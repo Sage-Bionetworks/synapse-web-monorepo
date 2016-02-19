@@ -5,7 +5,8 @@
 // same as UNESCAPE_MD_RE plus a space
 var UNESCAPE_RE = /\\([ \\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g;
 
-
+var suffix;
+var widgetIndex;
 function synapse(state, silent) {
   var found,
       content,
@@ -48,19 +49,22 @@ function synapse(state, silent) {
   // Earlier we checked !silent, but this implementation does not need it
   token         = state.push('synapse_open', 'span', 1);
   token.markup  = '${';
-
-  token         = state.push('text', '', 0);
-  token.content = content.replace(UNESCAPE_RE, '$1');
+  token.attrs = [ [ 'widgetparams', content.replace(UNESCAPE_RE, '$1') ],
+    [ 'class', 'widgetContainer' ],
+    [ 'id', 'widget-' + widgetIndex + suffix ] ];
 
   token         = state.push('synapse_close', 'span', -1);
   token.markup  = '}';
 
   state.pos = state.posMax + 1;
   state.posMax = max;
+  widgetIndex = widgetIndex + 1;
   return true;
 }
 
 
-module.exports = function synapse_plugin(md) {
-  md.inline.ruler.after('sub', 'synapse', synapse);
+module.exports = function synapse_plugin(md, _suffix) {
+  widgetIndex = 0;
+  suffix = _suffix;
+  md.inline.ruler.after('emphasis', 'synapse', synapse);
 };
