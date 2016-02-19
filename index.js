@@ -12,12 +12,11 @@ function synapse(state, silent) {
       token,
       max = state.posMax,
       start = state.pos;
-  
   if (start + 3 >= max) { return false; }
   if (state.src.charCodeAt(start) !== 0x24/* $ */) { return false; }
-  if (state.src.charCodeAt(start+1) !== 0x7B/* { */) { return false; }
+  if (state.src.charCodeAt(start + 1) !== 0x7B/* { */) { return false; }
   if (silent) { return false; } // don't run any pairs in validation mode
-  
+
   state.pos = start + 2;
 
   while (state.pos < max) {
