@@ -36,12 +36,7 @@ function synapse(state, silent) {
 
   content = state.src.slice(start + 2, state.pos);
 
-  // don't allow unescaped spaces/newlines inside
-  if (content.match(/(^|[^\\])(\\\\)*\s/)) {
-    state.pos = start;
-    return false;
-  }
-
+  // NOTE: allows unescaped spaces/newlines inside content
   // found!
   state.posMax = state.pos;
   state.pos = start + 2;

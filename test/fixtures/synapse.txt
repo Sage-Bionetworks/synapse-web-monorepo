@@ -40,6 +40,12 @@ $\{toc}
 <p>${toc}</p>
 .
 
+.
+${evalsubmit?subchallengeIdList=12345&unavailableMessage=Join the team to submit to the challenge}
+.
+<p><span widgetparams="evalsubmit?subchallengeIdList=12345&amp;unavailableMessage=Join the team to submit to the challenge" class="widgetContainer" id="widget-3undefined"></span></p>
+.
+
 coverage
 .
 *~f
