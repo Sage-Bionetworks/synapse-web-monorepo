@@ -35,5 +35,4 @@ package system, module will add itself globally as `window.markdownitSynapse`.
 
 
 ## License
-
-[MIT](https://github.com/markdown-it/markdown-it-synapse/blob/master/LICENSE)
+[MIT](https://github.com/jay-hodgson/markdown-it-synapse/blob/master/LICENSE)
