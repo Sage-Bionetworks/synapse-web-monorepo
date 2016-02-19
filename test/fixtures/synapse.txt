@@ -1,0 +1,51 @@
+.
+s
+.
+<p>s</p>
+.
+
+.
+a ${widget} in a paragraph
+.
+<p>a <span widgetparams="widget" class="widgetContainer" id="widget-0undefined"></span> in a paragraph</p>
+.
+
+.
+clearly not a widget $1.23 definition
+.
+<p>clearly not a widget $1.23 definition</p>
+.
+
+.
+${image?fileName=joy%2Epng&align=None}
+.
+<p><span widgetparams="image?fileName=joy%2Epng&amp;align=None" class="widgetContainer" id="widget-1undefined"></span></p>
+.
+
+.
+${toc}
+.
+<p><span widgetparams="toc" class="widgetContainer" id="widget-2undefined"></span></p>
+.
+
+.
+\${toc}
+.
+<p>${toc}</p>
+.
+
+.
+$\{toc}
+.
+<p>${toc}</p>
+.
+
+coverage
+.
+*~f
+.
+<p>*~f</p>
+.
+
+clean up init (constructor)
+remove icon
