@@ -1,21 +1,20 @@
 {
-  "name": "markdown-it-sub",
+  "name": "markdown-it-synapse",
   "version": "1.0.0",
-  "description": "<sub> tag for markdown-it markdown parser.",
+  "description": "tag for markdown-it markdown parser.",
   "keywords": [
     "markdown-it-plugin",
     "markdown-it",
     "markdown",
-    "subscript",
-    "sub"
+    "synapse"
   ],
-  "homepage": "https://github.com/markdown-it/markdown-it-sub",
+  "homepage": "https://github.com/jay-hodgson/markdown-it-synapse",
   "repository": {
     "type": "git",
-    "url": "git://github.com/markdown-it/markdown-it-sub.git"
+    "url": "git://github.com/jay-hodgson/markdown-it-synapse.git"
   },
   "bugs": {
-    "url": "https://github.com/markdown-it/markdown-it-sub/issues"
+    "url": "https://github.com/jay-hodgson/markdown-it-synapse/issues"
   },
   "license": "MIT",
   "main": "index.js",
@@ -34,5 +33,6 @@
     "mocha": "*",
     "request": "*",
     "uglify-js": "*"
-  }
+  },
+  "dependencies": {}
 }
