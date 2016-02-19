@@ -1,4 +1,4 @@
-// Process ~subscript~
+// Process ${widgetname?param1=1&param2=2}
 
 'use strict';
 
@@ -6,21 +6,22 @@
 var UNESCAPE_RE = /\\([ \\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g;
 
 
-function subscript(state, silent) {
+function synapse(state, silent) {
   var found,
       content,
       token,
       max = state.posMax,
       start = state.pos;
-
-  if (state.src.charCodeAt(start) !== 0x7E/* ~ */) { return false; }
+  
+  if (start + 3 >= max) { return false; }
+  if (state.src.charCodeAt(start) !== 0x24/* $ */) { return false; }
+  if (state.src.charCodeAt(start+1) !== 0x7B/* { */) { return false; }
   if (silent) { return false; } // don't run any pairs in validation mode
-  if (start + 2 >= max) { return false; }
-
-  state.pos = start + 1;
+  
+  state.pos = start + 2;
 
   while (state.pos < max) {
-    if (state.src.charCodeAt(state.pos) === 0x7E/* ~ */) {
+    if (state.src.charCodeAt(state.pos) === 0x7D/* } */) {
       found = true;
       break;
     }
@@ -28,12 +29,12 @@ function subscript(state, silent) {
     state.md.inline.skipToken(state);
   }
 
-  if (!found || start + 1 === state.pos) {
+  if (!found || start + 2 === state.pos) {
     state.pos = start;
     return false;
   }
 
-  content = state.src.slice(start + 1, state.pos);
+  content = state.src.slice(start + 2, state.pos);
 
   // don't allow unescaped spaces/newlines inside
   if (content.match(/(^|[^\\])(\\\\)*\s/)) {
@@ -43,17 +44,17 @@ function subscript(state, silent) {
 
   // found!
   state.posMax = state.pos;
-  state.pos = start + 1;
+  state.pos = start + 2;
 
   // Earlier we checked !silent, but this implementation does not need it
-  token         = state.push('sub_open', 'sub', 1);
-  token.markup  = '~';
+  token         = state.push('synapse_open', 'span', 1);
+  token.markup  = '${';
 
   token         = state.push('text', '', 0);
   token.content = content.replace(UNESCAPE_RE, '$1');
 
-  token         = state.push('sub_close', 'sub', -1);
-  token.markup  = '~';
+  token         = state.push('synapse_close', 'span', -1);
+  token.markup  = '}';
 
   state.pos = state.posMax + 1;
   state.posMax = max;
@@ -61,6 +62,6 @@ function subscript(state, silent) {
 }
 
 
-module.exports = function sub_plugin(md) {
-  md.inline.ruler.after('emphasis', 'sub', subscript);
+module.exports = function synapse_plugin(md) {
+  md.inline.ruler.after('sub', 'synapse', synapse);
 };
