@@ -1,8 +1,9 @@
 # markdown-it-synapse
 
-[![Build Status](https://img.shields.io/travis/markdown-it/markdown-it-synapse/master.svg?style=flat)](https://travis-ci.org/markdown-it/markdown-it-synapse)
+[![Build Status](https://img.shields.io/travis/jay-hodgson/markdown-it-synapse/master.svg?style=flat)](https://travis-ci.org/jay-hodgson/markdown-it-synapse)
+
 [![NPM version](https://img.shields.io/npm/v/markdown-it-synapse.svg?style=flat)](https://www.npmjs.org/package/markdown-it-synapse)
-[![Coverage Status](https://img.shields.io/coveralls/markdown-it/markdown-it-synapse/master.svg?style=flat)](https://coveralls.io/r/markdown-it/markdown-it-synapse?branch=master)
+[![Coverage Status](https://img.shields.io/coveralls/jay-hodgson/markdown-it-synapse/master.svg?style=flat)](https://coveralls.io/r/jay-hodgson/markdown-it-synapse?branch=master)
 
 > Synapse tag plugin for [markdown-it](https://github.com/markdown-it/markdown-it) markdown parser.
 
