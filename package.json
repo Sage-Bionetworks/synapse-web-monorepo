@@ -10,11 +10,11 @@
     "synapse"
   ],
   "scripts": {
-    "browserify": "(printf \"/*! %npm_package_name% %npm_package_version% %npm_package_homepage% @license MIT */\" && browserify ./ -s markdownitSynapse) > dist/markdown-it-synapse.js",
+    "browserify": "(printf \"/*! ${npm_package_name} ${npm_package_version} ${npm_package_homepage} @license MIT */\" && browserify ./ -s markdownitSynapse) > dist/markdown-it-synapse.js",
     "predist": "npm run test",
     "dist": "rm -fr dist && mkdir dist && npm run browserify && npm run minify",
     "lint": "eslint --reset index.js",
-    "minify": "uglifyjs dist/markdown-it-synapse.js -b beautify=false,ascii-only=true -c -m --preamble \"/*! %npm_package_name% %npm_package_version% %npm_package_homepage% @license MIT */\" > dist/markdown-it-synapse.min.js",
+    "minify": "uglifyjs dist/markdown-it-synapse.js -b beautify=false,ascii-only=true -c -m --preamble \"/*! ${npm_package_name} ${npm_package_version} ${npm_package_homepage} @license MIT */\" > dist/markdown-it-synapse.min.js",
     "prepublish": "npm run dist",
     "pretest": "npm run lint",
     "test": "npm run lint && mocha -R spec",
