@@ -2,12 +2,25 @@
   "name": "markdown-it-synapse",
   "version": "1.0.2",
   "description": "tag for markdown-it markdown parser.",
+  "main": "index.js",
   "keywords": [
     "markdown-it-plugin",
     "markdown-it",
     "markdown",
     "synapse"
   ],
+  "scripts": {
+    "browserify": "(printf \"/*! ${NPM_PACKAGE} ${NPM_VERSION} ${GITHUB_PROJ} @license MIT */\" && browserify ./ -s markdownitSynapse) > dist/markdown-it-synapse.js",
+    "predist": "npm run test",
+    "dist": "rm -fr dist && mkdir dist && npm run browserify && npm run minify",
+    "lint": "eslint --reset index.js",
+    "minify": "uglifyjs dist/markdown-it-synapse.js -b beautify=false,ascii-only=true -c -m --preamble \"/*! ${NPM_PACKAGE} ${NPM_VERSION} ${GITHUB_PROJ} @license MIT */\" > dist/markdown-it-synapse.min.js",
+    "prepublish": "npm run dist",
+    "pretest": "npm run lint",
+    "test": "npm run lint && mocha -R spec",
+    "coverage": "rm -rf coverage && istanbul cover node_modules/.bin/_mocha",
+    "test-ci": "npm run lint && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf coverage"
+  },
   "homepage": "https://github.com/jay-hodgson/markdown-it-synapse",
   "repository": {
     "type": "git",
@@ -18,9 +31,6 @@
   },
   "license": "MIT",
   "main": "index.js",
-  "scripts": {
-    "test": "make test"
-  },
   "devDependencies": {
     "browserify": "*",
     "coveralls": "^2.11.2",
