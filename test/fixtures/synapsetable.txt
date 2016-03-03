@@ -1,0 +1,82 @@
+.
+{| class="border text-align-center"
+Row 1 Content Cell 1 | Row 1 Content Cell 2  | Row 1 Content Cell 3
+Row 2 Content Cell 1 | Row 2 Content Cell 2  | Row 2 Content Cell 3
+|}
+
+.
+<table class=" border text-align-center ">
+<tbody>
+<tr>
+<td>Row 1 Content Cell 1</td>
+<td>Row 1 Content Cell 2</td>
+<td>Row 1 Content Cell 3</td>
+</tr>
+<tr>
+<td>Row 2 Content Cell 1</td>
+<td>Row 2 Content Cell 2</td>
+<td>Row 2 Content Cell 3</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+Header 1 | Header 2 | Header 3
+--- | --- | ---
+Row 1 Content Cell 1  |  Row 1 Content Cell 2  |  Row 1 Content Cell 3
+Row 2 Content Cell 1  |  Row 2 Content Cell 2  |  Row 2 Content Cell 3
+.
+<table>
+<thead>
+<tr>
+<th>Header 1</th>
+<th>Header 2</th>
+<th>Header 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Row 1 Content Cell 1</td>
+<td>Row 1 Content Cell 2</td>
+<td>Row 1 Content Cell 3</td>
+</tr>
+<tr>
+<td>Row 2 Content Cell 1</td>
+<td>Row 2 Content Cell 2</td>
+<td>Row 2 Content Cell 3</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+Row 1 Content Cell 1  |  Row 1 Content Cell 2  |  Row 1 Content Cell 3
+Row 2 Content Cell 1  |  Row 2 Content Cell 2  |  Row 2 Content Cell 3
+.
+<table>
+<tbody>
+<tr>
+<td>Row 1 Content Cell 1</td>
+<td>Row 1 Content Cell 2</td>
+<td>Row 1 Content Cell 3</td>
+</tr>
+<tr>
+<td>Row 2 Content Cell 1</td>
+<td>Row 2 Content Cell 2</td>
+<td>Row 2 Content Cell 3</td>
+</tr>
+</tbody>
+</table>
+.
+
+
+coverage
+.
+*~f
+.
+<p>*~f</p>
+.
+
+clean up init (constructor)
+remove icon
