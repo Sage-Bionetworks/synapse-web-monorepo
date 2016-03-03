@@ -8,13 +8,15 @@
  
 __v1.+ requires `markdown-it` v5.+, see changelog.__
 
+```
 Header 1 | Header 2 | Header 3
 --- | --- | ---
 Row 1 Content Cell 1  |  Row 1 Content Cell 2  |  Row 1 Content Cell 3
 Row 2 Content Cell 1  |  Row 2 Content Cell 2  |  Row 2 Content Cell 3
-
+```
 => 
 
+```
 <table>
 	<thead>
 		<tr>
@@ -36,16 +38,17 @@ Row 2 Content Cell 1  |  Row 2 Content Cell 2  |  Row 2 Content Cell 3
 	</tr>
 </tbody>
 </table>
+```
 
 ------
-
+```
 {| class="border text-align-center"
 Row 1 Content Cell 1 | Row 1 Content Cell 2  | Row 1 Content Cell 3
 Row 2 Content Cell 1 | Row 2 Content Cell 2  | Row 2 Content Cell 3
 |}
-
+```
 => 
-
+```
 <table class=" border text-align-center">
 	<tbody>
 		<tr>
@@ -60,7 +63,7 @@ Row 2 Content Cell 1 | Row 2 Content Cell 2  | Row 2 Content Cell 3
 		</tr>
 	</tbody>
 </table>
-
+```
 ## Install
 
 node.js, browser:
