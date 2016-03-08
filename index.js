@@ -19,6 +19,7 @@ function synapse(state, silent) {
       max = state.posMax,
       start = state.pos,
       widgetParams,
+      decodedWidgetParams,
       matchResults,
       footnoteText,
       widgetContainerClass = 'widgetContainer';
@@ -53,11 +54,12 @@ function synapse(state, silent) {
     token         = state.push('synapse_reference_close', 'span', -1);
     // also push bookmark markdown into the environment variable
     // (will be reprocessed and appended to the html output from the first pass)
-    matchResults = TEXT_PARAM_RE.exec(widgetParams);
+    decodedWidgetParams = decodeURIComponent(widgetParams);
+    matchResults = TEXT_PARAM_RE.exec(decodedWidgetParams);
     if (matchResults) {
       footnoteText = matchResults[1];
       footnotes += '${bookmark?text=[' + footnoteId +
-      ']&bookmarkID=wikiReference' + footnoteId + '} ' + decodeURIComponent(footnoteText) + '\n\n';
+      ']&bookmarkID=wikiReference' + footnoteId + '} ' + footnoteText + '\n';
     }
     footnoteId++;
     widgetContainerClass = 'inlineWidgetContainer';
@@ -66,9 +68,6 @@ function synapse(state, silent) {
     token         = state.push('synapse_footnote_target_open', 'span', 1);
     token.attrs = [ [ 'id', 'wikiFootnote' + footnoteId ] ];
     token         = state.push('synapse_footnote_target_close', 'span', -1);
-
-    token         = state.push('synapse_footnote_target_newline_open', 'br', 1);
-    token         = state.push('synapse_footnote_target_newline_close', 'br', -1);
 
     footnoteId++;
     widgetContainerClass = 'inlineWidgetContainer';
