@@ -58,6 +58,12 @@ ${bookmark?text=[1]&inlineWidget=true&bookmarkID=wikiReference1} K%2EA%2E Hoadle
 <p><span id="wikiFootnote2"></span><span widgetparams="bookmark?text=[1]&amp;inlineWidget=true&amp;bookmarkID=wikiReference1" class="inlineWidgetContainer" id="widget-5undefined"></span> K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049</p>
 .
 
+.
+And here's another ${reference?inlineWidget=true&text=My %5Freference%5F with processing that %2Aneeds%2A to take place%2E} down below.
+.
+<p>And here's another <span id="wikiReference3"></span><span widgetparams="reference?inlineWidget=true&amp;text=My %5Freference%5F with processing that %2Aneeds%2A to take place%2E&amp;footnoteId=3" class="inlineWidgetContainer" id="widget-6undefined"></span> down below.</p>
+.
+
 coverage
 .
 *~f

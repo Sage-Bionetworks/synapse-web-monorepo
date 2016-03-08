@@ -5,7 +5,6 @@
 
 // same as UNESCAPE_MD_RE plus a space
 var UNESCAPE_RE = /\\([ \\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g;
-var TEXT_PARAM_RE = /.*text=(.*)[&]{1}/gmi;
 var REFERENCE_START = 'reference?';
 var BOOKMARK_START = 'bookmark?';
 
@@ -13,6 +12,21 @@ var suffix;
 var widgetIndex;
 var footnoteId;
 var footnotes;
+
+
+function getParamValue(params, name) {
+  var queryStringArray, queryStringParamArray, nameValue = null, i, queryStringNameValueArray;
+  queryStringArray = params.split('?');
+  queryStringParamArray = queryStringArray[1].split('&');
+  for (i = 0; i < queryStringParamArray.length; i++) {
+    queryStringNameValueArray = queryStringParamArray[i].split('=');
+    if (name === queryStringNameValueArray[0]) {
+      nameValue = queryStringNameValueArray[1];
+    }
+  }
+  return nameValue;
+}
+
 function synapse(state, silent) {
   var found,
       content,
@@ -21,7 +35,6 @@ function synapse(state, silent) {
       start = state.pos,
       widgetParams,
       decodedWidgetParams,
-      matchResults,
       footnoteText,
       widgetContainerClass = 'widgetContainer';
   if (start + 3 >= max) { return false; }
@@ -56,9 +69,8 @@ function synapse(state, silent) {
     // also push bookmark markdown into the environment variable
     // (will be reprocessed and appended to the html output from the first pass)
     decodedWidgetParams = decodeURIComponent(widgetParams);
-    matchResults = TEXT_PARAM_RE.exec(decodedWidgetParams);
-    if (matchResults) {
-      footnoteText = matchResults[1];
+    footnoteText = getParamValue(decodedWidgetParams, 'text');
+    if (footnoteText) {
       footnotes += '${bookmark?text=[' + footnoteId +
       ']&bookmarkID=wikiReference' + footnoteId + '} ' + footnoteText + '\n';
     }
