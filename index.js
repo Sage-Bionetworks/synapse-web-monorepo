@@ -47,7 +47,7 @@ module.exports = function synapse_table_plugin(md) {
 
     function table(state, startLine, endLine, silent) {
       var lineText, pos, i, nextLine, columns, columnCount, token,
-        tableLines, tbodyLines, classNames, tableBodyStartLine, headerLine;
+        tableLines, tbodyLines, classNames, tableBodyStartLine, headerLine, isSpecialSyntaxTable = false;
       // should have at least two lines
       // (!!! Synapse change, used to be 3 due to required ---|---|--- line).  Header and single row.
       if (startLine + 1 > endLine) {
@@ -69,12 +69,13 @@ module.exports = function synapse_table_plugin(md) {
         tableClassEndRE = new RegExp('^\\s*[|]{1}}\\s*');
       }
 
-
       // look for optional class definition start, like '{| class="border"'
       if (tableClassStartRE.test(lineText)) {
         // this table definition includes class names, so the start marker is {| and end marker will be |}
         classNames = lineText.match(tableClassStartRE)[1];
         headerLine = startLine + 1;
+        // If tableClassStartRE passes, then it's definitely a table.
+        isSpecialSyntaxTable = true;
       } else {
         headerLine = startLine;
       }
@@ -90,7 +91,7 @@ module.exports = function synapse_table_plugin(md) {
 
       // read column headers
       lineText = getLine(state, headerLine).trim();
-      if (lineText.indexOf('|') === -1) {
+      if (lineText.indexOf('|') === -1 && !isSpecialSyntaxTable) {
         return false;
       }
       columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));
@@ -103,6 +104,13 @@ module.exports = function synapse_table_plugin(md) {
         return true;
       }
 
+      lineText = getLine(state, headerLine + 1).trim();
+
+      // if the second line does not contain a '|', then this is not a table
+      if (lineText.indexOf('|') === -1 && !isSpecialSyntaxTable) {
+        return false;
+      }
+
       token = state.push('table_open', 'table', 1);
       token.map = tableLines = [ startLine, 0 ];
       if (classNames) {
@@ -110,8 +118,6 @@ module.exports = function synapse_table_plugin(md) {
         // start line of the table (header) is really the second line.
         startLine++;
       }
-
-      lineText = getLine(state, headerLine + 1).trim();
 
       // If this line is of the form ---|---|---, then we have column headers and we should skip this line.
       // Else, no column headers and we should skip to the body.
@@ -157,7 +163,7 @@ module.exports = function synapse_table_plugin(md) {
           nextLine++;
           break;
         }
-        if (lineText.indexOf('|') === -1) {
+        if (lineText.indexOf('|') === -1 && !isSpecialSyntaxTable) {
           break;
         }
         columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));

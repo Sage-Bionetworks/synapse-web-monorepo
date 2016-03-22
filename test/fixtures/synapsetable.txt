@@ -70,6 +70,26 @@ Row 2 Content Cell 1  |  Row 2 Content Cell 2  |  Row 2 Content Cell 3
 </table>
 .
 
+.
+{| class="border text-align-right"
+Single column row 1
+Single column row 2
+|}
+
+.
+<table class=" border text-align-right ">
+<tbody>
+<tr>
+<td>Single column row 1</td>
+</tr>
+<tr>
+<td>Single column row 2</td>
+</tr>
+</tbody>
+</table>
+.
+
+
 
 coverage
 .
