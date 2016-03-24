@@ -89,6 +89,21 @@ Single column row 2
 </table>
 .
 
+.
+{|class="border"
+Single column row 1
+|}
+
+.
+<table class=" border ">
+<tbody>
+<tr>
+<td>Single column row 1</td>
+</tr>
+</tbody>
+</table>
+.
+
 
 
 coverage

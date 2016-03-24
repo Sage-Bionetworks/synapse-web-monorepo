@@ -62,7 +62,7 @@ module.exports = function synapse_table_plugin(md) {
 
       if (!tableClassStartRE) {
         tableClassStartRE = new RegExp(
-            '^\\s*{[|]{1}\\s+class\\s*=\\s*"\\s*(.*)"\\s*');
+            '^\\s*{[|]{1}\\s*class\\s*=\\s*"\\s*(.*)"\\s*');
       }
 
       if (!tableClassEndRE) {
