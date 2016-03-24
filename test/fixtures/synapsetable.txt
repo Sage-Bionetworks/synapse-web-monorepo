@@ -105,6 +105,30 @@ Single column row 1
 .
 
 
+.
+text before
+${badge?isUser=true&id=3323817&inlineWidget=true}|${badge?isUser=true&id=3324793&inlineWidget=true}|${badge?isUser=true&id=3329582&inlineWidget=true}|${badge?isUser=true&id=3327730&inlineWidget=true}
+text after
+.
+<p>text before</p>
+<table>
+<tbody>
+<tr>
+<td>${badge?isUser=true&amp;id=3323817&amp;inlineWidget=true}</td>
+<td>${badge?isUser=true&amp;id=3324793&amp;inlineWidget=true}</td>
+<td>${badge?isUser=true&amp;id=3329582&amp;inlineWidget=true}</td>
+<td>${badge?isUser=true&amp;id=3327730&amp;inlineWidget=true}</td>
+</tr>
+</tbody>
+</table>
+<p>text after</p>
+.
+
+.
+This line is math that contains a vertical pipe $$\(\small \text{Logit}(P(Y=1|X))=\b+\b{1}X\)$$, but this should not be considered a table
+.
+<p>This line is math that contains a vertical pipe $$(\small \text{Logit}(P(Y=1|X))=\b+\b{1}X)$$, but this should not be considered a table</p>
+.
 
 coverage
 .
