@@ -130,6 +130,22 @@ This line is math that contains a vertical pipe $$\(\small \text{Logit}(P(Y=1|X)
 <p>This line is math that contains a vertical pipe $$(\small \text{Logit}(P(Y=1|X))=\b+\b{1}X)$$, but this should not be considered a table</p>
 .
 
+.
+{|class="short"
+Single column row 1
+|}
+.
+<div class=" markdowntableWrap ">
+<table class=" short ">
+<tbody>
+<tr>
+<td>Single column row 1</td>
+</tr>
+</tbody>
+</table>
+</div>
+.
+
 coverage
 .
 *~f

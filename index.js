@@ -47,7 +47,8 @@ module.exports = function synapse_table_plugin(md) {
 
     function table(state, startLine, endLine, silent) {
       var lineText, pos, i, nextLine, columns, columnCount, token,
-        tableLines, tbodyLines, classNames, tableBodyStartLine, headerLine, isSpecialSyntaxTable = false;
+        tableLines, tbodyLines, classNames, tableBodyStartLine, headerLine,
+        isSpecialSyntaxTable = false, wrapWithDiv = false;
       // should have at least two lines
       // (!!! Synapse change, used to be 3 due to required ---|---|--- line).  Header and single row.
       if (startLine + 1 > endLine) {
@@ -73,6 +74,7 @@ module.exports = function synapse_table_plugin(md) {
       if (tableClassStartRE.test(lineText)) {
         // this table definition includes class names, so the start marker is {| and end marker will be |}
         classNames = lineText.match(tableClassStartRE)[1];
+        wrapWithDiv = classNames.indexOf('short') !== -1;
         headerLine = startLine + 1;
         // If tableClassStartRE passes, then it's definitely a table.
         isSpecialSyntaxTable = true;
@@ -108,6 +110,10 @@ module.exports = function synapse_table_plugin(md) {
         return true;
       }
 
+      if (wrapWithDiv) {
+        token = state.push('div_wrapper', 'div', 1);
+        token.attrs = [ [ 'class', ' markdowntableWrap ' ] ];
+      }
       token = state.push('table_open', 'table', 1);
       token.map = tableLines = [ startLine, 0 ];
       if (classNames) {
@@ -181,6 +187,10 @@ module.exports = function synapse_table_plugin(md) {
       }
       token = state.push('tbody_close', 'tbody', -1);
       token = state.push('table_close', 'table', -1);
+
+      if (wrapWithDiv) {
+        token = state.push('div_wrapper', 'div', -1);
+      }
 
       tableLines[1] = tbodyLines[1] = nextLine;
       state.line = nextLine;
