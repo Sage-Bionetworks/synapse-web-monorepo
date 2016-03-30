@@ -11,6 +11,7 @@ var suffix;
 var widgetIndex;
 var footnoteId;
 var footnotes;
+var initialized = false;
 
 
 function getParamValue(params, name) {
@@ -112,7 +113,10 @@ module.exports = function synapse_plugin(md, _suffix) {
   footnoteId = 1;
   suffix = _suffix;
   footnotes = '';
-  md.inline.ruler.after('emphasis', 'synapse', synapse);
+  if (!initialized) {
+    md.inline.ruler.after('emphasis', 'synapse', synapse);
+    initialized = true;
+  }
 };
 
 module.exports.footnotes = function() {
