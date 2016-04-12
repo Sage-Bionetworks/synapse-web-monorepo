@@ -3,7 +3,7 @@
 'use strict';
 
 module.exports = function synapse_table_plugin(md) {
-    var tableClassStartRE, tableClassEndRE;
+    var tableClassStartRE, tableClassEndRE, centerStartRE, centerEndRE;
     function getLine(state, line) {
       var pos = state.bMarks[line] + state.blkIndent, max = state.eMarks[line];
 
@@ -70,6 +70,14 @@ module.exports = function synapse_table_plugin(md) {
         tableClassEndRE = new RegExp('^\\s*[|]{1}}\\s*');
       }
 
+      if (!centerStartRE) {
+        centerStartRE = new RegExp('^\s*[-]{1}[>]{1}.*');
+      }
+
+      if (!centerEndRE) {
+        centerEndRE = new RegExp('.*[<]{1}[-]{1}\s*$');
+      }
+
       // look for optional class definition start, like '{| class="border"'
       if (tableClassStartRE.test(lineText)) {
         // this table definition includes class names, so the start marker is {| and end marker will be |}
@@ -96,6 +104,7 @@ module.exports = function synapse_table_plugin(md) {
       if (lineText.indexOf('|') === -1 && !isSpecialSyntaxTable) {
         return false;
       }
+
       // has a '|'.  If it looks like there is math on this line, skip it.
       if (lineText.indexOf('$$') !== -1) {
         return false;
@@ -174,6 +183,11 @@ module.exports = function synapse_table_plugin(md) {
         columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));
 
         token = state.push('tr_open', 'tr', 1);
+        // if line starts with -> and ends with <-, then eat these characters (SWC-3000)
+        if (centerStartRE.test(columns[0]) && centerEndRE.test(columns[columnCount - 1])) {
+          columns[0] = columns[0].substring(columns[0].indexOf('->') + 2);
+          columns[columnCount - 1] = columns[columnCount - 1].substring(0, columns[columnCount - 1].indexOf('<-'));
+        }
         for (i = 0; i < columnCount; i++) {
           token = state.push('td_open', 'td', 1);
 
