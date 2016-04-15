@@ -3,7 +3,12 @@
 'use strict';
 
 module.exports = function synapse_table_plugin(md) {
-    var tableClassStartRE, tableClassEndRE, centerStartRE, centerEndRE;
+    var tableClassStartRE = new RegExp(
+            '^\\s*{[|]{1}\\s*class\\s*=\\s*"\\s*(.*)"\\s*');
+    var tableClassEndRE = new RegExp('^\\s*[|]{1}}\\s*');
+    var centerStartRE = new RegExp('^\s*[-]{1}[>]{1}.*');
+    var centerEndRE = new RegExp('.*[<]{1}[-]{1}\s*$');
+    var outerPipesRE = new RegExp('^\s*[|]{1}.+[|]{1}\s*$');
     function getLine(state, line) {
       var pos = state.bMarks[line] + state.blkIndent, max = state.eMarks[line];
 
@@ -11,6 +16,10 @@ module.exports = function synapse_table_plugin(md) {
     }
 
     function escapedSplit(str) {
+      if (outerPipesRE.test(str)) {
+        str = str.replace(/^\||\|$/g, '');
+      }
+
       var result = [], pos = 0, max = str.length, ch, escapes = 0, lastPos = 0, backTicked = false, lastBackTick = 0;
 
       ch = str.charCodeAt(pos);
@@ -61,23 +70,6 @@ module.exports = function synapse_table_plugin(md) {
       }
       lineText = getLine(state, startLine);
 
-      if (!tableClassStartRE) {
-        tableClassStartRE = new RegExp(
-            '^\\s*{[|]{1}\\s*class\\s*=\\s*"\\s*(.*)"\\s*');
-      }
-
-      if (!tableClassEndRE) {
-        tableClassEndRE = new RegExp('^\\s*[|]{1}}\\s*');
-      }
-
-      if (!centerStartRE) {
-        centerStartRE = new RegExp('^\s*[-]{1}[>]{1}.*');
-      }
-
-      if (!centerEndRE) {
-        centerEndRE = new RegExp('.*[<]{1}[-]{1}\s*$');
-      }
-
       // look for optional class definition start, like '{| class="border"'
       if (tableClassStartRE.test(lineText)) {
         // this table definition includes class names, so the start marker is {| and end marker will be |}
@@ -109,8 +101,7 @@ module.exports = function synapse_table_plugin(md) {
       if (lineText.indexOf('$$') !== -1) {
         return false;
       }
-      columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));
-
+      columns = escapedSplit(lineText);
       // header row will define an amount of columns in the entire table,
       // and align row shouldn't be smaller than that (the rest of the rows can)
       columnCount = columns.length;
@@ -180,7 +171,7 @@ module.exports = function synapse_table_plugin(md) {
         if (lineText.indexOf('|') === -1 && !isSpecialSyntaxTable) {
           break;
         }
-        columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));
+        columns = escapedSplit(lineText);
 
         token = state.push('tr_open', 'tr', 1);
         // if line starts with -> and ends with <-, then eat these characters (SWC-3000)

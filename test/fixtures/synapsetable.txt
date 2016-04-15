@@ -165,6 +165,74 @@ Single column row 1
 <h2>and a heading</h2>
 .
 
+.
+**a** | 
+b | c
+d | e
+**f** | 
+g | h
+.
+<table>
+<tbody>
+<tr>
+<td><strong>a</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>b</td>
+<td>c</td>
+</tr>
+<tr>
+<td>d</td>
+<td>e</td>
+</tr>
+<tr>
+<td><strong>f</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>g</td>
+<td>h</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+ | a
+b | c
+.
+<table>
+<tbody>
+<tr>
+<td></td>
+<td>a</td>
+</tr>
+<tr>
+<td>b</td>
+<td>c</td>
+</tr>
+</tbody>
+</table>
+.
+
+.
+| with outer | pipes |
+| b | c |
+.
+<table>
+<tbody>
+<tr>
+<td>with outer</td>
+<td>pipes</td>
+</tr>
+<tr>
+<td>b</td>
+<td>c</td>
+</tr>
+</tbody>
+</table>
+.
 
 coverage
 .
