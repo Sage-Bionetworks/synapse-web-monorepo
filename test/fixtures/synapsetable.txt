@@ -234,6 +234,22 @@ b | c
 </table>
 .
 
+.
+-> this | that | foo <-
+-----
+.
+<table>
+<tbody>
+<tr>
+<td>this</td>
+<td>that</td>
+<td>foo</td>
+</tr>
+</tbody>
+</table>
+<hr>
+.
+
 coverage
 .
 *~f

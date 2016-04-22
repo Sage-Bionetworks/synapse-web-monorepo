@@ -126,7 +126,7 @@ module.exports = function synapse_table_plugin(md) {
 
       // If this line is of the form ---|---|---, then we have column headers and we should skip this line.
       // Else, no column headers and we should skip to the body.
-      if (/^[-:| ]+$/.test(lineText)) {
+      if (/^[-:| ]+$/.test(lineText) && lineText.indexOf('|') !== -1) {
         // we have column headers
         tableBodyStartLine = headerLine + 2;
         token = state.push('thead_open', 'thead', 1);
