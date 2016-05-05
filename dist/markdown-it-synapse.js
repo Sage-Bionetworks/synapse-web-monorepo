@@ -1,4 +1,4 @@
-/*! markdown-it-synapse 1.0.4 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*! markdown-it-synapse 1.0.5 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // Process ${widgetname?param1=1&param2=2}
 
 'use strict';
@@ -7,7 +7,13 @@
 var UNESCAPE_RE = /\\([ \\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g;
 var REFERENCE_START = 'reference?';
 var BOOKMARK_START = 'bookmark?';
-
+var synapseRE = new RegExp('^syn([0-9]+[.]?[0-9]*)+');
+var urlWithoutProtocolRE = new RegExp('^([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\w \\.-]*)*\\/?.*$');
+var doiRE = new RegExp('^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$');
+var gridLayoutColumnParamRE = new RegExp('^\\s*(width[=]{1})?\\s*(.*)[}]{1}\\s*$');
+var ulMarkerRE = new RegExp('^\\s*[*-+>]{1}[^|]*$');
+var olMarkerRE = new RegExp('^\\s*\\d+\\s*[.)]{1}[^|]*$');
+var spacesRE = new RegExp('[ ]{7}', 'g');
 var suffix;
 var widgetIndex;
 var footnoteId;
@@ -30,14 +36,14 @@ function getParamValue(params, name) {
 
 function synapse(state, silent) {
   var found,
-      content,
-      token,
-      max = state.posMax,
-      start = state.pos,
-      widgetParams,
-      decodedWidgetParams,
-      footnoteText,
-      widgetContainerClass = 'widgetContainer';
+    content,
+    token,
+    max = state.posMax,
+    start = state.pos,
+    widgetParams,
+    decodedWidgetParams,
+    footnoteText,
+    widgetContainerClass = 'widgetContainer';
   if (start + 3 >= max) { return false; }
   if (state.src.charCodeAt(start) !== 0x24/* $ */) { return false; }
   if (state.src.charCodeAt(start + 1) !== 0x7B/* { */) { return false; }
@@ -64,24 +70,24 @@ function synapse(state, silent) {
   if (content.lastIndexOf(REFERENCE_START, 0) === 0) {
     // If reference widget, then add an addditional widget param and output token.
     widgetParams += '&footnoteId=' + footnoteId;
-    token         = state.push('synapse_reference_open', 'span', 1);
+    token = state.push('synapse_reference_open', 'span', 1);
     token.attrs = [ [ 'id', 'wikiReference' + footnoteId ] ];
-    token         = state.push('synapse_reference_close', 'span', -1);
+    token = state.push('synapse_reference_close', 'span', -1);
     // also push bookmark markdown into the environment variable
     // (will be reprocessed and appended to the html output from the first pass)
     decodedWidgetParams = decodeURIComponent(widgetParams);
     footnoteText = getParamValue(decodedWidgetParams, 'text');
     if (footnoteText) {
       footnotes += '${bookmark?text=[' + footnoteId +
-      ']&bookmarkID=wikiReference' + footnoteId + '} ' + footnoteText + '\n';
+        ']&bookmarkID=wikiReference' + footnoteId + '} ' + footnoteText + '\n';
     }
     footnoteId++;
     widgetContainerClass = 'inlineWidgetContainer';
   } else if (content.lastIndexOf(BOOKMARK_START, 0) === 0) {
     // If bookmark widget, add additional span (target)
-    token         = state.push('synapse_footnote_target_open', 'span', 1);
+    token = state.push('synapse_footnote_target_open', 'span', 1);
     token.attrs = [ [ 'id', 'wikiFootnote' + footnoteId ] ];
-    token         = state.push('synapse_footnote_target_close', 'span', -1);
+    token = state.push('synapse_footnote_target_close', 'span', -1);
 
     footnoteId++;
     widgetContainerClass = 'inlineWidgetContainer';
@@ -93,14 +99,14 @@ function synapse(state, silent) {
   state.pos = start + 2;
 
   // Earlier we checked !silent, but this implementation does not need it
-  token         = state.push('synapse_open', 'span', 1);
-  token.markup  = '${';
+  token = state.push('synapse_open', 'span', 1);
+  token.markup = '${';
   token.attrs = [ [ 'widgetparams', widgetParams ],
     [ 'class', widgetContainerClass ],
     [ 'id', 'widget-' + widgetIndex + suffix ] ];
 
-  token         = state.push('synapse_close', 'span', -1);
-  token.markup  = '}';
+  token = state.push('synapse_close', 'span', -1);
+  token.markup = '}';
 
   state.pos = state.posMax + 1;
   state.posMax = max;
@@ -120,12 +126,442 @@ module.exports = function synapse_plugin(md, _suffix) {
   }
 };
 
-module.exports.footnotes = function() {
+module.exports.footnotes = function () {
   return footnotes;
 };
 
-module.exports.resetFootnoteId = function() {
+module.exports.resetFootnoteId = function () {
   footnoteId = 1;
+};
+
+module.exports.preprocessMarkdown = function (mdString) {
+  var md = '',
+    splitMD = mdString.split('\n');
+
+  var isPreviousLineInList = false;
+  var isCurrentLineInList = false;
+  for (var i = 0; i < splitMD.length; i++) {
+    isCurrentLineInList = ulMarkerRE.test(splitMD[i]) || olMarkerRE.test(splitMD[i]);
+    if (isCurrentLineInList) {
+      // SWC-2988: and replace each group of 7 spaces with 4 (so that markdown-it list rule recognizes sublists).
+      splitMD[i] = splitMD[i].replace(spacesRE, '    ');
+    }
+    if (isPreviousLineInList && !isCurrentLineInList) {
+      md += '\n';
+    }
+    md += splitMD[i] + '\n';
+    isPreviousLineInList = isCurrentLineInList;
+  }
+
+  return md;
+};
+
+module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
+  markdownitCentertext, markdownitSynapseHeading, markdownitSynapseTable,
+  markdownitStrikethroughAlt, markdownitContainer, markdownitEmphasisAlt) {
+  function sendLinksToNewWindow() {
+    var defaultRender = md.renderer.rules.link_open
+      || function (tokens, idx, options, env, self) {
+        return self.renderToken(tokens, idx, options);
+      };
+
+    md.renderer.rules.link_open = function (tokens, idx, options,
+      env, self) {
+      // If you are sure other plugins can't add `target` - drop check below
+      var aIndex = tokens[idx].attrIndex('target');
+      var hrefIndex = tokens[idx].attrIndex('href');
+      if (aIndex < 0) {
+        if (hrefIndex < 0
+          || !tokens[idx].attrs[hrefIndex][1]
+            .startsWith('#!')) {
+          tokens[idx].attrPush([ 'target', '_blank' ]); // add new attribute
+        }
+      } else {
+        tokens[idx].attrs[aIndex][1] = '_blank'; // replace value of existing attr
+      }
+
+      // pass token to default renderer.
+      return defaultRender(tokens, idx, options, env, self);
+    };
+  }
+
+  function initMarkdownTableStyle() {
+    var defaultRender = md.renderer.rules.table_open
+      || function (tokens, idx, options, env, self) {
+        return self.renderToken(tokens, idx, options);
+      };
+
+    md.renderer.rules.table_open = function (tokens, idx, options,
+      env, self) {
+      var aIndex = tokens[idx].attrIndex('class');
+      if (aIndex < 0) {
+        tokens[idx].attrPush([ 'class', 'markdowntable' ]); // add new attribute
+      } else {
+        tokens[idx].attrs[aIndex][1] += 'markdowntable'; // add value to existing attr
+      }
+
+      // pass token to default renderer.
+      return defaultRender(tokens, idx, options, env, self);
+    };
+  }
+
+  function initLinkify() {
+    md.linkify.set({ fuzzyLink: false });
+    md.linkify.add('@', {
+      validate: function (text, pos, self) {
+        var tail = text.slice(pos);
+        if (!self.re.username) {
+          self.re.username = new RegExp(
+            '^([a-zA-Z0-9_]){1,15}(?!_)(?=$|'
+            + self.re.src_ZPCc + ')');
+        }
+        if (self.re.username.test(tail)) {
+          // Linkifier allows punctuation chars before prefix,
+          // but we additionally disable `@` ("@@mention" is invalid)
+          if (pos >= 2 && tail[pos - 2] === '@') {
+            return false;
+          }
+          return tail.match(self.re.username)[0].length;
+        }
+        return 0;
+      },
+      normalize: function (match) {
+        match.url = '#!Profile:' + match.url.replace(/^@/, '');
+      }
+    });
+
+    // synapse (may have version or wiki page id)
+    md.linkify.add('syn', {
+      validate: function (text, pos, self) {
+        var tail = text.slice(pos);
+        if (!self.re.synapse) {
+          self.re.synapse = new RegExp(
+            '^([0-9]{3,}[.]?[0-9]*(\\/wiki\\/[0-9]+)?)+(?!_)(?=$|'
+            + self.re.src_ZPCc + ')');
+        }
+        if (self.re.synapse.test(tail)) {
+          return tail.match(self.re.synapse)[0].length;
+        }
+        return 0;
+      },
+      normalize: function (match) {
+        match.url = '#!Synapse:'
+          + match.url.replace(/[.]/, '/version/');
+      }
+    });
+
+    md.linkify.add('doi:10.', {
+      validate: function (text, pos, self) {
+        var tail = text.slice(pos);
+        if (!self.re.doi) {
+          self.re.doi = new RegExp(
+            '^[0-9]+[/]{1}[a-zA-Z0-9_.]+(?!_)(?=$|'
+            + self.re.src_ZPCc + ')');
+        }
+        if (self.re.doi.test(tail)) {
+          return tail.match(self.re.doi)[0].length;
+        }
+        return 0;
+      },
+      normalize: function (match) {
+        match.url = 'http://dx.doi.org/' + match.url;
+      }
+    });
+  }
+
+  function link(state, silent) {
+    var attrs, code, label, labelEnd, labelStart, pos, res, ref, title, token, href = '',
+      oldPos = state.pos, max = state.posMax, start = state.pos, parseLinkLabel = md.helpers.parseLinkLabel,
+      parseLinkDestination = md.helpers.parseLinkDestination, parseLinkTitle = md.helpers.parseLinkTitle,
+      isSpace = md.utils.isSpace, normalizeReference = md.utils.normalizeReference;
+
+    if (state.src.charCodeAt(state.pos) !== 0x5B) {
+      return false;
+    } // [
+    labelStart = state.pos + 1;
+    labelEnd = parseLinkLabel(state, state.pos, true);
+
+    // parser failed to find ']', so it's not a valid link
+    if (labelEnd < 0) {
+      return false;
+    }
+
+    pos = labelEnd + 1;
+    if (pos < max && state.src.charCodeAt(pos) === 0x28) { // (
+      //
+      // Inline link
+      //
+
+      // [link](  <href>  "title"  )
+      //        ^^ skipping these spaces
+      pos++;
+      for (; pos < max; pos++) {
+        code = state.src.charCodeAt(pos);
+        if (!isSpace(code) && code !== 0x0A) {
+          break;
+        }
+      }
+      if (pos >= max) {
+        return false;
+      }
+
+      // [link](  <href>  "title"  )
+      //          ^^^^^^ parsing link destination
+      start = pos;
+      res = parseLinkDestination(state.src, pos, state.posMax);
+      if (res.ok) {
+        // !!!!!!!!!!!!!!!!!! Changed for Synapse  !!!!!!!!!!!!!!!!!!!!!!!!!/
+        var testString = res.str;
+        if (synapseRE.test(testString)) {
+          // this is a synapse ID
+          res.str = '#!Synapse:'
+            + testString.replace(/[.]/, '/version/');
+        } else if (urlWithoutProtocolRE.test(testString)) {
+          res.str = 'http://' + testString;
+        } else if (doiRE.test(testString)) {
+          res.str = 'http://dx.doi.org/' + testString;
+        }
+        // !!!!!!!!!!!!!! End of change for Synapse  !!!!!!!!!!!!!!!!!!!!!!/
+        href = state.md.normalizeLink(res.str);
+        if (state.md.validateLink(href)) {
+          pos = res.pos;
+        } else {
+          href = '';
+        }
+      }
+
+      // [link](  <href>  "title"  )
+      //                ^^ skipping these spaces
+      start = pos;
+      for (; pos < max; pos++) {
+        code = state.src.charCodeAt(pos);
+        if (!isSpace(code) && code !== 0x0A) {
+          break;
+        }
+      }
+
+      // [link](  <href>  "title"  )
+      //                  ^^^^^^^ parsing link title
+      res = parseLinkTitle(state.src, pos, state.posMax);
+      if (pos < max && start !== pos && res.ok) {
+        title = res.str;
+        pos = res.pos;
+
+        // [link](  <href>  "title"  )
+        //                         ^^ skipping these spaces
+        for (; pos < max; pos++) {
+          code = state.src.charCodeAt(pos);
+          if (!isSpace(code) && code !== 0x0A) {
+            break;
+          }
+        }
+      } else {
+        title = '';
+      }
+
+      if (pos >= max || state.src.charCodeAt(pos) !== 0x29) { // )
+        state.pos = oldPos;
+        return false;
+      }
+      pos++;
+    } else {
+      //
+      // Link reference
+      //
+      if (typeof state.env.references === 'undefined') {
+        return false;
+      }
+
+      if (pos < max && state.src.charCodeAt(pos) === 0x5B) { // [
+        start = pos + 1;
+        pos = parseLinkLabel(state, pos);
+        if (pos >= 0) {
+          label = state.src.slice(start, pos++);
+        } else {
+          pos = labelEnd + 1;
+        }
+      } else {
+        pos = labelEnd + 1;
+      }
+
+      // covers label === '' and label === undefined
+      // (collapsed reference link and shortcut reference link respectively)
+      if (!label) {
+        label = state.src.slice(labelStart, labelEnd);
+      }
+
+      ref = state.env.references[normalizeReference(label)];
+      if (!ref) {
+        state.pos = oldPos;
+        return false;
+      }
+      href = ref.href;
+      title = ref.title;
+    }
+
+    //
+    // We found the end of the link, and know for a fact it's a valid link;
+    // so all that's left to do is to call tokenizer.
+    //
+    if (!silent) {
+      state.pos = labelStart;
+      state.posMax = labelEnd;
+
+      token = state.push('link_open', 'a', 1);
+      token.attrs = attrs = [ [ 'href', href ] ];
+      if (title) {
+        attrs.push([ 'title', title ]);
+      }
+
+      state.md.inline.tokenize(state);
+
+      token = state.push('link_close', 'a', -1);
+    }
+
+    state.pos = pos;
+    state.posMax = max;
+    return true;
+  }
+
+
+  // Define custom scanDelims that does not conclude that a token can open or close based on whitespace
+  function scanDelims(src, posMax, start) {
+    var pos = start, count, can_open, can_close,
+      max = posMax,
+      marker = src.charCodeAt(start);
+    while (pos < max && src.charCodeAt(pos) === marker) { pos++; }
+    count = pos - start;
+    can_open = true;
+    can_close = true;
+    return {
+      can_open: can_open,
+      can_close: can_close,
+      length: count
+    };
+  }
+
+  // Copy of markdown-it emphasis function,
+  // but uses the scanDelims function above instead of StateInline.prototype.scanDelims()
+  function emphasis(state, silent) {
+    var i, scanned, token,
+      start = state.pos,
+      marker = state.src.charCodeAt(start);
+
+    if (silent) { return false; }
+
+    if (marker !== 0x5F && marker !== 0x2A) { return false; } // '_' or '*'
+
+    scanned = scanDelims(state.src, state.posMax, state.pos);
+
+    for (i = 0; i < scanned.length; i++) {
+      token = state.push('text', '', 0);
+      token.content = String.fromCharCode(marker);
+
+      state.delimiters.push({
+        // Char code of the starting marker (number).
+        //
+        marker: marker,
+
+        // An amount of characters before this one that's equivalent to
+        // current one. In plain English: if this delimiter does not open
+        // an emphasis, neither do previous `jump` characters.
+        //
+        // Used to skip sequences like "*****" in one step, for 1st asterisk
+        // value will be 0, for 2nd it's 1 and so on.
+        //
+        jump: i,
+
+        // A position of the token this delimiter corresponds to.
+        //
+        token: state.tokens.length - 1,
+
+        // Token level.
+        //
+        level: state.level,
+
+        // If this delimiter is matched as a valid opener, `end` will be
+        // equal to its position, otherwise it's `-1`.
+        //
+        end: -1,
+
+        // Boolean flags that determine if this delimiter could open or close
+        // an emphasis.
+        //
+        open: scanned.can_open,
+        close: scanned.can_close
+      });
+    }
+
+    state.pos += scanned.length;
+
+    return true;
+  }
+
+  function initMarkdownIt() {
+    md.set({
+      html: false,
+      breaks: true,
+      linkify: true,
+      maxNesting: 100
+    });
+    md.disable([ 'heading' ]);
+    md.disable([ 'lheading' ]);
+    md.use(markdownitSub)
+      .use(markdownitSup)
+      .use(markdownitCentertext)
+      .use(markdownitSynapseHeading)
+      .use(markdownitSynapseTable)
+      .use(markdownitStrikethroughAlt)
+      .use(markdownitEmphasisAlt);
+
+    md.use(markdownitContainer, 'row',
+      {
+        marker: '{row}',
+        minMarkerCount: 1,
+        render: function (tokens, idx) {
+          var t;
+          if (tokens[idx].nesting === 1) {
+            // opening tag
+            t = '<div class="container-fluid"><div class="row">';
+          } else {
+            // closing tag
+            t = '</div></div>\n';
+          }
+          return t;
+        },
+        validate: function () {
+          return true;
+        }
+      });
+    md.use(markdownitContainer, 'column',
+      {
+        marker: '{column',
+        endMarker: '{column}',
+        minMarkerCount: 1,
+        render: function (tokens, idx) {
+          var m, t;
+          if (tokens[idx].nesting === 1) {
+            // opening tag
+            m = gridLayoutColumnParamRE.exec(tokens[idx].info);
+            t = '<div class="col-sm-' + md.utils.escapeHtml(m[2]) + '">';
+          } else {
+            // closing tag
+            t = '</div>\n';
+          }
+          return t;
+        },
+        validate: function (params) {
+          return gridLayoutColumnParamRE.test(params);
+        }
+      });
+    sendLinksToNewWindow();
+    initLinkify();
+    initMarkdownTableStyle();
+    md.inline.ruler.at('link', link);
+    md.inline.ruler.at('emphasis', emphasis);
+  }
+
+  initMarkdownIt();
 };
 
 },{}]},{},[1])(1)
