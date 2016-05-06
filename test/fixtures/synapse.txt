@@ -67,7 +67,7 @@ And here's another ${reference?inlineWidget=true&text=My %5Freference%5F with pr
 .
 What if I mention @jay in a comment?
 .
-<p>What if I mention <span widgetparams="badge?isUser=true&amp;inlineWidget=true&amp;username=jay" class="widgetContainer" id="widget-7undefined">jay</span>in a comment?</p>
+<p>What if I mention <span widgetparams="badge?isUser=true&amp;inlineWidget=true&amp;username=jay" class="widgetContainer" id="widget-7undefined"><a href="https://www.synapse.org/#!Profile:jay">@jay </a></span>in a comment?</p>
 .
 
 

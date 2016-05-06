@@ -79,8 +79,18 @@ function synapse(state, silent) {
       [ 'class', widgetContainerClass ],
       [ 'id', 'widget-' + widgetIndex + suffix ] ];
 
+    token         = state.push('link_open', 'a', 1);
+    token.attrs   = [ [ 'href', 'https://www.synapse.org/#!Profile:' + content ] ];
+    token.markup  = 'autolink';
+    token.info    = 'auto';
+
+    token         = state.push('text', '', 0);
+    token.content = '@' + content + ' ';
+
+    token         = state.push('link_close', 'a', -1);
+    token.markup  = 'autolink';
+    token.info    = 'auto';
     token = state.push('text', '', 0);
-    token.content = content;
 
     token = state.push('synapse_close', 'span', -1);
     state.pos = state.posMax + 1;
