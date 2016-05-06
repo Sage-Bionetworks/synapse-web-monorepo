@@ -1,4 +1,4 @@
-/*! markdown-it-synapse 1.0.5 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*! markdown-it-synapse 1.0.6 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // Process ${widgetname?param1=1&param2=2}
 
 'use strict';
@@ -34,6 +34,25 @@ function getParamValue(params, name) {
   return nameValue;
 }
 
+function isWhiteSpace(code) {
+  if (code >= 0x2000 && code <= 0x200A) { return true; }
+  switch (code) {
+    case 0x09: // \t
+    case 0x0A: // \n
+    case 0x0B: // \v
+    case 0x0C: // \f
+    case 0x0D: // \r
+    case 0x20:
+    case 0xA0:
+    case 0x1680:
+    case 0x202F:
+    case 0x205F:
+    case 0x3000:
+      return true;
+  }
+  return false;
+}
+
 function synapse(state, silent) {
   var found,
     content,
@@ -45,9 +64,34 @@ function synapse(state, silent) {
     footnoteText,
     widgetContainerClass = 'widgetContainer';
   if (start + 3 >= max) { return false; }
+  if (silent) { return false; } // don't run any pairs in validation mode
+  // handle special username mentions (output badge widget)
+  if (state.src.charCodeAt(start) === 0x40 /* @ */) {
+    // go to end of username
+    while (state.pos < max && !isWhiteSpace(state.src.charCodeAt(state.pos))) { state.pos++; }
+    content = state.src.slice(start + 1, state.pos);
+
+    state.posMax = state.pos;
+    state.pos = start + 1;
+
+    token = state.push('synapse_open', 'span', 1);
+    token.markup = '@';
+    token.attrs = [ [ 'widgetparams', 'badge?isUser=true&inlineWidget=true&username=' + content ],
+      [ 'class', widgetContainerClass ],
+      [ 'id', 'widget-' + widgetIndex + suffix ] ];
+
+    token = state.push('text', '', 0);
+    token.content = content;
+
+    token = state.push('synapse_close', 'span', -1);
+    state.pos = state.posMax + 1;
+    state.posMax = max;
+    widgetIndex = widgetIndex + 1;
+    return true;
+  }
+
   if (state.src.charCodeAt(start) !== 0x24/* $ */) { return false; }
   if (state.src.charCodeAt(start + 1) !== 0x7B/* { */) { return false; }
-  if (silent) { return false; } // don't run any pairs in validation mode
 
   state.pos = start + 2;
 
@@ -104,6 +148,9 @@ function synapse(state, silent) {
   token.attrs = [ [ 'widgetparams', widgetParams ],
     [ 'class', widgetContainerClass ],
     [ 'id', 'widget-' + widgetIndex + suffix ] ];
+
+  token = state.push('text', '', 0);
+  token.content = '<Synapse widget>';
 
   token = state.push('synapse_close', 'span', -1);
   token.markup = '}';
@@ -207,28 +254,6 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
 
   function initLinkify() {
     md.linkify.set({ fuzzyLink: false });
-    md.linkify.add('@', {
-      validate: function (text, pos, self) {
-        var tail = text.slice(pos);
-        if (!self.re.username) {
-          self.re.username = new RegExp(
-            '^([a-zA-Z0-9_]){1,15}(?!_)(?=$|'
-            + self.re.src_ZPCc + ')');
-        }
-        if (self.re.username.test(tail)) {
-          // Linkifier allows punctuation chars before prefix,
-          // but we additionally disable `@` ("@@mention" is invalid)
-          if (pos >= 2 && tail[pos - 2] === '@') {
-            return false;
-          }
-          return tail.match(self.re.username)[0].length;
-        }
-        return 0;
-      },
-      normalize: function (match) {
-        match.url = '#!Profile:' + match.url.replace(/^@/, '');
-      }
-    });
 
     // synapse (may have version or wiki page id)
     md.linkify.add('syn', {
