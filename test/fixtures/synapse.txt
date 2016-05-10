@@ -70,6 +70,17 @@ What if I mention @jay in a comment?
 <p>What if I mention <span widgetparams="badge?isUser=true&amp;inlineWidget=true&amp;username=jay" class="widgetContainer" id="widget-7undefined"><a href="https://www.synapse.org/#!Profile:jay">@jay </a></span>in a comment?</p>
 .
 
+.
+@Beginning of line mention
+.
+<p><span widgetparams="badge?isUser=true&amp;inlineWidget=true&amp;username=Beginning" class="widgetContainer" id="widget-8undefined"><a href="https://www.synapse.org/#!Profile:Beginning">@Beginning </a></span>of line mention</p>
+.
+
+.
+An email@address.com is not a mention
+.
+<p>An email@address.com is not a mention</p>
+.
 
 coverage
 .

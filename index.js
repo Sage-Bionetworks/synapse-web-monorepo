@@ -66,6 +66,10 @@ function synapse(state, silent) {
   if (silent) { return false; } // don't run any pairs in validation mode
   // handle special username mentions (output badge widget)
   if (state.src.charCodeAt(start) === 0x40 /* @ */) {
+    // do not process unless previous character is a whitespace
+    if (start > 0 && !isWhiteSpace(state.src.charCodeAt(state.pos - 1))) {
+      return false;
+    }
     // go to end of username
     while (state.pos < max && !isWhiteSpace(state.src.charCodeAt(state.pos))) { state.pos++; }
     content = state.src.slice(start + 1, state.pos);
