@@ -17,7 +17,6 @@ var suffix;
 var widgetIndex;
 var footnoteId;
 var footnotes;
-var initialized = false;
 
 
 function getParamValue(params, name) {
@@ -51,6 +50,12 @@ function isWhiteSpace(code) {
   }
   return false;
 }
+
+function startsWith(src, searchString, position) {
+  position = position || 0;
+  return src.substr(position, searchString.length) === searchString;
+}
+
 
 function synapse(state, silent) {
   var found,
@@ -180,10 +185,7 @@ module.exports = function synapse_plugin(md, _suffix) {
   footnoteId = 1;
   suffix = _suffix;
   footnotes = '';
-  if (!initialized) {
-    md.inline.ruler.after('emphasis', 'synapse', synapse);
-    initialized = true;
-  }
+  md.inline.ruler.after('emphasis', 'synapse', synapse);
 };
 
 module.exports.footnotes = function () {
@@ -232,8 +234,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
       var hrefIndex = tokens[idx].attrIndex('href');
       if (aIndex < 0) {
         if (hrefIndex < 0
-          || !tokens[idx].attrs[hrefIndex][1]
-            .startsWith('#!')) {
+          || !startsWith(tokens[idx].attrs[hrefIndex][1], '#!')) {
           tokens[idx].attrPush([ 'target', '_blank' ]); // add new attribute
         }
       } else {

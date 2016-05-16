@@ -1,4 +1,4 @@
-/*! markdown-it-synapse 1.0.8 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*! markdown-it-synapse 1.0.10 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // Process ${widgetname?param1=1&param2=2}
 
 'use strict';
@@ -18,7 +18,6 @@ var suffix;
 var widgetIndex;
 var footnoteId;
 var footnotes;
-var initialized = false;
 
 
 function getParamValue(params, name) {
@@ -52,6 +51,12 @@ function isWhiteSpace(code) {
   }
   return false;
 }
+
+function startsWith(src, searchString, position) {
+  position = position || 0;
+  return src.substr(position, searchString.length) === searchString;
+}
+
 
 function synapse(state, silent) {
   var found,
@@ -181,10 +186,7 @@ module.exports = function synapse_plugin(md, _suffix) {
   footnoteId = 1;
   suffix = _suffix;
   footnotes = '';
-  if (!initialized) {
-    md.inline.ruler.after('emphasis', 'synapse', synapse);
-    initialized = true;
-  }
+  md.inline.ruler.after('emphasis', 'synapse', synapse);
 };
 
 module.exports.footnotes = function () {
@@ -233,8 +235,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
       var hrefIndex = tokens[idx].attrIndex('href');
       if (aIndex < 0) {
         if (hrefIndex < 0
-          || !tokens[idx].attrs[hrefIndex][1]
-            .startsWith('#!')) {
+          || !startsWith(tokens[idx].attrs[hrefIndex][1], '#!')) {
           tokens[idx].attrPush([ 'target', '_blank' ]); // add new attribute
         }
       } else {
