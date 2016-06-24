@@ -11,12 +11,13 @@ var urlWithoutProtocolRE = new RegExp('^([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\w
 var doiRE = new RegExp('^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$');
 var gridLayoutColumnParamRE = new RegExp('^\\s*(width[=]{1})?\\s*(.*)[}]{1}\\s*$');
 var ulMarkerRE = new RegExp('^\\s*[*-+>]{1}[^|]*$');
-var olMarkerRE = new RegExp('^\\s*\\d+\\s*[.)]{1}[^|]*$');
+var olMarkerRE = new RegExp('^\\s*\\w+\\s*[.)]{1}[^|]*$');
 var spacesRE = new RegExp('[ ]{7}', 'g');
 var suffix;
 var widgetIndex;
 var footnoteId;
 var footnotes;
+var baseURL;
 
 
 function getParamValue(params, name) {
@@ -180,11 +181,15 @@ function synapse(state, silent) {
 }
 
 
-module.exports = function synapse_plugin(md, _suffix) {
+module.exports = function synapse_plugin(md, _suffix, _baseURL) {
   widgetIndex = 0;
   footnoteId = 1;
   suffix = _suffix;
   footnotes = '';
+  baseURL = '';
+  if (_baseURL) {
+    baseURL = _baseURL;
+  }
   md.inline.ruler.after('emphasis', 'synapse', synapse);
 };
 
@@ -284,7 +289,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
         return 0;
       },
       normalize: function (match) {
-        match.url = '#!Synapse:'
+        match.url = baseURL + '#!Synapse:'
           + match.url.replace(/[.]/, '/version/');
       }
     });
@@ -353,7 +358,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
         var testString = res.str;
         if (synapseRE.test(testString)) {
           // this is a synapse ID
-          res.str = '#!Synapse:'
+          res.str = baseURL + '#!Synapse:'
             + testString.replace(/[.]/, '/version/');
         } else if (urlWithoutProtocolRE.test(testString)) {
           res.str = 'http://' + testString;
