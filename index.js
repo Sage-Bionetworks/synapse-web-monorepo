@@ -12,6 +12,7 @@ var doiRE = new RegExp('^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$');
 var gridLayoutColumnParamRE = new RegExp('^\\s*(width[=]{1})?\\s*(.*)[}]{1}\\s*$');
 var ulMarkerRE = new RegExp('^\\s*[*-+>]{1}[^|]*$');
 var olMarkerRE = new RegExp('^\\s*\\w+\\s*[.)]{1}[^|]*$');
+var codeRE = new RegExp('^[`]{3}\s*([a-zA-Z_0-9-]*)\s*$');
 var spacesRE = new RegExp('[ ]{7}', 'g');
 var suffix;
 var widgetIndex;
@@ -207,17 +208,24 @@ module.exports.preprocessMarkdown = function (mdString) {
 
   var isPreviousLineInList = false;
   var isCurrentLineInList = false;
+  var isInCode = false;
   for (var i = 0; i < splitMD.length; i++) {
-    isCurrentLineInList = ulMarkerRE.test(splitMD[i]) || olMarkerRE.test(splitMD[i]);
-    if (isCurrentLineInList) {
-      // SWC-2988: and replace each group of 7 spaces with 4 (so that markdown-it list rule recognizes sublists).
-      splitMD[i] = splitMD[i].replace(spacesRE, '    ');
+    if (codeRE.test(splitMD[i])) {
+      // toggle isInCode
+      isInCode = !isInCode;
     }
-    if (isPreviousLineInList && !isCurrentLineInList) {
-      md += '\n';
+    if (!isInCode) {
+      isCurrentLineInList = ulMarkerRE.test(splitMD[i]) || olMarkerRE.test(splitMD[i]);
+      if (isCurrentLineInList) {
+        // SWC-2988: and replace each group of 7 spaces with 4 (so that markdown-it list rule recognizes sublists).
+        splitMD[i] = splitMD[i].replace(spacesRE, '    ');
+      }
+      if (isPreviousLineInList && !isCurrentLineInList) {
+        md += '\n';
+      }
+      isPreviousLineInList = isCurrentLineInList;
     }
     md += splitMD[i] + '\n';
-    isPreviousLineInList = isCurrentLineInList;
   }
 
   return md;

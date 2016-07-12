@@ -1,4 +1,4 @@
-/*! markdown-it-synapse 1.0.14 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*! markdown-it-synapse 1.0.15 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // Process ${widgetname?param1=1&param2=2}
 
 'use strict';
@@ -13,6 +13,7 @@ var doiRE = new RegExp('^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$');
 var gridLayoutColumnParamRE = new RegExp('^\\s*(width[=]{1})?\\s*(.*)[}]{1}\\s*$');
 var ulMarkerRE = new RegExp('^\\s*[*-+>]{1}[^|]*$');
 var olMarkerRE = new RegExp('^\\s*\\w+\\s*[.)]{1}[^|]*$');
+var codeRE = new RegExp('^[`]{3}\s*([a-zA-Z_0-9-]*)\s*$');
 var spacesRE = new RegExp('[ ]{7}', 'g');
 var suffix;
 var widgetIndex;
@@ -208,17 +209,24 @@ module.exports.preprocessMarkdown = function (mdString) {
 
   var isPreviousLineInList = false;
   var isCurrentLineInList = false;
+  var isInCode = false;
   for (var i = 0; i < splitMD.length; i++) {
-    isCurrentLineInList = ulMarkerRE.test(splitMD[i]) || olMarkerRE.test(splitMD[i]);
-    if (isCurrentLineInList) {
-      // SWC-2988: and replace each group of 7 spaces with 4 (so that markdown-it list rule recognizes sublists).
-      splitMD[i] = splitMD[i].replace(spacesRE, '    ');
+    if (codeRE.test(splitMD[i])) {
+      // toggle isInCode
+      isInCode = !isInCode;
     }
-    if (isPreviousLineInList && !isCurrentLineInList) {
-      md += '\n';
+    if (!isInCode) {
+      isCurrentLineInList = ulMarkerRE.test(splitMD[i]) || olMarkerRE.test(splitMD[i]);
+      if (isCurrentLineInList) {
+        // SWC-2988: and replace each group of 7 spaces with 4 (so that markdown-it list rule recognizes sublists).
+        splitMD[i] = splitMD[i].replace(spacesRE, '    ');
+      }
+      if (isPreviousLineInList && !isCurrentLineInList) {
+        md += '\n';
+      }
+      isPreviousLineInList = isCurrentLineInList;
     }
     md += splitMD[i] + '\n';
-    isPreviousLineInList = isCurrentLineInList;
   }
 
   return md;
