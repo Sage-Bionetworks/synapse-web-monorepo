@@ -233,7 +233,7 @@ module.exports.preprocessMarkdown = function (mdString) {
 
 module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
   markdownitCentertext, markdownitSynapseHeading, markdownitSynapseTable,
-  markdownitStrikethroughAlt, markdownitContainer, markdownitEmphasisAlt) {
+  markdownitStrikethroughAlt, markdownitContainer, markdownitEmphasisAlt, markdownitInlineComments) {
   function sendLinksToNewWindow() {
     var defaultRender = md.renderer.rules.link_open
       || function (tokens, idx, options, env, self) {
@@ -564,7 +564,8 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
       .use(markdownitSynapseHeading)
       .use(markdownitSynapseTable)
       .use(markdownitStrikethroughAlt)
-      .use(markdownitEmphasisAlt);
+      .use(markdownitEmphasisAlt)
+      .use(markdownitInlineComments);
 
     md.use(markdownitContainer, 'row',
       {
