@@ -1,4 +1,4 @@
-/*! markdown-it-synapse 1.0.15 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*! markdown-it-synapse 1.0.17 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // Process ${widgetname?param1=1&param2=2}
 
 'use strict';
@@ -11,12 +11,14 @@ var synapseRE = new RegExp('^syn([0-9]+[.]?[0-9]*)+');
 var urlWithoutProtocolRE = new RegExp('^([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\w \\.-]*)*\\/?.*$');
 var doiRE = new RegExp('^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$');
 var gridLayoutColumnParamRE = new RegExp('^\\s*(width[=]{1})?\\s*(.*)[}]{1}\\s*$');
+var navTextParamRE = new RegExp('^\\s*(text[=]{1}["]{1})?\\s*(.*)["]{1}[}]{1}\\s*$');
 var ulMarkerRE = new RegExp('^\\s*[*-+>]{1}[^|]*$');
 var olMarkerRE = new RegExp('^\\s*\\w+\\s*[.)]{1}[^|]*$');
 var codeRE = new RegExp('^[`]{3}\s*([a-zA-Z_0-9-]*)\s*$');
 var spacesRE = new RegExp('[ ]{7}', 'g');
 var suffix;
 var widgetIndex;
+var navIndex;
 var footnoteId;
 var footnotes;
 var baseURL;
@@ -185,6 +187,7 @@ function synapse(state, silent) {
 
 module.exports = function synapse_plugin(md, _suffix, _baseURL) {
   widgetIndex = 0;
+  navIndex = 0;
   footnoteId = 1;
   suffix = _suffix;
   footnotes = '';
@@ -234,7 +237,7 @@ module.exports.preprocessMarkdown = function (mdString) {
 
 module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
   markdownitCentertext, markdownitSynapseHeading, markdownitSynapseTable,
-  markdownitStrikethroughAlt, markdownitContainer, markdownitEmphasisAlt) {
+  markdownitStrikethroughAlt, markdownitContainer, markdownitEmphasisAlt, markdownitInlineComments) {
   function sendLinksToNewWindow() {
     var defaultRender = md.renderer.rules.link_open
       || function (tokens, idx, options, env, self) {
@@ -565,7 +568,8 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
       .use(markdownitSynapseHeading)
       .use(markdownitSynapseTable)
       .use(markdownitStrikethroughAlt)
-      .use(markdownitEmphasisAlt);
+      .use(markdownitEmphasisAlt)
+      .use(markdownitInlineComments);
 
     md.use(markdownitContainer, 'row',
       {
@@ -607,6 +611,30 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
           return gridLayoutColumnParamRE.test(params);
         }
       });
+    md.use(markdownitContainer, 'nav',
+        {
+          marker: '{nav',
+          endMarker: '{nav}',
+          minMarkerCount: 1,
+          render: function (tokens, idx) {
+            var m, t;
+            if (tokens[idx].nesting === 1) {
+              // opening tag
+              m = navTextParamRE.exec(tokens[idx].info);
+              t = '<div id="nav-target-' + navIndex + suffix + '" target-text="' +
+                md.utils.escapeHtml(m[2]) + '">';
+              navIndex = navIndex + 1;
+            } else {
+              // closing tag
+              t = '</div>\n';
+            }
+            return t;
+          },
+          validate: function (params) {
+            return navTextParamRE.test(params);
+          }
+        });
+
     sendLinksToNewWindow();
     initLinkify();
     initMarkdownTableStyle();

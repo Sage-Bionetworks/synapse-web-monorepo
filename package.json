@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-synapse",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "tag for markdown-it markdown parser.",
   "main": "index.js",
   "keywords": [
@@ -19,7 +19,7 @@
     "pretest": "npm run lint",
     "test": "npm run lint && mocha -R spec",
     "coverage": "rm -rf coverage && istanbul cover node_modules/.bin/_mocha",
-    "test-ci": "npm run lint && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf coverage"
+    "test-ci": "npm run lint && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec "
   },
   "homepage": "https://github.com/jay-hodgson/markdown-it-synapse",
   "repository": {
@@ -33,7 +33,6 @@
   "main": "index.js",
   "devDependencies": {
     "browserify": "*",
-    "coveralls": "^2.11.2",
     "eslint": "0.10.2",
     "eslint-plugin-nodeca": "^1.0.0",
     "istanbul": "*",
