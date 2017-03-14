@@ -568,7 +568,8 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
       .use(markdownitSynapseTable)
       .use(markdownitStrikethroughAlt)
       .use(markdownitEmphasisAlt)
-      .use(markdownitInlineComments);
+      .use(markdownitInlineComments)
+      .use(markdownitBr);
 
     md.use(markdownitContainer, 'row',
       {
