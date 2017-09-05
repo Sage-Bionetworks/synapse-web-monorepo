@@ -88,12 +88,12 @@ function synapse(state, silent) {
 
     token = state.push('synapse_open', 'span', 1);
     token.markup = '@';
-    token.attrs = [ [ 'widgetparams', 'badge?isUser=true&inlineWidget=true&username=' + content ],
+    token.attrs = [ [ 'widgetparams', 'badge?alias=' + content ],
       [ 'class', widgetContainerClass ],
       [ 'id', 'widget-' + widgetIndex + suffix ] ];
 
     token         = state.push('link_open', 'a', 1);
-    token.attrs   = [ [ 'href', 'https://www.synapse.org/#!Profile:' + content ] ];
+    token.attrs   = [ [ 'href', 'https://www.synapse.org/Portal/aliasredirector?alias=' + content ] ];
     token.markup  = 'autolink';
     token.info    = 'auto';
 
@@ -236,7 +236,8 @@ module.exports.preprocessMarkdown = function (mdString) {
 
 module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
   markdownitCentertext, markdownitSynapseHeading, markdownitSynapseTable,
-  markdownitStrikethroughAlt, markdownitContainer, markdownitEmphasisAlt, markdownitInlineComments) {
+  markdownitStrikethroughAlt, markdownitContainer, markdownitEmphasisAlt,
+  markdownitInlineComments, markdownitBr) {
   function sendLinksToNewWindow() {
     var defaultRender = md.renderer.rules.link_open
       || function (tokens, idx, options, env, self) {
