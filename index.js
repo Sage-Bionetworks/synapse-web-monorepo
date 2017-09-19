@@ -98,7 +98,7 @@ function synapse(state, silent) {
     token.info    = 'auto';
 
     token         = state.push('text', '', 0);
-    token.content = '@' + content + ' ';
+    token.content = '@' + content;
 
     token         = state.push('link_close', 'a', -1);
     token.markup  = 'autolink';
@@ -106,7 +106,7 @@ function synapse(state, silent) {
     token = state.push('text', '', 0);
 
     token = state.push('synapse_close', 'span', -1);
-    state.pos = state.posMax + 1;
+    state.pos = state.posMax;
     state.posMax = max;
     widgetIndex = widgetIndex + 1;
     return true;

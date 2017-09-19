@@ -67,13 +67,19 @@ And here's another ${reference?inlineWidget=true&text=My %5Freference%5F with pr
 .
 What if I mention @jay in a comment?
 .
-<p>What if I mention <span widgetparams="badge?alias=jay" class="widgetContainer" id="widget-7undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=jay">@jay </a></span>in a comment?</p>
+<p>What if I mention <span widgetparams="badge?alias=jay" class="widgetContainer" id="widget-7undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=jay">@jay</a></span> in a comment?</p>
 .
 
 .
 @Beginning of line mention
 .
-<p><span widgetparams="badge?alias=Beginning" class="widgetContainer" id="widget-8undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=Beginning">@Beginning </a></span>of line mention</p>
+<p><span widgetparams="badge?alias=Beginning" class="widgetContainer" id="widget-8undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=Beginning">@Beginning</a></span> of line mention</p>
+.
+
+.
+Mention at the @end
+.
+<p>Mention at the <span widgetparams="badge?alias=end" class="widgetContainer" id="widget-9undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=end">@end</a></span></p>
 .
 
 .
