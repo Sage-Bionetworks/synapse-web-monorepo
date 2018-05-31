@@ -42,7 +42,9 @@
     "request": "^2.87.0",
     "uglify-js": "*"
   },
-  "dependencies": {},
+  "dependencies": {
+    "node": "^10.3.0"
+  },
   "directories": {
     "test": "test"
   },
