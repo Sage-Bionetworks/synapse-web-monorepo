@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-synapse",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "tag for markdown-it markdown parser.",
   "main": "index.js",
   "keywords": [
@@ -13,7 +13,7 @@
     "browserify": "(printf \"/*! ${npm_package_name} ${npm_package_version} ${npm_package_homepage} @license MIT */\" && browserify ./ -s markdownitSynapse) > dist/markdown-it-synapse.js",
     "predist": "npm run test",
     "dist": "rm -fr dist && mkdir dist && npm run browserify && npm run minify",
-    "lint": "eslint --reset index.js",
+    "lint": "eslint index.js",
     "minify": "uglifyjs dist/markdown-it-synapse.js -b beautify=false,ascii_only=true -c -m --preamble \"/*! ${npm_package_name} ${npm_package_version} ${npm_package_homepage} @license MIT */\" > dist/markdown-it-synapse.min.js",
     "prepublish": "npm run dist",
     "pretest": "npm run lint",
@@ -30,17 +30,16 @@
     "url": "https://github.com/jay-hodgson/markdown-it-synapse/issues"
   },
   "license": "MIT",
-  "main": "index.js",
   "devDependencies": {
     "browserify": "*",
-    "eslint": "0.10.2",
+    "eslint": "^4.19.1",
     "eslint-plugin-nodeca": "^1.0.0",
     "istanbul": "*",
-    "lodash": "*",
+    "lodash": "^4.17.10",
     "markdown-it": "^4.0.0",
     "markdown-it-testgen": "~0.1.0",
-    "mocha": "*",
-    "request": "*",
+    "mocha": "^5.2.0",
+    "request": "^2.87.0",
     "uglify-js": "*"
   },
   "dependencies": {},

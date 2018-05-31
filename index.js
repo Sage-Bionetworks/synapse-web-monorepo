@@ -320,7 +320,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
         return 0;
       },
       normalize: function (match) {
-        match.url = 'http://dx.doi.org/' + match.url;
+        match.url = 'https://doi.org/' + match.url;
       }
     });
   }
