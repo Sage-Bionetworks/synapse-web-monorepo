@@ -555,7 +555,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
 
   function initMarkdownIt() {
     md.set({
-      html: false,
+      html: true,
       breaks: true,
       linkify: true,
       maxNesting: 100
