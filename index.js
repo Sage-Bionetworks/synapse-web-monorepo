@@ -88,7 +88,7 @@ function synapse(state, silent) {
 
     token = state.push('synapse_open', 'span', 1);
     token.markup = '@';
-    token.attrs = [ [ 'widgetparams', 'badge?alias=' + content ],
+    token.attrs = [ [ 'data-widgetparams', 'badge?alias=' + content ],
       [ 'class', widgetContainerClass ],
       [ 'id', 'widget-' + widgetIndex + suffix ] ];
 
@@ -167,7 +167,7 @@ function synapse(state, silent) {
   // Earlier we checked !silent, but this implementation does not need it
   token = state.push('synapse_open', 'span', 1);
   token.markup = '${';
-  token.attrs = [ [ 'widgetparams', widgetParams ],
+  token.attrs = [ [ 'data-widgetparams', widgetParams ],
     [ 'class', widgetContainerClass ],
     [ 'id', 'widget-' + widgetIndex + suffix ] ];
 
