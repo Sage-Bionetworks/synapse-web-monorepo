@@ -1,4 +1,4 @@
-/*! markdown-it-synapse 1.0.22 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*! markdown-it-synapse 1.0.22 https://github.com/jay-hodgson/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 // Process ${widgetname?param1=1&param2=2}
 
 'use strict';
@@ -89,7 +89,7 @@ function synapse(state, silent) {
 
     token = state.push('synapse_open', 'span', 1);
     token.markup = '@';
-    token.attrs = [ [ 'widgetparams', 'badge?alias=' + content ],
+    token.attrs = [ [ 'data-widgetparams', 'badge?alias=' + content ],
       [ 'class', widgetContainerClass ],
       [ 'id', 'widget-' + widgetIndex + suffix ] ];
 
@@ -168,7 +168,7 @@ function synapse(state, silent) {
   // Earlier we checked !silent, but this implementation does not need it
   token = state.push('synapse_open', 'span', 1);
   token.markup = '${';
-  token.attrs = [ [ 'widgetparams', widgetParams ],
+  token.attrs = [ [ 'data-widgetparams', widgetParams ],
     [ 'class', widgetContainerClass ],
     [ 'id', 'widget-' + widgetIndex + suffix ] ];
 

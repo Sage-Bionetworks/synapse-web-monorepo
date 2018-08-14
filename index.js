@@ -88,9 +88,11 @@ function synapse(state, silent) {
 
     token = state.push('synapse_open', 'span', 1);
     token.markup = '@';
-    token.attrs = [ [ 'widgetparams', 'badge?alias=' + content ],
+    token.attrs = [ [ 'data-widgetparams', 'badge?alias=' + content ],
+      ['data-widget-type', 'badge'],
       [ 'class', widgetContainerClass ],
-      [ 'id', 'widget-' + widgetIndex + suffix ] ];
+      [ 'id', 'widget-' + widgetIndex + suffix ]
+    ];
 
     token         = state.push('link_open', 'a', 1);
     token.attrs   = [ [ 'href', 'https://www.synapse.org/Portal/aliasredirector?alias=' + content ] ];
@@ -134,7 +136,7 @@ function synapse(state, silent) {
   content = state.src.slice(start + 2, state.pos);
   widgetParams = content.replace(UNESCAPE_RE, '$1');
   if (content.lastIndexOf(REFERENCE_START, 0) === 0) {
-    // If reference widget, then add an addditional widget param and output token.
+    // If reference widget, then add an additional widget param and output token.
     widgetParams += '&footnoteId=' + footnoteId;
     token = state.push('synapse_reference_open', 'span', 1);
     token.attrs = [ [ 'id', 'wikiReference' + footnoteId ] ];
@@ -167,9 +169,11 @@ function synapse(state, silent) {
   // Earlier we checked !silent, but this implementation does not need it
   token = state.push('synapse_open', 'span', 1);
   token.markup = '${';
-  token.attrs = [ [ 'widgetparams', widgetParams ],
+  token.attrs = [ [ 'data-widgetparams', widgetParams ],
     [ 'class', widgetContainerClass ],
-    [ 'id', 'widget-' + widgetIndex + suffix ] ];
+    [ 'id', 'widget-' + widgetIndex + suffix ],
+    ['data-widget-type', widgetParams.substring(0, widgetParams.indexOf('?'))]
+   ];
 
   token = state.push('text', '', 0);
   token.content = '<Synapse widget>';

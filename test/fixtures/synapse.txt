@@ -7,7 +7,7 @@ s
 .
 a ${widget} in a paragraph
 .
-<p>a <span widgetparams="widget" class="widgetContainer" id="widget-0undefined">&lt;Synapse widget&gt;</span> in a paragraph</p>
+<p>a <span data-widget-type="widget" data-widgetparams="widget" class="widgetContainer" id="widget-0undefined">&lt;Synapse widget&gt;</span> in a paragraph</p>
 .
 
 .
@@ -19,13 +19,13 @@ clearly not a widget $1.23 definition
 .
 ${image?fileName=joy%2Epng&align=None}
 .
-<p><span widgetparams="image?fileName=joy%2Epng&amp;align=None" class="widgetContainer" id="widget-1undefined">&lt;Synapse widget&gt;</span></p>
+<p><span data-widget-type="image" data-widgetparams="image?fileName=joy%2Epng&amp;align=None" class="widgetContainer" id="widget-1undefined">&lt;Synapse widget&gt;</span></p>
 .
 
 .
 ${toc}
 .
-<p><span widgetparams="toc" class="widgetContainer" id="widget-2undefined">&lt;Synapse widget&gt;</span></p>
+<p><span data-widget-type="toc" data-widgetparams="toc" class="widgetContainer" id="widget-2undefined">&lt;Synapse widget&gt;</span></p>
 .
 
 .
@@ -43,43 +43,43 @@ $\{toc}
 .
 ${evalsubmit?subchallengeIdList=12345&unavailableMessage=Join the team to submit to the challenge}
 .
-<p><span widgetparams="evalsubmit?subchallengeIdList=12345&amp;unavailableMessage=Join the team to submit to the challenge" class="widgetContainer" id="widget-3undefined">&lt;Synapse widget&gt;</span></p>
+<p><span data-widget-type="evalsubmit" data-widgetparams="evalsubmit?subchallengeIdList=12345&amp;unavailableMessage=Join the team to submit to the challenge" class="widgetContainer" id="widget-3undefined">&lt;Synapse widget&gt;</span></p>
 .
 
 .
 This is a ref ${reference?inlineWidget=true&text=K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049}.
 .
-<p>This is a ref <span id="wikiReference1"></span><span widgetparams="reference?inlineWidget=true&amp;text=K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049&amp;footnoteId=1" class="inlineWidgetContainer" id="widget-4undefined">&lt;Synapse widget&gt;</span>.</p>
+<p>This is a ref <span id="wikiReference1"></span><span data-widget-type="reference" data-widgetparams="reference?inlineWidget=true&amp;text=K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049&amp;footnoteId=1" class="inlineWidgetContainer" id="widget-4undefined">&lt;Synapse widget&gt;</span>.</p>
 .
 
 .
 ${bookmark?text=[1]&inlineWidget=true&bookmarkID=wikiReference1} K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049
 .
-<p><span id="wikiFootnote2"></span><span widgetparams="bookmark?text=[1]&amp;inlineWidget=true&amp;bookmarkID=wikiReference1" class="inlineWidgetContainer" id="widget-5undefined">&lt;Synapse widget&gt;</span> K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049</p>
+<p><span id="wikiFootnote2"></span><span data-widget-type="bookmark" data-widgetparams="bookmark?text=[1]&amp;inlineWidget=true&amp;bookmarkID=wikiReference1" class="inlineWidgetContainer" id="widget-5undefined">&lt;Synapse widget&gt;</span> K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049</p>
 .
 
 .
 And here's another ${reference?inlineWidget=true&text=My %5Freference%5F with processing that %2Aneeds%2A to take place%2E} down below.
 .
-<p>And here's another <span id="wikiReference3"></span><span widgetparams="reference?inlineWidget=true&amp;text=My %5Freference%5F with processing that %2Aneeds%2A to take place%2E&amp;footnoteId=3" class="inlineWidgetContainer" id="widget-6undefined">&lt;Synapse widget&gt;</span> down below.</p>
+<p>And here's another <span id="wikiReference3"></span><span data-widget-type="reference" data-widgetparams="reference?inlineWidget=true&amp;text=My %5Freference%5F with processing that %2Aneeds%2A to take place%2E&amp;footnoteId=3" class="inlineWidgetContainer" id="widget-6undefined">&lt;Synapse widget&gt;</span> down below.</p>
 .
 
 .
 What if I mention @jay in a comment?
 .
-<p>What if I mention <span widgetparams="badge?alias=jay" class="widgetContainer" id="widget-7undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=jay">@jay</a></span> in a comment?</p>
+<p>What if I mention <span data-widget-type="badge" data-widgetparams="badge?alias=jay" class="widgetContainer" id="widget-7undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=jay">@jay</a></span> in a comment?</p>
 .
 
 .
 @Beginning of line mention
 .
-<p><span widgetparams="badge?alias=Beginning" class="widgetContainer" id="widget-8undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=Beginning">@Beginning</a></span> of line mention</p>
+<p><span data-widget-type="badge" data-widgetparams="badge?alias=Beginning" class="widgetContainer" id="widget-8undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=Beginning">@Beginning</a></span> of line mention</p>
 .
 
 .
 Mention at the @end
 .
-<p>Mention at the <span widgetparams="badge?alias=end" class="widgetContainer" id="widget-9undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=end">@end</a></span></p>
+<p>Mention at the <span data-widget-type="badge" data-widgetparams="badge?alias=end" class="widgetContainer" id="widget-9undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=end">@end</a></span></p>
 .
 
 .
