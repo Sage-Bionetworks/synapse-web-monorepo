@@ -205,7 +205,8 @@ module.exports.footnotes = function () {
   return footnotes;
 };
 
-module.exports.resetFootnoteId = function () {
+module.exports.resetFootnotes = function () {
+  footnotes = '';
   footnoteId = 1;
 };
 
