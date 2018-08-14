@@ -40,7 +40,8 @@
     "markdown-it-testgen": "~0.1.0",
     "mocha": "^5.2.0",
     "request": "^2.87.0",
-    "uglify-js": "*"
+    "uglify-js": "*",
+    "node-bin-setup": "1.0.6"
   },
   "dependencies": {
     "node": "^10.3.0"
