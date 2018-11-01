@@ -280,7 +280,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
       if (aIndex < 0) {
         tokens[idx].attrPush([ 'class', 'markdowntable' ]); // add new attribute
       } else {
-        tokens[idx].attrs[aIndex][1] += 'markdowntable'; // add value to existing attr
+        tokens[idx].attrs[aIndex][1] += ' markdowntable'; // add value to existing attr
       }
 
       // pass token to default renderer.
