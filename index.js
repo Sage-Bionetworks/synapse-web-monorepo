@@ -55,6 +55,24 @@ function isWhiteSpace(code) {
   return false;
 }
 
+function isSupportedUsernameCharacter(code) {
+  //uppercase letter
+  if (code >= 0x41 && code <= 0x5A) { return true; }
+  //number
+  if (code >= 0x30 && code <= 0x39) { return true; }
+  //lowercase letter
+  if (code >= 0x61 && code <= 0x7A) { return true; }
+
+  switch (code) {
+    case 0x40: // '@' initial symbol
+    case 0x2E: // '.'
+    case 0x2E: // '-'
+    case 0x5F: // '_'
+      return true;
+  }
+  return false;
+}
+
 function startsWith(src, searchString, position) {
   position = position || 0;
   return src.substr(position, searchString.length) === searchString;
@@ -80,7 +98,10 @@ function synapse(state, silent) {
       return false;
     }
     // go to end of username
-    while (state.pos < max && !isWhiteSpace(state.src.charCodeAt(state.pos))) { state.pos++; }
+    while (state.pos < max &&
+      !isWhiteSpace(state.src.charCodeAt(state.pos)) &&
+      isSupportedUsernameCharacter(state.src.charCodeAt(state.pos))) {
+        state.pos++; }
     content = state.src.slice(start + 1, state.pos);
 
     state.posMax = state.pos;

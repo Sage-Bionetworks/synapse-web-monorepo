@@ -18,6 +18,7 @@
     "prepublish": "npm run dist",
     "pretest": "npm run lint",
     "test": "npm run lint && mocha -R spec",
+    "test-only": "mocha -R spec",
     "coverage": "rm -rf coverage && istanbul cover node_modules/.bin/_mocha",
     "test-ci": "npm run lint && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec "
   },
