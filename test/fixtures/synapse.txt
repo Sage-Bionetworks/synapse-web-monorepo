@@ -85,7 +85,7 @@ Mention at the @end
 .
 Mention @xschildw, @withSupportedSpecialCharacters-._, @test! Expectation that it will not eat the comma or exclamation point.
 .
-<p>Mention <span data-widgetparams="badge?alias=xschildw" data-widget-type="badge" class="widgetContainer" id="widget-10undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=xschildw">@xschildw</a>,</span> <span data-widgetparams="badge?alias=withSupportedSpecialCharacters-._" data-widget-type="badge" class="widgetContainer" id="widget-11undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=withSupportedSpecialCharacters-._">@withSupportedSpecialCharacters-._</a>,</span> <span data-widgetparams="badge?alias=test" data-widget-type="badge" class="widgetContainer" id="widget-12undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=test">@test</a></span>! Expectation that it will not eat the comma or exclamation point.</p>
+<p>Mention <span data-widgetparams="badge?alias=xschildw" data-widget-type="badge" class="widgetContainer" id="widget-10undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=xschildw">@xschildw</a></span>, <span data-widgetparams="badge?alias=withSupportedSpecialCharacters-._" data-widget-type="badge" class="widgetContainer" id="widget-11undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=withSupportedSpecialCharacters-._">@withSupportedSpecialCharacters-._</a></span>, <span data-widgetparams="badge?alias=test" data-widget-type="badge" class="widgetContainer" id="widget-12undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=test">@test</a></span>! Expectation that it will not eat the comma or exclamation point.</p>
 .
 
 .

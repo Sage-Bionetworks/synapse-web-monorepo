@@ -66,7 +66,7 @@ function isSupportedUsernameCharacter(code) {
   switch (code) {
     case 0x40: // '@' initial symbol
     case 0x2E: // '.'
-    case 0x2E: // '-'
+    case 0x2D: // '-'
     case 0x5F: // '_'
       return true;
   }
@@ -101,11 +101,12 @@ function synapse(state, silent) {
     while (state.pos < max &&
       !isWhiteSpace(state.src.charCodeAt(state.pos)) &&
       isSupportedUsernameCharacter(state.src.charCodeAt(state.pos))) {
-        state.pos++; }
+      state.pos++;
+    }
     content = state.src.slice(start + 1, state.pos);
 
     state.posMax = state.pos;
-    state.pos = start + 1;
+    state.pos = start;
 
     token = state.push('synapse_open', 'span', 1);
     token.markup = '@';
