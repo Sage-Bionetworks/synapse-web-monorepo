@@ -13,8 +13,7 @@ var gridLayoutColumnParamRE = new RegExp('^\\s*(width[=]{1})?\\s*(.*)[}]{1}\\s*$
 var navTextParamRE = new RegExp('^\\s*(text[=]{1}["]{1})?\\s*(.*)["]{1}[}]{1}\\s*$');
 var ulMarkerRE = new RegExp('^\\s*[*-+>]{1}[^|]*$');
 var olMarkerRE = new RegExp('^\\s*\\w+\\s*[.)]{1}[^|]*$');
-var codeRE = new RegExp('^[`]{3}\s*([a-zA-Z_0-9-]*)\s*$');
-var spacesRE = new RegExp('[ ]{7}', 'g');
+var codeRE = new RegExp('^\\s*[`]{3}\s*([a-zA-Z_0-9-]*)\s*$');
 var suffix;
 var widgetIndex;
 var navIndex;
@@ -246,10 +245,6 @@ module.exports.preprocessMarkdown = function (mdString) {
     }
     if (!isInCode) {
       isCurrentLineInList = ulMarkerRE.test(splitMD[i]) || olMarkerRE.test(splitMD[i]);
-      if (isCurrentLineInList) {
-        // SWC-2988: and replace each group of 7 spaces with 4 (so that markdown-it list rule recognizes sublists).
-        splitMD[i] = splitMD[i].replace(spacesRE, '    ');
-      }
       if (isPreviousLineInList && !isCurrentLineInList) {
         md += '\n';
       }
