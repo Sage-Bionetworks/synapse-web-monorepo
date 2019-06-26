@@ -1,3 +1,5 @@
+This project is a Synapse wrapper around functionality provided by the [mozilla-services react-jsonschema-form project](https://github.com/mozilla-services/react-jsonschema-form).
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
