@@ -1,15 +1,17 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import DemoChallengeSubmissionForm from './DemoChallengeSubmissionForm'
+import AppInitializer from './AppInitializer'
 
 const App: React.FC = () => {
   return (
     <div className="App container">
-      <DemoChallengeSubmissionForm
-        token='' //TODO: {this.state.token!}
-        parentContainerId="syn18987891"
-      />
+      <AppInitializer>
+        <DemoChallengeSubmissionForm
+          evaluationQueueId="12345"
+          parentContainerId="syn18987891"
+        />
+      </AppInitializer>
     </div>
   );
 }
