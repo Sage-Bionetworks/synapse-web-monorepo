@@ -6,7 +6,6 @@ import Login from 'synapse-react-client/dist/containers/Login'
 import { TokenContext } from './AppInitializer'
 import { UserProfile } from 'synapse-react-client/dist/utils/jsonResponses/UserProfile';
 import { lookupChildEntity, createEntity } from 'synapse-react-client/dist/utils/SynapseClient';
-// 2. Create Special Project for user submissions to this challenge (iff it does not exist)
 // 3. Refactor schema definitions into different config file.
 // 4. Create actual submission (configure with evaluation queue ID)
 const schema: JSONSchema6 = {
@@ -63,8 +62,8 @@ const uiSchema = {
 }
 type DemoChallengeSubmissionFormState = {
     token?: string,
-    error?: Error,
-    isUploading?: boolean,
+    error?: any,
+    isLoading?: boolean,
     successfullyUploaded: boolean,
     userprofile?: UserProfile,
     submissionContainerId?: string
@@ -77,40 +76,35 @@ export type DemoChallengeSubmissionFormProps = {
 
 export default class DemoChallengeSubmissionForm
     extends React.Component<DemoChallengeSubmissionFormProps, DemoChallengeSubmissionFormState> {
-    private readonly inputOpenFileRef: React.RefObject<HTMLInputElement>
 
     constructor(props: DemoChallengeSubmissionFormProps) {
         super(props)
         this.state = {
-            isUploading: false,
+            isLoading: true,
             successfullyUploaded: false,
-        }
-        this.inputOpenFileRef = React.createRef()
-    }
-
-    showOpenFileDlg = () => {
-        if (this.inputOpenFileRef && this.inputOpenFileRef.current) {
-            this.inputOpenFileRef.current.click()
         }
     }
 
     finishedProcessing = () => {
         this.setState(
             {
-                isUploading: false,
+                isLoading: false,
                 successfullyUploaded: true
             })
     }
 
     onError = (error: any) => {
-        this.finishedProcessing()
-        this.setState({ error })
+        this.setState({
+            error,
+            isLoading: false,
+            successfullyUploaded: false
+        })
     }
 
     onSubmit = ({ formData }: any) => {
         this.setState(
             {
-                isUploading: true,
+                isLoading: true,
                 successfullyUploaded: false
             })
 
@@ -147,6 +141,9 @@ export default class DemoChallengeSubmissionForm
     }
 
     getUserProfile = () => {
+        if (this.state.error) {
+            return
+        }
         const newToken = this.context
         if (newToken && (!this.state.userprofile || this.state.token !== newToken)) {
             SynapseClient.getUserProfile(newToken, 'https://repo-prod.prod.sagebase.org').then((profile: any) => {
@@ -168,7 +165,8 @@ export default class DemoChallengeSubmissionForm
             this.setState({
                 token,
                 userprofile,
-                submissionContainerId: entityId.id
+                submissionContainerId: entityId.id,
+                isLoading: false
             })
         }).catch((error: any) => {
             if (error.statusCode === 404) {
@@ -182,7 +180,8 @@ export default class DemoChallengeSubmissionForm
                     this.setState({
                         token,
                         userprofile,
-                        submissionContainerId: entity.id
+                        submissionContainerId: entity.id,
+                        isLoading: false
                     })
                 }).catch((error: any) => {
                     this.onError(error)
@@ -197,8 +196,9 @@ export default class DemoChallengeSubmissionForm
         return (
             <div>
                 {
+                    !this.state.error &&
                     this.state.token &&
-                    !this.state.isUploading &&
+                    !this.state.isLoading &&
                     !this.state.successfullyUploaded &&
                     <Form
                         schema={schema}
@@ -208,13 +208,15 @@ export default class DemoChallengeSubmissionForm
                     />
                 }
                 {
+                    !this.state.error &&
                     this.state.token &&
-                    this.state.isUploading &&
+                    this.state.isLoading &&
                     <React.Fragment>
                         <span style={{ marginLeft: '2px' }} className={'spinner'} />
                     </React.Fragment>
                 }
                 {
+                    !this.state.error &&
                     this.state.token &&
                     this.state.successfullyUploaded &&
                     <span style={{ marginLeft: '10px' }}>
@@ -223,6 +225,7 @@ export default class DemoChallengeSubmissionForm
                     </span>
                 }
                 {
+                    !this.state.error &&
                     !this.state.token &&
                     <Login
                         token={this.state.token}
@@ -233,7 +236,7 @@ export default class DemoChallengeSubmissionForm
                 {
                     this.state.error &&
                     <p>
-                        There's an error with the submission: {this.state.error.name}
+                        Error: {this.state.error.name || this.state.error.reason}
                     </p>
                 }
             </div>
