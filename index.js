@@ -275,9 +275,11 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
         if (hrefIndex < 0
           || !startsWith(tokens[idx].attrs[hrefIndex][1], '#!')) {
           tokens[idx].attrPush([ 'target', '_blank' ]); // add new attribute
+          tokens[idx].attrPush([ 'ref', 'noopener noreferrer' ]); // add new attribute
         }
       } else {
         tokens[idx].attrs[aIndex][1] = '_blank'; // replace value of existing attr
+        tokens[idx].attrPush([ 'ref', 'noopener noreferrer' ]); // add ref
       }
 
       // pass token to default renderer.
@@ -584,69 +586,65 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
     });
     md.disable([ 'heading' ]);
     md.disable([ 'lheading' ]);
-    md.use(markdownitSub)
-      .use(markdownitSup)
-      .use(markdownitCentertext)
-      .use(markdownitSynapseHeading)
-      .use(markdownitSynapseTable)
-      .use(markdownitStrikethroughAlt)
-      .use(markdownitEmphasisAlt)
-      .use(markdownitInlineComments)
-      .use(markdownitBr);
+    if (markdownitSub) {
+      md.use(markdownitSub);
+    }
+    if (markdownitSup) {
+      md.use(markdownitSup);
+    }
+    if (markdownitCentertext) {
+      md.use(markdownitCentertext);
+    }
+    if (markdownitSynapseHeading) {
+      md.use(markdownitSynapseHeading);
+    }
+    if (markdownitSynapseTable) {
+      md.use(markdownitSynapseTable);
+    }
+    if (markdownitStrikethroughAlt) {
+      md.use(markdownitStrikethroughAlt);
+    }
+    if (markdownitEmphasisAlt) {
+      md.use(markdownitEmphasisAlt);
+    }
+    if (markdownitInlineComments) {
+      md.use(markdownitInlineComments);
+    }
+    if (markdownitBr) {
+      md.use(markdownitBr);
+    }
 
-    md.use(markdownitContainer, 'row',
-      {
-        marker: '{row}',
-        minMarkerCount: 1,
-        render: function (tokens, idx) {
-          var t;
-          if (tokens[idx].nesting === 1) {
-            // opening tag
-            t = '<div class="container-fluid"><div class="row">';
-          } else {
-            // closing tag
-            t = '</div></div>\n';
-          }
-          return t;
-        },
-        validate: function () {
-          return true;
-        }
-      });
-    md.use(markdownitContainer, 'column',
-      {
-        marker: '{column',
-        endMarker: '{column}',
-        minMarkerCount: 1,
-        render: function (tokens, idx) {
-          var m, t;
-          if (tokens[idx].nesting === 1) {
-            // opening tag
-            m = gridLayoutColumnParamRE.exec(tokens[idx].info);
-            t = '<div class="col-sm-' + md.utils.escapeHtml(m[2]) + '">';
-          } else {
-            // closing tag
-            t = '</div>\n';
-          }
-          return t;
-        },
-        validate: function (params) {
-          return gridLayoutColumnParamRE.test(params);
-        }
-      });
-    md.use(markdownitContainer, 'nav',
+    if (markdownitContainer) {
+      md.use(markdownitContainer, 'row',
         {
-          marker: '{nav',
-          endMarker: '{nav}',
+          marker: '{row}',
+          minMarkerCount: 1,
+          render: function (tokens, idx) {
+            var t;
+            if (tokens[idx].nesting === 1) {
+              // opening tag
+              t = '<div class="container-fluid"><div class="row">';
+            } else {
+              // closing tag
+              t = '</div></div>\n';
+            }
+            return t;
+          },
+          validate: function () {
+            return true;
+          }
+        });
+      md.use(markdownitContainer, 'column',
+        {
+          marker: '{column',
+          endMarker: '{column}',
           minMarkerCount: 1,
           render: function (tokens, idx) {
             var m, t;
             if (tokens[idx].nesting === 1) {
               // opening tag
-              m = navTextParamRE.exec(tokens[idx].info);
-              t = '<div id="nav-target-' + navIndex + suffix + '" target-text="' +
-                md.utils.escapeHtml(m[2]) + '">';
-              navIndex = navIndex + 1;
+              m = gridLayoutColumnParamRE.exec(tokens[idx].info);
+              t = '<div class="col-sm-' + md.utils.escapeHtml(m[2]) + '">';
             } else {
               // closing tag
               t = '</div>\n';
@@ -654,10 +652,33 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
             return t;
           },
           validate: function (params) {
-            return navTextParamRE.test(params);
+            return gridLayoutColumnParamRE.test(params);
           }
         });
-
+      md.use(markdownitContainer, 'nav',
+          {
+            marker: '{nav',
+            endMarker: '{nav}',
+            minMarkerCount: 1,
+            render: function (tokens, idx) {
+              var m, t;
+              if (tokens[idx].nesting === 1) {
+                // opening tag
+                m = navTextParamRE.exec(tokens[idx].info);
+                t = '<div id="nav-target-' + navIndex + suffix + '" target-text="' +
+                  md.utils.escapeHtml(m[2]) + '">';
+                navIndex = navIndex + 1;
+              } else {
+                // closing tag
+                t = '</div>\n';
+              }
+              return t;
+            },
+            validate: function (params) {
+              return navTextParamRE.test(params);
+            }
+          });
+    }
     sendLinksToNewWindow();
     initLinkify();
     initMarkdownTableStyle();

@@ -13,7 +13,9 @@ var generate = require('markdown-it-testgen');
 /*eslint-env mocha*/
 
 describe('markdown-it-synapse', function () {
+  var synapseMarkdownIt = require('../');
   var md = require('markdown-it')()
-              .use(require('../'));
+              .use(synapseMarkdownIt);
+  synapseMarkdownIt.init_markdown_it(md);
   generate(path.join(__dirname, 'fixtures/synapse.txt'), md);
 });

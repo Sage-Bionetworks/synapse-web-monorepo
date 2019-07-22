@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-synapse",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "tag for markdown-it markdown parser.",
   "main": "index.js",
   "keywords": [
@@ -36,8 +36,8 @@
     "eslint": "^4.19.1",
     "eslint-plugin-nodeca": "^1.0.0",
     "istanbul": "*",
-    "lodash": "^4.17.11",
-    "markdown-it": "^4.0.0",
+    "lodash": "^4.17.15",
+    "markdown-it": "^9.0.1",
     "markdown-it-testgen": "~0.1.0",
     "mocha": "^5.2.0",
     "request": "^2.88.0",
