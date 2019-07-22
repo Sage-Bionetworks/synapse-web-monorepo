@@ -101,9 +101,15 @@ testing standard [link](http://link.com)
 .
 
 .
-testing standard internal [link](http://www.synapse.org/#!Synapse:syn123)
+testing standard linkify syn123 auto-link
 .
-<p>testing standard internal <a href="http://www.synapse.org/#!Synapse:syn123" target="_blank" ref="noopener noreferrer">link</a></p>
+<p>testing standard linkify <a href="#!Synapse:syn123">syn123</a> auto-link</p>
+.
+
+.
+testing standard https://www.google.com auto-link
+.
+<p>testing standard <a href="https://www.google.com" target="_blank" ref="noopener noreferrer">https://www.google.com</a> auto-link</p>
 .
 
 coverage
