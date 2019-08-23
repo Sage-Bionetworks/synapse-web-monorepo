@@ -1,5 +1,5 @@
 {
-  "name": "challenge-submission-form-template",
+  "name": "synapse-oauth-signin",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
