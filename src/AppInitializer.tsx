@@ -3,9 +3,8 @@ import { SynapseClient } from 'synapse-react-client'
 export type AppInitializerToken = {
   token: string
 }
-
 export const TokenContext = React.createContext('')
-
+const ENDPOINT: string = 'http://3.84.30.72:8080/services-repository-develop-SNAPSHOT/'
 class AppInitializer extends React.Component<{},AppInitializerToken> {
   constructor(props: any) {
     super(props)
@@ -18,7 +17,7 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
     SynapseClient.getSessionTokenFromCookie().then(
       (sessionToken: string|null) => {
         if (sessionToken) {
-          return SynapseClient.putRefreshSessionToken(sessionToken).then(
+          return SynapseClient.putRefreshSessionToken(sessionToken, ENDPOINT).then(
             // backend doesn't return a response for this call, its empty
             (_response) => {
               this.setState({ token: sessionToken })

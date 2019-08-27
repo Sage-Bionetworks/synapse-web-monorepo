@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SynapseClient } from 'synapse-react-client'
+import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import Login from 'synapse-react-client/dist/containers/Login'
 import { TokenContext } from './AppInitializer'
 import { UserProfile } from 'synapse-react-client/dist/utils/jsonResponses/UserProfile'
@@ -7,8 +7,11 @@ import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/jsonRe
 import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/jsonResponses/OIDCAuthorizationRequestDescription'
 import { OAuthClientPublic } from 'synapse-react-client/dist/utils/jsonResponses/OAuthClientPublic'
 import { AccessCodeResponse } from 'synapse-react-client/dist/utils/jsonResponses/AccessCodeResponse';
+import UserCard from 'synapse-react-client/dist/containers/UserCard';
 
-// NOTE: use http://3.84.30.72:8080/services-repository-develop-SNAPSHOT as the endpoint for testing, but remove for final deployment!
+// NOTE: using http://3.84.30.72:8080/services-repository-develop-SNAPSHOT/ as the endpoint for dev testing
+// should be https://repo-prod.prod.sagebase.org/
+const ENDPOINT: string = 'http://3.84.30.72:8080/services-repository-develop-SNAPSHOT/'
 
 type OAuth2FormState = {
     token?: string,
@@ -49,6 +52,7 @@ export default class OAuth2Form
     }
 
     onError = (error: any) => {
+        debugger
         this.setState({
             error,
             isLoading: false
@@ -61,9 +65,9 @@ export default class OAuth2Form
                 isLoading: true
             })
         let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-        SynapseClient.consentToOAuth2Request(request, this.state.token).then((accessCode: AccessCodeResponse) => {
+        SynapseClient.consentToOAuth2Request(request, this.state.token, ENDPOINT).then((accessCode: AccessCodeResponse) => {
             // done!  redirect with access code.
-            const redirectUri = this.getURLParam('redirectUri')
+            const redirectUri = this.getURLParam('redirect_uri')
             const state = this.getURLParam('state')
             window.location.replace(`${redirectUri}?state=${state}&code=${accessCode.access_code}`)
         }).catch((_err) => {
@@ -73,24 +77,24 @@ export default class OAuth2Form
     }
 
     onDeny = () => {
-        const redirectUri = this.getURLParam('redirectUri')
+        const redirectUri = this.getURLParam('redirect_uri')
         window.location.replace(redirectUri)
     }
 
     componentDidMount() {
-        this.getUserProfile()
-        this.getOAuth2RequestDescription()
+        this.componentDidUpdate()
     }
 
     componentDidUpdate() {
         this.getUserProfile()
         this.getOAuth2RequestDescription()
+        this.getOauthClientInfo()
     }
 
     getOAuth2RequestDescription() {
         if (!this.state.oidcRequestDescription && !this.state.error) {
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-            SynapseClient.getOAuth2RequestDescription(request, this.state.token).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
+            SynapseClient.getOAuth2RequestDescription(request, this.state.token, ENDPOINT).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
                 this.setState({
                     oidcRequestDescription,
                     isLoading: false
@@ -104,18 +108,18 @@ export default class OAuth2Form
 
     getOIDCAuthorizationRequestFromSearchParams(): OIDCAuthorizationRequest {
         return {
-            clientId: this.getURLParam('clientId'),
+            clientId: this.getURLParam('client_id'),
             scope: this.getURLParam('scope'),
             claims: this.getURLParam('claims'),
             responseType: 'code',
-            redirectUri: this.getURLParam('redirectUri')
+            redirectUri: this.getURLParam('redirect_uri')
         }
     }
 
     getOauthClientInfo() {
         if (!this.state.oauthClientInfo && !this.state.error) {
-            const clientId = this.getURLParam('clientId')
-            SynapseClient.getOAuth2Client(clientId).then((oauthClientInfo: OAuthClientPublic) => {
+            const clientId = this.getURLParam('client_id')
+            SynapseClient.getOAuth2Client(clientId, ENDPOINT).then((oauthClientInfo: OAuthClientPublic) => {
                 this.setState({
                     oauthClientInfo
                 })
@@ -128,14 +132,15 @@ export default class OAuth2Form
 
     getUserProfile() {
         const newToken = this.context
-        if (newToken && (!this.state.profile || this.state.token !== newToken)) {
-            SynapseClient.getUserProfile(newToken, 'https://repo-prod.prod.sagebase.org').then((profile: any) => {
+        if (newToken && (!this.state.profile || this.state.token !== newToken) && !this.state.error) {
+            SynapseClient.getUserProfile(newToken, ENDPOINT).then((profile: UserProfile) => {
                 if (profile.profilePicureFileHandleId) {
                     profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
                 }
                 this.setState({
                     profile,
-                    token: newToken
+                    token: newToken,
+                    isLoading: false
                 })
             }).catch((_err) => {
                 console.log('user profile could not be fetched ', _err)
@@ -187,15 +192,23 @@ export default class OAuth2Form
                     this.state.oidcRequestDescription &&
                     !this.state.isLoading &&
                     <React.Fragment>
-                        <h4>{this.state.oauthClientInfo.client_name} would like to access the following items in your Synapse account:</h4>
-                        {scopes}
-                        <p>By clicking "Allow", you allow this app to use your information in accordance with their <a href={this.state.oauthClientInfo.tos_uri} target="_blank" rel="noopener noreferrer">terms of service</a>
-                            and <a href={this.state.oauthClientInfo.policy_uri} target="_blank" rel="noopener noreferrer">privacy policy</a>.
-                        </p>
-                        <hr />
-                        <div style={{ textAlign: 'right' }}>
-                            <button onClick={this.onDeny} className="btn btn-default">Deny</button>
-                            <button onClick={this.onConsent} className="btn btn-success">Allow</button>
+                        <div className="margin-top-30">
+                            <div className="max-width-460 center-in-div light-border padding-30">
+                                <UserCard
+                                    userProfile={this.state.profile}
+                                    size={SynapseConstants.SMALL_USER_CARD}
+                                    />
+                                <h4><strong>{this.state.oauthClientInfo.client_name}</strong> would like to access the following items in your Synapse account:</h4>
+                                {scopes}
+                                <div className="margin-top-20">
+                                    <p>By clicking "Allow", you allow this app to use your information in accordance with their <a href={this.state.oauthClientInfo.tos_uri} target="_blank" rel="noopener noreferrer">terms of service</a> and <a href={this.state.oauthClientInfo.policy_uri} target="_blank" rel="noopener noreferrer">privacy policy</a>.
+                                    </p>
+                                </div>
+                                <div className="text-align-right margin-top-20">
+                                    <button onClick={this.onDeny} className="btn btn-default margin-right-5">Deny</button>
+                                    <button onClick={this.onConsent} className="btn btn-success">Allow</button>
+                                </div>
+                            </div>
                         </div>
                     </React.Fragment>
                 }
