@@ -4,7 +4,7 @@ import Login from 'synapse-react-client/dist/containers/Login'
 import { TokenContext } from './AppInitializer'
 import { UserProfile } from 'synapse-react-client/dist/utils/jsonResponses/UserProfile'
 import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/jsonResponses/OIDCAuthorizationRequest'
-import { OIDCAuthorizationRequestDescription }  from 'synapse-react-client/dist/utils/jsonResponses/OIDCAuthorizationRequestDescription'
+import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/jsonResponses/OIDCAuthorizationRequestDescription'
 import { OAuthClientPublic } from 'synapse-react-client/dist/utils/jsonResponses/OAuthClientPublic'
 import { AccessCodeResponse } from 'synapse-react-client/dist/utils/jsonResponses/AccessCodeResponse';
 
@@ -57,11 +57,11 @@ export default class OAuth2Form
 
     onConsent = () => {
         this.setState(
-        {
-            isLoading: true
-        })
+            {
+                isLoading: true
+            })
         let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-        SynapseClient.consentToOAuth2Request(request, this.state.token).then((accessCode:AccessCodeResponse) => {
+        SynapseClient.consentToOAuth2Request(request, this.state.token).then((accessCode: AccessCodeResponse) => {
             // done!  redirect with access code.
             const redirectUri = this.getURLParam('redirectUri')
             const state = this.getURLParam('state')
@@ -90,7 +90,7 @@ export default class OAuth2Form
     getOAuth2RequestDescription() {
         if (!this.state.oidcRequestDescription && !this.state.error) {
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-            SynapseClient.getOAuth2RequestDescription(request, this.state.token).then((oidcRequestDescription:OIDCAuthorizationRequestDescription) => {
+            SynapseClient.getOAuth2RequestDescription(request, this.state.token).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
                 this.setState({
                     oidcRequestDescription,
                     isLoading: false
@@ -102,7 +102,7 @@ export default class OAuth2Form
         }
     }
 
-    getOIDCAuthorizationRequestFromSearchParams():OIDCAuthorizationRequest  {
+    getOIDCAuthorizationRequestFromSearchParams(): OIDCAuthorizationRequest {
         return {
             clientId: this.getURLParam('clientId'),
             scope: this.getURLParam('scope'),
@@ -115,7 +115,7 @@ export default class OAuth2Form
     getOauthClientInfo() {
         if (!this.state.oauthClientInfo && !this.state.error) {
             const clientId = this.getURLParam('clientId')
-            SynapseClient.getOAuth2Client(clientId).then((oauthClientInfo:OAuthClientPublic) => {
+            SynapseClient.getOAuth2Client(clientId).then((oauthClientInfo: OAuthClientPublic) => {
                 this.setState({
                     oauthClientInfo
                 })
@@ -134,7 +134,8 @@ export default class OAuth2Form
                     profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
                 }
                 this.setState({
-                    profile
+                    profile,
+                    token: newToken
                 })
             }).catch((_err) => {
                 console.log('user profile could not be fetched ', _err)
@@ -143,38 +144,38 @@ export default class OAuth2Form
         }
     }
     getURLParam = (keyName: string): string => {
-      let currentUrl: URL | null | string = new URL(window.location.href)
-      // in test environment the searchParams isn't defined
-      const { searchParams } = currentUrl
-      let paramValue : string | null = null
-      if (searchParams) {
-        paramValue = searchParams.get(keyName)
-      }
-      return paramValue ? paramValue : ''
+        let currentUrl: URL | null | string = new URL(window.location.href)
+        // in test environment the searchParams isn't defined
+        const { searchParams } = currentUrl
+        let paramValue: string | null = null
+        if (searchParams) {
+            paramValue = searchParams.get(keyName)
+        }
+        return paramValue ? paramValue : ''
     }
 
-/**
-   * Returns scopes UI
-   *
-   * @returns JSX for the requested scopes
-   */
-  public renderScopes() {
-    // return all the links formatted accordingly
-    if (this.state.oidcRequestDescription) {
-        return <ul>
-            {
-                this.state.oidcRequestDescription.scope.map( 
-                (scope, index) => {
-                    return (
-                        <li key={index}>
-                            {scope}
-                        </li>
-                    )
-                })
-            }
-        </ul>
+    /**
+       * Returns scopes UI
+       *
+       * @returns JSX for the requested scopes
+       */
+    public renderScopes() {
+        // return all the links formatted accordingly
+        if (this.state.oidcRequestDescription) {
+            return <ul>
+                {
+                    this.state.oidcRequestDescription.scope.map(
+                        (scope, index) => {
+                            return (
+                                <li key={index}>
+                                    {scope}
+                                </li>
+                            )
+                        })
+                }
+            </ul>
+        }
     }
-  }
     render() {
         const scopes = this.renderScopes()
         return (
@@ -191,8 +192,8 @@ export default class OAuth2Form
                         <p>By clicking "Allow", you allow this app to use your information in accordance with their <a href={this.state.oauthClientInfo.tos_uri} target="_blank" rel="noopener noreferrer">terms of service</a>
                             and <a href={this.state.oauthClientInfo.policy_uri} target="_blank" rel="noopener noreferrer">privacy policy</a>.
                         </p>
-                        <hr/>
-                        <div style={{textAlign: 'right'}}>
+                        <hr />
+                        <div style={{ textAlign: 'right' }}>
                             <button onClick={this.onDeny} className="btn btn-default">Deny</button>
                             <button onClick={this.onConsent} className="btn btn-success">Allow</button>
                         </div>
@@ -200,7 +201,6 @@ export default class OAuth2Form
                 }
                 {
                     !this.state.error &&
-                    this.state.token &&
                     this.state.isLoading &&
                     <React.Fragment>
                         <span style={{ marginLeft: '2px' }} className={'spinner'} />
