@@ -77,8 +77,13 @@ export default class OAuth2Form
     }
 
     onDeny = () => {
-        const redirectUri = this.getURLParam('redirect_uri')
-        window.location.replace(redirectUri)
+        let redirect: string
+        if (this.state.oauthClientInfo && this.state.oauthClientInfo.client_uri) {
+            redirect = this.state.oauthClientInfo.client_uri
+        } else {
+            redirect = this.getURLParam('redirect_uri')
+        }
+        window.location.replace(redirect)
     }
 
     componentDidMount() {
