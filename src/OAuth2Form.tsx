@@ -177,11 +177,6 @@ export default class OAuth2Form
   }
     render() {
         const scopes = this.renderScopes()
-        const submitBtn: React.CSSProperties = {
-            padding: '6px 10px',
-            borderRadius: 6
-        }
-      
         return (
             <div>
                 {
@@ -198,8 +193,8 @@ export default class OAuth2Form
                         </p>
                         <hr/>
                         <div style={{textAlign: 'right'}}>
-                            <button onClick={this.onDeny} className="SRC-primary-text-color SRC-roundBorder SRC-underline-on-hover ">Deny</button>
-                            <button onClick={this.onConsent} style={submitBtn} className="SRC-primary-background-color SRC-roundBorder SRC-whiteText">Allow</button>
+                            <button onClick={this.onDeny} className="btn btn-default">Deny</button>
+                            <button onClick={this.onConsent} className="btn btn-success">Allow</button>
                         </div>
                     </React.Fragment>
                 }
