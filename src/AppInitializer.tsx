@@ -16,7 +16,7 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
 
   componentDidMount() {
     SynapseClient.getSessionTokenFromCookie().then(
-      (sessionToken: string) => {
+      (sessionToken: string|null) => {
         if (sessionToken) {
           return SynapseClient.putRefreshSessionToken(sessionToken).then(
             // backend doesn't return a response for this call, its empty

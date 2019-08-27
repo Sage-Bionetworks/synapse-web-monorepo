@@ -12,6 +12,7 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link href="https://www.synapse.org/swc.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script> 
@@ -31,8 +32,17 @@
     <script src="https://cdn.jsdelivr.net/npm/sanitize-html@1.20.0/dist/sanitize-html.min.js"></script>
     <title>Challenge Submission Form Demo</title>
   </head>
-  <body>
+  <body id="body">
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div class="notopmargin synapse-blue-bg-gradient" style="height: 53px;">
+      <div
+        class="margin-left-15 inline-block maxWidth50 overflowHidden text-overflow-ellipsis whitespace-nowrap color-white"
+        style="padding-top: 13px;"><img class="gwt-Image imageButton margin-right-5 moveup-5" src="https://www.synapse.org/images/logo.svg"
+          style="width: 35px; height: 35px;">
+        <h3 class="displayInline color-white"><a href="#"
+            class="color-white textDecorationNone lato notransition letter-spacing-6">SYNAPSE</a></h3>
+      </div>
+    </div>
     <div id="root"></div>
     <!--
       This HTML file is a template.
