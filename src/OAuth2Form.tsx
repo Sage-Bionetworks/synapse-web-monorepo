@@ -11,7 +11,7 @@ import UserCard from 'synapse-react-client/dist/containers/UserCard';
 
 // NOTE: using http://3.84.30.72:8080/services-repository-develop-SNAPSHOT/ as the endpoint for dev testing
 // should be https://repo-prod.prod.sagebase.org/
-const ENDPOINT: string = 'http://3.84.30.72:8080/services-repository-develop-SNAPSHOT/'
+const ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
 
 type OAuth2FormState = {
     token?: string,

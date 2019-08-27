@@ -4,7 +4,7 @@ export type AppInitializerToken = {
   token: string
 }
 export const TokenContext = React.createContext('')
-const ENDPOINT: string = 'http://3.84.30.72:8080/services-repository-develop-SNAPSHOT/'
+const ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
 class AppInitializer extends React.Component<{},AppInitializerToken> {
   constructor(props: any) {
     super(props)
