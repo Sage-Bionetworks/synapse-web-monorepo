@@ -227,11 +227,15 @@ export default class OAuth2Form
                 {
                     !this.state.error &&
                     !this.state.token &&
-                    <Login
-                        token={this.state.token}
-                        theme={'light'}
-                        icon={true}
-                    />
+                    <div className="margin-top-30">
+                        <div className="max-width-460 center-in-div light-border padding-30">
+                            <Login
+                                token={this.state.token}
+                                theme={'light'}
+                                icon={true}
+                            />
+                        </div>
+                    </div>
                 }
                 {
                     this.state.error &&
