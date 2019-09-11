@@ -233,6 +233,7 @@ export default class OAuth2Form
                                 token={this.state.token}
                                 theme={'light'}
                                 icon={true}
+                                endpoint={ENDPOINT}
                             />
                         </div>
                     </div>
