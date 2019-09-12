@@ -10,8 +10,9 @@ import { AccessCodeResponse } from 'synapse-react-client/dist/utils/jsonResponse
 import UserCard from 'synapse-react-client/dist/containers/UserCard';
 
 // NOTE: using http://3.84.30.72:8080/services-repository-develop-SNAPSHOT/ as the endpoint for dev testing
+// can set to https://repo-staging.prod.sagebase.org/ for staging
 // should be https://repo-prod.prod.sagebase.org/
-const ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
+export const ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
 
 type OAuth2FormState = {
     token?: string,
@@ -233,6 +234,7 @@ export default class OAuth2Form
                                 token={this.state.token}
                                 theme={'light'}
                                 icon={true}
+                                endpoint={ENDPOINT}
                             />
                         </div>
                     </div>

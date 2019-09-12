@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { SynapseClient } from 'synapse-react-client'
+import { ENDPOINT } from './OAuth2Form'
 export type AppInitializerToken = {
   token: string
 }
 export const TokenContext = React.createContext('')
-const ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
+
 class AppInitializer extends React.Component<{},AppInitializerToken> {
   constructor(props: any) {
     super(props)
