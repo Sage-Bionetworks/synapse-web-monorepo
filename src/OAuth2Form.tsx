@@ -13,6 +13,7 @@ import UserCard from 'synapse-react-client/dist/containers/UserCard';
 // can set to https://repo-staging.prod.sagebase.org/ for staging
 // should be https://repo-prod.prod.sagebase.org/
 export const ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
+export const SWC_ENDPOINT: string = 'https://www.synapse.org/'
 
 type OAuth2FormState = {
     token?: string,
@@ -234,7 +235,8 @@ export default class OAuth2Form
                                 token={this.state.token}
                                 theme={'light'}
                                 icon={true}
-                                endpoint={ENDPOINT}
+                                repoEndpoint={ENDPOINT}
+                                swcEndpoint={SWC_ENDPOINT}
                             />
                         </div>
                     </div>
