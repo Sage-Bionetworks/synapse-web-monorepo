@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { SynapseClient } from 'synapse-react-client'
-import { ENDPOINT } from './OAuth2Form'
+import { ENDPOINT, SWC_ENDPOINT } from './OAuth2Form'
 export type AppInitializerToken = {
   token: string
 }
@@ -15,7 +15,7 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
   }
 
   componentDidMount() {
-    SynapseClient.getSessionTokenFromCookie().then(
+    SynapseClient.getSessionTokenFromCookie(SWC_ENDPOINT).then(
       (sessionToken: string|null) => {
         if (sessionToken) {
           return SynapseClient.putRefreshSessionToken(sessionToken, ENDPOINT).then(
