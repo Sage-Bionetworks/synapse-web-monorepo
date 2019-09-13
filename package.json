@@ -12,7 +12,7 @@
     "react-dom": "^16.8.6",
     "react-jsonschema-form": "^1.6.1",
     "react-scripts": "3.0.1",
-    "synapse-react-client": "1.12.46",
+    "synapse-react-client": "1.12.47",
     "typescript": "3.5.2"
   },
   "scripts": {
