@@ -100,6 +100,9 @@ export default class OAuth2Form
 
     getOAuth2RequestDescription() {
         if (!this.state.oidcRequestDescription && !this.state.error) {
+            const code = this.getURLParam('code')
+            if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
+
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
             SynapseClient.getOAuth2RequestDescription(request, this.state.token, ENDPOINT).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
                 this.setState({
@@ -125,6 +128,9 @@ export default class OAuth2Form
 
     getOauthClientInfo() {
         if (!this.state.oauthClientInfo && !this.state.error) {
+            const code = this.getURLParam('code')
+            if (code) return; // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
+
             const clientId = this.getURLParam('client_id')
             SynapseClient.getOAuth2Client(clientId, ENDPOINT).then((oauthClientInfo: OAuthClientPublic) => {
                 this.setState({

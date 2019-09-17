@@ -29,7 +29,7 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
         console.log('no token from cookie could be fetched ', _err)
       })
     // on first time, also check for the SSO code
-    SynapseClient.detectSSOCode()
+    SynapseClient.detectSSOCode(ENDPOINT, SWC_ENDPOINT)
   }
 
   render() {
