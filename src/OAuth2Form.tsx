@@ -46,6 +46,18 @@ export default class OAuth2Form
         this.getURLParam = this.getURLParam.bind(this)
     }
 
+    sendGTagEvent = (event: string) => {
+      // send event to Google Analytics
+      // (casting to 'any' type to get compile-time access to gtag())
+      const windowAny:any = window
+      const gtag = windowAny.gtag
+      if (gtag) {
+        gtag('event', event, {
+            'event_category': 'SynapseOAUTH',
+          })
+      }
+    }
+
     finishedProcessing = () => {
         this.setState(
             {
@@ -66,6 +78,7 @@ export default class OAuth2Form
             {
                 isLoading: true
             })
+        this.sendGTagEvent('UserConsented')
         let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
         SynapseClient.consentToOAuth2Request(request, this.state.token, ENDPOINT).then((accessCode: AccessCodeResponse) => {
             // done!  redirect with access code.
@@ -80,6 +93,7 @@ export default class OAuth2Form
 
     onDeny = () => {
         let redirect: string
+        this.sendGTagEvent('UserDeniedConsent')
         if (this.state.oauthClientInfo && this.state.oauthClientInfo.client_uri) {
             redirect = this.state.oauthClientInfo.client_uri
         } else {
@@ -105,6 +119,7 @@ export default class OAuth2Form
 
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
             SynapseClient.getOAuth2RequestDescription(request, this.state.token, ENDPOINT).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
+                this.sendGTagEvent('SynapseOAuthClientRequestDescriptionLoaded')
                 this.setState({
                     oidcRequestDescription,
                     isLoading: false
