@@ -9,11 +9,13 @@ import { OAuthClientPublic } from 'synapse-react-client/dist/utils/jsonResponses
 import { AccessCodeResponse } from 'synapse-react-client/dist/utils/jsonResponses/AccessCodeResponse';
 import UserCard from 'synapse-react-client/dist/containers/UserCard';
 
-// NOTE: using http://3.84.30.72:8080/services-repository-develop-SNAPSHOT/ as the endpoint for dev testing
-// can set to https://repo-staging.prod.sagebase.org/ for staging
-// should be https://repo-prod.prod.sagebase.org/
-export const ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
-export const SWC_ENDPOINT: string = 'https://www.synapse.org/'
+// can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
+(window as any).SRC = {
+    OVERRIDE_ENDPOINT_CONFIG: {
+        REPO: 'https://repo-prod.prod.sagebase.org/',
+        PORTAL: 'https://www.synapse.org/',
+    }
+}
 
 type OAuth2FormState = {
     token?: string,
@@ -80,7 +82,7 @@ export default class OAuth2Form
             })
         this.sendGTagEvent('UserConsented')
         let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-        SynapseClient.consentToOAuth2Request(request, this.state.token, ENDPOINT).then((accessCode: AccessCodeResponse) => {
+        SynapseClient.consentToOAuth2Request(request, this.state.token).then((accessCode: AccessCodeResponse) => {
             // done!  redirect with access code.
             const redirectUri = this.getURLParam('redirect_uri')
             const state = this.getURLParam('state')
@@ -118,7 +120,7 @@ export default class OAuth2Form
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
 
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-            SynapseClient.getOAuth2RequestDescription(request, this.state.token, ENDPOINT).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
+            SynapseClient.getOAuth2RequestDescription(request, this.state.token).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
                 this.sendGTagEvent('SynapseOAuthClientRequestDescriptionLoaded')
                 this.setState({
                     oidcRequestDescription,
@@ -147,7 +149,7 @@ export default class OAuth2Form
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
 
             const clientId = this.getURLParam('client_id')
-            SynapseClient.getOAuth2Client(clientId, ENDPOINT).then((oauthClientInfo: OAuthClientPublic) => {
+            SynapseClient.getOAuth2Client(clientId).then((oauthClientInfo: OAuthClientPublic) => {
                 this.setState({
                     oauthClientInfo
                 })
@@ -161,7 +163,7 @@ export default class OAuth2Form
     getUserProfile() {
         const newToken = this.context
         if (newToken && (!this.state.profile || this.state.token !== newToken) && !this.state.error) {
-            SynapseClient.getUserProfile(newToken, ENDPOINT).then((profile: UserProfile) => {
+            SynapseClient.getUserProfile(newToken).then((profile: UserProfile) => {
                 if (profile.profilePicureFileHandleId) {
                     profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
                 }
@@ -256,8 +258,6 @@ export default class OAuth2Form
                                 token={this.state.token}
                                 theme={'light'}
                                 icon={true}
-                                repoEndpoint={ENDPOINT}
-                                swcEndpoint={SWC_ENDPOINT}
                             />
                         </div>
                     </div>
