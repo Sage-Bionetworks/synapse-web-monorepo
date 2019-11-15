@@ -6,14 +6,23 @@ import { UserProfile } from 'synapse-react-client/dist/utils/jsonResponses/UserP
 import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/jsonResponses/OIDCAuthorizationRequest'
 import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/jsonResponses/OIDCAuthorizationRequestDescription'
 import { OAuthClientPublic } from 'synapse-react-client/dist/utils/jsonResponses/OAuthClientPublic'
-import { AccessCodeResponse } from 'synapse-react-client/dist/utils/jsonResponses/AccessCodeResponse';
-import UserCard from 'synapse-react-client/dist/containers/UserCard';
+import { AccessCodeResponse } from 'synapse-react-client/dist/utils/jsonResponses/AccessCodeResponse'
+import UserCard from 'synapse-react-client/dist/containers/UserCard'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import {
+  faExclamationTriangle,
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-// NOTE: using http://3.84.30.72:8080/services-repository-develop-SNAPSHOT/ as the endpoint for dev testing
-// can set to https://repo-staging.prod.sagebase.org/ for staging
-// should be https://repo-prod.prod.sagebase.org/
-export const ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
-export const SWC_ENDPOINT: string = 'https://www.synapse.org/'
+// can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
+(window as any).SRC = {
+    OVERRIDE_ENDPOINT_CONFIG: {
+        REPO: 'https://repo-prod.prod.sagebase.org/',
+        PORTAL: 'https://www.synapse.org/',
+    }
+}
+
+library.add(faExclamationTriangle)
 
 type OAuth2FormState = {
     token?: string,
@@ -36,8 +45,8 @@ export default class OAuth2Form
             isLoading: true
         }
         this.onError = this.onError.bind(this)
-        this.finishedProcessing = this.finishedProcessing.bind(this)
         this.onConsent = this.onConsent.bind(this)
+        this.onGoBack = this.onGoBack.bind(this)
         this.onDeny = this.onDeny.bind(this)
         this.getOAuth2RequestDescription = this.getOAuth2RequestDescription.bind(this)
         this.getOIDCAuthorizationRequestFromSearchParams = this.getOIDCAuthorizationRequestFromSearchParams.bind(this)
@@ -58,15 +67,9 @@ export default class OAuth2Form
       }
     }
 
-    finishedProcessing = () => {
-        this.setState(
-            {
-                isLoading: false
-            })
-    }
-
     onError = (error: any) => {
         debugger
+        console.error(error)
         this.setState({
             error,
             isLoading: false
@@ -80,15 +83,18 @@ export default class OAuth2Form
             })
         this.sendGTagEvent('UserConsented')
         let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-        SynapseClient.consentToOAuth2Request(request, this.state.token, ENDPOINT).then((accessCode: AccessCodeResponse) => {
+        SynapseClient.consentToOAuth2Request(request, this.state.token).then((accessCode: AccessCodeResponse) => {
             // done!  redirect with access code.
             const redirectUri = this.getURLParam('redirect_uri')
             const state = this.getURLParam('state')
             window.location.replace(`${redirectUri}?state=${state}&code=${accessCode.access_code}`)
         }).catch((_err) => {
-            console.log('unable to consent to oauth request', _err)
             this.onError(_err)
         })
+    }
+
+    onGoBack = () => {
+        window.history.back()
     }
 
     onDeny = () => {
@@ -108,7 +114,6 @@ export default class OAuth2Form
 
     componentDidUpdate() {
         this.getUserProfile()
-        this.getOAuth2RequestDescription()
         this.getOauthClientInfo()
     }
 
@@ -118,14 +123,13 @@ export default class OAuth2Form
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
 
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-            SynapseClient.getOAuth2RequestDescription(request, this.state.token, ENDPOINT).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
+            SynapseClient.getOAuth2RequestDescription(request, this.state.token).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
                 this.sendGTagEvent('SynapseOAuthClientRequestDescriptionLoaded')
                 this.setState({
                     oidcRequestDescription,
                     isLoading: false
                 })
             }).catch((_err) => {
-                console.log('oauth request could not be verified ', _err)
                 this.onError(_err)
             })
         }
@@ -147,12 +151,19 @@ export default class OAuth2Form
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
 
             const clientId = this.getURLParam('client_id')
-            SynapseClient.getOAuth2Client(clientId, ENDPOINT).then((oauthClientInfo: OAuthClientPublic) => {
+            if (!clientId) {
+                this.onError(new Error('Synapse OAuth client_id is required'))
+                return
+            }
+            SynapseClient.getOAuth2Client(clientId).then((oauthClientInfo: OAuthClientPublic) => {
+                if (oauthClientInfo.verified) {
+                    this.getOAuth2RequestDescription()
+                }
                 this.setState({
-                    oauthClientInfo
+                    oauthClientInfo,
+                    isLoading: false
                 })
             }).catch((_err) => {
-                console.log('could not get oauth client info', _err)
                 this.onError(_err)
             })
         }
@@ -161,17 +172,15 @@ export default class OAuth2Form
     getUserProfile() {
         const newToken = this.context
         if (newToken && (!this.state.profile || this.state.token !== newToken) && !this.state.error) {
-            SynapseClient.getUserProfile(newToken, ENDPOINT).then((profile: UserProfile) => {
+            SynapseClient.getUserProfile(newToken).then((profile: UserProfile) => {
                 if (profile.profilePicureFileHandleId) {
                     profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
                 }
                 this.setState({
                     profile,
                     token: newToken,
-                    isLoading: false
                 })
             }).catch((_err) => {
-                console.log('user profile could not be fetched ', _err)
                 this.onError(_err)
             })
         }
@@ -215,8 +224,31 @@ export default class OAuth2Form
             <div>
                 {
                     !this.state.error &&
+                    this.state.oauthClientInfo &&
+                    !this.state.oauthClientInfo.verified &&
+                    !this.state.isLoading &&
+                    <React.Fragment>
+                        <div className="margin-top-30">
+                            <div className="max-width-460 center-in-div light-border padding-30">
+                                <FontAwesomeIcon
+                                    className='text-danger'
+                                    style={{ marginLeft: '5px', marginBottom: '15px', fontSize: '40px' }}
+                                    icon='exclamation-triangle'
+                                />
+                                <h3>This app isn't verified</h3>
+                                <p>This app has not been verified by Sage Bionetworks yet.</p>
+                                <div className="text-align-right margin-top-20">
+                                    <button onClick={this.onGoBack} className="btn btn-primary">Back to Safety</button>
+                                </div>
+                            </div>
+                        </div>
+                    </React.Fragment>
+                }
+                {
+                    !this.state.error &&
                     this.state.token &&
                     this.state.oauthClientInfo &&
+                    this.state.oauthClientInfo.verified &&
                     this.state.oidcRequestDescription &&
                     !this.state.isLoading &&
                     <React.Fragment>
@@ -243,21 +275,23 @@ export default class OAuth2Form
                 {
                     !this.state.error &&
                     this.state.isLoading &&
-                    <React.Fragment>
-                        <span style={{ marginLeft: '2px' }} className={'spinner'} />
-                    </React.Fragment>
+                    <div className="center">
+                        <span style={{ marginTop: '20px', marginLeft: '2px', backgroundSize: '40px 40px', width: '40px', height: '40px' }} className={'spinner'} />
+                    </div>
                 }
                 {
                     !this.state.error &&
                     !this.state.token &&
+                    this.state.oauthClientInfo &&
+                    this.state.oauthClientInfo.verified &&
+                    this.state.oidcRequestDescription &&
+                    !this.state.isLoading &&
                     <div className="margin-top-30">
                         <div className="max-width-460 center-in-div light-border padding-30">
                             <Login
                                 token={this.state.token}
                                 theme={'light'}
                                 icon={true}
-                                repoEndpoint={ENDPOINT}
-                                swcEndpoint={SWC_ENDPOINT}
                             />
                         </div>
                     </div>
@@ -265,7 +299,7 @@ export default class OAuth2Form
                 {
                     this.state.error &&
                     <div className="alert alert-danger">
-                        Error: {this.state.error.name || this.state.error.reason}
+                        {this.state.error.name || 'Error'} : {this.state.error.reason}{this.state.error.message}
                     </div>
                 }
             </div>
