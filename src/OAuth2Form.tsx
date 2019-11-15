@@ -45,7 +45,6 @@ export default class OAuth2Form
             isLoading: true
         }
         this.onError = this.onError.bind(this)
-        this.finishedProcessing = this.finishedProcessing.bind(this)
         this.onConsent = this.onConsent.bind(this)
         this.onGoBack = this.onGoBack.bind(this)
         this.onDeny = this.onDeny.bind(this)
@@ -68,15 +67,9 @@ export default class OAuth2Form
       }
     }
 
-    finishedProcessing = () => {
-        this.setState(
-            {
-                isLoading: false
-            })
-    }
-
     onError = (error: any) => {
         debugger
+        console.error(error)
         this.setState({
             error,
             isLoading: false
@@ -96,7 +89,6 @@ export default class OAuth2Form
             const state = this.getURLParam('state')
             window.location.replace(`${redirectUri}?state=${state}&code=${accessCode.access_code}`)
         }).catch((_err) => {
-            console.log('unable to consent to oauth request', _err)
             this.onError(_err)
         })
     }
@@ -122,7 +114,6 @@ export default class OAuth2Form
 
     componentDidUpdate() {
         this.getUserProfile()
-        this.getOAuth2RequestDescription()
         this.getOauthClientInfo()
     }
 
@@ -139,7 +130,6 @@ export default class OAuth2Form
                     isLoading: false
                 })
             }).catch((_err) => {
-                console.log('oauth request could not be verified ', _err)
                 this.onError(_err)
             })
         }
@@ -161,12 +151,19 @@ export default class OAuth2Form
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
 
             const clientId = this.getURLParam('client_id')
+            if (!clientId) {
+                this.onError(new Error('Synapse OAuth client_id is required'))
+                return
+            }
             SynapseClient.getOAuth2Client(clientId).then((oauthClientInfo: OAuthClientPublic) => {
+                if (oauthClientInfo.verified) {
+                    this.getOAuth2RequestDescription()
+                }
                 this.setState({
-                    oauthClientInfo
+                    oauthClientInfo,
+                    isLoading: false
                 })
             }).catch((_err) => {
-                console.log('could not get oauth client info', _err)
                 this.onError(_err)
             })
         }
@@ -184,7 +181,6 @@ export default class OAuth2Form
                     token: newToken,
                 })
             }).catch((_err) => {
-                console.log('user profile could not be fetched ', _err)
                 this.onError(_err)
             })
         }
@@ -230,7 +226,6 @@ export default class OAuth2Form
                     !this.state.error &&
                     this.state.oauthClientInfo &&
                     !this.state.oauthClientInfo.verified &&
-                    this.state.oidcRequestDescription &&
                     !this.state.isLoading &&
                     <React.Fragment>
                         <div className="margin-top-30">
@@ -304,7 +299,7 @@ export default class OAuth2Form
                 {
                     this.state.error &&
                     <div className="alert alert-danger">
-                        Error: {this.state.error.name || this.state.error.reason}
+                        {this.state.error.name || 'Error'} : {this.state.error.reason}{this.state.error.message}
                     </div>
                 }
             </div>
