@@ -53,6 +53,7 @@ export default class OAuth2Form
         this.getOauthClientInfo = this.getOauthClientInfo.bind(this)
         this.getUserProfile = this.getUserProfile.bind(this)
         this.getURLParam = this.getURLParam.bind(this)
+        this.getSession = this.getSession.bind(this)
     }
 
     sendGTagEvent = (event: string) => {
@@ -166,6 +167,18 @@ export default class OAuth2Form
             }).catch((_err) => {
                 this.onError(_err)
             })
+        }
+    }
+
+    getSession = async () => {
+        try {
+            const token = await SynapseClient.getSessionTokenFromCookie()
+            this.setState({ token })
+        } catch (e) {
+            console.error('Error on getSession: ', e)
+            // intentionally calling sign out because there token could be stale so we want
+            // the stored session to be cleared out.
+            SynapseClient.signOut(() => {})
         }
     }
 
@@ -289,9 +302,9 @@ export default class OAuth2Form
                     <div className="margin-top-30">
                         <div className="max-width-460 center-in-div light-border padding-30">
                             <Login
-                                token={this.state.token}
                                 theme={'light'}
                                 icon={true}
+                                sessionCallback={this.getSession}
                             />
                         </div>
                     </div>
