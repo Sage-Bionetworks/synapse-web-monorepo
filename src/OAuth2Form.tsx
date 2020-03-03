@@ -143,10 +143,7 @@ export default class OAuth2Form
             claims: this.getURLParam('claims')!,
             responseType: 'code',
             redirectUri: this.getURLParam('redirect_uri')!,
-        }
-        let nonce = this.getURLParam('nonce')
-        if (nonce != null) {
-            authRequest.nonce = nonce
+            nonce: this.getURLParam('nonce')
         }
         return authRequest
     }
@@ -203,13 +200,13 @@ export default class OAuth2Form
             })
         }
     }
-    getURLParam = (keyName: string): string | null => {
-        let currentUrl: URL | null | string = new URL(window.location.href)
+    getURLParam = (keyName: string): string | undefined => {
+        let currentUrl: URL | undefined | string = new URL(window.location.href)
         // in test environment the searchParams isn't defined
         const { searchParams } = currentUrl
-        let paramValue: string | null = null
-        if (searchParams) {
-            paramValue = searchParams.get(keyName)
+        let paramValue: string | undefined = undefined
+        if (searchParams && searchParams.get(keyName)) {
+            paramValue = searchParams.get(keyName)!
         }
         return paramValue
     }
