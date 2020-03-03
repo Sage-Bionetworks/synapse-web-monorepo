@@ -2,11 +2,11 @@ import * as React from 'react'
 import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import Login from 'synapse-react-client/dist/containers/Login'
 import { TokenContext } from './AppInitializer'
-import { UserProfile } from 'synapse-react-client/dist/utils/jsonResponses/UserProfile'
-import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/jsonResponses/OIDCAuthorizationRequest'
-import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/jsonResponses/OIDCAuthorizationRequestDescription'
-import { OAuthClientPublic } from 'synapse-react-client/dist/utils/jsonResponses/OAuthClientPublic'
-import { AccessCodeResponse } from 'synapse-react-client/dist/utils/jsonResponses/AccessCodeResponse'
+import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes/UserProfile'
+import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest'
+import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequestDescription'
+import { OAuthClientPublic } from 'synapse-react-client/dist/utils/synapseTypes/OAuthClientPublic'
+import { AccessCodeResponse } from 'synapse-react-client/dist/utils/synapseTypes/AccessCodeResponse'
 import UserCard from 'synapse-react-client/dist/containers/UserCard'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -67,7 +67,7 @@ export default class OAuth2Form
           })
       }
     }
-
+    
     onError = (error: any) => {
         debugger
         console.error(error)
@@ -104,7 +104,7 @@ export default class OAuth2Form
         if (this.state.oauthClientInfo && this.state.oauthClientInfo.client_uri) {
             redirect = this.state.oauthClientInfo.client_uri
         } else {
-            redirect = this.getURLParam('redirect_uri')
+            redirect = this.getURLParam('redirect_uri')!
         }
         window.location.replace(redirect)
     }
@@ -137,13 +137,15 @@ export default class OAuth2Form
     }
 
     getOIDCAuthorizationRequestFromSearchParams(): OIDCAuthorizationRequest {
-        return {
-            clientId: this.getURLParam('client_id'),
-            scope: this.getURLParam('scope'),
-            claims: this.getURLParam('claims'),
+        let authRequest:OIDCAuthorizationRequest = {
+            clientId: this.getURLParam('client_id')!,
+            scope: this.getURLParam('scope')!,
+            claims: this.getURLParam('claims')!,
             responseType: 'code',
-            redirectUri: this.getURLParam('redirect_uri')
+            redirectUri: this.getURLParam('redirect_uri')!,
+            nonce: this.getURLParam('nonce')
         }
+        return authRequest
     }
 
     getOauthClientInfo() {
@@ -198,15 +200,15 @@ export default class OAuth2Form
             })
         }
     }
-    getURLParam = (keyName: string): string => {
-        let currentUrl: URL | null | string = new URL(window.location.href)
+    getURLParam = (keyName: string): string | undefined => {
+        let currentUrl: URL | undefined | string = new URL(window.location.href)
         // in test environment the searchParams isn't defined
         const { searchParams } = currentUrl
-        let paramValue: string | null = null
-        if (searchParams) {
-            paramValue = searchParams.get(keyName)
+        let paramValue: string | undefined = undefined
+        if (searchParams && searchParams.get(keyName)) {
+            paramValue = searchParams.get(keyName)!
         }
-        return paramValue ? paramValue : ''
+        return paramValue
     }
 
     /**
