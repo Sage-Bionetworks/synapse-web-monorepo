@@ -67,7 +67,7 @@ export default class OAuth2Form
           })
       }
     }
-
+    
     onError = (error: any) => {
         debugger
         console.error(error)
@@ -104,7 +104,7 @@ export default class OAuth2Form
         if (this.state.oauthClientInfo && this.state.oauthClientInfo.client_uri) {
             redirect = this.state.oauthClientInfo.client_uri
         } else {
-            redirect = this.getURLParam('redirect_uri')
+            redirect = this.getURLParam('redirect_uri')!
         }
         window.location.replace(redirect)
     }
@@ -137,14 +137,18 @@ export default class OAuth2Form
     }
 
     getOIDCAuthorizationRequestFromSearchParams(): OIDCAuthorizationRequest {
-        return {
-            clientId: this.getURLParam('client_id'),
-            scope: this.getURLParam('scope'),
-            claims: this.getURLParam('claims'),
+        let authRequest:OIDCAuthorizationRequest = {
+            clientId: this.getURLParam('client_id')!,
+            scope: this.getURLParam('scope')!,
+            claims: this.getURLParam('claims')!,
             responseType: 'code',
-            redirectUri: this.getURLParam('redirect_uri'),
-            nonce: this.getURLParam('nonce')
+            redirectUri: this.getURLParam('redirect_uri')!,
         }
+        let nonce = this.getURLParam('nonce')
+        if (nonce != null) {
+            authRequest.nonce = nonce
+        }
+        return authRequest
     }
 
     getOauthClientInfo() {
@@ -199,7 +203,7 @@ export default class OAuth2Form
             })
         }
     }
-    getURLParam = (keyName: string): string => {
+    getURLParam = (keyName: string): string | null => {
         let currentUrl: URL | null | string = new URL(window.location.href)
         // in test environment the searchParams isn't defined
         const { searchParams } = currentUrl
@@ -207,7 +211,7 @@ export default class OAuth2Form
         if (searchParams) {
             paramValue = searchParams.get(keyName)
         }
-        return paramValue ? paramValue : ''
+        return paramValue
     }
 
     /**
