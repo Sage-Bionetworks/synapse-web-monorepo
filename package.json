@@ -15,13 +15,35 @@
     "react-dom": "^16.12.0",
     "react-jsonschema-form": "^1.6.1",
     "react-scripts": "3.4.0",
-    "synapse-react-client": "1.13.5",
+    "synapse-react-client": "1.13.8",
     "typescript": "3.7.5"
+  },
+  "devDependencies": {
+    "@types/katex": "^0.5.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.3.1",
+    "isomorphic-fetch": "^2.2.1",
+    "katex": "^0.10.0-rc.1",
+    "markdown-it": "^8.4.2",
+    "markdown-it-br": "^1.0.0",
+    "markdown-it-center-text": "^1.0.4",
+    "markdown-it-container": "^2.0.0",
+    "markdown-it-emphasis-alt": "^1.0.8",
+    "markdown-it-inline-comments": "^1.0.1",
+    "markdown-it-strikethrough-alt": "^1.0.0",
+    "markdown-it-sub-alt": "^1.0.0",
+    "markdown-it-sup-alt": "^1.0.2",
+    "markdown-it-synapse": "^1.1.1",
+    "markdown-it-synapse-heading": "^1.0.1",
+    "markdown-it-synapse-math": "^3.0.4",
+    "markdown-it-synapse-table": "^1.0.6",
+    "node": "^12.3.1",
+    "sanitize-html": "^1.18.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(synapse-react-client|lodash-es|jest*)/)\" , --env=jsdom --setupFiles ./src/setupTests.ts",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

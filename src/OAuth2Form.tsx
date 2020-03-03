@@ -2,11 +2,11 @@ import * as React from 'react'
 import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import Login from 'synapse-react-client/dist/containers/Login'
 import { TokenContext } from './AppInitializer'
-import { UserProfile } from 'synapse-react-client/dist/utils/jsonResponses/UserProfile'
-import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/jsonResponses/OIDCAuthorizationRequest'
-import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/jsonResponses/OIDCAuthorizationRequestDescription'
-import { OAuthClientPublic } from 'synapse-react-client/dist/utils/jsonResponses/OAuthClientPublic'
-import { AccessCodeResponse } from 'synapse-react-client/dist/utils/jsonResponses/AccessCodeResponse'
+import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes/UserProfile'
+import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest'
+import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequestDescription'
+import { OAuthClientPublic } from 'synapse-react-client/dist/utils/synapseTypes/OAuthClientPublic'
+import { AccessCodeResponse } from 'synapse-react-client/dist/utils/synapseTypes/AccessCodeResponse'
 import UserCard from 'synapse-react-client/dist/containers/UserCard'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -142,7 +142,8 @@ export default class OAuth2Form
             scope: this.getURLParam('scope'),
             claims: this.getURLParam('claims'),
             responseType: 'code',
-            redirectUri: this.getURLParam('redirect_uri')
+            redirectUri: this.getURLParam('redirect_uri'),
+            nonce: this.getURLParam('nonce')
         }
     }
 
