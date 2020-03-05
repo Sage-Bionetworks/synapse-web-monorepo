@@ -13,6 +13,7 @@ import {
   faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { OAuthConsentGrantedResponse } from 'synapse-react-client/dist/utils/synapseTypes'
 
 // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
 (window as any).SRC = {
@@ -28,7 +29,8 @@ type OAuth2FormState = {
     token?: string,
     profile?: UserProfile,
     oidcRequestDescription?: OIDCAuthorizationRequestDescription,
-    oauthClientInfo?: OAuthClientPublic
+    oauthClientInfo?: OAuthClientPublic,
+    hasCheckedPreviousConsent?: boolean,
     error?: any,
     isLoading?: boolean,
 }
@@ -49,6 +51,7 @@ export default class OAuth2Form
         this.onGoBack = this.onGoBack.bind(this)
         this.onDeny = this.onDeny.bind(this)
         this.getOAuth2RequestDescription = this.getOAuth2RequestDescription.bind(this)
+        this.getHasAlreadyConsented = this.getHasAlreadyConsented.bind(this)
         this.getOIDCAuthorizationRequestFromSearchParams = this.getOIDCAuthorizationRequestFromSearchParams.bind(this)
         this.getOauthClientInfo = this.getOauthClientInfo.bind(this)
         this.getUserProfile = this.getUserProfile.bind(this)
@@ -116,6 +119,28 @@ export default class OAuth2Form
     componentDidUpdate() {
         this.getUserProfile()
         this.getOauthClientInfo()
+        this.getHasAlreadyConsented()
+    }
+    
+    // if user has already consented to this client request, no need to ask again
+    getHasAlreadyConsented() {
+        if (!this.state.hasCheckedPreviousConsent && this.state.token && !this.state.error) {
+            const code = this.getURLParam('code')
+            if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
+            
+            let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
+            SynapseClient.hasUserAuthorizedOAuthClient(request, this.state.token).then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
+                if (consentGrantedResponse.granted) {
+                    // auto-consent!
+                    this.onConsent()
+                }
+                this.setState({
+                    hasCheckedPreviousConsent: consentGrantedResponse.granted
+                })
+            }).catch((_err) => {
+                this.onError(_err)
+            })
+        }
     }
 
     getOAuth2RequestDescription() {
@@ -266,6 +291,7 @@ export default class OAuth2Form
                     this.state.oauthClientInfo.verified &&
                     this.state.oidcRequestDescription &&
                     !this.state.isLoading &&
+                    this.state.profile &&
                     <React.Fragment>
                         <div className="margin-top-30">
                             <div className="max-width-460 center-in-div light-border padding-30">
