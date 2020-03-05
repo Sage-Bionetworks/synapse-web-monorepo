@@ -149,7 +149,7 @@ export default class OAuth2Form
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
 
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-            SynapseClient.getOAuth2RequestDescription(request, this.state.token).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
+            SynapseClient.getOAuth2RequestDescription(request, undefined).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
                 this.sendGTagEvent('SynapseOAuthClientRequestDescriptionLoaded')
                 this.setState({
                     oidcRequestDescription,
