@@ -135,7 +135,7 @@ export default class OAuth2Form
                     this.onConsent()
                 }
                 this.setState({
-                    hasCheckedPreviousConsent: consentGrantedResponse.granted
+                    hasCheckedPreviousConsent: true
                 })
             }).catch((_err) => {
                 this.onError(_err)
