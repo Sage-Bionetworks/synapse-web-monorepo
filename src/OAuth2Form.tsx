@@ -291,7 +291,6 @@ export default class OAuth2Form
                     this.state.oauthClientInfo.verified &&
                     this.state.oidcRequestDescription &&
                     !this.state.isLoading &&
-                    this.state.profile &&
                     <React.Fragment>
                         <div className="margin-top-30">
                             <div className="max-width-460 center-in-div light-border padding-30">
