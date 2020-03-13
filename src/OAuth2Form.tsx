@@ -90,8 +90,11 @@ export default class OAuth2Form
         SynapseClient.consentToOAuth2Request(request, this.state.token).then((accessCode: AccessCodeResponse) => {
             // done!  redirect with access code.
             const redirectUri = this.getURLParam('redirect_uri')
-            const state = this.getURLParam('state')
-            window.location.replace(`${redirectUri}?state=${state}&code=${accessCode.access_code}`)
+            let state = this.getURLParam('state')
+            if (state) {
+                state = encodeURIComponent(state)
+            }
+            window.location.replace(`${redirectUri}?state=${state}&code=${encodeURIComponent(accessCode.access_code)}`)
         }).catch((_err) => {
             this.onError(_err)
         })
