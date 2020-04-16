@@ -301,7 +301,7 @@ export default class OAuth2Form
                                     userProfile={this.state.profile}
                                     size={SynapseConstants.SMALL_USER_CARD}
                                     />
-                                <h4><strong>{this.state.oauthClientInfo.client_name}</strong> would like to:</h4>
+                                <h4><strong>{this.state.oauthClientInfo.client_name}</strong> requests permission:</h4>
                                 {scopes}
                                 <div className="margin-top-20">
                                     <p>By clicking "Allow", you allow this app to use your information in accordance with their <a href={this.state.oauthClientInfo.tos_uri} target="_blank" rel="noopener noreferrer">terms of service</a> and <a href={this.state.oauthClientInfo.policy_uri} target="_blank" rel="noopener noreferrer">privacy policy</a>.
