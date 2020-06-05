@@ -88,13 +88,20 @@ export default class OAuth2Form
         this.sendGTagEvent('UserConsented')
         let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
         SynapseClient.consentToOAuth2Request(request, this.state.token).then((accessCode: AccessCodeResponse) => {
+            if (!accessCode || !accessCode.access_code) {
+                this.onError('Something went wrong - the access code is missing from the Synapse call.')
+                return
+            }
             // done!  redirect with access code.
             const redirectUri = this.getURLParam('redirect_uri')
             let state = this.getURLParam('state')
+            let stateParam = ''
             if (state) {
                 state = encodeURIComponent(state)
+                stateParam = `state=${state}&`
             }
-            window.location.replace(`${redirectUri}?state=${state}&code=${encodeURIComponent(accessCode.access_code)}`)
+            
+            window.location.replace(`${redirectUri}?${stateParam}code=${encodeURIComponent(accessCode.access_code)}`)
         }).catch((_err) => {
             this.onError(_err)
         })
@@ -152,7 +159,7 @@ export default class OAuth2Form
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
 
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-            SynapseClient.getOAuth2RequestDescription(request, undefined).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
+            SynapseClient.getOAuth2RequestDescription(request).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
                 this.sendGTagEvent('SynapseOAuthClientRequestDescriptionLoaded')
                 this.setState({
                     oidcRequestDescription,
