@@ -112,6 +112,12 @@ testing standard https://www.google.com auto-link
 <p>testing standard <a href="https://www.google.com" target="_blank" ref="noopener noreferrer">https://www.google.com</a> auto-link</p>
 .
 
+.
+testing internal link [Explore/Data](/Explore/Data)
+.
+<p>testing internal link <a href="/Explore/Data">Explore/Data</a></p>
+.
+
 coverage
 .
 *~f
