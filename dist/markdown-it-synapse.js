@@ -1,4 +1,4 @@
-/*! markdown-it-synapse 1.1.6 https://github.com/Sage-Bionetworks/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+/*! markdown-it-synapse 1.1.7 https://github.com/Sage-Bionetworks/markdown-it-synapse @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitSynapse = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 // Process ${widgetname?param1=1&param2=2}
 
 'use strict';
@@ -8,6 +8,8 @@ var UNESCAPE_RE = /\\([ \\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g;
 var REFERENCE_START = 'reference?';
 var BOOKMARK_START = 'bookmark?';
 var synapseRE = new RegExp('^syn([0-9]+[.]?[0-9]*)+');
+// match url that starts with a leading slash / and is followed by an alphanumeric character
+var internalURL = new RegExp(/^\/\w/);
 var urlWithoutProtocolRE = new RegExp('^([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\w \\.-]*)*\\/?.*$');
 var doiRE = new RegExp('^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$');
 var gridLayoutColumnParamRE = new RegExp('^\\s*(width[=]{1})?\\s*(.*)[}]{1}\\s*$');
@@ -78,6 +80,12 @@ function startsWith(src, searchString, position) {
   return src.substr(position, searchString.length) === searchString;
 }
 
+function isInternalLink(src) {
+  if (src.length > 2) {
+    return internalURL.test(src.substr(0, 2));
+  }
+  return false;
+}
 
 function synapse(state, silent) {
   var found,
@@ -272,9 +280,11 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
       // If you are sure other plugins can't add `target` - drop check below
       var aIndex = tokens[idx].attrIndex('target');
       var hrefIndex = tokens[idx].attrIndex('href');
+      var isInternalSynapseLink = startsWith(tokens[idx].attrs[hrefIndex][1], '#!');
+      var isInternalPageLink = isInternalLink(tokens[idx].attrs[hrefIndex][1]);
       if (aIndex < 0) {
-        if (hrefIndex < 0
-          || !startsWith(tokens[idx].attrs[hrefIndex][1], '#!')) {
+        // if it has no href OR it is neither a synapse link or internal page link
+        if (hrefIndex < 0 || !(isInternalPageLink || isInternalSynapseLink)) {
           tokens[idx].attrPush([ 'target', '_blank' ]); // add new attribute
           tokens[idx].attrPush([ 'ref', 'noopener noreferrer' ]); // add new attribute
         }
