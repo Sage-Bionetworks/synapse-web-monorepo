@@ -175,12 +175,11 @@ export default class OAuth2Form
         let authRequest:OIDCAuthorizationRequest = {
             clientId: this.getURLParam('client_id')!,
             scope: this.getURLParam('scope')!,
-            claims: this.getURLParam('claims')!,
+            claims: JSON.parse(this.getURLParam('claims')!),
             responseType: 'code',
             redirectUri: this.getURLParam('redirect_uri')!,
             nonce: this.getURLParam('nonce')
         }
-        authRequest.claims = JSON.parse(authRequest.claims);
         return authRequest
     }
 
