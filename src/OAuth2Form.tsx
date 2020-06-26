@@ -180,6 +180,7 @@ export default class OAuth2Form
             redirectUri: this.getURLParam('redirect_uri')!,
             nonce: this.getURLParam('nonce')
         }
+        authRequest.claims = JSON.parse(authRequest.claims);
         return authRequest
     }
 
