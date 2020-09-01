@@ -184,6 +184,7 @@ export default class OAuth2Form
         let authRequest:OIDCAuthorizationRequest = {
             clientId: this.getURLParam('client_id')!,
             scope: this.getURLParam('scope')!,
+            // @ts-ignore
             responseType: this.getURLParam('response_type')!,
             redirectUri: this.getURLParam('redirect_uri')!,
             nonce: this.getURLParam('nonce')
