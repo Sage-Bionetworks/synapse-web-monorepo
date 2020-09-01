@@ -140,9 +140,17 @@ export default class OAuth2Form
             
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
             SynapseClient.hasUserAuthorizedOAuthClient(request, this.state.token).then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
+                const prompt = this.getURLParam('prompt')
                 if (consentGrantedResponse.granted) {
-                    // auto-consent!
-                    this.onConsent()
+                    // SWC-5285: before auto-consenting, make sure we're allowed to auto-consent.  
+                    // Only allow if prompt is undefined or set to none.
+                    if (!prompt || prompt === 'none') {
+                        // auto-consent!
+                        this.onConsent()
+                    } //else if prompt is defined and another value ('login', 'consent', or 'select_account') then always prompt!
+                } else if (prompt && prompt === 'none') {
+                    // granted === false and prompt === none
+                    this.onError(new Error('Current user has not previously granted permission, and prompt is set to "none"'))
                 }
                 this.setState({
                     hasCheckedPreviousConsent: true
@@ -172,16 +180,17 @@ export default class OAuth2Form
     }
 
     getOIDCAuthorizationRequestFromSearchParams(): OIDCAuthorizationRequest {
+        const claimsString: string = this.getURLParam('claims')!
         let authRequest:OIDCAuthorizationRequest = {
             clientId: this.getURLParam('client_id')!,
             scope: this.getURLParam('scope')!,
-            claims: this.getURLParam('claims')!,
-            responseType: 'code',
+            // @ts-ignore
+            responseType: this.getURLParam('response_type')!,
             redirectUri: this.getURLParam('redirect_uri')!,
             nonce: this.getURLParam('nonce')
         }
-        if (authRequest.claims) {
-            authRequest.claims = JSON.parse(authRequest.claims);
+        if (claimsString) {
+            authRequest.claims = JSON.parse(claimsString);
         }
         return authRequest;
     }
