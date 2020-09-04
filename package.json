@@ -16,7 +16,7 @@
     "react-jsonschema-form": "^1.6.1",
     "react-scripts": "3.4.0",
     "react-transition-group": "2.6.0",
-    "synapse-react-client": "1.15.14",
+    "synapse-react-client": "1.15.16",
     "typescript": "3.7.5"
   },
   "devDependencies": {

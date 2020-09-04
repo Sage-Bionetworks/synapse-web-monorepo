@@ -50,6 +50,7 @@ export default class OAuth2Form
         this.onConsent = this.onConsent.bind(this)
         this.onGoBack = this.onGoBack.bind(this)
         this.onDeny = this.onDeny.bind(this)
+        this.getStateParam = this.getStateParam.bind(this)
         this.getOAuth2RequestDescription = this.getOAuth2RequestDescription.bind(this)
         this.getHasAlreadyConsented = this.getHasAlreadyConsented.bind(this)
         this.getOIDCAuthorizationRequestFromSearchParams = this.getOIDCAuthorizationRequestFromSearchParams.bind(this)
@@ -74,12 +75,26 @@ export default class OAuth2Form
     onError = (error: any) => {
         debugger
         console.error(error)
+        const redirectUri = this.getURLParam('redirect_uri')
+        if (error["error"] && redirectUri) {
+            // we have a redirectUri and an error code from the backend (and possibly an error description!).  Redirect.
+            const errorDescription = error["error_description"] ? `&error_description=${encodeURIComponent(error["error_description"])}` : ''
+            window.location.replace(`${redirectUri}?${this.getStateParam()}error=${encodeURIComponent(error["error"])}${errorDescription}`)
+        }
         this.setState({
             error,
             isLoading: false
         })
     }
-
+    getStateParam = () => {
+        let state = this.getURLParam('state')
+        let stateParam = ''
+        if (state) {
+            state = encodeURIComponent(state)
+            stateParam = `state=${state}&`
+        }
+        return stateParam
+    }
     onConsent = () => {
         this.setState(
             {
@@ -93,15 +108,8 @@ export default class OAuth2Form
                 return
             }
             // done!  redirect with access code.
-            const redirectUri = this.getURLParam('redirect_uri')
-            let state = this.getURLParam('state')
-            let stateParam = ''
-            if (state) {
-                state = encodeURIComponent(state)
-                stateParam = `state=${state}&`
-            }
-            
-            window.location.replace(`${redirectUri}?${stateParam}code=${encodeURIComponent(accessCode.access_code)}`)
+            const redirectUri = this.getURLParam('redirect_uri')            
+            window.location.replace(`${redirectUri}?${this.getStateParam()}code=${encodeURIComponent(accessCode.access_code)}`)
         }).catch((_err) => {
             this.onError(_err)
         })
@@ -144,13 +152,13 @@ export default class OAuth2Form
                 if (consentGrantedResponse.granted) {
                     // SWC-5285: before auto-consenting, make sure we're allowed to auto-consent.  
                     // Only allow if prompt is undefined or set to none.
-                    if (!prompt || prompt === 'none') {
+                    if (!prompt || prompt !== 'consent') {
                         // auto-consent!
                         this.onConsent()
                     } //else if prompt is defined and another value ('login', 'consent', or 'select_account') then always prompt!
                 } else if (prompt && prompt === 'none') {
                     // granted === false and prompt === none
-                    this.onError(new Error('Current user has not previously granted permission, and prompt is set to "none"'))
+                    this.onError({error: 'consent_required', reason: 'Current user has not previously granted permission, and prompt was set to "none"'})
                 }
                 this.setState({
                     hasCheckedPreviousConsent: true
@@ -184,7 +192,6 @@ export default class OAuth2Form
         let authRequest:OIDCAuthorizationRequest = {
             clientId: this.getURLParam('client_id')!,
             scope: this.getURLParam('scope')!,
-            // @ts-ignore
             responseType: this.getURLParam('response_type')!,
             redirectUri: this.getURLParam('redirect_uri')!,
             nonce: this.getURLParam('nonce')
@@ -221,8 +228,14 @@ export default class OAuth2Form
 
     getSession = async () => {
         try {
-            const token = await SynapseClient.getSessionTokenFromCookie()
-            this.setState({ token })
+            let token = await SynapseClient.getSessionTokenFromCookie()
+            const prompt = this.getURLParam('prompt')
+            if (!token && prompt === 'none') {
+                // must show login, so send an error.
+                this.onError({error: 'login_required', reason: 'User is not logged in, and prompt was set to "none"'})
+            } else {
+                this.setState({ token })
+            }
         } catch (e) {
             console.error('Error on getSession: ', e)
             // intentionally calling sign out because there token could be stale so we want
@@ -248,12 +261,10 @@ export default class OAuth2Form
         }
     }
     getURLParam = (keyName: string): string | undefined => {
-        let currentUrl: URL | undefined | string = new URL(window.location.href)
-        // in test environment the searchParams isn't defined
-        const { searchParams } = currentUrl
+        const urlSearchParams = new URLSearchParams(window.location.search)
         let paramValue: string | undefined = undefined
-        if (searchParams && searchParams.get(keyName)) {
-            paramValue = searchParams.get(keyName)!
+        if (urlSearchParams && urlSearchParams.get(keyName)) {
+            paramValue = urlSearchParams.get(keyName)!
         }
         return paramValue
     }
