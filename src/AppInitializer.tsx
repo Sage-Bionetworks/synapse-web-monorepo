@@ -1,9 +1,11 @@
 import * as React from 'react'
 import { SynapseClient } from 'synapse-react-client'
+import { handleErrorRedirect } from './URLUtils'
 export type AppInitializerToken = {
   token: string
 }
 export const TokenContext = React.createContext('')
+
 
 class AppInitializer extends React.Component<{},AppInitializerToken> {
   constructor(props: any) {
@@ -27,14 +29,16 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
       SynapseClient.getSessionTokenFromCookie().then(
         (sessionToken: string|null) => {
           if (sessionToken) {
-            
             return SynapseClient.putRefreshSessionToken(sessionToken).then(
               // backend doesn't return a response for this call, its empty
               (_response) => {
                 this.setState({ token: sessionToken })
               }
             )
-          }
+          } else if (prompt === 'none') {
+              // not logged in, and prompt is "none".
+              handleErrorRedirect({error: 'login_required', error_description: 'User is not logged in, and prompt was set to "none"'})
+          } 
         }).catch((_err) => {
           console.log('no token from cookie could be fetched ', _err)
         })
