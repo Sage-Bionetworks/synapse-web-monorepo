@@ -14,6 +14,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { OAuthConsentGrantedResponse } from 'synapse-react-client/dist/utils/synapseTypes'
+import { getURLParam, getStateParam, handleErrorRedirect } from './URLUtils'
 
 // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
 (window as any).SRC = {
@@ -55,7 +56,6 @@ export default class OAuth2Form
         this.getOIDCAuthorizationRequestFromSearchParams = this.getOIDCAuthorizationRequestFromSearchParams.bind(this)
         this.getOauthClientInfo = this.getOauthClientInfo.bind(this)
         this.getUserProfile = this.getUserProfile.bind(this)
-        this.getURLParam = this.getURLParam.bind(this)
         this.getSession = this.getSession.bind(this)
     }
 
@@ -73,13 +73,12 @@ export default class OAuth2Form
     
     onError = (error: any) => {
         debugger
-        console.error(error)
+        handleErrorRedirect(error)
         this.setState({
             error,
             isLoading: false
         })
     }
-
     onConsent = () => {
         this.setState(
             {
@@ -93,15 +92,8 @@ export default class OAuth2Form
                 return
             }
             // done!  redirect with access code.
-            const redirectUri = this.getURLParam('redirect_uri')
-            let state = this.getURLParam('state')
-            let stateParam = ''
-            if (state) {
-                state = encodeURIComponent(state)
-                stateParam = `state=${state}&`
-            }
-            
-            window.location.replace(`${redirectUri}?${stateParam}code=${encodeURIComponent(accessCode.access_code)}`)
+            const redirectUri = getURLParam('redirect_uri')            
+            window.location.replace(`${redirectUri}?${getStateParam()}code=${encodeURIComponent(accessCode.access_code)}`)
         }).catch((_err) => {
             this.onError(_err)
         })
@@ -117,14 +109,14 @@ export default class OAuth2Form
         if (this.state.oauthClientInfo && this.state.oauthClientInfo.client_uri) {
             redirect = this.state.oauthClientInfo.client_uri
         } else {
-            redirect = this.getURLParam('redirect_uri')!
+            redirect = getURLParam('redirect_uri')!
         }
         window.location.replace(redirect)
     }
 
     componentDidMount() {
         this.componentDidUpdate()
-    }
+     }
 
     componentDidUpdate() {
         this.getUserProfile()
@@ -135,22 +127,22 @@ export default class OAuth2Form
     // if user has already consented to this client request, no need to ask again
     getHasAlreadyConsented() {
         if (!this.state.hasCheckedPreviousConsent && this.state.token && !this.state.error) {
-            const code = this.getURLParam('code')
+            const code = getURLParam('code')
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
             
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
             SynapseClient.hasUserAuthorizedOAuthClient(request, this.state.token).then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
-                const prompt = this.getURLParam('prompt')
+                const prompt = getURLParam('prompt')
                 if (consentGrantedResponse.granted) {
                     // SWC-5285: before auto-consenting, make sure we're allowed to auto-consent.  
                     // Only allow if prompt is undefined or set to none.
-                    if (!prompt || prompt === 'none') {
+                    if (!prompt || prompt !== 'consent') {
                         // auto-consent!
                         this.onConsent()
                     } //else if prompt is defined and another value ('login', 'consent', or 'select_account') then always prompt!
                 } else if (prompt && prompt === 'none') {
                     // granted === false and prompt === none
-                    this.onError(new Error('Current user has not previously granted permission, and prompt is set to "none"'))
+                    this.onError({error: 'consent_required', reason: 'Current user has not previously granted permission, and prompt was set to "none"'})
                 }
                 this.setState({
                     hasCheckedPreviousConsent: true
@@ -163,7 +155,7 @@ export default class OAuth2Form
 
     getOAuth2RequestDescription() {
         if (!this.state.oidcRequestDescription && !this.state.error) {
-            const code = this.getURLParam('code')
+            const code = getURLParam('code')
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
 
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
@@ -180,14 +172,13 @@ export default class OAuth2Form
     }
 
     getOIDCAuthorizationRequestFromSearchParams(): OIDCAuthorizationRequest {
-        const claimsString: string = this.getURLParam('claims')!
+        const claimsString: string = getURLParam('claims')!
         let authRequest:OIDCAuthorizationRequest = {
-            clientId: this.getURLParam('client_id')!,
-            scope: this.getURLParam('scope')!,
-            // @ts-ignore
-            responseType: this.getURLParam('response_type')!,
-            redirectUri: this.getURLParam('redirect_uri')!,
-            nonce: this.getURLParam('nonce')
+            clientId: getURLParam('client_id')!,
+            scope: getURLParam('scope')!,
+            responseType: getURLParam('response_type')!,
+            redirectUri: getURLParam('redirect_uri')!,
+            nonce: getURLParam('nonce')
         }
         if (claimsString) {
             authRequest.claims = JSON.parse(claimsString);
@@ -197,10 +188,10 @@ export default class OAuth2Form
 
     getOauthClientInfo() {
         if (!this.state.oauthClientInfo && !this.state.error) {
-            const code = this.getURLParam('code')
+            const code = getURLParam('code')
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
 
-            const clientId = this.getURLParam('client_id')
+            const clientId = getURLParam('client_id')
             if (!clientId) {
                 this.onError(new Error('Synapse OAuth client_id is required'))
                 return
@@ -221,7 +212,7 @@ export default class OAuth2Form
 
     getSession = async () => {
         try {
-            const token = await SynapseClient.getSessionTokenFromCookie()
+            let token = await SynapseClient.getSessionTokenFromCookie()
             this.setState({ token })
         } catch (e) {
             console.error('Error on getSession: ', e)
@@ -246,16 +237,6 @@ export default class OAuth2Form
                 this.onError(_err)
             })
         }
-    }
-    getURLParam = (keyName: string): string | undefined => {
-        let currentUrl: URL | undefined | string = new URL(window.location.href)
-        // in test environment the searchParams isn't defined
-        const { searchParams } = currentUrl
-        let paramValue: string | undefined = undefined
-        if (searchParams && searchParams.get(keyName)) {
-            paramValue = searchParams.get(keyName)!
-        }
-        return paramValue
     }
 
     /**
