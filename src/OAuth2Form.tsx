@@ -17,10 +17,13 @@ import { OAuthConsentGrantedResponse } from 'synapse-react-client/dist/utils/syn
 import { getURLParam, getStateParam, handleErrorRedirect } from './URLUtils'
 
 // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
+
+const isStaging:boolean = window.location.hostname.includes('staging');
+
 (window as any).SRC = {
     OVERRIDE_ENDPOINT_CONFIG: {
-        REPO: 'https://repo-prod.prod.sagebase.org/',
-        PORTAL: 'https://www.synapse.org/',
+        REPO: isStaging ? 'https://repo-staging.prod.sagebase.org/' : 'https://repo-prod.prod.sagebase.org/',
+        PORTAL: isStaging ? 'https://staging.synapse.org/' : 'https://www.synapse.org/',
     }
 }
 
