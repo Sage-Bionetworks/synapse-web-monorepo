@@ -12,7 +12,7 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
     super(props)
     this.state = {
       token: ''
-    }
+    }    
   }
 
   componentDidMount() {
@@ -24,7 +24,7 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
         urlSearchParams.set('prompt', '')
         // replace query params and refresh
         window.location.replace(`${window.location.href.slice(0, window.location.href.indexOf('?'))}?${urlSearchParams.toString()}`)
-      })  
+      })
     } else {
       SynapseClient.getSessionTokenFromCookie().then(
         (sessionToken: string|null) => {
@@ -35,13 +35,14 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
                 this.setState({ token: sessionToken })
               }
             )
-          } else if (prompt === 'none') {
-              // not logged in, and prompt is "none".
-              handleErrorRedirect({error: 'login_required', error_description: 'User is not logged in, and prompt was set to "none"'})
-          } 
+          }
         }).catch((_err) => {
           console.log('no token from cookie could be fetched ', _err)
-        })
+          if (prompt === 'none') {
+            // not logged in, and prompt is "none".
+            handleErrorRedirect({error: 'login_required', error_description: 'User is not logged in, and prompt was set to "none"'})
+          }
+        })        
     }
     // on first time, also check for the SSO code
     SynapseClient.detectSSOCode()
