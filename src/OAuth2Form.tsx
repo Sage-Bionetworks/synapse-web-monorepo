@@ -145,7 +145,7 @@ export default class OAuth2Form
                     } //else if prompt is defined and another value ('login', 'consent', or 'select_account') then always prompt!
                 } else if (prompt && prompt === 'none') {
                     // granted === false and prompt === none
-                    this.onError({error: 'consent_required', reason: 'Current user has not previously granted permission, and prompt was set to "none"'})
+                    this.onError({error: 'consent_required', error_description: 'Current user has not previously granted permission, and prompt was set to none'})
                 }
                 this.setState({
                     hasCheckedPreviousConsent: true

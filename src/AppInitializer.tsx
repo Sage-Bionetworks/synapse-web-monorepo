@@ -40,7 +40,7 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
           console.log('no token from cookie could be fetched ', _err)
           if (prompt === 'none') {
             // not logged in, and prompt is "none".
-            handleErrorRedirect({error: 'login_required', error_description: 'User is not logged in, and prompt was set to "none"'})
+            handleErrorRedirect({error: 'login_required', error_description: 'User is not logged in, and prompt was set to none'})
           }
         })        
     }
