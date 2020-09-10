@@ -8,7 +8,7 @@ export const handleErrorRedirect = (error:any) => {
       const errorDescription = error["error_description"] ? `&error_description=${encodeURIComponent(error["error_description"])}` : ''
       window.location.replace(`${redirectUri}?${getStateParam()}error=${encodeURIComponent(error["error"])}${errorDescription}`)
     } else {
-      alert(`${error["error"]} - ${error["error_description"]}`)
+      alert(`Error Code: ${error["error"]}  Description: ${error["error_description"]}`)
     }
   }
 }
