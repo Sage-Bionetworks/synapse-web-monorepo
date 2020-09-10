@@ -2,9 +2,14 @@ export const handleErrorRedirect = (error:any) => {
   console.error(error)
   const redirectUri = getURLParam('redirect_uri')
   if (error["error"] && redirectUri) {
+    // is this a valid URL?
+    if (isValidUrl(redirectUri)) {
       // we have a redirectUri and an error code from the backend (and possibly an error description!).  Redirect.
       const errorDescription = error["error_description"] ? `&error_description=${encodeURIComponent(error["error_description"])}` : ''
       window.location.replace(`${redirectUri}?${getStateParam()}error=${encodeURIComponent(error["error"])}${errorDescription}`)
+    } else {
+      alert(`Error Code: ${error["error"]}  Description: ${error["error_description"]}`)
+    }
   }
 }
 
@@ -24,4 +29,13 @@ export const getStateParam = () => {
       stateParam = `state=${state}&`
   }
   return stateParam
+}
+
+export const isValidUrl = (str:string) => {
+  try {
+    new URL(str);
+  } catch (_) {
+    return false;  
+  }
+  return true;
 }
