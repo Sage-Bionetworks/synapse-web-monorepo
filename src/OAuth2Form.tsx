@@ -34,7 +34,6 @@ type OAuth2FormState = {
     profile?: UserProfile,
     oidcRequestDescription?: OIDCAuthorizationRequestDescription,
     oauthClientInfo?: OAuthClientPublic,
-    hasCheckedPreviousConsent?: boolean,
     error?: any
 }
 
@@ -61,6 +60,9 @@ export default class OAuth2Form
 
         this.init()
     }
+    
+    isConsenting:boolean = false
+    isGettingUserProfile:boolean = false
 
     init = () => {
         this.getUserProfile()
@@ -87,19 +89,22 @@ export default class OAuth2Form
         })
     }
     onConsent = () => {
-        this.sendGTagEvent('UserConsented')
-        let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-        SynapseClient.consentToOAuth2Request(request, this.state.token).then((accessCode: AccessCodeResponse) => {
-            if (!accessCode || !accessCode.access_code) {
-                this.onError('Something went wrong - the access code is missing from the Synapse call.')
-                return
-            }
-            // done!  redirect with access code.
-            const redirectUri = getURLParam('redirect_uri')            
-            window.location.replace(`${redirectUri}?${getStateParam()}code=${encodeURIComponent(accessCode.access_code)}`)
-        }).catch((_err) => {
-            this.onError(_err)
-        })
+        if (!this.isConsenting) {
+            this.isConsenting = true
+            this.sendGTagEvent('UserConsented')
+            let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
+            SynapseClient.consentToOAuth2Request(request, this.state.token).then((accessCode: AccessCodeResponse) => {
+                if (!accessCode || !accessCode.access_code) {
+                    this.onError('Something went wrong - the access code is missing from the Synapse call.')
+                    return
+                }
+                // done!  redirect with access code.
+                const redirectUri = getURLParam('redirect_uri')            
+                window.location.replace(`${redirectUri}?${getStateParam()}code=${encodeURIComponent(accessCode.access_code)}`)
+            }).catch((_err) => {
+                this.onError(_err)
+            })
+        }
     }
 
     onGoBack = () => {
@@ -119,7 +124,7 @@ export default class OAuth2Form
     
     // if user has already consented to this client request, no need to ask again
     getHasAlreadyConsented(token:string) {
-        if (!this.state.hasCheckedPreviousConsent && token && !this.state.error) {
+        if (token && !this.state.error) {
             const code = getURLParam('code')
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
             
@@ -137,9 +142,6 @@ export default class OAuth2Form
                     // granted === false and prompt === none
                     this.onError({error: 'consent_required', error_description: 'Current user has not previously granted permission, and prompt was set to none'})
                 }
-                this.setState({
-                    hasCheckedPreviousConsent: true
-                })
             }).catch((_err) => {
                 this.onError(_err)
             })
@@ -216,18 +218,21 @@ export default class OAuth2Form
     getUserProfile() {
         const newToken = this.context
         if (newToken && (!this.state.profile || this.state.token !== newToken) && !this.state.error) {
-            SynapseClient.getUserProfile(newToken).then((profile: UserProfile) => {
-                if (profile.profilePicureFileHandleId) {
-                    profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
-                }
-                this.getHasAlreadyConsented(newToken)
-                this.setState({
-                    profile,
-                    token: newToken,
-                })
-            }).catch((_err) => {
-                this.onError(_err)
-            })
+            if (!this.isGettingUserProfile) {
+                this.isGettingUserProfile = true
+                SynapseClient.getUserProfile(newToken).then((profile: UserProfile) => {
+                    if (profile.profilePicureFileHandleId) {
+                        profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
+                    }
+                    this.getHasAlreadyConsented(newToken)
+                    this.setState({
+                        profile,
+                        token: newToken,
+                    })
+                }).catch((_err) => {
+                    this.onError(_err)
+                }).finally(() => this.isGettingUserProfile = false)
+            }
         }
     }
 
