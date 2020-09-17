@@ -35,8 +35,7 @@ type OAuth2FormState = {
     oidcRequestDescription?: OIDCAuthorizationRequestDescription,
     oauthClientInfo?: OAuthClientPublic,
     hasCheckedPreviousConsent?: boolean,
-    error?: any,
-    isLoading?: boolean,
+    error?: any
 }
 
 export type OAuth2FormProps = {
@@ -47,9 +46,7 @@ export default class OAuth2Form
 
     constructor(props: OAuth2FormProps) {
         super(props)
-        this.state = {
-            isLoading: true
-        }
+        this.state = {}
         this.onError = this.onError.bind(this)
         this.onConsent = this.onConsent.bind(this)
         this.onGoBack = this.onGoBack.bind(this)
@@ -60,6 +57,14 @@ export default class OAuth2Form
         this.getOauthClientInfo = this.getOauthClientInfo.bind(this)
         this.getUserProfile = this.getUserProfile.bind(this)
         this.getSession = this.getSession.bind(this)
+        this.init = this.init.bind(this)
+
+        this.init()
+    }
+
+    init = () => {
+        this.getUserProfile()
+        this.getOauthClientInfo()        
     }
 
     sendGTagEvent = (event: string) => {
@@ -79,14 +84,9 @@ export default class OAuth2Form
         handleErrorRedirect(error)
         this.setState({
             error,
-            isLoading: false
         })
     }
     onConsent = () => {
-        this.setState(
-            {
-                isLoading: true
-            })
         this.sendGTagEvent('UserConsented')
         let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
         SynapseClient.consentToOAuth2Request(request, this.state.token).then((accessCode: AccessCodeResponse) => {
@@ -116,25 +116,15 @@ export default class OAuth2Form
         }
         window.location.replace(redirect)
     }
-
-    componentDidMount() {
-        this.componentDidUpdate()
-     }
-
-    componentDidUpdate() {
-        this.getUserProfile()
-        this.getOauthClientInfo()
-        this.getHasAlreadyConsented()
-    }
     
     // if user has already consented to this client request, no need to ask again
-    getHasAlreadyConsented() {
-        if (!this.state.hasCheckedPreviousConsent && this.state.token && !this.state.error) {
+    getHasAlreadyConsented(token:string) {
+        if (!this.state.hasCheckedPreviousConsent && token && !this.state.error) {
             const code = getURLParam('code')
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
             
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
-            SynapseClient.hasUserAuthorizedOAuthClient(request, this.state.token).then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
+            SynapseClient.hasUserAuthorizedOAuthClient(request, token).then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
                 const prompt = getURLParam('prompt')
                 if (consentGrantedResponse.granted) {
                     // SWC-5285: before auto-consenting, make sure we're allowed to auto-consent.  
@@ -165,8 +155,7 @@ export default class OAuth2Form
             SynapseClient.getOAuth2RequestDescription(request).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
                 this.sendGTagEvent('SynapseOAuthClientRequestDescriptionLoaded')
                 this.setState({
-                    oidcRequestDescription,
-                    isLoading: false
+                    oidcRequestDescription,                    
                 })
             }).catch((_err) => {
                 this.onError(_err)
@@ -204,8 +193,7 @@ export default class OAuth2Form
                     this.getOAuth2RequestDescription()
                 }
                 this.setState({
-                    oauthClientInfo,
-                    isLoading: false
+                    oauthClientInfo,                    
                 })
             }).catch((_err) => {
                 this.onError(_err)
@@ -232,6 +220,7 @@ export default class OAuth2Form
                 if (profile.profilePicureFileHandleId) {
                     profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
                 }
+                this.getHasAlreadyConsented(newToken)
                 this.setState({
                     profile,
                     token: newToken,
@@ -265,6 +254,10 @@ export default class OAuth2Form
         }
     }
     render() {
+        if (this.context != this.state.token) {
+            // re-initialize!
+            this.init()
+        }
         const scopes = this.renderScopes()
         return (
             <div>
@@ -272,7 +265,6 @@ export default class OAuth2Form
                     !this.state.error &&
                     this.state.oauthClientInfo &&
                     !this.state.oauthClientInfo.verified &&
-                    !this.state.isLoading &&
                     <React.Fragment>
                         <div className="margin-top-30">
                             <div className="max-width-460 center-in-div light-border padding-30">
@@ -296,7 +288,6 @@ export default class OAuth2Form
                     this.state.oauthClientInfo &&
                     this.state.oauthClientInfo.verified &&
                     this.state.oidcRequestDescription &&
-                    !this.state.isLoading &&
                     <React.Fragment>
                         <div className="margin-top-30">
                             <div className="max-width-460 center-in-div light-border padding-30">
@@ -319,8 +310,7 @@ export default class OAuth2Form
                     </React.Fragment>
                 }
                 {
-                    !this.state.error &&
-                    this.state.isLoading &&
+                    !this.state.error && !this.state.oauthClientInfo && !this.state.oidcRequestDescription &&
                     <div className="center">
                         <span style={{ marginTop: '20px', marginLeft: '2px', backgroundSize: '40px 40px', width: '40px', height: '40px' }} className={'spinner'} />
                     </div>
@@ -331,7 +321,6 @@ export default class OAuth2Form
                     this.state.oauthClientInfo &&
                     this.state.oauthClientInfo.verified &&
                     this.state.oidcRequestDescription &&
-                    !this.state.isLoading &&
                     <div className="margin-top-30">
                         <div className="max-width-460 center-in-div light-border padding-30">
                             <Login
