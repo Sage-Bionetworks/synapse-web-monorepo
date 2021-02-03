@@ -45,7 +45,7 @@
     "node": "^14.15.0",
     "node-bin-setup": "1.0.6",
     "request": ">=2.88.0",
-    "uglify-js": "*"
+    "uglify-js": "^2.8.29"
   },
   "directories": {
     "test": "test"
