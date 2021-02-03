@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-synapse",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "tag for markdown-it markdown parser.",
   "main": "index.js",
   "keywords": [
@@ -42,12 +42,10 @@
     "markdown-it": ">=9.0.1",
     "markdown-it-testgen": "~0.1.0",
     "mocha": ">=5.2.0",
+    "node": "^14.15.0",
     "node-bin-setup": "1.0.6",
     "request": ">=2.88.0",
-    "uglify-js": "*"
-  },
-  "dependencies": {
-    "node": "^10.3.0"
+    "uglify-js": "^2.8.29"
   },
   "directories": {
     "test": "test"
