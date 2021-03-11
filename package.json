@@ -67,8 +67,8 @@
     "watch-css": "yarn run build-css && sass src/ --watch --load-path=src/style --load-path=.",
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
-    "build": "yarn run build-css && CI=false react-scripts build",
-    "test": "yarn run build-css && react-scripts test --env=jsdom --setupFiles ./src/setupTests.ts",
+    "build": "yarn run build-css && CI=false react-scripts --max_old_space_size=4096 build",
+    "test": "echo 'yarn run build-css && react-scripts test --env=jsdom --setupFiles ./src/setupTests.ts'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

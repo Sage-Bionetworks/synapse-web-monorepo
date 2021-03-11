@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { SynapseClient, SynapseConstants } from 'synapse-react-client'
-import Login from 'synapse-react-client/dist/containers/Login'
+import { SynapseClient, SynapseConstants, SynapseComponents } from 'synapse-react-client'
 import { TokenContext } from './AppInitializer'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes/UserProfile'
 import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest'
@@ -34,6 +33,7 @@ type OAuth2FormState = {
     profile?: UserProfile,
     oidcRequestDescription?: OIDCAuthorizationRequestDescription,
     oauthClientInfo?: OAuthClientPublic,
+    isRedirecting?: boolean,
     error?: any
 }
 
@@ -66,7 +66,7 @@ export default class OAuth2Form
 
     init = () => {
         this.getUserProfile()
-        this.getOauthClientInfo()        
+        this.getOauthClientInfo()
     }
 
     sendGTagEvent = (event: string) => {
@@ -99,7 +99,10 @@ export default class OAuth2Form
                     return
                 }
                 // done!  redirect with access code.
-                const redirectUri = getURLParam('redirect_uri')            
+                const redirectUri = getURLParam('redirect_uri')
+                this.setState({
+                    isRedirecting: true
+                })
                 window.location.replace(`${redirectUri}?${getStateParam()}code=${encodeURIComponent(accessCode.access_code)}`)
             }).catch((_err) => {
                 this.onError(_err)
@@ -119,6 +122,9 @@ export default class OAuth2Form
         } else {
             redirect = getURLParam('redirect_uri')!
         }
+        this.setState({
+            isRedirecting: true
+        })
         window.location.replace(redirect)
     }
     
@@ -131,6 +137,7 @@ export default class OAuth2Form
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
             SynapseClient.hasUserAuthorizedOAuthClient(request, token).then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
                 const prompt = getURLParam('prompt')
+                debugger
                 if (consentGrantedResponse.granted) {
                     // SWC-5285: before auto-consenting, make sure we're allowed to auto-consent.  
                     // Only allow if prompt is undefined or set to none.
@@ -259,20 +266,26 @@ export default class OAuth2Form
         }
     }
     render() {
-        if (this.context != this.state.token) {
+        if (this.context !== this.state.token) {
             // re-initialize!
             this.init()
         }
         const scopes = this.renderScopes()
+        const loadingSpinner = <div style={{ textAlign: 'center'}}>
+            <div style={{ marginTop: '50px'}}>
+                {this.state.isRedirecting &&  this.state.oauthClientInfo && <p>Waiting for {this.state.oauthClientInfo.client_name}...</p>}
+                <span style={{marginLeft: '10px', backgroundSize: '40px 40px', width: '40px', height: '40px' }} className={'spinner'} />
+            </div>
+        </div>
         return (
             <div>
                 {
                     !this.state.error &&
                     this.state.oauthClientInfo &&
                     !this.state.oauthClientInfo.verified &&
-                    <React.Fragment>
-                        <div className="margin-top-30">
-                            <div className="max-width-460 center-in-div light-border padding-30">
+                    <>
+                        <div className="BlueBackground">
+                            <div className="ComponentWrapper">
                                 <FontAwesomeIcon
                                     className='text-danger'
                                     style={{ marginLeft: '5px', marginBottom: '15px', fontSize: '40px' }}
@@ -280,22 +293,23 @@ export default class OAuth2Form
                                 />
                                 <h3>This app isn't verified</h3>
                                 <p>This app has not been verified by Sage Bionetworks yet.</p>
-                                <div className="text-align-right margin-top-20">
+                                <div style={{ marginTop: '50px', textAlign: 'right'}}>
                                     <button onClick={this.onGoBack} className="btn btn-primary">Back to Safety</button>
                                 </div>
                             </div>
                         </div>
-                    </React.Fragment>
+                    </>
                 }
                 {
+                    !this.state.isRedirecting &&
                     !this.state.error &&
                     this.state.token &&
                     this.state.oauthClientInfo &&
                     this.state.oauthClientInfo.verified &&
                     this.state.oidcRequestDescription &&
-                    <React.Fragment>
-                        <div className="margin-top-30">
-                            <div className="max-width-460 center-in-div light-border padding-30">
+                    <>
+                        <div className="BlueBackground">
+                            <div className="ComponentWrapper">
                                 <UserCard
                                     userProfile={this.state.profile}
                                     size={SynapseConstants.SMALL_USER_CARD}
@@ -306,28 +320,31 @@ export default class OAuth2Form
                                     <p>By clicking "Allow", you allow this app to use your information in accordance with their <a href={this.state.oauthClientInfo.tos_uri} target="_blank" rel="noopener noreferrer">terms of service</a> and <a href={this.state.oauthClientInfo.policy_uri} target="_blank" rel="noopener noreferrer">privacy policy</a>.
                                     </p>
                                 </div>
-                                <div className="text-align-right margin-top-20">
-                                    <button onClick={this.onDeny} className="btn btn-default margin-right-5">Deny</button>
-                                    <button onClick={this.onConsent} className="btn btn-success">Allow</button>
+                                <div style={{ marginTop: '50px', textAlign: 'right'}}>
+                                    <button onClick={this.onDeny} className="btn btn-default" style={{ marginRight: '5px' }}>Deny</button>
+                                    <button onClick={this.onConsent} className="btn btn-primary">Allow</button>
                                 </div>
                             </div>
                         </div>
-                    </React.Fragment>
+                    </>
                 }
                 {
                     !this.state.error && !this.state.oauthClientInfo && !this.state.oidcRequestDescription &&
-                    <div className="center">
-                        <span style={{ marginTop: '20px', marginLeft: '2px', backgroundSize: '40px 40px', width: '40px', height: '40px' }} className={'spinner'} />
-                    </div>
+                        loadingSpinner
                 }
                 {
+                    this.state.isRedirecting && this.state.oauthClientInfo &&
+                        loadingSpinner
+                }
+                {
+                    !this.state.isRedirecting &&
                     !this.state.error &&
                     !this.state.token &&
                     this.state.oauthClientInfo &&
                     this.state.oauthClientInfo.verified &&
                     this.state.oidcRequestDescription &&
-                    <div className="LoginWrapper">
-                        <Login
+                    <div className="BlueBackground">
+                        <SynapseComponents.Login
                             sessionCallback={this.getSession}
                         />
                     </div>

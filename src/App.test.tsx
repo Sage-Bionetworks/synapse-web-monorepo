@@ -4,5 +4,5 @@ import { shallow } from 'enzyme'
 
 it('renders without crashing', () => {
   window.history.pushState({}, 'Synapse Sign-In', '/?client_id=1234');  
-  const el = shallow(<App />)
+  shallow(<App />)
 });

@@ -33,7 +33,7 @@
   color: #61dafb;
 }
 
-.LoginWrapper {
+.BlueBackground {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,10 +45,15 @@
   min-height: 100vh;
 }
 
-.LoginComponent {
+.LoginComponent, .ComponentWrapper {
   background: #fff;
   padding: 50px;
+}
+.LoginComponent {
   max-width: 460px;
+}
+.ComponentWrapper {
+  max-width: 650px;
 }
 
 @keyframes App-logo-spin {

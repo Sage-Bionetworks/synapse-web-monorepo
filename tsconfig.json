@@ -22,7 +22,6 @@
     "jsx": "preserve"
   },
   "include": [
-    "src",
-    "node_modules"
+    "src"
   ]
 }
