@@ -1,0 +1,61 @@
+@use 'variables' as Portal;
+
+@use 'node_modules/synapse-react-client/dist/style/main.scss' with (
+  $primary-action-color: Portal.$primary-action-color, 
+  $secondary-action-color: Portal.$secondary-action-color,
+  $primary-bgcolor-rgba: unset,
+);
+@use 'node_modules/synapse-react-client/dist/template_style/Index.scss';
+
+.App {
+  font-family: 'Lato', sans-serif;
+  overflow: hidden;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.LoginWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent url("https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg") no-repeat;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  margin-top: -45px;
+  min-height: 100vh;
+}
+
+.LoginComponent {
+  background: #fff;
+  padding: 50px;
+  max-width: 460px;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

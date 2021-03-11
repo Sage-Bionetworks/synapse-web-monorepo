@@ -157,7 +157,7 @@ export default class OAuth2Form
             SynapseClient.getOAuth2RequestDescription(request).then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
                 this.sendGTagEvent('SynapseOAuthClientRequestDescriptionLoaded')
                 this.setState({
-                    oidcRequestDescription,                    
+                    oidcRequestDescription,
                 })
             }).catch((_err) => {
                 this.onError(_err)
@@ -195,7 +195,7 @@ export default class OAuth2Form
                     this.getOAuth2RequestDescription()
                 }
                 this.setState({
-                    oauthClientInfo,                    
+                    oauthClientInfo,
                 })
             }).catch((_err) => {
                 this.onError(_err)
@@ -326,19 +326,15 @@ export default class OAuth2Form
                     this.state.oauthClientInfo &&
                     this.state.oauthClientInfo.verified &&
                     this.state.oidcRequestDescription &&
-                    <div className="margin-top-30">
-                        <div className="max-width-460 center-in-div light-border padding-30">
-                            <Login
-                                theme={'light'}
-                                icon={true}
-                                sessionCallback={this.getSession}
-                            />
-                        </div>
+                    <div className="LoginWrapper">
+                        <Login
+                            sessionCallback={this.getSession}
+                        />
                     </div>
                 }
                 {
                     this.state.error &&
-                    <div className="alert alert-danger">
+                    <div className="alert alert-danger" style={{ marginTop: '30px' }}>
                         {this.state.error.name || 'Error'} : {this.state.error.reason}{this.state.error.message}
                     </div>
                 }

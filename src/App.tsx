@@ -6,7 +6,7 @@ import Versions from './Versions'
 
 const App: React.FC = () => {
   return (
-    <div className="App container">
+    <div className="App">
       <AppInitializer>
         <OAuth2Form />
       </AppInitializer>
