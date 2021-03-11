@@ -137,7 +137,6 @@ export default class OAuth2Form
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
             SynapseClient.hasUserAuthorizedOAuthClient(request, token).then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
                 const prompt = getURLParam('prompt')
-                debugger
                 if (consentGrantedResponse.granted) {
                     // SWC-5285: before auto-consenting, make sure we're allowed to auto-consent.  
                     // Only allow if prompt is undefined or set to none.
@@ -227,14 +226,16 @@ export default class OAuth2Form
         if (newToken && (!this.state.profile || this.state.token !== newToken) && !this.state.error) {
             if (!this.isGettingUserProfile) {
                 this.isGettingUserProfile = true
+                this.getHasAlreadyConsented(newToken)
+                this.setState({
+                    token: newToken,
+                })
                 SynapseClient.getUserProfile(newToken).then((profile: UserProfile) => {
                     if (profile.profilePicureFileHandleId) {
                         profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
                     }
-                    this.getHasAlreadyConsented(newToken)
                     this.setState({
                         profile,
-                        token: newToken,
                     })
                 }).catch((_err) => {
                     this.onError(_err)
