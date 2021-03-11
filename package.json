@@ -30,6 +30,14 @@
     "synapse-react-client": "1.15.78",
     "typescript": "3.8.3"
   },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less)$": "identity-obj-proxy"
+    },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!(synapse-react-client|lodash-es|jest*)/)"
+    ]
+  },
   "devDependencies": {
     "@types/katex": "^0.5.0",
     "enzyme": "^3.10.0",
@@ -60,7 +68,7 @@
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
     "build": "yarn run build-css && CI=false react-scripts build",
-    "test": "react-scripts test --env=jsdom --setupFiles ./src/setupTests.ts",
+    "test": "yarn run build-css && react-scripts test --env=jsdom --setupFiles ./src/setupTests.ts",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
