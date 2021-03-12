@@ -294,7 +294,7 @@ export default class OAuth2Form
                                 />
                                 <h3>This app isn't verified</h3>
                                 <p>This app has not been verified by Sage Bionetworks yet.</p>
-                                <div style={{ marginTop: '50px', textAlign: 'right'}}>
+                                <div className="text-align-right margin-top-40">
                                     <button onClick={this.onGoBack} className="btn btn-primary">Back to Safety</button>
                                 </div>
                             </div>
@@ -321,8 +321,8 @@ export default class OAuth2Form
                                     <p>By clicking "Allow", you allow this app to use your information in accordance with their <a href={this.state.oauthClientInfo.tos_uri} target="_blank" rel="noopener noreferrer">terms of service</a> and <a href={this.state.oauthClientInfo.policy_uri} target="_blank" rel="noopener noreferrer">privacy policy</a>.
                                     </p>
                                 </div>
-                                <div style={{ marginTop: '50px', textAlign: 'right'}}>
-                                    <button onClick={this.onDeny} className="btn btn-default" style={{ marginRight: '5px' }}>Deny</button>
+                                <div className="text-align-right margin-top-40">
+                                    <button onClick={this.onDeny} className="btn btn-default margin-right-5">Deny</button>
                                     <button onClick={this.onConsent} className="btn btn-primary">Allow</button>
                                 </div>
                             </div>
@@ -352,7 +352,7 @@ export default class OAuth2Form
                 }
                 {
                     this.state.error &&
-                    <div className="alert alert-danger" style={{ marginTop: '30px' }}>
+                    <div className="alert alert-danger">
                         {this.state.error.name || 'Error'} : {this.state.error.reason}{this.state.error.message}
                     </div>
                 }
