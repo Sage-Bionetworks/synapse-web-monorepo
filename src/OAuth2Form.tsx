@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { SynapseClient, SynapseConstants, SynapseComponents } from 'synapse-react-client'
+import { SynapseClient, SynapseConstants } from 'synapse-react-client'
+import Login from 'synapse-react-client/dist/containers/Login'
 import { TokenContext } from './AppInitializer'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes/UserProfile'
 import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest'
@@ -345,7 +346,7 @@ export default class OAuth2Form
                     this.state.oauthClientInfo.verified &&
                     this.state.oidcRequestDescription &&
                     <div className="BlueBackground">
-                        <SynapseComponents.Login
+                        <Login
                             sessionCallback={this.getSession}
                         />
                     </div>
