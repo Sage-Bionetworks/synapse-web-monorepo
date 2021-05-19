@@ -212,7 +212,7 @@ export default class OAuth2Form
 
     getSession = async () => {
         try {
-            let token = await SynapseClient.getSessionTokenFromCookie()
+            let token = await SynapseClient.getAccessTokenFromCookie()
             this.setState({ token })
         } catch (e) {
             console.error('Error on getSession: ', e)
