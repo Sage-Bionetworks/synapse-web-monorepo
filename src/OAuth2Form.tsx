@@ -15,6 +15,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { OAuthConsentGrantedResponse } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getURLParam, getStateParam, handleErrorRedirect } from './URLUtils'
+import moment from 'moment'
+import { AuthenticatedOn } from 'synapse-react-client/dist/utils/synapseTypes/AuthenticatedOn'
 
 // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
 
@@ -130,10 +132,19 @@ export default class OAuth2Form
     }
     
     // if user has already consented to this client request, no need to ask again
-    getHasAlreadyConsented(token:string) {
+    async getHasAlreadyConsented(token:string) {
         if (token && !this.state.error) {
             const code = getURLParam('code')
             if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
+            const maxAgeURLParam = getURLParam('max_age')
+            // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
+            if (maxAgeURLParam && parseInt(maxAgeURLParam)) {
+                const authenticatedOnResponse:AuthenticatedOn = await SynapseClient.getAuthenticatedOn(token)
+                const lastAuthenticatedOn = moment.utc(authenticatedOnResponse.authenticatedOn)
+                const now = moment.utc()
+                if (now.diff(lastAuthenticatedOn, 'seconds') > parseInt(maxAgeURLParam))
+                    return
+            }
             
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
             SynapseClient.hasUserAuthorizedOAuthClient(request, token).then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
