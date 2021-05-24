@@ -2,14 +2,13 @@ export const handleErrorRedirect = (error:any) => {
   console.error(error)
   const redirectUri = getURLParam('redirect_uri')
   if (error["error"] && redirectUri) {
-    // is this a valid URL?
-    if (isValidUrl(redirectUri)) {
+    // is this a valid URL, and has the backend validated the redirect uri (SWC-5596)?
+    if (isValidUrl(redirectUri) && error["error"] !== 'invalid_redirect_uri') {
       // we have a redirectUri and an error code from the backend (and possibly an error description!).  Redirect.
       const errorDescription = error["error_description"] ? `&error_description=${encodeURIComponent(error["error_description"])}` : ''
       window.location.replace(`${redirectUri}?${getStateParam()}error=${encodeURIComponent(error["error"])}${errorDescription}`)
-    } else {
-      alert(`Error Code: ${error["error"]}  Description: ${error["error_description"]}`)
-    }
+    } 
+    // no need to pop up an alert here, since the error should be shown on the page (and we already sent to console.error)
   }
 }
 
