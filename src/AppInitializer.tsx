@@ -1,5 +1,7 @@
+import moment from 'moment'
 import * as React from 'react'
 import { SynapseClient } from 'synapse-react-client'
+import { AuthenticatedOn } from 'synapse-react-client/dist/utils/synapseTypes/AuthenticatedOn'
 import { handleErrorRedirect } from './URLUtils'
 export type AppInitializerToken = {
   token: string
@@ -44,9 +46,24 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
       })
     } else {
       SynapseClient.getAccessTokenFromCookie().then(
-        (sessionToken: string|null) => {
-          if (sessionToken) {
-            this.setState({ token: sessionToken })
+        (accessToken: string|null) => {
+          if (accessToken) {
+            // check max age when re-establishing the session, not to auto-consent.
+            const maxAgeURLParam = urlSearchParams.get('max_age')
+            // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
+            if (maxAgeURLParam && parseInt(maxAgeURLParam)) {
+                SynapseClient.getAuthenticatedOn(accessToken).then(
+                  (authenticatedOnResponse:AuthenticatedOn) => {
+                    const lastAuthenticatedOn = moment.utc(authenticatedOnResponse.authenticatedOn)
+                    const now = moment.utc()
+                    if (now.diff(lastAuthenticatedOn, 'seconds') <= parseInt(maxAgeURLParam))
+                      this.setState({ token: accessToken })
+                  }
+                )
+            } else {
+              // no max age param, use the token
+              this.setState({ token: accessToken })
+            }
           }
         }).catch((_err) => {
           console.log('no token from cookie could be fetched ', _err)
