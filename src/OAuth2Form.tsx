@@ -165,6 +165,25 @@ export default class OAuth2Form
                 this.setState({
                     oidcRequestDescription,
                 })
+
+                // if we were able to get the oidc request description, also check for params that this web app does not support
+                // sorry, we don't support JWT in the url query params today
+                // https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests
+                const requestObject = getURLParam('request')
+                const requestUri = getURLParam('request_uri')
+                if (requestObject) {
+                handleErrorRedirect({error: 'request_not_supported'})
+                }
+                if (requestUri) {
+                handleErrorRedirect({error: 'request_uri_not_supported'})
+                }
+                // sorry, we don't support registration (yet?)
+                // https://openid.net/specs/openid-connect-core-1_0.html#RegistrationParameter
+                const registration = getURLParam('registration')
+                if (registration) {
+                handleErrorRedirect({error: 'registration_not_supported'})
+                }
+
             }).catch((_err) => {
                 this.onError(_err)
             })

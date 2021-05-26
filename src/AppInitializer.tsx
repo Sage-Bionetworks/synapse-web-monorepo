@@ -20,23 +20,6 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
   componentDidMount() {
     // is prompt=login?  if so, then clear the cookie
     const urlSearchParams = new URLSearchParams(window.location.search)
-    // sorry, we don't support JWT in the url query params today
-    // https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests
-    const requestObject = urlSearchParams.get('request')
-    const requestUri = urlSearchParams.get('request_uri')
-    if (requestObject) {
-      handleErrorRedirect({error: 'request_not_supported'})
-    }
-    if (requestUri) {
-      handleErrorRedirect({error: 'request_uri_not_supported'})
-    }
-    // sorry, we don't support registration (yet?)
-    // https://openid.net/specs/openid-connect-core-1_0.html#RegistrationParameter
-    const registration = urlSearchParams.get('registration')
-    if (registration) {
-      handleErrorRedirect({error: 'registration_not_supported'})
-    }
-  
     const prompt = urlSearchParams.get('prompt')
     if (prompt === 'login') {
       SynapseClient.setAccessTokenCookie(undefined, () => {
