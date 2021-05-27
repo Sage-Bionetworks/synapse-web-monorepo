@@ -15,8 +15,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { OAuthConsentGrantedResponse } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getURLParam, getStateParam, handleErrorRedirect } from './URLUtils'
-import moment from 'moment'
-import { AuthenticatedOn } from 'synapse-react-client/dist/utils/synapseTypes/AuthenticatedOn'
 
 // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
 
@@ -135,17 +133,7 @@ export default class OAuth2Form
     async getHasAlreadyConsented(token:string) {
         if (token && !this.state.error) {
             const code = getURLParam('code')
-            if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
-            const maxAgeURLParam = getURLParam('max_age')
-            // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
-            if (maxAgeURLParam && parseInt(maxAgeURLParam)) {
-                const authenticatedOnResponse:AuthenticatedOn = await SynapseClient.getAuthenticatedOn(token)
-                const lastAuthenticatedOn = moment.utc(authenticatedOnResponse.authenticatedOn)
-                const now = moment.utc()
-                if (now.diff(lastAuthenticatedOn, 'seconds') > parseInt(maxAgeURLParam))
-                    return
-            }
-            
+            if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet            
             let request: OIDCAuthorizationRequest = this.getOIDCAuthorizationRequestFromSearchParams()
             SynapseClient.hasUserAuthorizedOAuthClient(request, token).then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
                 const prompt = getURLParam('prompt')
@@ -177,6 +165,25 @@ export default class OAuth2Form
                 this.setState({
                     oidcRequestDescription,
                 })
+
+                // if we were able to get the oidc request description, also check for params that this web app does not support
+                // sorry, we don't support JWT in the url query params today
+                // https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests
+                const requestObject = getURLParam('request')
+                const requestUri = getURLParam('request_uri')
+                if (requestObject) {
+                handleErrorRedirect({error: 'request_not_supported'})
+                }
+                if (requestUri) {
+                handleErrorRedirect({error: 'request_uri_not_supported'})
+                }
+                // sorry, we don't support registration (yet?)
+                // https://openid.net/specs/openid-connect-core-1_0.html#RegistrationParameter
+                const registration = getURLParam('registration')
+                if (registration) {
+                handleErrorRedirect({error: 'registration_not_supported'})
+                }
+
             }).catch((_err) => {
                 this.onError(_err)
             })
