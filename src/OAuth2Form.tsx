@@ -19,12 +19,25 @@ import { SynapseContextType } from 'synapse-react-client/dist/utils/SynapseConte
 // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
 
 const isStaging:boolean = window.location.hostname.includes('staging');
+const isDev:boolean = window.location.hostname.includes('dev');
+
+const prodConfig = {
+    REPO: 'https://repo-prod.prod.sagebase.org/',
+    PORTAL: 'https://www.synapse.org/',
+};
+
+const stagingConfig = {
+    REPO: 'https://repo-staging.prod.sagebase.org/',
+    PORTAL: 'https://staging.synapse.org/',
+};
+
+const devConfig = {
+    REPO: 'https://repo-dev.dev.sagebase.org/',
+    PORTAL: 'https://portal-dev.dev.sagebase.org/',
+};
 
 (window as any).SRC = {
-    OVERRIDE_ENDPOINT_CONFIG: {
-        REPO: isStaging ? 'https://repo-staging.prod.sagebase.org/' : 'https://repo-prod.prod.sagebase.org/',
-        PORTAL: isStaging ? 'https://staging.synapse.org/' : 'https://www.synapse.org/',
-    }
+    OVERRIDE_ENDPOINT_CONFIG: isStaging ? stagingConfig : isDev ? devConfig : prodConfig
 }
 
 library.add(faExclamationTriangle)
