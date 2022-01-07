@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import Login from 'synapse-react-client/dist/containers/Login'
-import { TokenContext } from './AppInitializer'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes/UserProfile'
 import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest'
 import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequestDescription'
@@ -15,6 +14,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { OAuthConsentGrantedResponse } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getURLParam, getStateParam, handleErrorRedirect } from './URLUtils'
+import { SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext'
 
 // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
 
@@ -39,6 +39,7 @@ type OAuth2FormState = {
 }
 
 export type OAuth2FormProps = {
+    context?:SynapseContextType
 }
 
 export default class OAuth2Form
@@ -241,7 +242,7 @@ export default class OAuth2Form
     }
 
     getUserProfile() {
-        const newToken = this.context
+        const newToken = this.props.context?.accessToken
         if (newToken && (!this.state.profile || this.state.token !== newToken) && !this.state.error) {
             if (!this.isGettingUserProfile) {
                 this.isGettingUserProfile = true
@@ -286,7 +287,7 @@ export default class OAuth2Form
         }
     }
     render() {
-        if (this.context !== this.state.token) {
+        if (this.props.context?.accessToken !== this.state.token) {
             // re-initialize!
             this.init()
         }
@@ -379,5 +380,3 @@ export default class OAuth2Form
         )
     }
 }
-
-OAuth2Form.contextType = TokenContext

@@ -3,18 +3,17 @@ import * as React from 'react'
 import { SynapseClient } from 'synapse-react-client'
 import { AuthenticatedOn } from 'synapse-react-client/dist/utils/synapseTypes/AuthenticatedOn'
 import { handleErrorRedirect } from './URLUtils'
+import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 export type AppInitializerToken = {
   token: string
 }
-export const TokenContext = React.createContext('')
-
 
 class AppInitializer extends React.Component<{},AppInitializerToken> {
   constructor(props: any) {
     super(props)
     this.state = {
       token: ''
-    }    
+    }
   }
 
   componentDidMount() {
@@ -62,9 +61,16 @@ class AppInitializer extends React.Component<{},AppInitializerToken> {
 
   render() {
     return (
-      <TokenContext.Provider value={this.state.token}>
+      <SynapseContextProvider
+        synapseContext={{
+          accessToken: this.state.token,
+          isInExperimentalMode:
+            SynapseClient.isInSynapseExperimentalMode(),
+          utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+        }}
+      >
         {this.props.children}
-      </TokenContext.Provider>
+      </SynapseContextProvider>
     )
   }
 }
