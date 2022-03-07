@@ -1,4 +1,4 @@
-### This project is code for a Synapse OAuth login portal.
+### This project is code for Sage Bionetworks user account portal.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
