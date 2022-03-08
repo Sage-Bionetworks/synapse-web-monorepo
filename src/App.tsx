@@ -12,6 +12,7 @@ import CookiesNotification from 'components/CookiesNotification'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import OnRouteChange from 'components/OnRouteChange'
 import LoginPage from './LoginPage'
+import { RegisterAccount1 } from 'components/RegisterAccount1'
 
 const App: React.FC = () => {
   return (
@@ -27,14 +28,22 @@ const App: React.FC = () => {
                     return <>
                       <p>There are two main entrypoints into this web app</p>
                       <p>
-                        <a href="/register">Account Registration</a>&nbsp;and&nbsp;
+                        <a href="/register1">Account Registration</a>&nbsp;and&nbsp;
                         <a href="/validate">Profile Validation</a>
                       </p>
                       </>
-                    // return <Redirect to="/register" />
+                    // return <Redirect to="/register1" />
                   }} />
-                <Route exact={true} path="/register" render={props => {
-                  return <><p>Account registration page goes here</p></>
+                <Route exact={true} path="/register1" render={props => {
+                  return <RegisterAccount1 />
+                }}/>
+                <Route exact={true} path="/register2" render={props => {
+                  return <><p>Account registration step 2 page goes here. </p>
+                  <p>Ask for username, first name, last name, and password! </p>
+                    <p>Also get emailValidationSignedToken from URL search params.</p>
+                    <p>See http://rest-docs.synapse.org/rest/POST/account2.html</p>
+                    </>
+
                 }}/>
                 {/* profile validation requires that you are already registered and logged in */}
                 <Route exact={true} path="/validate"

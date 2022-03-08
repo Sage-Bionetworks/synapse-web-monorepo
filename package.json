@@ -79,7 +79,9 @@
     "start": "npm-run-all -p watch-css start-js",
     "build": "yarn run build-css && CI=false react-scripts build",
     "test": "echo 'yarn run build-css && react-scripts test --env=jsdom --setupFiles ./src/setupTests.ts'",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "link-src": "yarn link synapse-react-client && yarn link react && yarn link react-router && yarn link react-router-dom",
+    "unlink-src": "yarn unlink synapse-react-client && yarn unlink react && yarn unlink react-router && yarn unlink react-router-dom && yarn install --check-files"
   },
   "browserslist": {
     "production": [
