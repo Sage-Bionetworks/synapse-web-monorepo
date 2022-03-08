@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './App.css'
 import AppInitializer from './AppInitializer'
 import Versions from './Versions'
@@ -7,7 +7,6 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Redirect
 } from 'react-router-dom'
 import CookiesNotification from 'components/CookiesNotification'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
@@ -15,7 +14,6 @@ import OnRouteChange from 'components/OnRouteChange'
 import LoginPage from './LoginPage'
 
 const App: React.FC = () => {
-  const [returnToUrlAfterLogin, setReturnToUrlAfterLogin] = useState<string>('/')
   return (
     <div className="App">
       <>
@@ -32,8 +30,7 @@ const App: React.FC = () => {
                     return <SynapseContextConsumer>
                       {(ctx?: SynapseContextType) => {
                         if (!ctx?.accessToken) {
-                          setReturnToUrlAfterLogin('/afterlogin')
-                          return <Redirect to={'/login'} />
+                          return <LoginPage returnToUrl={'afterlogin'} />
                         }
                         return (
                           <>
@@ -49,7 +46,7 @@ const App: React.FC = () => {
                     </SynapseContextConsumer>
                   }} />
                 <Route exact={true} path="/login" render={props => {
-                  return <LoginPage returnToUrl={returnToUrlAfterLogin} />
+                  return <LoginPage returnToUrl={'/'} />
                 }}/>
               </Switch>
             </AppInitializer>
