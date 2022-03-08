@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Redirect, withRouter, RouteComponentProps } from 'react-router-dom'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 import Login from 'synapse-react-client/dist/containers/Login'
 
 export type OwnProps = {
@@ -12,7 +12,8 @@ const LoginPage:React.FunctionComponent<LoginPageProps> = ({
 }: OwnProps) => {
   const [isSessionEstablished, setIsSessionEstablished] = React.useState<boolean>(false)
   if (isSessionEstablished) {
-    return <Redirect to={returnToUrl} />
+    // using this instead of Redirect since we may need a page refresh
+    window.location.replace(returnToUrl)
   }
   return (
     <Login

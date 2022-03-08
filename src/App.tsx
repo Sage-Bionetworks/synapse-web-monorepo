@@ -6,7 +6,7 @@ import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client
 import {
   BrowserRouter as Router,
   Route,
-  Switch,
+  Switch
 } from 'react-router-dom'
 import CookiesNotification from 'components/CookiesNotification'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
@@ -21,20 +21,32 @@ const App: React.FC = () => {
             <OnRouteChange />
             <AppInitializer>
               <CookiesNotification />
-              {/* A <Switch> looks through its children <Route>s and
-                  renders the first one that matches the current URL. */}
               <Switch>
-                <Route exact={true} path="/"
-                  // TODO: instead of calling render, set component (to the component that should handle the default page)
+               <Route exact={true} path="/"
+                  render={props => {
+                    return <>
+                      <p>There are two main entrypoints into this web app</p>
+                      <p>
+                        <a href="/register">Account Registration</a>&nbsp;and&nbsp;
+                        <a href="/validate">Profile Validation</a>
+                      </p>
+                      </>
+                    // return <Redirect to="/register" />
+                  }} />
+                <Route exact={true} path="/register" render={props => {
+                  return <><p>Account registration page goes here</p></>
+                }}/>
+                {/* profile validation requires that you are already registered and logged in */}
+                <Route exact={true} path="/validate"
                   render={props => {
                     return <SynapseContextConsumer>
                       {(ctx?: SynapseContextType) => {
                         if (!ctx?.accessToken) {
-                          return <LoginPage returnToUrl={'afterlogin'} />
+                          return <LoginPage returnToUrl={'/validate'} />
                         }
                         return (
                           <>
-                            <p>Default page</p>
+                            <p>Profile validation page (wizard) goes here</p>
                             {ctx?.accessToken && 
                               <div>
                                 <p>You are logged in!</p>
