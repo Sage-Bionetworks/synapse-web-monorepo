@@ -1,6 +1,6 @@
 export const handleErrorRedirect = (error:any) => {
   console.error(error)
-  const redirectUri = getURLParam('redirect_uri')
+  const redirectUri = getSearchParam('redirect_uri')
   if (error["error"] && redirectUri) {
     // is this a valid URL, and has the backend validated the redirect uri (SWC-5596)?
     if (isValidUrl(redirectUri) && error["error"] !== 'invalid_redirect_uri') {
@@ -12,7 +12,7 @@ export const handleErrorRedirect = (error:any) => {
   }
 }
 
-export const getURLParam = (keyName: string): string | undefined => {
+export const getSearchParam = (keyName: string): string | undefined => {
   const urlSearchParams = new URLSearchParams(window.location.search)
   let paramValue: string | undefined = undefined
   if (urlSearchParams && urlSearchParams.get(keyName)) {
@@ -21,7 +21,7 @@ export const getURLParam = (keyName: string): string | undefined => {
   return paramValue
 }
 export const getStateParam = () => {
-  let state = getURLParam('state')
+  let state = getSearchParam('state')
   let stateParam = ''
   if (state) {
       state = encodeURIComponent(state)

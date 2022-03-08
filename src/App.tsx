@@ -1,21 +1,61 @@
-import React from 'react';
-import './App.css';
+import React, { useState } from 'react'
+import './App.css'
 import AppInitializer from './AppInitializer'
 import Versions from './Versions'
-import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext';
+import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext'
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect
+} from 'react-router-dom'
+import CookiesNotification from 'components/CookiesNotification'
+import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
+import OnRouteChange from 'components/OnRouteChange'
+import LoginPage from './LoginPage'
 
 const App: React.FC = () => {
+  const [returnToUrlAfterLogin, setReturnToUrlAfterLogin] = useState<string>('/')
   return (
     <div className="App">
-      <AppInitializer>
-        <SynapseContextConsumer>
-          {(ctx?: SynapseContextType) => {
-            // TODO: Add routes to different areas (registration)
-            // If going to an area that requires a session, prompt for login
-            return <></>
-          }}
-        </SynapseContextConsumer>
-      </AppInitializer>
+      <>
+        <Router>
+            <OnRouteChange />
+            <AppInitializer>
+              <CookiesNotification />
+              {/* A <Switch> looks through its children <Route>s and
+                  renders the first one that matches the current URL. */}
+              <Switch>
+                <Route exact={true} path="/"
+                  // TODO: instead of calling render, set component (to the component that should handle the default page)
+                  render={props => {
+                    return <SynapseContextConsumer>
+                      {(ctx?: SynapseContextType) => {
+                        if (!ctx?.accessToken) {
+                          setReturnToUrlAfterLogin('/afterlogin')
+                          return <Redirect to={'/login'} />
+                        }
+                        return (
+                          <>
+                            <p>Default page</p>
+                            {ctx?.accessToken && 
+                              <div>
+                                <p>You are logged in!</p>
+                                <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
+                              </div>}
+                          </>
+                        )
+                      }}
+                    </SynapseContextConsumer>
+                  }} />
+                <Route exact={true} path="/login" render={props => {
+                  return <LoginPage returnToUrl={returnToUrlAfterLogin} />
+                }}/>
+              </Switch>
+            </AppInitializer>
+          </Router>
+        
+        </>
       <Versions />
     </div>
   );

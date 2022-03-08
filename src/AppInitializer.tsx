@@ -1,78 +1,94 @@
-import moment from 'moment'
 import * as React from 'react'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { SynapseClient } from 'synapse-react-client'
-import { AuthenticatedOn } from 'synapse-react-client/dist/utils/synapseTypes/AuthenticatedOn'
-import { handleErrorRedirect } from './URLUtils'
+import { withCookies, ReactCookieProps } from 'react-cookie'
+import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
-export type AppInitializerToken = {
+
+export type AppInitializerState = {
   token: string
+  showLoginDialog: boolean
+  userProfile: UserProfile | undefined
+  // delay render until get session is called, o.w. theres an uneccessary refresh right
+  // after page load
+  hasCalledGetSession: boolean
 }
 
-class AppInitializer extends React.Component<{},AppInitializerToken> {
-  constructor(props: any) {
+type Props = RouteComponentProps & ReactCookieProps
+
+class AppInitializer extends React.Component<Props, AppInitializerState> {
+  constructor(props: Props) {
     super(props)
     this.state = {
-      token: ''
+      token: '',
+      hasCalledGetSession: false,
+      userProfile: undefined,
+      showLoginDialog: false,
+    }
+  }
+
+  initAnonymousUserState = () => {
+    SynapseClient.signOut(() => {
+      // reset token and user profile
+      this.setState({
+        token: '',
+        userProfile: undefined,
+        hasCalledGetSession: true,
+      })
+    })
+  }
+
+  getSession = async () => {
+    try {
+      const token = await SynapseClient.getAccessTokenFromCookie()
+      if (!token) {
+        this.initAnonymousUserState()
+        return
+      }
+      this.setState({ token, hasCalledGetSession: true })
+      // get user profile
+      const userProfile = await SynapseClient.getUserProfile(token)
+      if (userProfile.profilePicureFileHandleId) {
+        userProfile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${userProfile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${userProfile.profilePicureFileHandleId}`
+      }
+      this.setState({
+        userProfile,
+      })
+    } catch (e) {
+      console.error('Error on getSession: ', e)
+      // intentionally calling sign out because there token could be stale so we want
+      // the stored session to be cleared out.
+      this.initAnonymousUserState()
     }
   }
 
   componentDidMount() {
-    // is prompt=login?  if so, then clear the cookie
-    const urlSearchParams = new URLSearchParams(window.location.search)
-    const prompt = urlSearchParams.get('prompt')
-    if (prompt === 'login') {
-      SynapseClient.setAccessTokenCookie(undefined, () => {
-        urlSearchParams.set('prompt', '')
-        // replace query params and refresh
-        window.location.replace(`${window.location.href.slice(0, window.location.href.indexOf('?'))}?${urlSearchParams.toString()}`)
-      })
-    } else {
-      SynapseClient.getAccessTokenFromCookie().then(
-        (accessToken: string|null) => {
-          if (accessToken) {
-            // check max age when re-establishing the session, not to auto-consent.
-            const maxAgeURLParam = urlSearchParams.get('max_age')
-            // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
-            if (maxAgeURLParam && parseInt(maxAgeURLParam)) {
-                SynapseClient.getAuthenticatedOn(accessToken).then(
-                  (authenticatedOnResponse:AuthenticatedOn) => {
-                    const lastAuthenticatedOn = moment.utc(authenticatedOnResponse.authenticatedOn)
-                    const now = moment.utc()
-                    if (now.diff(lastAuthenticatedOn, 'seconds') <= parseInt(maxAgeURLParam))
-                      this.setState({ token: accessToken })
-                  }
-                )
-            } else {
-              // no max age param, use the token
-              this.setState({ token: accessToken })
-            }
-          }
-        }).catch((_err) => {
-          console.log('no token from cookie could be fetched ', _err)
-          if (prompt === 'none') {
-            // not logged in, and prompt is "none".
-            handleErrorRedirect({error: 'login_required', error_description: 'User is not logged in, and prompt was set to none'})
-          }
-        })        
-    }
-    // on first time, also check for the SSO code
+    this.getSession()
     SynapseClient.detectSSOCode()
   }
 
   render() {
+    if (!this.state.hasCalledGetSession) {
+      // prevent componentDidUpdate all over the page by waiting for get session call
+      return <></>
+    }
     return (
-      <SynapseContextProvider
-        synapseContext={{
-          accessToken: this.state.token,
-          isInExperimentalMode:
-            SynapseClient.isInSynapseExperimentalMode(),
-          utcTime: SynapseClient.getUseUtcTimeFromCookie(),
-        }}
-      >
-        {this.props.children}
-      </SynapseContextProvider>
+      <>
+        <SynapseContextProvider
+          synapseContext={{
+            accessToken: this.state.token,
+            isInExperimentalMode:
+              SynapseClient.isInSynapseExperimentalMode(),
+            utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+          }}
+        >
+          {React.Children.map(this.props.children, (child: any) => {
+            return child
+          })}
+        </SynapseContextProvider>
+      </>
     )
   }
 }
 
-export default AppInitializer
+export default withRouter(withCookies(AppInitializer))
