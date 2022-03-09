@@ -13,6 +13,7 @@ import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import LoginPage from './LoginPage'
 import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { SynapseComponents } from 'synapse-react-client'
+import { RegisterAccount2 } from 'components/RegisterAccount2'
 
 const App: React.FC = () => {
   return (
@@ -34,17 +35,8 @@ const App: React.FC = () => {
                       </>
                     // return <Redirect to="/register1" />
                   }} />
-                <Route exact={true} path="/register1" render={props => {
-                  return <RegisterAccount1 />
-                }}/>
-                <Route exact={true} path="/register2" render={props => {
-                  return <><p>Account registration step 2 page goes here. </p>
-                  <p>Ask for username, first name, last name, and password! </p>
-                    <p>Also get emailValidationSignedToken from URL search params.</p>
-                    <p>See http://rest-docs.synapse.org/rest/POST/account2.html</p>
-                    </>
-
-                }}/>
+                <Route exact={true} path="/register1" component={RegisterAccount1} />
+                <Route exact={true} path="/register2" component={RegisterAccount2} />
                 {/* profile validation requires that you are already registered and logged in */}
                 <Route exact={true} path="/validate"
                   render={props => {

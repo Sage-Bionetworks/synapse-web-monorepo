@@ -38,3 +38,8 @@ export const isValidUrl = (str:string) => {
   }
   return true;
 }
+
+export const hexDecodeAndDeserialize =(str:string) => {
+  const json = Buffer.from( str, 'hex' ).toString()
+  return JSON.parse(json)
+}

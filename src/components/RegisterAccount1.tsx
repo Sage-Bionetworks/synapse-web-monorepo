@@ -6,13 +6,9 @@ import { Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { isAliasAvailable, registerAccountStep1 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
-// import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 
 export type RegisterAccount1Props = {
 }
-
-export const UNDEFINED_USERNAME = 'Please provide a user name and try again.'
-export const UNDEFINED_EMAIL = 'Please provide a valid email and try again.'
 
 export const RegisterAccount1 = (props: RegisterAccount1Props) => {
   // const { accessToken } = useSynapseContext()
@@ -23,7 +19,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
   const onSignUpWithGoogle = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     if (!username) {
-      displayToast(UNDEFINED_USERNAME, 'danger')
+      displayToast('Please provide a user name and try again.', 'danger')
       return
     }
     setIsLoading(true)
@@ -50,7 +46,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
   const onSendRegistrationInfo = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     if (!email) {
-      displayToast(UNDEFINED_EMAIL, 'danger')
+      displayToast('Please provide a valid email and try again.', 'danger')
       return
     }
     setIsLoading(true)
@@ -74,10 +70,10 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
 
   return (
     <>
-      <div className="RegisterAccount bootstrap-4-backport">
+      <div className="RegisterAccount1 bootstrap-4-backport">
         <div className="GoogleSignUpUI">
           <Typography variant='label'>Choose a username</Typography>
-          {<div className="inputAndCreateButton">
+          <div className="inputAndCreateButton">
             <input
               onChange={onChangeUsername}
               type="text"
@@ -93,11 +89,11 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
             >
               Sign up with Google
             </Button>
-          </div>}
+          </div>
         </div>
         <div className="EmailAddressUI">
           <Typography variant='label'>Enter your email address and we will send you the instructions on how to complete the registration process.</Typography>
-          {<div className="inputAndCreateButton">
+          <div className="inputAndCreateButton">
             <input
               onChange={onChangeEmail}
               type="text"
@@ -113,7 +109,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
             >
               Send registration info
             </Button>
-          </div>}
+          </div>
         </div>
       </div>
     </>
