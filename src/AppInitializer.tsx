@@ -2,13 +2,11 @@ import * as React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { SynapseClient } from 'synapse-react-client'
 import { withCookies, ReactCookieProps } from 'react-cookie'
-import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 
 export type AppInitializerState = {
   token: string
   showLoginDialog: boolean
-  userProfile: UserProfile | undefined
   // delay render until get session is called, o.w. theres an uneccessary refresh right
   // after page load
   hasCalledGetSession: boolean
@@ -22,7 +20,6 @@ class AppInitializer extends React.Component<Props, AppInitializerState> {
     this.state = {
       token: '',
       hasCalledGetSession: false,
-      userProfile: undefined,
       showLoginDialog: false,
     }
   }
@@ -32,7 +29,6 @@ class AppInitializer extends React.Component<Props, AppInitializerState> {
       // reset token and user profile
       this.setState({
         token: '',
-        userProfile: undefined,
         hasCalledGetSession: true,
       })
     })
@@ -46,19 +42,24 @@ class AppInitializer extends React.Component<Props, AppInitializerState> {
         return
       }
       this.setState({ token, hasCalledGetSession: true })
-      // get user profile
-      const userProfile = await SynapseClient.getUserProfile(token)
-      if (userProfile.profilePicureFileHandleId) {
-        userProfile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${userProfile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${userProfile.profilePicureFileHandleId}`
-      }
-      this.setState({
-        userProfile,
-      })
     } catch (e) {
       console.error('Error on getSession: ', e)
       // intentionally calling sign out because there token could be stale so we want
       // the stored session to be cleared out.
       this.initAnonymousUserState()
+    }
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    // send page view event to Google Analytics
+    // (casting to 'any' type to get compile-time access to gtag())
+    const windowAny: any = window
+    const gtag = windowAny.gtag
+    if (gtag) {
+      gtag('config', 'UA-29804340-1', {
+        page_location: window.location.href,
+        page_path: `/${this.props.location.pathname}`,
+      })
     }
   }
 

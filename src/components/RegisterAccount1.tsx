@@ -3,17 +3,12 @@ import {
   Button,
 } from 'react-bootstrap'
 import { Typography } from 'synapse-react-client'
-import FullWidthAlert from 'synapse-react-client/dist/containers/FullWidthAlert'
+import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { isAliasAvailable, registerAccountStep1 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
 // import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 
 export type RegisterAccount1Props = {
-}
-
-type AlertConfig = {
-  message: string
-  variant?: string
 }
 
 export const UNDEFINED_USERNAME = 'Please provide a user name and try again.'
@@ -22,18 +17,13 @@ export const UNDEFINED_EMAIL = 'Please provide a valid email and try again.'
 export const RegisterAccount1 = (props: RegisterAccount1Props) => {
   // const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
-  const [alert, setAlert] = useState<AlertConfig>()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   
   const onSignUpWithGoogle = async (event: React.SyntheticEvent) => {
     event.preventDefault()
-    setAlert(undefined)
     if (!username) {
-      setAlert({
-        message: UNDEFINED_USERNAME,
-        variant: 'danger',
-      })
+      displayToast(UNDEFINED_USERNAME, 'danger')
       return
     }
     setIsLoading(true)
@@ -43,24 +33,15 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
         type: AliasType.USER_NAME
       })
       if (!aliasCheckResponse.available) {
-        setAlert({
-          message: 'Sorry, that username has already been taken.',
-          variant: 'danger',
-        })
+        displayToast('Sorry, that username has already been taken.', 'danger')
       } else if (!aliasCheckResponse.valid) {
-        setAlert({
-          message: 'Sorry, that username is not valid.',
-          variant: 'danger',
-        })
+        displayToast('Sorry, that username is not valid.', 'danger')
       } else {
         // TODO: Looks good!  Go to Google oauth account creation flow
 
       }
     } catch (err:any) {
-      setAlert({
-        message: err.reason as string,
-        variant: 'danger',
-      })
+      displayToast(err.reason as string, 'danger')
     } finally {
       setIsLoading(false)
     }
@@ -68,27 +49,17 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
 
   const onSendRegistrationInfo = async (event: React.SyntheticEvent) => {
     event.preventDefault()
-    setAlert(undefined)
     if (!email) {
-      setAlert({
-        message: UNDEFINED_EMAIL,
-        variant: 'danger',
-      })
+      displayToast(UNDEFINED_EMAIL, 'danger')
       return
     }
     setIsLoading(true)
     try {
       const callbackUrl = `${window.location.protocol}//${window.location.host}/register2?emailValidationSignedToken=`
       await registerAccountStep1({email}, callbackUrl)
-      setAlert({
-        message: 'We have sent you an email with instructions on how to complete the registration process.',
-        variant: 'success',
-      })
+      displayToast('We have sent you an email with instructions on how to complete the registration process.', 'success')
     } catch (err:any) {
-      setAlert({
-        message: err.reason as string,
-        variant: 'danger',
-      })
+      displayToast(err.reason as string, 'danger')
     } finally {
       setIsLoading(false)
     }
@@ -145,13 +116,6 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
           </div>}
         </div>
       </div>
-      {!isLoading && <FullWidthAlert
-        show={!!alert}
-        variant={alert?.variant ? alert.variant : 'success'}
-        description={alert?.message}
-        autoCloseAfterDelayInSeconds={10}
-        onClose={() => { setAlert(undefined) }}
-      />}
     </>
     
   )
