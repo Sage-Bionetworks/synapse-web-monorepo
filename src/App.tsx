@@ -14,6 +14,7 @@ import LoginPage from './LoginPage'
 import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { SynapseComponents } from 'synapse-react-client'
 import { RegisterAccount2 } from 'components/RegisterAccount2'
+import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
 
 const App: React.FC = () => {
   return (
@@ -24,37 +25,50 @@ const App: React.FC = () => {
               <SynapseComponents.SynapseToastContainer />
               <CookiesNotification />
               <Switch>
-               <Route exact={true} path="/"
+               <Route exact path="/"
                   render={props => {
                     return <>
                       <p>There are two main entrypoints into this web app</p>
                       <p>
                         <a href="/register1">Account Registration</a>&nbsp;and&nbsp;
-                        <a href="/validate">Profile Validation</a>
+                        <a href="/authenticated/validate">Profile Validation</a>
                       </p>
                       </>
                     // return <Redirect to="/register1" />
                   }} />
-                <Route exact={true} path="/register1" component={RegisterAccount1} />
-                <Route exact={true} path="/register2" component={RegisterAccount2} />
-                {/* profile validation requires that you are already registered and logged in */}
-                <Route exact={true} path="/validate"
-                  render={props => {
+                <Route exact path="/register1" component={RegisterAccount1} />
+                <Route exact path="/register2" component={RegisterAccount2} />
+                {/* check for an access token for any route in the "/authenticated/" path */}
+                <Route path="/authenticated/"
+                  render={routeProps => {
+                    const path = routeProps.location.pathname
                     return <SynapseContextConsumer>
                       {(ctx?: SynapseContextType) => {
                         if (!ctx?.accessToken) {
-                          return <LoginPage returnToUrl={'/validate'} />
+                          return <LoginPage returnToUrl={path} />
                         }
-                        return (
-                          <>
-                            <p>Profile validation page (wizard) goes here</p>
-                            {ctx?.accessToken && 
-                              <div>
-                                <p>You are logged in!</p>
-                                <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
-                              </div>}
-                          </>
-                        )
+                        if (path === '/authenticated/validate') {
+                          return (
+                            <>
+                              <p>Profile validation page (wizard) goes here</p>
+                              {ctx?.accessToken && 
+                                <div>
+                                  <p>You are logged in!</p>
+                                  <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
+                                </div>}
+                            </>
+                          )
+                        } else if (path === '/authenticated/signTermsOfUse') {
+                          return (
+                            <>
+                              <TermsAndConditions onFormChange={(completed:boolean) => { console.log("is the form completed?", completed) }} />
+                            </>
+                          )
+                       } else {
+                        return (<>
+                          <p>Unrecognized match path {routeProps.match.path}</p>
+                        </>)
+                       }
                       }}
                     </SynapseContextConsumer>
                   }} />

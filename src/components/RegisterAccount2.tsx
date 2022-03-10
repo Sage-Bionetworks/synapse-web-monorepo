@@ -4,7 +4,7 @@ import {
 } from 'react-bootstrap'
 import { Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import { isAliasAvailable, registerAccountStep2 } from 'synapse-react-client/dist/utils/SynapseClient'
+import { isAliasAvailable, registerAccountStep2, setAccessTokenCookie } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType, EmailValidationSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
 
@@ -57,14 +57,17 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
         return
       }
       // TODO: capture loginResponse here
-      await registerAccountStep2({
+      const loginResponse = await registerAccountStep2({
         username,
         firstName,
         lastName,
         emailValidationSignedToken,
         password: password1
       })
-      displayToast('Account created! Use loginResponse accessToken in context, and go to the Synapse pledge to sign the ToU', 'success')
+      setAccessTokenCookie(
+        loginResponse.accessToken,
+        () => window.location.replace('/authenticated/signTermsOfUse')
+      )
     } catch (err:any) {
       displayToast(err.reason as string, 'danger')
     } finally {
