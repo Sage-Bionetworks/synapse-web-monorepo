@@ -22,7 +22,6 @@ const App: React.FC = () => {
       <>
         <Router>
             <AppInitializer>
-              <SynapseComponents.SynapseToastContainer />
               <CookiesNotification />
               <Switch>
                <Route exact path="/"
@@ -30,16 +29,15 @@ const App: React.FC = () => {
                     return <>
                       <p>There are two main entrypoints into this web app</p>
                       <p>
-                        <a href="/register1">Account Registration</a>&nbsp;and&nbsp;
-                        <a href="/authenticated/validate">Profile Validation</a>
+                        <a href='/register1'>Account Registration</a>&nbsp;and&nbsp;
+                        <a href='/authenticated/validate'>Profile Validation</a>
                       </p>
                       </>
-                    // return <Redirect to="/register1" />
                   }} />
-                <Route exact path="/register1" component={RegisterAccount1} />
-                <Route exact path="/register2" component={RegisterAccount2} />
+                <Route exact path='/register1' component={RegisterAccount1} />
+                <Route exact path='/register2' component={RegisterAccount2} />
                 {/* check for an access token for any route in the "/authenticated/" path */}
-                <Route path="/authenticated/"
+                <Route path='/authenticated/'
                   render={routeProps => {
                     const path = routeProps.location.pathname
                     return <SynapseContextConsumer>
@@ -72,15 +70,15 @@ const App: React.FC = () => {
                       }}
                     </SynapseContextConsumer>
                   }} />
-                <Route exact={true} path="/login" render={props => {
+                <Route exact={true} path='/login' render={props => {
                   return <LoginPage returnToUrl={'/'} />
                 }}/>
               </Switch>
             </AppInitializer>
           </Router>
-        
         </>
       <Versions />
+      <SynapseComponents.SynapseToastContainer />
     </div>
   );
 }

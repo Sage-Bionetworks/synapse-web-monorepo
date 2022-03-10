@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import {
   Button,
 } from 'react-bootstrap'
-import { Typography } from 'synapse-react-client'
+import { SynapseClient, Typography } from 'synapse-react-client'
+import { PROVIDERS } from 'synapse-react-client/dist/containers/Login'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { isAliasAvailable, registerAccountStep1 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
@@ -33,8 +34,19 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
       } else if (!aliasCheckResponse.valid) {
         displayToast('Sorry, that username is not valid.', 'danger')
       } else {
-        // TODO: Looks good!  Go to Google oauth account creation flow
-
+        // Looks good!  Go to Google oauth account creation flow
+        // redirect to Google login, passing the username through via the state param.
+        // Send us back to the special oauth2 account creation step2 path (which is ignored by our AppInitializer)
+        localStorage.setItem('after-sso-login-url', `${SynapseClient.getRootURL()}authenticated/signTermsOfUse`)
+        const redirectUrl = `${SynapseClient.getRootURL()}?provider=${PROVIDERS.GOOGLE}`
+        SynapseClient.oAuthUrlRequest(PROVIDERS.GOOGLE, redirectUrl, username)
+          .then((data: any) => {
+            const authUrl = data.authorizationUrl
+            window.location.assign(authUrl)
+          })
+          .catch((err: any) => {
+            displayToast(err.reason as string, 'danger')
+          })
       }
     } catch (err:any) {
       displayToast(err.reason as string, 'danger')

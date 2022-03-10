@@ -3,6 +3,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { SynapseClient } from 'synapse-react-client'
 import { withCookies, ReactCookieProps } from 'react-cookie'
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
+import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 
 export type AppInitializerState = {
   token: string
@@ -65,7 +66,10 @@ class AppInitializer extends React.Component<Props, AppInitializerState> {
 
   componentDidMount() {
     this.getSession()
-    SynapseClient.detectSSOCode()
+    SynapseClient.detectSSOCode('/register1',
+      (err) => {
+        displayToast(err, 'danger')
+      })
   }
 
   render() {

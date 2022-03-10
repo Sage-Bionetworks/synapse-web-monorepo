@@ -14,8 +14,6 @@ export type RegisterAccount2Props = {
 export const RegisterAccount2 = (props: RegisterAccount2Props) => {
   // const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
   const [username, setUsername] = useState('')
   const [password1, setPassword1] = useState('')
   const [password2, setPassword2] = useState('')
@@ -56,11 +54,9 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
         displayToast('Sorry, that username is not valid.', 'danger')
         return
       }
-      // TODO: capture loginResponse here
+      // capture loginResponse here
       const loginResponse = await registerAccountStep2({
         username,
-        firstName,
-        lastName,
         emailValidationSignedToken,
         password: password1
       })
@@ -78,12 +74,6 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
   const onChangeUsername = (event: React.SyntheticEvent<HTMLInputElement>) => {
     setUsername(event.currentTarget.value)
   }
-  const onChangeFirstName = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    setFirstName(event.currentTarget.value)
-  }
-  const onChangeLastName = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    setLastName(event.currentTarget.value)
-  }
   const onChangePassword1 = (event: React.SyntheticEvent<HTMLInputElement>) => {
     setPassword1(event.currentTarget.value)
   }
@@ -100,22 +90,6 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
               onChange={onChangeUsername}
               type="text"
               placeholder="Choose a username"
-            ></input>
-        </div>
-        <div>
-          <Typography variant='label'>First name</Typography>
-          <input
-              onChange={onChangeFirstName}
-              type="text"
-              placeholder="First name"
-            ></input>
-        </div>
-        <div>
-          <Typography variant='label'>Last name</Typography>
-          <input
-              onChange={onChangeLastName}
-              type="text"
-              placeholder="Last name"
             ></input>
         </div>
         <div>
