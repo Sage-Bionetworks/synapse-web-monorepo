@@ -15,6 +15,7 @@ import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { SynapseComponents } from 'synapse-react-client'
 import { RegisterAccount2 } from 'components/RegisterAccount2'
 import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
+import { ORCiDButton } from 'components/ORCiDButton'
 
 const App: React.FC = () => {
   return (
@@ -27,10 +28,11 @@ const App: React.FC = () => {
                <Route exact path="/"
                   render={props => {
                     return <>
-                      <p>There are two main entrypoints into this web app</p>
+                      <p>There are a few main entrypoints into this web app</p>
                       <p>
-                        <a href='/register1'>Account Registration</a>&nbsp;and&nbsp;
-                        <a href='/authenticated/validate'>Profile Validation</a>
+                        <a href='/register1'>Account Registration</a>,&nbsp;
+                        <a href='/authenticated/validate'>Profile Validation</a>,&nbsp;and&nbsp;
+                        <a href='/authenticated/myaccount'>My Account</a>
                       </p>
                       </>
                   }} />
@@ -62,7 +64,19 @@ const App: React.FC = () => {
                               <TermsAndConditions onFormChange={(completed:boolean) => { console.log("is the form completed?", completed) }} />
                             </>
                           )
-                       } else {
+                       } else if (path === '/authenticated/myaccount') {
+                        return (
+                          <>
+                            <p>My account management goes here.  Emails, change password, ...</p>
+                            <ORCiDButton />
+                            {ctx?.accessToken && 
+                              <div>
+                                <p>You are logged in!</p>
+                                <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
+                              </div>}
+                          </>
+                        )
+                      } else {
                         return (<>
                           <p>Unrecognized match path {routeProps.match.path}</p>
                         </>)

@@ -14,6 +14,26 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
 
+
+### `yarn link-src` `yarn unlink-src`
+To run a portal with a local version of SRC run the following commands:
+
+```sh
+# In Synapse-React-Client/
+# Symlink the package itself as well as the local react, react-router, and react-router-dom packages
+$ yarn link-src
+$ yarn build
+
+# In this project
+$ yarn link-src
+$ yarn start
+# Note that you can make changes in the SRC project and reflect
+# them in this project by running yarn build again. This project
+# can continue to run as you make changes.
+```
+
+To unlink synapse react-client run `yarn unlink-src`
+
 ### `yarn test`
 
 Launches the test runner in the interactive watch mode.<br>
