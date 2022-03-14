@@ -1,20 +1,51 @@
-name: Build Workflow
+name: build-and-deploy-sageaccountsweb
 on:
   push:
     branches:
-      - main
+      - production
+      - staging
+      - develop
 jobs:
-  build:
+  build-and-deploy:
+    name: build-and-deploy
+    # limit to this repository
+    if: github.repository == 'Sage-Bionetworks/SageAccountWeb'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: SetupNode
+      # if in staging branch set then bucket name to staging bucket
+      - name: setup-outputbucket-staging
+        if: github.ref == 'refs/heads/staging'
+        run: echo 'BUCKET_NAME=staging.accounts.sagebionetworks.org' >> $GITHUB_ENV
+      # if in production branch then set bucket name to production bucket
+      - name: setup-outputbucket-prod
+        if: github.ref == 'refs/heads/production'
+        run: echo 'BUCKET_NAME=prod.accounts.sagebionetworks.org' >> $GITHUB_ENV
+      # if in development branch then bucket name is empty
+      # checkout and build
+      - name: checkout
+        uses: actions/checkout@v3.0.0
+      - name: setup-nodejs
         uses: actions/setup-node@v2
         with:
-          node-version: "12"
-      - name: Setup yarn
-        run: npm install -g yarn
-      - name: Install dependencies
+          node-version: "12.x"
+      - name: install-dependencies
         run: yarn install
-      - name: Build
+      - name: build
         run: yarn build
+      # setup AWS creds
+      - name: config-aws-creds
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AKID }}
+          aws-secret-access-key: ${{ secrets.AKSID }}
+          aws-region: us-east-1
+          mask-aws-account-id: true
+          role-to-assume: arn:aws:iam::797640923903:role/test-ghdeployer-GithubDeployerRole-V271Z804BS72
+          role-session-name: deploy-sageaccountweb-build
+          # TODO: fix role to allow this
+          role-skip-session-tagging: true
+          role-duration-seconds: 900
+      # if not develop branch deploy build to S3 bucket    
+      - name: deploy-build
+        if: env.BUCKET_NAME != ''
+        run: aws s3 sync ./build s3://$BUCKET_NAME/           
