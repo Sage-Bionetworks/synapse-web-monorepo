@@ -4,6 +4,7 @@ import { SynapseClient } from 'synapse-react-client'
 import { withCookies, ReactCookieProps } from 'react-cookie'
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
+import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 
 export type AppInitializerState = {
   token: string
@@ -11,6 +12,7 @@ export type AppInitializerState = {
   // delay render until get session is called, o.w. theres an uneccessary refresh right
   // after page load
   hasCalledGetSession: boolean
+  userProfile?: UserProfile
 }
 
 type Props = RouteComponentProps & ReactCookieProps
@@ -42,7 +44,16 @@ class AppInitializer extends React.Component<Props, AppInitializerState> {
         this.initAnonymousUserState()
         return
       }
-      this.setState({ token, hasCalledGetSession: true })
+      // verify we can get the current user profile
+      let userProfile = undefined
+      try {
+        userProfile = await SynapseClient.getUserProfile(token)
+      } catch (error:any) {
+        if ((error.reason as string).toLowerCase().includes('terms of use') && window.location.pathname !== '/authenticated/signTermsOfUse' ) {
+          window.location.assign('/authenticated/signTermsOfUse')
+        }
+      }
+      this.setState({ token, userProfile, hasCalledGetSession: true })
     } catch (e) {
       console.error('Error on getSession: ', e)
       // intentionally calling sign out because there token could be stale so we want
