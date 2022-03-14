@@ -15,11 +15,15 @@ jobs:
       # if in staging branch set then bucket name to staging bucket
       - name: setup-outputbucket-staging
         if: github.ref == 'refs/heads/staging'
-        run: echo 'BUCKET_NAME=staging.accounts.sagebionetworks.org' >> $GITHUB_ENV
+        run: |
+          echo 'BUCKET_NAME=staging.accounts.sagebionetworks.org' >> $GITHUB_ENV
+          echo 'CFDIST_ID=EY52HOUGKDP1F' >> $GITHUB_ENV
       # if in production branch then set bucket name to production bucket
       - name: setup-outputbucket-prod
         if: github.ref == 'refs/heads/production'
-        run: echo 'BUCKET_NAME=prod.accounts.sagebionetworks.org' >> $GITHUB_ENV
+        run: |
+          echo 'BUCKET_NAME=prod.accounts.sagebionetworks.org' >> $GITHUB_ENV
+          echo 'CFDIST_ID=E2656IE63W1MXI' >> $GITHUB_ENV
       # if in development branch then bucket name is empty
       # checkout and build
       - name: checkout
@@ -48,4 +52,6 @@ jobs:
       # if not develop branch deploy build to S3 bucket    
       - name: deploy-build
         if: env.BUCKET_NAME != ''
-        run: aws s3 sync ./build s3://$BUCKET_NAME/           
+        run: |
+          aws s3 sync ./build s3://$BUCKET_NAME/ --delete
+          aws cloudfront create-invalidation --distribution-id $CFDIST_ID
