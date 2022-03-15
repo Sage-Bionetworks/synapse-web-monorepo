@@ -7,6 +7,7 @@ import { PROVIDERS } from 'synapse-react-client/dist/containers/Login'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { isAliasAvailable, registerAccountStep1 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
+import SourceApp from './SourceApp'
 
 export type RegisterAccount1Props = {
 }
@@ -82,6 +83,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
 
   return (
     <>
+      <SourceApp />
       <div className="RegisterAccount1 bootstrap-4-backport">
         <div className="GoogleSignUpUI">
           <Typography variant='label'>Choose a username</Typography>

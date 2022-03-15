@@ -1,7 +1,6 @@
 import React from 'react'
 import './App.css'
 import AppInitializer from './AppInitializer'
-import Versions from './Versions'
 import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext'
 import {
   BrowserRouter as Router,
@@ -14,8 +13,8 @@ import LoginPage from './LoginPage'
 import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { SynapseComponents } from 'synapse-react-client'
 import { RegisterAccount2 } from 'components/RegisterAccount2'
-import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
 import { ORCiDButton } from 'components/ORCiDButton'
+import { TermsOfUsePage } from 'components/TermsOfUsePage'
 
 const App: React.FC = () => {
   return (
@@ -59,11 +58,7 @@ const App: React.FC = () => {
                             </>
                           )
                         } else if (path === '/authenticated/signTermsOfUse') {
-                          return (
-                            <>
-                              <TermsAndConditions onFormChange={(completed:boolean) => { console.log("is the form completed?", completed) }} />
-                            </>
-                          )
+                          return <TermsOfUsePage />
                        } else if (path === '/authenticated/myaccount') {
                         return (
                           <>
@@ -91,7 +86,6 @@ const App: React.FC = () => {
             </AppInitializer>
           </Router>
         </>
-      <Versions />
       <SynapseComponents.SynapseToastContainer />
     </div>
   );
