@@ -50,11 +50,7 @@ const App: React.FC = () => {
                           return (
                             <>
                               <p>Profile validation page (wizard) goes here</p>
-                              {ctx?.accessToken && 
-                                <div>
-                                  <p>You are logged in!</p>
-                                  <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
-                                </div>}
+                              <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
                             </>
                           )
                         } else if (path === '/authenticated/signTermsOfUse') {
@@ -64,11 +60,7 @@ const App: React.FC = () => {
                           <>
                             <p>My account management goes here.  Emails, change password, ...</p>
                             <ORCiDButton />
-                            {ctx?.accessToken && 
-                              <div>
-                                <p>You are logged in!</p>
-                                <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
-                              </div>}
+                            <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
                           </>
                         )
                       } else {

@@ -10,22 +10,35 @@ export type SourceAppProps = {
  */
 export const SourceApp = (props: SourceAppProps) => {
   const sourceAppId = localStorage.getItem('sourceAppId')
-
-  return ( <>
-      {sourceAppId && <p>Source app currently set to {sourceAppId}</p>}
-    </>
-  )
+  let ui = <></>
+  switch(sourceAppId) {
+    case 'MTB':
+    case 'MTB-staging': ui = <>
+        <p>This is UI that is specific to MTB</p>
+      </>
+      break
+    case 'Synapse': ui = <>
+        <p>This is UI that is specific to Synapse.org</p>
+      </>
+      break
+  }
+  return ui
 }
 
 export const getSourceAppRedirectURL = (): string | undefined => {
   const sourceAppId = localStorage.getItem('sourceAppId')
+  let redirectURL = undefined
   if (!sourceAppId) {
-    return undefined
+    redirectURL = undefined
+  } else {
+    switch(sourceAppId) {
+      case 'MTB': redirectURL = 'https://www.mobiletoolbox.org/'
+        break
+      case 'MTB-staging': redirectURL = 'https://staging.mobiletoolbox.org/'
+        break
+    }
   }
-  switch(sourceAppId) {
-    case 'MTB': return 'https://staging.mobiletoolbox.org/'
-    default: return undefined
-  }
+  return redirectURL
 }
 
 export default SourceApp
