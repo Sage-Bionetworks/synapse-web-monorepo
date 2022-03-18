@@ -108,6 +108,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
         <div className="EmailAddressUI">
           <Typography variant='label'>Enter your email address and we will send you the instructions on how to complete the registration process.</Typography>
           <div className="inputAndCreateButton">
+            
             <input
               onChange={onChangeEmail}
               type="text"

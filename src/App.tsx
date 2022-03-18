@@ -15,6 +15,7 @@ import { SynapseComponents } from 'synapse-react-client'
 import { RegisterAccount2 } from 'components/RegisterAccount2'
 import { ORCiDButton } from 'components/ORCiDButton'
 import { TermsOfUsePage } from 'components/TermsOfUsePage'
+import { ProfileValidation } from 'components/ProfileValidation'
 
 const App: React.FC = () => {
   return (
@@ -49,7 +50,7 @@ const App: React.FC = () => {
                         if (path === '/authenticated/validate') {
                           return (
                             <>
-                              <p>Profile validation page (wizard) goes here</p>
+                              <ProfileValidation />
                               <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
                             </>
                           )
