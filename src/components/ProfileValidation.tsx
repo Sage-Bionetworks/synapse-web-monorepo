@@ -41,6 +41,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
         )
         let verificationSubmission = bundle.verificationSubmission
         const profile = bundle.userProfile!
+        // is this the first verification submission
         if (!verificationSubmission) {
           verificationSubmission = {
             company: '',
@@ -52,7 +53,6 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
             attachments: []
           }
         }
-        // this is a new verification submission (perhaps based on an existing submission)
         // in any case, initialize to values that come from the current user profile state
         verificationSubmission.id = undefined
         verificationSubmission.company = profile.company ?? ''
