@@ -1,6 +1,8 @@
 import React from 'react'
+import SourceAppConfigs, { SourceAppConfig } from './SourceAppConfigs'
 
 export type SourceAppProps = {
+  isAccountCreationTextVisible?:boolean
 }
 
 /**
@@ -9,36 +11,23 @@ export type SourceAppProps = {
  * @returns 
  */
 export const SourceApp = (props: SourceAppProps) => {
+  const { isAccountCreationTextVisible=false } = props
+  return <>
+    <div className='SourceAppLogo'>{getCurrentSourceApp()?.logo}</div>
+    {isAccountCreationTextVisible && <div>
+      <p>A Sage account is required to log into {getCurrentSourceApp()?.friendlyName}.</p>
+      <p>Create an account to get started.</p>
+    </div>}
+  </>
+}
+
+export const getCurrentSourceApp = (): SourceAppConfig | undefined => {
   const sourceAppId = localStorage.getItem('sourceAppId')
-  let ui = <></>
-  switch(sourceAppId) {
-    case 'MTB':
-    case 'MTB-staging': ui = <>
-        <p>This is UI that is specific to MTB</p>
-      </>
-      break
-    case 'Synapse': ui = <>
-        <p>This is UI that is specific to Synapse.org</p>
-      </>
-      break
-  }
-  return ui
+  return SourceAppConfigs.find(config => config.appId === sourceAppId);
 }
 
 export const getSourceAppRedirectURL = (): string | undefined => {
-  const sourceAppId = localStorage.getItem('sourceAppId')
-  let redirectURL = undefined
-  if (!sourceAppId) {
-    redirectURL = undefined
-  } else {
-    switch(sourceAppId) {
-      case 'MTB': redirectURL = 'https://www.mobiletoolbox.org/'
-        break
-      case 'MTB-staging': redirectURL = 'https://staging.mobiletoolbox.org/'
-        break
-    }
-  }
-  return redirectURL
+  return getCurrentSourceApp()?.redirectURL
 }
 
 export default SourceApp
