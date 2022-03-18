@@ -77,7 +77,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
 
   return (
     <>
-      <SourceApp />
+      <SourceApp isAccountCreationTextVisible={true}/>
       <div className="RegisterAccount1 bootstrap-4-backport">
         <div className="GoogleSignUpUI">
             <FormGroup controlId='googleAccountCreation'>
