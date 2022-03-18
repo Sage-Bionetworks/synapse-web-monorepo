@@ -14,6 +14,7 @@ import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { SynapseComponents } from 'synapse-react-client'
 import { RegisterAccount2 } from 'components/RegisterAccount2'
 import { TermsOfUsePage } from 'components/TermsOfUsePage'
+import ChangePasswordPage from 'components/ChangePassword'
 import { ProfileValidation } from 'components/ProfileValidation'
 
 const App: React.FC = () => {
@@ -59,9 +60,15 @@ const App: React.FC = () => {
                         return (
                           <>
                             <p>My account management goes here.  Emails, change password, ...</p>
+                            <a href='/authenticated/changepassword'>Change Password</a>
                             <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
                           </>
                         )
+                      } else if(path ==='/authenticated/changepassword'){
+                        return (
+                          <ChangePasswordPage />
+                        )
+
                       } else {
                         return (<>
                           <p>Unrecognized match path {routeProps.match.path}</p>
