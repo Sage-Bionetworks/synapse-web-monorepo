@@ -30,29 +30,32 @@ export const VerifyIdentify = (props: VerifyIdentifyProps) => {
     <>
       <div className="VerifyIdentify bootstrap-4-backport">
         <Typography variant='headline3'>In order to validate your identify, we require:</Typography>
-        <ol>
+          <Typography variant='body1'>1. Accounts to have an ORCID. Please link your profile below. </Typography>
+          {verificationSubmission.orcid && <Typography variant='body1'>ORCiD: {verificationSubmission.orcid}</Typography>}
+          {!verificationSubmission.orcid && <ORCiDButton />}
+        <Typography variant='body1'>2. Submit recent identity attestation documentation. This document must be current within the past month. Acceptable forms of documentation, in English, are any one of the following: </Typography>
+        <ul>
           <li>
-            <Typography variant='body1'>Accounts to have an ORCID. Please link your profile below. </Typography>
-            {verificationSubmission.orcid && <Typography variant='body1'>ORCiD: {verificationSubmission.orcid}</Typography>}
-            {!verificationSubmission.orcid && <ORCiDButton />}
+            <p>A letter from a signing official on letterhead attesting to your identity (<a href="https://help.synapse.org/docs/2007072795/signing_official.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b" rel="nofollow">template here</a>).&nbsp;Note that you <strong>cannot</strong> serve as your own signing official.&nbsp; OR
+            </p>
           </li>
           <li>
-            <Typography variant='body1'>Submit recent identity... </Typography>
-            <ul>
-              <li>
-                A letter...
-              </li>
-            </ul>
-            {isAttachment && <span>{attachments[0].fileName}</span>}
-            <span>
-                <SynapseComponents.FileUpload 
-                uploadCallback={uploadCallback}
-                label={isAttachment ? 'Replace' : 'Select ID File to Upload'}
-                variant={isAttachment ? 'light-primary-base' : 'primary'}
-              />
-            </span>
+            <p>A notarized letter attesting to your identity (<a href="https://help.synapse.org/docs/2007072795/notarized_letter.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b" rel="nofollow">template here</a>) OR
+            </p>
           </li>
-        </ol>
+          <li>
+            <p>A copy of your professional license (e.g., a photocopy of your medical license).&nbsp;Note that a copy of a work or university identification badge is <strong>not</strong> an accepted form of identity attestation documentation.
+            </p>
+          </li>
+        </ul>
+        {isAttachment && <span>{attachments[0].fileName}</span>}
+        <span>
+            <SynapseComponents.FileUpload 
+            uploadCallback={uploadCallback}
+            label={isAttachment ? 'Replace' : 'Select ID File to Upload'}
+            variant={isAttachment ? 'light-primary-base' : 'primary'}
+          />
+        </span>
       </div>
     </>
     
