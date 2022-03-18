@@ -93,7 +93,8 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
       profile.firstName = verificationSubmission.firstName
       profile.lastName = verificationSubmission.lastName
       profile.location = verificationSubmission.location
-      await updateMyUserProfile(profile, accessToken)
+      const updatedProfile = await updateMyUserProfile(profile, accessToken)
+      setProfile(updatedProfile)
     }
   }
 
