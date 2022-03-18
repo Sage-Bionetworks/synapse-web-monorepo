@@ -5,6 +5,7 @@ import {
 import { SynapseClient } from 'synapse-react-client'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/Login'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
+import { ValidationWizardStep } from './ProfileValidation'
 
 export type ORCiDButtonProps = {
 }
@@ -17,7 +18,7 @@ export const ORCiDButton = (props: ORCiDButtonProps) => {
     setIsLoading(true)
     try {
       // after binding, go to ???
-      localStorage.setItem('after-sso-login-url', `${SynapseClient.getRootURL()}authenticated/myaccount`)
+      localStorage.setItem('after-sso-login-url', `${SynapseClient.getRootURL()}authenticated/validate?step=${ValidationWizardStep.VERIFY_IDENTITY}`)
       const redirectUrl = `${SynapseClient.getRootURL()}?provider=${PROVIDERS.ORCID}`
       SynapseClient.oAuthUrlRequest(PROVIDERS.ORCID, redirectUrl)
         .then((data: any) => {
@@ -41,7 +42,7 @@ export const ORCiDButton = (props: ORCiDButtonProps) => {
       style={{ marginLeft: 20 }}
       disabled={ isLoading }
     >
-      Bind ORCiD
+      Link My ORCiD
     </Button>
   )
 }

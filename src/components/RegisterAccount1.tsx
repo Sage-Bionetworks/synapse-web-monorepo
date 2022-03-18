@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import {
   Button,
+  FormControl, FormGroup, FormLabel 
 } from 'react-bootstrap'
-import { SynapseClient, Typography } from 'synapse-react-client'
+import { SynapseClient } from 'synapse-react-client'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/Login'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { isAliasAvailable, registerAccountStep1 } from 'synapse-react-client/dist/utils/SynapseClient'
@@ -74,26 +75,17 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
     }
   }
 
-  const onChangeUsername = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    setUsername(event.currentTarget.value)
-  }
-  const onChangeEmail = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    setEmail(event.currentTarget.value)
-  }
-
   return (
     <>
       <SourceApp />
       <div className="RegisterAccount1 bootstrap-4-backport">
         <div className="GoogleSignUpUI">
-          <Typography variant='label'>Choose a username</Typography>
-          <div className="inputAndCreateButton">
-            <input
-              onChange={onChangeUsername}
-              type="text"
-              placeholder="Choose a username"
-              style={{width:'233px'}}
-            ></input>
+            <FormGroup controlId='googleAccountCreation'>
+                <FormLabel>Choose a username</FormLabel>
+                <FormControl 
+                  onChange={e => setUsername(e.target.value)} 
+                  value = {username}/>
+            </FormGroup>
             <Button
               variant={username ? 'primary' : 'dark'}
               onClick={onSignUpWithGoogle}
@@ -103,18 +95,15 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
             >
               Sign up with Google
             </Button>
-          </div>
         </div>
         <div className="EmailAddressUI">
-          <Typography variant='label'>Enter your email address and we will send you the instructions on how to complete the registration process.</Typography>
-          <div className="inputAndCreateButton">
-            <input
-              onChange={onChangeEmail}
-              type="text"
-              placeholder="Your email address"
-              style={{width:'233px'}}
-            ></input>
-            <Button
+          <FormGroup controlId='emailAddressAccountCreation'>
+              <FormLabel>Enter your email address and we will send you the instructions on how to complete the registration process.</FormLabel>
+              <FormControl 
+                onChange={e => setEmail(e.target.value)} 
+                value = {email}/>
+          </FormGroup>
+          <Button
               variant={email ? 'primary' : 'dark'}
               onClick={onSendRegistrationInfo}
               type="button"
@@ -123,7 +112,6 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
             >
               Send registration info
             </Button>
-          </div>
         </div>
       </div>
     </>
