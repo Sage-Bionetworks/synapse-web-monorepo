@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from 'react-bootstrap'
-import { SynapseConstants } from 'synapse-react-client'
+import { Link, Redirect } from 'react-router-dom'
+import { SynapseConstants, Typography } from 'synapse-react-client'
+import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { getMyUserBundle, updateMyUserProfile, createProfileVerificationSubmission } from 'synapse-react-client/dist/utils/SynapseClient'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
@@ -25,6 +27,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
   const [profile, setProfile] = useState<UserProfile>()
   const [step, setStep] = useState<ValidationWizardStep>(ValidationWizardStep.PROFILE_INFO)
   const [isContinueButtonEnabled, setIsContinueButtonEnabled] = useState(true)
+  const [isReturnToAccountSettings, setIsReturnToAccountSettings] = useState(false)
 
   useEffect(() => {
     const getData = async () => {
@@ -76,6 +79,9 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
     getData()
   }, [accessToken])
 
+  if (isReturnToAccountSettings) {
+    return <Redirect to='/authenticated/myaccount' />
+  }
   const onSubmit = async () => {
     if (profile && verificationSubmission) {
       try {
@@ -161,10 +167,25 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
   return (
     <>
       <div className="ProfileValidation bootstrap-4-backport">
+        <Link to='/authenticated/myaccount'>Return to Account Settings</Link>
         {verificationSubmission && <>
           {step === ValidationWizardStep.PROFILE_INFO && <ProfileFieldsEditor verificationSubmission={verificationSubmission} />}
           {step === ValidationWizardStep.VERIFY_IDENTITY && <VerifyIdentify verificationSubmission={verificationSubmission} />}
-
+          {step === ValidationWizardStep.SIGN_PLEDGE && <>
+            <TermsAndConditions onFormChange={(isFormComplete) => {
+              setIsContinueButtonEnabled(isFormComplete)
+            }} />
+          </>}
+          {step === ValidationWizardStep.THANK_YOU && <>
+            <Typography variant="headline3">Thank you for verifying.</Typography>
+            <Button
+              variant='primary'
+              onClick={() => {setIsReturnToAccountSettings(true)}}
+              type="button"
+            >
+              Return to Account Settings
+            </Button>
+          </>}
         </>}
         { (step !== ValidationWizardStep.PROFILE_INFO && step !== ValidationWizardStep.THANK_YOU) && <Button
           variant='default'
