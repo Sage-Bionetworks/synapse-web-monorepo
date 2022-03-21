@@ -1,6 +1,8 @@
 import React from 'react'
+import SourceAppConfigs, { SourceAppConfig } from './SourceAppConfigs'
 
 export type SourceAppProps = {
+  isAccountCreationTextVisible?:boolean
 }
 
 /**
@@ -9,23 +11,23 @@ export type SourceAppProps = {
  * @returns 
  */
 export const SourceApp = (props: SourceAppProps) => {
-  const sourceAppId = localStorage.getItem('sourceAppId')
+  const { isAccountCreationTextVisible=false } = props
+  return <>
+    <div className='SourceAppLogo'>{getCurrentSourceApp()?.logo}</div>
+    {isAccountCreationTextVisible && <div>
+      <p>A Sage account is required to log into {getCurrentSourceApp()?.friendlyName}.</p>
+      <p>Create an account to get started.</p>
+    </div>}
+  </>
+}
 
-  return ( <>
-      {sourceAppId && <p>Source app currently set to {sourceAppId}</p>}
-    </>
-  )
+export const getCurrentSourceApp = (): SourceAppConfig | undefined => {
+  const sourceAppId = localStorage.getItem('sourceAppId')
+  return SourceAppConfigs.find(config => config.appId === sourceAppId);
 }
 
 export const getSourceAppRedirectURL = (): string | undefined => {
-  const sourceAppId = localStorage.getItem('sourceAppId')
-  if (!sourceAppId) {
-    return undefined
-  }
-  switch(sourceAppId) {
-    case 'MTB': return 'https://staging.mobiletoolbox.org/'
-    default: return undefined
-  }
+  return getCurrentSourceApp()?.redirectURL
 }
 
 export default SourceApp
