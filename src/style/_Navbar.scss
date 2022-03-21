@@ -1,0 +1,18 @@
+.top-nav {
+    background: rgba(256, 256, 256, 0.9);
+    padding: 40px;
+    width: 100%;
+    font-size: 18px;
+    
+    .nav-link {
+        color: black;
+        font-weight: 400;
+        line-height: 27px;
+        padding: 0 20px;
+        text-decoration: none;
+    }
+
+    .isSelected{
+        font-weight: 700;
+    }
+}

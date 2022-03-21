@@ -6,6 +6,7 @@
   $primary-bgcolor-rgba: unset,
 );
 @use 'node_modules/synapse-react-client/dist/template_style/Index.scss';
+@use 'Navbar';
 
 .App {
   font-family: 'Lato', sans-serif;
@@ -34,6 +35,7 @@
 .ComponentWrapper {
   max-width: 650px;
 }
+
 
 .SourceAppLogo svg {
   height: 100%;

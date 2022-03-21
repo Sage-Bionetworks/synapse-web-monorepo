@@ -15,6 +15,7 @@ import { SynapseComponents } from 'synapse-react-client'
 import { RegisterAccount2 } from 'components/RegisterAccount2'
 import { TermsOfUsePage } from 'components/TermsOfUsePage'
 import ChangePasswordPage from 'components/ChangePassword'
+import TopNavBar from 'components/TopNavBar'
 import { ProfileValidation } from 'components/ProfileValidation'
 
 const App: React.FC = () => {
@@ -23,6 +24,7 @@ const App: React.FC = () => {
       <>
         <Router>
             <AppInitializer>
+              <TopNavBar />
               <CookiesNotification />
               <Switch>
                <Route exact path="/"
