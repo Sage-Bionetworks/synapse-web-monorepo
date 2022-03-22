@@ -1,7 +1,38 @@
 #body {
+
     .btn {
         border-radius: 100px;
         padding-left: 20px;
         padding-right: 20px;
+    }
+    .form-group.required .form-label:after { 
+        content: "*";
+        margin-left: 2px;
+        top:0px;
+    }
+    .bootstrap-4-backport .form-control {
+        background: #FCFCFC;
+        border: 1px solid #2A2A2A;
+        box-sizing: border-box;
+        border-radius: 2px;
+        &:disabled {
+            background: #e9ecef;
+        }
+    }
+    .blue-background {
+        min-height: 100vh;
+        background: #E5E5E5;
+        padding-top: 100px;
+        padding-bottom: 100px;
+        .container {
+            background: #FEFEFE;
+            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+            padding: 80px;
+        }
+    }
+    .buttonsContainer {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 50px;
     }
 }

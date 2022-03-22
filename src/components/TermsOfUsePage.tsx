@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import {
-  Button,
+  Button, Container,
 } from 'react-bootstrap'
 import { Redirect } from 'react-router-dom'
 import { SynapseClient } from 'synapse-react-client'
+import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
@@ -39,16 +40,23 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   return (
     <>
       {isDone && <Redirect to='/authenticated/myaccount'/>}
-      <div><TermsAndConditions onFormChange={(completed:boolean) => { setIsFormComplete(completed) }} /></div>
-      <Button
-        variant='primary'
-        onClick={onSignTermsOfUse}
-        type="button"
-        style={{ marginLeft: 20 }}
-        disabled={ isLoading || !isFormComplete }
-      >
-        Next
-      </Button>
+      <div className="bootstrap-4-backport blue-background">
+        <Container>
+          <TermsAndConditions onFormChange={(completed:boolean) => { setIsFormComplete(completed) }} />
+          <div className="buttonsContainer">
+            <Button
+              variant='primary'
+              onClick={onSignTermsOfUse}
+              type="button"
+              style={{ marginLeft: 20 }}
+              disabled={ isLoading || !isFormComplete }
+            >
+              Accept and continue <IconSvg options={{ icon: 'arrowForward' }} />
+            </Button>
+          </div>
+          
+        </Container>
+      </div>
     </>
   )
 }
