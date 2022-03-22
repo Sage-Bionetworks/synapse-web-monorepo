@@ -87,7 +87,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                   value = {email}/>
             </FormGroup>
             <Button
-                variant={email ? 'secondary' : 'light'}
+                variant={email ? 'primary' : 'light'}
                 onClick={onSendRegistrationInfo}
                 type="button"
                 style={{ marginLeft: 20 }}

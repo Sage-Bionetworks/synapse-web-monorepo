@@ -53,7 +53,7 @@ export const VerifyIdentify = (props: VerifyIdentifyProps) => {
             <SynapseComponents.FileUpload 
             uploadCallback={uploadCallback}
             label={isAttachment ? 'Replace' : 'Select ID File to Upload'}
-            variant={isAttachment ? 'light-primary-base' : 'primary'}
+            variant={isAttachment ? 'light-primary-base' : 'secondary'}
           />
         </span>
       </div>

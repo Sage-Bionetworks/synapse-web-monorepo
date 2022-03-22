@@ -36,7 +36,7 @@ export const ORCiDButton = (props: ORCiDButtonProps) => {
   }
   return (
     <Button
-      variant='primary'
+      variant='secondary'
       onClick={onBindToORCiD}
       type="button"
       style={{ marginLeft: 20 }}
