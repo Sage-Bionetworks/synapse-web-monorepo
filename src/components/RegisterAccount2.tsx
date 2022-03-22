@@ -1,12 +1,15 @@
+
 import React, { useEffect, useState } from 'react'
 import {
-  Button,
+  Button, Col, Container, FormControl, FormGroup, FormLabel, Row,
 } from 'react-bootstrap'
-import { Typography } from 'synapse-react-client'
+import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { isAliasAvailable, registerAccountStep2, setAccessTokenCookie } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType, EmailValidationSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
+import SageBionetworksLogo from '../assets/SageBionetworksLogo.svg'
+
 
 export type RegisterAccount2Props = {
 }
@@ -26,9 +29,13 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
       displayToast('Email validation token was not provided in the URL, please contact synapseInfo@sagebase.org', 'danger')
       return
     }
-    const hexDecodedEmailValidationSignedToken = hexDecodeAndDeserialize(emailValidationSignedTokenValue).emailValidationSignedToken  
-    setEmailValidationSignedToken(hexDecodedEmailValidationSignedToken)
-    setEmail((hexDecodedEmailValidationSignedToken as EmailValidationSignedToken).email)
+    try {
+      const hexDecodedEmailValidationSignedToken = hexDecodeAndDeserialize(emailValidationSignedTokenValue).emailValidationSignedToken
+      setEmailValidationSignedToken(hexDecodedEmailValidationSignedToken)
+      setEmail((hexDecodedEmailValidationSignedToken as EmailValidationSignedToken).email)
+    } catch (err) {
+      displayToast('Unable to process the given email validation token.', 'danger')
+    }
   }, [emailValidationSignedTokenValue])
 
   const onCreateAccount = async (event: React.SyntheticEvent) => {
@@ -71,58 +78,63 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
     }
   }
 
-  const onChangeUsername = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    setUsername(event.currentTarget.value)
-  }
-  const onChangePassword1 = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    setPassword1(event.currentTarget.value)
-  }
-  const onChangePassword2 = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    setPassword2(event.currentTarget.value)
-  }
-
   return (
     <>
-      <div className="RegisterAccount2 bootstrap-4-backport">
-        <div>
-          <Typography variant='label'>Choose a username</Typography>
-          <input
-              onChange={onChangeUsername}
-              type="text"
-              placeholder="Choose a username"
-            ></input>
-        </div>
-        <div>
-          <Typography variant='label'>Email address</Typography>
-          <input
-              type="text"
-              value={email}
-              readOnly={true}
-            ></input>
-        </div>
-        <div>
-          <Typography variant='label'>Password</Typography>
-          <input
-              onChange={onChangePassword1}
-              type='password'
-            ></input>
-        </div>
-        <div>
-          <Typography variant='label'>Confirm password</Typography>
-          <input
-              onChange={onChangePassword2}
-              type='password'
-            ></input>
-        </div>
-        <Button
-          variant='primary'
-          onClick={onCreateAccount}
-          type="button"
-          style={{ marginLeft: 20 }}
-          disabled={isLoading}
-        >
-          Create Account
-        </Button>
+      <div className="RegisterAccount2 bootstrap-4-backport blue-background">
+        <Container>
+          <img
+              src={SageBionetworksLogo}
+              style={{ height: 100 }}
+              alt="Sage Bionetworks Logo"
+            />
+          <Row>
+            <Col xs={12} sm={6}>
+              <FormGroup className='required'>
+                  <FormLabel>Choose a username</FormLabel>
+                  <FormControl 
+                    onChange={e => setUsername(e.target.value)} 
+                    value = {username}/>
+              </FormGroup>
+            </Col>
+            <Col xs={12} sm={6}>
+              <FormGroup>
+                  <FormLabel>Email address</FormLabel>
+                  <FormControl 
+                    disabled
+                    value = {email}/>
+              </FormGroup>
+            </Col>
+            <Col xs={12} sm={6}>
+              <FormGroup className='required'>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl
+                    type="password"
+                    onChange={e => setPassword1(e.target.value)} 
+                    value = {password1}/>
+              </FormGroup>
+            </Col>
+            <Col xs={12} sm={6}>
+              <FormGroup className='required'>
+                  <FormLabel>Confirm password</FormLabel>
+                  <FormControl
+                    type="password"
+                    onChange={e => setPassword2(e.target.value)} 
+                    value = {password2}/>
+              </FormGroup>
+            </Col>
+          </Row>
+          <div className="buttonsContainer">
+            <Button
+              variant='secondary'
+              onClick={onCreateAccount}
+              type="button"
+              style={{ marginLeft: 20 }}
+              disabled={isLoading}
+            >
+              Continue <IconSvg options={{ icon: 'arrowForward' }} />
+            </Button>
+          </div>
+        </Container>
       </div>
     </>
     
