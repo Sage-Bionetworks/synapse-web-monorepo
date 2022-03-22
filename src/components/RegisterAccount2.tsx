@@ -6,10 +6,9 @@ import {
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { isAliasAvailable, registerAccountStep2, setAccessTokenCookie } from 'synapse-react-client/dist/utils/SynapseClient'
-import { AliasType, EmailValidationSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
+import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
 import SageBionetworksLogo from '../assets/SageBionetworksLogo.svg'
-
 
 export type RegisterAccount2Props = {
 }
@@ -18,9 +17,11 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
   // const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
   const [username, setUsername] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [password1, setPassword1] = useState('')
   const [password2, setPassword2] = useState('')
-  const [email, setEmail] = useState('')
+  // const [email, setEmail] = useState('')
   const [emailValidationSignedToken, setEmailValidationSignedToken] = useState(undefined as any)
 
   const emailValidationSignedTokenValue = getSearchParam('emailValidationSignedToken')
@@ -32,7 +33,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
     try {
       const hexDecodedEmailValidationSignedToken = hexDecodeAndDeserialize(emailValidationSignedTokenValue).emailValidationSignedToken
       setEmailValidationSignedToken(hexDecodedEmailValidationSignedToken)
-      setEmail((hexDecodedEmailValidationSignedToken as EmailValidationSignedToken).email)
+      // setEmail((hexDecodedEmailValidationSignedToken as EmailValidationSignedToken).email)
     } catch (err) {
       displayToast('Unable to process the given email validation token.', 'danger')
     }
@@ -65,7 +66,9 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
       const loginResponse = await registerAccountStep2({
         username,
         emailValidationSignedToken,
-        password: password1
+        password: password1,
+        firstName,
+        lastName
       })
       setAccessTokenCookie(
         loginResponse.accessToken,
@@ -97,11 +100,27 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
               </FormGroup>
             </Col>
             <Col xs={12} sm={6}>
-              <FormGroup>
+              {/* <FormGroup>
                   <FormLabel>Email address</FormLabel>
                   <FormControl 
                     disabled
                     value = {email}/>
+              </FormGroup> */}
+            </Col>
+            <Col xs={12} sm={6}>
+              <FormGroup>
+                  <FormLabel>First Name</FormLabel>
+                  <FormControl
+                    onChange={e => setFirstName(e.target.value)} 
+                    value = {firstName}/>
+              </FormGroup>
+            </Col>
+            <Col xs={12} sm={6}>
+              <FormGroup>
+                  <FormLabel>Last Name</FormLabel>
+                  <FormControl
+                    onChange={e => setLastName(e.target.value)} 
+                    value = {lastName}/>
               </FormGroup>
             </Col>
             <Col xs={12} sm={6}>
