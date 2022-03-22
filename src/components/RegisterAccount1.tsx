@@ -79,6 +79,23 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
     <>
       <SourceApp isAccountCreationTextVisible={true}/>
       <div className="RegisterAccount1 bootstrap-4-backport">
+        <div className="EmailAddressUI">
+            <FormGroup controlId='emailAddressAccountCreation'>
+                <FormLabel>Enter your email address and we will send you the instructions on how to complete the registration process.</FormLabel>
+                <FormControl 
+                  onChange={e => setEmail(e.target.value)} 
+                  value = {email}/>
+            </FormGroup>
+            <Button
+                variant={email ? 'secondary' : 'light'}
+                onClick={onSendRegistrationInfo}
+                type="button"
+                style={{ marginLeft: 20 }}
+                disabled={ (email && !isLoading) ? false : true}
+              >
+                Create Account
+              </Button>
+        </div>
         <div className="GoogleSignUpUI">
             <FormGroup controlId='googleAccountCreation'>
                 <FormLabel>Choose a username</FormLabel>
@@ -87,30 +104,13 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                   value = {username}/>
             </FormGroup>
             <Button
-              variant={username ? 'primary' : 'dark'}
+              variant={username ? 'outline-dark' : 'light'}
               onClick={onSignUpWithGoogle}
               type="button"
               style={{ marginLeft: 20 }}
               disabled={ (username && !isLoading) ? false : true}
             >
               Sign up with Google
-            </Button>
-        </div>
-        <div className="EmailAddressUI">
-          <FormGroup controlId='emailAddressAccountCreation'>
-              <FormLabel>Enter your email address and we will send you the instructions on how to complete the registration process.</FormLabel>
-              <FormControl 
-                onChange={e => setEmail(e.target.value)} 
-                value = {email}/>
-          </FormGroup>
-          <Button
-              variant={email ? 'primary' : 'dark'}
-              onClick={onSendRegistrationInfo}
-              type="button"
-              style={{ marginLeft: 20 }}
-              disabled={ (email && !isLoading) ? false : true}
-            >
-              Send registration info
             </Button>
         </div>
       </div>
