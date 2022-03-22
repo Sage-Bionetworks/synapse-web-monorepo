@@ -125,7 +125,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
           </Row>
           <div className="buttonsContainer">
             <Button
-              variant='secondary'
+              variant='primary'
               onClick={onCreateAccount}
               type="button"
               style={{ marginLeft: 20 }}

@@ -45,7 +45,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
           <TermsAndConditions onFormChange={(completed:boolean) => { setIsFormComplete(completed) }} />
           <div className="buttonsContainer">
             <Button
-              variant='primary'
+              variant='secondary'
               onClick={onSignTermsOfUse}
               type="button"
               style={{ marginLeft: 20 }}

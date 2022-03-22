@@ -179,7 +179,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
           {step === ValidationWizardStep.THANK_YOU && <>
             <Typography variant="headline3">Thank you for verifying.</Typography>
             <Button
-              variant='primary'
+              variant='secondary'
               onClick={() => {setIsReturnToAccountSettings(true)}}
               type="button"
             >
@@ -196,7 +196,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
           Previous
         </Button>}
         { step !== ValidationWizardStep.THANK_YOU && <Button
-          variant='primary'
+          variant='secondary'
           onClick={onNext}
           type="button"
           style={{ marginLeft: 20 }}

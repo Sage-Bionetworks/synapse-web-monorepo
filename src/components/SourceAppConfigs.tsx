@@ -1,5 +1,5 @@
-import { MobileToolboxLogo } from 'assets/MobileToolboxLogo'
-import { SynapseLogo } from 'assets/SynapseLogo'
+import MobileToolboxLogoSvg from 'assets/MobileToolboxLogo.svg'
+import SynapseLogoSvg from 'assets/SynapseLogo.svg'
 import React from 'react'
 
 export type SourceAppConfig = {
@@ -9,30 +9,40 @@ export type SourceAppConfig = {
   logo: JSX.Element
 }
 
+const mobileToolboxLogo = <img
+  src={MobileToolboxLogoSvg}
+  alt="Mobile Toolbox Logo"
+/>
+const synapseLogo = <img
+  src={SynapseLogoSvg}
+  style={{ height: 50 }}
+  alt="Synapse.org Logo"
+/>
+
 const SourceAppConfigs:SourceAppConfig[] = [
   {
     appId: 'MTB',
     redirectURL: 'https://www.mobiletoolbox.org/',
     friendlyName: 'Mobile Toolbox',
-    logo: <MobileToolboxLogo />
+    logo: mobileToolboxLogo
   },
   {
     appId: 'MTB-staging',
     redirectURL: 'https://staging.mobiletoolbox.org/',
     friendlyName: 'Mobile Toolbox (staging)',
-    logo: <MobileToolboxLogo />
+    logo: mobileToolboxLogo
   },
   {
     appId: 'synapse.org',
     redirectURL: 'https://www.synapse.org/',
     friendlyName: 'Synapse',
-    logo: <SynapseLogo />
+    logo: synapseLogo
   },
   {
     appId: 'staging.synapse.org',
     redirectURL: 'https://staging.synapse.org/',
     friendlyName: 'Synapse (staging)',
-    logo: <SynapseLogo />
+    logo: synapseLogo
   },
 ]
 
