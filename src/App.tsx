@@ -63,7 +63,6 @@ const App: React.FC = () => {
                           <>
                             <p>My account management goes here.  Emails, change password, ...</p>
                             <a href='/authenticated/changepassword'>Change Password</a>
-                            <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
                           </>
                         )
                       } else if(path ==='/authenticated/changepassword'){

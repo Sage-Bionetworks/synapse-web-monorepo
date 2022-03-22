@@ -6,7 +6,7 @@
   $primary-bgcolor-rgba: unset,
 );
 @use 'node_modules/synapse-react-client/dist/template_style/Index.scss';
-@use 'Navbar';
+@use 'all';
 
 .App {
   font-family: 'Lato', sans-serif;
