@@ -1,6 +1,41 @@
+.RegisterAccount1 {
+    .sageLogo {
+        position: absolute;
+        top: 40px;
+        right: 0px;
+    }
+    .registrationPanel {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        .form-group {
+            margin-top: 50px;
+        }
+        button {
+            width: 100%;
+            margin: 30px 0px;
+        }
+        > * {
+            width: 300px;
+        }
+    }
+    .sourceAppPanel {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 100px;
+        * {
+            max-width: 200px;
+            margin-top: 20px;
+        }
+    }
+}
+
 .RegisterAccount2 {
     .container {
         max-width: 770px;
     }
-
 }

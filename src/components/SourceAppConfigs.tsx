@@ -11,11 +11,12 @@ export type SourceAppConfig = {
 
 const mobileToolboxLogo = <img
   src={MobileToolboxLogoSvg}
+  style={{ width: 80 }}
   alt="Mobile Toolbox Logo"
 />
 const synapseLogo = <img
   src={SynapseLogoSvg}
-  style={{ height: 50 }}
+  style={{ height: 50, width: 50 }}
   alt="Synapse.org Logo"
 />
 
