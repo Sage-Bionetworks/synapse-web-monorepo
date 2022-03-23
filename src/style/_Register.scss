@@ -1,15 +1,11 @@
 .RegisterAccount1 {
-    .sageLogo {
-        position: absolute;
-        top: 40px;
-        right: 0px;
-    }
     .registrationPanel {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         height: 100vh;
+        margin-top: -100px;
         .form-group {
             margin-top: 50px;
         }
@@ -21,15 +17,19 @@
             width: 300px;
         }
     }
-    .sourceAppPanel {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 100px;
-        * {
-            max-width: 200px;
-            margin-top: 20px;
+    .orText {
+        text-align: center;
+        font-weight: bold;
+    }
+    .thankYouContainer {
+        width: 500px;
+        .thankYouPanel {
+            .mailIcon {
+                margin-bottom: 50px;
+            }
+            text-align: center;
+            width: 300px;
+            margin: auto;
         }
     }
 }

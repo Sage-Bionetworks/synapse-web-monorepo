@@ -50,12 +50,7 @@ const App: React.FC = () => {
                           return <LoginPage returnToUrl={path} />
                         }
                         if (path === '/authenticated/validate') {
-                          return (
-                            <>
-                              <ProfileValidation />
-                              <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
-                            </>
-                          )
+                          return <ProfileValidation />
                         } else if (path === '/authenticated/signTermsOfUse') {
                           return <TermsOfUsePage />
                        } else if (path === '/authenticated/myaccount') {

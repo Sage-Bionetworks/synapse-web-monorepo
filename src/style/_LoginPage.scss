@@ -1,0 +1,19 @@
+#body .LoginPage {
+    .loginPanel {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin-top: -100px;
+    }
+    .title {
+        width: 350px;
+    }
+    .container {
+        box-shadow: unset;
+        background: unset;
+        padding: 0px;
+        width: 350px;
+    }
+}

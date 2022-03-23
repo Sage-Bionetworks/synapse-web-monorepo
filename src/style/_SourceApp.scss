@@ -1,0 +1,18 @@
+.SourceAppPage {
+    .sageLogo {
+        position: absolute;
+        top: 40px;
+        right: 0px;
+    }
+    .sourceAppPanel {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 100px;
+        * {
+            max-width: 200px;
+            margin-top: 20px;
+        }
+    }
+}

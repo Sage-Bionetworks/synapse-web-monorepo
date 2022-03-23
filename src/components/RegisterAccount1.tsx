@@ -11,7 +11,10 @@ import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { isAliasAvailable, registerAccountStep1 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
 import SageBionetworksLogo from '../assets/SageBionetworksLogo.svg'
+import GoogleLogo from '../assets/g-logo.png'
 import SourceApp from './SourceApp'
+import { Link } from 'react-router-dom'
+import mailSvg from '../assets/mail.svg'
 
 export type RegisterAccount1Props = {
 }
@@ -86,7 +89,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
 
   return (
     <>
-      <div className="RegisterAccount1 bootstrap-4-backport">
+      <div className="RegisterAccount1 SourceAppPage bootstrap-4-backport">
         {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && <Row>
           <Col xs={12} sm={4} className="sourceAppPanel">
             <SourceApp isAccountCreationTextVisible={true}/>
@@ -96,6 +99,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
               className="sageLogo"
               src={SageBionetworksLogo}
               alt="Sage Bionetworks Logo"
+              style={{width: 270}}
             />
             <div className="registrationPanel">
               {page === Pages.EMAIL_REGISTRATION && <div className="EmailAddressUI">
@@ -104,7 +108,13 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                       <FormLabel>Email</FormLabel>
                       <FormControl 
                         onChange={e => setEmail(e.target.value)} 
-                        value = {email}/>
+                        value = {email}
+                        onKeyPress={(e:any) => {
+                          if (e.key === "Enter") {
+                            onSendRegistrationInfo(e)
+                          }
+                        }}
+                        />
                   </FormGroup>
                   <Button
                       variant={email ? 'primary' : 'light'}
@@ -114,21 +124,48 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                     >
                       Create Account
                   </Button>
+                  <Typography variant="body1" className="orText">or</Typography>
+                  <Button
+                    variant='white'
+                    className='googleSignInButton'
+                    onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
+                    type="button"
+                  >
+                    <img
+                      className="googleLogo"
+                      src={GoogleLogo}
+                      alt="Google Logo"
+                      style={{width: 25}}
+                    />
+                    <span className='signInText'>Sign up with Google</span>
+                  </Button>
+                  <Typography variant="body1">
+                    Already have an account? <strong><Link to="/authenticated/myaccount">Login</Link></strong>
+                    </Typography>
               </div>}
               {page === Pages.GOOGLE_REGISTRATION && <div className="GoogleSignUpUI">
-                <FormGroup controlId='googleAccountCreation'>
-                    <FormLabel>Choose a username</FormLabel>
+              <Typography variant="headline1">Create a Sage Account</Typography>
+              <Typography variant="headline1">with Google</Typography>
+                <FormGroup controlId='googleAccountCreation' className="required">
+                    <FormLabel>Create username</FormLabel>
                     <FormControl 
                       onChange={e => setUsername(e.target.value)} 
                       value = {username}/>
                 </FormGroup>
                 <Button
-                  variant={username ? 'outline-dark' : 'light'}
+                  variant={'white'}
+                  className='googleSignInButton'
                   onClick={onSignUpWithGoogle}
                   type="button"
                   disabled={ (username && !isLoading) ? false : true}
                 >
-                  Sign up with Google
+                <img
+                    className="googleLogo"
+                    src={GoogleLogo}
+                    alt="Google Logo"
+                    style={{width: 25}}
+                  />
+                  <span className='signInText'>Sign up with Google</span>
                 </Button>
               </div>}
             </div>
@@ -136,10 +173,17 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
         </Row>}
 
         {page === Pages.EMAIL_REGISTRATION_THANK_YOU && <div className="blue-background">
-          <Container>
-            <Typography variant="headline3">Thank you for signing up.</Typography>
-            <Typography variant="body1">We've sent an email to <strong>{email}</strong>.</Typography>
-            <Typography variant="body1">Please check your email to continue.</Typography>
+          <Container className="thankYouContainer">
+            <div className="thankYouPanel">
+              <img
+                className="mailIcon"
+                src={mailSvg}
+                alt="Mail icon"
+              />
+              <Typography variant="headline2">Thank you for signing up.</Typography>
+              <Typography variant="body1">We've sent an email to <strong>{email}</strong>.</Typography>
+              <Typography variant="body1">Please check your email to continue.</Typography>
+            </div>
           </Container>
         </div>}
       </div>
