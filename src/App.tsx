@@ -8,7 +8,6 @@ import {
   Switch
 } from 'react-router-dom'
 import CookiesNotification from 'components/CookiesNotification'
-import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import LoginPage from './LoginPage'
 import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { SynapseComponents } from 'synapse-react-client'
