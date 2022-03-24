@@ -8,7 +8,6 @@ import {
   Switch
 } from 'react-router-dom'
 import CookiesNotification from 'components/CookiesNotification'
-import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import LoginPage from './LoginPage'
 import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { SynapseComponents } from 'synapse-react-client'
@@ -50,12 +49,7 @@ const App: React.FC = () => {
                           return <LoginPage returnToUrl={path} />
                         }
                         if (path === '/authenticated/validate') {
-                          return (
-                            <>
-                              <ProfileValidation />
-                              <button onClick={() => {signOut(()=>{window.location.reload()})}}>Sign out</button>
-                            </>
-                          )
+                          return <ProfileValidation />
                         } else if (path === '/authenticated/signTermsOfUse') {
                           return <TermsOfUsePage />
                        } else if (path === '/authenticated/myaccount') {

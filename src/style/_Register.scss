@@ -1,6 +1,41 @@
+.RegisterAccount1 {
+    .registrationPanel {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin-top: -100px;
+        .form-group {
+            margin-top: 50px;
+        }
+        button {
+            width: 100%;
+            margin: 30px 0px;
+        }
+        > * {
+            width: 300px;
+        }
+    }
+    .orText {
+        text-align: center;
+        font-weight: bold;
+    }
+    .thankYouContainer {
+        width: 500px;
+        .thankYouPanel {
+            .mailIcon {
+                margin-bottom: 50px;
+            }
+            text-align: center;
+            width: 300px;
+            margin: auto;
+        }
+    }
+}
+
 .RegisterAccount2 {
     .container {
         max-width: 770px;
     }
-
 }

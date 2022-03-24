@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { NavLink, withRouter, useLocation } from 'react-router-dom'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
+import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import logo from '../assets/favicon.png'
 
 const links = [
@@ -19,12 +20,17 @@ const links = [
 ]
 
 const TopNavBar: React.FunctionComponent = () => {
-    const [isVisible, setIsVisible] = useState(true)
+    const { accessToken } = useSynapseContext()
+    const [isVisible, setIsVisible] = useState(!!accessToken)
     const location = useLocation()
 
     useEffect(() => {
-        setIsVisible(!!links.find(el => el.path === location.pathname))
-      }, [location])
+        if (!accessToken) {
+            setIsVisible(false)
+        } else {
+            setIsVisible(!!links.find(el => el.path === location.pathname))
+        }
+      }, [accessToken, location])
     
     
     return(

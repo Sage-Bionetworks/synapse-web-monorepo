@@ -4,6 +4,7 @@
         border-radius: 100px;
         padding-left: 20px;
         padding-right: 20px;
+        height: 55px;
     }
     .form-group.required .form-label:after { 
         content: "*";
@@ -21,9 +22,8 @@
     }
     .blue-background {
         min-height: 100vh;
-        background: rgb(237, 241, 245);
         padding-top: 100px;
-        padding-bottom: 100px;
+        background: rgb(236, 241, 245);
         .container {
             background: #FEFEFE;
             box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
@@ -34,5 +34,14 @@
         display: flex;
         justify-content: flex-end;
         padding-top: 50px;
+    }
+    .googleSignInButton {
+        text-align: left;
+        &:hover {
+            background-color: white;
+        }
+        .signInText {
+            margin-left: 34px;
+        }
     }
 }
