@@ -18,9 +18,9 @@ const AccountSettings = (props: AccountSettingsProps) => {
     const [ userProfile, setUserProfile ] = useState<UserProfile>()
     const [ orcid, setOrcid ] = useState<string>()
     const [ verified, setVerfied ] = useState<boolean>()
-    const [ editUsername, setEditUsername] = useState<boolean>()
-    const [ editEmail, setEditEmail] = useState<boolean>()
-    const [ changePW, setChangePW] = useState<boolean>()
+    const [ editUsername, setEditUsername] = useState<boolean>(false)
+    const [ editEmail, setEditEmail] = useState<boolean>(false)
+    const [ changePW, setChangePW] = useState<boolean>(false)
     const [ updatedUsername, setUpdatedUsername] = useState<string>('')
     const [ updatedEmail, setUpdatedEmail] = useState<string>('')
 
@@ -33,14 +33,6 @@ const AccountSettings = (props: AccountSettingsProps) => {
                 setUserProfile(updatedProfile)
             }
 
-            // Placeholder for updating emails
-            // if(userProfile && editEmail && updatedEmail){
-            //     userProfile.emails = [...userProfile.emails!, updatedEmail]
-            //     const updatedProfile = await updateMyUserProfile(userProfile, accessToken)
-            //     setUserProfile(updatedProfile)
-            //     console.log(updatedProfile)
-            //     console.log(userProfile)
-            // }
             cancelEdit()
         } catch(err:any) {
             displayToast(err.reason, 'danger')
@@ -65,13 +57,11 @@ const AccountSettings = (props: AccountSettingsProps) => {
                 setUserProfile(bundle.userProfile)
                 setOrcid(bundle.ORCID)
                 setVerfied(bundle.isVerified)
-                console.log(bundle.verificationSubmission)
             } catch (err: any) {
                 displayToast(err.reason as string, 'danger')
             }
         }
         getData()
-        console.log('hello')
     }, [accessToken])
 
     // Closes any forms and resets the fields.
@@ -91,9 +81,14 @@ const AccountSettings = (props: AccountSettingsProps) => {
                 <FormLabel>{label}</FormLabel>
                 <FormControl 
                     onChange={e => updateFn(e.target.value)} 
+                    style={{maxWidth:'320px'}}
                     value = {updatedValue}/>
-                <Button style={{width:'190px'}} className='btn-container emptyButton' onClick={cancelEdit}>Cancel</Button>&nbsp;&nbsp;
-                <Button style={{width:'190px'}} className='btn-container' variant='secondary' onClick={onUpdateUserProfile}>Save Changes</Button>
+                <Button className='btn-container emptyButton' onClick={cancelEdit}>
+                    Cancel
+                </Button>
+                <Button className='btn-container' variant='secondary' onClick={onUpdateUserProfile}>
+                    Save Changes
+                </Button>
             </FormGroup>
         </div>
         )
@@ -105,81 +100,69 @@ const AccountSettings = (props: AccountSettingsProps) => {
                 <Row>
                     <Col sm={3}>
                         {verified ? 
-                        <div>
+                        <div className='verified-img-container'>
                             <img src={VerifedAccount} alt="verified"/> 
-                            <p style={{marginTop:'8px'}}>Verified Account</p>
+                            <p className='verified-text'>Verified Account</p>
                         </div>
                         : 
-                        <div>
+                        <div className='verified-img-container'>
                             <img src={StarterAccount} alt="starter"/>
-                            <p style={{marginTop:'8px'}}>Starter Account</p>
+                            <p className='verified-text'>Starter Account</p>
                         </div>
                         }
                     </Col>
                     <Col sm={9}>
-                        <table style={{display:"inline-block"}}>
-                            <tbody>
-                                <tr>
-                                    {!!!editUsername ? 
-                                    <>
-                                        <td>Username: </td>
-                                        <td>
-                                            {userProfile?.userName}
-                                            &nbsp;&nbsp;&nbsp;
-                                            <button onClick={()=>{
-                                                setEditUsername(true) 
-                                                setChangePW(false)
-                                                setEditEmail(false)}}>
-                                                <img src={EditIcon} alt="edit icon"/>
-                                            </button>
-                                        </td>
-                                    </>
-                                    : <td colSpan={2}>{EditField('Username', updatedUsername,setUpdatedUsername)}</td>
-                                    }
-                                </tr>
-                                <tr>
-                                    {!!!editEmail ? 
-                                    <>
-                                        <td>Email: </td>
-                                        <td>
-                                            {userProfile?.emails?.slice(-1)[0]}
-                                            &nbsp;&nbsp;&nbsp;
-                                            <button onClick={()=>{
-                                                setEditEmail(true)
-                                                setChangePW(false)
-                                                setEditUsername(false)}}>
-                                                <img src={EditIcon} alt="edit icon"/>
-                                            </button>
-                                        </td>
-                                    </>
-                                    : <td colSpan={2}>{EditField('Email', updatedEmail, setUpdatedEmail)}</td>
-                                    }
-                                </tr>
-                                <tr>
-                                    {!!!changePW ?
-                                    <>
-                                        <td>Password: </td>
-                                        <td>
-                                            **********
-                                            &nbsp;&nbsp;&nbsp;
-                                            <button onClick={()=>setChangePW(true)}><img src={EditIcon} alt="edit icon"/></button>
-                                        </td>
-                                    </>
-                                    : <td colSpan={2}><ChangePasswordPage/></td>
-                                    }
-                                </tr>
-                                {orcid &&
-                                    <tr>
-                                        <td>ORCiD: </td>
-                                        <td>
-                                            {orcid}
-                                            &nbsp;&nbsp;&nbsp;
-                                            <ORCiDButton editButton={true} redirectAfter={window.location.href}/>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                        <div className="grid-container">
+                            {editUsername ? 
+                                <div className='edit-cell'>{EditField('Username', updatedUsername,setUpdatedUsername)}</div>
+                                : <>
+                                    <div className='label-cell'>Username:</div>
+                                    <div>
+                                        {userProfile?.userName}
+                                        <button onClick={()=>{
+                                            setEditUsername(true) 
+                                            setChangePW(false)
+                                            setEditEmail(false)}}>
+                                            <img src={EditIcon} alt="edit icon"/>
+                                        </button>
+                                    </div>
+                                </>
+                            }
+                            {editEmail ? 
+                                <div className='edit-cell'>{EditField('Email', updatedEmail, setUpdatedEmail)}</div>
+                                : <>
+                                    <div className='label-cell'>Email: </div>
+                                        <div>
+                                        {userProfile?.emails?.slice(-1)[0]}
+                                        <button onClick={()=>{
+                                            setEditEmail(true)
+                                            setChangePW(false)
+                                            setEditUsername(false)}}>
+                                            <img src={EditIcon} alt="edit icon"/>
+                                        </button>
+                                    </div>
+                                </>
+                            }
+                            {changePW ?
+                            <div className='edit-cell'><ChangePasswordPage /></div>
+                            : <>
+                                <div className='label-cell'>Password: </div>
+                                <div className='password-cell'>
+                                    **********
+                                    <button onClick={()=>setChangePW(true)}><img src={EditIcon} alt="edit icon"/></button>
+                                </div>
+                            </>
+                            }
+                            {orcid &&
+                            <>
+                                <div className='label-cell'>OrcID: </div>
+                                <div className='orcid-cell'>
+                                    {orcid}
+                                    <ORCiDButton editButton={true} redirectAfter={window.location.href}/>
+                                </div>
+                            </>
+                            }
+                        </div>
                     </Col>
                 </Row>
             </Container>

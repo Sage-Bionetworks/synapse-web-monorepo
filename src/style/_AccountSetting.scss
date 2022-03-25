@@ -2,23 +2,40 @@
     min-height: 100vh;
     background: rgb(237, 241, 245);
     padding-top: 40px;
+    font-size: 18px;
+
     .container{
         max-width: 770px;
-        min-height: 56vh;
+        min-height: 72vh;
         padding: 64px;
         background: #FEFEFE;
         box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-        td {
-            padding-top: 8px;
+
+        .verified-img-container{
+            text-align: center;
+            .verified-text{
+                margin-top: 16px;
+            }
         }
-        td:first-child{
-            font-weight: 700;
-            padding-right: 30px;
+
+        .grid-container{
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            row-gap: 1ch;
+            .edit-cell{
+                grid-column: 1/-1;
+            }
+            .label-cell{
+                grid-column: 1;
+                font-weight: 700;
+            }
         }
     }
-    .btn-container {
+    .btn-container{
         padding: 10px 30px;
         box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+        width: 190px;
+        margin-right: 16px;
         .cancle-btn{
             color: black;
             background-color: none;
