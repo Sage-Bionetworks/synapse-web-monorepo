@@ -32,7 +32,7 @@ const LoginPage:React.FunctionComponent<LoginPageProps> = ({
             alt="Sage Bionetworks Logo"
             style={{width: 270}}
           />
-          <div className="loginPanel">
+          <div className="mainContent">
             <Typography variant="headline1" className="title">Login</Typography>
             <Login
               sessionCallback={() => setIsSessionEstablished(true)}

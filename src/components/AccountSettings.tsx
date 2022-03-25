@@ -38,16 +38,15 @@ const AccountSettings = (props: AccountSettingsProps) => {
             displayToast(err.reason, 'danger')
         }
     }
-
-
+    
     useEffect(() => {
         const getData = async() => {
             try {
                 const mask =
-                  SynapseConstants.USER_BUNDLE_MASK_ORCID |
-                  SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
-                  SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
-                  SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION
+                //   SynapseConstants.USER_BUNDLE_MASK_ORCID |
+                //   SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
+                  SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
+                //   SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION
 
                 const bundle:UserBundle = await getMyUserBundle(
                     mask,

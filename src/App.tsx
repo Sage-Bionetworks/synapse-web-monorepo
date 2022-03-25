@@ -13,10 +13,10 @@ import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { SynapseComponents } from 'synapse-react-client'
 import { RegisterAccount2 } from 'components/RegisterAccount2'
 import { TermsOfUsePage } from 'components/TermsOfUsePage'
-import ChangePasswordPage from 'components/ChangePassword'
 import TopNavBar from 'components/TopNavBar'
 import { ProfileValidation } from 'components/ProfileValidation'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
+import AccountSettings from 'components/AccountSettings'
 
 const App: React.FC = () => {
   return (
@@ -58,11 +58,11 @@ const App: React.FC = () => {
                         } else if (path === '/authenticated/signTermsOfUse') {
                           return <TermsOfUsePage />
                         } else if (path === '/authenticated/myaccount') {
-                        return <AccountSettings/>
+                          return <AccountSettings/>
                         } else {
-                        return (<>
-                          <p>Unrecognized match path {routeProps.match.path}</p>
-                        </>)
+                          return (<>
+                            <p>Unrecognized match path {routeProps.match.path}</p>
+                          </>)
                        }
                       }}
                     </SynapseContextConsumer>

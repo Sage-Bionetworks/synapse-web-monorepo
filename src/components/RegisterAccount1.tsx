@@ -12,6 +12,7 @@ import { isAliasAvailable, registerAccountStep1 } from 'synapse-react-client/dis
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
 import SageBionetworksLogo from '../assets/SageBionetworksLogo.svg'
 import GoogleLogo from '../assets/g-logo.png'
+import SageNetworkOrange from '../assets/SageNetworkOrange.svg'
 import SourceApp from './SourceApp'
 import { Link } from 'react-router-dom'
 import mailSvg from '../assets/mail.svg'
@@ -96,12 +97,12 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
           </Col>
           <Col xs={12} sm={8} className="blue-background">
             <img
-              className="sageLogo"
-              src={SageBionetworksLogo}
-              alt="Sage Bionetworks Logo"
-              style={{width: 270}}
-            />
-            <div className="registrationPanel">
+                className="sageLogo"
+                src={SageBionetworksLogo}
+                alt="Sage Bionetworks Logo"
+                style={{width: 270}}
+              />
+            <div className="mainContent">
               {page === Pages.EMAIL_REGISTRATION && <div className="EmailAddressUI">
                   <Typography variant="headline1">Create a Sage Account</Typography>
                   <FormGroup controlId='emailAddressAccountCreation' className="required">
@@ -169,6 +170,11 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                 </Button>
               </div>}
             </div>
+            <img
+              className="sageNetworkOrange"
+              src={SageNetworkOrange}
+              alt="Network - orange"
+            />
           </Col>
         </Row>}
 
