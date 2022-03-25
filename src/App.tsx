@@ -57,19 +57,9 @@ const App: React.FC = () => {
                           return <ProfileValidation />
                         } else if (path === '/authenticated/signTermsOfUse') {
                           return <TermsOfUsePage />
-                       } else if (path === '/authenticated/myaccount') {
-                        return (
-                          <>
-                            <p>My account management goes here.  Emails, change password, ...</p>
-                            <a href='/authenticated/changepassword'>Change Password</a>
-                          </>
-                        )
-                      } else if(path ==='/authenticated/changepassword'){
-                        return (
-                          <ChangePasswordPage />
-                        )
-
-                      } else {
+                        } else if (path === '/authenticated/myaccount') {
+                        return <AccountSettings/>
+                        } else {
                         return (<>
                           <p>Unrecognized match path {routeProps.match.path}</p>
                         </>)
