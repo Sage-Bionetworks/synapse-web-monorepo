@@ -6,6 +6,7 @@ import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseC
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam } from 'URLUtils'
+import { HiddenIFrame } from 'components/HiddenIFrame'
 
 export type AppInitializerState = {
   token: string
@@ -59,6 +60,9 @@ class AppInitializer extends React.Component<Props, AppInitializerState> {
       } catch (error:any) {
         if ((error.reason as string).toLowerCase().includes('terms of use') && window.location.pathname !== '/authenticated/signTermsOfUse' ) {
           window.location.assign('/authenticated/signTermsOfUse')
+        } else {
+          // invalid access token detected, clear it
+          this.initAnonymousUserState()
         }
       }
       this.setState({ token, userProfile, hasCalledGetSession: true })
@@ -110,6 +114,9 @@ class AppInitializer extends React.Component<Props, AppInitializerState> {
           {React.Children.map(this.props.children, (child: any) => {
             return child
           })}
+          {/* This is only rendered after hasCalledGetSession is set to true */}
+          {this.state.token && <HiddenIFrame url={`https://signin.synapse.org/login?code=${this.state.token}`} />}
+          {!this.state.token && <HiddenIFrame url="https://signin.synapse.org/logout" />}
         </SynapseContextProvider>
       </>
     )

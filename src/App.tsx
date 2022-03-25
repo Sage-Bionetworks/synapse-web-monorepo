@@ -16,6 +16,7 @@ import { TermsOfUsePage } from 'components/TermsOfUsePage'
 import ChangePasswordPage from 'components/ChangePassword'
 import TopNavBar from 'components/TopNavBar'
 import { ProfileValidation } from 'components/ProfileValidation'
+import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 
 const App: React.FC = () => {
   return (
@@ -37,6 +38,10 @@ const App: React.FC = () => {
                       </p>
                       </>
                   }} />
+                <Route exact path='/logout' render={props => {
+                  signOut(()=>{window.location.assign('/authenticated/myaccount')})
+                  return <></>
+                }} />
                 <Route exact path='/register1' component={RegisterAccount1} />
                 <Route exact path='/register2' component={RegisterAccount2} />
                 {/* check for an access token for any route in the "/authenticated/" path */}
