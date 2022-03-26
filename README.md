@@ -7,7 +7,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 _/register1_
 
 Takes you to a place where you can create a Sage account.  It links to Google-based account creation, and standard Login (if you already have an account).
-This route uses the query parameter 'appId' to set the source app configuration (icon, application name, ...).  For example, '/register1?appId=MTB' can be used for the Mobile Toolbox product.
 
 ### Profile Validation
 _/authenticated/validate_
@@ -21,6 +20,9 @@ Takes you to your Account Settings page.  This will prompt for login if a sessio
 
 ### Force logout
 _/logout_
+
+### Special note about Source App ID
+All routes look for the query parameter 'appId' to set the source app configuration (icon, application name, ...).  For example, '/register1?appId=MTB' can be used to register for a new Sage Bionetworks account with the Mobile Toolbox product branding.
 
 This will immediately log you out of your account.
 
