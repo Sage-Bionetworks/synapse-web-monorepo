@@ -5,7 +5,8 @@ import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client
 import {
   BrowserRouter as Router,
   Route,
-  Switch
+  Switch,
+  Redirect
 } from 'react-router-dom'
 import CookiesNotification from 'components/CookiesNotification'
 import LoginPage from './LoginPage'
@@ -29,14 +30,7 @@ const App: React.FC = () => {
               <Switch>
                <Route exact path="/"
                   render={props => {
-                    return <>
-                      <p>There are a few main entrypoints into this web app</p>
-                      <p>
-                        <a href='/register1?appId=MTB'>MTB Account Registration</a>,&nbsp;
-                        <a href='/authenticated/validate'>Profile Validation</a>,&nbsp;and&nbsp;
-                        <a href='/authenticated/myaccount'>My Account</a>
-                      </p>
-                      </>
+                    return <Redirect to='/authenticated/myaccount' />
                   }} />
                 <Route exact path='/logout' render={props => {
                   signOut(()=>{window.location.assign('/authenticated/myaccount')})
