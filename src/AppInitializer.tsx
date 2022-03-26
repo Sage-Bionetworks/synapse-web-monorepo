@@ -114,7 +114,8 @@ class AppInitializer extends React.Component<Props, AppInitializerState> {
           {React.Children.map(this.props.children, (child: any) => {
             return child
           })}
-          {/* This is only rendered after hasCalledGetSession is set to true */}
+          {/* Force synapse.org login state to be in sync with this app. 
+          Note that this is only rendered after hasCalledGetSession is set to true. */}
           {this.state.token && <HiddenIFrame url={`https://signin.synapse.org/login?code=${this.state.token}`} />}
           {!this.state.token && <HiddenIFrame url="https://signin.synapse.org/logout" />}
         </SynapseContextProvider>

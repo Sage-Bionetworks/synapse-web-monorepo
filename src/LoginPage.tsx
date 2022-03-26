@@ -5,6 +5,7 @@ import Login from 'synapse-react-client/dist/containers/Login'
 import SourceApp from './components/SourceApp'
 import SageBionetworksLogo from './assets/SageBionetworksLogo.svg'
 import { Typography } from 'synapse-react-client'
+import SageNetworkOrange from './assets/SageNetworkOrange.svg'
 
 export type OwnProps = {
   returnToUrl:string
@@ -39,7 +40,11 @@ const LoginPage:React.FunctionComponent<LoginPageProps> = ({
               registerAccountUrl={'/register1'}
             />
           </div>
-          
+          <img
+              className="sageNetworkOrange"
+              src={SageNetworkOrange}
+              alt="Network - orange"
+            />
         </Col>
       </Row>
     </div>
