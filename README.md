@@ -1,6 +1,28 @@
-### This project is code for Sage Bionetworks user account portal.
+## This project is code for Sage Bionetworks user account portal.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Entry points
+### Account Registration 
+_/register1_
+
+Takes you to a place where you can create a Sage account.  It links to Google-based account creation, and standard Login (if you already have an account).
+This route uses the query parameter 'appId' to set the source app configuration (icon, application name, ...).  For example, '/register1?appId=MTB' can be used for the Mobile Toolbox product.
+
+### Profile Validation
+_/authenticated/validate_
+
+Walks you through account identity verification.  This will prompt for login if a session is not already established.
+
+### My Account
+_/authenticated/myaccount_
+
+Takes you to your Account Settings page.  This will prompt for login if a session is not already established.
+
+### Force logout
+_/logout_
+
+This will immediately log you out of your account.
 
 ## Available Scripts
 
