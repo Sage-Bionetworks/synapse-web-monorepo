@@ -32,7 +32,7 @@ const App: React.FC = () => {
                     return <>
                       <p>There are a few main entrypoints into this web app</p>
                       <p>
-                        <a href='/register1'>Account Registration</a>,&nbsp;
+                        <a href='/register1?appId=MTB'>MTB Account Registration</a>,&nbsp;
                         <a href='/authenticated/validate'>Profile Validation</a>,&nbsp;and&nbsp;
                         <a href='/authenticated/myaccount'>My Account</a>
                       </p>
