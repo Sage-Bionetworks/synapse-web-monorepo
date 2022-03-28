@@ -15,4 +15,18 @@
             margin-top: 20px;
         }
     }
+    .sageNetworkOrange {
+        position: absolute;
+        bottom: -30px;
+        right: -30px;
+        pointer-events: none;
+    }
+    .mainContent {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin-top: -100px;
+    }
 }

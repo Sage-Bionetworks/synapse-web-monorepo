@@ -38,8 +38,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
             displayToast(err.reason, 'danger')
         }
     }
-
-
+    
     useEffect(() => {
         const getData = async() => {
             try {
