@@ -1,0 +1,27 @@
+#body .progress-indicator{
+    color: #000000;
+    .progress-container{
+        position: relative;
+        margin-top: 40px;
+    }
+    .progress-element{
+        position: absolute;
+    }
+    .progress-border{
+        border:solid;
+    }
+    .verify-identity{
+        left: 50%;
+        transform: translate(-50%,0);
+    }
+    .completed-font{
+        font-weight: 400;
+    }
+    .current-font{
+        font-weight: 700;
+    }
+    .inactive-font{
+        font-weight: 500;
+        color: #dddddd
+    }
+}
