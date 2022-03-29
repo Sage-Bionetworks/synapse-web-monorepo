@@ -187,11 +187,9 @@ const AccountSettings = (props: AccountSettingsProps) => {
                         <Col lg={2} />
                         <Col lg={8} >
                             <div className="startAccountIconContainer"><img src={StarterAccount} alt="starter"/></div>
-                            <div className="welcomeTitle">
-                                <Typography variant='headline1'>
-                                    Welcome to your Starter Sage Account
-                                </Typography>
-                            </div>
+                            <Typography variant='headline1'>
+                                Welcome to your Starter Sage Account
+                            </Typography>
                             <Typography variant='body1'>
                                 You’ve created a Starter Sage Account.
                             </Typography>
