@@ -1,6 +1,8 @@
 ## This project is code for Sage Bionetworks user account portal.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+_Production_ branch is automatically deployed to https://accounts.sagebionetworks.org
+
+_Staging_ branch is automatically deployed to https://staging.accounts.sagebionetworks.org
 
 ## Entry points
 ### Account Registration 
