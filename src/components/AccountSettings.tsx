@@ -210,7 +210,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
                 <Modal.Footer>
                 <div className="ButtonContainer">
                     <Button
-                        variant="default"
+                        variant="white"
                         onClick={()=>{window.location.assign(getSourceAppRedirectURL())}}
                         >
                         Verify later
