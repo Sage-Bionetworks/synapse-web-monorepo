@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Col, Container, FormControl, FormGroup, FormLabel, Row } from 'react-bootstrap'
+import { Button, Col, Container, FormControl, FormGroup, FormLabel, Modal, Row } from 'react-bootstrap'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { UserProfile, UserBundle } from 'synapse-react-client/dist/utils/synapseTypes'
-import { SynapseConstants } from 'synapse-react-client'
+import { SynapseConstants, Typography } from 'synapse-react-client'
 import { getMyUserBundle, updateMyUserProfile } from 'synapse-react-client/dist/utils/SynapseClient'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import StarterAccount from '../assets/StarterAccount.svg'
 import VerifedAccount from '../assets/VerifiedAccount.svg'
+import CheckmarkBadgeLight from '../assets/CheckmarkBadgeLight.svg'
 import EditIcon from '../assets/RedEditPencil.svg'
 import ChangePasswordPage from './ChangePassword'
 import { ORCiDButton } from './ORCiDButton'
+import { getSearchParam } from 'URLUtils'
+import { getSourceAppRedirectURL } from './SourceApp'
 export type AccountSettingsProps = {
 }
 
@@ -21,9 +24,15 @@ const AccountSettings = (props: AccountSettingsProps) => {
     const [ editUsername, setEditUsername] = useState<boolean>(false)
     const [ editEmail, setEditEmail] = useState<boolean>(false)
     const [ changePW, setChangePW] = useState<boolean>(false)
+    const [ isShowingWelcomeScreen, setIsShowingWelcomeScreen] = useState<boolean>(false)
     const [ updatedUsername, setUpdatedUsername] = useState<string>('')
     const [ updatedEmail, setUpdatedEmail] = useState<string>('')
 
+    // on initial mount, check query parameter for showWelcomeScreen
+    const showWelcomeScreenURLParam = getSearchParam('showWelcomeScreen')
+    if (showWelcomeScreenURLParam && showWelcomeScreenURLParam === 'true' && !isShowingWelcomeScreen) {
+        setIsShowingWelcomeScreen(true)
+    }
     const onUpdateUserProfile = async (event: React.SyntheticEvent) => {
         event.preventDefault()
         try{
@@ -165,6 +174,54 @@ const AccountSettings = (props: AccountSettingsProps) => {
                     </Col>
                 </Row>
             </Container>
+            {isShowingWelcomeScreen && <Modal
+                className="WelcomeScreenModal bootstrap-4-backport"
+                show={isShowingWelcomeScreen}
+                animation={false}
+                size="lg"
+                onHide={()=> {setIsShowingWelcomeScreen(false)}}
+                backdrop='static'
+            >
+                <Modal.Body>
+                    <Row>
+                        <Col lg={2} />
+                        <Col lg={8} >
+                            <div className="startAccountIconContainer"><img src={StarterAccount} alt="starter"/></div>
+                            <Typography variant='headline1'>
+                                Welcome to your Starter Sage Account
+                            </Typography>
+                            <Typography variant='body1'>
+                                You’ve created a Starter Sage Account.
+                            </Typography>
+                            <Typography variant='body1'>
+                                This account will allow you to explore Sage's products and its many capabilities.
+                            </Typography>
+                            <Typography variant='body1'>
+                                For full access to data and ability to launch real studies, we will need additional information to verify your identity.
+                            </Typography>
+                            <Typography variant='body1'>
+                                Would you like to verify your account?
+                            </Typography>
+                        </Col>
+                    </Row>
+                </Modal.Body>
+                <Modal.Footer>
+                <div className="ButtonContainer">
+                    <Button
+                        variant="white"
+                        onClick={()=>{window.location.assign(getSourceAppRedirectURL())}}
+                        >
+                        Verify later
+                    </Button>
+                    <Button
+                        variant="primary"
+                        onClick={()=>{window.location.assign('/authenticated/validate')}}
+                    >
+                        <img className="verifyBadgeIcon" src={CheckmarkBadgeLight} alt="verify"/>Verify now
+                    </Button>
+                </div>
+                </Modal.Footer>
+            </Modal>}
         </div>
     )
 }

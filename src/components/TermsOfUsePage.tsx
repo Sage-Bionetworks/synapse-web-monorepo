@@ -39,7 +39,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   }
   return (
     <>
-      {isDone && <Redirect to='/authenticated/myaccount'/>}
+      {isDone && <Redirect to='/authenticated/myaccount?showWelcomeScreen=true'/>}
       <div className="bootstrap-4-backport blue-background">
         <Container>
           <TermsAndConditions onFormChange={(completed:boolean) => { setIsFormComplete(completed) }} />

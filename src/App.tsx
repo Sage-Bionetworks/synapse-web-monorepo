@@ -55,7 +55,7 @@ const App: React.FC = () => {
                           return <AccountSettings/>
                         } else {
                           return (<>
-                            <p>Unrecognized match path {routeProps.match.path}</p>
+                            <p>Unrecognized match path {path}</p>
                           </>)
                        }
                       }}
