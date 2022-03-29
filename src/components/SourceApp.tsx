@@ -26,8 +26,8 @@ export const getCurrentSourceApp = (): SourceAppConfig | undefined => {
   return SourceAppConfigs.find(config => config.appId === sourceAppId);
 }
 
-export const getSourceAppRedirectURL = (): string | undefined => {
-  return getCurrentSourceApp()?.redirectURL
+export const getSourceAppRedirectURL = (): string => {
+  return getCurrentSourceApp()?.redirectURL ?? '/authenticated/myaccount'
 }
 
 export default SourceApp
