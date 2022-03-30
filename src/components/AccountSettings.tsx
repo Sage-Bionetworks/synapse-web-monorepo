@@ -82,7 +82,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
     }, [accessToken])
 
     const ProfileValidationState = (verificationStateEnum: VerificationStateEnum | undefined) => {
-        const nameNeedTpChange = () => {
+        const profileValidationStatus = () => {
             if(verificationStateEnum === 'SUBMITTED'){
                 return <><img className="verifyBadgeIcon" src={CheckmarkBadgeDark} alt='CheckmarkBadgeDark'/>Pending Verification</>
             } else if(verificationStateEnum === 'REJECTED' || verificationStateEnum ==='SUSPENDED'){
@@ -97,7 +97,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
                 return <></>
             }
         }
-        return <>{nameNeedTpChange()}</>
+        return <>{profileValidationStatus()}</>
     }
 
     // Closes any forms and resets the fields.
