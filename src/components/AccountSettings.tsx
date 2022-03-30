@@ -30,7 +30,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
     const [ isShowingWelcomeScreen, setIsShowingWelcomeScreen] = useState<boolean>(false)
     const [ updatedUsername, setUpdatedUsername] = useState<string>('')
     const [ updatedEmail, setUpdatedEmail] = useState<string>('')
-    const [ verificationSubmission, setverificationSubmission] = useState<VerificationSubmission>()
+    const [ verificationSubmission, setVerificationSubmission] = useState<VerificationSubmission>()
     const [ verificationState, setVerificationState] = useState<VerificationState>()
 
     const SUSPENDED_TEXT = 'Your account has been suspended.'
@@ -71,7 +71,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
                 setUserProfile(bundle.userProfile)
                 setOrcid(bundle.ORCID)
                 setVerfied(bundle.isVerified)
-                setverificationSubmission(bundle.verificationSubmission)
+                setVerificationSubmission(bundle.verificationSubmission)
                 setVerificationState(bundle.verificationSubmission?.stateHistory?.slice(-1)[0])
 
             } catch (err: any) {
@@ -87,10 +87,18 @@ const AccountSettings = (props: AccountSettingsProps) => {
                 return <><img className="verifyBadgeIcon" src={CheckmarkBadgeDark} alt='CheckmarkBadgeDark'/>Pending Verification</>
             } else if(verificationStateEnum === 'REJECTED' || verificationStateEnum ==='SUSPENDED'){
                 return (
-                    <div style={{border:'solid',padding:'24px', borderColor:'#4DB3B9'}}>
-                        <div style={{fontWeight:'700'}}>{verificationStateEnum === 'REJECTED' ? REJECTED_TEXT : SUSPENDED_TEXT}</div>
-                        <div style={{margin: '24px 0',fontSize:'16px'}}>{verificationState?.reason}</div>
-                        <Button onClick={()=>{window.location.assign('/authenticated/validate')}} style={{width:'190px'}} variant='secondary'><img className='verifyBadgeIcon' src={CheckmarkBadgeLight} alt='empty checkmark'/>  Verify Account</Button>
+                    <div className='ValidationStateContainer'>
+                        <Typography variant='headline3'>
+                            {verificationStateEnum === 'REJECTED' ? REJECTED_TEXT : SUSPENDED_TEXT}
+                        </Typography>
+                        <Typography variant='body1' >
+                            {verificationState?.reason}
+                        </Typography>
+                        <Button
+                         onClick={()=>{window.location.assign('/authenticated/validate')}}
+                         variant='secondary'>
+                            <img className='verifyBadgeIcon' src={CheckmarkBadgeLight} alt='empty checkmark'/> Verify Account
+                        </Button>
                     </div>
                 )
             } else {
@@ -268,7 +276,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
             >   
                 <Modal.Body style={{margin:0, padding:'32px 0'}}>
                     <Row>
-                        <Col sm={12} style={{textAlign:'center', marginBottom:'32px'}}><img src={VerifedAccount} alt="verified"/></Col>
+                        <Col xs={12} style={{textAlign:'center', marginBottom:'32px'}}><img src={VerifedAccount} alt="verified"/></Col>
                     </Row>
                     <Row>
                         <Col><Typography variant='headline3' className='modal-column label-cell'>First Name:</Typography></Col>
