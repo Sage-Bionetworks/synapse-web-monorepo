@@ -1,0 +1,29 @@
+#body .ValidationSteps{
+    color: #000;
+    width: 75%;
+    margin: auto;
+    margin-top: 40px;
+
+    .orcid-container{
+        text-align: center;
+        margin: 48px 0;
+    }
+
+    .file-icon{
+        margin: 0 8px;
+    }
+}
+
+#body .ProfileValidation{
+    .return-link{
+        position: absolute;
+        top: 40px;
+        left: 30px;
+    }
+    .arrow-icon{
+        margin: 0 8px;
+        .button-arrow {
+            width: 32px;
+        }
+    }
+}
