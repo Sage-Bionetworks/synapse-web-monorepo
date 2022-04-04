@@ -199,7 +199,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
               </Button>
             </>}
           </>}
-          <div style={{float:'right'}}>
+          <div className='button-container'>
             { (step !== ValidationWizardStep.PROFILE_INFO && step !== ValidationWizardStep.THANK_YOU) && <Button
               variant='default'
               onClick={onPrevious}

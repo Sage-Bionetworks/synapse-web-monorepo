@@ -35,7 +35,7 @@ export const ChangePassword = (props: ChangePasswordProps) => {
         clickEvent.preventDefault()
         try{
             if(newPassword !== confirmPassword){
-                displayToast('New password and confirm password does not match.', 'danger')
+                displayToast('Passwords do not match.', 'danger')
             } else if (accessToken){
                 const changeRequest: ChangePasswordWithCurrentPassword = {
                     newPassword,
@@ -64,6 +64,7 @@ export const ChangePassword = (props: ChangePasswordProps) => {
                     type='password' 
                     onChange={e => setOldPassword(e.target.value)} 
                     value = {oldPassword}/>
+
                 </FormGroup>
                 <FormGroup controlId='newPassword'>
                     <FormLabel>New Password</FormLabel>

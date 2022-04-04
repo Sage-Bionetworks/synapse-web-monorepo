@@ -38,7 +38,7 @@ export const VerifyIdentify = (props: VerifyIdentifyProps) => {
               {!verificationSubmission.orcid && <ORCiDButton />}
             </div>
           <Typography variant='body1'>2. Submit recent identity attestation documentation. This document must be current within the past month. Acceptable forms of documentation, in English, are any one of the following: </Typography>
-          <ul style={{width:'80%', margin:'auto'}}>
+          <ul className='list-container'>
             <li>
               <Typography variant='body1'>
                 A letter from a signing official on letterhead attesting to your identity (<a href="https://help.synapse.org/docs/2007072795/signing_official.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b" rel="nofollow">template here</a>).&nbsp;<i>Note that you <strong>cannot</strong> serve as your own signing official.</i>
@@ -57,7 +57,7 @@ export const VerifyIdentify = (props: VerifyIdentifyProps) => {
               </Typography>
             </li>
           </ul>
-          <div style={{textAlign:'center', margin:'40px'}}>
+          <div className='file-upload-container'>
           {isAttachment && <Typography style={{display:'inline-block'}} variant='body1'><img className='file-icon' src={fileIcon} alt='fileIcon'/>{attachments[0].fileName}</Typography>}
               <SynapseComponents.FileUpload 
               uploadCallback={uploadCallback}
