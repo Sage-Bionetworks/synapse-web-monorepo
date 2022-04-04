@@ -10,7 +10,7 @@ import VerifedAccount from '../assets/VerifiedAccount.svg'
 import CheckmarkBadgeLight from '../assets/CheckmarkBadgeLight.svg'
 import CheckmarkBadgeDark from '../assets/CheckmarkBadge.svg'
 import EditIcon from '../assets/RedEditPencil.svg'
-import ChangePasswordPage from './ChangePassword'
+import { ChangePassword } from './ChangePassword'
 import { ORCiDButton } from './ORCiDButton'
 import { getSearchParam } from 'URLUtils'
 import { getSourceAppRedirectURL } from './SourceApp'
@@ -188,7 +188,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
                                 </>
                             }
                             {changePW ?
-                                <div className='edit-cell'><ChangePasswordPage /></div>
+                                <div className='edit-cell'><ChangePassword onCancel={cancelEdit} /></div>
                                 : <>
                                     <div className='label-cell'>Password: </div>
                                     <div>

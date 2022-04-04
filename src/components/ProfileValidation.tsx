@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, Container } from 'react-bootstrap'
 import { Link, Redirect } from 'react-router-dom'
 import { SynapseConstants, Typography } from 'synapse-react-client'
 import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
@@ -8,8 +8,13 @@ import { getMyUserBundle, updateMyUserProfile, createProfileVerificationSubmissi
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { UserBundle, UserProfile, VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam } from 'URLUtils'
+import { AccountVerificationProgess } from './AccountVerificationProgress'
 import { ProfileFieldsEditor } from './ProfileValidationSteps/ProfileFieldsEditor'
 import { VerifyIdentify } from './ProfileValidationSteps/VerifyIdentify'
+import ArrowLight from '../assets/ArrowLight.svg'
+import Arrow from '../assets/Arrow.svg'
+import ReturnArrow from '../assets/ReturnArrow.svg'
+
 
 export enum ValidationWizardStep {
   PROFILE_INFO,
@@ -166,44 +171,56 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
 
   return (
     <>
-      <div className="ProfileValidation bootstrap-4-backport">
-        <Link to='/authenticated/myaccount'>Return to Account Settings</Link>
-        {verificationSubmission && <>
-          {step === ValidationWizardStep.PROFILE_INFO && <ProfileFieldsEditor verificationSubmission={verificationSubmission} />}
-          {step === ValidationWizardStep.VERIFY_IDENTITY && <VerifyIdentify verificationSubmission={verificationSubmission} />}
-          {step === ValidationWizardStep.SIGN_PLEDGE && <>
-            <TermsAndConditions onFormChange={(isFormComplete) => {
-              setIsContinueButtonEnabled(isFormComplete)
-            }} />
+      <div className="ProfileValidation bootstrap-4-backport blue-background">
+        <Link className='return-link' to='/authenticated/myaccount'><img className='arrow-icon' src={ReturnArrow} alt='return arrow'/>Return to Account Settings</Link>
+        <Container>
+          {verificationSubmission && <>
+            {step === ValidationWizardStep.PROFILE_INFO && <>
+            <AccountVerificationProgess step={ValidationWizardStep.PROFILE_INFO}/>
+            <ProfileFieldsEditor verificationSubmission={verificationSubmission} />
+            </>}
+            {step === ValidationWizardStep.VERIFY_IDENTITY && <>
+            <AccountVerificationProgess step={ValidationWizardStep.VERIFY_IDENTITY}/>
+            <VerifyIdentify verificationSubmission={verificationSubmission} /></>}
+            {step === ValidationWizardStep.SIGN_PLEDGE && <>
+              <AccountVerificationProgess step={ValidationWizardStep.SIGN_PLEDGE}/>
+              <TermsAndConditions onFormChange={(isFormComplete) => {
+                setIsContinueButtonEnabled(isFormComplete)
+              }} />
+            </>}
+            {step === ValidationWizardStep.THANK_YOU && <>
+              <Typography variant="headline3">Thank you for verifying.</Typography>
+              <Button
+                variant='secondary'
+                onClick={() => {setIsReturnToAccountSettings(true)}}
+                type="button"
+              >
+                Return to Account Settings
+              </Button>
+            </>}
           </>}
-          {step === ValidationWizardStep.THANK_YOU && <>
-            <Typography variant="headline3">Thank you for verifying.</Typography>
-            <Button
-              variant='secondary'
-              onClick={() => {setIsReturnToAccountSettings(true)}}
+          <div className='button-container'>
+            { (step !== ValidationWizardStep.PROFILE_INFO && step !== ValidationWizardStep.THANK_YOU) && <Button
+              variant='default'
+              onClick={onPrevious}
               type="button"
+              className='emptyButton btn-container'
             >
-              Return to Account Settings
-            </Button>
-          </>}
-        </>}
-        { (step !== ValidationWizardStep.PROFILE_INFO && step !== ValidationWizardStep.THANK_YOU) && <Button
-          variant='default'
-          onClick={onPrevious}
-          type="button"
-          style={{ marginLeft: 20 }}
-        >
-          Previous
-        </Button>}
-        { step !== ValidationWizardStep.THANK_YOU && <Button
-          variant='secondary'
-          onClick={onNext}
-          type="button"
-          style={{ marginLeft: 20 }}
-          disabled={ !isContinueButtonEnabled }
-        >
-          {step === ValidationWizardStep.SIGN_PLEDGE ? 'Submit' : 'Continue'}
-        </Button>}
+              <img className='arrow-icon button-arrow' src={Arrow} alt='left-arrow' style={{transform:'rotate(180deg)'}}/>Previous
+            </Button>}
+            { step !== ValidationWizardStep.THANK_YOU && <Button
+              variant='secondary'
+              className='btn-container'
+              onClick={onNext}
+              type="button"
+              disabled={ !isContinueButtonEnabled }
+            >
+              {step === ValidationWizardStep.SIGN_PLEDGE ? 'Submit' : 'Continue'}
+              {step !== ValidationWizardStep.SIGN_PLEDGE && <img className='arrow-icon button-arrow' src={ArrowLight} alt='right-arrow'/>}
+            </Button>}
+          </div>
+
+        </Container>
       </div>
     </>
     
