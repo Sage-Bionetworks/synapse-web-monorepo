@@ -38,6 +38,7 @@ const LoginPage:React.FunctionComponent<LoginPageProps> = ({
             <Login
               sessionCallback={() => setIsSessionEstablished(true)}
               registerAccountUrl={'/register1'}
+              resetPasswordUrl={'/resetPassword'}
             />
           </div>
           <img
