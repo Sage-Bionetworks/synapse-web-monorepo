@@ -3,7 +3,7 @@ import { Button, FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { SynapseClient, Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { ChangePasswordWithToken, PasswordResetSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/ChangePasswordRequests'
-import { hexDecodeAndDeserialize } from 'URLUtils'
+import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
 
 export const ResetPassword = () => {
     const [userName, setUserName] = useState('')
@@ -12,11 +12,11 @@ export const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState<string>('')
     const [confirmPassword, setConfirmPassword] = useState<string>('')
 
+    const passwordResetTokenValue = getSearchParam('passwordResetToken')
 
     useEffect(() => {
-        if(window.location.hash){
-            const passwordResetToken = window.location.hash.substring(1)
-            const hexDecodedPasswordResetToken = hexDecodeAndDeserialize(passwordResetToken)
+        if(passwordResetTokenValue){
+            const hexDecodedPasswordResetToken = hexDecodeAndDeserialize(passwordResetTokenValue)
             setToken(hexDecodedPasswordResetToken)
             if(hexDecodedPasswordResetToken){
                 setHasToken(true)
