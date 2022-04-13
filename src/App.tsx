@@ -39,7 +39,9 @@ const App: React.FC = () => {
                 }} />
                 <Route exact path='/register1' component={RegisterAccount1} />
                 <Route exact path='/register2' component={RegisterAccount2} />
-                <Route exact path='/resetPassword' component={ResetPassword} />
+                <Route exact path='/resetPassword' render={props => {
+                  return <ResetPassword returnToUrl='/authenticated/myaccount' />
+                }} />
                 {/* check for an access token for any route in the "/authenticated/" path */}
                 <Route path='/authenticated/'
                   render={routeProps => {

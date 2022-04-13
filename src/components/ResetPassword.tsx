@@ -5,10 +5,13 @@ import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { ChangePasswordWithToken, PasswordResetSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/ChangePasswordRequests'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
 
-export const ResetPassword = () => {
+export type ResetPasswordProps = {
+    returnToUrl:string
+}
+
+export const ResetPassword = (props: ResetPasswordProps) => {
     const [userName, setUserName] = useState('')
     const [token, setToken] = useState<PasswordResetSignedToken | undefined>()
-    const [hasToken, setHasToken] = useState(false)
     const [newPassword, setNewPassword] = useState<string>('')
     const [confirmPassword, setConfirmPassword] = useState<string>('')
 
@@ -18,9 +21,6 @@ export const ResetPassword = () => {
         if(passwordResetTokenValue){
             const hexDecodedPasswordResetToken = hexDecodeAndDeserialize(passwordResetTokenValue)
             setToken(hexDecodedPasswordResetToken)
-            if(hexDecodedPasswordResetToken){
-                setHasToken(true)
-            }
         }
     },[])
 
@@ -53,6 +53,7 @@ export const ResetPassword = () => {
                     .then(() => {
                         displayToast("Successfully changed", 'success')
                     })
+                    .then(()=> window.location.replace(props.returnToUrl))
             }
         } catch(err: any){
             displayToast(err.reason as string, 'danger')
@@ -62,7 +63,7 @@ export const ResetPassword = () => {
     return(
         <div className="bootstrap-4-backport blue-background">
             {
-                hasToken ? <>
+                token ? <>
                     <form onSubmit={handleChangePasswordWithToken}>
                         <FormGroup controlId='newPassword'>
                             <FormLabel>New Password</FormLabel>
