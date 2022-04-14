@@ -6,7 +6,6 @@ import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseC
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam } from 'URLUtils'
-import { HiddenIFrame } from 'components/HiddenIFrame'
 
 export type AppInitializerState = {
   token: string
@@ -114,10 +113,6 @@ class AppInitializer extends React.Component<Props, AppInitializerState> {
           {React.Children.map(this.props.children, (child: any) => {
             return child
           })}
-          {/* Force synapse.org login state to be in sync with this app. 
-          Note that this is only rendered after hasCalledGetSession is set to true. */}
-          {this.state.token && <HiddenIFrame url={`https://signin.synapse.org/login?code=${this.state.token}`} />}
-          {!this.state.token && <HiddenIFrame url="https://signin.synapse.org/logout" />}
         </SynapseContextProvider>
       </>
     )
