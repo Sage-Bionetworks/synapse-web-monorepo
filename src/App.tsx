@@ -18,6 +18,7 @@ import TopNavBar from 'components/TopNavBar'
 import { ProfileValidation } from 'components/ProfileValidation'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import AccountSettings from 'components/AccountSettings'
+import { ResetPassword } from 'components/ResetPassword'
 
 const App: React.FC = () => {
   return (
@@ -38,6 +39,9 @@ const App: React.FC = () => {
                 }} />
                 <Route exact path='/register1' component={RegisterAccount1} />
                 <Route exact path='/register2' component={RegisterAccount2} />
+                <Route exact path='/resetPassword' render={props => {
+                  return <ResetPassword returnToUrl='/authenticated/myaccount' />
+                }} />
                 {/* check for an access token for any route in the "/authenticated/" path */}
                 <Route path='/authenticated/'
                   render={routeProps => {
