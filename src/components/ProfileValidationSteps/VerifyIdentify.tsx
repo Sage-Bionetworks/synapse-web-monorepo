@@ -1,5 +1,5 @@
 import { ORCiDButton } from 'components/ORCiDButton'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Typography, SynapseComponents } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { VerificationSubmission, UploadCallbackResp, FileUploadComplete } from 'synapse-react-client/dist/utils/synapseTypes'

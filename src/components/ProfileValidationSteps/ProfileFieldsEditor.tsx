@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Col, FormControl, FormGroup, FormLabel, Row } from 'react-bootstrap'
 import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
 

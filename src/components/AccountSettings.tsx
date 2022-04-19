@@ -14,6 +14,7 @@ import { ChangePassword } from './ChangePassword'
 import { ORCiDButton } from './ORCiDButton'
 import { getSearchParam } from 'URLUtils'
 import { getSourceAppRedirectURL } from './SourceApp'
+import { ConfigureEmail } from './ConfigureEmail'
 
 export type AccountSettingsProps = {
 }
@@ -25,11 +26,9 @@ const AccountSettings = (props: AccountSettingsProps) => {
     const [ orcid, setOrcid ] = useState<string>()
     const [ verified, setVerfied ] = useState<boolean>()
     const [ editUsername, setEditUsername] = useState<boolean>(false)
-    const [ editEmail, setEditEmail] = useState<boolean>(false)
     const [ changePW, setChangePW] = useState<boolean>(false)
     const [ isShowingWelcomeScreen, setIsShowingWelcomeScreen] = useState<boolean>(false)
     const [ updatedUsername, setUpdatedUsername] = useState<string>('')
-    const [ updatedEmail, setUpdatedEmail] = useState<string>('')
     const [ verificationSubmission, setVerificationSubmission] = useState<VerificationSubmission>()
     const [ verificationState, setVerificationState] = useState<VerificationState>()
 
@@ -112,8 +111,6 @@ const AccountSettings = (props: AccountSettingsProps) => {
     const cancelEdit = () => {
         setEditUsername(false)
         setUpdatedUsername('')
-        setEditEmail(false)
-        setUpdatedEmail('')
         setChangePW(false)
     }
 
@@ -165,28 +162,15 @@ const AccountSettings = (props: AccountSettingsProps) => {
                                         {userProfile?.userName}
                                         <button onClick={()=>{
                                             setEditUsername(true) 
-                                            setChangePW(false)
-                                            setEditEmail(false)}}>
+                                            setChangePW(false)}}>
+                                        
                                             <img src={EditIcon} alt="edit icon"/>
                                         </button>
                                     </div>
                                 </>
                             }
-                            {editEmail ? 
-                                <div className='edit-cell'>{EditField('Email', updatedEmail, setUpdatedEmail)}</div>
-                                : <>
-                                    <div className='label-cell'>Email: </div>
-                                    <div>
-                                        {userProfile?.emails?.slice(-1)[0]}
-                                        <button onClick={()=>{
-                                            setEditEmail(true)
-                                            setChangePW(false)
-                                            setEditUsername(false)}}>
-                                            <img src={EditIcon} alt="edit icon"/>
-                                        </button>
-                                    </div>
-                                </>
-                            }
+                            <div className='label-cell'>Email:</div>
+                            <ConfigureEmail returnToUrl='/authenticated/myaccount' />
                             {changePW ?
                                 <div className='edit-cell'><ChangePassword onCancel={cancelEdit} /></div>
                                 : <>

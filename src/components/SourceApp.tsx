@@ -1,4 +1,3 @@
-import React from 'react'
 import SourceAppConfigs, { SourceAppConfig } from './SourceAppConfigs'
 
 export type SourceAppProps = {
