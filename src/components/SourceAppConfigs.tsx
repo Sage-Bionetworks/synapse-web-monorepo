@@ -1,5 +1,6 @@
 import MobileToolboxLogoSvg from 'assets/MobileToolboxLogo.svg'
 import SynapseLogoSvg from 'assets/SynapseLogo.svg'
+import React from 'react'
 
 export type SourceAppConfig = {
   appId: string // app ID used in the query params
