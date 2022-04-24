@@ -5,6 +5,8 @@ import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { VerificationSubmission, UploadCallbackResp, FileUploadComplete } from 'synapse-react-client/dist/utils/synapseTypes'
 import fileIcon from '../../assets/file-icon.svg'
 import CheckmarkBadge from '../../assets/CheckmarkSecondary.svg'
+import { Button } from 'react-bootstrap'
+import { UnbindORCiDDialog } from 'components/UnbindORCiD'
 
 export type VerifyIdentifyProps = {
   verificationSubmission:VerificationSubmission
@@ -13,6 +15,7 @@ export type VerifyIdentifyProps = {
 export const VerifyIdentify = (props: VerifyIdentifyProps) => {
   const { verificationSubmission } = props
   const [attachments, setAttachments] = useState(verificationSubmission.attachments)
+  const [ showORCiDDialog, setShowORCiDDialog ] = useState(false)
   useEffect(() => {
     verificationSubmission.attachments = attachments    
   }, [attachments, verificationSubmission])
@@ -34,7 +37,13 @@ export const VerifyIdentify = (props: VerifyIdentifyProps) => {
           <Typography variant='headline1'>In order to validate your identify, we require:</Typography>
             <Typography variant='body1'>1. Accounts to have an ORCID. Please link your profile below. </Typography>
             <div className='orcid-container'>
-              {verificationSubmission.orcid && <Typography variant='body1'><img className='verifyBadgeIcon' src={CheckmarkBadge} alt='CheckmarkBadge'/>ORCiD: {verificationSubmission.orcid}</Typography>}
+              {
+              verificationSubmission.orcid &&
+              <>
+                <Typography style={{display:'inline-block', marginRight:'16px'}} variant='body1'><img className='verifyBadgeIcon' src={CheckmarkBadge} alt='CheckmarkBadge'/>ORCiD: {verificationSubmission.orcid}</Typography>
+                <Button onClick={()=>setShowORCiDDialog(true)} style={{minWidth:'150px'}} className='btn-container emptyButton'>Edit Link</Button>
+              </>
+              }
               {!verificationSubmission.orcid && <ORCiDButton />}
             </div>
           <Typography variant='body1'>2. Submit recent identity attestation documentation. This document must be current within the past month. Acceptable forms of documentation, in English, are any one of the following: </Typography>
@@ -66,6 +75,7 @@ export const VerifyIdentify = (props: VerifyIdentifyProps) => {
             />
           </div>
       </div>
+      <UnbindORCiDDialog show={showORCiDDialog} setShow={setShowORCiDDialog} orcid={verificationSubmission.orcid} />
     </>
     
   )

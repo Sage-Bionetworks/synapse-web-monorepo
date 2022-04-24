@@ -11,10 +11,10 @@ import CheckmarkBadgeLight from '../assets/CheckmarkBadgeLight.svg'
 import CheckmarkBadgeDark from '../assets/CheckmarkBadge.svg'
 import EditIcon from '../assets/RedEditPencil.svg'
 import { ChangePassword } from './ChangePassword'
-import { ORCiDButton } from './ORCiDButton'
 import { getSearchParam } from 'URLUtils'
 import { getSourceAppRedirectURL } from './SourceApp'
 import { ConfigureEmail } from './ConfigureEmail'
+import { UnbindORCiDDialog } from './UnbindORCiD'
 
 export type AccountSettingsProps = {
 }
@@ -31,6 +31,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
     const [ updatedUsername, setUpdatedUsername] = useState<string>('')
     const [ verificationSubmission, setVerificationSubmission] = useState<VerificationSubmission>()
     const [ verificationState, setVerificationState] = useState<VerificationState>()
+    const [ showORCiDDialog, setShowORCiDDialog ] = useState(false)
 
     const SUSPENDED_TEXT = 'Your account has been suspended.'
     const REJECTED_TEXT = 'Sorry we could not verify your account.'
@@ -185,8 +186,8 @@ const AccountSettings = (props: AccountSettingsProps) => {
                             <>
                                 <div className='label-cell'>OrcID: </div>
                                 <div className='orcid-cell'>
-                                    {orcid}
-                                    <ORCiDButton editButton={true} redirectAfter={window.location.href}/>
+                                    <a href={orcid}>{orcid}</a>
+                                    <button onClick={()=>setShowORCiDDialog(true)}><img src={EditIcon} alt="edit icon"/></button>
                                 </div>
                             </>
                             }
@@ -284,6 +285,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
                     </Row>
                 </Modal.Body>
             </Modal>
+            <UnbindORCiDDialog show={showORCiDDialog} setShow={setShowORCiDDialog} orcid={orcid} redirectAfter='/authenticated/myaccount'/>
         </div>
     )
 }
