@@ -42,16 +42,16 @@ export const UnbindORCiDDialog = (props: UnbindORCiDModalProps) => {
 
     return(
         <Modal 
-        className='bootstrap-4-backport'
+        className='bootstrap-4-backport UnbindORCiD'
         show={props.show}
         animation={false}
         backdrop='static'
         centered
         >
-            <Modal.Body style={{margin:0, padding:'32px 0'}}>
+            <Modal.Body className='unbind-modal'>
                 <Typography variant='headline1'>Remove ORCID</Typography>
                 <Typography variant='body1'>Are you sure you want to remove this ORCID?</Typography>
-                <div style={{float:'right',marginTop:'24px'}}>
+                <div className='btn-holder'>
                 <Button className='btn-container emptyButton' onClick={()=>props.setShow(false)}>Cancel</Button>
                 <Button className='btn-container' variant='secondary' onClick={()=>unbindORCiD(props.orcid, accessToken, props.redirectAfter)}>Yes, remove</Button>
                 </div>
