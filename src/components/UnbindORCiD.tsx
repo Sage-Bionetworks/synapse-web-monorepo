@@ -17,14 +17,14 @@ export const unbindORCiD = async (event: React.SyntheticEvent, setIsLoading: Fun
         }
     }
 }
-export type UnbindORCiDModalProps = {
+export type UnbindORCiDDialogProps = {
     show: boolean,
     setShow: Function,
     orcid: string|undefined,
     redirectAfter?: string
 }
 
-export const UnbindORCiDDialog = (props: UnbindORCiDModalProps) => {
+export const UnbindORCiDDialog = (props: UnbindORCiDDialogProps) => {
     const { accessToken } = useSynapseContext()
     const [isLoading, setIsLoading] = useState(false)
     return(
