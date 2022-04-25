@@ -13,43 +13,44 @@ export type ORCiDButtonProps = {
   editButton?: boolean
 }
 
+export const onBindToORCiD = async (event: React.SyntheticEvent, setIsLoading: Function, redirectAfter?: any) => {
+  event.preventDefault()
+  setIsLoading(true)
+  try {
+    // after binding, go to ???
+    if(redirectAfter){
+      localStorage.setItem('after-sso-login-url', redirectAfter)
+    } else {
+      localStorage.setItem('after-sso-login-url', `${SynapseClient.getRootURL()}authenticated/validate?step=${ValidationWizardStep.VERIFY_IDENTITY}`)
+    }
+    const redirectUrl = `${SynapseClient.getRootURL()}?provider=${PROVIDERS.ORCID}`
+    SynapseClient.oAuthUrlRequest(PROVIDERS.ORCID, redirectUrl)
+      .then((data: any) => {
+        const authUrl = data.authorizationUrl
+        window.location.assign(authUrl)
+      })
+      .catch((err: any) => {
+        displayToast(err.reason as string, 'danger')
+      })
+  } catch (err:any) {
+    displayToast(err.reason as string, 'danger')
+  } finally {
+    setIsLoading(false)
+  }
+}
+
 export const ORCiDButton = (props: ORCiDButtonProps) => {
   const [isLoading, setIsLoading] = useState(false)
 
-  const onBindToORCiD = async (event: React.SyntheticEvent) => {
-    event.preventDefault()
-    setIsLoading(true)
-    try {
-      // after binding, go to ???
-      if(props.redirectAfter){
-        localStorage.setItem('after-sso-login-url', props.redirectAfter)
-      } else {
-        localStorage.setItem('after-sso-login-url', `${SynapseClient.getRootURL()}authenticated/validate?step=${ValidationWizardStep.VERIFY_IDENTITY}`)
-      }
-      const redirectUrl = `${SynapseClient.getRootURL()}?provider=${PROVIDERS.ORCID}`
-      SynapseClient.oAuthUrlRequest(PROVIDERS.ORCID, redirectUrl)
-        .then((data: any) => {
-          const authUrl = data.authorizationUrl
-          window.location.assign(authUrl)
-        })
-        .catch((err: any) => {
-          displayToast(err.reason as string, 'danger')
-        })
-    } catch (err:any) {
-      displayToast(err.reason as string, 'danger')
-    } finally {
-      setIsLoading(false)
-    }
-  }
   return (
     <>
     {props.editButton  ? 
-      <button onClick={onBindToORCiD}><img src={EditIcon} alt="edit icon"/></button>
+      <button onClick={e=>onBindToORCiD(e,setIsLoading,props.redirectAfter)}><img src={EditIcon} alt="edit icon"/></button>
     : <Button
       variant='secondary'
-      onClick={onBindToORCiD}
+      onClick={e=>onBindToORCiD(e,setIsLoading,props.redirectAfter)}
       type="button"
-      style={{ marginLeft: 20 }}
+      style={{ marginLeft: 20, width: 'fit-content' }}
       disabled={ isLoading }
     >
       Link My ORCiD
