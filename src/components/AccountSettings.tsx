@@ -15,6 +15,7 @@ import { getSearchParam } from 'URLUtils'
 import { getSourceAppRedirectURL } from './SourceApp'
 import { ConfigureEmail } from './ConfigureEmail'
 import { UnbindORCiDDialog } from './UnbindORCiD'
+import { ORCiDButton } from './ORCiDButton'
 
 export type AccountSettingsProps = {
 }
@@ -54,7 +55,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
             displayToast(err.reason, 'danger')
         }
     }
-    
+
     useEffect(() => {
         const getData = async() => {
             try {
@@ -182,13 +183,17 @@ const AccountSettings = (props: AccountSettingsProps) => {
                                     </div>
                                 </>
                             }
-                            {orcid &&
+                            {orcid ?
                             <>
                                 <div className='label-cell'>OrcID: </div>
                                 <div className='orcid-cell'>
                                     <a href={orcid}>{orcid}</a>
                                     <button onClick={()=>setShowORCiDDialog(true)}><img src={EditIcon} alt="edit icon"/></button>
                                 </div>
+                            </> :
+                            <>
+                                <div className='label-cell'>OrcID: </div>
+                                <ORCiDButton />
                             </>
                             }
                         </div>

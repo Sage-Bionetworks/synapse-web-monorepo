@@ -1,30 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { SynapseClient, Typography } from 'synapse-react-client'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/Login'
-import { ValidationWizardStep } from './ProfileValidation'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { Button, Modal } from 'react-bootstrap'
+import { onBindToORCiD } from './ORCiDButton'
 
 
-export const unbindORCiD = async (orcid: string|undefined, accessToken:string|undefined, redirectAfter?:string) => {
+export const unbindORCiD = async (event: React.SyntheticEvent, setIsLoading: Function, orcid: string|undefined, accessToken:string|undefined, redirectAfter?:string) => {
+    event.preventDefault()
     if(orcid){
         try {
             await SynapseClient.unbindOAuthProviderToAccount(PROVIDERS.ORCID, accessToken, orcid)
-            if(redirectAfter){
-                localStorage.setItem('after-sso-login-url', redirectAfter)
-              } else {
-                localStorage.setItem('after-sso-login-url', `${SynapseClient.getRootURL()}authenticated/validate?step=${ValidationWizardStep.VERIFY_IDENTITY}`)
-              }
-              const redirectUrl = `${SynapseClient.getRootURL()}?provider=${PROVIDERS.ORCID}`
-              SynapseClient.oAuthUrlRequest(PROVIDERS.ORCID, redirectUrl)
-                .then((data: any) => {
-                  const authUrl = data.authorizationUrl
-                  window.location.assign(authUrl)
-                })
-                .catch((err: any) => {
-                  displayToast(err.reason as string, 'danger')
-                })
+            onBindToORCiD(event, setIsLoading, redirectAfter)
         } catch(err: any){
             console.error(err)
         }
@@ -39,7 +26,7 @@ export type UnbindORCiDModalProps = {
 
 export const UnbindORCiDDialog = (props: UnbindORCiDModalProps) => {
     const { accessToken } = useSynapseContext()
-
+    const [isLoading, setIsLoading] = useState(false)
     return(
         <Modal 
         className='bootstrap-4-backport UnbindORCiD'
@@ -53,7 +40,11 @@ export const UnbindORCiDDialog = (props: UnbindORCiDModalProps) => {
                 <Typography variant='body1'>Are you sure you want to remove this ORCID?</Typography>
                 <div className='btn-holder'>
                 <Button className='btn-container emptyButton' onClick={()=>props.setShow(false)}>Cancel</Button>
-                <Button className='btn-container' variant='secondary' onClick={()=>unbindORCiD(props.orcid, accessToken, props.redirectAfter)}>Yes, remove</Button>
+                <Button 
+                className='btn-container' 
+                variant='secondary' 
+                disabled={ isLoading } 
+                onClick={event=>unbindORCiD(event,setIsLoading, props.orcid, accessToken, props.redirectAfter)}>Yes, remove</Button>
                 </div>
             </Modal.Body>
         </Modal>

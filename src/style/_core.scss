@@ -47,6 +47,9 @@
     .emptyButton {
         color: black;
         background-color: #FEFEFE;
+        &:hover{
+            background-color: #f4f4f4;
+        }
     }
     .btn-container{
         padding: 10px 30px;
