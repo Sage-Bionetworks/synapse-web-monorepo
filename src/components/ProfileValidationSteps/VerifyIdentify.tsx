@@ -4,8 +4,9 @@ import { Typography, SynapseComponents } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { VerificationSubmission, UploadCallbackResp, FileUploadComplete } from 'synapse-react-client/dist/utils/synapseTypes'
 import fileIcon from '../../assets/file-icon.svg'
+import EditIcon from '../../assets/RedEditPencil.svg'
 import CheckmarkBadge from '../../assets/CheckmarkSecondary.svg'
-import { Button } from 'react-bootstrap'
+// import { Button } from 'react-bootstrap'
 import { UnbindORCiDDialog } from 'components/UnbindORCiD'
 
 export type VerifyIdentifyProps = {
@@ -41,7 +42,7 @@ export const VerifyIdentify = (props: VerifyIdentifyProps) => {
               verificationSubmission.orcid &&
               <>
                 <Typography style={{display:'inline-block', marginRight:'16px'}} variant='body1'><img className='verifyBadgeIcon' src={CheckmarkBadge} alt='CheckmarkBadge'/>ORCiD: {verificationSubmission.orcid}</Typography>
-                <Button onClick={()=>setShowORCiDDialog(true)} style={{minWidth:'150px'}} className='btn-container emptyButton'>Edit Link</Button>
+                <button onClick={()=>setShowORCiDDialog(true)}> <img src={EditIcon} alt="edit icon"/></button>
               </>
               }
               {!verificationSubmission.orcid && <ORCiDButton />}
