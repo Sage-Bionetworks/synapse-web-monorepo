@@ -1,20 +1,23 @@
 #body {
-    .edit-btn-container {
-        float: right;
-        position: relative;
-        bottom: 36px;
-        min-width: 140px;
-    }
-    .containers {
-        margin-bottom: 16px;
-
-        .mail-icon {
-            width: 24px;
-            margin-right: 8px;
+    .profile-page{
+        font-size: 18px;
+        .edit-btn-container {
+            float: right;
+            position: relative;
+            bottom: 36px;
+            min-width: 140px;
         }
-    }
-    .edit-field {
-        display: inline-block;
-        margin: 0 16px;
+        .containers {
+            margin-bottom: 16px;
+    
+            .contact-icon {
+                width: 24px;
+                margin-right: 8px;
+            }
+        }
+        .edit-field {
+            display: inline-block;
+            margin: 0 16px;
+        }
     }
 }

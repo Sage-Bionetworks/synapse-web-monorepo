@@ -7,6 +7,7 @@ import { Col, Container, FormControl, FormGroup, FormLabel, Row } from 'react-bo
 import MailIcon from 'assets/mail.svg'
 import LinkIcon from 'assets/link.svg'
 import EditIcon from '../assets/RedEditPencil.svg'
+import { Typography } from 'synapse-react-client'
 
 // import { useGetUserProfileWithProfilePic } from 'synapse-react-client/src/lib/utils/hooks/SynapseAPI/useUserBundle'
 
@@ -95,13 +96,13 @@ export const ProfilePage = (props: ProfilePageProps) => {
     }
 
     return(
-        <div className="bootstrap-4-backport blue-background">
+        <div className="bootstrap-4-backport blue-background profile-page">
             <Container>
                 <div className='edit-btn-container'>
                     {!!!editing ? 
                     <>
                         <img src={EditIcon} alt="edit icon"/>
-                        <button onClick={()=>setEditing(true)}>Edit Profile</button> 
+                        <button onClick={()=>setEditing(true)}>Edit Public Profile</button> 
                     </>
                     :
                     <>
@@ -118,7 +119,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
                         <div className='grid-container'>
                             <div className='containers'>
                                 {!!!editing ? 
-                                    <strong>{`${firstName} ${lastName}`}</strong>
+                                    <Typography variant='headline3'>{`${firstName} ${lastName}`}</Typography>
                                 : 
                                 <FormGroup style={{display:'inline-block'}}>
                                     {EditField('First name', firstName, setFirstName)}
@@ -129,8 +130,8 @@ export const ProfilePage = (props: ProfilePageProps) => {
                             <div className='containers'>
                                 {!!!editing ? 
                                 <div>
-                                    {position}<br/>
-                                    {company}<br/>
+                                    {position} <br/>
+                                    {company} <br/>
                                     {location}
                                 </div> : 
                                 <FormGroup>
@@ -155,10 +156,10 @@ export const ProfilePage = (props: ProfilePageProps) => {
                                 }
                             </div>
                             <div className='containers'>
-                                <a href={"mailto:" + userName}><img className='mail-icon' src={MailIcon}/>{userName}</a>
+                                <a href={"mailto:" + userName}><img className='contact-icon' src={MailIcon}/>{userName}</a>
                             </div>
                             <div className='containers'>
-                                {!!!editing ? <a href={url}><img className='mail-icon' src={LinkIcon}/>{url}</a> : EditField('Website', url, setUrl)}
+                                {!!!editing ? <a href={url}><img className='contact-icon' src={LinkIcon}/>{url}</a> : EditField('Website', url, setUrl)}
                             </div>
                         </div>
                     </Col>
