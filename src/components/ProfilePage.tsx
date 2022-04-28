@@ -28,27 +28,6 @@ export const ProfilePage = (props: ProfilePageProps) => {
     const [ verified, setVerfied ] = useState<boolean>()
     const [ editing, setEditing ] = useState(false)
 
-    const updateUserProfile = async () => {
-        try{
-            if(userProfile){
-                userProfile.firstName = firstName as string
-                userProfile.lastName = lastName as string
-                userProfile.position = position as string
-                userProfile.company = company as string
-                userProfile.location = location as string
-                userProfile.summary = summary as string
-                userProfile.url = url as string
-                userProfile.profilePicureFileHandleId = fileHandleId as string
-                await updateMyUserProfile(userProfile, accessToken)
-                displayToast('Profile has been successfully updated', 'success')
-                getProfile()
-                setEditing(false)
-            }
-        } catch(err:any){
-            displayToast(err.reason as string, 'danger')
-        }
-    }
-
     const getProfile = async () => {
         try{
             const mask =
@@ -68,6 +47,27 @@ export const ProfilePage = (props: ProfilePageProps) => {
             setProfilePicUrl(picUrl)
             setVerfied(bundle.isVerified)
         } catch(err:any) {
+            displayToast(err.reason as string, 'danger')
+        }
+    }
+
+    const updateUserProfile = async () => {
+        try{
+            if(userProfile){
+                userProfile.firstName = firstName as string
+                userProfile.lastName = lastName as string
+                userProfile.position = position as string
+                userProfile.company = company as string
+                userProfile.location = location as string
+                userProfile.summary = summary as string
+                userProfile.url = url as string
+                userProfile.profilePicureFileHandleId = fileHandleId as string
+                await updateMyUserProfile(userProfile, accessToken)
+                displayToast('Profile has been successfully updated', 'success')
+                getProfile()
+                setEditing(false)
+            }
+        } catch(err:any){
             displayToast(err.reason as string, 'danger')
         }
     }
