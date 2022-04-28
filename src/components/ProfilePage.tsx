@@ -35,7 +35,11 @@ export const ProfilePage = (props: ProfilePageProps) => {
             SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE
 
             const bundle: UserBundle = await getMyUserBundle(mask, accessToken)
-            const picUrl = await getFileHandleByIdURL(bundle.userProfile?.profilePicureFileHandleId as string,accessToken)
+            console.log(bundle.userProfile)
+            let picUrl
+            if(bundle.userProfile?.profilePicureFileHandleId){
+                picUrl = await getFileHandleByIdURL(bundle.userProfile?.profilePicureFileHandleId as string,accessToken)
+            }
             setUserProfile(bundle.userProfile)
             setFirstName(bundle.userProfile?.firstName)
             setLastName(bundle.userProfile?.lastName)
@@ -205,9 +209,9 @@ export const ProfilePage = (props: ProfilePageProps) => {
                             <div className='containers'>
                                 <a href={"mailto:" + userProfile?.userName}><img className='contact-icon' src={MailIcon}/>{userProfile?.userName}</a>
                             </div>
-                            <div className='containers'>
+                            {userProfile?.url && <div className='containers'>
                                 {!!!editing ? <a href={userProfile?.url}><img className='contact-icon' src={LinkIcon}/>{userProfile?.url}</a> : EditField('Website', url, setUrl)}
-                            </div>
+                            </div>}
                         </div>
                     </Col>
                 </Row>
