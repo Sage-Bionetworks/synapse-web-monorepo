@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { getFileHandleByIdURL, getMyUserBundle, updateMyUserProfile, uploadFile } from 'synapse-react-client/dist/utils/SynapseClient'
-import { FileUploadComplete, UserBundle, UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
+import { FileUploadComplete, UserBundle } from 'synapse-react-client/dist/utils/synapseTypes'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { Button, Col, Container, FormControl, FormGroup, FormLabel, Row } from 'react-bootstrap'
 import MailIcon from 'assets/mail.svg'
@@ -15,7 +15,7 @@ export type ProfilePageProps={}
 export const ProfilePage = (props: ProfilePageProps) => {
     const { accessToken } = useSynapseContext()
 
-    const [ userProfile, setUserProfile ] = useState<UserProfile>()
+    const [ bundleState, setBundleState] = useState<UserBundle>()
     const [ firstName, setFirstName ] = useState<string|undefined>()
     const [ lastName, setLastName ] = useState<string|undefined>()
     const [ position, setPosition ] = useState<string|undefined>()
@@ -24,49 +24,55 @@ export const ProfilePage = (props: ProfilePageProps) => {
     const [ summary, setSummary ] = useState<string|undefined>()
     const [ url, setUrl ] = useState<string|undefined>()
     const [ profilePicUrl, setProfilePicUrl ] = useState<string|undefined>()
+    const [ originalPicUrl, setOriginalPicUrl ] = useState<string|undefined>()
     const [ fileHandleId, setFileHandleId ] = useState<string|undefined>()
     const [ verified, setVerfied ] = useState<boolean>()
     const [ editing, setEditing ] = useState(false)
 
+    const unpackBundle = (bundle: UserBundle) => {
+        setFirstName(bundle.userProfile?.firstName)
+        setLastName(bundle.userProfile?.lastName)
+        setPosition(bundle.userProfile?.position)
+        setCompany(bundle.userProfile?.company)
+        setLocation(bundle.userProfile?.location)
+        setSummary(bundle.userProfile?.summary)
+        setUrl(bundle.userProfile?.url)
+        setFileHandleId(bundle.userProfile?.profilePicureFileHandleId)
+        setVerfied(bundle.isVerified)
+    }
+
     const getProfile = async () => {
-        try{
+        try {
             const mask =
             SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
             SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE
 
             const bundle: UserBundle = await getMyUserBundle(mask, accessToken)
-            console.log(bundle.userProfile)
             let picUrl
             if(bundle.userProfile?.profilePicureFileHandleId){
                 picUrl = await getFileHandleByIdURL(bundle.userProfile?.profilePicureFileHandleId as string,accessToken)
             }
-            setUserProfile(bundle.userProfile)
-            setFirstName(bundle.userProfile?.firstName)
-            setLastName(bundle.userProfile?.lastName)
-            setPosition(bundle.userProfile?.position)
-            setCompany(bundle.userProfile?.company)
-            setLocation(bundle.userProfile?.location)
-            setSummary(bundle.userProfile?.summary)
-            setUrl(bundle.userProfile?.url)
+            setBundleState(bundle)
+            unpackBundle(bundle)
             setProfilePicUrl(picUrl)
-            setVerfied(bundle.isVerified)
+            setOriginalPicUrl(picUrl)
         } catch(err:any) {
             displayToast(err.reason as string, 'danger')
         }
     }
 
     const updateUserProfile = async () => {
-        try{
-            if(userProfile){
-                userProfile.firstName = firstName as string
-                userProfile.lastName = lastName as string
-                userProfile.position = position as string
-                userProfile.company = company as string
-                userProfile.location = location as string
-                userProfile.summary = summary as string
-                userProfile.url = url as string
-                userProfile.profilePicureFileHandleId = fileHandleId as string
-                await updateMyUserProfile(userProfile, accessToken)
+        try {
+            if(bundleState?.userProfile){
+                bundleState.userProfile.firstName = firstName as string
+                bundleState.userProfile.lastName = lastName as string
+                bundleState.userProfile.position = position as string
+                bundleState.userProfile.company = company as string
+                bundleState.userProfile.location = location as string
+                bundleState.userProfile.summary = summary as string
+                bundleState.userProfile.url = url as string
+                bundleState.userProfile.profilePicureFileHandleId = fileHandleId as string
+                await updateMyUserProfile(bundleState.userProfile, accessToken)
                 displayToast('Profile has been successfully updated', 'success')
                 getProfile()
                 setEditing(false)
@@ -94,14 +100,15 @@ export const ProfilePage = (props: ProfilePageProps) => {
     }
 
     const onCancel = async () => {
-        getProfile()
+        unpackBundle(bundleState!)
+        setProfilePicUrl(originalPicUrl)
         setEditing(false)
     }
 
     const uploadHandler = async(e: React.ChangeEvent<HTMLInputElement>) => {
         if(e.target.files){
             const file = e.target.files[0]
-            try{
+            try {
                 const resp: FileUploadComplete = await uploadFile(accessToken, file.name, file)
                 const picUrl = await getFileHandleByIdURL(resp.fileHandleId,accessToken)
                 setFileHandleId(resp.fileHandleId)
@@ -131,7 +138,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
         </>
     )
 
-    const validProfilePic = (
+    const decoratedProfilePic = (
         <>
             {verified ? <div className='verified-img-container'>
                 <img className='verified-border' src={VerifiedBorder}/>
@@ -150,7 +157,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
         <div className="bootstrap-4-backport blue-background profile-page">
             <Container>
                 <div className='edit-btn-container'>
-                    {!!!editing ? 
+                    {!editing ? 
                     <>
                         <img src={EditIcon} alt="edit icon"/>
                         <button onClick={()=>setEditing(true)}>Edit Public Profile</button> 
@@ -164,13 +171,13 @@ export const ProfilePage = (props: ProfilePageProps) => {
                 </div>
                 <Row>
                     <Col sm={3} >
-                        {validProfilePic}   
+                        {decoratedProfilePic}   
                     </Col>
                     <Col sm={9}>
                         <div className='grid-container'>
                             <div className='containers'>
-                                {!!!editing ? 
-                                    <Typography variant='headline3'>{`${userProfile?.firstName} ${userProfile?.lastName}`}</Typography>
+                                {!editing ? 
+                                    <Typography variant='headline3'>{`${bundleState?.userProfile?.firstName} ${bundleState?.userProfile?.lastName}`}</Typography>
                                 : 
                                 <FormGroup style={{display:'inline-block'}}>
                                     {EditField('First name', firstName, setFirstName)}
@@ -179,11 +186,11 @@ export const ProfilePage = (props: ProfilePageProps) => {
                                 }
                             </div>
                             <div className='containers'>
-                                {!!!editing ? 
+                                {!editing ? 
                                 <div>
-                                    {userProfile?.position} <br/>
-                                    {userProfile?.company} <br/>
-                                    {userProfile?.location}
+                                    {bundleState?.userProfile?.position} <br/>
+                                    {bundleState?.userProfile?.company} <br/>
+                                    {bundleState?.userProfile?.location}
                                 </div> : 
                                 <FormGroup>
                                     {EditField('Position', position, setPosition)}
@@ -193,7 +200,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
                             }
                             </div>
                             <div className='containers'>
-                                {!!!editing ? userProfile?.summary : 
+                                {!editing ? bundleState?.userProfile?.summary : 
                                 <FormGroup>
                                 <FormLabel>Summary</FormLabel>
                                 <FormControl
@@ -207,10 +214,10 @@ export const ProfilePage = (props: ProfilePageProps) => {
                                 }
                             </div>
                             <div className='containers'>
-                                <a href={"mailto:" + userProfile?.userName}><img className='contact-icon' src={MailIcon}/>{userProfile?.userName}</a>
+                                <a href={"mailto:" + bundleState?.userProfile?.userName + "@synapse.org"}><img className='contact-icon' src={MailIcon}/>{bundleState?.userProfile?.userName}</a>
                             </div>
-                            {userProfile?.url && <div className='containers'>
-                                {!!!editing ? <a href={userProfile?.url}><img className='contact-icon' src={LinkIcon}/>{userProfile?.url}</a> : EditField('Website', url, setUrl)}
+                            {bundleState?.userProfile?.url && <div className='containers'>
+                                {!editing ? <a href={bundleState?.userProfile?.url}><img className='contact-icon' src={LinkIcon}/>{bundleState?.userProfile?.url}</a> : EditField('Website', url, setUrl)}
                             </div>}
                         </div>
                     </Col>
