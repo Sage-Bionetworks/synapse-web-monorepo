@@ -15,7 +15,7 @@ export type ProfilePageProps={}
 export const ProfilePage = (props: ProfilePageProps) => {
     const { accessToken } = useSynapseContext()
 
-    const [ bundleState, setBundleState] = useState<UserBundle>()
+    const [ userBundle, setUserBundle] = useState<UserBundle>()
     const [ firstName, setFirstName ] = useState<string|undefined>()
     const [ lastName, setLastName ] = useState<string|undefined>()
     const [ position, setPosition ] = useState<string|undefined>()
@@ -52,7 +52,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
             if(bundle.userProfile?.profilePicureFileHandleId){
                 picUrl = await getFileHandleByIdURL(bundle.userProfile?.profilePicureFileHandleId as string,accessToken)
             }
-            setBundleState(bundle)
+            setUserBundle(bundle)
             unpackBundle(bundle)
             setProfilePicUrl(picUrl)
             setOriginalPicUrl(picUrl)
@@ -63,16 +63,16 @@ export const ProfilePage = (props: ProfilePageProps) => {
 
     const updateUserProfile = async () => {
         try {
-            if(bundleState?.userProfile){
-                bundleState.userProfile.firstName = firstName as string
-                bundleState.userProfile.lastName = lastName as string
-                bundleState.userProfile.position = position as string
-                bundleState.userProfile.company = company as string
-                bundleState.userProfile.location = location as string
-                bundleState.userProfile.summary = summary as string
-                bundleState.userProfile.url = url as string
-                bundleState.userProfile.profilePicureFileHandleId = fileHandleId as string
-                await updateMyUserProfile(bundleState.userProfile, accessToken)
+            if(userBundle?.userProfile){
+                userBundle.userProfile.firstName = firstName as string
+                userBundle.userProfile.lastName = lastName as string
+                userBundle.userProfile.position = position as string
+                userBundle.userProfile.company = company as string
+                userBundle.userProfile.location = location as string
+                userBundle.userProfile.summary = summary as string
+                userBundle.userProfile.url = url as string
+                userBundle.userProfile.profilePicureFileHandleId = fileHandleId as string
+                await updateMyUserProfile(userBundle.userProfile, accessToken)
                 displayToast('Profile has been successfully updated', 'success')
                 getProfile()
                 setEditing(false)
@@ -100,7 +100,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
     }
 
     const onCancel = async () => {
-        unpackBundle(bundleState!)
+        unpackBundle(userBundle!)
         setProfilePicUrl(originalPicUrl)
         setEditing(false)
     }
@@ -177,7 +177,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
                         <div className='grid-container'>
                             <div className='containers'>
                                 {!editing ? 
-                                    <Typography variant='headline3'>{`${bundleState?.userProfile?.firstName} ${bundleState?.userProfile?.lastName}`}</Typography>
+                                    <Typography variant='headline3'>{`${userBundle?.userProfile?.firstName} ${userBundle?.userProfile?.lastName}`}</Typography>
                                 : 
                                 <FormGroup style={{display:'inline-block'}}>
                                     {EditField('First name', firstName, setFirstName)}
@@ -188,9 +188,9 @@ export const ProfilePage = (props: ProfilePageProps) => {
                             <div className='containers'>
                                 {!editing ? 
                                 <div>
-                                    {bundleState?.userProfile?.position} <br/>
-                                    {bundleState?.userProfile?.company} <br/>
-                                    {bundleState?.userProfile?.location}
+                                    {userBundle?.userProfile?.position} <br/>
+                                    {userBundle?.userProfile?.company} <br/>
+                                    {userBundle?.userProfile?.location}
                                 </div> : 
                                 <FormGroup>
                                     {EditField('Position', position, setPosition)}
@@ -200,7 +200,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
                             }
                             </div>
                             <div className='containers'>
-                                {!editing ? bundleState?.userProfile?.summary : 
+                                {!editing ? userBundle?.userProfile?.summary : 
                                 <FormGroup>
                                 <FormLabel>Summary</FormLabel>
                                 <FormControl
@@ -214,10 +214,10 @@ export const ProfilePage = (props: ProfilePageProps) => {
                                 }
                             </div>
                             <div className='containers'>
-                                <a href={"mailto:" + bundleState?.userProfile?.userName + "@synapse.org"}><img className='contact-icon' src={MailIcon}/>{bundleState?.userProfile?.userName}</a>
+                                <a href={"mailto:" + userBundle?.userProfile?.userName + "@synapse.org"}><img className='contact-icon' src={MailIcon}/>{userBundle?.userProfile?.userName}</a>
                             </div>
-                            {bundleState?.userProfile?.url && <div className='containers'>
-                                {!editing ? <a href={bundleState?.userProfile?.url}><img className='contact-icon' src={LinkIcon}/>{bundleState?.userProfile?.url}</a> : EditField('Website', url, setUrl)}
+                            {userBundle?.userProfile?.url && <div className='containers'>
+                                {!editing ? <a href={userBundle?.userProfile?.url}><img className='contact-icon' src={LinkIcon}/>{userBundle?.userProfile?.url}</a> : EditField('Website', url, setUrl)}
                             </div>}
                         </div>
                     </Col>
