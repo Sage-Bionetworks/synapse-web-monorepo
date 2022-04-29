@@ -19,6 +19,7 @@ import { ProfileValidation } from 'components/ProfileValidation'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import AccountSettings from 'components/AccountSettings'
 import { ResetPassword } from 'components/ResetPassword'
+import { ProfilePage } from 'components/ProfilePage'
 
 const App: React.FC = () => {
   return (
@@ -57,6 +58,8 @@ const App: React.FC = () => {
                           return <TermsOfUsePage />
                         } else if (path === '/authenticated/myaccount') {
                           return <AccountSettings/>
+                        } else if(path ==='/authenticated/myprofile'){
+                          return <ProfilePage/>
                         } else {
                           return (<>
                             <p>Unrecognized match path {path}</p>
