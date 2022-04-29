@@ -80,7 +80,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
             }
         }
         getData()
-    }, [accessToken])
+    }, [])
 
     const ProfileValidationState = (verificationStateEnum: VerificationStateEnum | undefined) => {
         const profileValidationStatus = () => {

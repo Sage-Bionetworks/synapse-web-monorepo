@@ -80,6 +80,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
         try{
             const callbackUrl = `${window.location.protocol}//${window.location.host}${props.returnToUrl}?emailValidationSignedToken=`
             await SynapseClient.addEmailAddressStep1(email, userId, callbackUrl, accessToken)
+            displayToast(`We've sent an email to ${email}. Please check your email to continue.`, 'success')
             setNewEmail('')
         } catch(err: any){
             displayToast(err.reason as string, 'danger')
