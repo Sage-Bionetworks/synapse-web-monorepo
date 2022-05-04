@@ -40,7 +40,6 @@ export const getCroppedImg = async(imgSrc:string, pixelCrop:Area, rotation=0) =>
   ctx.translate(-cropX, -cropY)
   // Move the origin to the center of the original position
   ctx.translate(centerX, centerY)
-
   // Move the center of the image to the origin (0,0)
   ctx.translate(-centerX, -centerY)
   ctx.drawImage(
@@ -61,8 +60,4 @@ export const getCroppedImg = async(imgSrc:string, pixelCrop:Area, rotation=0) =>
             resolve(new File([blob!], "profilePic.jpg", { type: "image/jpeg" }))
           }, 'image/jpeg')
     })
-    
-    
-    
-    
 }
