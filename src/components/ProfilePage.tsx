@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { getFileHandleByIdURL, getMyUserBundle, updateMyUserProfile, uploadFile } from 'synapse-react-client/dist/utils/SynapseClient'
-import { FileUploadComplete, UserBundle } from 'synapse-react-client/dist/utils/synapseTypes'
+import { FileUploadComplete } from 'synapse-react-client/dist/utils/synapseTypes'
+import { UserBundle } from 'synapse-react-client/dist/utils/synapseTypes'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { Button, Col, Container, FormControl, FormGroup, FormLabel, Row } from 'react-bootstrap'
+import { Button, Col, Container, FormControl, FormGroup, FormLabel, Modal, Row } from 'react-bootstrap'
 import MailIcon from 'assets/mail.svg'
 import LinkIcon from 'assets/link.svg'
 import EditIcon from 'assets/RedEditPencil.svg'
 import VerifiedBorder from 'assets/VerifiedProfilePic.svg'
 import { SynapseConstants, Typography } from 'synapse-react-client'
+import Cropper from "react-easy-crop"
+import Slider from "@material-ui/core/Slider"
+import { getCroppedImg } from './CropImage'
 
 export type ProfilePageProps={}
 
@@ -28,6 +32,13 @@ export const ProfilePage = (props: ProfilePageProps) => {
     const [ fileHandleId, setFileHandleId ] = useState<string|undefined>()
     const [ verified, setVerfied ] = useState<boolean>()
     const [ editing, setEditing ] = useState(false)
+
+    const [image, setImage] = useState<string|undefined>();
+	const [croppedArea, setCroppedArea] = useState(null);
+	const [crop, setCrop] = useState({ x: 0, y: 0 });
+	const [zoom, setZoom] = useState(1);
+    const [openCropModal, setOpenCropModal] = useState(false)
+    const [loadImg, setLoadImg] = useState(false)
 
     const unpackBundle = (bundle: UserBundle) => {
         setFirstName(bundle.userProfile?.firstName)
@@ -105,19 +116,16 @@ export const ProfilePage = (props: ProfilePageProps) => {
         setEditing(false)
     }
 
-    const uploadHandler = async(e: React.ChangeEvent<HTMLInputElement>) => {
-        if(e.target.files){
-            const file = e.target.files[0]
-            try {
-                const resp: FileUploadComplete = await uploadFile(accessToken, file.name, file)
-                const picUrl = await getFileHandleByIdURL(resp.fileHandleId,accessToken)
-                setFileHandleId(resp.fileHandleId)
-                setProfilePicUrl(picUrl)
-            } catch(err:any){
-                console.error(err)
-            }
-        }
-    }
+	const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files && e.target.files.length > 0) {
+			const reader = new FileReader();
+			reader.readAsDataURL(e.target.files[0]);
+			reader.addEventListener("load", () => {
+				setImage(reader.result as string);
+                setOpenCropModal(true)
+			});
+		}
+	};
 
     const hiddenFileInput = React.useRef<HTMLInputElement>(null)
     const clickHandler = () => {
@@ -131,7 +139,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
             <input
                 type={'file'}
                 ref={hiddenFileInput}
-                onChange={uploadHandler}
+                onChange={onSelectFile}
                 style={{display: 'none'}}
             />
             <Button style={{marginTop:'16px'}} variant='secondary' onClick={clickHandler}>Upload File</Button>
@@ -152,6 +160,33 @@ export const ProfilePage = (props: ProfilePageProps) => {
             }
         </>
     ) 
+
+    const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
+		setCroppedArea(croppedAreaPixels);
+	};
+
+    const onCrop = async() => {
+        const file: any = await getCroppedImg(image!, croppedArea!)
+        try{
+            setLoadImg(true)
+            const resp: FileUploadComplete = await uploadFile(accessToken, file.name, file)
+            const picUrl = await getFileHandleByIdURL(resp.fileHandleId,accessToken)
+            setFileHandleId(resp.fileHandleId)
+            setProfilePicUrl(picUrl)
+        } catch (err:any){
+            displayToast(err.reason as string,'danger')
+        }
+        setLoadImg(true)
+        closeCropModal()
+    }
+
+    const closeCropModal = () =>{
+        setCroppedArea(null)
+        setCrop({x:0,y:0})
+        setImage('')
+        setZoom(1)
+        setOpenCropModal(false)
+    }
 
     return(
         <div className="bootstrap-4-backport blue-background profile-page">
@@ -177,7 +212,9 @@ export const ProfilePage = (props: ProfilePageProps) => {
                         <div className='grid-container'>
                             <div className='containers'>
                                 {!editing ? 
-                                    <Typography variant='headline3'>{`${userBundle?.userProfile?.firstName} ${userBundle?.userProfile?.lastName}`}</Typography>
+                                    <Typography variant='headline3'>
+                                        {`${userBundle?.userProfile?.firstName} ${userBundle?.userProfile?.lastName}`}
+                                    </Typography>
                                 : 
                                 <FormGroup style={{display:'inline-block'}}>
                                     {EditField('First name', firstName, setFirstName)}
@@ -191,7 +228,8 @@ export const ProfilePage = (props: ProfilePageProps) => {
                                     {userBundle?.userProfile?.position} <br/>
                                     {userBundle?.userProfile?.company} <br/>
                                     {userBundle?.userProfile?.location}
-                                </div> : 
+                                </div> 
+                                : 
                                 <FormGroup>
                                     {EditField('Position', position, setPosition)}
                                     {EditField('Company', company, setCompany)}
@@ -214,15 +252,59 @@ export const ProfilePage = (props: ProfilePageProps) => {
                                 }
                             </div>
                             <div className='containers'>
-                                <a href={"mailto:" + userBundle?.userProfile?.userName + "@synapse.org"}><img className='contact-icon' src={MailIcon}/>{userBundle?.userProfile?.userName}</a>
+                                <a href={"mailto:" + userBundle?.userProfile?.userName + "@synapse.org"}>
+                                    <img className='contact-icon' src={MailIcon}/>
+                                    {userBundle?.userProfile?.userName}
+                                </a>
                             </div>
-                            {userBundle?.userProfile?.url && <div className='containers'>
-                                {!editing ? <a href={userBundle?.userProfile?.url}><img className='contact-icon' src={LinkIcon}/>{userBundle?.userProfile?.url}</a> : EditField('Website', url, setUrl)}
-                            </div>}
+                            <div className='containers'>
+                                {!editing ? 
+                                    userBundle?.userProfile?.url &&
+                                     <a href={userBundle?.userProfile?.url}>
+                                         <img className='contact-icon' src={LinkIcon}/>{userBundle?.userProfile?.url}
+                                    </a> 
+                                    :
+                                    EditField('Website', url, setUrl)
+                                }
+                            </div>
                         </div>
                     </Col>
                 </Row>
             </Container>
+
+            <Modal
+                className= 'bootstrap-4-backport'
+                show={openCropModal}
+                onHide={()=>setOpenCropModal(false)}
+                animation={false}
+                centered
+            >
+                <Modal.Body style={{width:'400px',height:'400px', margin:'20px auto'}}>
+                    <div>
+                        <Cropper
+                            image={image}
+                            crop={crop}
+                            zoom={zoom}
+                            aspect={1}
+                            cropShape='round'
+                            onCropChange={setCrop}
+                            onZoomChange={setZoom}
+                            onCropComplete={onCropComplete}
+                        />
+                    </div>
+                </Modal.Body>
+                <Slider
+					min={1}
+					max={3}
+					step={0.1}
+					value={zoom}
+                    onChange={(e, zoom) => setZoom(zoom as number)}
+                />
+                <div id='crop-btn-container' className='modal-btn-container'>
+                    <Button className='modal-btn btn-container emptyButton' onClick={closeCropModal}>Cancel</Button>
+                    <Button disabled={loadImg} className='modal-btn btn-container' variant='secondary' onClick={onCrop}>Save</Button>
+                </div>
+            </Modal>
         </div>
     )
 }
