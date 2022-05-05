@@ -1,22 +1,27 @@
 import { Area } from 'react-easy-crop/types'
 
-export const createImg = (url: string) => 
-    new Promise<HTMLImageElement>((res,rej) => {
-        const img = new Image()
-        img.addEventListener('load',() => res(img))
-        img.addEventListener('error', (err) => rej(err))
-        img.setAttribute("crossOrigin", "anonymous")
-        img.src = url
-    })
+export const createImg = (url: string) =>
+  new Promise<HTMLImageElement>((res, rej) => {
+    const img = new Image()
+    img.addEventListener('load', () => res(img))
+    img.addEventListener('error', (err) => rej(err))
+    img.setAttribute("crossOrigin", "anonymous")
+    img.src = url
+  })
 
-export const getCroppedImg = async(imgSrc:string, pixelCrop:Area, rotation=0) => {
-    const image = await createImg(imgSrc)
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
+export const getCroppedImg = async (imgSrc: string, pixelCrop: Area, rotation = 0) => {
+  const image = await createImg(imgSrc)
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
 
-    if(!ctx){
-        throw new Error('No 2d context')
-    }
+  if (!ctx) {
+    throw new Error('No 2d context')
+  }
+
+  const SX = 0
+  const SY = 0
+  const DX = 0
+  const DY = 0
 
   const scaleX = image.naturalWidth / image.width
   const scaleY = image.naturalHeight / image.height
@@ -44,20 +49,20 @@ export const getCroppedImg = async(imgSrc:string, pixelCrop:Area, rotation=0) =>
   ctx.translate(-centerX, -centerY)
   ctx.drawImage(
     image,
-    0,
-    0,
+    SX,
+    SY,
     image.naturalWidth,
     image.naturalHeight,
-    0,
-    0,
+    DX,
+    DY,
     image.naturalWidth,
     image.naturalHeight,
   )
   ctx.restore()
 
-    return new Promise((resolve)=>{
-        canvas.toBlob((blob) => {
-            resolve(new File([blob!], "profilePic.jpg", { type: "image/jpeg" }))
-          }, 'image/jpeg')
-    })
+  return new Promise<File>((resolve) => {
+    canvas.toBlob((blob) => {
+      resolve(new File([blob!], "profilePic.jpg", { type: "image/jpeg" }))
+    }, 'image/jpeg')
+  })
 }

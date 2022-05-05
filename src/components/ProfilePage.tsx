@@ -11,34 +11,35 @@ import EditIcon from 'assets/RedEditPencil.svg'
 import VerifiedBorder from 'assets/VerifiedProfilePic.svg'
 import { SynapseConstants, Typography } from 'synapse-react-client'
 import Cropper from "react-easy-crop"
+import { Area } from 'react-easy-crop/types'
 import Slider from "@material-ui/core/Slider"
 import { getCroppedImg } from './CropImage'
 
-export type ProfilePageProps={}
+export type ProfilePageProps = {}
 
 export const ProfilePage = (props: ProfilePageProps) => {
     const { accessToken } = useSynapseContext()
 
-    const [ userBundle, setUserBundle] = useState<UserBundle>()
-    const [ firstName, setFirstName ] = useState<string|undefined>()
-    const [ lastName, setLastName ] = useState<string|undefined>()
-    const [ position, setPosition ] = useState<string|undefined>()
-    const [ company, setCompany ] = useState<string|undefined>()
-    const [ location, setLocation ] = useState<string|undefined>()
-    const [ summary, setSummary ] = useState<string|undefined>()
-    const [ url, setUrl ] = useState<string|undefined>()
-    const [ profilePicUrl, setProfilePicUrl ] = useState<string|undefined>()
-    const [ originalPicUrl, setOriginalPicUrl ] = useState<string|undefined>()
-    const [ fileHandleId, setFileHandleId ] = useState<string|undefined>()
-    const [ verified, setVerfied ] = useState<boolean>()
-    const [ editing, setEditing ] = useState(false)
+    const [userBundle, setUserBundle] = useState<UserBundle>()
+    const [firstName, setFirstName] = useState<string | undefined>()
+    const [lastName, setLastName] = useState<string | undefined>()
+    const [position, setPosition] = useState<string | undefined>()
+    const [company, setCompany] = useState<string | undefined>()
+    const [location, setLocation] = useState<string | undefined>()
+    const [summary, setSummary] = useState<string | undefined>()
+    const [url, setUrl] = useState<string | undefined>()
+    const [profilePicUrl, setProfilePicUrl] = useState<string | undefined>()
+    const [originalPicUrl, setOriginalPicUrl] = useState<string | undefined>()
+    const [fileHandleId, setFileHandleId] = useState<string | undefined>()
+    const [verified, setVerfied] = useState<boolean>()
+    const [editing, setEditing] = useState(false)
 
-    const [image, setImage] = useState<string|undefined>();
-	const [croppedArea, setCroppedArea] = useState(null);
-	const [crop, setCrop] = useState({ x: 0, y: 0 });
-	const [zoom, setZoom] = useState(1);
+    const [image, setImage] = useState<string | undefined>();
+    const [croppedArea, setCroppedArea] = useState<Area | undefined>();
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
     const [openCropModal, setOpenCropModal] = useState(false)
-    const [loadImg, setLoadImg] = useState(false)
+    const [imageLoading, setImageLoading] = useState(false)
 
     const unpackBundle = (bundle: UserBundle) => {
         setFirstName(bundle.userProfile?.firstName)
@@ -55,26 +56,26 @@ export const ProfilePage = (props: ProfilePageProps) => {
     const getProfile = async () => {
         try {
             const mask =
-            SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
-            SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE
+                SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
+                SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE
 
             const bundle: UserBundle = await getMyUserBundle(mask, accessToken)
             let picUrl
-            if(bundle.userProfile?.profilePicureFileHandleId){
-                picUrl = await getFileHandleByIdURL(bundle.userProfile?.profilePicureFileHandleId as string,accessToken)
+            if (bundle.userProfile?.profilePicureFileHandleId) {
+                picUrl = await getFileHandleByIdURL(bundle.userProfile?.profilePicureFileHandleId as string, accessToken)
             }
             setUserBundle(bundle)
             unpackBundle(bundle)
             setProfilePicUrl(picUrl)
             setOriginalPicUrl(picUrl)
-        } catch(err:any) {
+        } catch (err: any) {
             displayToast(err.reason as string, 'danger')
         }
     }
 
     const updateUserProfile = async () => {
         try {
-            if(userBundle?.userProfile){
+            if (userBundle?.userProfile) {
                 userBundle.userProfile.firstName = firstName as string
                 userBundle.userProfile.lastName = lastName as string
                 userBundle.userProfile.position = position as string
@@ -88,24 +89,30 @@ export const ProfilePage = (props: ProfilePageProps) => {
                 getProfile()
                 setEditing(false)
             }
-        } catch(err:any){
+        } catch (err: any) {
             displayToast(err.reason as string, 'danger')
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getProfile()
-    },[accessToken,])
+    }, [accessToken,])
 
-    const EditField = (label: string, updatedValue: string|undefined, updateFn: Function) => {
-        return(
+    interface EditFieldProps {
+        label: string
+        updatedValue: string | undefined
+        updateFn: Function
+    }
+
+    const EditField: React.FC<EditFieldProps> = ({ label, updatedValue, updateFn }) => {
+        return (
             <div className='edit-field'>
                 <FormLabel>{label}</FormLabel>
                 <FormControl
-                    onChange={e=>updateFn(e.target.value)}
+                    onChange={e => updateFn(e.target.value)}
                     value={updatedValue}
-                    placeholder= {`Enter ${label}`}
-                /> 
+                    placeholder={`Enter ${label}`}
+                />
             </div>
         )
     }
@@ -116,21 +123,21 @@ export const ProfilePage = (props: ProfilePageProps) => {
         setEditing(false)
     }
 
-	const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files && e.target.files.length > 0) {
-			const reader = new FileReader();
-			reader.readAsDataURL(e.target.files[0]);
-			reader.addEventListener("load", () => {
-				setImage(reader.result as string);
+    const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                setImage(reader.result as string);
                 setOpenCropModal(true)
-			});
-		}
-	};
+            });
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    };
 
     const hiddenFileInput = React.useRef<HTMLInputElement>(null)
     const clickHandler = () => {
         if (hiddenFileInput?.current!) {
-          hiddenFileInput.current?.click()
+            hiddenFileInput.current?.click()
         }
     }
 
@@ -140,131 +147,132 @@ export const ProfilePage = (props: ProfilePageProps) => {
                 type={'file'}
                 ref={hiddenFileInput}
                 onChange={onSelectFile}
-                style={{display: 'none'}}
+                style={{ display: 'none' }}
             />
-            <Button style={{marginTop:'16px'}} variant='secondary' onClick={clickHandler}>Upload File</Button>
+            <Button style={{ marginTop: '16px' }} variant='secondary' onClick={clickHandler}>Upload File</Button>
         </>
     )
 
     const decoratedProfilePic = (
         <>
             {verified ? <div className='verified-img-container'>
-                <img className='verified-border' src={VerifiedBorder}/>
-                <img className='verified-img' src={profilePicUrl}/>
+                <img className='verified-border' src={VerifiedBorder} />
+                <img className='verified-img' src={profilePicUrl} />
                 {editing && uploadImg}
             </div> :
-            <div className='non-verified-profile-pic'>
-                <img className='non-verified-img' src={profilePicUrl}/>
-                {editing && uploadImg}
-            </div>
+                <div className='non-verified-profile-pic'>
+                    <img className='non-verified-img' src={profilePicUrl} />
+                    {editing && uploadImg}
+                </div>
             }
         </>
-    ) 
+    )
 
-    const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
-		setCroppedArea(croppedAreaPixels);
-	};
+    const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+        setCroppedArea(croppedAreaPixels);
+    };
 
-    const onCrop = async() => {
-        const file: any = await getCroppedImg(image!, croppedArea!)
-        try{
-            setLoadImg(true)
+    const onCrop = async () => {
+        const file: File = await getCroppedImg(image!, croppedArea!)
+        console.log(file)
+        try {
+            setImageLoading(true)
             const resp: FileUploadComplete = await uploadFile(accessToken, file.name, file)
-            const picUrl = await getFileHandleByIdURL(resp.fileHandleId,accessToken)
+            const picUrl = await getFileHandleByIdURL(resp.fileHandleId, accessToken)
             setFileHandleId(resp.fileHandleId)
             setProfilePicUrl(picUrl)
-        } catch (err:any){
-            displayToast(err.reason as string,'danger')
+        } catch (err: any) {
+            displayToast(err.reason as string, 'danger')
         }
-        setLoadImg(true)
+        setImageLoading(false)
         closeCropModal()
     }
 
-    const closeCropModal = () =>{
-        setCroppedArea(null)
-        setCrop({x:0,y:0})
+    const closeCropModal = () => {
+        setCroppedArea(undefined)
+        setCrop({ x: 0, y: 0 })
         setImage('')
         setZoom(1)
         setOpenCropModal(false)
     }
 
-    return(
+    return (
         <div className="bootstrap-4-backport blue-background profile-page">
             <Container>
                 <div className='edit-btn-container'>
-                    {!editing ? 
-                    <>
-                        <img src={EditIcon} alt="edit icon"/>
-                        <button onClick={()=>setEditing(true)}>Edit Public Profile</button> 
-                    </>
-                    :
-                    <>
-                        <button onClick={()=>updateUserProfile()}>Save Changes</button>
-                        <button onClick={onCancel}>Cancel</button>
-                    </> 
+                    {!editing ?
+                        <>
+                            <img src={EditIcon} alt="edit icon" />
+                            <button onClick={() => setEditing(true)}>Edit Public Profile</button>
+                        </>
+                        :
+                        <>
+                            <button onClick={() => updateUserProfile()}>Save Changes</button>
+                            <button onClick={onCancel}>Cancel</button>
+                        </>
                     }
                 </div>
                 <Row>
                     <Col sm={3} >
-                        {decoratedProfilePic}   
+                        {decoratedProfilePic}
                     </Col>
                     <Col sm={9}>
                         <div className='grid-container'>
                             <div className='containers'>
-                                {!editing ? 
+                                {!editing ?
                                     <Typography variant='headline3'>
                                         {`${userBundle?.userProfile?.firstName} ${userBundle?.userProfile?.lastName}`}
                                     </Typography>
-                                : 
-                                <FormGroup style={{display:'inline-block'}}>
-                                    {EditField('First name', firstName, setFirstName)}
-                                    {EditField('Last name', lastName, setLastName)}
-                                </FormGroup>
+                                    :
+                                    <FormGroup style={{ display: 'inline-block' }}>
+                                        <EditField label='First name' updatedValue={firstName} updateFn={setFirstName} />
+                                        <EditField label='Last name' updatedValue={lastName} updateFn={setLastName} />
+                                    </FormGroup>
                                 }
                             </div>
                             <div className='containers'>
-                                {!editing ? 
-                                <div>
-                                    {userBundle?.userProfile?.position} <br/>
-                                    {userBundle?.userProfile?.company} <br/>
-                                    {userBundle?.userProfile?.location}
-                                </div> 
-                                : 
-                                <FormGroup>
-                                    {EditField('Position', position, setPosition)}
-                                    {EditField('Company', company, setCompany)}
-                                    {EditField('Location', location, setLocation)}
-                                </FormGroup>   
-                            }
+                                {!editing ?
+                                    <div>
+                                        {userBundle?.userProfile?.position} <br />
+                                        {userBundle?.userProfile?.company} <br />
+                                        {userBundle?.userProfile?.location}
+                                    </div>
+                                    :
+                                    <FormGroup>
+                                        <EditField label='Position' updatedValue={position} updateFn={setPosition} />
+                                        <EditField label='Company' updatedValue={company} updateFn={setCompany} />
+                                        <EditField label='Location' updatedValue={location} updateFn={setLocation} />
+                                    </FormGroup>
+                                }
                             </div>
                             <div className='containers'>
-                                {!editing ? userBundle?.userProfile?.summary : 
-                                <FormGroup>
-                                <FormLabel>Summary</FormLabel>
-                                <FormControl
-                                    onChange={e=>setSummary(e.target.value)}
-                                    value={summary}
-                                    placeholder='Enter summary'
-                                    as='textarea'
-                                    rows={3}
-                                /> 
-                                </FormGroup>
+                                {!editing ? userBundle?.userProfile?.summary :
+                                    <FormGroup>
+                                        <FormLabel>Summary</FormLabel>
+                                        <FormControl
+                                            onChange={e => setSummary(e.target.value)}
+                                            value={summary}
+                                            placeholder='Enter summary'
+                                            as='textarea'
+                                            rows={3}
+                                        />
+                                    </FormGroup>
                                 }
                             </div>
                             <div className='containers'>
                                 <a href={"mailto:" + userBundle?.userProfile?.userName + "@synapse.org"}>
-                                    <img className='contact-icon' src={MailIcon}/>
+                                    <img className='contact-icon' src={MailIcon} />
                                     {userBundle?.userProfile?.userName}
                                 </a>
                             </div>
                             <div className='containers'>
-                                {!editing ? 
+                                {!editing ?
                                     userBundle?.userProfile?.url &&
-                                     <a href={userBundle?.userProfile?.url}>
-                                         <img className='contact-icon' src={LinkIcon}/>{userBundle?.userProfile?.url}
-                                    </a> 
+                                    <a href={userBundle?.userProfile?.url}>
+                                        <img className='contact-icon' src={LinkIcon} />{userBundle?.userProfile?.url}
+                                    </a>
                                     :
-                                    EditField('Website', url, setUrl)
+                                    <EditField label='Website' updatedValue={url} updateFn={setUrl} />
                                 }
                             </div>
                         </div>
@@ -273,13 +281,13 @@ export const ProfilePage = (props: ProfilePageProps) => {
             </Container>
 
             <Modal
-                className= 'bootstrap-4-backport'
+                className='bootstrap-4-backport'
                 show={openCropModal}
-                onHide={()=>setOpenCropModal(false)}
+                onHide={() => setOpenCropModal(false)}
                 animation={false}
                 centered
             >
-                <Modal.Body style={{width:'400px',height:'400px', margin:'20px auto'}}>
+                <Modal.Body style={{ width: '400px', height: '400px', margin: '20px auto' }}>
                     <div>
                         <Cropper
                             image={image}
@@ -294,15 +302,25 @@ export const ProfilePage = (props: ProfilePageProps) => {
                     </div>
                 </Modal.Body>
                 <Slider
-					min={1}
-					max={3}
-					step={0.1}
-					value={zoom}
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    value={zoom}
                     onChange={(e, zoom) => setZoom(zoom as number)}
                 />
-                <div id='crop-btn-container' className='modal-btn-container'>
-                    <Button className='modal-btn btn-container emptyButton' onClick={closeCropModal}>Cancel</Button>
-                    <Button disabled={loadImg} className='modal-btn btn-container' variant='secondary' onClick={onCrop}>Save</Button>
+                <div className='modal-btn-container'>
+                    <Button
+                        className='modal-btn btn-container emptyButton'
+                        onClick={closeCropModal}>
+                        Cancel
+                    </Button>
+                    <Button
+                        disabled={imageLoading}
+                        className='modal-btn btn-container'
+                        variant='secondary'
+                        onClick={!imageLoading ? onCrop : () => ''}>
+                        {imageLoading ? 'Loading...' : 'Save'}
+                    </Button>
                 </div>
             </Modal>
         </div>
