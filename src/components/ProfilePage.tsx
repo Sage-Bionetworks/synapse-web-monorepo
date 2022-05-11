@@ -136,8 +136,8 @@ export const ProfilePage = (props: ProfilePageProps) => {
 
     const hiddenFileInput = React.useRef<HTMLInputElement>(null)
     const clickHandler = () => {
-        if (hiddenFileInput?.current!) {
-            hiddenFileInput.current?.click()
+        if (hiddenFileInput?.current) {
+            hiddenFileInput.current.click()
         }
     }
 
@@ -149,21 +149,28 @@ export const ProfilePage = (props: ProfilePageProps) => {
                 onChange={onSelectFile}
                 style={{ display: 'none' }}
             />
-            <Button style={{ marginTop: '16px' }} variant='secondary' onClick={clickHandler}>Upload File</Button>
+            <Button
+                className='upload-btn'
+                variant='secondary' onClick={clickHandler}>
+                Upload File
+            </Button>
         </>
     )
 
     const decoratedProfilePic = (
         <>
-            {verified ? <div className='verified-img-container'>
-                <img className='verified-border' src={VerifiedBorder} />
-                <img className='verified-img' src={profilePicUrl} />
-                {editing && uploadImg}
-            </div> :
-                <div className='non-verified-profile-pic'>
-                    <img className='non-verified-img' src={profilePicUrl} />
-                    {editing && uploadImg}
-                </div>
+            {
+                verified ?
+                    <div className='verified-img-container'>
+                        <img className='verified-border' src={VerifiedBorder} />
+                        <img className='verified-img' src={profilePicUrl} />
+                        {editing && uploadImg}
+                    </div>
+                    :
+                    <div className='non-verified-profile-pic'>
+                        <img className='non-verified-img' src={profilePicUrl} />
+                        {editing && uploadImg}
+                    </div>
             }
         </>
     )
@@ -174,7 +181,6 @@ export const ProfilePage = (props: ProfilePageProps) => {
 
     const onCrop = async () => {
         const file: File = await getCroppedImg(image!, croppedArea!)
-        console.log(file)
         try {
             setImageLoading(true)
             const resp: FileUploadComplete = await uploadFile(accessToken, file.name, file)
@@ -287,7 +293,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
                 animation={false}
                 centered
             >
-                <Modal.Body style={{ width: '400px', height: '400px', margin: '20px auto' }}>
+                <Modal.Body className='cropper-modal-body'>
                     <div>
                         <Cropper
                             image={image}

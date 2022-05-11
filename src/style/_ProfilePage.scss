@@ -55,6 +55,18 @@
         }
     }
 
+    .upload-btn{
+        margin-top: 16px;
+    }
+
+    .modal-content {
+        .cropper-modal-body {
+            width: 400px;
+            height: 400px;
+            margin: 20px auto;
+        }
+    }
+
     .modal-btn-container {
         margin: auto;
         padding: 20px;
