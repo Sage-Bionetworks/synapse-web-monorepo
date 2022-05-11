@@ -101,7 +101,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
     interface EditFieldProps {
         label: string
         updatedValue: string | undefined
-        updateFn: Function
+        updateFn: (input: string) => void
     }
 
     const EditField: React.FC<EditFieldProps> = ({ label, updatedValue, updateFn }) => {
@@ -141,21 +141,24 @@ export const ProfilePage = (props: ProfilePageProps) => {
         }
     }
 
-    const uploadImg = (
-        <>
-            <input
-                type={'file'}
-                ref={hiddenFileInput}
-                onChange={onSelectFile}
-                style={{ display: 'none' }}
-            />
-            <Button
-                className='upload-btn'
-                variant='secondary' onClick={clickHandler}>
-                Upload File
-            </Button>
-        </>
-    )
+    const UploadImageButton = () => {
+        return (
+            <>
+                <input
+                    type={'file'}
+                    ref={hiddenFileInput}
+                    onChange={onSelectFile}
+                    style={{ display: 'none' }}
+                />
+                <Button
+                    className='upload-btn'
+                    variant='secondary' onClick={clickHandler}>
+                    Upload File
+                </Button>
+            </>
+        )
+    }
+
 
     const decoratedProfilePic = (
         <>
@@ -164,12 +167,12 @@ export const ProfilePage = (props: ProfilePageProps) => {
                     <div className='verified-img-container'>
                         <img className='verified-border' src={VerifiedBorder} />
                         <img className='verified-img' src={profilePicUrl} />
-                        {editing && uploadImg}
+                        {editing && <UploadImageButton />}
                     </div>
                     :
                     <div className='non-verified-profile-pic'>
                         <img className='non-verified-img' src={profilePicUrl} />
-                        {editing && uploadImg}
+                        {editing && <UploadImageButton />}
                     </div>
             }
         </>
