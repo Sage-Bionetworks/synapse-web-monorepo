@@ -11,7 +11,8 @@
 
         .containers {
             margin-bottom: 16px;
-
+            overflow: hidden; 
+            text-overflow: ellipsis;
             .contact-icon {
                 width: 24px;
                 margin-right: 8px;
@@ -44,7 +45,7 @@
 
             .verified-border {
                 position: absolute;
-                width: 134px;
+                width: 136.5px;
                 z-index: 99;
             }
 
