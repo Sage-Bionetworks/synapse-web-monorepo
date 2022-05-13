@@ -13,12 +13,12 @@ export type ConfigureEmailProps = {
 
 export const ConfigureEmail = (props: ConfigureEmailProps) => {
     const { accessToken } = useSynapseContext()
-    const [ newEmail, setNewEmail ] = useState('')
-    const [ primaryEmail, setPrimaryEmail ] = useState('')
-    const [ userId, setUserId ] = useState('')
-    const [ emails, setEmails ] = useState<string[] | undefined>()
-    const [ editEmail, setEditEmail ] = useState(false)
-    
+    const [newEmail, setNewEmail] = useState('')
+    const [primaryEmail, setPrimaryEmail] = useState('')
+    const [userId, setUserId] = useState('')
+    const [emails, setEmails] = useState<string[] | undefined>()
+    const [editEmail, setEditEmail] = useState(false)
+
     const btnStyle = {
         margin: '4px',
         borderRadius: '8px',
@@ -35,54 +35,54 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
             setUserId(bundle.userId)
             setEmails(bundle.userProfile?.emails)
             setPrimaryEmail(getPrimaryEmail.email)
-        } catch(err: any) {
+        } catch (err: any) {
             displayToast(err.reason as string, 'danger')
         }
     }
     useEffect(() => {
-        if(emailVerificationToken){
+        if (emailVerificationToken) {
             const hexDecodeEmailToken = hexDecodeAndDeserialize(emailVerificationToken)
-            try{
+            try {
                 SynapseClient.addEmailAddressStep2(hexDecodeEmailToken, accessToken)
-                .then(()=>{
-                    displayToast("Email has been successfully added",'success')
-                })
+                    .then(() => {
+                        displayToast("Email has been successfully added", 'success')
+                    })
                 getData()
-            } catch(err: any){
+            } catch (err: any) {
                 displayToast(err.reason as string, 'danger')
             }
         }
-    },[])
+    }, [])
 
-    const changePrimaryEmail = async(event: React.SyntheticEvent, email: string) => {
+    const changePrimaryEmail = async (event: React.SyntheticEvent, email: string) => {
         event.preventDefault()
-        try{
+        try {
             setPrimaryEmail(email)
             await SynapseClient.updateNotificationEmail(email, accessToken)
-        } catch(err: any){
+        } catch (err: any) {
             displayToast(err.reason as string, 'danger')
         }
     }
 
-    const deleteEmail = async(event: React.SyntheticEvent, email:string) => {
+    const deleteEmail = async (event: React.SyntheticEvent, email: string) => {
         event.preventDefault()
-        try{
+        try {
             let deletedEmailList = emails?.filter(item => item !== email)
             setEmails(deletedEmailList)
-            await SynapseClient.deleteEmail(accessToken,email)
-        } catch(err: any){
+            await SynapseClient.deleteEmail(accessToken, email)
+        } catch (err: any) {
             displayToast(err.reason as string, 'danger')
         }
     }
 
-    const addEmail = async(event: React.SyntheticEvent, email: string) => {
+    const addEmail = async (event: React.SyntheticEvent, email: string) => {
         event.preventDefault()
-        try{
+        try {
             const callbackUrl = `${window.location.protocol}//${window.location.host}${props.returnToUrl}?emailValidationSignedToken=`
             await SynapseClient.addEmailAddressStep1(email, userId, callbackUrl, accessToken)
             displayToast(`We've sent an email to ${email}. Please check your email to continue.`, 'success')
             setNewEmail('')
-        } catch(err: any){
+        } catch (err: any) {
             displayToast(err.reason as string, 'danger')
         }
     }
@@ -91,18 +91,18 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
         getData()
     }, [accessToken])
 
-    return(
+    return (
         <div className='bootstrap-4-backport'>
-            {emails?.map(email=>{
-                if(email === primaryEmail){
-                    return <div key={email}><strong>{email} (Primary)</strong><button onClick={()=>setEditEmail(!editEmail)}><img src={EditIcon} alt='edit icon'/></button></div>
+            {emails?.map(email => {
+                if (email === primaryEmail) {
+                    return <div key={email}><strong>{email} (Primary)</strong><button onClick={() => setEditEmail(!editEmail)}><img src={EditIcon} alt='edit icon' /></button></div>
                 } else {
                     return (
-                    <div key={email}>
-                        {email}
-                        <Button style={btnStyle} variant='secondary' onClick={e=>changePrimaryEmail(e,email)}>Make primary</Button>
-                        <Button style={btnStyle} variant='secondary' onClick={e=>deleteEmail(e,email)}>X</Button>
-                    </div>)
+                        <div key={email}>
+                            {email}
+                            <Button style={btnStyle} variant='secondary' onClick={e => changePrimaryEmail(e, email)}>Make primary</Button>
+                            <Button style={btnStyle} variant='secondary' onClick={e => deleteEmail(e, email)}>X</Button>
+                        </div>)
                 }
             })}
             {editEmail && <form>
@@ -113,7 +113,15 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
                         value={newEmail}
                     />
                 </FormGroup>
-                <Button style={btnStyle} disabled={!newEmail} onClick={e=>addEmail(e,newEmail)}>+ Add email</Button>
+                <Button
+                    style={btnStyle}
+                    disabled={!newEmail}
+                    onClick={e => {
+                        addEmail(e, newEmail)
+                        setEditEmail(false)
+                    }}>
+                    + Add email
+                </Button>
             </form>}
         </div>
     )
