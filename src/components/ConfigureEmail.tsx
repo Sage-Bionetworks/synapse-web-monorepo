@@ -47,11 +47,11 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
                     .then(() => {
                         displayToast("Email has been successfully added", 'success')
                     })
-                getData()
             } catch (err: any) {
                 displayToast(err.reason as string, 'danger')
             }
         }
+        getData()
     }, [])
 
     const changePrimaryEmail = async (event: React.SyntheticEvent, email: string) => {
