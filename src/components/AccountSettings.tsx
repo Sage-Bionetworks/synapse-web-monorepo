@@ -82,31 +82,36 @@ const AccountSettings = (props: AccountSettingsProps) => {
         getData()
     }, [])
 
-    const ProfileValidationState = (verificationStateEnum: VerificationStateEnum | undefined) => {
-        const profileValidationStatus = () => {
-            if(verificationStateEnum === 'SUBMITTED'){
-                return <><img className="verifyBadgeIcon" src={CheckmarkBadgeDark} alt='CheckmarkBadgeDark'/>Pending Verification</>
-            } else if(verificationStateEnum === 'REJECTED' || verificationStateEnum ==='SUSPENDED'){
-                return (
-                    <div className='ValidationStateContainer'>
-                        <Typography variant='headline3'>
-                            {verificationStateEnum === 'REJECTED' ? REJECTED_TEXT : SUSPENDED_TEXT}
-                        </Typography>
-                        <Typography variant='body1' >
-                            {verificationState?.reason}
-                        </Typography>
-                        <Button
-                         onClick={()=>{window.location.assign('/authenticated/validate')}}
-                         variant='secondary'>
-                            <img className='verifyBadgeIcon' src={CheckmarkBadgeLight} alt='empty checkmark'/> Verify Account
-                        </Button>
-                    </div>
-                )
-            } else {
-                return <></>
-            }
+    const VerifyButton = () => {
+        return(
+            <div className='center-button'>
+                <Button
+                onClick={()=>{window.location.assign('/authenticated/validate')}}
+                variant='secondary'>
+                <img className='verifyBadgeIcon' src={CheckmarkBadgeLight} alt='empty checkmark'/> Verify Account
+                </Button>
+            </div>   
+        )
+    }
+
+    const ProfileValidationState = (verificationStateEnum: VerificationStateEnum) => {
+        if(verificationStateEnum === 'SUBMITTED'){
+            return <div className='verified-img-container'><img className="verifyBadgeIcon" src={CheckmarkBadgeDark} alt='CheckmarkBadgeDark'/>Pending Verification</div>
+        } else if(verificationStateEnum === 'REJECTED' || verificationStateEnum ==='SUSPENDED'){
+            return (
+                <div className='ValidationStateContainer'>
+                    <Typography variant='headline3'>
+                        {verificationStateEnum === 'REJECTED' ? REJECTED_TEXT : SUSPENDED_TEXT}
+                    </Typography>
+                    <Typography variant='body1' >
+                        {verificationState?.reason}
+                    </Typography>
+                    <VerifyButton/>
+                </div>
+            )
+        } else {
+            return <VerifyButton/>
         }
-        return <>{profileValidationStatus()}</>
     }
 
     // Closes any forms and resets the fields.
@@ -116,24 +121,30 @@ const AccountSettings = (props: AccountSettingsProps) => {
         setChangePW(false)
     }
 
+    interface EditFieldProps {
+        label: string, 
+        updatedValue: string, 
+        updateFn: Function,
+    }
+    
     // Component to edit fields (username / email)
-    const EditField = (label: string, updatedValue: string, updateFn: Function) => {
+    const EditField: React.FC<EditFieldProps> = ({label, updatedValue, updateFn}) => {
         return(
-        <div>
-            <FormGroup className='required'>
-                <FormLabel>{label}</FormLabel>
-                <FormControl 
-                    onChange={e => updateFn(e.target.value)} 
-                    style={{maxWidth:'320px'}}
-                    value = {updatedValue}/>
-                <Button className='btn-container emptyButton' onClick={cancelEdit}>
-                    Cancel
-                </Button>
-                <Button className='btn-container'  variant='secondary' onClick={onUpdateUserProfile}>
-                    Save Changes
-                </Button>
-            </FormGroup>
-        </div>
+            <div>
+                <FormGroup className='required'>
+                    <FormLabel>{label}</FormLabel>
+                    <FormControl
+                        onChange={e => updateFn(e.target.value)}
+                        style={{maxWidth:'320px'}}
+                        value = {updatedValue}/>
+                    <Button className='btn-container emptyButton' onClick={cancelEdit}>
+                        Cancel
+                    </Button>
+                    <Button className='btn-container'  variant='secondary' onClick={onUpdateUserProfile}>
+                        Save Changes
+                    </Button>
+                </FormGroup>
+            </div>
         )
     }
     return(  
@@ -152,12 +163,14 @@ const AccountSettings = (props: AccountSettingsProps) => {
                             <p className='verified-text'>Starter Account</p>
                         </div>
                         }
-                        {!!!verified && ProfileValidationState(verificationState?.state as VerificationStateEnum)}
+                        {!verified && ProfileValidationState(verificationState?.state as VerificationStateEnum)}
                     </Col>
                     <Col sm={8}>
                         <div className="grid-container">
                             {editUsername ? 
-                                <div className='edit-cell'>{EditField('Username', updatedUsername,setUpdatedUsername)}</div>
+                                <div className='edit-cell'>
+                                    <EditField label='Username' updatedValue={updatedUsername} updateFn={setUpdatedUsername} />
+                                </div>
                                 : <>
                                     <div className='label-cell'>Username:</div>
                                     <div>
