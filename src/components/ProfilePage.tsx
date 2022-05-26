@@ -9,25 +9,28 @@ import LinkIcon from 'assets/link.svg'
 import EditIcon from 'assets/RedEditPencil.svg'
 import VerifiedBorder from 'assets/VerifiedProfilePic.svg'
 import { SynapseConstants, Typography } from 'synapse-react-client'
+import { Skeleton } from '@material-ui/lab'
+import { SkeletonTable } from 'synapse-react-client/dist/assets/skeletons/SkeletonTable'
 
-export type ProfilePageProps={}
+export type ProfilePageProps = {}
 
 export const ProfilePage = (props: ProfilePageProps) => {
     const { accessToken } = useSynapseContext()
 
-    const [ userBundle, setUserBundle] = useState<UserBundle>()
-    const [ firstName, setFirstName ] = useState<string|undefined>()
-    const [ lastName, setLastName ] = useState<string|undefined>()
-    const [ position, setPosition ] = useState<string|undefined>()
-    const [ company, setCompany ] = useState<string|undefined>()
-    const [ location, setLocation ] = useState<string|undefined>()
-    const [ summary, setSummary ] = useState<string|undefined>()
-    const [ url, setUrl ] = useState<string|undefined>()
-    const [ profilePicUrl, setProfilePicUrl ] = useState<string|undefined>()
-    const [ originalPicUrl, setOriginalPicUrl ] = useState<string|undefined>()
-    const [ fileHandleId, setFileHandleId ] = useState<string|undefined>()
-    const [ verified, setVerfied ] = useState<boolean>()
-    const [ editing, setEditing ] = useState(false)
+    const [userBundle, setUserBundle] = useState<UserBundle>()
+    const [firstName, setFirstName] = useState<string | undefined>()
+    const [lastName, setLastName] = useState<string | undefined>()
+    const [position, setPosition] = useState<string | undefined>()
+    const [company, setCompany] = useState<string | undefined>()
+    const [location, setLocation] = useState<string | undefined>()
+    const [summary, setSummary] = useState<string | undefined>()
+    const [url, setUrl] = useState<string | undefined>()
+    const [profilePicUrl, setProfilePicUrl] = useState<string | undefined>()
+    const [originalPicUrl, setOriginalPicUrl] = useState<string | undefined>()
+    const [fileHandleId, setFileHandleId] = useState<string | undefined>()
+    const [verified, setVerfied] = useState<boolean>()
+    const [editing, setEditing] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
 
     const unpackBundle = (bundle: UserBundle) => {
         setFirstName(bundle.userProfile?.firstName)
@@ -42,28 +45,31 @@ export const ProfilePage = (props: ProfilePageProps) => {
     }
 
     const getProfile = async () => {
+        setIsLoading(true)
         try {
             const mask =
-            SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
-            SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE
+                SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
+                SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE
 
             const bundle: UserBundle = await getMyUserBundle(mask, accessToken)
             let picUrl
-            if(bundle.userProfile?.profilePicureFileHandleId){
-                picUrl = await getFileHandleByIdURL(bundle.userProfile?.profilePicureFileHandleId as string,accessToken)
+            if (bundle.userProfile?.profilePicureFileHandleId) {
+                picUrl = await getFileHandleByIdURL(bundle.userProfile?.profilePicureFileHandleId as string, accessToken)
             }
             setUserBundle(bundle)
             unpackBundle(bundle)
             setProfilePicUrl(picUrl)
             setOriginalPicUrl(picUrl)
-        } catch(err:any) {
+        } catch (err: any) {
             displayToast(err.reason as string, 'danger')
+        } finally {
+            setIsLoading(false)
         }
     }
 
     const updateUserProfile = async () => {
         try {
-            if(userBundle?.userProfile){
+            if (userBundle?.userProfile) {
                 userBundle.userProfile.firstName = firstName as string
                 userBundle.userProfile.lastName = lastName as string
                 userBundle.userProfile.position = position as string
@@ -77,24 +83,35 @@ export const ProfilePage = (props: ProfilePageProps) => {
                 getProfile()
                 setEditing(false)
             }
-        } catch(err:any){
+        } catch (err: any) {
             displayToast(err.reason as string, 'danger')
         }
     }
 
-    useEffect(()=>{
-        getProfile()
-    },[accessToken,])
+    useEffect(() => {
+        try {
+            getProfile()
+        } catch (err: any) {
+            displayToast(err.reason as string, 'danger')
+        }
+    }, [accessToken,])
 
-    const EditField = (label: string, updatedValue: string|undefined, updateFn: Function) => {
-        return(
-            <div className='edit-field'>
+    interface EditFieldProps {
+        label: string
+        updatedValue: string | undefined
+        updateFn: Function
+    }
+
+    const EditField: React.FC<EditFieldProps & React.HTMLAttributes<HTMLDivElement>> = (props) => {
+        const { label, updatedValue, updateFn, className } = props
+        return (
+            <div className={`edit-field ${className}`}>
                 <FormLabel>{label}</FormLabel>
                 <FormControl
-                    onChange={e=>updateFn(e.target.value)}
+                    onChange={e => updateFn(e.target.value)}
                     value={updatedValue}
-                    placeholder= {`Enter ${label}`}
-                /> 
+                    placeholder={`Enter ${label}`}
+                />
             </div>
         )
     }
@@ -105,15 +122,15 @@ export const ProfilePage = (props: ProfilePageProps) => {
         setEditing(false)
     }
 
-    const uploadHandler = async(e: React.ChangeEvent<HTMLInputElement>) => {
-        if(e.target.files){
+    const uploadHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
             const file = e.target.files[0]
             try {
                 const resp: FileUploadComplete = await uploadFile(accessToken, file.name, file)
-                const picUrl = await getFileHandleByIdURL(resp.fileHandleId,accessToken)
+                const picUrl = await getFileHandleByIdURL(resp.fileHandleId, accessToken)
                 setFileHandleId(resp.fileHandleId)
                 setProfilePicUrl(picUrl)
-            } catch(err:any){
+            } catch (err: any) {
                 console.error(err)
             }
         }
@@ -122,7 +139,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
     const hiddenFileInput = React.useRef<HTMLInputElement>(null)
     const clickHandler = () => {
         if (hiddenFileInput?.current!) {
-          hiddenFileInput.current?.click()
+            hiddenFileInput.current?.click()
         }
     }
 
@@ -132,96 +149,113 @@ export const ProfilePage = (props: ProfilePageProps) => {
                 type={'file'}
                 ref={hiddenFileInput}
                 onChange={uploadHandler}
-                style={{display: 'none'}}
+                style={{ display: 'none' }}
             />
-            <Button style={{marginTop:'16px'}} variant='secondary' onClick={clickHandler}>Upload File</Button>
+            <Button style={{ marginTop: '16px' }} variant='secondary' onClick={clickHandler}>Upload File</Button>
         </>
     )
 
     const decoratedProfilePic = (
         <>
             {verified ? <div className='verified-img-container'>
-                <img className='verified-border' src={VerifiedBorder}/>
-                <img className='verified-img' src={profilePicUrl}/>
+                <img className='verified-border' src={VerifiedBorder} />
+                <img className='verified-img' src={profilePicUrl} />
                 {editing && uploadImg}
             </div> :
-            <div className='non-verified-profile-pic'>
-                <img className='non-verified-img' src={profilePicUrl}/>
-                {editing && uploadImg}
-            </div>
+                <div className='non-verified-profile-pic'>
+                    <img className='non-verified-img' src={profilePicUrl} />
+                    {editing && uploadImg}
+                </div>
             }
         </>
-    ) 
+    )
 
-    return(
+    return (
         <div className="bootstrap-4-backport blue-background profile-page">
             <Container>
                 <div className='edit-btn-container'>
-                    {!editing ? 
-                    <>
-                        <img src={EditIcon} alt="edit icon"/>
-                        <button onClick={()=>setEditing(true)}>Edit Public Profile</button> 
-                    </>
-                    :
-                    <>
-                        <button onClick={()=>updateUserProfile()}>Save Changes</button>
-                        <button onClick={onCancel}>Cancel</button>
-                    </> 
+                    {!editing ?
+                        <>
+                            <img src={EditIcon} alt="edit icon" />
+                            <button onClick={() => setEditing(true)}>Edit Public Profile</button>
+                        </>
+                        :
+                        <>
+                            <button onClick={() => updateUserProfile()}>Save Changes</button>
+                            <button onClick={onCancel}>Cancel</button>
+                        </>
                     }
                 </div>
-                <Row>
-                    <Col sm={3} >
-                        {decoratedProfilePic}   
-                    </Col>
-                    <Col sm={9}>
-                        <div className='grid-container'>
-                            <div className='containers'>
-                                {!editing ? 
-                                    <Typography variant='headline3'>{`${userBundle?.userProfile?.firstName} ${userBundle?.userProfile?.lastName}`}</Typography>
-                                : 
-                                <FormGroup style={{display:'inline-block'}}>
-                                    {EditField('First name', firstName, setFirstName)}
-                                    {EditField('Last name', lastName, setLastName)}
-                                </FormGroup>
-                                }
+                {isLoading ?
+                    <Row>
+                        <Col sm={3}>
+                            <Skeleton variant='circle' width='130px' height='130px' />
+                        </Col>
+                        <Col sm={9}>
+                            <SkeletonTable numCols={1} numRows={7} />
+                        </Col>
+                    </Row>
+                    :
+                    <Row>
+                        <Col sm={3} >
+                            {decoratedProfilePic}
+                        </Col>
+                        <Col sm={9}>
+                            <div className='grid-container'>
+                                <div className='containers'>
+                                    {!editing ?
+                                        <Typography variant='headline3'>{`${userBundle?.userProfile?.firstName} ${userBundle?.userProfile?.lastName}`}</Typography>
+                                        :
+                                        <FormGroup style={{ display: 'inline-block' }}>
+                                            <EditField label='First name' updatedValue={firstName} updateFn={setFirstName} />
+                                            <EditField label='Last name' updatedValue={lastName} updateFn={setLastName} />
+                                        </FormGroup>
+                                    }
+                                </div>
+                                <div className='containers'>
+                                    {!editing ?
+                                        <div>
+                                            {userBundle?.userProfile?.position} <br />
+                                            {userBundle?.userProfile?.company} <br />
+                                            {userBundle?.userProfile?.location}
+                                        </div> :
+                                        <FormGroup>
+                                            <EditField label='Position' updatedValue={position} updateFn={setPosition} />
+                                            <EditField label='Company' updatedValue={company} updateFn={setCompany} />
+                                            <EditField label='Location' updatedValue={location} updateFn={setLocation} />
+                                        </FormGroup>
+                                    }
+                                </div>
+                                <div className='containers'>
+                                    {!editing ? userBundle?.userProfile?.summary :
+                                        <FormGroup>
+                                            <FormLabel>Summary</FormLabel>
+                                            <FormControl
+                                                onChange={e => setSummary(e.target.value)}
+                                                value={summary}
+                                                placeholder='Enter summary'
+                                                as='textarea'
+                                                rows={3}
+                                            />
+                                        </FormGroup>
+                                    }
+                                </div>
+                                <div className='containers'>
+                                    <a href={"mailto:" + userBundle?.userProfile?.userName + "@synapse.org"}><img className='contact-icon' src={MailIcon} />{userBundle?.userProfile?.userName}</a>
+                                </div>
+                                {<div className='containers'>
+                                    {!editing ?
+                                        (userBundle?.userProfile?.url &&
+                                            <a href={userBundle?.userProfile?.url}>
+                                                <img className='contact-icon' src={LinkIcon} />{userBundle?.userProfile?.url}
+                                            </a>)
+                                        :
+                                        <EditField className='url-edit' label='Website' updatedValue={url} updateFn={setUrl} />}
+                                </div>}
                             </div>
-                            <div className='containers'>
-                                {!editing ? 
-                                <div>
-                                    {userBundle?.userProfile?.position} <br/>
-                                    {userBundle?.userProfile?.company} <br/>
-                                    {userBundle?.userProfile?.location}
-                                </div> : 
-                                <FormGroup>
-                                    {EditField('Position', position, setPosition)}
-                                    {EditField('Company', company, setCompany)}
-                                    {EditField('Location', location, setLocation)}
-                                </FormGroup>   
-                            }
-                            </div>
-                            <div className='containers'>
-                                {!editing ? userBundle?.userProfile?.summary : 
-                                <FormGroup>
-                                <FormLabel>Summary</FormLabel>
-                                <FormControl
-                                    onChange={e=>setSummary(e.target.value)}
-                                    value={summary}
-                                    placeholder='Enter summary'
-                                    as='textarea'
-                                    rows={3}
-                                /> 
-                                </FormGroup>
-                                }
-                            </div>
-                            <div className='containers'>
-                                <a href={"mailto:" + userBundle?.userProfile?.userName + "@synapse.org"}><img className='contact-icon' src={MailIcon}/>{userBundle?.userProfile?.userName}</a>
-                            </div>
-                            {userBundle?.userProfile?.url && <div className='containers'>
-                                {!editing ? <a href={userBundle?.userProfile?.url}><img className='contact-icon' src={LinkIcon}/>{userBundle?.userProfile?.url}</a> : EditField('Website', url, setUrl)}
-                            </div>}
-                        </div>
-                    </Col>
-                </Row>
+                        </Col>
+                    </Row>
+                }
             </Container>
         </div>
     )

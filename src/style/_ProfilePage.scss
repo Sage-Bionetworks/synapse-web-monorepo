@@ -1,5 +1,5 @@
 #body {
-    .profile-page{
+    .profile-page {
         font-size: 18px;
 
         .edit-btn-container {
@@ -11,7 +11,7 @@
 
         .containers {
             margin-bottom: 16px;
-    
+
             .contact-icon {
                 width: 24px;
                 margin-right: 8px;
@@ -20,17 +20,22 @@
 
         .edit-field {
             display: inline-block;
-            margin: 0 16px;
+            margin-right: 16px;
         }
 
-        .non-verified-profile-pic{
+        .url-edit {
+            width: 424px;
+        }
+
+        .non-verified-profile-pic {
             border: solid 1px;
             width: 133px;
             height: 133px;
             border-radius: 100%;
             position: absolute;
             border-color: black;
-            .non-verified-img{
+
+            .non-verified-img {
                 width: 100%;
                 height: 100%;
                 border-radius: 100%;
@@ -40,12 +45,14 @@
 
         .verified-img-container {
             position: relative;
+
             .verified-border {
                 position: absolute;
                 width: 134px;
                 z-index: 99;
             }
-            .verified-img{
+
+            .verified-img {
                 width: 134px;
                 border-radius: 100%;
             }
