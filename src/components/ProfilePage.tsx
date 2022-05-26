@@ -111,7 +111,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
     interface EditFieldProps {
         label: string
         updatedValue: string | undefined
-        updateFn: Function
+        updateFn: (input: string) => void
     }
 
     const EditField: React.FC<EditFieldProps & React.HTMLAttributes<HTMLDivElement>> = (props) => {
@@ -134,19 +134,6 @@ export const ProfilePage = (props: ProfilePageProps) => {
         setEditing(false)
     }
 
-    // const uploadHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (e.target.files) {
-    //         const file = e.target.files[0]
-    //         try {
-    //             const resp: FileUploadComplete = await uploadFile(accessToken, file.name, file)
-    //             const picUrl = await getFileHandleByIdURL(resp.fileHandleId, accessToken)
-    //             setFileHandleId(resp.fileHandleId)
-    //             setProfilePicUrl(picUrl)
-    //         } catch (err: any) {
-    //             console.error(err)
-    //         }
-    //     }
-    // }
     const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const reader = new FileReader();
@@ -160,8 +147,8 @@ export const ProfilePage = (props: ProfilePageProps) => {
 
     const hiddenFileInput = React.useRef<HTMLInputElement>(null)
     const clickHandler = () => {
-        if (hiddenFileInput?.current!) {
-            hiddenFileInput.current?.click()
+        if (hiddenFileInput?.current) {
+            hiddenFileInput.current.click()
         }
     }
 
@@ -243,77 +230,75 @@ export const ProfilePage = (props: ProfilePageProps) => {
                         </>
                     }
                 </div>
-                {
-                    isLoading ?
-                        <Row>
-                            <Col sm={3}>
-                                <Skeleton variant='circle' width='130px' height='130px' />
-                            </Col>
-                            <Col sm={9}>
-                                <SkeletonTable numCols={1} numRows={7} />
-                            </Col>
-                        </Row>
-                        :
-                        <Row>
-                            <Col sm={3} >
-                                {decoratedProfilePic}
-                            </Col>
-                            <Col sm={9}>
-                                <div className='grid-container'>
-                                    <div className='containers'>
-                                        {!editing ?
-                                            <Typography variant='headline3'>{`${userBundle?.userProfile?.firstName} ${userBundle?.userProfile?.lastName}`}</Typography>
-                                            :
-                                            <FormGroup style={{ display: 'inline-block' }}>
-                                                <EditField label='First name' updatedValue={firstName} updateFn={setFirstName} />
-                                                <EditField label='Last name' updatedValue={lastName} updateFn={setLastName} />
-                                            </FormGroup>
-                                        }
-                                    </div>
-                                    <div className='containers'>
-                                        {!editing ?
-                                            <div>
-                                                {userBundle?.userProfile?.position} <br />
-                                                {userBundle?.userProfile?.company} <br />
-                                                {userBundle?.userProfile?.location}
-                                            </div> :
-                                            <FormGroup>
-                                                <EditField label='Position' updatedValue={position} updateFn={setPosition} />
-                                                <EditField label='Company' updatedValue={company} updateFn={setCompany} />
-                                                <EditField label='Location' updatedValue={location} updateFn={setLocation} />
-                                            </FormGroup>
-                                        }
-                                    </div>
-                                    <div className='containers'>
-                                        {!editing ? userBundle?.userProfile?.summary :
-                                            <FormGroup>
-                                                <FormLabel>Summary</FormLabel>
-                                                <FormControl
-                                                    onChange={e => setSummary(e.target.value)}
-                                                    value={summary}
-                                                    placeholder='Enter summary'
-                                                    as='textarea'
-                                                    rows={3}
-                                                />
-                                            </FormGroup>
-                                        }
-                                    </div>
-                                    <div className='containers'>
-                                        <a href={"mailto:" + userBundle?.userProfile?.userName + "@synapse.org"}><img className='contact-icon' src={MailIcon} />{userBundle?.userProfile?.userName}</a>
-                                    </div>
-                                    {<div className='containers'>
-                                        {!editing ?
-                                            (userBundle?.userProfile?.url &&
-                                                <a href={userBundle?.userProfile?.url}>
-                                                    <img className='contact-icon' src={LinkIcon} />{userBundle?.userProfile?.url}
-                                                </a>)
-                                            :
-                                            <EditField className='url-edit' label='Website' updatedValue={url} updateFn={setUrl} />}
-                                    </div>}
+                {isLoading ?
+                    <Row>
+                        <Col sm={3}>
+                            <Skeleton variant='circle' width='130px' height='130px' />
+                        </Col>
+                        <Col sm={9}>
+                            <SkeletonTable numCols={1} numRows={7} />
+                        </Col>
+                    </Row>
+                    :
+                    <Row>
+                        <Col sm={3} >
+                            {decoratedProfilePic}
+                        </Col>
+                        <Col sm={9}>
+                            <div className='grid-container'>
+                                <div className='containers'>
+                                    {!editing ?
+                                        <Typography variant='headline3'>{`${userBundle?.userProfile?.firstName} ${userBundle?.userProfile?.lastName}`}</Typography>
+                                        :
+                                        <FormGroup style={{ display: 'inline-block' }}>
+                                            <EditField label='First name' updatedValue={firstName} updateFn={setFirstName} />
+                                            <EditField label='Last name' updatedValue={lastName} updateFn={setLastName} />
+                                        </FormGroup>
+                                    }
                                 </div>
-                            </Col>
-                        </Row>
-                }
+                                <div className='containers'>
+                                    {!editing ?
+                                        <div>
+                                            {userBundle?.userProfile?.position} <br />
+                                            {userBundle?.userProfile?.company} <br />
+                                            {userBundle?.userProfile?.location}
+                                        </div> :
+                                        <FormGroup>
+                                            <EditField label='Position' updatedValue={position} updateFn={setPosition} />
+                                            <EditField label='Company' updatedValue={company} updateFn={setCompany} />
+                                            <EditField label='Location' updatedValue={location} updateFn={setLocation} />
+                                        </FormGroup>
+                                    }
+                                </div>
+                                <div className='containers'>
+                                    {!editing ? userBundle?.userProfile?.summary :
+                                        <FormGroup>
+                                            <FormLabel>Summary</FormLabel>
+                                            <FormControl
+                                                onChange={e => setSummary(e.target.value)}
+                                                value={summary}
+                                                placeholder='Enter summary'
+                                                as='textarea'
+                                                rows={3}
+                                            />
+                                        </FormGroup>
+                                    }
+                                </div>
+                                <div className='containers'>
+                                    <a href={"mailto:" + userBundle?.userProfile?.userName + "@synapse.org"}><img className='contact-icon' src={MailIcon} />{userBundle?.userProfile?.userName}</a>
+                                </div>
+                                {<div className='containers'>
+                                    {!editing ?
+                                        (userBundle?.userProfile?.url &&
+                                            <a href={userBundle?.userProfile?.url}>
+                                                <img className='contact-icon' src={LinkIcon} />{userBundle?.userProfile?.url}
+                                            </a>)
+                                        :
+                                        <EditField className='url-edit' label='Website' updatedValue={url} updateFn={setUrl} />}
+                                </div>}
+                            </div>
+                        </Col>
+                    </Row>}
             </Container >
 
             <Modal
