@@ -11,7 +11,8 @@
 
         .containers {
             margin-bottom: 16px;
-
+            overflow: hidden; 
+            text-overflow: ellipsis;
             .contact-icon {
                 width: 24px;
                 margin-right: 8px;
@@ -48,7 +49,7 @@
 
             .verified-border {
                 position: absolute;
-                width: 134px;
+                width: 136.5px;
                 z-index: 99;
             }
 
@@ -59,5 +60,26 @@
         }
     }
 
+    .upload-btn{
+        margin-top: 16px;
+    }
 
+    .modal-content {
+        .cropper-modal-body {
+            width: 400px;
+            height: 400px;
+            margin: 20px auto;
+        }
+    }
+
+    .modal-btn-container {
+        margin: auto;
+        padding: 20px;
+
+        .modal-btn {
+            display: inline-block;
+            width: 150px;
+            min-width: 0;
+        }
+    }
 }
