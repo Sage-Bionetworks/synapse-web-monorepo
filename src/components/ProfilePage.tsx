@@ -10,6 +10,8 @@ import LinkIcon from 'assets/link.svg'
 import EditIcon from 'assets/RedEditPencil.svg'
 import VerifiedBorder from 'assets/VerifiedProfilePic.svg'
 import { SynapseConstants, Typography } from 'synapse-react-client'
+import { Skeleton } from '@material-ui/lab'
+import { SkeletonTable } from 'synapse-react-client/dist/assets/skeletons/SkeletonTable'
 import Cropper from "react-easy-crop"
 import { Area } from 'react-easy-crop/types'
 import Slider from "@material-ui/core/Slider"
@@ -33,7 +35,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
     const [fileHandleId, setFileHandleId] = useState<string | undefined>()
     const [verified, setVerfied] = useState<boolean>()
     const [editing, setEditing] = useState(false)
-
+    const [isLoading, setIsLoading] = useState(true)
     const [image, setImage] = useState<string | undefined>();
     const [croppedArea, setCroppedArea] = useState<Area | undefined>();
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -54,6 +56,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
     }
 
     const getProfile = async () => {
+        setIsLoading(true)
         try {
             const mask =
                 SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
@@ -70,6 +73,8 @@ export const ProfilePage = (props: ProfilePageProps) => {
             setOriginalPicUrl(picUrl)
         } catch (err: any) {
             displayToast(err.reason as string, 'danger')
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -95,6 +100,11 @@ export const ProfilePage = (props: ProfilePageProps) => {
     }
 
     useEffect(() => {
+        try {
+            getProfile()
+        } catch (err: any) {
+            displayToast(err.reason as string, 'danger')
+        }
         getProfile()
     }, [accessToken,])
 
@@ -104,9 +114,10 @@ export const ProfilePage = (props: ProfilePageProps) => {
         updateFn: (input: string) => void
     }
 
-    const EditField: React.FC<EditFieldProps> = ({ label, updatedValue, updateFn }) => {
+    const EditField: React.FC<EditFieldProps & React.HTMLAttributes<HTMLDivElement>> = (props) => {
+        const { label, updatedValue, updateFn, className } = props
         return (
-            <div className='edit-field'>
+            <div className={`edit-field ${className}`}>
                 <FormLabel>{label}</FormLabel>
                 <FormControl
                     onChange={e => updateFn(e.target.value)}
@@ -159,21 +170,19 @@ export const ProfilePage = (props: ProfilePageProps) => {
         )
     }
 
-
     const decoratedProfilePic = (
         <>
-            {
-                verified ?
-                    <div className='verified-img-container'>
-                        <img className='verified-border' src={VerifiedBorder} />
-                        <img className='verified-img' src={profilePicUrl} />
-                        {editing && <UploadImageButton />}
-                    </div>
-                    :
-                    <div className='non-verified-profile-pic'>
-                        <img className='non-verified-img' src={profilePicUrl} />
-                        {editing && <UploadImageButton />}
-                    </div>
+            {verified ?
+                <div className='verified-img-container'>
+                    <img className='verified-border' src={VerifiedBorder} />
+                    <img className='verified-img' src={profilePicUrl} />
+                    {editing && <UploadImageButton />}
+                </div>
+                :
+                <div className='non-verified-profile-pic'>
+                    <img className='non-verified-img' src={profilePicUrl} />
+                    {editing && <UploadImageButton />}
+                </div>
             }
         </>
     )
@@ -221,73 +230,76 @@ export const ProfilePage = (props: ProfilePageProps) => {
                         </>
                     }
                 </div>
-                <Row>
-                    <Col sm={3} >
-                        {decoratedProfilePic}
-                    </Col>
-                    <Col sm={9}>
-                        <div className='grid-container'>
-                            <div className='containers'>
-                                {!editing ?
-                                    <Typography variant='headline3'>
-                                        {`${userBundle?.userProfile?.firstName} ${userBundle?.userProfile?.lastName}`}
-                                    </Typography>
-                                    :
-                                    <FormGroup style={{ display: 'inline-block' }}>
-                                        <EditField label='First name' updatedValue={firstName} updateFn={setFirstName} />
-                                        <EditField label='Last name' updatedValue={lastName} updateFn={setLastName} />
-                                    </FormGroup>
-                                }
+                {isLoading ?
+                    <Row>
+                        <Col sm={3}>
+                            <Skeleton variant='circle' width='130px' height='130px' />
+                        </Col>
+                        <Col sm={9}>
+                            <SkeletonTable numCols={1} numRows={7} />
+                        </Col>
+                    </Row>
+                    :
+                    <Row>
+                        <Col sm={3} >
+                            {decoratedProfilePic}
+                        </Col>
+                        <Col sm={9}>
+                            <div className='grid-container'>
+                                <div className='containers'>
+                                    {!editing ?
+                                        <Typography variant='headline3'>{`${userBundle?.userProfile?.firstName} ${userBundle?.userProfile?.lastName}`}</Typography>
+                                        :
+                                        <FormGroup style={{ display: 'inline-block' }}>
+                                            <EditField label='First name' updatedValue={firstName} updateFn={setFirstName} />
+                                            <EditField label='Last name' updatedValue={lastName} updateFn={setLastName} />
+                                        </FormGroup>
+                                    }
+                                </div>
+                                <div className='containers'>
+                                    {!editing ?
+                                        <div>
+                                            {userBundle?.userProfile?.position} <br />
+                                            {userBundle?.userProfile?.company} <br />
+                                            {userBundle?.userProfile?.location}
+                                        </div> :
+                                        <FormGroup>
+                                            <EditField label='Position' updatedValue={position} updateFn={setPosition} />
+                                            <EditField label='Company' updatedValue={company} updateFn={setCompany} />
+                                            <EditField label='Location' updatedValue={location} updateFn={setLocation} />
+                                        </FormGroup>
+                                    }
+                                </div>
+                                <div className='containers'>
+                                    {!editing ? userBundle?.userProfile?.summary :
+                                        <FormGroup>
+                                            <FormLabel>Summary</FormLabel>
+                                            <FormControl
+                                                onChange={e => setSummary(e.target.value)}
+                                                value={summary}
+                                                placeholder='Enter summary'
+                                                as='textarea'
+                                                rows={3}
+                                            />
+                                        </FormGroup>
+                                    }
+                                </div>
+                                <div className='containers'>
+                                    <a href={"mailto:" + userBundle?.userProfile?.userName + "@synapse.org"}><img className='contact-icon' src={MailIcon} />{userBundle?.userProfile?.userName}</a>
+                                </div>
+                                {<div className='containers'>
+                                    {!editing ?
+                                        (userBundle?.userProfile?.url &&
+                                            <a href={userBundle?.userProfile?.url}>
+                                                <img className='contact-icon' src={LinkIcon} />{userBundle?.userProfile?.url}
+                                            </a>)
+                                        :
+                                        <EditField className='url-edit' label='Website' updatedValue={url} updateFn={setUrl} />}
+                                </div>}
                             </div>
-                            <div className='containers'>
-                                {!editing ?
-                                    <div>
-                                        {userBundle?.userProfile?.position} <br />
-                                        {userBundle?.userProfile?.company} <br />
-                                        {userBundle?.userProfile?.location}
-                                    </div>
-                                    :
-                                    <FormGroup>
-                                        <EditField label='Position' updatedValue={position} updateFn={setPosition} />
-                                        <EditField label='Company' updatedValue={company} updateFn={setCompany} />
-                                        <EditField label='Location' updatedValue={location} updateFn={setLocation} />
-                                    </FormGroup>
-                                }
-                            </div>
-                            <div className='containers'>
-                                {!editing ? userBundle?.userProfile?.summary :
-                                    <FormGroup>
-                                        <FormLabel>Summary</FormLabel>
-                                        <FormControl
-                                            onChange={e => setSummary(e.target.value)}
-                                            value={summary}
-                                            placeholder='Enter summary'
-                                            as='textarea'
-                                            rows={3}
-                                        />
-                                    </FormGroup>
-                                }
-                            </div>
-                            <div className='containers'>
-                                <a href={"mailto:" + userBundle?.userProfile?.userName + "@synapse.org"}>
-                                    <img className='contact-icon' src={MailIcon} />
-                                    {userBundle?.userProfile?.userName}
-                                </a>
-                            </div>
-                            <div className='containers'>
-                                {!editing ?
-                                    userBundle?.userProfile?.url &&
-                                    <a href={userBundle?.userProfile?.url}>
-                                        <img className='contact-icon' src={LinkIcon} />{userBundle?.userProfile?.url}
-                                    </a>
-                                    :
-                                    <EditField label='Website' updatedValue={url} updateFn={setUrl} />
-                                }
-                            </div>
-                        </div>
-                    </Col>
-                </Row>
-            </Container>
+                        </Col>
+                    </Row>}
+            </Container >
 
             <Modal
                 className='bootstrap-4-backport'
@@ -332,6 +344,6 @@ export const ProfilePage = (props: ProfilePageProps) => {
                     </Button>
                 </div>
             </Modal>
-        </div>
+        </div >
     )
 }
