@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.9.1",
+    "@sage-bionetworks/react-base-table": "^1.12.3",
     "clone-deep": "^4.0.1",
     "lodash-es": "^4.17.21",
     "plotly.js-basic-dist": "^1.47.3",
