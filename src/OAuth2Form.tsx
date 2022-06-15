@@ -7,14 +7,10 @@ import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/u
 import { OAuthClientPublic } from 'synapse-react-client/dist/utils/synapseTypes/OAuthClientPublic'
 import { AccessCodeResponse } from 'synapse-react-client/dist/utils/synapseTypes/AccessCodeResponse'
 import UserCard from 'synapse-react-client/dist/containers/UserCard'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faExclamationTriangle,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { OAuthConsentGrantedResponse } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getURLParam, getStateParam, handleErrorRedirect } from './URLUtils'
 import { SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext'
+import { WarningTwoTone } from '@material-ui/icons'
 
 // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
 
@@ -39,8 +35,6 @@ const devConfig = {
 (window as any).SRC = {
     OVERRIDE_ENDPOINT_CONFIG: isStaging ? stagingConfig : isDev ? devConfig : prodConfig
 }
-
-library.add(faExclamationTriangle)
 
 type OAuth2FormState = {
     token?: string,
@@ -320,10 +314,9 @@ export default class OAuth2Form
                     <>
                         <div className="BlueBackground">
                             <div className="ComponentWrapper">
-                                <FontAwesomeIcon
+                                <WarningTwoTone
                                     className='text-danger'
                                     style={{ marginLeft: '5px', marginBottom: '15px', fontSize: '40px' }}
-                                    icon='exclamation-triangle'
                                 />
                                 <h3>This app isn't verified</h3>
                                 <p>This app has not been verified by Sage Bionetworks yet.</p>
