@@ -2,32 +2,34 @@
 
 'use strict';
 
+import { RuleInline } from "markdown-it/lib/parser_inline";
+
 // same as UNESCAPE_MD_RE plus a space
-var UNESCAPE_RE = /\\([ \\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g;
-var REFERENCE_START = 'reference?';
-var BOOKMARK_START = 'bookmark?';
-var synapseRE = new RegExp('^syn([0-9]+[.]?[0-9]*)+');
+const UNESCAPE_RE = /\\([ \\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g;
+const REFERENCE_START = 'reference?';
+const BOOKMARK_START = 'bookmark?';
+const synapseRE = new RegExp('^syn([0-9]+[.]?[0-9]*)+');
 // match url that starts with a leading slash / and is followed by an alphanumeric character
-var internalURL = new RegExp(/^\/\w/);
-var urlWithoutProtocolRE = new RegExp('^([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\w \\.-]*)*\\/?.*$');
-var doiRE = new RegExp('^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$');
-var gridLayoutColumnParamRE = new RegExp('^\\s*(width[=]{1})?\\s*(.*)[}]{1}\\s*$');
-var navTextParamRE = new RegExp('^\\s*(text[=]{1}["]{1})?\\s*(.*)["]{1}[}]{1}\\s*$');
-var ulMarkerRE = new RegExp('^\\s*[*-+>]{1}[^|]*$');
-var olMarkerRE = new RegExp('^\\s*\\w+\\s*[.)]{1}[^|]*$');
-var codeRE = new RegExp('^\\s*[`]{3}\s*([a-zA-Z_0-9-]*)\s*$');
-var suffix;
-var widgetIndex;
-var navIndex;
-var footnoteId;
-var footnotes;
-var baseURL;
+const internalURL = new RegExp(/^\/\w/);
+const urlWithoutProtocolRE = new RegExp('^([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\w \\.-]*)*\\/?.*$');
+const doiRE = new RegExp('^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$');
+const gridLayoutColumnParamRE = new RegExp('^\\s*(width[=]{1})?\\s*(.*)[}]{1}\\s*$');
+const navTextParamRE = new RegExp('^\\s*(text[=]{1}["]{1})?\\s*(.*)["]{1}[}]{1}\\s*$');
+const ulMarkerRE = new RegExp('^\\s*[*-+>]{1}[^|]*$');
+const olMarkerRE = new RegExp('^\\s*\\w+\\s*[.)]{1}[^|]*$');
+const codeRE = new RegExp('^\\s*[`]{3}\s*([a-zA-Z_0-9-]*)\s*$');
+let suffix: string | undefined;
+let widgetIndex: number | undefined;
+let navIndex: number | undefined;
+let footnoteId: number | undefined;
+let footnotes: string | undefined;
+let baseURL: string | undefined;
 
 
-function getParamValue(params, name) {
-  var queryStringArray, queryStringParamArray, nameValue = null, i, queryStringNameValueArray;
-  queryStringArray = params.split('?');
-  queryStringParamArray = queryStringArray[1].split('&');
+function getParamValue(params: string, name: string) {
+  const queryStringArray = params.split('?');
+  const queryStringParamArray = queryStringArray[1].split('&');
+  let nameValue = null, i, queryStringNameValueArray;
   for (i = 0; i < queryStringParamArray.length; i++) {
     queryStringNameValueArray = queryStringParamArray[i].split('=');
     if (name === queryStringNameValueArray[0]) {
@@ -37,7 +39,7 @@ function getParamValue(params, name) {
   return nameValue;
 }
 
-function isWhiteSpace(code) {
+function isWhiteSpace(code: number) {
   if (code >= 0x2000 && code <= 0x200A) { return true; }
   switch (code) {
     case 0x09: // \t
@@ -56,7 +58,7 @@ function isWhiteSpace(code) {
   return false;
 }
 
-function isSupportedUsernameCharacter(code) {
+function isSupportedUsernameCharacter(code: number) {
   //uppercase letter
   if (code >= 0x41 && code <= 0x5A) { return true; }
   //number
@@ -74,28 +76,29 @@ function isSupportedUsernameCharacter(code) {
   return false;
 }
 
-function startsWith(src, searchString, position) {
+function startsWith(src: string, searchString: string, position?: number) {
   position = position || 0;
   return src.substr(position, searchString.length) === searchString;
 }
 
-function isInternalLink(src) {
+function isInternalLink(src: string) {
   if (src.length > 2) {
     return internalURL.test(src.substr(0, 2));
   }
   return false;
 }
 
-function synapse(state, silent) {
-  var found,
+const synapse: RuleInline = function (state, silent) {
+  let found,
     content,
     token,
-    max = state.posMax,
-    start = state.pos,
     widgetParams,
     decodedWidgetParams,
     footnoteText,
     widgetContainerClass = 'widgetContainer';
+  const max = state.posMax;
+  const start = state.pos;
+
   if (start + 3 >= max) { return false; }
   if (silent) { return false; } // don't run any pairs in validation mode
   // handle special username mentions (output badge widget)
@@ -240,13 +243,13 @@ module.exports.resetFootnotes = function () {
 };
 
 module.exports.preprocessMarkdown = function (mdString) {
-  var md = '',
-    splitMD = mdString.split('\n');
+  let md = '';
+  const splitMD = mdString.split('\n');
 
-  var isPreviousLineInList = false;
-  var isCurrentLineInList = false;
-  var isInCode = false;
-  for (var i = 0; i < splitMD.length; i++) {
+  let isPreviousLineInList = false;
+  let isCurrentLineInList = false;
+  let isInCode = false;
+  for (let i = 0; i < splitMD.length; i++) {
     if (codeRE.test(splitMD[i])) {
       // toggle isInCode
       isInCode = !isInCode;
@@ -269,7 +272,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
   markdownitStrikethroughAlt, markdownitContainer, markdownitEmphasisAlt,
   markdownitInlineComments, markdownitBr) {
   function sendLinksToNewWindow() {
-    var defaultRender = md.renderer.rules.link_open
+    const defaultRender = md.renderer.rules.link_open
       || function (tokens, idx, options, env, self) {
         return self.renderToken(tokens, idx, options);
       };
@@ -277,10 +280,10 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
     md.renderer.rules.link_open = function (tokens, idx, options,
       env, self) {
       // If you are sure other plugins can't add `target` - drop check below
-      var aIndex = tokens[idx].attrIndex('target');
-      var hrefIndex = tokens[idx].attrIndex('href');
-      var isInternalSynapseLink = startsWith(tokens[idx].attrs[hrefIndex][1], '#!');
-      var isInternalPageLink = isInternalLink(tokens[idx].attrs[hrefIndex][1]);
+      const aIndex = tokens[idx].attrIndex('target');
+      const hrefIndex = tokens[idx].attrIndex('href');
+      const isInternalSynapseLink = startsWith(tokens[idx].attrs[hrefIndex][1], '#!');
+      const isInternalPageLink = isInternalLink(tokens[idx].attrs[hrefIndex][1]);
       if (aIndex < 0) {
         // if it has no href OR it is neither a synapse link or internal page link
         if (hrefIndex < 0 || !(isInternalPageLink || isInternalSynapseLink)) {
@@ -298,14 +301,14 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
   }
 
   function initMarkdownTableStyle() {
-    var defaultRender = md.renderer.rules.table_open
+    const defaultRender = md.renderer.rules.table_open
       || function (tokens, idx, options, env, self) {
         return self.renderToken(tokens, idx, options);
       };
 
     md.renderer.rules.table_open = function (tokens, idx, options,
       env, self) {
-      var aIndex = tokens[idx].attrIndex('class');
+      const aIndex = tokens[idx].attrIndex('class');
       if (aIndex < 0) {
         tokens[idx].attrPush([ 'class', 'markdowntable' ]); // add new attribute
       } else {
@@ -323,7 +326,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
     // synapse (may have version or wiki page id)
     md.linkify.add('syn', {
       validate: function (text, pos, self) {
-        var tail = text.slice(pos);
+        const tail = text.slice(pos);
         if (!self.re.synapse) {
           self.re.synapse = new RegExp(
             '^([0-9]{3,}[.]?[0-9]*(\\/wiki\\/[0-9]+)?)+(?!_)(?=$|'
@@ -342,7 +345,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
 
     md.linkify.add('doi:10.', {
       validate: function (text, pos, self) {
-        var tail = text.slice(pos);
+        const tail = text.slice(pos);
         if (!self.re.doi) {
           self.re.doi = new RegExp(
             '^[0-9]+[/]{1}[a-zA-Z0-9_.]+(?!_)(?=$|'
@@ -360,16 +363,21 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
   }
 
   function link(state, silent) {
-    var attrs, code, label, labelEnd, labelStart, pos, res, ref, title, token, href = '',
-      oldPos = state.pos, max = state.posMax, start = state.pos, parseLinkLabel = md.helpers.parseLinkLabel,
+    let attrs, code, label, pos, res, ref, title, token, href = '',
+      start = state.pos
+      
+      const  oldPos = state.pos,
+       max = state.posMax,
+       parseLinkLabel = md.helpers.parseLinkLabel,
       parseLinkDestination = md.helpers.parseLinkDestination, parseLinkTitle = md.helpers.parseLinkTitle,
       isSpace = md.utils.isSpace, normalizeReference = md.utils.normalizeReference;
+
 
     if (state.src.charCodeAt(state.pos) !== 0x5B) {
       return false;
     } // [
-    labelStart = state.pos + 1;
-    labelEnd = parseLinkLabel(state, state.pos, true);
+    const labelStart = state.pos + 1;
+    const labelEnd = parseLinkLabel(state, state.pos, true);
 
     // parser failed to find ']', so it's not a valid link
     if (labelEnd < 0) {
@@ -401,7 +409,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
       res = parseLinkDestination(state.src, pos, state.posMax);
       if (res.ok) {
         // !!!!!!!!!!!!!!!!!! Changed for Synapse  !!!!!!!!!!!!!!!!!!!!!!!!!/
-        var testString = res.str;
+        const testString = res.str;
         if (synapseRE.test(testString)) {
           // this is a synapse ID
           res.str = baseURL + '#!Synapse:'
@@ -516,13 +524,13 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
 
   // Define custom scanDelims that does not conclude that a token can open or close based on whitespace
   function scanDelims(src, posMax, start) {
-    var pos = start, count, can_open, can_close,
-      max = posMax,
+    let pos = start;
+    const max = posMax,
       marker = src.charCodeAt(start);
     while (pos < max && src.charCodeAt(pos) === marker) { pos++; }
-    count = pos - start;
-    can_open = true;
-    can_close = true;
+    const count = pos - start;
+    const can_open = true;
+    const can_close = true;
     return {
       can_open: can_open,
       can_close: can_close,
@@ -532,16 +540,16 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
 
   // Copy of markdown-it emphasis function,
   // but uses the scanDelims function above instead of StateInline.prototype.scanDelims()
-  function emphasis(state, silent) {
-    var i, scanned, token,
-      start = state.pos,
+  const emphasis: RuleInline = function (state, silent) {
+    let i, token;
+    const start = state.pos,
       marker = state.src.charCodeAt(start);
 
     if (silent) { return false; }
 
     if (marker !== 0x5F && marker !== 0x2A) { return false; } // '_' or '*'
 
-    scanned = scanDelims(state.src, state.posMax, state.pos);
+    const scanned = scanDelims(state.src, state.posMax, state.pos);
 
     for (i = 0; i < scanned.length; i++) {
       token = state.push('text', '', 0);
@@ -566,7 +574,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
         token: state.tokens.length - 1,
 
         // Token level.
-        //
+        // @ts-ignore
         level: state.level,
 
         // If this delimiter is matched as a valid opener, `end` will be
@@ -630,7 +638,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
           marker: '{row}',
           minMarkerCount: 1,
           render: function (tokens, idx) {
-            var t;
+            let t;
             if (tokens[idx].nesting === 1) {
               // opening tag
               t = '<div class="container-fluid"><div class="row">';
@@ -650,7 +658,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
           endMarker: '{column}',
           minMarkerCount: 1,
           render: function (tokens, idx) {
-            var m, t;
+            let m, t;
             if (tokens[idx].nesting === 1) {
               // opening tag
               m = gridLayoutColumnParamRE.exec(tokens[idx].info);
@@ -671,7 +679,7 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
             endMarker: '{nav}',
             minMarkerCount: 1,
             render: function (tokens, idx) {
-              var m, t;
+              let m, t;
               if (tokens[idx].nesting === 1) {
                 // opening tag
                 m = navTextParamRE.exec(tokens[idx].info);
@@ -698,3 +706,4 @@ module.exports.init_markdown_it = function (md, markdownitSub, markdownitSup,
 
   initMarkdownIt();
 };
+
