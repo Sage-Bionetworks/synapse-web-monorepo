@@ -2,7 +2,6 @@
 
 'use strict';
 
-console.log("using dev version of markdown-it-synapse")
 import { RuleInline } from "markdown-it/lib/parser_inline";
 
 // same as UNESCAPE_MD_RE plus a space
