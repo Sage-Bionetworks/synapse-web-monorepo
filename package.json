@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-synapse",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "tag for markdown-it markdown parser.",
   "main": "index.js",
   "keywords": [
@@ -10,17 +10,17 @@
     "synapse"
   ],
   "scripts": {
-    "browserify": "(printf \"/*! ${npm_package_name} ${npm_package_version} ${npm_package_homepage} @license MIT */\" && browserify ./ -s markdownitSynapse) > dist/markdown-it-synapse.js",
-    "predist": "npm run test",
-    "dist": "rm -fr dist && mkdir dist && npm run browserify && npm run minify",
-    "lint": "eslint index.js",
+    "build": "yarn tsc",
+    "browserify": "(printf \"/*! ${npm_package_name} ${npm_package_version} ${npm_package_homepage} @license MIT */\" && browserify ./dist/index.js -s markdownitSynapse) > dist/markdown-it-synapse.js",
+    "predist": "rm -rf dist && yarn build && yarn test",
+    "dist": "yarn browserify && yarn minify",
+    "lint": "eslint src/*",
     "minify": "uglifyjs dist/markdown-it-synapse.js -b beautify=false,ascii_only=true -c -m --preamble \"/*! ${npm_package_name} ${npm_package_version} ${npm_package_homepage} @license MIT */\" > dist/markdown-it-synapse.min.js",
-    "prepublish": "npm run dist",
-    "pretest": "npm run lint",
-    "test": "npm run lint && mocha -R spec",
-    "test-only": "mocha -R spec",
+    "prepublish": "yarn dist",
+    "test": "mocha -R spec",
     "coverage": "rm -rf coverage && istanbul cover node_modules/.bin/_mocha",
-    "test-ci": "npm run lint && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec "
+    "test-ci": "yarn lint && yarn build && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec ",
+    "prepare": "husky install"
   },
   "homepage": "https://github.com/Sage-Bionetworks/markdown-it-synapse",
   "repository": {
@@ -32,23 +32,35 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "browserify": ">=16.2.3",
-    "eslint": ">=4.19.1",
-    "eslint-plugin-nodeca": ">=1.0.0",
-    "handlebars": ">=4.0.14",
+    "@types/markdown-it": "^12.2.3",
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.28.0",
+    "@typescript-eslint/parser": "^5.28.0",
+    "browserify": "^17.0.0",
+    "eslint": "^8.18.0",
+    "eslint-plugin-mocha": "^10.0.5",
+    "handlebars": "^4.7.7",
+    "husky": ">=6",
     "istanbul": "*",
-    "js-yaml": ">=3.13.1",
-    "lodash": ">=4.17.15",
-    "markdown-it": ">=9.0.1",
+    "js-yaml": "^3.13.1",
+    "lint-staged": ">=10",
+    "lodash": "^4.17.21",
+    "markdown-it": "^13.0.1",
     "markdown-it-testgen": "~0.1.0",
     "mocha": ">=5.2.0",
-    "node": "^14.15.0",
+    "node": "^16",
     "node-bin-setup": "1.0.6",
-    "request": ">=2.88.0",
+    "prettier": "^2.7.1",
+    "request": "^2.88.2",
+    "typescript": "^4.7.4",
     "uglify-js": "^2.8.29"
   },
   "directories": {
     "test": "test"
   },
-  "author": "Jay"
+  "author": "Jay",
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
+  }
 }

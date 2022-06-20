@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "env": {
+    "browser": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "mocha"],
+  "overrides": [
+    {
+      "files": ["src/**/*.ts"],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+      ],
+      "rules": {
+        "no-useless-escape": "warn",
+        "@typescript-eslint/ban-ts-comment": "warn"
+      }
+    },
+
+    {
+      "files": ["test/**/*.js"],
+      "extends": ["eslint:recommended", "plugin:mocha/recommended"],
+
+      "env": {
+        "node": true,
+        "mocha": true
+      }
+    }
+  ]
+}
