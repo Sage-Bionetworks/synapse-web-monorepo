@@ -78,20 +78,26 @@ export const OAuth2Form = (props: OAuth2FormProps) => {
     }
 
     useEffect(() => {
+        let isSubscribed = true
         if (isConsenting) {
             sendGTagEvent('UserConsented')
             let request: OIDCAuthorizationRequest = getOIDCAuthorizationRequestFromSearchParams()
             SynapseClient.consentToOAuth2Request(request, token).then((accessCode: AccessCodeResponse) => {
-                if (!accessCode || !accessCode.access_code) {
-                    onError('Something went wrong - the access code is missing from the Synapse call.')
-                    return
+                if (isSubscribed) {
+                    if (!accessCode || !accessCode.access_code) {
+                        onError('Something went wrong - the access code is missing from the Synapse call.')
+                        return
+                    }
+                    // done!  redirect with access code.
+                    const redirectUri = getURLParam('redirect_uri')
+                    setRedirectURL(`${redirectUri}?${getStateParam()}code=${encodeURIComponent(accessCode.access_code)}`)
                 }
-                // done!  redirect with access code.
-                const redirectUri = getURLParam('redirect_uri')
-                setRedirectURL(`${redirectUri}?${getStateParam()}code=${encodeURIComponent(accessCode.access_code)}`)
             }).catch((_err) => {
                 onError(_err)
             })
+        }
+        return () => {
+            isSubscribed = false
         }
     }, [isConsenting])
 
@@ -229,18 +235,24 @@ export const OAuth2Form = (props: OAuth2FormProps) => {
     }
 
     useEffect(() => {
+        let isSubscribed = true
         if (isGettingUserProfile) {
             const { accessToken: newToken } = props.context!
             getHasAlreadyConsented(newToken!)
             setToken(newToken)
             SynapseClient.getUserProfile(newToken).then((profile: UserProfile) => {
-                if (profile.profilePicureFileHandleId) {
-                    profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
+                if (isSubscribed) {
+                    if (profile.profilePicureFileHandleId) {
+                        profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
+                    }
+                    setProfile(profile)
                 }
-                setProfile(profile)
             }).catch((_err) => {
                 onError(_err)
             })
+        }
+        return () => {
+            isSubscribed = false
         }
     }, [isGettingUserProfile])
 
