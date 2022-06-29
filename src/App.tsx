@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import OAuth2Form from './OAuth2Form';
+import { OAuth2Form } from './OAuth2Form';
 import AppInitializer from './AppInitializer'
 import Versions from './Versions'
 import { getURLParam } from './URLUtils'
