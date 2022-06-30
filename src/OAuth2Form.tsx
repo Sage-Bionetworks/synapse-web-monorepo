@@ -287,7 +287,7 @@ export const OAuth2Form = (props: OAuth2FormProps) => {
             getUserProfile()
             getOauthClientInfo()
         }
-    }, [token])
+    }, [props.context?.accessToken])
 
     useEffect(() => {
         if (redirectURL) {
