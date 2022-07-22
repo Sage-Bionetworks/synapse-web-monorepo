@@ -3236,9 +3236,9 @@ ast-types-flow@^0.0.7:
   integrity sha512-eBvWn1lvIApYMhzQMsu9ciLfkBY499mFZlNqG+/9WR7PVlroQw0vG30cOQQbaKz3sCEc44TAOu2ykzqXSNnwag==
 
 async@^2.6.1:
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.6.3.tgz#d72625e2344a3656e3a3ad4fa749fa83299d82ff"
-  integrity sha512-zflvls11DCy+dQWzTW2dzuilv8Z5X/pjfmZOWba6TNIVDm+2UDaJmXSOXlasHKfNBs8oo3M0aT50fDEWfKZjXg==
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.6.4.tgz#706b7ff6084664cd7eae713f6f965433b5504221"
+  integrity sha512-mzo5dfJYwAn29PeiJ0zvwTo04zj8HDJj0Mn8TD7sno7q12prdbnasKJHhkm2c1LgrhlJ0teaea8860oxi51mGA==
   dependencies:
     lodash "^4.17.14"
 
@@ -7856,12 +7856,7 @@ moment-timezone@^0.5.34:
   dependencies:
     moment ">= 2.9.0"
 
-"moment@>= 2.9.0":
-  version "2.29.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
-  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
-
-moment@^2.29.4:
+"moment@>= 2.9.0", moment@^2.29.4:
   version "2.29.4"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
   integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
@@ -9667,7 +9662,7 @@ react-test-renderer@16.14.0, react-test-renderer@^16.0.0-0:
     react-is "^16.8.6"
     scheduler "^0.19.1"
 
-react-tooltip@*, react-tooltip@^4.2.21:
+react-tooltip@*:
   version "4.2.21"
   resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-4.2.21.tgz#840123ed86cf33d50ddde8ec8813b2960bfded7f"
   integrity sha512-zSLprMymBDowknr0KVDiJ05IjZn9mQhhg4PRsqln0OZtURAJ1snt1xi5daZfagsh6vfsziZrc9pErPTDY1ACig==
@@ -10874,10 +10869,10 @@ symbol-tree@^3.2.4:
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
-synapse-react-client@3.0.31:
-  version "3.0.31"
-  resolved "https://registry.yarnpkg.com/synapse-react-client/-/synapse-react-client-3.0.31.tgz#668ae4547b32fd83c89efa3e9720c0dbf7f15025"
-  integrity sha512-KL82+Ndyj0gMTN+08+qsNogAXuBGhRwVzT4CM/8hMfoJY/0qdsGnyHQ8hzjw2KLcyFY0r9nCtnxD1K/m6cQ+Sw==
+synapse-react-client@3.0.32:
+  version "3.0.32"
+  resolved "https://registry.yarnpkg.com/synapse-react-client/-/synapse-react-client-3.0.32.tgz#527ad41848544c5cfde093c416972d801e6201a7"
+  integrity sha512-TX8otR6Q3VcMYPJT+c1r/yK00ykdlSv1XCueGKcQytBwDCpmDYkLF2eCUxKbsxQYma2toj3tg6xKre2umXb7Tw==
   dependencies:
     "@apidevtools/json-schema-ref-parser" "^9.0.9"
     "@brainhubeu/react-carousel" "1.19.26"
@@ -10937,7 +10932,6 @@ synapse-react-client@3.0.31:
     react-sizeme "^2.6.12"
     react-switch "^5.0.1"
     react-test-renderer "16.14.0"
-    react-tooltip "^4.2.21"
     react-transition-group "4.4.2"
     react-virtualized-auto-sizer "^1.0.6"
     react-vtree "3.0.0-beta.3"
