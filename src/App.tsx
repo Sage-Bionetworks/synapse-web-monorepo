@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import './App.css';
-import { OAuth2Form } from './OAuth2Form';
-import AppInitializer from './AppInitializer'
-import Versions from './Versions'
-import { getURLParam } from './URLUtils'
-import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext';
 import {
   BrowserRouter as Router,
   Route,
   Switch
-} from 'react-router-dom'
-import { signOut, setAccessTokenCookie } from 'synapse-react-client/dist/utils/SynapseClient';
+} from 'react-router-dom';
+import { setAccessTokenCookie, signOut } from 'synapse-react-client/dist/utils/SynapseClient';
+import './App.css';
+import AppInitializer from './AppInitializer';
+import { OAuth2Form } from './OAuth2Form';
+import { getURLParam } from './URLUtils';
+import Versions from './Versions';
 
 const App: React.FC = () => {
   const [isLoggedOut, setIsLoggedOut] = useState(false)
@@ -19,13 +18,7 @@ const App: React.FC = () => {
       <Router>
         <AppInitializer>
           <Switch>
-            <Route exact path="/" render={() => {
-              return <SynapseContextConsumer>
-                {(ctx?: SynapseContextType) => {
-                  return <OAuth2Form context={ctx}/>
-                }}
-              </SynapseContextConsumer>
-               }}/>
+            <Route exact path="/" render={() => <OAuth2Form />}/>
             <Route exact path="/logout" render={() => {
               signOut(()=>{setIsLoggedOut(true)})
               return <p style={{margin: 10}}> {isLoggedOut ? 'Logged' : 'Logging'} out</p>

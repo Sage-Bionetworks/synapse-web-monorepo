@@ -1,7 +1,10 @@
-export const handleErrorRedirect = (error:any) => {
+import { OAuthClientError } from "OAuthClientError"
+import { SynapseClientError } from "synapse-react-client/dist/utils/SynapseClient"
+
+export const handleErrorRedirect = (error: Error | OAuthClientError | SynapseClientError) => {
   console.error(error)
   const redirectUri = getURLParam('redirect_uri')
-  if (error["error"] && redirectUri) {
+  if ("error" in error && redirectUri) {
     // is this a valid URL, and has the backend validated the redirect uri (SWC-5596)?
     if (isValidUrl(redirectUri) && error["error"] !== 'invalid_redirect_uri') {
       // we have a redirectUri and an error code from the backend (and possibly an error description!).  Redirect.
