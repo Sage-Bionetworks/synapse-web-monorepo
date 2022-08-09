@@ -34,6 +34,33 @@ function AppInitializer(
   const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
 
   useEffect(() => {
+    // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
+
+    const isStaging: boolean = window.location.hostname.includes("staging");
+    const isDev: boolean = window.location.hostname.includes("dev");
+
+    const stagingConfig = {
+      REPO: "https://repo-staging.prod.sagebase.org/",
+      PORTAL: "https://staging.synapse.org/",
+    };
+
+    const devConfig = {
+      REPO: "https://repo-dev.dev.sagebase.org/",
+      PORTAL: "https://portal-dev.dev.sagebase.org/",
+    };
+
+    if (isStaging || isDev) {
+      if (!(window as any).SRC) {
+        (window as any).SRC = {};
+      }
+
+      (window as any).SRC.OVERRIDE_ENDPOINT_CONFIG = isStaging
+        ? stagingConfig
+        : devConfig;
+    }
+  }, []);
+
+  useEffect(() => {
     // is prompt=login?  if so, then clear the cookie
     const urlSearchParams = new URLSearchParams(window.location.search);
     const prompt = urlSearchParams.get("prompt");

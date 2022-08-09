@@ -2,7 +2,7 @@ import { WarningTwoTone } from "@material-ui/icons";
 import { useOAuthAppContext } from "AppInitializer";
 import { OAuthClientError } from "OAuthClientError";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { SynapseClient, SynapseConstants } from "synapse-react-client";
 import Login from "synapse-react-client/dist/containers/Login";
 import UserCard from "synapse-react-client/dist/containers/UserCard";
@@ -15,35 +15,8 @@ import { OIDCAuthorizationRequestDescription } from "synapse-react-client/dist/u
 import { UserProfile } from "synapse-react-client/dist/utils/synapseTypes/UserProfile";
 import { getStateParam, getURLParam, handleErrorRedirect } from "./URLUtils";
 
-// can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
-
-const isStaging: boolean = window.location.hostname.includes("staging");
-const isDev: boolean = window.location.hostname.includes("dev");
-
-const prodConfig = {
-  REPO: "https://repo-prod.prod.sagebase.org/",
-  PORTAL: "https://www.synapse.org/",
-};
-
-const stagingConfig = {
-  REPO: "https://repo-staging.prod.sagebase.org/",
-  PORTAL: "https://staging.synapse.org/",
-};
-
-const devConfig = {
-  REPO: "https://repo-dev.dev.sagebase.org/",
-  PORTAL: "https://portal-dev.dev.sagebase.org/",
-};
-
-(window as any).SRC = {
-  OVERRIDE_ENDPOINT_CONFIG: isStaging
-    ? stagingConfig
-    : isDev
-    ? devConfig
-    : prodConfig,
-};
-
 export const OAuth2Form = () => {
+  const isMounted = useRef(true);
   const { accessToken, setAccessToken } = useOAuthAppContext();
   const [profile, setProfile] = useState<UserProfile>();
   const [oidcRequestDescription, setOidcRequestDescription] =
@@ -56,6 +29,13 @@ export const OAuth2Form = () => {
     useState<boolean>(false);
 
   const [error, setError] = useState<any>();
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  });
 
   const sendGTagEvent = (event: string) => {
     // send event to Google Analytics
@@ -184,29 +164,33 @@ export const OAuth2Form = () => {
         getOIDCAuthorizationRequestFromSearchParams();
       SynapseClient.getOAuth2RequestDescription(request)
         .then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
-          sendGTagEvent("SynapseOAuthClientRequestDescriptionLoaded");
-          setOidcRequestDescription(oidcRequestDescription);
+          if (isMounted.current) {
+            sendGTagEvent("SynapseOAuthClientRequestDescriptionLoaded");
+            setOidcRequestDescription(oidcRequestDescription);
 
-          // if we were able to get the oidc request description, also check for params that this web app does not support
-          // sorry, we don't support JWT in the url query params today
-          // https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests
-          const requestObject = getURLParam("request");
-          const requestUri = getURLParam("request_uri");
-          if (requestObject) {
-            handleErrorRedirect(new OAuthClientError("request_not_supported"));
-          }
-          if (requestUri) {
-            handleErrorRedirect(
-              new OAuthClientError("request_uri_not_supported")
-            );
-          }
-          // sorry, we don't support registration (yet?)
-          // https://openid.net/specs/openid-connect-core-1_0.html#RegistrationParameter
-          const registration = getURLParam("registration");
-          if (registration) {
-            handleErrorRedirect(
-              new OAuthClientError("registration_not_supported")
-            );
+            // if we were able to get the oidc request description, also check for params that this web app does not support
+            // sorry, we don't support JWT in the url query params today
+            // https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests
+            const requestObject = getURLParam("request");
+            const requestUri = getURLParam("request_uri");
+            if (requestObject) {
+              handleErrorRedirect(
+                new OAuthClientError("request_not_supported")
+              );
+            }
+            if (requestUri) {
+              handleErrorRedirect(
+                new OAuthClientError("request_uri_not_supported")
+              );
+            }
+            // sorry, we don't support registration (yet?)
+            // https://openid.net/specs/openid-connect-core-1_0.html#RegistrationParameter
+            const registration = getURLParam("registration");
+            if (registration) {
+              handleErrorRedirect(
+                new OAuthClientError("registration_not_supported")
+              );
+            }
           }
         })
         .catch((_err) => {
@@ -255,7 +239,10 @@ export const OAuth2Form = () => {
 
   const getSession = async () => {
     try {
-      setAccessToken(await SynapseClient.getAccessTokenFromCookie());
+      const newAccessToken = await SynapseClient.getAccessTokenFromCookie();
+      if (isMounted.current) {
+        setAccessToken(newAccessToken);
+      }
     } catch (e) {
       console.error("Error on getSession: ", e);
       // intentionally calling sign out because the token could be stale so we want

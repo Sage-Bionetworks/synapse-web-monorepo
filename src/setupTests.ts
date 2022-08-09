@@ -1,5 +1,6 @@
 import "isomorphic-fetch"; // polyfill for fetch
 import "raf/polyfill"; // polyfill for requestAnimationFrame
+import { server } from "./mocks/server";
 
 declare var global: any;
 global.markdownit = require("markdown-it");
@@ -24,3 +25,37 @@ global.markdownitMath = require("markdown-it-synapse-math");
 window.URL.createObjectURL = function () {
   return "";
 };
+
+// Establish API mocking before all tests.
+beforeAll(() => server.listen());
+// Reset any request handlers that we may add during the tests, so they don't affect other tests.
+afterEach(() => server.resetHandlers());
+// Clean up after the tests are finished.
+afterAll(() => server.close());
+
+// Mock window.location
+// https://www.benmvp.com/blog/mocking-window-location-methods-jest-jsdom/
+const oldWindowLocation = window.location;
+beforeAll(() => {
+  delete window.location;
+
+  window.location = Object.defineProperties(
+    {},
+    {
+      ...Object.getOwnPropertyDescriptors(oldWindowLocation),
+      assign: {
+        configurable: true,
+        value: jest.fn(),
+      },
+      replace: {
+        configurable: true,
+        value: jest.fn(),
+      },
+    }
+  );
+});
+afterAll(() => {
+  // restore `window.location` to the original `jsdom`
+  // `Location` object
+  window.location = oldWindowLocation;
+});
