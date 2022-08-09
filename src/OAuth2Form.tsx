@@ -35,6 +35,7 @@ export const OAuth2Form = () => {
     }
   };
 
+  // In addition to fetching the current user profile, the success of this request will determine if the current access token is valid.
   const { data: profile } = useGetCurrentUserProfile({
     enabled: !!accessToken,
     onError,
