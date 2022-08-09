@@ -1,5 +1,5 @@
 import moment from "moment";
-import { OAuthClientError } from "OAuthClientError";
+import { OAuthClientError } from "./OAuthClientError";
 import React, { useContext, useEffect, useState } from "react";
 import { SynapseClient } from "synapse-react-client";
 import { SynapseContextProvider } from "synapse-react-client/dist/utils/SynapseContext";
@@ -28,7 +28,9 @@ export function useOAuthAppContext(): OAuthAppContextType {
   return context;
 }
 
-function AppInitializer(props: React.PropsWithChildren<{}>) {
+function AppInitializer(
+  props: React.PropsWithChildren<Record<string, unknown>>
+) {
   const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
 
   useEffect(() => {

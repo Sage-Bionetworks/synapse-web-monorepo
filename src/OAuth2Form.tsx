@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { SynapseClient, SynapseConstants } from "synapse-react-client";
 import Login from "synapse-react-client/dist/containers/Login";
 import UserCard from "synapse-react-client/dist/containers/UserCard";
-import { SynapseClientError } from "synapse-react-client/dist/utils/SynapseClient";
+import { SynapseClientError } from "synapse-react-client/dist/utils/SynapseClientError";
 import { OAuthConsentGrantedResponse } from "synapse-react-client/dist/utils/synapseTypes";
 import { AccessCodeResponse } from "synapse-react-client/dist/utils/synapseTypes/AccessCodeResponse";
 import { OAuthClientPublic } from "synapse-react-client/dist/utils/synapseTypes/OAuthClientPublic";
@@ -261,7 +261,7 @@ export const OAuth2Form = () => {
       // intentionally calling sign out because the token could be stale so we want
       // the stored session to be cleared out.
       SynapseClient.signOut(() => {
-        setAccessToken(undefined)
+        setAccessToken(undefined);
       });
     }
   };
