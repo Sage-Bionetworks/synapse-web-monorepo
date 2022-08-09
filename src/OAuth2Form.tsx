@@ -25,7 +25,7 @@ export const OAuth2Form = () => {
   const onError = (error: Error | OAuthClientError | SynapseClientError) => {
     debugger;
     if (error instanceof SynapseClientError && error.status === 401) {
-      // invalid token, so clear the profile, token, and cookie
+      // invalid token, so clear it
       SynapseClient.signOut(() => {
         setAccessToken(undefined);
       });
