@@ -1,43 +1,51 @@
-import { OAuthClientError } from "OAuthClientError"
-import { SynapseClientError } from "synapse-react-client/dist/utils/SynapseClient"
+import { OAuthClientError } from "OAuthClientError";
+import { SynapseClientError } from "synapse-react-client/dist/utils/SynapseClientError";
 
-export const handleErrorRedirect = (error: Error | OAuthClientError | SynapseClientError) => {
-  console.error(error)
-  const redirectUri = getURLParam('redirect_uri')
+export const handleErrorRedirect = (
+  error: Error | OAuthClientError | SynapseClientError
+) => {
+  console.error(error);
+  const redirectUri = getURLParam("redirect_uri");
   if ("error" in error && redirectUri) {
     // is this a valid URL, and has the backend validated the redirect uri (SWC-5596)?
-    if (isValidUrl(redirectUri) && error["error"] !== 'invalid_redirect_uri') {
+    if (isValidUrl(redirectUri) && error["error"] !== "invalid_redirect_uri") {
       // we have a redirectUri and an error code from the backend (and possibly an error description!).  Redirect.
-      const errorDescription = error["error_description"] ? `&error_description=${encodeURIComponent(error["error_description"])}` : ''
-      window.location.replace(`${redirectUri}?${getStateParam()}error=${encodeURIComponent(error["error"])}${errorDescription}`)
-    } 
+      const errorDescription = error["error_description"]
+        ? `&error_description=${encodeURIComponent(error["error_description"])}`
+        : "";
+      window.location.replace(
+        `${redirectUri}?${getStateParam()}error=${encodeURIComponent(
+          error["error"]
+        )}${errorDescription}`
+      );
+    }
     // no need to pop up an alert here, since the error should be shown on the page (and we already sent to console.error)
   }
-}
+};
 
 export const getURLParam = (keyName: string): string | undefined => {
-  const urlSearchParams = new URLSearchParams(window.location.search)
-  let paramValue: string | undefined = undefined
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  let paramValue: string | undefined = undefined;
   if (urlSearchParams && urlSearchParams.get(keyName)) {
-      paramValue = urlSearchParams.get(keyName)!
+    paramValue = urlSearchParams.get(keyName)!;
   }
-  return paramValue
-}
+  return paramValue;
+};
 export const getStateParam = () => {
-  let state = getURLParam('state')
-  let stateParam = ''
+  let state = getURLParam("state");
+  let stateParam = "";
   if (state) {
-      state = encodeURIComponent(state)
-      stateParam = `state=${state}&`
+    state = encodeURIComponent(state);
+    stateParam = `state=${state}&`;
   }
-  return stateParam
-}
+  return stateParam;
+};
 
-export const isValidUrl = (str:string) => {
+export const isValidUrl = (str: string) => {
   try {
     new URL(str);
   } catch (_) {
-    return false;  
+    return false;
   }
   return true;
-}
+};
