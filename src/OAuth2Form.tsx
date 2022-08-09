@@ -6,29 +6,51 @@ import { useEffect, useState, useRef } from "react";
 import { SynapseClient, SynapseConstants } from "synapse-react-client";
 import Login from "synapse-react-client/dist/containers/Login";
 import UserCard from "synapse-react-client/dist/containers/UserCard";
+import { useGetCurrentUserProfile } from "synapse-react-client/dist/utils/hooks/SynapseAPI";
 import { SynapseClientError } from "synapse-react-client/dist/utils/SynapseClientError";
 import { OAuthConsentGrantedResponse } from "synapse-react-client/dist/utils/synapseTypes";
 import { AccessCodeResponse } from "synapse-react-client/dist/utils/synapseTypes/AccessCodeResponse";
 import { OAuthClientPublic } from "synapse-react-client/dist/utils/synapseTypes/OAuthClientPublic";
 import { OIDCAuthorizationRequest } from "synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest";
 import { OIDCAuthorizationRequestDescription } from "synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequestDescription";
-import { UserProfile } from "synapse-react-client/dist/utils/synapseTypes/UserProfile";
 import { getStateParam, getURLParam, handleErrorRedirect } from "./URLUtils";
 
 export const OAuth2Form = () => {
   const isMounted = useRef(true);
+
   const { accessToken, setAccessToken } = useOAuthAppContext();
-  const [profile, setProfile] = useState<UserProfile>();
+
+  const [error, setError] = useState<any>();
+
+  const onError = (error: Error | OAuthClientError | SynapseClientError) => {
+    debugger;
+    if (error instanceof SynapseClientError && error.status === 401) {
+      // invalid token, so clear it
+      SynapseClient.signOut(() => {
+        setAccessToken(undefined);
+      });
+    } else {
+      handleErrorRedirect(error);
+      setError(error);
+    }
+  };
+
+  // In addition to fetching the current user profile, the success of this request will determine if the current access token is valid.
+  const { data: profile } = useGetCurrentUserProfile({
+    enabled: !!accessToken,
+    onError,
+  });
+
+  if (profile?.profilePicureFileHandleId) {
+    profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`;
+  }
+
   const [oidcRequestDescription, setOidcRequestDescription] =
     useState<OIDCAuthorizationRequestDescription>();
   const [oauthClientInfo, setOauthClientInfo] = useState<OAuthClientPublic>();
   const [redirectURL, setRedirectURL] = useState<string>();
 
   const [isConsenting, setIsConsenting] = useState<boolean>(false);
-  const [isGettingUserProfile, setIsGettingUserProfile] =
-    useState<boolean>(false);
-
-  const [error, setError] = useState<any>();
 
   useEffect(() => {
     isMounted.current = true;
@@ -46,23 +68,6 @@ export const OAuth2Form = () => {
       gtag("event", event, {
         event_category: "SynapseOAUTH",
       });
-    }
-  };
-
-  const onError = (error: Error | OAuthClientError | SynapseClientError) => {
-    debugger;
-    if (
-      error instanceof SynapseClientError &&
-      error.reason.includes("invalid_token")
-    ) {
-      // invalid token, so clear the profile, token, and cookie
-      SynapseClient.signOut(() => {
-        setAccessToken(undefined);
-        setProfile(undefined);
-      });
-    } else {
-      handleErrorRedirect(error);
-      setError(error);
     }
   };
 
@@ -123,13 +128,13 @@ export const OAuth2Form = () => {
   };
 
   // if user has already consented to this client request, no need to ask again
-  const getHasAlreadyConsented = (token: string) => {
-    if (token && !error) {
+  useEffect(() => {
+    const getHasAlreadyConsented = () => {
       const code = getURLParam("code");
       if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
       let request: OIDCAuthorizationRequest =
         getOIDCAuthorizationRequestFromSearchParams();
-      SynapseClient.hasUserAuthorizedOAuthClient(request, token)
+      SynapseClient.hasUserAuthorizedOAuthClient(request, accessToken!)
         .then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
           const prompt = getURLParam("prompt");
           if (consentGrantedResponse.granted) {
@@ -152,8 +157,11 @@ export const OAuth2Form = () => {
         .catch((_err) => {
           onError(_err);
         });
+    };
+    if (profile && !error) {
+      getHasAlreadyConsented();
     }
-  };
+  }, [profile, error]);
 
   const getOAuth2RequestDescription = () => {
     if (!oidcRequestDescription && !error) {
@@ -214,29 +222,6 @@ export const OAuth2Form = () => {
     return authRequest;
   };
 
-  const getOauthClientInfo = () => {
-    if (!oauthClientInfo && !error) {
-      const code = getURLParam("code");
-      if (code) return; // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
-
-      const clientId = getURLParam("client_id");
-      if (!clientId) {
-        onError(new Error("Synapse OAuth client_id is required"));
-        return;
-      }
-      SynapseClient.getOAuth2Client(clientId)
-        .then((oauthClientInfo: OAuthClientPublic) => {
-          if (oauthClientInfo.verified) {
-            getOAuth2RequestDescription();
-          }
-          setOauthClientInfo(oauthClientInfo);
-        })
-        .catch((_err) => {
-          onError(_err);
-        });
-    }
-  };
-
   const getSession = async () => {
     try {
       const newAccessToken = await SynapseClient.getAccessTokenFromCookie();
@@ -252,36 +237,6 @@ export const OAuth2Form = () => {
       });
     }
   };
-
-  const getUserProfile = () => {
-    if (accessToken && !profile && !error) {
-      if (!isGettingUserProfile) {
-        setIsGettingUserProfile(true);
-      }
-    }
-  };
-
-  useEffect(() => {
-    let isSubscribed = true;
-    if (accessToken && isGettingUserProfile) {
-      getHasAlreadyConsented(accessToken);
-      SynapseClient.getUserProfile(accessToken)
-        .then((profile: UserProfile) => {
-          if (isSubscribed) {
-            if (profile.profilePicureFileHandleId) {
-              profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`;
-            }
-            setProfile(profile);
-          }
-        })
-        .catch((_err) => {
-          onError(_err);
-        });
-    }
-    return () => {
-      isSubscribed = false;
-    };
-  }, [isGettingUserProfile]);
 
   /**
    * Returns scopes UI.  All the links formatted accordingly
@@ -302,9 +257,31 @@ export const OAuth2Form = () => {
 
   //init
   useEffect(() => {
-    getUserProfile();
+    const getOauthClientInfo = () => {
+      if (!oauthClientInfo && !error) {
+        const code = getURLParam("code");
+        if (code) return; // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
+
+        const clientId = getURLParam("client_id");
+        if (!clientId) {
+          onError(new Error("Synapse OAuth client_id is required"));
+          return;
+        }
+        SynapseClient.getOAuth2Client(clientId)
+          .then((oauthClientInfo: OAuthClientPublic) => {
+            if (oauthClientInfo.verified) {
+              getOAuth2RequestDescription();
+            }
+            setOauthClientInfo(oauthClientInfo);
+          })
+          .catch((_err) => {
+            onError(_err);
+          });
+      }
+    };
+
     getOauthClientInfo();
-  }, [accessToken]);
+  }, []);
 
   useEffect(() => {
     if (redirectURL) {
