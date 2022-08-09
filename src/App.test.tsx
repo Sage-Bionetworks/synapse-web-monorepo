@@ -59,19 +59,6 @@ describe("App integration tests", () => {
             })
           );
         }
-      ),
-      rest.post(
-        "https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consentcheck",
-        (req, res, ctx) => {
-          return res(
-            ctx.status(401),
-            ctx.json({
-              reason: "invalid_token. The token has expired.",
-              error: "invalid_token",
-              error_description: "The token has expired.",
-            })
-          );
-        }
       )
     );
 
