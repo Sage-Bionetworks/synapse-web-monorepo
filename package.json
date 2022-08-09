@@ -31,7 +31,7 @@
   "devDependencies": {
     "@craco/craco": "^6.4.3",
     "@testing-library/react": "^12.1.5",
-    "@testing-library/user-event": "^13.5.0",
+    "@testing-library/user-event": "^14.4.2",
     "@types/jest": "^27.5.0",
     "@types/katex": "^0.5.0",
     "@types/node": "11.10.4",
@@ -72,6 +72,7 @@
     "markdown-it-synapse-heading": "^1.0.1",
     "markdown-it-synapse-math": "^3.0.4",
     "markdown-it-synapse-table": "^1.0.6",
+    "msw": "^0.44.2",
     "npm-run-all": "^4.1.5",
     "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",
@@ -94,7 +95,7 @@
     "start-js": "craco start",
     "start": "npm-run-all -p watch-css start-js",
     "build": "yarn run build-css && CI=false  GENERATE_SOURCEMAP=false craco --max_old_space_size=7168 build",
-    "test": "yarn run build-css && craco test --env=jsdom --setupFiles ./src/setupTests.ts",
+    "test": "yarn run build-css && craco test --env=jsdom --setupFilesAfterEnv ./src/setupTests.ts",
     "eject": "craco eject",
     "prepare": "husky install"
   },
