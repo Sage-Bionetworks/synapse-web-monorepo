@@ -1,10 +1,16 @@
 import moment from "moment";
 import { OAuthClientError } from "./OAuthClientError";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { SynapseClient } from "synapse-react-client";
-import { SynapseContextProvider } from "synapse-react-client/dist/utils/SynapseContext";
+import {
+  defaultQueryClientConfig,
+  SynapseContextProvider,
+} from "synapse-react-client/dist/utils/SynapseContext";
 import { AuthenticatedOn } from "synapse-react-client/dist/utils/synapseTypes/AuthenticatedOn";
 import { handleErrorRedirect } from "./URLUtils";
+import { QueryClient } from "react-query";
+
+const queryClient = new QueryClient(defaultQueryClientConfig);
 
 type OAuthAppContextType = {
   accessToken: string | undefined;
@@ -31,8 +37,13 @@ export function useOAuthAppContext(): OAuthAppContextType {
 function AppInitializer(
   props: React.PropsWithChildren<Record<string, unknown>>
 ) {
-  const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
-
+  const [accessToken, _setAccessToken] = useState<string | undefined>(
+    undefined
+  );
+  const setAccessToken = useCallback((token: string | undefined) => {
+    _setAccessToken(token);
+    queryClient.clear();
+  }, []);
   useEffect(() => {
     // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
 
@@ -127,6 +138,7 @@ function AppInitializer(
           isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
         }}
+        queryClient={queryClient}
       >
         {props.children}
       </SynapseContextProvider>

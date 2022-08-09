@@ -14,18 +14,11 @@ import { OAuthClientPublic } from "synapse-react-client/dist/utils/synapseTypes/
 import { OIDCAuthorizationRequest } from "synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest";
 import { OIDCAuthorizationRequestDescription } from "synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequestDescription";
 import { getStateParam, getURLParam, handleErrorRedirect } from "./URLUtils";
-import { useQueryClient } from "react-query";
-import { useCallback } from "react";
 
 export const OAuth2Form = () => {
   const isMounted = useRef(true);
-  const queryClient = useQueryClient();
 
-  const { accessToken, setAccessToken: _setAccessToken } = useOAuthAppContext();
-  const setAccessToken = useCallback((token: string | undefined) => {
-    _setAccessToken(token);
-    queryClient.clear();
-  }, []);
+  const { accessToken, setAccessToken } = useOAuthAppContext();
 
   const [error, setError] = useState<any>();
 
