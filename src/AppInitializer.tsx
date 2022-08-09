@@ -28,7 +28,9 @@ export function useOAuthAppContext(): OAuthAppContextType {
   return context;
 }
 
-function AppInitializer(props: React.PropsWithChildren<Record<string, never>>) {
+function AppInitializer(
+  props: React.PropsWithChildren<Record<string, unknown>>
+) {
   const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
 
   useEffect(() => {
