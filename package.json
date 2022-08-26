@@ -8,11 +8,11 @@
     "clone-deep": "^4.0.1",
     "lodash-es": "^4.17.21",
     "plotly.js-basic-dist": "^1.47.3",
-    "react": "16.14.0",
+    "react": "18.2.0",
     "react-app-polyfill": "^1.0.1",
     "react-bootstrap": "^1.5.2",
     "react-cookie": "4.0.0",
-    "react-dom": "16.14.0",
+    "react-dom": "18.2.0",
     "react-easy-crop": "^4.2.0",
     "react-router-dom": "5.3.3",
     "react-spinners": "^0.11.0",
@@ -38,8 +38,8 @@
     "@types/katex": "^0.5.0",
     "@types/node": "11.10.4",
     "@types/plotly.js": "^1.54.10",
-    "@types/react": "17.0.1",
-    "@types/react-dom": "16.9.14",
+    "@types/react": "18.0.17",
+    "@types/react-dom": "18.0.6",
     "@types/react-easy-crop": "^2.0.0",
     "@types/react-plotly.js": "^2.2.4",
     "@types/react-router-dom": "^5.1.7",
@@ -109,8 +109,8 @@
   "resolutions": {
     "babel-jest": "^27.5.1",
     "js-yaml": "3.13.1",
-    "react": "16.14.0",
-    "@types/react": "17.0.1",
-    "@types/react-dom": "16.9.6"
+    "react": "18.2.0",
+    "@types/react": "18.0.17",
+    "@types/react-dom": "18.0.6"
   }
 }
