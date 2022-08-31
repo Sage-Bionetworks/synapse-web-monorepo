@@ -86,7 +86,9 @@ describe("App integration tests", () => {
     await userEvent.type(usernameField, "myUsername");
     await userEvent.type(passwordField, "myPassword");
 
-    userEvent.click(await screen.findByRole("button", { name: "Log in" }));
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Log in" })
+    );
 
     await waitFor(() =>
       expect(document.cookie).toContain(`${ACCESS_TOKEN_COOKIE_KEY}=someToken`)
@@ -123,7 +125,7 @@ describe("App integration tests", () => {
     await screen.findByText(/requests permission/);
 
     const consentButton = await screen.findByRole("button", { name: "Allow" });
-    userEvent.click(consentButton);
+    await userEvent.click(consentButton);
 
     // Should redirect
     // TODO: Verify the redirect URL
@@ -141,7 +143,7 @@ describe("App integration tests", () => {
     await screen.findByText(/requests permission/);
 
     const denyButton = await screen.findByRole("button", { name: "Deny" });
-    userEvent.click(denyButton);
+    await userEvent.click(denyButton);
 
     // Should redirect
     // TODO: Verify the redirect URL
