@@ -6,7 +6,6 @@
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.9.1",
     "@sage-bionetworks/react-base-table": "^1.13.2",
-    "clone-deep": "^4.0.1",
     "lodash-es": "^4.17.21",
     "plotly.js-basic-dist": "^1.47.3",
     "react": "18.2.0",
@@ -19,7 +18,7 @@
     "react-spinners": "^0.11.0",
     "react-use": "^17.3.1",
     "sass": "^1.30.0",
-    "synapse-react-client": "3.0.33"
+    "synapse-react-client": "3.1.1"
   },
   "jest": {
     "moduleNameMapper": {
@@ -60,7 +59,7 @@
     "jsdom": "^20.0.0",
     "katex": "^0.10.0-rc.1",
     "lint-staged": ">=10",
-    "markdown-it": "^8.4.2",
+    "markdown-it": "^13.0.1",
     "markdown-it-br": "^1.0.0",
     "markdown-it-center-text": "^1.0.4",
     "markdown-it-container": "^2.0.0",
@@ -69,7 +68,7 @@
     "markdown-it-strikethrough-alt": "^1.0.0",
     "markdown-it-sub-alt": "^1.0.0",
     "markdown-it-sup-alt": "^1.0.2",
-    "markdown-it-synapse": "^1.1.7",
+    "markdown-it-synapse": "^1.1.10",
     "markdown-it-synapse-heading": "^1.0.1",
     "markdown-it-synapse-math": "^3.0.4",
     "markdown-it-synapse-table": "^1.0.6",
@@ -81,7 +80,6 @@
     "prettier": "^2.7.1",
     "process": "^0.11.10",
     "react-scripts": "5.0.1",
-    "sanitize-html": "^1.18.4",
     "source-map-explorer": "^2.5.2",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
