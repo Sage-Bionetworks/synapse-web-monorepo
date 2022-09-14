@@ -5,7 +5,6 @@
   "dependencies": {
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.9.1",
-    "clone-deep": "^4.0.1",
     "lodash-es": "^4.17.21",
     "plotly.js-basic-dist": "^1.47.3",
     "react": "18.2.0",
@@ -18,7 +17,7 @@
     "react-spinners": "^0.11.0",
     "react-use": "^17.3.1",
     "sass": "^1.30.0",
-    "synapse-react-client": "3.1.0"
+    "synapse-react-client": "3.1.1"
   },
   "jest": {
     "moduleNameMapper": {
@@ -48,7 +47,7 @@
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
     "katex": "^0.10.0-rc.1",
-    "markdown-it": "^8.4.2",
+    "markdown-it": "^13.0.1",
     "markdown-it-br": "^1.0.0",
     "markdown-it-center-text": "^1.0.4",
     "markdown-it-container": "^2.0.0",
@@ -66,7 +65,6 @@
     "pluralize": "^8.0.0",
     "process": "^0.11.10",
     "react-scripts": "^5.0.1",
-    "sanitize-html": "^1.18.4",
     "source-map-explorer": "^2.5.2",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
