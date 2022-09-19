@@ -4,7 +4,7 @@ import {
   setAccessTokenCookie,
   signOut,
 } from "synapse-react-client/dist/utils/SynapseClient";
-import "./App.css";
+import "./App.scss";
 import AppInitializer from "./AppInitializer";
 import { OAuth2Form } from "./OAuth2Form";
 import { getURLParam } from "./URLUtils";

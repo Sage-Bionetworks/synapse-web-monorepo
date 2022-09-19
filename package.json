@@ -73,7 +73,6 @@
     "markdown-it-synapse-math": "^3.0.4",
     "markdown-it-synapse-table": "^1.0.6",
     "msw": "^0.44.2",
-    "npm-run-all": "^4.1.5",
     "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",
     "postcss-normalize": "^10.0.1",
@@ -89,12 +88,9 @@
     "util": "^0.12.4"
   },
   "scripts": {
-    "build-css": "sass src/:src/ --load-path=src/config/style --load-path=src/style --load-path=node_modules --load-path=.",
-    "watch-css": "yarn run build-css && sass src/ --watch --load-path=src/config/style --load-path=src/style --load-path=node_modules --load-path=.",
-    "start-js": "craco start",
-    "start": "npm-run-all -p watch-css start-js",
-    "build": "yarn run build-css && CI=false  GENERATE_SOURCEMAP=false craco --max_old_space_size=7168 build",
-    "test": "yarn run build-css && craco test --env=jsdom --setupFilesAfterEnv ./src/setupTests.ts",
+    "start": "craco start",
+    "build": "CI=false GENERATE_SOURCEMAP=false craco --max_old_space_size=7168 build",
+    "test": "craco test --env=jsdom --setupFilesAfterEnv ./src/setupTests.ts",
     "eject": "craco eject",
     "prepare": "husky install"
   },
