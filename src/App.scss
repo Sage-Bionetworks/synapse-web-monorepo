@@ -1,15 +1,14 @@
-@use 'variables' as Portal;
+@use "./style/variables" as Portal;
 
-@use 'node_modules/synapse-react-client/dist/style/main.scss' with (
-  $primary-action-color: Portal.$primary-action-color, 
+@use "synapse-react-client/dist/style/main.scss" with (
+  $primary-action-color: Portal.$primary-action-color,
   $secondary-action-color: Portal.$secondary-action-color,
-  $primary-bgcolor-rgba: unset,
+  $primary-bgcolor-rgba: unset
 );
-@use 'node_modules/synapse-react-client/dist/template_style/Index.scss';
-@use 'all';
+@use "./style/all";
 
 .App {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   overflow: hidden;
 }
 
@@ -17,14 +16,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent url("https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg") no-repeat;
+  background: transparent
+    url("https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg")
+    no-repeat;
   background-size: cover;
   margin: 0;
   padding: 0;
   min-height: 100vh;
 }
 
-.LoginComponent, .ComponentWrapper {
+.LoginComponent,
+.ComponentWrapper {
   background: #fff;
   padding: 50px;
   margin: 50px;
@@ -35,7 +37,6 @@
 .ComponentWrapper {
   max-width: 650px;
 }
-
 
 .SourceAppLogo svg {
   height: 100%;
