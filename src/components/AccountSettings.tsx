@@ -9,6 +9,7 @@ import StarterAccount from '../assets/StarterAccount.svg'
 import VerifedAccount from '../assets/VerifiedAccount.svg'
 import CheckmarkBadgeLight from '../assets/CheckmarkBadgeLight.svg'
 import CheckmarkBadgeDark from '../assets/CheckmarkBadge.svg'
+import CertifiedImg from '../assets/Certified.svg'
 import EditIcon from '../assets/RedEditPencil.svg'
 import { ChangePassword } from './ChangePassword'
 import { getSearchParam } from 'URLUtils'
@@ -164,6 +165,14 @@ const AccountSettings = (props: AccountSettingsProps) => {
                         </div>
                         }
                         {!verified && ProfileValidationState(verificationState?.state as VerificationStateEnum)}
+                        <div className='center-button'>
+                            <Button
+                            variant='secondary'
+                            onClick={()=>{window.location.assign('/authenticated/certificationquiz')}}
+                            >
+                                <img  className='verifyBadgeIcon' src={CertifiedImg} alt='certify'/>Get Certified
+                            </Button>
+                        </div>
                     </Col>
                     <Col sm={8}>
                         <div className="grid-container">
