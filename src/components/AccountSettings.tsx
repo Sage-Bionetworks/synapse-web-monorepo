@@ -27,6 +27,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
     const [ showDialog, setShowDialog ] = useState<boolean>(false)
     const [ orcid, setOrcid ] = useState<string>()
     const [ verified, setVerfied ] = useState<boolean>()
+    const [ isCertified, setIsCertified] = useState<boolean>()
     const [ editUsername, setEditUsername] = useState<boolean>(false)
     const [ changePW, setChangePW] = useState<boolean>(false)
     const [ isShowingWelcomeScreen, setIsShowingWelcomeScreen] = useState<boolean>(false)
@@ -64,6 +65,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
                   SynapseConstants.USER_BUNDLE_MASK_ORCID |
                   SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
                   SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
+                  SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
                   SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION
 
                 const bundle:UserBundle = await getMyUserBundle(
@@ -73,6 +75,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
                 setUserProfile(bundle.userProfile)
                 setOrcid(bundle.ORCID)
                 setVerfied(bundle.isVerified)
+                setIsCertified(bundle.isCertified)
                 setVerificationSubmission(bundle.verificationSubmission)
                 setVerificationState(bundle.verificationSubmission?.stateHistory?.slice(-1)[0])
 
@@ -165,14 +168,14 @@ const AccountSettings = (props: AccountSettingsProps) => {
                         </div>
                         }
                         {!verified && ProfileValidationState(verificationState?.state as VerificationStateEnum)}
-                        <div className='center-button'>
+                        {!isCertified && <div className='center-button'>
                             <Button
                             variant='secondary'
                             onClick={()=>{window.location.assign('/authenticated/certificationquiz')}}
                             >
                                 <img  className='verifyBadgeIcon' src={CertifiedImg} alt='certify'/>Get Certified
                             </Button>
-                        </div>
+                        </div>}
                     </Col>
                     <Col sm={8}>
                         <div className="grid-container">
