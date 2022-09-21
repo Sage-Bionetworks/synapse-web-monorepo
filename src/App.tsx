@@ -20,6 +20,7 @@ import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import AccountSettings from 'components/AccountSettings'
 import { ResetPassword } from 'components/ResetPassword'
 import { ProfilePage } from 'components/ProfilePage'
+import { CertificationQuiz } from 'components/CertificationQuiz'
 
 const App: React.FC = () => {
   return (
@@ -58,8 +59,10 @@ const App: React.FC = () => {
                           return <TermsOfUsePage />
                         } else if (path === '/authenticated/myaccount') {
                           return <AccountSettings/>
-                        } else if(path ==='/authenticated/myprofile'){
+                        } else if(path ==='/authenticated/myprofile') {
                           return <ProfilePage/>
+                        } else if (path === '/authenticated/certificationquiz') {
+                          return <CertificationQuiz />
                         } else {
                           return (<>
                             <p>Unrecognized match path {path}</p>

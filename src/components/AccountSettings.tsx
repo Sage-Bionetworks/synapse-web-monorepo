@@ -9,6 +9,7 @@ import StarterAccount from '../assets/StarterAccount.svg'
 import VerifedAccount from '../assets/VerifiedAccount.svg'
 import CheckmarkBadgeLight from '../assets/CheckmarkBadgeLight.svg'
 import CheckmarkBadgeDark from '../assets/CheckmarkBadge.svg'
+import CertifiedImg from '../assets/Certified.svg'
 import EditIcon from '../assets/RedEditPencil.svg'
 import { ChangePassword } from './ChangePassword'
 import { getSearchParam } from 'URLUtils'
@@ -16,6 +17,7 @@ import { getSourceAppRedirectURL } from './SourceApp'
 import { ConfigureEmail } from './ConfigureEmail'
 import { UnbindORCiDDialog } from './UnbindORCiD'
 import { ORCiDButton } from './ORCiDButton'
+import { useHistory } from 'react-router-dom'
 
 export type AccountSettingsProps = {
 }
@@ -26,6 +28,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
     const [ showDialog, setShowDialog ] = useState<boolean>(false)
     const [ orcid, setOrcid ] = useState<string>()
     const [ verified, setVerfied ] = useState<boolean>()
+    const [ isCertified, setIsCertified] = useState<boolean>()
     const [ editUsername, setEditUsername] = useState<boolean>(false)
     const [ changePW, setChangePW] = useState<boolean>(false)
     const [ isShowingWelcomeScreen, setIsShowingWelcomeScreen] = useState<boolean>(false)
@@ -36,6 +39,12 @@ const AccountSettings = (props: AccountSettingsProps) => {
 
     const SUSPENDED_TEXT = 'Your account has been suspended.'
     const REJECTED_TEXT = 'Sorry we could not verify your account.'
+
+    const history = useHistory()
+
+    const handleChangesFn = (val: string) => {
+        history.push(`/authenticated/${val}`)
+    }
 
     // on initial mount, check query parameter for showWelcomeScreen
     const showWelcomeScreenURLParam = getSearchParam('showWelcomeScreen')
@@ -63,6 +72,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
                   SynapseConstants.USER_BUNDLE_MASK_ORCID |
                   SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
                   SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
+                  SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
                   SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION
 
                 const bundle:UserBundle = await getMyUserBundle(
@@ -72,6 +82,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
                 setUserProfile(bundle.userProfile)
                 setOrcid(bundle.ORCID)
                 setVerfied(bundle.isVerified)
+                setIsCertified(bundle.isCertified)
                 setVerificationSubmission(bundle.verificationSubmission)
                 setVerificationState(bundle.verificationSubmission?.stateHistory?.slice(-1)[0])
 
@@ -86,9 +97,9 @@ const AccountSettings = (props: AccountSettingsProps) => {
         return(
             <div className='center-button'>
                 <Button
-                onClick={()=>{window.location.assign('/authenticated/validate')}}
+                onClick={()=>handleChangesFn('validate')}
                 variant='secondary'>
-                <img className='verifyBadgeIcon' src={CheckmarkBadgeLight} alt='empty checkmark'/> Verify Account
+                <img className='BadgeIcon' src={CheckmarkBadgeLight} alt='empty checkmark'/> Verify Account
                 </Button>
             </div>   
         )
@@ -96,7 +107,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
 
     const ProfileValidationState = (verificationStateEnum: VerificationStateEnum) => {
         if(verificationStateEnum === 'SUBMITTED'){
-            return <div className='verified-img-container'><img className="verifyBadgeIcon" src={CheckmarkBadgeDark} alt='CheckmarkBadgeDark'/>Pending Verification</div>
+            return <div className='verified-img-container'><img className="BadgeIcon" src={CheckmarkBadgeDark} alt='CheckmarkBadgeDark'/>Pending Verification</div>
         } else if(verificationStateEnum === 'REJECTED' || verificationStateEnum ==='SUSPENDED'){
             return (
                 <div className='ValidationStateContainer'>
@@ -164,6 +175,14 @@ const AccountSettings = (props: AccountSettingsProps) => {
                         </div>
                         }
                         {!verified && ProfileValidationState(verificationState?.state as VerificationStateEnum)}
+                        {!isCertified && <div className='center-button'>
+                            <Button
+                            variant='secondary'
+                            onClick={()=>{handleChangesFn('certificationquiz')}}
+                            >
+                                <img  className='BadgeIcon' src={CertifiedImg} alt='certify'/>Get Certified
+                            </Button>
+                        </div>}
                     </Col>
                     <Col sm={8}>
                         <div className="grid-container">
@@ -261,9 +280,9 @@ const AccountSettings = (props: AccountSettingsProps) => {
                     </Button>
                     <Button
                         variant="primary"
-                        onClick={()=>{window.location.assign('/authenticated/validate')}}
+                        onClick={()=>handleChangesFn('validate')}
                     >
-                        <img className="verifyBadgeIcon" src={CheckmarkBadgeLight} alt="verify"/>Verify now
+                        <img className="BadgeIcon" src={CheckmarkBadgeLight} alt="verify"/>Verify now
                     </Button>
                 </div>
                 </Modal.Footer>
@@ -298,7 +317,7 @@ const AccountSettings = (props: AccountSettingsProps) => {
                         <Col><Typography variant='body1' className='modal-column'>{verificationSubmission?.location}</Typography></Col>
                     </Row>
                     <Row>
-                        <Col sm={6}><Button className='btn-container emptyButton' onClick={()=>{window.location.assign('/authenticated/validate')}}>Re-verify information</Button></Col>
+                        <Col sm={6}><Button className='btn-container emptyButton' onClick={()=>{handleChangesFn('validate')}}>Re-verify information</Button></Col>
                         <Col sm={6}><Button className='btn-container' variant='secondary' onClick={()=>setShowDialog(false)}>Close</Button></Col>
                     </Row>
                 </Modal.Body>
