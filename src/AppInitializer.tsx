@@ -132,6 +132,7 @@ function AppInitializer(
     SynapseClient.detectSSOCode();
   }, []);
 
+  // TODO: move this effect (and the corresponding useState hook) into one custom hook in a separate file
   useEffect(() => {
     // SWC-6294: on mount, detect and attempt a client-side framebuster (mitigation only, easily bypassed by attacker)
     if (window.top && window.top !== window) {
