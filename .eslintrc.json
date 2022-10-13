@@ -29,6 +29,7 @@
         "additionalHooks": "useDebouncedEffect"
       }
     ],
+    "react/no-unstable-nested-components": "warn",
     "no-extra-semi": "off",
     "prefer-const": "warn",
     "jest/expect-expect": "off",

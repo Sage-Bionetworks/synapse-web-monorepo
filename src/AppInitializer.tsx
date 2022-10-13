@@ -44,6 +44,8 @@ function AppInitializer(
     _setAccessToken(token);
     queryClient.clear();
   }, []);
+  const [isFramed, setIsFramed] = useState(false);
+
   useEffect(() => {
     // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
 
@@ -130,6 +132,17 @@ function AppInitializer(
     SynapseClient.detectSSOCode();
   }, []);
 
+  // TODO: move this effect (and the corresponding useState hook) into one custom hook in a separate file
+  useEffect(() => {
+    // SWC-6294: on mount, detect and attempt a client-side framebuster (mitigation only, easily bypassed by attacker)
+    if (window.top && window.top !== window) {
+      // If not sandboxed, make sure not to show any portal content (in case they block window unload via onbeforeunload)
+      setIsFramed(true);
+      // If sandboxed, this call will cause an uncaught js exception and portal will not load.
+      window.top.location = window.location;
+    }
+  }, []);
+
   return (
     <OAuthAppContext.Provider value={{ accessToken, setAccessToken }}>
       <SynapseContextProvider
@@ -140,7 +153,7 @@ function AppInitializer(
         }}
         queryClient={queryClient}
       >
-        {props.children}
+        {!isFramed && props.children}
       </SynapseContextProvider>
     </OAuthAppContext.Provider>
   );
