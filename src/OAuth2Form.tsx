@@ -2,7 +2,7 @@ import { WarningTwoTone } from "@material-ui/icons";
 import { useOAuthAppContext } from "AppInitializer";
 import { OAuthClientError } from "OAuthClientError";
 import * as React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { SynapseClient, SynapseConstants } from "synapse-react-client";
 import Login from "synapse-react-client/dist/containers/Login";
 import UserCard from "synapse-react-client/dist/containers/UserCard";
@@ -22,18 +22,21 @@ export const OAuth2Form = () => {
 
   const [error, setError] = useState<any>();
 
-  const onError = (error: Error | OAuthClientError | SynapseClientError) => {
-    debugger;
-    if (error instanceof SynapseClientError && error.status === 401) {
-      // invalid token, so clear it
-      SynapseClient.signOut(() => {
-        setAccessToken(undefined);
-      });
-    } else {
-      handleErrorRedirect(error);
-      setError(error);
-    }
-  };
+  const onError = useCallback(
+    (error: Error | OAuthClientError | SynapseClientError) => {
+      debugger;
+      if (error instanceof SynapseClientError && error.status === 401) {
+        // invalid token, so clear it
+        SynapseClient.signOut(() => {
+          setAccessToken(undefined);
+        });
+      } else {
+        handleErrorRedirect(error);
+        setError(error);
+      }
+    },
+    [setAccessToken]
+  );
 
   // In addition to fetching the current user profile, the success of this request will determine if the current access token is valid.
   const { data: profile } = useGetCurrentUserProfile({
@@ -71,11 +74,11 @@ export const OAuth2Form = () => {
     }
   };
 
-  const onConsent = () => {
+  const onConsent = useCallback(() => {
     if (!isConsenting) {
       setIsConsenting(true);
     }
-  };
+  }, [isConsenting]);
 
   useEffect(() => {
     let isSubscribed = true;
@@ -110,7 +113,7 @@ export const OAuth2Form = () => {
     return () => {
       isSubscribed = false;
     };
-  }, [isConsenting]);
+  }, [accessToken, isConsenting, onError]);
 
   const onGoBack = () => {
     window.history.back();
@@ -132,7 +135,7 @@ export const OAuth2Form = () => {
     const getHasAlreadyConsented = () => {
       const code = getURLParam("code");
       if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
-      let request: OIDCAuthorizationRequest =
+      const request: OIDCAuthorizationRequest =
         getOIDCAuthorizationRequestFromSearchParams();
       SynapseClient.hasUserAuthorizedOAuthClient(request, accessToken!)
         .then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
@@ -161,7 +164,7 @@ export const OAuth2Form = () => {
     if (profile && !error) {
       getHasAlreadyConsented();
     }
-  }, [profile, error]);
+  }, [profile, error, accessToken, onConsent, onError]);
 
   const getOAuth2RequestDescription = () => {
     if (!oidcRequestDescription && !error) {
@@ -232,27 +235,10 @@ export const OAuth2Form = () => {
       console.error("Error on getSession: ", e);
       // intentionally calling sign out because the token could be stale so we want
       // the stored session to be cleared out.
-      SynapseClient.signOut(() => {
+      await SynapseClient.signOut(() => {
         setAccessToken(undefined);
       });
     }
-  };
-
-  /**
-   * Returns scopes UI.  All the links formatted accordingly
-   */
-  const Scopes = () => {
-    return (
-      <>
-        {oidcRequestDescription && (
-          <ul>
-            {oidcRequestDescription.scope.map((scope, index) => {
-              return <li key={index}>{scope}</li>;
-            })}
-          </ul>
-        )}
-      </>
-    );
   };
 
   //init
@@ -322,7 +308,7 @@ export const OAuth2Form = () => {
                   fontSize: "40px",
                 }}
               />
-              <h3>This app isn't verified</h3>
+              <h3>This app isn&apos;t verified</h3>
               <p>This app has not been verified by Sage Bionetworks yet.</p>
               <div className="text-align-right margin-top-40">
                 <button onClick={onGoBack} className="btn btn-primary">
@@ -350,11 +336,17 @@ export const OAuth2Form = () => {
                   <strong>{oauthClientInfo.client_name}</strong> requests
                   permission:
                 </h4>
-                <Scopes />
+                {oidcRequestDescription && (
+                  <ul>
+                    {oidcRequestDescription.scope.map((scope, index) => {
+                      return <li key={index}>{scope}</li>;
+                    })}
+                  </ul>
+                )}
                 <div className="margin-top-20">
                   <p>
-                    By clicking "Allow", you allow this app to use your
-                    information in accordance with their{" "}
+                    By clicking &quote;Allow&quote;, you allow this app to use
+                    your information in accordance with their{" "}
                     <a
                       href={oauthClientInfo.tos_uri}
                       target="_blank"
