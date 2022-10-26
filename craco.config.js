@@ -7,7 +7,7 @@ module.exports = {
         fallback: {
           path: require.resolve('path-browserify'),
           timers: require.resolve('timers-browserify'),
-          fs: require.resolve('browserify-fs'),
+          fs: require.resolve('memfs'),
           https: require.resolve('https-browserify'),
           stream: require.resolve('stream-browserify'),
           http: require.resolve('stream-http'),
