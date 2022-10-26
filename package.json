@@ -44,7 +44,7 @@
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "assert": "^2.0.0",
-    "browserify-fs": "^1.0.0",
+    "memfs": "^3.4.7",
     "buffer": "^6.0.3",
     "eslint": "^8.18.0",
     "eslint-plugin-jest": "^26.1.1",
