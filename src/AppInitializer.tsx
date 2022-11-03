@@ -150,6 +150,7 @@ function AppInitializer(
           accessToken: accessToken,
           isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+          downloadCartPageUrl: "",
         }}
         queryClient={queryClient}
       >
