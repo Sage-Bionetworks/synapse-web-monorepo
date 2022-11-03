@@ -18,7 +18,7 @@
     "react-spinners": "^0.11.0",
     "react-use": "^17.3.1",
     "sass": "^1.30.0",
-    "synapse-react-client": "3.1.1"
+    "synapse-react-client": "3.1.9"
   },
   "jest": {
     "moduleNameMapper": {
@@ -72,7 +72,7 @@
     "markdown-it-synapse-heading": "^1.0.1",
     "markdown-it-synapse-math": "^3.0.4",
     "markdown-it-synapse-table": "^1.0.6",
-    "msw": "^0.44.2",
+    "msw": "^0.47.4",
     "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",
     "postcss-normalize": "^10.0.1",

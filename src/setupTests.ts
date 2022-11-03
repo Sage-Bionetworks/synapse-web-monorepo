@@ -15,7 +15,6 @@ global.markdownitContainer = require("markdown-it-container");
 global.markdownitEmphasisAlt = require("markdown-it-emphasis-alt");
 global.markdownitInlineComments = require("markdown-it-inline-comments");
 global.markdownitBr = require("markdown-it-br");
-global.sanitizeHtml = require("sanitize-html");
 global.markdownitMath = require("markdown-it-synapse-math");
 
 // Line below is used because plotly has a dependency on mapbox-gl
