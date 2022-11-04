@@ -100,7 +100,9 @@
     "babel-jest": "^27.5.1",
     "js-yaml": "3.13.1",
     "react": "18.2.0",
+    "react-hot-toast": "2.2.0",
     "@types/react": "18.0.17",
-    "@types/react-dom": "18.0.6"
+    "@types/react-dom": "18.0.6",
+    "minimatch": "^3.1.2"
   }
 }
