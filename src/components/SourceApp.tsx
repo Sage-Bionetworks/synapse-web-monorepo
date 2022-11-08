@@ -1,3 +1,4 @@
+import { ThemeOptions } from '@mui/material'
 import React from 'react'
 import SourceAppConfigs, { SourceAppConfig } from './SourceAppConfigs'
 
@@ -29,5 +30,10 @@ export const getCurrentSourceApp = (): SourceAppConfig | undefined => {
 export const getSourceAppRedirectURL = (): string => {
   return getCurrentSourceApp()?.redirectURL ?? '/authenticated/myaccount'
 }
+
+export const getSourceAppTheme = (): ThemeOptions | undefined => {
+  return getCurrentSourceApp()?.theme
+}
+
 
 export default SourceApp

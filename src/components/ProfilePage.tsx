@@ -10,7 +10,7 @@ import LinkIcon from 'assets/link.svg'
 import EditIcon from 'assets/RedEditPencil.svg'
 import VerifiedBorder from 'assets/VerifiedProfilePic.svg'
 import { SynapseConstants, Typography } from 'synapse-react-client'
-import { Skeleton } from '@material-ui/lab'
+import Skeleton from '@mui/material/Skeleton'
 import { SkeletonTable } from 'synapse-react-client/dist/assets/skeletons/SkeletonTable'
 import Cropper from "react-easy-crop"
 import { Area } from 'react-easy-crop/types'
@@ -233,7 +233,7 @@ export const ProfilePage = (props: ProfilePageProps) => {
                 {isLoading ?
                     <Row>
                         <Col sm={3}>
-                            <Skeleton variant='circle' width='130px' height='130px' />
+                            <Skeleton variant='circular' width='130px' height='130px' />
                         </Col>
                         <Col sm={9}>
                             <SkeletonTable numCols={1} numRows={7} />

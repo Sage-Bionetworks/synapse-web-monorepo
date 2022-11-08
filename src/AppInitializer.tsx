@@ -8,6 +8,8 @@ import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseC
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import useAnalytics from './useAnalytics'
 import { getSearchParam } from 'URLUtils'
+import { ThemeOptions } from '@mui/material'
+import { getSourceAppTheme } from 'components/SourceApp'
 
 export type AppInitializerState = {
   token?: string
@@ -30,14 +32,6 @@ function useSession(
   const [userProfile, setUserProfile] = useState<UserProfile | undefined>(
     undefined,
   )
-
-  const appId = getSearchParam('appId')
-  const initSourceAppId = useCallback(() => {
-    if (appId) {
-      localStorage.setItem('sourceAppId', appId)
-    }
-  }, [appId])
-  
   const initAnonymousUserState = useCallback(() => {
     SynapseClient.signOut(() => {
       // reset token and user profile
@@ -87,14 +81,14 @@ function useSession(
     userProfile,
     hasCalledGetSession,
     getSession,
-    initSourceAppId
   }
 }
 
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [isFramed, setIsFramed] = useState(false)
-
-  const { token, getSession, hasCalledGetSession, initSourceAppId } =
+  const [appId, setAppId] = useState<string>()
+  const [themeOptions, setThemeOptions] = useState<ThemeOptions>()
+  const { token, getSession, hasCalledGetSession } =
     useSession()
 
   useEffect(() => {
@@ -106,7 +100,24 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       window.top.location = window.location
     }
   }, [])
-  
+
+  useEffect(() => {
+    const searchParamAppId = getSearchParam('appId')
+    const localStorageAppId = localStorage.getItem('sourceAppId')
+    if (searchParamAppId) {
+      localStorage.setItem('sourceAppId', searchParamAppId)
+      setAppId(searchParamAppId)
+    } else if (localStorageAppId) {
+      setAppId(localStorageAppId)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (appId) {
+      setThemeOptions(getSourceAppTheme())
+    }
+  }, [appId])
+
   /** Call getSession on mount */
   useEffect(() => {
     getSession()
@@ -118,8 +129,6 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   useEffect(() => {
     // on first time, also check for the SSO code
     SynapseClient.detectSSOCode()
-    // and set the source app ID
-    initSourceAppId()
   }, [])
 
 
@@ -134,7 +143,9 @@ function AppInitializer(props: { children?: React.ReactNode }) {
         accessToken: token,
         isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
         utcTime: SynapseClient.getUseUtcTimeFromCookie(),
-      }}
+        downloadCartPageUrl: '',
+
+      }} theme={themeOptions}
     >
       {!isFramed && props.children}
     </SynapseContextProvider>
