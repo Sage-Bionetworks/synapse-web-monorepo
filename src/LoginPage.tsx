@@ -6,7 +6,6 @@ import SourceApp from './components/SourceApp'
 import SageBionetworksLogo from './assets/SageBionetworksLogo.svg'
 import { Typography } from 'synapse-react-client'
 import SageNetworkOrange from './assets/SageNetworkOrange.svg'
-import { useTheme } from '@mui/material'
 
 export type OwnProps = {
   returnToUrl:string
@@ -21,7 +20,6 @@ const LoginPage:React.FunctionComponent<LoginPageProps> = ({
     // using this instead of Redirect since we may need a page refresh
     window.location.replace(returnToUrl)
   }
-  const theme = useTheme()
   return (
     <div className="LoginPage SourceAppPage bootstrap-4-backport">
       <Row>
@@ -41,8 +39,6 @@ const LoginPage:React.FunctionComponent<LoginPageProps> = ({
               sessionCallback={() => setIsSessionEstablished(true)}
               registerAccountUrl={'/register1'}
               resetPasswordUrl={'/resetPassword'}
-              loginButtonStyle={{backgroundColor:theme.palette.primary.main}}
-              registerLinkStyle={{color:theme.palette.primary.main}}
             />
           </div>
           <img

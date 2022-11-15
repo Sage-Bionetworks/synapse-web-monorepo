@@ -51,7 +51,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
               style={{ marginLeft: 20 }}
               disabled={ isLoading || !isFormComplete }
             >
-              Accept and continue <IconSvg options={{ icon: 'arrowForward' }} />
+              Accept and continue <IconSvg icon='arrowForward' />
             </Button>
           </div>
           

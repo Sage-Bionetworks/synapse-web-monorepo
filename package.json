@@ -17,7 +17,7 @@
     "react-spinners": "^0.11.0",
     "react-use": "^17.3.1",
     "sass": "^1.30.0",
-    "synapse-react-client": "3.1.10"
+    "synapse-react-client": "^3.1.12"
   },
   "jest": {
     "moduleNameMapper": {
@@ -42,7 +42,6 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/react-tooltip": "^4.2.4",
     "assert": "^2.0.0",
-    "memfs": "^3.4.7",
     "buffer": "^6.0.3",
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
@@ -60,6 +59,7 @@
     "markdown-it-synapse-heading": "^1.0.1",
     "markdown-it-synapse-math": "^3.0.4",
     "markdown-it-synapse-table": "^1.0.6",
+    "memfs": "^3.4.7",
     "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",
     "process": "^0.11.10",

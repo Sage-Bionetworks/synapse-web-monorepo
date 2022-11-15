@@ -2,7 +2,8 @@ import MobileToolboxLogoSvg from 'assets/MobileToolboxLogo.svg'
 import SynapseLogoSvg from 'assets/SynapseLogo.svg'
 import { ThemeOptions, } from '@mui/material'
 import React from 'react'
-import { mtbPalette, synapsePalette } from './palettes/Palette'
+import palette from 'synapse-react-client/dist/utils/theme/palette/Palette'
+import mtbPalette from './palettes/MtbPalette'
 
 export type SourceAppConfig = {
   appId: string // app ID used in the query params
@@ -48,7 +49,7 @@ const SourceAppConfigs:SourceAppConfig[] = [
     friendlyName: 'Synapse',
     logo: synapseLogo,
     theme: {
-      palette: synapsePalette
+      palette: palette
     }
   },
   {
@@ -57,7 +58,7 @@ const SourceAppConfigs:SourceAppConfig[] = [
     friendlyName: 'Synapse (staging)',
     logo: synapseLogo,
     theme: {
-      palette: synapsePalette
+      palette: palette
     }
   },
 ]
