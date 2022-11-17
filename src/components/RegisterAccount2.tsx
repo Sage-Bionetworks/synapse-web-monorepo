@@ -150,7 +150,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
               style={{ marginLeft: 20 }}
               disabled={isLoading}
             >
-              Continue <IconSvg options={{ icon: 'arrowForward' }} />
+              Continue <IconSvg icon='arrowForward' />
             </Button>
           </div>
         </Container>
