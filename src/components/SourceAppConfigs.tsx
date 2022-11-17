@@ -2,8 +2,9 @@ import MobileToolboxLogoSvg from 'assets/MobileToolboxLogo.svg'
 import SynapseLogoSvg from 'assets/SynapseLogo.svg'
 import { ThemeOptions, } from '@mui/material'
 import React from 'react'
-import palette from 'synapse-react-client/dist/utils/theme/palette/Palette'
-import mtbPalette from './palettes/MtbPalette'
+import palette, { mtbPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+
+// TODO: Load apps at runtime (perhaps a Synapse Table like syn45291362)
 
 export type SourceAppConfig = {
   appId: string // app ID used in the query params
