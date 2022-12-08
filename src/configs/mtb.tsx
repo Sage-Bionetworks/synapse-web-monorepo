@@ -3,7 +3,7 @@ import { SourceAppConfig } from "components/SourceAppConfigs";
 import { mtbPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
 import MobileToolboxLogoSvg from '../assets/MobileToolboxLogo.svg'
 
-const mobileToolboxLogo = <img
+const logo = <img
   src={MobileToolboxLogoSvg}
   style={{ width: 80 }}
   alt="Mobile Toolbox Logo"
@@ -15,7 +15,7 @@ export const mtb:SourceAppConfig = {
     appId: 'MTB',
     redirectURL: 'https://www.mobiletoolbox.org/',
     friendlyName: 'Mobile Toolbox',
-    logo: mobileToolboxLogo,
+    logo,
     theme: {
       palette: mtbPalette
     },
@@ -26,7 +26,7 @@ export const mtbStaging:SourceAppConfig = {
     appId: 'MTB-staging',
     redirectURL: 'https://staging.mobiletoolbox.org/',
     friendlyName: 'Mobile Toolbox (staging)',
-    logo: mobileToolboxLogo,
+    logo,
     theme: {
       palette: mtbPalette
     },
