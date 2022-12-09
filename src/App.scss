@@ -27,7 +27,7 @@
 
 .LoginComponent,
 .ComponentWrapper {
-  background: #fff;
+  background: transparent;
   padding: 50px;
   margin: 50px;
 }
@@ -79,7 +79,7 @@ $wrapper-width: 910px;
     align-items: stretch;
     justify-content: center;
     margin-top: 50px;
-    margin-bottom: -50px;
+    margin-bottom: -25px;
     img {
       max-width: 300px;
       min-height: 100px;
@@ -95,6 +95,27 @@ $wrapper-width: 910px;
     }
     .description {
       margin-top: 15px;
+      margin-bottom: 300px;
+    }
+  }
+}
+
+@media (max-width: $wrapper-width) {
+  .panel-wrapper-bg {
+    background: #fff
+      url('https://s3.amazonaws.com/static.synapse.org/images/SynapseMobileLogInFull.svg')
+      50% 50%;
+    background-size: contain;
+  }
+  .panel-wrapper {
+    &.with-login-panel-bg {
+      background: none;
+    }
+    .panel {
+      padding: 60px 0;
+    }
+    .panel-right {
+      display: none;
     }
   }
 }
