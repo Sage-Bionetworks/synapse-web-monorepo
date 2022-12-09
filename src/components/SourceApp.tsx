@@ -1,6 +1,7 @@
 import { ThemeOptions } from '@mui/material'
 import React from 'react'
 import SourceAppConfigs, { SourceAppConfig } from './SourceAppConfigs'
+import { Typography } from 'synapse-react-client'
 
 export type SourceAppProps = {
   isAccountCreationTextVisible?:boolean
@@ -20,6 +21,16 @@ export const SourceApp = (props: SourceAppProps) => {
       <p>Create an account to get started.</p>
     </div>}
   </>
+}
+
+export const SourceAppLogo = () => {
+  return <div className='SourceAppLogo'>{getCurrentSourceApp()?.logo}</div>
+}
+
+export const SourceAppDescription = () => {
+  return <Typography className='description' variant='body1'>
+    {getCurrentSourceApp()?.description}
+  </Typography>
 }
 
 export const getCurrentSourceApp = (): SourceAppConfig | undefined => {

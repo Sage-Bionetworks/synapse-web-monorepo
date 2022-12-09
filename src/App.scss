@@ -41,3 +41,60 @@
 .SourceAppLogo svg {
   height: 100%;
 }
+
+$wrapper-width: 910px;
+.panel-wrapper-bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+    url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg');
+  background-size: cover;
+}
+
+.panel-wrapper {
+  display: flex;
+  max-width: $wrapper-width;
+  &.with-login-panel-bg {
+    background: #fff
+    url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg')
+    no-repeat right bottom 20px;
+  }
+
+  > div {
+    flex: 1;
+  }
+  .panel {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 60px 72px;
+  }
+  .panel-logo {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: -50px;
+    img {
+      max-width: 300px;
+      min-height: 100px;
+    }
+  }
+  .panel-right {
+    background-color: rgba(57,89,121,.05);
+    flex: 0 1 auto;
+    padding: 0 60px;
+    .headline {
+      margin-top: 200px;
+      font-weight: 700;
+    }
+    .description {
+      margin-top: 15px;
+    }
+  }
+}
