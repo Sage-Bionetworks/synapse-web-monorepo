@@ -19,7 +19,7 @@ export type SourceAppConfig = {
   description: string
 }
 
-const SourceAppConfigs:SourceAppConfig[] = [
+export const SourceAppConfigs:SourceAppConfig[] = [
   mtb,
   mtbStaging,
   synapse,
