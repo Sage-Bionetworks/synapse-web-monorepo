@@ -42,7 +42,7 @@
   height: 100%;
 }
 
-$wrapper-width: 910px;
+$wrapper-width: 955px;
 .panel-wrapper-bg {
   display: flex;
   align-items: center;
@@ -63,6 +63,9 @@ $wrapper-width: 910px;
     background: #fff
     url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg')
     no-repeat right bottom 20px;
+  }
+  &.with-white-panel-bg {
+    background: #fff;
   }
 
   > div {
