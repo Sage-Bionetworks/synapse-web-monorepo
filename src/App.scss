@@ -64,6 +64,9 @@ $wrapper-width: 910px;
     url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg')
     no-repeat right bottom 20px;
   }
+  &.with-white-panel-bg {
+    background: #fff;
+  }
 
   > div {
     flex: 1;
