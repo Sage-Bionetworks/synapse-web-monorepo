@@ -60,13 +60,13 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
       <div className="panel-wrapper-bg RegisterAccount1 bootstrap-4-backport">
         {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && 
           <div className='panel-wrapper with-login-panel-bg'>
+            <Link
+              className='back-button'
+              to="/authenticated/myaccount"
+            >
+              <IconSvg icon='arrowBack'/>
+            </Link>
             <div className='mainContent'>
-              <Link
-                className='back-button'
-                to="/authenticated/myaccount"
-              >
-                <IconSvg icon='arrowBack'/>
-              </Link>
               <div className='panel-logo logo-wrapper'>
                 <SourceAppLogo />
               </div>

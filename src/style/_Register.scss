@@ -1,29 +1,28 @@
 .RegisterAccount1 {
+    .back-button {
+        padding: 0;
+        width: 24px;
+        position: absolute;
+        margin: 24px;
+    }
     .mainContent {
-        .back-button {
-            padding: 0;
-            width: 24px;
-            position: absolute;
-            margin: 24px;
-        }
-        .logo-wrapper {
-            margin-left: auto;
-            margin-right: auto;
-        }
+        margin: 0 64px;
         height: 640px;
-        .form-group {
+        .form-group:first-child{
             margin-top: 50px;
+        }
+        .form-group {
+            margin-top: 30px;
         }
         button {
             width: 100%;
             margin: 30px 0px;
+            padding: 10px;
+            color: white;
         }
         > * {
             width: 300px;
         }
-    }
-    .EmailAddressUI {
-        margin: 60px;
     }
     .panel-right-text {
         margin-top: 100px;
@@ -46,8 +45,3 @@
     }
 }
 
-.RegisterAccount2 {
-    .container {
-        max-width: 770px;
-    }
-}
