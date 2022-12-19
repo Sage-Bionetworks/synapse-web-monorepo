@@ -26,9 +26,9 @@ export const EmailConfirmationPage: React.FunctionComponent<EmailConfirmationPag
           <h3>Please check your email.</h3>
           <p>We’ve sent an email to <strong>{email}</strong></p>
           <p>Click the link in the message to verify your address, then continue registration.</p>
-          <Link href={"#"} target="_blank">I didn’t receive an email</Link>
+          <Link href={"https://sagebionetworks.jira.com/servicedesk/customer/portal/9"} target="_blank">I didn’t receive an email</Link>
         </div>
-        <Button variant='contained' sx={buttonSx}>Close</Button>
+        <Button onClick={() => window.location.assign('/authenticated/myaccount')} variant='contained' sx={buttonSx}>Close</Button>
       </div>
     </Container>
   )
