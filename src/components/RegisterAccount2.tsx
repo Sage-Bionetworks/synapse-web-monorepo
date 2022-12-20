@@ -133,9 +133,9 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
             <div className={'panel-right-text'}>
               <h3>Email address verified!</h3>
               <h4>Now complete your registration.</h4>
-              <p>Your <strong>username</strong> can be up to 20 letters and numbers, but no spaces.</p>
+              <p>Your <strong>username</strong> can be made with letters and numbers, but no spaces.</p>
               <p><strong>First and last names</strong> are optional, but recommended because they make it easier for team members to find you.</p>
-              <p>We recommend using a strong, unique <strong>password</strong> of between 16-32 characters. You can use letters, numbers, and punctuation marks.</p>
+              <p>Your <strong>password</strong> needs to be at least 8 letters. We recommend using a strong, unique <strong>password</strong> of between 16-32 characters. You can use letters, numbers, and punctuation marks.</p>
             </div>
           </div>
         </div>
