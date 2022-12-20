@@ -1,6 +1,13 @@
 .RegisterAccount1 {
+    .back-button {
+        padding: 0;
+        width: 24px;
+        position: absolute;
+        margin: 24px;
+    }
     .mainContent {
         margin: 0 64px;
+        height: 640px;
         .form-group:first-child{
             margin-top: 50px;
         }
@@ -9,30 +16,34 @@
         }
         button {
             width: 100%;
-            margin: 30px 0px;
+            margin: 10px 0px;
             padding: 10px;
-            color: white;
         }
         > * {
             width: 300px;
         }
     }
-    .orText {
-        text-align: center;
-        font-weight: bold;
+    .panel-right-text {
+        margin-top: 100px;
     }
     .panel-right-text {
         margin-top: 100px;
     }
     .thankYouContainer {
+        background: #FEFEFE;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+        padding: 80px;
         width: 500px;
         .thankYouPanel {
             .mailIcon {
                 margin-bottom: 50px;
             }
-            text-align: center;
             width: 300px;
             margin: auto;
+            .thankYouText {
+                margin-bottom: 40px;
+            }
         }
     }
 }
+

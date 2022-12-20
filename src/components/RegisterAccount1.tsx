@@ -1,26 +1,24 @@
 import React, { useState } from 'react'
 import {
-  Button,
-  Col,
-  Container,
-  FormControl, FormGroup, FormLabel, Row 
+  FormControl, FormGroup, FormLabel
 } from 'react-bootstrap'
-import { SynapseClient, Typography } from 'synapse-react-client'
+import { SynapseClient } from 'synapse-react-client'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/Login'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { isAliasAvailable, registerAccountStep1 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
-import SageBionetworksLogo from '../assets/SageBionetworksLogo.svg'
-import GoogleLogo from '../assets/g-logo.png'
-import SageNetworkOrange from '../assets/SageNetworkOrange.svg'
-import SourceApp from './SourceApp'
+import { getCurrentSourceApp, SourceAppLogo } from './SourceApp'
 import { Link } from 'react-router-dom'
-import mailSvg from '../assets/mail.svg'
+import { EmailConfirmationPage } from './EmailConfirmationPage'
+import { Button, IconButton, Link as MuiLink } from '@mui/material'
+import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
+import GoogleLogo from '../assets/g-logo.png'
 
 export type RegisterAccount1Props = {
 }
 
 export enum Pages {
+  CHOOSE_REGISTRATION,
   EMAIL_REGISTRATION,
   EMAIL_REGISTRATION_THANK_YOU,
   GOOGLE_REGISTRATION
@@ -28,10 +26,64 @@ export enum Pages {
 
 export const RegisterAccount1 = (props: RegisterAccount1Props) => {
   const [isLoading, setIsLoading] = useState(false)
-  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
-  const [page, setPage] = useState(Pages.EMAIL_REGISTRATION)
-  
+  const [username, setUsername] = useState('')
+  const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
+  const [sourceAppName, setSourceAppName] = useState<string>()
+
+  React.useEffect(() => {
+    const source = getCurrentSourceApp()
+    setSourceAppName(source?.friendlyName)
+  },[])
+
+  const buttonSx={
+    width : '100%',
+    padding: '10px',
+    color: 'white',
+  }
+
+  const chooseButtonSx = {
+    color: '#666',
+    borderColor:'#EAECEE'
+  }
+
+  const BackButton = () => {
+    switch(page) {
+      case Pages.CHOOSE_REGISTRATION:
+        return <Link
+              className='back-button'
+              to="/authenticated/myaccount"
+            >
+              <IconSvg icon='arrowBack'/>
+        </Link>
+      case Pages.EMAIL_REGISTRATION:
+      case Pages.GOOGLE_REGISTRATION:
+        return <IconButton className='back-button' onClick={()=>setPage(Pages.CHOOSE_REGISTRATION)}>
+          <IconSvg icon='arrowBack'/>
+        </IconButton>
+        default:
+          return <></>
+    }
+  }
+
+  const onSendRegistrationInfo = async (event: React.SyntheticEvent) => {
+    event.preventDefault()
+    if (!email) {
+      displayToast('Please provide a valid email and try again.', 'danger')
+      return
+    }
+    setIsLoading(true)
+    try {
+      const callbackUrl = `${window.location.protocol}//${window.location.host}/register2?emailValidationSignedToken=`
+      await registerAccountStep1({email}, callbackUrl)
+      setPage(Pages.EMAIL_REGISTRATION_THANK_YOU)
+    } catch (err:any) {
+      displayToast(err.reason as string, 'danger')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const onSignUpWithGoogle = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     if (!username) {
@@ -70,43 +122,37 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
     }
   }
 
-  const onSendRegistrationInfo = async (event: React.SyntheticEvent) => {
-    event.preventDefault()
-    if (!email) {
-      displayToast('Please provide a valid email and try again.', 'danger')
-      return
-    }
-    setIsLoading(true)
-    try {
-      const callbackUrl = `${window.location.protocol}//${window.location.host}/register2?emailValidationSignedToken=`
-      await registerAccountStep1({email}, callbackUrl)
-      setPage(Pages.EMAIL_REGISTRATION_THANK_YOU)
-    } catch (err:any) {
-      displayToast(err.reason as string, 'danger')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
     <>
-      <div className="RegisterAccount1 SourceAppPage bootstrap-4-backport">
-        {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && <Row>
-          <Col xs={12} sm={4} className="sourceAppPanel">
-            <SourceApp isAccountCreationTextVisible={true}/>
-          </Col>
-          <Col xs={12} sm={8} className="blue-background">
-            <img
-                className="sageLogo"
-                src={SageBionetworksLogo}
-                alt="Sage Bionetworks Logo"
-                style={{width: 270}}
-              />
-            <div className="mainContent">
-              {page === Pages.EMAIL_REGISTRATION && <div className="EmailAddressUI">
-                  <Typography variant="headline1">Create a Sage Account</Typography>
+      <div className="panel-wrapper-bg RegisterAccount1 bootstrap-4-backport">
+        {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && 
+          <div className='panel-wrapper with-login-panel-bg'>
+            <BackButton/>
+            <div className='mainContent'>
+              <div className='panel-logo logo-wrapper'>
+                <SourceAppLogo />
+              </div>
+              {page === Pages.CHOOSE_REGISTRATION && 
+              <div style={{marginTop:'30px'}}>
+                <Button onClick={() => setPage(Pages.GOOGLE_REGISTRATION)} sx={chooseButtonSx} variant='outlined'>
+                  <img
+                    className="googleLogo"
+                    src={GoogleLogo}
+                    alt="Google Logo"
+                    style={{width: 25}}
+                  />
+                    <span className='signInText'>Create account with Google</span>
+                </Button>
+                <Button onClick={() => setPage(Pages.EMAIL_REGISTRATION)} sx={chooseButtonSx} variant='outlined'>
+                  <IconSvg icon='email'/> 
+                  Create account with your email
+                </Button>
+              </div>                
+              }
+              {page === Pages.EMAIL_REGISTRATION && 
+                <div className="EmailAddressUI">
                   <FormGroup controlId='emailAddressAccountCreation' className="required">
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Email address</FormLabel>
                       <FormControl 
                         onChange={e => setEmail(e.target.value)} 
                         value = {email}
@@ -115,85 +161,59 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                             onSendRegistrationInfo(e)
                           }
                         }}
-                        />
+                      />
                   </FormGroup>
                   <Button
-                      variant={email ? 'primary' : 'light'}
-                      onClick={onSendRegistrationInfo}
-                      type="button"
-                      disabled={ (email && !isLoading) ? false : true}
-                    >
-                      Create Account
-                  </Button>
-                  <Typography variant="body1" className="orText">or</Typography>
-                  <Button
-                    variant='white'
-                    className='googleSignInButton'
-                    onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
+                    sx={buttonSx}
+                    variant='contained'
+                    onClick={onSendRegistrationInfo}
                     type="button"
+                    disabled={ (email && !isLoading) ? false : true}
                   >
-                    <img
-                      className="googleLogo"
-                      src={GoogleLogo}
-                      alt="Google Logo"
-                      style={{width: 25}}
-                    />
-                    <span className='signInText'>Sign up with Google</span>
+                    Continue
                   </Button>
-                  <Typography variant="body1">
-                    Already have an account? <strong><Link to="/authenticated/myaccount">Login</Link></strong>
-                    </Typography>
-              </div>}
-              {page === Pages.GOOGLE_REGISTRATION && <div className="GoogleSignUpUI">
-              <Typography variant="headline1">Create a Sage Account</Typography>
-              <Typography variant="headline1">with Google</Typography>
-                <FormGroup controlId='googleAccountCreation' className="required">
-                    <FormLabel>Create username</FormLabel>
-                    <FormControl 
-                      onChange={e => setUsername(e.target.value)} 
-                      value = {username}/>
-                </FormGroup>
-                <Button
-                  variant={'white'}
-                  className='googleSignInButton'
-                  onClick={onSignUpWithGoogle}
-                  type="button"
-                  disabled={ (username && !isLoading) ? false : true}
-                >
-                <img
-                    className="googleLogo"
-                    src={GoogleLogo}
-                    alt="Google Logo"
-                    style={{width: 25}}
+            </div>}
+            {page === Pages.GOOGLE_REGISTRATION && 
+              <div>
+                <FormGroup controlId='emailAddressAccountCreation' className="required">
+                  <FormLabel>Username</FormLabel>
+                  <FormControl 
+                    onChange={e => setUsername(e.target.value)} 
+                    value = {username}
+                    onKeyPress={(e:any) => {
+                      if (e.key === "Enter") {
+                        onSignUpWithGoogle(e)
+                      }
+                    }}
                   />
-                  <span className='signInText'>Sign up with Google</span>
-                </Button>
-              </div>}
+                  </FormGroup>
+                  <Button
+                    sx={buttonSx}
+                    variant='contained'
+                    onClick={onSignUpWithGoogle}
+                    type="button"
+                    disabled={ (username && !isLoading) ? false : true}
+                  >
+                    Continue
+                  </Button>
+              </div>
+            }
+          </div>
+          <div className={'panel-right'}>
+            <div className={'panel-right-text'}>
+              <h3>Create an Account</h3>
+              <p>Your <strong>{sourceAppName}</strong> account is also a <strong>Sage account</strong>. You can also use it to access many other resources from Sage.</p>
+              <MuiLink>More about Sage accounts</MuiLink>
             </div>
-            <img
-              className="sageNetworkOrange"
-              src={SageNetworkOrange}
-              alt="Network - orange"
-            />
-          </Col>
-        </Row>}
+          </div>
+          </div>
+        }
 
-        {page === Pages.EMAIL_REGISTRATION_THANK_YOU && <div className="blue-background">
-          <Container className="thankYouContainer">
-            <div className="thankYouPanel">
-              <img
-                className="mailIcon"
-                src={mailSvg}
-                alt="Mail icon"
-              />
-              <Typography variant="headline2">Thank you for signing up.</Typography>
-              <Typography variant="body1">We've sent an email to <strong>{email}</strong>.</Typography>
-              <Typography variant="body1">Please check your email to continue.</Typography>
-            </div>
-          </Container>
-        </div>}
+        {page === Pages.EMAIL_REGISTRATION_THANK_YOU && 
+          <EmailConfirmationPage email={email} />
+        }
       </div>
     </>
-    
+
   )
 }
