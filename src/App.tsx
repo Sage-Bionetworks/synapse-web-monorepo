@@ -17,10 +17,11 @@ import { TermsOfUsePage } from 'components/TermsOfUsePage'
 import TopNavBar from 'components/TopNavBar'
 import { ProfileValidation } from 'components/ProfileValidation'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
-import AccountSettings from 'components/AccountSettings'
+// import AccountSettings from 'components/AccountSettings'
 import { ResetPassword } from 'components/ResetPassword'
 import { ProfilePage } from 'components/ProfilePage'
 import { CertificationQuiz } from 'components/CertificationQuiz'
+import { AccountSettings2 } from 'components/AccountSettingsV2'
 
 const App: React.FC = () => {
   return (
@@ -58,7 +59,8 @@ const App: React.FC = () => {
                         } else if (path === '/authenticated/signTermsOfUse') {
                           return <TermsOfUsePage />
                         } else if (path === '/authenticated/myaccount') {
-                          return <AccountSettings/>
+                          // return <AccountSettings/>
+                          return <AccountSettings2/>
                         } else if(path ==='/authenticated/myprofile') {
                           return <ProfilePage/>
                         } else if (path === '/authenticated/certificationquiz') {

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
-import { Button, FormControl, FormGroup, FormLabel } from 'react-bootstrap'
+import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
+import { Button } from '@mui/material'
 import { SynapseClient, Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { ChangePasswordWithToken, PasswordResetSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/ChangePasswordRequests'
@@ -83,7 +84,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                             placeholder='Confirm new password'
                             />
                         </FormGroup>
-                        <Button className='btn-container'  variant='secondary' type='submit' onSubmit={handleChangePasswordWithToken}>Change Password</Button>
+                        <Button className='btn-container'  variant='contained' type='submit' onSubmit={handleChangePasswordWithToken}>Change Password</Button>
                     </form>
                 </> :
                 <>
@@ -94,7 +95,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                         value={userName}
                         placeholder='Email address-or-username'
                     />
-                    <Button variant='secondary' onClick={handleResetPassword}>Reset my password</Button>
+                    <Button variant='contained' onClick={handleResetPassword}>Reset my password</Button>
                 </>
 
             }
