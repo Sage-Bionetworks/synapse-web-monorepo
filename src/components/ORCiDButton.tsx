@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
-import {
-  Button,
-} from 'react-bootstrap'
+import { Button, SxProps } from '@mui/material'
 import { SynapseClient } from 'synapse-react-client'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/Login'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
@@ -11,6 +9,7 @@ import EditIcon from '../assets/RedEditPencil.svg'
 export type ORCiDButtonProps = {
   redirectAfter?: any
   editButton?: boolean
+  sx?: SxProps
 }
 
 export const onBindToORCiD = async (event: React.SyntheticEvent, setIsLoading: Function, redirectAfter?: any) => {
@@ -47,10 +46,10 @@ export const ORCiDButton = (props: ORCiDButtonProps) => {
     {props.editButton  ? 
       <button onClick={e=>onBindToORCiD(e,setIsLoading,props.redirectAfter)}><img src={EditIcon} alt="edit icon"/></button>
     : <Button
-      variant='secondary'
+      variant='outlined'
       onClick={e=>onBindToORCiD(e,setIsLoading,props.redirectAfter)}
       type="button"
-      style={{ marginLeft: 20, width: 'fit-content' }}
+      sx={props.sx}
       disabled={ isLoading }
     >
       Link My ORCiD

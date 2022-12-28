@@ -1,330 +1,286 @@
-import React, { useState, useEffect } from 'react'
-import { Button, Col, Container, FormControl, FormGroup, FormLabel, Modal, Row } from 'react-bootstrap'
+import React, { useEffect, useRef, useState } from 'react'
+import { Button, Link } from '@mui/material'
+import { UserBundle, UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
+import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { UserProfile, UserBundle, VerificationSubmission, VerificationStateEnum, VerificationState } from 'synapse-react-client/dist/utils/synapseTypes'
-import { SynapseConstants, Typography } from 'synapse-react-client'
-import { getMyUserBundle, updateMyUserProfile } from 'synapse-react-client/dist/utils/SynapseClient'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import StarterAccount from '../assets/StarterAccount.svg'
-import VerifedAccount from '../assets/VerifiedAccount.svg'
-import CheckmarkBadgeLight from '../assets/CheckmarkBadgeLight.svg'
-import CheckmarkBadgeDark from '../assets/CheckmarkBadge.svg'
-import CertifiedImg from '../assets/Certified.svg'
-import EditIcon from '../assets/RedEditPencil.svg'
+import { Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { ChangePassword } from './ChangePassword'
-import { getSearchParam } from 'URLUtils'
-import { getSourceAppRedirectURL } from './SourceApp'
-import { ConfigureEmail } from './ConfigureEmail'
-import { UnbindORCiDDialog } from './UnbindORCiD'
-import { ORCiDButton } from './ORCiDButton'
+import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { useHistory } from 'react-router-dom'
+import { ORCiDButton } from './ORCiDButton'
 
-export type AccountSettingsProps = {
+export const AccountSettings = () => {
+  const { accessToken } = useSynapseContext()
+  const [ userProfile, setUserProfile ] = useState<UserProfile>()
+  const [ firstName, setFirstName ] = useState<string>()
+  const [ lastName, setLastName ] = useState<string>()
+  const [ position, setPosition ] = useState<string>()
+  const [ company, setCompany ] = useState<string>()
+  const [ location, setLocation ] = useState<string >()
+  const [ url, setUrl ] = useState<string>()
+  const [ industry, setIndustry ] = useState<string>()
+  const [ primaryEmail, setPrimaryEmail ] = useState<string>()
+  const [ username, setUsername ] = useState<string>()
+  const [ changeInForm, setChangeInForm] = useState(false)
+  const [ orcid, setOrcid ] = useState<string>()
+  const [ verified, setVerified ] = useState<boolean>()
+  const [ isCertified, setIsCertified ] = useState<boolean>()
+  const [ termsOfUse, setTermsOfUse ] = useState<boolean>() 
+  const history = useHistory()
+
+  const profileInformationRef = useRef<HTMLDivElement>(null)
+  const changePasswordRef = useRef<HTMLDivElement>(null)
+  const trustCredentialRef= useRef<HTMLDivElement>(null)
+  const personalAccessTokenRef = useRef<HTMLDivElement>(null)
+
+  const handleChangesFn = (val: string) => {
+    history.push(`/authenticated/${val}`)
+  }
+  
+  const markFormDirty = () => setChangeInForm(true)
+  const credentialButtonSX = {
+    marginRight: '26px'
+  }
+  const unpackBundle = (bundle: UserBundle) => {
+    setUserProfile(bundle.userProfile)
+    setUsername(bundle.userProfile?.userName)
+    setFirstName(bundle.userProfile?.firstName)
+    setLastName(bundle.userProfile?.lastName)
+    setPosition(bundle.userProfile?.position)
+    setCompany(bundle.userProfile?.company)
+    setLocation(bundle.userProfile?.location)
+    setIndustry(bundle.userProfile?.industry)
+    setUrl(bundle.userProfile?.url)
+    setVerified(bundle.isVerified)
+    setOrcid(bundle.ORCID)
+    setIsCertified(bundle.isCertified)
 }
 
-const AccountSettings = (props: AccountSettingsProps) => {
-    const { accessToken } = useSynapseContext()
-    const [ userProfile, setUserProfile ] = useState<UserProfile>()
-    const [ showDialog, setShowDialog ] = useState<boolean>(false)
-    const [ orcid, setOrcid ] = useState<string>()
-    const [ verified, setVerfied ] = useState<boolean>()
-    const [ isCertified, setIsCertified] = useState<boolean>()
-    const [ editUsername, setEditUsername] = useState<boolean>(false)
-    const [ changePW, setChangePW] = useState<boolean>(false)
-    const [ isShowingWelcomeScreen, setIsShowingWelcomeScreen] = useState<boolean>(false)
-    const [ updatedUsername, setUpdatedUsername] = useState<string>('')
-    const [ verificationSubmission, setVerificationSubmission] = useState<VerificationSubmission>()
-    const [ verificationState, setVerificationState] = useState<VerificationState>()
-    const [ showORCiDDialog, setShowORCiDDialog ] = useState(false)
+const getUserData = async() => {
+  try{
+    const mask =
+      SynapseConstants.USER_BUNDLE_MASK_ORCID |
+      SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
+      SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
+      SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
+      SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION  
+    const getPrimaryEmail = await SynapseClient.getNotificationEmail(accessToken)
+    const bundle: UserBundle = await SynapseClient.getMyUserBundle(mask, accessToken)
+    setPrimaryEmail(getPrimaryEmail.email)
+    unpackBundle(bundle)
+    setTermsOfUse(true)
+  } catch (err: any) {
+    displayToast(err.reason as string, 'danger')
+  }
+}
 
-    const SUSPENDED_TEXT = 'Your account has been suspended.'
-    const REJECTED_TEXT = 'Sorry we could not verify your account.'
+const updateUserProfile = async () => {
+  try{
+    if(userProfile){
+      userProfile.userName = username as string
+      userProfile.firstName = firstName as string
+      userProfile.lastName = lastName as string
+      userProfile.position = position as string
+      userProfile.company = company as string
+      userProfile.location = location as string
+      userProfile.industry = industry as string
+      userProfile.url = url as string
 
-    const history = useHistory()
-
-    const handleChangesFn = (val: string) => {
-        history.push(`/authenticated/${val}`)
+      await SynapseClient.updateMyUserProfile(userProfile, accessToken)
+      getUserData()
+      setChangeInForm(false)
     }
+  } catch (err: any) {
+    displayToast(err.reason as string, 'danger')
+  }
+}
 
-    // on initial mount, check query parameter for showWelcomeScreen
-    const showWelcomeScreenURLParam = getSearchParam('showWelcomeScreen')
-    if (showWelcomeScreenURLParam && showWelcomeScreenURLParam === 'true' && !isShowingWelcomeScreen) {
-        setIsShowingWelcomeScreen(true)
-    }
-    const onUpdateUserProfile = async (event: React.SyntheticEvent) => {
-        event.preventDefault()
-        try{
-            if(userProfile && editUsername && updatedUsername){
-                userProfile.userName = updatedUsername
-                const updatedProfile = await updateMyUserProfile(userProfile, accessToken)
-                setUserProfile(updatedProfile)
-            }
-            cancelEdit()
-        } catch(err:any) {
-            displayToast(err.reason, 'danger')
-        }
-    }
+  useEffect(() => {
+    getUserData()
+  }, []
+  )
 
-    useEffect(() => {
-        const getData = async() => {
-            try {
-                const mask =
-                  SynapseConstants.USER_BUNDLE_MASK_ORCID |
-                  SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
-                  SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
-                  SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
-                  SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION
+  const handleScroll = (ref:React.RefObject<HTMLDivElement>) => {
+    ref.current?.scrollIntoView({behavior:'smooth'})
+  }
 
-                const bundle:UserBundle = await getMyUserBundle(
-                    mask,
-                    accessToken
-                )
-                setUserProfile(bundle.userProfile)
-                setOrcid(bundle.ORCID)
-                setVerfied(bundle.isVerified)
-                setIsCertified(bundle.isCertified)
-                setVerificationSubmission(bundle.verificationSubmission)
-                setVerificationState(bundle.verificationSubmission?.stateHistory?.slice(-1)[0])
+  return (
+    <div className='panel-wrapper-bg with-account-setting'>
+      <nav className='account-setting-panel nav-panel'>
+        <Button onClick={() => handleScroll(profileInformationRef)} variant='outlined'>Profile Information</Button> 
+        <Button onClick={() => handleScroll(changePasswordRef)} variant='outlined'>Change Password</Button>
+        <Button onClick={() => handleScroll(trustCredentialRef)} variant='outlined'>Trust & Credentials</Button>
+        <Button onClick={() => handleScroll(personalAccessTokenRef)} variant='outlined'>Personal Access Tokens</Button>
+      </nav>
 
-            } catch (err: any) {
-                displayToast(err.reason as string, 'danger')
-            }
-        }
-        getData()
-    }, [])
-
-    const VerifyButton = () => {
-        return(
-            <div className='center-button'>
-                <Button
-                onClick={()=>handleChangesFn('validate')}
-                variant='secondary'>
-                <img className='BadgeIcon' src={CheckmarkBadgeLight} alt='empty checkmark'/> Verify Account
-                </Button>
-            </div>   
-        )
-    }
-
-    const ProfileValidationState = (verificationStateEnum: VerificationStateEnum) => {
-        if(verificationStateEnum === 'SUBMITTED'){
-            return <div className='verified-img-container'><img className="BadgeIcon" src={CheckmarkBadgeDark} alt='CheckmarkBadgeDark'/>Pending Verification</div>
-        } else if(verificationStateEnum === 'REJECTED' || verificationStateEnum ==='SUSPENDED'){
-            return (
-                <div className='ValidationStateContainer'>
-                    <Typography variant='headline3'>
-                        {verificationStateEnum === 'REJECTED' ? REJECTED_TEXT : SUSPENDED_TEXT}
-                    </Typography>
-                    <Typography variant='body1' >
-                        {verificationState?.reason}
-                    </Typography>
-                    <VerifyButton/>
-                </div>
-            )
-        } else {
-            return <VerifyButton/>
-        }
-    }
-
-    // Closes any forms and resets the fields.
-    const cancelEdit = () => {
-        setEditUsername(false)
-        setUpdatedUsername('')
-        setChangePW(false)
-    }
-
-    interface EditFieldProps {
-        label: string, 
-        updatedValue: string, 
-        updateFn: Function,
-    }
-    
-    // Component to edit fields (username / email)
-    const EditField: React.FC<EditFieldProps> = ({label, updatedValue, updateFn}) => {
-        return(
-            <div>
-                <FormGroup className='required'>
-                    <FormLabel>{label}</FormLabel>
-                    <FormControl
-                        onChange={e => updateFn(e.target.value)}
-                        style={{maxWidth:'320px'}}
-                        value = {updatedValue}/>
-                    <Button className='btn-container emptyButton' onClick={cancelEdit}>
-                        Cancel
-                    </Button>
-                    <Button className='btn-container'  variant='secondary' onClick={onUpdateUserProfile}>
-                        Save Changes
-                    </Button>
-                </FormGroup>
-            </div>
-        )
-    }
-    return(  
-        <div className="bootstrap-4-backport blue-background AccountSettings">
-            <Container>
-                <Row>
-                    <Col sm={4} style={{padding:0}}>
-                        {verified ? 
-                        <div className='verified-img-container'>
-                            <img src={VerifedAccount} alt="verified"/> 
-                            <p className='verified-text'>Verified Account</p>
-                        </div>
-                        : 
-                        <div className='verified-img-container'>
-                            <img src={StarterAccount} alt="starter"/>
-                            <p className='verified-text'>Starter Account</p>
-                        </div>
-                        }
-                        {!verified && ProfileValidationState(verificationState?.state as VerificationStateEnum)}
-                        {!isCertified && <div className='center-button'>
-                            <Button
-                            variant='secondary'
-                            onClick={()=>{handleChangesFn('certificationquiz')}}
-                            >
-                                <img  className='BadgeIcon' src={CertifiedImg} alt='certify'/>Get Certified
-                            </Button>
-                        </div>}
-                    </Col>
-                    <Col sm={8}>
-                        <div className="grid-container">
-                            {editUsername ? 
-                                <div className='edit-cell'>
-                                    <EditField label='Username' updatedValue={updatedUsername} updateFn={setUpdatedUsername} />
-                                </div>
-                                : <>
-                                    <div className='label-cell'>Username:</div>
-                                    <div>
-                                        {userProfile?.userName}
-                                        <button onClick={()=>{
-                                            setEditUsername(true) 
-                                            setChangePW(false)}}>
-                                        
-                                            <img src={EditIcon} alt="edit icon"/>
-                                        </button>
-                                    </div>
-                                </>
-                            }
-                            <div className='label-cell'>Email:</div>
-                            <ConfigureEmail returnToUrl='/authenticated/myaccount' />
-                            {changePW ?
-                                <div className='edit-cell'><ChangePassword onCancel={cancelEdit} /></div>
-                                : <>
-                                    <div className='label-cell'>Password: </div>
-                                    <div>
-                                        **********
-                                        <button onClick={()=>setChangePW(true)}><img src={EditIcon} alt="edit icon"/></button>
-                                    </div>
-                                </>
-                            }
-                            {orcid ?
-                            <>
-                                <div className='label-cell'>OrcID: </div>
-                                <div className='orcid-cell'>
-                                    <a href={orcid}>{orcid}</a>
-                                    <button onClick={()=>setShowORCiDDialog(true)}><img src={EditIcon} alt="edit icon"/></button>
-                                </div>
-                            </> :
-                            <>
-                                <div className='label-cell'>OrcID: </div>
-                                <ORCiDButton />
-                            </>
-                            }
-                        </div>
-                    </Col>
-                </Row>
-                     {verified 
-                     && 
-                     <div className='account-setting-footer'>
-                         <div>Your account was last verified on: {verificationSubmission?.createdOn}</div>
-                         <div>Please update if necessary.</div>
-                         <Button className='btn-container emptyButton' style={{marginTop:'16px'}} onClick={()=>setShowDialog(true)}>View Verified Profile</Button>
-                     </div>}
-            </Container>
-            {isShowingWelcomeScreen && <Modal
-                className="WelcomeScreenModal bootstrap-4-backport"
-                show={isShowingWelcomeScreen}
-                animation={false}
-                size="lg"
-                onHide={()=> {setIsShowingWelcomeScreen(false)}}
-                backdrop='static'
-            >
-                <Modal.Body>
-                    <Row>
-                        <Col lg={2} />
-                        <Col lg={8} >
-                            <div className="startAccountIconContainer"><img src={StarterAccount} alt="starter"/></div>
-                            <Typography variant='headline1'>
-                                Welcome to your Starter Sage Account
-                            </Typography>
-                            <Typography variant='body1'>
-                                You’ve created a Starter Sage Account.
-                            </Typography>
-                            <Typography variant='body1'>
-                                This account will allow you to explore Sage's products and its many capabilities.
-                            </Typography>
-                            <Typography variant='body1'>
-                                For full access to data and ability to launch real studies, we will need additional information to verify your identity.
-                            </Typography>
-                            <Typography variant='body1'>
-                                Would you like to verify your account?
-                            </Typography>
-                        </Col>
-                    </Row>
-                </Modal.Body>
-                <Modal.Footer>
-                <div className="ButtonContainer">
-                    <Button
-                        variant="white"
-                        onClick={()=>{window.location.assign(getSourceAppRedirectURL())}}
-                        >
-                        Verify later
-                    </Button>
-                    <Button
-                        variant="primary"
-                        onClick={()=>handleChangesFn('validate')}
-                    >
-                        <img className="BadgeIcon" src={CheckmarkBadgeLight} alt="verify"/>Verify now
-                    </Button>
-                </div>
-                </Modal.Footer>
-            </Modal>}
-
-            <Modal
-                className='verifiedModal bootstrap-4-backport'
-                show={showDialog}
-                onHide={()=>setShowDialog(false)}
-                animation={false}
-                backdrop='static'
-                centered
-            >   
-                <Modal.Body style={{margin:0, padding:'32px 0'}}>
-                    <Row>
-                        <Col xs={12} style={{textAlign:'center', marginBottom:'32px'}}><img src={VerifedAccount} alt="verified"/></Col>
-                    </Row>
-                    <Row>
-                        <Col><Typography variant='headline3' className='modal-column label-cell'>First Name:</Typography></Col>
-                        <Col><Typography variant='body1' className='modal-column'>{verificationSubmission?.firstName}</Typography></Col>
-                    </Row>
-                    <Row>
-                        <Col><Typography variant='headline3' className='label-cell'>Last Name:</Typography></Col>
-                        <Col><Typography variant='body1' className='modal-column'>{verificationSubmission?.lastName}</Typography></Col>
-                    </Row>
-                    <Row>
-                        <Col><Typography variant='headline3' className='label-cell'>Current Affiliation:</Typography></Col>
-                        <Col><Typography variant='body1' className='modal-column'>{verificationSubmission?.company}</Typography></Col>
-                    </Row>
-                    <Row>
-                        <Col><Typography variant='headline3' className='label-cell'>Location: </Typography> </Col>
-                        <Col><Typography variant='body1' className='modal-column'>{verificationSubmission?.location}</Typography></Col>
-                    </Row>
-                    <Row>
-                        <Col sm={6}><Button className='btn-container emptyButton' onClick={()=>{handleChangesFn('validate')}}>Re-verify information</Button></Col>
-                        <Col sm={6}><Button className='btn-container' variant='secondary' onClick={()=>setShowDialog(false)}>Close</Button></Col>
-                    </Row>
-                </Modal.Body>
-            </Modal>
-            <UnbindORCiDDialog show={showORCiDDialog} setShow={setShowORCiDDialog} orcid={orcid} redirectAfter='/authenticated/myaccount'/>
+      <div>
+        <div ref={profileInformationRef} className='account-setting-panel main-panel'>
+          <h3>Profile Information</h3>
+          <p>This information is reused across all Sage products.</p>
+          <Form onChange={markFormDirty}>
+            <FormGroup className='required'>
+              <FormLabel>Username</FormLabel>
+              <FormControl onChange={e => setUsername(e.target.value)} value={username}/>
+            </FormGroup>
+            <FormGroup className='required'>
+              <FormLabel>Email address</FormLabel>
+              <FormControl onChange={e => setPrimaryEmail(e.target.value)} value={primaryEmail}/>
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>First name</FormLabel>
+              <FormControl onChange={e => setFirstName(e.target.value)} value={firstName}/>
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Last name</FormLabel>
+              <FormControl onChange={e => setLastName(e.target.value)} value={lastName}/>
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Current position</FormLabel>
+              <FormControl placeholder='e.g Principal Investigator' onChange={e => setPosition(e.target.value)} value={position}/>
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Current affiliation</FormLabel>
+              <FormControl placeholder='e.g. Example University' onChange={e => setCompany(e.target.value)} value={company}/>
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Industry</FormLabel>
+              <FormControl onChange={e => setIndustry(e.target.value)} value={industry}/>
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Website</FormLabel>
+              <FormControl placeholder='https://example.com' onChange={e => setUrl(e.target.value)} value={url}/>
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>City, Country</FormLabel>
+              <FormControl onChange={e => setLocation(e.target.value)} value={location}/>
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Institutional affiliation</FormLabel>
+              <FormControl/>
+            </FormGroup>
+            <Button onClick={updateUserProfile} disabled={!changeInForm} variant='contained'>Save Changes</Button>
+          </Form>
         </div>
-    )
-}
+        <div ref={changePasswordRef} className='account-setting-panel main-panel'>
+          <h3>Change Password</h3>
+          <ChangePassword/>
+        </div>
+        <div ref={trustCredentialRef} className='account-setting-panel main-panel'>
+          <h3 >Trust & Credentials</h3>
+          <p>This section lists the various ways we support verifying your trust and identity in order to permit access to our products. You may be asked to complete any of the following as part of requesting access within a system.</p>
+          <div className='credential-partition'>
+            <h4>Terms and Conditions for Use</h4>
+            <i>Required to register</i>
+            <p>You must affirm your agreement to follow these terms and conditions in order to create an account. </p>
+            <div className='item-completion'>
+              {termsOfUse ? 
+                <span className='completeIcon'><IconSvg icon='check'/> Completed</span>  
+                : 
+                <span className='incompleteIcon'><IconSvg icon='close'/> Incompleted</span>
+              }           
+            </div>
+            <Button 
+              disabled={termsOfUse}
+              variant='outlined'
+              sx={credentialButtonSX}
+              onClick={()=>handleChangesFn('signTermsOfUse')}
+            >
+              Agree to Terms and Conditions
+            </Button> 
+            <Link 
+              href='https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf?v=5'
+              target="_blank"
+            >
+              More information
+            </Link>
+          </div>
+          <div className='credential-partition'>
+            <h4>Certification</h4>
+            <i>Required to upload data.</i>
+            <p>There are times where human data can only be shared with certain restrictions. In order to upload data on any application, you must pass a quiz on the technical and ethical aspects of sharing data in our system.</p>
+              <div className='item-completion'>
+              {isCertified ? 
+                <span className='completeIcon'><IconSvg icon='check'/> Completed</span>  
+                : 
+                <span className='incompleteIcon'><IconSvg icon='close'/> Incompleted</span>
+              }
+              </div>
 
-export default AccountSettings
+            <Button
+              disabled={isCertified}
+              variant='outlined'
+              sx={credentialButtonSX}
+              onClick={()=>handleChangesFn('certificationquiz')}
+            >
+              Take the certification quiz
+            </Button>
+            <Link 
+              href='https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers'
+              target="_blank"
+            >
+              More information
+            </Link>
+          </div>
+          <div className='credential-partition'>
+            <h4>ORCID Profile</h4>
+            <i>Linking your ORCID profile is useful for other researchers, and is required for profile validation.</i>
+            <div className='item-completion'>
+              {
+                orcid ? <a href={orcid}>{orcid}</a> : <span className='incompleteIcon'><IconSvg icon='close'/> Incompleted</span>
+              }
+            </div>
+            <ORCiDButton sx={credentialButtonSX}/>
+            <Link 
+              href='https://help.synapse.org/docs/Synapse-User-Account-Types.2007072795.html#SynapseUserAccountTypes-ValidatedUsers'
+              target="_blank"
+            >
+              More information
+            </Link>
+          </div>
+          <div className='credential-partition'>
+            <h4>Profile Validation</h4>
+            <i>Users with a validated profile can access more features and data.</i>
+            <p>Profile validation requires you to complete your profile, link an ORCID profile, sign and date the Sage pledge, and upload both the pledge and an identity attestation document, after which your application will be manually reviewed (which may take several days).</p>
+            <div className='item-completion'>
+              {verified ? 
+                  <span className='completeIcon'><IconSvg icon='check'/> Completed</span>  
+                  : 
+                  <span className='incompleteIcon'><IconSvg icon='close'/> Incompleted</span>
+              }
+            </div>
+            <Button
+              disabled={!!verified}
+              variant='outlined'
+              sx={credentialButtonSX}
+              onClick={()=>handleChangesFn('validate')}
+            >
+              Request validation
+            </Button>
+            <Link 
+              href="https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers"
+              target="_blank"
+            >
+              More information
+            </Link>
+          </div>
+        </div>
+        <div ref={personalAccessTokenRef} className='account-setting-panel main-panel'>
+          <h3>Personal Access Tokens</h3>
+          <p>You can issue personal access tokens to authenticate your scripts with scoped access to your account. It is important that you treat personal access tokens with the same security as your password.</p>
+          <Link
+            sx={credentialButtonSX}  
+          >
+            Manage Personal Access Tokens
+          </Link>
+          <Link 
+            href="https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#ManagingYourAccount-PersonalAccessTokens"
+            target="_blank"
+          >
+            More information
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}

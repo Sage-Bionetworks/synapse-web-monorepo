@@ -17,10 +17,10 @@ import { TermsOfUsePage } from 'components/TermsOfUsePage'
 import TopNavBar from 'components/TopNavBar'
 import { ProfileValidation } from 'components/ProfileValidation'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
-import AccountSettings from 'components/AccountSettings'
 import { ResetPassword } from 'components/ResetPassword'
 import { ProfilePage } from 'components/ProfilePage'
 import { CertificationQuiz } from 'components/CertificationQuiz'
+import { AccountSettings } from 'components/AccountSettings'
 
 const App: React.FC = () => {
   return (
