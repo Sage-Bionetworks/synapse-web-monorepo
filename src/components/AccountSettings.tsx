@@ -26,6 +26,7 @@ export const AccountSettings = () => {
   const [ orcid, setOrcid ] = useState<string>()
   const [ verified, setVerified ] = useState<boolean>()
   const [ isCertified, setIsCertified ] = useState<boolean>()
+  const [ termsOfUse, setTermsOfUse ] = useState<boolean>() 
   const history = useHistory()
 
   const profileInformationRef = useRef<HTMLDivElement>(null)
@@ -38,7 +39,9 @@ export const AccountSettings = () => {
   }
   
   const markFormDirty = () => setChangeInForm(true)
-
+  const credentialButtonSX = {
+    marginRight: '26px'
+  }
   const unpackBundle = (bundle: UserBundle) => {
     setUserProfile(bundle.userProfile)
     setUsername(bundle.userProfile?.userName)
@@ -66,6 +69,7 @@ const getUserData = async() => {
     const bundle: UserBundle = await SynapseClient.getMyUserBundle(mask, accessToken)
     setPrimaryEmail(getPrimaryEmail.email)
     unpackBundle(bundle)
+    setTermsOfUse(true)
   } catch (err: any) {
     displayToast(err.reason as string, 'danger')
   }
@@ -113,7 +117,7 @@ const updateUserProfile = async () => {
       <div>
         <div ref={profileInformationRef} className='account-setting-panel main-panel'>
           <h3>Profile Information</h3>
-          <p>This information is reused across all Sage products. Lorem ipsum dolor sit amet consectetuer adapiscing elit, sed do euismod tempore incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam. Quis nostrud exercitation ullamco laboris.</p>
+          <p>This information is reused across all Sage products.</p>
           <Form onChange={markFormDirty}>
             <FormGroup className='required'>
               <FormLabel>Username</FormLabel>
@@ -170,12 +174,17 @@ const updateUserProfile = async () => {
             <i>Required to register</i>
             <p>You must affirm your agreement to follow these terms and conditions in order to create an account. </p>
             <div className='item-completion'>
-              {/* Check if user finished Terms of Use */}
+              {termsOfUse ? 
+                <span className='completeIcon'><IconSvg icon='check'/> Completed</span>  
+                : 
+                <span className='incompleteIcon'><IconSvg icon='close'/> Incompleted</span>
+              }           
             </div>
             <Button 
-              disabled
-              variant='contained'
-              sx={{marginRight:'26px'}}
+              disabled={termsOfUse}
+              variant='outlined'
+              sx={credentialButtonSX}
+              onClick={()=>handleChangesFn('signTermsOfUse')}
             >
               Agree to Terms and Conditions
             </Button> 
@@ -192,16 +201,16 @@ const updateUserProfile = async () => {
             <p>There are times where human data can only be shared with certain restrictions. In order to upload data on any application, you must pass a quiz on the technical and ethical aspects of sharing data in our system.</p>
               <div className='item-completion'>
               {isCertified ? 
-                <span style={{color:'#32A330'}}><IconSvg icon='check'/> Completed</span>  
+                <span className='completeIcon'><IconSvg icon='check'/> Completed</span>  
                 : 
-                <span style={{color:'#C13415'}}><IconSvg icon='close'/> Incompleted</span>
+                <span className='incompleteIcon'><IconSvg icon='close'/> Incompleted</span>
               }
               </div>
 
             <Button
               disabled={isCertified}
               variant='outlined'
-              sx={{marginRight:'26px'}}
+              sx={credentialButtonSX}
               onClick={()=>handleChangesFn('certificationquiz')}
             >
               Take the certification quiz
@@ -218,10 +227,10 @@ const updateUserProfile = async () => {
             <i>Linking your ORCID profile is useful for other researchers, and is required for profile validation.</i>
             <div className='item-completion'>
               {
-                orcid ? <a href={orcid}>{orcid}</a> : <span style={{color:'#C13415'}}><IconSvg icon='close'/> Incompleted</span>
+                orcid ? <a href={orcid}>{orcid}</a> : <span className='incompleteIcon'><IconSvg icon='close'/> Incompleted</span>
               }
             </div>
-            <ORCiDButton sx={{marginRight:'26px'}}/>
+            <ORCiDButton sx={credentialButtonSX}/>
             <Link 
               href='https://help.synapse.org/docs/Synapse-User-Account-Types.2007072795.html#SynapseUserAccountTypes-ValidatedUsers'
               target="_blank"
@@ -235,15 +244,15 @@ const updateUserProfile = async () => {
             <p>Profile validation requires you to complete your profile, link an ORCID profile, sign and date the Sage pledge, and upload both the pledge and an identity attestation document, after which your application will be manually reviewed (which may take several days).</p>
             <div className='item-completion'>
               {verified ? 
-                  <span style={{color:'#32A330'}}><IconSvg icon='check'/> Completed</span>  
+                  <span className='completeIcon'><IconSvg icon='check'/> Completed</span>  
                   : 
-                  <span style={{color:'#C13415'}}><IconSvg icon='close'/> Incompleted</span>
+                  <span className='incompleteIcon'><IconSvg icon='close'/> Incompleted</span>
               }
             </div>
             <Button
               disabled={!!verified}
               variant='outlined'
-              sx={{marginRight:'26px'}}
+              sx={credentialButtonSX}
               onClick={()=>handleChangesFn('validate')}
             >
               Request validation
@@ -260,7 +269,7 @@ const updateUserProfile = async () => {
           <h3>Personal Access Tokens</h3>
           <p>You can issue personal access tokens to authenticate your scripts with scoped access to your account. It is important that you treat personal access tokens with the same security as your password.</p>
           <Link
-            sx={{marginRight:'26px'}}  
+            sx={credentialButtonSX}  
           >
             Manage Personal Access Tokens
           </Link>

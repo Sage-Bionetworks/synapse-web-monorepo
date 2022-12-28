@@ -14,6 +14,12 @@
         padding:54px;
         margin-right: 220px;
         .credential-partition {
+            .completeIcon {
+                color: #32A330
+            }
+            .incompleteIcon {
+                color: #C13415
+            }
             .item-completion {
                 margin: 20px 0;
             }
