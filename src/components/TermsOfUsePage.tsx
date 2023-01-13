@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Redirect } from 'react-router-dom'
 import { SynapseClient } from 'synapse-react-client'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
@@ -49,9 +48,13 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
     padding: '10px'
   }
 
+  if (isDone) {
+    // AppInitializer still thinks the ToU are not signed.
+    // TODO: This should go to the new Account Created page (or to the page where we gather more profile data for the specific app first, like your Institution for the ARK portal)
+    window.location.assign('/authenticated/myaccount?showWelcomeScreen=true')
+  }
   return (
     <>
-      {isDone && <Redirect to='/authenticated/myaccount?showWelcomeScreen=true'/>}
       <div className={'panel-wrapper-bg TermsOfUsePage'}>
         <div className={'panel-wrapper with-white-panel-bg'}>
           <div className={'panel-left'}>

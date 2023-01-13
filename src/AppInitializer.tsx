@@ -10,6 +10,7 @@ import useAnalytics from './useAnalytics'
 import { getSearchParam } from 'URLUtils'
 import { ThemeOptions } from '@mui/material'
 import { getSourceAppTheme } from 'components/SourceApp'
+import { Redirect, useLocation } from 'react-router-dom'
 
 export type AppInitializerState = {
   token?: string
@@ -28,6 +29,7 @@ export type AppInitializerState = {
 function useSession(
 ) {
   const [token, setToken] = useState<string | undefined>(undefined)
+  const [touSigned, setTouSigned] = useState(true)
   const [hasCalledGetSession, setHasCalledGetSession] = useState(false)
   const [userProfile, setUserProfile] = useState<UserProfile | undefined>(
     undefined,
@@ -54,9 +56,9 @@ function useSession(
       initAnonymousUserState()
       return
     }
+    await setToken(token)
+    await setHasCalledGetSession(true)
     try {
-      setToken(token)
-      setHasCalledGetSession(true)
       // get user profile
       const userProfile = await SynapseClient.getUserProfile(token)
       if (userProfile.profilePicureFileHandleId) {
@@ -65,13 +67,17 @@ function useSession(
       setUserProfile(userProfile)
     } catch (e) {
       console.error('Error on getSession: ', e)
-      // intentionally calling sign out because there token could be stale so we want
-      // the stored session to be cleared out.
-      SynapseClient.signOut(() => {
-        // PORTALS-2293: if the token was invalid (caused an error), reload the app to ensure all children
-        // are loading as the anonymous user
-        window.location.reload()
-      })
+      if (e.reason == "Terms of use have not been signed.") {
+        setTouSigned(false)
+      } else {
+        // intentionally calling sign out because there token could be stale so we want
+        // the stored session to be cleared out.
+        SynapseClient.signOut(() => {
+          // PORTALS-2293: if the token was invalid (caused an error), reload the app to ensure all children
+          // are loading as the anonymous user
+          window.location.reload()
+        })
+      }
     }
   }, [initAnonymousUserState])
 
@@ -81,6 +87,7 @@ function useSession(
     userProfile,
     hasCalledGetSession,
     getSession,
+    touSigned
   }
 }
 
@@ -88,7 +95,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   const [isFramed, setIsFramed] = useState(false)
   const [appId, setAppId] = useState<string>()
   const [themeOptions, setThemeOptions] = useState<ThemeOptions>()
-  const { token, getSession, hasCalledGetSession } =
+  const { token, getSession, hasCalledGetSession, touSigned } =
     useSession()
 
   useEffect(() => {
@@ -137,6 +144,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     // Otherwise we may end up reloading components and making duplicate requests
     return <></>
   }
+  const location = useLocation()
   return (
     <SynapseContextProvider
       synapseContext={{
@@ -147,6 +155,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
 
       }} theme={themeOptions}
     >
+      {!touSigned && location.pathname != '/authenticated/signTermsOfUse' && <Redirect to='/authenticated/signTermsOfUse' />}
       {!isFramed && props.children}
     </SynapseContextProvider>
   )

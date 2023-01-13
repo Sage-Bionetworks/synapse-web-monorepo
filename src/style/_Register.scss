@@ -7,7 +7,7 @@
     }
     .mainContent {
         margin: 0 64px;
-        height: 640px;
+        min-height: 640px;
         .form-group:first-child{
             margin-top: 50px;
         }
