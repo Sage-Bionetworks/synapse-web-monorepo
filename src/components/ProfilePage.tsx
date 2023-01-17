@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import { getFileHandleByIdURL, getMyUserBundle, updateMyUserProfile, uploadFile } from 'synapse-react-client/dist/utils/SynapseClient'
-import { FileUploadComplete } from 'synapse-react-client/dist/utils/synapseTypes'
-import { UserBundle } from 'synapse-react-client/dist/utils/synapseTypes'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { Button, Col, Container, FormControl, FormGroup, FormLabel, Modal, Row } from 'react-bootstrap'
-import MailIcon from 'assets/mail.svg'
+import Skeleton from '@mui/material/Skeleton'
+import Slider from "@mui/material/Slider"
 import LinkIcon from 'assets/link.svg'
+import MailIcon from 'assets/mail.svg'
 import EditIcon from 'assets/RedEditPencil.svg'
 import VerifiedBorder from 'assets/VerifiedProfilePic.svg'
-import { SynapseConstants, Typography } from 'synapse-react-client'
-import Skeleton from '@mui/material/Skeleton'
-import { SkeletonTable } from 'synapse-react-client/dist/assets/skeletons/SkeletonTable'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Container, FormControl, FormGroup, FormLabel, Modal, Row } from 'react-bootstrap'
 import Cropper from "react-easy-crop"
 import { Area } from 'react-easy-crop/types'
-import Slider from "@material-ui/core/Slider"
+import { SynapseConstants, Typography } from 'synapse-react-client'
+import { SkeletonTable } from 'synapse-react-client/dist/assets/skeletons/SkeletonTable'
+import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
+import { getFileHandleByIdURL, getMyUserBundle, updateMyUserProfile, uploadFile } from 'synapse-react-client/dist/utils/SynapseClient'
+import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
+import { FileUploadComplete, UserBundle } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getCroppedImg } from './CropImage'
 
 export type ProfilePageProps = {}
