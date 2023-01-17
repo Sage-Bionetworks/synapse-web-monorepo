@@ -5,8 +5,7 @@ import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client
 import {
   BrowserRouter as Router,
   Route,
-  Switch,
-  Redirect
+  Switch
 } from 'react-router-dom'
 import CookiesNotification from 'components/CookiesNotification'
 import LoginPage from './LoginPage'
@@ -21,6 +20,8 @@ import { ResetPassword } from 'components/ResetPassword'
 import { ProfilePage } from 'components/ProfilePage'
 import { CertificationQuiz } from 'components/CertificationQuiz'
 import { AccountSettings } from 'components/AccountSettings'
+import { AppContextConsumer } from 'AppContext'
+import { RedirectPage } from 'RedirectPage'
 
 const App: React.FC = () => {
   return (
@@ -33,8 +34,22 @@ const App: React.FC = () => {
               <Switch>
                <Route exact path="/"
                   render={props => {
-                    return <Redirect to='/authenticated/myaccount' />
-                  }} />
+                    return <SynapseContextConsumer>
+                      {(ctx?: SynapseContextType) => {
+                        if (!ctx?.accessToken) {
+                          return <LoginPage returnToUrl={'/'} />
+                        } else {
+                          return <AppContextConsumer>
+                          {appContext => (
+                            <>
+                              {appContext?.redirectURL && window.location.replace(appContext?.redirectURL)}
+                            </>
+                          )}
+                        </AppContextConsumer>
+                        }
+                      }}
+                      </SynapseContextConsumer>
+                    }} />
                 <Route exact path='/logout' render={props => {
                   signOut(()=>{window.location.assign('/authenticated/myaccount')})
                   return <></>

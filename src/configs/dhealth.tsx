@@ -12,19 +12,8 @@ const description = 'A Digital Health Knowledge Portal to enable the discovery a
 
 export const dHealth:SourceAppConfig = {
     appId: 'dHealth',
-    redirectURL: 'https://dhealth.synapse.org/',
+    appURL: 'https://dhealth.synapse.org/',
     friendlyName: 'dHealth Digital Health Data Portal',
-    logo,
-    theme: {
-      palette: digitalHealthPortalPalette
-    },
-    description
-  }
-
-export const dHealthStaging:SourceAppConfig = {
-    appId: 'dHealth-staging',
-    redirectURL: 'https://staging.dhealth.synapse.org/',
-    friendlyName: 'dHealth Digital Health Data Portal (staging)',
     logo,
     theme: {
       palette: digitalHealthPortalPalette

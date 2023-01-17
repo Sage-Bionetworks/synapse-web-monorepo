@@ -11,6 +11,7 @@ import { getSearchParam } from 'URLUtils'
 import { ThemeOptions } from '@mui/material'
 import { getSourceAppTheme } from 'components/SourceApp'
 import { Redirect, useLocation } from 'react-router-dom'
+import { AppContextProvider } from 'AppContext'
 
 export type AppInitializerState = {
   token?: string
@@ -94,6 +95,7 @@ function useSession(
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [isFramed, setIsFramed] = useState(false)
   const [appId, setAppId] = useState<string>()
+  const [redirectURL, setRedirectURL] = useState<string>()
   const [themeOptions, setThemeOptions] = useState<ThemeOptions>()
   const { token, getSession, hasCalledGetSession, touSigned } =
     useSession()
@@ -116,6 +118,20 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       setAppId(searchParamAppId)
     } else if (localStorageAppId) {
       setAppId(localStorageAppId)
+    }
+
+    const searchParamRedirectURL = getSearchParam('redirectURL')
+    const localStorageRedirectURL = localStorage.getItem('sourceAppRedirectURL')
+    if (searchParamRedirectURL) {
+      const hostName = new URL(searchParamRedirectURL).hostname
+      if (hostName.toLowerCase().endsWith('.synapse.org')) {
+        localStorage.setItem('sourceAppRedirectURL', searchParamRedirectURL)
+        setRedirectURL(searchParamRedirectURL)
+      } else {
+        console.error(`Invalid redirectURL (${searchParamRedirectURL}) - Must be a subdomain of .synapse.org`)
+      }
+    } else if (localStorageRedirectURL) {
+      setRedirectURL(localStorageRedirectURL)
     }
   }, [])
 
@@ -146,18 +162,23 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   }
   const location = useLocation()
   return (
-    <SynapseContextProvider
-      synapseContext={{
-        accessToken: token,
-        isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
-        utcTime: SynapseClient.getUseUtcTimeFromCookie(),
-        downloadCartPageUrl: '',
+    <AppContextProvider appContext={{
+      appId,
+      redirectURL,
+    }}>
+      <SynapseContextProvider
+        synapseContext={{
+          accessToken: token,
+          isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
+          utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+          downloadCartPageUrl: '',
 
-      }} theme={themeOptions}
-    >
-      {!touSigned && location.pathname != '/authenticated/signTermsOfUse' && <Redirect to='/authenticated/signTermsOfUse' />}
-      {!isFramed && props.children}
-    </SynapseContextProvider>
+        }} theme={themeOptions}
+      >
+        {!touSigned && location.pathname != '/authenticated/signTermsOfUse' && <Redirect to='/authenticated/signTermsOfUse' />}
+        {!isFramed && props.children}
+      </SynapseContextProvider>
+    </AppContextProvider>
   )
 }
 

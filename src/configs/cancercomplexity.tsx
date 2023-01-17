@@ -12,19 +12,8 @@ const description = 'The NIH National Cancer Institute-sponsored Cancer Systems 
 
 export const cckp:SourceAppConfig = {
     appId: 'CCKP',
-    redirectURL: 'https://cancercomplexity.synapse.org/',
+    appURL: 'https://cancercomplexity.synapse.org/',
     friendlyName: 'Cancer Complexity Knowledge Portal',
-    logo,
-    theme: {
-      palette: cancerComplexityPortalPalette
-    },
-    description
-  }
-
-export const cckpStaging:SourceAppConfig = {
-    appId: 'CCKP-staging',
-    redirectURL: 'https://staging.cancercomplexity.synapse.org/',
-    friendlyName: 'Cancer Complexity Knowledge Portal (staging)',
     logo,
     theme: {
       palette: cancerComplexityPortalPalette

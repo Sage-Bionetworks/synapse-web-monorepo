@@ -38,8 +38,8 @@ export const getCurrentSourceApp = (): SourceAppConfig | undefined => {
   return SourceAppConfigs.find(config => config.appId === sourceAppId);
 }
 
-export const getSourceAppRedirectURL = (): string => {
-  return getCurrentSourceApp()?.redirectURL ?? '/authenticated/myaccount'
+export const getSourceAppURL = (): string => {
+  return getCurrentSourceApp()?.appURL ?? 'https://sagebionetworks.org/'
 }
 
 export const getSourceAppTheme = (): ThemeOptions | undefined => {
