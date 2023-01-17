@@ -12,19 +12,8 @@ const description = 'Discover and download Alzheimer\'s Disease data, analyses, 
 
 export const adKnowledgePortal:SourceAppConfig = {
     appId: 'ADKnowledgePortal',
-    redirectURL: 'https://adknowledgeportal.synapse.org/',
+    appURL: 'https://adknowledgeportal.synapse.org/',
     friendlyName: 'AD Knowledge Portal',
-    logo,
-    theme: {
-      palette: adKnowledgePortalPalette
-    },
-    description
-  }
-
-export const adKnowledgePortalStaging:SourceAppConfig = {
-    appId: 'ADKnowledgePortal-staging',
-    redirectURL: 'https://staging.adknowledgeportal.synapse.org/',
-    friendlyName: 'AD Knowledge Portal (staging)',
     logo,
     theme: {
       palette: adKnowledgePortalPalette

@@ -12,19 +12,8 @@ const description = 'Access data and tools from a multi-site effort funded by th
 
 export const bsmn:SourceAppConfig = {
     appId: 'BSMN',
-    redirectURL: 'https://bsmn.synapse.org/',
+    appURL: 'https://bsmn.synapse.org/',
     friendlyName: 'BSMN Knowledge Portal',
-    logo,
-    theme: {
-      palette: bsmnPortalPalette
-    },
-    description
-  }
-
-export const bsmnStaging:SourceAppConfig = {
-    appId: 'BSMN-staging',
-    redirectURL: 'https://staging.bsmn.synapse.org/',
-    friendlyName: 'BSMN Knowledge Portal (staging)',
     logo,
     theme: {
       palette: bsmnPortalPalette

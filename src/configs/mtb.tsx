@@ -13,19 +13,8 @@ const description = 'Mobile Toolbox delivers digital tests of cognition to resea
 
 export const mtb:SourceAppConfig = {
     appId: 'MTB',
-    redirectURL: 'https://www.mobiletoolbox.org/',
+    appURL: 'https://www.mobiletoolbox.org/',
     friendlyName: 'Mobile Toolbox',
-    logo,
-    theme: {
-      palette: mtbPalette
-    },
-    description
-  }
-
-export const mtbStaging:SourceAppConfig = {
-    appId: 'MTB-staging',
-    redirectURL: 'https://staging.mobiletoolbox.org/',
-    friendlyName: 'Mobile Toolbox (staging)',
     logo,
     theme: {
       palette: mtbPalette

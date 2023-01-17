@@ -12,19 +12,8 @@ const description = "Screening the Optimal Pharmaceutical for Alzheimer's Diseas
 
 export const stopAd:SourceAppConfig = {
     appId: 'stopad',
-    redirectURL: 'https://stopadportal.synapse.org/',
+    appURL: 'https://stopadportal.synapse.org/',
     friendlyName: 'STOP-AD Portal',
-    logo,
-    theme: {
-      palette: stopAdPortalPalette
-    },
-    description
-  }
-
-export const stopAdStaging:SourceAppConfig = {
-    appId: 'stopad-staging',
-    redirectURL: 'https://staging.stopadportal.synapse.org/',
-    friendlyName: 'STOP-AD Portal (staging)',
     logo,
     theme: {
       palette: stopAdPortalPalette

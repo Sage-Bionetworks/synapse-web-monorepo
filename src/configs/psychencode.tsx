@@ -12,19 +12,8 @@ const description = 'Learn more about the PsychENCODE Consortium’s investigati
 
 export const psychEncode:SourceAppConfig = {
     appId: 'psychencode',
-    redirectURL: 'https://psychencode.synapse.org/',
+    appURL: 'https://psychencode.synapse.org/',
     friendlyName: 'PsychENCODE Knowledge Portal',
-    logo,
-    theme: {
-      palette: psychEncodePortalPalette
-    },
-    description
-  }
-
-export const psychEncodeStaging:SourceAppConfig = {
-    appId: 'psychencode-staging',
-    redirectURL: 'https://staging.psychencode.synapse.org/',
-    friendlyName: 'PsychENCODE Knowledge Portal (staging)',
     logo,
     theme: {
       palette: psychEncodePortalPalette

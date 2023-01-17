@@ -12,19 +12,8 @@ const description = 'An open science platform to help scientists find neurofibro
 
 export const nf:SourceAppConfig = {
     appId: 'nf',
-    redirectURL: 'https://nf.synapse.org/',
+    appURL: 'https://nf.synapse.org/',
     friendlyName: 'NF Data Portal',
-    logo,
-    theme: {
-      palette: nfPortalPalette
-    },
-    description
-  }
-
-export const nfStaging:SourceAppConfig = {
-    appId: 'nf-staging',
-    redirectURL: 'https://staging.nf.synapse.org/',
-    friendlyName: 'NF Data Portal (staging)',
     logo,
     theme: {
       palette: nfPortalPalette

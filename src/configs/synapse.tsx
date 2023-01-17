@@ -13,19 +13,8 @@ const description = 'Synapse is a collaborative compute space that allows scient
 
 export const synapse:SourceAppConfig = {
   appId: 'synapse.org',
-  redirectURL: 'https://www.synapse.org/',
+  appURL: 'https://www.synapse.org/',
   friendlyName: 'Synapse',
-  logo,
-  theme: {
-    palette: palette
-  },
-  description
-}
-
-export const synapseStaging:SourceAppConfig = {
-  appId: 'staging.synapse.org',
-  redirectURL: 'https://staging.synapse.org/',
-  friendlyName: 'Synapse (staging)',
   logo,
   theme: {
     palette: palette

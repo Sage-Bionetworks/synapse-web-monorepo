@@ -12,19 +12,8 @@ const logo = <img
 
 export const ark:SourceAppConfig = {
     appId: 'ARK',
-    redirectURL: 'https://arkportal.synapse.org/',
+    appURL: 'https://arkportal.synapse.org/',
     friendlyName: 'ARK Portal',
-    logo,
-    theme: {
-      palette: arkPortalPalette
-    },
-    description
-  }
-
-export const arkStaging:SourceAppConfig = {
-    appId: 'ARK-staging',
-    redirectURL: 'https://staging.arkportal.synapse.org/',
-    friendlyName: 'ARK Portal (staging)',
     logo,
     theme: {
       palette: arkPortalPalette
