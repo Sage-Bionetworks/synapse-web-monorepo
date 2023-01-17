@@ -42,7 +42,7 @@ const App: React.FC = () => {
                           return <AppContextConsumer>
                           {appContext => (
                             <>
-                              {appContext?.redirectURL && <RedirectPage redirectURL={appContext.redirectURL}/>}
+                              {appContext?.redirectURL && window.location.replace(appContext?.redirectURL)}
                             </>
                           )}
                         </AppContextConsumer>
