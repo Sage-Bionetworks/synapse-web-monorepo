@@ -1,4 +1,7 @@
-import { StyledEngineProvider, Theme, ThemeProvider } from '@mui/material/styles';
+
+import { createTheme, StyledEngineProvider, Theme, ThemeProvider } from '@mui/material/styles';
+import "@mui/styles";
+import { deepmerge } from '@mui/utils';
 import { AppContextConsumer } from 'AppContext';
 import { AccountSettings } from 'components/AccountSettings';
 import { CertificationQuiz } from 'components/CertificationQuiz';
@@ -16,10 +19,6 @@ import {
   BrowserRouter as Router, Route,
   Switch
 } from 'react-router-dom';
-
-import { createTheme } from '@mui/material/styles';
-import "@mui/styles";
-import { deepmerge } from '@mui/utils';
 import { SynapseComponents } from 'synapse-react-client';
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient';
 import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext';
