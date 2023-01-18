@@ -1,17 +1,19 @@
+
 import React, {
   useCallback,
   useEffect,
-  useState,
+  useState
 } from 'react'
+
+import { ThemeOptions } from '@mui/material'
+import { AppContextProvider } from 'AppContext'
+import { getSourceAppTheme } from 'components/SourceApp'
+import { Redirect, useLocation } from 'react-router-dom'
 import { SynapseClient } from 'synapse-react-client'
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
-import useAnalytics from './useAnalytics'
 import { getSearchParam } from 'URLUtils'
-import { ThemeOptions } from '@mui/material'
-import { getSourceAppTheme } from 'components/SourceApp'
-import { Redirect, useLocation } from 'react-router-dom'
-import { AppContextProvider } from 'AppContext'
+import useAnalytics from './useAnalytics'
 
 export type AppInitializerState = {
   token?: string
@@ -95,8 +97,12 @@ function useSession(
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [isFramed, setIsFramed] = useState(false)
   const [appId, setAppId] = useState<string>()
+<<<<<<< HEAD
   const [redirectURL, setRedirectURL] = useState<string>()
   const [themeOptions, setThemeOptions] = useState<ThemeOptions>()
+=======
+  const [themeOptions, setThemeOptions] = useState<DeprecatedThemeOptions>()
+>>>>>>> 2143524 (material v4->v5 updated)
   const { token, getSession, hasCalledGetSession, touSigned } =
     useSession()
 
