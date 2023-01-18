@@ -58,9 +58,14 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
         </Link>
       case Pages.EMAIL_REGISTRATION:
       case Pages.GOOGLE_REGISTRATION:
-        return <IconButton className='back-button' onClick={()=>setPage(Pages.CHOOSE_REGISTRATION)}>
-          <IconSvg icon='arrowBack'/>
-        </IconButton>
+        return (
+          <IconButton
+            className='back-button'
+            onClick={()=>setPage(Pages.CHOOSE_REGISTRATION)}
+            size="large">
+            <IconSvg icon='arrowBack'/>
+          </IconButton>
+        );
         default:
           return <></>
     }

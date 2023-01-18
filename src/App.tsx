@@ -1,37 +1,52 @@
-import React from 'react'
-import './App.scss'
-import AppInitializer from './AppInitializer'
-import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext'
+
+import { createTheme, StyledEngineProvider, Theme, ThemeProvider } from '@mui/material/styles';
+import "@mui/styles";
+import { deepmerge } from '@mui/utils';
+import { AppContextConsumer } from 'AppContext';
+import { AccountSettings } from 'components/AccountSettings';
+import { CertificationQuiz } from 'components/CertificationQuiz';
+import CookiesNotification from 'components/CookiesNotification';
+import { ProfilePage } from 'components/ProfilePage';
+import { ProfileValidation } from 'components/ProfileValidation';
+import { RegisterAccount1 } from 'components/RegisterAccount1';
+import { RegisterAccount2 } from 'components/RegisterAccount2';
+import { ResetPassword } from 'components/ResetPassword';
+import { getSourceAppTheme } from 'components/SourceApp';
+import { TermsOfUsePage } from 'components/TermsOfUsePage';
+import TopNavBar from 'components/TopNavBar';
+import React from 'react';
 import {
-  BrowserRouter as Router,
-  Route,
+  BrowserRouter as Router, Route,
   Switch
-} from 'react-router-dom'
-import CookiesNotification from 'components/CookiesNotification'
-import LoginPage from './LoginPage'
-import { RegisterAccount1 } from 'components/RegisterAccount1'
-import { SynapseComponents } from 'synapse-react-client'
-import { RegisterAccount2 } from 'components/RegisterAccount2'
-import { TermsOfUsePage } from 'components/TermsOfUsePage'
-import TopNavBar from 'components/TopNavBar'
-import { ProfileValidation } from 'components/ProfileValidation'
-import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
-import { ResetPassword } from 'components/ResetPassword'
-import { ProfilePage } from 'components/ProfilePage'
-import { CertificationQuiz } from 'components/CertificationQuiz'
-import { AccountSettings } from 'components/AccountSettings'
-import { AppContextConsumer } from 'AppContext'
+} from 'react-router-dom';
+import { SynapseComponents } from 'synapse-react-client';
+import { signOut } from 'synapse-react-client/dist/utils/SynapseClient';
+import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext';
+import './App.scss';
+import AppInitializer from './AppInitializer';
+import LoginPage from './LoginPage';
+import generalTheme from './style/theme';
+
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface (remove this line if you don't have the rule enabled)
+  interface DefaultTheme extends Theme { }
+}
+
+// theme is a merge of a general theme and particular color pallettesfor the source app
+const theme = createTheme(deepmerge(getSourceAppTheme(), generalTheme));
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <>
-        <Router>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <Router>
             <AppInitializer>
               <TopNavBar />
               <CookiesNotification />
               <Switch>
-               <Route exact path="/"
+                <Route exact path="/"
                   render={props => {
                     return <SynapseContextConsumer>
                       {(ctx?: SynapseContextType) => {
@@ -39,18 +54,18 @@ const App: React.FC = () => {
                           return <LoginPage returnToUrl={'/'} />
                         } else {
                           return <AppContextConsumer>
-                          {appContext => (
-                            <>
-                              {appContext?.redirectURL && window.location.replace(appContext?.redirectURL)}
-                            </>
-                          )}
-                        </AppContextConsumer>
+                            {appContext => (
+                              <>
+                                {appContext?.redirectURL && window.location.replace(appContext?.redirectURL)}
+                              </>
+                            )}
+                          </AppContextConsumer>
                         }
                       }}
-                      </SynapseContextConsumer>
-                    }} />
+                    </SynapseContextConsumer>
+                  }} />
                 <Route exact path='/logout' render={props => {
-                  signOut(()=>{window.location.assign('/authenticated/myaccount')})
+                  signOut(() => { window.location.assign('/authenticated/myaccount') })
                   return <></>
                 }} />
                 <Route exact path='/register1' component={RegisterAccount1} />
@@ -72,26 +87,27 @@ const App: React.FC = () => {
                         } else if (path === '/authenticated/signTermsOfUse') {
                           return <TermsOfUsePage />
                         } else if (path === '/authenticated/myaccount') {
-                          return <AccountSettings/>
-                        } else if(path ==='/authenticated/myprofile') {
-                          return <ProfilePage/>
+                          return <AccountSettings />
+                        } else if (path === '/authenticated/myprofile') {
+                          return <ProfilePage />
                         } else if (path === '/authenticated/certificationquiz') {
                           return <CertificationQuiz />
                         } else {
                           return (<>
                             <p>Unrecognized match path {path}</p>
                           </>)
-                       }
+                        }
                       }}
                     </SynapseContextConsumer>
                   }} />
                 <Route exact={true} path='/login' render={props => {
                   return <LoginPage returnToUrl={'/'} />
-                }}/>
+                }} />
               </Switch>
             </AppInitializer>
           </Router>
-        </>
+        </ThemeProvider>
+      </StyledEngineProvider>
       <SynapseComponents.SynapseToastContainer />
     </div>
   );

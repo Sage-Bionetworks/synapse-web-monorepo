@@ -1,10 +1,10 @@
-import { ThemeOptions } from '@mui/material'
+import { DeprecatedThemeOptions } from '@mui/material'
 import React from 'react'
-import SourceAppConfigs, { SourceAppConfig } from './SourceAppConfigs'
 import { Typography } from 'synapse-react-client'
+import SourceAppConfigs, { SourceAppConfig } from './SourceAppConfigs'
 
 export type SourceAppProps = {
-  isAccountCreationTextVisible?:boolean
+  isAccountCreationTextVisible?: boolean
 }
 
 /**
@@ -13,7 +13,7 @@ export type SourceAppProps = {
  * @returns 
  */
 export const SourceApp = (props: SourceAppProps) => {
-  const { isAccountCreationTextVisible=false } = props
+  const { isAccountCreationTextVisible = false } = props
   return <>
     <div className='SourceAppLogo'>{getCurrentSourceApp()?.logo}</div>
     {isAccountCreationTextVisible && <div>
@@ -42,7 +42,7 @@ export const getSourceAppURL = (): string => {
   return getCurrentSourceApp()?.appURL ?? 'https://sagebionetworks.org/'
 }
 
-export const getSourceAppTheme = (): ThemeOptions | undefined => {
+export const getSourceAppTheme = (): DeprecatedThemeOptions | undefined => {
   return getCurrentSourceApp()?.theme
 }
 
