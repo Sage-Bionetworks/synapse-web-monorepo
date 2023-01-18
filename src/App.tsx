@@ -1,4 +1,5 @@
 import { StyledEngineProvider, Theme, ThemeProvider } from '@mui/material/styles';
+import { AppContextConsumer } from 'AppContext';
 import { AccountSettings } from 'components/AccountSettings';
 import { CertificationQuiz } from 'components/CertificationQuiz';
 import CookiesNotification from 'components/CookiesNotification';
@@ -48,7 +49,21 @@ const App: React.FC = () => {
               <Switch>
                 <Route exact path="/"
                   render={props => {
-                    return <Redirect to='/authenticated/myaccount' />
+                    return <SynapseContextConsumer>
+                      {(ctx?: SynapseContextType) => {
+                        if (!ctx?.accessToken) {
+                          return <LoginPage returnToUrl={'/'} />
+                        } else {
+                          return <AppContextConsumer>
+                            {appContext => (
+                              <>
+                                {appContext?.redirectURL && window.location.replace(appContext?.redirectURL)}
+                              </>
+                            )}
+                          </AppContextConsumer>
+                        }
+                      }}
+                    </SynapseContextConsumer>
                   }} />
                 <Route exact path='/logout' render={props => {
                   signOut(() => { window.location.assign('/authenticated/myaccount') })
