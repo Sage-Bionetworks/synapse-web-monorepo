@@ -21,7 +21,6 @@ import { ProfilePage } from 'components/ProfilePage'
 import { CertificationQuiz } from 'components/CertificationQuiz'
 import { AccountSettings } from 'components/AccountSettings'
 import { AppContextConsumer } from 'AppContext'
-import { RedirectPage } from 'RedirectPage'
 
 const App: React.FC = () => {
   return (
