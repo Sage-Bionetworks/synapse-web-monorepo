@@ -1,18 +1,19 @@
-
+import { DeprecatedThemeOptions } from '@mui/material'
+import { deepmerge } from '@mui/utils'
+import { getSourceAppTheme } from 'components/SourceApp'
 import React, {
   useCallback,
   useEffect,
   useState
 } from 'react'
 
-import { ThemeOptions } from '@mui/material'
 import { AppContextProvider } from 'AppContext'
-import { getSourceAppTheme } from 'components/SourceApp'
 import { Redirect, useLocation } from 'react-router-dom'
 import { SynapseClient } from 'synapse-react-client'
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam } from 'URLUtils'
+import theme from './style/theme'
 import useAnalytics from './useAnalytics'
 
 export type AppInitializerState = {
@@ -97,12 +98,8 @@ function useSession(
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [isFramed, setIsFramed] = useState(false)
   const [appId, setAppId] = useState<string>()
-<<<<<<< HEAD
   const [redirectURL, setRedirectURL] = useState<string>()
-  const [themeOptions, setThemeOptions] = useState<ThemeOptions>()
-=======
   const [themeOptions, setThemeOptions] = useState<DeprecatedThemeOptions>()
->>>>>>> 2143524 (material v4->v5 updated)
   const { token, getSession, hasCalledGetSession, touSigned } =
     useSession()
 
@@ -143,7 +140,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
 
   useEffect(() => {
     if (appId) {
-      setThemeOptions(getSourceAppTheme())
+      setThemeOptions(deepmerge(theme, getSourceAppTheme()))
     }
   }, [appId])
 

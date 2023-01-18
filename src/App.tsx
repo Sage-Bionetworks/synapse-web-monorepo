@@ -7,6 +7,7 @@ import { ProfileValidation } from 'components/ProfileValidation';
 import { RegisterAccount1 } from 'components/RegisterAccount1';
 import { RegisterAccount2 } from 'components/RegisterAccount2';
 import { ResetPassword } from 'components/ResetPassword';
+import { getSourceAppTheme } from 'components/SourceApp';
 import { TermsOfUsePage } from 'components/TermsOfUsePage';
 import TopNavBar from 'components/TopNavBar';
 import React from 'react';
@@ -16,14 +17,15 @@ import {
 } from 'react-router-dom';
 
 import { createTheme } from '@mui/material/styles';
+import "@mui/styles";
+import { deepmerge } from '@mui/utils';
 import { SynapseComponents } from 'synapse-react-client';
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient';
 import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext';
 import './App.scss';
 import AppInitializer from './AppInitializer';
 import LoginPage from './LoginPage';
-
-import "@mui/styles";
+import generalTheme from './style/theme';
 
 
 declare module '@mui/styles/defaultTheme' {
@@ -31,7 +33,8 @@ declare module '@mui/styles/defaultTheme' {
   interface DefaultTheme extends Theme { }
 }
 
-const theme = createTheme();
+// theme is a merge of a general theme and particular color pallettesfor the source app
+const theme = createTheme(deepmerge(getSourceAppTheme(), generalTheme));
 
 const App: React.FC = () => {
   return (
