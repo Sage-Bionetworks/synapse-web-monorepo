@@ -12,17 +12,28 @@ export type ORCiDButtonProps = {
   sx?: SxProps
 }
 
-export const onBindToORCiD = async (event: React.SyntheticEvent, setIsLoading: Function, redirectAfter?: any) => {
+export const onBindToORCiD = async (
+  event: React.SyntheticEvent,
+  setIsLoading: Function,
+  redirectAfter?: any,
+) => {
   event.preventDefault()
   setIsLoading(true)
   try {
     // after binding, go to ???
-    if(redirectAfter){
+    if (redirectAfter) {
       localStorage.setItem('after-sso-login-url', redirectAfter)
     } else {
-      localStorage.setItem('after-sso-login-url', `${SynapseClient.getRootURL()}authenticated/validate?step=${ValidationWizardStep.VERIFY_IDENTITY}`)
+      localStorage.setItem(
+        'after-sso-login-url',
+        `${SynapseClient.getRootURL()}authenticated/validate?step=${
+          ValidationWizardStep.VERIFY_IDENTITY
+        }`,
+      )
     }
-    const redirectUrl = `${SynapseClient.getRootURL()}?provider=${PROVIDERS.ORCID}`
+    const redirectUrl = `${SynapseClient.getRootURL()}?provider=${
+      PROVIDERS.ORCID
+    }`
     SynapseClient.oAuthUrlRequest(PROVIDERS.ORCID, redirectUrl)
       .then((data: any) => {
         const authUrl = data.authorizationUrl
@@ -31,7 +42,7 @@ export const onBindToORCiD = async (event: React.SyntheticEvent, setIsLoading: F
       .catch((err: any) => {
         displayToast(err.reason as string, 'danger')
       })
-  } catch (err:any) {
+  } catch (err: any) {
     displayToast(err.reason as string, 'danger')
   } finally {
     setIsLoading(false)
@@ -43,18 +54,23 @@ export const ORCiDButton = (props: ORCiDButtonProps) => {
 
   return (
     <>
-    {props.editButton  ? 
-      <button onClick={e=>onBindToORCiD(e,setIsLoading,props.redirectAfter)}><img src={EditIcon} alt="edit icon"/></button>
-    : <Button
-      variant='outlined'
-      onClick={e=>onBindToORCiD(e,setIsLoading,props.redirectAfter)}
-      type="button"
-      sx={props.sx}
-      disabled={ isLoading }
-    >
-      Link My ORCiD
-    </Button>
-    }
+      {props.editButton ? (
+        <button
+          onClick={e => onBindToORCiD(e, setIsLoading, props.redirectAfter)}
+        >
+          <img src={EditIcon} alt="edit icon" />
+        </button>
+      ) : (
+        <Button
+          variant="outlined"
+          onClick={e => onBindToORCiD(e, setIsLoading, props.redirectAfter)}
+          type="button"
+          sx={props.sx}
+          disabled={isLoading}
+        >
+          Link My ORCiD
+        </Button>
+      )}
     </>
   )
 }

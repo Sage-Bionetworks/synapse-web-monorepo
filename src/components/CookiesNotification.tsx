@@ -45,20 +45,20 @@ class CookiesNotification extends React.Component<
     return this.state.hasAgreedToCookies ? (
       false
     ) : (
-      <SynapseComponents.FullWidthAlert 
-        variant="info" 
+      <SynapseComponents.FullWidthAlert
+        variant="info"
         title="Our site uses cookies."
-        description="This website uses cookies to enhance your experience and to analyze our traffic. Using this website means that you agree with our cookie policy." 
+        description="This website uses cookies to enhance your experience and to analyze our traffic. Using this website means that you agree with our cookie policy."
         primaryButtonConfig={{
-          text: "ACCEPT AND CONTINUE",
-          onClick: this.setHasAgreedToCookies
+          text: 'ACCEPT AND CONTINUE',
+          onClick: this.setHasAgreedToCookies,
         }}
         secondaryButtonConfig={{
-          text: "LEARN MORE",
-          href: 'https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf'
+          text: 'LEARN MORE',
+          href: 'https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf',
         }}
         isGlobal={true}
-        />
+      />
     )
   }
 }

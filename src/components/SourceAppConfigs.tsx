@@ -1,4 +1,4 @@
-import { ThemeOptions, } from '@mui/material'
+import { ThemeOptions } from '@mui/material'
 import { adKnowledgePortal } from 'configs/adknowledgeportal'
 import { ark } from 'configs/ark'
 import { bsmn } from 'configs/bsmn'
@@ -14,12 +14,12 @@ export type SourceAppConfig = {
   appId: string // app ID used in the query params
   appURL: string // URL that points to the production version of this app
   friendlyName: string
-  logo: JSX.Element,
-  theme: ThemeOptions,
+  logo: JSX.Element
+  theme: ThemeOptions
   description: string
 }
 
-export const SourceAppConfigs:SourceAppConfig[] = [
+export const SourceAppConfigs: SourceAppConfig[] = [
   mtb,
   synapse,
   adKnowledgePortal,

@@ -1,40 +1,43 @@
-
-import { createTheme, StyledEngineProvider, Theme, ThemeProvider } from '@mui/material/styles';
-import "@mui/styles";
-import { deepmerge } from '@mui/utils';
-import { AppContextConsumer } from 'AppContext';
-import { AccountSettings } from 'components/AccountSettings';
-import { CertificationQuiz } from 'components/CertificationQuiz';
-import CookiesNotification from 'components/CookiesNotification';
-import { ProfilePage } from 'components/ProfilePage';
-import { ProfileValidation } from 'components/ProfileValidation';
-import { RegisterAccount1 } from 'components/RegisterAccount1';
-import { RegisterAccount2 } from 'components/RegisterAccount2';
-import { ResetPassword } from 'components/ResetPassword';
-import { getSourceAppTheme } from 'components/SourceApp';
-import { TermsOfUsePage } from 'components/TermsOfUsePage';
-import TopNavBar from 'components/TopNavBar';
-import React from 'react';
 import {
-  BrowserRouter as Router, Route,
-  Switch
-} from 'react-router-dom';
-import { SynapseComponents } from 'synapse-react-client';
-import { signOut } from 'synapse-react-client/dist/utils/SynapseClient';
-import { SynapseContextConsumer, SynapseContextType } from 'synapse-react-client/dist/utils/SynapseContext';
-import './App.scss';
-import AppInitializer from './AppInitializer';
-import LoginPage from './LoginPage';
-import generalTheme from './style/theme';
-
+  createTheme,
+  StyledEngineProvider,
+  Theme,
+  ThemeProvider,
+} from '@mui/material/styles'
+import '@mui/styles'
+import { deepmerge } from '@mui/utils'
+import { AppContextConsumer } from 'AppContext'
+import { AccountSettings } from 'components/AccountSettings'
+import { CertificationQuiz } from 'components/CertificationQuiz'
+import CookiesNotification from 'components/CookiesNotification'
+import { ProfilePage } from 'components/ProfilePage'
+import { ProfileValidation } from 'components/ProfileValidation'
+import { RegisterAccount1 } from 'components/RegisterAccount1'
+import { RegisterAccount2 } from 'components/RegisterAccount2'
+import { ResetPassword } from 'components/ResetPassword'
+import { getSourceAppTheme } from 'components/SourceApp'
+import { TermsOfUsePage } from 'components/TermsOfUsePage'
+import TopNavBar from 'components/TopNavBar'
+import React from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { SynapseComponents } from 'synapse-react-client'
+import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
+import {
+  SynapseContextConsumer,
+  SynapseContextType,
+} from 'synapse-react-client/dist/utils/SynapseContext'
+import './App.scss'
+import AppInitializer from './AppInitializer'
+import LoginPage from './LoginPage'
+import generalTheme from './style/theme'
 
 declare module '@mui/styles/defaultTheme' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface (remove this line if you don't have the rule enabled)
-  interface DefaultTheme extends Theme { }
+  interface DefaultTheme extends Theme {}
 }
 
 // theme is a merge of a general theme and particular color pallettesfor the source app
-const theme = createTheme(deepmerge(getSourceAppTheme(), generalTheme));
+const theme = createTheme(deepmerge(getSourceAppTheme(), generalTheme))
 
 const App: React.FC = () => {
   return (
@@ -46,63 +49,97 @@ const App: React.FC = () => {
               <TopNavBar />
               <CookiesNotification />
               <Switch>
-                <Route exact path="/"
+                <Route
+                  exact
+                  path="/"
                   render={props => {
-                    return <SynapseContextConsumer>
-                      {(ctx?: SynapseContextType) => {
-                        if (!ctx?.accessToken) {
-                          return <LoginPage returnToUrl={'/'} />
-                        } else {
-                          return <AppContextConsumer>
-                            {appContext => (
-                              <>
-                                {appContext?.redirectURL && window.location.replace(appContext?.redirectURL)}
-                              </>
-                            )}
-                          </AppContextConsumer>
-                        }
-                      }}
-                    </SynapseContextConsumer>
-                  }} />
-                <Route exact path='/logout' render={props => {
-                  signOut(() => { window.location.assign('/authenticated/myaccount') })
-                  return <></>
-                }} />
-                <Route exact path='/register1' component={RegisterAccount1} />
-                <Route exact path='/register2' component={RegisterAccount2} />
-                <Route exact path='/resetPassword' render={props => {
-                  return <ResetPassword returnToUrl='/authenticated/myaccount' />
-                }} />
+                    return (
+                      <SynapseContextConsumer>
+                        {(ctx?: SynapseContextType) => {
+                          if (!ctx?.accessToken) {
+                            return <LoginPage returnToUrl={'/'} />
+                          } else {
+                            return (
+                              <AppContextConsumer>
+                                {appContext => (
+                                  <>
+                                    {appContext?.redirectURL &&
+                                      window.location.replace(
+                                        appContext?.redirectURL,
+                                      )}
+                                  </>
+                                )}
+                              </AppContextConsumer>
+                            )
+                          }
+                        }}
+                      </SynapseContextConsumer>
+                    )
+                  }}
+                />
+                <Route
+                  exact
+                  path="/logout"
+                  render={props => {
+                    signOut(() => {
+                      window.location.assign('/authenticated/myaccount')
+                    })
+                    return <></>
+                  }}
+                />
+                <Route exact path="/register1" component={RegisterAccount1} />
+                <Route exact path="/register2" component={RegisterAccount2} />
+                <Route
+                  exact
+                  path="/resetPassword"
+                  render={props => {
+                    return (
+                      <ResetPassword returnToUrl="/authenticated/myaccount" />
+                    )
+                  }}
+                />
                 {/* check for an access token for any route in the "/authenticated/" path */}
-                <Route path='/authenticated/'
+                <Route
+                  path="/authenticated/"
                   render={routeProps => {
                     const path = routeProps.location.pathname
-                    return <SynapseContextConsumer>
-                      {(ctx?: SynapseContextType) => {
-                        if (!ctx?.accessToken) {
-                          return <LoginPage returnToUrl={path} />
-                        }
-                        if (path === '/authenticated/validate') {
-                          return <ProfileValidation />
-                        } else if (path === '/authenticated/signTermsOfUse') {
-                          return <TermsOfUsePage />
-                        } else if (path === '/authenticated/myaccount') {
-                          return <AccountSettings />
-                        } else if (path === '/authenticated/myprofile') {
-                          return <ProfilePage />
-                        } else if (path === '/authenticated/certificationquiz') {
-                          return <CertificationQuiz />
-                        } else {
-                          return (<>
-                            <p>Unrecognized match path {path}</p>
-                          </>)
-                        }
-                      }}
-                    </SynapseContextConsumer>
-                  }} />
-                <Route exact={true} path='/login' render={props => {
-                  return <LoginPage returnToUrl={'/'} />
-                }} />
+                    return (
+                      <SynapseContextConsumer>
+                        {(ctx?: SynapseContextType) => {
+                          if (!ctx?.accessToken) {
+                            return <LoginPage returnToUrl={path} />
+                          }
+                          if (path === '/authenticated/validate') {
+                            return <ProfileValidation />
+                          } else if (path === '/authenticated/signTermsOfUse') {
+                            return <TermsOfUsePage />
+                          } else if (path === '/authenticated/myaccount') {
+                            return <AccountSettings />
+                          } else if (path === '/authenticated/myprofile') {
+                            return <ProfilePage />
+                          } else if (
+                            path === '/authenticated/certificationquiz'
+                          ) {
+                            return <CertificationQuiz />
+                          } else {
+                            return (
+                              <>
+                                <p>Unrecognized match path {path}</p>
+                              </>
+                            )
+                          }
+                        }}
+                      </SynapseContextConsumer>
+                    )
+                  }}
+                />
+                <Route
+                  exact={true}
+                  path="/login"
+                  render={props => {
+                    return <LoginPage returnToUrl={'/'} />
+                  }}
+                />
               </Switch>
             </AppInitializer>
           </Router>
@@ -110,6 +147,6 @@ const App: React.FC = () => {
       </StyledEngineProvider>
       <SynapseComponents.SynapseToastContainer />
     </div>
-  );
+  )
 }
-export default App;
+export default App

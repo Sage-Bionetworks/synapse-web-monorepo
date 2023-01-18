@@ -10,9 +10,9 @@ export type AppContextType = {
 /**
  * This must be exported to use the context in class components.
  */
-export const AppContext = React.createContext<
-  AppContextType | undefined
->(undefined)
+export const AppContext = React.createContext<AppContextType | undefined>(
+  undefined,
+)
 
 export type AppContextProviderProps = {
   appContext: AppContextType
@@ -22,11 +22,8 @@ export type AppContextProviderProps = {
 export const AppContextProvider: React.FunctionComponent<
   AppContextProviderProps
 > = ({ children, appContext }) => {
-
   return (
-    <AppContext.Provider value={appContext}>
-      {children}
-    </AppContext.Provider>
+    <AppContext.Provider value={appContext}>{children}</AppContext.Provider>
   )
 }
 
@@ -35,9 +32,7 @@ export const AppContextConsumer = AppContext.Consumer
 export function useAppContext(): AppContextType {
   const context = useContext(AppContext)
   if (context === undefined) {
-    throw new Error(
-      'useAppContext must be used within a AppContextProvider',
-    )
+    throw new Error('useAppContext must be used within a AppContextProvider')
   }
   return context
 }
