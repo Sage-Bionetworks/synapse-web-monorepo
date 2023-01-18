@@ -6,6 +6,8 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.4",
     "@mui/styles": "^5.11.2",
+    "husky": ">=6",
+    "lint-staged": ">=10",
     "lodash-es": "^4.17.21",
     "plotly.js-basic-dist": "^1.47.3",
     "react": "18.2.0",
@@ -63,6 +65,7 @@
     "memfs": "^3.4.7",
     "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",
+    "prettier": "^2.6.2",
     "process": "^0.11.10",
     "react-scripts": "^5.0.1",
     "source-map-explorer": "^2.5.2",
@@ -79,7 +82,8 @@
     "test": "craco test --env=jsdom --setupFiles ./src/setupTests.ts",
     "eject": "craco eject",
     "link-src": "yarn link synapse-react-client && yarn link react && yarn link react-router && yarn link react-router-dom",
-    "unlink-src": "yarn unlink synapse-react-client && yarn unlink react && yarn unlink react-router && yarn unlink react-router-dom && yarn install --check-files"
+    "unlink-src": "yarn unlink synapse-react-client && yarn unlink react && yarn unlink react-router && yarn unlink react-router-dom && yarn install --check-files",
+    "prepare": "husky install"
   },
   "browserslist": {
     "production": [
@@ -105,5 +109,8 @@
     "@types/react": "18.0.17",
     "@types/react-dom": "18.0.6",
     "minimatch": "^3.1.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --write"
   }
 }
