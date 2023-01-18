@@ -4,17 +4,16 @@ import { Typography } from 'synapse-react-client'
 import Login from 'synapse-react-client/dist/containers/Login'
 import { SourceAppDescription, SourceAppLogo } from './components/SourceApp'
 
-
-
 export type OwnProps = {
   returnToUrl: string
 }
 export type LoginPageProps = OwnProps & RouteComponentProps
 
 const LoginPage: React.FunctionComponent<LoginPageProps> = ({
-  returnToUrl
+  returnToUrl,
 }: OwnProps) => {
-  const [isSessionEstablished, setIsSessionEstablished] = React.useState<boolean>(false)
+  const [isSessionEstablished, setIsSessionEstablished] =
+    React.useState<boolean>(false)
   if (isSessionEstablished) {
     // using this instead of Redirect since we may need a page refresh
     window.location.replace(returnToUrl)
@@ -33,7 +32,7 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = ({
           />
         </div>
         <div className={'panel-right'}>
-          <Typography className='headline' variant='headline2'>
+          <Typography className="headline" variant="headline2">
             Sign in to your account
           </Typography>
           <SourceAppDescription />

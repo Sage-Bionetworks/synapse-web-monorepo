@@ -7,8 +7,7 @@ import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContex
 import { getCurrentSourceApp, SourceAppLogo } from './SourceApp'
 import { Button, Link } from '@mui/material'
 
-export type TermsOfUsePageProps = {
-}
+export type TermsOfUsePageProps = {}
 
 export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -19,24 +18,24 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   React.useEffect(() => {
     const source = getCurrentSourceApp()
     setSourceAppName(source?.friendlyName)
-  },[])
+  }, [])
 
   const tcAgreement =
-  'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf'
+    'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf'
   const onSignTermsOfUse = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     setIsLoading(true)
     try {
-      if(accessToken) {
+      if (accessToken) {
         SynapseClient.signSynapseTermsOfUse(accessToken)
-        .then(() => {
-          setIsDone(true)
-        })
-        .catch((err: any) => {
-          displayToast(err.reason as string, 'danger')
-        })
+          .then(() => {
+            setIsDone(true)
+          })
+          .catch((err: any) => {
+            displayToast(err.reason as string, 'danger')
+          })
       }
-    } catch (err:any) {
+    } catch (err: any) {
       displayToast(err.reason as string, 'danger')
     } finally {
       setIsLoading(false)
@@ -44,8 +43,8 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   }
 
   const buttonSx = {
-    width : '100%',
-    padding: '10px'
+    width: '100%',
+    padding: '10px',
   }
 
   if (isDone) {
@@ -62,21 +61,23 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
               <SourceAppLogo />
             </div>
             <div className={'terms-of-use-panel'}>
-              <TermsAndConditions 
-                onFormChange={(completed:boolean) => { setIsFormComplete(completed) }} 
+              <TermsAndConditions
+                onFormChange={(completed: boolean) => {
+                  setIsFormComplete(completed)
+                }}
                 // Once SRC version is updated uncomment below
                 // hideLinkToFullTC
               />
               <Button
-                sx ={buttonSx}
+                sx={buttonSx}
                 variant="contained"
                 onClick={onSignTermsOfUse}
-                disabled={ isLoading || !isFormComplete }
+                disabled={isLoading || !isFormComplete}
               >
-                Accept and Continue <IconSvg icon='arrowForward' />
+                Accept and Continue <IconSvg icon="arrowForward" />
               </Button>
               <Button
-                sx ={buttonSx}
+                sx={buttonSx}
                 variant="text"
                 href={tcAgreement}
                 target="_blank"
@@ -87,16 +88,29 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
           </div>
           <div className={'panel-right'}>
             <div className={'right-panel-text'}>
-              <h4>
-                What is the Sage Pledge
-              </h4>
-              <p>{sourceAppName} is powered by <Link href={"https://sagebionetworks.org/"} target="_blank">Sage Bionetworks</Link>, and follows the Sage Governance polices.</p>
-              <p>To ensure secure and confidential access to data, we ask all account holders to affirm their agreement with our governance policies before finishing registration.</p>
-              <p>If you have questions, please contact <Link href={"mailto:act@sagebionetworks.org"}>act@sagebionetworks.org</Link></p>
+              <h4>What is the Sage Pledge</h4>
+              <p>
+                {sourceAppName} is powered by{' '}
+                <Link href={'https://sagebionetworks.org/'} target="_blank">
+                  Sage Bionetworks
+                </Link>
+                , and follows the Sage Governance polices.
+              </p>
+              <p>
+                To ensure secure and confidential access to data, we ask all
+                account holders to affirm their agreement with our governance
+                policies before finishing registration.
+              </p>
+              <p>
+                If you have questions, please contact{' '}
+                <Link href={'mailto:act@sagebionetworks.org'}>
+                  act@sagebionetworks.org
+                </Link>
+              </p>
             </div>
           </div>
         </div>
-      </div>    
+      </div>
     </>
   )
 }

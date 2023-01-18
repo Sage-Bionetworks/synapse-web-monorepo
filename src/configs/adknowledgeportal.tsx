@@ -1,22 +1,20 @@
 import React from 'react'
-import { SourceAppConfig } from "components/SourceAppConfigs";
+import { SourceAppConfig } from 'components/SourceAppConfigs'
 import { adKnowledgePortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
 import LogoSvg from '../assets/ADKnowledgePortalLogo.svg'
 
-const logo = <img
-  src={LogoSvg}
-  alt="Logo"
-/>
+const logo = <img src={LogoSvg} alt="Logo" />
 
-const description = 'Discover and download Alzheimer\'s Disease data, analyses, and tools from the National Institute on Aging\'s Alzheimer\'s Disease Translational Research Program.'
+const description =
+  "Discover and download Alzheimer's Disease data, analyses, and tools from the National Institute on Aging's Alzheimer's Disease Translational Research Program."
 
-export const adKnowledgePortal:SourceAppConfig = {
-    appId: 'ADKnowledgePortal',
-    appURL: 'https://adknowledgeportal.synapse.org/',
-    friendlyName: 'AD Knowledge Portal',
-    logo,
-    theme: {
-      palette: adKnowledgePortalPalette
-    },
-    description
-  }
+export const adKnowledgePortal: SourceAppConfig = {
+  appId: 'ADKnowledgePortal',
+  appURL: 'https://adknowledgeportal.synapse.org/',
+  friendlyName: 'AD Knowledge Portal',
+  logo,
+  theme: {
+    palette: adKnowledgePortalPalette,
+  },
+  description,
+}
