@@ -254,7 +254,6 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
   }
   const onSubmit = async () => {
     if (profile && verificationSubmission) {
-      console.log('submitting')
       try {
         await createProfileVerificationSubmission(
           verificationSubmission,
@@ -354,7 +353,6 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
               <SourceAppLogo sx={{ margin: '0, auto', textAlign: 'center' }} />
               <BodyControlFactory {...{
                 step: step, verificationSubmission: verificationSubmission, onFormChange: isFormComplete => {
-                  console.log('isFormComplete', isFormComplete)
                   setIsContinueButtonEnabled(isFormComplete)
                 },
                 onReturnToSettings: () => {
