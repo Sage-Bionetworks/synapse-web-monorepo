@@ -1,5 +1,7 @@
+import { Box } from '@mui/material'
 import React, { useState } from 'react'
-import { Col, FormControl, FormGroup, FormLabel, Row } from 'react-bootstrap'
+import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
+import theme from 'style/theme'
 import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
 
 export type ProfileFieldsEditorProps = {
@@ -20,66 +22,60 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
   const [location, setLocation] = useState(verificationSubmission.location)
   return (
     <>
-      <div className="ProfileFieldsEditor bootstrap-4-backport ValidationSteps">
-        <Row>
-          <Col>
-            <FormGroup className="required">
-              <FormLabel>First Name</FormLabel>
-              <FormControl
-                onChange={e => {
-                  verificationSubmission.firstName = e.target.value
-                  setFirstName(e.target.value)
-                }}
-                value={firstName}
-              />
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup className="required">
-              <FormLabel>Last Name</FormLabel>
-              <FormControl
-                onChange={e => {
-                  verificationSubmission.lastName = e.target.value
-                  setLastName(e.target.value)
-                }}
-                value={lastName}
-              />
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormGroup className="required">
-              <FormLabel>Current Affiliation</FormLabel>
-              <FormControl
-                onChange={e => {
-                  verificationSubmission.company = e.target.value
-                  setCompany(e.target.value)
-                }}
-                value={company}
-              />
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup className="required">
-              <FormLabel>Location</FormLabel>
-              <FormControl
-                onChange={e => {
-                  verificationSubmission.location = e.target.value
-                  setLocation(e.target.value)
-                }}
-                value={location}
-              />
-            </FormGroup>
-          </Col>
-        </Row>
-        <FormGroup>
+      <Box sx={{ marginBottom: theme.spacing(2) }}/*className="ProfileFieldsEditor bootstrap-4-backport ValidationSteps"*/>
+
+        <FormGroup className="required">
+          <FormLabel>First Name</FormLabel>
+          <FormControl
+            onChange={e => {
+              verificationSubmission.firstName = e.target.value
+              setFirstName(e.target.value)
+            }}
+            value={firstName}
+          />
+        </FormGroup>
+
+        <FormGroup className="required">
+          <FormLabel>Last Name</FormLabel>
+          <FormControl
+            onChange={e => {
+              verificationSubmission.lastName = e.target.value
+              setLastName(e.target.value)
+            }}
+            value={lastName}
+          />
+        </FormGroup>
+
+
+        <FormGroup className="required">
+          <FormLabel>Current Affiliation</FormLabel>
+          <FormControl
+            onChange={e => {
+              verificationSubmission.company = e.target.value
+              setCompany(e.target.value)
+            }}
+            value={company}
+          />
+        </FormGroup>
+
+        <FormGroup className="required">
+          <FormLabel>Location</FormLabel>
+          <FormControl
+            onChange={e => {
+              verificationSubmission.location = e.target.value
+              setLocation(e.target.value)
+            }}
+            value={location}
+          />
+        </FormGroup>
+
+        {/* agendel TODO: do we need this     <FormGroup>
           <FormLabel>Email(s)</FormLabel>
           {verificationSubmission.emails.map((email, index) => (
             <p key={index}>{email}</p>
           ))}
-        </FormGroup>
-      </div>
+          </FormGroup>*/}
+      </Box>
     </>
   )
 }
