@@ -8,7 +8,7 @@ import {
   registerAccountStep1,
 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
-import { getCurrentSourceApp, SourceAppLogo } from './SourceApp'
+import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Link } from 'react-router-dom'
 import { EmailConfirmationPage } from './EmailConfirmationPage'
 import { Button, IconButton, Link as MuiLink } from '@mui/material'
@@ -29,12 +29,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
-  const [sourceAppName, setSourceAppName] = useState<string>()
-
-  React.useEffect(() => {
-    const source = getCurrentSourceApp()
-    setSourceAppName(source?.friendlyName)
-  }, [])
+  const sourceAppName = useSourceApp()?.friendlyName
 
   const buttonSx = {
     width: '100%',
