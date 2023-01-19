@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Container } from 'react-bootstrap'
-import { Link, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import { SynapseConstants, Typography } from 'synapse-react-client'
-import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
+import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import {
+  createProfileVerificationSubmission,
   getMyUserBundle,
   updateMyUserProfile,
-  createProfileVerificationSubmission,
 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import {
@@ -16,18 +17,175 @@ import {
   VerificationSubmission,
 } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam } from 'URLUtils'
-import { AccountVerificationProgess } from './AccountVerificationProgress'
 import { ProfileFieldsEditor } from './ProfileValidationSteps/ProfileFieldsEditor'
 import { VerifyIdentify } from './ProfileValidationSteps/VerifyIdentify'
-import ArrowLight from '../assets/ArrowLight.svg'
-import Arrow from '../assets/Arrow.svg'
-import ReturnArrow from '../assets/ReturnArrow.svg'
+import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
+import { Box, Button, IconButton, Link } from '@mui/material'
+import theme from 'style/theme'
+import { getCurrentSourceApp, SourceAppLogo } from './SourceApp'
+import { Terms } from './ProfileValidationSteps/Terms'
+import ThankYou from './ProfileValidationSteps/ThankYou';
+
+const STEP_CONTENT = [{
+  title: 'Identity verification',
+  body: <><Typography variant="body1" sx={{ fontWeight: 500, marginBottom: theme.spacing(3) }}>During <strong>identity verification</strong>, our data governance team will check the information you provide here.</Typography>
+    <Typography variant="smallText1" paragraph><strong>First and last names</strong> are required so that we can verify your identity.</Typography>
+    <Typography variant="smallText1" paragraph>Your <strong>Current Affiliation</strong> is the name of the group, company, or institution you are currently working with while requesting access to this application. </Typography>
+    <Typography variant="smallText1" paragraph>Your <strong>Location</strong> is important because different regulations around data are applicable in different geographic areas.</Typography> </>
+},
+{
+  title: 'Link your ORCID profile',
+  body: <Typography>In order to validate your identity, we require accounts to have an <strong>ORCID profile.</strong></Typography>
+},
+{
+  title: 'Submit recent identity attestation documentation.',
+  body: <><Typography variant="body2" paragraph>This document must be current within the past month. Acceptable forms of documentation, in English, are any one of the following: </Typography>
+
+    <ul style={{
+      marginLeft: '0px',
+      paddingLeft: '20px'
+    }}>
+      <li>
+        <Typography variant="body2">
+          A letter from a signing official on letterhead attesting to your
+          identity (
+          <Link color="primary" href="https://help.synapse.org/docs/2007072795/signing_official.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b"
+            rel="nofollow" > template here</Link>).&nbsp;
+          <i>
+            Note that you <strong>cannot</strong> serve as your own signing
+            official.
+          </i>
+        </Typography>
+        <Typography style={{ textAlign: 'center', margin: theme.spacing(1) }} variant="body2">
+          OR
+        </Typography>
+      </li>
+      <li>
+        <Typography variant="body2">
+          A notarized letter attesting to your identity (
+          <Link color="primary"
+            href="https://help.synapse.org/docs/2007072795/notarized_letter.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b"
+            rel="nofollow"
+          >
+            template here
+          </Link>
+          )
+        </Typography>
+        <Typography style={{ textAlign: 'center', margin: theme.spacing(1) }} variant="body2">
+          OR
+        </Typography>
+      </li>
+      <li>
+        <Typography variant="body2" paragraph>
+          A copy of your professional license (e.g., a photocopy of your
+          medical license).&nbsp;
+        </Typography>
+        <Typography variant="body2" paragraph>
+          <i>
+            Note that a copy of a work or university identification badge is{' '}
+            <strong>not</strong> an accepted form of identity attestation
+            documentation.
+          </i>
+        </Typography>
+      </li>
+    </ul></>
+}
+]
+
+const RightPanel: React.FC<{ stepNumber: number }> = ({ stepNumber }) => {
+  const totalSteps = 3
+  return (<Box sx={{ position: 'relative' }}>
+    {stepNumber === 0 && <IconButton href='/authenticated/myaccount' sx={{ position: 'absolute', top: theme.spacing(1.5), right: theme.spacing(1.5) }}><CloseIcon /></IconButton>
+    }
+    <Box sx={{
+      marginTop: theme.spacing(8),
+      marginBottom: theme.spacing(4),
+      overflow: 'hidden',
+      textAlign: 'center',
+      fontWeight: '700',
+      fontSize: '16px',
+      color: '#4A5056',
+      '&:before, &:after': {
+        backgroundColor: '#DFE2E6',
+        content: '""',
+        display: 'inline-block',
+        height: '1px',
+        position: 'relative',
+        verticalAlign: 'middle',
+        width: '50%',
+      },
+      '&:before': {
+        right: '0.5em',
+        marginLeft: '-50%',
+      },
+      '&:after': {
+        left: '0.5em',
+        marginRight: '-50%',
+      }
+    }}> Step {stepNumber + 1} of {totalSteps}</Box>
+    <Typography variant="headline2" sx={{
+      color: theme.palette.grey[900]
+    }}>{STEP_CONTENT[stepNumber].title}</Typography>
+    <Box>
+      {STEP_CONTENT[stepNumber].body}
+    </Box>
+  </Box>)
+}
 
 export enum ValidationWizardStep {
   PROFILE_INFO,
   VERIFY_IDENTITY,
   SIGN_PLEDGE,
   THANK_YOU,
+}
+
+
+function BodyControlFactory(args: {
+  step: ValidationWizardStep,
+  onFormChange: (a: boolean) => void,
+  onReturnToSettings: () => void,
+  verificationSubmission?: VerificationSubmission
+}) {
+  switch (args.step) {
+    case ValidationWizardStep.PROFILE_INFO: {
+      return <>
+        <ProfileFieldsEditor
+          verificationSubmission={args.verificationSubmission!}
+        />
+      </>
+    }
+    case ValidationWizardStep.VERIFY_IDENTITY: {
+      return <>
+        <VerifyIdentify
+          verificationSubmission={args.verificationSubmission!}
+        />
+      </>
+    }
+    case ValidationWizardStep.SIGN_PLEDGE: {
+      return <>
+        <Terms
+          verificationSubmission={args.verificationSubmission!}
+          onFormChange={isFormComplete => {
+            args.onFormChange(isFormComplete)
+          }}
+        />
+      </>
+    }
+    case ValidationWizardStep.THANK_YOU: {
+      return <>
+        <Typography variant="headline3">
+          Thank you for verifying.
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={() => args.onReturnToSettings()}
+          type="button"
+        >
+          Return to Account Settings
+        </Button>
+      </>
+    }
+  }
 }
 
 export type ProfileValidationProps = {}
@@ -96,11 +254,13 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
   }
   const onSubmit = async () => {
     if (profile && verificationSubmission) {
+      console.log('submitting')
       try {
         await createProfileVerificationSubmission(
           verificationSubmission,
           accessToken!,
         )
+
         setStep(ValidationWizardStep.THANK_YOU)
       } catch (err: any) {
         displayToast(err.reason as string, 'danger')
@@ -180,106 +340,56 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
   // }
 
   return (
-    <>
-      <div className="ProfileValidation bootstrap-4-backport blue-background">
-        <Link className="return-link" to="/authenticated/myaccount">
-          <img className="arrow-icon" src={ReturnArrow} alt="return arrow" />
-          Return to Account Settings
-        </Link>
-        <Container>
+    <StyledOuterContainer>
+      {step !== ValidationWizardStep.THANK_YOU ? (
+        <StyledInnerContainer>
+          {step}
           {verificationSubmission && (
-            <>
-              {step === ValidationWizardStep.PROFILE_INFO && (
-                <>
-                  <AccountVerificationProgess
-                    step={ValidationWizardStep.PROFILE_INFO}
-                  />
-                  <ProfileFieldsEditor
-                    verificationSubmission={verificationSubmission}
-                  />
-                </>
+            <Box>
+              {step !== ValidationWizardStep.PROFILE_INFO && (
+                <IconButton onClick={onPrevious} sx={{ position: 'absolute', top: theme.spacing(1.5), left: theme.spacing(1.5) }}>
+                  <ArrowBackIcon />
+                </IconButton>
               )}
-              {step === ValidationWizardStep.VERIFY_IDENTITY && (
-                <>
-                  <AccountVerificationProgess
-                    step={ValidationWizardStep.VERIFY_IDENTITY}
-                  />
-                  <VerifyIdentify
-                    verificationSubmission={verificationSubmission}
-                  />
-                </>
-              )}
-              {step === ValidationWizardStep.SIGN_PLEDGE && (
-                <>
-                  <AccountVerificationProgess
-                    step={ValidationWizardStep.SIGN_PLEDGE}
-                  />
-                  <TermsAndConditions
-                    onFormChange={isFormComplete => {
-                      setIsContinueButtonEnabled(isFormComplete)
-                    }}
-                  />
-                </>
-              )}
-              {step === ValidationWizardStep.THANK_YOU && (
-                <>
-                  <Typography variant="headline3">
-                    Thank you for verifying.
-                  </Typography>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setIsReturnToAccountSettings(true)
-                    }}
-                    type="button"
-                  >
-                    Return to Account Settings
-                  </Button>
-                </>
-              )}
-            </>
-          )}
-          <div className="button-container">
-            {step !== ValidationWizardStep.PROFILE_INFO &&
-              step !== ValidationWizardStep.THANK_YOU && (
-                <Button
-                  variant="default"
-                  onClick={onPrevious}
-                  type="button"
-                  className="emptyButton btn-container"
-                >
-                  <img
-                    className="arrow-icon button-arrow"
-                    src={Arrow}
-                    alt="left-arrow"
-                    style={{ transform: 'rotate(180deg)' }}
-                  />
-                  Previous
-                </Button>
-              )}
-            {step !== ValidationWizardStep.THANK_YOU && (
+              <SourceAppLogo sx={{ margin: '0, auto', textAlign: 'center' }} />
+              <BodyControlFactory {...{
+                step: step, verificationSubmission: verificationSubmission, onFormChange: isFormComplete => {
+                  console.log('isFormComplete', isFormComplete)
+                  setIsContinueButtonEnabled(isFormComplete)
+                },
+                onReturnToSettings: () => {
+                  setIsReturnToAccountSettings(true)
+                }
+              }} />
               <Button
-                variant="secondary"
-                className="btn-container"
+                variant="contained"
+                fullWidth
                 onClick={onNext}
-                type="button"
                 disabled={!isContinueButtonEnabled}
+                endIcon={step !== ValidationWizardStep.SIGN_PLEDGE && <ArrowRightAltIcon />}
               >
                 {step === ValidationWizardStep.SIGN_PLEDGE
                   ? 'Submit'
                   : 'Continue'}
-                {step !== ValidationWizardStep.SIGN_PLEDGE && (
-                  <img
-                    className="arrow-icon button-arrow"
-                    src={ArrowLight}
-                    alt="right-arrow"
-                  />
-                )}
               </Button>
-            )}
-          </div>
-        </Container>
-      </div>
-    </>
+            </Box>
+          )}
+          <RightPanel stepNumber={step} />
+        </StyledInnerContainer>
+      ) : (
+        <ThankYou>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={() => setIsReturnToAccountSettings(true)}
+            type="button"
+            sx={{ marginTop: theme.spacing(5) }}
+            endIcon={<ArrowRightAltIcon />}
+          >
+            Return to {getCurrentSourceApp()?.friendlyName}
+          </Button>
+        </ThankYou>
+      )}
+    </StyledOuterContainer>
   )
 }
