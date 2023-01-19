@@ -23,7 +23,7 @@ const TermsAndConditionsWrapped: React.FC<{ onFormChange: (a: boolean) => void }
         },
         '& .terms-conditions .view-terms .MuiButton-root ': {
             color: theme.palette.primary.main,
-            bgColor: 'transparent',
+            backgroundColor: 'transparent',
             border: 'none',
             boxShadow: 'none',
             padding: '0',
