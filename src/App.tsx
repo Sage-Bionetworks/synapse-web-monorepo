@@ -7,6 +7,7 @@ import {
 import '@mui/styles'
 import { deepmerge } from '@mui/utils'
 import { AppContextConsumer } from 'AppContext'
+import { AccountCreatedPage } from 'components/AccountCreatedPage'
 import { AccountSettings } from 'components/AccountSettings'
 import { CertificationQuiz } from 'components/CertificationQuiz'
 import CookiesNotification from 'components/CookiesNotification'
@@ -115,6 +116,8 @@ const App: React.FC = () => {
                             return <TermsOfUsePage />
                           } else if (path === '/authenticated/myaccount') {
                             return <AccountSettings />
+                          } else if (path === '/authenticated/accountcreated') {
+                            return <AccountCreatedPage />
                           } else if (path === '/authenticated/myprofile') {
                             return <ProfilePage />
                           } else if (

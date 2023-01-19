@@ -4,7 +4,7 @@ import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { getCurrentSourceApp, SourceAppLogo } from './SourceApp'
+import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Button, Link } from '@mui/material'
 
 export type TermsOfUsePageProps = {}
@@ -13,12 +13,8 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isFormComplete, setIsFormComplete] = useState(false)
   const [isDone, setIsDone] = useState(false)
-  const [sourceAppName, setSourceAppName] = useState<string>()
   const { accessToken } = useSynapseContext()
-  React.useEffect(() => {
-    const source = getCurrentSourceApp()
-    setSourceAppName(source?.friendlyName)
-  }, [])
+  const sourceAppName = useSourceApp()?.friendlyName
 
   const tcAgreement =
     'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf'

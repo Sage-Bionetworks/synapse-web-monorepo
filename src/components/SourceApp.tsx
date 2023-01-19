@@ -16,12 +16,12 @@ export const SourceApp = (props: SourceAppProps) => {
   const { isAccountCreationTextVisible = false } = props
   return (
     <>
-      <div className="SourceAppLogo">{getCurrentSourceApp()?.logo}</div>
+      <div className="SourceAppLogo">{useSourceApp()?.logo}</div>
       {isAccountCreationTextVisible && (
         <div>
           <p>
             A Sage account is required to log into{' '}
-            {getCurrentSourceApp()?.friendlyName}.
+            {useSourceApp()?.friendlyName}.
           </p>
           <p>Create an account to get started.</p>
         </div>
@@ -31,28 +31,28 @@ export const SourceApp = (props: SourceAppProps) => {
 }
 
 export const SourceAppLogo = () => {
-  return <div className="SourceAppLogo">{getCurrentSourceApp()?.logo}</div>
+  return <div className="SourceAppLogo">{useSourceApp()?.logo}</div>
 }
 
 export const SourceAppDescription = () => {
   return (
     <Typography className="description" variant="body1">
-      {getCurrentSourceApp()?.description}
+      {useSourceApp()?.description}
     </Typography>
   )
 }
 
-export const getCurrentSourceApp = (): SourceAppConfig | undefined => {
+export const useSourceApp = (): SourceAppConfig | undefined => {
   const sourceAppId = localStorage.getItem('sourceAppId')
   return SourceAppConfigs.find(config => config.appId === sourceAppId)
 }
 
 export const getSourceAppURL = (): string => {
-  return getCurrentSourceApp()?.appURL ?? 'https://sagebionetworks.org/'
+  return useSourceApp()?.appURL ?? 'https://sagebionetworks.org/'
 }
 
 export const getSourceAppTheme = (): DeprecatedThemeOptions | undefined => {
-  return getCurrentSourceApp()?.theme
+  return useSourceApp()?.theme
 }
 
 export default SourceApp
