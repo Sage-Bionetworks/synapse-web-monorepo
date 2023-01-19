@@ -17,10 +17,10 @@ const ThankYou: React.FC<{ children: React.ReactNode }> = ({ children }) => (
         }}>
             <CalendarMonthOutlinedIcon sx={{ color: '#fff', fontSize: '64px' }} />
         </Box>
-        <Typography variant="headline2">
-            We’re verifying your account.
+        <Typography variant="headline2" paragraph>
+            We're verifying your account.
         </Typography>
-        <Typography variant="headline3" sx={{ marginBottom: theme.spacing(2) }} >
+        <Typography variant="headline3" paragraph sx={{ marginBottom: theme.spacing(2) }} >
             Here's what to expect next:
         </Typography>
         <Typography variant="body2" paragraph>
