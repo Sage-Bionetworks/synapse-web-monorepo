@@ -7,7 +7,6 @@ import { dHealth } from 'configs/dhealth'
 import { mtb } from 'configs/mtb'
 import { nf } from 'configs/nf'
 import { psychEncode } from 'configs/psychencode'
-import { stopAd } from 'configs/stopad'
 import { synapse } from 'configs/synapse'
 
 export type SourceAppConfig = {
@@ -29,7 +28,7 @@ export const SourceAppConfigs: SourceAppConfig[] = [
   dHealth,
   nf,
   psychEncode,
-  stopAd,
+  // stopAd,
 ]
 
 export default SourceAppConfigs

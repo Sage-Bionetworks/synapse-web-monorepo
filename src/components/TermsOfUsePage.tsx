@@ -45,8 +45,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
 
   if (isDone) {
     // AppInitializer still thinks the ToU are not signed.
-    // TODO: This should go to the new Account Created page (or to the page where we gather more profile data for the specific app first, like your Institution for the ARK portal)
-    window.location.assign('/authenticated/myaccount?showWelcomeScreen=true')
+    window.location.assign('/authenticated/accountcreated')
   }
   return (
     <>

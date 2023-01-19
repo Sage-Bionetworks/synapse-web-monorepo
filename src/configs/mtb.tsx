@@ -6,8 +6,8 @@ import MobileToolboxLogoSvg from '../assets/MobileToolboxLogo.svg'
 const logo = (
   <img
     src={MobileToolboxLogoSvg}
-    style={{ width: 80 }}
     alt="Mobile Toolbox Logo"
+    style={{ height: '30px' }}
   />
 )
 
