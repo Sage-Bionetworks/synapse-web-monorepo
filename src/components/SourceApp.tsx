@@ -31,7 +31,7 @@ export const SourceApp = (props: SourceAppProps) => {
 }
 
 export const SourceAppLogo: React.FC<{ sx?: SxProps }> = ({ sx }) => {
-  return <Box className="SourceAppLogo" sx={sx}>{getCurrentSourceApp()?.logo}</Box>
+  return <Box className="SourceAppLogo" sx={sx}>{useSourceApp()?.logo}</Box>
 }
 
 export const SourceAppDescription = () => {

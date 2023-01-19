@@ -22,7 +22,7 @@ import { VerifyIdentify } from './ProfileValidationSteps/VerifyIdentify'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { Box, Button, IconButton, Link } from '@mui/material'
 import theme from 'style/theme'
-import { getCurrentSourceApp, SourceAppLogo } from './SourceApp'
+import { SourceAppLogo, useSourceApp } from './SourceApp'
 import Attestation from './ProfileValidationSteps/Attestation'
 import ThankYou from './ProfileValidationSteps/ThankYou';
 
@@ -386,7 +386,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
             sx={{ marginTop: theme.spacing(5) }}
             endIcon={<ArrowRightAltIcon />}
           >
-            Return to {getCurrentSourceApp()?.friendlyName}
+            Return to {useSourceApp()?.friendlyName}
           </Button>
         </ThankYou>
       )}
