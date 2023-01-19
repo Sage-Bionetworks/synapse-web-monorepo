@@ -20,7 +20,7 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                 <div className="panel-logo logo-wrapper">
                   <SourceAppLogo />
                 </div>
-                <Typography variant="h5" sx={{ paddingTop: '50px' }}>
+                <Typography variant="headline2" sx={{ paddingTop: '50px' }}>
                   Account created
                 </Typography>
                 <Typography
@@ -69,7 +69,10 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
               </div>
               <div className={'panel-right'}>
                 <div className={'panel-right-text'}>
-                  <Typography variant="subtitle1">
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ paddingBottom: '30px' }}
+                  >
                     Your <strong>Sage Account</strong> can also be used to
                     access all these resources.
                   </Typography>

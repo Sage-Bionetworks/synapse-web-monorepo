@@ -3,13 +3,7 @@ import { SourceAppConfig } from 'components/SourceAppConfigs'
 import palette from 'synapse-react-client/dist/utils/theme/palette/Palettes'
 import SynapseLogoSvg from '../assets/SynapseLogo.svg'
 
-const logo = (
-  <img
-    src={SynapseLogoSvg}
-    style={{ height: 50, width: 50 }}
-    alt="Synapse.org Logo"
-  />
-)
+const logo = <img src={SynapseLogoSvg} alt="Synapse.org Logo" />
 
 const description =
   'Synapse is a collaborative compute space that allows scientists to share and analyze data together.'
