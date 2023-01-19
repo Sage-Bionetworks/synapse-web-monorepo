@@ -1,4 +1,4 @@
-import { ORCiDButton } from 'components/ORCiDButton'
+import { ORCiDButton } from 'components/ProfileValidation/ORCiDButton'
 import React, { useEffect, useState } from 'react'
 import { Typography, } from 'synapse-react-client'
 import {
@@ -6,7 +6,7 @@ import {
 } from 'synapse-react-client/dist/utils/synapseTypes'
 import EditIcon from '../../assets/RedEditPencil.svg'
 import CheckmarkBadge from '../../assets/CheckmarkSecondary.svg'
-import { UnbindORCiDDialog } from 'components/UnbindORCiD'
+import { UnbindORCiDDialog } from 'components/ProfileValidation/UnbindORCiD'
 
 export type VerifyIdentifyProps = {
   verificationSubmission: VerificationSubmission

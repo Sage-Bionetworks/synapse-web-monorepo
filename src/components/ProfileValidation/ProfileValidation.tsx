@@ -17,14 +17,16 @@ import {
   VerificationSubmission,
 } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam } from 'URLUtils'
-import { ProfileFieldsEditor } from './ProfileValidationSteps/ProfileFieldsEditor'
-import { VerifyIdentify } from './ProfileValidationSteps/VerifyIdentify'
-import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
+import { ProfileFieldsEditor } from './ProfileFieldsEditor'
+import { VerifyIdentify } from './VerifyIdentify'
+import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
 import { Box, Button, IconButton, Link } from '@mui/material'
 import theme from 'style/theme'
-import { SourceAppLogo, useSourceApp } from './SourceApp'
-import Attestation from './ProfileValidationSteps/Attestation'
-import ThankYou from './ProfileValidationSteps/ThankYou';
+import { SourceAppLogo, useSourceApp } from '../SourceApp'
+import Attestation from './Attestation'
+import ThankYou from './ThankYou';
+import TermsAndConditionsWrapped from './TermsAndConditionsWrapped';
+
 
 const STEP_CONTENT = [{
   title: 'Identity verification',
@@ -37,6 +39,16 @@ const STEP_CONTENT = [{
   title: 'Link your ORCID profile',
   body: <Typography>In order to validate your identity, we require accounts to have an <strong>ORCID profile.</strong></Typography>
 },
+
+{
+  title: 'Synapse Pledge',
+  body: <><Typography variant="body2" paragraph>You need to indicate your understanding and agreement with each of the terms</Typography>.
+
+    <Typography variant="body2" paragraph>You must complete this step in order to request validation. </Typography>
+    <Typography variant="body2" paragraph>This is placeholder text. </Typography>
+  </>
+},
+
 {
   title: 'Submit recent identity attestation documentation.',
   body: <><Typography variant="body2" paragraph>This document must be current within the past month. Acceptable forms of documentation, in English, are any one of the following: </Typography>
@@ -93,7 +105,7 @@ const STEP_CONTENT = [{
 ]
 
 const RightPanel: React.FC<{ stepNumber: number }> = ({ stepNumber }) => {
-  const totalSteps = 3
+  const totalSteps = 4
   return (<Box sx={{ position: 'relative' }}>
     {stepNumber === 0 && <IconButton href='/authenticated/myaccount' sx={{ position: 'absolute', top: theme.spacing(1.5), right: theme.spacing(1.5) }}><CloseIcon /></IconButton>
     }
@@ -135,6 +147,7 @@ const RightPanel: React.FC<{ stepNumber: number }> = ({ stepNumber }) => {
 export enum ValidationWizardStep {
   PROFILE_INFO,
   VERIFY_IDENTITY,
+  TERMS_AGREE,
   SIGN_PLEDGE,
   THANK_YOU,
 }
@@ -160,6 +173,15 @@ function BodyControlFactory(args: {
           verificationSubmission={args.verificationSubmission!}
         />
       </>
+    }
+    case ValidationWizardStep.TERMS_AGREE: {
+      return <TermsAndConditionsWrapped
+        onFormChange={isFormComplete => {
+          args.onFormChange(isFormComplete)
+        }}
+      />
+
+
     }
     case ValidationWizardStep.SIGN_PLEDGE: {
       return <>
@@ -292,6 +314,9 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
         }
         break
       case ValidationWizardStep.VERIFY_IDENTITY:
+        setStep(ValidationWizardStep.TERMS_AGREE)
+        break
+      case ValidationWizardStep.TERMS_AGREE:
         setStep(ValidationWizardStep.SIGN_PLEDGE)
         break
       case ValidationWizardStep.SIGN_PLEDGE:
@@ -306,8 +331,11 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
       case ValidationWizardStep.VERIFY_IDENTITY:
         setStep(ValidationWizardStep.PROFILE_INFO)
         break
+      case ValidationWizardStep.TERMS_AGREE:
+        setStep(ValidationWizardStep.VERIFY_IDENTITY)
+        break
       case ValidationWizardStep.SIGN_PLEDGE:
-        setStep(ValidationWizardStep.PROFILE_INFO)
+        setStep(ValidationWizardStep.TERMS_AGREE)
         break
     }
   }
@@ -342,7 +370,6 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
     <StyledOuterContainer>
       {step !== ValidationWizardStep.THANK_YOU ? (
         <StyledInnerContainer>
-          {step}
           {verificationSubmission && (
             <Box>
               {step !== ValidationWizardStep.PROFILE_INFO && (

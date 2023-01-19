@@ -3,7 +3,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import React from "react"
 import theme from "style/theme"
 
-export const ThankYou: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+const ThankYou: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <Box sx={{
         width: '500px', padding: theme.spacing(8),
         margin: '0 auto',
