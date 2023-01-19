@@ -1,4 +1,4 @@
-import { DeprecatedThemeOptions } from '@mui/material'
+import { Box, DeprecatedThemeOptions, SxProps } from '@mui/material'
 import React from 'react'
 import { Typography } from 'synapse-react-client'
 import SourceAppConfigs, { SourceAppConfig } from './SourceAppConfigs'
@@ -30,8 +30,8 @@ export const SourceApp = (props: SourceAppProps) => {
   )
 }
 
-export const SourceAppLogo = () => {
-  return <div className="SourceAppLogo">{useSourceApp()?.logo}</div>
+export const SourceAppLogo: React.FC<{ sx?: SxProps }> = ({ sx }) => {
+  return <Box className="SourceAppLogo" sx={sx}>{getCurrentSourceApp()?.logo}</Box>
 }
 
 export const SourceAppDescription = () => {
