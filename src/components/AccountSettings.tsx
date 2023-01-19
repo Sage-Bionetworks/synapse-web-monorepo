@@ -11,7 +11,7 @@ import { Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { ChangePassword } from './ChangePassword'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { useHistory } from 'react-router-dom'
-import { ORCiDButton } from './ORCiDButton'
+import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 
 export const AccountSettings = () => {
   const { accessToken } = useSynapseContext()

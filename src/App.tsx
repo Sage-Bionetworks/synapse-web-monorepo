@@ -5,18 +5,16 @@ import {
   ThemeProvider,
 } from '@mui/material/styles'
 import '@mui/styles'
-import { deepmerge } from '@mui/utils'
 import { AppContextConsumer } from 'AppContext'
 import { AccountCreatedPage } from 'components/AccountCreatedPage'
 import { AccountSettings } from 'components/AccountSettings'
 import { CertificationQuiz } from 'components/CertificationQuiz'
 import CookiesNotification from 'components/CookiesNotification'
 import { ProfilePage } from 'components/ProfilePage'
-import { ProfileValidation } from 'components/ProfileValidation'
+import { ProfileValidation } from 'components/ProfileValidation/ProfileValidation'
 import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { RegisterAccount2 } from 'components/RegisterAccount2'
 import { ResetPassword } from 'components/ResetPassword'
-import { getSourceAppTheme } from 'components/SourceApp'
 import { TermsOfUsePage } from 'components/TermsOfUsePage'
 import TopNavBar from 'components/TopNavBar'
 import React from 'react'
@@ -34,11 +32,11 @@ import generalTheme from './style/theme'
 
 declare module '@mui/styles/defaultTheme' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface (remove this line if you don't have the rule enabled)
-  interface DefaultTheme extends Theme {}
+  interface DefaultTheme extends Theme { }
 }
 
 // theme is a merge of a general theme and particular color pallettesfor the source app
-const theme = createTheme(deepmerge(getSourceAppTheme(), generalTheme))
+const theme = createTheme(generalTheme)
 
 const App: React.FC = () => {
   return (

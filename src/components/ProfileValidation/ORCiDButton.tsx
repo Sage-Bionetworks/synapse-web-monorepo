@@ -4,7 +4,7 @@ import { SynapseClient } from 'synapse-react-client'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/Login'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { ValidationWizardStep } from './ProfileValidation'
-import EditIcon from '../assets/RedEditPencil.svg'
+import EditIcon from '../../assets/RedEditPencil.svg'
 
 export type ORCiDButtonProps = {
   redirectAfter?: any
@@ -26,14 +26,12 @@ export const onBindToORCiD = async (
     } else {
       localStorage.setItem(
         'after-sso-login-url',
-        `${SynapseClient.getRootURL()}authenticated/validate?step=${
-          ValidationWizardStep.VERIFY_IDENTITY
+        `${SynapseClient.getRootURL()}authenticated/validate?step=${ValidationWizardStep.VERIFY_IDENTITY
         }`,
       )
     }
-    const redirectUrl = `${SynapseClient.getRootURL()}?provider=${
-      PROVIDERS.ORCID
-    }`
+    const redirectUrl = `${SynapseClient.getRootURL()}?provider=${PROVIDERS.ORCID
+      }`
     SynapseClient.oAuthUrlRequest(PROVIDERS.ORCID, redirectUrl)
       .then((data: any) => {
         const authUrl = data.authorizationUrl
