@@ -23,7 +23,7 @@ import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { Box, Button, IconButton, Link } from '@mui/material'
 import theme from 'style/theme'
 import { getCurrentSourceApp, SourceAppLogo } from './SourceApp'
-import { Terms } from './ProfileValidationSteps/Terms'
+import Attestation from './ProfileValidationSteps/Attestation'
 import ThankYou from './ProfileValidationSteps/ThankYou';
 
 const STEP_CONTENT = [{
@@ -163,7 +163,7 @@ function BodyControlFactory(args: {
     }
     case ValidationWizardStep.SIGN_PLEDGE: {
       return <>
-        <Terms
+        <Attestation
           verificationSubmission={args.verificationSubmission!}
           onFormChange={isFormComplete => {
             args.onFormChange(isFormComplete)
