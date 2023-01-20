@@ -111,6 +111,6 @@
     "minimatch": "^3.1.2"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --write"
+    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --config .prettierrc --write"
   }
 }
