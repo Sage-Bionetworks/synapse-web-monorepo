@@ -5,6 +5,7 @@ import { AppContextConsumer } from 'AppContext'
 import { Typography } from 'synapse-react-client'
 import { Link as RouterLink } from 'react-router-dom'
 import SourceAppConfigs from './SourceAppConfigs'
+import { LeftRightPanel } from './LeftRightPanel'
 
 export type AccountCreatedPageProps = {}
 
@@ -14,15 +15,14 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
     <>
       <AppContextConsumer>
         {appContext => (
-          <div className="panel-wrapper-bg AccountCreatedPage">
-            <div className="panel-wrapper with-white-panel-bg">
-              <div className="mainContent">
-                <div className="panel-logo logo-wrapper">
-                  <SourceAppLogo />
-                </div>
-                <Typography variant="headline2" sx={{ paddingTop: '50px' }}>
-                  Account created
-                </Typography>
+          <LeftRightPanel
+            className={'AccountCreatedPage'}
+            leftContent={
+              <div>
+                <SourceAppLogo
+                  sx={{ textAlign: 'center', paddingBottom: '50px' }}
+                />
+                <Typography variant="headline2">Account created</Typography>
                 <Typography
                   variant="subtitle1"
                   sx={{ paddingTop: '10px', paddingBottom: '20px' }}
@@ -67,32 +67,32 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                   Take me to {sourceApp?.friendlyName}
                 </Button>
               </div>
-              <div className={'panel-right'}>
-                <div className={'panel-right-text'}>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ paddingBottom: '30px' }}
-                  >
-                    Your <strong>Sage Account</strong> can also be used to
-                    access all these resources.
-                  </Typography>
-                  <Grid container spacing={5} mx={{ paddingTop: '20px' }}>
-                    {SourceAppConfigs.map(config => {
-                      if (config.appId != sourceApp?.appId) {
-                        return (
-                          <Grid item xs={6} className="sourceAppItem">
-                            <a href={config.appURL}>{config.logo}</a>
-                          </Grid>
-                        )
-                      } else {
-                        return <></>
-                      }
-                    })}
-                  </Grid>
-                </div>
+            }
+            rightContent={
+              <div className={'panel-right-text'}>
+                <Typography
+                  variant="headline3"
+                  sx={{ paddingBottom: '30px', fontWeight: 500 }}
+                >
+                  Your <strong>Sage Account</strong> can also be used to access
+                  all these resources.
+                </Typography>
+                <Grid container spacing={5} mx={{ paddingTop: '20px' }}>
+                  {SourceAppConfigs.map(config => {
+                    if (config.appId != sourceApp?.appId) {
+                      return (
+                        <Grid item xs={6} className="sourceAppItem">
+                          <a href={config.appURL}>{config.logo}</a>
+                        </Grid>
+                      )
+                    } else {
+                      return <></>
+                    }
+                  })}
+                </Grid>
               </div>
-            </div>
-          </div>
+            }
+          ></LeftRightPanel>
         )}
       </AppContextConsumer>
     </>

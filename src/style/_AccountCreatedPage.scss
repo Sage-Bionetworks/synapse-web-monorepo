@@ -1,26 +1,14 @@
 .AccountCreatedPage {
-  .mainContent {
-    margin: 0 64px;
-    min-height: 640px;
-    button,
-    a {
-      width: 100%;
-      margin: 10px 0px;
-      text-align: center;
-      display: block;
-    }
-    > * {
-      width: 300px;
-    }
+  button,
+  a {
+    width: 100%;
+    margin: 10px 0px;
+    text-align: center;
+    display: block;
   }
   .sourceAppItem img {
     max-height: 50px;
+    max-width: 130px;
     height: 37px;
-  }
-  .panel-right-text {
-    margin-top: 100px;
-  }
-  .panel-right-text {
-    margin-top: 100px;
   }
 }
