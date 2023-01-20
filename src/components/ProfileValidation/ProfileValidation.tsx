@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import { SynapseConstants, Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import CloseIcon from '@mui/icons-material/Close';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import CloseIcon from '@mui/icons-material/Close'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 import {
   createProfileVerificationSubmission,
   getMyUserBundle,
@@ -24,124 +24,202 @@ import { Box, Button, IconButton, Link } from '@mui/material'
 import theme from 'style/theme'
 import { SourceAppLogo, useSourceApp } from '../SourceApp'
 import Attestation from './Attestation'
-import ThankYou from './ThankYou';
-import TermsAndConditionsWrapped from './TermsAndConditionsWrapped';
+import ThankYou from './ThankYou'
+import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
 
-
-const STEP_CONTENT = [{
-  title: 'Identity verification',
-  body: <><Typography variant="body1" sx={{ fontWeight: 500, marginBottom: theme.spacing(3) }}>During <strong>identity verification</strong>, our data governance team will check the information you provide here.</Typography>
-    <Typography variant="smallText1" paragraph><strong>First and last names</strong> are required so that we can verify your identity.</Typography>
-    <Typography variant="smallText1" paragraph>Your <strong>Current Affiliation</strong> is the name of the group, company, or institution you are currently working with while requesting access to this application. </Typography>
-    <Typography variant="smallText1" paragraph>Your <strong>Location</strong> is important because different regulations around data are applicable in different geographic areas.</Typography> </>
-},
-{
-  title: 'Link your ORCID profile',
-  body: <Typography>In order to validate your identity, we require accounts to have an <strong>ORCID profile.</strong></Typography>
-},
-
-{
-  title: 'Synapse Pledge',
-  body: <><Typography variant="body2" paragraph>You need to indicate your understanding and agreement with each of the terms</Typography>.
-
-    <Typography variant="body2" paragraph>You must complete this step in order to request validation. </Typography>
-    <Typography variant="body2" paragraph>This is placeholder text. </Typography>
-  </>
-},
-
-{
-  title: 'Submit recent identity attestation documentation.',
-  body: <><Typography variant="body2" paragraph>This document must be current within the past month. Acceptable forms of documentation, in English, are any one of the following: </Typography>
-
-    <ul style={{
-      marginLeft: '0px',
-      paddingLeft: '20px'
-    }}>
-      <li>
-        <Typography variant="body2">
-          A letter from a signing official on letterhead attesting to your
-          identity (
-          <Link color="primary" href="https://help.synapse.org/docs/2007072795/signing_official.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b"
-            rel="nofollow" > template here</Link>).&nbsp;
-          <i>
-            Note that you <strong>cannot</strong> serve as your own signing
-            official.
-          </i>
+const STEP_CONTENT = [
+  {
+    title: 'Identity verification',
+    body: (
+      <>
+        <Typography
+          variant="body1"
+          sx={{ fontWeight: 500, marginBottom: theme.spacing(3) }}
+        >
+          During <strong>identity verification</strong>, our data governance
+          team will check the information you provide here.
         </Typography>
-        <Typography style={{ textAlign: 'center', margin: theme.spacing(1) }} variant="body2">
-          OR
+        <Typography variant="smallText1" paragraph>
+          <strong>First and last names</strong> are required so that we can
+          verify your identity.
         </Typography>
-      </li>
-      <li>
-        <Typography variant="body2">
-          A notarized letter attesting to your identity (
-          <Link color="primary"
-            href="https://help.synapse.org/docs/2007072795/notarized_letter.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b"
-            rel="nofollow"
-          >
-            template here
-          </Link>
-          )
+        <Typography variant="smallText1" paragraph>
+          Your <strong>Current Affiliation</strong> is the name of the group,
+          company, or institution you are currently working with while
+          requesting access to this application.{' '}
         </Typography>
-        <Typography style={{ textAlign: 'center', margin: theme.spacing(1) }} variant="body2">
-          OR
-        </Typography>
-      </li>
-      <li>
+        <Typography variant="smallText1" paragraph>
+          Your <strong>Location</strong> is important because different
+          regulations around data are applicable in different geographic areas.
+        </Typography>{' '}
+      </>
+    ),
+  },
+  {
+    title: 'Link your ORCID profile',
+    body: (
+      <Typography>
+        In order to validate your identity, we require accounts to have an{' '}
+        <strong>ORCID profile.</strong>
+      </Typography>
+    ),
+  },
+
+  {
+    title: 'Synapse Pledge',
+    body: (
+      <>
         <Typography variant="body2" paragraph>
-          A copy of your professional license (e.g., a photocopy of your
-          medical license).&nbsp;
+          You need to indicate your understanding and agreement with each of the
+          terms
+        </Typography>
+        .
+        <Typography variant="body2" paragraph>
+          You must complete this step in order to request validation.{' '}
         </Typography>
         <Typography variant="body2" paragraph>
-          <i>
-            Note that a copy of a work or university identification badge is{' '}
-            <strong>not</strong> an accepted form of identity attestation
-            documentation.
-          </i>
+          This is placeholder text.{' '}
         </Typography>
-      </li>
-    </ul></>
-}
+      </>
+    ),
+  },
+
+  {
+    title: 'Submit recent identity attestation documentation.',
+    body: (
+      <>
+        <Typography variant="body2" paragraph>
+          This document must be current within the past month. Acceptable forms
+          of documentation, in English, are any one of the following:{' '}
+        </Typography>
+
+        <ul
+          style={{
+            marginLeft: '0px',
+            paddingLeft: '20px',
+          }}
+        >
+          <li>
+            <Typography variant="body2">
+              A letter from a signing official on letterhead attesting to your
+              identity (
+              <Link
+                color="primary"
+                href="https://help.synapse.org/docs/2007072795/signing_official.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b"
+                rel="nofollow"
+              >
+                {' '}
+                template here
+              </Link>
+              ).&nbsp;
+              <i>
+                Note that you <strong>cannot</strong> serve as your own signing
+                official.
+              </i>
+            </Typography>
+            <Typography
+              style={{ textAlign: 'center', margin: theme.spacing(1) }}
+              variant="body2"
+            >
+              OR
+            </Typography>
+          </li>
+          <li>
+            <Typography variant="body2">
+              A notarized letter attesting to your identity (
+              <Link
+                color="primary"
+                href="https://help.synapse.org/docs/2007072795/notarized_letter.doc?inst-v=82ba44ea-c50a-4c56-b8f9-f744ebd4620b"
+                rel="nofollow"
+              >
+                template here
+              </Link>
+              )
+            </Typography>
+            <Typography
+              style={{ textAlign: 'center', margin: theme.spacing(1) }}
+              variant="body2"
+            >
+              OR
+            </Typography>
+          </li>
+          <li>
+            <Typography variant="body2" paragraph>
+              A copy of your professional license (e.g., a photocopy of your
+              medical license).&nbsp;
+            </Typography>
+            <Typography variant="body2" paragraph>
+              <i>
+                Note that a copy of a work or university identification badge is{' '}
+                <strong>not</strong> an accepted form of identity attestation
+                documentation.
+              </i>
+            </Typography>
+          </li>
+        </ul>
+      </>
+    ),
+  },
 ]
 
 const RightPanel: React.FC<{ stepNumber: number }> = ({ stepNumber }) => {
   const totalSteps = 4
-  return (<Box sx={{ position: 'relative' }}>
-    {stepNumber === 0 && <IconButton href='/authenticated/myaccount' sx={{ position: 'absolute', top: theme.spacing(1.5), right: theme.spacing(1.5) }}><CloseIcon /></IconButton>
-    }
-    <Box sx={{
-      marginTop: theme.spacing(8),
-      marginBottom: theme.spacing(4),
-      overflow: 'hidden',
-      textAlign: 'center',
-      fontWeight: '700',
-      fontSize: '16px',
-      color: '#4A5056',
-      '&:before, &:after': {
-        backgroundColor: '#DFE2E6',
-        content: '""',
-        display: 'inline-block',
-        height: '1px',
-        position: 'relative',
-        verticalAlign: 'middle',
-        width: '50%',
-      },
-      '&:before': {
-        right: '0.5em',
-        marginLeft: '-50%',
-      },
-      '&:after': {
-        left: '0.5em',
-        marginRight: '-50%',
-      }
-    }}> Step {stepNumber + 1} of {totalSteps}</Box>
-    <Typography variant="headline2" sx={{
-      color: theme.palette.grey[900]
-    }}>{STEP_CONTENT[stepNumber].title}</Typography>
-    <Box>
-      {STEP_CONTENT[stepNumber].body}
+  return (
+    <Box sx={{ position: 'relative' }}>
+      {stepNumber === 0 && (
+        <IconButton
+          href="/authenticated/myaccount"
+          sx={{
+            position: 'absolute',
+            top: theme.spacing(1.5),
+            right: theme.spacing(1.5),
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      )}
+      <Box
+        sx={{
+          marginTop: theme.spacing(8),
+          marginBottom: theme.spacing(4),
+          overflow: 'hidden',
+          textAlign: 'center',
+          fontWeight: '700',
+          fontSize: '16px',
+          color: '#4A5056',
+          '&:before, &:after': {
+            backgroundColor: '#DFE2E6',
+            content: '""',
+            display: 'inline-block',
+            height: '1px',
+            position: 'relative',
+            verticalAlign: 'middle',
+            width: '50%',
+          },
+          '&:before': {
+            right: '0.5em',
+            marginLeft: '-50%',
+          },
+          '&:after': {
+            left: '0.5em',
+            marginRight: '-50%',
+          },
+        }}
+      >
+        {' '}
+        Step {stepNumber + 1} of {totalSteps}
+      </Box>
+      <Typography
+        variant="headline2"
+        sx={{
+          color: theme.palette.grey[900],
+        }}
+      >
+        {STEP_CONTENT[stepNumber].title}
+      </Typography>
+      <Box>{STEP_CONTENT[stepNumber].body}</Box>
     </Box>
-  </Box>)
+  )
 }
 
 export enum ValidationWizardStep {
@@ -152,60 +230,65 @@ export enum ValidationWizardStep {
   THANK_YOU,
 }
 
-
 function BodyControlFactory(args: {
-  step: ValidationWizardStep,
-  onFormChange: (a: boolean) => void,
-  onReturnToSettings: () => void,
+  step: ValidationWizardStep
+  onFormChange: (a: boolean) => void
+  onReturnToSettings: () => void
   verificationSubmission?: VerificationSubmission
 }) {
   switch (args.step) {
     case ValidationWizardStep.PROFILE_INFO: {
-      return <>
-        <ProfileFieldsEditor
-          verificationSubmission={args.verificationSubmission!}
-        />
-      </>
+      return (
+        <>
+          <ProfileFieldsEditor
+            verificationSubmission={args.verificationSubmission!}
+          />
+        </>
+      )
     }
     case ValidationWizardStep.VERIFY_IDENTITY: {
-      return <>
-        <VerifyIdentify
-          verificationSubmission={args.verificationSubmission!}
-        />
-      </>
+      return (
+        <>
+          <VerifyIdentify
+            verificationSubmission={args.verificationSubmission!}
+          />
+        </>
+      )
     }
     case ValidationWizardStep.TERMS_AGREE: {
-      return <TermsAndConditionsWrapped
-        onFormChange={isFormComplete => {
-          args.onFormChange(isFormComplete)
-        }}
-      />
-
-
-    }
-    case ValidationWizardStep.SIGN_PLEDGE: {
-      return <>
-        <Attestation
-          verificationSubmission={args.verificationSubmission!}
+      return (
+        <TermsAndConditionsWrapped
           onFormChange={isFormComplete => {
             args.onFormChange(isFormComplete)
           }}
         />
-      </>
+      )
+    }
+    case ValidationWizardStep.SIGN_PLEDGE: {
+      return (
+        <>
+          <Attestation
+            verificationSubmission={args.verificationSubmission!}
+            onFormChange={isFormComplete => {
+              args.onFormChange(isFormComplete)
+            }}
+          />
+        </>
+      )
     }
     case ValidationWizardStep.THANK_YOU: {
-      return <>
-        <Typography variant="headline3">
-          Thank you for verifying.
-        </Typography>
-        <Button
-          variant="contained"
-          onClick={() => args.onReturnToSettings()}
-          type="button"
-        >
-          Return to Account Settings
-        </Button>
-      </>
+      return (
+        <>
+          <Typography variant="headline3">Thank you for verifying.</Typography>
+          <Button
+            variant="contained"
+            onClick={() => args.onReturnToSettings()}
+            type="button"
+          >
+            Return to Account Settings
+          </Button>
+        </>
+      )
     }
   }
 }
@@ -373,25 +456,42 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
           {verificationSubmission && (
             <Box>
               {step !== ValidationWizardStep.PROFILE_INFO && (
-                <IconButton onClick={onPrevious} sx={{ position: 'absolute', top: theme.spacing(1.5), left: theme.spacing(1.5) }}>
+                <IconButton
+                  onClick={onPrevious}
+                  sx={{
+                    position: 'absolute',
+                    top: theme.spacing(1.5),
+                    left: theme.spacing(1.5),
+                  }}
+                >
                   <ArrowBackIcon />
                 </IconButton>
               )}
-              <SourceAppLogo sx={{ margin: '0, auto', textAlign: 'center' }} />
-              <BodyControlFactory {...{
-                step: step, verificationSubmission: verificationSubmission, onFormChange: isFormComplete => {
-                  setIsContinueButtonEnabled(isFormComplete)
-                },
-                onReturnToSettings: () => {
-                  setIsReturnToAccountSettings(true)
-                }
-              }} />
+              <SourceAppLogo
+                sx={{ textAlign: 'center', paddingBottom: '35px' }}
+              />
+              <BodyControlFactory
+                {...{
+                  step: step,
+                  verificationSubmission: verificationSubmission,
+                  onFormChange: isFormComplete => {
+                    setIsContinueButtonEnabled(isFormComplete)
+                  },
+                  onReturnToSettings: () => {
+                    setIsReturnToAccountSettings(true)
+                  },
+                }}
+              />
               <Button
                 variant="contained"
                 fullWidth
                 onClick={onNext}
                 disabled={!isContinueButtonEnabled}
-                endIcon={step !== ValidationWizardStep.SIGN_PLEDGE && <ArrowRightAltIcon />}
+                endIcon={
+                  step !== ValidationWizardStep.SIGN_PLEDGE && (
+                    <ArrowRightAltIcon />
+                  )
+                }
               >
                 {step === ValidationWizardStep.SIGN_PLEDGE
                   ? 'Submit'
