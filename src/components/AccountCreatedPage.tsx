@@ -19,12 +19,10 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
             className={'AccountCreatedPage'}
             leftContent={
               <div>
-                <div className="panel-logo logo-wrapper">
-                  <SourceAppLogo />
-                </div>
-                <Typography variant="headline2" sx={{ paddingTop: '50px' }}>
-                  Account created
-                </Typography>
+                <SourceAppLogo
+                  sx={{ textAlign: 'center', paddingBottom: '50px' }}
+                />
+                <Typography variant="headline2">Account created</Typography>
                 <Typography
                   variant="subtitle1"
                   sx={{ paddingTop: '10px', paddingBottom: '20px' }}
