@@ -1,6 +1,13 @@
-import { Box } from '@mui/material'
+import {
+  Box,
+  InputLabel,
+  TextField,
+  formHelperTextClasses,
+  inputBaseClasses,
+} from '@mui/material'
+import { StyledFormControl } from 'components/StyledComponents'
 import React, { useState } from 'react'
-import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
+
 import theme from 'style/theme'
 import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
 
@@ -17,57 +24,88 @@ export type ProfileFieldsEditorProps = {
 export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
   const { verificationSubmission } = props
   const [firstName, setFirstName] = useState(verificationSubmission.firstName)
+
   const [lastName, setLastName] = useState(verificationSubmission.lastName)
   const [company, setCompany] = useState(verificationSubmission.company)
   const [location, setLocation] = useState(verificationSubmission.location)
+  const requiredError = 'This field cannot be empty.'
   return (
     <>
-      <Box sx={{ marginBottom: theme.spacing(2) }}/*className="ProfileFieldsEditor bootstrap-4-backport ValidationSteps"*/>
-
-        <FormGroup className="required">
-          <FormLabel>First Name</FormLabel>
-          <FormControl
+      <Box
+        sx={{
+          marginBottom: theme.spacing(2),
+        }}
+      >
+        <StyledFormControl fullWidth variant="standard" margin="normal">
+          <InputLabel shrink htmlFor="firstName" required>
+            First Name
+          </InputLabel>
+          <TextField
+            fullWidth
+            id="firstName"
             onChange={e => {
               verificationSubmission.firstName = e.target.value
               setFirstName(e.target.value)
             }}
             value={firstName}
+            helperText={requiredError}
           />
-        </FormGroup>
+        </StyledFormControl>
 
-        <FormGroup className="required">
-          <FormLabel>Last Name</FormLabel>
-          <FormControl
+        <StyledFormControl fullWidth variant="standard" margin="normal">
+          <InputLabel shrink htmlFor="lasttName" required>
+            Last Name
+          </InputLabel>
+          <TextField
+            fullWidth
+            id="lastName"
             onChange={e => {
               verificationSubmission.lastName = e.target.value
               setLastName(e.target.value)
             }}
             value={lastName}
           />
-        </FormGroup>
+        </StyledFormControl>
 
-
-        <FormGroup className="required">
-          <FormLabel>Current Affiliation</FormLabel>
-          <FormControl
+        <StyledFormControl
+          fullWidth
+          variant="standard"
+          margin="normal"
+          required
+        >
+          <InputLabel shrink htmlFor="affiliation">
+            Current Affiliation
+          </InputLabel>
+          <TextField
+            fullWidth
+            id="affiliation"
             onChange={e => {
               verificationSubmission.company = e.target.value
               setCompany(e.target.value)
             }}
             value={company}
           />
-        </FormGroup>
+        </StyledFormControl>
 
-        <FormGroup className="required">
-          <FormLabel>Location</FormLabel>
-          <FormControl
+        <StyledFormControl
+          fullWidth
+          variant="standard"
+          margin="normal"
+          required
+        >
+          <InputLabel shrink htmlFor="location">
+            Location
+          </InputLabel>
+          <TextField
+            id="location"
+            fullWidth
             onChange={e => {
               verificationSubmission.location = e.target.value
               setLocation(e.target.value)
             }}
             value={location}
           />
-        </FormGroup>
+        </StyledFormControl>
 
         {/* agendel TODO: do we need this     <FormGroup>
           <FormLabel>Email(s)</FormLabel>

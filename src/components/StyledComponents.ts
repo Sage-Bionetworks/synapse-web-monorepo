@@ -1,4 +1,13 @@
-import { styled, Box } from '@mui/material'
+import {
+  styled,
+  Box,
+  alpha,
+  inputBaseClasses,
+  FormControl,
+  textFieldClasses,
+  formHelperTextClasses,
+} from '@mui/material'
+import { latoFont } from 'style/theme'
 
 export const StyledOuterContainer = styled(Box, {
   label: 'StyledOuterContainer',
@@ -27,5 +36,53 @@ export const StyledInnerContainer = styled(Box, {
   },
   '& > div:nth-of-type(2)': {
     backgroundColor: '#F1F3F5',
+  },
+}))
+
+/* bootstrap-like label/text inputs 
+ usage: 
+        <StyledFormControl fullWidth variant="standard" margin="normal">
+          <InputLabel shrink htmlFor="someinput">
+            labelText
+          </InputLabel>
+          <TextField
+            id="someinput"/>
+        </StyledFormControl>
+*/
+export const StyledFormControl = styled(FormControl, {
+  label: 'StyledFormControl',
+})(({ theme }) => ({
+  '& label': {
+    fontSize: '14px',
+    transform: 'none',
+  },
+  [`& .${formHelperTextClasses.root}`]: {
+    marginLeft: '0',
+    [`&.Mui-error`]: {
+      color: '#c13415',
+    },
+  },
+  [`& .${textFieldClasses.root}`]: {
+    marginTop: theme.spacing(3),
+
+    [`& .${inputBaseClasses.root}`]: {
+      borderRadius: '3px',
+    },
+    '& .MuiInputBase-input': {
+      borderRadius: '3px',
+      fontSize: '14px',
+      position: 'relative',
+      backgroundColor: theme.palette.mode === 'light' ? '#F1F3F5' : '#F1F3F5',
+      border: 'none',
+      padding: '14px 12px',
+      fontFamily: latoFont,
+      '&:focus': {
+        boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.1rem`,
+        borderColor: theme.palette.primary.main,
+      },
+    },
+    '& fieldset': {
+      border: 'none',
+    },
   },
 }))
