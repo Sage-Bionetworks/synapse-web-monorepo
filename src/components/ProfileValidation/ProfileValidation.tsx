@@ -232,7 +232,8 @@ export enum ValidationWizardStep {
 
 function BodyControlFactory(args: {
   step: ValidationWizardStep
-  onFormChange: (a: boolean) => void
+
+  onNext: (vs: VerificationSubmission) => void
   onReturnToSettings: () => void
   verificationSubmission?: VerificationSubmission
 }) {
@@ -242,6 +243,7 @@ function BodyControlFactory(args: {
         <>
           <ProfileFieldsEditor
             verificationSubmission={args.verificationSubmission!}
+            onNext={vs => args.onNext(vs)}
           />
         </>
       )
@@ -250,6 +252,7 @@ function BodyControlFactory(args: {
       return (
         <>
           <VerifyIdentify
+            onNext={vs => args.onNext(vs)}
             verificationSubmission={args.verificationSubmission!}
           />
         </>
@@ -258,9 +261,8 @@ function BodyControlFactory(args: {
     case ValidationWizardStep.TERMS_AGREE: {
       return (
         <TermsAndConditionsWrapped
-          onFormChange={isFormComplete => {
-            args.onFormChange(isFormComplete)
-          }}
+          verificationSubmission={args.verificationSubmission!}
+          onNext={() => args.onNext(args.verificationSubmission!)}
         />
       )
     }
@@ -269,9 +271,7 @@ function BodyControlFactory(args: {
         <>
           <Attestation
             verificationSubmission={args.verificationSubmission!}
-            onFormChange={isFormComplete => {
-              args.onFormChange(isFormComplete)
-            }}
+            onNext={() => args.onNext(args.verificationSubmission!)}
           />
         </>
       )
@@ -303,7 +303,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
   const [step, setStep] = useState<ValidationWizardStep>(
     ValidationWizardStep.PROFILE_INFO,
   )
-  const [isContinueButtonEnabled, setIsContinueButtonEnabled] = useState(true)
+
   const [isReturnToAccountSettings, setIsReturnToAccountSettings] =
     useState(false)
 
@@ -383,15 +383,14 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
     }
   }
 
-  const onNext = async (event: React.SyntheticEvent) => {
-    event.preventDefault()
+  const onNext = async (vs?: VerificationSubmission) => {
+    //  event.preventDefault()
     switch (step) {
       case ValidationWizardStep.PROFILE_INFO:
         try {
+          Object.assign(verificationSubmission || {}, vs!)
           await updateProfileFromVerificationSubmission()
           setStep(ValidationWizardStep.VERIFY_IDENTITY)
-          // the continue button is only enabled if ORCiD is bound
-          setIsContinueButtonEnabled(!!verificationSubmission!.orcid)
         } catch (err: any) {
           displayToast(err.reason as string, 'danger')
         }
@@ -474,29 +473,13 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
                 {...{
                   step: step,
                   verificationSubmission: verificationSubmission,
-                  onFormChange: isFormComplete => {
-                    setIsContinueButtonEnabled(isFormComplete)
-                  },
+                  onNext: onNext,
+
                   onReturnToSettings: () => {
                     setIsReturnToAccountSettings(true)
                   },
                 }}
               />
-              <Button
-                variant="contained"
-                fullWidth
-                onClick={onNext}
-                disabled={!isContinueButtonEnabled}
-                endIcon={
-                  step !== ValidationWizardStep.SIGN_PLEDGE && (
-                    <ArrowRightAltIcon />
-                  )
-                }
-              >
-                {step === ValidationWizardStep.SIGN_PLEDGE
-                  ? 'Submit'
-                  : 'Continue'}
-              </Button>
             </Box>
           )}
           <RightPanel stepNumber={step} />
