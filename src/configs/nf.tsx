@@ -9,7 +9,7 @@ const description =
   'An open science platform to help scientists find neurofibromatosis - NF1, NF2, schwannomatosis - datasets, resources, analysis, tools, and publications.'
 
 export const nf: SourceAppConfig = {
-  appId: 'nf',
+  appId: 'NF',
   appURL: 'https://nf.synapse.org/',
   friendlyName: 'NF Data Portal',
   logo,

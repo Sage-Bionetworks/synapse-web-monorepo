@@ -1,32 +1,31 @@
-.account-setting-panel{
-    background-color: #fff;
-    margin: 30px 0;
-    &.nav-panel {
-        margin-left: 180px;
-        margin-right: 50px;
-        width: 280px;
-        button{
-            display: block;
-            width: 100%;
-        }
+.account-setting-panel {
+  background-color: #fff;
+  margin: 30px 0;
+  &.nav-panel {
+    margin-left: 180px;
+    margin-right: 50px;
+    width: 410px;
+    button {
+      display: block;
+      width: 100%;
     }
-    &.main-panel{
-        padding:54px;
-        margin-right: 220px;
-        .credential-partition {
-            .completeIcon {
-                color: #32A330
-            }
-            .incompleteIcon {
-                color: #C13415
-            }
-            .item-completion {
-                margin: 20px 0;
-            }
-            border-bottom: 1px #EAECEE solid;
-            margin-bottom:1px;
-            padding: 34px 0;
-            
-        }
+  }
+  &.main-panel {
+    padding: 54px;
+    margin-right: 220px;
+    .credential-partition {
+      .completeIcon {
+        color: #32a330;
+      }
+      .incompleteIcon {
+        color: #c13415;
+      }
+      .item-completion {
+        margin: 20px 0;
+      }
+      border-bottom: 1px #eaecee solid;
+      margin-bottom: 1px;
+      padding: 34px 0;
     }
+  }
 }

@@ -1,14 +1,14 @@
-@use "./style/variables" as Portal;
+@use './style/variables' as Portal;
 
-@use "synapse-react-client/dist/style/main.scss" with (
+@use 'synapse-react-client/dist/style/main.scss' with (
   $primary-action-color: Portal.$primary-action-color,
   $secondary-action-color: Portal.$secondary-action-color,
   $primary-bgcolor-rgba: unset
 );
-@use "./style/all";
+@use './style/all';
 
 .App {
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
   overflow: hidden;
 }
 
@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: center;
   background: transparent
-    url("https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg")
+    url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg')
     no-repeat;
   background-size: cover;
   margin: 0;
@@ -38,8 +38,13 @@
   max-width: 650px;
 }
 
-.SourceAppLogo svg {
-  height: 100%;
+.SourceAppLogo {
+  img {
+    max-width: 275px;
+  }
+  svg {
+    height: 100%;
+  }
 }
 
 $wrapper-width: 955px;
@@ -50,11 +55,13 @@ $wrapper-width: 955px;
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background:
-    linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.7),
+      rgba(255, 255, 255, 0.7)
+    ),
     url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg');
   background-size: cover;
-  &.with-account-setting{
+  &.with-account-setting {
     align-items: flex-start;
   }
 }
@@ -64,8 +71,8 @@ $wrapper-width: 955px;
   max-width: $wrapper-width;
   &.with-login-panel-bg {
     background: #fff
-    url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg')
-    no-repeat right bottom 20px;
+      url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg')
+      no-repeat right bottom 20px;
   }
   &.with-white-panel-bg {
     background: #fff;
@@ -92,7 +99,7 @@ $wrapper-width: 955px;
     }
   }
   .panel-right {
-    background-color: rgba(57,89,121,.05);
+    background-color: rgba(57, 89, 121, 0.05);
     flex: 0 1 auto;
     padding: 0 60px;
     .headline {

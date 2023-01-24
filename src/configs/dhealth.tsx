@@ -9,7 +9,7 @@ const description =
   'A Digital Health Knowledge Portal to enable the discovery and download digital and mobile health data, tools, and benchmarked outcomes and digital biomarkers.'
 
 export const dHealth: SourceAppConfig = {
-  appId: 'dHealth',
+  appId: 'DH',
   appURL: 'https://dhealth.synapse.org/',
   friendlyName: 'dHealth Digital Health Data Portal',
   logo,
