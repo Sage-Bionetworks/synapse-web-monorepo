@@ -26,6 +26,7 @@ import { SourceAppLogo, useSourceApp } from '../SourceApp'
 import Attestation from './Attestation'
 import ThankYou from './ThankYou'
 import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
+import { ReturnToAppButton } from './ReturnToAppButton'
 
 const STEP_CONTENT = [
   {
@@ -167,16 +168,17 @@ const RightPanel: React.FC<{ stepNumber: number }> = ({ stepNumber }) => {
   return (
     <Box sx={{ position: 'relative' }}>
       {stepNumber === 0 && (
-        <IconButton
-          href="/authenticated/myaccount"
-          sx={{
-            position: 'absolute',
-            top: theme.spacing(1.5),
-            right: theme.spacing(1.5),
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
+        <ReturnToAppButton>
+          <IconButton
+            sx={{
+              position: 'absolute',
+              top: theme.spacing(1.5),
+              right: theme.spacing(1.5),
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </ReturnToAppButton>
       )}
       <Box
         sx={{
