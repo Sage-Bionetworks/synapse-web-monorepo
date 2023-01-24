@@ -11,6 +11,8 @@ import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam } from 'URLUtils'
 import theme from './style/theme'
 import useAnalytics from './useAnalytics'
+import SourceAppConfigs from 'components/SourceAppConfigs'
+import { synapse } from 'configs/synapse'
 
 export type AppInitializerState = {
   token?: string
@@ -114,8 +116,14 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       setAppId(searchParamAppId)
     } else if (localStorageAppId) {
       setAppId(localStorageAppId)
+    } else {
+      // fallback to Synapse
+      localStorage.setItem('sourceAppId', synapse.appId)
+      setAppId(synapse.appId)
     }
+  }, [])
 
+  useEffect(() => {
     const searchParamRedirectURL = getSearchParam('redirectURL')
     const localStorageRedirectURL = localStorage.getItem('sourceAppRedirectURL')
     if (searchParamRedirectURL) {
@@ -130,8 +138,14 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       }
     } else if (localStorageRedirectURL) {
       setRedirectURL(localStorageRedirectURL)
+    } else if (appId) {
+      // fallback to Source App public URL
+      const sourceAppConfig = SourceAppConfigs.find(
+        config => config.appId === appId,
+      )
+      setRedirectURL(sourceAppConfig?.appURL)
     }
-  }, [])
+  }, [appId])
 
   useEffect(() => {
     if (appId) {

@@ -58,7 +58,7 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                   type="button"
                   color="primary"
                   variant="contained"
-                  sx={{ padding: '10px' }}
+                  sx={{ padding: '10px', height: '100%' }}
                   onClick={() => {
                     appContext?.redirectURL &&
                       window.location.assign(appContext.redirectURL)

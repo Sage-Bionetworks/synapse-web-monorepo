@@ -16,7 +16,7 @@ const description =
 
 export const mtb: SourceAppConfig = {
   appId: 'MTB',
-  appURL: 'https://www.mobiletoolbox.org/',
+  appURL: 'https://studies.mobiletoolbox.org/',
   friendlyName: 'Mobile Toolbox',
   logo,
   theme: {

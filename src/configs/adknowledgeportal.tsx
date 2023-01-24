@@ -9,7 +9,7 @@ const description =
   "Discover and download Alzheimer's Disease data, analyses, and tools from the National Institute on Aging's Alzheimer's Disease Translational Research Program."
 
 export const adKnowledgePortal: SourceAppConfig = {
-  appId: 'ADKnowledgePortal',
+  appId: 'ADKP',
   appURL: 'https://adknowledgeportal.synapse.org/',
   friendlyName: 'AD Knowledge Portal',
   logo,
