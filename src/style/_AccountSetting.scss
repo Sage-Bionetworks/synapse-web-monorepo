@@ -1,18 +1,26 @@
 .account-setting-panel {
-  background-color: #fff;
   margin: 30px 0;
+  @media (max-width: 768px) {
+    &.nav-panel {
+      display: none;
+    }
+  }
   &.nav-panel {
-    margin-left: 180px;
-    margin-right: 50px;
-    width: 410px;
-    button {
-      display: block;
-      width: 100%;
+    min-width: 200px;
+    margin-right: 30px;
+    li {
+      background-color: #fff;
+      font-size: 14px;
+      border-bottom: 1px solid #eaecee;
+      padding: 11px 20px;
+      &:hover {
+        font-weight: bold;
+      }
     }
   }
   &.main-panel {
+    background-color: #fff;
     padding: 54px;
-    margin-right: 220px;
     .credential-partition {
       .completeIcon {
         color: #32a330;
