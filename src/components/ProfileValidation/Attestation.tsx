@@ -64,7 +64,7 @@ const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
                 style={{ margin: theme.spacing(5, 0) }}
                 variant="body2"
               >
-                ! {attachments[0].fileName}
+                {attachments[0].fileName}
               </Typography>
               <Button variant="outlined" onClick={() => setAttachments([])}>
                 Remove
