@@ -14,7 +14,8 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const [isFormComplete, setIsFormComplete] = useState(false)
   const [isDone, setIsDone] = useState(false)
   const { accessToken } = useSynapseContext()
-  const sourceAppName = useSourceApp()?.friendlyName
+  const sourceApp = useSourceApp()
+  const sourceAppName = sourceApp?.friendlyName
 
   const tcAgreement =
     'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf'
@@ -45,7 +46,11 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
 
   if (isDone) {
     // AppInitializer still thinks the ToU are not signed.
-    window.location.assign('/authenticated/accountcreated')
+    if (sourceApp?.requestAffiliation) {
+      window.location.assign('/authenticated/currentaffiliation')
+    } else {
+      window.location.assign('/authenticated/accountcreated')
+    }
   }
   return (
     <>
