@@ -17,7 +17,6 @@ import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { RegisterAccount2 } from 'components/RegisterAccount2'
 import { ResetPassword } from 'components/ResetPassword'
 import { TermsOfUsePage } from 'components/TermsOfUsePage'
-import TopNavBar from 'components/TopNavBar'
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { SynapseComponents } from 'synapse-react-client'
@@ -46,7 +45,6 @@ const App: React.FC = () => {
         <ThemeProvider theme={theme}>
           <Router>
             <AppInitializer>
-              <TopNavBar />
               <CookiesNotification />
               <Switch>
                 <Route
