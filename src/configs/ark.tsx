@@ -17,4 +17,5 @@ export const ark: SourceAppConfig = {
     palette: arkPortalPalette,
   },
   description,
+  requestAffiliation: true,
 }

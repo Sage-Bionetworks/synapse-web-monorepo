@@ -16,6 +16,7 @@ export type SourceAppConfig = {
   logo: JSX.Element
   theme: ThemeOptions
   description: string
+  requestAffiliation?: boolean // If set to true, a special screen is shown requesting the user to fill out UserProfile.company
 }
 
 export const SourceAppConfigs: SourceAppConfig[] = [
