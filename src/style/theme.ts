@@ -58,8 +58,49 @@ const themeObject = {
         },
       },
     },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {},
+      },
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          padding: '24px 24px 0px 24px',
+        },
+      },
+    },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          color: '#4A5056',
+        },
+      },
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          padding: '24px',
+          '& .MuiButton-root': {
+            height: '36px',
+            padding: '0 16px',
+            borderRadius: '0px',
+            fontSize: '15px',
+            '&:first-child': {
+              marginRight: '14px',
+            },
+            '&.MuiButton-outlinedPrimary': {
+              borderWidth: '1px',
+              fontWeight: 700,
+              '&:hover': {
+                '&.MuiButton-outlinedPrimary:hover': { borderWidth: '1px' },
+              },
+            },
+          },
+        },
+      },
+    },
   },
-
   typography: {
     allVariants: {
       fontFamily: latoFont,
@@ -110,7 +151,6 @@ const themeObject = {
     dataFieldKey: {},
   },
 }
-
 const theme: Theme = createTheme(deepmerge(getSourceAppTheme(), themeObject))
 
 export default theme
