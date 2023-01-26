@@ -1,0 +1,5 @@
+//allows to get the color from the theme map.
+//currently only used in drug tool
+@function themed($key) {
+  @return map-get($theme-map, $key);
+}

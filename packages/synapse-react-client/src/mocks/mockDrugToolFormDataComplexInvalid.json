@@ -1,0 +1,56 @@
+{
+  "in_vivo_data": {
+    "experiments": [
+      {
+        "age_range": {
+          "age_range_min": 119,
+          "age_range_max": 18
+        },
+        "dose_range": {
+          "dose_range_min": 36,
+          "dose_range_max": 9
+        },
+        "drug_formulation": "Culpa veniam nostru",
+        "name": "Ina Rhodes",
+        "reference": "Fugiat voluptatem iu",
+        "strain": "Tempora labore delen",
+        "ed50": "Possimus consequat",
+        "pretreatment_time": "Porro natus quo non ",
+        "outcome_measures": "Harum reiciendis des",
+        "assay_description": "Vel quae facere erro",
+        "adverse_events_description": "Illo explicabo Sit",
+        "species": "rabbit",
+        "route": ["formulated_in_drinking_water"],
+        "dose_regimen": "sub_chronic",
+        "sex": "female"
+      },
+      {
+        "age_range": {
+          "age_range_min": 107,
+          "age_range_max": 33
+        },
+        "dose_range": {
+          "dose_range_min": 87,
+          "dose_range_max": 10
+        },
+        "name": "Yvette Terrell",
+        "reference": "Est et ipsum proiden",
+        "strain": "Nam fugit non tenet",
+        "ed50": "Nam ab quo rerum del",
+        "pretreatment_time": "Officiis optio sapi",
+        "outcome_measures": "Unde consequatur mi",
+        "assay_description": "Id ut sint facilis l",
+        "drug_formulation": "Non quisquam non quo",
+        "adverse_events_description": "Duis iste voluptatem",
+        "species": "dog",
+        "route": [
+          "transdermal",
+          "formulated_in_food",
+          "formulated_in_drinking_water"
+        ],
+        "sex": "both",
+        "dose_regimen": "chronic"
+      }
+    ]
+  }
+}

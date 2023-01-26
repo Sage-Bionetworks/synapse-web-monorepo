@@ -1,0 +1,625 @@
+{
+  "steps": [
+    {
+      "id": "study",
+      "order": 0,
+      "title": "Study",
+      "default": "contact"
+    },
+    {
+      "id": "contact",
+      "order": 0,
+      "title": "Contact",
+      "default": "funding",
+      "rules": []
+    },
+    {
+      "id": "funding",
+      "order": 3,
+      "title": "Funding",
+      "default": "contributions",
+      "rules": []
+    },
+    {
+      "id": "contributions",
+      "order": 6,
+      "title": "Contributions",
+      "default": "data",
+      "rules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "data"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "data"
+            }
+          },
+          "priority:": 10
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "analysis"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "analysis"
+            }
+          },
+          "priority:": 5
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "tools"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "tools"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+
+    {
+      "id": "data",
+      "order": 9,
+      "title": "Data",
+      "default": "human",
+      "rules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "data",
+                "operator": "contains",
+                "path": ".data_origin",
+                "value": "human"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "human"
+            }
+          },
+          "priority:": 10
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "data",
+                "operator": "contains",
+                "path": ".data_origin",
+                "value": "model_system"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "model_system"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+    {
+      "id": "human",
+      "order": 10,
+      "title": "Human",
+      "default": "summary",
+      "rules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "data",
+                "operator": "contains",
+                "path": ".data_origin",
+                "value": "model_system"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "model_system"
+            }
+          },
+          "priority:": 1
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "analysis"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "analysis"
+            }
+          },
+          "priority:": 2
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "tools"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "tools"
+            }
+          },
+          "priority:": 2
+        }
+      ]
+    },
+    {
+      "id": "model_system",
+      "order": 20,
+      "title": "Model System",
+      "default": "mouse",
+      "rules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "model_system",
+                "operator": "contains",
+                "path": ".model_system_type",
+                "value": "mouse"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "mouse"
+            }
+          },
+          "priority:": 10
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "model_system",
+                "operator": "contains",
+                "path": ".model_system_type",
+                "value": "rat"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "rat"
+            }
+          },
+          "priority:": 5
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "model_system",
+                "operator": "contains",
+                "path": ".model_system_type",
+                "value": "drosophila"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "drosophila"
+            }
+          },
+          "priority:": 4
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "model_system",
+                "operator": "contains",
+                "path": ".model_system_type",
+                "value": "cell_culture"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "cell_culture"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+    {
+      "id": "mouse",
+      "order": 21,
+      "title": "Mouse",
+      "default": "summary",
+      "rules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "model_system",
+                "operator": "contains",
+                "path": ".model_system_type",
+                "value": "rat"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "rat"
+            }
+          },
+          "priority:": 10
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "model_system",
+                "operator": "contains",
+                "path": ".model_system_type",
+                "value": "drosophila"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "drosophila"
+            }
+          },
+          "priority:": 4
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "model_system",
+                "operator": "contains",
+                "path": ".model_system_type",
+                "value": "cell_culture"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "cell_culture"
+            }
+          },
+          "priority:": 1
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "analysis"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "analysis"
+            }
+          },
+          "priority:": 2
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "tools"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "tools"
+            }
+          },
+          "priority:": 2
+        }
+      ]
+    },
+    {
+      "id": "rat",
+      "order": 22,
+      "title": "Rat",
+      "default": "summary",
+      "rules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "model_system",
+                "operator": "contains",
+                "path": ".model_system_type",
+                "value": "drosophila"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "drosophila"
+            }
+          },
+          "priority:": 4
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "model_system",
+                "operator": "contains",
+                "path": ".model_system_type",
+                "value": "cell_culture"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "cell_culture"
+            }
+          },
+          "priority:": 1
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "analysis"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "analysis"
+            }
+          },
+          "priority:": 2
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "tools"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "tools"
+            }
+          },
+          "priority:": 2
+        }
+      ]
+    },
+    {
+      "id": "drosophila",
+      "order": 40,
+      "title": "Drosophila",
+      "default": "summary",
+      "rules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "model_system",
+                "operator": "contains",
+                "path": ".model_system_type",
+                "value": "cell_culture"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "cell_culture"
+            }
+          },
+          "priority:": 1
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "analysis"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "analysis"
+            }
+          },
+          "priority:": 2
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "tools"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "tools"
+            }
+          },
+          "priority:": 2
+        }
+      ]
+    },
+    {
+      "id": "cell_culture",
+      "order": 50,
+      "title": "Cell Culture",
+      "default": "summary",
+      "rules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "analysis"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "analysis"
+            }
+          },
+          "priority:": 2
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "tools"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "tools"
+            }
+          },
+          "priority:": 2
+        }
+      ]
+    },
+
+    {
+      "id": "analysis",
+      "order": 62,
+      "title": "Analysis",
+      "default": "summary",
+      "rules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "tools"
+              }
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "tools"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "order": 63,
+      "title": "Tools",
+      "default": "summary",
+      "rules": []
+    },
+    {
+      "id": "summary",
+      "order": 64,
+      "title": "Summary",
+      "default": null,
+      "final": true
+    }
+  ]
+}

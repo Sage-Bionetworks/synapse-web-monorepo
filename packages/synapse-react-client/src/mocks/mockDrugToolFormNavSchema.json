@@ -1,0 +1,169 @@
+{
+  "steps": [
+    {
+      "id": "naming",
+      "order": 5,
+      "title": "Naming",
+      "default": "measurements",
+      "child": true,
+      "validationRules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "naming",
+                "operator": "equal",
+                "path": ".first_name",
+                "value": "bob"
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "is bad",
+              "name": "bad",
+              "property": ".naming.first_name"
+            }
+          },
+          "priority:": 9
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "naming",
+                "operator": "notEqual",
+                "path": ".first_name",
+                "value": "jane"
+              },
+              {
+                "fact": "naming",
+                "operator": "equal",
+                "path": ".last_name",
+                "value": "doe"
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "is bad2 last",
+              "name": "bad",
+              "property": ".naming.last_name"
+            }
+          },
+          "priority:": 10
+        }
+      ]
+    },
+    {
+      "id": "measurements",
+      "order": 6,
+      "title": "Measurements",
+      "default": "basic",
+      "child": true
+    },
+    {
+      "id": "basic",
+      "order": 7,
+      "title": "Basic Data",
+      "default": "in_vitro",
+      "child": true
+    },
+    {
+      "id": "in_vitro",
+      "order": 20,
+      "title": "In Vitro",
+      "default": "binding",
+      "static": "true",
+      "copy": "<p>Use this section to enter results from any in vitro binding and efficacy studies that have been performed on this compound, including which cell lines were used, the binding affinity, and the IC50 or EC50. If this data is not yet available for this compound,  you can select “Exclude” from the Binding and Efficacy sub menus.</p>",
+      "children": ["binding", "efficacy"]
+    },
+    {
+      "id": "binding",
+      "order": 21,
+      "title": "Binding",
+      "child": true,
+      "excluded": false,
+      "default": "efficacy",
+      "rules": []
+    },
+    {
+      "id": "efficacy",
+      "order": 22,
+      "title": "Efficacy",
+      "child": true,
+      "excluded": false,
+      "default": "in_vivo_data",
+      "rules": []
+    },
+    {
+      "id": "in_vivo_data",
+      "order": 40,
+      "title": "In Vivo Data",
+      "default": "submission",
+      "excluded": false,
+      "child": true,
+      "validationRules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "in_vivo_data",
+                "operator": "greaterThan",
+                "path": ".experiments[*].age_range.age_range_min",
+                "value": {
+                  "fact": "in_vivo_data",
+                  "path": ".experiments[*].age_range.age_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum age should be less than maximum age",
+              "name": "range",
+              "property": ".in_vivo_data.experiments[*].age_range"
+            }
+          },
+          "priority:": 1
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "in_vivo_data",
+                "operator": "greaterThan",
+                "path": ".experiments[*].dose_range.dose_range_min",
+                "value": {
+                  "fact": "in_vivo_data",
+                  "path": ".experiments[*].dose_range.dose_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum dose should be less than maximum dose ",
+              "name": "range",
+              "property": ".in_vivo_data.experiments[*].dose_range"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+    {
+      "id": "submission",
+      "order": 80,
+      "title": "Submit",
+      "description": "<p>You are about to submit the form. Once you submit, you will no longer be able to edit the submission. If you are not ready to submit, you can save and revisit the form at a later time.</p>",
+      "default": null,
+      "final": true,
+      "rules": []
+    }
+  ]
+}

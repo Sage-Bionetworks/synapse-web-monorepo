@@ -1,0 +1,44 @@
+@use '../abstracts/variables' as SRC;
+
+.bootstrap-4-backport {
+  label {
+    color: SRC.$gray-formtext;
+    font-weight: bold;
+  }
+
+  .form-control {
+    box-shadow: none;
+    margin-bottom: 1rem;
+  }
+
+  .input-group-prepend {
+    margin-bottom: 1rem;
+  }
+
+  // disabled input boxes should be "flat"
+  input:disabled,
+  input:read-only {
+    box-shadow: none;
+    cursor: text;
+  }
+
+  // Placeholder text styling in input forms
+  .form-control::placeholder {
+    color: SRC.$text-color-disabled;
+  }
+  .form-control:focus-visible {
+    text-shadow: none;
+  }
+}
+
+.react-select-container {
+  .form-control {
+    display: flex;
+  }
+
+  // Almost a direct copy of the form-control-focus mixin in bootstrap 4
+  .form-control:focus-within {
+    border-color: lighten(SRC.$primary-action-color, 25%);
+    box-shadow: 0 0 0 0.2rem rgba(SRC.$primary-action-color, 0.25);
+  }
+}

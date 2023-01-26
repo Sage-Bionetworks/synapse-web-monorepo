@@ -1,0 +1,80 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:map';
+
+.ForumTable {
+  &__top-level-control {
+    float: right;
+    margin-bottom: 16px;
+    display: flex;
+  }
+
+  thead {
+    background-color: map.get(SRC.$colors, 'gray-200');
+    th {
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+  }
+
+  th,
+  td {
+    border: none;
+  }
+
+  .avatarContainer {
+    display: inline-flex;
+    margin: 0 2px;
+    vertical-align: middle;
+  }
+  tr td:nth-child(1) {
+    max-width: 14rem;
+  }
+  tr td:nth-child(3) {
+    width: auto;
+  }
+  tr td:nth-child(2),
+  tr td:nth-child(4),
+  tr td:nth-child(5),
+  tr td:nth-child(6) {
+    width: 1px;
+  }
+}
+
+.DiscussionThread {
+  padding: 15px 30px;
+  border: solid #ccc;
+  border-width: 0.1em;
+  border-radius: 0.4em;
+
+  .control-container {
+    float: right;
+    margin-right: 24px;
+  }
+  .reply-input {
+    width: 100%;
+    height: 35px;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin: 10px 0;
+  }
+}
+
+.reply-container {
+  padding: 5px;
+  margin-bottom: 5px;
+  background-color: SRC.$gray-light;
+  border: solid #ccc;
+  border-width: 0.1em;
+  border-radius: 0.4em;
+
+  .message-body {
+    padding: 6px 22px;
+  }
+}
+.SubscribersModal {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 4px;
+}

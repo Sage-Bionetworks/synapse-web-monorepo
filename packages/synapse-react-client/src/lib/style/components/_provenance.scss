@@ -1,0 +1,71 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:map';
+
+.react-flow {
+  &__attribution a {
+    color: map.get(SRC.$colors, 'gray-400') !important;
+    text-decoration-color: map.get(SRC.$colors, 'gray-400') !important;
+  }
+  &__node {
+    cursor: default !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    &:hover {
+      cursor: default;
+    }
+
+    &.ExternalNode,
+    &.EntityNode,
+    &.ExpandNode,
+    &.EntityPlaceholderNode {
+      overflow: hidden;
+      border: none;
+      box-shadow: none !important;
+      background: none !important;
+    }
+    &.ExpandNode a {
+      text-decoration: none !important;
+    }
+
+    &.EntityPlaceholderNode {
+      svg {
+        color: map.get(SRC.$colors, 'gray-400');
+      }
+    }
+    &.UndefinedNode {
+      .description {
+        display: inline;
+        margin-right: 10px;
+      }
+      .markdown {
+        text-align: left;
+        white-space: normal;
+      }
+    }
+    &.ActivityNode {
+      overflow: hidden;
+      .name,
+      .description {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .name {
+        font-size: 15px;
+      }
+      .description {
+        font-size: 12px;
+      }
+    }
+    &.ExpandNode {
+      a {
+        padding: 5px 10px;
+        border: 1px solid #1a192b;
+        border-radius: 3px;
+      }
+    }
+  }
+  &__handle {
+    // hide handles (important to override inline style applied to handle element by react-flow)
+    height: 0px !important;
+  }
+}

@@ -1,0 +1,357 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:color';
+
+//Variables
+$baseline-grid: 21px;
+$text-size-base: 16px;
+$text-size-title: 18px;
+$color-divider: #dddddf;
+$color-gray-background: #f9f9f9;
+$color-chicklet-base: #3c4a63;
+$text-color-base: #515359;
+$text-color-lighter: #898989;
+
+.SRC-font-size-base {
+  font-size: $text-size-base;
+}
+
+.SRC-portalCard {
+  display: block;
+  font-family: 'Lato', sans-serif;
+  font-size: $text-size-base;
+  line-height: $baseline-grid;
+
+  border: 1px solid $color-divider;
+  margin-top: 30px;
+  margin-bottom: 30px;
+
+  // default (non-header styles)
+  color: $text-color-base;
+  .SRC-type,
+  .SRC-cardThumbnail {
+    color: $text-color-lighter;
+  }
+  .SRC-cardThumbnail {
+    width: 15%;
+    img {
+      width: 50%;
+      &.iconImg {
+        max-width: 75px;
+      }
+    }
+    svg {
+      min-height: 55px;
+    }
+  }
+  .SRC-cardMetadata {
+    background-color: $color-gray-background;
+  }
+
+  &.SRC-portalCardHeader {
+    color: white;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background: SRC.$primary-action-color;
+    @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
+      padding-top: 40px;
+    }
+    @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
+      padding-top: 89px;
+    }
+    .SRC-type,
+    .SRC-cardThumbnail {
+      color: inherit;
+      img,
+      svg {
+        margin-left: 0px;
+      }
+    }
+    a,
+    .SRC-userCard {
+      color: white !important;
+      border-bottom: 1px solid white !important;
+      &:hover {
+        border-bottom: 1px solid white !important;
+      }
+    }
+    .SRC-cardMetadata .SRC-row-label {
+      text-transform: uppercase;
+      color: white;
+    }
+    .SRC-cardThumbnail {
+      width: 25%;
+      img {
+        width: 50%;
+      }
+    }
+    .SRC-cardMetadata {
+      background-color: inherit;
+    }
+    @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
+      &.isAlignToLeftNav {
+        .SRC-cardThumbnail {
+          svg,
+          img {
+            margin-right: 15px;
+          }
+        }
+        .SRC-cardContent {
+          padding-left: 32px;
+        }
+      }
+    }
+  }
+  .SRC-portalCardMain {
+    display: flex;
+    margin-left: 15px;
+  }
+  .SRC-portalCardCTALink {
+    margin-top: 20px;
+  }
+
+  .SRC-downloadData {
+    border-radius: 20px;
+    text-align: center;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    a {
+      font-size: 16px;
+      padding: 5px 20px !important;
+      color: white;
+    }
+  }
+
+  h3 {
+    margin: $baseline-grid, 0, $baseline-grid * 0.5, 0 !important;
+    padding: 0;
+    font-size: $text-size-title !important;
+    line-height: 125%;
+    a {
+      margin: 0;
+      font-weight: 700;
+    }
+  }
+
+  .SRC-type,
+  .SRC-cardThumbnail {
+    text-transform: uppercase;
+  }
+
+  .SRC-cardThumbnail {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: $baseline-grid;
+    max-width: 215px;
+    img {
+      margin: auto;
+      display: block;
+    }
+    svg {
+      width: auto;
+      margin: auto;
+      display: block;
+    }
+    > div {
+      // icon label
+      margin-top: $baseline-grid * 0.5;
+      text-align: center;
+    }
+  }
+  .SRC-imageThumbnail {
+    display: inline-block;
+    width: 25%;
+    vertical-align: top;
+    padding-right: 15px;
+    max-width: 215px;
+    img {
+      display: block;
+      width: 100%;
+    }
+    svg {
+      width: auto;
+      margin: auto;
+      display: block;
+    }
+  }
+
+  .SRC-cardContent {
+    padding-left: 0px;
+    padding-right: 4%;
+    flex: 1;
+    padding-top: $baseline-grid;
+    margin-bottom: $baseline-grid;
+    max-width: 850px;
+    overflow-x: hidden;
+    &.SRC-dataset {
+      width: 80%;
+    }
+
+    .SRC-author {
+      font-style: italic;
+      padding-bottom: $baseline-grid * 0.5;
+    }
+
+    .SRC-cardAnnotations {
+      margin: ($baseline-grid * 0.5) 0;
+      span {
+        background: color.change(SRC.$secondary-action-color, $alpha: 0.05);
+        display: inline-block;
+        padding: 2px 15px 4px 15px;
+        margin: 0 10px 5px 0;
+        border-radius: 15px;
+      }
+    }
+  }
+
+  .SRC-cardAction {
+    display: inline-block;
+    button {
+      font-size: 16px;
+      color: white;
+      display: inline-block;
+      height: 40px;
+      margin-right: 10px;
+      border-radius: 20px;
+      padding: 5px 20px !important;
+    }
+  }
+
+  .SRC-cardMetadata {
+    display: block;
+    padding-top: $baseline-grid;
+    padding-bottom: $baseline-grid;
+    > * {
+      margin-left: 15px;
+    }
+    &.hasIcon {
+      padding-left: 15%;
+    }
+    .row {
+      margin: 5px !important;
+      > * {
+        min-width: 100px;
+      }
+      & .extraWide {
+        min-width: 150px;
+      }
+    }
+    .SRC-row-label {
+      white-space: nowrap;
+      color: $text-color-lighter;
+      text-transform: uppercase;
+      margin-right: 40px;
+    }
+    .SRC-row-data {
+      font-weight: 400;
+      a {
+        font-size: 14px !important;
+      }
+    }
+  }
+
+  &.SRC-typeDataset {
+    // single row metadata for dataset type
+    .row {
+      display: inline-block;
+    }
+    .row > * {
+      min-width: 0;
+    }
+    .SRC-row-data {
+      padding-right: $baseline-grid * 2;
+    }
+  }
+
+  &.SRC-typeFunder {
+    .SRC-cardThumbnail {
+      display: inline;
+      float: right;
+      img {
+        width: 65%;
+      }
+    }
+    .SRC-cardContent {
+      max-width: 100%;
+      width: 90% !important;
+      margin-left: $baseline-grid * 2;
+      .SRC-website a {
+        display: inline-block;
+        font-size: $text-size-base;
+        padding-bottom: $baseline-grid * 0.5;
+      }
+    }
+    .SRC-cardAction {
+      margin: $baseline-grid 0 $baseline-grid $baseline-grid * 2;
+      a {
+        display: inline-flex;
+        padding: 5px 20px;
+        justify-content: center;
+        align-items: center;
+        height: 40px;
+      }
+    }
+  }
+
+  &.SRC-typeTool {
+    .SRC-cardAction {
+      margin: $baseline-grid 0 $baseline-grid 15%;
+    }
+  }
+}
+
+.SRC-cardRowDesktop {
+  > td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 0px;
+    padding-right: 20px;
+  }
+}
+
+// every two row elements represents a key-value
+// this adds spacing between every two elements
+.SRC-cardRowMobile:nth-child(even) {
+  > td {
+    padding-bottom: 10px;
+  }
+}
+
+// TODO: this should be removed in the future
+.SRC-description-dataset {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  p.SRC-description-text {
+    flex-basis: 65%;
+    display: inline-block;
+    padding-right: 15px;
+  }
+  div button {
+    white-space: nowrap;
+  }
+}
+
+.SRC-viewMore {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cardContainer {
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.QuerySortSelector {
+  .sort-by-label {
+    margin: 0px 2px;
+  }
+  .react-select-container {
+    min-width: 250px;
+    .form-control {
+      padding: 0px;
+      height: 37px;
+      margin-bottom: 0px;
+    }
+  }
+}

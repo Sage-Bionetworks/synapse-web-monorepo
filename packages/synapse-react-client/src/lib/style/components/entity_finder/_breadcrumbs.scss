@@ -1,0 +1,26 @@
+@use '../../abstracts/variables' as SRC;
+@use '../../abstracts/mixins' as mixins;
+@use './entity-finder' as EntityFinder;
+
+.Breadcrumbs {
+  height: $-breadcrumb-height;
+  background: SRC.$background-color-gray;
+  padding-left: 15px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow-x: auto;
+  .BreadcrumbItem {
+    @include mixins.normalLink();
+    font-weight: normal;
+  }
+  .BreadcrumbItem.Current {
+    color: unset;
+    font-weight: bold;
+    cursor: unset;
+
+    &:hover {
+      text-decoration: unset;
+    }
+  }
+}

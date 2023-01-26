@@ -1,0 +1,48 @@
+@use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SRCMixins;
+
+.EntityMetadata {
+  .Tabs {
+    @include SRCMixins.underline-tabs;
+    margin-bottom: 10px;
+  }
+
+  .placeholder {
+    margin: 30px 0px;
+    text-align: center;
+  }
+
+  .ButtonContainer {
+    display: flex;
+    width: 100%;
+    .Spacer {
+      flex-grow: 1;
+    }
+  }
+}
+
+.MetadataTable,
+.AnnotationsTable {
+  width: 100%;
+  margin: 0px;
+  table-layout: fixed;
+  word-break: break-all;
+  &__Row {
+    &__Key {
+      font-weight: bold;
+      padding: 6px 0px;
+    }
+
+    &__Value {
+      padding: 6px 0px;
+    }
+
+    &__Key.Schema {
+      color: SRC.$gray-deemphasized;
+    }
+  }
+}
+
+.FluidModal.EntityMetadata:not(.isInEditMode) .modal-dialog {
+  max-width: 600px;
+}

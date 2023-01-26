@@ -1,0 +1,27 @@
+.ExpandableTableData {
+  max-width: 250px;
+  vertical-align: middle;
+
+  p {
+    text-overflow: ellipsis;
+    margin: 0px 5px;
+  }
+
+  &[aria-expanded='true'] {
+    p {
+      white-space: normal;
+      overflow: hidden;
+    }
+  }
+
+  &[aria-expanded='false'] {
+    p {
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+
+  &__expandButton {
+    float: right;
+  }
+}

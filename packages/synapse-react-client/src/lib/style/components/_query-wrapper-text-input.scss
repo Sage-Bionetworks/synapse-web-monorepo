@@ -1,0 +1,107 @@
+@use '../abstracts/variables' as SRC;
+
+.QueryWrapperSearchInput,
+.QueryWrapperSqlEditorInput {
+  &__helppopoverwrapper {
+    display: grid;
+    grid-template-columns: auto 25px;
+  }
+  &__helppopover {
+    place-self: center;
+  }
+  &__searchbar {
+    height: 50px;
+    background: #f9f9f9;
+    border: 1px solid #dddddf;
+    display: flex;
+    align-items: center;
+    &:focus-within {
+      outline-color: SRC.$primary-action-color;
+      outline-style: auto;
+      outline-width: 5px;
+    }
+    &__searchicon {
+      color: #dcdcdc;
+      margin-left: 10px;
+      font-size: 17px;
+      flex: 1;
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+    input {
+      flex: 1;
+      &:focus {
+        outline-width: 0px;
+        outline: none;
+      }
+      margin-left: 10px;
+      width: fit-content;
+      height: 100%;
+      display: inline-block;
+      border: none;
+      background: #f9f9f9;
+    }
+    &__clearbutton {
+      flex: 1;
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+  }
+  &__form-container {
+    position: relative;
+    width: 100%;
+    margin-top: 5px;
+  }
+  &__column-select {
+    background: #ffffff;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    color: #515359;
+    max-height: 300px;
+    position: absolute;
+    overflow: auto;
+    z-index: 5;
+    width: inherit;
+  }
+
+  // Search bar height animation
+  &__animate_height {
+    max-height: 0;
+    overflow-y: hidden;
+    -webkit-transition: max-height 0.3s ease-in-out;
+    -moz-transition: max-height 0.3s ease-in-out;
+    -o-transition: max-height 0.3s ease-in-out;
+    transition: max-height 0.3s ease-in-out;
+  }
+
+  &__animate_dropdown-enter-done {
+    max-height: 300px; // fixed height required for css height animation
+  }
+
+  &__animate_dropdown-exit-done {
+    max-height: 0;
+  }
+
+  &__dropdown_pos {
+    position: relative;
+    width: 100%;
+  }
+
+  &__column-select.QueryWrapperSearchInput__animate_height {
+    overflow: scroll;
+  }
+
+  &__animate_dropdown-exit-active,
+  &__animate_dropdown-enter-done {
+    padding-left: 30px;
+    padding-top: 15px;
+    padding-bottom: 5px;
+  }
+
+  &__animate_dropdown-exit-done {
+    padding: 0;
+  }
+
+  .radio {
+    padding: 4px 0;
+  }
+}

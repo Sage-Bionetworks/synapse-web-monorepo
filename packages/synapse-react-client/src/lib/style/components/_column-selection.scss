@@ -1,0 +1,11 @@
+@use '../abstracts/variables' as SRC;
+
+%column-theme-dark {
+  .SRC-primary-fill-color {
+    fill: white;
+  }
+  .SRC-primary-stroke-color {
+    fill: SRC.$primary-action-color !important;
+    stroke: white !important;
+  }
+}

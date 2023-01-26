@@ -1,0 +1,40 @@
+@use '../abstracts/variables' as SRC;
+
+.FeaturedToolList {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.FeaturedToolCard {
+  word-wrap: break-word;
+  height: 250px;
+  width: 350px;
+  padding: 23px 34px;
+  margin: 10px;
+  background: #fff;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+  display: grid;
+  grid-template-rows: 40px 25px 50px auto 22px;
+  text-align: left;
+
+  &__Type {
+    grid-row: 1/1;
+  }
+  &__Date {
+    grid-row: 2/2;
+    color: SRC.$gray-deemphasized;
+  }
+
+  &__Name {
+    grid-row: 3/3;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  &__Description {
+    grid-row: 4/4;
+  }
+  &__Link {
+    grid-row: 5/5;
+  }
+}

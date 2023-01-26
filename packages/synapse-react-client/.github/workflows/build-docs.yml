@@ -1,0 +1,22 @@
+name: 'Build Storybook'
+
+env:
+  NODE_OPTIONS: '--max-old-space-size=4096'
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - run: yarn install
+      - name: Build docs
+        run: yarn build:docs

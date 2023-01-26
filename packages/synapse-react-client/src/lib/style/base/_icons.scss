@@ -1,0 +1,92 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:map';
+
+.SRC-arrow-icon,
+.Icon-Plus,
+.Icon-Minus,
+.Icon-Copy.primary {
+  path {
+    fill: SRC.$primary-action-color;
+  }
+}
+.Icon-Copy {
+  path {
+    fill: #dcdcdc;
+  }
+}
+.SRC-java-icon,
+.SRC-r-icon,
+.SRC-python-icon {
+  path {
+    fill: map.get(SRC.$primary-color-palette, 500);
+  }
+}
+
+.SRC-terminal-icon > rect.outer {
+  fill: map.get(SRC.$primary-color-palette, 500);
+}
+
+.styled-svg-wrapper {
+  span {
+    display: inline-flex;
+    vertical-align: middle;
+  }
+}
+
+.icon-list {
+  display: inline-block;
+  svg {
+    font-size: 24px;
+  }
+  path,
+  circle {
+    fill: currentColor;
+  }
+  .icon-svg-tooltip {
+    text-align: center;
+  }
+
+  // for portal theme
+  &.themed {
+    path,
+    circle {
+      fill: map.get(SRC.$primary-color-palette, 500);
+    }
+    &.bg-circle {
+      .styled-svg-wrapper {
+        display: inline-flex;
+        padding: 2px;
+        background-color: rgba(map.get(SRC.$primary-color-palette, 500), 0.1);
+        border-radius: 50%;
+        margin: 0 2px;
+      }
+    }
+  }
+}
+
+.SRC-Sort-Icon-Active {
+  padding: 2px;
+  background-color: map.get(SRC.$primary-color-palette, 500);
+  path {
+    fill: white;
+  }
+}
+
+.SRC-Sort-Icon-Inactive,
+.Content-Copy-Icon {
+  padding: 2px;
+
+  path {
+    fill: map.get(SRC.$primary-color-palette, 500);
+  }
+}
+
+svg.HelpButton {
+  color: map.get(SRC.$colors, 'gray-600');
+  cursor: pointer;
+  font-size: 0.8em;
+}
+
+.SRC-color-warning {
+  color: map.get(SRC.$colors, 'warning');
+}

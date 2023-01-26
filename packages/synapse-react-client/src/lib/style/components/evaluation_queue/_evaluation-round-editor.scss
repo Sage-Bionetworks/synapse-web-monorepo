@@ -1,0 +1,109 @@
+@use '../../abstracts/variables' as SRC;
+
+.evaluation-round-editor {
+  .card-body {
+    // even though all sides have the same padding,
+    // the top looks like it is slightly less padded than the bottom
+    // so we bump the top padding from default of 1.25rem to 1.75rem
+    padding-top: 1.75rem;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  .alert {
+    margin-bottom: 0;
+  }
+
+  h5 {
+    font-weight: bold;
+  }
+
+  .round-status {
+    .status {
+      display: inline-flex;
+      svg {
+        height: 1rem;
+        width: 1rem;
+        margin-right: 0.7rem;
+      }
+    }
+
+    .status-in-progress {
+      color: SRC.$green-affirmative;
+      .status {
+        align-items: center;
+      }
+      span {
+        line-height: 1rem;
+      }
+    }
+    .status-completed {
+      svg {
+        color: SRC.$green-affirmative;
+      }
+      span {
+        color: SRC.$gray-deemphasized;
+      }
+      .status {
+        align-items: baseline;
+      }
+    }
+    .status-not-yet-started {
+      color: SRC.$gray-deemphasized;
+    }
+  }
+
+  .max-submission-input-col {
+    padding-right: 0;
+  }
+
+  .advanced-limits-link {
+    padding: 0;
+  }
+
+  .advanced-limits-grid {
+    display: grid;
+    // We need a fixed size for the add-button
+    // or else the alignment will slightly change once the add-button disappears upon reaching the max number of rows
+    grid-template-columns: [limit-type] 1fr [spacer] 30px [limit-input] 1.8fr [remove-button] 30px [add-button] 30px [end];
+    grid-auto-rows: auto;
+    row-gap: 1rem;
+
+    .form-group {
+      // rely on grid's row gap instead of built-in bottom margin for spacing
+      margin-bottom: 0;
+    }
+    .remove-button,
+    .add-button {
+      padding: 0;
+      align-self: end;
+    }
+
+    .limit-type {
+      grid-column-start: limit-type;
+      select {
+        background-color: #f9f9f9;
+        option {
+          background-color: white;
+        }
+      }
+    }
+    .limit-input {
+      grid-column-start: limit-input;
+    }
+    .remove-button {
+      grid-column-start: remove-button;
+      svg {
+        fill: SRC.$primary-action-color;
+      }
+    }
+    .add-button {
+      grid-column-start: add-button;
+      svg {
+        fill: SRC.$primary-action-color;
+      }
+    }
+  }
+}

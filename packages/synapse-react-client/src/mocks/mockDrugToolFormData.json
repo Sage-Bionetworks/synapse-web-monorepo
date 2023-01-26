@@ -1,0 +1,73 @@
+{
+  "efficacy": {
+    "cell_line_efficacy": [
+      {
+        "name": "somename",
+        "cell_line": "Cell Line Efficacy Value",
+        "reference": "Non sunt aut suscip",
+        "assay_description": "Quam explicabo Dele",
+        "outcome_measures": "Voluptas omnis et ve",
+        "efficacy_measure": "Necessitatibus paria",
+        "efficacy_measure_type": "EC50"
+      },
+      {
+        "name": "Abel Murphy",
+        "cell_line": "Minima nisi repudian",
+        "reference": "Fugiat minus invento",
+        "assay_description": "Accusamus in fugit ",
+        "outcome_measures": "Quia neque anim aliq",
+        "efficacy_measure": "Voluptatem qui exce",
+        "efficacy_measure_type": "EC50"
+      }
+    ]
+  },
+  "binding": {
+    "cell_line_binding": [
+      {
+        "name": "Mollie Dyer",
+        "cell_line": "Et natus hic necessi",
+        "reference": "Adipisicing cupidata",
+        "binding_affinity": "Et tenetur sed quibu",
+        "assay_description": "Nulla aut dolores ex",
+        "binding_affinity_constant": "Kd"
+      }
+    ]
+  },
+  "measurements": {
+    "is_solution": false,
+    "molecular_weight": 40,
+    "compound_availability": 44
+  },
+  "naming": {
+    "data_sharing": false,
+    "is_off_label": false,
+    "compound_name": "Submission_Name",
+    "first_name": "bob",
+    "last_name": "Dennis",
+    "role_title": "Ullamco harum est vo",
+    "institution": "Ipsam eu quis conseq",
+    "email": "koqyh@mailinator.net",
+    "other_applicants": "Ad omnis maxime aute",
+    "chemical_name": "some chemical",
+    "common_name": "Francesca Dillon",
+    "iupac_name": "Isabella Bean",
+    "CAS_number": "752",
+    "drug_class": "Dolor aut ea earum e"
+  },
+  "basic": {
+    "molecular_target": "sadasd",
+    "moa_description": "asd",
+    "therapeutic_approach": "symptomatic",
+    "therapeutic_indication_description": "asdasd",
+    "water_soluble": "unknown",
+    "route": ["sublingual", "injection", "transdermal"],
+    "orally_active": "no"
+  },
+  "in_vivo_data": {},
+
+  "metadata": {
+    "formSchemaVersion": 154,
+    "uiSchemaVersion": 80,
+    "navSchemaVersion": 35
+  }
+}

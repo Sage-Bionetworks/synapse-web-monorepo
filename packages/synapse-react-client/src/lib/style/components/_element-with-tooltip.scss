@@ -1,0 +1,34 @@
+@use '../abstracts/variables' as SRC;
+
+.ElementWithTooltip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  line-height: 0px;
+
+  svg {
+    path {
+      fill: SRC.$primary-action-color;
+    }
+  }
+  &.dark-theme {
+    svg {
+      fill: SRC.$primary-action-color;
+      color: SRC.$primary-action-color !important;
+      width: 18px;
+      height: 18px;
+
+      path {
+        fill: SRC.$primary-action-color;
+      }
+    }
+  }
+}
+
+button.ElementWithTooltip {
+  &:active:focus,
+  &:focus {
+    outline: none;
+  }
+}

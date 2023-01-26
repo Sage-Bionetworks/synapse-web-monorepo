@@ -1,0 +1,28 @@
+@use '../../abstracts/variables' as SRC;
+@use '../../abstracts/mixins' as SrcMixins;
+@use './entity-finder' as EntityFinder;
+@use 'sass:color';
+
+.TreeView.BrowseTree {
+  .Node.BrowseNode {
+    grid-template-columns: [toggle] 20px [name] auto;
+    gap: 2px;
+    padding: 0px 10px;
+    .ExpandButton {
+      font-size: 20px;
+    }
+  }
+  .Node[aria-disabled='false'][aria-selected='false'] > .EntityName {
+    @include SrcMixins.normalLink();
+    font-weight: normal;
+
+    &:hover {
+      // The default offset provided by normalLink() is too much for this component and the underline may not appear
+      text-underline-offset: 2px;
+    }
+  }
+
+  .Node.BrowseNode[aria-disabled='false'][aria-selected='true'] > .EntityName {
+    font-weight: bold;
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "concreteType": "org.sagebionetworks.repo.model.table.QueryResultBundle",
+  "queryResult": {
+    "concreteType": "org.sagebionetworks.repo.model.table.QueryResult",
+    "queryResults": {
+      "concreteType": "org.sagebionetworks.repo.model.table.RowSet",
+      "tableId": "syn26302617",
+      "etag": "DEFAULT",
+      "headers": [
+        {
+          "name": "id",
+          "columnType": "ENTITYID",
+          "id": "81721"
+        }
+      ],
+      "rows": [
+        {
+          "rowId": 25922102,
+          "versionNumber": 1,
+          "values": ["syn25922102"]
+        },
+        {
+          "rowId": 25959271,
+          "versionNumber": 1,
+          "values": ["syn25959271"]
+        },
+        {
+          "rowId": 25959274,
+          "versionNumber": 1,
+          "values": ["syn25959274"]
+        },
+        {
+          "rowId": 25959276,
+          "versionNumber": 1,
+          "values": ["syn25959276"]
+        },
+        {
+          "rowId": 25959279,
+          "versionNumber": 1,
+          "values": ["syn25959279"]
+        },
+        {
+          "rowId": 25959281,
+          "versionNumber": 1,
+          "values": ["syn25959281"]
+        },
+        {
+          "rowId": 25959285,
+          "versionNumber": 1,
+          "values": ["syn25959285"]
+        },
+        {
+          "rowId": 25959288,
+          "versionNumber": 1,
+          "values": ["syn25959288"]
+        },
+        {
+          "rowId": 25959290,
+          "versionNumber": 1,
+          "values": ["syn25959290"]
+        },
+        {
+          "rowId": 25959292,
+          "versionNumber": 1,
+          "values": ["syn25959292"]
+        },
+        {
+          "rowId": 26208690,
+          "versionNumber": 1,
+          "values": ["syn26208690"]
+        },
+        {
+          "rowId": 32794351,
+          "versionNumber": 1,
+          "values": ["syn32794351"]
+        }
+      ]
+    }
+  },
+  "maxRowsPerPage": 47662
+}

@@ -1,0 +1,138 @@
+@use '../../abstracts/variables' as SrcVars;
+@use '../../abstracts/mixins' as SrcMixins;
+
+/* --- Steps Left Nav ---*/
+.json-forms-menu {
+  // top level menu
+  $item-height: 3.6rem;
+  $left-offset: 2.3rem;
+  ul {
+    position: relative;
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+    background-color: SrcVars.$gray-light;
+
+    li {
+      min-height: $item-height;
+      line-height: $item-height;
+      text-align: left;
+      position: relative;
+      font-weight: bold;
+    }
+
+    /* vertical line*/
+    li::after {
+      content: '';
+    }
+
+    li div.pointed {
+      min-height: $item-height;
+      height: $item-height;
+      line-height: $item-height;
+      text-align: left;
+      color: SrcVars.$primary-action-color;
+      background-color: SrcVars.$gray-dark;
+      border-left-color: SrcVars.$gray-dark;
+
+      .btn-link {
+        color: white;
+      }
+    }
+
+    li div.pointed:after,
+    ul li div.pointed::after {
+      position: absolute;
+      right: -5px;
+      top: 8px;
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: solid 10px;
+      border-left-color: inherit;
+      border-bottom: solid 10px transparent;
+      border-top: solid 10px transparent;
+    }
+
+    div.item-wrap,
+    div.item {
+      box-sizing: border-box;
+      padding-left: 1.6rem;
+    }
+
+    .btn-link {
+      color: SrcVars.$primary-action-color;
+      font-weight: bold;
+      padding: 0;
+      margin: 0;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    svg {
+      margin: 0 1.5rem 0 0;
+    }
+
+    .fa-check-circle {
+      color: SrcVars.$primary-action-color;
+    }
+
+    .fa-circle {
+      border-radius: 50%;
+      border: 1px solid SrcVars.$gray-dark;
+      color: SrcVars.$gray-light;
+    }
+
+    .static .fa-circle {
+      border: 1px solid SrcVars.$secondary-action-color;
+      color: SrcVars.$primary-action-color;
+    }
+
+    .fa-exclamation-circle {
+      color: SrcVars.$red-error;
+      background-color: SrcVars.$gray-light;
+      border-radius: 50%;
+    }
+
+    .pointed .fa-circle {
+      background-color: transparent;
+    }
+
+    .fa-ban {
+      color: #bbbbbc;
+    }
+  }
+
+  /* submenu */
+  div.subMenu {
+    ul svg {
+      margin: 0 1.2rem 0 0;
+    }
+
+    ul {
+      margin-left: $left-offset;
+
+      /* vertical line */
+      &::before {
+        content: '';
+        width: 1px;
+        background-color: transparent;
+        border-left: 1px #dcdcdc dashed;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: $left-offset;
+      }
+
+      li {
+        margin-left: -$left-offset;
+
+        div.item {
+          $b: 1.7rem;
+          @include SrcMixins.calc(padding-left, '#{$left-offset} + #{$b}');
+        }
+      }
+    }
+  }
+}

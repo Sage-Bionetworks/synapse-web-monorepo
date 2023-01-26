@@ -1,0 +1,24 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:map';
+
+.FacetFilterControls {
+  &__title {
+    font-weight: bold;
+  }
+  padding-top: 18px;
+  &__facet {
+    margin: 2rem 0;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  .AvailableFacet {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid SRC.$border-color-gray;
+    margin-bottom: 12px;
+    &__label {
+      font-weight: bold;
+    }
+  }
+}

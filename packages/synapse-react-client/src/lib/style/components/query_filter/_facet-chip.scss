@@ -1,0 +1,18 @@
+@use '../../abstracts/variables' as SRC;
+@use 'sass:map';
+
+.Chip {
+  border-radius: 3px;
+  padding: 4px 6px;
+  margin: 4px 4px 4px 0;
+  &:hover {
+    background-color: map.get(SRC.$secondary-color-palette, 100);
+  }
+}
+.Checked {
+  color: #ffffff;
+  background-color: SRC.$secondary-action-color;
+  &:hover {
+    background-color: map.get(SRC.$secondary-color-palette, 700);
+  }
+}

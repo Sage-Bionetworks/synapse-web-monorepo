@@ -1,0 +1,157 @@
+@use '../abstracts/variables' as SRC;
+
+.bootstrap-4-backport {
+  .AnnotationEditor {
+    .LoadingPlaceholder {
+      display: flex;
+      margin: 60px auto;
+    }
+
+    .AnnotationEditorForm {
+      display: grid;
+      // We can't rearrange the order of the HTML elements, so we use grid rows to reorder them.
+      grid-template-rows: auto auto auto auto auto;
+      margin-bottom: 15px;
+
+      > .form-group {
+        grid-row-start: 1;
+      }
+      .ErrorList {
+        grid-row-start: 2;
+        margin-top: 1rem;
+      }
+
+      .alert {
+        grid-row-start: 3;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+
+      > hr {
+        grid-row-start: 4;
+        width: 100%;
+      }
+
+      .SaveButtonContainer {
+        display: flex;
+        flex-direction: row-reverse;
+        grid-row-start: 5;
+
+        .Spacer {
+          flex-grow: 1;
+        }
+      }
+
+      .col-xs-3,
+      .col-xs-6 {
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .row {
+        padding: 0px 10px;
+      }
+      .calendar-with-icon-form-group.form-group {
+        input {
+          margin-bottom: 0;
+        }
+        .input-group-prepend {
+          margin-bottom: 0;
+        }
+      }
+
+      .AddButton,
+      .RemoveButton {
+        border-radius: 0px;
+        height: 25px;
+        width: 25px;
+        padding: 0px;
+        margin: 12px 5px 1rem;
+        justify-self: center;
+        align-self: start;
+
+        svg {
+          vertical-align: unset;
+        }
+      }
+
+      .array-item {
+        display: grid;
+        grid-template-columns: [input] auto [remove] 30px [add] 30px;
+        grid-template-rows: [widget] auto [description] auto [errors] auto;
+
+        .field-description {
+          grid-row-start: description;
+        }
+
+        .HelpButton {
+          display: none;
+        }
+
+        .form-control,
+        .react-select-container,
+        .calendar-with-icon-form-group {
+          grid-row-start: widget;
+        }
+
+        div {
+          grid-row-start: errors;
+        }
+
+        .AddButton {
+          grid-row-start: widget;
+          grid-column-start: add;
+        }
+
+        .RemoveButton {
+          grid-row-start: widget;
+          grid-column-start: remove;
+        }
+      }
+      .LabelContainer {
+        display: flex;
+        label {
+          color: SRC.$gray-deemphasized;
+          font-weight: normal;
+          flex-grow: 1;
+          span.required {
+            color: SRC.$red-required;
+            margin-left: 2px;
+          }
+        }
+      }
+      select {
+        background-color: SRC.$gray-light;
+      }
+
+      .field-array > .array-item > label.form-label {
+        display: none;
+      }
+
+      .HelpButton {
+        float: right;
+        margin: 0 0 0.5rem;
+        cursor: pointer;
+      }
+
+      table.FieldDescriptionTable {
+        margin: 10px 0px 15px 10px;
+        tr {
+          th,
+          td {
+            padding: 3px 0px;
+            vertical-align: middle;
+
+            .field-description {
+              margin-bottom: 0;
+            }
+          }
+          th {
+            padding-right: 25px;
+            font-weight: 400;
+            color: SRC.$text-color-disabled;
+          }
+        }
+      }
+    }
+  }
+}

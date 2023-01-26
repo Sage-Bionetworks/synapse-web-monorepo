@@ -1,0 +1,7 @@
+@use '../abstracts/variables' as SRC;
+
+.SubsectionRowRenderer {
+  &__item {
+    padding-top: 15px;
+  }
+}

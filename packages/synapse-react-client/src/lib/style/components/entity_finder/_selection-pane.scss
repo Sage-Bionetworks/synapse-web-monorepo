@@ -1,0 +1,38 @@
+@use '../../abstracts/variables' as SRC;
+@use 'sass:color';
+@use 'sass:map';
+
+.EntityFinderSelectionPane {
+  width: 100%;
+  white-space: nowrap;
+  padding: 15px;
+  margin: 15px 0px 0px auto;
+  max-height: 175px;
+  overflow-y: auto;
+  &__Items {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  &__Row {
+    display: flex;
+    align-items: center;
+    margin: 5px 0px;
+
+    .EntityIcon {
+      margin-right: 5px;
+      svg {
+        width: 18px;
+      }
+    }
+
+    &__EntityName {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    &__DeselectButton {
+      color: map.get(SRC.$primary-color-palette, 500);
+      cursor: pointer;
+    }
+  }
+}

@@ -1,0 +1,553 @@
+{
+  "definitions": {
+    "binding_item": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Experiment Name"
+        },
+        "cell_line": {
+          "type": "string",
+          "title": "What cell line was used for the binding assay?"
+        },
+        "assay_description": {
+          "type": "string",
+          "title": "Binding assay details"
+        },
+        "reference": {
+          "type": "string",
+          "title": "If this study has been published, please provide a reference."
+        },
+        "binding_affinity": {
+          "type": "string",
+          "title": "Binding Affinity (nM)"
+        },
+        "binding_affinity_constant": {
+          "type": "string",
+          "title": "Binding Affinity Constant",
+          "enum": ["Ki", "Kd", "Km"],
+          "uniqueItems": true
+        }
+      }
+    },
+    "efficacy_item": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Experiment Name"
+        },
+        "cell_line": {
+          "type": "string",
+          "title": "What cell line was used for the efficacy assay?"
+        },
+        "assay_description": {
+          "type": "string",
+          "title": "Efficacy assay details"
+        },
+        "outcome_measures": {
+          "type": "string",
+          "title": "Outcome measures"
+        },
+        "reference": {
+          "type": "string",
+          "title": "If this study has been published, please provide a reference."
+        },
+        "efficacy_measure": {
+          "type": "string",
+          "title": "Efficacy"
+        },
+        "efficacy_measure_type": {
+          "type": "string",
+          "title": "Efficacy Measure",
+          "enum": ["EC50", "IC50"],
+          "enumNames": ["EC50 (mg/kg)", "IC50 (nmol/L)"],
+          "uniqueItems": true
+        }
+      }
+    },
+    "naming": {
+      "type": "object",
+      "required": [
+        "first_name",
+        "last_name",
+        "institution",
+        "compound_name",
+        "is_off_label"
+      ],
+      "properties": {
+        "compound_name": {
+          "type": "string",
+          "title": "Submission Name"
+        },
+        "first_name": {
+          "type": "string",
+          "title": "First Name"
+        },
+        "last_name": {
+          "type": "string",
+          "title": "Last Name"
+        },
+        "role_title": {
+          "type": "string",
+          "title": "Title"
+        },
+        "institution": {
+          "type": "string",
+          "title": "Institution"
+        },
+        "email": {
+          "type": "string",
+          "title": " Contact Email",
+          "format": "email"
+        },
+        "other_applicants": {
+          "type": "string",
+          "title": "Other Applicants"
+        },
+        "data_sharing": {
+          "type": "boolean",
+          "default": false,
+          "enum": [true, false],
+          "enumNames": ["I agree to data sharing", "I want to discuss further"],
+          "uniqueItems": true,
+          "title": "Data Sharing"
+        },
+        "is_off_label": {
+          "type": "boolean",
+          "default": false,
+          "enum": [true, false],
+          "enumNames": ["Yes", "No"],
+          "uniqueItems": true,
+          "title": "Is this compound available for off label use?"
+        },
+        "chemical_name": {
+          "type": "string",
+          "title": "Chemical Name"
+        },
+        "common_name": {
+          "type": "string",
+          "title": " Common Name"
+        },
+        "iupac_name": {
+          "type": "string",
+          "title": " IUPAC Name"
+        },
+        "CAS_number": {
+          "type": "string",
+          "title": " CAS Number"
+        },
+        "drug_class": {
+          "type": "string",
+          "title": " Drug Class"
+        }
+      }
+    },
+    "measurements": {
+      "type": "object",
+      "required": ["compound_availability", "molecular_weight", "is_solution"],
+      "properties": {
+        "compound_availability": {
+          "title": "Available compound amount (mg)",
+          "type": "number",
+          "minimum": 0
+        },
+        "molecular_weight": {
+          "title": "Molecular weight (g/mol)",
+          "type": "number"
+        },
+        "is_solution": {
+          "title": "Is the compound a solution?",
+          "type": "boolean",
+          "enum": [true, false],
+          "enumNames": ["Yes", "No"],
+          "default": false
+        }
+      },
+      "dependencies": {
+        "is_solution": {
+          "oneOf": [
+            {
+              "properties": {
+                "is_solution": {
+                  "enum": [false]
+                }
+              }
+            },
+            {
+              "properties": {
+                "is_solution": {
+                  "enum": [true]
+                },
+                "compound_concentration": {
+                  "title": "Concentration (mg/ml)",
+                  "type": "number"
+                },
+                "compound_purity": {
+                  "title": "Compound Purity",
+                  "type": "string"
+                }
+              },
+              "required": []
+            }
+          ]
+        }
+      }
+    },
+    "basic": {
+      "type": "object",
+      "required": [
+        "molecular_target",
+        "moa_description",
+        "therapeutic_approach",
+        "therapeutic_indication_description",
+        "water_soluble",
+        "route",
+        "orally_active"
+      ],
+      "properties": {
+        "molecular_target": {
+          "type": "string",
+          "title": "Molecular Target"
+        },
+        "moa_description": {
+          "type": "string",
+          "title": "Mechanism of Action"
+        },
+        "therapeutic_approach": {
+          "type": "string",
+          "enum": ["prophylactic", "symptomatic", "both", "unknown"],
+          "enumNames": ["Prophylactic", "Symptomatic", "Both", "Unknown"],
+          "uniqueItems": true,
+          "title": "What is the therapeutic approach?"
+        },
+        "therapeutic_indication_description": {
+          "type": "string",
+          "title": "Therapeutic Indication"
+        },
+        "melting_point": {
+          "type": "number",
+          "title": "Melting Point (C)"
+        },
+        "freezing_point": {
+          "type": "number",
+          "title": "Freezing Point (C)"
+        },
+        "storage_temperature": {
+          "type": "string",
+          "title": "Storage Conditions"
+        },
+        "water_soluble": {
+          "type": "string",
+          "enum": ["yes", "no", "unknown"],
+          "enumNames": ["Yes", "No", "Unknown"],
+          "uniqueItems": true,
+          "title": "Is the compound water soluble?"
+        },
+        "route": {
+          "type": "array",
+          "title": "What is the intended route of administration?",
+          "items": {
+            "type": "string",
+            "enum": [
+              "oral",
+              "sublingual",
+              "nasal",
+              "injection",
+              "transdermal",
+              "intrathecal",
+              "formulated_in_food",
+              "formulated_in_drinking_water"
+            ],
+            "enumNames": [
+              "Oral",
+              "Sublingual",
+              "Nasal",
+              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
+              "Transdermal",
+              "Intrathecal",
+              "Formulated in Food",
+              "Formulated in Drinking Water"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "orally_active": {
+          "type": "string",
+          "enum": ["yes", "no", "unknown"],
+          "enumNames": ["Yes", "No", "Unknown"],
+          "uniqueItems": true,
+          "title": "Is the drug orally active?"
+        }
+      },
+      "dependencies": {
+        "water_soluble": {
+          "oneOf": [
+            {
+              "properties": {
+                "water_soluble": {
+                  "enum": ["no", "unknown"]
+                }
+              },
+              "required": []
+            },
+            {
+              "properties": {
+                "water_soluble": {
+                  "enum": ["yes"]
+                },
+                "solubility_limitations": {
+                  "type": "string",
+                  "title": "Describe any solubility limitations"
+                }
+              },
+              "required": ["solubility_limitations"]
+            }
+          ]
+        }
+      }
+    },
+    "in_vivo_data_item": {
+      "type": "object",
+      "required": [
+        "species",
+        "strain",
+        "outcome_measures",
+        "assay_description",
+        "age_range",
+        "sex",
+        "dose_range",
+        "dose_regimen",
+        "route",
+        "drug_formulation"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Experiment Name"
+        },
+        "reference": {
+          "type": "string",
+          "title": "If this study has been published, please provide a reference."
+        },
+        "species": {
+          "type": "string",
+          "title": "Species",
+          "enum": [
+            "mouse",
+            "rat",
+            "non_human_primate",
+            "dog",
+            "ferret",
+            "rabbit",
+            "other"
+          ],
+          "enumNames": [
+            "Mouse",
+            "Rat",
+            "Non Human Primate",
+            "Dog",
+            "Ferret",
+            "Rabbit",
+            "Other"
+          ],
+          "uniqueItems": true
+        },
+        "strain": {
+          "type": "string",
+          "title": "Model Strain"
+        },
+        "outcome_measures": {
+          "type": "string",
+          "title": "Outcome Measure"
+        },
+        "assay_description": {
+          "type": "string",
+          "title": "Assay Description"
+        },
+        "age_range": {
+          "type": "object",
+          "title": "Subject Age (months)",
+          "properties": {
+            "age_range_min": {
+              "title": "Minimum",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 130
+            },
+            "age_range_max": {
+              "title": "Maximum",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 130
+            }
+          }
+        },
+        "sex": {
+          "type": "string",
+          "title": "Subject Sex",
+          "enum": ["male", "female", "both"],
+          "enumNames": ["Male", "Female", "Both"]
+        },
+        "ed50": {
+          "type": "string",
+          "title": "ED50 (mg/kg)"
+        },
+        "dose_range": {
+          "type": "object",
+          "title": "Dose Range (mg/kg)",
+          "properties": {
+            "dose_range_min": {
+              "title": "Minimum",
+              "type": "number"
+            },
+            "dose_range_max": {
+              "title": "Maximum",
+              "type": "number"
+            }
+          }
+        },
+        "dose_regimen": {
+          "type": "string",
+          "title": "Dosing Regimen",
+          "enum": ["acute", "chronic", "sub_chronic"],
+          "enumNames": ["Acute", "Chronic", "Sub Chronic"]
+        },
+        "pretreatment_time": {
+          "type": "string",
+          "title": "Pre-treatment Time "
+        },
+        "route": {
+          "type": "array",
+          "title": "Route of Administration",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "oral",
+              "sublingual",
+              "nasal",
+              "injection",
+              "transdermal",
+              "intrathecal",
+              "formulated_in_food",
+              "formulated_in_drinking_water"
+            ],
+            "enumNames": [
+              "Oral",
+              "Sublingual",
+              "Nasal",
+              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
+              "Transdermal",
+              "Intrathecal",
+              "Formulated in Food",
+              "Formulated in Drinking Water"
+            ]
+          }
+        },
+        "drug_formulation": {
+          "type": "string",
+          "title": "Drug Formulation"
+        },
+        "adverse_events_description": {
+          "type": "string",
+          "title": "Adverse events"
+        }
+      },
+      "dependencies": {
+        "species": {
+          "oneOf": [
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "mouse",
+                    "rat",
+                    "non_human_primate",
+                    "dog",
+                    "ferret",
+                    "rabbit"
+                  ]
+                }
+              },
+              "required": []
+            },
+            {
+              "properties": {
+                "species": {
+                  "enum": ["other"]
+                },
+                "species_other": {
+                  "title": "Other Species",
+                  "type": "string"
+                }
+              },
+              "required": ["species_other"]
+            }
+          ]
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "properties": {
+        "cell_line_binding": {
+          "type": "array",
+          "title": "Cell Line-Binding",
+          "items": {
+            "$ref": "#/definitions/binding_item"
+          }
+        }
+      }
+    },
+    "efficacy": {
+      "type": "object",
+      "properties": {
+        "cell_line_efficacy": {
+          "type": "array",
+          "title": "Cell Line-Efficacy",
+          "items": {
+            "$ref": "#/definitions/efficacy_item"
+          }
+        }
+      }
+    }
+  },
+  "in_vivo_data": {
+    "type": "object",
+    "properties": {
+      "experiments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/in_vivo_data_item"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "naming": {
+      "title": "Naming",
+      "$ref": "#/definitions/naming"
+    },
+    "measurements": {
+      "title": "Measurements",
+      "$ref": "#/definitions/measurements"
+    },
+    "basic": {
+      "title": "Basic",
+      "$ref": "#/definitions/basic"
+    },
+    "binding": {
+      "title": "Binding",
+      "$ref": "#/definitions/binding"
+    },
+    "efficacy": {
+      "title": "Efficacy",
+      "$ref": "#/definitions/efficacy"
+    }
+  }
+}

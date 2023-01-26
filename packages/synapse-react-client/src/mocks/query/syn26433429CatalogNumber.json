@@ -1,0 +1,48 @@
+{
+  "concreteType": "org.sagebionetworks.repo.model.table.QueryResultBundle",
+  "queryResult": {
+    "concreteType": "org.sagebionetworks.repo.model.table.QueryResult",
+    "queryResults": {
+      "concreteType": "org.sagebionetworks.repo.model.table.RowSet",
+      "tableId": "syn26433429",
+      "etag": "dc14a31f-d114-4a20-9f28-a973ff980764",
+      "headers": [
+        {
+          "name": "Catalog Number",
+          "columnType": "STRING"
+        },
+        {
+          "name": "Catalog Number URL",
+          "columnType": "STRING"
+        }
+      ],
+      "rows": [
+        {
+          "rowId": 78,
+          "versionNumber": 2,
+          "values": [
+            "DCABH-6461",
+            "https://www.creative-diagnostics.com/Anti-NF1-MAb-165834-144.htm"
+          ]
+        },
+        {
+          "rowId": 79,
+          "versionNumber": 2,
+          "values": ["row2", "https://www.google.com/row2.htm"]
+        }
+      ]
+    }
+  },
+  "selectColumns": [
+    {
+      "name": "Catalog Number",
+      "columnType": "STRING"
+    },
+    {
+      "name": "Catalog Number URL",
+      "columnType": "STRING"
+    }
+  ],
+
+  "lastUpdatedOn": "2021-11-01T21:24:53.234Z"
+}

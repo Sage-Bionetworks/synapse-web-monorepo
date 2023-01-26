@@ -1,0 +1,45 @@
+{
+  "title": "IDG DREAM Round 2 Survey",
+  "type": "object",
+  "required": ["file"],
+  "properties": {
+    "file": {
+      "type": "string",
+      "format": "data-url",
+      "title": "Submission File"
+    },
+    "custom": {
+      "type": "string",
+      "title": "If you used any 'named' algorithms or methods, please list them here",
+      "default": ""
+    },
+    "multipleChoicesList": {
+      "type": "array",
+      "title": "What public training data did you use?",
+      "items": {
+        "type": "string",
+        "enum": [
+          "DrugTargetCommons",
+          "IDG Pharos",
+          "ChEMBL",
+          "Drug-Target Explorer"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "toggle": {
+      "title": "Did you use any private data?",
+      "type": "boolean",
+      "oneOf": [
+        {
+          "title": "Yes",
+          "const": true
+        },
+        {
+          "title": "No",
+          "const": false
+        }
+      ]
+    }
+  }
+}

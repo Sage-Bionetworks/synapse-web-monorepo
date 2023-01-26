@@ -1,0 +1,33 @@
+@use '../../abstracts/variables' as SRC;
+
+.FacetNav {
+  padding-top: 5px;
+  border: 1px solid SRC.$gray-dark;
+
+  &__row {
+    background-color: #fff;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    > div {
+      margin: 3px;
+      flex-grow: 1;
+      flex-basis: 49%;
+    }
+  }
+
+  &__showMoreContainer {
+    background-color: SRC.$gray-light;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    margin-top: 10px;
+    button.FacetNav__showMore {
+      // padding: 5px 70px;
+      width: 250px;
+      text-transform: uppercase;
+    }
+  }
+}

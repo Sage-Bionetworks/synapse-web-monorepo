@@ -1,0 +1,49 @@
+@use '../abstracts/variables' as SRC;
+
+.UserCardListRotate {
+  .SRC-card-grid-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-bottom: 46px;
+
+    & > .SRC-grid-item {
+      width: auto;
+      height: auto;
+      overflow: hidden;
+      padding: 5px;
+    }
+
+    .SRC-cardMetaData-scroll {
+      height: 220px;
+      overflow-y: auto;
+    }
+
+    p {
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .cardContainer {
+      box-shadow: SRC.$box-shadow-soft;
+    }
+  }
+
+  .UserCardListRotate__summary {
+    text-align: center;
+
+    .UserCardListRotate__summary__link {
+      border-radius: 24px;
+      padding: 10px 24px;
+      background-color: SRC.$primary-action-color;
+      color: #fff;
+      font-size: 16px;
+      display: inline-block;
+    }
+  }
+}
+
+@media (min-width: 980px) {
+  .UserCardListRotate .SRC-card-grid-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

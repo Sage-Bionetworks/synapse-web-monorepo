@@ -1,0 +1,22 @@
+@use '../abstracts/mixins' as SRCMixins;
+@use '../abstracts/variables' as SRC;
+
+.UserProfileLinks {
+  .title {
+    padding: 30px 0px 20px 30px;
+  }
+  .Tabs {
+    @include SRCMixins.underline-tabs;
+    .Tab {
+      padding-left: 10px;
+    }
+  }
+
+  .TabContent {
+    overflow-y: scroll;
+    padding: 30px 0px 0px 30px;
+    p {
+      padding-bottom: 10px;
+    }
+  }
+}

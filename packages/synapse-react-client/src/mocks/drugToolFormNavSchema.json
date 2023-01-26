@@ -1,0 +1,471 @@
+{
+  "steps": [
+    {
+      "id": "required_data",
+      "order": 0,
+      "title": "Required Data",
+      "default": "naming",
+      "description": "",
+
+      "static": true,
+      "copy": "<p>Use this section to enter basic information about this compound, including mechanism of action, proposed treatment strategy, and how much compound can be provided for testing.</p>",
+      "children": ["naming", "measurements", "basic"]
+    },
+
+    {
+      "id": "naming",
+      "order": 5,
+      "title": "Naming",
+      "default": "measurements",
+      "child": true
+    },
+    {
+      "id": "measurements",
+      "order": 6,
+      "title": "Measurements",
+      "default": "basic",
+      "child": true
+    },
+    {
+      "id": "basic",
+      "order": 7,
+      "title": "Basic Data",
+      "default": "in_vitro",
+      "child": true
+    },
+
+    {
+      "id": "in_vitro",
+      "order": 20,
+      "title": "In Vitro",
+      "default": "binding",
+      "static": "true",
+      "copy": "<p>Use this section to enter results from any in vitro binding and efficacy studies that have been performed on this compound, including which cell lines were used, the binding affinity, and the IC50 or EC50. If this data is not yet available for this compound,  you can select “SKIP” from the Binding and Efficacy sub menus.</p>",
+      "children": ["binding", "efficacy"]
+    },
+    {
+      "id": "binding",
+      "order": 21,
+      "title": "Binding",
+      "child": true,
+      "excluded": false,
+      "default": "efficacy",
+      "rules": []
+    },
+    {
+      "id": "efficacy",
+      "order": 22,
+      "title": "Efficacy",
+      "child": true,
+      "excluded": false,
+      "default": "in_vivo",
+      "rules": []
+    },
+    {
+      "id": "in_vivo",
+      "order": 30,
+      "title": "In Vivo",
+      "default": "in_vivo_data",
+      "copy": "<p>Use this section to enter results from any in vivo studies that have been performed on this compound, including the species and strain used, outcome measures, dosing, route of administration, and any adverse events. If this data is not yet available for this compound,  you can select “SKIP” from the in vivo data sub menus.</p>",
+      "static": true,
+      "rules": [],
+      "children": ["in_vivo_data"]
+    },
+    {
+      "id": "in_vivo_data",
+      "order": 40,
+      "title": "In Vivo Data",
+      "default": "pharmacokinetics",
+      "excluded": false,
+      "child": true,
+      "rules": [],
+      "validationRules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "in_vivo_data",
+                "operator": "greaterThan",
+                "path": ".experiments[*].age_range.age_range_min",
+                "value": {
+                  "fact": "in_vivo_data",
+                  "path": ".experiments[*].age_range.age_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum age should be less than maximum age",
+              "name": "range",
+              "property": ".in_vivo_data.experiments[*].age_range"
+            }
+          },
+          "priority:": 1
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "in_vivo_data",
+                "operator": "greaterThan",
+                "path": ".experiments[*].dose_range.dose_range_min",
+                "value": {
+                  "fact": "in_vivo_data",
+                  "path": ".experiments[*].dose_range.dose_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum dose should be less than maximum dose ",
+              "name": "range",
+              "property": ".in_vivo_data.experiments[*].dose_range"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+    {
+      "id": "pharmacokinetics",
+      "order": 50,
+      "title": "Pharmacokinetics",
+      "static": true,
+      "copy": "<p>Use this section to enter results from any pharmacokinetic studies that have been performed on this compound, including the acid dissociation constant, blood-brain-barrier permeability, and any in vivo pharmacokinetic results. If this data is not yet available for this compound, you can select “SKIP” from the PK in silico, PK in vitro, and/or PK in vivo sub menus.</p>",
+      "default": "pk_in_silico",
+      "rules": [],
+      "children": ["pk_in_silico", "pk_in_vitro", "pk_in_vivo"]
+    },
+    {
+      "id": "pk_in_silico",
+      "order": 52,
+      "title": "PK In Silico",
+      "default": "pk_in_vitro",
+      "excluded": false,
+      "child": true,
+      "rules": []
+    },
+    {
+      "id": "pk_in_vitro",
+      "order": 54,
+      "title": "PK In Vitro",
+      "default": "pk_in_vivo",
+      "excluded": false,
+      "child": true,
+      "rules": []
+    },
+    {
+      "id": "pk_in_vivo",
+      "order": 56,
+      "title": "PK In Vivo",
+      "default": "toxicology",
+      "excluded": false,
+      "child": true,
+      "rules": [],
+      "validationRules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "pk_in_vivo",
+                "operator": "greaterThan",
+                "path": ".experiments[*].age_range.age_range_min",
+                "value": {
+                  "fact": "pk_in_vivo",
+                  "path": ".experiments[*].age_range.age_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum age should be less than maximum age",
+              "name": "range",
+              "property": ".pk_in_vivo.experiments[*].age_range"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+    {
+      "id": "toxicology",
+      "order": 60,
+      "title": "Toxicology",
+      "default": "ld50",
+      "static": "true",
+      "copy": "<p>Use this section to enter results from any toxicology studies that have been performed on this compound, including LD50 and teratogenicity. If this data is not yet available for this compound, you can select “SKIP” from the LD50, acute dosing, chronic dosing, and teratogenicity sub menus.</p>",
+      "rules": [],
+      "children": ["ld50", "acute_dosing", "chronic_dosing", "teratogenicity"]
+    },
+    {
+      "id": "ld50",
+      "order": 61,
+      "title": "LD50",
+      "default": "acute_dosing",
+      "child": true,
+      "excluded": false,
+      "rules": [],
+      "validationRules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "ld50",
+                "operator": "greaterThan",
+                "path": ".experiments[*].age_range.age_range_min",
+                "value": {
+                  "fact": "ld50",
+                  "path": ".experiments[*].age_range.age_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum age should be less than maximum age",
+              "name": "range",
+              "property": ".ld50.experiments[*].age_range"
+            }
+          },
+          "priority:": 1
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "ld50",
+                "operator": "greaterThan",
+                "path": ".experiments[*].dose_range.dose_range_min",
+                "value": {
+                  "fact": "ld50",
+                  "path": ".experiments[*].dose_range.dose_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum dose should be less than maximum dose ",
+              "name": "range",
+              "property": ".ld50.experiments[*].dose_range"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+    {
+      "id": "acute_dosing",
+      "order": 62,
+      "title": "Acute Dosing",
+      "default": "chronic_dosing",
+      "child": true,
+      "excluded": false,
+      "rules": [],
+      "validationRules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "acute_dosing",
+                "operator": "greaterThan",
+                "path": ".experiments[*].age_range.age_range_min",
+                "value": {
+                  "fact": "acute_dosing",
+                  "path": ".experiments[*].age_range.age_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum age should be less than maximum age",
+              "name": "range",
+              "property": ".acute_dosing.experiments[*].age_range"
+            }
+          },
+          "priority:": 1
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "acute_dosing",
+                "operator": "greaterThan",
+                "path": ".experiments[*].dose_range.dose_range_min",
+                "value": {
+                  "fact": "acute_dosing",
+                  "path": ".experiments[*].dose_range.dose_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum dose should be less than maximum dose ",
+              "name": "range",
+              "property": ".acute_dosing.experiments[*].dose_range"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+    {
+      "id": "chronic_dosing",
+      "order": 63,
+      "title": "Chronic Dosing",
+      "default": "teratogenicity",
+      "child": true,
+      "excluded": false,
+      "rules": [],
+      "validationRules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "chronic_dosing",
+                "operator": "greaterThan",
+                "path": ".experiments[*].age_range.age_range_min",
+                "value": {
+                  "fact": "chronic_dosing",
+                  "path": ".experiments[*].age_range.age_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum age should be less than maximum age",
+              "name": "range",
+              "property": ".chronic_dosing.experiments[*].age_range"
+            }
+          },
+          "priority:": 1
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "chronic_dosing",
+                "operator": "greaterThan",
+                "path": ".experiments[*].dose_range.dose_range_min",
+                "value": {
+                  "fact": "chronic_dosing",
+                  "path": ".experiments[*].dose_range.dose_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum dose should be less than maximum dose ",
+              "name": "range",
+              "property": ".chronic_dosing.experiments[*].dose_range"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+    {
+      "id": "teratogenicity",
+      "order": 64,
+      "title": "Teratogenicity",
+      "default": "clinical",
+      "child": true,
+      "excluded": false,
+      "rules": [],
+      "validationRules": [
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "teratogenicity",
+                "operator": "greaterThan",
+                "path": ".experiments[*].age_range.age_range_min",
+                "value": {
+                  "fact": "teratogenicity",
+                  "path": ".experiments[*].age_range.age_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum age should be less than maximum age",
+              "name": "range",
+              "property": ".teratogenicity.experiments[*].age_range"
+            }
+          },
+          "priority:": 1
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "teratogenicity",
+                "operator": "greaterThan",
+                "path": ".experiments[*].dose_range.dose_range_min",
+                "value": {
+                  "fact": "teratogenicity",
+                  "path": ".experiments[*].dose_range.dose_range_max"
+                }
+              }
+            ]
+          },
+          "event": {
+            "type": "validation",
+            "params": {
+              "message": "minimum dose should be less than maximum dose ",
+              "name": "range",
+              "property": ".teratogenicity.experiments[*].dose_range"
+            }
+          },
+          "priority:": 1
+        }
+      ]
+    },
+    {
+      "id": "clinical",
+      "order": 70,
+      "title": "Clinical",
+      "default": "clinical",
+      "children": ["clinical_data"],
+      "static": true,
+      "copy": "<p>Use this section to enter results from any clinical studies that have been performed on this compound, including the patient population, clinical outcome measures, and safety data. If this data is not yet available for this compound, you can select “SKIP” from the Clinical Data sub menu.</p>",
+      "rules": []
+    },
+    {
+      "id": "clinical_data",
+      "order": 75,
+      "title": "Clinical Data",
+      "default": "submission",
+      "excluded": false,
+      "child": true,
+      "rules": []
+    },
+    {
+      "id": "submission",
+      "order": 80,
+      "title": "Submit",
+      "description": "<p>You are about to submit the form. Once you submit, you will no longer be able to edit the submission. If you are not ready to submit, you can save and revisit the form at a later time.</p>",
+      "default": null,
+      "final": true,
+      "rules": []
+    }
+  ]
+}

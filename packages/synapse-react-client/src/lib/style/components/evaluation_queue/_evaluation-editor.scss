@@ -1,0 +1,17 @@
+.bootstrap-4-backport .evaluation-editor {
+  h4 {
+    font-weight: bold;
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  .custom-select {
+    width: unset;
+    display: block;
+  }
+  .created-on {
+    margin-bottom: 1rem;
+  }
+}

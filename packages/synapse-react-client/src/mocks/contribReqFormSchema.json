@@ -1,0 +1,657 @@
+{
+  "definitions": {
+    "contribution_field": {
+      "title": "",
+      "type": "string",
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": ["data"],
+          "title": "Data"
+        },
+        {
+          "type": "string",
+          "enum": ["analysis"],
+          "title": "Analysis"
+        },
+        {
+          "type": "string",
+          "enum": ["tools"],
+          "title": "Tools"
+        }
+      ]
+    },
+    "data_origin_field": {
+      "title": "",
+      "type": "string",
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": ["human"],
+          "title": "Human"
+        },
+        {
+          "type": "string",
+          "enum": ["model_system"],
+          "title": "Model System"
+        }
+      ]
+    },
+    "model_system_field": {
+      "title": "",
+      "type": "string",
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": ["mouse"],
+          "title": "Mouse"
+        },
+        {
+          "type": "string",
+          "enum": ["rat"],
+          "title": "Rat"
+        },
+        {
+          "type": "string",
+          "enum": ["drosophila"],
+          "title": "Drosophila"
+        },
+        {
+          "type": "string",
+          "enum": ["cell_culture"],
+          "title": "Cell Culture"
+        },
+        {
+          "type": "string",
+          "enum": ["other"],
+          "title": "Other"
+        }
+      ]
+    },
+    "assays_field": {
+      "type": "object",
+      "title": "Assays",
+      "properties": {
+        "assays_list": {
+          "title": "List all assays specimens have been used for",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "SNP genotypes",
+              "WES or WGS",
+              "RNAseq",
+              "RNAseq single cell",
+              "ChIPseq",
+              "ATACseq",
+              "ATACseq single cell",
+              "Proteomics",
+              "Metabolomics",
+              "Other"
+            ]
+          }
+        },
+        "assays_list_other": {
+          "type": "string",
+          "title": "If other - describe"
+        }
+      }
+    },
+    "assesments_field": {
+      "type": "object",
+      "title": "Assessments",
+      "properties": {
+        "assesments_list": {
+          "type": "array",
+          "title": "List all assessments",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["Cognition", "Behavioral", "Imaging", "Other"]
+          }
+        },
+        "assesments_list_other": {
+          "type": "string",
+          "title": "If other - describe"
+        }
+      }
+    },
+    "study": {
+      "type": "object",
+      "required": ["submission_name", "content_summary"],
+      "properties": {
+        "submission_name": {
+          "title": "Submission Name",
+          "type": "string"
+        },
+        "content_summary": {
+          "title": "Summarize the study and the content you wish to contribute",
+          "type": "string"
+        }
+      }
+    },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "title": "E-mail",
+          "type": "string",
+          "format": "email"
+        },
+        "institution": {
+          "type": "string"
+        }
+      }
+    },
+    "funding": {
+      "type": "object",
+      "properties": {
+        "nih_grant_number": {
+          "title": "Provide NIH grant number if applicable",
+          "type": "string"
+        }
+      }
+    },
+    "contributions": {
+      "type": "object",
+      "required": ["contribution_type"],
+      "properties": {
+        "contribution_type": {
+          "title": "What type of content are you contributing?",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/contribution_field"
+          }
+        },
+        "contribution_size": {
+          "type": "string",
+          "title": " Estimated contribution size",
+          "enum": ["<1 GB", "<1 TB", "1-100 TB", ">100 TB"]
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "data_origin": {
+          "title": "What is the data origin?",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/data_origin_field"
+          }
+        }
+      }
+    },
+    "human": {
+      "type": "object",
+      "properties": {
+        "release_allowed_under_AMP-AD_KP": {
+          "type": "boolean",
+          "title": "Can data be released under the AMP-AD Knowledge Portal terms of use?",
+          "default": false,
+          "enum": [true, false],
+          "enumNames": ["Yes", "No"],
+          "uniqueItems": true
+        },
+        "study_type": {
+          "type": "string",
+          "title": "Study type",
+          "enum": ["Prospective Cohort", "Case-control", "Post Mortem", "Other"]
+        },
+        "specimen_repository": {
+          "title": "If post mortem - list brain bank or other specimen repository",
+          "type": "string"
+        },
+        "disease_focus": {
+          "type": "array",
+          "uniqueItems": true,
+          "title": "Disease focus",
+          "items": {
+            "type": "string",
+            "enum": ["AD", "MCI", "Other"]
+          }
+        },
+        "disease_focus_other": {
+          "title": "If other - describe",
+          "type": "string"
+        },
+        "specimen_source": {
+          "type": "array",
+          "uniqueItems": true,
+          "title": "Specimen source",
+          "items": {
+            "type": "string",
+            "enum": ["Serum", "Brain", "Other"]
+          }
+        },
+        "specimen_source_other": {
+          "title": "If other - describe",
+          "type": "string"
+        },
+        "total_number_individuals": {
+          "title": "Total number of individuals",
+          "type": "number"
+        },
+        "total_number_specimens": {
+          "title": "Total number of specimens",
+          "type": "number"
+        },
+        "assays": {
+          "$ref": "#/definitions/assays_field"
+        },
+        "assesments": {
+          "$ref": "#/definitions/assesments_field"
+        }
+      },
+      "dependencies": {
+        "release_allowed_under_AMP-AD_KP": {
+          "oneOf": [
+            {
+              "properties": {
+                "release_allowed_under_AMP-AD_KP": {
+                  "enum": [true]
+                }
+              }
+            },
+            {
+              "properties": {
+                "release_allowed_under_AMP-AD_KP": {
+                  "enum": [false]
+                },
+                "release_not_allowed_explanation": {
+                  "type": "string",
+                  "title": "If no - describe"
+                }
+              }
+            }
+          ]
+        },
+        "study_type": {
+          "oneOf": [
+            {
+              "properties": {
+                "study_type": {
+                  "enum": ["Prospective Cohort", "Case-control", "Post Mortem"]
+                }
+              }
+            },
+            {
+              "properties": {
+                "study_type": {
+                  "enum": ["Other"]
+                },
+                "study_type_other": {
+                  "title": "If other - describe",
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "model_system": {
+      "type": "object",
+      "properties": {
+        "model_system_type": {
+          "type": "array",
+          "title": "List the model systems used",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enumNames": [
+              "Mouse",
+              "Rat",
+              "Drosophila",
+              "Cell Culture",
+              "Other"
+            ],
+            "enum": ["mouse", "rat", "drosophila", "cell_culture", "other"]
+          }
+        },
+        "model_system_type_other": {
+          "title": " If other - describe",
+          "type": "string"
+        }
+      },
+      "dependencies": {
+        "included": ["model_system_type"]
+      }
+    },
+    "mouse": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "title": "Describe how the model was generated",
+          "type": "string"
+        },
+        "treatments_list": {
+          "type": "string",
+          "title": "List treatments if applicable"
+        },
+        "total_number_animals": {
+          "type": "number",
+          "title": "Total number of animals"
+        },
+        "total_number_specimens": {
+          "title": "Total number of specimens",
+          "type": "number"
+        },
+        "specimen_source": {
+          "type": "array",
+          "uniqueItems": true,
+          "title": "Specimen source",
+          "items": {
+            "type": "string",
+
+            "enum": ["Serum", "Brain", "Other"]
+          }
+        },
+        "specimen_source_other": {
+          "title": "If other - describe",
+          "type": "string"
+        },
+        "assays": {
+          "$ref": "#/definitions/assays_field"
+        },
+        "assesments": {
+          "$ref": "#/definitions/assesments_field"
+        }
+      }
+    },
+    "rat": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "title": "Describe how the model was generated"
+        },
+        "treatments_list": {
+          "type": "string",
+          "title": "List treatments if applicable"
+        },
+        "total_number_animals": {
+          "type": "number",
+          "title": "Total number of animals"
+        },
+        "total_number_specimens": {
+          "title": "Total number of specimens",
+          "type": "number"
+        },
+        "specimen_source": {
+          "type": "array",
+          "uniqueItems": true,
+          "title": "Specimen source",
+          "items": {
+            "type": "string",
+
+            "enum": ["Serum", "Brain", "Other"]
+          }
+        },
+        "specimen_source_other": {
+          "title": "If other - describe",
+          "type": "string"
+        },
+        "assays": {
+          "$ref": "#/definitions/assays_field"
+        },
+        "assesments": {
+          "$ref": "#/definitions/assesments_field"
+        }
+      }
+    },
+    "drosophila": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "title": "Describe how the model was generated",
+          "type": "string"
+        },
+        "treatments_list": {
+          "type": "string",
+          "title": "List treatments if applicable"
+        },
+        "total_number_animals_pools": {
+          "type": "number",
+          "title": "Total number of animals, or pools"
+        },
+        "total_number_specimens": {
+          "title": "Total number of specimens",
+          "type": "number"
+        },
+        "specimen_source": {
+          "type": "array",
+          "uniqueItems": true,
+          "title": "Specimen source",
+          "items": {
+            "type": "string",
+
+            "enum": ["Serum", "Brain", "Other"]
+          }
+        },
+        "specimen_source_other": {
+          "title": "If other - describe",
+          "type": "string"
+        },
+        "assays": {
+          "$ref": "#/definitions/assays_field"
+        },
+        "assesments": {
+          "$ref": "#/definitions/assesments_field"
+        }
+      }
+    },
+    "cell_culture": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "title": "Describe the cell types being used"
+        },
+        "treatments_list": {
+          "type": "string",
+          "title": "List treatments if applicable"
+        },
+        "assays": {
+          "$ref": "#/definitions/assays_field"
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "properties": {
+        "analytical_output_description": {
+          "type": "string",
+          "title": "Describe the analytical output"
+        },
+        "is_data_contributed": {
+          "type": "boolean",
+          "title": "Is the data used in the analysis provided in this contribution?",
+          "enum": [true, false],
+          "enumNames": ["Yes", "No"],
+          "uniqueItems": true
+        }
+      },
+      "dependencies": {
+        "is_data_contributed": {
+          "oneOf": [
+            {
+              "properties": {
+                "is_data_contributed": {
+                  "enum": [true]
+                }
+              }
+            },
+            {
+              "properties": {
+                "is_data_contributed": {
+                  "enum": [false]
+                },
+                "source_of_data": {
+                  "type": "string",
+                  "title": "If no - link to, or describe the source of the data"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "tools": {
+      "type": "object",
+      "properties": {
+        "experimental_tools": {
+          "title": "Experimental (e.g. reagents, animal models)",
+          "type": "boolean",
+          "default": false
+        },
+        "computational_tools": {
+          "title": "Computational (e.g. algorithms, R packages, R shiny app)",
+          "type": "boolean",
+          "default": false,
+          "enum": [true, false],
+          "enumNames": ["Yes", "No"],
+          "uniqueItems": true
+        },
+        "other_tools": {
+          "type": "boolean",
+          "title": "Other",
+          "default": false,
+          "enum": [true, false],
+          "enumNames": ["Yes", "No"],
+          "uniqueItems": true
+        }
+      },
+      "dependencies": {
+        "experimental_tools": {
+          "oneOf": [
+            {
+              "properties": {
+                "experimental_tools": {
+                  "enum": [false]
+                }
+              }
+            },
+            {
+              "properties": {
+                "experimental_tools": {
+                  "enum": [true]
+                },
+                "experimental_tools_description": {
+                  "type": "string",
+                  "title": "Describe the tool and how to access it"
+                }
+              }
+            }
+          ]
+        },
+        "computational_tools": {
+          "oneOf": [
+            {
+              "properties": {
+                "computational_tools": {
+                  "enum": [false]
+                }
+              }
+            },
+            {
+              "properties": {
+                "computational_tools": {
+                  "enum": [true]
+                },
+                "computational_tools_description": {
+                  "type": "string",
+                  "title": "Describe the tool and how to access it"
+                }
+              }
+            }
+          ]
+        },
+        "other_tools": {
+          "oneOf": [
+            {
+              "properties": {
+                "other_tools": {
+                  "enum": [false]
+                }
+              }
+            },
+            {
+              "properties": {
+                "other_tools": {
+                  "enum": [true]
+                },
+                "other_tools_description": {
+                  "type": "string",
+                  "title": "Describe the tool and how to access it"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "study": {
+      "title": "Study",
+      "$ref": "#/definitions/study"
+    },
+    "contact": {
+      "title": "Contact",
+      "$ref": "#/definitions/contact"
+    },
+    "funding": {
+      "title": "Funding",
+      "$ref": "#/definitions/funding"
+    },
+    "contributions": {
+      "title": "Contributions",
+      "$ref": "#/definitions/contributions"
+    },
+    "data": {
+      "title": "Data",
+      "$ref": "#/definitions/data"
+    },
+    "human": {
+      "title": "Human",
+      "$ref": "#/definitions/human"
+    },
+    "model_system": {
+      "title": "Model System",
+      "$ref": "#/definitions/model_system"
+    },
+    "mouse": {
+      "title": "Mouse",
+      "$ref": "#/definitions/mouse"
+    },
+    "rat": {
+      "title": "Rat",
+      "$ref": "#/definitions/rat"
+    },
+    "drosophila": {
+      "title": "Drosophila",
+      "$ref": "#/definitions/drosophila"
+    },
+    "cell_culture": {
+      "title": "Cell Culture",
+      "$ref": "#/definitions/cell_culture"
+    },
+    "analysis": {
+      "title": "Analysis",
+      "$ref": "#/definitions/analysis"
+    },
+    "tools": {
+      "title": "Tools",
+      "$ref": "#/definitions/tools"
+    }
+  }
+}

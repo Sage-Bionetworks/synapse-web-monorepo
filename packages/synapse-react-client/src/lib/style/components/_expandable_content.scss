@@ -1,0 +1,31 @@
+$gutter: 15px;
+
+.ExpandableContent {
+  background: #ffffff;
+  box-shadow: 0px 3px 10px rgba(93, 105, 171, 0.1);
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  &__button__container {
+    display: flex;
+    height: inherit;
+    justify-content: space-between;
+    align-items: center;
+    button {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      margin-left: $gutter;
+      margin-right: $gutter;
+      justify-content: space-between;
+      align-items: center;
+      word-break: keep-all;
+      padding: 0px;
+    }
+  }
+  &__content__container {
+    padding: $gutter;
+    padding-top: 10px;
+  }
+}

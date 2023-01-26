@@ -1,0 +1,70 @@
+{
+  "concreteType": "org.sagebionetworks.repo.model.table.QueryResultBundle",
+  "queryResult": {
+    "concreteType": "org.sagebionetworks.repo.model.table.QueryResult",
+    "queryResults": {
+      "concreteType": "org.sagebionetworks.repo.model.table.RowSet",
+      "tableId": "syn23519444",
+      "etag": "1f289e21-dff2-4fe8-8015-dd521f4f0805",
+      "headers": [
+        {
+          "name": "categories",
+          "columnType": "STRING_LIST",
+          "id": "126477"
+        },
+        {
+          "name": "date",
+          "columnType": "DATE",
+          "id": "82884"
+        },
+        {
+          "name": "title",
+          "columnType": "STRING",
+          "id": "126478"
+        },
+        {
+          "name": "mdDescription",
+          "columnType": "STRING",
+          "id": "126479"
+        }
+      ],
+      "rows": [
+        {
+          "rowId": 2,
+          "versionNumber": 2,
+          "values": [
+            "[\"category1\", \"category4\"]",
+            "1603387550000",
+            "Announcing Release 1.1",
+            "Lorem _ipsum_ dolor sit amet, consectetur adipiscing elit. Sed quis libero at justo aliquam convallis et ut metus. Maecenas gravida, metus in imperdiet sollicitudin, risus lectus pretium nibh, sit amet aliquam turpis nibh quis risus. Cras massa augue, ornare nec pellentesque sit amet, sodales nec dolor. In sollicitudin lectus non vehicula molestie. "
+          ]
+        },
+        {
+          "rowId": 1,
+          "versionNumber": 1,
+          "values": [
+            "[\"category1\", \"category2\", \"category3\"]",
+            "1603301030000",
+            "Announcing Release 1.0",
+            "Lorem ipsum **dolor** sit amet, consectetur adipiscing elit. Sed quis libero at justo aliquam convallis et ut metus. Maecenas gravida, metus in imperdiet sollicitudin, risus lectus pretium nibh, sit amet aliquam turpis nibh quis risus. Cras massa augue, ornare nec pellentesque sit amet, sodales nec dolor. In sollicitudin lectus non vehicula molestie. "
+          ]
+        },
+        {
+          "rowId": 3,
+          "versionNumber": 3,
+          "values": [
+            "[\"category5\"]",
+            "1595354553000",
+            "Something else",
+            "lalala"
+          ]
+        },
+        {
+          "rowId": 4,
+          "versionNumber": 3,
+          "values": [null, "1586196174000", "More than 3 items!", "3333333"]
+        }
+      ]
+    }
+  }
+}

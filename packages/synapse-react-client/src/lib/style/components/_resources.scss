@@ -1,0 +1,70 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:color';
+
+// TODO: These colors to be configurable for the other portals.
+.Resources {
+  background-color: rgba(64, 123, 160, 0.05);
+  a {
+    color: SRC.$primary-action-color;
+  }
+  .control-container {
+    background: white;
+    display: flex;
+    border: 1px solid #dcdcdc;
+    padding: 15px;
+    height: 450px;
+    .button-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      button {
+        max-height: 60px;
+        text-align: left;
+        color: #515359;
+        font-size: 16px;
+        padding: 10px;
+        &.isSelected,
+        &:not(.gap-fill):hover {
+          color: SRC.$primary-action-color;
+          background-color: color.change(
+            SRC.$primary-action-color,
+            $alpha: 0.04
+          );
+          border-right: 2px solid SRC.$primary-action-color;
+        }
+        border-right: 2px solid #dcdcdc;
+        font-weight: bold;
+        flex-grow: 1;
+        flex-shrink: 1;
+      }
+      .gap-fill {
+        max-height: unset;
+        cursor: default;
+      }
+    }
+    .content-container {
+      overflow-y: auto;
+      flex: 3;
+      padding-left: 40px;
+      padding-right: 140px;
+    }
+    .markdown {
+      p {
+        border-bottom: 1px solid #dcdcdc;
+        padding-bottom: 10px;
+        &:last-child {
+          border-bottom: 1px solid transparent;
+        }
+      }
+      h4 {
+        padding-top: 17px;
+        margin-bottom: 10px;
+        margin-top: 5px;
+        &:first-child {
+          margin-top: 0px;
+        }
+      }
+    }
+  }
+}

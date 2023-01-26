@@ -1,0 +1,63 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:color';
+@use 'sass:map';
+
+.TotalQueryResults {
+  color: SRC.$text-color-dark;
+  background: unset;
+  /* Divider */
+  padding: 1px 0px;
+  align-items: baseline;
+
+  &__selections {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+  &__topbar {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    &__clearall {
+      float: right;
+      font-weight: 400 !important;
+      margin-right: 15px;
+      svg {
+        margin: -3px 4px 0px 0px;
+      }
+    }
+  }
+}
+
+.SelectionCriteriaPill {
+  padding-left: 10px;
+  display: inline-flex;
+  justify-content: center;
+  border-radius: 20px;
+  line-height: 100%;
+  cursor: default;
+  background-color: color.change(SRC.$secondary-action-color, $alpha: 0.1);
+  color: SRC.$text-color-dark;
+  font-weight: normal;
+  margin: 5px;
+  margin-left: 0;
+  &:hover {
+    background-color: color.change(SRC.$secondary-action-color, $alpha: 0.2);
+  }
+  &:hover &__btnRemove {
+    background-color: color.change(SRC.$secondary-action-color, $alpha: 0.5);
+  }
+  span {
+    margin: auto;
+  }
+
+  &__btnRemove {
+    color: map.get(SRC.$colors, 'gray-900');
+    border-radius: 100%;
+    padding: 3px;
+    margin-left: 1px;
+    cursor: pointer;
+    svg {
+      font-size: 1.25rem;
+    }
+  }
+}

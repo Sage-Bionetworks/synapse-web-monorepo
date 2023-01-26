@@ -1,0 +1,171 @@
+@use '../abstracts/variables' as SrcVars;
+@use '../abstracts/mixins' as SrcMixins;
+
+.LoginComponent {
+  max-width: 350px;
+  background: white;
+  font-family: Lato, sans-serif;
+
+  .hide-component {
+    visibility: hidden;
+    max-height: 0;
+  }
+  .SRC-signin-button,
+  .SRC-login-button {
+    font-size: 14px;
+    font-weight: 500;
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 2px;
+    height: 50px;
+  }
+  .SRC-login-button {
+    margin: 44px 0 22px 0;
+  }
+  .SRC-signin-button {
+    svg {
+      font-size: 36px;
+    }
+  }
+  label {
+    color: SrcVars.$gray-formtext;
+    display: block;
+    margin-bottom: 0;
+  }
+  input.form-control {
+    margin-bottom: 1rem;
+    border: SrcVars.$gray-input-border;
+    padding: SrcVars.$input-padding;
+    height: auto;
+    border-radius: 2px;
+    box-shadow: none;
+
+    &[type='password'] {
+      margin-bottom: 5px;
+    }
+  }
+  a {
+    font-weight: bold;
+  }
+  .bg-strike {
+    padding: 10px 0;
+    @include SrcMixins.bg-strike(#dcdcdc);
+  }
+  .ButtonWithIcon__Icon {
+    float: none;
+    display: inline;
+  }
+  .form-control::placeholder {
+    color: SrcVars.$gray-deemphasized;
+    font-style: normal;
+  }
+}
+
+$login-wrapper-width: 910px;
+$login-wrapper-width-tiny: 320px;
+$login-wrapper-height: 560px;
+
+.login-panel-wrapper-bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent
+    url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg')
+    no-repeat;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.login-panel-wrapper {
+  display: flex;
+  max-width: $login-wrapper-width;
+  min-height: $login-wrapper-height;
+  background: #fff
+    url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg')
+    no-repeat right bottom 20px;
+
+  > div {
+    flex: 1;
+  }
+  .back-button {
+    padding: 0;
+    width: 24px;
+    position: absolute;
+  }
+  .login-panel {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 60px 72px;
+  }
+  .panel-tagline {
+    color: #1e4964;
+    font: 300 24px/34px Lato, sans-serif;
+  }
+  .panel-left {
+    .panel-tagline {
+      display: none;
+    }
+  }
+  .panel-logo {
+    margin: 0 0 60px 0;
+    align-self: center;
+  }
+  .panel-right {
+    background-color: adjust-color(
+      SrcVars.$primary-action-color,
+      $alpha: -0.95
+    );
+    flex: 0 1 auto;
+    padding: 0 60px;
+    .panel-tagline {
+      text-align: left;
+      margin-top: 160px;
+    }
+  }
+  .SRC-syn-border-spacing {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+  }
+}
+
+@media (max-width: $login-wrapper-width) {
+  .login-panel-wrapper-bg {
+    background: #fff
+      url('https://s3.amazonaws.com/static.synapse.org/images/SynapseMobileLogInFull.svg')
+      50% 50%;
+    background-size: contain;
+  }
+  .login-panel-wrapper {
+    background: transparent none;
+    .login-panel {
+      padding: 60px 0;
+      min-width: $login-wrapper-width-tiny;
+    }
+    .panel-logo {
+      text-align: center;
+      img {
+        width: 200px;
+      }
+      .panel-tagline {
+        display: block;
+        margin: 6px 0 0;
+        font: normal 16px/26px Lato, sans-serif;
+      }
+    }
+    .panel-right {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: $login-wrapper-width-tiny + 20) {
+  .login-panel-wrapper {
+    .login-panel {
+      padding: 60px 25px;
+    }
+  }
+}

@@ -1,0 +1,604 @@
+{
+  "concreteType": "org.sagebionetworks.repo.model.table.QueryResultBundle",
+  "queryResult": {
+    "concreteType": "org.sagebionetworks.repo.model.table.QueryResult",
+    "queryResults": {
+      "concreteType": "org.sagebionetworks.repo.model.table.RowSet",
+      "tableId": "syn20337467",
+      "etag": "DEFAULT",
+      "headers": [
+        {
+          "name": "id",
+          "columnType": "ENTITYID",
+          "id": "81721"
+        },
+        {
+          "name": "name",
+          "columnType": "STRING",
+          "id": "81722"
+        },
+        {
+          "name": "program",
+          "columnType": "STRING",
+          "id": "82274"
+        },
+        {
+          "name": "softwareType",
+          "columnType": "STRING",
+          "id": "116162"
+        },
+        {
+          "name": "grant",
+          "columnType": "STRING",
+          "id": "121725"
+        },
+        {
+          "name": "contributor",
+          "columnType": "STRING",
+          "id": "122199"
+        },
+        {
+          "name": "displayName",
+          "columnType": "STRING",
+          "id": "82078"
+        },
+        {
+          "name": "documentation",
+          "columnType": "STRING",
+          "id": "82079"
+        },
+        {
+          "name": "summary",
+          "columnType": "STRING",
+          "id": "81973"
+        },
+        {
+          "name": "url",
+          "columnType": "STRING",
+          "id": "82278"
+        }
+      ],
+      "rows": [
+        {
+          "rowId": 20336604,
+          "versionNumber": 1,
+          "values": [
+            "syn20336604",
+            "SpeakEasy  Network Algorithm",
+            "AMP-AD",
+            "Algorithm",
+            "U01AG046152",
+            "Chris Gaiteri",
+            "SpeakEasy  Network Algorithm",
+            null,
+            "SpeakEasy is an algorithm to detect overlapping or non-overlapping communities in biological networks. SpeakEasy combines bottom-up and top-down clustering approaches.",
+            "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4637843/"
+          ]
+        },
+        {
+          "rowId": 20336605,
+          "versionNumber": 1,
+          "values": [
+            "syn20336605",
+            "ROSMAP Molecular Networks",
+            "AMP-AD",
+            "Web application",
+            "U01AG046152",
+            "Shinya Tasaki ",
+            "ROSMAP Molecular Networks",
+            null,
+            "Molecular network explorer of networks derived from the ROSMAP cohort.",
+            "https://www.radc.rush.edu/molecular_networks/index.html"
+          ]
+        },
+        {
+          "rowId": 20803101,
+          "versionNumber": 1,
+          "values": [
+            "syn20803101",
+            "TReNA (Transcriptional Regulatory Network Analysis)",
+            "AMP-AD",
+            "Software package",
+            "U01AG046139",
+            "Seth Ament",
+            "TReNA: Transcriptional Regulatory Network Analysis",
+            null,
+            "Fit transcriptional regulatory networks using gene expression, priors, machine learning.",
+            "https://bioconductor.org/packages/release/bioc/html/trena.html"
+          ]
+        },
+        {
+          "rowId": 20833959,
+          "versionNumber": 2,
+          "values": [
+            "syn20833959",
+            "WINA (Large-scale Weighted Integrative Gene Network Analysis)",
+            "AMP-AD",
+            "Software package",
+            "U01AG046170",
+            "Bin Zhang",
+            null,
+            null,
+            "WINA implements an efficient pipeline for seamless coexpression network construction and module identification using weighted gene coexpression network analysis algorithm for very large gene sets.",
+            "https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-016-0355-3"
+          ]
+        },
+        {
+          "rowId": 20834046,
+          "versionNumber": 1,
+          "values": [
+            "syn20834046",
+            "SuperNOVA (ANOVA-based Differential Coexpression Analysis Between Two or More Groups)",
+            "AMP-AD",
+            "Software package",
+            "U01AG046170",
+            "Bin Zhang, Ryan Neff",
+            null,
+            null,
+            "SuperNOVA is an R package that implements an ANOVA test to quantify differential gene coexpression across two or more conditions simultaneously, and identifies differentially coexpressed genes, pathways, and modules, in parallel. ",
+            "https://github.com/ryananeff/superNOVA/blob/master/README.md"
+          ]
+        },
+        {
+          "rowId": 20834059,
+          "versionNumber": 1,
+          "values": [
+            "syn20834059",
+            "Multiscale Embedded Gene Co-Expression Network Analysis (MEGENA)",
+            "AMP-AD",
+            "Software package",
+            "U01AG046170",
+            "Bin Zhang",
+            null,
+            null,
+            "Multiscale Embedded Gene Co-Expression Network Analysis (MEGENA) can efficiently construct and analyze large scale planar filtered co-expression networks. ",
+            "https://doi.org/10.1371/journal.pcbi.1004574"
+          ]
+        },
+        {
+          "rowId": 21262174,
+          "versionNumber": 1,
+          "values": [
+            "syn21262174",
+            "BrainQTL",
+            "AMP-AD",
+            "Web application",
+            "R01AG056533",
+            "Chloe Robins",
+            null,
+            null,
+            "A resource for visualizing brain quantitative loci results",
+            "https://brainqtl.emory.edu/"
+          ]
+        },
+        {
+          "rowId": 22273980,
+          "versionNumber": 1,
+          "values": [
+            "syn22273980",
+            "Integrated Molecular Atlas of AD",
+            "AMP-AD",
+            "Web Application",
+            "U01AG061359",
+            "Maria Worheide, Gabi Kastenmuller, Matthias Arnold",
+            null,
+            null,
+            "The AD Altas is a network-based data integration resource for investigating AD, its biomarkers, and associated endophenotypes in a multi-omics context. The database can be queried by entering one or more phenotypes, genes, proteins, or metabolites and provides an interactive interface to inspect generated networks, as well as enrichment tools for downstream analyses. ",
+            "https://adatlas.org/"
+          ]
+        },
+        {
+          "rowId": 22275054,
+          "versionNumber": 2,
+          "values": [
+            "syn22275054",
+            "Bulk RNAseq Sample Processing Workflow",
+            "AMP-AD",
+            "Genomics Workflow",
+            "U24AG061340",
+            "Will Poehlman, Tess Thyer, James Eddy, Ben Logsdon, Larsson Omberg",
+            null,
+            null,
+            "This workflow takes FASTQ or BAM files as input and generates a gene count matrix as output. ",
+            "https://github.com/Sage-Bionetworks-Workflows/dockstore-workflow-rnaseq"
+          ]
+        },
+        {
+          "rowId": 24988882,
+          "versionNumber": 1,
+          "values": [
+            "syn24988882",
+            "Microglia in wild-derived APPPS1 strains",
+            "CDCP",
+            "Web Application",
+            "2018-AARF-589154, RF1AG051496, RF1AG055104",
+            "Stanley Yang",
+            null,
+            null,
+            "A Shiny app for querying microglia genes expressed in wild-derived APP/PS1 mouse strains.",
+            "https://wild_microglia_scrna-seq.jax.org/"
+          ]
+        },
+        {
+          "rowId": 25127078,
+          "versionNumber": 1,
+          "values": [
+            "syn25127078",
+            "Gene set enrichment using likelihood ratio-derived test statistics (gsLRT)",
+            "Psych-AD",
+            "R script",
+            "R56AG062302",
+            null,
+            null,
+            null,
+            "Quantify gene set enrichment using likelihood ratio\u2010derived test statistics (gsLRT), which accounts for sample covariates like age and sex.  The approach generates likelihood ratio statistics from a pair of nested logistic regression models. The procedure is flexible enough to test for a wide number of complicated gene set hypotheses while adjusting for variation explained by the covariates included in both models.",
+            "https://github.com/j-g-b/gsLRT"
+          ]
+        },
+        {
+          "rowId": 25281516,
+          "versionNumber": 1,
+          "values": [
+            "syn25281516",
+            "DRIAD",
+            "CDCP",
+            "Web Application",
+            "R01AG058063",
+            "Artem Sokolov",
+            null,
+            null,
+            "Drug Repurposing in Alzheimer's Disease (DRIAD). The DRIAD tool evaluates gene sets for their ability to predict the progression of Alzheimer's disease (AD). It utilizes expression data from post-mortem samples of AD patients collected by the AMP-AD consortium.",
+            "https://labsyspharm.shinyapps.io/DRIAD/"
+          ]
+        },
+        {
+          "rowId": 26010239,
+          "versionNumber": 1,
+          "values": [
+            "syn26010239",
+            "EWASplus",
+            "AMP-AD",
+            "Genomics Workflow",
+            "\tR56AG062256",
+            "Yanting Huang",
+            null,
+            null,
+            "EWASplus is a pipeline for predicting novel Alzheimer's Disease (AD)-associated CpG sites beyond 450K array across the whole human genome, including experimental set construction, features collection/processing, features selection and ensemble learning, for each of the AD-associated trait of interest.",
+            "https://github.com/xsun28/EWASplus/tree/remastered"
+          ]
+        },
+        {
+          "rowId": 26433712,
+          "versionNumber": 1,
+          "values": [
+            "syn26433712",
+            "MRGWAS",
+            "ELITE",
+            "Web Application",
+            "U24AG051129",
+            "Christine Le, Steven Cummings, Nik Schork, Daniel Evans",
+            null,
+            null,
+            "The MRGWAS viewer allows exploration of results from an analysis of the relationship between longevity outcomes and GWAS traits.",
+            "https://danielevanslab.shinyapps.io/MR_longevity_shiny/ "
+          ]
+        }
+      ]
+    }
+  },
+  "queryCount": 14,
+  "selectColumns": [
+    {
+      "name": "id",
+      "columnType": "ENTITYID",
+      "id": "81721"
+    },
+    {
+      "name": "name",
+      "columnType": "STRING",
+      "id": "81722"
+    },
+    {
+      "name": "program",
+      "columnType": "STRING",
+      "id": "82274"
+    },
+    {
+      "name": "softwareType",
+      "columnType": "STRING",
+      "id": "116162"
+    },
+    {
+      "name": "grant",
+      "columnType": "STRING",
+      "id": "121725"
+    },
+    {
+      "name": "contributor",
+      "columnType": "STRING",
+      "id": "122199"
+    },
+    {
+      "name": "displayName",
+      "columnType": "STRING",
+      "id": "82078"
+    },
+    {
+      "name": "documentation",
+      "columnType": "STRING",
+      "id": "82079"
+    },
+    {
+      "name": "summary",
+      "columnType": "STRING",
+      "id": "81973"
+    },
+    {
+      "name": "url",
+      "columnType": "STRING",
+      "id": "82278"
+    }
+  ],
+  "columnModels": [
+    {
+      "id": "81721",
+      "name": "id",
+      "columnType": "ENTITYID"
+    },
+    {
+      "id": "81722",
+      "name": "name",
+      "columnType": "STRING",
+      "maximumSize": 256
+    },
+    {
+      "id": "82274",
+      "name": "program",
+      "columnType": "STRING",
+      "maximumSize": 9,
+      "facetType": "enumeration"
+    },
+    {
+      "id": "116162",
+      "name": "softwareType",
+      "columnType": "STRING",
+      "maximumSize": 30,
+      "facetType": "enumeration"
+    },
+    {
+      "id": "121725",
+      "name": "grant",
+      "columnType": "STRING",
+      "maximumSize": 60,
+      "maximumListLength": 30,
+      "facetType": "enumeration"
+    },
+    {
+      "id": "122199",
+      "name": "contributor",
+      "columnType": "STRING",
+      "maximumSize": 75,
+      "maximumListLength": 30,
+      "facetType": "enumeration"
+    },
+    {
+      "id": "82078",
+      "name": "displayName",
+      "columnType": "STRING",
+      "maximumSize": 52
+    },
+    {
+      "id": "82079",
+      "name": "documentation",
+      "columnType": "STRING",
+      "maximumSize": 44
+    },
+    {
+      "id": "81973",
+      "name": "summary",
+      "columnType": "STRING",
+      "maximumSize": 500
+    },
+    {
+      "id": "82278",
+      "name": "url",
+      "columnType": "STRING",
+      "maximumSize": 150
+    }
+  ],
+  "facets": [
+    {
+      "concreteType": "org.sagebionetworks.repo.model.table.FacetColumnResultValues",
+      "columnName": "program",
+      "facetType": "enumeration",
+      "facetValues": [
+        {
+          "value": "AMP-AD",
+          "count": 10,
+          "isSelected": false
+        },
+        {
+          "value": "CDCP",
+          "count": 2,
+          "isSelected": false
+        },
+        {
+          "value": "ELITE",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Psych-AD",
+          "count": 1,
+          "isSelected": false
+        }
+      ]
+    },
+    {
+      "concreteType": "org.sagebionetworks.repo.model.table.FacetColumnResultValues",
+      "columnName": "softwareType",
+      "facetType": "enumeration",
+      "facetValues": [
+        {
+          "value": "Web application",
+          "count": 6,
+          "isSelected": false
+        },
+        {
+          "value": "Software package",
+          "count": 4,
+          "isSelected": false
+        },
+        {
+          "value": "Genomics Workflow",
+          "count": 2,
+          "isSelected": false
+        },
+        {
+          "value": "Algorithm",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "R script",
+          "count": 1,
+          "isSelected": false
+        }
+      ]
+    },
+    {
+      "concreteType": "org.sagebionetworks.repo.model.table.FacetColumnResultValues",
+      "columnName": "grant",
+      "facetType": "enumeration",
+      "facetValues": [
+        {
+          "value": "U01AG046170",
+          "count": 3,
+          "isSelected": false
+        },
+        {
+          "value": "U01AG046152",
+          "count": 2,
+          "isSelected": false
+        },
+        {
+          "value": "\tR56AG062256",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "2018-AARF-589154, RF1AG051496, RF1AG055104",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "R01AG056533",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "R01AG058063",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "R56AG062302",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "U01AG046139",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "U01AG061359",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "U24AG051129",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "U24AG061340",
+          "count": 1,
+          "isSelected": false
+        }
+      ]
+    },
+    {
+      "concreteType": "org.sagebionetworks.repo.model.table.FacetColumnResultValues",
+      "columnName": "contributor",
+      "facetType": "enumeration",
+      "facetValues": [
+        {
+          "value": "Bin Zhang",
+          "count": 2,
+          "isSelected": false
+        },
+        {
+          "value": "org.sagebionetworks.UNDEFINED_NULL_NOTSET",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Artem Sokolov",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Bin Zhang, Ryan Neff",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Chloe Robins",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Chris Gaiteri",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Christine Le, Steven Cummings, Nik Schork, Daniel Evans",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Maria Worheide, Gabi Kastenmuller, Matthias Arnold",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Seth Ament",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Shinya Tasaki ",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Stanley Yang",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Will Poehlman, Tess Thyer, James Eddy, Ben Logsdon, Larsson Omberg",
+          "count": 1,
+          "isSelected": false
+        },
+        {
+          "value": "Yanting Huang",
+          "count": 1,
+          "isSelected": false
+        }
+      ]
+    }
+  ]
+}

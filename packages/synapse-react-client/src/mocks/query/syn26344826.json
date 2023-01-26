@@ -1,0 +1,100 @@
+{
+  "concreteType": "org.sagebionetworks.repo.model.table.QueryResultBundle",
+  "queryResult": {
+    "concreteType": "org.sagebionetworks.repo.model.table.QueryResult",
+    "queryResults": {
+      "concreteType": "org.sagebionetworks.repo.model.table.RowSet",
+      "tableId": "syn26344826",
+      "etag": "d78d75eb-5359-4d47-86d6-eb6bfc0bb1fc",
+      "headers": [
+        {
+          "name": "Resource_id",
+          "columnType": "STRING",
+          "id": "171109"
+        },
+        {
+          "name": "Resource Name",
+          "columnType": "STRING",
+          "id": "171151"
+        },
+        {
+          "name": "Description",
+          "columnType": "LARGETEXT",
+          "id": "114279"
+        },
+        {
+          "name": "Resource Type",
+          "columnType": "STRING",
+          "id": "171266"
+        },
+        {
+          "name": "Date Added",
+          "columnType": "DATE",
+          "id": "171138"
+        }
+      ],
+      "rows": [
+        {
+          "rowId": 1074,
+          "versionNumber": 20,
+          "values": [
+            "2c20eb2a-242f-4dfc-8cde-db6462e7fd01",
+            "Monoclonal Anti-NF1 antibody produced in mouse",
+            null,
+            "Antibody",
+            "1634241592"
+          ]
+        },
+        {
+          "rowId": 1073,
+          "versionNumber": 20,
+          "values": [
+            "77a70e17-ea17-401f-b925-8d1ebc21a901",
+            "NF1 Polyclonal Antibody",
+            null,
+            "Antibody",
+            "1634241592"
+          ]
+        },
+        {
+          "rowId": 1072,
+          "versionNumber": 20,
+          "values": [
+            "9e9cab9c-b7cf-444e-b64e-c21ce996a01b",
+            "NF1 Polyclonal Antibody",
+            null,
+            "Antibody",
+            "1634241592"
+          ]
+        }
+      ]
+    }
+  },
+  "selectColumns": [
+    {
+      "name": "Resource_id",
+      "columnType": "STRING",
+      "id": "171109"
+    },
+    {
+      "name": "Resource Name",
+      "columnType": "STRING",
+      "id": "171151"
+    },
+    {
+      "name": "Description",
+      "columnType": "LARGETEXT",
+      "id": "114279"
+    },
+    {
+      "name": "Resource Type",
+      "columnType": "STRING",
+      "id": "171266"
+    },
+    {
+      "name": "Date Added",
+      "columnType": "DATE",
+      "id": "171138"
+    }
+  ]
+}

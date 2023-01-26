@@ -1,0 +1,513 @@
+@use '../../abstracts/variables' as SrcVariables;
+@use '../../abstracts/mixins' as SrcMixins;
+
+/* MODAL OVERWRITE! */
+.modal-backdrop {
+  opacity: 0.7;
+}
+
+.modal-title {
+  float: left;
+}
+.SRC-ReactJsonForm {
+  .submission-header {
+    h2 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: SrcVariables.$gray-formtext;
+    }
+    &.submitted {
+      div {
+        color: SrcVariables.$primary-action-color;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+      h2 {
+        opacity: 0.6;
+      }
+    }
+  }
+  hr {
+    margin: SrcVariables.$space-unit 0 SrcVariables.$space-unit 0;
+  }
+  .fade {
+    opacity: inherit;
+  }
+  /* colors */
+  .nav-link,
+  a.nav-link,
+  .nav-link > a {
+    color: SrcVariables.$primary-action-color;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .nav-link svg {
+    margin-left: 3px;
+  }
+
+  .btn-action {
+    background-color: SrcVariables.$primary-action-color;
+    color: #fff;
+  }
+  .btn-action:hover,
+  .btn-action:focus {
+    background-color: SrcVariables.$primary-action-color;
+    @include SrcMixins.box-shadow(3px, 3px, 5px, rgba(0, 0, 0, 0.5));
+    color: #fff;
+  }
+
+  .btn-action + .btn-action {
+    margin-right: 1rem;
+  }
+
+  .btn-success,
+  .btn-success:active,
+  .btn-success:focus {
+    background-color: SrcVariables.$primary-action-color;
+    border-color: SrcVariables.$primary-action-color;
+  }
+
+  /* padding */
+  .padding-full {
+    padding: 2rem;
+  }
+
+  /*--- File Grid ----*/
+  .file-grid {
+    h3 {
+      text-transform: uppercase;
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+    }
+
+    h4 {
+      text-transform: uppercase;
+      font-size: 1.6rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      padding-left: 0.8rem;
+    }
+    .panel {
+      background-color: SrcVariables.$gray-light;
+    }
+    .file-table {
+      @include SrcMixins.calc(
+        margin-bottom,
+        '#{SrcVariables.$space-unit} * #{3}'
+      );
+      button.btn {
+        color: SrcVariables.$primary-action-color;
+      }
+      .view-more {
+        text-align: right;
+      }
+
+      table {
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 0;
+
+        th {
+          font-size: 1.4rem;
+          line-height: 1.6rem;
+        }
+        td:first-child {
+          width: 40%;
+        }
+
+        td:nth-child(2) {
+          width: 30%;
+        }
+
+        td:nth-child(2) {
+          width: 20%;
+        }
+
+        td {
+          vertical-align: middle;
+        }
+        a {
+          color: SrcVariables.$primary-action-color;
+        }
+      }
+    }
+
+    .btn-large {
+      color: #fff;
+      background-color: SrcVariables.$primary-action-color;
+      text-transform: uppercase;
+      padding: 0.75rem 1.5rem;
+    }
+  }
+
+  .panel.unauthenticated {
+    border: 1px solid #ddd;
+    font-size: 1.4rem;
+  }
+
+  /* ---------- layout ---------------*/
+  $a: 100vh;
+  $b: 35rem;
+
+  .wrap {
+    @include SrcMixins.calc(height, '#{$a} - #{$b}');
+    overflow: hidden;
+    width: 100%;
+    clear: both;
+    padding: SrcVariables.$space-unit 0 1rem SrcVariables.$space-unit;
+
+    background-color: SrcVariables.$gray-light;
+
+    h4 {
+      margin-top: 0;
+    }
+  }
+
+  .right-top-actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .notification-area {
+    color: SrcVariables.$primary-action-color;
+    font-style: italic;
+    margin-bottom: SrcVariables.$space-unit;
+  }
+
+  .inner-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    position: relative;
+
+    .form-title {
+      display: block;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    .json-forms-menu {
+      padding-right: 3rem;
+    }
+  }
+
+  .form-wrap {
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex-basis: 100%;
+    flex: 3;
+    margin-top: 1rem;
+  }
+  .scroll-area {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    &.disabled {
+      opacity: 0.6;
+    }
+  }
+
+  ul.error-detail {
+    padding-left: 0;
+  }
+
+  ul.error-detail li {
+    list-style: none;
+    font-style: italic;
+    color: SrcVariables.$red-error2;
+  }
+
+  .step-exclude-directions {
+    font-style: italic;
+
+    vertical-align: middle;
+    @include SrcMixins.calc(line-height, '#{SrcVariables.$space-unit} * 2');
+    @include SrcMixins.calc(height, '#{SrcVariables.$space-unit} * 2');
+    button.btn-link {
+      color: SrcVariables.$primary-action-color;
+      font-weight: 700;
+      font-style: normal;
+      text-transform: uppercase;
+    }
+  }
+
+  /* radio button style override */
+  .field-radio-group .radio:first-child {
+    margin-top: 0;
+  }
+
+  .has-error .checkbox,
+  .has-error .checkbox-inline,
+  .has-error .control-label,
+  .has-error .help-block,
+  .has-error .radio,
+  .has-error .radio-inline,
+  .has-error.checkbox label,
+  .has-error.checkbox-inline label,
+  .has-error.radio label,
+  .has-error.radio-inline label {
+    color: SrcVariables.$red-error2;
+  }
+
+  input[type='checkbox']:checked + label::before,
+  input[type='checkbox']:checked + span::before {
+    color: SrcVariables.$primary-action-color;
+  }
+
+  .has-error .form-control {
+    border-color: SrcVariables.$red-error2;
+  }
+
+  /*--- form ---*/
+
+  .static-screen {
+    margin-right: 10rem;
+  }
+  .submissionInputForm {
+    margin-right: 10rem;
+
+    .help-block {
+      font-style: italic;
+      font-weight: lighter;
+      font-size: 1.25rem;
+    }
+
+    &.no-help .help-block {
+      display: none;
+    }
+
+    // for min/max type of field
+    .data-range {
+      legend {
+        font-size: 1.4rem;
+        font-weight: normal;
+        color: SrcVariables.$gray-formtext;
+        display: block;
+        margin-bottom: 0;
+      }
+      .form-group {
+        float: left;
+        margin-bottom: 0;
+
+        label {
+          font-size: 1.3rem;
+          font-weight: normal;
+        }
+      }
+      .form-group + .form-group {
+        margin-left: 1.5rem;
+      }
+    }
+  }
+
+  label.control-label,
+  .data-range legend {
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: SrcVariables.$gray-formtext;
+  }
+
+  .form-group {
+    margin-bottom: 2rem;
+  }
+
+  .checkboxes .checkbox:first-child {
+    margin-top: 0;
+  }
+
+  .checkbox > label::before,
+  .radio::before,
+  .radio-inline::before {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .radio input[type='radio'] + label,
+  .radio input[type='radio'] + span {
+    padding-left: 24px;
+  }
+
+  .radio input[type='radio']:checked + label,
+  .radio input[type='radio']:checked + span {
+    padding-left: 24px;
+  }
+
+  .checkbox > label,
+  .radio > label {
+    margin-bottom: 8px;
+  }
+
+  .array-item {
+    border: 1px solid SrcVariables.$gray-dark;
+    padding: 2rem 1rem;
+    overflow: auto;
+    margin: 0 1.6rem 2rem 1.6rem;
+  }
+
+  .array-item-move-down,
+  .array-item-move-down {
+    display: none;
+  }
+  legend {
+    border: none;
+  }
+  fieldset fieldset legend {
+    /* font-size: 2.25rem;*/
+    /* hiding default title for better scroll experience */
+    display: none;
+  }
+
+  /* second level title */
+  fieldset fieldset fieldset legend {
+    font-size: 1.75rem;
+    /* display: block;*/
+    margin-bottom: 0.5rem;
+    display: none;
+  }
+  .show-subfield-title fieldset legend {
+    display: block !important;
+  }
+  /* third level title */
+  fieldset fieldset fieldset fieldset legend {
+    font-size: 1.5rem;
+  }
+
+  .array-item-toolbox {
+    button,
+    button:hover {
+      background-color: transparent;
+      color: SrcVariables.$primary-action-color;
+      border: none;
+      box-shadow: none;
+      cursor: pointer;
+      font-weight: normal !important;
+      text-align: right;
+    }
+
+    i.glyphicon {
+      background: SrcVariables.$primary-action-color;
+      color: white;
+      font-weight: 100;
+      margin-right: 1rem;
+      padding: 2px;
+    }
+    .array-item-remove::after {
+      content: 'Remove';
+    }
+    button.array-item-move-up,
+    button.array-item-move-down {
+      display: none;
+    }
+  }
+  .array-item-add {
+    margin: 0 1.6rem 2rem 1.6rem;
+    padding: 0 3.2rem 0 0;
+    width: 100%;
+    button.btn-info.btn-add {
+      background-color: transparent;
+      color: SrcVariables.$primary-action-color;
+      border: 1px solid SrcVariables.$gray-dark;
+      padding: 2rem 3.3rem;
+      text-align: right;
+      /*box-shadow: none;*/
+      cursor: pointer;
+    }
+    .btn-add::after {
+      content: 'Add Data';
+    }
+
+    i.glyphicon {
+      background-color: SrcVariables.$primary-action-color;
+      color: white;
+      font-weight: 100;
+      margin-right: 1rem;
+      padding: 2px 2px 3px 3px;
+    }
+  }
+
+  .hide-form-only .form-group {
+    display: none;
+  }
+  .toggle-help-label {
+    line-height: 3em;
+    border: 1px solid SrcVariables.$gray-light;
+
+    padding: 0 1em;
+    margin: 0 1em;
+    font-size: 0.85em;
+  }
+
+  .toggle-help {
+    vertical-align: middle;
+    margin: 0 5px;
+    .react-switch-bg {
+      background-color: SrcVariables.$primary-action-color;
+    }
+  }
+
+  /*------- summary -------*/
+  .summary {
+    $c: 100%;
+    $d: 30px;
+    .scroll-area {
+      height: 100%;
+      &.table-body {
+        @include SrcMixins.calc(height, '#{$c} - #{$d}');
+      }
+    }
+    .summary-table-header {
+      margin-bottom: 0;
+    }
+
+    .summary-table,
+    .summary-table-header {
+      width: 100%;
+
+      th:first-child,
+      td:first-child {
+        width: 30%;
+      }
+      th:nth-child(2),
+      td:nth-child(2) {
+        width: 40%;
+      }
+      th:nth-child(3),
+      td:nth-child(3) {
+        width: 30%;
+      }
+    }
+  }
+
+  /*---- form classes -----*/
+  .experiments-list legend ~ .field-description {
+    font-size: 1.4rem;
+    font-style: italic;
+  }
+}
+
+@media print {
+  nav {
+    display: none !important;
+  }
+  .SRC-ReactJsonForm {
+    .submission-header {
+      display: none;
+    }
+    .inner-wrap {
+      .json-forms-menu {
+        display: none;
+      }
+      .form-title,
+      .right-top-actions,
+      .step-exclude-directions,
+      button {
+        display: none !important;
+      }
+      .wrap {
+        height: auto !important;
+        border: none !important;
+      }
+    }
+  }
+}

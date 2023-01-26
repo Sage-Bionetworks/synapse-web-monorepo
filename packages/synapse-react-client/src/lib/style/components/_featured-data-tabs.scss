@@ -1,0 +1,46 @@
+@use '../abstracts/variables' as SRC;
+
+.FeaturedDataTabs {
+  padding-top: 20px;
+  &__tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    height: 50px;
+    align-items: center;
+    border-bottom: 4px solid #dcdcdc;
+    &__tab {
+      height: 50px;
+      width: 250px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-top: 4px;
+      button {
+        color: #ababac;
+        //increase click area
+        width: 100%;
+        height: 100%;
+        padding-bottom: 10px;
+        text-transform: uppercase;
+        .iconImg {
+          padding-right: 10px;
+        }
+      }
+      &__selected {
+        font-weight: bold;
+        border-bottom: 5px solid;
+        border-bottom-color: SRC.$secondary-action-color;
+        button {
+          color: #515359;
+        }
+        .iconImg {
+          filter: invert(1);
+        }
+      }
+    }
+  }
+  &__explore-all {
+    text-align: center;
+    padding-top: 20px;
+  }
+}

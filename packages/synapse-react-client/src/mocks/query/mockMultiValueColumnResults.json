@@ -1,0 +1,43 @@
+{
+  "concreteType": "org.sagebionetworks.repo.model.table.QueryResultBundle",
+  "queryResult": {
+    "concreteType": "org.sagebionetworks.repo.model.table.QueryResult",
+    "queryResults": {
+      "concreteType": "org.sagebionetworks.repo.model.table.RowSet",
+      "tableId": "syn24610539",
+      "etag": "7529a617-caa0-449b-b153-9a2e60a8f826",
+      "headers": [
+        {
+          "name": "fundingAgency",
+          "columnType": "STRING_LIST",
+          "id": "126224"
+        }
+      ],
+      "rows": [
+        {
+          "rowId": 5,
+          "versionNumber": 1,
+          "values": ["[\"_CTF_\", \"NTAP\"]"]
+        }
+      ]
+    }
+  },
+  "selectColumns": [
+    {
+      "name": "fundingAgency",
+      "columnType": "STRING_LIST",
+      "id": "126224"
+    }
+  ],
+  "columnModels": [
+    {
+      "id": "126224",
+      "name": "fundingAgency",
+      "columnType": "STRING_LIST",
+      "maximumSize": 50,
+      "maximumListLength": 10,
+      "facetType": "enumeration"
+    }
+  ],
+  "lastUpdatedOn": "2021-10-27T17:51:47.213Z"
+}

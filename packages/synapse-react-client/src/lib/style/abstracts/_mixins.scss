@@ -1,0 +1,228 @@
+@use './variables' as SRC;
+@use 'sass:map';
+// -----------------------------------------------------------------------------
+// This file contains all application-wide Sass mixins.
+// -----------------------------------------------------------------------------
+
+@mixin box-shadow($top, $left, $blur, $color, $inset: false) {
+  @if $inset {
+    -webkit-box-shadow: inset $top $left $blur $color;
+    -moz-box-shadow: inset $top $left $blur $color;
+    box-shadow: inset $top $left $blur $color;
+  } @else {
+    -webkit-box-shadow: $top $left $blur $color;
+    -moz-box-shadow: $top $left $blur $color;
+    box-shadow: $top $left $blur $color;
+  }
+}
+
+@mixin calc($property, $expression) {
+  #{$property}: -moz-calc(#{$expression});
+  #{$property}: -webkit-calc(#{$expression});
+  #{$property}: calc(#{$expression});
+}
+
+/*
+  @param $color string e.g. #eee or red
+  @param $width unit e.g. 15%
+ */
+@mixin bg-strike($color: false, $width: 25%) {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  &:before,
+  &:after {
+    content: '';
+    flex: 1;
+    @if $color {
+      border-bottom: 1px solid $color;
+    } @else {
+      border-bottom: 1px solid currentColor;
+    }
+  }
+  &:before {
+    margin: 0 0.25em 0 $width;
+  }
+  &:after {
+    margin: 0 $width 0 0.25em;
+  }
+}
+
+@mixin sortable-table() {
+  thead > tr > th,
+  thead:first-child > tr:first-child > th {
+    padding: 10px 6px 5px 7px;
+    border: 1px solid #dddddf;
+    background-color: map.get(SRC.$colors, 'gray-200');
+    color: map.get(SRC.$colors, 'gray-800');
+    span {
+      display: inline-block;
+      float: right;
+    }
+  }
+  td {
+    vertical-align: middle !important;
+  }
+}
+
+@mixin sticky-column() {
+  border-collapse: separate;
+  .stickyColumn {
+    right: 0;
+    position: sticky;
+    z-index: 800;
+  }
+  // fix colors (icons, and set the cell background color to be opaque).
+  thead .stickyColumn {
+    text-align: center;
+  }
+  tbody tr > td.stickyColumn {
+    border-left: 1px solid map.get(SRC.$colors, 'gray-400');
+  }
+  tbody tr:nth-of-type(even) > .stickyColumn {
+    background-color: white;
+  }
+  tbody tr:nth-of-type(odd) > .stickyColumn {
+    background-color: #fbfbfc;
+  }
+}
+
+@mixin underline-tabs(
+  $active-color: SRC.$secondary-action-color,
+  $inactive-color: lightgray
+) {
+  display: flex;
+  justify-content: space-between;
+
+  > * {
+    cursor: pointer;
+    text-align: center;
+    flex-grow: 1;
+    padding: 5px 0px;
+    transition: border-bottom 200ms ease-in;
+    border-bottom: 3px solid transparent;
+  }
+
+  > *[aria-selected='false'],
+  > *[aria-current='false'] {
+    color: SRC.$inactive-tab-text;
+    border-bottom: 3px solid $inactive-color;
+  }
+  > *:hover,
+  > *[aria-selected='true'],
+  > *[aria-current='page'] {
+    border-color: $active-color;
+    color: SRC.$active-tab-text;
+    svg {
+      color: $active-color;
+    }
+  }
+}
+
+@mixin placeholder() {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 80%;
+  font-size: large;
+  margin: 15px;
+}
+
+$link-underline-color-default: adjust-color(
+  SRC.$primary-action-color,
+  $saturation: -50%,
+  $lightness: 40%
+) !default;
+
+@mixin underline($color, $thickness, $offset) {
+  text-decoration: underline;
+  text-underline-offset: $offset;
+  text-decoration-thickness: $thickness;
+  text-decoration-color: $color;
+}
+
+@mixin disabled($ignoreLink: false) {
+  color: map.get(SRC.$colors, 'gray-600');
+  &:hover {
+    @if not $ignoreLink {
+      @include underline($link-underline-color-default, 1px, 4px);
+    }
+    cursor: default;
+  }
+}
+
+// Core link styles across the portal main area.
+@mixin highlightLink() {
+  color: SRC.$primary-action-color;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  @include underline($link-underline-color-default, 1px, 4px);
+  &:hover {
+    @include underline(map.get(SRC.$primary-color-palette, 700), 2px, 4px);
+  }
+  &.disabled {
+    @include disabled;
+  }
+}
+
+@mixin normalLink() {
+  color: SRC.$primary-action-color;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  &:hover {
+    @include underline(map.get(SRC.$primary-color-palette, 700), 2px, 4px);
+  }
+  &.disabled {
+    @include disabled;
+  }
+}
+
+@mixin ignoreLink() {
+  color: unset;
+  text-decoration: unset;
+  font-weight: unset;
+  text-decoration: unset;
+  letter-spacing: unset;
+  &:hover {
+    text-decoration: unset;
+    margin-bottom: unset;
+  }
+  &.disabled {
+    @include disabled($ignoreLink: true);
+  }
+}
+
+// Always top margins to the MuiTypography variants causes problems with some built-in MUI components
+// Use this mixin within a selector to apply the margins
+@mixin MuiTypographyTopMargins() {
+  .MuiTypography-headline1 {
+    margin-top: 28px;
+  }
+  .MuiTypography-headline2 {
+    margin-top: 24px;
+  }
+  .MuiTypography-headline3 {
+    margin-top: 20px;
+  }
+  .MuiTypography-body1 {
+    margin-top: 24px;
+  }
+  .MuiTypography-body1Italic {
+    margin-top: 24px;
+  }
+  .MuiTypography-body2 {
+    margin-top: 24px;
+  }
+  .MuiTypography-smallText1 {
+    margin-top: 16px;
+  }
+  .MuiTypography-smallText2 {
+    margin-top: 16px;
+  }
+  .MuiTypography-dataFieldKey {
+    margin-top: 16px;
+  }
+}

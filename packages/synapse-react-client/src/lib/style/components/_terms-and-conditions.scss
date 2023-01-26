@@ -1,0 +1,96 @@
+$terms-text-color: #ababac;
+$terms-accent-gray: #dcdcdc;
+$terms-margin: 20px;
+$terms-checkbox-dimension: 40px;
+$signatureLine-width: 420px;
+
+.terms-conditions {
+  font-size: 14px;
+
+  .page-header {
+    font-size: 24px;
+    border-bottom: 0;
+  }
+  label {
+    font-weight: normal;
+    margin-bottom: $terms-margin;
+  }
+  svg {
+    vertical-align: middle;
+  }
+  .term-list {
+    list-style: none;
+    padding: 0;
+
+    > li {
+      display: flex;
+      padding: 20px 0;
+      border: 1px solid $terms-accent-gray;
+      margin-bottom: $terms-margin;
+      opacity: 0.3;
+
+      &.terms-enabled {
+        opacity: 1;
+      }
+      > span {
+        flex: 1;
+      }
+      .terms-desc {
+        ul {
+          list-style: disc;
+          margin-bottom: $terms-margin;
+        }
+      }
+      .terms-checkbox {
+        align-self: center;
+        text-align: right;
+        padding-right: 30px;
+        flex: 0 0 150px;
+      }
+      .terms-desc-content {
+        margin-bottom: $terms-margin;
+      }
+      .terms-show-desc {
+        display: inline-block;
+      }
+      .terms-icon {
+        flex: 0 0 150px;
+        text-align: center;
+        align-self: center;
+
+        svg {
+          height: 60px;
+        }
+      }
+      .terms-circle {
+        width: $terms-checkbox-dimension;
+        height: $terms-checkbox-dimension;
+        border: 2px solid $terms-accent-gray;
+        display: inline-block;
+        border-radius: 50%;
+        vertical-align: middle;
+        margin-right: 14px;
+        display: inline-block;
+        line-height: $terms-checkbox-dimension;
+      }
+      .terms-checked {
+        background-color: #28a745;
+        border: none;
+        text-align: center;
+      }
+    }
+
+    label {
+      font-size: 18px;
+    }
+  }
+
+  .view-terms a,
+  .view-terms a:active:focus {
+    background-color: $terms-accent-gray;
+    padding: 10px 30px;
+    color: #1a1c29;
+    font-weight: bold;
+    margin-bottom: 35px;
+  }
+}

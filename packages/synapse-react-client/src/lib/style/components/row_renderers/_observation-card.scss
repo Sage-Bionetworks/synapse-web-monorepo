@@ -1,0 +1,26 @@
+@use '../../abstracts/variables' as SRC;
+
+.ObservationCard {
+  &__submitter {
+    background-color: SRC.$gray-light;
+    padding: 10px 25px;
+  }
+
+  &__time {
+    padding: 10px 25px;
+    svg {
+      color: SRC.$primary-action-color;
+      padding-bottom: 4px;
+      margin-right: 5px;
+    }
+  }
+  &__text {
+    padding: 10px 25px;
+    max-width: 750px;
+    font-size: 16px;
+    color: SRC.$gray-regular;
+  }
+  &__tags {
+    padding: 20px 15px 35px 25px;
+  }
+}

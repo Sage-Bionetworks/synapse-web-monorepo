@@ -1,0 +1,209 @@
+{
+  "study": {
+    "submission_name": {
+      "ui:description": "Give your submission request a unique name that allows you to identify it",
+      "ui:help": "This is what the submission file will be named",
+      "ui:placeholder": "mysubmission"
+    },
+    "content_summary": {
+      "ui:widget": "textarea"
+    }
+  },
+  "contact": {
+    "name": {},
+    "email": {
+      "ui:options": {
+        "inputType": "email"
+      }
+    },
+    "institution": {
+      "ui:title": "Institutional affiliation"
+    }
+  },
+  "funding": {
+    "nih_grant_number": {}
+  },
+  "contributions": {
+    "contribution_type": {
+      "ui:widget": "checkboxes"
+    },
+    "contribution_size": {}
+  },
+  "data": {
+    "data_origin": {
+      "ui:widget": "checkboxes"
+    }
+  },
+  "human": {
+    "ui:order": [
+      "release_allowed_under_AMP-AD_KP",
+      "release_not_allowed_explanation",
+      "study_type",
+      "study_type_other",
+      "specimen_repository",
+      "disease_focus",
+      "disease_focus_other",
+      "specimen_source",
+      "specimen_source_other",
+      "*"
+    ],
+    "release_allowed_under_AMP-AD_KP": {
+      "ui:help": "Find more info here <a href='https://www.synapse.org/#!Synapse:syn9890650'\"#\" target=\"_blank\">AMP-AD Knowledge Portal Data Use Certificate </a>",
+      "ui:widget": "radio"
+    },
+    "release_not_allowed_explanation": {},
+    "study_type": {},
+    "study_type_other": {},
+    "specimen_repository": {},
+    "disease_focus": {
+      "ui:widget": "checkboxes"
+    },
+    "disease_focus_other": {},
+    "specimen_source": {
+      "ui:widget": "checkboxes"
+    },
+    "specimen_source_other": {
+      "ui:title": "If other - describe"
+    },
+    "total_number_individuals": {},
+    "total_number_specimens": {},
+    "assays": {
+      "classNames": "show-subfield-title",
+      "assays_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "assesments": {
+      "classNames": "show-subfield-title",
+      "assesments_list": {
+        "ui:widget": "checkboxes"
+      }
+    }
+  },
+  "model_system": {
+    "model_systems": {},
+    "model_systems_other": {},
+    "model_system_type": {
+      "ui:widget": "checkboxes"
+    }
+  },
+  "mouse": {
+    "assays": {
+      "classNames": "show-subfield-title",
+      "assays_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "assesments": {
+      "classNames": "show-subfield-title",
+      "assesments_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "specimen_source": {
+      "ui:widget": "checkboxes"
+    },
+    "description": {
+      "ui:description": "Include genotype and genotype background",
+      "ui:widget": "textarea"
+    },
+    "treatments_list": {},
+    "total_number_animals": {}
+  },
+  "rat": {
+    "assays": {
+      "classNames": "show-subfield-title",
+      "assays_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "assesments": {
+      "classNames": "show-subfield-title",
+      "assesments_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "specimen_source": {
+      "ui:widget": "checkboxes"
+    },
+    "description": {
+      "ui:description": "Include genotype and genotype background",
+      "ui:widget": "textarea"
+    },
+    "treatments_list": {},
+    "total_number_animals": {}
+  },
+  "drosophila": {
+    "assays": {
+      "classNames": "show-subfield-title",
+      "assays_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "assesments": {
+      "classNames": "show-subfield-title",
+      "assesments_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "specimen_source": {
+      "classNames": "show-subfield-title",
+      "ui:widget": "checkboxes"
+    },
+    "description": {
+      "ui:description": "Include genotype and genotype background",
+      "ui:widget": "textarea"
+    },
+    "treatments_list": {},
+    "total_number_animals_pools": {}
+  },
+  "cell_culture": {
+    "description": {},
+    "treatments_list": {},
+    "assays": {
+      "classNames": "show-subfield-title",
+      "assays_list": {
+        "ui:widget": "checkboxes"
+      }
+    }
+  },
+  "assays": {
+    "assays_list": {
+      "ui:widget": "checkboxes"
+    },
+    "assays_list_other": {}
+  },
+  "assesments": {
+    "classNames": "show-subfield-title",
+    "assays_list": {
+      "ui:widget": "checkboxes"
+    },
+    "assays_list_other": {}
+  },
+  "analysis": {
+    "analytical_output_description": {},
+    "is_data_contributed": {
+      "ui:widget": "radio"
+    },
+    "source_of_data": {}
+  },
+  "tools": {
+    "ui:title": "What type of tools are being contributed",
+    "ui:order": [
+      "experimental_tools",
+      "experimental_tools_description",
+      "computational_tools",
+      "computational_tools_description",
+      "other_tools",
+      "other_tools_description"
+    ],
+    "experimental_tools": {
+      "ui:description": "Experimental"
+    },
+    "experimental_tools_description": {},
+    "computational_tools": {},
+    "computational_tools_description": {},
+    "other_tools": {},
+    "other_tools_description": {}
+  }
+}

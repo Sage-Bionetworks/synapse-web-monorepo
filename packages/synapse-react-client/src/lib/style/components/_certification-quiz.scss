@@ -1,0 +1,34 @@
+@use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SrcMixins;
+
+.CertificationQuiz {
+  @include SrcMixins.MuiTypographyTopMargins();
+  .failBanner {
+    background-color: red;
+    color: white;
+    padding: 8px;
+  }
+
+  &__container {
+    border: solid 1px #ddd;
+    border-radius: 4px;
+    padding: 10px;
+
+    a {
+      color: SRC.$primary-action-color;
+    }
+    .help-button {
+      display: block;
+      margin-left: auto;
+      margin-right: 0;
+    }
+
+    .incorrectQuestion {
+      color: #f44336;
+    }
+
+    .question-choice {
+      font-weight: 400;
+    }
+  }
+}

@@ -1,0 +1,45 @@
+.UpsetPlot {
+  line {
+    stroke-width: 0;
+    stroke-opacity: 0;
+  }
+  // Upset.js authors use a unique class name (React.useMemo + random number generator), which makes it more difficult to target.
+  // select any <text> element that has a class name that starts with "cBarTextStyle-upset-".
+  text[class^='cBarTextStyle-upset-'],
+  text[class*=' cBarTextStyle-upset-'] {
+    display: none;
+  }
+  text[class^='sBarTextStyle-upset-'],
+  text[class*=' sBarTextStyle-upset-'] {
+    display: none;
+  }
+  circle[class^='fillNotMember-upset-'],
+  text[class*=' fillNotMember-upset-'] {
+    stroke: #d3d3d3;
+    stroke-width: 1;
+  }
+
+  // rotate axis label (so that it's vertical), and it move down by 12%
+  text[class^='sChartTextStyle-upset-'],
+  text[class*=' sChartTextStyle-upset-'] {
+    transform: rotate(270deg) translateX(-12%);
+  }
+  g[class^='interactive-upset-'],
+  text[class*=' interactive-upset-'] {
+    &:hover {
+      rect[class^='hoverBar-upset-'],
+      text[class*=' hoverBar-upset-'] {
+        stroke: none;
+        // fill: #d3d3d3;
+      }
+      text[class^='hoverBarTextStyle-upset-'],
+      text[class*=' hoverBarTextStyle-upset-'] {
+        display: none;
+      }
+    }
+  }
+
+  .UpsetPlot__summary {
+    text-align: center;
+  }
+}

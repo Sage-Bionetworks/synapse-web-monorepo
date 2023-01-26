@@ -1,0 +1,25 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:map';
+
+.bar-loader {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  height: 30px;
+  width: 100%;
+  .bar-background-color {
+    background-color: map.get(SRC.$colors, 'gray-400');
+  }
+  .bar-color {
+    background-color: map.get(SRC.$tertiary-color-palette, 400);
+  }
+  .MuiLinearProgress-determinate {
+    margin-bottom: 20px;
+    border-radius: 6px;
+    height: 10px;
+    width: 180px;
+  }
+  > div {
+    width: 30%;
+  }
+}
