@@ -94,7 +94,7 @@ export const ReturnToAppButton: React.FC<{ children?: React.ReactNode }> = ({
             }}
             onClick={() => setOpen(false)}
           >
-            Never Mind
+            Never mind
           </Button>
           <Button variant="contained" onClick={redirectFn}>
             Yes, cancel verification
