@@ -13,9 +13,11 @@ import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { useHistory } from 'react-router-dom'
 import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import AccountSettingsTopBar from './AccountSettingsTopBar'
+import { useLocation } from 'react-router-dom'
 
 export const AccountSettings = () => {
   const { accessToken } = useSynapseContext()
+  const { hash } = useLocation()
   const [userProfile, setUserProfile] = useState<UserProfile>()
   const [firstName, setFirstName] = useState<string>()
   const [lastName, setLastName] = useState<string>()
@@ -108,6 +110,12 @@ export const AccountSettings = () => {
   useEffect(() => {
     getUserData()
   }, [])
+
+  useEffect(() => {
+    if (hash === '#trust') {
+      handleScroll(trustCredentialRef)
+    }
+  }, [hash])
 
   const handleScroll = (ref: React.RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
