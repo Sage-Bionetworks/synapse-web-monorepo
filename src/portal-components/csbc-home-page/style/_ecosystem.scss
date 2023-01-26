@@ -1,0 +1,67 @@
+@use '../../../style/variables' as Portal;
+
+@use 'sass:color';
+
+.Ecosystem {
+  padding-bottom: 50px;
+  .header,
+  .subtitle {
+    text-align: center;
+  }
+  .header {
+    margin-top: 63px;
+    font-weight: 700;
+    font-size: 21px;
+  }
+  .subtitle {
+    margin-bottom: 20px;
+  }
+  .control-container {
+    background: white;
+    display: flex;
+    border: 1px solid #dcdcdc;
+    height: 450px;
+    .button-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      margin: 15px;
+      button {
+        text-align: left;
+        color: #515359;
+        font-size: 16px;
+        padding: 10px;
+        &.isSelected,
+        &:hover {
+          color: Portal.$primary-action-color;
+          background-color: color.change(
+            Portal.$primary-action-color,
+            $alpha: 0.08
+          );
+          border-right: 2px solid Portal.$primary-action-color;
+        }
+        border-right: 2px solid #dcdcdc;
+        font-weight: bold;
+        flex-grow: 1;
+        flex-shrink: 1;
+      }
+    }
+    .content-container {
+      overflow-y: auto;
+      flex: 3;
+      padding-left: 30px;
+      padding-right: 20px;
+    }
+    .markdown {
+      h4 {
+        padding-top: 17px;
+        margin-bottom: 10px;
+        margin-top: 5px;
+        &:first-child {
+          margin-top: 0px;
+        }
+      }
+    }
+  }
+}

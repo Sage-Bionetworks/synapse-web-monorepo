@@ -1,0 +1,25 @@
+.HomePageCardContainer {
+  margin-top: 20px;
+  .card-row {
+    display: flex;
+    flex-flow: row wrap;
+    margin: -10px;
+    @media screen and (min-width: 974px) {
+      .HomePageCard {
+        flex-basis: 30% !important;
+      }
+    }
+    @media screen and (max-width: 974px) {
+      .HomePageCard {
+        flex-basis: 100% !important;
+      }
+    }
+    .HomePageCard {
+      flex-grow: 1;
+      flex-shrink: 1;
+      border: 1px solid #dcdcdc;
+      padding: 20px;
+      margin: 10px;
+    }
+  }
+}

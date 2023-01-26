@@ -1,0 +1,64 @@
+@use './style/variables' as Portal;
+
+.mobile-explore-nav-selected,
+.mobile-route-control {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .explore-nav-container {
+    padding: 0;
+    border-bottom-width: 2px;
+
+    .container-fluid {
+      padding: 0;
+    }
+
+    .route-control {
+      display: none;
+    }
+
+    .mobile-route-control {
+      display: block;
+    }
+
+    .mobile-explore-nav-selected {
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 0 1rem 1rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .title {
+      font-size: 14px;
+      text-align: center;
+      margin: 1rem;
+    }
+
+    .nav.explore-nav {
+      margin-left: 0;
+      display: block;
+      column-count: 1;
+      column-width: auto;
+      background-color: #fff;
+      border-top: 2px solid Portal.$border-color-gray;
+      border-bottom: 1px solid Portal.$border-color-gray;
+      padding: 1rem 0;
+
+      .nav-button {
+        margin: 0.6rem auto;
+        height: 50px;
+        &.nav-button-container {
+          padding: 0 1rem;
+          &.isSelected {
+            border-bottom-color: Portal.$primary-action-color;
+          }
+        }
+      }
+    }
+  }
+}
