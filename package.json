@@ -1,7 +1,0 @@
-{
-  "name": "synapse-web-monorepo",
-  "version": "0.0.0",
-  "private": true,
-  "dependencies": {
-  }
-}
