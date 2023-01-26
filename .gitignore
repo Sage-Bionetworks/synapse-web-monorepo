@@ -1,0 +1,42 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# css
+*.css
+*.css.map
+!styleguide.setup.css
+
+# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# production
+/build
+
+# docs build
+/styleguide
+
+# misc
+.DS_Store
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# visual studio specific
+jsconfig.json
+.vscode
+
+# webstorm specific
+.idea
+*.iml
+
+#rollup
+.rpt2_cache
+
+# dist/build folders created to either deploy to npm or
+# to gh-pages
+/dist
+/storybook-static
+src/umd
