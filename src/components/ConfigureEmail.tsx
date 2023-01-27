@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SynapseClient } from 'synapse-react-client'
+import { SynapseClient, Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
@@ -10,6 +10,9 @@ import {
   IconButton,
   InputLabel,
   TextField,
+  FormControlLabel,
+  Checkbox,
+  Divider,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/DeleteTwoTone'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
@@ -30,7 +33,31 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
   const { data: primaryEmail, refetch: refetchNotificationEmail } =
     useGetNotificationEmail()
   const [newEmail, setNewEmail] = useState('')
+  const sendEmailNotifications =
+    currentProfile?.notificationSettings?.sendEmailNotifications ?? true
   const emailVerificationToken = getSearchParam('emailValidationSignedToken')
+
+  const updateEmailNotifications = async (
+    newSendEmailNotificationsValue: boolean,
+  ) => {
+    try {
+      if (currentProfile) {
+        if (!currentProfile.notificationSettings) {
+          currentProfile.notificationSettings = {
+            sendEmailNotifications: true,
+            markEmailedMessagesAsRead: false,
+          }
+        }
+        currentProfile.notificationSettings.sendEmailNotifications =
+          newSendEmailNotificationsValue
+        await SynapseClient.updateMyUserProfile(currentProfile, accessToken)
+        await refetchCurrentProfile()
+        displayToast(`Notification settings have been updated.`, 'success')
+      }
+    } catch (err: any) {
+      displayToast(err.reason as string, 'danger')
+    }
+  }
 
   useEffect(() => {
     if (emailVerificationToken) {
@@ -106,42 +133,44 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
       {emails?.map(email => {
         if (email === primaryEmail?.email) {
           return (
-            <Box
-              key={email}
-              sx={{ padding: '15px 0px', borderBottom: '1px solid #dcdcdc' }}
-            >
-              {email}{' '}
-              <Chip
-                sx={{ color: '#fff', marginLeft: '10px' }}
-                label="PRIMARY"
-                color="warning"
-              />
-            </Box>
+            <>
+              <Box key={email} sx={{ padding: '15px 0px' }}>
+                {email}{' '}
+                <Chip
+                  sx={{ color: '#fff', marginLeft: '10px' }}
+                  label="PRIMARY"
+                  color="warning"
+                />
+              </Box>
+              <Divider />
+            </>
           )
         } else {
           return (
-            <Box
-              key={email}
-              sx={{
-                display: 'flex',
-                padding: '15px 0px',
-                borderBottom: '1px solid #dcdcdc',
-              }}
-            >
-              <Box sx={{ flexGrow: 1, marginRight: '10px' }}>{email}</Box>
-              <Button
-                variant="outlined"
-                onClick={e => changePrimaryEmail(e, email)}
+            <>
+              <Box
+                key={email}
+                sx={{
+                  display: 'flex',
+                  padding: '15px 0px',
+                }}
               >
-                Make Primary
-              </Button>
-              <IconButton
-                aria-label="close"
-                onClick={e => deleteEmail(e, email)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Box>
+                <Box sx={{ flexGrow: 1, marginRight: '10px' }}>{email}</Box>
+                <Button
+                  variant="outlined"
+                  onClick={e => changePrimaryEmail(e, email)}
+                >
+                  Make Primary
+                </Button>
+                <IconButton
+                  aria-label="close"
+                  onClick={e => deleteEmail(e, email)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+              <Divider />
+            </>
           )
         }
       })}
@@ -155,6 +184,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
             onChange={e => setNewEmail(e.target.value)}
           />
           <Button
+            startIcon={<AddCircleTwoToneIcon />}
             disabled={!newEmail}
             variant={'contained'}
             sx={{ alignSelf: 'flex-end', height: '47px' }}
@@ -162,10 +192,24 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
               addEmail(e)
             }}
           >
-            <AddCircleTwoToneIcon /> Add
+            Add
           </Button>
         </Box>
       </StyledFormControl>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={sendEmailNotifications}
+            onChange={e => updateEmailNotifications(!sendEmailNotifications)}
+          />
+        }
+        label={
+          <Typography variant="smallText1">
+            Allow Synapse to send me email notifications to my Primary email
+            address.
+          </Typography>
+        }
+      />
     </div>
   )
 }
