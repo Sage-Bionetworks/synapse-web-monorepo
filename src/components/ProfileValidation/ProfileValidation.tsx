@@ -78,9 +78,6 @@ const STEP_CONTENT = [
         <Typography variant="body2" paragraph>
           You must complete this step in order to request validation.{' '}
         </Typography>
-        <Typography variant="body2" paragraph>
-          This is placeholder text.{' '}
-        </Typography>
       </>
     ),
   },
