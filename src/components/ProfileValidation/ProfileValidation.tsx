@@ -20,7 +20,7 @@ import { getSearchParam } from 'URLUtils'
 import { ProfileFieldsEditor } from './ProfileFieldsEditor'
 import { VerifyIdentify } from './VerifyIdentify'
 import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
-import { Box, Button, IconButton, Link } from '@mui/material'
+import { Box, Button, Divider, IconButton, Link } from '@mui/material'
 import theme from 'style/theme'
 import { SourceAppLogo, useSourceApp } from '../SourceApp'
 import Attestation from './Attestation'
@@ -180,37 +180,18 @@ const RightPanel: React.FC<{ stepNumber: number }> = ({ stepNumber }) => {
           </IconButton>
         </ReturnToAppButton>
       )}
-      <Box
+      <Divider
         sx={{
           marginTop: theme.spacing(8),
           marginBottom: theme.spacing(4),
-          overflow: 'hidden',
-          textAlign: 'center',
           fontWeight: '700',
           fontSize: '16px',
           color: '#4A5056',
-          '&:before, &:after': {
-            backgroundColor: '#DFE2E6',
-            content: '""',
-            display: 'inline-block',
-            height: '1px',
-            position: 'relative',
-            verticalAlign: 'middle',
-            width: '50%',
-          },
-          '&:before': {
-            right: '0.5em',
-            marginLeft: '-50%',
-          },
-          '&:after': {
-            left: '0.5em',
-            marginRight: '-50%',
-          },
         }}
       >
         {' '}
         Step {stepNumber + 1} of {totalSteps}
-      </Box>
+      </Divider>
       <Typography
         variant="headline2"
         sx={{
