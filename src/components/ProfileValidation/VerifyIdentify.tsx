@@ -42,7 +42,10 @@ export const VerifyIdentify = (props: VerifyIdentifyProps) => {
             </Button>*/}
           </>
         ) : (
-          <ORCiDButton sx={{ width: '100%' }} />
+          <ORCiDButton
+            sx={{ width: '100%' }}
+            redirectAfter={`${window.location.protocol}://${window.location.hostname}/authenticated/validate?step=1`}
+          />
         )}
       </Box>
       <ContinueButton
