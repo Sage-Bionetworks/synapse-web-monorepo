@@ -8,7 +8,7 @@ import { ReactComponent as OrcId } from '../../assets/ORCID.svg'
 import EditIcon from '../../assets/RedEditPencil.svg'
 
 export type ORCiDButtonProps = {
-  redirectAfter?: string
+  redirectAfter?: any
   editButton?: boolean
   sx?: SxProps
 }
@@ -16,7 +16,7 @@ export type ORCiDButtonProps = {
 export const onBindToORCiD = async (
   event: React.SyntheticEvent,
   setIsLoading: Function,
-  redirectAfter?: string,
+  redirectAfter?: any,
 ) => {
   event.preventDefault()
   setIsLoading(true)
