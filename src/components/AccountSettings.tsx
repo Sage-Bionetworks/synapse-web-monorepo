@@ -14,6 +14,7 @@ import { useHistory } from 'react-router-dom'
 import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import AccountSettingsTopBar from './AccountSettingsTopBar'
 import { useLocation } from 'react-router-dom'
+import { ConfigureEmail } from './ConfigureEmail'
 
 export const AccountSettings = () => {
   const { accessToken } = useSynapseContext()
@@ -26,7 +27,6 @@ export const AccountSettings = () => {
   const [location, setLocation] = useState<string>()
   const [url, setUrl] = useState<string>()
   const [industry, setIndustry] = useState<string>()
-  const [primaryEmail, setPrimaryEmail] = useState<string>()
   const [username, setUsername] = useState<string>()
   const [changeInForm, setChangeInForm] = useState(false)
   const [orcid, setOrcid] = useState<string>()
@@ -37,6 +37,7 @@ export const AccountSettings = () => {
 
   const profileInformationRef = useRef<HTMLDivElement>(null)
   const changePasswordRef = useRef<HTMLDivElement>(null)
+  const emailAddressesRef = useRef<HTMLDivElement>(null)
   const trustCredentialRef = useRef<HTMLDivElement>(null)
   const personalAccessTokenRef = useRef<HTMLDivElement>(null)
 
@@ -71,14 +72,10 @@ export const AccountSettings = () => {
         SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
         SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
         SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION
-      const getPrimaryEmail = await SynapseClient.getNotificationEmail(
-        accessToken,
-      )
       const bundle: UserBundle = await SynapseClient.getMyUserBundle(
         mask,
         accessToken,
       )
-      setPrimaryEmail(getPrimaryEmail.email)
       unpackBundle(bundle)
       setTermsOfUse(true)
     } catch (err: any) {
@@ -131,6 +128,9 @@ export const AccountSettings = () => {
               <MenuItem onClick={() => handleScroll(profileInformationRef)}>
                 Profile Information
               </MenuItem>
+              <MenuItem onClick={() => handleScroll(emailAddressesRef)}>
+                Email Addresses
+              </MenuItem>
               <MenuItem onClick={() => handleScroll(changePasswordRef)}>
                 Change Password
               </MenuItem>
@@ -155,13 +155,6 @@ export const AccountSettings = () => {
                     <FormControl
                       onChange={e => setUsername(e.target.value)}
                       value={username}
-                    />
-                  </FormGroup>
-                  <FormGroup className="required">
-                    <FormLabel>Email address</FormLabel>
-                    <FormControl
-                      onChange={e => setPrimaryEmail(e.target.value)}
-                      value={primaryEmail}
                     />
                   </FormGroup>
                   <FormGroup>
@@ -228,6 +221,13 @@ export const AccountSettings = () => {
                     Save Changes
                   </Button>
                 </Form>
+              </div>
+              <div
+                ref={emailAddressesRef}
+                className="account-setting-panel main-panel"
+              >
+                <h3>Email Addresses</h3>
+                <ConfigureEmail returnToPath="authenticated/myaccount" />
               </div>
               <div
                 ref={changePasswordRef}

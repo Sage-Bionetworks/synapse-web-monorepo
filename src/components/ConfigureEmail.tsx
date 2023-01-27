@@ -1,49 +1,37 @@
 import React, { useEffect, useState } from 'react'
-import { FormGroup, FormControl, Button } from 'react-bootstrap'
-import { SynapseClient, SynapseConstants } from 'synapse-react-client'
+import { SynapseClient } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { UserBundle } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
-import EditIcon from '../assets/RedEditPencil.svg'
+import {
+  Box,
+  Button,
+  Chip,
+  IconButton,
+  InputLabel,
+  TextField,
+} from '@mui/material'
+import DeleteIcon from '@mui/icons-material/DeleteTwoTone'
+import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
+import { StyledFormControl } from './StyledComponents'
+import {
+  useGetCurrentUserProfile,
+  useGetNotificationEmail,
+} from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
 
 export type ConfigureEmailProps = {
-  returnToUrl: string
+  returnToPath: string
 }
 
 export const ConfigureEmail = (props: ConfigureEmailProps) => {
   const { accessToken } = useSynapseContext()
+  const { data: currentProfile, refetch: refetchCurrentProfile } =
+    useGetCurrentUserProfile()
+  const { data: primaryEmail, refetch: refetchNotificationEmail } =
+    useGetNotificationEmail()
   const [newEmail, setNewEmail] = useState('')
-  const [primaryEmail, setPrimaryEmail] = useState('')
-  const [userId, setUserId] = useState('')
-  const [emails, setEmails] = useState<string[] | undefined>()
-  const [editEmail, setEditEmail] = useState(false)
-
-  const btnStyle = {
-    margin: '4px',
-    borderRadius: '8px',
-    padding: '0.375rem 0.75rem',
-    height: '38px',
-  }
-
   const emailVerificationToken = getSearchParam('emailValidationSignedToken')
-  const getData = async () => {
-    try {
-      const mask = SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE
-      const bundle: UserBundle = await SynapseClient.getMyUserBundle(
-        mask,
-        accessToken,
-      )
-      const getPrimaryEmail = await SynapseClient.getNotificationEmail(
-        accessToken,
-      )
-      setUserId(bundle.userId)
-      setEmails(bundle.userProfile?.emails)
-      setPrimaryEmail(getPrimaryEmail.email)
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    }
-  }
+
   useEffect(() => {
     if (emailVerificationToken) {
       const hexDecodeEmailToken = hexDecodeAndDeserialize(
@@ -55,13 +43,17 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
           accessToken,
         ).then(() => {
           displayToast('Email has been successfully added', 'success')
+          history.replaceState(
+            {},
+            '',
+            `${SynapseClient.getRootURL()}${props.returnToPath}`,
+          )
         })
       } catch (err: any) {
         displayToast(err.reason as string, 'danger')
       }
     }
-    getData()
-  }, [])
+  }, [emailVerificationToken])
 
   const changePrimaryEmail = async (
     event: React.SyntheticEvent,
@@ -69,8 +61,8 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
   ) => {
     event.preventDefault()
     try {
-      setPrimaryEmail(email)
       await SynapseClient.updateNotificationEmail(email, accessToken)
+      refetchNotificationEmail()
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
     }
@@ -79,26 +71,27 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
   const deleteEmail = async (event: React.SyntheticEvent, email: string) => {
     event.preventDefault()
     try {
-      let deletedEmailList = emails?.filter(item => item !== email)
-      setEmails(deletedEmailList)
       await SynapseClient.deleteEmail(accessToken, email)
+      refetchCurrentProfile()
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
     }
   }
 
-  const addEmail = async (event: React.SyntheticEvent, email: string) => {
+  const addEmail = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     try {
-      const callbackUrl = `${window.location.protocol}//${window.location.host}${props.returnToUrl}?emailValidationSignedToken=`
+      const callbackUrl = `${SynapseClient.getRootURL()}${
+        props.returnToPath
+      }?emailValidationSignedToken=`
       await SynapseClient.addEmailAddressStep1(
-        email,
-        userId,
+        newEmail,
+        currentProfile!.ownerId!,
         callbackUrl,
         accessToken,
       )
       displayToast(
-        `We've sent an email to ${email}. Please check your email to continue.`,
+        `We've sent an email to ${newEmail}. Please check your email to continue.`,
         'success',
       )
       setNewEmail('')
@@ -107,65 +100,72 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
     }
   }
 
-  useEffect(() => {
-    getData()
-  }, [accessToken])
-
+  const emails = currentProfile?.emails
   return (
-    <div className="bootstrap-4-backport">
+    <div>
       {emails?.map(email => {
-        if (email === primaryEmail) {
+        if (email === primaryEmail?.email) {
           return (
-            <div key={email}>
-              <strong>{email} (Primary)</strong>
-              <button onClick={() => setEditEmail(!editEmail)}>
-                <img src={EditIcon} alt="edit icon" />
-              </button>
-            </div>
+            <Box
+              key={email}
+              sx={{ padding: '15px 0px', borderBottom: '1px solid #dcdcdc' }}
+            >
+              {email}{' '}
+              <Chip
+                sx={{ color: '#fff', marginLeft: '10px' }}
+                label="PRIMARY"
+                color="warning"
+              />
+            </Box>
           )
         } else {
           return (
-            <div key={email}>
-              {email}
+            <Box
+              key={email}
+              sx={{
+                display: 'flex',
+                padding: '15px 0px',
+                borderBottom: '1px solid #dcdcdc',
+              }}
+            >
+              <Box sx={{ flexGrow: 1, marginRight: '10px' }}>{email}</Box>
               <Button
-                style={btnStyle}
-                variant="secondary"
+                variant="outlined"
                 onClick={e => changePrimaryEmail(e, email)}
               >
-                Make primary
+                Make Primary
               </Button>
-              <Button
-                style={btnStyle}
-                variant="secondary"
+              <IconButton
+                aria-label="close"
                 onClick={e => deleteEmail(e, email)}
               >
-                X
-              </Button>
-            </div>
+                <DeleteIcon />
+              </IconButton>
+            </Box>
           )
         }
       })}
-      {editEmail && (
-        <form>
-          <FormGroup>
-            <FormControl
-              onChange={e => setNewEmail(e.target.value)}
-              placeholder="New email address"
-              value={newEmail}
-            />
-          </FormGroup>
+      <StyledFormControl variant="standard" margin="normal" fullWidth>
+        <InputLabel shrink>Add an email address</InputLabel>
+        <Box sx={{ display: 'flex' }}>
+          <TextField
+            variant="filled"
+            sx={{ flexGrow: 1, marginRight: '10px' }}
+            value={newEmail}
+            onChange={e => setNewEmail(e.target.value)}
+          />
           <Button
-            style={btnStyle}
             disabled={!newEmail}
+            variant={'contained'}
+            sx={{ alignSelf: 'flex-end', height: '47px' }}
             onClick={e => {
-              addEmail(e, newEmail)
-              setEditEmail(false)
+              addEmail(e)
             }}
           >
-            + Add email
+            <AddCircleTwoToneIcon /> Add
           </Button>
-        </form>
-      )}
+        </Box>
+      </StyledFormControl>
     </div>
   )
 }
