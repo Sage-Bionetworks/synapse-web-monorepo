@@ -25,6 +25,7 @@ import {
   SynapseContextConsumer,
   SynapseContextType,
 } from 'synapse-react-client/dist/utils/SynapseContext'
+import { getSearchParam } from 'URLUtils'
 import './App.scss'
 import AppInitializer from './AppInitializer'
 import LoginPage from './LoginPage'
@@ -34,6 +35,9 @@ declare module '@mui/styles/defaultTheme' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface (remove this line if you don't have the rule enabled)
   interface DefaultTheme extends Theme {}
 }
+const isCodeSearchParam = getSearchParam('code') !== undefined
+const isProviderSearchParam = getSearchParam('provider') !== undefined
+const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
 
 // theme is a merge of a general theme and particular color pallettesfor the source app
 const theme = createTheme(generalTheme)
@@ -62,6 +66,7 @@ const App: React.FC = () => {
                                 {appContext => (
                                   <>
                                     {appContext?.redirectURL &&
+                                      !isInSSOFlow &&
                                       window.location.replace(
                                         appContext?.redirectURL,
                                       )}
