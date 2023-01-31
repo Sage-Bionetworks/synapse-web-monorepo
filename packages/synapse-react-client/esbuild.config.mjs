@@ -40,7 +40,7 @@ const esBuildOptions = {
   platform: 'browser',
   target: 'es2015',
   globalName: 'SRC',
-  tsconfig: 'tsconfig.build.json',
+  tsconfig: 'tsconfig.json',
   plugins: [
     sassPlugin({
       loadPaths: ['../../node_modules', 'node_modules'],

@@ -224,12 +224,12 @@ See [Examples](Examples.md)
 
 ### Configuration Files
 
-| File                  | Description                                                                                                                                                                                  |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ./types.d.ts          | In general this would be used as a library with type declarations for other client developers using Typescript. Currently, it contains only definitions for global CDNs used in the project. |
-| ./tsconfig.json       | Typescript configuration for IDEs, especially VSCode.                                                                                                                                        |
-| ./tsconfig.build.json | Typescript configuration for the emitted build                                                                                                                                               |
-| ./esbuild.config.mjs  | ESBuild configuration to create the UMD package                                                                                                                                              |
+| File                   | Description                                                                                                                                                                                  |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ./types.d.ts           | In general this would be used as a library with type declarations for other client developers using Typescript. Currently, it contains only definitions for global CDNs used in the project. |
+| ./tsconfig.eslint.json | Typescript configuration for IDEs, especially VSCode.                                                                                                                                        |
+| ./tsconfig.json        | Typescript configuration for the emitted build                                                                                                                                               |
+| ./esbuild.config.mjs   | ESBuild configuration to create the UMD package                                                                                                                                              |
 
 ## Project Development
 
