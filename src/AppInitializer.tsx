@@ -13,6 +13,7 @@ import theme from './style/theme'
 import useAnalytics from './useAnalytics'
 import SourceAppConfigs from 'components/SourceAppConfigs'
 import { synapse } from 'configs/synapse'
+import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 
 export type AppInitializerState = {
   token?: string
@@ -163,7 +164,9 @@ function AppInitializer(props: { children?: React.ReactNode }) {
 
   useEffect(() => {
     // on first time, also check for the SSO code
-    SynapseClient.detectSSOCode()
+    SynapseClient.detectSSOCode(undefined, error => {
+      displayToast(error, 'danger')
+    })
   }, [])
 
   if (!hasCalledGetSession) {

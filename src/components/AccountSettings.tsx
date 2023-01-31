@@ -15,6 +15,7 @@ import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import AccountSettingsTopBar from './AccountSettingsTopBar'
 import { useLocation } from 'react-router-dom'
 import { ConfigureEmail } from './ConfigureEmail'
+import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 
 export const AccountSettings = () => {
   const { accessToken } = useSynapseContext()
@@ -33,6 +34,8 @@ export const AccountSettings = () => {
   const [verified, setVerified] = useState<boolean>()
   const [isCertified, setIsCertified] = useState<boolean>()
   const [termsOfUse, setTermsOfUse] = useState<boolean>()
+  const [showUnbindORCiDDialog, setShowUnbindORCiDDialog] =
+    useState<boolean>(false)
   const history = useHistory()
 
   const profileInformationRef = useRef<HTMLDivElement>(null)
@@ -180,7 +183,7 @@ export const AccountSettings = () => {
                     />
                   </FormGroup>
                   <FormGroup>
-                    <FormLabel>Current affiliation</FormLabel>
+                    <FormLabel>Institutional affiliation</FormLabel>
                     <FormControl
                       placeholder="e.g. Example University"
                       onChange={e => setCompany(e.target.value)}
@@ -208,10 +211,6 @@ export const AccountSettings = () => {
                       onChange={e => setLocation(e.target.value)}
                       value={location}
                     />
-                  </FormGroup>
-                  <FormGroup>
-                    <FormLabel>Institutional affiliation</FormLabel>
-                    <FormControl />
                   </FormGroup>
                   <Button
                     onClick={updateUserProfile}
@@ -331,7 +330,26 @@ export const AccountSettings = () => {
                       </span>
                     )}
                   </div>
-                  <ORCiDButton sx={credentialButtonSX} />
+                  {orcid ? (
+                    <Button
+                      variant="outlined"
+                      sx={credentialButtonSX}
+                      onClick={() => setShowUnbindORCiDDialog(true)}
+                    >
+                      Unlink your ORCID profile
+                    </Button>
+                  ) : (
+                    <ORCiDButton
+                      sx={credentialButtonSX}
+                      redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
+                    />
+                  )}
+                  <UnbindORCiDDialog
+                    show={showUnbindORCiDDialog}
+                    setShow={setShowUnbindORCiDDialog}
+                    orcid={orcid}
+                    redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
+                  />
                   <Link
                     href="https://help.synapse.org/docs/Synapse-User-Account-Types.2007072795.html#SynapseUserAccountTypes-ValidatedUsers"
                     target="_blank"

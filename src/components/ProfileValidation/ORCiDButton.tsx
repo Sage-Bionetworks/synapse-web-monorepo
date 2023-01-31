@@ -70,7 +70,7 @@ export const ORCiDButton = (props: ORCiDButtonProps) => {
           disabled={isLoading}
         >
           <OrcId />
-          &nbsp; Link ORCID profile
+          &nbsp; Link your ORCID profile
         </Button>
       )}
     </>
