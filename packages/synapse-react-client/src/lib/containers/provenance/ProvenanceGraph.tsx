@@ -83,7 +83,11 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
     rootEntityRefs,
     { useErrorBoundary: true },
   )
-  if (isSuccess && rootEntityHeadersPage.totalNumberOfResults == 0) {
+  if (
+    isSuccess &&
+    rootEntityHeadersPage &&
+    rootEntityHeadersPage.totalNumberOfResults == 0
+  ) {
     const synapseIds = rootEntityRefs.map(ref => ref.targetId).join(',')
     handleError(
       `Unable to load provenance for the given Synapse IDs: ${synapseIds}`,

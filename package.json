@@ -2,5 +2,22 @@
   "name": "synapse-web-monorepo",
   "version": "0.0.0",
   "private": true,
-  "dependencies": {}
+  "dependencies": {},
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": ">=6",
+    "lint-staged": ">=10",
+    "nx": "15.6.2"
+  },
+  "npmClient": "pnpm",
+  "resolutions": {
+    "@types/plotly.js": "1.54.22",
+    "@types/plotly.js-basic-dist": "1.54.1",
+    "@types/react": "18.0.27",
+    "@types/react-plotly.js": "^2.2.4",
+    "goober": "2.1.9",
+    "react-hot-toast": "2.2.0"
+  }
 }

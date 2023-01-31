@@ -323,7 +323,7 @@ export function EntityTree(props: EntityTreeProps) {
           type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
           parentContainerId: currentContainer,
         }
-        if (isSuccessBundle) {
+        if (currentContainerBundle) {
           breadcrumbItems = [
             {
               name: scope,

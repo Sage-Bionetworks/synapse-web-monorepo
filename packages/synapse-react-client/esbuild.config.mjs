@@ -43,7 +43,7 @@ const esBuildOptions = {
   tsconfig: 'tsconfig.build.json',
   plugins: [
     sassPlugin({
-      loadPaths: ['node_modules'],
+      loadPaths: ['../../node_modules', 'node_modules'],
     }),
     svgrPlugin({
       ref: true,
@@ -89,7 +89,7 @@ esbuild.build({
   ...esBuildOptions,
   minify: false,
   sourcemap: true,
-  outfile: './src/umd/synapse-react-client.development.js',
+  outfile: './dist/umd/synapse-react-client.development.js',
 })
 
 // Production build
@@ -99,7 +99,7 @@ esbuild
     minify: true,
     sourcemap: false,
     metafile: true,
-    outfile: './src/umd/synapse-react-client.production.min.js',
+    outfile: './dist/umd/synapse-react-client.production.min.js',
   })
   .then(result => {
     const metafile = result.metafile
