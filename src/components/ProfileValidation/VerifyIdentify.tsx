@@ -51,12 +51,6 @@ export const VerifyIdentify = (props: VerifyIdentifyProps) => {
         disabled={!verificationSubmission.orcid}
       />
       <ReturnToAppButton />
-      {/* agendel todo: move the 'unlink' functionality to sage account page
-      <UnbindORCiDDialog
-        show={showORCiDDialog}
-        setShow={setShowORCiDDialog}
-        orcid={verificationSubmission.orcid}
-        />*/}
     </>
   )
 }

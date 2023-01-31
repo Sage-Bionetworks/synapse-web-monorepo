@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { SynapseClient, Typography } from 'synapse-react-client'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/Login'
-import { Button, Modal } from 'react-bootstrap'
-import { onBindToORCiD } from './ORCiDButton'
+import { Dialog, DialogActions, DialogContent, Button } from '@mui/material'
+import theme from 'style/theme'
 
 export const unbindORCiD = async (
   event: React.SyntheticEvent,
-  setIsLoading: Function,
   orcid: string | undefined,
   accessToken: string | undefined,
-  redirectAfter?: string,
+  setShow: Function,
+  redirectAfter: string,
 ) => {
   event.preventDefault()
   if (orcid) {
@@ -20,7 +20,8 @@ export const unbindORCiD = async (
         accessToken,
         orcid,
       )
-      onBindToORCiD(event, setIsLoading, redirectAfter)
+      setShow(false)
+      window.location.assign(redirectAfter)
     } catch (err: any) {
       console.error(err)
     }
@@ -30,50 +31,44 @@ export type UnbindORCiDDialogProps = {
   show: boolean
   setShow: Function
   orcid: string | undefined
-  redirectAfter?: string
+  redirectAfter: string
 }
 
 export const UnbindORCiDDialog = (props: UnbindORCiDDialogProps) => {
   const { accessToken } = useSynapseContext()
-  const [isLoading, setIsLoading] = useState(false)
   return (
-    <Modal
-      className="bootstrap-4-backport UnbindORCiD"
-      show={props.show}
-      animation={false}
-      backdrop="static"
-      centered
+    <Dialog
+      open={props.show}
+      maxWidth="sm"
+      sx={{ borderRadius: 0 }}
+      PaperProps={{ sx: { borderRadius: 0 } }}
     >
-      <Modal.Body className="unbind-modal">
-        <Typography variant="headline1">Remove ORCID</Typography>
-        <Typography variant="body1">
-          Are you sure you want to remove this ORCID?
+      <DialogContent
+        sx={{ margin: theme.spacing(0, 5.5), padding: theme.spacing(3, 0) }}
+      >
+        <Typography variant="body2" paragraph>
+          Are you sure you want to unlink this ORCID from your profile?
         </Typography>
-        <div className="btn-holder">
-          <Button
-            className="btn-container emptyButton"
-            onClick={() => props.setShow(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="btn-container"
-            variant="secondary"
-            disabled={isLoading}
-            onClick={event =>
-              unbindORCiD(
-                event,
-                setIsLoading,
-                props.orcid,
-                accessToken,
-                props.redirectAfter,
-              )
-            }
-          >
-            Yes, remove
-          </Button>
-        </div>
-      </Modal.Body>
-    </Modal>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="outlined" onClick={() => props.setShow(false)}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          onClick={event =>
+            unbindORCiD(
+              event,
+              props.orcid,
+              accessToken,
+              props.setShow,
+              props.redirectAfter,
+            )
+          }
+        >
+          Yes, unlink ORCID
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
