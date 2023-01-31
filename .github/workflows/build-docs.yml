@@ -17,6 +17,6 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - run: yarn install
+      - run: pnpm install
       - name: Build docs
-        run: yarn build:docs
+        run: nx run synapse-react-client:build:docs

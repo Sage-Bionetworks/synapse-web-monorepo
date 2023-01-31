@@ -39,5 +39,5 @@ jsconfig.json
 # to gh-pages
 apps/*/dist
 packages/*/dist
-/storybook-static
+storybook-static/
 src/umd

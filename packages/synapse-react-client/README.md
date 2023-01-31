@@ -263,7 +263,7 @@ To expose a component from the library you must export it from [index.ts](src/li
 To expose a component for use in synapse.org, you must export it from [umd.index.ts](src/lib/umd.index.ts). See [Project Development](#project-development) for more information on the UMD build and synapse.org.
 
 To release the react-client, bump the [package version](https://next.yarnpkg.com/cli/version), merge into main,
-and run `yarn publish`. Note - you must have access to the synapse-react-client [npm package](https://www.npmjs.com/package/synapse-react-client) to be able to run the command. Publising the package will also release a new version of the UMD build, it can be pulled down using unpkg.com, the URL is available [here](https://unpkg.com/browse/synapse-react-client@latest/dist/umd/synapse-react-client.production.min.js)
+and run `pnpm publish`. Note - you must have access to the synapse-react-client [npm package](https://www.npmjs.com/package/synapse-react-client) to be able to run the command. Publising the package will also release a new version of the UMD build, it can be pulled down using unpkg.com, the URL is available [here](https://unpkg.com/browse/synapse-react-client@latest/dist/umd/synapse-react-client.production.min.js)
 
 ## Updating this Project to New Releases
 
@@ -279,11 +279,11 @@ We commit to keeping the breaking changes minimal so you can upgrade `react-scri
 
 Before doing anything else run:
 
-### `yarn` (or `yarn install`)
+### `pnpm install`
 
 In the project directory, you can run:
 
-### `yarn start`
+### `pnpm start`
 
 Runs the Synapse React Client Styleguidist browser. In your browser, navigate to [http://127.0.0.1:6060](http://127.0.0.1:6060) to view it.
 
@@ -292,11 +292,11 @@ It will automatically open localhost, but you need to use 127.0.0.1 for CORS pre
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
 
-### `yarn test`
+### `pnpm test`
 
 Launches the test runner in the interactive watch mode.
 
-### `yarn test:coverage`
+### `pnpm test:coverage`
 
 Launches the test runner in the non-interactive mode to run all tests and calculate test coverage.<br>
 
@@ -309,12 +309,12 @@ Links to Resources on Testing:
 - Jest: https://jestjs.io/
 - React Testing Library: https://testing-library.com/docs/react-testing-library/intro
 
-### `yarn deploy`
+### `pnpm deploy`
 
 Build and deploy our style guide documentation to "upstream"<br>
 Available at https://sage-bionetworks.github.io/Synapse-React-Client/
 
-### `yarn start-docs`
+### `pnpm start-docs`
 
 Starts a style guide dev server, available at http://localhost:6060/
 
@@ -357,11 +357,11 @@ There are open issues in the microsoft vscode repository that block the ability 
 }
 ```
 
-### `yarn run build`
+### `pnpm build`
 
 Builds the app for production to the `build` folder.<br>
 
-### `yarn run build:esbuild`
+### `pnpm build:esbuild`
 
 This project can be built as a umd bundle. It produces three files
 

@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {},
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "build": "nx run-many --target=build",
+    "test": "nx run-many --target=test"
   },
   "devDependencies": {
     "husky": ">=6",

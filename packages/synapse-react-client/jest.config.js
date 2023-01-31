@@ -3,7 +3,7 @@ const esModules = [
   '@react-hook',
   'lodash-es',
   'nanoid',
-].join('|')
+]
 
 /** @type {import('jest').Config} */
 module.exports = {
@@ -13,7 +13,9 @@ module.exports = {
     // Mock SVGs, loaded by SVGR https://react-svgr.com/docs/jest/
     '\\.svg$': '<rootDir>/src/mocks/svg.js',
   },
-  transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
+  transformIgnorePatterns: [
+    `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
+  ],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
   resetMocks: false,
 }

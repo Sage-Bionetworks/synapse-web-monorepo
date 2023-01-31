@@ -77,7 +77,7 @@ EOL
 
 elif [ "$1" = "push-staging" ]; then
   # sync current with staging
-  yarn && yarn build
+  pnpm && pnpm build
   node sitemap/generate-sitemap.js $2
   # generate robots.txt
 cat > ./build/robots.txt <<EOL

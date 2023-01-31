@@ -1,0 +1,8 @@
+{
+  "extends": "../../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src/lib",
+    "outDir": "dist"
+  },
+  "include": ["./src/lib/**.ts", "./src/lib/**.tsx"]
+}

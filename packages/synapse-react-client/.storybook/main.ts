@@ -1,16 +1,20 @@
 import { mergeConfig, defineConfig } from 'vite'
-import svgr from 'vite-plugin-svgr'
+import { StorybookConfig } from '@storybook/react-vite'
 
-module.exports = {
+const config: StorybookConfig = {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
   ],
-  framework: '@storybook/react',
-  core: {
-    builder: '@storybook/builder-vite',
+  framework: {
+    name: '@storybook/react-vite',
+    options: {
+      builder: {
+        viteConfigPath: './.storybook/storybook-vite.config.ts',
+      },
+    },
   },
   typescript: {
     // These options are from https://storybook.js.org/blog/material-ui-in-storybook/
@@ -18,7 +22,7 @@ module.exports = {
     checkOptions: {},
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
-      // speeds up storybook build time
+      // @ts-ignore - speeds up storybook build time
       allowSyntheticDefaultImports: false,
       // speeds up storybook build time
       esModuleInterop: false,
@@ -43,39 +47,8 @@ module.exports = {
     if (configType === 'PRODUCTION') {
       base = './'
     }
-
     const customStorybookConfig = defineConfig({
       base,
-      plugins: [svgr()],
-      resolve: {
-        alias: {
-          stream: 'stream-browserify',
-          buffer: 'buffer/',
-          timers: 'timers-browserify',
-          path: 'path-browserify',
-          fs: 'memfs',
-          util: 'util/',
-        },
-      },
-      optimizeDeps: {
-        include: [
-          '@storybook/react/dist/esm/client/docs/config',
-          '@storybook/react/dist/esm/client/preview/config',
-          '@storybook/addon-links/preview.js',
-          '@storybook/addon-docs/preview.js',
-          '@storybook/addon-actions/preview.js',
-          '@welldone-software/why-did-you-render',
-          '@storybook/addon-backgrounds/preview.js',
-          '@storybook/addon-measure/preview.js',
-          '@storybook/addon-outline/preview.js',
-          '@storybook/addon-interactions/preview.js',
-          'buffer/',
-          'msw-storybook-addon',
-        ],
-      },
-      build: {
-        sourcemap: false,
-      },
     })
 
     // return the customized config
@@ -83,3 +56,4 @@ module.exports = {
     return mergeConfig(config, customStorybookConfig)
   },
 }
+module.exports = config

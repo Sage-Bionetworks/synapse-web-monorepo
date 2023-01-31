@@ -17,11 +17,11 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - run: yarn install
+      - run: pnpm install
       - name: Build docs
-        run: yarn build:docs
+        run: nx run synapse-react-client:build:docs
       - name: Deploy docs to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           branch: gh-pages
-          folder: storybook-static
+          folder: packages/synapse-react-client/storybook-static

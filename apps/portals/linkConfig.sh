@@ -54,7 +54,7 @@ if [ -h "$ACTIVE_CONFIGURATION/routesConfig.ts" ]; then
     Something went wrong: Detected symlink in $ACTIVE_CONFIGURATION
     If you ran ./linkConfig $folderNoSlash last rerun this script like so -
     $ ./linkConfig $folderNoSlash -r
-    Then fix the error that caused yarn start to fail (most likely need to clean install node_modules).
+    Then fix the error that caused pnpm start to fail (most likely need to clean install node_modules).
 
     Otherwise to reset the configuration run
     $ git checkout $ACTIVE_CONFIGURATION
@@ -78,4 +78,4 @@ cd ../../../
 # start the project
 # Fixes node binding error when switching between packages and forgetting to run this command...
 npm rebuild node-sass
-yarn && yarn start
+pnpm i && pnpm start
