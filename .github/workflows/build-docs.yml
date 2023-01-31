@@ -39,4 +39,4 @@ jobs:
         run: pnpm install
       - run: pnpm install
       - name: Build docs
-        run: nx run synapse-react-client:build:docs
+        run: pnpm nx run synapse-react-client:build:docs

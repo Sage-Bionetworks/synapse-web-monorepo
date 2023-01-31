@@ -37,7 +37,7 @@ jobs:
                   ${{ runner.os }}-pnpm-store-
       - run: pnpm install
       - name: Build docs
-        run: nx run synapse-react-client:build:docs
+        run: pnpm nx run synapse-react-client:build:docs
       - name: Deploy docs to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
