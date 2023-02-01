@@ -1,0 +1,2 @@
+import{_ as a,a as c}from"./_baseToString-34430836.js";import{_ as n}from"./_baseIteratee-3a86f617.js";var i=a,s=n,b=c,p="[object Object]",f=Function.prototype,j=Object.prototype,e=f.toString,u=j.hasOwnProperty,l=e.call(Object);function O(r){if(!b(r)||i(r)!=p)return!1;var o=s(r);if(o===null)return!0;var t=u.call(o,"constructor")&&o.constructor;return typeof t=="function"&&t instanceof t&&e.call(t)==l}var v=O;export{v as i};
+//# sourceMappingURL=isPlainObject-6c541f89.js.map
