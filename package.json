@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {},
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=7"
+  },
   "scripts": {
     "prepare": "husky install",
     "build": "nx run-many --target=build",

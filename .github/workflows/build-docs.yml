@@ -37,6 +37,5 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install
-      - run: pnpm install
       - name: Build docs
         run: pnpm nx run synapse-react-client:build:docs
