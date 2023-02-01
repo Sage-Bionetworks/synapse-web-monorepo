@@ -20,7 +20,7 @@
          # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
      steps:
-     - uses: actions/checkout@v2
+     - uses: actions/checkout@v3.1.0
      - name: Use Node.js ${{ matrix.node-version }}
        uses: actions/setup-node@v2
        with:
@@ -36,13 +36,26 @@
        shell: bash
        run: |
          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-     - uses: actions/cache@v3
-       name: Setup pnpm cache
+     - name: Setup pnpm cache
+       uses: actions/cache@v3
        with:
          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
          restore-keys: |
            ${{ runner.os }}-pnpm-store-
+     - name: Install dependencies
+       run: pnpm install
+     - name: Set up Nx build cache
+       uses: actions/cache@v3
+       with:
+         path: node_modules/.cache/nx
+         key: ${{ runner.os }}-nx-cache
+         restore-keys: |
+           ${{ runner.os }}-nx-cache
      - run: pnpm install --frozen-lockfile
+      # Portals won't build without a configuration. For now, copy the test configuration.
+      # We may want to invert the model and give each portal it's own project in the workspace, so we can build the portals in parallel.
+     - run: nx run portals:copy-test-configuration
+     - run: pnpm build
      - run: pnpm build
      - run: pnpm test
