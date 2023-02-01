@@ -1,0 +1,20 @@
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "test", "lint"]
+      }
+    }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "//": "Tests don't depend a build for their own package, but they do depend on their dependencies being built",
+      "dependsOn": ["^build"]
+    }
+  },
+  "defaultBase": "main"
+}

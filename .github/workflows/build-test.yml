@@ -1,0 +1,60 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+ name: Build/Test CI
+
+ on:
+   push:
+     branches: [ main ]
+   pull_request:
+     branches: [ main ]
+
+ jobs:
+   build:
+
+     runs-on: ubuntu-latest
+
+     strategy:
+       matrix:
+         node-version: [18.x]
+         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+     steps:
+     - uses: actions/checkout@v3.1.0
+     - name: Use Node.js ${{ matrix.node-version }}
+       uses: actions/setup-node@v2
+       with:
+         node-version: ${{ matrix.node-version }}
+     - uses: pnpm/action-setup@v2
+       name: Install pnpm
+       id: pnpm-install
+       with:
+         version: 7
+         run_install: false
+     - name: Get pnpm store directory
+       id: pnpm-cache
+       shell: bash
+       run: |
+         echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+     - name: Setup pnpm cache
+       uses: actions/cache@v3
+       with:
+         path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+         restore-keys: |
+           ${{ runner.os }}-pnpm-store-
+     - name: Install dependencies
+       run: pnpm install
+     - name: Set up Nx build cache
+       uses: actions/cache@v3
+       with:
+         path: node_modules/.cache/nx
+         key: ${{ runner.os }}-nx-cache
+         restore-keys: |
+           ${{ runner.os }}-nx-cache
+     - run: pnpm install --frozen-lockfile
+      # Portals won't build without a configuration. For now, copy the test configuration.
+      # We may want to invert the model and give each portal it's own project in the workspace, so we can build the portals in parallel.
+     - run: pnpm nx run portals:copy-test-configuration
+     - run: pnpm build
+     - run: pnpm test

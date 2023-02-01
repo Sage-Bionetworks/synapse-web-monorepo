@@ -6,7 +6,7 @@
 !styleguide.setup.css
 
 # dependencies
-/node_modules
+node_modules/
 
 # testing
 /coverage
@@ -37,6 +37,7 @@ jsconfig.json
 
 # dist/build folders created to either deploy to npm or
 # to gh-pages
-/dist
-/storybook-static
+apps/*/dist
+packages/*/dist
+storybook-static/
 src/umd

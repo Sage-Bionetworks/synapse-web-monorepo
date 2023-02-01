@@ -147,7 +147,7 @@ export default class App extends React.Component<{}, AppState> {
         <p>
           Demo a new component by creating a .md file of the same name
           (Button.md for Button.tsx), and run the styleguidist server:{' '}
-          <code>yarn start-docs</code>
+          <code>pnpm start-docs</code>
         </p>
       </Alert>
     )
