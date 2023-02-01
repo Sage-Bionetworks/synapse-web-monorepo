@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Link, Container, Box, MenuItem, Grid } from '@mui/material'
+import {
+  Button,
+  Link,
+  Container,
+  Box,
+  Grid,
+  Select,
+  MenuItem,
+} from '@mui/material'
 import {
   UserBundle,
   UserProfile,
@@ -21,6 +29,10 @@ import { useLocation } from 'react-router-dom'
 import { ConfigureEmail } from './ConfigureEmail'
 import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import SourceAppConfigs from './SourceAppConfigs'
+import UniversalCookies from 'universal-cookie'
+import { DATETIME_UTC_COOKIE_KEY } from 'synapse-react-client/dist/utils/SynapseConstants'
+import { getUseUtcTimeFromCookie } from 'synapse-react-client/dist/utils/SynapseClient'
+import { StyledFormControl } from './StyledComponents'
 
 export const AccountSettings = () => {
   const { accessToken } = useSynapseContext()
@@ -45,18 +57,32 @@ export const AccountSettings = () => {
 
   const profileInformationRef = useRef<HTMLDivElement>(null)
   const changePasswordRef = useRef<HTMLDivElement>(null)
+  const timezoneRef = useRef<HTMLDivElement>(null)
   const emailAddressesRef = useRef<HTMLDivElement>(null)
   const trustCredentialRef = useRef<HTMLDivElement>(null)
   const personalAccessTokenRef = useRef<HTMLDivElement>(null)
-
+  const cookies = new UniversalCookies()
+  const [isUTCTime, setUTCTime] = useState<string>(
+    getUseUtcTimeFromCookie().toString(),
+  )
   const handleChangesFn = (val: string) => {
     history.push(`/authenticated/${val}`)
   }
+  useEffect(() => {
+    const current = new Date()
+    const nextYear = new Date()
+    nextYear.setFullYear(current.getFullYear() + 1)
+    cookies.set(DATETIME_UTC_COOKIE_KEY, isUTCTime, {
+      path: '/',
+      expires: nextYear,
+    })
+  }, [isUTCTime])
 
   const markFormDirty = () => setChangeInForm(true)
   const credentialButtonSX = {
     marginRight: '26px',
   }
+
   const unpackBundle = (bundle: UserBundle) => {
     setUserProfile(bundle.userProfile)
     setUsername(bundle.userProfile?.userName)
@@ -141,6 +167,9 @@ export const AccountSettings = () => {
               </MenuItem>
               <MenuItem onClick={() => handleScroll(changePasswordRef)}>
                 Change Password
+              </MenuItem>
+              <MenuItem onClick={() => handleScroll(timezoneRef)}>
+                Date/Time Format
               </MenuItem>
               <MenuItem onClick={() => handleScroll(trustCredentialRef)}>
                 Trust & Credentials
@@ -268,6 +297,26 @@ export const AccountSettings = () => {
                 <h3>Change Password</h3>
                 <ChangePassword />
               </div>
+              <div
+                ref={timezoneRef}
+                className="account-setting-panel main-panel"
+              >
+                <h3>Date/Time Format</h3>
+                <StyledFormControl fullWidth>
+                  <Select
+                    labelId="timezone-select-label"
+                    id="timezone-select"
+                    value={isUTCTime}
+                    onChange={event => {
+                      setUTCTime(event.target.value)
+                    }}
+                  >
+                    <MenuItem value="false">Local</MenuItem>
+                    <MenuItem value="true">UTC</MenuItem>
+                  </Select>
+                </StyledFormControl>
+              </div>
+
               <div
                 ref={trustCredentialRef}
                 className="account-setting-panel main-panel"
