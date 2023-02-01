@@ -33,6 +33,7 @@ import UniversalCookies from 'universal-cookie'
 import { DATETIME_UTC_COOKIE_KEY } from 'synapse-react-client/dist/utils/SynapseConstants'
 import { getUseUtcTimeFromCookie } from 'synapse-react-client/dist/utils/SynapseClient'
 import { StyledFormControl } from './StyledComponents'
+import { ProfileAvatar } from './ProfileAvatar'
 
 export const AccountSettings = () => {
   const { accessToken } = useSynapseContext()
@@ -186,6 +187,7 @@ export const AccountSettings = () => {
               >
                 <h3>Profile Information</h3>
                 <p>This information is reused across all Sage products.</p>
+                <ProfileAvatar />
                 <Form onChange={markFormDirty}>
                   <FormGroup className="required">
                     <FormLabel>Username</FormLabel>
