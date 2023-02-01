@@ -1,4 +1,4 @@
-name: 'NPM Publish and GitHub tag'
+name: "NPM Publish and GitHub tag"
 on:
   push:
     branches:
@@ -30,23 +30,31 @@ jobs:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-              ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-pnpm-store-
       - run: pnpm install
-      - run: pnpm -r publish --access public --dry-run
+      - run: pnpm -r publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       # Set PACKAGE_VERSION, pull from package.json
       - name: package-version
         run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
+
+      # Now check if the synapse-react-client version changed, and if so, create a tag.
+      # We will need to revise/generalize this workflow if we publish multiple packages to npm.
+      - id: synapse-react-client-version-check
+        uses: EndBug/version-check@v2
+        with:
+          file-name: ./packages/synapse-react-client/package.json
       # Create the tag using the new PACKAGE_VERSION value
       - name: Create tag
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
+        if: steps.synapse-react-client-version-check.outputs.changed == 'true'
         with:
           github-token: ${{ github.token }}
           script: |
-            github.git.createRef({
+            octokit.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/v${{ env.PACKAGE_VERSION }}",
+              ref: "refs/tags/synapse-react-client/v${{ env.PACKAGE_VERSION }}",
               sha: context.sha
             })
