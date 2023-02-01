@@ -55,7 +55,7 @@
      - run: pnpm install --frozen-lockfile
       # Portals won't build without a configuration. For now, copy the test configuration.
       # We may want to invert the model and give each portal it's own project in the workspace, so we can build the portals in parallel.
-     - run: nx run portals:copy-test-configuration
+     - run: pnpm nx run portals:copy-test-configuration
      - run: pnpm build
      - run: pnpm build
      - run: pnpm test
