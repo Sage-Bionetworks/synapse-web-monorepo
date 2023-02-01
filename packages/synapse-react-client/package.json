@@ -211,7 +211,7 @@
     "whatwg-fetch": "^3.6.2"
   },
   "scripts": {
-    "prepublishOnly": "pnpm install && pnpm build && pnpm test:ci",
+    "prepublishOnly": "pnpm install && pnpm build",
     "build-gh": "pnpm build:docs",
     "deploy": "pnpm install && pnpm build:storybook && gh-pages -t -d storybook-static -o upstream",
     "deploy:origin": "pnpm install && pnpm build:storybook && gh-pages -t -d storybook-static -o origin",
