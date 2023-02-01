@@ -55,6 +55,6 @@ jobs:
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/synapse-react-client/v${{ env.PACKAGE_VERSION }}",
+              ref: "refs/tags/synapse-react-client/v${{ steps.synapse-react-client-version-check.outputs.version }}",
               sha: context.sha
             })
