@@ -25,5 +25,8 @@
   },
   "include": [
     "src"
-  ]
+  ],
+  "references": [{
+    "synapse-react-client": "../../packages/synapse-react-client"
+  }]
 }
