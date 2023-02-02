@@ -6,6 +6,7 @@ import { Typography } from 'synapse-react-client'
 import { Link as RouterLink } from 'react-router-dom'
 import SourceAppConfigs from './SourceAppConfigs'
 import { LeftRightPanel } from './LeftRightPanel'
+import { sage } from 'configs/sagebionetworks'
 
 export type AccountCreatedPageProps = {}
 
@@ -79,7 +80,10 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                 </Typography>
                 <Grid container spacing={5} mx={{ paddingTop: '20px' }}>
                   {SourceAppConfigs.map(config => {
-                    if (config.appId != sourceApp?.appId) {
+                    if (
+                      config.appId != sourceApp?.appId &&
+                      config.appId != sage.appId
+                    ) {
                       return (
                         <Grid item xs={6} className="sourceAppItem">
                           <a href={config.appURL}>{config.logo}</a>

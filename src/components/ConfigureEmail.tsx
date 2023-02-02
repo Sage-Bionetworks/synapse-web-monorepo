@@ -133,8 +133,8 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
       {emails?.map(email => {
         if (email === primaryEmail?.email) {
           return (
-            <>
-              <Box key={email} sx={{ padding: '15px 0px' }}>
+            <div key={email}>
+              <Box sx={{ padding: '15px 0px' }}>
                 {email}{' '}
                 <Chip
                   sx={{ color: '#fff', marginLeft: '10px' }}
@@ -143,7 +143,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
                 />
               </Box>
               <Divider />
-            </>
+            </div>
           )
         } else {
           return (

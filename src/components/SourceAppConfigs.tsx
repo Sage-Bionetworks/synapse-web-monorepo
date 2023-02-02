@@ -8,6 +8,7 @@ import { mtb } from 'configs/mtb'
 import { nf } from 'configs/nf'
 import { psychEncode } from 'configs/psychencode'
 import { synapse } from 'configs/synapse'
+import { sage } from 'configs/sagebionetworks'
 
 export type SourceAppConfig = {
   appId: string // app ID used in the query params
@@ -29,6 +30,7 @@ export const SourceAppConfigs: SourceAppConfig[] = [
   dHealth,
   nf,
   psychEncode,
+  sage,
   // stopAd,
 ]
 

@@ -12,7 +12,7 @@ import { getSearchParam } from 'URLUtils'
 import theme from './style/theme'
 import useAnalytics from './useAnalytics'
 import SourceAppConfigs from 'components/SourceAppConfigs'
-import { synapse } from 'configs/synapse'
+import { sage } from 'configs/sagebionetworks'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 
 export type AppInitializerState = {
@@ -118,9 +118,9 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     } else if (localStorageAppId) {
       setAppId(localStorageAppId)
     } else {
-      // fallback to Synapse
-      localStorage.setItem('sourceAppId', synapse.appId)
-      setAppId(synapse.appId)
+      // fallback to Sage Bionetworks
+      localStorage.setItem('sourceAppId', sage.appId)
+      setAppId(sage.appId)
     }
   }, [])
 
