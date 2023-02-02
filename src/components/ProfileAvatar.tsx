@@ -1,11 +1,10 @@
 import Slider from '@mui/material/Slider'
-import VerifiedBorder from 'assets/VerifiedProfilePic.svg'
 import React, { useEffect, useState } from 'react'
 import { Button } from '@mui/material'
 import { Modal } from 'react-bootstrap'
 import Cropper from 'react-easy-crop'
 import { Area } from 'react-easy-crop/types'
-
+import Person from '@mui/icons-material/Person'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
   getFileHandleByIdURL,
@@ -21,12 +20,11 @@ import { getCroppedImg } from './CropImage'
 
 export type ProfileAvatarProps = {
   userProfile?: UserProfile
-  verified?: boolean
   onProfileUpdated: () => void
 }
 
 export const ProfileAvatar = (props: ProfileAvatarProps) => {
-  const { userProfile, verified, onProfileUpdated } = props
+  const { userProfile, onProfileUpdated } = props
   const { accessToken } = useSynapseContext()
   const [profilePicUrl, setProfilePicUrl] = useState<string | undefined>()
   const [image, setImage] = useState<string | undefined>()
@@ -92,7 +90,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
           variant="contained"
           onClick={clickHandler}
         >
-          Upload File
+          Upload Image
         </Button>
       </>
     )
@@ -130,22 +128,23 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
   return (
     <div className="profile-avatar">
       <>
-        {verified ? (
+        {userProfile?.profilePicureFileHandleId ? (
           <>
-            <div className="verified-img-container">
-              <img className="verified-border" src={VerifiedBorder} />
-              <img className="verified-img" src={profilePicUrl} />
+            <div className="profile-pic">
+              <img src={profilePicUrl} />
             </div>
-            <UploadImageButton />
           </>
         ) : (
-          <>
-            <div className="non-verified-profile-pic">
-              <img className="non-verified-img" src={profilePicUrl} />
-            </div>
-            <UploadImageButton />
-          </>
+          <Person
+            sx={{
+              color: 'lightgrey',
+              height: '130px',
+              width: '130px',
+              display: 'block',
+            }}
+          />
         )}
+        <UploadImageButton />
       </>
 
       <Modal

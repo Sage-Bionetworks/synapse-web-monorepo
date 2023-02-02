@@ -189,7 +189,6 @@ export const AccountSettings = () => {
                 <p>This information is reused across all Sage products.</p>
                 <ProfileAvatar
                   userProfile={userProfile}
-                  verified={verified}
                   onProfileUpdated={() => {
                     getUserData()
                   }}
