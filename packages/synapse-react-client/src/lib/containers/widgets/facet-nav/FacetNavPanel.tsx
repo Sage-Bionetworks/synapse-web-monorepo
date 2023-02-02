@@ -11,7 +11,7 @@ import { ElementWithTooltip } from '../../../containers/widgets/ElementWithToolt
 import { SynapseClient, SynapseConstants } from '../../../utils'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import {
-  ColumnType,
+  ColumnTypeEnum,
   FacetColumnRequest,
   FacetColumnResultValueCount,
   FacetColumnResultValues,
@@ -95,7 +95,7 @@ export function truncate(str: string | undefined, n: number) {
 
 export async function extractPlotDataArray(
   facetToPlot: FacetColumnResultValues,
-  columnType: ColumnType | undefined,
+  columnType: ColumnTypeEnum | undefined,
   index: number,
   plotType: PlotType,
   accessToken?: string,
@@ -107,7 +107,7 @@ export async function extractPlotDataArray(
 
   const getLabels = async (
     facetValues: FacetColumnResultValueCount[],
-    columnType?: ColumnType,
+    columnType?: ColumnTypeEnum,
     accessToken?: string,
   ) => {
     const map = new Map<string, string>()
@@ -120,8 +120,8 @@ export async function extractPlotDataArray(
       .map(value => value.value)
       .filter(val => val !== SynapseConstants.VALUE_NOT_SET)
     if (
-      columnType === ColumnType.ENTITYID ||
-      columnType === ColumnType.ENTITYID_LIST
+      columnType === ColumnTypeEnum.ENTITYID ||
+      columnType === ColumnTypeEnum.ENTITYID_LIST
     ) {
       // TODO: Pagination
       const response = await SynapseClient.getEntityHeadersByIds(
@@ -132,8 +132,8 @@ export async function extractPlotDataArray(
         map.set(header.id, header.name)
       }
     } else if (
-      columnType === ColumnType.USERID ||
-      columnType === ColumnType.USERID_LIST
+      columnType === ColumnTypeEnum.USERID ||
+      columnType === ColumnTypeEnum.USERID_LIST
     ) {
       const response = await SynapseClient.getGroupHeadersBatch(
         filteredValues,
@@ -361,10 +361,10 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   const plotTitle = getColumnDisplayName(facetToPlot.columnName)
 
   const getColumnType = useCallback(
-    (): ColumnType | undefined =>
+    (): ColumnTypeEnum | undefined =>
       data?.columnModels?.find(
         columnModel => columnModel.name === facetToPlot.columnName,
-      )?.columnType as ColumnType,
+      )?.columnType as ColumnTypeEnum,
     [data, facetToPlot.columnName],
   )
 

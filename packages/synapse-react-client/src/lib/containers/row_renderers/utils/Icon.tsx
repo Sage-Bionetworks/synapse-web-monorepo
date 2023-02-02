@@ -80,9 +80,11 @@ import {
 } from '../../../assets/themed_icons'
 import IconSvg from '../../IconSvg'
 
+export type IconOptions = Record<string, string | React.ComponentType<any>>
+
 type IconProps = {
   type: string
-  iconOptions?: Record<string, string>
+  iconOptions?: IconOptions
   value?: string
   isHeader?: boolean
   cssClass?: string

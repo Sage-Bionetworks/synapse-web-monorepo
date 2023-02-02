@@ -20,7 +20,7 @@ export const getUniqueEntities = (
 ) => {
   const distinctEntities = new Set<string>()
   data.queryResult?.queryResults.rows.forEach(row => {
-    row.values.forEach((el: string, colIndex: number) => {
+    row.values.forEach((el: string | null, colIndex: number) => {
       // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
       if (
         indicies.includes(colIndex) &&

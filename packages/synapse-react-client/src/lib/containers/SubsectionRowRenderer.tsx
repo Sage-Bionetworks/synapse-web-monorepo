@@ -7,6 +7,7 @@ import {
 import { SynapseClient, SynapseConstants } from '../utils'
 import {
   ColumnType,
+  ColumnTypeEnum,
   QueryBundleRequest,
   RowSet,
 } from '../utils/synapseTypes/Table'
@@ -32,12 +33,12 @@ export type SubsectionRowRendererProps = {
   limit?: number
 }
 
-const LIST_COLUMN_TYPES = [
-  ColumnType.BOOLEAN_LIST,
-  ColumnType.DATE_LIST,
-  ColumnType.ENTITYID_LIST,
-  ColumnType.INTEGER_LIST,
-  ColumnType.STRING_LIST,
+const LIST_COLUMN_TYPES: ColumnType[] = [
+  ColumnTypeEnum.BOOLEAN_LIST,
+  ColumnTypeEnum.DATE_LIST,
+  ColumnTypeEnum.ENTITYID_LIST,
+  ColumnTypeEnum.INTEGER_LIST,
+  ColumnTypeEnum.STRING_LIST,
 ]
 
 const SubsectionRowRenderer: React.FunctionComponent<

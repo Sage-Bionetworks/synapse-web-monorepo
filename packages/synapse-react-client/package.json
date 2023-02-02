@@ -230,7 +230,8 @@
     "build:storybook": "storybook build && touch storybook-static/.nojekyll",
     "link-src": "pnpm link && cd ./node_modules/react && pnpm link && cd ../react-router && pnpm link && cd ../react-router-dom && pnpm link && cd ../../",
     "unlink-src": "pnpm unlink && cd ./node_modules/react && pnpm unlink && cd ../react-router && pnpm unlink && cd ../react-router-dom && pnpm unlink && cd ../../",
-    "storybook": "storybook dev -p 6060"
+    "storybook": "storybook dev -p 6060",
+    "lint": "eslint src"
   },
   "resolutions": {
     "js-yaml": "3.13.1",

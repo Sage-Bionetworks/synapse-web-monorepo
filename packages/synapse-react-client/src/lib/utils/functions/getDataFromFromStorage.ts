@@ -1,5 +1,6 @@
 import {
   ColumnType,
+  ColumnTypeEnum,
   EntityHeader,
   Evaluation,
   UserProfile,
@@ -62,13 +63,13 @@ export const getDisplayValue = (value: string, columnType: ColumnType) => {
   }
 
   switch (columnType) {
-    case ColumnType.ENTITYID:
-    case ColumnType.ENTITYID_LIST:
+    case ColumnTypeEnum.ENTITYID:
+    case ColumnTypeEnum.ENTITYID_LIST:
       return getDisplayValueForEntityColumn(value)
-    case ColumnType.USERID:
-    case ColumnType.USERID_LIST:
+    case ColumnTypeEnum.USERID:
+    case ColumnTypeEnum.USERID_LIST:
       return getDisplayValueUserIdColumn(value)
-    case ColumnType.EVALUATIONID:
+    case ColumnTypeEnum.EVALUATIONID:
       return getDisplayValueEvaluationIdColumn(value)
     default:
       return value

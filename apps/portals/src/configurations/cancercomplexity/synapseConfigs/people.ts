@@ -1,8 +1,6 @@
 import { SynapseConstants } from 'synapse-react-client'
-import {
-  GenericCardSchema,
-  IconOptions,
-} from 'synapse-react-client/dist/containers/GenericCard'
+import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import { IconOptions } from 'synapse-react-client/dist/containers/row_renderers/utils/Icon'
 import { Project } from 'synapse-react-client/dist/assets/themed_icons/Project'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { peopleSql } from '../resources'
@@ -25,7 +23,7 @@ export const peopleSchema: GenericCardSchema = {
 
 // TODO: Change iconOptions type to map () => string | JSX.Element and remove cast
 const iconOptions: IconOptions = {
-  Grant: (Project as unknown) as string,
+  Grant: Project as unknown as string,
 }
 
 export const peopleCardConfiguration: CardConfiguration = {

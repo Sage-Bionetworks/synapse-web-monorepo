@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { QueryClient } from 'react-query'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import {
   defaultQueryClientConfig,
   SynapseContextProvider,

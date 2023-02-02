@@ -12,6 +12,7 @@ import { SynapseContext } from '../utils/SynapseContext'
 import {
   ColumnModel,
   ColumnType,
+  ColumnTypeEnum,
   Entity,
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -37,6 +38,7 @@ import UserCard from './UserCard'
 import { FileHandleLink } from './widgets/FileHandleLink'
 import { ImageFileHandle } from './widgets/ImageFileHandle'
 import { QueryVisualizationContextType } from './QueryVisualizationWrapper'
+import { IconOptions } from './row_renderers/utils/Icon'
 
 export type KeyToAlias = {
   key: string
@@ -59,10 +61,6 @@ export type GenericCardSchema = {
   secondaryLabels?: string[]
   link?: string
   dataTypeIconNames?: string
-}
-
-export type IconOptions = {
-  [index: string]: string
 }
 
 export type GenericCardProps = {
@@ -253,7 +251,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     newClassName = className?.concat(' ', 'SRC-lightLink')
   }
   // PORTALS-1913: special rendering for user ID lists
-  if (columnModelType === ColumnType.USERID_LIST && strList) {
+  if (columnModelType === ColumnTypeEnum.USERID_LIST && strList) {
     return (
       <>
         {strList.map((val: string, index: number) => {
@@ -272,7 +270,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
       </>
     )
   }
-  if (columnModelType === ColumnType.USERID && str) {
+  if (columnModelType === ColumnTypeEnum.USERID && str) {
     return (
       <UserCard ownerId={str} size={SMALL_USER_CARD} className={newClassName} />
     )
@@ -818,16 +816,17 @@ export default class GenericCard extends React.Component<
             {
               // If the portal configs has columnIconOptions.columns.dataType option
               // and the column value is not null, display the card data type icons
-              columnIconOptions?.columns?.dataType && dataTypeIconNames?.length && (
-                <div style={{ marginTop: '20px' }}>
-                  <IconList
-                    iconConfigs={columnIconOptions.columns.dataType}
-                    iconNames={JSON.parse(dataTypeIconNames)}
-                    useBackground={true}
-                    useTheme={true}
-                  />
-                </div>
-              )
+              columnIconOptions?.columns?.dataType &&
+                dataTypeIconNames?.length && (
+                  <div style={{ marginTop: '20px' }}>
+                    <IconList
+                      iconConfigs={columnIconOptions.columns.dataType}
+                      iconNames={JSON.parse(dataTypeIconNames)}
+                      useBackground={true}
+                      useTheme={true}
+                    />
+                  </div>
+                )
             }
             <div>
               <h3
@@ -835,7 +834,7 @@ export default class GenericCard extends React.Component<
                 style={{ margin: 'none' }}
               >
                 {!titleLinkConfig &&
-                titleColumnType === ColumnType.FILEHANDLEID &&
+                titleColumnType === ColumnTypeEnum.FILEHANDLEID &&
                 fileHandleAssociation ? (
                   <FileHandleLink
                     fileHandleAssociation={fileHandleAssociation}

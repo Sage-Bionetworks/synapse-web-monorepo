@@ -2,44 +2,13 @@
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
     "allowJs": false,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "module": "CommonJS",
-    "target": "es5",
-    "lib": ["esnext", "dom"],
-    "sourceMap": true,
-    "jsx": "react",
-    "moduleResolution": "node",
-    "rootDir": "src",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "importHelpers": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
+    "rootDir": ".",
     "skipLibCheck": true,
     "strict": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "useUnknownInCatchVariables": false
+    "noFallthroughCasesInSwitch": true
   },
-  "exclude": [
-    ".storybook",
-    "storybook-static",
-    "esbuild.config.mjs",
-    "node_modules",
-    "build",
-    "coverage",
-    "dist",
-    "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest",
-    "setupTests.js"
-  ],
-  "include": ["src"]
+  "include": ["src", "mocks", "stories"],
+  "references": [{ "test": "./tsconfig.test.json" }]
 }

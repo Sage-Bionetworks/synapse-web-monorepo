@@ -10,7 +10,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../utils/synapseTypes/Table'
-import { ColumnType } from '../utils/synapseTypes'
+import { ColumnTypeEnum } from '../utils/synapseTypes'
 import UserCardList from './UserCardList'
 import { UserCardSize } from './UserCard'
 import { LARGE_USER_CARD } from '../utils/SynapseConstants'
@@ -116,7 +116,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
       if (queryResult?.queryResults.rows) {
         // find the column that has the USER_ID in it.
         const ownerIdColumnIndex = queryResult.queryResults.headers.findIndex(
-          el => el.columnType === ColumnType.USERID,
+          el => el.columnType === ColumnTypeEnum.USERID,
         )
         const ids: string[] = queryResult.queryResults.rows
           .map(d => d.values[ownerIdColumnIndex])

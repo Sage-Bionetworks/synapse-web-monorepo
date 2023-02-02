@@ -3,7 +3,7 @@ import { getUserProfileWithProfilePicAttached } from '../utils/functions/getUser
 import { UserProfileList } from '../utils/SynapseClient'
 import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
 import {
-  ColumnType,
+  ColumnTypeEnum,
   QueryResultBundle,
   UserProfile,
 } from '../utils/synapseTypes/'
@@ -91,7 +91,7 @@ export default class UserCardList extends React.Component<
       el => el.name === 'institution',
     )
     const ownerId = data.queryResult!.queryResults.headers.findIndex(
-      el => el.columnType === ColumnType.USERID,
+      el => el.columnType === ColumnTypeEnum.USERID,
     )
     const nullOwnerIdsRows = data.queryResult!.queryResults.rows.filter(
       el => !el.values[ownerId],

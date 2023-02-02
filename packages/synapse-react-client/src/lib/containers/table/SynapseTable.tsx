@@ -15,6 +15,7 @@ import { SynapseContextType } from '../../utils/SynapseContext'
 import {
   ColumnModel,
   ColumnType,
+  ColumnTypeEnum,
   EntityHeader,
   FacetColumnRequest,
   FacetColumnResult,
@@ -222,11 +223,11 @@ export default class SynapseTable extends React.Component<
     const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
     const entityIdColumnIndicies = getColumnIndiciesWithType(
       data,
-      ColumnType.ENTITYID,
+      ColumnTypeEnum.ENTITYID,
     )
     const userIdColumnIndicies = getColumnIndiciesWithType(
       data,
-      ColumnType.USERID,
+      ColumnTypeEnum.USERID,
     )
 
     const distinctEntityIds = getUniqueEntities(
@@ -552,7 +553,7 @@ export default class SynapseTable extends React.Component<
       const rowSynapseId = `syn${row.rowId}`
 
       const rowContent = row.values.map(
-        (columnValue: string, colIndex: number) => {
+        (columnValue: string | null, colIndex: number) => {
           const columnName = headers[colIndex].name
           const isColumnActive = columnsToShowInTable.includes(columnName)
           const columnLinkConfig = columnLinks.find(el => {
@@ -669,15 +670,15 @@ export default class SynapseTable extends React.Component<
 
   public isSortableColumn(column: ColumnType) {
     switch (column) {
-      case ColumnType.USERID:
-      case ColumnType.ENTITYID:
-      case ColumnType.FILEHANDLEID:
-      case ColumnType.STRING_LIST:
-      case ColumnType.INTEGER_LIST:
-      case ColumnType.BOOLEAN_LIST:
-      case ColumnType.DATE_LIST:
-      case ColumnType.USERID_LIST:
-      case ColumnType.ENTITYID_LIST:
+      case ColumnTypeEnum.USERID:
+      case ColumnTypeEnum.ENTITYID:
+      case ColumnTypeEnum.FILEHANDLEID:
+      case ColumnTypeEnum.STRING_LIST:
+      case ColumnTypeEnum.INTEGER_LIST:
+      case ColumnTypeEnum.BOOLEAN_LIST:
+      case ColumnTypeEnum.DATE_LIST:
+      case ColumnTypeEnum.USERID_LIST:
+      case ColumnTypeEnum.ENTITYID_LIST:
         return false
       default:
         return true
@@ -738,7 +739,7 @@ export default class SynapseTable extends React.Component<
           const isEntityIDColumn =
             columnModel &&
             columnModel.name == 'id' &&
-            columnModel.columnType == ColumnType.ENTITYID
+            columnModel.columnType == ColumnTypeEnum.ENTITYID
           return (
             <th key={column.name}>
               <div className="SRC-split">

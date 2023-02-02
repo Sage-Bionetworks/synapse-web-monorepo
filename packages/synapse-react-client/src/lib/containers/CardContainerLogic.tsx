@@ -8,7 +8,7 @@ import {
 import { QueryBundleRequest, SortDirection } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
 import { ErrorBanner } from './error/ErrorBanner'
-import { GenericCardSchema, IconOptions } from './GenericCard'
+import { GenericCardSchema } from './GenericCard'
 import { IconSvgProps } from './IconSvg'
 import {
   QueryVisualizationWrapper,
@@ -18,6 +18,7 @@ import { QueryContextConsumer } from './QueryContext'
 import { InfiniteQueryWrapper } from './InfiniteQueryWrapper'
 import QuerySortSelector from './QuerySortSelector'
 import { NoContentPlaceholderType } from './table/NoContentPlaceholderType'
+import { IconOptions } from './row_renderers/utils/Icon'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.

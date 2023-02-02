@@ -1,5 +1,5 @@
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/ColumnType.html
-export enum ColumnType {
+export enum ColumnTypeEnum {
   STRING = 'STRING',
   DOUBLE = 'DOUBLE',
   BOOLEAN = 'BOOLEAN',
@@ -19,3 +19,6 @@ export enum ColumnType {
   ENTITYID_LIST = 'ENTITYID_LIST',
   EVALUATIONID = 'EVALUATIONID',
 }
+
+// Allow an instance of the enum or any of the values in the num
+export type ColumnType = ColumnTypeEnum | `${ColumnTypeEnum}`

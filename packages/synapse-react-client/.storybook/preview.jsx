@@ -1,10 +1,10 @@
 import React from 'react'
-import '../src/demo/style/DemoStyle.scss'
+import '../demo/style/DemoStyle.scss'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
 import { StorybookComponentWrapper } from '../src/lib/containers/StorybookComponentWrapper'
 import { initialize, mswDecorator } from 'msw-storybook-addon'
-import { getHandlers } from '../src/mocks/msw/handlers'
+import { getHandlers } from '../mocks/msw/handlers'
 import { MOCK_REPO_ORIGIN } from '../src/lib/utils/functions/getEndpoint'
 
 globalThis.Buffer = Buffer
