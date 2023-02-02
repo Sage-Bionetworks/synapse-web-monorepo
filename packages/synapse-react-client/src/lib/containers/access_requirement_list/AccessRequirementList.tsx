@@ -46,7 +46,7 @@ export type AccessRequirementListProps = {
   numberOfFilesAffected?: number // if provided, will show this instead of the entity information
 }
 
-export type requestDataStepCallbackProps = {
+export type RequestDataStepCallbackArgs = {
   managedACTAccessRequirement?: ManagedACTAccessRequirement
   step: number
   researchProjectId?: string
@@ -249,7 +249,7 @@ export default function AccessRequirementList({
     }
   }
 
-  const requestDataStepCallback = (props: requestDataStepCallbackProps) => {
+  const requestDataStepCallback = (props: RequestDataStepCallbackArgs) => {
     const {
       managedACTAccessRequirement,
       step,

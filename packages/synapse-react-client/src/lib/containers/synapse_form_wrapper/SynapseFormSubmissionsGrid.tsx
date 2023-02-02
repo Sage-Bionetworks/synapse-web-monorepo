@@ -50,7 +50,7 @@ type SynapseFormSubmissionGridState = {
   }
   isLoading: boolean
   isShowInfoModal: boolean
-  modalContext?: { action: Function; arguments: any[] }
+  modalContext?: { action: (...args: any[]) => void; arguments: any[] }
 }
 
 export default class SynapseFormSubmissionGrid extends React.Component<
@@ -72,7 +72,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     <>
       <p>
         This submission is currently incomplete and has not been submitted. If
-        you trash this submission, you won't be able to recover the data.
+        you trash this submission, you won&apos;t be able to recover the data.
       </p>
       <p>Are you sure you want to trash this submission?</p>
     </>
@@ -234,7 +234,9 @@ export default class SynapseFormSubmissionGrid extends React.Component<
   setModalConfirmationState = (token: string, formDataId: string) => {
     this.setState({
       modalContext: {
-        action: this.deleteFile,
+        action: (...args) => {
+          this.deleteFile(args[0], args[1])
+        },
         arguments: [token, formDataId],
       },
     })
@@ -323,7 +325,9 @@ export default class SynapseFormSubmissionGrid extends React.Component<
       <div className="view-more">
         <button
           className="btn btn-link"
-          onClick={() => this.getMore(fileListType, nextPageToken)}
+          onClick={() => {
+            this.getMore(fileListType, nextPageToken)
+          }}
         >
           more ...
         </button>
@@ -340,7 +344,9 @@ export default class SynapseFormSubmissionGrid extends React.Component<
               {fileList.map((dataFileRecord, key) => {
                 if (isInProgress) {
                   return (
-                    <tr key={dataFileRecord.formDataId! + key + fileListType}>
+                    <tr
+                      key={`${dataFileRecord.formDataId}-${key}-${fileListType}`}
+                    >
                       <td>
                         <a
                           href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}`}
@@ -357,7 +363,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                           onClick={() =>
                             this.setModalConfirmationState(
                               this.props.token!,
-                              dataFileRecord.formDataId!,
+                              dataFileRecord.formDataId,
                             )
                           }
                         >
@@ -368,7 +374,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                   )
                 } else {
                   return (
-                    <tr key={dataFileRecord.formDataId! + key}>
+                    <tr key={`${dataFileRecord.formDataId}-${key}`}>
                       <td>
                         <a
                           href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}&submitted=1`}

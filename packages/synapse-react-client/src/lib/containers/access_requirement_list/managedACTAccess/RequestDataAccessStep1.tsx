@@ -10,10 +10,10 @@ import { ResearchProject } from '../../../utils/synapseTypes/ResearchProject'
 import { ManagedACTAccessRequirement } from '../../../utils/synapseTypes'
 import { AlertProps } from './RequestDataAccessStep2'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import { requestDataStepCallbackProps } from '../AccessRequirementList'
+import { RequestDataStepCallbackArgs } from '../AccessRequirementList'
 
 export type RequestDataAccessStep1Props = {
-  requestDataStepCallback?: (props: requestDataStepCallbackProps) => void
+  requestDataStepCallback?: (props: RequestDataStepCallbackArgs) => void
   managedACTAccessRequirement: ManagedACTAccessRequirement
   onHide: () => void
 }

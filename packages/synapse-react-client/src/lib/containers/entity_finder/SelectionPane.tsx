@@ -83,9 +83,10 @@ const EntityPathDisplay: React.FunctionComponent<{
         // Show the full path from project to entity
         setDisplayedPath(fullPath)
       } else {
+        const projectName: string = path[0]!.name
         // Truncate the path, showing only project, parent, and self
         setDisplayedPath(
-          path[0].name + // Project
+          projectName + // Project
             '/…/' +
             path
               .slice(path.length - 1) // drop everything except parent and self

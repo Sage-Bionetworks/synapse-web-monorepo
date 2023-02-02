@@ -51,7 +51,7 @@ export function getFacets(
       // PORTALS-1993: only plot if the facet has count data
       return (
         isFacetToPlot &&
-        (item as FacetColumnResultValues).facetValues.length > 0 &&
+        item.facetValues.length > 0 &&
         !isSingleNotSetValue(item)
       )
     }) ?? []

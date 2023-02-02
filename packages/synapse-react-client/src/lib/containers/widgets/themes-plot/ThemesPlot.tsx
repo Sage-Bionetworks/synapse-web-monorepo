@@ -186,7 +186,7 @@ const renderTopBarLegend = (
 )
 
 const fadeColors = (colors: { [key: string]: string }, opacity: string) => {
-  for (let key in colors) {
+  for (const key in colors) {
     colors[key] = colors[key]
       .replace(',1)', `, ${opacity})`)
       .replace(',1.0)', `, ${opacity})`)
@@ -351,7 +351,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                       }}
                     >
                       <DotPlot
-                        id={i + ''}
+                        id={`${i}`}
                         onClick={(e: any) =>
                           onPointClick(getClickTargetData(e, false))
                         }

@@ -6,7 +6,7 @@ export type FunderProps = {
   schema?: any
 }
 
-export default class Funder extends React.Component<FunderProps, {}> {
+export default class Funder extends React.Component<FunderProps, never> {
   constructor(props: FunderProps) {
     super(props)
     this.handleLinkClick = this.handleLinkClick.bind(this)

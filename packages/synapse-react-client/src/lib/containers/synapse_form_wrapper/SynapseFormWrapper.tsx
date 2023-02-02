@@ -402,8 +402,12 @@ class SynapseFormWrapper extends React.Component<
                 formTitle={this.props.formTitle}
                 formClass={this.props.formClass}
                 callbackStatus={this.state.status}
-                onSave={(data: any) => this.saveToFile(data)}
-                onSubmit={(data: any) => this.submitForm(data)}
+                onSave={(data: any) => {
+                  this.saveToFile(data)
+                }}
+                onSubmit={(data: any) => {
+                  this.submitForm(data)
+                }}
                 isSubmitted={
                   this.props.searchParams && !!this.props.searchParams.submitted
                 }

@@ -54,7 +54,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
           })
         } else {
           throw new Error(
-            'Not an external file handle: ' + externalFileHandle?.id,
+            `Not an external file handle: ${externalFileHandle?.id}`,
           )
         }
       } catch (e) {

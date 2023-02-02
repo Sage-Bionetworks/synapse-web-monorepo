@@ -18,7 +18,7 @@ export type DotPlotProps = {
   xMax?: number
   plotStyle?: PlotStyle
   markerSymbols?: Dictionary
-  onClick?: Function
+  onClick?: (e: Readonly<Plotly.PlotMouseEvent>) => void
 }
 
 type LayoutOptions = {
@@ -100,7 +100,7 @@ function getPlotDataPoints(
   markerSymbols?: Dictionary,
 ): any[] {
   const isFakeData = ySorted === undefined
-  var groups = _.uniq(graphItems.map(item => item.group))
+  const groups = _.uniq(graphItems.map(item => item.group))
   const data: any = []
   const defaultSymbols = [
     'y-down',
@@ -118,7 +118,7 @@ function getPlotDataPoints(
       x: isFakeData
         ? [-10] // fake datavalue outside of the bounds
         : createArrayOfGroupValues(
-            ySorted!,
+            ySorted,
             graphItems.filter(row => row.group === group),
           ),
       y: ySorted,
@@ -174,7 +174,7 @@ const DotPlot: FunctionComponent<DotPlotProps> = ({
       style={style}
       data={getPlotDataPoints(plotData, plotStyle, pointsTypes, markerSymbols)}
       config={optionsConfig}
-      onClick={(e: any) => (onClick ? onClick(e) : _.noop)}
+      onClick={e => (onClick ? onClick(e) : _.noop)}
     />
   )
 }

@@ -1,3 +1,6 @@
-import { AccessRequirement } from './AccessRequirement'
+import { ACTAccessRequirement } from './ACTAccessRequirement'
+import { ManagedACTAccessRequirement } from './ManagedACTAccessRequirement'
 
-export interface ACTAccessRequirementInterface extends AccessRequirement {}
+export type ACTAccessRequirementInterface =
+  | ACTAccessRequirement
+  | ManagedACTAccessRequirement

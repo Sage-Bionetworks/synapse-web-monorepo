@@ -52,7 +52,9 @@ const FileUpload: React.FC<FileUploadProps> = props => {
       <input
         type={'file'}
         ref={hiddenFileInput}
-        onChange={changeHandler}
+        onChange={e => {
+          changeHandler(e)
+        }}
         style={{ display: 'none' }}
       />
       <Button id={id} variant={variant} onClick={clickHandler}>

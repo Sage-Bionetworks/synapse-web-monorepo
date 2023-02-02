@@ -22,6 +22,7 @@ import {
 import { Tooltip } from '@mui/material'
 import {
   CardLink,
+  ColumnIconConfigs,
   ColumnSpecifiedLink,
   CommonCardProps,
   DescriptionConfig,
@@ -76,7 +77,7 @@ export type GenericCardProps = {
   data: string[]
   rowId?: number
   tableId: string | undefined
-  columnIconOptions?: {}
+  columnIconOptions?: ColumnIconConfigs
   queryContext: QueryContextType
   queryVisualizationContext: QueryVisualizationContextType
 } & CommonCardProps
@@ -577,7 +578,7 @@ export default class GenericCard extends React.Component<
 
   getCutoff = (summary: string) => {
     let previewText = ''
-    const summarySplit = summary!.split(' ')
+    const summarySplit = summary.split(' ')
     // find num words to join such that its >= char_count_cutoff
     let i = 0
     while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {

@@ -4,7 +4,7 @@ import { Step, StepStateEnum } from './types'
 
 export type StepsSideNavProps = {
   stepList: Step[]
-  onStepChange: Function
+  onStepChange: (step: Step) => void
   isWizardMode?: boolean
 }
 
@@ -59,7 +59,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
     const renderStepName = (
       step: Step,
       isWizard: boolean,
-      callback: Function,
+      callback: (step: Step) => void,
     ): JSX.Element => {
       if (!step.inProgress && (!isWizard || !!step.final)) {
         return (
@@ -87,7 +87,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
       <ul>
         {nonChildSteps.map((step: Step, i: number) => {
           return (
-            <li className="item-wrap" key={i + step.id}>
+            <li className="item-wrap" key={`${i}-${step.id}`}>
               {getListItem(step, !!props.isWizardMode)}
               {step.children && step.children.length > 0 && (
                 <div className="subMenu">
@@ -100,7 +100,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
                         return typeof childStep === 'undefined' ? (
                           <></>
                         ) : (
-                          <li className="item-wrap" key={j + stepChildId}>
+                          <li className="item-wrap" key={`${j}-${stepChildId}`}>
                             {getListItem(childStep, !!props.isWizardMode, true)}
                           </li>
                         )

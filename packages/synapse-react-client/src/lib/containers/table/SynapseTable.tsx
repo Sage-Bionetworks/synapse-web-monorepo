@@ -46,7 +46,7 @@ import {
 } from '../widgets/query-filter/FacetFilterControls'
 import { ICON_STATE } from './SynapseTableConstants'
 import {
-  getColumnIndiciesWithType,
+  getColumnIndicesWithType,
   getUniqueEntities,
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
@@ -221,11 +221,11 @@ export default class SynapseTable extends React.Component<
     }
     const mapEntityIdToHeader = cloneDeep(this.state.mapEntityIdToHeader)
     const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
-    const entityIdColumnIndicies = getColumnIndiciesWithType(
+    const entityIdColumnIndicies = getColumnIndicesWithType(
       data,
       ColumnTypeEnum.ENTITYID,
     )
-    const userIdColumnIndicies = getColumnIndiciesWithType(
+    const userIdColumnIndicies = getColumnIndicesWithType(
       data,
       ColumnTypeEnum.USERID,
     )
@@ -337,7 +337,7 @@ export default class SynapseTable extends React.Component<
     const { facets = [] } = data
     const { isExpanded, isExportTableDownloadOpen } = this.state
     const queryRequest = this.props.queryContext.getLastQueryRequest()
-    let className = ''
+    const className = ''
     const hasResults = (data.queryResult?.queryResults.rows.length ?? 0) > 0
     // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
     if (!hasResults && queryRequest.query.offset === 0) {

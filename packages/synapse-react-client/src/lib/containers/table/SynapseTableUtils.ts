@@ -1,6 +1,12 @@
-import { ColumnType, QueryResultBundle } from '../../utils/synapseTypes'
+import {
+  ColumnType,
+  EntityHeader,
+  QueryResultBundle,
+  UserGroupHeader,
+  UserProfile,
+} from '../../utils/synapseTypes'
 
-export const getColumnIndiciesWithType = (
+export const getColumnIndicesWithType = (
   data: QueryResultBundle | undefined,
   ...columnTypes: ColumnType[]
 ) => {
@@ -15,15 +21,19 @@ export const getColumnIndiciesWithType = (
 
 export const getUniqueEntities = (
   data: QueryResultBundle,
-  mapIdToHeader: {},
-  indicies: number[],
+  mapIdToHeader: Record<
+    string,
+    EntityHeader | Partial<UserGroupHeader & UserProfile>
+  >,
+  indices: number[],
 ) => {
   const distinctEntities = new Set<string>()
   data.queryResult?.queryResults.rows.forEach(row => {
     row.values.forEach((el: string | null, colIndex: number) => {
       // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
       if (
-        indicies.includes(colIndex) &&
+        el != null &&
+        indices.includes(colIndex) &&
         !Object.prototype.hasOwnProperty.call(mapIdToHeader, el) &&
         el
       ) {

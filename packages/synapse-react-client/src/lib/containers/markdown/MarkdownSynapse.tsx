@@ -496,7 +496,7 @@ export default class MarkdownSynapse extends React.Component<
     // @ts-ignore
     this.markupRef.current &&
       // @ts-ignore
-      this.markupRef.current!.addEventListener('click', this.handleLinkClicks)
+      this.markupRef.current.addEventListener('click', this.handleLinkClicks)
     // unpack and set default value if not specified
     // get wiki attachments
     await this.getWikiPageMarkdown()

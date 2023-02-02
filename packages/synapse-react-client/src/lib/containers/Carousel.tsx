@@ -81,7 +81,7 @@ export const Carousel: React.FunctionComponent<CarouselProps> = ({
           // @ts-ignore - the BrainhubCarousel component doesn't properly specify `children`
           <BrainhubCarousel
             {...(showDesktop ? DesktopProps : MobileProps)}
-            key={size.width!}
+            key={size.width}
             value={currentIndex}
             onChange={value => setCurrentIndex(value)}
           >

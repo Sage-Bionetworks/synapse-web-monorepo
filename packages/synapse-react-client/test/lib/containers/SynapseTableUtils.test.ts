@@ -1,5 +1,5 @@
 import {
-  getColumnIndiciesWithType,
+  getColumnIndicesWithType,
   getUniqueEntities,
 } from '../../../src/lib/containers/table/SynapseTableUtils'
 import {
@@ -165,43 +165,43 @@ describe('Synapse Table Utilities tests', () => {
       },
     }
     it('gets column indicies correctly', () => {
-      const entities = getColumnIndiciesWithType(
+      const entities = getColumnIndicesWithType(
         mockData,
         ColumnTypeEnum.ENTITYID,
       )
       expect(entities).toEqual([ENTITYID_INDEX])
-      const userIds = getColumnIndiciesWithType(mockData, ColumnTypeEnum.USERID)
+      const userIds = getColumnIndicesWithType(mockData, ColumnTypeEnum.USERID)
       expect(userIds).toEqual([USERID_INDEX])
-      const dates = getColumnIndiciesWithType(mockData, ColumnTypeEnum.DATE)
+      const dates = getColumnIndicesWithType(mockData, ColumnTypeEnum.DATE)
       expect(dates).toEqual([DATE_INDEX])
-      const stringLists = getColumnIndiciesWithType(
+      const stringLists = getColumnIndicesWithType(
         mockData,
         ColumnTypeEnum.STRING_LIST,
       )
       expect(stringLists).toEqual([STRING_LIST_INDEX])
-      const dateLists = getColumnIndiciesWithType(
+      const dateLists = getColumnIndicesWithType(
         mockData,
         ColumnTypeEnum.DATE_LIST,
       )
       expect(dateLists).toEqual([DATE_LIST_INDEX])
-      const booleanLists = getColumnIndiciesWithType(
+      const booleanLists = getColumnIndicesWithType(
         mockData,
         ColumnTypeEnum.BOOLEAN_LIST,
       )
       expect(booleanLists).toEqual([BOOLEAN_LIST_INDEX])
-      const integerLists = getColumnIndiciesWithType(
+      const integerLists = getColumnIndicesWithType(
         mockData,
         ColumnTypeEnum.INTEGER_LIST,
       )
       expect(integerLists).toEqual([INTEGER_LIST_INDEX])
-      const dateOrIntegerLists = getColumnIndiciesWithType(
+      const dateOrIntegerLists = getColumnIndicesWithType(
         mockData,
         ColumnTypeEnum.DATE_LIST,
         ColumnTypeEnum.INTEGER_LIST,
       )
       expect(dateOrIntegerLists).toEqual([DATE_LIST_INDEX, INTEGER_LIST_INDEX])
 
-      const fileHandleId = getColumnIndiciesWithType(
+      const fileHandleId = getColumnIndicesWithType(
         mockData,
         ColumnTypeEnum.FILEHANDLEID,
       )

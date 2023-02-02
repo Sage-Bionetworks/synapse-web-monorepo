@@ -7,11 +7,10 @@ import { LockedColumn } from './QueryContext'
 import NoData from '../assets/icons/NoData'
 import { Button } from 'react-bootstrap'
 
-let rssParser = new Parser()
+const rssParser = new Parser()
 type RssState = {
   rssFeed: any
   isLoadingError: boolean
-  itemId2MoreItem: {}
   isShowingSubscribeUI: boolean
   allItemsUrl?: string
 }
@@ -37,7 +36,6 @@ export default class RssFeedCards extends React.Component<
     this.state = {
       rssFeed: {},
       isLoadingError: false,
-      itemId2MoreItem: {},
       isShowingSubscribeUI: false,
     }
   }
@@ -122,7 +120,7 @@ export default class RssFeedCards extends React.Component<
             {this.state.rssFeed.items &&
               this.state.rssFeed.items.map((item: any, index: any) => {
                 // The other is to hide the large number of items in a particular feed (usually a max of 10 are returned).  See state.isShowingMoreItems
-                let isItemVisible: boolean = index < this.props.itemsToShow
+                const isItemVisible: boolean = index < this.props.itemsToShow
 
                 return (
                   <div

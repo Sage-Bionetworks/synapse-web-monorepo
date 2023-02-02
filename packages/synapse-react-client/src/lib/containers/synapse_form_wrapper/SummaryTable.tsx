@@ -17,7 +17,7 @@ import {
 export interface SummaryTableProps {
   isWizard?: boolean
   formData: any
-  callbackFn?: Function
+  callbackFn?: (screenId: string) => void
   steps: Step[]
   schema: FormSchema
   uiSchema: UiSchema
@@ -43,7 +43,7 @@ function findLabel(key: string, schema: any, uiSchema: UiSchema): string {
 
   if (index) {
     index = index.substring(1, index.length - 2)
-    index = !isNaN(parseInt(index)) ? parseInt(index) + 1 + '' : ''
+    index = !isNaN(parseInt(index)) ? `${parseInt(index) + 1}` : ''
   }
 
   const label =
@@ -89,7 +89,9 @@ export function getFlatData(
             )
           } else {
             let prevVal = flattenedObject[`${prefix}${key}`]
-            prevVal = prevVal ? prevVal + ', ' : ''
+            prevVal = prevVal ? `${prevVal}, ` : ''
+            // TODO: Fix this eslint error
+            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
             flattenedObject[`${prefix}${key}`] = prevVal + object[key][i]
           }
         }
@@ -163,7 +165,7 @@ export default function SummaryTable(props: SummaryTableProps): JSX.Element {
           <tbody>
             {flatFormData.map((line: SummaryFormat, i: number) => {
               return (
-                <tr key={i + line.screen.id + line.label}>
+                <tr key={`${i}-${line.screen.id}-${line.label}`}>
                   <td>
                     {prevScreenId !== line.screen.id &&
                       (prevScreenId = line.screen.id) && (
@@ -186,7 +188,8 @@ export default function SummaryTable(props: SummaryTableProps): JSX.Element {
     <>
       <p className="step-exclude-directions">
         Below is all of the data you have entered. Before submitting, click
-        'Validate' to ensure that all of the required data has been entered.
+        &quot;Validate&quot; to ensure that all of the required data has been
+        entered.
       </p>
       <button className="nav-link pull-right" onClick={() => window.print()}>
         Print this data

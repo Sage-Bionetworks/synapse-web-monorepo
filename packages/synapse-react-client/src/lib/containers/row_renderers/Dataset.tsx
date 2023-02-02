@@ -15,7 +15,7 @@ export type DatasetProps = {
   columnModels?: ColumnModel[]
 }
 
-class Dataset extends React.Component<DatasetProps, {}> {
+class Dataset extends React.Component<DatasetProps, never> {
   constructor(props: DatasetProps) {
     super(props)
     this.handleLinkClick = this.handleLinkClick.bind(this)

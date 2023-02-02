@@ -114,7 +114,7 @@ const DirectDownload: React.FunctionComponent<
   const getTableEntityFileHandle = (includePreSignedURLs: boolean = false) => {
     const fileHandleAssociationList: FileHandleAssociation[] = [
       {
-        associateObjectId: associatedObjectId!,
+        associateObjectId: associatedObjectId,
         associateObjectType: associatedObjectType!,
         fileHandleId: fileHandleId!,
       },
@@ -132,7 +132,7 @@ const DirectDownload: React.FunctionComponent<
     return getEntity(accessToken, associatedObjectId, entityVersionNumber)
       .then(async entity => {
         // From file view
-        if (entity.hasOwnProperty('dataFileHandleId')) {
+        if (Object.hasOwn(entity, 'dataFileHandleId')) {
           // looks like a FileEntity, get the FileHandle
           setFileEntity(entity as FileEntity)
           return getFileResult(
@@ -195,7 +195,12 @@ const DirectDownload: React.FunctionComponent<
     }
     if (hasFileAccess) {
       return (
-        <button className={'btn-download-icon'} onClick={getDownloadLink}>
+        <button
+          className={'btn-download-icon'}
+          onClick={() => {
+            getDownloadLink()
+          }}
+        >
           <IconSvg icon="download" />
           {displayFileName && fileName ? fileName : ''}
         </button>

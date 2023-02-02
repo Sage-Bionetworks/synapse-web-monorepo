@@ -34,7 +34,7 @@ export default class ShowMore extends React.Component<
       return { previewText }
     }
     let hiddenText = ''
-    const summarySplit = summary!.split(' ')
+    const summarySplit = summary.split(' ')
     // find num words to join such that its >= char_count_cutoff
     let i = 0
     while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {
@@ -50,7 +50,7 @@ export default class ShowMore extends React.Component<
   public render() {
     const { summary } = this.props
     const meetsCharRequirements = summary && summary.length >= CHAR_COUNT_CUTOFF
-    let { previewText, hiddenText } = this.getCutoff(summary)
+    const { previewText, hiddenText } = this.getCutoff(summary)
     const showMoreButton = meetsCharRequirements && (
       <a
         style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px' }}

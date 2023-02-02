@@ -205,7 +205,9 @@ class Login extends React.Component<Props, State> {
         </div>
         <Form
           className={showUsernameOrPassword ? '' : 'hide-component'}
-          onSubmit={this.handleLogin}
+          onSubmit={e => {
+            this.handleLogin(e)
+          }}
         >
           {this.props.renderBackButton && (
             <IconButton
@@ -241,7 +243,9 @@ class Login extends React.Component<Props, State> {
           />
           <Link href={resetPasswordUrl}>Forgot password?</Link>
           <Button
-            onClick={this.handleLogin}
+            onClick={e => {
+              this.handleLogin(e)
+            }}
             type="submit"
             color="primary"
             variant="contained"

@@ -136,7 +136,7 @@ const ForumSearch = (props: ForumSearchProps) => {
         <>
           {props.projectId && (
             <Typography variant="body1Italic" className="NoResultsText">
-              No results for '{searchInput}' in {entity?.name}
+              No results for &quot;{searchInput}&quot; in {entity?.name}
             </Typography>
           )}
           <NoSearchResultComponent />
@@ -146,7 +146,7 @@ const ForumSearch = (props: ForumSearchProps) => {
         <>
           {props.projectId && !noSearchResult && (
             <Typography variant="body1Italic" className="ResultsText">
-              Results for '{searchInput}' in {entity?.name}
+              Results for &quot;{searchInput}&quot; in {entity?.name}
             </Typography>
           )}
           {matchList.map(match => (
@@ -161,7 +161,12 @@ const ForumSearch = (props: ForumSearchProps) => {
       )}
       {searchResult?.nextPageToken && (
         <div className="text-center">
-          <Button variant="primary" onClick={onLoadMore}>
+          <Button
+            variant="primary"
+            onClick={() => {
+              onLoadMore()
+            }}
+          >
             Load more
           </Button>
         </div>

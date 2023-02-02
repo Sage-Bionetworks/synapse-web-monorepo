@@ -97,7 +97,9 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
               <span className="zipUI">.zip</span>
               <Button
                 variant={fileName ? 'primary' : 'dark'}
-                onClick={createPackageHandler}
+                onClick={e => {
+                  createPackageHandler(e)
+                }}
                 type="button"
                 style={{ marginLeft: 20 }}
                 disabled={fileName ? false : true}

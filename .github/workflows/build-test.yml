@@ -57,4 +57,5 @@
       # We may want to invert the model and give each portal its own project in the workspace, so we can build the portals in parallel.
      - run: pnpm nx run portals:copy-test-configuration
      - run: pnpm build
-     - run: CI=true pnpm test
+     - run: pnpm lint
+     - run: pnpm test

@@ -327,7 +327,9 @@ export const DownloadConfirmation: React.FunctionComponent<
             <button
               type="button"
               className="btn btn-primary"
-              onClick={triggerAddToDownload}
+              onClick={() => {
+                triggerAddToDownload()
+              }}
             >
               Add
             </button>

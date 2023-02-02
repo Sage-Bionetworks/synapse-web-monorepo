@@ -34,8 +34,8 @@ export type SynapseFormProps = {
     steps: any[]
   }
   formData: IFormData
-  onSubmit: Function
-  onSave: Function
+  onSubmit: (formData: IFormData) => void
+  onSave: (formData: IFormData) => void
   formTitle: string
   formClass?: string
   isWizardMode?: boolean
@@ -52,7 +52,7 @@ type SynapseFormState = {
   hasValidated?: boolean //validation has been called and it passed
   doShowErrors: boolean //if we should show error summary at the top of the page
   doShowHelp: boolean
-  modalContext?: { action: Function; arguments: any[] }
+  modalContext?: { action: (...args: any[]) => void; arguments: any[] }
   hasUnsavedChanges: boolean
   isSubmitted?: boolean
   isLoadingSaved: boolean
@@ -83,7 +83,7 @@ export default class SynapseForm extends React.Component<
   submitButtonRef: React.RefObject<HTMLButtonElement>
   formDivRef: any // ref to the div containing form (for scrolling on validation failure)
   navAction: NavActionEnum = NavActionEnum.NONE
-  uiSchema: {}
+  uiSchema: UiSchema
   nextStep: Step | undefined
   extraErrors: AjvError[] = []
 
@@ -320,7 +320,7 @@ export default class SynapseForm extends React.Component<
       })
     }
 
-    this.saveStepState(previousStack, steps, nextStep!, formData)
+    this.saveStepState(previousStack, steps, nextStep, formData)
   }
 
   //save the state of the current screen
@@ -591,7 +591,7 @@ export default class SynapseForm extends React.Component<
     return (
       <div
         className="static-screen"
-        dangerouslySetInnerHTML={{ __html: copy! }}
+        dangerouslySetInnerHTML={{ __html: copy }}
       />
     )
   }
@@ -619,7 +619,7 @@ export default class SynapseForm extends React.Component<
       return (
         <div className="step-exclude-directions">
           This form is currently included in the submission. Enter some data if
-          you have it, or click "Skip".
+          you have it, or click &quot;Skip&quot;.
           <button
             className="btn btn-link"
             onClick={() =>
@@ -637,7 +637,7 @@ export default class SynapseForm extends React.Component<
   renderHelpToggle = (
     currentStep: Step,
     showHelp: boolean,
-    callbackFn: Function,
+    callbackFn: () => void,
   ): JSX.Element => {
     if (currentStep.static || currentStep.final) {
       return <></>
@@ -852,7 +852,9 @@ export default class SynapseForm extends React.Component<
                   <button
                     type="button"
                     className="btn btn-action save pull-right"
-                    onClick={() => this.triggerAction(NavActionEnum.VALIDATE)}
+                    onClick={() => {
+                      this.triggerAction(NavActionEnum.VALIDATE)
+                    }}
                   >
                     VALIDATE
                   </button>
@@ -870,7 +872,9 @@ export default class SynapseForm extends React.Component<
                     type="button"
                     className="btn btn-action save pull-right"
                     disabled={this.state.isSubmitted}
-                    onClick={() => this.triggerAction(NavActionEnum.SUBMIT)}
+                    onClick={() => {
+                      this.triggerAction(NavActionEnum.SUBMIT)
+                    }}
                   >
                     SUBMIT
                   </button>
@@ -956,7 +960,9 @@ export default class SynapseForm extends React.Component<
                 steps={this.state.steps}
                 previousStepIds={this.state.previousStepIds}
                 isFormSubmitted={this.state.isSubmitted}
-                onNavAction={(e: NavActionEnum) => this.triggerAction(e)}
+                onNavAction={(e: NavActionEnum) => {
+                  this.triggerAction(e)
+                }}
               ></NavButtons>
             </div>
           </div>

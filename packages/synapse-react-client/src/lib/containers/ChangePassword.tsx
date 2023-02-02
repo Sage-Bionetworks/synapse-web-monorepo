@@ -57,7 +57,11 @@ const ChangePassword: React.FunctionComponent = () => {
 
   return (
     <div className="changePassword">
-      <form onSubmit={handleChangePassword}>
+      <form
+        onSubmit={e => {
+          handleChangePassword(e)
+        }}
+      >
         <FormGroup controlId="oldPassword">
           <FormLabel>Current Password</FormLabel>
           <FormControl
@@ -82,7 +86,12 @@ const ChangePassword: React.FunctionComponent = () => {
             value={confirmPassword}
           />
         </FormGroup>
-        <Button type="submit" onSubmit={handleChangePassword}>
+        <Button
+          type="submit"
+          onSubmit={e => {
+            handleChangePassword(e)
+          }}
+        >
           Change Password
         </Button>
       </form>

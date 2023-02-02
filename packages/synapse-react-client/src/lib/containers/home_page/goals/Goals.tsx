@@ -63,7 +63,7 @@ export const Goals: React.FC<GoalsProps> = (props: GoalsProps) => {
           ExpectedColumns.ASSET,
           queryResultBundle,
         )
-        let assets = (queryResultBundle?.queryResult!.queryResults.rows.map(
+        const assets = (queryResultBundle?.queryResult!.queryResults.rows.map(
           el => el.values[assetColumnIndex],
         ) ?? []) as string[]
         if (assets.some(asset => asset === null)) {
@@ -78,7 +78,7 @@ export const Goals: React.FC<GoalsProps> = (props: GoalsProps) => {
         const fileHandleAssociationList: FileHandleAssociation[] = assets.map(
           fileId => {
             return {
-              associateObjectId: entityId!,
+              associateObjectId: entityId,
               associateObjectType: FileHandleAssociateType.TableEntity,
               fileHandleId: fileId,
             }

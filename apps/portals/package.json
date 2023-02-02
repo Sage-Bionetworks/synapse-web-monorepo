@@ -1,6 +1,6 @@
 {
   "name": "portals",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -37,6 +37,7 @@
     ]
   },
   "scripts": {
+    "lint": "eslint src",
     "copy-assets": "cp src/config/style/favicon* public/; cp src/config/style/logo.svg public/; cp src/config/style/socialmedia.png public/",
     "save-build-date": "date > public/build-date.txt",
     "start": "craco start",

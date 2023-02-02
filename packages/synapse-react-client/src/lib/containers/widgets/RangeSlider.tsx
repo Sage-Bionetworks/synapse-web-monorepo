@@ -179,7 +179,7 @@ export const RangeSlider = ({
               <div className="slider-handles">
                 {handles.map(handle => (
                   <Handle
-                    key={handle.id + handle.percent}
+                    key={`${handle.id}-${handle.percent}`}
                     handle={handle}
                     domain={stringArrToNumArr(props.domain)}
                     getHandleProps={getHandleProps}

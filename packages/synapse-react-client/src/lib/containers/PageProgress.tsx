@@ -5,9 +5,9 @@ export type PageProgressProps = {
   barColor: string
   barPercent: number
   backBtnLabel: string
-  backBtnCallback?: Function
+  backBtnCallback?: () => void
   forwardBtnLabel: string
-  forwardBtnCallback?: Function
+  forwardBtnCallback?: () => void
   forwardBtnActive: boolean
 }
 
@@ -50,7 +50,7 @@ const PageProgress: React.FunctionComponent<PageProgressProps> = props => {
       <div
         className="page-progress-percent"
         style={{
-          width: progressPercent + '%',
+          width: `${progressPercent}%`,
           backgroundColor: barColor,
         }}
       ></div>

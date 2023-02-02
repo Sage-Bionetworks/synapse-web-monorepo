@@ -34,12 +34,12 @@ import IconSvg from '../../IconSvg'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import { RenewalInterface } from '../../../utils/synapseTypes/AccessRequirement/RenewalInterface'
 import { RadioGroup } from '../../widgets/RadioGroup'
-import { requestDataStepCallbackProps } from '../AccessRequirementList'
+import { RequestDataStepCallbackArgs } from '../AccessRequirementList'
 
 export type RequestDataAccessStep2Props = {
   managedACTAccessRequirement: ManagedACTAccessRequirement
   entityId: string
-  requestDataStepCallback: (props: requestDataStepCallbackProps) => void
+  requestDataStepCallback: (props: RequestDataStepCallbackArgs) => void
   user: UserProfile
   researchProjectId: string
   onHide: () => void
@@ -200,7 +200,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         associateObjectId: String(managedACTAccessRequirement.id),
         associateObjectType:
           FileHandleAssociateType.AccessRequirementAttachment,
-        fileHandleId: managedACTAccessRequirement!.ducTemplateFileHandleId,
+        fileHandleId: managedACTAccessRequirement.ducTemplateFileHandleId,
       }
       batchFileRequest.requestedFiles.push(requestObj)
       if (
@@ -221,16 +221,16 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       dataAccessRequestData.ducFileHandleId
     ) {
       const requestObj = {
-        associateObjectId: dataAccessRequestData!.id,
+        associateObjectId: dataAccessRequestData.id,
         associateObjectType:
           FileHandleAssociateType.DataAccessRequestAttachment,
-        fileHandleId: dataAccessRequestData!.ducFileHandleId,
+        fileHandleId: dataAccessRequestData.ducFileHandleId,
       }
       batchFileRequest.requestedFiles.push(requestObj)
       if (!requestedFileTypes[dataAccessRequestData.ducFileHandleId]) {
         requestedFileTypes[dataAccessRequestData.ducFileHandleId] = []
       }
-      requestedFileTypes[dataAccessRequestData!.ducFileHandleId].push('DUC')
+      requestedFileTypes[dataAccessRequestData.ducFileHandleId].push('DUC')
       setDUC(requestObj)
     }
 
@@ -239,16 +239,16 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       dataAccessRequestData.irbFileHandleId
     ) {
       const requestObj = {
-        associateObjectId: dataAccessRequestData!.id,
+        associateObjectId: dataAccessRequestData.id,
         associateObjectType:
           FileHandleAssociateType.DataAccessRequestAttachment,
-        fileHandleId: dataAccessRequestData!.irbFileHandleId,
+        fileHandleId: dataAccessRequestData.irbFileHandleId,
       }
       batchFileRequest.requestedFiles.push(requestObj)
       if (!requestedFileTypes[dataAccessRequestData.irbFileHandleId]) {
         requestedFileTypes[dataAccessRequestData.irbFileHandleId] = []
       }
-      requestedFileTypes[dataAccessRequestData!.irbFileHandleId].push('IRB')
+      requestedFileTypes[dataAccessRequestData.irbFileHandleId].push('IRB')
       setIRB(requestObj)
     }
 
@@ -258,7 +258,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     ) {
       dataAccessRequestData.attachments.forEach(id => {
         batchFileRequest.requestedFiles.push({
-          associateObjectId: dataAccessRequestData!.id,
+          associateObjectId: dataAccessRequestData.id,
           associateObjectType:
             FileHandleAssociateType.DataAccessRequestAttachment,
           fileHandleId: id,
@@ -311,7 +311,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                   ...prev,
                   {
                     fileName: fileName,
-                    associateObjectId: dataAccessRequestData!.id,
+                    associateObjectId: dataAccessRequestData.id,
                     associateObjectType:
                       FileHandleAssociateType.DataAccessRequestAttachment,
                     fileHandleId: file.fileHandleId,
@@ -679,30 +679,31 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                   }
                   {
                     // Renewal/Revoke data access, only display if isRenewal is true
-                    isRenewal && accessor.accessType !== AccessType.GAIN_ACCESS && (
-                      <>
-                        <RadioGroup
-                          id={`accessor-renewal-${accessor.profile.ownerId}`}
-                          value={accessor.accessType}
-                          options={[
-                            {
-                              label: 'Renew',
-                              value: AccessType.RENEW_ACCESS,
-                            },
-                            {
-                              label: 'Revoke',
-                              value: AccessType.REVOKE_ACCESS,
-                            },
-                          ]}
-                          onChange={(value: string) =>
-                            onAccessorRadioBtnChange(
-                              value as AccessType,
-                              accessor.profile.ownerId,
-                            )
-                          }
-                        ></RadioGroup>
-                      </>
-                    )
+                    isRenewal &&
+                      accessor.accessType !== AccessType.GAIN_ACCESS && (
+                        <>
+                          <RadioGroup
+                            id={`accessor-renewal-${accessor.profile.ownerId}`}
+                            value={accessor.accessType}
+                            options={[
+                              {
+                                label: 'Renew',
+                                value: AccessType.RENEW_ACCESS,
+                              },
+                              {
+                                label: 'Revoke',
+                                value: AccessType.REVOKE_ACCESS,
+                              },
+                            ]}
+                            onChange={(value: string) =>
+                              onAccessorRadioBtnChange(
+                                value as AccessType,
+                                accessor.profile.ownerId,
+                              )
+                            }
+                          ></RadioGroup>
+                        </>
+                      )
                   }
                 </div>
               )
@@ -901,7 +902,12 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               >
                 Cancel
               </Button>
-              <Button variant="primary" onClick={() => handleSubmit()}>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  handleSubmit()
+                }}
+              >
                 Submit
               </Button>
             </>

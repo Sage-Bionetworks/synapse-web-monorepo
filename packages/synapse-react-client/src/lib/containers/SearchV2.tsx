@@ -130,8 +130,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     this.setState({
       show: false,
     })
-    const { executeQueryRequest, getLastQueryRequest } =
-      this.props.queryContext!
+    const { executeQueryRequest, getLastQueryRequest } = this.props.queryContext
 
     const lastQueryRequestDeepClone = getLastQueryRequest()
 
@@ -181,7 +180,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       ).values.push(`%${searchText}%`)
     }
     lastQueryRequestDeepClone.query.additionalFilters = additionalFilters
-    executeQueryRequest!(lastQueryRequestDeepClone)
+    executeQueryRequest(lastQueryRequestDeepClone)
   }
 
   public handleChange = (event: React.FormEvent<HTMLInputElement>) => {

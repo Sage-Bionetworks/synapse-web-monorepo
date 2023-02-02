@@ -142,7 +142,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
       SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
     query,
   }
-  const QueryWrapper = !!tableConfiguration
+  const QueryWrapper = tableConfiguration
     ? PaginatedQueryWrapper
     : InfiniteQueryWrapper
 
