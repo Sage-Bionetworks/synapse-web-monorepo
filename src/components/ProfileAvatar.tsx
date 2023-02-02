@@ -1,4 +1,3 @@
-import Skeleton from '@mui/material/Skeleton'
 import Slider from '@mui/material/Slider'
 import VerifiedBorder from 'assets/VerifiedProfilePic.svg'
 import React, { useEffect, useState } from 'react'
@@ -6,30 +5,30 @@ import { Button } from '@mui/material'
 import { Modal } from 'react-bootstrap'
 import Cropper from 'react-easy-crop'
 import { Area } from 'react-easy-crop/types'
-import { SynapseConstants } from 'synapse-react-client'
+
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
   getFileHandleByIdURL,
-  getMyUserBundle,
   updateMyUserProfile,
   uploadFile,
 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import {
   FileUploadComplete,
-  UserBundle,
+  UserProfile,
 } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getCroppedImg } from './CropImage'
 
-export type ProfileAvatarProps = {}
+export type ProfileAvatarProps = {
+  userProfile?: UserProfile
+  verified?: boolean
+  onProfileUpdated: () => void
+}
 
 export const ProfileAvatar = (props: ProfileAvatarProps) => {
+  const { userProfile, verified, onProfileUpdated } = props
   const { accessToken } = useSynapseContext()
-
-  const [userBundle, setUserBundle] = useState<UserBundle>()
   const [profilePicUrl, setProfilePicUrl] = useState<string | undefined>()
-  const [verified, setVerfied] = useState<boolean>()
-  const [isLoading, setIsLoading] = useState(true)
   const [image, setImage] = useState<string | undefined>()
   const [croppedArea, setCroppedArea] = useState<Area | undefined>()
   const [crop, setCrop] = useState({ x: 0, y: 0 })
@@ -37,53 +36,29 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
   const [openCropModal, setOpenCropModal] = useState(false)
   const [imageLoading, setImageLoading] = useState(false)
 
-  const getProfile = async () => {
-    setIsLoading(true)
-    try {
-      const mask =
-        SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
-        SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE
-
-      const bundle: UserBundle = await getMyUserBundle(mask, accessToken)
-      let picUrl
-      if (bundle.userProfile?.profilePicureFileHandleId) {
-        picUrl = await getFileHandleByIdURL(
-          bundle.userProfile?.profilePicureFileHandleId as string,
-          accessToken,
-        )
-      }
-      setUserBundle(bundle)
-      setVerfied(bundle.isVerified)
-      setProfilePicUrl(picUrl)
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    } finally {
-      setIsLoading(false)
+  useEffect(() => {
+    if (userProfile?.profilePicureFileHandleId) {
+      getFileHandleByIdURL(
+        userProfile?.profilePicureFileHandleId as string,
+        accessToken,
+      ).then(picUrl => {
+        setProfilePicUrl(picUrl)
+      })
     }
-  }
+  }, [userProfile])
 
   const updateUserProfile = async (newFileHandleId: string) => {
     try {
-      if (userBundle?.userProfile) {
-        userBundle.userProfile.profilePicureFileHandleId =
-          newFileHandleId as string
-        await updateMyUserProfile(userBundle.userProfile, accessToken)
+      if (userProfile) {
+        userProfile.profilePicureFileHandleId = newFileHandleId as string
+        await updateMyUserProfile(userProfile, accessToken)
         displayToast('Profile picture has been successfully updated', 'success')
-        getProfile()
+        onProfileUpdated()
       }
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
     }
   }
-
-  useEffect(() => {
-    try {
-      getProfile()
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    }
-    getProfile()
-  }, [accessToken])
 
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -155,26 +130,20 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
   return (
     <div className="profile-avatar">
       <>
-        {isLoading ? (
-          <Skeleton variant="circular" width="130px" height="130px" />
+        {verified ? (
+          <>
+            <div className="verified-img-container">
+              <img className="verified-border" src={VerifiedBorder} />
+              <img className="verified-img" src={profilePicUrl} />
+            </div>
+            <UploadImageButton />
+          </>
         ) : (
           <>
-            {verified ? (
-              <>
-                <div className="verified-img-container">
-                  <img className="verified-border" src={VerifiedBorder} />
-                  <img className="verified-img" src={profilePicUrl} />
-                </div>
-                <UploadImageButton />
-              </>
-            ) : (
-              <>
-                <div className="non-verified-profile-pic">
-                  <img className="non-verified-img" src={profilePicUrl} />
-                </div>
-                <UploadImageButton />
-              </>
-            )}
+            <div className="non-verified-profile-pic">
+              <img className="non-verified-img" src={profilePicUrl} />
+            </div>
+            <UploadImageButton />
           </>
         )}
       </>

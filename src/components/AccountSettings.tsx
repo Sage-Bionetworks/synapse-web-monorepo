@@ -187,7 +187,13 @@ export const AccountSettings = () => {
               >
                 <h3>Profile Information</h3>
                 <p>This information is reused across all Sage products.</p>
-                <ProfileAvatar />
+                <ProfileAvatar
+                  userProfile={userProfile}
+                  verified={verified}
+                  onProfileUpdated={() => {
+                    getUserData()
+                  }}
+                />
                 <Form onChange={markFormDirty}>
                   <FormGroup className="required">
                     <FormLabel>Username</FormLabel>
@@ -261,7 +267,12 @@ export const AccountSettings = () => {
                       {SourceAppConfigs.map(config => {
                         if (config.requestAffiliation) {
                           return (
-                            <Grid item xs={2} className="sourceAppItem">
+                            <Grid
+                              item
+                              key={config.appId}
+                              xs={2}
+                              className="sourceAppItem"
+                            >
                               <a
                                 style={{ display: 'block' }}
                                 href={config.appURL}
