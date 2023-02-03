@@ -1,6 +1,6 @@
 import Slider from '@mui/material/Slider'
 import React, { useEffect, useState } from 'react'
-import { Button } from '@mui/material'
+import { IconButton, Button, SxProps } from '@mui/material'
 import { Modal } from 'react-bootstrap'
 import Cropper from 'react-easy-crop'
 import { Area } from 'react-easy-crop/types'
@@ -17,6 +17,7 @@ import {
   UserProfile,
 } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getCroppedImg } from './CropImage'
+import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 
 export type ProfileAvatarProps = {
   userProfile?: UserProfile
@@ -77,6 +78,14 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
   }
 
   const UploadImageButton = () => {
+    const uploadButtonStyle: SxProps = {
+      backgroundColor: 'grey.200',
+      position: 'absolute',
+      marginLeft: '100px',
+      marginTop: '-65px',
+      '&:hover': { backgroundColor: 'grey.300' },
+    }
+
     return (
       <>
         <input
@@ -85,13 +94,9 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
           onChange={onSelectFile}
           style={{ display: 'none' }}
         />
-        <Button
-          className="upload-btn"
-          variant="contained"
-          onClick={clickHandler}
-        >
-          Upload Image
-        </Button>
+        <IconButton sx={uploadButtonStyle} onClick={clickHandler}>
+          <IconSvg icon="edit" wrap={false} />
+        </IconButton>
       </>
     )
   }
@@ -141,6 +146,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
               height: '130px',
               width: '130px',
               display: 'block',
+              margin: '20px 0px',
             }}
           />
         )}

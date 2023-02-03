@@ -66,6 +66,7 @@ export const AccountSettings = () => {
   const [isUTCTime, setUTCTime] = useState<string>(
     getUseUtcTimeFromCookie().toString(),
   )
+  const [isUTCTimeStaged, setUTCTimeStaged] = useState<string>(isUTCTime)
   const handleChangesFn = (val: string) => {
     history.push(`/authenticated/${val}`)
   }
@@ -318,15 +319,26 @@ export const AccountSettings = () => {
                   <Select
                     labelId="timezone-select-label"
                     id="timezone-select"
-                    value={isUTCTime}
+                    value={isUTCTimeStaged}
                     onChange={event => {
-                      setUTCTime(event.target.value)
+                      setUTCTimeStaged(event.target.value)
                     }}
                   >
                     <MenuItem value="false">Local</MenuItem>
                     <MenuItem value="true">UTC</MenuItem>
                   </Select>
                 </StyledFormControl>
+                <Button
+                  disabled={isUTCTimeStaged === isUTCTime}
+                  variant="contained"
+                  sx={{
+                    ...credentialButtonSX,
+                    marginTop: '15px',
+                  }}
+                  onClick={() => setUTCTime(isUTCTimeStaged)}
+                >
+                  Update Preference
+                </Button>
               </div>
 
               <div
