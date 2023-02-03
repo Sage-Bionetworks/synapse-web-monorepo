@@ -19,7 +19,7 @@
   ],
   "parserOptions": {
     "tsconfigRootDir": ".",
-    "project": ["tsconfig.json", "./packages/**/tsconfig.json", "./apps/**/tsconfig.json"]
+    "project": ["tsconfig.eslint.json", "packages/**/tsconfig.eslint.json", "appsq/**/tsconfig.eslint.json"]
   },
   "rules": {
     "react/prop-types": [0],

@@ -9,7 +9,8 @@
     "strict": true,
     "noEmit": false,
     "isolatedModules": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "incremental": true
   },
   "include": [],
   // TODO: break each folder out into its own buildable TypeScript project and reference it, so we can get incremental builds

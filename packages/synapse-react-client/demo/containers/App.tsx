@@ -2,7 +2,6 @@ import $RefParser from '@apidevtools/json-schema-ref-parser'
 import * as React from 'react'
 import { Alert } from 'react-bootstrap'
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
-import { ReactComponent as LogoSvg } from '../../src/images/logo.svg'
 import Login from '../../src/lib/containers/Login'
 import SynapseForm from '../../src/lib/containers/synapse_form_wrapper/SynapseForm'
 import SynapseFormSubmissionsGrid from '../../src/lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
@@ -160,7 +159,6 @@ export default class App extends React.Component<{}, AppState> {
       return (
         <div>
           <div className="App-header text-center">
-            <LogoSvg className="App-logo" title="logo" />
             <h4 className="white-text">Synapse React Client Demo</h4>
           </div>
           {alert}
@@ -180,7 +178,6 @@ export default class App extends React.Component<{}, AppState> {
         <Router basename={process.env.PUBLIC_URL}>
           <div>
             <div className="App-header text-center">
-              <LogoSvg className="App-logo" title="logo" />
               <h4 className="white-text">Synapse React Client Demo</h4>
             </div>
             {alert}

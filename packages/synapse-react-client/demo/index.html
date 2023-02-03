@@ -4,6 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="" />
+    <script>
+        globalThis.process = {
+            browser: true,
+            env: {
+                NODE_ENV: 'development',
+                NODE_DEBUG: undefined,
+            },
+        }
+    </script>
     <link rel="shortcut icon" href="./favicon.ico" />
     <link
       rel="stylesheet"
@@ -62,5 +71,5 @@
   <body>
     <div id="app"></div>
   </body>
-  <script type="module" src="./src/demo/containers/main.tsx"></script>
+  <script type="module" src="./containers/main.tsx"></script>
 </html>
