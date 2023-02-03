@@ -146,6 +146,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
               height: '130px',
               width: '130px',
               display: 'block',
+              margin: '20px 0px',
             }}
           />
         )}
