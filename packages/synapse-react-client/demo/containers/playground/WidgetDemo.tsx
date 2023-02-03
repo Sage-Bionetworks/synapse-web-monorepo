@@ -1,13 +1,13 @@
 import * as React from 'react'
-import { Checkbox } from '../../../lib/containers/widgets/Checkbox'
-import { RadioGroup } from '../../../lib/containers/widgets/RadioGroup'
-import ThemesPlot from '../../../lib/containers/widgets/themes-plot/ThemesPlot'
+import { Checkbox } from '../../../src/lib/containers/widgets/Checkbox'
+import { RadioGroup } from '../../../src/lib/containers/widgets/RadioGroup'
+import ThemesPlot from '../../../src/lib/containers/widgets/themes-plot/ThemesPlot'
 import {
   PlotProps,
   ClickCallbackParams,
-} from '../../../lib/containers/widgets/themes-plot/types'
-import { Range, RangeValues } from '../../../lib/containers/widgets/Range'
-import { RangeSlider } from '../../../lib/containers/widgets/RangeSlider'
+} from '../../../src/lib/containers/widgets/themes-plot/types'
+import { Range, RangeValues } from '../../../src/lib/containers/widgets/Range'
+import { RangeSlider } from '../../../src/lib/containers/widgets/RangeSlider'
 import { useState } from 'react'
 
 export const WidgetDemo: React.FunctionComponent = () => {

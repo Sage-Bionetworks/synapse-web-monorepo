@@ -5,7 +5,7 @@ import * as MarkdownPlotModule from '../../../../src/lib/containers/markdown/wid
 import MarkdownSynapse, {
   MarkdownSynapseProps,
 } from '../../../../src/lib/containers/markdown/MarkdownSynapse'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../src/lib/utils'
 import {
   BackendDestinationEnum,

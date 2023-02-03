@@ -12,7 +12,7 @@ import {
   SchemaDrivenAnnotationEditorProps,
 } from '../../../../../src/lib/containers/entity/annotations/SchemaDrivenAnnotationEditor'
 import { displayToast } from '../../../../../src/lib/containers/ToastMessage'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import {
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,

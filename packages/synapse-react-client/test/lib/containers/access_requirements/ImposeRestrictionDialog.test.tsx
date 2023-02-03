@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import ImposeRestrictionDialog from '../../../../src/lib/containers/access_requirements/ImposeRestrictionDialog'
 import { rest, server } from '../../../../mocks/msw/server'
 import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'

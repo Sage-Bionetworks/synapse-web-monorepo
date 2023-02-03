@@ -51,8 +51,9 @@ export const getEndpoint = (endpoint: BackendDestinationEnum): string => {
 
 export type SynapseStack = 'production' | 'staging' | 'development' | 'mock'
 
-export const MOCK_REPO_ORIGIN = 'https://mock-repo.sagebase.org'
-const MOCK_PORTAL_ORIGIN = 'https://mock-repo.sagebase.org/'
+export const MOCK_REPO_ORIGIN =
+  'https://mock-repo.sagebase.org' satisfies string
+const MOCK_PORTAL_ORIGIN = 'https://mock-repo.sagebase.org/' satisfies string
 
 export const STACK_MAP: Record<SynapseStack, EndpointObject> = {
   production: {

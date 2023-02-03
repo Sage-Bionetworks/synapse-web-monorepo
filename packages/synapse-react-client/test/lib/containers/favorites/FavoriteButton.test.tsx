@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import FavoriteButton from '../../../../src/lib/containers/favorites/FavoriteButton'
 import { rest, server } from '../../../../mocks/msw/server'
 import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'

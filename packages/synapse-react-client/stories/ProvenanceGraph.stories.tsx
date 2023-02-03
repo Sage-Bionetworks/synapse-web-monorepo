@@ -1,51 +1,51 @@
 import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import ProvenanceGraph from '../src/lib/containers/provenance/ProvenanceGraph'
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: 'Synapse/ProvenanceGraph',
   component: ProvenanceGraph,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {},
-} as ComponentMeta<typeof ProvenanceGraph>
+  render: args => (
+    <div className="bootstrap-4-backport">
+      <ProvenanceGraph {...args} />
+    </div>
+  ),
+} satisfies Meta
+export default meta
+type Story = StoryObj<typeof meta>
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof ProvenanceGraph> = args => (
-  <div className="bootstrap-4-backport">
-    <ProvenanceGraph {...args} />
-  </div>
-)
-
-export const TestProvenanceGraph = Template.bind({})
-TestProvenanceGraph.args = {
-  entityRefs: [
-    {
-      targetId: 'syn13363290',
-      targetVersionNumber: 9,
-    },
-  ],
-  containerHeight: '500px',
+export const TestProvenanceGraph: Story = {
+  args: {
+    entityRefs: [
+      {
+        targetId: 'syn13363290',
+        targetVersionNumber: 9,
+      },
+    ],
+    containerHeight: '500px',
+  },
 }
 
-export const NoProvenanceGraph = Template.bind({})
-NoProvenanceGraph.args = {
-  entityRefs: [
-    {
-      targetId: 'syn8075918',
-      targetVersionNumber: undefined,
-    },
-  ],
-  containerHeight: '500px',
+export const NoProvenanceGraph: Story = {
+  args: {
+    entityRefs: [
+      {
+        targetId: 'syn8075918',
+        targetVersionNumber: undefined,
+      },
+    ],
+    containerHeight: '500px',
+  },
 }
 
-export const InvalidSynIDProvenanceGraph = Template.bind({})
-InvalidSynIDProvenanceGraph.args = {
-  entityRefs: [
-    {
-      targetId: 'synINVALID',
-      targetVersionNumber: 1,
-    },
-  ],
-  containerHeight: '500px',
+export const InvalidSynIDProvenanceGraph: Story = {
+  args: {
+    entityRefs: [
+      {
+        targetId: 'synINVALID',
+        targetVersionNumber: 1,
+      },
+    ],
+    containerHeight: '500px',
+  },
 }

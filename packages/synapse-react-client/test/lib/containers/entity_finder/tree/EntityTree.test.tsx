@@ -34,7 +34,7 @@ import {
   FAVORITES,
   PROJECTS,
 } from '../../../../../src/lib/utils/APIConstants'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import * as ToastMessageModule from '../../../../../src/lib/containers/ToastMessage'
 

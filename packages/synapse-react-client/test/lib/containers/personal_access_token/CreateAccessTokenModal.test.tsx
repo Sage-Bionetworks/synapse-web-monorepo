@@ -5,7 +5,7 @@ import {
   CreateAccessTokenModal,
   CreateAccessTokenModalProps,
 } from '../../../../src/lib/containers/personal_access_token/CreateAccessTokenModal'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import * as SynapseContext from '../../../../src/lib/utils/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 

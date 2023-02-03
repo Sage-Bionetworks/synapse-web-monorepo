@@ -5,7 +5,7 @@ import FileHandleContentRenderer, {
 } from '../../../../../src/lib/containers/FilePreview/FileHandleContentRenderer'
 import * as HtmlPreviewModule from '../../../../../src/lib/containers/FilePreview/HtmlPreview/HtmlPreview'
 import { PreviewRendererType } from '../../../../../src/lib/containers/FilePreview/PreviewRendererType'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,

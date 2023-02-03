@@ -8,7 +8,7 @@ import SynapseFormWrapper, {
   SynapseFormWrapperProps,
   UploadToolSearchParams,
 } from '../../../../src/lib/containers/synapse_form_wrapper/SynapseFormWrapper'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../src/lib/utils'
 import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
 import {

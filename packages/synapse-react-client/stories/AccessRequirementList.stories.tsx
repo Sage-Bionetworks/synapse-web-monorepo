@@ -38,12 +38,9 @@ import { ResearchProject } from '../src/lib/utils/synapseTypes/ResearchProject'
 import { mockFileHandle } from '../mocks/mock_file_handle'
 import AccessRequirementList from '../src/lib/containers/access_requirement_list/AccessRequirementList'
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-
-const meta = {
+const meta: Meta = {
   title: 'Governance/AccessRequirementList',
   component: AccessRequirementList,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },

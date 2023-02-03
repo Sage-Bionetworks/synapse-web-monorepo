@@ -7,7 +7,7 @@ import {
   AccessTokenPageProps,
 } from '../../../../src/lib/containers/personal_access_token/AccessTokenPage'
 import { CreateAccessTokenModalProps } from '../../../../src/lib/containers/personal_access_token/CreateAccessTokenModal'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../src/lib/utils'
 import { SynapseContextType } from '../../../../src/lib/utils/SynapseContext'
 import { AccessTokenRecordList } from '../../../../src/lib/utils/synapseTypes/AccessToken/AccessTokenRecord'

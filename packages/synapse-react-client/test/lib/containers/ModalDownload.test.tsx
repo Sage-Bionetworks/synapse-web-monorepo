@@ -9,7 +9,7 @@ import {
   tsvOption,
   writeHeaderOption,
 } from '../../../src/lib/containers/ModalDownload.FormSchema'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../src/lib/utils'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 

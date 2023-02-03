@@ -4,7 +4,7 @@ import React from 'react'
 import UserFileGrid, {
   SynapseFormSubmissionGridProps,
 } from '../../../../src/lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../src/lib/utils'
 import { StatusEnum } from '../../../../src/lib/utils/synapseTypes'
 import {

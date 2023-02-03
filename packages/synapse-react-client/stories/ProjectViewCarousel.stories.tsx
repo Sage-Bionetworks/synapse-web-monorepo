@@ -1,20 +1,21 @@
 import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import ProjectViewCarousel from '../src/lib/containers/home_page/project_view_carousel/ProjectViewCarousel'
 
-export default {
+const meta = {
   title: 'Home Page/ProjectViewCarousel',
   component: ProjectViewCarousel,
-} as ComponentMeta<typeof ProjectViewCarousel>
+  render: args => (
+    <div style={{ background: 'rgba(22, 75, 110, 0.05)' }}>
+      <ProjectViewCarousel {...args} />
+    </div>
+  ),
+} satisfies Meta
+export default meta
+type Story = StoryObj<typeof meta>
 
-const Template: ComponentStory<typeof ProjectViewCarousel> = args => (
-  <div style={{ background: 'rgba(22, 75, 110, 0.05)' }}>
-    <ProjectViewCarousel {...args} />
-  </div>
-)
-
-export const Demo = Template.bind({})
-
-Demo.args = {
-  entityId: 'syn23593547',
+export const Demo: Story = {
+  args: {
+    entityId: 'syn23593547',
+  },
 }

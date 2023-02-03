@@ -1,20 +1,17 @@
-import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import AddConditionsForUseButton from '../src/lib/containers/access_requirements/AddConditionsForUseButton'
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: 'Components/AddConditionsForUseButton',
   component: AddConditionsForUseButton,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {},
-} as ComponentMeta<typeof AddConditionsForUseButton>
+} satisfies Meta
 
-const Template: ComponentStory<typeof AddConditionsForUseButton> = args => (
-  <AddConditionsForUseButton {...args} />
-)
+export default meta
 
-export const Demo = Template.bind({})
-Demo.args = {
-  entityId: 'syn45328519',
+type Story = StoryObj<typeof meta>
+
+export const Demo: Story = {
+  args: {
+    entityId: 'syn45328519',
+  },
 }

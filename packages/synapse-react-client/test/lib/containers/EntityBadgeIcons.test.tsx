@@ -4,7 +4,7 @@ import {
   EntityBadgeIcons,
   EntityBadgeIconsProps,
 } from '../../../src/lib/containers/EntityBadgeIcons'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../src/lib/utils/SynapseContext'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../mocks/msw/server'

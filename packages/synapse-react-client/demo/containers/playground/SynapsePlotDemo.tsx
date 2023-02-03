@@ -1,5 +1,5 @@
 import * as React from 'react'
-import SynapsePlot from '../../../lib/containers/widgets/SynapsePlot'
+import SynapsePlot from '../../../src/lib/containers/widgets/SynapsePlot'
 
 export const SynapsePlotDemo: React.FunctionComponent = () => {
   return (

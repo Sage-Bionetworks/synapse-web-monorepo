@@ -34,6 +34,7 @@ export default class FileContentDownloadUploadDemo extends React.Component<
   }
 
   static contextType = SynapseContext
+  context!: React.ContextType<typeof SynapseContext>
 
   public componentDidMount() {
     const { targetEntityId } = this.props

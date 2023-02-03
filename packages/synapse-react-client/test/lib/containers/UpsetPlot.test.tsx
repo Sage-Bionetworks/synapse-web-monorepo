@@ -3,7 +3,7 @@ import React from 'react'
 import UpsetPlot, {
   UpsetPlotProps,
 } from '../../../src/lib/containers/UpsetPlot'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../src/lib/utils'
 import { QueryResultBundle } from '../../../src/lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/query/syn16787123'

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import ReviewerDashboard from '../../../../src/lib/containers/dataaccess/ReviewerDashboard'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { USER_BUNDLE } from '../../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,

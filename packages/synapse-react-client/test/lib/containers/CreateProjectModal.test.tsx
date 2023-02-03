@@ -4,7 +4,7 @@ import {
   CreateProjectModal,
   CreateProjectModalProps,
 } from '../../../src/lib/containers/CreateProjectModal'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../src/lib/utils/SynapseContext'
 import { MOCK_INVALID_PROJECT_NAME } from '../../../mocks/entity/mockEntity'
 import mockProjectEntityData from '../../../mocks/entity/mockProject'

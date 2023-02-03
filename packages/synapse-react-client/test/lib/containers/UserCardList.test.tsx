@@ -3,7 +3,7 @@ import React from 'react'
 import UserCardList, {
   UserCardListProps,
 } from '../../../src/lib/containers/UserCardList'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../../src/lib/utils'
 import { server } from '../../../mocks/msw/server'
 

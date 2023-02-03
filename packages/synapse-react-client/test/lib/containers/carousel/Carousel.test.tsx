@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import SizeMe from 'react-sizeme'
 import Carousel from '../../../../src/lib/containers/Carousel'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 SizeMe.noPlaceholders = true
 
 describe('basic functionality', () => {

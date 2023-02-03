@@ -5,7 +5,7 @@ import {
   ForumPage,
   ForumPageProps,
 } from '../../../../src/lib/containers/discussion_forum/ForumPage'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { FORUM, FORUM_THREAD } from '../../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,

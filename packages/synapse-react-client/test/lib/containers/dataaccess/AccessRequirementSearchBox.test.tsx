@@ -5,7 +5,7 @@ import selectEvent from 'react-select-event'
 import AccessRequirementSearchBox, {
   getOptionLabel,
 } from '../../../../src/lib/containers/dataaccess/AccessRequirementSearchBox'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_SEARCH,

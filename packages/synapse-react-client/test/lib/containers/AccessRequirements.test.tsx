@@ -11,7 +11,7 @@ import AccessRequirementList, {
   AccessRequirementListProps,
   sortAccessRequirementByCompletion,
 } from '../../../src/lib/containers/access_requirement_list/AccessRequirementList'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_STATUS } from '../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,

@@ -4,7 +4,7 @@ import {
   HasAccessV2,
   HasAccessProps,
 } from '../../../src/lib/containers/access_requirements/HasAccessV2'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { ENTITY_BUNDLE_V2 } from '../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '../../../src/lib/utils/synapseTypes'
 import syn26433429CatalogNumberJson from '../../../mocks/query/syn26433429CatalogNumber.json'
 import mockMultiValueColumnResultsJson from '../../../mocks/query/mockMultiValueColumnResults.json'

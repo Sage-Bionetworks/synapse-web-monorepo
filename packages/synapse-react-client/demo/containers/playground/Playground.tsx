@@ -6,9 +6,9 @@ import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 import { WidgetDemo } from './WidgetDemo'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
-import Resources from '../../../lib/containers/home_page/resources/Resources'
+import Resources from '../../../src/lib/containers/home_page/resources/Resources'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
-import { ExternalFileHandleLink } from '../../../lib/containers/ExternalFileHandleLink'
+import { ExternalFileHandleLink } from '../../../src/lib/containers/ExternalFileHandleLink'
 import ColorPaletteInspector from './ColorPaletteInspector'
 
 /**

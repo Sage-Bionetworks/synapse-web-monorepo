@@ -10,7 +10,7 @@ import {
   DownloadOptionsProps,
   DOWNLOAD_FILES_MENU_TEXT,
 } from '../../../../../src/lib/containers/table/table-top/DownloadOptions'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import { mockFileViewEntity } from '../../../../../mocks/entity/mockEntity'
 import mockDatasetData from '../../../../../mocks/entity/mockDataset'
 import { mockTableEntity } from '../../../../../mocks/entity/mockTableEntity'

@@ -7,7 +7,7 @@ import { MemoryRouter } from 'react-router-dom'
 import SynapseForm, {
   SynapseFormProps,
 } from '../../../../src/lib/containers/synapse_form_wrapper/SynapseForm'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   mockFormData as submissionData,
   mockFormSchema as formSchema,

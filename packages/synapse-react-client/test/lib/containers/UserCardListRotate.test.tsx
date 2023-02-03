@@ -4,7 +4,7 @@ import UserCardListRotate, {
   getDisplayIds,
   UserCardListRotateProps,
 } from '../../../src/lib/containers/UserCardListRotate'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 function renderComponent(props: UserCardListRotateProps) {

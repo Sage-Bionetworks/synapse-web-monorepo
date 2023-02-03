@@ -1,12 +1,10 @@
 import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import { Button } from 'react-bootstrap'
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta: Meta = {
   title: 'UI/Archive/Button',
   component: Button,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
     label: { control: 'text' },
     variant: {
@@ -29,16 +27,17 @@ export default {
       options: ['', 'pill', 'pill-xl'],
     },
   },
-} as ComponentMeta<typeof Button>
+  render: args => (
+    <div className="bootstrap-4-backport">
+      <Button {...args}>{args.label}</Button>
+    </div>
+  ),
+} satisfies Meta
 
-const Template: ComponentStory<typeof Button> = args => (
-  <div className="bootstrap-4-backport">
-    <Button {...args}>{args.label}</Button>
-  </div>
-)
+export default meta
 
-export const Primary = Template.bind({})
-Primary.args = {
-  variant: 'sds-primary',
-  label: 'Button',
+type Story = StoryObj<typeof meta>
+
+export const Primary: Story = {
+  args: { variant: 'sds-primary', label: 'Button' },
 }

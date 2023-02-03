@@ -5,7 +5,7 @@ import React from 'react'
 import { Router } from 'react-router-dom'
 import selectEvent from 'react-select-event'
 import { DataAccessSubmissionDashboard } from '../../../../src/lib/containers/dataaccess/AccessSubmissionDashboard'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { rest, server } from '../../../../mocks/msw/server'
 import {
   MOCK_USER_ID,

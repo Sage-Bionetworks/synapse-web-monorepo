@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../../src/lib/utils/SynapseContext'
 import { rest, server } from '../../../../mocks/msw/server'
 import { ENTITY_HEADERS } from '../../../../src/lib/utils/APIConstants'

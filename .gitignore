@@ -9,10 +9,11 @@
 node_modules/
 
 # testing
-/coverage
+coverage/
 
-# production
-/build
+# incremental builds
+build/
+.tsbuildinfo
 
 # docs build
 /styleguide

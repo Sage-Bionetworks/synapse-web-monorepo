@@ -9,7 +9,7 @@ import {
   UNSAVED_CHANGES,
 } from '../../../../src/lib/containers/entity_finder/EntityFinderModal'
 import { FinderScope } from '../../../../src/lib/containers/entity_finder/tree/EntityTree'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { EntityType, Reference } from '../../../../src/lib/utils/synapseTypes'
 
 let capturedOnSelectionChange: ((selected: Reference[]) => void) | undefined

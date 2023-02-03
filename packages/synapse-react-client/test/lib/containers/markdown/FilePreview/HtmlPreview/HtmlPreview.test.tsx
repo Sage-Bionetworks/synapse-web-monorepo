@@ -4,7 +4,7 @@ import HtmlPreview, {
   EXPORTED_FOR_UNIT_TESTING,
   HtmlPreviewProps,
 } from '../../../../../../src/lib/containers/FilePreview/HtmlPreview/HtmlPreview'
-import { createWrapper } from '../../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../../testutils/TestingLibraryUtils'
 import { TEAM_ID_MEMBER_ID } from '../../../../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,

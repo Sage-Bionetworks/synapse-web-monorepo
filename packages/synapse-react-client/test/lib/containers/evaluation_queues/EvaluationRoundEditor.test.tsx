@@ -13,7 +13,7 @@ import {
   EvaluationRoundInput,
   EvaluationRoundLimitInput,
 } from '../../../../src/lib/containers/evaluation_queues/input_models/models'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../src/lib/utils/'
 import { EvaluationRound } from '../../../../src/lib/utils/synapseTypes'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'

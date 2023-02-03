@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import { Skeleton, Tooltip } from '@mui/material'
 import BaseTable, {
   CallOrReturn,
   ColumnShape,
@@ -21,7 +21,6 @@ import {
   EntityType,
   Reference,
 } from '../../../../utils/synapseTypes'
-import { Tooltip } from '@mui/material'
 import { EntityBadgeIcons } from '../../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { EntityLink } from '../../../EntityLink'
@@ -60,15 +59,6 @@ export type EntityIdAndVersionNumber = {
   versionNumber?: number
 }
 
-export type EntityIdAndVersionRendererProps =
-  CellRendererProps<EntityIdAndVersionNumber>
-
-/**
- * Props for cellRenderer components within the BaseTable
- */
-export type EntityFinderTableCellRendererProps =
-  CellRendererProps<EntityFinderTableViewRowData>
-
 export const CustomSortIndicator = ({
   className,
   sortOrder,
@@ -92,7 +82,9 @@ export const CustomSortIndicator = ({
  * @param props
  * @returns
  */
-export function BadgeIconsRenderer(props: EntityIdAndVersionRendererProps) {
+export function BadgeIconsRenderer<T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) {
   return (
     <EntityBadgeIcons
       entityId={props.rowData.entityId}
@@ -117,7 +109,9 @@ export function DateRenderer({ cellData }: { cellData?: string }) {
  * @param props
  * @returns
  */
-export function ModifiedOnRenderer(props: EntityIdAndVersionRendererProps) {
+export function ModifiedOnRenderer<T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) {
   const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
     props.rowData.versionNumber,
@@ -135,7 +129,9 @@ export function ModifiedOnRenderer(props: EntityIdAndVersionRendererProps) {
  * @param props
  * @returns
  */
-export function CreatedOnRenderer(props: EntityIdAndVersionRendererProps) {
+export function CreatedOnRenderer<T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) {
   const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
     props.rowData.versionNumber,
@@ -148,7 +144,9 @@ export function CreatedOnRenderer(props: EntityIdAndVersionRendererProps) {
   return <DateRenderer {...props} cellData={bundle?.entity?.createdOn} />
 }
 
-export function EntityNameRenderer(props: EntityIdAndVersionRendererProps) {
+export function EntityNameRenderer<T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) {
   const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
     props.rowData.versionNumber,
@@ -168,7 +166,9 @@ export function EntityNameRenderer(props: EntityIdAndVersionRendererProps) {
   )
 }
 
-export function ProjectRenderer(props: EntityIdAndVersionRendererProps) {
+export function ProjectRenderer<T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) {
   const { data: entityBundle, isLoading: isLoadingBundle } = useGetEntityBundle(
     props.rowData.entityId,
     props.rowData.versionNumber,
@@ -201,7 +201,9 @@ export function UserCardRenderer({ cellData }: { cellData?: string }) {
  * @param props
  * @returns
  */
-export function ModifiedByRenderer(props: EntityIdAndVersionRendererProps) {
+export function ModifiedByRenderer<T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) {
   const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
     props.rowData.versionNumber,
@@ -222,35 +224,35 @@ export function LoadingRenderer() {
   )
 }
 
-export function DetailsViewCheckboxRenderer({
-  rowData,
-}: EntityFinderTableCellRendererProps) {
-  const { isSelected, isDisabled } = rowData
-  return (
-    !isDisabled && (
-      <Checkbox
-        label={`Select ${rowData.entityId}`}
-        hideLabel={true}
-        className="SRC-pointer-events-none"
-        checked={isSelected}
-        onChange={() => {
-          // no-op
-        }}
+export const DetailsViewCheckboxRenderer: ColumnShape<EntityFinderTableViewRowData>['cellRenderer'] =
+  props => {
+    const { rowData } = props
+    const { isSelected, isDisabled } = rowData
+    return (
+      !isDisabled && (
+        <Checkbox
+          label={`Select ${rowData.entityId}`}
+          hideLabel={true}
+          className="SRC-pointer-events-none"
+          checked={isSelected}
+          onChange={() => {
+            // no-op
+          }}
+        />
+      )
+    )
+  }
+
+export const TypeIconRenderer: ColumnShape<EntityFinderTableViewRowData>['cellRenderer'] =
+  props => {
+    const { cellData } = props
+    return (
+      <EntityTypeIcon
+        className="EntityFinderTableCellEntityIcon"
+        type={cellData as EntityType}
       />
     )
-  )
-}
-
-export function TypeIconRenderer({
-  cellData,
-}: EntityFinderTableCellRendererProps) {
-  return (
-    <EntityTypeIcon
-      className="EntityFinderTableCellEntityIcon"
-      type={cellData as EntityType}
-    />
-  )
-}
+  }
 
 export function EmptyRenderer({
   noResultsPlaceholder,
@@ -386,7 +388,7 @@ export const DetailsViewVersionRenderer = ({
   rowData,
   versionSelection,
   toggleSelection,
-}: EntityFinderTableCellRendererProps & {
+}: CellRendererProps<EntityFinderTableViewRowData> & {
   versionSelection: VersionSelectionType
   toggleSelection: (entity: Reference | Reference[]) => void
 }) => {
@@ -475,15 +477,13 @@ export const DetailsViewVersionRenderer = ({
   )
 }
 
-export function DatasetEditorCheckboxRenderer(
-  props: CellRendererProps<
-    EntityIdAndVersionNumber & {
-      isSelected: boolean
-      isDisabled?: boolean
-      setSelected: (newValue: boolean) => void
-    }
-  >,
-) {
+export function DatasetEditorCheckboxRenderer<
+  T extends EntityIdAndVersionNumber & {
+    isSelected: boolean
+    isDisabled?: boolean
+    setSelected: (newValue: boolean) => void
+  },
+>(props: CellRendererProps<T>) {
   const { isSelected, isDisabled, setSelected, entityId } = props.rowData
   return (
     !isDisabled && (
@@ -501,7 +501,9 @@ export function DatasetEditorCheckboxRenderer(
   )
 }
 
-export const EntityErrorRenderer = (props: EntityIdAndVersionRendererProps) => {
+export const EntityErrorRenderer = <T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) => {
   const { entityId, versionNumber } = props.rowData
   const { error, isError } = useGetEntity(entityId, versionNumber)
 

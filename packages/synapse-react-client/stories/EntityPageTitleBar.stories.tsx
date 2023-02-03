@@ -1,24 +1,25 @@
 import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import EntityPageTitleBar from '../src/lib/containers/entity/page/title_bar/EntityPageTitleBar'
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: 'Synapse/EntityPage/TitleBar',
   component: EntityPageTitleBar,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {},
-} as ComponentMeta<typeof EntityPageTitleBar>
-
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof EntityPageTitleBar> = args => (
-  <>
-    {/* Add some space above the component so the tooltip positioning is more accurate */}
-    <br />
-    <br />
-    <EntityPageTitleBar {...args} />
-  </>
-)
+  render: args => (
+    <>
+      {/* Add some space above the component so the tooltip positioning is more accurate */}
+      <br />
+      <br />
+      <EntityPageTitleBar
+        entityId={''}
+        onActMemberClickAddConditionsForUse={() => {}}
+        {...args}
+      />
+    </>
+  ),
+} satisfies Meta
+export default meta
+type Story = StoryObj<typeof meta>
 
 const onClickHandler = (action: string) => () => {
   console.log('Action clicked: ' + action)
@@ -102,23 +103,22 @@ const actionMenuProps = {
   },
 }
 
-export const File = Template.bind({})
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-File.args = {
-  entityId: 'syn24610484',
-  versionNumber: 1,
-  entityActionMenuProps: actionMenuProps,
+export const File: Story = {
+  args: {
+    entityId: 'syn24610484',
+    versionNumber: 1,
+    entityActionMenuProps: actionMenuProps,
+  },
 }
-
-export const Dataset = Template.bind({})
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Dataset.args = {
-  entityId: 'syn26302617',
-  entityActionMenuProps: actionMenuProps,
+export const Dataset: Story = {
+  args: {
+    entityId: 'syn26302617',
+    entityActionMenuProps: actionMenuProps,
+  },
 }
-
-export const Folder = Template.bind({})
-Folder.args = {
-  entityId: 'syn24610451',
-  entityActionMenuProps: actionMenuProps,
+export const Folder: Story = {
+  args: {
+    entityId: 'syn24610451',
+    entityActionMenuProps: actionMenuProps,
+  },
 }

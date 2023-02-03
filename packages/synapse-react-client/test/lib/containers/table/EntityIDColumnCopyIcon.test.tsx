@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EntityIDColumnCopyIcon from '../../../../src/lib/containers/table/EntityIDColumnCopyIcon'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../../src/lib/utils/SynapseContext'
 import {
   QueryBundleRequest,

@@ -1,12 +1,12 @@
 import * as React from 'react'
-import { SynapseVersion } from '../../lib/utils/synapseTypes/'
-import { SynapseClient } from '../../lib/utils/'
-import Uploader from '../../lib/containers/Uploader'
-import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
-import StatisticsPlot from '../../lib/containers/StatisticsPlot'
-import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
-import { HasAccessV2 as HasAccess } from '../../lib/containers/access_requirements/HasAccessV2'
-import { SynapseContextProvider } from '../../lib/utils/SynapseContext'
+import { SynapseVersion } from '../../src/lib/utils/synapseTypes/'
+import { SynapseClient } from '../../src/lib/utils/'
+import Uploader from './Uploader'
+import FileContentDownloadUploadDemo from './FileContentDownloadUploadDemo'
+import StatisticsPlot from '../../src/lib/containers/StatisticsPlot'
+import { testDownloadSpeed } from '../../src/lib/utils/functions/testDownloadSpeed'
+import { HasAccessV2 as HasAccess } from '../../src/lib/containers/access_requirements/HasAccessV2'
+import { SynapseContextProvider } from '../../src/lib/utils/SynapseContext'
 
 type DemoState = {
   token: string | null

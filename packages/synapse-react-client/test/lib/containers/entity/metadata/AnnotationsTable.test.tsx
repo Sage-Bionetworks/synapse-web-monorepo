@@ -4,7 +4,7 @@ import {
   AnnotationsTable,
   AnnotationsTableProps,
 } from '../../../../../src/lib/containers/entity/metadata/AnnotationsTable'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import { ENTITY_JSON } from '../../../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,

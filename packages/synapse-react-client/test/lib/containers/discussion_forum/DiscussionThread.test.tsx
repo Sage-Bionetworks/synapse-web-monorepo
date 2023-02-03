@@ -5,7 +5,7 @@ import {
   DiscussionThread,
   DiscussionThreadProps,
 } from '../../../../src/lib/containers/discussion_forum/DiscussionThread'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   THREAD,
   THREAD_ID,

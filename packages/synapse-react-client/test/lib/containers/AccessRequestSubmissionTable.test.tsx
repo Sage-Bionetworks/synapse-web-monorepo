@@ -5,7 +5,7 @@ import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,
 } from '../../../src/lib/containers/AccessRequestSubmissionTable'
-import { createWrapperAndQueryClient } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
 import {
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,

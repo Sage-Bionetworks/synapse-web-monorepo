@@ -15,7 +15,7 @@ import {
   RootNodeConfiguration,
   TreeData,
 } from '../../../../../src/lib/containers/entity_finder/tree/VirtualizedTree'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import { EntityType } from '../../../../../src/lib/utils/synapseTypes'
 
 describe('VirtualizedTree tests', () => {

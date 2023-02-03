@@ -3,7 +3,7 @@ import * as React from 'react'
 import EntityForm, {
   EntityFormProps,
 } from '../../../src/lib/containers/EntityForm'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { mockFileEntity } from '../../../mocks/entity/mockEntity'
 import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
 

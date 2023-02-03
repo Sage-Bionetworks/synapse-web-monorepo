@@ -7,7 +7,7 @@ import CardContainerLogic, {
 } from '../../../src/lib/containers/CardContainerLogic'
 import { QueryVisualizationWrapper } from '../../../src/lib/containers/QueryVisualizationWrapper'
 import { InfiniteQueryWrapper } from '../../../src/lib/containers/InfiniteQueryWrapper'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { NoContentPlaceholderType } from '../../../src/lib/containers/table/NoContentPlaceholderType'
 
 const renderComponent = (props: CardContainerLogicProps) => {

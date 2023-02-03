@@ -14,7 +14,7 @@ import {
   QueryWrapper,
   QueryWrapperProps,
 } from '../../../src/lib/containers/QueryWrapper'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../../src/lib/utils/'
 import {
   ColumnTypeEnum,

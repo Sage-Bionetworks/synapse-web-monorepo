@@ -1,5 +1,5 @@
 import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 
 import ErrorChip from '../src/lib/containers/error/ErrorChip'
 import { SynapseClientError } from '../src/lib/utils/SynapseClientError'
@@ -8,28 +8,28 @@ import {
   SynapseContextProvider,
 } from '../src/lib/utils/SynapseContext'
 
-export default {
+const meta = {
   title: 'Components/ErrorChip',
   component: ErrorChip,
-  argTypes: {},
-} as ComponentMeta<typeof ErrorChip>
-
-const Template: ComponentStory<typeof ErrorChip> = args => (
-  <SynapseContextConsumer>
-    {context => (
-      <SynapseContextProvider
-        synapseContext={{
-          ...context,
-          accessToken: args.isAuthenticated
-            ? context.accessToken || 'fake token'
-            : undefined,
-        }}
-      >
-        <ErrorChip {...args} />
-      </SynapseContextProvider>
-    )}
-  </SynapseContextConsumer>
-)
+  render: (args: ErrorChipProps) => (
+    <SynapseContextConsumer>
+      {context => (
+        <SynapseContextProvider
+          synapseContext={{
+            ...context,
+            accessToken: args.isAuthenticated
+              ? context.accessToken || 'fake token'
+              : undefined,
+          }}
+        >
+          <ErrorChip {...args} />
+        </SynapseContextProvider>
+      )}
+    </SynapseContextConsumer>
+  ),
+} satisfies Meta
+export default meta
+type Story = StoryObj<typeof meta>
 
 const NotSignedInError = new SynapseClientError(
   401,
@@ -37,11 +37,12 @@ const NotSignedInError = new SynapseClientError(
   '',
 )
 
-export const NotSignedIn = Template.bind({})
-NotSignedIn.args = {
-  chipText: 'syn1234567',
-  error: NotSignedInError,
-  isAuthenticated: false,
+export const NotSignedIn: Story = {
+  args: {
+    chipText: 'syn1234567',
+    error: NotSignedInError,
+    isAuthenticated: false,
+  },
 }
 
 const NoAccessError = new SynapseClientError(
@@ -50,24 +51,23 @@ const NoAccessError = new SynapseClientError(
   '',
 )
 
-export const NoAccess = Template.bind({})
-
-NoAccess.args = {
-  chipText: 'syn1234567',
-  error: NoAccessError,
-  isAuthenticated: true,
+export const NoAccess: Story = {
+  args: {
+    chipText: 'syn1234567',
+    error: NoAccessError,
+    isAuthenticated: true,
+  },
 }
-
 const NotFoundError = new SynapseClientError(
   404,
   'The entity does not exist.',
   '',
 )
 
-export const NotFound = Template.bind({})
-
-NotFound.args = {
-  chipText: 'syn1234567',
-  error: NotFoundError,
-  isAuthenticated: true,
+export const NotFound: Story = {
+  args: {
+    chipText: 'syn1234567',
+    error: NotFoundError,
+    isAuthenticated: true,
+  },
 }

@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Disable strict TypeScript rules for the demo site
+    "strict": false
+  },
+  "include": ["**/*"],
+  "references": [
+    {
+      "path": "../src"
+    },
+    {
+      "path": "../mocks"
+    }
+  ]
+}

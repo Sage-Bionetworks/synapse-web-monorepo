@@ -2,12 +2,7 @@ import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI'
-import {
-  useGetForumInfinite,
-  useGetModerators,
-} from '../../utils/hooks/SynapseAPI/forum/useForum'
+import { useGetForumInfinite } from '../../utils/hooks/SynapseAPI/forum/useForum'
 import { AVATAR, SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import { Direction } from '../../utils/synapseTypes'
 import {
@@ -43,13 +38,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
     filter,
   )
 
-  const { data: moderatorList } = useGetModerators(forumId)
-  const { data: currentUserProfile } = useGetCurrentUserProfile()
   const threads = data?.pages.flatMap(page => page.results) ?? []
-
-  const getUrl = (threadId: string, projectId: string) => {
-    return `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${projectId}/discussion/threadId=${threadId}`
-  }
 
   const onSort = (field: DiscussionThreadOrder) => {
     if (sort == field) {
@@ -60,9 +49,6 @@ export const ForumTable: React.FC<ForumTableProps> = ({
       setIsAscending(false)
     }
   }
-  const isCurrentUserModerator = moderatorList?.results.includes(
-    currentUserProfile?.ownerId ?? '',
-  )
 
   return (
     <div className="ForumTable bootstrap-4-backport">

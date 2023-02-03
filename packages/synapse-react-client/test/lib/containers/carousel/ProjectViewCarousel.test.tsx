@@ -4,7 +4,7 @@ import SizeMe from 'react-sizeme'
 import ProjectViewCarousel, {
   ProjectViewCarouselProps,
 } from '../../../../src/lib/containers/home_page/project_view_carousel/ProjectViewCarousel'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../src/lib/utils'
 import { mockQueryResult } from '../../../../mocks/query/mockProjectViewQueryResults'
 SizeMe.noPlaceholders = true

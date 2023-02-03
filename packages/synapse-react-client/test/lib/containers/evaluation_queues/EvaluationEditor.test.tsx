@@ -6,7 +6,7 @@ import {
   EvaluationEditor,
   EvaluationEditorProps,
 } from '../../../../src/lib/containers/evaluation_queues/EvaluationEditor'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   EVALUATION,
   EVALUATION_BY_ID,

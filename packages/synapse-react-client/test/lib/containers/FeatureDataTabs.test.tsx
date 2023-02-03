@@ -3,7 +3,7 @@ import * as React from 'react'
 import FeaturedDataTabs, {
   FeaturedDataTabsProps,
 } from '../../../src/lib/containers/home_page/featured-data/FeaturedDataTabs'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '../../../src/lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 

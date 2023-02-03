@@ -6,7 +6,7 @@ import {
   accountLevelRegisteredLabel,
   accountLevelVerifiedLabel,
 } from '../../../src/lib/containers/AccountLevelBadge'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { UserBundle } from '../../../src/lib/utils/synapseTypes'
 
 const SynapseClient = require('../../../src/lib/utils/SynapseClient')

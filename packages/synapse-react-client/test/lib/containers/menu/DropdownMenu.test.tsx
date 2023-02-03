@@ -4,7 +4,7 @@ import {
   DropdownMenuProps,
 } from '../../../../src/lib/containers/menu/DropdownMenu'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
 
 const DROPDOWN_BUTTON_TEXT = 'Open Dropdown Menu'

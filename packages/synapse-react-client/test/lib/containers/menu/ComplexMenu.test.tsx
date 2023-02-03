@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
 import {
   ComplexMenu,

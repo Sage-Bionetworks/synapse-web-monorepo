@@ -1,13 +1,11 @@
 import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 
 import { Typography } from '@mui/material'
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: 'UI/Typography',
   component: Typography,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
     children: { control: 'text' },
     variant: {
@@ -33,18 +31,20 @@ export default {
       ],
     },
   },
-} as ComponentMeta<typeof Typography>
+  render: args => (
+    <Typography {...args}>
+      {args.children ??
+        "Modify this sample text using the 'children' control below"}
+    </Typography>
+  ),
+} satisfies Meta
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof Typography> = args => (
-  <Typography {...args}>
-    {args.children ??
-      "Modify this sample text using the 'children' control below"}
-  </Typography>
-)
+export default meta
 
-export const TypographyDemo = Template.bind({})
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-TypographyDemo.args = {
-  variant: 'headline1',
+type Story = StoryObj<typeof meta>
+
+export const TypographyDemo: Story = {
+  args: {
+    variant: 'body1',
+  },
 }

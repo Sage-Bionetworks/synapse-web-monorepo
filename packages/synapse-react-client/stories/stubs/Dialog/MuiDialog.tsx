@@ -10,8 +10,8 @@ import {
   IconButton,
   Stack,
 } from '@mui/material'
-import { HelpPopover } from '../../../lib/containers/HelpPopover'
-import IconSvg from '../../../lib/containers/IconSvg'
+import { HelpPopover } from '../../../src/lib/containers/HelpPopover'
+import IconSvg from '../../../src/lib/containers/IconSvg'
 
 export interface DialogProps extends MuiDialogProps {
   title: string
@@ -26,21 +26,17 @@ export const Dialog = (props: DialogProps) => {
       <DialogTitle>
         <Stack direction="row" alignItems={'center'} gap={'5px'}>
           {title}
-          <HelpPopover markdownText={helpText} />
+          {helpText && <HelpPopover markdownText={helpText} />}
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={props.onClose}>
+          <IconButton>
             <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
           </IconButton>
         </Stack>
       </DialogTitle>
       <DialogContent>{content}</DialogContent>
       <DialogActions>
-        <Button variant="outlined" onClick={props.onClose}>
-          Cancel
-        </Button>
-        <Button variant="contained" onClick={props.onClose}>
-          OK
-        </Button>
+        <Button variant="outlined">Cancel</Button>
+        <Button variant="contained">OK</Button>
       </DialogActions>
     </MuiDialog>
   )

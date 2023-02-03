@@ -13,7 +13,6 @@ import {
   useGetCurrentUserProfile,
   useGetEntityBundle,
 } from '../../utils/hooks/SynapseAPI'
-import { useGetModerators } from '../../utils/hooks/SynapseAPI/forum/useForum'
 import {
   useDeleteReply,
   useGetReply,
@@ -34,7 +33,6 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
   const [showReplyModal, setShowReplyModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
-  const { data: moderatorList } = useGetModerators(reply.forumId)
   const { data: entityBundle } = useGetEntityBundle(reply.projectId)
   const { data: message, isLoading } = useGetReply(reply)
 
@@ -46,9 +44,6 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
   })
 
   const isCurrentUserAuthor = reply.createdBy == currentUserProfile?.ownerId
-  const isCurrentUserModerator = moderatorList?.results.includes(
-    currentUserProfile?.ownerId ?? '',
-  )
 
   return (
     <div className="reply-container">

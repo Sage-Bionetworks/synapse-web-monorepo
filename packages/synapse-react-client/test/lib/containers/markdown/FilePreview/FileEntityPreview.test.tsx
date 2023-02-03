@@ -5,7 +5,7 @@ import FileEntityPreview, {
 } from '../../../../../src/lib/containers/FilePreview/FileEntityPreview'
 import * as FileHandleContentRendererModule from '../../../../../src/lib/containers/FilePreview/FileHandleContentRenderer'
 import { PreviewRendererType } from '../../../../../src/lib/containers/FilePreview/PreviewRendererType'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,

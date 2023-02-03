@@ -7,7 +7,7 @@ import {
   AccessRequirementTable,
   AccessRequirementTableProps,
 } from '../../../../src/lib/containers/dataaccess/AccessRequirementTable'
-import { createWrapperAndQueryClient } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapperAndQueryClient } from '../../../testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_SEARCH } from '../../../../src/lib/utils/APIConstants'
 import { formatDate } from '../../../../src/lib/utils/functions/DateFormatter'
 import {

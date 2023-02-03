@@ -7,7 +7,7 @@ import UserCardContextMenu, {
   MenuAction,
   UserCardContextMenuProps,
 } from '../../../src/lib/containers/UserCardContextMenu'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../../src/lib/utils'
 import { PROFILE_IMAGE_PREVIEW } from '../../../src/lib/utils/APIConstants'
 import {

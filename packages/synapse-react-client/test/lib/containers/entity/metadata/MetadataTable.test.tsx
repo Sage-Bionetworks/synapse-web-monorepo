@@ -4,7 +4,7 @@ import {
   MetadataTable,
   MetadataTableProps,
 } from '../../../../../src/lib/containers/entity/metadata/MetadataTable'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../../../src/lib/utils/SynapseContext'
 import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { server } from '../../../../../mocks/msw/server'

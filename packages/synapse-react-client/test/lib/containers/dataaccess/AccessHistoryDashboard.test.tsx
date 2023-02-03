@@ -2,7 +2,7 @@ import React from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { UserHistoryDashboard } from '../../../../src/lib/containers/dataaccess/AccessHistoryDashboard'
 import { createMemoryHistory, MemoryHistory } from 'history'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { Router } from 'react-router-dom'
 import { rest, server } from '../../../../mocks/msw/server'
 import {

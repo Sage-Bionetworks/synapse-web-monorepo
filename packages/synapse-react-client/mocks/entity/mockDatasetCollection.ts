@@ -1,8 +1,4 @@
-import {
-  Dataset,
-  DatasetCollection,
-  EntityPath,
-} from '../../src/lib/utils/synapseTypes'
+import { DatasetCollection, EntityPath } from '../../src/lib/utils/synapseTypes'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 import mockDatasetData from './mockDataset'
 import { MockEntityData } from './MockEntityData'
@@ -26,6 +22,7 @@ export const mockDatasetCollectionEntity: DatasetCollection = {
     },
   ],
   columnIds: [],
+  isSearchEnabled: false,
 }
 
 const path: EntityPath = {

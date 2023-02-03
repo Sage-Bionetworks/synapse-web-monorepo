@@ -8,7 +8,7 @@ import { mockFolderEntity } from '../../../../../../mocks/entity/mockEntity'
 import mockFileEntity from '../../../../../../mocks/entity/mockFileEntity'
 import { mockDatasetEntity } from '../../../../../../mocks/entity/mockDataset'
 import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
 import { rest, server } from '../../../../../../mocks/msw/server'
 import {

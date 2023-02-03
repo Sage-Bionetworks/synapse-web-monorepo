@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import React from 'react'
 import * as FileEntityPreviewModule from '../../../../../src/lib/containers/FilePreview/FileEntityPreview'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { server } from '../../../../../mocks/msw/server'
 import mockDatasetData from '../../../../../mocks/entity/mockDataset'

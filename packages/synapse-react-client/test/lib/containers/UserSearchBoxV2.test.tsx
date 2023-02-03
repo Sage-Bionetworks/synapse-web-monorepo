@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import * as React from 'react'
 import selectEvent from 'react-select-event'
 import UserSearchBox from '../../../src/lib/containers/UserSearchBoxV2'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { server } from '../../../mocks/msw/server'
 import {
   mockUserGroupHeader,

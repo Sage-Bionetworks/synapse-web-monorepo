@@ -1,4 +1,4 @@
-import { SynapseClient } from '../../../lib'
+import { SynapseClient } from '../../../src/lib'
 import {
   FileUploadComplete,
   FormData,
@@ -6,7 +6,7 @@ import {
   ListRequest,
   ListResponse,
   StatusEnum,
-} from '../../../lib/utils/synapseTypes/'
+} from '../../../src/lib/utils/synapseTypes/'
 import * as React from 'react'
 import { TokenContext } from '../App'
 

@@ -7,7 +7,7 @@ import AddConditionsForUseButton, {
   AddConditionsForUseButtonProps,
 } from '../../../../src/lib/containers/access_requirements/AddConditionsForUseButton'
 import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { rest, server } from '../../../../mocks/msw/server'
 import {
   BackendDestinationEnum,

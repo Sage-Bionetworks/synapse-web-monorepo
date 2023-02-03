@@ -10,7 +10,7 @@ import {
 } from '../../../../../src/lib/containers/table/datasets/DatasetItemsEditor'
 import * as ToastMessageModule from '../../../../../src/lib/containers/ToastMessage'
 import { displayToast } from '../../../../../src/lib/containers/ToastMessage'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import { ENTITY_ID } from '../../../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,

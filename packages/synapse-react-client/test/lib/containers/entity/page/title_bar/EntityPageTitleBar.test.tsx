@@ -3,7 +3,7 @@ import EntityPageTitleBar, {
   EntityPageTitleBarProps,
 } from '../../../../../../src/lib/containers/entity/page/title_bar/EntityPageTitleBar'
 import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../../testutils/TestingLibraryUtils'
 import mockFileEntity from '../../../../../../mocks/entity/mockFileEntity'
 import { EntityActionMenuProps } from '../../../../../../src/lib/containers/entity/page/action_menu/EntityActionMenu'
 import {

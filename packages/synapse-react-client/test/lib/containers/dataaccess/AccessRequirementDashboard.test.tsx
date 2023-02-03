@@ -8,7 +8,7 @@ import {
   AccessRequirementDashboard,
   AccessRequirementDashboardProps,
 } from '../../../../src/lib/containers/dataaccess/AccessRequirementDashboard'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { server } from '../../../../mocks/msw/server'
 import {
   MOCK_USER_ID,

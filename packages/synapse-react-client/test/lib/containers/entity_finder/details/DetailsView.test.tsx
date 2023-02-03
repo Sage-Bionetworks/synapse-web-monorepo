@@ -12,7 +12,7 @@ import {
 import { NO_VERSION_NUMBER } from '../../../../../src/lib/containers/entity_finder/EntityFinder'
 import { EntityFinderHeader } from '../../../../../src/lib/containers/entity_finder/EntityFinderHeader'
 import { VersionSelectionType } from '../../../../../src/lib/containers/entity_finder/VersionSelectionType'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import { ENTITY_ID_VERSIONS } from '../../../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,

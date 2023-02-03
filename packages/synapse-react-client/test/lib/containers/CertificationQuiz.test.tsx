@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import CertificationQuiz from '../../../src/lib/containers/CertificationQuiz'
 import { displayToast } from '../../../src/lib/containers/ToastMessage'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,

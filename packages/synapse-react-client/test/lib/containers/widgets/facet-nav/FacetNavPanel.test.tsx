@@ -12,7 +12,7 @@ import {
   QueryContextType,
 } from '../../../../../src/lib/containers/QueryContext'
 import { QueryVisualizationContextProvider } from '../../../../../src/lib/containers/QueryVisualizationWrapper'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import failOnConsole from 'jest-fail-on-console'
 
 const mockApplyCallback = jest.fn(() => null)

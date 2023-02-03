@@ -4,7 +4,7 @@ import React from 'react'
 import SubmissionPage, {
   SubmissionPageProps,
 } from '../../../../src/lib/containers/dataaccess/SubmissionPage'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,

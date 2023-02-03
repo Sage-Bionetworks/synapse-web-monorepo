@@ -4,7 +4,7 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import DirectDownload, {
   DirectFileDownloadProps,
 } from '../../../src/lib/containers/DirectDownload'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,

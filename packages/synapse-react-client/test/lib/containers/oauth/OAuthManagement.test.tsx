@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import React from 'react'
 import { OAuthManagement } from '../../../../src/lib/containers/oauth/OAuthManagement'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { formatDate } from '../../../../src/lib/utils/functions/DateFormatter'
 import {
   useCreateOAuthClient,

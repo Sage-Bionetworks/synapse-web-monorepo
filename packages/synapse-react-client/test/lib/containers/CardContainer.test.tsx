@@ -14,7 +14,7 @@ import {
   QueryContextProvider,
   QueryContextType,
 } from '../../../src/lib/containers/QueryContext'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   QueryBundleRequest,
   QueryResultBundle,

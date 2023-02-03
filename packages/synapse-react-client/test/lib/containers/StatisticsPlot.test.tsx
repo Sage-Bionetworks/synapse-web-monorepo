@@ -4,7 +4,7 @@ import { SynapseClient } from '../../../src/lib'
 import StatisticsPlot, {
   StatisticsPlotProps,
 } from '../../../src/lib/containers/StatisticsPlot'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   MonthlyFilesStatistics,
   ProjectFilesStatisticsRequest,

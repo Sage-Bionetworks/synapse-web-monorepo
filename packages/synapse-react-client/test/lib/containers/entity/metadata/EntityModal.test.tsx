@@ -7,7 +7,7 @@ import {
   EntityModalProps,
   EntityModalTabs,
 } from '../../../../../src/lib/containers/entity/metadata/EntityModal'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import { ENTITY_BUNDLE_V2 } from '../../../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,

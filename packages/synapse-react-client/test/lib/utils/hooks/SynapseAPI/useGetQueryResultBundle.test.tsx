@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks'
 import { SynapseClient } from '../../../../../src/lib/utils'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import useGetQueryResultBundle, {
   useGetQueryResultBundleWithAsyncStatus,
 } from '../../../../../src/lib/utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'

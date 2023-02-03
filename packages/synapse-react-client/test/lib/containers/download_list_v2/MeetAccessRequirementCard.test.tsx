@@ -8,7 +8,7 @@ import {
   ACT_TITLE,
   LOCK_TITLE,
 } from '../../../../src/lib/containers/download_list_v2/MeetAccessRequirementCard'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../../src/lib/utils/SynapseContext'
 import { rest, server } from '../../../../mocks/msw/server'
 import {

@@ -6,7 +6,7 @@ import {
   CreatedByModifiedBy,
   CreatedByModifiedByProps,
 } from '../../../../../src/lib/containers/entity/page/CreatedByModifiedBy'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import { server } from '../../../../../mocks/msw/server'
 import mockFileEntity from '../../../../../mocks/entity/mockFileEntity'
 import {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, FormControl, FormLabel } from 'react-bootstrap'
-import { displayToast } from '../../../lib/containers/ToastMessage'
-import { RadioGroup } from '../../../lib/containers/widgets/RadioGroup'
+import { displayToast } from '../../../src/lib/containers/ToastMessage'
+import { RadioGroup } from '../../../src/lib/containers/widgets/RadioGroup'
 
 export const ToastDemo = () => {
   const [variant, setVariant] = React.useState<

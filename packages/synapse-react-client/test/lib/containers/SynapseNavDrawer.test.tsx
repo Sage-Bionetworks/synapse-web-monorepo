@@ -4,7 +4,7 @@ import {
   SynapseNavDrawer,
   SynapseNavDrawerProps,
 } from '../../../src/lib/containers/SynapseNavDrawer'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../src/lib/utils/SynapseContext'
 import { server } from '../../../mocks/msw/server'
 import { INVALID_ACCESS_TOKEN_CAUSES_GET_PROFILE_ERROR } from '../../../mocks/user/mock_user_profile'

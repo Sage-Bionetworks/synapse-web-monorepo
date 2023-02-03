@@ -6,7 +6,7 @@ import {
   DownloadConfirmationProps,
 } from '../../../src/lib/containers/download_list/DownloadConfirmation'
 import { displayToast } from '../../../src/lib/containers/ToastMessage'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../src/lib/utils/SynapseContext'
 import { QueryBundleRequest } from '../../../src/lib/utils/synapseTypes/'
 import { AddToDownloadListRequest } from '../../../src/lib/utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'

@@ -1,22 +1,26 @@
 import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import RenderIfInView from '../src/lib/containers/RenderIfInView'
 
-export default {
+const meta = {
   title: 'Components/RenderIfInView',
   component: RenderIfInView,
-} as ComponentMeta<typeof RenderIfInView>
+  render: args => (
+    <RenderIfInView>
+      <div
+        style={{
+          backgroundColor: '#adedba',
+          transition: 'background-color 1s',
+        }}
+      >
+        RenderIfInView uses the IntersectionObserver API to allow conditional
+        child rendering and callbacks based on viewport visibility. It will
+        render children when it's scrolled into view.
+      </div>
+    </RenderIfInView>
+  ),
+} satisfies Meta
+export default meta
+type Story = StoryObj<typeof meta>
 
-const Template: ComponentStory<typeof RenderIfInView> = args => (
-  <RenderIfInView>
-    <div
-      style={{ backgroundColor: '#adedba', transition: 'background-color 1s' }}
-    >
-      RenderIfInView uses the IntersectionObserver API to allow conditional
-      child rendering and callbacks based on viewport visibility. It will render
-      children when it's scrolled into view.
-    </div>
-  </RenderIfInView>
-)
-
-export const Demo = Template.bind({})
+export const Demo: Story = {}

@@ -1,9 +1,11 @@
 {
-  "extends": "../../shared/tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noEmit": false,
-    "rootDir": "src/lib",
-    "outDir": "dist"
+    // Set the outDir to dist, where the output will be published to npm
+    "outDir": "dist",
+    "composite": false,
+    "strict": true,
+    "rootDir": "src/lib"
   },
   "include": ["./src/lib/**.ts", "./src/lib/**.tsx"]
 }

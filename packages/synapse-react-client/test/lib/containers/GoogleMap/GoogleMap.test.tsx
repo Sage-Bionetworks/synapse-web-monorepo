@@ -6,7 +6,7 @@ import { GeoData } from '../../../../src/lib/containers/GoogleMap/GeoData'
 import GoogleMap, {
   MapProps,
 } from '../../../../src/lib/containers/GoogleMap/GoogleMap'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { rest, server } from '../../../../mocks/msw/server'
 import {
   MOCK_TEAM_ID,

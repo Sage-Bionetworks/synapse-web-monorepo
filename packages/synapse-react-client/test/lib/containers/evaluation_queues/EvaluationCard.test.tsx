@@ -8,7 +8,7 @@ import {
   EvaluationCardProps,
   ExistingEvaluation,
 } from '../../../../src/lib/containers/evaluation_queues/EvaluationCard'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { UserEvaluationPermissions } from '../../../../src/lib/utils/synapseTypes/Evaluation/UserEvaluationPermissions'
 import { server } from '../../../../mocks/msw/server'
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'

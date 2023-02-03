@@ -1,5 +1,5 @@
 import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 
 import {
   ANONYMOUS_PRINCIPAL_ID,
@@ -11,46 +11,55 @@ import {
 import { useGetCurrentUserProfile } from '../src/lib/utils/hooks/SynapseAPI/user/useUserBundle'
 import UserCard from '../src/lib/containers/UserCard'
 
-export default {
+const meta = {
   title: 'UI/UserCard',
   component: UserCard,
-} as ComponentMeta<typeof UserCard>
+  render: args => {
+    const { data: currentUserProfile } = useGetCurrentUserProfile()
+    let currentUserId = currentUserProfile?.ownerId
+    if (currentUserId === ANONYMOUS_PRINCIPAL_ID.toString()) {
+      currentUserId = undefined
+    }
+    return (
+      <>
+        <p>
+          If you are logged in, your avatar or card will appear. If you are not
+          logged in, enter an ownerId (e.g. 273960) or alias (e.g. brucehoff)
+          below.
+        </p>
+        <UserCard
+          ownerId={args.ownerId ?? currentUserId}
+          size={args.size ?? SMALL_USER_CARD}
+          {...args}
+        />
+      </>
+    )
+  },
+} satisfies Meta
+export default meta
+type Story = StoryObj<typeof meta>
 
-const Template: ComponentStory<typeof UserCard> = args => {
-  const { data: currentUserProfile } = useGetCurrentUserProfile()
-  let currentUserId = currentUserProfile?.ownerId
-  if (currentUserId === ANONYMOUS_PRINCIPAL_ID.toString()) {
-    currentUserId = undefined
-  }
-  return (
-    <>
-      <p>
-        If you are logged in, your avatar or card will appear. If you are not
-        logged in, enter an ownerId (e.g. 273960) or alias (e.g. brucehoff)
-        below.
-      </p>
-      <UserCard ownerId={args.ownerId ?? currentUserId} {...args} />
-    </>
-  )
+export const Avatar: Story = {
+  args: {
+    size: AVATAR,
+    avatarSize: 'SMALL',
+  },
 }
 
-export const Avatar = Template.bind({})
-Avatar.args = {
-  size: AVATAR,
-  avatarSize: 'SMALL',
+export const SmallUserCard: Story = {
+  args: {
+    size: SMALL_USER_CARD,
+  },
 }
 
-export const SmallUserCard = Template.bind({})
-SmallUserCard.args = {
-  size: SMALL_USER_CARD,
+export const MediumUserCard: Story = {
+  args: {
+    size: MEDIUM_USER_CARD,
+  },
 }
 
-export const MediumUserCard = Template.bind({})
-MediumUserCard.args = {
-  size: MEDIUM_USER_CARD,
-}
-
-export const LargeUserCard = Template.bind({})
-LargeUserCard.args = {
-  size: LARGE_USER_CARD,
+export const LargeUserCard: Story = {
+  args: {
+    size: LARGE_USER_CARD,
+  },
 }

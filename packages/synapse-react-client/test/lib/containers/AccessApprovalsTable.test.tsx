@@ -6,7 +6,7 @@ import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
 } from '../../../src/lib/containers/AccessApprovalsTable'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
 import {
   mockApprovalSearchResponse,

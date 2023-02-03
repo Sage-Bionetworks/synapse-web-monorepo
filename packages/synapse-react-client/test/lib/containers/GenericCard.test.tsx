@@ -18,7 +18,7 @@ import GenericCard, {
 import * as IconSvg from '../../../src/lib/containers/IconSvg'
 import * as FileHandleLinkModule from '../../../src/lib/containers/widgets/FileHandleLink'
 import * as ImageFileHandleModule from '../../../src/lib/containers/widgets/ImageFileHandle'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   ColumnTypeEnum,
   FileHandleAssociateType,

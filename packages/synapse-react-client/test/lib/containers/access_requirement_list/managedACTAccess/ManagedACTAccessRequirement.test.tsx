@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import ManagedACTAccessRequirementComponent from '../../../../../src/lib/containers/access_requirement_list/managedACTAccess/ManagedACTAccessRequirement'
-import { createWrapper } from '../../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import {
   ACCESS_TYPE,
   ManagedACTAccessRequirement,

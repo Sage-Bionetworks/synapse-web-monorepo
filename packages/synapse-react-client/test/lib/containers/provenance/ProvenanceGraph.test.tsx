@@ -3,7 +3,7 @@ import React from 'react'
 import ProvenanceGraph, {
   ProvenanceProps,
 } from '../../../../src/lib/containers/provenance/ProvenanceGraph'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { ACTIVITY_FOR_ENTITY } from '../../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,

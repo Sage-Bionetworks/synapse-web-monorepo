@@ -10,7 +10,7 @@ import {
   QueryContextType,
 } from '../../../src/lib/containers/QueryContext'
 import SqlEditor from '../../../src/lib/containers/SqlEditor'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 const renderComponent = (
   queryContext: Partial<QueryContextType>,

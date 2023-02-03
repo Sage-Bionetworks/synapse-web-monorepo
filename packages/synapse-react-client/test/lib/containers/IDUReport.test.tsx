@@ -6,7 +6,7 @@ import {
   SubmissionInfoPageRequest,
 } from '../../../src/lib/utils/synapseTypes/SubmissionInfo'
 import IDUReport from '../../../src/lib/containers/IDUReport'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,

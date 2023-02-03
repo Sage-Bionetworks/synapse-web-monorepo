@@ -143,7 +143,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       const entityData = mockEntities.find(
         entity => entity.id === req.params.entityId,
       )
-      if (entityData) {
+      if (entityData?.bundle) {
         response = entityData.bundle
         status = 200
       }
@@ -167,9 +167,9 @@ export const getEntityHandlers = (backendOrigin: string) => [
           response = {
             ...bundle,
             entity: entityData.versions[versionNumber],
-          }
+          } as EntityBundle
         } else {
-          response = bundle
+          response = bundle as EntityBundle
         }
         status = 200
       }
@@ -194,7 +194,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       const entityData = mockEntities.find(
         entity => entity.id === req.params.entityId,
       )
-      if (entityData) {
+      if (entityData?.json) {
         response = entityData.json
         status = 200
       }
@@ -218,6 +218,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
           referenceList.references.find(ref => ref.targetId === entity.id),
         )
         .map(entity => entity.entityHeader)
+        .filter((header): header is EntityHeader => !!header)
 
       if (entityData) {
         response = { results: entityData }

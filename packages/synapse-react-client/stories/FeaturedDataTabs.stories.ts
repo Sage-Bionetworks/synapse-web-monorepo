@@ -4,7 +4,6 @@ import FeaturedDataTabs from '../src/lib/containers/home_page/featured-data/Feat
 const meta = {
   title: 'Home Page/FeaturedDataTabs',
   component: FeaturedDataTabs,
-  argTypes: {},
 } satisfies Meta<typeof FeaturedDataTabs>
 
 export default meta

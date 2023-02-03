@@ -1,5 +1,5 @@
 import * as React from 'react'
-import ModalDownload from '../../../lib/containers/ModalDownload'
+import ModalDownload from '../../../src/lib/containers/ModalDownload'
 
 type State = {
   showModal: boolean

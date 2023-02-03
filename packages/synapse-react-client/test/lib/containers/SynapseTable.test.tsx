@@ -19,7 +19,7 @@ import SynapseTable, {
   SynapseTableProps,
 } from '../../../src/lib/containers/table/SynapseTable'
 import { NOT_SET_DISPLAY_VALUE } from '../../../src/lib/containers/table/SynapseTableConstants'
-import { createWrapper } from '../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   ENTITY_HEADERS,
   ENTITY_ID_VERSION,

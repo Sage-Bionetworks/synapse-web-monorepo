@@ -3,7 +3,7 @@ import * as React from 'react'
 import StandaloneQueryWrapper, {
   StandaloneQueryWrapperProps,
 } from '../../../../src/lib/containers/table/StandaloneQueryWrapper'
-import { createWrapper } from '../../../../src/lib/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../../src/lib/utils/SynapseContext'
 import { QueryResultBundle } from '../../../../src/lib/utils/synapseTypes'
 import syn20337467Json from '../../../../mocks/query/syn20337467.json'
