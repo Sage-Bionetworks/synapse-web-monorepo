@@ -17,6 +17,7 @@ import {
   SubscriptionObjectType,
   Topic,
   SubscriptionPagedResults,
+  SubscriberPagedResults,
 } from '../../../../src/lib/utils/synapseTypes/Subscription'
 import {
   mockDiscussionThreadBundle,
@@ -24,9 +25,14 @@ import {
 } from '../../../../mocks/discussion/mock_discussion'
 import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../../mocks/msw/server'
+import { SynapseClient } from '../../../../src/lib/utils'
+import { PaginatedIds } from '../../../../src/lib/utils/synapseTypes/PaginatedIds'
+import failOnConsole from 'jest-fail-on-console'
 
 const MOCK_FORUM_ID = 'syn123'
 const MOCK_SUBSCRIPTION_ID = '123'
+
+let serverSideHasSubscribed = false
 
 const defaultProps: ForumPageProps = {
   forumId: MOCK_FORUM_ID,
@@ -38,9 +44,8 @@ const followRequest: Topic = {
   objectType: SubscriptionObjectType.FORUM,
 }
 
-const SynapseClient = require('../../../../src/lib/utils/SynapseClient')
-SynapseClient.postSubscription = jest.fn()
-SynapseClient.deleteSubscription = jest.fn()
+jest.spyOn(SynapseClient, 'postSubscription')
+jest.spyOn(SynapseClient, 'deleteSubscription')
 
 const forumThread: PaginatedResults<DiscussionThreadBundle>[] = [
   {
@@ -52,6 +57,11 @@ const forumThread: PaginatedResults<DiscussionThreadBundle>[] = [
     results: [mockDiscussionThreadBundle2],
   },
 ]
+
+const mockSubscriptionPagedEmptyResult: SubscriptionPagedResults = {
+  results: [],
+  totalNumberOfResults: 0,
+}
 
 const mockSubscriptionPagedResult: SubscriptionPagedResults = {
   results: [
@@ -73,6 +83,7 @@ function renderComponent() {
 }
 
 describe('Forum Table test', () => {
+  failOnConsole()
   beforeAll(() => {
     server.listen()
   })
@@ -92,7 +103,54 @@ describe('Forum Table test', () => {
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/subscription/list`,
         async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockSubscriptionPagedResult))
+          const response: SubscriptionPagedResults = serverSideHasSubscribed
+            ? mockSubscriptionPagedResult
+            : mockSubscriptionPagedEmptyResult
+          return res(ctx.status(200), ctx.json(response))
+        },
+      ),
+      rest.post(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/subscription`,
+        async (req, res, ctx) => {
+          serverSideHasSubscribed = true
+          return res(
+            ctx.status(201),
+            ctx.json(mockSubscriptionPagedResult.results[0]),
+          )
+        },
+      ),
+      rest.delete(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/subscription/:id`,
+        async (req, res, ctx) => {
+          serverSideHasSubscribed = false
+          return res(ctx.status(200), ctx.body(''))
+        },
+      ),
+      rest.post(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/subscription/subscribers`,
+        async (req, res, ctx) => {
+          const resp: SubscriberPagedResults = {
+            subscribers: [],
+          }
+          return res(ctx.status(200), ctx.json(resp))
+        },
+      ),
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${FORUM}/:id/moderators`,
+        async (req, res, ctx) => {
+          const resp: PaginatedIds = {
+            results: [],
+            totalNumberOfResults: 0,
+          }
+          return res(ctx.status(200), ctx.json(resp))
         },
       ),
     )
@@ -119,25 +177,31 @@ describe('Forum Table test', () => {
   })
 
   it('Has a follow button', async () => {
+    // Initially, not subscribed
+    serverSideHasSubscribed = false
+
     renderComponent()
 
     // Find follow button
     const followButton = await screen.findByRole('button', { name: 'Follow' })
+    await waitFor(() => expect(followButton).not.toBeDisabled())
     await userEvent.click(followButton)
 
-    waitFor(() => {
-      expect(SynapseClient.postSubscription).toBeCalledWith(
+    await waitFor(() =>
+      expect(SynapseClient.postSubscription).toHaveBeenCalledWith(
         MOCK_ACCESS_TOKEN,
         followRequest,
-      )
-    })
+      ),
+    )
+
     // When following the follow button should show Unfollow
     const unFollowButton = await screen.findByRole('button', {
       name: 'Unfollow',
     })
+    await waitFor(() => expect(unFollowButton).not.toBeDisabled())
     await userEvent.click(unFollowButton)
     await waitFor(() => {
-      expect(SynapseClient.deleteSubscription).toBeCalledWith(
+      expect(SynapseClient.deleteSubscription).toHaveBeenCalledWith(
         MOCK_ACCESS_TOKEN,
         MOCK_SUBSCRIPTION_ID,
       )

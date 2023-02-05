@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import SubmissionPage, {
@@ -212,10 +212,14 @@ describe('Submission Page tests', () => {
     await userEvent.click(approveButton)
 
     // Modal appears
-    await screen.findByText('Approve Request?')
-    const approveConfirmButton = (
-      await screen.findAllByRole('button', { name: 'Approve' })
-    )[0]
+    const confirmationDialog = await screen.findByRole('dialog')
+    await within(confirmationDialog).findByText('Approve Request?')
+    const approveConfirmButton = await within(confirmationDialog).findByRole(
+      'button',
+      {
+        name: 'Approve',
+      },
+    )
 
     await userEvent.click(approveConfirmButton)
 

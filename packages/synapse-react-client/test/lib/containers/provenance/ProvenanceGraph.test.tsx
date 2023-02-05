@@ -46,6 +46,17 @@ describe('ProvenanceGraph', () => {
           return res(ctx.status(404), ctx.json(response))
         },
       ),
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${ACTIVITY_FOR_ENTITY(MOCK_TABLE_ENTITY_ID, ':version')}`,
+        async (req, res, ctx) => {
+          const response: SynapseApiResponse<Activity> = {
+            reason: `Mock Service worker was not configured to return an Activity for ${MOCK_TABLE_ENTITY_ID}.${req.params.version}`,
+          }
+          return res(ctx.status(404), ctx.json(response))
+        },
+      ),
     )
   })
   afterEach(() => server.restoreHandlers())

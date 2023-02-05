@@ -24,22 +24,16 @@ import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_SEARCH,
 } from '../../../../src/lib/utils/APIConstants'
+import * as AccessRequestSubmissionTableModule from '../../../../src/lib/containers/AccessRequestSubmissionTable'
 
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'
 const MOCK_AR_ID = '12321'
 
-jest.mock(
-  '../../../../src/lib/containers/AccessRequestSubmissionTable',
-  () => ({
-    AccessRequestSubmissionTable: jest.fn().mockImplementation(() => {
-      return <div data-testid={SUBMISSION_TABLE_TEST_ID}></div>
-    }),
-  }),
-)
-
-const {
-  AccessRequestSubmissionTable: mockAccessRequestSubmissionTable,
-} = require('../../../../src/lib/containers/AccessRequestSubmissionTable')
+const mockAccessRequestSubmissionTable = jest
+  .spyOn(AccessRequestSubmissionTableModule, 'AccessRequestSubmissionTable')
+  .mockImplementation(() => {
+    return <div data-testid={SUBMISSION_TABLE_TEST_ID}></div>
+  })
 
 const onServiceRecievedRequest = jest.fn()
 
@@ -87,7 +81,10 @@ describe('AccessSubmissionDashboard tests', () => {
       ),
     )
   })
-  afterEach(() => server.restoreHandlers())
+  afterEach(() => {
+    server.restoreHandlers()
+    window.history.pushState(null, document.title, '/')
+  })
   afterAll(() => server.close())
 
   it('Renders inputFields and the table component', async () => {
@@ -107,7 +104,9 @@ describe('AccessSubmissionDashboard tests', () => {
 
   it('Updates the passed props and URLSearchParams when updating arName', async () => {
     const { history } = renderComponent()
-    const arNameInput = (await screen.findAllByRole('combobox'))[0]
+    const arNameInput = await screen.findByLabelText(
+      'Filter by Access Requirement Name',
+    )
     await userEvent.type(arNameInput, mockAccessRequirement.name)
     await screen.findByText(
       getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
@@ -139,7 +138,7 @@ describe('AccessSubmissionDashboard tests', () => {
 
   it('Updates the passed props and URLSearchParams when updating requesterId', async () => {
     const { history } = renderComponent()
-    const requesterInput = (await screen.findAllByRole('combobox'))[1]
+    const requesterInput = await screen.findByLabelText('Filter by Requester')
     await userEvent.type(requesterInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await act(async () => {
@@ -165,9 +164,9 @@ describe('AccessSubmissionDashboard tests', () => {
   //  Example: https://app.travis-ci.com/github/Sage-Bionetworks/Synapse-React-Client/builds/258312595
   //  Expected: "999" (MOCK_USER_ID)
   //  Received: null
-  it.skip('Updates the passed props and URLSearchParams when updating reviewerId', async () => {
+  it('Updates the passed props and URLSearchParams when updating reviewerId', async () => {
     const { history } = renderComponent()
-    const reviewerInput = (await screen.findAllByRole('combobox'))[2]
+    const reviewerInput = await screen.findByLabelText('Filter by Reviewer')
     await userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await act(async () => {

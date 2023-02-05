@@ -42,5 +42,5 @@ export interface SubscriptionPagedResults {
 
 export interface SubscriberPagedResults {
   subscribers: string[]
-  nextPageToken: string
+  nextPageToken?: string
 }

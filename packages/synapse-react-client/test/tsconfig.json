@@ -2,7 +2,8 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     // Disable strict TypeScript rules for tests
-    "strict": false
+    "strict": false,
+    "types": ["node", "jest", "@testing-library/jest-dom"]
   },
   "include": ["**/*"],
   "references": [

@@ -55,6 +55,8 @@ import {
 import * as HasAccessModule from '../../../src/lib/containers/access_requirements/HasAccessV2'
 import * as EntityLinkModule from '../../../src/lib/containers/EntityLink'
 import * as UserCardModule from '../../../src/lib/containers/UserCard'
+import * as AddToDownloadListV2Module from '../../../src/lib/containers/AddToDownloadListV2'
+
 import failOnConsole from 'jest-fail-on-console'
 
 const queryResultBundle: QueryResultBundle =
@@ -184,52 +186,54 @@ jest.spyOn(UserCardModule, 'default').mockImplementation(() => {
   return <div data-testid="UserCard"></div>
 })
 
-server.use(
-  rest.post(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
-    async (req, res, ctx) => {
-      const requestBody: ReferenceList = (await req.json())
-        .references as ReferenceList
-      const responseBody: PaginatedResults<EntityHeader> = {
-        results: requestBody.map((reference: Reference) => {
-          return {
-            id: reference.targetId,
-            name: 3,
-            type: 'org.sagebionetworks.repo.model.FileEntity',
-          }
-        }),
-      }
-      return res(ctx.status(200), ctx.json(responseBody))
-    },
-  ),
-  rest.get(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID_VERSION(
-      ':id',
-      ':version',
-    )}`,
-    async (req, res, ctx) => {
-      const responseBody: Entity = {
-        id: req.params.id!,
-        name: `Mock Entity with Id ${req.params.id}`,
-        versionNumber: req.params.version,
-        versionLabel: `v${req.params.version}`,
-        versionComment: 'test',
-        modifiedOn: '2021-03-31T18:30:00.000Z',
-        modifiedBy: MOCK_USER_ID.toString(),
-        modifiedByPrincipalId: MOCK_USER_ID_2.toString(),
-        etag: 'etag',
-        concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-      }
-      return res(ctx.status(200), ctx.json(responseBody))
-    },
-  ),
-)
+jest.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
+  return <div data-testid="AddToDownloadListV2" />
+})
 
 describe('SynapseTable tests', () => {
   failOnConsole()
 
   beforeAll(() => {
     server.listen()
+    server.use(
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
+        async (req, res, ctx) => {
+          const requestBody: ReferenceList = (await req.json())
+            .references as ReferenceList
+          const responseBody: PaginatedResults<EntityHeader> = {
+            results: requestBody.map((reference: Reference) => {
+              return {
+                id: reference.targetId,
+                name: 3,
+                type: 'org.sagebionetworks.repo.model.FileEntity',
+              }
+            }),
+          }
+          return res(ctx.status(200), ctx.json(responseBody))
+        },
+      ),
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${ENTITY_ID_VERSION(':id', ':version')}`,
+        async (req, res, ctx) => {
+          const responseBody: Entity = {
+            id: req.params.id!,
+            name: `Mock Entity with Id ${req.params.id}`,
+            versionNumber: req.params.version,
+            versionLabel: `v${req.params.version}`,
+            versionComment: 'test',
+            modifiedOn: '2021-03-31T18:30:00.000Z',
+            modifiedBy: MOCK_USER_ID.toString(),
+            modifiedByPrincipalId: MOCK_USER_ID_2.toString(),
+            etag: 'etag',
+            concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+          }
+          return res(ctx.status(200), ctx.json(responseBody))
+        },
+      ),
+    )
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -370,9 +374,7 @@ describe('SynapseTable tests', () => {
     renderTable({ ...props, showDownloadColumn: true }, testQueryContext)
     mockAllIsIntersecting(true)
 
-    expect(
-      screen.queryByTestId('AddToDownloadListV2ColumnHeader'),
-    ).toBeInTheDocument()
+    await screen.findByTestId('AddToDownloadListV2ColumnHeader')
 
     expect(
       (await screen.findAllByTestId('AddToDownloadListV2')).length,
@@ -387,9 +389,7 @@ describe('SynapseTable tests', () => {
     renderTable({ ...props, showDownloadColumn: true }, testQueryContext)
     mockAllIsIntersecting(true)
 
-    expect(
-      screen.queryByTestId('AddToDownloadListV2ColumnHeader'),
-    ).toBeInTheDocument()
+    await screen.findByTestId('AddToDownloadListV2ColumnHeader')
 
     expect(
       (await screen.findAllByTestId('AddToDownloadListV2')).length,

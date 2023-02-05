@@ -17,6 +17,6 @@ module.exports = {
   transformIgnorePatterns: [
     `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
   ],
-  setupFilesAfterEnv: ['<rootDir>/test/setupTests.js'],
+  setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
   resetMocks: false,
 }
