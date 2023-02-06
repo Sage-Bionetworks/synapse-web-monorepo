@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect, useState, useRef } from 'react'
 import xss from 'xss'
 import { xssOptions } from '../../../utils/functions/SanitizeHtmlUtils'
 import { useGetIsUserMemberOfTeam } from '../../../utils/hooks/SynapseAPI/team/useTeamMembers'
@@ -40,12 +40,30 @@ export type HtmlPreviewProps = {
  */
 export default function HtmlPreview(props: HtmlPreviewProps) {
   const { createdByUserId, rawHtml } = props
+  const frameEl = useRef(null)
+  const [frameHeight, setFrameHeight] = useState(100)
 
   const { data: teamMembership, isLoading } = useGetIsUserMemberOfTeam(
     TRUSTED_HTML_USERS_TEAM_ID,
     createdByUserId,
   )
-
+  const updateHeight = () => {
+    if (frameEl?.current && frameEl?.current['contentWindow']) {
+      let newHeightPx: number =
+        frameEl.current['contentWindow']['document']['body']['scrollHeight']
+      if (newHeightPx < 450) {
+        newHeightPx = 450
+      }
+      if (!frameHeight || Math.abs(newHeightPx - frameHeight) > 70) {
+        setFrameHeight(newHeightPx + 50)
+      }
+    }
+  }
+  useEffect(() => {
+    setInterval(() => {
+      updateHeight()
+    }, 500)
+  }, [rawHtml])
   const htmlIsCreatedByTrustedUser = !!teamMembership
 
   const cleanHtml = useCleanHtml({
@@ -70,7 +88,12 @@ export default function HtmlPreview(props: HtmlPreviewProps) {
           Limited rendering only.
         </Alert>
       )}
-      <iframe srcDoc={cleanHtml} style={{ border: 0, width: '100%' }} />
+      <iframe
+        ref={frameEl}
+        srcDoc={cleanHtml}
+        height={`${frameHeight}px`}
+        style={{ border: 0, width: '100%' }}
+      />
     </>
   )
 }
