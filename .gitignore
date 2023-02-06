@@ -13,7 +13,7 @@ coverage/
 
 # incremental builds
 build/
-.tsbuildinfo
+*.tsbuildinfo
 
 # docs build
 /styleguide

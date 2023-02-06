@@ -1,42 +1,46 @@
-{
-  "root": true,
-  "parser": "@typescript-eslint/parser",
-  "plugins": [
+module.exports = {
+  root: true,
+  parser: "@typescript-eslint/parser",
+  plugins: [
     "react",
     "react-hooks",
     "testing-library",
     "jest",
     "jest-dom",
-    "@typescript-eslint"
+    "@typescript-eslint",
   ],
-  "extends": [
+  extends: [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:jest/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:storybook/recommended"
+    "plugin:storybook/recommended",
   ],
-  "parserOptions": {
-    "tsconfigRootDir": ".",
-    "project": ["packages/**/tsconfig.eslint.json", "apps/**/tsconfig.eslint.json"]
+  parserOptions: {
+    tsconfigRootDir: __dirname,
+    project: [
+      "./tsconfig.json",
+      "./packages/**/tsconfig.json",
+      "./apps/**/tsconfig.json",
+    ],
   },
-  "rules": {
+  rules: {
     "react/prop-types": [0],
     "react/no-unstable-nested-components": "warn",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": [
       "warn",
       {
-        "additionalHooks": "useDebouncedEffect"
-      }
+        additionalHooks: "useDebouncedEffect",
+      },
     ],
     "no-extra-semi": "off",
     "prefer-const": "warn",
     "jest/expect-expect": "off",
     "@typescript-eslint/restrict-template-expressions": [
       "warn",
-      { "allowBoolean": true }
+      { allowBoolean: true },
     ],
     "@typescript-eslint/unbound-method": "warn",
     "@typescript-eslint/no-inferrable-types": "off",
@@ -53,14 +57,14 @@
     "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-extra-semi": "warn"
+    "@typescript-eslint/no-extra-semi": "warn",
   },
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
+  settings: {
+    react: {
+      version: "detect",
+    },
   },
-  "globals": {
-    "JSX": true
-  }
-}
+  globals: {
+    JSX: true,
+  },
+};
