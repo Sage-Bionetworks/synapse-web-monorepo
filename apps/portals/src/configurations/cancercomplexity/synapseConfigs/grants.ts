@@ -1,8 +1,6 @@
 import { SynapseConstants } from 'synapse-react-client'
-import {
-  GenericCardSchema,
-  IconOptions,
-} from 'synapse-react-client/dist/containers/GenericCard'
+import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import { IconOptions } from 'synapse-react-client/dist/containers/row_renderers/utils/Icon'
 import { Project } from 'synapse-react-client/dist/assets/themed_icons/Project'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { grantsSql } from '../resources'

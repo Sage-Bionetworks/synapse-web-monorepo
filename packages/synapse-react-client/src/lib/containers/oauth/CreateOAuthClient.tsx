@@ -121,7 +121,7 @@ export const CreateOAuthModal: React.FunctionComponent<
       hide()
     },
     onError: error => {
-      displayToast(error.reason as string, 'danger')
+      displayToast(error.reason, 'danger')
     },
   })
 
@@ -401,7 +401,7 @@ export const CreateOAuthModal: React.FunctionComponent<
             </>
           )}
         </Modal.Body>
-        {error && <Alert variant="danger">{error?.reason as string}</Alert>}
+        {error && <Alert variant="danger">{error?.reason}</Alert>}
         <Modal.Footer>
           <Button
             variant="default"

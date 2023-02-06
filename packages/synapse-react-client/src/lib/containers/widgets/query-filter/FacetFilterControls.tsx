@@ -236,12 +236,12 @@ export function FacetFilterControls(props: FacetFilterControlsProps) {
                     facetResult={facet}
                     columnModel={columnModel}
                     collapsed={false}
-                    onChange={(values: string[]) =>
+                    onChange={(values: (string | number | undefined)[]) =>
                       applyChangesToRangeColumn(
                         lastRequest,
                         facet,
                         applyChanges,
-                        values,
+                        values as string[],
                       )
                     }
                   ></RangeFacetFilter>

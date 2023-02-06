@@ -24,7 +24,7 @@ export type ModalDownloadState = {
   isLoading: boolean
   step: number
   data?: DownloadFromTableResult
-  formData: {}
+  formData: any
 }
 
 export type ModalDownloadProps = {

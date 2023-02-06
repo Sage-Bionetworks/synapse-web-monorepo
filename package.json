@@ -2,7 +2,6 @@
   "name": "synapse-web-monorepo",
   "version": "0.0.0",
   "private": true,
-  "dependencies": {},
   "engines": {
     "node": ">=18",
     "pnpm": ">=7"
@@ -10,12 +9,23 @@
   "scripts": {
     "prepare": "husky install",
     "build": "nx run-many --target=build",
+    "lint": "nx run-many --target=lint",
     "test": "nx run-many --target=test -- --watchAll=false"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.50.0",
+    "eslint": "^8.33.0",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-jest-dom": "^4.0.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-storybook": "^0.6.10",
+    "eslint-plugin-testing-library": "^5.10.0",
     "husky": ">=6",
     "lint-staged": ">=10",
-    "nx": "15.6.2"
+    "nx": "15.6.2",
+    "typescript": "4.9.5"
   },
   "npmClient": "pnpm",
   "resolutions": {

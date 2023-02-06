@@ -18,6 +18,7 @@ import {
 import { useGetEntityHeaders } from 'synapse-react-client/dist/utils/hooks/SynapseAPI/entity/useGetEntityHeaders'
 import {
   ColumnType,
+  ColumnTypeEnum,
   QueryBundleRequest,
   QueryResultBundle,
 } from 'synapse-react-client/dist/utils/synapseTypes/'
@@ -85,7 +86,7 @@ function HeadlineWithLink(props: { title: string; id: string }) {
                 })
               }}
             >
-              <IconSvg icon='link' sx={{paddingLeft: 10}} />
+              <IconSvg icon="link" sx={{ paddingLeft: 10 }} />
             </div>
           </Tooltip>
         </span>
@@ -129,7 +130,7 @@ export default function DetailsPage(props: DetailsPageProps) {
       partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
       query: {
         sql,
-        additionalFilters
+        additionalFilters,
       },
     }
     return queryBundleRequest
@@ -208,7 +209,8 @@ const SynapseObject: React.FC<{
   const { columnName = '', resolveSynId, props, overrideSqlSourceTable } = el
   const deepCloneOfProps = cloneDeep(props)
   const row = queryResultBundle!.queryResult!.queryResults.rows[0].values
-  const rowVersionNumber = queryResultBundle!.queryResult!.queryResults.rows[0].versionNumber
+  const rowVersionNumber =
+    queryResultBundle!.queryResult!.queryResults.rows[0].versionNumber
 
   // map column name to index
   const mapColumnHeaderToRowIndex: Dictionary<{
@@ -224,8 +226,8 @@ const SynapseObject: React.FC<{
     console.error('No value mapped for ', columnName)
     return <></>
   } else if (
-    columnType === ColumnType.STRING_LIST ||
-    columnType === ColumnType.INTEGER_LIST
+    columnType === ColumnTypeEnum.STRING_LIST ||
+    columnType === ColumnTypeEnum.INTEGER_LIST
   ) {
     try {
       rawValue = JSON.parse(rawValue)
@@ -287,7 +289,7 @@ export const SplitStringToComponent: React.FC<{
   el,
   deepCloneOfProps,
   overrideSqlSourceTable,
-  rowVersionNumber
+  rowVersionNumber,
 }) => {
   let value = splitString.trim()
   const valueIsSynId = React.useMemo(
@@ -299,7 +301,7 @@ export const SplitStringToComponent: React.FC<{
 
   // For explorer 2.0, construct an object to contain the locked facet name and facet value
   const lockedColumn: LockedColumn = {
-    columnName: columnName
+    columnName: columnName,
   }
 
   const { data: entityHeaders } = useGetEntityHeaders([{ targetId: value }], {

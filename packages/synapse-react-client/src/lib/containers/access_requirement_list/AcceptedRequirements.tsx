@@ -30,7 +30,7 @@ export type AcceptedRequirementsProps = {
     | ManagedACTAccessRequirement
   accessRequirementStatus: AccessRequirementStatus | undefined
   showButton?: boolean
-  onHide?: Function
+  onHide?: () => void
 }
 
 export default function AcceptedRequirements({
@@ -90,7 +90,7 @@ export default function AcceptedRequirements({
     } else {
       if (!isApproved) {
         const accessApprovalRequest: AccessApproval = {
-          requirementId: accessRequirement?.id!,
+          requirementId: accessRequirement?.id,
           submitterId: user?.ownerId!,
           accessorId: user?.ownerId!,
           state: ApprovalState.APPROVED,

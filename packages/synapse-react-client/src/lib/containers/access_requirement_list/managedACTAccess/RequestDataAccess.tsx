@@ -20,7 +20,10 @@ import {
 } from '../../../utils/synapseTypes/'
 import { SynapseClient } from '../../../utils'
 import AccessApprovalCheckMark from '../AccessApprovalCheckMark'
-import { SUPPORTED_ACCESS_REQUIREMENTS } from '../AccessRequirementList'
+import {
+  RequestDataStepCallbackArgs,
+  SUPPORTED_ACCESS_REQUIREMENTS,
+} from '../AccessRequirementList'
 import { ManagedACTAccessRequirementStatus } from '../../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 import { cancelDataAccessRequest } from '../../../utils/SynapseClient'
 import { AlertProps } from './RequestDataAccessStep2'
@@ -38,8 +41,8 @@ export type RequestDataAccessProps = {
     | ManagedACTAccessRequirement
   accessRequirementStatus?: ManagedACTAccessRequirementStatus
   showButton?: boolean
-  onHide?: Function
-  requestDataStepCallback?: Function
+  onHide?: () => void
+  requestDataStepCallback?: (args: RequestDataStepCallbackArgs) => void
 }
 
 const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
@@ -71,7 +74,9 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
     }
   }, [propsIsApproved])
 
-  const showRequestAccess = () => {
+  const showRequestAccess = (
+    accessRequirement: ManagedACTAccessRequirement,
+  ) => {
     requestDataStepCallback?.({
       managedACTAccessRequirement: accessRequirement,
       step: 1,
@@ -81,7 +86,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
   const onAcceptClicked = async () => {
     if (
       accessRequirement.concreteType ===
-      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+      'org.sagebionetworks.repo.model.ManagedACTAccessRequirement'
     ) {
       if (accessToken) {
         // !isSubmissionCanceled: if the submission has already been canceled, don't cancel again
@@ -103,7 +108,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
             const resp: ACTSubmissionStatus | any =
               await cancelDataAccessRequest(
                 accessRequirementStatus?.currentSubmissionStatus!.submissionId!,
-                accessToken!,
+                accessToken,
               )
             if (resp.state === SubmissionState.CANCELLED) {
               // successfully cancelled
@@ -125,7 +130,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
             setAlert(errAlert)
           }
         } else {
-          showRequestAccess()
+          showRequestAccess(accessRequirement)
         }
       } else {
         requestDataStepCallback?.({
@@ -136,7 +141,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
     } else {
       if (!isApproved) {
         const accessApprovalRequest: AccessApproval = {
-          requirementId: accessRequirement?.id!,
+          requirementId: accessRequirement?.id,
           submitterId: user?.ownerId!,
           accessorId: user?.ownerId!,
           state: ApprovalState.APPROVED,
@@ -276,7 +281,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
                   <button
                     className="update-request-button"
                     onClick={() => {
-                      showRequestAccess()
+                      showRequestAccess(accessRequirement)
                     }}
                     style={{
                       paddingLeft: '0',
@@ -306,7 +311,12 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
               className={`button-container ${isApproved ? `hide` : `default`}`}
             >
               <div className="accept-button-container">
-                <button className="accept-button" onClick={onAcceptClicked}>
+                <button
+                  className="accept-button"
+                  onClick={() => {
+                    onAcceptClicked()
+                  }}
+                >
                   {getAcceptButtonText()}
                 </button>
               </div>

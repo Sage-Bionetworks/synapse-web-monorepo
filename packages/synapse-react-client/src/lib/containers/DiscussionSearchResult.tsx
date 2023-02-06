@@ -116,7 +116,7 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
                 {
                   <UserCard
                     size={SMALL_USER_CARD}
-                    ownerId={replyAuthor?.ownerId!}
+                    ownerId={replyAuthor?.ownerId}
                   />
                 }{' '}
                 {formatDate(dayjs(replyBundle?.createdOn))}

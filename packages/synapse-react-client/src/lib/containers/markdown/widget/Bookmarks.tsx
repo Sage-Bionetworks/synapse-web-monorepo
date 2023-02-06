@@ -4,7 +4,7 @@ type BookmarksProps = {
   footnotes: string
 }
 
-class Bookmarks extends React.Component<BookmarksProps, {}> {
+class Bookmarks extends React.Component<BookmarksProps, never> {
   constructor(props: BookmarksProps) {
     super(props)
     this.renderBookmarks = this.renderBookmarks.bind(this)

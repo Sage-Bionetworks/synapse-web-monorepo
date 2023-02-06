@@ -67,7 +67,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
     setTagModalWithKeyboard(false)
   }
 
-  const handleTagModal = (e: KeyboardEvent) => {
+  const handleTagModal = (e: React.KeyboardEvent) => {
     if (e.key == '@') {
       setTagModalWithKeyboard(true)
       setIsShowingTagModal(true)

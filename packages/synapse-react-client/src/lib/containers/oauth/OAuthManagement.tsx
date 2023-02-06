@@ -121,7 +121,12 @@ export const OAuthManagement: React.FunctionComponent = () => {
       </Table>
       {hasNextPage && (
         <div className="text-center">
-          <Button variant="primary" onClick={() => fetchNextPage()}>
+          <Button
+            variant="primary"
+            onClick={() => {
+              fetchNextPage()
+            }}
+          >
             Load more
           </Button>
         </div>

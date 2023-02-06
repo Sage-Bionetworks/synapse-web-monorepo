@@ -4,14 +4,14 @@ import { Step, NavActionEnum } from './types'
 export interface NavButtonsProps {
   isWizardMode?: boolean
   previousStepIds: string[]
-  onNavAction: Function
+  onNavAction: (action: NavActionEnum) => void
   steps: Step[]
   currentStep: Step
   isFormSubmitted?: boolean
 }
 
 export interface NextStepLinkProps {
-  onNavAction: Function
+  onNavAction: (step: Step) => void
   steps: Step[]
   nextStepId: string | undefined
 }

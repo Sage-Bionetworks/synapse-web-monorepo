@@ -118,7 +118,7 @@ export const ProjectViewCarousel: React.FunctionComponent<
                     accessToken,
                     project.entityId,
                     wikiPageKey.wikiPageId,
-                    project.imageFileName!,
+                    project.imageFileName,
                   )
               }
             } catch (err) {

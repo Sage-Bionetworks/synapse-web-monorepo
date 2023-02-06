@@ -73,7 +73,12 @@ const CancelRequestDataAccess: React.FC<
             <Button variant="link" onClick={() => onHide?.()}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={() => handleSave()}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                handleSave()
+              }}
+            >
               Save changes
             </Button>
           </>

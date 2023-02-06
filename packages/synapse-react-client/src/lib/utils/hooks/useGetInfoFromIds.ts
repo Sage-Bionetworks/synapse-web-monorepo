@@ -214,7 +214,7 @@ export default function useGetInfoFromIds<
             totalData.push(...(newData as T[]))
           }
           if (!isCancelled) {
-            setData(oldData => oldData.concat(...(totalData as T[])))
+            setData(oldData => oldData.concat(...totalData))
           }
         } catch (error) {
           console.error('Error on data retrieval', error)

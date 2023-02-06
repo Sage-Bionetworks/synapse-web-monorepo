@@ -3,9 +3,6 @@ import { DescriptionConfig } from './CardContainerLogic'
 import MarkdownSynapse from './markdown/MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
 
-export type IconOptions = {
-  [index: string]: string
-}
 export type HeaderCardProps = {
   rgbIndex?: number
   type: string

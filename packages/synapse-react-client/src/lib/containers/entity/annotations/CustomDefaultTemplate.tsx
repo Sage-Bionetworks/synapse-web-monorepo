@@ -23,7 +23,7 @@ export function CustomDefaultTemplate<T>(
     schema,
   } = props
 
-  let description = props.description ?? props.schema.description
+  const description = props.description ?? props.schema.description
   const [showDetails, setShowDetails] = useState(false)
 
   // The formData that we get may be an array (for example, if it was an additionalProperty, but then the key was added to the schema)

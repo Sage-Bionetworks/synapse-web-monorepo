@@ -2,44 +2,24 @@
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
     "allowJs": false,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "module": "CommonJS",
-    "target": "es5",
-    "lib": ["esnext", "dom"],
-    "sourceMap": true,
-    "jsx": "react",
-    "moduleResolution": "node",
-    "rootDir": "src",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "importHelpers": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
+    "rootDir": ".",
+    "outDir": "build",
     "skipLibCheck": true,
     "strict": true,
+    "noEmit": false,
     "isolatedModules": true,
-    "noEmit": true,
     "noFallthroughCasesInSwitch": true,
-    "useUnknownInCatchVariables": false
+    "incremental": true
   },
-  "exclude": [
-    ".storybook",
-    "storybook-static",
-    "esbuild.config.mjs",
-    "node_modules",
-    "build",
-    "coverage",
-    "dist",
-    "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest",
-    "setupTests.js"
-  ],
-  "include": ["src"]
+  "include": [],
+  // TODO: break each folder out into its own buildable TypeScript project and reference it, so we can get incremental builds
+  // We will have to break circular dependencies to accomplish this
+  "references": [
+    { "path": "./src" }
+    //    { "path": "./demo" },
+    //    { "path": "./mocks" },
+    //    { "path": "./test" },
+    //    { "path": "./stories" },
+  ]
 }

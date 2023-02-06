@@ -78,7 +78,12 @@ export const CreateProjectModal: React.FunctionComponent<
             <Button variant="default" onClick={onClose}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={onCreateProject}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                onCreateProject()
+              }}
+            >
               Save
             </Button>
           </div>

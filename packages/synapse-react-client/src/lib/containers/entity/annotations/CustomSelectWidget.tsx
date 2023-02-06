@@ -76,7 +76,7 @@ export const CustomSelectWidget: Widget = (props: WidgetProps) => {
       isDisabled={disabled || readonly}
       autoFocus={autofocus}
       onBlur={onBlur && (() => onBlur(id, value?.value))}
-      options={enumOptions as EnumOption[]}
+      options={enumOptions}
       onFocus={onFocus && (() => onFocus(id, value?.value))}
       onChange={option => onChange((option as EnumOption | null)?.value)}
       isClearable={true}

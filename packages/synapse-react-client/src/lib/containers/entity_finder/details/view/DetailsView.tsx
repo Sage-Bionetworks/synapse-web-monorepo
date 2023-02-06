@@ -26,12 +26,13 @@ import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import {
   BadgeIconsRenderer,
+  CellRendererProps,
   CreatedOnRenderer,
   CustomSortIndicator,
   DetailsViewCheckboxRenderer,
   DetailsViewVersionRenderer,
   EmptyRenderer,
-  EntityFinderTableCellRendererProps,
+  EntityIdAndVersionNumber,
   LoadingRenderer,
   ModifiedByRenderer,
   ModifiedOnRenderer,
@@ -326,7 +327,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   ])
 
   const NameRenderer = useCallback(
-    (props: EntityFinderTableCellRendererProps) => {
+    (props: CellRendererProps<EntityFinderTableViewRowData>) => {
       if (setCurrentContainer && isContainerType(props.rowData.entityType)) {
         return (
           <span
@@ -481,7 +482,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               resizable={true}
               cellRenderer={NameRenderer}
             />
-            <Column<EntityFinderTableViewRowData>
+            <Column<EntityIdAndVersionNumber>
               key="badge"
               title=""
               width={75}
@@ -515,7 +516,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 }
               />
             )}
-            <Column<EntityFinderTableViewRowData>
+            <Column<EntityIdAndVersionNumber>
               key={SortBy.CREATED_ON}
               sortable={sort != null}
               title="Created On"
@@ -523,7 +524,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               minWidth={170}
               cellRenderer={CreatedOnRenderer}
             />
-            <Column<EntityFinderTableViewRowData>
+            <Column<EntityIdAndVersionNumber>
               key={SortBy.MODIFIED_ON}
               title="Modified On"
               width={220}
@@ -531,7 +532,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               sortable={sort != null}
               cellRenderer={ModifiedOnRenderer}
             />
-            <Column<EntityFinderTableViewRowData>
+            <Column<EntityIdAndVersionNumber>
               key="modifiedBy"
               title="Modified By"
               width={500}

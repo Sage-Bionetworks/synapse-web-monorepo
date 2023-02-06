@@ -19,14 +19,16 @@ export default function UserCardListGroupsMobile(
             'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
         }
         const content = (
-          <UserCardListRotate
-            key={`UserCardListGroup-Mobile-${curIndex}`}
-            {...rest}
-            selectedFacets={[selectedFacet]}
-          />
+          <UserCardListRotate {...rest} selectedFacets={[selectedFacet]} />
         )
         const title = <> {facetValue} </>
-        return <ExpandableContent title={title} content={content} />
+        return (
+          <ExpandableContent
+            key={`UserCardListGroup-Mobile-${curIndex}`}
+            title={title}
+            content={content}
+          />
+        )
       })}
     </div>
   )

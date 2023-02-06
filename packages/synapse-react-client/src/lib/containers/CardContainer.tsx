@@ -8,7 +8,7 @@ import {
   MEDIUM_USER_CARD,
   OBSERVATION_CARD,
 } from '../utils/SynapseConstants'
-import { ColumnType, EntityHeader, Row } from '../utils/synapseTypes/'
+import { ColumnTypeEnum, EntityHeader, Row } from '../utils/synapseTypes/'
 import { CardConfiguration } from './CardContainerLogic'
 import GenericCard from './GenericCard'
 import loadingScreen from './LoadingScreen'
@@ -103,7 +103,7 @@ export const CardContainer = (props: CardContainerProps) => {
     // Hard coding ownerId as a column name containing the user profile ownerId
     // for each row, grab the column with the ownerId
     const userIdColumnIndex = data.queryResult!.queryResults.headers.findIndex(
-      el => el.columnType === ColumnType.USERID,
+      el => el.columnType === ColumnTypeEnum.USERID,
     )
     if (userIdColumnIndex === -1) {
       throw Error(

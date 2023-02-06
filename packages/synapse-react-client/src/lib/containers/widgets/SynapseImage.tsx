@@ -128,7 +128,7 @@ class SynapseImage extends React.Component<
     if (alignLowerCase === 'center') {
       className = 'align-center'
     }
-    let style: React.CSSProperties = {
+    const style: React.CSSProperties = {
       width: scale,
       height: scale,
     }

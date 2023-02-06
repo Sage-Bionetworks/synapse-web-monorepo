@@ -3,11 +3,10 @@ import { SynapseClient, SynapseConstants } from '..'
 import { LockedColumn } from '../../containers/QueryContext'
 import {
   FacetColumnResult,
-  FacetColumnResultValues,
+  Query,
   QueryBundleRequest,
   QueryResultBundle,
   SelectColumn,
-  Query,
 } from '../synapseTypes/'
 import {
   isColumnMultiValueFunctionQueryFilter,
@@ -100,9 +99,8 @@ export const isFacetAvailable = (
 export const isSingleNotSetValue = (facet: FacetColumnResult): boolean => {
   return (
     facet.facetType === 'enumeration' &&
-    (facet as FacetColumnResultValues).facetValues.length == 1 &&
-    (facet as FacetColumnResultValues).facetValues[0].value ==
-      SynapseConstants.VALUE_NOT_SET
+    facet.facetValues.length == 1 &&
+    facet.facetValues[0].value == SynapseConstants.VALUE_NOT_SET
   )
 }
 

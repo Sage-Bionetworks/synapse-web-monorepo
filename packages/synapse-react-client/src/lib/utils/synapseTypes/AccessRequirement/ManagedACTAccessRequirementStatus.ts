@@ -1,5 +1,3 @@
-import { AccessRequirementStatus } from './AccessRequirementStatus'
-
 /**
  * The state of a Submission.
  * http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/dataaccess/SubmissionState.html
@@ -27,7 +25,14 @@ export type ACTSubmissionStatus = {
  * The status of a user meeting an ACTAccessRequirement.
  * http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/dataaccess/ManagedACTAccessRequirementStatus.html
  */
-export interface ManagedACTAccessRequirementStatus
-  extends AccessRequirementStatus {
+export type ManagedACTAccessRequirementStatus = {
+  /* The ID of the requested AccessRequirement. */
+  accessRequirementId: string
+  /* Indicates which implementation of AccessRequirementStatus this object represents. */
+  concreteType: 'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus'
+  /* True if there is an AccessApproval for the user for the given AccessRequirement. */
+  isApproved: boolean
+  /* The date that the user no longer have access to the data. */
+  expiredOn: string
   currentSubmissionStatus: ACTSubmissionStatus
 }

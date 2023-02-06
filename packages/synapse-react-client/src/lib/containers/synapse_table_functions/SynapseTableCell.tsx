@@ -11,6 +11,7 @@ import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import {
   ColumnModel,
   ColumnType,
+  ColumnTypeEnum,
   EntityHeader,
   FileHandleAssociateType,
   Row,
@@ -36,7 +37,7 @@ import UserIdList from '../UserIdList'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
-  columnValue: string
+  columnValue: string | null
   isBold: string
   columnLinkConfig?: CardLink | MarkdownLink | ColumnSpecifiedLink
   mapEntityIdToHeader: Record<string, EntityHeader>
@@ -114,7 +115,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   }
 
   switch (columnType) {
-    case ColumnType.ENTITYID:
+    case ColumnTypeEnum.ENTITYID:
       return (
         <p>
           <EntityLink
@@ -125,7 +126,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         </p>
       )
       break
-    case ColumnType.DATE_LIST: {
+    case ColumnTypeEnum.DATE_LIST: {
       const jsonData: number[] = JSON.parse(columnValue)
       return (
         <p>
@@ -140,7 +141,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         </p>
       )
     }
-    case ColumnType.BOOLEAN_LIST: {
+    case ColumnTypeEnum.BOOLEAN_LIST: {
       const jsonData: boolean[] = JSON.parse(columnValue)
       return (
         <p>
@@ -155,7 +156,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         </p>
       )
     }
-    case ColumnType.FILEHANDLEID:
+    case ColumnTypeEnum.FILEHANDLEID:
       return (
         <>
           {entity && (
@@ -168,17 +169,17 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
           )}
         </>
       )
-    case ColumnType.ENTITYID_LIST: {
+    case ColumnTypeEnum.ENTITYID_LIST: {
       const jsonData: string[] = JSON.parse(columnValue)
       return <EntityIdList entityIdList={jsonData} />
     }
-    case ColumnType.USERID_LIST: {
+    case ColumnTypeEnum.USERID_LIST: {
       const jsonData: string[] = JSON.parse(columnValue)
       return <UserIdList userIds={jsonData} />
     }
     // handle other list types
-    case ColumnType.STRING_LIST:
-    case ColumnType.INTEGER_LIST: {
+    case ColumnTypeEnum.STRING_LIST:
+    case ColumnTypeEnum.INTEGER_LIST: {
       const jsonData: string[] = JSON.parse(columnValue)
       return (
         <p>
@@ -193,14 +194,14 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         </p>
       )
     }
-    case ColumnType.EVALUATIONID: {
+    case ColumnTypeEnum.EVALUATIONID: {
       return <EvaluationIdRenderer evaluationId={columnValue} />
     }
 
-    case ColumnType.DATE:
+    case ColumnTypeEnum.DATE:
       return <p className={isBold}>{formatDate(dayjs(Number(columnValue)))}</p>
 
-    case ColumnType.USERID:
+    case ColumnTypeEnum.USERID:
       if (
         Object.prototype.hasOwnProperty.call(mapUserIdToHeader, columnValue)
       ) {
@@ -237,18 +238,18 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         }
       }
       break
-    case ColumnType.LINK:
+    case ColumnTypeEnum.LINK:
       return (
         <a target="_blank" rel="noopener noreferrer" href={columnValue}>
           {columnValue}
         </a>
       )
-    case ColumnType.STRING:
-    case ColumnType.DOUBLE:
-    case ColumnType.INTEGER:
-    case ColumnType.BOOLEAN:
-    case ColumnType.MEDIUMTEXT:
-    case ColumnType.LARGETEXT: {
+    case ColumnTypeEnum.STRING:
+    case ColumnTypeEnum.DOUBLE:
+    case ColumnTypeEnum.INTEGER:
+    case ColumnTypeEnum.BOOLEAN:
+    case ColumnTypeEnum.MEDIUMTEXT:
+    case ColumnTypeEnum.LARGETEXT: {
       return <p className={isBold}>{columnValue}</p>
     }
     default:

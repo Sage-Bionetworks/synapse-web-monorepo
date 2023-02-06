@@ -1,7 +1,6 @@
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import { useGetModerators } from '../../utils/hooks/SynapseAPI/forum/useForum'
 import { useGetRepliesInfinite } from '../../utils/hooks/SynapseAPI/forum/useReply'
 import {
   useDeleteThread,
@@ -63,9 +62,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       enabled: !!threadData,
     },
   )
-  const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '', {
-    enabled: !!threadData,
-  })
+
   const { subscription, toggleSubscribed, isLoading } = useSubscription(
     threadId,
     SubscriptionObjectType.THREAD,
@@ -85,9 +82,6 @@ export function DiscussionThread(props: DiscussionThreadProps) {
 
   const isCurrentUserAuthor =
     threadData?.createdBy == currentUserProfile?.ownerId
-  const isCurrentUserModerator = moderatorList?.results.includes(
-    currentUserProfile?.ownerId ?? '',
-  )
 
   function handleFollowBtn() {
     if (currentUserProfile?.userName == 'anonymous') {

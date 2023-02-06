@@ -184,7 +184,13 @@ export const CreateAccessTokenModal: React.FunctionComponent<
               <Button variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit" variant="sds-primary" onClick={onSubmit}>
+              <Button
+                type="submit"
+                variant="sds-primary"
+                onClick={e => {
+                  onSubmit(e)
+                }}
+              >
                 Create Token
               </Button>
             </>

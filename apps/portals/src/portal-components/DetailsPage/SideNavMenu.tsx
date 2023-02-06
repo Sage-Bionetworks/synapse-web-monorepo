@@ -48,6 +48,7 @@ export const SideNavMenu: React.FC<{
           if (el.name === 'ExternalFileHandleLink') {
             return (
               <ExternalFileHandleLink
+                key={index}
                 className={className}
                 synId={el.props.synId}
               />

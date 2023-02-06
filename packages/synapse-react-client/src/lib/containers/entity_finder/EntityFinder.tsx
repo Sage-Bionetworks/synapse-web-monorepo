@@ -229,7 +229,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 className="EntityFinder__Search__SearchButton"
                 onClick={() => {
                   setSearchActive(true)
-                  searchInputRef!.current!.focus()
+                  searchInputRef.current!.focus()
                 }}
               >
                 <IconSvg icon="search" />

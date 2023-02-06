@@ -77,7 +77,12 @@ export const DownloadCartPage: React.FunctionComponent<
               enterNextDelay={300}
               placement="right"
             >
-              <a className="clearDownloadListLink" onClick={clearDownloadList}>
+              <a
+                className="clearDownloadListLink"
+                onClick={() => {
+                  clearDownloadList()
+                }}
+              >
                 <span>
                   <IconSvg
                     icon="delete"

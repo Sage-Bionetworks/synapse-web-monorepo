@@ -103,13 +103,13 @@ export default class EntityForm extends React.Component<
     const promises = [
       SynapseClient.getFileResult(
         formSchemaFileEntity,
-        this.context.accessToken!,
+        this.context.accessToken,
         true,
         true,
       ),
       SynapseClient.getFileResult(
         formUiSchemaFileEntity,
-        this.context.accessToken!,
+        this.context.accessToken,
         true,
         true,
       ),
@@ -170,7 +170,7 @@ export default class EntityForm extends React.Component<
           if (this.props.initFormData) {
             return SynapseClient.getFileResult(
               currentFileEntity,
-              this.context.accessToken!,
+              this.context.accessToken,
               true,
               true,
             ).then(async existingFileData => {
@@ -270,9 +270,15 @@ export default class EntityForm extends React.Component<
         // do we need to create a new file entity, or update an existing file entity?
         const newFileHandleId = fileUploadComplete.fileHandleId
         if (this.state.currentFileEntity) {
-          this.state.currentFileEntity.dataFileHandleId = newFileHandleId
+          const updatedFileEntity = {
+            ...this.state.currentFileEntity,
+            dataFileHandleId: newFileHandleId,
+          }
+          this.setState({
+            currentFileEntity: updatedFileEntity,
+          })
           return SynapseClient.updateEntity(
-            this.state.currentFileEntity,
+            updatedFileEntity,
             this.context.accessToken,
           )
         }
@@ -337,12 +343,14 @@ export default class EntityForm extends React.Component<
               </div>
             </Form>
           )}
-        {!this.state.error && this.context.accessToken && this.state.isLoading && (
-          <React.Fragment>
-            <span>Saving&hellip;</span>
-            <span style={{ marginLeft: '2px' }} className={'spinner'} />
-          </React.Fragment>
-        )}
+        {!this.state.error &&
+          this.context.accessToken &&
+          this.state.isLoading && (
+            <React.Fragment>
+              <span>Saving&hellip;</span>
+              <span style={{ marginLeft: '2px' }} className={'spinner'} />
+            </React.Fragment>
+          )}
       </div>
     )
   }

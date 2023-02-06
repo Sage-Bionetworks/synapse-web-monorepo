@@ -36,7 +36,7 @@ export function AccessRequirementDashboard(
 
   useEffect(() => {
     function initializeFromSearchParams() {
-      const initialParams = new URLSearchParams(location.search as string)
+      const initialParams = new URLSearchParams(location.search)
       setNameContains(initialParams.get('nameContains') ?? '')
       setRelatedProjectId(initialParams.get('relatedProjectId') ?? undefined)
       setReviewerId(initialParams.get('reviewerId') ?? undefined)

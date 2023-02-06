@@ -6,7 +6,7 @@ import { SizeMe } from 'react-sizeme'
 
 import {
   FacetColumnResultValues,
-  ColumnType,
+  ColumnTypeEnum,
   FacetColumnResult,
   FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
@@ -68,10 +68,10 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     } else {
       const getColumnType = (
         facetToPlot: FacetColumnResult,
-      ): ColumnType | undefined =>
+      ): ColumnTypeEnum | undefined =>
         data?.columnModels?.find(
           columnModel => columnModel.name === facetToPlot.columnName,
-        )?.columnType as ColumnType
+        )?.columnType as ColumnTypeEnum
 
       const facetsDataToPlot = getFacets(data, facetsToPlot)
       setFacetDataArray(facetsDataToPlot)

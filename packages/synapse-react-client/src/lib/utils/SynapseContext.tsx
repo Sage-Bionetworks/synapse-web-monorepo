@@ -34,12 +34,19 @@ export type SynapseContextType = {
   downloadCartPageUrl: string
 }
 
+const defaultContext = {
+  accessToken: undefined,
+  isInExperimentalMode: false,
+  utcTime: false,
+  withErrorBoundary: undefined,
+  downloadCartPageUrl: '/DownloadCart',
+} satisfies SynapseContextType
+
 /**
  * This must be exported to use the context in class components.
  */
-export const SynapseContext = React.createContext<
-  SynapseContextType | undefined
->(undefined)
+export const SynapseContext =
+  React.createContext<SynapseContextType>(defaultContext)
 
 export type SynapseContextProviderProps = {
   synapseContext: SynapseContextType

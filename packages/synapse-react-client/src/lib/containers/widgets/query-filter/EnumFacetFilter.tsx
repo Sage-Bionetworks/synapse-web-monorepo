@@ -6,7 +6,7 @@ import { ElementWithTooltip } from '../../../containers/widgets/ElementWithToolt
 import { SynapseConstants } from '../../../utils'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
 import {
-  ColumnType,
+  ColumnTypeEnum,
   Evaluation,
   UserGroupHeader,
 } from '../../../utils/synapseTypes'
@@ -113,8 +113,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const allIsSelected = facetValues.filter(item => item.isSelected).length === 0
 
   const userIds =
-    columnModel?.columnType === ColumnType.USERID ||
-    columnModel?.columnType === ColumnType.USERID_LIST
+    columnModel?.columnType === ColumnTypeEnum.USERID ||
+    columnModel?.columnType === ColumnTypeEnum.USERID_LIST
       ? facetValues.map(facet => facet.value)
       : []
   const userGroupHeaders = useGetInfoFromIds<UserGroupHeader>({
@@ -123,8 +123,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   })
 
   const entityIds =
-    columnModel?.columnType === ColumnType.ENTITYID ||
-    columnModel?.columnType === ColumnType.ENTITYID_LIST
+    columnModel?.columnType === ColumnTypeEnum.ENTITYID ||
+    columnModel?.columnType === ColumnTypeEnum.ENTITYID_LIST
       ? facetValues.map(facet => facet.value)
       : []
   const entityHeaders = useGetInfoFromIds<EntityHeader>({
@@ -133,7 +133,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   })
 
   const evaluationIds =
-    columnModel?.columnType === ColumnType.EVALUATIONID
+    columnModel?.columnType === ColumnTypeEnum.EVALUATIONID
       ? facetValues.map(facet => facet.value)
       : []
   const evaluations = useGetInfoFromIds<Evaluation>({

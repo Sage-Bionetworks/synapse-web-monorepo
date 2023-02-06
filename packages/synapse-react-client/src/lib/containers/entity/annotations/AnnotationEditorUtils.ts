@@ -16,7 +16,7 @@ export function dropNullishArrayValues(
   Object.keys(formData).forEach(key => {
     let value = formData[key]
     if (Array.isArray(value)) {
-      value = (value as Array<any>).filter((item: any) => item != null)
+      value = value.filter((item: any) => item != null)
       if (!isEmpty(value)) {
         newFormData[key] = value
       }

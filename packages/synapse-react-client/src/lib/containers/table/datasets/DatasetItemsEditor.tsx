@@ -483,7 +483,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       title: 'Created On',
       dataKey: 'entityId',
       resizable: true,
-
       cellRenderer: CreatedOnRenderer,
     },
     {

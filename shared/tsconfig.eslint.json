@@ -1,0 +1,8 @@
+{
+  "extends": "./packages/synapse-react-client/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": ["**/*"]
+}

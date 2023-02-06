@@ -1,7 +1,7 @@
 import { Collapse } from '@mui/material'
 import React from 'react'
 import { CSSTransition } from 'react-transition-group'
-import { ColumnModel, ColumnType } from '../utils/synapseTypes'
+import { ColumnModel, ColumnTypeEnum } from '../utils/synapseTypes'
 import {
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
@@ -130,8 +130,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     this.setState({
       show: false,
     })
-    const { executeQueryRequest, getLastQueryRequest } =
-      this.props.queryContext!
+    const { executeQueryRequest, getLastQueryRequest } = this.props.queryContext
 
     const lastQueryRequestDeepClone = getLastQueryRequest()
 
@@ -181,7 +180,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       ).values.push(`%${searchText}%`)
     }
     lastQueryRequestDeepClone.query.additionalFilters = additionalFilters
-    executeQueryRequest!(lastQueryRequestDeepClone)
+    executeQueryRequest(lastQueryRequestDeepClone)
   }
 
   public handleChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -192,11 +191,11 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   public isSupportedColumn = (columnModel?: ColumnModel) => {
     switch (columnModel?.columnType) {
-      case ColumnType.FILEHANDLEID:
-      case ColumnType.ENTITYID:
-      case ColumnType.DATE:
-      case ColumnType.DATE_LIST:
-      case ColumnType.USERID:
+      case ColumnTypeEnum.FILEHANDLEID:
+      case ColumnTypeEnum.ENTITYID:
+      case ColumnTypeEnum.DATE:
+      case ColumnTypeEnum.DATE_LIST:
+      case ColumnTypeEnum.USERID:
         return false
       default:
         return true

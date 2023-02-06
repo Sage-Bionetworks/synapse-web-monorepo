@@ -17,7 +17,7 @@ export type EntityPreviewProps = {
  * @returns
  */
 export default function EntityPreview(props: EntityPreviewProps) {
-  let { entityId, versionNumber } = props
+  const { entityId, versionNumber } = props
 
   // If the entity is a Link, follow it until we get a non-link
   const { data: resolvedLink, isLoading: isLoadingLinkResolution } =

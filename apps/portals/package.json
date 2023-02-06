@@ -1,6 +1,6 @@
 {
   "name": "portals",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -37,6 +37,7 @@
     ]
   },
   "scripts": {
+    "lint": "eslint src",
     "copy-assets": "cp src/config/style/favicon* public/; cp src/config/style/logo.svg public/; cp src/config/style/socialmedia.png public/",
     "save-build-date": "date > public/build-date.txt",
     "start": "craco start",
@@ -67,8 +68,8 @@
     "buffer": "^6.0.3",
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
-    "katex": "^0.10.0-rc.1",
     "jest-environment-jsdom": "^27.5.1",
+    "katex": "^0.10.0-rc.1",
     "markdown-it": "^13.0.1",
     "markdown-it-br": "^1.0.0",
     "markdown-it-center-text": "^1.0.4",
@@ -93,6 +94,7 @@
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "timers-browserify": "^2.0.12",
+    "tslib": "^2.3.1",
     "typescript": "4.9.5",
     "url": "^0.11.0",
     "util": "^0.12.4",

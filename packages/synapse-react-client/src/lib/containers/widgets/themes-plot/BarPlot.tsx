@@ -17,7 +17,7 @@ export type BarPlotProps = {
   xMax: number
   colors?: BarPlotColors
   plotStyle?: PlotStyle
-  onClick?: Function
+  onClick?: (event: Readonly<Plotly.PlotMouseEvent>) => void
 }
 
 type LayoutOptions = {
@@ -35,7 +35,7 @@ function getBarPlotDataPoints(
   if (filter) {
     data = data.filter(item => item.y === filter)
   }
-  var groups = _.uniq(data.map(item => item['group'])).sort()
+  const groups = _.uniq(data.map(item => item['group'])).sort()
   const result: any[] = []
   const defaultColors = [`(28,118,175,1)`, `rgba(91,176,181,1)`]
 
@@ -106,7 +106,7 @@ const BarPlot: FunctionComponent<BarPlotProps> = ({
       })}
       config={optionsConfig}
       data={getBarPlotDataPoints(plotData, label, colors)}
-      onClick={(e: any) => (onClick ? onClick(e) : _.noop)}
+      onClick={e => (onClick ? onClick(e) : _.noop)}
     />
   )
 }

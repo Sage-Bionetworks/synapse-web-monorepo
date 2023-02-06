@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
+    // We'll emit local build files (used by IDEs and incremental builds) to build/
+    "outDir": "build",
+    "composite": true,
     "declaration": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -22,5 +24,5 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "useUnknownInCatchVariables": false
-  },
+  }
 }

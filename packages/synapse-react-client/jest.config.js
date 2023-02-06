@@ -7,15 +7,16 @@ const esModules = [
 
 /** @type {import('jest').Config} */
 module.exports = {
+  testMatch: ['<rootDir>/test/**/*.test.[jt]s?(x)'],
   testEnvironment: 'jsdom',
   moduleNameMapper: {
     '\\.(css|less|scss)$': 'identity-obj-proxy',
     // Mock SVGs, loaded by SVGR https://react-svgr.com/docs/jest/
-    '\\.svg$': '<rootDir>/src/mocks/svg.js',
+    '\\.svg$': '<rootDir>/mocks/svg.js',
   },
   transformIgnorePatterns: [
     `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
   ],
-  setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
+  setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
   resetMocks: false,
 }

@@ -44,7 +44,9 @@ const DirectDownloadButton: React.FC<DirectFileDownloadButtonProps> = props => {
         id={id}
         variant={variant}
         className={className}
-        onClick={e => getDownloadLink()}
+        onClick={() => {
+          getDownloadLink()
+        }}
       >
         {fileName}
       </Button>

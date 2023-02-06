@@ -213,7 +213,9 @@ const CertificationQuiz: React.FunctionComponent = () => {
             color="primary"
             variant="contained"
             size="large"
-            onClick={() => handleSubmit()}
+            onClick={() => {
+              handleSubmit()
+            }}
           >
             Submit
           </Button>

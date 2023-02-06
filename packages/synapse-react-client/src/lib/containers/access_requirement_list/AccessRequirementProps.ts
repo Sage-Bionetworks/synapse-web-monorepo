@@ -6,5 +6,5 @@ export type AccessRequirementProps<T extends AccessRequirement> = {
   accessRequirement: T
   accessRequirementStatus: AccessRequirementStatus
   user: UserProfile | undefined
-  onHide?: Function
+  onHide?: () => void
 }
