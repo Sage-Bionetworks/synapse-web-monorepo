@@ -79,6 +79,12 @@ export const HtmlRenderingTest: Story = {
   },
 }
 
+export const LargeHtmlFileRenderingTest: Story = {
+  args: {
+    ownerId: 'syn38870076',
+  },
+}
+
 export const MarkdownIDUReport: Story = {
   args: {
     markdown: '${iduReport?accessRestrictionId=9605700}',
