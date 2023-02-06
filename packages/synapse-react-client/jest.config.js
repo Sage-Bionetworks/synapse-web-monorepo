@@ -18,5 +18,16 @@ module.exports = {
     `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
   ],
   setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
+  reporters: [
+    'default',
+    [
+      './node_modules/jest-html-reporter',
+      {
+        pageTitle: 'synapse-react-client Test Report',
+        outputPath: './coverage/test-report.html',
+      },
+    ],
+  ],
+  coverageReporters: ['text-summary', 'html'],
   resetMocks: false,
 }
