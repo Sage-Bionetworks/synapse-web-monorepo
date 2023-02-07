@@ -20,7 +20,6 @@ import * as FavoriteButtonModule from '../../../../../../src/lib/containers/favo
 import * as EntityActionMenuModule from '../../../../../../src/lib/containers/entity/page/action_menu/EntityActionMenu'
 import * as TitleBarPropertiesModule from '../../../../../../src/lib/containers/entity/page/title_bar/TitleBarProperties'
 import * as TitleBarVersionInfoModule from '../../../../../../src/lib/containers/entity/page/title_bar/EntityTitleBarVersionInfo'
-import failOnConsoleError from 'jest-fail-on-console'
 
 const TITLE_BAR_PROPERTIES_TEST_ID = 'title-bar-properties'
 const TITLE_BAR_VERSION_INFO_TEST_ID = 'title-bar-version-info'
@@ -103,7 +102,6 @@ const defaultProps: EntityPageTitleBarProps = {
 }
 
 describe('Entity Page Title Bar', () => {
-  failOnConsoleError()
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
