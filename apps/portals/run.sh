@@ -77,7 +77,7 @@ EOL
 
 elif [ "$1" = "push-staging" ]; then
   # sync current with staging
-  pnpm i && pnpm build
+  pnpm i && pnpm nx run portals:build
   node sitemap/generate-sitemap.js $2
   # generate robots.txt
 cat > ./build/robots.txt <<EOL
