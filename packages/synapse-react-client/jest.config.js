@@ -25,6 +25,8 @@ module.exports = {
       {
         pageTitle: 'synapse-react-client Test Report',
         outputPath: './coverage/test-report.html',
+        includeFailureMsg: true,
+        includeSuiteFailure: true,
       },
     ],
   ],
