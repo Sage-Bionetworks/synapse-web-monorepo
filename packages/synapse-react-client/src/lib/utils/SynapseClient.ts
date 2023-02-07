@@ -66,6 +66,7 @@ import {
   USER_PROFILE,
   USER_PROFILE_ID,
   VERIFICATION_SUBMISSION,
+  TEAM_MEMBER,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -287,6 +288,8 @@ import {
 import { calculateFriendlyFileSize } from './functions/calculateFriendlyFileSize'
 import { PaginatedIds } from './synapseTypes/PaginatedIds'
 import { UploadDestination } from './synapseTypes/File/UploadDestination'
+import { JoinTeamSignedToken } from './synapseTypes/JoinTeamSignedToken'
+import { ResponseMessage } from './synapseTypes/ResponseMessage'
 
 const cookies = new UniversalCookies()
 
@@ -1334,6 +1337,21 @@ export const getTeamMembers = (
     fragment ? `&fragment=${fragment}` : ''
   }`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Add a member to the Team
+ * https://rest-docs.synapse.org/rest/PUT/teamMember.html
+ */
+export const addTeamMember = (
+  joinTeamSignedToken: JoinTeamSignedToken,
+): Promise<ResponseMessage> => {
+  return doPut<ResponseMessage>(
+    TEAM_MEMBER,
+    joinTeamSignedToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**
