@@ -151,8 +151,19 @@ export const TEAM_MEMBERS = (teamId: string | number) =>
 const notificationUnsubscribeEndpoint = 'https://www.synapse.org/#!SignedToken:'
 const teamEndpoint = 'https://www.synapse.org/#!Team:'
 
-// https://rest-docs.synapse.org/rest/PUT/teamMember.html
 export const TEAM_MEMBER = `${REPO}/teamMember/?teamEndpoint=${teamEndpoint}&notificationUnsubscribeEndpoint=${notificationUnsubscribeEndpoint}`
+export const TEAM_ID_MEMBER_ID_WITH_NOTIFICATION = (
+  teamId: string | number,
+  memberId: string | number,
+) =>
+  TEAM_ID_MEMBER_ID(teamId, memberId) +
+  `?teamEndpoint=${teamEndpoint}&notificationUnsubscribeEndpoint=${notificationUnsubscribeEndpoint}`
+export const MEMBERSHIP_INVITATION = (id: string) =>
+  `${REPO}/membershipInvitation/${id}`
+export const INVITEE_VERIFICATION_SIGNED_TOKEN = (id: string) =>
+  `${REPO}/membershipInvitation/${id}/inviteeVerificationSignedToken`
+export const BIND_INVITATION_TO_AUTHENTICATED_USER = (id: string) =>
+  `${REPO}/membershipInvitation/${id}/inviteeId`
 
 export const FORUM = `${REPO}/forum`
 export const FORUM_THREAD = (id: string) => `${FORUM}/${id}/threads`

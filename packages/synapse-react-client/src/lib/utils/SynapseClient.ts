@@ -67,6 +67,10 @@ import {
   USER_PROFILE_ID,
   VERIFICATION_SUBMISSION,
   TEAM_MEMBER,
+  MEMBERSHIP_INVITATION,
+  INVITEE_VERIFICATION_SIGNED_TOKEN,
+  BIND_INVITATION_TO_AUTHENTICATED_USER,
+  TEAM_ID_MEMBER_ID_WITH_NOTIFICATION,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -290,6 +294,9 @@ import { PaginatedIds } from './synapseTypes/PaginatedIds'
 import { UploadDestination } from './synapseTypes/File/UploadDestination'
 import { JoinTeamSignedToken } from './synapseTypes/JoinTeamSignedToken'
 import { ResponseMessage } from './synapseTypes/ResponseMessage'
+import { MembershipInvtnSignedToken } from './synapseTypes/SignedToken/MembershipInvtnSignedToken'
+import { MembershipInvitation } from './synapseTypes/MembershipInvitation'
+import { InviteeVerificationSignedToken } from './synapseTypes/SignedToken/InviteeVerificationSignedToken'
 
 const cookies = new UniversalCookies()
 
@@ -1343,13 +1350,71 @@ export const getTeamMembers = (
  * Add a member to the Team
  * https://rest-docs.synapse.org/rest/PUT/teamMember.html
  */
-export const addTeamMember = (
+export const addTeamMemberWithToken = (
   joinTeamSignedToken: JoinTeamSignedToken,
 ): Promise<ResponseMessage> => {
   return doPut<ResponseMessage>(
     TEAM_MEMBER,
     joinTeamSignedToken,
     undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Add member to the Team
+ * https://rest-docs.synapse.org/rest/PUT/team/id/member/principalId.html
+ */
+export const addTeamMemberAsAuthenticatedUserOrAdmin = (
+  teamId: string,
+  memberId: string,
+  accessToken: string,
+) => {
+  return doPut(
+    TEAM_ID_MEMBER_ID_WITH_NOTIFICATION(teamId, memberId),
+    undefined,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/POST/membershipInvitation/id.html
+export const getMembershipInvitation = (
+  membershipInvitationSignedToken: MembershipInvtnSignedToken,
+  accessToken: string,
+): Promise<MembershipInvitation> => {
+  return doPost(
+    MEMBERSHIP_INVITATION(
+      membershipInvitationSignedToken.membershipInvitationId,
+    ),
+    membershipInvitationSignedToken,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/membershipInvitation/id/inviteeVerificationSignedToken.html
+export const getInviteeVerificationSignedToken = (
+  membershipInvitationId: string,
+  accessToken: string,
+): Promise<MembershipInvitation> => {
+  return doGet(
+    INVITEE_VERIFICATION_SIGNED_TOKEN(membershipInvitationId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/PUT/membershipInvitation/id/inviteeId.html
+export const bindInvitationToAuthenticatedUser = (
+  inviteeVerificationSignedToken: InviteeVerificationSignedToken,
+  membershipInvitationId: string,
+  accessToken: string,
+) => {
+  return doPut(
+    BIND_INVITATION_TO_AUTHENTICATED_USER(membershipInvitationId),
+    inviteeVerificationSignedToken,
+    accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
