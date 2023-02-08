@@ -54,6 +54,7 @@ import SynapsePlot from './containers/widgets/SynapsePlot'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import { SynapseClient, SynapseConstants, SynapseQueries } from './utils'
 import Palettes from './utils/theme/palette/Palettes'
+import { hex2ascii } from './utils/functions/StringUtils'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
@@ -125,6 +126,7 @@ const SynapseComponents = {
   FileUpload,
   ProvenanceGraph,
   ForumSearch,
+  hex2ascii,
 }
 
 export {
