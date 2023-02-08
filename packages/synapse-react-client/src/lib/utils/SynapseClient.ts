@@ -1365,7 +1365,7 @@ export const addTeamMemberWithToken = (
  * Add member to the Team
  * https://rest-docs.synapse.org/rest/PUT/team/id/member/principalId.html
  */
-export const addTeamMemberAsCurrentUserOrAdmin = (
+export const addTeamMemberAsAuthenticatedUserOrAdmin = (
   teamId: string,
   memberId: string,
   accessToken: string,
