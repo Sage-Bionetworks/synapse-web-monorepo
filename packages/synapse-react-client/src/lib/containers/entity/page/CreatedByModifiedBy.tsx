@@ -107,8 +107,15 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
   }
 
   return (
-    <Box sx={{ bgcolor: 'grey.100', px: '40px', py: '10px' }}>
-      <Breadcrumbs separator={<Separator />}>
+    <Box sx={{ bgcolor: 'grey.100', py: '10px' }}>
+      <Breadcrumbs
+        separator={<Separator />}
+        sx={{
+          '& .MuiBreadcrumbs-ol': {
+            justifyContent: 'center',
+          },
+        }}
+      >
         <ConditionalWrapper condition={!entity} wrapper={Skeleton}>
           <Typography
             sx={{ color: 'grey.700' }}
