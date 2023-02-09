@@ -32,7 +32,9 @@ import TopLevelControls, {
   TopLevelControlsProps,
 } from '../table/TopLevelControls'
 import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
-import { FacetFilterControls } from '../widgets/query-filter/FacetFilterControls'
+import FacetFilterControls, {
+  FacetFilterControlsProps,
+} from '../widgets/query-filter/FacetFilterControls'
 import FilterAndView from './FilterAndView'
 import { NoContentPlaceholderType } from '../table/NoContentPlaceholderType'
 
@@ -59,7 +61,7 @@ type OwnProps = {
     'queryContext' | 'queryVisualizationContext'
   >
   facetsToPlot?: string[]
-  facetsToFilter?: string[]
+  availableFacets?: FacetFilterControlsProps['availableFacets']
   defaultColumn?: string
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
@@ -100,7 +102,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     name,
     cardConfiguration,
     facetsToPlot,
-    facetsToFilter,
+    availableFacets,
     hideDownload,
     hideQueryCount,
     hideSqlEditorControl,
@@ -232,7 +234,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                         {isFaceted && (
                           <>
                             <FacetFilterControls
-                              facetsToFilter={facetsToFilter}
+                              availableFacets={availableFacets}
                             />
                           </>
                         )}

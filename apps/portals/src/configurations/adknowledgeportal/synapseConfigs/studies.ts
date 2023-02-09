@@ -174,7 +174,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
               showAccessColumn: true,
               showDownloadColumn: true,
             },
-            facetsToFilter: ['metadataType', 'dataType', 'assay'],
+            availableFacets: ['metadataType', 'dataType', 'assay'],
             sql: dataOnStudiesPageSql,
             shouldDeepLink: false,
             defaultShowFacetVisualization: false,

@@ -14,7 +14,7 @@ import {
   QueryResultBundle,
 } from '../../../../src/lib/utils/synapseTypes'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
-import mockQueryResponseData from '../../../../mocks/mockQueryResponseData.json'
+import mockQueryResponseData from '../../../../mocks/mockQueryResponseData'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
