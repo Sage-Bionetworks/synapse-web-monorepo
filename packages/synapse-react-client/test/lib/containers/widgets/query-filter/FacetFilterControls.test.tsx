@@ -11,8 +11,7 @@ import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
 } from '../../../../../src/lib/containers/QueryVisualizationWrapper'
-import {
-  FacetFilterControls,
+import FacetFilterControls, {
   FacetFilterControlsProps,
   getDefaultShownFacetFilters,
 } from '../../../../../src/lib/containers/widgets/query-filter/FacetFilterControls'

@@ -197,7 +197,7 @@ function FacetFilterControlsSkeleton() {
   )
 }
 
-export function FacetFilterControls(props: FacetFilterControlsProps) {
+function FacetFilterControls(props: FacetFilterControlsProps) {
   const { availableFacets } = props
   const {
     data: data,
