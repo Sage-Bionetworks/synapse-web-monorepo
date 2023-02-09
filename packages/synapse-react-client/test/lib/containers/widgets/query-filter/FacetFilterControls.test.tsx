@@ -14,10 +14,11 @@ import {
 import {
   FacetFilterControls,
   FacetFilterControlsProps,
+  getDefaultShownFacetFilters,
 } from '../../../../../src/lib/containers/widgets/query-filter/FacetFilterControls'
 import { SynapseContextProvider } from '../../../../../src/lib/utils/SynapseContext'
 import { QueryResultBundle } from '../../../../../src/lib/utils/synapseTypes'
-import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData.json'
+import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 
 let capturedOnChange: Function | undefined
@@ -150,9 +151,9 @@ describe('FacetFilterControls tests', () => {
     })
   })
 
-  it('should respect facetsToFilter', async () => {
-    // set facetsToFilter to make the component only show a filter for Year (a range type facet) and not Make (a values/enum type)
-    init({ facetsToFilter: ['Year'] })
+  it('should respect availableFacets', async () => {
+    // set availableFacets to make the component only show a filter for Year (a range type facet) and not Make (a values/enum type)
+    init({ availableFacets: ['Year'] })
     expect(screen.queryByTestId('EnumFacetFilter')).not.toBeInTheDocument()
     expect(screen.queryByTestId('RangeFacetFilter')).toBeInTheDocument()
     // expects the facet chips to only show facets within facetToFilter
@@ -257,6 +258,41 @@ describe('FacetFilterControls tests', () => {
       expect(facetChip.className).toEqual('Chip Checked')
       await userEvent.click(facetChip)
       expect(facetChip.className).toEqual('Chip ')
+    })
+  })
+
+  describe('getDefaultShownFacetFilters', () => {
+    it('return the first three facet column names', () => {
+      expect(
+        getDefaultShownFacetFilters(mockQueryResponseData.facets!),
+      ).toEqual(new Set(['Year', 'Make', 'Model']))
+    })
+    it('returns the first three facet column names plus any selected facets', () => {
+      expect(
+        getDefaultShownFacetFilters(mockQueryResponseData.facets!, [
+          {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            columnName: 'Lemon',
+            facetValues: ['true'],
+          },
+        ]),
+      ).toEqual(new Set(['Year', 'Make', 'Model', 'Lemon']))
+    })
+    it('handles 0 facets', () => {
+      expect(getDefaultShownFacetFilters([])).toEqual(new Set())
+    })
+    it('handles case where one of first three facets is selected', () => {
+      expect(
+        getDefaultShownFacetFilters(mockQueryResponseData.facets!, [
+          {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            columnName: 'Make',
+            facetValues: ['Honda', 'Ford'],
+          },
+        ]),
+      ).toEqual(new Set(['Year', 'Make', 'Model']))
     })
   })
 })
