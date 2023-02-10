@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as React from 'react'
-import Login from '../../../src/lib/containers/Login'
+import Login from '../../../src/lib/containers/auth/Login'
 
 const SynapseClient = require('../../../src/lib/utils/SynapseClient')
 SynapseClient.login = jest.fn().mockResolvedValue({

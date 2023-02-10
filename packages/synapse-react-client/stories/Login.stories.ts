@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import Login from '../src/lib/containers/Login'
+import Login from '../src/lib/containers/auth/Login'
 import { displayToast } from '../src/lib/containers/ToastMessage'
 import { sessionChangeHandler } from '../src/lib/containers/StorybookComponentWrapper'
 

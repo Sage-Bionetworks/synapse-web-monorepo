@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Login from './Login'
-import IconSvg from './IconSvg'
+import IconSvg from '../IconSvg'
 import { IconButton } from '@mui/material'
 
 export type LoginPageProps = {

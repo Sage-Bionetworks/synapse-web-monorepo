@@ -22,7 +22,7 @@ import {
 import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 import IconSvg from '../IconSvg'
-import Login from '../Login'
+import Login from '../auth/Login'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
 import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'

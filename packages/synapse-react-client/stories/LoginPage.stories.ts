@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 
-import LoginPage from '../src/lib/containers/LoginPage'
+import LoginPage from '../src/lib/containers/auth/LoginPage'
 
 const meta = {
   title: 'Synapse/LoginPage',
