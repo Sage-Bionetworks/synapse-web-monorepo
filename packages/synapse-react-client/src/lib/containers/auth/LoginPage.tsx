@@ -5,12 +5,11 @@ import { IconButton } from '@mui/material'
 
 export type LoginPageProps = {
   ssoRedirectUrl?: string
-  redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
   sessionCallback: () => void // Callback is invoked after login
 }
 
 const LoginPage: React.FunctionComponent<LoginPageProps> = props => {
-  const { ssoRedirectUrl, redirectUrl, sessionCallback } = props
+  const { ssoRedirectUrl, sessionCallback } = props
   const [isOnUsernameOrPasswordScreen, setIsOnUsernameOrPasswordScreen] =
     React.useState<boolean | undefined>()
   const thisClass = 'login-panel-wrapper'
@@ -40,7 +39,6 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = props => {
           </div>
           <Login
             ssoRedirectUrl={ssoRedirectUrl}
-            redirectUrl={redirectUrl}
             sessionCallback={sessionCallback}
             renderBackButton={false}
             handleIsOnUsernameOrPasswordScreen={setIsOnUsernameOrPasswordScreen}
