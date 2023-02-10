@@ -2,7 +2,7 @@ import { JSONSchema7 } from 'json-schema'
 import SparkMD5 from 'spark-md5'
 import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
-import { PROVIDERS } from '../containers/Login'
+import { PROVIDERS } from '../containers/auth/Login'
 import {
   ACCESS_APPROVAL,
   ACCESS_APPROVAL_BY_ID,

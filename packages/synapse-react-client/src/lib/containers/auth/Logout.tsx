@@ -1,4 +1,4 @@
-import { SynapseClient } from '../utils'
+import { SynapseClient } from '../../utils'
 import React from 'react'
 import { Button } from 'react-bootstrap'
 
