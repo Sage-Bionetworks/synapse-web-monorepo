@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { SynapseClient } from 'synapse-react-client'
-import { PROVIDERS } from 'synapse-react-client/dist/containers/Login'
+import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/Login'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
   isAliasAvailable,
@@ -25,6 +25,8 @@ export enum Pages {
 }
 
 export const RegisterAccount1 = (props: RegisterAccount1Props) => {
+  // TODO: Get email from MembershipInvtnSignedToken if set, and initialize email with that value.
+
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')

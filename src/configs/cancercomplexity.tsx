@@ -13,8 +13,6 @@ export const cckp: SourceAppConfig = {
   appURL: 'https://cancercomplexity.synapse.org/',
   friendlyName: 'Cancer Complexity Knowledge Portal',
   logo,
-  theme: {
-    palette: cancerComplexityPortalPalette,
-  },
+  palette: cancerComplexityPortalPalette,
   description,
 }

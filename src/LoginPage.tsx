@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { Typography } from 'synapse-react-client'
-import Login from 'synapse-react-client/dist/containers/Login'
+import Login from 'synapse-react-client/dist/containers/auth/Login'
 import { SourceAppDescription, SourceAppLogo } from './components/SourceApp'
 
 export type OwnProps = {

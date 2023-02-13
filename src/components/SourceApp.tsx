@@ -1,4 +1,4 @@
-import { Box, DeprecatedThemeOptions, SxProps } from '@mui/material'
+import { Box, SxProps, PaletteOptions } from '@mui/material'
 import React from 'react'
 import { Typography } from 'synapse-react-client'
 import SourceAppConfigs, { SourceAppConfig } from './SourceAppConfigs'
@@ -31,7 +31,11 @@ export const SourceApp = (props: SourceAppProps) => {
 }
 
 export const SourceAppLogo: React.FC<{ sx?: SxProps }> = ({ sx }) => {
-  return <Box className="SourceAppLogo" sx={sx}>{useSourceApp()?.logo}</Box>
+  return (
+    <Box className="SourceAppLogo" sx={sx}>
+      {useSourceApp()?.logo}
+    </Box>
+  )
 }
 
 export const SourceAppDescription = () => {
@@ -51,8 +55,8 @@ export const getSourceAppURL = (): string => {
   return useSourceApp()?.appURL ?? 'https://sagebionetworks.org/'
 }
 
-export const getSourceAppTheme = (): DeprecatedThemeOptions | undefined => {
-  return useSourceApp()?.theme
+export const getSourceAppPaletteOptions = (): PaletteOptions | undefined => {
+  return useSourceApp()?.palette
 }
 
 export default SourceApp

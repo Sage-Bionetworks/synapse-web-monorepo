@@ -13,8 +13,6 @@ export const synapse: SourceAppConfig = {
   appURL: 'https://www.synapse.org/',
   friendlyName: 'Synapse',
   logo,
-  theme: {
-    palette: palette,
-  },
+  palette: palette,
   description,
 }

@@ -1,10 +1,13 @@
 import React, { useContext } from 'react'
+import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
 
 export type AppContextType = {
   /** Source App ID */
   appId?: string
   /** Source App Redirect URL */
   redirectURL?: string
+  /** If initialized with a signed token, this will be available in the context (until it is handled and cleared) */
+  signedToken?: SignedTokenInterface
 }
 
 /**

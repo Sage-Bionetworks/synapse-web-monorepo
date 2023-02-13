@@ -13,8 +13,6 @@ export const stopAd: SourceAppConfig = {
   appURL: 'https://stopadportal.synapse.org/',
   friendlyName: 'STOP-AD Portal',
   logo,
-  theme: {
-    palette: stopAdPortalPalette,
-  },
+  palette: stopAdPortalPalette,
   description,
 }

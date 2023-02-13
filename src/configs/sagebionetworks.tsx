@@ -13,8 +13,6 @@ export const sage: SourceAppConfig = {
   appURL: 'https://sagebionetworks.org/',
   friendlyName: 'Sage Bionetworks',
   logo,
-  theme: {
-    palette: sageBionetworksPalette,
-  },
+  palette: sageBionetworksPalette,
   description,
 }

@@ -13,8 +13,6 @@ export const adKnowledgePortal: SourceAppConfig = {
   appURL: 'https://adknowledgeportal.synapse.org/',
   friendlyName: 'AD Knowledge Portal',
   logo,
-  theme: {
-    palette: adKnowledgePortalPalette,
-  },
+  palette: adKnowledgePortalPalette,
   description,
 }

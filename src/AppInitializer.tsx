@@ -1,11 +1,11 @@
-import { DeprecatedThemeOptions } from '@mui/material'
+import { ThemeOptions } from '@mui/material'
 import { deepmerge } from '@mui/utils'
-import { getSourceAppTheme } from 'components/SourceApp'
+import { getSourceAppPaletteOptions } from 'components/SourceApp'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { AppContextProvider } from 'AppContext'
 import { Redirect, useLocation } from 'react-router-dom'
-import { SynapseClient } from 'synapse-react-client'
+import { SynapseClient, SynapseComponents } from 'synapse-react-client'
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam } from 'URLUtils'
@@ -14,6 +14,7 @@ import useAnalytics from './useAnalytics'
 import SourceAppConfigs from 'components/SourceAppConfigs'
 import { sage } from 'configs/sagebionetworks'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
+import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
 
 export type AppInitializerState = {
   token?: string
@@ -96,8 +97,11 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   const [isFramed, setIsFramed] = useState(false)
   const [appId, setAppId] = useState<string>()
   const [redirectURL, setRedirectURL] = useState<string>()
-  const [themeOptions, setThemeOptions] = useState<DeprecatedThemeOptions>()
+  const [themeOptions, setThemeOptions] = useState<ThemeOptions>()
   const { token, getSession, hasCalledGetSession, touSigned } = useSession()
+  const [signedToken, setSignedToken] = useState<
+    SignedTokenInterface | undefined
+  >()
 
   useEffect(() => {
     // SWC-6294: on mount, detect and attempt a client-side framebuster (mitigation only, easily bypassed by attacker)
@@ -121,6 +125,23 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       // fallback to Sage Bionetworks
       localStorage.setItem('sourceAppId', sage.appId)
       setAppId(sage.appId)
+    }
+  }, [])
+
+  useEffect(() => {
+    const searchParamSignedToken = getSearchParam('signedToken')
+    const localStorageSignedToken = localStorage.getItem('signedToken')
+    if (searchParamSignedToken) {
+      localStorage.setItem('signedToken', searchParamSignedToken)
+      const searchParamToken = JSON.parse(
+        SynapseComponents.hex2ascii(searchParamSignedToken),
+      ) as SignedTokenInterface
+      setSignedToken(searchParamToken)
+    } else if (localStorageSignedToken) {
+      const localStorageParamToken = JSON.parse(
+        SynapseComponents.hex2ascii(localStorageSignedToken),
+      ) as SignedTokenInterface
+      setSignedToken(localStorageParamToken)
     }
   }, [])
 
@@ -150,7 +171,9 @@ function AppInitializer(props: { children?: React.ReactNode }) {
 
   useEffect(() => {
     if (appId) {
-      setThemeOptions(deepmerge(theme, getSourceAppTheme()))
+      setThemeOptions(
+        deepmerge(theme, { palette: getSourceAppPaletteOptions() }),
+      )
     }
   }, [appId])
 
@@ -180,6 +203,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       appContext={{
         appId,
         redirectURL,
+        signedToken,
       }}
     >
       <SynapseContextProvider

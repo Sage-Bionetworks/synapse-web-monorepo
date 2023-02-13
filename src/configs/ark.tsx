@@ -13,9 +13,7 @@ export const ark: SourceAppConfig = {
   appURL: 'https://arkportal.synapse.org/',
   friendlyName: 'ARK Portal',
   logo,
-  theme: {
-    palette: arkPortalPalette,
-  },
+  palette: arkPortalPalette,
   description,
   requestAffiliation: true,
 }

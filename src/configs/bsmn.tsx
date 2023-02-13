@@ -13,8 +13,6 @@ export const bsmn: SourceAppConfig = {
   appURL: 'https://bsmn.synapse.org/',
   friendlyName: 'BSMN Knowledge Portal',
   logo,
-  theme: {
-    palette: bsmnPortalPalette,
-  },
+  palette: bsmnPortalPalette,
   description,
 }

@@ -11,6 +11,11 @@ import { sage } from 'configs/sagebionetworks'
 export type AccountCreatedPageProps = {}
 
 export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
+  // TODO: get the signed token.  If set and it's a MembershipInvtnSignedToken, then
+  // bind membership invite to new account: https://rest-docs.synapse.org/rest/PUT/membershipInvitation/id/inviteeId.html
+  // and add to team.
+  // and display success message
+
   const sourceApp = useSourceApp()
   return (
     <>
