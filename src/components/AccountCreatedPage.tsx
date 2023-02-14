@@ -1,20 +1,77 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Button, Link, Grid } from '@mui/material'
-import { AppContextConsumer } from 'AppContext'
-import { Typography } from 'synapse-react-client'
+import { AppContextConsumer, useAppContext } from 'AppContext'
+import { SynapseClient, Typography } from 'synapse-react-client'
 import { Link as RouterLink } from 'react-router-dom'
 import SourceAppConfigs from './SourceAppConfigs'
 import { LeftRightPanel } from './LeftRightPanel'
 import { sage } from 'configs/sagebionetworks'
+import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
+import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
+import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 
 export type AccountCreatedPageProps = {}
 
 export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
-  // TODO: get the signed token.  If set and it's a MembershipInvtnSignedToken, then
-  // bind membership invite to new account: https://rest-docs.synapse.org/rest/PUT/membershipInvitation/id/inviteeId.html
-  // and add to team.
-  // and display success message
+  const { accessToken } = useSynapseContext()
+  const context = useAppContext()
+  // If we have a MembershipInvtnSignedToken in the local storage, then process and clear it!
+  useEffect(() => {
+    const fetchData = async () => {
+      if (
+        accessToken &&
+        context?.signedToken &&
+        isMembershipInvtnSignedToken(context.signedToken)
+      ) {
+        const inviteeSignedToken =
+          await SynapseClient.getInviteeVerificationSignedToken(
+            context.signedToken.membershipInvitationId,
+            accessToken,
+          )
+        const membershipInvitation =
+          await SynapseClient.getMembershipInvitation(
+            context.signedToken,
+            accessToken,
+          )
+        try {
+          // attempt to bind the membership invite to new account
+          await SynapseClient.bindInvitationToAuthenticatedUser(
+            inviteeSignedToken,
+            context.signedToken.membershipInvitationId,
+            accessToken,
+          )
+          await SynapseClient.addTeamMemberAsAuthenticatedUserOrAdmin(
+            membershipInvitation.teamId,
+            membershipInvitation.inviteeId,
+            accessToken,
+          )
+          // clear token from local storage, and show success UI
+          localStorage.removeItem('signedToken')
+          displayToast(`Successfully joined the team.`)
+        } catch (error) {
+          if (error?.status === 403) {
+            displayToast(
+              `Couldn't join the team. This invitation was sent to an email address not associated to the current user. ${membershipInvitation.inviteeEmail} Please add this email in your Account Settings, or log in with the correct account before accepting the invitation.`,
+              'warning',
+              {
+                primaryButtonConfig: {
+                  text: 'Account Settings',
+                  href: '/authenticated/myaccount',
+                },
+              },
+            )
+          } else {
+            throw error
+          }
+        }
+      }
+    }
+
+    fetchData().catch(err => {
+      displayToast(err.reason, 'danger')
+    })
+  }, [context.signedToken])
 
   const sourceApp = useSourceApp()
   return (
