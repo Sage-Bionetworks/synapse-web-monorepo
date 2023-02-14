@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { SynapseClient } from 'synapse-react-client'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/Login'
@@ -14,6 +14,8 @@ import { EmailConfirmationPage } from './EmailConfirmationPage'
 import { Button, IconButton, Link as MuiLink } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import GoogleLogo from '../assets/g-logo.png'
+import { useAppContext } from 'AppContext'
+import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
 
 export type RegisterAccount1Props = {}
 
@@ -25,13 +27,26 @@ export enum Pages {
 }
 
 export const RegisterAccount1 = (props: RegisterAccount1Props) => {
-  // TODO: Get email from MembershipInvtnSignedToken if set, and initialize email with that value.
-
+  const appContext = useAppContext()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
   const sourceAppName = useSourceApp()?.friendlyName
+
+  // If we have a MembershipInvtnSignedToken, initialize the email address with the membership invitation invitee email.
+  useEffect(() => {
+    if (
+      appContext.signedToken &&
+      isMembershipInvtnSignedToken(appContext.signedToken)
+    ) {
+      SynapseClient.getMembershipInvitation(appContext.signedToken, '').then(
+        membershipInvitation => {
+          setEmail(membershipInvitation.inviteeEmail)
+        },
+      )
+    }
+  }, [appContext.signedToken])
 
   const buttonSx = {
     width: '100%',

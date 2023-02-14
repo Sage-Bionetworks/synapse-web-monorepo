@@ -1,98 +1,156 @@
 import React, { useEffect, useState } from 'react'
-import { useSourceApp, SourceAppLogo } from './SourceApp'
-import { Button, Link } from '@mui/material'
+import { Button, Box } from '@mui/material'
 import { useAppContext } from 'AppContext'
 import { Typography, SynapseClient } from 'synapse-react-client'
-import { Link as RouterLink, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
+import theme from 'style/theme'
 
 import {
   isJoinTeamSignedToken,
   JoinTeamSignedToken,
 } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/JoinTeamSignedToken'
-import {
-  isMembershipInvtnSignedToken,
-  MembershipInvtnSignedToken,
-} from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
+import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
+import { CelebrationOutlined, Groups2Outlined } from '@mui/icons-material'
+import UserOrTeamBadge from 'synapse-react-client/dist/containers/UserOrTeamBadge'
+import { MembershipInvitation } from 'synapse-react-client/dist/utils/synapseTypes/MembershipInvitation'
+import { ResponseMessage } from 'synapse-react-client/dist/utils/synapseTypes/ResponseMessage'
+import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
+import { StyledOuterContainer } from './StyledComponents'
 
 export type JoinTeamPageProps = {}
 
 export const JoinTeamPage = (props: JoinTeamPageProps) => {
   const context = useAppContext()
   const [joinTeamToken, setJoinTeamToken] = useState<JoinTeamSignedToken>()
-  const [membershipInvtnSignedToken, setMembershipInvtnSignedToken] =
-    useState<MembershipInvtnSignedToken>()
-
+  const [joinedTeamResponseMessage, setJoinedTeamResponseMessage] =
+    useState<ResponseMessage>()
+  const [redirectToRegistration, setRedirectToRegistration] =
+    useState<boolean>(false)
+  const [redirectToTeamPage, setRedirectToTeamPage] = useState<boolean>(false)
+  const [membershipInvitation, setMembershipInvitation] =
+    useState<MembershipInvitation>()
   useEffect(() => {
     if (context && context.signedToken) {
       if (isJoinTeamSignedToken(context.signedToken)) {
-        setJoinTeamToken(context.signedToken as JoinTeamSignedToken)
+        setJoinTeamToken(context.signedToken)
       } else if (isMembershipInvtnSignedToken(context.signedToken)) {
-        setMembershipInvtnSignedToken(
-          context.signedToken as MembershipInvtnSignedToken,
+        SynapseClient.getMembershipInvitation(context.signedToken, '').then(
+          invitation => {
+            setMembershipInvitation(invitation)
+          },
         )
       }
     }
   }, [context])
 
   useEffect(() => {
+    if (redirectToTeamPage) {
+      window.location.href = `https://www.synapse.org/#!Team:${joinTeamToken?.teamId}`
+    }
+  }, [redirectToTeamPage])
+
+  useEffect(() => {
     if (joinTeamToken) {
-      SynapseClient.addTeamMember(joinTeamToken)
+      SynapseClient.addTeamMemberWithToken(joinTeamToken)
         .then(responseMessage => {
-          // TODO : clear token from local storage, and show success UI
+          // clear token from local storage, and show success UI
+          localStorage.removeItem('signedToken')
+          setJoinedTeamResponseMessage(responseMessage)
         })
         .catch(error => {
-          // TODO : show error
+          displayToast(error.reason, 'danger')
         })
     }
   }, [joinTeamToken])
 
-  const sourceApp = useSourceApp()
   return (
-    <>
-      {membershipInvtnSignedToken && <Redirect to="/register1" />}
-      <div>
-        <SourceAppLogo sx={{ textAlign: 'center', paddingBottom: '50px' }} />
-        <Typography variant="headline2">Account created</Typography>
-        <Typography
-          variant="subtitle1"
-          sx={{ paddingTop: '10px', paddingBottom: '20px' }}
+    <StyledOuterContainer>
+      {redirectToRegistration && <Redirect to="/register1" />}
+      <Box
+        sx={{
+          width: '500px',
+          padding: theme.spacing(8),
+          margin: '0 auto',
+          backgroundColor: '#fff',
+        }}
+      >
+        <Box
+          sx={{
+            textAlign: 'center',
+            width: '100px',
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: theme.spacing(4),
+            justifyContent: 'center',
+            height: '100px',
+            backgroundColor: theme.palette.primary.main,
+            borderRadius: '50%',
+          }}
         >
-          <strong>Welcome to {sourceApp?.friendlyName}!</strong>
-        </Typography>
-        <p>
-          You’ve created a Sage Account, which you can use on the{' '}
-          {sourceApp?.friendlyName}.
-        </p>
-        <p>
-          For full access to data and other functionality, we’ll need additional
-          information to verify your identity and certify you to upload data.
-        </p>
-        <Link
-          color="primary"
-          component={RouterLink}
-          to="/authenticated/validate"
-          sx={{ paddingTop: '30px' }}
-        >
-          Start identity verification
-        </Link>
-        <Link
-          color="primary"
-          component={RouterLink}
-          to="/authenticated/certificationquiz"
-          sx={{ paddingTop: '15px', paddingBottom: '15px' }}
-        >
-          Get certified for data upload
-        </Link>
-        <Button
-          type="button"
-          color="primary"
-          variant="contained"
-          sx={{ padding: '10px', height: '100%' }}
-          onClick={() => {}}
-        >
-          Take me to {sourceApp?.friendlyName}
-        </Button>
-      </div>
-    </>
+          {joinedTeamResponseMessage && (
+            <CelebrationOutlined sx={{ color: '#fff', fontSize: '64px' }} />
+          )}
+          {membershipInvitation && (
+            <Groups2Outlined sx={{ color: '#fff', fontSize: '64px' }} />
+          )}
+        </Box>
+        {membershipInvitation && (
+          <>
+            <Typography variant="headline2" paragraph>
+              Join a Team
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ paddingTop: '10px', paddingBottom: '50px' }}
+            >
+              <UserOrTeamBadge principalId={membershipInvitation.createdBy} />{' '}
+              invited you to join:
+              <br />
+              <UserOrTeamBadge principalId={membershipInvitation.teamId} />
+            </Typography>
+            <Button
+              type="button"
+              color="primary"
+              variant="contained"
+              fullWidth
+              sx={{ padding: '10px', height: '100%' }}
+              onClick={() => {
+                setRedirectToRegistration(true)
+              }}
+            >
+              Register for a new account
+            </Button>
+          </>
+        )}
+        {joinedTeamResponseMessage && (
+          <>
+            <Typography variant="headline2" paragraph>
+              Joined a Team!
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ paddingTop: '10px', paddingBottom: '50px' }}
+            >
+              <UserOrTeamBadge principalId={joinTeamToken?.memberId} /> is now a
+              member of:
+              <br />
+              <UserOrTeamBadge principalId={joinTeamToken?.teamId} />
+            </Typography>
+            <Button
+              type="button"
+              color="primary"
+              variant="contained"
+              fullWidth
+              sx={{ padding: '10px', height: '100%' }}
+              onClick={() => {
+                setRedirectToTeamPage(true)
+              }}
+            >
+              View the team page
+            </Button>
+          </>
+        )}
+      </Box>
+    </StyledOuterContainer>
   )
 }
