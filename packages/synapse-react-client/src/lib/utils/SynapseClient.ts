@@ -1381,14 +1381,13 @@ export const addTeamMemberAsAuthenticatedUserOrAdmin = (
 // https://rest-docs.synapse.org/rest/POST/membershipInvitation/id.html
 export const getMembershipInvitation = (
   membershipInvitationSignedToken: MembershipInvtnSignedToken,
-  accessToken: string,
 ): Promise<MembershipInvitation> => {
   return doPost(
     MEMBERSHIP_INVITATION(
       membershipInvitationSignedToken.membershipInvitationId,
     ),
     membershipInvitationSignedToken,
-    accessToken,
+    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1397,7 +1396,7 @@ export const getMembershipInvitation = (
 export const getInviteeVerificationSignedToken = (
   membershipInvitationId: string,
   accessToken: string,
-): Promise<MembershipInvitation> => {
+): Promise<InviteeVerificationSignedToken> => {
   return doGet(
     INVITEE_VERIFICATION_SIGNED_TOKEN(membershipInvitationId),
     accessToken,
