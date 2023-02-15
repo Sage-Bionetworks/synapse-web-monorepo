@@ -24,44 +24,49 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
         context?.signedToken &&
         isMembershipInvtnSignedToken(context.signedToken)
       ) {
-        const inviteeSignedToken =
-          await SynapseClient.getInviteeVerificationSignedToken(
-            context.signedToken.membershipInvitationId,
-            accessToken,
-          )
         const membershipInvitation =
           await SynapseClient.getMembershipInvitation(context.signedToken)
-        try {
-          // attempt to bind the membership invite to new account
-          await SynapseClient.bindInvitationToAuthenticatedUser(
-            inviteeSignedToken,
-            context.signedToken.membershipInvitationId,
-            accessToken,
-          )
-          await SynapseClient.addTeamMemberAsAuthenticatedUserOrAdmin(
-            membershipInvitation.teamId,
-            membershipInvitation.inviteeId,
-            accessToken,
-          )
-          // clear token from local storage, and show success UI
-          localStorage.removeItem('signedToken')
-          displayToast(`Successfully joined the team.`)
-        } catch (error) {
-          if (error?.status === 403) {
-            displayToast(
-              `Couldn't join the team. This invitation was sent to an email address not associated to the current user. ${membershipInvitation.inviteeEmail} Please add this email in your Account Settings, or log in with the correct account before accepting the invitation.`,
-              'warning',
-              {
-                primaryButtonConfig: {
-                  text: 'Account Settings',
-                  href: '/authenticated/myaccount',
-                },
-              },
+        if (!membershipInvitation.inviteeId) {
+          // email is filled in, we must first bind the invitation
+          const inviteeSignedToken =
+            await SynapseClient.getInviteeVerificationSignedToken(
+              context.signedToken.membershipInvitationId,
+              accessToken,
             )
-          } else {
-            throw error
+          try {
+            // attempt to bind the membership invite to new account
+            await SynapseClient.bindInvitationToAuthenticatedUser(
+              inviteeSignedToken,
+              context.signedToken.membershipInvitationId,
+              accessToken,
+            )
+          } catch (error) {
+            if (error?.status === 403) {
+              displayToast(
+                `Couldn't join the team. This invitation was sent to an email address not associated to the current user. ${membershipInvitation.inviteeEmail} Please add this email in your Account Settings, or log in with the correct account before accepting the invitation.`,
+                'warning',
+                {
+                  primaryButtonConfig: {
+                    text: 'Account Settings',
+                    href: '/authenticated/myaccount',
+                  },
+                },
+              )
+            } else {
+              throw error
+            }
           }
         }
+
+        await SynapseClient.addTeamMemberAsAuthenticatedUserOrAdmin(
+          membershipInvitation.teamId,
+          membershipInvitation.inviteeId,
+          accessToken,
+        )
+        // clear token from local storage, and show success UI
+        context.signedToken = undefined
+        localStorage.removeItem('signedToken')
+        displayToast(`Successfully joined the team.`)
       }
     }
 
