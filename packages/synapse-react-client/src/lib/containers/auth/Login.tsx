@@ -85,7 +85,7 @@ function Login(props: Props) {
       await SynapseClient.setAccessTokenCookie(data.accessToken)
       // Set the new receipt
       localStorage.setItem(authenticationReceiptKey, data.authenticationReceipt)
-      await sessionCallback()
+      sessionCallback()
     } catch (err) {
       console.log('Error on login: ', err.reason)
       setErrorMessage(err.reason)
