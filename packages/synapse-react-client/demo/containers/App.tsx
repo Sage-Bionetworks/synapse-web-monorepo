@@ -100,7 +100,7 @@ export default class App extends React.Component<{}, AppState> {
         You are logged in.&nbsp;
         <button
           onClick={() => {
-            SynapseClient.signOut(this.getSession)
+            SynapseClient.signOut().then(this.getSession)
           }}
         >
           <span aria-hidden="true">Sign out</span>

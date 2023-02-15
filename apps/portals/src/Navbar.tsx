@@ -139,8 +139,12 @@ class Navbar extends React.Component<any, State> {
     )[0]
 
     // if the home route does not contain any titles, then just show a link
-    const homeConfigTitleCount = homeRouteConfig?.synapseConfigArray?.filter(config => config.title !== undefined).length
-    const isHomeDropdown = homeConfigTitleCount ? homeConfigTitleCount > 0 : false
+    const homeConfigTitleCount = homeRouteConfig?.synapseConfigArray?.filter(
+      (config) => config.title !== undefined,
+    ).length
+    const isHomeDropdown = homeConfigTitleCount
+      ? homeConfigTitleCount > 0
+      : false
     return (
       <React.Fragment>
         <nav
@@ -406,9 +410,8 @@ class Navbar extends React.Component<any, State> {
             }
             {
               // if theres less than 7 navbar items show the home page button
-              routesConfig.filter((el) => !el.hideRouteFromNavbar).length <
-                7 && (
-                  isHomeDropdown ? 
+              routesConfig.filter((el) => !el.hideRouteFromNavbar).length < 7 &&
+                (isHomeDropdown ? (
                   <Dropdown className={this.getBorder('')}>
                     <Dropdown.Toggle
                       variant="light"
@@ -436,13 +439,14 @@ class Navbar extends React.Component<any, State> {
                           },
                         )}
                     </Dropdown.Menu>
-                  </Dropdown> :
+                  </Dropdown>
+                ) : (
                   <NavLink
                     className={`nav-button nav-button-container center-content ${isHomeSelectedCssClassName}`}
                     to={'/'}
-                    text='Home'
-                />
-              )
+                    text="Home"
+                  />
+                ))
             }
           </div>
         </nav>
