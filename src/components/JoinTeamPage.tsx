@@ -34,7 +34,7 @@ export const JoinTeamPage = (props: JoinTeamPageProps) => {
       if (isJoinTeamSignedToken(context.signedToken)) {
         setJoinTeamToken(context.signedToken)
       } else if (isMembershipInvtnSignedToken(context.signedToken)) {
-        SynapseClient.getMembershipInvitation(context.signedToken, '').then(
+        SynapseClient.getMembershipInvitation(context.signedToken).then(
           invitation => {
             setMembershipInvitation(invitation)
           },

@@ -30,10 +30,7 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
             accessToken,
           )
         const membershipInvitation =
-          await SynapseClient.getMembershipInvitation(
-            context.signedToken,
-            accessToken,
-          )
+          await SynapseClient.getMembershipInvitation(context.signedToken)
         try {
           // attempt to bind the membership invite to new account
           await SynapseClient.bindInvitationToAuthenticatedUser(

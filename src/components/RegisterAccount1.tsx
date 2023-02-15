@@ -40,7 +40,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
       appContext.signedToken &&
       isMembershipInvtnSignedToken(appContext.signedToken)
     ) {
-      SynapseClient.getMembershipInvitation(appContext.signedToken, '').then(
+      SynapseClient.getMembershipInvitation(appContext.signedToken).then(
         membershipInvitation => {
           setEmail(membershipInvitation.inviteeEmail)
         },
