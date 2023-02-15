@@ -68,7 +68,7 @@ export const JoinTeamPage = (props: JoinTeamPageProps) => {
       {redirectToRegistration && <Redirect to="/register1" />}
       <Box
         sx={{
-          width: '500px',
+          width: '700px',
           padding: theme.spacing(8),
           margin: '0 auto',
           backgroundColor: '#fff',
@@ -101,19 +101,39 @@ export const JoinTeamPage = (props: JoinTeamPageProps) => {
             </Typography>
             <Typography
               variant="body1"
-              sx={{ paddingTop: '10px', paddingBottom: '50px' }}
+              sx={{ paddingTop: '10px', paddingBottom: '30px' }}
             >
               <UserOrTeamBadge principalId={membershipInvitation.createdBy} />{' '}
               invited you to join:
               <br />
               <UserOrTeamBadge principalId={membershipInvitation.teamId} />
             </Typography>
+            <Typography
+              variant="body1"
+              sx={{ paddingTop: '10px', paddingBottom: '10px' }}
+            >
+              To join this team, you must register for a Sage account using the
+              same email address that was invited to the team.
+            </Typography>
+            <Box
+              sx={{
+                padding: '20px 30px',
+                backgroundColor: 'rgba(241, 243, 245, 0.75)',
+              }}
+            >
+              <Typography variant="body1" sx={{ fontWeight: 700 }}>
+                Use this email address when you register
+              </Typography>
+              <Typography variant="body1">
+                <em>{membershipInvitation.inviteeEmail}</em>
+              </Typography>
+            </Box>
             <Button
               type="button"
               color="primary"
               variant="contained"
               fullWidth
-              sx={{ padding: '10px', height: '100%' }}
+              sx={{ marginTop: '45px', padding: '10px', height: '100%' }}
               onClick={() => {
                 setRedirectToRegistration(true)
               }}

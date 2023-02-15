@@ -1,8 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Button, Link, Grid } from '@mui/material'
-import { AppContextConsumer, useAppContext } from 'AppContext'
-import { SynapseClient, Typography } from 'synapse-react-client'
+import { AppContextConsumer } from 'AppContext'
+import {
+  SynapseClient,
+  SynapseComponents,
+  Typography,
+} from 'synapse-react-client'
 import { Link as RouterLink } from 'react-router-dom'
 import SourceAppConfigs from './SourceAppConfigs'
 import { LeftRightPanel } from './LeftRightPanel'
@@ -10,35 +14,53 @@ import { sage } from 'configs/sagebionetworks'
 import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
+import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
 
 export type AccountCreatedPageProps = {}
 
 export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
   const { accessToken } = useSynapseContext()
-  const context = useAppContext()
+  const [signedToken, setSignedToken] = useState<
+    SignedTokenInterface | undefined
+  >()
+  const localStorageSignedToken = localStorage.getItem('signedToken')
+  useEffect(() => {
+    if (localStorageSignedToken) {
+      setSignedToken(
+        JSON.parse(
+          SynapseComponents.hex2ascii(localStorageSignedToken),
+        ) as SignedTokenInterface,
+      )
+    }
+  }, [localStorageSignedToken])
+
   // If we have a MembershipInvtnSignedToken in the local storage, then process and clear it!
   useEffect(() => {
     const fetchData = async () => {
       if (
         accessToken &&
-        context?.signedToken &&
-        isMembershipInvtnSignedToken(context.signedToken)
+        signedToken &&
+        isMembershipInvtnSignedToken(signedToken)
       ) {
-        const membershipInvitation =
-          await SynapseClient.getMembershipInvitation(context.signedToken)
+        let membershipInvitation = await SynapseClient.getMembershipInvitation(
+          signedToken,
+        )
         if (!membershipInvitation.inviteeId) {
           // email is filled in, we must first bind the invitation
           const inviteeSignedToken =
             await SynapseClient.getInviteeVerificationSignedToken(
-              context.signedToken.membershipInvitationId,
+              membershipInvitation.id,
               accessToken,
             )
           try {
             // attempt to bind the membership invite to new account
             await SynapseClient.bindInvitationToAuthenticatedUser(
               inviteeSignedToken,
-              context.signedToken.membershipInvitationId,
+              membershipInvitation.id,
               accessToken,
+            )
+            membershipInvitation = await SynapseClient.getMembershipInvitation(
+              signedToken,
             )
           } catch (error) {
             if (error?.status === 403) {
@@ -58,22 +80,31 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
           }
         }
 
-        await SynapseClient.addTeamMemberAsAuthenticatedUserOrAdmin(
-          membershipInvitation.teamId,
-          membershipInvitation.inviteeId,
-          accessToken,
-        )
-        // clear token from local storage, and show success UI
-        context.signedToken = undefined
-        localStorage.removeItem('signedToken')
-        displayToast(`Successfully joined the team.`)
+        // returns undefined (if inviteeId is null)
+        if (membershipInvitation.inviteeId) {
+          await SynapseClient.addTeamMemberAsAuthenticatedUserOrAdmin(
+            membershipInvitation.teamId,
+            membershipInvitation.inviteeId,
+            accessToken,
+          )
+          // clear token from local storage, and show success UI
+          localStorage.removeItem('signedToken')
+          setSignedToken(undefined)
+          displayToast(`Successfully joined the team.`)
+        }
       }
     }
 
-    fetchData().catch(err => {
-      displayToast(err.reason, 'danger')
-    })
-  }, [context.signedToken])
+    if (
+      accessToken &&
+      signedToken &&
+      isMembershipInvtnSignedToken(signedToken)
+    ) {
+      fetchData().catch(err => {
+        displayToast(err.reason, 'danger')
+      })
+    }
+  }, [signedToken])
 
   const sourceApp = useSourceApp()
   return (
