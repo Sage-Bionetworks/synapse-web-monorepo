@@ -224,7 +224,7 @@
     "test:coverage": "jest --coverage --runInBand",
     "build": "rimraf dist && pnpm build:js && pnpm build:copy-assets && pnpm build:esbuild",
     "build:js": "tsc --p tsconfig.build.json",
-    "build:copy-assets": "copyfiles -u 2 src/lib/**/*.{css,scss,svg} dist",
+    "build:copy-assets": "copyfiles -u 2 \"src/lib/**/*.{css,scss,svg}\" dist",
     "build:esbuild": "node esbuild.config.mjs",
     "serve:docs": "pnpm storybook",
     "build:docs": "pnpm build:storybook",
