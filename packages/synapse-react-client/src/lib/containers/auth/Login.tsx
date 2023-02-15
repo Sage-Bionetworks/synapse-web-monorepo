@@ -82,12 +82,10 @@ function Login(props: Props) {
         authenticationReceipt,
       )
       // now get access token from cookie has to be called in the portals repo
-      await SynapseClient.setAccessTokenCookie(
-        data.accessToken,
-        sessionCallback,
-      )
+      await SynapseClient.setAccessTokenCookie(data.accessToken)
       // Set the new receipt
       localStorage.setItem(authenticationReceiptKey, data.authenticationReceipt)
+      await sessionCallback()
     } catch (err) {
       console.log('Error on login: ', err.reason)
       setErrorMessage(err.reason)
