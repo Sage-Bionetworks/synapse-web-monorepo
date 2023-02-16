@@ -1,6 +1,4 @@
 import { createTheme, Theme } from '@mui/material'
-import { deepmerge } from '@mui/utils'
-import { getSourceAppTheme } from 'components/SourceApp'
 
 export const latoFont = ['Lato', 'Roboto', 'Helvetica', 'Arial'].join(',')
 
@@ -151,6 +149,6 @@ const themeObject = {
     dataFieldKey: {},
   },
 }
-const theme: Theme = createTheme(deepmerge(getSourceAppTheme(), themeObject))
+const theme: Theme = createTheme(themeObject)
 
 export default theme

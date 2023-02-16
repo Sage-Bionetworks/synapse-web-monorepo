@@ -13,8 +13,6 @@ export const psychEncode: SourceAppConfig = {
   appURL: 'https://psychencode.synapse.org/',
   friendlyName: 'PsychENCODE Knowledge Portal',
   logo,
-  theme: {
-    palette: psychEncodePortalPalette,
-  },
+  palette: psychEncodePortalPalette,
   description,
 }

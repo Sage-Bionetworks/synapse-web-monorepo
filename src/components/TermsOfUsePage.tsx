@@ -88,13 +88,13 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
           </div>
           <div className={'panel-right'}>
             <div className={'right-panel-text'}>
-              <h4>What is the Sage Pledge</h4>
+              <h4>What is the Synapse Pledge</h4>
               <p>
                 {sourceAppName} is powered by{' '}
-                <Link href={'https://sagebionetworks.org/'} target="_blank">
-                  Sage Bionetworks
+                <Link href={'https://www.synapse.org/'} target="_blank">
+                  Synapse
                 </Link>
-                , and follows the Sage Governance polices.
+                , and follows the Synapse Governance polices.
               </p>
               <p>
                 To ensure secure and confidential access to data, we ask all

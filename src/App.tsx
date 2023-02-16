@@ -1,16 +1,15 @@
 import {
   createTheme,
   StyledEngineProvider,
-  Theme,
   ThemeProvider,
 } from '@mui/material/styles'
-import '@mui/styles'
 import { AppContextConsumer } from 'AppContext'
 import { AccountCreatedPage } from 'components/AccountCreatedPage'
 import { AccountSettings } from 'components/AccountSettings'
 import { CertificationQuiz } from 'components/CertificationQuiz'
 import CookiesNotification from 'components/CookiesNotification'
 import { CurrentAffiliationPage } from 'components/CurrentAffiliationPage'
+import { JoinTeamPage } from 'components/JoinTeamPage'
 import { ProfilePage } from 'components/ProfilePage'
 import { ProfileValidation } from 'components/ProfileValidation/ProfileValidation'
 import { RegisterAccount1 } from 'components/RegisterAccount1'
@@ -31,10 +30,6 @@ import AppInitializer from './AppInitializer'
 import LoginPage from './LoginPage'
 import generalTheme from './style/theme'
 
-declare module '@mui/styles/defaultTheme' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface (remove this line if you don't have the rule enabled)
-  interface DefaultTheme extends Theme {}
-}
 const isCodeSearchParam = getSearchParam('code') !== undefined
 const isProviderSearchParam = getSearchParam('provider') !== undefined
 const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
@@ -92,6 +87,7 @@ const App: React.FC = () => {
                 />
                 <Route exact path="/register1" component={RegisterAccount1} />
                 <Route exact path="/register2" component={RegisterAccount2} />
+                <Route exact path="/jointeam" component={JoinTeamPage} />
                 <Route
                   exact
                   path="/resetPassword"

@@ -13,8 +13,6 @@ export const nf: SourceAppConfig = {
   appURL: 'https://nf.synapse.org/',
   friendlyName: 'NF Data Portal',
   logo,
-  theme: {
-    palette: nfPortalPalette,
-  },
+  palette: nfPortalPalette,
   description,
 }

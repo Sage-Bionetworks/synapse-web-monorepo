@@ -13,8 +13,6 @@ export const dHealth: SourceAppConfig = {
   appURL: 'https://dhealth.synapse.org/',
   friendlyName: 'dHealth Digital Health Data Portal',
   logo,
-  theme: {
-    palette: digitalHealthPortalPalette,
-  },
+  palette: digitalHealthPortalPalette,
   description,
 }

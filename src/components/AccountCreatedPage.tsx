@@ -7,13 +7,14 @@ import { Link as RouterLink } from 'react-router-dom'
 import SourceAppConfigs from './SourceAppConfigs'
 import { LeftRightPanel } from './LeftRightPanel'
 import { sage } from 'configs/sagebionetworks'
-
+import { MembershipInvitationTokenHandler } from './MembershipInvitationTokenHandler'
 export type AccountCreatedPageProps = {}
 
 export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
   const sourceApp = useSourceApp()
   return (
     <>
+      <MembershipInvitationTokenHandler />
       <AppContextConsumer>
         {appContext => (
           <LeftRightPanel
