@@ -205,9 +205,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
     if (signoutCallback) {
       signoutCallback()
     } else {
-      await SynapseClient.signOut(() => {
-        console.log('Signed out')
-      })
+      await SynapseClient.signOut()
       window.location.reload()
     }
   }

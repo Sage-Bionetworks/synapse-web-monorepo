@@ -13,7 +13,7 @@ export default function Logout(props: LogoutProps) {
       <Button
         variant="default"
         onClick={() => {
-          SynapseClient.signOut(callback)
+          SynapseClient.signOut().then(callback)
         }}
       >
         Log out

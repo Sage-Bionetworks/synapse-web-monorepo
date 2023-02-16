@@ -48,7 +48,7 @@ export async function sessionChangeHandler() {
         err,
         'Signing out...',
       )
-      await signOut(() => {})
+      await signOut()
       accessToken = undefined
     }
     // Otherwise rethrow

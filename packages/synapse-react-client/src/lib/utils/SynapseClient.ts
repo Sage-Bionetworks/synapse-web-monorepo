@@ -18,6 +18,7 @@ import {
   ALIAS_AVAILABLE,
   APPROVED_SUBMISSION_INFO,
   ASYNCHRONOUS_JOB_TOKEN,
+  BIND_INVITATION_TO_AUTHENTICATED_USER,
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SUBMISSION,
   DATA_ACCESS_SUBMISSION_BY_ID,
@@ -40,6 +41,8 @@ import {
   FILE_HANDLE_BATCH,
   FORUM,
   FORUM_THREAD,
+  INVITEE_VERIFICATION_SIGNED_TOKEN,
+  MEMBERSHIP_INVITATION,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
   PROJECTS,
@@ -53,6 +56,8 @@ import {
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
   TEAM_ID_MEMBER_ID,
+  TEAM_ID_MEMBER_ID_WITH_NOTIFICATION,
+  TEAM_MEMBER,
   TEAM_MEMBERS,
   THREAD,
   THREAD_ID,
@@ -66,11 +71,6 @@ import {
   USER_PROFILE,
   USER_PROFILE_ID,
   VERIFICATION_SUBMISSION,
-  TEAM_MEMBER,
-  MEMBERSHIP_INVITATION,
-  INVITEE_VERIFICATION_SIGNED_TOKEN,
-  BIND_INVITATION_TO_AUTHENTICATED_USER,
-  TEAM_ID_MEMBER_ID_WITH_NOTIFICATION,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -158,10 +158,16 @@ import {
   WikiPageKey,
 } from './synapseTypes/'
 import {
+  AccessApprovalSearchRequest,
+  AccessApprovalSearchResponse,
   CreateSubmissionRequest,
+  EntityChildrenRequest,
+  EntityChildrenResponse,
   ManagedACTAccessRequirementStatus,
   RequestInterface,
-} from './synapseTypes/AccessRequirement'
+  TYPE_FILTER,
+  UserGroupHeaderResponse,
+} from './synapseTypes'
 import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
@@ -217,10 +223,6 @@ import {
 } from './synapseTypes/DownloadListV2/QueryResponseDetails'
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
-import {
-  EntityChildrenRequest,
-  EntityChildrenResponse,
-} from './synapseTypes/EntityChildren'
 import { EvaluationRoundListRequest } from './synapseTypes/Evaluation/EvaluationRoundListRequest'
 import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/EvaluationRoundListResponse'
 import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
@@ -246,15 +248,7 @@ import {
   TransformSqlWithFacetsRequest,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { Team } from './synapseTypes/Team'
-import {
-  TYPE_FILTER,
-  UserGroupHeaderResponse,
-} from './synapseTypes/UserGroupHeader'
 import { VersionInfo } from './synapseTypes/VersionInfo'
-import {
-  AccessApprovalSearchRequest,
-  AccessApprovalSearchResponse,
-} from './synapseTypes/AccessApproval'
 import {
   SubmissionSearchRequest,
   SubmissionSearchResponse,
@@ -301,11 +295,9 @@ import { InviteeVerificationSignedToken } from './synapseTypes/SignedToken/Invit
 const cookies = new UniversalCookies()
 
 // TODO: Create JSON response types for all return types
-export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
+export const IS_OUTSIDE_SYNAPSE_ORG = !window.location.hostname
   .toLowerCase()
   .includes('.synapse.org')
-  ? false
-  : true
 
 export const ACCESS_TOKEN_COOKIE_KEY =
   'org.sagebionetworks.security.user.login.token'
@@ -504,7 +496,7 @@ export const doDelete = (
 
 export const doPut = <T>(
   url: string,
-  requestJsonObject: any,
+  requestJsonObject: unknown,
   accessToken: string | undefined,
   endpoint: BackendDestinationEnum,
   additionalOptions: RequestInit = {},
@@ -612,6 +604,7 @@ export const getFileHandleByIdURL = (
 /**
  * Get a completed asynchronous job. Will refetch every 500ms until COMPLETE or FAILED.
  * @param asyncJobId
+ * @param responseBodyEndpoint
  * @param accessToken
  * @param setCurrentAsyncStatus - optional function that will receive the AsynchronousJobStatus object every time
  *   it's fetched, including while it is in the "PROCESSING" state.
@@ -662,6 +655,7 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
 /**
  * Get the response body for an asynchronous job, or throw an error if the job failed.
  * @param asyncJobId
+ * @param responseBodyEndpoint
  * @param accessToken
  * @returns
  */
@@ -683,7 +677,6 @@ export const getAsyncResultBodyFromJobId = async <TResponse>(
  * https://rest-docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
  * @param {*} queryBundleRequest
  * @param {*} accessToken
- * @param {*} endpoint
  */
 export const getQueryTableAsyncJobResults = async (
   queryBundleRequest: QueryBundleRequest,
@@ -710,7 +703,7 @@ export const getQueryTableAsyncJobResults = async (
  * https://rest-docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
  * @param {*} queryBundleRequest
  * @param {*} accessToken
- * @param {*} endpoint
+ * @param {*} signal
  */
 export const getQueryTableResults = async (
   queryBundleRequest: QueryBundleRequest,
@@ -750,7 +743,6 @@ export const getFullQueryTableResults = async (
   accessToken: string | undefined = undefined,
   signal?: AbortSignal,
 ): Promise<QueryResultBundle> => {
-  let data: QueryResultBundle
   // get first page
   let offset = 0
   const { query, ...rest } = queryBundleRequest
@@ -761,12 +753,10 @@ export const getFullQueryTableResults = async (
       queryBundleRequest.partMask |
       SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE,
   }
-  const response = await getQueryTableResults(queryRequest, accessToken, signal)
-  data = response
+  const data = await getQueryTableResults(queryRequest, accessToken, signal)
   // we are done if we return less than a max pagesize that the backend is willing to return.
-  let isDone =
-    response.queryResult!.queryResults.rows.length < data.maxRowsPerPage!
-  offset += response.queryResult!.queryResults.rows.length
+  let isDone = data.queryResult!.queryResults.rows.length < data.maxRowsPerPage!
+  offset += data.queryResult!.queryResults.rows.length
   queryRequest.query.limit = data.maxRowsPerPage // set the limit to the actual max rows per page
 
   while (!isDone) {
@@ -819,7 +809,7 @@ export const oAuthUrlRequest = (
   state?: string,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
 ) => {
-  return doPost(
+  return doPost<{ authorizationUrl: string }>(
     '/auth/v1/oauth2/authurl',
     { provider, redirectUrl, state },
     undefined,
@@ -1514,7 +1504,6 @@ export const isInSynapseExperimentalMode = (): boolean => {
  */
 export const setAccessTokenCookie = async (
   token: string | undefined,
-  sessionCallback: () => void,
 ): Promise<void> => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
     if (!token) {
@@ -1529,7 +1518,6 @@ export const setAccessTokenCookie = async (
         path: '/',
       })
     }
-    sessionCallback()
   } else {
     // will set cookie in the http header
     return doPost(
@@ -1539,12 +1527,6 @@ export const setAccessTokenCookie = async (
       BackendDestinationEnum.PORTAL_ENDPOINT,
       { credentials: 'include' },
     )
-      .then(_ => {
-        sessionCallback()
-      })
-      .catch(err => {
-        console.error('Error on setting access token ', err)
-      })
   }
 }
 /**
@@ -1585,12 +1567,12 @@ If state is included, then we assume that this is being used for account creatio
 where we pass the username through the process.
 */
 export const detectSSOCode = (
-  registerAccountUrl?: string,
-  onError?: (err: any) => void,
+  registerAccountUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
+  onError?: (err: unknown) => void,
 ) => {
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
-  const fullUrl: URL | null | string = new URL(window.location.href)
+  const fullUrl: URL = new URL(window.location.href)
   // in test environment the searchParams isn't defined
   const { searchParams } = fullUrl
   if (!searchParams) {
@@ -1611,16 +1593,13 @@ export const detectSSOCode = (
       }
     }
     if (PROVIDERS.GOOGLE == provider) {
-      const onSuccess = (synToken: any) => {
-        setAccessTokenCookie(synToken.accessToken, redirectAfterSuccess)
+      const onSuccess = (response: LoginResponse) => {
+        setAccessTokenCookie(response.accessToken).then(redirectAfterSuccess)
       }
-      const onFailure = (err: any) => {
+      const onFailure = (err: SynapseClientError) => {
         if (err.status === 404) {
           // Synapse account not found, send to registration page
-          window.location.replace(
-            registerAccountUrl ??
-              `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
-          )
+          window.location.replace(registerAccountUrl)
         }
         console.error('Error with Google account association: ', err)
         if (onError) {
@@ -1650,7 +1629,7 @@ export const detectSSOCode = (
       }
     } else if (PROVIDERS.ORCID == provider) {
       // now bind this to the user account
-      const onFailure = (err: any) => {
+      const onFailure = (err: SynapseClientError) => {
         console.error('Error binding ORCiD to account: ', err)
         if (onError) {
           onError(err.reason)
@@ -1668,8 +1647,8 @@ export const detectSSOCode = (
   }
 }
 
-export const signOut = async (sessionCallback: () => void) => {
-  await setAccessTokenCookie(undefined, sessionCallback)
+export const signOut = async () => {
+  await setAccessTokenCookie(undefined)
 }
 
 /**
@@ -1867,7 +1846,7 @@ export const checkUploadComplete = (
 }
 const uploadFilePart = async (
   presignedUrl: string,
-  file: any,
+  file: Blob,
   contentType: string,
 ) => {
   // TODO: could try using axios to get upload progress, then update the client-side part state (change to numbers from 0-1)
@@ -3000,7 +2979,7 @@ export const deleteDownloadList = (accessToken: string | undefined) => {
     '/file/v1/download/list',
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
-  ).then(_ => {
+  ).then(() => {
     dispatchDownloadListChangeEvent(undefined)
   })
 }
@@ -3015,7 +2994,7 @@ export const deleteDownloadList = (accessToken: string | undefined) => {
 export const updateTable = async (
   tableUpdateRequest: TableUpdateTransactionRequest,
   accessToken: string | undefined = undefined,
-): Promise<any> => {
+): Promise<void> => {
   const asyncJobId = await doPost<AsyncJobId>(
     `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/start`,
     tableUpdateRequest,
@@ -3515,8 +3494,8 @@ export const isAliasAvailable = (
 export const registerAccountStep1 = (
   newUser: NewUser,
   portalEndpoint: string,
-): Promise<any> => {
-  return doPost(
+): Promise<void> => {
+  return doPost<void>(
     REGISTER_ACCOUNT_STEP_1(portalEndpoint),
     newUser,
     undefined,
@@ -3707,10 +3686,7 @@ export const addEmailAddressStep2 = (
  * @param email
  * @param accessToken
  */
-export const deleteEmail = (
-  accessToken: string | undefined,
-  email?: string,
-) => {
+export const deleteEmail = (accessToken: string | undefined, email: string) => {
   return doDelete(
     `/repo/v1/email?email=${email}`,
     accessToken,
@@ -4272,7 +4248,7 @@ export async function getGoogleMapsApiKey(): Promise<string> {
  */
 export async function getAllSynapseUserGeoData(): Promise<GeoData[]> {
   const response = await fetch(GEO_DATA_URL)
-  return await response.json()
+  return (await response.json()) as GeoData[]
 }
 
 /**
@@ -4282,7 +4258,7 @@ export async function getSynapseTeamGeoData(
   teamId: string,
 ): Promise<GeoData[]> {
   const response = await fetch(`${S3_GEODATA_ENDPOINT}${teamId}.json`)
-  return await response.json()
+  return (await response.json()) as GeoData[]
 }
 
 /**

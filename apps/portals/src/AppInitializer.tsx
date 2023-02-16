@@ -28,7 +28,7 @@ export type AppInitializerState = {
 export type SignInProps = {
   userProfile: UserProfile | undefined
   resetSession: Function
-  getSession: Function
+  getSession: () => Promise<void>
   showLoginDialog: boolean
   onSignIn: Function
   handleCloseLoginDialog: Function
@@ -62,13 +62,12 @@ function useSession(
     undefined,
   )
 
-  const initAnonymousUserState = useCallback(() => {
-    SynapseClient.signOut(() => {
-      // reset token and user profile
-      setToken(undefined)
-      setUserProfile(undefined)
-      setHasCalledGetSession(true)
-    })
+  const initAnonymousUserState = useCallback(async () => {
+    await SynapseClient.signOut()
+    // reset token and user profile
+    setToken(undefined)
+    setUserProfile(undefined)
+    setHasCalledGetSession(true)
   }, [])
 
   const getSession = useCallback(async () => {
@@ -97,16 +96,16 @@ function useSession(
       console.error('Error on getSession: ', e)
       // intentionally calling sign out because there token could be stale so we want
       // the stored session to be cleared out.
-      SynapseClient.signOut(() => {
-        // PORTALS-2293: if the token was invalid (caused an error), reload the app to ensure all children
-        // are loading as the anonymous user
-        window.location.reload()
-      })
+      await SynapseClient.signOut()
+      // PORTALS-2293: if the token was invalid (caused an error), reload the app to ensure all children
+      // are loading as the anonymous user
+      window.location.reload()
     }
   }, [initAnonymousUserState])
 
-  const resetSession = useCallback(() => {
-    SynapseClient.signOut(getSession)
+  const resetSession = useCallback(async () => {
+    await SynapseClient.signOut()
+    await getSession()
     setShowLoginDialog(false)
   }, [getSession, setShowLoginDialog])
 
@@ -139,7 +138,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       window.top.location = window.location
     }
   }, [])
-  
+
   /** Call getSession on mount */
   useEffect(() => {
     getSession()
@@ -286,10 +285,10 @@ function AppInitializer(props: { children?: React.ReactNode }) {
         accessToken: token,
         isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
         utcTime: SynapseClient.getUseUtcTimeFromCookie(),
-        downloadCartPageUrl: '/DownloadCart'
+        downloadCartPageUrl: '/DownloadCart',
       }}
       theme={{
-        palette
+        palette,
       }}
     >
       {!isFramed && clonedChildren}
