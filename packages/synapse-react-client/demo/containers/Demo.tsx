@@ -7,6 +7,7 @@ import StatisticsPlot from '../../src/lib/containers/StatisticsPlot'
 import { testDownloadSpeed } from '../../src/lib/utils/functions/testDownloadSpeed'
 import { HasAccessV2 as HasAccess } from '../../src/lib/containers/access_requirements/HasAccessV2'
 import { SynapseContextProvider } from '../../src/lib/utils/SynapseContext'
+// import { useDetectSSOCode } from '../../src/lib/utils/hooks/useDetectSSOCode'
 
 type DemoState = {
   token: string | null
@@ -90,7 +91,8 @@ class Demo extends React.Component<DemoProps, DemoState> {
   public componentDidMount() {
     // Note:  All portals should do this once on the initial app load.
     // This looks for the access token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
-    SynapseClient.detectSSOCode()
+    // TODO: Convert to function component to use this hook. Until then, SSO will not work.
+    // useDetectSSOCode()
     SynapseClient.getAccessTokenFromCookie()
       .then(accessToken => {
         this.setState({
