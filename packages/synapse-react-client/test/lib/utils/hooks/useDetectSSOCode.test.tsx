@@ -116,7 +116,7 @@ describe('useDetectSSO tests', () => {
     mockOAuthSessionRequest.mockRejectedValue(unhandledError)
     const mockOnError = jest.fn()
 
-    renderHook(() => useDetectSSOCode(undefined, undefined, mockOnError))
+    renderHook(() => useDetectSSOCode(undefined, mockOnError))
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
@@ -199,7 +199,7 @@ describe('useDetectSSO tests', () => {
     )
     mockBindOAuthProviderToAccount.mockRejectedValue(error)
 
-    renderHook(() => useDetectSSOCode(undefined, undefined, mockOnError))
+    renderHook(() => useDetectSSOCode(undefined, mockOnError))
     await waitFor(() => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
         PROVIDERS.ORCID,
