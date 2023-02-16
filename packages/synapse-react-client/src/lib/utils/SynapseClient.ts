@@ -291,6 +291,11 @@ import { ResponseMessage } from './synapseTypes/ResponseMessage'
 import { MembershipInvtnSignedToken } from './synapseTypes/SignedToken/MembershipInvtnSignedToken'
 import { MembershipInvitation } from './synapseTypes/MembershipInvitation'
 import { InviteeVerificationSignedToken } from './synapseTypes/SignedToken/InviteeVerificationSignedToken'
+import {
+  ErrorResponseCode,
+  TwoFactorAuthErrorResponse,
+} from './synapseTypes/ErrorResponse'
+import { TwoFactorAuthLoginRequest } from './synapseTypes/TwoFactorAuthLoginRequest'
 
 const cookies = new UniversalCookies()
 
@@ -345,6 +350,35 @@ export async function allowNotFoundError<T>(
   } catch (e) {
     if (e instanceof SynapseClientError && e.status === 404) {
       // Permitted
+    } else {
+      throw e
+    }
+  }
+  return response
+}
+
+/**
+ * If the asynchronous request returns a TwoFactorAuthErrorResponse, return that error instead of throwing it. Other
+ * types of errors will still be thrown.
+ * @param fn
+ */
+export async function returnIfTwoFactorAuthError<T>(
+  fn: () => Promise<T>,
+): Promise<T | TwoFactorAuthErrorResponse> {
+  let response = null
+  try {
+    response = await fn()
+  } catch (e) {
+    if (
+      e instanceof SynapseClientError &&
+      e.status === 401 &&
+      e.errorResponse &&
+      'errorCode' in e.errorResponse &&
+      e.errorResponse.errorCode === ErrorResponseCode.TWO_FA_REQUIRED &&
+      e.errorResponse.concreteType ===
+        'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse'
+    ) {
+      return e.errorResponse
     } else {
       throw e
     }
@@ -416,6 +450,7 @@ const fetchWithExponentialTimeout = async <TResponse>(
       response.status,
       responseObject.reason,
       url.toString(),
+      responseObject,
     )
   } else {
     throw new SynapseClientError(
@@ -783,19 +818,35 @@ export const getFullQueryTableResults = async (
  *  authenticated requests.
  *  https://rest-docs.synapse.org/rest/POST/login2.html
  */
-export const login = (
+export async function login(
   username: string,
   password: string,
   authenticationReceipt: string | null,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
-): Promise<LoginResponse> => {
-  return doPost(
-    '/auth/v1/login2',
-    { username, password, authenticationReceipt },
-    undefined,
-    endpoint,
+): Promise<LoginResponse | TwoFactorAuthErrorResponse> {
+  return returnIfTwoFactorAuthError(() =>
+    doPost(
+      '/auth/v1/login2',
+      { username, password, authenticationReceipt },
+      undefined,
+      endpoint,
+    ),
   )
 }
+
+/**
+ * Performs authentication using 2FA, the body of the request needs to include the twoFaToken received as part of the
+ * error when authenticating and the totp code shown by the authenticator application.
+ *
+ * https://rest-docs.synapse.org/rest/POST/2fa/token.html
+ */
+export function loginWith2fa(
+  request: TwoFactorAuthLoginRequest,
+  endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
+): Promise<LoginResponse> {
+  return doPost('/auth/v1/2fa/token', request, undefined, endpoint)
+}
+
 /**
  * Get redirect url
  * https://rest-docs.synapse.org/rest/POST/oauth2/authurl.html
@@ -828,13 +879,15 @@ export const oAuthSessionRequest = (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
-  endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
-): Promise<LoginResponse> => {
-  return doPost(
-    '/auth/v1/oauth2/session2',
-    { provider, authenticationCode, redirectUrl },
-    undefined,
-    endpoint,
+  endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
+): Promise<LoginResponse | TwoFactorAuthErrorResponse> => {
+  return returnIfTwoFactorAuthError(() =>
+    doPost(
+      '/auth/v1/oauth2/session2',
+      { provider, authenticationCode, redirectUrl },
+      undefined,
+      endpoint,
+    ),
   )
 }
 /**
