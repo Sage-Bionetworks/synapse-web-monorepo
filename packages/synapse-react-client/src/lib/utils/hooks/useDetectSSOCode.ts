@@ -13,6 +13,7 @@ import {
   setAccessTokenCookie,
 } from '../SynapseClient'
 import { useEffect } from 'react'
+import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
 
 /*
  * During SSO login, the authorization provider (Google) will send the user back to the portal with an authorization code,
@@ -48,8 +49,12 @@ export default function useDetectSSOCode(
         }
       }
       if (PROVIDERS.GOOGLE == provider) {
-        const onSuccess = (response: LoginResponse) => {
-          setAccessTokenCookie(response.accessToken).then(redirectAfterSuccess)
+        const onSuccess = (
+          response: LoginResponse | TwoFactorAuthErrorResponse,
+        ) => {
+          setAccessTokenCookie((response as LoginResponse).accessToken).then(
+            redirectAfterSuccess,
+          )
         }
         const onFailure = (err: SynapseClientError) => {
           if (err.status === 404) {
