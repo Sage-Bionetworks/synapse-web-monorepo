@@ -14,4 +14,4 @@ export type TwoFactorAuthLoginRequest = {
   otpType: TwoFactorAuthOtpType
 }
 
-type TwoFactorAuthOtpType = 'TOTP' | 'RECOVERY_CODE'
+export type TwoFactorAuthOtpType = 'TOTP' | 'RECOVERY_CODE'
