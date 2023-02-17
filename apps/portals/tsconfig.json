@@ -4,9 +4,6 @@
     "baseUrl": "src",
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "paths": {
-      "synapse-react-client": ["../../packages/synapse-react-client"]
-    },
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -21,12 +18,8 @@
     "noEmit": false,
     "jsx": "react",
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "composite": false
   },
-  "include": ["src", "**/*.json"],
-  "references": [
-    {
-      "path": "../../packages/synapse-react-client"
-    }
-  ]
+  "include": ["src", "**/*.json"]
 }
