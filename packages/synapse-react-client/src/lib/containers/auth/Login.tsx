@@ -11,6 +11,7 @@ import { Button, IconButton, Link } from '@mui/material'
 import IconSvg from '../IconSvg'
 import FullWidthAlert from '../FullWidthAlert'
 import { useState } from 'react'
+import { LoginResponse } from '../../utils/synapseTypes'
 
 export const PROVIDERS = {
   GOOGLE: 'GOOGLE_OAUTH_2_0',
@@ -76,11 +77,11 @@ function Login(props: Props) {
       const authenticationReceipt = localStorage.getItem(
         authenticationReceiptKey,
       )
-      const data = await SynapseClient.login(
+      const data = (await SynapseClient.login(
         username,
         password,
         authenticationReceipt,
-      )
+      )) as LoginResponse
       // now get access token from cookie has to be called in the portals repo
       await SynapseClient.setAccessTokenCookie(data.accessToken)
       // Set the new receipt

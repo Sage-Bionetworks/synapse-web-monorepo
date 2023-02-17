@@ -1,7 +1,8 @@
 import * as SynapseConstants from './SynapseConstants'
 import * as SynapseClient from './SynapseClient'
-import * as SynapseQueries from './hooks/SynapseAPI'
+import * as SynapseHookUtils from './hooks'
+import { SynapseQueries } from './hooks'
 import { RequiredProperties } from './types/RequiredProperties'
 
-export { SynapseConstants, SynapseClient, SynapseQueries }
+export { SynapseConstants, SynapseClient, SynapseHookUtils, SynapseQueries }
 export type { RequiredProperties }

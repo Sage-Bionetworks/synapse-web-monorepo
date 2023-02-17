@@ -11,6 +11,7 @@ import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import { DOWNLOAD_FILES_MENU_TEXT } from 'synapse-react-client/dist/containers/table/SynapseTableConstants'
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
+import useDetectSSOCode from 'synapse-react-client/dist/utils/hooks/useDetectSSOCode'
 import useAnalytics from 'useAnalytics'
 import docTitleConfig from './config/docTitleConfig.json'
 import palette from './config/paletteConfig'
@@ -233,10 +234,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run only on mount
   }, [])
 
-  useEffect(() => {
-    // on first time, also check for the SSO code
-    SynapseClient.detectSSOCode()
-  }, [])
+  useDetectSSOCode()
 
   const onSignInClicked = useCallback(() => {
     setShowLoginDialog(true)

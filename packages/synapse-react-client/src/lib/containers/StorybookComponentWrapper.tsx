@@ -11,7 +11,6 @@ import { SynapseToastContainer } from './ToastMessage'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import dayjs from 'dayjs'
 import {
-  detectSSOCode,
   getAccessTokenFromCookie,
   getUserProfile,
   getAuthenticatedOn,
@@ -34,9 +33,9 @@ import {
   sageBionetworksPalette,
   stopAdPortalPalette,
 } from '../utils/theme/palette/Palettes'
+import useDetectSSOCode from '../utils/hooks/useDetectSSOCode'
 
 export async function sessionChangeHandler() {
-  detectSSOCode()
   let accessToken: string | undefined = await getAccessTokenFromCookie()
   let profile
   try {
@@ -106,6 +105,9 @@ export function StorybookComponentWrapper(props: {
   const [accessToken, setAccessToken] = React.useState<string | undefined>(
     undefined,
   )
+
+  useDetectSSOCode()
+
   useEffect(() => {
     sessionChangeHandler().then(data => {
       setAccessToken(data.accessToken)

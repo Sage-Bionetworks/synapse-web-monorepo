@@ -12,6 +12,10 @@ import {
   PaginatedResults,
 } from '../../../src/lib/utils/synapseTypes'
 import { rest, server } from '../../../mocks/msw/server'
+import {
+  ErrorResponseCode,
+  TwoFactorAuthErrorResponse,
+} from '../../../src/lib/utils/synapseTypes/ErrorResponse'
 
 describe('SynapseClient tests', () => {
   describe('SynapseClient integration tests', () => {
@@ -54,7 +58,7 @@ describe('SynapseClient tests', () => {
               BackendDestinationEnum.REPO_ENDPOINT,
             )}${ASYNCHRONOUS_JOB_TOKEN(':jobId')}`,
 
-            async (req, res, ctx) => {
+            (req, res, ctx) => {
               requestCaptor(req)
               const status = 200
               const response = completeJob
@@ -71,8 +75,8 @@ describe('SynapseClient tests', () => {
           setCurrentAsyncStatus,
         )
 
-        expect(requestCaptor).toBeCalledTimes(1)
-        expect(requestCaptor).toBeCalledWith(
+        expect(requestCaptor).toHaveBeenCalledTimes(1)
+        expect(requestCaptor).toHaveBeenCalledWith(
           expect.objectContaining({
             params: {
               jobId: asyncJobId,
@@ -80,8 +84,8 @@ describe('SynapseClient tests', () => {
           }),
         )
 
-        expect(setCurrentAsyncStatus).toBeCalledTimes(1)
-        expect(setCurrentAsyncStatus).toBeCalledWith(response)
+        expect(setCurrentAsyncStatus).toHaveBeenCalledTimes(1)
+        expect(setCurrentAsyncStatus).toHaveBeenCalledWith(response)
       })
 
       it('Re-fetches a processing response until complete', async () => {
@@ -116,8 +120,8 @@ describe('SynapseClient tests', () => {
 
         expect(response).toEqual(completeJob)
 
-        expect(requestCaptor).toBeCalledTimes(3)
-        expect(requestCaptor).toBeCalledWith(
+        expect(requestCaptor).toHaveBeenCalledTimes(3)
+        expect(requestCaptor).toHaveBeenCalledWith(
           expect.objectContaining({
             params: {
               jobId: asyncJobId,
@@ -125,9 +129,9 @@ describe('SynapseClient tests', () => {
           }),
         )
 
-        expect(setCurrentAsyncStatus).toBeCalledTimes(3)
-        expect(setCurrentAsyncStatus).toBeCalledWith(processingJob)
-        expect(setCurrentAsyncStatus).toBeCalledWith(completeJob)
+        expect(setCurrentAsyncStatus).toHaveBeenCalledTimes(3)
+        expect(setCurrentAsyncStatus).toHaveBeenCalledWith(processingJob)
+        expect(setCurrentAsyncStatus).toHaveBeenCalledWith(completeJob)
       })
 
       it('Fetches a failed response on alternate endpoint to get HTTP failure status code', async () => {
@@ -166,8 +170,8 @@ describe('SynapseClient tests', () => {
         ).rejects.toEqual(
           expect.objectContaining({ status: errorStatus, ...errorObject }),
         )
-        expect(setCurrentAsyncStatus).toBeCalledTimes(1)
-        expect(setCurrentAsyncStatus).toBeCalledWith(failedJob)
+        expect(setCurrentAsyncStatus).toHaveBeenCalledTimes(1)
+        expect(setCurrentAsyncStatus).toHaveBeenCalledWith(failedJob)
       })
     })
   })
@@ -211,6 +215,50 @@ describe('SynapseClient tests', () => {
         await expect(() =>
           SynapseClient.allowNotFoundError(fn),
         ).rejects.toEqual(expected)
+      })
+    })
+    describe('returnIfTwoFactorAuthError', () => {
+      it('Passes along a successful response', async () => {
+        const expected = {
+          arbitrary: 'data',
+        }
+        const fn = jest.fn().mockResolvedValue(expected)
+
+        const actual = await SynapseClient.returnIfTwoFactorAuthError(fn)
+
+        expect(expected).toEqual(actual)
+      })
+      it('Rethrows a non-2fa error', async () => {
+        const notFoundError = new SynapseClientError(
+          404,
+          'Not found!',
+          expect.getState().currentTestName!,
+        )
+        const fn = jest.fn().mockRejectedValue(notFoundError)
+
+        await expect(
+          SynapseClient.returnIfTwoFactorAuthError(fn),
+        ).rejects.toEqual(notFoundError)
+      })
+      it('Passes along a two factor authentication error response', async () => {
+        const twoFactorAuthError: TwoFactorAuthErrorResponse = {
+          reason: 'Need 2fa',
+          errorCode: ErrorResponseCode.TWO_FA_REQUIRED,
+          userId: 12345,
+          twoFaToken: 'abc123',
+          concreteType:
+            'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse',
+        }
+        const expected = new SynapseClientError(
+          401,
+          'Need 2fa',
+          expect.getState().currentTestName!,
+          twoFactorAuthError,
+        )
+        const fn = jest.fn().mockRejectedValue(expected)
+
+        const actual = await SynapseClient.returnIfTwoFactorAuthError(fn)
+        expect(actual).toBe(twoFactorAuthError)
       })
     })
     describe('fetch tests', () => {

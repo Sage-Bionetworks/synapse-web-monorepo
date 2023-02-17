@@ -26,6 +26,37 @@ global.ResizeObserver = ResizeObserver
 
 setupIntersectionMocking(jest.fn)
 
+const oldWindowLocation = window.location
+
+/**
+ * Mock `window.location` so we can verify interactions in tests
+ * See https://www.benmvp.com/blog/mocking-window-location-methods-jest-jsdom/
+ */
+beforeAll(() => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore - TS doesn't allow us to delete location. Not an issue because we're immediately replacing it with the mock
+  delete window.location
+  window.location = Object.defineProperties(
+    {},
+    {
+      ...Object.getOwnPropertyDescriptors(oldWindowLocation),
+      // Each method must be manually mocked
+      assign: {
+        configurable: true,
+        value: jest.fn(),
+      },
+      replace: {
+        configurable: true,
+        value: jest.fn(),
+      },
+    },
+  ) as Location
+})
+afterAll(() => {
+  // restore `window.location` to the original `jsdom`
+  // `Location` object
+  window.location = oldWindowLocation
+})
 // Synapse API calls may take longer than 5s (typically if a dependent call is taking much longer than normal)
 jest.setTimeout(30000)
 

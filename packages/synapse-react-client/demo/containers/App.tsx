@@ -17,6 +17,8 @@ import '../style/App.scss'
 import '../style/DemoStyle.scss'
 import Demo from './Demo'
 import Playground from './playground/Playground'
+// import { useDetectSSOCode } from '../../src/lib/utils/hooks/useDetectSSOCode'
+
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
@@ -70,7 +72,8 @@ export default class App extends React.Component<{}, AppState> {
   public componentDidMount() {
     // Note:  All portals should do this once on the initial app load.
     // This looks for the access token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
-    SynapseClient.detectSSOCode()
+    // TODO: Convert to function component to use this hook. SSO will not work until then!
+    // useDetectSSOCode()
     SynapseClient.getAccessTokenFromCookie()
       .then(accessToken =>
         this.handleChange({ token: accessToken, getSessionCalled: true }),
@@ -84,7 +87,6 @@ export default class App extends React.Component<{}, AppState> {
   }
 
   getSession = async () => {
-    SynapseClient.detectSSOCode()
     SynapseClient.getAccessTokenFromCookie()
       .then(accessToken => {
         this.handleChange({ token: accessToken })
