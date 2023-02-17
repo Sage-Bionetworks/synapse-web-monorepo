@@ -77,7 +77,7 @@
   "scripts": {
     "start": "craco start",
     "build": "CI=false GENERATE_SOURCEMAP=false craco --max_old_space_size=7168 build",
-    "test": "craco test --env=jsdom --setupFiles ./src/setupTests.ts",
+    "test": "craco test --env=jsdom --setupFiles ./src/tests/setupTests.ts --watchAll=false",
     "eject": "craco eject",
     "link-src": "yarn link synapse-react-client && yarn link react && yarn link react-router && yarn link react-router-dom",
     "unlink-src": "yarn unlink synapse-react-client && yarn unlink react && yarn unlink react-router && yarn unlink react-router-dom && yarn install --check-files",
