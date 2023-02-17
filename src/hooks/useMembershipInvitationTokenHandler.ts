@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppContext } from 'AppContext'
 import { SynapseClient } from 'synapse-react-client'
 import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
+import { MembershipInvitation } from 'synapse-react-client/dist/utils/synapseTypes/MembershipInvitation'
 import { InviteeVerificationSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/InviteeVerificationSignedToken'
 
-export type MembershipInvitationTokenHandlerProps = {}
-
-export const MembershipInvitationTokenHandler = (
-  props: MembershipInvitationTokenHandlerProps,
-) => {
+export default function useMembershipInvitationTokenHandler():
+  | MembershipInvitation
+  | undefined {
   const context = useAppContext()
   const { accessToken } = useSynapseContext()
   const [signedToken, setSignedToken] = useState<
@@ -19,6 +18,9 @@ export const MembershipInvitationTokenHandler = (
   >(context.signedToken)
   const [inviteeVerificationSignedToken, setInviteeVerificationSignedToken] =
     useState<InviteeVerificationSignedToken>()
+  const [membershipInvitation, setMembershipInvitation] = useState<
+    MembershipInvitation | undefined
+  >()
 
   // If we have a MembershipInvtnSignedToken in the local storage, then process and clear it!
   /**
@@ -36,6 +38,7 @@ export const MembershipInvitationTokenHandler = (
         let membershipInvitation = await SynapseClient.getMembershipInvitation(
           signedToken,
         )
+        setMembershipInvitation(membershipInvitation)
         if (!membershipInvitation.inviteeId) {
           // email is filled in, we must first bind the invitation
           try {
@@ -142,5 +145,5 @@ export const MembershipInvitationTokenHandler = (
     }
   }, [inviteeVerificationSignedToken])
 
-  return <></>
+  return membershipInvitation
 }

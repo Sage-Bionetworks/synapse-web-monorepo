@@ -7,14 +7,15 @@ import { Link as RouterLink } from 'react-router-dom'
 import SourceAppConfigs from './SourceAppConfigs'
 import { LeftRightPanel } from './LeftRightPanel'
 import { sage } from 'configs/sagebionetworks'
-import { MembershipInvitationTokenHandler } from './MembershipInvitationTokenHandler'
+import useMembershipInvitationTokenHandler from 'hooks/useMembershipInvitationTokenHandler'
+import { synapse } from 'configs/synapse'
 export type AccountCreatedPageProps = {}
 
 export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
+  const membershipInvitation = useMembershipInvitationTokenHandler()
   const sourceApp = useSourceApp()
   return (
     <>
-      <MembershipInvitationTokenHandler />
       <AppContextConsumer>
         {appContext => (
           <LeftRightPanel
@@ -56,18 +57,34 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                 >
                   Get certified for data upload
                 </Link>
-                <Button
-                  type="button"
-                  color="primary"
-                  variant="contained"
-                  sx={{ padding: '10px', height: '100%' }}
-                  onClick={() => {
-                    appContext?.redirectURL &&
-                      window.location.assign(appContext.redirectURL)
-                  }}
-                >
-                  Take me to {sourceApp?.friendlyName}
-                </Button>
+                {membershipInvitation && sourceApp == synapse ? (
+                  <Button
+                    type="button"
+                    color="primary"
+                    variant="contained"
+                    sx={{ padding: '10px', height: '100%' }}
+                    onClick={() => {
+                      window.location.assign(
+                        `https://www.synapse.org/#!Team:${membershipInvitation.teamId}`,
+                      )
+                    }}
+                  >
+                    Take me to the team page
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    color="primary"
+                    variant="contained"
+                    sx={{ padding: '10px', height: '100%' }}
+                    onClick={() => {
+                      appContext?.redirectURL &&
+                        window.location.assign(appContext.redirectURL)
+                    }}
+                  >
+                    Take me to {sourceApp?.friendlyName}
+                  </Button>
+                )}
               </div>
             }
             rightContent={
