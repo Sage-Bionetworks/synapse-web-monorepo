@@ -72,23 +72,19 @@ export default function useMembershipInvitationTokenHandler():
       }
       return undefined
     }
-    if (
-      accessToken &&
-      signedToken &&
-      isMembershipInvtnSignedToken(signedToken)
-    ) {
-      fetchData()
-        .then(inviteeSignedToken => {
-          if (!ignore) {
-            setInviteeVerificationSignedToken(inviteeSignedToken)
-          }
-        })
-        .catch(err => {
-          if (!ignore) {
-            displayToast(err.reason, 'danger')
-          }
-        })
-    }
+
+    fetchData()
+      .then(inviteeSignedToken => {
+        if (!ignore) {
+          setInviteeVerificationSignedToken(inviteeSignedToken)
+        }
+      })
+      .catch(err => {
+        if (!ignore) {
+          displayToast(err.reason, 'danger')
+        }
+      })
+
     return () => {
       ignore = true
     }
@@ -131,15 +127,9 @@ export default function useMembershipInvitationTokenHandler():
         }
       }
     }
-    if (
-      accessToken &&
-      signedToken &&
-      isMembershipInvtnSignedToken(signedToken)
-    ) {
-      addTeamMember().catch(err => {
-        displayToast(err.reason, 'danger')
-      })
-    }
+    addTeamMember().catch(err => {
+      displayToast(err.reason, 'danger')
+    })
     return () => {
       ignore = true
     }
