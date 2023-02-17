@@ -86,9 +86,7 @@ export default function useLogin(
   }, [twoFaErrorResponse])
 
   async function finishLogin(loginResponse: LoginResponse) {
-    // now get access token from cookie has to be called in the portals repo
     await SynapseClient.setAccessTokenCookie(loginResponse.accessToken)
-    // Set the new receipt
     localStorage.setItem(
       AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY,
       loginResponse.authenticationReceipt,
@@ -104,7 +102,6 @@ export default function useLogin(
     async (username, password) => {
       setErrorMessage(undefined)
       try {
-        // get last valid receipt
         const authenticationReceipt = localStorage.getItem(
           AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY,
         )
