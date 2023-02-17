@@ -6,6 +6,7 @@ import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Button, Link } from '@mui/material'
+import { synapse } from 'configs/synapse'
 
 export type TermsOfUsePageProps = {}
 
@@ -89,13 +90,16 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
           <div className={'panel-right'}>
             <div className={'right-panel-text'}>
               <h4>What is the Synapse Pledge</h4>
-              <p>
-                {sourceAppName} is powered by{' '}
-                <Link href={'https://www.synapse.org/'} target="_blank">
-                  Synapse
-                </Link>
-                , and follows the Synapse Governance polices.
-              </p>
+
+              {sourceApp !== synapse && (
+                <p>
+                  {sourceAppName} is powered by{' '}
+                  <Link href={'https://www.synapse.org/'} target="_blank">
+                    Synapse
+                  </Link>
+                  , and follows the Synapse Governance polices.
+                </p>
+              )}
               <p>
                 To ensure secure and confidential access to data, we ask all
                 account holders to affirm their agreement with our governance
