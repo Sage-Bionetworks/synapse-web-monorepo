@@ -28,7 +28,7 @@ window.URL.createObjectURL = function () {
 // https://stackoverflow.com/a/53449595
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: query => ({
+  value: (query: any) => ({
     matches: true,
     media: query,
     onchange: null,
