@@ -26,7 +26,7 @@
     "react-switch": "^7.0.0",
     "react-use": "^17.3.1",
     "sass": "^1.30.0",
-    "synapse-react-client": "^3.1.21"
+    "synapse-react-client": "workspace:^3.1.24"
   },
   "jest": {
     "moduleNameMapper": {
