@@ -33,7 +33,7 @@ import {
   sageBionetworksPalette,
   stopAdPortalPalette,
 } from '../utils/theme/palette/Palettes'
-import { useDetectSSOCode } from '../utils/hooks/useDetectSSOCode'
+import useDetectSSOCode from '../utils/hooks/useDetectSSOCode'
 
 export async function sessionChangeHandler() {
   let accessToken: string | undefined = await getAccessTokenFromCookie()
