@@ -5,6 +5,10 @@ import { SynapseClient } from '../../../../src/lib'
 import { LoginResponse } from '../../../../src/lib/utils/synapseTypes'
 import { BackendDestinationEnum } from '../../../../src/lib/utils/functions/getEndpoint'
 import { SynapseClientError } from '../../../../src/lib/utils/SynapseClientError'
+import {
+  ErrorResponseCode,
+  TwoFactorAuthErrorResponse,
+} from '../../../../src/lib/utils/synapseTypes/ErrorResponse'
 
 const authorizationCode = '12345'
 
@@ -13,6 +17,15 @@ const successfulLoginResponse: LoginResponse = {
   sessionToken: 'zxcv',
   acceptsTermsOfUse: true,
   authenticationReceipt: 'asdf',
+}
+
+const twoFactorAuthErrorResponse: TwoFactorAuthErrorResponse = {
+  concreteType:
+    'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse',
+  userId: 123,
+  twoFaToken: 'a1b2c3',
+  reason: 'need 2fa plz',
+  errorCode: ErrorResponseCode.TWO_FA_REQUIRED,
 }
 
 const mockOAuthSessionRequest = jest.spyOn(SynapseClient, 'oAuthSessionRequest')
@@ -29,7 +42,7 @@ const mockBindOAuthProviderToAccount = jest.spyOn(
   'bindOAuthProviderToAccount',
 )
 
-describe('useDetectSSO tests', () => {
+describe('useDetectSSOCode tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     history.replaceState({}, '', `/`)
@@ -64,6 +77,32 @@ describe('useDetectSSO tests', () => {
       expect(mockSetAccessTokenCookie).toHaveBeenCalledWith(
         successfulLoginResponse.accessToken,
       )
+    })
+  })
+
+  it('Handles 2fa scenario on login with Google', async () => {
+    history.replaceState(
+      {},
+      '',
+      `/?code=${authorizationCode}&provider=${PROVIDERS.GOOGLE}`,
+    )
+    const mockOn2fa = jest.fn()
+    mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
+
+    renderHook(() => useDetectSSOCode({ onTwoFactorAuthRequired: mockOn2fa }))
+
+    await waitFor(() => {
+      expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
+        PROVIDERS.GOOGLE,
+        authorizationCode,
+        `http://localhost/?provider=${PROVIDERS.GOOGLE}`,
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )
+      expect(mockOn2fa).toHaveBeenCalledWith(
+        twoFactorAuthErrorResponse,
+        expect.anything(),
+      )
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
     })
   })
 
@@ -116,7 +155,7 @@ describe('useDetectSSO tests', () => {
     mockOAuthSessionRequest.mockRejectedValue(unhandledError)
     const mockOnError = jest.fn()
 
-    renderHook(() => useDetectSSOCode(undefined, mockOnError))
+    renderHook(() => useDetectSSOCode({ onError: mockOnError }))
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
@@ -199,7 +238,7 @@ describe('useDetectSSO tests', () => {
     )
     mockBindOAuthProviderToAccount.mockRejectedValue(error)
 
-    renderHook(() => useDetectSSOCode(undefined, mockOnError))
+    renderHook(() => useDetectSSOCode({ onError: mockOnError }))
     await waitFor(() => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
         PROVIDERS.ORCID,

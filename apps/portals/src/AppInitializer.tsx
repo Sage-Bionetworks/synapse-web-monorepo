@@ -12,25 +12,17 @@ import { DOWNLOAD_FILES_MENU_TEXT } from 'synapse-react-client/dist/containers/t
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import useDetectSSOCode from 'synapse-react-client/dist/utils/hooks/useDetectSSOCode'
+import { TwoFactorAuthErrorResponse } from 'synapse-react-client/dist/utils/synapseTypes/ErrorResponse'
 import useAnalytics from 'useAnalytics'
 import docTitleConfig from './config/docTitleConfig.json'
 import palette from './config/paletteConfig'
-
-export type AppInitializerState = {
-  token?: string
-  showLoginDialog: boolean
-  synapseRedirectUrl?: string
-  userProfile: UserProfile | undefined
-  // delay render until get session is called, o.w. theres an uneccessary refresh right
-  // after page load
-  hasCalledGetSession: boolean
-}
 
 export type SignInProps = {
   userProfile: UserProfile | undefined
   resetSession: Function
   getSession: () => Promise<void>
   showLoginDialog: boolean
+  twoFaErrorResponse: TwoFactorAuthErrorResponse | undefined
   onSignIn: Function
   handleCloseLoginDialog: Function
 }
@@ -122,6 +114,8 @@ function useSession(
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [cookies, setCookie] = useCookies([COOKIE_CONFIG_KEY])
   const [showLoginDialog, setShowLoginDialog] = useState(false)
+  const [twoFaErrorResponse, setTwoFaErrorResponse] =
+    useState<TwoFactorAuthErrorResponse>()
   const [synapseRedirectUrl, setSynapseRedirectUrl] = useState<
     string | undefined
   >(undefined)
@@ -234,7 +228,12 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run only on mount
   }, [])
 
-  useDetectSSOCode()
+  useDetectSSOCode({
+    onTwoFactorAuthRequired: (twoFactorAuthError) => {
+      setTwoFaErrorResponse(twoFactorAuthError)
+      setShowLoginDialog(true)
+    },
+  })
 
   const onSignInClicked = useCallback(() => {
     setShowLoginDialog(true)
@@ -252,6 +251,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
         } else {
           const props: SignInProps = {
             showLoginDialog: showLoginDialog,
+            twoFaErrorResponse: twoFaErrorResponse,
             getSession: getSession,
             onSignIn: onSignInClicked,
             userProfile: userProfile,

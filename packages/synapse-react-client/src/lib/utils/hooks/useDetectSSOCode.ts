@@ -15,6 +15,15 @@ import {
 import { useEffect } from 'react'
 import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
 
+type UseDetectSSOCodeOptions = {
+  registerAccountUrl?: string
+  onError?: (err: unknown) => void
+  onTwoFactorAuthRequired?: (
+    resp: TwoFactorAuthErrorResponse,
+    callback: () => void,
+  ) => void
+}
+
 /*
  * During SSO login, the authorization provider (Google) will send the user back to the portal with an authorization code,
  * which can be exchanged for a Synapse user session. This function should be called whenever the root App is initialized
@@ -22,9 +31,13 @@ import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
  * used for account creation, where we pass the username through the process.
  */
 export default function useDetectSSOCode(
-  registerAccountUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
-  onError?: (err: unknown) => void,
+  opts: UseDetectSSOCodeOptions = {},
 ): void {
+  const {
+    registerAccountUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
+    onError,
+    onTwoFactorAuthRequired,
+  } = opts
   useEffect(() => {
     const redirectURL = getRootURL()
     // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
@@ -52,9 +65,16 @@ export default function useDetectSSOCode(
         const onSuccess = (
           response: LoginResponse | TwoFactorAuthErrorResponse,
         ) => {
-          setAccessTokenCookie((response as LoginResponse).accessToken).then(
-            redirectAfterSuccess,
-          )
+          if ('accessToken' in response) {
+            setAccessTokenCookie(response.accessToken).then(
+              redirectAfterSuccess,
+            )
+          } else {
+            // The app will redirect or open a modal to handle 2FA
+            if (onTwoFactorAuthRequired) {
+              onTwoFactorAuthRequired(response, redirectAfterSuccess)
+            }
+          }
         }
         const onFailure = (err: SynapseClientError) => {
           if (err.status === 404) {
