@@ -24,6 +24,10 @@ import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
 export default function useDetectSSOCode(
   registerAccountUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
   onError?: (err: unknown) => void,
+  onTwoFactorAuthRequired?: (
+    resp: TwoFactorAuthErrorResponse,
+    callback: () => void,
+  ) => void,
 ): void {
   useEffect(() => {
     const redirectURL = getRootURL()
@@ -52,9 +56,16 @@ export default function useDetectSSOCode(
         const onSuccess = (
           response: LoginResponse | TwoFactorAuthErrorResponse,
         ) => {
-          setAccessTokenCookie((response as LoginResponse).accessToken).then(
-            redirectAfterSuccess,
-          )
+          if ('accessToken' in response) {
+            setAccessTokenCookie(response.accessToken).then(
+              redirectAfterSuccess,
+            )
+          } else {
+            // The app will redirect or open a modal to handle 2FA
+            if (onTwoFactorAuthRequired) {
+              onTwoFactorAuthRequired(response, redirectAfterSuccess)
+            }
+          }
         }
         const onFailure = (err: SynapseClientError) => {
           if (err.status === 404) {

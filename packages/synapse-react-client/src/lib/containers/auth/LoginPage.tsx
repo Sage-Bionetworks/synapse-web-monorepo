@@ -8,10 +8,10 @@ export type LoginPageProps = {
   sessionCallback: () => void // Callback is invoked after login
 }
 
-const LoginPage: React.FunctionComponent<LoginPageProps> = props => {
+function LoginPage(props: LoginPageProps) {
   const { ssoRedirectUrl, sessionCallback } = props
   const [isOnUsernameOrPasswordScreen, setIsOnUsernameOrPasswordScreen] =
-    React.useState<boolean | undefined>()
+    React.useState<boolean>(false)
   const thisClass = 'login-panel-wrapper'
 
   return (

@@ -102,6 +102,7 @@ class Navbar extends React.Component<any, State> {
       getSession,
       resetSession,
       userProfile,
+      twoFaErrorResponse,
     } = this.props as SignInProps
     const { name, icon, hideLogin = false } = logoHeaderConfig
     const imageElement = icon ? (
@@ -223,7 +224,24 @@ class Navbar extends React.Component<any, State> {
                   >
                     <Modal.Header closeButton />
                     <SynapseComponents.Login
-                      sessionCallback={() => getSession()}
+                      twoFactorAuthenticationRequired={twoFaErrorResponse}
+                      onBeginOAuthSignIn={() => {
+                        // save current route (so that we can go back here after SSO)
+                        localStorage.setItem(
+                          'after-sso-login-url',
+                          window.location.href,
+                        )
+                      }}
+                      sessionCallback={async () => {
+                        await getSession()
+                        const originalUrl = localStorage.getItem(
+                          'after-sso-login-url',
+                        )
+                        localStorage.removeItem('after-sso-login-url')
+                        if (originalUrl) {
+                          window.location.replace(originalUrl)
+                        }
+                      }}
                     />
                   </Modal>
                 </div>

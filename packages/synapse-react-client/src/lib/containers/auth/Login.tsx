@@ -11,7 +11,10 @@ import { Button, IconButton, Link } from '@mui/material'
 import IconSvg from '../IconSvg'
 import FullWidthAlert from '../FullWidthAlert'
 import { useState } from 'react'
-import { LoginResponse } from '../../utils/synapseTypes'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import useLogin from '../../utils/hooks/useLogin'
+import { TwoFactorAuthErrorResponse } from '../../utils/synapseTypes/ErrorResponse'
+import TOTPForm from './TOTPForm'
 
 export const PROVIDERS = {
   GOOGLE: 'GOOGLE_OAUTH_2_0',
@@ -23,11 +26,15 @@ type Props = {
   sessionCallback: () => void // Callback is invoked after login
   registerAccountUrl?: string
   resetPasswordUrl?: string
+  /* Invoked before redirecting to Google. Useful in portals where we may want to store the current URL to redirect back here. */
+  onBeginOAuthSignIn?: () => void
   handleIsOnUsernameOrPasswordScreen?: React.Dispatch<
-    React.SetStateAction<boolean | undefined>
+    React.SetStateAction<boolean>
   >
   showUsernameOrPassword?: boolean | undefined
   renderBackButton?: boolean
+  /* optionally pass the 2FA error response to directly start the 2FA challenge */
+  twoFactorAuthenticationRequired?: TwoFactorAuthErrorResponse
 }
 
 /**
@@ -41,13 +48,6 @@ type Props = {
 function Login(props: Props) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
-  const [hasLoginFailed, setHasLoginFailed] = useState(false)
-  /* Only used if props.showUsernameOrPassword is undefined */
-  const [
-    showUsernameOrPasswordLocalState,
-    setShowUsernameOrPasswordLocalState,
-  ] = useState(false)
 
   const {
     ssoRedirectUrl,
@@ -58,63 +58,43 @@ function Login(props: Props) {
     resetPasswordUrl = `${getEndpoint(
       BackendDestinationEnum.PORTAL_ENDPOINT,
     )}#!PasswordReset:0`,
-    handleIsOnUsernameOrPasswordScreen,
-    showUsernameOrPassword = showUsernameOrPasswordLocalState,
-    renderBackButton,
   } = props
 
-  const authenticationReceiptKey = 'last_user_authentication_receipt'
+  const {
+    step,
+    setStep,
+    submitUsernameAndPassword,
+    submitOneTimePassword,
+    errorMessage,
+  } = useLogin(sessionCallback, props.twoFactorAuthenticationRequired)
+
+  const renderBackButton =
+    props.renderBackButton &&
+    (step === 'USERNAME_PASSWORD' || step === 'VERIFICATION_CODE')
 
   /**
    * Handle user login on click
-   *
-   * @param {*} clickEvent Userclick event
    */
   async function handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
     clickEvent.preventDefault() // avoid page refresh
-    try {
-      // get last valid receipt
-      const authenticationReceipt = localStorage.getItem(
-        authenticationReceiptKey,
-      )
-      const data = (await SynapseClient.login(
-        username,
-        password,
-        authenticationReceipt,
-      )) as LoginResponse
-      // now get access token from cookie has to be called in the portals repo
-      await SynapseClient.setAccessTokenCookie(data.accessToken)
-      // Set the new receipt
-      localStorage.setItem(authenticationReceiptKey, data.authenticationReceipt)
-      sessionCallback()
-    } catch (err) {
-      console.log('Error on login: ', err.reason)
-      setErrorMessage(err.reason)
-      setHasLoginFailed(true)
-    }
-  }
-
-  function handleShowEmailLogin(showEmailLogin: boolean) {
-    if (handleIsOnUsernameOrPasswordScreen) {
-      handleIsOnUsernameOrPasswordScreen(showEmailLogin)
-    } else {
-      setShowUsernameOrPasswordLocalState(showEmailLogin)
-    }
+    await submitUsernameAndPassword(username, password)
   }
 
   function onGoogleSignIn(event: React.MouseEvent<HTMLButtonElement>) {
-    // save current route (so that we can go back here after SSO)
-    localStorage.setItem('after-sso-login-url', window.location.href)
+    if (props.onBeginOAuthSignIn) {
+      props.onBeginOAuthSignIn()
+    }
+
     event.preventDefault()
     const redirectUrl = ssoRedirectUrl
       ? `${ssoRedirectUrl}${PROVIDERS.GOOGLE}`
       : `${SynapseClient.getRootURL()}?provider=${PROVIDERS.GOOGLE}`
     SynapseClient.oAuthUrlRequest(PROVIDERS.GOOGLE, redirectUrl)
-      .then((data: any) => {
-        const authUrl = data.authorizationUrl
-        window.location = authUrl // ping the url
+      .then(data => {
+        // Send the user to the authorization URL
+        window.location = data.authorizationUrl as unknown as Location
       })
-      .catch((err: any) => {
+      .catch((err: SynapseClientError) => {
         console.log('Error on oAuth url ', err)
       })
   }
@@ -124,7 +104,12 @@ function Login(props: Props) {
       id="loginPage"
       className="container LoginComponent SRC-syn-border-spacing bootstrap-4-backport"
     >
-      <div className={!showUsernameOrPassword ? '' : 'hide-component'}>
+      {renderBackButton && (
+        <IconButton type="button" onClick={() => setStep('CHOOSE_AUTH_METHOD')}>
+          <IconSvg icon="arrowBack" />
+        </IconButton>
+      )}
+      <div className={step === 'CHOOSE_AUTH_METHOD' ? '' : 'hide-component'}>
         <form>
           <ButtonWithIcon
             variant="white"
@@ -139,22 +124,17 @@ function Login(props: Props) {
           variant="white"
           className={`SRC-signin-button`}
           icon={<IconSvg icon="email" />}
-          onClick={() => handleShowEmailLogin(true)}
+          onClick={() => setStep('USERNAME_PASSWORD')}
         >
           Sign in with your email
         </ButtonWithIcon>
       </div>
       <Form
-        className={showUsernameOrPassword ? '' : 'hide-component'}
+        className={step === 'USERNAME_PASSWORD' ? '' : 'hide-component'}
         onSubmit={e => {
           handleLogin(e)
         }}
       >
-        {renderBackButton && (
-          <IconButton type="button" onClick={() => handleShowEmailLogin(false)}>
-            <IconSvg icon="arrowBack" />
-          </IconButton>
-        )}
         <label htmlFor={'username'}>Username or Email Address</label>
         <Form.Control
           required
@@ -192,12 +172,17 @@ function Login(props: Props) {
           Sign in
         </Button>
       </Form>
-      <div className={'SRC-center-text'}>
-        <Link href={registerAccountUrl}>
-          Don&apos;t have an account? Create one now
-        </Link>
-      </div>
-      {hasLoginFailed && (
+      {step === 'VERIFICATION_CODE' && (
+        <TOTPForm onSubmit={submitOneTimePassword} />
+      )}
+      {(step === 'CHOOSE_AUTH_METHOD' || step === 'USERNAME_PASSWORD') && (
+        <div className={'SRC-center-text'}>
+          <Link href={registerAccountUrl}>
+            Don&apos;t have an account? Create one now
+          </Link>
+        </div>
+      )}
+      {errorMessage && (
         <FullWidthAlert
           variant={'warning'}
           isGlobal={false}
