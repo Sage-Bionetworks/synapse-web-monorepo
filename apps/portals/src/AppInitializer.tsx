@@ -56,11 +56,15 @@ function useSession(
   )
 
   const initAnonymousUserState = useCallback(async () => {
-    await SynapseClient.signOut()
     // reset token and user profile
     setToken(undefined)
     setUserProfile(undefined)
     setHasCalledGetSession(true)
+    try {
+      await SynapseClient.signOut()
+    } catch (e) {
+      console.error('Unable to sign out: ', e)
+    }
   }, [])
 
   const getSession = useCallback(async () => {
