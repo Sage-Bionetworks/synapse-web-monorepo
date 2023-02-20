@@ -228,9 +228,11 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run only on mount
   }, [])
 
-  useDetectSSOCode(undefined, undefined, (twoFactorAuthError) => {
-    setTwoFaErrorResponse(twoFactorAuthError)
-    setShowLoginDialog(true)
+  useDetectSSOCode({
+    onTwoFactorAuthRequired: (twoFactorAuthError) => {
+      setTwoFaErrorResponse(twoFactorAuthError)
+      setShowLoginDialog(true)
+    },
   })
 
   const onSignInClicked = useCallback(() => {

@@ -89,7 +89,7 @@ describe('useDetectSSOCode tests', () => {
     const mockOn2fa = jest.fn()
     mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
 
-    renderHook(() => useDetectSSOCode(undefined, undefined, mockOn2fa))
+    renderHook(() => useDetectSSOCode({ onTwoFactorAuthRequired: mockOn2fa }))
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
@@ -155,7 +155,7 @@ describe('useDetectSSOCode tests', () => {
     mockOAuthSessionRequest.mockRejectedValue(unhandledError)
     const mockOnError = jest.fn()
 
-    renderHook(() => useDetectSSOCode(undefined, mockOnError))
+    renderHook(() => useDetectSSOCode({ onError: mockOnError }))
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
@@ -238,7 +238,7 @@ describe('useDetectSSOCode tests', () => {
     )
     mockBindOAuthProviderToAccount.mockRejectedValue(error)
 
-    renderHook(() => useDetectSSOCode(undefined, mockOnError))
+    renderHook(() => useDetectSSOCode({ onError: mockOnError }))
     await waitFor(() => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
         PROVIDERS.ORCID,
