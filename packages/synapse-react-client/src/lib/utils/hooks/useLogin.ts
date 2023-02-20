@@ -151,6 +151,7 @@ export default function useLogin(
         // The user waited too long to enter the code.
         e.reason.includes('Token has expired')
       ) {
+        console.warn(e)
         // Instruct the user refresh to start over.
         setErrorMessage('Something went wrong. Refresh the page and try again.')
         // If the 2FA token is in the search parameters, remove it so the user doesn't just get the same error again.

@@ -271,6 +271,7 @@ describe('useLogin tests', () => {
   })
 
   it('Handles 2fa error where the token is invalid/expired', async () => {
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
     const timedOneTimePassword = '123456'
     const error = new SynapseClientError(
       400,
@@ -293,6 +294,7 @@ describe('useLogin tests', () => {
         otpCode: timedOneTimePassword,
         otpType: 'TOTP',
       })
+      expect(consoleWarnSpy).toHaveBeenCalledWith(error)
       expect(result.current.errorMessage).toContain(
         'Something went wrong. Refresh the page and try again.',
       )
@@ -301,9 +303,12 @@ describe('useLogin tests', () => {
         localStorage.getItem(AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY),
       ).toBe(null)
     })
+    consoleWarnSpy.mockRestore()
   })
 
   it('Handles 2fa error where the token is invalid/expired, and clears search params', async () => {
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+
     history.replaceState(
       {},
       '',
@@ -334,6 +339,7 @@ describe('useLogin tests', () => {
         otpCode: timedOneTimePassword,
         otpType: 'TOTP',
       })
+      expect(consoleWarnSpy).toHaveBeenCalledWith(error)
       expect(result.current.errorMessage).toContain(
         'Something went wrong. Refresh the page and try again.',
       )
@@ -345,5 +351,6 @@ describe('useLogin tests', () => {
         'http://localhost/#!LoginPlace:0?foo=bar',
       )
     })
+    consoleWarnSpy.mockRestore()
   })
 })
