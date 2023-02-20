@@ -1,1 +1,1 @@
-export S3_STAGING_BUCKET_LOCATION=s3://staging-elportal-NEEDS-UPDATE
+export S3_STAGING_BUCKET_LOCATION=s3://staging-eliteportal-synapse-org-websitebucket-enedr8ccgn9x
