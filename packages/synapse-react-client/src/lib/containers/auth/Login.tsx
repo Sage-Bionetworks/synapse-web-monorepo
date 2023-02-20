@@ -173,7 +173,11 @@ function Login(props: Props) {
         </Button>
       </Form>
       {step === 'VERIFICATION_CODE' && (
-        <TOTPForm onSubmit={submitOneTimePassword} />
+        <TOTPForm
+          onSubmit={totp => {
+            submitOneTimePassword(totp)
+          }}
+        />
       )}
       {(step === 'CHOOSE_AUTH_METHOD' || step === 'USERNAME_PASSWORD') && (
         <div className={'SRC-center-text'}>
