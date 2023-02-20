@@ -133,3 +133,5 @@ export const NETWORK_UNAVAILABLE_MESSAGE =
 
 /* The ID of the table in production that contains the canned responses for the submission rejection form. */
 export const REJECT_SUBMISSION_CANNED_RESPONSES_TABLE = 'syn50683097'
+export const AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY =
+  'last_user_authentication_receipt'
