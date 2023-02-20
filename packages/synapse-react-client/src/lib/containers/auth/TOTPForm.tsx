@@ -18,10 +18,11 @@ export default function TOTPForm(props: TOTPFormProps) {
         length={TOTP_LENGTH}
         value={verificationCode}
         onChange={setVerificationCode}
-        gap={0}
+        onComplete={onSubmit}
         validateChar={(character: string) => {
           return DIGIT_CHARACTERS.includes(character)
         }}
+        gap={0}
         sx={{
           '.MuiFormControl-root:first-of-type > .MuiInputBase-root': {
             borderTopRightRadius: 0,
