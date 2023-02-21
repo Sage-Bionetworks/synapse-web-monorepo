@@ -9,6 +9,7 @@ import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { PaginatedResults, TrashedEntity } from '../../../synapseTypes'
+import { KeyFactory } from '../KeyFactory'
 
 export function useGetItemsInTrashCanInfinite(
   options?: UseInfiniteQueryOptions<
@@ -17,9 +18,10 @@ export function useGetItemsInTrashCanInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
 
   return useInfiniteQuery<PaginatedResults<TrashedEntity>, SynapseClientError>(
-    ['trashcan', 'list', accessToken],
+    keyFactory.getTrashCanItemsQueryKey(),
     context => {
       return SynapseClient.getItemsInTrashCan(accessToken, context.pageParam)
     },
@@ -48,6 +50,7 @@ export function useRestoreEntities(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
 
   return useMutation<
     PromiseSettledResult<void>[],
@@ -66,7 +69,9 @@ export function useRestoreEntities(
     {
       ...options,
       onSuccess: async (_, ids, ctx) => {
-        await queryClient.invalidateQueries(['trashcan'])
+        await queryClient.invalidateQueries(
+          keyFactory.getTrashCanItemsQueryKey(),
+        )
         if (options?.onSuccess) {
           await options.onSuccess(_, ids, ctx)
         }
@@ -84,6 +89,7 @@ export function usePurgeEntities(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
 
   return useMutation<
     PromiseSettledResult<void>[],
@@ -102,7 +108,9 @@ export function usePurgeEntities(
     {
       ...options,
       onSuccess: async (_, ids, ctx) => {
-        await queryClient.invalidateQueries(['trashcan'])
+        await queryClient.invalidateQueries(
+          keyFactory.getTrashCanItemsQueryKey(),
+        )
         if (options?.onSuccess) {
           await options.onSuccess(_, ids, ctx)
         }

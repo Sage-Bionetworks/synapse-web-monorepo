@@ -4,7 +4,7 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { ALL_ENTITY_BUNDLE_FIELDS } from '../../../SynapseConstants'
 import { useSynapseContext } from '../../../SynapseContext'
 import { EntityBundle, EntityBundleRequest } from '../../../synapseTypes'
-import { entityQueryKeys } from './queryKeys'
+import { KeyFactory } from '../KeyFactory'
 
 export function useGetEntityBundle<
   T extends EntityBundleRequest = typeof ALL_ENTITY_BUNDLE_FIELDS,
@@ -15,8 +15,9 @@ export function useGetEntityBundle<
   options?: UseQueryOptions<EntityBundle<T>, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   return useQuery<EntityBundle<T>, SynapseClientError>(
-    entityQueryKeys.bundle(entityId, version, bundleRequest),
+    keyFactory.getEntityBundleQueryKey(entityId, version, bundleRequest),
     () =>
       SynapseClient.getEntityBundleV2<T>(
         entityId,

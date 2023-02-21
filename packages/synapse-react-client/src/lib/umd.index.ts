@@ -57,6 +57,7 @@ import {
   SynapseContextProvider,
   useSynapseContext,
 } from './utils/SynapseContext'
+import { SynapseQueries } from './utils'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -132,5 +133,6 @@ export {
   SynapseConstants,
   SynapseClient,
   SynapseContext,
+  SynapseQueries,
   Palettes,
 }

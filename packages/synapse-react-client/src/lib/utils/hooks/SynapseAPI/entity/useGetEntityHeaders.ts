@@ -7,15 +7,17 @@ import {
   PaginatedResults,
   ReferenceList,
 } from '../../../synapseTypes'
+import { KeyFactory } from '../KeyFactory'
 
 export function useGetEntityHeaders(
   references: ReferenceList,
   options?: UseQueryOptions<PaginatedResults<EntityHeader>, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
 
   return useQuery<PaginatedResults<EntityHeader>, SynapseClientError>(
-    ['entityHeaders', accessToken, references],
+    keyFactory.getEntityHeadersQueryKey(references),
     () => SynapseClient.getEntityHeaders(references, accessToken),
     options,
   )
@@ -26,9 +28,10 @@ export function useGetEntityHeader(
   options?: UseQueryOptions<EntityHeader, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
 
   return useQuery<EntityHeader, SynapseClientError>(
-    ['entityHeader', accessToken, entityId],
+    keyFactory.getEntityHeaderQueryKey(entityId),
     () => SynapseClient.getEntityHeader(entityId, accessToken),
     options,
   )

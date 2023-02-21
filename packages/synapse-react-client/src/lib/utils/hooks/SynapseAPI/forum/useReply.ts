@@ -19,6 +19,7 @@ import {
 } from '../../../synapseTypes/DiscussionBundle'
 import { PaginatedResults } from '../../../synapseTypes'
 import { Match } from '../../../synapseTypes/DiscussionSearch'
+import { KeyFactory } from '../KeyFactory'
 
 export function useGetRepliesInfinite(
   threadId: string,
@@ -32,11 +33,12 @@ export function useGetRepliesInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   return useInfiniteQuery<
     PaginatedResults<DiscussionReplyBundle>,
     SynapseClientError
   >(
-    ['reply', threadId, limit, filter, sort, ascending],
+    keyFactory.getRepliesQueryKey(threadId, ascending, limit, sort, filter),
     async context => {
       return SynapseClient.getReplies(
         accessToken,
@@ -69,6 +71,7 @@ export function useGetReply(
   options?: UseQueryOptions<string, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   const queryFn = async () => {
     const messageUrl = await SynapseClient.getReplyMessageUrl(
       reply.messageKey,
@@ -85,7 +88,7 @@ export function useGetReply(
     return data.text()
   }
   return useQuery<string, SynapseClientError>(
-    ['reply', reply.threadId, reply.id, reply.messageKey],
+    keyFactory.getReplyQueryKey(reply.threadId, reply.id, reply.messageKey),
     queryFn,
     options,
   )
@@ -100,7 +103,7 @@ export function usePostReply(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-
+  const keyFactory = new KeyFactory(accessToken)
   return useMutation<
     DiscussionReplyBundle,
     SynapseClientError,
@@ -111,7 +114,9 @@ export function usePostReply(
     {
       ...options,
       onSuccess: async (newReply, variables, ctx) => {
-        await queryClient.invalidateQueries(['reply', newReply.threadId])
+        await queryClient.invalidateQueries(
+          keyFactory.getAllRepliesQueryKey(newReply.threadId),
+        )
         if (options?.onSuccess) {
           await options.onSuccess(newReply, variables, ctx)
         }
@@ -129,6 +134,7 @@ export function usePutReply(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
 
   return useMutation<
     DiscussionReplyBundle,
@@ -140,7 +146,9 @@ export function usePutReply(
     {
       ...options,
       onSuccess: async (newReply, variables, ctx) => {
-        queryClient.invalidateQueries(['reply', newReply.threadId])
+        await queryClient.invalidateQueries(
+          keyFactory.getAllRepliesQueryKey(newReply.threadId),
+        )
 
         if (options?.onSuccess) {
           await options.onSuccess(newReply, variables, ctx)
@@ -155,13 +163,16 @@ export function useDeleteReply(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
 
   return useMutation<void, SynapseClientError, Match>(
     (match: Match) => SynapseClient.deleteReply(accessToken, match.replyId),
     {
       ...options,
       onSuccess: async (updatedReply, variables, ctx) => {
-        await queryClient.invalidateQueries(['reply', variables.threadId])
+        await queryClient.invalidateQueries(
+          keyFactory.getAllRepliesQueryKey(variables.threadId),
+        )
 
         if (options?.onSuccess) {
           await options.onSuccess(updatedReply, variables, ctx)

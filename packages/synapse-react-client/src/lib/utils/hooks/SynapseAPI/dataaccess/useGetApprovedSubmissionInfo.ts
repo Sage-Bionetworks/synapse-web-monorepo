@@ -6,6 +6,7 @@ import {
   SubmissionInfoPage,
   SubmissionInfoPageRequest,
 } from '../../../synapseTypes/SubmissionInfo'
+import { KeyFactory } from '../KeyFactory'
 
 export function useGetApprovedSubmissionInfoInfinite(
   accessRequirementId: string,
@@ -16,11 +17,12 @@ export function useGetApprovedSubmissionInfoInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   const request: SubmissionInfoPageRequest = {
     accessRequirementId,
   }
   return useInfiniteQuery<SubmissionInfoPage, SynapseClientError>(
-    ['approvedSubmissionInfo', request],
+    keyFactory.getApprovedSubmissionInfoQueryKey(request),
     async context => {
       return await SynapseClient.getApprovedSubmissionInfo(
         { ...request, nextPageToken: context.pageParam },

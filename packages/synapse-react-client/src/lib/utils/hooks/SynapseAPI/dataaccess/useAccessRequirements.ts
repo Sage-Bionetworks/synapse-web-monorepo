@@ -21,18 +21,16 @@ import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
 } from '../../../synapseTypes/AccessRequirement/AccessRequirementSearch'
-import { entityQueryKeys } from '../entity/queryKeys'
-
-const ACCESS_REQUIREMENT_QUERY_KEY = 'accessRequirement'
+import { KeyFactory } from '../KeyFactory'
 
 export function useGetAccessRequirements<T extends AccessRequirement>(
   accessRequirementId: string | number,
   options?: UseQueryOptions<T, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-
+  const keyFactory = new KeyFactory(accessToken)
   return useQuery<T, SynapseClientError>(
-    [ACCESS_REQUIREMENT_QUERY_KEY, accessRequirementId],
+    keyFactory.getAccessRequirementQueryKey(String(accessRequirementId)),
     () =>
       SynapseClient.getAccessRequirementById<T>(
         accessToken,
@@ -47,8 +45,9 @@ export function useGetAccessRequirementWikiPageKey(
   options?: UseQueryOptions<WikiPageKey, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   return useQuery<WikiPageKey, SynapseClientError>(
-    [ACCESS_REQUIREMENT_QUERY_KEY, accessRequirementId, 'wikiPageKey'],
+    keyFactory.getAccessRequirementWikiPageKey(accessRequirementId),
     () =>
       SynapseClient.getWikiPageKeyForAccessRequirement(
         accessToken,
@@ -63,8 +62,10 @@ export function useGetAccessRequirementACL(
   options?: UseQueryOptions<AccessControlList | null, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
+
   return useQuery<AccessControlList | null, SynapseClientError>(
-    [ACCESS_REQUIREMENT_QUERY_KEY, accessRequirementId, 'acl'],
+    keyFactory.getAccessRequirementAclQueryKey(accessRequirementId),
     () =>
       SynapseClient.getAccessRequirementAcl(accessToken, accessRequirementId),
     options,
@@ -79,8 +80,9 @@ export function useSearchAccessRequirementsInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   return useInfiniteQuery<AccessRequirementSearchResponse, SynapseClientError>(
-    [ACCESS_REQUIREMENT_QUERY_KEY, 'search', params],
+    keyFactory.searchAccessRequirementsQueryKey(params),
     async context => {
       return await SynapseClient.searchAccessRequirements(accessToken, {
         ...params,
@@ -99,8 +101,10 @@ export function useGetRestrictionInformation(
   options?: UseQueryOptions<RestrictionInformationResponse, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
+
   return useQuery<RestrictionInformationResponse, SynapseClientError>(
-    [ACCESS_REQUIREMENT_QUERY_KEY, 'restrictionInformation', request],
+    keyFactory.getAccessRequirementRestrictionInformationQueryKey(request),
     () => SynapseClient.getRestrictionInformation(request, accessToken),
     options,
   )
@@ -111,6 +115,8 @@ export function useCreateLockAccessRequirement(
 ) {
   const { accessToken } = useSynapseContext()
   const queryClient = useQueryClient()
+  const keyFactory = new KeyFactory(accessToken)
+
   return useMutation<AccessRequirement, SynapseClientError, string>({
     ...options,
     mutationFn: (entityId: string) =>
@@ -118,9 +124,11 @@ export function useCreateLockAccessRequirement(
     mutationKey: ['createLockAccessRequirement'],
     onSuccess: async (data, variables, ctx) => {
       // Invalidate all access requirement queries
-      await queryClient.invalidateQueries([ACCESS_REQUIREMENT_QUERY_KEY])
+      await queryClient.invalidateQueries(
+        keyFactory.getAccessRequirementQueryKey(),
+      )
       // Invalidate all entity queries (not just the current entity because the new AR may apply to this entity's children)
-      await queryClient.invalidateQueries(entityQueryKeys.all)
+      await queryClient.invalidateQueries(keyFactory.getAllEntityDataQueryKey())
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }

@@ -22,26 +22,7 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { SynapseClient } from '../../../index'
 import { AddBatchOfFilesToDownloadListResponse } from '../../../synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
-
-export const downloadListQueryKeys = {
-  /* Key used to invalidate all download list queries */
-  base: ['downloadList'],
-  availableFiles: (request: AvailableFilesRequest) => [
-    ...downloadListQueryKeys.base,
-    'availableFiles',
-    request,
-  ],
-  availableFilesInfinite: (request: AvailableFilesRequest) => [
-    ...downloadListQueryKeys.availableFiles(request),
-    'infinite',
-  ],
-  getActionsRequired: () => [...downloadListQueryKeys.base, 'actionsRequired'],
-  getActionsRequiredInfinite: () => [
-    ...downloadListQueryKeys.getActionsRequired(),
-    'infinite',
-  ],
-  getStatistics: () => [...downloadListQueryKeys.base, 'statistics'],
-}
+import { KeyFactory } from '../KeyFactory'
 
 export function useGetAvailableFilesToDownload(
   request: AvailableFilesRequest,
@@ -52,8 +33,9 @@ export function useGetAvailableFilesToDownload(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   return useQuery<AvailableFilesResponse, SynapseClientError>(
-    downloadListQueryKeys.availableFiles(request),
+    keyFactory.getDownloadListAvailableFilesQueryKey(request),
     () => SynapseClient.getAvailableFilesToDownload(request, accessToken),
     options,
   )
@@ -69,6 +51,7 @@ export function useGetAvailableFilesToDownloadInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   const request: AvailableFilesRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.download.AvailableFilesRequest',
@@ -80,7 +63,7 @@ export function useGetAvailableFilesToDownloadInfinite(
     request.filter = filter
   }
   return useInfiniteQuery<AvailableFilesResponse, SynapseClientError>(
-    downloadListQueryKeys.availableFilesInfinite(request),
+    keyFactory.getDownloadListAvailableFilesInfiniteQueryKey(request),
     async context => {
       return SynapseClient.getAvailableFilesToDownload(
         { ...request, nextPageToken: context.pageParam },
@@ -102,13 +85,14 @@ export function useGetDownloadListActionsRequired(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   const request: ActionRequiredRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.download.ActionRequiredRequest',
   }
 
   return useQuery<ActionRequiredResponse, SynapseClientError>(
-    downloadListQueryKeys.getActionsRequired(),
+    keyFactory.getDownloadListActionsRequiredQueryKey(),
     () => SynapseClient.getDownloadListActionsRequired(request, accessToken),
     options,
   )
@@ -122,12 +106,13 @@ export function useGetDownloadListActionsRequiredInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   const request: ActionRequiredRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.download.ActionRequiredRequest',
   }
   return useInfiniteQuery<ActionRequiredResponse, SynapseClientError>(
-    downloadListQueryKeys.getActionsRequiredInfinite(),
+    keyFactory.getDownloadListActionsRequiredInfiniteQueryKey(),
     async context => {
       return await SynapseClient.getDownloadListActionsRequired(
         { ...request, nextPageToken: context.pageParam },
@@ -149,8 +134,9 @@ export function useGetDownloadListStatistics(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   return useQuery<FilesStatisticsResponse, SynapseClientError>(
-    downloadListQueryKeys.getStatistics(),
+    keyFactory.getDownloadListStatisticsQueryKey(),
     () => SynapseClient.getDownloadListStatistics(accessToken),
     options,
   )
@@ -167,6 +153,7 @@ export function useAddFileToDownloadList(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   const queryClient = useQueryClient()
   return useMutation({
     ...options,
@@ -182,7 +169,9 @@ export function useAddFileToDownloadList(
     mutationKey: ['addFileToDownloadList'],
     onSuccess: async (data, variables, ctx) => {
       // PORTALS-2222: Invalidate to load the accurate results
-      await queryClient.invalidateQueries(downloadListQueryKeys.base)
+      await queryClient.invalidateQueries(
+        keyFactory.getDownloadListBaseQueryKey(),
+      )
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }

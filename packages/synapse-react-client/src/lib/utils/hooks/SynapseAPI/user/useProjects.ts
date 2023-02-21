@@ -9,6 +9,7 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { ProjectHeaderList } from '../../../synapseTypes'
 import { GetProjectsParameters } from '../../../synapseTypes/GetProjectsParams'
+import { KeyFactory } from '../KeyFactory'
 
 export function useGetProjects(
   params?: GetProjectsParameters,
@@ -19,8 +20,9 @@ export function useGetProjects(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   return useQuery<ProjectHeaderList, SynapseClientError>(
-    ['myProjects', accessToken, params],
+    keyFactory.getMyProjectsQueryKey(params),
     () => SynapseClient.getMyProjects(accessToken!, params),
     options,
   )
@@ -35,9 +37,10 @@ export function useGetProjectsInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
 
   return useInfiniteQuery<ProjectHeaderList, SynapseClientError>(
-    ['myProjects', accessToken, params],
+    keyFactory.getMyProjectsQueryKey(params),
     async context => {
       return await SynapseClient.getMyProjects(accessToken!, {
         ...params,

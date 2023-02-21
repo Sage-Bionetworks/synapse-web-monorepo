@@ -21,7 +21,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../synapseTypes'
-import { entityQueryKeys } from './queryKeys'
+import { KeyFactory } from '../KeyFactory'
 
 const sharedQueryDefaults = {
   staleTime: 1000 * 60 * 30, // 30 minutes
@@ -41,9 +41,9 @@ export default function useGetQueryResultBundle(
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-
+  const keyFactory = new KeyFactory(accessToken)
   return useQuery<QueryResultBundle, SynapseClientError>(
-    entityQueryKeys.tableQueryResult(queryBundleRequest, false),
+    keyFactory.getEntityTableQueryResultQueryKey(queryBundleRequest, false),
     () => SynapseClient.getQueryTableResults(queryBundleRequest, accessToken),
     {
       ...sharedQueryDefaults,
@@ -63,12 +63,16 @@ function _useGetQueryResultBundleWithAsyncStatus(
   ) => void,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
 
   return useQuery<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError
   >(
-    entityQueryKeys.tableQueryResultWithAsyncStatus(queryBundleRequest, false),
+    keyFactory.getEntityTableQueryResultWithAsyncStatusQueryKey(
+      queryBundleRequest,
+      false,
+    ),
     () =>
       SynapseClient.getQueryTableAsyncJobResults(
         queryBundleRequest,
@@ -211,11 +215,12 @@ export function useInfiniteQueryResultBundle(
   ) => void,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   return useInfiniteQuery<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError
   >(
-    entityQueryKeys.tableQueryResult(queryBundleRequest, true),
+    keyFactory.getEntityTableQueryResultQueryKey(queryBundleRequest, true),
     (context: QueryFunctionContext<QueryKey, string>) => {
       const offset = context.pageParam ? parseInt(context.pageParam) : 0
       return SynapseClient.getQueryTableAsyncJobResults(
@@ -305,9 +310,9 @@ export function useGetFullTableQueryResults(
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
 ): UseQueryResult<QueryResultBundle, SynapseClientError> {
   const { accessToken } = useSynapseContext()
-
+  const keyFactory = new KeyFactory(accessToken)
   return useQuery<QueryResultBundle, SynapseClientError>(
-    entityQueryKeys.fullTableQueryResult(queryBundleRequest),
+    keyFactory.getFullTableQueryResultQueryKey(queryBundleRequest),
     () =>
       SynapseClient.getFullQueryTableResults(queryBundleRequest, accessToken),
     {

@@ -3,6 +3,7 @@ import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { SynapseClient } from '../../../index'
+import { KeyFactory } from '../KeyFactory'
 
 export function useGetDOIAssociation(
   objectId: string,
@@ -11,8 +12,9 @@ export function useGetDOIAssociation(
   options?: UseQueryOptions<DoiAssociation | null, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
+  const keyFactory = new KeyFactory(accessToken)
   return useQuery<DoiAssociation | null, SynapseClientError>(
-    ['doi', 'association', objectType, objectId, versionNumber],
+    keyFactory.getDOIAssociationQueryKey(objectType, objectId, versionNumber),
     () =>
       SynapseClient.getDOIAssociation(
         accessToken,
