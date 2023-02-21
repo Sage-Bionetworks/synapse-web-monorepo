@@ -4,6 +4,7 @@ import {
   ThemeProvider,
 } from '@mui/material/styles'
 import { AppContextConsumer } from 'AppContext'
+import { SageResourcesPage } from 'components/SageResourcesPage'
 import { AccountCreatedPage } from 'components/AccountCreatedPage'
 import { AccountSettings } from 'components/AccountSettings'
 import { CertificationQuiz } from 'components/CertificationQuiz'
@@ -88,6 +89,11 @@ const App: React.FC = () => {
                 <Route exact path="/register1" component={RegisterAccount1} />
                 <Route exact path="/register2" component={RegisterAccount2} />
                 <Route exact path="/jointeam" component={JoinTeamPage} />
+                <Route
+                  exact
+                  path="/sageresources"
+                  component={SageResourcesPage}
+                />
                 <Route
                   exact
                   path="/resetPassword"
