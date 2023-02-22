@@ -7,7 +7,7 @@ import {
 import { SynapseErrorBoundary } from '../containers/error/ErrorBanner'
 import { ThemeProvider } from './theme/useTheme'
 import { ThemeOptions } from '@mui/material'
-import { KeyFactory } from './hooks/SynapseAPI'
+import { KeyFactory } from './hooks/SynapseAPI/KeyFactory'
 
 export const defaultQueryClientConfig: QueryClientConfig = {
   defaultOptions: {
