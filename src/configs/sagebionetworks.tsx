@@ -10,7 +10,7 @@ const description =
 
 export const sage: SourceAppConfig = {
   appId: 'sage',
-  appURL: 'https://sagebionetworks.org/',
+  appURL: '/sageresources',
   friendlyName: 'Sage Bionetworks',
   logo,
   palette: sageBionetworksPalette,

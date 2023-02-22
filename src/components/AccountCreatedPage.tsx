@@ -103,7 +103,12 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                       config.appId != sage.appId
                     ) {
                       return (
-                        <Grid item xs={6} className="sourceAppItem">
+                        <Grid
+                          item
+                          xs={6}
+                          className="sourceAppItem"
+                          key={config.appId}
+                        >
                           <a href={config.appURL}>{config.logo}</a>
                         </Grid>
                       )

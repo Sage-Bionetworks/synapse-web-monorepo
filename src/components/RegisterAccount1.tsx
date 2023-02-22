@@ -12,7 +12,7 @@ import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principa
 import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Link } from 'react-router-dom'
 import { EmailConfirmationPage } from './EmailConfirmationPage'
-import { Button, IconButton, Link as MuiLink } from '@mui/material'
+import { Button, IconButton } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from 'AppContext'
@@ -264,7 +264,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                   <strong>Sage account</strong>. You can also use it to access
                   many other resources from Sage.
                 </p>
-                <MuiLink>More about Sage accounts</MuiLink>
+                <Link to="/sageresources">More about Sage accounts</Link>
               </div>
             </div>
           </div>
