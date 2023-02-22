@@ -20,7 +20,7 @@ import {
 import { Link as RouterLink } from 'react-router-dom'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import { Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 import { ChangePassword } from './ChangePassword'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { useHistory } from 'react-router-dom'
@@ -35,6 +35,8 @@ import { DATETIME_UTC_COOKIE_KEY } from 'synapse-react-client/dist/utils/Synapse
 import { getUseUtcTimeFromCookie } from 'synapse-react-client/dist/utils/SynapseClient'
 import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
+import { InputLabel } from '@mui/material'
+import { TextField } from '@mui/material'
 
 export const AccountSettings = () => {
   const { accessToken } = useSynapseContext()
@@ -48,6 +50,7 @@ export const AccountSettings = () => {
   const [url, setUrl] = useState<string>()
   const [industry, setIndustry] = useState<string>()
   const [username, setUsername] = useState<string>()
+  const [bio, setBio] = useState<string>()
   const [changeInForm, setChangeInForm] = useState(false)
   const [orcid, setOrcid] = useState<string>()
   const [verified, setVerified] = useState<boolean>()
@@ -96,6 +99,7 @@ export const AccountSettings = () => {
     setLocation(bundle.userProfile?.location)
     setIndustry(bundle.userProfile?.industry)
     setUrl(bundle.userProfile?.url)
+    setBio(bundle.userProfile?.summary)
     setVerified(bundle.isVerified)
     setOrcid(bundle.ORCID)
     setIsCertified(bundle.isCertified)
@@ -131,6 +135,7 @@ export const AccountSettings = () => {
         userProfile.location = location as string
         userProfile.industry = industry as string
         userProfile.url = url as string
+        userProfile.summary = bio as string
 
         await SynapseClient.updateMyUserProfile(userProfile, accessToken)
         getUserData()
@@ -199,61 +204,131 @@ export const AccountSettings = () => {
                   }}
                 />
                 <Form onChange={markFormDirty}>
-                  <FormGroup className="required">
-                    <FormLabel>Username</FormLabel>
-                    <FormControl
+                  <StyledFormControl
+                    fullWidth
+                    variant="standard"
+                    margin="normal"
+                    required
+                  >
+                    <InputLabel shrink htmlFor="username">
+                      Username
+                    </InputLabel>
+                    <TextField
+                      id="username"
+                      name="username"
+                      fullWidth
                       onChange={e => setUsername(e.target.value)}
                       value={username}
                     />
-                  </FormGroup>
-                  <FormGroup>
-                    <FormLabel>First name</FormLabel>
-                    <FormControl
+                  </StyledFormControl>
+                  <StyledFormControl
+                    fullWidth
+                    variant="standard"
+                    margin="normal"
+                  >
+                    <InputLabel shrink htmlFor="firstName">
+                      First name
+                    </InputLabel>
+                    <TextField
+                      id="firstName"
+                      name="firstName"
+                      fullWidth
                       onChange={e => setFirstName(e.target.value)}
                       value={firstName}
                     />
-                  </FormGroup>
-                  <FormGroup>
-                    <FormLabel>Last name</FormLabel>
-                    <FormControl
+                  </StyledFormControl>
+                  <StyledFormControl
+                    fullWidth
+                    variant="standard"
+                    margin="normal"
+                  >
+                    <InputLabel shrink htmlFor="lastName">
+                      Last name
+                    </InputLabel>
+                    <TextField
+                      id="lastName"
+                      name="lastName"
+                      fullWidth
                       onChange={e => setLastName(e.target.value)}
                       value={lastName}
                     />
-                  </FormGroup>
-                  <FormGroup>
-                    <FormLabel>Current position</FormLabel>
-                    <FormControl
-                      placeholder="e.g Principal Investigator"
+                  </StyledFormControl>
+                  <StyledFormControl
+                    fullWidth
+                    variant="standard"
+                    margin="normal"
+                  >
+                    <InputLabel shrink htmlFor="position">
+                      Current position
+                    </InputLabel>
+                    <TextField
+                      id="position"
+                      name="position"
+                      fullWidth
                       onChange={e => setPosition(e.target.value)}
                       value={position}
                     />
-                  </FormGroup>
-                  <FormGroup>
-                    <FormLabel>Industry</FormLabel>
-                    <FormControl
+                  </StyledFormControl>
+                  <StyledFormControl
+                    fullWidth
+                    variant="standard"
+                    margin="normal"
+                  >
+                    <InputLabel shrink htmlFor="industry">
+                      Industry
+                    </InputLabel>
+                    <TextField
+                      id="industry"
+                      name="industry"
+                      fullWidth
                       onChange={e => setIndustry(e.target.value)}
                       value={industry}
                     />
-                  </FormGroup>
-                  <FormGroup>
-                    <FormLabel>Website</FormLabel>
-                    <FormControl
-                      placeholder="https://example.com"
+                  </StyledFormControl>
+                  <StyledFormControl
+                    fullWidth
+                    variant="standard"
+                    margin="normal"
+                  >
+                    <InputLabel shrink htmlFor="website">
+                      Website
+                    </InputLabel>
+                    <TextField
+                      id="website"
+                      name="website"
+                      fullWidth
                       onChange={e => setUrl(e.target.value)}
                       value={url}
                     />
-                  </FormGroup>
-                  <FormGroup>
-                    <FormLabel>City, Country</FormLabel>
-                    <FormControl
+                  </StyledFormControl>
+                  <StyledFormControl
+                    fullWidth
+                    variant="standard"
+                    margin="normal"
+                  >
+                    <InputLabel shrink htmlFor="location">
+                      City, Country
+                    </InputLabel>
+                    <TextField
+                      id="location"
+                      name="location"
+                      fullWidth
                       onChange={e => setLocation(e.target.value)}
                       value={location}
                     />
-                  </FormGroup>
-                  <FormGroup>
-                    <FormLabel>Institutional affiliation</FormLabel>
-                    <FormControl
-                      placeholder="e.g. Example University"
+                  </StyledFormControl>
+                  <StyledFormControl
+                    fullWidth
+                    variant="standard"
+                    margin="normal"
+                  >
+                    <InputLabel shrink htmlFor="company">
+                      Institutional affiliation
+                    </InputLabel>
+                    <TextField
+                      id="company"
+                      name="company"
+                      fullWidth
                       onChange={e => setCompany(e.target.value)}
                       value={company}
                     />
@@ -290,7 +365,25 @@ export const AccountSettings = () => {
                         }
                       })}
                     </Grid>
-                  </FormGroup>
+                  </StyledFormControl>
+                  <StyledFormControl
+                    fullWidth
+                    variant="standard"
+                    margin="normal"
+                    sx={{}}
+                  >
+                    <InputLabel shrink htmlFor="bio">
+                      Bio
+                    </InputLabel>
+                    <TextField
+                      id="bio"
+                      name="bio"
+                      fullWidth
+                      multiline
+                      onChange={e => setBio(e.target.value)}
+                      value={bio}
+                    />
+                  </StyledFormControl>
                   <Button
                     onClick={updateUserProfile}
                     disabled={!changeInForm}

@@ -47,6 +47,13 @@
   }
 }
 
+.AccountSettingsSourceAppLogo {
+  img {
+    height: 24px;
+    max-height: 24px;
+  }
+}
+
 $wrapper-width: 955px;
 .panel-wrapper-bg {
   display: flex;

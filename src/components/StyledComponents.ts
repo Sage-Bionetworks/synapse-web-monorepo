@@ -68,6 +68,9 @@ export const StyledFormControl = styled(FormControl, {
     [`& .${inputBaseClasses.root}`]: {
       borderRadius: '3px',
     },
+    '& .MuiInputBase-multiline': {
+      padding: '0px',
+    },
     '& .MuiInputBase-input': {
       borderRadius: '3px',
       fontSize: '14px',

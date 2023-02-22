@@ -3,8 +3,10 @@ import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import { BadgeOutlined } from '@mui/icons-material'
 import { Box, SxProps, Button } from '@mui/material'
 import { Typography } from 'synapse-react-client'
+import { useSourceApp } from './SourceApp'
 
 const AccountSettingsTopBar: React.FunctionComponent = () => {
+  const sourceApp = useSourceApp()
   const iconSx: SxProps = {
     width: '32px',
     height: '32px',
@@ -27,6 +29,12 @@ const AccountSettingsTopBar: React.FunctionComponent = () => {
             <Typography variant="headline3" sx={{ display: 'inline' }}>
               Account Settings
             </Typography>
+            <Box
+              className="AccountSettingsSourceAppLogo"
+              sx={{ marginLeft: '30px' }}
+            >
+              {sourceApp?.logo}
+            </Box>
           </Box>
           <Button
             variant="text"
