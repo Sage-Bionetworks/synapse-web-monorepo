@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import {
   QueryClient,
   QueryClientConfig,
@@ -7,6 +7,7 @@ import {
 import { SynapseErrorBoundary } from '../containers/error/ErrorBanner'
 import { ThemeProvider } from './theme/useTheme'
 import { ThemeOptions } from '@mui/material'
+import { KeyFactory } from './hooks/SynapseAPI'
 
 export const defaultQueryClientConfig: QueryClientConfig = {
   defaultOptions: {
@@ -32,6 +33,8 @@ export type SynapseContextType = {
   withErrorBoundary?: boolean
   /** The URL of the download cart page in the current app. Used to properly link components */
   downloadCartPageUrl: string
+  /* The key factory to use for react-query */
+  keyFactory: KeyFactory
 }
 
 const defaultContext = {
@@ -39,6 +42,7 @@ const defaultContext = {
   isInExperimentalMode: false,
   utcTime: false,
   withErrorBoundary: undefined,
+  keyFactory: new KeyFactory(undefined),
   downloadCartPageUrl: '/DownloadCart',
 } satisfies SynapseContextType
 
@@ -64,6 +68,12 @@ export const SynapseContextProvider: React.FunctionComponent<
   SynapseContextProviderProps
 > = ({ children, synapseContext, queryClient, theme }) => {
   synapseContext.downloadCartPageUrl ??= '/DownloadCart'
+  const queryKeyFactory = useMemo(
+    () => new KeyFactory(synapseContext.accessToken),
+    [synapseContext.accessToken],
+  )
+
+  synapseContext.keyFactory = queryKeyFactory
 
   return (
     <SynapseContext.Provider value={synapseContext}>

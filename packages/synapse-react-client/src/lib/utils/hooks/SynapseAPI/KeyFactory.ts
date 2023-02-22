@@ -19,7 +19,6 @@ import {
   DiscussionReplyOrder,
   DiscussionThreadOrder,
 } from '../../synapseTypes/DiscussionBundle'
-import { isEmpty, pickBy } from 'lodash-es'
 import { SearchQuery } from '../../synapseTypes/Search'
 import { SubscriptionObjectType } from '../../synapseTypes/Subscription'
 import {
@@ -28,6 +27,7 @@ import {
 } from '../../synapseTypes/FavoriteSortBy'
 import { GetProjectsParameters } from '../../synapseTypes/GetProjectsParams'
 import { PrincipalAliasRequest } from '../../synapseTypes/Principal/PrincipalServices'
+import { removeTrailingUndefinedElements } from '../../functions/ArrayUtils'
 
 const entityQueryKeyObjects = {
   /* Query key for all entities */

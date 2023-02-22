@@ -4,7 +4,6 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { PaginatedResults } from '../../../synapseTypes'
 import { Team } from '../../../synapseTypes/Team'
-import useKeyFactory from '../useKeyFactory'
 
 export function useGetUserTeamsInfinite(
   userId: string,
@@ -14,8 +13,7 @@ export function useGetUserTeamsInfinite(
     PaginatedResults<Team>
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<PaginatedResults<Team>, SynapseClientError>(
     keyFactory.getUserTeamsQueryKey(userId),

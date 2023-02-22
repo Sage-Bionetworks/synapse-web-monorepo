@@ -16,14 +16,12 @@ import {
   SubmissionSearchRequest,
   SubmissionSearchResponse,
 } from '../../../synapseTypes/AccessSubmission'
-import useKeyFactory from '../useKeyFactory'
 
 export default function useGetDataAccessSubmission(
   submissionId: string | number,
   options?: UseQueryOptions<Submission, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<Submission, SynapseClientError>(
     keyFactory.getDataAccessSubmissionQueryKey(String(submissionId.toString())),
@@ -39,8 +37,7 @@ export function useSearchAccessSubmissionsInfinite(
     SynapseClientError
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<SubmissionSearchResponse, SynapseClientError>(
     keyFactory.searchDataAccessSubmissionQueryKey(params),
@@ -68,8 +65,7 @@ export function useUpdateDataAccessSubmissionState(
   >,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<
     Submission,

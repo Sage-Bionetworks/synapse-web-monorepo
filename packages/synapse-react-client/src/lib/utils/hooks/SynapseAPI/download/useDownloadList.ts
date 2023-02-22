@@ -22,7 +22,6 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { SynapseClient } from '../../../index'
 import { AddBatchOfFilesToDownloadListResponse } from '../../../synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
-import useKeyFactory from '../useKeyFactory'
 
 export function useGetAvailableFilesToDownload(
   request: AvailableFilesRequest,
@@ -32,8 +31,7 @@ export function useGetAvailableFilesToDownload(
     AvailableFilesResponse
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<AvailableFilesResponse, SynapseClientError>(
     keyFactory.getDownloadListAvailableFilesQueryKey(request),
     () => SynapseClient.getAvailableFilesToDownload(request, accessToken),
@@ -50,8 +48,7 @@ export function useGetAvailableFilesToDownloadInfinite(
     AvailableFilesResponse
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   const request: AvailableFilesRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.download.AvailableFilesRequest',
@@ -84,8 +81,7 @@ export function useGetDownloadListActionsRequired(
     ActionRequiredResponse
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   const request: ActionRequiredRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.download.ActionRequiredRequest',
@@ -105,8 +101,7 @@ export function useGetDownloadListActionsRequiredInfinite(
     ActionRequiredResponse
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   const request: ActionRequiredRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.download.ActionRequiredRequest',
@@ -133,8 +128,7 @@ export function useGetDownloadListStatistics(
     FilesStatisticsResponse
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<FilesStatisticsResponse, SynapseClientError>(
     keyFactory.getDownloadListStatisticsQueryKey(),
     () => SynapseClient.getDownloadListStatistics(accessToken),
@@ -152,8 +146,7 @@ export function useAddFileToDownloadList(
     }
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
   return useMutation({
     ...options,

@@ -3,7 +3,6 @@ import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { BatchFileRequest, FileHandle } from '../../../synapseTypes'
-import useKeyFactory from '../useKeyFactory'
 
 export function useGetPresignedUrlContent(
   fileHandle: FileHandle,
@@ -14,8 +13,7 @@ export function useGetPresignedUrlContent(
   if (request.requestedFiles.length !== 1) {
     console.warn('useGetPresignedUrlContent only supports one file at a time')
   }
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   const queryFn = async () => {
     const batchFileResult = await SynapseClient.getFiles(request, accessToken)
     const data = await SynapseClient.getFileHandleContent(
@@ -47,7 +45,7 @@ export function useGetProfileImage(
   userId: string,
   options?: Omit<UseQueryOptions<Blob | null, SynapseClientError>, 'staleTime'>,
 ) {
-  const keyFactory = useKeyFactory()
+  const { keyFactory } = useSynapseContext()
   const queryFn = async () => {
     const presignedUrl = await SynapseClient.getProfilePicPreviewPresignedUrl(
       userId,

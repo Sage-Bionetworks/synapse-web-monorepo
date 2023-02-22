@@ -18,14 +18,12 @@ import { useSynapseContext } from '../../../SynapseContext'
 import { Direction } from '../../../synapseTypes'
 import { SynapseClient } from '../../..'
 import { useCallback } from 'react'
-import useKeyFactory from '../useKeyFactory'
 
 export function useGetSubscribers(
   topic: Topic,
   options?: UseQueryOptions<SubscriberPagedResults, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<SubscriberPagedResults, SynapseClientError>(
     keyFactory.getSubscribersQueryKey(topic.objectId, topic.objectType),
     () => SynapseClient.getSubscribers(accessToken, topic),
@@ -38,8 +36,7 @@ export function useGetSubscription(
   objectType: SubscriptionObjectType,
   options?: UseQueryOptions<Subscription, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   const queryFn = async () => {
     const subscriptionRequest: SubscriptionRequest = {
       objectType: objectType,
@@ -64,8 +61,7 @@ export function usePostSubscription(
   options?: UseMutationOptions<Subscription, SynapseClientError, Topic>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<Subscription, SynapseClientError, Topic>(
     (topic: Topic) => SynapseClient.postSubscription(accessToken, topic),
@@ -94,8 +90,7 @@ export function useDeleteSubscription(
   options?: UseMutationOptions<void, SynapseClientError, string>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<void, SynapseClientError, string>(
     (subscriptionId: string) =>

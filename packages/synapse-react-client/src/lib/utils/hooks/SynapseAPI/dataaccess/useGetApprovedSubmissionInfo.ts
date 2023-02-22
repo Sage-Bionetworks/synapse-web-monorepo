@@ -6,7 +6,6 @@ import {
   SubmissionInfoPage,
   SubmissionInfoPageRequest,
 } from '../../../synapseTypes/SubmissionInfo'
-import useKeyFactory from '../useKeyFactory'
 
 export function useGetApprovedSubmissionInfoInfinite(
   accessRequirementId: string,
@@ -16,8 +15,7 @@ export function useGetApprovedSubmissionInfoInfinite(
     SubmissionInfoPage
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   const request: SubmissionInfoPageRequest = {
     accessRequirementId,
   }

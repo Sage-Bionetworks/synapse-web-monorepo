@@ -6,7 +6,6 @@ import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchResponse,
 } from '../../../synapseTypes'
-import useKeyFactory from '../useKeyFactory'
 
 export function useSearchAccessApprovalsInfinite(
   params: AccessApprovalSearchRequest,
@@ -15,8 +14,7 @@ export function useSearchAccessApprovalsInfinite(
     SynapseClientError
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<AccessApprovalSearchResponse, SynapseClientError>(
     keyFactory.searchAccessApprovalsQueryKey(params),
     async context => {

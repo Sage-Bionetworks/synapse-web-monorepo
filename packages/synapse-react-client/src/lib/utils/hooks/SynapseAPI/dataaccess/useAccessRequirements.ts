@@ -21,14 +21,12 @@ import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
 } from '../../../synapseTypes/AccessRequirement/AccessRequirementSearch'
-import useKeyFactory from '../useKeyFactory'
 
 export function useGetAccessRequirements<T extends AccessRequirement>(
   accessRequirementId: string | number,
   options?: UseQueryOptions<T, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<T, SynapseClientError>(
     keyFactory.getAccessRequirementQueryKey(String(accessRequirementId)),
     () =>
@@ -44,8 +42,7 @@ export function useGetAccessRequirementWikiPageKey(
   accessRequirementId: string,
   options?: UseQueryOptions<WikiPageKey, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<WikiPageKey, SynapseClientError>(
     keyFactory.getAccessRequirementWikiPageKey(accessRequirementId),
     () =>
@@ -61,8 +58,7 @@ export function useGetAccessRequirementACL(
   accessRequirementId: string,
   options?: UseQueryOptions<AccessControlList | null, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<AccessControlList | null, SynapseClientError>(
     keyFactory.getAccessRequirementAclQueryKey(accessRequirementId),
@@ -79,8 +75,7 @@ export function useSearchAccessRequirementsInfinite(
     SynapseClientError
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<AccessRequirementSearchResponse, SynapseClientError>(
     keyFactory.searchAccessRequirementsQueryKey(params),
     async context => {
@@ -100,8 +95,7 @@ export function useGetRestrictionInformation(
   request: RestrictionInformationRequest,
   options?: UseQueryOptions<RestrictionInformationResponse, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<RestrictionInformationResponse, SynapseClientError>(
     keyFactory.getAccessRequirementRestrictionInformationQueryKey(request),
@@ -115,7 +109,7 @@ export function useCreateLockAccessRequirement(
 ) {
   const { accessToken } = useSynapseContext()
   const queryClient = useQueryClient()
-  const keyFactory = useKeyFactory()
+  const { keyFactory } = useSynapseContext()
 
   return useMutation<AccessRequirement, SynapseClientError, string>({
     ...options,

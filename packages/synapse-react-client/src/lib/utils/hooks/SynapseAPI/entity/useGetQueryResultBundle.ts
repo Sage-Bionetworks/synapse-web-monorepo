@@ -21,7 +21,6 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../synapseTypes'
-import useKeyFactory from '../useKeyFactory'
 
 const sharedQueryDefaults = {
   staleTime: 1000 * 60 * 30, // 30 minutes
@@ -40,8 +39,7 @@ export default function useGetQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<QueryResultBundle, SynapseClientError>(
     keyFactory.getEntityTableQueryResultQueryKey(queryBundleRequest, false),
     () => SynapseClient.getQueryTableResults(queryBundleRequest, accessToken),
@@ -62,8 +60,7 @@ function _useGetQueryResultBundleWithAsyncStatus(
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   ) => void,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
@@ -214,8 +211,7 @@ export function useInfiniteQueryResultBundle(
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   ) => void,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError
@@ -309,8 +305,7 @@ export function useGetFullTableQueryResults(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
 ): UseQueryResult<QueryResultBundle, SynapseClientError> {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<QueryResultBundle, SynapseClientError>(
     keyFactory.getFullTableQueryResultQueryKey(queryBundleRequest),
     () =>

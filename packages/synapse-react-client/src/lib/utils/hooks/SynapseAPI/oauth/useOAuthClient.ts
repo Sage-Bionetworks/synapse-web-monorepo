@@ -9,7 +9,6 @@ import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { OAuthClient, OAuthClientList } from '../../../synapseTypes/OAuthClient'
-import useKeyFactory from '../useKeyFactory'
 
 const oAuthQueryKeys = {
   all: (accessToken: string) => ['oAuthClient', accessToken],
@@ -18,8 +17,7 @@ const oAuthQueryKeys = {
 export function useGetOAuthClientInfinite(
   options?: UseInfiniteQueryOptions<OAuthClientList, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<OAuthClientList, SynapseClientError>(
     keyFactory.getMyOAuthClientsQueryKey(),
     async context =>
@@ -35,8 +33,7 @@ export function useDeleteOAuthClient(
   options?: UseMutationOptions<void, SynapseClientError, string>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<void, SynapseClientError, string>(
     (clientId: string) =>
@@ -59,8 +56,7 @@ export function useUpdateOAuthClient(
   options?: UseMutationOptions<OAuthClient, SynapseClientError, OAuthClient>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<OAuthClient, SynapseClientError, OAuthClient>(
     (client: OAuthClient) =>

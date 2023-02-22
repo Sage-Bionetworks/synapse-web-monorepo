@@ -19,7 +19,6 @@ import {
 } from '../../../synapseTypes/DiscussionBundle'
 import { PaginatedResults } from '../../../synapseTypes'
 import { Match } from '../../../synapseTypes/DiscussionSearch'
-import useKeyFactory from '../useKeyFactory'
 
 export function useGetRepliesInfinite(
   threadId: string,
@@ -32,8 +31,7 @@ export function useGetRepliesInfinite(
     SynapseClientError
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<
     PaginatedResults<DiscussionReplyBundle>,
     SynapseClientError
@@ -70,8 +68,7 @@ export function useGetReply(
   reply: DiscussionReplyBundle,
   options?: UseQueryOptions<string, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   const queryFn = async () => {
     const messageUrl = await SynapseClient.getReplyMessageUrl(
       reply.messageKey,
@@ -102,8 +99,7 @@ export function usePostReply(
   >,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useMutation<
     DiscussionReplyBundle,
     SynapseClientError,
@@ -133,8 +129,7 @@ export function usePutReply(
   >,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<
     DiscussionReplyBundle,
@@ -162,8 +157,7 @@ export function useDeleteReply(
   options?: UseMutationOptions<void, SynapseClientError, Match>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<void, SynapseClientError, Match>(
     (match: Match) => SynapseClient.deleteReply(accessToken, match.replyId),

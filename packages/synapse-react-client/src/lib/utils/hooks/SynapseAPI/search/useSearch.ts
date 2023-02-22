@@ -9,14 +9,12 @@ import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { SearchQuery, SearchResults } from '../../../synapseTypes/Search'
-import useKeyFactory from '../useKeyFactory'
 
 export function useSearch(
   query: SearchQuery,
   options?: UseQueryOptions<SearchResults, SynapseClientError, SearchResults>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<SearchResults, SynapseClientError>(
     keyFactory.getSearchEntitiesQueryKey(query),
     () => SynapseClient.searchEntities(query, accessToken),
@@ -32,8 +30,7 @@ export function useSearchInfinite(
     SearchResults
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<SearchResults, SynapseClientError>(
     keyFactory.getSearchEntitiesQueryKey(query),

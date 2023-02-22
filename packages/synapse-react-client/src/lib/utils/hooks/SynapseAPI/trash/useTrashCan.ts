@@ -9,7 +9,6 @@ import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { PaginatedResults, TrashedEntity } from '../../../synapseTypes'
-import useKeyFactory from '../useKeyFactory'
 
 export function useGetItemsInTrashCanInfinite(
   options?: UseInfiniteQueryOptions<
@@ -17,8 +16,7 @@ export function useGetItemsInTrashCanInfinite(
     SynapseClientError
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<PaginatedResults<TrashedEntity>, SynapseClientError>(
     keyFactory.getTrashCanItemsQueryKey(),
@@ -49,8 +47,7 @@ export function useRestoreEntities(
   >,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<
     PromiseSettledResult<void>[],
@@ -88,8 +85,7 @@ export function usePurgeEntities(
   >,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
-  const keyFactory = useKeyFactory()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<
     PromiseSettledResult<void>[],
