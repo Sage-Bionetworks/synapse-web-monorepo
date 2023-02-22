@@ -112,12 +112,6 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
             error={!!errors.location}
           />
         </StyledFormControl>
-        {/* agendel TODO: do we need this     <FormGroup>
-          <FormLabel>Email(s)</FormLabel>
-          {verificationSubmission.emails.map((email, index) => (
-            <p key={index}>{email}</p>
-          ))}
-          </FormGroup>*/}
         <ContinueButton
           onClick={() => {
             props.onNext(values)
