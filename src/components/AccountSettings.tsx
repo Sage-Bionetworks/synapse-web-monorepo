@@ -17,6 +17,7 @@ import {
   SynapseConstants,
   Typography,
 } from 'synapse-react-client'
+import { Link as RouterLink } from 'react-router-dom'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap'
@@ -187,7 +188,10 @@ export const AccountSettings = () => {
                 className="account-setting-panel main-panel"
               >
                 <h3>Profile Information</h3>
-                <p>This information is reused across all Sage products.</p>
+                <p>
+                  This information is reused across all{' '}
+                  <RouterLink to="/sageresources">Sage products.</RouterLink>
+                </p>
                 <ProfileAvatar
                   userProfile={userProfile}
                   onProfileUpdated={() => {
