@@ -149,21 +149,6 @@ const downloadListQueryKeys = {
   getStatistics: () => [downloadListQueryKeys.base, 'statistics'],
 }
 
-function removeTrailingUndefinedElements(params: any[]): any[] {
-  const result = [...params]
-  let lastElement = result[result.length - 1]
-  while (
-    lastElement === undefined ||
-    // Also remove empty objects or objects where only keys with undefined values are present
-    (typeof lastElement === 'object' &&
-      isEmpty(pickBy(lastElement, v => v !== undefined)))
-  ) {
-    result.pop()
-    lastElement = result[result.length - 1]
-  }
-  return result
-}
-
 const ACCESS_REQUIREMENT_QUERY_KEY = 'accessRequirement'
 
 /**
@@ -483,7 +468,7 @@ export class KeyFactory {
   }
 
   public getFavoritesQueryKey() {
-    return 'favorites'
+    return this.getKey('favorites')
   }
 
   public getUserFavoritesQueryKey(

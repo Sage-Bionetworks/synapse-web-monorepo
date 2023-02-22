@@ -19,7 +19,7 @@ import {
 } from '../../../synapseTypes/DiscussionBundle'
 import { PaginatedResults } from '../../../synapseTypes'
 import { Match } from '../../../synapseTypes/DiscussionSearch'
-import { KeyFactory } from '../KeyFactory'
+import useKeyFactory from '../useKeyFactory'
 
 export function useGetRepliesInfinite(
   threadId: string,
@@ -33,7 +33,7 @@ export function useGetRepliesInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useInfiniteQuery<
     PaginatedResults<DiscussionReplyBundle>,
     SynapseClientError
@@ -71,7 +71,7 @@ export function useGetReply(
   options?: UseQueryOptions<string, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   const queryFn = async () => {
     const messageUrl = await SynapseClient.getReplyMessageUrl(
       reply.messageKey,
@@ -103,7 +103,7 @@ export function usePostReply(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useMutation<
     DiscussionReplyBundle,
     SynapseClientError,
@@ -134,7 +134,7 @@ export function usePutReply(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useMutation<
     DiscussionReplyBundle,
@@ -163,7 +163,7 @@ export function useDeleteReply(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useMutation<void, SynapseClientError, Match>(
     (match: Match) => SynapseClient.deleteReply(accessToken, match.replyId),

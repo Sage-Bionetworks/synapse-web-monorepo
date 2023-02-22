@@ -4,7 +4,7 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { ProjectHeaderList } from '../../../synapseTypes'
 import { GetProjectsParameters } from '../../../synapseTypes/GetProjectsParams'
-import { KeyFactory } from '../KeyFactory'
+import useKeyFactory from '../useKeyFactory'
 
 export function useGetUserProjectsInfinite(
   userId: string,
@@ -16,7 +16,7 @@ export function useGetUserProjectsInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useInfiniteQuery<ProjectHeaderList, SynapseClientError>(
     keyFactory.getUserProjectsQueryKey(userId, projectParams),
     async context => {

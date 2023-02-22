@@ -3,7 +3,7 @@ import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { ChallengeWithProjectHeaderPagedResults } from '../../../synapseTypes/ChallengePagedResults'
-import { KeyFactory } from '../KeyFactory'
+import useKeyFactory from '../useKeyFactory'
 
 export function useGetUserChallengesInfinite(
   userId: string,
@@ -14,7 +14,7 @@ export function useGetUserChallengesInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useInfiniteQuery<
     ChallengeWithProjectHeaderPagedResults,
     SynapseClientError

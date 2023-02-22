@@ -21,7 +21,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../synapseTypes'
-import { KeyFactory } from '../KeyFactory'
+import useKeyFactory from '../useKeyFactory'
 
 const sharedQueryDefaults = {
   staleTime: 1000 * 60 * 30, // 30 minutes
@@ -41,7 +41,7 @@ export default function useGetQueryResultBundle(
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useQuery<QueryResultBundle, SynapseClientError>(
     keyFactory.getEntityTableQueryResultQueryKey(queryBundleRequest, false),
     () => SynapseClient.getQueryTableResults(queryBundleRequest, accessToken),
@@ -63,7 +63,7 @@ function _useGetQueryResultBundleWithAsyncStatus(
   ) => void,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useQuery<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
@@ -215,7 +215,7 @@ export function useInfiniteQueryResultBundle(
   ) => void,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useInfiniteQuery<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError
@@ -310,7 +310,7 @@ export function useGetFullTableQueryResults(
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
 ): UseQueryResult<QueryResultBundle, SynapseClientError> {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useQuery<QueryResultBundle, SynapseClientError>(
     keyFactory.getFullTableQueryResultQueryKey(queryBundleRequest),
     () =>

@@ -20,13 +20,13 @@ import {
   PrincipalAliasRequest,
   PrincipalAliasResponse,
 } from '../../../synapseTypes/Principal/PrincipalServices'
-import { KeyFactory } from '../KeyFactory'
+import useKeyFactory from '../useKeyFactory'
 
 export function useGetNotificationEmail(
   options?: UseQueryOptions<NotificationEmail, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useQuery<NotificationEmail, SynapseClientError>(
     keyFactory.getNotificationEmailQueryKey(),
     () => SynapseClient.getNotificationEmail(accessToken),
@@ -38,7 +38,7 @@ export function useGetCurrentUserProfile(
   options?: UseQueryOptions<UserProfile, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   const queryKey = keyFactory.getCurrentUserProfileQueryKey()
 
   return useQuery<UserProfile, SynapseClientError>(
@@ -63,7 +63,7 @@ export function useGetUserBundle(
   options?: UseQueryOptions<UserBundle, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   const queryKey = keyFactory.getUserBundleQueryKey(userId, mask)
 
   return useQuery<UserBundle, SynapseClientError>(
@@ -78,7 +78,7 @@ export function useGetCurrentUserBundle<TData = UserBundle>(
   options?: UseQueryOptions<UserBundle, SynapseClientError, TData>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   const queryKey = keyFactory.getUserBundleQueryKey('current', mask)
 
@@ -94,7 +94,7 @@ export function useGetUserProfile(
   options?: UseQueryOptions<UserProfile, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   const queryKey = keyFactory.getUserProfileQueryKey(principalId)
   // We store the profile in a session storage cache used by SWC
   const sessionStorageCacheKey = `${principalId}_USER_PROFILE`
@@ -127,7 +127,7 @@ export function useGetPrincipalIdForAlias(
   >,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   const queryKey = keyFactory.getPrincipalAliasQueryKey(request)
 

@@ -3,7 +3,7 @@ import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { Activity } from '../../../synapseTypes/Provenance/Provenance'
-import { KeyFactory } from '../KeyFactory'
+import useKeyFactory from '../useKeyFactory'
 
 export function useGetActivityForEntity(
   entityId: string,
@@ -11,7 +11,7 @@ export function useGetActivityForEntity(
   options?: UseQueryOptions<Activity, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useQuery<Activity, SynapseClientError>(
     keyFactory.getEntityActivityQueryKey(entityId, versionNumber),
     () =>

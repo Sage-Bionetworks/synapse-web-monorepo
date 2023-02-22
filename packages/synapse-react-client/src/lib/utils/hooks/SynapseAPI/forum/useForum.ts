@@ -14,14 +14,14 @@ import {
   DiscussionThreadOrder,
 } from '../../../synapseTypes/DiscussionBundle'
 import { PaginatedIds } from '../../../synapseTypes/PaginatedIds'
-import { KeyFactory } from '../KeyFactory'
+import useKeyFactory from '../useKeyFactory'
 
 export function useGetModerators(
   forumId: string,
   options?: UseQueryOptions<PaginatedIds, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useQuery<PaginatedIds, SynapseClientError>(
     keyFactory.getForumModeratorsQueryKey(forumId),
     () => SynapseClient.getModerators(accessToken, forumId),
@@ -41,7 +41,7 @@ export function useGetForumInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useInfiniteQuery<
     PaginatedResults<DiscussionThreadBundle>,
     SynapseClientError

@@ -15,7 +15,7 @@ import {
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { KeyFactory } from '../KeyFactory'
+import useKeyFactory from '../useKeyFactory'
 
 export function useGetThread(threadId: string) {
   const { data: threadData, isLoading: isLoadingBundle } =
@@ -46,7 +46,7 @@ export function useGetThreadBundle(
   options?: UseQueryOptions<DiscussionThreadBundle, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useQuery<DiscussionThreadBundle, SynapseClientError>(
     keyFactory.getThreadQueryKey(threadId),
@@ -56,15 +56,15 @@ export function useGetThreadBundle(
 }
 
 export function useGetThreadBody(
-  threadData: DiscussionThreadBundle,
+  threadData?: DiscussionThreadBundle,
   options?: UseQueryOptions<string, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   const queryFn = async () => {
     const messageUrl = await SynapseClient.getThreadMessageUrl(
-      threadData.messageKey,
+      threadData?.messageKey,
       accessToken,
     )
     const data = await fetch(messageUrl.messageUrl, {
@@ -78,7 +78,7 @@ export function useGetThreadBody(
     return data.text()
   }
   return useQuery<string, SynapseClientError>(
-    keyFactory.getThreadBodyQueryKey(threadData.id, threadData.messageKey),
+    keyFactory.getThreadBodyQueryKey(threadData?.id, threadData?.messageKey),
     queryFn,
     options,
   )
@@ -93,7 +93,7 @@ export function useUpdateThreadTitle(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useMutation<
     DiscussionThreadBundle,
     SynapseClientError,
@@ -127,7 +127,7 @@ export function useUpdateThreadMessage(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useMutation<
     DiscussionThreadBundle,
@@ -159,7 +159,7 @@ export function useCreateThread(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useMutation<
     DiscussionThreadBundle,
@@ -191,7 +191,7 @@ export function useDeleteThread(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
     (threadBundle: DiscussionThreadBundle) =>
@@ -222,7 +222,7 @@ export function useRestoreThread(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
     (threadBundle: DiscussionThreadBundle) =>
@@ -253,7 +253,7 @@ export function usePinThread(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
     (threadBundle: DiscussionThreadBundle) =>
@@ -284,7 +284,7 @@ export function useUnPinThread(
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
     (threadBundle: DiscussionThreadBundle) =>

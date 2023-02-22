@@ -4,14 +4,14 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { PaginatedResults } from '../../../synapseTypes'
 import { TeamMember } from '../../../synapseTypes/TeamMember'
-import { KeyFactory } from '../KeyFactory'
+import useKeyFactory from '../useKeyFactory'
 
 export function useGetTeamMembers(
   teamId: string | number,
   options?: UseQueryOptions<PaginatedResults<TeamMember>, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
   return useQuery<PaginatedResults<TeamMember>, SynapseClientError>(
     keyFactory.getTeamMembersQueryKey(String(teamId)),
     () => SynapseClient.getTeamMembers(accessToken, teamId, '', 50, 0),
@@ -25,7 +25,7 @@ export function useGetIsUserMemberOfTeam(
   options?: UseQueryOptions<TeamMember | null, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const keyFactory = new KeyFactory(accessToken)
+  const keyFactory = useKeyFactory()
 
   return useQuery<TeamMember | null, SynapseClientError>(
     keyFactory.getIsUserMemberOfTeamQueryKey(teamId, userId),
