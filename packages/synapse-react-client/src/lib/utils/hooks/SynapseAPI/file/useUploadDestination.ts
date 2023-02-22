@@ -8,10 +8,9 @@ export function useGetDefaultUploadDestination(
   containerEntityId: string,
   options?: UseQueryOptions<UploadDestination, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<UploadDestination, SynapseClientError>(
-    ['uploadDestination', 'default', containerEntityId],
+    keyFactory.getDefaultUploadDestinationQueryKey(containerEntityId),
     () => getDefaultUploadDestination(containerEntityId, accessToken),
     {
       ...options,

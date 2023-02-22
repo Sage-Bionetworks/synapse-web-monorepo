@@ -15,12 +15,12 @@ export function useGetApprovedSubmissionInfoInfinite(
     SubmissionInfoPage
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   const request: SubmissionInfoPageRequest = {
     accessRequirementId,
   }
   return useInfiniteQuery<SubmissionInfoPage, SynapseClientError>(
-    ['approvedSubmissionInfo', request],
+    keyFactory.getApprovedSubmissionInfoQueryKey(request),
     async context => {
       return await SynapseClient.getApprovedSubmissionInfo(
         { ...request, nextPageToken: context.pageParam },

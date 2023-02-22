@@ -17,9 +17,9 @@ const oAuthQueryKeys = {
 export function useGetOAuthClientInfinite(
   options?: UseInfiniteQueryOptions<OAuthClientList, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<OAuthClientList, SynapseClientError>(
-    oAuthQueryKeys.all(accessToken!),
+    keyFactory.getMyOAuthClientsQueryKey(),
     async context =>
       await SynapseClient.getOAuth2(accessToken!, context.pageParam),
     {
@@ -33,7 +33,7 @@ export function useDeleteOAuthClient(
   options?: UseMutationOptions<void, SynapseClientError, string>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<void, SynapseClientError, string>(
     (clientId: string) =>
@@ -41,7 +41,9 @@ export function useDeleteOAuthClient(
     {
       ...options,
       onSuccess: async (updatedClient, clientId, ctx) => {
-        await queryClient.invalidateQueries(oAuthQueryKeys.all(accessToken!))
+        await queryClient.invalidateQueries(
+          keyFactory.getMyOAuthClientsQueryKey(),
+        )
         if (options?.onSuccess) {
           await options.onSuccess(updatedClient, clientId, ctx)
         }
@@ -54,7 +56,7 @@ export function useUpdateOAuthClient(
   options?: UseMutationOptions<OAuthClient, SynapseClientError, OAuthClient>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<OAuthClient, SynapseClientError, OAuthClient>(
     (client: OAuthClient) =>
@@ -62,7 +64,9 @@ export function useUpdateOAuthClient(
     {
       ...options,
       onSuccess: async (updatedClient, client, ctx) => {
-        await queryClient.invalidateQueries(oAuthQueryKeys.all(accessToken!))
+        await queryClient.invalidateQueries(
+          keyFactory.getMyOAuthClientsQueryKey(),
+        )
         if (options?.onSuccess) {
           await options.onSuccess(updatedClient, client, ctx)
         }

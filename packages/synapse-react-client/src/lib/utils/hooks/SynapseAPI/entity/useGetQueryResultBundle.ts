@@ -21,7 +21,6 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../synapseTypes'
-import { entityQueryKeys } from './queryKeys'
 
 const sharedQueryDefaults = {
   staleTime: 1000 * 60 * 30, // 30 minutes
@@ -40,10 +39,9 @@ export default function useGetQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<QueryResultBundle, SynapseClientError>(
-    entityQueryKeys.tableQueryResult(queryBundleRequest, false),
+    keyFactory.getEntityTableQueryResultQueryKey(queryBundleRequest, false),
     () => SynapseClient.getQueryTableResults(queryBundleRequest, accessToken),
     {
       ...sharedQueryDefaults,
@@ -62,13 +60,16 @@ function _useGetQueryResultBundleWithAsyncStatus(
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   ) => void,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError
   >(
-    entityQueryKeys.tableQueryResultWithAsyncStatus(queryBundleRequest, false),
+    keyFactory.getEntityTableQueryResultWithAsyncStatusQueryKey(
+      queryBundleRequest,
+      false,
+    ),
     () =>
       SynapseClient.getQueryTableAsyncJobResults(
         queryBundleRequest,
@@ -210,12 +211,12 @@ export function useInfiniteQueryResultBundle(
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   ) => void,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError
   >(
-    entityQueryKeys.tableQueryResult(queryBundleRequest, true),
+    keyFactory.getEntityTableQueryResultQueryKey(queryBundleRequest, true),
     (context: QueryFunctionContext<QueryKey, string>) => {
       const offset = context.pageParam ? parseInt(context.pageParam) : 0
       return SynapseClient.getQueryTableAsyncJobResults(
@@ -304,10 +305,9 @@ export function useGetFullTableQueryResults(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
 ): UseQueryResult<QueryResultBundle, SynapseClientError> {
-  const { accessToken } = useSynapseContext()
-
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<QueryResultBundle, SynapseClientError>(
-    entityQueryKeys.fullTableQueryResult(queryBundleRequest),
+    keyFactory.getFullTableQueryResultQueryKey(queryBundleRequest),
     () =>
       SynapseClient.getFullQueryTableResults(queryBundleRequest, accessToken),
     {

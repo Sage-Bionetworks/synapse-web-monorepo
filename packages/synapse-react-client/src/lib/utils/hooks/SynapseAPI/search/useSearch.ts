@@ -14,9 +14,9 @@ export function useSearch(
   query: SearchQuery,
   options?: UseQueryOptions<SearchResults, SynapseClientError, SearchResults>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<SearchResults, SynapseClientError>(
-    ['search', accessToken, query],
+    keyFactory.getSearchEntitiesQueryKey(query),
     () => SynapseClient.searchEntities(query, accessToken),
     options,
   )
@@ -30,10 +30,10 @@ export function useSearchInfinite(
     SearchResults
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<SearchResults, SynapseClientError>(
-    ['search', accessToken, query],
+    keyFactory.getSearchEntitiesQueryKey(query),
     async (context: QueryFunctionContext) => {
       return SynapseClient.searchEntities(
         { ...query, start: context.pageParam },

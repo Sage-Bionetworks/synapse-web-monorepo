@@ -23,9 +23,9 @@ export function useGetSubscribers(
   topic: Topic,
   options?: UseQueryOptions<SubscriberPagedResults, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<SubscriberPagedResults, SynapseClientError>(
-    ['subscriber', topic.objectId, topic.objectType],
+    keyFactory.getSubscribersQueryKey(topic.objectId, topic.objectType),
     () => SynapseClient.getSubscribers(accessToken, topic),
     options,
   )
@@ -36,7 +36,7 @@ export function useGetSubscription(
   objectType: SubscriptionObjectType,
   options?: UseQueryOptions<Subscription, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   const queryFn = async () => {
     const subscriptionRequest: SubscriptionRequest = {
       objectType: objectType,
@@ -51,7 +51,7 @@ export function useGetSubscription(
     return subscriptionList.results[0]
   }
   return useQuery<Subscription, SynapseClientError>(
-    [accessToken, 'subscription', objectId, objectType],
+    keyFactory.getSubscriptionQueryKey(objectId, objectType),
     queryFn,
     options,
   )
@@ -61,19 +61,23 @@ export function usePostSubscription(
   options?: UseMutationOptions<Subscription, SynapseClientError, Topic>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<Subscription, SynapseClientError, Topic>(
     (topic: Topic) => SynapseClient.postSubscription(accessToken, topic),
     {
       ...options,
       onSuccess: async (updatedSubscription, variables, ctx) => {
-        await queryClient.invalidateQueries([accessToken, 'subscription'])
-        await queryClient.invalidateQueries([
-          'subscriber',
-          variables.objectId,
-          variables.objectType,
-        ])
+        await queryClient.invalidateQueries(
+          keyFactory.getAllSubscriptionsQueryKey(),
+        )
+
+        await queryClient.invalidateQueries(
+          keyFactory.getSubscribersQueryKey(
+            variables.objectId,
+            variables.objectType,
+          ),
+        )
         if (options?.onSuccess) {
           await options.onSuccess(updatedSubscription, variables, ctx)
         }
@@ -86,7 +90,7 @@ export function useDeleteSubscription(
   options?: UseMutationOptions<void, SynapseClientError, string>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<void, SynapseClientError, string>(
     (subscriptionId: string) =>
@@ -94,8 +98,13 @@ export function useDeleteSubscription(
     {
       ...options,
       onSuccess: async (updatedSubscription, variables, ctx) => {
-        await queryClient.invalidateQueries([accessToken, 'subscription'])
-        await queryClient.invalidateQueries(['subscriber'])
+        await queryClient.invalidateQueries(
+          keyFactory.getAllSubscriptionsQueryKey(),
+        )
+
+        await queryClient.invalidateQueries(
+          keyFactory.getAllSubscribersQueryKey(),
+        )
         if (options?.onSuccess) {
           await options.onSuccess(updatedSubscription, variables, ctx)
         }

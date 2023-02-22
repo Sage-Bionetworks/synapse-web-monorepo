@@ -4,15 +4,14 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { JsonSchemaObjectBinding } from '../../../synapseTypes/Schema/JsonSchemaObjectBinding'
 import { ValidationResults } from '../../../synapseTypes/Schema/ValidationResults'
-import { entityQueryKeys } from './queryKeys'
 
 export function useGetSchemaBinding(
   entityId: string,
   options?: UseQueryOptions<JsonSchemaObjectBinding | null, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<JsonSchemaObjectBinding | null, SynapseClientError>(
-    entityQueryKeys.boundJSONSchema(entityId),
+    keyFactory.getEntityBoundJsonSchemaQueryKey(entityId),
     () => SynapseClient.getSchemaBinding(entityId, accessToken),
     options,
   )
@@ -22,10 +21,10 @@ export function useGetValidationResults(
   entityId: string,
   options?: UseQueryOptions<ValidationResults, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<ValidationResults, SynapseClientError>(
-    entityQueryKeys.schemaValidationResults(entityId),
+    keyFactory.getEntitySchemaValidationResultsQueryKey(entityId),
     () => SynapseClient.getSchemaValidationResults(entityId, accessToken),
     options,
   )

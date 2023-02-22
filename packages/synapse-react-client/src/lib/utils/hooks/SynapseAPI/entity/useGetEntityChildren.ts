@@ -13,7 +13,6 @@ import {
   EntityChildrenRequest,
   EntityChildrenResponse,
 } from '../../../synapseTypes'
-import { entityQueryKeys } from './queryKeys'
 
 export function useGetEntityChildren(
   request: EntityChildrenRequest,
@@ -23,9 +22,9 @@ export function useGetEntityChildren(
     EntityChildrenResponse
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<EntityChildrenResponse, SynapseClientError>(
-    entityQueryKeys.children(request, false),
+    keyFactory.getEntityChildrenQueryKey(request, false),
     () => SynapseClient.getEntityChildren(request, accessToken),
     options,
   )
@@ -39,9 +38,9 @@ export function useGetEntityChildrenInfinite(
     EntityChildrenResponse
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<EntityChildrenResponse, SynapseClientError>(
-    entityQueryKeys.children(request, true),
+    keyFactory.getEntityChildrenQueryKey(request, true),
     async (context: QueryFunctionContext<QueryKey, string>) => {
       return await SynapseClient.getEntityChildren(
         {

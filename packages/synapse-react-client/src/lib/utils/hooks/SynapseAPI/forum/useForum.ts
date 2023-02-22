@@ -19,9 +19,9 @@ export function useGetModerators(
   forumId: string,
   options?: UseQueryOptions<PaginatedIds, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<PaginatedIds, SynapseClientError>(
-    ['moderators', forumId],
+    keyFactory.getForumModeratorsQueryKey(forumId),
     () => SynapseClient.getModerators(accessToken, forumId),
     options,
   )
@@ -38,12 +38,12 @@ export function useGetForumInfinite(
     SynapseClientError
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<
     PaginatedResults<DiscussionThreadBundle>,
     SynapseClientError
   >(
-    ['forumthread', forumId, 'infinite', limit, filter, sort, ascending],
+    keyFactory.getForumThreadsQueryKey(forumId, limit, sort, ascending, filter),
     async context => {
       return SynapseClient.getForumThread(
         accessToken,

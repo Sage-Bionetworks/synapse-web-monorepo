@@ -16,8 +16,6 @@ import {
   FavoriteSortDirection,
 } from '../../../synapseTypes/FavoriteSortBy'
 
-const FAVORITES_QUERY_KEY = 'favorites'
-
 export function useIsFavorite(entityId: string) {
   // TODO: Handle pagination - the default limit is 200
   // It would probably make more sense to add a backend service to check if an entity ID is favorited
@@ -31,7 +29,7 @@ export function useIsFavorite(entityId: string) {
 export function useAddFavorite(
   options?: UseMutationOptions<EntityHeader, SynapseClientError, string>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
   return useMutation({
     ...options,
@@ -39,7 +37,7 @@ export function useAddFavorite(
       SynapseClient.addUserFavorite(entityId, accessToken),
     mutationKey: ['addFavorite'],
     onSuccess: async (data, variables, ctx) => {
-      await queryClient.invalidateQueries([FAVORITES_QUERY_KEY])
+      await queryClient.invalidateQueries(keyFactory.getFavoritesQueryKey())
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
@@ -52,6 +50,7 @@ export function useRemoveFavorite(
 ) {
   const { accessToken } = useSynapseContext()
   const queryClient = useQueryClient()
+  const { keyFactory } = useSynapseContext()
 
   return useMutation({
     ...options,
@@ -59,7 +58,7 @@ export function useRemoveFavorite(
       SynapseClient.removeUserFavorite(entityId, accessToken),
     mutationKey: ['removeFavorite'],
     onSuccess: async (data, variables, ctx) => {
-      await queryClient.invalidateQueries([FAVORITES_QUERY_KEY])
+      await queryClient.invalidateQueries(keyFactory.getFavoritesQueryKey())
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
@@ -76,9 +75,10 @@ export function useGetFavorites(
     PaginatedResults<EntityHeader>
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
+
   return useQuery<PaginatedResults<EntityHeader>, SynapseClientError>(
-    [FAVORITES_QUERY_KEY, sort, sortDirection, accessToken],
+    keyFactory.getUserFavoritesQueryKey(sort, sortDirection),
     () =>
       SynapseClient.getUserFavorites(
         accessToken,
@@ -101,10 +101,10 @@ export function useGetFavoritesInfinite(
 ) {
   const LIMIT = 10
 
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<PaginatedResults<EntityHeader>, SynapseClientError>(
-    [FAVORITES_QUERY_KEY, 'infinite', sort, sortDirection],
+    keyFactory.getUserFavoritesInfiniteQueryKey(sort, sortDirection),
     async context => {
       return SynapseClient.getUserFavorites(
         accessToken,

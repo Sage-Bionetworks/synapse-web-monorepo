@@ -14,10 +14,9 @@ export function useSearchAccessApprovalsInfinite(
     SynapseClientError
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<AccessApprovalSearchResponse, SynapseClientError>(
-    ['accessApprovalSearch', params],
+    keyFactory.searchAccessApprovalsQueryKey(params),
     async context => {
       return await SynapseClient.searchAccessApprovals(
         {

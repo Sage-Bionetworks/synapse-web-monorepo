@@ -17,20 +17,14 @@ import {
   SubmissionSearchResponse,
 } from '../../../synapseTypes/AccessSubmission'
 
-const dataAccessSubmissionQueryKeys = {
-  submission: (id: string | number) => ['dataAccessSubmission', id],
-  search: (params?: SubmissionSearchRequest) =>
-    params ? ['accessSubmissionSearch', params] : ['accessSubmissionSearch'],
-}
-
 export default function useGetDataAccessSubmission(
   submissionId: string | number,
   options?: UseQueryOptions<Submission, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<Submission, SynapseClientError>(
-    dataAccessSubmissionQueryKeys.submission(submissionId),
+    keyFactory.getDataAccessSubmissionQueryKey(String(submissionId.toString())),
     () => SynapseClient.getSubmissionById(submissionId, accessToken),
     options,
   )
@@ -43,10 +37,10 @@ export function useSearchAccessSubmissionsInfinite(
     SynapseClientError
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<SubmissionSearchResponse, SynapseClientError>(
-    dataAccessSubmissionQueryKeys.search(params),
+    keyFactory.searchDataAccessSubmissionQueryKey(params),
     async context => {
       return await SynapseClient.searchAccessSubmission(
         {
@@ -71,7 +65,7 @@ export function useUpdateDataAccessSubmissionState(
   >,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<
     Submission,
@@ -84,10 +78,12 @@ export function useUpdateDataAccessSubmissionState(
       ...options,
       onSuccess: async (updatedSubmission, variables, ctx) => {
         // Invalidate all searches, since updating the status will affect filtered search results
-        queryClient.invalidateQueries(dataAccessSubmissionQueryKeys.search())
+        await queryClient.invalidateQueries(
+          keyFactory.searchDataAccessSubmissionQueryKey(),
+        )
         // Update the query data for the updated submission
         queryClient.setQueryData(
-          dataAccessSubmissionQueryKeys.submission(variables.submissionId),
+          keyFactory.getDataAccessSubmissionQueryKey(variables.submissionId),
           updatedSubmission,
         )
 

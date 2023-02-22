@@ -8,8 +8,8 @@ export function useGetUserGroupHeader(
   principalId: string,
   options?: UseQueryOptions<UserGroupHeader, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const queryKey = ['userGroupHeader', principalId]
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryKey = keyFactory.getUserGroupHeaderQueryKey(principalId)
 
   return useQuery<UserGroupHeader, SynapseClientError>(
     queryKey,
@@ -34,7 +34,8 @@ export function useSearchUserGroupHeaders(
   filter?: TYPE_FILTER,
   options?: UseQueryOptions<UserGroupHeader[], SynapseClientError>,
 ) {
-  const queryKey = ['userGroupHeader', 'search', prefix, filter]
+  const { keyFactory } = useSynapseContext()
+  const queryKey = keyFactory.getUserGroupHeaderSearchQueryKey(prefix, filter)
 
   return useQuery<UserGroupHeader[], SynapseClientError>(
     queryKey,
@@ -53,7 +54,9 @@ export function useGetUserGroupHeaderWithAlias(
   aliases: string[],
   options?: UseQueryOptions<UserGroupHeader[], SynapseClientError>,
 ) {
-  const queryKey = ['userGroupHeader', aliases]
+  const { keyFactory } = useSynapseContext()
+
+  const queryKey = keyFactory.getUserGroupHeaderWithAliasQueryKey(aliases)
 
   return useQuery<UserGroupHeader[], SynapseClientError>(
     queryKey,

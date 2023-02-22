@@ -14,10 +14,9 @@ export function useGetUserProjectsInfinite(
     ProjectHeaderList
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<ProjectHeaderList, SynapseClientError>(
-    ['getuserprojects', userId, projectParams],
+    keyFactory.getUserProjectsQueryKey(userId, projectParams),
     async context => {
       return SynapseClient.getUserProjects(
         userId,

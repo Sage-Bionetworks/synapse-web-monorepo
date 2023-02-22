@@ -27,16 +27,16 @@ import {
   PaginatedResults,
 } from '../../../synapseTypes'
 import { VersionInfo } from '../../../synapseTypes/VersionInfo'
-import { entityQueryKeys, invalidateAllQueriesForEntity } from './queryKeys'
+import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
   versionNumber?: string | number,
   options?: UseQueryOptions<T, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<T, SynapseClientError>(
-    entityQueryKeys.version(entityId, versionNumber),
+    keyFactory.getEntityVersionQueryKey(entityId, versionNumber),
     () =>
       SynapseClient.getEntity<T>(
         accessToken,
@@ -51,16 +51,20 @@ export function useUpdateEntity<T extends Entity>(
   options?: UseMutationOptions<T, SynapseClientError, T>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<T, SynapseClientError, T>(
     (entity: T) => SynapseClient.updateEntity<T>(entity, accessToken),
     {
       ...options,
       onSuccess: async (updatedEntity, variables, ctx) => {
-        await invalidateAllQueriesForEntity(queryClient, updatedEntity.id!)
+        await invalidateAllQueriesForEntity(
+          queryClient,
+          keyFactory,
+          updatedEntity.id!,
+        )
         queryClient.setQueryData(
-          entityQueryKeys.entity(updatedEntity.id!),
+          keyFactory.getEntityQueryKey(updatedEntity.id!),
           updatedEntity,
         )
 
@@ -76,14 +80,14 @@ export function useDeleteEntity(
   options?: UseMutationOptions<void, SynapseClientError, string>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<void, SynapseClientError, string>(
     (entityId: string) => SynapseClient.deleteEntity(accessToken, entityId),
     {
       ...options,
       onSuccess: async (voidReturn, entityId, ctx) => {
-        await invalidateAllQueriesForEntity(queryClient, entityId)
+        await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
         if (options?.onSuccess) {
           await options.onSuccess(voidReturn, entityId, ctx)
         }
@@ -98,9 +102,9 @@ export function useGetVersions(
   limit: number = 200,
   options?: UseQueryOptions<PaginatedResults<VersionInfo>, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
-    entityQueryKeys.versionsQuery(entityId, limit, offset),
+    keyFactory.getPaginatedEntityVersionsQueryKey(entityId, limit, offset),
     () => SynapseClient.getEntityVersions(entityId, accessToken, offset, limit),
     options,
   )
@@ -114,9 +118,9 @@ export function useGetVersionsInfinite(
   >,
 ) {
   const LIMIT = 200
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
-    entityQueryKeys.versions(entityId),
+    keyFactory.getEntityVersionsQueryKey(entityId),
     async (context: QueryFunctionContext<QueryKey, number>) => {
       return await SynapseClient.getEntityVersions(
         entityId,
@@ -164,9 +168,9 @@ export function useGetJson(
   const [annotations, setAnnotations] = useState<
     Record<string, EntityJsonValue> | undefined
   >()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   const query = useQuery<EntityJson, SynapseClientError>(
-    entityQueryKeys.json(entityId),
+    keyFactory.getEntityJsonQueryKey(entityId),
     () => SynapseClient.getEntityJson(entityId, accessToken),
     options,
   )
@@ -190,7 +194,7 @@ export function useUpdateViaJson(
   options?: UseMutationOptions<EntityJson, SynapseClientError, EntityJson>,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useMutation<EntityJson, SynapseClientError, EntityJson>(
     (json: EntityJson) => {
       const entityId = json.id
@@ -201,8 +205,11 @@ export function useUpdateViaJson(
       onSuccess: async (data, variables, ctx) => {
         const entityId = data.id
 
-        await invalidateAllQueriesForEntity(queryClient, entityId)
-        queryClient.setQueryData(entityQueryKeys.json(entityId), data)
+        await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
+        queryClient.setQueryData(
+          keyFactory.getEntityJsonQueryKey(entityId),
+          data,
+        )
 
         if (options?.onSuccess) {
           await options.onSuccess(data, variables, ctx)
@@ -216,9 +223,9 @@ export function useGetEntityPath(
   entityId: string,
   options?: UseQueryOptions<EntityPath, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<EntityPath, SynapseClientError>(
-    entityQueryKeys.path(entityId),
+    keyFactory.getEntityPathQueryKey(entityId),
     () => SynapseClient.getEntityPath(entityId, accessToken),
     options,
   )

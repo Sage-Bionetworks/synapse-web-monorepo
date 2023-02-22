@@ -12,10 +12,9 @@ import { AccessTokenRecordList } from '../../../synapseTypes/AccessToken/AccessT
 export function useGetPersonalAccessTokensInfinite(
   options?: UseInfiniteQueryOptions<AccessTokenRecordList, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<AccessTokenRecordList, SynapseClientError>(
-    ['getPersonalAccessTokens'],
+    keyFactory.getPersonalAccessTokensQueryKey(),
     async (context: QueryFunctionContext<QueryKey, string | undefined>) => {
       return await SynapseClient.getPersonalAccessTokenRecords(
         accessToken,

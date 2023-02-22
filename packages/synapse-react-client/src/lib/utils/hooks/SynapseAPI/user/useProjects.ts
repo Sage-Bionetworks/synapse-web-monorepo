@@ -18,9 +18,9 @@ export function useGetProjects(
     ProjectHeaderList
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<ProjectHeaderList, SynapseClientError>(
-    ['myProjects', accessToken, params],
+    keyFactory.getMyProjectsQueryKey(params),
     () => SynapseClient.getMyProjects(accessToken!, params),
     options,
   )
@@ -34,10 +34,10 @@ export function useGetProjectsInfinite(
     ProjectHeaderList
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<ProjectHeaderList, SynapseClientError>(
-    ['myProjects', accessToken, params],
+    keyFactory.getMyProjectsQueryKey(params),
     async context => {
       return await SynapseClient.getMyProjects(accessToken!, {
         ...params,

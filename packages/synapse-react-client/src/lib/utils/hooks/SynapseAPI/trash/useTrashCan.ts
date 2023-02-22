@@ -16,10 +16,10 @@ export function useGetItemsInTrashCanInfinite(
     SynapseClientError
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<PaginatedResults<TrashedEntity>, SynapseClientError>(
-    ['trashcan', 'list', accessToken],
+    keyFactory.getTrashCanItemsQueryKey(),
     context => {
       return SynapseClient.getItemsInTrashCan(accessToken, context.pageParam)
     },
@@ -47,7 +47,7 @@ export function useRestoreEntities(
   >,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<
     PromiseSettledResult<void>[],
@@ -66,7 +66,9 @@ export function useRestoreEntities(
     {
       ...options,
       onSuccess: async (_, ids, ctx) => {
-        await queryClient.invalidateQueries(['trashcan'])
+        await queryClient.invalidateQueries(
+          keyFactory.getTrashCanItemsQueryKey(),
+        )
         if (options?.onSuccess) {
           await options.onSuccess(_, ids, ctx)
         }
@@ -83,7 +85,7 @@ export function usePurgeEntities(
   >,
 ) {
   const queryClient = useQueryClient()
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<
     PromiseSettledResult<void>[],
@@ -102,7 +104,9 @@ export function usePurgeEntities(
     {
       ...options,
       onSuccess: async (_, ids, ctx) => {
-        await queryClient.invalidateQueries(['trashcan'])
+        await queryClient.invalidateQueries(
+          keyFactory.getTrashCanItemsQueryKey(),
+        )
         if (options?.onSuccess) {
           await options.onSuccess(_, ids, ctx)
         }

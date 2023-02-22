@@ -13,10 +13,10 @@ export function useGetUserTeamsInfinite(
     PaginatedResults<Team>
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<PaginatedResults<Team>, SynapseClientError>(
-    ['getuserteams', userId],
+    keyFactory.getUserTeamsQueryKey(userId),
     async context => {
       return SynapseClient.getUserTeamList(
         accessToken,

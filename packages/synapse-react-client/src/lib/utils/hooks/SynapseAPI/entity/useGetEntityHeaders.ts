@@ -12,10 +12,10 @@ export function useGetEntityHeaders(
   references: ReferenceList,
   options?: UseQueryOptions<PaginatedResults<EntityHeader>, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<PaginatedResults<EntityHeader>, SynapseClientError>(
-    ['entityHeaders', accessToken, references],
+    keyFactory.getEntityHeadersQueryKey(references),
     () => SynapseClient.getEntityHeaders(references, accessToken),
     options,
   )
@@ -25,10 +25,10 @@ export function useGetEntityHeader(
   entityId: string,
   options?: UseQueryOptions<EntityHeader, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<EntityHeader, SynapseClientError>(
-    ['entityHeader', accessToken, entityId],
+    keyFactory.getEntityHeaderQueryKey(entityId),
     () => SynapseClient.getEntityHeader(entityId, accessToken),
     options,
   )

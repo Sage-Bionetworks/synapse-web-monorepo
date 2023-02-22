@@ -7,11 +7,11 @@ import { Activity } from '../../../synapseTypes/Provenance/Provenance'
 export function useGetActivityForEntity(
   entityId: string,
   versionNumber: number,
-  options?: UseQueryOptions<Activity, SynapseClientError, Activity>,
+  options?: UseQueryOptions<Activity, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<Activity, SynapseClientError>(
-    ['getActivityForEntity', entityId, versionNumber, accessToken],
+    keyFactory.getEntityActivityQueryKey(entityId, versionNumber),
     () =>
       SynapseClient.getActivityForEntity(entityId, versionNumber, accessToken),
     options,

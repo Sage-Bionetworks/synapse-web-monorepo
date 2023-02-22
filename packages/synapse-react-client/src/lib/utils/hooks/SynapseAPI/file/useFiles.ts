@@ -13,7 +13,7 @@ export function useGetPresignedUrlContent(
   if (request.requestedFiles.length !== 1) {
     console.warn('useGetPresignedUrlContent only supports one file at a time')
   }
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   const queryFn = async () => {
     const batchFileResult = await SynapseClient.getFiles(request, accessToken)
     const data = await SynapseClient.getFileHandleContent(
@@ -24,7 +24,12 @@ export function useGetPresignedUrlContent(
     return data
   }
   return useQuery<string, SynapseClientError>(
-    ['presignedUrlContent', fileHandle, request],
+    keyFactory.getPresignedUrlContentQueryKey(
+      fileHandle,
+      request,
+      maxFileSizeBytes,
+    ),
+
     queryFn,
     {
       staleTime: Infinity,
@@ -40,6 +45,7 @@ export function useGetProfileImage(
   userId: string,
   options?: Omit<UseQueryOptions<Blob | null, SynapseClientError>, 'staleTime'>,
 ) {
+  const { keyFactory } = useSynapseContext()
   const queryFn = async () => {
     const presignedUrl = await SynapseClient.getProfilePicPreviewPresignedUrl(
       userId,
@@ -56,7 +62,7 @@ export function useGetProfileImage(
     return null
   }
   return useQuery<Blob | null, SynapseClientError>(
-    ['profileImageData', userId],
+    keyFactory.getProfileImageQueryKey(userId),
     queryFn,
     {
       staleTime: Infinity,

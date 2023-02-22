@@ -24,9 +24,9 @@ import {
 export function useGetNotificationEmail(
   options?: UseQueryOptions<NotificationEmail, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<NotificationEmail, SynapseClientError>(
-    ['notificationEmail'],
+    keyFactory.getNotificationEmailQueryKey(),
     () => SynapseClient.getNotificationEmail(accessToken),
     options,
   )
@@ -35,38 +35,12 @@ export function useGetNotificationEmail(
 export function useGetCurrentUserProfile(
   options?: UseQueryOptions<UserProfile, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const queryKey = ['user', 'current', 'profile', accessToken]
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryKey = keyFactory.getCurrentUserProfileQueryKey()
 
   return useQuery<UserProfile, SynapseClientError>(
     queryKey,
     () => SynapseClient.getUserProfile(accessToken),
-    options,
-  )
-}
-
-export function useGetUserBundle(
-  userId: string,
-  mask?: number,
-  options?: UseQueryOptions<UserBundle, SynapseClientError>,
-) {
-  const ALL_USER_BUNDLE_FIELDS =
-    USER_BUNDLE_MASK_USER_PROFILE |
-    USER_BUNDLE_MASK_ORCID |
-    USER_BUNDLE_MASK_VERIFICATION_SUBMISSION |
-    USER_BUNDLE_MASK_IS_CERTIFIED |
-    USER_BUNDLE_MASK_IS_VERIFIED |
-    USER_BUNDLE_MASK_IS_ACT_MEMBER |
-    USER_BUNDLE_MASK_IS_AR_REVIEWER
-
-  const requestMask = mask ?? ALL_USER_BUNDLE_FIELDS
-
-  const { accessToken } = useSynapseContext()
-  const queryKey = ['user', userId, 'bundle', requestMask, accessToken]
-
-  return useQuery<UserBundle, SynapseClientError>(
-    queryKey,
-    () => SynapseClient.getUserBundle(userId, requestMask, accessToken),
     options,
   )
 }
@@ -80,12 +54,28 @@ const ALL_USER_BUNDLE_FIELDS =
   USER_BUNDLE_MASK_IS_ACT_MEMBER |
   USER_BUNDLE_MASK_IS_AR_REVIEWER
 
+export function useGetUserBundle(
+  userId: string,
+  mask: number = ALL_USER_BUNDLE_FIELDS,
+  options?: UseQueryOptions<UserBundle, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryKey = keyFactory.getUserBundleQueryKey(userId, mask)
+
+  return useQuery<UserBundle, SynapseClientError>(
+    queryKey,
+    () => SynapseClient.getUserBundle(userId, mask, accessToken),
+    options,
+  )
+}
+
 export function useGetCurrentUserBundle<TData = UserBundle>(
   mask: number = ALL_USER_BUNDLE_FIELDS,
   options?: UseQueryOptions<UserBundle, SynapseClientError, TData>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const queryKey = ['user', 'current', 'bundle', mask, accessToken]
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  const queryKey = keyFactory.getUserBundleQueryKey('current', mask)
 
   return useQuery<UserBundle, SynapseClientError, TData>(
     queryKey,
@@ -98,8 +88,8 @@ export function useGetUserProfile(
   principalId: string,
   options?: UseQueryOptions<UserProfile, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
-  const queryKey = ['user', principalId, 'profile']
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryKey = keyFactory.getUserProfileQueryKey(principalId)
   // We store the profile in a session storage cache used by SWC
   const sessionStorageCacheKey = `${principalId}_USER_PROFILE`
   const cachedValue = sessionStorage.getItem(sessionStorageCacheKey)
@@ -130,8 +120,9 @@ export function useGetPrincipalIdForAlias(
     SynapseClientError
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-  const queryKey = ['principalAliasRequest', request]
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  const queryKey = keyFactory.getPrincipalAliasQueryKey(request)
 
   return useQuery<PrincipalAliasResponse['principalId'], SynapseClientError>(
     queryKey,

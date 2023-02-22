@@ -12,13 +12,12 @@ export function useGetUserChallengesInfinite(
     ChallengeWithProjectHeaderPagedResults
   >,
 ) {
-  const { accessToken } = useSynapseContext()
-
+  const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<
     ChallengeWithProjectHeaderPagedResults,
     SynapseClientError
   >(
-    ['getuserchallenges', userId],
+    keyFactory.getUserChallengesQueryKey(userId),
     async context => {
       const challenges = await SynapseClient.getUserChallenges(
         accessToken,

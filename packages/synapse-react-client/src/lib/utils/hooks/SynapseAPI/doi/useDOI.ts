@@ -10,9 +10,9 @@ export function useGetDOIAssociation(
   objectType = 'ENTITY',
   options?: UseQueryOptions<DoiAssociation | null, SynapseClientError>,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<DoiAssociation | null, SynapseClientError>(
-    ['doi', 'association', objectType, objectId, versionNumber],
+    keyFactory.getDOIAssociationQueryKey(objectType, objectId, versionNumber),
     () =>
       SynapseClient.getDOIAssociation(
         accessToken,
