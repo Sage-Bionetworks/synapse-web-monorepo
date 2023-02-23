@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -40,10 +40,6 @@ export default function LoginForm(props: Props) {
     submitOneTimePassword,
     errorMessage,
   } = props
-
-  useEffect(() => {
-    onStepChange(step)
-  }, [step])
 
   return (
     <>
