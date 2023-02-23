@@ -1,6 +1,5 @@
 import { sortBy } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
-import * as ReactBootstrap from 'react-bootstrap'
 import { SynapseClient, SynapseConstants } from '../../utils/'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI/user/useUserBundle'
@@ -22,7 +21,7 @@ import {
 import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 import IconSvg from '../IconSvg'
-import Login from '../auth/Login'
+import StandaloneLoginForm from '../auth/StandaloneLoginForm'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
 import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
@@ -32,6 +31,14 @@ import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
 import RequestDataAccessSuccess from './managedACTAccess/RequestDataAccessSuccess'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+} from '@mui/material'
 
 type AccessRequirementAndStatus = {
   accessRequirement: AccessRequirement
@@ -271,12 +278,17 @@ export default function AccessRequirementList({
 
   const content = (
     <>
-      <ReactBootstrap.Modal.Header closeButton={true}>
-        <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
+      <DialogTitle>
+        <Stack direction="row" alignItems={'center'} gap={'5px'}>
           Data Access Request
-        </ReactBootstrap.Modal.Title>
-      </ReactBootstrap.Modal.Header>
-      <ReactBootstrap.Modal.Body>
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton onClick={onHide}>
+            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
+
+      <DialogContent>
         <div>
           <h4 className="AccessRequirementList__instruction AccessRequirementList__access">
             Access For:
@@ -347,7 +359,7 @@ export default function AccessRequirementList({
             },
           )}
         </div>
-      </ReactBootstrap.Modal.Body>
+      </DialogContent>
     </>
   )
 
@@ -386,20 +398,14 @@ export default function AccessRequirementList({
       case 4:
         renderContent = (
           <>
-            <ReactBootstrap.Modal.Header closeButton={false}>
-              <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
-                Please Log In
-              </ReactBootstrap.Modal.Title>
-            </ReactBootstrap.Modal.Header>
-            <ReactBootstrap.Modal.Body
-              className={'AccessRequirementList login-modal '}
-            >
-              <Login
+            <DialogTitle>Please Log In</DialogTitle>
+            <DialogContent className={'AccessRequirementList login-modal '}>
+              <StandaloneLoginForm
                 sessionCallback={() => {
                   window.location.reload()
                 }}
               />
-            </ReactBootstrap.Modal.Body>
+            </DialogContent>
           </>
         )
         break
@@ -410,21 +416,19 @@ export default function AccessRequirementList({
         renderContent = content
     }
     return (
-      <ReactBootstrap.Modal
+      <Dialog
         className={
           !requestDataStep
-            ? 'bootstrap-4-backport AccessRequirementList'
-            : 'bootstrap-4-backport AccessRequirementList modal-auto-height'
+            ? 'AccessRequirementList'
+            : 'AccessRequirementList modal-auto-height'
         }
-        onHide={() => onHide?.()}
-        show={true}
-        animation={false}
-        centered={true}
-        scrollable={true}
-        size="lg"
+        onClose={() => onHide?.()}
+        open={true}
+        fullWidth
+        maxWidth="md"
       >
         {renderContent}
-      </ReactBootstrap.Modal>
+      </Dialog>
     )
   }
   return <div className="AccessRequirementList">{renderContent}</div>

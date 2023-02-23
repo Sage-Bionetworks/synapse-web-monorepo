@@ -2,7 +2,6 @@ import {
   BackendDestinationEnum,
   PRODUCTION_ENDPOINT_CONFIG,
 } from '../functions/getEndpoint'
-import { PROVIDERS } from '../../containers/auth/Login'
 import { LoginResponse } from '../synapseTypes'
 import { SynapseClientError } from '../SynapseClientError'
 import {
@@ -14,6 +13,7 @@ import {
 } from '../SynapseClient'
 import { useEffect } from 'react'
 import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
+import { PROVIDERS } from '../../containers/auth/AuthenticationMethodSelection'
 
 type UseDetectSSOCodeOptions = {
   registerAccountUrl?: string

@@ -1,11 +1,20 @@
-import * as React from 'react'
+import React from 'react'
 import { RequestInterface } from '../../../utils/synapseTypes'
-import * as ReactBootstrap from 'react-bootstrap'
-import { Alert, Button } from 'react-bootstrap'
+import { Alert } from 'react-bootstrap'
 import { useState } from 'react'
 import { updateDataAccessRequest } from '../../../utils/SynapseClient'
 import { AlertProps } from './RequestDataAccessStep2'
 import { useSynapseContext } from '../../../utils/SynapseContext'
+import {
+  Box,
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+} from '@mui/material'
+import IconSvg from '../../IconSvg'
 
 export type CancelRequestDataAccessProps = {
   formSubmitRequestObject: RequestInterface | undefined
@@ -53,28 +62,36 @@ const CancelRequestDataAccess: React.FC<
 
   return (
     <>
-      <ReactBootstrap.Modal.Header closeButton={true}>
-        <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
+      <DialogTitle>
+        <Stack direction="row" alignItems={'center'} gap={'5px'}>
           Save Changes
-        </ReactBootstrap.Modal.Title>
-      </ReactBootstrap.Modal.Header>
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton onClick={onHide}>
+            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
 
-      <ReactBootstrap.Modal.Body>
+      <DialogContent>
         <p>Would you like to save your recent changes?</p>
         {
           /* Alert message */
-          alert && <Alert variant={alert.key}>{alert.message}</Alert>
+          alert && (
+            <Alert variant={alert.key} transition={false}>
+              {alert.message}
+            </Alert>
+          )
         }
-      </ReactBootstrap.Modal.Body>
+      </DialogContent>
 
-      <ReactBootstrap.Modal.Footer>
+      <DialogActions>
         {!showCloseBtn && (
           <>
-            <Button variant="link" onClick={() => onHide?.()}>
+            <Button variant="outlined" onClick={onHide}>
               Cancel
             </Button>
             <Button
-              variant="primary"
+              variant="contained"
               onClick={() => {
                 handleSave()
               }}
@@ -84,11 +101,11 @@ const CancelRequestDataAccess: React.FC<
           </>
         )}
         {showCloseBtn && (
-          <Button variant="primary" onClick={() => onHide?.()}>
+          <Button variant="contained" onClick={onHide}>
             Close
           </Button>
         )}
-      </ReactBootstrap.Modal.Footer>
+      </DialogActions>
     </>
   )
 }

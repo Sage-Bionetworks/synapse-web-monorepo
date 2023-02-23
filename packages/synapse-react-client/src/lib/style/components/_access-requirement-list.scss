@@ -11,10 +11,6 @@
     padding-bottom: 20px;
   }
 
-  &__access {
-    margin-top: -10px;
-  }
-
   &__title {
     font-size: 23px;
     font-weight: bold;
@@ -136,9 +132,6 @@
         transform: none;
         min-height: calc(100% - 3.5rem);
       }
-    }
-    .LoginComponent {
-      width: 350px;
     }
 
     .access-request-form2 {

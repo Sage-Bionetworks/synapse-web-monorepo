@@ -1212,19 +1212,6 @@ hr ~ .SRC-wrapper {
   overflow: auto;
 }
 
-.ButtonWithIcon {
-  display: inline-flex;
-  align-items: center;
-
-  &__Icon {
-    float: left;
-    padding-right: 10px;
-    padding-bottom: 4px;
-    padding-left: 10px;
-    width: 0%;
-  }
-}
-
 .SRC-pointer-events-none {
   pointer-events: none;
 }

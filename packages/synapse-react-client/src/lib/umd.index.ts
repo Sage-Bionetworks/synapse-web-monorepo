@@ -23,7 +23,7 @@ import { HasAccessV2 as HasAccess } from './containers/access_requirements/HasAc
 import { HelpPopover } from './containers/HelpPopover'
 import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 import IconSvg from './containers/IconSvg'
-import Login from './containers/auth/Login'
+import StandaloneLoginForm from './containers/auth/StandaloneLoginForm'
 import LoginPage from './containers/auth/LoginPage'
 import PageProgress from './containers/PageProgress'
 import { AccessTokenPage } from './containers/personal_access_token/AccessTokenPage'
@@ -68,7 +68,7 @@ const SynapseContext = {
 }
 
 const SynapseComponents = {
-  Login,
+  Login: StandaloneLoginForm,
   LoginPage,
   EntityForm,
   UserCard,

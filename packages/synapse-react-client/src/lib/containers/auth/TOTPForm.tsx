@@ -20,7 +20,7 @@ export default function TOTPForm(props: TOTPFormProps) {
         onChange={setVerificationCode}
         onComplete={onSubmit}
         validateChar={(character: string) => {
-          return DIGIT_CHARACTERS.includes(character)
+          return DIGIT_CHARACTERS.includes(character) || character === ''
         }}
         gap={0}
         sx={{

@@ -1,6 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import useDetectSSOCode from '../../../../src/lib/utils/hooks/useDetectSSOCode'
-import { PROVIDERS } from '../../../../src/lib/containers/auth/Login'
 import { SynapseClient } from '../../../../src/lib'
 import { LoginResponse } from '../../../../src/lib/utils/synapseTypes'
 import { BackendDestinationEnum } from '../../../../src/lib/utils/functions/getEndpoint'
@@ -9,6 +8,7 @@ import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
 } from '../../../../src/lib/utils/synapseTypes/ErrorResponse'
+import { PROVIDERS } from '../../../../src/lib/containers/auth/AuthenticationMethodSelection'
 
 const authorizationCode = '12345'
 

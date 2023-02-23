@@ -249,6 +249,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
             <Alert
               className={'access-requirement-list-alert'}
               variant={alert.key}
+              transition={false}
             >
               {alert.message}
             </Alert>

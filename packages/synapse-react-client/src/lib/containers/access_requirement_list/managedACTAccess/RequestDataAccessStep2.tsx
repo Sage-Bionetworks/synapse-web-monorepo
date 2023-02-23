@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import * as ReactBootstrap from 'react-bootstrap'
-import { Alert, Button, Form } from 'react-bootstrap'
+import { Alert, Form } from 'react-bootstrap'
 import {
   getDataAccessRequestForUpdate,
   getFiles,
@@ -35,6 +34,15 @@ import { useSynapseContext } from '../../../utils/SynapseContext'
 import { RenewalInterface } from '../../../utils/synapseTypes/AccessRequirement/RenewalInterface'
 import { RadioGroup } from '../../widgets/RadioGroup'
 import { RequestDataStepCallbackArgs } from '../AccessRequirementList'
+import {
+  Box,
+  Button,
+  DialogContent,
+  DialogActions,
+  DialogTitle,
+  IconButton,
+  Stack,
+} from '@mui/material'
 
 export type RequestDataAccessStep2Props = {
   managedACTAccessRequirement: ManagedACTAccessRequirement
@@ -615,16 +623,20 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   return (
     <>
-      <Form
-        className={'access-request-form2'}
-        onSubmit={e => e.preventDefault()}
-      >
-        <ReactBootstrap.Modal.Header closeButton={true}>
-          <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
-            Request Access
-          </ReactBootstrap.Modal.Title>
-        </ReactBootstrap.Modal.Header>
-        <ReactBootstrap.Modal.Body>
+      <DialogTitle>
+        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+          Request Access
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton onClick={props.onHide}>
+            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
+      <DialogContent>
+        <Form
+          className={'access-request-form2'}
+          onSubmit={e => e.preventDefault()}
+        >
           <p>
             Please provide the information below to submit the request for
             access.
@@ -668,7 +680,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       accessor.accessType === AccessType.GAIN_ACCESS && (
                         <Button
                           className={'clear-x'}
-                          variant={'link'}
+                          variant={'text'}
                           onClick={() =>
                             onClearAccessor(accessor.profile.ownerId)
                           }
@@ -823,7 +835,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       />
                       <Button
                         className={'clear-x'}
-                        variant={'link'}
+                        variant={'text'}
                         onClick={() =>
                           onClearAttachment(attachment.fileHandleId)
                         }
@@ -885,35 +897,39 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
           {
             /* Alert message */
-            alert && <Alert variant={alert.key}>{alert.message}</Alert>
+            alert && (
+              <Alert variant={alert.key} transition={false}>
+                {alert.message}
+              </Alert>
+            )
           }
-        </ReactBootstrap.Modal.Body>
-        <ReactBootstrap.Modal.Footer>
-          {
-            <>
-              <Button
-                variant="link"
-                onClick={() =>
-                  requestDataStepCallback?.({
-                    step: 3,
-                    formSubmitRequestObject: formSubmitRequestObject,
-                  })
-                }
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => {
-                  handleSubmit()
-                }}
-              >
-                Submit
-              </Button>
-            </>
-          }
-        </ReactBootstrap.Modal.Footer>
-      </Form>
+        </Form>
+      </DialogContent>
+      <DialogActions>
+        {
+          <>
+            <Button
+              variant="outlined"
+              onClick={() =>
+                requestDataStepCallback?.({
+                  step: 3,
+                  formSubmitRequestObject: formSubmitRequestObject,
+                })
+              }
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                handleSubmit()
+              }}
+            >
+              Submit
+            </Button>
+          </>
+        }
+      </DialogActions>
     </>
   )
 }
