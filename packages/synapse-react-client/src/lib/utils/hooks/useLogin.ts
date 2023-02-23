@@ -8,14 +8,14 @@ import {
 import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 
-type UseLoginReturn = {
+export type UseLoginReturn = {
   step:
     | 'CHOOSE_AUTH_METHOD'
     | 'USERNAME_PASSWORD'
     | 'VERIFICATION_CODE'
     | 'RECOVERY_CODE'
     | 'LOGGED_IN'
-  setStep: Dispatch<SetStateAction<UseLoginReturn['step']>>
+  onStepChange: Dispatch<SetStateAction<UseLoginReturn['step']>>
   submitUsernameAndPassword: (
     username: string,
     password: string,
@@ -169,7 +169,7 @@ export default function useLogin(
 
   return {
     step,
-    setStep,
+    onStepChange: setStep,
     submitUsernameAndPassword,
     submitOneTimePassword: submitOneTimePassword,
     errorMessage,

@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
-import Login from '../src/lib/containers/auth/Login'
+import StandaloneLoginForm from '../src/lib/containers/auth/StandaloneLoginForm'
 import { displayToast } from '../src/lib/containers/ToastMessage'
 import { sessionChangeHandler } from '../src/lib/containers/StorybookComponentWrapper'
 
 const meta = {
   title: 'Authentication/Login',
-  component: Login,
+  component: StandaloneLoginForm,
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>

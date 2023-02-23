@@ -2,7 +2,7 @@ import $RefParser from '@apidevtools/json-schema-ref-parser'
 import * as React from 'react'
 import { Alert } from 'react-bootstrap'
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
-import Login from '../../src/lib/containers/auth/Login'
+import StandaloneLoginForm from '../../src/lib/containers/auth/StandaloneLoginForm'
 import SynapseForm from '../../src/lib/containers/synapse_form_wrapper/SynapseForm'
 import SynapseFormSubmissionsGrid from '../../src/lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import SynapseFormWrapper from '../../src/lib/containers/synapse_form_wrapper/SynapseFormWrapper'
@@ -113,12 +113,12 @@ export default class App extends React.Component<{}, AppState> {
     const notSignedInState = (
       <div className="text-center">
         <h4>Synapse Production (Google SSO redirects here)</h4>
-        <Login sessionCallback={this.getSession} />
+        <StandaloneLoginForm sessionCallback={this.getSession} />
         <details>
           <summary>
             Synapse Staging (Google SSO redirects to staging site)
           </summary>
-          <Login
+          <StandaloneLoginForm
             sessionCallback={this.getSession}
             ssoRedirectUrl={
               'https://staging.synapse.org/Portal/oauth2callback?oauth2provider=GOOGLE_OAUTH_2_0'

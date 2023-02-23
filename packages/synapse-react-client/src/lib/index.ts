@@ -25,7 +25,7 @@ import UserCardListGroups from './containers/home_page/people/UserCardListGroups
 import Programs from './containers/home_page/programs/Programs'
 import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 import Resources from './containers/home_page/resources/Resources'
-import Login from './containers/auth/Login'
+import StandaloneLoginForm from './containers/auth/StandaloneLoginForm'
 import MarkdownCollapse from './containers/MarkdownCollapse'
 import { MarkdownPopover } from './containers/MarkdownPopover'
 import MarkdownSynapse from './containers/markdown/MarkdownSynapse'
@@ -74,7 +74,7 @@ const SynapseContext = {
 }
 
 const SynapseComponents = {
-  Login,
+  Login: StandaloneLoginForm,
   CardContainer,
   QueryWrapper,
   StandaloneQueryWrapper,

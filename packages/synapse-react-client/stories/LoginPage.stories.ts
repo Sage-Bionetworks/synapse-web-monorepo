@@ -5,7 +5,7 @@ import { sessionChangeHandler } from '../src/lib/containers/StorybookComponentWr
 import { displayToast } from '../src/lib/containers/ToastMessage'
 
 const meta = {
-  title: 'Synapse/LoginPage',
+  title: 'Authentication/LoginPage',
   component: LoginPage,
 } satisfies Meta
 export default meta

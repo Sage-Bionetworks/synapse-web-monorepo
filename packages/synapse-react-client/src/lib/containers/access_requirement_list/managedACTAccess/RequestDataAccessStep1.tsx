@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { Alert, Button, Form } from 'react-bootstrap'
-import * as ReactBootstrap from 'react-bootstrap'
+import { Alert, Form } from 'react-bootstrap'
 import { useEffect, useRef, useState } from 'react'
 import {
   updateResearchProject,
@@ -11,6 +10,16 @@ import { ManagedACTAccessRequirement } from '../../../utils/synapseTypes'
 import { AlertProps } from './RequestDataAccessStep2'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import { RequestDataStepCallbackArgs } from '../AccessRequirementList'
+import {
+  Box,
+  Button,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Stack,
+} from '@mui/material'
+import IconSvg from '../../IconSvg'
 
 export type RequestDataAccessStep1Props = {
   requestDataStepCallback?: (props: RequestDataStepCallbackArgs) => void
@@ -115,13 +124,17 @@ const RequestDataAccessStep1: React.FC<RequestDataAccessStep1Props> = props => {
 
   return (
     <>
-      <Form className={'access-request-form1'} onSubmit={handleSubmit}>
-        <ReactBootstrap.Modal.Header closeButton={true}>
-          <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
-            Request Access
-          </ReactBootstrap.Modal.Title>
-        </ReactBootstrap.Modal.Header>
-        <ReactBootstrap.Modal.Body>
+      <DialogTitle>
+        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+          Request Access
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton onClick={onHide}>
+            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
+      <DialogContent>
+        <Form className={'access-request-form1'} onSubmit={handleSubmit}>
           <p>Please tell us about your project.</p>
           <Form.Group>
             <Form.Label htmlFor={'project-lead'}>Project Lead</Form.Label>
@@ -163,18 +176,22 @@ const RequestDataAccessStep1: React.FC<RequestDataAccessStep1Props> = props => {
           )}
           {
             /* Alert message */
-            alert && <Alert variant={alert.key}>{alert.message}</Alert>
+            alert && (
+              <Alert variant={alert.key} transition={false}>
+                {alert.message}
+              </Alert>
+            )
           }
-        </ReactBootstrap.Modal.Body>
-        <ReactBootstrap.Modal.Footer>
-          <Button variant="link" onClick={() => onHide?.()}>
-            Cancel
-          </Button>
-          <Button variant="primary" type="submit">
-            Save changes
-          </Button>
-        </ReactBootstrap.Modal.Footer>
-      </Form>
+        </Form>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="outlined" onClick={onHide}>
+          Cancel
+        </Button>
+        <Button variant="contained" type="submit" onClick={handleSubmit}>
+          Save changes
+        </Button>
+      </DialogActions>
     </>
   )
 }

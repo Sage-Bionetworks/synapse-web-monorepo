@@ -1,6 +1,14 @@
 import * as React from 'react'
-import * as ReactBootstrap from 'react-bootstrap'
-import { Button } from 'react-bootstrap'
+import {
+  Box,
+  Button,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Stack,
+} from '@mui/material'
+import IconSvg from '../../IconSvg'
 
 export type RequestDataAccessSuccessProps = {
   onHide: () => void
@@ -12,23 +20,28 @@ const RequestDataAccessSuccess: React.FC<
   const { onHide } = props
   return (
     <>
-      <ReactBootstrap.Modal.Header closeButton={true}>
-        <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
-          Your Data Access Request Has Been Submitted!
-        </ReactBootstrap.Modal.Title>
-      </ReactBootstrap.Modal.Header>
-      <ReactBootstrap.Modal.Body>
+      <DialogTitle>
+        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+          Your Data Access Request Has Been Submitted
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton onClick={onHide}>
+            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
+
+      <DialogContent>
         <p style={{ margin: '2rem 0' }}>
           Your data access request been submitted and is currently being
           reviewed. Please allow for up to 2 weeks for your request to be
           reviewed and approved.
         </p>
-      </ReactBootstrap.Modal.Body>
-      <ReactBootstrap.Modal.Footer>
-        <Button variant="primary" onClick={() => onHide?.()}>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" onClick={onHide}>
           Finish
         </Button>
-      </ReactBootstrap.Modal.Footer>
+      </DialogActions>
     </>
   )
 }
