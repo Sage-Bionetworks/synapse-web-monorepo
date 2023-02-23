@@ -36,8 +36,6 @@ export default function StandaloneLoginForm(props: Props) {
 
   return (
     <Box
-      id="loginPage"
-      className="LoginComponent"
       sx={{
         width: '325px',
         p: 0,
