@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { SynapseConstants } from '../../../utils'
 import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
+import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
@@ -34,7 +35,7 @@ export function getQueryRequest(
     query: {
       sql,
       offset: 0,
-      limit: 25,
+      limit: DEFAULT_PAGE_SIZE,
       selectedFacets: [
         {
           columnName: selectFacetColumnName,

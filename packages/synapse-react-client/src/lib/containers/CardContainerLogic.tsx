@@ -19,6 +19,7 @@ import { InfiniteQueryWrapper } from './InfiniteQueryWrapper'
 import QuerySortSelector from './QuerySortSelector'
 import { NoContentPlaceholderType } from './table/NoContentPlaceholderType'
 import { IconOptions } from './row_renderers/utils/Icon'
+import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -159,7 +160,7 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
     entityId: entityId,
     query: {
       sql: props.sql,
-      limit: props.limit,
+      limit: props.limit ?? DEFAULT_PAGE_SIZE,
       sort: defaultSortItems,
       additionalFilters: queryFilters,
     },

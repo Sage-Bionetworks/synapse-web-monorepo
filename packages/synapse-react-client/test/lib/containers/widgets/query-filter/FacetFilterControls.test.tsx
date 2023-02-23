@@ -19,6 +19,7 @@ import { SynapseContextProvider } from '../../../../../src/lib/utils/SynapseCont
 import { QueryResultBundle } from '../../../../../src/lib/utils/synapseTypes'
 import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import { DEFAULT_PAGE_SIZE } from '../../../../../src/lib/utils/SynapseConstants'
 
 let capturedOnChange: Function | undefined
 let capturedOnClear: Function | undefined
@@ -81,7 +82,7 @@ const lastQueryRequestResult = {
         max: 1999,
       },
     ],
-    limit: 25,
+    limit: DEFAULT_PAGE_SIZE,
     offset: 0,
   },
 }

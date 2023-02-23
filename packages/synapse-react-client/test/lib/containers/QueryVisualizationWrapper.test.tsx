@@ -24,6 +24,7 @@ import queryResponse from '../../../mocks/mockQueryResponseDataWithManyEnumFacet
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { server } from '../../../mocks/msw/server'
 import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
+import { DEFAULT_PAGE_SIZE } from '../../../src/lib/utils/SynapseConstants'
 
 const onQueryContextReceived = jest.fn<void, [PaginatedQueryContextType]>()
 const onContextReceived = jest.fn<void, [QueryVisualizationContextType]>()
@@ -64,7 +65,7 @@ const initialQueryRequest: QueryBundleRequest = {
   entityId: MOCK_TABLE_ENTITY_ID,
   query: {
     sql: `SELECT * FROM ${MOCK_TABLE_ENTITY_ID}`,
-    limit: 25,
+    limit: DEFAULT_PAGE_SIZE,
     offset: 0,
   },
 }
