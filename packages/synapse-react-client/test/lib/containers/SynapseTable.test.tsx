@@ -28,7 +28,10 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../src/lib/utils/functions/getEndpoint'
-import { AUTHENTICATED_USERS } from '../../../src/lib/utils/SynapseConstants'
+import {
+  AUTHENTICATED_USERS,
+  DEFAULT_PAGE_SIZE,
+} from '../../../src/lib/utils/SynapseConstants'
 import {
   ColumnTypeEnum,
   EntityHeader,
@@ -73,7 +76,7 @@ const lastQueryRequest: QueryBundleRequest = {
     SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
   query: {
     sql: 'SELECT * FROM syn16787123',
-    limit: 25,
+    limit: DEFAULT_PAGE_SIZE,
     offset: 0,
     selectedFacets: [
       {

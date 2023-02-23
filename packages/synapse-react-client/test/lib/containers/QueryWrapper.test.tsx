@@ -16,6 +16,7 @@ import { SynapseContextProvider } from '../../../src/lib/utils/SynapseContext'
 import { QueryBundleRequest } from '../../../src/lib/utils/synapseTypes/'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import syn16787123Json from '../../../mocks/query/syn16787123'
+import { DEFAULT_PAGE_SIZE } from '../../../src/lib/utils/SynapseConstants'
 
 let providedContext: QueryContextType | undefined
 const renderedTextConfirmation = 'QueryWrapper rendered!'
@@ -57,7 +58,7 @@ const initialQueryRequest: QueryBundleRequest = {
   entityId: 'syn16787123',
   query: {
     sql: 'SELECT * FROM syn16787123',
-    limit: 25,
+    limit: DEFAULT_PAGE_SIZE,
     offset: 0,
   },
 }

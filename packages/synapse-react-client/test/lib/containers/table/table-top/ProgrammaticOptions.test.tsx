@@ -16,6 +16,7 @@ import ProgrammaticOptions, {
 } from '../../../../../src/lib/containers/table/table-top/ProgrammaticOptions'
 import { getHandlersForTableQuery } from '../../../../../mocks/msw/handlers/tableQueryHandlers'
 import { SynapseConstants } from '../../../../../src/lib'
+import { DEFAULT_PAGE_SIZE } from '../../../../../src/lib/utils/SynapseConstants'
 
 const onHide = jest.fn()
 
@@ -29,7 +30,7 @@ const queryBundleRequest: QueryBundleRequest = {
     SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
   query: {
     sql: 'SELECT name FROM syn12345',
-    limit: 25,
+    limit: DEFAULT_PAGE_SIZE,
     offset: 0,
   },
 }

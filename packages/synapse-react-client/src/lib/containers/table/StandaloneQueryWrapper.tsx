@@ -24,6 +24,7 @@ import {
 import { isTable } from '../../utils/functions/EntityTypeUtils'
 import LastUpdatedOn from '../query_wrapper_plot_nav/LastUpdatedOn'
 import { NoContentPlaceholderType } from './NoContentPlaceholderType'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 
 type SearchParams = {
   searchParams?: {
@@ -74,7 +75,7 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     query: {
       sql,
-      limit: 25,
+      limit: DEFAULT_PAGE_SIZE,
       offset: 0,
     },
   }

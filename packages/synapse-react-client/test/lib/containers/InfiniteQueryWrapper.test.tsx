@@ -19,6 +19,7 @@ import {
 } from '../../../mocks/MockSynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
 import { act } from '@testing-library/react'
+import { DEFAULT_PAGE_SIZE } from '../../../src/lib/utils/SynapseConstants'
 
 let providedContext: QueryContextType | undefined
 const renderedTextConfirmation = 'QueryWrapper rendered!'
@@ -60,7 +61,7 @@ const initialQueryRequest: QueryBundleRequest = {
   entityId: 'syn16787123',
   query: {
     sql: 'SELECT * FROM syn16787123',
-    limit: 25,
+    limit: DEFAULT_PAGE_SIZE,
     offset: 0,
   },
 }

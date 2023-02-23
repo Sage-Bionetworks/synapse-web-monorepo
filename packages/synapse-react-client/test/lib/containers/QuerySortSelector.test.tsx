@@ -21,6 +21,7 @@ import {
 } from '../../../src/lib/utils/synapseTypes'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 import selectEvent from 'react-select-event'
+import { DEFAULT_PAGE_SIZE } from '../../../src/lib/utils/SynapseConstants'
 
 const renderComponent = (
   props: QuerySortSelectorProps,
@@ -54,7 +55,7 @@ describe('QuerySortSelector tests', () => {
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
     query: {
       sql,
-      limit: 25,
+      limit: DEFAULT_PAGE_SIZE,
       offset: 0,
     },
   }

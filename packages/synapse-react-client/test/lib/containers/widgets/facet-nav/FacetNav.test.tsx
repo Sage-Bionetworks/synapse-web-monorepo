@@ -22,6 +22,7 @@ import {
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { server } from '../../../../../mocks/msw/server'
 import failOnConsole from 'jest-fail-on-console'
+import { DEFAULT_PAGE_SIZE } from '../../../../../src/lib/utils/SynapseConstants'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -29,7 +30,7 @@ const lastQueryRequest: QueryBundleRequest = {
   entityId: 'syn21450294',
   query: {
     sql: '',
-    limit: 25,
+    limit: DEFAULT_PAGE_SIZE,
     offset: 0,
   },
 }
