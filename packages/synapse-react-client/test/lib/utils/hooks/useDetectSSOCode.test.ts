@@ -14,7 +14,6 @@ const authorizationCode = '12345'
 
 const successfulLoginResponse: LoginResponse = {
   accessToken: 'abcd',
-  sessionToken: 'zxcv',
   acceptsTermsOfUse: true,
   authenticationReceipt: 'asdf',
 }
