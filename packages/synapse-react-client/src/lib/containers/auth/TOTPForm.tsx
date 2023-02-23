@@ -1,16 +1,18 @@
 import React from 'react'
 import { Box, Button } from '@mui/material'
 import { MuiOtpInput } from 'mui-one-time-password-input'
+import { UseLoginReturn } from '../../utils/hooks'
 
 const TOTP_LENGTH = 6
 const DIGIT_CHARACTERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 type TOTPFormProps = {
   onSubmit: (value: string) => void
+  isLoading: UseLoginReturn['isLoading']
 }
 
 export default function TOTPForm(props: TOTPFormProps) {
-  const { onSubmit } = props
+  const { onSubmit, isLoading } = props
   const [verificationCode, setVerificationCode] = React.useState('')
   return (
     <Box>
@@ -49,13 +51,13 @@ export default function TOTPForm(props: TOTPFormProps) {
           mt: 4,
           mb: 2,
         }}
-        disabled={verificationCode.length !== TOTP_LENGTH}
+        disabled={verificationCode.length !== TOTP_LENGTH || isLoading}
         onClick={e => {
           e.preventDefault()
           onSubmit(verificationCode)
         }}
       >
-        Submit
+        {isLoading ? 'Verifying...' : 'Submit'}
       </Button>
     </Box>
   )

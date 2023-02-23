@@ -7,6 +7,8 @@ import {
 } from '../synapseTypes/TwoFactorAuthLoginRequest'
 import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
+import { useMutation } from 'react-query'
+import { SynapseClientError } from '../SynapseClientError'
 
 export type UseLoginReturn = {
   step:
@@ -26,6 +28,7 @@ export type UseLoginReturn = {
     otpType?: TwoFactorAuthOtpType,
   ) => Promise<void>
   errorMessage: string | undefined
+  isLoading: boolean
 }
 
 /**
@@ -98,28 +101,80 @@ export default function useLogin(
     }
   }
 
+  const {
+    mutateAsync: mutateLoginWithUsernameAndPassword,
+    isLoading: isLoadingLoginWithUsernameAndPassword,
+  } = useMutation<
+    LoginResponse | TwoFactorAuthErrorResponse,
+    SynapseClientError,
+    { username: string; password: string; authenticationReceipt: string | null }
+  >(
+    ({ username, password, authenticationReceipt }) =>
+      SynapseClient.login(username, password, authenticationReceipt),
+    {
+      onError: error => {
+        setErrorMessage(error.reason)
+      },
+      onSuccess: async loginResponse => {
+        if ('errorCode' in loginResponse) {
+          setStep('VERIFICATION_CODE')
+          setTwoFaToken(loginResponse.twoFaToken)
+          setUserId(loginResponse.userId)
+        } else {
+          await finishLogin(loginResponse)
+        }
+      },
+    },
+  )
+
+  const {
+    mutateAsync: mutateLoginWith2FACode,
+    isLoading: isLoadingLoginWith2FACode,
+  } = useMutation<LoginResponse, SynapseClientError, TwoFactorAuthLoginRequest>(
+    SynapseClient.loginWith2fa,
+    {
+      onError: e => {
+        setErrorMessage(e.reason)
+        if (
+          // The twoFaToken wasn't transmitted correctly
+          e.reason.includes('The provided twoFaToken is invalid') ||
+          // The user waited too long to enter the code.
+          e.reason.includes('Token has expired')
+        ) {
+          console.warn(e)
+          // Instruct the user refresh to start over.
+          setErrorMessage(
+            'Something went wrong. Refresh the page and try again.',
+          )
+          // If the 2FA token is in the search parameters, remove it so the user doesn't just get the same error again.
+          if (window.location.href.includes('twoFaToken')) {
+            window.history.replaceState(
+              {},
+              document.title,
+              // using regex because SWC hashbang doesn't work with URLSearchParams
+              window.location.href.replaceAll(
+                /(twoFaToken|userId)=[^&]*&?/g,
+                '',
+              ),
+            )
+          }
+        }
+      },
+      onSuccess: finishLogin,
+    },
+  )
+
   const submitUsernameAndPassword: UseLoginReturn['submitUsernameAndPassword'] =
     async (username, password) => {
       setErrorMessage(undefined)
-      try {
-        const authenticationReceipt = localStorage.getItem(
-          AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY,
-        )
-        const data = await SynapseClient.login(
-          username,
-          password,
-          authenticationReceipt,
-        )
-        if ('errorCode' in data) {
-          setStep('VERIFICATION_CODE')
-          setTwoFaToken(data.twoFaToken)
-          setUserId(data.userId)
-        } else {
-          await finishLogin(data)
-        }
-      } catch (err) {
-        setErrorMessage(err.reason)
-      }
+      const authenticationReceipt = localStorage.getItem(
+        AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY,
+      )
+      await mutateLoginWithUsernameAndPassword({
+        username,
+        password,
+        authenticationReceipt,
+      })
     }
 
   const submitOneTimePassword: UseLoginReturn['submitOneTimePassword'] = async (
@@ -140,31 +195,7 @@ export default function useLogin(
       otpCode: code,
       otpType: otpType,
     }
-    try {
-      const loginResponse = await SynapseClient.loginWith2fa(request)
-      await finishLogin(loginResponse)
-    } catch (e) {
-      setErrorMessage(e.reason)
-      if (
-        // The twoFaToken wasn't transmitted correctly
-        e.reason.includes('The provided twoFaToken is invalid') ||
-        // The user waited too long to enter the code.
-        e.reason.includes('Token has expired')
-      ) {
-        console.warn(e)
-        // Instruct the user refresh to start over.
-        setErrorMessage('Something went wrong. Refresh the page and try again.')
-        // If the 2FA token is in the search parameters, remove it so the user doesn't just get the same error again.
-        if (window.location.href.includes('twoFaToken')) {
-          window.history.replaceState(
-            {},
-            document.title,
-            // using regex because SWC hashbang doesn't work with URLSearchParams
-            window.location.href.replaceAll(/(twoFaToken|userId)=[^&]*&?/g, ''),
-          )
-        }
-      }
-    }
+    await mutateLoginWith2FACode(request)
   }
 
   return {
@@ -173,5 +204,7 @@ export default function useLogin(
     submitUsernameAndPassword,
     submitOneTimePassword: submitOneTimePassword,
     errorMessage,
+    isLoading:
+      isLoadingLoginWithUsernameAndPassword || isLoadingLoginWith2FACode,
   }
 }
