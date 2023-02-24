@@ -27,36 +27,20 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                 />
                 <Typography variant="headline2">Account created</Typography>
                 <Typography
-                  variant="subtitle1"
+                  variant="headline3"
                   sx={{ paddingTop: '10px', paddingBottom: '20px' }}
                 >
                   <strong>Welcome to {sourceApp?.friendlyName}!</strong>
                 </Typography>
-                <p>
+                <Typography variant="body2" sx={{ paddingBottom: '10px' }}>
                   You’ve created a Sage Account, which you can use on the{' '}
                   {sourceApp?.friendlyName}.
-                </p>
-                <p>
+                </Typography>
+                <Typography variant="body2" sx={{ paddingBottom: '30px' }}>
                   For full access to data and other functionality, we’ll need
                   additional information to verify your identity and certify you
                   to upload data.
-                </p>
-                <Link
-                  color="primary"
-                  component={RouterLink}
-                  to="/authenticated/validate"
-                  sx={{ paddingTop: '30px' }}
-                >
-                  Start identity verification
-                </Link>
-                <Link
-                  color="primary"
-                  component={RouterLink}
-                  to="/authenticated/certificationquiz"
-                  sx={{ paddingTop: '15px', paddingBottom: '15px' }}
-                >
-                  Get certified for data upload
-                </Link>
+                </Typography>
                 {membershipInvitation && sourceApp == synapse ? (
                   <Button
                     type="button"
@@ -85,18 +69,42 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                     Take me to {sourceApp?.friendlyName}
                   </Button>
                 )}
+                <Typography variant="body2" sx={{ paddingBottom: '30px' }}>
+                  <Link
+                    color="primary"
+                    component={RouterLink}
+                    to="/authenticated/myaccount"
+                    sx={{
+                      paddingTop: '15px',
+                      paddingBottom: '15px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Complete my profile
+                  </Link>
+                </Typography>
               </div>
             }
             rightContent={
               <div className={'panel-right-text'}>
                 <Typography
                   variant="headline3"
-                  sx={{ paddingBottom: '30px', fontWeight: 500 }}
+                  sx={{ paddingBottom: '10px', fontWeight: 500 }}
                 >
                   Your <strong>Sage Account</strong> can also be used to access
                   all these resources.
                 </Typography>
-                <Grid container spacing={5} mx={{ paddingTop: '20px' }}>
+                <Typography variant="body2" sx={{ paddingBottom: '10px' }}>
+                  <Link
+                    color="primary"
+                    component={RouterLink}
+                    to="/sageresources"
+                  >
+                    More about these resources
+                  </Link>
+                </Typography>
+
+                <Grid container spacing={4} mx={{ paddingTop: '20px' }}>
                   {SourceAppConfigs.map(config => {
                     if (
                       config.appId != sourceApp?.appId &&
@@ -108,6 +116,9 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                           xs={6}
                           className="sourceAppItem"
                           key={config.appId}
+                          // sx={{
+                          //   '&:hover': { backgroundColor: '#EAECEE' },
+                          // }}
                         >
                           <a href={config.appURL}>{config.logo}</a>
                         </Grid>

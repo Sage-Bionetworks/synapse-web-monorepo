@@ -10,9 +10,9 @@ import {
 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
 import { useSourceApp, SourceAppLogo } from './SourceApp'
-import { Link } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import { EmailConfirmationPage } from './EmailConfirmationPage'
-import { Button, IconButton } from '@mui/material'
+import { Button, IconButton, Link } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from 'AppContext'
@@ -68,7 +68,11 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
     switch (page) {
       case Pages.CHOOSE_REGISTRATION:
         return (
-          <Link className="back-button" to="/authenticated/myaccount">
+          <Link
+            component={RouterLink}
+            className="back-button"
+            to="/authenticated/myaccount"
+          >
             <IconSvg icon="arrowBack" />
           </Link>
         )
@@ -151,7 +155,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
 
   return (
     <>
-      <div className="panel-wrapper-bg RegisterAccount1 bootstrap-4-backport">
+      <div className="panel-wrapper-bg RegisterAccount1">
         {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && (
           <div className="panel-wrapper with-login-panel-bg">
             <BackButton />
@@ -264,7 +268,13 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                   <strong>Sage account</strong>. You can also use it to access
                   many other resources from Sage.
                 </p>
-                <Link to="/sageresources">More about Sage accounts</Link>
+                <Link
+                  color="primary"
+                  component={RouterLink}
+                  to="/sageresources"
+                >
+                  More about Sage accounts
+                </Link>
               </div>
             </div>
           </div>
