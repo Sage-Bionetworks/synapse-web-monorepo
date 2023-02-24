@@ -1,7 +1,7 @@
 import React from 'react'
 import { SynapseClient, Typography } from 'synapse-react-client'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/Login'
+import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
 import { Dialog, DialogActions, DialogContent, Button } from '@mui/material'
 import theme from 'style/theme'
 

@@ -40,7 +40,7 @@ const AccountSettingsTopBar: React.FunctionComponent = () => {
             variant="text"
             sx={{ color: '#515359', marginRight: '15px' }}
             onClick={() => {
-              signOut(() => {
+              signOut().then(() => {
                 window.location.reload()
               })
             }}

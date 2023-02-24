@@ -79,7 +79,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
         firstName,
         lastName,
       })
-      setAccessTokenCookie(loginResponse.accessToken, () =>
+      setAccessTokenCookie(loginResponse.accessToken).then(() =>
         window.location.replace('/authenticated/signTermsOfUse'),
       )
     } catch (err: any) {

@@ -463,7 +463,7 @@ export const AccountSettings = () => {
                       </span>
                     ) : (
                       <span className="incompleteIcon">
-                        <IconSvg icon="close" /> Incompleted
+                        <IconSvg icon="close" /> Incomplete
                       </span>
                     )}
                   </div>
@@ -498,7 +498,7 @@ export const AccountSettings = () => {
                       </span>
                     ) : (
                       <span className="incompleteIcon">
-                        <IconSvg icon="close" /> Incompleted
+                        <IconSvg icon="close" /> Incomplete
                       </span>
                     )}
                   </div>
@@ -529,7 +529,7 @@ export const AccountSettings = () => {
                       <a href={orcid}>{orcid}</a>
                     ) : (
                       <span className="incompleteIcon">
-                        <IconSvg icon="close" /> Incompleted
+                        <IconSvg icon="close" /> Incomplete
                       </span>
                     )}
                   </div>
@@ -580,7 +580,7 @@ export const AccountSettings = () => {
                       </span>
                     ) : (
                       <span className="incompleteIcon">
-                        <IconSvg icon="close" /> Incompleted
+                        <IconSvg icon="close" /> Incomplete
                       </span>
                     )}
                   </div>
