@@ -291,6 +291,11 @@ import {
   TwoFactorAuthErrorResponse,
 } from './synapseTypes/ErrorResponse'
 import { TwoFactorAuthLoginRequest } from './synapseTypes/TwoFactorAuthLoginRequest'
+import {
+  TotpSecret,
+  TotpSecretActivationRequest,
+  TwoFactorAuthStatus,
+} from './synapseTypes/TotpSecret'
 
 const cookies = new UniversalCookies()
 
@@ -885,6 +890,34 @@ export const oAuthSessionRequest = (
     ),
   )
 }
+
+/**
+ * https://rest-docs.synapse.org/rest/POST/2fa/enroll.html
+ */
+export function start2FAEnrollment(accessToken?: string) {
+  return doPost<TotpSecret>(
+    '/auth/v1/2fa/enroll',
+    null,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * https://rest-docs.synapse.org/rest/POST/2fa.html
+ */
+export function complete2FAEnrollment(
+  request: TotpSecretActivationRequest,
+  accessToken?: string,
+) {
+  return doPost<TwoFactorAuthStatus>(
+    '/auth/v1/2fa',
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * Create an entity (Project, Folder, File, Table, View)
  * https://rest-docs.synapse.org/rest/POST/entity.html
