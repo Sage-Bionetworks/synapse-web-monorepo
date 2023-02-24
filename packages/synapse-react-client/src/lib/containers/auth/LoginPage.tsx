@@ -35,6 +35,14 @@ const Tagline: StyledComponent<TypographyProps> = styled(Typography, {
   font: '300 24px/34px Lato, sans-serif',
 }))
 
+const BACKUP_CODE_INFO_JSX = (
+  <>
+    Your backup code is a 16-digit code. We generated 10 of these codes for you
+    when you set up 2FA. If you don’t have access to these codes, please{' '}
+    <Link href={LOST_ACCOUNT_ACCESS_CONTACT_URL}>contact us</Link>.
+  </>
+)
+
 export default function LoginPage(props: LoginPageProps) {
   const { ssoRedirectUrl, sessionCallback } = props
   const showDesktop = useShowDesktop(910)
@@ -87,9 +95,7 @@ export default function LoginPage(props: LoginPageProps) {
       )}
       {!showDesktop && step === 'RECOVERY_CODE' && (
         <Typography variant={'body1'} align={'center'} sx={{ my: 1 }}>
-          Your backup code is a 16-digit code. We generated 10 of these codes
-          for you when you set up 2FA. If you don’t have access to these codes,
-          please <Link href={LOST_ACCOUNT_ACCESS_CONTACT_URL}>contact us</Link>.
+          {BACKUP_CODE_INFO_JSX}
         </Typography>
       )}
       <LoginForm
@@ -156,13 +162,7 @@ export default function LoginPage(props: LoginPageProps) {
                     Enter your backup code
                   </Typography>
                   <Typography variant={'headline2'} sx={{ lineHeight: '30px' }}>
-                    Your backup code is a 16-digit code. We generated 10 of
-                    these codes for you when you set up 2FA. If you don’t have
-                    access to these codes, please{' '}
-                    <Link href={LOST_ACCOUNT_ACCESS_CONTACT_URL}>
-                      contact us
-                    </Link>
-                    .
+                    {BACKUP_CODE_INFO_JSX}
                   </Typography>
                 </>
               )}

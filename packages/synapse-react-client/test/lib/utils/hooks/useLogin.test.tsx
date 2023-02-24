@@ -8,10 +8,10 @@ import {
 } from '../../../../src/lib/utils/synapseTypes/ErrorResponse'
 import useLogin from '../../../../src/lib/utils/hooks/useLogin'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../../../../src/lib/utils/SynapseConstants'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 
 const successfulLoginResponse: LoginResponse = {
   accessToken: 'abcd',
-  sessionToken: 'zxcv',
   acceptsTermsOfUse: true,
   authenticationReceipt: 'asdf',
 }
@@ -36,6 +36,15 @@ const mockSetAccessTokenCookie = jest
   .spyOn(SynapseClient, 'setAccessTokenCookie')
   .mockResolvedValue(undefined)
 
+function renderUseLogin(
+  sessionCallback: () => void,
+  twoFaErrorResponse?: TwoFactorAuthErrorResponse,
+) {
+  return renderHook(() => useLogin(sessionCallback, twoFaErrorResponse), {
+    wrapper: createWrapper(),
+  })
+}
+
 describe('useLogin tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -46,7 +55,7 @@ describe('useLogin tests', () => {
   it('Log in with username and password', async () => {
     mockLogIn.mockResolvedValue(successfulLoginResponse)
 
-    const { result } = renderHook(() => useLogin(onSuccessfulLoginFn))
+    const { result } = renderUseLogin(onSuccessfulLoginFn)
 
     await act(async () => {
       await result.current.submitUsernameAndPassword(username, password)
@@ -70,7 +79,7 @@ describe('useLogin tests', () => {
     mockLogIn.mockResolvedValue(twoFactorAuthErrorResponse)
     mockLogInWith2FA.mockResolvedValue(successfulLoginResponse)
 
-    const { result } = renderHook(() => useLogin(onSuccessfulLoginFn))
+    const { result } = renderUseLogin(onSuccessfulLoginFn)
 
     await act(async () => {
       await result.current.submitUsernameAndPassword(username, password)
@@ -105,6 +114,10 @@ describe('useLogin tests', () => {
   })
 
   it('Handles error on login', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+
     const error = new SynapseClientError(
       500,
       'error reason',
@@ -112,7 +125,7 @@ describe('useLogin tests', () => {
     )
     mockLogIn.mockRejectedValue(error)
 
-    const { result } = renderHook(() => useLogin(onSuccessfulLoginFn))
+    const { result } = renderUseLogin(onSuccessfulLoginFn)
 
     await act(async () => {
       await result.current.submitUsernameAndPassword(username, password)
@@ -127,6 +140,8 @@ describe('useLogin tests', () => {
       ).toBe(null)
       expect(onSuccessfulLoginFn).not.toHaveBeenCalled()
     })
+
+    consoleErrorSpy.mockRestore()
   })
 
   test.each([
@@ -147,7 +162,7 @@ describe('useLogin tests', () => {
       const timedOneTimePassword = '123456'
       mockLogInWith2FA.mockResolvedValue(successfulLoginResponse)
 
-      const { result } = renderHook(() => useLogin(onSuccessfulLoginFn))
+      const { result } = renderUseLogin(onSuccessfulLoginFn)
 
       await waitFor(() => {
         expect(result.current.step).toBe('VERIFICATION_CODE')
@@ -181,8 +196,9 @@ describe('useLogin tests', () => {
     const timedOneTimePassword = '123456'
     mockLogInWith2FA.mockResolvedValue(successfulLoginResponse)
 
-    const { result } = renderHook(() =>
-      useLogin(onSuccessfulLoginFn, twoFactorAuthErrorResponse),
+    const { result } = renderUseLogin(
+      onSuccessfulLoginFn,
+      twoFactorAuthErrorResponse,
     )
 
     await waitFor(() => {
@@ -212,6 +228,10 @@ describe('useLogin tests', () => {
   })
 
   it('Error on 2fa submission', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+
     const timedOneTimePassword = '123456'
     const error = new SynapseClientError(
       400,
@@ -220,8 +240,9 @@ describe('useLogin tests', () => {
     )
     mockLogInWith2FA.mockRejectedValue(error)
 
-    const { result } = renderHook(() =>
-      useLogin(onSuccessfulLoginFn, twoFactorAuthErrorResponse),
+    const { result } = renderUseLogin(
+      onSuccessfulLoginFn,
+      twoFactorAuthErrorResponse,
     )
 
     await waitFor(() => {
@@ -247,12 +268,14 @@ describe('useLogin tests', () => {
       expect(result.current.step).toBe('VERIFICATION_CODE')
       expect(mockLogIn).not.toHaveBeenCalled()
     })
+
+    consoleErrorSpy.mockRestore()
   })
 
   it('Handles 2fa error where there is no token or userId', async () => {
     const timedOneTimePassword = '123456'
 
-    const { result } = renderHook(() => useLogin(onSuccessfulLoginFn))
+    const { result } = renderUseLogin(onSuccessfulLoginFn)
 
     await act(async () => {
       await result.current.submitOneTimePassword(timedOneTimePassword, 'TOTP')
@@ -271,6 +294,10 @@ describe('useLogin tests', () => {
   })
 
   it('Handles 2fa error where the token is invalid/expired', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+
     const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
     const timedOneTimePassword = '123456'
     const error = new SynapseClientError(
@@ -279,8 +306,9 @@ describe('useLogin tests', () => {
       expect.getState().currentTestName!,
     )
     mockLogInWith2FA.mockRejectedValue(error)
-    const { result } = renderHook(() =>
-      useLogin(onSuccessfulLoginFn, twoFactorAuthErrorResponse),
+    const { result } = renderUseLogin(
+      onSuccessfulLoginFn,
+      twoFactorAuthErrorResponse,
     )
 
     await act(async () => {
@@ -304,9 +332,13 @@ describe('useLogin tests', () => {
       ).toBe(null)
     })
     consoleWarnSpy.mockRestore()
+    consoleErrorSpy.mockRestore()
   })
 
   it('Handles 2fa error where the token is invalid/expired, and clears search params', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
 
     history.replaceState(
@@ -326,7 +358,7 @@ describe('useLogin tests', () => {
       expect.getState().currentTestName!,
     )
     mockLogInWith2FA.mockRejectedValue(error)
-    const { result } = renderHook(() => useLogin(onSuccessfulLoginFn))
+    const { result } = renderUseLogin(onSuccessfulLoginFn)
 
     await act(async () => {
       await result.current.submitOneTimePassword(timedOneTimePassword, 'TOTP')
@@ -352,5 +384,6 @@ describe('useLogin tests', () => {
       )
     })
     consoleWarnSpy.mockRestore()
+    consoleErrorSpy.mockRestore()
   })
 })

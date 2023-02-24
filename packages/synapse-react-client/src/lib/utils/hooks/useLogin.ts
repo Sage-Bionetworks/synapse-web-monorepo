@@ -18,15 +18,12 @@ export type UseLoginReturn = {
     | 'RECOVERY_CODE'
     | 'LOGGED_IN'
   onStepChange: Dispatch<SetStateAction<UseLoginReturn['step']>>
-  submitUsernameAndPassword: (
-    username: string,
-    password: string,
-  ) => Promise<void>
+  submitUsernameAndPassword: (username: string, password: string) => void
   submitOneTimePassword: (
     code: string,
     /* The type of one time password code that can be used to authenticate through two-factor authentication. Default is based on current value of `step` */
     otpType?: TwoFactorAuthOtpType,
-  ) => Promise<void>
+  ) => void
   errorMessage: string | undefined
   isLoading: boolean
 }
@@ -102,7 +99,7 @@ export default function useLogin(
   }
 
   const {
-    mutateAsync: mutateLoginWithUsernameAndPassword,
+    mutate: mutateLoginWithUsernameAndPassword,
     isLoading: isLoadingLoginWithUsernameAndPassword,
   } = useMutation<
     LoginResponse | TwoFactorAuthErrorResponse,
@@ -128,7 +125,7 @@ export default function useLogin(
   )
 
   const {
-    mutateAsync: mutateLoginWith2FACode,
+    mutate: mutateLoginWith2FACode,
     isLoading: isLoadingLoginWith2FACode,
   } = useMutation<LoginResponse, SynapseClientError, TwoFactorAuthLoginRequest>(
     SynapseClient.loginWith2fa,
@@ -165,19 +162,19 @@ export default function useLogin(
   )
 
   const submitUsernameAndPassword: UseLoginReturn['submitUsernameAndPassword'] =
-    async (username, password) => {
+    (username, password) => {
       setErrorMessage(undefined)
       const authenticationReceipt = localStorage.getItem(
         AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY,
       )
-      await mutateLoginWithUsernameAndPassword({
+      mutateLoginWithUsernameAndPassword({
         username,
         password,
         authenticationReceipt,
       })
     }
 
-  const submitOneTimePassword: UseLoginReturn['submitOneTimePassword'] = async (
+  const submitOneTimePassword: UseLoginReturn['submitOneTimePassword'] = (
     code,
     otpType = step === 'RECOVERY_CODE' ? 'RECOVERY_CODE' : 'TOTP',
   ) => {
@@ -195,7 +192,7 @@ export default function useLogin(
       otpCode: code,
       otpType: otpType,
     }
-    await mutateLoginWith2FACode(request)
+    mutateLoginWith2FACode(request)
   }
 
   return {
