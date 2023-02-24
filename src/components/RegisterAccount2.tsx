@@ -10,6 +10,8 @@ import {
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
 import { SourceAppLogo } from './SourceApp'
+import { Typography } from 'synapse-react-client'
+import { LeftRightPanel } from './LeftRightPanel'
 
 export type RegisterAccount2Props = {}
 
@@ -91,8 +93,9 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
 
   return (
     <>
-      <div className="panel-wrapper-bg RegisterAccount1">
-        <div className="panel-wrapper with-white-panel-bg">
+      <LeftRightPanel
+        className={'AccountCreatedPage'}
+        leftContent={
           <div className="mainContent">
             <div className="panel-logo logo-wrapper">
               <SourceAppLogo />
@@ -145,29 +148,33 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
               </Button>
             </div>
           </div>
-          <div className={'panel-right'}>
-            <div className={'panel-right-text'}>
-              <h3>Email address verified!</h3>
-              <h4>Now complete your registration.</h4>
-              <p>
-                Your <strong>username</strong> can be made with letters and
-                numbers, but no spaces.
-              </p>
-              <p>
-                <strong>First and last names</strong> are optional, but
-                recommended because they make it easier for team members to find
-                you.
-              </p>
-              <p>
-                Your <strong>password</strong> needs to be at least 8 letters.
-                We recommend using a strong, unique <strong>password</strong> of
-                between 16-32 characters. You can use letters, numbers, and
-                punctuation marks.
-              </p>
-            </div>
+        }
+        rightContent={
+          <div>
+            <Typography variant="headline2" sx={{ marginTop: '50px' }}>
+              Email address verified!
+            </Typography>
+            <Typography variant="headline3" sx={{ marginTop: '30px' }}>
+              Now complete your registration.
+            </Typography>
+            <Typography variant="smallText1" sx={{ marginTop: '30px' }}>
+              Your <strong>username</strong> can be made with letters and
+              numbers, but no spaces.
+            </Typography>
+            <Typography variant="smallText1" sx={{ marginTop: '30px' }}>
+              <strong>First and last names</strong> are optional, but
+              recommended because they make it easier for team members to find
+              you.
+            </Typography>
+            <Typography variant="smallText1" sx={{ marginTop: '30px' }}>
+              Your <strong>password</strong> needs to be at least 8 letters. We
+              recommend using a strong, unique <strong>password</strong> of
+              between 16-32 characters. You can use letters, numbers, and
+              punctuation marks.
+            </Typography>
           </div>
-        </div>
-      </div>
+        }
+      ></LeftRightPanel>
     </>
   )
 }

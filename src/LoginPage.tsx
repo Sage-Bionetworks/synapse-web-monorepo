@@ -4,7 +4,10 @@ import { Typography } from 'synapse-react-client'
 import StandaloneLoginForm from 'synapse-react-client/dist/containers/auth/StandaloneLoginForm'
 import { SourceAppDescription, SourceAppLogo } from './components/SourceApp'
 import { Box } from '@mui/material'
-import { LeftRightPanel } from 'synapse-react-client/dist/components/styled/LeftRightPanel'
+import {
+  StyledInnerContainer,
+  StyledOuterContainer,
+} from 'components/StyledComponents'
 
 export type OwnProps = {
   returnToUrl: string
@@ -21,10 +24,10 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = ({
     window.location.replace(returnToUrl)
   }
   return (
-    <LeftRightPanel
-      leftContent={
-        <>
-          <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
+    <StyledOuterContainer>
+      <StyledInnerContainer>
+        <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
+          <Box sx={{ minHeight: '530px' }}>
             <div className={'panel-logo'}>
               <SourceAppLogo />
             </div>
@@ -41,32 +44,24 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = ({
               }}
             />
           </Box>
-        </>
-      }
-      rightContent={
+        </Box>
         <Box
           sx={{
-            py: 10,
-            height: '100%',
             background:
               "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
           }}
         >
-          <Box
-            sx={{
-              py: 10,
-              px: 9,
-              color: '#1e4964',
-            }}
+          <Typography
+            className="headline"
+            variant="headline2"
+            sx={{ marginTop: '100px' }}
           >
-            <Typography className="headline" variant="headline2">
-              Sign in to your account
-            </Typography>
-            <SourceAppDescription />
-          </Box>
+            Sign in to your account
+          </Typography>
+          <SourceAppDescription />
         </Box>
-      }
-    />
+      </StyledInnerContainer>
+    </StyledOuterContainer>
   )
 }
 
