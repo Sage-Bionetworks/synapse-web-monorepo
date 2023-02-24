@@ -3,6 +3,7 @@ import {
   Box,
   Stack,
   styled,
+  Link,
   Typography,
   TypographyProps,
   useTheme,
@@ -13,6 +14,14 @@ import LoginFlowBackButton from './LoginFlowBackButton'
 import useLogin from '../../utils/hooks/useLogin'
 import LoginForm from './LoginForm'
 import { StyledComponent } from '@emotion/styled'
+
+const LOST_ACCOUNT_SERVICE_DESK_ISSUE_TITLE = encodeURIComponent(
+  'Lost access to my Synapse account',
+)
+const LOST_ACCOUNT_SERVICE_DESK_DESCRIPTION = encodeURIComponent(
+  '<Please provide your username and/or email address associated with your account.>',
+)
+const LOST_ACCOUNT_ACCESS_CONTACT_URL = `https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/16/create/85?summary=${LOST_ACCOUNT_SERVICE_DESK_ISSUE_TITLE}&description=${LOST_ACCOUNT_SERVICE_DESK_DESCRIPTION}`
 
 export type LoginPageProps = {
   ssoRedirectUrl?: string
@@ -26,6 +35,14 @@ const Tagline: StyledComponent<TypographyProps> = styled(Typography, {
   font: '300 24px/34px Lato, sans-serif',
 }))
 
+const BACKUP_CODE_INFO_JSX = (
+  <>
+    Your backup code is a 16-digit code. We generated 10 of these codes for you
+    when you set up 2FA. If you don’t have access to these codes, please{' '}
+    <Link href={LOST_ACCOUNT_ACCESS_CONTACT_URL}>contact us</Link>.
+  </>
+)
+
 export default function LoginPage(props: LoginPageProps) {
   const { ssoRedirectUrl, sessionCallback } = props
   const showDesktop = useShowDesktop(910)
@@ -37,6 +54,7 @@ export default function LoginPage(props: LoginPageProps) {
     submitUsernameAndPassword,
     submitOneTimePassword,
     errorMessage,
+    isLoading,
   } = useLogin(sessionCallback)
 
   const loginForm = (
@@ -75,7 +93,11 @@ export default function LoginPage(props: LoginPageProps) {
           authenticator app.
         </Typography>
       )}
-
+      {!showDesktop && step === 'RECOVERY_CODE' && (
+        <Typography variant={'body1'} align={'center'} sx={{ my: 1 }}>
+          {BACKUP_CODE_INFO_JSX}
+        </Typography>
+      )}
       <LoginForm
         ssoRedirectUrl={ssoRedirectUrl}
         step={step}
@@ -83,6 +105,7 @@ export default function LoginPage(props: LoginPageProps) {
         submitUsernameAndPassword={submitUsernameAndPassword}
         submitOneTimePassword={submitOneTimePassword}
         errorMessage={errorMessage}
+        isLoading={isLoading}
       />
     </Stack>
   )
@@ -122,17 +145,28 @@ export default function LoginPage(props: LoginPageProps) {
                 color: '#1e4964',
               }}
             >
-              {step === 'VERIFICATION_CODE' ? (
+              {step === 'VERIFICATION_CODE' && (
                 <>
                   <Typography variant="headline1" sx={{ mb: 4 }}>
                     Enter your verification code
                   </Typography>
-                  <Typography variant="headline2">
+                  <Typography variant={'headline2'} sx={{ lineHeight: '30px' }}>
                     Enter the 6-digit, time-based verification code provided by
                     your authenticator app.
                   </Typography>
                 </>
-              ) : (
+              )}
+              {step === 'RECOVERY_CODE' && (
+                <>
+                  <Typography variant="headline1" sx={{ mb: 4 }}>
+                    Enter your backup code
+                  </Typography>
+                  <Typography variant={'headline2'} sx={{ lineHeight: '30px' }}>
+                    {BACKUP_CODE_INFO_JSX}
+                  </Typography>
+                </>
+              )}
+              {step !== 'VERIFICATION_CODE' && step !== 'RECOVERY_CODE' && (
                 <>
                   <Tagline variant="headline2">
                     <strong>Organize</strong> your digital research assets.

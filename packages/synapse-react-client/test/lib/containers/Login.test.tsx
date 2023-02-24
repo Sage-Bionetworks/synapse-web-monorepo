@@ -1,13 +1,20 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as React from 'react'
-import StandaloneLoginForm from '../../../src/lib/containers/auth/StandaloneLoginForm'
+import StandaloneLoginForm, {
+  StandaloneLoginFormProps,
+} from '../../../src/lib/containers/auth/StandaloneLoginForm'
 import { SynapseClient } from '../../../src/lib/utils'
 import { LoginResponse } from '../../../src/lib/utils/synapseTypes'
 import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
 } from '../../../src/lib/utils/synapseTypes/ErrorResponse'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../../../src/lib/utils/SynapseConstants'
+
+const username = 'myUsername'
+const password = 'myPassword'
 
 const successfulLoginResponse: LoginResponse = {
   accessToken: 'abc-123',
@@ -24,9 +31,16 @@ const twoFactorAuthErrorResponse: TwoFactorAuthErrorResponse = {
   errorCode: ErrorResponseCode.TWO_FA_REQUIRED,
 }
 
-describe('Functionality of Login Component', () => {
+function renderComponent(props: StandaloneLoginFormProps) {
+  return render(<StandaloneLoginForm {...props} />, {
+    wrapper: createWrapper(),
+  })
+}
+
+describe('StandaloneLoginForm', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    localStorage.removeItem(AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY)
   })
   const callback = jest.fn()
 
@@ -35,22 +49,34 @@ describe('Functionality of Login Component', () => {
       .spyOn(SynapseClient, 'login')
       .mockResolvedValue(successfulLoginResponse)
 
-    render(<StandaloneLoginForm sessionCallback={callback} />)
+    renderComponent({ sessionCallback: callback })
 
     await userEvent.click(
       await screen.findByRole('button', { name: 'Sign in with your email' }),
     )
 
-    screen.getByLabelText('Username or Email Address', { exact: false })
-    screen.getByLabelText('Password', { exact: false })
+    await userEvent.type(
+      screen.getByLabelText('Username or Email Address', { exact: false }),
+      username,
+    )
+    await userEvent.type(
+      screen.getByLabelText('Password', { exact: false }),
+      password,
+    )
 
     await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
 
-    await waitFor(() => expect(SynapseClient.login).toHaveBeenCalled())
+    await waitFor(() =>
+      expect(SynapseClient.login).toHaveBeenCalledWith(
+        username,
+        password,
+        null,
+      ),
+    )
     await waitFor(() => expect(callback).toHaveBeenCalled())
   })
 
-  it('Log in with email + 2FA code', async () => {
+  it('Log in with email + 2FA TOTP code', async () => {
     jest
       .spyOn(SynapseClient, 'login')
       .mockResolvedValue(twoFactorAuthErrorResponse)
@@ -59,18 +85,30 @@ describe('Functionality of Login Component', () => {
       .spyOn(SynapseClient, 'loginWith2fa')
       .mockResolvedValue(successfulLoginResponse)
 
-    render(<StandaloneLoginForm sessionCallback={callback} />)
+    renderComponent({ sessionCallback: callback })
 
     await userEvent.click(
       await screen.findByRole('button', { name: 'Sign in with your email' }),
     )
 
-    screen.getByLabelText('Username or Email Address', { exact: false })
-    screen.getByLabelText('Password', { exact: false })
+    await userEvent.type(
+      screen.getByLabelText('Username or Email Address', { exact: false }),
+      username,
+    )
+    await userEvent.type(
+      screen.getByLabelText('Password', { exact: false }),
+      password,
+    )
 
     await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
 
-    await waitFor(() => expect(SynapseClient.login).toHaveBeenCalled())
+    await waitFor(() =>
+      expect(SynapseClient.login).toHaveBeenCalledWith(
+        username,
+        password,
+        null,
+      ),
+    )
     expect(callback).not.toHaveBeenCalled()
 
     const otpInputs = await screen.findAllByRole('textbox')
@@ -81,7 +119,65 @@ describe('Functionality of Login Component', () => {
 
     // Once the code is entered, the form should submit automatically
     await waitFor(() => {
-      expect(SynapseClient.loginWith2fa).toHaveBeenCalled()
+      expect(SynapseClient.loginWith2fa).toHaveBeenCalledWith({
+        twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
+        userId: twoFactorAuthErrorResponse.userId,
+        otpCode: '123456',
+        otpType: 'TOTP',
+      })
+      expect(callback).toHaveBeenCalled()
+    })
+  })
+
+  it('Log in with email + 2FA recovery code', async () => {
+    jest
+      .spyOn(SynapseClient, 'login')
+      .mockResolvedValue(twoFactorAuthErrorResponse)
+
+    jest
+      .spyOn(SynapseClient, 'loginWith2fa')
+      .mockResolvedValue(successfulLoginResponse)
+
+    renderComponent({ sessionCallback: callback })
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Sign in with your email' }),
+    )
+
+    await userEvent.type(
+      screen.getByLabelText('Username or Email Address', { exact: false }),
+      username,
+    )
+    await userEvent.type(
+      screen.getByLabelText('Password', { exact: false }),
+      password,
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    await waitFor(() =>
+      expect(SynapseClient.login).toHaveBeenCalledWith(
+        username,
+        password,
+        null,
+      ),
+    )
+    expect(callback).not.toHaveBeenCalled()
+
+    await userEvent.click(screen.getByText('Use a backup code instead'))
+
+    const recoveryCode = 'abcd-1234-zxcv-5678'
+    const recoveryCodeInput = await screen.findByRole('textbox')
+    await userEvent.type(recoveryCodeInput, recoveryCode)
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }))
+
+    await waitFor(() => {
+      expect(SynapseClient.loginWith2fa).toHaveBeenCalledWith({
+        twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
+        userId: twoFactorAuthErrorResponse.userId,
+        otpCode: recoveryCode,
+        otpType: 'RECOVERY_CODE',
+      })
       expect(callback).toHaveBeenCalled()
     })
   })
@@ -91,12 +187,10 @@ describe('Functionality of Login Component', () => {
       .spyOn(SynapseClient, 'loginWith2fa')
       .mockResolvedValue(successfulLoginResponse)
 
-    render(
-      <StandaloneLoginForm
-        sessionCallback={callback}
-        twoFactorAuthenticationRequired={twoFactorAuthErrorResponse}
-      />,
-    )
+    renderComponent({
+      sessionCallback: callback,
+      twoFactorAuthenticationRequired: twoFactorAuthErrorResponse,
+    })
 
     // Should jump straight to 2fa
 
@@ -108,7 +202,12 @@ describe('Functionality of Login Component', () => {
 
     // Once the code is entered, the form should submit automatically
     await waitFor(() => {
-      expect(SynapseClient.loginWith2fa).toHaveBeenCalled()
+      expect(SynapseClient.loginWith2fa).toHaveBeenCalledWith({
+        twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
+        userId: twoFactorAuthErrorResponse.userId,
+        otpCode: '123456',
+        otpType: 'TOTP',
+      })
       expect(callback).toHaveBeenCalled()
       expect(SynapseClient.login).not.toHaveBeenCalled()
     })

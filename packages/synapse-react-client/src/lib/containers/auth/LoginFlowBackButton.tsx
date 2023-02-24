@@ -17,7 +17,8 @@ function getPreviousStep(currentStep: UseLoginReturn['step']) {
     case 'USERNAME_PASSWORD':
       return 'CHOOSE_AUTH_METHOD'
     case 'VERIFICATION_CODE':
-      return 'USERNAME_PASSWORD'
+      // Could have reached this step from either username + password or OAuth sign in, so go back to the beginning
+      return 'CHOOSE_AUTH_METHOD'
     case 'RECOVERY_CODE':
       return 'VERIFICATION_CODE'
     case 'LOGGED_IN':
@@ -29,7 +30,9 @@ function getPreviousStep(currentStep: UseLoginReturn['step']) {
 export default function LoginFlowBackButton(props: LoginFormBackButtonProps) {
   const { step, onStepChange, sx } = props
   const shouldRender =
-    step === 'USERNAME_PASSWORD' || step === 'VERIFICATION_CODE'
+    step === 'USERNAME_PASSWORD' ||
+    step === 'VERIFICATION_CODE' ||
+    step === 'RECOVERY_CODE'
 
   if (!shouldRender) {
     return null

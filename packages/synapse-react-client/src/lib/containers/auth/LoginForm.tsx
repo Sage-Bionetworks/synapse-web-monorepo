@@ -10,6 +10,7 @@ import { TwoFactorAuthErrorResponse } from '../../utils/synapseTypes/ErrorRespon
 import TOTPForm from './TOTPForm'
 import UsernamePasswordForm from './UsernamePasswordForm'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
+import RecoveryCodeForm from './RecoveryCodeForm'
 
 type Props = {
   ssoRedirectUrl?: string
@@ -24,6 +25,7 @@ type Props = {
   submitUsernameAndPassword: UseLoginReturn['submitUsernameAndPassword']
   submitOneTimePassword: UseLoginReturn['submitOneTimePassword']
   errorMessage: UseLoginReturn['errorMessage']
+  isLoading: UseLoginReturn['isLoading']
 }
 
 export default function LoginForm(props: Props) {
@@ -39,6 +41,7 @@ export default function LoginForm(props: Props) {
     submitUsernameAndPassword,
     submitOneTimePassword,
     errorMessage,
+    isLoading,
   } = props
 
   return (
@@ -52,6 +55,7 @@ export default function LoginForm(props: Props) {
       )}
       {step === 'USERNAME_PASSWORD' && (
         <UsernamePasswordForm
+          isLoading={isLoading}
           resetPasswordUrl={resetPasswordUrl}
           onSubmit={(username, password) => {
             submitUsernameAndPassword(username, password)
@@ -59,9 +63,28 @@ export default function LoginForm(props: Props) {
         />
       )}
       {step === 'VERIFICATION_CODE' && (
-        <TOTPForm
-          onSubmit={totp => {
-            submitOneTimePassword(totp)
+        <>
+          <TOTPForm
+            isLoading={isLoading}
+            onSubmit={totp => {
+              submitOneTimePassword(totp, 'TOTP')
+            }}
+          />
+          <Link
+            align={'center'}
+            color={'grey.700'}
+            sx={{ display: 'block', mx: 'auto' }}
+            onClick={() => onStepChange('RECOVERY_CODE')}
+          >
+            Use a backup code instead
+          </Link>
+        </>
+      )}
+      {step === 'RECOVERY_CODE' && (
+        <RecoveryCodeForm
+          isLoading={isLoading}
+          onSubmit={recoveryCode => {
+            submitOneTimePassword(recoveryCode, 'RECOVERY_CODE')
           }}
         />
       )}

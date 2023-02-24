@@ -5,7 +5,7 @@ import { TwoFactorAuthErrorResponse } from '../../utils/synapseTypes/ErrorRespon
 import LoginForm from './LoginForm'
 import LoginFlowBackButton from './LoginFlowBackButton'
 
-type Props = {
+export type StandaloneLoginFormProps = {
   ssoRedirectUrl?: string
   sessionCallback: () => void // Callback is invoked after login
   registerAccountUrl?: string
@@ -17,7 +17,7 @@ type Props = {
   twoFactorAuthenticationRequired?: TwoFactorAuthErrorResponse
 }
 
-export default function StandaloneLoginForm(props: Props) {
+export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
   const {
     ssoRedirectUrl,
     sessionCallback,
@@ -32,6 +32,7 @@ export default function StandaloneLoginForm(props: Props) {
     submitUsernameAndPassword,
     submitOneTimePassword,
     errorMessage,
+    isLoading,
   } = useLogin(sessionCallback, props.twoFactorAuthenticationRequired)
 
   return (
@@ -65,6 +66,7 @@ export default function StandaloneLoginForm(props: Props) {
         registerAccountUrl={registerAccountUrl}
         resetPasswordUrl={resetPasswordUrl}
         onBeginOAuthSignIn={onBeginOAuthSignIn}
+        isLoading={isLoading}
       />
     </Box>
   )

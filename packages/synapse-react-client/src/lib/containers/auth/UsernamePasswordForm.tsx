@@ -5,10 +5,12 @@ import {
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import TextField from '../TextField'
+import { UseLoginReturn } from '../../utils/hooks'
 
 type UsernamePasswordFormProps = {
   onSubmit: (username: string, password: string) => void
   resetPasswordUrl?: string
+  isLoading: UseLoginReturn['isLoading']
 }
 
 export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
@@ -17,6 +19,7 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
       BackendDestinationEnum.PORTAL_ENDPOINT,
     )}#!PasswordReset:0`,
     onSubmit,
+    isLoading,
   } = props
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -58,16 +61,14 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
         type="submit"
         color="primary"
         variant="contained"
+        disabled={isLoading}
         sx={{
           height: '50px',
           mt: 4,
           mb: 2,
         }}
-        onClick={e => {
-          handleLogin(e)
-        }}
       >
-        Sign in
+        {isLoading ? 'Logging you in...' : 'Sign in'}
       </Button>
     </form>
   )
