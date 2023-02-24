@@ -85,6 +85,11 @@ export default function useLogin(
     }
   }, [twoFaErrorResponse])
 
+  /* When the step changes, clear the old error message. */
+  useEffect(() => {
+    setErrorMessage(undefined)
+  }, [step])
+
   async function finishLogin(loginResponse: LoginResponse) {
     await SynapseClient.setAccessTokenCookie(loginResponse.accessToken)
     localStorage.setItem(
