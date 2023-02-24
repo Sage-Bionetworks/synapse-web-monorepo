@@ -7,6 +7,7 @@ import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContex
 import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Button, Link } from '@mui/material'
 import { synapse } from 'configs/synapse'
+import { Typography } from 'synapse-react-client'
 
 export type TermsOfUsePageProps = {}
 
@@ -89,28 +90,29 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
           </div>
           <div className={'panel-right'}>
             <div className={'right-panel-text'}>
-              <h4>What is the Synapse Pledge</h4>
-
+              <Typography variant="headline2" sx={{ marginTop: '160px' }}>
+                What is the Synapse Pledge
+              </Typography>
               {sourceApp !== synapse && (
-                <p>
+                <Typography variant="body2" sx={{ marginBottom: '20px' }}>
                   {sourceAppName} is powered by{' '}
                   <Link href={'https://www.synapse.org/'} target="_blank">
                     Synapse
                   </Link>
                   , and follows the Synapse Governance polices.
-                </p>
+                </Typography>
               )}
-              <p>
+              <Typography variant="body2" sx={{ marginBottom: '20px' }}>
                 To ensure secure and confidential access to data, we ask all
                 account holders to affirm their agreement with our governance
                 policies before finishing registration.
-              </p>
-              <p>
+              </Typography>
+              <Typography variant="body2" sx={{ marginBottom: '20px' }}>
                 If you have questions, please contact{' '}
                 <Link href={'mailto:act@sagebionetworks.org'}>
                   act@sagebionetworks.org
                 </Link>
-              </p>
+              </Typography>
             </div>
           </div>
         </div>

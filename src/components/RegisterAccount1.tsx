@@ -18,6 +18,8 @@ import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from 'AppContext'
 import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
 import theme from 'style/theme'
+import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
+import { Box } from '@mui/material'
 
 export type RegisterAccount1Props = {}
 
@@ -155,119 +157,133 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
 
   return (
     <>
-      <div className="panel-wrapper-bg RegisterAccount1">
-        {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && (
-          <div className="panel-wrapper with-login-panel-bg">
-            <BackButton />
-            <div className="mainContent">
-              <div className="panel-logo logo-wrapper">
-                <SourceAppLogo />
-              </div>
-              {page === Pages.CHOOSE_REGISTRATION && (
-                <div style={{ marginTop: '30px' }}>
-                  <Button
-                    onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
-                    sx={chooseButtonSx}
-                    variant="outlined"
-                  >
-                    <img
-                      className="googleLogo"
-                      src={GoogleLogo}
-                      alt="Google Logo"
-                      style={{ width: 25 }}
-                    />
-                    <span className="signInText">
-                      Create account with Google
-                    </span>
-                  </Button>
-                  <Button
-                    onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
-                    sx={chooseButtonSx}
-                    variant="outlined"
-                  >
-                    <IconSvg icon="email" />
-                    Create account with your email
-                  </Button>
-                </div>
-              )}
-              {page === Pages.EMAIL_REGISTRATION && (
-                <div className="EmailAddressUI">
-                  <FormGroup
-                    controlId="emailAddressAccountCreation"
-                    className="required"
-                  >
-                    <FormLabel>Email address</FormLabel>
-                    <FormControl
-                      onChange={e =>
-                        setEmail(e.target.value ?? membershipInvitationEmail)
-                      }
-                      value={email}
-                      onKeyPress={(e: any) => {
-                        if (e.key === 'Enter') {
-                          onSendRegistrationInfo(e)
-                        }
-                      }}
-                    />
-                    {!!membershipInvitationEmail &&
-                      membershipInvitationEmail !== email && (
-                        <Typography
-                          variant="smallText1"
-                          sx={{ color: theme.palette.error.main }}
+      <StyledOuterContainer className="RegisterAccount1">
+        <StyledInnerContainer>
+          {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && (
+            <>
+              <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
+                <BackButton />
+                <Box sx={{ minHeight: '530px' }}>
+                  <div className="mainContent">
+                    <div className="panel-logo logo-wrapper">
+                      <SourceAppLogo />
+                    </div>
+                    {page === Pages.CHOOSE_REGISTRATION && (
+                      <div style={{ marginTop: '30px' }}>
+                        <Button
+                          onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
+                          sx={chooseButtonSx}
+                          variant="outlined"
                         >
-                          Changing your email address will affect any items that
-                          have been shared with you. You can add additional
-                          email addresses after account creation.
-                        </Typography>
-                      )}
-                  </FormGroup>
-                  <Button
-                    sx={buttonSx}
-                    variant="contained"
-                    onClick={onSendRegistrationInfo}
-                    type="button"
-                    disabled={email && !isLoading ? false : true}
-                  >
-                    Continue
-                  </Button>
-                </div>
-              )}
-              {page === Pages.GOOGLE_REGISTRATION && (
-                <div>
-                  <FormGroup
-                    controlId="emailAddressAccountCreation"
-                    className="required"
-                  >
-                    <FormLabel>Username</FormLabel>
-                    <FormControl
-                      onChange={e => setUsername(e.target.value)}
-                      value={username}
-                      onKeyPress={(e: any) => {
-                        if (e.key === 'Enter') {
-                          onSignUpWithGoogle(e)
-                        }
-                      }}
-                    />
-                  </FormGroup>
-                  <Button
-                    sx={buttonSx}
-                    variant="contained"
-                    onClick={onSignUpWithGoogle}
-                    type="button"
-                    disabled={username && !isLoading ? false : true}
-                  >
-                    Continue
-                  </Button>
-                </div>
-              )}
-            </div>
-            <div className={'panel-right'}>
-              <div className={'panel-right-text'}>
-                <h3>Create an Account</h3>
-                <p>
+                          <img
+                            className="googleLogo"
+                            src={GoogleLogo}
+                            alt="Google Logo"
+                            style={{ width: 25, marginRight: 5 }}
+                          />
+                          <span className="signInText">
+                            Create account with Google
+                          </span>
+                        </Button>
+                        <Button
+                          onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
+                          sx={chooseButtonSx}
+                          variant="outlined"
+                        >
+                          <IconSvg icon="email" sx={{ marginRight: '5px' }} />
+                          Create account with your email
+                        </Button>
+                      </div>
+                    )}
+                    {page === Pages.EMAIL_REGISTRATION && (
+                      <div className="EmailAddressUI">
+                        <FormGroup
+                          controlId="emailAddressAccountCreation"
+                          className="required"
+                        >
+                          <FormLabel>Email address</FormLabel>
+                          <FormControl
+                            onChange={e =>
+                              setEmail(
+                                e.target.value ?? membershipInvitationEmail,
+                              )
+                            }
+                            value={email}
+                            onKeyPress={(e: any) => {
+                              if (e.key === 'Enter') {
+                                onSendRegistrationInfo(e)
+                              }
+                            }}
+                          />
+                          {!!membershipInvitationEmail &&
+                            membershipInvitationEmail !== email && (
+                              <Typography
+                                variant="smallText1"
+                                sx={{ color: theme.palette.error.main }}
+                              >
+                                Changing your email address will affect any
+                                items that have been shared with you. You can
+                                add additional email addresses after account
+                                creation.
+                              </Typography>
+                            )}
+                        </FormGroup>
+                        <Button
+                          sx={buttonSx}
+                          variant="contained"
+                          onClick={onSendRegistrationInfo}
+                          type="button"
+                          disabled={email && !isLoading ? false : true}
+                        >
+                          Continue
+                        </Button>
+                      </div>
+                    )}
+                    {page === Pages.GOOGLE_REGISTRATION && (
+                      <div>
+                        <FormGroup
+                          controlId="emailAddressAccountCreation"
+                          className="required"
+                        >
+                          <FormLabel>Username</FormLabel>
+                          <FormControl
+                            onChange={e => setUsername(e.target.value)}
+                            value={username}
+                            onKeyPress={(e: any) => {
+                              if (e.key === 'Enter') {
+                                onSignUpWithGoogle(e)
+                              }
+                            }}
+                          />
+                        </FormGroup>
+                        <Button
+                          sx={buttonSx}
+                          variant="contained"
+                          onClick={onSignUpWithGoogle}
+                          type="button"
+                          disabled={username && !isLoading ? false : true}
+                        >
+                          Continue
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </Box>
+              </Box>
+              <Box
+                sx={{
+                  background:
+                    "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
+                }}
+              >
+                <Typography variant="headline2" sx={{ marginTop: '100px' }}>
+                  Create an Account
+                </Typography>
+                <Typography variant="body2" sx={{ marginBottom: '20px' }}>
                   Your <strong>{sourceAppName}</strong> account is also a{' '}
                   <strong>Sage account</strong>. You can also use it to access
                   many other resources from Sage.
-                </p>
+                </Typography>
                 <Link
                   color="primary"
                   component={RouterLink}
@@ -275,15 +291,15 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                 >
                   More about Sage accounts
                 </Link>
-              </div>
-            </div>
-          </div>
-        )}
+              </Box>
+            </>
+          )}
 
-        {page === Pages.EMAIL_REGISTRATION_THANK_YOU && (
-          <EmailConfirmationPage email={email} />
-        )}
-      </div>
+          {page === Pages.EMAIL_REGISTRATION_THANK_YOU && (
+            <EmailConfirmationPage email={email} />
+          )}
+        </StyledInnerContainer>
+      </StyledOuterContainer>
     </>
   )
 }

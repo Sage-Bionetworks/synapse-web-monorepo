@@ -1,49 +1,49 @@
 .RegisterAccount1 {
-    .back-button {
-        padding: 0;
-        width: 24px;
-        position: absolute;
-        margin: 24px;
+  .back-button {
+    padding: 0;
+    width: 24px;
+    position: absolute;
+    margin: 24px;
+    top: 0px;
+    left: 0px;
+  }
+  .mainContent {
+    min-height: 350px;
+    .form-group:first-child {
+      margin-top: 50px;
     }
-    .mainContent {
-        margin: 0 64px;
-        min-height: 640px;
-        .form-group:first-child{
-            margin-top: 50px;
-        }
-        .form-group {
-            margin-top: 30px;
-        }
-        button {
-            width: 100%;
-            margin: 10px 0px;
-            padding: 10px;
-        }
-        > * {
-            width: 300px;
-        }
+    .form-group {
+      margin-top: 30px;
     }
-    .panel-right-text {
-        margin-top: 100px;
+    button {
+      width: 100%;
+      margin: 10px 0px;
+      padding: 10px;
     }
-    .panel-right-text {
-        margin-top: 100px;
+    > * {
+      width: 300px;
     }
-    .thankYouContainer {
-        background: #FEFEFE;
-        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-        padding: 80px;
-        width: 500px;
-        .thankYouPanel {
-            .mailIcon {
-                margin-bottom: 50px;
-            }
-            width: 300px;
-            margin: auto;
-            .thankYouText {
-                margin-bottom: 40px;
-            }
-        }
+  }
+  .panel-right-text {
+    margin-top: 100px;
+  }
+  .panel-right-text {
+    margin-top: 100px;
+  }
+  .thankYouContainer {
+    background: #fefefe;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    padding: 80px;
+    width: 500px;
+    .thankYouPanel {
+      .mailIcon {
+        margin-bottom: 50px;
+      }
+      width: 300px;
+      margin: auto;
+      .thankYouText {
+        margin-bottom: 40px;
+      }
     }
+  }
 }
-
