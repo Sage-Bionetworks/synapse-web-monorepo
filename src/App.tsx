@@ -80,7 +80,7 @@ const App: React.FC = () => {
                   exact
                   path="/logout"
                   render={props => {
-                    signOut(() => {
+                    signOut().then(() => {
                       window.location.assign('/authenticated/myaccount')
                     })
                     return <></>

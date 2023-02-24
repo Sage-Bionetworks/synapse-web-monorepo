@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { SynapseClient } from 'synapse-react-client'
-import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/Login'
+import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { Typography } from 'synapse-react-client'
 import {

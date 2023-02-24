@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, SxProps } from '@mui/material'
 import { SynapseClient } from 'synapse-react-client'
-import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/Login'
+import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { ValidationWizardStep } from './ProfileValidation'
 import { ReactComponent as OrcId } from '../../assets/ORCID.svg'

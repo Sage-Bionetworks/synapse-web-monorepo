@@ -15,6 +15,7 @@ import SourceAppConfigs from 'components/SourceAppConfigs'
 import { sage } from 'configs/sagebionetworks'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
+import useDetectSSOCode from 'synapse-react-client/dist/utils/hooks/useDetectSSOCode'
 
 export type AppInitializerState = {
   token?: string
@@ -38,7 +39,7 @@ function useSession() {
     undefined,
   )
   const initAnonymousUserState = useCallback(() => {
-    SynapseClient.signOut(() => {
+    SynapseClient.signOut().then(() => {
       // reset token and user profile
       setToken(undefined)
       setUserProfile(undefined)
@@ -75,7 +76,7 @@ function useSession() {
       } else {
         // intentionally calling sign out because there token could be stale so we want
         // the stored session to be cleared out.
-        SynapseClient.signOut(() => {
+        SynapseClient.signOut().then(() => {
           // PORTALS-2293: if the token was invalid (caused an error), reload the app to ensure all children
           // are loading as the anonymous user
           window.location.reload()
@@ -185,12 +186,12 @@ function AppInitializer(props: { children?: React.ReactNode }) {
 
   useAnalytics()
 
-  useEffect(() => {
-    // on first time, also check for the SSO code
-    SynapseClient.detectSSOCode(undefined, error => {
-      displayToast(error, 'danger')
-    })
-  }, [])
+  useDetectSSOCode({
+    registerAccountUrl: '/register1',
+    onError: error => {
+      displayToast(error as string, 'danger')
+    },
+  })
 
   if (!hasCalledGetSession) {
     // Don't render anything until the session has been established

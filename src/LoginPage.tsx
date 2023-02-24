@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { Typography } from 'synapse-react-client'
-import Login from 'synapse-react-client/dist/containers/auth/Login'
+import StandaloneLoginForm from 'synapse-react-client/dist/containers/auth/StandaloneLoginForm'
 import { SourceAppDescription, SourceAppLogo } from './components/SourceApp'
+import { Box } from '@mui/material'
+import { LeftRightPanel } from 'synapse-react-client/dist/components/styled/LeftRightPanel'
 
 export type OwnProps = {
   returnToUrl: string
@@ -19,26 +21,52 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = ({
     window.location.replace(returnToUrl)
   }
   return (
-    <div className={'panel-wrapper-bg'}>
-      <div className={'panel-wrapper with-login-panel-bg'}>
-        <div className={'panel-left'}>
-          <div className={'panel-logo'}>
-            <SourceAppLogo />
-          </div>
-          <Login
-            sessionCallback={() => setIsSessionEstablished(true)}
-            registerAccountUrl={'/register1'}
-            resetPasswordUrl={'/resetPassword'}
-          />
-        </div>
-        <div className={'panel-right'}>
-          <Typography className="headline" variant="headline2">
-            Sign in to your account
-          </Typography>
-          <SourceAppDescription />
-        </div>
-      </div>
-    </div>
+    <LeftRightPanel
+      leftContent={
+        <>
+          <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
+            <div className={'panel-logo'}>
+              <SourceAppLogo />
+            </div>
+            <StandaloneLoginForm
+              sessionCallback={() => setIsSessionEstablished(true)}
+              registerAccountUrl={'/register1'}
+              resetPasswordUrl={'/resetPassword'}
+              onBeginOAuthSignIn={() => {
+                // save current route (so that we can go back here after SSO)
+                localStorage.setItem(
+                  'after-sso-login-url',
+                  window.location.href,
+                )
+              }}
+            />
+          </Box>
+        </>
+      }
+      rightContent={
+        <Box
+          sx={{
+            py: 10,
+            height: '100%',
+            background:
+              "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
+          }}
+        >
+          <Box
+            sx={{
+              py: 10,
+              px: 9,
+              color: '#1e4964',
+            }}
+          >
+            <Typography className="headline" variant="headline2">
+              Sign in to your account
+            </Typography>
+            <SourceAppDescription />
+          </Box>
+        </Box>
+      }
+    />
   )
 }
 
