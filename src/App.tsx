@@ -11,7 +11,6 @@ import { CertificationQuiz } from 'components/CertificationQuiz'
 import CookiesNotification from 'components/CookiesNotification'
 import { CurrentAffiliationPage } from 'components/CurrentAffiliationPage'
 import { JoinTeamPage } from 'components/JoinTeamPage'
-import { ProfilePage } from 'components/ProfilePage'
 import { ProfileValidation } from 'components/ProfileValidation/ProfileValidation'
 import { RegisterAccount1 } from 'components/RegisterAccount1'
 import { RegisterAccount2 } from 'components/RegisterAccount2'
@@ -126,8 +125,6 @@ const App: React.FC = () => {
                             return <CurrentAffiliationPage />
                           } else if (path === '/authenticated/accountcreated') {
                             return <AccountCreatedPage />
-                          } else if (path === '/authenticated/myprofile') {
-                            return <ProfilePage />
                           } else if (
                             path === '/authenticated/certificationquiz'
                           ) {
