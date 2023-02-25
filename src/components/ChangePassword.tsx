@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { FormGroup, FormControl, FormLabel } from 'react-bootstrap'
-import { Button, Link } from '@mui/material'
+import { Button, Link, InputLabel, TextField } from '@mui/material'
 import { ChangePasswordWithCurrentPassword } from 'synapse-react-client/dist/utils/synapseTypes/ChangePasswordRequests'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { SynapseClient } from 'synapse-react-client'
 import { Link as RouterLink } from 'react-router-dom'
+import { StyledFormControl } from 'components/StyledComponents'
 
 export type ChangePasswordProps = {
   onCancel?: Function
@@ -64,30 +64,60 @@ export const ChangePassword = (props: ChangePasswordProps) => {
   return (
     <div className="changePassword">
       <form onSubmit={handleChangePassword}>
-        <FormGroup controlId="oldPassword">
-          <FormLabel>Current Password</FormLabel>
-          <FormControl
+        <StyledFormControl
+          fullWidth
+          required
+          variant="standard"
+          margin="normal"
+        >
+          <InputLabel shrink htmlFor="currentPassword" required>
+            Current password
+          </InputLabel>
+          <TextField
+            fullWidth
             type="password"
+            id="currentPassword"
+            name="currentPassword"
             onChange={e => setOldPassword(e.target.value)}
-            value={oldPassword}
+            value={oldPassword || ''}
           />
-        </FormGroup>
-        <FormGroup controlId="newPassword">
-          <FormLabel>New Password</FormLabel>
-          <FormControl
+        </StyledFormControl>
+        <StyledFormControl
+          fullWidth
+          required
+          variant="standard"
+          margin="normal"
+        >
+          <InputLabel shrink htmlFor="newPassword" required>
+            New password
+          </InputLabel>
+          <TextField
+            fullWidth
             type="password"
+            id="newPassword"
+            name="newPassword"
             onChange={e => setNewPassword(e.target.value)}
-            value={newPassword}
+            value={newPassword || ''}
           />
-        </FormGroup>
-        <FormGroup controlId="confirmPassword">
-          <FormLabel>Confirm Password</FormLabel>
-          <FormControl
+        </StyledFormControl>
+        <StyledFormControl
+          fullWidth
+          required
+          variant="standard"
+          margin="normal"
+        >
+          <InputLabel shrink htmlFor="confirmPassword" required>
+            Confirm password
+          </InputLabel>
+          <TextField
+            fullWidth
             type="password"
+            id="confirmPassword"
+            name="confirmPassword"
             onChange={e => setConfirmPassword(e.target.value)}
-            value={confirmPassword}
+            value={confirmPassword || ''}
           />
-        </FormGroup>
+        </StyledFormControl>
         {props.onCancel && (
           <Button
             className="btn-container emptyButton"
