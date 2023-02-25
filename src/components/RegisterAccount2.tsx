@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { Button } from '@mui/material'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
@@ -12,6 +11,8 @@ import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
 import { SourceAppLogo } from './SourceApp'
 import { Typography } from 'synapse-react-client'
 import { LeftRightPanel } from './LeftRightPanel'
+import { InputLabel, TextField } from '@mui/material'
+import { StyledFormControl } from 'components/StyledComponents'
 
 export type RegisterAccount2Props = {}
 
@@ -101,43 +102,83 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
               <SourceAppLogo />
             </div>
             <div className="form-wrapper">
-              <FormGroup className="required">
-                <FormLabel>Choose a username</FormLabel>
-                <FormControl
+              <StyledFormControl
+                fullWidth
+                required
+                variant="standard"
+                margin="normal"
+              >
+                <InputLabel shrink htmlFor="username" required>
+                  Choose a username
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  id="username"
+                  name="username"
                   onChange={e => setUsername(e.target.value)}
-                  value={username}
+                  value={username || ''}
                 />
-              </FormGroup>
-              <FormGroup>
-                <FormLabel>First Name</FormLabel>
-                <FormControl
+              </StyledFormControl>
+              <StyledFormControl fullWidth variant="standard" margin="normal">
+                <InputLabel shrink htmlFor="firstName" required>
+                  First name
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  id="firstName"
+                  name="firstName"
                   onChange={e => setFirstName(e.target.value)}
-                  value={firstName}
+                  value={firstName || ''}
                 />
-              </FormGroup>
-              <FormGroup>
-                <FormLabel>Last Name</FormLabel>
-                <FormControl
+              </StyledFormControl>
+              <StyledFormControl fullWidth variant="standard" margin="normal">
+                <InputLabel shrink htmlFor="lastName" required>
+                  Last name
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  id="lastName"
+                  name="lastName"
                   onChange={e => setLastName(e.target.value)}
-                  value={lastName}
+                  value={lastName || ''}
                 />
-              </FormGroup>
-              <FormGroup className="required">
-                <FormLabel>Password</FormLabel>
-                <FormControl
+              </StyledFormControl>
+              <StyledFormControl
+                fullWidth
+                required
+                variant="standard"
+                margin="normal"
+              >
+                <InputLabel shrink htmlFor="password1" required>
+                  Password
+                </InputLabel>
+                <TextField
                   type="password"
+                  fullWidth
+                  id="password1"
+                  name="password1"
                   onChange={e => setPassword1(e.target.value)}
-                  value={password1}
+                  value={password1 || ''}
                 />
-              </FormGroup>
-              <FormGroup className="required">
-                <FormLabel>Confirm password</FormLabel>
-                <FormControl
+              </StyledFormControl>
+              <StyledFormControl
+                fullWidth
+                required
+                variant="standard"
+                margin="normal"
+              >
+                <InputLabel shrink htmlFor="password2" required>
+                  Confirm password
+                </InputLabel>
+                <TextField
                   type="password"
+                  fullWidth
+                  id="password2"
+                  name="password2"
                   onChange={e => setPassword2(e.target.value)}
-                  value={password2}
+                  value={password2 || ''}
                 />
-              </FormGroup>
+              </StyledFormControl>
               <Button
                 variant="contained"
                 onClick={onCreateAccount}

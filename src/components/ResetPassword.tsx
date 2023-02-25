@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
-import { Button } from '@mui/material'
 import { SynapseClient, Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
@@ -8,6 +6,13 @@ import {
   PasswordResetSignedToken,
 } from 'synapse-react-client/dist/utils/synapseTypes/ChangePasswordRequests'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
+import { Button, InputLabel, TextField } from '@mui/material'
+import {
+  StyledFormControl,
+  StyledInnerContainer,
+  StyledOuterContainer,
+} from 'components/StyledComponents'
+import { Container } from 'react-bootstrap'
 
 export type ResetPasswordProps = {
   returnToUrl: string
@@ -76,55 +81,92 @@ export const ResetPassword = (props: ResetPasswordProps) => {
   }
 
   return (
-    <div className="bootstrap-4-backport blue-background">
-      {token ? (
-        <>
-          <form onSubmit={handleChangePasswordWithToken}>
-            <FormGroup controlId="newPassword">
-              <FormLabel>New Password</FormLabel>
-              <FormControl
-                type="password"
-                onChange={e => setNewPassword(e.target.value)}
-                value={newPassword}
-                placeholder="Enter new password"
-              />
-            </FormGroup>
-            <FormGroup controlId="confirmPassword">
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl
-                type="password"
-                onChange={e => setConfirmPassword(e.target.value)}
-                value={confirmPassword}
-                placeholder="Confirm new password"
-              />
-            </FormGroup>
-            <Button
-              className="btn-container"
-              variant="contained"
-              type="submit"
-              onSubmit={handleChangePasswordWithToken}
-            >
-              Change Password
-            </Button>
-          </form>
-        </>
-      ) : (
-        <>
-          <Typography variant="headline1">Reset your Password</Typography>
-          <Typography variant="body1">
-            Please enter your email address or Synapse user name and we'll send
-            you instructions to reset your password
-          </Typography>
-          <FormControl
-            onChange={e => setUserName(e.target.value)}
-            value={userName}
-            placeholder="Email address-or-username"
-          />
-          <Button variant="contained" onClick={handleResetPassword}>
-            Reset my password
-          </Button>
-        </>
-      )}
-    </div>
+    <StyledOuterContainer>
+      <StyledInnerContainer>
+        <Container>
+          {token ? (
+            <>
+              <form onSubmit={handleChangePasswordWithToken}>
+                <StyledFormControl
+                  fullWidth
+                  required
+                  variant="standard"
+                  margin="normal"
+                >
+                  <InputLabel shrink htmlFor="newPassword" required>
+                    New password
+                  </InputLabel>
+                  <TextField
+                    fullWidth
+                    type="password"
+                    id="newPassword"
+                    name="newPassword"
+                    onChange={e => setNewPassword(e.target.value)}
+                    value={newPassword || ''}
+                  />
+                </StyledFormControl>
+                <StyledFormControl
+                  fullWidth
+                  required
+                  variant="standard"
+                  margin="normal"
+                >
+                  <InputLabel shrink htmlFor="confirmPassword" required>
+                    Confirm password
+                  </InputLabel>
+                  <TextField
+                    fullWidth
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    value={confirmPassword || ''}
+                  />
+                </StyledFormControl>
+                <Button
+                  className="btn-container"
+                  variant="contained"
+                  type="submit"
+                  fullWidth
+                  onSubmit={handleChangePasswordWithToken}
+                >
+                  Change Password
+                </Button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Typography variant="headline2">Reset your Password</Typography>
+              <Typography variant="body1">
+                Please enter your email address or Synapse user name and we'll
+                send you instructions to reset your password
+              </Typography>
+              <StyledFormControl
+                fullWidth
+                required
+                variant="standard"
+                margin="normal"
+              >
+                <TextField
+                  fullWidth
+                  id="username"
+                  name="username"
+                  onChange={e => setUserName(e.target.value)}
+                  placeholder="Email address-or-username"
+                  value={userName || ''}
+                />
+              </StyledFormControl>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={handleResetPassword}
+              >
+                Reset my password
+              </Button>
+            </>
+          )}
+        </Container>
+      </StyledInnerContainer>
+    </StyledOuterContainer>
   )
 }

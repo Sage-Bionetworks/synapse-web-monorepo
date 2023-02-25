@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
+import { Box, InputLabel, TextField } from '@mui/material'
 import { SynapseClient } from 'synapse-react-client'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
@@ -18,8 +18,11 @@ import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from 'AppContext'
 import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
 import theme from 'style/theme'
-import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
-import { Box } from '@mui/material'
+import {
+  StyledInnerContainer,
+  StyledOuterContainer,
+  StyledFormControl,
+} from './StyledComponents'
 
 export type RegisterAccount1Props = {}
 
@@ -197,18 +200,25 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                     )}
                     {page === Pages.EMAIL_REGISTRATION && (
                       <div className="EmailAddressUI">
-                        <FormGroup
-                          controlId="emailAddressAccountCreation"
-                          className="required"
+                        <StyledFormControl
+                          fullWidth
+                          variant="standard"
+                          margin="normal"
                         >
-                          <FormLabel>Email address</FormLabel>
-                          <FormControl
+                          <InputLabel shrink htmlFor="emailAddress" required>
+                            Email address
+                          </InputLabel>
+                          <TextField
+                            fullWidth
+                            id="emailAddress"
+                            name="emailAddress"
+                            required
                             onChange={e =>
                               setEmail(
                                 e.target.value ?? membershipInvitationEmail,
                               )
                             }
-                            value={email}
+                            value={email || ''}
                             onKeyPress={(e: any) => {
                               if (e.key === 'Enter') {
                                 onSendRegistrationInfo(e)
@@ -227,7 +237,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                                 creation.
                               </Typography>
                             )}
-                        </FormGroup>
+                        </StyledFormControl>
                         <Button
                           sx={buttonSx}
                           variant="contained"
@@ -241,21 +251,28 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                     )}
                     {page === Pages.GOOGLE_REGISTRATION && (
                       <div>
-                        <FormGroup
-                          controlId="emailAddressAccountCreation"
-                          className="required"
+                        <StyledFormControl
+                          fullWidth
+                          variant="standard"
+                          margin="normal"
                         >
-                          <FormLabel>Username</FormLabel>
-                          <FormControl
+                          <InputLabel shrink htmlFor="username" required>
+                            Username
+                          </InputLabel>
+                          <TextField
+                            fullWidth
+                            id="username"
+                            name="username"
+                            required
                             onChange={e => setUsername(e.target.value)}
-                            value={username}
+                            value={username || ''}
                             onKeyPress={(e: any) => {
                               if (e.key === 'Enter') {
                                 onSignUpWithGoogle(e)
                               }
                             }}
                           />
-                        </FormGroup>
+                        </StyledFormControl>
                         <Button
                           sx={buttonSx}
                           variant="contained"
