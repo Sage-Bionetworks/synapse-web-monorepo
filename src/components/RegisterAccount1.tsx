@@ -311,11 +311,10 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
               </Box>
             </>
           )}
-
-          {page === Pages.EMAIL_REGISTRATION_THANK_YOU && (
-            <EmailConfirmationPage email={email} />
-          )}
         </StyledInnerContainer>
+        {page === Pages.EMAIL_REGISTRATION_THANK_YOU && (
+          <EmailConfirmationPage email={email} />
+        )}
       </StyledOuterContainer>
     </>
   )

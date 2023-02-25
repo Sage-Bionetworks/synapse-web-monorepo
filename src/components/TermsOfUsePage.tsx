@@ -5,9 +5,10 @@ import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndCon
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { useSourceApp, SourceAppLogo } from './SourceApp'
-import { Button, Link } from '@mui/material'
+import { Button, Link, Box } from '@mui/material'
 import { synapse } from 'configs/synapse'
 import { Typography } from 'synapse-react-client'
+import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 
 export type TermsOfUsePageProps = {}
 
@@ -55,10 +56,18 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
     }
   }
   return (
-    <>
-      <div className={'panel-wrapper-bg TermsOfUsePage'}>
-        <div className={'panel-wrapper with-white-panel-bg'}>
-          <div className={'panel-left'}>
+    <StyledOuterContainer className="TermsOfUsePage">
+      <StyledInnerContainer>
+        <Box
+          sx={{
+            minWidth: '650px',
+            py: 10,
+            px: 8,
+            height: '100%',
+            position: 'relative',
+          }}
+        >
+          <Box sx={{ minHeight: '530px' }}>
             <div className={'panel-logo'}>
               <SourceAppLogo />
             </div>
@@ -87,36 +96,36 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
                 View and Complete Terms and Conditions for Use
               </Button>
             </div>
-          </div>
-          <div className={'panel-right'}>
-            <div className={'right-panel-text'}>
-              <Typography variant="headline2" sx={{ marginTop: '160px' }}>
-                What is the Synapse Pledge
-              </Typography>
-              {sourceApp !== synapse && (
-                <Typography variant="body2" sx={{ marginBottom: '20px' }}>
-                  {sourceAppName} is powered by{' '}
-                  <Link href={'https://www.synapse.org/'} target="_blank">
-                    Synapse
-                  </Link>
-                  , and follows the Synapse Governance polices.
-                </Typography>
-              )}
+          </Box>
+        </Box>
+        <Box sx={{}}>
+          <div className={'right-panel-text'}>
+            <Typography variant="headline2" sx={{ marginTop: '100px' }}>
+              What is the Synapse Pledge
+            </Typography>
+            {sourceApp !== synapse && (
               <Typography variant="body2" sx={{ marginBottom: '20px' }}>
-                To ensure secure and confidential access to data, we ask all
-                account holders to affirm their agreement with our governance
-                policies before finishing registration.
-              </Typography>
-              <Typography variant="body2" sx={{ marginBottom: '20px' }}>
-                If you have questions, please contact{' '}
-                <Link href={'mailto:act@sagebionetworks.org'}>
-                  act@sagebionetworks.org
+                {sourceAppName} is powered by{' '}
+                <Link href={'https://www.synapse.org/'} target="_blank">
+                  Synapse
                 </Link>
+                , and follows the Synapse Governance polices.
               </Typography>
-            </div>
+            )}
+            <Typography variant="body2" sx={{ marginBottom: '20px' }}>
+              To ensure secure and confidential access to data, we ask all
+              account holders to affirm their agreement with our governance
+              policies before finishing registration.
+            </Typography>
+            <Typography variant="body2" sx={{ marginBottom: '20px' }}>
+              If you have questions, please contact{' '}
+              <Link href={'mailto:act@sagebionetworks.org'}>
+                act@sagebionetworks.org
+              </Link>
+            </Typography>
           </div>
-        </div>
-      </div>
-    </>
+        </Box>
+      </StyledInnerContainer>
+    </StyledOuterContainer>
   )
 }

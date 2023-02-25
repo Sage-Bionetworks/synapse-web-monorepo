@@ -1,6 +1,7 @@
 import {
   alpha,
   Box,
+  Paper,
   FormControl,
   formHelperTextClasses,
   inputBaseClasses,
@@ -20,7 +21,7 @@ export const StyledOuterContainer = styled(Box, {
   backgroundSize: 'cover',
 }))
 
-export const StyledInnerContainer = styled(Box, {
+export const StyledInnerContainer = styled(Paper, {
   label: 'StyledInnerContainer',
 })(({ theme }) => ({
   width: '900px',

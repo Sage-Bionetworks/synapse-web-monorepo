@@ -120,7 +120,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
                 />
               </StyledFormControl>
               <StyledFormControl fullWidth variant="standard" margin="normal">
-                <InputLabel shrink htmlFor="firstName" required>
+                <InputLabel shrink htmlFor="firstName">
                   First name
                 </InputLabel>
                 <TextField
@@ -132,7 +132,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
                 />
               </StyledFormControl>
               <StyledFormControl fullWidth variant="standard" margin="normal">
-                <InputLabel shrink htmlFor="lastName" required>
+                <InputLabel shrink htmlFor="lastName">
                   Last name
                 </InputLabel>
                 <TextField
