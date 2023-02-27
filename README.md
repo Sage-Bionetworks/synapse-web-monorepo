@@ -13,11 +13,11 @@ _Staging_ branch is automatically deployed to https://staging.accounts.sagebione
      - **Logo**: Your app logo.  The logo should contain the name of your app, and preferably be a svg.
      - **Primary and Secondary colors**: These are used to generate a palette. Optionally provide a Tertiary color.
      - **Description**:  A plain text short description of your app (<200 characters).
-3. Web Engineering will send you an 'appId'.  To show the user a branded experience, the 'appId' should be given as a query parameter when you link to the OneSage website for sign-in or account registration (see below).
+3. Web Engineering will send you an 'appId'.  To show the user a branded experience, the 'appId' should be given as a query parameter when you link to the OneSage website for sign-in or account registration (see below).  You should also provide the 'redirectURL' query parameter.
 
 ## Entry points
 
-### Immediate Redirect
+### Redirect to App
 
 _/_
 
@@ -27,7 +27,7 @@ The root prompts you to sign in or register for an account. Once this is complet
 
 _/register1_
 
-Takes you to a place where you can create a Sage account. It links to Google-based account creation, and standard Login (if you already have an account).
+Takes you to a place where you can create a Sage account. It links to Google-based account creation, or email-based account creation.
 
 ### Profile Validation
 
