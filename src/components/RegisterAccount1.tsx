@@ -293,7 +293,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                     "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
                 }}
               >
-                <Typography variant="headline2" sx={{ marginTop: '100px' }}>
+                <Typography variant="headline2" sx={{ marginTop: '115px' }}>
                   Create an Account
                 </Typography>
                 <Typography variant="body2" sx={{ marginBottom: '20px' }}>

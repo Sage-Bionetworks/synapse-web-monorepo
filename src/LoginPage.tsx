@@ -54,7 +54,7 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = ({
           <Typography
             className="headline"
             variant="headline2"
-            sx={{ marginTop: '100px' }}
+            sx={{ marginTop: '115px' }}
           >
             Sign in to your account
           </Typography>

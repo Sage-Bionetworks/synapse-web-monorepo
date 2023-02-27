@@ -3,7 +3,7 @@ import { SourceAppConfig } from 'components/SourceAppConfigs'
 import { bsmnPortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
 import LogoSvg from '../assets/BSMNLogo.svg'
 
-const logo = <img src={LogoSvg} alt="Logo" />
+const logo = <img src={LogoSvg} alt="Logo" style={{ height: '65px' }} />
 
 const description =
   'Access data and tools from a multi-site effort funded by the National Institute of Mental Health to study the role of brain somatic mosaicism in neuropsychiatric disease.'
