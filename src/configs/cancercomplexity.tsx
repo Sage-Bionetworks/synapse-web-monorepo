@@ -6,7 +6,7 @@ import LogoSvg from '../assets/CCKPLogo.svg'
 const logo = <img src={LogoSvg} alt="Logo" />
 
 const description =
-  "Data and tools from the NIH National Cancer Institute-sponsored Cancer Systems Biology Consortium (CSBC) and Physical Sciences in Oncology Network (PS-ON) for the study of Alzheimer's disease, related dementias, and healthy aging."
+  'Approaches, data, and tools from the NIH National Cancer Institute-sponsored Cancer Systems Biology Consortium (CSBC) and Physical Sciences in Oncology Network (PS-ON) to address important questions in basic and translational cancer research.'
 
 export const cckp: SourceAppConfig = {
   appId: 'CCKP',

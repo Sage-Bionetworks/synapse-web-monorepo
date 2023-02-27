@@ -7,7 +7,7 @@ const logo = (
   <img
     src={MobileToolboxLogoSvg}
     alt="Mobile Toolbox Logo"
-    style={{ height: '30px' }}
+    style={{ height: '65px' }}
   />
 )
 
