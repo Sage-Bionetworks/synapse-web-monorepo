@@ -7,12 +7,12 @@ _Staging_ branch is automatically deployed to https://staging.accounts.sagebione
 ## How do I add my app to OneSage?
 
 1. [Create an OAuth 2.0 Client for use with Synapse](https://help.synapse.org/docs/Using-Synapse-as-an-OAuth-Server.2048327904.html).  You can skip this step if you have an internal app running on a known .synapse.org subdomain.
-2. Create a new Jira ticket in the [PORTALS project](https://sagebionetworks.jira.com/jira/software/c/projects/PORTALS/issues) requesting that your app is listed in OneSage. Please include the following information:
-  - **Default URL**: Where can we find the production version of this app?
-  - **Name**: The friendly name of your app
-  - **Logo**: Your app logo.  The logo should contain the name of your app, and preferably be a svg.
-  - **Primary and Secondary colors**: These are used to generate a palette. Optionally provide a Tertiary color.
-  - **Description**:  A plain text short description of your app (<200 characters).
+2. Create a new Jira ticket in the [PORTALS project](https://sagebionetworks.jira.com/jira/software/c/projects/PORTALS/issues), or [open a Service Desk ticket](https://sagebionetworks.jira.com/servicedesk/customer/portal/9) if outside Sage, requesting that your app be listed in OneSage. Please include the following information:
+     - **Default URL**: Where can we find the production version of this app?
+     - **Name**: The friendly name of your app
+     - **Logo**: Your app logo.  The logo should contain the name of your app, and preferably be a svg.
+     - **Primary and Secondary colors**: These are used to generate a palette. Optionally provide a Tertiary color.
+     - **Description**:  A plain text short description of your app (<200 characters).
 3. Web Engineering will send you an 'appId'.  This should be used as a query parameter when you link to the OneSage website for sign-in or registration (see below).
 
 ## Entry points
