@@ -13,11 +13,11 @@ _Staging_ branch is automatically deployed to https://staging.accounts.sagebione
      - **Logo**: Your app logo.  The logo should contain the name of your app, and preferably be a svg.
      - **Primary and Secondary colors**: These are used to generate a palette. Optionally provide a Tertiary color.
      - **Description**:  A plain text short description of your app (<200 characters).
-3. Web Engineering will send you an 'appId'.  This should be used as a query parameter when you link to the OneSage website for sign-in or registration (see below).
+3. Web Engineering will send you an 'appId'.  To show the user a branded experience, the 'appId' should be given as a query parameter when you link to the OneSage website for sign-in or account registration (see below).
 
 ## Entry points
 
-### Account Registration
+### Immediate Redirect
 
 _/_
 
