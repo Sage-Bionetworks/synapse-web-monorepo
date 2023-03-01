@@ -1,7 +1,7 @@
 import { PaletteColorOptions, PaletteOptions } from '@mui/material'
 import tinycolor from 'tinycolor2'
 
-const generatePalette = (
+export const generatePalette = (
   mainColor: tinycolor.ColorInput,
   specificColors?: PaletteColorOptions,
 ): PaletteColorOptions => {
