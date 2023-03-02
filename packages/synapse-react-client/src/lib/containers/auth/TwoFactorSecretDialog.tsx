@@ -15,18 +15,18 @@ import React from 'react'
 
 type TwoFactorSecretDialogProps = {
   secret: string
-} & Pick<DialogProps, 'open' | 'onHide'>
+} & Pick<DialogProps, 'open' | 'onClose'>
 
 export default function TwoFactorSecretDialog(
   props: TwoFactorSecretDialogProps,
 ) {
-  const { secret, open, onHide } = props
+  const { secret, open, onClose } = props
   return (
-    <Dialog open={open} onHide={onHide}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>
         <Stack direction="row" alignItems={'center'} gap={'5px'}>
           Use this code to set up 2FA <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={onHide}>
+          <IconButton aria-label={'Close'} onClick={onClose}>
             <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
           </IconButton>
         </Stack>
@@ -55,7 +55,7 @@ export default function TwoFactorSecretDialog(
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button variant={'contained'} onClick={onHide}>
+        <Button variant={'contained'} onClick={onClose}>
           Done
         </Button>
       </DialogActions>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Box,
   BoxProps,
@@ -24,8 +24,12 @@ import {
 } from '../../utils/hooks/SynapseAPI/auth/useTwoFactorEnrollment'
 import TwoFactorSecretDialog from './TwoFactorSecretDialog'
 
+/**
+ * Returns a URL that can be used to generate a QR code that 2FA authenticator apps can interpret
+ * @param secret
+ * @param subject
+ */
 function toOtpAuthUrl(secret: TotpSecret, subject: string) {
-  // return '123'
   return `otpauth://totp/Synapse:${subject}?secret=${secret.secret}&issuer=Sage%20Bionetworks&algorithm=${secret.alg}&digits=${secret.digits}&period=${secret.period}`
 }
 
@@ -42,7 +46,7 @@ const Section: StyledComponent<BoxProps> = styled(
   {
     label: 'Section',
   },
-)()
+)(() => ({}))
 
 const SectionInnerGrid: StyledComponent<BoxProps> = styled(
   props => <Box {...props} />,
@@ -55,7 +59,7 @@ const SectionInnerGrid: StyledComponent<BoxProps> = styled(
   columnGap: theme.spacing(5),
 }))
 
-// TODO
+// TODO https://sagebionetworks.jira.com/browse/DOCS-115
 const TWO_FACTOR_DOCS_LINK = ''
 
 export type TwoFactorEnrollmentFormProps = {
@@ -67,9 +71,9 @@ export default function TwoFactorEnrollmentForm(
 ) {
   const { onTwoFactorEnrollmentSuccess } = props
 
-  const [totp, setTotp] = React.useState('')
-  const [hasQrCode, setHasQrCode] = React.useState(false)
-  const [showSecretInModal, setShowSecretInModal] = React.useState(false)
+  const [totp, setTotp] = useState('')
+  const [hasQrCode, setHasQrCode] = useState(false)
+  const [showSecretInModal, setShowSecretInModal] = useState(false)
   const { data: currentUserEmail } = useGetNotificationEmail()
 
   const qrCodeCanvasElement = useRef<HTMLCanvasElement>(null)
@@ -187,7 +191,7 @@ export default function TwoFactorEnrollmentForm(
               <TwoFactorSecretDialog
                 secret={totpSecret?.secret ?? ''}
                 open={showSecretInModal}
-                onHide={() => setShowSecretInModal(false)}
+                onClose={() => setShowSecretInModal(false)}
               />
             </Box>
             <Box
@@ -257,3 +261,5 @@ export default function TwoFactorEnrollmentForm(
     </StyledOuterContainer>
   )
 }
+
+export const EXPORTED_FOR_UNIT_TESTING = { toOtpAuthUrl }

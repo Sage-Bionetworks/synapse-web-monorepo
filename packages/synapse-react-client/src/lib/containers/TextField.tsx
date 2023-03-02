@@ -36,9 +36,10 @@ type TextFieldProps = Pick<
 export default function TextField(props: TextFieldProps) {
   const id = useId()
   const { palette } = useTheme()
+  const { noWrapInFormControl, ...rest } = props
   const Wrapper = useMemo(
     () =>
-      props.noWrapInFormControl
+      noWrapInFormControl
         ? (props: React.PropsWithChildren<object>) => (
             <React.Fragment>{props.children}</React.Fragment>
           )
@@ -47,7 +48,7 @@ export default function TextField(props: TextFieldProps) {
               {props.children}
             </FormControl>
           ),
-    [props.noWrapInFormControl],
+    [noWrapInFormControl],
   )
   return (
     <Wrapper>
@@ -69,7 +70,7 @@ export default function TextField(props: TextFieldProps) {
         </Typography>
       )}
       <InputBase
-        {...props}
+        {...rest}
         id={props.id || id}
         sx={{
           backgroundColor: 'grey.200',
