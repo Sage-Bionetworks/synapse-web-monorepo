@@ -81,7 +81,11 @@ export default function TwoFactorEnrollmentForm(
   const { mutate: start2FAEnrollment, data: totpSecret } =
     useStartTwoFactorEnrollment()
 
-  const { mutate: finishEnrollment, error } = useFinishTwoFactorEnrollment({
+  const {
+    mutate: finishEnrollment,
+    isLoading: isFinishingEnrollment,
+    error,
+  } = useFinishTwoFactorEnrollment({
     onSuccess: onTwoFactorEnrollmentSuccess,
   })
 
@@ -242,7 +246,9 @@ export default function TwoFactorEnrollmentForm(
                   type={'submit'}
                   variant={'contained'}
                   sx={{ flexShrink: 0 }}
-                  disabled={totp.length != totpSecret?.digits}
+                  disabled={
+                    isFinishingEnrollment || totp.length != totpSecret?.digits
+                  }
                 >
                   Activate
                 </Button>
