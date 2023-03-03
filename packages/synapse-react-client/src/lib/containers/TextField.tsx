@@ -1,4 +1,4 @@
-import React, { useId } from 'react'
+import React, { useId, useMemo } from 'react'
 import {
   Box,
   FormControl,
@@ -16,6 +16,7 @@ type TextFieldProps = Pick<
   | 'error'
   | 'fullWidth'
   | 'id'
+  | 'inputProps'
   | 'label'
   | 'maxRows'
   | 'minRows'
@@ -27,7 +28,7 @@ type TextFieldProps = Pick<
   | 'sx'
   | 'type'
   | 'value'
->
+> & { noWrapInFormControl?: boolean }
 
 /**
  * A styled text field built using MUI components and designed to match the Sage Design System (SDS) input fields.
@@ -35,25 +36,41 @@ type TextFieldProps = Pick<
 export default function TextField(props: TextFieldProps) {
   const id = useId()
   const { palette } = useTheme()
+  const { noWrapInFormControl, ...rest } = props
+  const Wrapper = useMemo(
+    () =>
+      noWrapInFormControl
+        ? (props: React.PropsWithChildren<object>) => (
+            <React.Fragment>{props.children}</React.Fragment>
+          )
+        : (props: React.PropsWithChildren<object>) => (
+            <FormControl fullWidth sx={{ my: 1 }}>
+              {props.children}
+            </FormControl>
+          ),
+    [noWrapInFormControl],
+  )
   return (
-    <FormControl fullWidth sx={{ my: 1 }}>
-      <Typography
-        component={'label'}
-        htmlFor={props.id || id}
-        variant={'body1'}
-        sx={{ fontWeight: 700, mb: '4px' }}
-      >
-        {props.label}
-        {props.required ? (
-          <Box component={'span'} sx={{ ml: '3px', color: 'secondary.main' }}>
-            {'*'}
-          </Box>
-        ) : (
-          <></>
-        )}
-      </Typography>
+    <Wrapper>
+      {props.label && (
+        <Typography
+          component={'label'}
+          htmlFor={props.id || id}
+          variant={'body1'}
+          sx={{ fontWeight: 700, mb: '4px' }}
+        >
+          {props.label}
+          {props.required ? (
+            <Box component={'span'} sx={{ ml: '3px', color: 'secondary.main' }}>
+              {'*'}
+            </Box>
+          ) : (
+            <></>
+          )}
+        </Typography>
+      )}
       <InputBase
-        {...props}
+        {...rest}
         id={props.id || id}
         sx={{
           backgroundColor: 'grey.200',
@@ -66,6 +83,6 @@ export default function TextField(props: TextFieldProps) {
           },
         }}
       ></InputBase>
-    </FormControl>
+    </Wrapper>
   )
 }
