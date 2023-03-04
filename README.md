@@ -11,10 +11,13 @@ _Staging_ branch is automatically deployed to https://staging.accounts.sagebione
      - **Default URL**: Where can we find the production version of this app?
      - **Name**: The friendly name of your app
      - **Logo**: Your app logo.  The logo should contain the name of your app, and preferably be a svg.
-     - **Primary and Secondary colors**: These are used to generate a palette. Optionally provide a Tertiary color.
+     - **Primary and Secondary colors**: These are used to generate a palette.
      - **Description**:  A plain text short description of your app (<200 characters).
      - **OAuth Client ID**:  If using an OAuth Client to connect, please provide your 'client ID'.  This value will be used as your 'appId'.
 3. Web Engineering will send you an 'appId'.  To show the user a branded experience, the 'appId' should be given as a query parameter when you link to the OneSage website for sign-in or account registration (see below).  You should also provide the 'redirectURL' query parameter.
+
+_Note to Web Engineer:_ We are currently using [this Synapse Table](https://www.synapse.org/#!Synapse:syn45291362/tables/) as the data source.
+
 
 ## Entry points
 
