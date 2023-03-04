@@ -6,7 +6,6 @@ import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Button, Link, Box } from '@mui/material'
-import { synapse } from 'configs/synapse'
 import { Typography } from 'synapse-react-client'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 
@@ -103,7 +102,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
             <Typography variant="headline2" sx={{ marginTop: '100px' }}>
               What is the Synapse Pledge
             </Typography>
-            {sourceApp !== synapse && (
+            {sourceApp?.appId !== 'synapse.org' && (
               <Typography variant="body2" sx={{ marginBottom: '20px' }}>
                 {sourceAppName} is powered by{' '}
                 <Link href={'https://www.synapse.org/'} target="_blank">

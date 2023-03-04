@@ -29,7 +29,6 @@ import AccountSettingsTopBar from './AccountSettingsTopBar'
 import { useLocation } from 'react-router-dom'
 import { ConfigureEmail } from './ConfigureEmail'
 import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
-import SourceAppConfigs from './SourceAppConfigs'
 import UniversalCookies from 'universal-cookie'
 import { DATETIME_UTC_COOKIE_KEY } from 'synapse-react-client/dist/utils/SynapseConstants'
 import { getUseUtcTimeFromCookie } from 'synapse-react-client/dist/utils/SynapseClient'
@@ -37,6 +36,7 @@ import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
 import { InputLabel } from '@mui/material'
 import { TextField } from '@mui/material'
+import { useSourceAppConfigs } from './SourceApp'
 
 export const AccountSettings = () => {
   const { accessToken } = useSynapseContext()
@@ -59,7 +59,7 @@ export const AccountSettings = () => {
   const [showUnbindORCiDDialog, setShowUnbindORCiDDialog] =
     useState<boolean>(false)
   const history = useHistory()
-
+  const sourceAppConfigs = useSourceAppConfigs()
   const profileInformationRef = useRef<HTMLDivElement>(null)
   const changePasswordRef = useRef<HTMLDivElement>(null)
   const timezoneRef = useRef<HTMLDivElement>(null)
@@ -343,7 +343,7 @@ export const AccountSettings = () => {
                       >
                         Used by
                       </Typography>
-                      {SourceAppConfigs.map(config => {
+                      {sourceAppConfigs?.map(config => {
                         if (config.requestAffiliation) {
                           return (
                             <Grid

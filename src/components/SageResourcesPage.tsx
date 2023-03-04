@@ -1,20 +1,20 @@
 import React from 'react'
 import { Grid, Paper, Box } from '@mui/material'
 import { Typography } from 'synapse-react-client'
-import SourceAppConfigs from './SourceAppConfigs'
-import { sage } from 'configs/sagebionetworks'
-import { mtb } from 'configs/mtb'
 import ShowMore from 'synapse-react-client/dist/containers/row_renderers/utils/ShowMore'
 import { IconButton } from '@mui/material'
 import theme from 'style/theme'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useHistory } from 'react-router'
 import { StyledOuterContainer } from './StyledComponents'
+import { useSourceApp, useSourceAppConfigs } from './SourceApp'
 
 export type SageResourcesPageProps = {}
 
 export const SageResourcesPage = (props: SageResourcesPageProps) => {
   const history = useHistory()
+  const sourceAppConfigs = useSourceAppConfigs()
+  const sageSourceAppConfig = useSourceApp('SAGE')
   return (
     <StyledOuterContainer>
       <Paper
@@ -45,7 +45,7 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
               marginBottom: '40px',
             }}
           >
-            <div className="SageLogo">{sage.logo}</div>
+            <div className="SageLogo">{sageSourceAppConfig?.logo}</div>
             <Typography
               variant="body1"
               sx={{ marginTop: '30px', paddingBottom: '30px', fontWeight: 500 }}
@@ -76,8 +76,8 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
           }}
         >
           <Grid container spacing={5} mx={{ paddingTop: '20px' }}>
-            {SourceAppConfigs.map(config => {
-              if (config.appId != mtb.appId && config.appId != sage.appId) {
+            {sourceAppConfigs?.map(config => {
+              if (config.isPublicized) {
                 return (
                   <Grid
                     item
@@ -95,7 +95,7 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
                   </Grid>
                 )
               } else {
-                return <></>
+                return false
               }
             })}
           </Grid>

@@ -1,6 +1,3 @@
-import { ThemeOptions } from '@mui/material'
-import { deepmerge } from '@mui/utils'
-import { getSourceAppPaletteOptions } from 'components/SourceApp'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { AppContextProvider } from 'AppContext'
@@ -9,22 +6,14 @@ import { SynapseClient, SynapseComponents } from 'synapse-react-client'
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam } from 'URLUtils'
-import theme from './style/theme'
 import useAnalytics from './useAnalytics'
-import SourceAppConfigs from 'components/SourceAppConfigs'
-import { sage } from 'configs/sagebionetworks'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
 import useDetectSSOCode from 'synapse-react-client/dist/utils/hooks/useDetectSSOCode'
-
-export type AppInitializerState = {
-  token?: string
-  showLoginDialog: boolean
-  userProfile: UserProfile | undefined
-  // delay render until get session is called, o.w. theres an uneccessary refresh right
-  // after page load
-  hasCalledGetSession: boolean
-}
+import { ThemeOptions } from '@mui/material'
+import { useSourceApp } from 'components/SourceApp'
+import { deepmerge } from '@mui/utils'
+import theme from './style/theme'
 
 /**
  * State and helpers for managing a user session in the portal
@@ -66,7 +55,7 @@ function useSession() {
       // get user profile
       const userProfile = await SynapseClient.getUserProfile(token)
       if (userProfile.profilePicureFileHandleId) {
-        userProfile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${userProfile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${userProfile.profilePicureFileHandleId}`
+        userProfile.clientPreSignedURL = `https://repo-prod.prod.sagebase.org/file/v1/file/${userProfile.profilePicureFileHandleId}?fileAssociateType=UserProfileAttachment&fileAssociateId=${userProfile.ownerId}&redirect=true`
       }
       setUserProfile(userProfile)
     } catch (e) {
@@ -103,7 +92,6 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
   >()
-
   useEffect(() => {
     // SWC-6294: on mount, detect and attempt a client-side framebuster (mitigation only, easily bypassed by attacker)
     if (window.top && window.top !== window) {
@@ -124,10 +112,18 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       setAppId(localStorageAppId)
     } else {
       // fallback to Sage Bionetworks
-      localStorage.setItem('sourceAppId', sage.appId)
-      setAppId(sage.appId)
+      localStorage.setItem('sourceAppId', 'SAGE')
+      setAppId('SAGE')
     }
   }, [])
+
+  const sourceApp = useSourceApp(appId)
+
+  useEffect(() => {
+    if (sourceApp?.palette) {
+      setThemeOptions(deepmerge(theme, { palette: sourceApp.palette }))
+    }
+  }, [sourceApp?.appId])
 
   useEffect(() => {
     const searchParamSignedToken = getSearchParam('signedToken')
@@ -161,20 +157,9 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       }
     } else if (localStorageRedirectURL) {
       setRedirectURL(localStorageRedirectURL)
-    } else if (appId) {
-      // fallback to Source App public URL
-      const sourceAppConfig = SourceAppConfigs.find(
-        config => config.appId === appId,
-      )
-      setRedirectURL(sourceAppConfig?.appURL)
-    }
-  }, [appId])
-
-  useEffect(() => {
-    if (appId) {
-      setThemeOptions(
-        deepmerge(theme, { palette: getSourceAppPaletteOptions() }),
-      )
+    } else {
+      // fallback to Synapse.org
+      setRedirectURL('https://www.synapse.org/#!Profile:v/projects/all')
     }
   }, [appId])
 

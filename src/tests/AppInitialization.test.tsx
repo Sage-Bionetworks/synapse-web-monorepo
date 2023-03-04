@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react'
 import { AppContextProvider } from 'AppContext'
-import { mtb } from 'configs/mtb'
 import LoginPage from 'LoginPage'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
@@ -8,13 +7,13 @@ import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseC
 
 describe('App initialization tests', () => {
   it('renders a branded experience', async () => {
-    window.localStorage.setItem('sourceAppId', mtb.appId)
+    window.localStorage.setItem('sourceAppId', 'MTB')
     render(
       <MemoryRouter>
         <AppContextProvider
           appContext={{
-            appId: mtb.appId,
-            redirectURL: mtb.appURL,
+            appId: 'MTB',
+            redirectURL: 'https://mtb',
             signedToken: undefined,
           }}
         >
