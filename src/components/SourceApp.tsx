@@ -8,6 +8,8 @@ import palette, {
   generatePalette,
 } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
 import SourceAppImage from './SourceAppImage'
+import Skeleton from '@mui/material/Skeleton'
+import { SkeletonTable } from 'synapse-react-client/dist/assets/skeletons/SkeletonTable'
 
 export type SourceAppProps = {
   isAccountCreationTextVisible?: boolean
@@ -37,18 +39,26 @@ export const SourceApp = (props: SourceAppProps) => {
 }
 
 export const SourceAppLogo: React.FC<{ sx?: SxProps }> = ({ sx }) => {
+  const sourceAppConfig = useSourceApp()
   return (
     <Box className="SourceAppLogo" sx={sx}>
-      {useSourceApp()?.logo}
+      {sourceAppConfig ? (
+        sourceAppConfig.logo
+      ) : (
+        <Skeleton variant="rectangular" width={420} height={60} />
+      )}
     </Box>
   )
 }
 
 export const SourceAppDescription = () => {
-  return (
+  const sourceAppConfig = useSourceApp()
+  return sourceAppConfig ? (
     <Typography className="description" variant="body1">
-      {useSourceApp()?.description}
+      {sourceAppConfig?.description}
     </Typography>
+  ) : (
+    <SkeletonTable numRows={7} numCols={1} />
   )
 }
 
@@ -57,6 +67,7 @@ export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
     entityId: 'syn45291362',
     query: {
       sql: `SELECT * FROM syn45291362`,
+      limit: 75,
     },
     partMask: BUNDLE_MASK_QUERY_RESULTS,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
