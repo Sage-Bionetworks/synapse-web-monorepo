@@ -29,6 +29,7 @@ import './App.scss'
 import AppInitializer from './AppInitializer'
 import LoginPage from './LoginPage'
 import generalTheme from './style/theme'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 const isCodeSearchParam = getSearchParam('code') !== undefined
 const isProviderSearchParam = getSearchParam('provider') !== undefined
@@ -38,118 +39,133 @@ const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
 const theme = createTheme(generalTheme)
 
 const App: React.FC = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 50 * 1000, // 50s
+        retry: false, // SynapseClient knows which queries to retry
+      },
+    },
+  })
+
   return (
     <div className="App">
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
           <Router>
-            <AppInitializer>
-              <CookiesNotification />
-              <Switch>
-                <Route
-                  exact
-                  path="/"
-                  render={props => {
-                    return (
-                      <SynapseContextConsumer>
-                        {(ctx?: SynapseContextType) => {
-                          if (!ctx?.accessToken) {
-                            return <LoginPage returnToUrl={'/'} />
-                          } else {
-                            return (
-                              <AppContextConsumer>
-                                {appContext => (
-                                  <>
-                                    {appContext?.redirectURL &&
-                                      !isInSSOFlow &&
-                                      window.location.replace(
-                                        appContext?.redirectURL,
-                                      )}
-                                  </>
-                                )}
-                              </AppContextConsumer>
-                            )
-                          }
-                        }}
-                      </SynapseContextConsumer>
-                    )
-                  }}
-                />
-                <Route
-                  exact
-                  path="/logout"
-                  render={props => {
-                    signOut().then(() => {
-                      window.location.assign('/authenticated/myaccount')
-                    })
-                    return <></>
-                  }}
-                />
-                <Route exact path="/register1" component={RegisterAccount1} />
-                <Route exact path="/register2" component={RegisterAccount2} />
-                <Route exact path="/jointeam" component={JoinTeamPage} />
-                <Route
-                  exact
-                  path="/sageresources"
-                  component={SageResourcesPage}
-                />
-                <Route
-                  exact
-                  path="/resetPassword"
-                  render={props => {
-                    return (
-                      <ResetPassword returnToUrl="/authenticated/myaccount" />
-                    )
-                  }}
-                />
-                {/* check for an access token for any route in the "/authenticated/" path */}
-                <Route
-                  path="/authenticated/"
-                  render={routeProps => {
-                    const path = routeProps.location.pathname
-                    return (
-                      <SynapseContextConsumer>
-                        {(ctx?: SynapseContextType) => {
-                          if (!ctx?.accessToken) {
-                            return <LoginPage returnToUrl={path} />
-                          }
-                          if (path === '/authenticated/validate') {
-                            return <ProfileValidation />
-                          } else if (path === '/authenticated/signTermsOfUse') {
-                            return <TermsOfUsePage />
-                          } else if (path === '/authenticated/myaccount') {
-                            return <AccountSettings />
-                          } else if (
-                            path === '/authenticated/currentaffiliation'
-                          ) {
-                            return <CurrentAffiliationPage />
-                          } else if (path === '/authenticated/accountcreated') {
-                            return <AccountCreatedPage />
-                          } else if (
-                            path === '/authenticated/certificationquiz'
-                          ) {
-                            return <CertificationQuiz />
-                          } else {
-                            return (
-                              <>
-                                <p>Unrecognized match path {path}</p>
-                              </>
-                            )
-                          }
-                        }}
-                      </SynapseContextConsumer>
-                    )
-                  }}
-                />
-                <Route
-                  exact={true}
-                  path="/login"
-                  render={props => {
-                    return <LoginPage returnToUrl={'/'} />
-                  }}
-                />
-              </Switch>
-            </AppInitializer>
+            <QueryClientProvider client={queryClient}>
+              <AppInitializer>
+                <CookiesNotification />
+                <Switch>
+                  <Route
+                    exact
+                    path="/"
+                    render={props => {
+                      return (
+                        <SynapseContextConsumer>
+                          {(ctx?: SynapseContextType) => {
+                            if (!ctx?.accessToken) {
+                              return <LoginPage returnToUrl={'/'} />
+                            } else {
+                              return (
+                                <AppContextConsumer>
+                                  {appContext => (
+                                    <>
+                                      {appContext?.redirectURL &&
+                                        !isInSSOFlow &&
+                                        window.location.replace(
+                                          appContext?.redirectURL,
+                                        )}
+                                    </>
+                                  )}
+                                </AppContextConsumer>
+                              )
+                            }
+                          }}
+                        </SynapseContextConsumer>
+                      )
+                    }}
+                  />
+                  <Route
+                    exact
+                    path="/logout"
+                    render={props => {
+                      signOut().then(() => {
+                        window.location.assign('/authenticated/myaccount')
+                      })
+                      return <></>
+                    }}
+                  />
+                  <Route exact path="/register1" component={RegisterAccount1} />
+                  <Route exact path="/register2" component={RegisterAccount2} />
+                  <Route exact path="/jointeam" component={JoinTeamPage} />
+                  <Route
+                    exact
+                    path="/sageresources"
+                    component={SageResourcesPage}
+                  />
+                  <Route
+                    exact
+                    path="/resetPassword"
+                    render={props => {
+                      return (
+                        <ResetPassword returnToUrl="/authenticated/myaccount" />
+                      )
+                    }}
+                  />
+                  {/* check for an access token for any route in the "/authenticated/" path */}
+                  <Route
+                    path="/authenticated/"
+                    render={routeProps => {
+                      const path = routeProps.location.pathname
+                      return (
+                        <SynapseContextConsumer>
+                          {(ctx?: SynapseContextType) => {
+                            if (!ctx?.accessToken) {
+                              return <LoginPage returnToUrl={path} />
+                            }
+                            if (path === '/authenticated/validate') {
+                              return <ProfileValidation />
+                            } else if (
+                              path === '/authenticated/signTermsOfUse'
+                            ) {
+                              return <TermsOfUsePage />
+                            } else if (path === '/authenticated/myaccount') {
+                              return <AccountSettings />
+                            } else if (
+                              path === '/authenticated/currentaffiliation'
+                            ) {
+                              return <CurrentAffiliationPage />
+                            } else if (
+                              path === '/authenticated/accountcreated'
+                            ) {
+                              return <AccountCreatedPage />
+                            } else if (
+                              path === '/authenticated/certificationquiz'
+                            ) {
+                              return <CertificationQuiz />
+                            } else {
+                              return (
+                                <>
+                                  <p>Unrecognized match path {path}</p>
+                                </>
+                              )
+                            }
+                          }}
+                        </SynapseContextConsumer>
+                      )
+                    }}
+                  />
+                  <Route
+                    exact={true}
+                    path="/login"
+                    render={props => {
+                      return <LoginPage returnToUrl={'/'} />
+                    }}
+                  />
+                </Switch>
+              </AppInitializer>
+            </QueryClientProvider>
           </Router>
         </ThemeProvider>
       </StyledEngineProvider>
