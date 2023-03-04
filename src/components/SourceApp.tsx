@@ -45,7 +45,7 @@ export const SourceAppLogo: React.FC<{ sx?: SxProps }> = ({ sx }) => {
       {sourceAppConfig ? (
         sourceAppConfig.logo
       ) : (
-        <Skeleton variant="rectangular" width={420} height={60} />
+        <Skeleton variant="rectangular" width={250} height={65} />
       )}
     </Box>
   )
@@ -107,8 +107,7 @@ export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
   return rows?.map(row => {
     const rowVals = row.values
     const fileHandleId = rowVals[logoFileHandleColIndex]
-    const logoHref = `https://repo-prod.prod.sagebase.org/file/v1/file/${fileHandleId}?fileAssociateType=TableEntity&fileAssociateId=syn45291362&redirect=true`
-    const logo = <SourceAppImage href={logoHref} />
+    const logo = <SourceAppImage fileHandleId={fileHandleId} />
     const appPalette: PaletteOptions = {
       ...palette,
       primary: generatePalette(rowVals[primaryColorColIndex] ?? ''),
