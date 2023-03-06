@@ -37,6 +37,10 @@ const isSynapseURL = (url:string) => {
   return new URL(url).hostname.toLowerCase() === 'www.synapse.org'
 }
 
+const getInitialCountdownSeconds = (redirectURL:string) => {
+  return isSynapseURL(redirectURL) ? 10 : 30
+}
+
 const RedirectDialog = (props: RedirectDialogProps) => {
   const [countdownSeconds, setCountdownSeconds] = React.useState<number | undefined>()
   const {redirectUrl, onCancelRedirect} = props
@@ -68,7 +72,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
 
   React.useEffect(() => {
     if (redirectUrl && !countdownSeconds) {
-      setCountdownSeconds(isSynapseURL(redirectUrl) ? 10 : 30)
+      setCountdownSeconds(getInitialCountdownSeconds(redirectUrl))
     }
   }, [countdownSeconds, redirectUrl])
 
