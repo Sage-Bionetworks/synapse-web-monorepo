@@ -2,7 +2,8 @@ import * as React from 'react'
 import {
   Dialog,
   DialogContent,
-  Button
+  Button,
+  Link
 } from '@mui/material'
 import { Typography } from 'synapse-react-client'
 
@@ -21,7 +22,7 @@ export const redirectInstructionsMap = {
       The MC2 Center Intranet is a protected website containing MC2 Center resources. If you are not a participating member of the MC2 Center community, you will not be able to access the intranet.
     </Typography>
     <Typography variant="body1" sx={{paddingBottom: '20px'}}>
-      Feel free to <a target="_blank" rel="noreferrer" href="https://help.cancercomplexity.synapse.org/doc/contact-us">contact the MC2 Center</a> to learn more, or if you have any questions.
+      Feel free to <Link target="_blank" rel="noreferrer" href="https://help.cancercomplexity.synapse.org/doc/contact-us">contact the MC2 Center</Link> to learn more, or if you have any questions.
     </Typography>
   </>
 }
