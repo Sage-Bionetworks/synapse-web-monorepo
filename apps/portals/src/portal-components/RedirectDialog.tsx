@@ -38,7 +38,7 @@ const isSynapseURL = (url:string) => {
 }
 
 const RedirectDialog = (props: RedirectDialogProps) => {
-  const [countdownSeconds, setCountdownSeconds] = React.useState(isSynapseURL(redirectUrl) ? 10 : 30)
+  const [countdownSeconds, setCountdownSeconds] = React.useState<number | undefined>()
   const {redirectUrl, onCancelRedirect} = props
   const [redirectInstructions, setRedirectInstructions] = React.useState()
   
