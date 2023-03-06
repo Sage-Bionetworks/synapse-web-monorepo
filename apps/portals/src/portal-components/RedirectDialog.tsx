@@ -1,5 +1,8 @@
 import * as React from 'react'
-import { Modal } from 'react-bootstrap'
+import {
+  Dialog,
+  DialogContent
+} from '@mui/material'
 import { Typography } from 'synapse-react-client'
 
 export type RedirectDialogProps = {
@@ -13,14 +16,18 @@ export const redirectInstructionsMap = {
   </p>
 }
 
+const isSynapseURL = (url:string) => {
+  if (!url) return false
+  return new URL(url).hostname.toLowerCase() === 'www.synapse.org'
+}
+
 const RedirectDialog = (props: RedirectDialogProps) => {
-  const [countdownSeconds, setCountdownSeconds] = React.useState(10)
+  const [countdownSeconds, setCountdownSeconds] = React.useState<number | undefined>()
   const {redirectUrl, onCancelRedirect} = props
-  const [redirectInstructions, setRedirectInstructions] = React.useState(10)
-  const [isSynapseURL, setIsSynapseURL] = React.useState(false)
+  const [redirectInstructions, setRedirectInstructions] = React.useState()
   
   React.useEffect(() => {
-    if (redirectUrl) {
+    if (redirectUrl && countdownSeconds) {
       // You would expect that we should redirect when countdownSeconds reaches 0,
       // but it actually takes about a second to perform the redirect. 
       // So let's start the process when we get to 1.
@@ -28,46 +35,45 @@ const RedirectDialog = (props: RedirectDialogProps) => {
         window.location.assign(redirectUrl!)
       }
       setTimeout(() => {
-        setCountdownSeconds(countdownSeconds => countdownSeconds - 1)
+        if (countdownSeconds) {
+          setCountdownSeconds(countdownSeconds => countdownSeconds! - 1)
+        }
       }, 1000)
     }
   }, [redirectUrl, countdownSeconds])
 
-
   React.useEffect(() => {
-    const isRedirectToSynapse = redirectUrl ? new URL(redirectUrl).hostname.toLowerCase() === 'www.synapse.org' : false
     if (redirectUrl) {
-      setCountdownSeconds(isRedirectToSynapse ? 10 : 30)
+      const isRedirectToSynapse = isSynapseURL(redirectUrl)
       setRedirectInstructions(isRedirectToSynapse ? <p>You are being redirected to Synapse to view this data.</p> : 
         redirectInstructionsMap[redirectUrl])
     }
-    setIsSynapseURL(isRedirectToSynapse)
   }, [redirectUrl])
+
+  React.useEffect(() => {
+    if (redirectUrl && !countdownSeconds) {
+      setCountdownSeconds(isSynapseURL(redirectUrl) ? 10 : 30)
+    }
+  }, [countdownSeconds, redirectUrl])
+
   const onClose = () => {
     // cancel the redirect
     onCancelRedirect()
     // and reset countdown seconds
-    setCountdownSeconds(isSynapseURL ? 10 : 30)
+    setCountdownSeconds(undefined)
   }
   
   return ( 
     <>
-      {redirectUrl && (<Modal
-            animation={false}
-            show={true}
-            // @ts-ignore
-            onHide={onClose}
-            backdrop='static'
-            className='RedirectDialog'
+      {redirectUrl && (<Dialog
+            open={true}
+            onClose={onClose}
+            className="RedirectDialog"
+            PaperProps={{sx: {padding: 0}}}
           >
-            <Modal.Header
-              // @ts-ignore
-              onHide={onClose}
-              closeButton={true}
-            ></Modal.Header>
-            <Modal.Body>
+            <DialogContent>
               <div className="redirect-dialog-body">
-                <Typography variant="headline1" className='redirect-title'>Hang tight!</Typography>
+                <Typography variant="headline1" sx={{padding: '50px 0px 20px 0px'}}>Hang tight!</Typography>
                 {redirectInstructions}
                 <p>
                 You will be redirected in <strong>{countdownSeconds} seconds</strong>
@@ -79,7 +85,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
                 </div>
                 </p>
               </div>
-              {isSynapseURL && <div className="redirect-dialog-footer">
+              {isSynapseURL(redirectUrl) && <div className="redirect-dialog-footer">
                 <img
                   className="synapse-logo-image"
                   src="https://www.synapse.org/images/logo.svg"
@@ -92,8 +98,8 @@ const RedirectDialog = (props: RedirectDialogProps) => {
                   alt=""
                 />
               </div>}
-            </Modal.Body>
-          </Modal>)}
+            </DialogContent>
+          </Dialog>)}
     </>
   )
 }
