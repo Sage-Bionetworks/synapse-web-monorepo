@@ -66,12 +66,17 @@ const RedirectDialog = (props: RedirectDialogProps) => {
     }
   }, [redirectUrl])
 
+  React.useEffect(() => {
+    if (redirectUrl && !countdownSeconds) {
+      setCountdownSeconds(isSynapseURL(redirectUrl) ? 10 : 30)
+    }
+  }, [countdownSeconds, redirectUrl])
 
   const onClose = () => {
     // cancel the redirect
     onCancelRedirect()
     // and reset countdown seconds
-    setCountdownSeconds(isSynapseURL(redirectUrl) ? 10 : 30)
+    setCountdownSeconds(undefined)
   }
   
   return ( 
