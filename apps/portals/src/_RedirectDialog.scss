@@ -11,13 +11,6 @@ html:not(#synapse\.org) .RedirectDialog {
   }
   .redirect-dialog-body {
     padding: 0px 45px 45px 45px;
-    h4 {
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
-    button {
-      padding: 0px;
-    }
   }
   .links-container {
     display: flex;

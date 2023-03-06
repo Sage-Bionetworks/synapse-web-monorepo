@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {
   Dialog,
-  DialogContent
+  DialogContent,
+  Button
 } from '@mui/material'
 import { Typography } from 'synapse-react-client'
 
@@ -9,12 +10,26 @@ export type RedirectDialogProps = {
   onCancelRedirect: ()=>void
   redirectUrl?: string
 }
+
 export const redirectInstructionsMap = {
-  'https://sites.google.com/sagebase.org/mc2intranet/home?authuser=0' : <p>
-    You are currently being redirected to the Multi-Consortia Coordinating (MC2) Center Intranet. The MC2 Center Intranet is a protected website containing MC2 Center resources. If you are not a participating member of the MC2 Center community, you will not be able to access the intranet.
-    Feel free to contact the MC2 Center to learn more or if you have any questions. <a target="_blank" rel="noreferrer" href="https://help.cancercomplexity.synapse.org/doc/contact-us">Contact Us</a>
-  </p>
+  'https://sites.google.com/sagebase.org/mc2intranet/home?authuser=0' : 
+  <>
+    <Typography variant="body1" sx={{paddingBottom: '20px'}}>
+      <strong>You are currently being redirected to the Multi-Consortia Coordinating (MC2) Center Intranet.</strong>
+    </Typography>
+    <Typography variant="body1" sx={{paddingBottom: '20px'}}>
+      The MC2 Center Intranet is a protected website containing MC2 Center resources. If you are not a participating member of the MC2 Center community, you will not be able to access the intranet.
+    </Typography>
+    <Typography variant="body1" sx={{paddingBottom: '20px'}}>
+      Feel free to <a target="_blank" rel="noreferrer" href="https://help.cancercomplexity.synapse.org/doc/contact-us">contact the MC2 Center</a> to learn more, or if you have any questions.
+    </Typography>
+  </>
 }
+
+export const synapseRedirectInstructions =
+  <Typography variant="body1" sx={{paddingBottom: '20px'}}>
+    <strong>You are being redirected to Synapse to view this data.</strong>
+  </Typography>
 
 const isSynapseURL = (url:string) => {
   if (!url) return false
@@ -45,7 +60,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
   React.useEffect(() => {
     if (redirectUrl) {
       const isRedirectToSynapse = isSynapseURL(redirectUrl)
-      setRedirectInstructions(isRedirectToSynapse ? <p>You are being redirected to Synapse to view this data.</p> : 
+      setRedirectInstructions(isRedirectToSynapse ? synapseRedirectInstructions : 
         redirectInstructionsMap[redirectUrl])
     }
   }, [redirectUrl])
@@ -73,15 +88,17 @@ const RedirectDialog = (props: RedirectDialogProps) => {
           >
             <DialogContent>
               <div className="redirect-dialog-body">
-                <Typography variant="headline1" sx={{padding: '50px 0px 20px 0px'}}>Hang tight!</Typography>
+                <Typography variant="headline1" sx={{padding: '50px 0px 20px 0px'}}>Redirecting</Typography>
                 {redirectInstructions}
                 <p>
-                You will be redirected in <strong>{countdownSeconds} seconds</strong>
+                <Typography variant="body1" sx={{paddingBottom: '20px'}}>
+                  You will be redirected in <strong>{countdownSeconds} seconds</strong>
+                </Typography>
                 <div className="links-container">
-                  <button className="btn btn-link" onClick={() => {
+                  <Button variant="contained" onClick={() => {
                     window.location.assign(redirectUrl!)
-                  }}>Go to the site now</button>
-                  <button className="btn btn-link" onClick={onClose}>Stay in the Portal</button>
+                  }}>Go to the site now</Button>
+                  <Button variant="outlined" onClick={onClose}>Stay in the Portal</Button>
                 </div>
                 </p>
               </div>
