@@ -1,6 +1,6 @@
 // Import the theme css
 @use './style/variables' as Portal;
-html:not(#synapse\.org) .SynapseRedirectDialog {
+html:not(#synapse\.org) .RedirectDialog {
   .modal-content,
   .modal-body {
     padding: 0px;
