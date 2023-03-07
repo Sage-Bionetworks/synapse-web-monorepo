@@ -56,6 +56,12 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
           authenticator app.
         </Typography>
       )}
+      {step === 'RECOVERY_CODE' && (
+        <Typography variant={'body1'} sx={{ my: 2 }} align={'center'}>
+          Enter a one-time backup code. Your backup code is a 16 digit code,
+          with groups of 4 letters or numbers separated by hyphens.
+        </Typography>
+      )}
       <LoginForm
         step={step}
         onStepChange={onStepChange}

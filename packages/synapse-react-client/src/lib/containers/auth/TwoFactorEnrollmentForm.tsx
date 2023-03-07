@@ -129,9 +129,10 @@ export default function TwoFactorEnrollmentForm(
             log in using your Google{' '}
             {/* Remove conditionality when NIH RAS login is supported */}
             {false && 'or NIH RAS'} account, you may need to use 2FA as part of
-            those processes as well.
+            {/*those processes*/}
+            that process as well.
             {TWO_FACTOR_DOCS_LINK.length > 0 && (
-              //   Remove conditionality when docs are ready
+              // Remove conditionality when docs are ready
               <>
                 {' '}
                 <Link href={TWO_FACTOR_DOCS_LINK}>Learn more about 2FA</Link>.
