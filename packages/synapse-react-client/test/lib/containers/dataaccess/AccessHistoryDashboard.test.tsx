@@ -163,7 +163,6 @@ describe('AccessHistoryDashboard tests', () => {
     // Pre-configure to not be in ACT
     const isACTMember = false
     const isARReviewer = true
-    // configureUserBundleMock(isACTMember, isARReviewer)
     server.use(getUserBundleHandler(isACTMember, isARReviewer))
 
     renderComponent()
