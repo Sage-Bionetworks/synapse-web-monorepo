@@ -1,6 +1,6 @@
 // Import the theme css
 @use './style/variables' as Portal;
-html:not(#synapse\.org) .SynapseRedirectDialog {
+html:not(#synapse\.org) .RedirectDialog {
   .modal-content,
   .modal-body {
     padding: 0px;
@@ -9,18 +9,8 @@ html:not(#synapse\.org) .SynapseRedirectDialog {
     padding: 10px 15px 0px 0px;
     border-bottom: none;
   }
-  .redirect-title {
-    padding: 20px 0px;
-  }
   .redirect-dialog-body {
     padding: 0px 45px 45px 45px;
-    h4 {
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
-    button {
-      padding: 0px;
-    }
   }
   .links-container {
     display: flex;

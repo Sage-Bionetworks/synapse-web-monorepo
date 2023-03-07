@@ -1,4 +1,4 @@
-import SynapseRedirectDialog from 'portal-components/SynapseRedirectDialog'
+import RedirectDialog, {redirectInstructionsMap} from 'portal-components/RedirectDialog'
 import React, {
   SetStateAction,
   useCallback,
@@ -120,7 +120,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   const [showLoginDialog, setShowLoginDialog] = useState(false)
   const [twoFaErrorResponse, setTwoFaErrorResponse] =
     useState<TwoFactorAuthErrorResponse>()
-  const [synapseRedirectUrl, setSynapseRedirectUrl] = useState<
+  const [redirectUrl, setRedirectUrl] = useState<
     string | undefined
   >(undefined)
   const [isFramed, setIsFramed] = useState(false)
@@ -165,11 +165,11 @@ function AppInitializer(props: { children?: React.ReactNode }) {
           anchorElement.text === DOWNLOAD_FILES_MENU_TEXT
         if (anchorElement.href) {
           const { hostname } = new URL(anchorElement.href)
-          if (hostname.toLowerCase() === 'www.synapse.org') {
+          if (hostname.toLowerCase() === 'www.synapse.org' || redirectInstructionsMap[anchorElement.href]) {
             // && anchorElement.target !== '_blank') {  // should we skip the dialog if opening in a new window?
             ev.preventDefault()
-            if (!synapseRedirectUrl) {
-              setSynapseRedirectUrl(anchorElement.href)
+            if (!redirectUrl) {
+              setRedirectUrl(anchorElement.href)
             }
           }
         }
@@ -294,11 +294,11 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       }}
     >
       {!isFramed && clonedChildren}
-      <SynapseRedirectDialog
+      <RedirectDialog
         onCancelRedirect={() => {
-          setSynapseRedirectUrl(undefined)
+          setRedirectUrl(undefined)
         }}
-        synapseRedirectUrl={synapseRedirectUrl}
+        redirectUrl={redirectUrl}
       />
     </SynapseContextProvider>
   )

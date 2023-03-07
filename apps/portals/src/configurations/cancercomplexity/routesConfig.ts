@@ -631,6 +631,14 @@ const routes: GenericRoute[] = [
   },
   {
     exact: true,
+    displayName: 'Intranet',
+    path: undefined,
+    target: '_blank',
+    link: 'https://sites.google.com/sagebase.org/mc2intranet/home?authuser=0',
+    synapseConfigArray: [],
+  },
+  {
+    exact: true,
     displayName: 'News',
     path: undefined,
     target: '_blank',
