@@ -1,403 +1,439 @@
-import { WarningTwoTone } from "@material-ui/icons";
-import { useOAuthAppContext } from "AppInitializer";
-import { OAuthClientError } from "OAuthClientError";
-import * as React from "react";
-import { useEffect, useState, useRef, useCallback } from "react";
-import { SynapseClient, SynapseConstants } from "synapse-react-client";
-import Login from "synapse-react-client/dist/containers/Login";
-import UserCard from "synapse-react-client/dist/containers/UserCard";
-import { useGetCurrentUserProfile } from "synapse-react-client/dist/utils/hooks/SynapseAPI";
-import { SynapseClientError } from "synapse-react-client/dist/utils/SynapseClientError";
-import { OAuthConsentGrantedResponse } from "synapse-react-client/dist/utils/synapseTypes";
-import { AccessCodeResponse } from "synapse-react-client/dist/utils/synapseTypes/AccessCodeResponse";
-import { OAuthClientPublic } from "synapse-react-client/dist/utils/synapseTypes/OAuthClientPublic";
-import { OIDCAuthorizationRequest } from "synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest";
-import { OIDCAuthorizationRequestDescription } from "synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequestDescription";
-import { getStateParam, getURLParam, handleErrorRedirect } from "./URLUtils";
+import { WarningTwoTone } from '@material-ui/icons'
+import { useOAuthAppContext } from 'AppInitializer'
+import { OAuthClientError } from 'OAuthClientError'
+import * as React from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
+import {
+  SynapseClient,
+  SynapseConstants,
+  Typography,
+} from 'synapse-react-client'
+import StandaloneLoginForm from 'synapse-react-client/dist/containers/auth/StandaloneLoginForm'
+import { StyledOuterContainer } from 'synapse-react-client/dist/components/styled/LeftRightPanel'
+import UserCard from 'synapse-react-client/dist/containers/UserCard'
+import { useGetCurrentUserProfile } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
+import { SynapseClientError } from 'synapse-react-client/dist/utils/SynapseClientError'
+import { OAuthConsentGrantedResponse } from 'synapse-react-client/dist/utils/synapseTypes'
+import { AccessCodeResponse } from 'synapse-react-client/dist/utils/synapseTypes/AccessCodeResponse'
+import { OAuthClientPublic } from 'synapse-react-client/dist/utils/synapseTypes/OAuthClientPublic'
+import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest'
+import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequestDescription'
+import { getStateParam, getURLParam, handleErrorRedirect } from './URLUtils'
+import { Paper, Button, Link } from '@mui/material'
+import { StyledInnerContainer } from 'StyledInnerContainer'
 
 export const OAuth2Form = () => {
-  const isMounted = useRef(true);
+  const isMounted = useRef(true)
 
-  const { accessToken, setAccessToken } = useOAuthAppContext();
-
-  const [error, setError] = useState<any>();
+  const { accessToken, setAccessToken } = useOAuthAppContext()
+  const [isSessionEstablished, setIsSessionEstablished] =
+    React.useState<boolean>(false)
+  const [error, setError] = useState<any>()
 
   const onError = useCallback(
     (error: Error | OAuthClientError | SynapseClientError) => {
-      debugger;
+      debugger
       if (error instanceof SynapseClientError && error.status === 401) {
         // invalid token, so clear it
-        SynapseClient.signOut(() => {
-          setAccessToken(undefined);
-        });
+        SynapseClient.signOut().then(() => {
+          setAccessToken(undefined)
+        })
       } else {
-        handleErrorRedirect(error);
-        setError(error);
+        handleErrorRedirect(error)
+        setError(error)
       }
     },
-    [setAccessToken]
-  );
+    [setAccessToken],
+  )
 
   // In addition to fetching the current user profile, the success of this request will determine if the current access token is valid.
   const { data: profile } = useGetCurrentUserProfile({
     enabled: !!accessToken,
     onError,
-  });
+  })
 
   if (profile?.profilePicureFileHandleId) {
-    profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`;
+    profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
   }
 
   const [oidcRequestDescription, setOidcRequestDescription] =
-    useState<OIDCAuthorizationRequestDescription>();
-  const [oauthClientInfo, setOauthClientInfo] = useState<OAuthClientPublic>();
-  const [redirectURL, setRedirectURL] = useState<string>();
-
-  const [isConsenting, setIsConsenting] = useState<boolean>(false);
+    useState<OIDCAuthorizationRequestDescription>()
+  const [oauthClientInfo, setOauthClientInfo] = useState<OAuthClientPublic>()
+  const [redirectURL, setRedirectURL] = useState<string>()
+  const [isPreviousAuthCheckComplete, setIsPreviousAuthCheckComplete] =
+    useState<boolean>(false)
+  const [isConsenting, setIsConsenting] = useState<boolean>(false)
 
   useEffect(() => {
-    isMounted.current = true;
+    isMounted.current = true
     return () => {
-      isMounted.current = false;
-    };
-  });
+      isMounted.current = false
+    }
+  })
+
+  useEffect(() => {
+    const getSession = async () => {
+      try {
+        const newAccessToken = await SynapseClient.getAccessTokenFromCookie()
+        if (isMounted.current) {
+          setAccessToken(newAccessToken)
+        }
+      } catch (e) {
+        console.error('Error on getSession: ', e)
+        // intentionally calling sign out because the token could be stale so we want
+        // the stored session to be cleared out.
+        await SynapseClient.signOut().then(() => {
+          setAccessToken(undefined)
+        })
+      }
+    }
+    getSession()
+  }, [isSessionEstablished, setAccessToken])
 
   const sendGTagEvent = (event: string) => {
     // send event to Google Analytics
     // (casting to 'any' type to get compile-time access to gtag())
-    const windowAny: any = window;
-    const gtag = windowAny.gtag;
+    const windowAny: any = window
+    const gtag = windowAny.gtag
     if (gtag) {
-      gtag("event", event, {
-        event_category: "SynapseOAUTH",
-      });
+      gtag('event', event, {
+        event_category: 'SynapseOAUTH',
+      })
     }
-  };
+  }
 
   const onConsent = useCallback(() => {
     if (!isConsenting) {
-      setIsConsenting(true);
+      setIsConsenting(true)
     }
-  }, [isConsenting]);
+  }, [isConsenting])
 
   useEffect(() => {
-    let isSubscribed = true;
+    let isSubscribed = true
     if (isConsenting) {
-      sendGTagEvent("UserConsented");
+      sendGTagEvent('UserConsented')
       let request: OIDCAuthorizationRequest =
-        getOIDCAuthorizationRequestFromSearchParams();
+        getOIDCAuthorizationRequestFromSearchParams()
       SynapseClient.consentToOAuth2Request(request, accessToken)
         .then((accessCode: AccessCodeResponse) => {
           if (isSubscribed) {
             if (!accessCode || !accessCode.access_code) {
               onError(
                 new Error(
-                  "Something went wrong - the access code is missing from the Synapse call."
-                )
-              );
-              return;
+                  'Something went wrong - the access code is missing from the Synapse call.',
+                ),
+              )
+              return
             }
             // done!  redirect with access code.
-            const redirectUri = getURLParam("redirect_uri");
+            const redirectUri = getURLParam('redirect_uri')
             setRedirectURL(
               `${redirectUri}?${getStateParam()}code=${encodeURIComponent(
-                accessCode.access_code
-              )}`
-            );
+                accessCode.access_code,
+              )}`,
+            )
           }
         })
-        .catch((_err) => {
-          onError(_err);
-        });
+        .catch(_err => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          onError(_err)
+        })
     }
     return () => {
-      isSubscribed = false;
-    };
-  }, [accessToken, isConsenting, onError]);
+      isSubscribed = false
+    }
+  }, [accessToken, isConsenting, onError])
 
   const onGoBack = () => {
-    window.history.back();
-  };
+    window.history.back()
+  }
 
   const onDeny = () => {
-    let redirect: string;
-    sendGTagEvent("UserDeniedConsent");
+    let redirect: string
+    sendGTagEvent('UserDeniedConsent')
     if (oauthClientInfo && oauthClientInfo.client_uri) {
-      redirect = oauthClientInfo.client_uri;
+      redirect = oauthClientInfo.client_uri
     } else {
-      redirect = getURLParam("redirect_uri")!;
+      redirect = getURLParam('redirect_uri')!
     }
-    setRedirectURL(redirect);
-  };
+    setRedirectURL(redirect)
+  }
 
   // if user has already consented to this client request, no need to ask again
   useEffect(() => {
     const getHasAlreadyConsented = () => {
-      const code = getURLParam("code");
-      if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
+      const code = getURLParam('code')
+      if (code) return // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
       const request: OIDCAuthorizationRequest =
-        getOIDCAuthorizationRequestFromSearchParams();
+        getOIDCAuthorizationRequestFromSearchParams()
       SynapseClient.hasUserAuthorizedOAuthClient(request, accessToken!)
         .then((consentGrantedResponse: OAuthConsentGrantedResponse) => {
-          const prompt = getURLParam("prompt");
+          const prompt = getURLParam('prompt')
           if (consentGrantedResponse.granted) {
             // SWC-5285: before auto-consenting, make sure we're allowed to auto-consent.
             // Only allow if prompt is undefined or set to none.
-            if (!prompt || prompt !== "consent") {
+            if (!prompt || prompt !== 'consent') {
               // auto-consent!
-              onConsent();
+              onConsent()
             } //else if prompt is defined and another value ('login', 'consent', or 'select_account') then always prompt!
-          } else if (prompt && prompt === "none") {
+          } else if (prompt && prompt === 'none') {
             // granted === false and prompt === none
             onError(
               new OAuthClientError(
-                "consent_required",
-                "Current user has not previously granted permission, and prompt was set to none"
-              )
-            );
+                'consent_required',
+                'Current user has not previously granted permission, and prompt was set to none',
+              ),
+            )
           }
+          setIsPreviousAuthCheckComplete(true)
         })
-        .catch((_err) => {
-          onError(_err);
-        });
-    };
-    if (profile && !error) {
-      getHasAlreadyConsented();
+        .catch(_err => {
+          setIsPreviousAuthCheckComplete(true)
+          onError(_err)
+        })
     }
-  }, [profile, error, accessToken, onConsent, onError]);
+    if (profile && !error) {
+      getHasAlreadyConsented()
+    }
+  }, [profile, error, accessToken, onConsent, onError])
 
   const getOAuth2RequestDescription = () => {
     if (!oidcRequestDescription && !error) {
-      const code = getURLParam("code");
-      if (code) return; // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
+      const code = getURLParam('code')
+      if (code) return // we're in the middle of a SSO, do not attempt to get OAuth2RequestDescription yet
 
       let request: OIDCAuthorizationRequest =
-        getOIDCAuthorizationRequestFromSearchParams();
+        getOIDCAuthorizationRequestFromSearchParams()
       SynapseClient.getOAuth2RequestDescription(request)
         .then((oidcRequestDescription: OIDCAuthorizationRequestDescription) => {
           if (isMounted.current) {
-            sendGTagEvent("SynapseOAuthClientRequestDescriptionLoaded");
-            setOidcRequestDescription(oidcRequestDescription);
+            sendGTagEvent('SynapseOAuthClientRequestDescriptionLoaded')
+            setOidcRequestDescription(oidcRequestDescription)
 
             // if we were able to get the oidc request description, also check for params that this web app does not support
             // sorry, we don't support JWT in the url query params today
             // https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests
-            const requestObject = getURLParam("request");
-            const requestUri = getURLParam("request_uri");
+            const requestObject = getURLParam('request')
+            const requestUri = getURLParam('request_uri')
             if (requestObject) {
-              handleErrorRedirect(
-                new OAuthClientError("request_not_supported")
-              );
+              handleErrorRedirect(new OAuthClientError('request_not_supported'))
             }
             if (requestUri) {
               handleErrorRedirect(
-                new OAuthClientError("request_uri_not_supported")
-              );
+                new OAuthClientError('request_uri_not_supported'),
+              )
             }
             // sorry, we don't support registration (yet?)
             // https://openid.net/specs/openid-connect-core-1_0.html#RegistrationParameter
-            const registration = getURLParam("registration");
+            const registration = getURLParam('registration')
             if (registration) {
               handleErrorRedirect(
-                new OAuthClientError("registration_not_supported")
-              );
+                new OAuthClientError('registration_not_supported'),
+              )
             }
           }
         })
-        .catch((_err) => {
-          onError(_err);
-        });
+        .catch(_err => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          onError(_err)
+        })
     }
-  };
+  }
 
   const getOIDCAuthorizationRequestFromSearchParams = () => {
-    const claimsString: string = getURLParam("claims")!;
-    let authRequest: OIDCAuthorizationRequest = {
-      clientId: getURLParam("client_id")!,
-      scope: getURLParam("scope")!,
-      responseType: getURLParam("response_type")!,
-      redirectUri: getURLParam("redirect_uri")!,
-      nonce: getURLParam("nonce"),
-    };
+    const claimsString: string = getURLParam('claims')!
+    const authRequest: OIDCAuthorizationRequest = {
+      clientId: getURLParam('client_id')!,
+      scope: getURLParam('scope')!,
+      responseType: getURLParam('response_type')!,
+      redirectUri: getURLParam('redirect_uri')!,
+      nonce: getURLParam('nonce'),
+    }
     if (claimsString) {
-      authRequest.claims = JSON.parse(claimsString);
+      authRequest.claims = JSON.parse(claimsString)
     }
-    return authRequest;
-  };
-
-  const getSession = async () => {
-    try {
-      const newAccessToken = await SynapseClient.getAccessTokenFromCookie();
-      if (isMounted.current) {
-        setAccessToken(newAccessToken);
-      }
-    } catch (e) {
-      console.error("Error on getSession: ", e);
-      // intentionally calling sign out because the token could be stale so we want
-      // the stored session to be cleared out.
-      await SynapseClient.signOut(() => {
-        setAccessToken(undefined);
-      });
-    }
-  };
+    return authRequest
+  }
 
   //init
   useEffect(() => {
     const getOauthClientInfo = () => {
       if (!oauthClientInfo && !error) {
-        const code = getURLParam("code");
-        if (code) return; // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
+        const code = getURLParam('code')
+        if (code) return // we're in the middle of a SSO, do not attempt to get OAuthClient info yet
 
-        const clientId = getURLParam("client_id");
+        const clientId = getURLParam('client_id')
         if (!clientId) {
-          onError(new Error("Synapse OAuth client_id is required"));
-          return;
+          onError(new Error('Synapse OAuth client_id is required'))
+          return
         }
         SynapseClient.getOAuth2Client(clientId)
           .then((oauthClientInfo: OAuthClientPublic) => {
             if (oauthClientInfo.verified) {
-              getOAuth2RequestDescription();
+              getOAuth2RequestDescription()
             }
-            setOauthClientInfo(oauthClientInfo);
+            setOauthClientInfo(oauthClientInfo)
           })
-          .catch((_err) => {
-            onError(_err);
-          });
+          .catch(_err => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            onError(_err)
+          })
       }
-    };
+    }
 
-    getOauthClientInfo();
-  }, []);
+    getOauthClientInfo()
+  }, [])
 
   useEffect(() => {
     if (redirectURL) {
-      window.location.replace(redirectURL);
+      window.location.replace(redirectURL)
     }
-  }, [redirectURL]);
+  }, [redirectURL])
 
   const loadingSpinner = (
-    <div style={{ textAlign: "center" }}>
-      <div style={{ marginTop: "50px" }}>
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ marginTop: '50px' }}>
         {redirectURL && oauthClientInfo && (
           <p>Waiting for {oauthClientInfo.client_name}...</p>
         )}
         <span
           style={{
-            marginLeft: "10px",
-            backgroundSize: "40px 40px",
-            width: "40px",
-            height: "40px",
+            marginLeft: '10px',
+            backgroundSize: '40px 40px',
+            width: '40px',
+            height: '40px',
           }}
-          className={"spinner"}
+          className={'spinner'}
         />
       </div>
     </div>
-  );
+  )
 
   return (
     <div>
       {!error && oauthClientInfo && !oauthClientInfo.verified && (
-        <>
-          <div className="BlueBackground">
-            <div className="ComponentWrapper">
-              <WarningTwoTone
-                className="text-danger"
-                style={{
-                  marginLeft: "5px",
-                  marginBottom: "15px",
-                  fontSize: "40px",
-                }}
-              />
-              <h3>This app isn&apos;t verified</h3>
-              <p>This app has not been verified by Sage Bionetworks yet.</p>
-              <div className="text-align-right margin-top-40">
-                <button onClick={onGoBack} className="btn btn-primary">
-                  Back to Safety
-                </button>
-              </div>
+        <StyledOuterContainer>
+          <StyledInnerContainer>
+            <WarningTwoTone
+              className="text-danger"
+              style={{
+                marginLeft: '5px',
+                marginBottom: '15px',
+                fontSize: '40px',
+              }}
+            />
+            <h3>This app isn&apos;t verified</h3>
+            <p>This app has not been verified by Sage Bionetworks yet.</p>
+            <div className="text-align-right margin-top-40">
+              <button onClick={onGoBack} className="btn btn-primary">
+                Back to Safety
+              </button>
             </div>
-          </div>
-        </>
+          </StyledInnerContainer>
+        </StyledOuterContainer>
       )}
       {!redirectURL &&
         !error &&
+        isPreviousAuthCheckComplete &&
         accessToken &&
+        !isConsenting &&
         oauthClientInfo &&
         oauthClientInfo.verified &&
         oidcRequestDescription && (
-          <>
-            <div className="BlueBackground">
-              <div className="ComponentWrapper">
-                <UserCard
-                  userProfile={profile}
-                  size={SynapseConstants.SMALL_USER_CARD}
-                />
-                <h4>
-                  <strong>{oauthClientInfo.client_name}</strong> requests
-                  permission:
-                </h4>
-                {oidcRequestDescription && (
-                  <ul>
-                    {oidcRequestDescription.scope.map((scope, index) => {
-                      return <li key={index}>{scope}</li>;
-                    })}
-                  </ul>
-                )}
-                <div className="margin-top-20">
-                  <p>
-                    By clicking &quote;Allow&quote;, you allow this app to use
-                    your information in accordance with their{" "}
-                    <a
-                      href={oauthClientInfo.tos_uri}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      terms of service
-                    </a>{" "}
-                    and{" "}
-                    <a
-                      href={oauthClientInfo.policy_uri}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      privacy policy
-                    </a>
-                    .
-                  </p>
-                </div>
-                <div className="text-align-right margin-top-40">
-                  <button
-                    onClick={onDeny}
-                    className="btn btn-default margin-right-5"
+          <StyledOuterContainer>
+            <StyledInnerContainer>
+              <UserCard
+                userProfile={profile}
+                size={SynapseConstants.SMALL_USER_CARD}
+              />
+              <Typography
+                variant="headline3"
+                sx={{ paddingTop: '25px', paddingBottom: '25px' }}
+              >
+                <strong>{oauthClientInfo.client_name}</strong> requests
+                permission:
+              </Typography>
+              {oidcRequestDescription && (
+                <ul>
+                  {oidcRequestDescription.scope.map((scope, index) => {
+                    return (
+                      <li key={index}>
+                        <Typography variant="body1">{scope}</Typography>
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
+              <div className="margin-top-20">
+                <Typography variant="body1">
+                  By clicking <strong>Allow</strong>, you allow this app to use
+                  your information in accordance with their{' '}
+                  <Link
+                    href={oauthClientInfo.tos_uri}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    Deny
-                  </button>
-                  <button onClick={onConsent} className="btn btn-primary">
-                    Allow
-                  </button>
-                </div>
+                    terms of service
+                  </Link>{' '}
+                  and{' '}
+                  <Link
+                    href={oauthClientInfo.policy_uri}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    privacy policy
+                  </Link>
+                  .
+                </Typography>
               </div>
-            </div>
-          </>
+              <div className="text-align-right margin-top-40">
+                <Button
+                  variant="outlined"
+                  onClick={onDeny}
+                  sx={{ marginRight: '10px' }}
+                >
+                  Deny
+                </Button>
+                <Button variant="contained" color="primary" onClick={onConsent}>
+                  Allow
+                </Button>
+              </div>
+            </StyledInnerContainer>
+          </StyledOuterContainer>
         )}
-      {!error && !oauthClientInfo && !oidcRequestDescription && loadingSpinner}
-      {redirectURL && oauthClientInfo && loadingSpinner}
+      {((!error && !oauthClientInfo && !oidcRequestDescription) ||
+        (redirectURL && oauthClientInfo) ||
+        (profile && !isPreviousAuthCheckComplete)) &&
+        loadingSpinner}
       {!redirectURL &&
         !error &&
         !accessToken &&
         oauthClientInfo &&
         oauthClientInfo.verified &&
         oidcRequestDescription && (
-          <div className="BlueBackground">
-            <Login sessionCallback={getSession} />
-          </div>
+          <StyledOuterContainer>
+            <Paper sx={{ width: '400px', padding: '30px', margin: '0 auto' }}>
+              <StandaloneLoginForm
+                sessionCallback={() => {
+                  setIsSessionEstablished(true)
+                }}
+                onBeginOAuthSignIn={() => {
+                  // save current route (so that we can go back here after SSO)
+                  localStorage.setItem(
+                    'after-sso-login-url',
+                    window.location.href,
+                  )
+                }}
+              />
+            </Paper>
+          </StyledOuterContainer>
         )}
       {error && (
         <div className="alert alert-danger">
-          {error.name || "Error"} : {error.reason}
+          {error.name || 'Error'} : {error.reason}
           {error.message}
         </div>
       )}
     </div>
-  );
-};
+  )
+}
