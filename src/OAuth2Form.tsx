@@ -1,4 +1,3 @@
-import { WarningTwoTone } from '@material-ui/icons'
 import { useOAuthAppContext } from 'AppInitializer'
 import { OAuthClientError } from 'OAuthClientError'
 import * as React from 'react'
@@ -21,6 +20,7 @@ import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/u
 import { getStateParam, getURLParam, handleErrorRedirect } from './URLUtils'
 import { Paper, Button, Link } from '@mui/material'
 import { StyledInnerContainer } from 'StyledInnerContainer'
+import FullWidthAlert from 'synapse-react-client/dist/containers/FullWidthAlert'
 
 export const OAuth2Form = () => {
   const isMounted = useRef(true)
@@ -313,23 +313,16 @@ export const OAuth2Form = () => {
     <div>
       {!error && oauthClientInfo && !oauthClientInfo.verified && (
         <StyledOuterContainer>
-          <StyledInnerContainer>
-            <WarningTwoTone
-              className="text-danger"
-              style={{
-                marginLeft: '5px',
-                marginBottom: '15px',
-                fontSize: '40px',
-              }}
-            />
-            <h3>This app isn&apos;t verified</h3>
-            <p>This app has not been verified by Sage Bionetworks yet.</p>
-            <div className="text-align-right margin-top-40">
-              <button onClick={onGoBack} className="btn btn-primary">
-                Back to Safety
-              </button>
-            </div>
-          </StyledInnerContainer>
+          <FullWidthAlert
+            variant="warning"
+            title="This app is not verified"
+            description="This app has not been verified by Sage Bionetworks yet."
+            primaryButtonConfig={{
+              text: 'Back to Safety',
+              onClick: onGoBack,
+            }}
+            isGlobal={false}
+          />
         </StyledOuterContainer>
       )}
       {!redirectURL &&
@@ -429,10 +422,14 @@ export const OAuth2Form = () => {
           </StyledOuterContainer>
         )}
       {error && (
-        <div className="alert alert-danger">
-          {error.name || 'Error'} : {error.reason}
-          {error.message}
-        </div>
+        <StyledOuterContainer>
+          <FullWidthAlert
+            variant="danger"
+            title={error.name || 'Error'}
+            description={`${error.reason} : ${error.message}`}
+            isGlobal={false}
+          />
+        </StyledOuterContainer>
       )}
     </div>
   )
