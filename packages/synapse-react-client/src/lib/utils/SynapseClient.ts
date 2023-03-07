@@ -296,6 +296,7 @@ import {
   TotpSecretActivationRequest,
   TwoFactorAuthStatus,
 } from './synapseTypes/TotpSecret'
+import { TwoFactorAuthRecoveryCodes } from './synapseTypes/TwoFactorAuthRecoveryCodes'
 
 const cookies = new UniversalCookies()
 
@@ -913,6 +914,25 @@ export function complete2FAEnrollment(
   return doPost<TwoFactorAuthStatus>(
     '/auth/v1/2fa',
     request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Generates a new set of single use recovery codes that are associated with the two factor authentication of the user.
+ * The recovery codes are single use and can be used to login with 2FA in place of an TOTP. In order to use a recovery
+ * code the body of the login request should specify as the otpType RECOVERY_CODE and the otpCode should match one of
+ * the generated recovery codes.
+ *
+ * Note that invoking this endpoint will replace existing recovery codes.
+ *
+ * https://rest-docs.synapse.org/rest/POST/2fa/recoveryCodes.html
+ */
+export function createRecoveryCodes(accessToken?: string) {
+  return doPost<TwoFactorAuthRecoveryCodes>(
+    '/auth/v1/2fa/recoveryCodes',
+    null,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

@@ -8,6 +8,18 @@ const defaultMuiTheme: ThemeOptions = {
   typography: typographyOptions,
   palette: palette,
   components: {
+    MuiAlert: {
+      styleOverrides: {
+        root: ({ ownerState, theme }) => ({
+          borderRadius: '0px',
+          fontSize: '16px',
+          borderLeft: `10px solid ${
+            // The default severity is 'success'.
+            theme.palette[ownerState.severity || 'success']['main']
+          }`,
+        }),
+      },
+    },
     MuiLink: linkTheme,
     MuiButtonBase: {
       defaultProps: {
