@@ -11,29 +11,37 @@ import {
 import { UserBundle } from '../../../../src/lib/utils/synapseTypes'
 import { rest, server } from '../../../../mocks/msw/server'
 import { MOCK_USER_ID } from '../../../../mocks/user/mock_user_profile'
+import * as AccessRequirementDashboardModule from '../../../../src/lib/containers/dataaccess/AccessRequirementDashboard'
+import * as AccessRequestSubmissionDashboardModule from '../../../../src/lib/containers/dataaccess/AccessSubmissionDashboard'
+import * as UserAccessHistoryDashboardModule from '../../../../src/lib/containers/dataaccess/AccessHistoryDashboard'
 
 const AR_DASHBOARD_TEST_ID = 'AccessRequirementDashboardTestId'
 const SUBMISSION_DASHBOARD_TEST_ID = 'SubmissionDashboardTestId'
+const HISTORY_DASHBOARD_TEST_ID = 'HistoryDashboardTestId'
 
-jest.mock(
-  '../../../../src/lib/containers/dataaccess/AccessRequirementDashboard',
-  () => ({
-    AccessRequirementDashboard: jest.fn().mockImplementation(() => {
-      return <div data-testid={AR_DASHBOARD_TEST_ID}></div>
-    }),
-  }),
-)
-jest.mock(
-  '../../../../src/lib/containers/AccessRequestSubmissionTable',
-  () => ({
-    AccessRequestSubmissionTable: jest.fn().mockImplementation(() => {
-      return <div data-testid={SUBMISSION_DASHBOARD_TEST_ID}></div>
-    }),
-  }),
-)
+jest
+  .spyOn(AccessRequirementDashboardModule, 'AccessRequirementDashboard')
+  .mockImplementation(() => {
+    return <div data-testid={AR_DASHBOARD_TEST_ID}></div>
+  })
+
+jest
+  .spyOn(
+    AccessRequestSubmissionDashboardModule,
+    'DataAccessSubmissionDashboard',
+  )
+  .mockImplementation(() => {
+    return <div data-testid={SUBMISSION_DASHBOARD_TEST_ID}></div>
+  })
+
+jest
+  .spyOn(UserAccessHistoryDashboardModule, 'UserHistoryDashboard')
+  .mockImplementation(() => {
+    return <div data-testid={HISTORY_DASHBOARD_TEST_ID}></div>
+  })
 
 function renderComponent() {
-  return render(<ReviewerDashboard />, {
+  return render(<ReviewerDashboard routerBaseName={'/'} />, {
     wrapper: createWrapper(),
   })
 }
@@ -89,8 +97,17 @@ describe('ReviewerDashboard tests', () => {
       await screen.findByTestId(SUBMISSION_DASHBOARD_TEST_ID)
     })
 
-    // TODO
-    it.skip('Renders the User Access History Dashboard', () => {})
+    it('Renders the User Access History Dashboard', async () => {
+      renderComponent()
+
+      const tab = await screen.findByRole('tab', {
+        name: 'User Access History',
+      })
+
+      await userEvent.click(tab)
+
+      await screen.findByTestId(HISTORY_DASHBOARD_TEST_ID)
+    })
   })
 
   it('Unauthorized user cannot see any tabs', async () => {
@@ -146,7 +163,7 @@ describe('ReviewerDashboard tests', () => {
     screen.getByRole('tab', { name: 'User Access History' })
   })
 
-  it('AR Reviewer can only see Submissions tab', async () => {
+  it('AR Reviewer can see Submissions and User Access History tabs', async () => {
     const isACTMember = false
     const isARReviewer = true
 
@@ -168,14 +185,12 @@ describe('ReviewerDashboard tests', () => {
 
     await screen.findByRole('tablist')
     const tabs = screen.getAllByRole('tab')
-    expect(tabs).toHaveLength(1)
+    expect(tabs).toHaveLength(2)
 
     expect(
       screen.queryByRole('tab', { name: 'Access Requirements' }),
     ).not.toBeInTheDocument()
     screen.getByRole('tab', { name: 'Submissions' })
-    expect(
-      screen.queryByRole('tab', { name: 'User Access History' }),
-    ).not.toBeInTheDocument()
+    screen.getByRole('tab', { name: 'User Access History' })
   })
 })

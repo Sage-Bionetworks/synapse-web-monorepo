@@ -16,6 +16,7 @@ import {
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import UserSearchBoxV2 from '../UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox'
+import { useGetCurrentUserBundle } from '../../utils/hooks/SynapseAPI'
 
 export const UserHistoryDashboard = () => {
   const [accessRequirementId, setAccessRequirementId] = useState<
@@ -34,6 +35,9 @@ export const UserHistoryDashboard = () => {
       accessorId,
       accessRequirementId,
     })
+
+  const { data: userBundle } = useGetCurrentUserBundle()
+  const hasActPermissions = userBundle?.isACTMember
 
   const location = useLocation()
   const history = useHistory()
@@ -147,11 +151,14 @@ export const UserHistoryDashboard = () => {
             Submissions including <UserOrTeamBadge principalId={accessorId} />
           </Typography>
           <AccessRequestSubmissionTable {...submissionTableProps} />
-
-          <Typography variant="headline3">
-            Status in Access Requirements
-          </Typography>
-          <AccessApprovalsTable {...approvalTableProps} />
+          {hasActPermissions && (
+            <>
+              <Typography variant="headline3">
+                Status in Access Requirements
+              </Typography>
+              <AccessApprovalsTable {...approvalTableProps} />
+            </>
+          )}
         </>
       ) : (
         <NoSearchResultComponent />

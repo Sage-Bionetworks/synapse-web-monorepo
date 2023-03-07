@@ -12,6 +12,7 @@ import {
 import {
   ACCESS_REQUIREMENT_SEARCH,
   ACCESS_REQUIREMENT_BY_ID,
+  USER_BUNDLE,
 } from '../../../../src/lib/utils/APIConstants'
 import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
@@ -24,34 +25,25 @@ import {
 } from '../../../../mocks/user/mock_user_profile'
 import selectEvent from 'react-select-event'
 import { getOptionLabel } from '../../../../src/lib/containers/dataaccess/AccessRequirementSearchBox'
-
+import * as AccessApprovalsTableModule from '../../../../src/lib/containers/AccessApprovalsTable'
+import * as AccessRequestSubmissionTableModule from '../../../../src/lib/containers/AccessRequestSubmissionTable'
+import { UserBundle } from '../../../../src/lib/utils/synapseTypes'
 const APPROVAL_TABLE_TEST_ID = 'AccessApprovalTableTestId'
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'
 
-jest.mock('../../../../src/lib/containers/AccessApprovalsTable', () => ({
-  AccessApprovalsTable: jest.fn().mockImplementation(() => {
+const mockAccessApprovalsTable = jest
+  .spyOn(AccessApprovalsTableModule, 'AccessApprovalsTable')
+  .mockImplementation(() => {
     return <div data-testid={APPROVAL_TABLE_TEST_ID}></div>
-  }),
-}))
+  })
 
-jest.mock(
-  '../../../../src/lib/containers/AccessRequestSubmissionTable',
-  () => ({
-    AccessRequestSubmissionTable: jest.fn().mockImplementation(() => {
-      return <div data-testid={SUBMISSION_TABLE_TEST_ID}></div>
-    }),
-  }),
-)
+const mockAccessRequestSubmissionTable = jest
+  .spyOn(AccessRequestSubmissionTableModule, 'AccessRequestSubmissionTable')
+  .mockImplementation(() => {
+    return <div data-testid={SUBMISSION_TABLE_TEST_ID}></div>
+  })
 
-const {
-  AccessRequestSubmissionTable: mockAccessRequestSubmissionTable,
-} = require('../../../../src/lib/containers/AccessRequestSubmissionTable')
-
-const {
-  AccessApprovalsTable: mockAccessApprovalsTable,
-} = require('../../../../src/lib/containers/AccessApprovalsTable')
-
-const onServiceRecievedRequest = jest.fn()
+const onServiceReceivedRequest = jest.fn()
 
 function renderComponent(modifyHistory?: (history: MemoryHistory) => void) {
   const history = createMemoryHistory()
@@ -73,6 +65,23 @@ describe('AccessHistoryDashboard tests', () => {
   beforeAll(() => {
     server.listen()
 
+    const isACTMember = true
+    const isARReviewer = true
+
+    server.use(
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
+        async (req, res, ctx) => {
+          const response: UserBundle = {
+            userId: MOCK_USER_ID.toString(),
+            isACTMember: isACTMember,
+            isARReviewer: isARReviewer,
+          }
+          return res(ctx.status(200), ctx.json(response))
+        },
+      ),
+    )
+
     server.use(
       rest.post(
         `${getEndpoint(
@@ -80,7 +89,7 @@ describe('AccessHistoryDashboard tests', () => {
         )}${ACCESS_REQUIREMENT_SEARCH}`,
 
         async (req, res, ctx) => {
-          onServiceRecievedRequest(req.body)
+          onServiceReceivedRequest(req.body)
           return res(ctx.status(200), ctx.json(mockSearchResults))
         },
       ),
@@ -91,7 +100,7 @@ describe('AccessHistoryDashboard tests', () => {
         )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
         async (req, res, ctx) => {
-          onServiceRecievedRequest(req.body)
+          onServiceReceivedRequest(req.body)
           return res(ctx.status(200), ctx.json(mockAccessRequirement))
         },
       ),
@@ -107,7 +116,6 @@ describe('AccessHistoryDashboard tests', () => {
     expect(await screen.findAllByRole('combobox')).toHaveLength(1)
   })
 
-  // TODO: flaky in CI
   it.skip('Renders table components and filter input for AR Name', async () => {
     renderComponent()
 
