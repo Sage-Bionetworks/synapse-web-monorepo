@@ -116,6 +116,7 @@ describe('AccessHistoryDashboard tests', () => {
     expect(await screen.findAllByRole('combobox')).toHaveLength(1)
   })
 
+  // TODO: flaky in CI
   it.skip('Renders table components and filter input for AR Name', async () => {
     renderComponent()
 
