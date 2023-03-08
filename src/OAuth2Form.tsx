@@ -185,11 +185,12 @@ export const OAuth2Form = () => {
               ),
             )
           }
-          setIsPreviousAuthCheckComplete(true)
         })
         .catch(_err => {
-          setIsPreviousAuthCheckComplete(true)
           onError(_err)
+        })
+        .finally(() => {
+          setIsPreviousAuthCheckComplete(true)
         })
     }
     if (profile && !error) {
