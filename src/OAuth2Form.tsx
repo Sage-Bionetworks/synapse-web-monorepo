@@ -26,8 +26,6 @@ export const OAuth2Form = () => {
   const isMounted = useRef(true)
 
   const { accessToken, setAccessToken } = useOAuthAppContext()
-  const [isSessionEstablished, setIsSessionEstablished] =
-    React.useState<boolean>(false)
   const [error, setError] = useState<any>()
 
   const onError = useCallback(
@@ -71,24 +69,21 @@ export const OAuth2Form = () => {
     }
   })
 
-  useEffect(() => {
-    const getSession = async () => {
-      try {
-        const newAccessToken = await SynapseClient.getAccessTokenFromCookie()
-        if (isMounted.current) {
-          setAccessToken(newAccessToken)
-        }
-      } catch (e) {
-        console.error('Error on getSession: ', e)
-        // intentionally calling sign out because the token could be stale so we want
-        // the stored session to be cleared out.
-        await SynapseClient.signOut().then(() => {
-          setAccessToken(undefined)
-        })
+  const getSession = useCallback(async () => {
+    try {
+      const newAccessToken = await SynapseClient.getAccessTokenFromCookie()
+      if (isMounted.current) {
+        setAccessToken(newAccessToken)
       }
+    } catch (e) {
+      console.error('Error on getSession: ', e)
+      // intentionally calling sign out because the token could be stale so we want
+      // the stored session to be cleared out.
+      await SynapseClient.signOut().then(() => {
+        setAccessToken(undefined)
+      })
     }
-    getSession()
-  }, [isSessionEstablished, setAccessToken])
+  }, [setAccessToken])
 
   const sendGTagEvent = (event: string) => {
     // send event to Google Analytics
@@ -409,7 +404,7 @@ export const OAuth2Form = () => {
             <Paper sx={{ width: '400px', padding: '30px', margin: '0 auto' }}>
               <StandaloneLoginForm
                 sessionCallback={() => {
-                  setIsSessionEstablished(true)
+                  getSession()
                 }}
                 onBeginOAuthSignIn={() => {
                   // save current route (so that we can go back here after SSO)

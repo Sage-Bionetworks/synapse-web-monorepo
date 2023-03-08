@@ -180,6 +180,9 @@ describe('App integration tests', () => {
     expect(window.location.replace).not.toHaveBeenCalled()
   })
 
+  test.todo(
+    'Redirects if a token is provided and the user has already consented, and prompt is not consent',
+  )
   test.todo('Redirects in error if a the redirect URI is invalid')
   test.todo('Redirects in error if the backend provides an unhandled error')
   test.todo('Shows warning if the client is unverified')
