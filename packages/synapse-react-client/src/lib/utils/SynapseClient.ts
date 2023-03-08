@@ -258,6 +258,7 @@ import {
   OAuthClient,
   OAuthClientIdAndSecret,
   OAuthClientList,
+  OAuthClientVerificationPrecheckResult,
 } from './synapseTypes/OAuthClient'
 import { Activity } from './synapseTypes/Provenance/Provenance'
 import {
@@ -2439,6 +2440,23 @@ export const updateOAuthClient = (
 ): Promise<OAuthClient> => {
   return doPut(
     `/auth/v1/oauth2/client/${request.client_id}`,
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ 
+ Note: Only the creator of a client can update it.
+ https://rest-docs.synapse.org/rest/PUT/oauth2/client/id/verificationPrecheck.html
+ */
+export const isOAuthClientReverificationRequired = (
+  request: OAuthClient,
+  accessToken: string,
+): Promise<OAuthClientVerificationPrecheckResult> => {
+  return doPut(
+    `/auth/v1/oauth2/client/${request.client_id}/verificationPrecheck`,
     request,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
