@@ -305,6 +305,11 @@ export const OAuth2Form = () => {
     </div>
   )
 
+  const isLoading =
+    (!error && !oauthClientInfo && !oidcRequestDescription) ||
+    (redirectURL && oauthClientInfo) ||
+    (profile && !isPreviousAuthCheckComplete)
+
   return (
     <div>
       {!error && oauthClientInfo && !oauthClientInfo.verified && (
@@ -390,10 +395,7 @@ export const OAuth2Form = () => {
             </StyledInnerContainer>
           </StyledOuterContainer>
         )}
-      {((!error && !oauthClientInfo && !oidcRequestDescription) ||
-        (redirectURL && oauthClientInfo) ||
-        (profile && !isPreviousAuthCheckComplete)) &&
-        loadingSpinner}
+      {isLoading && loadingSpinner}
       {!redirectURL &&
         !error &&
         !accessToken &&
