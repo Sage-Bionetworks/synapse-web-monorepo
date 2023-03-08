@@ -125,7 +125,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
 
   const options = (data ?? [])
     .filter(filterPredicate ?? (() => true))
-    // Map the AR(s) to options for the select input component
+    // Map each user to an options object for the select input component
     .map(item => ({
       id: item.ownerId.toString(),
       value: item.ownerId.toString(),

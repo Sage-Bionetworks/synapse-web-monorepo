@@ -12,6 +12,7 @@ import {
 import {
   ACCESS_REQUIREMENT_SEARCH,
   ACCESS_REQUIREMENT_BY_ID,
+  USER_BUNDLE,
 } from '../../../../src/lib/utils/APIConstants'
 import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
@@ -24,34 +25,39 @@ import {
 } from '../../../../mocks/user/mock_user_profile'
 import selectEvent from 'react-select-event'
 import { getOptionLabel } from '../../../../src/lib/containers/dataaccess/AccessRequirementSearchBox'
-
+import * as AccessApprovalsTableModule from '../../../../src/lib/containers/AccessApprovalsTable'
+import * as AccessRequestSubmissionTableModule from '../../../../src/lib/containers/AccessRequestSubmissionTable'
+import { UserBundle } from '../../../../src/lib/utils/synapseTypes'
 const APPROVAL_TABLE_TEST_ID = 'AccessApprovalTableTestId'
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'
 
-jest.mock('../../../../src/lib/containers/AccessApprovalsTable', () => ({
-  AccessApprovalsTable: jest.fn().mockImplementation(() => {
+const mockAccessApprovalsTable = jest
+  .spyOn(AccessApprovalsTableModule, 'AccessApprovalsTable')
+  .mockImplementation(() => {
     return <div data-testid={APPROVAL_TABLE_TEST_ID}></div>
-  }),
-}))
+  })
 
-jest.mock(
-  '../../../../src/lib/containers/AccessRequestSubmissionTable',
-  () => ({
-    AccessRequestSubmissionTable: jest.fn().mockImplementation(() => {
-      return <div data-testid={SUBMISSION_TABLE_TEST_ID}></div>
-    }),
-  }),
-)
+const mockAccessRequestSubmissionTable = jest
+  .spyOn(AccessRequestSubmissionTableModule, 'AccessRequestSubmissionTable')
+  .mockImplementation(() => {
+    return <div data-testid={SUBMISSION_TABLE_TEST_ID}></div>
+  })
 
-const {
-  AccessRequestSubmissionTable: mockAccessRequestSubmissionTable,
-} = require('../../../../src/lib/containers/AccessRequestSubmissionTable')
+const onServiceReceivedRequest = jest.fn()
 
-const {
-  AccessApprovalsTable: mockAccessApprovalsTable,
-} = require('../../../../src/lib/containers/AccessApprovalsTable')
-
-const onServiceRecievedRequest = jest.fn()
+function getUserBundleHandler(isACTMember: boolean, isARReviewer: boolean) {
+  return rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
+    async (req, res, ctx) => {
+      const response: UserBundle = {
+        userId: MOCK_USER_ID.toString(),
+        isACTMember: isACTMember,
+        isARReviewer: isARReviewer,
+      }
+      return res(ctx.status(200), ctx.json(response))
+    },
+  )
+}
 
 function renderComponent(modifyHistory?: (history: MemoryHistory) => void) {
   const history = createMemoryHistory()
@@ -70,17 +76,22 @@ function renderComponent(modifyHistory?: (history: MemoryHistory) => void) {
 }
 
 describe('AccessHistoryDashboard tests', () => {
-  beforeAll(() => {
-    server.listen()
+  beforeAll(() => server.listen())
+  beforeEach(() => {
+    jest.clearAllMocks()
+
+    const isACTMember = true
+    const isARReviewer = true
 
     server.use(
+      getUserBundleHandler(isACTMember, isARReviewer),
       rest.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_SEARCH}`,
 
         async (req, res, ctx) => {
-          onServiceRecievedRequest(req.body)
+          onServiceReceivedRequest(req.body)
           return res(ctx.status(200), ctx.json(mockSearchResults))
         },
       ),
@@ -91,7 +102,7 @@ describe('AccessHistoryDashboard tests', () => {
         )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
         async (req, res, ctx) => {
-          onServiceRecievedRequest(req.body)
+          onServiceReceivedRequest(req.body)
           return res(ctx.status(200), ctx.json(mockAccessRequirement))
         },
       ),
@@ -105,17 +116,23 @@ describe('AccessHistoryDashboard tests', () => {
     renderComponent()
 
     expect(await screen.findAllByRole('combobox')).toHaveLength(1)
+
+    expect(
+      screen.queryByTestId(SUBMISSION_TABLE_TEST_ID),
+    ).not.toBeInTheDocument()
+    expect(mockAccessRequestSubmissionTable).not.toHaveBeenCalled()
+    expect(screen.queryByTestId(APPROVAL_TABLE_TEST_ID)).not.toBeInTheDocument()
+    expect(mockAccessApprovalsTable).not.toHaveBeenCalled()
   })
 
-  // TODO: flaky in CI
-  it.skip('Renders table components and filter input for AR Name', async () => {
+  it('Renders table components and filter input for AR Name', async () => {
     renderComponent()
 
     const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
-    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
+    await screen.findByText(new RegExp(`@${MOCK_USER_NAME}`))
     await act(async () => {
-      await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
+      await selectEvent.select(userInput, new RegExp(`@${MOCK_USER_NAME}`))
     })
 
     await screen.findByLabelText('Select a user to view their access history')
@@ -132,7 +149,7 @@ describe('AccessHistoryDashboard tests', () => {
       expect.anything(),
     )
 
-    await screen.findAllByTestId(APPROVAL_TABLE_TEST_ID)
+    await screen.findByTestId(APPROVAL_TABLE_TEST_ID)
     expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
       expect.objectContaining({
         accessRequirementId: undefined,
@@ -140,6 +157,39 @@ describe('AccessHistoryDashboard tests', () => {
       }),
       expect.anything(),
     )
+  })
+
+  it('Renders only the submission table for non-ACT users', async () => {
+    // Pre-configure to not be in ACT
+    const isACTMember = false
+    const isARReviewer = true
+    server.use(getUserBundleHandler(isACTMember, isARReviewer))
+
+    renderComponent()
+
+    const userInput = await screen.findByRole('combobox')
+    await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
+    await screen.findByText(new RegExp(`@${MOCK_USER_NAME}`))
+    await act(async () => {
+      await selectEvent.select(userInput, new RegExp(`@${MOCK_USER_NAME}`))
+    })
+
+    await screen.findByLabelText('Select a user to view their access history')
+    await screen.findByLabelText('Filter by Access Requirement Name')
+
+    await screen.findByTestId(SUBMISSION_TABLE_TEST_ID)
+    expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
+      expect.objectContaining({
+        accessRequirementId: undefined,
+        accessorId: '',
+        showStatus: true,
+        showSubmitter: true,
+      }),
+      expect.anything(),
+    )
+
+    expect(screen.queryByTestId(APPROVAL_TABLE_TEST_ID)).not.toBeInTheDocument()
+    expect(mockAccessApprovalsTable).not.toHaveBeenCalled()
   })
 
   it('Updates the passed props and URLSearchParams when updating user/team name', async () => {
@@ -152,29 +202,29 @@ describe('AccessHistoryDashboard tests', () => {
       await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
     })
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         new URLSearchParams(history.location.search).get('accessorId'),
-      ).toEqual(MOCK_USER_ID.toString()),
-    )
+      ).toEqual(MOCK_USER_ID.toString())
 
-    expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        accessRequirementId: undefined,
-        accessorId: MOCK_USER_ID.toString(),
-        showStatus: true,
-        showSubmitter: true,
-      }),
-      expect.anything(),
-    )
+      expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
+        expect.objectContaining({
+          accessRequirementId: undefined,
+          accessorId: MOCK_USER_ID.toString(),
+          showStatus: true,
+          showSubmitter: true,
+        }),
+        expect.anything(),
+      )
 
-    expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        accessRequirementId: undefined,
-        accessorId: MOCK_USER_ID.toString(),
-      }),
-      expect.anything(),
-    )
+      expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
+        expect.objectContaining({
+          accessRequirementId: undefined,
+          accessorId: MOCK_USER_ID.toString(),
+        }),
+        expect.anything(),
+      )
+    })
   })
 
   it('Filters the passed props and URLSearchParams when updating the AR Name', async () => {
@@ -207,29 +257,29 @@ describe('AccessHistoryDashboard tests', () => {
       )
     })
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         new URLSearchParams(history.location.search).get('accessRequirementId'),
-      ).toEqual(mockAccessRequirement.id.toString()),
-    )
+      ).toEqual(mockAccessRequirement.id.toString())
 
-    expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        accessRequirementId: mockAccessRequirement.id.toString(),
-        accessorId: MOCK_USER_ID.toString(),
-        showStatus: true,
-        showSubmitter: true,
-      }),
-      expect.anything(),
-    )
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          accessRequirementId: mockAccessRequirement.id.toString(),
+          accessorId: MOCK_USER_ID.toString(),
+          showStatus: true,
+          showSubmitter: true,
+        }),
+        expect.anything(),
+      )
 
-    expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        accessRequirementId: mockAccessRequirement.id.toString(),
-        accessorId: MOCK_USER_ID.toString(),
-      }),
-      expect.anything(),
-    )
+      expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
+        expect.objectContaining({
+          accessRequirementId: mockAccessRequirement.id.toString(),
+          accessorId: MOCK_USER_ID.toString(),
+        }),
+        expect.anything(),
+      )
+    })
   })
 
   it('Auto-fills the inputs with search parameter values', async () => {
@@ -243,7 +293,7 @@ describe('AccessHistoryDashboard tests', () => {
       history.push('?' + searchParams.toString())
     })
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
         expect.objectContaining({
           accessRequirementId: mockAccessRequirement.id.toString(),
@@ -252,17 +302,15 @@ describe('AccessHistoryDashboard tests', () => {
           showSubmitter: true,
         }),
         expect.anything(),
-      ),
-    )
+      )
 
-    await waitFor(() =>
       expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
         expect.objectContaining({
           accessRequirementId: mockAccessRequirement.id.toString(),
           accessorId: MOCK_USER_ID.toString(),
         }),
         expect.anything(),
-      ),
-    )
+      )
+    })
   })
 })

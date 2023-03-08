@@ -86,7 +86,7 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
               Submissions
             </LinkTab>
           )}
-          {hasActPermissions && (
+          {hasReviewerPermissions && (
             <LinkTab href="/UserAccessHistory" icon="history">
               User Access History
             </LinkTab>
