@@ -12,6 +12,7 @@ import {
 } from '@mui/material'
 import IconSvg from '../IconSvg'
 import React from 'react'
+import { monospaceFontFamily } from '../../utils/theme/typography/Typography'
 
 type TwoFactorSecretDialogProps = {
   secret: string
@@ -43,7 +44,7 @@ export default function TwoFactorSecretDialog(
             width: '100%',
             textAlign: 'center',
             background: theme.palette.grey[200],
-            fontFamily: 'Menlo, monospace',
+            fontFamily: monospaceFontFamily,
             letterSpacing: '2px',
             fontSize: '16px',
           })}

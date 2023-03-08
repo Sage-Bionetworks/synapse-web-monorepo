@@ -35,13 +35,29 @@ const Tagline: StyledComponent<TypographyProps> = styled(Typography, {
   font: '300 24px/34px Lato, sans-serif',
 }))
 
-const BACKUP_CODE_INFO_JSX = (
-  <>
-    Your backup code is a 16-digit code. We generated 10 of these codes for you
-    when you set up 2FA. If you don’t have access to these codes, please{' '}
-    <Link href={LOST_ACCOUNT_ACCESS_CONTACT_URL}>contact us</Link>.
-  </>
-)
+function BackupCodeInstructions(props: TypographyProps) {
+  return (
+    <>
+      <Typography {...props}>
+        Your backup code is a 16 digit code, with groups of 4 letters or numbers
+        separated by hyphens, like this:
+      </Typography>
+      <Typography
+        {...props}
+        component={'div' as any}
+        variant={'monospace'}
+        sx={{ my: 1, fontSize: '18px' }}
+      >
+        xxxx-xxxx-xxxx-xxxx
+      </Typography>
+      <Typography {...props}>
+        Each code can only be used once. If you don’t have access to these
+        codes, please{' '}
+        <Link href={LOST_ACCOUNT_ACCESS_CONTACT_URL}>contact us</Link>.
+      </Typography>
+    </>
+  )
+}
 
 export default function LoginPage(props: LoginPageProps) {
   const { ssoRedirectUrl, sessionCallback } = props
@@ -94,9 +110,11 @@ export default function LoginPage(props: LoginPageProps) {
         </Typography>
       )}
       {!showDesktop && step === 'RECOVERY_CODE' && (
-        <Typography variant={'body1'} align={'center'} sx={{ my: 1 }}>
-          {BACKUP_CODE_INFO_JSX}
-        </Typography>
+        <BackupCodeInstructions
+          variant={'body1'}
+          align={'center'}
+          sx={{ my: 1 }}
+        />
       )}
       <LoginForm
         ssoRedirectUrl={ssoRedirectUrl}
@@ -115,7 +133,7 @@ export default function LoginPage(props: LoginPageProps) {
       <LeftRightPanel
         leftContent={
           <>
-            <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
+            <Box sx={{ py: 15, px: 8, height: '100%', position: 'relative' }}>
               <LoginFlowBackButton
                 step={step}
                 onStepChange={onStepChange}
@@ -132,15 +150,14 @@ export default function LoginPage(props: LoginPageProps) {
         rightContent={
           <Box
             sx={{
-              py: 10,
+              py: 15,
               height: '100%',
               background:
-                "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
+                "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 5px",
             }}
           >
             <Box
               sx={{
-                py: 10,
                 px: 9,
                 color: '#1e4964',
               }}
@@ -161,9 +178,10 @@ export default function LoginPage(props: LoginPageProps) {
                   <Typography variant="headline1" sx={{ mb: 4 }}>
                     Enter your backup code
                   </Typography>
-                  <Typography variant={'headline2'} sx={{ lineHeight: '30px' }}>
-                    {BACKUP_CODE_INFO_JSX}
-                  </Typography>
+                  <BackupCodeInstructions
+                    variant={'body1'}
+                    sx={{ fontSize: '18px', lineHeight: '30px' }}
+                  />
                 </>
               )}
               {step !== 'VERIFICATION_CODE' && step !== 'RECOVERY_CODE' && (

@@ -1,6 +1,14 @@
 import { TypographyOptions } from '@mui/material/styles/createTypography'
 import { Palette } from '@mui/material/styles/createPalette'
 
+export const defaultFontFamily = ['Lato', 'sans-serif'].join(',')
+export const monospaceFontFamily = [
+  'Menlo',
+  'Courier New',
+  'Courier',
+  'monospace',
+].join(',')
+
 const defaultStyles = {
   fontStyle: 'normal',
   letterSpacing: '0px',
@@ -9,7 +17,7 @@ const defaultStyles = {
 export const typographyOptions: (
   palette: Palette,
 ) => TypographyOptions = palette => ({
-  fontFamily: ['Lato', 'sans-serif'].join(','),
+  fontFamily: defaultFontFamily,
   headline1: {
     ...defaultStyles,
     fontSize: '24px',
@@ -115,5 +123,10 @@ export const typographyOptions: (
     lineHeight: '16px',
     color: palette.grey[700],
     textTransform: 'uppercase',
+  },
+  monospace: {
+    ...defaultStyles,
+    fontFamily: monospaceFontFamily,
+    fontSize: '13px',
   },
 })
