@@ -544,4 +544,8 @@ export class KeyFactory {
   ) {
     return this.getKey('userGroupHeader', 'search', prefix, filter)
   }
+
+  public getTwoFactorAuthStatusQueryKey() {
+    return this.getKey('twoFactorAuthStatus')
+  }
 }

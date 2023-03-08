@@ -60,7 +60,7 @@ const SectionInnerGrid: StyledComponent<BoxProps> = styled(
 }))
 
 // TODO https://sagebionetworks.jira.com/browse/DOCS-115
-const TWO_FACTOR_DOCS_LINK = ''
+export const TWO_FACTOR_DOCS_LINK = ''
 
 export type TwoFactorEnrollmentFormProps = {
   onTwoFactorEnrollmentSuccess: () => void
