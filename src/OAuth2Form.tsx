@@ -308,7 +308,7 @@ export const OAuth2Form = () => {
   const isLoading =
     (!error && !oauthClientInfo && !oidcRequestDescription) ||
     (redirectURL && oauthClientInfo) ||
-    (profile && !isPreviousAuthCheckComplete)
+    (!error && profile && !isPreviousAuthCheckComplete)
 
   return (
     <div>
