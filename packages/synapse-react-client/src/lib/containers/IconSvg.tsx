@@ -199,6 +199,7 @@ export const IconStrings = [
   'chevronLeft',
   'database',
   'close',
+  'cross',
   'verticalEllipsis',
   'sync',
   'clipboardCheck',
@@ -234,7 +235,7 @@ export const IconStrings = [
   'addConditions',
 ] as const
 
-export type Icon = typeof IconStrings[number]
+export type Icon = (typeof IconStrings)[number]
 
 export type IconSvgProps = {
   icon: Icon
@@ -359,6 +360,7 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
     case 'helpOutlined':
       return <HelpOutlined sx={sx}></HelpOutlined>
     case 'close':
+    case 'cross':
       return <CloseTwoTone sx={sx} />
     case 'expandLess':
       return <ExpandLess sx={sx}></ExpandLess>

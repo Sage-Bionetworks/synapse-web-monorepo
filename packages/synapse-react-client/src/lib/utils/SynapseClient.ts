@@ -894,6 +894,30 @@ export const oAuthSessionRequest = (
 }
 
 /**
+ * Fetch the current 2FA status for the user.
+ * https://rest-docs.synapse.org/rest/GET/2fa.html
+ */
+export function getCurrentUserTwoFactorEnrollmentStatus(accessToken?: string) {
+  return doGet<TwoFactorAuthStatus>(
+    '/auth/v1/2fa',
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Disable 2FA for the user.
+ * https://rest-docs.synapse.org/rest/DELETE/2fa.html
+ */
+export function disableTwoFactorAuthForCurrentUser(accessToken?: string) {
+  return doDelete(
+    '/auth/v1/2fa',
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * https://rest-docs.synapse.org/rest/POST/2fa/enroll.html
  */
 export function start2FAEnrollment(accessToken?: string) {
