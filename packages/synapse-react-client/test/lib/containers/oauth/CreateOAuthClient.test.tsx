@@ -14,6 +14,7 @@ import {
   getEndpoint,
 } from '../../../../src/lib/utils/functions/getEndpoint'
 import { WarningModal } from '../../../../src/lib/containers/synapse_form_wrapper/WarningModal'
+import { SynapseClient } from '../../../../src/lib/utils'
 
 jest.mock('../../../../src/lib/containers/ToastMessage', () => {
   return { displayToast: jest.fn() }
@@ -147,6 +148,9 @@ describe('Create OAuth Client', () => {
   })
 
   it('Shows a warning modal when changing redirect uri', async () => {
+    const mockIsOAuthClientReverificationRequired = jest
+      .spyOn(SynapseClient, 'isOAuthClientReverificationRequired')
+      .mockReturnValue(Promise.resolve({ reverificationRequired: true }))
     renderComponent({ ...defaultProps, isEdit: true, client: mockClient })
     const inputRedirectURI = await screen.findByLabelText('Redirect URI(s)')
     const saveButton = screen.getByRole('button', { name: 'Save' })

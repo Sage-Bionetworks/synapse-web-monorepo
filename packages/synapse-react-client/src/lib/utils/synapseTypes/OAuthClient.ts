@@ -31,6 +31,14 @@ export interface OAuthClient {
 }
 
 /**
+ * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/oauth/OAuthClientVerificationPrecheckResult.html
+ * (used in https://rest-docs.synapse.org/rest/PUT/oauth2/client/id/verificationPrecheck.html)
+ */
+export interface OAuthClientVerificationPrecheckResult {
+  reverificationRequired: boolean
+}
+
+/**
  OAuth 2.0 Client ID and secret, generated when a new client is created
 https://docs.synapse.org/rest/org/sagebionetworks/repo/model/oauth/OAuthClientIdAndSecret.html
 */

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { displayToast } from '../ToastMessage'
@@ -15,6 +15,10 @@ import { HelpOutlineTwoTone } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseClient } from '../../utils'
+import { useDebouncedEffect } from '../../utils/hooks'
+
+const INPUT_CHANGE_DEBOUNCE_DELAY_MS = 500
 
 export type CreateOAuthModalProps = {
   isShowingModal: boolean
@@ -53,6 +57,30 @@ export const CreateOAuthModal: React.FunctionComponent<
   const warningBody =
     'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.'
   const uriHelpMessage = 'Click Add URI to add more Redirect URIs'
+
+  // Return the OAuth Client definition based on the current client-side UI state
+  const oAuthClient: OAuthClient = useMemo(() => {
+    return {
+      client_id: client?.client_id,
+      client_name: clientName,
+      redirect_uris: redirectUris?.map(str => str.uri) ?? [''],
+      policy_uri: policyUri,
+      client_uri: clientUri,
+      sector_identifier_uri: sectorUri ?? '',
+      tos_uri: tosUri,
+      etag: client?.etag,
+    }
+  }, [
+    client?.client_id,
+    client?.etag,
+    clientName,
+    clientUri,
+    policyUri,
+    redirectUris,
+    sectorUri,
+    tosUri,
+  ])
+
   useEffect(() => {
     setClientName(client?.client_name ?? '')
     setRedirectUris(
@@ -64,17 +92,21 @@ export const CreateOAuthModal: React.FunctionComponent<
     setTosUri(client?.tos_uri ?? '')
   }, [isShowingModal, client])
 
-  useEffect(() => {
-    const stateArr = redirectUris?.map(str => str.uri)
-    const propArr = client?.redirect_uris
-
-    client &&
-    (stateArr?.length !== propArr?.length ||
-      !stateArr?.every(el => propArr?.includes(el)) ||
-      sectorUri != client?.sector_identifier_uri)
-      ? setWarnTrigger(true)
-      : setWarnTrigger(false)
-  }, [redirectUris, sectorUri, client])
+  useDebouncedEffect(
+    () => {
+      if (accessToken) {
+        // SWC-6365: use the pre-check service to determine if we need to show a warning on edit
+        SynapseClient.isOAuthClientReverificationRequired(
+          oAuthClient,
+          accessToken,
+        ).then(precheckResult => {
+          setWarnTrigger(precheckResult.reverificationRequired)
+        })
+      }
+    },
+    [accessToken, oAuthClient],
+    INPUT_CHANGE_DEBOUNCE_DELAY_MS,
+  )
 
   const hide = () => {
     setClientName('')
@@ -128,16 +160,6 @@ export const CreateOAuthModal: React.FunctionComponent<
   const onCreateClient = () => {
     try {
       if (accessToken) {
-        const oAuthClient: OAuthClient = {
-          client_id: client?.client_id,
-          client_name: clientName,
-          redirect_uris: redirectUris?.map(str => str.uri) ?? [''],
-          policy_uri: policyUri,
-          client_uri: clientUri,
-          sector_identifier_uri: sectorUri ?? '',
-          tos_uri: tosUri,
-          etag: client?.etag,
-        }
         setUpdatedClient(oAuthClient)
         if (warnTrigger === true) {
           setIsShowingConfirmModal(true)
