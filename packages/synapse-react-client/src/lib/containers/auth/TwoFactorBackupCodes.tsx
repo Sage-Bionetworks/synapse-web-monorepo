@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   IconButton,
-  SxProps,
   Typography,
   useTheme,
 } from '@mui/material'
@@ -16,16 +15,12 @@ import IconSvg from '../IconSvg'
 import { useMutation } from 'react-query'
 import { createRecoveryCodes } from '../../utils/SynapseClient'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import TwoFactorGraphic from '../../assets/icons/twofactor-graphic.svg'
 import { displayToast } from '../ToastMessage'
 import { RegenerateBackupCodesWarning } from './RegenerateBackupCodesWarning'
 import { RecoveryCodeGrid } from './RecoveryCodeGrid'
-
-const hideOnPrintStyle: SxProps = {
-  '@media print': {
-    display: 'none',
-  },
-}
+import { TwoFactorAuthRecoveryCodes } from '../../utils/synapseTypes/TwoFactorAuthRecoveryCodes'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useMediaPrintOnly } from '../../utils/hooks/useMediaPrintOnly'
 
 export type TwoFactorBackupCodesProps = {
   /* Whether to show a warning before generating new codes, to prevent users from overwriting their existing codes */
@@ -47,7 +42,7 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
     mutate: generateCodes,
     data: recoveryCodes,
     error,
-  } = useMutation({
+  } = useMutation<TwoFactorAuthRecoveryCodes, SynapseClientError>({
     mutationFn: () => createRecoveryCodes(accessToken),
     onMutate: () => {
       setHasConfirmedRegeneration(true)
@@ -59,7 +54,12 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
     if (!showReplaceOldCodesWarning) {
       generateCodes()
     }
+    // Run on mount only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const { visibleOnPrintClassName, hiddenOnPrintClassName } =
+    useMediaPrintOnly()
 
   const copyCodesToClipboard = React.useCallback(() => {
     const codes = (recoveryCodes?.codes || []).join('\n')
@@ -81,96 +81,95 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
 
   return (
     <LeftRightPanel
+      className={visibleOnPrintClassName}
       leftContent={
-        <>
-          <Box
+        <Box
+          sx={{
+            py: 10,
+            px: 8,
+            height: '100%',
+            position: 'relative',
+          }}
+        >
+          <IconButton
+            type="button"
+            onClick={onClose}
+            className={hiddenOnPrintClassName}
             sx={{
-              py: 10,
-              px: 8,
-              height: '100%',
-              position: 'relative',
+              position: 'absolute',
+              top: theme.spacing(2),
+              left: theme.spacing(2),
             }}
           >
-            <IconButton
-              type="button"
-              onClick={onClose}
+            <IconSvg
+              icon="arrowBack"
+              wrap={false}
+              sx={{ height: '24px', width: '24px' }}
+            />
+          </IconButton>
+          <Typography variant="headline1" sx={{ mt: 7 }}>
+            Backup codes
+          </Typography>
+          {showReplaceOldCodesWarning && (
+            <Alert
+              severity="warning"
+              className={hiddenOnPrintClassName}
               sx={{
-                position: 'absolute',
-                top: theme.spacing(2),
-                left: theme.spacing(2),
-                ...hideOnPrintStyle,
+                my: 2,
               }}
+              icon={false}
             >
-              <IconSvg
-                icon="arrowBack"
-                wrap={false}
-                sx={{ height: '24px', width: '24px' }}
-              />
-            </IconButton>
-            <Typography variant="headline1" sx={{ mt: 7 }}>
-              Backup codes
-            </Typography>
-            {showReplaceOldCodesWarning && (
-              <Alert
-                severity="warning"
-                sx={{
-                  my: 2,
-                  ...hideOnPrintStyle,
-                }}
-                icon={false}
-              >
-                <strong>These new codes have replaced your old codes.</strong>{' '}
-                Please save these codes and use them from now on.
-              </Alert>
-            )}
-            <RecoveryCodeGrid recoveryCodes={recoveryCodes} />
-            {error && (
-              <Alert severity={'error'} sx={{ my: 2 }}>
-                {error.message}
-              </Alert>
-            )}
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '10px',
-                mb: '10px',
-                ...hideOnPrintStyle,
-              }}
-            >
-              <Button
-                variant={'outlined'}
-                onClick={copyCodesToClipboard}
-                disabled={!recoveryCodes}
-              >
-                Copy to Clipboard
-              </Button>
-              <Button
-                variant={'outlined'}
-                disabled={!recoveryCodes}
-                onClick={window.print}
-              >
-                Print Codes
-              </Button>
-            </Box>
+              <strong>These new codes have replaced your old codes.</strong>{' '}
+              Please save these codes and use them from now on.
+            </Alert>
+          )}
+          <RecoveryCodeGrid recoveryCodes={recoveryCodes} />
+          {error && (
+            <Alert severity={'error'} sx={{ my: 2 }} icon={false}>
+              {error.message}
+            </Alert>
+          )}
+          <Box
+            className={hiddenOnPrintClassName}
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '10px',
+              mb: '10px',
+            }}
+          >
             <Button
-              variant={'contained'}
-              fullWidth
+              variant={'outlined'}
+              onClick={copyCodesToClipboard}
               disabled={!recoveryCodes}
-              sx={hideOnPrintStyle}
-              onClick={onClose}
             >
-              Done
+              Copy to Clipboard
+            </Button>
+            <Button
+              variant={'outlined'}
+              disabled={!recoveryCodes}
+              onClick={window.print}
+            >
+              Print Codes
             </Button>
           </Box>
-        </>
+          <Button
+            variant={'contained'}
+            className={hiddenOnPrintClassName}
+            fullWidth
+            disabled={!recoveryCodes}
+            onClick={onClose}
+          >
+            Done
+          </Button>
+        </Box>
       }
       rightContent={
         <Box
           sx={{
             py: 10,
             height: '100%',
-            background: `url(${TwoFactorGraphic}) no-repeat right bottom`,
+            background: `url(https://s3.amazonaws.com/static.synapse.org/images/twofactor-graphic.svg) no-repeat right bottom`,
             backgroundSize: '100%',
           }}
         >

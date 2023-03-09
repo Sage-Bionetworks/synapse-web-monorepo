@@ -50,8 +50,8 @@ export default function TwoFactorAuthSettingsPanel(
         </Typography>
       </ConditionalWrapper>
       <Typography variant={'body1Italic'} sx={{ my: 1 }}>
-        Required to satisfy certain access requirements, and recommended for
-        overall account security.
+        Required to satisfy certain data access requirements, and recommended
+        for overall account security.
       </Typography>
       <Typography variant={'body1'} sx={{ my: 2 }}>
         Synapse uses a time-based system, which you can set up using an app like
