@@ -68,6 +68,7 @@ const routes: GenericRoute[] = [
               PDMC: 'rgba(32, 171, 159, 1)',
               'PS-ON': 'rgba(197, 191, 223, 1)',
               TEC: 'rgba(59, 88, 143, 1)',
+              'Sage Bionetworks': 'rgba(127, 127, 127, 1)',
             },
             whereClause: 'totalCount is not NULL',
           },

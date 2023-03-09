@@ -52,6 +52,7 @@ function getBarPlotDataPoints(
       },
       text: [group],
       hovertemplate: `%{x} %{text}<extra></extra>`,
+      textposition: 'none',
       type: 'bar',
     })
   })
