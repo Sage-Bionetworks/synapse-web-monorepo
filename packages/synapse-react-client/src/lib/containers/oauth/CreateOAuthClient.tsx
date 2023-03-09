@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { displayToast } from '../ToastMessage'
@@ -59,8 +59,8 @@ export const CreateOAuthModal: React.FunctionComponent<
   const uriHelpMessage = 'Click Add URI to add more Redirect URIs'
 
   // Return the OAuth Client definition based on the current client-side UI state
-  const getOAuthClient = useCallback(() => {
-    const oAuthClient: OAuthClient = {
+  const oAuthClient: OAuthClient = useMemo(() => {
+    return {
       client_id: client?.client_id,
       client_name: clientName,
       redirect_uris: redirectUris?.map(str => str.uri) ?? [''],
@@ -70,7 +70,6 @@ export const CreateOAuthModal: React.FunctionComponent<
       tos_uri: tosUri,
       etag: client?.etag,
     }
-    return oAuthClient
   }, [
     client?.client_id,
     client?.etag,
@@ -98,14 +97,14 @@ export const CreateOAuthModal: React.FunctionComponent<
       if (accessToken) {
         // SWC-6365: use the pre-check service to determine if we need to show a warning on edit
         SynapseClient.isOAuthClientReverificationRequired(
-          getOAuthClient(),
+          oAuthClient,
           accessToken,
         ).then(precheckResult => {
           setWarnTrigger(precheckResult.reverificationRequired)
         })
       }
     },
-    [accessToken, getOAuthClient],
+    [accessToken, oAuthClient],
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 
@@ -161,7 +160,6 @@ export const CreateOAuthModal: React.FunctionComponent<
   const onCreateClient = () => {
     try {
       if (accessToken) {
-        const oAuthClient = getOAuthClient()
         setUpdatedClient(oAuthClient)
         if (warnTrigger === true) {
           setIsShowingConfirmModal(true)
