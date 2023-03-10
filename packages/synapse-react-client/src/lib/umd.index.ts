@@ -58,6 +58,9 @@ import {
   useSynapseContext,
 } from './utils/SynapseContext'
 import { SynapseQueries } from './utils'
+import TwoFactorBackupCodes from './containers/auth/TwoFactorBackupCodes'
+import TwoFactorEnrollmentForm from './containers/auth/TwoFactorEnrollmentForm'
+import TwoFactorAuthSettingsPanel from './containers/auth/TwoFactorAuthSettingsPanel'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -121,6 +124,9 @@ const SynapseComponents = {
   EntityActionMenu,
   EntityPageTitleBar,
   CreatedByModifiedBy,
+  TwoFactorAuthSettingsPanel,
+  TwoFactorBackupCodes,
+  TwoFactorEnrollmentForm,
 }
 
 // Include the version in the build

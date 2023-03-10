@@ -33,7 +33,7 @@ const globals = {
   'universal-cookie': 'UniversalCookie',
 }
 
-/** @type {import('esbuild').CommonOptions} */
+/** @type {import('esbuild').BuildOptions} */
 const esBuildOptions = {
   entryPoints: ['src/lib/umd.index.ts'],
   bundle: true,
