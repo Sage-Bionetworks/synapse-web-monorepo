@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogProps,
   DialogTitle,
   IconButton,
   Stack,
@@ -16,7 +15,9 @@ import { monospaceFontFamily } from '../../utils/theme/typography/Typography'
 
 type TwoFactorSecretDialogProps = {
   secret: string
-} & Pick<DialogProps, 'open' | 'onClose'>
+  open: boolean
+  onClose: () => void
+}
 
 export default function TwoFactorSecretDialog(
   props: TwoFactorSecretDialogProps,

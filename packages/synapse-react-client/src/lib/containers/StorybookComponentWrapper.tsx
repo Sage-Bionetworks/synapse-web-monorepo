@@ -123,7 +123,7 @@ export function StorybookComponentWrapper(props: {
     resetCache()
   }, [accessToken])
 
-  const synapseContext: SynapseContextType = useMemo(
+  const synapseContext: Partial<SynapseContextType> = useMemo(
     () => ({
       accessToken: accessToken,
       isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
