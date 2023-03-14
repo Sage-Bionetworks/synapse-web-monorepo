@@ -14,10 +14,11 @@ import { useQueryContext } from '../QueryContext'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { DownloadOptions } from './table-top'
 import { ColumnSelection } from './table-top/ColumnSelection'
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import QueryCount from '../QueryCount'
 import { Icon } from '../row_renderers/utils'
 import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
+import { useExportToCavatica } from '../../utils/hooks/SynapseAPI/entity/useExportToCavatica'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -94,6 +95,10 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     getInitQueryRequest,
     lockedColumn,
   } = useQueryContext()
+  const exportToCavatica = useExportToCavatica(
+    getLastQueryRequest(),
+    data?.queryResult?.queryResults.headers,
+  )
 
   const {
     topLevelControlsState,
@@ -223,6 +228,16 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                 </button>
               )
             })}
+          {showExportToCavatica && (
+            <Button
+              variant="outlined"
+              onClick={() => {
+                exportToCavatica()
+              }}
+            >
+              Export to Cavatica
+            </Button>
+          )}
           {controls.map(control => {
             const { key, icon, tooltipText } = control
             if (
