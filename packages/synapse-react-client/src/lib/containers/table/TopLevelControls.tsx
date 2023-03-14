@@ -28,6 +28,7 @@ export type TopLevelControlsProps = {
   hideSqlEditorControl?: boolean
   showColumnSelection?: boolean
   customControls?: CustomControl[]
+  showExportToCavatica?: boolean
 }
 
 type Control = {
@@ -82,6 +83,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     hideQueryCount = false,
     hideSqlEditorControl = true,
     customControls,
+    showExportToCavatica = false,
   } = props
 
   const {

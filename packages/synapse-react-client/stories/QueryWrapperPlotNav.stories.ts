@@ -172,6 +172,19 @@ export const FileViewWithLockedColumn: Story = {
     },
   },
 }
+
+export const Cavatica: Story = {
+  args: {
+    sql: "SELECT id, name, CONCAT('drs://repo-prod.prod.sagebase.org/syn', id, '.', currentVersion) AS drs_uri FROM syn51186974",
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDownloadColumn: true,
+    },
+    name: 'Cavatica Integration Demo',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+  },
+}
 export const Dataset: Story = {
   args: {
     sql: 'SELECT * FROM syn26302617',
