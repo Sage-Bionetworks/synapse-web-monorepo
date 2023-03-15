@@ -19,7 +19,6 @@ import QueryCount from '../QueryCount'
 import { Icon } from '../row_renderers/utils'
 import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 import { useExportToCavatica } from '../../utils/hooks/SynapseAPI/entity/useExportToCavatica'
-import cavaticaLogo from '../../assets/icons/cavatica.png'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -236,8 +235,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                 exportToCavatica()
               }}
             >
-              <img src={cavaticaLogo} />
-              &nbsp;&nbsp;Send to Cavatica
+              Send to Cavatica
             </Button>
           )}
           {controls.map(control => {
