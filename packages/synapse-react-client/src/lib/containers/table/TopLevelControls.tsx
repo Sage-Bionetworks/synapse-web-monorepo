@@ -235,7 +235,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                 exportToCavatica()
               }}
             >
-              Export to Cavatica
+              Send to Cavatica
             </Button>
           )}
           {controls.map(control => {
