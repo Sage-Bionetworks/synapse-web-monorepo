@@ -1,0 +1,2 @@
+import{r as t}from"./index-f1f749bf.js";function r(n){return n&&n.ownerDocument||document}function u(n,e){typeof n=="function"?n(e):n&&(n.current=e)}const c=typeof window<"u"?t.useLayoutEffect:t.useEffect,s=c;function i(...n){return t.useMemo(()=>n.every(e=>e==null)?null:e=>{n.forEach(o=>{u(o,e)})},n)}function a(n){return typeof n=="string"}export{s as a,a as i,r as o,u as s,i as u};
+//# sourceMappingURL=isHostComponent-957231d5.js.map
