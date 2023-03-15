@@ -45,7 +45,7 @@ export function useExportToCavatica(
       )
       window.open(presignedURL, '_blank')
     } catch (_err) {
-      displayToast(_err, 'danger')
+      displayToast(_err.reason, 'danger')
     }
   }
 }
