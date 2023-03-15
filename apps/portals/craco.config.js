@@ -2,19 +2,26 @@ const { ProvidePlugin } = require('webpack')
 
 module.exports = {
   webpack: {
-    configure: {
-      resolve: {
-        fallback: {
-          path: require.resolve('path-browserify'),
-          timers: require.resolve('timers-browserify'),
-          fs: require.resolve('memfs'),
-          https: require.resolve('https-browserify'),
-          stream: require.resolve('stream-browserify'),
-          http: require.resolve('stream-http'),
-          events: require.resolve('events'),
-        },
-      },
-      ignoreWarnings: [/Failed to parse source map/],
+    configure: (webpackConfig) => {
+      const scopePluginIndex = webpackConfig.resolve.plugins.findIndex(
+        ({ constructor }) =>
+          constructor && constructor.name === 'ModuleScopePlugin',
+      )
+
+      webpackConfig.resolve.plugins.splice(scopePluginIndex, 1)
+
+      webpackConfig.resolve.fallback = {
+        ...webpackConfig.resolve.fallback,
+        path: require.resolve('path-browserify'),
+        timers: require.resolve('timers-browserify'),
+        fs: require.resolve('memfs'),
+        https: require.resolve('https-browserify'),
+        stream: require.resolve('stream-browserify'),
+        http: require.resolve('stream-http'),
+        events: require.resolve('events'),
+      }
+      webpackConfig.ignoreWarnings = [/Failed to parse source map/]
+      return webpackConfig
     },
     plugins: {
       add: [
@@ -28,6 +35,7 @@ module.exports = {
   eslint: {
     enable: false,
   },
+
   // babel: {
   //   presets: ['@babel/preset-react'],
   //   plugins: [
