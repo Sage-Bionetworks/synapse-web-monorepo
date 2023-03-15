@@ -10,7 +10,7 @@ import { ConfigRoute, GenericRoute } from 'types/portal-config'
 import Button from 'react-bootstrap/esm/Button'
 import { preparePostSSORedirect, redirectAfterSSO } from './utils'
 import { Dialog, DialogContent, IconButton } from '@mui/material'
-import IconSvg from 'synapse-react-client/build/src/lib/containers/IconSvg'
+import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 
 type SynapseSettingLink = {
   text: string
