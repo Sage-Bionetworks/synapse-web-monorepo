@@ -32,6 +32,7 @@ export const toolsSchema: GenericCardSchema = {
   description: 'description',
   secondaryLabels: [
     'investigatorName',
+    'institution',
     'investigatorWebsite',
     'rrid',
     'synonyms',
