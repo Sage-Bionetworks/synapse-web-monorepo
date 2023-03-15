@@ -27,6 +27,8 @@ const twoFactorAuthErrorResponse: TwoFactorAuthErrorResponse = {
   errorCode: ErrorResponseCode.TWO_FA_REQUIRED,
 }
 
+const onSignInComplete = jest.fn()
+
 const mockOAuthSessionRequest = jest.spyOn(SynapseClient, 'oAuthSessionRequest')
 const mockSetAccessTokenCookie = jest.spyOn(
   SynapseClient,
@@ -48,11 +50,12 @@ describe('useDetectSSOCode tests', () => {
   })
 
   it('Does nothing if searchParams are not set', () => {
-    renderHook(() => useDetectSSOCode())
+    renderHook(() => useDetectSSOCode({ onSignInComplete: onSignInComplete }))
 
     expect(mockOAuthSessionRequest).not.toHaveBeenCalled()
     expect(mockOAuthRegisterAccountStep2).not.toHaveBeenCalled()
     expect(mockBindOAuthProviderToAccount).not.toHaveBeenCalled()
+    expect(onSignInComplete).not.toHaveBeenCalled()
   })
 
   it('Handles successful login with Google', async () => {
@@ -64,7 +67,7 @@ describe('useDetectSSOCode tests', () => {
     mockOAuthSessionRequest.mockResolvedValue(successfulLoginResponse)
     mockSetAccessTokenCookie.mockResolvedValue(undefined)
 
-    renderHook(() => useDetectSSOCode())
+    renderHook(() => useDetectSSOCode({ onSignInComplete: onSignInComplete }))
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
         PROVIDERS.GOOGLE,
@@ -76,6 +79,7 @@ describe('useDetectSSOCode tests', () => {
       expect(mockSetAccessTokenCookie).toHaveBeenCalledWith(
         successfulLoginResponse.accessToken,
       )
+      expect(onSignInComplete).toHaveBeenCalled()
     })
   })
 
@@ -88,7 +92,12 @@ describe('useDetectSSOCode tests', () => {
     const mockOn2fa = jest.fn()
     mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
 
-    renderHook(() => useDetectSSOCode({ onTwoFactorAuthRequired: mockOn2fa }))
+    renderHook(() =>
+      useDetectSSOCode({
+        onSignInComplete,
+        onTwoFactorAuthRequired: mockOn2fa,
+      }),
+    )
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
@@ -97,11 +106,9 @@ describe('useDetectSSOCode tests', () => {
         `http://localhost/?provider=${PROVIDERS.GOOGLE}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
-      expect(mockOn2fa).toHaveBeenCalledWith(
-        twoFactorAuthErrorResponse,
-        expect.anything(),
-      )
+      expect(mockOn2fa).toHaveBeenCalledWith(twoFactorAuthErrorResponse)
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(onSignInComplete).not.toHaveBeenCalled()
     })
   })
 
@@ -120,7 +127,7 @@ describe('useDetectSSOCode tests', () => {
 
     mockOAuthSessionRequest.mockRejectedValue(notFoundError)
 
-    renderHook(() => useDetectSSOCode())
+    renderHook(() => useDetectSSOCode({ onSignInComplete }))
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
@@ -130,7 +137,7 @@ describe('useDetectSSOCode tests', () => {
         BackendDestinationEnum.REPO_ENDPOINT,
       )
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
-
+      expect(onSignInComplete).not.toHaveBeenCalled()
       expect(window.location.replace).toHaveBeenCalledWith(
         'https://www.synapse.org/#!RegisterAccount:0',
       )
@@ -154,7 +161,9 @@ describe('useDetectSSOCode tests', () => {
     mockOAuthSessionRequest.mockRejectedValue(unhandledError)
     const mockOnError = jest.fn()
 
-    renderHook(() => useDetectSSOCode({ onError: mockOnError }))
+    renderHook(() =>
+      useDetectSSOCode({ onSignInComplete, onError: mockOnError }),
+    )
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
@@ -164,6 +173,7 @@ describe('useDetectSSOCode tests', () => {
         BackendDestinationEnum.REPO_ENDPOINT,
       )
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(onSignInComplete).not.toHaveBeenCalled()
 
       expect(mockOnError).toHaveBeenCalledWith(unhandledError.reason)
       // Should not redirect to account creation
@@ -184,7 +194,7 @@ describe('useDetectSSOCode tests', () => {
     mockOAuthRegisterAccountStep2.mockResolvedValue(successfulLoginResponse)
     mockSetAccessTokenCookie.mockResolvedValue(undefined)
 
-    renderHook(() => useDetectSSOCode())
+    renderHook(() => useDetectSSOCode({ onSignInComplete }))
     await waitFor(() => {
       expect(mockOAuthRegisterAccountStep2).toHaveBeenCalledWith(
         state,
@@ -197,6 +207,7 @@ describe('useDetectSSOCode tests', () => {
       expect(mockSetAccessTokenCookie).toHaveBeenCalledWith(
         successfulLoginResponse.accessToken,
       )
+      expect(onSignInComplete).toHaveBeenCalled()
 
       expect(mockOAuthSessionRequest).not.toHaveBeenCalled()
     })
@@ -209,7 +220,7 @@ describe('useDetectSSOCode tests', () => {
     )
     mockBindOAuthProviderToAccount.mockResolvedValue(successfulLoginResponse)
 
-    renderHook(() => useDetectSSOCode())
+    renderHook(() => useDetectSSOCode({ onSignInComplete }))
     await waitFor(() => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
         PROVIDERS.ORCID,
@@ -219,6 +230,7 @@ describe('useDetectSSOCode tests', () => {
       )
 
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(onSignInComplete).not.toHaveBeenCalled()
     })
   })
   it('Handles ORCID binding failure', async () => {
@@ -237,7 +249,9 @@ describe('useDetectSSOCode tests', () => {
     )
     mockBindOAuthProviderToAccount.mockRejectedValue(error)
 
-    renderHook(() => useDetectSSOCode({ onError: mockOnError }))
+    renderHook(() =>
+      useDetectSSOCode({ onSignInComplete, onError: mockOnError }),
+    )
     await waitFor(() => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
         PROVIDERS.ORCID,
@@ -248,6 +262,7 @@ describe('useDetectSSOCode tests', () => {
 
       expect(mockOnError).toHaveBeenCalledWith(error.reason)
 
+      expect(onSignInComplete).not.toHaveBeenCalled()
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
     })
     consoleSpy.mockReset()

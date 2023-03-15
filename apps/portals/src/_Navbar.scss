@@ -1,20 +1,6 @@
 // Import the theme css
 @use './style/variables' as Portal;
 
-.login-modal {
-  .modal-dialog {
-    display: flex;
-    width: 360px;
-  }
-  .modal-content {
-    padding: 5px !important;
-  }
-  .modal-header {
-    padding: 5px 16px 0 !important;
-    border-bottom: 0 none;
-  }
-}
-
 .crawler-link {
   position: absolute;
   top: -500px;

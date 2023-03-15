@@ -16,12 +16,10 @@ import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
 import { PROVIDERS } from '../../containers/auth/AuthenticationMethodSelection'
 
 type UseDetectSSOCodeOptions = {
+  onSignInComplete?: () => void
   registerAccountUrl?: string
   onError?: (err: unknown) => void
-  onTwoFactorAuthRequired?: (
-    resp: TwoFactorAuthErrorResponse,
-    callback: () => void,
-  ) => void
+  onTwoFactorAuthRequired?: (resp: TwoFactorAuthErrorResponse) => void
 }
 
 /*
@@ -34,6 +32,7 @@ export default function useDetectSSOCode(
   opts: UseDetectSSOCodeOptions = {},
 ): void {
   const {
+    onSignInComplete,
     registerAccountUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
     onError,
     onTwoFactorAuthRequired,
@@ -53,26 +52,17 @@ export default function useDetectSSOCode(
     // state is used during OAuth based Synapse account creation (it's the username)
     if (code && provider) {
       const redirectUrl = `${redirectURL}?provider=${provider}`
-      const redirectAfterSuccess = () => {
-        // go back to original route after successful SSO login
-        const originalUrl = localStorage.getItem('after-sso-login-url')
-        localStorage.removeItem('after-sso-login-url')
-        if (originalUrl) {
-          window.location.replace(originalUrl)
-        }
-      }
+
       if (PROVIDERS.GOOGLE == provider) {
         const onSuccess = (
           response: LoginResponse | TwoFactorAuthErrorResponse,
         ) => {
           if ('accessToken' in response) {
-            setAccessTokenCookie(response.accessToken).then(
-              redirectAfterSuccess,
-            )
+            setAccessTokenCookie(response.accessToken).then(onSignInComplete)
           } else {
             // The app will redirect or open a modal to handle 2FA
             if (onTwoFactorAuthRequired) {
-              onTwoFactorAuthRequired(response, redirectAfterSuccess)
+              onTwoFactorAuthRequired(response)
             }
           }
         }
@@ -121,7 +111,7 @@ export default function useDetectSSOCode(
           redirectUrl,
           BackendDestinationEnum.REPO_ENDPOINT,
         )
-          .then(redirectAfterSuccess)
+          .then(onSignInComplete)
           .catch(onFailure)
       }
     }
