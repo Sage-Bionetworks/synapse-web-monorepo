@@ -230,7 +230,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             })}
           {showExportToCavatica && (
             <Button
-              variant="outlined"
+              variant="contained"
               onClick={() => {
                 exportToCavatica()
               }}
