@@ -173,7 +173,7 @@ export const FileViewWithLockedColumn: Story = {
   },
 }
 
-export const Cavatica: Story = {
+export const SendToCavatica: Story = {
   args: {
     sql: 'SELECT * FROM syn51186974',
     tableConfiguration: {

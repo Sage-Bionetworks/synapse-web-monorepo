@@ -43,6 +43,7 @@ export function useExportToCavatica(
         result.resultsFileHandleId,
         accessToken,
       )
+      // TODO: Send this presigned URL to the Cavatica landing page where it can be processed
       window.open(presignedURL, '_blank')
     } catch (_err) {
       displayToast(_err.reason, 'danger')
