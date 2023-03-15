@@ -7,3 +7,4 @@ declare module '*.svg' {
   >
 }
 declare module 'column-resizer'
+declare module '*.png'
