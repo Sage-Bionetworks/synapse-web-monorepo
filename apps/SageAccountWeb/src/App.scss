@@ -1,0 +1,145 @@
+@use 'variables' as Portal;
+
+@use 'synapse-react-client/dist/style/main.scss' with (
+  $primary-action-color: Portal.$primary-action-color,
+  $secondary-action-color: Portal.$secondary-action-color,
+  $primary-bgcolor-rgba: unset
+);
+@use 'all';
+
+.App {
+  font-family: 'Lato', sans-serif;
+  overflow: hidden;
+}
+
+.BlueBackground {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent
+    url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg')
+    no-repeat;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.LoginComponent,
+.ComponentWrapper {
+  background: transparent;
+  padding: 50px;
+  margin: 50px;
+}
+.LoginComponent {
+  max-width: 460px;
+}
+.ComponentWrapper {
+  max-width: 650px;
+}
+
+.SourceAppLogo {
+  img {
+    max-width: 320px;
+  }
+  svg {
+    height: 100%;
+  }
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.AccountSettingsSourceAppLogo {
+  img {
+    height: 24px;
+    max-height: 24px;
+  }
+}
+
+$wrapper-width: 955px;
+.panel-wrapper-bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.7),
+      rgba(255, 255, 255, 0.7)
+    ),
+    url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg');
+  background-size: cover;
+  &.with-account-setting {
+    align-items: flex-start;
+  }
+}
+
+.panel-wrapper {
+  display: flex;
+  max-width: $wrapper-width;
+  &.with-login-panel-bg {
+    background: #fff
+      url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg')
+      no-repeat right bottom 20px;
+  }
+  &.with-white-panel-bg {
+    background: #fff;
+  }
+
+  > div {
+    flex: 1;
+  }
+  .panel {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 60px 72px;
+  }
+  .panel-logo {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: -25px;
+    img {
+      max-width: 300px;
+      min-height: 100px;
+    }
+  }
+  .panel-right {
+    background-color: rgba(57, 89, 121, 0.05);
+    flex: 0 1 auto;
+    padding: 0 60px;
+    .headline {
+      margin-top: 200px;
+      font-weight: 700;
+    }
+    .description {
+      margin-top: 15px;
+      margin-bottom: 300px;
+    }
+  }
+}
+
+@media (max-width: $wrapper-width) {
+  .panel-wrapper-bg {
+    background: #fff
+      url('https://s3.amazonaws.com/static.synapse.org/images/SynapseMobileLogInFull.svg')
+      50% 50%;
+    background-size: contain;
+  }
+  .panel-wrapper {
+    &.with-login-panel-bg {
+      background: none;
+    }
+    .panel {
+      padding: 60px 0;
+    }
+    .panel-right {
+      display: none;
+    }
+  }
+}

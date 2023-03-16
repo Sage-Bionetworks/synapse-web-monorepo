@@ -1,0 +1,42 @@
+.account-setting-panel {
+  margin: 30px 0;
+  @media (max-width: 768px) {
+    &.nav-panel {
+      display: none;
+    }
+  }
+  &.nav-panel {
+    min-width: 200px;
+    margin-right: 30px;
+    li {
+      background-color: #fff;
+      font-size: 14px;
+      border-bottom: 1px solid #eaecee;
+      padding: 11px 20px;
+      &:hover {
+        font-weight: bold;
+      }
+    }
+  }
+  &.main-panel {
+    background-color: #fff;
+    padding: 54px;
+    .credential-partition {
+      .completeIcon {
+        color: #32a330;
+      }
+      .incompleteIcon {
+        color: #c13415;
+      }
+      .item-completion {
+        margin: 20px 0;
+      }
+      border-bottom: 1px #eaecee solid;
+      margin-bottom: 1px;
+      padding: 34px 0;
+    }
+  }
+  .sourceAppItem img {
+    width: 100%;
+  }
+}
