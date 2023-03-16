@@ -81,15 +81,14 @@ describe('useExportToCavatica', () => {
   it('Successfully send to Cavatica', async () => {
     mockGetDownloadFromTableRequest.mockResolvedValue(downloadFromTableResult)
     mockGetFileHandleByIdURL.mockResolvedValue(presignedURLResponse)
-    let exportFunction = () => {}
-    renderHook(
+    const { current: exportFunction } = renderHook(
       () =>
-        (exportFunction = useExportToCavatica(
+        useExportToCavatica(
           testQueryRequest,
           testSelectColumns,
-        )),
+        ),
     )
-    exportFunction()
+    await exportFunction()
     await waitFor(() => {
       expect(mockGetDownloadFromTableRequest).toHaveBeenCalled()
       expect(window.open).toHaveBeenCalledWith(presignedURLResponse, '_blank')
@@ -101,15 +100,14 @@ describe('useExportToCavatica', () => {
       reason: errorMessage,
     }
     mockGetDownloadFromTableRequest.mockRejectedValue(error)
-    let exportFunction = () => {}
-    renderHook(
+    const { current: exportFunction } = renderHook(
       () =>
-        (exportFunction = useExportToCavatica(
+        useExportToCavatica(
           testQueryRequest,
           testSelectColumns,
-        )),
+        ),
     )
-    exportFunction()
+    await exportFunction()
     await waitFor(() => {
       expect(mockGetDownloadFromTableRequest).toHaveBeenCalled()
       expect(mockToastFn).toBeCalledWith(errorMessage, 'danger'),
