@@ -64,6 +64,7 @@ type OwnProps = {
   availableFacets?: FacetFilterControlsProps['availableFacets']
   defaultColumn?: string
   defaultShowSearchBox?: boolean
+  showExportToCavatica?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
 } & Omit<TopLevelControlsProps, 'entityId'> &
   Pick<
@@ -110,6 +111,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     limit = DEFAULT_PAGE_SIZE,
     initQueryJson,
     showLastUpdatedOn,
+    showExportToCavatica = false,
   } = props
 
   const additionalFilters = generateQueryFilterFromSearchParams(
@@ -230,6 +232,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                           hideFacetFilterControl={!isFaceted}
                           hideVisualizationsControl={!isFaceted}
                           hideSqlEditorControl={hideSqlEditorControl}
+                          showExportToCavatica={showExportToCavatica}
                         />
                         {isFaceted && (
                           <>
