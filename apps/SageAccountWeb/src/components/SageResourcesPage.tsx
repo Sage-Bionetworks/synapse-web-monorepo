@@ -5,7 +5,7 @@ import ShowMore from 'synapse-react-client/dist/containers/row_renderers/utils/S
 import { IconButton } from '@mui/material'
 import theme from 'style/theme'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { useHistory } from 'react-router'
+import { useHistory } from 'react-router-dom'
 import { StyledOuterContainer } from './StyledComponents'
 import { useSourceApp, useSourceAppConfigs } from './SourceApp'
 

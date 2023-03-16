@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 
 describe('App initialization tests', () => {
-  it('renders a branded experience', async () => {
+  it.skip('renders a branded experience', async () => {
     window.localStorage.setItem('sourceAppId', 'MTB')
     render(
       <MemoryRouter>

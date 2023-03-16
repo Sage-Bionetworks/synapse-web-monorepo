@@ -1,3 +1,4 @@
+import 'synapse-react-client/dist/utils/theme/ThemeTypes'
 import { createTheme, Theme } from '@mui/material'
 import { palette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
 
@@ -149,6 +150,7 @@ const themeObject = {
     sectionTitle: {},
     subsectionHeader: {},
     dataFieldKey: {},
+    monospace: {},
   },
 }
 const theme: Theme = createTheme(themeObject)
