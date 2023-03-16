@@ -231,13 +231,12 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             })}
           {showExportToCavatica && (
             <Button
-              variant="outlined"
+              variant="text"
               onClick={() => {
                 exportToCavatica()
               }}
             >
-              <Cavatica />
-              &nbsp;&nbsp;Send to Cavatica
+              <Cavatica sx={{ mr: 1 }} /> Send to Cavatica
             </Button>
           )}
           {controls.map(control => {
