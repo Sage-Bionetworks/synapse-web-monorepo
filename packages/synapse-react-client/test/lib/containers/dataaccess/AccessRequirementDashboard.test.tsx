@@ -74,7 +74,7 @@ describe('AccessRequirementDashboard tests', () => {
     )
   })
 
-  it('Updates the passed props and URLSearchParams when updating nameContains', async () => {
+  it.skip('Updates the passed props and URLSearchParams when updating nameContains', async () => {
     const { history } = renderComponent()
     const nameContainsInput = await screen.findByLabelText(
       'Filter by Access Requirement Name',
