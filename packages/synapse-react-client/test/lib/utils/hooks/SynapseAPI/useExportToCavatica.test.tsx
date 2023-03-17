@@ -81,12 +81,10 @@ describe('useExportToCavatica', () => {
   it('Successfully send to Cavatica', async () => {
     mockGetDownloadFromTableRequest.mockResolvedValue(downloadFromTableResult)
     mockGetFileHandleByIdURL.mockResolvedValue(presignedURLResponse)
-    const { current: exportFunction } = renderHook(
-      () =>
-        useExportToCavatica(
-          testQueryRequest,
-          testSelectColumns,
-        ),
+    const {
+      result: { current: exportFunction },
+    } = renderHook(() =>
+      useExportToCavatica(testQueryRequest, testSelectColumns),
     )
     await exportFunction()
     await waitFor(() => {
@@ -100,12 +98,10 @@ describe('useExportToCavatica', () => {
       reason: errorMessage,
     }
     mockGetDownloadFromTableRequest.mockRejectedValue(error)
-    const { current: exportFunction } = renderHook(
-      () =>
-        useExportToCavatica(
-          testQueryRequest,
-          testSelectColumns,
-        ),
+    const {
+      result: { current: exportFunction },
+    } = renderHook(() =>
+      useExportToCavatica(testQueryRequest, testSelectColumns),
     )
     await exportFunction()
     await waitFor(() => {

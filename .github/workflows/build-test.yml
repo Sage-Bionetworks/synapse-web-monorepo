@@ -21,6 +21,8 @@
 
      steps:
      - uses: actions/checkout@v3.1.0
+       with:
+         fetch-depth: 0
      - name: Use Node.js ${{ matrix.node-version }}
        uses: actions/setup-node@v3
        with:
@@ -56,10 +58,10 @@
       # Portals won't build without a configuration. For now, copy the test configuration.
       # We may want to invert the model and give each portal its own project in the workspace, so we can build the portals in parallel.
      - run: pnpm nx run portals:copy-test-configuration
-     - run: pnpm build
-     - run: pnpm lint
+     - run: pnpm nx affected --target=build --parallel=2 --base=remotes/origin/main
+     - run: pnpm nx affected --target=lint --parallel=2 --base=remotes/origin/main
      - id: test
-       run: pnpm test
+       run: pnpm nx affected --target test --parallel=2 --base=remotes/origin/main
      - name: Upload test report
        if: success() || steps.test.conclusion == 'failure'
        uses: actions/upload-artifact@v3
