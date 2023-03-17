@@ -1,2 +1,0 @@
-function a(){return a=Object.assign?Object.assign.bind():function(n){for(var t=1;t<arguments.length;t++){var e=arguments[t];for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(n[r]=e[r])}return n},a.apply(this,arguments)}function i(n){if(n===void 0)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return n}export{a as _,i as a};
-//# sourceMappingURL=assertThisInitialized-3be3daa4.js.map
