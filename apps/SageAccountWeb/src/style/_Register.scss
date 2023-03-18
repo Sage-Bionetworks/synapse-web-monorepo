@@ -47,3 +47,17 @@
     }
   }
 }
+
+.RegisterAccount2 {
+  .mainContent {
+    .form-wrapper > .MuiFormControl-root {
+      margin-top: 0px;
+      margin-bottom: 20px;
+    }
+    button {
+      margin-top: 20px;
+      display: block;
+      width: 100%;
+    }
+  }
+}

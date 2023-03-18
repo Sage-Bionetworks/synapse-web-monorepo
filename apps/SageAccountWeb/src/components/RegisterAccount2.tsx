@@ -1,5 +1,7 @@
+import { Button, InputLabel, TextField } from '@mui/material'
+import { StyledFormControl } from 'components/StyledComponents'
 import React, { useEffect, useState } from 'react'
-import { Button } from '@mui/material'
+import { Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
   isAliasAvailable,
@@ -8,11 +10,8 @@ import {
 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
-import { SourceAppLogo } from './SourceApp'
-import { Typography } from 'synapse-react-client'
 import { LeftRightPanel } from './LeftRightPanel'
-import { InputLabel, TextField } from '@mui/material'
-import { StyledFormControl } from 'components/StyledComponents'
+import { SourceAppLogo } from './SourceApp'
 
 export type RegisterAccount2Props = {}
 
@@ -95,7 +94,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
   return (
     <>
       <LeftRightPanel
-        className={'AccountCreatedPage'}
+        className={'RegisterAccount2'}
         leftContent={
           <div className="mainContent">
             <div className="panel-logo logo-wrapper">
@@ -195,19 +194,19 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
             <Typography variant="headline2" sx={{ marginTop: '50px' }}>
               Email address verified!
             </Typography>
-            <Typography variant="headline3" sx={{ marginTop: '30px' }}>
+            <Typography variant="headline3" sx={{ marginTop: '20px' }}>
               Now complete your registration.
             </Typography>
-            <Typography variant="smallText1" sx={{ marginTop: '30px' }}>
+            <Typography variant="smallText1" sx={{ marginTop: '20px' }}>
               Your <strong>username</strong> can be made with letters and
               numbers, but no spaces.
             </Typography>
-            <Typography variant="smallText1" sx={{ marginTop: '30px' }}>
+            <Typography variant="smallText1" sx={{ marginTop: '20px' }}>
               <strong>First and last names</strong> are optional, but
               recommended because they make it easier for team members to find
               you.
             </Typography>
-            <Typography variant="smallText1" sx={{ marginTop: '30px' }}>
+            <Typography variant="smallText1" sx={{ marginTop: '20px' }}>
               Your <strong>password</strong> needs to be at least 8 letters. We
               recommend using a strong, unique <strong>password</strong> of
               between 16-32 characters. You can use letters, numbers, and
