@@ -2,7 +2,9 @@
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
     "allowJs": false,
-    "module": "CommonJS",
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
     "rootDir": ".",
     "outDir": "build",
     "skipLibCheck": true,

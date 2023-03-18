@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { OAuthClientError } from './OAuthClientError'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { SynapseClient } from 'synapse-react-client'
 import {
   defaultQueryClientConfig,
@@ -10,30 +10,11 @@ import { AuthenticatedOn } from 'synapse-react-client/dist/utils/synapseTypes/Au
 import { handleErrorRedirect } from './URLUtils'
 import { QueryClient } from 'react-query'
 import useDetectSSOCode from 'synapse-react-client/dist/utils/hooks/useDetectSSOCode'
+import { TwoFactorAuthErrorResponse } from 'synapse-react-client/dist/utils/synapseTypes/ErrorResponse'
+import { OAuthAppContext } from './OAuthAppContext'
+import themeOptions from './style/theme'
 
 const queryClient = new QueryClient(defaultQueryClientConfig)
-
-type OAuthAppContextType = {
-  accessToken: string | undefined
-  setAccessToken: (accessToken: string | undefined) => void
-}
-
-export const OAuthAppContext = React.createContext<OAuthAppContextType>({
-  accessToken: undefined,
-  setAccessToken: () => {
-    console.error('OAuthAppContext not initialized')
-  },
-})
-
-export function useOAuthAppContext(): OAuthAppContextType {
-  const context = useContext(OAuthAppContext)
-  if (context === undefined) {
-    throw new Error(
-      'useOAuthAppContext must be used within a OAuthAppContextProvider',
-    )
-  }
-  return context
-}
 
 function AppInitializer(
   props: React.PropsWithChildren<Record<string, unknown>>,
@@ -44,6 +25,8 @@ function AppInitializer(
     queryClient.clear()
   }, [])
   const [isFramed, setIsFramed] = useState(false)
+  const [twoFactorAuthErrorResponse, setTwoFactorAuthErrorResponse] =
+    useState<TwoFactorAuthErrorResponse>()
 
   useEffect(() => {
     // can override endpoints as https://repo-staging.prod.sagebase.org/ and https://staging.synapse.org for staging
@@ -73,10 +56,21 @@ function AppInitializer(
   }, [])
 
   useDetectSSOCode({
+    onSignInComplete: () => {
+      const originalUrl = localStorage.getItem('after-sso-login-url')
+      localStorage.removeItem('after-sso-login-url')
+      if (originalUrl) {
+        window.location.replace(originalUrl)
+      }
+    },
+    onTwoFactorAuthRequired: twoFactorAuthError => {
+      setTwoFactorAuthErrorResponse(twoFactorAuthError)
+    },
     onError: error => {
       throw error
     },
   })
+
   useEffect(() => {
     // is prompt=login?  if so, then clear the cookie
     const urlSearchParams = new URLSearchParams(window.location.search)
@@ -146,7 +140,9 @@ function AppInitializer(
   }, [])
 
   return (
-    <OAuthAppContext.Provider value={{ accessToken, setAccessToken }}>
+    <OAuthAppContext.Provider
+      value={{ accessToken, setAccessToken, twoFactorAuthErrorResponse }}
+    >
       <SynapseContextProvider
         synapseContext={{
           accessToken: accessToken,
@@ -154,6 +150,7 @@ function AppInitializer(
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
           downloadCartPageUrl: '',
         }}
+        theme={themeOptions}
         queryClient={queryClient}
       >
         {!isFramed && props.children}
