@@ -34,7 +34,6 @@
   },
   "devDependencies": {
     "@craco/craco": "^6.4.3",
-    "@testing-library/react": "^13.3.0",
     "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^27.5.0",
@@ -97,7 +96,7 @@
   "scripts": {
     "start": "craco start",
     "build": "CI=false GENERATE_SOURCEMAP=false craco --max_old_space_size=7168 build",
-    "test": "craco test --env=jsdom --setupFilesAfterEnv ./src/setupTests.ts --watchAll=false",
+    "test": "craco test --env=jsdom --setupFilesAfterEnv ./src/setupTests.ts",
     "eject": "craco eject"
   },
   "browserslist": {

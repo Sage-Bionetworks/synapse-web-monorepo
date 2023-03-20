@@ -285,12 +285,32 @@ export function OAuth2Form() {
     }
   }, [redirectURL])
 
+  const isLoadingProfile =
+    !twoFactorAuthErrorResponse &&
+    !error &&
+    profile &&
+    !isPreviousAuthCheckComplete
+  const isLoadingClientInfo =
+    !error && !oauthClientInfo && !oidcRequestDescription
+  const isRedirecting = redirectURL && oauthClientInfo
+  const promptForTwoFactorAuth = !!twoFactorAuthErrorResponse
+
+  const isLoading =
+    !promptForTwoFactorAuth &&
+    (isLoadingProfile || isLoadingClientInfo || isRedirecting)
+
   const loadingSpinner = (
-    <div style={{ textAlign: 'center' }}>
+    <Paper
+      sx={{
+        mx: 'auto',
+        width: '500px',
+        height: '250px',
+        textAlign: 'center',
+        p: 4,
+      }}
+    >
       <div style={{ marginTop: '50px' }}>
-        {redirectURL && oauthClientInfo && (
-          <p>Waiting for {oauthClientInfo.client_name}...</p>
-        )}
+        {isRedirecting && <p>Waiting for {oauthClientInfo?.client_name}...</p>}
         <span
           style={{
             marginLeft: '10px',
@@ -301,14 +321,8 @@ export function OAuth2Form() {
           className={'spinner'}
         />
       </div>
-    </div>
+    </Paper>
   )
-
-  const isLoading =
-    !twoFactorAuthErrorResponse &&
-    ((!error && !oauthClientInfo && !oidcRequestDescription) ||
-      (redirectURL && oauthClientInfo) ||
-      (!error && profile && !isPreviousAuthCheckComplete))
 
   return (
     <StyledOuterContainer>
