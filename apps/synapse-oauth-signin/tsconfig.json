@@ -1,4 +1,5 @@
 {
+  "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "src",
     "target": "es5",
@@ -9,7 +10,6 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -19,11 +19,7 @@
     "jsx": "react",
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false,
-    "strictNullChecks": true,
-    "importHelpers": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true
+    "composite": false
   },
   "include": ["src"]
 }

@@ -3,8 +3,8 @@
   "version": "0.1.2",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.13",
     "@mui/styles": "^5.11.13",
@@ -12,17 +12,17 @@
     "lodash-es": "^4.17.21",
     "moment": "^2.29.4",
     "plotly.js-basic-dist": "^1.47.3",
-    "react": "18.2.0",
-    "react-app-polyfill": "^1.0.1",
+    "react": "^18.2.0",
+    "react-app-polyfill": "^3.0.0",
     "react-bootstrap": "^1.5.2",
     "react-cookie": "4.0.0",
-    "react-dom": "18.2.0",
+    "react-dom": "^18.2.0",
     "react-query": "3.39.1",
     "react-router-dom": "5.3.3",
     "react-spinners": "^0.11.0",
     "react-use": "^17.3.1",
     "sass": "^1.30.0",
-    "synapse-react-client": "workspace:^3.1.28"
+    "synapse-react-client": "workspace:*"
   },
   "jest": {
     "moduleNameMapper": {
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^6.4.3",
-    "@testing-library/react": "^13.3.0",
+    "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^27.5.0",
     "@types/katex": "^0.5.0",
@@ -45,16 +45,8 @@
     "@types/react-plotly.js": "^2.2.4",
     "@types/react-router-dom": "^5.3.3",
     "@types/react-tooltip": "^4.2.4",
-    "@typescript-eslint/eslint-plugin": "^5.13.0",
-    "@typescript-eslint/parser": "^5.13.0",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
-    "eslint": "^8.18.0",
-    "eslint-plugin-jest": "^26.1.1",
-    "eslint-plugin-jest-dom": "^4.0.1",
-    "eslint-plugin-react": "latest",
-    "eslint-plugin-react-hooks": "^4.3.0",
-    "eslint-plugin-testing-library": "^5.0.6",
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
     "isomorphic-fetch": "^2.2.1",
@@ -75,7 +67,8 @@
     "markdown-it-synapse-math": "^3.0.4",
     "markdown-it-synapse-table": "^1.0.6",
     "memfs": "^3.4.7",
-    "msw": "^0.47.4",
+    "msw": "1.0.1",
+    "object-assign": "^4.1.1",
     "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",
     "postcss-normalize": "^10.0.1",
@@ -95,7 +88,7 @@
   "scripts": {
     "start": "craco start",
     "build": "CI=false GENERATE_SOURCEMAP=false craco --max_old_space_size=7168 build",
-    "test": "craco test --env=jsdom --setupFilesAfterEnv ./src/setupTests.ts --watchAll=false",
+    "test": "craco test --env=jsdom --setupFilesAfterEnv ./src/setupTests.ts",
     "eject": "craco eject"
   },
   "browserslist": {
@@ -115,9 +108,7 @@
     ]
   },
   "resolutions": {
-    "babel-jest": "^27.5.1",
     "js-yaml": "3.13.1",
-    "react": "18.2.0",
     "@types/react": "18.0.17",
     "@types/react-dom": "18.0.6",
     "minimatch": "^3.1.2"

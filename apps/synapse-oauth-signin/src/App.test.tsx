@@ -7,6 +7,7 @@ import { URLSearchParams } from 'url'
 import App from './App'
 import userEvent from '@testing-library/user-event'
 import { SynapseClient } from 'synapse-react-client'
+import { LoginResponse } from 'synapse-react-client/dist/utils/synapseTypes/LoginResponse'
 
 function createParams(prompt?: string) {
   const params = new URLSearchParams()
@@ -23,16 +24,13 @@ function createParams(prompt?: string) {
 }
 
 function renderApp(prompt?: string) {
-  window.history.pushState(
-    null,
-    'Synapse Sign-In',
-    `/?${createParams(prompt).toString()}`,
-  )
+  window.history.pushState(null, '', `/?${createParams(prompt).toString()}`)
   return render(<App />)
 }
 
 describe('App integration tests', () => {
   afterEach(() => {
+    jest.clearAllMocks()
     document.cookie = ''
   })
 
@@ -186,4 +184,103 @@ describe('App integration tests', () => {
   test.todo('Redirects in error if a the redirect URI is invalid')
   test.todo('Redirects in error if the backend provides an unhandled error')
   test.todo('Shows warning if the client is unverified')
+
+  test('Supports OAuth2 login with 2FA', async () => {
+    const onOAuthSignIn = jest.fn()
+    const on2FASignIn = jest.fn()
+    const oauthProvider = 'GOOGLE_OAUTH_2_0'
+    const oauthCode = 'abcdef'
+
+    const paramsFromProvider = new URLSearchParams()
+    paramsFromProvider.set('provider', oauthProvider)
+    paramsFromProvider.set('code', oauthCode)
+    paramsFromProvider.set('scope', 'email+profile+openid')
+    paramsFromProvider.set('prompt', 'consent')
+
+    const userId = 999
+    const twoFaToken = 'a1b2c3d4'
+    const accessToken = 'nv879un243980fn2in392uvb'
+    const authenticationReciept = 'imv890vm0ewvmim3'
+
+    server.use(
+      rest.post(
+        'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/session2',
+        async (req, res, ctx) => {
+          const requestBody = await req.json()
+          onOAuthSignIn(requestBody)
+
+          return res(
+            ctx.status(401),
+            ctx.json({
+              concreteType:
+                'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse',
+              reason: 'Two factor authentication required.',
+              errorCode: 'TWO_FA_REQUIRED',
+              userId: userId,
+              twoFaToken: twoFaToken,
+            }),
+          )
+        },
+      ),
+      rest.post(
+        'https://repo-prod.prod.sagebase.org/auth/v1/2fa/token',
+        async (req, res, ctx) => {
+          const requestBody = await req.json()
+          on2FASignIn(requestBody)
+          const responseBody: LoginResponse = {
+            accessToken: accessToken,
+            authenticationReceipt: authenticationReciept,
+            acceptsTermsOfUse: true,
+          }
+          return res(ctx.status(201), ctx.json(responseBody))
+        },
+      ),
+    )
+
+    // Note - don't use `renderApp` since it sets the URL and instead we want to simulate the redirect from Google
+    localStorage.setItem(
+      'after-sso-login-url',
+      `/?${createParams().toString()}`,
+    )
+    window.history.replaceState({}, '', `/?${paramsFromProvider.toString()}`)
+
+    render(<App />)
+
+    await waitFor(() => {
+      expect(onOAuthSignIn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          provider: oauthProvider,
+          authenticationCode: oauthCode,
+        }),
+      )
+    })
+
+    // Verify the TOTP prompt is on-screen and type in '123456'
+    await screen.findByText(
+      'Enter the 6-digit, time-based verification code provided by your authenticator app.',
+    )
+    const otpInputs = await screen.findAllByRole('textbox')
+    expect(otpInputs).toHaveLength(6)
+    for (let i = 0; i < otpInputs.length; i++) {
+      await userEvent.type(otpInputs[i], String(i + 1))
+    }
+    await waitFor(() => {
+      expect(on2FASignIn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          twoFaToken: twoFaToken,
+          userId: userId,
+          otpCode: '123456',
+          otpType: 'TOTP',
+        }),
+      )
+    })
+
+    // Verify that the authentication is complete and we're redirected to see the OAuth client prompt
+    // Verify user is redirected to the client prompt
+    await waitFor(() => {
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `/?${createParams().toString()}`,
+      )
+    })
+  })
 })
