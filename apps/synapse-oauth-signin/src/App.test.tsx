@@ -7,7 +7,7 @@ import { URLSearchParams } from 'url'
 import App from './App'
 import userEvent from '@testing-library/user-event'
 import { SynapseClient } from 'synapse-react-client'
-import { LoginResponse } from 'synapse-react-client/build/src/lib/utils/synapseTypes/LoginResponse'
+import { LoginResponse } from 'synapse-react-client/dist/utils/synapseTypes/LoginResponse'
 
 function createParams(prompt?: string) {
   const params = new URLSearchParams()
