@@ -17,6 +17,7 @@ export default function TOTPForm(props: TOTPFormProps) {
   return (
     <Box>
       <MuiOtpInput
+        autoFocus
         length={TOTP_LENGTH}
         value={verificationCode}
         onChange={setVerificationCode}

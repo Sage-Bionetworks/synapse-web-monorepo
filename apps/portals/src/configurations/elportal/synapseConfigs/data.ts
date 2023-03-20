@@ -8,6 +8,7 @@ const data: SynapseConfig = {
   props: {
     rgbIndex,
     name: 'Data',
+    // showExportToCavatica: true,
     visibleColumnCount: 10,
     tableConfiguration: {
       showAccessColumn: true,

@@ -1,0 +1,59 @@
+#body {
+  .btn {
+    border-radius: 100px;
+    padding-left: 20px;
+    padding-right: 20px;
+    height: 55px;
+  }
+  .form-group.required .form-label:after {
+    content: '*';
+    margin-left: 2px;
+    top: 0px;
+  }
+  .bootstrap-4-backport .form-control {
+    background: #fcfcfc;
+    border: 1px solid #2a2a2a;
+    box-sizing: border-box;
+    border-radius: 2px;
+    &:disabled {
+      background: #e9ecef;
+    }
+  }
+  .blue-background {
+    min-height: 100vh;
+    padding-top: 100px;
+    background: rgb(236, 241, 245);
+    .container {
+      background: #fefefe;
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+      padding: 80px;
+    }
+  }
+  .buttonsContainer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 50px;
+  }
+  .googleSignInButton {
+    text-align: left;
+    &:hover {
+      background-color: white;
+    }
+    .signInText {
+      margin-left: 34px;
+    }
+  }
+  .emptyButton {
+    color: black;
+    background-color: #fefefe;
+    &:hover {
+      background-color: #f4f4f4;
+    }
+  }
+  .btn-container {
+    padding: 10px 30px;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    min-width: 190px;
+    margin-right: 16px;
+  }
+}

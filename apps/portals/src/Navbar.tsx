@@ -2,13 +2,15 @@ import * as React from 'react'
 import routesConfig from './config/routesConfig'
 import logoHeaderConfig from './config/logoHeaderConfig'
 import Dropdown from 'react-bootstrap/Dropdown'
-import Modal from 'react-bootstrap/Modal'
 import { SynapseComponents } from 'synapse-react-client'
 import { SignInProps } from './AppInitializer'
 import NavLink from 'portal-components/NavLink'
 import NavUserLink from './portal-components/NavUserLink'
 import { ConfigRoute, GenericRoute } from 'types/portal-config'
 import Button from 'react-bootstrap/esm/Button'
+import { preparePostSSORedirect, redirectAfterSSO } from './utils'
+import { Dialog, DialogContent, IconButton } from '@mui/material'
+import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 
 type SynapseSettingLink = {
   text: string
@@ -212,38 +214,38 @@ class Navbar extends React.Component<any, State> {
                   >
                     SIGN&nbsp;IN
                   </Button>
-                  <Modal
-                    animation={false}
-                    backdrop="static"
-                    keyboard={false}
-                    onHide={() => {
+                  <Dialog
+                    onClose={() => {
                       handleCloseLoginDialog()
                     }}
-                    className="login-modal"
-                    show={showLoginDialog}
+                    open={showLoginDialog}
                   >
-                    <Modal.Header closeButton />
-                    <SynapseComponents.Login
-                      twoFactorAuthenticationRequired={twoFaErrorResponse}
-                      onBeginOAuthSignIn={() => {
-                        // save current route (so that we can go back here after SSO)
-                        localStorage.setItem(
-                          'after-sso-login-url',
-                          window.location.href,
-                        )
+                    <IconButton
+                      aria-label={'Close'}
+                      onClick={() => {
+                        handleCloseLoginDialog()
                       }}
-                      sessionCallback={async () => {
-                        await getSession()
-                        const originalUrl = localStorage.getItem(
-                          'after-sso-login-url',
-                        )
-                        localStorage.removeItem('after-sso-login-url')
-                        if (originalUrl) {
-                          window.location.replace(originalUrl)
-                        }
-                      }}
-                    />
-                  </Modal>
+                      sx={{ marginLeft: 'auto' }}
+                    >
+                      <IconSvg
+                        icon={'close'}
+                        wrap={false}
+                        sx={{ color: 'grey.700' }}
+                      />
+                    </IconButton>
+                    <DialogContent>
+                      <SynapseComponents.Login
+                        twoFactorAuthenticationRequired={twoFaErrorResponse}
+                        onBeginOAuthSignIn={() => {
+                          preparePostSSORedirect()
+                        }}
+                        sessionCallback={async () => {
+                          await getSession()
+                          redirectAfterSSO()
+                        }}
+                      />
+                    </DialogContent>
+                  </Dialog>
                 </div>
               )}
 

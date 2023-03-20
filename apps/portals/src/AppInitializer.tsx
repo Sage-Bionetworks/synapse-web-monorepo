@@ -1,4 +1,6 @@
-import RedirectDialog, {redirectInstructionsMap} from 'portal-components/RedirectDialog'
+import RedirectDialog, {
+  redirectInstructionsMap,
+} from 'portal-components/RedirectDialog'
 import React, {
   SetStateAction,
   useCallback,
@@ -16,6 +18,7 @@ import { TwoFactorAuthErrorResponse } from 'synapse-react-client/dist/utils/syna
 import useAnalytics from 'useAnalytics'
 import docTitleConfig from './config/docTitleConfig.json'
 import palette from './config/paletteConfig'
+import { redirectAfterSSO } from './utils'
 
 export type SignInProps = {
   userProfile: UserProfile | undefined
@@ -120,9 +123,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   const [showLoginDialog, setShowLoginDialog] = useState(false)
   const [twoFaErrorResponse, setTwoFaErrorResponse] =
     useState<TwoFactorAuthErrorResponse>()
-  const [redirectUrl, setRedirectUrl] = useState<
-    string | undefined
-  >(undefined)
+  const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)
   const [isFramed, setIsFramed] = useState(false)
 
   const { token, userProfile, getSession, hasCalledGetSession, resetSession } =
@@ -165,7 +166,10 @@ function AppInitializer(props: { children?: React.ReactNode }) {
           anchorElement.text === DOWNLOAD_FILES_MENU_TEXT
         if (anchorElement.href) {
           const { hostname } = new URL(anchorElement.href)
-          if (hostname.toLowerCase() === 'www.synapse.org' || redirectInstructionsMap[anchorElement.href]) {
+          if (
+            hostname.toLowerCase() === 'www.synapse.org' ||
+            redirectInstructionsMap[anchorElement.href]
+          ) {
             // && anchorElement.target !== '_blank') {  // should we skip the dialog if opening in a new window?
             ev.preventDefault()
             if (!redirectUrl) {
@@ -233,6 +237,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   }, [])
 
   useDetectSSOCode({
+    onSignInComplete: redirectAfterSSO,
     onTwoFactorAuthRequired: (twoFactorAuthError) => {
       setTwoFaErrorResponse(twoFactorAuthError)
       setShowLoginDialog(true)

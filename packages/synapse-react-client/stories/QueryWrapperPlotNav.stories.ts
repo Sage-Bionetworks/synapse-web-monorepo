@@ -172,6 +172,20 @@ export const FileViewWithLockedColumn: Story = {
     },
   },
 }
+
+export const SendToCavatica: Story = {
+  args: {
+    sql: 'SELECT * FROM syn51186974',
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDownloadColumn: true,
+    },
+    name: 'Cavatica Integration Demo',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    showExportToCavatica: true,
+  },
+}
 export const Dataset: Story = {
   args: {
     sql: 'SELECT * FROM syn26302617',
