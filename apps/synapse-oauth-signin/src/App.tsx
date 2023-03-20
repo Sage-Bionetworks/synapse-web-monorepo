@@ -16,10 +16,10 @@ import {
   ThemeProvider,
 } from '@mui/material/styles'
 
-const App: React.FC = () => {
+function App() {
   const [isLoggedOut, setIsLoggedOut] = useState(false)
   const theme = createTheme(generalTheme)
-  debugger
+
   return (
     <div className="App">
       <StyledEngineProvider injectFirst>

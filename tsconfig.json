@@ -9,6 +9,7 @@
   },
   "references": [
     { "path": "./packages/synapse-react-client/tsconfig.json" },
-    { "path": "./apps/portals/tsconfig.json" }
+    { "path": "./apps/portals/tsconfig.json" },
+    { "path": "./apps/synapse-oauth-signin/tsconfig.json" }
   ]
 }

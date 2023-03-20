@@ -1,10 +1,10 @@
 import 'synapse-react-client/dist/utils/theme/ThemeTypes'
-import { createTheme, Theme } from '@mui/material'
+import { ThemeOptions } from '@mui/material'
 import { palette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
 
 export const latoFont = ['Lato', 'Roboto', 'Helvetica', 'Arial'].join(',')
 
-const themeObject = {
+const themeOptions: ThemeOptions = {
   palette,
   components: {
     MuiCssBaseline: {},
@@ -153,6 +153,5 @@ const themeObject = {
     monospace: {},
   },
 }
-const theme: Theme = createTheme(themeObject)
 
-export default theme
+export default themeOptions

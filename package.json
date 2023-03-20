@@ -24,7 +24,7 @@
     "eslint-plugin-testing-library": "^5.10.0",
     "husky": ">=6",
     "lint-staged": ">=10",
-    "nx": "15.6.2",
+    "nx": "^15.8.6",
     "typescript": "4.9.5"
   },
   "npmClient": "pnpm",
