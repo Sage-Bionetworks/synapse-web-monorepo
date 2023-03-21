@@ -89,7 +89,7 @@ export default function LoginForm(props: Props) {
         />
       )}
       {(step === 'CHOOSE_AUTH_METHOD' || step === 'USERNAME_PASSWORD') && (
-        <Box display={'flex'} justifyContent={'center'}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '10px' }}>
           <Link href={registerAccountUrl} align={'center'}>
             Don&apos;t have an account? Create one now
           </Link>

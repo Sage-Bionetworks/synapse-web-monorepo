@@ -50,9 +50,9 @@ export default function AuthenticationMethodSelection(
       <Button
         fullWidth
         variant="outlined"
-        color="primary"
         onClick={onGoogleSignIn}
         sx={{
+          color: 'grey.800',
           height: '50px',
           mb: '10px',
         }}
@@ -63,11 +63,11 @@ export default function AuthenticationMethodSelection(
       <Button
         fullWidth
         variant="outlined"
-        color="primary"
         startIcon={
           <IconSvg icon="email" sx={{ width: '28px', height: '28px' }} />
         }
         sx={{
+          color: 'grey.800',
           height: '50px',
           mb: '10px',
         }}
