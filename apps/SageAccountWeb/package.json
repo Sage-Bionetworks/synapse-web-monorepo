@@ -28,15 +28,12 @@
     "universal-cookie": "^4.0.3"
   },
   "jest": {
-    "moduleNameMapper": {
-      "\\.(css|less)$": "identity-obj-proxy"
-    },
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!(synapse-react-client|lodash-es|jest*)/)"
     ]
   },
   "devDependencies": {
-    "@craco/craco": "^6.4.3",
+    "@craco/craco": "^7.1.0",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^27.5.0",
@@ -53,6 +50,7 @@
     "buffer": "^6.0.3",
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
+    "jest-html-reporter": "^3.7.0",
     "katex": "^0.10.0-rc.1",
     "markdown-it": "^13.0.1",
     "markdown-it-br": "^1.0.0",
@@ -87,7 +85,7 @@
   "scripts": {
     "start": "craco start",
     "build": "CI=false GENERATE_SOURCEMAP=false craco --max_old_space_size=7168 build",
-    "test": "craco test --env=jsdom --setupFiles ./src/tests/setupTests.ts --watchAll=false",
+    "test": "craco test --watchAll=false",
     "eject": "craco eject"
   },
   "browserslist": {
