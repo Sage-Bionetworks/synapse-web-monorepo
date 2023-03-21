@@ -7,6 +7,10 @@ import {
 } from '../src/lib/utils/SynapseConstants'
 import { Query } from '../src/lib/utils/synapseTypes'
 import QueryWrapperPlotNav from '../src/lib/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '../src/lib/utils/synapseTypes/Table/QueryFilter'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',
@@ -137,7 +141,7 @@ export const FileView: Story = {
     visibleColumnCount: 10,
     rgbIndex: 1,
     name: 'Data',
-    sqlOperator: '=',
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     sql: 'SELECT * FROM syn11346063.28',
     hideSqlEditorControl: false,
   },
@@ -150,7 +154,7 @@ const queryWithAdditionalFilter: Query = {
       concreteType:
         'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
       columnName: 'study',
-      function: 'HAS_LIKE',
+      function: ColumnMultiValueFunction.HAS_LIKE,
       values: ['ADMC_ADNI_BakerLipidomics'],
     },
   ],
@@ -194,7 +198,7 @@ export const Dataset: Story = {
       showDownloadColumn: true,
     },
     name: 'Dataset Demo',
-    sqlOperator: '=',
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     hideSqlEditorControl: false,
     shouldDeepLink: false,
   },
@@ -208,7 +212,7 @@ export const DatasetCollection: Story = {
       showDownloadColumn: true,
     },
     name: 'Dataset Collection Demo',
-    sqlOperator: '=',
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     hideSqlEditorControl: false,
     shouldDeepLink: false,
   },
@@ -219,7 +223,7 @@ export const People: Story = {
     sql: 'SELECT * FROM syn13897207',
 
     name: 'People Demo',
-    sqlOperator: '=',
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     hideSqlEditorControl: false,
     shouldDeepLink: false,
     cardConfiguration: {

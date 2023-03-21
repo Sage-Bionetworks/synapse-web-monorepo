@@ -22,6 +22,10 @@ import {
 } from '../resources'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { publicationsV2CardConfiguration } from './publications'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 export const newToolsSql = `${toolsSql} order by ROW_ID desc limit 3`
 
@@ -93,7 +97,7 @@ const tools: SynapseConfig = {
 
 export const toolDetailsPageConfig: DetailsPageProps = {
   sql: toolsSql,
-  sqlOperator: '=',
+  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
   showMenu: false,
   tabLayout: [
     {
@@ -113,7 +117,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           props: {
             sql: usageRequirementsSql,
             isMarkdown: true,
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
           },
           tableSqlKeys: ['resourceId'],
           columnName: 'resourceId',
@@ -123,7 +127,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           outsideContainerClassName: 'home-spacer',
           props: {
             sql: vendorSql,
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             columnLink: {
               linkColumnName: 'Vendor Url',
               matchColumnName: 'Vendor',
@@ -139,7 +143,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           outsideContainerClassName: 'home-spacer',
           props: {
             sql: catalogNumberSql,
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             columnLink: {
               linkColumnName: 'Catalog Number URL',
               matchColumnName: 'Catalog Number',
@@ -158,7 +162,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
             count: 1,
             size: SynapseConstants.MEDIUM_USER_CARD,
             useQueryResultUserData: true,
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
           },
           tableSqlKeys: ['resourceId'],
           columnName: 'resourceId',
@@ -182,7 +186,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           props: {
             sql: fundingAgencySql,
             isMarkdown: true,
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
           },
           tableSqlKeys: ['resourceId'],
           columnName: 'resourceId',
@@ -192,7 +196,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           outsideContainerClassName: 'home-spacer',
           props: {
             sql: mtaRequiredSql,
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             columnNameIsSectionTitle: true,
             isMarkdown: true,
             friendlyValuesMap: {
@@ -211,7 +215,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           props: {
             sql: toolApplicationsSql,
             columnNameIsSectionTitle: true,
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             limit: 1,
           },
           tableSqlKeys: ['resourceId'],
@@ -223,7 +227,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
             title: 'Mutations',
             name: 'Mutations',
             unitDescription: 'Mutations',
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             rgbIndex,
             sql: mutationsSql,
             showTopLevelControls: true,
@@ -302,7 +306,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
             {
               name: 'QueryWrapperPlotNav',
               props: {
-                sqlOperator: 'HAS',
+                sqlOperator: ColumnMultiValueFunction.HAS,
                 rgbIndex,
                 name: 'Files',
                 sql: filesSql,
@@ -332,7 +336,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
             {
               name: 'QueryWrapperPlotNav',
               props: {
-                sqlOperator: 'HAS',
+                sqlOperator: ColumnMultiValueFunction.HAS,
                 rgbIndex,
                 name: 'Studies',
                 sql: studiesSql,

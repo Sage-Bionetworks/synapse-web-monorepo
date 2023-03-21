@@ -1,11 +1,18 @@
 import { isTypeViaConcreteTypeFactory } from '../../functions/TypeUtils'
 
 export enum ColumnSingleValueFilterOperator {
-  LIKE = 'LIKE', // The LIKE operation. Use wildcard '%' in value sting for prefix/suffix matching.
+  /* The LIKE operation. Use wildcard '%' in value sting for prefix/suffix matching. */
+  LIKE = 'LIKE',
+  /* The EQUAL operation. */
+  EQUAL = 'EQUAL',
+  /* The IN operation */
+  IN = 'IN',
 }
 export enum ColumnMultiValueFunction {
-  HAS = 'HAS', // HAS function on multi-value columns, same as the predicate: 'columnName HAS ()'
-  HAS_LIKE = 'HAS_LIKE', // HAS_LIKE function on multi-value columns, same as the predicate: 'columnName HAS_LIKE ()'. Can be used for pattern matching using wildcard %.
+  /* HAS function on multi-value columns, same as the predicate: 'columnName HAS ()' */
+  HAS = 'HAS',
+  /* HAS_LIKE function on multi-value columns, same as the predicate: 'columnName HAS_LIKE ()'. Can be used for pattern matching using wildcard %. */
+  HAS_LIKE = 'HAS_LIKE',
 }
 
 const COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE =

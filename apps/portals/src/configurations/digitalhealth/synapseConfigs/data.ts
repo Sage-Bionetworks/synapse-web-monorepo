@@ -3,6 +3,7 @@ import columnAliases from '../columnAliases'
 import { LabelLinkConfig } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { StandaloneQueryWrapperProps } from 'synapse-react-client/dist/containers/table/StandaloneQueryWrapper'
 import { dataSql } from '../resources'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
@@ -66,7 +67,7 @@ export const dataDetailPageProps: StandaloneQueryWrapperProps = {
   title: 'Data Files',
   columnLinks: dataColumnLinks,
   hideDownload: true,
-  sqlOperator: '=',
+  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
 }
 
 export default data

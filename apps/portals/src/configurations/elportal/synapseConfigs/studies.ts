@@ -4,6 +4,10 @@ import { SynapseConstants } from 'synapse-react-client'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import studyHeaderSvg from '../style/study-header.svg'
 import { studiesSql, dataSql, dataOnStudiesPageSql } from '../resources'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 0
 export const studyCardConfiguration: CardConfiguration = {
@@ -77,7 +81,7 @@ const studies: SynapseConfig = {
 
 export const studiesDetailsPageProps: DetailsPageProps = {
   sql: studiesSql,
-  sqlOperator: 'LIKE',
+  sqlOperator: ColumnSingleValueFilterOperator.LIKE,
   tabLayout: [
     {
       title: 'Study Details',
@@ -120,7 +124,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
           title: 'Related Studies',
           tableSqlKeys: ['Study'],
           props: {
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             sql: studiesSql,
             ...studyCardConfiguration,
           },
@@ -165,7 +169,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
         {
           name: 'QueryWrapperPlotNav',
           props: {
-            sqlOperator: 'HAS',
+            sqlOperator: ColumnMultiValueFunction.HAS,
             showColumnSelection: true,
             rgbIndex,
             name: 'Metadata Files',
@@ -189,7 +193,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
           name: 'QueryWrapperPlotNav',
           title: 'Study Data',
           props: {
-            sqlOperator: 'HAS',
+            sqlOperator: ColumnMultiValueFunction.HAS,
             rgbIndex,
             visibleColumnCount: 10,
             tableConfiguration: {

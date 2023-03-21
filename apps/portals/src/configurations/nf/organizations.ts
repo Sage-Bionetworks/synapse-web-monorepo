@@ -1,7 +1,10 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { SynapseConfig } from 'types/portal-config'
-import { columnAliases, searchConfiguration } from './synapseConfigs/commonProps'
+import {
+  columnAliases,
+  searchConfiguration,
+} from './synapseConfigs/commonProps'
 import { publicationsCardConfiguration } from './synapseConfigs/publications'
 import { studyCardConfiguration } from './synapseConfigs/studies'
 import {
@@ -13,6 +16,7 @@ import {
 } from './resources'
 import { CardLink } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 export const organizationDetailsPageConfig: DetailsPageProps = {
   sql: fundersSql,
@@ -39,7 +43,7 @@ export const organizationDetailsPageConfig: DetailsPageProps = {
             sql: publicationsSql,
             limit: 3,
             ...publicationsCardConfiguration,
-            sqlOperator: 'LIKE',
+            sqlOperator: ColumnSingleValueFilterOperator.LIKE,
           },
           title: 'Publications',
           columnName: 'fundingAgency',
@@ -70,7 +74,7 @@ export const organizationDetailsPageConfig: DetailsPageProps = {
             shouldDeepLink: false,
             sql: filesSql,
             visibleColumnCount: 7,
-            sqlOperator: 'LIKE',
+            sqlOperator: ColumnSingleValueFilterOperator.LIKE,
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,

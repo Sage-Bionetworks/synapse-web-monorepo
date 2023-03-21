@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './Versions.scss'
-import packageJson from '../../package.json'
+import synapseReactClientPackageJson from '../../../../packages/synapse-react-client/package.json'
 import { Tooltip } from '@mui/material'
 import dayjs from 'dayjs'
 
@@ -68,7 +68,7 @@ const Versions: React.FunctionComponent = () => {
               <br />
               Deployed: {deployDate}
               <br />
-              SRC Version: {packageJson.dependencies['synapse-react-client']}
+              SRC Version: {synapseReactClientPackageJson.version}
             </div>
           }
         >
