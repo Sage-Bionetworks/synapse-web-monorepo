@@ -53,7 +53,7 @@ export const generateQueryFilterFromSearchParams = (
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
             columnName: key,
-            operator: ColumnSingleValueFilterOperator.EQUAL,
+            operator: operator,
             values: [searchParams[key]],
           }
           return filter
@@ -63,8 +63,8 @@ export const generateQueryFilterFromSearchParams = (
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
             columnName: key,
-            operator: ColumnSingleValueFilterOperator.IN,
-            values: [searchParams[key]],
+            operator: operator,
+            values: searchParams[key].split(','),
           }
           return filter
         }
@@ -73,7 +73,7 @@ export const generateQueryFilterFromSearchParams = (
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
             columnName: key,
-            function: ColumnMultiValueFunction.HAS,
+            function: operator,
             values: searchParams[key].split(','),
           }
           return filter
@@ -87,7 +87,7 @@ export const generateQueryFilterFromSearchParams = (
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
             columnName: key,
-            operator: ColumnSingleValueFilterOperator.LIKE,
+            operator: operator,
             // Add wildcards around the value
             values: [`%${removePrefixIfSynId(searchParams[key])}%`],
           }
@@ -98,7 +98,7 @@ export const generateQueryFilterFromSearchParams = (
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
             columnName: key,
-            function: ColumnMultiValueFunction.HAS,
+            function: operator,
             values: searchParams[key].split(',').map(param => {
               // Remove synId prefix for the same reasons as in the LIKE case
               return `%${removePrefixIfSynId(param)}%`
