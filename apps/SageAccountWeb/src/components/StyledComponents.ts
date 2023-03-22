@@ -27,6 +27,8 @@ export const StyledInnerContainer = styled(Paper, {
   width: '900px',
   margin: '0 auto',
   display: 'flex',
+  boxShadow: '0px 2px 6px rgba(53, 58, 63, 0.1)',
+  borderRadius: '5px',
   '& > div:nth-of-type(1), & > div:nth-of-type(2)': {
     width: '450px',
     position: 'relative',
