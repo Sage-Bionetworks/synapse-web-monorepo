@@ -1,8 +1,8 @@
 import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
+import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 import { peopleSql } from '../resources'
-import { SQLOperator } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
 
 const name = 'People'
 const sql = 'SELECT * FROM syn22096112'
@@ -20,11 +20,7 @@ export const people: SynapseConfig = {
     shouldDeepLink: true,
     hideDownload: true,
     searchConfiguration: {
-      searchable: [
-        'grants',
-        'firstName',
-        'lastName',
-      ],
+      searchable: ['grants', 'firstName', 'lastName'],
     },
   },
 }
@@ -32,5 +28,5 @@ export const people: SynapseConfig = {
 export const peopleDetailPageProps = {
   sql,
   type: SynapseConstants.MEDIUM_USER_CARD,
-  sqlOperator: 'HAS' as SQLOperator,
+  sqlOperator: ColumnMultiValueFunction.HAS,
 }

@@ -7,6 +7,7 @@ import hackathonCompleteSvg from '../style/hackathon-complete.svg'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { hackathonsSql } from '../resources'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const type = SynapseConstants.GENERIC_CARD
 const rgbIndex = 5
@@ -106,7 +107,7 @@ const hackathons: SynapseConfig = {
 export const hackathonsDetailPage: DetailsPageProps = {
   showMenu: true,
   sql: hackathonsSql,
-  sqlOperator: '=',
+  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
   tabLayout: [
     {
       title: 'Background & Results',

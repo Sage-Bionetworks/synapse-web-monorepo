@@ -1,10 +1,10 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
-
 import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { publicationSql } from '../resources'
-import { SQLOperator } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
+import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+
 const rgbIndex = 1
 
 export const publicationSchema: GenericCardSchema = {
@@ -46,7 +46,7 @@ export const publications: SynapseConfig = {
         'study',
         'grants',
         'DOI',
-        'pubmedId',        
+        'pubmedId',
       ],
     },
     facetsToPlot: ['study', 'grants'],
@@ -56,6 +56,6 @@ export const publications: SynapseConfig = {
 
 export const publicationDetailPageProps = {
   sql: publicationSql,
-  sqlOperator: 'HAS' as SQLOperator,
+  sqlOperator: ColumnMultiValueFunction.HAS,
   ...publicationsCardConfiguration,
 }

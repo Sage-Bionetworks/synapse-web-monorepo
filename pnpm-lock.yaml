@@ -252,7 +252,7 @@ importers:
       source-map-explorer: ^2.5.2
       stream-browserify: ^3.0.0
       stream-http: ^3.2.0
-      synapse-react-client: workspace:^3.1.24
+      synapse-react-client: workspace:*
       timers-browserify: ^2.0.12
       tslib: ^2.3.1
       typescript: 4.9.5

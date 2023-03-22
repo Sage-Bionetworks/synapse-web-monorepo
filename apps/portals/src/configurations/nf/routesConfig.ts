@@ -40,6 +40,7 @@ import {
 } from './resources'
 import { toolsDetailsPage } from './synapseConfigs/tools'
 import datasetsV2, { datasetsDetailsPage } from './synapseConfigs/datasetsV2'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const limit = 3
 
@@ -52,9 +53,9 @@ const routes: GenericRoute[] = [
         name: 'NFSurveyToast',
         centerTitle: true,
         outsideContainerClassName: 'home-spacer',
-        props: undefined
-      }
-    ]
+        props: undefined,
+      },
+    ],
   },
   {
     path: '',
@@ -222,7 +223,7 @@ const routes: GenericRoute[] = [
                 name: 'CardContainerLogic',
                 isOutsideContainer: true,
                 props: {
-                  sqlOperator: '=',
+                  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                   isHeader: true,
 
                   ...initiativeCardConfiguration,
@@ -260,29 +261,32 @@ const routes: GenericRoute[] = [
           {
             path: 'DetailsPage',
             routes: [
-              { path: '', synapseConfigArray: [
-                {
-                  name: 'CardContainerLogic',
-                  isOutsideContainer: true,
-                  props: {
-                    sqlOperator: '=',
-                    isHeader: true,
-  
-                    ...studyCardConfiguration,
-                    columnAliases,
-                    iconOptions: studyHeaderIconOptions,
-                    secondaryLabelLimit: Infinity,
-                    sql: studiesSql,
+              {
+                path: '',
+                synapseConfigArray: [
+                  {
+                    name: 'CardContainerLogic',
+                    isOutsideContainer: true,
+                    props: {
+                      sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+                      isHeader: true,
+
+                      ...studyCardConfiguration,
+                      columnAliases,
+                      iconOptions: studyHeaderIconOptions,
+                      secondaryLabelLimit: Infinity,
+                      sql: studiesSql,
+                    },
                   },
-                },
-                {
-                  name: 'DetailsPage',
-                  isOutsideContainer: false,
-                  props: studiesDetailPage,
-                  containerClassName: 'container-full-width',
-                },
-              ],
-            },]
+                  {
+                    name: 'DetailsPage',
+                    isOutsideContainer: false,
+                    props: studiesDetailPage,
+                    containerClassName: 'container-full-width',
+                  },
+                ],
+              },
+            ],
           },
         ],
       },
@@ -403,7 +407,7 @@ const routes: GenericRoute[] = [
                 name: 'CardContainerLogic',
                 isOutsideContainer: true,
                 props: {
-                  sqlOperator: '=',
+                  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                   isHeader: true,
                   ...hackathonCardConfiguration,
                   columnAliases: { ...columnAliases, studyStatus: 'Status' },
@@ -485,7 +489,7 @@ const routes: GenericRoute[] = [
         props: {
           ownerId: 'syn26451327',
           wikiId: '614265',
-          loadingSkeletonRowCount: 20
+          loadingSkeletonRowCount: 20,
         },
       },
     ],

@@ -6,6 +6,7 @@ import {
   CardContainerLogicProps,
 } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { publicationSql } from '../resources'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 7
 
@@ -78,5 +79,5 @@ export const publications: SynapseConfig = {
 export const publicationDetailPageProps: CardContainerLogicProps = {
   sql: publicationSql,
   ...publicationCardConfiguration,
-  sqlOperator: 'LIKE',
+  sqlOperator: ColumnSingleValueFilterOperator.LIKE,
 }

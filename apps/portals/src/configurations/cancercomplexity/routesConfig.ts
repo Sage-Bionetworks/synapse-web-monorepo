@@ -1,11 +1,5 @@
 import { GenericRoute } from 'types/portal-config'
-import {
-  publications,
-  datasets,
-  grants,
-  tools,
-  people,
-} from './synapseConfigs'
+import { publications, datasets, grants, tools, people } from './synapseConfigs'
 import { projectCardConfiguration } from './synapseConfigs/projects'
 import { datasetCardConfiguration } from './synapseConfigs/datasets'
 import RouteControlWrapperProps from './routeControlWrapperProps'
@@ -25,6 +19,10 @@ import {
   peopleSql,
 } from './resources'
 import consortiaHomePageConfig from './synapseConfigs/consortiaHomePage'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const routes: GenericRoute[] = [
   {
@@ -203,7 +201,7 @@ const routes: GenericRoute[] = [
                 name: 'DetailsPage',
                 props: {
                   sql: `${grantsSql}`,
-                  sqlOperator: 'LIKE',
+                  sqlOperator: ColumnSingleValueFilterOperator.LIKE,
                   synapseConfigArray: [
                     {
                       name: 'CardContainerLogic',
@@ -211,7 +209,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Projects',
                       tableSqlKeys: ['grant'],
                       props: {
-                        sqlOperator: 'LIKE',
+                        sqlOperator: ColumnSingleValueFilterOperator.LIKE,
                         sql: `${projectsSql} where grantType LIKE '%U54%'`,
                         ...projectCardConfiguration,
                       },
@@ -222,7 +220,7 @@ const routes: GenericRoute[] = [
                       title: 'Related People',
                       tableSqlKeys: ['grantNumber'],
                       props: {
-                        sqlOperator: 'HAS',
+                        sqlOperator: ColumnMultiValueFunction.HAS,
                         sql: peopleSql,
                         ...peopleCardConfiguration,
                         columnAliases,
@@ -234,7 +232,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Publications',
                       tableSqlKeys: ['grantNumber'],
                       props: {
-                        sqlOperator: 'HAS',
+                        sqlOperator: ColumnMultiValueFunction.HAS,
                         sql: publicationSql,
                         ...publicationsCardConfiguration,
                         columnAliases,
@@ -246,7 +244,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Datasets',
                       tableSqlKeys: ['grantNumber'],
                       props: {
-                        sqlOperator: 'HAS',
+                        sqlOperator: ColumnMultiValueFunction.HAS,
                         sql: datasetsSql,
                         ...datasetCardConfiguration,
                         columnAliases,
@@ -258,7 +256,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Tools',
                       tableSqlKeys: ['grantNumber'],
                       props: {
-                        sqlOperator: 'HAS',
+                        sqlOperator: ColumnMultiValueFunction.HAS,
                         sql: toolsSql,
                         ...toolsConfiguration,
                         columnAliases,
@@ -297,7 +295,7 @@ const routes: GenericRoute[] = [
                 isOutsideContainer: true,
                 props: {
                   isHeader: true,
-                  sqlOperator: '=',
+                  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                   ...peopleCardConfiguration,
                   secondaryLabelLimit: Infinity,
                   sql: peopleSql,
@@ -308,7 +306,7 @@ const routes: GenericRoute[] = [
                 name: 'DetailsPage',
                 props: {
                   sql: peopleSql,
-                  sqlOperator: 'LIKE',
+                  sqlOperator: ColumnSingleValueFilterOperator.LIKE,
                   synapseConfigArray: [
                     {
                       name: 'CardContainerLogic',
@@ -316,7 +314,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Grants',
                       tableSqlKeys: ['grantNumber'],
                       props: {
-                        sqlOperator: '=',
+                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: grantsSql,
                         ...grantsCardConfiguration,
                         columnAliases,
@@ -328,7 +326,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Publications',
                       tableSqlKeys: ['pubMedId'],
                       props: {
-                        sqlOperator: '=',
+                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: publicationSql,
                         ...publicationsCardConfiguration,
                         columnAliases,
@@ -340,7 +338,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Datasets',
                       tableSqlKeys: ['datasetAlias'],
                       props: {
-                        sqlOperator: '=',
+                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: datasetsSql,
                         ...datasetCardConfiguration,
                         columnAliases,
@@ -352,7 +350,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Tools',
                       tableSqlKeys: ['toolName'],
                       props: {
-                        sqlOperator: '=',
+                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: toolsSql,
                         ...toolsConfiguration,
                         columnAliases,
@@ -401,7 +399,7 @@ const routes: GenericRoute[] = [
                 name: 'DetailsPage',
                 props: {
                   sql: publicationSql,
-                  sqlOperator: '=',
+                  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                   synapseConfigArray: [
                     {
                       name: 'CardContainerLogic',
@@ -409,7 +407,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Grants',
                       tableSqlKeys: ['grantNumber'],
                       props: {
-                        sqlOperator: '=',
+                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: grantsSql,
                         ...grantsCardConfiguration,
                         columnAliases,
@@ -421,7 +419,7 @@ const routes: GenericRoute[] = [
                       title: 'Related People',
                       tableSqlKeys: ['publicationId'],
                       props: {
-                        sqlOperator: 'LIKE',
+                        sqlOperator: ColumnSingleValueFilterOperator.LIKE,
                         sql: peopleSql,
                         ...peopleCardConfiguration,
                         columnAliases,
@@ -433,7 +431,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Datasets',
                       tableSqlKeys: ['pubMedId'],
                       props: {
-                        sqlOperator: 'HAS',
+                        sqlOperator: ColumnMultiValueFunction.HAS,
                         sql: datasetsSql,
                         ...datasetCardConfiguration,
                         columnAliases,
@@ -445,7 +443,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Tools',
                       tableSqlKeys: ['pubMedId'],
                       props: {
-                        sqlOperator: '=',
+                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: toolsSql,
                         ...toolsConfiguration,
                         columnAliases,
@@ -484,7 +482,7 @@ const routes: GenericRoute[] = [
                 isOutsideContainer: true,
                 props: {
                   isHeader: true,
-                  sqlOperator: '=',
+                  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                   ...datasetCardConfiguration,
                   secondaryLabelLimit: Infinity,
                   sql: datasetsSql,
@@ -498,7 +496,7 @@ const routes: GenericRoute[] = [
                 name: 'DetailsPage',
                 props: {
                   sql: datasetsSql,
-                  sqlOperator: '=',
+                  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                   synapseConfigArray: [
                     {
                       name: 'CardContainerLogic',
@@ -506,7 +504,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Grants',
                       tableSqlKeys: ['grantNumber'],
                       props: {
-                        sqlOperator: '=',
+                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: grantsSql,
                         ...grantsCardConfiguration,
                         columnAliases,
@@ -518,7 +516,7 @@ const routes: GenericRoute[] = [
                       title: 'Related People',
                       tableSqlKeys: ['publicationId'],
                       props: {
-                        sqlOperator: 'LIKE',
+                        sqlOperator: ColumnSingleValueFilterOperator.LIKE,
                         sql: peopleSql,
                         ...peopleCardConfiguration,
                         columnAliases,
@@ -530,7 +528,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Publications',
                       tableSqlKeys: ['pubMedId'],
                       props: {
-                        sqlOperator: '=',
+                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: publicationSql,
                         ...publicationsCardConfiguration,
                         columnAliases,
@@ -569,7 +567,7 @@ const routes: GenericRoute[] = [
                 isOutsideContainer: true,
                 props: {
                   isHeader: true,
-                  sqlOperator: '=',
+                  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                   ...toolsConfiguration,
                   secondaryLabelLimit: Infinity,
                   sql: toolsSql,
@@ -583,7 +581,7 @@ const routes: GenericRoute[] = [
                 name: 'DetailsPage',
                 props: {
                   sql: toolsSql,
-                  sqlOperator: 'LIKE',
+                  sqlOperator: ColumnSingleValueFilterOperator.LIKE,
                   synapseConfigArray: [
                     {
                       name: 'CardContainerLogic',
@@ -591,7 +589,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Grants',
                       tableSqlKeys: ['grantNumber'],
                       props: {
-                        sqlOperator: '=',
+                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: grantsSql,
                         ...grantsCardConfiguration,
                         columnAliases,
@@ -603,7 +601,7 @@ const routes: GenericRoute[] = [
                       title: 'Related People',
                       tableSqlKeys: ['toolId'],
                       props: {
-                        sqlOperator: 'LIKE',
+                        sqlOperator: ColumnSingleValueFilterOperator.LIKE,
                         sql: peopleSql,
                         ...peopleCardConfiguration,
                         columnAliases,
@@ -615,7 +613,7 @@ const routes: GenericRoute[] = [
                       title: 'Related Publications',
                       tableSqlKeys: ['pubMedId'],
                       props: {
-                        sqlOperator: '=',
+                        sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                         sql: publicationSql,
                         ...publicationsCardConfiguration,
                         columnAliases,

@@ -24,6 +24,7 @@ import {
 import * as SynapseComponentModule from 'SynapseComponent'
 import { MemoryRouter } from 'react-router-dom'
 import * as SynapseClient from 'synapse-react-client/dist/utils/SynapseClient'
+import { ColumnMultiValueFunction } from '../../../../../packages/synapse-react-client/src/lib/utils/synapseTypes/Table/QueryFilter'
 
 function renderWithContext(component) {
   return render(
@@ -33,7 +34,7 @@ function renderWithContext(component) {
           accessToken: 'abcd',
           utcTime: false,
           isInExperimentalMode: false,
-          downloadCartPageUrl: '/DownloadCart'
+          downloadCartPageUrl: '/DownloadCart',
         }}
       >
         {component}
@@ -258,7 +259,7 @@ describe('DetailsPage tests', () => {
     const queryPlotNavRowConfig: RowSynapseConfig = {
       name: 'QueryWrapperPlotNav',
       props: {
-        sqlOperator: 'HAS',
+        sqlOperator: ColumnMultiValueFunction.HAS,
         name: 'Files',
         sql: 'select * from syn1',
         visibleColumnCount: 7,
@@ -271,7 +272,7 @@ describe('DetailsPage tests', () => {
       overrideSqlSourceTable: true,
     }
     const deepCloneOfProps = {
-      sqlOperator: 'HAS',
+      sqlOperator: ColumnMultiValueFunction.HAS,
       rgbIndex: 6,
       name: 'Files',
       sql: '',

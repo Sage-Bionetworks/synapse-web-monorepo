@@ -1,13 +1,16 @@
 import { SynapseConfig } from 'types/portal-config'
 import columnAliases from '../columnAliases'
-import { CardConfiguration, LabelLinkConfig } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import {
+  CardConfiguration,
+  LabelLinkConfig,
+} from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { datasetsSql } from '../resources'
 import { SynapseConstants } from 'synapse-react-client'
 import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
 import { DetailsPageProps } from 'types/portal-util-types'
 import publicationDataSvg from '../style/publicationData.svg'
 import experimentalDataSvg from '../style/experimentalData.svg'
-
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 0
 export const datasetColumnLinks: LabelLinkConfig = [
@@ -16,7 +19,7 @@ export const datasetColumnLinks: LabelLinkConfig = [
     baseURL: 'Explore/Datasets/DetailsPage',
     URLColumnName: 'id',
     matchColumnName: 'name',
-    overrideValueWithRowID: true
+    overrideValueWithRowID: true,
   },
 ]
 
@@ -31,22 +34,11 @@ const dataset: SynapseConfig = {
     tableConfiguration: {
       columnLinks: datasetColumnLinks,
     },
-    facetsToPlot: [
-      'program',
-      'project',
-      'datasetType',
-      'assay',
-    ],
+    facetsToPlot: ['program', 'project', 'datasetType', 'assay'],
     searchConfiguration: {
-      searchable: [
-        'name',
-        'program',
-        'project',
-        'datasetType',
-        'assay',
-      ],
+      searchable: ['name', 'program', 'project', 'datasetType', 'assay'],
     },
-    defaultShowFacetVisualization: false
+    defaultShowFacetVisualization: false,
   },
 }
 
@@ -55,11 +47,7 @@ export const datasetSchema: GenericCardSchema = {
   title: 'name',
   subTitle: 'program',
   description: 'description',
-  secondaryLabels: [
-    'project',
-    'assay',
-    'datasetType',
-  ],
+  secondaryLabels: ['project', 'assay', 'datasetType'],
   icon: 'datasetType',
 }
 
@@ -74,13 +62,13 @@ export const datasetCardConfiguration: CardConfiguration = {
   },
   iconOptions: {
     Publication: publicationDataSvg,
-    "Experimental Data": experimentalDataSvg,
+    'Experimental Data': experimentalDataSvg,
   },
 }
 
 export const datasetDetailsPageConfig: DetailsPageProps = {
   sql: datasetsSql,
-  sqlOperator: '=',
+  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
   showMenu: true,
 
   synapseConfigArray: [
@@ -109,7 +97,7 @@ export const datasetDetailsPageConfig: DetailsPageProps = {
         },
         shouldDeepLink: false,
         columnAliases,
-        defaultShowFacetVisualization: false
+        defaultShowFacetVisualization: false,
       },
       // tableSqlKeys: ['id'],  // Do not modify the sql where condition based on search params
       overrideSqlSourceTable: true, // Instead, modify the sql (SELECT * FROM <search_param_value>).<rowVersionNumber>

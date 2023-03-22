@@ -8,9 +8,19 @@ import {
   QueryFilter,
 } from '../synapseTypes/Table/QueryFilter'
 
-export type SQLOperator = 'LIKE' | '=' | 'HAS'
+export type SQLOperator =
+  | ColumnSingleValueFilterOperator
+  | ColumnMultiValueFunction
 
 const WITHOUT_SYN_PREFIX = 3
+
+function removePrefixIfSynId(value: string) {
+  if (value.match(SYNAPSE_ENTITY_ID_REGEX)) {
+    return value.substring(WITHOUT_SYN_PREFIX)
+  }
+  return value
+}
+
 /**
  * Given the search params, return a set of QueryFilters to narrow the the query to view just related data. May return null if a QueryFilter should not be added.
  * @param sql
@@ -20,7 +30,7 @@ const WITHOUT_SYN_PREFIX = 3
  */
 export const generateQueryFilterFromSearchParams = (
   searchParams?: Record<string, string>,
-  operator: SQLOperator = 'LIKE',
+  operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE,
 ): QueryFilter[] | undefined => {
   if (!searchParams) {
     return
@@ -37,44 +47,65 @@ export const generateQueryFilterFromSearchParams = (
   return Object.keys(searchParams)
     .filter(key => !isQueryWrapperKey(key))
     .map(key => {
-      if (operator === 'HAS') {
-        const filter: ColumnMultiValueFunctionQueryFilter = {
-          concreteType:
-            'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
-          columnName: key,
-          function: ColumnMultiValueFunction.HAS,
-          values: searchParams[key].split(','),
+      switch (operator) {
+        case ColumnSingleValueFilterOperator.EQUAL: {
+          const filter: ColumnSingleValueQueryFilter = {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+            columnName: key,
+            operator: operator,
+            values: [searchParams[key]],
+          }
+          return filter
         }
-        return filter
-      } else if (operator === 'LIKE') {
-        let value = searchParams[key]
-        if (value.match(SYNAPSE_ENTITY_ID_REGEX)) {
+        case ColumnSingleValueFilterOperator.IN: {
+          const filter: ColumnSingleValueQueryFilter = {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+            columnName: key,
+            operator: operator,
+            values: searchParams[key].split(','),
+          }
+          return filter
+        }
+        case ColumnMultiValueFunction.HAS: {
+          const filter: ColumnMultiValueFunctionQueryFilter = {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+            columnName: key,
+            function: operator,
+            values: searchParams[key].split(','),
+          }
+          return filter
+        }
+        case ColumnSingleValueFilterOperator.LIKE: {
           // If we use a LIKE statement with a synId the backend will look for a string with the first three
           // characters being 'syn', however, it stores synIds without 'syn', so the query will fail
           // The backend usually parses 'syn' out, but not with the LIKE clause since its expecting a regex, so we
           // parse this out. This will cause a bug if something matches the synId regex but is in free text.
-          value = value.substring(WITHOUT_SYN_PREFIX)
+          const filter: ColumnSingleValueQueryFilter = {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+            columnName: key,
+            operator: operator,
+            // Add wildcards around the value
+            values: [`%${removePrefixIfSynId(searchParams[key])}%`],
+          }
+          return filter
         }
-        const filter: ColumnSingleValueQueryFilter = {
-          concreteType:
-            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-          columnName: key,
-          operator: ColumnSingleValueFilterOperator.LIKE,
-          // Add wildcards around the value
-          values: [`%${value}%`],
+        case ColumnMultiValueFunction.HAS_LIKE: {
+          const filter: ColumnMultiValueFunctionQueryFilter = {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+            columnName: key,
+            function: operator,
+            values: searchParams[key].split(',').map(param => {
+              // Remove synId prefix for the same reasons as in the LIKE case
+              return `%${removePrefixIfSynId(param)}%`
+            }),
+          }
+          return filter
         }
-        return filter
-      } else {
-        // operator is '='
-        // The backend doesn't have an '=' operator for query filters, but we can just use LIKE without wildcards.
-        const filter: ColumnSingleValueQueryFilter = {
-          concreteType:
-            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-          columnName: key,
-          operator: ColumnSingleValueFilterOperator.LIKE,
-          values: [searchParams[key]],
-        }
-        return filter
       }
     })
 }

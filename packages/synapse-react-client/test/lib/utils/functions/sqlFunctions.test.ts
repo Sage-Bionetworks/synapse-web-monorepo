@@ -1,8 +1,8 @@
 import {
+  generateQueryFilterFromSearchParams,
+  parseEntityIdAndVersionFromSqlStatement,
   parseEntityIdFromSqlStatement,
   SQLOperator,
-  parseEntityIdAndVersionFromSqlStatement,
-  generateQueryFilterFromSearchParams,
 } from '../../../../src/lib/utils/functions/sqlFunctions'
 import {
   ColumnMultiValueFunction,
@@ -81,7 +81,7 @@ describe('generateQueryFilterFromSearchParams', () => {
         '{"sql":"SELECT id AS "File ID", assay, dataType, diagnosis, tumorType,  species, individualID,  fileFormat, dataSubtype, nf1Genotype as \\"NF1 Genotype\\", nf2Genotype as \\"NF2 Genotype\\", studyName, fundingAgency, consortium, name AS \\"File Name\\", accessType, accessTeam  FROM syn16858331 WHERE resourceType = \'experimentalData\'","limit":25,"offset":0,"selectedFacets":[{"concreteType":"org.sagebionetworks.repo.model.table.FacetColumnValuesRequest","columnName":"assay","facetValues":["exomeSeq"]}]}',
       study: 'syn21754060',
     }
-    let operator: SQLOperator = '='
+    let operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
     // if no search params are there, then it should return the input sql
     const result = generateQueryFilterFromSearchParams(searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
@@ -89,7 +89,7 @@ describe('generateQueryFilterFromSearchParams', () => {
         concreteType:
           'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
         columnName: 'study',
-        operator: ColumnSingleValueFilterOperator.LIKE,
+        operator: ColumnSingleValueFilterOperator.EQUAL,
         values: ['syn21754060'],
       },
     ]
@@ -100,7 +100,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     let searchParams = {
       study: 'syn21754060',
     }
-    let operator: SQLOperator = '='
+    let operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
     // if no search params are there, then it should return the input sql
     const result = generateQueryFilterFromSearchParams(searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
@@ -108,8 +108,27 @@ describe('generateQueryFilterFromSearchParams', () => {
         concreteType:
           'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
         columnName: 'study',
-        operator: ColumnSingleValueFilterOperator.LIKE,
+        operator: ColumnSingleValueFilterOperator.EQUAL,
         values: ['syn21754060'],
+      },
+    ]
+    expect(result).toStrictEqual(expectedResult)
+  })
+
+  it('Generates a queryFilter for IN', () => {
+    let searchParams = {
+      study: 'someValue1,someValue2',
+    }
+    let operator: SQLOperator = ColumnSingleValueFilterOperator.IN
+    // if no search params are there, then it should return the input sql
+    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const expectedResult: ColumnSingleValueQueryFilter[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        columnName: 'study',
+        operator: ColumnSingleValueFilterOperator.IN,
+        values: ['someValue1', 'someValue2'],
       },
     ]
     expect(result).toStrictEqual(expectedResult)
@@ -119,7 +138,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     let searchParams = {
       study: 'someValue',
     }
-    let operator: SQLOperator = 'LIKE'
+    let operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
     // if no search params are there, then it should return the input sql
     const result = generateQueryFilterFromSearchParams(searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
@@ -138,7 +157,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     let searchParams = {
       study: 'syn21754060',
     }
-    let operator: SQLOperator = 'LIKE'
+    let operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
     // if no search params are there, then it should return the input sql
     const result = generateQueryFilterFromSearchParams(searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
@@ -157,7 +176,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     let searchParams = {
       study: 'syn21754060',
     }
-    let operator: SQLOperator = 'HAS'
+    let operator: SQLOperator = ColumnMultiValueFunction.HAS
     // if no search params are there, then it should return the input sql
     const actual = generateQueryFilterFromSearchParams(searchParams, operator)
     const expectedResult: ColumnMultiValueFunctionQueryFilter[] = [
@@ -167,6 +186,25 @@ describe('generateQueryFilterFromSearchParams', () => {
         columnName: 'study',
         function: ColumnMultiValueFunction.HAS,
         values: ['syn21754060'],
+      },
+    ]
+    expect(actual).toStrictEqual(expectedResult)
+  })
+
+  it('Generates a queryFilter for HAS_LIKE', () => {
+    let searchParams = {
+      study: 'abc,def',
+    }
+    let operator: SQLOperator = ColumnMultiValueFunction.HAS_LIKE
+    // if no search params are there, then it should return the input sql
+    const actual = generateQueryFilterFromSearchParams(searchParams, operator)
+    const expectedResult: ColumnMultiValueFunctionQueryFilter[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+        columnName: 'study',
+        function: ColumnMultiValueFunction.HAS_LIKE,
+        values: ['%abc%', '%def%'],
       },
     ]
     expect(actual).toStrictEqual(expectedResult)
@@ -199,7 +237,7 @@ describe('generateQueryFilterFromSearchParams', () => {
   })
 
   it('works with multiple conditions in the HAS clause', () => {
-    const operator = 'HAS'
+    const operator: SQLOperator = ColumnMultiValueFunction.HAS
     const searchParams = {
       APPLE: 'SMITH,FUJI',
     }
@@ -216,5 +254,18 @@ describe('generateQueryFilterFromSearchParams', () => {
 
     const result = generateQueryFilterFromSearchParams(searchParams, operator)
     expect(result).toStrictEqual(expectedResults)
+  })
+
+  it('handles every filter type', () => {
+    Object.entries(ColumnSingleValueFilterOperator).forEach(([_, operator]) => {
+      expect(
+        generateQueryFilterFromSearchParams({ col: 'val' }, operator),
+      ).toBeDefined()
+    })
+    Object.entries(ColumnMultiValueFunction).forEach(([_, operator]) => {
+      expect(
+        generateQueryFilterFromSearchParams({ col: 'val' }, operator),
+      ).toBeDefined()
+    })
   })
 })
