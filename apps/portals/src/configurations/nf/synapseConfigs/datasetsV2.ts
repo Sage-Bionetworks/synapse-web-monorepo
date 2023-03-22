@@ -1,10 +1,13 @@
 import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
-
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
 import { columnAliases } from './commonProps'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { DetailsPageProps } from 'types/portal-util-types'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const datasetsSql = 'SELECT * FROM syn31543490'
 export const datasetSchema: GenericCardSchema = {
@@ -12,12 +15,7 @@ export const datasetSchema: GenericCardSchema = {
   title: 'name',
   subTitle: 'institutionOrPI', // custom annotation on datasets
   description: 'descriptionAnnotation', // until entity.description is supported, this also needs to be a custom annotation
-  secondaryLabels: [
-    'assay', 
-    'currentVersion',
-    'createdBy',
-    'id'
-  ],
+  secondaryLabels: ['assay', 'currentVersion', 'createdBy', 'id'],
 }
 
 export const datasetCardConfiguration: CardConfiguration = {
@@ -46,7 +44,7 @@ const datasetsV2: SynapseConfig = {
 
 export const datasetDetailsPageConfig: DetailsPageProps = {
   sql: datasetsSql,
-  sqlOperator: '=',
+  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
   showMenu: false,
 
   synapseConfigArray: [
@@ -60,7 +58,7 @@ export const datasetDetailsPageConfig: DetailsPageProps = {
     {
       name: 'QueryWrapperPlotNav',
       props: {
-        sqlOperator: 'HAS',
+        sqlOperator: ColumnMultiValueFunction.HAS,
         rgbIndex,
         name: 'Files',
         sql: '',

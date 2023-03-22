@@ -3,6 +3,7 @@ import columnAliases from '../columnAliases'
 import { LabelLinkConfig } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { StandaloneQueryWrapperProps } from 'synapse-react-client/dist/containers/table/StandaloneQueryWrapper'
 import { dataSql } from '../resources'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
@@ -37,18 +38,11 @@ const data: SynapseConfig = {
     tableConfiguration: {
       columnLinks: dataColumnLinks,
     },
-    facetsToPlot: [
-      'program',
-      'project',
-    ],
+    facetsToPlot: ['program', 'project'],
     searchConfiguration: {
-      searchable: [
-        'name',
-        'program',
-        'project',
-      ],
+      searchable: ['name', 'program', 'project'],
     },
-    defaultShowFacetVisualization: false
+    defaultShowFacetVisualization: false,
   },
 }
 
@@ -58,7 +52,7 @@ export const dataDetailPageProps: StandaloneQueryWrapperProps = {
   title: 'Files',
   columnLinks: dataColumnLinks,
   hideDownload: true,
-  sqlOperator: '=',
+  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
 }
 
 export default data

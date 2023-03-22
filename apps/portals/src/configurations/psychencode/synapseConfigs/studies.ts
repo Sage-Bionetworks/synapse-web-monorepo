@@ -5,8 +5,11 @@ import { CardConfiguration } from 'synapse-react-client/dist/containers/CardCont
 import { SynapseConfig } from 'types/portal-config'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { studiesSql, dataSql, metadataSql } from '../resources'
-import { SQLOperator } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
 import { publicationDetailPageProps } from './publications'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 const rgbIndex = 1
 
 export const studySchema: GenericCardSchema = {
@@ -69,7 +72,7 @@ export const studies: SynapseConfig = {
 
 export const details: DetailsPageProps = {
   sql: studiesSql,
-  sqlOperator: '=',
+  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
   tabLayout: [
     {
       title: 'Study Details',
@@ -143,7 +146,7 @@ export const details: DetailsPageProps = {
             },
             rgbIndex,
             title: 'Metadata',
-            sqlOperator: 'HAS',
+            sqlOperator: ColumnMultiValueFunction.HAS,
           },
           resolveSynId: {
             value: true,
@@ -158,7 +161,7 @@ export const details: DetailsPageProps = {
           props: {
             rgbIndex: 8,
             sql: dataSql,
-            sqlOperator: 'HAS',
+            sqlOperator: ColumnMultiValueFunction.HAS,
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,
@@ -209,7 +212,7 @@ export const studyDetailPage: SynapseConfig[] = [
       rgbIndex,
       genericCardSchema: studySchema,
       sql: studiesSql,
-      sqlOperator: '=',
+      sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     },
   },
   {
@@ -221,6 +224,6 @@ export const studyDetailPage: SynapseConfig[] = [
 
 export const studyDetailPageProps = {
   sql: studiesSql,
-  sqlOperator: 'HAS' as SQLOperator,
+  sqlOperator: ColumnMultiValueFunction.HAS,
   ...studyCardConfiguration,
 }

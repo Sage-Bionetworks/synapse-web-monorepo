@@ -12,10 +12,14 @@ import {
 import { DetailsPageProps } from 'types/portal-util-types'
 import { studyCardConfiguration } from './studies'
 import { publicationCardProps } from './publications'
-import { experimentalDetailsTableConfigurationColumnLinks, experimentalToolsCardConfiguration } from './experimental_tools'
+import {
+  experimentalDetailsTableConfigurationColumnLinks,
+  experimentalToolsCardConfiguration,
+} from './experimental_tools'
 import { computationalCardConfiguration } from './computational_tools'
 import { targetEnablingResourcesDetailsPageSql } from '../resources'
 import { targetEnablingResourcesCardConfiguration } from './target_enabling_resources'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 4
 export const projectCardConfiguration: CardConfiguration = {
@@ -85,7 +89,7 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
           props: {
             sql: experimentalModelsSql,
             rgbIndex,
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             columnLinks: experimentalDetailsTableConfigurationColumnLinks,
           },
           columnName: 'Grant Number',

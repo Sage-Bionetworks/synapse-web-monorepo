@@ -7,6 +7,7 @@ import {
 } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import columnAliases from '../columnAliases'
 import { toolsSql } from '../resources'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 3
 
@@ -63,7 +64,7 @@ export const tools: SynapseConfig = {
 export const toolsDetailPageProps: CardContainerLogicProps = {
   sql: toolsSql,
   ...toolsCardConfiguration,
-  sqlOperator: 'LIKE',
+  sqlOperator: ColumnSingleValueFilterOperator.LIKE,
   columnAliases,
 }
 

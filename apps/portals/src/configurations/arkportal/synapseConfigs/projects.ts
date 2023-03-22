@@ -6,6 +6,7 @@ import columnAliases from '../columnAliases'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { datasetsSql, projectsSql } from '../resources'
 import { datasetCardConfiguration } from './datasets'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 9
 
@@ -14,9 +15,7 @@ export const projectSchema: GenericCardSchema = {
   title: 'Full Project Name',
   subTitle: 'Program',
   description: 'Description',
-  secondaryLabels: [
-    'Program',
-  ],
+  secondaryLabels: ['Program'],
 }
 
 export const projectsCardConfiguration: CardConfiguration = {
@@ -47,7 +46,7 @@ export const projects: SynapseConfig = {
     name: 'Projects',
     columnAliases,
     facetsToPlot: [],
-    defaultShowFacetVisualization: false
+    defaultShowFacetVisualization: false,
   },
 }
 
@@ -79,10 +78,10 @@ export const projectDetailPage: SynapseConfig[] = [
       columnAliases,
       genericCardSchema: {
         ...projectSchema,
-        link: ''
+        link: '',
       },
       sql: projectsSql,
-      sqlOperator: '=',
+      sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     },
   },
   {

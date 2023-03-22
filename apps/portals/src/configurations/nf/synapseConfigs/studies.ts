@@ -18,6 +18,7 @@ import {
   metadataFilesSql,
   toolStudySql,
 } from '../resources'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 export const newStudiesSql = `${studiesSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
@@ -68,14 +69,14 @@ export const studyCardConfiguration: CardConfiguration = {
   columnIconOptions: {
     columns: {
       dataStatus: {
-        Available: { icon: 'data', sx: {color: '#28A745'} },
-        'Partially Available': { icon: 'data', sx: {color: '#DE9A1F' } },
-        'Under Embargo': { icon: 'dataLocked', sx: {color: '#D46D1E' } },
-        None: { icon: 'data', sx: {color: '#BBBBBC' }},
+        Available: { icon: 'data', sx: { color: '#28A745' } },
+        'Partially Available': { icon: 'data', sx: { color: '#DE9A1F' } },
+        'Under Embargo': { icon: 'dataLocked', sx: { color: '#D46D1E' } },
+        None: { icon: 'data', sx: { color: '#BBBBBC' } },
       },
       studyStatus: {
-        Active: { icon: 'reload', sx: {color: '#28A745' }},
-        Completed: { icon: 'check', sx: {color: '#B2242A' }},
+        Active: { icon: 'reload', sx: { color: '#28A745' } },
+        Completed: { icon: 'check', sx: { color: '#B2242A' } },
       },
       dataType: {
         genomicVariants: {
@@ -185,7 +186,7 @@ export const studiesDetailPage: DetailsPageProps = {
           columnName: 'relatedStudies',
           tableSqlKeys: ['studyId'],
           props: {
-            sqlOperator: 'LIKE',
+            sqlOperator: ColumnSingleValueFilterOperator.LIKE,
             sql: studiesSql,
             columnAliases,
             ...studyCardConfiguration,
@@ -207,7 +208,7 @@ export const studiesDetailPage: DetailsPageProps = {
             shouldDeepLink: false,
             sql: filesSql,
             visibleColumnCount: 7,
-            sqlOperator: 'LIKE',
+            sqlOperator: ColumnSingleValueFilterOperator.LIKE,
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,
@@ -227,7 +228,7 @@ export const studiesDetailPage: DetailsPageProps = {
           tableSqlKeys: ['studyId'],
           props: {
             sql: datasetsSql,
-            sqlOperator: '=',
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             type: 'dataset',
           },
         },

@@ -10,6 +10,7 @@ import { publicationDetailPageProps } from './publications'
 import { peopleDetailPageProps } from './people'
 import { Project } from 'synapse-react-client/dist/assets/themed_icons/Project'
 import { grantSql } from '../resources'
+import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 2
 
@@ -55,7 +56,7 @@ export const grants: SynapseConfig = {
 
 const details: DetailsPageProps = {
   sql: grantSql,
-  sqlOperator: 'LIKE',
+  sqlOperator: ColumnSingleValueFilterOperator.LIKE,
   synapseConfigArray: [
     {
       name: 'CardContainerLogic',
