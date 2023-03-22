@@ -26,7 +26,7 @@
     "react-switch": "^7.0.0",
     "react-use": "^17.3.1",
     "sass": "^1.30.0",
-    "synapse-react-client": "workspace:^3.1.24"
+    "synapse-react-client": "workspace:*"
   },
   "jest": {
     "moduleNameMapper": {
@@ -37,6 +37,7 @@
     ]
   },
   "scripts": {
+    "clean": "rimraf coverage",
     "lint": "eslint src",
     "copy-assets": "cp src/config/style/favicon* public/; cp src/config/style/logo.svg public/; cp src/config/style/socialmedia.png public/",
     "save-build-date": "date > public/build-date.txt",
