@@ -27,7 +27,7 @@
     "lint-staged": ">=10",
     "nx": "^15.8.6",
     "rimraf": "^4.4.0",
-    "typescript": "4.9.5"
+    "typescript": "5.0.2"
   },
   "npmClient": "pnpm",
   "resolutions": {
