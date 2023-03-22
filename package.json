@@ -10,7 +10,7 @@
     "prepare": "husky install",
     "build": "nx run-many --target=build",
     "lint": "nx run-many --target=lint",
-    "test": "nx run-many --target=test -- --watchAll=false",
+    "test": "nx run-many --target=test -- --watchAll=false --silent=true"
     "clean": "nx run-many --target=clean"
   },
   "devDependencies": {

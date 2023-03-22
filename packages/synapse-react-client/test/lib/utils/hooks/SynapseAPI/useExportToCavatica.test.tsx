@@ -89,7 +89,12 @@ describe('useExportToCavatica', () => {
     await exportFunction()
     await waitFor(() => {
       expect(mockGetDownloadFromTableRequest).toHaveBeenCalled()
-      expect(window.open).toHaveBeenCalledWith(presignedURLResponse, '_blank')
+      expect(window.open).toHaveBeenCalledWith(
+        `https://cavatica.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
+          presignedURLResponse,
+        )}`,
+        '_blank',
+      )
     })
   })
   it('Error in service call', async () => {

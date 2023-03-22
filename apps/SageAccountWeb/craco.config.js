@@ -28,4 +28,26 @@ module.exports = {
   eslint: {
     enable: false,
   },
+  jest: {
+    configure: {
+      silent: true,
+      testEnvironment: 'jsdom',
+      setupFilesAfterEnv: './src/tests/setupTests.ts',
+      moduleNameMapper: {
+        '\\.(css|less)$': 'identity-obj-proxy',
+      },
+      reporters: [
+        'default',
+        [
+          './node_modules/jest-html-reporter',
+          {
+            pageTitle: 'SageAccountWeb Test Report',
+            outputPath: './coverage/test-report.html',
+            includeFailureMsg: true,
+            includeSuiteFailure: true,
+          },
+        ],
+      ],
+    },
+  },
 }
