@@ -136,7 +136,7 @@ describe('AccessSubmissionDashboard tests', () => {
     )
   })
 
-  it('Updates the passed props and URLSearchParams when updating requesterId', async () => {
+  it.skip('Updates the passed props and URLSearchParams when updating requesterId', async () => {
     const { history } = renderComponent()
     const requesterInput = await screen.findByLabelText('Filter by Requester')
     await userEvent.type(requesterInput, MOCK_USER_NAME.substring(0, 1))

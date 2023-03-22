@@ -29,9 +29,6 @@
     "synapse-react-client": "workspace:*"
   },
   "jest": {
-    "moduleNameMapper": {
-      "\\.(css|less)$": "identity-obj-proxy"
-    },
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!(synapse-react-client|lodash-es|jest*)/)"
     ]
@@ -43,7 +40,7 @@
     "start": "craco start",
     "build": "pnpm copy-assets; pnpm save-build-date; CI=false GENERATE_SOURCEMAP=false craco --max_old_space_size=7168 build",
     "copy-test-configuration": "cp -r src/test-configuration/ src/config/",
-    "test": "pnpm run copy-test-configuration && craco test --env=jsdom --setupFiles ./src/tests/setupTests.ts --watchAll=false",
+    "test": "pnpm run copy-test-configuration && craco test --watchAll=false",
     "generate-sitemap": "node sitemap/generate-sitemap.js",
     "eject": "craco eject",
     "analyze": "pnpm run copy-test-configuration && craco --max_old_space_size=4096 build && source-map-explorer 'build/static/js/*.js'",
@@ -51,7 +48,7 @@
     "unlink-src": "pnpm unlink synapse-react-client && pnpm unlink react && pnpm unlink react-router && pnpm unlink react-router-dom && pnpm install --check-files"
   },
   "devDependencies": {
-    "@craco/craco": "^7.0.0",
+    "@craco/craco": "^7.1.0",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^27.5.0",
@@ -69,6 +66,7 @@
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jest-environment-jsdom": "^27.5.1",
+    "jest-html-reporter": "^3.7.0",
     "katex": "^0.10.0-rc.1",
     "markdown-it": "^13.0.1",
     "markdown-it-br": "^1.0.0",
