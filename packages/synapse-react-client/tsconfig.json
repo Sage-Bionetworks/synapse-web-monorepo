@@ -9,8 +9,7 @@
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/lib/**/*.ts", "src/lib/**/*.tsx"],
-  "exclude": ["src/lib/umd.index.ts"]
+  "include": ["src/lib/**/*.ts", "src/lib/**/*.tsx"]
   // TODO: break each folder out into its own buildable TypeScript project and reference it, so we can get incremental builds
   // We will have to break circular dependencies to accomplish this
 }
