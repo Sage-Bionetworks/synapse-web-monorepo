@@ -1,25 +1,15 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "allowJs": false,
+    "rootDir": "src/lib",
+    "outDir": "dist",
     "module": "CommonJS",
-    "rootDir": ".",
-    "outDir": "build",
-    "skipLibCheck": true,
-    "strict": true,
+    "allowJs": false,
     "noEmit": false,
     "isolatedModules": true,
-    "noFallthroughCasesInSwitch": true,
-    "incremental": true
+    "noFallthroughCasesInSwitch": true
   },
-  "include": [],
+  "include": ["src/lib/**/*.ts", "src/lib/**/*.tsx"]
   // TODO: break each folder out into its own buildable TypeScript project and reference it, so we can get incremental builds
   // We will have to break circular dependencies to accomplish this
-  "references": [
-    { "path": "./src" }
-    //    { "path": "./demo" },
-    //    { "path": "./mocks" },
-    //    { "path": "./test" },
-    //    { "path": "./stories" },
-  ]
 }

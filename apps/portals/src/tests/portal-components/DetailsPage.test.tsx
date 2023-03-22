@@ -24,7 +24,7 @@ import {
 import * as SynapseComponentModule from 'SynapseComponent'
 import { MemoryRouter } from 'react-router-dom'
 import * as SynapseClient from 'synapse-react-client/dist/utils/SynapseClient'
-import { ColumnMultiValueFunction } from '../../../../../packages/synapse-react-client/src/lib/utils/synapseTypes/Table/QueryFilter'
+import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 function renderWithContext(component) {
   return render(

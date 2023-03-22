@@ -1,6 +1,6 @@
 import React from 'react'
-import packageJson from '../package.json'
 import './Versions.scss'
+import synapseReactClientPackageJson from 'synapse-react-client/package.json'
 
 const Versions: React.FunctionComponent = () => {
   return (
@@ -8,9 +8,9 @@ const Versions: React.FunctionComponent = () => {
       className="Versions footer-item"
       target="_blank"
       rel="noopener noreferrer"
-      href="https://github.com/Sage-Bionetworks/Synapse-React-Client"
+      href="https://github.com/Sage-Bionetworks/synapse-web-monorepo"
     >
-      VERSION {packageJson.dependencies['synapse-react-client']}
+      VERSION {synapseReactClientPackageJson.version}
     </a>
   )
 }

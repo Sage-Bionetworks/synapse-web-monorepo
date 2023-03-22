@@ -61,7 +61,7 @@ export function useGetThreadBody(
 
   const queryFn = async () => {
     const messageUrl = await SynapseClient.getThreadMessageUrl(
-      threadData?.messageKey,
+      threadData?.messageKey!,
       accessToken,
     )
     const data = await fetch(messageUrl.messageUrl, {
@@ -75,7 +75,7 @@ export function useGetThreadBody(
     return data.text()
   }
   return useQuery<string, SynapseClientError>(
-    keyFactory.getThreadBodyQueryKey(threadData?.id, threadData?.messageKey),
+    keyFactory.getThreadBodyQueryKey(threadData?.id!, threadData?.messageKey!),
     queryFn,
     options,
   )

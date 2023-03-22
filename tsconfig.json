@@ -1,15 +1,11 @@
 {
   "extends": "./shared/tsconfig.base.json",
   "files": [".eslintrc.js"],
-  "include": ["*.js", "*.ts"],
+  "include": [],
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
-    "allowJs": true
-  },
-  "references": [
-    { "path": "./packages/synapse-react-client/tsconfig.json" },
-    { "path": "./apps/portals/tsconfig.json" },
-    { "path": "./apps/synapse-oauth-signin/tsconfig.json" }
-  ]
+    "allowJs": true,
+    "composite": false
+  }
 }

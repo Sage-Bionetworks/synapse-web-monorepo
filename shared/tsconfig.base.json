@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    // We'll emit local build files (used by IDEs and incremental builds) to build/
     "outDir": "build",
-    "composite": true,
+    "noEmit": true,
+    "strict": true,
+    "composite": false,
     "declaration": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
