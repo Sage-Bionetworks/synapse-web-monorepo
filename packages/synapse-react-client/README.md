@@ -6,7 +6,7 @@
 
 This project helps you integrate your app with the Synapse API backend.
 
-[See the available Components](https://sage-bionetworks.github.io/Synapse-React-Client/)
+[See the available Components](https://sage-bionetworks.github.io/synapse-web-monorepo/)
 
 [Getting started](https://help.synapse.org/docs/Getting-Started.2055471150.html) with Synapse.
 
