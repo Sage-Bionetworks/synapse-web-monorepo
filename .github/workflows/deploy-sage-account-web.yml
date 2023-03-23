@@ -31,8 +31,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "18"
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
         id: pnpm-install
         with:
           version: 7
