@@ -122,7 +122,14 @@ export function DropdownMenu(props: DropdownMenuProps) {
 
   return (
     <React.Fragment>
-      <Tooltip title={buttonTooltip} placement={'top'}>
+      <Tooltip
+        title={
+          buttonTooltip ? (
+            <div style={{ whiteSpace: 'pre-line' }}>{buttonTooltip}</div>
+          ) : undefined
+        }
+        placement={'top'}
+      >
         <span>
           <Button
             variant="outlined"
