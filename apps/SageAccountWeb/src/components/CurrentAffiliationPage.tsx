@@ -33,9 +33,7 @@ export const CurrentAffiliationPage = () => {
         className={'CurrentAffiliationPage'}
         leftContent={
           <div>
-            <SourceAppLogo
-              sx={{ textAlign: 'center', paddingBottom: '50px' }}
-            />
+            <SourceAppLogo sx={{ textAlign: 'center' }} />
             <StyledFormControl
               fullWidth
               variant="standard"

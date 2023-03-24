@@ -4,7 +4,7 @@ import { SynapseClient } from 'synapse-react-client'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { ValidationWizardStep } from './ProfileValidation'
-import { ReactComponent as OrcId } from '../../assets/ORCID.svg'
+import OrcId from '../../assets/ORCID.svg'
 import EditIcon from '../../assets/RedEditPencil.svg'
 
 export type ORCiDButtonProps = {
@@ -69,7 +69,7 @@ export const ORCiDButton = (props: ORCiDButtonProps) => {
           sx={props.sx}
           disabled={isLoading}
         >
-          <OrcId />
+          <img src={OrcId} alt="orcid logo" />
           &nbsp; Link your ORCID profile
         </Button>
       )}

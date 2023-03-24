@@ -446,9 +446,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
                   <ArrowBackIcon />
                 </IconButton>
               )}
-              <SourceAppLogo
-                sx={{ textAlign: 'center', paddingBottom: '35px' }}
-              />
+              <SourceAppLogo sx={{ textAlign: 'center' }} />
               <BodyControlFactory
                 {...{
                   step: step,

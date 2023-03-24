@@ -39,20 +39,17 @@
 }
 
 .SourceAppLogo {
-  img {
-    max-width: 320px;
+  & > .SourceAppImage {
+    height: 65px;
   }
-  svg {
-    height: 100%;
-  }
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .AccountSettingsSourceAppLogo {
-  img {
+  svg {
     height: 24px;
     max-height: 24px;
   }

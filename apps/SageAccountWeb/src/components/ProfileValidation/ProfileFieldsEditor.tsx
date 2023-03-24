@@ -50,7 +50,12 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
           marginBottom: theme.spacing(2),
         }}
       >
-        <StyledFormControl fullWidth variant="standard" margin="normal">
+        <StyledFormControl
+          fullWidth
+          variant="standard"
+          margin="normal"
+          sx={{ marginTop: '0px' }}
+        >
           <InputLabel shrink htmlFor="firstName" required>
             First Name
           </InputLabel>

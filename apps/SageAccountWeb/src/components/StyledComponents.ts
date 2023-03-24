@@ -1,16 +1,20 @@
 import {
   alpha,
   Box,
+  BoxProps,
   Paper,
+  PaperProps,
   FormControl,
+  FormControlProps,
   formHelperTextClasses,
   inputBaseClasses,
   styled,
   textFieldClasses,
 } from '@mui/material'
 import { latoFont } from 'style/theme'
+import { StyledComponent } from '@mui/styles'
 
-export const StyledOuterContainer = styled(Box, {
+export const StyledOuterContainer: StyledComponent<BoxProps> = styled(Box, {
   label: 'StyledOuterContainer',
 })(({ theme }) => ({
   minHeight: '100vh',
@@ -21,7 +25,7 @@ export const StyledOuterContainer = styled(Box, {
   backgroundSize: 'cover',
 }))
 
-export const StyledInnerContainer = styled(Paper, {
+export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   label: 'StyledInnerContainer',
 })(({ theme }) => ({
   width: '900px',
@@ -52,9 +56,12 @@ export const StyledInnerContainer = styled(Paper, {
             id="someinput"/>
         </StyledFormControl>
 */
-export const StyledFormControl = styled(FormControl, {
-  label: 'StyledFormControl',
-})(({ theme }) => ({
+export const StyledFormControl: StyledComponent<FormControlProps> = styled(
+  FormControl,
+  {
+    label: 'StyledFormControl',
+  },
+)(({ theme }) => ({
   '& label': {
     fontSize: '14px',
     transform: 'none',
