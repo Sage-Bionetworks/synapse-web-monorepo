@@ -44,6 +44,10 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const buttonSx = {
     width: '100%',
     padding: '10px',
+    '&.MuiButton-contained': {
+      marginTop: '20px',
+      marginBottom: '10px',
+    },
   }
 
   if (isDone) {
@@ -56,12 +60,15 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   }
   return (
     <StyledOuterContainer className="TermsOfUsePage">
-      <StyledInnerContainer>
+      <StyledInnerContainer
+        sx={{
+          width: '1200px',
+          '& > div:nth-of-type(1)': { paddingTop: 10, width: '750px' },
+          '& > div:nth-of-type(2)': { paddingTop: 10 },
+        }}
+      >
         <Box
           sx={{
-            minWidth: '650px',
-            py: 10,
-            px: 8,
             height: '100%',
             position: 'relative',
           }}
@@ -75,8 +82,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
                 onFormChange={(completed: boolean) => {
                   setIsFormComplete(completed)
                 }}
-                // Once SRC version is updated uncomment below
-                // hideLinkToFullTC
+                hideLinkToFullTC={true}
               />
               <Button
                 sx={buttonSx}
