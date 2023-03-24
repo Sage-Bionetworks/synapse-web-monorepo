@@ -37,7 +37,7 @@ The `main` branch contains to the development version all packages. All changes 
 
 For those packages that are deployed to npm, the deployment will occur when the version is changed in the `main` branch. A tag of the form `<projectName>/v<version>` will be created and applied to the commit which was deployed.
 
-You can generate release notes for a particular release using the GitHub API before you merge the change that bumps teh version number. These notes will include all changes in the monorepo, so you may want to manually filter through these release notes. For example (this assumes you have `gh` and `jq` installed).
+You can generate release notes for a particular release using the GitHub API before you merge the change that bumps the version number. These notes will include all changes in the monorepo, so you may want to manually filter through these release notes. For example (this assumes you have `gh` and `jq` installed).
 
 ```zsh
 PACKAGE_NAME='synapse-react-client'
