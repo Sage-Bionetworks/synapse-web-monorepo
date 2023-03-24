@@ -19,7 +19,13 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
     <StyledOuterContainer>
       <Paper
         className="SageResourcesPage"
-        sx={{ margin: '0 auto', width: '900px', backgroundColor: '#FFF' }}
+        sx={{
+          margin: '0 auto',
+          width: '900px',
+          backgroundColor: '#FFF',
+          boxShadow: '0px 2px 6px rgba(53, 58, 63, 0.1)',
+          borderRadius: '5px',
+        }}
       >
         <IconButton
           onClick={() => {

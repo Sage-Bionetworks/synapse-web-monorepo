@@ -58,14 +58,23 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
     }
   }, [appContext.signedToken])
 
+  const formControlSx = {
+    marginTop: '0px',
+    marginBottom: '10px',
+  }
+
   const buttonSx = {
     width: '100%',
     padding: '10px',
     color: 'white',
+    marginTop: '30px',
   }
 
   const chooseButtonSx = {
-    color: '#666',
+    width: '100%',
+    marginBottom: '10px',
+    padding: '10px',
+    color: 'grey.800',
     borderColor: '#EAECEE',
   }
 
@@ -204,6 +213,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                           fullWidth
                           variant="standard"
                           margin="normal"
+                          sx={formControlSx}
                         >
                           <InputLabel shrink htmlFor="emailAddress" required>
                             Email address
@@ -255,6 +265,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                           fullWidth
                           variant="standard"
                           margin="normal"
+                          sx={formControlSx}
                         >
                           <InputLabel shrink htmlFor="username" required>
                             Username
@@ -293,7 +304,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                     "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
                 }}
               >
-                <Typography variant="headline2" sx={{ marginTop: '115px' }}>
+                <Typography variant="headline2" sx={{ marginTop: '95px' }}>
                   Create an Account
                 </Typography>
                 <Typography variant="body2" sx={{ marginBottom: '20px' }}>
