@@ -23,6 +23,7 @@ import {
   StyledOuterContainer,
   StyledFormControl,
 } from './StyledComponents'
+import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from 'synapse-react-client/dist/utils/AppUtils'
 
 export type RegisterAccount1Props = {}
 
@@ -145,7 +146,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
         // redirect to Google login, passing the username through via the state param.
         // Send us back to the special oauth2 account creation step2 path (which is ignored by our AppInitializer)
         localStorage.setItem(
-          'after-sso-login-url',
+          POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
           `${SynapseClient.getRootURL()}authenticated/signTermsOfUse`,
         )
         const redirectUrl = `${SynapseClient.getRootURL()}?provider=${

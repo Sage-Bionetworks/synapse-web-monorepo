@@ -8,6 +8,7 @@ import App from './App'
 import userEvent from '@testing-library/user-event'
 import { SynapseClient } from 'synapse-react-client'
 import { LoginResponse } from 'synapse-react-client/dist/utils/synapseTypes/LoginResponse'
+import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from 'synapse-react-client/dist/utils/AppUtils'
 
 function createParams(prompt?: string) {
   const params = new URLSearchParams()
@@ -239,7 +240,7 @@ describe('App integration tests', () => {
 
     // Note - don't use `renderApp` since it sets the URL and instead we want to simulate the redirect from Google
     localStorage.setItem(
-      'after-sso-login-url',
+      POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
       `/?${createParams().toString()}`,
     )
     window.history.replaceState({}, '', `/?${paramsFromProvider.toString()}`)

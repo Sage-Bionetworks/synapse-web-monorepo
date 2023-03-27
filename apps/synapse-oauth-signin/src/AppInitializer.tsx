@@ -13,6 +13,7 @@ import useDetectSSOCode from 'synapse-react-client/dist/utils/hooks/useDetectSSO
 import { TwoFactorAuthErrorResponse } from 'synapse-react-client/dist/utils/synapseTypes/ErrorResponse'
 import { OAuthAppContext } from './OAuthAppContext'
 import themeOptions from './style/theme'
+import { redirectAfterSSO } from 'synapse-react-client/dist/utils/AppUtils'
 
 const queryClient = new QueryClient(defaultQueryClientConfig)
 
@@ -57,11 +58,7 @@ function AppInitializer(
 
   useDetectSSOCode({
     onSignInComplete: () => {
-      const originalUrl = localStorage.getItem('after-sso-login-url')
-      localStorage.removeItem('after-sso-login-url')
-      if (originalUrl) {
-        window.location.replace(originalUrl)
-      }
+      redirectAfterSSO()
     },
     onTwoFactorAuthRequired: twoFactorAuthError => {
       setTwoFactorAuthErrorResponse(twoFactorAuthError)
