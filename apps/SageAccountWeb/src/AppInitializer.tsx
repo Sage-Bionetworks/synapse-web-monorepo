@@ -14,6 +14,9 @@ import { ThemeOptions } from '@mui/material'
 import { useSourceApp } from 'components/SourceApp'
 import { deepmerge } from '@mui/utils'
 import theme from './style/theme'
+import { TwoFactorAuthSSOContextProvider } from './TwoFactorAuthSSOContext'
+import { TwoFactorAuthErrorResponse } from 'synapse-react-client/dist/utils/synapseTypes/ErrorResponse'
+import { redirectAfterSSO } from 'synapse-react-client/dist/utils/AppUtils'
 
 /**
  * State and helpers for managing a user session in the portal
@@ -88,6 +91,8 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   const [appId, setAppId] = useState<string>()
   const [redirectURL, setRedirectURL] = useState<string>()
   const [themeOptions, setThemeOptions] = useState<ThemeOptions>()
+  const [twoFactorAuthError, setTwoFactorAuthError] =
+    useState<TwoFactorAuthErrorResponse>()
   const { token, getSession, hasCalledGetSession, touSigned } = useSession()
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
@@ -172,10 +177,15 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   useAnalytics()
 
   useDetectSSOCode({
+    onSignInComplete: () => {
+      // go back to original route after successful SSO login
+      redirectAfterSSO()
+    },
     registerAccountUrl: '/register1',
     onError: error => {
       displayToast(error as string, 'danger')
     },
+    onTwoFactorAuthRequired: error => setTwoFactorAuthError(error),
   })
 
   if (!hasCalledGetSession) {
@@ -192,20 +202,25 @@ function AppInitializer(props: { children?: React.ReactNode }) {
         signedToken,
       }}
     >
-      <SynapseContextProvider
-        synapseContext={{
-          accessToken: token,
-          isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
-          utcTime: SynapseClient.getUseUtcTimeFromCookie(),
-          downloadCartPageUrl: '',
-        }}
-        theme={themeOptions}
+      <TwoFactorAuthSSOContextProvider
+        context={{ twoFactorAuthErrorResponse: twoFactorAuthError }}
       >
-        {!touSigned && location.pathname != '/authenticated/signTermsOfUse' && (
-          <Redirect to="/authenticated/signTermsOfUse" />
-        )}
-        {!isFramed && props.children}
-      </SynapseContextProvider>
+        <SynapseContextProvider
+          synapseContext={{
+            accessToken: token,
+            isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
+            utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+            downloadCartPageUrl: '',
+          }}
+          theme={themeOptions}
+        >
+          {!touSigned &&
+            location.pathname != '/authenticated/signTermsOfUse' && (
+              <Redirect to="/authenticated/signTermsOfUse" />
+            )}
+          {!isFramed && props.children}
+        </SynapseContextProvider>
+      </TwoFactorAuthSSOContextProvider>
     </AppContextProvider>
   )
 }

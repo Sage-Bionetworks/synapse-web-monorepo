@@ -8,21 +8,21 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from 'components/StyledComponents'
+import { useTwoFactorAuthSSOContext } from './TwoFactorAuthSSOContext'
+import {
+  preparePostSSORedirect,
+  redirectAfterSSO,
+} from 'synapse-react-client/dist/utils/AppUtils'
 
 export type OwnProps = {
   returnToUrl: string
 }
 export type LoginPageProps = OwnProps & RouteComponentProps
 
-const LoginPage: React.FunctionComponent<LoginPageProps> = ({
-  returnToUrl,
-}: OwnProps) => {
-  const [isSessionEstablished, setIsSessionEstablished] =
-    React.useState<boolean>(false)
-  if (isSessionEstablished) {
-    // using this instead of Redirect since we may need a page refresh
-    window.location.replace(returnToUrl)
-  }
+function LoginPage(props: LoginPageProps) {
+  const { returnToUrl } = props
+  const { twoFactorAuthErrorResponse } = useTwoFactorAuthSSOContext()
+
   return (
     <StyledOuterContainer>
       <StyledInnerContainer>
@@ -32,16 +32,16 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = ({
               <SourceAppLogo />
             </div>
             <StandaloneLoginForm
-              sessionCallback={() => setIsSessionEstablished(true)}
+              sessionCallback={() => {
+                redirectAfterSSO(returnToUrl)
+              }}
               registerAccountUrl={'/register1'}
               resetPasswordUrl={'/resetPassword'}
               onBeginOAuthSignIn={() => {
                 // save current route (so that we can go back here after SSO)
-                localStorage.setItem(
-                  'after-sso-login-url',
-                  window.location.href,
-                )
+                preparePostSSORedirect()
               }}
+              twoFactorAuthenticationRequired={twoFactorAuthErrorResponse}
             />
           </Box>
         </Box>

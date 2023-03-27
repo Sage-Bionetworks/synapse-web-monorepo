@@ -20,6 +20,10 @@ import FullWidthAlert from 'synapse-react-client/dist/containers/FullWidthAlert'
 import { useOAuthAppContext } from './OAuthAppContext'
 import { OAuthClientError } from './OAuthClientError'
 import { StyledInnerContainer } from './StyledInnerContainer'
+import {
+  preparePostSSORedirect,
+  redirectAfterSSO,
+} from 'synapse-react-client/dist/utils/AppUtils'
 
 export function OAuth2Form() {
   const isMounted = useRef(true)
@@ -417,15 +421,11 @@ export function OAuth2Form() {
           <StandaloneLoginForm
             onBeginOAuthSignIn={() => {
               // save current route (so that we can go back here after SSO)
-              localStorage.setItem('after-sso-login-url', window.location.href)
+              preparePostSSORedirect()
             }}
             sessionCallback={() => {
               getSession().then(() => {
-                const originalUrl = localStorage.getItem('after-sso-login-url')
-                localStorage.removeItem('after-sso-login-url')
-                if (originalUrl) {
-                  window.location.replace(originalUrl)
-                }
+                redirectAfterSSO()
               })
             }}
             twoFactorAuthenticationRequired={twoFactorAuthErrorResponse}

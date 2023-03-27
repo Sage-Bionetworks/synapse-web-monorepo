@@ -6,27 +6,31 @@ import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { ValidationWizardStep } from './ProfileValidation'
 import OrcId from '../../assets/ORCID.svg'
 import EditIcon from '../../assets/RedEditPencil.svg'
+import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from 'synapse-react-client/dist/utils/AppUtils'
 
 export type ORCiDButtonProps = {
-  redirectAfter?: any
+  redirectAfter?: string
   editButton?: boolean
   sx?: SxProps
 }
 
-export const onBindToORCiD = async (
+export const onBindToORCiD = (
   event: React.SyntheticEvent,
-  setIsLoading: Function,
-  redirectAfter?: any,
+  setIsLoading: (isLoading: boolean) => void,
+  redirectAfter?: string,
 ) => {
   event.preventDefault()
   setIsLoading(true)
   try {
     // after binding, go to ???
     if (redirectAfter) {
-      localStorage.setItem('after-sso-login-url', redirectAfter)
+      localStorage.setItem(
+        POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
+        redirectAfter,
+      )
     } else {
       localStorage.setItem(
-        'after-sso-login-url',
+        POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
         `${SynapseClient.getRootURL()}authenticated/validate?step=${
           ValidationWizardStep.VERIFY_IDENTITY
         }`,

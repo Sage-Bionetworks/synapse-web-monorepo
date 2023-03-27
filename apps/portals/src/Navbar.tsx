@@ -8,9 +8,12 @@ import NavLink from 'portal-components/NavLink'
 import NavUserLink from './portal-components/NavUserLink'
 import { ConfigRoute, GenericRoute } from 'types/portal-config'
 import Button from 'react-bootstrap/esm/Button'
-import { preparePostSSORedirect, redirectAfterSSO } from './utils'
 import { Dialog, DialogContent, IconButton } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
+import {
+  preparePostSSORedirect,
+  redirectAfterSSO,
+} from 'synapse-react-client/dist/utils/AppUtils'
 
 type SynapseSettingLink = {
   text: string

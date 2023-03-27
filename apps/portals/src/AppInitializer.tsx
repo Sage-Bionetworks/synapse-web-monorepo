@@ -18,16 +18,16 @@ import { TwoFactorAuthErrorResponse } from 'synapse-react-client/dist/utils/syna
 import useAnalytics from 'useAnalytics'
 import docTitleConfig from './config/docTitleConfig.json'
 import palette from './config/paletteConfig'
-import { redirectAfterSSO } from './utils'
+import { redirectAfterSSO } from 'synapse-react-client/dist/utils/AppUtils'
 
 export type SignInProps = {
   userProfile: UserProfile | undefined
-  resetSession: Function
+  resetSession: () => Promise<void>
   getSession: () => Promise<void>
   showLoginDialog: boolean
   twoFaErrorResponse: TwoFactorAuthErrorResponse | undefined
-  onSignIn: Function
-  handleCloseLoginDialog: Function
+  onSignIn: () => void
+  handleCloseLoginDialog: () => void
 }
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
@@ -71,7 +71,7 @@ function useSession(
   }, [])
 
   const getSession = useCallback(async () => {
-    let token
+    let token: string | undefined
     try {
       token = await SynapseClient.getAccessTokenFromCookie()
       if (!token) {
@@ -237,7 +237,9 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   }, [])
 
   useDetectSSOCode({
-    onSignInComplete: redirectAfterSSO,
+    onSignInComplete: () => {
+      redirectAfterSSO()
+    },
     onTwoFactorAuthRequired: (twoFactorAuthError) => {
       setTwoFaErrorResponse(twoFactorAuthError)
       setShowLoginDialog(true)
