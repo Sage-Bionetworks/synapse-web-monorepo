@@ -1,4 +1,8 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { Box, Button, IconButton, InputLabel, TextField } from '@mui/material'
+import { StyledFormControl } from 'components/StyledComponents'
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { SynapseClient, Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
@@ -6,19 +10,15 @@ import {
   PasswordResetSignedToken,
 } from 'synapse-react-client/dist/utils/synapseTypes/ChangePasswordRequests'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
-import { Button, InputLabel, TextField } from '@mui/material'
-import {
-  StyledFormControl,
-  StyledInnerContainer,
-  StyledOuterContainer,
-} from 'components/StyledComponents'
-import { Container } from 'react-bootstrap'
+import { LeftRightPanel } from './LeftRightPanel'
+import { SourceAppLogo } from './SourceApp'
 
 export type ResetPasswordProps = {
   returnToUrl: string
 }
 
 export const ResetPassword = (props: ResetPasswordProps) => {
+  const history = useHistory()
   const [userName, setUserName] = useState('')
   const [token, setToken] = useState<PasswordResetSignedToken | undefined>()
   const [newPassword, setNewPassword] = useState<string>('')
@@ -80,18 +80,39 @@ export const ResetPassword = (props: ResetPasswordProps) => {
     }
   }
 
+  const formControlSx = {
+    marginTop: '0px',
+    marginBottom: '10px',
+  }
+
+  const buttonSx = {
+    marginTop: '30px',
+  }
+
+  const backButtonSx = {
+    position: 'absolute',
+    padding: '0',
+    width: '24px',
+    margin: '24px',
+    top: '-64px',
+    left: '-64px',
+  }
+
   return (
-    <StyledOuterContainer>
-      <StyledInnerContainer>
-        <Container>
-          {token ? (
+    <>
+      <LeftRightPanel
+        className={'ResetPasswords'}
+        leftContent={
+          token ? (
             <>
+              <SourceAppLogo />
               <form onSubmit={handleChangePasswordWithToken}>
                 <StyledFormControl
                   fullWidth
                   required
                   variant="standard"
                   margin="normal"
+                  sx={formControlSx}
                 >
                   <InputLabel shrink htmlFor="newPassword" required>
                     New password
@@ -110,6 +131,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                   required
                   variant="standard"
                   margin="normal"
+                  sx={formControlSx}
                 >
                   <InputLabel shrink htmlFor="confirmPassword" required>
                     Confirm password
@@ -129,30 +151,39 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                   type="submit"
                   fullWidth
                   onSubmit={handleChangePasswordWithToken}
+                  sx={buttonSx}
+                  disabled={!newPassword || !confirmPassword}
                 >
                   Change Password
                 </Button>
               </form>
             </>
           ) : (
-            <>
-              <Typography variant="headline2">Reset your Password</Typography>
-              <Typography variant="body1">
-                Please enter your email address or Synapse user name and we'll
-                send you instructions to reset your password
-              </Typography>
+            <Box sx={{ position: 'relative' }}>
+              <IconButton
+                onClick={() => {
+                  history.goBack()
+                }}
+                sx={backButtonSx}
+              >
+                <ArrowBackIcon />
+              </IconButton>
+              <SourceAppLogo />
               <StyledFormControl
                 fullWidth
                 required
                 variant="standard"
                 margin="normal"
+                sx={formControlSx}
               >
+                <InputLabel shrink htmlFor="username" required>
+                  Email address or username
+                </InputLabel>
                 <TextField
                   fullWidth
                   id="username"
                   name="username"
                   onChange={e => setUserName(e.target.value)}
-                  placeholder="Email address-or-username"
                   value={userName || ''}
                 />
               </StyledFormControl>
@@ -160,13 +191,36 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                 variant="contained"
                 fullWidth
                 onClick={handleResetPassword}
+                sx={buttonSx}
+                type="button"
+                disabled={!userName}
               >
                 Reset my password
               </Button>
-            </>
-          )}
-        </Container>
-      </StyledInnerContainer>
-    </StyledOuterContainer>
+            </Box>
+          )
+        }
+        rightContent={
+          token ? (
+            <div>
+              <Typography variant="headline2">Set a new password</Typography>
+              <Typography variant="smallText1">
+                We recommend using a strong, unique <strong>password</strong> of
+                between 16-32 characters. You can use letters, numbers, and
+                punctuation marks.
+              </Typography>
+            </div>
+          ) : (
+            <div>
+              <Typography variant="headline2">Reset your password</Typography>
+              <Typography variant="body1">
+                Please enter your email address or username and we'll send you
+                instructions to reset your password
+              </Typography>
+            </div>
+          )
+        }
+      ></LeftRightPanel>
+    </>
   )
 }

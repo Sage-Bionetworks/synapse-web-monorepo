@@ -11,11 +11,12 @@ export const LeftRightPanel: React.FC<{
   return (
     <StyledOuterContainer className={className}>
       <StyledInnerContainer>
-        <Box>{leftContent}</Box>
+        <Box className="left-panel">{leftContent}</Box>
         <Box sx={{ position: 'relative' }}>
           <Box
+            className="right-panel"
             sx={{
-              marginTop: theme.spacing(8),
+              marginTop: '95px',
               marginBottom: theme.spacing(4),
               overflow: 'hidden',
               fontWeight: '700',
