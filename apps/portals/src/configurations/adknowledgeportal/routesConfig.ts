@@ -550,15 +550,6 @@ const routes: GenericRoute[] = [
               loadingSkeletonRowCount: 20,
             },
           },
-          {
-            name: 'SynapseFormSubmissionsGrid',
-            props: {
-              pathpart: '/Contribute/FormSubmission',
-              formGroupId: '11',
-              itemNoun: 'contribution-request',
-              formClass: 'contribution-request',
-            },
-          },
         ],
       },
       {
