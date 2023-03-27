@@ -191,9 +191,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
         }
         rightContent={
           <div>
-            <Typography variant="headline2" sx={{ marginTop: '50px' }}>
-              Email address verified!
-            </Typography>
+            <Typography variant="headline2">Email address verified!</Typography>
             <Typography variant="headline3" sx={{ marginTop: '20px' }}>
               Now complete your registration.
             </Typography>
