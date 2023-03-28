@@ -1,0 +1,8 @@
+import{S as p}from"./SynapseVideo-6a0f62ad.js";import"./jsx-runtime-670450c2.js";import"./index-f1f749bf.js";import"./_commonjsHelpers-042e6b4d.js";import"./SynapseContext-aadd8945.js";import"./index-96c5f47c.js";import"./extends-98964cd2.js";import"./inheritsLoose-d541526f.js";import"./setPrototypeOf-0bb37fbe.js";import"./Fade-9c0595ba.js";import"./objectWithoutPropertiesLoose-4f48578a.js";import"./useTheme-3634b412.js";import"./styled-a7106a93.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-eaaa54fe.js";import"./Clear-3ac01158.js";import"./isHostComponent-fa76b8d9.js";import"./useForkRef-dd8a6e5c.js";import"./TransitionGroupContext-a2b6e27b.js";import"./isArray-5e3f9107.js";import"./getEndpoint-5374ab4d.js";import"./SynapseConstants-41b9b1f3.js";import"./SvgIcon-139ff9de.js";import"./IconSvg-4a47858c.js";import"./Box-410a3c10.js";import"./extendSxProp-667aa008.js";import"./Button-c1d710d9.js";import"./ButtonBase-b022013b.js";import"./emotion-react.browser.esm-2df70300.js";import"./assertThisInitialized-081f9914.js";import"./Button-7d415009.js";import"./Alert-84d62a08.js";import"./hook-c05d8d9f.js";import"./createWithBsPrefix-e09f51dd.js";import"./divWithClassName-1aeead00.js";import"./index-4d501b15.js";const J={title:"Markdown/SynapseVideo",component:p},o={args:{params:{vimeoId:"355433104"}}};var r,m,t;o.parameters={...o.parameters,docs:{...(r=o.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  args: {
+    params: {
+      vimeoId: '355433104'
+    }
+  }
+}`,...(t=(m=o.parameters)==null?void 0:m.docs)==null?void 0:t.source}}};const K=["SynapseVideoDemo"];export{o as SynapseVideoDemo,K as __namedExportsOrder,J as default};
+//# sourceMappingURL=SynapseVideo.stories-986391c9.js.map
