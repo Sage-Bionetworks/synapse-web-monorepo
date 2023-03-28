@@ -21,7 +21,7 @@ export function useExportToCavatica(
     try {
       // add drs_uri to select
       const selectColumnsList = selectColumns?.map(col => col.name).join(',')
-      const sql = `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', id, '.', currentVersion) AS gh4gh_drs_uri, name as file_name, ${selectColumnsList} FROM ${originalSql.slice(
+      const sql = `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', id, '.', currentVersion) AS drs_uri, name as file_name, ${selectColumnsList} FROM ${originalSql.slice(
         originalSql.toLowerCase().indexOf('from') + 'from'.length + 1,
       )}`
       const downloadFromTableRequest: DownloadFromTableRequest = {
