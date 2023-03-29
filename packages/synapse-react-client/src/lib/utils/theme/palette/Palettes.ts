@@ -88,7 +88,7 @@ export const palette: PaletteOptions = {
 export const mtbPalette: PaletteOptions = {
   ...palette,
   primary: generatePalette('#4F527D'),
-  secondary: generatePalette('#C22E49'),
+  secondary: generatePalette('#9499C7'),
 }
 
 export const arkPortalPalette: PaletteOptions = {
