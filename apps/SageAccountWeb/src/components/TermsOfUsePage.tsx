@@ -5,9 +5,9 @@ import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndCon
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { useSourceApp, SourceAppLogo } from './SourceApp'
-import { Button, Link, Box } from '@mui/material'
-import { Typography } from 'synapse-react-client'
+import { Button, Box } from '@mui/material'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
+import { TermsOfUseRightPanelText } from './TermsOfUsePageRightPanelText'
 
 export type TermsOfUsePageProps = {}
 
@@ -17,7 +17,6 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const [isDone, setIsDone] = useState(false)
   const { accessToken } = useSynapseContext()
   const sourceApp = useSourceApp()
-  const sourceAppName = sourceApp?.friendlyName
 
   const tcAgreement =
     'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf'
@@ -103,32 +102,10 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
             </div>
           </Box>
         </Box>
-        <Box sx={{}}>
-          <div className={'right-panel-text'}>
-            <Typography variant="headline2" sx={{ marginTop: '100px' }}>
-              What is the Synapse Pledge
-            </Typography>
-            {sourceApp?.appId !== 'synapse.org' && (
-              <Typography variant="body2" sx={{ marginBottom: '20px' }}>
-                {sourceAppName} is powered by{' '}
-                <Link href={'https://www.synapse.org/'} target="_blank">
-                  Synapse
-                </Link>
-                , and follows the Synapse Governance polices.
-              </Typography>
-            )}
-            <Typography variant="body2" sx={{ marginBottom: '20px' }}>
-              To ensure secure and confidential access to data, we ask all
-              account holders to affirm their agreement with our governance
-              policies before finishing registration.
-            </Typography>
-            <Typography variant="body2" sx={{ marginBottom: '20px' }}>
-              If you have questions, please contact{' '}
-              <Link href={'mailto:act@sagebionetworks.org'}>
-                act@sagebionetworks.org
-              </Link>
-            </Typography>
-          </div>
+        <Box>
+          <Box sx={{ marginTop: '100px' }}>
+            <TermsOfUseRightPanelText />
+          </Box>
         </Box>
       </StyledInnerContainer>
     </StyledOuterContainer>
