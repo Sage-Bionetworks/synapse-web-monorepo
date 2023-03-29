@@ -105,6 +105,7 @@ export const ChangePassword = (props: ChangePasswordProps) => {
           required
           variant="standard"
           margin="normal"
+          sx={{ marginBottom: '10px' }}
         >
           <InputLabel shrink htmlFor="confirmPassword" required>
             Confirm password
@@ -126,18 +127,20 @@ export const ChangePassword = (props: ChangePasswordProps) => {
             Cancel
           </Button>
         )}
-        <Button
-          sx={{ marginRight: '26px' }}
-          disabled={!oldPassword || !newPassword || !confirmPassword}
-          variant="contained"
-          type="submit"
-          onSubmit={handleChangePassword}
-        >
-          Change Password
-        </Button>
-        <Link component={RouterLink} to="/resetPassword">
-          Forgot password?
-        </Link>
+        <div style={{ marginTop: '30px' }}>
+          <Button
+            sx={{ marginRight: '26px' }}
+            disabled={!oldPassword || !newPassword || !confirmPassword}
+            variant="contained"
+            type="submit"
+            onSubmit={handleChangePassword}
+          >
+            Change Password
+          </Button>
+          <Link component={RouterLink} to="/resetPassword">
+            Forgot password?
+          </Link>
+        </div>
       </form>
     </div>
   )

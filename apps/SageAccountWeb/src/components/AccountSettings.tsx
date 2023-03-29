@@ -1,13 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import {
-  Button,
-  Link,
-  Container,
-  Box,
-  Grid,
-  Select,
-  MenuItem,
-} from '@mui/material'
+import { Button, Link, Container, Box, Grid, MenuItem } from '@mui/material'
 import {
   UserBundle,
   UserProfile,
@@ -37,6 +29,24 @@ import { ProfileAvatar } from './ProfileAvatar'
 import { InputLabel } from '@mui/material'
 import { TextField } from '@mui/material'
 import { useSourceAppConfigs } from './SourceApp'
+
+const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
+  isComplete,
+}) => {
+  return (
+    <div className="item-completion">
+      {isComplete ? (
+        <span className="completeIcon">
+          <IconSvg icon="check" /> Completed
+        </span>
+      ) : (
+        <span className="incompleteIcon">
+          <IconSvg icon="close" /> Incomplete
+        </span>
+      )}
+    </div>
+  )
+}
 
 export const AccountSettings = () => {
   const { accessToken } = useSynapseContext()
@@ -161,11 +171,11 @@ export const AccountSettings = () => {
   }
 
   return (
-    <>
+    <div className="account-settings-page">
       <AccountSettingsTopBar />
       <div className="panel-wrapper-bg with-account-setting">
         <Container maxWidth="md">
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: 'flex', my: '60px' }}>
             <nav className="account-setting-panel nav-panel">
               <MenuItem onClick={() => handleScroll(profileInformationRef)}>
                 Profile Information
@@ -370,7 +380,7 @@ export const AccountSettings = () => {
                     fullWidth
                     variant="standard"
                     margin="normal"
-                    sx={{}}
+                    sx={{ marginBottom: '10px' }}
                   >
                     <InputLabel shrink htmlFor="bio">
                       Bio
@@ -384,13 +394,15 @@ export const AccountSettings = () => {
                       value={bio}
                     />
                   </StyledFormControl>
-                  <Button
-                    onClick={updateUserProfile}
-                    disabled={!changeInForm}
-                    variant="contained"
-                  >
-                    Save Changes
-                  </Button>
+                  <div className="primary-button-container">
+                    <Button
+                      onClick={updateUserProfile}
+                      disabled={!changeInForm}
+                      variant="contained"
+                    >
+                      Save Changes
+                    </Button>
+                  </div>
                 </Form>
               </div>
               <div
@@ -412,30 +424,42 @@ export const AccountSettings = () => {
                 className="account-setting-panel main-panel"
               >
                 <h3>Date/Time Format</h3>
-                <StyledFormControl fullWidth>
-                  <Select
-                    labelId="timezone-select-label"
+                <StyledFormControl
+                  fullWidth
+                  variant="standard"
+                  margin="normal"
+                  sx={{ marginBottom: '10px' }}
+                >
+                  <InputLabel shrink htmlFor="timezone-select">
+                    Choose a format
+                  </InputLabel>
+                  <TextField
                     id="timezone-select"
                     value={isUTCTimeStaged}
+                    fullWidth
+                    select
                     onChange={event => {
                       setUTCTimeStaged(event.target.value)
                     }}
                   >
-                    <MenuItem value="false">Local</MenuItem>
-                    <MenuItem value="true">UTC</MenuItem>
-                  </Select>
+                    <MenuItem value="false" sx={{ fontSize: '14px' }}>
+                      Local
+                    </MenuItem>
+                    <MenuItem value="true" sx={{ fontSize: '14px' }}>
+                      UTC
+                    </MenuItem>
+                  </TextField>
                 </StyledFormControl>
-                <Button
-                  disabled={isUTCTimeStaged === isUTCTime}
-                  variant="contained"
-                  sx={{
-                    ...credentialButtonSX,
-                    marginTop: '15px',
-                  }}
-                  onClick={() => setUTCTime(isUTCTimeStaged)}
-                >
-                  Update Preference
-                </Button>
+                <div className="primary-button-container">
+                  <Button
+                    disabled={isUTCTimeStaged === isUTCTime}
+                    variant="contained"
+                    sx={{ credentialButtonSX }}
+                    onClick={() => setUTCTime(isUTCTimeStaged)}
+                  >
+                    Update Preference
+                  </Button>
+                </div>
               </div>
 
               <div
@@ -451,121 +475,113 @@ export const AccountSettings = () => {
                 </p>
                 <div className="credential-partition">
                   <h4>Terms and Conditions for Use</h4>
-                  <i>Required to register</i>
+                  <CompletionStatus isComplete={termsOfUse} />
+                  <p>
+                    <i>Required to register</i>
+                  </p>
                   <p>
                     You must affirm your agreement to follow these terms and
                     conditions in order to create an account.{' '}
                   </p>
-                  <div className="item-completion">
-                    {termsOfUse ? (
-                      <span className="completeIcon">
-                        <IconSvg icon="check" /> Completed
-                      </span>
-                    ) : (
-                      <span className="incompleteIcon">
-                        <IconSvg icon="close" /> Incomplete
-                      </span>
-                    )}
+                  <div className="primary-button-container">
+                    <Button
+                      disabled={termsOfUse}
+                      variant="outlined"
+                      sx={credentialButtonSX}
+                      onClick={() => handleChangesFn('signTermsOfUse')}
+                    >
+                      Agree to Terms and Conditions
+                    </Button>
+                    <Link
+                      href="https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf?v=5"
+                      target="_blank"
+                    >
+                      More information
+                    </Link>
                   </div>
-                  <Button
-                    disabled={termsOfUse}
-                    variant="outlined"
-                    sx={credentialButtonSX}
-                    onClick={() => handleChangesFn('signTermsOfUse')}
-                  >
-                    Agree to Terms and Conditions
-                  </Button>
-                  <Link
-                    href="https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf?v=5"
-                    target="_blank"
-                  >
-                    More information
-                  </Link>
                 </div>
                 <div className="credential-partition">
                   <h4>Certification</h4>
-                  <i>Required to upload data.</i>
+                  <CompletionStatus isComplete={isCertified} />
+                  <p>
+                    <i>Required to upload data.</i>
+                  </p>
                   <p>
                     There are times where human data can only be shared with
                     certain restrictions. In order to upload data on any
                     application, you must pass a quiz on the technical and
                     ethical aspects of sharing data in our system.
                   </p>
-                  <div className="item-completion">
-                    {isCertified ? (
-                      <span className="completeIcon">
-                        <IconSvg icon="check" /> Completed
-                      </span>
-                    ) : (
-                      <span className="incompleteIcon">
-                        <IconSvg icon="close" /> Incomplete
-                      </span>
-                    )}
+                  <div className="primary-button-container">
+                    <Button
+                      disabled={isCertified}
+                      variant="outlined"
+                      sx={credentialButtonSX}
+                      onClick={() => handleChangesFn('certificationquiz')}
+                    >
+                      Take the certification quiz
+                    </Button>
+                    <Link
+                      href="https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers"
+                      target="_blank"
+                    >
+                      More information
+                    </Link>
                   </div>
-
-                  <Button
-                    disabled={isCertified}
-                    variant="outlined"
-                    sx={credentialButtonSX}
-                    onClick={() => handleChangesFn('certificationquiz')}
-                  >
-                    Take the certification quiz
-                  </Button>
-                  <Link
-                    href="https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers"
-                    target="_blank"
-                  >
-                    More information
-                  </Link>
                 </div>
                 <div className="credential-partition">
                   <h4>ORCID Profile</h4>
-                  <i>
-                    Linking your ORCID profile is useful for other researchers,
-                    and is required for profile validation.
-                  </i>
                   <div className="item-completion">
                     {orcid ? (
                       <a href={orcid}>{orcid}</a>
                     ) : (
-                      <span className="incompleteIcon">
-                        <IconSvg icon="close" /> Incomplete
-                      </span>
+                      <CompletionStatus isComplete={false} />
                     )}
                   </div>
-                  {orcid ? (
-                    <Button
-                      variant="outlined"
-                      sx={credentialButtonSX}
-                      onClick={() => setShowUnbindORCiDDialog(true)}
+                  <p>
+                    <i>
+                      Linking your ORCID profile is useful for other
+                      researchers, and is required for profile validation.
+                    </i>
+                  </p>
+                  <div className="primary-button-container">
+                    {orcid ? (
+                      <Button
+                        variant="outlined"
+                        sx={credentialButtonSX}
+                        onClick={() => setShowUnbindORCiDDialog(true)}
+                      >
+                        Unlink your ORCID profile
+                      </Button>
+                    ) : (
+                      <ORCiDButton
+                        sx={credentialButtonSX}
+                        redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
+                      />
+                    )}
+                    <Link
+                      href="https://help.synapse.org/docs/Synapse-User-Account-Types.2007072795.html#SynapseUserAccountTypes-ValidatedUsers"
+                      target="_blank"
                     >
-                      Unlink your ORCID profile
-                    </Button>
-                  ) : (
-                    <ORCiDButton
-                      sx={credentialButtonSX}
-                      redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
-                    />
-                  )}
+                      More information
+                    </Link>
+                  </div>
                   <UnbindORCiDDialog
                     show={showUnbindORCiDDialog}
                     setShow={setShowUnbindORCiDDialog}
                     orcid={orcid}
                     redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
                   />
-                  <Link
-                    href="https://help.synapse.org/docs/Synapse-User-Account-Types.2007072795.html#SynapseUserAccountTypes-ValidatedUsers"
-                    target="_blank"
-                  >
-                    More information
-                  </Link>
                 </div>
                 <div className="credential-partition">
                   <h4>Profile Validation</h4>
-                  <i>
-                    Users with a validated profile can access more features and
-                    data.
-                  </i>
+                  <CompletionStatus isComplete={verified} />
+                  <p>
+                    <i>
+                      Users with a validated profile can access more features
+                      and data.
+                    </i>
+                  </p>
                   <p>
                     Profile validation requires you to complete your profile,
                     link an ORCID profile, sign and date the Synapse pledge, and
@@ -573,31 +589,22 @@ export const AccountSettings = () => {
                     after which your application will be manually reviewed
                     (which may take several days).
                   </p>
-                  <div className="item-completion">
-                    {verified ? (
-                      <span className="completeIcon">
-                        <IconSvg icon="check" /> Completed
-                      </span>
-                    ) : (
-                      <span className="incompleteIcon">
-                        <IconSvg icon="close" /> Incomplete
-                      </span>
-                    )}
+                  <div className="primary-button-container">
+                    <Button
+                      disabled={!!verified}
+                      variant="outlined"
+                      sx={credentialButtonSX}
+                      onClick={() => handleChangesFn('validate')}
+                    >
+                      Request validation
+                    </Button>
+                    <Link
+                      href="https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers"
+                      target="_blank"
+                    >
+                      More information
+                    </Link>
                   </div>
-                  <Button
-                    disabled={!!verified}
-                    variant="outlined"
-                    sx={credentialButtonSX}
-                    onClick={() => handleChangesFn('validate')}
-                  >
-                    Request validation
-                  </Button>
-                  <Link
-                    href="https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers"
-                    target="_blank"
-                  >
-                    More information
-                  </Link>
                 </div>
               </div>
               <div
@@ -611,20 +618,22 @@ export const AccountSettings = () => {
                   that you treat personal access tokens with the same security
                   as your password.
                 </p>
-                <Link sx={credentialButtonSX}>
-                  Manage Personal Access Tokens
-                </Link>
-                <Link
-                  href="https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#ManagingYourAccount-PersonalAccessTokens"
-                  target="_blank"
-                >
-                  More information
-                </Link>
+                <div className="primary-button-container">
+                  <Link sx={credentialButtonSX}>
+                    Manage Personal Access Tokens
+                  </Link>
+                  <Link
+                    href="https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#ManagingYourAccount-PersonalAccessTokens"
+                    target="_blank"
+                  >
+                    More information
+                  </Link>
+                </div>
               </div>
             </div>
           </Box>
         </Container>
       </div>
-    </>
+    </div>
   )
 }

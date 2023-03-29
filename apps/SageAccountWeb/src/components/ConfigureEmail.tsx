@@ -175,10 +175,12 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
         }
       })}
       <StyledFormControl variant="standard" margin="normal" fullWidth>
-        <InputLabel shrink>Add an email address</InputLabel>
+        <InputLabel shrink htmlFor="additionalEmail">
+          Add an email address
+        </InputLabel>
         <Box sx={{ display: 'flex' }}>
           <TextField
-            variant="filled"
+            id="additionalEmail"
             sx={{ flexGrow: 1, marginRight: '10px' }}
             value={newEmail}
             onChange={e => setNewEmail(e.target.value)}
