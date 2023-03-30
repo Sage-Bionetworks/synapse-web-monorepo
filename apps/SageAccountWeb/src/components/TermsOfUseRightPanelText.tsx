@@ -13,7 +13,7 @@ export const TermsOfUseRightPanelText = (
 
   return (
     <>
-      <Typography variant="headline2">What is the Synapse Pledge</Typography>
+      <Typography variant="headline2">What is the Synapse Pledge?</Typography>
       {sourceApp?.appId !== 'synapse.org' && (
         <Typography variant="body2" sx={{ marginBottom: '20px' }}>
           {sourceAppName} is powered by{' '}
