@@ -12,6 +12,10 @@ jobs:
     # limit to this repository
     if: github.repository == 'Sage-Bionetworks/synapse-web-monorepo'
     runs-on: ubuntu-latest
+    # Allow OIDC Integration (so we can assume the AWS role to deploy)
+    permissions:
+      id-token: write
+      contents: read
     steps:
       # if in staging branch set then bucket name to staging bucket
       - name: setup-outputbucket-staging
