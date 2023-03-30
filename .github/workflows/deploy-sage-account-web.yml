@@ -1,9 +1,11 @@
-name: deploy-sageaccountweb
+name: "Deploy SageAccountWeb"
+
 on:
   push:
     branches:
       - SageAccountWeb-production
       - SageAccountWeb-staging
+
 jobs:
   build-and-deploy:
     name: build-and-deploy
@@ -49,7 +51,7 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store- - name: install-dependencies
-        run: pnpm install
+      - run: pnpm install
       - name: build
         run: pnpm nx run SageAccountWeb:build
       - name: Assume AWS Role
