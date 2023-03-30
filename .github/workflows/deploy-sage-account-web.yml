@@ -52,19 +52,13 @@ jobs:
         run: pnpm install
       - name: build
         run: pnpm nx run SageAccountWeb:build
-      # setup AWS creds
-      - name: config-aws-creds
+      - name: Assume AWS Role
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AKID }}
-          aws-secret-access-key: ${{ secrets.AKSID }}
           aws-region: us-east-1
-          mask-aws-account-id: true
-          role-to-assume: arn:aws:iam::797640923903:role/test-ghdeployer-GithubDeployerRole-V271Z804BS72
-          role-session-name: deploy-sageaccountweb-build
-          # TODO: fix role to allow this
-          role-skip-session-tagging: true
-          role-duration-seconds: 900
+          role-to-assume: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-ProviderRolesynapsewebmo-1DNSZNE6O57RM
+          role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
+          role-duration-seconds: 1200
       # if not main branch deploy build to S3 bucket
       - name: deploy-build
         if: env.BUCKET_NAME != ''
