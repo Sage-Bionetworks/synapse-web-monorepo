@@ -7,8 +7,8 @@ import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContex
 import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Button, Box } from '@mui/material'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
-import { TermsOfUseRightPanelText } from './TermsOfUsePageRightPanelText'
-import { URL_TERMS_CONDITIONS_AGREEMENT } from 'synapse-react-client/dist/utils/SynapseConstants'
+import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
+import { TermsAndConditionsLink } from './TermsAndConditionsLink'
 
 export type TermsOfUsePageProps = {}
 
@@ -90,14 +90,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
               >
                 Accept and Continue <IconSvg icon="arrowForward" />
               </Button>
-              <Button
-                sx={buttonSx}
-                variant="text"
-                href={URL_TERMS_CONDITIONS_AGREEMENT}
-                target="_blank"
-              >
-                View and Complete Terms and Conditions for Use
-              </Button>
+              <TermsAndConditionsLink sx={buttonSx} />
             </div>
           </Box>
         </Box>

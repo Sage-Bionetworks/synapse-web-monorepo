@@ -27,7 +27,7 @@ import Attestation from './Attestation'
 import ThankYou from './ThankYou'
 import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
 import { ReturnToAppButton } from './ReturnToAppButton'
-import { TermsOfUseRightPanelText } from 'components/TermsOfUsePageRightPanelText'
+import { TermsOfUseRightPanelText } from 'components/TermsOfUseRightPanelText'
 
 const STEP_CONTENT = [
   {
