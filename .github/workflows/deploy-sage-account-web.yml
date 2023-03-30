@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - SageAccountWeb-production
-      - SageAccountWeb-staging
+      - main
 
 jobs:
   build-and-deploy:
@@ -15,7 +15,7 @@ jobs:
     steps:
       # if in staging branch set then bucket name to staging bucket
       - name: setup-outputbucket-staging
-        if: github.ref == 'refs/heads/SageAccountWeb-staging'
+        if: github.ref == 'refs/heads/main'
         run: |
           echo 'BUCKET_NAME=staging.accounts.sagebionetworks.org' >> $GITHUB_ENV
           echo 'CFDIST_ID=EY52HOUGKDP1F' >> $GITHUB_ENV
