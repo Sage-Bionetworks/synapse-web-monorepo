@@ -5,6 +5,7 @@ import React from 'react'
 import { ContinueButton } from './ContinueButton'
 import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
 import { ReturnToAppButton } from './ReturnToAppButton'
+import { URL_TERMS_CONDITIONS_AGREEMENT } from 'synapse-react-client/dist/utils/SynapseConstants'
 
 export type TermsAndConditionsWrappedProps = {
   verificationSubmission: VerificationSubmission
@@ -16,8 +17,6 @@ const TermsAndConditionsWrapped: React.FC<TermsAndConditionsWrappedProps> = ({
   verificationSubmission,
 }) => {
   const [isFormComplete, setIsFormComplete] = React.useState(false)
-  const tcAgreement =
-    'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf'
 
   return (
     <Box>
@@ -33,7 +32,7 @@ const TermsAndConditionsWrapped: React.FC<TermsAndConditionsWrappedProps> = ({
       />
       <Button
         variant="text"
-        href={tcAgreement}
+        href={URL_TERMS_CONDITIONS_AGREEMENT}
         target="_blank"
         sx={{ width: '100%', padding: '6px', marginTop: '10px' }}
       >

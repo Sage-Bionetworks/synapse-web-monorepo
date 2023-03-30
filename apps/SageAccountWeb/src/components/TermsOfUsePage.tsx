@@ -8,6 +8,7 @@ import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Button, Box } from '@mui/material'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { TermsOfUseRightPanelText } from './TermsOfUsePageRightPanelText'
+import { URL_TERMS_CONDITIONS_AGREEMENT } from 'synapse-react-client/dist/utils/SynapseConstants'
 
 export type TermsOfUsePageProps = {}
 
@@ -18,8 +19,6 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const { accessToken } = useSynapseContext()
   const sourceApp = useSourceApp()
 
-  const tcAgreement =
-    'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf'
   const onSignTermsOfUse = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     setIsLoading(true)
@@ -94,7 +93,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
               <Button
                 sx={buttonSx}
                 variant="text"
-                href={tcAgreement}
+                href={URL_TERMS_CONDITIONS_AGREEMENT}
                 target="_blank"
               >
                 View and Complete Terms and Conditions for Use

@@ -10,6 +10,7 @@ import { PeopleIcon } from '../assets/icons/terms/PeopleIcon'
 import { PenIcon } from '../assets/icons/terms/PenIcon'
 import { SpeakerIcon } from '../assets/icons/terms/SpeakerIcon'
 import { FlagIcon } from '../assets/icons/terms/FlagIcon'
+import { URL_TERMS_CONDITIONS_AGREEMENT } from '../utils/SynapseConstants'
 
 export type TermsAndConditionsProps = {
   onFormChange: (formComplete: boolean) => void
@@ -18,8 +19,6 @@ export type TermsAndConditionsProps = {
 
 const dataUseLink =
   'https://s3.amazonaws.com/static.synapse.org/governance/SynapseCommonsDataUseProcedure.pdf?v=4'
-const termsLink =
-  'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf?v=5'
 
 const tcList: tcItem[] = [
   {
@@ -46,7 +45,7 @@ Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/
     icon: <ScaleIcon />,
     label: 'I will act ethically and responsibly.',
     description: `You agree to the following Synapse Operating Ethics Principles, outlined in our 
-    <a target="_blank" href=${termsLink}>Terms and Conditions of Use</a>.
+    <a target="_blank" href=${URL_TERMS_CONDITIONS_AGREEMENT}>Terms and Conditions of Use</a>.
     <br><br>Consequences of misconduct can include loss of both data use privileges and future use of Synapse.`,
   },
   {
@@ -60,7 +59,7 @@ Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/
     <li>Refrain from unauthorized data redistribution. Please refer to the 
     <a target="_blank" href=${dataUseLink}>Synapse Commons Data Use Procedure</a>.</li>
     </ul>
-    For more information, please refer to the full <a target="_blank" href=${termsLink}>Synapse Terms and Conditions of Use</a>.`,
+    For more information, please refer to the full <a target="_blank" href=${URL_TERMS_CONDITIONS_AGREEMENT}>Synapse Terms and Conditions of Use</a>.`,
   },
   {
     icon: <PeopleIcon />,
@@ -74,7 +73,7 @@ Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/
     label: 'I will credit research participants and all data sources.',
     description: `You agree to acknowledge data participants and to cite contributors and data sources using the language provided with the dataset.<br><br>
     It is our policy to terminate the access privileges of those who infringe the intellectual property rights of others. For more information, please refer to our full 
-    <a target="_blank" href=${termsLink}>Terms and Conditions of Use</a>.`,
+    <a target="_blank" href=${URL_TERMS_CONDITIONS_AGREEMENT}>Terms and Conditions of Use</a>.`,
   },
   {
     icon: <SpeakerIcon />,
@@ -89,7 +88,7 @@ Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/
     description: `Data misuse includes violating dataset access requirements, unauthorized use or 
     redistribution, lack of data accreditation, and unethical data handling.<br><br>
     For more information about what classifies as a violation of our data governance policies, please refer to our 
-    <a target="_blank" href=${dataUseLink}>Data Use Procedure</a> and <a target="_blank" href=${termsLink}>Terms and Conditions of Use</a>.`,
+    <a target="_blank" href=${dataUseLink}>Data Use Procedure</a> and <a target="_blank" href=${URL_TERMS_CONDITIONS_AGREEMENT}>Terms and Conditions of Use</a>.`,
   },
 ]
 
@@ -98,8 +97,6 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
   hideLinkToFullTC = false,
 }) => {
   const checkboxCount = tcList.length
-  const tcAgreement =
-    'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf'
   const governancePolicy =
     'https://help.synapse.org/docs/Synapse-Governance.2004255211.html'
   const getInitialCheckboxState = () =>
@@ -176,7 +173,11 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
         </ul>
         {!hideLinkToFullTC && (
           <div className="view-terms">
-            <Button variant={'contained'} href={tcAgreement} target="_blank">
+            <Button
+              variant={'contained'}
+              href={URL_TERMS_CONDITIONS_AGREEMENT}
+              target="_blank"
+            >
               View Complete Terms and Conditions for Use
             </Button>
           </div>

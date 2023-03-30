@@ -2,6 +2,7 @@ import * as React from 'react'
 import { ReactComponent as SageLogo } from './assets/sage-logo.svg'
 import { ReactComponent as NCI } from './assets/nci.svg'
 import { ReactComponent as NIH } from './assets/nih.svg'
+import { URL_TERMS_CONDITIONS_AGREEMENT } from 'synapse-react-client/dist/utils/SynapseConstants'
 
 const DevelopedBySage = () => {
   return (
@@ -28,7 +29,7 @@ const DevelopedBySage = () => {
         Use of this Portal is governed by the
         <a
           className="SRC-primary-text-color SRC-boldText"
-          href="https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf?v=5"
+          href={URL_TERMS_CONDITIONS_AGREEMENT}
           target="_blank" rel="noreferrer"
         >
           &nbsp;Terms and Conditions
