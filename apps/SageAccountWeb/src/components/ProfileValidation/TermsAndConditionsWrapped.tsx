@@ -5,7 +5,7 @@ import { ContinueButton } from './ContinueButton'
 import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
 import { ReturnToAppButton } from './ReturnToAppButton'
 import { TermsAndConditionsLink } from 'components/TermsAndConditionsLink'
-import { TermsAndConditionsSignature } from './TermsAndConditionsSignature'
+// import { TermsAndConditionsSignature } from './TermsAndConditionsSignature'
 
 export type TermsAndConditionsWrappedProps = {
   verificationSubmission: VerificationSubmission
@@ -17,7 +17,7 @@ const TermsAndConditionsWrapped: React.FC<TermsAndConditionsWrappedProps> = ({
   verificationSubmission,
 }) => {
   const [isFormComplete, setIsFormComplete] = React.useState(false)
-  const [isSignatureComplete, setIsSignatureComplete] = React.useState(false)
+  // const [isSignatureComplete, setIsSignatureComplete] = React.useState(false)
 
   return (
     <Box>
@@ -27,7 +27,7 @@ const TermsAndConditionsWrapped: React.FC<TermsAndConditionsWrappedProps> = ({
         }}
         hideLinkToFullTC={true}
       />
-      {/* signature not currently saved, but may need to be - see PLFM-7757 */}
+      {/* hiding until decisions made around how to capture signature - see PLFM-7757
       <TermsAndConditionsSignature
         canSign={isFormComplete}
         onSigned={isSignatureComplete => {
@@ -35,8 +35,9 @@ const TermsAndConditionsWrapped: React.FC<TermsAndConditionsWrappedProps> = ({
         }}
         expectedSignature={`${verificationSubmission.firstName} ${verificationSubmission.lastName}`}
       />
+      */}
       <ContinueButton
-        disabled={!isFormComplete || !isSignatureComplete}
+        disabled={!isFormComplete /* || !isSignatureComplete */}
         onClick={() => onNext(verificationSubmission)}
       />
       <TermsAndConditionsLink

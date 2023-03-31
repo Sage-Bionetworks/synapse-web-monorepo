@@ -5,7 +5,7 @@ import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndCon
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { useSourceApp, SourceAppLogo } from './SourceApp'
-import { Button, Box } from '@mui/material'
+import { Button, Box, useTheme } from '@mui/material'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
 import { TermsAndConditionsLink } from './TermsAndConditionsLink'
@@ -13,6 +13,7 @@ import { TermsAndConditionsLink } from './TermsAndConditionsLink'
 export type TermsOfUsePageProps = {}
 
 export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
+  const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [isFormComplete, setIsFormComplete] = useState(false)
   const [isDone, setIsDone] = useState(false)
@@ -61,8 +62,11 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
       <StyledInnerContainer
         sx={{
           width: '1200px',
-          '& > div:nth-of-type(1)': { paddingTop: 10, width: '750px' },
-          '& > div:nth-of-type(2)': { paddingTop: 10 },
+          '& > div:nth-of-type(1)': {
+            paddingTop: theme.spacing(10),
+            width: '750px',
+          },
+          '& > div:nth-of-type(2)': { paddingTop: theme.spacing(10) },
         }}
       >
         <Box

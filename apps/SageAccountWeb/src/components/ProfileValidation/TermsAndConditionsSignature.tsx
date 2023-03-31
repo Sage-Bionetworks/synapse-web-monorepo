@@ -1,7 +1,7 @@
 import { TextField } from '@mui/material'
 import { StyledFormControl } from 'components/StyledComponents'
 import React from 'react'
-import { Typography } from 'synapse-react-client'
+import { Typography } from '@mui/material'
 
 export type TermsAndConditionsSignatureProps = {
   canSign: boolean
@@ -26,8 +26,9 @@ export const TermsAndConditionsSignature: React.FC<
     <>
       <Typography variant="body1" sx={tcSignatureTextSx}>
         After agreeing to the above terms, electronically sign this agreement by
-        typing your full name, first and last, to acknowledge your agreement
-        with the terms stated above. You must sign in order to proceed.
+        typing your full name, as it appears below, to acknowledge your
+        agreement with the terms stated above. You must sign in order to
+        proceed.
       </Typography>
       <StyledFormControl
         fullWidth
