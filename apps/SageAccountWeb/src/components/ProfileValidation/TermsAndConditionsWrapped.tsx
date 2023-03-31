@@ -1,10 +1,11 @@
 import { Box } from '@mui/material'
 import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
-
 import React from 'react'
-import theme from 'style/theme'
 import { ContinueButton } from './ContinueButton'
 import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
+import { ReturnToAppButton } from './ReturnToAppButton'
+import { TermsAndConditionsLink } from 'components/TermsAndConditionsLink'
+// import { TermsAndConditionsSignature } from './TermsAndConditionsSignature'
 
 export type TermsAndConditionsWrappedProps = {
   verificationSubmission: VerificationSubmission
@@ -16,45 +17,33 @@ const TermsAndConditionsWrapped: React.FC<TermsAndConditionsWrappedProps> = ({
   verificationSubmission,
 }) => {
   const [isFormComplete, setIsFormComplete] = React.useState(false)
+  // const [isSignatureComplete, setIsSignatureComplete] = React.useState(false)
 
   return (
-    <Box
-      sx={{
-        '&  ul': { margin: theme.spacing(0, -8) },
-        '&  .terms-conditions .term-list > li': {
-          borderLeft: 'none',
-          borderRight: 'none',
-          '&  label ': { fontSize: '14px' },
-          '& .terms-icon': {
-            flex: '0 0 70px',
-          },
-          '& .terms-checked': {
-            backgroundColor: theme.palette.primary.main,
-          },
-          '& .terms-desc ul ': {
-            marginLeft: theme.spacing(-3),
-          },
-        },
-        '& .terms-conditions .view-terms .MuiButton-root ': {
-          color: theme.palette.primary.main,
-          backgroundColor: 'transparent',
-          border: 'none',
-          boxShadow: 'none',
-          padding: '0',
-          width: '100%',
-          fontSize: '14px',
-        },
-      }}
-    >
+    <Box>
       <TermsAndConditions
         onFormChange={isFormComplete => {
           setIsFormComplete(isFormComplete)
         }}
+        hideLinkToFullTC={true}
       />
+      {/* hiding until decisions made around how to capture signature - see PLFM-7757
+      <TermsAndConditionsSignature
+        canSign={isFormComplete}
+        onSigned={isSignatureComplete => {
+          setIsSignatureComplete(isSignatureComplete)
+        }}
+        expectedSignature={`${verificationSubmission.firstName} ${verificationSubmission.lastName}`}
+      />
+      */}
       <ContinueButton
-        disabled={!isFormComplete}
+        disabled={!isFormComplete /* || !isSignatureComplete */}
         onClick={() => onNext(verificationSubmission)}
       />
+      <TermsAndConditionsLink
+        sx={{ width: '100%', padding: '6px', marginTop: '10px' }}
+      />
+      <ReturnToAppButton />
     </Box>
   )
 }

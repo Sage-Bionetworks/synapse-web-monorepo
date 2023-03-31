@@ -20,13 +20,14 @@ import { getSearchParam } from 'URLUtils'
 import { ProfileFieldsEditor } from './ProfileFieldsEditor'
 import { VerifyIdentify } from './VerifyIdentify'
 import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
-import { Box, Button, Divider, IconButton, Link } from '@mui/material'
+import { Box, Button, Divider, IconButton, Link, useTheme } from '@mui/material'
 import theme from 'style/theme'
 import { SourceAppLogo, useSourceApp } from '../SourceApp'
 import Attestation from './Attestation'
 import ThankYou from './ThankYou'
 import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
 import { ReturnToAppButton } from './ReturnToAppButton'
+import { TermsOfUseRightPanelText } from 'components/TermsOfUseRightPanelText'
 
 const STEP_CONTENT = [
   {
@@ -67,17 +68,10 @@ const STEP_CONTENT = [
   },
 
   {
-    title: 'Synapse Pledge',
+    title: null,
     body: (
       <>
-        <Typography variant="body2" paragraph>
-          You need to indicate your understanding and agreement with each of the
-          terms
-        </Typography>
-        .
-        <Typography variant="body2" paragraph>
-          You must complete this step in order to request validation.{' '}
-        </Typography>
+        <TermsOfUseRightPanelText />
       </>
     ),
   },
@@ -276,6 +270,7 @@ function BodyControlFactory(args: {
 export type ProfileValidationProps = {}
 
 export const ProfileValidation = (props: ProfileValidationProps) => {
+  const theme = useTheme()
   const { accessToken } = useSynapseContext()
   const [verificationSubmission, setVerificationSubmission] =
     useState<VerificationSubmission>()
@@ -431,7 +426,20 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
   return (
     <StyledOuterContainer>
       {step !== ValidationWizardStep.THANK_YOU ? (
-        <StyledInnerContainer>
+        <StyledInnerContainer
+          sx={
+            step === ValidationWizardStep.TERMS_AGREE
+              ? {
+                  width: '1200px',
+                  '& > div:nth-of-type(1)': {
+                    paddingTop: theme.spacing(10),
+                    width: '750px',
+                  },
+                  '& > div:nth-of-type(2)': { paddingTop: theme.spacing(10) },
+                }
+              : null
+          }
+        >
           {verificationSubmission && (
             <Box>
               {step !== ValidationWizardStep.PROFILE_INFO && (

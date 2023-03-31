@@ -22,7 +22,10 @@ import { useLocation } from 'react-router-dom'
 import { ConfigureEmail } from './ConfigureEmail'
 import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import UniversalCookies from 'universal-cookie'
-import { DATETIME_UTC_COOKIE_KEY } from 'synapse-react-client/dist/utils/SynapseConstants'
+import {
+  DATETIME_UTC_COOKIE_KEY,
+  URL_TERMS_CONDITIONS_AGREEMENT,
+} from 'synapse-react-client/dist/utils/SynapseConstants'
 import { getUseUtcTimeFromCookie } from 'synapse-react-client/dist/utils/SynapseClient'
 import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
@@ -492,10 +495,7 @@ export const AccountSettings = () => {
                     >
                       Agree to Terms and Conditions
                     </Button>
-                    <Link
-                      href="https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf?v=5"
-                      target="_blank"
-                    >
+                    <Link href={URL_TERMS_CONDITIONS_AGREEMENT} target="_blank">
                       More information
                     </Link>
                   </div>
