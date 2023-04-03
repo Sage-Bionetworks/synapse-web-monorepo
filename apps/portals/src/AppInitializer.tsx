@@ -11,7 +11,7 @@ import React, {
 import { useCookies } from 'react-cookie'
 import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import { DOWNLOAD_FILES_MENU_TEXT } from 'synapse-react-client/dist/containers/table/SynapseTableConstants'
-import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
+import SynapseContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import useDetectSSOCode from 'synapse-react-client/dist/utils/hooks/useDetectSSOCode'
 import { TwoFactorAuthErrorResponse } from 'synapse-react-client/dist/utils/synapseTypes/ErrorResponse'

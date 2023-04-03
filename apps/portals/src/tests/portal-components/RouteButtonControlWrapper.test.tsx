@@ -3,8 +3,8 @@ import RouteControlWrapper, {
   RouteControlWrapperProps,
 } from '../../portal-components/RouteControlWrapper'
 import { MemoryRouter } from 'react-router-dom'
-import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 import { render, screen } from '@testing-library/react'
+import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
 
 describe('RouteControlWrapper works', () => {
   const routeName = 'custom route'
@@ -20,18 +20,18 @@ describe('RouteControlWrapper works', () => {
 
   it('renders correctly', () => {
     render(
-      <SynapseContextProvider
+      <FullContextProvider
         synapseContext={{
           accessToken: 'abcd',
           utcTime: false,
           isInExperimentalMode: false,
-          downloadCartPageUrl: '/DownloadCart'
+          downloadCartPageUrl: '/DownloadCart',
         }}
       >
         <MemoryRouter initialEntries={[`/Explore/${routeName}`]}>
           <RouteControlWrapper {...props} />
         </MemoryRouter>
-      </SynapseContextProvider>,
+      </FullContextProvider>,
     )
     // check that it renders a MarkdownSynapse component
     screen.getByText('This is a markdown component')

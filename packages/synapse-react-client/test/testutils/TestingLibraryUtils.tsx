@@ -3,9 +3,9 @@ import { QueryClient } from 'react-query'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import {
   defaultQueryClientConfig,
-  SynapseContextProvider,
   SynapseContextType,
 } from '../../src/lib/utils/SynapseContext'
+import FullContextProvider from '../../src/lib/utils/FullContextProvider'
 
 type RtlWrapperProps = {
   children?: ReactNode
@@ -25,12 +25,12 @@ export const createWrapperAndQueryClient = (props?: SynapseContextType) => {
   return {
     wrapperFn: function RtlWrapper({ children }: RtlWrapperProps) {
       return (
-        <SynapseContextProvider
+        <FullContextProvider
           synapseContext={wrapperProps}
           queryClient={queryClient}
         >
           {children}
-        </SynapseContextProvider>
+        </FullContextProvider>
       )
     },
     queryClient: queryClient,

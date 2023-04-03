@@ -19,6 +19,7 @@ import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
 } from '../../../../src/lib/containers/QueryVisualizationWrapper'
+import FullContextProvider from '../../../../src/lib/utils/FullContextProvider'
 
 const mockFacetColumn: FacetColumnResult = {
   columnName: 'Make',
@@ -64,7 +65,7 @@ function renderComponent(props: FacetChipProps) {
   return render(<FacetChip {...props} />, {
     wrapper: ({ children }) => {
       return (
-        <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
+        <FullContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
           <QueryContextProvider queryContext={defaultQueryContext}>
             <QueryVisualizationContextProvider
               queryVisualizationContext={defaultQueryVisualizationContext}
@@ -72,7 +73,7 @@ function renderComponent(props: FacetChipProps) {
               {children}
             </QueryVisualizationContextProvider>
           </QueryContextProvider>
-        </SynapseContextProvider>
+        </FullContextProvider>
       )
     },
   })

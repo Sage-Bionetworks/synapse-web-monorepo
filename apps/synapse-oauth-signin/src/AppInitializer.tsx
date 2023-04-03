@@ -2,10 +2,7 @@ import moment from 'moment'
 import { OAuthClientError } from './OAuthClientError'
 import React, { useCallback, useEffect, useState } from 'react'
 import { SynapseClient } from 'synapse-react-client'
-import {
-  defaultQueryClientConfig,
-  SynapseContextProvider,
-} from 'synapse-react-client/dist/utils/SynapseContext'
+import { defaultQueryClientConfig } from 'synapse-react-client/dist/utils/SynapseContext'
 import { AuthenticatedOn } from 'synapse-react-client/dist/utils/synapseTypes/AuthenticatedOn'
 import { handleErrorRedirect } from './URLUtils'
 import { QueryClient } from 'react-query'
@@ -14,6 +11,7 @@ import { TwoFactorAuthErrorResponse } from 'synapse-react-client/dist/utils/syna
 import { OAuthAppContext } from './OAuthAppContext'
 import themeOptions from './style/theme'
 import { redirectAfterSSO } from 'synapse-react-client/dist/utils/AppUtils'
+import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
 
 const queryClient = new QueryClient(defaultQueryClientConfig)
 
@@ -140,7 +138,7 @@ function AppInitializer(
     <OAuthAppContext.Provider
       value={{ accessToken, setAccessToken, twoFactorAuthErrorResponse }}
     >
-      <SynapseContextProvider
+      <FullContextProvider
         synapseContext={{
           accessToken: accessToken,
           isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
@@ -151,7 +149,7 @@ function AppInitializer(
         queryClient={queryClient}
       >
         {!isFramed && props.children}
-      </SynapseContextProvider>
+      </FullContextProvider>
     </OAuthAppContext.Provider>
   )
 }

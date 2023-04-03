@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 import { SynapseComponent } from 'SynapseComponent'
 import { SynapseConfig } from 'types/portal-config'
+import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
 
 describe('SynapseComponent tests', () => {
   it('renders SRC components correctly', () => {
@@ -14,16 +14,16 @@ describe('SynapseComponent tests', () => {
       },
     }
     render(
-      <SynapseContextProvider
+      <FullContextProvider
         synapseContext={{
           accessToken: 'abcd',
           utcTime: false,
           isInExperimentalMode: false,
-          downloadCartPageUrl: '/DownloadCart'
+          downloadCartPageUrl: '/DownloadCart',
         }}
       >
         <SynapseComponent synapseConfig={synapseConfig} />
-      </SynapseContextProvider>,
+      </FullContextProvider>,
     )
     screen.getByText('This is a markdown component')
   })
@@ -48,18 +48,18 @@ describe('SynapseComponent tests', () => {
       },
     }
     render(
-      <SynapseContextProvider
+      <FullContextProvider
         synapseContext={{
           accessToken: 'abcd',
           utcTime: false,
           isInExperimentalMode: false,
-          downloadCartPageUrl: '/DownloadCart'
+          downloadCartPageUrl: '/DownloadCart',
         }}
       >
         <MemoryRouter>
           <SynapseComponent synapseConfig={synapseConfig} />
         </MemoryRouter>
-      </SynapseContextProvider>,
+      </FullContextProvider>,
     )
     screen.getByText('This is a markdown component')
   })

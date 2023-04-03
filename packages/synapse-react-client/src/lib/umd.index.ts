@@ -54,19 +54,19 @@ import { SynapseClient, SynapseConstants } from './utils'
 import Palettes from './utils/theme/palette/Palettes'
 import {
   SynapseContextConsumer,
-  SynapseContextProvider,
   useSynapseContext,
 } from './utils/SynapseContext'
 import { SynapseQueries } from './utils'
 import TwoFactorBackupCodes from './containers/auth/TwoFactorBackupCodes'
 import TwoFactorEnrollmentForm from './containers/auth/TwoFactorEnrollmentForm'
 import TwoFactorAuthSettingsPanel from './containers/auth/TwoFactorAuthSettingsPanel'
+import { FullContextProvider } from './utils/FullContextProvider'
 
 // Also include scss in the bundle
 import './style/main.scss'
 
 const SynapseContext = {
-  SynapseContextProvider,
+  SynapseContextProvider: FullContextProvider,
   SynapseContextConsumer,
   useSynapseContext,
 }

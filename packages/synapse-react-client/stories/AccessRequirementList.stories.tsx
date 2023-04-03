@@ -37,6 +37,7 @@ import { MOCK_USER_ID } from '../mocks/user/mock_user_profile'
 import { ResearchProject } from '../src/lib/utils/synapseTypes/ResearchProject'
 import { mockFileHandle } from '../mocks/mock_file_handle'
 import AccessRequirementList from '../src/lib/containers/access_requirement_list/AccessRequirementList'
+import FullContextProvider from '../src/lib/utils/FullContextProvider'
 
 const meta: Meta = {
   title: 'Governance/AccessRequirementList',
@@ -50,7 +51,7 @@ const meta: Meta = {
   render: args => (
     <SynapseContextConsumer>
       {context => (
-        <SynapseContextProvider
+        <FullContextProvider
           synapseContext={{
             ...context,
             accessToken: args.isAuthenticated
@@ -64,7 +65,7 @@ const meta: Meta = {
           </p>
 
           <AccessRequirementList {...args} />
-        </SynapseContextProvider>
+        </FullContextProvider>
       )}
     </SynapseContextConsumer>
   ),

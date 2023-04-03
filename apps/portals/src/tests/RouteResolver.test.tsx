@@ -2,22 +2,22 @@ import { render, screen, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import RouteResolver from 'RouteResolver'
-import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
+import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
 
 describe('RouteResolver works', () => {
   function renderComponent(initialEntries) {
     return render(
       <MemoryRouter initialEntries={initialEntries}>
-        <SynapseContextProvider
+        <FullContextProvider
           synapseContext={{
             accessToken: undefined,
             utcTime: false,
             isInExperimentalMode: false,
-            downloadCartPageUrl: '/DownloadCart'
+            downloadCartPageUrl: '/DownloadCart',
           }}
         >
           <RouteResolver />
-        </SynapseContextProvider>
+        </FullContextProvider>
       </MemoryRouter>,
     )
   }

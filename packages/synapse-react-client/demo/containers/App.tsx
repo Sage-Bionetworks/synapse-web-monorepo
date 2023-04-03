@@ -17,6 +17,7 @@ import '../style/App.scss'
 import '../style/DemoStyle.scss'
 import Demo from './Demo'
 import Playground from './playground/Playground'
+import FullContextProvider from '../../src/lib/utils/FullContextProvider'
 // import { useDetectSSOCode } from '../../src/lib/utils/hooks/useDetectSSOCode'
 
 /**
@@ -169,7 +170,7 @@ export default class App extends React.Component<{}, AppState> {
       )
     }
     return (
-      <SynapseContextProvider
+      <FullContextProvider
         synapseContext={{
           accessToken: token,
           isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
@@ -281,7 +282,7 @@ export default class App extends React.Component<{}, AppState> {
             <Route exact={true} path="/mockForm" render={MockForm} />
           </div>
         </Router>
-      </SynapseContextProvider>
+      </FullContextProvider>
     )
   }
 }

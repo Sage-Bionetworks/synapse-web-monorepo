@@ -20,6 +20,7 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import { act } from '@testing-library/react'
 import { DEFAULT_PAGE_SIZE } from '../../../src/lib/utils/SynapseConstants'
+import FullContextProvider from '../../../src/lib/utils/FullContextProvider'
 
 let providedContext: QueryContextType | undefined
 const renderedTextConfirmation = 'QueryWrapper rendered!'
@@ -34,11 +35,11 @@ const QueryContextReciever = jest.fn((props: any) => {
 // utility function
 const renderComponent = (props: Partial<InfiniteQueryWrapperProps>) => {
   render(
-    <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
+    <FullContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
       <InfiniteQueryWrapper {...props}>
         <QueryContextReciever></QueryContextReciever>
       </InfiniteQueryWrapper>
-    </SynapseContextProvider>,
+    </FullContextProvider>,
   )
 }
 

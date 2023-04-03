@@ -9,15 +9,16 @@ import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
 import { SynapseContextProvider } from '../../../../../src/lib/utils/SynapseContext'
 import { SynapseClient } from '../../../../../src/lib/utils'
+import FullContextProvider from '../../../../../src/lib/utils/FullContextProvider'
 const queryClient = new QueryClient()
 
 const wrapper = (props: { children: React.ReactChildren }) => (
-  <SynapseContextProvider
+  <FullContextProvider
     synapseContext={MOCK_CONTEXT_VALUE}
     queryClient={queryClient}
   >
     {props.children}
-  </SynapseContextProvider>
+  </FullContextProvider>
 )
 
 const expected: PaginatedResults<EntityHeader> = {

@@ -10,7 +10,6 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DetailsPageTabProps, RowSynapseConfig } from 'types/portal-util-types'
-import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
 import syn16787123Json from '../../mocks/syn16787123.json'
 import { SynapseConfig } from 'types/portal-config'
 import { assert } from 'console'
@@ -25,11 +24,12 @@ import * as SynapseComponentModule from 'SynapseComponent'
 import { MemoryRouter } from 'react-router-dom'
 import * as SynapseClient from 'synapse-react-client/dist/utils/SynapseClient'
 import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
 
 function renderWithContext(component) {
   return render(
     <MemoryRouter>
-      <SynapseContextProvider
+      <FullContextProvider
         synapseContext={{
           accessToken: 'abcd',
           utcTime: false,
@@ -38,7 +38,7 @@ function renderWithContext(component) {
         }}
       >
         {component}
-      </SynapseContextProvider>
+      </FullContextProvider>
     </MemoryRouter>,
   )
 }
