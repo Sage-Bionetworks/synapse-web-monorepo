@@ -771,7 +771,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                 )}
                 <FileUpload
                   id={'duc-browse'}
-                  variant={'light-primary-base'}
                   uploadCallback={uploadCallback}
                   context={'ducFileHandleId'}
                 />
@@ -804,7 +803,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               )}
               <FileUpload
                 id={'irb-browse'}
-                variant={'light-primary-base'}
                 uploadCallback={uploadCallback}
                 context={'irbFileHandleId'}
               />
@@ -847,7 +845,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                 })}
                 <FileUpload
                   id={'attachment-browse'}
-                  variant={'light-primary-base'}
                   uploadCallback={uploadCallback}
                   context={'attachments'}
                 />

@@ -1,7 +1,7 @@
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
-import { Box } from '@mui/material'
+import { Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { Typography, SynapseComponents } from 'synapse-react-client'
+import { SynapseComponents } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
   VerificationSubmission,
@@ -16,44 +16,19 @@ export type AttestationProps = {
   onNext: (vs: VerificationSubmission) => void
 }
 
-export type UploadButtonProps = {
-  uploadCallback: (data: UploadCallbackResp) => void
-}
-
-const UploadButton: React.FC<UploadButtonProps> = ({ uploadCallback }) => {
-  const hackSx = {
-    position: 'relative',
-    'button#uploadButton': {
-      fontWeight: 700,
-      border: '1px solid #E0E0E0',
-      borderRadius: '3px',
-      width: '100%',
-      color: 'grey.800',
-      paddingLeft: '32px',
-    },
-  }
-  const iconSx = {
-    zIndex: 10,
-    position: 'absolute',
-    left: '56.6px',
-    top: '50%',
-    transform: 'translate(-50%,-50%)',
-    color: 'grey.800',
-    pointerEvents: 'none',
-  }
-
-  /* agendel TODO: we need a component that takes a child component and wraps it in a button */
-  return (
-    <Box id="hack" sx={hackSx}>
-      <CloudUploadOutlinedIcon sx={iconSx} />
-      <SynapseComponents.FileUpload
-        uploadCallback={uploadCallback}
-        label={'Upload from your computer'}
-        variant="light-primary-base"
-        id="uploadButton"
-      />
-    </Box>
-  )
+const buttonSx = {
+  fontWeight: 700,
+  border: '1px solid #E0E0E0',
+  borderRadius: '3px',
+  width: '100%',
+  color: 'grey.800',
+  padding: '12px',
+  '&:focus': {
+    outlineStyle: 'auto',
+    outlineWidth: '3px',
+    outlineOffset: '0px',
+    borderRadius: '3px',
+  },
 }
 
 const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
@@ -92,7 +67,14 @@ const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
           </Typography>
         </>
       )}
-      <UploadButton uploadCallback={uploadCallback} />
+      <SynapseComponents.FileUpload
+        uploadCallback={uploadCallback}
+        label="Upload from your computer"
+        buttonProps={{
+          sx: buttonSx,
+          startIcon: <CloudUploadOutlinedIcon />,
+        }}
+      />
       <ContinueButton
         disabled={!attachments?.length}
         onClick={() => props.onNext(verificationSubmission)}
