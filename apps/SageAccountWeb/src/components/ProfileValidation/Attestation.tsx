@@ -16,21 +16,6 @@ export type AttestationProps = {
   onNext: (vs: VerificationSubmission) => void
 }
 
-const buttonSx = {
-  fontWeight: 700,
-  border: '1px solid #E0E0E0',
-  borderRadius: '3px',
-  width: '100%',
-  color: 'grey.800',
-  padding: '12px',
-  '&:focus': {
-    outlineStyle: 'auto',
-    outlineWidth: '3px',
-    outlineOffset: '0px',
-    borderRadius: '3px',
-  },
-}
-
 const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
   const { verificationSubmission } = props
   const [attachments, setAttachments] = useState(
@@ -70,8 +55,10 @@ const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
       <SynapseComponents.FileUpload
         uploadCallback={uploadCallback}
         label="Upload from your computer"
+        variant="outlined"
         buttonProps={{
-          sx: buttonSx,
+          sx: { color: 'grey.800' },
+          fullWidth: true,
           startIcon: <CloudUploadOutlinedIcon />,
         }}
       />

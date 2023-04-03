@@ -1,45 +1,24 @@
 import * as React from 'react'
-import { Button, ButtonProps, styled } from '@mui/material'
+import { Button, ButtonProps } from '@mui/material'
 import { uploadFile } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { FileUploadComplete, UploadCallbackResp } from '../utils/synapseTypes'
-import { StyledComponent } from '@emotion/styled'
 
 export type FileUploadProps = {
   id?: string
   label?: string
+  variant?: ButtonProps['variant']
   buttonProps?: ButtonProps
   uploadCallback?: (response: UploadCallbackResp) => void
   context?: any // to distinguish which file was uploaded if we have several FileUpload components on the same page
 }
-
-// replicate bootstrap styling
-const StyledUploadButton: StyledComponent<ButtonProps> = styled(Button, {
-  label: 'StyledUploadButton',
-})(({ theme }) => ({
-  fontSize: '14px',
-  lineHeight: '20px',
-  fontWeight: '400',
-  color: '#333',
-  border: '1px solid transparent',
-  '&:hover': {
-    textDecoration: 'none',
-    backgroundColor: 'transparent',
-  },
-  '&:focus': {
-    outlineColor: '#005fcc',
-    outlineStyle: 'auto',
-    outlineWidth: '5px',
-    outlineOffset: '-2px',
-    borderRadius: '4px',
-  },
-}))
 
 const FileUpload: React.FC<FileUploadProps> = props => {
   const {
     id,
     buttonProps,
     label = 'Browse...',
+    variant = 'contained',
     uploadCallback,
     context,
   } = props
@@ -86,9 +65,9 @@ const FileUpload: React.FC<FileUploadProps> = props => {
         }}
         style={{ display: 'none' }}
       />
-      <StyledUploadButton id={id} onClick={clickHandler} {...buttonProps}>
+      <Button id={id} variant={variant} onClick={clickHandler} {...buttonProps}>
         {label}
-      </StyledUploadButton>
+      </Button>
     </>
   )
 }
