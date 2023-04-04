@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Link, Container, Box, Grid, MenuItem } from '@mui/material'
+import {
+  Button,
+  Link,
+  Container,
+  Box,
+  Grid,
+  MenuItem,
+  ListItemButton,
+  Paper,
+} from '@mui/material'
 import {
   UserBundle,
   UserProfile,
@@ -179,29 +188,33 @@ export const AccountSettings = () => {
       <div className="panel-wrapper-bg with-account-setting">
         <Container maxWidth="md">
           <Box sx={{ display: 'flex', my: '60px' }}>
-            <nav className="account-setting-panel nav-panel">
-              <MenuItem onClick={() => handleScroll(profileInformationRef)}>
+            <Paper component="nav" className="account-setting-panel nav-panel">
+              <ListItemButton
+                onClick={() => handleScroll(profileInformationRef)}
+              >
                 Profile Information
-              </MenuItem>
-              <MenuItem onClick={() => handleScroll(emailAddressesRef)}>
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(emailAddressesRef)}>
                 Email Addresses
-              </MenuItem>
-              <MenuItem onClick={() => handleScroll(changePasswordRef)}>
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(changePasswordRef)}>
                 Change Password
-              </MenuItem>
-              <MenuItem onClick={() => handleScroll(timezoneRef)}>
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(timezoneRef)}>
                 Date/Time Format
-              </MenuItem>
-              <MenuItem onClick={() => handleScroll(trustCredentialRef)}>
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(trustCredentialRef)}>
                 Trust & Credentials
-              </MenuItem>
-              <MenuItem onClick={() => handleScroll(personalAccessTokenRef)}>
+              </ListItemButton>
+              <ListItemButton
+                onClick={() => handleScroll(personalAccessTokenRef)}
+              >
                 Personal Access Tokens
-              </MenuItem>
-            </nav>
+              </ListItemButton>
+            </Paper>
 
             <div>
-              <div
+              <Paper
                 ref={profileInformationRef}
                 className="account-setting-panel main-panel"
               >
@@ -407,22 +420,22 @@ export const AccountSettings = () => {
                     </Button>
                   </div>
                 </Form>
-              </div>
-              <div
+              </Paper>
+              <Paper
                 ref={emailAddressesRef}
                 className="account-setting-panel main-panel"
               >
                 <h3>Email Addresses</h3>
                 <ConfigureEmail returnToPath="authenticated/myaccount" />
-              </div>
-              <div
+              </Paper>
+              <Paper
                 ref={changePasswordRef}
                 className="account-setting-panel main-panel"
               >
                 <h3>Change Password</h3>
                 <ChangePassword />
-              </div>
-              <div
+              </Paper>
+              <Paper
                 ref={timezoneRef}
                 className="account-setting-panel main-panel"
               >
@@ -463,9 +476,9 @@ export const AccountSettings = () => {
                     Update Preference
                   </Button>
                 </div>
-              </div>
+              </Paper>
 
-              <div
+              <Paper
                 ref={trustCredentialRef}
                 className="account-setting-panel main-panel"
               >
@@ -606,8 +619,8 @@ export const AccountSettings = () => {
                     </Link>
                   </div>
                 </div>
-              </div>
-              <div
+              </Paper>
+              <Paper
                 ref={personalAccessTokenRef}
                 className="account-setting-panel main-panel"
               >
@@ -629,7 +642,7 @@ export const AccountSettings = () => {
                     More information
                   </Link>
                 </div>
-              </div>
+              </Paper>
             </div>
           </Box>
         </Container>

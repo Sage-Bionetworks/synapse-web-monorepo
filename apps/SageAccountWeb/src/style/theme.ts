@@ -98,6 +98,14 @@ const themeObject = {
         },
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: '5px',
+          boxShadow: '0px 2px 6px rgba(53, 58, 63, 0.1)',
+        },
+      },
+    },
   },
   typography: {
     allVariants: {
