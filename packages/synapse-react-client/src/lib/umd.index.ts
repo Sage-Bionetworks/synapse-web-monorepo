@@ -54,6 +54,7 @@ import { SynapseClient, SynapseConstants } from './utils'
 import Palettes from './utils/theme/palette/Palettes'
 import {
   SynapseContextConsumer,
+  SynapseContextProvider,
   useSynapseContext,
 } from './utils/SynapseContext'
 import { SynapseQueries } from './utils'
@@ -66,7 +67,8 @@ import { FullContextProvider } from './utils/FullContextProvider'
 import './style/main.scss'
 
 const SynapseContext = {
-  SynapseContextProvider: FullContextProvider,
+  FullContextProvider,
+  SynapseContextProvider,
   SynapseContextConsumer,
   useSynapseContext,
 }

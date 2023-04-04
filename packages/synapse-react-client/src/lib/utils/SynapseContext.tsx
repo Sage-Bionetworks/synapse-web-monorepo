@@ -37,7 +37,9 @@ export type SynapseContextProviderProps = React.PropsWithChildren<{
 }>
 
 /**
- * Provides context necessary for most components in SRC
+ * Provides context necessary for most components in SRC.
+ *
+ * The SynapseContextProvider must be wrapped in a react-query QueryClientProvider.
  * @param param0
  * @returns
  */
