@@ -38,11 +38,13 @@ export function FullContextProvider(props: FullContextProviderProps) {
   const { children, synapseContext, queryClient, theme } = props
 
   return (
-    <SynapseContextProvider synapseContext={synapseContext}>
-      <QueryClientProvider client={queryClient ?? defaultQueryClient}>
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
-      </QueryClientProvider>
-    </SynapseContextProvider>
+    <QueryClientProvider client={queryClient ?? defaultQueryClient}>
+      <ThemeProvider theme={theme}>
+        <SynapseContextProvider synapseContext={synapseContext}>
+          {children}
+        </SynapseContextProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 }
 
