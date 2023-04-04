@@ -1,7 +1,7 @@
-import { Box, Button } from '@mui/material'
+import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
+import { Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import theme from 'style/theme'
-import { Typography, SynapseComponents } from 'synapse-react-client'
+import { SynapseComponents } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
   VerificationSubmission,
@@ -9,6 +9,7 @@ import {
   FileUploadComplete,
 } from 'synapse-react-client/dist/utils/synapseTypes'
 import { ContinueButton } from './ContinueButton'
+import { ReturnToAppButton } from './ReturnToAppButton'
 
 export type AttestationProps = {
   verificationSubmission: VerificationSubmission
@@ -41,44 +42,34 @@ const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
 
   return (
     <>
-      <Box
-        sx={{
-          '& #hack > button': {
-            border: '1px solid #E0E0E0',
-            borderRadius: '3px',
-            width: '100%',
-          },
+      {isAttachment && (
+        <>
+          <Typography variant="body2" sx={{ fontWeight: 700 }}>
+            Selected file:
+          </Typography>
+          <Typography variant="body2" sx={{ marginBottom: '20px' }}>
+            {attachments[0].fileName}
+          </Typography>
+        </>
+      )}
+      <SynapseComponents.FileUpload
+        uploadCallback={uploadCallback}
+        label="Upload from your computer"
+        buttonProps={{
+          variant: 'outlined',
+          sx: { color: 'grey.800' },
+          fullWidth: true,
+          startIcon: <CloudUploadOutlinedIcon />,
         }}
-      >
-        {/* agendel TODO: we need a component that takes a child component and wraps it in a button 
-                    import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined' for the icon here*/}
-        <div id="hack">
-          <SynapseComponents.FileUpload
-            uploadCallback={uploadCallback}
-            label={isAttachment ? 'Replace' : 'Select ID File to Upload'}
-            variant={/*isAttachment ? */ 'light-primary-base' /*: 'secondary'*/}
-          />
-          {isAttachment && (
-            <>
-              <Typography
-                style={{ margin: theme.spacing(5, 0) }}
-                variant="body2"
-              >
-                {attachments[0].fileName}
-              </Typography>
-              <Button variant="outlined" onClick={() => setAttachments([])}>
-                Remove
-              </Button>
-            </>
-          )}
-        </div>
-      </Box>
+      />
       <ContinueButton
         disabled={!attachments?.length}
         onClick={() => props.onNext(verificationSubmission)}
+        sx={{ marginTop: '40px', marginBottom: '10px' }}
       >
-        Request Validation
+        Request validation
       </ContinueButton>
+      <ReturnToAppButton />
     </>
   )
 }

@@ -20,24 +20,6 @@ To run a portal locally, use the linkConfig script, which copies configuration f
 ./linkConfig.sh <portal-name>
 ```
 
-To run a portal with a local version of SRC run the following commands:
-
-```sh
-# In Synapse-React-Client/
-# Symlink the package itself as well as the local react, react-router, and react-router-dom packages
-$ pnpm link-src
-$ pnpm build # last step is to build the project
-
-# In portals/
-$ pnpm link-src
-$ ./linkConfig <portal-name>
-# Note that you can make changes in the SRC project and reflect
-# them in the portals by running pnpm build again. The portals project
-# can continue to run as you make changes.
-```
-
-To unlink synapse-react-client run `pnpm unlink-src`
-
 # Build/Deploy Process
 
 Note - [Jenkins](http://build-system-portals.sagebase.org:8080/login) is accessible only through VPN, reach out to IT to set this up.
@@ -65,7 +47,7 @@ Making a new staging job
 ## Deploy the Staging version to Production
 
 Run `deploy-portal-production` with parameters, using the portal's folder name, e.g. 'nf' or 'cancercomplexity'
-This will copy everything from the staging bucket to the production bucket for that portal.  Approval from the portal owner must be obtained before running this job.
+This will copy everything from the staging bucket to the production bucket for that portal. Approval from the portal owner must be obtained before running this job.
 
 ## Jenkins build script
 
@@ -77,4 +59,3 @@ Sync current with staging:
 
 Sync production with production:
 `$ ./run.sh WARNING-push-production [portal-name]`
-

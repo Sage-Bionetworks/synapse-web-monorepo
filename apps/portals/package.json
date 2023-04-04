@@ -44,9 +44,7 @@
     "test": "pnpm run copy-test-configuration && craco test --watchAll=false",
     "generate-sitemap": "node sitemap/generate-sitemap.js",
     "eject": "craco eject",
-    "analyze": "pnpm run copy-test-configuration && craco --max_old_space_size=4096 build && source-map-explorer 'build/static/js/*.js'",
-    "link-src": "pnpm link synapse-react-client && pnpm link react && pnpm link react-router && pnpm link react-router-dom",
-    "unlink-src": "pnpm unlink synapse-react-client && pnpm unlink react && pnpm unlink react-router && pnpm unlink react-router-dom && pnpm install --check-files"
+    "analyze": "pnpm run copy-test-configuration && craco --max_old_space_size=4096 build && source-map-explorer 'build/static/js/*.js'"
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",

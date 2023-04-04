@@ -1,6 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import FileUpload from '../src/lib/containers/FileUpload'
+import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
 
 const meta = {
   title: 'Components/FileUpload',
@@ -31,3 +32,12 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {}
+
+export const WithIcon: Story = {
+  args: {
+    buttonProps: {
+      variant: 'outlined',
+      startIcon: <CloudUploadOutlinedIcon />,
+    },
+  },
+}
