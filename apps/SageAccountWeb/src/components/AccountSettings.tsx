@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Link, Container, Box, Grid, MenuItem } from '@mui/material'
+import {
+  Button,
+  Link,
+  Container,
+  Box,
+  Grid,
+  MenuItem,
+  ListItemButton,
+  Paper,
+} from '@mui/material'
 import {
   UserBundle,
   UserProfile,
@@ -179,26 +188,30 @@ export const AccountSettings = () => {
       <div className="panel-wrapper-bg with-account-setting">
         <Container maxWidth="md">
           <Box sx={{ display: 'flex', my: '60px' }}>
-            <nav className="account-setting-panel nav-panel">
-              <MenuItem onClick={() => handleScroll(profileInformationRef)}>
+            <Paper component="nav" className="account-setting-panel nav-panel">
+              <ListItemButton
+                onClick={() => handleScroll(profileInformationRef)}
+              >
                 Profile Information
-              </MenuItem>
-              <MenuItem onClick={() => handleScroll(emailAddressesRef)}>
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(emailAddressesRef)}>
                 Email Addresses
-              </MenuItem>
-              <MenuItem onClick={() => handleScroll(changePasswordRef)}>
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(changePasswordRef)}>
                 Change Password
-              </MenuItem>
-              <MenuItem onClick={() => handleScroll(timezoneRef)}>
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(timezoneRef)}>
                 Date/Time Format
-              </MenuItem>
-              <MenuItem onClick={() => handleScroll(trustCredentialRef)}>
+              </ListItemButton>
+              <ListItemButton onClick={() => handleScroll(trustCredentialRef)}>
                 Trust & Credentials
-              </MenuItem>
-              <MenuItem onClick={() => handleScroll(personalAccessTokenRef)}>
+              </ListItemButton>
+              <ListItemButton
+                onClick={() => handleScroll(personalAccessTokenRef)}
+              >
                 Personal Access Tokens
-              </MenuItem>
-            </nav>
+              </ListItemButton>
+            </Paper>
 
             <div>
               <div
