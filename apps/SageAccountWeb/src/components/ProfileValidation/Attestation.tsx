@@ -55,8 +55,8 @@ const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
       <SynapseComponents.FileUpload
         uploadCallback={uploadCallback}
         label="Upload from your computer"
-        variant="outlined"
         buttonProps={{
+          variant: 'outlined',
           sx: { color: 'grey.800' },
           fullWidth: true,
           startIcon: <CloudUploadOutlinedIcon />,

@@ -7,7 +7,6 @@ import { FileUploadComplete, UploadCallbackResp } from '../utils/synapseTypes'
 export type FileUploadProps = {
   id?: string
   label?: string
-  variant?: ButtonProps['variant']
   buttonProps?: ButtonProps
   uploadCallback?: (response: UploadCallbackResp) => void
   context?: any // to distinguish which file was uploaded if we have several FileUpload components on the same page
@@ -16,9 +15,8 @@ export type FileUploadProps = {
 const FileUpload: React.FC<FileUploadProps> = props => {
   const {
     id,
-    buttonProps,
+    buttonProps = { variant: 'contained' },
     label = 'Browse...',
-    variant = 'contained',
     uploadCallback,
     context,
   } = props
@@ -65,7 +63,7 @@ const FileUpload: React.FC<FileUploadProps> = props => {
         }}
         style={{ display: 'none' }}
       />
-      <Button id={id} variant={variant} onClick={clickHandler} {...buttonProps}>
+      <Button id={id} onClick={clickHandler} {...buttonProps}>
         {label}
       </Button>
     </>

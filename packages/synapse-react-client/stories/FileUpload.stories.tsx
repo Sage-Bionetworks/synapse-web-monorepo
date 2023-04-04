@@ -36,6 +36,7 @@ export const Demo: Story = {}
 export const WithIcon: Story = {
   args: {
     buttonProps: {
+      variant: 'outlined',
       startIcon: <CloudUploadOutlinedIcon />,
     },
   },
