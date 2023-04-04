@@ -14,13 +14,13 @@
     white-space: nowrap;
     box-shadow: 0px 8px 4px rgba(0, 0, 0, 0.025),
       0px 4px 2px rgba(0, 0, 0, 0.025), 0px 2px 1px rgba(0, 0, 0, 0.025);
+    border-radius: 3px;
     position: -webkit-sticky; /* for Safari */
     position: sticky;
     top: 60px;
     align-self: flex-start;
     padding-top: 10px;
     padding-bottom: 20px;
-    border-radius: 3px;
     > .MuiListItemButton-root {
       padding-left: 30px;
       padding-right: 30px;
@@ -30,8 +30,6 @@
   &.main-panel {
     background-color: #fff;
     padding: 54px;
-    box-shadow: 0px 2px 6px rgba(53, 58, 63, 0.1);
-    border-radius: 5px;
     width: 720px;
     h3 {
       margin-top: 0px;

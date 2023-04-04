@@ -214,7 +214,7 @@ export const AccountSettings = () => {
             </Paper>
 
             <div>
-              <div
+              <Paper
                 ref={profileInformationRef}
                 className="account-setting-panel main-panel"
               >
@@ -420,22 +420,22 @@ export const AccountSettings = () => {
                     </Button>
                   </div>
                 </Form>
-              </div>
-              <div
+              </Paper>
+              <Paper
                 ref={emailAddressesRef}
                 className="account-setting-panel main-panel"
               >
                 <h3>Email Addresses</h3>
                 <ConfigureEmail returnToPath="authenticated/myaccount" />
-              </div>
-              <div
+              </Paper>
+              <Paper
                 ref={changePasswordRef}
                 className="account-setting-panel main-panel"
               >
                 <h3>Change Password</h3>
                 <ChangePassword />
-              </div>
-              <div
+              </Paper>
+              <Paper
                 ref={timezoneRef}
                 className="account-setting-panel main-panel"
               >
@@ -476,9 +476,9 @@ export const AccountSettings = () => {
                     Update Preference
                   </Button>
                 </div>
-              </div>
+              </Paper>
 
-              <div
+              <Paper
                 ref={trustCredentialRef}
                 className="account-setting-panel main-panel"
               >
@@ -619,8 +619,8 @@ export const AccountSettings = () => {
                     </Link>
                   </div>
                 </div>
-              </div>
-              <div
+              </Paper>
+              <Paper
                 ref={personalAccessTokenRef}
                 className="account-setting-panel main-panel"
               >
@@ -642,7 +642,7 @@ export const AccountSettings = () => {
                     More information
                   </Link>
                 </div>
-              </div>
+              </Paper>
             </div>
           </Box>
         </Container>
