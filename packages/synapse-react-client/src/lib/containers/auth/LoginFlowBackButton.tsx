@@ -39,6 +39,7 @@ export default function LoginFlowBackButton(props: LoginFormBackButtonProps) {
   }
   return (
     <IconButton
+      className="login-flow-back-button"
       type="button"
       onClick={() => {
         onStepChange(getPreviousStep(step))

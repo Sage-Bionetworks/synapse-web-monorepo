@@ -1,24 +1,4 @@
 .RegisterAccount1 {
-  .back-button {
-    padding: 0;
-    width: 24px;
-    position: absolute;
-    margin: 24px;
-    top: 0px;
-    left: 0px;
-  }
-  .mainContent {
-    min-height: 350px;
-    .form-group:first-child {
-      margin-top: 50px;
-    }
-    .form-group {
-      margin-top: 30px;
-    }
-    > * {
-      width: 300px;
-    }
-  }
   .panel-right-text {
     margin-top: 100px;
   }
