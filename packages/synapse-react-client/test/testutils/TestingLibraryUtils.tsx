@@ -1,11 +1,10 @@
 import React, { ReactNode } from 'react'
 import { QueryClient } from 'react-query'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import {
+import { SynapseContextType } from '../../src/lib/utils/SynapseContext'
+import FullContextProvider, {
   defaultQueryClientConfig,
-  SynapseContextProvider,
-  SynapseContextType,
-} from '../../src/lib/utils/SynapseContext'
+} from '../../src/lib/utils/FullContextProvider'
 
 type RtlWrapperProps = {
   children?: ReactNode
@@ -15,7 +14,9 @@ type RtlWrapperProps = {
  * Creates a test wrapper for components being tested with @testing-library/react. This wrapper
  * includes context and an isolated query cache. Returns the queryClient so it may be modified as needed
  */
-export const createWrapperAndQueryClient = (props?: SynapseContextType) => {
+export const createWrapperAndQueryClient = (
+  props?: Partial<SynapseContextType>,
+) => {
   // Creating a new query client for each rendering is important isolating tests, otherwise the
   // cache could be shared across tests.
   // This is also easier/more reliable than clearing the queryCache after each test.
@@ -25,12 +26,12 @@ export const createWrapperAndQueryClient = (props?: SynapseContextType) => {
   return {
     wrapperFn: function RtlWrapper({ children }: RtlWrapperProps) {
       return (
-        <SynapseContextProvider
+        <FullContextProvider
           synapseContext={wrapperProps}
           queryClient={queryClient}
         >
           {children}
-        </SynapseContextProvider>
+        </FullContextProvider>
       )
     },
     queryClient: queryClient,
@@ -41,6 +42,6 @@ export const createWrapperAndQueryClient = (props?: SynapseContextType) => {
  * Creates a test wrapper for components being tested with @testing-library/react. This wrapper
  * includes context and an isolated query cache.
  */
-export const createWrapper = (props?: SynapseContextType) => {
+export const createWrapper = (props?: Partial<SynapseContextType>) => {
   return createWrapperAndQueryClient(props).wrapperFn
 }

@@ -20,6 +20,7 @@ import { QueryResultBundle } from '../../../../../src/lib/utils/synapseTypes'
 import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { DEFAULT_PAGE_SIZE } from '../../../../../src/lib/utils/SynapseConstants'
+import FullContextProvider from '../../../../../src/lib/utils/FullContextProvider'
 
 let capturedOnChange: Function | undefined
 let capturedOnClear: Function | undefined
@@ -126,7 +127,7 @@ function init(overrides?: FacetFilterControlsProps) {
   return render(<FacetFilterControls {...props} />, {
     wrapper: ({ children }) => {
       return (
-        <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
+        <FullContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
           <QueryContextProvider queryContext={defaultQueryContext}>
             <QueryVisualizationContextProvider
               queryVisualizationContext={defaultQueryVisualizationContext}
@@ -134,7 +135,7 @@ function init(overrides?: FacetFilterControlsProps) {
               {children}
             </QueryVisualizationContextProvider>
           </QueryContextProvider>
-        </SynapseContextProvider>
+        </FullContextProvider>
       )
     },
   })

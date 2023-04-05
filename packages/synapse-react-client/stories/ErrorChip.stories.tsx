@@ -7,6 +7,7 @@ import {
   SynapseContextConsumer,
   SynapseContextProvider,
 } from '../src/lib/utils/SynapseContext'
+import FullContextProvider from '../src/lib/utils/FullContextProvider'
 
 const meta = {
   title: 'Components/ErrorChip',
@@ -14,7 +15,7 @@ const meta = {
   render: (args: ErrorChipProps) => (
     <SynapseContextConsumer>
       {context => (
-        <SynapseContextProvider
+        <FullContextProvider
           synapseContext={{
             ...context,
             accessToken: args.isAuthenticated
@@ -23,7 +24,7 @@ const meta = {
           }}
         >
           <ErrorChip {...args} />
-        </SynapseContextProvider>
+        </FullContextProvider>
       )}
     </SynapseContextConsumer>
   ),

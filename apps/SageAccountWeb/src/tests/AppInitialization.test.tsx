@@ -3,7 +3,7 @@ import { AppContextProvider } from 'AppContext'
 import LoginPage from 'LoginPage'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
+import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
 
 describe('App initialization tests', () => {
   it.skip('renders a branded experience', async () => {
@@ -17,7 +17,7 @@ describe('App initialization tests', () => {
             signedToken: undefined,
           }}
         >
-          <SynapseContextProvider
+          <FullContextProvider
             synapseContext={{
               accessToken: undefined,
               utcTime: false,
@@ -26,7 +26,7 @@ describe('App initialization tests', () => {
             }}
           >
             <LoginPage returnToUrl="/" />
-          </SynapseContextProvider>
+          </FullContextProvider>
         </AppContextProvider>
       </MemoryRouter>,
     )

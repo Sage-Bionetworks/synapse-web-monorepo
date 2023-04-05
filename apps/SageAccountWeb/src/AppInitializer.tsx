@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { AppContextProvider } from 'AppContext'
 import { Redirect, useLocation } from 'react-router-dom'
 import { SynapseClient, SynapseComponents } from 'synapse-react-client'
-import { SynapseContextProvider } from 'synapse-react-client/dist/utils/SynapseContext'
+import { FullContextProvider } from 'synapse-react-client/dist/utils/FullContextProvider'
 import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { getSearchParam } from 'URLUtils'
 import useAnalytics from './useAnalytics'
@@ -205,7 +205,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       <TwoFactorAuthSSOContextProvider
         context={{ twoFactorAuthErrorResponse: twoFactorAuthError }}
       >
-        <SynapseContextProvider
+        <FullContextProvider
           synapseContext={{
             accessToken: token,
             isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
@@ -219,7 +219,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
               <Redirect to="/authenticated/signTermsOfUse" />
             )}
           {!isFramed && props.children}
-        </SynapseContextProvider>
+        </FullContextProvider>
       </TwoFactorAuthSSOContextProvider>
     </AppContextProvider>
   )

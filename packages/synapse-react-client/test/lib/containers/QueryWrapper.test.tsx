@@ -17,6 +17,7 @@ import { QueryBundleRequest } from '../../../src/lib/utils/synapseTypes/'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 import { DEFAULT_PAGE_SIZE } from '../../../src/lib/utils/SynapseConstants'
+import FullContextProvider from '../../../src/lib/utils/FullContextProvider'
 
 let providedContext: QueryContextType | undefined
 const renderedTextConfirmation = 'QueryWrapper rendered!'
@@ -31,11 +32,11 @@ const QueryContextReciever = jest.fn((props: any) => {
 // utility function
 const renderComponent = (props: Partial<QueryWrapperProps>) => {
   render(
-    <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
+    <FullContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
       <QueryWrapper {...props}>
         <QueryContextReciever></QueryContextReciever>
       </QueryWrapper>
-    </SynapseContextProvider>,
+    </FullContextProvider>,
   )
 }
 

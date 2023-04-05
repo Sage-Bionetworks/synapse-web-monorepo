@@ -3,6 +3,7 @@ import {
   SynapseContextProvider,
   SynapseContextType,
 } from '../src/lib/utils/SynapseContext'
+import FullContextProvider from '../src/lib/utils/FullContextProvider'
 
 export const MOCK_ACCESS_TOKEN = 'mock-access-token'
 
@@ -24,8 +25,8 @@ export const SynapseTestContext = jest
   .fn()
   .mockImplementation(({ children }) => {
     return (
-      <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
+      <FullContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
         {children}
-      </SynapseContextProvider>
+      </FullContextProvider>
     )
   })

@@ -1,26 +1,6 @@
 import React, { useContext, useMemo } from 'react'
-import {
-  QueryClient,
-  QueryClientConfig,
-  QueryClientProvider,
-} from 'react-query'
 import { SynapseErrorBoundary } from '../containers/error/ErrorBanner'
-import { ThemeProvider } from './theme/useTheme'
-import { ThemeOptions } from '@mui/material'
 import { KeyFactory } from './hooks/SynapseAPI/KeyFactory'
-
-export const defaultQueryClientConfig: QueryClientConfig = {
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 min
-      cacheTime: 1000 * 60 * 30, // 30 min
-      retry: false, // SynapseClient knows which queries to retry
-      refetchOnWindowFocus: false,
-    },
-  },
-}
-
-const defaultQueryClient = new QueryClient(defaultQueryClientConfig)
 
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */
@@ -52,25 +32,19 @@ const defaultContext = {
 export const SynapseContext =
   React.createContext<SynapseContextType>(defaultContext)
 
-export type SynapseContextProviderProps = {
+export type SynapseContextProviderProps = React.PropsWithChildren<{
   synapseContext: Partial<SynapseContextType>
-  queryClient?: QueryClient
-  theme?: ThemeOptions
-  children?: React.ReactNode
-}
+}>
 
 /**
- * Provides context necessary for most components in SRC
+ * Provides context necessary for most components in SRC.
+ *
+ * The SynapseContextProvider must be wrapped in a react-query QueryClientProvider.
  * @param param0
  * @returns
  */
 export function SynapseContextProvider(props: SynapseContextProviderProps) {
-  const {
-    children,
-    synapseContext: providedContext,
-    queryClient,
-    theme,
-  } = props
+  const { children, synapseContext: providedContext } = props
   const queryKeyFactory = useMemo(
     () => new KeyFactory(providedContext.accessToken),
     [providedContext.accessToken],
@@ -99,15 +73,11 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
 
   return (
     <SynapseContext.Provider value={synapseContext}>
-      <QueryClientProvider client={queryClient ?? defaultQueryClient}>
-        <ThemeProvider theme={theme}>
-          {synapseContext?.withErrorBoundary ? (
-            <SynapseErrorBoundary>{children}</SynapseErrorBoundary>
-          ) : (
-            children
-          )}
-        </ThemeProvider>
-      </QueryClientProvider>
+      {synapseContext?.withErrorBoundary ? (
+        <SynapseErrorBoundary>{children}</SynapseErrorBoundary>
+      ) : (
+        children
+      )}
     </SynapseContext.Provider>
   )
 }

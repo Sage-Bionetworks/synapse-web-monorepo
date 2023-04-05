@@ -7,6 +7,7 @@ import StatisticsPlot from '../../src/lib/containers/StatisticsPlot'
 import { testDownloadSpeed } from '../../src/lib/utils/functions/testDownloadSpeed'
 import { HasAccessV2 as HasAccess } from '../../src/lib/containers/access_requirements/HasAccessV2'
 import { SynapseContextProvider } from '../../src/lib/utils/SynapseContext'
+import FullContextProvider from '../../src/lib/utils/FullContextProvider'
 // import { useDetectSSOCode } from '../../src/lib/utils/hooks/useDetectSSOCode'
 
 type DemoState = {
@@ -107,7 +108,7 @@ class Demo extends React.Component<DemoProps, DemoState> {
   public render(): JSX.Element {
     const { token, estimatedDownloadBytesPerSecond } = this.state
     return (
-      <SynapseContextProvider
+      <FullContextProvider
         synapseContext={{
           accessToken: this.state.token ?? undefined,
           isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
@@ -196,7 +197,7 @@ class Demo extends React.Component<DemoProps, DemoState> {
             </div>
           )}
         </div>
-      </SynapseContextProvider>
+      </FullContextProvider>
     )
   }
 }
