@@ -1,5 +1,4 @@
-import * as React from 'react'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import React from 'react'
 import { Typography } from 'synapse-react-client'
 import StandaloneLoginForm from 'synapse-react-client/dist/containers/auth/StandaloneLoginForm'
 import { SourceAppDescription, SourceAppLogo } from './components/SourceApp'
@@ -8,21 +7,22 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from 'components/StyledComponents'
-import { useTwoFactorAuthSSOContext } from './TwoFactorAuthSSOContext'
+import { useApplicationSessionContext } from './ApplicationSessionContext'
 import {
   preparePostSSORedirect,
   redirectAfterSSO,
 } from 'synapse-react-client/dist/utils/AppUtils'
+import { useHistory } from 'react-router-dom'
 
-export type OwnProps = {
-  returnToUrl: string
+export type LoginPageProps = {
+  returnToUrl?: string
 }
-export type LoginPageProps = OwnProps & RouteComponentProps
 
 function LoginPage(props: LoginPageProps) {
   const { returnToUrl } = props
-  const { twoFactorAuthErrorResponse } = useTwoFactorAuthSSOContext()
-
+  const { twoFactorAuthErrorResponse } = useApplicationSessionContext()
+  const { refreshSession } = useApplicationSessionContext()
+  const history = useHistory()
   return (
     <StyledOuterContainer>
       <StyledInnerContainer>
@@ -33,7 +33,9 @@ function LoginPage(props: LoginPageProps) {
             </div>
             <StandaloneLoginForm
               sessionCallback={() => {
-                redirectAfterSSO(returnToUrl)
+                redirectAfterSSO(history, returnToUrl)
+                // If we didn't redirect, refresh the session
+                refreshSession()
               }}
               registerAccountUrl={'/register1'}
               resetPasswordUrl={'/resetPassword'}
@@ -65,4 +67,4 @@ function LoginPage(props: LoginPageProps) {
   )
 }
 
-export default withRouter(LoginPage)
+export default LoginPage
