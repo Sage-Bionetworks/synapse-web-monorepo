@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 
 export type LogInDialogContextType = {
   setShowLoginDialog: (showLoginDialog: boolean) => void
-  showLoginDialog?: boolean
+  showLoginDialog: boolean
 }
 
 /*

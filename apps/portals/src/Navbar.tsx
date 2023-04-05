@@ -18,6 +18,7 @@ import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/ap
 import { useLogInDialogContext } from './LogInDialogContext'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { useGetCurrentUserProfile } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
+import { useHistory } from 'react-router-dom'
 
 type SynapseSettingLink = {
   text: string
@@ -43,14 +44,15 @@ const synapseQuickLinks: SynapseSettingLink[] = [
   },
 ]
 
-function Navbar(props) {
+function Navbar() {
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
+  const history = useHistory()
 
   const { data: userProfile } = useGetCurrentUserProfile()
 
   const [showMenu, setShowMenu] = useState(false)
-  const openBtnRef = React.useRef<HTMLDivElement>()
+  const openBtnRef = React.useRef<HTMLDivElement>(null)
 
   const { refreshSession, clearSession, twoFactorAuthSSOErrorResponse } =
     useApplicationSessionContext()
@@ -61,18 +63,18 @@ function Navbar(props) {
     setShowLoginDialog(true)
   }
 
-  function handleClickOutside(e: Event) {
-    const node = e.target as HTMLElement
-    if (
-      openBtnRef &&
-      !(openBtnRef.current === node || node?.closest('.dropdown-toggle'))
-    ) {
-      setShowMenu(false)
-    }
-  }
-
   useEffect(() => {
-    document.addEventListener('click', handleClickOutside.bind(this))
+    function handleClickOutside(e: Event) {
+      const node = e.target as HTMLElement
+      if (
+        openBtnRef &&
+        !(openBtnRef.current === node || node?.closest('.dropdown-toggle'))
+      ) {
+        setShowMenu(false)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
@@ -193,8 +195,9 @@ function Navbar(props) {
                   id="signin-button"
                   variant="secondary"
                   className="pill signout-button-mb"
-                  // @ts-ignore
-                  onClick={() => clearSession()}
+                  onClick={() => {
+                    clearSession()
+                  }}
                 >
                   SIGN OUT
                 </Button>
@@ -207,7 +210,6 @@ function Navbar(props) {
                   id="signin-button"
                   variant="secondary"
                   className="pill"
-                  // @ts-ignore
                   onClick={() => {
                     setShowLoginDialog(true)
                   }}
@@ -241,9 +243,10 @@ function Navbar(props) {
                       onBeginOAuthSignIn={() => {
                         preparePostSSORedirect()
                       }}
-                      sessionCallback={async () => {
-                        await refreshSession()
-                        redirectAfterSSO(props.history)
+                      sessionCallback={() => {
+                        refreshSession().then(() => {
+                          redirectAfterSSO(history)
+                        })
                       }}
                     />
                   </DialogContent>
@@ -296,8 +299,9 @@ function Navbar(props) {
                     </Dropdown.Item>
                     <Dropdown.Item // desktop sign out
                       className="SRC-primary-background-color-hover SRC-nested-color"
-                      // @ts-ignore
-                      onClick={() => clearSession()}
+                      onClick={() => {
+                        clearSession()
+                      }}
                     >
                       Sign Out
                     </Dropdown.Item>

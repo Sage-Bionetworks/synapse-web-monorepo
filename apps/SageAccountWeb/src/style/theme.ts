@@ -128,9 +128,9 @@ export const themeOptions = mergeTheme({
     },
     body1: {
       fontWeight: 400,
-      fontSize: '16px',
-      lineHeight: '20px',
-      letterSpacing: '0',
+      fontSize: '20px',
+      lineHeight: '150%',
+      letterSpacing: '-0.019em',
       color: '#4A5056',
     },
     body2: {
