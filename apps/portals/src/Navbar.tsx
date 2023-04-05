@@ -127,7 +127,7 @@ function Navbar() {
   const hostname = window.location.hostname.toLowerCase()
   // for now, we only support login in the dev environment (localstorage) or from a .synapse.org subdomain (http-only secure cookie)
   const isSynapseSubdomainOrLocal =
-    (hostname.includes('.synapse.org') ||
+    (hostname.endsWith('.synapse.org') ||
       hostname.includes('127.0.0.1') ||
       hostname.includes('localhost')) &&
     !hideLogin
