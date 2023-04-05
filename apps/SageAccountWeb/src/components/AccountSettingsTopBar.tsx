@@ -5,7 +5,7 @@ import { Box, Button, SxProps } from '@mui/material'
 import { Typography } from 'synapse-react-client'
 import { useSourceApp } from './SourceApp'
 import { useAppContext } from 'AppContext'
-import { useApplicationSessionContext } from '../ApplicationSessionContext'
+import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 
 const AccountSettingsTopBar: React.FunctionComponent = () => {
   const sourceApp = useSourceApp()

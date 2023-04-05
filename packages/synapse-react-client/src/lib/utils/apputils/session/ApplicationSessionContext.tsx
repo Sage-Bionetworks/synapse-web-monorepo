@@ -18,9 +18,6 @@ export type ApplicationSessionContextType = {
   isLoadingSSO: UseDetectSSOCodeReturnType['isLoading']
 }
 
-/*
- * ApplicationSessionContext
- */
 const ApplicationSessionContext = React.createContext<
   ApplicationSessionContextType | undefined
 >(undefined)
@@ -44,8 +41,8 @@ export const ApplicationSessionContextConsumer =
   ApplicationSessionContext.Consumer
 
 /*
- * A twoFactorAuthErrorResponse is required to complete a sign in with 2FA. If signing in with SSO (e.g. Google), then
- *  the error object would be returned out-of-band and can be passed back into the Login component through this context hook.
+ * Retrieves the context provided by the ApplicationSessionContextProvider. The context is often created by the
+ * ApplicationSessionManager
  */
 export function useApplicationSessionContext(): ApplicationSessionContextType {
   const context = useContext(ApplicationSessionContext)

@@ -7,12 +7,12 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from 'components/StyledComponents'
-import { useApplicationSessionContext } from './ApplicationSessionContext'
 import {
   preparePostSSORedirect,
   redirectAfterSSO,
 } from 'synapse-react-client/dist/utils/AppUtils'
 import { useHistory } from 'react-router-dom'
+import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 
 export type LoginPageProps = {
   returnToUrl?: string
@@ -20,8 +20,8 @@ export type LoginPageProps = {
 
 function LoginPage(props: LoginPageProps) {
   const { returnToUrl } = props
-  const { twoFactorAuthErrorResponse } = useApplicationSessionContext()
-  const { refreshSession } = useApplicationSessionContext()
+  const { refreshSession, twoFactorAuthErrorResponse } =
+    useApplicationSessionContext()
   const history = useHistory()
   return (
     <StyledOuterContainer>
