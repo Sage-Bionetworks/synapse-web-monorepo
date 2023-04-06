@@ -1,5 +1,4 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { Box, Button, IconButton, InputLabel, TextField } from '@mui/material'
+import { Box, Button, InputLabel, TextField } from '@mui/material'
 import { StyledFormControl } from 'components/StyledComponents'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -10,6 +9,7 @@ import {
   PasswordResetSignedToken,
 } from 'synapse-react-client/dist/utils/synapseTypes/ChangePasswordRequests'
 import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
+import { BackButton } from './BackButton'
 import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'
 
@@ -89,15 +89,6 @@ export const ResetPassword = (props: ResetPasswordProps) => {
     marginTop: '30px',
   }
 
-  const backButtonSx = {
-    position: 'absolute',
-    padding: '0',
-    width: '24px',
-    margin: '24px',
-    top: '-64px',
-    left: '-64px',
-  }
-
   return (
     <>
       <LeftRightPanel
@@ -159,15 +150,12 @@ export const ResetPassword = (props: ResetPasswordProps) => {
               </form>
             </>
           ) : (
-            <Box sx={{ position: 'relative' }}>
-              <IconButton
+            <Box>
+              <BackButton
                 onClick={() => {
                   history.goBack()
                 }}
-                sx={backButtonSx}
-              >
-                <ArrowBackIcon />
-              </IconButton>
+              />
               <SourceAppLogo />
               <StyledFormControl
                 fullWidth

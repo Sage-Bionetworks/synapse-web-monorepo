@@ -1,18 +1,17 @@
 import React from 'react'
-import { Grid, Paper, Box } from '@mui/material'
+import { Grid, Paper, Box, useTheme } from '@mui/material'
 import { Typography } from 'synapse-react-client'
 import ShowMore from 'synapse-react-client/dist/containers/row_renderers/utils/ShowMore'
-import { IconButton } from '@mui/material'
-import theme from 'style/theme'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useHistory } from 'react-router-dom'
 import { StyledOuterContainer } from './StyledComponents'
 import { useSourceApp, useSourceAppConfigs } from './SourceApp'
+import { BackButton } from './BackButton'
 
 export type SageResourcesPageProps = {}
 
 export const SageResourcesPage = (props: SageResourcesPageProps) => {
   const history = useHistory()
+  const theme = useTheme()
   const sourceAppConfigs = useSourceAppConfigs()
   const sageSourceAppConfig = useSourceApp('SAGE')
   return (
@@ -24,23 +23,18 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
           width: '900px',
         }}
       >
-        <IconButton
-          onClick={() => {
-            history.goBack()
-          }}
-          sx={{
-            position: 'absolute',
-            top: theme.spacing(1.5),
-            left: theme.spacing(1.5),
-          }}
-        >
-          <ArrowBackIcon />
-        </IconButton>
         <Box
           sx={{
-            padding: '40px',
+            px: theme.spacing(8),
+            paddingTop: theme.spacing(8),
+            position: 'relative',
           }}
         >
+          <BackButton
+            onClick={() => {
+              history.goBack()
+            }}
+          />
           <Box
             sx={{
               backgroundColor: '#3959790D',
@@ -75,7 +69,8 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
         </Box>
         <Box
           sx={{
-            padding: '0px 30px',
+            px: theme.spacing(8),
+            py: theme.spacing(0),
           }}
         >
           <Grid container spacing={5} mx={{ paddingTop: '20px' }}>

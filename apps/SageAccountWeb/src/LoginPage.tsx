@@ -13,6 +13,8 @@ import {
   preparePostSSORedirect,
   redirectAfterSSO,
 } from 'synapse-react-client/dist/utils/AppUtils'
+import { backButtonSx } from 'components/BackButton'
+import { LOGIN_BACK_BUTTON_CLASS_NAME } from 'synapse-react-client/dist/utils/SynapseConstants'
 
 export type OwnProps = {
   returnToUrl: string
@@ -26,8 +28,20 @@ function LoginPage(props: LoginPageProps) {
   return (
     <StyledOuterContainer>
       <StyledInnerContainer>
-        <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
-          <Box sx={{ minHeight: '530px' }}>
+        <Box
+          sx={{
+            py: 10,
+            px: 8,
+            height: '100%',
+            position: 'relative',
+            [`.${LOGIN_BACK_BUTTON_CLASS_NAME}`]: backButtonSx,
+          }}
+        >
+          <Box
+            sx={{
+              minHeight: '530px',
+            }}
+          >
             <div className={'panel-logo'}>
               <SourceAppLogo />
             </div>

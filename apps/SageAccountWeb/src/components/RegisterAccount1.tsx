@@ -12,12 +12,13 @@ import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principa
 import { useSourceApp, SourceAppLogo } from './SourceApp'
 import { Link as RouterLink } from 'react-router-dom'
 import { EmailConfirmationPage } from './EmailConfirmationPage'
-import { Button, IconButton, Link } from '@mui/material'
+import { Button, Link } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from 'AppContext'
 import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
 import theme from 'style/theme'
+import { BackButton } from './BackButton'
 import {
   StyledInnerContainer,
   StyledOuterContainer,
@@ -79,29 +80,13 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
     borderColor: '#EAECEE',
   }
 
-  const BackButton = () => {
+  const BackButtonForPage = () => {
     switch (page) {
       case Pages.CHOOSE_REGISTRATION:
-        return (
-          <Link
-            component={RouterLink}
-            className="back-button"
-            to="/authenticated/myaccount"
-          >
-            <IconSvg icon="arrowBack" />
-          </Link>
-        )
+        return <BackButton to={'/authenticated/myaccount'} />
       case Pages.EMAIL_REGISTRATION:
       case Pages.GOOGLE_REGISTRATION:
-        return (
-          <IconButton
-            className="back-button"
-            onClick={() => setPage(Pages.CHOOSE_REGISTRATION)}
-            size="large"
-          >
-            <IconSvg icon="arrowBack" />
-          </IconButton>
-        )
+        return <BackButton onClick={() => setPage(Pages.CHOOSE_REGISTRATION)} />
       default:
         return <></>
     }
@@ -175,128 +160,125 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
           {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && (
             <>
               <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
-                <BackButton />
+                <BackButtonForPage />
                 <Box sx={{ minHeight: '530px' }}>
-                  <div className="mainContent">
-                    <div className="panel-logo logo-wrapper">
-                      <SourceAppLogo />
-                    </div>
-                    {page === Pages.CHOOSE_REGISTRATION && (
-                      <div style={{ marginTop: '30px' }}>
-                        <Button
-                          onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
-                          sx={chooseButtonSx}
-                          variant="outlined"
-                        >
-                          <img
-                            className="googleLogo"
-                            src={GoogleLogo}
-                            alt="Google Logo"
-                            style={{ width: 25, marginRight: 5 }}
-                          />
-                          <span className="signInText">
-                            Create account with Google
-                          </span>
-                        </Button>
-                        <Button
-                          onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
-                          sx={chooseButtonSx}
-                          variant="outlined"
-                        >
-                          <IconSvg icon="email" sx={{ marginRight: '5px' }} />
-                          Create account with your email
-                        </Button>
-                      </div>
-                    )}
-                    {page === Pages.EMAIL_REGISTRATION && (
-                      <div className="EmailAddressUI">
-                        <StyledFormControl
-                          fullWidth
-                          variant="standard"
-                          margin="normal"
-                          sx={formControlSx}
-                        >
-                          <InputLabel shrink htmlFor="emailAddress" required>
-                            Email address
-                          </InputLabel>
-                          <TextField
-                            fullWidth
-                            id="emailAddress"
-                            name="emailAddress"
-                            required
-                            onChange={e =>
-                              setEmail(
-                                e.target.value ?? membershipInvitationEmail,
-                              )
-                            }
-                            value={email || ''}
-                            onKeyPress={(e: any) => {
-                              if (e.key === 'Enter') {
-                                onSendRegistrationInfo(e)
-                              }
-                            }}
-                          />
-                          {!!membershipInvitationEmail &&
-                            membershipInvitationEmail !== email && (
-                              <Typography
-                                variant="smallText1"
-                                sx={{ color: theme.palette.error.main }}
-                              >
-                                Changing your email address will affect any
-                                items that have been shared with you. You can
-                                add additional email addresses after account
-                                creation.
-                              </Typography>
-                            )}
-                        </StyledFormControl>
-                        <Button
-                          sx={buttonSx}
-                          variant="contained"
-                          onClick={onSendRegistrationInfo}
-                          type="button"
-                          disabled={email && !isLoading ? false : true}
-                        >
-                          Continue
-                        </Button>
-                      </div>
-                    )}
-                    {page === Pages.GOOGLE_REGISTRATION && (
-                      <div>
-                        <StyledFormControl
-                          fullWidth
-                          variant="standard"
-                          margin="normal"
-                          sx={formControlSx}
-                        >
-                          <InputLabel shrink htmlFor="username" required>
-                            Username
-                          </InputLabel>
-                          <TextField
-                            fullWidth
-                            id="username"
-                            name="username"
-                            required
-                            onChange={e => setUsername(e.target.value)}
-                            value={username || ''}
-                            onKeyPress={(e: any) => {
-                              if (e.key === 'Enter') {
-                                onSignUpWithGoogle(e)
-                              }
-                            }}
-                          />
-                        </StyledFormControl>
-                        <Button
-                          sx={buttonSx}
-                          variant="contained"
-                          onClick={onSignUpWithGoogle}
-                          type="button"
-                          disabled={username && !isLoading ? false : true}
-                        >
-                          Continue
-                        </Button>
-                      </div>
-                    )}
+                  <div className="panel-logo logo-wrapper">
+                    <SourceAppLogo />
                   </div>
+                  {page === Pages.CHOOSE_REGISTRATION && (
+                    <div style={{ marginTop: '30px' }}>
+                      <Button
+                        onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
+                        sx={chooseButtonSx}
+                        variant="outlined"
+                      >
+                        <img
+                          className="googleLogo"
+                          src={GoogleLogo}
+                          alt="Google Logo"
+                          style={{ width: 25, marginRight: 5 }}
+                        />
+                        <span className="signInText">
+                          Create account with Google
+                        </span>
+                      </Button>
+                      <Button
+                        onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
+                        sx={chooseButtonSx}
+                        variant="outlined"
+                      >
+                        <IconSvg icon="email" sx={{ marginRight: '5px' }} />
+                        Create account with your email
+                      </Button>
+                    </div>
+                  )}
+                  {page === Pages.EMAIL_REGISTRATION && (
+                    <div className="EmailAddressUI">
+                      <StyledFormControl
+                        fullWidth
+                        variant="standard"
+                        margin="normal"
+                        sx={formControlSx}
+                      >
+                        <InputLabel shrink htmlFor="emailAddress" required>
+                          Email address
+                        </InputLabel>
+                        <TextField
+                          fullWidth
+                          id="emailAddress"
+                          name="emailAddress"
+                          required
+                          onChange={e =>
+                            setEmail(
+                              e.target.value ?? membershipInvitationEmail,
+                            )
+                          }
+                          value={email || ''}
+                          onKeyPress={(e: any) => {
+                            if (e.key === 'Enter') {
+                              onSendRegistrationInfo(e)
+                            }
+                          }}
+                        />
+                        {!!membershipInvitationEmail &&
+                          membershipInvitationEmail !== email && (
+                            <Typography
+                              variant="smallText1"
+                              sx={{ color: theme.palette.error.main }}
+                            >
+                              Changing your email address will affect any items
+                              that have been shared with you. You can add
+                              additional email addresses after account creation.
+                            </Typography>
+                          )}
+                      </StyledFormControl>
+                      <Button
+                        sx={buttonSx}
+                        variant="contained"
+                        onClick={onSendRegistrationInfo}
+                        type="button"
+                        disabled={email && !isLoading ? false : true}
+                      >
+                        Continue
+                      </Button>
+                    </div>
+                  )}
+                  {page === Pages.GOOGLE_REGISTRATION && (
+                    <div>
+                      <StyledFormControl
+                        fullWidth
+                        variant="standard"
+                        margin="normal"
+                        sx={formControlSx}
+                      >
+                        <InputLabel shrink htmlFor="username" required>
+                          Username
+                        </InputLabel>
+                        <TextField
+                          fullWidth
+                          id="username"
+                          name="username"
+                          required
+                          onChange={e => setUsername(e.target.value)}
+                          value={username || ''}
+                          onKeyPress={(e: any) => {
+                            if (e.key === 'Enter') {
+                              onSignUpWithGoogle(e)
+                            }
+                          }}
+                        />
+                      </StyledFormControl>
+                      <Button
+                        sx={buttonSx}
+                        variant="contained"
+                        onClick={onSignUpWithGoogle}
+                        type="button"
+                        disabled={username && !isLoading ? false : true}
+                      >
+                        Continue
+                      </Button>
+                    </div>
+                  )}
                 </Box>
               </Box>
               <Box
