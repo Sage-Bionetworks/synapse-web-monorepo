@@ -6,11 +6,11 @@ import {
   LinkProps as RouterLinkProps,
 } from 'react-router-dom'
 
-export type BackButtonProps = {
-  sx?: SxProps
-  onClick?: React.MouseEventHandler<HTMLButtonElement>
-  linkTo?: RouterLinkProps['to']
-}
+type StyleProps = { sx?: SxProps }
+type BackLinkProps = { to: RouterLinkProps['to'] }
+type BackButtonProps = { onClick: React.MouseEventHandler<HTMLButtonElement> }
+
+export type BackButtonLinkProps = StyleProps & (BackLinkProps | BackButtonProps)
 
 export const backButtonSx = {
   color: 'grey.700',
@@ -24,19 +24,18 @@ export const backButtonSx = {
   },
 }
 
-export const BackButton: React.FC<BackButtonProps> = ({
+export const BackButton: React.FC<BackButtonLinkProps> = ({
   sx = backButtonSx,
-  onClick,
-  linkTo = '/placeholder',
+  ...otherProps
 }) => {
   return (
     <>
-      {onClick ? (
-        <IconButton onClick={onClick} sx={sx}>
+      {'onClick' in otherProps ? (
+        <IconButton sx={sx} onClick={otherProps.onClick}>
           <ArrowBackIcon />
         </IconButton>
       ) : (
-        <IconButton component={RouterLink} sx={sx} to={linkTo}>
+        <IconButton component={RouterLink} sx={sx} to={otherProps.to}>
           <ArrowBackIcon />
         </IconButton>
       )}

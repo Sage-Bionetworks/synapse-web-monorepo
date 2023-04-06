@@ -83,7 +83,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
   const BackButtonForPage = () => {
     switch (page) {
       case Pages.CHOOSE_REGISTRATION:
-        return <BackButton linkTo={'/authenticated/myaccount'} />
+        return <BackButton to={'/authenticated/myaccount'} />
       case Pages.EMAIL_REGISTRATION:
       case Pages.GOOGLE_REGISTRATION:
         return <BackButton onClick={() => setPage(Pages.CHOOSE_REGISTRATION)} />
