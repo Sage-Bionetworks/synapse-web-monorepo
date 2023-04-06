@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Box } from '@mui/material'
+import { Box, Button, useTheme } from '@mui/material'
 import { useAppContext } from 'AppContext'
-import { Typography, SynapseClient } from 'synapse-react-client'
+import { SynapseClient, Typography } from 'synapse-react-client'
 import { Redirect } from 'react-router-dom'
-import theme from 'style/theme'
-
 import {
   isJoinTeamSignedToken,
   JoinTeamSignedToken,
@@ -21,6 +19,7 @@ export type JoinTeamPageProps = {}
 
 export const JoinTeamPage = (props: JoinTeamPageProps) => {
   const context = useAppContext()
+  const theme = useTheme()
   const [joinTeamToken, setJoinTeamToken] = useState<JoinTeamSignedToken>()
   const [joinedTeamResponseMessage, setJoinedTeamResponseMessage] =
     useState<ResponseMessage>()

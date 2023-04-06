@@ -5,9 +5,9 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.10.9",
-    "@mui/material": "^5.11.13",
-    "@mui/styles": "^5.11.13",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.11.16",
+    "@mui/styles": "^5.11.16",
     "@sage-bionetworks/react-base-table": "^1.13.2",
     "clone-deep": "^4.0.1",
     "dayjs": "^1.11.6",
@@ -92,7 +92,7 @@
     "stream-http": "^3.2.0",
     "timers-browserify": "^2.0.12",
     "tslib": "^2.3.1",
-    "typescript": "5.0.2",
+    "typescript": "5.0.3",
     "url": "^0.11.0",
     "util": "^0.12.4",
     "whatwg-fetch": "^3.6.2"

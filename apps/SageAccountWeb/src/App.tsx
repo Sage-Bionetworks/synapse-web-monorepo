@@ -44,8 +44,8 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <QueryClientProvider client={queryClient}>
-          <StyledEngineProvider injectFirst>
+        <StyledEngineProvider injectFirst>
+          <QueryClientProvider client={queryClient}>
             <ApplicationSessionManager>
               <AppInitializer>
                 <CookiesNotification />
@@ -161,10 +161,10 @@ function App() {
                 </Switch>
               </AppInitializer>
             </ApplicationSessionManager>
-          </StyledEngineProvider>
-        </QueryClientProvider>
+            <SynapseComponents.SynapseToastContainer />
+          </QueryClientProvider>
+        </StyledEngineProvider>
       </Router>
-      <SynapseComponents.SynapseToastContainer />
     </div>
   )
 }

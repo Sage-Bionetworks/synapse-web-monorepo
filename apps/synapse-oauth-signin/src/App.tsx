@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import {
   setAccessTokenCookie,
   signOut,
@@ -10,11 +10,7 @@ import { OAuth2Form } from './OAuth2Form'
 import { getURLParam } from './URLUtils'
 import Versions from './Versions'
 import generalTheme from './style/theme'
-import {
-  createTheme,
-  StyledEngineProvider,
-  ThemeProvider,
-} from '@mui/material/styles'
+import { createTheme, StyledEngineProvider } from '@mui/material/styles'
 import { mergeTheme } from 'synapse-react-client/dist/utils/theme'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { defaultQueryClientConfig } from 'synapse-react-client/dist/utils/FullContextProvider'
@@ -27,50 +23,48 @@ function App() {
 
   return (
     <div className="App">
-      <Router>
+      <BrowserRouter>
         <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={theme}>
-            <QueryClientProvider client={queryClient}>
-              <AppInitializer>
-                <Switch>
-                  <Route exact path="/" render={() => <OAuth2Form />} />
-                  <Route
-                    exact
-                    path="/logout"
-                    render={() => {
-                      signOut().then(() => {
-                        setIsLoggedOut(true)
-                      })
-                      return (
-                        <p style={{ margin: 10 }}>
-                          {isLoggedOut ? 'Logged' : 'Logging'} out
-                        </p>
-                      )
-                    }}
-                  />
-                  <Route
-                    exact
-                    path="/login"
-                    render={() => {
-                      // look for the code from the params
-                      const code = getURLParam('code')
-                      setAccessTokenCookie(code).then(() => {
-                        setIsLoggedOut(false)
-                      })
-                      return (
-                        <p style={{ margin: 10 }}>
-                          {isLoggedOut ? 'Logging' : 'Logged'} in
-                        </p>
-                      )
-                    }}
-                  />
-                </Switch>
-              </AppInitializer>
-              <Versions />
-            </QueryClientProvider>
-          </ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <AppInitializer>
+              <Switch>
+                <Route exact path="/" render={() => <OAuth2Form />} />
+                <Route
+                  exact
+                  path="/logout"
+                  render={() => {
+                    signOut().then(() => {
+                      setIsLoggedOut(true)
+                    })
+                    return (
+                      <p style={{ margin: 10 }}>
+                        {isLoggedOut ? 'Logged' : 'Logging'} out
+                      </p>
+                    )
+                  }}
+                />
+                <Route
+                  exact
+                  path="/login"
+                  render={() => {
+                    // look for the code from the params
+                    const code = getURLParam('code')
+                    setAccessTokenCookie(code).then(() => {
+                      setIsLoggedOut(false)
+                    })
+                    return (
+                      <p style={{ margin: 10 }}>
+                        {isLoggedOut ? 'Logging' : 'Logged'} in
+                      </p>
+                    )
+                  }}
+                />
+              </Switch>
+            </AppInitializer>
+            <Versions />
+          </QueryClientProvider>
         </StyledEngineProvider>
-      </Router>
+      </BrowserRouter>
     </div>
   )
 }

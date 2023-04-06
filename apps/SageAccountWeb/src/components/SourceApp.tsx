@@ -112,6 +112,7 @@ export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
       ...palette,
       primary: generatePalette(rowVals[primaryColorColIndex] ?? ''),
       secondary: generatePalette(rowVals[secondaryColorColIndex] ?? ''),
+      contrastThreshold: 2.5,
     }
     const sourceAppConfig: SourceAppConfig = {
       appId: rowVals[appIdColIndex] ?? '',

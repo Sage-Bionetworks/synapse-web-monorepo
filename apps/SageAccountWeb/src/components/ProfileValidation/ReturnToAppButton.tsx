@@ -4,19 +4,20 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  useTheme,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { Button } from '@mui/material'
 import { useAppContext } from 'AppContext'
 import React from 'react'
 import { Typography } from 'synapse-react-client'
-import theme from 'style/theme'
 import { NavLink } from 'react-router-dom'
 
 export const ReturnToAppButton: React.FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
   const { redirectURL } = useAppContext()
+  const theme = useTheme()
   const [open, setOpen] = React.useState(false)
   const onClose = () => setOpen(false)
   const redirectFn = () => {

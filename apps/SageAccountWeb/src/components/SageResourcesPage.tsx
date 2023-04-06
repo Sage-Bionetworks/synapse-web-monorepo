@@ -1,9 +1,8 @@
 import React from 'react'
-import { Grid, Paper, Box } from '@mui/material'
+import { Grid, Paper, Box, useTheme } from '@mui/material'
 import { Typography } from 'synapse-react-client'
 import ShowMore from 'synapse-react-client/dist/containers/row_renderers/utils/ShowMore'
 import { IconButton } from '@mui/material'
-import theme from 'style/theme'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useHistory } from 'react-router-dom'
 import { StyledOuterContainer } from './StyledComponents'
@@ -12,6 +11,7 @@ import { useSourceApp, useSourceAppConfigs } from './SourceApp'
 export type SageResourcesPageProps = {}
 
 export const SageResourcesPage = (props: SageResourcesPageProps) => {
+  const theme = useTheme()
   const history = useHistory()
   const sourceAppConfigs = useSourceAppConfigs()
   const sageSourceAppConfig = useSourceApp('SAGE')

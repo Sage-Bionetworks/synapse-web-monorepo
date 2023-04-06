@@ -5,18 +5,18 @@ import { SynapseComponents } from 'synapse-react-client'
 import { getSearchParam } from 'URLUtils'
 import useAnalytics from './useAnalytics'
 import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
-import { ThemeOptions, ThemeProvider } from '@mui/material'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useSourceApp } from 'components/SourceApp'
-import { deepmerge } from '@mui/utils'
 import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 import { themeOptions as defaultThemeOptions } from './style/theme'
+import { deepmerge } from '@mui/utils'
+import { Theme } from '@mui/material'
 
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [isFramed, setIsFramed] = useState(false)
   const [appId, setAppId] = useState<string>()
   const [redirectURL, setRedirectURL] = useState<string>()
-  const [themeOptions, setThemeOptions] =
-    useState<ThemeOptions>(defaultThemeOptions)
+  const [theme, setTheme] = useState<Theme>(createTheme(defaultThemeOptions))
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
   >()
@@ -49,8 +49,10 @@ function AppInitializer(props: { children?: React.ReactNode }) {
 
   useEffect(() => {
     if (sourceApp?.palette) {
-      setThemeOptions(
-        deepmerge(defaultThemeOptions, { palette: sourceApp.palette }),
+      setTheme(
+        createTheme(
+          deepmerge(defaultThemeOptions, { palette: sourceApp.palette }),
+        ),
       )
     }
   }, [sourceApp?.appId])
@@ -105,7 +107,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
         signedToken,
       }}
     >
-      <ThemeProvider theme={themeOptions}>
+      <ThemeProvider theme={theme}>
         {acceptsTermsOfUse === false &&
           location.pathname != '/authenticated/signTermsOfUse' && (
             <Redirect to="/authenticated/signTermsOfUse" />

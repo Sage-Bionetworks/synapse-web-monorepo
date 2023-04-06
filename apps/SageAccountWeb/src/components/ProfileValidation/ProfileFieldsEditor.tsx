@@ -1,8 +1,6 @@
-import { Box, InputLabel, TextField } from '@mui/material'
+import { Box, InputLabel, TextField, useTheme } from '@mui/material'
 import { StyledFormControl } from 'components/StyledComponents'
 import React, { useState } from 'react'
-
-import theme from 'style/theme'
 import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
 import { ContinueButton } from './ContinueButton'
 
@@ -34,6 +32,7 @@ export type ProfileFieldsEditorProps = {
  * @returns
  */
 export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
+  const theme = useTheme()
   const [values, setValues] = useState({ ...props.verificationSubmission })
   const [errors] = useState({} as Partial<VerificationSubmission>)
 

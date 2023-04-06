@@ -1,13 +1,13 @@
 import React from 'react'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
-import { Box } from '@mui/material'
-import theme from 'style/theme'
+import { Box, useTheme } from '@mui/material'
 
 export const LeftRightPanel: React.FC<{
   leftContent: JSX.Element
   rightContent: JSX.Element
   className?: string
 }> = ({ leftContent, rightContent, className }) => {
+  const theme = useTheme()
   return (
     <StyledOuterContainer className={className}>
       <StyledInnerContainer>

@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "node": ">=18",
-    "pnpm": ">=7"
+    "pnpm": ">=8"
   },
   "scripts": {
     "prepare": "husky install",
@@ -27,7 +27,7 @@
     "lint-staged": "^13.2.0",
     "nx": "^15.8.7",
     "rimraf": "^4.4.0",
-    "typescript": "5.0.2"
+    "typescript": "5.0.3"
   },
   "npmClient": "pnpm",
   "resolutions": {
