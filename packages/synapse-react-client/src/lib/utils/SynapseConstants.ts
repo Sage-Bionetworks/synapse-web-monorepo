@@ -139,3 +139,6 @@ export const AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY =
 /** URL constants */
 export const URL_TERMS_CONDITIONS_AGREEMENT =
   'https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf?v=5'
+
+/** Class names */
+export const LOGIN_BACK_BUTTON_CLASS_NAME = 'login-flow-back-button'

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Paper, Box } from '@mui/material'
+import { Grid, Paper, Box, useTheme } from '@mui/material'
 import { Typography } from 'synapse-react-client'
 import ShowMore from 'synapse-react-client/dist/containers/row_renderers/utils/ShowMore'
 import { useHistory } from 'react-router-dom'
@@ -11,6 +11,7 @@ export type SageResourcesPageProps = {}
 
 export const SageResourcesPage = (props: SageResourcesPageProps) => {
   const history = useHistory()
+  const theme = useTheme()
   const sourceAppConfigs = useSourceAppConfigs()
   const sageSourceAppConfig = useSourceApp('SAGE')
   return (
@@ -24,8 +25,8 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
       >
         <Box
           sx={{
-            px: '64px',
-            paddingTop: '64px',
+            px: theme.spacing(8),
+            paddingTop: theme.spacing(8),
             position: 'relative',
           }}
         >
@@ -68,7 +69,8 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
         </Box>
         <Box
           sx={{
-            padding: '0px 64px',
+            px: theme.spacing(8),
+            py: theme.spacing(0),
           }}
         >
           <Grid container spacing={5} mx={{ paddingTop: '20px' }}>

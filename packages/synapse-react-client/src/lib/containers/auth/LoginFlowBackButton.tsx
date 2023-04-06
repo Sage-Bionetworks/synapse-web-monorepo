@@ -2,6 +2,7 @@ import { IconButton, SxProps } from '@mui/material'
 import IconSvg from '../IconSvg'
 import React from 'react'
 import { UseLoginReturn } from '../../utils/hooks'
+import { LOGIN_BACK_BUTTON_CLASS_NAME } from '../../utils/SynapseConstants'
 
 type LoginFormBackButtonProps = {
   step: UseLoginReturn['step']
@@ -39,7 +40,7 @@ export default function LoginFlowBackButton(props: LoginFormBackButtonProps) {
   }
   return (
     <IconButton
-      className="login-flow-back-button"
+      className={LOGIN_BACK_BUTTON_CLASS_NAME}
       type="button"
       onClick={() => {
         onStepChange(getPreviousStep(step))

@@ -14,6 +14,7 @@ import {
   redirectAfterSSO,
 } from 'synapse-react-client/dist/utils/AppUtils'
 import { backButtonSx } from 'components/BackButton'
+import { LOGIN_BACK_BUTTON_CLASS_NAME } from 'synapse-react-client/dist/utils/SynapseConstants'
 
 export type OwnProps = {
   returnToUrl: string
@@ -33,7 +34,7 @@ function LoginPage(props: LoginPageProps) {
             px: 8,
             height: '100%',
             position: 'relative',
-            '.login-flow-back-button': backButtonSx,
+            [`.${LOGIN_BACK_BUTTON_CLASS_NAME}`]: backButtonSx,
           }}
         >
           <Box
