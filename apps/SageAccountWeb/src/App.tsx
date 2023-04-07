@@ -105,17 +105,9 @@ function App() {
                         <>
                           {/* If not signed in and in the "/authenticated" path, show the login page */}
                           {!isAuthenticated && (
-                            <Route
-                              path="/authenticated"
-                              exact={false}
-                              render={routeProps => {
-                                return (
-                                  <LoginPage
-                                  // returnToUrl={routeProps.location.pathname}
-                                  />
-                                )
-                              }}
-                            />
+                            <Route path="/authenticated" exact={false}>
+                              <LoginPage />
+                            </Route>
                           )}
                           {isAuthenticated && (
                             <>

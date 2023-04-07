@@ -43,30 +43,26 @@ export default function useDetectSSOCode(
     onTwoFactorAuthRequired,
   } = opts
 
-  const [isLoading, setIsLoading] = useState(false)
+  const redirectURL = getRootURL()
+  // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
+  const fullUrl: URL = new URL(window.location.href)
+  // in test environment the searchParams isn't defined
+  const { searchParams } = fullUrl
+  const code = searchParams?.get('code')
+  const provider = searchParams?.get('provider')
+  // state is used during OAuth based Synapse account creation (it's the username)
+  const state = searchParams?.get('state')
+
+  const [isLoading, setIsLoading] = useState(!!(code && provider))
 
   useEffect(() => {
-    const redirectURL = getRootURL()
-    // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
-    const fullUrl: URL = new URL(window.location.href)
-    // in test environment the searchParams isn't defined
-    const { searchParams } = fullUrl
-    if (!searchParams) {
-      return
-    }
-    const code = searchParams.get('code')
-    const provider = searchParams.get('provider')
-    const state = searchParams.get('state')
-    // state is used during OAuth based Synapse account creation (it's the username)
     if (code && provider) {
       const redirectUrl = `${redirectURL}?provider=${provider}`
 
       if (PROVIDERS.GOOGLE == provider) {
-        setIsLoading(true)
         const onSuccess = (
           response: LoginResponse | TwoFactorAuthErrorResponse,
         ) => {
-          setIsLoading(false)
           if ('accessToken' in response) {
             setAccessTokenCookie(response.accessToken).then(onSignInComplete)
           } else {
@@ -77,7 +73,6 @@ export default function useDetectSSOCode(
           }
         }
         const onFailure = (err: SynapseClientError) => {
-          setIsLoading(false)
           if (err.status === 404) {
             // Synapse account not found, send to registration page
             window.location.replace(registerAccountUrl)
@@ -98,6 +93,7 @@ export default function useDetectSSOCode(
           )
             .then(onSuccess)
             .catch(onFailure)
+            .finally(() => setIsLoading(false))
         } else {
           oAuthSessionRequest(
             provider,
@@ -107,12 +103,11 @@ export default function useDetectSSOCode(
           )
             .then(onSuccess)
             .catch(onFailure)
+            .finally(() => setIsLoading(false))
         }
       } else if (PROVIDERS.ORCID == provider) {
-        setIsLoading(true)
         // now bind this to the user account
         const onFailure = (err: SynapseClientError) => {
-          setIsLoading(false)
           console.error('Error binding ORCiD to account: ', err)
           if (onError) {
             onError(err.reason)
@@ -126,6 +121,10 @@ export default function useDetectSSOCode(
         )
           .then(onSignInComplete)
           .catch(onFailure)
+          .finally(() => setIsLoading(false))
+      } else {
+        console.warn('Unknown SSO Provider: ', provider)
+        setIsLoading(false)
       }
     }
     // Intentionally have an empty dep array -- this should only run once per mount since it's checking for params that come from a redirect

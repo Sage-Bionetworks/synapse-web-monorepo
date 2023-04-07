@@ -3,7 +3,10 @@ import { renderHook, waitFor } from '@testing-library/react'
 import ApplicationSessionManager, {
   ApplicationSessionManagerProps,
 } from '../../../../../src/lib/utils/apputils/session/ApplicationSessionManager'
-import { useApplicationSessionContext } from '../../../../../src/lib/utils/apputils/session/ApplicationSessionContext'
+import {
+  ApplicationSessionContextType,
+  useApplicationSessionContext,
+} from '../../../../../src/lib/utils/apputils/session/ApplicationSessionContext'
 import { SynapseClient } from '../../../../../src/lib'
 import {
   MOCK_USER_ID,
@@ -18,6 +21,7 @@ import {
   TwoFactorAuthErrorResponse,
 } from '../../../../../src/lib/utils/synapseTypes/ErrorResponse'
 import dayjs from 'dayjs'
+import { MOCK_ACCESS_TOKEN } from '../../../../../mocks/MockSynapseContext'
 
 function render(props?: ApplicationSessionManagerProps) {
   return renderHook(() => useApplicationSessionContext(), {
@@ -37,41 +41,53 @@ const mockUseDetectSSOCode = jest
   .spyOn(UseDetectSSOCodeModule, 'default')
   .mockReturnValue({ isLoading: false })
 
+const EXPECTED_ANONYMOUS_STATE: Partial<ApplicationSessionContextType> = {
+  token: undefined,
+  acceptsTermsOfUse: undefined,
+  hasInitializedSession: true,
+  twoFactorAuthSSOErrorResponse: undefined,
+  isLoadingSSO: false,
+}
+
+const EXPECTED_AUTH_STATE: Partial<ApplicationSessionContextType> = {
+  token: MOCK_ACCESS_TOKEN,
+  acceptsTermsOfUse: true,
+  hasInitializedSession: true,
+  twoFactorAuthSSOErrorResponse: undefined,
+  isLoadingSSO: false,
+}
+
+const EXPECTED_AUTH_STATE_TERMS_NOT_ACCEPTED: Partial<ApplicationSessionContextType> =
+  { ...EXPECTED_AUTH_STATE, acceptsTermsOfUse: false }
+
 describe('ApplicationSessionManager tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
+  const mockGetAccessToken = jest.spyOn(
+    SynapseClient,
+    'getAccessTokenFromCookie',
+  )
+  const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
+  const mockGetUserProfile = jest.spyOn(SynapseClient, 'getUserProfile')
+  const mockAuthenticatedOn = jest.spyOn(SynapseClient, 'getAuthenticatedOn')
+
   it('Bootstraps when not signed in', async () => {
-    const mockGetAccessToken = jest
-      .spyOn(SynapseClient, 'getAccessTokenFromCookie')
-      .mockResolvedValue(null)
-    const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
+    mockGetAccessToken.mockResolvedValue(null)
 
     const context = render()
 
     await waitFor(() => {
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(signOutSpy).toHaveBeenCalled()
-      expect(context.result.current).toMatchObject({
-        token: undefined,
-        acceptsTermsOfUse: undefined,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
     })
   })
 
   it('Bootstraps when signed in', async () => {
-    const token = 'asdf'
-    const mockGetAccessToken = jest
-      .spyOn(SynapseClient, 'getAccessTokenFromCookie')
-      .mockResolvedValue(token)
-    const mockGetUserProfile = jest
-      .spyOn(SynapseClient, 'getUserProfile')
-      .mockResolvedValue(mockUserProfileData)
-    const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
+    mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
 
     const context = render()
 
@@ -79,31 +95,19 @@ describe('ApplicationSessionManager tests', () => {
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(mockGetUserProfile).toHaveBeenCalled()
       expect(signOutSpy).not.toHaveBeenCalled()
-      expect(context.result.current).toMatchObject({
-        token: token,
-        acceptsTermsOfUse: true,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(EXPECTED_AUTH_STATE)
     })
   })
 
   it('User has not accepted terms of use', async () => {
-    const token = 'asdf'
-    const mockGetAccessToken = jest
-      .spyOn(SynapseClient, 'getAccessTokenFromCookie')
-      .mockResolvedValue(token)
-    const mockGetUserProfile = jest
-      .spyOn(SynapseClient, 'getUserProfile')
-      .mockRejectedValue(
-        new SynapseClientError(
-          403,
-          'Terms of use have not been signed.',
-          expect.getState().currentTestName,
-        ),
-      )
-    const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
+    mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+    mockGetUserProfile.mockRejectedValue(
+      new SynapseClientError(
+        403,
+        'Terms of use have not been signed.',
+        expect.getState().currentTestName,
+      ),
+    )
 
     const context = render()
 
@@ -111,21 +115,15 @@ describe('ApplicationSessionManager tests', () => {
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(mockGetUserProfile).toHaveBeenCalled()
       expect(signOutSpy).not.toHaveBeenCalled()
-      expect(context.result.current).toMatchObject({
-        token: token,
-        acceptsTermsOfUse: false,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(
+        EXPECTED_AUTH_STATE_TERMS_NOT_ACCEPTED,
+      )
     })
   })
 
   it('Finishes SSO authentication', async () => {
     mockUseDetectSSOCode.mockReturnValue({ isLoading: true })
-    const mockGetAccessToken = jest
-      .spyOn(SynapseClient, 'getAccessTokenFromCookie')
-      .mockResolvedValue(null)
+    mockGetAccessToken.mockResolvedValue(null)
 
     const context = render()
 
@@ -137,11 +135,8 @@ describe('ApplicationSessionManager tests', () => {
     })
 
     // At this point, useDetectSSOCode would use the URL query parameters to finish sign in
-    const token = 'asdf'
-    mockGetAccessToken.mockResolvedValue(token)
-    const mockGetUserProfile = jest
-      .spyOn(SynapseClient, 'getUserProfile')
-      .mockResolvedValue(mockUserProfileData)
+    mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
     mockUseDetectSSOCode.mockReturnValue({ isLoading: false })
 
     // useDetectSSOCode will then invoke onSignInComplete to refresh the session
@@ -150,21 +145,13 @@ describe('ApplicationSessionManager tests', () => {
     options.onSignInComplete()
 
     await waitFor(() => {
-      expect(context.result.current).toMatchObject({
-        token: token,
-        acceptsTermsOfUse: true,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(EXPECTED_AUTH_STATE)
     })
   })
 
   it('Contains the SSO error object if 2FA is enabled', async () => {
     mockUseDetectSSOCode.mockReturnValue({ isLoading: true })
-    const mockGetAccessToken = jest
-      .spyOn(SynapseClient, 'getAccessTokenFromCookie')
-      .mockResolvedValue(null)
+    mockGetAccessToken.mockResolvedValue(null)
 
     const context = render()
 
@@ -192,9 +179,7 @@ describe('ApplicationSessionManager tests', () => {
 
     await waitFor(() => {
       expect(context.result.current).toMatchObject({
-        token: undefined,
-        acceptsTermsOfUse: undefined,
-        hasInitializedSession: true,
+        ...EXPECTED_ANONYMOUS_STATE,
         twoFactorAuthSSOErrorResponse: twoFactorAuthError,
         isLoadingSSO: false,
       })
@@ -203,31 +188,19 @@ describe('ApplicationSessionManager tests', () => {
 
   it('Session can be refreshed', async () => {
     // Start out unauthenticated
-    const mockGetAccessToken = jest
-      .spyOn(SynapseClient, 'getAccessTokenFromCookie')
-      .mockResolvedValue(null)
-    const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
+    mockGetAccessToken.mockResolvedValue(null)
 
     const context = render()
 
     await waitFor(() => {
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(signOutSpy).toHaveBeenCalled()
-      expect(context.result.current).toMatchObject({
-        token: undefined,
-        acceptsTermsOfUse: undefined,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
     })
 
     // Using the app's Login component, the user logs in. the component invokes refreshSession once the token is stored
-    const token = 'asdf'
-    mockGetAccessToken.mockResolvedValue(token)
-    const mockGetUserProfile = jest
-      .spyOn(SynapseClient, 'getUserProfile')
-      .mockResolvedValue(mockUserProfileData)
+    mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
 
     // Call under test
     await context.result.current.refreshSession()
@@ -235,26 +208,14 @@ describe('ApplicationSessionManager tests', () => {
     await waitFor(() => {
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(mockGetUserProfile).toHaveBeenCalled()
-      expect(context.result.current).toMatchObject({
-        token: token,
-        acceptsTermsOfUse: true,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(EXPECTED_AUTH_STATE)
     })
   })
 
   it('Session can be cleared', async () => {
     // Start signed in
-    const token = 'asdf'
-    const mockGetAccessToken = jest
-      .spyOn(SynapseClient, 'getAccessTokenFromCookie')
-      .mockResolvedValue(token)
-    const mockGetUserProfile = jest
-      .spyOn(SynapseClient, 'getUserProfile')
-      .mockResolvedValue(mockUserProfileData)
-    const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
+    mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
 
     const context = render()
 
@@ -262,13 +223,7 @@ describe('ApplicationSessionManager tests', () => {
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(mockGetUserProfile).toHaveBeenCalled()
       expect(signOutSpy).not.toHaveBeenCalled()
-      expect(context.result.current).toMatchObject({
-        token: token,
-        acceptsTermsOfUse: true,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(EXPECTED_AUTH_STATE)
     })
 
     // Signing out would update the return value of this call
@@ -279,13 +234,7 @@ describe('ApplicationSessionManager tests', () => {
 
     await waitFor(() => {
       expect(signOutSpy).toHaveBeenCalled()
-      expect(context.result.current).toMatchObject({
-        token: undefined,
-        acceptsTermsOfUse: undefined,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
     })
   })
 
@@ -293,20 +242,11 @@ describe('ApplicationSessionManager tests', () => {
     // User authenticated 5 minutes ago, maxAge is 1 hour
     const authenticatedOn = dayjs.utc().subtract(5, 'minutes').format()
     const maxAge = 60 * 60
-    const token = 'asdf'
-    const mockGetAccessToken = jest
-      .spyOn(SynapseClient, 'getAccessTokenFromCookie')
-      .mockResolvedValue(token)
-    const mockGetUserProfile = jest
-      .spyOn(SynapseClient, 'getUserProfile')
-      .mockResolvedValue(mockUserProfileData)
-    const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
-
-    const mockAuthenticatedOn = jest
-      .spyOn(SynapseClient, 'getAuthenticatedOn')
-      .mockResolvedValue({
-        authenticatedOn,
-      })
+    mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
+    mockAuthenticatedOn.mockResolvedValue({
+      authenticatedOn,
+    })
 
     const context = render({
       maxAge,
@@ -317,13 +257,7 @@ describe('ApplicationSessionManager tests', () => {
       expect(mockGetUserProfile).toHaveBeenCalled()
       expect(mockAuthenticatedOn).toHaveBeenCalled()
       expect(signOutSpy).not.toHaveBeenCalled()
-      expect(context.result.current).toMatchObject({
-        token: token,
-        acceptsTermsOfUse: true,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(EXPECTED_AUTH_STATE)
     })
   })
 
@@ -332,18 +266,13 @@ describe('ApplicationSessionManager tests', () => {
     const authenticatedOn = dayjs.utc().subtract(24, 'hours').format()
     const maxAge = 60 * 60
     const token = 'asdf'
-    const mockGetAccessToken = jest
-      .spyOn(SynapseClient, 'getAccessTokenFromCookie')
-      .mockResolvedValue(token)
-    const mockGetUserProfile = jest
-      .spyOn(SynapseClient, 'getUserProfile')
-      .mockResolvedValue(mockUserProfileData)
-    const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
+    mockGetAccessToken.mockResolvedValue(token)
+    mockGetUserProfile.mockResolvedValue(mockUserProfileData)
 
     console.log(dayjs.utc().subtract(24, 'hours').format())
-    const mockAuthenticatedOn = jest
-      .spyOn(SynapseClient, 'getAuthenticatedOn')
-      .mockResolvedValue({ authenticatedOn })
+    mockAuthenticatedOn.mockResolvedValue({
+      authenticatedOn,
+    })
 
     const context = render({
       maxAge,
@@ -354,13 +283,7 @@ describe('ApplicationSessionManager tests', () => {
       expect(mockAuthenticatedOn).toHaveBeenCalled()
       expect(mockGetUserProfile).not.toHaveBeenCalled()
       expect(signOutSpy).not.toHaveBeenCalled()
-      expect(context.result.current).toMatchObject({
-        token: undefined,
-        acceptsTermsOfUse: undefined,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
     })
   })
 
@@ -371,10 +294,7 @@ describe('ApplicationSessionManager tests', () => {
       'some error',
       expect.getState().currentTestName,
     )
-    const mockGetAccessToken = jest
-      .spyOn(SynapseClient, 'getAccessTokenFromCookie')
-      .mockRejectedValue(error)
-    const signOutSpy = jest.spyOn(SynapseClient, 'signOut')
+    mockGetAccessToken.mockRejectedValue(error)
 
     const context = render({ onError })
 
@@ -382,13 +302,7 @@ describe('ApplicationSessionManager tests', () => {
       expect(onError).toHaveBeenCalledWith(error)
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(signOutSpy).toHaveBeenCalled()
-      expect(context.result.current).toMatchObject({
-        token: undefined,
-        acceptsTermsOfUse: undefined,
-        hasInitializedSession: true,
-        twoFactorAuthSSOErrorResponse: undefined,
-        isLoadingSSO: false,
-      })
+      expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
     })
   })
 })
