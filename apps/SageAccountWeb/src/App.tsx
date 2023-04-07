@@ -143,15 +143,16 @@ function App() {
                               >
                                 <CertificationQuiz />
                               </Route>
-                              <Route path={'/authenticated/2fa/enroll'} exact>
-                                <TwoFactorAuthEnrollmentPage />
-                              </Route>
+                              <Route
+                                path={'/authenticated/2fa/enroll'}
+                                exact
+                                render={() => <TwoFactorAuthEnrollmentPage />}
+                              />
                               <Route
                                 path={'/authenticated/2fa/generatecodes'}
                                 exact
-                              >
-                                <TwoFactorAuthBackupCodesPage />
-                              </Route>
+                                render={() => <TwoFactorAuthBackupCodesPage />}
+                              />
                             </>
                           )}
                         </>

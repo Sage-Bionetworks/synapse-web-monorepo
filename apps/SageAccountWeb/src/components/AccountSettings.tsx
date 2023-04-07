@@ -637,7 +637,7 @@ export const AccountSettings = () => {
               >
                 <TwoFactorAuthSettingsPanel
                   onRegenerateBackupCodes={() => {
-                    history.push('/authenticated/2fa/regeneratecodes')
+                    history.push('/authenticated/2fa/generatecodes')
                   }}
                   onBeginTwoFactorEnrollment={() => {
                     history.push('/authenticated/2fa/enroll')
