@@ -3,7 +3,6 @@ import { Redirect } from 'react-router-dom'
 import { SynapseConstants, Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import CloseIcon from '@mui/icons-material/Close'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
 import {
   createProfileVerificationSubmission,
@@ -27,6 +26,7 @@ import ThankYou from './ThankYou'
 import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
 import { ReturnToAppButton } from './ReturnToAppButton'
 import { TermsOfUseRightPanelText } from 'components/TermsOfUseRightPanelText'
+import { BackButton } from 'components/BackButton'
 
 const STEP_CONTENT = [
   {
@@ -442,16 +442,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
           {verificationSubmission && (
             <Box>
               {step !== ValidationWizardStep.PROFILE_INFO && (
-                <IconButton
-                  onClick={onPrevious}
-                  sx={theme => ({
-                    position: 'absolute',
-                    top: theme.spacing(1.5),
-                    left: theme.spacing(1.5),
-                  })}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
+                <BackButton onClick={onPrevious} />
               )}
               <SourceAppLogo sx={{ textAlign: 'center' }} />
               <BodyControlFactory
