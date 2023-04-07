@@ -15,7 +15,7 @@ export const TermsOfUseRightPanelText = (
     <>
       <Typography variant="headline2">What is the Synapse Pledge?</Typography>
       {sourceApp?.appId !== 'synapse.org' && (
-        <Typography variant="body2" sx={{ marginBottom: '20px' }}>
+        <Typography variant="body1" sx={{ marginBottom: '20px' }}>
           {sourceAppName} is powered by{' '}
           <Link href={'https://www.synapse.org/'} target="_blank">
             Synapse
@@ -23,7 +23,7 @@ export const TermsOfUseRightPanelText = (
           , and follows the Synapse Governance polices.
         </Typography>
       )}
-      <Typography variant="body2" sx={{ marginBottom: '20px' }}>
+      <Typography variant="body1" sx={{ marginBottom: '20px' }}>
         To ensure secure and confidential access to data, we ask all account
         holders to affirm their agreement with our governance policies before
         finishing registration.

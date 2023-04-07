@@ -1,9 +1,12 @@
-import { createTheme, Theme } from '@mui/material'
-import { mergeTheme } from 'synapse-react-client/dist/utils/theme'
+import { ThemeOptions } from '@mui/material'
 
 export const latoFont = ['Lato', 'Roboto', 'Helvetica', 'Arial'].join(',')
 
-export const themeOptions = mergeTheme({
+// Merge the default theme (defined in synapse-react-client) with the SageAccountWeb overrides defined here.
+export const sageAccountWebThemeOverrides: ThemeOptions = {
+  styledBackground:
+    "linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg')",
+
   components: {
     MuiButton: {
       styleOverrides: {
@@ -26,7 +29,7 @@ export const themeOptions = mergeTheme({
           fontWeight: 700,
           '&:hover': {
             backgroundColor: '#FFFFFF',
-            border: '2px solid #EAECEE',
+            border: '1px solid #b5bcc3',
           },
         },
         containedSecondary: {
@@ -56,48 +59,6 @@ export const themeOptions = mergeTheme({
         },
       },
     },
-    MuiDialog: {
-      styleOverrides: {
-        paper: {},
-      },
-    },
-    MuiDialogTitle: {
-      styleOverrides: {
-        root: {
-          padding: '24px 24px 0px 24px',
-        },
-      },
-    },
-    MuiDialogContent: {
-      styleOverrides: {
-        root: {
-          color: '#4A5056',
-        },
-      },
-    },
-    MuiDialogActions: {
-      styleOverrides: {
-        root: {
-          padding: '24px',
-          '& .MuiButton-root': {
-            height: '36px',
-            padding: '0 16px',
-            borderRadius: '0px',
-            fontSize: '15px',
-            '&:first-child': {
-              marginRight: '14px',
-            },
-            '&.MuiButton-outlinedPrimary': {
-              borderWidth: '1px',
-              fontWeight: 700,
-              '&:hover': {
-                '&.MuiButton-outlinedPrimary:hover': { borderWidth: '1px' },
-              },
-            },
-          },
-        },
-      },
-    },
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -112,7 +73,6 @@ export const themeOptions = mergeTheme({
       fontFamily: latoFont,
       fontSize: '14px',
     },
-    headline1: {},
     headline2: {
       fontWeight: 700,
       fontSize: '24px',
@@ -121,22 +81,11 @@ export const themeOptions = mergeTheme({
       alignItems: 'center',
       marginBottom: '20px',
     },
-    headline3: {
-      fontWeight: '700',
-      fontSize: '18px',
-      lineHeight: '20px',
-    },
-    body1: {
-      fontWeight: 400,
+    subtitle1: {
+      fontWeight: 500,
       fontSize: '20px',
       lineHeight: '150%',
       letterSpacing: '-0.019em',
-      color: '#4A5056',
-    },
-    body2: {
-      fontWeight: 400,
-      fontSize: '16px',
-      lineHeight: '24px',
     },
     smallText1: {
       fontWeight: 400,
@@ -145,8 +94,4 @@ export const themeOptions = mergeTheme({
       color: '#878E95',
     },
   },
-})
-
-const theme: Theme = createTheme(themeOptions)
-
-export default theme
+}

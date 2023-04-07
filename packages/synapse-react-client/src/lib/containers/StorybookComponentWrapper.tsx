@@ -14,7 +14,7 @@ import {
 } from '../utils/SynapseClient'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { STACK_MAP, SynapseStack } from '../utils/functions/getEndpoint'
-import defaultMuiTheme from '../utils/theme/DefaultTheme'
+import defaultMuiThemeOptions from '../utils/theme/DefaultTheme'
 import {
   adKnowledgePortalPalette,
   arkPortalPalette,
@@ -140,7 +140,7 @@ export function StorybookComponentWrapper(props: {
       key={accessToken}
       synapseContext={synapseContext}
       theme={{
-        ...defaultMuiTheme,
+        ...defaultMuiThemeOptions,
         palette: paletteMap[storybookContext.globals.palette],
       }}
     >

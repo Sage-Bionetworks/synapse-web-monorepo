@@ -44,10 +44,10 @@ const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
     <>
       {isAttachment && (
         <>
-          <Typography variant="body2" sx={{ fontWeight: 700 }}>
+          <Typography variant="body1" sx={{ fontWeight: 700 }}>
             Selected file:
           </Typography>
-          <Typography variant="body2" sx={{ marginBottom: '20px' }}>
+          <Typography variant="body1" sx={{ marginBottom: '20px' }}>
             {attachments[0].fileName}
           </Typography>
         </>

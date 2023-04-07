@@ -290,7 +290,7 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                 <Typography variant="headline2" sx={{ marginTop: '95px' }}>
                   Create an Account
                 </Typography>
-                <Typography variant="body2" sx={{ marginBottom: '20px' }}>
+                <Typography variant="body1" sx={{ marginBottom: '20px' }}>
                   Your <strong>{sourceAppName}</strong> account is also a{' '}
                   <strong>Sage account</strong>. You can also use it to access
                   many other resources from Sage.

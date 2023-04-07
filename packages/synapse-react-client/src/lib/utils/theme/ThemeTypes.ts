@@ -32,6 +32,13 @@ type RecordWithCustomVariantKeys<Value> = {
 // To add custom Typography variants to the MUI theme, we have to extend the MUI theme type.
 // See https://mui.com/material-ui/customization/theming/#theme-configuration-variables CTRL+F TypeScript
 declare module '@mui/material/styles' {
+  interface Theme {
+    styledBackground: string
+  }
+  interface ThemeOptions {
+    styledBackground?: string
+  }
+
   interface TypographyVariants
     extends RecordWithCustomVariantKeys<React.CSSProperties> {}
 

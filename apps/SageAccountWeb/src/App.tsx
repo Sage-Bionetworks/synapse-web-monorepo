@@ -26,6 +26,8 @@ import AppInitializer from './AppInitializer'
 import LoginPage from './LoginPage'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import ApplicationSessionManager from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionManager'
+import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
+import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAuthBackupCodesPage'
 
 const isCodeSearchParam = getSearchParam('code') !== undefined
 const isProviderSearchParam = getSearchParam('provider') !== undefined
@@ -140,6 +142,15 @@ function App() {
                                 exact
                               >
                                 <CertificationQuiz />
+                              </Route>
+                              <Route path={'/authenticated/2fa/enroll'} exact>
+                                <TwoFactorAuthEnrollmentPage />
+                              </Route>
+                              <Route
+                                path={'/authenticated/2fa/generatecodes'}
+                                exact
+                              >
+                                <TwoFactorAuthBackupCodesPage />
                               </Route>
                             </>
                           )}

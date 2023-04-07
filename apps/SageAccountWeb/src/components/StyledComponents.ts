@@ -13,17 +13,10 @@ import {
 } from '@mui/material'
 import { latoFont } from 'style/theme'
 import { StyledComponent } from '@mui/styles'
+import { StyledOuterContainer as _StyledOuterContainer } from 'synapse-react-client/dist/components/styled/LeftRightPanel'
 
-export const StyledOuterContainer: StyledComponent<BoxProps> = styled(Box, {
-  label: 'StyledOuterContainer',
-})(({ theme }) => ({
-  minHeight: '100vh',
-  paddingTop: '50px',
-  paddingBottom: '50px',
-  background:
-    "linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg')",
-  backgroundSize: 'cover',
-}))
+export const StyledOuterContainer: StyledComponent<BoxProps> =
+  _StyledOuterContainer
 
 export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   label: 'StyledInnerContainer',

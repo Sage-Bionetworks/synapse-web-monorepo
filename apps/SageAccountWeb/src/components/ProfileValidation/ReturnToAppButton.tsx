@@ -1,9 +1,11 @@
 import {
+  Box,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
+  Stack,
   useTheme,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
@@ -38,46 +40,23 @@ export const ReturnToAppButton: React.FC<{ children?: React.ReactNode }> = ({
   return (
     <>
       {element}
-      <Dialog
-        open={open}
-        fullWidth
-        maxWidth="sm"
-        sx={{ borderRadius: 0 }}
-        PaperProps={{ sx: { borderRadius: 0 } }}
-      >
-        <DialogTitle
-          sx={{
-            margin: theme.spacing(0, 5.5),
-            padding: theme.spacing(4, 0, 2, 0),
-            fontSize: '25px',
-            fontWeight: 700,
-          }}
-        >
-          <IconButton
-            aria-label="close"
-            onClick={onClose}
-            sx={{
-              position: 'absolute',
-              right: '40px',
-              top: '30px',
-              color: '#878E95',
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-          Cancel verification?
+      <Dialog open={open} fullWidth maxWidth="sm">
+        <DialogTitle>
+          <Stack direction="row" alignItems={'center'} gap={'5px'}>
+            Cancel verification?
+            <Box sx={{ flexGrow: 1 }} />
+            <IconButton aria-label={'Close'} onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          </Stack>
         </DialogTitle>
-
-        <DialogContent
-          dividers
-          sx={{ margin: theme.spacing(0, 5.5), padding: theme.spacing(3, 0) }}
-        >
-          <Typography variant="body2" paragraph>
+        <DialogContent dividers>
+          <Typography variant="body1" paragraph>
             If you cancel verification, you'll still be able to use portions of
             the application which are available to registered users, but your
             access will be restricted.
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body1">
             To resume your verification in the future, access the{' '}
             <NavLink target="_blank" to={'/authenticated/myaccount#trust'}>
               {' '}
@@ -101,7 +80,7 @@ export const ReturnToAppButton: React.FC<{ children?: React.ReactNode }> = ({
             Yes, cancel verification
           </Button>
         </DialogActions>
-      </Dialog>{' '}
+      </Dialog>
     </>
   )
 }

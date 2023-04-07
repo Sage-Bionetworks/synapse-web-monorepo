@@ -30,7 +30,7 @@ export const VerifyIdentify = (props: VerifyIdentifyProps) => {
           <>
             <Typography
               style={{ display: 'flex', marginTop: theme.spacing(5) }}
-              variant="body2"
+              variant="body1"
             >
               <CheckIcon style={{ color: '#32A330', marginRight: '8px' }} />
               Profile linked successfully {/*verificationSubmission.orcid*/}

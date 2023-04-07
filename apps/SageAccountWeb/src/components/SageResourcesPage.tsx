@@ -44,21 +44,21 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
           >
             <div className="SageLogo">{sageSourceAppConfig?.logo}</div>
             <Typography
-              variant="body1"
+              variant="subtitle1"
               sx={{ marginTop: '30px', paddingBottom: '30px', fontWeight: 500 }}
             >
               Your Sage Account gets you access to all these tools.
             </Typography>
 
             <Typography
-              variant="body2"
+              variant="body1"
               sx={{ paddingBottom: '30px', fontWeight: 500 }}
             >
               Sage Bionetworks creates resources to help speed the translation
               of science into medicine.
             </Typography>
             <Typography
-              variant="body2"
+              variant="body1"
               sx={{ paddingBottom: '30px', fontWeight: 500 }}
             >
               Your Sage Account can be used across all these different products.
@@ -85,7 +85,7 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
                   >
                     <a href={config.appURL}>{config.logo}</a>
                     <Typography
-                      variant="body2"
+                      variant="body1"
                       sx={{ paddingBottom: '30px', fontWeight: 500 }}
                     >
                       <ShowMore summary={config.description} />

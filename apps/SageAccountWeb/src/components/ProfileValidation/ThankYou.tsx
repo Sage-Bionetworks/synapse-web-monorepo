@@ -38,13 +38,13 @@ const ThankYou: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       >
         Here's what to expect next:
       </Typography>
-      <Typography variant="body2" paragraph>
+      <Typography variant="body1" paragraph>
         Our Access and Compliance Team (ACT) will review your application. This
         usually takes about two business days, but it can sometimes take longer.
         You’ll receive an email from us if we have any questions, and when we’ve
         made a decision.
       </Typography>
-      <Typography variant="body2" paragraph>
+      <Typography variant="body1" paragraph>
         You can access unrestricted areas of the website in the mean time.
       </Typography>
       {children}
