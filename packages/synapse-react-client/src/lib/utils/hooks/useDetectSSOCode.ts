@@ -11,11 +11,16 @@ import {
   oAuthSessionRequest,
   setAccessTokenCookie,
 } from '../SynapseClient'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
 import { PROVIDERS } from '../../containers/auth/AuthenticationMethodSelection'
 
-type UseDetectSSOCodeOptions = {
+export type UseDetectSSOCodeReturnType = {
+  /* true iff SSO login has occurred and the completion of the OAuth flow in Synapse is pending */
+  isLoading: boolean
+}
+
+export type UseDetectSSOCodeOptions = {
   onSignInComplete?: () => void
   registerAccountUrl?: string
   onError?: (err: unknown) => void
@@ -30,26 +35,27 @@ type UseDetectSSOCodeOptions = {
  */
 export default function useDetectSSOCode(
   opts: UseDetectSSOCodeOptions = {},
-): void {
+): UseDetectSSOCodeReturnType {
   const {
     onSignInComplete,
     registerAccountUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
     onError,
     onTwoFactorAuthRequired,
   } = opts
+
+  const redirectURL = getRootURL()
+  // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
+  const fullUrl: URL = new URL(window.location.href)
+  // in test environment the searchParams isn't defined
+  const { searchParams } = fullUrl
+  const code = searchParams?.get('code')
+  const provider = searchParams?.get('provider')
+  // state is used during OAuth based Synapse account creation (it's the username)
+  const state = searchParams?.get('state')
+
+  const [isLoading, setIsLoading] = useState(!!(code && provider))
+
   useEffect(() => {
-    const redirectURL = getRootURL()
-    // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
-    const fullUrl: URL = new URL(window.location.href)
-    // in test environment the searchParams isn't defined
-    const { searchParams } = fullUrl
-    if (!searchParams) {
-      return
-    }
-    const code = searchParams.get('code')
-    const provider = searchParams.get('provider')
-    const state = searchParams.get('state')
-    // state is used during OAuth based Synapse account creation (it's the username)
     if (code && provider) {
       const redirectUrl = `${redirectURL}?provider=${provider}`
 
@@ -87,6 +93,7 @@ export default function useDetectSSOCode(
           )
             .then(onSuccess)
             .catch(onFailure)
+            .finally(() => setIsLoading(false))
         } else {
           oAuthSessionRequest(
             provider,
@@ -96,6 +103,7 @@ export default function useDetectSSOCode(
           )
             .then(onSuccess)
             .catch(onFailure)
+            .finally(() => setIsLoading(false))
         }
       } else if (PROVIDERS.ORCID == provider) {
         // now bind this to the user account
@@ -113,9 +121,15 @@ export default function useDetectSSOCode(
         )
           .then(onSignInComplete)
           .catch(onFailure)
+          .finally(() => setIsLoading(false))
+      } else {
+        console.warn('Unknown SSO Provider: ', provider)
+        setIsLoading(false)
       }
     }
     // Intentionally have an empty dep array -- this should only run once per mount since it's checking for params that come from a redirect
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  return { isLoading }
 }

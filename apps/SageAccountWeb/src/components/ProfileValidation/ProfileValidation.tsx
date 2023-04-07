@@ -20,7 +20,6 @@ import { ProfileFieldsEditor } from './ProfileFieldsEditor'
 import { VerifyIdentify } from './VerifyIdentify'
 import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
 import { Box, Button, Divider, IconButton, Link, useTheme } from '@mui/material'
-import theme from 'style/theme'
 import { SourceAppLogo, useSourceApp } from '../SourceApp'
 import Attestation from './Attestation'
 import ThankYou from './ThankYou'
@@ -36,7 +35,7 @@ const STEP_CONTENT = [
       <>
         <Typography
           variant="body1"
-          sx={{ fontWeight: 500, marginBottom: theme.spacing(3) }}
+          sx={theme => ({ fontWeight: 500, marginBottom: theme.spacing(3) })}
         >
           During <strong>identity verification</strong>, our data governance
           team will check the information you provide here.
@@ -110,7 +109,7 @@ const STEP_CONTENT = [
               </i>
             </Typography>
             <Typography
-              style={{ textAlign: 'center', margin: theme.spacing(1) }}
+              sx={theme => ({ textAlign: 'center', margin: theme.spacing(1) })}
               variant="body2"
             >
               OR
@@ -129,7 +128,7 @@ const STEP_CONTENT = [
               )
             </Typography>
             <Typography
-              style={{ textAlign: 'center', margin: theme.spacing(1) }}
+              sx={theme => ({ textAlign: 'center', margin: theme.spacing(1) })}
               variant="body2"
             >
               OR
@@ -155,30 +154,31 @@ const STEP_CONTENT = [
 ]
 
 const RightPanel: React.FC<{ stepNumber: number }> = ({ stepNumber }) => {
+  const theme = useTheme()
   const totalSteps = 4
   return (
     <Box sx={{ position: 'relative' }}>
       {stepNumber === 0 && (
         <ReturnToAppButton>
           <IconButton
-            sx={{
+            sx={theme => ({
               position: 'absolute',
               top: theme.spacing(1.5),
               right: theme.spacing(1.5),
-            }}
+            })}
           >
             <CloseIcon />
           </IconButton>
         </ReturnToAppButton>
       )}
       <Divider
-        sx={{
+        sx={theme => ({
           marginTop: theme.spacing(8),
           marginBottom: theme.spacing(4),
           fontWeight: '700',
           fontSize: '16px',
           color: '#4A5056',
-        }}
+        })}
       >
         {' '}
         Step {stepNumber + 1} of {totalSteps}
@@ -270,7 +270,6 @@ function BodyControlFactory(args: {
 export type ProfileValidationProps = {}
 
 export const ProfileValidation = (props: ProfileValidationProps) => {
-  const theme = useTheme()
   const { accessToken } = useSynapseContext()
   const [verificationSubmission, setVerificationSubmission] =
     useState<VerificationSubmission>()
@@ -429,14 +428,14 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
         <StyledInnerContainer
           sx={
             step === ValidationWizardStep.TERMS_AGREE
-              ? {
+              ? theme => ({
                   width: '1200px',
                   '& > div:nth-of-type(1)': {
                     paddingTop: theme.spacing(10),
                     width: '750px',
                   },
                   '& > div:nth-of-type(2)': { paddingTop: theme.spacing(10) },
-                }
+                })
               : null
           }
         >
@@ -468,7 +467,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
             fullWidth
             onClick={() => setIsReturnToAccountSettings(true)}
             type="button"
-            sx={{ marginTop: theme.spacing(5) }}
+            sx={theme => ({ marginTop: theme.spacing(5) })}
             endIcon={<ArrowRightAltIcon />}
           >
             Return to {useSourceApp()?.friendlyName}

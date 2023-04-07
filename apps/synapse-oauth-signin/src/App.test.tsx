@@ -24,8 +24,10 @@ function createParams(prompt?: string) {
   return params
 }
 
-function renderApp(prompt?: string) {
-  window.history.pushState(null, '', `/?${createParams(prompt).toString()}`)
+function renderApp(prompt?: string, updateHistory = true) {
+  if (updateHistory) {
+    window.history.pushState(null, '', `/?${createParams(prompt).toString()}`)
+  }
   return render(<App />)
 }
 
@@ -187,6 +189,8 @@ describe('App integration tests', () => {
   test.todo('Shows warning if the client is unverified')
 
   test('Supports OAuth2 login with 2FA', async () => {
+    jest.spyOn(window.history, 'replaceState')
+
     const onOAuthSignIn = jest.fn()
     const on2FASignIn = jest.fn()
     const oauthProvider = 'GOOGLE_OAUTH_2_0'
@@ -245,7 +249,7 @@ describe('App integration tests', () => {
     )
     window.history.replaceState({}, '', `/?${paramsFromProvider.toString()}`)
 
-    render(<App />)
+    renderApp(undefined, false)
 
     await waitFor(() => {
       expect(onOAuthSignIn).toHaveBeenCalledWith(
@@ -279,7 +283,9 @@ describe('App integration tests', () => {
     // Verify that the authentication is complete and we're redirected to see the OAuth client prompt
     // Verify user is redirected to the client prompt
     await waitFor(() => {
-      expect(window.location.replace).toHaveBeenCalledWith(
+      expect(window.history.replaceState).toHaveBeenLastCalledWith(
+        expect.anything(),
+        null,
         `/?${createParams().toString()}`,
       )
     })

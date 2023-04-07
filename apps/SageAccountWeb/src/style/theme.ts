@@ -1,10 +1,10 @@
 import { createTheme, Theme } from '@mui/material'
+import { mergeTheme } from 'synapse-react-client/dist/utils/theme'
 
 export const latoFont = ['Lato', 'Roboto', 'Helvetica', 'Arial'].join(',')
 
-const themeObject = {
+export const themeOptions = mergeTheme({
   components: {
-    MuiCssBaseline: {},
     MuiButton: {
       styleOverrides: {
         contained: {
@@ -133,30 +133,20 @@ const themeObject = {
       letterSpacing: '-0.019em',
       color: '#4A5056',
     },
-    body1Italic: {},
     body2: {
       fontWeight: 400,
       fontSize: '16px',
       lineHeight: '24px',
     },
-    breadcrumb1: {},
-    breadcrumb2: {},
     smallText1: {
       fontWeight: 400,
       fontSize: '14px',
       lineHeight: '21px',
       color: '#878E95',
     },
-    smallText2: {},
-    smallLink: {},
-    label: {},
-    buttonLink: {},
-    hintText: {},
-    sectionTitle: {},
-    subsectionHeader: {},
-    dataFieldKey: {},
   },
-}
-const theme: Theme = createTheme(themeObject)
+})
+
+const theme: Theme = createTheme(themeOptions)
 
 export default theme

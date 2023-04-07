@@ -1,10 +1,11 @@
 import React from 'react'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import { BadgeOutlined } from '@mui/icons-material'
-import { Box, SxProps, Button } from '@mui/material'
+import { Box, Button, SxProps } from '@mui/material'
 import { Typography } from 'synapse-react-client'
 import { useSourceApp } from './SourceApp'
-import { AppContextConsumer } from 'AppContext'
+import { useAppContext } from 'AppContext'
+import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 
 const AccountSettingsTopBar: React.FunctionComponent = () => {
   const sourceApp = useSourceApp()
@@ -14,45 +15,42 @@ const AccountSettingsTopBar: React.FunctionComponent = () => {
     ml: '20px',
     mr: '10px',
   }
+  const appContext = useAppContext()
+  const { refreshSession } = useApplicationSessionContext()
+
   return (
-    <>
-      <AppContextConsumer>
-        {appContext => (
-          <Box
-            sx={{
-              display: 'flex',
-              height: '60px',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <BadgeOutlined sx={iconSx} />
-              <Typography variant="headline3" sx={{ display: 'inline' }}>
-                Account Settings
-              </Typography>
-              <Box
-                className="AccountSettingsSourceAppLogo"
-                sx={{ marginLeft: '30px' }}
-              >
-                <a href={appContext?.redirectURL}>{sourceApp?.logo}</a>
-              </Box>
-            </Box>
-            <Button
-              variant="text"
-              sx={{ color: '#515359', marginRight: '15px' }}
-              onClick={() => {
-                signOut().then(() => {
-                  window.location.reload()
-                })
-              }}
-            >
-              Sign out
-            </Button>
-          </Box>
-        )}
-      </AppContextConsumer>
-    </>
+    <Box
+      sx={{
+        display: 'flex',
+        height: '60px',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <BadgeOutlined sx={iconSx} />
+        <Typography variant="headline3" sx={{ display: 'inline' }}>
+          Account Settings
+        </Typography>
+        <Box
+          className="AccountSettingsSourceAppLogo"
+          sx={{ marginLeft: '30px' }}
+        >
+          <a href={appContext?.redirectURL}>{sourceApp?.logo}</a>
+        </Box>
+      </Box>
+      <Button
+        variant="text"
+        sx={{ color: '#515359', marginRight: '15px' }}
+        onClick={() => {
+          signOut().then(() => {
+            refreshSession()
+          })
+        }}
+      >
+        Sign out
+      </Button>
+    </Box>
   )
 }
 

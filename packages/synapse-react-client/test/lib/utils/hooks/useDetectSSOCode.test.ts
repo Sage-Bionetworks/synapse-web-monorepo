@@ -50,12 +50,15 @@ describe('useDetectSSOCode tests', () => {
   })
 
   it('Does nothing if searchParams are not set', () => {
-    renderHook(() => useDetectSSOCode({ onSignInComplete: onSignInComplete }))
+    const hookReturn = renderHook(() =>
+      useDetectSSOCode({ onSignInComplete: onSignInComplete }),
+    )
 
     expect(mockOAuthSessionRequest).not.toHaveBeenCalled()
     expect(mockOAuthRegisterAccountStep2).not.toHaveBeenCalled()
     expect(mockBindOAuthProviderToAccount).not.toHaveBeenCalled()
     expect(onSignInComplete).not.toHaveBeenCalled()
+    expect(hookReturn.result.current.isLoading).toBe(false)
   })
 
   it('Handles successful login with Google', async () => {
@@ -67,7 +70,13 @@ describe('useDetectSSOCode tests', () => {
     mockOAuthSessionRequest.mockResolvedValue(successfulLoginResponse)
     mockSetAccessTokenCookie.mockResolvedValue(undefined)
 
-    renderHook(() => useDetectSSOCode({ onSignInComplete: onSignInComplete }))
+    const hookReturn = renderHook(() =>
+      useDetectSSOCode({ onSignInComplete: onSignInComplete }),
+    )
+
+    // Should initially be loading
+    expect(hookReturn.result.current.isLoading).toBe(true)
+
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
         PROVIDERS.GOOGLE,
@@ -80,6 +89,7 @@ describe('useDetectSSOCode tests', () => {
         successfulLoginResponse.accessToken,
       )
       expect(onSignInComplete).toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
     })
   })
 
@@ -92,12 +102,14 @@ describe('useDetectSSOCode tests', () => {
     const mockOn2fa = jest.fn()
     mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
 
-    renderHook(() =>
+    const hookReturn = renderHook(() =>
       useDetectSSOCode({
         onSignInComplete,
         onTwoFactorAuthRequired: mockOn2fa,
       }),
     )
+
+    expect(hookReturn.result.current.isLoading).toBe(true)
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
@@ -109,6 +121,7 @@ describe('useDetectSSOCode tests', () => {
       expect(mockOn2fa).toHaveBeenCalledWith(twoFactorAuthErrorResponse)
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
       expect(onSignInComplete).not.toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
     })
   })
 
@@ -127,7 +140,9 @@ describe('useDetectSSOCode tests', () => {
 
     mockOAuthSessionRequest.mockRejectedValue(notFoundError)
 
-    renderHook(() => useDetectSSOCode({ onSignInComplete }))
+    const hookReturn = renderHook(() => useDetectSSOCode({ onSignInComplete }))
+
+    expect(hookReturn.result.current.isLoading).toBe(true)
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
@@ -141,6 +156,7 @@ describe('useDetectSSOCode tests', () => {
       expect(window.location.replace).toHaveBeenCalledWith(
         'https://www.synapse.org/#!RegisterAccount:0',
       )
+      expect(hookReturn.result.current.isLoading).toBe(false)
     })
     consoleSpy.mockReset()
   })
@@ -161,9 +177,10 @@ describe('useDetectSSOCode tests', () => {
     mockOAuthSessionRequest.mockRejectedValue(unhandledError)
     const mockOnError = jest.fn()
 
-    renderHook(() =>
+    const hookReturn = renderHook(() =>
       useDetectSSOCode({ onSignInComplete, onError: mockOnError }),
     )
+    expect(hookReturn.result.current.isLoading).toBe(true)
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
@@ -180,6 +197,7 @@ describe('useDetectSSOCode tests', () => {
       expect(window.location.href).not.toEqual(
         'https://www.synapse.org/#!RegisterAccount:0',
       )
+      expect(hookReturn.result.current.isLoading).toBe(false)
     })
     consoleSpy.mockReset()
   })
@@ -193,8 +211,9 @@ describe('useDetectSSOCode tests', () => {
     )
     mockOAuthRegisterAccountStep2.mockResolvedValue(successfulLoginResponse)
     mockSetAccessTokenCookie.mockResolvedValue(undefined)
+    const hookReturn = renderHook(() => useDetectSSOCode({ onSignInComplete }))
+    expect(hookReturn.result.current.isLoading).toBe(true)
 
-    renderHook(() => useDetectSSOCode({ onSignInComplete }))
     await waitFor(() => {
       expect(mockOAuthRegisterAccountStep2).toHaveBeenCalledWith(
         state,
@@ -210,6 +229,7 @@ describe('useDetectSSOCode tests', () => {
       expect(onSignInComplete).toHaveBeenCalled()
 
       expect(mockOAuthSessionRequest).not.toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
     })
   })
   it('Handles ORCID binding', async () => {
@@ -220,7 +240,9 @@ describe('useDetectSSOCode tests', () => {
     )
     mockBindOAuthProviderToAccount.mockResolvedValue(successfulLoginResponse)
 
-    renderHook(() => useDetectSSOCode({ onSignInComplete }))
+    const hookReturn = renderHook(() => useDetectSSOCode({ onSignInComplete }))
+    expect(hookReturn.result.current.isLoading).toBe(true)
+
     await waitFor(() => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
         PROVIDERS.ORCID,
@@ -230,7 +252,8 @@ describe('useDetectSSOCode tests', () => {
       )
 
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
-      expect(onSignInComplete).not.toHaveBeenCalled()
+      expect(onSignInComplete).toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
     })
   })
   it('Handles ORCID binding failure', async () => {
@@ -249,9 +272,11 @@ describe('useDetectSSOCode tests', () => {
     )
     mockBindOAuthProviderToAccount.mockRejectedValue(error)
 
-    renderHook(() =>
+    const hookReturn = renderHook(() =>
       useDetectSSOCode({ onSignInComplete, onError: mockOnError }),
     )
+    expect(hookReturn.result.current.isLoading).toBe(true)
+
     await waitFor(() => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
         PROVIDERS.ORCID,
@@ -264,6 +289,7 @@ describe('useDetectSSOCode tests', () => {
 
       expect(onSignInComplete).not.toHaveBeenCalled()
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
     })
     consoleSpy.mockReset()
   })

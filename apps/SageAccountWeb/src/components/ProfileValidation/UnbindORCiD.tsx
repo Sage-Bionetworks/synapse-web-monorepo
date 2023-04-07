@@ -2,8 +2,13 @@ import React from 'react'
 import { SynapseClient, Typography } from 'synapse-react-client'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
-import { Dialog, DialogActions, DialogContent, Button } from '@mui/material'
-import theme from 'style/theme'
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Button,
+  useTheme,
+} from '@mui/material'
 
 export const unbindORCiD = async (
   event: React.SyntheticEvent,
@@ -35,6 +40,7 @@ export type UnbindORCiDDialogProps = {
 }
 
 export const UnbindORCiDDialog = (props: UnbindORCiDDialogProps) => {
+  const theme = useTheme()
   const { accessToken } = useSynapseContext()
   return (
     <Dialog

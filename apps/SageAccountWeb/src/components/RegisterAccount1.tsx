@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, InputLabel, TextField } from '@mui/material'
+import { Box, InputLabel, TextField, useTheme } from '@mui/material'
 import { SynapseClient } from 'synapse-react-client'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
@@ -17,7 +17,6 @@ import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from 'AppContext'
 import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
-import theme from 'style/theme'
 import { BackButton } from './BackButton'
 import {
   StyledInnerContainer,
@@ -37,6 +36,7 @@ export enum Pages {
 
 export const RegisterAccount1 = (props: RegisterAccount1Props) => {
   const appContext = useAppContext()
+  const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')

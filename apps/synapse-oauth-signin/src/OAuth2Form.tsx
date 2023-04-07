@@ -17,34 +17,37 @@ import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/u
 import { getStateParam, getURLParam, handleErrorRedirect } from './URLUtils'
 import { Button, Link, Paper } from '@mui/material'
 import FullWidthAlert from 'synapse-react-client/dist/containers/FullWidthAlert'
-import { useOAuthAppContext } from './OAuthAppContext'
 import { OAuthClientError } from './OAuthClientError'
 import { StyledInnerContainer } from './StyledInnerContainer'
 import {
   preparePostSSORedirect,
   redirectAfterSSO,
 } from 'synapse-react-client/dist/utils/AppUtils'
+import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
+import { useHistory } from 'react-router-dom'
+import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 
 export function OAuth2Form() {
   const isMounted = useRef(true)
 
-  const { accessToken, setAccessToken, twoFactorAuthErrorResponse } =
-    useOAuthAppContext()
+  const { accessToken } = useSynapseContext()
+  const { refreshSession, twoFactorAuthSSOErrorResponse, clearSession } =
+    useApplicationSessionContext()
+  const history = useHistory()
+
   const [error, setError] = useState<any>()
 
   const onError = useCallback(
     (error: Error | OAuthClientError | SynapseClientError) => {
       if (error instanceof SynapseClientError && error.status === 401) {
         // invalid token, so clear it
-        SynapseClient.signOut().then(() => {
-          setAccessToken(undefined)
-        })
+        clearSession()
       } else {
         handleErrorRedirect(error)
         setError(error)
       }
     },
-    [setAccessToken],
+    [clearSession],
   )
 
   // In addition to fetching the current user profile, the success of this request will determine if the current access token is valid.
@@ -64,29 +67,6 @@ export function OAuth2Form() {
   const [isPreviousAuthCheckComplete, setIsPreviousAuthCheckComplete] =
     useState<boolean>(false)
   const [isConsenting, setIsConsenting] = useState<boolean>(false)
-
-  useEffect(() => {
-    isMounted.current = true
-    return () => {
-      isMounted.current = false
-    }
-  })
-
-  const getSession = useCallback(async () => {
-    try {
-      const newAccessToken = await SynapseClient.getAccessTokenFromCookie()
-      if (isMounted.current) {
-        setAccessToken(newAccessToken)
-      }
-    } catch (e) {
-      console.error('Error on getSession: ', e)
-      // intentionally calling sign out because the token could be stale so we want
-      // the stored session to be cleared out.
-      await SynapseClient.signOut().then(() => {
-        setAccessToken(undefined)
-      })
-    }
-  }, [setAccessToken])
 
   const sendGTagEvent = (event: string) => {
     // send event to Google Analytics
@@ -290,14 +270,14 @@ export function OAuth2Form() {
   }, [redirectURL])
 
   const isLoadingProfile =
-    !twoFactorAuthErrorResponse &&
+    !twoFactorAuthSSOErrorResponse &&
     !error &&
     profile &&
     !isPreviousAuthCheckComplete
   const isLoadingClientInfo =
     !error && !oauthClientInfo && !oidcRequestDescription
   const isRedirecting = redirectURL && oauthClientInfo
-  const promptForTwoFactorAuth = !!twoFactorAuthErrorResponse
+  const promptForTwoFactorAuth = !!twoFactorAuthSSOErrorResponse
 
   const isLoading =
     !promptForTwoFactorAuth &&
@@ -410,7 +390,7 @@ export function OAuth2Form() {
           </StyledInnerContainer>
         )}
       {isLoading && loadingSpinner}
-      {(!!twoFactorAuthErrorResponse ||
+      {(!!twoFactorAuthSSOErrorResponse ||
         (!redirectURL &&
           !error &&
           !accessToken &&
@@ -424,11 +404,11 @@ export function OAuth2Form() {
               preparePostSSORedirect()
             }}
             sessionCallback={() => {
-              getSession().then(() => {
-                redirectAfterSSO()
+              refreshSession().then(() => {
+                redirectAfterSSO(history)
               })
             }}
-            twoFactorAuthenticationRequired={twoFactorAuthErrorResponse}
+            twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
           />
         </Paper>
       )}

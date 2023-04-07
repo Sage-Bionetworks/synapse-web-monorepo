@@ -4,9 +4,8 @@ import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseT
 import CheckIcon from '@mui/icons-material/Check'
 //agendelTODO: mobe to sage account page
 //import { UnbindORCiDDialog } from 'components/ProfileValidation/UnbindORCiD'
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, useTheme } from '@mui/material'
 import { ContinueButton } from './ContinueButton'
-import theme from 'style/theme'
 
 import { ReturnToAppButton } from './ReturnToAppButton'
 
@@ -16,6 +15,7 @@ export type VerifyIdentifyProps = {
 }
 
 export const VerifyIdentify = (props: VerifyIdentifyProps) => {
+  const theme = useTheme()
   const { verificationSubmission } = props
   const [attachments] = useState(verificationSubmission.attachments)
 
