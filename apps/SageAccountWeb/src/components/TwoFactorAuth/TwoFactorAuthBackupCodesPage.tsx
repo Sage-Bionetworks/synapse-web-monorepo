@@ -10,14 +10,10 @@ import TwoFactorBackupCodes from 'synapse-react-client/dist/containers/auth/TwoF
 export default function TwoFactorAuthBackupCodesPage() {
   const history = useHistory()
   const { search } = useLocation()
-  let showWarning = true
   const warn = new URLSearchParams(search).get('warn')
-  if (warn === 'false') {
-    showWarning = false
-  }
   return (
     <TwoFactorBackupCodes
-      showReplaceOldCodesWarning={showWarning}
+      showReplaceOldCodesWarning={warn !== 'false'}
       onClose={() => history.push('/authenticated/myaccount')}
     />
   )
