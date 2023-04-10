@@ -1,17 +1,17 @@
-import { Badge, Drawer, List, ListItem } from '@mui/material'
+import { Badge, Drawer, List, ListItemButton, Tooltip } from '@mui/material'
 import React, { useState } from 'react'
 import { Form } from 'react-bootstrap'
 import SynapseIconWhite from '../assets/icons/SynapseIconWhite'
 import SynapseLogoName from '../assets/icons/SynapseLogoName'
 import { SynapseClient } from '../utils'
-import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useDataAccessSubmission'
-import { useGetDownloadListStatistics } from '../utils/hooks/SynapseAPI/download/useDownloadList'
-import { useGetCurrentUserBundle } from '../utils/hooks/SynapseAPI/user/useUserBundle'
-import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
+import {
+  useGetCurrentUserBundle,
+  useGetDownloadListStatistics,
+  useSearchAccessSubmissionsInfinite,
+} from '../utils/hooks/SynapseAPI'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { Direction, SubmissionState } from '../utils/synapseTypes'
 import { SubmissionSortField } from '../utils/synapseTypes/AccessSubmission'
-import { Tooltip } from '@mui/material'
 import { CreateProjectModal } from './CreateProjectModal'
 import IconSvg, { Icon } from './IconSvg'
 import UserCard from './UserCard'
@@ -47,7 +47,7 @@ export enum NavItem {
 // To support project search, we send this json object in the url.
 // We update the queryTerm array based on user input.
 const projectSearchJson = {
-  queryTerm: [],
+  queryTerm: [] as string[],
   booleanQuery: [
     {
       key: 'node_type',
@@ -123,10 +123,8 @@ const NavDrawerListItem = (props: MenuItemParams) => {
 
   const listItem = (
     <Tooltip title={tooltip} placement="right">
-      <ListItem
-        button
+      <ListItemButton
         key={iconName}
-        data-testid={`${tooltip}`}
         onClick={handler}
         className="SRC-whiteText"
         selected={isCurrentlySelectedItem}
@@ -134,7 +132,7 @@ const NavDrawerListItem = (props: MenuItemParams) => {
         <Badge badgeContent={badgeContent} color="secondary">
           {item}
         </Badge>
-      </ListItem>
+      </ListItemButton>
     </Tooltip>
   )
 
@@ -190,8 +188,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
       ],
     },
     {
-      enabled:
-        currentUserBundle?.isACTMember || currentUserBundle?.isARReviewer,
+      enabled: currentUserBundle?.isARReviewer,
     },
   )
 
@@ -221,8 +218,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
   }
 
   const onProjectSearch = (searchTerm: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    projectSearchJson.queryTerm = searchTerm.split(/[ ,]+/) as any
+    projectSearchJson.queryTerm = searchTerm.split(/[ ,]+/)
     window.location.href = `/#!Search:${encodeURI(
       JSON.stringify(projectSearchJson),
     )}`
@@ -286,17 +282,16 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 handleDrawerClose={handleDrawerClose}
                 handleDrawerOpen={handleDrawerOpen}
               />
-              {isInSynapseExperimentalMode() &&
-                currentUserBundle?.isARReviewer && (
-                  <NavDrawerListItem
-                    tooltip="Data Access Management"
-                    iconName="accessManagement"
-                    onClickGoToUrl="/#!DataAccessManagement:default/Submissions"
-                    badgeContent={countOfOpenSubmissionsForReview}
-                    handleDrawerClose={handleDrawerClose}
-                    handleDrawerOpen={handleDrawerOpen}
-                  />
-                )}
+              {currentUserBundle?.isARReviewer && (
+                <NavDrawerListItem
+                  tooltip="Data Access Management"
+                  iconName="accessManagement"
+                  onClickGoToUrl="/#!DataAccessManagement:default/Submissions"
+                  badgeContent={countOfOpenSubmissionsForReview}
+                  handleDrawerClose={handleDrawerClose}
+                  handleDrawerOpen={handleDrawerOpen}
+                />
+              )}
             </>
           )}
           <NavDrawerListItem

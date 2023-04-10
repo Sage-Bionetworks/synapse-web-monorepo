@@ -8,7 +8,7 @@
     display: block;
   }
   .SynapseNavDrawerMenu {
-    .MuiListItem-button:hover,
+    .MuiListItemButton-root:hover,
     .Mui-selected {
       border-left: 7px solid SRC.$secondary-action-color;
       padding-left: 9px;
@@ -24,7 +24,7 @@
       flex-grow: 1;
     }
   }
-  .MuiListItem-root {
+  .MuiListItemButton-root {
     padding-top: 14px;
     padding-bottom: 14px;
   }
