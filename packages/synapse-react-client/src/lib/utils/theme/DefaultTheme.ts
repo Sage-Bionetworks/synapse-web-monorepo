@@ -4,7 +4,7 @@ import palette from './palette/Palettes'
 import { Fade } from '@mui/material'
 import linkTheme from './typography/Link'
 
-const defaultMuiTheme: ThemeOptions = {
+const defaultMuiThemeOptions: ThemeOptions = {
   typography: typographyOptions,
   palette: palette,
   components: {
@@ -55,36 +55,50 @@ const defaultMuiTheme: ThemeOptions = {
     MuiDialog: {
       defaultProps: {
         PaperProps: {
-          sx: {
+          sx: theme => ({
             borderRadius: '0px',
-            padding: '35px',
+            padding: theme.spacing(5.5),
             alignSelf: 'flex-start',
-          },
+          }),
         },
       },
     },
     MuiDialogTitle: {
       styleOverrides: {
         root: ({ theme }) => ({
-          borderBottom: `1px solid ${theme.palette.grey[300]}`,
-          padding: '0px 0px 20px',
-          marginBottom: '20px',
+          fontSize: '24px',
+          fontWeight: 700,
+          paddingLeft: '0px',
+          paddingRight: '0px',
+          paddingBottom: theme.spacing(3),
         }),
       },
     },
     MuiDialogContent: {
+      defaultProps: {
+        dividers: true,
+      },
       styleOverrides: {
-        root: {
-          padding: '0px',
-        },
+        root: ({ theme }) => ({
+          color: theme.palette.text.secondary,
+          paddingTop: theme.spacing(3),
+          paddingBottom: theme.spacing(3),
+          paddingLeft: '0px',
+          paddingRight: '0px',
+        }),
       },
     },
     MuiDialogActions: {
       styleOverrides: {
         root: ({ theme }) => ({
-          padding: '20px 0px 0px',
-          marginTop: '20px',
-          borderTop: `1px solid ${theme.palette.grey[300]}`,
+          paddingLeft: '0px',
+          paddingRight: '0px',
+          paddingTop: theme.spacing(3),
+          '& .MuiButton-root': {
+            height: '36px',
+            padding: '0px 16px',
+            borderRadius: 0,
+          },
         }),
       },
     },
@@ -138,6 +152,8 @@ const defaultMuiTheme: ThemeOptions = {
       },
     },
   },
+  styledBackground:
+    "url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg')",
 }
 
-export default defaultMuiTheme
+export default defaultMuiThemeOptions

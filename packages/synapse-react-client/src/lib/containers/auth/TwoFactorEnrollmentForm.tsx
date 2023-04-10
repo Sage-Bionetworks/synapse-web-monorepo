@@ -4,6 +4,7 @@ import {
   BoxProps,
   Button,
   Divider,
+  IconButton,
   Link,
   Paper,
   Stack,
@@ -23,6 +24,7 @@ import {
   useStartTwoFactorEnrollment,
 } from '../../utils/hooks/SynapseAPI/auth/useTwoFactorEnrollment'
 import TwoFactorSecretDialog from './TwoFactorSecretDialog'
+import IconSvg from '../IconSvg'
 
 /**
  * Returns a URL that can be used to generate a QR code that 2FA authenticator apps can interpret
@@ -64,12 +66,13 @@ export const TWO_FACTOR_DOCS_LINK = ''
 
 export type TwoFactorEnrollmentFormProps = {
   onTwoFactorEnrollmentSuccess: () => void
+  onBackClicked: () => void
 }
 
 export default function TwoFactorEnrollmentForm(
   props: TwoFactorEnrollmentFormProps,
 ) {
-  const { onTwoFactorEnrollmentSuccess } = props
+  const { onTwoFactorEnrollmentSuccess, onBackClicked } = props
 
   const [totp, setTotp] = useState('')
   const [hasQrCode, setHasQrCode] = useState(false)
@@ -113,12 +116,32 @@ export default function TwoFactorEnrollmentForm(
     <StyledOuterContainer>
       <Paper
         sx={{
+          position: 'relative',
           width: '800px',
           py: 6.5,
           px: 8,
           mx: 'auto',
         }}
       >
+        {onBackClicked && (
+          <IconButton
+            type="button"
+            onClick={() => {
+              onBackClicked()
+            }}
+            sx={theme => ({
+              position: 'absolute',
+              top: theme.spacing(2),
+              left: theme.spacing(2),
+            })}
+          >
+            <IconSvg
+              icon="arrowBack"
+              wrap={false}
+              sx={{ height: '24px', width: '24px' }}
+            />
+          </IconButton>
+        )}
         <Section>
           <Typography variant="headline2" sx={{ mb: 3 }}>
             Activate Two-factor Authentication

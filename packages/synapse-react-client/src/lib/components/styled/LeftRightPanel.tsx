@@ -4,12 +4,11 @@ import { StyledComponent } from '@emotion/styled'
 
 export const StyledOuterContainer: StyledComponent<BoxProps> = styled(Box, {
   label: 'StyledOuterContainer',
-})(() => ({
+})(({ theme }) => ({
   minHeight: '100vh',
   paddingTop: '50px',
   paddingBottom: '50px',
-  background:
-    "linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0)), url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg')",
+  background: theme.styledBackground,
   backgroundSize: 'cover',
 }))
 

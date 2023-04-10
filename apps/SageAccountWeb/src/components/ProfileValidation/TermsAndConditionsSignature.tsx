@@ -24,7 +24,7 @@ export const TermsAndConditionsSignature: React.FC<
 > = ({ canSign, onSigned, expectedSignature }) => {
   return (
     <>
-      <Typography variant="body1" sx={tcSignatureTextSx}>
+      <Typography variant="subtitle1" sx={tcSignatureTextSx}>
         After agreeing to the above terms, electronically sign this agreement by
         typing your full name, as it appears below, to acknowledge your
         agreement with the terms stated above. You must sign in order to

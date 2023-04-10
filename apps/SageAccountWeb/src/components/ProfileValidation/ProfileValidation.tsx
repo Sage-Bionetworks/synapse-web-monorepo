@@ -34,7 +34,7 @@ const STEP_CONTENT = [
     body: (
       <>
         <Typography
-          variant="body1"
+          variant="subtitle1"
           sx={theme => ({ fontWeight: 500, marginBottom: theme.spacing(3) })}
         >
           During <strong>identity verification</strong>, our data governance
@@ -79,7 +79,7 @@ const STEP_CONTENT = [
     title: 'Submit recent identity attestation documentation.',
     body: (
       <>
-        <Typography variant="body2" paragraph>
+        <Typography variant="body1" paragraph>
           This document must be current within the past month. Acceptable forms
           of documentation, in English, are any one of the following:{' '}
         </Typography>
@@ -91,7 +91,7 @@ const STEP_CONTENT = [
           }}
         >
           <li>
-            <Typography variant="body2">
+            <Typography variant="body1">
               A letter from a signing official on letterhead attesting to your
               identity (
               <Link
@@ -110,13 +110,13 @@ const STEP_CONTENT = [
             </Typography>
             <Typography
               sx={theme => ({ textAlign: 'center', margin: theme.spacing(1) })}
-              variant="body2"
+              variant="body1"
             >
               OR
             </Typography>
           </li>
           <li>
-            <Typography variant="body2">
+            <Typography variant="body1">
               A notarized letter attesting to your identity (
               <Link
                 color="primary"
@@ -129,17 +129,17 @@ const STEP_CONTENT = [
             </Typography>
             <Typography
               sx={theme => ({ textAlign: 'center', margin: theme.spacing(1) })}
-              variant="body2"
+              variant="body1"
             >
               OR
             </Typography>
           </li>
           <li>
-            <Typography variant="body2" paragraph>
+            <Typography variant="body1" paragraph>
               A copy of your professional license (e.g., a photocopy of your
               medical license).&nbsp;
             </Typography>
-            <Typography variant="body2" paragraph>
+            <Typography variant="body1" paragraph>
               <i>
                 Note that a copy of a work or university identification badge is{' '}
                 <strong>not</strong> an accepted form of identity attestation

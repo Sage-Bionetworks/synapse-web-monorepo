@@ -54,7 +54,7 @@ export const SourceAppLogo: React.FC<{ sx?: SxProps }> = ({ sx }) => {
 export const SourceAppDescription = () => {
   const sourceAppConfig = useSourceApp()
   return sourceAppConfig ? (
-    <Typography className="description" variant="body1">
+    <Typography className="description" variant="subtitle1">
       {sourceAppConfig?.description}
     </Typography>
   ) : (
