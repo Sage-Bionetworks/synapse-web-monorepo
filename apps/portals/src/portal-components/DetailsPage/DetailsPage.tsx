@@ -165,7 +165,7 @@ export default function DetailsPage(props: DetailsPageProps) {
           onClick={goToExplorePage}
           className="SRC-standard-button-shape SRC-primary-background-color SRC-whiteText"
         >
-          CONTINUE EXPLORING
+          Continue Exploring
         </button>
       </div>
     )

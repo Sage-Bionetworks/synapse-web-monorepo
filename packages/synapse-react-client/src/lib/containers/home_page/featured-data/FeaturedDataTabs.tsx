@@ -69,7 +69,7 @@ const FeaturedDataTabs: React.FunctionComponent<
                 size="lg"
                 href={selectedTabProps.explorePagePath}
               >
-                EXPLORE ALL {selectedTabProps.exploreObjectType?.toUpperCase()}
+                Explore All {selectedTabProps.exploreObjectType}
               </Button>
             </div>
           )}

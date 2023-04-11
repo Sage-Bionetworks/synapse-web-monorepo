@@ -56,7 +56,7 @@ const routes: GenericRoute[] = [
           ],
           size: SynapseConstants.MEDIUM_USER_CARD,
           useQueryResultUserData: true,
-          summaryLinkText: 'EXPLORE ALL PEOPLE',
+          summaryLinkText: 'Explore All People',
           summaryLink: '/Explore/People',
           count: 6,
         },

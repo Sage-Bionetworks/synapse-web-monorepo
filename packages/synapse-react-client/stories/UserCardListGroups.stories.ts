@@ -28,7 +28,7 @@ export const Demo: Story = {
     ],
     size: MEDIUM_USER_CARD,
     useQueryResultUserData: false,
-    summaryLinkText: 'EXPLORE ALL PEOPLE',
+    summaryLinkText: 'Explore All People',
     summaryLink: '/Explore/People',
     count: 6,
   },

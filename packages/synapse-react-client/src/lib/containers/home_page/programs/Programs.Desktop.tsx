@@ -46,7 +46,7 @@ export default function ProgramsDesktop({
           href={exploreLink}
           className="pill"
         >
-          EXPLORE
+          Explore
         </Button>
       </div>
     </div>

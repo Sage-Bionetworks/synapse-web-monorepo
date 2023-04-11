@@ -2,7 +2,7 @@
 @use 'sass:map';
 
 .Chip {
-  border-radius: 3px;
+  border-radius: SRC.$button-border-radius;
   padding: 4px 6px;
   margin: 4px 4px 4px 0;
   &:hover {

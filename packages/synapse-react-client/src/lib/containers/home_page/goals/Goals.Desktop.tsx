@@ -32,7 +32,7 @@ export default function GoalsDesktop({
           variant="secondary"
           href={link}
         >
-          EXPLORE
+          Explore
         </Button>
       </div>
     </div>

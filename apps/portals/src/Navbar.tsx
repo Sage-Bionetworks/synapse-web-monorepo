@@ -214,7 +214,7 @@ function Navbar() {
                     setShowLoginDialog(true)
                   }}
                 >
-                  SIGN&nbsp;IN
+                  Sign&nbsp;In
                 </Button>
                 <Dialog
                   onClose={() => {

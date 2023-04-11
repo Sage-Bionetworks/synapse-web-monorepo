@@ -611,7 +611,7 @@ export default class SynapseForm extends React.Component<
             className="btn btn-link"
             onClick={() => this.toggleExcludeStep(currentStep.id, false)}
           >
-            INCLUDE
+            Include
           </button>
         </div>
       )
@@ -626,7 +626,7 @@ export default class SynapseForm extends React.Component<
               this.showExcludeStateWarningModal(this.state.currentStep.id)
             }
           >
-            SKIP
+            Skip
           </button>
         </div>
       )

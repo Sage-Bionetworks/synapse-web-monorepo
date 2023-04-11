@@ -196,7 +196,7 @@ export default class RssFeedCards extends React.Component<
                   }
                   target="_blank"
                 >
-                  {viewAllNewsButtonText ?? 'VIEW ALL NEWS'}
+                  {viewAllNewsButtonText ?? 'View All News'}
                 </Button>
               </div>
             )}

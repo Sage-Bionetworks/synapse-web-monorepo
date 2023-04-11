@@ -151,7 +151,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             allowCategories: [],
             // mailChimpListName: 'study specific list name????',
             // mailChimpUrl:'https://study specific url????'
-            viewAllNewsButtonText: 'VIEW ALL DATA UPDATES',
+            viewAllNewsButtonText: 'View All Data Updates',
           },
         },
         {

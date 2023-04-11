@@ -38,7 +38,7 @@ export default function ProgramsMobile({
       )}
       <p>{summary}</p>
       <Button variant="secondary" size="lg" href={exploreLink} className="pill">
-        EXPLORE
+        Explore
       </Button>
     </div>
   )

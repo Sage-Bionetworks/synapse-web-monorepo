@@ -16,6 +16,6 @@ export const Demo: Story = {
     setName: 'Individuals (#) per Assay',
     combinationName: 'Individuals (#)',
     summaryLink: '#',
-    summaryLinkText: 'EXPLORE ALL OF SOMETHING',
+    summaryLinkText: 'Explore All Of Something',
   },
 }

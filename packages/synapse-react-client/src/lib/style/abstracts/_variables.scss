@@ -120,12 +120,17 @@ $breakpoints: (
   'large': 1024px,
 ) !default;
 
+// Buttons
+$button-border-radius: 3px;
+$button-text-transform: capitalize;
+
 // To reset bootstrap button style
 %button-reset {
   border: 0;
   outline: none;
   box-shadow: none;
-  border-radius: 2px;
+  border-radius: $button-border-radius;
+  text-transform: $button-text-transform;
 }
 
 // Form Control

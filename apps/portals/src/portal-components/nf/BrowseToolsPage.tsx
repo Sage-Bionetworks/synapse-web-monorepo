@@ -103,7 +103,7 @@ const BrowseToolsPage = () => {
           </button>
         </div>
         <div className="center-content bootstrap-4-backport">
-          <Button className="pill-xl" variant="primary" onClick={() => gotoExploreTools()}>VIEW ALL TOOLS</Button>
+          <Button className="pill-xl" variant="primary" onClick={() => gotoExploreTools()}>View All Tools</Button>
         </div>
       </Layout>
       <div className="home-container-description  home-bg-dark home-spacer">
@@ -180,7 +180,7 @@ const BrowseToolsPage = () => {
           </div>
         </div>
         <div className="center-content bootstrap-4-backport">
-          <Button href="https://help.nf.synapse.org/NFdocs/2555543592.html" className="pill-xl highlightSubmitToolButton" variant="secondary" target="_blank">SUBMIT A TOOL</Button>
+          <Button href="https://help.nf.synapse.org/NFdocs/2555543592.html" className="pill-xl highlightSubmitToolButton" variant="secondary" target="_blank">Submit A Tool</Button>
         </div>
       </Layout>
     </div>

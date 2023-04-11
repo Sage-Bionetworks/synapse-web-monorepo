@@ -28,7 +28,7 @@ export default function GoalsMobile({
         className="pill Goals__Mobile__Content__Link"
         href={link}
       >
-        EXPLORE
+        Explore
       </Button>
     </div>
   )
