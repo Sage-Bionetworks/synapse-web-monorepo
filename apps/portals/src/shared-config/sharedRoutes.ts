@@ -1,4 +1,4 @@
-import { GenericRoute, NestedRoute } from 'types/portal-config'
+import { GenericRoute, NestedRoute } from '../types/portal-config'
 
 const homeRoute: GenericRoute = {
   path: '',

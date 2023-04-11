@@ -1,10 +1,9 @@
 import * as React from 'react'
 import { Route, useLocation, useRouteMatch } from 'react-router-dom'
-import { SynapseComponent } from 'SynapseComponent'
-import { SynapseConfig, GenericRoute } from 'types/portal-config'
-import { scrollToWithOffset } from 'utils'
-import docTitleConfig from 'config/docTitleConfig.json'
-import routesConfig from 'config/routesConfig'
+import { SynapseComponent } from './SynapseComponent'
+import { SynapseConfig, GenericRoute } from './types/portal-config'
+import { scrollToWithOffset } from './utils'
+import routesConfig from './config/routesConfig'
 import Layout from './portal-components/Layout'
 import sharedRouteConfig from './shared-config/sharedRoutes'
 
@@ -100,10 +99,10 @@ function RecursiveRouteRenderer(props: {
   const pageName = route.displayName ?? route.path?.replaceAll('/', '')
   const getPageName = () =>
     pageName
-      ? `${docTitleConfig.name} - ${pageName}`
+      ? `${import.meta.env.VITE_PORTAL_NAME} - ${pageName}`
       : getPageNameFromParentRoute()
-  
-      // if there are children, don't update the title
+
+  // if there are children, don't update the title
   if (!route.routes || route.routes.length === 0) {
     const newTitle: string = getPageName()
     if (document.title !== newTitle) {
@@ -145,7 +144,7 @@ const RouteResolver = () => {
   return (
     <RecursiveRouteRenderer
       route={ROUTES}
-      getPageNameFromParentRoute={() => docTitleConfig.name}
+      getPageNameFromParentRoute={() => import.meta.env.VITE_PORTAL_NAME}
     />
   )
 }

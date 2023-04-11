@@ -1,4 +1,3 @@
-import 'raf/polyfill' // polyfill for requestAnimationFrame
 import 'whatwg-fetch'
 
 declare var global: any

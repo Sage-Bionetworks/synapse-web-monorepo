@@ -1,4 +1,4 @@
-import { GenericRoute } from 'types/portal-config'
+import { GenericRoute } from '../types/portal-config'
 
 // Constants used for testing
 export const ABOUT_INDEX = 2
@@ -71,7 +71,7 @@ routes[HOME_INDEX] = {
       title: 'Some Markdown',
       name: 'Markdown',
       props: {
-        markdown: "Markdown on the home page"
+        markdown: 'Markdown on the home page',
       },
     },
   ],

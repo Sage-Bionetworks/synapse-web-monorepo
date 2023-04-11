@@ -9,10 +9,11 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { DetailsPageTabProps, RowSynapseConfig } from 'types/portal-util-types'
+import {
+  DetailsPageTabProps,
+  RowSynapseConfig,
+} from '../../types/portal-util-types'
 import syn16787123Json from '../../mocks/syn16787123.json'
-import { SynapseConfig } from 'types/portal-config'
-import { assert } from 'console'
 import {
   AsynchronousJobStatus,
   EntityHeader,
@@ -20,7 +21,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from 'synapse-react-client/dist/utils/synapseTypes'
-import * as SynapseComponentModule from 'SynapseComponent'
+import * as SynapseComponentModule from '../../SynapseComponent'
 import { MemoryRouter } from 'react-router-dom'
 import * as SynapseClient from 'synapse-react-client/dist/utils/SynapseClient'
 import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
@@ -69,8 +70,6 @@ const expected: PaginatedResults<EntityHeader> = {
 }
 
 jest.spyOn(SynapseClient, 'getEntityHeaders').mockResolvedValue(expected)
-
-let getSynapseConfig: () => SynapseConfig
 
 describe('DetailsPage tests', () => {
   it('Renders synapseConfigArray with no tabs', async () => {
@@ -247,12 +246,9 @@ describe('DetailsPage tests', () => {
   })
 
   it('Test overrideSqlSourceTable', async () => {
-    jest
+    const mockSynapseComponent = jest
       .spyOn(SynapseComponentModule, 'SynapseComponent')
-      .mockImplementation(({ synapseConfig }) => {
-        getSynapseConfig = () => {
-          return synapseConfig
-        }
+      .mockImplementation(() => {
         return <div>My Query Wrapper Plot Nav</div>
       })
 
@@ -282,16 +278,25 @@ describe('DetailsPage tests', () => {
     }
     renderWithContext(
       <SplitStringToComponent
+        overrideSqlSourceTable={true}
         splitString="syn26843747"
         deepCloneOfProps={deepCloneOfProps}
         el={queryPlotNavRowConfig}
         columnName="id"
       />,
     )
-    await waitFor(() => screen.getByText('My Query Wrapper Plot Nav'))
-    const modifiedSynapseConfig = getSynapseConfig()
-    assert(
-      modifiedSynapseConfig!.props!['sql'] === 'SELECT  *  FROM  syn26843747',
-    )
+    await waitFor(() => {
+      screen.getByText('My Query Wrapper Plot Nav')
+      expect(mockSynapseComponent).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          synapseConfig: expect.objectContaining({
+            props: expect.objectContaining({
+              sql: 'SELECT  *  FROM  syn26843747',
+            }),
+          }),
+        }),
+        expect.anything(),
+      )
+    })
   })
 })

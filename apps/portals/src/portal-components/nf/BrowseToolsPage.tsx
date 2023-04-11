@@ -1,5 +1,5 @@
-import { popularSearchesSql, toolsSql } from 'configurations/nf/resources'
-import Layout from 'portal-components/Layout'
+import { popularSearchesSql, toolsSql } from '../../configurations/nf/resources'
+import Layout from '../Layout'
 import * as React from 'react'
 import { Button, Form } from 'react-bootstrap'
 import { Typography } from 'synapse-react-client'
@@ -15,16 +15,20 @@ import { ReactComponent as CellLines } from './assets/cell-lines.svg'
 import { ReactComponent as PlasmidsReagents } from './assets/plasmids-reagents.svg'
 import PopularSearches from './PopularSearches'
 
-export const gotoExploreToolsWithFullTextSearch = (fullTextSearchString: string) => {
+export const gotoExploreToolsWithFullTextSearch = (
+  fullTextSearchString: string,
+) => {
   const filter: TextMatchesQueryFilter = {
-    concreteType: "org.sagebionetworks.repo.model.table.TextMatchesQueryFilter",
+    concreteType: 'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
     searchExpression: fullTextSearchString,
   }
   const query: Query = {
     sql: toolsSql,
     additionalFilters: [filter],
   }
-  window.location.assign(`/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`)
+  window.location.assign(
+    `/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`,
+  )
 }
 
 const BrowseToolsPage = () => {
@@ -38,13 +42,16 @@ const BrowseToolsPage = () => {
       sql: toolsSql,
       selectedFacets: [
         {
-          concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
           columnName: 'resourceType',
-          facetValues: [selectedResource]
-        }
+          facetValues: [selectedResource],
+        },
       ],
     }
-    window.location.assign(`/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`)
+    window.location.assign(
+      `/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`,
+    )
   }
 
   return (
@@ -57,7 +64,12 @@ const BrowseToolsPage = () => {
           <div className="center-content">
             <div className="description">
               <Typography variant="body1">
-                The NF Research Tools Database aims to support the development of a robust research toolkit and lower the barrier of entry to neurofibromatosis (NF) research. The database includes NF-associated animal models, cell lines, antibodies, and genetic reagents and details on tool characteristics and sourcing, as well as observational and experimental data.
+                The NF Research Tools Database aims to support the development
+                of a robust research toolkit and lower the barrier of entry to
+                neurofibromatosis (NF) research. The database includes
+                NF-associated animal models, cell lines, antibodies, and genetic
+                reagents and details on tool characteristics and sourcing, as
+                well as observational and experimental data.
               </Typography>
             </div>
           </div>
@@ -71,39 +83,47 @@ const BrowseToolsPage = () => {
           Drill-down to explore specific types of NF research tools.
         </Typography>
         <div className="categories">
-          <button onClick={() => gotoExploreToolsWithSelectedResource('Animal Model')}>
+          <button
+            onClick={() => gotoExploreToolsWithSelectedResource('Animal Model')}
+          >
             <AnimalModels />
-            <Typography variant="headline3">
-              Animal Models
-            </Typography>
+            <Typography variant="headline3">Animal Models</Typography>
           </button>
-          <button onClick={() => gotoExploreToolsWithSelectedResource('Antibody')}>
+          <button
+            onClick={() => gotoExploreToolsWithSelectedResource('Antibody')}
+          >
             <Antibodies />
-            <Typography variant="headline3">
-              Antibodies
-            </Typography>
+            <Typography variant="headline3">Antibodies</Typography>
           </button>
-          <button onClick={() => gotoExploreToolsWithSelectedResource('Genetic Reagent')}>
+          <button
+            onClick={() =>
+              gotoExploreToolsWithSelectedResource('Genetic Reagent')
+            }
+          >
             <PlasmidsReagents />
-            <Typography variant="headline3">
-              Genetic Reagents
-            </Typography>
+            <Typography variant="headline3">Genetic Reagents</Typography>
           </button>
-          <button onClick={() => gotoExploreToolsWithSelectedResource('Cell Line')}>
+          <button
+            onClick={() => gotoExploreToolsWithSelectedResource('Cell Line')}
+          >
             <CellLines />
-            <Typography variant="headline3">
-              Cell Lines
-            </Typography>
+            <Typography variant="headline3">Cell Lines</Typography>
           </button>
-          <button onClick={() => gotoExploreToolsWithSelectedResource('Biobank')}>
+          <button
+            onClick={() => gotoExploreToolsWithSelectedResource('Biobank')}
+          >
             <Biobanks />
-            <Typography variant="headline3">
-              Biobanks
-            </Typography>
+            <Typography variant="headline3">Biobanks</Typography>
           </button>
         </div>
         <div className="center-content bootstrap-4-backport">
-          <Button className="pill-xl" variant="primary" onClick={() => gotoExploreTools()}>VIEW ALL TOOLS</Button>
+          <Button
+            className="pill-xl"
+            variant="primary"
+            onClick={() => gotoExploreTools()}
+          >
+            VIEW ALL TOOLS
+          </Button>
         </div>
       </Layout>
       <div className="home-container-description  home-bg-dark home-spacer">
@@ -113,13 +133,15 @@ const BrowseToolsPage = () => {
         <div className="center-content">
           <div className="searchToolsRow">
             <div className="searchInputWithIcon">
-              <IconSvg icon='searchOutlined' />
-              <Form.Control type="search" placeholder=""
+              <IconSvg icon="searchOutlined" />
+              <Form.Control
+                type="search"
+                placeholder=""
                 value={searchText}
-                onChange={event => {
+                onChange={(event) => {
                   setSearchText(event.target.value)
                 }}
-                onKeyPress={evt => {
+                onKeyPress={(evt) => {
                   if (evt.key === 'Enter') {
                     gotoExploreToolsWithFullTextSearch(searchText)
                   }
@@ -127,12 +149,22 @@ const BrowseToolsPage = () => {
               />
             </div>
             <div className="search-button-container bootstrap-4-backport">
-              <Button className="pill-xl" variant="primary" onClick={() => gotoExploreToolsWithFullTextSearch(searchText)}>SEARCH</Button>
+              <Button
+                className="pill-xl"
+                variant="primary"
+                onClick={() => gotoExploreToolsWithFullTextSearch(searchText)}
+              >
+                SEARCH
+              </Button>
             </div>
             <div className="help-popover">
               <HelpPopover
-                markdownText={'This search bar is powered by MySQL Full Text Search.'}
-                helpUrl={'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html'}
+                markdownText={
+                  'This search bar is powered by MySQL Full Text Search.'
+                }
+                helpUrl={
+                  'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html'
+                }
                 placement="left"
               />
             </div>
@@ -145,7 +177,7 @@ const BrowseToolsPage = () => {
           <PopularSearches sql={popularSearchesSql} />
         </div>
       </div>
-      
+
       <Layout outsideContainerClassName="home-spacer">
         <Typography variant="sectionTitle" className="sectionTitle">
           Recently Added Tools
@@ -165,7 +197,13 @@ const BrowseToolsPage = () => {
           />
         </div>
         <div className="center-content bootstrap-4-backport">
-          <Button className="pill-xl" variant="primary" onClick={() => gotoExploreTools()}>VIEW ALL TOOLS</Button>
+          <Button
+            className="pill-xl"
+            variant="primary"
+            onClick={() => gotoExploreTools()}
+          >
+            VIEW ALL TOOLS
+          </Button>
         </div>
       </Layout>
       <Layout outsideContainerClassName="home-spacer highlightSubmitToolContainer">
@@ -175,12 +213,23 @@ const BrowseToolsPage = () => {
         <div className="center-content">
           <div className="description">
             <Typography variant="body1">
-              We are currently accepting submissions that describe any NF1-related mouse model, cell line, genetic reagent (e.g. plasmid, CRISPR), antibody, or biobank. If you have a tool that you would like to add to the Research Tools Database, please click the {'"'}Submit a Tool{'"'} button below to learn more.
+              We are currently accepting submissions that describe any
+              NF1-related mouse model, cell line, genetic reagent (e.g. plasmid,
+              CRISPR), antibody, or biobank. If you have a tool that you would
+              like to add to the Research Tools Database, please click the {'"'}
+              Submit a Tool{'"'} button below to learn more.
             </Typography>
           </div>
         </div>
         <div className="center-content bootstrap-4-backport">
-          <Button href="https://help.nf.synapse.org/NFdocs/2555543592.html" className="pill-xl highlightSubmitToolButton" variant="secondary" target="_blank">SUBMIT A TOOL</Button>
+          <Button
+            href="https://help.nf.synapse.org/NFdocs/2555543592.html"
+            className="pill-xl highlightSubmitToolButton"
+            variant="secondary"
+            target="_blank"
+          >
+            SUBMIT A TOOL
+          </Button>
         </div>
       </Layout>
     </div>
