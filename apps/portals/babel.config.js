@@ -5,5 +5,6 @@ module.exports = {
     ['@babel/preset-typescript', { allowDeclareFields: true }],
     '@babel/preset-react',
   ],
+  plugins: ['babel-plugin-transform-vite-meta-env'],
   sourceMap: 'inline',
 }

@@ -1,4 +1,4 @@
-declare var pluralize: any
+declare let pluralize: any
 
 declare module 'plotly.js-basic-dist' {
   import PlotlyTyped from 'plotly.js'

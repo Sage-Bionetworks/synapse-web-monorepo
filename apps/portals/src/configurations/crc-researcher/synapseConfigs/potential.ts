@@ -24,14 +24,14 @@ export const potential: SynapseConfig = {
       {
         buttonText: 'Send lab invitation',
         classNames: 'exampleClassNameToAddToButton',
-        onClick: async (event) => {
+        onClick: (event) => {
           handleParticipantWorkflowChange(event, 'Invited')
         },
       },
       {
         buttonText: 'Move to uncategorized',
         classNames: 'exampleClassNameToAddToButton',
-        onClick: async (event) => {
+        onClick: (event) => {
           handleParticipantWorkflowChange(event, 'Uncategorized')
         },
       },

@@ -55,7 +55,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
       }
       let isInvokingDownloadTable: boolean = false
       if (ev.target instanceof HTMLAnchorElement) {
-        const anchorElement = ev.target as HTMLAnchorElement
+        const anchorElement = ev.target 
         isInvokingDownloadTable =
           anchorElement.text === DOWNLOAD_FILES_MENU_TEXT
         if (anchorElement.href) {

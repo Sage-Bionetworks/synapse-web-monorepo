@@ -2,12 +2,7 @@ import React from 'react'
 import DetailsPage, {
   SplitStringToComponent,
 } from '../../portal-components/DetailsPage/DetailsPage'
-import {
-  render,
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-} from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   DetailsPageTabProps,
@@ -126,21 +121,20 @@ describe('DetailsPage tests', () => {
     const tab2 = await screen.findByText('Tab 2')
 
     // Component 1 should be visible at first, component 2 should not be visible
-    const component1 = await screen.findByText('Synapse Component 1')
-    expect(await screen.queryByText('Synapse Component 2')).toBeNull()
+    await screen.findByText('Synapse Component 1')
+    expect(screen.queryByText('Synapse Component 2')).toBeNull()
 
     // Call under test - click tab 2 to reveal tab 2's contents and hide tab 1's contents
-    userEvent.click(tab2)
-
-    await waitForElementToBeRemoved(component1)
+    await userEvent.click(tab2)
 
     await screen.findByText('Synapse Component 2')
+    expect(screen.queryByText('Synapse Component 1')).toBeNull()
 
     // Call under test -- click back to tab 1
-    userEvent.click(tab1)
+    await userEvent.click(tab1)
 
     await screen.findByText('Synapse Component 1')
-    expect(await screen.queryByText('Synapse Component 2')).toBeNull()
+    expect(screen.queryByText('Synapse Component 2')).toBeNull()
   })
 
   it('Renders two sets of tabs (subtabs) and synapseConfigArray objects', async () => {
@@ -206,41 +200,31 @@ describe('DetailsPage tests', () => {
 
     // Component in first subtab should be visible, second should not
     await screen.findByText('Synapse component in first subtab')
-    expect(
-      await screen.queryByText('Synapse component in second subtab'),
-    ).toBeNull()
+    expect(screen.queryByText('Synapse component in second subtab')).toBeNull()
 
     // Click the second subtab and which component is visible should switch
-    userEvent.click(await getSubtab2())
+    await userEvent.click(await getSubtab2())
 
     await screen.findByText('Synapse component in second subtab')
-    expect(
-      await screen.queryByText('Synapse component in first subtab'),
-    ).toBeNull()
+    expect(screen.queryByText('Synapse component in first subtab')).toBeNull()
 
     // Click the first subtab and it should switch back
-    userEvent.click(await getSubtab1())
+    await userEvent.click(await getSubtab1())
 
     await screen.findByText('Synapse component in first subtab')
-    expect(
-      await screen.queryByText('Synapse component in second subtab'),
-    ).toBeNull()
+    expect(screen.queryByText('Synapse component in second subtab')).toBeNull()
 
     // Click tab 2 and the subtabs and content should disappear
-    userEvent.click(await getTab2())
+    await userEvent.click(await getTab2())
 
     await screen.findByText('Synapse component in second tab')
-    expect(await screen.queryByText('Subtab 1')).toBeNull()
-    expect(await screen.queryByText('Subtab 2')).toBeNull()
-    expect(
-      await screen.queryByText('Synapse component in first subtab'),
-    ).toBeNull()
-    expect(
-      await screen.queryByText('Synapse component in second subtab'),
-    ).toBeNull()
+    expect(screen.queryByText('Subtab 1')).toBeNull()
+    expect(screen.queryByText('Subtab 2')).toBeNull()
+    expect(screen.queryByText('Synapse component in first subtab')).toBeNull()
+    expect(screen.queryByText('Synapse component in second subtab')).toBeNull()
 
     // Click tab 1 and the subtabs should reappear
-    userEvent.click(await getTab1())
+    await userEvent.click(await getTab1())
     await screen.findByText('Subtab 1')
     await screen.findByText('Subtab 2')
   })

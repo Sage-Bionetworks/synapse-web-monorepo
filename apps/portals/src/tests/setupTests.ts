@@ -1,6 +1,6 @@
 import 'whatwg-fetch'
 
-declare var global: any
+declare let global: any
 global.markdownit = require('markdown-it')
 global.markdownitSynapse = require('markdown-it-synapse')
 global.markdownitSub = require('markdown-it-sub-alt')

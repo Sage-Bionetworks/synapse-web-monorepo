@@ -330,7 +330,7 @@ function Navbar() {
               .filter((el) => !['', '/'].includes(el.path!))
               .map((el: GenericRoute) => {
                 const topLevelTo = el.path
-                let displayName = el.displayName ? el.displayName : topLevelTo
+                const displayName = el.displayName ? el.displayName : topLevelTo
                 const icon = el.icon && (
                   <img style={{ padding: '0px 4px' }} src={el.icon} />
                 )

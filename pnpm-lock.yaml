@@ -419,6 +419,9 @@ importers:
       babel-jest:
         specifier: ^27.5.1
         version: 27.5.1(@babel/core@7.21.0)
+      babel-plugin-transform-vite-meta-env:
+        specifier: ^1.0.3
+        version: 1.0.3
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -8892,6 +8895,13 @@ packages:
       '@babel/helper-define-polyfill-provider': 0.3.3(@babel/core@7.21.0)
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /babel-plugin-transform-vite-meta-env@1.0.3:
+    resolution: {integrity: sha512-eyfuDEXrMu667TQpmctHeTlJrZA6jXYHyEJFjcM0yEa60LS/LXlOg2PBbMb8DVS+V9CnTj/j9itdlDVMcY2zEg==}
+    dependencies:
+      '@babel/runtime': 7.21.0
+      '@types/babel__core': 7.20.0
     dev: true
 
   /babel-preset-current-node-syntax@1.0.1(@babel/core@7.20.12):

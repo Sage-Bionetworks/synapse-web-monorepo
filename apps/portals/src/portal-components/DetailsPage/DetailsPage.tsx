@@ -208,16 +208,16 @@ const SynapseObject: React.FC<{
 }> = ({ el, queryResultBundle }) => {
   const { columnName = '', resolveSynId, props, overrideSqlSourceTable } = el
   const deepCloneOfProps = cloneDeep(props)
-  const row = queryResultBundle!.queryResult!.queryResults.rows[0].values
+  const row = queryResultBundle.queryResult!.queryResults.rows[0].values
   const rowVersionNumber =
-    queryResultBundle!.queryResult!.queryResults.rows[0].versionNumber
+    queryResultBundle.queryResult!.queryResults.rows[0].versionNumber
 
   // map column name to index
   const mapColumnHeaderToRowIndex: Dictionary<{
     index: number
     columnType: ColumnType
   }> = {}
-  queryResultBundle!.queryResult!.queryResults.headers.forEach((el, index) => {
+  queryResultBundle.queryResult!.queryResults.headers.forEach((el, index) => {
     mapColumnHeaderToRowIndex[el.name] = { index, columnType: el.columnType }
   })
   const { index, columnType } = mapColumnHeaderToRowIndex[columnName] ?? {}

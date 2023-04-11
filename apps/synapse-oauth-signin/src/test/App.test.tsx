@@ -155,7 +155,7 @@ describe('App integration tests', () => {
     expect(consentSpy).not.toHaveBeenCalled()
   })
 
-  test('Does not redirect if a token is provided and the user has already consented, if prompt is consent', async () => {
+  test('Does not redirect if a token is provided and the user has already consented, if prompt is consent', () => {
     const prompt = 'consent'
     // Consent has already been granted:
     const hasGrantedConsent = true

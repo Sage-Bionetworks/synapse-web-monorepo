@@ -82,7 +82,7 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
                     tabConfig.synapseConfigArray && (
                       <DetailsPageSynapseConfigArray
                         showMenu={showMenu}
-                        synapseConfigArray={tabConfig.synapseConfigArray!}
+                        synapseConfigArray={tabConfig.synapseConfigArray}
                         queryResultBundle={queryResultBundle}
                       />
                     )}
