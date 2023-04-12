@@ -223,7 +223,7 @@ const BrowseToolsPage = () => {
         </div>
         <div className="center-content bootstrap-4-backport">
           <Button
-            href="https://help.nf.synapse.org/NFdocs/2555543592.html"
+            href="https://forms.gle/htFkH5yewLzP1RAu7"
             className="pill-xl highlightSubmitToolButton"
             variant="secondary"
             target="_blank"
