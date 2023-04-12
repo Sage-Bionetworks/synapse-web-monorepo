@@ -261,7 +261,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   onClick={() =>
                     onShowMoreClick(showMoreButtonState === 'MORE')
                   }
-                  style={{ zIndex: 500 }}
                 >
                   {showMoreButtonState === 'LESS'
                     ? 'Hide Charts'
