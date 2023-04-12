@@ -1,7 +1,7 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import { RowSynapseConfig } from 'types/portal-util-types'
-import { scrollToWithOffset } from 'utils'
+import { RowSynapseConfig } from '../../types/portal-util-types'
+import { scrollToWithOffset } from '../../utils'
 
 export function getComponentId(
   rowSynapseConfig: RowSynapseConfig,

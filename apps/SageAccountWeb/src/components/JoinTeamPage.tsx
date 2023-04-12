@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Button, useTheme } from '@mui/material'
-import { useAppContext } from 'AppContext'
+import { useAppContext } from '../AppContext'
 import { SynapseClient, Typography } from 'synapse-react-client'
 import { Redirect } from 'react-router-dom'
 import {

@@ -1,6 +1,6 @@
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import react from '@vitejs/plugin-react'
-import path from 'path'
+import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
 
@@ -32,7 +32,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      src: path.resolve(__dirname, '/src'),
+      src: resolve(__dirname, '/src'),
       process: 'process/browser',
       path: 'path-browserify',
       timers: 'timers-browserify',

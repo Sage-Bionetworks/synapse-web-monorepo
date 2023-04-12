@@ -17,14 +17,14 @@ describe('StatefulButtonControlWrapper works', () => {
             props: {
               markdown: '## This is a markdown component',
             },
-                },
+          },
         ],
         name: 'Route 1',
       },
     ],
   }
 
-  it('renders correctly', async () => {
+  it('renders correctly', () => {
     render(
       <MemoryRouter>
         <StatefulButtonControlWrapper {...props} />

@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import { server } from 'mocks/server'
+import { server } from '../mocks/server'
 import { rest } from 'msw'
 import React from 'react'
 import { ACCESS_TOKEN_COOKIE_KEY } from 'synapse-react-client/dist/utils/SynapseClient'
 import { URLSearchParams } from 'url'
-import App from './App'
+import App from '../App'
 import userEvent from '@testing-library/user-event'
 import { SynapseClient } from 'synapse-react-client'
 import { LoginResponse } from 'synapse-react-client/dist/utils/synapseTypes/LoginResponse'
@@ -155,7 +155,7 @@ describe('App integration tests', () => {
     expect(consentSpy).not.toHaveBeenCalled()
   })
 
-  test('Does not redirect if a token is provided and the user has already consented, if prompt is consent', async () => {
+  test('Does not redirect if a token is provided and the user has already consented, if prompt is consent', () => {
     const prompt = 'consent'
     // Consent has already been granted:
     const hasGrantedConsent = true

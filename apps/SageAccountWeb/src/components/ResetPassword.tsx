@@ -1,5 +1,5 @@
 import { Box, Button, InputLabel, TextField } from '@mui/material'
-import { StyledFormControl } from 'components/StyledComponents'
+import { StyledFormControl } from '../components/StyledComponents'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { SynapseClient, Typography } from 'synapse-react-client'
@@ -8,7 +8,7 @@ import {
   ChangePasswordWithToken,
   PasswordResetSignedToken,
 } from 'synapse-react-client/dist/utils/synapseTypes/ChangePasswordRequests'
-import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
+import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { BackButton } from './BackButton'
 import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'

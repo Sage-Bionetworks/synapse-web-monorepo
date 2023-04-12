@@ -15,7 +15,7 @@ import { EmailConfirmationPage } from './EmailConfirmationPage'
 import { Button, Link } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import GoogleLogo from '../assets/g-logo.png'
-import { useAppContext } from 'AppContext'
+import { useAppContext } from '../AppContext'
 import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
 import { BackButton } from './BackButton'
 import {

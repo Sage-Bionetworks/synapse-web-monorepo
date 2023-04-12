@@ -23,13 +23,13 @@ import {
   QueryResultBundle,
 } from 'synapse-react-client/dist/utils/synapseTypes/'
 import { Tooltip } from '@mui/material'
-import { SynapseComponent } from 'SynapseComponent'
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseComponent } from '../../SynapseComponent'
+import { SynapseConfig } from '../../types/portal-config'
 import {
   DetailsPageProps,
   ResolveSynId,
   RowSynapseConfig,
-} from 'types/portal-util-types'
+} from '../../types/portal-util-types'
 import injectPropsIntoConfig from '../injectPropsIntoConfig'
 import ToggleSynapseObjects from '../ToggleSynapseObjects'
 import DetailsPageTabs from './DetailsPageTabs'
@@ -86,7 +86,7 @@ function HeadlineWithLink(props: { title: string; id: string }) {
                 })
               }}
             >
-              <IconSvg icon="link" sx={{ paddingLeft: 10 }} />
+              <IconSvg icon="link" wrap={false} sx={{ pl: 1 }} />
             </div>
           </Tooltip>
         </span>
@@ -208,16 +208,16 @@ const SynapseObject: React.FC<{
 }> = ({ el, queryResultBundle }) => {
   const { columnName = '', resolveSynId, props, overrideSqlSourceTable } = el
   const deepCloneOfProps = cloneDeep(props)
-  const row = queryResultBundle!.queryResult!.queryResults.rows[0].values
+  const row = queryResultBundle.queryResult!.queryResults.rows[0].values
   const rowVersionNumber =
-    queryResultBundle!.queryResult!.queryResults.rows[0].versionNumber
+    queryResultBundle.queryResult!.queryResults.rows[0].versionNumber
 
   // map column name to index
   const mapColumnHeaderToRowIndex: Dictionary<{
     index: number
     columnType: ColumnType
   }> = {}
-  queryResultBundle!.queryResult!.queryResults.headers.forEach((el, index) => {
+  queryResultBundle.queryResult!.queryResults.headers.forEach((el, index) => {
     mapColumnHeaderToRowIndex[el.name] = { index, columnType: el.columnType }
   })
   const { index, columnType } = mapColumnHeaderToRowIndex[columnName] ?? {}
@@ -340,7 +340,9 @@ export const SplitStringToComponent: React.FC<{
   })
   if (overrideSqlSourceTable) {
     // use the search param value to override the sql param.
-    injectedProps['sql'] = `SELECT  *  FROM  ${value}.${rowVersionNumber}`
+    injectedProps['sql'] = `SELECT  *  FROM  ${value}${
+      rowVersionNumber ? `.${rowVersionNumber}` : ''
+    }`
   }
 
   // For explorer 2.0, cannot assign key `lockedColumn` to deepCloneOfProps due to type errors,

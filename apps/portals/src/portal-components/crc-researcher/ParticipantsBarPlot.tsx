@@ -73,11 +73,11 @@ function getTotalSurveysReceived(data: any[]): number {
   return totalCount
 }
 function getBarPlotDataPoints(data: any[]): any[] {
-  let totalCount: number = getTotalSurveysReceived(data)
+  const totalCount: number = getTotalSurveysReceived(data)
 
-  let invitedRows = data.filter((item) => item['x'] === 'Invited')
-  let scheduledRows = data.filter((item) => item['x'] === 'Scheduled')
-  let testedRows = data.filter((item) => item['x'] === 'Tested')
+  const invitedRows = data.filter((item) => item['x'] === 'Invited')
+  const scheduledRows = data.filter((item) => item['x'] === 'Scheduled')
+  const testedRows = data.filter((item) => item['x'] === 'Tested')
 
   const result: any[] = []
   const defaultColors = [`black`, `#C4C4C4`]
