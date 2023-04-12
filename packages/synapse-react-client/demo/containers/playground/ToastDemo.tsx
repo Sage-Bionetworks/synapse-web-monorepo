@@ -15,19 +15,28 @@ export const ToastDemo = () => {
   const [linkText, setLinkText] = React.useState('')
 
   function fireToast() {
+    const primaryButtonConfig =
+      buttonText === ''
+        ? undefined
+        : {
+            text: buttonText,
+            onClick: () => {
+              console.log('Primary button clicked!')
+            },
+          }
+    const secondaryButtonConfig =
+      linkText === ''
+        ? undefined
+        : {
+            text: linkText,
+            href: '#',
+          }
+
     displayToast(message, variant, {
       title: title,
       autoCloseInMs: autoClose,
-      primaryButtonConfig: {
-        text: buttonText,
-        onClick: () => {
-          console.log('Primary button clicked!')
-        },
-      },
-      secondaryButtonConfig: {
-        text: linkText,
-        href: '#',
-      },
+      primaryButtonConfig: primaryButtonConfig,
+      secondaryButtonConfig: secondaryButtonConfig,
     })
   }
   return (
