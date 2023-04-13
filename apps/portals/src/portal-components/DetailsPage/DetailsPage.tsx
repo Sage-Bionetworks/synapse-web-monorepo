@@ -86,7 +86,7 @@ function HeadlineWithLink(props: { title: string; id: string }) {
                 })
               }}
             >
-              <IconSvg icon="link" sx={{ paddingLeft: 10 }} />
+              <IconSvg icon="link" wrap={false} sx={{ pl: 1 }} />
             </div>
           </Tooltip>
         </span>
@@ -340,7 +340,9 @@ export const SplitStringToComponent: React.FC<{
   })
   if (overrideSqlSourceTable) {
     // use the search param value to override the sql param.
-    injectedProps['sql'] = `SELECT  *  FROM  ${value}.${rowVersionNumber}`
+    injectedProps['sql'] = `SELECT  *  FROM  ${value}${
+      rowVersionNumber ? `.${rowVersionNumber}` : ''
+    }`
   }
 
   // For explorer 2.0, cannot assign key `lockedColumn` to deepCloneOfProps due to type errors,
