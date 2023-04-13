@@ -42,7 +42,7 @@
     "@types/react": "18.0.17",
     "@types/react-dom": "18.0.6",
     "@types/react-easy-crop": "^2.0.0",
-    "@types/react-plotly.js": "^2.2.4",
+    "@types/react-plotly.js": "^2.6.0",
     "@types/react-router-dom": "^5.1.7",
     "@types/react-tooltip": "^4.2.4",
     "assert": "^2.0.0",
