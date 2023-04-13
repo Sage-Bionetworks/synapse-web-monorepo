@@ -33,12 +33,7 @@ export default function UserCardListGroups(props: UserCardListGroupsProps) {
         )}
         {summaryLink && summaryLinkText && (
           <div className="UserCardListGroups__summary">
-            <Button
-              variant="secondary"
-              size="lg"
-              className="pill"
-              href={summaryLink}
-            >
+            <Button variant="secondary" size="lg" href={summaryLink}>
               {summaryLinkText}
             </Button>
           </div>

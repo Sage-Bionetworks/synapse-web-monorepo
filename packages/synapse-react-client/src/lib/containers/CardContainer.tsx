@@ -89,7 +89,7 @@ export const CardContainer = (props: CardContainerProps) => {
     <div className="SRC-viewMore bootstrap-4-backport">
       <Button
         variant="secondary"
-        className="pill-xl"
+        className="btn-wide"
         onClick={() => {
           appendNextPageToResults()
         }}

@@ -151,12 +151,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
       )}
       {summaryLink && summaryLinkText && (
         <div className="UserCardListRotate__summary">
-          <Button
-            className="pill"
-            variant="secondary"
-            size="lg"
-            href={summaryLink}
-          >
+          <Button variant="secondary" size="lg" href={summaryLink}>
             {summaryLinkText}
           </Button>
         </div>

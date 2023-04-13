@@ -182,12 +182,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
               />
               {summaryLink && summaryLinkText && (
                 <div className="UpsetPlot__summary">
-                  <Button
-                    variant="secondary"
-                    size="lg"
-                    className="pill"
-                    href={summaryLink}
-                  >
+                  <Button variant="secondary" size="lg" href={summaryLink}>
                     {summaryLinkText}
                   </Button>
                 </div>

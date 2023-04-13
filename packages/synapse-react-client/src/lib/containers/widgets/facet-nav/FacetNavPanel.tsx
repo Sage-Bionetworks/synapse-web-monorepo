@@ -438,8 +438,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
             <div className="bootstrap-4-backport SaveFiltersButtonContainer">
               <Button
                 variant="secondary"
-                className="pill-xl SaveFiltersButton"
-                size="sm"
+                className="SaveFiltersButton"
                 onClick={() => setShowModal(false)}
               >
                 Apply Filters

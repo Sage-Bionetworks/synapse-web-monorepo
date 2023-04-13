@@ -11,7 +11,7 @@ export type ButtonLinkWidgetParams = {
 export default function MarkdownButton(
   widgetParamsMapped: ButtonLinkWidgetParams,
 ) {
-  let buttonClasses = 'pill-xl '
+  let buttonClasses = 'btn-wide '
   const { align = '', highlight = '' } = widgetParamsMapped
   const alignLowerCase = align.toLowerCase()
   if (alignLowerCase === 'left') {

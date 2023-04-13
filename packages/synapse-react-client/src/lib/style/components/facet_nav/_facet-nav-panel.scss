@@ -119,10 +119,11 @@ $facetNavPanel-btn-margin: 0 1px;
   margin: auto;
   .SaveFiltersButton {
     display: block;
-    text-transform: uppercase;
     margin: auto;
     width: 250px;
-    padding: 5px 10px;
+    min-width: 150px;
+    min-height: 20px;
+    padding: 5px;
     font-size: 16px;
   }
 }

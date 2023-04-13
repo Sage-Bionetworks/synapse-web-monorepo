@@ -25,7 +25,7 @@ export default function GoalsMobile({
       <p>{summary}</p>
       <Button
         variant="secondary"
-        className="pill Goals__Mobile__Content__Link"
+        className="Goals__Mobile__Content__Link"
         href={link}
       >
         Explore
