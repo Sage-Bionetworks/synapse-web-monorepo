@@ -15,7 +15,7 @@ import {
   UserProfile,
   VerificationSubmission,
 } from 'synapse-react-client/dist/utils/synapseTypes'
-import { getSearchParam } from '../../URLUtils'
+import { getSearchParam } from 'URLUtils'
 import { ProfileFieldsEditor } from './ProfileFieldsEditor'
 import { VerifyIdentify } from './VerifyIdentify'
 import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
@@ -25,8 +25,8 @@ import Attestation from './Attestation'
 import ThankYou from './ThankYou'
 import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
 import { ReturnToAppButton } from './ReturnToAppButton'
-import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
-import { BackButton } from '../BackButton'
+import { TermsOfUseRightPanelText } from 'components/TermsOfUseRightPanelText'
+import { BackButton } from 'components/BackButton'
 
 const STEP_CONTENT = [
   {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { SynapseClient, Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
+import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
 import {
   Box,
   Button,

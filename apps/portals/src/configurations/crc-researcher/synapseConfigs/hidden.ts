@@ -24,7 +24,7 @@ export const hidden: SynapseConfig = {
       {
         buttonText: 'Unhide',
         classNames: 'exampleClassNameToAddToButton',
-        onClick: (event) => {
+        onClick: async (event) => {
           handleParticipantWorkflowChange(event, 'Uncategorized')
         },
       },

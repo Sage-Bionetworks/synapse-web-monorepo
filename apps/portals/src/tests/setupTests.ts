@@ -1,6 +1,7 @@
+import 'raf/polyfill' // polyfill for requestAnimationFrame
 import 'whatwg-fetch'
 
-declare let global: any
+declare var global: any
 global.markdownit = require('markdown-it')
 global.markdownitSynapse = require('markdown-it-synapse')
 global.markdownitSub = require('markdown-it-sub-alt')
