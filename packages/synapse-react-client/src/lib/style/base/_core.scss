@@ -1320,10 +1320,10 @@ main,
 
 .SRC-tag {
   border: 1px solid SRC.$primary-action-color;
-  border-radius: SRC.$button-border-radius;
+  border-radius: 100px;
   padding: 5px 10px;
   color: SRC.$primary-action-color;
-  text-transform: SRC.$button-text-transform;
+  text-transform: uppercase;
 }
 
 .SRC-margin-left-5 {
