@@ -28,7 +28,7 @@ Structure of test-configuration
 
 <pre>
 test-configuration/
-├── .env                                    # Configure portal-specific environment variables, such as title and description
+├── docTitleConfig.ts                       # Configure the document title
 ├── exploreHomeConfiguration                # Configure the data for explore and home page
 │   ├── data.ts                             
 │   ├── index.ts                            

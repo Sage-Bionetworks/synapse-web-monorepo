@@ -4,7 +4,7 @@ import React from 'react'
 import { ContinueButton } from './ContinueButton'
 import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
 import { ReturnToAppButton } from './ReturnToAppButton'
-import { TermsAndConditionsLink } from '../TermsAndConditionsLink'
+import { TermsAndConditionsLink } from 'components/TermsAndConditionsLink'
 // import { TermsAndConditionsSignature } from './TermsAndConditionsSignature'
 
 export type TermsAndConditionsWrappedProps = {

@@ -11,7 +11,7 @@ import {
   styled,
   textFieldClasses,
 } from '@mui/material'
-import { latoFont } from '../style/theme'
+import { latoFont } from 'style/theme'
 import { StyledComponent } from '@mui/styles'
 import { StyledOuterContainer as _StyledOuterContainer } from 'synapse-react-client/dist/components/styled/LeftRightPanel'
 

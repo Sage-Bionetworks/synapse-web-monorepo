@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import RouteResolver from '../RouteResolver'
+import RouteResolver from 'RouteResolver'
 import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
 
 describe('RouteResolver works', () => {

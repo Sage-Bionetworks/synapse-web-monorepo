@@ -6,7 +6,7 @@ import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { SynapseClient } from 'synapse-react-client'
 import { Link as RouterLink } from 'react-router-dom'
-import { StyledFormControl } from './StyledComponents'
+import { StyledFormControl } from 'components/StyledComponents'
 
 export type ChangePasswordProps = {
   onCancel?: Function

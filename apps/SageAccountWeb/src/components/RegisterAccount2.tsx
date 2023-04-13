@@ -1,5 +1,5 @@
 import { Button, InputLabel, TextField } from '@mui/material'
-import { StyledFormControl } from './StyledComponents'
+import { StyledFormControl } from 'components/StyledComponents'
 import React, { useEffect, useState } from 'react'
 import { Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
@@ -9,7 +9,7 @@ import {
   setAccessTokenCookie,
 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
-import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
+import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
 import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'
 

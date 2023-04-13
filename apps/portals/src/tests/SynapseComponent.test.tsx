@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { SynapseComponent } from '../SynapseComponent'
-import { SynapseConfig } from '../types/portal-config'
+import { SynapseComponent } from 'SynapseComponent'
+import { SynapseConfig } from 'types/portal-config'
 import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
 
 describe('SynapseComponent tests', () => {

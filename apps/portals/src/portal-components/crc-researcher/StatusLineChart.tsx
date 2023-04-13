@@ -79,7 +79,7 @@ function getChartDataPoints(data: PlotData) {
     },
   }
 
-  const invitedData: Plotly.Data = {
+  var invitedData: Plotly.Data = {
     x: data.invited.map((val) => new Date(Number(val.x))),
     y: data.invited.map((val) => val.y),
     name: 'Invitations sent',
@@ -97,7 +97,7 @@ function getChartDataPoints(data: PlotData) {
     },
   }
 
-  const aptScheduledData: Plotly.Data = {
+  var aptScheduledData: Plotly.Data = {
     x: data.apptScheduled.map((val) => new Date(Number(val.x))),
     y: data.apptScheduled.map((val) => val.y),
     name: 'Labs scheduled',
@@ -114,7 +114,7 @@ function getChartDataPoints(data: PlotData) {
       symbol: 'circle',
     },
   }
-  const apptMadeData: Plotly.Data = {
+  var apptMadeData: Plotly.Data = {
     x: data.apptMade.map((val) => new Date(val.x)),
     y: data.apptMade.map((val) => val.y),
     name: 'Samples Collected/Appointments Made ',
@@ -133,7 +133,7 @@ function getChartDataPoints(data: PlotData) {
     },
   }
 
-  const data2 = [collectedData, invitedData, aptScheduledData, apptMadeData]
+  var data2 = [collectedData, invitedData, aptScheduledData, apptMadeData]
   return data2
 }
 

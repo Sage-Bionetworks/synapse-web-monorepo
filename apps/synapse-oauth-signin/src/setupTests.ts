@@ -1,8 +1,8 @@
 import 'isomorphic-fetch' // polyfill for fetch
 import 'raf/polyfill' // polyfill for requestAnimationFrame
-import { server } from '../mocks/server'
+import { server } from './mocks/server'
 
-declare const global: any
+declare var global: any
 global.markdownit = require('markdown-it')
 global.markdownitSynapse = require('markdown-it-synapse')
 global.markdownitSub = require('markdown-it-sub-alt')
@@ -36,8 +36,10 @@ afterAll(() => server.close())
 // https://www.benmvp.com/blog/mocking-window-location-methods-jest-jsdom/
 const oldWindowLocation = window.location
 beforeAll(() => {
+  // @ts-ignore
   delete window.location
 
+  // @ts-ignore
   window.location = Object.defineProperties(
     {},
     {

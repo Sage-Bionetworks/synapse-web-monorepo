@@ -1,11 +1,12 @@
 import RedirectDialog, {
   redirectInstructionsMap,
-} from './portal-components/RedirectDialog'
+} from 'portal-components/RedirectDialog'
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import { DOWNLOAD_FILES_MENU_TEXT } from 'synapse-react-client/dist/containers/table/SynapseTableConstants'
-import useAnalytics from './useAnalytics'
+import useAnalytics from 'useAnalytics'
+import docTitleConfig from './config/docTitleConfig.json'
 import ApplicationSessionManager from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionManager'
 import { useLogInDialogContext } from './LogInDialogContext'
 
@@ -14,12 +15,12 @@ const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
 /** On mount, update the document title and meta description using data from the portal config */
 function useSetDocumentMetadataFromConfig() {
   useEffect(() => {
-    if (document.title !== import.meta.env.VITE_PORTAL_NAME) {
-      document.title = import.meta.env.VITE_PORTAL_NAME
+    if (document.title !== docTitleConfig.name) {
+      document.title = docTitleConfig.name
     }
     document
       .querySelector('meta[name="description"]')!
-      .setAttribute('content', import.meta.env.VITE_PORTAL_DESCRIPTION)
+      .setAttribute('content', docTitleConfig.description)
   }, [])
 }
 
@@ -55,7 +56,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
       }
       let isInvokingDownloadTable: boolean = false
       if (ev.target instanceof HTMLAnchorElement) {
-        const anchorElement = ev.target 
+        const anchorElement = ev.target as HTMLAnchorElement
         isInvokingDownloadTable =
           anchorElement.text === DOWNLOAD_FILES_MENU_TEXT
         if (anchorElement.href) {

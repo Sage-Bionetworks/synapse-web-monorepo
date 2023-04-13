@@ -3,9 +3,7 @@
   "compilerOptions": {
     "rootDir": "src/lib",
     "outDir": "dist",
-    "module": "esnext",
-    "target": "esnext",
-    "moduleResolution": "Node",
+    "module": "CommonJS",
     "allowJs": false,
     "noEmit": false,
     "isolatedModules": true,

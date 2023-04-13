@@ -1,12 +1,11 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
 import routesConfig from './config/routesConfig'
 import logoHeaderConfig from './config/logoHeaderConfig'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { SynapseComponents } from 'synapse-react-client'
-import NavLink from './portal-components/NavLink'
+import NavLink from 'portal-components/NavLink'
 import NavUserLink from './portal-components/NavUserLink'
-import { ConfigRoute, GenericRoute } from './types/portal-config'
+import { ConfigRoute, GenericRoute } from 'types/portal-config'
 import Button from 'react-bootstrap/esm/Button'
 import { Dialog, DialogContent, IconButton } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
@@ -14,6 +13,7 @@ import {
   preparePostSSORedirect,
   redirectAfterSSO,
 } from 'synapse-react-client/dist/utils/AppUtils'
+import { useEffect, useState } from 'react'
 import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 import { useLogInDialogContext } from './LogInDialogContext'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
@@ -330,7 +330,7 @@ function Navbar() {
               .filter((el) => !['', '/'].includes(el.path!))
               .map((el: GenericRoute) => {
                 const topLevelTo = el.path
-                const displayName = el.displayName ? el.displayName : topLevelTo
+                let displayName = el.displayName ? el.displayName : topLevelTo
                 const icon = el.icon && (
                   <img style={{ padding: '0px 4px' }} src={el.icon} />
                 )
