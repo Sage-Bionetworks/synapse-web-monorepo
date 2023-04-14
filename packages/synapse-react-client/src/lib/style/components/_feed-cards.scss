@@ -4,7 +4,11 @@
   font-weight: bold;
 }
 .FeedSubscribe {
+  display: flex;
+  justify-content: center;
   .FeedSubscribeToNewsLink {
+    display: flex;
+    align-items: center;
     color: #404b63;
     margin-right: 15px;
     &:hover {

@@ -88,7 +88,7 @@ export default class RssFeedCards extends React.Component<
     return (
       <>
         {this.props.mailChimpUrl && (
-          <div className="FeedSubscribe text-center">
+          <div className="FeedSubscribe">
             {!this.state.isShowingSubscribeUI && (
               <a
                 className="FeedSubscribeToNewsLink SRC-no-border-bottom-imp"
