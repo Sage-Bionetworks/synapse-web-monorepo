@@ -130,6 +130,28 @@ describe('useImmutableTableQuery tests', () => {
     expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery.query))
   })
 
+  it('Updates the query if initQueryRequest changes', () => {
+    const onQueryChange = jest.fn()
+    const { result, rerender } = renderHook(
+      props => useImmutableTableQuery(props),
+      { initialProps: { ...options, onQueryChange } },
+    )
+
+    expect(onQueryChange).not.toHaveBeenCalled()
+
+    const newQuery = cloneDeep(options.initQueryRequest)
+    newQuery.query.sql = 'SELECT * FROM syn123.3 WHERE "foo"=\'baz\''
+
+    // Call under test - change the initQueryRequest
+    rerender({
+      ...options,
+      onQueryChange,
+      initQueryRequest: newQuery,
+    })
+
+    expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery.query))
+  })
+
   it('Updates the URL if shouldDeepLink is true', () => {
     const mockUpdateUrl = jest
       .spyOn(DeepLinkingUtils, 'updateUrlWithNewSearchParam')

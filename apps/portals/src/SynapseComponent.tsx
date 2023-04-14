@@ -42,9 +42,8 @@ export const SynapseComponent: React.FC<SynapseComponentWithContextProps> = ({
 }) => {
   // return the synapse object but with token/search params injected into its props from the context created in AppInitializer
   const { props, ...rest } = synapseConfig
-  const key = JSON.stringify(props)
   return (
-    <SynapseContextConsumer key={key}>
+    <SynapseContextConsumer>
       {(ctx?: SynapseContextType) => {
         const propsWithSearchAndToken = {
           ...props,

@@ -33,6 +33,7 @@ import { RedirectProps } from 'react-router-dom'
 import { MarkdownCollapseProps } from 'synapse-react-client/dist/containers/MarkdownCollapse'
 import { DownloadListActionsRequiredProps } from 'synapse-react-client/dist/containers/download_list_v2/DownloadListActionsRequired'
 import { ToggleSynapseObjectsProps } from 'portal-components/ToggleSynapseObjects'
+import { CSSProperties } from 'react'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -210,7 +211,7 @@ type Metadata = {
   centerTitle?: boolean
   subtitle?: string
   link?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
   isOutsideContainer?: boolean
   // applied to the inner most container of the object
   className?: string
