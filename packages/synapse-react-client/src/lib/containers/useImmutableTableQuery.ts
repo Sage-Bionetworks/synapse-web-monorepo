@@ -194,6 +194,11 @@ export default function useImmutableTableQuery(
     setQuery(initQueryRequest)
   }, [initQueryRequest, setQuery])
 
+  /* If the initial query changes, then reset the query to match the new prop */
+  useEffect(() => {
+    resetQuery()
+  }, [initQueryRequest])
+
   const removeSelectedFacet = useCallback(
     (facetColumnRequest: FacetColumnRequest) => {
       setQuery(currentQuery => {
