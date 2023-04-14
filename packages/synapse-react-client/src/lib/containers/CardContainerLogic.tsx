@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { SynapseConstants } from '../utils'
 import {
   generateQueryFilterFromSearchParams,
@@ -142,49 +142,38 @@ export type CardContainerLogicProps = {
  */
 export const CardContainerLogic = (props: CardContainerLogicProps) => {
   const entityId = parseEntityIdFromSqlStatement(props.sql)
-  const { sortConfig, columnAliases } = props
-  const initQueryRequest: QueryBundleRequest = useMemo(() => {
-    const defaultSortItems = sortConfig
-      ? [
-          {
-            column: sortConfig.defaultColumn,
-            direction: sortConfig.defaultDirection,
-          },
-        ]
-      : undefined
-
-    const queryFilters = generateQueryFilterFromSearchParams(
-      props.searchParams,
-      props.sqlOperator,
-    )
-
-    return {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      entityId: entityId,
-      query: {
-        sql: props.sql,
-        limit: props.limit ?? DEFAULT_PAGE_SIZE,
-        sort: defaultSortItems,
-        additionalFilters: queryFilters,
-      },
-      partMask:
-        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-        SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-        SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-        SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
-        SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-        SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
-        SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
-    }
-  }, [
-    entityId,
-    props.limit,
+  const queryFilters = generateQueryFilterFromSearchParams(
     props.searchParams,
-    props.sql,
     props.sqlOperator,
-    sortConfig,
-  ])
+  )
+  const { sortConfig, columnAliases } = props
+  const defaultSortItems = sortConfig
+    ? [
+        {
+          column: sortConfig.defaultColumn,
+          direction: sortConfig.defaultDirection,
+        },
+      ]
+    : undefined
+  const initQueryRequest: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId: entityId,
+    query: {
+      sql: props.sql,
+      limit: props.limit ?? DEFAULT_PAGE_SIZE,
+      sort: defaultSortItems,
+      additionalFilters: queryFilters,
+    },
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+      SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
+      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+      SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
+      SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
+  }
 
   return (
     <InfiniteQueryWrapper {...props} initQueryRequest={initQueryRequest}>

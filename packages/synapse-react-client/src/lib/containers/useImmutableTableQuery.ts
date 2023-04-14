@@ -13,6 +13,7 @@ import {
   isColumnSingleValueQueryFilter,
   QueryFilter,
 } from '../utils/synapseTypes/Table/QueryFilter'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 
 export type ImmutableTableQueryResult = {
   /** The ID of the table parsed from the SQL query */
@@ -195,7 +196,7 @@ export default function useImmutableTableQuery(
   }, [initQueryRequest, setQuery])
 
   /* If the initial query changes, then reset the query to match the new prop */
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     resetQuery()
   }, [initQueryRequest])
 
