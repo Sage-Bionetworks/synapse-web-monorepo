@@ -197,7 +197,9 @@ export default function useImmutableTableQuery(
 
   /* If the initial query changes, then reset the query to match the new prop */
   useDeepCompareEffect(() => {
-    resetQuery()
+    if (lastQueryRequest != initQueryRequest) {
+      resetQuery()
+    }
   }, [initQueryRequest])
 
   const removeSelectedFacet = useCallback(
