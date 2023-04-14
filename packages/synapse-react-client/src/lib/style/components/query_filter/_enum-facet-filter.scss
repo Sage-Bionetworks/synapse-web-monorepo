@@ -26,11 +26,6 @@
       .checkbox,
       .checkbox-focused {
         margin: 5px 0px;
-        > label::before {
-          border: none;
-          background: none;
-          box-shadow: none;
-        }
       }
     }
 

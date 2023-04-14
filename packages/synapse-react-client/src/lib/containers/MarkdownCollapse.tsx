@@ -55,9 +55,14 @@ const MarkdownCollapse = (props: MarkdownCollapseProps) => {
             className="highlight-link"
             onClick={() => {
               if (plainText) {
-                navigator.clipboard.writeText(plainText).then(() => {
-                  displayToast('Successfully copied to the clipboard')
-                })
+                navigator.clipboard
+                  .writeText(plainText)
+                  .then(() => {
+                    displayToast('Successfully copied to the clipboard')
+                  })
+                  .catch(err => {
+                    console.error(err)
+                  })
               }
             }}
           >

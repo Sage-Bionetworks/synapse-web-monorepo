@@ -46,6 +46,22 @@ export const TablePagination = () => {
         <option value={100}>100 per page</option>
         <option value={500}>500 per page</option>
       </select>
+      {
+        //TODO: PORTALS-2546: convert to MUI?
+        /* <FormControl>
+        <Select
+          value={pageSize}
+          size="small"
+          onChange={handlePageSize}
+          sx={{border: 'solid 1px #e5e7eb'}}
+        >
+          <MenuItem value={10}>10 per page</MenuItem>
+          <MenuItem value={25}>25 per page</MenuItem>
+          <MenuItem value={100}>100 per page</MenuItem>
+          <MenuItem value={500}>500 per page</MenuItem>
+        </Select>
+      </FormControl> */
+      }
     </div>
   )
 }
