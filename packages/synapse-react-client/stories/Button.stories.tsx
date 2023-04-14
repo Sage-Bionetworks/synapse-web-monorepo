@@ -21,10 +21,14 @@ const meta: Meta = {
         'light',
       ],
     },
+    size: {
+      control: 'select',
+      options: ['', 'sm', 'lg'],
+    },
     className: {
       name: 'shape',
       control: 'select',
-      options: ['', 'pill', 'pill-xl'],
+      options: ['', 'btn-wide'],
     },
   },
   render: args => (

@@ -257,7 +257,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               <div className="FacetNav__showMoreContainer bootstrap-4-backport">
                 <Button
                   variant="secondary"
-                  className="pill-xl FacetNav__showMore"
+                  className="btn-wide FacetNav__showMore"
                   onClick={() =>
                     onShowMoreClick(showMoreButtonState === 'MORE')
                   }

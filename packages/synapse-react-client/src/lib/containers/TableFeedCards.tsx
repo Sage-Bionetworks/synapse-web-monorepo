@@ -114,10 +114,9 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
           <Button
             variant="primary"
             size="lg"
-            className="pill"
             onClick={() => setItemCountShowing(itemCountShowing + 3)}
           >
-            VIEW MORE NEWS
+            View More News
           </Button>
         </div>
       )}

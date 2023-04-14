@@ -55,7 +55,7 @@ const routes: GenericRoute[] = [
           maxBarCount: 20,
           setName: '# Individuals per assay',
           combinationName: '# Individuals',
-          summaryLinkText: 'EXPLORE ALL DATA',
+          summaryLinkText: 'Explore All Data',
           summaryLink: '/Explore/Data',
         },
       },
@@ -68,7 +68,7 @@ const routes: GenericRoute[] = [
           sql: `${peopleSql} where feature=true`,
           count: 3,
           summaryLink: 'Explore/People',
-          summaryLinkText: 'EXPLORE ALL PEOPLE',
+          summaryLinkText: 'Explore All People',
         },
       },
       {

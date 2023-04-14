@@ -85,7 +85,7 @@ class Dataset extends React.Component<DatasetProps, never> {
             <p className="SRC-description-text">{summary}</p>
             <div className="SRC-cardAction bootstrap-4-backport">
               <Button
-                className="pill SRC-datasetButton"
+                className="SRC-datasetButton"
                 onClick={this.handleLinkClick(id)}
                 variant="secondary"
               >

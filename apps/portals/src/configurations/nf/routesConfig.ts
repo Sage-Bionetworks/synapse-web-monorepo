@@ -94,7 +94,7 @@ const routes: GenericRoute[] = [
           size: SynapseConstants.LARGE_USER_CARD,
           useQueryResultUserData: true,
           // summaryLink: 'Explore/People',
-          // summaryLinkText: 'EXPLORE ALL PEOPLE',
+          // summaryLinkText: 'Explore All People',
         },
       },
       {

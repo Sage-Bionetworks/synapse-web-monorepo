@@ -194,12 +194,12 @@ function Navbar() {
                 <Button
                   id="signin-button"
                   variant="secondary"
-                  className="pill signout-button-mb"
+                  className="signout-button-mb"
                   onClick={() => {
                     clearSession()
                   }}
                 >
-                  SIGN OUT
+                  Sign Out
                 </Button>
               </div>
             )}
@@ -209,12 +209,11 @@ function Navbar() {
                 <Button
                   id="signin-button"
                   variant="secondary"
-                  className="pill"
                   onClick={() => {
                     setShowLoginDialog(true)
                   }}
                 >
-                  SIGN&nbsp;IN
+                  Sign&nbsp;In
                 </Button>
                 <Dialog
                   onClose={() => {

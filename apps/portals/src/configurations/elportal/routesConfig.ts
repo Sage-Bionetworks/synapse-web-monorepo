@@ -180,7 +180,7 @@ const routes: GenericRoute[] = [
           size: SynapseConstants.MEDIUM_USER_CARD,
           useQueryResultUserData: true,
           summaryLink: 'Explore/People',
-          summaryLinkText: 'EXPLORE ALL PEOPLE',
+          summaryLinkText: 'Explore All People',
         },
       },
       {

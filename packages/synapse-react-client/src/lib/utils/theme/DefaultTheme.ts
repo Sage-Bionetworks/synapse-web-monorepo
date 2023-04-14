@@ -31,8 +31,8 @@ const defaultMuiThemeOptions: ThemeOptions = {
         root: {
           fontWeight: 900,
           padding: '6px 12px',
-          borderRadius: '0px',
-          textTransform: 'none',
+          borderRadius: '3px',
+          textTransform: 'capitalize',
           '&:hover': {
             transition: '0.2s',
           },
@@ -97,7 +97,6 @@ const defaultMuiThemeOptions: ThemeOptions = {
           '& .MuiButton-root': {
             height: '36px',
             padding: '0px 16px',
-            borderRadius: 0,
           },
         }),
       },

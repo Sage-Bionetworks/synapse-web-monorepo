@@ -9,6 +9,9 @@
   $secondary: SRC.$secondary-action-color;
   $border-radius: 0.2rem;
   $btn-box-shadow: SRC.$box-shadow-soft;
+  $btn-border-radius: SRC.$button-border-radius;
+  $btn-border-radius-sm: SRC.$button-border-radius;
+  $btn-border-radius-lg: SRC.$button-border-radius;
   $input-height: 50px;
   $input-padding-x: 0.75rem;
   $input-padding-y: 0.5rem;
@@ -27,6 +30,14 @@
       SRC.$bootstrap-4-danger-text-color
     );
   }
+
+  // PORTALS-2597, SWC-6413: all buttons should be rounded
+  // style button directly so MuiButtons within bootstrap-4-backport class divs are styled, e.g. DiscussionThread
+  button {
+    border-radius: SRC.$button-border-radius;
+    text-transform: SRC.$button-text-transform;
+  }
+
   // For all buttons, make the box shadow more intense on hover
   .btn {
     @include hover() {
@@ -34,31 +45,15 @@
     }
   }
 
-  // Add the 'pill' class for a pill shape
-  .btn.pill {
-    border-radius: 24px;
-  }
-
-  .btn.pill.btn-lg {
+  // Large buttons
+  .btn.btn-lg {
     font-size: 16px;
     padding: 10px 24px;
   }
 
-  // Extra-long pill shape
-  .btn.pill-xl {
-    border-radius: 24px;
+  // Extra-wide button
+  .btn.btn-wide {
     min-width: 168px;
-    padding: 10px;
-  }
-
-  .btn.pill-xl.btn-sm {
-    min-width: 150px;
-    min-height: 20px;
-    padding: 5px;
-  }
-
-  .btn.pill-xl.btn-lg {
-    min-width: 220px;
     padding: 10px;
   }
 
@@ -175,7 +170,6 @@
       $active-background: map.get(SRC.$primary-color-palette, 700),
       $active-border: map.get(SRC.$primary-color-palette, 700)
     );
-    border-radius: 0px;
     font-weight: 900;
     &:hover {
       box-shadow: none; // ?
@@ -197,7 +191,6 @@
       $active-background: rgba(255, 255, 255, 0),
       $active-border: map.get(SRC.$primary-color-palette, 700)
     );
-    border-radius: 0px;
     font-weight: 900;
     &:hover {
       box-shadow: none; // ?

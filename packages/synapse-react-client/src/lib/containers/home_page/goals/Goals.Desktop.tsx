@@ -28,11 +28,11 @@ export default function GoalsDesktop({
       <div className="Goals__Card__summary">
         <p> {summary} </p>
         <Button
-          className="pill Goals__Card__summary__link"
+          className="Goals__Card__summary__link"
           variant="secondary"
           href={link}
         >
-          EXPLORE
+          Explore
         </Button>
       </div>
     </div>

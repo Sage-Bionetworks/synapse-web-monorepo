@@ -271,7 +271,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
               Please sign in or register to initiate or continue your submission
             </p>
             <Button
-              className={`${SRC_SIGN_IN_CLASS} pill`}
+              className={`${SRC_SIGN_IN_CLASS}`}
               variant="primary"
               size="lg"
             >
@@ -466,7 +466,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
 
                 <div className="text-center bootstrap-4-backport">
                   <Button
-                    className="pill-xl btn-large" // .btn-large is a custom class, don't use size="lg"
+                    className="btn-wide btn-large" // .btn-large is a custom class, don't use size="lg"
                     variant="primary"
                     href={`${this.props.pathpart}?formGroupId=${this.props.formGroupId}`}
                   >

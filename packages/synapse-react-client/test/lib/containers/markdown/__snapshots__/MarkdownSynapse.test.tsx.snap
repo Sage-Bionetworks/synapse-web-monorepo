@@ -83,7 +83,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
           class="bootstrap-4-backport"
         >
           <a
-            class="pill-xl  btn btn-secondary"
+            class="btn-wide  btn btn-secondary"
             href="#/Help/How It Works"
           >
             sometext
@@ -93,7 +93,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
           class="bootstrap-4-backport"
         >
           <a
-            class="pill-xl  btn btn-secondary"
+            class="btn-wide  btn btn-secondary"
             href="#/Apply"
           >
             APPLY

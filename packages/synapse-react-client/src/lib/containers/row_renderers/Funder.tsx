@@ -39,7 +39,7 @@ export default class Funder extends React.Component<FunderProps, never> {
       showOrgLink = (
         <div className="SRC-marginAuto SRC-cardAction bootstrap-4-backport">
           <Button
-            className="pill-xl"
+            className="btn-wide"
             href={organizationPath}
             variant="secondary"
           >

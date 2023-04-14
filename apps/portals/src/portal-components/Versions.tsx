@@ -74,7 +74,7 @@ const Versions: React.FunctionComponent = () => {
               className="Versions footer-item"
               target="_blank"
               rel="noopener noreferrer"
-              href="https://github.com/Sage-Bionetworks/portals"
+              href="https://github.com/Sage-Bionetworks/synapse-web-monorepo"
             >
               VERSION
             </a>

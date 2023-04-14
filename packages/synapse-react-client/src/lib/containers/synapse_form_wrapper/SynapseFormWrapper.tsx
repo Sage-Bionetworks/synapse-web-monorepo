@@ -373,7 +373,7 @@ class SynapseFormWrapper extends React.Component<
           <Button
             variant="light-primary-base"
             style={{ margin: '10px' }}
-            className={`pill ${SRC_SIGN_IN_CLASS}`}
+            className={`${SRC_SIGN_IN_CLASS}`}
           >
             sign in
           </Button>
