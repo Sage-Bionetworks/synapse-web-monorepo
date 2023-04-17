@@ -67,9 +67,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   const { entity } = useQueryContext()
 
   if (!columnValue) {
-    return (
-      <p className="SRC-center-text SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
-    )
+    return <p className="SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
   }
 
   if (columnLinkConfig) {
