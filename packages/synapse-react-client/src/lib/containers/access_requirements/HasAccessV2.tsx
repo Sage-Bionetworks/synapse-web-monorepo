@@ -243,7 +243,7 @@ export function HasAccessV2(props: HasAccessProps) {
             fontSize: '14px',
             cursor: 'pointer',
             marginLeft: '5px',
-            verticalAlign: 'middle',
+            verticalAlign: 'top',
           }}
           className={props.className}
           onClick={handleGetAccess}
