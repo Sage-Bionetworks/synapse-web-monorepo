@@ -80,6 +80,8 @@ function AccessIcon(props: { downloadType: FileHandleDownloadTypeEnum }) {
         label={configuration.tooltipText}
         sx={{
           color: configuration.color(theme),
+          height: '16px',
+          verticalAlign: 'text-top',
         }}
       />
     )
