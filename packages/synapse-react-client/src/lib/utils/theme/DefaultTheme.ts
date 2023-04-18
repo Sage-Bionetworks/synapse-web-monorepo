@@ -1,8 +1,10 @@
 import { ThemeOptions } from '@mui/material/styles'
 import { typographyOptions } from './typography/Typography'
 import palette from './palette/Palettes'
-import { Fade } from '@mui/material'
+import { alpha, Fade } from '@mui/material'
 import linkTheme from './typography/Link'
+
+const DIALOG_INNER_PADDING = '2px'
 
 const defaultMuiThemeOptions: ThemeOptions = {
   typography: typographyOptions,
@@ -79,12 +81,19 @@ const defaultMuiThemeOptions: ThemeOptions = {
         dividers: true,
       },
       styleOverrides: {
-        root: ({ theme }) => ({
+        root: ({ ownerState, theme }) => ({
           color: theme.palette.text.secondary,
-          paddingTop: theme.spacing(3),
-          paddingBottom: theme.spacing(3),
-          paddingLeft: '0px',
-          paddingRight: '0px',
+          paddingTop: ownerState.dividers ? theme.spacing(3) : 0,
+          paddingBottom: ownerState.dividers ? theme.spacing(3) : 0,
+          // Hack - set add a small padding and offset with a negative margin so box-shadow effects on full width elements (like input fields) are shown
+          paddingLeft: DIALOG_INNER_PADDING,
+          paddingRight: DIALOG_INNER_PADDING,
+          marginLeft: `-${DIALOG_INNER_PADDING}`,
+          marginRight: `-${DIALOG_INNER_PADDING}`,
+          // Add a filter on the `dividers` borders so that the borders are transparent on the edges based on the DIALOG_INNER_PADDING length
+          borderImage: ownerState.dividers
+            ? `linear-gradient(to right, transparent 0px, transparent ${DIALOG_INNER_PADDING}, ${theme.palette.grey[400]} ${DIALOG_INNER_PADDING}, ${theme.palette.grey[400]} calc(100% - ${DIALOG_INNER_PADDING}), transparent calc(100% - ${DIALOG_INNER_PADDING})) 1`
+            : undefined,
         }),
       },
     },
@@ -98,6 +107,27 @@ const defaultMuiThemeOptions: ThemeOptions = {
             height: '36px',
             padding: '0px 16px',
           },
+        }),
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          borderRadius: '3px',
+          fontSize: '14px',
+          position: 'relative',
+          backgroundColor: theme.palette.grey[200],
+          border: 'none',
+          '&.Mui-focused': {
+            boxShadow: `${alpha(
+              theme.palette.primary.main,
+              0.25,
+            )} 0 0 0 0.1rem`,
+            borderColor: theme.palette.primary.main,
+          },
+        }),
+        input: ({ theme }) => ({
+          padding: '14px 12px',
         }),
       },
     },

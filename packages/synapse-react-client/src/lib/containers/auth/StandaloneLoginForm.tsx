@@ -41,7 +41,6 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
         width: '325px',
         p: 0,
         mx: 'auto',
-        my: 4,
         bgColor: 'transparent',
       }}
     >

@@ -397,7 +397,7 @@ export function OAuth2Form() {
           oauthClientInfo &&
           oauthClientInfo.verified &&
           oidcRequestDescription)) && (
-        <Paper sx={{ width: '400px', padding: '30px', margin: '0 auto' }}>
+        <Paper sx={{ width: '400px', py: 8, px: 4, margin: '0 auto' }}>
           <StandaloneLoginForm
             onBeginOAuthSignIn={() => {
               // save current route (so that we can go back here after SSO)

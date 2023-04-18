@@ -234,7 +234,7 @@ function Navbar() {
                       sx={{ color: 'grey.700' }}
                     />
                   </IconButton>
-                  <DialogContent>
+                  <DialogContent dividers={false}>
                     <SynapseComponents.Login
                       twoFactorAuthenticationRequired={
                         twoFactorAuthSSOErrorResponse
