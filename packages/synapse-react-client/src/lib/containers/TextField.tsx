@@ -53,9 +53,8 @@ export default function TextField(props: TextFieldProps) {
     <Wrapper>
       {props.label && (
         <InputLabel
-          component={'label'}
           htmlFor={props.id || id}
-          sx={{ fontWeight: 700, mb: '4px' }}
+          sx={{ fontWeight: 700, mb: '4px', pointerEvents: 'unset' }}
         >
           {props.label}
           {props.required ? (
