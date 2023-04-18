@@ -54,6 +54,8 @@ export default function ExpandableTableDataCell(
             icon={isExpanded ? 'minusBoxOutline' : 'addBoxOutline'}
             sx={{
               color: 'grey.600',
+              height: '16px',
+              verticalAlign: 'top',
             }}
           ></IconSvg>
         </button>
