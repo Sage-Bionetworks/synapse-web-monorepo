@@ -74,7 +74,7 @@ const RouteControlWrapper: React.FunctionComponent<Props> = ({
           </div>
         )}
       </div>
-      <div>
+      <div className={'explore-content'}>
         {synapseConfig && (
           <SynapseComponent
             synapseConfig={synapseConfig}

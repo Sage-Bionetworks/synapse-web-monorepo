@@ -177,6 +177,12 @@ body {
     margin-top: 0px;
   }
 }
+.explore-content {
+  margin-right: 65px; 
+  @media screen and (max-width: 768px) {
+      margin-right: 18px;
+  }
+}
 .DownloadCartPage .pageHeader {
   padding: 30px 30px 0px 30px;
 }
@@ -282,6 +288,8 @@ a.nav-button {
   @extend %hoverFade;
   @extend %bottomBorderNav;
   border-radius: 0;
+  border-right: 0;
+  border-left: 0;
 }
 
 // override src behavior
@@ -299,6 +307,9 @@ button.dropdown-toggle.nav-button:hover {
   color: #404b63;
   box-shadow: none;
   outline: none;
+  border-radius: 0; 
+  border-right: 0;
+  border-left: 0;
 }
 .nav-link-container .show button.dropdown-toggle {
   border-bottom-color: Portal.$secondary-action-color;
@@ -713,7 +724,7 @@ div[data-id='tooltip'] {
 .QueryWrapperPlotNav {
   .TopLevelControls,
   .FacetFilterControls {
-    padding: 10px 30px;
+    padding: 10px 5px 10px 30px;
   }
   .TotalQueryResults.hasFilters > * {
     margin-left: 30px;
