@@ -83,8 +83,8 @@ const defaultMuiThemeOptions: ThemeOptions = {
       styleOverrides: {
         root: ({ ownerState, theme }) => ({
           color: theme.palette.text.secondary,
-          paddingTop: theme.spacing(3),
-          paddingBottom: theme.spacing(3),
+          paddingTop: ownerState.dividers ? theme.spacing(3) : 0,
+          paddingBottom: ownerState.dividers ? theme.spacing(3) : 0,
           // Hack - set add a small padding and offset with a negative margin so box-shadow effects on full width elements (like input fields) are shown
           paddingLeft: DIALOG_INNER_PADDING,
           paddingRight: DIALOG_INNER_PADDING,

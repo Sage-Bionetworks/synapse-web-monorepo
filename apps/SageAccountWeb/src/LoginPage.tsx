@@ -45,20 +45,22 @@ function LoginPage(props: LoginPageProps) {
             <div className={'panel-logo'}>
               <SourceAppLogo />
             </div>
-            <StandaloneLoginForm
-              sessionCallback={() => {
-                redirectAfterSSO(history, returnToUrl)
-                // If we didn't redirect, refresh the session
-                refreshSession()
-              }}
-              registerAccountUrl={'/register1'}
-              resetPasswordUrl={'/resetPassword'}
-              onBeginOAuthSignIn={() => {
-                // save current route (so that we can go back here after SSO)
-                preparePostSSORedirect()
-              }}
-              twoFactorAuthenticationRequired={twoFactorAuthErrorResponse}
-            />
+            <Box sx={{ my: 4 }}>
+              <StandaloneLoginForm
+                sessionCallback={() => {
+                  redirectAfterSSO(history, returnToUrl)
+                  // If we didn't redirect, refresh the session
+                  refreshSession()
+                }}
+                registerAccountUrl={'/register1'}
+                resetPasswordUrl={'/resetPassword'}
+                onBeginOAuthSignIn={() => {
+                  // save current route (so that we can go back here after SSO)
+                  preparePostSSORedirect()
+                }}
+                twoFactorAuthenticationRequired={twoFactorAuthErrorResponse}
+              />
+            </Box>
           </Box>
         </Box>
         <Box
