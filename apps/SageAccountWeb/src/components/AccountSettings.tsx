@@ -42,7 +42,7 @@ import { InputLabel } from '@mui/material'
 import { TextField } from '@mui/material'
 import { useSourceAppConfigs } from './SourceApp'
 import TwoFactorAuthSettingsPanel from 'synapse-react-client/dist/containers/auth/TwoFactorAuthSettingsPanel'
-
+import SRCTextField from 'synapse-react-client/dist/containers/TextField'
 const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
   isComplete,
 }) => {
@@ -399,24 +399,17 @@ export const AccountSettings = () => {
                       })}
                     </Grid>
                   </StyledFormControl>
-                  <StyledFormControl
+                  <SRCTextField
                     fullWidth
-                    variant="standard"
                     margin="normal"
-                    sx={{ marginBottom: '10px' }}
-                  >
-                    <InputLabel shrink htmlFor="bio">
-                      Bio
-                    </InputLabel>
-                    <TextField
-                      id="bio"
-                      name="bio"
-                      fullWidth
-                      multiline
-                      onChange={e => setBio(e.target.value)}
-                      value={bio}
-                    />
-                  </StyledFormControl>
+                    label="Bio"
+                    id="bio"
+                    name="bio"
+                    multiline
+                    rows={5}
+                    onChange={e => setBio(e.target.value)}
+                    value={bio}
+                  />
                   <div className="primary-button-container">
                     <Button
                       onClick={() => {

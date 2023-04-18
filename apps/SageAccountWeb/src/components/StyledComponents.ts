@@ -1,19 +1,7 @@
-import {
-  alpha,
-  Box,
-  BoxProps,
-  Paper,
-  PaperProps,
-  FormControl,
-  FormControlProps,
-  formHelperTextClasses,
-  inputBaseClasses,
-  styled,
-  textFieldClasses,
-} from '@mui/material'
-import { latoFont } from 'style/theme'
+import { BoxProps, Paper, PaperProps, styled } from '@mui/material'
 import { StyledComponent } from '@mui/styles'
 import { StyledOuterContainer as _StyledOuterContainer } from 'synapse-react-client/dist/components/styled/LeftRightPanel'
+import { StyledFormControl as _StyledFormControl } from 'synapse-react-client/dist/components/styled/StyledFormControl'
 
 export const StyledOuterContainer: StyledComponent<BoxProps> =
   _StyledOuterContainer
@@ -38,56 +26,4 @@ export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   },
 }))
 
-/* bootstrap-like label/text inputs 
- usage: 
-        <StyledFormControl fullWidth variant="standard" margin="normal">
-          <InputLabel shrink htmlFor="someinput">
-            labelText
-          </InputLabel>
-          <TextField
-            id="someinput"/>
-        </StyledFormControl>
-*/
-export const StyledFormControl: StyledComponent<FormControlProps> = styled(
-  FormControl,
-  {
-    label: 'StyledFormControl',
-  },
-)(({ theme }) => ({
-  '& label': {
-    fontSize: '14px',
-    transform: 'none',
-  },
-  [`& .${formHelperTextClasses.root}`]: {
-    marginLeft: '0',
-    [`&.Mui-error`]: {
-      color: '#c13415',
-    },
-  },
-  [`& .${textFieldClasses.root}`]: {
-    marginTop: theme.spacing(3),
-
-    [`& .${inputBaseClasses.root}`]: {
-      borderRadius: '3px',
-    },
-    '& .MuiInputBase-multiline': {
-      padding: '0px',
-    },
-    '& .MuiInputBase-input': {
-      borderRadius: '3px',
-      fontSize: '14px',
-      position: 'relative',
-      backgroundColor: theme.palette.mode === 'light' ? '#F1F3F5' : '#F1F3F5',
-      border: 'none',
-      padding: '14px 12px',
-      fontFamily: latoFont,
-      '&:focus': {
-        boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.1rem`,
-        borderColor: theme.palette.primary.main,
-      },
-    },
-    '& fieldset': {
-      border: 'none',
-    },
-  },
-}))
+export const StyledFormControl = _StyledFormControl

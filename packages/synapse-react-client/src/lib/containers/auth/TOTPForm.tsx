@@ -27,6 +27,10 @@ export default function TOTPForm(props: TOTPFormProps) {
         }}
         gap={0}
         sx={{
+          '.MuiInputBase-root': {
+            paddingLeft: '5px',
+            paddingRight: '5px',
+          },
           '.MuiFormControl-root:first-of-type > .MuiInputBase-root': {
             borderTopRightRadius: 0,
             borderBottomRightRadius: 0,
