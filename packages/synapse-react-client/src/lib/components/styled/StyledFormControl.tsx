@@ -13,8 +13,7 @@ import { StyledComponent } from '@emotion/styled'
           <InputLabel shrink htmlFor="someinput">
             labelText
           </InputLabel>
-          <TextField
-            id="someinput"/>
+          <InputBase id="someinput"/>
         </StyledFormControl>
 */
 export const StyledFormControl: StyledComponent<FormControlProps> = styled(
