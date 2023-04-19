@@ -15,6 +15,7 @@ import {
   getEndpoint,
 } from '../../../src/lib/utils/functions/getEndpoint'
 import {
+  TYPE_FILTER,
   UserBundle,
   UserGroupHeaderResponsePage,
   UserProfile,
@@ -135,23 +136,36 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
    * Get userGroupHeaders by prefix
    */
   rest.get(`${backendOrigin}${USER_GROUP_HEADERS}`, async (req, res, ctx) => {
-    const prefix = req.url.searchParams.get('prefix') as string
+    const prefix = (
+      req.url.searchParams.get('prefix') ?? ''
+    ).toLowerCase() as string
+    const typeFilter = req.url.searchParams.get('typeFilter') as TYPE_FILTER
+    console.log('typeFilter', typeFilter)
     const responsePage: UserGroupHeaderResponsePage = {
       children: mockUserData
+        .filter(userData => {
+          if (!typeFilter || typeFilter === TYPE_FILTER.ALL) {
+            return true
+          } else if (typeFilter === TYPE_FILTER.USERS_ONLY) {
+            return userData.userGroupHeader.isIndividual
+          } else {
+            return !userData.userGroupHeader.isIndividual
+          }
+        })
         .filter(
           userData =>
             userData.userGroupHeader.userName
               .toLowerCase()
-              .startsWith(prefix.toLowerCase() ?? '') ||
+              .startsWith(prefix) ||
             (userData.userGroupHeader.firstName || '')
               .toLowerCase()
-              .startsWith(prefix.toLowerCase() ?? '') ||
-            (userData.userGroupHeader.displayName || '')
+              .startsWith(prefix) ||
+            userData.userGroupHeader.displayName
               .toLowerCase()
-              .startsWith(prefix.toLowerCase() ?? '') ||
+              .startsWith(prefix) ||
             (userData.userGroupHeader.lastName || '')
               .toLowerCase()
-              .startsWith(prefix.toLowerCase() ?? ''),
+              .startsWith(prefix),
         )
         .map(userData => userData.userGroupHeader),
     }
