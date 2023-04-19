@@ -230,7 +230,7 @@ const EvaluationEditorDropdown: React.FunctionComponent<
           onCancel={() => {
             setDeleteWarningShow(false)
           }}
-          confirmButtonVariant="danger"
+          confirmButtonColor="error"
         />
       )}
       <Dropdown className="float-right">

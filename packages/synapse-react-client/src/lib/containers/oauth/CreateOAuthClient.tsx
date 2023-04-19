@@ -450,7 +450,7 @@ export const CreateOAuthModal: React.FunctionComponent<
             : updateClient(updatedClient!)
           hideConfirmModal()
         }}
-        confirmButtonVariant="danger"
+        confirmButtonColor="error"
         confirmButtonText="Yes, Continue"
       />
     </div>

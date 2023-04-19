@@ -119,7 +119,7 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
             replyId: reply.id,
           })
         }
-        confirmButtonVariant="danger"
+        confirmButtonColor="error"
         confirmButtonText="Delete"
       />
     </div>

@@ -1,6 +1,17 @@
 import React from 'react'
-import { Button, Modal } from 'react-bootstrap'
-import { ButtonVariant } from 'react-bootstrap/esm/types'
+import {
+  Box,
+  Button,
+  ButtonProps,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+  SxProps,
+} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 
 export type WarningModalProps<T = any> = {
   title: string
@@ -10,49 +21,66 @@ export type WarningModalProps<T = any> = {
   show: boolean
   onConfirm: (...args: T[]) => unknown
   onConfirmCallbackArgs?: Parameters<WarningModalProps['onConfirm']>
-  confirmButtonVariant?: ButtonVariant
+  confirmButtonColor?: ButtonProps['color']
   onCancel: () => void
+}
+
+export type CloseButtonProps = {
+  sx?: SxProps
+  onClick?: () => void
+}
+
+export const CloseButton: React.FC<CloseButtonProps> = ({
+  sx = { color: 'grey.700' },
+  onClick,
+}) => {
+  return (
+    <IconButton sx={sx} onClick={onClick}>
+      <CloseIcon />
+    </IconButton>
+  )
 }
 
 export function WarningModal(props: WarningModalProps) {
   const {
     title,
     modalBody,
-    confirmButtonText,
+    confirmButtonText = 'OK',
     className,
     show,
     onConfirm,
-    confirmButtonVariant = 'sds-primary',
+    confirmButtonColor = 'primary',
     onCancel,
     onConfirmCallbackArgs,
   } = props
   return (
-    <Modal
-      dialogClassName="bootstrap-4-backport"
-      show={show}
-      animation={false}
+    <Dialog
+      fullWidth
+      open={show}
       className={className}
-      onHide={() => onCancel()}
-      backdrop="static"
+      onClose={() => onCancel()}
     >
-      <Modal.Header closeButton={true} onHide={() => onCancel()}>
-        <Modal.Title>{title}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>{modalBody}</Modal.Body>
-      <Modal.Footer>
-        <div>
-          <Button variant="outline" onClick={() => onCancel()}>
-            Cancel
-          </Button>
-          <Button
-            variant={confirmButtonVariant}
-            onClick={() => onConfirm(...(onConfirmCallbackArgs ?? []))}
-          >
-            <span>{confirmButtonText || 'OK'}</span>
-          </Button>
-        </div>
-      </Modal.Footer>
-    </Modal>
+      <DialogTitle>
+        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+          {title}
+          <Box sx={{ flexGrow: 1 }} />
+          <CloseButton onClick={() => onCancel()} />
+        </Stack>
+      </DialogTitle>
+      <DialogContent>{modalBody}</DialogContent>
+      <DialogActions>
+        <Button variant="outlined" onClick={() => onCancel()}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          color={confirmButtonColor}
+          onClick={() => onConfirm(...(onConfirmCallbackArgs ?? []))}
+        >
+          {confirmButtonText}
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 

@@ -61,10 +61,10 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
               handleError(error)
             })
         }}
-        confirmButtonVariant="danger"
+        confirmButtonColor="error"
         show={showModal}
         onConfirmCallbackArgs={[accessToken.id, authToken]}
-      ></WarningModal>
+      />
 
       <div className="SRC-cardContent">
         <div className="SRC-eqHeightRow SRC-userCardName">

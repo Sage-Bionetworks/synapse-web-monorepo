@@ -339,7 +339,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                     'Are you sure you want to remove this link? The original object will not be changed.'
                   }
                   confirmButtonText="Unlink"
-                  confirmButtonVariant="danger"
+                  confirmButtonColor="error"
                   onConfirm={() => {
                     unlinkEntity(entityId)
                     setShowUnlinkConfirmModal(false)

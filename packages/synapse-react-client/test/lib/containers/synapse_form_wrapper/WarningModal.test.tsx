@@ -29,8 +29,8 @@ describe('WarningModal', () => {
   test('should display the modal with correct text', () => {
     renderComponent(props)
     const dialog = screen.getByRole('dialog')
-    within(dialog.querySelector('.modal-title.h4')!).getByText(props.title)
-    within(dialog.querySelector('div.modal-body')!).getByText(
+    within(dialog.querySelector('.MuiDialogTitle-root')!).getByText(props.title)
+    within(dialog.querySelector('.MuiDialogContent-root')!).getByText(
       props.modalBody as string,
     )
     screen.getByRole('button', { name: props.confirmButtonText })

@@ -70,7 +70,7 @@ function ApproveConfirmationModal(
       title="Approve Request?"
       modalBody={
         <>
-          <Typography variant="body1">
+          <Typography variant="body1" sx={{ marginBottom: '10px' }}>
             Approving the request will grant access to controlled data.
           </Typography>
           <Typography variant="body1">

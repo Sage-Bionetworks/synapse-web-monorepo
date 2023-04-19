@@ -276,22 +276,20 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       </Modal>
       <WarningModal
         show={showDeleteModal}
-        className="bootstrap-4-backport"
         title="Confirm Deletion"
         modalBody="Are you sure you want to delete this thread?"
         onCancel={() => setShowDeleteModal(false)}
         onConfirm={() => threadData && deleteThread(threadData)}
-        confirmButtonVariant="danger"
+        confirmButtonColor="error"
         confirmButtonText="Delete"
       />
       <WarningModal
         show={showRestoreModal}
-        className="bootstrap-4-backport"
         title="Confirm Restoration"
         modalBody="Are you sure you want to restore this thread?"
         onCancel={() => setShowRestoreModal(false)}
         onConfirm={() => threadData && restoreThread(threadData)}
-        confirmButtonVariant="info"
+        confirmButtonColor="info"
         confirmButtonText="Restore"
       />
       <Modal

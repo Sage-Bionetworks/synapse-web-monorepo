@@ -978,7 +978,7 @@ export default class SynapseForm extends React.Component<
             onConfirm={(stepId: string, isExclude: boolean) =>
               this.toggleExcludeStep(stepId, isExclude)
             }
-          ></WarningModal>
+          />
         )}
         <DataDebug formData={this.state.formData} hidden={true}></DataDebug>
       </div>

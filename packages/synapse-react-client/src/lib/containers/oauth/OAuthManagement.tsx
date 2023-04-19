@@ -182,7 +182,6 @@ export const OAuthManagement: React.FunctionComponent = () => {
 
       <WarningModal
         show={isShowingSecretWarning}
-        className="bootstrap-4-backport"
         title={warningHeader}
         modalBody={warningBody}
         onCancel={() => {
@@ -190,7 +189,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
           setSelectedClient(undefined)
         }}
         onConfirm={onShowSecret}
-        confirmButtonVariant="danger"
+        confirmButtonColor="error"
         confirmButtonText="Yes, Continue"
       />
       {secret && (
