@@ -3,7 +3,7 @@ import '../demo/style/DemoStyle.scss'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
 import { StorybookComponentWrapper } from '../src/lib/containers/StorybookComponentWrapper'
-import { initialize, mswDecorator } from 'msw-storybook-addon'
+import { initialize, mswLoader } from 'msw-storybook-addon'
 import { getHandlers } from '../mocks/msw/handlers'
 import { MOCK_REPO_ORIGIN } from '../src/lib/utils/functions/getEndpoint'
 
@@ -108,8 +108,9 @@ initialize({
   onUnhandledRequest: 'bypass',
 })
 
+export const loaders = [mswLoader]
+
 export const decorators = [
-  mswDecorator,
   (Story, context) => {
     return (
       <StorybookComponentWrapper storybookContext={context}>
@@ -122,4 +123,5 @@ export const decorators = [
 export default {
   parameters,
   decorators,
+  loaders,
 }
