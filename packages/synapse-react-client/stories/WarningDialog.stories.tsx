@@ -1,4 +1,3 @@
-import { Typography } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
 import {
@@ -7,7 +6,7 @@ import {
 } from '../src/lib/containers/synapse_form_wrapper/WarningDialog'
 
 const meta = {
-  title: 'Synapse/WarningDialog',
+  title: 'UI/WarningDialog',
   component: WarningDialog,
   render: args => {
     return <WarningDialog {...args} />

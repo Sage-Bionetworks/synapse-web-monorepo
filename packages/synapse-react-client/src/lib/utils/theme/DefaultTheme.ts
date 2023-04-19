@@ -58,6 +58,7 @@ const defaultMuiThemeOptions: ThemeOptions = {
       defaultProps: {
         PaperProps: {
           sx: theme => ({
+            borderRadius: '0px',
             padding: theme.spacing(5.5),
             alignSelf: 'flex-start',
           }),

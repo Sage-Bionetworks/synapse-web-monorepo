@@ -593,8 +593,7 @@ describe('Dataset Items Editor tests', () => {
       await clickCancel()
 
       // Verify that the warning dialog appears
-      const dialog = screen.queryByRole('dialog')
-      expect(dialog).toBeInTheDocument()
+      const dialog = screen.getByRole('dialog')
       await screen.findByText('Any unsaved changes will be lost', {
         exact: false,
       })
@@ -622,8 +621,7 @@ describe('Dataset Items Editor tests', () => {
       await clickCancel()
 
       // Verify that the warning dialog appears
-      const dialog = screen.queryByRole('dialog')
-      expect(dialog).toBeInTheDocument()
+      const dialog = screen.getByRole('dialog')
       await screen.findByText('Any unsaved changes will be lost', {
         exact: false,
       })
