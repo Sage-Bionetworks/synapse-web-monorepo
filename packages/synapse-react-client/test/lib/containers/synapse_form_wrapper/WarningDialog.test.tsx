@@ -1,26 +1,26 @@
 import * as React from 'react'
 import * as _ from 'lodash-es'
 
-import WarningModal, {
-  WarningModalProps,
-} from '../../../../src/lib/containers/synapse_form_wrapper/WarningModal'
+import WarningDialog, {
+  WarningDialogProps,
+} from '../../../../src/lib/containers/synapse_form_wrapper/WarningDialog'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-const renderComponent = (props: WarningModalProps) => {
-  return render(<WarningModal {...props} />)
+const renderComponent = (props: WarningDialogProps) => {
+  return render(<WarningDialog {...props} />)
 }
 
-describe('WarningModal', () => {
+describe('WarningDialog', () => {
   const mock = {
     confirmFn: jest.fn(() => Promise.resolve({ value: 'ok' })),
   }
 
-  const props: WarningModalProps = {
+  const props: WarningDialogProps = {
     title: 'Some Warning',
-    modalBody: 'Some Copy',
+    content: 'Some Copy',
     confirmButtonText: 'Do it!',
-    show: true,
+    open: true,
     onConfirm: mock.confirmFn,
     onCancel: _.noop,
     onConfirmCallbackArgs: ['one', 'two'],
@@ -31,7 +31,7 @@ describe('WarningModal', () => {
     const dialog = screen.getByRole('dialog')
     within(dialog.querySelector('.MuiDialogTitle-root')!).getByText(props.title)
     within(dialog.querySelector('.MuiDialogContent-root')!).getByText(
-      props.modalBody as string,
+      props.content as string,
     )
     screen.getByRole('button', { name: props.confirmButtonText })
   })

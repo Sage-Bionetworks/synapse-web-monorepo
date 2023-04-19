@@ -13,7 +13,7 @@ import { TrashedEntity } from '../../utils/synapseTypes'
 import { Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import { BlockingLoader, SynapseSpinner } from '../LoadingScreen'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import { Checkbox } from '../widgets/Checkbox'
 
 type TrashCanListItemProps = {
@@ -136,9 +136,9 @@ export function TrashCanList() {
         will remain in the trash can for 30 days before being automatically
         purged.
       </Typography>
-      <WarningModal
+      <WarningDialog
         title="Delete selected items from your Trash?"
-        modalBody={
+        content={
           <Typography variant="body1">
             You can&apos;t undo this action.
           </Typography>
@@ -152,7 +152,7 @@ export function TrashCanList() {
         onCancel={() => {
           setShowDeleteConfirmation(false)
         }}
-        show={showDeleteConfirmation}
+        open={showDeleteConfirmation}
       />
       {isLoading && <SynapseSpinner />}
       {!isLoading && items.length === 0 && (

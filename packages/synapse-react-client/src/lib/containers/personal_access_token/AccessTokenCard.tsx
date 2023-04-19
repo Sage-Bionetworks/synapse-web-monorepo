@@ -8,7 +8,7 @@ import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTo
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
 import { Tooltip } from '@mui/material'
 import IconSvg from '../IconSvg'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(relativeTime)
@@ -36,9 +36,9 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         (isExpired ? ' bg-warning' : '')
       }
     >
-      <WarningModal
+      <WarningDialog
         title={'Confirm Deletion'}
-        modalBody={
+        content={
           <>
             <p>
               If you delete this token, any applications using it will stop
@@ -62,7 +62,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
             })
         }}
         confirmButtonColor="error"
-        show={showModal}
+        open={showModal}
         onConfirmCallbackArgs={[accessToken.id, authToken]}
       />
 

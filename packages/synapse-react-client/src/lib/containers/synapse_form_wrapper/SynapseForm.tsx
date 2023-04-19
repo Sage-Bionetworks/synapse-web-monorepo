@@ -16,7 +16,7 @@ import StepsSideNav from './StepsSideNav'
 import { NavButtons, NextStepLink } from './NavButtons'
 import DataDebug from './DataDebug'
 import SummaryTable from './SummaryTable'
-import WarningModal from './WarningModal'
+import WarningDialog from './WarningDialog'
 import Switch from 'react-switch'
 import { Prompt } from 'react-router-dom'
 
@@ -525,7 +525,7 @@ export default class SynapseForm extends React.Component<
     return this.state.currentStep.final === true && !this.state.isLoadingSaved
   }
 
-  showExcludeStateWarningModal = (
+  showExcludeStateWarningDialog = (
     stepId: string,
     isUpdateFlattenedData: boolean = false,
   ): void => {
@@ -623,7 +623,7 @@ export default class SynapseForm extends React.Component<
           <button
             className="btn btn-link"
             onClick={() =>
-              this.showExcludeStateWarningModal(this.state.currentStep.id)
+              this.showExcludeStateWarningDialog(this.state.currentStep.id)
             }
           >
             Skip
@@ -948,7 +948,7 @@ export default class SynapseForm extends React.Component<
                   formData={this.state.formData}
                   steps={this.state.steps}
                   callbackFn={(screenId: string) =>
-                    this.showExcludeStateWarningModal(screenId, true)
+                    this.showExcludeStateWarningDialog(screenId, true)
                   }
                   uiSchema={this.props.uiSchema}
                   schema={this.props.schema}
@@ -968,10 +968,10 @@ export default class SynapseForm extends React.Component<
           </div>
         </div>
         {this.state.modalContext && (
-          <WarningModal
-            show={true}
+          <WarningDialog
+            open={true}
             title={this.excludeWarningHeader}
-            modalBody={this.excludeWarningText}
+            content={this.excludeWarningText}
             className={`theme-${this.props.formClass}`}
             onConfirmCallbackArgs={this.state.modalContext.arguments}
             onCancel={() => this.setState({ modalContext: undefined })}

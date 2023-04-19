@@ -13,14 +13,14 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 
-export type WarningModalProps<T = any> = {
+export type WarningDialogProps<T = any> = {
   title: string
-  modalBody: string | JSX.Element
+  content: string | JSX.Element
   confirmButtonText?: string
   className?: string
-  show: boolean
+  open: boolean
   onConfirm: (...args: T[]) => unknown
-  onConfirmCallbackArgs?: Parameters<WarningModalProps['onConfirm']>
+  onConfirmCallbackArgs?: Parameters<WarningDialogProps['onConfirm']>
   confirmButtonColor?: ButtonProps['color']
   onCancel: () => void
 }
@@ -41,13 +41,13 @@ export const CloseButton: React.FC<CloseButtonProps> = ({
   )
 }
 
-export function WarningModal(props: WarningModalProps) {
+export function WarningDialog(props: WarningDialogProps) {
   const {
     title,
-    modalBody,
+    content,
     confirmButtonText = 'OK',
     className,
-    show,
+    open,
     onConfirm,
     confirmButtonColor = 'primary',
     onCancel,
@@ -56,7 +56,7 @@ export function WarningModal(props: WarningModalProps) {
   return (
     <Dialog
       fullWidth
-      open={show}
+      open={open}
       className={className}
       onClose={() => onCancel()}
     >
@@ -67,7 +67,7 @@ export function WarningModal(props: WarningModalProps) {
           <CloseButton onClick={() => onCancel()} />
         </Stack>
       </DialogTitle>
-      <DialogContent>{modalBody}</DialogContent>
+      <DialogContent>{content}</DialogContent>
       <DialogActions>
         <Button variant="outlined" onClick={() => onCancel()}>
           Cancel
@@ -84,4 +84,4 @@ export function WarningModal(props: WarningModalProps) {
   )
 }
 
-export default WarningModal
+export default WarningDialog

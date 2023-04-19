@@ -25,7 +25,7 @@ import {
 import { useSynapseContext } from '../utils/SynapseContext'
 import { EntityBundle, EntityType } from '../utils/synapseTypes'
 import { EntityModal, EntityModalTabs } from './entity/metadata/EntityModal'
-import WarningModal from './synapse_form_wrapper/WarningModal'
+import WarningDialog from './synapse_form_wrapper/WarningDialog'
 import { Tooltip } from '@mui/material'
 
 function isPublic(bundle: EntityBundle): boolean {
@@ -332,10 +332,10 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
             bundle.entityType === EntityType.LINK &&
             bundle.permissions?.canDelete && (
               <>
-                <WarningModal
-                  show={showUnlinkConfirmModal}
+                <WarningDialog
+                  open={showUnlinkConfirmModal}
                   title="Confirm Unlink"
-                  modalBody={
+                  content={
                     'Are you sure you want to remove this link? The original object will not be changed.'
                   }
                   confirmButtonText="Unlink"

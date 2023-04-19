@@ -22,9 +22,9 @@ import {
 import { Typography } from '@mui/material'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
-import WarningModal, {
-  WarningModalProps,
-} from '../synapse_form_wrapper/WarningModal'
+import WarningDialog, {
+  WarningDialogProps,
+} from '../synapse_form_wrapper/WarningDialog'
 import UserCard from '../UserCard'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { FileHandleLink } from '../widgets/FileHandleLink'
@@ -62,13 +62,13 @@ function DataAccessSubmissionFileHandleLink(props: {
 }
 
 function ApproveConfirmationModal(
-  props: Pick<WarningModalProps, 'show' | 'onConfirm' | 'onCancel'>,
+  props: Pick<WarningDialogProps, 'open' | 'onConfirm' | 'onCancel'>,
 ) {
   return (
-    <WarningModal
-      show={props.show}
+    <WarningDialog
+      open={props.open}
       title="Approve Request?"
-      modalBody={
+      content={
         <>
           <Typography variant="body1" sx={{ marginBottom: '10px' }}>
             Approving the request will grant access to controlled data.
@@ -155,7 +155,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   return (
     <div className="SubmissionPage">
       <ApproveConfirmationModal
-        show={showApprovalConfirmation}
+        open={showApprovalConfirmation}
         onCancel={() => {
           setShowApprovalConfirmation(false)
         }}

@@ -18,7 +18,7 @@ import {
   useGetReply,
 } from '../../utils/hooks/SynapseAPI/forum/useReply'
 import { displayToast } from '../ToastMessage'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 export type DiscussionReplyProps = {
@@ -106,11 +106,11 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
           />
         </Modal.Body>
       </Modal>
-      <WarningModal
-        show={showDeleteModal}
+      <WarningDialog
+        open={showDeleteModal}
         className="bootstrap-4-backport"
         title="Confirm Deletion"
-        modalBody="Are you sure you want to delete this reply?"
+        content="Are you sure you want to delete this reply?"
         onCancel={() => setShowDeleteModal(false)}
         onConfirm={() =>
           deleteReply({

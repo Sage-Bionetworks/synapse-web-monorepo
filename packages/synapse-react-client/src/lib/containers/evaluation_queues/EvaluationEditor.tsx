@@ -5,7 +5,7 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { Evaluation } from '../../utils/synapseTypes/Evaluation/Evaluation'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import IconSvg from '../IconSvg'
 
@@ -217,10 +217,10 @@ const EvaluationEditorDropdown: React.FunctionComponent<
   return (
     <>
       {onDelete && (
-        <WarningModal
+        <WarningDialog
           title="Delete Evaluation Queue"
-          modalBody="Are you sure you want to delete this Evaluation Queue?"
-          show={deleteWarningShow}
+          content="Are you sure you want to delete this Evaluation Queue?"
+          open={deleteWarningShow}
           confirmButtonText="Delete"
           onConfirm={() => {
             onDelete()

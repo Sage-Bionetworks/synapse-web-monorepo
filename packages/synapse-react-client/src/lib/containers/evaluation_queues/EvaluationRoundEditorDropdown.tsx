@@ -1,6 +1,6 @@
 import { Dropdown } from 'react-bootstrap'
 import React, { useState } from 'react'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import IconSvg from '../IconSvg'
 
 export type EvaluationRoundEditorDropdownProps = {
@@ -15,10 +15,10 @@ export const EvaluationRoundEditorDropdown: React.FunctionComponent<
 
   return (
     <>
-      <WarningModal
+      <WarningDialog
         title="Delete Evaluation Round"
-        modalBody="Are you sure you want to delete this Evaluation Round?"
-        show={deleteWarningShow}
+        content="Are you sure you want to delete this Evaluation Round?"
+        open={deleteWarningShow}
         confirmButtonText="Delete"
         onConfirm={() => {
           onDelete()

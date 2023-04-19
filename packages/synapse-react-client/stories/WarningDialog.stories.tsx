@@ -1,35 +1,36 @@
+import { Typography } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
 import {
-  WarningModal,
-  WarningModalProps,
-} from '../src/lib/containers/synapse_form_wrapper/WarningModal'
+  WarningDialog,
+  WarningDialogProps,
+} from '../src/lib/containers/synapse_form_wrapper/WarningDialog'
 
 const meta = {
-  title: 'Synapse/WarningModal',
-  component: WarningModal,
+  title: 'Synapse/WarningDialog',
+  component: WarningDialog,
   render: args => {
-    return <WarningModal {...args} />
+    return <WarningDialog {...args} />
   },
-} satisfies Meta<WarningModalProps>
+} satisfies Meta<WarningDialogProps>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   args: {
-    show: true,
+    open: true,
     title: 'Approve Request',
-    modalBody: 'Are you sure you want to approve this request?',
+    content: 'Are you sure you want to approve this request?',
     onConfirmCallbackArgs: [],
   },
 }
 
-export const AccessTokenCardWarningModal: Story = {
+export const AccessTokenCardWarningDialog: Story = {
   render: args => (
-    <WarningModal
+    <WarningDialog
       {...args}
-      modalBody={
+      content={
         <>
           <p>
             If you delete this token, any applications using it will stop
