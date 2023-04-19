@@ -8,7 +8,7 @@ import ReactFlow, {
   getConnectedEdges,
   ReactFlowProvider,
   useReactFlow,
-} from 'react-flow-renderer'
+} from 'reactflow'
 import {
   getLayoutedElements,
   isArrayEqual,
@@ -41,6 +41,7 @@ import {
   findEntityNode,
   isRootEntity,
 } from './ProvenanceGraphUtils'
+import 'reactflow/dist/style.css'
 
 export type ProvenanceProps = {
   // what entity nodes should we start with?
@@ -403,7 +404,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
       style={{ width: '100%', height: containerHeight }}
     >
       <ReactFlow
-        defaultZoom={DEFAULT_ZOOM}
+        defaultViewport={{ x: 0, y: 0, zoom: DEFAULT_ZOOM }}
         nodes={nodes}
         edges={edges}
         onNodeClick={onClickNode}
