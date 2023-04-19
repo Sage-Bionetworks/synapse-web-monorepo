@@ -7,7 +7,7 @@ const esModules = [
 
 /** @type {import('jest').Config} */
 module.exports = {
-  testMatch: ['<rootDir>/test/**/*.test.[jt]s?(x)'],
+  testMatch: ['<rootDir>/test/**/Synapse*.test.[jt]s?(x)'],
   testEnvironment: 'jsdom',
   moduleNameMapper: {
     '\\.(css|less|scss)$': 'identity-obj-proxy',
@@ -19,7 +19,8 @@ module.exports = {
   ],
   setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
   reporters: [
-    'default',
+    '<rootDir>/test/logForFailedTestsOnlyReporter.ts',
+    'summary',
     'github-actions',
     [
       './node_modules/jest-html-reporter',

@@ -119,6 +119,7 @@
     "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
     "@googlemaps/jest-mocks": "^2.7.5",
+    "@jest/reporters": "^29.5.0",
     "@juggle/resize-observer": "^3.3.1",
     "@rollup/plugin-inject": "^4.0.4",
     "@storybook/addon-actions": "^7.0.6",
