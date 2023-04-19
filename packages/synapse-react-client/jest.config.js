@@ -7,7 +7,7 @@ const esModules = [
 
 /** @type {import('jest').Config} */
 module.exports = {
-  testMatch: ['<rootDir>/test/**/Synapse*.test.[jt]s?(x)'],
+  testMatch: ['<rootDir>/test/**/*.test.[jt]s?(x)'],
   testEnvironment: 'jsdom',
   moduleNameMapper: {
     '\\.(css|less|scss)$': 'identity-obj-proxy',
