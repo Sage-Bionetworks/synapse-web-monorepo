@@ -65,7 +65,7 @@ async function addToDownload(
     closeConfirmationFn()
     return [StatusEnum.LOADING_INFO, '']
   } catch (error) {
-    displayToast('danger', undefined, error.reason)
+    displayToast(error.reason, 'danger')
     closeConfirmationFn()
     return [StatusEnum.LOADING_INFO, '']
   }
