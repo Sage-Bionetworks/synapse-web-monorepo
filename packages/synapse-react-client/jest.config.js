@@ -20,6 +20,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
   reporters: [
     'default',
+    'github-actions',
     [
       './node_modules/jest-html-reporter',
       {

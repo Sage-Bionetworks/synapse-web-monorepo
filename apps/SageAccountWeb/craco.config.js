@@ -38,6 +38,7 @@ module.exports = {
       },
       reporters: [
         'default',
+        'github-actions',
         [
           './node_modules/jest-html-reporter',
           {
