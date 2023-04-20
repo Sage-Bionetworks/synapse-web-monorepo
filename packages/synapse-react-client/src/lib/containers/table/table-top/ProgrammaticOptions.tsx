@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { Link } from '@mui/material'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { ProgrammaticInstructionsModal } from '../../ProgrammaticInstructionsModal'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../../utils/hooks/SynapseAPI'
@@ -71,13 +72,13 @@ function ProgrammaticOptions({
       rNotes={
         <>
           This R code will download file annotations only. Use{' '}
-          <a
+          <Link
             target="_blank"
             rel="noopener noreferrer"
             href="https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles"
           >
             synGet{'()'}
-          </a>{' '}
+          </Link>{' '}
           to loop over the list of Synapse IDs from the file annotations to
           download files.
         </>
@@ -86,13 +87,13 @@ function ProgrammaticOptions({
       pythonNotes={
         <>
           This Python code will download file annotations only. Use{' '}
-          <a
+          <Link
             target="_blank"
             rel="noopener noreferrer"
             href="https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles"
           >
             syn.get
-          </a>{' '}
+          </Link>{' '}
           to loop over the list of Synapse IDs from the file annotations to
           download files.
         </>
