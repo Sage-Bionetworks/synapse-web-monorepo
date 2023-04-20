@@ -106,6 +106,11 @@ export const globalTypes = {
 // Initialize MSW
 initialize({
   onUnhandledRequest: 'bypass',
+  serviceWorker: {
+    url: `${
+      location.hostname.endsWith('.github.io') ? '/synapse-web-monorepo' : ''
+    }/mockServiceWorker.js`,
+  },
 })
 
 export const loaders = [mswLoader]
