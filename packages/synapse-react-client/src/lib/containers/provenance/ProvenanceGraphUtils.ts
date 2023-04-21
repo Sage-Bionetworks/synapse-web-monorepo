@@ -1,4 +1,4 @@
-import { Edge, Node } from 'react-flow-renderer'
+import { Edge, Node } from 'reactflow'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import {
   Activity,
