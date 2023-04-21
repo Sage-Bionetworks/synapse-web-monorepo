@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-  Node,
-  Position,
-  ConnectionLineType,
-  Edge,
-  MarkerType,
-} from 'react-flow-renderer'
+import { Node, Position, ConnectionLineType, Edge, MarkerType } from 'reactflow'
 import { ActivityNodeLabel } from './ActivityNodeLabel'
 import { EntityNodeLabel } from './EntityNodeLabel'
 import {
