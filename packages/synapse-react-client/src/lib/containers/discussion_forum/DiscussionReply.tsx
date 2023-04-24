@@ -108,7 +108,6 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
       </Modal>
       <WarningDialog
         open={showDeleteModal}
-        className="bootstrap-4-backport"
         title="Confirm Deletion"
         content="Are you sure you want to delete this reply?"
         onCancel={() => setShowDeleteModal(false)}
