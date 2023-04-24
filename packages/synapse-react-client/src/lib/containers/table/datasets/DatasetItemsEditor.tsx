@@ -44,7 +44,7 @@ import { FinderScope } from '../../entity_finder/tree/EntityTree'
 import { VersionSelectionType } from '../../entity_finder/VersionSelectionType'
 import IconSvg from '../../IconSvg'
 import { BlockingLoader } from '../../LoadingScreen'
-import WarningModal from '../../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../../synapse_form_wrapper/WarningDialog'
 import { displayToast } from '../../ToastMessage'
 import { Checkbox } from '../../widgets/Checkbox'
 
@@ -133,7 +133,7 @@ const TABLE_HEIGHT = 350
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { entityId, onSave, onClose, onUnsavedChangesChange } = props
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
-  const [showWarningModal, setShowWarningModal] = useState<boolean>(false)
+  const [showWarningDialog, setShowWarningDialog] = useState<boolean>(false)
   const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false)
   // Disable updating the entity after the initial fetch because we don't want to replace edits that the user makes.
   const [datasetToUpdate, _setDatasetToUpdate] =
@@ -572,20 +572,20 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         }}
         onCancel={() => setShowEntityFinder(false)}
       />
-      <WarningModal
+      <WarningDialog
         title="Unsaved Changes"
-        modalBody="Any unsaved changes will be lost. Are you sure you want to close the editor?"
+        content="Any unsaved changes will be lost. Are you sure you want to close the editor?"
         confirmButtonText="Close Editor"
         onConfirm={() => {
           if (onClose) {
-            setShowWarningModal(false)
+            setShowWarningDialog(false)
             onUnsavedChangesChange && onUnsavedChangesChange(false)
             onClose()
           }
         }}
-        show={showWarningModal}
+        open={showWarningDialog}
         onConfirmCallbackArgs={[]}
-        onCancel={() => setShowWarningModal(false)}
+        onCancel={() => setShowWarningDialog(false)}
       />
 
       <div className="DatasetEditorTopBottomPanel">
@@ -680,7 +680,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           variant={'outline'}
           onClick={() => {
             if (hasChangedSinceLastSave) {
-              setShowWarningModal(true)
+              setShowWarningDialog(true)
             } else if (onClose) {
               onClose()
             }

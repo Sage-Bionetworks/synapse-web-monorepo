@@ -3,7 +3,7 @@ import { Reference } from '../../utils/synapseTypes'
 import { Typography } from '@mui/material'
 import { FluidModal } from '../FluidModal'
 import { HelpPopoverProps } from '../HelpPopover'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import EntityFinder, { EntityFinderProps } from './EntityFinder'
 
 export const UNSAVED_CHANGES = 'Unsaved Changes'
@@ -26,10 +26,10 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
     useState(false)
   return (
     <>
-      <WarningModal
+      <WarningDialog
         title={UNSAVED_CHANGES}
-        modalBody="Any unsaved changes will be lost. Are you sure you want to close the finder?"
-        show={showUnsavedChangesWarning}
+        content="Any unsaved changes will be lost. Are you sure you want to close the finder?"
+        open={showUnsavedChangesWarning}
         confirmButtonText="Close Finder"
         onConfirm={() => {
           setShowUnsavedChangesWarning(false)

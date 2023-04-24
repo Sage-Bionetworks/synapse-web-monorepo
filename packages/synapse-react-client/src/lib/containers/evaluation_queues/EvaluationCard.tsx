@@ -10,7 +10,7 @@ import { ErrorBanner } from '../error/ErrorBanner'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import { UserEvaluationPermissions } from '../../utils/synapseTypes/Evaluation/UserEvaluationPermissions'
 import { RequiredProperties } from '../../utils'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import IconSvg from '../IconSvg'
 
@@ -145,10 +145,10 @@ const EvaluationCardDropdown: React.FunctionComponent<
   return (
     <>
       {permissions?.canDelete && (
-        <WarningModal
+        <WarningDialog
           title="Delete Evaluation Queue"
-          modalBody="Are you sure you want to delete the Evaluation Queue?"
-          show={deleteWarningShow}
+          content="Are you sure you want to delete the Evaluation Queue?"
+          open={deleteWarningShow}
           confirmButtonText="Delete"
           onConfirm={() => {
             onDelete()
@@ -158,7 +158,7 @@ const EvaluationCardDropdown: React.FunctionComponent<
           onCancel={() => {
             setDeleteWarningShow(false)
           }}
-          confirmButtonVariant="danger"
+          confirmButtonColor="error"
         />
       )}
       <Dropdown className="float-right">

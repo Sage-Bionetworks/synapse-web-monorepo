@@ -13,22 +13,22 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../src/lib/utils/functions/getEndpoint'
-import { WarningModal } from '../../../../src/lib/containers/synapse_form_wrapper/WarningModal'
+import { WarningDialog } from '../../../../src/lib/containers/synapse_form_wrapper/WarningDialog'
 import { SynapseClient } from '../../../../src/lib/utils'
 
 jest.mock('../../../../src/lib/containers/ToastMessage', () => {
   return { displayToast: jest.fn() }
 })
 jest.mock(
-  '../../../../src/lib/containers/synapse_form_wrapper/WarningModal',
+  '../../../../src/lib/containers/synapse_form_wrapper/WarningDialog',
   () => ({
-    WarningModal: jest.fn().mockImplementation(() => {
+    WarningDialog: jest.fn().mockImplementation(() => {
       return <div></div>
     }),
   }),
 )
 
-const mockWarningModal = WarningModal
+const mockWarningDialog = WarningDialog
 const mockToastFn = displayToast
 
 const updatedClient = jest.fn()
@@ -102,10 +102,10 @@ describe('Create OAuth Client', () => {
     const deleteButton = screen.getByRole('button', { name: 'DELETE CLIENT' })
     await userEvent.click(deleteButton)
 
-    expect(mockWarningModal).toBeCalledWith(
+    expect(mockWarningDialog).toBeCalledWith(
       expect.objectContaining({
         title: 'Are you absolutely sure?',
-        modalBody:
+        content:
           'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.',
       }),
       expect.anything(),
@@ -158,10 +158,10 @@ describe('Create OAuth Client', () => {
     await userEvent.type(inputRedirectURI, 'xxx')
     await userEvent.click(saveButton)
 
-    expect(mockWarningModal).toBeCalledWith(
+    expect(mockWarningDialog).toBeCalledWith(
       expect.objectContaining({
         title: 'Are you absolutely sure?',
-        modalBody:
+        content:
           'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.',
       }),
       expect.anything(),

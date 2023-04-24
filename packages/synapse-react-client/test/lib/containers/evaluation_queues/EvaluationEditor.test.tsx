@@ -286,10 +286,10 @@ describe('test EvaluationEditor', () => {
     within(deleteOption).getByText('Delete')
     await user.click(deleteOption)
 
-    const warningModal = await screen.findByRole('dialog')
+    const warningDialog = await screen.findByRole('dialog')
 
     //simulate the warning button click
-    const deleteButton = await within(warningModal).findByRole('button', {
+    const deleteButton = await within(warningDialog).findByRole('button', {
       name: 'Delete',
     })
     await user.click(deleteButton)
