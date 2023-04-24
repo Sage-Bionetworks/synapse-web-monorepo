@@ -142,3 +142,9 @@ export const URL_TERMS_CONDITIONS_AGREEMENT =
 
 /** Class names */
 export const LOGIN_BACK_BUTTON_CLASS_NAME = 'login-flow-back-button'
+
+export const SYNAPSE_ORG_RAW_FILE_HANDLE_URL_SERVLET = (
+  fileHandleId: string,
+) => {
+  return `https://www.synapse.org/Portal/filehandleassociation?fileHandleId=${fileHandleId}`
+}

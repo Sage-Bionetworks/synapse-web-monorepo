@@ -7,7 +7,10 @@ import {
   QueryBundleRequest,
   SelectColumn,
 } from '../../../../../src/lib/utils/synapseTypes'
-import { DEFAULT_PAGE_SIZE } from '../../../../../src/lib/utils/SynapseConstants'
+import {
+  DEFAULT_PAGE_SIZE,
+  SYNAPSE_ORG_RAW_FILE_HANDLE_URL_SERVLET,
+} from '../../../../../src/lib/utils/SynapseConstants'
 import { SynapseError } from '../../../../../src/lib/utils/SynapseClient'
 import { displayToast } from '../../../../../src/lib/containers/ToastMessage'
 
@@ -19,7 +22,8 @@ const mockToastFn = displayToast
 
 const tableId = 'syn42'
 const resultsFileHandleId = '12345'
-const presignedURLResponse = 'https://presignedUrlToManifestCSVExport/test.csv'
+const expectedFileURL =
+  SYNAPSE_ORG_RAW_FILE_HANDLE_URL_SERVLET(resultsFileHandleId)
 
 const downloadFromTableResult: DownloadFromTableResult = {
   resultsFileHandleId,
@@ -61,10 +65,6 @@ const mockGetDownloadFromTableRequest = jest.spyOn(
   SynapseClient,
   'getDownloadFromTableRequest',
 )
-const mockGetFileHandleByIdURL = jest.spyOn(
-  SynapseClient,
-  'getFileHandleByIdURL',
-)
 
 describe('useExportToCavatica', () => {
   beforeEach(() => {
@@ -75,12 +75,10 @@ describe('useExportToCavatica', () => {
     renderHook(() => useExportToCavatica(testQueryRequest, testSelectColumns))
 
     expect(mockGetDownloadFromTableRequest).not.toHaveBeenCalled()
-    expect(mockGetFileHandleByIdURL).not.toHaveBeenCalled()
   })
 
   it('Successfully send to Cavatica', async () => {
     mockGetDownloadFromTableRequest.mockResolvedValue(downloadFromTableResult)
-    mockGetFileHandleByIdURL.mockResolvedValue(presignedURLResponse)
     const {
       result: { current: exportFunction },
     } = renderHook(() =>
@@ -92,13 +90,13 @@ describe('useExportToCavatica', () => {
       // TODO: change to production redirect link after the changes have been validated and they have released to prod
       expect(window.open).toHaveBeenCalledWith(
         `https://synapse-vayu.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
-          presignedURLResponse,
+          expectedFileURL,
         )}`,
         '_blank',
       )
       // expect(window.open).toHaveBeenCalledWith(
       //   `https://cavatica.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
-      //     presignedURLResponse,
+      //     expectedFileURL,
       //   )}`,
       //   '_blank',
       // )
