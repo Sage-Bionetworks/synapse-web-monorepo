@@ -1,20 +1,6 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Link,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
-} from '@mui/material'
+import { Box, Link, Tab, Tabs, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import IconSvg from './IconSvg'
-import { HelpPopover } from './HelpPopover'
+import { ConfirmationDialog } from './ConfirmationDialog'
 
 export enum ProgrammaticOptionsTabs {
   COMMAND_LINE = 'Command Line',
@@ -82,91 +68,84 @@ export const ProgrammaticInstructionsModal = ({
     </Typography>
   )
 
-  return (
-    <Dialog fullWidth open={show} onClose={onClose} maxWidth="md">
-      <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
-          {title}
-          {helpMarkdown && (
-            <HelpPopover markdownText={helpMarkdown!} helpUrl={helpUrl} />
-          )}
-          <Box sx={{ flexGrow: 1 }} />
-          {/* TODO - replace with closeButton from WarningDialog */}
-          <IconButton onClick={onClose}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
-      <DialogContent>
-        <Box
-          sx={{
-            borderBottom: 1,
-            borderColor: 'divider',
-            marginBottom: 4,
+  const dialogContent = (
+    <>
+      <Box
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          marginBottom: 4,
+        }}
+      >
+        <Tabs
+          value={currentTab}
+          onChange={(
+            event: React.SyntheticEvent,
+            newValue: ProgrammaticOptionsTabs,
+          ) => {
+            event.stopPropagation()
+            setCurrentTab(newValue)
           }}
+          textColor="secondary"
+          indicatorColor="secondary"
         >
-          <Tabs
-            value={currentTab}
-            onChange={(
-              event: React.SyntheticEvent,
-              newValue: ProgrammaticOptionsTabs,
-            ) => {
-              event.stopPropagation()
-              setCurrentTab(newValue)
-            }}
-            textColor="secondary"
-            indicatorColor="secondary"
-          >
-            {cliCode && (
-              <Tab
-                value={ProgrammaticOptionsTabs.COMMAND_LINE}
-                label={ProgrammaticOptionsTabs.COMMAND_LINE}
-              />
-            )}
-            {rCode && (
-              <Tab
-                value={ProgrammaticOptionsTabs.R}
-                label={ProgrammaticOptionsTabs.R}
-              />
-            )}
-            {pythonCode && (
-              <Tab
-                value={ProgrammaticOptionsTabs.PYTHON}
-                label={ProgrammaticOptionsTabs.PYTHON}
-              />
-            )}
-          </Tabs>
-        </Box>
-        <Box sx={{ '& > p': { marginBottom: 3 } }}>
-          {currentTab === ProgrammaticOptionsTabs.COMMAND_LINE && (
-            <>
-              <Typography variant="body1">{cliNotes}</Typography>
-              {installationInstructions}
-              <pre> {cliCode} </pre>
-            </>
+          {cliCode && (
+            <Tab
+              value={ProgrammaticOptionsTabs.COMMAND_LINE}
+              label={ProgrammaticOptionsTabs.COMMAND_LINE}
+            />
           )}
-          {currentTab === ProgrammaticOptionsTabs.R && (
-            <>
-              <Typography variant="body1">{rNotes}</Typography>
-              {installationInstructions}
-              <pre>{rCode}</pre>
-            </>
+          {rCode && (
+            <Tab
+              value={ProgrammaticOptionsTabs.R}
+              label={ProgrammaticOptionsTabs.R}
+            />
           )}
-          {currentTab === ProgrammaticOptionsTabs.PYTHON && (
-            <>
-              <Typography variant="body1">{pythonNotes}</Typography>
-              {installationInstructions}
-              <pre>{pythonCode}</pre>
-            </>
+          {pythonCode && (
+            <Tab
+              value={ProgrammaticOptionsTabs.PYTHON}
+              label={ProgrammaticOptionsTabs.PYTHON}
+            />
           )}
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button variant="contained" color="primary" onClick={onClose}>
-          OK
-        </Button>
-      </DialogActions>
-    </Dialog>
+        </Tabs>
+      </Box>
+      <Box sx={{ '& > p': { marginBottom: 3 } }}>
+        {currentTab === ProgrammaticOptionsTabs.COMMAND_LINE && (
+          <>
+            <Typography variant="body1">{cliNotes}</Typography>
+            {installationInstructions}
+            <pre> {cliCode} </pre>
+          </>
+        )}
+        {currentTab === ProgrammaticOptionsTabs.R && (
+          <>
+            <Typography variant="body1">{rNotes}</Typography>
+            {installationInstructions}
+            <pre>{rCode}</pre>
+          </>
+        )}
+        {currentTab === ProgrammaticOptionsTabs.PYTHON && (
+          <>
+            <Typography variant="body1">{pythonNotes}</Typography>
+            {installationInstructions}
+            <pre>{pythonCode}</pre>
+          </>
+        )}
+      </Box>
+    </>
+  )
+
+  return (
+    <ConfirmationDialog
+      open={show}
+      title={title}
+      onCancel={onClose}
+      onConfirm={onClose}
+      maxWidth="md"
+      helpMarkdown={helpMarkdown}
+      helpUrl={helpUrl}
+      content={dialogContent}
+    />
   )
 }
 
