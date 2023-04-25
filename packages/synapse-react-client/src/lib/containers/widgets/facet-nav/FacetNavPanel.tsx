@@ -65,21 +65,6 @@ const layout: Partial<PlotlyTyped.Layout> = {
   },
 }
 
-// https://github.com/plotly/plotly.js/blob/fa51e33d3e1f8ca0c029b3029f3d006a5205c8f3/src/lib/index.js#L1173
-const formatPercent = (ratio: number, n: number) => {
-  n = n || 0
-  let str =
-    (Math.round(100 * ratio * Math.pow(10, n)) * Math.pow(0.1, n)).toFixed(n) +
-    '%'
-  for (let i = 0; i < n; i++) {
-    if (str.indexOf('.') !== -1) {
-      str = str.replace('0%', '%')
-      str = str.replace('.%', '%')
-    }
-  }
-  return str
-}
-
 export type GraphData = {
   data: PlotlyTyped.Data[]
   labels: FacetWithLabel[]

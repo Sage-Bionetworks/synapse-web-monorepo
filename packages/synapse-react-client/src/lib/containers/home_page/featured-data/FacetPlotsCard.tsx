@@ -25,7 +25,7 @@ import { useSynapseContext } from '../../../utils/SynapseContext'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { ShowMore } from '../../row_renderers/utils'
-import { Button, Link } from '@mui/material'
+import { Link } from '@mui/material'
 
 const Plot = createPlotlyComponent(Plotly)
 
