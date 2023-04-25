@@ -503,13 +503,14 @@ const routes: GenericRoute[] = [
   },
   {
     exact: true,
-    path: 'Analytical Workspace',
+    path: 'Limited Data Commons',
     synapseConfigArray: [
       {
         name: 'Markdown',
+        title: 'Limited Data Commons',
         props: {
-          ownerId: 'syn22300949',
-          wikiId: '604940',
+          ownerId: 'syn27229419',
+          wikiId: '621275',
           loadingSkeletonRowCount: 10,
         },
       },
@@ -531,7 +532,6 @@ const routes: GenericRoute[] = [
     ],
   },
 
-  // Uncomment to expose Contribute route (once research team is monitoring submissions)
   {
     path: 'Contribute',
     routes: [
@@ -543,20 +543,10 @@ const routes: GenericRoute[] = [
           {
             name: 'Markdown',
             title: 'Contribute',
-            className: 'amp-project-component',
             props: {
-              ownerId: 'syn12666371',
-              wikiId: '600033',
+              ownerId: 'syn27229419',
+              wikiId: '621277',
               loadingSkeletonRowCount: 20,
-            },
-          },
-          {
-            name: 'SynapseFormSubmissionsGrid',
-            props: {
-              pathpart: '/Contribute/FormSubmission',
-              formGroupId: '11',
-              itemNoun: 'contribution-request',
-              formClass: 'contribution-request',
             },
           },
         ],
@@ -618,7 +608,7 @@ const routes: GenericRoute[] = [
     displayName: 'Help',
     path: undefined,
     target: '_blank',
-    link: 'https://help.adknowledgeportal.org/apd/',
+    link: 'https://elite-portal-docs.scrollhelp.site/help/',
     synapseConfigArray: [],
   },
 ]
