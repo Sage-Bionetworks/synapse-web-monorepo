@@ -7,7 +7,10 @@ export const MOCK_DATA_ACCESS_SUBMISSION_IRB_APPROVAL_FILE_HANDLE_ID =
   '64198100'
 export const MOCK_DUC_TEMPLATE_FILE_HANDLE_ID = '64198101'
 export const MOCK_DUC_SUBMISSION_FILE_HANDLE_ID = '64198102'
-export const MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_FILE_HANDLE_ID = '64198103'
+export const MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_1_FILE_HANDLE_ID =
+  '64198103'
+export const MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_2_FILE_HANDLE_ID =
+  '64198104'
 
 export const mockFileHandle: S3FileHandle = {
   id: `${MOCK_FILE_HANDLE_ID}`,
@@ -77,8 +80,8 @@ export const mockDucSubmissionFileHandle: S3FileHandle = {
   isPreview: false,
 }
 
-export const mockDataAccessSubmissionAttachmentFileHandle: S3FileHandle = {
-  id: `${MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_FILE_HANDLE_ID}`,
+export const mockDataAccessSubmissionAttachment1FileHandle: S3FileHandle = {
+  id: `${MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_1_FILE_HANDLE_ID}`,
   etag: 'abc-deg-4028-8eb8-aaaaa',
   createdBy: `${MOCK_USER_ID}`,
   createdOn: '2016-05-09T22:08:22.000Z',
@@ -86,6 +89,23 @@ export const mockDataAccessSubmissionAttachmentFileHandle: S3FileHandle = {
   contentType: 'application/octet-stream',
   contentMd5: '123456789',
   fileName: 'custom-attachment.csv',
+  storageLocationId: 1,
+  contentSize: 20,
+  bucketName: 'proddata.sagebase.org',
+  key: `${MOCK_USER_ID}/mock-s3-key/attachment.csv`,
+  previewId: `${MOCK_PREVIEW_FILE_HANDLE_ID}`,
+  isPreview: false,
+}
+
+export const mockDataAccessSubmissionAttachment2FileHandle: S3FileHandle = {
+  id: `${MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_2_FILE_HANDLE_ID}`,
+  etag: 'abc-deg-4028-8eb8-aaaaa',
+  createdBy: `${MOCK_USER_ID}`,
+  createdOn: '2016-05-09T22:08:22.000Z',
+  concreteType: 'org.sagebionetworks.repo.model.file.S3FileHandle',
+  contentType: 'application/octet-stream',
+  contentMd5: '123456789',
+  fileName: 'another-attachment-for-review.pdf',
   storageLocationId: 1,
   contentSize: 20,
   bucketName: 'proddata.sagebase.org',
@@ -113,7 +133,8 @@ export const mockFileHandles = [
   mockFileHandle,
   mockPreviewFileHandle,
   mockDucTemplateFileHandle,
-  mockDataAccessSubmissionAttachmentFileHandle,
+  mockDataAccessSubmissionAttachment1FileHandle,
+  mockDataAccessSubmissionAttachment2FileHandle,
   mockIrbApprovalFileHandle,
   mockDucSubmissionFileHandle,
 ]

@@ -1,11 +1,8 @@
-import React from 'react'
-import { RequestInterface } from '../../../utils/synapseTypes'
-import { Alert } from 'react-bootstrap'
-import { useState } from 'react'
-import { updateDataAccessRequest } from '../../../utils/SynapseClient'
+import React, { useState } from 'react'
+import { Renewal, Request } from '../../../utils/synapseTypes'
 import { AlertProps } from './RequestDataAccessStep2'
-import { useSynapseContext } from '../../../utils/SynapseContext'
 import {
+  Alert,
   Box,
   Button,
   DialogActions,
@@ -13,50 +10,40 @@ import {
   DialogTitle,
   IconButton,
   Stack,
+  Typography,
 } from '@mui/material'
 import IconSvg from '../../IconSvg'
+import { useUpdateDataAccessRequest } from '../../../utils/hooks/SynapseAPI'
 
 export type CancelRequestDataAccessProps = {
-  formSubmitRequestObject: RequestInterface | undefined
+  /* The data access request with unsaved changes */
+  modifiedDataAccessRequest: Request | Renewal | undefined
   onHide: () => void
 }
 
-const CancelRequestDataAccess: React.FC<
-  CancelRequestDataAccessProps
-> = props => {
-  const { accessToken } = useSynapseContext()
-  const { formSubmitRequestObject, onHide } = props
+function CancelRequestDataAccess(props: CancelRequestDataAccessProps) {
+  const { modifiedDataAccessRequest, onHide } = props
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [showCloseBtn, setShowCloseBtn] = useState<boolean>(false)
 
-  const handleSave = async () => {
-    if (formSubmitRequestObject) {
-      try {
-        const resp = await updateDataAccessRequest(
-          formSubmitRequestObject,
-          accessToken!,
-        )
-        if (resp) {
-          // save success, close dialog
-          onHide?.()
-        } else {
-          setAlert({
-            key: 'danger',
-            message:
-              'Sorry, there is an error in submitting your request. Please close this dialog and try again later.',
-          })
-          setShowCloseBtn(true)
-        }
-      } catch (e) {
-        console.log('CancelRequestDataAccess: Error updating form', e)
-        setAlert({
-          key: 'danger',
-          message: `Sorry, there is an error in submitting your request. ${
-            e.reason || ''
-          }. Please close this dialog and try again later`,
-        })
-        setShowCloseBtn(true)
-      }
+  const { mutate: updateRequest } = useUpdateDataAccessRequest({
+    onSuccess: () => {
+      onHide()
+    },
+    onError: e => {
+      setAlert({
+        key: 'error',
+        message: `Sorry, there is an error in submitting your request. ${
+          e.reason ? e.reason + '.' : ' '
+        }Please close this dialog and try again later.`,
+      })
+      setShowCloseBtn(true)
+    },
+  })
+
+  function handleSave() {
+    if (modifiedDataAccessRequest) {
+      updateRequest(modifiedDataAccessRequest)
     }
   }
 
@@ -73,15 +60,10 @@ const CancelRequestDataAccess: React.FC<
       </DialogTitle>
 
       <DialogContent>
-        <p>Would you like to save your recent changes?</p>
-        {
-          /* Alert message */
-          alert && (
-            <Alert variant={alert.key} transition={false}>
-              {alert.message}
-            </Alert>
-          )
-        }
+        <Typography variant={'body1'}>
+          Would you like to save your recent changes?
+        </Typography>
+        {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
       </DialogContent>
 
       <DialogActions>

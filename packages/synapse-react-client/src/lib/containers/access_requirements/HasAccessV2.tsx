@@ -16,7 +16,7 @@ import {
   RestrictionLevel,
 } from '../../utils/synapseTypes'
 import AccessRequirementList, {
-  checkHasUnsportedRequirement,
+  checkHasUnsupportedRequirement,
 } from '../access_requirement_list/AccessRequirementList'
 import IconSvg, { Icon } from '../IconSvg'
 import { Theme, useTheme } from '@mui/material'
@@ -202,7 +202,7 @@ export function HasAccessV2(props: HasAccessProps) {
     // If we need to open the AR page in synapse, the logic should be in the modal and it should just close itself right away
     SynapseClient.getAllAccessRequirements(accessToken, entityId).then(
       requirements => {
-        if (checkHasUnsportedRequirement(requirements)) {
+        if (checkHasUnsupportedRequirement(requirements)) {
           window.open(
             `${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,

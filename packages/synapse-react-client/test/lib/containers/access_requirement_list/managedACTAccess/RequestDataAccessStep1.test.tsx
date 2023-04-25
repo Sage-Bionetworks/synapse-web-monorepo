@@ -41,10 +41,11 @@ function renderComponent(override?: object) {
 }
 
 describe('RequestDataAccessStep1: basic functionality', () => {
-  it('render component without crashing', async () => {
-    const { container } = renderComponent()
-    expect(container).toBeDefined()
-  })
+  it.todo('Prompts for a project lead and institution')
+  it.todo('Loads an existing ResearchProject')
+  it.todo('Saves and fires callback on the Submit action')
+  it.todo('Hides on the Cancel action')
+  it.todo('Shows an error if saving fails')
 
   it('should show IDU field if required', async () => {
     mockAccessRequirement.isIDURequired = true

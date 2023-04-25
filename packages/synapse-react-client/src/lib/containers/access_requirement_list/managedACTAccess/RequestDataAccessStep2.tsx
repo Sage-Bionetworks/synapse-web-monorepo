@@ -1,394 +1,293 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
-import { Alert, Form } from 'react-bootstrap'
-import {
-  getDataAccessRequestForUpdate,
-  getFiles,
-  getUserProfileById,
-  submitDataAccessRequest,
-  updateDataAccessRequest,
-} from '../../../utils/SynapseClient'
+import { useMemo, useState } from 'react'
+import { Form } from 'react-bootstrap'
 import {
   AccessorChange,
   AccessType,
   ACTSubmissionStatus,
   BatchFileRequest,
-  CreateSubmissionRequest,
   FileHandleAssociateType,
+  FileHandleAssociation,
   FileUploadComplete,
   ManagedACTAccessRequirement,
-  RequestInterface,
+  Renewal,
+  Request,
   RestrictableObjectType,
   SubmissionState,
-  TYPE_FILTER,
   UploadCallbackResp,
-  UserGroupHeader,
-  UserProfile,
 } from '../../../utils/synapseTypes'
 import DirectDownloadButton from '../../DirectDownloadButton'
 import FileUpload from '../../FileUpload'
-import UserSearchBox from '../../UserSearchBox'
-import { UserCardSmall } from '../../UserCardSmall'
 import IconSvg from '../../IconSvg'
-import { useSynapseContext } from '../../../utils/SynapseContext'
-import { RenewalInterface } from '../../../utils/synapseTypes/AccessRequirement/RenewalInterface'
-import { RadioGroup } from '../../widgets/RadioGroup'
-import { RequestDataStepCallbackArgs } from '../AccessRequirementList'
 import {
+  Alert,
+  AlertProps as MuiAlertProps,
   Box,
   Button,
-  DialogContent,
   DialogActions,
+  DialogContent,
   DialogTitle,
+  Divider,
   IconButton,
+  Link,
   Stack,
+  Typography,
 } from '@mui/material'
+import {
+  useGetCurrentUserProfile,
+  useGetDataAccessRequestForUpdate,
+  useSubmitDataAccessRequest,
+  useUpdateDataAccessRequest,
+} from '../../../utils/hooks/SynapseAPI'
+import { useGetFileBatch } from '../../../utils/hooks/SynapseAPI/file/useFiles'
+import { SynapseClientError } from '../../../utils/SynapseClientError'
+import TextField from '../../TextField'
+import DataAccessRequestAccessorsEditor, {
+  DataAccessRequestAccessorsEditorProps,
+} from './DataAccessRequestAccessorsEditor'
 
 export type RequestDataAccessStep2Props = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  /**
+   * The ID of the entity of interest. This corresponds to the subjectId of the {@link CreateSubmissionRequest}
+   */
   entityId: string
-  requestDataStepCallback: (props: RequestDataStepCallbackArgs) => void
-  user: UserProfile
+  /* The access requirement to which the user is requesting access */
+  managedACTAccessRequirement: ManagedACTAccessRequirement
+  onSubmissionCreated: () => void
   researchProjectId: string
   onHide: () => void
+  /* Callback invoked when the user clicks cancel. The unsaved, modified dataAccessRequest is returned so the calling component may prompt the user to save this data */
+  onCancel: (modifiedDataAccessRequest: Request | Renewal) => void
 }
-
-export type DataAccessDoc = {
-  fileName?: string
-  associateObjectId?: string
-  associateObjectType?: string
-  fileHandleId: string
-}
-
-export type DataAccessDocs =
-  | {
-      DUCTemplate: DataAccessDoc | undefined
-      DUC: DataAccessDoc | undefined
-      IRB: DataAccessDoc | undefined
-      attachments: DataAccessDoc[] | undefined
-    }
-  | undefined
 
 export type AlertProps = {
-  key: string
+  key: MuiAlertProps['severity']
   message: string | JSX.Element
 }
 
-type requestedFileTypesMap = {
-  [key: string]: string[]
+type UploadDocumentFieldProps = {
+  id: string
+  documentName: string
+  uploadCallback: (data: UploadCallbackResp) => void
+  /* The fileHandleAssociations corresponding to an existing upload */
+  fileHandleAssociations?: FileHandleAssociation[]
+  isMultiFileUpload?: boolean
+  onClearAttachment?: (fileHandleId: string) => void
 }
 
-type Accessor = {
-  profile: UserProfile
-  accessType: AccessType
-}
-
-const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
+function UploadDocumentField(props: UploadDocumentFieldProps) {
   const {
-    requestDataStepCallback,
+    fileHandleAssociations = [],
+    uploadCallback,
+    id,
+    documentName,
+    isMultiFileUpload = false,
+    onClearAttachment,
+  } = props
+  const { data: fileData } = useGetFileBatch(
+    {
+      includeFileHandles: true,
+      includePreSignedURLs: false,
+      includePreviewPreSignedURLs: false,
+      requestedFiles: fileHandleAssociations,
+    },
+    { enabled: fileHandleAssociations.length > 0 },
+  )
+
+  return (
+    <Box
+      id={id}
+      display={'flex'}
+      flexDirection={isMultiFileUpload ? 'column' : 'row'}
+      alignItems={isMultiFileUpload ? 'flex-start' : 'center'}
+      justifyContent={'flex-start'}
+      gap={2}
+      sx={{ my: 2 }}
+    >
+      <FileUpload
+        id={`${id}-upload`}
+        uploadCallback={uploadCallback}
+        label={`Upload ${documentName}`}
+        buttonProps={{
+          variant: 'outlined',
+          endIcon: <IconSvg icon={'upload'} wrap={false} />,
+        }}
+      />
+      {fileHandleAssociations.map((fha, index) => {
+        const fileHandle = fileData?.requestedFiles.find(
+          result => result.fileHandleId === fha.fileHandleId,
+        )?.fileHandle
+        return (
+          <Box key={fha.fileHandleId}>
+            <DirectDownloadButton
+              key={index}
+              id={`${id}-download-${index}`}
+              variant={'text'}
+              endIcon={<IconSvg icon={'download'} wrap={false} />}
+              color={'primary'}
+              fileHandleAssociation={fha}
+              fileName={fileHandle?.fileName}
+              sx={{
+                /* Do not apply text-transform because the text is a raw filename */
+                textTransform: 'none',
+              }}
+            />
+            {onClearAttachment && (
+              <Button
+                className={'clear-x'}
+                variant={'text'}
+                onClick={() => onClearAttachment(fha.fileHandleId)}
+              >
+                <IconSvg icon="clear" />
+              </Button>
+            )}
+          </Box>
+        )
+      })}
+    </Box>
+  )
+}
+
+/**
+ * Step 2 of the Data Access Request/Renewal flow prompts the user to
+ * - Manage the list of accessors, i.e. Synapse users who will gain, renew, or lose access
+ * - Download and upload documents required by the Access Requirement
+ * - If a renewal, provide publications and a summary of use statement.
+ *
+ * The component expects a researchProjectId, which should reference complete researchProject created in Step 1.
+ * The user may click a "Submit" button, which will save the request and issue a data access submission that references
+ * the requestId created/updated in this component.
+ */
+export default function RequestDataAccessStep2(
+  props: RequestDataAccessStep2Props,
+) {
+  const {
+    onSubmissionCreated,
     managedACTAccessRequirement,
     entityId,
-    user,
     researchProjectId,
+    onCancel,
   } = props
-  const { accessToken } = useSynapseContext()
-  const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
-  const [DUC, setDUC] = useState<DataAccessDoc>()
-  const [IRB, setIRB] = useState<DataAccessDoc>()
-  const [attachments, setAttachments] = useState<DataAccessDoc[]>([])
-  const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<
-    RequestInterface | RenewalInterface
-  >()
+  const { data: user } = useGetCurrentUserProfile()
   const [alert, setAlert] = useState<AlertProps | undefined>()
-  const [isRenewal, setIsRenewal] = useState<boolean>(false)
-  const [accessors, setAccessors] = useState<Accessor[]>([])
+  const [dataAccessRequest, setDataAccessRequest] = useState<
+    Request | Renewal | undefined
+  >()
 
-  const requestedFileTypes: requestedFileTypesMap = {}
-  const batchFileRequest: BatchFileRequest = {
-    requestedFiles: [],
-    includeFileHandles: true,
-    includePreSignedURLs: false,
-    includePreviewPreSignedURLs: false,
-  }
+  useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
+    // We append the current user onto the accessorChanges, so we wait for that data to populate
+    enabled: !!user,
+    // Infinite staleTime ensures this won't get re-fetched unless explicitly invalidated by the mutation
+    staleTime: Infinity,
+    select: data => {
+      const isRenewal =
+        data.concreteType ===
+        'org.sagebionetworks.repo.model.dataaccess.Renewal'
+      // Add the current user with GAIN_ACCESS to the list of accessors
+      const currentUserWithGainAccess: AccessorChange = {
+        userId: user!.ownerId,
+        type: isRenewal ? AccessType.RENEW_ACCESS : AccessType.GAIN_ACCESS,
+      }
+      if (!data.accessorChanges) {
+        data.accessorChanges = [currentUserWithGainAccess]
+      } else {
+        data.accessorChanges = [
+          currentUserWithGainAccess,
+          ...data.accessorChanges,
+        ]
+      }
 
-  let mounted = true
-
-  useEffect(() => {
-    if (mounted) {
-      setAlert(undefined)
-      setFormData()
-    }
-    return () => {
-      mounted = false
-    }
-  }, [accessToken, researchProjectId])
-
-  const setFormData = async () => {
-    const dataAccessRequestData = await getDataAccessRequestForUpdate(
-      String(managedACTAccessRequirement.id),
-      accessToken!,
-    )
-
-    // SWC-5765: Filter out duplicate accessors that are in an existing Access Requirement data access request
-    if (dataAccessRequestData.accessorChanges) {
+      // SWC-5765: Filter out duplicate accessors
       const seen = new Set()
-      dataAccessRequestData.accessorChanges =
-        dataAccessRequestData.accessorChanges.filter(accessorChange => {
-          return seen.has(accessorChange.userId)
-            ? false
-            : seen.add(accessorChange.userId)
-        })
-    }
-
-    // renewal case
-    if (
-      dataAccessRequestData.concreteType ===
-      'org.sagebionetworks.repo.model.dataaccess.Renewal'
-    ) {
-      setIsRenewal(true)
-    }
-
-    // initialize form submission request object
-    dataAccessRequestData.researchProjectId = researchProjectId
-    setFormSubmitRequestObject(dataAccessRequestData)
-    // get assessors' user profiles data for display and save them in the state variables
-    getAccessorsData(dataAccessRequestData)
-    // get data access required docs data to display file names
-    getFilesData(dataAccessRequestData)
-  }
-
-  const getAccessorsData = (dataAccessRequestData: RequestInterface) => {
-    const accessorChanges = dataAccessRequestData.accessorChanges
-    const ids: string[] = []
-
-    if (!accessorChanges || !accessorChanges.length) {
-      ids.push(user.ownerId)
-      // Add current user to submission request object
-      setFormSubmitRequestObject(prevState => {
-        return Object.assign({}, prevState, {
-          accessorChanges: [
-            {
-              userId: user.ownerId,
-              type: AccessType.GAIN_ACCESS,
-            },
-          ],
-        })
+      data.accessorChanges = data.accessorChanges.filter(accessorChange => {
+        return seen.has(accessorChange.userId)
+          ? false
+          : seen.add(accessorChange.userId)
       })
-    } else {
-      accessorChanges.forEach(item => {
-        ids.push(item.userId)
-      })
-    }
 
-    const promises = ids.map(userId => {
-      return getUserProfileById(accessToken, userId)
-    })
-    Promise.all(promises).then(profiles => {
-      const profileAndAccessType: Accessor[] = profiles.map((item, i) => {
-        const accessType =
-          accessorChanges && accessorChanges[i]?.type
-            ? accessorChanges[i].type
-            : AccessType.GAIN_ACCESS
-        return {
-          profile: item,
-          accessType: accessType,
-        }
+      // Attach the researchProjectId to the request
+      data.researchProjectId = researchProjectId
+      return data
+    },
+    onSuccess: data => {
+      setAlert(undefined)
+      setDataAccessRequest(data)
+    },
+    onError: err => {
+      setAlert({
+        key: 'error',
+        message: err.reason,
       })
-      setAccessors(profileAndAccessType)
-    })
-  }
+    },
+  })
 
-  const getFilesData = (dataAccessRequestData: RequestInterface) => {
-    // Create the request objects for required documents and save them in the state variables
+  const isRenewal =
+    dataAccessRequest?.concreteType ===
+    'org.sagebionetworks.repo.model.dataaccess.Renewal'
+
+  const batchFilesRequest: BatchFileRequest = useMemo(() => {
+    const requestedFileAssociations: FileHandleAssociation[] = []
     if (
       managedACTAccessRequirement.isDUCRequired &&
       managedACTAccessRequirement.ducTemplateFileHandleId
     ) {
-      const requestObj = {
+      requestedFileAssociations.push({
         associateObjectId: String(managedACTAccessRequirement.id),
         associateObjectType:
           FileHandleAssociateType.AccessRequirementAttachment,
         fileHandleId: managedACTAccessRequirement.ducTemplateFileHandleId,
-      }
-      batchFileRequest.requestedFiles.push(requestObj)
-      if (
-        !requestedFileTypes[managedACTAccessRequirement.ducTemplateFileHandleId]
-      ) {
-        requestedFileTypes[
-          managedACTAccessRequirement.ducTemplateFileHandleId
-        ] = []
-      }
-      requestedFileTypes[
-        managedACTAccessRequirement.ducTemplateFileHandleId
-      ].push('DUCTemplate')
-      setDUCTemplate(requestObj)
-    }
-
-    if (
-      managedACTAccessRequirement.isDUCRequired &&
-      dataAccessRequestData.ducFileHandleId
-    ) {
-      const requestObj = {
-        associateObjectId: dataAccessRequestData.id,
-        associateObjectType:
-          FileHandleAssociateType.DataAccessRequestAttachment,
-        fileHandleId: dataAccessRequestData.ducFileHandleId,
-      }
-      batchFileRequest.requestedFiles.push(requestObj)
-      if (!requestedFileTypes[dataAccessRequestData.ducFileHandleId]) {
-        requestedFileTypes[dataAccessRequestData.ducFileHandleId] = []
-      }
-      requestedFileTypes[dataAccessRequestData.ducFileHandleId].push('DUC')
-      setDUC(requestObj)
-    }
-
-    if (
-      managedACTAccessRequirement.isIRBApprovalRequired &&
-      dataAccessRequestData.irbFileHandleId
-    ) {
-      const requestObj = {
-        associateObjectId: dataAccessRequestData.id,
-        associateObjectType:
-          FileHandleAssociateType.DataAccessRequestAttachment,
-        fileHandleId: dataAccessRequestData.irbFileHandleId,
-      }
-      batchFileRequest.requestedFiles.push(requestObj)
-      if (!requestedFileTypes[dataAccessRequestData.irbFileHandleId]) {
-        requestedFileTypes[dataAccessRequestData.irbFileHandleId] = []
-      }
-      requestedFileTypes[dataAccessRequestData.irbFileHandleId].push('IRB')
-      setIRB(requestObj)
-    }
-
-    if (
-      dataAccessRequestData.attachments &&
-      dataAccessRequestData.attachments.length
-    ) {
-      dataAccessRequestData.attachments.forEach(id => {
-        batchFileRequest.requestedFiles.push({
-          associateObjectId: dataAccessRequestData.id,
-          associateObjectType:
-            FileHandleAssociateType.DataAccessRequestAttachment,
-          fileHandleId: id,
-        })
-        if (!requestedFileTypes[id]) {
-          requestedFileTypes[id] = []
-        }
-        requestedFileTypes[id].push('attachments')
       })
     }
 
-    // Fetch the required doc file names and save them in the state variables
-    if (batchFileRequest.requestedFiles.length) {
-      getFiles(batchFileRequest, accessToken).then(resp => {
-        resp.requestedFiles.forEach(file => {
-          const fileName = file.fileHandle!.fileName
-          const fileTypes: string[] = requestedFileTypes[file.fileHandleId]
-
-          fileTypes.forEach((type: string) => {
-            switch (type) {
-              case 'DUCTemplate':
-                setDUCTemplate(prevState => {
-                  return Object.assign({}, prevState, { fileName: fileName })
-                })
-                requestedFileTypes[file.fileHandleId].splice(
-                  fileTypes.indexOf('DUCTemplate'),
-                  1,
-                )
-                break
-              case 'DUC':
-                setDUC(prevState => {
-                  return Object.assign({}, prevState, { fileName: fileName })
-                })
-                requestedFileTypes[file.fileHandleId].splice(
-                  fileTypes.indexOf('DUC'),
-                  1,
-                )
-                break
-              case 'IRB':
-                setIRB(prevState => {
-                  return Object.assign({}, prevState, { fileName: fileName })
-                })
-                requestedFileTypes[file.fileHandleId].splice(
-                  fileTypes.indexOf('IRB'),
-                  1,
-                )
-                break
-              case 'attachments':
-                setAttachments(prev => [
-                  ...prev,
-                  {
-                    fileName: fileName,
-                    associateObjectId: dataAccessRequestData.id,
-                    associateObjectType:
-                      FileHandleAssociateType.DataAccessRequestAttachment,
-                    fileHandleId: file.fileHandleId,
-                  },
-                ])
-                requestedFileTypes[file.fileHandleId].splice(
-                  fileTypes.indexOf('attachments'),
-                  1,
-                )
-                break
-              default:
-            }
-          })
-        })
-      }) // end getFiles
+    return {
+      requestedFiles: requestedFileAssociations,
+      includeFileHandles: true,
+      includePreSignedURLs: false,
+      includePreviewPreSignedURLs: false,
     }
+  }, [dataAccessRequest])
+
+  // get batch of files
+  const { data: fileData } = useGetFileBatch(batchFilesRequest)
+
+  function onError(e: SynapseClientError) {
+    console.log('RequestDataAccessStep2: Error updating form', e)
+    setAlert({
+      key: 'error',
+      message: getErrorMessage(e.reason),
+    })
   }
 
-  const handleSubmit = async () => {
-    if (formSubmitRequestObject) {
-      try {
-        const resp = await updateDataAccessRequest(
-          formSubmitRequestObject,
-          accessToken!,
-        )
-        if (resp && resp.etag) {
-          // save success
-          const requestObject: CreateSubmissionRequest = {
-            requestId: resp.id,
-            requestEtag: resp.etag,
-            subjectId: entityId,
-            subjectType: RestrictableObjectType.ENTITY,
-          }
-
-          // Update save etag
-          setFormSubmitRequestObject(prevState => {
-            return Object.assign({}, prevState, {
-              etag: resp.etag,
-            })
-          })
-
-          // and submit
-          const submission_resp: ACTSubmissionStatus =
-            await submitDataAccessRequest(requestObject, accessToken!)
-          const alertMsg = getSubmissionMsg(submission_resp)
-          if (submission_resp.state === SubmissionState.REJECTED) {
-            setAlert({
-              key: 'danger',
-              message: alertMsg,
-            })
-          } else {
-            // Navigate to the submission success dialog
-            requestDataStepCallback?.({
-              step: 5,
-            })
-          }
-        } else {
-          setAlert({
-            key: 'danger',
-            message: getErrorMessage(),
-          })
-        }
-      } catch (e) {
-        console.log('RequestDataAccessStep2: Error updating form', e)
+  const { mutate: submit } = useSubmitDataAccessRequest({
+    onSuccess: submission_resp => {
+      const alertMsg = getSubmissionMsg(submission_resp)
+      if (submission_resp.state === SubmissionState.REJECTED) {
         setAlert({
-          key: 'danger',
-          message: getErrorMessage(e.reason),
+          key: 'error',
+          message: alertMsg,
         })
+      } else {
+        onSubmissionCreated()
       }
+    },
+    onError: onError,
+  })
+
+  const { mutateAsync: updateRequestAsync } = useUpdateDataAccessRequest({
+    onError: onError,
+  })
+
+  async function handleSubmit() {
+    if (dataAccessRequest) {
+      // Save the request
+      const requestObject = await updateRequestAsync(dataAccessRequest)
+      // Create a submission and attach the request
+      submit({
+        requestId: requestObject.id,
+        requestEtag: requestObject.etag,
+        subjectId: entityId,
+        subjectType: RestrictableObjectType.ENTITY,
+      })
     }
   }
 
@@ -424,85 +323,42 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     }
   }
 
-  const onClearAccessor = (pid: string) => {
-    // Update the view
-    const filtered: Accessor[] = accessors.filter(
-      item => item.profile.ownerId !== pid,
-    )
-    setAccessors(filtered)
-
-    // Update form submission request object
-    const newAccessorChanges: AccessorChange[] = filtered.map(item => {
-      return {
-        userId: item.profile.ownerId,
-        type: item.accessType,
-      }
-    })
-    setFormSubmitRequestObject(prevState => {
-      return Object.assign({}, prevState, {
-        accessorChanges: newAccessorChanges,
-      })
-    })
-  }
+  const onAccessorChange: DataAccessRequestAccessorsEditorProps['onChange'] =
+    updater => {
+      setDataAccessRequest(req => ({
+        ...req!,
+        // Copy the array so the caller doesn't have to worry about immutability
+        accessorChanges: [...updater(req!.accessorChanges || [])],
+      }))
+    }
 
   const onClearAttachment = (fid: string) => {
-    // Update the view
-    const filtered: DataAccessDoc[] = attachments.filter(
-      item => item.fileHandleId !== fid,
-    )
-    setAttachments(filtered)
-
-    // Update form submission request object
-    const newAttachments: string[] = filtered.map(item => item.fileHandleId)
-    setFormSubmitRequestObject(prevState => {
-      return Object.assign({}, prevState, {
-        attachments: newAttachments,
-      })
+    setDataAccessRequest(req => {
+      if (req) {
+        return {
+          ...req,
+          attachments: req.attachments.filter(item => item !== fid),
+        }
+      }
+      return req
     })
   }
 
-  const uploadCallback = (data: UploadCallbackResp) => {
+  const uploadCallback = (data: UploadCallbackResp, context: string) => {
     if (data.resp && data.success) {
       const uploadResponse: FileUploadComplete = data.resp
       if (data.context === 'attachments') {
-        const docs = formSubmitRequestObject?.attachments
-          ? formSubmitRequestObject?.attachments
-          : []
-        docs?.push(uploadResponse.fileHandleId)
-        setFormSubmitRequestObject(prevState => {
-          return Object.assign({}, prevState, { attachments: docs })
+        setDataAccessRequest(req => {
+          return {
+            ...req!,
+            attachments: [...req!.attachments, uploadResponse.fileHandleId],
+          }
         })
-        // Update the view
-        setAttachments(prev => [
-          ...prev,
-          {
-            fileName: uploadResponse.fileName,
-            fileHandleId: uploadResponse.fileHandleId,
-          },
-        ])
       } else {
-        setFormSubmitRequestObject(prevState => {
-          return Object.assign({}, prevState, {
-            [data.context]: uploadResponse.fileHandleId,
-          })
-        })
-        // Update the view
-        if (data.context === 'ducFileHandleId') {
-          setDUC(prevState => {
-            return Object.assign({}, prevState, {
-              fileName: uploadResponse.fileName,
-              fileHandleId: uploadResponse.fileHandleId,
-            })
-          })
-        }
-        if (data.context === 'irbFileHandleId') {
-          setIRB(prevState => {
-            return Object.assign({}, prevState, {
-              fileName: uploadResponse.fileName,
-              fileHandleId: uploadResponse.fileHandleId,
-            })
-          })
-        }
+        setDataAccessRequest(req => ({
+          ...req!,
+          [data.context]: uploadResponse.fileHandleId,
+        }))
       }
     } else if (!data.success && data.error) {
       // show the error
@@ -511,43 +367,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         data.error,
       )
       setAlert({
-        key: 'danger',
+        key: 'error',
         message: getErrorMessage(data.error.reason),
-      })
-    }
-  }
-
-  // User search input event handler
-  const onSelectUserCallback = (selected: UserGroupHeader) => {
-    const currentAccessorIds = accessors.map(
-      accessor => accessor.profile.ownerId,
-    )
-
-    // if user is not already in the accessor list (prevent duplicates in accessor list)
-    if (!currentAccessorIds.includes(selected.ownerId)) {
-      setAccessors(prev => [
-        ...prev,
-        {
-          profile: {
-            ownerId: selected.ownerId,
-            firstName: selected.firstName ?? '',
-            lastName: selected.lastName ?? '',
-            userName: selected.userName,
-          },
-          accessType: AccessType.GAIN_ACCESS,
-        },
-      ])
-
-      const selectedAccessor: AccessorChange = {
-        userId: selected.ownerId,
-        type: AccessType.GAIN_ACCESS,
-      }
-      const accessorsArr = formSubmitRequestObject?.accessorChanges || []
-      accessorsArr.push(selectedAccessor)
-      setFormSubmitRequestObject(prevState => {
-        return Object.assign({}, prevState, {
-          accessorChanges: accessorsArr,
-        })
       })
     }
   }
@@ -559,67 +380,82 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     const value = e.target.value
     switch (id) {
       case 'publications':
-        setFormSubmitRequestObject(prevState => {
-          return Object.assign({}, prevState, {
-            publication: value,
-          })
-        })
+        setDataAccessRequest(req => ({
+          ...(req as Renewal),
+          publication: value,
+        }))
         break
       case 'summaryOfUse':
-        setFormSubmitRequestObject(prevState => {
-          return Object.assign({}, prevState, {
-            summaryOfUse: value,
-          })
-        })
+        setDataAccessRequest(req => ({
+          ...(req as Renewal),
+          summaryOfUse: value,
+        }))
         break
       default:
     }
   }
 
-  // For renewal only
-  const onAccessorRadioBtnChange = (accessType: AccessType, userId: string) => {
-    // Make the radio button appears selected when clicked.
-    const copy = [...accessors]
-    const index = copy.findIndex(item => item.profile.ownerId === userId)
-    copy[index].accessType = accessType
-    setAccessors(copy)
-
-    // Update formSubmitRequestObject
-    const formCopy = formSubmitRequestObject?.accessorChanges || []
-    const index2 = formCopy.findIndex(item => item.userId === userId)
-    formCopy[index2].type = accessType
-    setFormSubmitRequestObject(prevState => {
-      return Object.assign({}, prevState, {
-        accessorChanges: formCopy,
-      })
-    })
-  }
-
-  const getAccessorRequirementHelpText = () => {
+  const AccessorRequirementHelpText = () => {
     let link: string = ''
     let msg: string = ''
 
-    if (managedACTAccessRequirement.isCertifiedUserRequired) {
+    if (
+      managedACTAccessRequirement.isCertifiedUserRequired &&
+      managedACTAccessRequirement.isValidatedProfileRequired
+    ) {
+      link = 'https://help.synapse.org/docs/User-Types.2007072795.html'
+      msg =
+        'All data requesters must be certified users and have a validated user profile.'
+    } else if (managedACTAccessRequirement.isCertifiedUserRequired) {
       link =
         'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers'
       msg = 'All data requesters must be a certified user.'
-    }
-    if (managedACTAccessRequirement.isValidatedProfileRequired) {
+    } else if (managedACTAccessRequirement.isValidatedProfileRequired) {
       link =
         'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
       msg = 'All data requesters must have a validated user profile.'
     }
     return link && msg ? (
       <>
-        {msg}
-        <a href={link} target={'_blank'} rel={'noreferrer'}>
-          <IconSvg icon="info" />
-        </a>
+        {msg}{' '}
+        <Link href={link} target={'_blank'} rel={'noreferrer'}>
+          Learn more
+        </Link>
       </>
     ) : (
       <></>
     )
   }
+
+  const ducFileHandleAssociation: FileHandleAssociation[] =
+    dataAccessRequest?.ducFileHandleId
+      ? [
+          {
+            fileHandleId: dataAccessRequest?.ducFileHandleId,
+            associateObjectType:
+              FileHandleAssociateType.AccessRequirementAttachment,
+            associateObjectId: String(managedACTAccessRequirement.id),
+          },
+        ]
+      : []
+  const irbFileHandleAssociation: FileHandleAssociation[] =
+    dataAccessRequest?.irbFileHandleId
+      ? [
+          {
+            fileHandleId: dataAccessRequest.irbFileHandleId,
+            associateObjectType:
+              FileHandleAssociateType.AccessRequirementAttachment,
+            associateObjectId: String(managedACTAccessRequirement.id),
+          },
+        ]
+      : []
+
+  const attachmentFileHandleAssociations: FileHandleAssociation[] =
+    dataAccessRequest?.attachments.map(attachmentFileHandleId => ({
+      fileHandleId: attachmentFileHandleId,
+      associateObjectType: FileHandleAssociateType.AccessRequirementAttachment,
+      associateObjectId: String(managedACTAccessRequirement.id),
+    })) ?? []
 
   return (
     <>
@@ -637,218 +473,157 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           className={'access-request-form2'}
           onSubmit={e => e.preventDefault()}
         >
-          <p>
+          <Typography variant={'body1'} sx={{ mb: 2 }}>
             Please provide the information below to submit the request for
             access.
-          </p>
-          <Form.Group>
-            <Form.Label htmlFor={'requesters'} style={{ margin: '0' }}>
-              Data Requesters
-            </Form.Label>
-            <br />
-            <span className={'requester-label'}>
-              {managedACTAccessRequirement.isDUCRequired && (
-                <>
-                  This list should match those listed on your DUC.
-                  <br />
-                </>
-              )}
-              {getAccessorRequirementHelpText()}
-            </span>
-            <UserSearchBox
-              id={'requesters'}
-              typeFilter={TYPE_FILTER.USERS_ONLY}
-              onSelectCallback={onSelectUserCallback}
-              filterUserIds={accessors.map(user => user.profile.ownerId)}
+          </Typography>
+
+          {dataAccessRequest && (
+            <DataAccessRequestAccessorsEditor
+              accessorChanges={dataAccessRequest.accessorChanges || []}
+              onChange={onAccessorChange}
+              isRenewal={isRenewal}
+              helpText={<AccessorRequirementHelpText />}
+              isDUCRequired={managedACTAccessRequirement?.isDUCRequired}
             />
-          </Form.Group>
+          )}
 
-          {/* Accessors List */}
-          <Form.Group style={{ marginBottom: '4rem' }}>
-            {accessors.map((accessor, i) => {
-              return (
-                <div className={'list-items'} key={`accessor-${i}`}>
-                  <UserCardSmall
-                    userProfile={accessor.profile}
-                    showAccountLevelIcon={true}
-                    disableLink={true}
-                    showFullName={true}
-                  />
-                  {
-                    // only display delete button if the user profile is other users and has not access before
-                    user.ownerId !== accessor.profile.ownerId &&
-                      accessor.accessType === AccessType.GAIN_ACCESS && (
-                        <Button
-                          className={'clear-x'}
-                          variant={'text'}
-                          onClick={() =>
-                            onClearAccessor(accessor.profile.ownerId)
-                          }
-                        >
-                          <IconSvg icon="clear" />
-                        </Button>
-                      )
-                  }
-                  {
-                    // Renewal/Revoke data access, only display if isRenewal is true
-                    isRenewal &&
-                      accessor.accessType !== AccessType.GAIN_ACCESS && (
-                        <>
-                          <RadioGroup
-                            id={`accessor-renewal-${accessor.profile.ownerId}`}
-                            value={accessor.accessType}
-                            options={[
-                              {
-                                label: 'Renew',
-                                value: AccessType.RENEW_ACCESS,
-                              },
-                              {
-                                label: 'Revoke',
-                                value: AccessType.REVOKE_ACCESS,
-                              },
-                            ]}
-                            onChange={(value: string) =>
-                              onAccessorRadioBtnChange(
-                                value as AccessType,
-                                accessor.profile.ownerId,
-                              )
-                            }
-                          ></RadioGroup>
-                        </>
-                      )
-                  }
-                </div>
-              )
-            })}
-          </Form.Group>
-
+          {(managedACTAccessRequirement?.isDUCRequired ||
+            managedACTAccessRequirement?.isIRBApprovalRequired ||
+            managedACTAccessRequirement?.areOtherAttachmentsRequired ||
+            isRenewal) && <Divider sx={{ my: 4 }} />}
           {/* DUC */}
           {managedACTAccessRequirement?.isDUCRequired && (
             <>
-              <Form.Group>
-                <Form.Label htmlFor={'duc-temp'} className={'SRC-noMargin'}>
-                  DUC template
-                </Form.Label>
-                <br />
-                {DUCTemplate && (
-                  <div>
+              {managedACTAccessRequirement?.ducTemplateFileHandleId && (
+                <>
+                  <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
+                    Download DUC Template
+                  </Typography>
+                  <Typography variant={'body1'} sx={{ my: 2 }}>
+                    As a first step, you will need to download the most current
+                    version of the Data Use Certificate.
+                  </Typography>
+                  <Typography variant={'body1'}>Download this file:</Typography>
+                  <Typography variant={'smallText1'} sx={{ my: 0.5 }}>
+                    <strong>
+                      {
+                        fileData?.requestedFiles.find(
+                          fha =>
+                            managedACTAccessRequirement.ducTemplateFileHandleId ===
+                            fha.fileHandleId,
+                        )?.fileHandle?.fileName
+                      }
+                    </strong>
+                  </Typography>
+                  <Box
+                    display={'flex'}
+                    alignItems={'center'}
+                    justifyContent={'flex-start'}
+                    gap={2}
+                    sx={{ backgroundColor: 'tertiary.100', p: 2.5, my: 2 }}
+                  >
                     <DirectDownloadButton
-                      fileHandleAssociation={{
-                        associateObjectId: DUCTemplate?.associateObjectId!,
-                        associateObjectType:
-                          DUCTemplate.associateObjectType as FileHandleAssociateType,
-                        fileHandleId: DUCTemplate.fileHandleId,
-                      }}
-                      fileName={DUCTemplate.fileName}
                       id={'duc-temp'}
-                      variant={'link'}
-                      className={'SRC-noPadding'}
-                    />
-                  </div>
-                )}
-              </Form.Group>
-
-              <Form.Group>
-                <Form.Label htmlFor={'duc'} className={'SRC-noMargin'}>
-                  Upload DUC
-                </Form.Label>
-                <br />
-                {DUC && (
-                  <div>
-                    <DirectDownloadButton
+                      variant={'outlined'}
                       fileHandleAssociation={{
-                        associateObjectId: DUC.associateObjectId!,
+                        fileHandleId:
+                          managedACTAccessRequirement.ducTemplateFileHandleId,
                         associateObjectType:
-                          DUC.associateObjectType as FileHandleAssociateType,
-                        fileHandleId: DUC.fileHandleId,
+                          FileHandleAssociateType.AccessRequirementAttachment,
+                        associateObjectId: String(
+                          managedACTAccessRequirement.id,
+                        ),
                       }}
-                      fileName={DUC?.fileName}
-                      id={'duc-download'}
-                      variant={'link'}
-                      className={'SRC-noPadding'}
+                      fileName={'Download DUC Template'}
+                      endIcon={<IconSvg icon={'download'} wrap={false} />}
+                      sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
                     />
-                  </div>
-                )}
-                <FileUpload
-                  id={'duc-browse'}
-                  uploadCallback={uploadCallback}
-                  context={'ducFileHandleId'}
-                />
-              </Form.Group>
+                    <Typography variant={'body1'}>
+                      You must fill out and upload this exact version of the
+                      template.{' '}
+                      <strong>No other versions will be accepted.</strong>
+                    </Typography>
+                  </Box>
+                </>
+              )}
+              <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
+                Fill out and upload a Data Use Certificate
+              </Typography>
+              <Typography variant={'body1'} sx={{ my: 2 }}>
+                You must download and fill out a Data Use Certificate (DUC). Be
+                sure to upload the completed DUC below once you&apos;ve
+                completed it.
+              </Typography>
+              <Typography variant={'body1'} component={'ol'}>
+                <li>Download the DUC template file.</li>
+                <li>
+                  Fill out the DUC template, following the instructions in the
+                  file.
+                </li>
+                <li>
+                  Upload the completed certificate using the button below:
+                </li>
+              </Typography>
+              <UploadDocumentField
+                id={'duc'}
+                uploadCallback={resp => uploadCallback(resp, 'ducFileHandleId')}
+                documentName={'Data Use Certificate'}
+                fileHandleAssociations={ducFileHandleAssociation}
+              />
+              {(managedACTAccessRequirement?.isIRBApprovalRequired ||
+                managedACTAccessRequirement?.areOtherAttachmentsRequired ||
+                isRenewal) && <Divider sx={{ my: 4 }} />}
             </>
           )}
 
           {/* IRB */}
           {managedACTAccessRequirement?.isIRBApprovalRequired && (
-            <Form.Group>
-              <Form.Label htmlFor={'irb'} className={'SRC-noMargin'}>
-                Upload IRB approval
-              </Form.Label>
-              <br />
-              {IRB && (
-                <div>
-                  <DirectDownloadButton
-                    fileHandleAssociation={{
-                      associateObjectId: IRB.associateObjectId!,
-                      associateObjectType:
-                        IRB.associateObjectType as FileHandleAssociateType,
-                      fileHandleId: IRB.fileHandleId,
-                    }}
-                    fileName={IRB?.fileName}
-                    id={'irb-download'}
-                    variant={'link'}
-                    className={'SRC-noPadding'}
-                  />
-                </div>
-              )}
-              <FileUpload
-                id={'irb-browse'}
-                uploadCallback={uploadCallback}
-                context={'irbFileHandleId'}
+            <>
+              <Typography variant={'headline3'} sx={{ my: 2 }}>
+                IRB Approval
+              </Typography>
+              <Typography variant={'body1'} sx={{ my: 2 }}>
+                Upload a signed IRB letter on institutional letterhead. The
+                letter must include the names of all the datasets requested, as
+                well as the names of the data requesters above. Use the button
+                below to upload the document.
+              </Typography>
+              <UploadDocumentField
+                id={'irb'}
+                documentName={'IRB Approval Letter'}
+                uploadCallback={resp => uploadCallback(resp, 'irbFileHandleId')}
+                fileHandleAssociations={irbFileHandleAssociation}
               />
-            </Form.Group>
+
+              {(managedACTAccessRequirement?.areOtherAttachmentsRequired ||
+                isRenewal) && <Divider sx={{ my: 4 }} />}
+            </>
           )}
 
           {
             /* Attachments */
             managedACTAccessRequirement?.areOtherAttachmentsRequired && (
-              <Form.Group>
-                <Form.Label className={'SRC-noMargin'}>
+              <>
+                <Typography variant={'headline3'} sx={{ my: 2 }}>
                   Upload other required documents
-                </Form.Label>
-                <br />
-                {attachments.map((attachment: DataAccessDoc, i: number) => {
-                  return (
-                    <div className={'list-items'} key={`file-attachment-${i}`}>
-                      <DirectDownloadButton
-                        fileHandleAssociation={{
-                          associateObjectId: attachment.associateObjectId!,
-                          associateObjectType:
-                            attachment.associateObjectType as FileHandleAssociateType,
-                          fileHandleId: attachment.fileHandleId,
-                        }}
-                        fileName={attachment?.fileName}
-                        variant={'link'}
-                        className={'SRC-noPadding attachment-download'}
-                      />
-                      <Button
-                        className={'clear-x'}
-                        variant={'text'}
-                        onClick={() =>
-                          onClearAttachment(attachment.fileHandleId)
-                        }
-                      >
-                        <IconSvg icon="clear" />
-                      </Button>
-                    </div>
-                  )
-                })}
-                <FileUpload
-                  id={'attachment-browse'}
-                  uploadCallback={uploadCallback}
-                  context={'attachments'}
+                </Typography>
+                <Typography variant={'body1'} sx={{ my: 2 }}>
+                  You must upload other required documents. Please review the
+                  instructions to gain data access to determine which documents
+                  must also be uploaded.
+                </Typography>
+                <UploadDocumentField
+                  id={'file-attachment'}
+                  documentName={'Attachment'}
+                  uploadCallback={res => uploadCallback(res, 'attachments')}
+                  isMultiFileUpload={true}
+                  fileHandleAssociations={attachmentFileHandleAssociations}
+                  onClearAttachment={onClearAttachment}
                 />
-              </Form.Group>
+
+                {isRenewal && <Divider sx={{ my: 4 }} />}
+              </>
             )
           }
 
@@ -856,49 +631,33 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             // Publications & Summary of Use
             isRenewal && (
               <>
-                <Form.Group>
-                  <Form.Label
-                    htmlFor={'publications'}
-                    className={'SRC-noMargin'}
-                  >
-                    Publication(s)
-                  </Form.Label>
-                  <Form.Control
-                    id={'publications'}
-                    as="textarea"
-                    rows={3}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                      handleTextAreaInputChange(e, 'publications')
-                    }
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label
-                    htmlFor={'summaryOfUse'}
-                    className={'SRC-noMargin'}
-                  >
-                    Summary of use
-                  </Form.Label>
-                  <Form.Control
-                    id={'summaryOfUse'}
-                    as="textarea"
-                    rows={3}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                      handleTextAreaInputChange(e, 'summaryOfUse')
-                    }
-                  />
-                </Form.Group>
+                <TextField
+                  id={'publications'}
+                  label={'Publication(s)'}
+                  multiline
+                  rows={3}
+                  value={dataAccessRequest?.publication}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    handleTextAreaInputChange(e, 'publications')
+                  }
+                />
+                <TextField
+                  id={'summaryOfUse'}
+                  label={'Summary of use'}
+                  value={dataAccessRequest?.summaryOfUse}
+                  multiline
+                  rows={3}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    handleTextAreaInputChange(e, 'summaryOfUse')
+                  }
+                />
               </>
             )
           }
 
           {
             /* Alert message */
-            alert && (
-              <Alert variant={alert.key} transition={false}>
-                {alert.message}
-              </Alert>
-            )
+            alert && <Alert severity={alert.key}>{alert.message}</Alert>
           }
         </Form>
       </DialogContent>
@@ -907,12 +666,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           <>
             <Button
               variant="outlined"
-              onClick={() =>
-                requestDataStepCallback?.({
-                  step: 3,
-                  formSubmitRequestObject: formSubmitRequestObject,
-                })
-              }
+              onClick={() => {
+                if (dataAccessRequest) {
+                  onCancel(dataAccessRequest)
+                }
+              }}
             >
               Cancel
             </Button>
@@ -930,5 +688,3 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     </>
   )
 }
-
-export default RequestDataAccessStep2

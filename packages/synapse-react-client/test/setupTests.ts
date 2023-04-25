@@ -27,6 +27,7 @@ global.ResizeObserver = ResizeObserver
 setupIntersectionMocking(jest.fn)
 
 const oldWindowLocation = window.location
+const oldWindowOpen = window.open
 
 /**
  * Mock `window.location` so we can verify interactions in tests
@@ -51,11 +52,15 @@ beforeAll(() => {
       },
     },
   ) as Location
+
+  delete window.open
+  window.open = jest.fn()
 })
 afterAll(() => {
   // restore `window.location` to the original `jsdom`
   // `Location` object
   window.location = oldWindowLocation
+  window.open = oldWindowOpen
 })
 // Synapse API calls may take longer than 5s (typically if a dependent call is taking much longer than normal)
 jest.setTimeout(30000)

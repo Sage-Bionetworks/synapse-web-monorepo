@@ -1,7 +1,7 @@
 import { JSONSchema7 } from 'json-schema'
 import SparkMD5 from 'spark-md5'
 import UniversalCookies from 'universal-cookie'
-import { SynapseConstants } from '.'
+import { SynapseClient, SynapseConstants } from '.'
 import {
   ACCESS_APPROVAL,
   ACCESS_APPROVAL_BY_ID,
@@ -140,6 +140,8 @@ import {
   QueryResultBundle,
   QueryTableResults,
   ReferenceList,
+  Renewal,
+  Request,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   Submission as EvaluationSubmission,
@@ -159,7 +161,6 @@ import {
   EntityChildrenRequest,
   EntityChildrenResponse,
   ManagedACTAccessRequirementStatus,
-  RequestInterface,
   TYPE_FILTER,
   UserGroupHeaderResponse,
 } from './synapseTypes'
@@ -167,7 +168,6 @@ import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
 } from './synapseTypes/AccessRequirement/AccessRequirementSearch'
-import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
 import { SubmissionStateChangeRequest } from './synapseTypes/AccessRequirement/SubmissionStateChangeRequest'
 import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
@@ -298,6 +298,7 @@ import {
   TwoFactorAuthStatus,
 } from './synapseTypes/TotpSecret'
 import { TwoFactorAuthRecoveryCodes } from './synapseTypes/TwoFactorAuthRecoveryCodes'
+import { sortBy } from 'lodash-es'
 
 const cookies = new UniversalCookies()
 
@@ -2859,11 +2860,12 @@ export const searchAccessRequirements = (
  * @param {string} requirementId id of entity to lookup
  * @returns {AccessRequirementStatus}
  */
-export const getAccessRequirementStatus = (
-  accessToken: string | undefined,
-  requirementId: string | number,
-): Promise<AccessRequirementStatus | ManagedACTAccessRequirementStatus> => {
-  return doGet(
+export function getAccessRequirementStatus<
+  T extends
+    | AccessRequirementStatus
+    | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
+>(accessToken: string | undefined, requirementId: string | number): Promise<T> {
+  return doGet<T>(
     ACCESS_REQUIREMENT_STATUS(requirementId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2892,6 +2894,35 @@ export const getAllAccessRequirements = (
     )
   }
   return getAllOfPaginatedService(fn)
+}
+
+/**
+ * Given an array of access requirement IDs, return the IDs sorted by the user's status, where
+ * completed access requirements are shown first.
+ * @param accessToken
+ * @param requirementIds
+ */
+export const sortAccessRequirementsByCompletion = async (
+  accessToken: string | undefined,
+  requirementIds: string[],
+): Promise<string[]> => {
+  const statuses = requirementIds.map(id => {
+    return SynapseClient.getAccessRequirementStatus(accessToken, id)
+  })
+  const accessRequirementStatuses = await Promise.all(statuses)
+
+  return sortBy(requirementIds, id => {
+    // if its true then it should come first, which means that it should be higher in the list
+    // which is sorted ascendingly
+    return (
+      -1 *
+      Number(
+        accessRequirementStatuses.find(
+          status => id === status.accessRequirementId,
+        )!.isApproved,
+      )
+    )
+  })
 }
 
 /**
@@ -2940,7 +2971,7 @@ export const getAccessApproval = async (
  * @param {AccessApproval} accessApproval access approval request object
  * @returns {AccessApproval}
  */
-export const postAccessApproval = async (
+export const createAccessApproval = async (
   accessToken: string | undefined,
   accessApproval: AccessApproval,
 ): Promise<AccessApproval> => {
@@ -3303,7 +3334,7 @@ export const getDataAccessRequestForUpdate = (
   requirementId: string,
   accessToken: string,
 ) => {
-  return doGet<RequestInterface | RenewalInterface>(
+  return doGet<Request | Renewal>(
     ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE(requirementId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3311,11 +3342,11 @@ export const getDataAccessRequestForUpdate = (
 }
 
 // http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
-export const updateDataAccessRequest = (
-  requestObj: RequestInterface,
+export function updateDataAccessRequest(
+  requestObj: Request | Renewal,
   accessToken: string,
-) => {
-  return doPost<RequestInterface>(
+) {
+  return doPost<typeof requestObj>(
     DATA_ACCESS_REQUEST,
     requestObj,
     accessToken,

@@ -28,6 +28,7 @@ import {
 } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
 import { UserProfileList } from '../../../src/lib/utils/SynapseClient'
+import { TwoFactorAuthStatus } from '../../../src/lib/utils/synapseTypes/TotpSecret'
 
 export const getUserProfileHandlers = (backendOrigin: string) => [
   /**
@@ -190,5 +191,12 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
       ctx.status(200),
       ctx.json({ email: mockUserBundle.userProfile?.email }),
     )
+  }),
+
+  rest.get(`${backendOrigin}/auth/v1/2fa`, async (req, res, ctx) => {
+    const response: TwoFactorAuthStatus = {
+      status: 'ENABLED',
+    }
+    return res(ctx.status(200), ctx.json(response))
   }),
 ]

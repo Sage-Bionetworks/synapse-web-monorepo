@@ -2,7 +2,8 @@ import { AccessType, Renewal, Request } from '../../src/lib/utils/synapseTypes'
 import { mockManagedACTAccessRequirement } from '../mockAccessRequirements'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import {
-  MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_FILE_HANDLE_ID,
+  MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_1_FILE_HANDLE_ID,
+  MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_2_FILE_HANDLE_ID,
   MOCK_DATA_ACCESS_SUBMISSION_IRB_APPROVAL_FILE_HANDLE_ID,
   MOCK_DUC_SUBMISSION_FILE_HANDLE_ID,
 } from '../mock_file_handle'
@@ -19,7 +20,10 @@ export const MOCK_DATA_ACCESS_REQUEST: Request = {
       type: AccessType.GAIN_ACCESS,
     },
   ],
-  attachments: [MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_FILE_HANDLE_ID],
+  attachments: [
+    MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_1_FILE_HANDLE_ID,
+    MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_2_FILE_HANDLE_ID,
+  ],
   createdBy: String(MOCK_USER_ID),
   createdOn: '2023-04-19T13:06:51+00:00',
   ducFileHandleId: MOCK_DUC_SUBMISSION_FILE_HANDLE_ID,
@@ -44,7 +48,10 @@ export const MOCK_DATA_ACCESS_RENEWAL: Renewal = {
       type: AccessType.REVOKE_ACCESS,
     },
   ],
-  attachments: [MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_FILE_HANDLE_ID],
+  attachments: [
+    MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_1_FILE_HANDLE_ID,
+    MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_2_FILE_HANDLE_ID,
+  ],
   createdBy: String(MOCK_USER_ID),
   createdOn: '2023-04-19T13:06:51+00:00',
   ducFileHandleId: MOCK_DUC_SUBMISSION_FILE_HANDLE_ID,

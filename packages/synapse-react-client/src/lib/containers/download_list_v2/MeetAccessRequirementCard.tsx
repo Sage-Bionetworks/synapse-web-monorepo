@@ -57,8 +57,7 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
         break
       case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement: {
         title = SELF_SIGN_TITLE
-        const selfSignAR: SelfSignAccessRequirement =
-          ar as SelfSignAccessRequirement
+        const selfSignAR: SelfSignAccessRequirement = ar
         if (selfSignAR.isValidatedProfileRequired) {
           iconType = VARIABLE_DIFFICULTY
         } else if (selfSignAR.isCertifiedUserRequired) {

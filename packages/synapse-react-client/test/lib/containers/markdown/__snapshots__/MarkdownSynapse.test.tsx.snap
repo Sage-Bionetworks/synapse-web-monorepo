@@ -6,36 +6,29 @@ exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loos
     class="markdown"
   >
     <span>
-      <p>
-         
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+      >
         some more free
-         
       </p>
-       
       
 
-       
       <h1
+        class="MuiTypography-root MuiTypography-headline1 css-1ix3kim-MuiTypography-root"
         id="SRC-header-1"
         toc="true"
       >
-         
         header
-         
       </h1>
-       
       
 
-       
-      <p>
-         
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+      >
         loose text
-         
       </p>
-       
       
 
-       
     </span>
   </div>
 </div>
@@ -48,25 +41,20 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
   >
     <span>
       <h1
+        class="MuiTypography-root MuiTypography-headline1 css-1ix3kim-MuiTypography-root"
         id="SRC-header-1"
         toc="true"
       >
-         
         header 
-         
         <a
           href="https://synapse.org"
           target="_blank"
         >
-           
           text
-           
         </a>
       </h1>
-       
       
 
-       
     </span>
   </div>
 </div>
@@ -78,7 +66,9 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
     class="markdown"
   >
     <span>
-      <p>
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+      >
         <span
           class="bootstrap-4-backport"
         >
@@ -100,10 +90,8 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
           </a>
         </span>
       </p>
-       
       
 
-       
     </span>
   </div>
 </div>

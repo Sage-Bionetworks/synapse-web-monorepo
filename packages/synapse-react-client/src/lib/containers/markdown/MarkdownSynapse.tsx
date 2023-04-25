@@ -18,6 +18,7 @@ import {
 } from './SynapseWikiContext'
 import Bookmarks from './widget/Bookmarks'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
+import { Typography } from '@mui/material'
 
 declare const katex: any
 declare const markdownitSynapse: any
@@ -357,7 +358,7 @@ export default class MarkdownSynapse extends React.Component<
     */
     if (element.nodeType === Node.TEXT_NODE) {
       // case 1.
-      return <> {element.textContent} </>
+      return <>{element.textContent}</>
     } else if (
       element.nodeType === Node.ELEMENT_NODE &&
       element instanceof HTMLElement
@@ -404,7 +405,46 @@ export default class MarkdownSynapse extends React.Component<
         )
       })
       // Render tagName as parent element of the children below
-      return <Tag {...props}>{children}</Tag>
+      switch (Tag) {
+        case 'p':
+          return (
+            <Typography variant={'body1'} {...props} component={Tag}>
+              {children}
+            </Typography>
+          )
+        case 'h1':
+          return (
+            <Typography variant={'headline1'} {...props} component={Tag}>
+              {children}
+            </Typography>
+          )
+        case 'h2':
+          return (
+            <Typography variant={'headline2'} {...props} component={Tag}>
+              {children}
+            </Typography>
+          )
+        case 'h3':
+          return (
+            <Typography variant={'headline3'} {...props} component={Tag}>
+              {children}
+            </Typography>
+          )
+        case 'ol':
+          return (
+            <Typography variant={'body1'} {...props} component={Tag}>
+              {children}
+            </Typography>
+          )
+        case 'ul':
+          return (
+            <Typography variant={'body1'} {...props} component={Tag}>
+              {children}
+            </Typography>
+          )
+        default:
+          return <Tag {...props}>{children}</Tag>
+      }
     }
   }
 

@@ -9,7 +9,6 @@ export type FileUploadProps = {
   label?: string
   buttonProps?: ButtonProps
   uploadCallback?: (response: UploadCallbackResp) => void
-  context?: any // to distinguish which file was uploaded if we have several FileUpload components on the same page
 }
 
 const FileUpload: React.FC<FileUploadProps> = props => {
@@ -18,7 +17,6 @@ const FileUpload: React.FC<FileUploadProps> = props => {
     buttonProps = { variant: 'contained' },
     label = 'Browse...',
     uploadCallback,
-    context,
   } = props
   const { accessToken } = useSynapseContext()
   const hiddenFileInput = React.useRef<HTMLInputElement>(null)
@@ -38,17 +36,20 @@ const FileUpload: React.FC<FileUploadProps> = props => {
           file.name,
           file,
         )
-        uploadCallback?.({
-          success: true,
-          resp: resp,
-          context: context,
-        })
+        if (uploadCallback) {
+          uploadCallback({
+            success: true,
+            resp: resp,
+          })
+        }
       } catch (e) {
         console.log('FileUpload: fail to upload file', e)
-        uploadCallback?.({
-          success: false,
-          error: e,
-        })
+        if (uploadCallback) {
+          uploadCallback({
+            success: false,
+            error: e,
+          })
+        }
       }
     }
   }

@@ -1,5 +1,6 @@
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
 import ACCESS_TYPE from '../ACCESS_TYPE'
+import { isTypeViaConcreteTypeFactory } from '../../functions/TypeUtils'
 
 export interface TermsOfUseAccessRequirement {
   /* The version number issued to this version on the object. */
@@ -31,3 +32,8 @@ export interface TermsOfUseAccessRequirement {
   /* Terms Of Use for Access, stored directly in the document (versus in a referenced Location) Required when creating or updating.*/
   termsOfUse: string
 }
+
+export const isTermsOfUseAccessRequirement =
+  isTypeViaConcreteTypeFactory<TermsOfUseAccessRequirement>(
+    'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
+  )
