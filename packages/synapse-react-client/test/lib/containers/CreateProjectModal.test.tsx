@@ -53,6 +53,17 @@ describe('CreateProjectModal tests', () => {
     await screen.findByText('Project created')
   })
 
+  it('Creates project on enter', async () => {
+    const { user, input, saveButton } = setUp()
+
+    await user.type(input, MOCK_PROJECT_NAME)
+    expect(input.value).toBe(MOCK_PROJECT_NAME)
+    await user.keyboard('{ENTER}')
+
+    // should show success alert
+    await screen.findByText('Project created')
+  })
+
   it('Shows error if creation fails', async () => {
     const { user, input, saveButton } = setUp()
 

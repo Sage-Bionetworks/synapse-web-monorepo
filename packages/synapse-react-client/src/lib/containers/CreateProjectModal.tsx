@@ -52,6 +52,15 @@ export const CreateProjectModal: React.FunctionComponent<
         onChange={event => {
           setProjectName(event.target.value)
         }}
+        inputProps={{
+          onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
+            if (event.key === 'Enter') {
+              if (projectName !== '') {
+                onCreateProject()
+              }
+            }
+          },
+        }}
       />
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
     </>
