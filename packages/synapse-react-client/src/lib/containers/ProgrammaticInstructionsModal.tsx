@@ -1,6 +1,6 @@
+import { Box, Link, Tab, Tabs, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import { Button, Modal } from 'react-bootstrap'
-import { HelpPopover } from './HelpPopover'
+import { ConfirmationDialog } from './ConfirmationDialog'
 
 export enum ProgrammaticOptionsTabs {
   COMMAND_LINE = 'Command Line',
@@ -53,111 +53,99 @@ export const ProgrammaticInstructionsModal = ({
     useState<ProgrammaticOptionsTabs>(defaultTab)
 
   const installationInstructions = (
-    <p>
+    <Typography variant="body1">
       Installation instructions are available at our{' '}
-      <a
-        className="ProgrammaticOptions__docslink"
-        href="https://help.synapse.org/docs/Installing-Synapse-API-Clients.1985249668.html"
+      <Link
+        href={
+          'https://help.synapse.org/docs/Installing-Synapse-API-Clients.1985249668.html'
+        }
         target="_blank"
         rel="noopener noreferrer"
       >
         Synapse API Documentation Site
-      </a>
+      </Link>
       .
-    </p>
+    </Typography>
+  )
+
+  const dialogContent = (
+    <>
+      <Box
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          marginBottom: 4,
+        }}
+      >
+        <Tabs
+          value={currentTab}
+          onChange={(
+            event: React.SyntheticEvent,
+            newValue: ProgrammaticOptionsTabs,
+          ) => {
+            event.stopPropagation()
+            setCurrentTab(newValue)
+          }}
+          textColor="secondary"
+          indicatorColor="secondary"
+        >
+          {cliCode && (
+            <Tab
+              value={ProgrammaticOptionsTabs.COMMAND_LINE}
+              label={ProgrammaticOptionsTabs.COMMAND_LINE}
+            />
+          )}
+          {rCode && (
+            <Tab
+              value={ProgrammaticOptionsTabs.R}
+              label={ProgrammaticOptionsTabs.R}
+            />
+          )}
+          {pythonCode && (
+            <Tab
+              value={ProgrammaticOptionsTabs.PYTHON}
+              label={ProgrammaticOptionsTabs.PYTHON}
+            />
+          )}
+        </Tabs>
+      </Box>
+      <Box sx={{ '& > p': { marginBottom: 3 } }}>
+        {currentTab === ProgrammaticOptionsTabs.COMMAND_LINE && (
+          <>
+            <Typography variant="body1">{cliNotes}</Typography>
+            {installationInstructions}
+            <pre> {cliCode} </pre>
+          </>
+        )}
+        {currentTab === ProgrammaticOptionsTabs.R && (
+          <>
+            <Typography variant="body1">{rNotes}</Typography>
+            {installationInstructions}
+            <pre>{rCode}</pre>
+          </>
+        )}
+        {currentTab === ProgrammaticOptionsTabs.PYTHON && (
+          <>
+            <Typography variant="body1">{pythonNotes}</Typography>
+            {installationInstructions}
+            <pre>{pythonCode}</pre>
+          </>
+        )}
+      </Box>
+    </>
   )
 
   return (
-    <Modal
-      className="bootstrap-4-backport ProgrammaticOptions"
-      backdrop="static"
-      animation={false}
-      show={show}
-      onHide={onClose}
-      size="lg"
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>
-          {title}&nbsp;
-          {helpMarkdown && (
-            <HelpPopover markdownText={helpMarkdown} helpUrl={helpUrl} />
-          )}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <div className="Tabs">
-          {cliCode && (
-            <div
-              className="Tab"
-              role="tab"
-              onClick={e => {
-                e.stopPropagation()
-                setCurrentTab(ProgrammaticOptionsTabs.COMMAND_LINE)
-              }}
-              aria-selected={
-                ProgrammaticOptionsTabs.COMMAND_LINE === currentTab
-              }
-            >
-              {ProgrammaticOptionsTabs.COMMAND_LINE}
-            </div>
-          )}
-          {rCode && (
-            <div
-              className="Tab"
-              role="tab"
-              onClick={e => {
-                e.stopPropagation()
-                setCurrentTab(ProgrammaticOptionsTabs.R)
-              }}
-              aria-selected={ProgrammaticOptionsTabs.R === currentTab}
-            >
-              {ProgrammaticOptionsTabs.R}
-            </div>
-          )}
-          {pythonCode && (
-            <div
-              className="Tab"
-              role="tab"
-              onClick={e => {
-                e.stopPropagation()
-                setCurrentTab(ProgrammaticOptionsTabs.PYTHON)
-              }}
-              aria-selected={ProgrammaticOptionsTabs.PYTHON === currentTab}
-            >
-              {ProgrammaticOptionsTabs.PYTHON}
-            </div>
-          )}
-        </div>
-        <div className="TabContent">
-          {currentTab === ProgrammaticOptionsTabs.COMMAND_LINE && (
-            <>
-              <p>{cliNotes}</p>
-              {installationInstructions}
-              <pre> {cliCode} </pre>
-            </>
-          )}
-          {currentTab === ProgrammaticOptionsTabs.R && (
-            <>
-              <p>{rNotes}</p>
-              {installationInstructions}
-              <pre>{rCode}</pre>
-            </>
-          )}
-          {currentTab === ProgrammaticOptionsTabs.PYTHON && (
-            <>
-              <p>{pythonNotes}</p>
-              {installationInstructions}
-              <pre>{pythonCode}</pre>
-            </>
-          )}
-        </div>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="primary" onClick={onClose}>
-          OK
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <ConfirmationDialog
+      open={show}
+      title={title}
+      onCancel={onClose}
+      onConfirm={onClose}
+      maxWidth="md"
+      helpMarkdown={helpMarkdown}
+      helpUrl={helpUrl}
+      content={dialogContent}
+    />
   )
 }
 
