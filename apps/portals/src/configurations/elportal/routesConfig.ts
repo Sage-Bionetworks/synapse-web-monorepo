@@ -5,12 +5,10 @@ import {
   studies,
   data,
   people,
-  programs,
   publications,
 } from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import {
-  studyCardConfiguration,
   studiesProgrammaticRouteConfig,
 } from './synapseConfigs/studies'
 import {
@@ -18,21 +16,14 @@ import {
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
 import { results } from './synapseConfigs/results'
-import { programCardConfiguration } from './synapseConfigs/programs'
-import { programsHomePageConfig } from './synapseConfigs/programsHomePage'
 import experimentalTools from './synapseConfigs/experimental_tools'
 import computationalTools from './synapseConfigs/computational_tools'
 import targetEnablingResources from './synapseConfigs/target_enabling_resources'
 import {
   dataSql,
   projectsSql,
-  studiesSql,
   peopleSql,
-  programsSql,
-  experimentalModelsSql,
-  modelADStrainsSelectedFacet,
 } from './resources'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const routes: GenericRoute[] = [
   {
@@ -40,15 +31,6 @@ const routes: GenericRoute[] = [
     hideRouteFromNavbar: true,
     exact: true,
     synapseConfigArray: [
-      {
-        name: 'Programs',
-        title: 'Programs',
-        className: 'ProgramsHomePage',
-        centerTitle: true,
-        props: {
-          ...programsHomePageConfig,
-        },
-      },
       {
         name: 'FeaturedDataTabs',
         title: 'Featured Data',
@@ -147,24 +129,24 @@ const routes: GenericRoute[] = [
         title: 'Related Resources',
         centerTitle: true,
         subtitle:
-          'The EL Portal ecosystem contains a growing list of tools and resources. Explore some of them below.',
+          '',
         outsideContainerClassName: 'home-spacer',
         props: {
           config: [
             {
-              title: 'Results Explorers',
-              ownerId: 'syn12666371',
-              wikiId: '607139',
+              title: 'Cross-Species Research Partners',
+              ownerId: 'syn27229419',
+              wikiId: '621472',
             },
             {
               title: 'Data Portals',
-              ownerId: 'syn12666371',
-              wikiId: '607138',
+              ownerId: 'syn27229419',
+              wikiId: '621470',
             },
             {
-              title: 'Program Websites',
-              ownerId: 'syn12666371',
-              wikiId: '607140',
+              title: 'Project Websites',
+              ownerId: 'syn27229419',
+              wikiId: '621471',
             },
           ],
         },
@@ -220,107 +202,8 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    // PORTALS-2028 (part 2): redirect /MODEL-ADstrains to /Explore/Experimental%20Models with query request
-    exact: true,
-    path: 'MODEL-ADstrains',
-    hideRouteFromNavbar: true,
-    synapseConfigArray: [
-      {
-        name: 'Redirect',
-        props: {
-          from: 'MODEL-ADstrains',
-          to: {
-            pathname: '/Explore/Experimental Models',
-            search: `QueryWrapper0={"sql":"${encodeURI(
-              experimentalModelsSql,
-            )}","limit":25,"offset":0,"selectedFacets":[{"concreteType":"org.sagebionetworks.repo.model.table.FacetColumnValuesRequest","columnName":"${
-              modelADStrainsSelectedFacet.columnName
-            }","facetValues":["${modelADStrainsSelectedFacet.facetValue}"]}]}`,
-          },
-        },
-      },
-    ],
-  },
-  {
     path: 'Explore',
     routes: [
-      {
-        path: 'Programs',
-        routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                className: 'ProgramCardList',
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: {
-                    name: 'CardContainerLogic',
-                    props: {
-                      ...programs,
-                      sql: programsSql,
-                    },
-                  },
-                },
-              },
-            ],
-          },
-          {
-            exact: true,
-            path: 'DetailsPage',
-            synapseConfigArray: [
-              {
-                name: 'CardContainerLogic',
-                isOutsideContainer: true,
-                props: {
-                  sql: programsSql,
-                  isHeader: true,
-                  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-                  ...programCardConfiguration,
-                  genericCardSchema: {
-                    ...programCardConfiguration.genericCardSchema!,
-                    description: 'Long Description',
-                  },
-                },
-              },
-              {
-                name: 'DetailsPage',
-                props: {
-                  showMenu: true,
-                  sql: programsSql,
-                  synapseConfigArray: [
-                    {
-                      name: 'CardContainerLogic',
-                      title: 'Projects',
-                      columnName: 'Program',
-                      showTitleSeperator: false,
-                      tableSqlKeys: ['Program'],
-                      props: {
-                        ...projectCardConfiguration,
-                        sql: projectsSql,
-                      },
-                    },
-                    {
-                      name: 'CardContainerLogic',
-                      title: 'Studies',
-                      columnName: 'Program',
-                      showTitleSeperator: false,
-                      tableSqlKeys: ['Program'],
-                      props: {
-                        ...studyCardConfiguration,
-                        sql: studiesSql,
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-      },
       {
         path: 'Projects',
         routes: [
@@ -517,6 +400,21 @@ const routes: GenericRoute[] = [
     ],
   },
   {
+    exact: true,
+    path: 'About',
+    synapseConfigArray: [
+      {
+        name: 'Markdown',
+        title: 'About',
+        props: {
+          ownerId: 'syn27229419',
+          wikiId: '621273',
+          loadingSkeletonRowCount: 10,
+        },
+      },
+    ],
+  },
+  {
     path: 'Data Access',
     exact: true,
     synapseConfigArray: [
@@ -524,8 +422,8 @@ const routes: GenericRoute[] = [
         name: 'Markdown',
         title: 'Data Access',
         props: {
-          ownerId: 'syn12666371',
-          wikiId: '581937',
+          ownerId: 'syn27229419',
+          wikiId: '621276',
           loadingSkeletonRowCount: 20,
         },
       },
@@ -576,22 +474,6 @@ const routes: GenericRoute[] = [
             },
           },
         ],
-      },
-    ],
-  },
-  {
-    exact: true,
-    path: 'About',
-    hideRouteFromNavbar: true,
-    synapseConfigArray: [
-      {
-        name: 'Markdown',
-        title: 'About',
-        props: {
-          wikiId: '581939',
-          ownerId: 'syn12666371',
-          loadingSkeletonRowCount: 20,
-        },
       },
     ],
   },
