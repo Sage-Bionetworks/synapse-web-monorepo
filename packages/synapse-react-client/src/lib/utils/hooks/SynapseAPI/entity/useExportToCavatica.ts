@@ -1,7 +1,6 @@
 import { SynapseClient } from '../../..'
 import { displayToast } from '../../../../containers/ToastMessage'
 import { parseEntityIdFromSqlStatement } from '../../../functions/sqlFunctions'
-import { SYNAPSE_ORG_RAW_FILE_HANDLE_URL_SERVLET } from '../../../SynapseConstants'
 import { useSynapseContext } from '../../../SynapseContext'
 import {
   DownloadFromTableRequest,
@@ -40,17 +39,18 @@ export function useExportToCavatica(
         downloadFromTableRequest,
         accessToken,
       )
-      const fileURL = SYNAPSE_ORG_RAW_FILE_HANDLE_URL_SERVLET(
+      const presignedURL = await SynapseClient.getFileHandleByIdURL(
         result.resultsFileHandleId,
+        accessToken,
       )
-      // Send a URL (using the Synapse.org filehandleassociation servlet) to the Cavatica landing page where it can be processed.
+      // Send this presigned URL to the Cavatica landing page where it can be processed
       // NOTE: This dev environment redirect link only works if you are in the Seven Bridges VPN, so this cannot be tested by Sage
       const cavaticaURL = `https://synapse-vayu.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
-        fileURL,
+        presignedURL,
       )}`
       // TODO: change to production redirect link after the changes have been validated and they have released to prod
       // const cavaticaURL = `https://cavatica.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
-      //   fileURL,
+      //   presignedURL,
       // )}`
       window.open(cavaticaURL, '_blank')
     } catch (_err) {
