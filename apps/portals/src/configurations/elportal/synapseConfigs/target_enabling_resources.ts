@@ -22,12 +22,6 @@ export const targetEnablingResourcesCardConfiguration: CardConfiguration = {
   labelLinkConfig: [
     {
       isMarkdown: false,
-      matchColumnName: 'program',
-      URLColumnName: 'Program',
-      baseURL: 'Explore/Programs/DetailsPage',
-    },
-    {
-      isMarkdown: false,
       matchColumnName: 'grant',
       URLColumnName: 'Grant Number',
       baseURL: 'Explore/Projects/DetailsPage',
@@ -45,12 +39,6 @@ export const targetEnablingResourcesTableConfiguration: QueryWrapperPlotNavProps
         matchColumnName: 'title',
         linkColumnName: 'link',
         isMarkdown: false,
-      },
-      {
-        isMarkdown: false,
-        matchColumnName: 'program',
-        URLColumnName: 'Program',
-        baseURL: 'Explore/Programs/DetailsPage',
       },
       {
         isMarkdown: false,

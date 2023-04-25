@@ -19,14 +19,6 @@ export const studyCardConfiguration: CardConfiguration = {
     URLColumnName: 'Study',
     matchColumnName: 'Study',
   },
-  labelLinkConfig: [
-    {
-      isMarkdown: false,
-      matchColumnName: 'Program',
-      URLColumnName: 'Program',
-      baseURL: 'Explore/Programs/DetailsPage',
-    },
-  ],
   genericCardSchema: {
     type: SynapseConstants.STUDY,
     title: 'Study_Name',
