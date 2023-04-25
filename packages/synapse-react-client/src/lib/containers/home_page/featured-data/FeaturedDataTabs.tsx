@@ -68,7 +68,7 @@ const FeaturedDataTabs: React.FunctionComponent<
                 size="lg"
                 href={selectedTabProps.explorePagePath}
               >
-                Explore All {selectedTabProps.exploreObjectType}
+                View All {selectedTabProps.exploreObjectType}
               </Button>
             </div>
           )}
