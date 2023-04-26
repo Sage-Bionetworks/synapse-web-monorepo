@@ -1,0 +1,2 @@
+import{r as u}from"./index-f1f749bf.js";import{o as c}from"./isHostComponent-fa76b8d9.js";function s(e,o=166){let t;function n(...i){const r=()=>{e.apply(this,i)};clearTimeout(t),t=setTimeout(r,o)}return n.clear=()=>{clearTimeout(t)},n}function d(e,o){return u.isValidElement(e)&&o.indexOf(e.type.muiName)!==-1}function l(e){return c(e).defaultView||window}export{s as d,d as i,l as o};
+//# sourceMappingURL=ownerWindow-12ded16b.js.map
