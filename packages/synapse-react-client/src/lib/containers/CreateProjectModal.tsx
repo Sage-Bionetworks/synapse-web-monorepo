@@ -1,9 +1,10 @@
+import { Alert } from '@mui/material'
 import React, { useState } from 'react'
-import { Alert, Button, Modal } from 'react-bootstrap'
 import { SynapseClient } from '../utils'
 import { useSynapseContext } from '../utils/SynapseContext'
+import { ConfirmationDialog } from './ConfirmationDialog'
 import FullWidthAlert from './FullWidthAlert'
-import { Form } from 'react-bootstrap'
+import TextField from './TextField'
 
 export type CreateProjectModalProps = {
   isShowingModal?: boolean
@@ -40,55 +41,44 @@ export const CreateProjectModal: React.FunctionComponent<
       }
     }
   }
+
+  const dialogContent = (
+    <>
+      <TextField
+        id="projectInput"
+        label="Project Name"
+        value={projectName}
+        fullWidth
+        onChange={event => {
+          setProjectName(event.target.value)
+        }}
+        inputProps={{
+          onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
+            if (event.key === 'Enter') {
+              if (projectName !== '') {
+                onCreateProject()
+              }
+            }
+          },
+        }}
+      />
+      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+    </>
+  )
+
   return (
     <>
-      <Modal
-        className="CreateProjectModal bootstrap-4-backport"
-        show={isShowingModal}
-        animation={false}
-        onHide={hide}
-        backdrop="static"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Create a new Project</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group>
-            <Form.Label htmlFor={'projectInput'}>Project Name</Form.Label>
-            <Form.Control
-              id="projectInput"
-              data-testid="projectInput"
-              value={projectName}
-              onChange={event => {
-                setProjectName(event.target.value)
-              }}
-              onKeyDown={(event: any) => {
-                if (event.key === 'Enter') {
-                  if (projectName !== '') {
-                    onCreateProject()
-                  }
-                }
-              }}
-            />
-          </Form.Group>
-          {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="ButtonContainer">
-            <Button variant="default" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => {
-                onCreateProject()
-              }}
-            >
-              Save
-            </Button>
-          </div>
-        </Modal.Footer>
-      </Modal>
+      <ConfirmationDialog
+        open={isShowingModal}
+        title="Create a new Project"
+        content={dialogContent}
+        confirmButtonText="Save"
+        onConfirm={() => {
+          void onCreateProject()
+        }}
+        onCancel={hide}
+        maxWidth="md"
+      />
       <FullWidthAlert
         show={isShowingSuccessAlert}
         variant="info"

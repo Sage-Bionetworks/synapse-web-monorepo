@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
   CreateProjectModal,
@@ -23,6 +24,14 @@ function renderComponent(wrapperProps?: SynapseContextType) {
   })
 }
 
+function setUp(wrapperProps?: SynapseContextType) {
+  const user = userEvent.setup()
+  const component = renderComponent(wrapperProps)
+  const input = screen.getByRole('textbox', { name: /project name/i })
+  const saveButton = screen.getByRole('button', { name: /save/i })
+  return { component, user, input, saveButton }
+}
+
 describe('CreateProjectModal tests', () => {
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
@@ -34,28 +43,67 @@ describe('CreateProjectModal tests', () => {
   })
 
   it('Creates project on submit', async () => {
-    renderComponent()
-    const input: HTMLInputElement = (await screen.findByTestId(
-      'projectInput',
-    )) as HTMLInputElement
-    fireEvent.change(input, { target: { value: MOCK_PROJECT_NAME } })
+    const { user, input, saveButton } = setUp()
+
+    await user.type(input, MOCK_PROJECT_NAME)
     expect(input.value).toBe(MOCK_PROJECT_NAME)
-    fireEvent.keyDown(input, { key: 'Enter' })
+    await user.click(saveButton)
+
+    // should show success alert
+    await screen.findByText('Project created')
+  })
+
+  it('Creates project on enter', async () => {
+    const { user, input, saveButton } = setUp()
+
+    await user.type(input, MOCK_PROJECT_NAME)
+    expect(input.value).toBe(MOCK_PROJECT_NAME)
+    await user.keyboard('{ENTER}')
 
     // should show success alert
     await screen.findByText('Project created')
   })
 
   it('Shows error if creation fails', async () => {
-    renderComponent()
-    const input: HTMLInputElement = (await screen.findByTestId(
-      'projectInput',
-    )) as HTMLInputElement
-    fireEvent.change(input, { target: { value: MOCK_INVALID_PROJECT_NAME } })
+    const { user, input, saveButton } = setUp()
+
+    await user.type(input, MOCK_INVALID_PROJECT_NAME)
     expect(input.value).toBe(MOCK_INVALID_PROJECT_NAME)
-    fireEvent.keyDown(input, { key: 'Enter' })
+    await user.click(saveButton)
 
     // should show error alert
     await screen.findByText('Invalid project name')
+  })
+
+  it('Clears alert and project name on cancel', async () => {
+    const { user, input, saveButton } = setUp()
+
+    await user.type(input, MOCK_INVALID_PROJECT_NAME)
+    await user.click(saveButton)
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('Invalid project name')
+
+    const cancelButton = screen.getByRole('button', { name: /cancel/i })
+    await user.click(cancelButton)
+
+    expect(alert).not.toBeInTheDocument()
+    expect(input.value).toBe('')
+  })
+
+  it('Clears alert and project name on closing dialog', async () => {
+    const { user, input, saveButton } = setUp()
+
+    await user.type(input, MOCK_INVALID_PROJECT_NAME)
+    await user.click(saveButton)
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('Invalid project name')
+
+    const closeButton = screen.getByRole('button', { name: /close/i })
+    await user.click(closeButton)
+
+    expect(alert).not.toBeInTheDocument()
+    expect(input.value).toBe('')
   })
 })
