@@ -16,9 +16,6 @@ import {
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
 import { results } from './synapseConfigs/results'
-import experimentalTools from './synapseConfigs/experimental_tools'
-import computationalTools from './synapseConfigs/computational_tools'
-import targetEnablingResources from './synapseConfigs/target_enabling_resources'
 import {
   dataSql,
   projectsSql,
@@ -117,7 +114,7 @@ const routes: GenericRoute[] = [
         outsideContainerClassName: 'home-spacer home-bg-dark',
         centerTitle: true,
         props: {
-          sql: `${peopleSql}`,
+          sql: `${peopleSql} where isFeatured=true`,
           count: 3,
           size: SynapseConstants.MEDIUM_USER_CARD,
           useQueryResultUserData: true,
@@ -254,48 +251,6 @@ const routes: GenericRoute[] = [
       },
       {
         exact: true,
-        path: 'Experimental Models',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: experimentalTools,
-            },
-          },
-        ],
-      },
-      {
-        exact: true,
-        path: 'Computational Tools',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: computationalTools,
-            },
-          },
-        ],
-      },
-      {
-        exact: true,
-        path: 'Target Enabling Resources',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: targetEnablingResources,
-            },
-          },
-        ],
-      },
-      {
-        exact: true,
         path: 'Results',
         synapseConfigArray: [
           {
@@ -335,7 +290,7 @@ const routes: GenericRoute[] = [
         props: {
           ownerId: 'syn27229419',
           wikiId: '621273',
-          loadingSkeletonRowCount: 10,
+          loadingSkeletonRowCount: 20,
         },
       },
     ],
@@ -350,7 +305,7 @@ const routes: GenericRoute[] = [
         props: {
           ownerId: 'syn27229419',
           wikiId: '621276',
-          loadingSkeletonRowCount: 20,
+          loadingSkeletonRowCount: 10,
         },
       },
     ],
@@ -370,7 +325,7 @@ const routes: GenericRoute[] = [
             props: {
               ownerId: 'syn27229419',
               wikiId: '621277',
-              loadingSkeletonRowCount: 20,
+              loadingSkeletonRowCount: 15,
             },
           },
         ],
