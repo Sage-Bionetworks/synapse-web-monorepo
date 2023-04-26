@@ -38,7 +38,7 @@ export type ConfirmationDialogProps = {
   confirmButtonText?: string
   confirmButtonColor?: ButtonProps['color']
   className?: string
-  onConfirm: () => unknown | Promise<void>
+  onConfirm: () => void
   onCancel: () => void
   hasCloseButton?: boolean
   helpMarkdown?: string

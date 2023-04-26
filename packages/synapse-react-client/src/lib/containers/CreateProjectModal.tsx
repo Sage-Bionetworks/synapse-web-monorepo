@@ -73,7 +73,9 @@ export const CreateProjectModal: React.FunctionComponent<
         title="Create a new Project"
         content={dialogContent}
         confirmButtonText="Save"
-        onConfirm={onCreateProject}
+        onConfirm={() => {
+          void onCreateProject()
+        }}
         onCancel={hide}
         maxWidth="md"
       />
