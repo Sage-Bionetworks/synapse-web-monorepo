@@ -6,7 +6,6 @@ import {
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '../../../src/lib/utils/APIConstants'
 import { MOCK_DATA_ACCESS_REQUEST } from '../../dataaccess/MockDataAccessRequest'
-import { MOCK_REPO_ORIGIN } from '../../../src/lib/utils/functions/getEndpoint'
 
 export function getDataAccessRequestHandlers(
   backendOrigin: string,
@@ -30,7 +29,7 @@ export function getDataAccessRequestHandlers(
       },
     ),
     rest.post(
-      `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_SUBMISSION(':id')}`,
+      `${backendOrigin}${DATA_ACCESS_REQUEST_SUBMISSION(':id')}`,
       async (req, res, ctx) => {
         return res(ctx.status(201), ctx.json({}))
       },
