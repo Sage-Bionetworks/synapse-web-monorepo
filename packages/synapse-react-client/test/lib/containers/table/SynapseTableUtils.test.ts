@@ -1,11 +1,11 @@
 import {
   getColumnIndicesWithType,
   getUniqueEntities,
-} from '../../../src/lib/containers/table/SynapseTableUtils'
+} from '../../../../src/lib/containers/table/SynapseTableUtils'
 import {
   ColumnTypeEnum,
   QueryResultBundle,
-} from '../../../src/lib/utils/synapseTypes'
+} from '../../../../src/lib/utils/synapseTypes'
 
 describe('Synapse Table Utilities tests', () => {
   describe('Table cell renderer utilities', () => {

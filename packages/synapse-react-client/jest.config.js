@@ -6,8 +6,7 @@ const esModules = [
 ]
 
 /** @type {import('jest').Config} */
-module.exports = {
-  testMatch: ['<rootDir>/test/**/*.test.[jt]s?(x)'],
+const shared = {
   testEnvironment: 'jsdom',
   moduleNameMapper: {
     '\\.(css|less|scss)$': 'identity-obj-proxy',
@@ -18,8 +17,29 @@ module.exports = {
     `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
   ],
   setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
+  resetMocks: false,
+}
+
+/** @type {import('jest').Config} */
+module.exports = {
+  projects: [
+    {
+      displayName: 'synapse-react-client unit tests',
+      testMatch: ['<rootDir>/test/**/*.test.[jt]s?(x)'],
+      testPathIgnorePatterns: ['/node_modules/', 'integration.test\\.'],
+      ...shared,
+    },
+    {
+      displayName: 'synapse-react-client integration tests',
+      testMatch: ['<rootDir>/test/**/*.integration.test.[jt]s?(x)'],
+      // Use jest-serial-runner since these integration tests use a shared mock server
+      runner: 'jest-serial-runner',
+      ...shared,
+    },
+  ],
   reporters: [
-    'default',
+    '<rootDir>/test/testutils/LogForFailedTestsOnlyReporter.ts',
+    'summary',
     [
       './node_modules/jest-html-reporter',
       {
@@ -31,5 +51,4 @@ module.exports = {
     ],
   ],
   coverageReporters: ['text-summary', 'html'],
-  resetMocks: false,
 }
