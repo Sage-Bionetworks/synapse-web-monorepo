@@ -27,7 +27,6 @@ import {
   Tooltip,
 } from '@mui/material'
 import { CloseButton } from '../../ConfirmationDialog'
-import ConditionalWrapper from '../../utils/ConditionalWrapper'
 
 export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -224,9 +223,6 @@ export function EntityModal(props: EntityModalProps) {
         </div>
       </DialogContent>
       <DialogActions>
-        <ConditionalWrapper condition={!entityBundle} wrapper={Skeleton}>
-          <Button></Button>
-        </ConditionalWrapper>
         {showCancelAnnotationEditsButton && cancelAnnotationEditsButton}
         {showSaveAnnotationsButton && saveAnnotationsButton}
         {showEditAnnotationsButton && editAnnotationsButton}
