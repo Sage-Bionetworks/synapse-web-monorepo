@@ -131,12 +131,12 @@ const routes: GenericRoute[] = [
       //   centerTitle: true,
       //   outsideContainerClassName: 'home-spacer',
       //   props: {
-      //     url: 'https://news.adknowledgeportal.org',
+      //     url: 'https://eliteportalstg.wpengine.com/',
       //     itemsToShow: 3,
       //     allowCategories: [],
-      //     mailChimpListName: 'AMP-AD quarterly newsletter',
-      //     mailChimpUrl:
-      //       'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
+      //     // mailChimpListName: 'AMP-AD quarterly newsletter',
+      //     // mailChimpUrl:
+      //     //   'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
       //     lockedColumn: {
       //       value: "what's-new",
       //     },
@@ -377,14 +377,14 @@ const routes: GenericRoute[] = [
       },
     ],
   },
-  // {
-  //   exact: true,
-  //   displayName: 'News',
-  //   path: undefined,
-  //   target: '_blank',
-  //   link: 'https://news.adknowledgeportal.org/',
-  //   synapseConfigArray: [],
-  // },
+  {
+    exact: true,
+    displayName: 'News',
+    path: undefined,
+    target: '_blank',
+    link: 'https://eliteportalstg.wpengine.com/',
+    synapseConfigArray: [],
+  },
   {
     exact: true,
     displayName: 'Help',

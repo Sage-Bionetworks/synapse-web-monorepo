@@ -153,7 +153,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
             <span className="FacetPlotsCard__description">
               <ShowMore
                 summary={description}
-                maxCharacterCount={300}
+                maxCharacterCount={200}
               ></ShowMore>
             </span>
           )}
