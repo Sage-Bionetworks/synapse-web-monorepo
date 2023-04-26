@@ -1,72 +1,54 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
- name: Build/Test All Projects
+name: Build/Test All Projects
 
- on:
-   push:
-     branches: [ main ]
-   pull_request:
-     branches: [ main ]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
- jobs:
-   build:
-
-     runs-on: ubuntu-latest
-
-     strategy:
-       matrix:
-         node-version: [18.x]
-         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-     steps:
-     - uses: actions/checkout@v3.1.0
-       with:
-         fetch-depth: 0
-     - name: Use Node.js ${{ matrix.node-version }}
-       uses: actions/setup-node@v3
-       with:
-         node-version: ${{ matrix.node-version }}
-     - uses: pnpm/action-setup@v2
-       name: Install pnpm
-       id: pnpm-install
-       with:
-         version: 8
-         run_install: false
-     - name: Get pnpm store directory
-       id: pnpm-cache
-       shell: bash
-       run: |
-         echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-     - name: Setup pnpm cache
-       uses: actions/cache@v3
-       with:
-         path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-         restore-keys: |
-           ${{ runner.os }}-pnpm-store-
-     - name: Install dependencies
-       run: pnpm install
-     - name: Set up Nx build cache
-       uses: actions/cache@v3
-       with:
-         path: node_modules/.cache/nx
-         key: ${{ runner.os }}-nx-cache
-         restore-keys: |
-           ${{ runner.os }}-nx-cache
-     - run: pnpm install --frozen-lockfile
-      # Portals won't build without a configuration. For now, copy the test configuration.
-      # We may want to invert the model and give each portal its own project in the workspace, so we can build the portals in parallel.
-     - run: pnpm nx run portals:copy-test-configuration
-     - run: pnpm nx affected --target=build --parallel=2 --base=remotes/origin/main
-     - run: pnpm nx affected --target=lint --parallel=2 --base=remotes/origin/main
-     - id: test
-       run: pnpm nx affected --target test --parallel=2 --base=remotes/origin/main
-     - name: Upload test report
-       if: success() || steps.test.conclusion == 'failure'
-       uses: actions/upload-artifact@v3
-       with:
-         name: test-results
-         path: |
-          ./packages/*/coverage/
-          ./apps/*/coverage/
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    # We should test all active LTS releases, but not until our test suite is less flaky
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/pnpm-setup-action
+        # Portals won't build without a configuration. For now, copy the test configuration.
+        # We may want to invert the model and give each portal its own project in the workspace, so we can build the portals in parallel.
+      - run: pnpm nx run portals:copy-test-configuration
+      - run: pnpm nx affected --target=build --parallel=2 --base=remotes/origin/main
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/pnpm-setup-action
+      - run: pnpm nx run portals:copy-test-configuration
+      - id: test
+        run: pnpm nx affected --target test --parallel=2 --base=remotes/origin/main
+      - name: Upload test report
+        if: success() || steps.test.conclusion == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: |
+            ./packages/*/coverage/
+            ./apps/*/coverage/
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/pnpm-setup-action
+      - run: pnpm nx affected --target=lint --parallel=2 --base=remotes/origin/main

@@ -265,16 +265,6 @@ To expose a component for use in synapse.org, you must export it from [umd.index
 To release the react-client, bump the [package version](https://next.yarnpkg.com/cli/version), merge into main,
 and run `pnpm publish`. Note - you must have access to the synapse-react-client [npm package](https://www.npmjs.com/package/synapse-react-client) to be able to run the command. Publising the package will also release a new version of the UMD build, it can be pulled down using unpkg.com, the URL is available [here](https://unpkg.com/browse/synapse-react-client@latest/dist/umd/synapse-react-client.production.min.js)
 
-## Updating this Project to New Releases
-
-- `react-scripts` is a development dependency in this project.
-
-To update to a new version of `react-scripts`, [open the changelog](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md), find the version you’re currently on (check `package.json` in this folder if you’re not sure), and apply the migration instructions for the newer versions.
-
-In most cases bumping the `react-scripts` version in `package.json` and running `npm install` in this folder should be enough, but it’s good to consult the [changelog](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md) for potential breaking changes.
-
-We commit to keeping the breaking changes minimal so you can upgrade `react-scripts` painlessly.
-
 ## Available Scripts
 
 Before doing anything else run:
@@ -409,8 +399,6 @@ To configure the syntax highlighting in your favorite text editor, head to the [
 
 ## Displaying Lint Output in the Editor
 
-> Note: this feature is available with `react-scripts@0.2.0` and higher.
-
 Some editors, including Sublime Text, Atom, and Visual Studio Code, provide plugins for ESLint.
 
 They are not required for linting. You should see the linter output right in your terminal as well as the browser console. However, if you prefer the lint results to appear right in your editor, there are some extra steps you can do.
@@ -423,35 +411,7 @@ You would need to install an ESLint plugin for your editor first.
 
 > <img src="http://i.imgur.com/yVNNHJM.png" width="300">
 
-> **For Visual Studio Code users**
-
-> VS Code ESLint plugin automatically detects Create React App's configuration file. So you do not need to create `eslintrc.json` at the root directory, except when you want to add your own rules. In that case, you should include CRA's config by adding this line:
-
-> ```js
-> {
->  // ...
->  "extends": "react-app"
-> }
-> ```
-
-Then add this block to the `package.json` file of your project:
-
-> ```js
-> {
->  // ...
->  "eslintConfig": {
->    "extends": "react-app"
->  }
-> }
-> ```
-
-Finally, you will need to install some packages _globally_:
-
-```sh
-npm install -g eslint-config-react-app@0.3.0 eslint@3.8.1 babel-eslint@7.0.0 eslint-plugin-react@6.4.1 eslint-plugin-import@2.0.1 eslint-plugin-jsx-a11y@4.0.0 eslint-plugin-flowtype@2.21.0
-```
-
-We recognize that this is suboptimal, but it is currently required due to the way we hide the ESLint dependency. The ESLint team is already [working on a solution to this](https://github.com/eslint/eslint/issues/3458) so this may become unnecessary in a couple of months.
+VS Code ESLint plugin automatically detects the ESLint configuration file.
 
 ## Debugging in the Editor
 
