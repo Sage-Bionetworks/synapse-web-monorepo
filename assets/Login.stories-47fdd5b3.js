@@ -1,0 +1,15 @@
+import{S as p}from"./StandaloneLoginForm-06404cf9.js";import{d as e}from"./ToastMessage-306d2a68.js";import{s as n}from"./StorybookComponentWrapper-348bfeaa.js";import"./jsx-runtime-ad672792.js";import"./index-f1f749bf.js";import"./_commonjsHelpers-042e6b4d.js";import"./LoginFlowBackButton-db475b05.js";import"./SynapseContext-4d0a6100.js";import"./inheritsLoose-d541526f.js";import"./setPrototypeOf-0bb37fbe.js";import"./isArray-5e3f9107.js";import"./index-96c5f47c.js";import"./extends-98964cd2.js";import"./getEndpoint-5374ab4d.js";import"./SynapseConstants-9d1f6e44.js";import"./SvgIcon-93d86b25.js";import"./objectWithoutPropertiesLoose-4f48578a.js";import"./styled-8837a0b3.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-3d5299f2.js";import"./IconSvg-6905ab9a.js";import"./Clear-a9f76abf.js";import"./useTheme-c4678cf9.js";import"./isHostComponent-fa76b8d9.js";import"./useForkRef-dd8a6e5c.js";import"./TransitionGroupContext-a2b6e27b.js";import"./Box-2e3c1244.js";import"./extendSxProp-a6801df0.js";import"./Button-e0234af7.js";import"./ButtonBase-26873d31.js";import"./emotion-react.browser.esm-a8a50fc7.js";import"./assertThisInitialized-081f9914.js";import"./Button-7d415009.js";import"./Alert-84d62a08.js";import"./hook-c05d8d9f.js";import"./createWithBsPrefix-e09f51dd.js";import"./divWithClassName-1aeead00.js";import"./index-4d501b15.js";import"./useMutation-ac9f97a7.js";import"./mutation-e03dc349.js";import"./FullWidthAlert-d2f0fc35.js";import"./Typography-f5dd8748.js";import"./TextField-365dcc43.js";import"./InputLabel-accc8b3a.js";import"./ownerWindow-12ded16b.js";import"./index-1aacdabe.js";import"./Modal-48a95231.js";import"./Fade-ddf4f21a.js";import"./getScrollbarSize-ac846fe6.js";import"./createChainedFunction-0bab83cf.js";import"./Paper-a43bd2f5.js";import"./MenuList-5339742f.js";import"./TextField-5636b9d3.js";import"./Link-a8e33667.js";import"./IconButton-404fc885.js";import"./removeClass-164fd327.js";import"./hasClass-ec9efd32.js";import"./uniqueId-4d05949d.js";import"./toString-cc90cb98.js";import"./isSymbol-7c514724.js";import"./dayjs.min-e0adaab4.js";import"./FullContextProvider-faf098e7.js";import"./Typography-fd50ec33.js";import"./queryClient-f31963f5.js";import"./infiniteQueryBehavior-08106fd1.js";import"./react-router-b06b9355.js";const Bo={title:"Authentication/Login",component:p},o={args:{sessionCallback:()=>{n().then(({profile:m})=>{e(`You are currently logged in as ${m.userName}`,"info",{autoCloseInMs:5e3})})},renderBackButton:!0}};var r,t,i;o.parameters={...o.parameters,docs:{...(r=o.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  args: {
+    sessionCallback: () => {
+      sessionChangeHandler().then(({
+        profile
+      }) => {
+        displayToast(\`You are currently logged in as \${profile.userName}\`, 'info', {
+          autoCloseInMs: 5000
+        });
+      });
+    },
+    renderBackButton: true
+  }
+}`,...(i=(t=o.parameters)==null?void 0:t.docs)==null?void 0:i.source}}};const Lo=["LoginDemo"];export{o as LoginDemo,Lo as __namedExportsOrder,Bo as default};
+//# sourceMappingURL=Login.stories-47fdd5b3.js.map
