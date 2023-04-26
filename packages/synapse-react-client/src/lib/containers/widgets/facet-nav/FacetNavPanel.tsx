@@ -306,8 +306,8 @@ export function FacetPlotLegend(props: FacetPlotLegendProps) {
                 key={`legendLabel_${index}`}
                 style={{ cursor: 'default' }}
               />
-              <Typography variant="body1">{labelDisplay}</Typography>
-              <Typography variant="body1" sx={{ color: '#AEB5BC' }}>
+              <Typography variant="body2">{labelDisplay}</Typography>
+              <Typography variant="body2" sx={{ color: '#AEB5BC' }}>
                 {facetValue.count}
               </Typography>
             </Box>
