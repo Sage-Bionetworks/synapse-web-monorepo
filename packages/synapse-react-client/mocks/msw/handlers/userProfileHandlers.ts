@@ -141,7 +141,6 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
       req.url.searchParams.get('prefix') ?? ''
     ).toLowerCase() as string
     const typeFilter = req.url.searchParams.get('typeFilter') as TYPE_FILTER
-    console.log('typeFilter', typeFilter)
     const responsePage: UserGroupHeaderResponsePage = {
       children: mockUserData
         .filter(userData => {
