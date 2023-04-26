@@ -1,6 +1,6 @@
 import * as React from 'react'
-import IconCopy from '../../lib/assets/icons/IconCopy'
-import { Button, FormControl } from 'react-bootstrap'
+import { TextField, IconButton, InputAdornment } from '@mui/material'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { ToastMessage } from './ToastMessage'
 
 export type CopyToClipboardInputProps = {
@@ -46,25 +46,32 @@ export const CopyToClipboardInput: React.FunctionComponent<
         autohide={true}
       ></ToastMessage>
       <div
-        className="SRC-copyToClipboardInputContainer SRC-marginBottomTop"
+        style={{
+          margin: '15px 0px',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
         ref={ref}
       >
-        <FormControl
-          className="SRC-copyToClipboardInput"
-          type="text"
-          style={{
+        <TextField
+          sx={{
             width: inputWidth,
           }}
           value={value}
-          readOnly={true}
-          onClick={copyToClipboard(ref, value)}
-        ></FormControl>
-        <Button
-          className="SRC-copyToClipboardButton"
-          onClick={copyToClipboard(ref, value)}
-        >
-          <IconCopy />
-        </Button>
+          inputProps={{
+            readOnly: true,
+            onClick: copyToClipboard(ref, value),
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={copyToClipboard(ref, value)}>
+                  <ContentCopyIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
       </div>
     </>
   )
