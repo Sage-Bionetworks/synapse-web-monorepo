@@ -78,30 +78,6 @@ $facetNavPanel-btn-margin: 0 1px;
         }
       }
     }
-    &__legend {
-      width: 40%;
-      align-self: center;
-      margin-left: -25px;
-      &--expanded {
-        flex: 1;
-        width: 50%;
-      }
-    }
-    &__legend__row {
-      display: flex;
-      margin: 5px 0;
-
-      div {
-        width: 14px;
-        height: 14px;
-        margin-right: 5px;
-        flex-shrink: 0;
-      }
-      label {
-        line-height: 14px;
-        font-weight: normal;
-      }
-    }
   }
 
   &--expanded {
