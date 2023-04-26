@@ -3,28 +3,28 @@ import * as React from 'react'
 import {
   PaginatedQueryContextType,
   usePaginatedQueryContext,
-} from '../../../src/lib/containers/QueryContext'
+} from '../../../../src/lib/containers/QueryContext'
 import {
   QueryVisualizationContextType,
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
   useQueryVisualizationContext,
-} from '../../../src/lib/containers/QueryVisualizationWrapper'
+} from '../../../../src/lib/containers/QueryVisualizationWrapper'
 import {
   QueryWrapper,
   QueryWrapperProps,
-} from '../../../src/lib/containers/QueryWrapper'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../../src/lib/utils/'
+} from '../../../../src/lib/containers/QueryWrapper'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { SynapseConstants } from '../../../../src/lib/utils'
 import {
   ColumnTypeEnum,
   QueryBundleRequest,
-} from '../../../src/lib/utils/synapseTypes/'
-import queryResponse from '../../../mocks/mockQueryResponseDataWithManyEnumFacets'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
-import { server } from '../../../mocks/msw/server'
-import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
-import { DEFAULT_PAGE_SIZE } from '../../../src/lib/utils/SynapseConstants'
+} from '../../../../src/lib/utils/synapseTypes'
+import queryResponse from '../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
+import { getHandlersForTableQuery } from '../../../../mocks/msw/handlers/tableQueryHandlers'
+import { server } from '../../../../mocks/msw/server'
+import { MOCK_TABLE_ENTITY_ID } from '../../../../mocks/entity/mockTableEntity'
+import { DEFAULT_PAGE_SIZE } from '../../../../src/lib/utils/SynapseConstants'
 
 const onQueryContextReceived = jest.fn<void, [PaginatedQueryContextType]>()
 const onContextReceived = jest.fn<void, [QueryVisualizationContextType]>()

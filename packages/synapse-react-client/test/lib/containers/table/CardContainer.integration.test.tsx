@@ -1,32 +1,32 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { SynapseConstants } from '../../../src/lib/utils'
+import { SynapseConstants } from '../../../../src/lib/utils'
 import CardContainer, {
   CardContainerProps,
-} from '../../../src/lib/containers/CardContainer'
+} from '../../../../src/lib/containers/CardContainer'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
-} from '../../../src/lib/containers/QueryVisualizationWrapper'
+} from '../../../../src/lib/containers/QueryVisualizationWrapper'
 import {
   InfiniteQueryContextType,
   QueryContextProvider,
   QueryContextType,
-} from '../../../src/lib/containers/QueryContext'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+} from '../../../../src/lib/containers/QueryContext'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
-} from '../../../src/lib/utils/synapseTypes/'
-import syn16787123Json from '../../../mocks/query/syn16787123'
+} from '../../../../src/lib/utils/synapseTypes'
+import syn16787123Json from '../../../../mocks/query/syn16787123.json'
 import {
   DEFAULT_PAGE_SIZE,
   MEDIUM_USER_CARD,
-} from '../../../src/lib/utils/SynapseConstants'
-import mockUserCardTableQueryResultBundle from '../../../mocks/query/mockUserCardTableQueryResultBundle'
-import { server } from '../../../mocks/msw/server'
-import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
+} from '../../../../src/lib/utils/SynapseConstants'
+import mockUserCardTableQueryResultBundle from '../../../../mocks/query/mockUserCardTableQueryResultBundle'
+import { server } from '../../../../mocks/msw/server'
+import { mockUserProfileData } from '../../../../mocks/user/mock_user_profile'
 
 const renderComponent = (
   props: CardContainerProps,

@@ -1,40 +1,38 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { SynapseConstants } from '../../../src/lib/utils'
-import CardContainer from '../../../src/lib/containers/CardContainer'
+import { SynapseConstants } from '../../../../src/lib/utils'
 import CardContainerLogic, {
   CardContainerLogicProps,
-} from '../../../src/lib/containers/CardContainerLogic'
-import { QueryVisualizationWrapper } from '../../../src/lib/containers/QueryVisualizationWrapper'
-import { InfiniteQueryWrapper } from '../../../src/lib/containers/InfiniteQueryWrapper'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { NoContentPlaceholderType } from '../../../src/lib/containers/table/NoContentPlaceholderType'
+} from '../../../../src/lib/containers/CardContainerLogic'
+import * as QueryVisualizationWrapperModule from '../../../../src/lib/containers/QueryVisualizationWrapper'
+import { QueryVisualizationWrapper } from '../../../../src/lib/containers/QueryVisualizationWrapper'
+import * as InfiniteQueryWrapperModule from '../../../../src/lib/containers/InfiniteQueryWrapper'
+import { InfiniteQueryWrapper } from '../../../../src/lib/containers/InfiniteQueryWrapper'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { NoContentPlaceholderType } from '../../../../src/lib/containers/table/NoContentPlaceholderType'
+import * as CardContainerModule from '../../../../src/lib/containers/CardContainer'
 
 const renderComponent = (props: CardContainerLogicProps) => {
   return render(<CardContainerLogic {...props} />, { wrapper: createWrapper() })
 }
 
-jest.mock('../../../src/lib/containers/CardContainer', () => ({
-  __esModule: true,
-  default: jest.fn(props => {
+const mockCardContainer = jest
+  .spyOn(CardContainerModule, 'default')
+  .mockImplementation(props => {
     return <div data-testid="CardContainer"></div>
-  }),
-}))
+  })
 
-jest.mock('../../../src/lib/containers/InfiniteQueryWrapper', () => ({
-  InfiniteQueryWrapper: jest.fn().mockImplementation(props => {
+jest
+  .spyOn(InfiniteQueryWrapperModule, 'InfiniteQueryWrapper')
+  .mockImplementation(props => {
     return <div data-testid="InfiniteQueryWrapper">{props.children}</div>
-  }),
-  QueryContextConsumer: jest.fn().mockImplementation(props => {
-    return <div data-testid="QueryContextConsumer">{props.children}</div>
-  }),
-}))
+  })
 
-jest.mock('../../../src/lib/containers/QueryVisualizationWrapper', () => ({
-  QueryVisualizationWrapper: jest.fn().mockImplementation(props => {
+jest
+  .spyOn(QueryVisualizationWrapperModule, 'QueryVisualizationWrapper')
+  .mockImplementation(props => {
     return <div data-testid="QueryVisualizationWrapper">{props.children}</div>
-  }),
-}))
+  })
 
 describe('it performs basic functionality', () => {
   const sql = 'SELECT * FROM syn16787123'
@@ -98,7 +96,7 @@ describe('it performs basic functionality', () => {
     )
 
     await waitFor(() =>
-      expect(CardContainer).toHaveBeenCalledWith(props, expect.anything()),
+      expect(mockCardContainer).toHaveBeenCalledWith(props, expect.anything()),
     )
   })
 })

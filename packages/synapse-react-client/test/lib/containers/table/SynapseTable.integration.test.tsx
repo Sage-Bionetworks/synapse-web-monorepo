@@ -3,35 +3,35 @@ import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { SynapseConstants } from '../../../src/lib/utils'
-import { QueryVisualizationContextType } from '../../../src/lib/containers/QueryVisualizationWrapper'
+import { SynapseConstants } from '../../../../src/lib/utils'
+import { QueryVisualizationContextType } from '../../../../src/lib/containers/QueryVisualizationWrapper'
 import {
   PaginatedQueryContextType,
   QueryContextProvider,
   QueryContextType,
-} from '../../../src/lib/containers/QueryContext'
+} from '../../../../src/lib/containers/QueryContext'
 import {
   SynapseTableCell,
   SynapseTableCellProps,
-} from '../../../src/lib/containers/synapse_table_functions/SynapseTableCell'
+} from '../../../../src/lib/containers/synapse_table_functions/SynapseTableCell'
 import SynapseTable, {
   SORT_STATE,
   SynapseTableProps,
-} from '../../../src/lib/containers/table/SynapseTable'
-import { NOT_SET_DISPLAY_VALUE } from '../../../src/lib/containers/table/SynapseTableConstants'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+} from '../../../../src/lib/containers/table/SynapseTable'
+import { NOT_SET_DISPLAY_VALUE } from '../../../../src/lib/containers/table/SynapseTableConstants'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   ENTITY_HEADERS,
   ENTITY_ID_VERSION,
-} from '../../../src/lib/utils/APIConstants'
+} from '../../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../src/lib/utils/functions/getEndpoint'
+} from '../../../../src/lib/utils/functions/getEndpoint'
 import {
   AUTHENTICATED_USERS,
   DEFAULT_PAGE_SIZE,
-} from '../../../src/lib/utils/SynapseConstants'
+} from '../../../../src/lib/utils/SynapseConstants'
 import {
   ColumnTypeEnum,
   EntityHeader,
@@ -45,20 +45,20 @@ import {
   UserGroupHeader,
   UserProfile,
   Entity,
-} from '../../../src/lib/utils/synapseTypes/'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
-import { rest, server } from '../../../mocks/msw/server'
-import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
+} from '../../../../src/lib/utils/synapseTypes'
+import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
+import { rest, server } from '../../../../mocks/msw/server'
+import queryResultBundleJson from '../../../../mocks/query/syn16787123.json'
 import dayjs from 'dayjs'
-import { formatDate } from '../../../src/lib/utils/functions/DateFormatter'
+import { formatDate } from '../../../../src/lib/utils/functions/DateFormatter'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
-} from '../../../mocks/user/mock_user_profile'
-import * as HasAccessModule from '../../../src/lib/containers/access_requirements/HasAccessV2'
-import * as EntityLinkModule from '../../../src/lib/containers/EntityLink'
-import * as UserCardModule from '../../../src/lib/containers/UserCard'
-import * as AddToDownloadListV2Module from '../../../src/lib/containers/AddToDownloadListV2'
+} from '../../../../mocks/user/mock_user_profile'
+import * as HasAccessModule from '../../../../src/lib/containers/access_requirements/HasAccessV2'
+import * as EntityLinkModule from '../../../../src/lib/containers/EntityLink'
+import * as UserCardModule from '../../../../src/lib/containers/UserCard'
+import * as AddToDownloadListV2Module from '../../../../src/lib/containers/AddToDownloadListV2'
 
 import failOnConsole from 'jest-fail-on-console'
 
