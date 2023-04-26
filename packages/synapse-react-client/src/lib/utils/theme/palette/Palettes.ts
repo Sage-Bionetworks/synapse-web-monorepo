@@ -103,6 +103,12 @@ export const adKnowledgePortalPalette: PaletteOptions = {
   secondary: generatePalette('#2f8e94'),
 }
 
+export const elPortalPalette: PaletteOptions = {
+  ...palette,
+  primary: generatePalette('#39AC97'),
+  secondary: generatePalette('#39AC97'),
+}
+
 export const nfPortalPalette: PaletteOptions = {
   ...palette,
   primary: generatePalette('#125e81'),
