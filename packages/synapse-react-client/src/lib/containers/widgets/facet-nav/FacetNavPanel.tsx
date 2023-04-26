@@ -288,7 +288,6 @@ export function FacetPlotLegend(props: FacetPlotLegendProps) {
       className={`FacetNavPanel__body__legend${isExpanded ? '--expanded' : ''}`}
     >
       {labels.slice(0, numLegendItems).map((facetValue, index) => {
-        // const percent = formatPercent(facetValue.count / totalCount, 1)
         const labelDisplay = truncate(facetValue.label, maxLegendLength)
         return (
           <ElementWithTooltip
@@ -307,7 +306,7 @@ export function FacetPlotLegend(props: FacetPlotLegendProps) {
                 style={{ cursor: 'default' }}
               />
               <Typography variant="body2">{labelDisplay}</Typography>
-              <Typography variant="body2" sx={{ color: '#AEB5BC' }}>
+              <Typography variant="body2" sx={{ color: 'grey.600' }}>
                 {facetValue.count}
               </Typography>
             </Box>
