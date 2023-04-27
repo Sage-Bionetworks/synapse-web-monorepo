@@ -358,16 +358,6 @@ export class KeyFactory {
     )
   }
 
-  public getSortedAccessRequirementsAndStatusQueryKey(
-    accessRequirementIds?: string[],
-  ) {
-    return this.getKey(
-      ACCESS_REQUIREMENT_QUERY_KEY,
-      'sortedByStatus',
-      accessRequirementIds,
-    )
-  }
-
   public getDataAccessSubmissionQueryKey(id?: string) {
     return this.getKey('dataAccessSubmission', id)
   }
