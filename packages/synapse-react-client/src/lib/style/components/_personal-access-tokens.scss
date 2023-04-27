@@ -71,7 +71,6 @@
 }
 
 .AccessTokenModal {
-  margin: 20px 0px;
   .checkbox {
     margin-top: 5px;
     margin-bottom: 15px;
@@ -84,9 +83,5 @@
   }
   &__CopyToClipboardContainer {
     text-align: center;
-  }
-
-  &__TokenNameInput {
-    width: 325px;
   }
 }

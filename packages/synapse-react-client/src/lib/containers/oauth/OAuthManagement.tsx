@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Modal, Table } from 'react-bootstrap'
+import { Table } from 'react-bootstrap'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { useGetOAuthClientInfinite } from '../../utils/hooks/SynapseAPI'
@@ -10,6 +10,8 @@ import { SynapseClient } from '../../utils'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import CopyToClipboardInput from '../CopyToClipboardInput'
 import { displayToast } from '../ToastMessage'
+import { DialogBase } from '../DialogBase'
+import { Button, Link } from '@mui/material'
 
 export const OAuthManagement: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
@@ -46,13 +48,15 @@ export const OAuthManagement: React.FunctionComponent = () => {
   }
 
   return (
-    <div className="bootstrap-4-backport OAuthEditor">
+    <div className="bootstrap-4-backport">
       <Button
+        variant="contained"
+        color="primary"
         onClick={() => {
           setIsShowingCreateClientModal(true)
           setIsEdit(false)
         }}
-        style={{ float: 'right' }}
+        sx={{ float: 'right' }}
       >
         Create New Client
       </Button>
@@ -81,8 +85,8 @@ export const OAuthManagement: React.FunctionComponent = () => {
                     'Yes'
                   ) : (
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant="outlined"
+                      size="small"
                       onClick={() => setIsShowingVerification(true)}
                     >
                       SUBMIT VERIFICATION
@@ -91,25 +95,25 @@ export const OAuthManagement: React.FunctionComponent = () => {
                 </td>
                 <td>
                   <Button
-                    variant="outline"
+                    variant="outlined"
                     onClick={() => {
                       setSelectedClient(item)
                       setIsShowingSecretWarning(true)
                     }}
-                    size="sm"
+                    size="small"
                   >
                     GENERATE SECRET
                   </Button>
                 </td>
                 <td>
                   <Button
-                    variant="outline"
+                    variant="outlined"
                     onClick={() => {
                       setSelectedClient(item)
                       setIsEdit(true)
                       setIsShowingCreateClientModal(true)
                     }}
-                    size="sm"
+                    size="small"
                   >
                     EDIT
                   </Button>
@@ -122,7 +126,8 @@ export const OAuthManagement: React.FunctionComponent = () => {
       {hasNextPage && (
         <div className="text-center">
           <Button
-            variant="primary"
+            variant="contained"
+            color="primary"
             onClick={() => {
               fetchNextPage()
             }}
@@ -143,43 +148,36 @@ export const OAuthManagement: React.FunctionComponent = () => {
         isShowingConfirmModal={isShowingConfirmModal}
         setIsShowingModal={setIsShowingCreateClientModal}
       />
-
-      <Modal
-        show={isShowingVerification}
-        animation={false}
-        backdrop="static"
-        className="bootstrap-4-backport"
-        onHide={() => setIsShowingVerification(false)}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Submit Verification</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            In order to verify an OAuth client please submit a request to the{' '}
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
-            >
-              Synapse Service Desk.
-            </a>
-          </p>
-          <b>Please list the following items in your request:</b>
-          <ul>
-            <li>Your name</li>
-            <li>
-              The ID of the client to be verified <br />
-            </li>
-            <li>A description of your application</li>
-          </ul>
-          {/* <p>
+      <DialogBase
+        open={isShowingVerification}
+        onCancel={() => setIsShowingVerification(false)}
+        title="Submit Verification"
+        content={
+          <>
+            <p>
+              In order to verify an OAuth client please submit a request to the{' '}
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
+              >
+                Synapse Service Desk.
+              </Link>
+            </p>
+            <b>Please list the following items in your request:</b>
+            <ul>
+              <li>Your name</li>
+              <li>
+                The ID of the client to be verified <br />
+              </li>
+              <li>A description of your application</li>
+            </ul>
+            {/* <p>
             Verification can take up to X weeks and we will notify you via X.
           </p> */}
-        </Modal.Body>
-        <Modal.Footer></Modal.Footer>
-      </Modal>
-
+          </>
+        }
+      />
       <WarningDialog
         open={isShowingSecretWarning}
         title={warningHeader}
@@ -193,28 +191,24 @@ export const OAuthManagement: React.FunctionComponent = () => {
         confirmButtonText="Yes, Continue"
       />
       {secret && (
-        <Modal
-          show={isShowingSecret}
-          animation={false}
-          backdrop="static"
-          className="bootstrap-4-backport"
-          onHide={() => {
+        <DialogBase
+          open={isShowingSecret}
+          title="App Secret"
+          onCancel={() => {
             setIsShowingSecret(false)
             setSecret(undefined)
           }}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>App Secret</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>
-              <b>This secret will not be able to be retrieved again.</b> If
-              needed, in order to generate a new secret select Generate from the
-              Client List.
-            </p>
-            <CopyToClipboardInput value={secret} inputWidth={'350px'} />
-          </Modal.Body>
-        </Modal>
+          content={
+            <>
+              <p>
+                <b>This secret will not be able to be retrieved again.</b> If
+                needed, in order to generate a new secret select Generate from
+                the Client List.
+              </p>
+              <CopyToClipboardInput value={secret} inputWidth={'400px'} />
+            </>
+          }
+        />
       )}
     </div>
   )

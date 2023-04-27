@@ -1,12 +1,5 @@
 import * as React from 'react'
-import {
-  Button,
-  Form,
-  FormControl,
-  FormLabel,
-  Modal,
-  ModalBody,
-} from 'react-bootstrap'
+import { FormLabel } from 'react-bootstrap'
 import { SynapseClient } from '../../utils'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
@@ -15,6 +8,8 @@ import { CopyToClipboardInput } from '../CopyToClipboardInput'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen'
 import { Checkbox } from '../widgets/Checkbox'
+import { ConfirmationDialog } from '../ConfirmationDialog'
+import TextField from '../TextField'
 
 const INVALID_INPUT_MSG =
   'You must provide a token name and at least one permission.'
@@ -49,10 +44,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<
     return !!tokenName && access.some(x => x)
   }
 
-  const onSubmit = async (
-    clickEvent: React.MouseEvent<HTMLElement, MouseEvent>,
-  ): Promise<void> => {
-    clickEvent.preventDefault()
+  const onSubmit = async (): Promise<void> => {
     if (validateInput(tokenName, [viewAccess, downloadAccess, modifyAccess])) {
       try {
         const request: AccessTokenGenerationRequest = {
@@ -85,118 +77,82 @@ export const CreateAccessTokenModal: React.FunctionComponent<
     }
   }
 
+  const dialogContent = showCreatedToken ? (
+    <>
+      <span className="SRC-boldText">
+        This token will not be able to be retrieved again.
+      </span>{' '}
+      <span>
+        If needed, generate a new personal access token, and delete this one.
+      </span>
+      <div className="AccessTokenModal__CopyToClipboardContainer">
+        <CopyToClipboardInput value={createdToken} inputWidth={'350px'} />
+      </div>
+      <p>
+        This token grants access to your account functions and should be treated
+        like a password.
+      </p>
+    </>
+  ) : (
+    <div className="SRC-marginFive">
+      <TextField
+        autoFocus
+        label="Token Name"
+        value={tokenName}
+        onChange={handleTokenNameChange}
+        placeholder="e.g. Synapse command line access on my laptop"
+      />
+      <div className="AccessTokenModal SRC-marginBottomTop">
+        <FormLabel className="SRC-boldText">Token Permissions</FormLabel>
+        <Checkbox
+          label={scopeDescriptions.view.displayName}
+          checked={viewAccess}
+          onChange={() => setViewAccess(!viewAccess)}
+        >
+          <div className="AccessTokenModal__ScopeDescription">
+            {scopeDescriptions.view.description}. Required to use Synapse
+            programmatic clients.
+          </div>
+        </Checkbox>
+        <Checkbox
+          label={scopeDescriptions.download.displayName}
+          checked={downloadAccess}
+          onChange={() => setDownloadAccess(!downloadAccess)}
+        >
+          <div className="AccessTokenModal__ScopeDescription">
+            {scopeDescriptions.download.description}
+          </div>
+        </Checkbox>
+        <Checkbox
+          label={scopeDescriptions.modify.displayName}
+          checked={modifyAccess}
+          onChange={() => setModifyAccess(!modifyAccess)}
+        >
+          <div className="AccessTokenModal__ScopeDescription">
+            {scopeDescriptions.modify.description}
+          </div>
+        </Checkbox>
+      </div>
+      {showErrorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
+    </div>
+  )
+
   return (
-    <Modal
-      className={'bootstrap-4-backport AccessTokenModal'}
-      animation={false}
-      show={true}
-      onHide={onClose}
-      backdrop="static"
-    >
-      <Form>
-        <Modal.Header closeButton>
-          <Modal.Title>Create New Personal Access Token</Modal.Title>
-        </Modal.Header>
-        <ModalBody>
-          {isLoading ? (
-            loadingScreen
-          ) : showCreatedToken ? (
-            <>
-              <span className="SRC-boldText">
-                This token will not be able to be retrieved again.
-              </span>{' '}
-              <span>
-                If needed, generate a new personal access token, and delete this
-                one.
-              </span>
-              <div className="AccessTokenModal__CopyToClipboardContainer">
-                <CopyToClipboardInput
-                  value={createdToken}
-                  inputWidth={'350px'}
-                />
-              </div>
-              <p>
-                This token grants access to your account functions and should be
-                treated like a password.
-              </p>
-            </>
-          ) : (
-            <div className="SRC-marginFive">
-              <div className="SRC-marginBottomTen">
-                <FormLabel className="SRC-boldText">Token Name</FormLabel>
-                <FormControl
-                  autoFocus
-                  className="AccessTokenModal__TokenNameInput"
-                  value={tokenName}
-                  onChange={handleTokenNameChange}
-                  type="text"
-                  placeholder="e.g. Synapse command line access on my laptop"
-                ></FormControl>
-              </div>
-              <div className="SRC-marginBottomTop">
-                <FormLabel className="SRC-boldText">
-                  Token Permissions
-                </FormLabel>
-                <Checkbox
-                  label={scopeDescriptions.view.displayName}
-                  checked={viewAccess}
-                  onChange={() => setViewAccess(!viewAccess)}
-                >
-                  <div className="AccessTokenModal__ScopeDescription">
-                    {scopeDescriptions.view.description}. Required to use
-                    Synapse programmatic clients.
-                  </div>
-                </Checkbox>
-                <Checkbox
-                  label={scopeDescriptions.download.displayName}
-                  checked={downloadAccess}
-                  onChange={() => setDownloadAccess(!downloadAccess)}
-                >
-                  <div className="AccessTokenModal__ScopeDescription">
-                    {scopeDescriptions.download.description}
-                  </div>
-                </Checkbox>
-                <Checkbox
-                  label={scopeDescriptions.modify.displayName}
-                  checked={modifyAccess}
-                  onChange={() => setModifyAccess(!modifyAccess)}
-                >
-                  <div className="AccessTokenModal__ScopeDescription">
-                    {scopeDescriptions.modify.description}
-                  </div>
-                </Checkbox>
-              </div>
-              <div className="SRC-center-text">
-                {showErrorMessage && (
-                  <ErrorBanner error={errorMessage}></ErrorBanner>
-                )}
-              </div>
-            </div>
-          )}
-        </ModalBody>
-        <Modal.Footer>
-          {showCreatedToken ? (
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
-          ) : (
-            <>
-              <Button variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="sds-primary"
-                onClick={e => {
-                  onSubmit(e)
-                }}
-              >
-                Create Token
-              </Button>
-            </>
-          )}
-        </Modal.Footer>
-      </Form>
-    </Modal>
+    <ConfirmationDialog
+      open={true}
+      title="Create New Personal Access Token"
+      content={isLoading ? loadingScreen : dialogContent}
+      confirmButtonText={showCreatedToken ? 'Close' : 'Create Token'}
+      confirmButtonVariant={showCreatedToken ? 'outlined' : 'contained'}
+      hasCancelButton={!showCreatedToken}
+      onCancel={onClose}
+      onConfirm={
+        showCreatedToken
+          ? () => onClose()
+          : () => {
+              void onSubmit()
+            }
+      }
+    />
   )
 }
