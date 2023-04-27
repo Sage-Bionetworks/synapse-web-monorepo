@@ -1,5 +1,5 @@
 import React from 'react'
-import { RequestInterface } from '../../../utils/synapseTypes'
+import { Request, Renewal } from '../../../utils/synapseTypes'
 import { Alert } from 'react-bootstrap'
 import { useState } from 'react'
 import { updateDataAccessRequest } from '../../../utils/SynapseClient'
@@ -17,7 +17,7 @@ import {
 import IconSvg from '../../IconSvg'
 
 export type CancelRequestDataAccessProps = {
-  formSubmitRequestObject: RequestInterface | undefined
+  formSubmitRequestObject: Request | Renewal | undefined
   onHide: () => void
 }
 

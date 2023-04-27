@@ -147,7 +147,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
           state: ApprovalState.APPROVED,
         }
 
-        SynapseClient.postAccessApproval(accessToken, accessApprovalRequest)
+        SynapseClient.createAccessApproval(accessToken, accessApprovalRequest)
           .then(_ => {
             setIsApproved(true)
           })

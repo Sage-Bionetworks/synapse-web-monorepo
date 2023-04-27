@@ -20,7 +20,7 @@ export type ManagedACTAccessRequirement = {
   createdBy: string
   /* The user that last modified this object. Provided by the system, the user may not set this field. */
   modifiedBy: string
-  /* Defaults to 'false'. When 'true', the subjects controlled by this AR are defined by the the'_accessRequirementIds' annotations on individual entities. This property is mutually exclusive with 'subjectIds'. If this is set to 'true' then 'subjectIds' must be excluded or empty. */
+  /* Defaults to 'false'. When 'true', the subjects controlled by this AR are defined by the'_accessRequirementIds' annotations on individual entities. This property is mutually exclusive with 'subjectIds'. If this is set to 'true' then 'subjectIds' must be excluded or empty. */
   subjectsDefinedByAnnotations: boolean
   /* The IDs of the items controlled by this Access Requirement when 'subjectsDefinedByAnnotations=false'. This property is mutually exclusive with 'subjectsDefinedByAnnotations'. When 'subjectsDefinedByAnnotations=true' then this property must be empty or excluded. Required when creating or updating and 'subjectsDefinedByAnnotations=false' or 'subjectsDefinedByAnnotations' is excluded. */
   subjectIds: Array<RestrictableObjectDescriptor>
@@ -39,10 +39,12 @@ export type ManagedACTAccessRequirement = {
   isIRBApprovalRequired: boolean
   /* If true, then accessor needs to upload attachment(s) other than Data Use Certificate (DUC) and Institutional Review Board (IRB) Approval document to gain access to the data. */
   areOtherAttachmentsRequired: boolean
-  /* After an AccessApproval is granted for this AccessRequirement, it will be expired after expirationPeriod miliseconds. Set this value to 0 to indicate that AccessApproval will never be expired. */
+  /* After an AccessApproval is granted for this AccessRequirement, it will be expired after expirationPeriod milliseconds. Set this value to 0 to indicate that AccessApproval will never be expired. */
   expirationPeriod: number
   /* If true, the Intended Data Use Statements submitted to gain access to the data will be presented to public. */
   isIDUPublic: boolean
   /*  If true (default), the Intended Data Use Statement for a research project is required. */
   isIDURequired: boolean
+  /* If true, then accessor needs to enable two-factor authentication before gaining access to the data. */
+  isTwoFaRequired: boolean
 }

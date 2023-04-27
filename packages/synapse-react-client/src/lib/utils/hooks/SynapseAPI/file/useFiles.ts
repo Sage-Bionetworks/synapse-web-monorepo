@@ -2,7 +2,11 @@ import { UseQueryOptions, useQuery } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { BatchFileRequest, FileHandle } from '../../../synapseTypes'
+import {
+  BatchFileRequest,
+  BatchFileResult,
+  FileHandle,
+} from '../../../synapseTypes'
 
 export function useGetPresignedUrlContent(
   fileHandle: FileHandle,
@@ -66,6 +70,22 @@ export function useGetProfileImage(
     queryFn,
     {
       staleTime: Infinity,
+      ...options,
+    },
+  )
+}
+
+export function useGetFileBatch(
+  request: BatchFileRequest,
+  options?: UseQueryOptions<BatchFileResult, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryFn = async () => SynapseClient.getFiles(request, accessToken)
+
+  return useQuery<BatchFileResult, SynapseClientError>(
+    keyFactory.getBatchOfFiles(request),
+    queryFn,
+    {
       ...options,
     },
   )

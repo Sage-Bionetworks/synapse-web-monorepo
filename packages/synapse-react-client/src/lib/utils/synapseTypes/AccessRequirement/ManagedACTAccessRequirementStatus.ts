@@ -16,7 +16,7 @@ export enum SubmissionState {
 export type ACTSubmissionStatus = {
   submissionId: string
   submittedBy: string
-  rejectedReason: string
+  rejectedReason?: string
   state: SubmissionState
   modifiedOn: string
 }
@@ -33,6 +33,7 @@ export type ManagedACTAccessRequirementStatus = {
   /* True if there is an AccessApproval for the user for the given AccessRequirement. */
   isApproved: boolean
   /* The date that the user no longer have access to the data. */
-  expiredOn: string
-  currentSubmissionStatus: ACTSubmissionStatus
+  expiredOn?: string
+  /* Current submission status. Will be undefined if no submission has been created */
+  currentSubmissionStatus?: ACTSubmissionStatus
 }

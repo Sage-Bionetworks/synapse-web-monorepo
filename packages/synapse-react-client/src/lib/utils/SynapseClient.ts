@@ -140,6 +140,8 @@ import {
   QueryResultBundle,
   QueryTableResults,
   ReferenceList,
+  Renewal,
+  Request,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   Submission as EvaluationSubmission,
@@ -159,7 +161,6 @@ import {
   EntityChildrenRequest,
   EntityChildrenResponse,
   ManagedACTAccessRequirementStatus,
-  RequestInterface,
   TYPE_FILTER,
   UserGroupHeaderResponse,
 } from './synapseTypes'
@@ -167,7 +168,6 @@ import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
 } from './synapseTypes/AccessRequirement/AccessRequirementSearch'
-import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
 import { SubmissionStateChangeRequest } from './synapseTypes/AccessRequirement/SubmissionStateChangeRequest'
 import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
@@ -2859,11 +2859,12 @@ export const searchAccessRequirements = (
  * @param {string} requirementId id of entity to lookup
  * @returns {AccessRequirementStatus}
  */
-export const getAccessRequirementStatus = (
-  accessToken: string | undefined,
-  requirementId: string | number,
-): Promise<AccessRequirementStatus | ManagedACTAccessRequirementStatus> => {
-  return doGet(
+export function getAccessRequirementStatus<
+  T extends
+    | AccessRequirementStatus
+    | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
+>(accessToken: string | undefined, requirementId: string | number): Promise<T> {
+  return doGet<T>(
     ACCESS_REQUIREMENT_STATUS(requirementId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2940,7 +2941,7 @@ export const getAccessApproval = async (
  * @param {AccessApproval} accessApproval access approval request object
  * @returns {AccessApproval}
  */
-export const postAccessApproval = async (
+export const createAccessApproval = async (
   accessToken: string | undefined,
   accessApproval: AccessApproval,
 ): Promise<AccessApproval> => {
@@ -3303,7 +3304,7 @@ export const getDataAccessRequestForUpdate = (
   requirementId: string,
   accessToken: string,
 ) => {
-  return doGet<RequestInterface | RenewalInterface>(
+  return doGet<Request | Renewal>(
     ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE(requirementId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3311,11 +3312,11 @@ export const getDataAccessRequestForUpdate = (
 }
 
 // http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
-export const updateDataAccessRequest = (
-  requestObj: RequestInterface,
+export function updateDataAccessRequest(
+  requestObj: Request | Renewal,
   accessToken: string,
-) => {
-  return doPost<RequestInterface>(
+) {
+  return doPost<typeof requestObj>(
     DATA_ACCESS_REQUEST,
     requestObj,
     accessToken,

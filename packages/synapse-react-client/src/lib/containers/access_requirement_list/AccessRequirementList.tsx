@@ -14,7 +14,8 @@ import {
   ACTAccessRequirement,
   EntityHeader,
   ManagedACTAccessRequirement,
-  RequestInterface,
+  Request,
+  Renewal,
   SelfSignAccessRequirement,
   TermsOfUseAccessRequirement,
 } from '../../utils/synapseTypes'
@@ -57,7 +58,7 @@ export type RequestDataStepCallbackArgs = {
   managedACTAccessRequirement?: ManagedACTAccessRequirement
   step: number
   researchProjectId?: string
-  formSubmitRequestObject?: RequestInterface
+  formSubmitRequestObject?: Request | Renewal
 }
 
 export enum SUPPORTED_ACCESS_REQUIREMENTS {
@@ -132,8 +133,9 @@ export default function AccessRequirementList({
   const [managedACTAccessRequirement, setManagedACTAccessRequirement] =
     useState<ManagedACTAccessRequirement>()
   const [researchProjectId, setresearchProjectId] = useState<string>('')
-  const [formSubmitRequestObject, setFormSubmitRequestObject] =
-    useState<RequestInterface>()
+  const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<
+    Request | Renewal
+  >()
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],

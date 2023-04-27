@@ -10,6 +10,12 @@ type RtlWrapperProps = {
   children?: ReactNode
 }
 
+const reactQueryTestConfig = {
+  ...defaultQueryClientConfig,
+  // Recommended to set cacheTime to Infinity: https://tanstack.com/query/v3/docs/react/guides/testing#set-cachetime-to-infinity-with-jest
+  cacheTime: Infinity,
+}
+
 /**
  * Creates a test wrapper for components being tested with @testing-library/react. This wrapper
  * includes context and an isolated query cache. Returns the queryClient so it may be modified as needed

@@ -15,5 +15,5 @@ export type BasicAccessRequirementStatus = {
   /* True if there is an AccessApproval for the user for the given AccessRequirement. */
   isApproved: boolean
   /* The date that the user no longer have access to the data. */
-  expiredOn: string
+  expiredOn?: string
 }
