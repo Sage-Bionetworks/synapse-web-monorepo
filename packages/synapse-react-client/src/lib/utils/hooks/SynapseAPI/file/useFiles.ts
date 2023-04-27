@@ -76,9 +76,10 @@ export function useGetProfileImage(
 }
 
 /**
- * Get a batch of files from the backend.
- * This hook not support fetching pre-signed URLs. In most web UI cases, you will want to use
- * {@link SynapseClient#getPortalFileHandleServletUrl}
+ * Get a batch of file handle data from the backend.
+ *
+ * This hook does not support fetching pre-signed URLs. In most web UI cases, you will want to either request the presigned
+ * URL upon an invoked action (e.g. a "download" button is clicked) or use {@link SynapseClient#getPortalFileHandleServletUrl}
  * @param request
  * @param options
  */
