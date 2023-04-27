@@ -103,7 +103,7 @@ export function useSubmitDataAccessRequest(
   options?: UseMutationOptions<
     ACTSubmissionStatus,
     SynapseClientError,
-    CreateSubmissionRequest
+    { request: CreateSubmissionRequest; accessRequirementId: string }
   >,
 ) {
   const queryClient = useQueryClient()
@@ -112,14 +112,20 @@ export function useSubmitDataAccessRequest(
   return useMutation<
     ACTSubmissionStatus,
     SynapseClientError,
-    CreateSubmissionRequest
+    { request: CreateSubmissionRequest; accessRequirementId: string }
   >(
-    (request: CreateSubmissionRequest): Promise<ACTSubmissionStatus> =>
+    ({ request }): Promise<ACTSubmissionStatus> =>
       SynapseClient.submitDataAccessRequest(request, accessToken!),
     {
       ...options,
       onSuccess: async (data, variables, ctx) => {
-        // Invalidate all searches
+        // Invalidate the status of the relevant AR
+        await queryClient.invalidateQueries(
+          keyFactory.getAccessRequirementStatusQueryKey(
+            variables.accessRequirementId,
+          ),
+        )
+        // Invalidate all searches, in case it was an AR reviewer who created this submission
         await queryClient.invalidateQueries(
           keyFactory.searchDataAccessSubmissionQueryKey(),
         )

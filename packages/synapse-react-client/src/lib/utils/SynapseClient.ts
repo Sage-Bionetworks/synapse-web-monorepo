@@ -4445,3 +4445,31 @@ export function getDOIAssociation(
     ),
   )
 }
+
+/**
+ * Returns the URL for the SWC file handle servlet so the user can retrieve the contents of a Synapse file handle when
+ * they follow the link.
+ * This effectively provides a stable URL where a user can request the contents of a file and get the same result, without
+ * concern for the 30s expiration of presigned file handles returned by the Synapse backend.
+ *
+ * Note that this URL will only work if the user is logged in to Synapse on the domain of the SWC instance, and the client
+ * (typically a browser) can provide the current access token cookie.
+ * @param fileHandleId The ID of the file handle to retrieve
+ * @param associatedObjectId ID of the object the file handle is associated with. Required if the user is not the one who uploaded the file handle
+ * @param associatedObjectType The type of the associated object. Required if the user is not the one who uploaded the file handle
+ */
+export function getPortalFileHandleServletUrl(
+  fileHandleId: string,
+  associatedObjectId?: string,
+  associatedObjectType?: FileHandleAssociateType,
+) {
+  const search = new URLSearchParams()
+  search.set('fileHandleId', fileHandleId)
+  if (associatedObjectId && associatedObjectType) {
+    search.set('associatedObjectId', associatedObjectId)
+    search.set('associatedObjectType', associatedObjectType.toString())
+  }
+  return `${getEndpoint(
+    BackendDestinationEnum.PORTAL_ENDPOINT,
+  )}/Portal/filehandleassociation?${search.toString()}`
+}

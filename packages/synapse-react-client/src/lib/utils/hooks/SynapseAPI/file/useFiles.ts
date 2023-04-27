@@ -75,12 +75,27 @@ export function useGetProfileImage(
   )
 }
 
+/**
+ * Get a batch of files from the backend.
+ * This hook not support fetching pre-signed URLs. In most web UI cases, you will want to use
+ * {@link SynapseClient#getPortalFileHandleServletUrl}
+ * @param request
+ * @param options
+ */
 export function useGetFileBatch(
   request: BatchFileRequest,
   options?: UseQueryOptions<BatchFileResult, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryFn = async () => SynapseClient.getFiles(request, accessToken)
+
+  if (request.includePreSignedURLs || request.includePreviewPreSignedURLs) {
+    // Don't use this hook if you need pre-signed URLs. They expire every 30 seconds, so you will either end up giving the
+    // user an expired URL, or making requests to the backend more frequently than necessary.
+    console.error('useGetFileBatch does not support pre-signed URLs.')
+    request.includePreSignedURLs = false
+    request.includePreviewPreSignedURLs = false
+  }
 
   return useQuery<BatchFileResult, SynapseClientError>(
     keyFactory.getBatchOfFiles(request),

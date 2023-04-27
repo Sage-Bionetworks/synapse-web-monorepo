@@ -9,7 +9,10 @@ import { StyledOuterContainer } from 'synapse-react-client/dist/components/style
 import UserCard from 'synapse-react-client/dist/containers/UserCard'
 import { useGetCurrentUserProfile } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
 import { SynapseClientError } from 'synapse-react-client/dist/utils/SynapseClientError'
-import { OAuthConsentGrantedResponse } from 'synapse-react-client/dist/utils/synapseTypes'
+import {
+  FileHandleAssociateType,
+  OAuthConsentGrantedResponse,
+} from 'synapse-react-client/dist/utils/synapseTypes'
 import { AccessCodeResponse } from 'synapse-react-client/dist/utils/synapseTypes/AccessCodeResponse'
 import { OAuthClientPublic } from 'synapse-react-client/dist/utils/synapseTypes/OAuthClientPublic'
 import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest'
@@ -26,6 +29,7 @@ import {
 import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 import { useHistory } from 'react-router-dom'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
+import { getPortalFileHandleServletUrl } from 'synapse-react-client/dist/utils/SynapseClient'
 
 export function OAuth2Form() {
   const isMounted = useRef(true)
@@ -57,7 +61,11 @@ export function OAuth2Form() {
   })
 
   if (profile?.profilePicureFileHandleId) {
-    profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
+    profile.clientPreSignedURL = getPortalFileHandleServletUrl(
+      profile.profilePicureFileHandleId,
+      profile.ownerId,
+      FileHandleAssociateType.UserProfileAttachment,
+    )
   }
 
   const [oidcRequestDescription, setOidcRequestDescription] =
