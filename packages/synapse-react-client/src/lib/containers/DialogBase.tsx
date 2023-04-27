@@ -31,7 +31,7 @@ export const CloseButton: React.FC<CloseButtonProps> = ({
 
 export type DialogBaseProps = {
   open: boolean
-  title: string
+  title: string | JSX.Element
   content: string | JSX.Element
   actions?: JSX.Element
   className?: string
