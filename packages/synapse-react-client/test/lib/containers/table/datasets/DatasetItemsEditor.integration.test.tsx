@@ -1,4 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import {
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
@@ -588,7 +593,7 @@ describe('Dataset Items Editor tests', () => {
       await clickCancel()
 
       // Verify that the warning dialog appears
-      expect(screen.queryByRole('dialog')).toBeInTheDocument()
+      const dialog = screen.getByRole('dialog')
       await screen.findByText('Any unsaved changes will be lost', {
         exact: false,
       })
@@ -597,6 +602,7 @@ describe('Dataset Items Editor tests', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Cancel' }),
       )
+      await waitForElementToBeRemoved(dialog)
 
       // Verify the dialog is gone but onClose was not called
       expect(mockOnCloseFn).not.toHaveBeenCalled()
@@ -615,7 +621,7 @@ describe('Dataset Items Editor tests', () => {
       await clickCancel()
 
       // Verify that the warning dialog appears
-      expect(screen.queryByRole('dialog')).toBeInTheDocument()
+      const dialog = screen.getByRole('dialog')
       await screen.findByText('Any unsaved changes will be lost', {
         exact: false,
       })
@@ -624,6 +630,7 @@ describe('Dataset Items Editor tests', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Close Editor' }),
       )
+      await waitForElementToBeRemoved(dialog)
 
       // Verify the dialog is gone and onClose was called
       expect(mockOnCloseFn).toHaveBeenCalled()

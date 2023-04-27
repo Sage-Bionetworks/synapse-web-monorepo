@@ -20,7 +20,7 @@ jest.mock('../../../../src/lib/containers/widgets/SynapsePlot', () => {
   return {
     __esModule: true,
     default: function MockSynapsePlot() {
-      return <div role="figure"></div>
+      return <span role="figure"></span>
     },
   }
 })
@@ -29,7 +29,7 @@ jest.mock('../../../../src/lib/containers/widgets/SynapseImage', () => {
   return {
     __esModule: true,
     default: function MockSynapseImage() {
-      return <div role="img"></div>
+      return <img role="img"></img>
     },
   }
 })

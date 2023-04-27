@@ -83,6 +83,7 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
     target,
     TIMER_DELAY_SHOW,
     TIMER_DELAY_HIDE,
+    { sx: { maxWidth: '425px' } },
   )
 
   const avatar = withAvatar ? (

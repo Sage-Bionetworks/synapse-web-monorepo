@@ -3,20 +3,20 @@ import userEvent from '@testing-library/user-event'
 import * as React from 'react'
 import AcceptedRequirements, {
   AcceptedRequirementsProps,
-} from '../../../src/lib/containers/access_requirement_list/AcceptedRequirements'
+} from '../../../../src/lib/containers/access_requirement_list/AcceptedRequirements'
 import AccessApprovalCheckMark, {
   CheckMarkProps,
-} from '../../../src/lib/containers/access_requirement_list/AccessApprovalCheckMark'
+} from '../../../../src/lib/containers/access_requirement_list/AccessApprovalCheckMark'
 import AccessRequirementList, {
   AccessRequirementListProps,
   sortAccessRequirementByCompletion,
-} from '../../../src/lib/containers/access_requirement_list/AccessRequirementList'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { ACCESS_REQUIREMENT_STATUS } from '../../../src/lib/utils/APIConstants'
+} from '../../../../src/lib/containers/access_requirement_list/AccessRequirementList'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { ACCESS_REQUIREMENT_STATUS } from '../../../../src/lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../src/lib/utils/functions/getEndpoint'
+} from '../../../../src/lib/utils/functions/getEndpoint'
 import {
   AccessApproval,
   AccessRequirement,
@@ -25,11 +25,11 @@ import {
   ApprovalState,
   ObjectType,
   WikiPageKey,
-} from '../../../src/lib/utils/synapseTypes/'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../../mocks/msw/server'
-import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
-import { SynapseClient } from '../../../src/lib/utils'
+} from '../../../../src/lib/utils/synapseTypes'
+import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
+import { rest, server } from '../../../../mocks/msw/server'
+import { mockUserProfileData } from '../../../../mocks/user/mock_user_profile'
+import { SynapseClient } from '../../../../src/lib/utils'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
 

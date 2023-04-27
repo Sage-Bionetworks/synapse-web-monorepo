@@ -61,8 +61,8 @@ const SectionInnerGrid: StyledComponent<BoxProps> = styled(
   columnGap: theme.spacing(5),
 }))
 
-// TODO https://sagebionetworks.jira.com/browse/DOCS-115
-export const TWO_FACTOR_DOCS_LINK = ''
+export const TWO_FACTOR_DOCS_LINK =
+  'https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#Adding-Two-Factor-Authentication-(2FA)-to-your-account'
 
 export type TwoFactorEnrollmentFormProps = {
   onTwoFactorEnrollmentSuccess: () => void
@@ -153,14 +153,8 @@ export default function TwoFactorEnrollmentForm(
             {/* Remove conditionality when NIH RAS login is supported */}
             {false && 'or NIH RAS'} account, you may need to use 2FA as part of
             {/*those processes*/}
-            that process as well.
-            {TWO_FACTOR_DOCS_LINK.length > 0 && (
-              // Remove conditionality when docs are ready
-              <>
-                {' '}
-                <Link href={TWO_FACTOR_DOCS_LINK}>Learn more about 2FA</Link>.
-              </>
-            )}
+            that process as well.{' '}
+            <Link href={TWO_FACTOR_DOCS_LINK}>Learn more about 2FA</Link>.
           </Typography>
         </Section>
         <Section>

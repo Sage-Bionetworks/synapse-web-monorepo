@@ -10,7 +10,7 @@ import {
   useUpdateOAuthClient,
 } from '../../utils/hooks/SynapseAPI'
 import IconSvg from '../IconSvg'
-import { WarningModal } from '../synapse_form_wrapper/WarningModal'
+import { WarningDialog } from '../synapse_form_wrapper/WarningDialog'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 import { SynapseClientError } from '../../utils/SynapseClientError'
@@ -439,10 +439,10 @@ export const CreateOAuthModal: React.FunctionComponent<
           </Button>
         </Modal.Footer>
       </Modal>
-      <WarningModal
-        show={isShowingConfirmModal}
+      <WarningDialog
+        open={isShowingConfirmModal}
         title={warningHeader}
-        modalBody={warningBody}
+        content={warningBody}
         onCancel={hideConfirmModal}
         onConfirm={() => {
           isDelete
@@ -450,7 +450,7 @@ export const CreateOAuthModal: React.FunctionComponent<
             : updateClient(updatedClient!)
           hideConfirmModal()
         }}
-        confirmButtonVariant="danger"
+        confirmButtonColor="error"
         confirmButtonText="Yes, Continue"
       />
     </div>

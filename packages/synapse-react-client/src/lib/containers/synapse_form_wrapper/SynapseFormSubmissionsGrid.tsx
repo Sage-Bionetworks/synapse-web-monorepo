@@ -7,7 +7,7 @@ import {
   StatusEnum,
   ListResponse,
 } from '../../utils/synapseTypes/'
-import WarningModal from './WarningModal'
+import WarningDialog from './WarningDialog'
 import { Button } from 'react-bootstrap'
 import { Modal } from 'react-bootstrap'
 
@@ -477,11 +477,11 @@ export default class SynapseFormSubmissionGrid extends React.Component<
             </div>
           )}
           {this.state.modalContext && (
-            <WarningModal
+            <WarningDialog
               className={`theme-${this.props.formClass}`}
-              show={typeof this.state.modalContext !== 'undefined'}
+              open={typeof this.state.modalContext !== 'undefined'}
               title={this.modalTitle}
-              modalBody={this.modalCopy}
+              content={this.modalCopy}
               onConfirmCallbackArgs={this.state.modalContext.arguments}
               onCancel={() => this.setState({ modalContext: undefined })}
               onConfirm={(token: string, formDataId: string) =>

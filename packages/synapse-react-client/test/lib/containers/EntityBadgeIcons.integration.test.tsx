@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import {
   EntityBadgeIcons,
   EntityBadgeIconsProps,
@@ -41,9 +41,11 @@ const defaultProps: EntityBadgeIconsProps = {
   renderTooltipComponent: true,
 }
 
-function renderComponent(wrapperProps?: SynapseContextType) {
-  render(<EntityBadgeIcons {...defaultProps} />, {
-    wrapper: createWrapper(wrapperProps),
+async function renderComponent(wrapperProps?: SynapseContextType) {
+  await act(() => {
+    render(<EntityBadgeIcons {...defaultProps} />, {
+      wrapper: createWrapper(wrapperProps),
+    })
   })
   mockAllIsIntersecting(true)
 }
@@ -54,7 +56,7 @@ describe('EntityBadgeIcons tests', () => {
   afterAll(() => server.close())
 
   it('Renders annotations in a table', async () => {
-    renderComponent()
+    await renderComponent()
     const icon = await screen.findByTestId('annotations-icon')
     await userEvent.hover(icon)
     for (const annotation of Object.entries(
@@ -95,7 +97,7 @@ describe('EntityBadgeIcons tests', () => {
       ),
     )
 
-    renderComponent()
+    await renderComponent()
     await screen.findByTestId('is-public-icon')
   })
   it('Shows the private icon when anonymous is not in the ACL', async () => {
@@ -120,7 +122,7 @@ describe('EntityBadgeIcons tests', () => {
       ),
     )
 
-    renderComponent()
+    await renderComponent()
     await screen.findByTestId('is-private-icon')
   })
 
@@ -146,22 +148,22 @@ describe('EntityBadgeIcons tests', () => {
       ),
     )
 
-    renderComponent()
+    await renderComponent()
     await screen.findByTestId('sharing-settings-icon')
   })
 
   it('Shows the wiki icon', async () => {
-    renderComponent()
+    await renderComponent()
     await screen.findByTestId('wiki-icon')
   })
 
   it('Shows the discussion thread icon', async () => {
-    renderComponent()
+    await renderComponent()
     await screen.findByTestId('discussion-icon')
   })
 
   describe('Unlink', () => {
-    it('Does not show the icon on non-links', () => {
+    it('Does not show the icon on non-links', async () => {
       server.use(
         rest.post(
           `${getEndpoint(
@@ -182,11 +184,11 @@ describe('EntityBadgeIcons tests', () => {
           },
         ),
       )
-      renderComponent()
+      await renderComponent()
       expect(screen.queryByTestId('unlink-icon')).toBeNull()
     })
 
-    it('Does not show the icon if no permission to delete', () => {
+    it('Does not show the icon if no permission to delete', async () => {
       server.use(
         rest.post(
           `${getEndpoint(
@@ -207,7 +209,7 @@ describe('EntityBadgeIcons tests', () => {
           },
         ),
       )
-      renderComponent()
+      await renderComponent()
       expect(screen.queryByTestId('unlink-icon')).toBeNull()
     })
 
@@ -232,7 +234,7 @@ describe('EntityBadgeIcons tests', () => {
           },
         ),
       )
-      renderComponent()
+      await renderComponent()
       await screen.findByTestId('unlink-icon')
     })
     it('Calls the success callback on success', async () => {
@@ -268,7 +270,7 @@ describe('EntityBadgeIcons tests', () => {
           },
         ),
       )
-      renderComponent()
+      await renderComponent()
       const unlinkButton = await screen.findByTestId('unlink-icon')
 
       await userEvent.click(unlinkButton)
@@ -317,7 +319,7 @@ describe('EntityBadgeIcons tests', () => {
         ),
       )
 
-      renderComponent()
+      await renderComponent()
       const unlinkButton = await screen.findByTestId('unlink-icon')
 
       await userEvent.click(unlinkButton)
@@ -355,7 +357,7 @@ describe('EntityBadgeIcons tests', () => {
         ),
       )
 
-      renderComponent({ isInExperimentalMode: true, utcTime: true })
+      await renderComponent({ isInExperimentalMode: true, utcTime: true })
       let icon: HTMLElement
       await waitFor(() => {
         icon = screen.getByTestId('annotations-icon')
@@ -395,7 +397,7 @@ describe('EntityBadgeIcons tests', () => {
         ),
       )
 
-      renderComponent({ isInExperimentalMode: true, utcTime: true })
+      await renderComponent({ isInExperimentalMode: true, utcTime: true })
       let icon: HTMLElement
       await waitFor(() => {
         icon = screen.getByTestId('annotations-icon')
@@ -454,7 +456,7 @@ describe('EntityBadgeIcons tests', () => {
         ),
       )
 
-      renderComponent({ isInExperimentalMode: true, utcTime: true })
+      await renderComponent({ isInExperimentalMode: true, utcTime: true })
       let icon: HTMLElement
       await waitFor(() => {
         icon = screen.getByTestId('annotations-icon')
@@ -465,7 +467,7 @@ describe('EntityBadgeIcons tests', () => {
       await screen.findByText('Missing Annotations')
     })
 
-    it('Does not fetch validation results if there is no bound schema', () => {
+    it('Does not fetch validation results if there is no bound schema', async () => {
       const onSchemaValidationFetched = jest.fn()
 
       server.use(
@@ -502,7 +504,7 @@ describe('EntityBadgeIcons tests', () => {
         ),
       )
 
-      renderComponent({ isInExperimentalMode: true, utcTime: true })
+      await renderComponent({ isInExperimentalMode: true, utcTime: true })
       expect(onSchemaValidationFetched).not.toHaveBeenCalled()
     })
   })

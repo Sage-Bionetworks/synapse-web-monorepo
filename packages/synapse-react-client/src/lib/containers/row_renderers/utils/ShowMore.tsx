@@ -7,6 +7,7 @@ type ShowMoreState = {
 
 type ShowMoreProps = {
   summary: string
+  maxCharacterCount?: number
 }
 
 export default class ShowMore extends React.Component<
@@ -28,7 +29,7 @@ export default class ShowMore extends React.Component<
     })
   }
 
-  getCutoff = (summary: string) => {
+  getCutoff = (summary: string, maxCharacterCount: number) => {
     let previewText = ''
     if (!summary) {
       return { previewText }
@@ -37,7 +38,7 @@ export default class ShowMore extends React.Component<
     const summarySplit = summary.split(' ')
     // find num words to join such that its >= char_count_cutoff
     let i = 0
-    while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {
+    while (previewText.length < maxCharacterCount && i < summarySplit.length) {
       previewText += `${summarySplit[i]} `
       i += 1
     }
@@ -48,9 +49,12 @@ export default class ShowMore extends React.Component<
   }
 
   public render() {
-    const { summary } = this.props
-    const meetsCharRequirements = summary && summary.length >= CHAR_COUNT_CUTOFF
-    const { previewText, hiddenText } = this.getCutoff(summary)
+    const { summary, maxCharacterCount = CHAR_COUNT_CUTOFF } = this.props
+    const meetsCharRequirements = summary && summary.length >= maxCharacterCount
+    const { previewText, hiddenText } = this.getCutoff(
+      summary,
+      maxCharacterCount,
+    )
     const showMoreButton = meetsCharRequirements && (
       <a
         style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px' }}

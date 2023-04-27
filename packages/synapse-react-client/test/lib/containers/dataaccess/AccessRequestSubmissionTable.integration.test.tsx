@@ -4,30 +4,30 @@ import { render, screen, waitFor } from '@testing-library/react'
 import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,
-} from '../../../src/lib/containers/AccessRequestSubmissionTable'
-import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
+} from '../../../../src/lib/containers/AccessRequestSubmissionTable'
+import { createWrapperAndQueryClient } from '../../../testutils/TestingLibraryUtils'
 import {
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,
   SubmissionSearchResponse,
-} from '../../../src/lib/utils/synapseTypes/AccessSubmission'
+} from '../../../../src/lib/utils/synapseTypes/AccessSubmission'
 import {
   AccessType,
   SubmissionState,
-} from '../../../src/lib/utils/synapseTypes'
-import { rest, server } from '../../../mocks/msw/server'
+} from '../../../../src/lib/utils/synapseTypes'
+import { rest, server } from '../../../../mocks/msw/server'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../src/lib/utils/functions/getEndpoint'
-import { ACCESS_REQUEST_SUBMISSION_SEARCH } from '../../../src/lib/utils/APIConstants'
-import { mockSubmissionSearchResponse } from '../../../mocks/mockAccessRequest'
+} from '../../../../src/lib/utils/functions/getEndpoint'
+import { ACCESS_REQUEST_SUBMISSION_SEARCH } from '../../../../src/lib/utils/APIConstants'
+import { mockSubmissionSearchResponse } from '../../../../mocks/mockAccessRequest'
 import {
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../../mocks/user/mock_user_profile'
 import { upperFirst } from 'lodash-es'
-import { formatDate } from '../../../src/lib/utils/functions/DateFormatter'
+import { formatDate } from '../../../../src/lib/utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'

@@ -24,6 +24,8 @@ import { getFacets } from '../../widgets/facet-nav/FacetNav'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { ShowMore } from '../../row_renderers/utils'
+import { Link } from '@mui/material'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -89,22 +91,25 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       ).then(newPlotData => setFacetPlotDataArray(newPlotData))
       // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
       const selectedFacet: FacetColumnResultValueCount | undefined =
-        data?.facets?.map(item => {
-          const facetValues: FacetColumnResultValueCount[] = (
-            item as FacetColumnResultValues
-          ).facetValues
-          if (facetValues) {
-            const filteredFacetValues: FacetColumnResultValueCount[] =
-              facetValues.filter(facetValue => {
-                return facetValue.isSelected
-              })
-            return filteredFacetValues.length > 0
-              ? filteredFacetValues[0]
-              : undefined
-          } else {
-            return undefined
-          }
-        })[0]
+        data?.facets
+          ?.map(item => {
+            const facetValues: FacetColumnResultValueCount[] = (
+              item as FacetColumnResultValues
+            ).facetValues
+            if (facetValues) {
+              const filteredFacetValues: FacetColumnResultValueCount[] =
+                facetValues.filter(facetValue => {
+                  return facetValue.isSelected
+                })
+              return filteredFacetValues.length > 0
+                ? filteredFacetValues[0]
+                : undefined
+            } else {
+              return undefined
+            }
+          })
+          .filter(x => x !== undefined)[0]
+
       if (selectedFacet && selectedFacet.value) {
         setSelectedFacetValue(selectedFacet?.value)
       }
@@ -126,8 +131,8 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     let detailsPageLink = <></>
     if (detailsPagePath && selectedFacetValue) {
       detailsPageLink = (
-        <div className="FacetPlotsCard__link">
-          <a href={detailsPagePath}>View {selectedFacetValue}</a>
+        <div>
+          <Link href={detailsPagePath}>Explore {selectedFacetValue}</Link>
         </div>
       )
     }
@@ -145,7 +150,12 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         >
           <span className="FacetPlotsCard__title">{cardTitle}</span>
           {description && (
-            <span className="FacetPlotsCard__description">{description}</span>
+            <span className="FacetPlotsCard__description">
+              <ShowMore
+                summary={description}
+                maxCharacterCount={200}
+              ></ShowMore>
+            </span>
           )}
           {detailsPageLink}
           {isLoadingNewBundle && (
@@ -179,11 +189,13 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                       </div>
                     )}
                   </SizeMe>
-                  <FacetPlotLegend
-                    labels={plotData?.labels}
-                    colors={plotData?.colors}
-                    isExpanded={false}
-                  />
+                  <div className="FacetPlotsCard__body__legend">
+                    <FacetPlotLegend
+                      labels={plotData?.labels}
+                      colors={plotData?.colors}
+                      isExpanded={false}
+                    />
+                  </div>
                 </div>
               </div>
             )

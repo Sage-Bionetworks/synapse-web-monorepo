@@ -9,6 +9,7 @@ import { SkeletonInlineBlock } from '../../../assets/skeletons/SkeletonInlineBlo
 import getColorPalette from '../../../containers/ColorGradient'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import { SynapseClient, SynapseConstants } from '../../../utils'
+
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import {
   ColumnTypeEnum,
@@ -24,7 +25,7 @@ import {
   applyChangesToValuesColumn,
   applyMultipleChangesToValuesColumn,
 } from '../query-filter/FacetFilterControls'
-import { Tooltip } from '@mui/material'
+import { Box, Tooltip, Typography } from '@mui/material'
 import { useQuery } from 'react-query'
 
 const Plot = createPlotlyComponent(Plotly)
@@ -62,21 +63,6 @@ const layout: Partial<PlotlyTyped.Layout> = {
     visible: false,
     showgrid: false,
   },
-}
-
-// https://github.com/plotly/plotly.js/blob/fa51e33d3e1f8ca0c029b3029f3d006a5205c8f3/src/lib/index.js#L1173
-const formatPercent = (ratio: number, n: number) => {
-  n = n || 0
-  let str =
-    (Math.round(100 * ratio * Math.pow(10, n)) * Math.pow(0.1, n)).toFixed(n) +
-    '%'
-  for (let i = 0; i < n; i++) {
-    if (str.indexOf('.') !== -1) {
-      str = str.replace('0%', '%')
-      str = str.replace('.%', '%')
-    }
-  }
-  return str
 }
 
 export type GraphData = {
@@ -293,35 +279,37 @@ export function FacetPlotLegend(props: FacetPlotLegendProps) {
   }
   const numLegendItems = isExpanded
     ? Math.min(labels.length, 9)
-    : Math.min(labels.length, 3)
+    : Math.min(labels.length, 4)
   if (numLegendItems === 0) {
     return <></>
   }
-  const totalCount = labels.reduce(
-    (curValue, curFacet) => curValue + curFacet.count,
-    0,
-  )
   return (
     <div
       className={`FacetNavPanel__body__legend${isExpanded ? '--expanded' : ''}`}
     >
       {labels.slice(0, numLegendItems).map((facetValue, index) => {
-        const percent = formatPercent(facetValue.count / totalCount, 1)
-        const label = `(${percent}) ${facetValue.label}`
-        const labelDisplay = truncate(label, maxLegendLength)
+        const labelDisplay = truncate(facetValue.label, maxLegendLength)
         return (
           <ElementWithTooltip
             tooltipText={facetValue.label}
             key={facetValue.label}
           >
-            <div
-              className="FacetNavPanel__body__legend__row"
-              key={`legendLabel_${index}`}
-              style={{ cursor: 'default' }}
-            >
-              <div style={{ backgroundColor: colors[index] }}></div>
-              <label>{labelDisplay}</label>
-            </div>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Box
+                sx={{
+                  width: '14px',
+                  height: '14px',
+                  cursor: 'default',
+                  backgroundColor: colors[index],
+                }}
+                key={`legendLabel_${index}`}
+                style={{ cursor: 'default' }}
+              />
+              <Typography variant="body2">{labelDisplay}</Typography>
+              <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                {facetValue.count}
+              </Typography>
+            </Box>
           </ElementWithTooltip>
         )
       })}

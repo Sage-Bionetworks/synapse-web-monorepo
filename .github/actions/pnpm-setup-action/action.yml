@@ -1,0 +1,37 @@
+name: "Set up pnpm and configure environment"
+description: "Installs Node, pnpm, fetches cache (if exists), and runs pnpm install"
+runs:
+  using: "composite"
+  steps:
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - uses: pnpm/action-setup@v2
+      name: Install pnpm
+      id: pnpm-install
+      with:
+        version: 8
+        run_install: false
+    - name: Get pnpm store directory
+      id: pnpm-cache
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+    - name: Setup pnpm cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+    - name: Set up Nx build cache
+      uses: actions/cache@v3
+      with:
+        path: node_modules/.cache/nx
+        key: ${{ runner.os }}-nx-cache
+        restore-keys: |
+          ${{ runner.os }}-nx-cache
+    - name: Install dependencies (use frozen lockfile)
+      run: pnpm install --frozen-lockfile
+      shell: bash

@@ -1,4 +1,9 @@
-import { render, screen, within } from '@testing-library/react'
+import {
+  render,
+  screen,
+  waitForElementToBeRemoved,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
 import dayjs, { Dayjs } from 'dayjs'
@@ -280,6 +285,7 @@ describe('test EvaluationRoundEditor', () => {
       name: 'Delete',
     })
     await userEvent.click(confirmDeleteButton)
+    await waitForElementToBeRemoved(dialog)
   }
 
   it('test delete: no id', async () => {

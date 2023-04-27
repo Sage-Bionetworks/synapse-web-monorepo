@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import { useGetOAuthClientInfinite } from '../../utils/hooks/SynapseAPI'
 import { CreateOAuthModal } from './CreateOAuthClient'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import { SynapseClient } from '../../utils'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import CopyToClipboardInput from '../CopyToClipboardInput'
@@ -180,17 +180,16 @@ export const OAuthManagement: React.FunctionComponent = () => {
         <Modal.Footer></Modal.Footer>
       </Modal>
 
-      <WarningModal
-        show={isShowingSecretWarning}
-        className="bootstrap-4-backport"
+      <WarningDialog
+        open={isShowingSecretWarning}
         title={warningHeader}
-        modalBody={warningBody}
+        content={warningBody}
         onCancel={() => {
           setIsShowingSecretWarning(false)
           setSelectedClient(undefined)
         }}
         onConfirm={onShowSecret}
-        confirmButtonVariant="danger"
+        confirmButtonColor="error"
         confirmButtonText="Yes, Continue"
       />
       {secret && (

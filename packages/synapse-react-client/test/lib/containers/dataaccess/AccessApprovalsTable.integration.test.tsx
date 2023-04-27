@@ -1,34 +1,28 @@
 import * as React from 'react'
-import { server } from '../../../mocks/msw/server'
+import { server } from '../../../../mocks/msw/server'
 import { render, screen } from '@testing-library/react'
-import { AccessApprovalSearchResult } from '../../../src/lib/utils/synapseTypes'
+import { AccessApprovalSearchResult } from '../../../../src/lib/utils/synapseTypes'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
-} from '../../../src/lib/containers/AccessApprovalsTable'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+} from '../../../../src/lib/containers/AccessApprovalsTable'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { MOCK_USER_ID } from '../../../../mocks/user/mock_user_profile'
 import {
   mockApprovalSearchResponse,
   mockAccessApprovalSearchResult2,
-} from '../../../mocks/MockAccessApprovals'
-
+} from '../../../../mocks/MockAccessApprovals'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { useSearchAccessApprovalsInfinite } from '../../../src/lib/utils/hooks/SynapseAPI/dataaccess/useAccessApprovals'
+import { useSearchAccessApprovalsInfinite } from '../../../../src/lib/utils/hooks/SynapseAPI/dataaccess/useAccessApprovals'
 import userEvent from '@testing-library/user-event'
+import * as UseAccessApprovalsModule from '../../../../src/lib/utils/hooks/SynapseAPI/dataaccess/useAccessApprovals'
 
-jest.mock(
-  '../../../src/lib/utils/hooks/SynapseAPI/dataaccess/useAccessApprovals',
-  () => {
-    return {
-      useSearchAccessApprovalsInfinite: jest.fn(),
-    }
-  },
+const mockSearchAccessApprovalsInfinite = jest.spyOn(
+  UseAccessApprovalsModule,
+  'useSearchAccessApprovalsInfinite',
 )
 
 const mockFetchNextPage = jest.fn()
-const mockSearchAccessApprovalsInfinite =
-  useSearchAccessApprovalsInfinite as jest.Mock
 
 const page2: AccessApprovalSearchResult = mockAccessApprovalSearchResult2
 

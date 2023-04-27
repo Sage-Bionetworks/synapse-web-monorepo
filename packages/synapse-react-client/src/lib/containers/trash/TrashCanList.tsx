@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, Button, Table } from 'react-bootstrap'
+import { Alert, Table } from 'react-bootstrap'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetEntity } from '../../utils/hooks/SynapseAPI'
 import {
@@ -10,10 +10,10 @@ import {
 } from '../../utils/hooks/SynapseAPI/trash/useTrashCan'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { TrashedEntity } from '../../utils/synapseTypes'
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import { BlockingLoader, SynapseSpinner } from '../LoadingScreen'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import { Checkbox } from '../widgets/Checkbox'
 
 type TrashCanListItemProps = {
@@ -47,7 +47,7 @@ function TrashCanListItem(props: TrashCanListItemProps) {
       </td>
       <td>{formatDate(dayjs(item.deletedOn))}</td>
       <td>
-        <Button size="sm" variant="outline" onClick={onRestore}>
+        <Button size="small" variant="outlined" onClick={onRestore}>
           Restore
         </Button>
       </td>
@@ -136,15 +136,15 @@ export function TrashCanList() {
         will remain in the trash can for 30 days before being automatically
         purged.
       </Typography>
-      <WarningModal
+      <WarningDialog
         title="Delete selected items from your Trash?"
-        modalBody={
+        content={
           <Typography variant="body1">
             You can&apos;t undo this action.
           </Typography>
         }
         confirmButtonText="Delete"
-        confirmButtonVariant="danger"
+        confirmButtonColor="error"
         onConfirm={() => {
           purge(selected)
           setShowDeleteConfirmation(false)
@@ -152,7 +152,7 @@ export function TrashCanList() {
         onCancel={() => {
           setShowDeleteConfirmation(false)
         }}
-        show={showDeleteConfirmation}
+        open={showDeleteConfirmation}
       />
       {isLoading && <SynapseSpinner />}
       {!isLoading && items.length === 0 && (
@@ -227,7 +227,7 @@ export function TrashCanList() {
           >
             {hasNextPage && (
               <Button
-                variant="sds-primary"
+                variant="contained"
                 disabled={isFetchingNextPage}
                 onClick={() => {
                   fetchNextPage()
@@ -238,7 +238,8 @@ export function TrashCanList() {
             )}
             <div style={{ margin: 'auto' }} />
             <Button
-              variant="danger"
+              variant="contained"
+              color="error"
               disabled={selected.size === 0}
               onClick={() => {
                 setShowDeleteConfirmation(true)
@@ -247,7 +248,7 @@ export function TrashCanList() {
               Delete Selected
             </Button>
             <Button
-              variant="outline"
+              variant="outlined"
               disabled={selected.size === 0}
               onClick={() => {
                 restore(selected)

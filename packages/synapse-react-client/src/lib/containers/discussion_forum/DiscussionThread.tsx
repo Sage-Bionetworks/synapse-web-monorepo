@@ -27,7 +27,7 @@ import {
   useGetEntityBundle,
 } from '../../utils/hooks/SynapseAPI'
 import { ForumThreadEditor } from './ForumThreadEditor'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
+import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import { SubscribersModal } from './SubscribersModal'
 
 export type DiscussionThreadProps = {
@@ -274,24 +274,22 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           />
         </Modal.Body>
       </Modal>
-      <WarningModal
-        show={showDeleteModal}
-        className="bootstrap-4-backport"
+      <WarningDialog
+        open={showDeleteModal}
         title="Confirm Deletion"
-        modalBody="Are you sure you want to delete this thread?"
+        content="Are you sure you want to delete this thread?"
         onCancel={() => setShowDeleteModal(false)}
         onConfirm={() => threadData && deleteThread(threadData)}
-        confirmButtonVariant="danger"
+        confirmButtonColor="error"
         confirmButtonText="Delete"
       />
-      <WarningModal
-        show={showRestoreModal}
-        className="bootstrap-4-backport"
+      <WarningDialog
+        open={showRestoreModal}
         title="Confirm Restoration"
-        modalBody="Are you sure you want to restore this thread?"
+        content="Are you sure you want to restore this thread?"
         onCancel={() => setShowRestoreModal(false)}
         onConfirm={() => threadData && restoreThread(threadData)}
-        confirmButtonVariant="info"
+        confirmButtonColor="info"
         confirmButtonText="Restore"
       />
       <Modal

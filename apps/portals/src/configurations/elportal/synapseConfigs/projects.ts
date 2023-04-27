@@ -2,24 +2,14 @@ import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import {
-  computationalSql,
   projectsSql,
   publicationsSql,
   studiesSql,
-  experimentalModelsSql,
   peopleSql,
 } from '../resources'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { studyCardConfiguration } from './studies'
 import { publicationCardProps } from './publications'
-import {
-  experimentalDetailsTableConfigurationColumnLinks,
-  experimentalToolsCardConfiguration,
-} from './experimental_tools'
-import { computationalCardConfiguration } from './computational_tools'
-import { targetEnablingResourcesDetailsPageSql } from '../resources'
-import { targetEnablingResourcesCardConfiguration } from './target_enabling_resources'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 4
 export const projectCardConfiguration: CardConfiguration = {
@@ -75,59 +65,6 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
       props: {
         sql: publicationsSql,
         ...publicationCardProps,
-      },
-    },
-    {
-      name: 'ToggleSynapseObjects',
-      title: 'Experimental Models',
-      showTitleSeperator: false,
-      standalone: true,
-      toggleConfigs: {
-        icon1: 'table',
-        config1: {
-          name: 'StandaloneQueryWrapper',
-          props: {
-            sql: experimentalModelsSql,
-            rgbIndex,
-            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-            columnLinks: experimentalDetailsTableConfigurationColumnLinks,
-          },
-          columnName: 'Grant Number',
-          tableSqlKeys: ['grant'],
-        },
-        icon2: 'cards',
-        config2: {
-          name: 'CardContainerLogic',
-          columnName: 'Grant Number',
-          tableSqlKeys: ['grant'],
-          props: {
-            sql: experimentalModelsSql,
-            ...experimentalToolsCardConfiguration,
-          },
-        },
-      },
-      props: {},
-    },
-    {
-      name: 'CardContainerLogic',
-      columnName: 'Grant Number',
-      title: 'Computational Tools',
-      showTitleSeperator: false,
-      tableSqlKeys: ['grant'],
-      props: {
-        sql: computationalSql,
-        ...computationalCardConfiguration,
-      },
-    },
-    {
-      name: 'CardContainerLogic',
-      columnName: 'Grant Number',
-      title: 'Target Enabling Resources',
-      showTitleSeperator: false,
-      tableSqlKeys: ['grant'],
-      props: {
-        sql: targetEnablingResourcesDetailsPageSql,
-        ...targetEnablingResourcesCardConfiguration,
       },
     },
     {

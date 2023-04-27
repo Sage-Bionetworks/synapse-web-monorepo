@@ -151,7 +151,7 @@ describe('SynapseForm', () => {
       'show warning when excluding a screen',
       //  async () => {
       //     instance.nextStep = instance.state.steps[4]
-      //     const excludeSpy = jest.spyOn(instance, 'showExcludeStateWarningModal')
+      //     const excludeSpy = jest.spyOn(instance, 'showExcludeStateWarningDialog')
       //     await instance.performAction(NavActionEnum.GO_TO_STEP, false)
       //     expect(instance.state.currentStep.id).toEqual(instance.state.steps[4].id)
       //     wrapper.find('.step-exclude-directions button').simulate('click')

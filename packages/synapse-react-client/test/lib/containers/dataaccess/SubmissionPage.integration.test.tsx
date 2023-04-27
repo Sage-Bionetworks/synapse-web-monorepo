@@ -1,4 +1,10 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import {
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import SubmissionPage, {
@@ -230,6 +236,7 @@ describe('Submission Page tests', () => {
         }),
       ),
     )
+    await waitForElementToBeRemoved(confirmationDialog)
   })
 
   it('Shows the rejection modal', async () => {
