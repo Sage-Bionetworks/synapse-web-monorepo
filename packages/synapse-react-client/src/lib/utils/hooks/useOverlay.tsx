@@ -5,8 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { Overlay } from 'react-bootstrap'
-import { Placement } from 'react-bootstrap/esm/Overlay'
+import { Paper, PaperProps, Popover, PopoverProps } from '@mui/material'
 
 function resetTimer(timer: NodeJS.Timeout | null) {
   if (timer) {
@@ -22,7 +21,15 @@ export function useOverlay(
   targetRef: RefObject<any>,
   delayShow = DEFAULT_DELAY_SHOW_MS,
   delayHide = DEFAULT_DELAY_HIDE_MS,
-  placement: Placement = 'top-start',
+  paperProps: PaperProps = {},
+  anchorOrigin: PopoverProps['anchorOrigin'] = {
+    vertical: 'top',
+    horizontal: 'right',
+  },
+  transformOrigin: PopoverProps['transformOrigin'] = {
+    vertical: 'center',
+    horizontal: 'left',
+  },
 ) {
   const isMounted = useRef(false)
   const timer = useRef<NodeJS.Timeout | null>(null)
@@ -70,35 +77,33 @@ export function useOverlay(
 
   const OverlayComponent = useCallback(
     () => (
-      <Overlay
-        target={targetRef.current}
-        show={isShowing}
-        placement={placement}
+      <Popover
+        anchorEl={targetRef.current}
+        open={isShowing}
+        anchorOrigin={anchorOrigin}
+        transformOrigin={transformOrigin}
+        sx={{ pointerEvents: 'none' }}
       >
-        {({ placement, arrowProps, show: _show, popper, ...props }) => {
-          return (
-            <div
-              className="bootstrap-4-backport"
-              onMouseEnter={() => {
-                toggle(true, false)
-              }}
-              onMouseLeave={() => {
-                toggleHide(true)
-              }}
-              {...props}
-              style={{
-                ...props.style,
-                width: 'max-content',
-                minWidth: '300px',
-              }}
-            >
-              {children}
-            </div>
-          )
-        }}
-      </Overlay>
+        <Paper
+          {...paperProps}
+          onMouseEnter={() => {
+            toggle(true, false)
+          }}
+          onMouseLeave={() => {
+            toggleHide(true)
+          }}
+          sx={{
+            pointerEvents: 'auto',
+            width: 'max-content',
+            minWidth: '300px',
+            ...paperProps.sx,
+          }}
+        >
+          {children}
+        </Paper>
+      </Popover>
     ),
-    [children, isShowing, placement, targetRef, toggle, toggleHide],
+    [children, isShowing, anchorOrigin, targetRef, toggle, toggleHide],
   )
 
   return { OverlayComponent, isShowing, toggleShow, toggleHide, toggle }
