@@ -248,7 +248,7 @@ describe('Accepted Requirements works as expect', () => {
     const { container } = init(props)
 
     jest
-      .spyOn(SynapseClient, 'postAccessApproval')
+      .spyOn(SynapseClient, 'createAccessApproval')
       .mockResolvedValue(accessApprovalMock)
 
     await userEvent.click(
