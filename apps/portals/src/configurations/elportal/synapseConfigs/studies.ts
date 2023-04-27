@@ -131,22 +131,6 @@ export const studiesDetailsPageProps: DetailsPageProps = {
       cssClass: 'tab-database',
       synapseConfigArray: [
         {
-          name: 'RssFeedCards',
-          title: 'Recent Data Updates',
-          columnName: 'Study',
-          resolveSynId: {
-            value: true,
-          },
-          props: {
-            url: 'https://news.adknowledgeportal.org',
-            itemsToShow: 3,
-            allowCategories: [],
-            // mailChimpListName: 'study specific list name????',
-            // mailChimpUrl:'https://study specific url????'
-            viewAllNewsButtonText: 'View All Data Updates',
-          },
-        },
-        {
           name: 'Markdown',
           title: 'Access Requirements',
           columnName: 'accessReqs',
@@ -185,7 +169,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
           name: 'QueryWrapperPlotNav',
           title: 'Study Data',
           props: {
-            sqlOperator: ColumnMultiValueFunction.HAS,
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             rgbIndex,
             visibleColumnCount: 10,
             tableConfiguration: {
