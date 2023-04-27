@@ -35,7 +35,9 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
     isShowing: isShowingOverlay,
     toggleShow,
     toggleHide,
-  } = useOverlay(mediumUserCard, target, TIMER_DELAY_SHOW, TIMER_DELAY_HIDE)
+  } = useOverlay(mediumUserCard, target, TIMER_DELAY_SHOW, TIMER_DELAY_HIDE, {
+    sx: { maxWidth: '425px' },
+  })
 
   let sizeClass
   switch (avatarSize) {

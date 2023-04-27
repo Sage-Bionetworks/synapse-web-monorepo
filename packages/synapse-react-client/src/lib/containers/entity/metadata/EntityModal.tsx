@@ -1,7 +1,6 @@
 import Skeleton from '@mui/material/Skeleton'
 import Form from '@rjsf/core'
 import React, { useRef, useState } from 'react'
-import { Modal } from 'react-bootstrap'
 import {
   entityTypeToFriendlyName,
   isVersionableEntityType,
@@ -13,11 +12,21 @@ import {
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { VersionableEntity } from '../../../utils/synapseTypes'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
-import { FluidModal } from '../../FluidModal'
 import { displayToast } from '../../ToastMessage'
 import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  Tooltip,
+} from '@mui/material'
+import { CloseButton } from '../../ConfirmationDialog'
 
 export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -37,14 +46,15 @@ export type EntityModalProps = {
   readonly showTabs?: boolean
 }
 
-export const EntityModal: React.FC<EntityModalProps> = ({
-  entityId,
-  versionNumber,
-  show,
-  onClose,
-  initialTab = EntityModalTabs.METADATA,
-  showTabs = true,
-}: EntityModalProps) => {
+export function EntityModal(props: EntityModalProps) {
+  const {
+    entityId,
+    versionNumber,
+    show,
+    onClose,
+    initialTab = EntityModalTabs.METADATA,
+    showTabs = true,
+  } = props
   const annotationEditorFormRef = useRef<Form<Record<string, unknown>>>(null)
 
   const [currentTab, setCurrentTab] = useState<EntityModalTabs>(initialTab)
@@ -60,147 +70,164 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   const isLatestVersion =
     isVersionable && (entityBundle.entity as VersionableEntity).isLatestVersion!
 
-  let primaryAction
-  let secondaryActions
-
-  if (!entityBundle) {
-    primaryAction = { skeleton: true }
-    secondaryActions = undefined
-  } else {
-    if (!window.location.href.includes(entityId)) {
-      primaryAction = {
-        skeleton: false,
-        copy: `Open ${entityTypeToFriendlyName(entityBundle.entityType)}`,
-        onClick: () =>
-          window.open(
-            `${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}#!Synapse:${entityId}`,
-            '_blank',
-            'noopener',
-          ),
+  const showOpenEntityPageButton =
+    currentTab === EntityModalTabs.METADATA &&
+    entityBundle &&
+    !window.location.href.includes(entityId)
+  const openEntityPageButton = (
+    <Button
+      variant={'contained'}
+      onClick={() =>
+        window.open(
+          `${getEndpoint(
+            BackendDestinationEnum.PORTAL_ENDPOINT,
+          )}#!Synapse:${entityId}`,
+          '_blank',
+          'noopener',
+        )
       }
-    }
-  }
+    >
+      Open{' '}
+      {entityBundle ? entityTypeToFriendlyName(entityBundle?.entityType) : ''}
+    </Button>
+  )
 
-  if (currentTab === EntityModalTabs.ANNOTATIONS) {
-    if (isInEditMode) {
-      primaryAction = {
-        copy: `Save Annotations`,
-        onClick: () => {
-          // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/2104#issuecomment-847924986
-          // Should be fixed if we upgrade to RJSF v5
-          ;(annotationEditorFormRef.current as any).formElement.dispatchEvent(
-            new CustomEvent('submit', {
-              cancelable: true,
-              bubbles: true,
-            }),
-          )
-        },
+  const showSaveAnnotationsButton =
+    currentTab === EntityModalTabs.ANNOTATIONS && isInEditMode
+  const saveAnnotationsButton = (
+    <Button
+      variant={'contained'}
+      onClick={() => {
+        // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/2104#issuecomment-847924986
+        // Should be fixed if we upgrade to RJSF v5
+        ;(annotationEditorFormRef.current as any).formElement.dispatchEvent(
+          new CustomEvent('submit', {
+            cancelable: true,
+            bubbles: true,
+          }),
+        )
+      }}
+    >
+      Save Annotations
+    </Button>
+  )
+
+  const showCancelAnnotationEditsButton =
+    currentTab === EntityModalTabs.ANNOTATIONS && isInEditMode
+  const cancelAnnotationEditsButton = (
+    <Button
+      variant={'outlined'}
+      onClick={() => {
+        if (hasClickedCancel) {
+          setIsInEditMode(false)
+        }
+        setHasClickedCancel(!hasClickedCancel)
+      }}
+    >
+      {hasClickedCancel
+        ? 'Are you sure? Unsaved changes will be lost'
+        : 'Cancel'}
+    </Button>
+  )
+
+  const showEditAnnotationsButton =
+    canEdit && currentTab === EntityModalTabs.ANNOTATIONS && !isInEditMode
+  const editAnnotationsButton = (
+    <Tooltip
+      title={
+        isVersionable && !isLatestVersion
+          ? 'Annotations can only be edited on the latest version'
+          : undefined
       }
-      secondaryActions = [
-        {
-          copy: hasClickedCancel
-            ? 'Are you sure? Unsaved changes will be lost'
-            : 'Cancel',
-          onClick: () => {
-            if (hasClickedCancel) {
-              setIsInEditMode(false)
-            }
-            setHasClickedCancel(!hasClickedCancel)
-          },
-        },
-      ]
-    } else if (canEdit) {
-      secondaryActions = [
-        {
-          copy: 'Edit',
-          disabled: isVersionable && !isLatestVersion,
-          'data-for': 'entityModalTooltip',
-          'data-tip':
-            isVersionable && !isLatestVersion
-              ? 'Annotations can only be edited on the latest version'
-              : undefined,
-          onClick: () => {
-            setIsInEditMode(true)
-          },
-        },
-      ]
-    }
-  }
+    >
+      <Button
+        variant={'contained'}
+        disabled={isVersionable && !isLatestVersion}
+        onClick={() => {
+          setIsInEditMode(true)
+        }}
+      >
+        Edit
+      </Button>
+    </Tooltip>
+  )
 
   return (
-    <>
-      <FluidModal
-        className={`EntityMetadata ${isInEditMode ? 'isInEditMode' : ''}`}
-        title={
-          entityBundle ? (
-            <Modal.Title>{entityBundle.entity.name}</Modal.Title>
-          ) : (
-            <Skeleton width={'40%'} />
-          )
-        }
-        show={show}
-        onClose={onClose}
-        primaryAction={primaryAction}
-        secondaryActions={secondaryActions}
-      >
-        <>
-          {showTabs && !isInEditMode ? (
-            <div className="Tabs">
-              {Object.keys(EntityModalTabs).map((tabName: string) => {
-                return (
-                  <div
-                    className="Tab"
-                    role="tab"
-                    key={tabName}
-                    onClick={e => {
-                      e.stopPropagation()
-                      setCurrentTab(EntityModalTabs[tabName])
-                    }}
-                    aria-selected={tabName === currentTab}
-                  >
-                    {tabName}
-                  </div>
-                )
-              })}
-            </div>
-          ) : null}
-          <div
-            style={
-              currentTab === EntityModalTabs.ANNOTATIONS
-                ? {}
-                : { display: 'none' }
-            }
-          >
-            {isInEditMode ? (
-              <SynapseErrorBoundary>
-                <SchemaDrivenAnnotationEditor
-                  entityId={entityId}
-                  formRef={annotationEditorFormRef}
-                  onSuccess={() => {
-                    displayToast('Annotations successfully updated.', 'success')
-                    setIsInEditMode(false)
+    <Dialog
+      className={`EntityMetadata`}
+      open={show}
+      onClose={onClose}
+      maxWidth={isInEditMode ? 'md' : 'sm'}
+      fullWidth
+    >
+      <DialogTitle>
+        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+          {entityBundle ? entityBundle.entity.name : <Skeleton width={'40%'} />}
+          <Box sx={{ flexGrow: 1 }} />
+          <CloseButton onClick={onClose} />
+        </Stack>
+      </DialogTitle>
+      <DialogContent>
+        {showTabs && !isInEditMode ? (
+          <div className="Tabs">
+            {Object.keys(EntityModalTabs).map((tabName: string) => {
+              return (
+                <div
+                  className="Tab"
+                  role="tab"
+                  key={tabName}
+                  onClick={e => {
+                    e.stopPropagation()
+                    setCurrentTab(EntityModalTabs[tabName])
                   }}
-                  onCancel={() => setIsInEditMode(false)}
-                />
-              </SynapseErrorBoundary>
-            ) : (
-              <AnnotationsTable
+                  aria-selected={tabName === currentTab}
+                >
+                  {tabName}
+                </div>
+              )
+            })}
+          </div>
+        ) : null}
+        <div
+          style={
+            currentTab === EntityModalTabs.ANNOTATIONS
+              ? {}
+              : { display: 'none' }
+          }
+        >
+          {isInEditMode ? (
+            <SynapseErrorBoundary>
+              <SchemaDrivenAnnotationEditor
                 entityId={entityId}
-                versionNumber={versionNumber}
+                formRef={annotationEditorFormRef}
+                onSuccess={() => {
+                  displayToast('Annotations successfully updated.', 'success')
+                  setIsInEditMode(false)
+                }}
+                onCancel={() => setIsInEditMode(false)}
               />
-            )}
-          </div>
-          <div
-            style={
-              currentTab === EntityModalTabs.METADATA ? {} : { display: 'none' }
-            }
-          >
-            <MetadataTable entityId={entityId} versionNumber={versionNumber} />
-          </div>
-        </>
-      </FluidModal>
-    </>
+            </SynapseErrorBoundary>
+          ) : (
+            <AnnotationsTable
+              entityId={entityId}
+              versionNumber={versionNumber}
+            />
+          )}
+        </div>
+        <div
+          style={
+            currentTab === EntityModalTabs.METADATA ? {} : { display: 'none' }
+          }
+        >
+          <MetadataTable entityId={entityId} versionNumber={versionNumber} />
+        </div>
+      </DialogContent>
+      <DialogActions>
+        {showCancelAnnotationEditsButton && cancelAnnotationEditsButton}
+        {showSaveAnnotationsButton && saveAnnotationsButton}
+        {showEditAnnotationsButton && editAnnotationsButton}
+        {showOpenEntityPageButton && openEntityPageButton}
+      </DialogActions>
+    </Dialog>
   )
 }
