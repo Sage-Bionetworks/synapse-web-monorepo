@@ -14,7 +14,7 @@
     padding: 50px 0px 30px 0px;
   }
   .sectionTitle {
-    padding: 50px 0px 45px 0px;
+    padding: 50px 0px 15px 0px;
     text-align: center;
   }
   .sectionSubtitle {
@@ -28,22 +28,18 @@
     margin-top: 20px;
     display: grid;
     max-width: 750px;
-    grid-template-columns: 500px 200px 25px;
+    grid-template-columns: 550px 100px 25px;
     input {
       height: 41px;
     }
     .search-button-container {
       place-self: center;
     }
-    .help-popover {
-      font-size: 20px;
-      place-self: center;
-    }
   }
   .PopularSearches {
     display: flex;
     justify-content: space-between;
-    margin: 20px 0px 40px 0px;
+    margin: 20px 0px 20px 0px;
     width: 800px;
   }
   .description {
@@ -69,7 +65,7 @@
     padding: 50px 0px 100px 0px;
   }
 
-  .bootstrap-4-backport .highlightSubmitToolButton {
+  .highlightSubmitToolButton {
     background-color: #e27134;
     color: white;
   }
