@@ -7,6 +7,7 @@ import {
   RowSet,
 } from 'synapse-react-client/dist/utils/synapseTypes'
 import { gotoExploreToolsWithFullTextSearch } from './BrowseToolsPage'
+import { Link } from '@mui/material'
 
 export type PopularSearchesProps = {
   sql: string
@@ -60,7 +61,7 @@ const PopularSearches: React.FunctionComponent<PopularSearchesProps> = ({
   }, [sql, accessToken])
 
   return (
-    <div className="PopularSearches bootstrap-4-backport">
+    <div className="PopularSearches">
       {!isLoading &&
         rowSet &&
         rowSet.rows.length > 0 &&
@@ -74,12 +75,12 @@ const PopularSearches: React.FunctionComponent<PopularSearchesProps> = ({
           const displayText = row.values[displayTextColumnIndex]
           const fullTextSearch = row.values[ftsColumnIndex] as string
           return (
-            <a
+            <Link
               key={rowIndex}
               onClick={() => gotoExploreToolsWithFullTextSearch(fullTextSearch)}
             >
               {displayText}
-            </a>
+            </Link>
           )
         })}
     </div>
