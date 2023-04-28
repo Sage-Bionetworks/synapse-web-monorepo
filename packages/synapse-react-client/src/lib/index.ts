@@ -48,7 +48,6 @@ import TermsAndConditions from './containers/TermsAndConditions'
 import { displayToast, SynapseToastContainer } from './containers/ToastMessage'
 import UpsetPlot from './containers/UpsetPlot'
 import UserCard from './containers/UserCard'
-import { AccessTokenPage } from './containers/personal_access_token/AccessTokenPage'
 import UserCardListRotate from './containers/UserCardListRotate'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import SynapsePlot from './containers/widgets/SynapsePlot'
@@ -114,7 +113,6 @@ const SynapseComponents = {
   ExperimentalMode,
   EntityBadgeIcons,
   DownloadCartPage,
-  AccessTokenPage,
   ShowDownloadV2,
   FullWidthAlert: FullWidthAlert,
   SynapseToastContainer,
