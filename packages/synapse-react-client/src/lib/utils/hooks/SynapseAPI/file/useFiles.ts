@@ -93,9 +93,7 @@ export function useGetFileBatch(
   if (request.includePreSignedURLs || request.includePreviewPreSignedURLs) {
     // Don't use this hook if you need pre-signed URLs. They expire every 30 seconds, so you will either end up giving the
     // user an expired URL, or making requests to the backend more frequently than necessary.
-    console.error('useGetFileBatch does not support pre-signed URLs.')
-    request.includePreSignedURLs = false
-    request.includePreviewPreSignedURLs = false
+    throw new Error('useGetFileBatch does not support pre-signed URLs.')
   }
 
   return useQuery<BatchFileResult, SynapseClientError>(

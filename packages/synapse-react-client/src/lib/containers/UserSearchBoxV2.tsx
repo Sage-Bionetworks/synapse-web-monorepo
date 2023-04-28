@@ -73,6 +73,7 @@ const customSelectComponents: Partial<
           userGroupHeader={data.header}
           disableHref={true}
           showFullName={true}
+          showCardOnHover={false}
         />
       </components.Option>
     )

@@ -14,12 +14,14 @@ type UserOrTeamBadgeProps = {
   userGroupHeader?: UserGroupHeader
   showFullName?: boolean
   disableHref?: boolean
+  showCardOnHover?: boolean
 }
 
 export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
   let principalId = props.principalId
   const {
     disableHref,
+    showCardOnHover,
     showFullName,
     userGroupHeader: providedUserGroupHeader,
   } = props
@@ -60,6 +62,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
         size={SMALL_USER_CARD}
         disableLink={disableHref}
         showFullName={showFullName}
+        showCardOnHover={showCardOnHover}
       />
     )
   } else {
