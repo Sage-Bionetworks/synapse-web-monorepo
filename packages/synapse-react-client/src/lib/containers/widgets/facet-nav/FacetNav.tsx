@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Button } from 'react-bootstrap'
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import {
   FacetColumnRequest,
@@ -17,6 +16,7 @@ import { useQueryContext } from '../../QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
 import FacetNavPanel, { PlotType } from './FacetNavPanel'
 import TotalQueryResults from '../../TotalQueryResults'
+import WideButton from '../../../components/styled/WideButton'
 
 /*
 TODO: This component has a few bugs when its props are updated with new data, this should be handled
@@ -254,18 +254,19 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               ))}
             </div>
             {showMoreButtonState !== 'NONE' && (
-              <div className="FacetNav__showMoreContainer bootstrap-4-backport">
-                <Button
-                  variant="secondary"
-                  className="btn-wide FacetNav__showMore"
+              <div className="FacetNav__showMoreContainer">
+                <WideButton
+                  variant="contained"
+                  color="secondary"
                   onClick={() =>
                     onShowMoreClick(showMoreButtonState === 'MORE')
                   }
+                  sx={{ width: '250px' }}
                 >
                   {showMoreButtonState === 'LESS'
                     ? 'Hide Charts'
                     : 'View All Charts'}
-                </Button>
+                </WideButton>
               </div>
             )}
           </div>
