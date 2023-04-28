@@ -90,6 +90,7 @@ export const AccountSettings = () => {
   const trustCredentialRef = useRef<HTMLDivElement>(null)
   const twoFactorAuthRef = useRef<HTMLDivElement>(null)
   const personalAccessTokenRef = useRef<HTMLDivElement>(null)
+  const oauthClientManagementRef = useRef<HTMLDivElement>(null)
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
     getUseUtcTimeFromCookie().toString(),
@@ -215,6 +216,11 @@ export const AccountSettings = () => {
                 onClick={() => handleScroll(personalAccessTokenRef)}
               >
                 Personal Access Tokens
+              </ListItemButton>
+              <ListItemButton
+                onClick={() => handleScroll(oauthClientManagementRef)}
+              >
+                OAuth Clients
               </ListItemButton>
             </Paper>
 
@@ -651,11 +657,38 @@ export const AccountSettings = () => {
                   as your password.
                 </Typography>
                 <div className="primary-button-container">
-                  <Link sx={credentialButtonSX}>
+                  <Link
+                    sx={credentialButtonSX}
+                    onClick={() => handleChangesFn('personalaccesstokens')}
+                  >
                     Manage Personal Access Tokens
                   </Link>
                   <Link
                     href="https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#ManagingYourAccount-PersonalAccessTokens"
+                    target="_blank"
+                  >
+                    More information
+                  </Link>
+                </div>
+              </Paper>
+              <Paper
+                ref={oauthClientManagementRef}
+                className="account-setting-panel main-panel"
+              >
+                <Typography variant={'headline2'}>OAuth Clients</Typography>
+                <Typography variant={'body1'} sx={{ my: 1 }}>
+                  OAuth Clients can be created to develop applications that use
+                  Synapse as an identity provider.
+                </Typography>
+                <div className="primary-button-container">
+                  <Link
+                    sx={credentialButtonSX}
+                    onClick={() => handleChangesFn('oauthclientmanagement')}
+                  >
+                    Manage OAuth Clients
+                  </Link>
+                  <Link
+                    href="https://help.synapse.org/docs/Using-Synapse-as-an-OAuth-Server.2048327904.html"
                     target="_blank"
                   >
                     More information
