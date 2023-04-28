@@ -1,12 +1,21 @@
 import * as React from 'react'
-import { Button, OverlayTrigger, Popover } from 'react-bootstrap'
+import { Button, IconButton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
 import { EXPERIMENTAL_MODE_COOKIE } from '../utils/SynapseConstants'
 import { InfoOutlined } from '@mui/icons-material'
+import LightTooltip from '../components/styled/LightTooltip'
+
+const experimentalModeText =
+  'This mode gives you early access to features that are still in development. Please note that we do not guarantee an absence of errors, and that the data created using these features may be lost during product upgrade.'
 
 const ExperimentalMode: React.FC = () => {
+  const [open, setOpen] = useState<boolean>(false)
+  const toggleOpen = () => {
+    setOpen(!open)
+  }
+
   const [isExperimentalModeOn, setIsExperimentalModeOn] =
     useState<boolean>(false)
   const cookies = new UniversalCookies()
@@ -34,24 +43,11 @@ const ExperimentalMode: React.FC = () => {
     setIsExperimentalModeOn(false)
   }
 
-  const popover = ({ ...props }) => (
-    <div className={'bootstrap-4-backport'}>
-      <Popover id={'experimental-mode-popover'} {...props}>
-        <Popover.Content>
-          This mode gives you early access to features that are still in
-          development. Please note that we do not guarantee an absence of
-          errors, and that the data created using these features may be lost
-          during product upgrade.
-        </Popover.Content>
-      </Popover>
-    </div>
-  )
-
   return (
     <span className={'experimental-mode-wrapper'}>
       <Button
         className={'experimental-mode'}
-        variant="link"
+        variant="text"
         onClick={
           isExperimentalModeOn
             ? deleteExperimentalModeCookie
@@ -60,9 +56,21 @@ const ExperimentalMode: React.FC = () => {
       >
         Experimental mode is {isExperimentalModeOn ? 'on' : 'off'}
       </Button>
-      <OverlayTrigger trigger="click" placement="top" overlay={popover}>
-        <InfoOutlined style={{ verticalAlign: 'middle' }} />
-      </OverlayTrigger>
+      <LightTooltip
+        title={experimentalModeText}
+        arrow
+        placement="top"
+        open={open}
+      >
+        <IconButton
+          aria-label="info"
+          color="inherit"
+          onClick={toggleOpen}
+          sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+        >
+          <InfoOutlined sx={{ verticalAlign: 'middle' }} />
+        </IconButton>
+      </LightTooltip>
     </span>
   )
 }
