@@ -919,8 +919,8 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3(react@18.2.0)
       react-select:
-        specifier: ^5.4.0
-        version: 5.7.0(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^5.7.2
+        version: 5.7.2(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0)
       react-sizeme:
         specifier: ^2.6.12
         version: 2.6.12(react-dom@18.2.0)(react@18.2.0)
@@ -20178,8 +20178,8 @@ packages:
       '@testing-library/dom': 8.20.0
     dev: true
 
-  /react-select@5.7.0(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-lJGiMxCa3cqnUr2Jjtg9YHsaytiZqeNOKeibv6WF5zbK/fPegZ1hg3y/9P1RZVLhqBTs0PfqQLKuAACednYGhQ==}
+  /react-select@5.7.2(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-cTlJkQ8YjV6T/js8wW0owTzht0hHGABh29vjLscY4HfZGkv7hc3FFTmRp9NzY/Ib1uQ36GieAKEjxpHdpCFpcA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0

@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { Paper, PaperProps, Popover, PopoverProps } from '@mui/material'
+import { Fade, Paper, PaperProps, Popover, PopoverProps } from '@mui/material'
 
 function resetTimer(timer: NodeJS.Timeout | null) {
   if (timer) {
@@ -78,6 +78,7 @@ export function useOverlay(
   const OverlayComponent = useCallback(
     () => (
       <Popover
+        TransitionComponent={Fade}
         anchorEl={targetRef.current}
         open={isShowing}
         anchorOrigin={anchorOrigin}
