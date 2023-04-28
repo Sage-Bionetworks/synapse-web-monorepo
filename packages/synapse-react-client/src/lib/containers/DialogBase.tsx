@@ -31,15 +31,16 @@ export const CloseButton: React.FC<CloseButtonProps> = ({
 
 export type DialogBaseProps = {
   open: boolean
-  title: string | JSX.Element
-  content: string | JSX.Element
-  actions?: JSX.Element
+  title: React.ReactNode
+  content: React.ReactNode
+  actions?: React.ReactNode
   className?: string
   onCancel: () => void
   hasCloseButton?: boolean
   helpMarkdown?: string
   helpUrl?: string
   maxWidth?: DialogProps['maxWidth']
+  fullWidth?: boolean
 }
 
 /**
@@ -56,10 +57,11 @@ export const DialogBase = ({
   helpMarkdown,
   helpUrl,
   maxWidth = 'sm',
+  fullWidth = true,
 }: DialogBaseProps) => {
   return (
     <Dialog
-      fullWidth
+      fullWidth={fullWidth}
       maxWidth={maxWidth}
       open={open}
       className={className}

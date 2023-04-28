@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { FormLabel } from 'react-bootstrap'
+import { Typography } from '@mui/material'
 import { SynapseClient } from '../../utils'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
@@ -103,7 +103,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<
         placeholder="e.g. Synapse command line access on my laptop"
       />
       <div className="AccessTokenModal SRC-marginBottomTop">
-        <FormLabel className="SRC-boldText">Token Permissions</FormLabel>
+        <Typography variant="label">Token Permissions</Typography>
         <Checkbox
           label={scopeDescriptions.view.displayName}
           checked={viewAccess}

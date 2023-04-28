@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { TextField, IconButton, InputAdornment } from '@mui/material'
+import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { ToastMessage } from './ToastMessage'
 
@@ -45,11 +45,12 @@ export const CopyToClipboardInput: React.FunctionComponent<
         show={showModal}
         autohide={true}
       ></ToastMessage>
-      <div
-        style={{
-          margin: '15px 0px',
-          display: 'flex',
-          justifyContent: 'center',
+      <Box
+        display="flex"
+        justifyContent="center"
+        sx={{
+          my: 2,
+          mx: 0,
         }}
         ref={ref}
       >
@@ -72,7 +73,7 @@ export const CopyToClipboardInput: React.FunctionComponent<
             ),
           }}
         />
-      </div>
+      </Box>
     </>
   )
 }
