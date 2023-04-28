@@ -28,6 +28,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import ApplicationSessionManager from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionManager'
 import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
 import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAuthBackupCodesPage'
+import { PersonalAccessTokensPage } from './components/PersonalAccessTokensPage'
 
 const isCodeSearchParam = getSearchParam('code') !== undefined
 const isProviderSearchParam = getSearchParam('provider') !== undefined
@@ -152,6 +153,11 @@ function App() {
                                 path={'/authenticated/2fa/generatecodes'}
                                 exact
                                 render={() => <TwoFactorAuthBackupCodesPage />}
+                              />
+                              <Route
+                                path={'/authenticated/personalaccesstokens'}
+                                exact
+                                render={() => <PersonalAccessTokensPage />}
                               />
                             </>
                           )}

@@ -651,7 +651,10 @@ export const AccountSettings = () => {
                   as your password.
                 </Typography>
                 <div className="primary-button-container">
-                  <Link sx={credentialButtonSX}>
+                  <Link
+                    sx={credentialButtonSX}
+                    onClick={() => handleChangesFn('personalaccesstokens')}
+                  >
                     Manage Personal Access Tokens
                   </Link>
                   <Link
