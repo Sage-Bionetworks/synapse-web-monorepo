@@ -1,99 +1,48 @@
-import CloseIcon from '@mui/icons-material/Close'
-import {
-  Box,
-  Button,
-  ButtonProps,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogProps,
-  DialogTitle,
-  IconButton,
-  Stack,
-  SxProps,
-} from '@mui/material'
+import { Button, ButtonProps } from '@mui/material'
 import React from 'react'
-import { HelpPopover } from './HelpPopover'
+import { DialogBase, DialogBaseProps } from './DialogBase'
 
-export type CloseButtonProps = {
-  sx?: SxProps
-  onClick?: () => void
-}
-
-export const CloseButton: React.FC<CloseButtonProps> = ({
-  sx = { color: 'grey.700' },
-  onClick,
-}) => {
-  return (
-    <IconButton sx={sx} onClick={onClick} aria-label="close">
-      <CloseIcon />
-    </IconButton>
-  )
-}
-
-export type ConfirmationDialogProps = {
-  open: boolean
-  title: string
-  content: string | JSX.Element
+export type ConfirmationDialogProps = DialogBaseProps & {
   confirmButtonText?: string
   confirmButtonColor?: ButtonProps['color']
-  className?: string
+  confirmButtonVariant?: ButtonProps['variant']
   onConfirm: () => void
-  onCancel: () => void
-  hasCloseButton?: boolean
-  helpMarkdown?: string
-  helpUrl?: string
-  maxWidth?: DialogProps['maxWidth']
+  hasCancelButton?: boolean
 }
 
 /**
  * A confirmation dialog built using MUI components.
  */
-export const ConfirmationDialog = ({
-  open,
-  title,
-  content,
-  confirmButtonText = 'OK',
-  confirmButtonColor = 'primary',
-  className,
-  onConfirm,
-  onCancel,
-  hasCloseButton = true,
-  helpMarkdown,
-  helpUrl,
-  maxWidth = 'sm',
-}: ConfirmationDialogProps) => {
+export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
+  const {
+    confirmButtonText = 'OK',
+    confirmButtonColor = 'primary',
+    confirmButtonVariant = 'contained',
+    onConfirm,
+    onCancel,
+    hasCancelButton = true,
+    ...rest
+  } = props
   return (
-    <Dialog
-      fullWidth
-      maxWidth={maxWidth}
-      open={open}
-      className={className}
-      onClose={() => onCancel()}
-    >
-      <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
-          {title}
-          {helpMarkdown && (
-            <HelpPopover markdownText={helpMarkdown!} helpUrl={helpUrl} />
+    <DialogBase
+      onCancel={onCancel}
+      actions={
+        <>
+          {hasCancelButton && (
+            <Button variant="outlined" onClick={() => onCancel()}>
+              Cancel
+            </Button>
           )}
-          <Box sx={{ flexGrow: 1 }} />
-          {hasCloseButton && <CloseButton onClick={() => onCancel()} />}
-        </Stack>
-      </DialogTitle>
-      <DialogContent>{content}</DialogContent>
-      <DialogActions>
-        <Button variant="outlined" onClick={() => onCancel()}>
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          color={confirmButtonColor}
-          onClick={() => onConfirm()}
-        >
-          {confirmButtonText}
-        </Button>
-      </DialogActions>
-    </Dialog>
+          <Button
+            variant={confirmButtonVariant}
+            color={confirmButtonColor}
+            onClick={() => onConfirm()}
+          >
+            {confirmButtonText}
+          </Button>
+        </>
+      }
+      {...rest}
+    />
   )
 }
