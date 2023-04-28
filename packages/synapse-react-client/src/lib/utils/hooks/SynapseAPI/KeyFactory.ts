@@ -127,6 +127,10 @@ const entityQueryKeyObjects = {
     scope: 'entityHeaders',
     entityHeadersRequest: references,
   }),
+  accessRequirements: (id: string) => ({
+    ...entityQueryKeyObjects.entity(id),
+    scope: 'accessRequirements',
+  }),
 }
 
 const downloadListQueryKeys = {
@@ -238,6 +242,10 @@ export class KeyFactory {
     return this.getKey(entityQueryKeyObjects.header(id))
   }
 
+  public getEntityAccessRequirementsQueryKey(id: string) {
+    return this.getKey(entityQueryKeyObjects.accessRequirements(id))
+  }
+
   public getEntityHeadersQueryKey(references: ReferenceList) {
     return this.getKey(entityQueryKeyObjects.headers(references))
   }
@@ -325,6 +333,28 @@ export class KeyFactory {
       ACCESS_REQUIREMENT_QUERY_KEY,
       'restrictionInformation',
       request,
+    )
+  }
+
+  public getAccessRequirementStatusQueryKey(id: string) {
+    return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, id, 'status')
+  }
+
+  public getDataAccessRequestForUpdateQueryKey(accessRequirementId: string) {
+    return this.getKey(
+      ACCESS_REQUIREMENT_QUERY_KEY,
+      accessRequirementId,
+      'dataAccessRequestForUpdate',
+    )
+  }
+
+  public getAccessRequirementResearchProjectQueryKey(
+    accessRequirementId: string,
+  ) {
+    return this.getKey(
+      ACCESS_REQUIREMENT_QUERY_KEY,
+      accessRequirementId,
+      'researchProject',
     )
   }
 
@@ -547,5 +577,9 @@ export class KeyFactory {
 
   public getTwoFactorAuthStatusQueryKey() {
     return this.getKey('twoFactorAuthStatus')
+  }
+
+  public getBatchOfFiles(request: BatchFileRequest) {
+    return this.getKey('fileBatch', request)
   }
 }

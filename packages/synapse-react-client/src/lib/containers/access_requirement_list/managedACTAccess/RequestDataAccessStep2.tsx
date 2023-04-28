@@ -17,6 +17,8 @@ import {
   FileHandleAssociateType,
   FileUploadComplete,
   ManagedACTAccessRequirement,
+  Renewal,
+  Request,
   RequestInterface,
   RestrictableObjectType,
   SubmissionState,
@@ -31,7 +33,6 @@ import UserSearchBox from '../../UserSearchBox'
 import { UserCardSmall } from '../../UserCardSmall'
 import IconSvg from '../../IconSvg'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import { RenewalInterface } from '../../../utils/synapseTypes/AccessRequirement/RenewalInterface'
 import { RadioGroup } from '../../widgets/RadioGroup'
 import { RequestDataStepCallbackArgs } from '../AccessRequirementList'
 import {
@@ -97,7 +98,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [IRB, setIRB] = useState<DataAccessDoc>()
   const [attachments, setAttachments] = useState<DataAccessDoc[]>([])
   const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<
-    RequestInterface | RenewalInterface
+    Request | Renewal
   >()
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [isRenewal, setIsRenewal] = useState<boolean>(false)

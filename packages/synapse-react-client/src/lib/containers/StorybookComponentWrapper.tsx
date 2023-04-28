@@ -34,6 +34,7 @@ import {
   defaultQueryClientConfig,
   FullContextProvider,
 } from '../utils/FullContextProvider'
+import { createTheme } from '@mui/material/styles'
 
 export async function sessionChangeHandler() {
   let accessToken: string | undefined = await getAccessTokenFromCookie()
@@ -134,20 +135,21 @@ export function StorybookComponentWrapper(props: {
     [accessToken],
   )
 
+  const theme = createTheme(defaultMuiThemeOptions, {
+    palette: paletteMap[storybookContext.globals.palette],
+  })
+
   return (
     <FullContextProvider
       queryClient={storybookQueryClient}
       key={accessToken}
       synapseContext={synapseContext}
-      theme={{
-        ...defaultMuiThemeOptions,
-        palette: paletteMap[storybookContext.globals.palette],
-      }}
+      theme={theme}
     >
+      {storybookContext.globals.showReactQueryDevtools && (
+        <ReactQueryDevtools />
+      )}
       <MemoryRouter>
-        {storybookContext.globals.showReactQueryDevtools && (
-          <ReactQueryDevtools />
-        )}
         <SynapseToastContainer />
         <main>{props.children}</main>
       </MemoryRouter>

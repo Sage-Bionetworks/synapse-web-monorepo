@@ -1,12 +1,15 @@
 import { rest } from 'msw'
 import {
   ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
 } from '../../../src/lib/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '../../../src/lib/utils/functions/getEndpoint'
 import {
   AccessRequirement,
+  AccessRequirementStatus,
   ObjectType,
+  SubmissionState,
   WikiPageKey,
 } from '../../../src/lib/utils/synapseTypes'
 import { SynapseApiResponse } from '../handlers'
@@ -14,6 +17,7 @@ import {
   mockAccessRequirements,
   mockAccessRequirementWikiPageKeys,
 } from '../../mockAccessRequirements'
+import { mockApprovedSubmission } from '../../dataaccess/MockSubmission'
 
 export const getAccessRequirementHandlers = (backendOrigin: string) => [
   rest.get(
@@ -37,7 +41,7 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
     },
   ),
   rest.get(
-    `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(':id')}`,
+    `${backendOrigin}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(':id')}`,
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<WikiPageKey> = {
@@ -54,6 +58,35 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
         status = 200
       }
 
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+  rest.get(
+    `${backendOrigin}${ACCESS_REQUIREMENT_STATUS(':id')}`,
+
+    async (req, res, ctx) => {
+      const accessRequirement = mockAccessRequirements.find(
+        accessRequirement => req.params.id === accessRequirement.id.toString(),
+      )
+      const isManagedACTAR =
+        accessRequirement.concreteType ===
+        'org.sagebionetworks.repo.model.ManagedACTAccessRequirement'
+      const response: AccessRequirementStatus = {
+        accessRequirementId: req.params.id as string,
+        concreteType: isManagedACTAR
+          ? 'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus'
+          : 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+        isApproved: true,
+        currentSubmissionStatus: isManagedACTAR
+          ? {
+              submissionId: mockApprovedSubmission.id,
+              submittedBy: mockApprovedSubmission.submittedBy,
+              modifiedOn: mockApprovedSubmission.modifiedOn,
+              state: SubmissionState.APPROVED,
+            }
+          : undefined,
+      }
+      const status = response ? 200 : 404
       return res(ctx.status(status), ctx.json(response))
     },
   ),

@@ -96,7 +96,7 @@ export default function AcceptedRequirements({
           state: ApprovalState.APPROVED,
         }
 
-        SynapseClient.postAccessApproval(accessToken, accessApprovalRequest)
+        SynapseClient.createAccessApproval(accessToken, accessApprovalRequest)
           .then(_ => {
             setIsApproved(true)
           })
