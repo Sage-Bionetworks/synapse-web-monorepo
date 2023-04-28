@@ -3,11 +3,11 @@ import { SourceAppLogo } from './SourceApp'
 import { StyledOuterContainer } from './StyledComponents'
 import { Box, Paper, Typography } from '@mui/material'
 import { BackButton } from './BackButton'
-import { AccessTokenPage } from 'synapse-react-client/dist/containers/personal_access_token/AccessTokenPage'
+import { OAuthManagement } from 'synapse-react-client/dist/containers/oauth/OAuthManagement'
 
-export const PersonalAccessTokensPage = () => {
+export const OAuthClientManagementPage = () => {
   return (
-    <StyledOuterContainer className="PersonalAccessTokenPage">
+    <StyledOuterContainer className="OAuthClientManagementPage">
       <Paper
         className="SageResourcesPage"
         sx={{
@@ -21,14 +21,17 @@ export const PersonalAccessTokensPage = () => {
         <BackButton to={'/authenticated/myaccount'} />
         <Box sx={{ padding: '60px' }}>
           <SourceAppLogo sx={{ display: 'block' }} />
-          <Typography variant="headline3">Personal Access Tokens</Typography>
-          <AccessTokenPage
-            title=""
-            body="Issue personal access tokens to access your Synapse resources in the
-            command line clients. A personal access token will expire if it is
-            unused for 180 consecutive days. You may create up to 100 personal
-            access tokens."
-          />
+          <Typography
+            variant="headline3"
+            sx={{ marginTop: '20px', marginBottom: '20px' }}
+          >
+            OAuth Client Management
+          </Typography>
+          <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+            OAuth Clients can be created to develop applications that use
+            Synapse as an identity provider.
+          </Typography>
+          <OAuthManagement />
         </Box>
       </Paper>
     </StyledOuterContainer>
