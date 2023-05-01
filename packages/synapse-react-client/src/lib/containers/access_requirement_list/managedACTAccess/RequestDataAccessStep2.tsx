@@ -462,10 +462,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     })
   }
 
-  const uploadCallback = (data: UploadCallbackResp) => {
+  const uploadCallback = (data: UploadCallbackResp, context: string) => {
     if (data.resp && data.success) {
       const uploadResponse: FileUploadComplete = data.resp
-      if (data.context === 'attachments') {
+      if (context === 'attachments') {
         const docs = formSubmitRequestObject?.attachments
           ? formSubmitRequestObject?.attachments
           : []
@@ -484,11 +484,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       } else {
         setFormSubmitRequestObject(prevState => {
           return Object.assign({}, prevState, {
-            [data.context]: uploadResponse.fileHandleId,
+            [context]: uploadResponse.fileHandleId,
           })
         })
         // Update the view
-        if (data.context === 'ducFileHandleId') {
+        if (context === 'ducFileHandleId') {
           setDUC(prevState => {
             return Object.assign({}, prevState, {
               fileName: uploadResponse.fileName,
@@ -496,7 +496,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             })
           })
         }
-        if (data.context === 'irbFileHandleId') {
+        if (context === 'irbFileHandleId') {
           setIRB(prevState => {
             return Object.assign({}, prevState, {
               fileName: uploadResponse.fileName,
@@ -742,7 +742,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       }}
                       fileName={DUCTemplate.fileName}
                       id={'duc-temp'}
-                      variant={'link'}
+                      variant={'text'}
                       className={'SRC-noPadding'}
                     />
                   </div>
@@ -765,15 +765,16 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       }}
                       fileName={DUC?.fileName}
                       id={'duc-download'}
-                      variant={'link'}
+                      variant={'text'}
                       className={'SRC-noPadding'}
                     />
                   </div>
                 )}
                 <FileUpload
                   id={'duc-browse'}
-                  uploadCallback={uploadCallback}
-                  context={'ducFileHandleId'}
+                  uploadCallback={response =>
+                    uploadCallback(response, 'ducFileHandleId')
+                  }
                 />
               </Form.Group>
             </>
@@ -797,15 +798,16 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                     }}
                     fileName={IRB?.fileName}
                     id={'irb-download'}
-                    variant={'link'}
+                    variant={'text'}
                     className={'SRC-noPadding'}
                   />
                 </div>
               )}
               <FileUpload
                 id={'irb-browse'}
-                uploadCallback={uploadCallback}
-                context={'irbFileHandleId'}
+                uploadCallback={response =>
+                  uploadCallback(response, 'irbFileHandleId')
+                }
               />
             </Form.Group>
           )}
@@ -829,7 +831,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                           fileHandleId: attachment.fileHandleId,
                         }}
                         fileName={attachment?.fileName}
-                        variant={'link'}
+                        variant={'text'}
                         className={'SRC-noPadding attachment-download'}
                       />
                       <Button
@@ -846,8 +848,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                 })}
                 <FileUpload
                   id={'attachment-browse'}
-                  uploadCallback={uploadCallback}
-                  context={'attachments'}
+                  uploadCallback={val => uploadCallback(val, 'attachments')}
                 />
               </Form.Group>
             )

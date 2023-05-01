@@ -56,9 +56,15 @@ const RequestDataAccessStep1: React.FC<RequestDataAccessStep1Props> = props => {
       )
       if (researchProject.id) {
         researchProjectRef.current = researchProject
-        setProjectLead(researchProject.projectLead)
-        setInstitution(researchProject.institution)
-        setIntendedDataUseStatement(researchProject.intendedDataUseStatement)
+        if (researchProject?.projectLead) {
+          setProjectLead(researchProject?.projectLead)
+        }
+        if (researchProject?.institution) {
+          setInstitution(researchProject?.institution)
+        }
+        if (researchProject?.intendedDataUseStatement) {
+          setIntendedDataUseStatement(researchProject?.intendedDataUseStatement)
+        }
       }
     } catch (e) {
       console.log(

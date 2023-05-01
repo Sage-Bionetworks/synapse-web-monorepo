@@ -9,11 +9,8 @@ import {
   MEDIUM_DIFFICULTY,
   VARIABLE_DIFFICULTY,
 } from '../../utils/SynapseConstants'
-import AccessRequirementList, {
-  SUPPORTED_ACCESS_REQUIREMENTS,
-} from '../access_requirement_list/AccessRequirementList'
-import { Skeleton } from '@mui/material'
-import { Typography } from '@mui/material'
+import AccessRequirementListV2 from '../AccessRequirementListV2/AccessRequirementListV2'
+import { Skeleton, Typography } from '@mui/material'
 
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number
@@ -50,15 +47,14 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
     let iconType = ''
     let description = ''
     switch (ar.concreteType) {
-      case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
+      case 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement':
         title = TERMS_OF_USE_TITLE
         iconType = EASY_DIFFICULTY
         description = ar.name ?? ''
         break
-      case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement: {
+      case 'org.sagebionetworks.repo.model.SelfSignAccessRequirement': {
         title = SELF_SIGN_TITLE
-        const selfSignAR: SelfSignAccessRequirement =
-          ar as SelfSignAccessRequirement
+        const selfSignAR: SelfSignAccessRequirement = ar
         if (selfSignAR.isValidatedProfileRequired) {
           iconType = VARIABLE_DIFFICULTY
         } else if (selfSignAR.isCertifiedUserRequired) {
@@ -69,8 +65,8 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
         description = ar.name ?? ''
         break
       }
-      case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
-      case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
+      case 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement':
+      case 'org.sagebionetworks.repo.model.ACTAccessRequirement':
         title = ACT_TITLE
         iconType = VARIABLE_DIFFICULTY
         description = ar.name ?? ''
@@ -112,7 +108,7 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
       {!isError && !isFetching && content}
       {isFetching && <LoadingAccessRequirementCard />}
       {isShowingAccessRequirement && ar && (
-        <AccessRequirementList
+        <AccessRequirementListV2
           entityId={ar.subjectIds[0].id}
           accessRequirementFromProps={[ar]}
           renderAsModal={true}

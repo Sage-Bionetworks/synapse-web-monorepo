@@ -1,76 +1,263 @@
 import * as React from 'react'
-import RequestDataAccessStep1 from '../../../../../src/lib/containers/access_requirement_list/managedACTAccess/RequestDataAccessStep1'
+import RequestDataAccessStep1, {
+  RequestDataAccessStep1Props,
+} from '../../../../../src/lib/containers/AccessRequirementListV2/ManagedACTAccessRequirementRequestFlow/RequestDataAccessStep1'
 import {
   ACCESS_TYPE,
   ManagedACTAccessRequirement,
 } from '../../../../../src/lib/utils/synapseTypes'
-import { render } from '@testing-library/react'
-import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
+import { mockManagedACTAccessRequirement } from '../../../../../mocks/mockAccessRequirements'
+import { SynapseClient } from '../../../../../src/lib'
+import {
+  MOCK_EMPTY_RESEARCH_PROJECT,
+  MOCK_RESEARCH_PROJECT,
+} from '../../../../../mocks/dataaccess/MockResearchProject'
+import { MOCK_ACCESS_TOKEN } from '../../../../../mocks/MockSynapseContext'
+import { SynapseClientError } from '../../../../../src/lib/utils/SynapseClientError'
 
-const mockAccessRequirement: ManagedACTAccessRequirement = {
-  concreteType: 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
-  isCertifiedUserRequired: false,
-  isValidatedProfileRequired: false,
-  isDUCRequired: false,
-  ducTemplateFileHandleId: '123',
-  isIRBApprovalRequired: false,
-  areOtherAttachmentsRequired: false,
-  expirationPeriod: 1,
-  isIDUPublic: false,
-  isIDURequired: false,
-  versionNumber: 1,
-  id: 1234,
-  etag: '12345',
-  createdOn: '',
-  createdBy: '',
-  modifiedOn: '',
-  modifiedBy: '',
-  subjectIds: [],
-  accessType: ACCESS_TYPE.UPDATE,
-}
+const CREATED_RESEARCH_PROJECT_ID = MOCK_RESEARCH_PROJECT.id
 
-function renderComponent(override?: object) {
-  return render(
-    <SynapseTestContext>
-      <RequestDataAccessStep1
-        managedACTAccessRequirement={mockAccessRequirement}
-        onHide={() => {}}
-      />
-    </SynapseTestContext>,
+const mockGetResearchProjectForUpdate = jest
+  .spyOn(SynapseClient, 'getResearchProject')
+  .mockImplementation(() => Promise.resolve(MOCK_EMPTY_RESEARCH_PROJECT))
+
+const mockSaveResearchProject = jest
+  .spyOn(SynapseClient, 'updateResearchProject')
+  .mockImplementation(submitted =>
+    Promise.resolve({
+      id: CREATED_RESEARCH_PROJECT_ID,
+      ...submitted,
+    }),
   )
+
+const mockOnSave = jest.fn()
+const mockOnHide = jest.fn()
+
+const defaultProps: RequestDataAccessStep1Props = {
+  managedACTAccessRequirement: mockManagedACTAccessRequirement,
+  onSave: mockOnSave,
+  onHide: mockOnHide,
 }
 
-describe('RequestDataAccessStep1: basic functionality', () => {
-  it('render component without crashing', async () => {
-    const { container } = renderComponent()
-    expect(container).toBeDefined()
+async function renderComponent(props: RequestDataAccessStep1Props) {
+  await act(() => {
+    render(<RequestDataAccessStep1 {...props} />, {
+      wrapper: createWrapper(),
+    })
+  })
+}
+
+async function setUp(props: RequestDataAccessStep1Props) {
+  const user = userEvent.setup()
+  const component = await renderComponent(props)
+  const projectLeadInput = screen.getByLabelText('Project Lead')
+  const institutionInput = screen.getByLabelText('Institution')
+  const iduInput = screen.queryByLabelText('Intended Data Use Statement', {
+    exact: false,
+  })
+  const saveChangesButton = screen.getByRole('button', {
+    name: 'Save changes',
+  })
+  const cancelButton = screen.getByRole('button', { name: 'Cancel' })
+  return {
+    component,
+    user,
+    projectLeadInput,
+    institutionInput,
+    iduInput,
+    saveChangesButton,
+    cancelButton,
+  }
+}
+
+describe('RequestDataAccessStep1', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
-  it('should show IDU field if required', async () => {
-    mockAccessRequirement.isIDURequired = true
-    const { container } = renderComponent()
-    expect(container.querySelector('#data-use')).toBeDefined()
+  it('Prompts for a project lead and institution', async () => {
+    const {
+      user,
+      projectLeadInput,
+      institutionInput,
+      iduInput,
+      saveChangesButton,
+    } = await setUp({
+      ...defaultProps,
+      managedACTAccessRequirement: {
+        ...mockManagedACTAccessRequirement,
+        isIDURequired: false,
+      },
+    })
+    expect(projectLeadInput).toBeInTheDocument()
+    expect(institutionInput).toBeInTheDocument()
+    expect(iduInput).not.toBeInTheDocument()
+
+    const projectLead = 'My name'
+    const institution = 'My institution'
+    await user.type(projectLeadInput, projectLead)
+    await user.type(institutionInput, institution)
+
+    await user.click(saveChangesButton)
+
+    await waitFor(() => {
+      expect(mockSaveResearchProject).toHaveBeenCalledWith(
+        {
+          ...MOCK_EMPTY_RESEARCH_PROJECT,
+          projectLead,
+          institution,
+        },
+        MOCK_ACCESS_TOKEN,
+      )
+      expect(mockOnSave).toHaveBeenCalledWith({
+        ...MOCK_EMPTY_RESEARCH_PROJECT,
+        id: CREATED_RESEARCH_PROJECT_ID,
+        projectLead,
+        institution,
+      })
+    })
+  })
+  it('Prompts for an IDU statement if required', async () => {
+    const {
+      user,
+      projectLeadInput,
+      institutionInput,
+      iduInput,
+      saveChangesButton,
+    } = await setUp({
+      ...defaultProps,
+      managedACTAccessRequirement: {
+        ...mockManagedACTAccessRequirement,
+        isIDURequired: true,
+        isIDUPublic: false,
+      },
+    })
+    expect(projectLeadInput).toBeInTheDocument()
+    expect(institutionInput).toBeInTheDocument()
+    expect(iduInput).toBeInTheDocument()
+
+    const projectLead = 'My name'
+    const institution = 'My institution'
+    const idu = "what I'm going to do with the data"
+    await user.type(projectLeadInput, projectLead)
+    await user.type(institutionInput, institution)
+    await user.type(iduInput, idu)
+
+    await user.click(saveChangesButton)
+
+    await waitFor(() => {
+      expect(mockSaveResearchProject).toHaveBeenCalledWith(
+        {
+          ...MOCK_EMPTY_RESEARCH_PROJECT,
+          projectLead,
+          institution,
+          intendedDataUseStatement: idu,
+        },
+        MOCK_ACCESS_TOKEN,
+      )
+      expect(mockOnSave).toHaveBeenCalledWith({
+        ...MOCK_EMPTY_RESEARCH_PROJECT,
+        id: CREATED_RESEARCH_PROJECT_ID,
+        projectLead,
+        institution,
+        intendedDataUseStatement: idu,
+      })
+    })
   })
 
-  it('should not show IDU field if not required', async () => {
-    mockAccessRequirement.isIDURequired = false
-    const { container } = renderComponent()
-    expect(container.querySelector('#data-use')).toEqual(null)
-  })
+  it('informs the user if the IDU will be public', async () => {
+    const { iduInput } = await setUp({
+      ...defaultProps,
+      managedACTAccessRequirement: {
+        ...mockManagedACTAccessRequirement,
+        isIDURequired: true,
+        isIDUPublic: true,
+      },
+    })
 
-  it('should show IDU public text if isIDUPublic is true', async () => {
-    mockAccessRequirement.isIDURequired = true
-    mockAccessRequirement.isIDUPublic = true
-    const { container } = renderComponent()
-    expect(container.querySelector('#idu-visible')?.textContent).toEqual(
+    expect(iduInput).toBeInTheDocument()
+    const willBePublicLabelledElement = await screen.findByLabelText(
       'this will be visible to the public',
+      { exact: false },
     )
+    expect(iduInput).toBe(willBePublicLabelledElement)
   })
 
-  it('should not show IDU public text if isIDUPublic is false', async () => {
-    mockAccessRequirement.isIDURequired = false
-    mockAccessRequirement.isIDUPublic = false
-    const { container } = renderComponent()
-    expect(container.querySelector('#idu-visible')).toEqual(null)
+  it('Hides on the Cancel action', async () => {
+    const { user, cancelButton } = await setUp({
+      ...defaultProps,
+      managedACTAccessRequirement: {
+        ...mockManagedACTAccessRequirement,
+        isIDURequired: true,
+        isIDUPublic: false,
+      },
+    })
+
+    await user.click(cancelButton)
+
+    await waitFor(() => {
+      expect(mockOnHide).toHaveBeenCalled()
+      expect(mockSaveResearchProject).not.toHaveBeenCalled()
+    })
+  })
+
+  it('Shows an error if saving fails', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+    const errorReason = 'Something went wrong'
+    mockSaveResearchProject.mockImplementation(() => {
+      throw new SynapseClientError(
+        500,
+        errorReason,
+        expect.getState().currentTestName,
+      )
+    })
+
+    const {
+      user,
+      projectLeadInput,
+      institutionInput,
+      iduInput,
+      saveChangesButton,
+    } = await setUp({
+      ...defaultProps,
+      managedACTAccessRequirement: {
+        ...mockManagedACTAccessRequirement,
+        isIDURequired: true,
+        isIDUPublic: false,
+      },
+    })
+
+    const projectLead = 'My name'
+    const institution = 'My institution'
+    const idu = "what I'm going to do with the data"
+    await user.type(projectLeadInput, projectLead)
+    await user.type(institutionInput, institution)
+    await user.type(iduInput, idu)
+
+    await user.click(saveChangesButton)
+
+    await waitFor(() => {
+      expect(mockSaveResearchProject).toHaveBeenCalledWith(
+        {
+          ...MOCK_EMPTY_RESEARCH_PROJECT,
+          projectLead,
+          institution,
+          intendedDataUseStatement: idu,
+        },
+        MOCK_ACCESS_TOKEN,
+      )
+      expect(mockOnSave).not.toHaveBeenCalled()
+      expect(mockOnHide).not.toHaveBeenCalled()
+    })
+
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(errorReason)
+
+    consoleErrorSpy.mockRestore()
   })
 })

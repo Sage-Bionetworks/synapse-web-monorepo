@@ -425,11 +425,11 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
     case 'docker':
       return <Docker sx={sx} />
     case 'accountCertified':
-      return <AccountCertified></AccountCertified>
+      return <AccountCertified sx={sx} />
     case 'accountRegistered':
-      return <AccountRegistered></AccountRegistered>
+      return <AccountRegistered sx={sx} />
     case 'accountValidated':
-      return <AccountValidated></AccountValidated>
+      return <AccountValidated sx={sx} />
     case 'warningOutlined':
       return <ReportProblemOutlined sx={sx}></ReportProblemOutlined>
     case 'warning':
