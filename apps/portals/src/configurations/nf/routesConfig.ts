@@ -52,7 +52,6 @@ const routes: GenericRoute[] = [
       {
         name: 'NFSurveyToast',
         centerTitle: true,
-        outsideContainerClassName: '',
         props: undefined,
       },
     ],

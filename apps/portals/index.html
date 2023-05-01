@@ -2,40 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.svg" />
 
     <!-- Facebook Meta Tags -->
-    <meta property="og:url" content="%PRODUCTION_URL%" />
+    <meta property="og:url" content="https://%VITE_PORTAL_KEY%.synapse.org/" />
     <meta property="og:type" content="website">
-    <meta property="og:title" content="%PORTAL_NAME%" />
-    <meta property="og:description" content="%PORTAL_DESCRIPTION%" />
-    <meta name="image" property="og:image" content="%PRODUCTION_URL%/socialmedia.png" />
+    <meta property="og:title" content="%VITE_PORTAL_NAME%" />
+    <meta property="og:description" content="%VITE_PORTAL_DESCRIPTION%" />
+    <meta name="image" property="og:image" content="https://%VITE_PORTAL_KEY%.synapse.org/socialmedia.png" />
 
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta property="twitter:domain" content="synapse.org">
-    <meta property="twitter:url" content="%PRODUCTION_URL%" />
-    <meta name="twitter:title" content="%PORTAL_NAME%">
-    <meta name="twitter:description" content="%PORTAL_DESCRIPTION%">
-    <meta name="twitter:image" content="%PRODUCTION_URL%/socialmedia.png">
+    <meta property="twitter:url" content="https://%VITE_PORTAL_KEY%.synapse.org/" />
+    <meta name="twitter:title" content="%VITE_PORTAL_NAME%">
+    <meta name="twitter:description" content="%VITE_PORTAL_DESCRIPTION%">
+    <meta name="twitter:image" content="https://%VITE_PORTAL_KEY%.synapse.org/socialmedia.png">
 
-    <meta name="description" content="%PORTAL_DESCRIPTION%" />
+    <meta name="description" content="%VITE_PORTAL_DESCRIPTION%" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
+    <link rel="manifest" href="/manifest.json" />
     <title> </title>
     <!-- This gets populated on app load -->
     <!-- links below are SRC dependencies -->
@@ -75,7 +66,7 @@
     <script src="https://unpkg.com/markdown-it-inline-comments@1.0.1/dist/markdown-it-inline-comments.min.js"></script>
     <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/markdown-it-container@2.0.0/dist/markdown-it-container.min.js"></script>
-    <script src="%PUBLIC_URL%/js/back-forward-nav-handler.js"></script>
+    <script src="/js/back-forward-nav-handler.js"></script>
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-CEKFPZDZX7"
@@ -97,6 +88,7 @@
         OVERRIDE_ENDPOINT_CONFIG: endpoint
       }
     </script> -->
+      <script type="module" src="./src/index.tsx"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -112,5 +104,4 @@
       To create a production bundle, use `pnpm build`.
     -->
   </body>
-  <script></script>
 </html>

@@ -23,13 +23,13 @@ import {
   QueryResultBundle,
 } from 'synapse-react-client/dist/utils/synapseTypes/'
 import { Tooltip } from '@mui/material'
-import { SynapseComponent } from 'SynapseComponent'
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseComponent } from '../../SynapseComponent'
+import { SynapseConfig } from '../../types/portal-config'
 import {
   DetailsPageProps,
   ResolveSynId,
   RowSynapseConfig,
-} from 'types/portal-util-types'
+} from '../../types/portal-util-types'
 import injectPropsIntoConfig from '../injectPropsIntoConfig'
 import ToggleSynapseObjects from '../ToggleSynapseObjects'
 import DetailsPageTabs from './DetailsPageTabs'
@@ -208,16 +208,16 @@ const SynapseObject: React.FC<{
 }> = ({ el, queryResultBundle }) => {
   const { columnName = '', resolveSynId, props, overrideSqlSourceTable } = el
   const deepCloneOfProps = cloneDeep(props)
-  const row = queryResultBundle!.queryResult!.queryResults.rows[0].values
+  const row = queryResultBundle.queryResult!.queryResults.rows[0].values
   const rowVersionNumber =
-    queryResultBundle!.queryResult!.queryResults.rows[0].versionNumber
+    queryResultBundle.queryResult!.queryResults.rows[0].versionNumber
 
   // map column name to index
   const mapColumnHeaderToRowIndex: Dictionary<{
     index: number
     columnType: ColumnType
   }> = {}
-  queryResultBundle!.queryResult!.queryResults.headers.forEach((el, index) => {
+  queryResultBundle.queryResult!.queryResults.headers.forEach((el, index) => {
     mapColumnHeaderToRowIndex[el.name] = { index, columnType: el.columnType }
   })
   const { index, columnType } = mapColumnHeaderToRowIndex[columnName] ?? {}

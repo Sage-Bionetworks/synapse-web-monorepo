@@ -1,5 +1,5 @@
 import { Box, InputLabel, TextField, useTheme } from '@mui/material'
-import { StyledFormControl } from 'components/StyledComponents'
+import { StyledFormControl } from '../StyledComponents'
 import React, { useState } from 'react'
 import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
 import { ContinueButton } from './ContinueButton'

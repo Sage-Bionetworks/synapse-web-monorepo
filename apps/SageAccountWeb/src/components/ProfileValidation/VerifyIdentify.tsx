@@ -1,4 +1,4 @@
-import { ORCiDButton } from 'components/ProfileValidation/ORCiDButton'
+import { ORCiDButton } from './ORCiDButton'
 import React, { useEffect, useState } from 'react'
 import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
 import CheckIcon from '@mui/icons-material/Check'

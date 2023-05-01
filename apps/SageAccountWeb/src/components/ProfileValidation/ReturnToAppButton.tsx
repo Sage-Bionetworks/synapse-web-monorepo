@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { Button } from '@mui/material'
-import { useAppContext } from 'AppContext'
+import { useAppContext } from '../../AppContext'
 import React from 'react'
 import { Typography } from 'synapse-react-client'
 import { NavLink } from 'react-router-dom'

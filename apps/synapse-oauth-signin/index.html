@@ -9,7 +9,7 @@
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="manifest" href="/manifest.json" />
 
     <link
       href="https://fonts.googleapis.com/css?family=Lato"
@@ -54,13 +54,15 @@
     ></script>
     <title>Sage Bionetworks Sign-in</title>
     <script>
-      window.dataLayer = window.dataLayer || [];
+      window.dataLayer = window.dataLayer || []
       function gtag() {
-        dataLayer.push(arguments);
+        dataLayer.push(arguments)
       }
-      gtag("js", new Date());
-      gtag("config", "UA-29804340-1");
+      gtag('js', new Date())
+      gtag('config', 'UA-29804340-1')
     </script>
+
+    <script type="module" src="./src/index.tsx"></script>
   </head>
   <body id="body">
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -77,14 +79,14 @@
     </div>
     <div id="rootPanel"></div>
     <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+  This HTML file is a template.
+  If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+  You can add webfonts, meta tags, or analytics to this file.
+  The build step will place the bundled scripts into the <body> tag.
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+  To begin the development, run `npm start` or `yarn start`.
+  To create a production bundle, use `npm run build` or `yarn build`.
+-->
   </body>
 </html>

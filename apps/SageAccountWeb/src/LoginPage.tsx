@@ -6,14 +6,14 @@ import { Box } from '@mui/material'
 import {
   StyledInnerContainer,
   StyledOuterContainer,
-} from 'components/StyledComponents'
+} from './components/StyledComponents'
 import {
   preparePostSSORedirect,
   redirectAfterSSO,
 } from 'synapse-react-client/dist/utils/AppUtils'
 import { useHistory } from 'react-router-dom'
 import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
-import { backButtonSx } from 'components/BackButton'
+import { backButtonSx } from './components/BackButton'
 import { LOGIN_BACK_BUTTON_CLASS_NAME } from 'synapse-react-client/dist/utils/SynapseConstants'
 
 export type LoginPageProps = {

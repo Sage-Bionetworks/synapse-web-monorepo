@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef } from 'react'
 import { Tab, Tabs, TabScrollButton } from '@mui/material'
-import { useShowDesktop } from 'utils'
+import { useShowDesktop } from './utils'
 export type NamedRoute = {
   name: string
 }
@@ -67,7 +67,7 @@ export const RouteControl: React.FunctionComponent<RouteControlProps> = ({
       aria-label="Explore Sections"
       className="flex-display nav explore-nav"
       TabIndicatorProps={{
-        style: { background: "transparent" }
+        style: { background: 'transparent' },
       }}
     >
       {customRoutes.map((name, index) => {
@@ -84,7 +84,7 @@ export const RouteControl: React.FunctionComponent<RouteControlProps> = ({
             disableTouchRipple
             onClick={() => handleChanges(name, index)}
             sx={{
-              padding: "0 2rem"
+              padding: '0 2rem',
             }}
           />
         )
