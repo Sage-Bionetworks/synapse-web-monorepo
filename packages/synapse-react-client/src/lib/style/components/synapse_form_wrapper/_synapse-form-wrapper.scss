@@ -99,9 +99,6 @@
       button.btn {
         color: SrcVariables.$primary-action-color;
       }
-      .view-more {
-        text-align: right;
-      }
 
       table {
         border-bottom: 1px solid #ddd;
@@ -126,16 +123,7 @@
         td {
           vertical-align: middle;
         }
-        a {
-          color: SrcVariables.$primary-action-color;
-        }
       }
-    }
-
-    .btn-large {
-      color: #fff;
-      background-color: SrcVariables.$primary-action-color;
-      padding: 0.75rem 1.5rem;
     }
   }
 
