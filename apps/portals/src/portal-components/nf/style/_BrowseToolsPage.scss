@@ -63,6 +63,7 @@
   }
 
   .highlightSubmitToolButton {
+    // TODO: Use theme to provide this color and hover state, see PORTALS-2653
     background-color: #e27134;
     color: white;
     &:hover {
