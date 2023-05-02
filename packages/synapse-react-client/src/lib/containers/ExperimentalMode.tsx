@@ -1,21 +1,15 @@
 import * as React from 'react'
-import { Button, IconButton } from '@mui/material'
+import { Button, IconButton, Tooltip } from '@mui/material'
 import { useEffect, useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
 import { EXPERIMENTAL_MODE_COOKIE } from '../utils/SynapseConstants'
 import { InfoOutlined } from '@mui/icons-material'
-import LightTooltip from '../components/styled/LightTooltip'
 
 const experimentalModeText =
   'This mode gives you early access to features that are still in development. Please note that we do not guarantee an absence of errors, and that the data created using these features may be lost during product upgrade.'
 
 const ExperimentalMode: React.FC = () => {
-  const [open, setOpen] = useState<boolean>(false)
-  const toggleOpen = () => {
-    setOpen(!open)
-  }
-
   const [isExperimentalModeOn, setIsExperimentalModeOn] =
     useState<boolean>(false)
   const cookies = new UniversalCookies()
@@ -56,21 +50,15 @@ const ExperimentalMode: React.FC = () => {
       >
         Experimental mode is {isExperimentalModeOn ? 'on' : 'off'}
       </Button>
-      <LightTooltip
-        title={experimentalModeText}
-        arrow
-        placement="top"
-        open={open}
-      >
+      <Tooltip title={experimentalModeText} arrow placement="top">
         <IconButton
           aria-label="info"
           color="inherit"
-          onClick={toggleOpen}
           sx={{ '&:hover': { backgroundColor: 'transparent' } }}
         >
           <InfoOutlined sx={{ verticalAlign: 'middle' }} />
         </IconButton>
-      </LightTooltip>
+      </Tooltip>
     </span>
   )
 }
