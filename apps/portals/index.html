@@ -6,18 +6,28 @@
 
     <!-- Facebook Meta Tags -->
     <meta property="og:url" content="https://%VITE_PORTAL_KEY%.synapse.org/" />
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="website" />
     <meta property="og:title" content="%VITE_PORTAL_NAME%" />
     <meta property="og:description" content="%VITE_PORTAL_DESCRIPTION%" />
-    <meta name="image" property="og:image" content="https://%VITE_PORTAL_KEY%.synapse.org/socialmedia.png" />
+    <meta
+      name="image"
+      property="og:image"
+      content="https://%VITE_PORTAL_KEY%.synapse.org/socialmedia.png"
+    />
 
     <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="synapse.org">
-    <meta property="twitter:url" content="https://%VITE_PORTAL_KEY%.synapse.org/" />
-    <meta name="twitter:title" content="%VITE_PORTAL_NAME%">
-    <meta name="twitter:description" content="%VITE_PORTAL_DESCRIPTION%">
-    <meta name="twitter:image" content="https://%VITE_PORTAL_KEY%.synapse.org/socialmedia.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="synapse.org" />
+    <meta
+      property="twitter:url"
+      content="https://%VITE_PORTAL_KEY%.synapse.org/"
+    />
+    <meta name="twitter:title" content="%VITE_PORTAL_NAME%" />
+    <meta name="twitter:description" content="%VITE_PORTAL_DESCRIPTION%" />
+    <meta
+      name="twitter:image"
+      content="https://%VITE_PORTAL_KEY%.synapse.org/socialmedia.png"
+    />
 
     <meta name="description" content="%VITE_PORTAL_DESCRIPTION%" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,7 +36,7 @@
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="./manifest.json" />
     <title> </title>
     <!-- This gets populated on app load -->
     <!-- links below are SRC dependencies -->
@@ -79,6 +89,14 @@
       gtag('js', new Date())
       gtag('config', 'G-CEKFPZDZX7')
     </script>
+    <script type="module">
+      <!-- Fix polyfill issues with vite and @apidevtools/json-schema-ref-parser -->
+        import { Buffer } from 'buffer'
+        window.Buffer = Buffer
+
+        globalThis.global = globalThis
+        globalThis.process = { env: {} }
+    </script>
     <!-- <script>
       const endpoint = {
         REPO: 'https://repo-staging.prod.sagebase.org',
@@ -88,7 +106,7 @@
         OVERRIDE_ENDPOINT_CONFIG: endpoint
       }
     </script> -->
-      <script type="module" src="./src/index.tsx"></script>
+    <script type="module" src="./src/index.tsx"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSourceApp } from './SourceApp'
-import { Link } from '@mui/material'
-import { Typography } from 'synapse-react-client'
+import { Link, Typography } from '@mui/material'
 
 export type TermsOfUseRightPanelTextProps = {}
 

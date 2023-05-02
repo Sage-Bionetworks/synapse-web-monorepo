@@ -1,6 +1,6 @@
 import Slider from '@mui/material/Slider'
 import React, { useEffect, useState } from 'react'
-import { IconButton, Button, SxProps } from '@mui/material'
+import { Button, IconButton, SxProps } from '@mui/material'
 import { Modal } from 'react-bootstrap'
 import Cropper from 'react-easy-crop'
 import { Area } from 'react-easy-crop/types'

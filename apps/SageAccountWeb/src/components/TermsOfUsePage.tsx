@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
-import { SynapseClient } from 'synapse-react-client'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { useSourceApp, SourceAppLogo } from './SourceApp'
-import { Button, Box, useTheme } from '@mui/material'
+import { SourceAppLogo, useSourceApp } from './SourceApp'
+import { Box, Button, useTheme } from '@mui/material'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
 import { TermsAndConditionsLink } from './TermsAndConditionsLink'
+import { SynapseClient } from 'synapse-react-client/dist/utils'
 
 export type TermsOfUsePageProps = {}
 

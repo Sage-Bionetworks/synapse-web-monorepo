@@ -57,15 +57,23 @@
         gtag("js", new Date());
         gtag("config", "UA-29804340-1");
     </script>
+    <script type="module">
+        <!-- Fix polyfill issues with vite and @apidevtools/json-schema-ref-parser -->
+        import { Buffer } from 'buffer'
+        window.Buffer = Buffer
+
+        globalThis.global = globalThis
+        globalThis.process = { env: {} }
+    </script>
     <!-- <script>
-      const endpoint = {
-        REPO: 'https://repo-staging.prod.sagebase.org',
-        PORTAL: 'https://staging.synapse.org/',
-      }
-      window.SRC = {
-        OVERRIDE_ENDPOINT_CONFIG: endpoint
-      }
-    </script> -->
+        const endpoint = {
+          REPO: 'https://repo-staging.prod.sagebase.org',
+          PORTAL: 'https://staging.synapse.org/',
+        }
+        window.SRC = {
+          OVERRIDE_ENDPOINT_CONFIG: endpoint
+        }
+      </script> -->
     <script type="module" src="./src/index.tsx"></script>
 </head>
 <body id="body">

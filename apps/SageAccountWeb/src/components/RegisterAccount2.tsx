@@ -1,7 +1,6 @@
-import { Button, InputLabel, TextField } from '@mui/material'
+import { Button, InputLabel, TextField, Typography } from '@mui/material'
 import { StyledFormControl } from './StyledComponents'
 import React, { useEffect, useState } from 'react'
-import { Typography } from 'synapse-react-client'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
   isAliasAvailable,

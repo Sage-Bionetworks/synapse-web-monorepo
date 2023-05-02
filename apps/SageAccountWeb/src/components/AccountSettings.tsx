@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
-  Button,
-  Link,
-  Container,
   Box,
+  Button,
+  Container,
   Grid,
-  MenuItem,
+  InputLabel,
+  Link,
   ListItemButton,
+  MenuItem,
   Paper,
+  TextField,
+  Typography,
 } from '@mui/material'
 import {
   UserBundle,
@@ -16,18 +19,15 @@ import {
 import {
   SynapseClient,
   SynapseConstants,
-  Typography,
-} from 'synapse-react-client'
-import { Link as RouterLink } from 'react-router-dom'
+} from 'synapse-react-client/dist/utils'
+import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { Form } from 'react-bootstrap'
 import { ChangePassword } from './ChangePassword'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
-import { useHistory } from 'react-router-dom'
 import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import AccountSettingsTopBar from './AccountSettingsTopBar'
-import { useLocation } from 'react-router-dom'
 import { ConfigureEmail } from './ConfigureEmail'
 import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import UniversalCookies from 'universal-cookie'
@@ -38,11 +38,10 @@ import {
 import { getUseUtcTimeFromCookie } from 'synapse-react-client/dist/utils/SynapseClient'
 import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
-import { InputLabel } from '@mui/material'
-import { TextField } from '@mui/material'
 import { useSourceAppConfigs } from './SourceApp'
 import TwoFactorAuthSettingsPanel from 'synapse-react-client/dist/containers/auth/TwoFactorAuthSettingsPanel'
 import SRCTextField from 'synapse-react-client/dist/containers/TextField'
+
 const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
   isComplete,
 }) => {

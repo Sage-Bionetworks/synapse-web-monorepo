@@ -1,8 +1,7 @@
 import React from 'react'
-import { Typography } from 'synapse-react-client'
+import { Box, Typography } from '@mui/material'
 import StandaloneLoginForm from 'synapse-react-client/dist/containers/auth/StandaloneLoginForm'
 import { SourceAppDescription, SourceAppLogo } from './components/SourceApp'
-import { Box } from '@mui/material'
 import {
   StyledInnerContainer,
   StyledOuterContainer,

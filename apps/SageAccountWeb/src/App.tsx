@@ -29,7 +29,7 @@ import ApplicationSessionManager from 'synapse-react-client/dist/utils/apputils/
 import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
 import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAuthBackupCodesPage'
 import { PersonalAccessTokensPage } from './components/PersonalAccessTokensPage'
-import { OAuthClientManagementPage } from 'components/OAuthClientManagementPage'
+import { OAuthClientManagementPage } from './components/OAuthClientManagementPage'
 
 const isCodeSearchParam = getSearchParam('code') !== undefined
 const isProviderSearchParam = getSearchParam('provider') !== undefined

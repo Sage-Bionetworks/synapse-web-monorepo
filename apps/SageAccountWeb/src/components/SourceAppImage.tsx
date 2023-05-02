@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SynapseClient } from 'synapse-react-client'
+import { SynapseClient } from 'synapse-react-client/dist/utils'
 import { FileHandleAssociateType } from 'synapse-react-client/dist/utils/synapseTypes'
 import Skeleton from '@mui/material/Skeleton'
 

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
-import { SynapseConstants, Typography } from 'synapse-react-client'
+import { SynapseConstants } from 'synapse-react-client/dist/utils'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import CloseIcon from '@mui/icons-material/Close'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
@@ -19,7 +19,15 @@ import { getSearchParam } from '../../URLUtils'
 import { ProfileFieldsEditor } from './ProfileFieldsEditor'
 import { VerifyIdentify } from './VerifyIdentify'
 import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
-import { Box, Button, Divider, IconButton, Link, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Link,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import { SourceAppLogo, useSourceApp } from '../SourceApp'
 import Attestation from './Attestation'
 import ThankYou from './ThankYou'
