@@ -52,6 +52,13 @@ td.SRC_noBorderTop:nth-child(n + 4) {
   margin-top: 25px !important;
 }
 
+.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedSecondary {
+  color: white;
+  &:hover {
+    color: white;
+  }
+}
+
 /** 
 Adam's style hacks
 **/
@@ -65,14 +72,6 @@ $ARK-gray-900: #1d1d22 !default;
 .Goals {
   &__Desktop {
     gap: 30px;  
-  }
-  &__Mobile__Content {
-    & > &__Link {
-      color: white;
-      &:hover {
-        color: white;
-      }
-    }
   }
   &__Card {
     position: relative;

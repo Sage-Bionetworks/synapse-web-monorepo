@@ -6,8 +6,7 @@ import { SynapseComponents } from 'synapse-react-client'
 import NavLink from 'portal-components/NavLink'
 import NavUserLink from './portal-components/NavUserLink'
 import { ConfigRoute, GenericRoute } from 'types/portal-config'
-import Button from 'react-bootstrap/esm/Button'
-import { Dialog, DialogContent, IconButton } from '@mui/material'
+import { Button, Dialog, DialogContent, IconButton } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import {
   preparePostSSORedirect,
@@ -190,10 +189,11 @@ function Navbar() {
         <div className="nav-link-container">
           {isSignedIn &&
             isSynapseSubdomainOrLocal && ( // mobile sign out
-              <div className="center-content nav-button nav-button-signin bootstrap-4-backport mobile-signout-container">
+              <div className="center-content nav-button nav-button-signin mobile-signout-container">
                 <Button
                   id="signin-button"
-                  variant="secondary"
+                  color="secondary"
+                  variant="contained"
                   className="signout-button-mb"
                   onClick={() => {
                     clearSession()
@@ -205,10 +205,11 @@ function Navbar() {
             )}
           {!isSignedIn &&
             isSynapseSubdomainOrLocal && ( // desktop sign in
-              <div className="center-content nav-button nav-button-signin bootstrap-4-backport">
+              <div className="center-content nav-button nav-button-signin">
                 <Button
                   id="signin-button"
-                  variant="secondary"
+                  color="secondary"
+                  variant="contained"
                   onClick={() => {
                     setShowLoginDialog(true)
                   }}
