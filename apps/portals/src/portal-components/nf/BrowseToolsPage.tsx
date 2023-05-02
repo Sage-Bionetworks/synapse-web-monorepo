@@ -59,12 +59,12 @@ const BrowseToolsPage = () => {
       <div className="header">
         <div className="home-container-description">
           <Typography variant="headline1" className="sectionTitle">
-            NF Research Tools Database
+            NF Research Tools Central
           </Typography>
           <div className="center-content">
             <div className="description">
               <Typography variant="body1">
-                The NF Research Tools Database aims to support the development
+                NF Research Tools Central aims to support the development
                 of a robust research toolkit and lower the barrier of entry to
                 neurofibromatosis (NF) research. The database includes
                 NF-associated animal models, cell lines, antibodies, and genetic
@@ -204,7 +204,7 @@ const BrowseToolsPage = () => {
       </Layout>
       <Layout outsideContainerClassName="home-spacer highlightSubmitToolContainer">
         <Typography variant="sectionTitle" className="sectionTitle">
-          Submit a Tool to the Database
+          Submit a Tool to NF Research Tools Central
         </Typography>
         <div className="center-content">
           <div className="description">
@@ -212,7 +212,7 @@ const BrowseToolsPage = () => {
               We are currently accepting submissions that describe any
               NF1-related mouse model, cell line, genetic reagent (e.g. plasmid,
               CRISPR), antibody, or biobank. If you have a tool that you would
-              like to add to the Research Tools Database, please click the {'"'}
+              like to add to NF Research Tools Central, please click the {'"'}
               Submit a Tool{'"'} button below to learn more.
             </Typography>
           </div>
