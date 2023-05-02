@@ -1,12 +1,12 @@
 import React from 'react'
 import { MarkdownPopover } from './MarkdownPopover'
-import { Placement } from 'react-bootstrap/esm/Overlay'
+import { ButtonProps, TooltipProps } from '@mui/material'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 
 export type HelpPopoverProps = {
   markdownText: string
   helpUrl?: string
-  placement?: Placement
+  placement?: TooltipProps['placement']
   showCloseButton?: boolean
   className?: string
 }
@@ -23,7 +23,7 @@ export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
         content: <>More info</>,
         closePopoverOnClick: true,
         onClick: () => window.open(helpUrl, '_blank'),
-        variant: 'primary',
+        color: 'primary' as ButtonProps['color'],
       }
     : undefined
   return (
@@ -33,8 +33,7 @@ export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
         placement={placement}
         actionButton={actionButtonConfig}
         showCloseButton={showCloseButton}
-        strategy="fixed"
-        style={{ maxWidth: '350px' }}
+        maxWidth="350px"
       >
         <HelpOutlineTwoTone className={`HelpButton ${className}`} />
       </MarkdownPopover>
