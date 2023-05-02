@@ -2,10 +2,11 @@ import * as React from 'react'
 import { DATASET } from '../../utils/SynapseConstants'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import * as Utils from './utils'
-import { getValueOrMultiValue } from '../GenericCard'
+import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
 import { SelectColumn, ColumnModel } from '../../utils/synapseTypes'
 import { Button } from 'react-bootstrap'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 
 export type DatasetProps = {
   data?: any
@@ -13,6 +14,8 @@ export type DatasetProps = {
   secondaryLabelLimit?: number
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
+  genericCardSchema?: GenericCardSchema
+  queryVisualizationContext: QueryVisualizationContextType
 }
 
 class Dataset extends React.Component<DatasetProps, never> {
@@ -31,7 +34,14 @@ class Dataset extends React.Component<DatasetProps, never> {
     }
 
   public render() {
-    const { data, schema, selectColumns, columnModels } = this.props
+    const {
+      data,
+      schema,
+      selectColumns,
+      columnModels,
+      genericCardSchema,
+      queryVisualizationContext: { getColumnDisplayName },
+    } = this.props
     const datasetName = data[schema.datasetName]
     const summary = data[schema.summary]
     const tumorType = getValueOrMultiValue({
@@ -63,6 +73,20 @@ class Dataset extends React.Component<DatasetProps, never> {
       ['SIZE', fileSize],
       ['FILES', fileCount],
     ]
+    if (genericCardSchema && genericCardSchema.secondaryLabels) {
+      const { secondaryLabels } = genericCardSchema
+      for (let i = 0; i < secondaryLabels.length; i++) {
+        const columnName = secondaryLabels[i]
+        const value: any = data[schema[columnName]]
+        let columnDisplayName
+        if (value) {
+          columnDisplayName = getColumnDisplayName(columnName)
+          const keyValue = [columnDisplayName, value, columnName]
+          values.push(keyValue)
+        }
+      }
+    }
+
     return (
       <div className="SRC-portalCard SRC-typeDataset  ">
         <div className="SRC-cardThumbnail">
