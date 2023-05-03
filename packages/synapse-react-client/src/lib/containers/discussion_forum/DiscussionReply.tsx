@@ -7,7 +7,7 @@ import UserCard from '../UserCard'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import { ObjectType } from '../../utils/synapseTypes'
 import IconSvg from '../IconSvg'
-import { Modal } from 'react-bootstrap'
+import { DialogBase } from '../DialogBase'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import {
   useGetCurrentUserProfile,
@@ -88,24 +88,20 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
           )}
         </>
       )}
-      <Modal
-        size="lg"
-        show={showReplyModal}
-        onHide={() => setShowReplyModal(false)}
-        animation={false}
-      >
-        <Modal.Header>
-          <Modal.Title>Edit Reply</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <DialogBase
+        maxWidth="md"
+        open={showReplyModal}
+        onCancel={() => setShowReplyModal(false)}
+        title="Edit Reply"
+        content={
           <ForumThreadEditor
             isReply={true}
             initialText={message}
             onClose={() => setShowReplyModal(false)}
             id={reply.id}
           />
-        </Modal.Body>
-      </Modal>
+        }
+      />
       <WarningDialog
         open={showDeleteModal}
         title="Confirm Deletion"
