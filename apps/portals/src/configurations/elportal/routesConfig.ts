@@ -337,7 +337,7 @@ const routes: GenericRoute[] = [
     displayName: 'News',
     path: undefined,
     target: '_blank',
-    link: 'https://eliteportalstg.wpengine.com/',
+    link: 'http://news.eliteportal.org/',
     synapseConfigArray: [],
   },
   {
