@@ -1,4 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import {
+  render,
+  screen,
+  waitForElementToBeRemoved,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
@@ -25,6 +29,7 @@ function renderComponent(wrapperProps?: SynapseContextType) {
 
 describe('MarkdownPopover tests', () => {
   it('Appears and disappears on click', async () => {
+    const user = userEvent.setup()
     const component = renderComponent()
 
     const showPopoverButton = screen.getByRole('button')
@@ -35,17 +40,14 @@ describe('MarkdownPopover tests', () => {
     ).not.toBeInTheDocument()
 
     // Click to show
-    await userEvent.click(showPopoverButton)
+    await user.click(showPopoverButton)
 
-    await screen.findByText(markdownText)
+    const tooltip = screen.getByRole('tooltip')
+    expect(tooltip).toHaveTextContent(markdownText)
 
     // Click to hide
-    await userEvent.click(showPopoverButton)
+    await user.click(showPopoverButton)
 
-    // We hide using SCSS that @testing-library doesn't know about.
-    // Get the DOM node and check for the class that applies "display: none"
-    const tooltip = component.container.querySelector('.Tooltip')
-
-    await waitFor(() => expect(tooltip).toHaveClass('fade-in-out-exit-done'))
+    waitForElementToBeRemoved(tooltip)
   })
 })

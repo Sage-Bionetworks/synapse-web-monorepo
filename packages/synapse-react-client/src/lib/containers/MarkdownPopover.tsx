@@ -81,25 +81,26 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
   )
 
   return (
-    <Box
-      className={'PopoverContainer'}
-      sx={{ display: 'inline-block', cursor: 'pointer' }}
+    <LightTooltip
+      title={content}
+      placement={placement}
+      onClick={() => setShow(!show)}
+      open={show}
+      sx={{
+        ...sx,
+        [`& .${tooltipClasses.tooltip}`]: {
+          maxWidth: { maxWidth },
+          minWidth: { minWidth },
+        },
+      }}
     >
-      <LightTooltip
-        title={content}
-        placement={placement}
-        onClick={() => setShow(!show)}
-        open={show}
-        sx={{
-          ...sx,
-          [`& .${tooltipClasses.tooltip}`]: {
-            maxWidth: { maxWidth },
-            minWidth: { minWidth },
-          },
-        }}
+      <Box
+        role="button"
+        className={'PopoverContainer'}
+        sx={{ display: 'inline-block', cursor: 'pointer' }}
       >
         {children}
-      </LightTooltip>
-    </Box>
+      </Box>
+    </LightTooltip>
   )
 }

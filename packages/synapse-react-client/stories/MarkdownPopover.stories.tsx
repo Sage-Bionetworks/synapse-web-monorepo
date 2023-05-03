@@ -46,3 +46,11 @@ export const WikiPage: Story = {
     placement: 'right',
   },
 }
+
+export const NonButtonChild: Story = {
+  render: args => (
+    <MarkdownPopover contentProps={{ markdown: 'Tooltip on a div' }} {...args}>
+      <div>Click Me</div>
+    </MarkdownPopover>
+  ),
+}
