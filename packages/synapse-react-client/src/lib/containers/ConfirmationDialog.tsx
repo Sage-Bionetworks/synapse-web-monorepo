@@ -11,6 +11,8 @@ export type ConfirmationDialogProps = DialogBaseProps & {
   hasCancelButton?: boolean
 }
 
+export const CANCEL_BUTTON_TEXT = 'Cancel'
+
 /**
  * A confirmation dialog built using MUI components.
  */
@@ -32,7 +34,7 @@ export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
         <>
           {hasCancelButton && (
             <Button variant="outlined" onClick={() => onCancel()}>
-              Cancel
+              {CANCEL_BUTTON_TEXT}
             </Button>
           )}
           <Button

@@ -8,6 +8,8 @@ export type DownloadLoginModalProps = {
   onHide: () => void
 }
 
+export const CONFIRM_BUTTON_TEXT = 'Sign in'
+
 const content = (
   <>
     <Typography variant="smallText1" marginBottom="10px">
@@ -47,7 +49,7 @@ export const DownloadLoginModal: React.FunctionComponent<
       content={content}
       onCancel={() => props.onHide()}
       onConfirm={() => props.onHide()}
-      confirmButtonText="Sign in"
+      confirmButtonText={CONFIRM_BUTTON_TEXT}
       confirmButtonClassName={SRC_SIGN_IN_CLASS}
     />
   )
