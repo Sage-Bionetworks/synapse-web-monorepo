@@ -33,7 +33,7 @@ describe('DownloadLoginModal tests', () => {
 
   it('Has cancel button', async () => {
     renderComponent()
-    const cancelButton = screen.getByRole('button', { name: 'CANCEL' })
+    const cancelButton = screen.getByRole('button', { name: /cancel/i })
 
     await userEvent.click(cancelButton)
 
@@ -41,7 +41,7 @@ describe('DownloadLoginModal tests', () => {
   })
   it('Has sign in button', async () => {
     renderComponent()
-    const signInButton = screen.getByRole('button', { name: 'Sign in' })
+    const signInButton = screen.getByRole('button', { name: /sign in/i })
     expect(signInButton.classList.contains(SRC_SIGN_IN_CLASS)).toBe(true)
     await userEvent.click(signInButton)
 

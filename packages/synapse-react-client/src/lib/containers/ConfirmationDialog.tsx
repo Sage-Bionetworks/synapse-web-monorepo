@@ -4,6 +4,7 @@ import { DialogBase, DialogBaseProps } from './DialogBase'
 
 export type ConfirmationDialogProps = DialogBaseProps & {
   confirmButtonText?: string
+  confirmButtonClassName?: string
   confirmButtonColor?: ButtonProps['color']
   confirmButtonVariant?: ButtonProps['variant']
   onConfirm: () => void
@@ -16,6 +17,7 @@ export type ConfirmationDialogProps = DialogBaseProps & {
 export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
   const {
     confirmButtonText = 'OK',
+    confirmButtonClassName,
     confirmButtonColor = 'primary',
     confirmButtonVariant = 'contained',
     onConfirm,
@@ -35,6 +37,7 @@ export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
           )}
           <Button
             variant={confirmButtonVariant}
+            className={confirmButtonClassName}
             color={confirmButtonColor}
             onClick={() => onConfirm()}
           >
