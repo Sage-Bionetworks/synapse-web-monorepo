@@ -1,6 +1,4 @@
-import { INVITEE_VERIFICATION_CONCRETE_TYPE } from './InviteeVerificationSignedToken'
-import { JOIN_TEAM_CONCRETE_TYPE } from './JoinTeamSignedToken'
-import { MEMBERSHIP_INVITATION_CONCRETE_TYPE } from './MembershipInvtnSignedToken'
+import { SIGNED_TOKEN_CONCRETE_TYPE } from './SignedTokenConcreteType'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/SignedTokenInterface.html
 export interface SignedTokenInterface {
@@ -10,8 +8,3 @@ export interface SignedTokenInterface {
   readonly createdOn: string //The date-time the token was generated.
   readonly concreteType: SIGNED_TOKEN_CONCRETE_TYPE
 }
-
-export type SIGNED_TOKEN_CONCRETE_TYPE =
-  | JOIN_TEAM_CONCRETE_TYPE
-  | INVITEE_VERIFICATION_CONCRETE_TYPE
-  | MEMBERSHIP_INVITATION_CONCRETE_TYPE

@@ -298,6 +298,7 @@ import {
   TwoFactorAuthStatus,
 } from './synapseTypes/TotpSecret'
 import { TwoFactorAuthRecoveryCodes } from './synapseTypes/TwoFactorAuthRecoveryCodes'
+import { SynapseError } from './SynapseError'
 
 const cookies = new UniversalCookies()
 
@@ -329,13 +330,6 @@ export function delay(t: number) {
   return new Promise(resolve => {
     setTimeout(resolve.bind(null, {}), t)
   })
-}
-
-/**
- * Error message returned by the Synapse Backend
- */
-export type SynapseError = {
-  reason: string
 }
 
 /**

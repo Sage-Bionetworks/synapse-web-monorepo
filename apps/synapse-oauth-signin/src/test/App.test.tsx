@@ -3,12 +3,12 @@ import { server } from '../mocks/server'
 import { rest } from 'msw'
 import React from 'react'
 import { ACCESS_TOKEN_COOKIE_KEY } from 'synapse-react-client/dist/utils/SynapseClient'
-import { URLSearchParams } from 'url'
 import App from '../App'
 import userEvent from '@testing-library/user-event'
 import { SynapseClient } from 'synapse-react-client'
 import { LoginResponse } from 'synapse-react-client/dist/utils/synapseTypes/LoginResponse'
 import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from 'synapse-react-client/dist/utils/AppUtils'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 
 function createParams(prompt?: string) {
   const params = new URLSearchParams()
@@ -33,7 +33,7 @@ function renderApp(prompt?: string, updateHistory = true) {
 
 describe('App integration tests', () => {
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     document.cookie = ''
   })
 
@@ -118,7 +118,7 @@ describe('App integration tests', () => {
   })
 
   test('Consent to app terms', async () => {
-    const consentSpy = jest.spyOn(SynapseClient, 'consentToOAuth2Request')
+    const consentSpy = vi.spyOn(SynapseClient, 'consentToOAuth2Request')
 
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
@@ -137,7 +137,7 @@ describe('App integration tests', () => {
     expect(consentSpy).toHaveBeenCalled()
   })
   test('Deny consent to app terms', async () => {
-    const consentSpy = jest.spyOn(SynapseClient, 'consentToOAuth2Request')
+    const consentSpy = vi.spyOn(SynapseClient, 'consentToOAuth2Request')
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
@@ -189,10 +189,10 @@ describe('App integration tests', () => {
   test.todo('Shows warning if the client is unverified')
 
   test('Supports OAuth2 login with 2FA', async () => {
-    jest.spyOn(window.history, 'replaceState')
+    vi.spyOn(window.history, 'replaceState')
 
-    const onOAuthSignIn = jest.fn()
-    const on2FASignIn = jest.fn()
+    const onOAuthSignIn = vi.fn()
+    const on2FASignIn = vi.fn()
     const oauthProvider = 'GOOGLE_OAUTH_2_0'
     const oauthCode = 'abcdef'
 

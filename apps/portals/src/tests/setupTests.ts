@@ -1,4 +1,6 @@
 import 'whatwg-fetch'
+import { afterEach, vi } from 'vitest'
+import { cleanup } from '@testing-library/react'
 
 declare let global: any
 global.markdownit = require('markdown-it')
@@ -31,12 +33,17 @@ Object.defineProperty(window, 'matchMedia', {
     matches: true,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // Deprecated
-    removeListener: jest.fn(), // Deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // Deprecated
+    removeListener: vi.fn(), // Deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   }),
 })
 
-Element.prototype.scrollIntoView = jest.fn()
+Element.prototype.scrollIntoView = vi.fn()
+
+// Clean up after each test case (e.g. clearing jsdom)
+afterEach(() => {
+  cleanup()
+})

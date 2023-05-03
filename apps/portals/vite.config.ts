@@ -1,7 +1,13 @@
 import { defineConfig } from 'vite'
-import sharedConfig from 'vite-config'
+import { vitestConfig } from 'vite-config'
+import { mergeConfig } from 'vitest/config'
 
-export default defineConfig({
-  envDir: './src/config',
-  ...sharedConfig,
-})
+export default mergeConfig(
+  vitestConfig,
+  defineConfig({
+    test: {
+      include: ['src/tests/**/*.test.[jt]s?(x)'],
+      setupFiles: ['src/tests/setupTests.ts'],
+    },
+  }),
+)

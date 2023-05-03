@@ -3,6 +3,7 @@ import * as React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import RouteResolver from '../RouteResolver'
 import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
+import { describe, expect, it } from 'vitest'
 
 describe('RouteResolver works', () => {
   function renderComponent(initialEntries) {

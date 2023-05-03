@@ -1,7 +1,8 @@
-import 'raf/polyfill' // polyfill for requestAnimationFrame
 import 'whatwg-fetch'
+import { vi, afterEach } from 'vitest'
+import { cleanup } from '@testing-library/react'
 
-declare var global: any
+declare let global: any
 global.markdownit = require('markdown-it')
 global.markdownitSynapse = require('markdown-it-synapse')
 global.markdownitSub = require('markdown-it-sub-alt')
@@ -16,6 +17,10 @@ global.markdownitInlineComments = require('markdown-it-inline-comments')
 global.markdownitBr = require('markdown-it-br')
 global.markdownitMath = require('markdown-it-synapse-math')
 
+// Clean up after each test case (e.g. clearing jsdom)
+afterEach(() => {
+  cleanup()
+})
 // Line below is used because plotly has a dependency on mapbox-gl
 // which requires a browser env and doesn't provide support for headless
 // js testing, so we shim the function below.
@@ -32,15 +37,15 @@ Object.defineProperty(window, 'matchMedia', {
     matches: true,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // Deprecated
-    removeListener: jest.fn(), // Deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // Deprecated
+    removeListener: vi.fn(), // Deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   }),
 })
 
-Element.prototype.scrollIntoView = jest.fn()
+Element.prototype.scrollIntoView = vi.fn()
 
 const oldWindowLocation = window.location
 /**
@@ -57,11 +62,11 @@ window.location = Object.defineProperties(
     // Each method must be manually mocked
     assign: {
       configurable: true,
-      value: jest.fn(),
+      value: vi.fn(),
     },
     replace: {
       configurable: true,
-      value: jest.fn(),
+      value: vi.fn(),
     },
   },
 ) as Location
