@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import UserFileGrid, {
@@ -19,9 +19,11 @@ const formGroupId = '5'
 const itemNoun = 'submission'
 const mockListFormData = jest.spyOn(SynapseClient, 'listFormData')
 
-const renderComponent = (props: SynapseFormSubmissionGridProps) => {
-  return render(<UserFileGrid {...props} />, {
-    wrapper: createWrapper(),
+const renderComponent = async (props: SynapseFormSubmissionGridProps) => {
+  return await act(async () => {
+    render(<UserFileGrid {...props} />, {
+      wrapper: createWrapper(),
+    })
   })
 }
 
@@ -46,13 +48,13 @@ describe('SynapseFormSubmissionsGrid', () => {
   afterAll(() => server.close())
 
   test('displays table with file list when files are present', async () => {
-    renderComponent(props)
+    await renderComponent(props)
     const tables = await screen.findAllByRole('table')
     expect(tables).toHaveLength(2)
   })
 
   test('not display the table when there are no files', async () => {
-    renderComponent(props)
+    await renderComponent(props)
 
     await waitFor(() => {
       expect(mockListFormData).toHaveBeenCalledWith(
@@ -74,15 +76,17 @@ describe('SynapseFormSubmissionsGrid', () => {
 
   test('not display an icon instead of the tables when there are no files', async () => {
     mockListFormData.mockReset().mockResolvedValue({ page: [] })
-    renderComponent(props)
+    await renderComponent(props)
 
     await screen.findByText('You have no submissions')
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
 
   test('should modify the modal state when clicking "delete"', async () => {
-    const spy = jest.spyOn(SynapseClient, 'deleteFormData')
-    renderComponent(props)
+    const spy = jest
+      .spyOn(SynapseClient, 'deleteFormData')
+      .mockReturnValue(Promise.resolve())
+    await renderComponent(props)
 
     const deleteButton = (
       await screen.findAllByRole('button', { name: 'delete' })
@@ -104,9 +108,9 @@ describe('SynapseFormSubmissionsGrid', () => {
   })
 
   test('should have view more link if there is a token for next page and call the back end fn to get the additional items', async () => {
-    renderComponent(props)
+    await renderComponent(props)
     const viewMoreButton = await screen.findByRole('button', {
-      name: 'more ...',
+      name: /more.../i,
     })
     await userEvent.click(viewMoreButton)
 

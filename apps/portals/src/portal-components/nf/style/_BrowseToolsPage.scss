@@ -21,9 +21,6 @@
     margin: 10px 0px 25px 0px;
     text-align: center;
   }
-  .center-content > .btn-wide {
-    margin-top: 50px;
-  }
   .searchToolsRow {
     margin-top: 20px;
     display: grid;
@@ -66,7 +63,11 @@
   }
 
   .highlightSubmitToolButton {
+    // TODO: Use theme to provide this color and hover state, see PORTALS-2653
     background-color: #e27134;
     color: white;
+    &:hover {
+      background-color: #dc6525;
+    }
   }
 }

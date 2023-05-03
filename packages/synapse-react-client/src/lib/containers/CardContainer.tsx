@@ -1,5 +1,4 @@
 import React from 'react'
-import { Button } from 'react-bootstrap'
 import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
 import {
   DATASET,
@@ -21,6 +20,8 @@ import {
 } from './row_renderers/ObservationCard'
 import TotalQueryResults from './TotalQueryResults'
 import UserCardList from './UserCardList'
+import WideButton from '../components/styled/WideButton'
+import { Box } from '@mui/material'
 
 export type CardContainerProps = {
   isHeader?: boolean
@@ -86,17 +87,18 @@ export const CardContainer = (props: CardContainerProps) => {
     schema[element.name] = index
   })
   const showViewMoreButton = hasNextPage && (
-    <div className="SRC-viewMore bootstrap-4-backport">
-      <Button
-        variant="secondary"
-        className="btn-wide"
+    <Box display="flex" justifyContent="flex-end">
+      <WideButton
+        variant="contained"
+        color="secondary"
+        size="large"
         onClick={() => {
           appendNextPageToResults()
         }}
       >
         View More
-      </Button>
-    </div>
+      </WideButton>
+    </Box>
   )
   let cards
   if (type === MEDIUM_USER_CARD) {

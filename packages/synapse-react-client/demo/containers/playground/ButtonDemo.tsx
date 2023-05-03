@@ -19,7 +19,7 @@ export const ButtonDemo: React.FunctionComponent = () => {
     undefined,
   )
 
-  const shapeClasses: string[] = ['', 'btn-wide']
+  const shapeClasses: string[] = ['']
   const colorVariants: string[] = [
     'sds-primary',
     'outline',

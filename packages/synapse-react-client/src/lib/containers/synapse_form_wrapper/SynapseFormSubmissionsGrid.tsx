@@ -8,14 +8,15 @@ import {
   ListResponse,
 } from '../../utils/synapseTypes/'
 import WarningDialog from './WarningDialog'
-import { Button } from 'react-bootstrap'
-import { Modal } from 'react-bootstrap'
-
+import { ConfirmationDialog } from '../ConfirmationDialog'
+import WideButton from '../../components/styled/WideButton'
+import { Box, Button, IconButton, Link, Typography } from '@mui/material'
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
+import PhoneTwoToneIcon from '@mui/icons-material/PhoneTwoTone'
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { ReactComponent as NoSubmissionsIcon } from '../../assets/icons/json-form-tool-no-submissions.svg'
-import IconSvg from '../IconSvg'
 
 dayjs.extend(calendar)
 /**
@@ -264,19 +265,20 @@ export default class SynapseFormSubmissionGrid extends React.Component<
       return <></>
     } else {
       return (
-        <div className="bootstrap-4-backport file-grid">
-          <h3>Your Submissions</h3>
+        <div className="file-grid">
+          <Typography variant="h3">Your Submissions</Typography>
           <div className="panel padding-full unauthenticated text-center">
             <p className="padding-full">
               Please sign in or register to initiate or continue your submission
             </p>
-            <Button
+            <WideButton
               className={`${SRC_SIGN_IN_CLASS}`}
-              variant="primary"
-              size="lg"
+              variant="contained"
+              color="primary"
+              size="large"
             >
               Sign In
-            </Button>
+            </WideButton>
           </div>
         </div>
       )
@@ -322,16 +324,16 @@ export default class SynapseFormSubmissionGrid extends React.Component<
       </h5>
     )
     const viewMore = nextPageToken ? (
-      <div className="view-more">
-        <button
-          className="btn btn-link"
+      <Box sx={{ textAlign: 'right', paddingTop: '5px' }}>
+        <Button
+          variant="text"
           onClick={() => {
             this.getMore(fileListType, nextPageToken)
           }}
         >
-          more ...
-        </button>
-      </div>
+          More...
+        </Button>
+      </Box>
     ) : (
       <></>
     )
@@ -348,18 +350,18 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                       key={`${dataFileRecord.formDataId}-${key}-${fileListType}`}
                     >
                       <td>
-                        <a
+                        <Link
                           href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}`}
                         >
                           {dataFileRecord.name}
-                        </a>
+                        </Link>
                       </td>
                       <td>{dayjs(dataFileRecord.modifiedOn).calendar()}</td>
                       <td>&nbsp;</td>
                       <td className="text-right">
-                        <button
-                          className="btn"
+                        <IconButton
                           aria-label="delete"
+                          color="primary"
                           onClick={() =>
                             this.setModalConfirmationState(
                               this.props.token!,
@@ -367,8 +369,8 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                             )
                           }
                         >
-                          <IconSvg icon="delete" aria-hidden="true" />
-                        </button>
+                          <DeleteTwoToneIcon />
+                        </IconButton>
                       </td>
                     </tr>
                   )
@@ -376,24 +378,24 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                   return (
                     <tr key={`${dataFileRecord.formDataId}-${key}`}>
                       <td>
-                        <a
+                        <Link
                           href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}&submitted=1`}
                         >
                           {dataFileRecord.name}
-                        </a>
+                        </Link>
                       </td>
                       <td>{dayjs(dataFileRecord.modifiedOn).calendar()}</td>
                       <td>{dataFileRecord.submissionStatus.state}</td>
                       <td className="text-right">
-                        <button
-                          className="btn"
+                        <IconButton
+                          color="primary"
                           aria-label="information"
                           onClick={() =>
                             this.setState({ isShowInfoModal: true })
                           }
                         >
-                          <IconSvg icon="phone" aria-hidden="true" />
-                        </button>
+                          <PhoneTwoToneIcon />
+                        </IconButton>
                       </td>
                     </tr>
                   )
@@ -453,9 +455,9 @@ export default class SynapseFormSubmissionGrid extends React.Component<
           {this.renderLoading(this.props.token, this.state.isLoading)}
           {this.renderUnauthenticatedView(this.props.token)}
 
-          {!this.state.isLoading && (
+          {this.props.token && !this.state.isLoading && (
             <div className="file-grid ">
-              <h3>Your Submissions</h3>
+              <Typography variant="h3">Your Submissions</Typography>
               <div className="panel panel-default padding-full">
                 {this.renderSubmissionsTables(
                   this.state.inProgress,
@@ -464,15 +466,20 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                   this.props.formGroupId,
                 )}
 
-                <div className="text-center bootstrap-4-backport">
-                  <Button
-                    className="btn-wide btn-large" // .btn-large is a custom class, don't use size="lg"
-                    variant="primary"
+                <Box textAlign={'center'}>
+                  <WideButton
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                      padding: '0.75rem 1.5rem',
+                      // TODO: remove this line after we have removed bootstrap
+                      '&:hover': { color: 'common.white' }, // otherwise tab-focus.less overrides color
+                    }}
                     href={`${this.props.pathpart}?formGroupId=${this.props.formGroupId}`}
                   >
                     Add new {this.props.itemNoun}
-                  </Button>
-                </div>
+                  </WideButton>
+                </Box>
               </div>
             </div>
           )}
@@ -489,32 +496,22 @@ export default class SynapseFormSubmissionGrid extends React.Component<
               }
             />
           )}
-
-          <Modal
-            show={this.state.isShowInfoModal}
-            animation={false}
+          <ConfirmationDialog
+            open={this.state.isShowInfoModal}
+            title="More Information"
+            content={
+              <>
+                Please <Link href="mailto:ModelAD@iupui.edu">contact us</Link>{' '}
+                for more information about your submission
+              </>
+            }
             className={`theme-${this.props.formClass}`}
-            backdrop="static"
-          >
-            <Modal.Header
-              closeButton={false}
-              onHide={() => this.setState({ isShowInfoModal: false })}
-            >
-              <Modal.Title>More Information</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              Please <a href="mailto:ModelAD@iupui.edu">contact us</a> for more
-              information about your submission
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="success"
-                onClick={() => this.setState({ isShowInfoModal: false })}
-              >
-                OK
-              </Button>
-            </Modal.Footer>
-          </Modal>
+            hasCloseButton={false}
+            hasCancelButton={false}
+            confirmButtonColor="success"
+            onCancel={() => this.setState({ isShowInfoModal: false })}
+            onConfirm={() => this.setState({ isShowInfoModal: false })}
+          />
         </div>
       </div>
     )
