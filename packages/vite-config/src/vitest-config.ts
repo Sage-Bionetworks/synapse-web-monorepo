@@ -10,12 +10,12 @@ export default mergeConfig(
     },
     test: {
       environment: "jsdom",
-      // TODO: Coverage reports can be included in the test report when vitest 0.31.0 is released
       reporters: ["default", "html"],
       outputFile: { html: "./coverage/report/index.html" },
       coverage: {
         provider: "c8",
-        reportsDirectory: "./coverage/coverage/",
+        reporter: ["text-summary", "html-spa"],
+        reportsDirectory: "./coverage/cov",
       },
     },
   })

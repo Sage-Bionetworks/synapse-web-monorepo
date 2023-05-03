@@ -15,9 +15,9 @@
     "vite": "^4.3.4"
   },
   "optionalDependencies": {
-    "vitest": "^0.30.1",
-    "@vitest/coverage-c8": "^0.30.1",
-    "@vitest/ui": "^0.30.1"
+    "vitest": "^0.31.0",
+    "@vitest/coverage-c8": "^0.31.0",
+    "@vitest/ui": "^0.31.0"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
@@ -28,6 +28,6 @@
     "typescript": "5.0.4",
     "vite": "^4.3.4",
     "vite-plugin-svgr": "^2.4.0",
-    "vitest": "^0.30.1"
+    "vitest": "^0.31.0"
   }
 }
