@@ -4,11 +4,14 @@ import { DialogBase, DialogBaseProps } from './DialogBase'
 
 export type ConfirmationDialogProps = DialogBaseProps & {
   confirmButtonText?: string
+  confirmButtonClassName?: string
   confirmButtonColor?: ButtonProps['color']
   confirmButtonVariant?: ButtonProps['variant']
   onConfirm: () => void
   hasCancelButton?: boolean
 }
+
+export const CANCEL_BUTTON_TEXT = 'Cancel'
 
 /**
  * A confirmation dialog built using MUI components.
@@ -16,6 +19,7 @@ export type ConfirmationDialogProps = DialogBaseProps & {
 export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
   const {
     confirmButtonText = 'OK',
+    confirmButtonClassName,
     confirmButtonColor = 'primary',
     confirmButtonVariant = 'contained',
     onConfirm,
@@ -30,11 +34,12 @@ export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
         <>
           {hasCancelButton && (
             <Button variant="outlined" onClick={() => onCancel()}>
-              Cancel
+              {CANCEL_BUTTON_TEXT}
             </Button>
           )}
           <Button
             variant={confirmButtonVariant}
+            className={confirmButtonClassName}
             color={confirmButtonColor}
             onClick={() => onConfirm()}
           >
