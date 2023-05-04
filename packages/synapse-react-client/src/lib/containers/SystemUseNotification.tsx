@@ -40,10 +40,10 @@ export const SystemUseNotification: React.FunctionComponent<
         Orders, directives, policies, regulations, standards, and guidance. Any
         evidence of possible violations of proper use or applicable laws found
         as a result of this monitoring may be turned over to law enforcement.
-        Any individual found to be in violation of the system's proper use rules
-        or law could be punished with loss of system access, fines, and/or
+        Any individual found to be in violation of the system&apos;s proper use
+        rules or law could be punished with loss of system access, fines, and/or
         imprisonment. By proceeding, you hereby acknowledge your agreement with
-        these terms and the system's rules of behavior and consent to such
+        these terms and the system&apos;s rules of behavior and consent to such
         monitoring and information retrieval for law enforcement and other
         official purposes.
       </Typography>
