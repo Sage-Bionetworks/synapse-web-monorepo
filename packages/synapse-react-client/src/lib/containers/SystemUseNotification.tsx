@@ -7,14 +7,11 @@ import { Box, SxProps, Typography } from '@mui/material'
 export const SystemUseNotification: React.FunctionComponent<
   SxProps
 > = sxProps => {
-  const commonSx: SxProps = {
-    color: 'grey.700',
-  }
-
   return (
     <Box
       sx={{
         ...sxProps,
+        color: 'grey.700',
         maxHeight: '110px',
         overflow: 'auto',
         margin: '20px 0px',
@@ -23,14 +20,13 @@ export const SystemUseNotification: React.FunctionComponent<
       <Typography
         variant="smallText1"
         sx={{
-          ...commonSx,
           fontWeight: 700,
           marginBottom: '5px',
         }}
       >
         System Use Notice
       </Typography>
-      <Typography variant="smallText1" sx={commonSx}>
+      <Typography variant="smallText1" sx={{ lineHeight: '21px' }}>
         Sage Bionetworks actively monitors this system and activity to maintain
         system security and availability and to ensure appropriate and
         legitimate usage. Any individual who intentionally accesses a computer
