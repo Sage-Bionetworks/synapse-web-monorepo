@@ -12,9 +12,7 @@ export type DownloadDocumentTemplateProps = {
   downloadButtonText: string
 }
 
-export default function DownloadDocumentTemplate(
-  props: DownloadDocumentTemplateProps,
-) {
+export default function DocumentTemplate(props: DownloadDocumentTemplateProps) {
   const { title, description, fileHandleAssociation, downloadButtonText } =
     props
 
@@ -53,7 +51,6 @@ export default function DownloadDocumentTemplate(
         sx={{ backgroundColor: 'tertiary.100', p: 2.5, my: 2 }}
       >
         <DirectDownloadButton
-          id={'duc-temp'}
           variant={'outlined'}
           fileHandleAssociation={fileHandleAssociation}
           fileName={downloadButtonText}

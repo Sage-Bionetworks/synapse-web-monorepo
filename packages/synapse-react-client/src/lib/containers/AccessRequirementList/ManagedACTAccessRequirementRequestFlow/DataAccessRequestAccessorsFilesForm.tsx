@@ -39,7 +39,7 @@ import DataAccessRequestAccessorsEditor, {
   DataAccessRequestAccessorsEditorProps,
 } from './DataAccessRequestAccessorsEditor'
 import { UploadDocumentField } from './UploadDocumentField'
-import DownloadDocumentTemplate from './DownloadDocumentTemplate'
+import DocumentTemplate from './DocumentTemplate'
 
 export type DataAccessRequestAccessorsFilesFormProps = {
   /**
@@ -365,7 +365,7 @@ export default function DataAccessRequestAccessorsFilesForm(
           {managedACTAccessRequirement?.isDUCRequired && (
             <>
               {managedACTAccessRequirement?.ducTemplateFileHandleId && (
-                <DownloadDocumentTemplate
+                <DocumentTemplate
                   title={'Download DUC Template'}
                   description={
                     'As a first step, you will need to download the most current version of the Data Use Certificate.'
