@@ -6,6 +6,7 @@ import FeaturedToolsList from 'synapse-react-client/dist/containers/home_page/fe
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { Query } from 'synapse-react-client/dist/utils/synapseTypes'
 import { TextMatchesQueryFilter } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { WideButton } from 'synapse-react-client/dist/components/styled/WideButton'
 import { ReactComponent as AnimalModels } from './assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from './assets/antibodies.svg'
 import { ReactComponent as Biobanks } from './assets/biobanks.svg'
@@ -53,6 +54,8 @@ const BrowseToolsPage = () => {
       `/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`,
     )
   }
+
+  const wideButtonSx = { marginTop: '50px' }
 
   return (
     <div className="browse-tools-page">
@@ -117,24 +120,41 @@ const BrowseToolsPage = () => {
           </button>
         </div>
         <div className="center-content">
-          <Button
-            className="btn-wide"
-            variant='contained'
+          <WideButton
+            sx={wideButtonSx}
+            variant="contained"
             onClick={() => gotoExploreTools()}
           >
             View All Tools
-          </Button>
+          </WideButton>
         </div>
       </Layout>
       <div className="home-container-description  home-bg-dark home-spacer">
-        <Typography variant="sectionTitle" sx={{textAlign:'center', paddingTop:'50px', paddingBottom: '15px'}}>
+        <Typography
+          variant="sectionTitle"
+          sx={{
+            textAlign: 'center',
+            paddingTop: '50px',
+            paddingBottom: '15px',
+          }}
+        >
           What Tools Can We Help You Find?
         </Typography>
-        <Typography variant="body1" sx={{textAlign:'center', paddingBottom: '15px'}}>
-            For the greatest success with your search, ensure your spelling is correct and avoid pluralization or suffixes.
+        <Typography
+          variant="body1"
+          sx={{ textAlign: 'center', paddingBottom: '15px' }}
+        >
+          For the greatest success with your search, ensure your spelling is
+          correct and avoid pluralization or suffixes.
         </Typography>
-        <Typography variant="body1" sx={{textAlign:'center', paddingBottom: '40px'}}>
-          <Link href="https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html" target="_blank">
+        <Typography
+          variant="body1"
+          sx={{ textAlign: 'center', paddingBottom: '40px' }}
+        >
+          <Link
+            href="https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html"
+            target="_blank"
+          >
             Learn More About MySQL Full Text Search
           </Link>
         </Typography>
@@ -158,7 +178,7 @@ const BrowseToolsPage = () => {
             </div>
             <div className="search-button-container">
               <Button
-                variant='contained'
+                variant="contained"
                 onClick={() => gotoExploreToolsWithFullTextSearch(searchText)}
               >
                 Search
@@ -193,13 +213,13 @@ const BrowseToolsPage = () => {
           />
         </div>
         <div className="center-content">
-          <Button
-            className="btn-wide"
-            variant='contained'
+          <WideButton
+            sx={wideButtonSx}
+            variant="contained"
             onClick={() => gotoExploreTools()}
           >
             View All Tools
-          </Button>
+          </WideButton>
         </div>
       </Layout>
       <Layout outsideContainerClassName="home-spacer highlightSubmitToolContainer">
@@ -218,14 +238,16 @@ const BrowseToolsPage = () => {
           </div>
         </div>
         <div className="center-content">
-          <Button
+          <WideButton
+            sx={wideButtonSx}
             href="https://forms.gle/htFkH5yewLzP1RAu7"
-            className="btn-wide highlightSubmitToolButton"
-            variant='contained'
+            className="highlightSubmitToolButton"
+            variant="contained"
+            // @ts-ignore - target prop exists, but TS doesn't recognize on styled component
             target="_blank"
           >
             Submit A Tool
-          </Button>
+          </WideButton>
         </div>
       </Layout>
     </div>

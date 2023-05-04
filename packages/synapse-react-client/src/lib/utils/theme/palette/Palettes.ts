@@ -95,6 +95,7 @@ export const arkPortalPalette: PaletteOptions = {
   ...palette,
   primary: generatePalette('#e79776'),
   secondary: generatePalette('#e79776'),
+  contrastThreshold: 2.3,
 }
 
 export const adKnowledgePortalPalette: PaletteOptions = {

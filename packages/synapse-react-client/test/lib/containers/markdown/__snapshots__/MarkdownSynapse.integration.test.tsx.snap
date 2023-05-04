@@ -69,22 +69,20 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
       <p
         class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
       >
-        <span
-          class="bootstrap-4-backport"
-        >
+        <span>
           <a
-            class="btn-wide  btn btn-secondary"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-qnfplt-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Help/How It Works"
+            tabindex="0"
           >
             sometext
           </a>
         </span>
-        <span
-          class="bootstrap-4-backport"
-        >
+        <span>
           <a
-            class="btn-wide  btn btn-secondary"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-qnfplt-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Apply"
+            tabindex="0"
           >
             APPLY
           </a>

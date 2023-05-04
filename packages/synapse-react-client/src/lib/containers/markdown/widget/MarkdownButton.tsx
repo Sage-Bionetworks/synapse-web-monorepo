@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from 'react-bootstrap'
+import WideButton from '../../../components/styled/WideButton'
 
 export type ButtonLinkWidgetParams = {
   align?: string
@@ -11,38 +11,38 @@ export type ButtonLinkWidgetParams = {
 export default function MarkdownButton(
   widgetParamsMapped: ButtonLinkWidgetParams,
 ) {
-  let buttonClasses = 'btn-wide '
+  let buttonClasses = ''
   const { align = '', highlight = '' } = widgetParamsMapped
   const alignLowerCase = align.toLowerCase()
   if (alignLowerCase === 'left') {
-    buttonClasses += 'floatLeft '
+    buttonClasses += 'floatleft '
   }
   if (alignLowerCase === 'right') {
     buttonClasses += 'floatright '
   }
-  const buttonVariant = highlight === 'true' ? 'secondary' : 'light-secondary'
-  if (alignLowerCase === 'center') {
-    return (
-      <div className="bootstrap-4-backport" style={{ textAlign: 'center' }}>
-        <Button
-          href={widgetParamsMapped.url}
-          className={buttonClasses}
-          variant={buttonVariant}
-        >
-          {widgetParamsMapped.text}
-        </Button>
-      </div>
-    )
-  }
-  return (
-    <span className="bootstrap-4-backport">
-      <Button
-        href={widgetParamsMapped.url}
-        className={buttonClasses}
-        variant={buttonVariant}
-      >
-        {widgetParamsMapped.text}
-      </Button>
-    </span>
+  const buttonIsCenterAligned = alignLowerCase === 'center'
+  const buttonVariant = highlight === 'true' ? 'secondary' : 'inherit'
+  const button = (
+    <WideButton
+      href={widgetParamsMapped.url}
+      className={buttonClasses}
+      variant="contained"
+      color={buttonVariant}
+      sx={{
+        '&:hover': { backgroundColor: 'secondary.main', color: 'white' },
+        ...(!buttonIsCenterAligned &&
+          widgetParamsMapped.url && {
+            margin: '20px 20px 20px 0px',
+          }),
+      }}
+    >
+      {widgetParamsMapped.text}
+    </WideButton>
+  )
+
+  return buttonIsCenterAligned ? (
+    <div style={{ textAlign: 'center' }}>{button}</div>
+  ) : (
+    <span>{button}</span>
   )
 }

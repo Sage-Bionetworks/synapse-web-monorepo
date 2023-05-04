@@ -1,7 +1,7 @@
 import React from 'react'
 import { GoalsDataProps } from './Goals'
 import QueryCount from '../../../containers/QueryCount'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 
 export default function GoalsDesktop({
   asset,
@@ -11,7 +11,7 @@ export default function GoalsDesktop({
   title,
 }: GoalsDataProps) {
   return (
-    <div className="Goals__Card bootstrap-4-backport">
+    <div className="Goals__Card">
       <div
         className="Goals__Card__header"
         style={{ background: `url('${asset}')` }}
@@ -29,7 +29,8 @@ export default function GoalsDesktop({
         <p> {summary} </p>
         <Button
           className="Goals__Card__summary__link"
-          variant="secondary"
+          variant="contained"
+          color="secondary"
           href={link}
         >
           Explore

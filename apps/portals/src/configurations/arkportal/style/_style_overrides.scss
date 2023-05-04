@@ -47,15 +47,6 @@ td.SRC_noBorderTop:nth-child(n + 4) {
     }
   }
 }
-.bootstrap-4-backport {
-  .btn-secondary,
-  .btn-secondary-base {
-    color: white;
-    &:hover {
-      color: white;
-    }
-  }
-}
 
 .AboutPage {
   margin-top: 25px !important;
@@ -113,7 +104,7 @@ $ARK-gray-900: #1d1d22 !default;
       line-height: 1.5;
       color: $ARK-gray-700;
       margin-bottom: 40px;
-      &__link.btn {
+      &__link.MuiButton-root {
         border-color: transparent;
         display: block;
         box-sizing: border-box;

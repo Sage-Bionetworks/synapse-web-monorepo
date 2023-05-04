@@ -2,7 +2,7 @@ import React from 'react'
 import { GoalsDataProps } from './Goals'
 import ExpandableContent from '../ExpandableContent'
 import QueryCount from '../../../containers/QueryCount'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 
 export default function GoalsMobile({
   link,
@@ -21,10 +21,11 @@ export default function GoalsMobile({
     </div>
   )
   const content = (
-    <div className="Goals__Mobile__Content bootstrap-4-backport">
+    <div className="Goals__Mobile__Content">
       <p>{summary}</p>
       <Button
-        variant="secondary"
+        variant="contained"
+        color="secondary"
         className="Goals__Mobile__Content__Link"
         href={link}
       >
