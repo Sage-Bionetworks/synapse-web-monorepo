@@ -18,6 +18,7 @@ import { useLogInDialogContext } from './LogInDialogContext'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { useGetCurrentUserProfile } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
 import { useHistory } from 'react-router-dom'
+import SystemUseNotification from 'synapse-react-client/dist/containers/SystemUseNotification'
 
 type SynapseSettingLink = {
   text: string
@@ -249,6 +250,7 @@ function Navbar() {
                         })
                       }}
                     />
+                    <SystemUseNotification maxWidth={'325px'} />
                   </DialogContent>
                 </Dialog>
               </div>
