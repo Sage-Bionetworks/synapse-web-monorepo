@@ -30,7 +30,7 @@
   },
   "scripts": {
     "clean": "rimraf coverage",
-    "lint": "eslint src/AppInitializer.tsx --debug",
+    "lint": "eslint src",
     "copy-assets": "cp src/config/style/favicon* public/; cp src/config/style/logo.svg public/; cp src/config/style/socialmedia.png public/",
     "save-build-date": "date > public/build-date.txt",
     "start": "vite",
