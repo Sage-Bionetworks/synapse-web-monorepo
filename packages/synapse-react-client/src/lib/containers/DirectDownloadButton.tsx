@@ -1,19 +1,16 @@
 import React from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, ButtonProps } from '@mui/material'
 import { BatchFileRequest, FileHandleAssociation } from '../utils/synapseTypes'
 import { getFiles } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
 
-export type DirectFileDownloadButtonProps = {
-  id?: string
+export type DirectFileDownloadButtonProps = Omit<ButtonProps, 'onClick'> & {
   fileHandleAssociation: FileHandleAssociation
   fileName: string | undefined
-  className?: string
-  variant?: string // This allows you to change the look of the button (see react bootstrap doc)
 }
 
-const DirectDownloadButton: React.FC<DirectFileDownloadButtonProps> = props => {
-  const { id, fileHandleAssociation, className, variant, fileName } = props
+function DirectDownloadButton(props: DirectFileDownloadButtonProps) {
+  const { fileHandleAssociation, fileName, ...buttonProps } = props
   const { accessToken } = useSynapseContext()
 
   const getDownloadLink = async () => {
@@ -39,18 +36,14 @@ const DirectDownloadButton: React.FC<DirectFileDownloadButtonProps> = props => {
   }
 
   return (
-    <>
-      <Button
-        id={id}
-        variant={variant}
-        className={className}
-        onClick={() => {
-          getDownloadLink()
-        }}
-      >
-        {fileName}
-      </Button>
-    </>
+    <Button
+      {...buttonProps}
+      onClick={() => {
+        getDownloadLink()
+      }}
+    >
+      {fileName}
+    </Button>
   )
 }
 

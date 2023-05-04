@@ -1,11 +1,11 @@
 import * as React from 'react'
+import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-const AccountRegistered = () => {
+const AccountRegistered = (props: SvgIconProps) => {
   return (
-    <svg
-      width="60"
-      height="61"
-      viewBox="0 0 60 61"
+    <SvgIcon
+      {...props}
+      viewBox="4 -1 51 51"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -35,7 +35,7 @@ const AccountRegistered = () => {
         d="M32.9181 30.7493L32.002 31.7027L34.9466 34.7671L41.4903 27.9573L40.5742 27.0039L34.9466 32.8604L32.9181 30.7493Z"
         fill="white"
       />
-    </svg>
+    </SvgIcon>
   )
 }
 

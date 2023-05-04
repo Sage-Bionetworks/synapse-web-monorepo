@@ -13,6 +13,7 @@ import {
 import {
   BackendDestinationEnum,
   getEndpoint,
+  MOCK_REPO_ORIGIN,
 } from '../../../src/lib/utils/functions/getEndpoint'
 import {
   TYPE_FILTER,
@@ -199,3 +200,19 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
     return res(ctx.status(200), ctx.json(response))
   }),
 ]
+
+export function getCurrentUserCertifiedValidatedHandler(
+  backendOrigin: string,
+  isCertified: boolean,
+  isValidated: boolean,
+) {
+  return rest.get(`${backendOrigin}${USER_BUNDLE}`, async (req, res, ctx) => {
+    let status = 200
+    let response: UserBundle = {
+      ...mockUserBundle,
+      isCertified: isCertified,
+      isVerified: isValidated,
+    }
+    return res(ctx.status(status), ctx.json(response))
+  })
+}

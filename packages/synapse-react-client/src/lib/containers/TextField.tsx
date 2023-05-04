@@ -1,6 +1,5 @@
 import React, { useId, useMemo } from 'react'
 import {
-  Box,
   InputBase,
   InputLabel,
   TextFieldProps as MuiTextFieldProps,
@@ -54,16 +53,18 @@ export default function TextField(props: TextFieldProps) {
       {props.label && (
         <InputLabel
           htmlFor={props.id || id}
-          sx={{ fontWeight: 700, mb: '4px', pointerEvents: 'unset' }}
+          sx={{
+            fontWeight: 700,
+            mb: '4px',
+            pointerEvents: 'unset',
+            '&::after': ({ palette }) => ({
+              content: props.required ? '"*"' : undefined,
+              marginLeft: '3px',
+              color: palette.secondary.main,
+            }),
+          }}
         >
           {props.label}
-          {props.required ? (
-            <Box component={'span'} sx={{ ml: '3px', color: 'secondary.main' }}>
-              {'*'}
-            </Box>
-          ) : (
-            <></>
-          )}
         </InputLabel>
       )}
       <InputBase id={id} {...rest}></InputBase>

@@ -7,6 +7,7 @@ import {
   DialogActions,
   IconButton,
   Stack,
+  Typography,
 } from '@mui/material'
 import IconSvg from '../../IconSvg'
 
@@ -14,9 +15,9 @@ export type RequestDataAccessSuccessProps = {
   onHide: () => void
 }
 
-const RequestDataAccessSuccess: React.FC<
-  RequestDataAccessSuccessProps
-> = props => {
+export default function RequestDataAccessSuccess(
+  props: RequestDataAccessSuccessProps,
+) {
   const { onHide } = props
   return (
     <>
@@ -31,11 +32,11 @@ const RequestDataAccessSuccess: React.FC<
       </DialogTitle>
 
       <DialogContent>
-        <p style={{ margin: '2rem 0' }}>
+        <Typography variant="body1">
           Your data access request been submitted and is currently being
           reviewed. Please allow for up to 2 weeks for your request to be
           reviewed and approved.
-        </p>
+        </Typography>
       </DialogContent>
       <DialogActions>
         <Button variant="contained" onClick={onHide}>
@@ -45,5 +46,3 @@ const RequestDataAccessSuccess: React.FC<
     </>
   )
 }
-
-export default RequestDataAccessSuccess

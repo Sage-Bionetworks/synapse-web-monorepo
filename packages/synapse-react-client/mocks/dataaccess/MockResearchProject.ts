@@ -11,3 +11,8 @@ export const MOCK_RESEARCH_PROJECT: ResearchProject = {
     'We plan to use this data to investigate the properties of antimatter. Our findings will be published in' +
     ' a peer-reviewed journal, and derivative data will be shared on Synapse.',
 }
+
+// When a "new" research project is retrieved, the backend returns an object with just the AR ID
+export const MOCK_EMPTY_RESEARCH_PROJECT: ResearchProject = {
+  accessRequirementId: String(mockManagedACTAccessRequirement.id),
+}
