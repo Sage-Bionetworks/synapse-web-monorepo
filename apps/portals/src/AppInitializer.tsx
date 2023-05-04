@@ -55,7 +55,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
       }
       let isInvokingDownloadTable: boolean = false
       if (ev.target instanceof HTMLAnchorElement) {
-        const anchorElement = ev.target 
+        const anchorElement = ev.target
         isInvokingDownloadTable =
           anchorElement.text === DOWNLOAD_FILES_MENU_TEXT
         if (anchorElement.href) {
@@ -87,7 +87,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
       let icon = ''
       const logoImgElement = document.querySelector('#header-logo-image')
       if (logoImgElement) {
-        let imageSrc = logoImgElement.getAttribute('src')
+        let imageSrc: string | null = logoImgElement.getAttribute('src')
         if (imageSrc) {
           if (!imageSrc.toLowerCase().startsWith('http')) {
             imageSrc = SynapseClient.getRootURL() + imageSrc.substring(1)

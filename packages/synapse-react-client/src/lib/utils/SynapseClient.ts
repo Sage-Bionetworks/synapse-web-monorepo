@@ -314,7 +314,7 @@ export const ACCESS_TOKEN_COOKIE_KEY =
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
-export const getRootURL = () => {
+export function getRootURL(): string {
   const portString = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
