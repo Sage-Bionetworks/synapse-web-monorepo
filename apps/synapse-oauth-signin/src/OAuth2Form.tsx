@@ -30,6 +30,7 @@ import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/ap
 import { useHistory } from 'react-router-dom'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { getPortalFileHandleServletUrl } from 'synapse-react-client/dist/utils/SynapseClient'
+import SystemUseNotification from 'synapse-react-client/dist/containers/SystemUseNotification'
 
 export function OAuth2Form() {
   const isMounted = useRef(true)
@@ -418,6 +419,7 @@ export function OAuth2Form() {
             }}
             twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
           />
+          <SystemUseNotification maxWidth={'325px'} />
         </Paper>
       )}
       {error && (
