@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { Modal } from 'react-bootstrap'
+import { DialogBase } from '../DialogBase'
 import { TYPE_FILTER, UserGroupHeader } from '../../utils/synapseTypes'
 import UserSearchBoxV2 from '../UserSearchBoxV2'
 
@@ -26,19 +26,25 @@ export const UserMentionModal: React.FC<UserMentionModalProps> = ({
 
   return (
     <>
-      <Modal show={show} onHide={onClose} backdrop="static" animation={false}>
-        <Modal.Header closeButton>
-          <Modal.Title>Find User or Team</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <DialogBase
+        open={show}
+        onCancel={onClose}
+        title="Find User or Team"
+        content={
           <UserSearchBoxV2
             placeholder="Search for a user or team name"
             onChange={onUserChange}
             typeFilter={TYPE_FILTER.ALL}
             focusOnSelect={true}
           />
-        </Modal.Body>
-      </Modal>
+        }
+        sx={{
+          '.MuiDialog-paperFullWidth': {
+            overflowY: 'visible',
+            '.MuiDialogContent-root': { overflowY: 'visible' },
+          },
+        }}
+      />
     </>
   )
 }
