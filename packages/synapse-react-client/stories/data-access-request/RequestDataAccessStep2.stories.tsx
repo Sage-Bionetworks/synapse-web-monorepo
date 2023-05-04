@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import RequestDataAccessStep2 from '../../src/lib/containers/AccessRequirementListV2/ManagedACTAccessRequirementRequestFlow/RequestDataAccessStep2'
+import DataAccessRequestAccessorsFilesForm from '../../src/lib/containers/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm'
 import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
 import { MOCK_FOLDER_ID } from '../../mocks/entity/mockEntity'
 import { MOCK_RESEARCH_PROJECT_ID } from '../../mocks/dataaccess/MockResearchProject'
@@ -16,7 +16,7 @@ import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
 const meta: Meta = {
   title:
     'Governance/Data Access Request Flow/Managed Access Requirement/Step 2 - Accessors and Documentation',
-  component: RequestDataAccessStep2,
+  component: DataAccessRequestAccessorsFilesForm,
 } satisfies Meta
 
 export default meta

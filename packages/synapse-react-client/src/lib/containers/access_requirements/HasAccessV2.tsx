@@ -15,9 +15,9 @@ import {
   RestrictionInformationRequest,
   RestrictionLevel,
 } from '../../utils/synapseTypes'
-import AccessRequirementListV2, {
+import AccessRequirementList, {
   checkHasUnsupportedRequirement,
-} from '../AccessRequirementListV2/AccessRequirementListV2'
+} from '../AccessRequirementList/AccessRequirementList'
 import IconSvg, { Icon } from '../IconSvg'
 import { Theme, useTheme } from '@mui/material'
 
@@ -251,7 +251,7 @@ export function HasAccessV2(props: HasAccessProps) {
           {linkText}
         </a>
         {displayAccessRequirement && (
-          <AccessRequirementListV2
+          <AccessRequirementList
             entityId={entityId}
             accessRequirementFromProps={accessRequirements}
             renderAsModal={true}

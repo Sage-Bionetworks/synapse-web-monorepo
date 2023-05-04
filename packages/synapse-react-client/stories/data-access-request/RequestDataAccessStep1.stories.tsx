@@ -2,13 +2,13 @@ import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
 import { MOCK_REPO_ORIGIN } from '../../src/lib/utils/functions/getEndpoint'
-import RequestDataAccessStep1 from '../../src/lib/containers/AccessRequirementListV2/ManagedACTAccessRequirementRequestFlow/RequestDataAccessStep1'
+import ResearchProjectForm from '../../src/lib/containers/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/ResearchProjectForm'
 import { getResearchProjectHandlers } from '../../mocks/msw/handlers/researchProjectHandlers'
 
 const meta: Meta = {
   title:
     'Governance/Data Access Request Flow/Managed Access Requirement/Step 1 - Research Project Information',
-  component: RequestDataAccessStep1,
+  component: ResearchProjectForm,
 } satisfies Meta
 
 export default meta

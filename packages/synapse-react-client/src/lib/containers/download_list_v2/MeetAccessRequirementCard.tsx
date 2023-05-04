@@ -9,7 +9,7 @@ import {
   MEDIUM_DIFFICULTY,
   VARIABLE_DIFFICULTY,
 } from '../../utils/SynapseConstants'
-import AccessRequirementListV2 from '../AccessRequirementListV2/AccessRequirementListV2'
+import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
 import { Skeleton, Typography } from '@mui/material'
 
 export type MeetAccessRequirementCardProps = {
@@ -108,7 +108,7 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
       {!isError && !isFetching && content}
       {isFetching && <LoadingAccessRequirementCard />}
       {isShowingAccessRequirement && ar && (
-        <AccessRequirementListV2
+        <AccessRequirementList
           entityId={ar.subjectIds[0].id}
           accessRequirementFromProps={[ar]}
           renderAsModal={true}

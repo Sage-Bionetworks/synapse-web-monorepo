@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import SelfSignAccessRequirementItem from '../../src/lib/containers/AccessRequirementListV2/RequirementItem/SelfSignAccessRequirementItem'
+import SelfSignAccessRequirementItem from '../../src/lib/containers/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,

@@ -1,11 +1,11 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { Paper } from '@mui/material'
-import RequirementItem from '../../src/lib/containers/AccessRequirementListV2/RequirementItem/RequirementItem'
+import RequirementItem from '../../src/lib/containers/AccessRequirementList/RequirementItem/RequirementItem'
 import { displayToast } from '../../src/lib/containers/ToastMessage'
 import MarkdownSynapse from '../../src/lib/containers/markdown/MarkdownSynapse'
 import { mockManagedACTAccessRequirementWikiPage } from '../../mocks/mockWiki'
-import { RequirementItemStatus } from '../../src/lib/containers/AccessRequirementListV2/AccessApprovalCheckMarkV2'
+import { RequirementItemStatus } from '../../src/lib/containers/AccessRequirementList/AccessApprovalCheckMark'
 
 const meta: Meta = {
   title: 'Governance/Data Access Request Flow/Requirements/RequirementItem',

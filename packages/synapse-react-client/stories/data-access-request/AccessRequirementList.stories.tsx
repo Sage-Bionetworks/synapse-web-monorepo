@@ -22,7 +22,7 @@ import {
   SubmissionState,
 } from '../../src/lib/utils/synapseTypes'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import AccessRequirementListV2 from '../../src/lib/containers/AccessRequirementListV2/AccessRequirementListV2'
+import AccessRequirementList from '../../src/lib/containers/AccessRequirementList/AccessRequirementList'
 import { TwoFactorAuthStatus } from '../../src/lib/utils/synapseTypes/TotpSecret'
 import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
 import {
@@ -36,7 +36,7 @@ import { getCurrentUserCertifiedValidatedHandler } from '../../mocks/msw/handler
 
 const meta: Meta = {
   title: 'Governance/Data Access Request Flow/AccessRequirementList',
-  component: AccessRequirementListV2,
+  component: AccessRequirementList,
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },
@@ -59,7 +59,7 @@ const meta: Meta = {
             stack
           </p>
 
-          <AccessRequirementListV2 {...args} />
+          <AccessRequirementList {...args} />
         </SynapseContextProvider>
       )}
     </SynapseContextConsumer>

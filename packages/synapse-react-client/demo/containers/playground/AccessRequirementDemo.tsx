@@ -1,5 +1,5 @@
 import * as React from 'react'
-import AccessRequirementListV2 from '../../../src/lib/containers/AccessRequirementListV2/AccessRequirementListV2'
+import AccessRequirementList from '../../../src/lib/containers/AccessRequirementList/AccessRequirementList'
 
 export const AccessRequirementDemo: React.FunctionComponent = () => {
   const [displayAccessRequirement, setDisplayAccessRequirement] =
@@ -16,7 +16,7 @@ export const AccessRequirementDemo: React.FunctionComponent = () => {
   return (
     <div>
       {displayAccessRequirement ? (
-        <AccessRequirementListV2
+        <AccessRequirementList
           onHide={() => {
             window.location.href = currentWindowLocation
             setDisplayAccessRequirement(false)

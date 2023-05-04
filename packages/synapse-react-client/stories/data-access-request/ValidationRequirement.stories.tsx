@@ -1,7 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { MOCK_REPO_ORIGIN } from '../../src/lib/utils/functions/getEndpoint'
-import ValidationRequirement from '../../src/lib/containers/AccessRequirementListV2/RequirementItem/ValidationRequirement'
+import ValidationRequirement from '../../src/lib/containers/AccessRequirementList/RequirementItem/ValidationRequirement'
 import { getCurrentUserCertifiedValidatedHandler } from '../../mocks/msw/handlers/userProfileHandlers'
 
 const meta: Meta = {

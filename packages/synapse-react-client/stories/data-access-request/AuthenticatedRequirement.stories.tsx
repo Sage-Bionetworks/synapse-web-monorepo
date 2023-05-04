@@ -2,7 +2,7 @@ import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { SynapseContextConsumer } from '../../src/lib/utils/SynapseContext'
 import FullContextProvider from '../../src/lib/utils/FullContextProvider'
-import AuthenticatedRequirement from '../../src/lib/containers/AccessRequirementListV2/RequirementItem/AuthenticatedRequirement'
+import AuthenticatedRequirement from '../../src/lib/containers/AccessRequirementList/RequirementItem/AuthenticatedRequirement'
 
 const meta: Meta = {
   title:

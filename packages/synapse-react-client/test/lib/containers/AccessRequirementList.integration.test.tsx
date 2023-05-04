@@ -1,8 +1,8 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import AccessRequirementListV2, {
+import AccessRequirementList, {
   AccessRequirementListProps,
-} from '../../../src/lib/containers/AccessRequirementListV2/AccessRequirementListV2'
+} from '../../../src/lib/containers/AccessRequirementList/AccessRequirementList'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { AccessRequirement } from '../../../src/lib/utils/synapseTypes/'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
@@ -13,7 +13,7 @@ import {
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '../../../mocks/mockAccessRequirements'
-import * as AccessRequirementListUtils from '../../../src/lib/containers/AccessRequirementListV2/AccessRequirementListUtils'
+import * as AccessRequirementListUtils from '../../../src/lib/containers/AccessRequirementList/AccessRequirementListUtils'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
 
@@ -29,7 +29,7 @@ describe('AccessRequirementList tests', () => {
 
   async function init(props: AccessRequirementListProps) {
     await act(() => {
-      render(<AccessRequirementListV2 {...props} />, {
+      render(<AccessRequirementList {...props} />, {
         wrapper: createWrapper(),
       })
     })

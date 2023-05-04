@@ -28,7 +28,7 @@ import {
   AccessRequirementSearchResponse,
 } from '../../../synapseTypes/AccessRequirement/AccessRequirementSearch'
 import { ResearchProject } from '../../../synapseTypes/ResearchProject'
-import { sortAccessRequirementsByCompletion } from '../../../../containers/AccessRequirementListV2/AccessRequirementListUtils'
+import { sortAccessRequirementsByCompletion } from '../../../../containers/AccessRequirementList/AccessRequirementListUtils'
 
 export function useGetAccessRequirements<T extends AccessRequirement>(
   accessRequirementId: string | number,
