@@ -67,8 +67,8 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
     setTagModalWithKeyboard(false)
   }
 
-  const handleTagModal = (e: React.KeyboardEvent) => {
-    if (e.key == '@') {
+  const handleTagModal = (text: string) => {
+    if (text.slice(-1) === '@') {
       setTagModalWithKeyboard(true)
       setIsShowingTagModal(true)
     }
@@ -159,13 +159,15 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
       <div>
         {currentTab === MarkdownEditorTabs.WRITE ? (
           <textarea
-            onChange={e => setText(e.target.value)}
+            onChange={e => {
+              setText(e.target.value)
+              handleTagModal(e.target.value)
+            }}
             style={{ width: '100%' }}
             rows={6}
             value={text}
             ref={textAreaRef}
             placeholder={placeholder}
-            onKeyDown={handleTagModal}
           />
         ) : text ? (
           <MarkdownSynapse markdown={text} />
