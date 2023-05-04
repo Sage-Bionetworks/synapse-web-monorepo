@@ -29,7 +29,6 @@ import {
 import { ForumThreadEditor } from './ForumThreadEditor'
 import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import { SubscribersModal } from './SubscribersModal'
-import { DialogBase } from '../DialogBase'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 
 export type DiscussionThreadProps = {
@@ -149,6 +148,15 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           <span>
             posted {formatDate(dayjs(threadData.createdOn), 'M/D/YYYY')}
           </span>
+          <ForumThreadEditor
+            isReply={false}
+            initialText={threadBody}
+            onClose={() => setShowThreadModal(false)}
+            initialTitle={threadData?.title}
+            id={threadId}
+            isDialog={true}
+            openDialog={showThreadModal}
+          />
         </>
       ) : (
         <></>
@@ -216,6 +224,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           id={threadId}
           isReply={true}
           onClose={() => setShowReplyEditor1(false)}
+          isDialog={false}
         />
       )}
       <div>
@@ -240,6 +249,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
               id={threadId}
               isReply={true}
               onClose={() => setShowReplyEditor2(false)}
+              isDialog={false}
             />
           )}
         </>
@@ -257,21 +267,6 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       ) : (
         <></>
       )}
-      <DialogBase
-        maxWidth="md"
-        open={showThreadModal}
-        title="Edit Thread"
-        onCancel={() => setShowThreadModal(false)}
-        content={
-          <ForumThreadEditor
-            isReply={false}
-            initialText={threadBody}
-            onClose={() => setShowThreadModal(false)}
-            initialTitle={threadData?.title}
-            id={threadId}
-          />
-        }
-      />
       <WarningDialog
         open={showDeleteModal}
         title="Confirm Deletion"

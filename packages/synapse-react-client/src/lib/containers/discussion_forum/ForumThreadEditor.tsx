@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Button, FormControl } from 'react-bootstrap'
+import { Box } from '@mui/material'
+import { FormControl } from 'react-bootstrap'
 import {
   useCreateThread,
   useUpdateThreadTitle,
@@ -11,6 +12,7 @@ import {
 } from '../../utils/hooks/SynapseAPI/forum/useReply'
 import { CreateDiscussionThread } from '../../utils/synapseTypes/DiscussionBundle'
 import { MarkdownEditor } from '../markdown/MarkdownEditor'
+import { ConfirmationButtons, ConfirmationDialog } from '../ConfirmationDialog'
 
 export type ForumThreadEditorProps = {
   initialTitle?: string
@@ -18,11 +20,24 @@ export type ForumThreadEditorProps = {
   id: string
   onClose: () => void
   isReply: boolean
-}
+} & (
+  | { isDialog: false; openDialog?: never }
+  | { isDialog: true; openDialog: boolean }
+)
 
 export const ForumThreadEditor: React.FunctionComponent<
   ForumThreadEditorProps
-> = ({ initialText, initialTitle, id, onClose, isReply }) => {
+> = props => {
+  const {
+    initialText,
+    initialTitle,
+    id,
+    onClose,
+    isReply,
+    isDialog,
+    openDialog,
+  } = props
+
   const [title, setTitle] = useState<string>(initialTitle ?? '')
   const [text, setText] = useState<string>(initialText ?? '')
   const { mutate: updateTitle, isLoading: isLoadingTitle } =
@@ -50,6 +65,8 @@ export const ForumThreadEditor: React.FunctionComponent<
     isLoadingTitle ||
     isLoadingReplyUpdate
 
+  const isExistingThread = !isReply && initialTitle
+
   const onSave = (text: string, title: string) => {
     if (isReply) {
       if (initialText) {
@@ -66,7 +83,7 @@ export const ForumThreadEditor: React.FunctionComponent<
         })
       }
     } else {
-      if (initialTitle) {
+      if (isExistingThread) {
         // updating thread
         updateTitle({
           title: title,
@@ -88,7 +105,7 @@ export const ForumThreadEditor: React.FunctionComponent<
     }
   }
 
-  return (
+  const editorContent = (
     <div className="bootstrap-4-backport">
       {!isReply && (
         <FormControl
@@ -99,18 +116,41 @@ export const ForumThreadEditor: React.FunctionComponent<
         />
       )}
       <MarkdownEditor text={text} setText={setText} />
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button onClick={onClose} variant="light">
-          Cancel
-        </Button>
-        <Button
-          disabled={isLoading}
-          onClick={() => onSave(text, title)}
-          variant="primary"
-        >
-          {isLoading ? 'Saving' : 'Save'}
-        </Button>
-      </div>
     </div>
+  )
+
+  const confirmButtonText = isLoading ? 'Saving' : 'Save'
+
+  return (
+    <>
+      {isDialog ? (
+        <ConfirmationDialog
+          maxWidth="md"
+          open={openDialog}
+          onCancel={onClose}
+          title={
+            isReply
+              ? 'Edit Reply'
+              : isExistingThread
+              ? 'Edit Thread'
+              : 'New Thread'
+          }
+          content={editorContent}
+          onConfirm={() => onSave(text, title)}
+          confirmButtonText={confirmButtonText}
+        />
+      ) : (
+        <>
+          {editorContent}
+          <Box display="flex" justifyContent="flex-end">
+            <ConfirmationButtons
+              onCancel={onClose}
+              onConfirm={() => onSave(text, title)}
+              confirmButtonText={confirmButtonText}
+            />
+          </Box>
+        </>
+      )}
+    </>
   )
 }
