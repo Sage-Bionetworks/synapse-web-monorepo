@@ -11,7 +11,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
-  envDir: "./src/config",
   server: { port: 3000 },
   build: {
     outDir: "./build",
