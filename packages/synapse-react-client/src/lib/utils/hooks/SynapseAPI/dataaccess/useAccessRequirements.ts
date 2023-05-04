@@ -28,6 +28,7 @@ import {
   AccessRequirementSearchResponse,
 } from '../../../synapseTypes/AccessRequirement/AccessRequirementSearch'
 import { ResearchProject } from '../../../synapseTypes/ResearchProject'
+import { sortAccessRequirementsByCompletion } from '../../../../containers/AccessRequirementList/AccessRequirementListUtils'
 
 export function useGetAccessRequirements<T extends AccessRequirement>(
   accessRequirementId: string | number,
@@ -166,6 +167,21 @@ export function useGetAccessRequirementStatus<
         accessToken,
         accessRequirementId,
       ),
+    options,
+  )
+}
+
+export function useSortAccessRequirementIdsByCompletion(
+  accessRequirementIds: string[],
+  options?: UseQueryOptions<string[], SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useQuery<string[], SynapseClientError>(
+    keyFactory.getSortedAccessRequirementsAndStatusQueryKey(
+      accessRequirementIds,
+    ),
+    () => sortAccessRequirementsByCompletion(accessToken, accessRequirementIds),
     options,
   )
 }

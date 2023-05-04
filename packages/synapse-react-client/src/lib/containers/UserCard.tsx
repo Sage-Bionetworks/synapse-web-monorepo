@@ -54,6 +54,7 @@ export type UserCardProps = {
   /** Whether to show the full name in the small user card */
   showFullName?: boolean
   className?: string
+  showAccountLevelIcon?: boolean
 }
 
 export const UserCard: React.FunctionComponent<UserCardProps> = (

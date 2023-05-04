@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef } from 'react'
 import { SynapseConstants } from '../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { useGetUserBundle } from '../utils/hooks/SynapseAPI/user/useUserBundle'
@@ -7,6 +7,7 @@ import { UserProfile } from '../utils/synapseTypes/'
 import { Avatar, AvatarSize } from './Avatar'
 import IconSvg from './IconSvg'
 import UserCardMedium from './UserCardMedium'
+import { Box, Link } from '@mui/material'
 
 export type UserCardSmallProps = {
   userProfile: UserProfile
@@ -45,9 +46,6 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
   } = props
   let { link } = props
 
-  const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(
-    <IconSvg icon="accountRegistered" />,
-  )
   const target = useRef(null)
   const certificationOrVerification =
     SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
@@ -57,15 +55,6 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
     userProfile.ownerId,
     certificationOrVerification,
   )
-
-  useEffect(() => {
-    if (userBundle?.isCertified) {
-      setAccountLevelIcon(<IconSvg icon="accountCertified" />)
-    }
-    if (userBundle?.isVerified) {
-      setAccountLevelIcon(<IconSvg icon="accountValidated" />)
-    }
-  }, [showAccountLevelIcon, userBundle?.isCertified, userBundle?.isVerified])
 
   const mediumUserCard = useMemo(
     () => (
@@ -99,6 +88,32 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
     <></>
   )
 
+  const accountLevelIcon = (
+    <Box display={'flex'} gap={1} sx={{ mx: 1 }}>
+      {!userBundle?.isCertified && !userBundle?.isVerified && (
+        <IconSvg
+          icon="accountRegistered"
+          label={'Registered'}
+          sx={{ width: '30px', height: '30px' }}
+        />
+      )}
+      {userBundle?.isCertified && (
+        <IconSvg
+          icon="accountCertified"
+          label={'Certified'}
+          sx={{ width: '30px', height: '30px' }}
+        />
+      )}
+      {userBundle?.isVerified && (
+        <IconSvg
+          icon="accountValidated"
+          label={'Validated'}
+          sx={{ width: '30px', height: '30px' }}
+        />
+      )}
+    </Box>
+  )
+
   const fullName =
     showFullName && (userProfile.firstName || userProfile.lastName) ? (
       <span className={'user-fullname'}>
@@ -108,7 +123,7 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
       </span>
     ) : null
 
-  const Tag = showCardOnHover || !disableLink ? 'a' : 'span'
+  const Tag = showCardOnHover || !disableLink ? Link : 'span'
 
   let style: React.CSSProperties = {}
   if (showCardOnHover) {
@@ -135,9 +150,7 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
         {fullName ? `${NONBREAKING_SPACE}(` : ''}
         {`@${userProfile.userName}`}
         {fullName ? ')' : ''}
-        {showAccountLevelIcon && (
-          <span className={'account-level-icon'}>{accountLevelIcon}</span>
-        )}
+        {showAccountLevelIcon && accountLevelIcon}
       </Tag>
     </>
   )
