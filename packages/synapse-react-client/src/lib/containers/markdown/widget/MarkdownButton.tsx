@@ -12,7 +12,8 @@ export default function MarkdownButton(
   widgetParamsMapped: ButtonLinkWidgetParams,
 ) {
   let buttonClasses = ''
-  const { align = '', highlight = '' } = widgetParamsMapped
+  const { align = '', highlight: _highlight = '' } = widgetParamsMapped
+  const highlight = _highlight === 'true'
   const alignLowerCase = align.toLowerCase()
   if (alignLowerCase === 'left') {
     buttonClasses += 'floatleft '
@@ -21,15 +22,18 @@ export default function MarkdownButton(
     buttonClasses += 'floatright '
   }
   const buttonIsCenterAligned = alignLowerCase === 'center'
-  const buttonVariant = highlight === 'true' ? 'secondary' : 'inherit'
+  const buttonColor = highlight ? 'secondary' : 'neutral'
   const button = (
     <WideButton
       href={widgetParamsMapped.url}
       className={buttonClasses}
       variant="contained"
-      color={buttonVariant}
+      color={buttonColor}
       sx={{
-        '&:hover': { backgroundColor: 'secondary.main', color: 'white' },
+        '&:hover': {
+          backgroundColor: highlight ? undefined : 'secondary.main',
+          color: 'white',
+        },
         ...(!buttonIsCenterAligned &&
           widgetParamsMapped.url && {
             margin: '20px 20px 20px 0px',
