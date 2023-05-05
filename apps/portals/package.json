@@ -38,7 +38,7 @@
     "copy-test-configuration": "cp -r src/test-configuration/ src/config/",
     "test": "pnpm run copy-test-configuration && vitest",
     "test:coverage": "pnpm run copy-test-configuration && vitest run --coverage",
-    "generate-sitemap": "node sitemap/generate-sitemap.js"
+    "generate-sitemap": "node sitemap/generate-sitemap.cjs"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
