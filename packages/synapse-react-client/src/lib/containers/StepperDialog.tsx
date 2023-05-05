@@ -55,14 +55,19 @@ export const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
     </Box>
   )
 
+  const isReadyToConfirm = isLastStep && confirmButtonText
+  const shouldShowNext = !isLastStep && nextStepButtonText
+
   return (
     <DialogBase
       actions={
         <>
-          <Button variant="outlined" onClick={() => onCancel()}>
-            {cancelButtonText}
-          </Button>
-          {!isFirstStep && !isLastStep && (
+          {cancelButtonText && (
+            <Button variant="outlined" onClick={() => onCancel()}>
+              {cancelButtonText}
+            </Button>
+          )}
+          {backButtonText && !isFirstStep && !isLastStep && (
             <Button
               variant="outlined"
               color="primary"
@@ -71,13 +76,15 @@ export const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
               {backButtonText}
             </Button>
           )}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => (isLastStep ? onConfirm() : handleStepChange(1))}
-          >
-            {isLastStep ? confirmButtonText : nextStepButtonText}
-          </Button>
+          {(isReadyToConfirm || shouldShowNext) && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => (isLastStep ? onConfirm() : handleStepChange(1))}
+            >
+              {isReadyToConfirm ? confirmButtonText : nextStepButtonText}
+            </Button>
+          )}
         </>
       }
       content={dialogContent}
