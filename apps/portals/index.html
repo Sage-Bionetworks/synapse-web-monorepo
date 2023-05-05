@@ -92,10 +92,11 @@
     <script type="module">
         /* Fix polyfill issues with vite and @apidevtools/json-schema-ref-parser */
         import { Buffer } from 'buffer'
+        import process from 'process'
         window.Buffer = Buffer
+        window.process = process
 
         globalThis.global = globalThis
-        globalThis.process = { env: {} }
     </script>
     <!-- <script>
       const endpoint = {

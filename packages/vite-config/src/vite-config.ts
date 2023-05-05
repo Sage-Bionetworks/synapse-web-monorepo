@@ -33,8 +33,6 @@ export default defineConfig({
   define: {
     __TEST__: JSON.stringify(false),
     __DEV__: JSON.stringify(false),
-    "process.env": "{NODE_ENV: 'production'}",
-    // "process.platform": '"browser"',
   },
   optimizeDeps: {
     include: ["synapse-react-client"],

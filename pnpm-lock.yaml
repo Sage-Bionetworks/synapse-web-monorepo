@@ -8,6 +8,11 @@ overrides:
   goober: 2.1.9
   react-hot-toast: 2.2.0
 
+patchedDependencies:
+  '@jsdevtools/ono@7.1.3':
+    hash: ftv5fxgpd6wo7ilbdz5gio2woe
+    path: patches/@jsdevtools__ono@7.1.3.patch
+
 importers:
 
   .:
@@ -1344,7 +1349,7 @@ packages:
   /@apidevtools/json-schema-ref-parser@9.1.2:
     resolution: {integrity: sha512-r1w81DpR+KyRWd3f+rk6TNqMgedmAxZP5v5KWlXQWlgMUUtyEJch0DKEci1SorPMiSeM8XPl7MZ3miJ60JIpQg==}
     dependencies:
-      '@jsdevtools/ono': 7.1.3
+      '@jsdevtools/ono': 7.1.3(patch_hash=ftv5fxgpd6wo7ilbdz5gio2woe)
       '@types/json-schema': 7.0.11
       call-me-maybe: 1.0.2
       js-yaml: 4.1.0
@@ -4543,9 +4548,10 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
 
-  /@jsdevtools/ono@7.1.3:
+  /@jsdevtools/ono@7.1.3(patch_hash=ftv5fxgpd6wo7ilbdz5gio2woe):
     resolution: {integrity: sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==}
     dev: false
+    patched: true
 
   /@juggle/resize-observer@3.4.0:
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
