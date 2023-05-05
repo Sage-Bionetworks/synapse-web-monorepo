@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { AppContextProvider } from 'AppContext'
+import { AppContextProvider } from './AppContext'
 import { Redirect } from 'react-router-dom'
-import { SynapseComponents } from 'synapse-react-client'
-import { getSearchParam } from 'URLUtils'
+import { getSearchParam } from './URLUtils'
 import useAnalytics from './useAnalytics'
 import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { useSourceApp } from 'components/SourceApp'
+import { useSourceApp } from './components/SourceApp'
 import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 import { sageAccountWebThemeOverrides } from './style/theme'
 import { Theme } from '@mui/material'
 import defaultMuiThemeOptions from 'synapse-react-client/dist/utils/theme/DefaultTheme'
+import { hex2ascii } from 'synapse-react-client/dist/utils/functions/StringUtils'
 
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [isFramed, setIsFramed] = useState(false)
@@ -65,12 +65,12 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     if (searchParamSignedToken) {
       localStorage.setItem('signedToken', searchParamSignedToken)
       const searchParamToken = JSON.parse(
-        SynapseComponents.hex2ascii(searchParamSignedToken),
+        hex2ascii(searchParamSignedToken),
       ) as SignedTokenInterface
       setSignedToken(searchParamToken)
     } else if (localStorageSignedToken) {
       const localStorageParamToken = JSON.parse(
-        SynapseComponents.hex2ascii(localStorageSignedToken),
+        hex2ascii(localStorageSignedToken),
       ) as SignedTokenInterface
       setSignedToken(localStorageParamToken)
     }

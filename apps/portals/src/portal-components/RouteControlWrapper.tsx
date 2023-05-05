@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { RouteControl, RouteControlProps } from '../RouteControl'
 import { useLocation, useHistory } from 'react-router-dom'
-import { SynapseComponent } from 'SynapseComponent'
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseComponent } from '../SynapseComponent'
+import { SynapseConfig } from '../types/portal-config'
 import { useEffect, useState } from 'react'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 

@@ -65,14 +65,14 @@ export const uncategorized: SynapseConfig = {
       {
         buttonText: 'Select as potential',
         classNames: 'exampleClassNameToAddToButton',
-        onClick: async (event) => {
+        onClick: (event) => {
           handleParticipantWorkflowChange(event, 'Potential')
         },
       },
       {
         buttonText: 'Hide from view',
         classNames: 'exampleClassNameToAddToButton',
-        onClick: async (event) => {
+        onClick: (event) => {
           handleParticipantWorkflowChange(event, 'Hidden')
         },
       },

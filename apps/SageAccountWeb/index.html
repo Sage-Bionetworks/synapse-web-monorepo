@@ -9,7 +9,7 @@
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="manifest" href="/manifest.json" />
 
     <link
             href="https://fonts.googleapis.com/css?family=Lato"
@@ -57,15 +57,25 @@
         gtag("js", new Date());
         gtag("config", "UA-29804340-1");
     </script>
+    <script type="module">
+        /* Fix polyfill issues with vite and @apidevtools/json-schema-ref-parser */
+        import { Buffer } from 'buffer'
+        import process from 'process'
+        window.Buffer = Buffer
+        window.process = process
+
+        globalThis.global = globalThis
+    </script>
     <!-- <script>
-      const endpoint = {
-        REPO: 'https://repo-staging.prod.sagebase.org',
-        PORTAL: 'https://staging.synapse.org/',
-      }
-      window.SRC = {
-        OVERRIDE_ENDPOINT_CONFIG: endpoint
-      }
-    </script> -->
+        const endpoint = {
+          REPO: 'https://repo-staging.prod.sagebase.org',
+          PORTAL: 'https://staging.synapse.org/',
+        }
+        window.SRC = {
+          OVERRIDE_ENDPOINT_CONFIG: endpoint
+        }
+      </script> -->
+    <script type="module" src="./src/index.tsx"></script>
 </head>
 <body id="body">
 <noscript>You need to enable JavaScript to run this app.</noscript>

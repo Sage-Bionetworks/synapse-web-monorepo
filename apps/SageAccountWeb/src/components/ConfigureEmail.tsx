@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { SynapseClient, Typography } from 'synapse-react-client'
+import { SynapseClient } from 'synapse-react-client/dist/utils'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { getSearchParam, hexDecodeAndDeserialize } from 'URLUtils'
+import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import {
   Box,
   Button,
+  Checkbox,
   Chip,
+  Divider,
+  FormControlLabel,
   IconButton,
   InputLabel,
   TextField,
-  FormControlLabel,
-  Checkbox,
-  Divider,
+  Typography,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/DeleteTwoTone'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'

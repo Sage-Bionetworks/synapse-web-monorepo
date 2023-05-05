@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseConfig } from '../types/portal-config'
 import QueryCount from 'synapse-react-client/dist/containers/QueryCount'
-import { RouteControl, RouteControlProps } from 'RouteControl'
-import { SynapseComponent } from 'SynapseComponent'
+import { RouteControl, RouteControlProps } from '../RouteControl'
+import { SynapseComponent } from '../SynapseComponent'
 
 export type StatefulButtonControlConfigs = {
   synapseConfigArray: SynapseConfig[]

@@ -1,18 +1,18 @@
 import {
   Box,
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
   Stack,
+  Typography,
   useTheme,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { Button } from '@mui/material'
-import { useAppContext } from 'AppContext'
+import { useAppContext } from '../../AppContext'
 import React from 'react'
-import { Typography } from 'synapse-react-client'
 import { NavLink } from 'react-router-dom'
 
 export const ReturnToAppButton: React.FC<{ children?: React.ReactNode }> = ({

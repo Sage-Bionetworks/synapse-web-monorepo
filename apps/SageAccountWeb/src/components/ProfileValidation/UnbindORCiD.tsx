@@ -1,13 +1,14 @@
 import React from 'react'
-import { SynapseClient, Typography } from 'synapse-react-client'
+import { SynapseClient } from 'synapse-react-client/dist/utils'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
 import {
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
-  Button,
   DialogTitle,
+  Typography,
 } from '@mui/material'
 
 export const unbindORCiD = async (

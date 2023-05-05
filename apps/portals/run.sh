@@ -43,11 +43,6 @@ fi
 # copy over the directory
 cp -r $PORTAL_CONFIGURATION $PORTAL_APP_TEMPLATE
 
-# replace variable values in index.html
-chmod +x ./replaceIndexHtmlStaticValues.sh 
-# source lets the child process run in the current shell instead of creating its own
-source ./replaceIndexHtmlStaticValues.sh $2
-
 chmod +x ./$PORTAL_APP_TEMPLATE/scripts/exportS3StagingBucketName.sh
 # source lets the child process run in the current shell instead of creating its own
 source ./$PORTAL_APP_TEMPLATE/scripts/exportS3StagingBucketName.sh

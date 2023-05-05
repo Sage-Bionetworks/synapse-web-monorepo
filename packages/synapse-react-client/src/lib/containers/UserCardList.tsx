@@ -1,13 +1,13 @@
 import React from 'react'
 import { getUserProfileWithProfilePicAttached } from '../utils/functions/getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
-import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
+import { MEDIUM_USER_CARD, UserCardSize } from '../utils/SynapseConstants'
 import {
   ColumnTypeEnum,
   QueryResultBundle,
   UserProfile,
 } from '../utils/synapseTypes/'
-import UserCard, { UserCardSize } from './UserCard'
+import UserCard from './UserCard'
 import { without } from 'lodash-es'
 
 export type UserCardListProps = {

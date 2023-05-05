@@ -2,8 +2,8 @@ import { Dictionary } from 'lodash'
 import * as React from 'react'
 import { ExternalFileHandleLink } from 'synapse-react-client/dist/containers/ExternalFileHandleLink'
 import { QueryResultBundle } from 'synapse-react-client/dist/utils/synapseTypes/'
-import { RowSynapseConfig } from 'types/portal-util-types'
-import { scrollToWithOffset } from 'utils'
+import { RowSynapseConfig } from '../../types/portal-util-types'
+import { scrollToWithOffset } from '../../utils'
 import { getComponentId } from './utils'
 
 export const handleMenuClick = (id: string) => {

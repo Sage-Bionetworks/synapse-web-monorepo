@@ -1,5 +1,5 @@
-import { popularSearchesSql, toolsSql } from 'configurations/nf/resources'
-import Layout from 'portal-components/Layout'
+import { popularSearchesSql, toolsSql } from '../../configurations/nf/resources'
+import Layout from '../Layout'
 import * as React from 'react'
 import { Typography } from 'synapse-react-client'
 import FeaturedToolsList from 'synapse-react-client/dist/containers/home_page/featured_tools/FeaturedToolsList'

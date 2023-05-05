@@ -1,5 +1,4 @@
 import { rest } from 'msw'
-import { SynapseError } from '../../src/lib/utils/SynapseClient'
 import { getEntityHandlers } from './handlers/entityHandlers'
 import {
   getCurrentUserCertifiedValidatedHandler,
@@ -18,6 +17,7 @@ import { getWikiHandlers } from './handlers/wikiHandlers'
 import { getDataAccessRequestHandlers } from './handlers/dataAccessRequestHandlers'
 import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
 import { getFileHandlers } from './handlers/fileHandlers'
+import { SynapseError } from '../../src/lib/utils/SynapseError'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError

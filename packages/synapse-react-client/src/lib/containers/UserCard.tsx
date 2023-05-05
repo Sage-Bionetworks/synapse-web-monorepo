@@ -14,12 +14,7 @@ import { MenuAction } from './UserCardContextMenu'
 import UserCardMedium from './UserCardMedium'
 import { UserCardSmall } from './UserCardSmall'
 import { AliasType } from '../utils/synapseTypes/Principal/PrincipalServices'
-
-export type UserCardSize =
-  | 'AVATAR'
-  | 'SMALL USER CARD'
-  | 'MEDIUM USER CARD'
-  | 'LARGE USER CARD'
+import { UserCardSize } from '../utils/SynapseConstants'
 
 export type UserCardProps = {
   /** A UserProfile may be used for data for the card. You must supply one of `userProfile`, `alias`, `ownerId` */

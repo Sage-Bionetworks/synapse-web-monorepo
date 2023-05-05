@@ -74,7 +74,7 @@ export const DialogBase = ({
         <Stack direction="row" alignItems={'center'} gap={'5px'}>
           {title}
           {helpMarkdown && (
-            <HelpPopover markdownText={helpMarkdown!} helpUrl={helpUrl} />
+            <HelpPopover markdownText={helpMarkdown} helpUrl={helpUrl} />
           )}
           <Box sx={{ flexGrow: 1 }} />
           {hasCloseButton && <CloseButton onClick={() => onCancel()} />}

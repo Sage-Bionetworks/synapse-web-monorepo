@@ -12,7 +12,7 @@ const Versions: React.FunctionComponent = () => {
 
   useEffect(() => {
     let isDeployDateFetchCancelled: boolean = false
-    const getDeployDate = async () => {
+    const getDeployDate = () => {
       try {
         fetch('/deploy_date.txt').then((v) => {
           v?.text().then((txt) => {
@@ -36,7 +36,7 @@ const Versions: React.FunctionComponent = () => {
 
   useEffect(() => {
     let isBuildDateFetchCancelled: boolean = false
-    const getBuildDate = async () => {
+    const getBuildDate = () => {
       try {
         fetch('/build-date.txt').then((v) => {
           v?.text().then((txt) => {
