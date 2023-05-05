@@ -18,7 +18,7 @@ import {
 } from './SynapseWikiContext'
 import Bookmarks from './widget/Bookmarks'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
-import { Typography } from '@mui/material'
+import { Link, Typography } from '@mui/material'
 
 declare const katex: any
 declare const markdownitSynapse: any
@@ -441,6 +441,12 @@ export default class MarkdownSynapse extends React.Component<
             <Typography variant={'body1'} {...props} component={Tag}>
               {children}
             </Typography>
+          )
+        case 'a':
+          return (
+            <Link {...props} component={Tag}>
+              {children}
+            </Link>
           )
         default:
           return <Tag {...props}>{children}</Tag>
