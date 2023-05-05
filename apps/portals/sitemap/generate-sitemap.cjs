@@ -7,7 +7,7 @@ fs.readFile('src/config/routesConfig.ts', (err, data) => {
   const args = process.argv.slice(2)
   if (!args[0]) {
     return console.error(
-      'Usage: node generate-sitemap.js [portal-name]\n Note: sitemap.xml assumes portal is hosted on [portal-name].synapse.org',
+      'Usage: node generate-sitemap.cjs [portal-name]\n Note: sitemap.xml assumes portal is hosted on [portal-name].synapse.org',
     )
   }
 

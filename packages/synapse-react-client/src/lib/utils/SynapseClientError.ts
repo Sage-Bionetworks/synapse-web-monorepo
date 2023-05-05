@@ -6,7 +6,8 @@ import {
   ErrorResponse,
   TwoFactorAuthErrorResponse,
 } from './synapseTypes/ErrorResponse'
-import { SynapseError } from './SynapseClient'
+
+import { SynapseError } from './SynapseError'
 
 export class SynapseClientError extends Error {
   public status: number

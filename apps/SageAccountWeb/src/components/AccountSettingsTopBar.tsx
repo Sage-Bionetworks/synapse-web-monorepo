@@ -1,10 +1,9 @@
 import React from 'react'
 import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import { BadgeOutlined } from '@mui/icons-material'
-import { Box, Button, SxProps } from '@mui/material'
-import { Typography } from 'synapse-react-client'
+import { Box, Button, SxProps, Typography } from '@mui/material'
 import { useSourceApp } from './SourceApp'
-import { useAppContext } from 'AppContext'
+import { useAppContext } from '../AppContext'
 import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 
 const AccountSettingsTopBar: React.FunctionComponent = () => {

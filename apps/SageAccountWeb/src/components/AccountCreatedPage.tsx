@@ -1,11 +1,11 @@
 import React from 'react'
-import { useSourceApp, SourceAppLogo, useSourceAppConfigs } from './SourceApp'
-import { Button, Link, Grid } from '@mui/material'
-import { AppContextConsumer } from 'AppContext'
-import { Typography } from 'synapse-react-client'
+import { SourceAppLogo, useSourceApp, useSourceAppConfigs } from './SourceApp'
+import { Button, Grid, Link, Typography } from '@mui/material'
+import { AppContextConsumer } from '../AppContext'
 import { Link as RouterLink } from 'react-router-dom'
 import { LeftRightPanel } from './LeftRightPanel'
-import useMembershipInvitationTokenHandler from 'hooks/useMembershipInvitationTokenHandler'
+import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
+
 export type AccountCreatedPageProps = {}
 
 export const AccountCreatedPage = (props: AccountCreatedPageProps) => {

@@ -1,8 +1,9 @@
-import 'isomorphic-fetch' // polyfill for fetch
-import 'raf/polyfill' // polyfill for requestAnimationFrame
-import { server } from './mocks/server'
+import fetch from 'isomorphic-fetch' // polyfill for fetch
+import { server } from '../mocks/server'
+import { cleanup } from '@testing-library/react'
+import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 
-declare var global: any
+declare const global: any
 global.markdownit = require('markdown-it')
 global.markdownitSynapse = require('markdown-it-synapse')
 global.markdownitSub = require('markdown-it-sub-alt')
@@ -16,6 +17,9 @@ global.markdownitEmphasisAlt = require('markdown-it-emphasis-alt')
 global.markdownitInlineComments = require('markdown-it-inline-comments')
 global.markdownitBr = require('markdown-it-br')
 global.markdownitMath = require('markdown-it-synapse-math')
+
+// Need to add this line
+global.fetch = fetch
 
 // Line below is used because plotly has a dependency on mapbox-gl
 // which requires a browser env and doesn't provide support for headless
@@ -32,25 +36,28 @@ afterEach(() => server.resetHandlers())
 // Clean up after the tests are finished.
 afterAll(() => server.close())
 
+// Clean up after each test case (e.g. clearing jsdom)
+afterEach(() => {
+  cleanup()
+})
+
 // Mock window.location
 // https://www.benmvp.com/blog/mocking-window-location-methods-jest-jsdom/
 const oldWindowLocation = window.location
 beforeAll(() => {
-  // @ts-ignore
   delete window.location
 
-  // @ts-ignore
   window.location = Object.defineProperties(
     {},
     {
       ...Object.getOwnPropertyDescriptors(oldWindowLocation),
       assign: {
         configurable: true,
-        value: jest.fn(),
+        value: vi.fn(),
       },
       replace: {
         configurable: true,
-        value: jest.fn(),
+        value: vi.fn(),
       },
     },
   )

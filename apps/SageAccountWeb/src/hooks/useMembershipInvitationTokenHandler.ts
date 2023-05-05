@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useAppContext } from 'AppContext'
-import { SynapseClient } from 'synapse-react-client'
+import { useAppContext } from '../AppContext'
+import { SynapseClient } from 'synapse-react-client/dist/utils'
 import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'

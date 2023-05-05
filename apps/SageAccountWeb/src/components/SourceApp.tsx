@@ -1,6 +1,5 @@
-import { Box, SxProps, PaletteOptions } from '@mui/material'
+import { Box, PaletteOptions, SxProps, Typography } from '@mui/material'
 import React from 'react'
-import { Typography } from 'synapse-react-client'
 import { useGetQueryResultBundleWithAsyncStatus } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
 import { BUNDLE_MASK_QUERY_RESULTS } from 'synapse-react-client/dist/utils/SynapseConstants'
 import { SourceAppConfig } from './SourceAppConfigs'

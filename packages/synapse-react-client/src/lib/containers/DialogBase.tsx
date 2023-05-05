@@ -41,6 +41,7 @@ export type DialogBaseProps = {
   helpUrl?: string
   maxWidth?: DialogProps['maxWidth']
   fullWidth?: boolean
+  sx?: DialogProps['sx']
 }
 
 /**
@@ -58,6 +59,7 @@ export const DialogBase = ({
   helpUrl,
   maxWidth = 'sm',
   fullWidth = true,
+  sx,
 }: DialogBaseProps) => {
   return (
     <Dialog
@@ -66,12 +68,13 @@ export const DialogBase = ({
       open={open}
       className={className}
       onClose={() => onCancel()}
+      sx={sx}
     >
       <DialogTitle>
         <Stack direction="row" alignItems={'center'} gap={'5px'}>
           {title}
           {helpMarkdown && (
-            <HelpPopover markdownText={helpMarkdown!} helpUrl={helpUrl} />
+            <HelpPopover markdownText={helpMarkdown} helpUrl={helpUrl} />
           )}
           <Box sx={{ flexGrow: 1 }} />
           {hasCloseButton && <CloseButton onClick={() => onCancel()} />}

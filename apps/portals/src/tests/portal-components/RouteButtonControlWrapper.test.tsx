@@ -5,6 +5,7 @@ import RouteControlWrapper, {
 import { MemoryRouter } from 'react-router-dom'
 import { render, screen } from '@testing-library/react'
 import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
+import { describe, it } from 'vitest'
 
 describe('RouteControlWrapper works', () => {
   const routeName = 'custom route'

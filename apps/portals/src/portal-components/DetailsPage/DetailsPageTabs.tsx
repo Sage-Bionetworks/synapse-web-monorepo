@@ -10,7 +10,7 @@ import { BarLoader } from 'react-spinners'
 import { Icon } from 'synapse-react-client/dist/containers/row_renderers/utils'
 import { QueryResultBundle } from 'synapse-react-client/dist/utils/synapseTypes'
 import { Tooltip } from '@mui/material'
-import { DetailsPageTabProps } from 'types/portal-util-types'
+import { DetailsPageTabProps } from '../../types/portal-util-types'
 import RedirectWithQuery from '../RedirectWithQuery'
 import { DetailsPageSynapseConfigArray } from './DetailsPage'
 
@@ -41,16 +41,20 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
       <div className="tab-groups">
         {tabConfigs.map((tab, index) => {
           return (
-            <Tooltip key={tab.uriValue} title={tab.toolTip ?? ''} placement='top'>
-            <NavLink
-              to={`${urlWithTrailingSlash}${tab.uriValue + search}`}
-              key={`detailPage-tab-${index}`}
-              className={'tab-item ignoreLink'}
-              aria-current="true"
+            <Tooltip
+              key={tab.uriValue}
+              title={tab.toolTip ?? ''}
+              placement="top"
             >
-              {tab.iconName && <Icon type={tab.iconName}></Icon>}
-              {tab.title}
-            </NavLink>
+              <NavLink
+                to={`${urlWithTrailingSlash}${tab.uriValue + search}`}
+                key={`detailPage-tab-${index}`}
+                className={'tab-item ignoreLink'}
+                aria-current="true"
+              >
+                {tab.iconName && <Icon type={tab.iconName}></Icon>}
+                {tab.title}
+              </NavLink>
             </Tooltip>
           )
         })}
@@ -78,7 +82,7 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
                     tabConfig.synapseConfigArray && (
                       <DetailsPageSynapseConfigArray
                         showMenu={showMenu}
-                        synapseConfigArray={tabConfig.synapseConfigArray!}
+                        synapseConfigArray={tabConfig.synapseConfigArray}
                         queryResultBundle={queryResultBundle}
                       />
                     )}

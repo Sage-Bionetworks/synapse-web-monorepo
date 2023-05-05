@@ -1,9 +1,9 @@
 import React from 'react'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
-import { UserCardSize } from '../../UserCard'
 import UserCardListGroupsMobile from './UserCardListGroups.Mobile'
 import UserCardListGroupsDesktop from './UserCardListGroups.Desktop'
 import { Button } from 'react-bootstrap'
+import { UserCardSize } from '../../../utils/SynapseConstants'
 
 export type UserCardListGroupsProps = {
   sql: string

@@ -1,66 +1,56 @@
-import { Modal, ModalBody, ModalFooter, Button } from 'react-bootstrap'
 import React from 'react'
+import { ConfirmationDialog } from '../../ConfirmationDialog'
+import { Link, Typography } from '@mui/material'
+import { SRC_SIGN_IN_CLASS } from '../../../utils/SynapseConstants'
 
 export type DownloadLoginModalProps = {
   showModal?: boolean
   onHide: () => void
 }
 
+export const CONFIRM_BUTTON_TEXT = 'Sign in'
+
+const content = (
+  <>
+    <Typography variant="smallText1" marginBottom="10px">
+      Anyone can browse public content on the Synapse website, but in order to
+      download and create content you will need to register for an account using
+      an email address.
+    </Typography>
+    <Typography variant="smallText1">
+      To find out more see&nbsp;
+      <Link
+        href="https://help.synapse.org/docs/Managing-your-account.2055405596.html"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        User Accounts
+      </Link>
+      <span> and </span>
+      <Link
+        href="https://help.synapse.org/docs/Synapse-Governance.2004255211.html"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Governance Overview
+      </Link>
+      .
+    </Typography>
+  </>
+)
+
 export const DownloadLoginModal: React.FunctionComponent<
   DownloadLoginModalProps
 > = props => {
   return (
-    <Modal
-      animation={false}
-      show={true}
-      onHide={() => props.onHide()}
-      backdrop="static"
-    >
-      <Modal.Header closeButton>
-        <span
-          style={{ fontWeight: 'bold', color: '#515359', fontSize: '1.5em' }}
-        >
-          Sign In Required
-        </span>
-      </Modal.Header>
-      <ModalBody>
-        <p>
-          Anyone can browse public content on the Synapse website, but in order
-          to download and create content you will need to register for an
-          account using an email address.
-        </p>
-        <p>
-          To find out more see&nbsp;
-          <a
-            href="https://help.synapse.org/docs/Managing-your-account.2055405596.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            User Accounts
-          </a>
-          <span> and </span>
-          <a
-            href="https://help.synapse.org/docs/Synapse-Governance.2004255211.html"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Governance Overview
-          </a>
-          .
-        </p>
-      </ModalBody>
-      <ModalFooter>
-        <Button variant="secondary" onClick={() => props.onHide()}>
-          CANCEL
-        </Button>
-        <Button
-          className="SRC-SIGN-IN-CLASS"
-          variant="primary"
-          onClick={() => props.onHide()}
-        >
-          Sign in
-        </Button>
-      </ModalFooter>
-    </Modal>
+    <ConfirmationDialog
+      open={true}
+      title="Sign In Required"
+      content={content}
+      onCancel={() => props.onHide()}
+      onConfirm={() => props.onHide()}
+      confirmButtonText={CONFIRM_BUTTON_TEXT}
+      confirmButtonClassName={SRC_SIGN_IN_CLASS}
+    />
   )
 }

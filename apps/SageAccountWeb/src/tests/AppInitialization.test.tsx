@@ -1,9 +1,10 @@
 import { render, screen } from '@testing-library/react'
-import { AppContextProvider } from 'AppContext'
-import LoginPage from 'LoginPage'
+import { AppContextProvider } from '../AppContext'
+import LoginPage from '../LoginPage'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
+import { describe, it } from 'vitest'
 
 describe('App initialization tests', () => {
   it.skip('renders a branded experience', async () => {
