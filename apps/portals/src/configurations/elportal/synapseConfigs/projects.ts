@@ -100,6 +100,12 @@ const projects: SynapseConfig = {
         'Abstract',
       ],
     },
+    facetsToPlot: ['Name',
+      'Institutions',
+      'Principal Investigators',
+      'Grant Number',
+      // 'Program',
+    ],
   },
 }
 

@@ -6,6 +6,7 @@ import {
   data,
   people,
   publications,
+  cohortbuilder,
 } from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import {
@@ -23,6 +24,13 @@ import {
 } from './resources'
 
 const routes: GenericRoute[] = [
+  {
+    exact: true,
+    displayName: 'Home',
+    path: undefined,
+    link: '/',
+    synapseConfigArray: [],
+  },
   {
     path: '',
     hideRouteFromNavbar: true,
@@ -145,6 +153,34 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
+        exact: true,
+        path: 'Data by Files',
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: data,
+            },
+          },
+        ],
+      },
+      {
+        exact: true,
+        path: 'Data by Participants',
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: cohortbuilder,
+            },
+          },
+        ],
+      },
+      {
         path: 'Projects',
         routes: [
           {
@@ -209,20 +245,6 @@ const routes: GenericRoute[] = [
       },
       {
         exact: true,
-        path: 'Data',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: data,
-            },
-          },
-        ],
-      },
-      {
-        exact: true,
         path: 'Publications',
         synapseConfigArray: [
           {
@@ -249,20 +271,6 @@ const routes: GenericRoute[] = [
           },
         ],
       },
-      {
-        exact: true,
-        path: 'Results',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: results,
-            },
-          },
-        ],
-      },
     ],
   },
   {
@@ -276,21 +284,6 @@ const routes: GenericRoute[] = [
           ownerId: 'syn27229419',
           wikiId: '621275',
           loadingSkeletonRowCount: 10,
-        },
-      },
-    ],
-  },
-  {
-    exact: true,
-    path: 'About',
-    synapseConfigArray: [
-      {
-        name: 'Markdown',
-        title: 'About',
-        props: {
-          ownerId: 'syn27229419',
-          wikiId: '621273',
-          loadingSkeletonRowCount: 20,
         },
       },
     ],
