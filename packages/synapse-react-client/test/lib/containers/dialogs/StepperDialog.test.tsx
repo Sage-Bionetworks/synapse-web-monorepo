@@ -1,11 +1,10 @@
 import * as React from 'react'
-import * as _ from 'lodash-es'
 
 import {
   StepperDialog,
   StepperDialogProps,
 } from '../../../../src/lib/containers/StepperDialog'
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 const renderComponent = (props: StepperDialogProps) => {
