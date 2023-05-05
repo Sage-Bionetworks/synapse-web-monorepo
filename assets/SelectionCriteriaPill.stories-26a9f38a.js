@@ -1,8 +1,0 @@
-import{S as e}from"./SelectionCriteriaPill-67ec8f9d.js";import"./jsx-runtime-ad672792.js";import"./index-f1f749bf.js";import"./_commonjsHelpers-042e6b4d.js";import"./ElementWithTooltip-a3afc8b7.js";import"./SynapseTableConstants-942d2b0b.js";import"./IconSvg-e02ad7d3.js";import"./SvgIcon-19b553ad.js";import"./extends-98964cd2.js";import"./objectWithoutPropertiesLoose-4f48578a.js";import"./styled-be3878cf.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-3d5299f2.js";import"./Clear-4b047352.js";import"./useTheme-5ec55fc4.js";import"./isHostComponent-fa76b8d9.js";import"./index-96c5f47c.js";import"./useForkRef-dd8a6e5c.js";import"./TransitionGroupContext-a2b6e27b.js";import"./inheritsLoose-d541526f.js";import"./setPrototypeOf-0bb37fbe.js";import"./RegularExpressions-bc0adf55.js";import"./SynapseConstants-42953824.js";import"./Button-7d415009.js";import"./contains-e27fcc5c.js";import"./createWithBsPrefix-e09f51dd.js";import"./index-4d501b15.js";import"./hook-c05d8d9f.js";import"./hasClass-ec9efd32.js";import"./Close-37ccd429.js";const q={title:"Explore/Tokens/SelectionCriteriaPill",component:e},t={args:{key:"key",innerText:"Facet Value: ABC",tooltipText:"You can add tooltip text too."}};var o,r,i;t.parameters={...t.parameters,docs:{...(o=t.parameters)==null?void 0:o.docs,source:{originalSource:`{
-  args: {
-    key: 'key',
-    innerText: 'Facet Value: ABC',
-    tooltipText: 'You can add tooltip text too.'
-  }
-}`,...(i=(r=t.parameters)==null?void 0:r.docs)==null?void 0:i.source}}};const v=["Pill"];export{t as Pill,v as __namedExportsOrder,q as default};
-//# sourceMappingURL=SelectionCriteriaPill.stories-26a9f38a.js.map
