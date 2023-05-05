@@ -229,4 +229,72 @@ describe('StepperDialog', () => {
     await userEvent.click(screen.getByText(props.confirmButtonText))
     expect(props.onConfirm).toHaveBeenCalled()
   })
+
+  test('should not show cancel button if no cancel button text is provided', () => {
+    const props = createProps({ cancelButtonText: undefined })
+    renderComponent(props)
+
+    const buttons = screen.getAllByRole('button')
+    expect(buttons).toHaveLength(2)
+
+    const [closeButton, nextButton] = buttons
+    const closeIconSvg = screen.getByTestId('CloseIcon')
+
+    expect(closeButton).toContainElement(closeIconSvg)
+    expect(nextButton).toHaveTextContent(props.nextStepButtonText)
+  })
+
+  test('should not show back button if no back button text is provided', async () => {
+    const props = createProps({ backButtonText: undefined })
+    renderComponent(props)
+
+    // mock user clicking the next button to increment step
+    await advanceNextSteps(props.nextStepButtonText, 1)
+
+    const buttons = screen.getAllByRole('button')
+    expect(buttons).toHaveLength(3)
+
+    const [closeButton, cancelButton, nextButton] = buttons
+    const closeIconSvg = screen.getByTestId('CloseIcon')
+
+    expect(closeButton).toContainElement(closeIconSvg)
+    expect(cancelButton).toHaveTextContent(props.cancelButtonText)
+    expect(nextButton).toHaveTextContent(props.nextStepButtonText)
+  })
+
+  test('should not show next button if no next button text is provided', async () => {
+    const props = createProps({ nextStepButtonText: undefined })
+    renderComponent(props)
+
+    // expect the user action to throw error since the next button is not showing
+    await expect(
+      advanceNextSteps(props.nextStepButtonText, 1),
+    ).rejects.toThrow()
+
+    const buttons = screen.getAllByRole('button')
+    expect(buttons).toHaveLength(2)
+
+    const [closeButton, cancelButton] = buttons
+    const closeIconSvg = screen.getByTestId('CloseIcon')
+
+    expect(closeButton).toContainElement(closeIconSvg)
+    expect(cancelButton).toHaveTextContent(props.cancelButtonText)
+  })
+
+  test('should not show confirm button if no confirm button text is provided', async () => {
+    const props = createProps({ confirmButtonText: undefined })
+    renderComponent(props)
+
+    // mock user clicking the next button twice to increment steps
+    await advanceNextSteps(props.nextStepButtonText, 2)
+
+    const buttons = screen.getAllByRole('button')
+    expect(buttons).toHaveLength(2)
+
+    const [closeButton, cancelButton] = buttons
+    const closeIconSvg = screen.getByTestId('CloseIcon')
+
+    expect(closeButton).toContainElement(closeIconSvg)
+    expect(cancelButton).toHaveTextContent(props.cancelButtonText)
+  })
 })
