@@ -14,6 +14,5 @@ export const RangeSliderDemo: Story = {
     initialValues: { min: '20', max: '80' },
     step: 5,
     doUpdateOnApply: false,
-    maxTickCount: 15,
   },
 }
