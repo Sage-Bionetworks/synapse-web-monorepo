@@ -31,6 +31,12 @@ const ActionRequiredCardContainer: StyledComponent<PaperProps> = styled(Paper, {
   gap: theme.spacing(4),
 }))
 
+/**
+ * The ActionRequiredCard component renders a generic card that represents some action that a user must take to gain
+ * download access to a file.
+ * @param props
+ * @returns
+ */
 export function ActionRequiredCard(props: ActionRequiredCardProps) {
   if (props.isLoading) {
     return <LoadingActionRequiredCard />

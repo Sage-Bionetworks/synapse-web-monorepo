@@ -8,6 +8,7 @@ import { Button, Typography } from '@mui/material'
 const meta = {
   title: 'Download/ActionRequiredCard',
   component: ActionRequiredCard,
+  tags: ['autodocs'],
   argTypes: {
     actionNode: {
       options: ['Button', 'Button with text (Sharing Settings)'],
