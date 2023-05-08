@@ -16,7 +16,7 @@ import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
 import UserCard from '../UserCard'
 import { displayToast } from '../ToastMessage'
 import { DiscussionReply } from './DiscussionReply'
-import { FormControl, Modal } from 'react-bootstrap'
+import { FormControl } from 'react-bootstrap'
 import { Button, Typography } from '@mui/material'
 import IconSvg from '../IconSvg'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
@@ -29,6 +29,7 @@ import {
 import { ForumThreadEditor } from './ForumThreadEditor'
 import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import { SubscribersModal } from './SubscribersModal'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -147,6 +148,15 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           <span>
             posted {formatDate(dayjs(threadData.createdOn), 'M/D/YYYY')}
           </span>
+          <ForumThreadEditor
+            isReply={false}
+            initialText={threadBody}
+            onClose={() => setShowThreadModal(false)}
+            initialTitle={threadData?.title}
+            id={threadId}
+            isDialog={true}
+            openDialog={showThreadModal}
+          />
         </>
       ) : (
         <></>
@@ -214,6 +224,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           id={threadId}
           isReply={true}
           onClose={() => setShowReplyEditor1(false)}
+          isDialog={false}
         />
       )}
       <div>
@@ -238,6 +249,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
               id={threadId}
               isReply={true}
               onClose={() => setShowReplyEditor2(false)}
+              isDialog={false}
             />
           )}
         </>
@@ -255,25 +267,6 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       ) : (
         <></>
       )}
-      <Modal
-        size="lg"
-        show={showThreadModal}
-        onHide={() => setShowThreadModal(false)}
-        animation={false}
-      >
-        <Modal.Header>
-          <Modal.Title>Edit Thread</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <ForumThreadEditor
-            isReply={false}
-            initialText={threadBody}
-            onClose={() => setShowThreadModal(false)}
-            initialTitle={threadData?.title}
-            id={threadId}
-          />
-        </Modal.Body>
-      </Modal>
       <WarningDialog
         open={showDeleteModal}
         title="Confirm Deletion"
@@ -292,24 +285,16 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         confirmButtonColor="info"
         confirmButtonText="Restore"
       />
-      <Modal
-        className="bootstrap-4-backport"
-        show={showSignInModal}
-        onHide={() => setShowSignInModal(false)}
-        animation={false}
-      >
-        <Modal.Header closeButton />
-        <Modal.Body>{SIGN_IN_TEXT}</Modal.Body>
-        <Modal.Footer>
-          <Button
-            onClick={() => setShowSignInModal(false)}
-            variant="contained"
-            className={SRC_SIGN_IN_CLASS}
-          >
-            Sign In
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ConfirmationDialog
+        open={showSignInModal}
+        title="Sign In Required"
+        content={SIGN_IN_TEXT}
+        onCancel={() => setShowSignInModal(false)}
+        hasCancelButton={false}
+        onConfirm={() => setShowSignInModal(false)}
+        confirmButtonText="Sign In"
+        confirmButtonClassName={SRC_SIGN_IN_CLASS}
+      />
     </div>
   )
 }
