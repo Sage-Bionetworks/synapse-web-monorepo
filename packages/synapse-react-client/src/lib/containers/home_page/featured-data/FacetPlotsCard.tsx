@@ -1,6 +1,5 @@
 import * as React from 'react'
 import Plotly from 'plotly.js-basic-dist'
-import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 
@@ -36,7 +35,7 @@ export type FacetPlotsCardProps = {
   detailsPagePath?: string
 }
 
-const layout: Partial<PlotlyTyped.Layout> = {
+const layout: Partial<Plotly.Layout> = {
   showlegend: false,
   annotations: [],
   margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
@@ -176,7 +175,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                   </div>
                 )}
                 <div className="FacetPlotsCard__body__row">
-                  <SizeMe monitorHeight>
+                  <SizeMe monitorHeight noPlaceholder>
                     {({ size }) => (
                       <div className="FacetPlotsCard__body__plot">
                         <Plot

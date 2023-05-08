@@ -1,5 +1,4 @@
 import { InfoOutlined } from '@mui/icons-material'
-import * as PlotlyTyped from 'plotly.js'
 import Plotly from 'plotly.js-basic-dist'
 import React, { useCallback, useState } from 'react'
 import { Button, Dropdown, Modal } from 'react-bootstrap'
@@ -51,7 +50,7 @@ const maxLegendLength: number = 30
 
 export type PlotType = 'PIE' | 'BAR'
 
-const layout: Partial<PlotlyTyped.Layout> = {
+const layout: Partial<Plotly.Layout> = {
   showlegend: false,
   annotations: [],
   margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
@@ -66,7 +65,7 @@ const layout: Partial<PlotlyTyped.Layout> = {
 }
 
 export type GraphData = {
-  data: PlotlyTyped.Data[]
+  data: Plotly.Data[]
   labels: FacetWithLabel[]
   colors: string[]
 }
@@ -170,7 +169,7 @@ export async function extractPlotDataArray(
               .replace(')', ', 0.25)'),
       )
     : colorPalette
-  const singleChartData: PlotlyTyped.Data = {
+  const singleChartData: Plotly.Data = {
     values:
       plotType === 'PIE'
         ? facetToPlot.facetValues.map(facet => facet.count)
@@ -223,7 +222,7 @@ export async function extractPlotDataArray(
 }
 
 const applyFacetFilter = (
-  event: PlotlyTyped.PlotMouseEvent,
+  event: Plotly.PlotMouseEvent,
   allFacetValues: FacetColumnResultValues,
   callbackApplyFn: FacetNavPanelProps['applyChangesToGraphSlice'],
 ) => {
@@ -531,7 +530,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
             className={`FacetNavPanel__body${isModalView ? '--expanded' : ''}`}
             role="graphics-object"
           >
-            <SizeMe monitorHeight>
+            <SizeMe monitorHeight noPlaceholder>
               {({ size }) => (
                 <div className={getClassNameForPlotDiv(isModalView, plotType)}>
                   <Plot

@@ -1,6 +1,5 @@
 import React, { FunctionComponent /*, useState , useEffect */ } from 'react' // importing FunctionComponent
 import Plotly from 'plotly.js-basic-dist'
-import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { GraphItem, PlotStyle, Dictionary } from './types'
 import _ from 'lodash-es'
@@ -8,8 +7,8 @@ const Plot = createPlotlyComponent(Plotly)
 
 export type DotPlotProps = {
   plotData: GraphItem[]
-  layoutConfig: Partial<PlotlyTyped.Layout>
-  optionsConfig: Partial<PlotlyTyped.Config>
+  layoutConfig: Partial<Plotly.Layout>
+  optionsConfig: Partial<Plotly.Config>
   label?: string
   style?: React.CSSProperties
   id: string
@@ -29,9 +28,9 @@ type LayoutOptions = {
 }
 
 function getLayout(
-  dotPlotLayoutConfig: Partial<PlotlyTyped.Layout>,
+  dotPlotLayoutConfig: Partial<Plotly.Layout>,
   layoutOptions?: LayoutOptions,
-): Partial<PlotlyTyped.Layout> {
+): Partial<Plotly.Layout> {
   const result = _.cloneDeep(dotPlotLayoutConfig)
   if (!layoutOptions) {
     return result

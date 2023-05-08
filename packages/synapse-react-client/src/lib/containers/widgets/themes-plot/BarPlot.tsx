@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from 'react'
 import Plotly from 'plotly.js-basic-dist'
-import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { GraphItem, BarPlotColors, PlotStyle } from './types'
 import _ from 'lodash-es'
@@ -11,8 +10,8 @@ export type BarPlotProps = {
   isTop: boolean
   style?: React.CSSProperties
   plotData: GraphItem[]
-  layoutConfig: Partial<PlotlyTyped.Layout>
-  optionsConfig: Partial<PlotlyTyped.Config>
+  layoutConfig: Partial<Plotly.Layout>
+  optionsConfig: Partial<Plotly.Config>
   label: string
   xMax: number
   colors?: BarPlotColors
@@ -61,9 +60,9 @@ function getBarPlotDataPoints(
 }
 
 function getLayout(
-  layoutConfig: Partial<PlotlyTyped.Layout>,
+  layoutConfig: Partial<Plotly.Layout>,
   { isTop, maxValue, backgroundColor }: LayoutOptions,
-): Partial<PlotlyTyped.Layout> {
+): Partial<Plotly.Layout> {
   const layout = _.cloneDeep(layoutConfig)
   layout.xaxis = {
     visible: false,

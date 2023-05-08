@@ -1,9 +1,7 @@
 import React, { FunctionComponent, useState, useEffect } from 'react' // importing FunctionComponent
-import * as PlotlyTyped from 'plotly.js'
-
+import Plotly from 'plotly.js-basic-dist'
 import { ElementWithTooltip, TooltipVisualProps } from '../ElementWithTooltip'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
-
 import { SynapseConstants } from '../../../utils'
 import { getFullQueryTableResults } from '../../../utils/SynapseClient'
 import {
@@ -36,7 +34,7 @@ export type ThemesPlotProps = {
 type TotalsGroupByY = { y: string; count: number }
 type TotalsGroupByGroup = { group: string; count: number }
 
-const optionsConfig: Partial<PlotlyTyped.Config> = {
+const optionsConfig: Partial<Plotly.Config> = {
   displayModeBar: false,
   responsive: true,
   scrollZoom: false,
@@ -51,7 +49,7 @@ const tooltipVisualProps: TooltipVisualProps = {
   effect: 'solid',
   border: true,
 }
-const dotPlotLayoutConfig: Partial<PlotlyTyped.Layout> = {
+const dotPlotLayoutConfig: Partial<Plotly.Layout> = {
   showlegend: true,
   dragmode: false,
   legend: {
@@ -90,7 +88,7 @@ const dotPlotLayoutConfig: Partial<PlotlyTyped.Layout> = {
   hovermode: 'closest',
 }
 
-const barLayoutConfig: Partial<PlotlyTyped.Layout> = {
+const barLayoutConfig: Partial<Plotly.Layout> = {
   barmode: 'stack',
   showlegend: false,
   dragmode: false,
@@ -148,7 +146,7 @@ function getTotalsByProp<T>(data: GraphItem[], prop: string): T[] {
 }
 
 const getClickTargetData = (
-  e: PlotlyTyped.PlotMouseEvent,
+  e: Plotly.PlotMouseEvent,
   swap: boolean,
 ): ClickCallbackParams => {
   const pointData = e.points[0].data
