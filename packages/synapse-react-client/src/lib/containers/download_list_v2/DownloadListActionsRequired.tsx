@@ -2,16 +2,11 @@ import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/SynapseAPI/download/useDownloadList'
 import { useInView } from 'react-intersection-observer'
-import {
-  ActionRequiredCount,
-  MeetAccessRequirement,
-  RequestDownload,
-} from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
-import {
-  LoadingAccessRequirementCard,
-  MeetAccessRequirementCard,
-} from './MeetAccessRequirementCard'
+import { ActionRequiredCount } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
+import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
+import { EnableTwoFaRequirementCard } from './EnableTwoFaRequirementCard'
+import { LoadingActionRequiredCard } from './ActionRequiredCard'
 
 export type DownloadListActionsRequiredProps = {
   /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
@@ -63,28 +58,34 @@ export const DownloadListActionsRequired: React.FunctionComponent<
   const renderActionRequired = (actionRequiredCount: ActionRequiredCount) => {
     switch (actionRequiredCount.action.concreteType) {
       case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement': {
-        const meetARAction: MeetAccessRequirement =
-          actionRequiredCount.action as MeetAccessRequirement
         return (
           <MeetAccessRequirementCard
-            key={meetARAction.accessRequirementId}
-            accessRequirementId={meetARAction.accessRequirementId}
+            key={actionRequiredCount.action.accessRequirementId}
+            accessRequirementId={actionRequiredCount.action.accessRequirementId}
             count={actionRequiredCount.count}
           />
         )
       }
       case 'org.sagebionetworks.repo.model.download.RequestDownload': {
-        const requestDownloadAction: RequestDownload =
-          actionRequiredCount.action as RequestDownload
         return (
           <RequestDownloadCard
-            key={requestDownloadAction.benefactorId}
-            entityId={`syn${requestDownloadAction.benefactorId}`}
+            key={actionRequiredCount.action.benefactorId}
+            entityId={`syn${actionRequiredCount.action.benefactorId}`}
             count={actionRequiredCount.count}
             onViewSharingSettingsClicked={props.onViewSharingSettingsClicked}
           />
         )
       }
+      case 'org.sagebionetworks.repo.model.download.EnableTwoFa': {
+        return (
+          <EnableTwoFaRequirementCard
+            key={actionRequiredCount.action.accessRequirementId}
+            accessRequirementId={actionRequiredCount.action.accessRequirementId}
+            count={actionRequiredCount.count}
+          />
+        )
+      }
+
       // case not supported yet
       default:
         return undefined
@@ -103,7 +104,7 @@ export const DownloadListActionsRequired: React.FunctionComponent<
           <div ref={ref} />
         </div>
       )}
-      {isLoading && <LoadingAccessRequirementCard />}
+      {isLoading && <LoadingActionRequiredCard />}
     </>
   )
 }
