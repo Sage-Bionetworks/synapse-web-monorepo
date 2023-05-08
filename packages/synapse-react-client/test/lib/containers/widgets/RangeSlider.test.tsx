@@ -50,7 +50,6 @@ describe('RangeSlider', () => {
   })
 
   describe('callbacks', () => {
-    // Failing after replacing custom component with MUI
     it('should not call the callbackFn on change when doUpdateOnApply is true', async () => {
       init({ doUpdateOnApply: true })
       screen.getByTestId(MUI_SLIDER_TEST_ID)
