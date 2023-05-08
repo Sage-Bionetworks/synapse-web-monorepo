@@ -25,18 +25,17 @@ export const LOCK_TITLE = 'Access Restricted'
 export const MeetAccessRequirementCard: React.FunctionComponent<
   MeetAccessRequirementCardProps
 > = ({ accessRequirementId, count }: MeetAccessRequirementCardProps) => {
-  const {
-    data: ar,
-    isLoading,
-    isError,
-  } = useGetAccessRequirements(accessRequirementId, { useErrorBoundary: true })
+  const { data: ar, isLoading } = useGetAccessRequirements(
+    accessRequirementId,
+    { useErrorBoundary: true },
+  )
   const [isShowingAccessRequirement, setIsShowingAccessRequirement] =
     useState<boolean>(false)
-  let content = <></>
-  if (!isError && !isLoading && ar) {
-    let title: string | undefined = undefined
-    let iconType = ''
-    let description = ''
+  let title: string | undefined = undefined
+  let iconType = ''
+  let description = ''
+
+  if (!isLoading && ar) {
     switch (ar.concreteType) {
       case 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement':
         title = TERMS_OF_USE_TITLE
@@ -69,30 +68,25 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
           'Access restricted pending review by Synapse Access and Compliance Team.'
         break
     }
-    if (title) {
-      content = (
-        <ActionRequiredCard
-          isLoading={isLoading}
-          title={title}
-          description={description}
-          iconType={iconType}
-          count={count}
-          actionNode={
-            <WideButton
-              variant="contained"
-              onClick={() => setIsShowingAccessRequirement(true)}
-            >
-              Start
-            </WideButton>
-          }
-        />
-      )
-    }
   }
 
   return (
     <>
-      {!isError && !isLoading && content}
+      <ActionRequiredCard
+        isLoading={isLoading}
+        title={title}
+        description={description}
+        iconType={iconType}
+        count={count}
+        actionNode={
+          <WideButton
+            variant="contained"
+            onClick={() => setIsShowingAccessRequirement(true)}
+          >
+            Start
+          </WideButton>
+        }
+      />
       {isShowingAccessRequirement && ar && (
         <AccessRequirementList
           entityId={ar.subjectIds[0].id}
