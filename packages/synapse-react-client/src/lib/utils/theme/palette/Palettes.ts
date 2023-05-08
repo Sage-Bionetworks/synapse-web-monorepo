@@ -95,6 +95,10 @@ export const palette: PaletteOptions = {
     primary: '#353a3f', // gray-900
     secondary: '#4a5056', // gray-800
   },
+  // Set a minimum contrast of at least 4.5:1 as defined in WCAG 2.1 Rule 1.4.3.
+  // https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html.
+  // But the contrast text color is currently not updated when the colors are: https://github.com/mui/material-ui/issues/35895
+  contrastThreshold: 4.5,
 }
 
 export const mtbPalette: PaletteOptions = {
@@ -116,10 +120,14 @@ export const adKnowledgePortalPalette: PaletteOptions = {
   secondary: generatePalette('#2f8e94'),
 }
 
+const elPortalPrimaryPalette = {
+  ...generatePalette('#39AC97'),
+  contrastText: '#ffffff',
+}
 export const elPortalPalette: PaletteOptions = {
   ...palette,
-  primary: generatePalette('#39AC97'),
-  secondary: generatePalette('#39AC97'),
+  primary: elPortalPrimaryPalette,
+  secondary: elPortalPrimaryPalette,
 }
 
 export const nfPortalPalette: PaletteOptions = {
