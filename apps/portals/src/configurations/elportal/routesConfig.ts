@@ -7,6 +7,7 @@ import {
   people,
   publications,
   cohortbuilder,
+  species,
 } from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import {
@@ -187,6 +188,20 @@ const routes: GenericRoute[] = [
             props: {
               ...RouteControlWrapperProps,
               synapseConfig: cohortbuilder,
+            },
+          },
+        ],
+      },
+      {
+        path: 'Species',
+        exact: true,
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: species,
             },
           },
         ],
