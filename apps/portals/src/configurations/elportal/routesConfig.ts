@@ -43,7 +43,7 @@ const routes: GenericRoute[] = [
         outsideContainerClassName: 'home-spacer',
         props: {
           ...projectHomePageCardConfiguration,
-          sql: `${projectsSql} where isFeatured=false`,
+          sql: `${projectsSql} where isFeatured=true`,
           limit: 3,
         },
       },
