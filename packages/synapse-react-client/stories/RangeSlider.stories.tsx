@@ -1,9 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { RangeSlider } from '../src/lib/containers/widgets/RangeSlider'
+import { Paper } from '@mui/material'
 
 const meta = {
   title: 'UI/RangeSlider',
   component: RangeSlider,
+  render: args => (
+    <Paper sx={{ p: 4 }}>
+      <RangeSlider {...args} />
+    </Paper>
+  ),
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>

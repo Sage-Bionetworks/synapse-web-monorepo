@@ -1,7 +1,14 @@
 import React from 'react'
 import { RangeValues } from './Range'
 import { useState } from 'react'
-import { Button, Slider, SliderValueLabelProps, Tooltip } from '@mui/material'
+import {
+  Box,
+  Button,
+  Slider,
+  SliderValueLabelProps,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 
 export type RangeSliderProps = React.PropsWithChildren<{
   domain: string[]
@@ -48,11 +55,11 @@ export function RangeSlider(props: RangeSliderProps) {
   }
 
   return (
-    <div>
-      <div>
+    <Box>
+      <Typography variant="smallText1">
         {values[0]} - {values[1]}
-      </div>
-      <div>
+      </Typography>
+      <Box display="flex" gap={3}>
         <Slider
           marks={[
             { value: numDomain[0], label: props.domain[0] },
@@ -69,15 +76,18 @@ export function RangeSlider(props: RangeSliderProps) {
           }}
         />
         {doUpdateOnApply && (
-          <Button
-            variant="contained"
-            onClick={() => props.onChange({ min: values[0], max: values[1] })}
-          >
-            Apply
-          </Button>
+          <Box>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => props.onChange({ min: values[0], max: values[1] })}
+            >
+              Apply
+            </Button>
+          </Box>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }
 
