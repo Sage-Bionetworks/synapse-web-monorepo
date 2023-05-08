@@ -14,9 +14,9 @@ import {
 } from './synapseConfigs/studies'
 import {
   projectCardConfiguration,
+  projectHomePageCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import { results } from './synapseConfigs/results'
 import {
   dataSql,
   projectsSql,
@@ -36,6 +36,17 @@ const routes: GenericRoute[] = [
     hideRouteFromNavbar: true,
     exact: true,
     synapseConfigArray: [
+      {
+        name: 'CardContainerLogic',
+        title: 'Projects',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          ...projectHomePageCardConfiguration,
+          sql: `${projectsSql} where isFeatured=true`,
+          limit: 3,
+        },
+      },
       {
         name: 'FeaturedDataTabs',
         title: 'Featured Data',

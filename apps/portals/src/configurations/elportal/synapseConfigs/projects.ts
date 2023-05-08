@@ -7,7 +7,7 @@ import {
   studiesSql,
   peopleSql,
 } from '../resources'
-import { DetailsPageProps } from 'types/portal-util-types'
+import { DetailsPageProps, RowSynapseConfig } from 'types/portal-util-types'
 import { studyCardConfiguration } from './studies'
 import { publicationCardProps } from './publications'
 
@@ -40,6 +40,22 @@ export const projectCardConfiguration: CardConfiguration = {
       linkColumnName: 'More Information URL',
     },
   ],
+}
+
+export const projectHomePageCardConfiguration: CardConfiguration = {
+  type: SynapseConstants.GENERIC_CARD,
+  genericCardSchema: {
+    type: 'Project',
+    title: 'Name',
+    description: 'Abstract',
+  },
+  secondaryLabelLimit: 0,
+  titleLinkConfig: {
+    isMarkdown: false,
+    baseURL: 'Explore/Projects/DetailsPage',
+    URLColumnName: 'Grant Number',
+    matchColumnName: 'Grant Number',
+  },
 }
 
 export const projectsDetailsPageConfiguration: DetailsPageProps = {
