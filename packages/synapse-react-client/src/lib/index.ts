@@ -1,5 +1,3 @@
-import 'react-app-polyfill/ie11'
-import 'react-app-polyfill/stable'
 import 'regenerator-runtime/runtime'
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
 import CardContainer from './containers/CardContainer'

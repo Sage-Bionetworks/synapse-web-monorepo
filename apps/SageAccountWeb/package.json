@@ -82,7 +82,7 @@
     "start": "vite",
     "build": "vite build",
     "test": "vitest",
-    "test:coverage": "vitest --coverage.enabled=true"
+    "test:ci": "vitest run --coverage"
   },
   "browserslist": {
     "production": [

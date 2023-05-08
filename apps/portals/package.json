@@ -33,11 +33,11 @@
     "lint": "eslint src",
     "copy-assets": "cp src/config/style/favicon* public/; cp src/config/style/logo.svg public/; cp src/config/style/socialmedia.png public/",
     "save-build-date": "date > public/build-date.txt",
-    "start": "vite --force",
+    "start": "vite",
     "build": "pnpm copy-assets; pnpm save-build-date; vite build",
     "copy-test-configuration": "cp -r src/test-configuration/ src/config/",
     "test": "pnpm run copy-test-configuration && vitest",
-    "test:coverage": "pnpm run copy-test-configuration && vitest run --coverage",
+    "test:ci": "pnpm run copy-test-configuration && vitest run --coverage",
     "generate-sitemap": "node sitemap/generate-sitemap.cjs"
   },
   "devDependencies": {

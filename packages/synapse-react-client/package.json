@@ -220,6 +220,7 @@
     "start": "pnpm storybook",
     "start-deprecated-demo": "start-js",
     "test": "jest",
+    "test:ci": "jest --watchAll=false --coverage",
     "test:coverage": "jest --coverage",
     "build": "pnpm build:js && pnpm build:copy-assets && pnpm build:esbuild",
     "build:js": "tsc --build",

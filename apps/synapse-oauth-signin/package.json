@@ -86,7 +86,7 @@
     "start": "vite",
     "build": "vite build",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test:ci": "vitest run --coverage",
     "lint": "eslint src"
   },
   "browserslist": {
