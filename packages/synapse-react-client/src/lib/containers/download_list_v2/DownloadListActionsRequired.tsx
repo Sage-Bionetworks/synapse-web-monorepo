@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
 import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/SynapseAPI/download/useDownloadList'
 import { useInView } from 'react-intersection-observer'
 import { ActionRequiredCount } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
@@ -16,7 +15,6 @@ export type DownloadListActionsRequiredProps = {
 export const DownloadListActionsRequired: React.FunctionComponent<
   DownloadListActionsRequiredProps
 > = props => {
-  const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
   const {
@@ -26,15 +24,9 @@ export const DownloadListActionsRequired: React.FunctionComponent<
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    isError,
-    error: newError,
-  } = useGetDownloadListActionsRequiredInfinite()
-
-  useEffect(() => {
-    if (isError && newError) {
-      handleError(newError)
-    }
-  }, [isError, newError, handleError])
+  } = useGetDownloadListActionsRequiredInfinite({
+    useErrorBoundary: true,
+  })
 
   useEffect(() => {
     if (

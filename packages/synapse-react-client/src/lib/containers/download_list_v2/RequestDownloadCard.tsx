@@ -40,7 +40,7 @@ export const RequestDownloadCard: React.FunctionComponent<
       count={count}
       actionNode={
         <>
-          <Typography variant="smallText1" sx={{ color: 'grey.700' }}>
+          <Typography variant="smallText1" sx={{ mb: 1, color: 'grey.700' }}>
             Contact an administrator to request download permission
           </Typography>
           <Button

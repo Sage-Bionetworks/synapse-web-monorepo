@@ -25,9 +25,9 @@ const ActionRequiredCardContainer: StyledComponent<PaperProps> = styled(Paper, {
   label: 'ActionRequiredCardContainer',
 })(({ theme }) => ({
   padding: `${theme.spacing(2.5)} ${theme.spacing(4)}`,
-  display: 'flex',
-  justifyContent: 'flex-start',
+  display: 'grid',
   alignItems: 'center',
+  gridTemplateColumns: '160px auto 200px',
   gap: theme.spacing(4),
 }))
 
@@ -56,7 +56,7 @@ export function ActionRequiredCard(props: ActionRequiredCardProps) {
         </Typography>
         <Typography variant={'smallText1'}>{description}</Typography>
       </Box>
-      <Box sx={{ textAlign: 'center', maxWidth: '200px' }}>{actionNode}</Box>
+      <Box sx={{ textAlign: 'center', marginLeft: 'auto' }}>{actionNode}</Box>
     </ActionRequiredCardContainer>
   )
 }
