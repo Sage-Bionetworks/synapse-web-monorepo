@@ -15,7 +15,6 @@ import {
 } from './synapseConfigs/studies'
 import {
   projectCardConfiguration,
-  projectHomePageCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
 import {
