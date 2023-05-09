@@ -1,0 +1,2 @@
+import{a as o}from"./index-8d5da403.js";import{at as n,au as E}from"./EntityTypeUtils-cad60590.js";import{a as R}from"./MockResearchProject-1c98ef09.js";function p(e){return[o.rest.post(`${e}${n}`,async(t,r,s)=>{const a=await t.json();return r(s.status(201),s.json(a))}),o.rest.get(`${e}${E(":id")}`,async(t,r,s)=>{const a={...R,accessRequirementId:t.params.id.toString()};return r(s.status(200),s.json(a))})]}export{p as g};
+//# sourceMappingURL=researchProjectHandlers-2f80c6e8.js.map
