@@ -70,7 +70,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnName: 'study',
                     selectFacetColumnValue: 'LLFS',
                     detailsPagePath:
-                      '/Explore/Studies/DetailsPage?Study=syn26229161',
+                      '/Explore/Studies/DetailsPage?studyKey=LLFS',
                   },
                   {
                     title: 'The Single cell transcriptomic analysis of PBMCs in Extreme Longevity',
@@ -80,7 +80,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnName: 'study',
                     selectFacetColumnValue: 'ELPSCRNA',
                     detailsPagePath:
-                      '/Explore/Studies/DetailsPage?Study=syn26067509',
+                      '/Explore/Studies/DetailsPage?studyKey=ELPSCRNA',
                   },
                   {
                     title:
@@ -91,7 +91,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnName: 'study',
                     selectFacetColumnValue: 'ADAMTS7',
                     detailsPagePath:
-                      '/Explore/Studies/DetailsPage?Study=syn26969078',
+                      '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
                   },
                 ],
               },
