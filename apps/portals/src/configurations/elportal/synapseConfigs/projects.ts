@@ -42,22 +42,6 @@ export const projectCardConfiguration: CardConfiguration = {
   ],
 }
 
-export const projectHomePageCardConfiguration: CardConfiguration = {
-  type: SynapseConstants.GENERIC_CARD,
-  genericCardSchema: {
-    type: 'Project',
-    title: 'Name',
-    description: 'Abstract',
-  },
-  secondaryLabelLimit: 0,
-  titleLinkConfig: {
-    isMarkdown: false,
-    baseURL: 'Explore/Projects/DetailsPage',
-    URLColumnName: 'Grant Number',
-    matchColumnName: 'Grant Number',
-  },
-}
-
 export const projectsDetailsPageConfiguration: DetailsPageProps = {
   showMenu: true,
   sql: projectsSql,
