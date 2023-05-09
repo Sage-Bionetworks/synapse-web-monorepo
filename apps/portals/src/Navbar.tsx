@@ -330,7 +330,7 @@ function Navbar() {
               .slice()
               .reverse()
               .filter((el) => !['', '/'].includes(el.path!))
-              .map((el: GenericRoute) => {
+              .map((el: GenericRoute, topLevelIndex) => {
                 const topLevelTo = el.path
                 const displayName = el.displayName ? el.displayName : topLevelTo
                 const icon = el.icon && (
@@ -354,9 +354,9 @@ function Navbar() {
                     )
                   const isSelectedCssClassName = isSelected ? 'isSelected' : ''
                   return (
-                    <React.Fragment key={topLevelTo}>
+                    <React.Fragment key={`${topLevelTo}-${topLevelIndex}`}>
                       {el.routes &&
-                        el.routes.map((route) => {
+                        el.routes.map((route, index) => {
                           const { path: to, link } = route
                           // Add anchors to the DOM for a crawler to find.  This is an attempt to fix an issue where all routes are Excluded from the index.
                           if (route.hideRouteFromNavbar) {
@@ -366,7 +366,7 @@ function Navbar() {
                           const linkDisplay = link ?? `/${topLevelTo}/${to}`
                           return (
                             <a
-                              key={`${to}-seo-anchor`}
+                              key={`${to}-seo-anchor-${index}`}
                               className="crawler-link"
                               href={linkDisplay}
                             >
@@ -384,7 +384,7 @@ function Navbar() {
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="portal-nav-menu">
                           {el.routes &&
-                            el.routes.map((route) => {
+                            el.routes.map((route, index) => {
                               const { path: to } = route
                               if (route.hideRouteFromNavbar) {
                                 return false
@@ -396,7 +396,7 @@ function Navbar() {
                                 true,
                               )
                               return (
-                                <Dropdown.Item key={to} as="li">
+                                <Dropdown.Item key={`${to}-${index}`} as="li">
                                   <NavLink
                                     className="dropdown-item SRC-primary-background-color-hover SRC-nested-color"
                                     to={linkDisplay}
@@ -417,7 +417,7 @@ function Navbar() {
                     : ''
                 return (
                   <NavLink
-                    key={topLevelTo}
+                    key={`${topLevelTo}-${topLevelIndex}`}
                     className={`nav-button nav-button-container center-content ${isSelectedCssClassName} ${getBorder(
                       topLevelTo,
                     )}`}

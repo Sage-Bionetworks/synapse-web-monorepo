@@ -8,6 +8,8 @@ import {
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import * as SynapseContext from '../../../../src/lib/utils/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
+import { CLOSE_BUTTON_LABEL } from '../../../../src/lib/containers/DialogBase'
+import { CANCEL_BUTTON_TEXT } from '../../../../src/lib/containers/ConfirmationDialog'
 
 const EXAMPLE_PAT = 'abcdefghiklmnop'
 const SynapseClient = require('../../../../src/lib/utils/SynapseClient')
@@ -35,8 +37,8 @@ function setUp(props: CreateAccessTokenModalProps) {
     download: screen.getByRole('checkbox', { name: 'Download' }),
   }
   const initialButtons = {
-    close: screen.getByRole('button', { name: /close/i }),
-    cancel: screen.getByRole('button', { name: /cancel/i }),
+    close: screen.getByRole('button', { name: CLOSE_BUTTON_LABEL }),
+    cancel: screen.getByRole('button', { name: CANCEL_BUTTON_TEXT }),
     create: screen.getByRole('button', { name: /create token/i }),
   }
   return { component, user, tokenInput, checkboxes, initialButtons }
