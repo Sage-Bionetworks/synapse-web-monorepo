@@ -38,14 +38,12 @@ const routes: GenericRoute[] = [
     exact: true,
     synapseConfigArray: [
       {
-        name: 'CardContainerLogic',
-        title: 'Projects',
+        name: 'Goals',
+        title: "What's in the Portal",
         centerTitle: true,
         outsideContainerClassName: 'home-spacer',
         props: {
-          ...projectHomePageCardConfiguration,
-          sql: `${projectsSql} where isFeatured=true`,
-          limit: 3,
+          entityId: 'syn51449135',
         },
       },
       {
