@@ -11,6 +11,7 @@ const routeControlWrapper: RouteControlWrapperProps = {
     'Studies',
     'Publications',
     'People',
+    'Computational Tools'
   ],
 }
 

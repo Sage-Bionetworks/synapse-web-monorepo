@@ -50,7 +50,7 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
       name: 'CardContainerLogic',
       columnName: 'Grant Number',
       title: 'Studies',
-      tableSqlKeys: ['Grant Number'],
+      tableSqlKeys: ['grantNumber'],
       props: {
         ...studyCardConfiguration,
         sql: studiesSql,
