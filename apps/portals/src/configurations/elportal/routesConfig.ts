@@ -22,6 +22,7 @@ import {
   projectsSql,
   peopleSql,
 } from './resources'
+import computationalTools from './synapseConfigs/computational_tools'
 
 const routes: GenericRoute[] = [
   {
@@ -290,6 +291,20 @@ const routes: GenericRoute[] = [
             props: {
               ...RouteControlWrapperProps,
               synapseConfig: people,
+            },
+          },
+        ],
+      },
+      {
+        exact: true,
+        path: 'Computational Tools',
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: computationalTools,
             },
           },
         ],
