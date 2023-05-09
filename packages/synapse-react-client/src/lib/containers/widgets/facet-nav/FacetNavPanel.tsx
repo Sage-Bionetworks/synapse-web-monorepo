@@ -2,7 +2,7 @@ import { InfoOutlined } from '@mui/icons-material'
 import * as PlotlyTyped from 'plotly.js'
 import Plotly from 'plotly.js-basic-dist'
 import React, { useCallback, useState } from 'react'
-import { Button, Dropdown, Modal } from 'react-bootstrap'
+import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import { SkeletonInlineBlock } from '../../../assets/skeletons/SkeletonInlineBlock'
@@ -27,6 +27,7 @@ import {
 } from '../query-filter/FacetFilterControls'
 import { Box, Tooltip, Typography } from '@mui/material'
 import { useQuery } from 'react-query'
+import { ConfirmationDialog } from '../../ConfirmationDialog'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -412,28 +413,15 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   } else {
     return (
       <>
-        <Modal
-          animation={false}
-          show={showModal}
-          onHide={() => setShowModal(false)}
-          backdrop="static"
-        >
-          <Modal.Header closeButton={true}>
-            <Modal.Title>{plotTitle ?? ''}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <FacetNavPanel {...props} isModalView={true} />
-            <div className="bootstrap-4-backport SaveFiltersButtonContainer">
-              <Button
-                variant="secondary"
-                className="SaveFiltersButton"
-                onClick={() => setShowModal(false)}
-              >
-                Apply Filters
-              </Button>
-            </div>
-          </Modal.Body>
-        </Modal>
+        <ConfirmationDialog
+          open={showModal}
+          onCancel={() => setShowModal(false)}
+          title={plotTitle ?? ''}
+          content={<FacetNavPanel {...props} isModalView={true} />}
+          hasCancelButton={false}
+          confirmButtonText="Apply Filters"
+          onConfirm={() => setShowModal(false)}
+        />
         <div
           role="graphics-document"
           className={`FacetNavPanel${isModalView ? '--expanded' : ''}`}

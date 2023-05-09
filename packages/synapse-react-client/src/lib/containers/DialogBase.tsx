@@ -18,12 +18,14 @@ export type CloseButtonProps = {
   onClick?: () => void
 }
 
+export const CLOSE_BUTTON_LABEL = 'close'
+
 export const CloseButton: React.FC<CloseButtonProps> = ({
   sx = { color: 'grey.700' },
   onClick,
 }) => {
   return (
-    <IconButton sx={sx} onClick={onClick} aria-label="close">
+    <IconButton sx={sx} onClick={onClick} aria-label={CLOSE_BUTTON_LABEL}>
       <CloseIcon />
     </IconButton>
   )
