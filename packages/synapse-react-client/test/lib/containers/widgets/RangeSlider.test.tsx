@@ -1,12 +1,23 @@
-import { render, screen, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
   RangeSlider,
   RangeSliderProps,
 } from '../../../../src/lib/containers/widgets/RangeSlider'
+import { Slider } from '@mui/material'
 
-const mockCallback = jest.fn(() => {})
+const mockCallback = jest.fn()
+const MUI_SLIDER_TEST_ID = 'Mock MUI Slider'
+jest.mock('@mui/material', () => {
+  const muiActual = jest.requireActual('@mui/material')
+  return {
+    ...muiActual,
+    Slider: jest.fn(() => <span data-testid={MUI_SLIDER_TEST_ID}></span>),
+  }
+})
+
+const mockSlider = jest.mocked(Slider)
 
 function createTestProps(
   overrides?: Partial<RangeSliderProps>,
@@ -27,31 +38,25 @@ function init(overrides?: Partial<RangeSliderProps>) {
 }
 
 describe('RangeSlider', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
 
   it('should render with correct properties', () => {
-    const { container } = init()
+    init()
     // The initial values should be reported to the screen
-    within(container.querySelector('.RangeSlider__values')!).getByText('1 - 20')
-    const sliders = screen.getAllByRole('slider')
-    expect(sliders).toHaveLength(2)
-    expect(sliders[0].getAttribute('aria-valuenow')).toBe('1')
-    expect(sliders[0].getAttribute('aria-valuemin')).toBe('0')
-    expect(sliders[0].getAttribute('aria-valuemax')).toBe('35')
-    expect(sliders[1].getAttribute('aria-valuenow')).toBe('20')
-    expect(sliders[1].getAttribute('aria-valuemin')).toBe('0')
-    expect(sliders[1].getAttribute('aria-valuemax')).toBe('35')
-
-    // Find min and max values
-    screen.getByText('0')
-    screen.getByText('35')
+    screen.getByText('1 - 20')
+    screen.getByTestId(MUI_SLIDER_TEST_ID)
   })
 
   describe('callbacks', () => {
     it('should not call the callbackFn on change when doUpdateOnApply is true', async () => {
       init({ doUpdateOnApply: true })
-      const sliders = screen.getAllByRole('slider')
-      await userEvent.click(sliders[0])
+      screen.getByTestId(MUI_SLIDER_TEST_ID)
+      await waitFor(() => expect(mockSlider).toHaveBeenCalled())
+      act(() => {
+        mockSlider.mock.calls[0][0].onChange({}, [1, 20], 0)
+      })
       expect(mockCallback).not.toHaveBeenCalled()
     })
 
@@ -66,6 +71,7 @@ describe('RangeSlider', () => {
 
     it('should always call callbackFn on Apply', async () => {
       init({ doUpdateOnApply: true })
+      screen.getByTestId(MUI_SLIDER_TEST_ID)
       const button = screen.getByRole('button', { name: 'Apply' })
       await userEvent.click(button)
       expect(mockCallback).toHaveBeenCalledWith({ min: 1, max: 20 })

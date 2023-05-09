@@ -1,5 +1,5 @@
-import { psychEncodePortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { elPortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
 
-const palette = psychEncodePortalPalette
+const palette = elPortalPalette
 
 export default palette

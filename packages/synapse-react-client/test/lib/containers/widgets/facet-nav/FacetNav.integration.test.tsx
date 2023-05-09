@@ -23,6 +23,7 @@ import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFace
 import { server } from '../../../../../mocks/msw/server'
 import failOnConsole from 'jest-fail-on-console'
 import { DEFAULT_PAGE_SIZE } from '../../../../../src/lib/utils/SynapseConstants'
+import { CLOSE_BUTTON_LABEL } from '../../../../../src/lib/containers/DialogBase'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -173,7 +174,9 @@ describe('facets display hide/show', () => {
     await within(dialog).findByRole('graphics-document')
 
     // Close the modal
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: CLOSE_BUTTON_LABEL }),
+    )
     await waitFor(() =>
       expect(screen.getAllByRole('graphics-document')).toHaveLength(2),
     )

@@ -4,12 +4,14 @@ import { SynapseConfig } from 'types/portal-config'
 const routeControlWrapper: RouteControlWrapperProps = {
   synapseConfig: {} as SynapseConfig,
   customRoutes: [
+    'Data by Files',
+    'Data by Participants',
+    'Species',
     'Projects',
     'Studies',
-    'Data',
     'Publications',
     'People',
-    'Results',
+    'Computational Tools'
   ],
 }
 
