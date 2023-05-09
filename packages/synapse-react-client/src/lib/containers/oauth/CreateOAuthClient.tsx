@@ -7,10 +7,10 @@ import {
   Button,
   Grid,
   IconButton,
-  InputLabel,
-  TextField as MuiTextField,
+  TextField,
   Tooltip,
   Typography,
+  InputAdornment,
 } from '@mui/material'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
 import {
@@ -27,7 +27,6 @@ import { SynapseClient } from '../../utils'
 import { useDebouncedEffect } from '../../utils/hooks'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import StyledFormControl from '../../components/styled/StyledFormControl'
-import TextField from '../TextField'
 
 const INPUT_CHANGE_DEBOUNCE_DELAY_MS = 500
 const GRID_NARROW = 12
@@ -214,71 +213,72 @@ export const CreateOAuthModal: React.FunctionComponent<
     }
   }
 
+  const labelSx = {
+    fontWeight: 700,
+    mb: '4px',
+  }
+
+  const dangerLabelSx = {
+    ...labelSx,
+    color: isEdit ? 'error.main' : undefined,
+    '&.Mui-focused': {
+      color: isEdit ? 'error.main' : undefined,
+    },
+  }
+
   const sectorIdentifierURIInput = (
     <StyledFormControl fullWidth variant="standard" margin="normal">
-      <InputLabel
-        htmlFor="sectorURI"
-        sx={{
-          color: isEdit ? 'error.main' : undefined,
-          fontWeight: 700,
-          mb: '4px',
-        }}
-      >
-        Sector Identifier URI
-      </InputLabel>
-      <MuiTextField
+      <TextField
         onChange={e => setSectorUri(e.target.value)}
         placeholder="https://"
         type="text"
         value={sectorUri}
         id="sectorURI"
+        label="Sector Identifier URI"
+        InputLabelProps={{ sx: dangerLabelSx }}
       />
     </StyledFormControl>
   )
 
   const redirectURIInputs = (
     <StyledFormControl fullWidth variant="standard" margin="normal">
-      <InputLabel
-        htmlFor="redirect-uri-0"
-        required
-        sx={{
-          color: isEdit ? 'error.main' : undefined,
-          fontWeight: 700,
-          mb: '4px',
-          pointerEvents: 'auto',
-          zIndex: 1,
-        }}
-      >
-        Redirect URI(s)
-        <Tooltip title={uriHelpMessage} placement="top">
-          <HelpOutlineTwoTone
-            className={`HelpButton`}
-            sx={{ float: 'right' }}
-          />
-        </Tooltip>
-      </InputLabel>
       {redirectUris?.map((singleUri, idx) => (
         <div key={idx}>
-          <Box display="flex" gap="2px">
-            <MuiTextField
-              name="uri"
-              fullWidth
-              id={`redirect-uri-${idx}`}
-              onChange={e => handleUriChange(e, idx)}
-              value={singleUri.uri}
-              placeholder="https://"
-              type="text"
-            />
-            {redirectUris.length > 1 && (
-              <IconButton
-                sx={{ mt: '24px', width: '50px' }}
-                onClick={() => handleRedirectUriRemove(idx)}
-              >
-                <DeleteTwoToneIcon sx={{ color: 'error.main' }} />
-              </IconButton>
-            )}
-          </Box>
-
+          <TextField
+            required={idx === 0}
+            InputLabelProps={{
+              sx: { ...dangerLabelSx, pointerEvents: 'auto', zIndex: 1 },
+            }}
+            label={
+              idx === 0 && (
+                <>
+                  Redirect URI(s)
+                  <Tooltip title={uriHelpMessage} placement="top">
+                    <HelpOutlineTwoTone
+                      className={`HelpButton`}
+                      sx={{ float: 'right' }}
+                    />
+                  </Tooltip>
+                </>
+              )
+            }
+            name="uri"
+            fullWidth
+            id={`redirect-uri-${idx}`}
+            onChange={e => handleUriChange(e, idx)}
+            value={singleUri.uri}
+            placeholder="https://"
+            type="text"
+            InputProps={{
+              endAdornment: redirectUris.length > 1 && (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => handleRedirectUriRemove(idx)}>
+                    <DeleteTwoToneIcon sx={{ color: 'error.main' }} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
           {redirectUris.length - 1 === idx && (
             <Button
               variant="contained"
@@ -322,25 +322,31 @@ export const CreateOAuthModal: React.FunctionComponent<
             columnSpacing={GRID_COL_SPACING}
           >
             <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
-              <TextField
-                label="Client Name"
-                required
-                onChange={e => setClientName(e.target.value)}
-                placeholder="Client Name"
-                type="text"
-                value={clientName}
-                id="clientName"
-              />
+              <StyledFormControl fullWidth variant="standard" margin="normal">
+                <TextField
+                  label="Client Name"
+                  required
+                  onChange={e => setClientName(e.target.value)}
+                  placeholder="Client Name"
+                  type="text"
+                  value={clientName}
+                  id="clientName"
+                  InputLabelProps={{ sx: labelSx }}
+                />
+              </StyledFormControl>
             </Grid>
             <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
-              <TextField
-                label="Client Homepage"
-                onChange={e => setClientUri(e.target.value)}
-                placeholder="https://"
-                type="text"
-                value={clientUri}
-                id="clientUri"
-              />
+              <StyledFormControl fullWidth variant="standard" margin="normal">
+                <TextField
+                  label="Client Homepage"
+                  onChange={e => setClientUri(e.target.value)}
+                  placeholder="https://"
+                  type="text"
+                  value={clientUri}
+                  id="clientUri"
+                  InputLabelProps={{ sx: labelSx }}
+                />
+              </StyledFormControl>
             </Grid>
             {!isEdit && (
               <>
@@ -353,22 +359,28 @@ export const CreateOAuthModal: React.FunctionComponent<
               </>
             )}
             <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
-              <TextField
-                label="Link to Privacy Policy"
-                onChange={e => setPolicyUri(e.target.value)}
-                placeholder="https://"
-                type="text"
-                value={policyUri}
-              />
+              <StyledFormControl fullWidth variant="standard" margin="normal">
+                <TextField
+                  label="Link to Privacy Policy"
+                  onChange={e => setPolicyUri(e.target.value)}
+                  placeholder="https://"
+                  type="text"
+                  value={policyUri}
+                  InputLabelProps={{ sx: labelSx }}
+                />
+              </StyledFormControl>
             </Grid>
             <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
-              <TextField
-                label="Links to Terms of Service"
-                onChange={e => setTosUri(e.target.value)}
-                placeholder="https://"
-                type="text"
-                value={tosUri}
-              />
+              <StyledFormControl fullWidth variant="standard" margin="normal">
+                <TextField
+                  label="Links to Terms of Service"
+                  onChange={e => setTosUri(e.target.value)}
+                  placeholder="https://"
+                  type="text"
+                  value={tosUri}
+                  InputLabelProps={{ sx: labelSx }}
+                />
+              </StyledFormControl>
             </Grid>
           </Grid>
           {isEdit && (

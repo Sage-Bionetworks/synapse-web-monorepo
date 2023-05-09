@@ -52,8 +52,8 @@ function setUp(props: CreateOAuthModalProps = defaultProps) {
   const user = userEvent.setup()
   const component = renderComponent(props)
   const inputs = {
-    name: screen.getByLabelText('Client Name'),
-    homePage: screen.getByLabelText('Client Homepage'),
+    name: screen.getByRole('textbox', { name: 'Client Name' }),
+    homePage: screen.getByRole('textbox', { name: 'Client Homepage' }),
     redirectURI: screen.getByRole('textbox', { name: 'Redirect URI(s)' }),
   }
   const saveButton = screen.getByRole('button', { name: 'Save' })

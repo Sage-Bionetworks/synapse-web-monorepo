@@ -39,13 +39,15 @@ const defaultMuiThemeOptions: ThemeOptions = {
             transition: '0.2s',
           },
         },
-        text: {
+        text: ({ theme, ownerState }) => ({
           '&:hover': {
             textDecoration: 'underline',
             textUnderlineOffset: '4px',
+            textDecorationColor:
+              theme.palette[ownerState.color || 'primary']['main'],
             textDecorationThickness: '2px',
           },
-        },
+        }),
       },
     },
     MuiCheckbox: {
@@ -128,6 +130,11 @@ const defaultMuiThemeOptions: ThemeOptions = {
         input: ({ theme }) => ({
           padding: '14px 12px',
         }),
+      },
+    },
+    MuiInputLabel: {
+      defaultProps: {
+        shrink: true,
       },
     },
     MuiMenuItem: {
