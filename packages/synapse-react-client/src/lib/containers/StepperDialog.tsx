@@ -1,10 +1,25 @@
 import { Alert, Button, Box } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DialogBase } from './DialogBase'
+import { useSynapseContext } from '../utils/SynapseContext'
+import { BackendDestinationEnum } from '../utils/functions/getEndpoint'
+import { doGet } from '../utils/SynapseClient'
+
+type ChildStep = {
+  title: string
+  content: React.ReactElement
+  onConfirm?: () => void
+  onConfirmText: string
+}
 
 export type Step = {
   title: string
   content: React.ReactElement
+  children: ChildStep
+}
+
+type ChildSteps = {
+  [key: number]: ChildStep
 }
 
 export type Steps = {
@@ -21,6 +36,7 @@ export type StepperDialogProps = {
   onConfirm: () => void
   open: boolean
   steps: Steps
+  children: ChildSteps
 }
 
 /**
@@ -39,6 +55,31 @@ export const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
 }) => {
   const [stepNumber, setStepNumber] = useState<number>(0)
   const [step, setStep] = useState<Step>(steps[stepNumber])
+  const { accessToken } = useSynapseContext()
+
+  useEffect(() => {
+    if (!accessToken) {
+      console.log('NO ACCESS TOKEN')
+      return
+    }
+
+    const testApi = async () => {
+      const userProfile = `/repo/v1/userProfile`
+      const projectsByUser = `/repo/v1/projects/user/3471514`
+      const challengeByProjectId = `/repo/v1/entity/syn28590455/challenge`
+      const challengeTeamsByChallengeId = `/repo/v1/challenge/4524/challengeTeam`
+      const teams = `/repo/v1/teams?fragment=kevin-grayson` // ?fragment=kevin-grayson    <<< optional
+      const teamByTeamId = `/repo/v1/team/3471520`
+      const data = await doGet(
+        teamByTeamId,
+        accessToken,
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )
+      console.log('DATA', data)
+    }
+
+    testApi()
+  }, [])
 
   const isFirstStep = stepNumber === 0
   const isLastStep = stepNumber === Object.keys(steps).length - 1
@@ -50,8 +91,10 @@ export const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
 
   const dialogContent = (
     <Box display="flex" flexDirection="column" gap={1}>
-      {step.content}
-      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+      <>
+        {step.children || step.content}
+        {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+      </>
     </Box>
   )
 
