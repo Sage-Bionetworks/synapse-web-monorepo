@@ -9,7 +9,6 @@ export const tsvOption = 'Tab Separated Values (TSV)'
 
 // Step 1
 const stepOneFormSchema: JSONSchema7 = {
-  title: 'Download query results',
   type: 'object',
   properties: {
     'File Type': {
@@ -48,7 +47,6 @@ const stepOneFormUISchema: UiSchema = {
 
 // Step 2
 const stepTwoFormSchema: JSONSchema7 = {
-  title: 'Download query results',
   description:
     'File is ready for download. Select the download button to download the file.',
   type: 'object',
