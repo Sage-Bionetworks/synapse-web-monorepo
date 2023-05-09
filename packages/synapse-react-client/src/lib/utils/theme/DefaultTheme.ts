@@ -39,14 +39,13 @@ const defaultMuiThemeOptions: ThemeOptions = {
             transition: '0.2s',
           },
         },
-        text: ({ theme }) => ({
+        text: {
           '&:hover': {
             textDecoration: 'underline',
             textUnderlineOffset: '4px',
-            textDecorationColor: theme.palette.primary.main,
             textDecorationThickness: '2px',
           },
-        }),
+        },
       },
     },
     MuiCheckbox: {
