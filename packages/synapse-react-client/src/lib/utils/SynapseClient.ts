@@ -140,6 +140,8 @@ import {
   QueryResultBundle,
   QueryTableResults,
   ReferenceList,
+  Renewal,
+  Request,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   Submission as EvaluationSubmission,
@@ -159,7 +161,6 @@ import {
   EntityChildrenRequest,
   EntityChildrenResponse,
   ManagedACTAccessRequirementStatus,
-  RequestInterface,
   TYPE_FILTER,
   UserGroupHeaderResponse,
 } from './synapseTypes'
@@ -167,7 +168,6 @@ import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
 } from './synapseTypes/AccessRequirement/AccessRequirementSearch'
-import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
 import { SubmissionStateChangeRequest } from './synapseTypes/AccessRequirement/SubmissionStateChangeRequest'
 import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
@@ -298,6 +298,7 @@ import {
   TwoFactorAuthStatus,
 } from './synapseTypes/TotpSecret'
 import { TwoFactorAuthRecoveryCodes } from './synapseTypes/TwoFactorAuthRecoveryCodes'
+import { SynapseError } from './SynapseError'
 
 const cookies = new UniversalCookies()
 
@@ -313,7 +314,7 @@ export const ACCESS_TOKEN_COOKIE_KEY =
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
-export const getRootURL = () => {
+export function getRootURL(): string {
   const portString = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
@@ -329,13 +330,6 @@ export function delay(t: number) {
   return new Promise(resolve => {
     setTimeout(resolve.bind(null, {}), t)
   })
-}
-
-/**
- * Error message returned by the Synapse Backend
- */
-export type SynapseError = {
-  reason: string
 }
 
 /**
@@ -2859,11 +2853,12 @@ export const searchAccessRequirements = (
  * @param {string} requirementId id of entity to lookup
  * @returns {AccessRequirementStatus}
  */
-export const getAccessRequirementStatus = (
-  accessToken: string | undefined,
-  requirementId: string | number,
-): Promise<AccessRequirementStatus | ManagedACTAccessRequirementStatus> => {
-  return doGet(
+export function getAccessRequirementStatus<
+  T extends
+    | AccessRequirementStatus
+    | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
+>(accessToken: string | undefined, requirementId: string | number): Promise<T> {
+  return doGet<T>(
     ACCESS_REQUIREMENT_STATUS(requirementId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2940,7 +2935,7 @@ export const getAccessApproval = async (
  * @param {AccessApproval} accessApproval access approval request object
  * @returns {AccessApproval}
  */
-export const postAccessApproval = async (
+export const createAccessApproval = async (
   accessToken: string | undefined,
   accessApproval: AccessApproval,
 ): Promise<AccessApproval> => {
@@ -3303,7 +3298,7 @@ export const getDataAccessRequestForUpdate = (
   requirementId: string,
   accessToken: string,
 ) => {
-  return doGet<RequestInterface | RenewalInterface>(
+  return doGet<Request | Renewal>(
     ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE(requirementId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3311,11 +3306,11 @@ export const getDataAccessRequestForUpdate = (
 }
 
 // http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
-export const updateDataAccessRequest = (
-  requestObj: RequestInterface,
+export function updateDataAccessRequest(
+  requestObj: Request | Renewal,
   accessToken: string,
-) => {
-  return doPost<RequestInterface>(
+) {
+  return doPost<typeof requestObj>(
     DATA_ACCESS_REQUEST,
     requestObj,
     accessToken,
@@ -4443,4 +4438,32 @@ export function getDOIAssociation(
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
   )
+}
+
+/**
+ * Returns the URL for the SWC file handle servlet so the user can retrieve the contents of a Synapse file handle when
+ * they follow the link.
+ * This effectively provides a stable URL where a user can request the contents of a file and get the same result, without
+ * concern for the 30s expiration of presigned file handles returned by the Synapse backend.
+ *
+ * Note that this URL will only work if the user is logged in to Synapse on the domain of the SWC instance, and the client
+ * (typically a browser) can provide the current access token cookie.
+ * @param fileHandleId The ID of the file handle to retrieve
+ * @param associatedObjectId ID of the object the file handle is associated with. Required if the user is not the one who uploaded the file handle
+ * @param associatedObjectType The type of the associated object. Required if the user is not the one who uploaded the file handle
+ */
+export function getPortalFileHandleServletUrl(
+  fileHandleId: string,
+  associatedObjectId?: string,
+  associatedObjectType?: FileHandleAssociateType,
+) {
+  const search = new URLSearchParams()
+  search.set('fileHandleId', fileHandleId)
+  if (associatedObjectId && associatedObjectType) {
+    search.set('associatedObjectId', associatedObjectId)
+    search.set('associatedObjectType', associatedObjectType.toString())
+  }
+  return `${getEndpoint(
+    BackendDestinationEnum.PORTAL_ENDPOINT,
+  )}/Portal/filehandleassociation?${search.toString()}`
 }

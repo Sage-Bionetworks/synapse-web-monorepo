@@ -2,20 +2,22 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   SynapseClient,
   SynapseConstants,
-  Typography,
-} from 'synapse-react-client'
+} from 'synapse-react-client/dist/utils'
 import StandaloneLoginForm from 'synapse-react-client/dist/containers/auth/StandaloneLoginForm'
 import { StyledOuterContainer } from 'synapse-react-client/dist/components/styled/LeftRightPanel'
 import UserCard from 'synapse-react-client/dist/containers/UserCard'
 import { useGetCurrentUserProfile } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
 import { SynapseClientError } from 'synapse-react-client/dist/utils/SynapseClientError'
-import { OAuthConsentGrantedResponse } from 'synapse-react-client/dist/utils/synapseTypes'
+import {
+  FileHandleAssociateType,
+  OAuthConsentGrantedResponse,
+} from 'synapse-react-client/dist/utils/synapseTypes'
 import { AccessCodeResponse } from 'synapse-react-client/dist/utils/synapseTypes/AccessCodeResponse'
 import { OAuthClientPublic } from 'synapse-react-client/dist/utils/synapseTypes/OAuthClientPublic'
 import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest'
 import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequestDescription'
 import { getStateParam, getURLParam, handleErrorRedirect } from './URLUtils'
-import { Button, Link, Paper } from '@mui/material'
+import { Button, Link, Paper, Typography } from '@mui/material'
 import FullWidthAlert from 'synapse-react-client/dist/containers/FullWidthAlert'
 import { OAuthClientError } from './OAuthClientError'
 import { StyledInnerContainer } from './StyledInnerContainer'
@@ -26,6 +28,8 @@ import {
 import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 import { useHistory } from 'react-router-dom'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
+import { getPortalFileHandleServletUrl } from 'synapse-react-client/dist/utils/SynapseClient'
+import SystemUseNotification from 'synapse-react-client/dist/containers/SystemUseNotification'
 
 export function OAuth2Form() {
   const isMounted = useRef(true)
@@ -57,7 +61,11 @@ export function OAuth2Form() {
   })
 
   if (profile?.profilePicureFileHandleId) {
-    profile.clientPreSignedURL = `https://www.synapse.org/Portal/filehandleassociation?associatedObjectId=${profile.ownerId}&associatedObjectType=UserProfileAttachment&fileHandleId=${profile.profilePicureFileHandleId}`
+    profile.clientPreSignedURL = getPortalFileHandleServletUrl(
+      profile.profilePicureFileHandleId,
+      profile.ownerId,
+      FileHandleAssociateType.UserProfileAttachment,
+    )
   }
 
   const [oidcRequestDescription, setOidcRequestDescription] =
@@ -410,6 +418,7 @@ export function OAuth2Form() {
             }}
             twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
           />
+          <SystemUseNotification maxWidth={'325px'} />
         </Paper>
       )}
       {error && (

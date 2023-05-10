@@ -16,17 +16,8 @@ import { displayToast } from '../../ToastMessage'
 import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Stack,
-  Tooltip,
-} from '@mui/material'
-import { CloseButton } from '../../ConfirmationDialog'
+import { Button, Tooltip } from '@mui/material'
+import { DialogBase } from '../../DialogBase'
 
 export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -152,82 +143,77 @@ export function EntityModal(props: EntityModalProps) {
     </Tooltip>
   )
 
+  const dialogContent = (
+    <>
+      {showTabs && !isInEditMode ? (
+        <div className="Tabs">
+          {Object.keys(EntityModalTabs).map((tabName: string) => {
+            return (
+              <div
+                className="Tab"
+                role="tab"
+                key={tabName}
+                onClick={e => {
+                  e.stopPropagation()
+                  setCurrentTab(EntityModalTabs[tabName])
+                }}
+                aria-selected={tabName === currentTab}
+              >
+                {tabName}
+              </div>
+            )
+          })}
+        </div>
+      ) : null}
+      <div
+        style={
+          currentTab === EntityModalTabs.ANNOTATIONS ? {} : { display: 'none' }
+        }
+      >
+        {isInEditMode ? (
+          <SynapseErrorBoundary>
+            <SchemaDrivenAnnotationEditor
+              entityId={entityId}
+              formRef={annotationEditorFormRef}
+              onSuccess={() => {
+                displayToast('Annotations successfully updated.', 'success')
+                setIsInEditMode(false)
+              }}
+              onCancel={() => setIsInEditMode(false)}
+            />
+          </SynapseErrorBoundary>
+        ) : (
+          <AnnotationsTable entityId={entityId} versionNumber={versionNumber} />
+        )}
+      </div>
+      <div
+        style={
+          currentTab === EntityModalTabs.METADATA ? {} : { display: 'none' }
+        }
+      >
+        <MetadataTable entityId={entityId} versionNumber={versionNumber} />
+      </div>
+    </>
+  )
+
   return (
-    <Dialog
+    <DialogBase
       className={`EntityMetadata`}
       open={show}
-      onClose={onClose}
+      onCancel={onClose}
       maxWidth={isInEditMode ? 'md' : 'sm'}
-      fullWidth
-    >
-      <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
-          {entityBundle ? entityBundle.entity.name : <Skeleton width={'40%'} />}
-          <Box sx={{ flexGrow: 1 }} />
-          <CloseButton onClick={onClose} />
-        </Stack>
-      </DialogTitle>
-      <DialogContent>
-        {showTabs && !isInEditMode ? (
-          <div className="Tabs">
-            {Object.keys(EntityModalTabs).map((tabName: string) => {
-              return (
-                <div
-                  className="Tab"
-                  role="tab"
-                  key={tabName}
-                  onClick={e => {
-                    e.stopPropagation()
-                    setCurrentTab(EntityModalTabs[tabName])
-                  }}
-                  aria-selected={tabName === currentTab}
-                >
-                  {tabName}
-                </div>
-              )
-            })}
-          </div>
-        ) : null}
-        <div
-          style={
-            currentTab === EntityModalTabs.ANNOTATIONS
-              ? {}
-              : { display: 'none' }
-          }
-        >
-          {isInEditMode ? (
-            <SynapseErrorBoundary>
-              <SchemaDrivenAnnotationEditor
-                entityId={entityId}
-                formRef={annotationEditorFormRef}
-                onSuccess={() => {
-                  displayToast('Annotations successfully updated.', 'success')
-                  setIsInEditMode(false)
-                }}
-                onCancel={() => setIsInEditMode(false)}
-              />
-            </SynapseErrorBoundary>
-          ) : (
-            <AnnotationsTable
-              entityId={entityId}
-              versionNumber={versionNumber}
-            />
-          )}
-        </div>
-        <div
-          style={
-            currentTab === EntityModalTabs.METADATA ? {} : { display: 'none' }
-          }
-        >
-          <MetadataTable entityId={entityId} versionNumber={versionNumber} />
-        </div>
-      </DialogContent>
-      <DialogActions>
-        {showCancelAnnotationEditsButton && cancelAnnotationEditsButton}
-        {showSaveAnnotationsButton && saveAnnotationsButton}
-        {showEditAnnotationsButton && editAnnotationsButton}
-        {showOpenEntityPageButton && openEntityPageButton}
-      </DialogActions>
-    </Dialog>
+      title={
+        entityBundle ? entityBundle.entity.name : <Skeleton width={'40%'} />
+      }
+      content={dialogContent}
+      actions={
+        <>
+          {showCancelAnnotationEditsButton && cancelAnnotationEditsButton}
+          {showSaveAnnotationsButton && saveAnnotationsButton}
+          {showEditAnnotationsButton && editAnnotationsButton}
+          {showOpenEntityPageButton && openEntityPageButton}
+        </>
+      }
+    />
   )
 }

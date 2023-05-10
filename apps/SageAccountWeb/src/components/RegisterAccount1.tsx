@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from 'react'
-import { Box, InputLabel, TextField, useTheme } from '@mui/material'
-import { SynapseClient } from 'synapse-react-client'
+import {
+  Box,
+  Button,
+  InputLabel,
+  Link,
+  TextField,
+  Typography,
+  useTheme,
+} from '@mui/material'
+import { SynapseClient } from 'synapse-react-client/dist/utils'
 import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import { Typography } from 'synapse-react-client'
 import {
   isAliasAvailable,
   registerAccountStep1,
 } from 'synapse-react-client/dist/utils/SynapseClient'
 import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
-import { useSourceApp, SourceAppLogo } from './SourceApp'
+import { SourceAppLogo, useSourceApp } from './SourceApp'
 import { Link as RouterLink } from 'react-router-dom'
 import { EmailConfirmationPage } from './EmailConfirmationPage'
-import { Button, Link } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import GoogleLogo from '../assets/g-logo.png'
-import { useAppContext } from 'AppContext'
+import { useAppContext } from '../AppContext'
 import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
 import { BackButton } from './BackButton'
 import {
+  StyledFormControl,
   StyledInnerContainer,
   StyledOuterContainer,
-  StyledFormControl,
 } from './StyledComponents'
 import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from 'synapse-react-client/dist/utils/AppUtils'
 

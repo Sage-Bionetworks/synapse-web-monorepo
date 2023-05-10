@@ -22,7 +22,7 @@ import mockProject from './mockProject'
 const parentId = mockProject.id
 const projectName = mockProject.name
 
-const MOCK_FILE_ENTITY_ID = 'syn123'
+export const MOCK_FILE_ENTITY_ID = 'syn123'
 const MOCK_FILE_NAME = 'My mock file entity'
 
 // TODO: Create a mock wiki

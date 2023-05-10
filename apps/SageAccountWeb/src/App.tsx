@@ -1,17 +1,17 @@
 import { StyledEngineProvider } from '@mui/material/styles'
-import { AppContextConsumer } from 'AppContext'
-import { SageResourcesPage } from 'components/SageResourcesPage'
-import { AccountCreatedPage } from 'components/AccountCreatedPage'
-import { AccountSettings } from 'components/AccountSettings'
-import { CertificationQuiz } from 'components/CertificationQuiz'
-import CookiesNotification from 'components/CookiesNotification'
-import { CurrentAffiliationPage } from 'components/CurrentAffiliationPage'
-import { JoinTeamPage } from 'components/JoinTeamPage'
-import { ProfileValidation } from 'components/ProfileValidation/ProfileValidation'
-import { RegisterAccount1 } from 'components/RegisterAccount1'
-import { RegisterAccount2 } from 'components/RegisterAccount2'
-import { ResetPassword } from 'components/ResetPassword'
-import { TermsOfUsePage } from 'components/TermsOfUsePage'
+import { AppContextConsumer } from './AppContext'
+import { SageResourcesPage } from './components/SageResourcesPage'
+import { AccountCreatedPage } from './components/AccountCreatedPage'
+import { AccountSettings } from './components/AccountSettings'
+import { CertificationQuiz } from './components/CertificationQuiz'
+import CookiesNotification from './components/CookiesNotification'
+import { CurrentAffiliationPage } from './components/CurrentAffiliationPage'
+import { JoinTeamPage } from './components/JoinTeamPage'
+import { ProfileValidation } from './components/ProfileValidation/ProfileValidation'
+import { RegisterAccount1 } from './components/RegisterAccount1'
+import { RegisterAccount2 } from './components/RegisterAccount2'
+import { ResetPassword } from './components/ResetPassword'
+import { TermsOfUsePage } from './components/TermsOfUsePage'
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { SynapseComponents } from 'synapse-react-client'
@@ -20,7 +20,7 @@ import {
   SynapseContextConsumer,
   SynapseContextType,
 } from 'synapse-react-client/dist/utils/SynapseContext'
-import { getSearchParam } from 'URLUtils'
+import { getSearchParam } from './URLUtils'
 import './App.scss'
 import AppInitializer from './AppInitializer'
 import LoginPage from './LoginPage'
@@ -28,6 +28,8 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import ApplicationSessionManager from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionManager'
 import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
 import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAuthBackupCodesPage'
+import { PersonalAccessTokensPage } from './components/PersonalAccessTokensPage'
+import { OAuthClientManagementPage } from './components/OAuthClientManagementPage'
 
 const isCodeSearchParam = getSearchParam('code') !== undefined
 const isProviderSearchParam = getSearchParam('provider') !== undefined
@@ -152,6 +154,16 @@ function App() {
                                 path={'/authenticated/2fa/generatecodes'}
                                 exact
                                 render={() => <TwoFactorAuthBackupCodesPage />}
+                              />
+                              <Route
+                                path={'/authenticated/personalaccesstokens'}
+                                exact
+                                render={() => <PersonalAccessTokensPage />}
+                              />
+                              <Route
+                                path={'/authenticated/oauthclientmanagement'}
+                                exact
+                                render={() => <OAuthClientManagementPage />}
                               />
                             </>
                           )}

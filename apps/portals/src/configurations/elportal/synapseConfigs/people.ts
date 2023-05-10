@@ -23,6 +23,11 @@ const people: SynapseConfig = {
         'Grant Number',
       ],
     },
+    facetsToPlot: [
+      'institution',
+      'Grant Number',
+      // 'Program',
+    ],
   },
 }
 

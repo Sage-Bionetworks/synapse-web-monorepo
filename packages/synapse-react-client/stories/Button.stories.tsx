@@ -26,9 +26,8 @@ const meta: Meta = {
       options: ['', 'sm', 'lg'],
     },
     className: {
-      name: 'shape',
-      control: 'select',
-      options: ['', 'btn-wide'],
+      name: 'className',
+      control: 'text',
     },
   },
   render: args => (

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button } from 'react-bootstrap'
+import WideButton from '../../components/styled/WideButton'
 
 export type FunderProps = {
   data?: any
@@ -37,14 +37,16 @@ export default class Funder extends React.Component<FunderProps, never> {
     let showOrgLink
     if (!isOnOrgPath) {
       showOrgLink = (
-        <div className="SRC-marginAuto SRC-cardAction bootstrap-4-backport">
-          <Button
-            className="btn-wide"
+        <div className="SRC-marginAuto SRC-cardAction">
+          <WideButton
             href={organizationPath}
-            variant="secondary"
+            variant="contained"
+            color="secondary"
+            // TODO: remove this line after we have removed bootstrap
+            sx={{ '&:hover': { color: 'common.white' } }} // otherwise tab-focus.less overrides color
           >
             View Funded Research
-          </Button>
+          </WideButton>
         </div>
       )
     } else {

@@ -1,4 +1,5 @@
 import '@mui/material/styles'
+
 declare type CustomTypographyVariants =
   | 'headline1'
   | 'headline2'
@@ -41,4 +42,3 @@ declare module '@mui/material/Typography' {
   interface TypographyPropsVariantOverrides
     extends RecordWithCustomVariantKeys<true> {}
 }
-export {}

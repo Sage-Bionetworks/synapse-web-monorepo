@@ -3,9 +3,9 @@ import {
   SynapseContextConsumer,
   SynapseContextType,
 } from 'synapse-react-client/dist/utils/SynapseContext'
-import { SynapseConfig } from 'types/portal-config'
-import PortalComponents from 'portal-components'
-import { SynapseComponents } from 'synapse-react-client'
+import { SynapseConfig } from './types/portal-config'
+import PortalComponents from './portal-components'
+import { SynapseComponents } from 'synapse-react-client/dist/index'
 
 type SynapseComponentProps = {
   synapseConfig: SynapseConfig

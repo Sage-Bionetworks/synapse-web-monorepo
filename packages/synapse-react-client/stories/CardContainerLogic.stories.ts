@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import {
+  FUNDER,
   GENERIC_CARD,
   OBSERVATION_CARD,
   PUBLICATION,
@@ -54,6 +55,14 @@ export const ObservationCard: Story = {
   args: {
     sql: `SELECT "Observation Submitter Name" as "submitterName", Synapse_id as "submitterUserId", "Observation Time" as "time", "Observation Time Units" as "timeUnits", "Observation Text" as "text", "Observation Type" as "tag" FROM syn26344832 WHERE "Observation Time" IS NOT NULL`,
     type: OBSERVATION_CARD,
+    limit: 3,
+  },
+}
+
+export const FunderCard: Story = {
+  args: {
+    sql: `SELECT * FROM syn16858699`,
+    type: FUNDER,
     limit: 3,
   },
 }

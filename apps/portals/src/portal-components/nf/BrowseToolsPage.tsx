@@ -1,19 +1,20 @@
-import { popularSearchesSql, toolsSql } from 'configurations/nf/resources'
-import Layout from 'portal-components/Layout'
+import { popularSearchesSql, toolsSql } from '../../configurations/nf/resources'
+import Layout from '../Layout'
 import * as React from 'react'
-import { Button, Form } from 'react-bootstrap'
 import { Typography } from 'synapse-react-client'
 import FeaturedToolsList from 'synapse-react-client/dist/containers/home_page/featured_tools/FeaturedToolsList'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { Query } from 'synapse-react-client/dist/utils/synapseTypes'
 import { TextMatchesQueryFilter } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
-import { HelpPopover } from 'synapse-react-client/dist/containers/HelpPopover'
+import { WideButton } from 'synapse-react-client/dist/components/styled/WideButton'
 import { ReactComponent as AnimalModels } from './assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from './assets/antibodies.svg'
 import { ReactComponent as Biobanks } from './assets/biobanks.svg'
 import { ReactComponent as CellLines } from './assets/cell-lines.svg'
 import { ReactComponent as PlasmidsReagents } from './assets/plasmids-reagents.svg'
 import PopularSearches from './PopularSearches'
+import { Button, Link } from '@mui/material'
+import { Form } from 'react-bootstrap'
 
 export const gotoExploreToolsWithFullTextSearch = (
   fullTextSearchString: string,
@@ -54,17 +55,19 @@ const BrowseToolsPage = () => {
     )
   }
 
+  const wideButtonSx = { marginTop: '50px' }
+
   return (
     <div className="browse-tools-page">
-      <div className="header bootstrap-4-backport">
+      <div className="header">
         <div className="home-container-description">
           <Typography variant="headline1" className="sectionTitle">
-            NF Research Tools Database
+            NF Research Tools Central
           </Typography>
           <div className="center-content">
             <div className="description">
               <Typography variant="body1">
-                The NF Research Tools Database aims to support the development
+                NF Research Tools Central aims to support the development
                 of a robust research toolkit and lower the barrier of entry to
                 neurofibromatosis (NF) research. The database includes
                 NF-associated animal models, cell lines, antibodies, and genetic
@@ -116,19 +119,44 @@ const BrowseToolsPage = () => {
             <Typography variant="headline3">Biobanks</Typography>
           </button>
         </div>
-        <div className="center-content bootstrap-4-backport">
-          <Button
-            className="btn-wide"
-            variant="primary"
+        <div className="center-content">
+          <WideButton
+            sx={wideButtonSx}
+            variant="contained"
             onClick={() => gotoExploreTools()}
           >
             View All Tools
-          </Button>
+          </WideButton>
         </div>
       </Layout>
       <div className="home-container-description  home-bg-dark home-spacer">
-        <Typography variant="sectionTitle" className="sectionTitle">
+        <Typography
+          variant="sectionTitle"
+          sx={{
+            textAlign: 'center',
+            paddingTop: '50px',
+            paddingBottom: '15px',
+          }}
+        >
           What Tools Can We Help You Find?
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{ textAlign: 'center', paddingBottom: '15px' }}
+        >
+          For the greatest success with your search, ensure your spelling is
+          correct and avoid pluralization or suffixes.
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{ textAlign: 'center', paddingBottom: '40px' }}
+        >
+          <Link
+            href="https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html"
+            target="_blank"
+          >
+            Learn More About MySQL Full Text Search
+          </Link>
         </Typography>
         <div className="center-content">
           <div className="searchToolsRow">
@@ -148,25 +176,13 @@ const BrowseToolsPage = () => {
                 }}
               />
             </div>
-            <div className="search-button-container bootstrap-4-backport">
+            <div className="search-button-container">
               <Button
-                className="btn-wide"
-                variant="primary"
+                variant="contained"
                 onClick={() => gotoExploreToolsWithFullTextSearch(searchText)}
               >
                 Search
               </Button>
-            </div>
-            <div className="help-popover">
-              <HelpPopover
-                markdownText={
-                  'This search bar is powered by MySQL Full Text Search.'
-                }
-                helpUrl={
-                  'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html'
-                }
-                placement="left"
-              />
             </div>
           </div>
         </div>
@@ -196,19 +212,19 @@ const BrowseToolsPage = () => {
             toolDetailPageURL={'/Explore/Tools/DetailsPage?resourceId='}
           />
         </div>
-        <div className="center-content bootstrap-4-backport">
-          <Button
-            className="btn-wide"
-            variant="primary"
+        <div className="center-content">
+          <WideButton
+            sx={wideButtonSx}
+            variant="contained"
             onClick={() => gotoExploreTools()}
           >
             View All Tools
-          </Button>
+          </WideButton>
         </div>
       </Layout>
       <Layout outsideContainerClassName="home-spacer highlightSubmitToolContainer">
         <Typography variant="sectionTitle" className="sectionTitle">
-          Submit a Tool to the Database
+          Submit a Tool to NF Research Tools Central
         </Typography>
         <div className="center-content">
           <div className="description">
@@ -216,20 +232,22 @@ const BrowseToolsPage = () => {
               We are currently accepting submissions that describe any
               NF1-related mouse model, cell line, genetic reagent (e.g. plasmid,
               CRISPR), antibody, or biobank. If you have a tool that you would
-              like to add to the Research Tools Database, please click the {'"'}
+              like to add to NF Research Tools Central, please click the {'"'}
               Submit a Tool{'"'} button below to learn more.
             </Typography>
           </div>
         </div>
-        <div className="center-content bootstrap-4-backport">
-          <Button
+        <div className="center-content">
+          <WideButton
+            sx={wideButtonSx}
             href="https://forms.gle/htFkH5yewLzP1RAu7"
-            className="btn-wide highlightSubmitToolButton"
-            variant="secondary"
+            className="highlightSubmitToolButton"
+            variant="contained"
+            // @ts-ignore - target prop exists, but TS doesn't recognize on styled component
             target="_blank"
           >
             Submit A Tool
-          </Button>
+          </WideButton>
         </div>
       </Layout>
     </div>

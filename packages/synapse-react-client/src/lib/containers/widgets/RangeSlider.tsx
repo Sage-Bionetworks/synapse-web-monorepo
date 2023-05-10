@@ -1,113 +1,31 @@
-import * as React from 'react'
-
-import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
-import {
-  SliderItem,
-  GetHandleProps,
-  GetTrackProps,
-} from 'react-compound-slider'
+import React from 'react'
 import { RangeValues } from './Range'
 import { useState } from 'react'
-
-/**************** RANGE SLIDER SUBCOMPONENTS *********************/
-
-/***  handles ***/
-
-interface IHandleProps {
-  domain: number[]
-  handle: SliderItem
-  getHandleProps: GetHandleProps
-}
-
-export const Handle: React.FunctionComponent<IHandleProps> = ({
-  domain: [min, max],
-  handle: { id, value, percent },
-  getHandleProps,
-}) => (
-  <div
-    role="slider"
-    className="RangeSlider__handle"
-    aria-valuemin={min}
-    aria-valuemax={max}
-    aria-valuenow={value}
-    style={{
-      left: `${percent}%`,
-    }}
-    {...getHandleProps(id)}
-  />
-)
-
-/***   track  ***/
-interface ITrackProps {
-  source: SliderItem
-  target: SliderItem
-  getTrackProps: GetTrackProps
-}
-
-export const Track: React.FunctionComponent<ITrackProps> = ({
-  source,
-  target,
-  getTrackProps,
-}) => (
-  <div
-    className="RangeSlider__track"
-    style={{
-      left: `${source.percent}%`,
-      width: `${target.percent - source.percent}%`,
-    }}
-    {...getTrackProps()}
-  />
-)
-
-/***   tick  ***/
-interface ITickProps {
-  key: string
-  tick: SliderItem
-  count: number
-  mode?: 'SHOWALL' | 'SHOWNONE' | 'SHOWMINMAX'
-}
-
-export const Tick: React.FunctionComponent<ITickProps> = ({
-  tick,
-  count,
-  mode = 'SHOWMINMAX',
-}) => (
-  <div>
-    <div
-      className="RangeSlider__tick"
-      style={{
-        left: `${tick.percent}%`,
-      }}
-    />
-    <div
-      className="RangeSlider__tickInner"
-      style={{
-        marginLeft: `${-(100 / count) / 2}%`,
-        width: `${100 / count}%`,
-        left: `${tick.percent}%`,
-      }}
-    >
-      {(mode === 'SHOWALL' ||
-        (mode === 'SHOWMINMAX' &&
-          (tick.percent == 0 || tick.percent == 100))) &&
-        tick.value}
-    </div>
-  </div>
-)
-
-/*************  RANGE SLIDER COMPONENT ****************/
+import {
+  Box,
+  Button,
+  Slider,
+  SliderValueLabelProps,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 
 export type RangeSliderProps = React.PropsWithChildren<{
   domain: string[]
   initialValues: RangeValues
   step: number
   doUpdateOnApply?: boolean
-  maxTickCount?: number
   onChange: (values: RangeValues) => void
 }>
 
-export type RangeSliderState = {
-  values: readonly number[]
+function ValueLabelComponent(props: SliderValueLabelProps) {
+  const { children, value } = props
+
+  return (
+    <Tooltip enterTouchDelay={0} placement="top" title={value}>
+      {children}
+    </Tooltip>
+  )
 }
 
 function getInitialValues(initialValues: RangeValues, domain: string[]) {
@@ -118,10 +36,8 @@ function getInitialValues(initialValues: RangeValues, domain: string[]) {
   return result
 }
 
-export const RangeSlider = ({
-  doUpdateOnApply = true,
-  ...props
-}: RangeSliderProps) => {
+export function RangeSlider(props: RangeSliderProps) {
+  const { doUpdateOnApply = true, onChange, step } = props
   const stringArrToNumArr = (inputArr: string[]) =>
     inputArr.map(value => Number(value))
 
@@ -131,96 +47,48 @@ export const RangeSlider = ({
 
   const numDomain = stringArrToNumArr(props.domain)
 
-  const handleSliderChange = (
-    values: readonly number[],
-    callbackFn?: (values: RangeValues) => void,
-  ) => {
+  const handleSliderChange = (values: readonly number[]) => {
     setValues([...values])
-    if (callbackFn) {
-      callbackFn({ min: values[0], max: values[1] })
+    if (!doUpdateOnApply && onChange) {
+      onChange({ min: values[0], max: values[1] })
     }
   }
 
-  let ticksCount = numDomain[1] - numDomain[0]
-  if (props.maxTickCount && ticksCount > props.maxTickCount) {
-    ticksCount = props.maxTickCount
-  }
-
   return (
-    <div className="RangeSlider">
-      <div className="RangeSlider__values">
+    <Box>
+      <Typography variant="smallText1">
         {values[0]} - {values[1]}
-      </div>
-      <div
-        className={`RangeSlider__wrapper${
-          doUpdateOnApply ? '--flex' : '--block'
-        }`}
-      >
+      </Typography>
+      <Box display="flex" gap={3}>
         <Slider
-          mode={1}
-          step={props.step}
-          domain={stringArrToNumArr(props.domain)}
-          className="RangeSlider__slider"
-          onChange={(values: readonly number[]) =>
-            handleSliderChange(
-              values,
-              doUpdateOnApply ? undefined : props.onChange,
-            )
-          }
-          values={getInitialValues(props.initialValues, props.domain)}
-        >
-          <Rail>
-            {({ getRailProps }) => (
-              <div className="RangeSlider__rail" {...getRailProps()} />
-            )}
-          </Rail>
-          <Handles>
-            {({ handles, getHandleProps }) => (
-              <div className="slider-handles">
-                {handles.map(handle => (
-                  <Handle
-                    key={`${handle.id}-${handle.percent}`}
-                    handle={handle}
-                    domain={stringArrToNumArr(props.domain)}
-                    getHandleProps={getHandleProps}
-                  />
-                ))}
-              </div>
-            )}
-          </Handles>
-          <Tracks left={true} right={true}>
-            {({ tracks, getTrackProps }) => (
-              <div>
-                {tracks.map(({ id, source, target }) => (
-                  <Track
-                    key={id}
-                    source={source}
-                    target={target}
-                    getTrackProps={getTrackProps}
-                  />
-                ))}
-              </div>
-            )}
-          </Tracks>
-          <Ticks count={ticksCount}>
-            {({ ticks }) => (
-              <div>
-                {ticks.map(tick => (
-                  <Tick key={tick.id} tick={tick} count={ticks.length} />
-                ))}
-              </div>
-            )}
-          </Ticks>
-        </Slider>
+          marks={[
+            { value: numDomain[0], label: props.domain[0] },
+            { value: numDomain[1], label: props.domain[1] },
+          ]}
+          min={numDomain[0]}
+          max={numDomain[1]}
+          value={values}
+          onChange={(_, newValues) => handleSliderChange(newValues as number[])}
+          step={step}
+          valueLabelDisplay="auto"
+          slots={{
+            valueLabel: ValueLabelComponent,
+          }}
+        />
         {doUpdateOnApply && (
-          <button
-            className="RangeSlider__btnApply"
-            onClick={() => props.onChange({ min: values[0], max: values[1] })}
-          >
-            Apply
-          </button>
+          <Box>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => props.onChange({ min: values[0], max: values[1] })}
+            >
+              Apply
+            </Button>
+          </Box>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }
+
+export default RangeSlider

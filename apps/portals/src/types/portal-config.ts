@@ -14,7 +14,7 @@ import { SynapseFormSubmissionGridProps } from 'synapse-react-client/dist/contai
 import { QueryWrapperPlotNavProps } from 'synapse-react-client/dist/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 import { SynapseFormWrapperProps } from 'synapse-react-client/dist/containers/synapse_form_wrapper/SynapseFormWrapper'
 import { ThemesPlotProps } from 'synapse-react-client/dist/containers/widgets/themes-plot/ThemesPlot'
-import { StatefulButtonControlWrapperProps } from 'portal-components/StatefulButtonControlWrapper'
+import { StatefulButtonControlWrapperProps } from '../portal-components/StatefulButtonControlWrapper'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
 import { AboutPortalProps } from '../portal-components/csbc-home-page/AboutPortal'
@@ -23,8 +23,8 @@ import { DetailsPageProps } from './portal-util-types'
 import { StandaloneQueryWrapperProps } from 'synapse-react-client/dist/containers/table/StandaloneQueryWrapper'
 import { ParticipantsBarPlotProps } from '../portal-components/crc-researcher/ParticipantsBarPlot'
 import { StatusLineChartProps } from '../portal-components/crc-researcher/StatusLineChart'
-import { SurveysCompletedPlotsProps } from 'portal-components/crc-researcher/SurveysCompletedPlots'
-import { ImageProps } from 'portal-components/Image'
+import { SurveysCompletedPlotsProps } from '../portal-components/crc-researcher/SurveysCompletedPlots'
+import { ImageProps } from '../portal-components/Image'
 import { RssFeedCardsProps } from 'synapse-react-client/dist/containers/RssFeedCards'
 import { FeaturedDataTabsProps } from 'synapse-react-client/dist/containers/home_page/featured-data/FeaturedDataTabs'
 import { UserCardListGroupsProps } from 'synapse-react-client/dist/containers/home_page/people/UserCardListGroups'
@@ -32,7 +32,7 @@ import { TableFeedCardsProps } from 'synapse-react-client/dist/containers/TableF
 import { RedirectProps } from 'react-router-dom'
 import { MarkdownCollapseProps } from 'synapse-react-client/dist/containers/MarkdownCollapse'
 import { DownloadListActionsRequiredProps } from 'synapse-react-client/dist/containers/download_list_v2/DownloadListActionsRequired'
-import { ToggleSynapseObjectsProps } from 'portal-components/ToggleSynapseObjects'
+import { ToggleSynapseObjectsProps } from '../portal-components/ToggleSynapseObjects'
 import { CSSProperties } from 'react'
 
 // For styling the header on the home page -- the main title and the summary text
@@ -344,13 +344,6 @@ export type FooterConfig = {
   about?: string
 }
 // Footer end
-
-// DocTitleConfig - start
-export type DocTitleConfig = {
-  name: string
-  description: string
-}
-// DocTitleConfig - end
 
 // LogoConfig
 export type LogoConfig = {

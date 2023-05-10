@@ -1,13 +1,23 @@
 import { rest } from 'msw'
-import { SynapseError } from '../../src/lib/utils/SynapseClient'
 import { getEntityHandlers } from './handlers/entityHandlers'
-import { getUserProfileHandlers } from './handlers/userProfileHandlers'
+import {
+  getCurrentUserCertifiedValidatedHandler,
+  getUserProfileHandlers,
+} from './handlers/userProfileHandlers'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../src/lib/utils/functions/getEndpoint'
-import { getAccessRequirementHandlers } from './handlers/accessRequirementHandlers'
+import {
+  getAccessRequirementEntityBindingHandlers,
+  getAccessRequirementHandlers,
+  getAccessRequirementStatusHandlers,
+} from './handlers/accessRequirementHandlers'
 import { getWikiHandlers } from './handlers/wikiHandlers'
+import { getDataAccessRequestHandlers } from './handlers/dataAccessRequestHandlers'
+import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
+import { getFileHandlers } from './handlers/fileHandlers'
+import { SynapseError } from '../../src/lib/utils/SynapseError'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
@@ -27,8 +37,14 @@ const getHandlers = (backendOrigin: string) => [
   ),
   ...getEntityHandlers(backendOrigin),
   ...getUserProfileHandlers(backendOrigin),
+  getCurrentUserCertifiedValidatedHandler(backendOrigin, true, true),
   ...getWikiHandlers(backendOrigin),
   ...getAccessRequirementHandlers(backendOrigin),
+  ...getAccessRequirementEntityBindingHandlers(backendOrigin),
+  ...getAccessRequirementStatusHandlers(backendOrigin),
+  ...getDataAccessRequestHandlers(backendOrigin),
+  ...getResearchProjectHandlers(backendOrigin),
+  ...getFileHandlers(backendOrigin),
 ]
 
 const handlers = getHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT))

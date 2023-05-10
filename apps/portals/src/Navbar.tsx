@@ -1,24 +1,24 @@
 import * as React from 'react'
+import { useEffect, useState } from 'react'
 import routesConfig from './config/routesConfig'
 import logoHeaderConfig from './config/logoHeaderConfig'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { SynapseComponents } from 'synapse-react-client'
-import NavLink from 'portal-components/NavLink'
+import NavLink from './portal-components/NavLink'
 import NavUserLink from './portal-components/NavUserLink'
-import { ConfigRoute, GenericRoute } from 'types/portal-config'
-import Button from 'react-bootstrap/esm/Button'
-import { Dialog, DialogContent, IconButton } from '@mui/material'
+import { ConfigRoute, GenericRoute } from './types/portal-config'
+import { Button, Dialog, DialogContent, IconButton } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import {
   preparePostSSORedirect,
   redirectAfterSSO,
 } from 'synapse-react-client/dist/utils/AppUtils'
-import { useEffect, useState } from 'react'
 import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 import { useLogInDialogContext } from './LogInDialogContext'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { useGetCurrentUserProfile } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
 import { useHistory } from 'react-router-dom'
+import SystemUseNotification from 'synapse-react-client/dist/containers/SystemUseNotification'
 
 type SynapseSettingLink = {
   text: string
@@ -190,10 +190,11 @@ function Navbar() {
         <div className="nav-link-container">
           {isSignedIn &&
             isSynapseSubdomainOrLocal && ( // mobile sign out
-              <div className="center-content nav-button nav-button-signin bootstrap-4-backport mobile-signout-container">
+              <div className="center-content nav-button nav-button-signin mobile-signout-container">
                 <Button
                   id="signin-button"
-                  variant="secondary"
+                  color="secondary"
+                  variant="contained"
                   className="signout-button-mb"
                   onClick={() => {
                     clearSession()
@@ -205,10 +206,11 @@ function Navbar() {
             )}
           {!isSignedIn &&
             isSynapseSubdomainOrLocal && ( // desktop sign in
-              <div className="center-content nav-button nav-button-signin bootstrap-4-backport">
+              <div className="center-content nav-button nav-button-signin">
                 <Button
                   id="signin-button"
-                  variant="secondary"
+                  color="secondary"
+                  variant="contained"
                   onClick={() => {
                     setShowLoginDialog(true)
                   }}
@@ -248,6 +250,7 @@ function Navbar() {
                         })
                       }}
                     />
+                    <SystemUseNotification maxWidth={'325px'} />
                   </DialogContent>
                 </Dialog>
               </div>
@@ -327,9 +330,9 @@ function Navbar() {
               .slice()
               .reverse()
               .filter((el) => !['', '/'].includes(el.path!))
-              .map((el: GenericRoute) => {
+              .map((el: GenericRoute, topLevelIndex) => {
                 const topLevelTo = el.path
-                let displayName = el.displayName ? el.displayName : topLevelTo
+                const displayName = el.displayName ? el.displayName : topLevelTo
                 const icon = el.icon && (
                   <img style={{ padding: '0px 4px' }} src={el.icon} />
                 )
@@ -351,9 +354,9 @@ function Navbar() {
                     )
                   const isSelectedCssClassName = isSelected ? 'isSelected' : ''
                   return (
-                    <React.Fragment key={topLevelTo}>
+                    <React.Fragment key={`${topLevelTo}-${topLevelIndex}`}>
                       {el.routes &&
-                        el.routes.map((route) => {
+                        el.routes.map((route, index) => {
                           const { path: to, link } = route
                           // Add anchors to the DOM for a crawler to find.  This is an attempt to fix an issue where all routes are Excluded from the index.
                           if (route.hideRouteFromNavbar) {
@@ -363,7 +366,7 @@ function Navbar() {
                           const linkDisplay = link ?? `/${topLevelTo}/${to}`
                           return (
                             <a
-                              key={`${to}-seo-anchor`}
+                              key={`${to}-seo-anchor-${index}`}
                               className="crawler-link"
                               href={linkDisplay}
                             >
@@ -381,7 +384,7 @@ function Navbar() {
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="portal-nav-menu">
                           {el.routes &&
-                            el.routes.map((route) => {
+                            el.routes.map((route, index) => {
                               const { path: to } = route
                               if (route.hideRouteFromNavbar) {
                                 return false
@@ -393,7 +396,7 @@ function Navbar() {
                                 true,
                               )
                               return (
-                                <Dropdown.Item key={to} as="li">
+                                <Dropdown.Item key={`${to}-${index}`} as="li">
                                   <NavLink
                                     className="dropdown-item SRC-primary-background-color-hover SRC-nested-color"
                                     to={linkDisplay}
@@ -414,7 +417,7 @@ function Navbar() {
                     : ''
                 return (
                   <NavLink
-                    key={topLevelTo}
+                    key={`${topLevelTo}-${topLevelIndex}`}
                     className={`nav-button nav-button-container center-content ${isSelectedCssClassName} ${getBorder(
                       topLevelTo,
                     )}`}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, useTheme } from '@mui/material'
-import { useAppContext } from 'AppContext'
-import { SynapseClient, Typography } from 'synapse-react-client'
+import { Box, Button, useTheme, Typography } from '@mui/material'
+import { useAppContext } from '../AppContext'
+import { SynapseClient } from 'synapse-react-client/dist/utils'
 import { Redirect } from 'react-router-dom'
 import {
   isJoinTeamSignedToken,

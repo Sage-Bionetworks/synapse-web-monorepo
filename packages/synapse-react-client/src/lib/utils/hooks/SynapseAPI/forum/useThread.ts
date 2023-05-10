@@ -20,7 +20,7 @@ export function useGetThread(threadId: string) {
   const { data: threadData, isLoading: isLoadingBundle } =
     useGetThreadBundle(threadId)
   const { data: threadBody, isLoading: isLoadingBody } = useGetThreadBody(
-    threadData!,
+    threadData,
     { enabled: !!threadData },
   )
   const { mutate: pinThread } = usePinThread()

@@ -10,6 +10,8 @@ import { SynapseContextType } from '../../../src/lib/utils/SynapseContext'
 import { MOCK_INVALID_PROJECT_NAME } from '../../../mocks/entity/mockEntity'
 import mockProjectEntityData from '../../../mocks/entity/mockProject'
 import { server } from '../../../mocks/msw/server'
+import { CLOSE_BUTTON_LABEL } from '../../../src/lib/containers/DialogBase'
+import { CANCEL_BUTTON_TEXT } from '../../../src/lib/containers/ConfirmationDialog'
 
 const MOCK_PROJECT_NAME = mockProjectEntityData.name
 
@@ -84,7 +86,9 @@ describe('CreateProjectModal tests', () => {
     const alert = await screen.findByRole('alert')
     expect(alert).toHaveTextContent('Invalid project name')
 
-    const cancelButton = screen.getByRole('button', { name: /cancel/i })
+    const cancelButton = screen.getByRole('button', {
+      name: CANCEL_BUTTON_TEXT,
+    })
     await user.click(cancelButton)
 
     expect(alert).not.toBeInTheDocument()
@@ -100,7 +104,7 @@ describe('CreateProjectModal tests', () => {
     const alert = await screen.findByRole('alert')
     expect(alert).toHaveTextContent('Invalid project name')
 
-    const closeButton = screen.getByRole('button', { name: /close/i })
+    const closeButton = screen.getByRole('button', { name: CLOSE_BUTTON_LABEL })
     await user.click(closeButton)
 
     expect(alert).not.toBeInTheDocument()

@@ -1,10 +1,13 @@
 import * as React from 'react'
-import { Button, OverlayTrigger, Popover } from 'react-bootstrap'
+import { Button, IconButton, Tooltip } from '@mui/material'
 import { useEffect, useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
 import { EXPERIMENTAL_MODE_COOKIE } from '../utils/SynapseConstants'
 import { InfoOutlined } from '@mui/icons-material'
+
+const experimentalModeText =
+  'This mode gives you early access to features that are still in development. Please note that we do not guarantee an absence of errors, and that the data created using these features may be lost during product upgrade.'
 
 const ExperimentalMode: React.FC = () => {
   const [isExperimentalModeOn, setIsExperimentalModeOn] =
@@ -34,24 +37,11 @@ const ExperimentalMode: React.FC = () => {
     setIsExperimentalModeOn(false)
   }
 
-  const popover = ({ ...props }) => (
-    <div className={'bootstrap-4-backport'}>
-      <Popover id={'experimental-mode-popover'} {...props}>
-        <Popover.Content>
-          This mode gives you early access to features that are still in
-          development. Please note that we do not guarantee an absence of
-          errors, and that the data created using these features may be lost
-          during product upgrade.
-        </Popover.Content>
-      </Popover>
-    </div>
-  )
-
   return (
     <span className={'experimental-mode-wrapper'}>
       <Button
         className={'experimental-mode'}
-        variant="link"
+        variant="text"
         onClick={
           isExperimentalModeOn
             ? deleteExperimentalModeCookie
@@ -60,9 +50,15 @@ const ExperimentalMode: React.FC = () => {
       >
         Experimental mode is {isExperimentalModeOn ? 'on' : 'off'}
       </Button>
-      <OverlayTrigger trigger="click" placement="top" overlay={popover}>
-        <InfoOutlined style={{ verticalAlign: 'middle' }} />
-      </OverlayTrigger>
+      <Tooltip title={experimentalModeText} arrow placement="top">
+        <IconButton
+          aria-label="info"
+          color="inherit"
+          sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+        >
+          <InfoOutlined sx={{ verticalAlign: 'middle' }} />
+        </IconButton>
+      </Tooltip>
     </span>
   )
 }

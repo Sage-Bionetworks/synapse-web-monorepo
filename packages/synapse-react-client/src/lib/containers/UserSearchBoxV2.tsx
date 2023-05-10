@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react'
 import Select, {
   components,
   GroupBase,
+  PropsValue,
   SelectComponentsConfig,
 } from 'react-select'
 import { useSearchUserGroupHeaders } from '../utils/hooks/SynapseAPI'
@@ -11,6 +12,13 @@ import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
 import { UserGroupHeader } from '../utils/synapseTypes'
 import { TYPE_FILTER } from '../utils/synapseTypes/UserGroupHeader'
 import UserOrTeamBadge from './UserOrTeamBadge'
+
+type UserSearchBoxValueType = {
+  id: string
+  value: string
+  label: string
+  header: UserGroupHeader
+} | null
 
 export type UserSearchBoxProps = {
   /* id for the input tag */
@@ -25,23 +33,15 @@ export type UserSearchBoxProps = {
   filterPredicate?: (item: UserGroupHeader) => boolean
   placeholder?: string
   focusOnSelect?: boolean
+  /* The principal ID of the current selected user or team. If null, no selection is made. If undefined, state will be handled internally */
+  value?: PropsValue<UserSearchBoxValueType> | undefined
 }
 
 const customSelectComponents: Partial<
   SelectComponentsConfig<
-    {
-      id: string
-      value: string
-      label: string
-      header: UserGroupHeader
-    },
+    UserSearchBoxValueType,
     false,
-    GroupBase<{
-      id: string
-      value: string
-      label: string
-      header: UserGroupHeader
-    }>
+    GroupBase<UserSearchBoxValueType>
   >
 > = {
   Control: props => {
@@ -55,12 +55,12 @@ const customSelectComponents: Partial<
   SingleValue: props => {
     const { data } = props
     return (
-      <components.SingleValue {...props} key={data.id}>
+      <components.SingleValue {...props} key={data?.id}>
         <UserOrTeamBadge
-          key={data.header.ownerId}
-          userGroupHeader={data.header}
-          disableHref={true}
-          showFullName={true}
+          key={data?.header.ownerId}
+          userGroupHeader={data?.header}
+          disableHref
+          showFullName
         />
       </components.SingleValue>
     )
@@ -68,11 +68,12 @@ const customSelectComponents: Partial<
   Option: props => {
     const { data } = props
     return (
-      <components.Option {...props} key={data.id}>
+      <components.Option {...props} key={data?.id}>
         <UserOrTeamBadge
-          userGroupHeader={data.header}
+          userGroupHeader={data?.header}
           disableHref={true}
           showFullName={true}
+          showCardOnHover={false}
         />
       </components.Option>
     )
@@ -88,6 +89,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     typeFilter,
     placeholder,
     focusOnSelect = false,
+    value,
   } = props
   const [inputValue, setInputValue] = useState('')
   const [debouncedInput, setDebouncedInput] = useState('')
@@ -159,6 +161,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
       }
       inputId={inputId}
       isClearable
+      value={value}
       styles={{
         // Bootstrap's form-control class overrides the display value, manually set to flex (the default without Bootstrap)
         control: styles => ({ ...styles, display: 'flex !important' }),

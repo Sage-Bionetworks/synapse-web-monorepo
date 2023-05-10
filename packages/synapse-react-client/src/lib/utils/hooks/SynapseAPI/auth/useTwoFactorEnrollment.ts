@@ -20,7 +20,7 @@ export function useStartTwoFactorEnrollment(
   const { accessToken } = useSynapseContext()
   return useMutation({
     ...options,
-    mutationFn: () => SynapseClient.start2FAEnrollment(accessToken!),
+    mutationFn: () => SynapseClient.start2FAEnrollment(accessToken),
   })
 }
 

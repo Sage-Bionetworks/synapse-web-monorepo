@@ -1,0 +1,33 @@
+{
+  "name": "vite-config",
+  "main": "dist/index.js",
+  "type": "module",
+  "types": "dist/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "exports": [
+    "./dist/index.js",
+    "./dist/vite-config.js",
+    "./dist/vitest-config.js"
+  ],
+  "peerDependencies": {
+    "vite": "^4.3.4"
+  },
+  "optionalDependencies": {
+    "vitest": "^0.31.0",
+    "@vitest/coverage-c8": "^0.31.0",
+    "@vitest/ui": "^0.31.0"
+  },
+  "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@vitejs/plugin-react": "^4.0.0",
+    "rollup-plugin-polyfill-node": "^0.10.2",
+    "svgo": "^3.0.2",
+    "typescript": "5.0.4",
+    "vite": "^4.3.4",
+    "vite-plugin-svgr": "^2.4.0",
+    "vitest": "^0.31.0"
+  }
+}

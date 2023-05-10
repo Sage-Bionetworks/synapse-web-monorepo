@@ -2,7 +2,11 @@ import { UseQueryOptions, useQuery } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { BatchFileRequest, FileHandle } from '../../../synapseTypes'
+import {
+  BatchFileRequest,
+  BatchFileResult,
+  FileHandle,
+} from '../../../synapseTypes'
 
 export function useGetPresignedUrlContent(
   fileHandle: FileHandle,
@@ -66,6 +70,36 @@ export function useGetProfileImage(
     queryFn,
     {
       staleTime: Infinity,
+      ...options,
+    },
+  )
+}
+
+/**
+ * Get a batch of file handle data from the backend.
+ *
+ * This hook does not support fetching pre-signed URLs. In most web UI cases, you will want to either request the presigned
+ * URL upon an invoked action (e.g. a "download" button is clicked) or use {@link SynapseClient#getPortalFileHandleServletUrl}
+ * @param request
+ * @param options
+ */
+export function useGetFileBatch(
+  request: BatchFileRequest,
+  options?: UseQueryOptions<BatchFileResult, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryFn = async () => SynapseClient.getFiles(request, accessToken)
+
+  if (request.includePreSignedURLs || request.includePreviewPreSignedURLs) {
+    // Don't use this hook if you need pre-signed URLs. They expire every 30 seconds, so you will either end up giving the
+    // user an expired URL, or making requests to the backend more frequently than necessary.
+    throw new Error('useGetFileBatch does not support pre-signed URLs.')
+  }
+
+  return useQuery<BatchFileResult, SynapseClientError>(
+    keyFactory.getBatchOfFiles(request),
+    queryFn,
+    {
       ...options,
     },
   )

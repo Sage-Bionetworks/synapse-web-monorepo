@@ -3,11 +3,7 @@ import pluralize from 'pluralize'
 import * as React from 'react'
 import { useState } from 'react'
 import { BarLoader } from 'react-spinners'
-import {
-  SynapseConstants,
-  SynapseQueries,
-  Typography,
-} from 'synapse-react-client'
+import { Typography } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { LockedColumn } from 'synapse-react-client/dist/containers/QueryContext'
 import { SYNAPSE_ENTITY_ID_REGEX } from 'synapse-react-client/dist/utils/functions/RegularExpressions'
@@ -17,19 +13,23 @@ import {
 } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
 import { useGetEntityHeaders } from 'synapse-react-client/dist/utils/hooks/SynapseAPI/entity/useGetEntityHeaders'
 import {
+SynapseQueries,
+SynapseConstants
+} from 'synapse-react-client/dist/utils'
+import {
   ColumnType,
   ColumnTypeEnum,
   QueryBundleRequest,
   QueryResultBundle,
 } from 'synapse-react-client/dist/utils/synapseTypes/'
 import { Tooltip } from '@mui/material'
-import { SynapseComponent } from 'SynapseComponent'
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseComponent } from '../../SynapseComponent'
+import { SynapseConfig } from '../../types/portal-config'
 import {
   DetailsPageProps,
   ResolveSynId,
   RowSynapseConfig,
-} from 'types/portal-util-types'
+} from '../../types/portal-util-types'
 import injectPropsIntoConfig from '../injectPropsIntoConfig'
 import ToggleSynapseObjects from '../ToggleSynapseObjects'
 import DetailsPageTabs from './DetailsPageTabs'
@@ -208,16 +208,16 @@ const SynapseObject: React.FC<{
 }> = ({ el, queryResultBundle }) => {
   const { columnName = '', resolveSynId, props, overrideSqlSourceTable } = el
   const deepCloneOfProps = cloneDeep(props)
-  const row = queryResultBundle!.queryResult!.queryResults.rows[0].values
+  const row = queryResultBundle.queryResult!.queryResults.rows[0].values
   const rowVersionNumber =
-    queryResultBundle!.queryResult!.queryResults.rows[0].versionNumber
+    queryResultBundle.queryResult!.queryResults.rows[0].versionNumber
 
   // map column name to index
   const mapColumnHeaderToRowIndex: Dictionary<{
     index: number
     columnType: ColumnType
   }> = {}
-  queryResultBundle!.queryResult!.queryResults.headers.forEach((el, index) => {
+  queryResultBundle.queryResult!.queryResults.headers.forEach((el, index) => {
     mapColumnHeaderToRowIndex[el.name] = { index, columnType: el.columnType }
   })
   const { index, columnType } = mapColumnHeaderToRowIndex[columnName] ?? {}

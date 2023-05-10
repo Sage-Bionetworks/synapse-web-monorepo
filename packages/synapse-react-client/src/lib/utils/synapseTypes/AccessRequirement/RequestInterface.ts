@@ -14,8 +14,18 @@ export interface RequestInterface {
   modifiedBy: string
   ducFileHandleId: string
   irbFileHandleId: string
-  attachments: string[]
+  attachments?: string[]
   accessorChanges: AccessorChange[]
   etag: string
   concreteType: string
+}
+
+export interface Request extends RequestInterface {
+  concreteType: 'org.sagebionetworks.repo.model.dataaccess.Request'
+}
+
+export interface Renewal extends RequestInterface {
+  concreteType: 'org.sagebionetworks.repo.model.dataaccess.Renewal'
+  publication?: string
+  summaryOfUse?: string
 }

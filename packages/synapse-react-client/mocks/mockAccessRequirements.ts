@@ -16,7 +16,7 @@ import {
   mockManagedACTAccessRequirementWikiPage,
   mockSelfSignAccessRequirementWikiPage,
 } from './mockWiki'
-import { mockFileHandle } from './mock_file_handle'
+import { mockDucTemplateFileHandle } from './mock_file_handle'
 
 const MOCK_PROJECT_ID = mockProjectData.id
 
@@ -47,10 +47,13 @@ export const mockManagedACTAccessRequirement: ManagedACTAccessRequirement = {
   isDUCRequired: true,
   isIDUPublic: true,
   isIDURequired: true,
-  ducTemplateFileHandleId: mockFileHandle.id,
+  ducTemplateFileHandleId: mockDucTemplateFileHandle.id,
   expirationPeriod: 1000 * 60 * 60 * 24, // 1 day
   isIRBApprovalRequired: true,
   isValidatedProfileRequired: true,
+  isTwoFaRequired: true,
+  description: '',
+  subjectsDefinedByAnnotations: false,
 }
 
 export const mockManagedACTAccessRequirementWikiPageKey: WikiPageKey = {
@@ -63,15 +66,16 @@ export const mockToUAccessRequirement: TermsOfUseAccessRequirement = {
   ...defaultAccessRequirement,
   id: 2,
   concreteType: 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
-  termsOfUse: '',
+  termsOfUse:
+    'These are the terms of use for a TermsOfUseAccessRequirement. The content is inlined in the object, but **markdown** is supported.',
 }
 
 export const mockSelfSignAccessRequirement: SelfSignAccessRequirement = {
   ...defaultAccessRequirement,
   id: 3,
   concreteType: 'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
-  isCertifiedUserRequired: false,
-  isValidatedProfileRequired: false,
+  isCertifiedUserRequired: true,
+  isValidatedProfileRequired: true,
 }
 
 export const mockSelfSignAccessRequirementWikiPageKey: WikiPageKey = {
@@ -84,7 +88,8 @@ export const mockACTAccessRequirement: ACTAccessRequirement = {
   ...defaultAccessRequirement,
   id: 4,
   concreteType: 'org.sagebionetworks.repo.model.ACTAccessRequirement',
-  actContactInfo: 'not web engineering',
+  actContactInfo:
+    'This is the contact info for the ACTAccessRequirement. You would probably email some documentation to act@sagebase.org, or something like that. **Markdown is supported**.',
   openJiraIssue: true,
 }
 

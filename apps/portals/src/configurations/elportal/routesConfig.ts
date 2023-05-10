@@ -6,6 +6,8 @@ import {
   data,
   people,
   publications,
+  cohortbuilder,
+  species,
 } from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import {
@@ -15,19 +17,35 @@ import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import { results } from './synapseConfigs/results'
 import {
   dataSql,
   projectsSql,
   peopleSql,
 } from './resources'
+import computationalTools from './synapseConfigs/computational_tools'
 
 const routes: GenericRoute[] = [
+  {
+    exact: true,
+    displayName: 'Home',
+    path: undefined,
+    link: '/',
+    synapseConfigArray: [],
+  },
   {
     path: '',
     hideRouteFromNavbar: true,
     exact: true,
     synapseConfigArray: [
+      {
+        name: 'Goals',
+        title: "What's in the Portal",
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          entityId: 'syn51449135',
+        },
+      },
       {
         name: 'FeaturedDataTabs',
         title: 'Featured Data',
@@ -52,7 +70,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnName: 'study',
                     selectFacetColumnValue: 'LLFS',
                     detailsPagePath:
-                      '/Explore/Studies/DetailsPage?Study=syn26229161',
+                      '/Explore/Studies/DetailsPage?studyKey=LLFS',
                   },
                   {
                     title: 'The Single cell transcriptomic analysis of PBMCs in Extreme Longevity',
@@ -62,7 +80,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnName: 'study',
                     selectFacetColumnValue: 'ELPSCRNA',
                     detailsPagePath:
-                      '/Explore/Studies/DetailsPage?Study=syn26067509',
+                      '/Explore/Studies/DetailsPage?studyKey=ELPSCRNA',
                   },
                   {
                     title:
@@ -73,7 +91,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnName: 'study',
                     selectFacetColumnValue: 'ADAMTS7',
                     detailsPagePath:
-                      '/Explore/Studies/DetailsPage?Study=syn26969078',
+                      '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
                   },
                 ],
               },
@@ -145,6 +163,48 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
+        exact: true,
+        path: 'Data by Files',
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: data,
+            },
+          },
+        ],
+      },
+      {
+        exact: true,
+        path: 'Data by Participants',
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: cohortbuilder,
+            },
+          },
+        ],
+      },
+      {
+        path: 'Species',
+        exact: true,
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: species,
+            },
+          },
+        ],
+      },
+      {
         path: 'Projects',
         routes: [
           {
@@ -209,20 +269,6 @@ const routes: GenericRoute[] = [
       },
       {
         exact: true,
-        path: 'Data',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: data,
-            },
-          },
-        ],
-      },
-      {
-        exact: true,
         path: 'Publications',
         synapseConfigArray: [
           {
@@ -251,14 +297,14 @@ const routes: GenericRoute[] = [
       },
       {
         exact: true,
-        path: 'Results',
+        path: 'Computational Tools',
         synapseConfigArray: [
           {
             name: 'RouteControlWrapper',
             isOutsideContainer: true,
             props: {
               ...RouteControlWrapperProps,
-              synapseConfig: results,
+              synapseConfig: computationalTools,
             },
           },
         ],
@@ -276,21 +322,6 @@ const routes: GenericRoute[] = [
           ownerId: 'syn27229419',
           wikiId: '621275',
           loadingSkeletonRowCount: 10,
-        },
-      },
-    ],
-  },
-  {
-    exact: true,
-    path: 'About',
-    synapseConfigArray: [
-      {
-        name: 'Markdown',
-        title: 'About',
-        props: {
-          ownerId: 'syn27229419',
-          wikiId: '621273',
-          loadingSkeletonRowCount: 20,
         },
       },
     ],
@@ -337,7 +368,7 @@ const routes: GenericRoute[] = [
     displayName: 'News',
     path: undefined,
     target: '_blank',
-    link: 'https://eliteportalstg.wpengine.com/',
+    link: 'http://news.eliteportal.org/',
     synapseConfigArray: [],
   },
   {

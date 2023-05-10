@@ -2,10 +2,12 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as React from 'react'
 import {
+  CONFIRM_BUTTON_TEXT,
   DownloadLoginModal,
   DownloadLoginModalProps,
 } from '../../../src/lib/containers/table/table-top/DownloadLoginModal'
 import { SRC_SIGN_IN_CLASS } from '../../../src/lib/utils/SynapseConstants'
+import { CANCEL_BUTTON_TEXT } from '../../../src/lib/containers/ConfirmationDialog'
 
 const mockCallback = jest.fn()
 
@@ -33,7 +35,9 @@ describe('DownloadLoginModal tests', () => {
 
   it('Has cancel button', async () => {
     renderComponent()
-    const cancelButton = screen.getByRole('button', { name: 'CANCEL' })
+    const cancelButton = screen.getByRole('button', {
+      name: CANCEL_BUTTON_TEXT,
+    })
 
     await userEvent.click(cancelButton)
 
@@ -41,7 +45,9 @@ describe('DownloadLoginModal tests', () => {
   })
   it('Has sign in button', async () => {
     renderComponent()
-    const signInButton = screen.getByRole('button', { name: 'Sign in' })
+    const signInButton = screen.getByRole('button', {
+      name: CONFIRM_BUTTON_TEXT,
+    })
     expect(signInButton.classList.contains(SRC_SIGN_IN_CLASS)).toBe(true)
     await userEvent.click(signInButton)
 

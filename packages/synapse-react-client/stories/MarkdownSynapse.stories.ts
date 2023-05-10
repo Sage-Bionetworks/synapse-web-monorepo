@@ -61,7 +61,7 @@ export const Plot: Story = {
 export const SynapseTable: Story = {
   args: {
     markdown:
-      '# Synapse Table\nModify the markdown control to change the parameters\n${synapsetable?query=SELECT %2A FROM syn26302617&showquery=false&tableonly=false}',
+      '# Synapse Table\n\nModify the markdown control to change the parameters\n\n${synapsetable?query=SELECT %2A FROM syn26302617&showquery=false&tableonly=false}',
   },
 }
 
@@ -88,5 +88,12 @@ export const LargeHtmlFileRenderingTest: Story = {
 export const MarkdownIDUReport: Story = {
   args: {
     markdown: '${iduReport?accessRestrictionId=9605700}',
+  },
+}
+
+export const ComprehensivePlainMarkdownWiki: Story = {
+  args: {
+    ownerId: 'syn23567475',
+    wikiId: '621868',
   },
 }

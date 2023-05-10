@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
-  Button,
-  Link,
-  Container,
   Box,
+  Button,
+  Container,
   Grid,
-  MenuItem,
+  InputLabel,
+  Link,
   ListItemButton,
+  MenuItem,
   Paper,
+  TextField,
+  Typography,
 } from '@mui/material'
 import {
   UserBundle,
@@ -16,18 +19,15 @@ import {
 import {
   SynapseClient,
   SynapseConstants,
-  Typography,
-} from 'synapse-react-client'
-import { Link as RouterLink } from 'react-router-dom'
+} from 'synapse-react-client/dist/utils'
+import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
 import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { Form } from 'react-bootstrap'
 import { ChangePassword } from './ChangePassword'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
-import { useHistory } from 'react-router-dom'
 import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import AccountSettingsTopBar from './AccountSettingsTopBar'
-import { useLocation } from 'react-router-dom'
 import { ConfigureEmail } from './ConfigureEmail'
 import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import UniversalCookies from 'universal-cookie'
@@ -38,11 +38,10 @@ import {
 import { getUseUtcTimeFromCookie } from 'synapse-react-client/dist/utils/SynapseClient'
 import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
-import { InputLabel } from '@mui/material'
-import { TextField } from '@mui/material'
 import { useSourceAppConfigs } from './SourceApp'
 import TwoFactorAuthSettingsPanel from 'synapse-react-client/dist/containers/auth/TwoFactorAuthSettingsPanel'
 import SRCTextField from 'synapse-react-client/dist/containers/TextField'
+
 const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
   isComplete,
 }) => {
@@ -90,6 +89,7 @@ export const AccountSettings = () => {
   const trustCredentialRef = useRef<HTMLDivElement>(null)
   const twoFactorAuthRef = useRef<HTMLDivElement>(null)
   const personalAccessTokenRef = useRef<HTMLDivElement>(null)
+  const oauthClientManagementRef = useRef<HTMLDivElement>(null)
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
     getUseUtcTimeFromCookie().toString(),
@@ -215,6 +215,11 @@ export const AccountSettings = () => {
                 onClick={() => handleScroll(personalAccessTokenRef)}
               >
                 Personal Access Tokens
+              </ListItemButton>
+              <ListItemButton
+                onClick={() => handleScroll(oauthClientManagementRef)}
+              >
+                OAuth Clients
               </ListItemButton>
             </Paper>
 
@@ -651,11 +656,38 @@ export const AccountSettings = () => {
                   as your password.
                 </Typography>
                 <div className="primary-button-container">
-                  <Link sx={credentialButtonSX}>
+                  <Link
+                    sx={credentialButtonSX}
+                    onClick={() => handleChangesFn('personalaccesstokens')}
+                  >
                     Manage Personal Access Tokens
                   </Link>
                   <Link
                     href="https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#ManagingYourAccount-PersonalAccessTokens"
+                    target="_blank"
+                  >
+                    More information
+                  </Link>
+                </div>
+              </Paper>
+              <Paper
+                ref={oauthClientManagementRef}
+                className="account-setting-panel main-panel"
+              >
+                <Typography variant={'headline2'}>OAuth Clients</Typography>
+                <Typography variant={'body1'} sx={{ my: 1 }}>
+                  OAuth Clients can be created to develop applications that use
+                  Synapse as an identity provider.
+                </Typography>
+                <div className="primary-button-container">
+                  <Link
+                    sx={credentialButtonSX}
+                    onClick={() => handleChangesFn('oauthclientmanagement')}
+                  >
+                    Manage OAuth Clients
+                  </Link>
+                  <Link
+                    href="https://help.synapse.org/docs/Using-Synapse-as-an-OAuth-Server.2048327904.html"
                     target="_blank"
                   >
                     More information

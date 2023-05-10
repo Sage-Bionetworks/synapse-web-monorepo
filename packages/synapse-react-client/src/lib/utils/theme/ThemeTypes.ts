@@ -35,6 +35,7 @@ declare module '@mui/material/styles' {
   interface Theme {
     styledBackground: string
   }
+
   interface ThemeOptions {
     styledBackground?: string
   }
@@ -48,9 +49,16 @@ declare module '@mui/material/styles' {
 
   interface Palette {
     tertiary: Palette['primary']
+    /* Neutral is same as grey, but provides a full palette so it can be used for components like buttons.
+       This is necessary because the builtin grey cannot be overridden for this purpose. */
+    neutral: Palette['primary']
   }
+
   interface PaletteOptions {
     tertiary: PaletteOptions['primary']
+    /* Neutral is same as grey, but provides a full palette so it can be used for components like buttons.
+       This is necessary because the builtin grey cannot be overridden for this purpose. */
+    neutral: PaletteOptions['primary']
   }
 }
 
@@ -58,6 +66,10 @@ declare module '@mui/material' {
   interface Color {
     // MUI doesn't go up to 1000 but our palette does
     [1000]: string
+  }
+
+  interface ButtonPropsColorOverrides {
+    neutral: true
   }
 }
 

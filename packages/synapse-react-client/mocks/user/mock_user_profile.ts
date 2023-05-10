@@ -77,6 +77,43 @@ export const mockUserGroupHeader2: UserGroupHeader = {
   isIndividual: true,
 }
 
+export const MOCK_USER_ID_3 = 1001
+export const MOCK_USER_NAME_3 = 'heisenberg'
+
+export const mockUserProfileData3: UserProfile = {
+  summary:
+    'My name is Walter Hartwell White. I live at 308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104.',
+  firstName: 'Walter',
+  lastName: 'White',
+  location: 'Albuquerque, NM, USA',
+  industry: 'Chemistry',
+  company: 'J. P. Wynne HS',
+  position: 'High School Teacher',
+  ownerId: MOCK_USER_ID_3.toString(),
+  userName: MOCK_USER_NAME_3,
+  createdOn: '2008-01-20T18:12:39.000Z',
+  url: 'https://sagebase.org',
+}
+
+export const mockUserBundle3: UserBundle = {
+  userId: MOCK_USER_ID_3.toString(),
+  userProfile: mockUserProfileData3,
+  ORCID: 'https://orcid.org/0000-0000-0000-0000',
+  isCertified: true,
+  isVerified: true,
+  isACTMember: false,
+}
+
+export const mockUserGroupHeader3: UserGroupHeader = {
+  ownerId: MOCK_USER_ID_3.toString(),
+  firstName: mockUserProfileData3.firstName,
+  lastName: mockUserProfileData3.lastName,
+  userName: MOCK_USER_NAME_3,
+  email: 'heisenberg@polloshermanos.com',
+  displayName: 'Walter White',
+  isIndividual: true,
+}
+
 type MockUserOrTeamData = {
   id: number
   userProfile: UserProfile | null
@@ -98,6 +135,13 @@ const mockUserData2: MockUserOrTeamData = {
   userGroupHeader: mockUserGroupHeader2,
 }
 
+const mockUserData3: MockUserOrTeamData = {
+  id: MOCK_USER_ID_3,
+  userProfile: mockUserProfileData3,
+  userBundle: mockUserBundle3,
+  userGroupHeader: mockUserGroupHeader3,
+}
+
 const mockActData: MockUserOrTeamData = {
   id: ACT_TEAM_ID,
   userProfile: null,
@@ -112,6 +156,7 @@ const mockActData: MockUserOrTeamData = {
 export const mockUserData: MockUserOrTeamData[] = [
   mockUserData1,
   mockUserData2,
+  mockUserData3,
   mockActData,
 ]
 

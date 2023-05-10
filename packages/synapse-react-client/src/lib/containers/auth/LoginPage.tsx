@@ -14,6 +14,7 @@ import LoginFlowBackButton from './LoginFlowBackButton'
 import useLogin from '../../utils/hooks/useLogin'
 import LoginForm from './LoginForm'
 import { StyledComponent } from '@emotion/styled'
+import SystemUseNotification from '../SystemUseNotification'
 
 const LOST_ACCOUNT_SERVICE_DESK_ISSUE_TITLE = encodeURIComponent(
   'Lost access to my Synapse account',
@@ -198,6 +199,7 @@ export default function LoginPage(props: LoginPageProps) {
                   </Tagline>
                 </>
               )}
+              <SystemUseNotification />
             </Box>
           </Box>
         }
@@ -216,6 +218,7 @@ export default function LoginPage(props: LoginPageProps) {
         }}
       >
         {loginForm}
+        <SystemUseNotification />
       </Box>
     )
   }

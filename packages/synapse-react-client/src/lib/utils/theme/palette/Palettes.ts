@@ -75,6 +75,18 @@ export const palette: PaletteOptions = {
     200: '#f1f3f5',
     100: '#fbfbfc',
   },
+  neutral: generatePalette('#d0d4d9', {
+    1000: '#22252a',
+    900: '#353a3f',
+    800: '#4a5056',
+    700: '#878e95',
+    600: '#aeb5bc',
+    500: '#d0d4d9',
+    400: '#dfe2e6',
+    300: '#eaecee',
+    200: '#f1f3f5',
+    100: '#fbfbfc',
+  }),
   success: { main: '#32a330' },
   info: { main: '#017fa5' },
   warning: { main: '#cc9f00' },
@@ -83,6 +95,10 @@ export const palette: PaletteOptions = {
     primary: '#353a3f', // gray-900
     secondary: '#4a5056', // gray-800
   },
+  // Set a minimum contrast of at least 4.5:1 as defined in WCAG 2.1 Rule 1.4.3.
+  // https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html.
+  // But the contrast text color is currently not updated when the colors are: https://github.com/mui/material-ui/issues/35895
+  contrastThreshold: 4.5,
 }
 
 export const mtbPalette: PaletteOptions = {
@@ -100,7 +116,17 @@ export const arkPortalPalette: PaletteOptions = {
 export const adKnowledgePortalPalette: PaletteOptions = {
   ...palette,
   primary: generatePalette('#4d5491'),
-  secondary: generatePalette('#2f8e94'),
+  secondary: { ...generatePalette('#2f8e94'), contrastText: '#ffffff' },
+}
+
+const elPortalPrimaryPalette = {
+  ...generatePalette('#39AC97'),
+  contrastText: '#ffffff',
+}
+export const elPortalPalette: PaletteOptions = {
+  ...palette,
+  primary: elPortalPrimaryPalette,
+  secondary: elPortalPrimaryPalette,
 }
 
 export const nfPortalPalette: PaletteOptions = {

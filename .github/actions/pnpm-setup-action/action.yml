@@ -3,10 +3,11 @@ description: "Installs Node, pnpm, fetches cache (if exists), and runs pnpm inst
 runs:
   using: "composite"
   steps:
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js ${{ matrix.node-version || 18 }}
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ${{ matrix.node-version || 18 }}
+        registry-url: https://registry.npmjs.org/
     - uses: pnpm/action-setup@v2
       name: Install pnpm
       id: pnpm-install

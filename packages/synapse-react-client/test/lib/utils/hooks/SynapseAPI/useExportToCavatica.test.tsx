@@ -8,8 +8,8 @@ import {
   SelectColumn,
 } from '../../../../../src/lib/utils/synapseTypes'
 import { DEFAULT_PAGE_SIZE } from '../../../../../src/lib/utils/SynapseConstants'
-import { SynapseError } from '../../../../../src/lib/utils/SynapseClient'
 import { displayToast } from '../../../../../src/lib/containers/ToastMessage'
+import { SynapseError } from '../../../../../src/lib/utils/SynapseError'
 
 window.open = jest.fn()
 jest.mock('../../../../../src/lib/containers/ToastMessage', () => {

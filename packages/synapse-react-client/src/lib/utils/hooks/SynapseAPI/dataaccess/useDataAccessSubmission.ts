@@ -16,6 +16,10 @@ import {
   SubmissionSearchRequest,
   SubmissionSearchResponse,
 } from '../../../synapseTypes/AccessSubmission'
+import {
+  ACTSubmissionStatus,
+  CreateSubmissionRequest,
+} from '../../../synapseTypes'
 
 export default function useGetDataAccessSubmission(
   submissionId: string | number,
@@ -89,6 +93,44 @@ export function useUpdateDataAccessSubmissionState(
 
         if (options?.onSuccess) {
           await options.onSuccess(updatedSubmission, variables, ctx)
+        }
+      },
+    },
+  )
+}
+
+export function useSubmitDataAccessRequest(
+  options?: UseMutationOptions<
+    ACTSubmissionStatus,
+    SynapseClientError,
+    { request: CreateSubmissionRequest; accessRequirementId: string }
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<
+    ACTSubmissionStatus,
+    SynapseClientError,
+    { request: CreateSubmissionRequest; accessRequirementId: string }
+  >(
+    ({ request }): Promise<ACTSubmissionStatus> =>
+      SynapseClient.submitDataAccessRequest(request, accessToken!),
+    {
+      ...options,
+      onSuccess: async (data, variables, ctx) => {
+        // Invalidate the status of the relevant AR
+        await queryClient.invalidateQueries(
+          keyFactory.getAccessRequirementStatusQueryKey(
+            variables.accessRequirementId,
+          ),
+        )
+        // Invalidate all searches, in case it was an AR reviewer who created this submission
+        await queryClient.invalidateQueries(
+          keyFactory.searchDataAccessSubmissionQueryKey(),
+        )
+        if (options?.onSuccess) {
+          await options.onSuccess(data, variables, ctx)
         }
       },
     },

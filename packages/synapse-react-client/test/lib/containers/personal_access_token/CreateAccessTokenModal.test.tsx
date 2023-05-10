@@ -8,6 +8,8 @@ import {
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import * as SynapseContext from '../../../../src/lib/utils/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
+import { CLOSE_BUTTON_LABEL } from '../../../../src/lib/containers/DialogBase'
+import { CANCEL_BUTTON_TEXT } from '../../../../src/lib/containers/ConfirmationDialog'
 
 const EXAMPLE_PAT = 'abcdefghiklmnop'
 const SynapseClient = require('../../../../src/lib/utils/SynapseClient')
@@ -25,6 +27,23 @@ function renderComponent(props: CreateAccessTokenModalProps) {
   })
 }
 
+function setUp(props: CreateAccessTokenModalProps) {
+  const user = userEvent.setup()
+  const component = renderComponent(props)
+  const tokenInput = screen.getByRole('textbox')
+  const checkboxes = {
+    view: screen.getByRole('checkbox', { name: 'View' }),
+    modify: screen.getByRole('checkbox', { name: 'Modify' }),
+    download: screen.getByRole('checkbox', { name: 'Download' }),
+  }
+  const initialButtons = {
+    close: screen.getByRole('button', { name: CLOSE_BUTTON_LABEL }),
+    cancel: screen.getByRole('button', { name: CANCEL_BUTTON_TEXT }),
+    create: screen.getByRole('button', { name: /create token/i }),
+  }
+  return { component, user, tokenInput, checkboxes, initialButtons }
+}
+
 describe('CreateAccessTokenModal tests', () => {
   const props: CreateAccessTokenModalProps = {
     onClose: mockOnClose,
@@ -40,15 +59,15 @@ describe('CreateAccessTokenModal tests', () => {
 
   it('displays the token after successful creation', async () => {
     const tokenName = 'Token Name'
-    renderComponent(props)
+    const { user, tokenInput, checkboxes, initialButtons } = setUp(props)
 
     // Fill out the form
-    await userEvent.type(screen.getByRole('textbox'), tokenName)
-    await userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Modify' }))
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Download' }))
+    await user.type(tokenInput, tokenName)
+    await user.click(checkboxes.modify)
+    await user.click(checkboxes.view)
+    await user.click(checkboxes.download)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await userEvent.click(initialButtons.create)
 
     await waitFor(() => expect(mockOnCreate).toHaveBeenCalled())
     expect(SynapseClient.createPersonalAccessToken).toHaveBeenCalled()
@@ -58,47 +77,61 @@ describe('CreateAccessTokenModal tests', () => {
     )
 
     // Close the modal using the 'Close' button
-    await userEvent.click(
-      (
-        await screen.findAllByRole('button', { name: 'Close' })
-      )[1],
-    )
+    await user.click(screen.getByRole('button', { name: 'Close' }))
 
     await waitFor(() => expect(mockOnClose).toHaveBeenCalled())
   })
 
-  it('requires a token name and at least one permission before dispatching the request', async () => {
-    renderComponent(props)
+  it('does not dispatch request when there is no token name or permission', async () => {
+    const { user, tokenInput, checkboxes, initialButtons } = setUp(props)
     expect(screen.queryByTestId('ErrorBanner')).not.toBeInTheDocument()
 
     // Try to create with no name or permissions
-    await userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
-    await userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
+    await user.click(checkboxes.view)
+    expect(checkboxes.view.checked).toBe(false)
+    expect(checkboxes.modify.checked).toBe(false)
+    expect(checkboxes.download.checked).toBe(false)
+    await user.click(initialButtons.create)
 
     await screen.findByTestId('ErrorBanner')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
+  })
+
+  it('does not dispatch request when there is a token name, but no permissions', async () => {
+    const { user, tokenInput, checkboxes, initialButtons } = setUp(props)
+    expect(screen.queryByTestId('ErrorBanner')).not.toBeInTheDocument()
+
+    // Try to create with name, but no permissions
+    await user.click(checkboxes.view)
+    expect(checkboxes.view.checked).toBe(false)
 
     // Add a name
-    await userEvent.type(screen.getByRole('textbox'), 'some name')
-    await userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await user.type(tokenInput, 'some name')
+
+    await user.click(initialButtons.create)
     await screen.findByTestId('ErrorBanner')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
+  })
 
-    // Remove name, add a permission
-    await userEvent.clear(screen.getByRole('textbox'))
-    await userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
+  it('does not dispatch request when there is a permission, but no token name', async () => {
+    const { user, tokenInput, checkboxes, initialButtons } = setUp(props)
+    expect(screen.queryByTestId('ErrorBanner')).not.toBeInTheDocument()
+
+    // Try to create with permisions, but no name
+    expect(tokenInput).toHaveTextContent('')
+    expect(checkboxes.view.checked).toBe(true)
 
     // Submit and verify that an error is shown
-    await userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await user.click(initialButtons.create)
     await screen.findByTestId('ErrorBanner')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
   })
 
   it('handles an error from the backend', async () => {
-    renderComponent(props)
+    const { user, tokenInput, initialButtons } = setUp(props)
 
     const errorReason = 'Malformed input'
     SynapseClient.createPersonalAccessToken = jest.fn().mockRejectedValue({
@@ -107,20 +140,18 @@ describe('CreateAccessTokenModal tests', () => {
     })
 
     // Fill out the form and send the request
-    await userEvent.type(screen.getByRole('textbox'), 'some name')
-    await userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await user.type(tokenInput, 'some name')
+    await user.click(initialButtons.create)
 
     await screen.findByTestId('ErrorBanner')
     screen.getByText(errorReason)
   })
 
   it('calls onClose when closing via Modal prop', async () => {
-    renderComponent(props)
+    const { user, initialButtons } = setUp(props)
 
     // Close the modal using the prop
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Close', exact: false }),
-    )
+    await user.click(initialButtons.close)
 
     expect(mockOnClose).toHaveBeenCalled()
 
@@ -129,10 +160,10 @@ describe('CreateAccessTokenModal tests', () => {
   })
 
   it('calls onClose when closing via cancel button', async () => {
-    renderComponent(props)
+    const { user, initialButtons } = setUp(props)
 
     // Close the modal using the prop
-    await userEvent.click(await screen.findByRole('button', { name: 'Cancel' }))
+    await user.click(initialButtons.cancel)
 
     expect(mockOnClose).toHaveBeenCalled()
 

@@ -51,12 +51,6 @@
     padding: 10px 24px;
   }
 
-  // Extra-wide button
-  .btn.btn-wide {
-    min-width: 168px;
-    padding: 10px;
-  }
-
   // default variant is in BS3 but not BS4, so we recreate it here
   .btn-default {
     @include button-variant(
