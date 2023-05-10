@@ -503,6 +503,10 @@ export class KeyFactory {
     return this.getKey('team', teamId, 'membersList')
   }
 
+  public getWikiPageKey(ownerId: string, wikiPageId: string) {
+    return this.getKey('ownerId', ownerId, 'wikiPageId', wikiPageId)
+  }
+
   public getIsUserMemberOfTeamQueryKey(teamId: string, userId: string) {
     return this.getKey('team', teamId, 'member', userId)
   }

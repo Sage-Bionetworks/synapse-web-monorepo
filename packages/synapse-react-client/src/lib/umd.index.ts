@@ -61,6 +61,7 @@ import { SynapseQueries } from './utils'
 import TwoFactorBackupCodes from './containers/auth/TwoFactorBackupCodes'
 import TwoFactorEnrollmentForm from './containers/auth/TwoFactorEnrollmentForm'
 import TwoFactorAuthSettingsPanel from './containers/auth/TwoFactorAuthSettingsPanel'
+import DatasetJsonLdScript from './containers/DatasetJsonLdScript'
 import { FullContextProvider } from './utils/FullContextProvider'
 
 // Also include scss in the bundle
@@ -129,6 +130,7 @@ const SynapseComponents = {
   TwoFactorAuthSettingsPanel,
   TwoFactorBackupCodes,
   TwoFactorEnrollmentForm,
+  DatasetJsonLdScript,
 }
 
 // Include the version in the build

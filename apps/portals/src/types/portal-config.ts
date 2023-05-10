@@ -14,6 +14,7 @@ import { SynapseFormSubmissionGridProps } from 'synapse-react-client/dist/contai
 import { QueryWrapperPlotNavProps } from 'synapse-react-client/dist/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 import { SynapseFormWrapperProps } from 'synapse-react-client/dist/containers/synapse_form_wrapper/SynapseFormWrapper'
 import { ThemesPlotProps } from 'synapse-react-client/dist/containers/widgets/themes-plot/ThemesPlot'
+import { DatasetJsonLdScriptProps } from 'synapse-react-client/dist/containers/DatasetJsonLdScript'
 import { StatefulButtonControlWrapperProps } from '../portal-components/StatefulButtonControlWrapper'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
@@ -63,6 +64,11 @@ type QueryWrapperPlotNav = {
 type UserCard = {
   name: 'UserCard'
   props: UserCardProps
+}
+
+type DatasetJsonLdScript = {
+  name: 'DatasetJsonLdScript'
+  props: DatasetJsonLdScriptProps
 }
 
 type Markdown = {
@@ -309,6 +315,7 @@ export type SynapseConfig = (
   | SubsectionRowRenderer
   | ToggleSynapseObjects
   | Header
+  | DatasetJsonLdScript
 ) &
   Metadata
 

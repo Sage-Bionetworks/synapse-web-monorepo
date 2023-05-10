@@ -34,6 +34,7 @@ import PageProgress from './containers/PageProgress'
 import QueryCount from './containers/QueryCount'
 import { QueryWrapper } from './containers/QueryWrapper'
 import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
+import DatasetJsonLdScript from './containers/DatasetJsonLdScript'
 import RenderIfInView from './containers/RenderIfInView'
 import RssFeedCards from './containers/RssFeedCards'
 import SubsectionRowRenderer from './containers/SubsectionRowRenderer'
@@ -126,6 +127,7 @@ const SynapseComponents = {
   FileUpload,
   ProvenanceGraph,
   ForumSearch,
+  DatasetJsonLdScript,
   hex2ascii,
 }
 
