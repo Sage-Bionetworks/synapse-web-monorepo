@@ -9,8 +9,8 @@ import {
   FacetColumnRequest,
   QueryBundleRequest,
   QueryResultBundle,
-} from '../utils/synapseTypes/Table'
-import { ColumnTypeEnum } from '../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
+import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import UserCardList from './UserCardList'
 import { LARGE_USER_CARD, UserCardSize } from '../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'

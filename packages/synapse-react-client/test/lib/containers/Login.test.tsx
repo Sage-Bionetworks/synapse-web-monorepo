@@ -5,11 +5,11 @@ import StandaloneLoginForm, {
   StandaloneLoginFormProps,
 } from '../../../src/lib/containers/auth/StandaloneLoginForm'
 import { SynapseClient } from '../../../src/lib/utils'
-import { LoginResponse } from '../../../src/lib/utils/synapseTypes'
+import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
-} from '../../../src/lib/utils/synapseTypes/ErrorResponse'
+} from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../../../src/lib/utils/SynapseConstants'
 

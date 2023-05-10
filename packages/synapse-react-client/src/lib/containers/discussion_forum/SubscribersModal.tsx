@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
 import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
-import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
+import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 import { Button } from '@mui/material'
 import UserCard from '../UserCard'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'

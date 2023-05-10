@@ -9,7 +9,7 @@ import {
   MonthlyFilesStatistics,
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
-} from '../../../src/lib/utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 
 const projectFilesStatsRequest: ProjectFilesStatisticsRequest = {
   concreteType:

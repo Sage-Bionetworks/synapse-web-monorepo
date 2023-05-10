@@ -1,6 +1,6 @@
 import { ACT_TEAM_ID } from '../src/lib/utils/SynapseConstants'
-import { AccessType, SubmissionState } from '../src/lib/utils/synapseTypes'
-import { SubmissionSearchResponse } from '../src/lib/utils/synapseTypes/AccessSubmission'
+import { AccessType, SubmissionState } from '@sage-bionetworks/synapse-types'
+import { SubmissionSearchResponse } from '@sage-bionetworks/synapse-types'
 import { mockManagedACTAccessRequirement } from './mockAccessRequirements'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from './user/mock_user_profile'
 

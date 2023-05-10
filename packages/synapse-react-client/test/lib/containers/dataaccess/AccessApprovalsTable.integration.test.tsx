@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { server } from '../../../../mocks/msw/server'
 import { render, screen } from '@testing-library/react'
-import { AccessApprovalSearchResult } from '../../../../src/lib/utils/synapseTypes'
+import { AccessApprovalSearchResult } from '@sage-bionetworks/synapse-types'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,

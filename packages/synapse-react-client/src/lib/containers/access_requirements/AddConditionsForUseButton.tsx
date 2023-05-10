@@ -6,7 +6,7 @@ import {
   useGetEntityBundle,
   useIsCurrentUserACTMember,
 } from '../../utils/hooks/SynapseAPI'
-import { RestrictionLevel } from '../../utils/synapseTypes'
+import { RestrictionLevel } from '@sage-bionetworks/synapse-types'
 import {
   isEntityRefCollectionView,
   isEntityView,

@@ -4,8 +4,8 @@ import MarkdownSynapse from '../../markdown/MarkdownSynapse'
 import {
   ManagedACTAccessRequirement,
   SubmissionState,
-} from '../../../utils/synapseTypes'
-import { ManagedACTAccessRequirementStatus } from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
+import { ManagedACTAccessRequirementStatus } from '@sage-bionetworks/synapse-types'
 import { AlertProps } from './DataAccessRequestAccessorsFilesForm'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
 import RequirementItem from '../RequirementItem/RequirementItem'

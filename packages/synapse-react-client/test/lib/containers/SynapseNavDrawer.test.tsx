@@ -12,8 +12,8 @@ import {
   mockUserBundle,
 } from '../../../mocks/user/mock_user_profile'
 import { SynapseClient } from '../../../src/lib'
-import { SubmissionState } from '../../../src/lib/utils/synapseTypes'
-import { SubmissionSearchResult } from '../../../src/lib/utils/synapseTypes/AccessSubmission'
+import { SubmissionState } from '@sage-bionetworks/synapse-types'
+import { SubmissionSearchResult } from '@sage-bionetworks/synapse-types'
 import { mockManagedACTAccessRequirement } from '../../../mocks/mockAccessRequirements'
 import { mockSubmittedSubmission } from '../../../mocks/dataaccess/MockSubmission'
 

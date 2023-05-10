@@ -22,12 +22,12 @@ import {
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   WikiPageKey,
-} from '../../../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
-} from '../../../synapseTypes/AccessRequirement/AccessRequirementSearch'
-import { ResearchProject } from '../../../synapseTypes/ResearchProject'
+} from '@sage-bionetworks/synapse-types'
+import { ResearchProject } from '@sage-bionetworks/synapse-types'
 import { sortAccessRequirementsByCompletion } from '../../../../containers/AccessRequirementList/AccessRequirementListUtils'
 
 export function useGetAccessRequirements<T extends AccessRequirement>(

@@ -15,14 +15,14 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../src/lib/utils/functions/getEndpoint'
-import { PaginatedResults } from '../../../../src/lib/utils/synapseTypes'
-import { DiscussionReplyBundle } from '../../../../src/lib/utils/synapseTypes/DiscussionBundle'
-import { MessageURL } from '../../../../src/lib/utils/synapseTypes/MessageUrl'
+import { PaginatedResults } from '@sage-bionetworks/synapse-types'
+import { DiscussionReplyBundle } from '@sage-bionetworks/synapse-types'
+import { MessageURL } from '@sage-bionetworks/synapse-types'
 import {
   SubscriptionObjectType,
   SubscriptionPagedResults,
   Topic,
-} from '../../../../src/lib/utils/synapseTypes/Subscription'
+} from '@sage-bionetworks/synapse-types'
 import {
   mockDiscussionReplyBundle,
   mockDiscussionThreadBundle,

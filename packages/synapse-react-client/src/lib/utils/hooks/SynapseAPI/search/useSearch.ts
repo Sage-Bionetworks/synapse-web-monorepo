@@ -8,7 +8,7 @@ import {
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { SearchQuery, SearchResults } from '../../../synapseTypes/Search'
+import { SearchQuery, SearchResults } from '@sage-bionetworks/synapse-types'
 
 export function useSearch(
   query: SearchQuery,

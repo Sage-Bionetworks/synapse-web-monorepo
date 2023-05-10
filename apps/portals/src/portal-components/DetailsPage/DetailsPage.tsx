@@ -4,25 +4,18 @@ import * as React from 'react'
 import { useState } from 'react'
 import { BarLoader } from 'react-spinners'
 import {
+  RegularExpressions,
+  SynapseComponents,
   SynapseConstants,
   SynapseQueries,
-  Typography,
 } from 'synapse-react-client'
-import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
-import { LockedColumn } from 'synapse-react-client/dist/containers/QueryContext'
-import { SYNAPSE_ENTITY_ID_REGEX } from 'synapse-react-client/dist/utils/functions/RegularExpressions'
-import {
-  generateQueryFilterFromSearchParams,
-  parseEntityIdFromSqlStatement,
-} from 'synapse-react-client/dist/utils/functions/sqlFunctions'
-import { useGetEntityHeaders } from 'synapse-react-client/dist/utils/hooks/SynapseAPI/entity/useGetEntityHeaders'
 import {
   ColumnType,
   ColumnTypeEnum,
   QueryBundleRequest,
   QueryResultBundle,
-} from 'synapse-react-client/dist/utils/synapseTypes/'
-import { Tooltip } from '@mui/material'
+} from '@sage-bionetworks/synapse-types'
+import { Tooltip, Typography } from '@mui/material'
 import { SynapseComponent } from '../../SynapseComponent'
 import { SynapseConfig } from '../../types/portal-config'
 import {
@@ -35,6 +28,7 @@ import ToggleSynapseObjects from '../ToggleSynapseObjects'
 import DetailsPageTabs from './DetailsPageTabs'
 import { SideNavMenu } from './SideNavMenu'
 import { getComponentId, useScrollOnMount } from './utils'
+import type { LockedColumn } from 'synapse-react-client/dist/containers/QueryContext'
 
 const goToExplorePage = () => {
   /*
@@ -86,7 +80,11 @@ function HeadlineWithLink(props: { title: string; id: string }) {
                 })
               }}
             >
-              <IconSvg icon="link" wrap={false} sx={{ pl: 1 }} />
+              <SynapseComponents.IconSvg
+                icon="link"
+                wrap={false}
+                sx={{ pl: 1 }}
+              />
             </div>
           </Tooltip>
         </span>
@@ -119,11 +117,12 @@ export default function DetailsPage(props: DetailsPageProps) {
   useScrollOnMount()
 
   const queryBundleRequest = React.useMemo(() => {
-    const additionalFilters = generateQueryFilterFromSearchParams(
-      searchParams,
-      sqlOperator,
-    )
-    const entityId = parseEntityIdFromSqlStatement(sql)
+    const additionalFilters =
+      SynapseComponents.generateQueryFilterFromSearchParams(
+        searchParams,
+        sqlOperator,
+      )
+    const entityId = SynapseComponents.parseEntityIdFromSqlStatement(sql)
     const queryBundleRequest: QueryBundleRequest = {
       entityId,
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -293,7 +292,7 @@ export const SplitStringToComponent: React.FC<{
 }) => {
   let value = splitString.trim()
   const valueIsSynId = React.useMemo(
-    () => !!SYNAPSE_ENTITY_ID_REGEX.exec(value),
+    () => !!RegularExpressions.SYNAPSE_ENTITY_ID_REGEX.exec(value),
     [value],
   )
 

@@ -2,11 +2,11 @@ import React from 'react'
 import { renderHook, waitFor } from '@testing-library/react'
 import ApplicationSessionManager, {
   ApplicationSessionManagerProps,
-} from '../../../../../src/lib/utils/apputils/session/ApplicationSessionManager'
+} from '../../../../../src/lib/utils/AppUtils/session/ApplicationSessionManager'
 import {
   ApplicationSessionContextType,
   useApplicationSessionContext,
-} from '../../../../../src/lib/utils/apputils/session/ApplicationSessionContext'
+} from '../../../../../src/lib/utils/AppUtils/session/ApplicationSessionContext'
 import { SynapseClient } from '../../../../../src/lib'
 import {
   MOCK_USER_ID,
@@ -19,7 +19,7 @@ import { UseDetectSSOCodeOptions } from '../../../../../src/lib/utils/hooks/useD
 import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
-} from '../../../../../src/lib/utils/synapseTypes/ErrorResponse'
+} from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { MOCK_ACCESS_TOKEN } from '../../../../../mocks/MockSynapseContext'
 

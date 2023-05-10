@@ -5,7 +5,7 @@ import StandaloneQueryWrapper, {
 } from '../../../../src/lib/containers/table/StandaloneQueryWrapper'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../../src/lib/utils/SynapseContext'
-import { QueryResultBundle } from '../../../../src/lib/utils/synapseTypes'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import syn20337467Json from '../../../../mocks/query/syn20337467.json'
 
 const SynapseClient = require('../../../../src/lib/utils/SynapseClient')

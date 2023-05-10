@@ -2,7 +2,7 @@ import {
   EntityHeader,
   ProjectHeader,
   PROJECT_CONCRETE_TYPE,
-} from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 /**
  * The entity header fields that also exist in a search Hit. We convert Hits to this object so fields can be accessed consistently within the Entity Finder.

@@ -2,7 +2,7 @@ import {
   EvaluationRound,
   EvaluationRoundLimit,
   EvaluationRoundLimitType,
-} from '../../../utils/synapseTypes/Evaluation'
+} from '@sage-bionetworks/synapse-types'
 import shortid from 'shortid'
 
 export type EvaluationRoundLimitInput = {

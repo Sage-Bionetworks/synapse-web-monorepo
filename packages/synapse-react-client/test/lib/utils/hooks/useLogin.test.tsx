@@ -1,11 +1,11 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { SynapseClient } from '../../../../src/lib'
-import { LoginResponse } from '../../../../src/lib/utils/synapseTypes'
+import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../../../src/lib/utils/SynapseClientError'
 import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
-} from '../../../../src/lib/utils/synapseTypes/ErrorResponse'
+} from '@sage-bionetworks/synapse-types'
 import useLogin from '../../../../src/lib/utils/hooks/useLogin'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../../../../src/lib/utils/SynapseConstants'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'

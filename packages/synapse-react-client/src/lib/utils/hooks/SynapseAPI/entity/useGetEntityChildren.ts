@@ -12,7 +12,7 @@ import { useSynapseContext } from '../../../SynapseContext'
 import {
   EntityChildrenRequest,
   EntityChildrenResponse,
-} from '../../../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export function useGetEntityChildren(
   request: EntityChildrenRequest,

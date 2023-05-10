@@ -5,7 +5,7 @@ import {
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
 import SynapseTable, { SynapseTableProps } from './SynapseTable'
-import { QueryBundleRequest } from '../../utils/synapseTypes'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryContextConsumer } from '../QueryContext'

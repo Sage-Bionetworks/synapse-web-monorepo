@@ -10,7 +10,7 @@ import {
   usePostReply,
   usePutReply,
 } from '../../utils/hooks/SynapseAPI/forum/useReply'
-import { CreateDiscussionThread } from '../../utils/synapseTypes/DiscussionBundle'
+import { CreateDiscussionThread } from '@sage-bionetworks/synapse-types'
 import { MarkdownEditor } from '../markdown/MarkdownEditor'
 import { ConfirmationButtons, ConfirmationDialog } from '../ConfirmationDialog'
 

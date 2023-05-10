@@ -1,4 +1,4 @@
-import { Reference } from '../synapseTypes'
+import { Reference } from '@sage-bionetworks/synapse-types'
 
 // doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
 // note - had to add an escape character for the second and third forward slash in the regex above

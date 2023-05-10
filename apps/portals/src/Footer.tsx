@@ -3,8 +3,7 @@ import footerConfig from './config/footerConfig'
 import logoFooterConfig from './config/logoFooterConfig'
 import { ReactComponent as PoweredBySvg } from './portal-assets/poweredbysynapse.svg'
 import Versions from './portal-components/Versions'
-import ExperimentalMode from 'synapse-react-client/dist/containers/ExperimentalMode' // synapse-react-client/dist/utils/functions/sqlFunctions
-import { URL_TERMS_CONDITIONS_AGREEMENT } from 'synapse-react-client/dist/utils/SynapseConstants'
+import { SynapseComponents, SynapseConstants } from 'synapse-react-client'
 
 function Footer() {
   const goToTop = () => {
@@ -27,14 +26,15 @@ function Footer() {
     <img alt="footer logo" className="nav-logo" src={icon} />
   )
   const termsOfServiceUrl =
-    footerConfig.termsOfService ?? URL_TERMS_CONDITIONS_AGREEMENT
+    footerConfig.termsOfService ??
+    SynapseConstants.URL_TERMS_CONDITIONS_AGREEMENT
   return (
     <footer id="footer" className="center-content">
       <div id="portal-title-footer">
         <div id="footer-logo-link">{logo}</div>
       </div>
       <div id="portal-contact-footer" className="center-content">
-        <ExperimentalMode />
+        <SynapseComponents.ExperimentalMode />
         <Versions />
         <a
           rel="noopener noreferrer"

@@ -1,6 +1,6 @@
 import { useCallback, useReducer } from 'react'
 import { Map } from 'immutable'
-import { Reference } from '../../utils/synapseTypes'
+import { Reference } from '@sage-bionetworks/synapse-types'
 import { NO_VERSION_NUMBER } from './EntityFinder'
 
 export function useEntitySelection(selectMultiple: boolean) {

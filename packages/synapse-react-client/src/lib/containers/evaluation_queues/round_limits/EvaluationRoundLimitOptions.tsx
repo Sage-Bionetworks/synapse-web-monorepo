@@ -1,4 +1,4 @@
-import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation'
+import { EvaluationRoundLimitType } from '@sage-bionetworks/synapse-types'
 import React from 'react'
 import { FormControl, FormGroup } from 'react-bootstrap'
 import { EvaluationRoundLimitInput } from '../input_models/models'

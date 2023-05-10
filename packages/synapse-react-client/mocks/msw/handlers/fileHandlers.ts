@@ -1,7 +1,7 @@
 import {
   BatchFileRequest,
   BatchFileResult,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { rest } from 'msw'
 import { FILE_HANDLE_BATCH } from '../../../src/lib/utils/APIConstants'
 import { mockFileHandles } from '../../mock_file_handle'

@@ -25,7 +25,7 @@ import {
   EntityChildrenResponse,
   EntityType,
   ExternalFileHandle,
-} from '../../../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import mockDataset from '../../../../../../mocks/entity/mockDataset'
 import { mockFolderEntity } from '../../../../../../mocks/entity/mockEntity'
 import failOnConsoleError from 'jest-fail-on-console'

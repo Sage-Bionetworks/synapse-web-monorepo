@@ -4,7 +4,7 @@ import {
   FileHandleAssociation,
   FileHandleAssociateType,
   BatchFileRequest,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../../utils'
 import { getFiles } from '../../../utils/SynapseClient'
 import { SynapseClientError } from '../../../utils/SynapseClientError'

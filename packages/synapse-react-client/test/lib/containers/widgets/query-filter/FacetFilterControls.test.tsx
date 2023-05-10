@@ -16,7 +16,7 @@ import FacetFilterControls, {
   getDefaultShownFacetFilters,
 } from '../../../../../src/lib/containers/widgets/query-filter/FacetFilterControls'
 import { SynapseContextProvider } from '../../../../../src/lib/utils/SynapseContext'
-import { QueryResultBundle } from '../../../../../src/lib/utils/synapseTypes'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { DEFAULT_PAGE_SIZE } from '../../../../../src/lib/utils/SynapseConstants'

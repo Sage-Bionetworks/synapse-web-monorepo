@@ -1,7 +1,7 @@
 import {
   AccessRequirement,
   ManagedACTAccessRequirement,
-} from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import UnmanagedACTAccessRequirementItem from './RequirementItem/UnmanagedACTAccessRequirementItem'
 import ManagedACTAccessRequirementItem from './ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem'
 import React from 'react'

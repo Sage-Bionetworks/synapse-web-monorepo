@@ -3,7 +3,7 @@ import {
   ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE,
   RESEARCH_PROJECT,
 } from '../../../src/lib/utils/APIConstants'
-import { ResearchProject } from '../../../src/lib/utils/synapseTypes/ResearchProject'
+import { ResearchProject } from '@sage-bionetworks/synapse-types'
 import { MOCK_RESEARCH_PROJECT } from '../../dataaccess/MockResearchProject'
 
 export function getResearchProjectHandlers(backendOrigin: string) {

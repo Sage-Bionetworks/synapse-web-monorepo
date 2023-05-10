@@ -2,8 +2,8 @@ import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { PaginatedResults } from '../../../synapseTypes'
-import { TeamMember } from '../../../synapseTypes/TeamMember'
+import { PaginatedResults } from '@sage-bionetworks/synapse-types'
+import { TeamMember } from '@sage-bionetworks/synapse-types'
 
 export function useGetTeamMembers(
   teamId: string | number,

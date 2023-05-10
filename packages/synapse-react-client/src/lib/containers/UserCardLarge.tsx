@@ -1,6 +1,6 @@
 import * as React from 'react'
 import CertifiedUserIcon from '../assets/icons/CertifiedUser'
-import { UserProfile } from '../utils/synapseTypes/'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
 
 type UserCardLargeProps = {
   userProfile: UserProfile

@@ -15,7 +15,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   Table,
-} from '../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   LockedColumn,
   PaginatedQueryContextType,

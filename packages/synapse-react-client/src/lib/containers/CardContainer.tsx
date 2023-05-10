@@ -7,7 +7,11 @@ import {
   MEDIUM_USER_CARD,
   OBSERVATION_CARD,
 } from '../utils/SynapseConstants'
-import { ColumnTypeEnum, EntityHeader, Row } from '../utils/synapseTypes/'
+import {
+  ColumnTypeEnum,
+  EntityHeader,
+  Row,
+} from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from './CardContainerLogic'
 import GenericCard from './GenericCard'
 import loadingScreen from './LoadingScreen'

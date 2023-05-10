@@ -18,7 +18,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { displayToast } from '../ToastMessage'
 import { RegenerateBackupCodesWarning } from './RegenerateBackupCodesWarning'
 import { RecoveryCodeGrid } from './RecoveryCodeGrid'
-import { TwoFactorAuthRecoveryCodes } from '../../utils/synapseTypes/TwoFactorAuthRecoveryCodes'
+import { TwoFactorAuthRecoveryCodes } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useMediaPrintOnly } from '../../utils/hooks/useMediaPrintOnly'
 

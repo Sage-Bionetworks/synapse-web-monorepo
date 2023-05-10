@@ -4,11 +4,11 @@ import { Button, Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
 import { useGetForumInfinite } from '../../utils/hooks/SynapseAPI/forum/useForum'
 import { AVATAR, SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { Direction } from '../../utils/synapseTypes'
+import { Direction } from '@sage-bionetworks/synapse-types'
 import {
   DiscussionFilter,
   DiscussionThreadOrder,
-} from '../../utils/synapseTypes/DiscussionBundle'
+} from '@sage-bionetworks/synapse-types'
 import IconSvg from '../IconSvg'
 import UserCard from '../UserCard'
 

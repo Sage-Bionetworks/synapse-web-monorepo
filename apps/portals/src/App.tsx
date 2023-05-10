@@ -6,17 +6,19 @@ import AppInitializer from './AppInitializer'
 import Navbar from './Navbar'
 import CookiesNotification from './CookiesNotification'
 import { CookiesProvider } from 'react-cookie'
-import { SynapseComponents } from 'synapse-react-client'
+import {
+  SynapseComponents,
+  SynapseContext,
+  SynapseTheme,
+} from 'synapse-react-client'
 import { LogInDialogContextProvider } from './LogInDialogContext'
 import { createTheme, ThemeProvider } from '@mui/material'
 import palette from './config/paletteConfig'
-import { mergeTheme } from 'synapse-react-client/dist/utils/theme'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { defaultQueryClientConfig } from 'synapse-react-client/dist/utils/FullContextProvider'
 
 const RouteResolver = React.lazy(() => import('./RouteResolver'))
-const theme = createTheme(mergeTheme({ palette }))
-const queryClient = new QueryClient(defaultQueryClientConfig)
+const theme = createTheme(SynapseTheme.mergeTheme({ palette }))
+const queryClient = new QueryClient(SynapseContext.defaultQueryClientConfig)
 
 function App() {
   return (

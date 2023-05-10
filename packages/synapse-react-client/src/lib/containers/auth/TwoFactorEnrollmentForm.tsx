@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import { StyledOuterContainer } from '../../components/styled/LeftRightPanel'
 import { StyledComponent } from '@emotion/styled'
-import { TotpSecret } from '../../utils/synapseTypes/TotpSecret'
+import { TotpSecret } from '@sage-bionetworks/synapse-types'
 import { useGetNotificationEmail } from '../../utils/hooks/SynapseAPI'
 import { toCanvas } from 'qrcode'
 import TextField from '../TextField'

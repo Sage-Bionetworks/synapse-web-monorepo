@@ -1,14 +1,15 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import useDetectSSOCode from '../../../../src/lib/utils/hooks/useDetectSSOCode'
 import { SynapseClient } from '../../../../src/lib'
-import { LoginResponse } from '../../../../src/lib/utils/synapseTypes'
+import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { BackendDestinationEnum } from '../../../../src/lib/utils/functions/getEndpoint'
 import { SynapseClientError } from '../../../../src/lib/utils/SynapseClientError'
 import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
-} from '../../../../src/lib/utils/synapseTypes/ErrorResponse'
-import { PROVIDERS } from '../../../../src/lib/containers/auth/AuthenticationMethodSelection'
+} from '@sage-bionetworks/synapse-types'
+
+import { OAUTH2_PROVIDERS } from '../../../../src/lib/utils/SynapseConstants'
 
 const authorizationCode = '12345'
 
@@ -65,7 +66,7 @@ describe('useDetectSSOCode tests', () => {
     history.replaceState(
       {},
       '',
-      `/?code=${authorizationCode}&provider=${PROVIDERS.GOOGLE}`,
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.GOOGLE}`,
     )
     mockOAuthSessionRequest.mockResolvedValue(successfulLoginResponse)
     mockSetAccessTokenCookie.mockResolvedValue(undefined)
@@ -79,9 +80,9 @@ describe('useDetectSSOCode tests', () => {
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
-        PROVIDERS.GOOGLE,
+        OAUTH2_PROVIDERS.GOOGLE,
         authorizationCode,
-        `http://localhost/?provider=${PROVIDERS.GOOGLE}`,
+        `http://localhost/?provider=${OAUTH2_PROVIDERS.GOOGLE}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
 
@@ -97,7 +98,7 @@ describe('useDetectSSOCode tests', () => {
     history.replaceState(
       {},
       '',
-      `/?code=${authorizationCode}&provider=${PROVIDERS.GOOGLE}`,
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.GOOGLE}`,
     )
     const mockOn2fa = jest.fn()
     mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
@@ -113,9 +114,9 @@ describe('useDetectSSOCode tests', () => {
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
-        PROVIDERS.GOOGLE,
+        OAUTH2_PROVIDERS.GOOGLE,
         authorizationCode,
-        `http://localhost/?provider=${PROVIDERS.GOOGLE}`,
+        `http://localhost/?provider=${OAUTH2_PROVIDERS.GOOGLE}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
       expect(mockOn2fa).toHaveBeenCalledWith(twoFactorAuthErrorResponse)
@@ -130,7 +131,7 @@ describe('useDetectSSOCode tests', () => {
     history.replaceState(
       {},
       '',
-      `/?code=${authorizationCode}&provider=${PROVIDERS.GOOGLE}`,
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.GOOGLE}`,
     )
     const notFoundError = new SynapseClientError(
       404,
@@ -146,9 +147,9 @@ describe('useDetectSSOCode tests', () => {
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
-        PROVIDERS.GOOGLE,
+        OAUTH2_PROVIDERS.GOOGLE,
         authorizationCode,
-        `http://localhost/?provider=${PROVIDERS.GOOGLE}`,
+        `http://localhost/?provider=${OAUTH2_PROVIDERS.GOOGLE}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
@@ -166,7 +167,7 @@ describe('useDetectSSOCode tests', () => {
     history.replaceState(
       {},
       '',
-      `/?code=${authorizationCode}&provider=${PROVIDERS.GOOGLE}`,
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.GOOGLE}`,
     )
     const unhandledError = new SynapseClientError(
       500,
@@ -184,9 +185,9 @@ describe('useDetectSSOCode tests', () => {
 
     await waitFor(() => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
-        PROVIDERS.GOOGLE,
+        OAUTH2_PROVIDERS.GOOGLE,
         authorizationCode,
-        `http://localhost/?provider=${PROVIDERS.GOOGLE}`,
+        `http://localhost/?provider=${OAUTH2_PROVIDERS.GOOGLE}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
@@ -207,7 +208,7 @@ describe('useDetectSSOCode tests', () => {
     history.replaceState(
       {},
       '',
-      `/?code=${authorizationCode}&provider=${PROVIDERS.GOOGLE}&state=${state}`,
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.GOOGLE}&state=${state}`,
     )
     mockOAuthRegisterAccountStep2.mockResolvedValue(successfulLoginResponse)
     mockSetAccessTokenCookie.mockResolvedValue(undefined)
@@ -217,9 +218,9 @@ describe('useDetectSSOCode tests', () => {
     await waitFor(() => {
       expect(mockOAuthRegisterAccountStep2).toHaveBeenCalledWith(
         state,
-        PROVIDERS.GOOGLE,
+        OAUTH2_PROVIDERS.GOOGLE,
         authorizationCode,
-        `http://localhost/?provider=${PROVIDERS.GOOGLE}`,
+        `http://localhost/?provider=${OAUTH2_PROVIDERS.GOOGLE}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
 
@@ -236,7 +237,7 @@ describe('useDetectSSOCode tests', () => {
     history.replaceState(
       {},
       '',
-      `/?code=${authorizationCode}&provider=${PROVIDERS.ORCID}`,
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.ORCID}`,
     )
     mockBindOAuthProviderToAccount.mockResolvedValue(successfulLoginResponse)
 
@@ -245,9 +246,9 @@ describe('useDetectSSOCode tests', () => {
 
     await waitFor(() => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
-        PROVIDERS.ORCID,
+        OAUTH2_PROVIDERS.ORCID,
         authorizationCode,
-        `http://localhost/?provider=${PROVIDERS.ORCID}`,
+        `http://localhost/?provider=${OAUTH2_PROVIDERS.ORCID}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
 
@@ -261,7 +262,7 @@ describe('useDetectSSOCode tests', () => {
     history.replaceState(
       {},
       '',
-      `/?code=${authorizationCode}&provider=${PROVIDERS.ORCID}`,
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.ORCID}`,
     )
 
     const mockOnError = jest.fn()
@@ -279,9 +280,9 @@ describe('useDetectSSOCode tests', () => {
 
     await waitFor(() => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
-        PROVIDERS.ORCID,
+        OAUTH2_PROVIDERS.ORCID,
         authorizationCode,
-        `http://localhost/?provider=${PROVIDERS.ORCID}`,
+        `http://localhost/?provider=${OAUTH2_PROVIDERS.ORCID}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
 

@@ -4,7 +4,7 @@ import FeaturedDataTabs, {
   FeaturedDataTabsProps,
 } from '../../../src/lib/containers/home_page/featured-data/FeaturedDataTabs'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { QueryResultBundle } from '../../../src/lib/utils/synapseTypes/'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 
 const SynapseClient = require('../../../src/lib/utils/SynapseClient')

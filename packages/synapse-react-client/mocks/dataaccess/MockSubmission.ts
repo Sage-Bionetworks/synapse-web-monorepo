@@ -2,11 +2,11 @@ import {
   AccessType,
   RestrictableObjectType,
   SubmissionState,
-} from '../../src/lib/utils/synapseTypes'
-import { Submission } from '../../src/lib/utils/synapseTypes/AccessRequirement/Submission'
+} from '@sage-bionetworks/synapse-types'
+import { EvaluationSubmission } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 
-export const mockRejectedSubmission: Submission = {
+export const mockRejectedSubmission: EvaluationSubmission = {
   id: '3',
   accessRequirementId: '9602626',
   accessRequirementVersion: 1,
@@ -49,7 +49,7 @@ export const mockRejectedSubmission: Submission = {
   subjectId: 'syn12156790',
   subjectType: RestrictableObjectType.ENTITY,
 }
-export const mockSubmittedSubmission: Submission = {
+export const mockSubmittedSubmission: EvaluationSubmission = {
   id: '1',
   accessRequirementId: '9602626',
   accessRequirementVersion: 1,
@@ -90,7 +90,7 @@ export const mockSubmittedSubmission: Submission = {
   subjectId: 'syn12156790',
   subjectType: RestrictableObjectType.ENTITY,
 }
-export const mockApprovedSubmission: Submission = {
+export const mockApprovedSubmission: EvaluationSubmission = {
   id: '2',
   accessRequirementId: '9602626',
   accessRequirementVersion: 1,
@@ -127,7 +127,7 @@ export const mockApprovedSubmission: Submission = {
   subjectType: RestrictableObjectType.ENTITY,
 }
 
-export const mockDemoSubmission: Submission = {
+export const mockDemoSubmission: EvaluationSubmission = {
   id: '4',
   accessRequirementId: '9603055',
   accessRequirementVersion: 1,
@@ -173,7 +173,7 @@ export const mockDemoSubmission: Submission = {
   subjectType: RestrictableObjectType.ENTITY,
 }
 
-export const mockSubmissions: Submission[] = [
+export const mockSubmissions: EvaluationSubmission[] = [
   mockApprovedSubmission,
   mockRejectedSubmission,
   mockSubmittedSubmission,

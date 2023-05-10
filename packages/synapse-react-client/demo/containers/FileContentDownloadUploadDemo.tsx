@@ -9,7 +9,7 @@ import {
   Entity,
   FileEntity,
   FileUploadComplete,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 type FileContentDownloadUploadDemoState = {
   error?: any

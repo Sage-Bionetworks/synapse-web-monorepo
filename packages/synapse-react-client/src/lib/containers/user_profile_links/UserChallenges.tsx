@@ -3,7 +3,7 @@ import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserChallengesInfinite } from '../../utils/hooks/SynapseAPI/user/useGetUserChallenges'
-import { ChallengeWithProjectHeader } from '../../utils/synapseTypes/ChallengePagedResults'
+import { ChallengeWithProjectHeader } from '@sage-bionetworks/synapse-types'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 export type UserChallengesProps = {

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState } from 'react'
-import { ManagedACTAccessRequirement } from '../../../utils/synapseTypes'
+import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import { AlertProps } from './DataAccessRequestAccessorsFilesForm'
 import {
   Alert,
@@ -19,7 +19,7 @@ import {
   useUpdateResearchProject,
 } from '../../../utils/hooks/SynapseAPI'
 import TextField from '../../TextField'
-import { ResearchProject } from '../../../utils/synapseTypes/ResearchProject'
+import { ResearchProject } from '@sage-bionetworks/synapse-types'
 
 export type ResearchProjectFormProps = {
   /* The access requirement to which the research project refers */

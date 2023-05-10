@@ -10,16 +10,16 @@ import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import {
   AccessRequirement,
-  isFileEntity,
   RestrictableObjectType,
   RestrictionInformationRequest,
   RestrictionLevel,
-} from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import AccessRequirementList, {
   checkHasUnsupportedRequirement,
 } from '../AccessRequirementList/AccessRequirementList'
 import IconSvg, { Icon } from '../IconSvg'
 import { Theme, useTheme } from '@mui/material'
+import { isFileEntity } from '../../utils/types/IsType'
 
 export type HasAccessProps = {
   onHide?: () => void

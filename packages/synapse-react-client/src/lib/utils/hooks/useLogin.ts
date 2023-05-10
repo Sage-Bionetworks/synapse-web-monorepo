@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { SynapseClient } from '../index'
-import { LoginResponse } from '../synapseTypes'
+import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import {
   TwoFactorAuthLoginRequest,
   TwoFactorAuthOtpType,
-} from '../synapseTypes/TwoFactorAuthLoginRequest'
-import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
+} from '@sage-bionetworks/synapse-types'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useMutation } from 'react-query'
 import { SynapseClientError } from '../SynapseClientError'

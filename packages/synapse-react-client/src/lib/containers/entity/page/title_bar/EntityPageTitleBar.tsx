@@ -7,9 +7,9 @@ import ConditionalWrapper from '../../../utils/ConditionalWrapper'
 import EntityActionMenu, {
   EntityActionMenuProps,
 } from '../action_menu/EntityActionMenu'
-import { isDockerRepository } from '../../../../utils/synapseTypes/docker/DockerRepository'
 import TitleBarProperties from './TitleBarProperties'
 import { EntityTitleBarVersionInfo } from './EntityTitleBarVersionInfo'
+import { isDockerRepository } from '../../../../utils/types/IsType'
 
 export type EntityPageTitleBarProps = {
   entityId: string

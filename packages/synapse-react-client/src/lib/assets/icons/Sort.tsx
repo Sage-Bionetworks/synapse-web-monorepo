@@ -1,6 +1,6 @@
 import React from 'react'
 import { SortOrder } from '@sage-bionetworks/react-base-table'
-import { Direction } from '../../utils/synapseTypes'
+import { Direction } from '@sage-bionetworks/synapse-types'
 
 type SortIconProps = {
   direction: Direction | SortOrder | 'ASC' | 'DESC'

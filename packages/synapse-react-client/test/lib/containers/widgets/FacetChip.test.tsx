@@ -12,7 +12,7 @@ import { SynapseContextProvider } from '../../../../src/lib/utils/SynapseContext
 import {
   FacetColumnResult,
   QueryResultBundle,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 import mockQueryResponseData from '../../../../mocks/mockQueryResponseData'
 import {

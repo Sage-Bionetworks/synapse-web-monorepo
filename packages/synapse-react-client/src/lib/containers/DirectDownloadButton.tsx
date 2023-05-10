@@ -1,6 +1,9 @@
 import React from 'react'
 import { Button, ButtonProps } from '@mui/material'
-import { BatchFileRequest, FileHandleAssociation } from '../utils/synapseTypes'
+import {
+  BatchFileRequest,
+  FileHandleAssociation,
+} from '@sage-bionetworks/synapse-types'
 import { getFiles } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
 

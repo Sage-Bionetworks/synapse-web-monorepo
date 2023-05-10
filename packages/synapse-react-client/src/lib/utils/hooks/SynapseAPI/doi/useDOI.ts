@@ -1,4 +1,4 @@
-import { DoiAssociation } from '../../../synapseTypes'
+import { DoiAssociation } from '@sage-bionetworks/synapse-types'
 import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'

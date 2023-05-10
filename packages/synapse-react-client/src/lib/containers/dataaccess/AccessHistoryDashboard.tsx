@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { FormLabel } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
-import { TYPE_FILTER } from '../../utils/synapseTypes'
+import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import {
   AccessApprovalsTable,

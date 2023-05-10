@@ -1,10 +1,9 @@
 import { BoxProps, Paper, PaperProps, styled } from '@mui/material'
 import { StyledComponent } from '@mui/styles'
-import { StyledOuterContainer as _StyledOuterContainer } from 'synapse-react-client/dist/components/styled/LeftRightPanel'
-import { StyledFormControl as _StyledFormControl } from 'synapse-react-client/dist/components/styled/StyledFormControl'
+import { SynapseComponents } from 'synapse-react-client'
 
 export const StyledOuterContainer: StyledComponent<BoxProps> =
-  _StyledOuterContainer
+  SynapseComponents.StyledOuterContainer
 
 export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   label: 'StyledInnerContainer',
@@ -26,4 +25,4 @@ export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   },
 }))
 
-export const StyledFormControl = _StyledFormControl
+export const StyledFormControl = SynapseComponents.StyledFormControl

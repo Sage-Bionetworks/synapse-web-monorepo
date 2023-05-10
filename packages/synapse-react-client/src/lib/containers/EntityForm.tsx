@@ -10,7 +10,7 @@ import {
   EntityLookupRequest,
   FileEntity,
   UserProfile,
-} from '../utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 import { getFileHandleContent } from '../utils/SynapseClient'
 import { SynapseContext } from '../utils/SynapseContext'
 

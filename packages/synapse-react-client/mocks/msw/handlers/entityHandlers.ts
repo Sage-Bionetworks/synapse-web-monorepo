@@ -22,16 +22,13 @@ import {
   PaginatedResults,
   Reference,
   VersionableEntity,
-} from '../../../src/lib/utils/synapseTypes'
-import { VersionInfo } from '../../../src/lib/utils/synapseTypes/VersionInfo'
+} from '@sage-bionetworks/synapse-types'
+import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import mockEntities from '../../entity'
 import { MOCK_INVALID_PROJECT_NAME } from '../../entity/mockEntity'
 import { mockSchemaBinding } from '../../mockSchema'
 import { SynapseApiResponse } from '../handlers'
-import {
-  UploadDestination,
-  UploadType,
-} from '../../../src/lib/utils/synapseTypes/File/UploadDestination'
+import { UploadDestination, UploadType } from '@sage-bionetworks/synapse-types'
 
 export const getEntityHandlers = (backendOrigin: string) => [
   /**

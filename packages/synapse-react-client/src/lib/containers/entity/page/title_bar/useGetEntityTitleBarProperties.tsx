@@ -6,7 +6,7 @@ import {
 import {
   EntityRefCollectionView,
   EntityType,
-} from '../../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   isContainerType,
   isEntityRefCollectionView,

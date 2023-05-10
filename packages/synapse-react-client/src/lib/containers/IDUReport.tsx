@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useGetApprovedSubmissionInfoInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useGetApprovedSubmissionInfo'
-import { SubmissionInfo } from '../utils/synapseTypes/SubmissionInfo'
+import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
 import {
   LoadingSubmissionInfoCard,
   SubmissionInfoCard,

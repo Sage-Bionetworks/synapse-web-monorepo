@@ -1,4 +1,4 @@
-import { DatasetCollection, EntityPath } from '../../src/lib/utils/synapseTypes'
+import { DatasetCollection, EntityPath } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 import mockDatasetData from './mockDataset'
 import { MockEntityData } from './MockEntityData'

@@ -8,7 +8,7 @@ import {
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { OAuthClient, OAuthClientList } from '../../../synapseTypes/OAuthClient'
+import { OAuthClient, OAuthClientList } from '@sage-bionetworks/synapse-types'
 
 export function useGetOAuthClientInfinite(
   options?: UseInfiniteQueryOptions<OAuthClientList, SynapseClientError>,

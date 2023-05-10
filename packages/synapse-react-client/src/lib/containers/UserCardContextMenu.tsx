@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { UserProfile } from '../utils/synapseTypes/'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
 import { SEPERATOR } from '../utils/SynapseConstants'
 
 export type MenuAction = {

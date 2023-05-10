@@ -1,7 +1,7 @@
 import { Clear } from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { Reference } from '../../utils/synapseTypes'
+import { Reference } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import { EntityTypeIcon } from '../EntityIcon'
 import { NO_VERSION_NUMBER } from './EntityFinder'

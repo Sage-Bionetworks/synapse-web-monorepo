@@ -1,9 +1,6 @@
 import { getIsAllSelectedFromInfiniteList } from '../../../../src/lib/utils/hooks/useGetIsAllSelectedInfiniteList'
 import { Map } from 'immutable'
-import {
-  EntityHeader,
-  EntityType,
-} from '../../../../src/lib/utils/synapseTypes'
+import { EntityHeader, EntityType } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../../../../src/lib/utils/functions/EntityTypeUtils'
 
 const ALL_TYPES = Object.values(EntityType)

@@ -1,18 +1,22 @@
 import { useEffect, useState } from 'react'
 import { useAppContext } from '../AppContext'
-import { SynapseClient } from 'synapse-react-client/dist/utils'
-import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
-import { MembershipInvitation } from 'synapse-react-client/dist/utils/synapseTypes/MembershipInvitation'
-import { InviteeVerificationSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/InviteeVerificationSignedToken'
+import {
+  displayToast,
+  SynapseClient,
+  SynapseContext,
+} from 'synapse-react-client'
+import {
+  InviteeVerificationSignedToken,
+  isMembershipInvtnSignedToken,
+  MembershipInvitation,
+  SignedTokenInterface,
+} from '@sage-bionetworks/synapse-types'
 
 export default function useMembershipInvitationTokenHandler():
   | MembershipInvitation
   | undefined {
   const context = useAppContext()
-  const { accessToken } = useSynapseContext()
+  const { accessToken } = SynapseContext.useSynapseContext()
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
   >(context.signedToken)

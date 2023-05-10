@@ -12,35 +12,25 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import { UserBundle, UserProfile } from '@sage-bionetworks/synapse-types'
 import {
-  UserBundle,
-  UserProfile,
-} from 'synapse-react-client/dist/utils/synapseTypes'
-import {
+  displayToast,
   SynapseClient,
+  SynapseComponents,
   SynapseConstants,
-} from 'synapse-react-client/dist/utils'
+  SynapseContext,
+} from 'synapse-react-client'
 import { Link as RouterLink, useHistory, useLocation } from 'react-router-dom'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { Form } from 'react-bootstrap'
 import { ChangePassword } from './ChangePassword'
-import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { ORCiDButton } from './ProfileValidation/ORCiDButton'
 import AccountSettingsTopBar from './AccountSettingsTopBar'
 import { ConfigureEmail } from './ConfigureEmail'
 import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import UniversalCookies from 'universal-cookie'
-import {
-  DATETIME_UTC_COOKIE_KEY,
-  URL_TERMS_CONDITIONS_AGREEMENT,
-} from 'synapse-react-client/dist/utils/SynapseConstants'
-import { getUseUtcTimeFromCookie } from 'synapse-react-client/dist/utils/SynapseClient'
 import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
 import { useSourceAppConfigs } from './SourceApp'
-import TwoFactorAuthSettingsPanel from 'synapse-react-client/dist/containers/auth/TwoFactorAuthSettingsPanel'
-import SRCTextField from 'synapse-react-client/dist/containers/TextField'
 
 const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
   isComplete,
@@ -49,11 +39,11 @@ const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
     <div className="item-completion">
       {isComplete ? (
         <span className="completeIcon">
-          <IconSvg icon="check" /> Completed
+          <SynapseComponents.IconSvg icon="check" /> Completed
         </span>
       ) : (
         <span className="incompleteIcon">
-          <IconSvg icon="close" /> Incomplete
+          <SynapseComponents.IconSvg icon="close" /> Incomplete
         </span>
       )}
     </div>
@@ -61,7 +51,7 @@ const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
 }
 
 export const AccountSettings = () => {
-  const { accessToken } = useSynapseContext()
+  const { accessToken } = SynapseContext.useSynapseContext()
   const { hash } = useLocation()
   const [userProfile, setUserProfile] = useState<UserProfile>()
   const [firstName, setFirstName] = useState<string>()
@@ -92,7 +82,7 @@ export const AccountSettings = () => {
   const oauthClientManagementRef = useRef<HTMLDivElement>(null)
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
-    getUseUtcTimeFromCookie().toString(),
+    SynapseClient.getUseUtcTimeFromCookie().toString(),
   )
   const [isUTCTimeStaged, setUTCTimeStaged] = useState<string>(isUTCTime)
   const handleChangesFn = (val: string) => {
@@ -102,7 +92,7 @@ export const AccountSettings = () => {
     const current = new Date()
     const nextYear = new Date()
     nextYear.setFullYear(current.getFullYear() + 1)
-    cookies.set(DATETIME_UTC_COOKIE_KEY, isUTCTime, {
+    cookies.set(SynapseConstants.DATETIME_UTC_COOKIE_KEY, isUTCTime, {
       path: '/',
       expires: nextYear,
     })
@@ -404,7 +394,7 @@ export const AccountSettings = () => {
                       })}
                     </Grid>
                   </StyledFormControl>
-                  <SRCTextField
+                  <SynapseComponents.TextField
                     fullWidth
                     margin="normal"
                     label="Bio"
@@ -517,7 +507,10 @@ export const AccountSettings = () => {
                     >
                       Agree to Terms and Conditions
                     </Button>
-                    <Link href={URL_TERMS_CONDITIONS_AGREEMENT} target="_blank">
+                    <Link
+                      href={SynapseConstants.URL_TERMS_CONDITIONS_AGREEMENT}
+                      target="_blank"
+                    >
                       More information
                     </Link>
                   </div>
@@ -633,7 +626,7 @@ export const AccountSettings = () => {
                 ref={twoFactorAuthRef}
                 className="account-setting-panel main-panel"
               >
-                <TwoFactorAuthSettingsPanel
+                <SynapseComponents.TwoFactorAuthSettingsPanel
                   onRegenerateBackupCodes={() => {
                     history.push('/authenticated/2fa/generatecodes')
                   }}

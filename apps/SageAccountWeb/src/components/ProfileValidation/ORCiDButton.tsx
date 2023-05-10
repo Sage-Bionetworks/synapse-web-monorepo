@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { Button, SxProps } from '@mui/material'
-import { SynapseClient } from 'synapse-react-client'
-import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
+import {
+  displayToast,
+  SynapseConstants,
+  SynapseClient,
+} from 'synapse-react-client'
 import { ValidationWizardStep } from './ProfileValidation'
 import OrcId from '../../assets/ORCID.svg'
 import EditIcon from '../../assets/RedEditPencil.svg'
-import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from 'synapse-react-client/dist/utils/AppUtils'
 
 export type ORCiDButtonProps = {
   redirectAfter?: string
@@ -25,21 +26,24 @@ export const onBindToORCiD = (
     // after binding, go to ???
     if (redirectAfter) {
       localStorage.setItem(
-        POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
+        SynapseConstants.POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
         redirectAfter,
       )
     } else {
       localStorage.setItem(
-        POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
+        SynapseConstants.POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
         `${SynapseClient.getRootURL()}authenticated/validate?step=${
           ValidationWizardStep.VERIFY_IDENTITY
         }`,
       )
     }
     const redirectUrl = `${SynapseClient.getRootURL()}?provider=${
-      PROVIDERS.ORCID
+      SynapseConstants.OAUTH2_PROVIDERS.ORCID
     }`
-    SynapseClient.oAuthUrlRequest(PROVIDERS.ORCID, redirectUrl)
+    SynapseClient.oAuthUrlRequest(
+      SynapseConstants.OAUTH2_PROVIDERS.ORCID,
+      redirectUrl,
+    )
       .then((data: any) => {
         const authUrl = data.authorizationUrl
         window.location.assign(authUrl)

@@ -1,12 +1,12 @@
 import { ThemeOptions } from '@mui/material/styles'
 import { typographyOptions } from './typography/Typography'
-import palette from './palette/Palettes'
+import { palette } from './palette/Palettes'
 import { alpha, Fade } from '@mui/material'
 import linkTheme from './typography/Link'
 
 const DIALOG_INNER_PADDING = '2px'
 
-const defaultMuiThemeOptions: ThemeOptions = {
+export const defaultMuiThemeOptions: ThemeOptions = {
   typography: typographyOptions,
   palette: palette,
   components: {

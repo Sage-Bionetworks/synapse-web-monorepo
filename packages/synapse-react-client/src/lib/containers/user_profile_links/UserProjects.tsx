@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
-import { ProjectHeader } from '../../utils/synapseTypes'
+import { ProjectHeader } from '@sage-bionetworks/synapse-types'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserProjectsInfinite } from '../../utils/hooks/SynapseAPI/user/useGetUserProjects'
-import { GetProjectsParameters } from '../../utils/synapseTypes/GetProjectsParams'
+import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 export type UserProjectsProps = {

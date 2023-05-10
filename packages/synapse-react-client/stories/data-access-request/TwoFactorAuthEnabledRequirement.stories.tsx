@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../src/lib/utils/functions/getEndpoint'
 import TwoFactorAuthEnabledRequirement from '../../src/lib/containers/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement'
-import { TwoFactorAuthStatus } from '../../src/lib/utils/synapseTypes/TotpSecret'
+import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import { SynapseContextConsumer } from '../../src/lib/utils/SynapseContext'
 import FullContextProvider from '../../src/lib/utils/FullContextProvider'
 

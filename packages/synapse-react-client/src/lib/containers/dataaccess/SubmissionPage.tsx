@@ -18,7 +18,7 @@ import {
   FileHandleAssociateType,
   ManagedACTAccessRequirement,
   SubmissionState,
-} from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'

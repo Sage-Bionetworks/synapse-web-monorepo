@@ -7,11 +7,12 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   SelectColumn,
-} from '../synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
+
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
-} from '../synapseTypes/Table/QueryFilter'
+} from '../types/IsType'
 
 type PartialStateObject = {
   hasMoreData: boolean

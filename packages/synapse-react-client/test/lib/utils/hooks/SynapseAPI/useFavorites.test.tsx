@@ -1,10 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
 import { useGetFavorites } from '../../../../../src/lib/utils/hooks/SynapseAPI/user/useFavorites'
-import {
-  EntityHeader,
-  PaginatedResults,
-} from '../../../../../src/lib/utils/synapseTypes'
+import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
 import { SynapseContextProvider } from '../../../../../src/lib/utils/SynapseContext'

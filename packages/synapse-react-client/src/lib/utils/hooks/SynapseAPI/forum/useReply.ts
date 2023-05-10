@@ -16,9 +16,9 @@ import {
   DiscussionReplyBundle,
   DiscussionReplyOrder,
   UpdateDiscussionReply,
-} from '../../../synapseTypes/DiscussionBundle'
-import { PaginatedResults } from '../../../synapseTypes'
-import { Match } from '../../../synapseTypes/DiscussionSearch'
+} from '@sage-bionetworks/synapse-types'
+import { PaginatedResults } from '@sage-bionetworks/synapse-types'
+import { Match } from '@sage-bionetworks/synapse-types'
 
 export function useGetRepliesInfinite(
   threadId: string,

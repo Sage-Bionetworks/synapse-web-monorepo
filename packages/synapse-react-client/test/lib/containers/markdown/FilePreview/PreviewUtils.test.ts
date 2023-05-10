@@ -7,10 +7,7 @@ import {
   VIDEO_EXTENSIONS,
 } from '../../../../../src/lib/containers/FilePreview/PreviewUtils'
 import { PreviewRendererType } from '../../../../../src/lib/containers/FilePreview/PreviewRendererType'
-import {
-  ProxyFileHandle,
-  S3FileHandle,
-} from '../../../../../src/lib/utils/synapseTypes'
+import { ProxyFileHandle, S3FileHandle } from '@sage-bionetworks/synapse-types'
 
 const s3FileHandle: S3FileHandle = {
   bucketName: '',

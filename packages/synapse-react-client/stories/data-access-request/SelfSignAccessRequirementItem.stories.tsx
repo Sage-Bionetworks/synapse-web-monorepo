@@ -16,7 +16,7 @@ import {
   AccessApproval,
   AccessRequirementStatus,
   ApprovalState,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import { getAccessRequirementHandlers } from '../../mocks/msw/handlers/accessRequirementHandlers'
 import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'

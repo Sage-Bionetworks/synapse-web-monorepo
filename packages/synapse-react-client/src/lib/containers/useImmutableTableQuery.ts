@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   FacetColumnRequest,
-  isFacetColumnValuesRequest,
   QueryBundleRequest,
-} from '../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { cloneDeep, isEqual } from 'lodash-es'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
 import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
+import { QueryFilter } from '@sage-bionetworks/synapse-types'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
-  QueryFilter,
-} from '../utils/synapseTypes/Table/QueryFilter'
-import useDeepCompareEffect from 'use-deep-compare-effect'
+  isFacetColumnValuesRequest,
+} from '../utils/types/IsType'
 
 export type ImmutableTableQueryResult = {
   /** The ID of the table parsed from the SQL query */

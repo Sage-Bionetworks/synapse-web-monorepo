@@ -26,7 +26,7 @@ import {
   ACCESS_TYPE,
   SubmissionState,
   FileHandleAssociation,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   mockApprovedSubmission,
   mockRejectedSubmission,

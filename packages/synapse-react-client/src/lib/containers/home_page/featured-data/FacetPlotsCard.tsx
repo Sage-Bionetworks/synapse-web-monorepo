@@ -8,7 +8,7 @@ import {
   ColumnTypeEnum,
   FacetColumnResult,
   FacetColumnResultValueCount,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 import { getColorPalette } from '../../../containers/ColorGradient'
 import { useEffect, useState } from 'react'

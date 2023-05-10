@@ -7,13 +7,13 @@ import {
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { PaginatedResults } from '../../../synapseTypes'
+import { PaginatedResults } from '@sage-bionetworks/synapse-types'
 import {
   DiscussionFilter,
   DiscussionThreadBundle,
   DiscussionThreadOrder,
-} from '../../../synapseTypes/DiscussionBundle'
-import { PaginatedIds } from '../../../synapseTypes/PaginatedIds'
+} from '@sage-bionetworks/synapse-types'
+import { PaginatedIds } from '@sage-bionetworks/synapse-types'
 
 export function useGetModerators(
   forumId: string,

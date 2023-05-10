@@ -11,7 +11,7 @@ import {
   getEndpoint,
 } from '../../../../../../src/lib/utils/functions/getEndpoint'
 import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../../../../src/lib/utils/SynapseConstants'
-import { TeamMember } from '../../../../../../src/lib/utils/synapseTypes/TeamMember'
+import { TeamMember } from '@sage-bionetworks/synapse-types'
 import { rest, server } from '../../../../../../mocks/msw/server'
 import {
   MOCK_USER_ID,

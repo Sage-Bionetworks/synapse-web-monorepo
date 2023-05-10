@@ -49,3 +49,5 @@ export const Project = () => (
     </defs>
   </svg>
 )
+
+export default Project

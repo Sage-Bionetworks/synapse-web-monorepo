@@ -10,11 +10,11 @@ import {
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { EntityHeader, PaginatedResults } from '../../../synapseTypes'
+import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import {
   FavoriteSortBy,
   FavoriteSortDirection,
-} from '../../../synapseTypes/FavoriteSortBy'
+} from '@sage-bionetworks/synapse-types'
 
 export function useIsFavorite(entityId: string) {
   // TODO: Handle pagination - the default limit is 200

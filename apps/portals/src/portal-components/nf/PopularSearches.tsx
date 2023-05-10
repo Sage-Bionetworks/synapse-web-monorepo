@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { parseEntityIdFromSqlStatement } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
-import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import {
-  QueryBundleRequest,
-  RowSet,
-} from 'synapse-react-client/dist/utils/synapseTypes'
+  SynapseClient,
+  SynapseConstants,
+  SynapseComponents,
+  SynapseContext,
+} from 'synapse-react-client'
+import { QueryBundleRequest, RowSet } from '@sage-bionetworks/synapse-types'
 import { gotoExploreToolsWithFullTextSearch } from './BrowseToolsPage'
 import { Link } from '@mui/material'
 
@@ -19,14 +19,14 @@ export type PopularSearchesProps = {
 const PopularSearches: React.FunctionComponent<PopularSearchesProps> = ({
   sql,
 }) => {
-  const { accessToken } = useSynapseContext()
+  const { accessToken } = SynapseContext.useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
   const [isLoading, setIsLoading] = useState<boolean>()
   let mounted = true
   useEffect(() => {
     const fetchData = async function () {
       setIsLoading(true)
-      const entityId = parseEntityIdFromSqlStatement(sql)
+      const entityId = SynapseComponents.parseEntityIdFromSqlStatement(sql)
       const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
       const request: QueryBundleRequest = {
         partMask,

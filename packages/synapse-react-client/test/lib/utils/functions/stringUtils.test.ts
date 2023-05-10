@@ -1,5 +1,5 @@
 import { hex2ascii } from '../../../../src/lib/utils/functions/StringUtils'
-import { JoinTeamSignedToken } from '../../../../src/lib/utils/synapseTypes/JoinTeamSignedToken'
+import { JoinTeamSignedToken } from '@sage-bionetworks/synapse-types'
 
 describe('StringUtils.hex2ascii', () => {
   it('should parse hex encoded string properly', () => {

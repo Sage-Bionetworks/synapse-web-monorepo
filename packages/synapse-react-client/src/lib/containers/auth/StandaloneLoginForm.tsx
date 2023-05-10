@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
 import useLogin from '../../utils/hooks/useLogin'
-import { TwoFactorAuthErrorResponse } from '../../utils/synapseTypes/ErrorResponse'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import LoginForm from './LoginForm'
 import LoginFlowBackButton from './LoginFlowBackButton'
 

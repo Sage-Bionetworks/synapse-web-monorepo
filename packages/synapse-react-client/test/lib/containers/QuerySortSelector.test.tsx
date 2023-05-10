@@ -18,7 +18,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   SortItem,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 import selectEvent from 'react-select-event'
 import { DEFAULT_PAGE_SIZE } from '../../../src/lib/utils/SynapseConstants'

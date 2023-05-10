@@ -1,6 +1,6 @@
 import React from 'react'
 import { SkeletonInlineBlock } from '../assets/skeletons/SkeletonInlineBlock'
-import { FacetColumnRequest } from '../utils/synapseTypes'
+import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,

@@ -23,7 +23,7 @@ import {
   ColumnTypeEnum,
   FileHandleAssociateType,
   SelectColumn,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { server } from '../../../mocks/msw/server'
 import {
   MOCK_USER_ID,

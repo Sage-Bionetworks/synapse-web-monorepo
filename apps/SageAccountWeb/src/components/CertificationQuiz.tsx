@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import Quiz from 'synapse-react-client/dist/containers/CertificationQuiz'
+import { SynapseComponents } from 'synapse-react-client'
 import ReturnArrow from '../assets/ReturnArrow.svg'
 
 export const CertificationQuiz = () => {
@@ -12,7 +12,7 @@ export const CertificationQuiz = () => {
           <img className="arrow-icon" src={ReturnArrow} alt="return arrow" />
           Return to Account Settings
         </Link>
-        <Quiz />
+        <SynapseComponents.CertificationQuiz />
       </Container>
     </div>
   )

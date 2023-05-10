@@ -5,12 +5,12 @@ import {
   GENERIC_CARD,
   MEDIUM_USER_CARD,
 } from '../src/lib/utils/SynapseConstants'
-import { Query } from '../src/lib/utils/synapseTypes'
+import { Query } from '@sage-bionetworks/synapse-types'
 import QueryWrapperPlotNav from '../src/lib/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
-} from '../src/lib/utils/synapseTypes/Table/QueryFilter'
+} from '@sage-bionetworks/synapse-types'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',

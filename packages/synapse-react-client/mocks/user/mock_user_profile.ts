@@ -3,7 +3,7 @@ import {
   UserBundle,
   UserGroupHeader,
   UserProfile,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export const MOCK_USER_ID = 999
 export const MOCK_USER_NAME = 'myUserName'

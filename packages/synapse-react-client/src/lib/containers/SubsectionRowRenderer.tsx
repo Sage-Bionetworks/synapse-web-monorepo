@@ -10,7 +10,7 @@ import {
   ColumnTypeEnum,
   QueryBundleRequest,
   RowSet,
-} from '../utils/synapseTypes/Table'
+} from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../utils/SynapseContext'
 import MarkdownSynapse from './markdown/MarkdownSynapse'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'

@@ -8,7 +8,7 @@ import {
   FileHandle,
   FileHandleAssociateType,
   FileHandleAssociation,
-} from '../../utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 
 export type SynapseImageProps = {
   wikiId?: string

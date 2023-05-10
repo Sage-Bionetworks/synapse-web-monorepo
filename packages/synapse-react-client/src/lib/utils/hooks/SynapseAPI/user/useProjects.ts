@@ -7,8 +7,8 @@ import {
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { ProjectHeaderList } from '../../../synapseTypes'
-import { GetProjectsParameters } from '../../../synapseTypes/GetProjectsParams'
+import { ProjectHeaderList } from '@sage-bionetworks/synapse-types'
+import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'
 
 export function useGetProjects(
   params?: GetProjectsParameters,

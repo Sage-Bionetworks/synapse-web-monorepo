@@ -6,7 +6,7 @@ import {
   BatchFileRequest,
   BatchFileResult,
   FileHandle,
-} from '../../../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export function useGetPresignedUrlContent(
   fileHandle: FileHandle,

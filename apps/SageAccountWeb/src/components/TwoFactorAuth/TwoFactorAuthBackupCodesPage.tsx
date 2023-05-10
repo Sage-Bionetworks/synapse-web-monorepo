@@ -1,6 +1,6 @@
 import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import TwoFactorBackupCodes from 'synapse-react-client/dist/containers/auth/TwoFactorBackupCodes'
+import { SynapseComponents } from 'synapse-react-client'
 
 /**
  * Shows a page used to regenerate 2FA backup codes.
@@ -12,7 +12,7 @@ export default function TwoFactorAuthBackupCodesPage() {
   const { search } = useLocation()
   const warn = new URLSearchParams(search).get('warn')
   return (
-    <TwoFactorBackupCodes
+    <SynapseComponents.TwoFactorBackupCodes
       showReplaceOldCodesWarning={warn !== 'false'}
       onClose={() => history.push('/authenticated/myaccount')}
     />

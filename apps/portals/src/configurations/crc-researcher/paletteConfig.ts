@@ -1,5 +1,5 @@
-import { crcResearcherPortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { Palettes } from 'synapse-react-client'
 
-const palette = crcResearcherPortalPalette
+const palette = Palettes.crcResearcherPortalPalette
 
 export default palette

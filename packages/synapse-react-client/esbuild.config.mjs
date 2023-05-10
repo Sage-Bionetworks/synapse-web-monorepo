@@ -1,8 +1,10 @@
 import svgrPlugin from 'esbuild-plugin-svgr'
 import { sassPlugin } from 'esbuild-sass-plugin'
 import ESBuildNodePolyfillsPlugin from 'esbuild-plugin-node-polyfills'
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import esbuild from 'esbuild'
 import GlobalsPlugin from 'esbuild-plugin-globals'
+import packageJson from "./package.json" assert { type: "json" };
 
 const globals = {
   react: 'React',
@@ -34,12 +36,10 @@ const globals = {
 }
 
 /** @type {import('esbuild').BuildOptions} */
-const esBuildOptions = {
-  entryPoints: ['src/lib/umd.index.ts'],
+const esBuildSharedOptions = {
   bundle: true,
   platform: 'browser',
   target: 'es2015',
-  globalName: 'SRC',
   tsconfig: 'tsconfig.json',
   plugins: [
     sassPlugin({
@@ -50,64 +50,94 @@ const esBuildOptions = {
       namedExport: 'ReactComponent',
       exportType: 'named',
     }),
-    ESBuildNodePolyfillsPlugin,
-    GlobalsPlugin(globals),
+    NodeModulesPolyfillPlugin(),
   ],
-  external: [
-    '^react$', // Use regex ^$ because we do want to bundle 'react/jsx-transform'
-    'react-dom',
-    'react-router',
-    'react-router-dom',
-    'react-measure',
-    'react-bootstrap',
-    'react-plotly.js/factory',
-    'plotly.js-basic-dist',
-    '@rjsf/core',
-    'katex',
-    'rss-parser',
-    'react-mailchimp-subscribe',
-    'markdownit',
-    'markdownitSynapse',
-    'markdownitSub',
-    'markdownitSup',
-    'markdownitCentertext',
-    'markdownitSynapseHeading',
-    'markdownitSynapseTable',
-    'markdownitStrikethroughAlt',
-    'markdownitContainer',
-    'markdownitEmphasisAlt',
-    'markdownitInlineComments',
-    'markdownitBr',
-    'markdownitMath',
-    'react-transition-group',
-    'universal-cookie',
-  ],
+    packages: "external",
+  // external: [
+      // ...Object.keys(packageJson.dependencies),
+    // '^react$', // Use regex ^$ because we do want to bundle 'react/jsx-transform'
+    // 'react-dom',
+    // 'react-router',
+    // 'react-router-dom',
+    // 'react-measure',
+    // 'react-bootstrap',
+    // 'react-plotly.js/factory',
+    // 'plotly.js-basic-dist',
+    // '@rjsf/core',
+    // 'katex',
+    // 'rss-parser',
+    // 'react-mailchimp-subscribe',
+    // 'markdownit',
+    // 'markdownitSynapse',
+    // 'markdownitSub',
+    // 'markdownitSup',
+    // 'markdownitCentertext',
+    // 'markdownitSynapseHeading',
+    // 'markdownitSynapseTable',
+    // 'markdownitStrikethroughAlt',
+    // 'markdownitContainer',
+    // 'markdownitEmphasisAlt',
+    // 'markdownitInlineComments',
+    // 'markdownitBr',
+    // 'markdownitMath',
+    // 'react-transition-group',
+    // 'universal-cookie',
+  // ],
 }
 
-// Development build
-esbuild.build({
-  ...esBuildOptions,
-  minify: false,
-  sourcemap: true,
-  outfile: './dist/umd/synapse-react-client.development.js',
+/** @type {import('esbuild').BuildOptions} */
+const esBuildUmdOptions = {
+  ...esBuildSharedOptions,
+  entryPoints: ['src/lib/umd.index.ts'],
+  globalName: 'SRC',
+  plugins: [...esBuildSharedOptions.plugins, GlobalsPlugin(globals)],
+}
+
+const esBuildCommonJsOptions = {
+  ...esBuildSharedOptions,
+
+  entryPoints: ['src/lib/index.ts'],
+  format: 'cjs',
+}
+
+const esBuildEsmOptions = {
+  ...esBuildCommonJsOptions,
+  format: 'esm',
+}
+
+const options = {
+  umd: esBuildUmdOptions,
+  cjs: esBuildCommonJsOptions,
+  esm: esBuildEsmOptions,
+}
+
+Object.keys(options).forEach(key => {
+  const option = options[key]
+  // Development build
+  esbuild.build({
+    ...option,
+    minify: false,
+    sourcemap: true,
+    outfile: `./dist/${key}/synapse-react-client.development.js`,
+  })
+
+  // Production build
+  esbuild
+    .build({
+      ...option,
+      minify: true,
+      sourcemap: false,
+      metafile: true,
+      outfile: `./dist/${key}/synapse-react-client.production.min.js`,
+    })
+    .then(result => {
+      const metafile = result.metafile
+      const outputMb = Object.entries(metafile.outputs).forEach(
+        ([key, value]) => {
+          console.log(`${key}: ${(value.bytes / 1024 / 1024).toFixed(2)} MB`)
+        },
+      )
+
+      // TODO: Use the metafile to determine the impact of each bundled dependency.
+    })
 })
-
-// Production build
-esbuild
-  .build({
-    ...esBuildOptions,
-    minify: true,
-    sourcemap: false,
-    metafile: true,
-    outfile: './dist/umd/synapse-react-client.production.min.js',
-  })
-  .then(result => {
-    const metafile = result.metafile
-    const outputMb = Object.entries(metafile.outputs).forEach(
-      ([key, value]) => {
-        console.log(`${key}: ${(value.bytes / 1024 / 1024).toFixed(2)} MB`)
-      },
-    )
-
-    // TODO: Use the metafile to determine the impact of each bundled dependency.
-  })

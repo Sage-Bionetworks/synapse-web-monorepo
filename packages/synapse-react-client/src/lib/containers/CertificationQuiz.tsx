@@ -5,11 +5,11 @@ import {
   PassingRecord,
   QuizResponse,
   Quiz,
-} from '../utils/synapseTypes/CertificationQuiz/Quiz'
+} from '@sage-bionetworks/synapse-types'
 import {
   MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
   QuestionResponse,
-} from '../utils/synapseTypes/CertificationQuiz/Questions'
+} from '@sage-bionetworks/synapse-types'
 import { displayToast } from './ToastMessage'
 import { Button, Link } from '@mui/material'
 import { MarkdownPopover } from './MarkdownPopover'

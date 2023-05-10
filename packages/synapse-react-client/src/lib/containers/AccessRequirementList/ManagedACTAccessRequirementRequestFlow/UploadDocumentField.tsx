@@ -1,7 +1,7 @@
 import {
   FileHandleAssociation,
   UploadCallbackResp,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { useGetFileBatch } from '../../../utils/hooks/SynapseAPI/file/useFiles'
 import { Box, Button } from '@mui/material'
 import FileUpload from '../../FileUpload'

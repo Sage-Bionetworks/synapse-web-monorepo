@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
-import { SelectColumn } from '../../../utils/synapseTypes/'
+import { SelectColumn } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 

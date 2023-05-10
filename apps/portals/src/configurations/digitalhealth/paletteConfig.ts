@@ -1,5 +1,5 @@
-import { digitalHealthPortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { Palettes } from 'synapse-react-client'
 
-const palette = digitalHealthPortalPalette
+const palette = Palettes.digitalHealthPortalPalette
 
 export default palette

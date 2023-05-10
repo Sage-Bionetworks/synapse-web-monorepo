@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { ReactCookieProps, withCookies } from 'react-cookie'
-import FullWidthAlert from 'synapse-react-client/dist/containers/FullWidthAlert'
+import { SynapseComponents } from 'synapse-react-client'
 
 export type CookiesNotificationToken = {
   hasAgreedToCookies: boolean
@@ -45,7 +45,7 @@ class CookiesNotification extends React.Component<
     return this.state.hasAgreedToCookies ? (
       false
     ) : (
-      <FullWidthAlert
+      <SynapseComponents.FullWidthAlert
         variant="info"
         title="Our site uses cookies."
         description="This website uses cookies to enhance your experience and to analyze our traffic. Using this website means that you agree with our cookie policy."

@@ -20,7 +20,7 @@ import {
 } from '../../../../src/lib/containers/evaluation_queues/input_models/models'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../src/lib/utils/'
-import { EvaluationRound } from '../../../../src/lib/utils/synapseTypes'
+import { EvaluationRound } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 
 dayjs.extend(duration)

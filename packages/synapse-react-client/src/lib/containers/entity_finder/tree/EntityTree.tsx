@@ -17,8 +17,12 @@ import {
   useGetFavorites,
   useGetProjectsInfinite,
 } from '../../../utils/hooks/SynapseAPI'
-import { ALL_ENTITY_BUNDLE_FIELDS } from '../../../utils/SynapseConstants'
-import { EntityPath, EntityType, Reference } from '../../../utils/synapseTypes'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  EntityPath,
+  EntityType,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { BreadcrumbItem } from '../Breadcrumbs'
 import { toEntityHeader } from '../details/configurations/ProjectListDetails'

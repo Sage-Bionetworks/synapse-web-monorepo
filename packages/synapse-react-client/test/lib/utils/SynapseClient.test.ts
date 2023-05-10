@@ -10,12 +10,12 @@ import { NETWORK_UNAVAILABLE_MESSAGE } from '../../../src/lib/utils/SynapseConst
 import {
   AsynchronousJobStatus,
   PaginatedResults,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { rest, server } from '../../../mocks/msw/server'
 import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
-} from '../../../src/lib/utils/synapseTypes/ErrorResponse'
+} from '@sage-bionetworks/synapse-types'
 
 describe('SynapseClient tests', () => {
   describe('SynapseClient integration tests', () => {

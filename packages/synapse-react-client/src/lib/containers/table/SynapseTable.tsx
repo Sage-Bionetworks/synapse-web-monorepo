@@ -27,7 +27,7 @@ import {
   SortItem,
   UserGroupHeader,
   UserProfile,
-} from '../../utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { LabelLinkConfig } from '../CardContainerLogic'
 import DirectDownload from '../DirectDownload'

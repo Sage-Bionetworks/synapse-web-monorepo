@@ -7,7 +7,7 @@ import {
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { AccessTokenRecordList } from '../../../synapseTypes/AccessToken/AccessTokenRecord'
+import { AccessTokenRecordList } from '@sage-bionetworks/synapse-types'
 
 export function useGetPersonalAccessTokensInfinite(
   options?: UseInfiniteQueryOptions<AccessTokenRecordList, SynapseClientError>,

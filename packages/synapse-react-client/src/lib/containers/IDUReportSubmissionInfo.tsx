@@ -1,6 +1,6 @@
 import React from 'react'
 import { Skeleton } from '@mui/material'
-import { SubmissionInfo } from '../utils/synapseTypes/SubmissionInfo'
+import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import UserCard from './UserCard'
 import { formatDate } from '../utils/functions/DateFormatter'

@@ -2,7 +2,7 @@ import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { TYPE_FILTER, UserGroupHeader } from '../../../synapseTypes'
+import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 
 export function useGetUserGroupHeader(
   principalId: string,

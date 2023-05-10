@@ -5,7 +5,7 @@ import { useSynapseContext } from '../../../SynapseContext'
 import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchResponse,
-} from '../../../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export function useSearchAccessApprovalsInfinite(
   params: AccessApprovalSearchRequest,

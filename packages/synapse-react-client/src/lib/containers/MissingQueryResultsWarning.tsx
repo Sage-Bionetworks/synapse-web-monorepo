@@ -3,7 +3,7 @@ import React from 'react'
 import { SynapseConstants } from '../utils/'
 import { isDataset } from '../utils/functions/EntityTypeUtils'
 import useGetQueryResultBundle from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
-import { QueryBundleRequest, Table } from '../utils/synapseTypes/'
+import { QueryBundleRequest, Table } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import { HelpPopover } from './HelpPopover'
 

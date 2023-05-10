@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI/entity/useGetEntityHeaders'
-import { EntityHeader } from '../../utils/synapseTypes'
+import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { Icon } from '../row_renderers/utils'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'

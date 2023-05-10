@@ -1,7 +1,7 @@
 import React from 'react'
 import { convertToConcreteEntityType } from '../../../../utils/functions/EntityTypeUtils'
 import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/search/useSearch'
-import { Hit, SearchQuery } from '../../../../utils/synapseTypes/Search'
+import { Hit, SearchQuery } from '@sage-bionetworks/synapse-types'
 import { EntityHeaderFromHit } from '../../EntityFinderHeader'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'

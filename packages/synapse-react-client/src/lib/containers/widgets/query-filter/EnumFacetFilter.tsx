@@ -9,12 +9,12 @@ import {
   ColumnTypeEnum,
   Evaluation,
   UserGroupHeader,
-} from '../../../utils/synapseTypes'
-import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
+} from '@sage-bionetworks/synapse-types'
+import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import {
   FacetColumnResultValueCount,
   SelectColumn,
-} from '../../../utils/synapseTypes/Table'
+} from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg'
 import { Checkbox } from '../Checkbox'
 import { FacetFilterHeader } from './FacetFilterHeader'

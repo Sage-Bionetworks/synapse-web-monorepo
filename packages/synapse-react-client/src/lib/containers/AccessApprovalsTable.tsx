@@ -7,7 +7,7 @@ import {
   AccessApprovalSearchSort,
   AccessApprovalSortField,
   Direction,
-} from '../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import UserCard from './UserCard'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'

@@ -24,7 +24,7 @@ import {
   AsyncJobId,
   QueryBundleRequest,
   QueryResultBundle,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 const BIT_TO_FIELD_MAP: Record<number, keyof QueryResultBundle> = {
   [BUNDLE_MASK_QUERY_RESULTS]: 'queryResult',

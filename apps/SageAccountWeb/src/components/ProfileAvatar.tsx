@@ -5,19 +5,17 @@ import { Modal } from 'react-bootstrap'
 import Cropper from 'react-easy-crop'
 import { Area } from 'react-easy-crop/types'
 import Person from '@mui/icons-material/Person'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
-  getFileHandleByIdURL,
-  updateMyUserProfile,
-  uploadFile,
-} from 'synapse-react-client/dist/utils/SynapseClient'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
+  displayToast,
+  SynapseComponents,
+  SynapseContext,
+  SynapseClient,
+} from 'synapse-react-client'
 import {
   FileUploadComplete,
   UserProfile,
-} from 'synapse-react-client/dist/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { getCroppedImg } from './CropImage'
-import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 
 export type ProfileAvatarProps = {
   userProfile?: UserProfile
@@ -26,7 +24,7 @@ export type ProfileAvatarProps = {
 
 export const ProfileAvatar = (props: ProfileAvatarProps) => {
   const { userProfile, onProfileUpdated } = props
-  const { accessToken } = useSynapseContext()
+  const { accessToken } = SynapseContext.useSynapseContext()
   const [profilePicUrl, setProfilePicUrl] = useState<string | undefined>()
   const [image, setImage] = useState<string | undefined>()
   const [croppedArea, setCroppedArea] = useState<Area | undefined>()
@@ -37,7 +35,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
 
   useEffect(() => {
     if (userProfile?.profilePicureFileHandleId) {
-      getFileHandleByIdURL(
+      SynapseClient.getFileHandleByIdURL(
         userProfile?.profilePicureFileHandleId as string,
         accessToken,
       ).then(picUrl => {
@@ -50,7 +48,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     try {
       if (userProfile) {
         userProfile.profilePicureFileHandleId = newFileHandleId as string
-        await updateMyUserProfile(userProfile, accessToken)
+        await SynapseClient.updateMyUserProfile(userProfile, accessToken)
         displayToast('Profile picture has been successfully updated', 'success')
         onProfileUpdated()
       }
@@ -95,7 +93,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
           style={{ display: 'none' }}
         />
         <IconButton sx={uploadButtonStyle} onClick={clickHandler}>
-          <IconSvg icon="edit" wrap={false} />
+          <SynapseComponents.IconSvg icon="edit" wrap={false} />
         </IconButton>
       </>
     )

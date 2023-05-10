@@ -3,10 +3,12 @@ import RedirectDialog, {
 } from './portal-components/RedirectDialog'
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
-import { SynapseClient, SynapseConstants } from 'synapse-react-client'
-import { DOWNLOAD_FILES_MENU_TEXT } from 'synapse-react-client/dist/containers/table/SynapseTableConstants'
+import {
+  SynapseClient,
+  SynapseConstants,
+  SynapseComponents,
+} from 'synapse-react-client'
 import useAnalytics from './useAnalytics'
-import ApplicationSessionManager from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionManager'
 import { useLogInDialogContext } from './LogInDialogContext'
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
@@ -57,7 +59,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
       if (ev.target instanceof HTMLAnchorElement) {
         const anchorElement = ev.target
         isInvokingDownloadTable =
-          anchorElement.text === DOWNLOAD_FILES_MENU_TEXT
+          anchorElement.text === SynapseConstants.DOWNLOAD_FILES_MENU_TEXT
         if (anchorElement.href) {
           const { hostname } = new URL(anchorElement.href)
           if (
@@ -129,7 +131,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
   }, [])
 
   return (
-    <ApplicationSessionManager
+    <SynapseComponents.ApplicationSessionManager
       downloadCartPageUrl={'/DownloadCart'}
       onResetSessionComplete={() => {
         setShowLoginDialog(false)
@@ -142,7 +144,7 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
         }}
         redirectUrl={redirectUrl}
       />
-    </ApplicationSessionManager>
+    </SynapseComponents.ApplicationSessionManager>
   )
 }
 

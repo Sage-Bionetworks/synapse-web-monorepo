@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SynapseVersion } from '../../src/lib/utils/synapseTypes/'
+import { SynapseVersion } from '@sage-bionetworks/synapse-types'
 import { SynapseClient } from '../../src/lib/utils/'
 import Uploader from './Uploader'
 import FileContentDownloadUploadDemo from './FileContentDownloadUploadDemo'

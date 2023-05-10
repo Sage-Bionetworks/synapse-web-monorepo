@@ -4,7 +4,7 @@ import {
   convertToEntityType,
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { EntityHeader } from '../../utils/synapseTypes'
+import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { Tooltip } from '@mui/material'
 import { ProvenanceEntityIcon } from './ProvenanceEntityIcon'
 

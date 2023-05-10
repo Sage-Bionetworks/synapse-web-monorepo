@@ -112,7 +112,7 @@ import Other from '../assets/mui_components/Other'
 import PackagableFile from '../assets/mui_components/PackagableFile'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Rat from '../assets/mui_components/Rat'
-import { EntityType } from '../utils/synapseTypes'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import { SxProps, Tooltip } from '@mui/material'
 import CreateVersion from '../assets/icons/CreateVersion'
 

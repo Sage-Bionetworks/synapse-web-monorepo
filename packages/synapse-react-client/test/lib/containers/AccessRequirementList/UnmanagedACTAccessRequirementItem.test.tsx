@@ -6,7 +6,7 @@ import UnmanagedACTAccessRequirementItem, {
   UnmanagedACTAccessRequirementItemProps,
 } from '../../../../src/lib/containers/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem'
 import { SynapseClient } from '../../../../src/lib'
-import { AccessRequirementStatus } from '../../../../src/lib/utils/synapseTypes'
+import { AccessRequirementStatus } from '@sage-bionetworks/synapse-types'
 import {
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,

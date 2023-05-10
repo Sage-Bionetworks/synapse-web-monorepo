@@ -9,8 +9,8 @@ import Select, {
 import { useSearchUserGroupHeaders } from '../utils/hooks/SynapseAPI'
 import { useDebouncedEffect } from '../utils/hooks/useDebouncedEffect'
 import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
-import { UserGroupHeader } from '../utils/synapseTypes'
-import { TYPE_FILTER } from '../utils/synapseTypes/UserGroupHeader'
+import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
+import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import UserOrTeamBadge from './UserOrTeamBadge'
 
 type UserSearchBoxValueType = {

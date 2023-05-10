@@ -15,7 +15,7 @@ import {
   PaginatedResults,
   ProjectHeader,
   ProjectHeaderList,
-} from '../../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import userEvent from '@testing-library/user-event'
 import * as VirtualizedTreeModule from '../../../../../src/lib/containers/entity_finder/tree/VirtualizedTree'
 import {

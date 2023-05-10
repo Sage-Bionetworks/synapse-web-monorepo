@@ -14,11 +14,11 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../src/lib/utils/functions/getEndpoint'
-import { ACCESS_TYPE } from '../../../../src/lib/utils/synapseTypes'
+import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
-} from '../../../../src/lib/utils/synapseTypes/AccessRequirement/AccessRequirementSearch'
+} from '@sage-bionetworks/synapse-types'
 import mockProjectData from '../../../../mocks/entity/mockProject'
 import { mockSearchResults } from '../../../../mocks/mockAccessRequirements'
 import { rest, server } from '../../../../mocks/msw/server'

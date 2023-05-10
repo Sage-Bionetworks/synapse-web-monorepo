@@ -2,7 +2,7 @@ import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { ChallengeWithProjectHeaderPagedResults } from '../../../synapseTypes/ChallengePagedResults'
+import { ChallengeWithProjectHeaderPagedResults } from '@sage-bionetworks/synapse-types'
 
 export function useGetUserChallengesInfinite(
   userId: string,

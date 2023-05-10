@@ -1,5 +1,5 @@
-import { arkPortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { Palettes } from 'synapse-react-client'
 
-const palette = arkPortalPalette
+const palette = Palettes.arkPortalPalette
 
 export default palette

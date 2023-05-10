@@ -14,7 +14,7 @@ import {
   getEndpoint,
 } from '../../../../src/lib/utils/functions/getEndpoint'
 import { DATA_ACCESS_SUBMISSION_BY_ID } from '../../../../src/lib/utils/APIConstants'
-import { SubmissionState } from '../../../../src/lib/utils/synapseTypes'
+import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import failOnConsoleError from 'jest-fail-on-console'
 
 const props: RejectDataAccessRequestModalProps = {

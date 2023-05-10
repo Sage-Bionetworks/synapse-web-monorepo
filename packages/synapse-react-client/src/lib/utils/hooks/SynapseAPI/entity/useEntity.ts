@@ -25,8 +25,8 @@ import {
   EntityJsonValue,
   EntityPath,
   PaginatedResults,
-} from '../../../synapseTypes'
-import { VersionInfo } from '../../../synapseTypes/VersionInfo'
+} from '@sage-bionetworks/synapse-types'
+import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
 
 export function useGetEntity<T extends Entity>(

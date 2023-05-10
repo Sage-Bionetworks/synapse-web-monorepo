@@ -3,7 +3,7 @@ import {
   commandList,
   CommandListType,
   MARKDOWN_COMMANDS_DATA,
-} from '../../utils/synapseTypes/MarkdownCommands'
+} from '@sage-bionetworks/synapse-types'
 import IconSvg from '../IconSvg'
 import MarkdownSynapse from './MarkdownSynapse'
 import { UserMentionModal } from './UserMentionModal'

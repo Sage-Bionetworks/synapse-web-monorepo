@@ -1,5 +1,5 @@
 import { SynapseClient } from '../../utils'
-import { FileEntity } from '../../utils/synapseTypes'
+import { FileEntity } from '@sage-bionetworks/synapse-types'
 
 //gets a file entity with content
 export async function getFileEntityData(

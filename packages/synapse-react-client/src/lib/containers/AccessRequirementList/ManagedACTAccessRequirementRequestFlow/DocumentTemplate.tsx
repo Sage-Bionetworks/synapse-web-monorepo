@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import DirectDownloadButton from '../../DirectDownloadButton'
-import { FileHandleAssociation } from '../../../utils/synapseTypes'
+import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg'
 import React from 'react'
 import { useGetFileBatch } from '../../../utils/hooks/SynapseAPI/file/useFiles'

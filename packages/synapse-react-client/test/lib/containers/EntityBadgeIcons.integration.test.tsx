@@ -23,7 +23,7 @@ import {
   ANONYMOUS_PRINCIPAL_ID,
   AUTHENTICATED_PRINCIPAL_ID,
 } from '../../../src/lib/utils/SynapseConstants'
-import { EntityType } from '../../../src/lib/utils/synapseTypes'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import {
   mockSchemaBinding,
   mockSchemaValidationResults,

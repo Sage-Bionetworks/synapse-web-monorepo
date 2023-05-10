@@ -10,7 +10,7 @@ import {
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { VersionableEntity } from '../../../utils/synapseTypes'
+import { VersionableEntity } from '@sage-bionetworks/synapse-types'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { displayToast } from '../../ToastMessage'
 import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'

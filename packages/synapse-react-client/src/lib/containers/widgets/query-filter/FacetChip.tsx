@@ -1,5 +1,5 @@
 import React from 'react'
-import { FacetColumnResult } from '../../../utils/synapseTypes'
+import { FacetColumnResult } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 

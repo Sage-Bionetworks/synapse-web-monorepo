@@ -18,7 +18,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
-} from '../../../src/lib/utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 
 function renderComponent(
   props: TotalQueryResultsProps,

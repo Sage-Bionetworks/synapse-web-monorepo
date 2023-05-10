@@ -10,11 +10,8 @@ import {
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,
   SubmissionSearchResponse,
-} from '../../../../src/lib/utils/synapseTypes/AccessSubmission'
-import {
-  AccessType,
-  SubmissionState,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
+import { AccessType, SubmissionState } from '@sage-bionetworks/synapse-types'
 import { rest, server } from '../../../../mocks/msw/server'
 import {
   BackendDestinationEnum,

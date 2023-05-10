@@ -9,7 +9,7 @@ import {
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
-} from '../../../../src/lib/utils/synapseTypes/Table/QueryFilter'
+} from '@sage-bionetworks/synapse-types'
 
 describe('parseEntityIdFromSqlStatement', () => {
   it('should get entityId correctly', () => {

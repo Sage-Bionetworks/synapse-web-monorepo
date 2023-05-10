@@ -6,7 +6,7 @@ import {
   ActionRequiredCount,
   MeetAccessRequirement,
   RequestDownload,
-} from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
+} from '@sage-bionetworks/synapse-types'
 import {
   LoadingAccessRequirementCard,
   MeetAccessRequirementCard,

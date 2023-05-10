@@ -2,15 +2,14 @@ import React, { FunctionComponent, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import _ from 'lodash-es'
-import { SynapseConstants } from 'synapse-react-client'
+import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import {
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
-} from 'synapse-react-client/dist/utils/synapseTypes'
-import { getFullQueryTableResults } from 'synapse-react-client/dist/utils/SynapseClient'
-import { GraphItem } from 'synapse-react-client/dist/containers/widgets/themes-plot/types'
-import { resultToJson } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
+} from '@sage-bionetworks/synapse-types'
+import type { GraphItem } from 'synapse-react-client/dist/containers/widgets/themes-plot/types'
+import type { resultToJson } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
 import { PlotParams } from 'react-plotly.js'
 
 const Plot = createPlotlyComponent(Plotly)
@@ -124,15 +123,15 @@ function getLayout(
   layoutConfig: Partial<Plotly.LayoutAxis>,
   totalNumberOfResults: number,
 ): Partial<Plotly.LayoutAxis> {
-  const layout = _.cloneDeep(layoutConfig);
-  (layout as any).xaxis = {
+  const layout = _.cloneDeep(layoutConfig)
+  ;(layout as any).xaxis = {
     visible: false,
   }
   layout.title = {
     text: `Total surveys received: ${totalNumberOfResults}`,
-  };
-  (layout as any).showlegend = false;
-  (layout as any).height = 240
+  }
+  ;(layout as any).showlegend = false
+  ;(layout as any).height = 240
   return layout
 }
 
@@ -149,7 +148,7 @@ export function fetchData(token: string): Promise<RowSet> {
     },
   }
 
-  return getFullQueryTableResults(queryRequest, token).then(
+  return SynapseClient.getFullQueryTableResults(queryRequest, token).then(
     (data: QueryResultBundle) => {
       return data.queryResult!.queryResults
     },

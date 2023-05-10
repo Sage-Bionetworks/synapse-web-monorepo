@@ -3,10 +3,9 @@ import MarkdownSynapse from '../../markdown/MarkdownSynapse'
 import {
   AccessApproval,
   ApprovalState,
-  isTermsOfUseAccessRequirement,
   SelfSignAccessRequirement,
   TermsOfUseAccessRequirement,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
 import {
@@ -18,6 +17,7 @@ import {
 } from '../../../utils/hooks/SynapseAPI'
 import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import { isTermsOfUseAccessRequirement } from '../../../utils/types/IsType'
 
 export type SelfSignAccessRequirementItemProps = {
   accessRequirement: SelfSignAccessRequirement | TermsOfUseAccessRequirement

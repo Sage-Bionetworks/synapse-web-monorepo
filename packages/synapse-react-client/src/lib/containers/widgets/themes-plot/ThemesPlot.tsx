@@ -8,7 +8,7 @@ import {
   QueryResultBundle,
   QueryBundleRequest,
   RowSet,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { resultToJson } from '../../../utils/functions/sqlFunctions'
 import {
   GraphItem,

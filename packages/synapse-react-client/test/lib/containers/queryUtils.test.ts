@@ -1,7 +1,7 @@
 import { getNextPageOfData } from '../../../src/lib/utils/functions'
 import { SynapseConstants } from '../../../src/lib/utils'
 import syn16787123Json from '../../../mocks/query/syn16787123'
-import { QueryResultBundle } from 'src/src/lib/utils/synapseTypes/Table/QueryResultBundle.js'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
 import {
   isFacetAvailable,
@@ -12,7 +12,7 @@ import {
   FacetColumnResult,
   FacetColumnResultValues,
   SelectColumn,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 describe('get next page of data', () => {
   const sql = 'SELECT * FROM syn16787123'

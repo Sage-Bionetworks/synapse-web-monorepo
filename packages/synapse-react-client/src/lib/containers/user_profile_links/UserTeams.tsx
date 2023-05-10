@@ -3,7 +3,7 @@ import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserTeamsInfinite } from '../../utils/hooks/SynapseAPI/user/useGetUserTeams'
-import { Team } from '../../utils/synapseTypes/Team'
+import { Team } from '@sage-bionetworks/synapse-types'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 export type UserTeamsProps = {

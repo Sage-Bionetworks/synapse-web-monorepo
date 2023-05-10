@@ -7,7 +7,7 @@ import {
   AccessType,
   TYPE_FILTER,
   UserGroupHeader,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg'
 import { RadioGroup } from '../../widgets/RadioGroup'
 import { useGetCurrentUserProfile } from '../../../utils/hooks/SynapseAPI'

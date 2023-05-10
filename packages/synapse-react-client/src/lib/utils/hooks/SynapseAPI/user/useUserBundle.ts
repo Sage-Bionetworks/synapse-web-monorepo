@@ -6,7 +6,7 @@ import {
   NotificationEmail,
   UserBundle,
   UserProfile,
-} from '../../../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
   USER_BUNDLE_MASK_IS_AR_REVIEWER,
@@ -19,7 +19,7 @@ import {
 import {
   PrincipalAliasRequest,
   PrincipalAliasResponse,
-} from '../../../synapseTypes/Principal/PrincipalServices'
+} from '@sage-bionetworks/synapse-types'
 
 export function useGetNotificationEmail(
   options?: UseQueryOptions<NotificationEmail, SynapseClientError>,

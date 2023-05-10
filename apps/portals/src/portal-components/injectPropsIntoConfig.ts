@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash'
-import { MarkdownSynapseProps } from 'synapse-react-client/dist/containers/markdown/MarkdownSynapse'
+import type { MarkdownSynapseProps } from 'synapse-react-client/dist/containers/markdown/MarkdownSynapse'
 import { RowSynapseConfig } from '../types/portal-util-types'
 /**
  * Given a value and synapse config, returns the props with the value injected into the synapse object accordingly.

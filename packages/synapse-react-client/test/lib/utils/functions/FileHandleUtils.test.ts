@@ -11,7 +11,7 @@ import {
   ProxyFileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   S3FileHandle,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   ExternalGoogleCloudUploadDestination,
   ExternalObjectStoreUploadDestination,
@@ -19,7 +19,7 @@ import {
   ExternalUploadDestination,
   S3UploadDestination,
   UploadType,
-} from '../../../../src/lib/utils/synapseTypes/File/UploadDestination'
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../../../../mocks/user/mock_user_profile'
 import {
   getDataFileHandle,

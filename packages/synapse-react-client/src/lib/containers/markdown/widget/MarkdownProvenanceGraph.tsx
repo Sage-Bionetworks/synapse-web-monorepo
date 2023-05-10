@@ -1,5 +1,5 @@
 import React from 'react'
-import { Reference } from '../../../utils/synapseTypes'
+import { Reference } from '@sage-bionetworks/synapse-types'
 import ProvenanceGraph from '../../provenance/ProvenanceGraph'
 
 export type MarkdownProvenanceGraphProps = {

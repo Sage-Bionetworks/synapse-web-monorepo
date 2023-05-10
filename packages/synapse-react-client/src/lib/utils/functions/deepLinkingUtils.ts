@@ -1,5 +1,5 @@
-import { QueryBundleRequest } from '../synapseTypes/Table/QueryBundleRequest'
-import { Query } from '../synapseTypes'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { Query } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '..'
 import { parseEntityIdFromSqlStatement } from './sqlFunctions'
 

@@ -4,6 +4,7 @@ import IconSvg from '../IconSvg'
 import React from 'react'
 import { SynapseClient } from '../../utils'
 import { SynapseClientError } from '../../utils/SynapseClientError'
+import { OAUTH2_PROVIDERS } from '../../utils/SynapseConstants'
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
@@ -12,10 +13,6 @@ type AuthenticationMethodSelectionProps = {
   onSelectUsernameAndPassword: () => void
 }
 
-export const PROVIDERS = {
-  GOOGLE: 'GOOGLE_OAUTH_2_0',
-  ORCID: 'ORCID',
-}
 /**
  *  To support Google SSO in your portal, you must add your domain to the Authorized Redirect URIs for Synapse authentication.
  *  This can be done by visiting https://sagebionetworks.jira.com/servicedesk/customer/portal/9 to set up a collaboration.
@@ -33,9 +30,9 @@ export default function AuthenticationMethodSelection(
 
     event.preventDefault()
     const redirectUrl = ssoRedirectUrl
-      ? `${ssoRedirectUrl}${PROVIDERS.GOOGLE}`
-      : `${SynapseClient.getRootURL()}?provider=${PROVIDERS.GOOGLE}`
-    SynapseClient.oAuthUrlRequest(PROVIDERS.GOOGLE, redirectUrl)
+      ? `${ssoRedirectUrl}${OAUTH2_PROVIDERS.GOOGLE}`
+      : `${SynapseClient.getRootURL()}?provider=${OAUTH2_PROVIDERS.GOOGLE}`
+    SynapseClient.oAuthUrlRequest(OAUTH2_PROVIDERS.GOOGLE, redirectUrl)
       .then(data => {
         // Send the user to the authorization URL
         window.location = data.authorizationUrl as unknown as Location

@@ -10,16 +10,16 @@ import {
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { Submission } from '../../../synapseTypes/AccessRequirement/Submission'
-import { SubmissionStateChangeRequest } from '../../../synapseTypes/AccessRequirement/SubmissionStateChangeRequest'
+import { Submission } from '@sage-bionetworks/synapse-types'
+import { SubmissionStateChangeRequest } from '@sage-bionetworks/synapse-types'
 import {
   SubmissionSearchRequest,
   SubmissionSearchResponse,
-} from '../../../synapseTypes/AccessSubmission'
+} from '@sage-bionetworks/synapse-types'
 import {
   ACTSubmissionStatus,
   CreateSubmissionRequest,
-} from '../../../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export default function useGetDataAccessSubmission(
   submissionId: string | number,

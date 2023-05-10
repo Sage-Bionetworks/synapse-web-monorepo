@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { FormGroup, FormControl, FormLabel, Button } from 'react-bootstrap'
-import { ChangePasswordWithCurrentPassword } from '../utils/synapseTypes/ChangePasswordRequests'
+import { ChangePasswordWithCurrentPassword } from '@sage-bionetworks/synapse-types'
 import { displayToast } from './ToastMessage'
 import { SynapseClient } from '../utils'
 import { useSynapseContext } from '../utils/SynapseContext'
-import { UserProfile } from '../utils/synapseTypes'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
 
 const ChangePassword: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()

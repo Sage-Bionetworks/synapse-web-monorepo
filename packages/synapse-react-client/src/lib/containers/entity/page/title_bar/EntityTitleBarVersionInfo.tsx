@@ -7,7 +7,7 @@ import {
 import { truncateString } from '../../../../utils/functions/StringUtils'
 import { Box, Link, Tooltip, Typography } from '@mui/material'
 import React from 'react'
-import { Entity } from '../../../../utils/synapseTypes'
+import { Entity } from '@sage-bionetworks/synapse-types'
 import { ActionConfiguration } from '../action_menu/EntityActionMenu'
 
 const MAX_VERSION_LABEL_LENGTH = 50

@@ -5,7 +5,7 @@ import React from 'react'
 import { EvaluationRoundEditorList } from '../../../../src/lib/containers/evaluation_queues/EvaluationRoundEditorList'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../src/lib/utils'
-import { EvaluationRound } from '../../../../src/lib/utils/synapseTypes'
+import { EvaluationRound } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 
 describe('test EvaluationRoundEditorList', () => {

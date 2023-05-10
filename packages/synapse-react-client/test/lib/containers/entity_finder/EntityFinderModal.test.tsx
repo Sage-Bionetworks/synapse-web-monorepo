@@ -10,7 +10,7 @@ import {
 } from '../../../../src/lib/containers/entity_finder/EntityFinderModal'
 import { FinderScope } from '../../../../src/lib/containers/entity_finder/tree/EntityTree'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { EntityType, Reference } from '../../../../src/lib/utils/synapseTypes'
+import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 
 let capturedOnSelectionChange: ((selected: Reference[]) => void) | undefined
 

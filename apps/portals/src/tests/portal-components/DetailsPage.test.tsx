@@ -15,12 +15,12 @@ import {
   PaginatedResults,
   QueryBundleRequest,
   QueryResultBundle,
-} from 'synapse-react-client/dist/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import * as SynapseComponentModule from '../../SynapseComponent'
 import { MemoryRouter } from 'react-router-dom'
-import * as SynapseClient from 'synapse-react-client/dist/utils/SynapseClient'
-import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
-import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
+import * as SynapseClient from 'synapse-react-client'
+import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
+import FullContextProvider from 'synapse-react-client'
 import { vi, describe, it, expect } from 'vitest'
 
 function renderWithContext(component) {

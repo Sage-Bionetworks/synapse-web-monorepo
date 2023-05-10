@@ -11,14 +11,14 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../src/lib/utils/functions/getEndpoint'
-import { PaginatedResults } from '../../../../src/lib/utils/synapseTypes'
-import { DiscussionThreadBundle } from '../../../../src/lib/utils/synapseTypes/DiscussionBundle'
+import { PaginatedResults } from '@sage-bionetworks/synapse-types'
+import { DiscussionThreadBundle } from '@sage-bionetworks/synapse-types'
 import {
   SubscriptionObjectType,
   Topic,
   SubscriptionPagedResults,
   SubscriberPagedResults,
-} from '../../../../src/lib/utils/synapseTypes/Subscription'
+} from '@sage-bionetworks/synapse-types'
 import {
   mockDiscussionThreadBundle,
   mockDiscussionThreadBundle2,
@@ -26,7 +26,7 @@ import {
 import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../../mocks/msw/server'
 import { SynapseClient } from '../../../../src/lib/utils'
-import { PaginatedIds } from '../../../../src/lib/utils/synapseTypes/PaginatedIds'
+import { PaginatedIds } from '@sage-bionetworks/synapse-types'
 import failOnConsole from 'jest-fail-on-console'
 
 const MOCK_FORUM_ID = 'syn123'

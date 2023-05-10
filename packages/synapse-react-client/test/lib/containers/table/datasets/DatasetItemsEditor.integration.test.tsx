@@ -26,7 +26,7 @@ import {
   EntityRef,
   EntityType,
   Reference,
-} from '../../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import mockDatasetEntityData from '../../../../../mocks/entity/mockDataset'
 import mockDatasetCollectionData from '../../../../../mocks/entity/mockDatasetCollection'
 import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'

@@ -6,7 +6,7 @@ import {
   ListRequest,
   ListResponse,
   StatusEnum,
-} from '../../../src/lib/utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 import * as React from 'react'
 import { TokenContext } from '../App'
 

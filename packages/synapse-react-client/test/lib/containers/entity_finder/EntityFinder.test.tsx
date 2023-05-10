@@ -19,7 +19,7 @@ import {
   EntityType,
   PaginatedResults,
   Reference,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   MOCK_ACCESS_TOKEN,
   SynapseTestContext,

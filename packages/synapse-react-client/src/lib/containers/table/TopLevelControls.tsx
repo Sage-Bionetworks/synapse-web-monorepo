@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash-es'
 import React, { useMemo } from 'react'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
-import { Query, QueryResultBundle } from '../../utils/synapseTypes'
+import { Query, QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import {
   TopLevelControlsState,
   useQueryVisualizationContext,

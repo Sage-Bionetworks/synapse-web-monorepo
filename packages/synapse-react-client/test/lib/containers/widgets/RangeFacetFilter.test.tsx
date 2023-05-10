@@ -13,7 +13,7 @@ import {
   ColumnModel,
   ColumnTypeEnum,
   FacetColumnResultRange,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { QueryVisualizationContextProvider } from '../../../../src/lib/containers/QueryVisualizationWrapper'
 
 let capturedOnChange:

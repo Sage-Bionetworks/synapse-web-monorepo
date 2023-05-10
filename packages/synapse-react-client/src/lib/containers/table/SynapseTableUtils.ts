@@ -4,7 +4,7 @@ import {
   QueryResultBundle,
   UserGroupHeader,
   UserProfile,
-} from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export const getColumnIndicesWithType = (
   data: QueryResultBundle | undefined,

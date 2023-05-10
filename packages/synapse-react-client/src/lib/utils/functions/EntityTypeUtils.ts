@@ -24,14 +24,14 @@ import {
   VersionableEntity,
   View,
   VIEW_CONCRETE_TYPE_VALUES,
-} from '../synapseTypes'
-import { Hit } from '../synapseTypes/Search'
+} from '@sage-bionetworks/synapse-types'
+import { Hit } from '@sage-bionetworks/synapse-types'
 import {
   MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
   MaterializedView,
-} from '../synapseTypes/Table/MaterializedView'
-import { isTypeViaConcreteTypeFactory } from './TypeUtils'
-import { DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE } from '../synapseTypes/docker/DockerRepository'
+} from '@sage-bionetworks/synapse-types'
+import { DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
+import { isTypeViaConcreteTypeFactory } from '../types/IsType'
 
 export function getEntityTypeFromHeader(
   header:

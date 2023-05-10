@@ -8,7 +8,7 @@ import {
   EntityChildrenRequest,
   EntityType,
   ProjectHeaderList,
-} from '../../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
 import { SynapseContextProvider } from '../../../../../src/lib/utils/SynapseContext'

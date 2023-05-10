@@ -27,7 +27,7 @@ import selectEvent from 'react-select-event'
 import { getOptionLabel } from '../../../../src/lib/containers/dataaccess/AccessRequirementSearchBox'
 import * as AccessApprovalsTableModule from '../../../../src/lib/containers/AccessApprovalsTable'
 import * as AccessRequestSubmissionTableModule from '../../../../src/lib/containers/AccessRequestSubmissionTable'
-import { UserBundle } from '../../../../src/lib/utils/synapseTypes'
+import { UserBundle } from '@sage-bionetworks/synapse-types'
 const APPROVAL_TABLE_TEST_ID = 'AccessApprovalTableTestId'
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'
 

@@ -4,7 +4,7 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
   SubmissionInfoPage,
   SubmissionInfoPageRequest,
-} from '../../../src/lib/utils/synapseTypes/SubmissionInfo'
+} from '@sage-bionetworks/synapse-types'
 import IDUReport from '../../../src/lib/containers/IDUReport'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {

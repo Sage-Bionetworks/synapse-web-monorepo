@@ -7,7 +7,7 @@ import {
   DownloadFromTableResult,
   SortItem,
   QueryBundleRequest,
-} from '../utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 
 import {
   csvOption,

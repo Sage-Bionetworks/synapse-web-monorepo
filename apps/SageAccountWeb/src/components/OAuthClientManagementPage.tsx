@@ -3,7 +3,7 @@ import { SourceAppLogo } from './SourceApp'
 import { StyledOuterContainer } from './StyledComponents'
 import { Box, Paper, Typography } from '@mui/material'
 import { BackButton } from './BackButton'
-import { OAuthManagement } from 'synapse-react-client/dist/containers/oauth/OAuthManagement'
+import { SynapseComponents } from 'synapse-react-client'
 
 export const OAuthClientManagementPage = () => {
   return (
@@ -31,7 +31,7 @@ export const OAuthClientManagementPage = () => {
             OAuth Clients can be created to develop applications that use
             Synapse as an identity provider.
           </Typography>
-          <OAuthManagement />
+          <SynapseComponents.OAuthManagement />
         </Box>
       </Paper>
     </StyledOuterContainer>

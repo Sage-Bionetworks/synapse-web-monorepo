@@ -1,4 +1,4 @@
-import { Evaluation } from '../../src/lib/utils/synapseTypes'
+import { Evaluation } from '@sage-bionetworks/synapse-types'
 
 export const MOCK_EVALUATION_ID = '9614712'
 export const MOCK_EVALUATION_ETAG = 'a2b871cb-faa4-471a-8c23-b917c77fecb2'

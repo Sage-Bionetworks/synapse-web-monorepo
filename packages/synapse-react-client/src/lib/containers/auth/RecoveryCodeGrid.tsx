@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import ConditionalWrapper from '../utils/ConditionalWrapper'
 import Skeleton from '@mui/material/Skeleton'
 import React from 'react'
-import { TwoFactorAuthRecoveryCodes } from '../../utils/synapseTypes/TwoFactorAuthRecoveryCodes'
+import { TwoFactorAuthRecoveryCodes } from '@sage-bionetworks/synapse-types'
 
 const DEFAULT_RECOVERY_CODE_COUNT = 10
 

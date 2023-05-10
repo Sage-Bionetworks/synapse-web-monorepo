@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useGetAccessRequirements } from '../../utils/hooks/SynapseAPI/dataaccess/useAccessRequirements'
-import { SelfSignAccessRequirement } from '../../utils/synapseTypes'
+import { SelfSignAccessRequirement } from '@sage-bionetworks/synapse-types'
 import { Button } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
 import {

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import FeaturedToolsList from '../../../../../src/lib/containers/home_page/featured_tools/FeaturedToolsList'
-import { QueryResultBundle } from '../../../../../src/lib/utils/synapseTypes/'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import syn26344826Json from '../../../../../mocks/query/syn26344826.json'
 import { render } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'

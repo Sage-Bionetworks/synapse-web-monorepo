@@ -6,7 +6,7 @@ import { getFullQueryTableResults } from '../../utils/SynapseClient'
 import {
   QueryResultBundle,
   QueryBundleRequest,
-} from '../../utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
 import { SynapseContext } from '../../utils/SynapseContext'
 const Plot = createPlotlyComponent(Plotly)

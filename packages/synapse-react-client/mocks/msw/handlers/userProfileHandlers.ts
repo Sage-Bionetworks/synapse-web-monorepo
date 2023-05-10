@@ -20,7 +20,7 @@ import {
   UserBundle,
   UserGroupHeaderResponsePage,
   UserProfile,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
 import {
   mockUserBundle,
@@ -29,7 +29,7 @@ import {
 } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
 import { UserProfileList } from '../../../src/lib/utils/SynapseClient'
-import { TwoFactorAuthStatus } from '../../../src/lib/utils/synapseTypes/TotpSecret'
+import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 
 export const getUserProfileHandlers = (backendOrigin: string) => [
   /**

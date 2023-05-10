@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 
 import EntityFinder from '../src/lib/containers/entity_finder/EntityFinder'
 import { FinderScope } from '../src/lib/containers/entity_finder/tree/EntityTree'
-import { EntityType } from '../src/lib/utils/synapseTypes'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import { VersionSelectionType } from '../src/lib/containers/entity_finder/VersionSelectionType'
 
 const meta = {

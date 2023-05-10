@@ -4,7 +4,7 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserTeams from '../../../../src/lib/containers/user_profile_links/UserTeams'
 import { useGetUserTeamsInfinite } from '../../../../src/lib/utils/hooks/SynapseAPI/user/useGetUserTeams'
-import { Team } from '../../../../src/lib/utils/synapseTypes/Team'
+import { Team } from '@sage-bionetworks/synapse-types'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
 jest.mock(

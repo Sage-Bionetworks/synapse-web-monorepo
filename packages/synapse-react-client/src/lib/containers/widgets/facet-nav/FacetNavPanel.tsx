@@ -15,7 +15,7 @@ import {
   FacetColumnRequest,
   FacetColumnResultValueCount,
   FacetColumnResultValues,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import loadingScreen from '../../LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext'

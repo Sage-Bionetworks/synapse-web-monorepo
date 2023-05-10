@@ -1,20 +1,17 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
-import StandaloneLoginForm from 'synapse-react-client/dist/containers/auth/StandaloneLoginForm'
+import {
+  AppUtils,
+  SynapseComponents,
+  SynapseConstants,
+} from 'synapse-react-client'
 import { SourceAppDescription, SourceAppLogo } from './components/SourceApp'
 import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from './components/StyledComponents'
-import {
-  preparePostSSORedirect,
-  redirectAfterSSO,
-} from 'synapse-react-client/dist/utils/AppUtils'
 import { useHistory } from 'react-router-dom'
-import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 import { backButtonSx } from './components/BackButton'
-import { LOGIN_BACK_BUTTON_CLASS_NAME } from 'synapse-react-client/dist/utils/SynapseConstants'
-import SystemUseNotification from 'synapse-react-client/dist/containers/SystemUseNotification'
 
 export type LoginPageProps = {
   returnToUrl?: string
@@ -23,7 +20,7 @@ export type LoginPageProps = {
 function LoginPage(props: LoginPageProps) {
   const { returnToUrl } = props
   const { refreshSession, twoFactorAuthErrorResponse } =
-    useApplicationSessionContext()
+    AppUtils.useApplicationSessionContext()
   const history = useHistory()
   return (
     <StyledOuterContainer>
@@ -34,7 +31,7 @@ function LoginPage(props: LoginPageProps) {
             px: 8,
             height: '100%',
             position: 'relative',
-            [`.${LOGIN_BACK_BUTTON_CLASS_NAME}`]: backButtonSx,
+            [`.${SynapseConstants.LOGIN_BACK_BUTTON_CLASS_NAME}`]: backButtonSx,
           }}
         >
           <Box
@@ -46,9 +43,9 @@ function LoginPage(props: LoginPageProps) {
               <SourceAppLogo />
             </div>
             <Box sx={{ my: 4 }}>
-              <StandaloneLoginForm
+              <SynapseComponents.Login
                 sessionCallback={() => {
-                  redirectAfterSSO(history, returnToUrl)
+                  AppUtils.redirectAfterSSO(history, returnToUrl)
                   // If we didn't redirect, refresh the session
                   refreshSession()
                 }}
@@ -56,7 +53,7 @@ function LoginPage(props: LoginPageProps) {
                 resetPasswordUrl={'/resetPassword'}
                 onBeginOAuthSignIn={() => {
                   // save current route (so that we can go back here after SSO)
-                  preparePostSSORedirect()
+                  AppUtils.preparePostSSORedirect()
                 }}
                 twoFactorAuthenticationRequired={twoFactorAuthErrorResponse}
               />
@@ -77,7 +74,7 @@ function LoginPage(props: LoginPageProps) {
             Sign in to your account
           </Typography>
           <SourceAppDescription />
-          <SystemUseNotification />
+          <SynapseComponents.SystemUseNotification />
         </Box>
       </StyledInnerContainer>
     </StyledOuterContainer>

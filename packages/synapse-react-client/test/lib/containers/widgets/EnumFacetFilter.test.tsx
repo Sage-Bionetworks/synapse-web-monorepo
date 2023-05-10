@@ -7,7 +7,7 @@ import {
   ColumnModel,
   FacetColumnResultValueCount,
   ColumnTypeEnum,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import { act } from '@testing-library/react'
 import { SynapseConstants } from '../../../../src/lib/utils'

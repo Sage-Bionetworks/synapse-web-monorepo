@@ -4,7 +4,7 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserProjects from '../../../../src/lib/containers/user_profile_links/UserProjects'
 import { useGetUserProjectsInfinite } from '../../../../src/lib/utils/hooks/SynapseAPI/user/useGetUserProjects'
-import { ProjectHeader } from '../../../../src/lib/utils/synapseTypes'
+import { ProjectHeader } from '@sage-bionetworks/synapse-types'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
 jest.mock(

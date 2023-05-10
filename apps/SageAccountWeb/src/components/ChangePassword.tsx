@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Button, InputLabel, Link, TextField } from '@mui/material'
-import { ChangePasswordWithCurrentPassword } from 'synapse-react-client/dist/utils/synapseTypes/ChangePasswordRequests'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import { UserProfile } from 'synapse-react-client/dist/utils/synapseTypes'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { SynapseClient } from 'synapse-react-client/dist/utils'
+import {
+  ChangePasswordWithCurrentPassword,
+  UserProfile,
+} from '@sage-bionetworks/synapse-types'
+import {
+  displayToast,
+  SynapseClient,
+  SynapseContext,
+} from 'synapse-react-client'
 import { Link as RouterLink } from 'react-router-dom'
 import { StyledFormControl } from './StyledComponents'
 
@@ -13,7 +17,7 @@ export type ChangePasswordProps = {
 }
 
 export const ChangePassword = (props: ChangePasswordProps) => {
-  const { accessToken } = useSynapseContext()
+  const { accessToken } = SynapseContext.useSynapseContext()
   const [oldPassword, setOldPassword] = useState<string>('')
   const [newPassword, setNewPassword] = useState<string>('')
   const [confirmPassword, setConfirmPassword] = useState<string>('')

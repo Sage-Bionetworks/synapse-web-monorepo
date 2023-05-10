@@ -1,9 +1,12 @@
 import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
-import { ALL_ENTITY_BUNDLE_FIELDS } from '../../../SynapseConstants'
 import { useSynapseContext } from '../../../SynapseContext'
-import { EntityBundle, EntityBundleRequest } from '../../../synapseTypes'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  EntityBundle,
+  EntityBundleRequest,
+} from '@sage-bionetworks/synapse-types'
 
 export function useGetEntityBundle<
   T extends EntityBundleRequest = typeof ALL_ENTITY_BUNDLE_FIELDS,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import MarkdownSynapse from '../../markdown/MarkdownSynapse'
-import { ACTAccessRequirement } from '../../../utils/synapseTypes'
+import { ACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
 import { Box, ButtonProps, Link, Typography } from '@mui/material'

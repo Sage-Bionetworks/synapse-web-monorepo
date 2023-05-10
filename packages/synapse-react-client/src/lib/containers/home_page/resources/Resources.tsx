@@ -1,5 +1,5 @@
 import React from 'react'
-import { QueryBundleRequest } from '../../../utils/synapseTypes'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../../utils'
 import { ErrorBanner } from '../../error/ErrorBanner'
 import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'

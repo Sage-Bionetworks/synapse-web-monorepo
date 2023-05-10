@@ -6,7 +6,7 @@ import UserFileGrid, {
 } from '../../../../src/lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../src/lib/utils'
-import { StatusEnum } from '../../../../src/lib/utils/synapseTypes'
+import { StatusEnum } from '@sage-bionetworks/synapse-types'
 import {
   formListDataInProgress,
   formListDataSubmitted,

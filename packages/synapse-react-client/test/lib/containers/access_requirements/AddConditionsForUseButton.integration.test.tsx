@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-  EntityBundle,
-  UserBundle,
-} from '../../../../src/lib/utils/synapseTypes'
+import { EntityBundle, UserBundle } from '@sage-bionetworks/synapse-types'
 import AddConditionsForUseButton, {
   AddConditionsForUseButtonProps,
 } from '../../../../src/lib/containers/access_requirements/AddConditionsForUseButton'

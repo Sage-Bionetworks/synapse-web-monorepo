@@ -1,6 +1,6 @@
 import { AjvError } from '@sage-bionetworks/rjsf-core'
 import { flatMap, groupBy, isEmpty } from 'lodash-es'
-import { ENTITY_CONCRETE_TYPE } from '../../../utils/synapseTypes'
+import { ENTITY_CONCRETE_TYPE } from '@sage-bionetworks/synapse-types'
 import { entityJsonKeys } from '../../../utils/functions/EntityTypeUtils'
 
 /**

@@ -20,10 +20,13 @@ import {
   ANONYMOUS_PRINCIPAL_ID,
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
-  ALL_ENTITY_BUNDLE_FIELDS,
 } from '../utils/SynapseConstants'
 import { useSynapseContext } from '../utils/SynapseContext'
-import { EntityBundle, EntityType } from '../utils/synapseTypes'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  EntityBundle,
+  EntityType,
+} from '@sage-bionetworks/synapse-types'
 import { EntityModal, EntityModalTabs } from './entity/metadata/EntityModal'
 import WarningDialog from './synapse_form_wrapper/WarningDialog'
 import { Tooltip } from '@mui/material'

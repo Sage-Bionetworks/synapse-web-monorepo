@@ -20,7 +20,7 @@ import {
   EntityRef,
   EntityType,
   Reference,
-} from '../../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { EntityBadgeIcons } from '../../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { EntityLink } from '../../../EntityLink'

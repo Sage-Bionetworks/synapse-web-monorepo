@@ -1,6 +1,6 @@
 import { Collapse } from '@mui/material'
 import React, { useRef, useState } from 'react'
-import { TextMatchesQueryFilter } from '../utils/synapseTypes/Table/QueryFilter'
+import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,

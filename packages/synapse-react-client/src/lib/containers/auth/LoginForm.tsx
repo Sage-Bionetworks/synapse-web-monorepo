@@ -6,7 +6,7 @@ import {
 import { Box, Link } from '@mui/material'
 import FullWidthAlert from '../FullWidthAlert'
 import { UseLoginReturn } from '../../utils/hooks'
-import { TwoFactorAuthErrorResponse } from '../../utils/synapseTypes/ErrorResponse'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import TOTPForm from './TOTPForm'
 import UsernamePasswordForm from './UsernamePasswordForm'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'

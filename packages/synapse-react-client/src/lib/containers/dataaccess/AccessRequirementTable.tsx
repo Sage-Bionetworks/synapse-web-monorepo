@@ -6,11 +6,11 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useSearchAccessRequirementsInfinite } from '../../utils/hooks/SynapseAPI/dataaccess/useAccessRequirements'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
-import { ACCESS_TYPE } from '../../utils/synapseTypes'
+import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchSort,
-} from '../../utils/synapseTypes/AccessRequirement/AccessRequirementSearch'
+} from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import IconSvg from '../IconSvg'

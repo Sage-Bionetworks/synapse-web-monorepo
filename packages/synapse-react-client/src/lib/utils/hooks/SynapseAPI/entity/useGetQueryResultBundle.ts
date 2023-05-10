@@ -20,7 +20,7 @@ import {
   AsynchronousJobStatus,
   QueryBundleRequest,
   QueryResultBundle,
-} from '../../../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 const sharedQueryDefaults = {
   staleTime: 1000 * 60 * 30, // 30 minutes

@@ -6,7 +6,7 @@ import {
   DownloadFromTableResult,
   QueryBundleRequest,
   SelectColumn,
-} from '../../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { DEFAULT_PAGE_SIZE } from '../../../../../src/lib/utils/SynapseConstants'
 import { displayToast } from '../../../../../src/lib/containers/ToastMessage'
 import { SynapseError } from '../../../../../src/lib/utils/SynapseError'

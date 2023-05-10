@@ -6,7 +6,7 @@ import {
 } from '../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { useGetEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
-import { Entity, EntityHeader } from '../utils/synapseTypes/'
+import { Entity, EntityHeader } from '@sage-bionetworks/synapse-types'
 import { EntityTypeIcon } from './EntityIcon'
 import { ErrorBanner } from './error/ErrorBanner'
 import ErrorChip from './error/ErrorChip'

@@ -2,7 +2,7 @@ import {
   BackendDestinationEnum,
   PRODUCTION_ENDPOINT_CONFIG,
 } from '../functions/getEndpoint'
-import { LoginResponse } from '../synapseTypes'
+import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../SynapseClientError'
 import {
   bindOAuthProviderToAccount,
@@ -12,8 +12,9 @@ import {
   setAccessTokenCookie,
 } from '../SynapseClient'
 import { useEffect, useState } from 'react'
-import { TwoFactorAuthErrorResponse } from '../synapseTypes/ErrorResponse'
-import { PROVIDERS } from '../../containers/auth/AuthenticationMethodSelection'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
+
+import { OAUTH2_PROVIDERS } from '../SynapseConstants'
 
 export type UseDetectSSOCodeReturnType = {
   /* true iff SSO login has occurred and the completion of the OAuth flow in Synapse is pending */
@@ -59,7 +60,7 @@ export default function useDetectSSOCode(
     if (code && provider) {
       const redirectUrl = `${redirectURL}?provider=${provider}`
 
-      if (PROVIDERS.GOOGLE == provider) {
+      if (OAUTH2_PROVIDERS.GOOGLE == provider) {
         const onSuccess = (
           response: LoginResponse | TwoFactorAuthErrorResponse,
         ) => {
@@ -105,7 +106,7 @@ export default function useDetectSSOCode(
             .catch(onFailure)
             .finally(() => setIsLoading(false))
         }
-      } else if (PROVIDERS.ORCID == provider) {
+      } else if (OAUTH2_PROVIDERS.ORCID == provider) {
         // now bind this to the user account
         const onFailure = (err: SynapseClientError) => {
           console.error('Error binding ORCiD to account: ', err)

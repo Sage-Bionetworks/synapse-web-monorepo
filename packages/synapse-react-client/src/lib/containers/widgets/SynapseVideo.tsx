@@ -7,7 +7,7 @@ import {
   FileHandleAssociation,
   BatchFileRequest,
   BatchFileResult,
-} from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils/'
 import { useSynapseContext } from '../../utils/SynapseContext'
 

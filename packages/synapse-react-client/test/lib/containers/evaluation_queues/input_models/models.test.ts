@@ -1,4 +1,4 @@
-import { EvaluationRound } from '../../../../../src/lib/utils/synapseTypes/Evaluation'
+import { EvaluationRound } from '@sage-bionetworks/synapse-types'
 import {
   convertEvaluationRoundToInput,
   EvaluationRoundInput,

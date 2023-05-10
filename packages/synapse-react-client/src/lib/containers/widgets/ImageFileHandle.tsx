@@ -1,4 +1,4 @@
-import { FileHandleAssociation } from '../../utils/synapseTypes'
+import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import React, { useEffect, useState } from 'react'
 import { SynapseClient } from '../../utils'
 import { useInView } from 'react-intersection-observer'

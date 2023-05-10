@@ -4,7 +4,7 @@ import AccessRequirementList, {
   AccessRequirementListProps,
 } from '../../../src/lib/containers/AccessRequirementList/AccessRequirementList'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { AccessRequirement } from '../../../src/lib/utils/synapseTypes/'
+import { AccessRequirement } from '@sage-bionetworks/synapse-types'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { server } from '../../../mocks/msw/server'
 import {

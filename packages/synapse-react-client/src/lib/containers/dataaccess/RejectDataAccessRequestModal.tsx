@@ -29,7 +29,7 @@ import {
   QueryResultBundle,
   Row,
   SubmissionState,
-} from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import FullWidthAlert from '../FullWidthAlert'

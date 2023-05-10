@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Grid, Paper, Typography, useTheme } from '@mui/material'
-import ShowMore from 'synapse-react-client/dist/containers/row_renderers/utils/ShowMore'
+import { SynapseComponents } from 'synapse-react-client'
 import { useHistory } from 'react-router-dom'
 import { StyledOuterContainer } from './StyledComponents'
 import { useSourceApp, useSourceAppConfigs } from './SourceApp'
@@ -87,7 +87,9 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
                       variant="body1"
                       sx={{ paddingBottom: '30px', fontWeight: 500 }}
                     >
-                      <ShowMore summary={config.description} />
+                      <SynapseComponents.ShowMore
+                        summary={config.description}
+                      />
                     </Typography>
                   </Grid>
                 )

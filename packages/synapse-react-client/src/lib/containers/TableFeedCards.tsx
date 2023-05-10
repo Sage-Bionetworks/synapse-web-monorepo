@@ -5,7 +5,7 @@ import {
   QueryBundleRequest,
   RowSet,
   SelectColumn,
-} from '../utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 import MarkdownSynapse from './markdown/MarkdownSynapse'
 import loadingScreen from './LoadingScreen'
 import { Button } from 'react-bootstrap'

@@ -5,8 +5,8 @@ import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,
 } from '../../../utils/SynapseConstants'
-import { SelectColumn } from '../../../utils/synapseTypes'
-import { FacetColumnResultRange } from '../../../utils/synapseTypes/Table/FacetColumnResult'
+import { SelectColumn } from '@sage-bionetworks/synapse-types'
+import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
 import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
 import { RangeSlider } from '../RangeSlider'

@@ -13,7 +13,7 @@ import {
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
   TableEntity,
   TABLE_ENTITY_CONCRETE_TYPE_VALUE,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 const allEntityTypes = [
   {

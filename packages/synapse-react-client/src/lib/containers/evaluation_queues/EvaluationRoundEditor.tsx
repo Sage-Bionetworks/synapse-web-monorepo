@@ -1,4 +1,7 @@
-import { EvaluationRound, EvaluationRoundLimit } from '../../utils/synapseTypes'
+import {
+  EvaluationRound,
+  EvaluationRoundLimit,
+} from '@sage-bionetworks/synapse-types'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,

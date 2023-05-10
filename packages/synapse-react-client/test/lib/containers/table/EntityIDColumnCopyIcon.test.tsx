@@ -9,14 +9,14 @@ import { SynapseContextType } from '../../../../src/lib/utils/SynapseContext'
 import {
   QueryBundleRequest,
   QueryResultBundle,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   QueryContextProvider,
   QueryContextType,
 } from '../../../../src/lib/containers/QueryContext'
 import idsQueryResponse from '../../../../mocks/mockIDListQueryResponseData.json'
 import { SynapseClient, SynapseConstants } from '../../../../src/lib'
-import { TextMatchesQueryFilter } from '../../../../src/lib/utils/synapseTypes/Table/QueryFilter'
+import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 
 const synID = 'syn55555'
 const version = '7'

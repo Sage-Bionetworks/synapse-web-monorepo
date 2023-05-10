@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { SortConfiguration } from './CardContainerLogic'
 import { useQueryContext } from './QueryContext'
-import { SortDirection, SortItem } from '../utils/synapseTypes'
+import { SortDirection, SortItem } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import Select from 'react-select'
 import {

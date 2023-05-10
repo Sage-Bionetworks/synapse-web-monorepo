@@ -7,11 +7,11 @@ import {
   getUserProfileById,
 } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
-import { UserProfile } from '../utils/synapseTypes'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
 import {
   DiscussionReplyBundle,
   DiscussionThreadBundle,
-} from '../utils/synapseTypes/DiscussionBundle'
+} from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { Typography } from '@mui/material'
 import { Col, Row } from 'react-bootstrap'

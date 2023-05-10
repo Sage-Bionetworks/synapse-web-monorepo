@@ -1,7 +1,7 @@
 import 'regenerator-runtime/runtime'
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
 import CardContainer from './containers/CardContainer'
-import { CardContainerLogic } from './containers/CardContainerLogic'
+import CardContainerLogic from './containers/CardContainerLogic'
 import ChangePassword from './containers/ChangePassword'
 import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
@@ -50,7 +50,12 @@ import UserCardListRotate from './containers/UserCardListRotate'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
-import { SynapseClient, SynapseConstants, SynapseQueries } from './utils'
+import {
+  SynapseClient,
+  SynapseConstants,
+  SynapseQueries,
+  SynapseTheme,
+} from './utils'
 import Palettes from './utils/theme/palette/Palettes'
 import { hex2ascii } from './utils/functions/StringUtils'
 import {
@@ -58,17 +63,46 @@ import {
   SynapseContextProvider,
   useSynapseContext,
 } from './utils/SynapseContext'
-import { Typography } from '@mui/material'
 import './utils/theme/ThemeTypes'
-
+import FullContextProvider, {
+  defaultQueryClientConfig,
+} from './utils/FullContextProvider'
+import GenericCard from './containers/GenericCard'
+import ApplicationSessionManager from './utils/AppUtils/session/ApplicationSessionManager'
+import * as AppUtils from './utils/AppUtils'
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
 import './style/components/_spinner.scss'
+import IconSvg from './containers/IconSvg'
+import SystemUseNotification from './containers/SystemUseNotification'
+import Icon from './containers/row_renderers/utils/Icon'
+import {
+  generateQueryFilterFromSearchParams,
+  parseEntityIdFromSqlStatement,
+} from './utils/functions/sqlFunctions'
+import * as RegularExpressions from './utils/functions/RegularExpressions'
+import WideButton from './components/styled/WideButton'
+import ProjectIcon from './assets/themed_icons/Project'
+import { StyledOuterContainer } from './components/styled/LeftRightPanel'
+import StyledFormControl from './components/styled/StyledFormControl'
+import { SkeletonTable } from './assets/skeletons/SkeletonTable'
+import { ShowMore } from './containers/row_renderers/utils'
+import TextField from './containers/TextField'
+import TwoFactorAuthSettingsPanel from './containers/auth/TwoFactorAuthSettingsPanel'
+import CertificationQuiz from './containers/CertificationQuiz'
+import UserOrTeamBadge from './containers/UserOrTeamBadge'
+import TwoFactorEnrollmentForm from './containers/auth/TwoFactorEnrollmentForm'
+import TwoFactorBackupCodes from './containers/auth/TwoFactorBackupCodes'
+import { AccessTokenPage } from './containers/personal_access_token/AccessTokenPage'
+import { OAuthManagement } from './containers/oauth/OAuthManagement'
+import { SynapseClientError } from './utils/SynapseClientError'
 
 const SynapseContext = {
   SynapseContextProvider,
   SynapseContextConsumer,
   useSynapseContext,
+  FullContextProvider,
+  defaultQueryClientConfig,
 }
 
 const SynapseComponents = {
@@ -125,14 +159,39 @@ const SynapseComponents = {
   ProvenanceGraph,
   ForumSearch,
   hex2ascii,
+  GenericCard,
+  IconSvg,
+  ApplicationSessionManager,
+  SystemUseNotification,
+  Icon,
+  generateQueryFilterFromSearchParams,
+  parseEntityIdFromSqlStatement,
+  WideButton,
+  ProjectIcon,
+  StyledOuterContainer,
+  StyledFormControl,
+  SkeletonTable,
+  ShowMore,
+  TextField,
+  TwoFactorAuthSettingsPanel,
+  CertificationQuiz,
+  UserOrTeamBadge,
+  TwoFactorEnrollmentForm,
+  TwoFactorBackupCodes,
+  AccessTokenPage,
+  OAuthManagement,
 }
 
 export {
   SynapseClient,
+  SynapseClientError,
   SynapseConstants,
   SynapseComponents,
   SynapseContext,
-  Typography,
+  SynapseTheme,
   SynapseQueries,
   Palettes,
+  AppUtils,
+  RegularExpressions,
+  displayToast,
 }

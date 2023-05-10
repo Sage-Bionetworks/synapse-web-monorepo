@@ -1,12 +1,11 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { SynapseConstants } from 'synapse-react-client'
+import { SynapseConstants, SynapseClient } from 'synapse-react-client'
 import {
   QueryBundleRequest,
   QueryResultBundle,
-} from 'synapse-react-client/dist/utils/synapseTypes'
-import { getQueryTableResults } from 'synapse-react-client/dist/utils/SynapseClient'
+} from '@sage-bionetworks/synapse-types'
 import { PlotParams } from 'react-plotly.js'
 
 const Plot = createPlotlyComponent(Plotly)
@@ -93,7 +92,7 @@ export function fetchData(
       sql: sql,
     },
   }
-  return getQueryTableResults(queryRequest, token).then(
+  return SynapseClient.getQueryTableResults(queryRequest, token).then(
     (data: QueryResultBundle) => {
       return parseInt(
         data.queryResult!.queryResults.rows[0].values[0] as string,

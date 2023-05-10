@@ -25,8 +25,8 @@ import {
   EntityType,
   PaginatedResults,
   SortBy,
-} from '../../../../../src/lib/utils/synapseTypes'
-import { VersionInfo } from '../../../../../src/lib/utils/synapseTypes/VersionInfo'
+} from '@sage-bionetworks/synapse-types'
+import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import { mockProjectHeader } from '../../../../../mocks/entity/mockEntity'
 import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../../../mocks/msw/server'

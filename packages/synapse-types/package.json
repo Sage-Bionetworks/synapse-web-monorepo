@@ -1,0 +1,14 @@
+{
+  "name": "@sage-bionetworks/synapse-types",
+  "version": "0.0.0",
+  "private": true,
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf ./dist && tsc"
+  },
+  "devDependencies": {
+    "typescript": "5.0.4",
+    "rimraf": "^5.0.0"
+  }
+}

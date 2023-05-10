@@ -12,7 +12,7 @@ import {
   getEndpoint,
 } from '../../../../src/lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../src/lib/utils/SynapseContext'
-import { WikiPage } from '../../../../src/lib/utils/synapseTypes'
+import { WikiPage } from '@sage-bionetworks/synapse-types'
 import { rest, server } from '../../../../mocks/msw/server'
 import * as MarkdownProvenanceModule from '../../../../src/lib/containers/markdown/widget/MarkdownProvenanceGraph'
 

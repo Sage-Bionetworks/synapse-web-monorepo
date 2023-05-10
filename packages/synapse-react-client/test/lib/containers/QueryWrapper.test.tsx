@@ -13,7 +13,7 @@ import {
 } from '../../../src/lib/containers/QueryWrapper'
 import { SynapseConstants } from '../../../src/lib/utils/'
 import { SynapseContextProvider } from '../../../src/lib/utils/SynapseContext'
-import { QueryBundleRequest } from '../../../src/lib/utils/synapseTypes/'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 import { DEFAULT_PAGE_SIZE } from '../../../src/lib/utils/SynapseConstants'

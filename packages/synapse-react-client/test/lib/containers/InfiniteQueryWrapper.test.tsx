@@ -10,7 +10,7 @@ import {
 } from '../../../src/lib/containers/QueryContext'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 import { SynapseConstants } from '../../../src/lib/utils/'
-import { QueryBundleRequest } from '../../../src/lib/utils/synapseTypes/'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
 import { SynapseContextProvider } from '../../../src/lib/utils/SynapseContext'
 import {

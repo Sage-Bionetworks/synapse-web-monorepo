@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Reference } from '../../utils/synapseTypes'
+import { Reference } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import { FluidModal } from '../FluidModal'
 import { HelpPopoverProps } from '../HelpPopover'

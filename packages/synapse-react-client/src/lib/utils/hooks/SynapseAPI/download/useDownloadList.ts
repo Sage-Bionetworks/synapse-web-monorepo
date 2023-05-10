@@ -3,7 +3,7 @@ import {
   AvailableFilesRequest,
   AvailableFilter,
   Sort,
-} from '../../../synapseTypes/DownloadListV2/QueryRequestDetails'
+} from '@sage-bionetworks/synapse-types'
 import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
@@ -17,11 +17,11 @@ import {
   ActionRequiredResponse,
   AvailableFilesResponse,
   FilesStatisticsResponse,
-} from '../../../synapseTypes/DownloadListV2/QueryResponseDetails'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { SynapseClient } from '../../../index'
-import { AddBatchOfFilesToDownloadListResponse } from '../../../synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
+import { AddBatchOfFilesToDownloadListResponse } from '@sage-bionetworks/synapse-types'
 
 export function useGetAvailableFilesToDownload(
   request: AvailableFilesRequest,

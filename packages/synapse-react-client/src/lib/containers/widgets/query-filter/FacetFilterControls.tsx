@@ -9,7 +9,7 @@ import {
   FacetColumnResult,
   FacetColumnResultRange,
   FacetColumnResultValues,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {

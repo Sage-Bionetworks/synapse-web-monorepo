@@ -5,7 +5,7 @@ import { useSynapseContext } from '../../../SynapseContext'
 import {
   SubmissionInfoPage,
   SubmissionInfoPageRequest,
-} from '../../../synapseTypes/SubmissionInfo'
+} from '@sage-bionetworks/synapse-types'
 
 export function useGetApprovedSubmissionInfoInfinite(
   accessRequirementId: string,

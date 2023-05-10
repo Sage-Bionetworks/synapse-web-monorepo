@@ -1,4 +1,4 @@
-import { Row, SelectColumn } from '../synapseTypes'
+import { Row, SelectColumn } from '@sage-bionetworks/synapse-types'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../functions/RegularExpressions'
 import {
   ColumnMultiValueFunction,
@@ -6,7 +6,7 @@ import {
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
   QueryFilter,
-} from '../synapseTypes/Table/QueryFilter'
+} from '@sage-bionetworks/synapse-types'
 
 export type SQLOperator =
   | ColumnSingleValueFilterOperator

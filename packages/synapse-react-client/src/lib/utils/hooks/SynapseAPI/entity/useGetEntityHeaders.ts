@@ -6,7 +6,7 @@ import {
   EntityHeader,
   PaginatedResults,
   ReferenceList,
-} from '../../../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export function useGetEntityHeaders(
   references: ReferenceList,

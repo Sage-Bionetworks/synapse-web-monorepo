@@ -5,8 +5,7 @@ import {
   FileHandle,
   FileHandleAssociateType,
   FileHandleAssociation,
-  implementsExternalFileHandleInterface,
-} from '../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { getFiles, getFileResult, getEntity } from '../utils/SynapseClient'
 import IconSvg from './IconSvg'
 import { useInView } from 'react-intersection-observer'
@@ -14,6 +13,7 @@ import { useSynapseContext } from '../utils/SynapseContext'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import { UAParser } from 'ua-parser-js'
 import { Tooltip } from '@mui/material'
+import { implementsExternalFileHandleInterface } from '../utils/types/IsType'
 
 export type DirectFileDownloadProps = {
   associatedObjectId: string

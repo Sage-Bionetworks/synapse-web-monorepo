@@ -10,8 +10,8 @@ import {
   useSearchAccessSubmissionsInfinite,
 } from '../utils/hooks/SynapseAPI'
 import { useSynapseContext } from '../utils/SynapseContext'
-import { Direction, SubmissionState } from '../utils/synapseTypes'
-import { SubmissionSortField } from '../utils/synapseTypes/AccessSubmission'
+import { Direction, SubmissionState } from '@sage-bionetworks/synapse-types'
+import { SubmissionSortField } from '@sage-bionetworks/synapse-types'
 import { CreateProjectModal } from './CreateProjectModal'
 import IconSvg, { Icon } from './IconSvg'
 import UserCard from './UserCard'

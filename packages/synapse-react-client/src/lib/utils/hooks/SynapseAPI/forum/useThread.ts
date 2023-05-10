@@ -11,7 +11,7 @@ import {
   DiscussionThreadBundle,
   UpdateThreadMessageRequest,
   UpdateThreadTitleRequest,
-} from '../../../synapseTypes/DiscussionBundle'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'

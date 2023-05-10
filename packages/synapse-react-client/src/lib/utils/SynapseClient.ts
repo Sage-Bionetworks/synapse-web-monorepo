@@ -81,223 +81,190 @@ import {
 import {
   ACCESS_TYPE,
   AccessApproval,
+  AccessApprovalSearchRequest,
+  AccessApprovalSearchResponse,
   AccessCodeResponse,
   AccessControlList,
   AccessRequirement,
+  AccessRequirementSearchRequest,
+  AccessRequirementSearchResponse,
   AccessRequirementStatus,
+  AccessTokenGenerationRequest,
+  AccessTokenGenerationResponse,
+  AccessTokenRecordList,
+  AccountSetupInfo,
+  ActionRequiredRequest,
+  ActionRequiredResponse,
+  Activity,
   ACTSubmissionStatus,
+  AddBatchOfFilesToDownloadListRequest,
+  AddBatchOfFilesToDownloadListResponse,
   AddPartResponse,
+  AddToDownloadListRequest,
+  AddToDownloadListResponse,
+  AliasCheckRequest,
+  AliasCheckResponse,
   AsynchronousJobStatus,
   AsyncJobId,
+  AuthenticatedOn,
+  AvailableFilesRequest,
+  AvailableFilesResponse,
   BatchFileRequest,
   BatchFileResult,
   BatchPresignedUploadUrlRequest,
   BatchPresignedUploadUrlResponse,
   BulkFileDownloadRequest,
   BulkFileDownloadResponse,
+  ChallengePagedResults,
+  ChangePasswordWithCurrentPassword,
+  ChangePasswordWithToken,
+  CreateDiscussionReply,
+  CreateDiscussionThread,
+  CreateSubmissionRequest,
+  DiscussionFilter,
+  DiscussionReplyBundle,
+  DiscussionReplyOrder,
+  DiscussionSearchRequest,
+  DiscussionSearchResponse,
+  DiscussionThreadBundle,
+  DiscussionThreadOrder,
   DoiAssociation,
   DownloadFromTableRequest,
   DownloadFromTableResult,
   DownloadList,
+  DownloadListItem,
+  DownloadListManifestRequest,
+  DownloadListPackageRequest,
+  DownloadListPackageResponse,
+  DownloadListQueryRequest,
+  DownloadListQueryResponse,
   DownloadOrder,
+  EmailValidationSignedToken,
   Entity,
   EntityBundle,
   EntityBundleRequest,
+  EntityChildrenRequest,
+  EntityChildrenResponse,
   EntityHeader,
   EntityId,
   EntityJson,
   EntityLookupRequest,
   EntityPath,
+  ErrorResponseCode,
   Evaluation,
   EvaluationRound,
+  EvaluationRoundListRequest,
+  EvaluationRoundListResponse,
+  EvaluationSubmission as EvaluationSubmission,
+  FavoriteSortBy,
+  FavoriteSortDirection,
   FileEntity,
   FileHandle,
   FileHandleAssociateType,
   FileHandleAssociation,
   FileHandleResults,
   FileResult,
+  FilesStatisticsRequest,
+  FilesStatisticsResponse,
   FileUploadComplete,
   FormChangeRequest,
   FormData,
   FormGroup,
   FormRejection,
+  GetProjectsParameters,
+  HasAccessResponse,
+  InviteeVerificationSignedToken,
+  JoinTeamSignedToken,
+  JsonSchemaObjectBinding,
   ListRequest,
   ListResponse,
   LoginResponse,
+  ManagedACTAccessRequirementStatus,
+  MembershipInvitation,
+  MembershipInvtnSignedToken,
+  MessageURL,
   MultipartUploadRequest,
   MultipartUploadStatus,
+  NewUser,
   NotificationEmail,
+  OAuthClient,
+  OAuthClientIdAndSecret,
+  OAuthClientList,
   OAuthClientPublic,
+  OAuthClientVerificationPrecheckResult,
   OAuthConsentGrantedResponse,
   ObjectType,
   OIDCAuthorizationRequest,
   OIDCAuthorizationRequestDescription,
+  PaginatedIds,
   PaginatedResults,
+  PassingRecord,
+  PrincipalAliasRequest,
+  PrincipalAliasResponse,
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
   ProjectHeaderList,
   QueryBundleRequest,
+  QueryRequestDetails,
+  QueryResponseDetails,
   QueryResultBundle,
   QueryTableResults,
-  ReferenceList,
-  Renewal,
-  Request,
-  RestrictionInformationRequest,
-  RestrictionInformationResponse,
-  Submission as EvaluationSubmission,
-  SynapseVersion,
-  TrashedEntity,
-  UserBundle,
-  UserGroupHeaderResponsePage,
-  UserProfile,
-  VerificationSubmission,
-  WikiPage,
-  WikiPageKey,
-} from './synapseTypes/'
-import {
-  AccessApprovalSearchRequest,
-  AccessApprovalSearchResponse,
-  CreateSubmissionRequest,
-  EntityChildrenRequest,
-  EntityChildrenResponse,
-  ManagedACTAccessRequirementStatus,
-  TYPE_FILTER,
-  UserGroupHeaderResponse,
-} from './synapseTypes'
-import {
-  AccessRequirementSearchRequest,
-  AccessRequirementSearchResponse,
-} from './synapseTypes/AccessRequirement/AccessRequirementSearch'
-import { SubmissionStateChangeRequest } from './synapseTypes/AccessRequirement/SubmissionStateChangeRequest'
-import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
-import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
-import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
-import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
-import { ChallengePagedResults } from './synapseTypes/ChallengePagedResults'
-import {
-  ChangePasswordWithCurrentPassword,
-  ChangePasswordWithToken,
-} from './synapseTypes/ChangePasswordRequests'
-import {
-  CreateDiscussionReply,
-  CreateDiscussionThread,
-  DiscussionFilter,
-  DiscussionReplyBundle,
-  DiscussionReplyOrder,
-  DiscussionThreadBundle,
-  DiscussionThreadOrder,
-  UpdateDiscussionReply,
-  UpdateThreadMessageRequest,
-  UpdateThreadTitleRequest,
-} from './synapseTypes/DiscussionBundle'
-import {
-  DiscussionSearchRequest,
-  DiscussionSearchResponse,
-} from './synapseTypes/DiscussionSearch'
-import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
-import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
-import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
-import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
-import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
-import { DownloadListManifestRequest } from './synapseTypes/DownloadListV2/DownloadListManifestRequest'
-import { DownloadListPackageRequest } from './synapseTypes/DownloadListV2/DownloadListPackageRequest'
-import { DownloadListPackageResponse } from './synapseTypes/DownloadListV2/DownloadListPackageResponse'
-import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
-import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
-import {
-  ActionRequiredRequest,
-  AvailableFilesRequest,
-  FilesStatisticsRequest,
-  QueryRequestDetails,
-} from './synapseTypes/DownloadListV2/QueryRequestDetails'
-import {
-  ActionRequiredResponse,
-  AvailableFilesResponse,
-  FilesStatisticsResponse,
-  QueryResponseDetails,
-} from './synapseTypes/DownloadListV2/QueryResponseDetails'
-import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
-import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
-import { EvaluationRoundListRequest } from './synapseTypes/Evaluation/EvaluationRoundListRequest'
-import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/EvaluationRoundListResponse'
-import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
-import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
-import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
-import { MessageURL } from './synapseTypes/MessageUrl'
-import {
-  AccountSetupInfo,
-  AliasCheckRequest,
-  AliasCheckResponse,
-  EmailValidationSignedToken,
-  NewUser,
-  PrincipalAliasRequest,
-  PrincipalAliasResponse,
-} from './synapseTypes/Principal/PrincipalServices'
-import { ResearchProject } from './synapseTypes/ResearchProject'
-import { JsonSchemaObjectBinding } from './synapseTypes/Schema/JsonSchemaObjectBinding'
-import { ValidationResults } from './synapseTypes/Schema/ValidationResults'
-import { SearchQuery, SearchResults } from './synapseTypes/Search'
-import { TableUpdateTransactionRequest } from './synapseTypes/Table/TableUpdate'
-import {
-  SqlTransformResponse,
-  TransformSqlWithFacetsRequest,
-} from './synapseTypes/Table/TransformSqlWithFacetsRequest'
-import { Team } from './synapseTypes/Team'
-import { VersionInfo } from './synapseTypes/VersionInfo'
-import {
-  SubmissionSearchRequest,
-  SubmissionSearchResponse,
-} from './synapseTypes/AccessSubmission'
-import {
-  SubmissionInfoPage,
-  SubmissionInfoPageRequest,
-} from './synapseTypes/SubmissionInfo'
-import { Submission as DataAccessSubmission } from './synapseTypes/AccessRequirement/Submission'
-import { SynapseClientError } from './SynapseClientError'
-import {
-  OAuthClient,
-  OAuthClientIdAndSecret,
-  OAuthClientList,
-  OAuthClientVerificationPrecheckResult,
-} from './synapseTypes/OAuthClient'
-import { Activity } from './synapseTypes/Provenance/Provenance'
-import {
-  FavoriteSortBy,
-  FavoriteSortDirection,
-} from './synapseTypes/FavoriteSortBy'
-import {
-  PassingRecord,
   Quiz,
   QuizResponse,
-} from './synapseTypes/CertificationQuiz/Quiz'
-import { GeoData } from '../containers/GoogleMap/GeoData'
-import { TeamMember } from './synapseTypes/TeamMember'
-import {
+  ReferenceList,
+  RemoveBatchOfFilesFromDownloadListRequest,
+  RemoveBatchOfFilesFromDownloadListResponse,
+  Renewal,
+  Request,
+  ResearchProject,
+  ResponseMessage,
+  RestrictionInformationRequest,
+  RestrictionInformationResponse,
+  SearchQuery,
+  SearchResults,
+  SqlTransformResponse,
+  Submission as DataAccessSubmission,
+  SubmissionInfoPage,
+  SubmissionInfoPageRequest,
+  SubmissionSearchRequest,
+  SubmissionSearchResponse,
+  SubmissionStateChangeRequest,
   SubscriberPagedResults,
   Subscription,
   SubscriptionPagedResults,
   SubscriptionRequest,
+  SynapseVersion,
+  TableUpdateTransactionRequest,
+  Team,
+  TeamMember,
   Topic,
-} from './synapseTypes/Subscription'
-import { calculateFriendlyFileSize } from './functions/calculateFriendlyFileSize'
-import { PaginatedIds } from './synapseTypes/PaginatedIds'
-import { UploadDestination } from './synapseTypes/File/UploadDestination'
-import { JoinTeamSignedToken } from './synapseTypes/JoinTeamSignedToken'
-import { ResponseMessage } from './synapseTypes/ResponseMessage'
-import { MembershipInvtnSignedToken } from './synapseTypes/SignedToken/MembershipInvtnSignedToken'
-import { MembershipInvitation } from './synapseTypes/MembershipInvitation'
-import { InviteeVerificationSignedToken } from './synapseTypes/SignedToken/InviteeVerificationSignedToken'
-import {
-  ErrorResponseCode,
-  TwoFactorAuthErrorResponse,
-} from './synapseTypes/ErrorResponse'
-import { TwoFactorAuthLoginRequest } from './synapseTypes/TwoFactorAuthLoginRequest'
-import {
   TotpSecret,
   TotpSecretActivationRequest,
+  TransformSqlWithFacetsRequest,
+  TrashedEntity,
+  TwoFactorAuthErrorResponse,
+  TwoFactorAuthLoginRequest,
+  TwoFactorAuthRecoveryCodes,
   TwoFactorAuthStatus,
-} from './synapseTypes/TotpSecret'
-import { TwoFactorAuthRecoveryCodes } from './synapseTypes/TwoFactorAuthRecoveryCodes'
+  TYPE_FILTER,
+  UpdateDiscussionReply,
+  UpdateThreadMessageRequest,
+  UpdateThreadTitleRequest,
+  UploadDestination,
+  UserBundle,
+  UserEvaluationPermissions,
+  UserGroupHeaderResponse,
+  UserGroupHeaderResponsePage,
+  UserProfile,
+  ValidationResults,
+  VerificationSubmission,
+  VersionInfo,
+  WikiPage,
+  WikiPageKey,
+} from '@sage-bionetworks/synapse-types'
+import { SynapseClientError } from './SynapseClientError'
+import { GeoData } from '../containers/GoogleMap/GeoData'
+import { calculateFriendlyFileSize } from './functions/calculateFriendlyFileSize'
 import { SynapseError } from './SynapseError'
 
 const cookies = new UniversalCookies()

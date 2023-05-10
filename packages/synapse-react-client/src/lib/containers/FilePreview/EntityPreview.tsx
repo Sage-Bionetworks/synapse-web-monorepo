@@ -1,10 +1,13 @@
 import React from 'react'
 import { useResolveLinkEntity } from '../../utils/functions/ResolveLinkEntity'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { ALL_ENTITY_BUNDLE_FIELDS } from '../../utils/SynapseConstants'
-import { FileEntity, isFileEntity } from '../../utils/synapseTypes'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  FileEntity,
+} from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen'
 import FileEntityPreview from './FileEntityPreview'
+import { isFileEntity } from '../../utils/types/IsType'
 
 export type EntityPreviewProps = {
   entityId: string

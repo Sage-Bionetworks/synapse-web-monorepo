@@ -20,7 +20,7 @@ import {
   isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import { EntityType } from '../../../utils/synapseTypes'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import { Tooltip } from '@mui/material'
 import { Writable } from '../../../utils/types/Writable'
 import { Typography } from '@mui/material'

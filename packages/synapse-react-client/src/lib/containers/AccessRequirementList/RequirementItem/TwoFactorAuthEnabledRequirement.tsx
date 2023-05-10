@@ -8,7 +8,7 @@ import { useSynapseContext } from '../../../utils/SynapseContext'
 import { TWO_FACTOR_DOCS_LINK } from '../../auth/TwoFactorEnrollmentForm'
 import { useGetTwoFactorEnrollmentStatus } from '../../../utils/hooks/SynapseAPI/auth/useTwoFactorEnrollment'
 import RequirementItem, { RequirementItemProps } from './RequirementItem'
-import { TwoFactorAuthStatus } from '../../../utils/synapseTypes/TotpSecret'
+import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 
 const TWO_FACTOR_ENROLLMENT_LINK = `${getEndpoint(

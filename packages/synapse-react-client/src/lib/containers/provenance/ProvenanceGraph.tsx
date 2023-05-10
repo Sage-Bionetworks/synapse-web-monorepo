@@ -21,8 +21,8 @@ import {
   UsedEntity,
   UsedURL,
   USED_ENTITY_CONCRETE_TYPE_VALUE,
-} from '../../utils/synapseTypes/Provenance/Provenance'
-import { EntityHeader, ReferenceList } from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
+import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'

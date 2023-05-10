@@ -5,7 +5,7 @@ import {
 import {
   ColumnTypeEnum,
   QueryResultBundle,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 describe('Synapse Table Utilities tests', () => {
   describe('Table cell renderer utilities', () => {

@@ -177,4 +177,19 @@ export const sageBionetworksPalette: PaletteOptions = {
   secondary: generatePalette('#F5B33C'),
 }
 
-export default palette
+export default {
+  palette,
+  generatePalette,
+  adKnowledgePortalPalette,
+  mtbPalette,
+  arkPortalPalette,
+  elPortalPalette,
+  nfPortalPalette,
+  bsmnPortalPalette,
+  psychEncodePortalPalette,
+  stopAdPortalPalette,
+  digitalHealthPortalPalette,
+  crcResearcherPortalPalette,
+  cancerComplexityPortalPalette,
+  sageBionetworksPalette,
+}

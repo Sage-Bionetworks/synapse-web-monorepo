@@ -5,7 +5,7 @@ import {
   SubscriptionRequest,
   Topic,
   SubscriberPagedResults,
-} from '../../../synapseTypes/Subscription'
+} from '@sage-bionetworks/synapse-types'
 import {
   useMutation,
   useQuery,
@@ -15,7 +15,7 @@ import {
 } from 'react-query'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { Direction } from '../../../synapseTypes'
+import { Direction } from '@sage-bionetworks/synapse-types'
 import { SynapseClient } from '../../..'
 import { useCallback } from 'react'
 

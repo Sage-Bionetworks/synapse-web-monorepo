@@ -6,7 +6,7 @@ import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import TwoFactorBackupCodes, {
   TwoFactorBackupCodesProps,
 } from '../../../../src/lib/containers/auth/TwoFactorBackupCodes'
-import { TwoFactorAuthRecoveryCodes } from '../../../../src/lib/utils/synapseTypes/TwoFactorAuthRecoveryCodes'
+import { TwoFactorAuthRecoveryCodes } from '@sage-bionetworks/synapse-types'
 
 const newCodes: TwoFactorAuthRecoveryCodes = {
   codes: [

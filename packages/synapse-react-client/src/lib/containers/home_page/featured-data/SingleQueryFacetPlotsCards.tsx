@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { SynapseConstants } from '../../../utils'
 import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
-import { QueryBundleRequest } from '../../../utils/synapseTypes'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
 import { QueryWrapperErrorBanner } from '../../QueryWrapperErrorBanner'

@@ -1,4 +1,4 @@
-import { ColumnTypeEnum } from '../../src/lib/utils/synapseTypes'
+import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 const mockData = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   columnModels: [

@@ -1,14 +1,14 @@
 import { Box, PaletteOptions, SxProps, Typography } from '@mui/material'
 import React from 'react'
-import { useGetQueryResultBundleWithAsyncStatus } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
-import { BUNDLE_MASK_QUERY_RESULTS } from 'synapse-react-client/dist/utils/SynapseConstants'
+import {
+  SynapseConstants,
+  SynapseQueries,
+  Palettes,
+  SynapseComponents,
+} from 'synapse-react-client'
 import { SourceAppConfig } from './SourceAppConfigs'
-import palette, {
-  generatePalette,
-} from 'synapse-react-client/dist/utils/theme/palette/Palettes'
 import SourceAppImage from './SourceAppImage'
 import Skeleton from '@mui/material/Skeleton'
-import { SkeletonTable } from 'synapse-react-client/dist/assets/skeletons/SkeletonTable'
 
 export type SourceAppProps = {
   isAccountCreationTextVisible?: boolean
@@ -57,20 +57,21 @@ export const SourceAppDescription = () => {
       {sourceAppConfig?.description}
     </Typography>
   ) : (
-    <SkeletonTable numRows={7} numCols={1} />
+    <SynapseComponents.SkeletonTable numRows={7} numCols={1} />
   )
 }
 
 export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
-  const { data: tableQueryResult } = useGetQueryResultBundleWithAsyncStatus({
-    entityId: 'syn45291362',
-    query: {
-      sql: `SELECT * FROM syn45291362`,
-      limit: 75,
-    },
-    partMask: BUNDLE_MASK_QUERY_RESULTS,
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-  })
+  const { data: tableQueryResult } =
+    SynapseQueries.useGetQueryResultBundleWithAsyncStatus({
+      entityId: 'syn45291362',
+      query: {
+        sql: `SELECT * FROM syn45291362`,
+        limit: 75,
+      },
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    })
   const rowSet = tableQueryResult?.responseBody?.queryResult?.queryResults
   // transform row data to SourceAppConfig[]
   const headers = rowSet?.headers
@@ -108,9 +109,11 @@ export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
     const fileHandleId = rowVals[logoFileHandleColIndex]
     const logo = <SourceAppImage fileHandleId={fileHandleId} />
     const appPalette: PaletteOptions = {
-      ...palette,
-      primary: generatePalette(rowVals[primaryColorColIndex] ?? ''),
-      secondary: generatePalette(rowVals[secondaryColorColIndex] ?? ''),
+      ...Palettes.palette,
+      primary: Palettes.generatePalette(rowVals[primaryColorColIndex] ?? ''),
+      secondary: Palettes.generatePalette(
+        rowVals[secondaryColorColIndex] ?? '',
+      ),
     }
     const sourceAppConfig: SourceAppConfig = {
       appId: rowVals[appIdColIndex] ?? '',

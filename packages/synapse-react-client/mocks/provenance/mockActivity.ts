@@ -1,4 +1,4 @@
-import { Activity } from '../../src/lib/utils/synapseTypes/Provenance/Provenance'
+import { Activity } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 import { MOCK_TABLE_ENTITY_ID } from '../entity/mockTableEntity'
 

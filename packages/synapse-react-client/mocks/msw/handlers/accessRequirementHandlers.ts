@@ -13,7 +13,7 @@ import {
   PaginatedResults,
   SubmissionState,
   WikiPageKey,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseApiResponse } from '../handlers'
 import {
   mockAccessRequirements,

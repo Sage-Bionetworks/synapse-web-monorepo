@@ -9,7 +9,7 @@ import {
   useRestoreEntities,
 } from '../../utils/hooks/SynapseAPI/trash/useTrashCan'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { TrashedEntity } from '../../utils/synapseTypes'
+import { TrashedEntity } from '@sage-bionetworks/synapse-types'
 import { Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import { BlockingLoader, SynapseSpinner } from '../LoadingScreen'

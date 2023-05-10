@@ -6,7 +6,7 @@ import studyActiveSvg from '../style/study-active.svg'
 import studyCompleteSvg from '../style/study-complete.svg'
 import studyCompleteHeaderSvg from '../style/study-completed-header.svg'
 import studyActiveHeaderSvg from '../style/study-active-header.svg'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { toolsCardConfiguration } from './tools'
 import { publicationsCardConfiguration } from './publications'
@@ -18,7 +18,7 @@ import {
   metadataFilesSql,
   toolStudySql,
 } from '../resources'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 export const newStudiesSql = `${studiesSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD

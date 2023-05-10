@@ -8,7 +8,10 @@ import {
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { PaginatedResults, TrashedEntity } from '../../../synapseTypes'
+import {
+  PaginatedResults,
+  TrashedEntity,
+} from '@sage-bionetworks/synapse-types'
 
 export function useGetItemsInTrashCanInfinite(
   options?: UseInfiniteQueryOptions<

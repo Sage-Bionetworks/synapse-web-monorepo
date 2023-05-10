@@ -13,7 +13,7 @@ import UpSetJS, {
   ISets,
   ISet,
 } from '@upsetjs/react'
-import { QueryBundleRequest } from '../utils/synapseTypes'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants, SynapseClient } from '../utils'
 import { SizeMe } from 'react-sizeme'
 import getColorPalette from './ColorGradient'

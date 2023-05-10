@@ -8,7 +8,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../src/lib/utils/functions/getEndpoint'
-import { UserBundle } from '../../../../src/lib/utils/synapseTypes'
+import { UserBundle } from '@sage-bionetworks/synapse-types'
 import { rest, server } from '../../../../mocks/msw/server'
 import { MOCK_USER_ID } from '../../../../mocks/user/mock_user_profile'
 import * as AccessRequirementDashboardModule from '../../../../src/lib/containers/dataaccess/AccessRequirementDashboard'

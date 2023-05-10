@@ -1,4 +1,4 @@
-import { SubmissionSearchRequest } from '../../synapseTypes/AccessSubmission'
+import { SubmissionSearchRequest } from '@sage-bionetworks/synapse-types'
 import {
   AccessApprovalSearchRequest,
   BatchFileRequest,
@@ -9,24 +9,24 @@ import {
   ReferenceList,
   RestrictionInformationRequest,
   TYPE_FILTER,
-} from '../../synapseTypes'
-import { AccessRequirementSearchRequest } from '../../synapseTypes/AccessRequirement/AccessRequirementSearch'
-import { SubmissionInfoPageRequest } from '../../synapseTypes/SubmissionInfo'
-import { AvailableFilesRequest } from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
+} from '@sage-bionetworks/synapse-types'
+import { AccessRequirementSearchRequest } from '@sage-bionetworks/synapse-types'
+import { SubmissionInfoPageRequest } from '@sage-bionetworks/synapse-types'
+import { AvailableFilesRequest } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from 'react-query'
 import {
   DiscussionFilter,
   DiscussionReplyOrder,
   DiscussionThreadOrder,
-} from '../../synapseTypes/DiscussionBundle'
-import { SearchQuery } from '../../synapseTypes/Search'
-import { SubscriptionObjectType } from '../../synapseTypes/Subscription'
+} from '@sage-bionetworks/synapse-types'
+import { SearchQuery } from '@sage-bionetworks/synapse-types'
+import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 import {
   FavoriteSortBy,
   FavoriteSortDirection,
-} from '../../synapseTypes/FavoriteSortBy'
-import { GetProjectsParameters } from '../../synapseTypes/GetProjectsParams'
-import { PrincipalAliasRequest } from '../../synapseTypes/Principal/PrincipalServices'
+} from '@sage-bionetworks/synapse-types'
+import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'
+import { PrincipalAliasRequest } from '@sage-bionetworks/synapse-types'
 import { removeTrailingUndefinedElements } from '../../functions/ArrayUtils'
 
 const entityQueryKeyObjects = {

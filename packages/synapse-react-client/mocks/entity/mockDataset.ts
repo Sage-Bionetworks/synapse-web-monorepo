@@ -4,8 +4,8 @@ import {
   EntityHeader,
   EntityPath,
   EntityType,
-} from '../../src/lib/utils/synapseTypes'
-import { VersionInfo } from '../../src/lib/utils/synapseTypes/VersionInfo'
+} from '@sage-bionetworks/synapse-types'
+import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 import mockProjectEntityData from './mockProject'

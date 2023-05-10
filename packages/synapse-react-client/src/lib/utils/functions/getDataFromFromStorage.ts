@@ -4,7 +4,7 @@ import {
   EntityHeader,
   Evaluation,
   UserProfile,
-} from '../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '..'
 
 const getStoredEntityHeaders = (): EntityHeader[] => {

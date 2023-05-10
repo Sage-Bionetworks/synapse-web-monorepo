@@ -31,7 +31,7 @@ import {
   AccessType,
   RestrictableObjectType,
   SubmissionState,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import userEvent from '@testing-library/user-event'
 import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 import * as UserSearchBoxV2Module from '../../../../src/lib/containers/UserSearchBoxV2'

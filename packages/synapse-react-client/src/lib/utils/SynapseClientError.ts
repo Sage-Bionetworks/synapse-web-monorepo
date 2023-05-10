@@ -5,7 +5,7 @@
 import {
   ErrorResponse,
   TwoFactorAuthErrorResponse,
-} from './synapseTypes/ErrorResponse'
+} from '@sage-bionetworks/synapse-types'
 
 import { SynapseError } from './SynapseError'
 

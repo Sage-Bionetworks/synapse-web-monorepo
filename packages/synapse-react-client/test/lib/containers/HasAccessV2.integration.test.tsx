@@ -17,7 +17,7 @@ import {
   RestrictableObjectType,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { mockFolderEntity } from '../../../mocks/entity/mockEntity'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'

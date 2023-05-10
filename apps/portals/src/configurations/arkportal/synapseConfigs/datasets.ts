@@ -1,16 +1,16 @@
 import { SynapseConfig } from 'types/portal-config'
 import columnAliases from '../columnAliases'
-import {
+import type {
   CardConfiguration,
   LabelLinkConfig,
 } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { datasetsSql } from '../resources'
 import { SynapseConstants } from 'synapse-react-client'
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import type { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
 import { DetailsPageProps } from 'types/portal-util-types'
 import publicationDataSvg from '../style/publicationData.svg'
 import experimentalDataSvg from '../style/experimentalData.svg'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
 export const datasetColumnLinks: LabelLinkConfig = [

@@ -8,7 +8,7 @@ import {
 } from '../../utils/functions/sqlFunctions'
 import { useGetEntity } from '../../utils/hooks/SynapseAPI/entity/useEntity'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { Query, QueryBundleRequest } from '../../utils/synapseTypes'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from '../CardContainerLogic'
 import { DownloadConfirmation } from '../download_list'
 import FullTextSearch from '../FullTextSearch'

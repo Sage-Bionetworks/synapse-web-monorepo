@@ -4,11 +4,11 @@ import {
   getEvaluationPermissions,
 } from '../../utils/SynapseClient'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { Evaluation } from '../../utils/synapseTypes'
+import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { Button, Card, Col, Dropdown, Row } from 'react-bootstrap'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
-import { UserEvaluationPermissions } from '../../utils/synapseTypes/Evaluation/UserEvaluationPermissions'
+import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
 import { RequiredProperties } from '../../utils'
 import WarningDialog from '../synapse_form_wrapper/WarningDialog'
 import { useSynapseContext } from '../../utils/SynapseContext'

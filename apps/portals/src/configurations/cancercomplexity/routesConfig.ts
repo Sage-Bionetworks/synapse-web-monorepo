@@ -22,7 +22,7 @@ import consortiaHomePageConfig from './synapseConfigs/consortiaHomePage'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
-} from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+} from '@sage-bionetworks/synapse-types'
 
 const routes: GenericRoute[] = [
   {

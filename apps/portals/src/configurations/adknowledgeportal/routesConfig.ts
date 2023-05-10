@@ -32,7 +32,7 @@ import {
   experimentalModelsSql,
   modelADStrainsSelectedFacet,
 } from './resources'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const routes: GenericRoute[] = [
   {

@@ -4,7 +4,7 @@ import FacetNavPanel, {
   truncate,
 } from '../../../../../src/lib/containers/widgets/facet-nav/FacetNavPanel'
 import { render, screen, within } from '@testing-library/react'
-import { FacetColumnResultValues } from '../../../../../src/lib/utils/synapseTypes'
+import { FacetColumnResultValues } from '@sage-bionetworks/synapse-types'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { SynapseConstants } from '../../../../../src/lib/utils'
 import {

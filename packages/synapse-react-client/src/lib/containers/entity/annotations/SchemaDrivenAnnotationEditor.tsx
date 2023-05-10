@@ -15,7 +15,10 @@ import {
   useUpdateViaJson,
 } from '../../../utils/hooks/SynapseAPI'
 import { SynapseClientError } from '../../../utils/SynapseClientError'
-import { ENTITY_CONCRETE_TYPE, EntityJson } from '../../../utils/synapseTypes'
+import {
+  ENTITY_CONCRETE_TYPE,
+  EntityJson,
+} from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
 import {
@@ -204,17 +207,19 @@ export const SchemaDrivenAnnotationEditor = (
               </b>
             </Alert>
           )}
-          {entityJson && (!formData || isEmpty(formData)) && schema === null && (
-            <Alert
-              dismissible={false}
-              show={true}
-              variant="info"
-              transition={false}
-            >
-              <b>{entityJson.name}</b> has no annotations. Click the{' '}
-              <AddToList /> button to annotate.
-            </Alert>
-          )}
+          {entityJson &&
+            (!formData || isEmpty(formData)) &&
+            schema === null && (
+              <Alert
+                dismissible={false}
+                show={true}
+                variant="info"
+                transition={false}
+              >
+                <b>{entityJson.name}</b> has no annotations. Click the{' '}
+                <AddToList /> button to annotate.
+              </Alert>
+            )}
           <Form
             className="AnnotationEditorForm"
             liveValidate={liveValidate}

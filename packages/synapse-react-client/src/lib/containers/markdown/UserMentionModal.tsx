@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { DialogBase } from '../DialogBase'
-import { TYPE_FILTER, UserGroupHeader } from '../../utils/synapseTypes'
+import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import UserSearchBoxV2 from '../UserSearchBoxV2'
 
 export type UserMentionModalProps = {

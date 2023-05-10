@@ -13,7 +13,7 @@ import { mockActivity } from '../../../../mocks/provenance/mockActivity'
 import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../../mocks/msw/server'
 import { SynapseApiResponse } from '../../../../mocks/msw/handlers'
-import { Activity } from '../../../../src/lib/utils/synapseTypes/Provenance/Provenance'
+import { Activity } from '@sage-bionetworks/synapse-types'
 import { MOCK_TABLE_ENTITY_ID } from '../../../../mocks/entity/mockTableEntity'
 
 function renderComponent(props: ProvenanceProps) {

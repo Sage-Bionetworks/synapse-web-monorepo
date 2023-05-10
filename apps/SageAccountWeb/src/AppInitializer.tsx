@@ -3,21 +3,22 @@ import { AppContextProvider } from './AppContext'
 import { Redirect } from 'react-router-dom'
 import { getSearchParam } from './URLUtils'
 import useAnalytics from './useAnalytics'
-import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
+import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useSourceApp } from './components/SourceApp'
-import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 import { sageAccountWebThemeOverrides } from './style/theme'
 import { Theme } from '@mui/material'
-import defaultMuiThemeOptions from 'synapse-react-client/dist/utils/theme/DefaultTheme'
-import { hex2ascii } from 'synapse-react-client/dist/utils/functions/StringUtils'
+import { AppUtils, SynapseComponents, SynapseTheme } from 'synapse-react-client'
 
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [isFramed, setIsFramed] = useState(false)
   const [appId, setAppId] = useState<string>()
   const [redirectURL, setRedirectURL] = useState<string>()
   const [theme, setTheme] = useState<Theme>(
-    createTheme(defaultMuiThemeOptions, sageAccountWebThemeOverrides),
+    createTheme(
+      SynapseTheme.defaultMuiThemeOptions,
+      sageAccountWebThemeOverrides,
+    ),
   )
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
@@ -52,9 +53,13 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   useEffect(() => {
     if (sourceApp?.palette) {
       setTheme(
-        createTheme(defaultMuiThemeOptions, sageAccountWebThemeOverrides, {
-          palette: sourceApp.palette,
-        }),
+        createTheme(
+          SynapseTheme.defaultMuiThemeOptions,
+          sageAccountWebThemeOverrides,
+          {
+            palette: sourceApp.palette,
+          },
+        ),
       )
     }
   }, [sourceApp?.appId])
@@ -65,12 +70,12 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     if (searchParamSignedToken) {
       localStorage.setItem('signedToken', searchParamSignedToken)
       const searchParamToken = JSON.parse(
-        hex2ascii(searchParamSignedToken),
+        SynapseComponents.hex2ascii(searchParamSignedToken),
       ) as SignedTokenInterface
       setSignedToken(searchParamToken)
     } else if (localStorageSignedToken) {
       const localStorageParamToken = JSON.parse(
-        hex2ascii(localStorageSignedToken),
+        SynapseComponents.hex2ascii(localStorageSignedToken),
       ) as SignedTokenInterface
       setSignedToken(localStorageParamToken)
     }
@@ -99,7 +104,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
 
   useAnalytics()
 
-  const { acceptsTermsOfUse } = useApplicationSessionContext()
+  const { acceptsTermsOfUse } = AppUtils.useApplicationSessionContext()
 
   return (
     <AppContextProvider

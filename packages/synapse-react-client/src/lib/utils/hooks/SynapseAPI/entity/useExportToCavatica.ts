@@ -6,7 +6,7 @@ import {
   DownloadFromTableRequest,
   QueryBundleRequest,
   SelectColumn,
-} from '../../../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export function useExportToCavatica(
   queryBundleRequest: QueryBundleRequest,

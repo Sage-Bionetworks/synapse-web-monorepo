@@ -1,8 +1,8 @@
 import { Box } from '@mui/material'
-import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
+import { SynapseComponents } from 'synapse-react-client'
 import React from 'react'
 import { ContinueButton } from './ContinueButton'
-import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
+import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import { ReturnToAppButton } from './ReturnToAppButton'
 import { TermsAndConditionsLink } from '../TermsAndConditionsLink'
 // import { TermsAndConditionsSignature } from './TermsAndConditionsSignature'
@@ -21,7 +21,7 @@ const TermsAndConditionsWrapped: React.FC<TermsAndConditionsWrappedProps> = ({
 
   return (
     <Box>
-      <TermsAndConditions
+      <SynapseComponents.TermsAndConditions
         onFormChange={isFormComplete => {
           setIsFormComplete(isFormComplete)
         }}

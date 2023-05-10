@@ -18,7 +18,7 @@ import {
   SelectColumn,
   UserGroupHeader,
   UserProfile,
-} from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   CardLink,
   ColumnSpecifiedLink,

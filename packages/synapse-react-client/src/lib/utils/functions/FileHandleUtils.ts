@@ -13,7 +13,7 @@ import {
   ProxyFileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   S3FileHandle,
-} from '../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   ExternalGoogleCloudUploadDestination,
   ExternalObjectStoreUploadDestination,
@@ -21,7 +21,7 @@ import {
   ExternalUploadDestination,
   UploadDestination,
   UploadType,
-} from '../synapseTypes/File/UploadDestination'
+} from '@sage-bionetworks/synapse-types'
 
 const SYNAPSE_STORAGE = 'Synapse Storage'
 const SYNAPSE_STORAGE_LOCATION_ID = 1

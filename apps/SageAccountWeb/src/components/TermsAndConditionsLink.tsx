@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, SxProps } from '@mui/material'
-import { URL_TERMS_CONDITIONS_AGREEMENT } from 'synapse-react-client/dist/utils/SynapseConstants'
+import { SynapseConstants } from 'synapse-react-client'
 
 export type TermsAndConditionsLinkProps = {
   sx?: SxProps
@@ -12,7 +12,7 @@ export const TermsAndConditionsLink: React.FC<TermsAndConditionsLinkProps> = ({
   return (
     <Button
       variant="text"
-      href={URL_TERMS_CONDITIONS_AGREEMENT}
+      href={SynapseConstants.URL_TERMS_CONDITIONS_AGREEMENT}
       target="_blank"
       sx={sx}
     >

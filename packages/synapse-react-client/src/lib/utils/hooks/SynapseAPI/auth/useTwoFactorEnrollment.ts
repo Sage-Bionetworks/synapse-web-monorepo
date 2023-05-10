@@ -9,7 +9,7 @@ import {
   TotpSecret,
   TotpSecretActivationRequest,
   TwoFactorAuthStatus,
-} from '../../../synapseTypes/TotpSecret'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { SynapseClient } from '../../../index'
 import { useSynapseContext } from '../../../SynapseContext'

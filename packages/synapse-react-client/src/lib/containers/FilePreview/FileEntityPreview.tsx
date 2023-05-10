@@ -1,10 +1,8 @@
 import React from 'react'
 import {
   EntityBundle,
-  isFileEntity,
   FileHandleAssociateType,
-  implementsCloudProviderFileHandleInterface,
-} from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import FileHandleContentRenderer from './FileHandleContentRenderer'
 import { PreviewRendererType } from './PreviewRendererType'
 import {
@@ -14,6 +12,10 @@ import {
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { Alert } from 'react-bootstrap'
 import { SignInPrompt } from '../error/ErrorBanner'
+import {
+  implementsCloudProviderFileHandleInterface,
+  isFileEntity,
+} from '../../utils/types/IsType'
 
 export type FileEntityPreviewProps = {
   /** An entity bundle containing a FileEntity, and its fileHandles */

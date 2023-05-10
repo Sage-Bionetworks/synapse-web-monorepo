@@ -5,7 +5,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../../src/lib/utils/functions/getEndpoint'
-import { QueryBundleRequest } from '../../../../../src/lib/utils/synapseTypes'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { TABLE_QUERY_ASYNC_START } from '../../../../../src/lib/utils/APIConstants'
 
 import { rest, server } from '../../../../../mocks/msw/server'

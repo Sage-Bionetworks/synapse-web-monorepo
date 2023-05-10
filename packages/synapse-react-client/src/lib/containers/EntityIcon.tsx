@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { EntityType } from '../utils/synapseTypes'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import { entityTypeToFriendlyName } from '../utils/functions/EntityTypeUtils'
 import IconSvg, { Icon, IconSvgProps, type2SvgIconName } from './IconSvg'
 

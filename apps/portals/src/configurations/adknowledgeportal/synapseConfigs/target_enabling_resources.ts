@@ -1,9 +1,9 @@
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import type { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { targetEnablingResourcesExploreSql } from '../resources'
-import { QueryWrapperPlotNavProps } from 'synapse-react-client/dist/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/dist/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 
 // https://sagebionetworks.jira.com/wiki/spaces/PS/pages/2501607563/AMP-AD+Target+Enabling+Resources+Schema
 

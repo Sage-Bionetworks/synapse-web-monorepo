@@ -3,24 +3,24 @@ import { QueryContextType, useQueryContext } from '../../QueryContext'
 import {
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueQueryFilter,
-  isColumnMultiValueFunctionQueryFilter,
-  isColumnSingleValueQueryFilter,
-  isTextMatchesQueryFilter,
   QueryFilter,
   TextMatchesQueryFilter,
-} from '../../../utils/synapseTypes/Table/QueryFilter'
+} from '@sage-bionetworks/synapse-types'
 import SelectionCriteriaPill, {
   SelectionCriteriaPillProps,
 } from './SelectionCriteriaPill'
-import {
-  FacetColumnRequest,
-  isFacetColumnRangeRequest,
-  isFacetColumnValuesRequest,
-} from '../../../utils/synapseTypes'
+import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
 import {
   QueryVisualizationContextType,
   useQueryVisualizationContext,
 } from '../../QueryVisualizationWrapper'
+import {
+  isColumnMultiValueFunctionQueryFilter,
+  isColumnSingleValueQueryFilter,
+  isFacetColumnValuesRequest,
+  isFacetColumnRangeRequest,
+  isTextMatchesQueryFilter,
+} from '../../../utils/types/IsType'
 
 function getPillPropsFromColumnQueryFilter(
   queryFilter:
@@ -104,6 +104,7 @@ function getPillPropsFromFacet(
   }
   const columnModel = queryContext.getColumnModel(selectedFacet.columnName)!
   const { getColumnDisplayName, getDisplayValue } = queryVisualizationContext
+  // @ts-ignore
   if (isFacetColumnValuesRequest(selectedFacet)) {
     return selectedFacet.facetValues.map(facetValue => {
       const innerText = getDisplayValue(facetValue, columnModel.columnType)

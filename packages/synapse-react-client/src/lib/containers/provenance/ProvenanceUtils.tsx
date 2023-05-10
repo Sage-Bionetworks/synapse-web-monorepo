@@ -10,11 +10,8 @@ import { ExternalGraphNodeLabel } from './ExternalGraphNodeLabel'
 import dagre from 'dagre'
 import { differenceWith, isEqual } from 'lodash-es'
 import { UndefinedNodeLabel } from './UndefinedNodeLabel'
-import { EntityHeader, Reference } from '../../utils/synapseTypes'
-import {
-  Activity,
-  UsedURL,
-} from '../../utils/synapseTypes/Provenance/Provenance'
+import { EntityHeader, Reference } from '@sage-bionetworks/synapse-types'
+import { Activity, UsedURL } from '@sage-bionetworks/synapse-types'
 import { EntityPlaceholderNodeLabel } from './EntityPlaceholderNodeLabel'
 
 export enum NodeType {

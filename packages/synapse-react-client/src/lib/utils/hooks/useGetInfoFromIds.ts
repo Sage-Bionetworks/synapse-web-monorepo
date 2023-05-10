@@ -14,7 +14,7 @@ import {
   Reference,
   ReferenceList,
   UserGroupHeader,
-} from '../synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE' | 'EVALUATION_QUEUE'
 export type UseGetInfoFromIdsProps = {

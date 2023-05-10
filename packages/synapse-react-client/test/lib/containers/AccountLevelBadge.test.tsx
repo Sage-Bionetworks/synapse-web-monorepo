@@ -7,7 +7,7 @@ import {
   accountLevelVerifiedLabel,
 } from '../../../src/lib/containers/AccountLevelBadge'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { UserBundle } from '../../../src/lib/utils/synapseTypes'
+import { UserBundle } from '@sage-bionetworks/synapse-types'
 
 const SynapseClient = require('../../../src/lib/utils/SynapseClient')
 

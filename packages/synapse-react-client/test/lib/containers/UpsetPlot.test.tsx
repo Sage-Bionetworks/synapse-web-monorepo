@@ -5,7 +5,7 @@ import UpsetPlot, {
 } from '../../../src/lib/containers/UpsetPlot'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../src/lib/utils'
-import { QueryResultBundle } from '../../../src/lib/utils/synapseTypes/'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 import * as UpSetJsModule from '@upsetjs/react'
 

@@ -7,7 +7,7 @@ import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   AccessRequirementStatus,
   SubmissionState,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { FullContextProviderProps } from '../../../../src/lib/utils/FullContextProvider'
 import { MOCK_FILE_ENTITY_ID } from '../../../../mocks/entity/mockFileEntity'
 import {

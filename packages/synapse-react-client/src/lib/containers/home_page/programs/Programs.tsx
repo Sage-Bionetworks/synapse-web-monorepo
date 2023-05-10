@@ -2,7 +2,7 @@ import React from 'react'
 import {
   FileHandleAssociation,
   QueryBundleRequest,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../../utils'
 
 import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'

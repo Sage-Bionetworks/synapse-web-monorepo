@@ -9,7 +9,7 @@ import {
   FileHandleResults,
   ObjectType,
   WikiPage,
-} from '../../utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 import { ErrorBanner } from '../error/ErrorBanner'
 import MarkdownWidget from './MarkdownWidget'
 import {

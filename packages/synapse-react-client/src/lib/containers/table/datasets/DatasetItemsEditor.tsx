@@ -25,7 +25,7 @@ import {
   EntityRefCollectionView,
   EntityType,
   Reference,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { RequiredProperties } from '../../../utils/types/RequiredProperties'
 import {
   BadgeIconsRenderer,

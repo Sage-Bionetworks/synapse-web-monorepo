@@ -16,7 +16,7 @@ import {
   TreeData,
 } from '../../../../../src/lib/containers/entity_finder/tree/VirtualizedTree'
 import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import { EntityType } from '../../../../../src/lib/utils/synapseTypes'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 
 describe('VirtualizedTree tests', () => {
   beforeEach(() => {

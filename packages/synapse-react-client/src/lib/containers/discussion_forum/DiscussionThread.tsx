@@ -8,11 +8,10 @@ import {
   useRestoreThread,
 } from '../../utils/hooks/SynapseAPI/forum/useThread'
 import {
-  ALL_ENTITY_BUNDLE_FIELDS,
   SMALL_USER_CARD,
   SRC_SIGN_IN_CLASS,
 } from '../../utils/SynapseConstants'
-import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
+import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 import UserCard from '../UserCard'
 import { displayToast } from '../ToastMessage'
 import { DiscussionReply } from './DiscussionReply'
@@ -20,7 +19,10 @@ import { FormControl } from 'react-bootstrap'
 import { Button, Typography } from '@mui/material'
 import IconSvg from '../IconSvg'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
-import { ObjectType } from '../../utils/synapseTypes'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  ObjectType,
+} from '@sage-bionetworks/synapse-types'
 import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
 import {
   useGetCurrentUserProfile,

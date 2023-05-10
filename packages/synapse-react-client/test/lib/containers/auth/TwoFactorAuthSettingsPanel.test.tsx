@@ -6,7 +6,7 @@ import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import TwoFactorAuthSettingsPanel, {
   TwoFactorAuthSettingsPanelProps,
 } from '../../../../src/lib/containers/auth/TwoFactorAuthSettingsPanel'
-import { TwoFactorAuthStatus } from '../../../../src/lib/utils/synapseTypes/TotpSecret'
+import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 
 const enabledStatus: TwoFactorAuthStatus = {
   status: 'ENABLED',

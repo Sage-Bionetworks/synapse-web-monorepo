@@ -1,16 +1,14 @@
 import { Collapse } from '@mui/material'
 import React from 'react'
 import { CSSTransition } from 'react-transition-group'
-import { ColumnModel, ColumnTypeEnum } from '../utils/synapseTypes'
+import { ColumnModel, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import {
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
-  isColumnMultiValueFunctionQueryFilter,
-  isColumnSingleValueQueryFilter,
   QueryFilter,
-} from '../utils/synapseTypes/Table/QueryFilter'
+} from '@sage-bionetworks/synapse-types'
 import { QueryVisualizationContextType } from './QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
@@ -18,6 +16,10 @@ import {
 } from './QueryWrapper'
 import { LockedColumn, QueryContextType } from './QueryContext'
 import IconSvg from './IconSvg'
+import {
+  isColumnMultiValueFunctionQueryFilter,
+  isColumnSingleValueQueryFilter,
+} from '../utils/types/IsType'
 
 type SearchState = {
   show: boolean

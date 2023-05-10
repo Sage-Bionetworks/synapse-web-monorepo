@@ -15,7 +15,7 @@ import {
 import {
   PaginatedResults,
   TrashedEntity,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import mockDatasetData from '../../../../mocks/entity/mockDataset'
 import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../../mocks/msw/server'

@@ -7,13 +7,13 @@ import SortIcon from '../assets/icons/Sort'
 import { formatDate } from '../utils/functions/DateFormatter'
 import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useDataAccessSubmission'
 import { ACT_TEAM_ID, SMALL_USER_CARD } from '../utils/SynapseConstants'
-import { Direction, SubmissionState } from '../utils/synapseTypes'
+import { Direction, SubmissionState } from '@sage-bionetworks/synapse-types'
 import {
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,
   SubmissionSearchSort,
   SubmissionSortField,
-} from '../utils/synapseTypes/AccessSubmission'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from './LoadingScreen'
 import UserCard from './UserCard'
 import { Typography } from '@mui/material'

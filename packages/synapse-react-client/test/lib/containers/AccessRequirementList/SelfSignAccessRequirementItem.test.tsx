@@ -7,7 +7,7 @@ import {
   AccessApproval,
   AccessRequirementStatus,
   ApprovalState,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import {
   mockAccessRequirementWikiPageKeys,
   mockSelfSignAccessRequirement,

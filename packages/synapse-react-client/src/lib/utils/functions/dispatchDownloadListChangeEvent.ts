@@ -1,4 +1,4 @@
-import { DownloadList } from '../synapseTypes'
+import { DownloadList } from '@sage-bionetworks/synapse-types'
 
 export const DOWNLOAD_LIST_CHANGE_EVENT = 'DOWNLOAD_LIST_UPDATED_EVENT'
 

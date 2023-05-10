@@ -45,7 +45,7 @@ import {
   UserGroupHeader,
   UserProfile,
   Entity,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../../mocks/msw/server'
 import queryResultBundleJson from '../../../../mocks/query/syn16787123.json'

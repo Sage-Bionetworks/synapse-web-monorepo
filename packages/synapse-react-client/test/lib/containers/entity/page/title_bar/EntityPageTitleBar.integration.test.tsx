@@ -6,10 +6,7 @@ import { render, screen } from '@testing-library/react'
 import { createWrapper } from '../../../../../testutils/TestingLibraryUtils'
 import mockFileEntity from '../../../../../../mocks/entity/mockFileEntity'
 import { EntityActionMenuProps } from '../../../../../../src/lib/containers/entity/page/action_menu/EntityActionMenu'
-import {
-  EntityBundle,
-  EntityType,
-} from '../../../../../../src/lib/utils/synapseTypes'
+import { EntityBundle, EntityType } from '@sage-bionetworks/synapse-types'
 import { rest, server } from '../../../../../../mocks/msw/server'
 import {
   BackendDestinationEnum,

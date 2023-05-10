@@ -12,7 +12,7 @@ import { NoContentPlaceholderType } from './table/NoContentPlaceholderType'
 import SearchResultsNotFound from './table/SearchResultsNotFound'
 import ThisTableIsEmpty from './table/TableIsEmpty'
 import { unCamelCase } from '../utils/functions/unCamelCase'
-import { ColumnType } from '../utils/synapseTypes'
+import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { getDisplayValue } from '../utils/functions/getDataFromFromStorage'
 
 export type QueryVisualizationContextType = {

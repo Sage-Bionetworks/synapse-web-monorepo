@@ -13,7 +13,7 @@ import {
   EntityLookupRequest,
   FileEntity,
   FileUploadComplete,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 type UploaderState = {
   error?: any

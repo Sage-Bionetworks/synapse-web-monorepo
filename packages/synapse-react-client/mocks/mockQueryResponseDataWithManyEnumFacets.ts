@@ -1,4 +1,4 @@
-import { QueryResultBundle } from '../src/lib/utils/synapseTypes'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { MOCK_FOLDER_ID } from './entity/mockEntity'
 import mockFileEntityData from './entity/mockFileEntity'
 import { MOCK_TABLE_ENTITY_ID } from './entity/mockTableEntity'

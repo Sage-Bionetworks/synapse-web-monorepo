@@ -4,11 +4,8 @@ import {
   useSearch,
   useSearchInfinite,
 } from '../../../../../src/lib/utils/hooks/SynapseAPI/search/useSearch'
-import { EntityType } from '../../../../../src/lib/utils/synapseTypes'
-import {
-  SearchQuery,
-  SearchResults,
-} from '../../../../../src/lib/utils/synapseTypes/Search'
+import { EntityType } from '@sage-bionetworks/synapse-types'
+import { SearchQuery, SearchResults } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
 import { FullContextProvider } from '../../../../../src/lib/utils/FullContextProvider'

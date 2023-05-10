@@ -1,9 +1,9 @@
 import { SynapseConfig } from 'types/portal-config'
 import columnAliases from '../columnAliases'
-import { LabelLinkConfig } from 'synapse-react-client/dist/containers/CardContainerLogic'
-import { StandaloneQueryWrapperProps } from 'synapse-react-client/dist/containers/table/StandaloneQueryWrapper'
+import type { LabelLinkConfig } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { StandaloneQueryWrapperProps } from 'synapse-react-client/dist/containers/table/StandaloneQueryWrapper'
 import { dataSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [

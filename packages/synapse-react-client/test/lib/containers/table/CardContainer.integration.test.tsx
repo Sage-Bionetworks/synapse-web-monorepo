@@ -18,7 +18,7 @@ import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import syn16787123Json from '../../../../mocks/query/syn16787123.json'
 import {
   DEFAULT_PAGE_SIZE,

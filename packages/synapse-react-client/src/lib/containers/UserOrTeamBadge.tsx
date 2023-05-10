@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useGetUserGroupHeader } from '../utils/hooks/SynapseAPI/user/useUserGroupHeader'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { useSynapseContext } from '../utils/SynapseContext'
-import { UserGroupHeader } from '../utils/synapseTypes'
+import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import TeamBadge from './TeamBadge'
 import UserCard from './UserCard'
 

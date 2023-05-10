@@ -3,7 +3,7 @@ import { SourceAppLogo } from './SourceApp'
 import { StyledOuterContainer } from './StyledComponents'
 import { Box, Paper, Typography } from '@mui/material'
 import { BackButton } from './BackButton'
-import { AccessTokenPage } from 'synapse-react-client/dist/containers/personal_access_token/AccessTokenPage'
+import { SynapseComponents } from 'synapse-react-client'
 
 export const PersonalAccessTokensPage = () => {
   return (
@@ -22,7 +22,7 @@ export const PersonalAccessTokensPage = () => {
         <Box sx={{ padding: '60px' }}>
           <SourceAppLogo sx={{ display: 'block' }} />
           <Typography variant="headline3">Personal Access Tokens</Typography>
-          <AccessTokenPage
+          <SynapseComponents.AccessTokenPage
             title=""
             body="Issue personal access tokens to access your Synapse resources in the
             command line clients. A personal access token will expire if it is

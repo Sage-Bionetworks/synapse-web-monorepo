@@ -7,7 +7,7 @@ import TwoFactorEnrollmentForm, {
   EXPORTED_FOR_UNIT_TESTING,
   TwoFactorEnrollmentFormProps,
 } from '../../../../src/lib/containers/auth/TwoFactorEnrollmentForm'
-import { TotpSecret } from '../../../../src/lib/utils/synapseTypes/TotpSecret'
+import { TotpSecret } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../../../src/lib/utils/SynapseClientError'
 import { mockUserProfileData } from '../../../../mocks/user/mock_user_profile'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'

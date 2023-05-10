@@ -1,7 +1,9 @@
 import React from 'react'
-import { SynapseClient } from 'synapse-react-client/dist/utils'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
+import {
+  SynapseClient,
+  SynapseConstants,
+  SynapseContext,
+} from 'synapse-react-client'
 import {
   Button,
   Dialog,
@@ -22,7 +24,7 @@ export const unbindORCiD = async (
   if (orcid) {
     try {
       await SynapseClient.unbindOAuthProviderToAccount(
-        PROVIDERS.ORCID,
+        SynapseConstants.OAUTH2_PROVIDERS.ORCID,
         accessToken,
         orcid,
       )
@@ -41,7 +43,7 @@ export type UnbindORCiDDialogProps = {
 }
 
 export const UnbindORCiDDialog = (props: UnbindORCiDDialogProps) => {
-  const { accessToken } = useSynapseContext()
+  const { accessToken } = SynapseContext.useSynapseContext()
   return (
     <Dialog open={props.show} maxWidth="sm">
       <DialogTitle>Unlink ORCID?</DialogTitle>

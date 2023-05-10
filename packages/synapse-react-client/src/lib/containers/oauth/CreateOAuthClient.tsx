@@ -3,7 +3,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { displayToast } from '../ToastMessage'
 import { Typography } from '@mui/material'
-import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
+import { OAuthClient } from '@sage-bionetworks/synapse-types'
 import {
   useCreateOAuthClient,
   useDeleteOAuthClient,

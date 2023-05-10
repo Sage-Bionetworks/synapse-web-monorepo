@@ -6,7 +6,7 @@ import {
   FacetColumnResultValueCount,
   FacetColumnResultValues,
   QueryResultBundle,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,

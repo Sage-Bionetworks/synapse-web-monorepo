@@ -1,5 +1,5 @@
 import { EvaluationRoundLimitInput } from '../../../../../src/lib/containers/evaluation_queues/input_models/models'
-import { EvaluationRoundLimitType } from '../../../../../src/lib/utils/synapseTypes/Evaluation'
+import { EvaluationRoundLimitType } from '@sage-bionetworks/synapse-types'
 import {
   EvaluationRoundLimitOptions,
   EvaluationRoundLimitOptionsProps,

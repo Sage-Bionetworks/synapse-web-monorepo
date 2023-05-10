@@ -6,7 +6,7 @@ import {
   EntityView,
   PaginatedResults,
   ProjectHeader,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 import mockFile from './mockFileEntity'
 import mockProject from './mockProject'

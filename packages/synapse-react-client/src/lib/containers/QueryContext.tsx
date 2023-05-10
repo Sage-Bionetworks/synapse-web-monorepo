@@ -7,7 +7,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   Table,
-} from '../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { ImmutableTableQueryResult } from './useImmutableTableQuery'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'

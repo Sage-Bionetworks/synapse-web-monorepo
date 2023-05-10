@@ -6,7 +6,7 @@ import {
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
   FilesCountStatistics,
-} from '../utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseContext } from '../utils/SynapseContext'
 const Plot = createPlotlyComponent(Plotly)
 

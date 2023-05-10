@@ -9,7 +9,7 @@ import {
   ManagedACTAccessRequirement,
   Renewal,
   Request,
-} from '../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import IconSvg from '../IconSvg'
 import StandaloneLoginForm from '../auth/StandaloneLoginForm'
 import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/CancelRequestDataAccess'

@@ -4,12 +4,11 @@ import {
   FileHandleAssociateType,
   FileEntity,
   ExternalFileHandle,
-  isExternalFileHandle,
-  isFileEntity,
-} from '../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { SynapseClient } from '../utils/'
 import { OpenInNewTwoTone } from '@mui/icons-material'
 import { useSynapseContext } from '../utils/SynapseContext'
+import { isFileEntity, isExternalFileHandle } from '../utils/types/IsType'
 
 export type ExternalFileHandleLinkProps = {
   synId: string

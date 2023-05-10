@@ -15,7 +15,7 @@ import {
   Query,
   QueryBundleRequest,
   QueryResultBundle,
-} from '../../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { MOCK_USER_ID } from '../../../../../mocks/user/mock_user_profile'
 

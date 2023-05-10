@@ -8,30 +8,25 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import { SynapseClient } from 'synapse-react-client/dist/utils'
-import { PROVIDERS } from 'synapse-react-client/dist/containers/auth/AuthenticationMethodSelection'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import {
-  isAliasAvailable,
-  registerAccountStep1,
-} from 'synapse-react-client/dist/utils/SynapseClient'
-import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
+  SynapseClient,
+  SynapseComponents,
+  AppUtils,
+  SynapseConstants,
+} from 'synapse-react-client'
+import { AliasType } from '@sage-bionetworks/synapse-types'
 import { SourceAppLogo, useSourceApp } from './SourceApp'
 import { Link as RouterLink } from 'react-router-dom'
 import { EmailConfirmationPage } from './EmailConfirmationPage'
-import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from '../AppContext'
-import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
+import { isMembershipInvtnSignedToken } from '@sage-bionetworks/synapse-types/dist/SignedToken/MembershipInvtnSignedToken'
 import { BackButton } from './BackButton'
 import {
   StyledFormControl,
   StyledInnerContainer,
   StyledOuterContainer,
 } from './StyledComponents'
-import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from 'synapse-react-client/dist/utils/AppUtils'
-
-export type RegisterAccount1Props = {}
 
 export enum Pages {
   CHOOSE_REGISTRATION,
@@ -40,7 +35,7 @@ export enum Pages {
   GOOGLE_REGISTRATION,
 }
 
-export const RegisterAccount1 = (props: RegisterAccount1Props) => {
+export const RegisterAccount1 = () => {
   const appContext = useAppContext()
   const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
@@ -101,16 +96,19 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
   const onSendRegistrationInfo = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     if (!email) {
-      displayToast('Please provide a valid email and try again.', 'danger')
+      SynapseComponents.displayToast(
+        'Please provide a valid email and try again.',
+        'danger',
+      )
       return
     }
     setIsLoading(true)
     try {
       const callbackUrl = `${window.location.protocol}//${window.location.host}/register2?emailValidationSignedToken=`
-      await registerAccountStep1({ email }, callbackUrl)
+      await SynapseClient.registerAccountStep1({ email }, callbackUrl)
       setPage(Pages.EMAIL_REGISTRATION_THANK_YOU)
     } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
+      SynapseComponents.displayToast(err.reason as string, 'danger')
     } finally {
       setIsLoading(false)
     }
@@ -119,41 +117,54 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
   const onSignUpWithGoogle = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     if (!username) {
-      displayToast('Please provide a user name and try again.', 'danger')
+      SynapseComponents.displayToast(
+        'Please provide a user name and try again.',
+        'danger',
+      )
       return
     }
     setIsLoading(true)
     try {
-      const aliasCheckResponse = await isAliasAvailable({
+      const aliasCheckResponse = await SynapseClient.isAliasAvailable({
         alias: username,
         type: AliasType.USER_NAME,
       })
       if (!aliasCheckResponse.available) {
-        displayToast('Sorry, that username has already been taken.', 'danger')
+        SynapseComponents.displayToast(
+          'Sorry, that username has already been taken.',
+          'danger',
+        )
       } else if (!aliasCheckResponse.valid) {
-        displayToast('Sorry, that username is not valid.', 'danger')
+        SynapseComponents.displayToast(
+          'Sorry, that username is not valid.',
+          'danger',
+        )
       } else {
         // Looks good!  Go to Google oauth account creation flow
         // redirect to Google login, passing the username through via the state param.
         // Send us back to the special oauth2 account creation step2 path (which is ignored by our AppInitializer)
         localStorage.setItem(
-          POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
+          AppUtils.POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY,
           `${SynapseClient.getRootURL()}authenticated/signTermsOfUse`,
         )
         const redirectUrl = `${SynapseClient.getRootURL()}?provider=${
-          PROVIDERS.GOOGLE
+          SynapseConstants.OAUTH2_PROVIDERS.GOOGLE
         }`
-        SynapseClient.oAuthUrlRequest(PROVIDERS.GOOGLE, redirectUrl, username)
+        SynapseClient.oAuthUrlRequest(
+          SynapseConstants.OAUTH2_PROVIDERS.GOOGLE,
+          redirectUrl,
+          username,
+        )
           .then((data: any) => {
             const authUrl = data.authorizationUrl
             window.location.assign(authUrl)
           })
           .catch((err: any) => {
-            displayToast(err.reason as string, 'danger')
+            SynapseComponents.displayToast(err.reason as string, 'danger')
           })
       }
     } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
+      SynapseComponents.displayToast(err.reason as string, 'danger')
     } finally {
       setIsLoading(false)
     }
@@ -193,7 +204,10 @@ export const RegisterAccount1 = (props: RegisterAccount1Props) => {
                         sx={chooseButtonSx}
                         variant="outlined"
                       >
-                        <IconSvg icon="email" sx={{ marginRight: '5px' }} />
+                        <SynapseComponents.IconSvg
+                          icon="email"
+                          sx={{ marginRight: '5px' }}
+                        />
                         Create account with your email
                       </Button>
                     </div>

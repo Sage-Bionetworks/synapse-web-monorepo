@@ -8,12 +8,12 @@ import {
 import usePreFetchResource, {
   useCreateUrlForData,
 } from '../utils/hooks/usePreFetchResource'
-import { UserProfile } from '../utils/synapseTypes/'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
 import { Avatar, AvatarSize } from './Avatar'
 import { MenuAction } from './UserCardContextMenu'
 import UserCardMedium from './UserCardMedium'
 import { UserCardSmall } from './UserCardSmall'
-import { AliasType } from '../utils/synapseTypes/Principal/PrincipalServices'
+import { AliasType } from '@sage-bionetworks/synapse-types'
 import { UserCardSize } from '../utils/SynapseConstants'
 
 export type UserCardProps = {

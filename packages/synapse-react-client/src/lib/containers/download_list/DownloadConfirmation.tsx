@@ -6,9 +6,9 @@ import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/downl
 import { useGetEntityChildren } from '../../utils/hooks/SynapseAPI/entity/useGetEntityChildren'
 import useGetQueryResultBundle from '../../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import { EntityType, QueryBundleRequest } from '../../utils/synapseTypes/'
-import { AddToDownloadListRequest } from '../../utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
-import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
+import { EntityType, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { AddToDownloadListRequest } from '@sage-bionetworks/synapse-types'
+import { FilesStatisticsResponse } from '@sage-bionetworks/synapse-types'
 import { TopLevelControlsState } from '../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,

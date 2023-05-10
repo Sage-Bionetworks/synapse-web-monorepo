@@ -11,7 +11,7 @@ import {
   Request,
   RestrictableObjectType,
   UploadCallbackResp,
-} from '../../../utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg'
 import {
   Alert,

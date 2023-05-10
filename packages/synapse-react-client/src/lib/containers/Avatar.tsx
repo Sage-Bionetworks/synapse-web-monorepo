@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { getColor } from '../utils/functions/getUserData'
-import { UserProfile } from '../utils/synapseTypes'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
 import UserCardMedium from './UserCardMedium'
 import { useOverlay } from '../utils/hooks/useOverlay'
 import { Skeleton } from '@mui/material'

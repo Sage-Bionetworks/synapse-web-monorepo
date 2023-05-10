@@ -19,7 +19,7 @@ import { SynapseConstants } from '../../../../src/lib/utils'
 import {
   ColumnTypeEnum,
   QueryBundleRequest,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import queryResponse from '../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { getHandlersForTableQuery } from '../../../../mocks/msw/handlers/tableQueryHandlers'
 import { server } from '../../../../mocks/msw/server'

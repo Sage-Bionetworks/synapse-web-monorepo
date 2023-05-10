@@ -20,10 +20,10 @@ import {
   AccessRequirementStatus,
   ApprovalState,
   SubmissionState,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import AccessRequirementList from '../../src/lib/containers/AccessRequirementList/AccessRequirementList'
-import { TwoFactorAuthStatus } from '../../src/lib/utils/synapseTypes/TotpSecret'
+import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
 import {
   getAccessRequirementEntityBindingHandlers,

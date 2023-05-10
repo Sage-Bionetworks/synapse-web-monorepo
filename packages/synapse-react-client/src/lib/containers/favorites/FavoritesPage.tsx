@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
-import { Direction, EntityHeader } from '../../utils/synapseTypes'
+import { Direction, EntityHeader } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseSpinner } from '../LoadingScreen'
 import {

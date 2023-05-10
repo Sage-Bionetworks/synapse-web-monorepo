@@ -1,7 +1,7 @@
 import { SynapseConstants } from '../../../utils'
 import { getFieldIndex } from '../../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
-import { QueryBundleRequest } from '../../../utils/synapseTypes'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import React, { useState, useEffect } from 'react'
 import { FeaturedToolCard } from './FeaturedToolCard'
 import { ErrorBanner } from '../../error/ErrorBanner'

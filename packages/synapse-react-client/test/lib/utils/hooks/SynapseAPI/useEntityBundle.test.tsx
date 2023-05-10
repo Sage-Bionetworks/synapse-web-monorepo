@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
 import { QueryClient } from 'react-query'
 import useGetEntityBundle from '../../../../../src/lib/utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { EntityBundle } from '../../../../../src/lib/utils/synapseTypes'
+import { EntityBundle } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import FullContextProvider from '../../../../../src/lib/utils/FullContextProvider'
 

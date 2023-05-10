@@ -4,7 +4,7 @@ import {
   getFriendlyPropertyName,
   getTransformErrors,
 } from '../../../../../src/lib/containers/entity/annotations/AnnotationEditorUtils'
-import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from '../../../../../src/lib/utils/synapseTypes'
+import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 
 describe('AnnotationEditorUtils tests', () => {
   describe('dropNullishArrayValues', () => {

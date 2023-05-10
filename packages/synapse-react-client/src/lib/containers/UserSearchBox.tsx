@@ -5,8 +5,8 @@ import { getUserGroupHeaders } from '../utils/SynapseClient'
 import {
   UserGroupHeader,
   UserGroupHeaderResponsePage,
-} from '../utils/synapseTypes'
-import { TYPE_FILTER } from '../utils/synapseTypes/UserGroupHeader'
+} from '@sage-bionetworks/synapse-types'
+import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import UserOrTeamBadge from './UserOrTeamBadge'
 
 export type UserSearchBoxProps = {

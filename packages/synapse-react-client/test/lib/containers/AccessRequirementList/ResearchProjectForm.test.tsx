@@ -5,7 +5,7 @@ import ResearchProjectForm, {
 import {
   ACCESS_TYPE,
   ManagedACTAccessRequirement,
-} from '../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'

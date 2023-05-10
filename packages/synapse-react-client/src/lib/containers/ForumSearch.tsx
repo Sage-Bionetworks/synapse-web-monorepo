@@ -3,10 +3,10 @@ import { forumSearch, getEntity } from '../utils/SynapseClient'
 import {
   DiscussionSearchResponse,
   Match,
-} from '../utils/synapseTypes/DiscussionSearch'
+} from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../utils/SynapseContext'
 import DiscussionReply from './DiscussionSearchResult'
-import { Entity } from '../utils/synapseTypes'
+import { Entity } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import NoSearchResults from '../assets/icons/NoSearchResults'
 import { Button } from 'react-bootstrap'

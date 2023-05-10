@@ -6,7 +6,7 @@ import {
   ListRequest,
   StatusEnum,
   ListResponse,
-} from '../../utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 import WarningDialog from './WarningDialog'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import WideButton from '../../components/styled/WideButton'

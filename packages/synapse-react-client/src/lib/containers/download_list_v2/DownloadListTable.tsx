@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { DownloadListItemResult } from '../../utils/synapseTypes/DownloadListV2/DownloadListItemResult'
+import { DownloadListItemResult } from '@sage-bionetworks/synapse-types'
 import { Dropdown, Table } from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/download/useDownloadList'
@@ -9,13 +9,16 @@ import {
   AvailableFilter,
   Sort,
   SortField,
-} from '../../utils/synapseTypes/DownloadListV2/QueryRequestDetails'
-import { DownloadListItem } from '../../utils/synapseTypes/DownloadListV2/DownloadListItem'
+} from '@sage-bionetworks/synapse-types'
+import { DownloadListItem } from '@sage-bionetworks/synapse-types'
 import { SynapseClient } from '../../utils'
 import dayjs from 'dayjs'
 import UserCard from '../UserCard'
 import SortIcon from '../../assets/icons/Sort'
-import { Direction, FileHandleAssociateType } from '../../utils/synapseTypes'
+import {
+  Direction,
+  FileHandleAssociateType,
+} from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg'
@@ -23,7 +26,7 @@ import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 import DirectDownload from '../DirectDownload'
 import { displayToast } from '../ToastMessage'
-import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
+import { FilesStatisticsResponse } from '@sage-bionetworks/synapse-types'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
 import { BlockingLoader } from '../LoadingScreen'
 import { Tooltip } from '@mui/material'

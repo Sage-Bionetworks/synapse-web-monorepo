@@ -21,24 +21,6 @@ export const BUNDLE_MASK_SUM_FILES_SIZE_BYTES: number = 64
 export const BUNDLE_MASK_LAST_UPDATED_ON = 0x80
 export const BUNDLE_MASK_COMBINED_SQL = 0x100
 
-/** Request object to return all Entity Bundle fields */
-export const ALL_ENTITY_BUNDLE_FIELDS = {
-  includeEntity: true,
-  includeEntityPath: true,
-  includeAnnotations: true,
-  includePermissions: true,
-  includeHasChildren: true,
-  includeAccessControlList: true,
-  includeFileHandles: true,
-  includeTableBundle: true,
-  includeRootWikiId: true,
-  includeBenefactorACL: true,
-  includeDOIAssociation: true,
-  includeFileName: true,
-  includeThreadCount: true,
-  includeRestrictionInformation: true,
-} as const
-
 /** Row Types  */
 export const STUDY: string = 'study'
 /** Unannotated value for query */
@@ -147,3 +129,7 @@ export const URL_TERMS_CONDITIONS_AGREEMENT =
 
 /** Class names */
 export const LOGIN_BACK_BUTTON_CLASS_NAME = 'login-flow-back-button'
+export const OAUTH2_PROVIDERS = {
+  GOOGLE: 'GOOGLE_OAUTH_2_0',
+  ORCID: 'ORCID',
+}

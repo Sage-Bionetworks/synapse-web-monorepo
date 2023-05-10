@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { FileHandleResults, WikiPage } from '../../utils/synapseTypes'
+import { FileHandleResults, WikiPage } from '@sage-bionetworks/synapse-types'
 
 export type SynapseWikiContextType = {
   ownerId?: string

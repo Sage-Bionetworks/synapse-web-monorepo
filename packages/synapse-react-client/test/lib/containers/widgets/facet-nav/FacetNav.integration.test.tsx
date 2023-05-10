@@ -18,7 +18,7 @@ import { SynapseConstants } from '../../../../../src/lib/utils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
-} from '../../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { server } from '../../../../../mocks/msw/server'
 import failOnConsole from 'jest-fail-on-console'

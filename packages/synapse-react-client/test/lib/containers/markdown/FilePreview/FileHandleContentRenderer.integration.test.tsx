@@ -16,7 +16,7 @@ import {
   FileHandle,
   FileHandleAssociateType,
   FileHandleAssociation,
-} from '../../../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { MOCK_FILE_HANDLE_ID } from '../../../../../mocks/mock_file_handle'
 import { rest, server } from '../../../../../mocks/msw/server'

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import TableFeedCards from '../../../src/lib/containers/TableFeedCards'
-import { QueryResultBundle } from '../../../src/lib/utils/synapseTypes/'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import syn23519444Json from '../../../mocks/query/syn23519444.json'
 import { act } from '@testing-library/react'
 import { render, fireEvent } from '@testing-library/react'

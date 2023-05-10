@@ -12,7 +12,7 @@ import {
 import {
   BatchFileResult,
   FileHandleAssociateType,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../mocks/msw/server'
 import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'

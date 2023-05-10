@@ -6,7 +6,7 @@ import {
   ColumnTypeEnum,
   QueryResultBundle,
   UserProfile,
-} from '../utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 import UserCard from './UserCard'
 import { without } from 'lodash-es'
 

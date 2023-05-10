@@ -10,7 +10,7 @@ import { CreateAccessTokenModalProps } from '../../../../src/lib/containers/pers
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../src/lib/utils'
 import { SynapseContextType } from '../../../../src/lib/utils/SynapseContext'
-import { AccessTokenRecordList } from '../../../../src/lib/utils/synapseTypes/AccessToken/AccessTokenRecord'
+import { AccessTokenRecordList } from '@sage-bionetworks/synapse-types'
 
 // Mock the CreateAccessTokenModal with a simple dialog with buttons to easily invoke passed props
 jest.mock(

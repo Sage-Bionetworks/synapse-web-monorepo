@@ -9,10 +9,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../src/lib/utils/functions/getEndpoint'
-import {
-  EntityHeader,
-  PaginatedResults,
-} from '../../../../src/lib/utils/synapseTypes'
+import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import userEvent from '@testing-library/user-event'
 import { SynapseContextType } from '../../../../src/lib/utils/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
