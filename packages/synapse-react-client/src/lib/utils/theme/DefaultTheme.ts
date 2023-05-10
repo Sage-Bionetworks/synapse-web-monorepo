@@ -1,7 +1,7 @@
 import { ThemeOptions } from '@mui/material/styles'
 import { typographyOptions } from './typography/Typography'
 import palette from './palette/Palettes'
-import { alpha, Fade } from '@mui/material'
+import { alpha, Fade, inputBaseClasses } from '@mui/material'
 import linkTheme from './typography/Link'
 
 const DIALOG_INNER_PADDING = '2px'
@@ -111,6 +111,16 @@ const defaultMuiThemeOptions: ThemeOptions = {
         }),
       },
     },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          marginLeft: '0',
+          '&.Mui-error': {
+            color: theme.palette.error.main,
+          },
+        }),
+      },
+    },
     MuiInputBase: {
       styleOverrides: {
         root: ({ theme }) => ({
@@ -126,15 +136,38 @@ const defaultMuiThemeOptions: ThemeOptions = {
             )} 0 0 0 0.1rem`,
             borderColor: theme.palette.primary.main,
           },
+          '& fieldset': {
+            border: 'none',
+          },
         }),
         input: ({ theme }) => ({
           padding: '14px 12px',
         }),
+        multiline: {
+          padding: '0px',
+        },
       },
     },
     MuiInputLabel: {
       defaultProps: {
         shrink: true,
+      },
+      styleOverrides: {
+        root: ({ theme }) => ({
+          fontWeight: 700,
+          mb: '4px',
+          fontSize: '14px',
+          transform: 'none',
+        }),
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: ({ theme, ownerState }) => ({
+          [`& .${inputBaseClasses.root}`]: {
+            marginTop: ownerState.label && theme.spacing(3),
+          },
+        }),
       },
     },
     MuiMenuItem: {

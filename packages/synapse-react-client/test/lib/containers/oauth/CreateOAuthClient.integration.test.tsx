@@ -42,6 +42,10 @@ const defaultProps: CreateOAuthModalProps = {
   setIsShowingConfirmModal: jest.fn(),
 }
 
+jest
+  .spyOn(SynapseClient, 'isOAuthClientReverificationRequired')
+  .mockReturnValue(Promise.resolve({ reverificationRequired: true }))
+
 function renderComponent(props: CreateOAuthModalProps = defaultProps) {
   render(<CreateOAuthModal {...props} />, {
     wrapper: createWrapper(),
@@ -53,7 +57,7 @@ function setUp(props: CreateOAuthModalProps = defaultProps) {
   const component = renderComponent(props)
   const inputs = {
     name: screen.getByRole('textbox', { name: 'Client Name' }),
-    homePage: screen.getByRole('textbox', { name: 'Client Homepage' }),
+    homePage: screen.getByLabelText('Client Homepage'),
     redirectURI: screen.getByRole('textbox', { name: 'Redirect URI(s)' }),
   }
   const saveButton = screen.getByRole('button', { name: 'Save' })
@@ -156,9 +160,6 @@ describe('Create OAuth Client', () => {
   })
 
   it('Shows a warning modal when changing redirect uri', async () => {
-    const mockIsOAuthClientReverificationRequired = jest
-      .spyOn(SynapseClient, 'isOAuthClientReverificationRequired')
-      .mockReturnValue(Promise.resolve({ reverificationRequired: true }))
     const { user, inputs, saveButton } = setUp({
       ...defaultProps,
       isEdit: true,

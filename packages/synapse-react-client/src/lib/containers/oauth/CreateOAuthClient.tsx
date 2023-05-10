@@ -8,7 +8,6 @@ import {
   Grid,
   IconButton,
   TextField,
-  Tooltip,
   Typography,
   InputAdornment,
 } from '@mui/material'
@@ -19,14 +18,12 @@ import {
   useUpdateOAuthClient,
 } from '../../utils/hooks/SynapseAPI'
 import { WarningDialog } from '../synapse_form_wrapper/WarningDialog'
-import { HelpOutlineTwoTone } from '@mui/icons-material'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { SynapseSpinner } from '../LoadingScreen'
 import { SynapseClient } from '../../utils'
 import { useDebouncedEffect } from '../../utils/hooks'
 import { ConfirmationDialog } from '../ConfirmationDialog'
-import StyledFormControl from '../../components/styled/StyledFormControl'
 
 const INPUT_CHANGE_DEBOUNCE_DELAY_MS = 500
 const GRID_NARROW = 12
@@ -70,7 +67,6 @@ export const CreateOAuthModal: React.FunctionComponent<
   const warningHeader = 'Are you absolutely sure?'
   const warningBody =
     'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.'
-  const uriHelpMessage = 'Click Add URI to add more Redirect URIs'
 
   // Return the OAuth Client definition based on the current client-side UI state
   const oAuthClient: OAuthClient = useMemo(() => {
@@ -213,13 +209,7 @@ export const CreateOAuthModal: React.FunctionComponent<
     }
   }
 
-  const labelSx = {
-    fontWeight: 700,
-    mb: '4px',
-  }
-
   const dangerLabelSx = {
-    ...labelSx,
     color: isEdit ? 'error.main' : undefined,
     '&.Mui-focused': {
       color: isEdit ? 'error.main' : undefined,
@@ -227,41 +217,27 @@ export const CreateOAuthModal: React.FunctionComponent<
   }
 
   const sectorIdentifierURIInput = (
-    <StyledFormControl fullWidth variant="standard" margin="normal">
-      <TextField
-        onChange={e => setSectorUri(e.target.value)}
-        placeholder="https://"
-        type="text"
-        value={sectorUri}
-        id="sectorURI"
-        label="Sector Identifier URI"
-        InputLabelProps={{ sx: dangerLabelSx }}
-      />
-    </StyledFormControl>
+    <TextField
+      onChange={e => setSectorUri(e.target.value)}
+      placeholder="https://"
+      type="text"
+      value={sectorUri}
+      id="sectorURI"
+      label="Sector Identifier URI"
+      margin="normal"
+      InputLabelProps={{ sx: dangerLabelSx }}
+      fullWidth
+    />
   )
 
   const redirectURIInputs = (
-    <StyledFormControl fullWidth variant="standard" margin="normal">
+    <>
       {redirectUris?.map((singleUri, idx) => (
         <div key={idx}>
           <TextField
             required={idx === 0}
-            InputLabelProps={{
-              sx: { ...dangerLabelSx, pointerEvents: 'auto', zIndex: 1 },
-            }}
-            label={
-              idx === 0 && (
-                <>
-                  Redirect URI(s)
-                  <Tooltip title={uriHelpMessage} placement="top">
-                    <HelpOutlineTwoTone
-                      className={`HelpButton`}
-                      sx={{ float: 'right' }}
-                    />
-                  </Tooltip>
-                </>
-              )
-            }
+            InputLabelProps={{ sx: dangerLabelSx }}
+            label={idx === 0 && 'Redirect URI(s)'}
             name="uri"
             fullWidth
             id={`redirect-uri-${idx}`}
@@ -278,6 +254,7 @@ export const CreateOAuthModal: React.FunctionComponent<
                 </InputAdornment>
               ),
             }}
+            margin={idx === 0 ? 'normal' : 'dense'}
           />
           {redirectUris.length - 1 === idx && (
             <Button
@@ -292,7 +269,7 @@ export const CreateOAuthModal: React.FunctionComponent<
           )}
         </div>
       ))}
-    </StyledFormControl>
+    </>
   )
 
   const content = (
@@ -322,31 +299,29 @@ export const CreateOAuthModal: React.FunctionComponent<
             columnSpacing={GRID_COL_SPACING}
           >
             <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
-              <StyledFormControl fullWidth variant="standard" margin="normal">
-                <TextField
-                  label="Client Name"
-                  required
-                  onChange={e => setClientName(e.target.value)}
-                  placeholder="Client Name"
-                  type="text"
-                  value={clientName}
-                  id="clientName"
-                  InputLabelProps={{ sx: labelSx }}
-                />
-              </StyledFormControl>
+              <TextField
+                label="Client Name"
+                required
+                onChange={e => setClientName(e.target.value)}
+                placeholder="Client Name"
+                type="text"
+                value={clientName}
+                id="clientName"
+                margin="normal"
+                fullWidth
+              />
             </Grid>
             <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
-              <StyledFormControl fullWidth variant="standard" margin="normal">
-                <TextField
-                  label="Client Homepage"
-                  onChange={e => setClientUri(e.target.value)}
-                  placeholder="https://"
-                  type="text"
-                  value={clientUri}
-                  id="clientUri"
-                  InputLabelProps={{ sx: labelSx }}
-                />
-              </StyledFormControl>
+              <TextField
+                label="Client Homepage"
+                onChange={e => setClientUri(e.target.value)}
+                placeholder="https://"
+                type="text"
+                value={clientUri}
+                id="clientUri"
+                fullWidth
+                margin="normal"
+              />
             </Grid>
             {!isEdit && (
               <>
@@ -359,37 +334,35 @@ export const CreateOAuthModal: React.FunctionComponent<
               </>
             )}
             <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
-              <StyledFormControl fullWidth variant="standard" margin="normal">
-                <TextField
-                  label="Link to Privacy Policy"
-                  onChange={e => setPolicyUri(e.target.value)}
-                  placeholder="https://"
-                  type="text"
-                  value={policyUri}
-                  InputLabelProps={{ sx: labelSx }}
-                />
-              </StyledFormControl>
+              <TextField
+                label="Link to Privacy Policy"
+                onChange={e => setPolicyUri(e.target.value)}
+                placeholder="https://"
+                type="text"
+                value={policyUri}
+                fullWidth
+                margin="normal"
+              />
             </Grid>
             <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
-              <StyledFormControl fullWidth variant="standard" margin="normal">
-                <TextField
-                  label="Links to Terms of Service"
-                  onChange={e => setTosUri(e.target.value)}
-                  placeholder="https://"
-                  type="text"
-                  value={tosUri}
-                  InputLabelProps={{ sx: labelSx }}
-                />
-              </StyledFormControl>
+              <TextField
+                label="Links to Terms of Service"
+                onChange={e => setTosUri(e.target.value)}
+                placeholder="https://"
+                type="text"
+                value={tosUri}
+                fullWidth
+                margin="normal"
+              />
             </Grid>
           </Grid>
           {isEdit && (
             <Box
               sx={{ backgroundColor: 'rgb(178, 36, 42, 0.03)' }}
               mt="10px"
-              padding="8px"
+              padding={1}
             >
-              <Typography sx={{ mt: '8px' }} color="error" variant="headline3">
+              <Typography sx={{ my: 1 }} color="error" variant="headline3">
                 DANGER ZONE
               </Typography>
               <Typography variant="smallText1">
@@ -418,7 +391,7 @@ export const CreateOAuthModal: React.FunctionComponent<
                 color="error"
                 variant="text"
                 startIcon={<DeleteTwoToneIcon />}
-                sx={{ padding: 0, mb: '8px' }}
+                sx={{ padding: 0, mb: 1 }}
               >
                 DELETE CLIENT
               </Button>
