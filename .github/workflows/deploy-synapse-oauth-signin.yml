@@ -1,12 +1,13 @@
-name: "Deploy SynapseOauthSignin"
+name: "Deploy synapse-oauth-signin"
 
 on:
   push:
     branches:
-      - production
-      - staging
+      - releases/synapse_oauth_signin/production
+      - releases/synapse_oauth_signin/staging
       - main
     paths:
+      - "packages/synapse-react-client/**"
       - "apps/synapse-oauth-signin/**"
 jobs:
   build-and-deploy:
@@ -21,13 +22,13 @@ jobs:
     steps:
       # if in staging branch set then bucket name to staging bucket
       - name: setup-outputbucket-staging
-        if: github.ref == 'refs/heads/staging'
+        if: github.ref == 'refs/heads/releases/synapse_oauth_signin/staging'
         run: |
           echo 'BUCKET_NAME=staging-signin.synapse.org' >> $GITHUB_ENV
           echo 'CFDIST_ID=EUE2TU70O0M2M' >> $GITHUB_ENV
       # if in production branch then set bucket name to production bucket
       - name: setup-outputbucket-prod
-        if: github.ref == 'refs/heads/production'
+        if: github.ref == 'refs/heads/releases/synapse_oauth_signin/production'
         run: |
           echo 'BUCKET_NAME=prod-signin-synapse-websitebucket-u91v422hx5bs' >> $GITHUB_ENV
           echo 'CFDIST_ID=E1HPVCTTKTU4MN' >> $GITHUB_ENV
@@ -35,33 +36,9 @@ jobs:
       # checkout and build
       - name: checkout
         uses: actions/checkout@v3.0.0
-      - name: setup-nodejs
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: 8
-          run_install: false
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-      - name: install-dependencies
-        run: pnpm install
+      - uses: ./.github/actions/pnpm-setup-action
       - name: build
-        run:
-          pnpm nx run synapse-oauth-signin:build
+        run: pnpm nx run synapse-oauth-signin:build
       - name: Assume AWS Role
         uses: aws-actions/configure-aws-credentials@v2
         with:
