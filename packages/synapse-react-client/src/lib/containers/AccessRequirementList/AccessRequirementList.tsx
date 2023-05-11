@@ -212,7 +212,7 @@ export default function AccessRequirementList(
       accessRequirement.isValidatedProfileRequired,
   )
 
-  const displayRequestDetails = useMemo(() => {
+  const requestDetails = useMemo(() => {
     // Prioritize requestObjectName, then the number of files affected, then the entity name
     if (requestObjectName) return requestObjectName
     if (numberOfFilesAffected)
@@ -248,10 +248,10 @@ export default function AccessRequirementList(
 
       <DialogContent>
         <DialogSubsectionHeader sx={{ mt: 0 }}>
-          Access For:
+          What is this request for?
         </DialogSubsectionHeader>
         <Typography variant={'body1'} component={'span'}>
-          {displayRequestDetails}
+          {requestDetails}
         </Typography>
         <DialogSubsectionHeader>What do I need to do?</DialogSubsectionHeader>
         <AuthenticatedRequirement />
