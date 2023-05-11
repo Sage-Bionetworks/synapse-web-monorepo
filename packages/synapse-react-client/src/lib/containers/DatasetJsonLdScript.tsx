@@ -9,13 +9,13 @@ declare const markdownit: typeof MarkdownIt
 const md = markdownit({ html: true })
 
 interface DatasetJsonLdScriptOption1Props {
-  entityId: string
-  version: number
-  searchParams: never
+  entityId?: string
+  version?: number
+  searchParams?: never
 }
 interface DatasetJsonLdScriptOption2Props {
-  entityId: never
-  version: never
+  entityId?: never
+  version?: never
   searchParams?: { [key: string]: string } // can be injected if this component is embedded in a Dataset Details page
 }
 export type DatasetJsonLdScriptProps =
@@ -58,21 +58,25 @@ export default function DatasetJsonLdScript(props: DatasetJsonLdScriptProps) {
         return `${key}, ${annotationsObject[key].value.join(', ')}`
       })
     : []
-  const myDataset: WithContext<Dataset> = {
-    '@context': 'https://schema.org',
-    '@type': 'Dataset',
-    name: entityBundle?.entity.name,
-    description: plainTextWiki,
-    url: window.location.href,
-    version: version,
-    keywords: keywords,
-    includedInDataCatalog: {
-      '@type': 'DataCatalog',
-      name: 'Synapse',
-      url: 'https://www.synapse.org',
-    },
-    isAccessibleForFree: true,
-    dateModified: dayjs(entityBundle?.entity.modifiedOn).toISOString(),
-  }
+
+  const isStaging = window.location.hostname.toLowerCase().includes('staging')
+  const myDataset: WithContext<Dataset> | undefined = isStaging
+    ? undefined
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'Dataset',
+        name: entityBundle?.entity.name,
+        description: plainTextWiki,
+        url: window.location.href,
+        version: version,
+        keywords: keywords,
+        includedInDataCatalog: {
+          '@type': 'DataCatalog',
+          name: 'Synapse',
+          url: 'https://www.synapse.org',
+        },
+        isAccessibleForFree: true,
+        dateModified: dayjs(entityBundle?.entity.modifiedOn).toISOString(),
+      }
   useJsonLdScriptElement(myDataset)
 }
