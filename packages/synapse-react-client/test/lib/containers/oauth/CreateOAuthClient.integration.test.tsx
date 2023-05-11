@@ -42,10 +42,26 @@ const defaultProps: CreateOAuthModalProps = {
   setIsShowingConfirmModal: jest.fn(),
 }
 
+jest
+  .spyOn(SynapseClient, 'isOAuthClientReverificationRequired')
+  .mockReturnValue(Promise.resolve({ reverificationRequired: true }))
+
 function renderComponent(props: CreateOAuthModalProps = defaultProps) {
   render(<CreateOAuthModal {...props} />, {
     wrapper: createWrapper(),
   })
+}
+
+function setUp(props: CreateOAuthModalProps = defaultProps) {
+  const user = userEvent.setup()
+  const component = renderComponent(props)
+  const inputs = {
+    name: screen.getByRole('textbox', { name: 'Client Name' }),
+    homePage: screen.getByLabelText('Client Homepage'),
+    redirectURI: screen.getByRole('textbox', { name: 'Redirect URI(s)' }),
+  }
+  const saveButton = screen.getByRole('button', { name: 'Save' })
+  return { component, user, inputs, saveButton }
 }
 
 describe('Create OAuth Client', () => {
@@ -74,23 +90,19 @@ describe('Create OAuth Client', () => {
         },
       ),
     )
-    renderComponent()
-    const inputName = await screen.findByLabelText('Client Name')
-    const inputHomePage = await screen.findByLabelText('Client Homepage')
-    const inputRedirectURI = await screen.findByLabelText('Redirect URI(s)')
+    const { user, inputs, saveButton } = setUp()
 
-    const saveButton = screen.getByRole('button', { name: 'Save' })
-    await userEvent.type(inputName, mockClient.client_name)
-    await userEvent.type(inputHomePage, mockClient.client_uri!)
-    await userEvent.type(inputRedirectURI, mockClient.redirect_uris[0]!)
+    await user.type(inputs.name, mockClient.client_name)
+    await user.type(inputs.homePage, mockClient.client_uri!)
+    await user.type(inputs.redirectURI, mockClient.redirect_uris[0]!)
 
     await waitFor(() => {
-      expect(inputName).toHaveValue(mockClient.client_name)
-      expect(inputHomePage).toHaveValue(mockClient.client_uri)
-      expect(inputRedirectURI).toHaveValue(mockClient.redirect_uris[0])
+      expect(inputs.name).toHaveValue(mockClient.client_name)
+      expect(inputs.homePage).toHaveValue(mockClient.client_uri)
+      expect(inputs.redirectURI).toHaveValue(mockClient.redirect_uris[0])
     })
 
-    await userEvent.click(saveButton)
+    await user.click(saveButton)
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith('Successfully created', 'success'),
@@ -98,9 +110,13 @@ describe('Create OAuth Client', () => {
   })
 
   it('Shows a warning modal when deleteing a client', async () => {
-    renderComponent({ ...defaultProps, isEdit: true, client: mockClient })
+    const { user } = setUp({
+      ...defaultProps,
+      isEdit: true,
+      client: mockClient,
+    })
     const deleteButton = screen.getByRole('button', { name: 'DELETE CLIENT' })
-    await userEvent.click(deleteButton)
+    await user.click(deleteButton)
 
     expect(mockWarningDialog).toBeCalledWith(
       expect.objectContaining({
@@ -125,22 +141,18 @@ describe('Create OAuth Client', () => {
     )
     const showModal = jest.fn().mockReturnValue(true)
 
-    renderComponent({
+    const { user, inputs, saveButton } = setUp({
       ...defaultProps,
       setIsShowingConfirmModal: showModal,
       isEdit: true,
       client: mockClient,
     })
-    const inputName = await screen.findByRole('textbox', {
-      name: 'Client Name',
-    })
-    const saveButton = screen.getByRole('button', { name: 'Save' })
-    await userEvent.type(inputName, 'rename')
+    await user.type(inputs.name, 'rename')
 
     await waitFor(() =>
-      expect(inputName).toHaveValue(`${mockClient.client_name}rename`),
+      expect(inputs.name).toHaveValue(`${mockClient.client_name}rename`),
     )
-    await userEvent.click(saveButton)
+    await user.click(saveButton)
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith('Successfully saved', 'success'),
@@ -148,15 +160,14 @@ describe('Create OAuth Client', () => {
   })
 
   it('Shows a warning modal when changing redirect uri', async () => {
-    const mockIsOAuthClientReverificationRequired = jest
-      .spyOn(SynapseClient, 'isOAuthClientReverificationRequired')
-      .mockReturnValue(Promise.resolve({ reverificationRequired: true }))
-    renderComponent({ ...defaultProps, isEdit: true, client: mockClient })
-    const inputRedirectURI = await screen.findByLabelText('Redirect URI(s)')
-    const saveButton = screen.getByRole('button', { name: 'Save' })
+    const { user, inputs, saveButton } = setUp({
+      ...defaultProps,
+      isEdit: true,
+      client: mockClient,
+    })
 
-    await userEvent.type(inputRedirectURI, 'xxx')
-    await userEvent.click(saveButton)
+    await user.type(inputs.redirectURI, 'xxx')
+    await user.click(saveButton)
 
     expect(mockWarningDialog).toBeCalledWith(
       expect.objectContaining({
