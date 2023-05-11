@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
@@ -46,6 +46,7 @@ export type AccessRequirementListProps = {
   onHide: () => void
   renderAsModal?: boolean
   numberOfFilesAffected?: number // if provided, will show this instead of the entity information
+  requestObjectName?: string // if provided, will show this instead of the entity information or numberOfFilesAffected
 }
 
 const SUPPORTED_ACCESS_REQUIREMENTS = new Set<
@@ -121,6 +122,7 @@ export default function AccessRequirementList(
     accessRequirementFromProps,
     renderAsModal,
     numberOfFilesAffected,
+    requestObjectName,
   } = props
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
@@ -210,6 +212,28 @@ export default function AccessRequirementList(
       accessRequirement.isValidatedProfileRequired,
   )
 
+  const displayRequestDetails = useMemo(() => {
+    // Prioritize requestObjectName, then the number of files affected, then the entity name
+    if (requestObjectName) return requestObjectName
+    if (numberOfFilesAffected)
+      return (
+        <>
+          <IconSvg icon="file" sx={{ width: '30px' }} /> {numberOfFilesAffected}{' '}
+          File(s)
+        </>
+      )
+    return (
+      <>
+        <IconSvg icon="file" sx={{ width: '30px' }} />{' '}
+        <Link
+          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityId}`}
+        >
+          {entityInformation[0]?.name}
+        </Link>
+      </>
+    )
+  }, [entityId, entityInformation, numberOfFilesAffected, requestObjectName])
+
   const content = (
     <>
       <DialogTitle>
@@ -227,16 +251,7 @@ export default function AccessRequirementList(
           Access For:
         </DialogSubsectionHeader>
         <Typography variant={'body1'} component={'span'}>
-          <IconSvg icon="file" sx={{ width: '30px' }} />{' '}
-          {numberOfFilesAffected ? (
-            `${numberOfFilesAffected} File(s)`
-          ) : (
-            <Link
-              href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityId}`}
-            >
-              {entityInformation[0]?.name}
-            </Link>
-          )}
+          {displayRequestDetails}
         </Typography>
         <DialogSubsectionHeader>What do I need to do?</DialogSubsectionHeader>
         <AuthenticatedRequirement />
