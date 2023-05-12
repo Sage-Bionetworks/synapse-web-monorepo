@@ -7,11 +7,18 @@ import { EntityActionsRequired } from './access_requirements/EntityActionsRequir
  * Error banner that automatically pulls the error from QueryContext.  If 403, shows entity actions required
  */
 export const QueryWrapperErrorBanner = () => {
-  const { error, getLastQueryRequest } = useQueryContext()
+  const { error, getLastQueryRequest, onViewSharingSettingsClicked } =
+    useQueryContext()
   const { entityId } = getLastQueryRequest()
 
   if (error?.status == 403) {
-    return <EntityActionsRequired entityId={entityId} />
+    // TODO: set onViewSharingSettingsClicked using QueryWrapper
+    return (
+      <EntityActionsRequired
+        entityId={entityId}
+        onViewSharingSettingsClicked={onViewSharingSettingsClicked}
+      />
+    )
   } else {
     return <ErrorBanner error={error} />
   }

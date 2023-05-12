@@ -14,7 +14,7 @@ import { displayToast } from './ToastMessage'
 import { Button, Link } from '@mui/material'
 import { MarkdownPopover } from './MarkdownPopover'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
-import { Typography } from '@mui/material'
+import { ButtonProps, Typography } from '@mui/material'
 import { useErrorHandler } from 'react-error-boundary'
 
 const CertificationQuiz: React.FunctionComponent = () => {
@@ -91,7 +91,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
           content: <>More info</>,
           closePopoverOnClick: true,
           onClick: () => window.open(helpUrl, '_blank'),
-          variant: 'primary',
+          color: 'primary' as ButtonProps['color'],
         }
       : undefined
 

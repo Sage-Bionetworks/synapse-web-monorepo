@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import DownloadListStats from './DownloadListStats'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/download/useDownloadList'
@@ -13,10 +13,8 @@ import IconSvg from '../IconSvg'
 import { CreatePackageV2 } from './CreatePackageV2'
 import FullWidthAlert from '../FullWidthAlert'
 import { ErrorBanner } from '../error/ErrorBanner'
-import { Typography } from '@mui/material'
+import { Button, Tooltip, Typography } from '@mui/material'
 import { HelpPopover } from '../HelpPopover'
-import { Tooltip } from '@mui/material'
-import { Button } from 'react-bootstrap'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal'
 
 const pythonDownloadCode = `import synapseclient
@@ -67,7 +65,7 @@ export const DownloadCartPage: React.FunctionComponent<
     refetch()
   }
   return (
-    <div className="DownloadCartPage bootstrap-4-backport">
+    <div className="DownloadCartPage">
       <div>
         <div className="pageHeader">
           <div className="grid">
@@ -160,7 +158,7 @@ export const DownloadCartPage: React.FunctionComponent<
                 <div className="subSectionOverview container">
                   <div>
                     <div className="headlineWithHelp">
-                      <Typography variant={'headline3'}>
+                      <Typography variant={'headline3'} sx={{ mb: 2 }}>
                         <IconSvg icon="packagableFile" /> Web Download (.ZIP
                         Packages)
                       </Typography>
@@ -169,7 +167,11 @@ export const DownloadCartPage: React.FunctionComponent<
                         helpUrl="https://help.synapse.org/docs/Downloading-Data-From-the-Synapse-UI.2004254837.html"
                       />
                     </div>
-                    <Typography variant={'body1'}>
+                    <Typography
+                      variant={'body1'}
+                      component={'div'}
+                      sx={{ mb: 2 }}
+                    >
                       <ul>
                         <li>
                           Eligible files will be added to .ZIP packages of up to
@@ -189,37 +191,40 @@ export const DownloadCartPage: React.FunctionComponent<
                         </li>
                       </ul>
                     </Typography>
-                    <span>
-                      {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging >
-                        0 && (
-                        <Button
-                          variant="sds-primary"
-                          onClick={() => {
-                            setIsShowingCreatePackageUI(true)
-                          }}
-                        >
-                          <IconSvg icon="download" />
-                          Download As .Zip Packages
-                        </Button>
-                      )}
-                      {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging ==
-                        0 && (
-                        <Tooltip
-                          title="You cannot create a .zip package because there are no eligible files."
-                          enterNextDelay={300}
-                          placement="top"
-                        >
-                          <Button variant="sds-primary" disabled>
-                            <IconSvg icon="download" />
-                            &nbsp;Download As .Zip Packages
+                    {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging >
+                      0 && (
+                      <Button
+                        variant="contained"
+                        onClick={() => {
+                          setIsShowingCreatePackageUI(true)
+                        }}
+                        startIcon={<IconSvg icon="download" wrap={false} />}
+                      >
+                        Download As .Zip Packages
+                      </Button>
+                    )}
+                    {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging ==
+                      0 && (
+                      <Tooltip
+                        title="You cannot create a .zip package because there are no eligible files."
+                        enterNextDelay={300}
+                        placement="top"
+                      >
+                        <span>
+                          <Button
+                            variant="contained"
+                            disabled
+                            startIcon={<IconSvg icon="download" wrap={false} />}
+                          >
+                            Download As .Zip Packages
                           </Button>
-                        </Tooltip>
-                      )}
-                    </span>
+                        </span>
+                      </Tooltip>
+                    )}
                   </div>
                   <div>
                     <div className="headlineWithHelp">
-                      <Typography variant={'headline3'}>
+                      <Typography variant={'headline3'} sx={{ mb: 2 }}>
                         <IconSvg icon="code" /> Programmatic Download
                       </Typography>
                       <HelpPopover
@@ -227,7 +232,11 @@ export const DownloadCartPage: React.FunctionComponent<
                         helpUrl="https://help.synapse.org/docs/Downloading-Data-Programmatically.2003796248.html"
                       />
                     </div>
-                    <Typography variant={'body1'}>
+                    <Typography
+                      variant={'body1'}
+                      component={'div'}
+                      sx={{ mb: 2 }}
+                    >
                       <ul>
                         <li>
                           Requires installation of a programmatic client (R,
@@ -247,21 +256,19 @@ export const DownloadCartPage: React.FunctionComponent<
                         </li>
                       </ul>
                     </Typography>
-                    <span>
-                      <Button
-                        variant="sds-primary"
-                        onClick={() => {
-                          setIsShowingModal(true)
-                        }}
-                      >
-                        <IconSvg icon="code" />
-                        &nbsp;Create Programmatic Package
-                      </Button>
-                    </span>
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        setIsShowingModal(true)
+                      }}
+                      startIcon={<IconSvg icon="code" wrap={false} />}
+                    >
+                      Create Programmatic Package
+                    </Button>
                   </div>
                 </div>
               </div>
-              <div className="availableForDownloadTableContainer container">
+              <div className="availableForDownloadTableContainer container bootstrap-4-backport">
                 {isShowingCreatePackageUI && (
                   <CreatePackageV2
                     onPackageCreation={() => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { Box, Button, LinearProgress } from '@mui/material'
 
 export type PageProgressProps = {
   barColor: string
@@ -45,28 +45,44 @@ const PageProgress: React.FunctionComponent<PageProgressProps> = props => {
     }
   }
 
+  const buttonSx = {
+    padding: '10px 120px',
+    marginRight: '30px',
+  }
+  const progressSx = {
+    backgroundColor: 'transparent',
+    '& .MuiLinearProgress-bar': {
+      backgroundColor: barColor,
+    },
+    height: '10px',
+  }
+
   return (
-    <section className="page-progress">
-      <div
-        className="page-progress-percent"
-        style={{
-          width: `${progressPercent}%`,
-          backgroundColor: barColor,
-        }}
-      ></div>
-      <div className="page-progress-action">
-        <Button className="btn-progress-back" onClick={handleBackButtonClick}>
+    <section>
+      <LinearProgress
+        value={progressPercent}
+        variant="determinate"
+        sx={progressSx}
+      />
+      <Box padding="30px 0" textAlign="center">
+        <Button
+          onClick={handleBackButtonClick}
+          sx={buttonSx}
+          variant="outlined"
+          color="primary"
+        >
           {backBtnLabel}
         </Button>
         <Button
-          className={
-            forwardBtnActive ? 'btn-progress-next-active' : 'btn-progress-next'
-          }
           onClick={handleNextButtonClick}
+          disabled={!forwardBtnActive}
+          sx={buttonSx}
+          variant="contained"
+          color="primary"
         >
           {forwardBtnLabel}
         </Button>
-      </div>
+      </Box>
     </section>
   )
 }

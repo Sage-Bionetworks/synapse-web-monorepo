@@ -2,7 +2,7 @@ import React from 'react'
 import IconSvg from './IconSvg'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { displayToast } from './ToastMessage'
-import { Tooltip } from '@mui/material'
+import { Link, Tooltip } from '@mui/material'
 import { useAddFileToDownloadList } from '../utils/hooks/SynapseAPI/download/useDownloadList'
 import { useGetEntity } from '../utils/hooks/SynapseAPI'
 
@@ -48,7 +48,7 @@ const AddToDownloadListV2: React.FunctionComponent<
         placement="right"
         enterNextDelay={300}
       >
-        <a
+        <Link
           data-testid="AddToDownloadListV2"
           onClick={() => {
             addToDownloadList({ entityId, entityVersionNumber })
@@ -56,7 +56,7 @@ const AddToDownloadListV2: React.FunctionComponent<
           className="ignoreLink"
         >
           <IconSvg icon={'addToCart'} />
-        </a>
+        </Link>
       </Tooltip>
     </>
   )

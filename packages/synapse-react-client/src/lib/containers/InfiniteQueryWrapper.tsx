@@ -30,6 +30,7 @@ export type InfiniteQueryWrapperProps = {
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   lockedColumn?: LockedColumn
+  onViewSharingSettingsClicked: (benefactorId: string) => void
 }
 
 /**
@@ -44,6 +45,7 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     lockedColumn,
     componentIndex,
     shouldDeepLink,
+    onViewSharingSettingsClicked,
   } = props
   const [currentAsyncStatus, setCurrentAsyncStatus] = useState<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle> | undefined
@@ -219,6 +221,7 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     removeValueFromSelectedFacet,
     lockedColumn,
     getColumnModel,
+    onViewSharingSettingsClicked,
   }
   /**
    * Render the children without any formatting

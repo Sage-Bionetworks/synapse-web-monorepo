@@ -202,6 +202,24 @@ export const TableHasAccessRequirement: Story = {
     shouldDeepLink: false,
   },
 }
+export const TableWithNoDownloadAccess: Story = {
+  args: {
+    sql: 'SELECT * FROM syn51489955',
+    tableConfiguration: {
+      showAccessColumn: false,
+      showDownloadColumn: false,
+    },
+    name: 'You Do Not Have Download Access To This Table',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    onViewSharingSettingsClicked: benefactorEntityId => {
+      window.open(
+        `https://www.synapse.org/#!Synapse:${benefactorEntityId}`,
+        '_blank',
+      )
+    },
+  },
+}
 
 export const Dataset: Story = {
   args: {
