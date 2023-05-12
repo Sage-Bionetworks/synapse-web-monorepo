@@ -1,7 +1,7 @@
 import ColumnResizer from 'column-resizer'
 import { cloneDeep, eq } from 'lodash-es'
 import * as React from 'react'
-import { Modal } from 'react-bootstrap'
+import { DialogBase } from '../DialogBase'
 import { SynapseClient } from '../../utils'
 import {
   hasFilesInView,
@@ -370,21 +370,22 @@ export default class SynapseTable extends React.Component<
     return (
       <React.Fragment>
         {isExpanded && (
-          <Modal
-            animation={false}
-            show={true}
-            // @ts-ignore
-            onHide={() => this.setState({ isExpanded: false })}
-            dialogClassName={'modal-90w'}
-            backdrop="static"
-          >
-            <Modal.Header
-              // @ts-ignore
-              onHide={() => this.setState({ isExpanded: false })}
-              closeButton={true}
-            ></Modal.Header>
-            <Modal.Body>{content}</Modal.Body>
-          </Modal>
+          <DialogBase
+            open={true}
+            onCancel={() => this.setState({ isExpanded: false })}
+            content={content}
+            title={undefined}
+            maxWidth="xl"
+            fullWidth
+            sx={{
+              '.MuiDialogTitle-root': {
+                padding: 0,
+              },
+              '.MuiDialogContent-root': {
+                border: 'transparent',
+              },
+            }}
+          />
         )}
         {!isExpanded && content}
       </React.Fragment>
