@@ -34,6 +34,7 @@ import ValidationRequirement from './RequirementItem/ValidationRequirement'
 import { StyledComponent } from '@emotion/styled'
 import {
   useGetAccessRequirementsForEntity,
+  useGetAccessRequirementsForTeam,
   useSortAccessRequirementIdsByCompletion,
 } from '../../utils/hooks/SynapseAPI'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
@@ -42,6 +43,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type AccessRequirementListProps = {
   entityId: string // will show this entity info
+  teamId?: string // will show this team info
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide: () => void
   renderAsModal?: boolean
@@ -118,6 +120,7 @@ export default function AccessRequirementList(
 ) {
   const {
     entityId,
+    teamId,
     onHide,
     accessRequirementFromProps,
     renderAsModal,
@@ -143,12 +146,19 @@ export default function AccessRequirementList(
 
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
-  const { data: fetchedRequirements } = useGetAccessRequirementsForEntity(
-    entityId,
-    {
-      enabled: Boolean(!accessRequirementFromProps && entityId),
-    },
-  )
+  const determineFetchedARs = () => {
+    const fetched = teamId
+      ? useGetAccessRequirementsForTeam(teamId, {
+          enabled: Boolean(!accessRequirementFromProps && teamId),
+        })
+      : useGetAccessRequirementsForEntity(entityId, {
+          enabled: Boolean(!accessRequirementFromProps && !teamId && entityId),
+        })
+
+    return fetched || {}
+  }
+
+  const { data: fetchedRequirements } = determineFetchedARs()
 
   const accessRequirements = accessRequirementFromProps ?? fetchedRequirements
 
