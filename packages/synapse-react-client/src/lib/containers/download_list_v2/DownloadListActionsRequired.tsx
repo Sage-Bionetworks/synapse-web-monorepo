@@ -6,6 +6,7 @@ import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
 import { EnableTwoFaRequirementCard } from './EnableTwoFaRequirementCard'
 import { LoadingActionRequiredCard } from './ActionRequiredCard'
+import { Box } from '@mui/material'
 
 export type DownloadListActionsRequiredProps = {
   /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
@@ -85,17 +86,15 @@ export const DownloadListActionsRequired: React.FunctionComponent<
   }
   return (
     <>
-      {allRows.length > 0 && (
-        <div className="DownloadListActionsRequired">
-          {allRows.map((item: ActionRequiredCount) => {
-            if (item) {
-              return renderActionRequired(item)
-            } else return false
-          })}
-          {/* To trigger loading the next page */}
-          <div ref={ref} />
-        </div>
-      )}
+      <Box sx={{ pt: 5 }} display="flex" flexDirection="column" gap={3}>
+        {allRows.map((item: ActionRequiredCount) => {
+          if (item) {
+            return renderActionRequired(item)
+          } else return false
+        })}
+        {/* To trigger loading the next page */}
+        {allRows.length > 0 && <div ref={ref} />}
+      </Box>
       {isLoading && <LoadingActionRequiredCard />}
     </>
   )
