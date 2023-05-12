@@ -1,124 +1,106 @@
-import { PositioningStrategy } from '@popperjs/core'
 import React, { useState } from 'react'
-import { Button } from '@mui/material'
-import { Placement } from 'react-bootstrap/esm/Overlay'
-import { ButtonVariant } from 'react-bootstrap/esm/types'
-import { usePopper } from 'react-popper'
-import { CSSTransition } from 'react-transition-group'
+import {
+  Button,
+  Box,
+  TooltipProps,
+  tooltipClasses,
+  ButtonProps,
+} from '@mui/material'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
 } from './markdown/MarkdownSynapse'
 import { Typography } from '@mui/material'
+import LightTooltip from '../components/styled/LightTooltip'
 
 export type MarkdownPopoverProps = {
   children: JSX.Element
   contentProps: MarkdownSynapseProps
-  style?: React.CSSProperties
-  placement?: Placement
+  sx?: TooltipProps['sx']
+  placement?: TooltipProps['placement']
   showCloseButton?: boolean
   actionButton?: {
     content: React.ReactElement
-    variant: ButtonVariant
+    color?: ButtonProps['color']
+    variant?: ButtonProps['variant']
     onClick: () => void
-    closePopoverOnClick: boolean
+    closePopoverOnClick?: boolean
   }
-  /* Useful if the item is in an overflow container. See https://popper.js.org/docs/v2/constructors/#strategy */
-  strategy?: PositioningStrategy
+  maxWidth?: string
+  minWidth?: string
+}
+
+const buttonBoxSx = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  flexDirection: 'row-reverse',
+  '> button': {
+    flexGrow: 1,
+    maxWidth: '45%',
+  },
 }
 
 export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
   children,
   contentProps,
-  placement,
+  placement = 'bottom-start',
   showCloseButton = true,
   actionButton,
-  strategy,
-  style,
+  sx,
+  maxWidth = '500px',
+  minWidth = '300px',
 }: MarkdownPopoverProps) => {
-  placement = placement ?? 'bottom-start'
-
   const [show, setShow] = useState(false)
 
-  // We intentionally use useState instead of useRef, see https://popper.js.org/react-popper/v2/#example
-  const [referenceElement, setReferenceElement] =
-    useState<HTMLSpanElement | null>(null)
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null,
-  )
-  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null)
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement,
-    strategy: strategy,
-    modifiers: [
-      { name: 'arrow', options: { element: arrowElement } },
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 10],
-        },
-      },
-    ],
-  })
-
-  const popover = (
-    <CSSTransition
-      in={show}
-      timeout={200}
-      classNames="fade-in-out"
-      mountOnEnter
-    >
-      <div
-        className={`Tooltip SRC-popover bootstrap-4-backport`}
-        style={{ ...style, ...styles.popper }}
-        ref={setPopperElement}
-        {...attributes.popper}
-      >
-        <Typography variant="body1">
-          <MarkdownSynapse {...contentProps} />
-        </Typography>
-        <div className="TooltipButtonContainer">
-          {actionButton && (
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => {
-                actionButton.onClick()
-                if (actionButton.closePopoverOnClick) {
-                  setShow(false)
-                }
-              }}
-            >
-              {actionButton.content}
-            </Button>
-          )}
-          {showCloseButton && (
-            <Button variant="outlined" onClick={() => setShow(false)}>
-              Close
-            </Button>
-          )}
-        </div>
-        <div
-          className="arrow"
-          data-popper-arrow
-          ref={setArrowElement}
-          style={styles.arrow}
-        />
-      </div>
-    </CSSTransition>
+  const content = (
+    <Box sx={{ padding: '20px' }}>
+      <Typography variant="body1" marginBottom={2}>
+        <MarkdownSynapse {...contentProps} />
+      </Typography>
+      <Box sx={buttonBoxSx}>
+        {actionButton && (
+          <Button
+            color={actionButton.color || 'primary'}
+            variant={actionButton.variant || 'contained'}
+            onClick={() => {
+              actionButton.onClick()
+              if (actionButton.closePopoverOnClick) {
+                setShow(false)
+              }
+            }}
+          >
+            {actionButton.content}
+          </Button>
+        )}
+        {showCloseButton && (
+          <Button variant="outlined" onClick={() => setShow(false)}>
+            Close
+          </Button>
+        )}
+      </Box>
+    </Box>
   )
 
   return (
-    <>
-      <span
+    <LightTooltip
+      title={content}
+      placement={placement}
+      onClick={() => setShow(!show)}
+      open={show}
+      sx={{
+        ...sx,
+        [`& .${tooltipClasses.tooltip}`]: {
+          maxWidth: { maxWidth },
+          minWidth: { minWidth },
+        },
+      }}
+    >
+      <Box
         role="button"
-        className="PopoverContainer bootstrap-4-backport"
-        onClick={() => setShow(val => !val)}
-        ref={setReferenceElement}
+        className={'PopoverContainer'}
+        sx={{ display: 'inline-block', cursor: 'pointer' }}
       >
         {children}
-      </span>
-      {popover}
-    </>
+      </Box>
+    </LightTooltip>
   )
 }

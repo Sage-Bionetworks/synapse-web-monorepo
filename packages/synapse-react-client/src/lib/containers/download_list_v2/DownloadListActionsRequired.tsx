@@ -1,17 +1,12 @@
 import React, { useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
 import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/SynapseAPI/download/useDownloadList'
 import { useInView } from 'react-intersection-observer'
-import {
-  ActionRequiredCount,
-  MeetAccessRequirement,
-  RequestDownload,
-} from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
-import {
-  LoadingAccessRequirementCard,
-  MeetAccessRequirementCard,
-} from './MeetAccessRequirementCard'
+import { ActionRequiredCount } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
+import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
+import { EnableTwoFaRequirementCard } from './EnableTwoFaRequirementCard'
+import { LoadingActionRequiredCard } from './ActionRequiredCard'
+import { Box } from '@mui/material'
 
 export type DownloadListActionsRequiredProps = {
   /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
@@ -21,7 +16,6 @@ export type DownloadListActionsRequiredProps = {
 export const DownloadListActionsRequired: React.FunctionComponent<
   DownloadListActionsRequiredProps
 > = props => {
-  const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
   const {
@@ -31,15 +25,9 @@ export const DownloadListActionsRequired: React.FunctionComponent<
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    isError,
-    error: newError,
-  } = useGetDownloadListActionsRequiredInfinite()
-
-  useEffect(() => {
-    if (isError && newError) {
-      handleError(newError)
-    }
-  }, [isError, newError, handleError])
+  } = useGetDownloadListActionsRequiredInfinite({
+    useErrorBoundary: true,
+  })
 
   useEffect(() => {
     if (
@@ -63,28 +51,34 @@ export const DownloadListActionsRequired: React.FunctionComponent<
   const renderActionRequired = (actionRequiredCount: ActionRequiredCount) => {
     switch (actionRequiredCount.action.concreteType) {
       case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement': {
-        const meetARAction: MeetAccessRequirement =
-          actionRequiredCount.action as MeetAccessRequirement
         return (
           <MeetAccessRequirementCard
-            key={meetARAction.accessRequirementId}
-            accessRequirementId={meetARAction.accessRequirementId}
+            key={actionRequiredCount.action.accessRequirementId}
+            accessRequirementId={actionRequiredCount.action.accessRequirementId}
             count={actionRequiredCount.count}
           />
         )
       }
       case 'org.sagebionetworks.repo.model.download.RequestDownload': {
-        const requestDownloadAction: RequestDownload =
-          actionRequiredCount.action as RequestDownload
         return (
           <RequestDownloadCard
-            key={requestDownloadAction.benefactorId}
-            entityId={`syn${requestDownloadAction.benefactorId}`}
+            key={actionRequiredCount.action.benefactorId}
+            entityId={`syn${actionRequiredCount.action.benefactorId}`}
             count={actionRequiredCount.count}
             onViewSharingSettingsClicked={props.onViewSharingSettingsClicked}
           />
         )
       }
+      case 'org.sagebionetworks.repo.model.download.EnableTwoFa': {
+        return (
+          <EnableTwoFaRequirementCard
+            key={actionRequiredCount.action.accessRequirementId}
+            accessRequirementId={actionRequiredCount.action.accessRequirementId}
+            count={actionRequiredCount.count}
+          />
+        )
+      }
+
       // case not supported yet
       default:
         return undefined
@@ -92,18 +86,16 @@ export const DownloadListActionsRequired: React.FunctionComponent<
   }
   return (
     <>
-      {allRows.length > 0 && (
-        <div className="DownloadListActionsRequired">
-          {allRows.map((item: ActionRequiredCount) => {
-            if (item) {
-              return renderActionRequired(item)
-            } else return false
-          })}
-          {/* To trigger loading the next page */}
-          <div ref={ref} />
-        </div>
-      )}
-      {isLoading && <LoadingAccessRequirementCard />}
+      <Box sx={{ pt: 5 }} display="flex" flexDirection="column" gap={3}>
+        {allRows.map((item: ActionRequiredCount) => {
+          if (item) {
+            return renderActionRequired(item)
+          } else return false
+        })}
+        {/* To trigger loading the next page */}
+        {allRows.length > 0 && <div ref={ref} />}
+        {isLoading && <LoadingActionRequiredCard />}
+      </Box>
     </>
   )
 }

@@ -412,6 +412,12 @@ export default class MarkdownSynapse extends React.Component<
               {children}
             </Typography>
           )
+        case 'span':
+          return (
+            <Typography variant={'body1'} {...props} component={Tag}>
+              {children}
+            </Typography>
+          )
         case 'h1':
           return (
             <Typography variant={'headline1'} {...props} component={Tag}>
