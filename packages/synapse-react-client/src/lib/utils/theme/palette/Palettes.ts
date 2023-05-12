@@ -174,4 +174,10 @@ export const sageBionetworksPalette: PaletteOptions = {
   secondary: generatePalette('#F5B33C'),
 }
 
+export const challengePortalPalette: PaletteOptions = {
+  ...palette,
+  primary: generatePalette('#407BA0'),
+  secondary: generatePalette('#407BA0'),
+}
+
 export default palette
