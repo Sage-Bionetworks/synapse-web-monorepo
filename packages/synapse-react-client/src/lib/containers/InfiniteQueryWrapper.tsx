@@ -30,7 +30,7 @@ export type InfiniteQueryWrapperProps = {
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   lockedColumn?: LockedColumn
-  onViewSharingSettingsClicked: (benefactorId: string) => void
+  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 /**

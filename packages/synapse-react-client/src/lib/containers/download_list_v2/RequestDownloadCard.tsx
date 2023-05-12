@@ -9,7 +9,7 @@ export type RequestDownloadCardProps = {
   entityId: string
   count?: number
   /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
-  onViewSharingSettingsClicked: (benefactorId: string) => void
+  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 export const REQUEST_DOWNLOAD_TITLE = 'Download Permission Required'
@@ -18,7 +18,11 @@ export const RequestDownloadCard: React.FunctionComponent<
 > = ({
   entityId,
   count,
-  onViewSharingSettingsClicked,
+  onViewSharingSettingsClicked = benefactorEntityId =>
+    window.open(
+      `https://www.synapse.org/#!Synapse:${benefactorEntityId}`,
+      '_blank',
+    ),
 }: RequestDownloadCardProps) => {
   const { data, isLoading } = useGetEntityHeaders([{ targetId: entityId }], {
     useErrorBoundary: true,

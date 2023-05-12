@@ -5,7 +5,7 @@ import { renderActionRequired } from '../download_list_v2/DownloadListActionsReq
 
 export type EntityActionsRequiredProps = {
   entityId: string
-  onViewSharingSettingsClicked: (benefactorId: string) => void
+  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 export const EntityActionsRequired: React.FunctionComponent<

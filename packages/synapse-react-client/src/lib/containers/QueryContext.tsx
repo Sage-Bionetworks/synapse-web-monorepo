@@ -60,7 +60,7 @@ export type QueryContextType = {
   hasResettableFilters: boolean
   getColumnModel: (columnName: string) => ColumnModel | null
   // Either open benefactor entity page in a new window or open the sharing settings dialog (in Synapse.org)
-  onViewSharingSettingsClicked: (benefactorId: string) => void
+  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 export type PaginatedQueryContextType = QueryContextType & {

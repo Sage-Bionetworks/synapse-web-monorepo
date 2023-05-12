@@ -11,6 +11,7 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '../src/lib/utils/synapseTypes/Table/QueryFilter'
+import { displayToast } from '../src/lib/containers/ToastMessage'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',
@@ -209,13 +210,20 @@ export const TableWithNoDownloadAccess: Story = {
       showAccessColumn: false,
       showDownloadColumn: false,
     },
-    name: 'You Do Not Have Download Access To This Table',
+    name: 'No Table Download Access',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
+    // onViewSharingSettingsClicked: undefined
     onViewSharingSettingsClicked: benefactorEntityId => {
-      window.open(
-        `https://www.synapse.org/#!Synapse:${benefactorEntityId}`,
-        '_blank',
+      displayToast(
+        `Open the ${benefactorEntityId} Sharing Settings dialog.  If undefined, send to the entity page.`,
+        'info',
+        {
+          primaryButtonConfig: {
+            text: 'Open Entity Page',
+            href: `https://www.synapse.org/#!Synapse:${benefactorEntityId}`,
+          },
+        },
       )
     },
   },
