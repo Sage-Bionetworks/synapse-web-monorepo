@@ -5,7 +5,9 @@ exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loos
   <div
     class="markdown"
   >
-    <span>
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+    >
       <p
         class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
       >
@@ -39,7 +41,9 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
   <div
     class="markdown"
   >
-    <span>
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+    >
       <h1
         class="MuiTypography-root MuiTypography-headline1 css-1ix3kim-MuiTypography-root"
         id="SRC-header-1"
@@ -66,7 +70,9 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
   <div
     class="markdown"
   >
-    <span>
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+    >
       <p
         class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
       >
