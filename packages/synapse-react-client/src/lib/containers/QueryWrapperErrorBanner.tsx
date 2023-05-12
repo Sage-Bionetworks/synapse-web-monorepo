@@ -12,7 +12,6 @@ export const QueryWrapperErrorBanner = () => {
   const { entityId } = getLastQueryRequest()
 
   if (error?.status == 403) {
-    // TODO: set onViewSharingSettingsClicked using QueryWrapper
     return (
       <EntityActionsRequired
         entityId={entityId}
