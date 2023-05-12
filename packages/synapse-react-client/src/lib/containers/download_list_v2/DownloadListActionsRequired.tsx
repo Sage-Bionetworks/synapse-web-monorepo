@@ -94,8 +94,8 @@ export const DownloadListActionsRequired: React.FunctionComponent<
         })}
         {/* To trigger loading the next page */}
         {allRows.length > 0 && <div ref={ref} />}
+        {isLoading && <LoadingActionRequiredCard />}
       </Box>
-      {isLoading && <LoadingActionRequiredCard />}
     </>
   )
 }
