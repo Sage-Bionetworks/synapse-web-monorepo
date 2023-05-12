@@ -1,6 +1,5 @@
-import { Box, SxProps, PaletteOptions } from '@mui/material'
+import { Box, PaletteOptions, SxProps, Typography } from '@mui/material'
 import React from 'react'
-import { Typography } from 'synapse-react-client'
 import { useGetQueryResultBundleWithAsyncStatus } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
 import { BUNDLE_MASK_QUERY_RESULTS } from 'synapse-react-client/dist/utils/SynapseConstants'
 import { SourceAppConfig } from './SourceAppConfigs'
@@ -112,7 +111,6 @@ export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
       ...palette,
       primary: generatePalette(rowVals[primaryColorColIndex] ?? ''),
       secondary: generatePalette(rowVals[secondaryColorColIndex] ?? ''),
-      contrastThreshold: 2.5,
     }
     const sourceAppConfig: SourceAppConfig = {
       appId: rowVals[appIdColIndex] ?? '',

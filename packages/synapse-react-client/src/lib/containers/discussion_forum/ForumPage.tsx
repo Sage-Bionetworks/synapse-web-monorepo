@@ -1,6 +1,5 @@
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import { Button, Modal } from 'react-bootstrap'
 import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI'
 import { useGetModerators } from '../../utils/hooks/SynapseAPI/forum/useForum'
 import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
@@ -11,6 +10,7 @@ import { displayToast } from '../ToastMessage'
 import { ForumTable } from './ForumTable'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { SubscribersModal } from './SubscribersModal'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 
 export type ForumPageProps = {
   forumId: string
@@ -66,19 +66,26 @@ export const ForumPage: React.FC<ForumPageProps> = ({
           handleModal={setShowSubscriberModal}
         />
         <Button
-          variant={subscription ? 'outline-primary' : 'primary'}
+          variant={subscription ? 'outlined' : 'contained'}
+          color="primary"
           onClick={() => handleFollowBtn()}
           disabled={isLoading}
         >
           {subscription ? 'Unfollow' : 'Follow'}
         </Button>
-        {
-          <Button variant="primary" onClick={() => handleNewThreadBtn()}>
-            New Thread
-          </Button>
-        }
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleNewThreadBtn()}
+        >
+          New Thread
+        </Button>
         {isCurrentUserModerator && (
-          <Button onClick={() => setShowDeletedThread(!showDeletedThread)}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setShowDeletedThread(!showDeletedThread)}
+          >
             {showDeletedThread
               ? 'Hide Deleted Threads'
               : 'Show Deleted Threads'}
@@ -102,40 +109,23 @@ export const ForumPage: React.FC<ForumPageProps> = ({
         limit={limit}
         filter={DiscussionFilter.EXCLUDE_DELETED}
       />
-      <Modal
-        size="lg"
-        show={showThreadModal}
-        onHide={() => setShowThreadModal(false)}
-        animation={false}
-      >
-        <Modal.Header>
-          <Modal.Title>New Thread</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <ForumThreadEditor
-            isReply={false}
-            id={forumId}
-            onClose={() => setShowThreadModal(false)}
-          />
-        </Modal.Body>
-      </Modal>
-      <Modal
-        className="bootstrap-4-backport"
-        show={showSignInModal}
-        onHide={() => setShowSignInModal(false)}
-        animation={false}
-      >
-        <Modal.Header closeButton />
-        <Modal.Body>{SIGN_IN_TEXT}</Modal.Body>
-        <Modal.Footer>
-          <Button
-            onClick={() => setShowSignInModal(false)}
-            className={SRC_SIGN_IN_CLASS}
-          >
-            Sign In
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ForumThreadEditor
+        isReply={false}
+        id={forumId}
+        onClose={() => setShowThreadModal(false)}
+        isDialog={true}
+        openDialog={showThreadModal}
+      />
+      <ConfirmationDialog
+        open={showSignInModal}
+        title="Sign In Required"
+        content={SIGN_IN_TEXT}
+        onCancel={() => setShowSignInModal(false)}
+        hasCancelButton={false}
+        onConfirm={() => setShowSignInModal(false)}
+        confirmButtonText="Sign In"
+        confirmButtonClassName={SRC_SIGN_IN_CLASS}
+      />
     </div>
   )
 }

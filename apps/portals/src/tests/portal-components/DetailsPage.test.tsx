@@ -21,6 +21,7 @@ import { MemoryRouter } from 'react-router-dom'
 import * as SynapseClient from 'synapse-react-client/dist/utils/SynapseClient'
 import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
+import { vi, describe, it, expect } from 'vitest'
 
 function renderWithContext(component) {
   return render(
@@ -41,7 +42,7 @@ function renderWithContext(component) {
 
 // We have to mock fetching a table query result, but those details remain untested
 // eslint-disable-next-line no-import-assign
-jest.spyOn(SynapseClient, 'getQueryTableAsyncJobResults').mockResolvedValue({
+vi.spyOn(SynapseClient, 'getQueryTableAsyncJobResults').mockResolvedValue({
   jobState: 'COMPLETE',
   responseBody: syn16787123Json as QueryResultBundle,
 } as AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>)
@@ -64,7 +65,7 @@ const expected: PaginatedResults<EntityHeader> = {
   ],
 }
 
-jest.spyOn(SynapseClient, 'getEntityHeaders').mockResolvedValue(expected)
+vi.spyOn(SynapseClient, 'getEntityHeaders').mockResolvedValue(expected)
 
 describe('DetailsPage tests', () => {
   it('Renders synapseConfigArray with no tabs', async () => {
@@ -230,7 +231,7 @@ describe('DetailsPage tests', () => {
   })
 
   it('Test overrideSqlSourceTable', async () => {
-    const mockSynapseComponent = jest
+    const mockSynapseComponent = vi
       .spyOn(SynapseComponentModule, 'SynapseComponent')
       .mockImplementation(() => {
         return <div>My Query Wrapper Plot Nav</div>

@@ -2,7 +2,7 @@ import React from 'react'
 import footerConfig from './config/footerConfig'
 import logoFooterConfig from './config/logoFooterConfig'
 import { ReactComponent as PoweredBySvg } from './portal-assets/poweredbysynapse.svg'
-import Versions from 'portal-components/Versions'
+import Versions from './portal-components/Versions'
 import ExperimentalMode from 'synapse-react-client/dist/containers/ExperimentalMode' // synapse-react-client/dist/utils/functions/sqlFunctions
 import { URL_TERMS_CONDITIONS_AGREEMENT } from 'synapse-react-client/dist/utils/SynapseConstants'
 

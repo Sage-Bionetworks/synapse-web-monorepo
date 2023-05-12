@@ -5,7 +5,9 @@ exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loos
   <div
     class="markdown"
   >
-    <span>
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+    >
       <p
         class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
       >
@@ -39,7 +41,9 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
   <div
     class="markdown"
   >
-    <span>
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+    >
       <h1
         class="MuiTypography-root MuiTypography-headline1 css-1ix3kim-MuiTypography-root"
         id="SRC-header-1"
@@ -47,6 +51,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
       >
         header 
         <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1qzjv42-MuiTypography-root-MuiLink-root"
           href="https://synapse.org"
           target="_blank"
         >
@@ -65,13 +70,15 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
   <div
     class="markdown"
   >
-    <span>
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+    >
       <p
         class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
       >
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-qnfplt-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-sgyk4n-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Help/How It Works"
             tabindex="0"
           >
@@ -80,7 +87,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
         </span>
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-qnfplt-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-sgyk4n-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Apply"
             tabindex="0"
           >

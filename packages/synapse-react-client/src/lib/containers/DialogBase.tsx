@@ -18,12 +18,14 @@ export type CloseButtonProps = {
   onClick?: () => void
 }
 
+export const CLOSE_BUTTON_LABEL = 'close'
+
 export const CloseButton: React.FC<CloseButtonProps> = ({
   sx = { color: 'grey.700' },
   onClick,
 }) => {
   return (
-    <IconButton sx={sx} onClick={onClick} aria-label="close">
+    <IconButton sx={sx} onClick={onClick} aria-label={CLOSE_BUTTON_LABEL}>
       <CloseIcon />
     </IconButton>
   )
@@ -41,6 +43,7 @@ export type DialogBaseProps = {
   helpUrl?: string
   maxWidth?: DialogProps['maxWidth']
   fullWidth?: boolean
+  sx?: DialogProps['sx']
 }
 
 /**
@@ -58,6 +61,7 @@ export const DialogBase = ({
   helpUrl,
   maxWidth = 'sm',
   fullWidth = true,
+  sx,
 }: DialogBaseProps) => {
   return (
     <Dialog
@@ -66,12 +70,13 @@ export const DialogBase = ({
       open={open}
       className={className}
       onClose={() => onCancel()}
+      sx={sx}
     >
       <DialogTitle>
         <Stack direction="row" alignItems={'center'} gap={'5px'}>
           {title}
           {helpMarkdown && (
-            <HelpPopover markdownText={helpMarkdown!} helpUrl={helpUrl} />
+            <HelpPopover markdownText={helpMarkdown} helpUrl={helpUrl} />
           )}
           <Box sx={{ flexGrow: 1 }} />
           {hasCloseButton && <CloseButton onClick={() => onCancel()} />}

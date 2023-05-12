@@ -43,11 +43,6 @@ fi
 # copy over the directory
 cp -r $PORTAL_CONFIGURATION $PORTAL_APP_TEMPLATE
 
-# replace variable values in index.html
-chmod +x ./replaceIndexHtmlStaticValues.sh 
-# source lets the child process run in the current shell instead of creating its own
-source ./replaceIndexHtmlStaticValues.sh $2
-
 chmod +x ./$PORTAL_APP_TEMPLATE/scripts/exportS3StagingBucketName.sh
 # source lets the child process run in the current shell instead of creating its own
 source ./$PORTAL_APP_TEMPLATE/scripts/exportS3StagingBucketName.sh
@@ -78,7 +73,7 @@ EOL
 elif [ "$1" = "push-staging" ]; then
   # sync current with staging
   pnpm i && pnpm nx run portals:build
-  node sitemap/generate-sitemap.js $2
+  node sitemap/generate-sitemap.cjs $2
   # generate robots.txt
 cat > ./build/robots.txt <<EOL
 User-agent: * 

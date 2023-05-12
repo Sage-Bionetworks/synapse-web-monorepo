@@ -16,7 +16,7 @@ export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   label: 'StyledInnerContainer',
 })(({ theme }) => ({
   width: '900px',
-  minHeight: '600px',
+  minHeight: '675px',
   margin: '0 auto',
   display: 'flex',
   '& > div:nth-of-type(1), & > div:nth-of-type(2)': {

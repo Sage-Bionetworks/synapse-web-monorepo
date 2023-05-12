@@ -1,6 +1,5 @@
 import React from 'react'
-import { Grid, Paper, Box, useTheme } from '@mui/material'
-import { Typography } from 'synapse-react-client'
+import { Box, Grid, Paper, Typography, useTheme } from '@mui/material'
 import ShowMore from 'synapse-react-client/dist/containers/row_renderers/utils/ShowMore'
 import { useHistory } from 'react-router-dom'
 import { StyledOuterContainer } from './StyledComponents'

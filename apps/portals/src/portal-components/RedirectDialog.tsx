@@ -52,7 +52,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
       // but it actually takes about a second to perform the redirect. 
       // So let's start the process when we get to 1.
       if (countdownSeconds <= 1) {
-        window.location.assign(redirectUrl!)
+        window.location.assign(redirectUrl)
       }
       setTimeout(() => {
         if (countdownSeconds) {
@@ -101,7 +101,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
                 </Typography>
                 <div className="links-container">
                   <Button variant="contained" onClick={() => {
-                    window.location.assign(redirectUrl!)
+                    window.location.assign(redirectUrl)
                   }}>Go to the site now</Button>
                   <Button variant="outlined" onClick={onClose}>Stay in the Portal</Button>
                 </div>

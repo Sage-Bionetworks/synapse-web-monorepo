@@ -7,7 +7,7 @@ import {
   studiesSql,
   peopleSql,
 } from '../resources'
-import { DetailsPageProps } from 'types/portal-util-types'
+import { DetailsPageProps, RowSynapseConfig } from 'types/portal-util-types'
 import { studyCardConfiguration } from './studies'
 import { publicationCardProps } from './publications'
 
@@ -50,7 +50,7 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
       name: 'CardContainerLogic',
       columnName: 'Grant Number',
       title: 'Studies',
-      tableSqlKeys: ['Grant Number'],
+      tableSqlKeys: ['grantNumber'],
       props: {
         ...studyCardConfiguration,
         sql: studiesSql,
@@ -100,6 +100,12 @@ const projects: SynapseConfig = {
         'Abstract',
       ],
     },
+    facetsToPlot: ['Name',
+      'Institutions',
+      'Principal Investigators',
+      'Grant Number',
+      // 'Program',
+    ],
   },
 }
 

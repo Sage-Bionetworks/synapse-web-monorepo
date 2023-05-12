@@ -11,6 +11,9 @@
     "build": {
       "dependsOn": ["^build"]
     },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
     "test": {
       "//": "Tests don't depend a build for their own package, but they do depend on their dependencies being built",
       "dependsOn": ["^build"]

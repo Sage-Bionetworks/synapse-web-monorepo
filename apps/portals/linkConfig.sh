@@ -22,6 +22,7 @@ ACTIVE_CONFIGURATION=src/configurations/$folderNoSlash
 # we want to always make sure that the linking is undone after this script so we capture
 # ctrl-c. This has removed various bugs when developing locally.
 # See here - https://unix.stackexchange.com/a/407249
+# NOTE: While this worked for webpack, Vite does not seem to pass this signal along
 trap undoSymlink SIGINT
 function undoSymlink {
   # remove symlink
@@ -76,6 +77,7 @@ cd ./$ACTIVE_CONFIGURATION
 ln -s ../../config/* .
 cd ../../../
 # start the project
-# Fixes node binding error when switching between packages and forgetting to run this command...
-npm rebuild node-sass
-pnpm i && pnpm start
+pnpm i && pnpm start && wait
+
+echo "Unlinking current portal configuration."
+undoSymlink

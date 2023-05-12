@@ -5,7 +5,6 @@ import { CardConfiguration } from 'synapse-react-client/dist/containers/CardCont
 import studyHeaderSvg from '../style/study-header.svg'
 import { studiesSql, dataSql, dataOnStudiesPageSql } from '../resources'
 import {
-  ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
@@ -16,33 +15,38 @@ export const studyCardConfiguration: CardConfiguration = {
   titleLinkConfig: {
     isMarkdown: false,
     baseURL: 'Explore/Studies/DetailsPage',
-    URLColumnName: 'Study',
-    matchColumnName: 'Study',
+    URLColumnName: 'studyKey',
+    matchColumnName: 'studyKey',
   },
+  labelLinkConfig: [
+    {
+      isMarkdown: false,
+      matchColumnName: 'grantNumber',
+      URLColumnName: 'Grant Number',
+      baseURL: 'Explore/Projects/DetailsPage',
+    },
+  ],
   genericCardSchema: {
     type: SynapseConstants.STUDY,
-    title: 'Study_Name',
-    subTitle: 'Data_Contributor',
+    title: 'studyName',
+    subTitle: 'dataContributor',
     icon: 'Access_Type',
-    description: 'Study_Description',
+    description: 'studyDescription',
     secondaryLabels: [
-      'DataType_All',
+      'dataTypeAll',
       'studyFocus',
-      'Number_Of_Individuals',
+      'species',
       'specimenType',
-      'Species',
+      'program',
+      'grantNumber',
+      'Number_Of_Individuals',
       'Cohort_Type',
       'Study_Status',
-      'Program',
-      'Grant Number',
     ],
   },
 }
 const columnAliases = {
-  DataType_All: 'Data Types',
-  Data_Contributor: 'Data Contributor',
-  Study_Description: 'Study Description',
-  Study_Name: 'Study Name',
+  dataTypeAll: 'Data Types',
   Number_of_Individuals: 'Individuals',
   'Grant Number': 'Grant',
 }
@@ -83,7 +87,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
       synapseConfigArray: [
         {
           name: 'Markdown',
-          columnName: 'Study',
+          columnName: 'studyMetadata',
           title: 'Study Description',
           props: {},
         },
@@ -95,7 +99,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
         },
         {
           name: 'MarkdownCollapse',
-          columnName: 'Acknowledgement',
+          columnName: 'acknowledgement',
           props: {
             textDescription: 'full statement',
             showCopyPlainText: true,
@@ -103,7 +107,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
         },
         {
           name: 'Markdown',
-          columnName: 'Methods',
+          columnName: 'methods',
           title: 'Methods',
           props: {},
           resolveSynId: {
@@ -112,9 +116,9 @@ export const studiesDetailsPageProps: DetailsPageProps = {
         },
         {
           name: 'CardContainerLogic',
-          columnName: 'Related_Studies',
+          columnName: 'relatedStudies',
           title: 'Related Studies',
-          tableSqlKeys: ['Study'],
+          tableSqlKeys: ['studyKey'],
           props: {
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             sql: studiesSql,
@@ -145,7 +149,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
         {
           name: 'QueryWrapperPlotNav',
           props: {
-            sqlOperator: ColumnMultiValueFunction.HAS,
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             showColumnSelection: true,
             rgbIndex,
             name: 'Metadata Files',
@@ -159,11 +163,8 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             shouldDeepLink: false,
             defaultShowFacetVisualization: false,
           },
-          resolveSynId: {
-            value: true,
-          },
           tableSqlKeys: ['study'],
-          columnName: 'Study',
+          columnName: 'studyKey',
         },
         {
           name: 'QueryWrapperPlotNav',
@@ -180,7 +181,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
                   matchColumnName: 'study',
                   isMarkdown: false,
                   baseURL: 'Explore/Studies/DetailsPage',
-                  URLColumnName: 'Study_Name',
+                  URLColumnName: 'studyKey',
                   wrapValueWithParens: true,
                 },
               ],
@@ -188,11 +189,8 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             sql: dataSql,
             shouldDeepLink: false,
           },
-          resolveSynId: {
-            value: true,
-          },
           tableSqlKeys: ['study'],
-          columnName: 'Study',
+          columnName: 'studyKey',
         },
       ],
     },

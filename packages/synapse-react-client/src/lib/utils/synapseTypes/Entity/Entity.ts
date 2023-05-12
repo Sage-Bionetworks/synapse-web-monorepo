@@ -1,7 +1,7 @@
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
 import { LINK_CONCRETE_TYPE } from './Link'
-import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/Table'
 import { DOCKER_REPOSITORY_CONCRETE_TYPE } from '../docker/DockerRepository'
+import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/ConcreteType'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
@@ -55,7 +55,7 @@ export const VERSIONABLE_ENTITY_CONCRETE_TYPE_VALUES = [
 ] as const
 
 export type VERSIONABLE_ENTITY_CONCRETE_TYPE =
-  typeof VERSIONABLE_ENTITY_CONCRETE_TYPE_VALUES[number]
+  (typeof VERSIONABLE_ENTITY_CONCRETE_TYPE_VALUES)[number]
 
 export interface VersionableEntity extends Entity, Versionable {
   /* The version label for this entity */
