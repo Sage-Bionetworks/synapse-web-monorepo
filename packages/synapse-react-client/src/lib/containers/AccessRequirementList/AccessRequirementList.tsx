@@ -146,19 +146,20 @@ export default function AccessRequirementList(
 
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
-  const determineFetchedARs = () => {
-    const fetched = teamId
-      ? useGetAccessRequirementsForTeam(teamId, {
-          enabled: Boolean(!accessRequirementFromProps && teamId),
-        })
-      : useGetAccessRequirementsForEntity(entityId, {
-          enabled: Boolean(!accessRequirementFromProps && !teamId && entityId),
-        })
+  const { data: fetchedRequirementsForTeam } = useGetAccessRequirementsForTeam(
+    entityId,
+    {
+      enabled: Boolean(!accessRequirementFromProps && teamId),
+    },
+  )
+  const { data: fetchedRequirementsForEntity } = useGetAccessRequirementsForEntity(
+    entityId,
+    {
+      enabled: Boolean(!accessRequirementFromProps && entityId && !teamId),
+    },
+  )
 
-    return fetched || {}
-  }
-
-  const { data: fetchedRequirements } = determineFetchedARs()
+  const fetchedRequirements = teamId ? fetchedRequirementsForTeam : fetchedRequirementsForEntity
 
   const accessRequirements = accessRequirementFromProps ?? fetchedRequirements
 
