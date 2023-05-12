@@ -210,13 +210,15 @@ export const DownloadCartPage: React.FunctionComponent<
                         enterNextDelay={300}
                         placement="top"
                       >
-                        <Button
-                          variant="contained"
-                          disabled
-                          startIcon={<IconSvg icon="download" wrap={false} />}
-                        >
-                          Download As .Zip Packages
-                        </Button>
+                        <span>
+                          <Button
+                            variant="contained"
+                            disabled
+                            startIcon={<IconSvg icon="download" wrap={false} />}
+                          >
+                            Download As .Zip Packages
+                          </Button>
+                        </span>
                       </Tooltip>
                     )}
                   </div>
