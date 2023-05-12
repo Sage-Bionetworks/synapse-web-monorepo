@@ -91,7 +91,7 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({
       aria-hidden={false}
       sx={{
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        zIndex: theme => theme.zIndex.drawer + 1,
+        zIndex: theme => theme.zIndex.modal + 1,
       }}
     >
       <Box
