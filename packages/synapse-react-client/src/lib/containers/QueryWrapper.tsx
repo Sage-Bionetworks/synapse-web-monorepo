@@ -23,9 +23,6 @@ import {
 } from './QueryContext'
 import useImmutableTableQuery from './useImmutableTableQuery'
 
-export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
-export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
-
 export type QueryWrapperProps = {
   children: React.ReactNode | React.ReactNode[]
   initQueryRequest: QueryBundleRequest

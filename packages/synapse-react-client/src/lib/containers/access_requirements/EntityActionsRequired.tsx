@@ -5,12 +5,13 @@ import { renderActionRequired } from '../download_list_v2/DownloadListActionsReq
 
 export type EntityActionsRequiredProps = {
   entityId: string
+  onViewSharingSettingsClicked: (benefactorId: string) => void
 }
 
 export const EntityActionsRequired: React.FunctionComponent<
   EntityActionsRequiredProps
 > = props => {
-  const { entityId } = props
+  const { entityId, onViewSharingSettingsClicked } = props
   const { data: actionRequiredList } = useGetEntityActionsRequired(entityId)
   const actions = actionRequiredList?.actions
 
@@ -20,7 +21,10 @@ export const EntityActionsRequired: React.FunctionComponent<
         <div className="EntityActionsRequired">
           {actions.map((action: Action) => {
             if (action) {
-              return renderActionRequired(action)
+              return renderActionRequired({
+                action: action,
+                onViewSharingSettingsClicked,
+              })
             } else return false
           })}
         </div>

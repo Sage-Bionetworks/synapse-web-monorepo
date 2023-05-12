@@ -15,13 +15,21 @@ export type DownloadListActionsRequiredProps = {
   onViewSharingSettingsClicked: (benefactorId: string) => void
 }
 
+export type ActionRequiredParams = {
+  action: Action
+  count?: number
+  /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
+  onViewSharingSettingsClicked: (benefactorId: string) => void
+}
+
 /**
  * Returns rendering for the Action and optional count.
  *
  * @param {Action} action action being rendered
  * @param {number} count number of files associated to the Action (optional)
  */
-export const renderActionRequired = (action: Action, count?: number) => {
+export const renderActionRequired = (params: ActionRequiredParams) => {
+  const { action, count, onViewSharingSettingsClicked } = params
   switch (action.concreteType) {
     case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement': {
       return (
@@ -38,7 +46,7 @@ export const renderActionRequired = (action: Action, count?: number) => {
           key={action.benefactorId}
           entityId={`syn${action.benefactorId}`}
           count={count}
-          onViewSharingSettingsClicked={props.onViewSharingSettingsClicked}
+          onViewSharingSettingsClicked={onViewSharingSettingsClicked}
         />
       )
     }
@@ -92,7 +100,12 @@ export const DownloadListActionsRequired: React.FunctionComponent<
         <div className="DownloadListActionsRequired">
           {allRows.map((item: ActionRequiredCount) => {
             if (item) {
-              return renderActionRequired(item.action, item.count)
+              return renderActionRequired({
+                action: item.action,
+                count: item.count,
+                onViewSharingSettingsClicked:
+                  props.onViewSharingSettingsClicked,
+              })
             } else return false
           })}
           {/* To trigger loading the next page */}

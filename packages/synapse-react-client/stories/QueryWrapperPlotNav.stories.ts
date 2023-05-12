@@ -190,7 +190,7 @@ export const SendToCavatica: Story = {
     showExportToCavatica: true,
   },
 }
-export const AccessRequirementTest: Story = {
+export const TableHasAccessRequirement: Story = {
   args: {
     sql: 'SELECT * FROM syn51425243',
     tableConfiguration: {
