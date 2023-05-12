@@ -58,6 +58,18 @@ export function useGetAccessRequirementsForEntity(
   )
 }
 
+export function useGetAccessRequirementsForTeam(
+  teamId: string,
+  options?: UseQueryOptions<AccessRequirement[], SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery<AccessRequirement[], SynapseClientError>(
+    keyFactory.getTeamAccessRequirementsQueryKey(teamId),
+    () => SynapseClient.getTeamAccessRequirements(accessToken, teamId),
+    options,
+  )
+}
+
 export function useGetAccessRequirementWikiPageKey(
   accessRequirementId: string,
   options?: UseQueryOptions<WikiPageKey, SynapseClientError>,
