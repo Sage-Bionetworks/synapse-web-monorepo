@@ -1,2 +1,0 @@
-import{a as o}from"./index-b9ca233c.js";import{at as n,au as E}from"./EntityTypeUtils-5efcfc46.js";import{a as R}from"./MockResearchProject-fa24576d.js";function p(e){return[o.rest.post(`${e}${n}`,async(t,r,s)=>{const a=await t.json();return r(s.status(201),s.json(a))}),o.rest.get(`${e}${E(":id")}`,async(t,r,s)=>{const a={...R,accessRequirementId:t.params.id.toString()};return r(s.status(200),s.json(a))})]}export{p as g};
-//# sourceMappingURL=researchProjectHandlers-239dc9e7.js.map
