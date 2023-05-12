@@ -7,7 +7,7 @@ import { ActionRequiredCard } from './ActionRequiredCard'
 
 export type RequestDownloadCardProps = {
   entityId: string
-  count: number
+  count?: number
   /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
   onViewSharingSettingsClicked: (benefactorId: string) => void
 }

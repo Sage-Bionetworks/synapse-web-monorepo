@@ -184,19 +184,12 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                       )
                     }
 
-                    const showFacetFilter =
-                      queryVisualizationContext?.topLevelControlsState
-                        .showFacetFilter ||
-                      queryVisualizationContext?.topLevelControlsState
-                        .showFacetFilter === undefined
-
                     return (
                       <>
                         <div
                           className={`ErrorBannerWrapper ${
-                            showFacetFilter
-                              ? QUERY_FILTERS_EXPANDED_CSS
-                              : QUERY_FILTERS_COLLAPSED_CSS
+                            // if there's a query error, show full width
+                            QUERY_FILTERS_COLLAPSED_CSS
                           }`}
                         >
                           <QueryWrapperErrorBanner />

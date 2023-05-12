@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react'
 import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/SynapseAPI/download/useDownloadList'
 import { useInView } from 'react-intersection-observer'
-import { ActionRequiredCount } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
+import {
+  Action,
+  ActionRequiredCount,
+} from '../../utils/synapseTypes/DownloadListV2/ActionRequired'
 import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
 import { EnableTwoFaRequirementCard } from './EnableTwoFaRequirementCard'
@@ -12,6 +15,48 @@ export type DownloadListActionsRequiredProps = {
   onViewSharingSettingsClicked: (benefactorId: string) => void
 }
 
+/**
+ * Returns rendering for the Action and optional count.
+ *
+ * @param {Action} action action being rendered
+ * @param {number} count number of files associated to the Action (optional)
+ */
+export const renderActionRequired = (action: Action, count?: number) => {
+  switch (action.concreteType) {
+    case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement': {
+      return (
+        <MeetAccessRequirementCard
+          key={action.accessRequirementId}
+          accessRequirementId={action.accessRequirementId}
+          count={count}
+        />
+      )
+    }
+    case 'org.sagebionetworks.repo.model.download.RequestDownload': {
+      return (
+        <RequestDownloadCard
+          key={action.benefactorId}
+          entityId={`syn${action.benefactorId}`}
+          count={count}
+          onViewSharingSettingsClicked={props.onViewSharingSettingsClicked}
+        />
+      )
+    }
+    case 'org.sagebionetworks.repo.model.download.EnableTwoFa': {
+      return (
+        <EnableTwoFaRequirementCard
+          key={action.accessRequirementId}
+          accessRequirementId={action.accessRequirementId}
+          count={count}
+        />
+      )
+    }
+
+    // case not supported yet
+    default:
+      return undefined
+  }
+}
 export const DownloadListActionsRequired: React.FunctionComponent<
   DownloadListActionsRequiredProps
 > = props => {
@@ -41,55 +86,13 @@ export const DownloadListActionsRequired: React.FunctionComponent<
   }, [status, hasNextPage, isFetchingNextPage, fetchNextPage, inView])
 
   const allRows = data?.pages.flatMap(page => page.page) ?? []
-
-  /**
-   * Returns rendering for the ActionRequiredCount.
-   *
-   * @param {ActionRequiredCount} actionRequiredCount actionRequiredCount being rendered
-   */
-  const renderActionRequired = (actionRequiredCount: ActionRequiredCount) => {
-    switch (actionRequiredCount.action.concreteType) {
-      case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement': {
-        return (
-          <MeetAccessRequirementCard
-            key={actionRequiredCount.action.accessRequirementId}
-            accessRequirementId={actionRequiredCount.action.accessRequirementId}
-            count={actionRequiredCount.count}
-          />
-        )
-      }
-      case 'org.sagebionetworks.repo.model.download.RequestDownload': {
-        return (
-          <RequestDownloadCard
-            key={actionRequiredCount.action.benefactorId}
-            entityId={`syn${actionRequiredCount.action.benefactorId}`}
-            count={actionRequiredCount.count}
-            onViewSharingSettingsClicked={props.onViewSharingSettingsClicked}
-          />
-        )
-      }
-      case 'org.sagebionetworks.repo.model.download.EnableTwoFa': {
-        return (
-          <EnableTwoFaRequirementCard
-            key={actionRequiredCount.action.accessRequirementId}
-            accessRequirementId={actionRequiredCount.action.accessRequirementId}
-            count={actionRequiredCount.count}
-          />
-        )
-      }
-
-      // case not supported yet
-      default:
-        return undefined
-    }
-  }
   return (
     <>
       {allRows.length > 0 && (
         <div className="DownloadListActionsRequired">
           {allRows.map((item: ActionRequiredCount) => {
             if (item) {
-              return renderActionRequired(item)
+              return renderActionRequired(item.action, item.count)
             } else return false
           })}
           {/* To trigger loading the next page */}
