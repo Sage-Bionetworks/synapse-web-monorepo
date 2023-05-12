@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 
-import ForumSearch from '../src/lib/containers/ForumSearch'
+import ForumSearch from '../src/components/ForumSearch/ForumSearch'
 
 const meta = {
   title: 'Synapse/ForumSearch',

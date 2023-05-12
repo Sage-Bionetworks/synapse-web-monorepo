@@ -4,7 +4,7 @@ import {
   ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE,
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SUBMISSION,
-} from '../../../src/lib/utils/APIConstants'
+} from '../../../src/utils/APIConstants'
 import { MOCK_DATA_ACCESS_REQUEST } from '../../dataaccess/MockDataAccessRequest'
 
 export function getDataAccessRequestHandlers(

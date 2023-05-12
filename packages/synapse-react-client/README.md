@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.com/Sage-Bionetworks/Synapse-React-Client.svg?branch=main)](https://travis-ci.com/Sage-Bionetworks/Synapse-React-Client)
 [![npm version](https://badge.fury.io/js/synapse-react-client.svg)](https://badge.fury.io/js/synapse-react-client)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
@@ -136,7 +135,7 @@ Note there are a number of CDNs required to finish this functionality-
 
 See [`index.ts`](./src/index.tsx) for a comprehensive list of components that can be used.
 
-To function properly, all components must be wrapped in a [SynapseContextProvider](./src/lib/utils/SynapseContext.tsx). To make authenticated requests, you must provide the user's access token as a property to the context provider, among other values. You may maintain this in state, or provide it however you like.
+To function properly, all components must be wrapped in a [SynapseContextProvider](src/utils/SynapseContext.tsx). To make authenticated requests, you must provide the user's access token as a property to the context provider, among other values. You may maintain this in state, or provide it however you like.
 
 The context provider also maintains a shared cache (via `react-query`). It is recommended to place the provider at the highest possible point in your component tree, and to use the same provider across components if possible.
 
@@ -173,14 +172,14 @@ Note - this will apply to all calls being made.
 ## Style
 
 Synapse React Client uses [Dart Sass](https://sass-lang.com/dart-sass).
-The core css lives in [`src/lib/style`](src/lib/style) and `src/lib/template_style`.
+The core css lives in [`src/style`](src/style) and `src/template_style`.
 
-- `src/lib/style` contains all scss that doesn't use any external variables.
-- `src/lib/template_style` contains any scss files that require external variables.
+- `src/style` contains all scss that doesn't use any external variables.
+- `src/template_style` contains any scss files that require external variables.
 
 ## Overrides
 
-For a list of variables you can override, see [`src/lib/style/abstracts/_variables.scss`](src/lib/style/abstracts/_variables.scss).
+For a list of variables you can override, see [`src/style/abstracts/_variables.scss`](src/style/abstracts/_variables.scss).
 
 Override the variables by importing the SCSS in your project like so:
 
@@ -258,9 +257,9 @@ Once the hotfix is complete it is merged to both develop and master
 
 ## Adding a new component and Publishing a new version of SRC
 
-To expose a component from the library you must export it from [index.ts](src/lib/index.ts).
+To expose a component from the library you must export it from [index.ts](src/index.ts).
 
-To expose a component for use in synapse.org, you must export it from [umd.index.ts](src/lib/umd.index.ts). See [Project Development](#project-development) for more information on the UMD build and synapse.org.
+To expose a component for use in synapse.org, you must export it from [umd.index.ts](src/umd.index.ts). See [Project Development](#project-development) for more information on the UMD build and synapse.org.
 
 To release the react-client, bump the [package version](https://next.yarnpkg.com/cli/version), merge into main,
 and run `pnpm publish`. Note - you must have access to the synapse-react-client [npm package](https://www.npmjs.com/package/synapse-react-client) to be able to run the command. Publising the package will also release a new version of the UMD build, it can be pulled down using unpkg.com, the URL is available [here](https://unpkg.com/browse/synapse-react-client@latest/dist/umd/synapse-react-client.production.min.js)

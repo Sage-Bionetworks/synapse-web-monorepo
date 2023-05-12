@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 
-import ChangePassword from '../src/lib/containers/ChangePassword'
+import ChangePassword from '../src/components/ChangePassword/ChangePassword'
 
 const meta = {
   title: 'Authentication/ChangePassword',

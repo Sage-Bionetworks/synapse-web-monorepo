@@ -1,7 +1,7 @@
 import { SynapseConstants } from 'synapse-react-client'
 
-import type { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
-import type { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { GenericCardSchema } from '../../../../../../packages/synapse-react-client/src/components/GenericCard'
+import type { CardConfiguration } from '../../../../../../packages/synapse-react-client/src/components/CardContainerLogic'
 import { SynapseConfig } from 'types/portal-config'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { studiesSql, dataSql, metadataSql } from '../resources'

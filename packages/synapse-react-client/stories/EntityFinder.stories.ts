@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react'
 
-import EntityFinder from '../src/lib/containers/entity_finder/EntityFinder'
-import { FinderScope } from '../src/lib/containers/entity_finder/tree/EntityTree'
+import EntityFinder from '../src/components/EntityFinder/EntityFinder'
+import { FinderScope } from '../src/components/EntityFinder/tree/EntityTree'
 import { EntityType } from '@sage-bionetworks/synapse-types'
-import { VersionSelectionType } from '../src/lib/containers/entity_finder/VersionSelectionType'
+import { VersionSelectionType } from '../src/components/EntityFinder/VersionSelectionType'
 
 const meta = {
   title: 'Synapse/EntityFinder',

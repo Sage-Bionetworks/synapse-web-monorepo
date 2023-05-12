@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import TableFeedCards from '../src/lib/containers/TableFeedCards'
+import TableFeedCards from '../src/components/TableFeedCards/TableFeedCards'
 
 const meta = {
   title: 'Synapse/TableFeedCards',

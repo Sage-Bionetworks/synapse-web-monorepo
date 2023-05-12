@@ -3,7 +3,7 @@ import {
   BatchFileResult,
 } from '@sage-bionetworks/synapse-types'
 import { rest } from 'msw'
-import { FILE_HANDLE_BATCH } from '../../../src/lib/utils/APIConstants'
+import { FILE_HANDLE_BATCH } from '../../../src/utils/APIConstants'
 import { mockFileHandles } from '../../mock_file_handle'
 
 export function getFileHandlers(backendOrigin: string) {

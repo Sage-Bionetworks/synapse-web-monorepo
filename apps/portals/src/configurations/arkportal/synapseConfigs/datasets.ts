@@ -3,10 +3,10 @@ import columnAliases from '../columnAliases'
 import type {
   CardConfiguration,
   LabelLinkConfig,
-} from 'synapse-react-client/dist/containers/CardContainerLogic'
+} from '../../../../../../packages/synapse-react-client/src/components/CardContainerLogic'
 import { datasetsSql } from '../resources'
 import { SynapseConstants } from 'synapse-react-client'
-import type { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import type { GenericCardSchema } from '../../../../../../packages/synapse-react-client/src/components/GenericCard'
 import { DetailsPageProps } from 'types/portal-util-types'
 import publicationDataSvg from '../style/publicationData.svg'
 import experimentalDataSvg from '../style/experimentalData.svg'

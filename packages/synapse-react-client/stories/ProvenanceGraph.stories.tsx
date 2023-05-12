@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import ProvenanceGraph from '../src/lib/containers/provenance/ProvenanceGraph'
+import ProvenanceGraph from '../src/components/ProvenanceGraph/ProvenanceGraph'
 
 const meta = {
   title: 'Synapse/ProvenanceGraph',

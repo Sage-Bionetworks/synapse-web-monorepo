@@ -1,10 +1,10 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
-import type { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import type { GenericCardSchema } from '../../../../../../packages/synapse-react-client/src/components/GenericCard'
 import type {
   CardConfiguration,
   CardContainerLogicProps,
-} from 'synapse-react-client/dist/containers/CardContainerLogic'
+} from '../../../../../../packages/synapse-react-client/src/components/CardContainerLogic'
 import { publicationSql } from '../resources'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 

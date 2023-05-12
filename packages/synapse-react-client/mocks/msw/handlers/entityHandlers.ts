@@ -8,11 +8,11 @@ import {
   ENTITY_ID_VERSIONS,
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
-} from '../../../src/lib/utils/APIConstants'
+} from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../src/lib/utils/functions/getEndpoint'
+} from '../../../src/utils/functions/getEndpoint'
 import {
   Entity,
   EntityBundle,

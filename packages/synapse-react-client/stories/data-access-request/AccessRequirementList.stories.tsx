@@ -1,8 +1,8 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
-import { MOCK_REPO_ORIGIN } from '../../src/lib/utils/functions/getEndpoint'
-import { ACCESS_APPROVAL } from '../../src/lib/utils/APIConstants'
+import { MOCK_REPO_ORIGIN } from '../../src/utils/functions/getEndpoint'
+import { ACCESS_APPROVAL } from '../../src/utils/APIConstants'
 import {
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,
@@ -13,7 +13,7 @@ import mockFileEntity from '../../mocks/entity/mockFileEntity'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
-} from '../../src/lib/utils/SynapseContext'
+} from '../../src/utils/SynapseContext'
 import {
   AccessApproval,
   AccessRequirement,
@@ -22,7 +22,7 @@ import {
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import AccessRequirementList from '../../src/lib/containers/AccessRequirementList/AccessRequirementList'
+import AccessRequirementList from '../../src/components/AccessRequirementList/AccessRequirementList'
 import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
 import {

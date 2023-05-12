@@ -5,13 +5,14 @@ import {
   SynapseComponents,
   SynapseConstants,
 } from 'synapse-react-client'
-import { SourceAppDescription, SourceAppLogo } from './components/SourceApp'
+import { SourceAppDescription, SourceAppLogo } from './components/SourceApp.js'
 import {
   StyledInnerContainer,
   StyledOuterContainer,
-} from './components/StyledComponents'
+} from './components/StyledComponents.js'
 import { useHistory } from 'react-router-dom'
-import { backButtonSx } from './components/BackButton'
+import { backButtonSx } from './components/BackButton.js'
+const { StandaloneLoginForm, SystemUseNotification } = SynapseComponents
 
 export type LoginPageProps = {
   returnToUrl?: string
@@ -43,7 +44,7 @@ function LoginPage(props: LoginPageProps) {
               <SourceAppLogo />
             </div>
             <Box sx={{ my: 4 }}>
-              <SynapseComponents.Login
+              <StandaloneLoginForm
                 sessionCallback={() => {
                   AppUtils.redirectAfterSSO(history, returnToUrl)
                   // If we didn't redirect, refresh the session
@@ -74,7 +75,7 @@ function LoginPage(props: LoginPageProps) {
             Sign in to your account
           </Typography>
           <SourceAppDescription />
-          <SynapseComponents.SystemUseNotification />
+          <SystemUseNotification />
         </Box>
       </StyledInnerContainer>
     </StyledOuterContainer>

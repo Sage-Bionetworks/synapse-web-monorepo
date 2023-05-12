@@ -6,7 +6,7 @@ import {
   DropdownButton,
   Table,
 } from 'react-bootstrap'
-import { Checkbox } from '../../../src/lib/containers/widgets/Checkbox'
+import { Checkbox } from '../../../src/components/widgets/Checkbox'
 
 /**
  * A simple component that displays all of our reusable button styles

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { DiscussionThread } from '../src/lib/containers/discussion_forum/DiscussionThread'
+import { DiscussionThread } from '../src/components/discussion_forum/DiscussionThread'
 
 const meta = {
   title: 'Synapse/DiscussionThread',

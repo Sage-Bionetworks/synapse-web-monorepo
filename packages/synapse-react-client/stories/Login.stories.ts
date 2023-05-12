@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
-import StandaloneLoginForm from '../src/lib/containers/auth/StandaloneLoginForm'
-import { displayToast } from '../src/lib/containers/ToastMessage'
-import { sessionChangeHandler } from '../src/lib/containers/StorybookComponentWrapper'
+import StandaloneLoginForm from '../src/components/Authentication/StandaloneLoginForm'
+import { displayToast } from '../src/components/ToastMessage/ToastMessage'
+import { sessionChangeHandler } from '../src/components/StorybookComponentWrapper'
 
 const meta = {
   title: 'Authentication/Login',

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
-import UserCardListRotate from '../src/lib/containers/UserCardListRotate'
-import { MEDIUM_USER_CARD } from '../src/lib/utils/SynapseConstants'
+import UserCardListRotate from '../src/components/UserCardList/UserCardListRotate'
+import { MEDIUM_USER_CARD } from '../src/utils/SynapseConstants'
 
 const meta = {
   title: 'Home Page/UserCardListRotate',

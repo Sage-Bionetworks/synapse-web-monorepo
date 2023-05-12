@@ -9,7 +9,7 @@ import {
   RowSet,
 } from '@sage-bionetworks/synapse-types'
 import type { GraphItem } from 'synapse-react-client/dist/containers/widgets/themes-plot/types'
-import type { resultToJson } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
+import type { resultToJson } from 'synapse-react-client/dist/utils/functions/SqlFunctions'
 import { PlotParams } from 'react-plotly.js'
 
 const Plot = createPlotlyComponent(Plotly)

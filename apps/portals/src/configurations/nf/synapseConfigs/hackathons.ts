@@ -7,7 +7,7 @@ import hackathonCompleteSvg from '../style/hackathon-complete.svg'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { hackathonsSql } from '../resources'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import type { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from '../../../../../../packages/synapse-react-client/src/components/CardContainerLogic'
 
 const type = SynapseConstants.GENERIC_CARD
 const rgbIndex = 5

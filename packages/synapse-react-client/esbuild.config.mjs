@@ -4,7 +4,8 @@ import ESBuildNodePolyfillsPlugin from 'esbuild-plugin-node-polyfills'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import esbuild from 'esbuild'
 import GlobalsPlugin from 'esbuild-plugin-globals'
-import packageJson from "./package.json" assert { type: "json" };
+import packageJson from './package.json' assert { type: 'json' }
+import glob from 'tiny-glob'
 
 const globals = {
   react: 'React',
@@ -52,62 +53,67 @@ const esBuildSharedOptions = {
     }),
     NodeModulesPolyfillPlugin(),
   ],
-    packages: "external",
-  // external: [
-      // ...Object.keys(packageJson.dependencies),
-    // '^react$', // Use regex ^$ because we do want to bundle 'react/jsx-transform'
-    // 'react-dom',
-    // 'react-router',
-    // 'react-router-dom',
-    // 'react-measure',
-    // 'react-bootstrap',
-    // 'react-plotly.js/factory',
-    // 'plotly.js-basic-dist',
-    // '@rjsf/core',
-    // 'katex',
-    // 'rss-parser',
-    // 'react-mailchimp-subscribe',
-    // 'markdownit',
-    // 'markdownitSynapse',
-    // 'markdownitSub',
-    // 'markdownitSup',
-    // 'markdownitCentertext',
-    // 'markdownitSynapseHeading',
-    // 'markdownitSynapseTable',
-    // 'markdownitStrikethroughAlt',
-    // 'markdownitContainer',
-    // 'markdownitEmphasisAlt',
-    // 'markdownitInlineComments',
-    // 'markdownitBr',
-    // 'markdownitMath',
-    // 'react-transition-group',
-    // 'universal-cookie',
-  // ],
 }
 
 /** @type {import('esbuild').BuildOptions} */
 const esBuildUmdOptions = {
   ...esBuildSharedOptions,
-  entryPoints: ['src/lib/umd.index.ts'],
+  entryPoints: ['src/umd.index.ts'],
   globalName: 'SRC',
   plugins: [...esBuildSharedOptions.plugins, GlobalsPlugin(globals)],
+  external: [
+    '^react$', // Use regex ^$ because we do want to bundle 'react/jsx-transform'
+    'react-dom',
+    'react-router',
+    'react-router-dom',
+    'react-measure',
+    'react-bootstrap',
+    'react-plotly.js/factory',
+    'plotly.js-basic-dist',
+    '@rjsf/core',
+    'katex',
+    'rss-parser',
+    'react-mailchimp-subscribe',
+    'markdownit',
+    'markdownitSynapse',
+    'markdownitSub',
+    'markdownitSup',
+    'markdownitCentertext',
+    'markdownitSynapseHeading',
+    'markdownitSynapseTable',
+    'markdownitStrikethroughAlt',
+    'markdownitContainer',
+    'markdownitEmphasisAlt',
+    'markdownitInlineComments',
+    'markdownitBr',
+    'markdownitMath',
+    'react-transition-group',
+    'universal-cookie',
+  ],
 }
+
+/**
+ * Any `index.ts` file will be built as an entrypoint, so one could import from e.g. 'synapse-react-client/components/MyComponent'
+ */
+const entryPoints = ['./src/index.ts'] //await glob('./src/**/index.ts')
 
 const esBuildCommonJsOptions = {
   ...esBuildSharedOptions,
-
-  entryPoints: ['src/lib/index.ts'],
+  entryPoints: entryPoints,
   format: 'cjs',
+  packages: 'external',
 }
 
 const esBuildEsmOptions = {
-  ...esBuildCommonJsOptions,
+  ...esBuildSharedOptions,
+  entryPoints: entryPoints,
   format: 'esm',
+  packages: 'external',
 }
 
 const options = {
   umd: esBuildUmdOptions,
-  cjs: esBuildCommonJsOptions,
+  // cjs: esBuildCommonJsOptions,
   esm: esBuildEsmOptions,
 }
 
@@ -118,6 +124,7 @@ Object.keys(options).forEach(key => {
     ...option,
     minify: false,
     sourcemap: true,
+    // outdir: `./dist/${key}`,
     outfile: `./dist/${key}/synapse-react-client.development.js`,
   })
 
@@ -128,6 +135,7 @@ Object.keys(options).forEach(key => {
       minify: true,
       sourcemap: false,
       metafile: true,
+      // outdir: `./dist/${key}`,
       outfile: `./dist/${key}/synapse-react-client.production.min.js`,
     })
     .then(result => {

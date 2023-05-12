@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import SubsectionRowRenderer from '../src/lib/containers/SubsectionRowRenderer'
+import SubsectionRowRenderer from '../src/components/SubsectionRowRenderer/SubsectionRowRenderer'
 
 const meta = {
   title: 'Explore/SubsectionRowRenderer',

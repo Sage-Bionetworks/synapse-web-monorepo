@@ -1,13 +1,13 @@
 import * as React from 'react'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../src/lib/utils/functions/getEndpoint'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../src/utils/functions/getEndpoint'
 import {
   createEntity,
   getEntity,
   lookupChildEntity,
   updateEntity,
   uploadFile,
-} from '../../src/lib/utils/SynapseClient'
-import { SynapseContext } from '../../src/lib/utils/SynapseContext'
+} from '../../src/synapse-client/SynapseClient'
+import { SynapseContext } from '../../src/utils/SynapseContext'
 import {
   EntityId,
   EntityLookupRequest,

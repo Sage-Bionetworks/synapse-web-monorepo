@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import ProjectViewCarousel from '../src/lib/containers/home_page/project_view_carousel/ProjectViewCarousel'
+import ProjectViewCarousel from '../src/components/ProjectViewCarousel/ProjectViewCarousel'
 
 const meta = {
   title: 'Home Page/ProjectViewCarousel',

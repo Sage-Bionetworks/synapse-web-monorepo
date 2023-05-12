@@ -1,11 +1,11 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
-import { MOCK_REPO_ORIGIN } from '../../src/lib/utils/functions/getEndpoint'
-import TwoFactorAuthEnabledRequirement from '../../src/lib/containers/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement'
+import { MOCK_REPO_ORIGIN } from '../../src/utils/functions/getEndpoint'
+import TwoFactorAuthEnabledRequirement from '../../src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement'
 import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
-import { SynapseContextConsumer } from '../../src/lib/utils/SynapseContext'
-import FullContextProvider from '../../src/lib/utils/FullContextProvider'
+import { SynapseContextConsumer } from '../../src/utils/SynapseContext'
+import FullContextProvider from '../../src/utils/FullContextProvider'
 
 const meta: Meta = {
   title:

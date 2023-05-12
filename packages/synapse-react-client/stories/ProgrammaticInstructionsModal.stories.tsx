@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import ProgrammaticInstructionsModal from '../src/lib/containers/ProgrammaticInstructionsModal'
+import ProgrammaticInstructionsModal from '../src/components/ProgrammaticInstructionsModal'
 
 const meta = {
   title: 'Download/ProgrammaticInstructionsModal',

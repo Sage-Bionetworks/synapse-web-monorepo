@@ -1,10 +1,10 @@
 import React, { ReactNode } from 'react'
 import { QueryClient } from 'react-query'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import { SynapseContextType } from '../../src/lib/utils/SynapseContext'
+import { SynapseContextType } from '../../src/utils/SynapseContext'
 import FullContextProvider, {
   defaultQueryClientConfig,
-} from '../../src/lib/utils/FullContextProvider'
+} from '../../src/utils/FullContextProvider'
 
 type RtlWrapperProps = {
   children?: ReactNode

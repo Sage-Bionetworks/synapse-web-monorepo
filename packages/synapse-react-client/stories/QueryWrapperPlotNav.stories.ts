@@ -4,9 +4,9 @@ import {
   EXPERIMENTAL_TOOL,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
-} from '../src/lib/utils/SynapseConstants'
+} from '../src/utils/SynapseConstants'
 import { Query } from '@sage-bionetworks/synapse-types'
-import QueryWrapperPlotNav from '../src/lib/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
+import QueryWrapperPlotNav from '../src/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,

@@ -1,7 +1,7 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
 import { columnAliases } from './commonProps'
-import type { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from '../../../../../../packages/synapse-react-client/src/components/CardContainerLogic'
 
 import { publicationsSql } from '../resources'
 

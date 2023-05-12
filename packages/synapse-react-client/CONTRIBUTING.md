@@ -21,11 +21,11 @@
 
 #### Prefer react hooks to class components
 
-Hooks have a number of advantages, they can be read about in depth [here](https://reactjs.org/docs/hooks-faq.html). Additionally, any stateful piece of code that can be reused should be made an effect hook. These should be created in this folder `src/lib/utils/hooks`.
+Hooks have a number of advantages, they can be read about in depth [here](https://reactjs.org/docs/hooks-faq.html). Additionally, any stateful piece of code that can be reused should be made an effect hook. These should be created in this folder `src/utils/hooks`.
 
 #### UMD Build
 
-This codebase packages itself as a UMD bundle using [esbuild](https://esbuild.github.io/). Note - not all components are exported as part of the UMD bundle - only those in [umd.index.ts](./src/lib/umd.index.ts). For more reliable tree-shaking (resulting in smaller builds), imports should (if possible) be made in the form -
+This codebase packages itself as a UMD bundle using [esbuild](https://esbuild.github.io/). Note - not all components are exported as part of the UMD bundle - only those in [umd.index.ts](src/umd.index.ts). For more reliable tree-shaking (resulting in smaller builds), imports should (if possible) be made in the form -
 
 `import <submodule> from '<package-name>/<submodule>'`
 
@@ -37,12 +37,12 @@ e.g `import ModalHeader from 'react-bootstrap/ModalHeader`
 
 #### Submitting a new component
 
-1. Create a component in `src/lib/containers`, if it's a large component consider creating a folder with the sub components
+1. Create a component in `src/components`, if it's a large component consider creating a folder with the sub components
    that comprise it.
 2. To work on a component, create a corresponding demo page - e.g. src/demo/playground/_ComponentNameDemo_.tsx
-   - See [Playground](./src/demo/containers/playground/Playground.tsx) and [TemplateComponentDemo](src/demo/containers/playground/TemplateComponentDemo.tsx) and [TemplateComponent](src/lib/containers/TemplateComponent.tsx) for example usage.
-3. To export that component through npm module it should be imported/exported in `src/lib/index.ts`
-4. To export that component through esbuild it should be imported/exported in `src/lib/umd.index.ts`
+   - See [Playground](./src/demo/containers/playground/Playground.tsx) and [TemplateComponentDemo](src/demo/containers/playground/TemplateComponentDemo.tsx) and [TemplateComponent](src/components/TemplateComponent.tsx) for example usage.
+3. To export that component through npm module it should be imported/exported in `src/index.ts`
+4. To export that component through esbuild it should be imported/exported in `src/umd.index.ts`
 
 #### CSS
 

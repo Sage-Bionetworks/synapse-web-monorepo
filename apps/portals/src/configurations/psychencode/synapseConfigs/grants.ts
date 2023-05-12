@@ -1,9 +1,9 @@
 import { SynapseConstants, SynapseComponents } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
 
-import type { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import type { GenericCardSchema } from '../../../../../../packages/synapse-react-client/src/components/GenericCard'
 import type { IconOptions } from 'synapse-react-client/dist/containers/row_renderers/utils/Icon'
-import type { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from '../../../../../../packages/synapse-react-client/src/components/CardContainerLogic'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { studyDetailPageProps } from './studies'
 import { publicationDetailPageProps } from './publications'

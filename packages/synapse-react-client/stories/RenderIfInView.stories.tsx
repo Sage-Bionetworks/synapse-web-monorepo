@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import RenderIfInView from '../src/lib/containers/RenderIfInView'
+import RenderIfInView from '../src/components/RenderIfInView/RenderIfInView'
 
 const meta = {
   title: 'Components/RenderIfInView',

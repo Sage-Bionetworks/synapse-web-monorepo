@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { EntityLink } from '../src/lib/containers/EntityLink'
+import { EntityLink } from '../src/components/EntityLink'
 
 const meta = {
   title: 'Components/EntityLink',

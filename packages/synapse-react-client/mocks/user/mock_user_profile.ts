@@ -1,4 +1,4 @@
-import { ACT_TEAM_ID } from '../../src/lib/utils/SynapseConstants'
+import { ACT_TEAM_ID } from '../../src/utils/SynapseConstants'
 import {
   UserBundle,
   UserGroupHeader,

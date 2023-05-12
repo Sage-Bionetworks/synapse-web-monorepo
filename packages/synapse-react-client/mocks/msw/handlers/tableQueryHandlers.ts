@@ -4,11 +4,11 @@ import {
   ASYNCHRONOUS_JOB_TOKEN,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
-} from '../../../src/lib/utils/APIConstants'
+} from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../src/lib/utils/functions/getEndpoint'
+} from '../../../src/utils/functions/getEndpoint'
 import {
   BUNDLE_MASK_LAST_UPDATED_ON,
   BUNDLE_MASK_QUERY_COLUMN_MODELS,
@@ -18,7 +18,7 @@ import {
   BUNDLE_MASK_QUERY_RESULTS,
   BUNDLE_MASK_QUERY_SELECT_COLUMNS,
   BUNDLE_MASK_SUM_FILES_SIZE_BYTES,
-} from '../../../src/lib/utils/SynapseConstants'
+} from '../../../src/utils/SynapseConstants'
 import {
   AsynchronousJobStatus,
   AsyncJobId,

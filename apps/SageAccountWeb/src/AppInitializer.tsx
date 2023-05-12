@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { AppContextProvider } from './AppContext'
 import { Redirect } from 'react-router-dom'
-import { getSearchParam } from './URLUtils'
-import useAnalytics from './useAnalytics'
+import { getSearchParam } from './URLUtils.js'
+import useAnalytics from './useAnalytics.js'
 import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { useSourceApp } from './components/SourceApp'
-import { sageAccountWebThemeOverrides } from './style/theme'
+import { useSourceApp } from './components/SourceApp.js'
+import { sageAccountWebThemeOverrides } from './style/theme.js'
 import { Theme } from '@mui/material'
-import { AppUtils, SynapseComponents, SynapseTheme } from 'synapse-react-client'
+import { SynapseTheme, SynapseUtilityFunctions } from 'synapse-react-client'
+import { AppContextProvider } from './AppContext.js'
 
 function AppInitializer(props: { children?: React.ReactNode }) {
   const [isFramed, setIsFramed] = useState(false)
@@ -70,12 +70,12 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     if (searchParamSignedToken) {
       localStorage.setItem('signedToken', searchParamSignedToken)
       const searchParamToken = JSON.parse(
-        SynapseComponents.hex2ascii(searchParamSignedToken),
+        SynapseUtilityFunctions.hex2ascii(searchParamSignedToken),
       ) as SignedTokenInterface
       setSignedToken(searchParamToken)
     } else if (localStorageSignedToken) {
       const localStorageParamToken = JSON.parse(
-        SynapseComponents.hex2ascii(localStorageSignedToken),
+        SynapseUtilityFunctions.hex2ascii(localStorageSignedToken),
       ) as SignedTokenInterface
       setSignedToken(localStorageParamToken)
     }
@@ -104,7 +104,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
 
   useAnalytics()
 
-  const { acceptsTermsOfUse } = AppUtils.useApplicationSessionContext()
+  const { acceptsTermsOfUse } = useApplicationSessionContext()
 
   return (
     <AppContextProvider

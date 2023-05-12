@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { BlockingLoader } from '../src/lib/containers/LoadingScreen'
+import { BlockingLoader } from '../src/components/LoadingScreen'
 
 const meta = {
   title: 'UI/Loaders/BlockingLoader',

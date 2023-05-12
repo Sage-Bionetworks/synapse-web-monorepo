@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { EvaluationEditorPage } from '../src/lib/containers/evaluation_queues/EvaluationEditorPage'
+import { EvaluationEditorPage } from '../src/components/Evaluation/EvaluationEditorPage'
 
 const meta = {
   title: 'Synapse/Challenge/EvaluationEditorPage',

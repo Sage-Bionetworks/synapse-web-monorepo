@@ -3,8 +3,8 @@ import {
   getEntity,
   updateEntity,
   uploadFile,
-} from '../../src/lib/utils/SynapseClient'
-import { SynapseContext } from '../../src/lib/utils/SynapseContext'
+} from '../../src/synapse-client/SynapseClient'
+import { SynapseContext } from '../../src/utils/SynapseContext'
 import {
   Entity,
   FileEntity,

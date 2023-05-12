@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import FavoritesPage from '../src/lib/containers/favorites/FavoritesPage'
+import FavoritesPage from '../src/components/favorites/FavoritesPage'
 
 const meta = {
   title: 'Synapse/FavoritesPage',

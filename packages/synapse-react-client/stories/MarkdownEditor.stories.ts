@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { ForumThreadEditor } from '../src/lib/containers/discussion_forum/ForumThreadEditor'
+import { ForumThreadEditor } from '../src/components/discussion_forum/ForumThreadEditor'
 
 const meta = {
   title: 'Markdown/MarkdownEditor',

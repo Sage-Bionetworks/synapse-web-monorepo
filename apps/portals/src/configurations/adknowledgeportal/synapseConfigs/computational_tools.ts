@@ -1,8 +1,8 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
-import type { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from '../../../../../../packages/synapse-react-client/src/components/CardContainerLogic'
 import { computationalSql } from '../resources'
-import type { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import type { GenericCardSchema } from '../../../../../../packages/synapse-react-client/src/components/GenericCard'
 
 const computationalSchema: GenericCardSchema = {
   type: SynapseConstants.COMPUTATIONAL,

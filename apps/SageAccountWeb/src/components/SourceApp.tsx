@@ -1,14 +1,15 @@
 import { Box, PaletteOptions, SxProps, Typography } from '@mui/material'
 import React from 'react'
 import {
+  Palettes,
   SynapseConstants,
   SynapseQueries,
-  Palettes,
-  SynapseComponents,
 } from 'synapse-react-client'
+import { SynapseComponents } from 'synapse-react-client'
 import { SourceAppConfig } from './SourceAppConfigs'
 import SourceAppImage from './SourceAppImage'
 import Skeleton from '@mui/material/Skeleton'
+const { SkeletonTable } = SynapseComponents
 
 export type SourceAppProps = {
   isAccountCreationTextVisible?: boolean
@@ -57,7 +58,7 @@ export const SourceAppDescription = () => {
       {sourceAppConfig?.description}
     </Typography>
   ) : (
-    <SynapseComponents.SkeletonTable numRows={7} numCols={1} />
+    <SkeletonTable numRows={7} numCols={1} />
   )
 }
 

@@ -2,8 +2,8 @@ import React from 'react'
 import {
   SynapseContextProvider,
   SynapseContextType,
-} from '../src/lib/utils/SynapseContext'
-import FullContextProvider from '../src/lib/utils/FullContextProvider'
+} from '../src/utils/SynapseContext'
+import FullContextProvider from '../src/utils/FullContextProvider'
 
 export const MOCK_ACCESS_TOKEN = 'mock-access-token'
 

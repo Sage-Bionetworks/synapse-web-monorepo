@@ -1,6 +1,6 @@
 import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from '../../../../../../packages/synapse-react-client/src/components/CardContainerLogic'
 import { peopleSql } from '../resources'
 
 const rgbIndex = 3

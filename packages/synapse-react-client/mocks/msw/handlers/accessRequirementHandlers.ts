@@ -4,8 +4,8 @@ import {
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ENTITY_ACCESS_REQUIREMENTS,
-} from '../../../src/lib/utils/APIConstants'
-import { MOCK_REPO_ORIGIN } from '../../../src/lib/utils/functions/getEndpoint'
+} from '../../../src/utils/APIConstants'
+import { MOCK_REPO_ORIGIN } from '../../../src/utils/functions/getEndpoint'
 import {
   AccessRequirement,
   AccessRequirementStatus,

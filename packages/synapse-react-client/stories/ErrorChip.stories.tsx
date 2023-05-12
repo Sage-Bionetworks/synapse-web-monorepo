@@ -1,13 +1,13 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 
-import ErrorChip from '../src/lib/containers/error/ErrorChip'
-import { SynapseClientError } from '../src/lib/utils/SynapseClientError'
+import ErrorChip from '../src/components/error/ErrorChip'
+import { SynapseClientError } from '../src/utils/SynapseClientError'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
-} from '../src/lib/utils/SynapseContext'
-import FullContextProvider from '../src/lib/utils/FullContextProvider'
+} from '../src/utils/SynapseContext'
+import FullContextProvider from '../src/utils/FullContextProvider'
 
 const meta = {
   title: 'Components/ErrorChip',

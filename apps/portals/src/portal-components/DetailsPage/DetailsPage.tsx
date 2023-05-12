@@ -28,7 +28,7 @@ import ToggleSynapseObjects from '../ToggleSynapseObjects'
 import DetailsPageTabs from './DetailsPageTabs'
 import { SideNavMenu } from './SideNavMenu'
 import { getComponentId, useScrollOnMount } from './utils'
-import type { LockedColumn } from 'synapse-react-client/dist/containers/QueryContext'
+import type { LockedColumn } from 'packages/synapse-react-client/src/components/QueryContext'
 
 const goToExplorePage = () => {
   /*

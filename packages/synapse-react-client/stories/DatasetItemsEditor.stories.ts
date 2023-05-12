@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { DatasetItemsEditor } from '../src/lib/containers/table/datasets/DatasetItemsEditor'
+import { DatasetItemsEditor } from '../src/components/SynapseTable/datasets/DatasetItemsEditor'
 
 const meta = {
   title: 'Synapse/DatasetItemsEditor',

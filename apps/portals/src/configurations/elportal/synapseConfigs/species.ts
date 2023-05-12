@@ -1,5 +1,5 @@
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from '../../../../../../packages/synapse-react-client/src/components/CardContainerLogic'
 import { SynapseConfig } from 'types/portal-config'
 import { speciesSql } from '../resources'
 

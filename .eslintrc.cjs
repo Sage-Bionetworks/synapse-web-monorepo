@@ -24,6 +24,7 @@ module.exports = {
       "./packages/**/tsconfig.json",
       "./apps/**/tsconfig.json",
     ],
+    ignorePatterns: ["dist/*"],
   },
   rules: {
     "react/prop-types": [0],

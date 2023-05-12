@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import StandaloneQueryWrapper from '../src/lib/containers/table/StandaloneQueryWrapper'
+import StandaloneQueryWrapper from '../src/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 
 const meta = {
   title: 'Explore/StandaloneQueryWrapper',
