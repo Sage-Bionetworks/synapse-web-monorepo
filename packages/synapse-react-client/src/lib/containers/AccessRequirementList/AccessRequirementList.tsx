@@ -147,7 +147,7 @@ export default function AccessRequirementList(
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   const { data: fetchedRequirementsForTeam } = useGetAccessRequirementsForTeam(
-    entityId,
+    teamId,
     {
       enabled: Boolean(!accessRequirementFromProps && teamId),
     },
