@@ -1,0 +1,2 @@
+import{u as s,az as n,bc as o,bF as y}from"./EntityTypeUtils-1822b521.js";import"./index-8db94870.js";import"./getEndpoint-ac94413e.js";import"./jsx-runtime-095bf462.js";function E(e,t){const{accessToken:a,keyFactory:r}=s();return n(r.getEntityHeadersQueryKey(e),()=>o(e,a),t)}function H(e,t){const{accessToken:a,keyFactory:r}=s();return n(r.getEntityHeaderQueryKey(e),()=>y(e,a),t)}export{H as a,E as u};
+//# sourceMappingURL=useGetEntityHeaders-135fe93e.js.map
