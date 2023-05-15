@@ -10,7 +10,7 @@
     "prepare": "husky install",
     "build": "nx run-many --target=build",
     "lint": "nx run-many --target=lint",
-    "test": "nx run-many --target=test -- --watchAll=false --silent=true",
+    "test": "nx run-many --target=test:ci",
     "clean": "nx run-many --target=clean"
   },
   "devDependencies": {
@@ -31,10 +31,7 @@
   },
   "npmClient": "pnpm",
   "resolutions": {
-    "@types/plotly.js": "1.54.22",
-    "@types/plotly.js-basic-dist": "1.54.1",
     "@types/react": "18.0.27",
-    "@types/react-plotly.js": "^2.6.0",
     "goober": "2.1.9",
     "react-hot-toast": "2.2.0"
   },

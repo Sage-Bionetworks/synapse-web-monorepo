@@ -5,14 +5,14 @@
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "dist/index.js",
-  "homepage": "https://sage-bionetworks.github.io/Synapse-React-Client/",
+  "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",
   "files": [
     "dist",
     "README.md"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sage-Bionetworks/Synapse-React-Client"
+    "url": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/packages/synapse-react-client"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
@@ -60,7 +60,7 @@
     "markdown-it-synapse-math": "^3.0.4",
     "markdown-it-synapse-table": "^1.0.6",
     "mui-one-time-password-input": "^1.1.0",
-    "plotly.js-basic-dist": "^2.11.1",
+    "plotly.js-basic-dist": "^2.22.0",
     "pluralize": "^8.0.0",
     "qrcode": "^1.5.1",
     "raf": "^3.4.1",
@@ -146,8 +146,8 @@
     "@types/lodash-es": "4.17.3",
     "@types/markdown-it": "^12.0.1",
     "@types/node": "^14.14.31",
-    "@types/plotly.js": "^1.54.20",
-    "@types/plotly.js-basic-dist": "^1.54.0",
+    "@types/plotly.js": "^2.12.18",
+    "@types/plotly.js-basic-dist": "^1.54.1",
     "@types/pluralize": "^0.0.29",
     "@types/qrcode": "^1.5.0",
     "@types/react": "^18.0.27",
@@ -220,6 +220,7 @@
     "start": "pnpm storybook",
     "start-deprecated-demo": "start-js",
     "test": "jest",
+    "test:ci": "jest --watchAll=false --coverage",
     "test:coverage": "jest --coverage",
     "build": "pnpm build:js && pnpm build:copy-assets && pnpm build:esbuild",
     "build:js": "tsc --build",
