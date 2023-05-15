@@ -27,6 +27,13 @@ jobs:
         uses: actions/checkout@v3.0.0
       - name: setup
         uses: ./.github/actions/pnpm-setup-action
+      - name: Assume AWS Role
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
+          role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
+          role-duration-seconds: 1200
       - name: build
         run: |
           cd apps/portals
@@ -37,10 +44,10 @@ jobs:
         run: |
           cd apps/portals
           echo chmod +x ./deploy.sh
-          echo bash -c ./deploy.sh push-staging challengeportal
+          echo ./deploy.sh push-staging challengeportal
       - name: setup-outputbucket-prod
         if: github.ref == 'refs/heads/releases/portals/production'
         run: |
           cd apps/portals
           echo chmod +x ./deploy.sh
-          echo bash -c ./deploy.sh WARNING-push-production challengeportal
+          echo ./deploy.sh WARNING-push-production challengeportal
