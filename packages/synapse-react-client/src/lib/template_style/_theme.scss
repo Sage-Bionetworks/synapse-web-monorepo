@@ -35,7 +35,8 @@
 }
 
 .SRC-primary-background-color-hover {
-  &:hover, &[aria-expanded="true"] {
+  &:hover,
+  &[aria-expanded='true'] {
     background-color: SRC.$primary-action-color !important;
     color: white !important;
     fill: white !important;
@@ -47,7 +48,8 @@
 }
 
 .SRC-secondary-background-color-hover {
-  &:hover, &[aria-expanded="true"] {
+  &:hover,
+  &[aria-expanded='true'] {
     background-color: SRC.$secondary-action-color !important;
     color: white !important;
     fill: white !important;
@@ -146,20 +148,6 @@
 .SRC-portalCard {
   .SRC-downloadData {
     background-color: SRC.$primary-action-color;
-  }
-}
-
-// Table Modal View
-.modal-90w {
-  width: 95%;
-  // hide modal border
-  .modal-header {
-    border: none;
-    button.close {
-      font-size: 25px;
-      color: SRC.$primary-action-color;
-      opacity: 1;
-    }
   }
 }
 

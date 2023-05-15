@@ -10,12 +10,12 @@ import {
   FacetColumnResultRange,
   FacetColumnResultValues,
 } from '../../../utils/synapseTypes'
-import { useQueryContext } from '../../QueryContext'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
-} from '../../QueryWrapper'
+  useQueryContext,
+} from '../../QueryContext'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { EnumFacetFilter } from './EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'

@@ -3,11 +3,7 @@ import pluralize from 'pluralize'
 import * as React from 'react'
 import { useState } from 'react'
 import { BarLoader } from 'react-spinners'
-import {
-  SynapseConstants,
-  SynapseQueries,
-  Typography,
-} from 'synapse-react-client'
+import { Typography } from '@mui/material'
 import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 import { LockedColumn } from 'synapse-react-client/dist/containers/QueryContext'
 import { SYNAPSE_ENTITY_ID_REGEX } from 'synapse-react-client/dist/utils/functions/RegularExpressions'
@@ -16,6 +12,10 @@ import {
   parseEntityIdFromSqlStatement,
 } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
 import { useGetEntityHeaders } from 'synapse-react-client/dist/utils/hooks/SynapseAPI/entity/useGetEntityHeaders'
+import {
+SynapseQueries,
+SynapseConstants
+} from 'synapse-react-client/dist/utils'
 import {
   ColumnType,
   ColumnTypeEnum,

@@ -23,9 +23,6 @@ import {
 } from './QueryContext'
 import useImmutableTableQuery from './useImmutableTableQuery'
 
-export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
-export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
-
 export type QueryWrapperProps = {
   children: React.ReactNode | React.ReactNode[]
   initQueryRequest: QueryBundleRequest
@@ -34,6 +31,7 @@ export type QueryWrapperProps = {
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   lockedColumn?: LockedColumn
+  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 /**
@@ -48,6 +46,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     lockedColumn,
     componentIndex,
     shouldDeepLink,
+    onViewSharingSettingsClicked,
   } = props
 
   const [currentAsyncStatus, setCurrentAsyncStatus] = useState<
@@ -155,6 +154,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     removeValueFromQueryFilter,
     lockedColumn,
     getColumnModel,
+    onViewSharingSettingsClicked,
   }
   /**
    * Render the children without any formatting
