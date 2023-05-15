@@ -14,6 +14,7 @@ const meta: Meta = {
       control: { type: 'boolean' },
       defaultValue: true,
     },
+    onClick: { action: 'clicked' },
   },
   render: args => {
     const isAuthenticated = args.isAuthenticated
@@ -47,6 +48,9 @@ export const Demo: Story = {
     children: 'Register for this Challenge',
     to: '/pathName?key=value#fragment',
     href: '',
+    onClick: () => {
+      alert('"Register for this Challenge" button clicked!')
+    },
     variant: 'contained',
     color: 'secondary',
     sx: {
