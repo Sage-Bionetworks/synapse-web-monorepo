@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 import { MarkdownPopover } from '../src/lib/containers/MarkdownPopover'
 
 const meta = {
@@ -8,7 +8,9 @@ const meta = {
   component: MarkdownPopover,
   render: args => (
     <MarkdownPopover contentProps={{ markdown: '' }} {...args}>
-      <Button variant="sds-primary">Button</Button>
+      <Button variant="contained" color="primary">
+        Button
+      </Button>
     </MarkdownPopover>
   ),
 } satisfies Meta
@@ -43,4 +45,12 @@ export const WikiPage: Story = {
     showCloseButton: false,
     placement: 'right',
   },
+}
+
+export const NonButtonChild: Story = {
+  render: args => (
+    <MarkdownPopover contentProps={{ markdown: 'Tooltip on a div' }} {...args}>
+      <div>Click Me</div>
+    </MarkdownPopover>
+  ),
 }

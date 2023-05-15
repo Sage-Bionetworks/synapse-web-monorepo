@@ -10,13 +10,13 @@ import { EntityType, QueryBundleRequest } from '../../utils/synapseTypes/'
 import { AddToDownloadListRequest } from '../../utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { TopLevelControlsState } from '../QueryVisualizationWrapper'
-import {
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-} from '../QueryWrapper'
 import SignInButton from '../SignInButton'
 import { displayToast } from '../ToastMessage'
 import DownloadDetails from './DownloadDetails'
+import {
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+} from '../QueryContext'
 
 enum StatusEnum {
   LOADING_INFO,

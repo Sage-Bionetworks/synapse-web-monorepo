@@ -134,7 +134,6 @@ export const ACTIVITY_FOR_ENTITY = (entityId: string, versionNumber?: string) =>
   versionNumber
     ? `${REPO}/entity/${entityId}/version/${versionNumber}/generatedBy`
     : `${REPO}/entity/${entityId}/generatedBy`
-
 export const TRASHCAN = `${REPO}/trashcan`
 export const TRASHCAN_VIEW = `${TRASHCAN}/view`
 export const TRASHCAN_RESTORE = (id: string) => `${TRASHCAN}/restore/${id}`
@@ -196,3 +195,5 @@ export const FILE_HANDLE = `${FILE}/fileHandle`
 export const FILE_HANDLE_BATCH = `${FILE_HANDLE}/batch`
 
 export const PROJECTS = `${REPO}/projects`
+export const ENTITY_ACTIONS_REQUIRED = (entityId: string) =>
+  `${REPO}/entity/${entityId}/actions/download`

@@ -22,6 +22,7 @@ export const generatePalette = (
     dark:
       (specificColors && specificColors[600]) ||
       tinycolor(mainColor).saturate(5).darken(4).toString(), // 600
+    contrastText: '#fff',
     ...specificColors,
   }
 }
@@ -116,17 +117,13 @@ export const arkPortalPalette: PaletteOptions = {
 export const adKnowledgePortalPalette: PaletteOptions = {
   ...palette,
   primary: generatePalette('#4d5491'),
-  secondary: { ...generatePalette('#2f8e94'), contrastText: '#ffffff' },
+  secondary: generatePalette('#2f8e94'),
 }
 
-const elPortalPrimaryPalette = {
-  ...generatePalette('#39AC97'),
-  contrastText: '#ffffff',
-}
 export const elPortalPalette: PaletteOptions = {
   ...palette,
-  primary: elPortalPrimaryPalette,
-  secondary: elPortalPrimaryPalette,
+  primary: generatePalette('#39AC97'),
+  secondary: generatePalette('#39AC97'),
 }
 
 export const nfPortalPalette: PaletteOptions = {
@@ -175,6 +172,12 @@ export const sageBionetworksPalette: PaletteOptions = {
   ...palette,
   primary: generatePalette('#24AB9F'),
   secondary: generatePalette('#F5B33C'),
+}
+
+export const challengePortalPalette: PaletteOptions = {
+  ...palette,
+  primary: generatePalette('#407BA0'),
+  secondary: generatePalette('#407BA0'),
 }
 
 export default palette

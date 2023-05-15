@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Modal } from 'react-bootstrap'
+import { Button } from '@mui/material'
 import Form, { IChangeEvent } from '@rjsf/core'
 import { SynapseClient } from '../utils'
 import {
@@ -18,7 +18,7 @@ import {
 } from './ModalDownload.FormSchema'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { SynapseContext } from '../utils/SynapseContext'
-import IconSvg from './IconSvg'
+import { DialogBase } from './DialogBase'
 
 export type ModalDownloadState = {
   isLoading: boolean
@@ -126,59 +126,59 @@ export default class ModalDownload extends React.Component<
   }
 
   render() {
-    const closeBtn: React.CSSProperties = {
-      position: 'absolute',
-      top: 10,
-      right: 10,
-      zIndex: 10,
-    }
     const spinnerStyle: React.CSSProperties = {
       height: 50,
       width: 50,
       backgroundSize: 50,
     }
     return (
-      <Modal
-        animation={false}
-        show={true}
-        onHide={this.props.onClose}
-        backdrop="static"
-      >
-        <Modal.Body>
-          <button style={closeBtn} onClick={this.props.onClose}>
-            <IconSvg icon="close" />
-          </button>
-          <Form
-            schema={formSchemaArray[this.state.step]}
-            uiSchema={formSchemaUIArray[this.state.step]}
-            onChange={this.handleChange}
-            formData={this.state.formData}
-            onSubmit={this.handleSubmit}
-          >
-            {this.state.isLoading && (
-              <div className="SRC-centerAndJustifyContent">
-                <div className="SRC-center-text">
-                  <p> Creating the File </p>
-                  <div style={spinnerStyle} className="spinner" />
-                  <p> Loading... </p>
+      <DialogBase
+        open={true}
+        onCancel={this.props.onClose}
+        title="Download query results"
+        content={
+          <>
+            <Form
+              id="modal-download-form"
+              schema={formSchemaArray[this.state.step]}
+              uiSchema={formSchemaUIArray[this.state.step]}
+              onChange={this.handleChange}
+              formData={this.state.formData}
+              onSubmit={this.handleSubmit}
+            >
+              {this.state.isLoading && (
+                <div className="SRC-centerAndJustifyContent">
+                  <div className="SRC-center-text">
+                    <p> Creating the File </p>
+                    <div style={spinnerStyle} className="spinner" />
+                    <p> Loading... </p>
+                  </div>
                 </div>
-              </div>
-            )}
-            <div style={{ textAlign: 'right' }}>
-              <Button
-                variant="default"
-                onClick={this.props.onClose}
-                style={{ marginRight: '5px' }}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary">
-                {this.state.step === 0 ? 'Next' : 'Download'}
-              </Button>
-            </div>
-          </Form>
-        </Modal.Body>
-      </Modal>
+              )}
+              <React.Fragment />
+            </Form>
+          </>
+        }
+        actions={
+          <>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={this.props.onClose}
+            >
+              Cancel
+            </Button>
+            <Button
+              form="modal-download-form"
+              type="submit"
+              variant="contained"
+              color="primary"
+            >
+              {this.state.step === 0 ? 'Next' : 'Download'}
+            </Button>
+          </>
+        }
+      />
     )
   }
 }

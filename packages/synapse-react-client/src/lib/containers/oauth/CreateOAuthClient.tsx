@@ -1,24 +1,35 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { displayToast } from '../ToastMessage'
-import { Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  TextField,
+  Typography,
+  InputAdornment,
+} from '@mui/material'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
 import {
   useCreateOAuthClient,
   useDeleteOAuthClient,
   useUpdateOAuthClient,
 } from '../../utils/hooks/SynapseAPI'
-import IconSvg from '../IconSvg'
 import { WarningDialog } from '../synapse_form_wrapper/WarningDialog'
-import { HelpOutlineTwoTone } from '@mui/icons-material'
-import { Tooltip } from '@mui/material'
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { SynapseSpinner } from '../LoadingScreen'
 import { SynapseClient } from '../../utils'
 import { useDebouncedEffect } from '../../utils/hooks'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 
 const INPUT_CHANGE_DEBOUNCE_DELAY_MS = 500
+const GRID_NARROW = 12
+const GRID_WIDE = 6
+const GRID_ROW_SPACING = 1
+const GRID_COL_SPACING = 2
 
 export type CreateOAuthModalProps = {
   isShowingModal: boolean
@@ -56,7 +67,6 @@ export const CreateOAuthModal: React.FunctionComponent<
   const warningHeader = 'Are you absolutely sure?'
   const warningBody =
     'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.'
-  const uriHelpMessage = 'Click Add URI to add more Redirect URIs'
 
   // Return the OAuth Client definition based on the current client-side UI state
   const oAuthClient: OAuthClient = useMemo(() => {
@@ -199,246 +209,214 @@ export const CreateOAuthModal: React.FunctionComponent<
     }
   }
 
+  const dangerLabelSx = {
+    color: isEdit ? 'error.main' : undefined,
+    '&.Mui-focused': {
+      color: isEdit ? 'error.main' : undefined,
+    },
+  }
+
+  const sectorIdentifierURIInput = (
+    <TextField
+      onChange={e => setSectorUri(e.target.value)}
+      placeholder="https://"
+      type="text"
+      value={sectorUri}
+      id="sectorURI"
+      label="Sector Identifier URI"
+      margin="normal"
+      InputLabelProps={{ sx: dangerLabelSx }}
+      fullWidth
+    />
+  )
+
+  const redirectURIInputs = (
+    <>
+      {redirectUris?.map((singleUri, idx) => (
+        <div key={idx}>
+          <TextField
+            required={idx === 0}
+            InputLabelProps={{ sx: dangerLabelSx }}
+            label={idx === 0 && 'Redirect URI(s)'}
+            name="uri"
+            fullWidth
+            id={`redirect-uri-${idx}`}
+            onChange={e => handleUriChange(e, idx)}
+            value={singleUri.uri}
+            placeholder="https://"
+            type="text"
+            InputProps={{
+              endAdornment: redirectUris.length > 1 && (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => handleRedirectUriRemove(idx)}>
+                    <DeleteTwoToneIcon sx={{ color: 'error.main' }} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            margin={idx === 0 ? 'normal' : 'dense'}
+          />
+          {redirectUris.length - 1 === idx && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleRedirectUriAdd}
+              disabled={singleUri.uri.length === 0}
+              sx={{ my: '10px' }}
+            >
+              Add URI
+            </Button>
+          )}
+        </div>
+      ))}
+    </>
+  )
+
+  const content = (
+    <>
+      {isLoadingUpdate && (
+        <div className={'SRC-center-text'}>
+          <SynapseSpinner size={40} />
+        </div>
+      )}
+      {!isLoadingUpdate && (
+        <>
+          <Typography variant="body1" mb={'10px'}>
+            To protect you and your users, your consent screen and application
+            will need to be verified by Sage Bionetworks. Before your consent
+            screen and application are verified by Sage Bionetworks, you can
+            still test your application with limitations.
+          </Typography>
+
+          {isEdit && (
+            <Typography sx={{ mt: '16px' }} variant="label">
+              Client ID: {client?.client_id}
+            </Typography>
+          )}
+          <Grid
+            container
+            rowSpacing={GRID_ROW_SPACING}
+            columnSpacing={GRID_COL_SPACING}
+          >
+            <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+              <TextField
+                label="Client Name"
+                required
+                onChange={e => setClientName(e.target.value)}
+                placeholder="Client Name"
+                type="text"
+                value={clientName}
+                id="clientName"
+                margin="normal"
+                fullWidth
+              />
+            </Grid>
+            <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+              <TextField
+                label="Client Homepage"
+                onChange={e => setClientUri(e.target.value)}
+                placeholder="https://"
+                type="text"
+                value={clientUri}
+                id="clientUri"
+                fullWidth
+                margin="normal"
+              />
+            </Grid>
+            {!isEdit && (
+              <>
+                <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+                  {redirectURIInputs}
+                </Grid>
+                <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+                  {sectorIdentifierURIInput}
+                </Grid>
+              </>
+            )}
+            <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+              <TextField
+                label="Link to Privacy Policy"
+                onChange={e => setPolicyUri(e.target.value)}
+                placeholder="https://"
+                type="text"
+                value={policyUri}
+                fullWidth
+                margin="normal"
+              />
+            </Grid>
+            <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+              <TextField
+                label="Links to Terms of Service"
+                onChange={e => setTosUri(e.target.value)}
+                placeholder="https://"
+                type="text"
+                value={tosUri}
+                fullWidth
+                margin="normal"
+              />
+            </Grid>
+          </Grid>
+          {isEdit && (
+            <Box
+              sx={{ backgroundColor: 'rgb(178, 36, 42, 0.03)' }}
+              mt="10px"
+              padding={1}
+            >
+              <Typography sx={{ my: 1 }} color="error" variant="headline3">
+                DANGER ZONE
+              </Typography>
+              <Typography variant="smallText1">
+                Editing the following information will render your client
+                invalid and will require you to create it again and resubmit
+                verification if needed.
+              </Typography>
+              <Grid
+                container
+                rowSpacing={GRID_ROW_SPACING}
+                columnSpacing={GRID_COL_SPACING}
+              >
+                <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+                  {redirectURIInputs}
+                </Grid>
+                <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+                  {sectorIdentifierURIInput}
+                </Grid>
+              </Grid>
+
+              <Button
+                onClick={() => {
+                  setIsDelete(true)
+                  setIsShowingConfirmModal(true)
+                }}
+                color="error"
+                variant="text"
+                startIcon={<DeleteTwoToneIcon />}
+                sx={{ padding: 0, mb: 1 }}
+              >
+                DELETE CLIENT
+              </Button>
+            </Box>
+          )}
+        </>
+      )}
+      {error && <Alert severity="error">{error?.reason}</Alert>}
+    </>
+  )
+
   return (
-    <div className="bootstrap-4-backport">
-      <Modal
-        show={isShowingModal && !isShowingConfirmModal}
-        animation={false}
-        backdrop="static"
-        onHide={() => {
+    <>
+      <ConfirmationDialog
+        open={isShowingModal && !isShowingConfirmModal}
+        onCancel={() => {
           hide()
           setError(undefined)
         }}
-        size="lg"
-        className="OAuthDialog bootstrap-4-backport"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {isEdit ? 'Client Details' : 'Create New OAuth Client'}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {isLoadingUpdate && (
-            <div className={'SRC-center-text'}>
-              <SynapseSpinner size={40} />
-            </div>
-          )}
-          {!isLoadingUpdate && (
-            <>
-              <Typography variant="body1">
-                To protect you and your users, your consent screen and
-                application will need to be verified by Sage Bionetworks. Before
-                your consent screen and application are verified by Sage
-                Bionetworks, you can still test your application with
-                limitations.
-              </Typography>
-
-              {isEdit && (
-                <Typography style={{ marginTop: '16px' }} variant="label">
-                  Client ID: {client?.client_id}
-                </Typography>
-              )}
-              <Row>
-                <Col lg={6} md={6} sm={12} xs={12}>
-                  <Form.Group className="required">
-                    <Form.Label htmlFor="clientName">Client Name</Form.Label>
-                    <Form.Control
-                      required
-                      onChange={e => setClientName(e.target.value)}
-                      placeholder="Client Name"
-                      type="text"
-                      value={clientName}
-                      id="clientName"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col lg={6} md={6} sm={12} xs={12}>
-                  <Form.Label className="required" htmlFor="clientUri">
-                    Client Homepage
-                  </Form.Label>
-                  <Form.Control
-                    onChange={e => setClientUri(e.target.value)}
-                    placeholder="https://"
-                    type="text"
-                    value={clientUri}
-                    id="clientUri"
-                  />
-                </Col>
-              </Row>
-              <Row>
-                {!isEdit && (
-                  <>
-                    <Col lg={6} md={6} sm={12} xs={12}>
-                      <Form.Group className="required">
-                        <Form.Label htmlFor="redirect-uri-0">
-                          Redirect URI(s)
-                        </Form.Label>
-                        <Tooltip title={uriHelpMessage} placement="top">
-                          <HelpOutlineTwoTone className={`HelpButton`} />
-                        </Tooltip>
-                        {redirectUris?.map((singleUri, idx) => (
-                          <div key={idx}>
-                            <Form.Control
-                              name="uri"
-                              required
-                              id={`redirect-uri-${idx}`}
-                              onChange={e => handleUriChange(e, idx)}
-                              value={singleUri.uri}
-                              placeholder="https://"
-                              type="text"
-                            />
-                            {redirectUris.length > 1 && (
-                              <button
-                                onClick={() => handleRedirectUriRemove(idx)}
-                              >
-                                <IconSvg
-                                  icon="delete"
-                                  sx={{ color: 'error.main' }}
-                                />
-                              </button>
-                            )}
-
-                            {redirectUris.length - 1 === idx && (
-                              <Button
-                                onClick={handleRedirectUriAdd}
-                                disabled={singleUri.uri.length === 0}
-                              >
-                                Add URI
-                              </Button>
-                            )}
-                          </div>
-                        ))}
-                      </Form.Group>
-                    </Col>
-                    <Col lg={6} md={6} sm={12} xs={12}>
-                      <Form.Label>Sector Identifier URI</Form.Label>
-                      <Form.Control
-                        onChange={e => setSectorUri(e.target.value)}
-                        placeholder="https://"
-                        type="text"
-                      />
-                    </Col>
-                  </>
-                )}
-              </Row>
-              <Row>
-                <Col lg={6} md={6} sm={12} xs={12}>
-                  <Form.Label>Link to Privacy Policy</Form.Label>
-                  <Form.Control
-                    onChange={e => setPolicyUri(e.target.value)}
-                    placeholder="https://"
-                    type="text"
-                    value={policyUri}
-                  />
-                </Col>
-                <Col lg={6} md={6} sm={12} xs={12}>
-                  <Form.Label>Links to Terms of Service</Form.Label>
-                  <Form.Control
-                    onChange={e => setTosUri(e.target.value)}
-                    placeholder="https://"
-                    type="text"
-                    value={tosUri}
-                  />
-                </Col>
-              </Row>
-              {isEdit && (
-                <div className="danger">
-                  <Typography
-                    style={{ marginTop: '8px' }}
-                    color="error"
-                    variant="headline3"
-                  >
-                    DANGER ZONE
-                  </Typography>
-                  <Typography variant="smallText1">
-                    Editing the following information will render your client
-                    invalid and will require you to create it again and resubmit
-                    verification if needed.
-                  </Typography>
-                  <Row>
-                    <Col lg={6} md={6} sm={12} xs={12}>
-                      <Form.Label htmlFor="redirect-uri-0">
-                        Redirect URI(s)
-                      </Form.Label>
-                      <Tooltip title={uriHelpMessage} placement="top">
-                        <HelpOutlineTwoTone className={`HelpButton`} />
-                      </Tooltip>
-
-                      {redirectUris?.map((singleUri, idx) => (
-                        <div key={idx}>
-                          <Form.Control
-                            id={`redirect-uri-${idx}`}
-                            required
-                            name="uri"
-                            onChange={e => handleUriChange(e, idx)}
-                            value={singleUri.uri}
-                            placeholder="https://"
-                            type="text"
-                          />
-                          {redirectUris.length > 1 && (
-                            <button
-                              onClick={() => handleRedirectUriRemove(idx)}
-                            >
-                              <IconSvg
-                                icon="delete"
-                                sx={{ color: 'error.main' }}
-                              />
-                            </button>
-                          )}
-
-                          {redirectUris.length - 1 === idx && (
-                            <Button
-                              onClick={handleRedirectUriAdd}
-                              disabled={singleUri.uri.length === 0}
-                            >
-                              Add Uri
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                    </Col>
-                    <Col lg={6} md={6} sm={12} xs={12}>
-                      <Form.Label>Sector Identifier URI</Form.Label>
-                      <Form.Control
-                        onChange={e => setSectorUri(e.target.value)}
-                        placeholder="https://"
-                        type="text"
-                        value={sectorUri}
-                      />
-                    </Col>
-                  </Row>
-
-                  <button
-                    className="delete-button"
-                    onClick={() => {
-                      setIsDelete(true)
-                      setIsShowingConfirmModal(true)
-                    }}
-                  >
-                    <IconSvg icon="delete" sx={{ color: 'error.main' }} />
-                    DELETE CLIENT
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </Modal.Body>
-        {error && <Alert variant="danger">{error?.reason}</Alert>}
-        <Modal.Footer>
-          <Button
-            variant="default"
-            onClick={() => {
-              hide()
-              setError(undefined)
-            }}
-          >
-            CANCEL
-          </Button>
-          <Button variant="primary" onClick={onCreateClient}>
-            Save
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        maxWidth="md"
+        title={isEdit ? 'Client Details' : 'Create New OAuth Client'}
+        content={content}
+        onConfirm={onCreateClient}
+        confirmButtonText="Save"
+      />
       <WarningDialog
         open={isShowingConfirmModal}
         title={warningHeader}
@@ -453,6 +431,6 @@ export const CreateOAuthModal: React.FunctionComponent<
         confirmButtonColor="error"
         confirmButtonText="Yes, Continue"
       />
-    </div>
+    </>
   )
 }

@@ -9,8 +9,8 @@ import {
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
-} from '../QueryWrapper'
-import { useQueryContext } from '../QueryContext'
+  useQueryContext,
+} from '../QueryContext'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { DownloadOptions } from './table-top'
 import { ColumnSelection } from './table-top/ColumnSelection'

@@ -5,15 +5,31 @@ import PageProgress, {
   PageProgressProps,
 } from '../../../src/lib/containers/PageProgress'
 
+const buttonLabels = {
+  back: 'Go back',
+  forward: 'Go forward',
+}
+
+function setUp(props: PageProgressProps) {
+  const user = userEvent.setup()
+  const component = render(<PageProgress {...props} />)
+  const buttons = {
+    back: screen.getByRole('button', { name: buttonLabels.back }),
+    forward: screen.getByRole('button', { name: buttonLabels.forward }),
+  }
+  const progressbar = screen.getByRole('progressbar')
+  return { user, component, buttons, progressbar }
+}
+
 describe('Page Progress: basic functionality', () => {
   const onBackButtonClicked = jest.fn()
   const onNextButtonClicked = jest.fn()
   const props: PageProgressProps = {
     barColor: '',
     barPercent: 30,
-    backBtnLabel: 'Go back',
+    backBtnLabel: buttonLabels.back,
     backBtnCallback: onBackButtonClicked,
-    forwardBtnLabel: 'Go forward',
+    forwardBtnLabel: buttonLabels.forward,
     forwardBtnCallback: onNextButtonClicked,
     forwardBtnActive: false,
   }
@@ -21,56 +37,42 @@ describe('Page Progress: basic functionality', () => {
   canGoNextProps.forwardBtnActive = true
 
   it('render component without crashing', () => {
-    const { container } = render(<PageProgress {...props} />)
-    expect(container).toBeDefined()
+    const { component } = setUp(props)
+    expect(component).toBeDefined()
   })
 
-  it('should render progress bar with correct width', () => {
-    const { container } = render(<PageProgress {...props} />)
-    expect(
-      container.querySelector('.page-progress-percent')?.getAttribute('style'),
-    ).toBe('width: 30%;')
+  it('should render progress bar with correct percentage', () => {
+    const { progressbar } = setUp(props)
+    expect(progressbar).toHaveAttribute('aria-valuenow', '30')
   })
 
-  it('should render button with correct labels', () => {
-    render(<PageProgress {...props} />)
-
-    expect(
-      screen
-        .getByRole('button', { name: 'Go back' })
-        .classList.contains('btn-progress-back'),
-    ).toBe(true)
-    expect(
-      screen
-        .getByRole('button', { name: 'Go forward' })
-        .classList.contains('btn-progress-next'),
-    ).toBe(true)
+  it('should render buttons with correct labels', () => {
+    const { buttons } = setUp(props)
+    expect(buttons.back).toBeInTheDocument()
+    expect(buttons.forward).toBeInTheDocument()
   })
 
-  it('should have correct css class for forward button', () => {
-    render(<PageProgress {...canGoNextProps} />)
-    expect(
-      screen
-        .getByRole('button', { name: 'Go forward' })
-        .classList.contains('btn-progress-next-active'),
-    ).toBe(true)
+  it('should disable forward button when cannot advance', () => {
+    const { buttons } = setUp(props)
+    expect(buttons.forward).toBeDisabled()
+  })
+
+  it('should not disable forward button when can advance', () => {
+    const { buttons } = setUp(canGoNextProps)
+    expect(buttons.forward).not.toBeDisabled()
   })
 
   it('should call back button callback when clicked', async () => {
-    render(<PageProgress {...props} />)
-    await userEvent.click(screen.getByRole('button', { name: 'Go back' }))
+    const { user, buttons } = setUp(props)
+    expect(buttons.back).not.toBeDisabled()
+    await user.click(buttons.back)
     expect(onBackButtonClicked).toHaveBeenCalledTimes(1)
   })
 
-  it('should not call forward button callback when it is not active', async () => {
-    render(<PageProgress {...props} />)
-    await userEvent.click(screen.getByRole('button', { name: 'Go forward' }))
-    expect(onNextButtonClicked).toHaveBeenCalledTimes(0)
-  })
-
   it('should call forward button callback when it is active', async () => {
-    render(<PageProgress {...canGoNextProps} />)
-    await userEvent.click(screen.getByRole('button', { name: 'Go forward' }))
+    const { user, buttons } = setUp(canGoNextProps)
+    expect(buttons.forward).not.toBeDisabled()
+    await user.click(buttons.forward)
     expect(onNextButtonClicked).toHaveBeenCalledTimes(1)
   })
 })

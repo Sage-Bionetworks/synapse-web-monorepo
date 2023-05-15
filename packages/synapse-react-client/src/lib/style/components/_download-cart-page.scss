@@ -145,10 +145,6 @@
   .checkbox label {
     font-weight: normal;
   }
-  .page-progress-percent {
-    align-self: start;
-    margin-bottom: 15px;
-  }
 
   .createManifestTitle,
   .createPackageTitle {
@@ -161,48 +157,5 @@
 
   .zipUI {
     margin-left: -25px;
-  }
-}
-
-.DownloadListActionsRequired {
-  padding-top: 40px;
-}
-
-.actionRequiredCard {
-  display: grid;
-  padding: 20px 35px;
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
-  grid-template-columns: 160px auto 160px;
-  &.RequestDownloadCart {
-    grid-template-columns: 160px auto 200px;
-    .iconImg {
-      margin-top: 10px;
-      margin-left: 30px;
-    }
-    .contactAdminNote {
-      color: map.get(SRC.$colors, 'gray-700');
-      text-align: center;
-    }
-  }
-  .title {
-    margin-bottom: 5px;
-  }
-  .metadata,
-  .startButtonContainer {
-    align-self: center;
-  }
-  .pageHeaderTitle {
-    font-weight: bold;
-    font-size: 16px;
-    line-height: 40px;
-  }
-  .fileCount {
-    color: map.get(SRC.$colors, 'gray-700');
-  }
-  .description {
-    margin-right: 10px;
-  }
-  .startButton {
-    width: 100%;
   }
 }

@@ -11,8 +11,8 @@ import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
-} from '../../QueryWrapper'
-import { useQueryContext } from '../../QueryContext'
+  useQueryContext,
+} from '../../QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
 import FacetNavPanel, { PlotType } from './FacetNavPanel'
 import TotalQueryResults from '../../TotalQueryResults'

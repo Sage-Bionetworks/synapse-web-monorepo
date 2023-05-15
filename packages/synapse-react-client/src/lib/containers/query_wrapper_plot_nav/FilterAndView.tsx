@@ -1,12 +1,12 @@
 import * as React from 'react'
-import {
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-} from '../QueryWrapper'
 import CardContainer from '../CardContainer'
 import SynapseTable, { SynapseTableProps } from '../table/SynapseTable'
 import { CardConfiguration } from '../CardContainerLogic'
-import { useQueryContext } from '../QueryContext'
+import {
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+  useQueryContext,
+} from '../QueryContext'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import LastUpdatedOn from './LastUpdatedOn'

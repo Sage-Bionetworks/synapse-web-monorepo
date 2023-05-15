@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import { Link, Skeleton } from '@mui/material'
 import React from 'react'
 import {
   convertToEntityType,
@@ -53,7 +53,7 @@ export const EntityLink = (props: EntityLinkProps) => {
 
     if (link) {
       return (
-        <a
+        <Link
           className={className}
           target="_blank"
           rel="noopener noreferrer"
@@ -65,7 +65,7 @@ export const EntityLink = (props: EntityLinkProps) => {
             <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
           )}
           {entity[displayTextField]}
-        </a>
+        </Link>
       )
     } else {
       return (
