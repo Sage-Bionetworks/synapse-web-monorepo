@@ -51,6 +51,9 @@ export const Demo: Story = {
     color: 'secondary',
     sx: {
       color: 'white',
+      fontSize: '1.12em',
+      textTransform: 'none',
+      padding: '4px 18px',
       fontWeight: 400,
       ':hover': { color: 'white' },
       ':active': { color: 'white' },
