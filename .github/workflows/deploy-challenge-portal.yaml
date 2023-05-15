@@ -1,0 +1,46 @@
+name: "Deploy Challenges Portal"
+
+on:
+  push:
+    branches:
+      - releases/portals/production
+      - releases/portals/staging
+      - main
+    paths:
+      - "apps/portals/**"
+      - "!apps/portals/src/configurations/**"
+      - "apps/portals/src/configurations/challengeportal/**"
+      - "packages/synapse-react-client/**"
+
+jobs:
+  build-and-deploy:
+    name: build-and-deploy
+    # limit to this repository
+    if: github.repository == 'xschildw/synapse-web-monorepo-test'
+    runs-on: ubuntu-latest
+    # Allow OIDC Integration (so we can assume the AWS role to deploy)
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3.0.0
+      - name: setup
+        uses: ./.github/actions/pnpm-setup-action
+      - name: build
+        run: |
+          cd apps/portals
+          chmod +x ./build.sh
+          ./build.sh challengeportal
+      - name: setup-outputbucket-staging
+        if: github.ref == 'refs/heads/releases/portals/staging'
+        run: |
+          cd apps/portals
+          echo chmod +x ./deploy.sh
+          echo bash -c ./deploy.sh push-staging challengeportal
+      - name: setup-outputbucket-prod
+        if: github.ref == 'refs/heads/releases/portals/production'
+        run: |
+          cd apps/portals
+          echo chmod +x ./deploy.sh
+          echo bash -c ./deploy.sh WARNING-push-production challengeportal
