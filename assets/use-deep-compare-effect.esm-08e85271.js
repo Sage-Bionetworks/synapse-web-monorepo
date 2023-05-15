@@ -1,0 +1,2 @@
+import{r as t}from"./index-8db94870.js";import{d as n}from"./index-5d0cf067.js";function f(e){var r=t.useRef(e),u=t.useRef(0);return n(e,r.current)||(r.current=e,u.current+=1),t.useMemo(function(){return r.current},[u.current])}function s(e,r){return t.useEffect(e,f(r))}function a(e,r){return t.useEffect(e,f(r))}export{f as a,a as b,s as u};
+//# sourceMappingURL=use-deep-compare-effect.esm-08e85271.js.map
