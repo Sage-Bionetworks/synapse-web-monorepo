@@ -4,8 +4,8 @@ import { TextMatchesQueryFilter } from '../utils/synapseTypes/Table/QueryFilter'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
-} from './QueryWrapper'
-import { useQueryContext } from './QueryContext'
+  useQueryContext,
+} from './QueryContext'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { HelpPopover } from './HelpPopover'
 import IconSvg from './IconSvg'

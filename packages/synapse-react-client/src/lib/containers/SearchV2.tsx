@@ -13,10 +13,11 @@ import {
 } from '../utils/synapseTypes/Table/QueryFilter'
 import { QueryVisualizationContextType } from './QueryVisualizationWrapper'
 import {
+  LockedColumn,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
-} from './QueryWrapper'
-import { LockedColumn, QueryContextType } from './QueryContext'
+  QueryContextType,
+} from './QueryContext'
 import IconSvg from './IconSvg'
 
 type SearchState = {

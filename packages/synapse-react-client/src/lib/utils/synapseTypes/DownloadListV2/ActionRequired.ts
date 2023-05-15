@@ -7,6 +7,11 @@ export type ActionRequiredCount = {
   count: number // The number of files that require this action.
 }
 
+//https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/ActionRequiredList.html
+export type ActionRequiredList = {
+  actions: Action[]
+}
+
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/RequestDownload.html
 // In order to download a one or more files, the user will need to be granted the 'DOWNLOAD' permission.
 export type RequestDownload = {

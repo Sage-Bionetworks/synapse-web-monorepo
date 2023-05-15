@@ -11,6 +11,7 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '../src/lib/utils/synapseTypes/Table/QueryFilter'
+import { displayToast } from '../src/lib/containers/ToastMessage'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',
@@ -190,6 +191,44 @@ export const SendToCavatica: Story = {
     showExportToCavatica: true,
   },
 }
+export const TableHasAccessRequirement: Story = {
+  args: {
+    sql: 'SELECT * FROM syn51425243',
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDownloadColumn: true,
+    },
+    name: 'Table Has Access Requirement',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+  },
+}
+export const TableWithNoDownloadAccess: Story = {
+  args: {
+    sql: 'SELECT * FROM syn51489955',
+    tableConfiguration: {
+      showAccessColumn: false,
+      showDownloadColumn: false,
+    },
+    name: 'No Table Download Access',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    // onViewSharingSettingsClicked: undefined
+    onViewSharingSettingsClicked: benefactorEntityId => {
+      displayToast(
+        `Open the ${benefactorEntityId} Sharing Settings dialog.  If undefined, send to the entity page.`,
+        'info',
+        {
+          primaryButtonConfig: {
+            text: 'Open Entity Page',
+            href: `https://www.synapse.org/#!Synapse:${benefactorEntityId}`,
+          },
+        },
+      )
+    },
+  },
+}
+
 export const Dataset: Story = {
   args: {
     sql: 'SELECT * FROM syn26302617',

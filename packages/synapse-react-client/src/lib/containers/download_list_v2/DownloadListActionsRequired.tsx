@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react'
 import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/SynapseAPI/download/useDownloadList'
 import { useInView } from 'react-intersection-observer'
-import { ActionRequiredCount } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
-import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
-import { RequestDownloadCard } from './RequestDownloadCard'
-import { EnableTwoFaRequirementCard } from './EnableTwoFaRequirementCard'
+import { ActionRequiredCount } from '../../utils/synapseTypes/DownloadListV2/ActionRequired'
 import { LoadingActionRequiredCard } from './ActionRequiredCard'
 import { Box } from '@mui/material'
+import { ActionRequiredListItem } from './ActionRequiredListItem'
 
 export type DownloadListActionsRequiredProps = {
   /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
-  onViewSharingSettingsClicked: (benefactorId: string) => void
+  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 export const DownloadListActionsRequired: React.FunctionComponent<
@@ -42,54 +40,21 @@ export const DownloadListActionsRequired: React.FunctionComponent<
   }, [status, hasNextPage, isFetchingNextPage, fetchNextPage, inView])
 
   const allRows = data?.pages.flatMap(page => page.page) ?? []
-
-  /**
-   * Returns rendering for the ActionRequiredCount.
-   *
-   * @param {ActionRequiredCount} actionRequiredCount actionRequiredCount being rendered
-   */
-  const renderActionRequired = (actionRequiredCount: ActionRequiredCount) => {
-    switch (actionRequiredCount.action.concreteType) {
-      case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement': {
-        return (
-          <MeetAccessRequirementCard
-            key={actionRequiredCount.action.accessRequirementId}
-            accessRequirementId={actionRequiredCount.action.accessRequirementId}
-            count={actionRequiredCount.count}
-          />
-        )
-      }
-      case 'org.sagebionetworks.repo.model.download.RequestDownload': {
-        return (
-          <RequestDownloadCard
-            key={actionRequiredCount.action.benefactorId}
-            entityId={`syn${actionRequiredCount.action.benefactorId}`}
-            count={actionRequiredCount.count}
-            onViewSharingSettingsClicked={props.onViewSharingSettingsClicked}
-          />
-        )
-      }
-      case 'org.sagebionetworks.repo.model.download.EnableTwoFa': {
-        return (
-          <EnableTwoFaRequirementCard
-            key={actionRequiredCount.action.accessRequirementId}
-            accessRequirementId={actionRequiredCount.action.accessRequirementId}
-            count={actionRequiredCount.count}
-          />
-        )
-      }
-
-      // case not supported yet
-      default:
-        return undefined
-    }
-  }
   return (
     <>
       <Box sx={{ pt: 5 }} display="flex" flexDirection="column" gap={3}>
-        {allRows.map((item: ActionRequiredCount) => {
+        {allRows.map((item: ActionRequiredCount, index) => {
           if (item) {
-            return renderActionRequired(item)
+            return (
+              <ActionRequiredListItem
+                key={index}
+                action={item.action}
+                count={item.count}
+                onViewSharingSettingsClicked={
+                  props.onViewSharingSettingsClicked
+                }
+              />
+            )
           } else return false
         })}
         {/* To trigger loading the next page */}

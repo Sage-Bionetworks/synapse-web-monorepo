@@ -12,7 +12,7 @@ import WideButton from '../../components/styled/WideButton'
 
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number
-  count: number
+  count?: number
 }
 export const TERMS_OF_USE_TITLE =
   'Requires Acceptance of Data-Specific Terms of Use'

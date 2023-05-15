@@ -23,7 +23,10 @@ import {
   QueryWrapperProps,
 } from '../QueryWrapper'
 import { InfiniteQueryWrapper } from '../InfiniteQueryWrapper'
-import { QueryContextConsumer } from '../QueryContext'
+import {
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QueryContextConsumer,
+} from '../QueryContext'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import SqlEditor from '../SqlEditor'
@@ -37,9 +40,6 @@ import FacetFilterControls, {
 } from '../widgets/query-filter/FacetFilterControls'
 import FilterAndView from './FilterAndView'
 import { NoContentPlaceholderType } from '../table/NoContentPlaceholderType'
-
-const QUERY_FILTERS_EXPANDED_CSS = 'isShowingFacetFilters'
-const QUERY_FILTERS_COLLAPSED_CSS = 'isHidingFacetFilters'
 
 type OwnProps = {
   sql: string
@@ -65,6 +65,7 @@ type OwnProps = {
   defaultColumn?: string
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
+  onViewSharingSettingsClicked?: (benefactorId: string) => void
 } & Omit<TopLevelControlsProps, 'entityId'> &
   Pick<
     QueryVisualizationWrapperProps,
@@ -184,19 +185,12 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                       )
                     }
 
-                    const showFacetFilter =
-                      queryVisualizationContext?.topLevelControlsState
-                        .showFacetFilter ||
-                      queryVisualizationContext?.topLevelControlsState
-                        .showFacetFilter === undefined
-
                     return (
                       <>
                         <div
                           className={`ErrorBannerWrapper ${
-                            showFacetFilter
-                              ? QUERY_FILTERS_EXPANDED_CSS
-                              : QUERY_FILTERS_COLLAPSED_CSS
+                            // if there's a query error, show full width
+                            QUERY_FILTERS_COLLAPSED_CSS
                           }`}
                         >
                           <QueryWrapperErrorBanner />

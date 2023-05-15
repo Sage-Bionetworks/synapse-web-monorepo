@@ -16,7 +16,7 @@ export type ActionRequiredCardProps =
       description: React.ReactNode
       actionNode: React.ReactNode
       iconType: string
-      count: number
+      count?: number
       isLoading?: false
     }
   | { isLoading: true }
@@ -51,9 +51,11 @@ export function ActionRequiredCard(props: ActionRequiredCardProps) {
         <Typography variant="headline3" sx={{ mb: 1 }}>
           {title}
         </Typography>
-        <Typography variant={'smallText1'} sx={{ my: 1, color: 'grey.700' }}>
-          {count} File{count != 1 ? 's' : ''}
-        </Typography>
+        {count && (
+          <Typography variant={'smallText1'} sx={{ my: 1, color: 'grey.700' }}>
+            {count} File{count != 1 ? 's' : ''}
+          </Typography>
+        )}
         <Typography variant={'smallText1'}>{description}</Typography>
       </Box>
       <Box sx={{ textAlign: 'center', marginLeft: 'auto' }}>{actionNode}</Box>

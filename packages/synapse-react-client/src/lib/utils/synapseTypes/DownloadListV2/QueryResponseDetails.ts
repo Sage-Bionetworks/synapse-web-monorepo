@@ -1,4 +1,4 @@
-import { ActionRequiredCount } from './ActionRequiredCount'
+import { ActionRequiredCount } from './ActionRequired'
 import { DownloadListItemResult } from './DownloadListItemResult'
 
 export type QueryResponseDetails =

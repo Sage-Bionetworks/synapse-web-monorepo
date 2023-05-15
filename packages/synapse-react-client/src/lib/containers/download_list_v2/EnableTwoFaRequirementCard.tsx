@@ -7,7 +7,7 @@ import WideButton from '../../components/styled/WideButton'
 
 export type EnableTwoFaRequirementCardProps = {
   accessRequirementId: number
-  count: number
+  count?: number
 }
 export const REQUIRES_2FA_CARD_TITLE = 'Requires Two-Factor Authentication'
 
