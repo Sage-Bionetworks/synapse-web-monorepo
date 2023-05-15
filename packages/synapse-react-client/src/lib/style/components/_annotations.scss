@@ -15,30 +15,10 @@
     > .form-group {
       grid-row-start: 1;
     }
-    .ErrorList {
-      grid-row-start: 2;
-      margin-top: 1rem;
-    }
-
-    .alert {
-      grid-row-start: 3;
-      margin-top: 5px;
-      margin-bottom: 5px;
-    }
 
     > hr {
       grid-row-start: 4;
       width: 100%;
-    }
-
-    .SaveButtonContainer {
-      display: flex;
-      flex-direction: row-reverse;
-      grid-row-start: 5;
-
-      .Spacer {
-        flex-grow: 1;
-      }
     }
 
     .col-xs-3,

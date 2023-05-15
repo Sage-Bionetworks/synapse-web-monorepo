@@ -56,6 +56,11 @@ const entityQueryKeyObjects = {
     ...entityQueryKeyObjects.entity(id),
     scope: 'json',
   }),
+  // entity actions required
+  entityActions: (id: string) => [
+    entityQueryKeyObjects.entity(id),
+    'entityActions',
+  ],
   activity: (id: string, versionNumber?: number) => ({
     ...entityQueryKeyObjects.version(id),
     scope: 'activity',
@@ -190,6 +195,10 @@ export class KeyFactory {
 
   public getEntityActivityQueryKey(id: string, versionNumber?: number) {
     return this.getKey(entityQueryKeyObjects.activity(id, versionNumber))
+  }
+
+  public getEntityActionsRequiredQueryKey(id: string) {
+    return this.getKey(...entityQueryKeyObjects.entityActions(id))
   }
 
   public getEntityVersionQueryKey(id: string, versionNumber?: string | number) {

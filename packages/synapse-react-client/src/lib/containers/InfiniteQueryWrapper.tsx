@@ -22,9 +22,6 @@ import {
 } from './QueryContext'
 import useImmutableTableQuery from './useImmutableTableQuery'
 
-export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
-export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
-
 export type InfiniteQueryWrapperProps = {
   children: React.ReactNode | React.ReactNode[]
   initQueryRequest: QueryBundleRequest
@@ -33,6 +30,7 @@ export type InfiniteQueryWrapperProps = {
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   lockedColumn?: LockedColumn
+  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 /**
@@ -47,6 +45,7 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     lockedColumn,
     componentIndex,
     shouldDeepLink,
+    onViewSharingSettingsClicked,
   } = props
   const [currentAsyncStatus, setCurrentAsyncStatus] = useState<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle> | undefined
@@ -222,6 +221,7 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     removeValueFromSelectedFacet,
     lockedColumn,
     getColumnModel,
+    onViewSharingSettingsClicked,
   }
   /**
    * Render the children without any formatting

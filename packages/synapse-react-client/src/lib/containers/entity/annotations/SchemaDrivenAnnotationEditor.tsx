@@ -2,7 +2,7 @@ import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
-import { Alert, Button, Modal } from 'react-bootstrap'
+import { Alert, Box, Link } from '@mui/material'
 import AddToList from '../../../assets/icons/AddToList'
 import {
   BackendDestinationEnum,
@@ -32,6 +32,10 @@ import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
 import { CustomSelectWidget } from './CustomSelectWidget'
 import CustomTextWidget from './CustomTextWidget'
 import { entityJsonKeys } from '../../../utils/functions/EntityTypeUtils'
+import {
+  ConfirmationButtons,
+  ConfirmationDialog,
+} from '../../ConfirmationDialog'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -180,17 +184,12 @@ export const SchemaDrivenAnnotationEditor = (
       ) : (
         <>
           {entityJson && schema && (
-            <Alert
-              dismissible={false}
-              show={true}
-              variant="info"
-              transition={false}
-            >
+            <Alert severity="info" sx={{ mb: 2 }}>
               <b>{entityJson.name}</b> requires scientific annotations specified
               by <b>{schema.jsonSchemaVersionInfo.$id}</b>
               {'. '}
               <b>
-                <a
+                <Link
                   href={`${getEndpoint(
                     BackendDestinationEnum.REPO_ENDPOINT,
                   )}/repo/v1/schema/type/registered/${
@@ -200,21 +199,18 @@ export const SchemaDrivenAnnotationEditor = (
                   rel="noopener noreferrer"
                 >
                   View required schema (JSON)
-                </a>
+                </Link>
               </b>
             </Alert>
           )}
-          {entityJson && (!formData || isEmpty(formData)) && schema === null && (
-            <Alert
-              dismissible={false}
-              show={true}
-              variant="info"
-              transition={false}
-            >
-              <b>{entityJson.name}</b> has no annotations. Click the{' '}
-              <AddToList /> button to annotate.
-            </Alert>
-          )}
+          {entityJson &&
+            (!formData || isEmpty(formData)) &&
+            schema === null && (
+              <Alert severity="info">
+                <b>{entityJson.name}</b> has no annotations. Click the{' '}
+                <AddToList /> button to annotate.
+              </Alert>
+            )}
           <Form
             className="AnnotationEditorForm"
             liveValidate={liveValidate}
@@ -273,13 +269,7 @@ export const SchemaDrivenAnnotationEditor = (
             }}
           >
             {validationError && (
-              <Alert
-                className="ErrorList"
-                dismissible={false}
-                show={true}
-                variant="danger"
-                transition={false}
-              >
+              <Alert severity="error" sx={{ mt: 2 }}>
                 <b>Validation errors found:</b>
                 <ul>
                   {validationError.map((e: AjvError, index: number) => {
@@ -294,97 +284,69 @@ export const SchemaDrivenAnnotationEditor = (
               </Alert>
             )}
 
-            {submissionError && (
-              <Alert
-                dismissible={false}
-                show={showSubmissionError}
-                variant={'danger'}
-                transition={false}
-              >
+            {submissionError && showSubmissionError && (
+              <Alert severity="error">
                 Annotations could not be updated: {submissionError.reason}
               </Alert>
             )}
             {!formRefFromParent && (
               <>
                 <hr />
-                <div className="SaveButtonContainer">
-                  <Button
-                    variant="primary-500"
-                    onClick={() => {
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  sx={{ gridRowStart: 5 }}
+                >
+                  <ConfirmationButtons
+                    hasCancelButton={onCancel !== undefined}
+                    onCancel={() => {
+                      onCancel && onCancel()
+                    }}
+                    onConfirm={() => {
                       formRef.current!.submit()
                     }}
-                  >
-                    {entityId ? 'Save' : 'Validate'}
-                  </Button>
-                  {onCancel && (
-                    <>
-                      <div className="Spacer" />
-                      <Button variant="primary-500" onClick={onCancel}>
-                        Cancel
-                      </Button>
-                    </>
-                  )}
-                </div>
+                    confirmButtonText={entityId ? 'Save' : 'Validate'}
+                  />
+                </Box>
               </>
             )}
           </Form>
           {showConfirmation && (
-            <ConfirmationModal
-              show={true}
-              onSave={() => {
+            <ConfirmationDialog
+              open={true}
+              onConfirm={() => {
                 submitChangedEntity()
                 setShowConfirmation(false)
               }}
               onCancel={() => {
                 setShowConfirmation(false)
               }}
-              errors={validationError}
+              title="Update Annotations"
+              content={
+                <>
+                  <div>
+                    The following errors exist with the annotations you entered:
+                  </div>
+                  <div>
+                    <ul>
+                      {(validationError ?? []).map(
+                        (e: AjvError, index: number) => (
+                          <li key={index}>
+                            <b>{`${getFriendlyPropertyName(e)}: `}</b>{' '}
+                            {`${e.message}`}
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                  <div>Are you sure you want to save them?</div>
+                </>
+              }
+              confirmButtonText="Save"
             />
           )}
         </>
       )}
     </div>
-  )
-}
-
-type ConfirmationModalProps = {
-  show: boolean
-  onCancel: () => void
-  onSave: () => void
-  errors: AjvError[] | undefined
-}
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
-  show,
-  onCancel,
-  onSave,
-  errors,
-}: ConfirmationModalProps) => {
-  return (
-    <Modal animation={false} show={show} onHide={onCancel} backdrop="static">
-      <Modal.Header closeButton>
-        <Modal.Title>Update Annotations</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <div>The following errors exist with the annotations you entered:</div>
-        <div>
-          <ul>
-            {(errors ?? []).map((e: AjvError, index: number) => (
-              <li key={index}>
-                <b>{`${getFriendlyPropertyName(e)}: `}</b> {`${e.message}`}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>Are you sure you want to save them?</div>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="default" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button variant="primary" onClick={onSave}>
-          Save
-        </Button>
-      </Modal.Footer>
-    </Modal>
   )
 }

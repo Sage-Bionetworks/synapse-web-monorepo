@@ -7,8 +7,8 @@ import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
-} from './QueryWrapper'
-import { useQueryContext } from './QueryContext'
+  useQueryContext,
+} from './QueryContext'
 
 export type SqlEditorProps = {
   helpMessage?: string

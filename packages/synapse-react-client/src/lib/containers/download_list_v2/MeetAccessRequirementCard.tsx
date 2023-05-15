@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
+import React, { useState } from 'react'
 import { useGetAccessRequirements } from '../../utils/hooks/SynapseAPI/dataaccess/useAccessRequirements'
 import { SelfSignAccessRequirement } from '../../utils/synapseTypes'
-import { Button } from 'react-bootstrap'
-import { Icon } from '../row_renderers/utils'
 import {
   EASY_DIFFICULTY,
   MEDIUM_DIFFICULTY,
   VARIABLE_DIFFICULTY,
 } from '../../utils/SynapseConstants'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
-import { Skeleton, Typography } from '@mui/material'
+import { ActionRequiredCard } from './ActionRequiredCard'
+import WideButton from '../../components/styled/WideButton'
 
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number
-  count: number
+  count?: number
 }
 export const TERMS_OF_USE_TITLE =
   'Requires Acceptance of Data-Specific Terms of Use'
@@ -27,25 +25,17 @@ export const LOCK_TITLE = 'Access Restricted'
 export const MeetAccessRequirementCard: React.FunctionComponent<
   MeetAccessRequirementCardProps
 > = ({ accessRequirementId, count }: MeetAccessRequirementCardProps) => {
-  const handleError = useErrorHandler()
-  const {
-    data: ar,
-    isFetching,
-    isError,
-    error: newError,
-  } = useGetAccessRequirements(accessRequirementId)
-  useEffect(() => {
-    if (isError && newError) {
-      handleError(newError)
-    }
-  }, [isError, newError, handleError])
+  const { data: ar, isLoading } = useGetAccessRequirements(
+    accessRequirementId,
+    { useErrorBoundary: true },
+  )
   const [isShowingAccessRequirement, setIsShowingAccessRequirement] =
     useState<boolean>(false)
-  let content = <></>
-  if (!isError && !isFetching && ar) {
-    let title: string | undefined = undefined
-    let iconType = ''
-    let description = ''
+  let title: string | undefined = undefined
+  let iconType = ''
+  let description = ''
+
+  if (!isLoading && ar) {
     switch (ar.concreteType) {
       case 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement':
         title = TERMS_OF_USE_TITLE
@@ -78,35 +68,25 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
           'Access restricted pending review by Synapse Access and Compliance Team.'
         break
     }
-    if (title) {
-      content = (
-        <div className="MeetAccessRequirementCard actionRequiredCard">
-          <Icon type={iconType} />
-          <div className="metadata">
-            <Typography variant="headline3" className="title">
-              {title}
-            </Typography>
-            <div className="fileCount">{count} File(s)</div>
-            <div className="description">{description}</div>
-          </div>
-          <div className="startButtonContainer">
-            <Button
-              className="startButton"
-              variant="primary"
-              onClick={() => setIsShowingAccessRequirement(true)}
-            >
-              Start
-            </Button>
-          </div>
-        </div>
-      )
-    }
   }
 
   return (
     <>
-      {!isError && !isFetching && content}
-      {isFetching && <LoadingAccessRequirementCard />}
+      <ActionRequiredCard
+        isLoading={isLoading}
+        title={title}
+        description={description}
+        iconType={iconType}
+        count={count}
+        actionNode={
+          <WideButton
+            variant="contained"
+            onClick={() => setIsShowingAccessRequirement(true)}
+          >
+            Start
+          </WideButton>
+        }
+      />
       {isShowingAccessRequirement && ar && (
         <AccessRequirementList
           entityId={ar.subjectIds[0].id}
@@ -117,24 +97,5 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
         />
       )}
     </>
-  )
-}
-
-export const LoadingAccessRequirementCard: React.FunctionComponent = () => {
-  return (
-    <div className="MeetAccessRequirementCard actionRequiredCard">
-      <Skeleton variant="rectangular" width={136} height={74} />
-      <div className="metadata">
-        <div className="title">
-          <Skeleton width={320} />
-        </div>
-        <div className="fileCount">
-          <Skeleton width={100} />
-        </div>
-      </div>
-      <div className="startButtonContainer">
-        <Skeleton variant="rectangular" width={160} height={33} />
-      </div>
-    </div>
   )
 }

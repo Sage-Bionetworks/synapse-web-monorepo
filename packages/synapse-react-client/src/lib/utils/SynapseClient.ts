@@ -25,6 +25,7 @@ import {
   ENTITY,
   ENTITY_ACCESS,
   ENTITY_ACCESS_REQUIREMENTS,
+  ENTITY_ACTIONS_REQUIRED,
   ENTITY_BUNDLE_V2,
   ENTITY_HEADER_BY_ID,
   ENTITY_HEADERS,
@@ -299,6 +300,7 @@ import {
 } from './synapseTypes/TotpSecret'
 import { TwoFactorAuthRecoveryCodes } from './synapseTypes/TwoFactorAuthRecoveryCodes'
 import { SynapseError } from './SynapseError'
+import { ActionRequiredList } from './synapseTypes/DownloadListV2/ActionRequired'
 
 const cookies = new UniversalCookies()
 
@@ -4466,4 +4468,16 @@ export function getPortalFileHandleServletUrl(
   return `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )}/Portal/filehandleassociation?${search.toString()}`
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/actions/download.html
+export const getEntityDownloadActionsRequired = (
+  entityId: string,
+  accessToken?: string,
+) => {
+  return doGet<ActionRequiredList>(
+    ENTITY_ACTIONS_REQUIRED(entityId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }

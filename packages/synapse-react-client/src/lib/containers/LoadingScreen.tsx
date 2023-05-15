@@ -1,7 +1,11 @@
-import { LinearProgress } from '@mui/material'
 import React, { useEffect } from 'react'
-import { Modal, Button } from 'react-bootstrap'
-import { Typography } from '@mui/material'
+import {
+  Backdrop,
+  Box,
+  Button,
+  LinearProgress,
+  Typography,
+} from '@mui/material'
 import '../style/components/_spinner.scss'
 
 const loadingScreen = (
@@ -17,10 +21,12 @@ const loadingScreen = (
 
 type SynapseSpinnerProps = {
   size?: number // the size in pixels. default 20
+  margin?: string // the margin, default auto
 }
 
 export const SynapseSpinner: React.FC<SynapseSpinnerProps> = ({
   size = 20,
+  margin = 'auto',
 }) => {
   return (
     <div
@@ -29,6 +35,7 @@ export const SynapseSpinner: React.FC<SynapseSpinnerProps> = ({
         height: `${size}px`,
         width: `${size}px`,
         backgroundSize: `${size}px`,
+        margin: `${margin}`,
       }}
     />
   )
@@ -69,38 +76,51 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({
           value={(currentProgress! / totalProgress!) * 100}
         />
       </div>
-      <Typography variant="headline3">{headlineText}</Typography>
-      <Typography variant="hintText">{hintText}</Typography>
+      <Typography variant="headline3" mb={2}>
+        {headlineText}
+      </Typography>
+      <Typography variant="hintText" mb={2}>
+        {hintText}
+      </Typography>
     </>
   )
   return (
-    <Modal
-      className="bootstrap-4-backport BlockingLoader"
-      backdrop={false}
-      animation={false}
-      show={show}
-      size="sm"
-      centered={true}
-      onHide={() => {}}
+    <Backdrop
+      open={show}
+      onClick={() => {}}
+      aria-hidden={false}
+      sx={{
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        zIndex: theme => theme.zIndex.modal + 1,
+      }}
     >
-      <div className="SpinnerContainer" data-testid="spinner-container">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+      >
         {totalProgress ? (
           barLoader
         ) : (
           <>
-            <SynapseSpinner size={40} />
-            <Typography variant="headline3" data-testid="spinner-hint-text">
+            <SynapseSpinner size={40} margin="16px" />
+            <Typography
+              variant="headline3"
+              data-testid="spinner-hint-text"
+              mb={2}
+            >
               {hintText}
             </Typography>
           </>
         )}
         {onCancel && (
-          <Button variant="default" onClick={onCancel}>
+          <Button variant="outlined" color="primary" onClick={onCancel}>
             Cancel
           </Button>
         )}
-      </div>
-    </Modal>
+      </Box>
+    </Backdrop>
   )
 }
 
