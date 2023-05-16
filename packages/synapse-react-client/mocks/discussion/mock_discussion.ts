@@ -1,7 +1,7 @@
 import {
   DiscussionReplyBundle,
   DiscussionThreadBundle,
-} from '../../src/lib/utils/synapseTypes/DiscussionBundle'
+} from '@sage-bionetworks/synapse-types'
 import {
   mockUserProfileData,
   mockUserProfileData2,

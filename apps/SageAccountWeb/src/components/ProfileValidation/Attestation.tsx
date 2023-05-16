@@ -1,13 +1,13 @@
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
 import { Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { SynapseComponents } from 'synapse-react-client'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
+import { FileUpload } from 'synapse-react-client'
+import { displayToast } from 'synapse-react-client'
 import {
   VerificationSubmission,
   UploadCallbackResp,
   FileUploadComplete,
-} from 'synapse-react-client/dist/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { ContinueButton } from './ContinueButton'
 import { ReturnToAppButton } from './ReturnToAppButton'
 
@@ -52,7 +52,7 @@ const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
           </Typography>
         </>
       )}
-      <SynapseComponents.FileUpload
+      <FileUpload
         uploadCallback={uploadCallback}
         label="Upload from your computer"
         buttonProps={{

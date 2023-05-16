@@ -1,5 +1,5 @@
 import { SynapseConstants } from 'synapse-react-client'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
 import { datasetCollectionsSql } from '../resources'
 

@@ -1,4 +1,4 @@
-import { OAuthClientList } from '../../src/lib/utils/synapseTypes/OAuthClient'
+import { OAuthClientList } from '@sage-bionetworks/synapse-types'
 import {
   mockUserProfileData,
   mockUserProfileData2,

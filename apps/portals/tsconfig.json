@@ -10,5 +10,6 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false
   },
-  "include": ["src", "**/*.json"]
+  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "files": ["src/types.d.ts"]
 }

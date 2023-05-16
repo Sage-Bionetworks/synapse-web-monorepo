@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { HomePageHeaderConfig } from 'types/portal-config'
 import { ReactComponent as SageLogo } from './style/SageLogo.svg'
 import { ReactComponent as DreamLogo } from './style/DreamLogo.svg'
@@ -9,10 +9,16 @@ const homePageHeader: HomePageHeaderConfig = {
   summary: (
     <>
       {import.meta.env.VITE_PORTAL_DESCRIPTION}
-      <Box sx={{marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '30px'}}>
+      <Box
+        sx={{
+          marginTop: '20px',
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '30px',
+        }}
+      >
         <DreamLogo /> <SageLogo />
       </Box>
-      
     </>
   ),
   showBlur: true,

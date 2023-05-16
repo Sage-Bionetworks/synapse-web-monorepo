@@ -1,22 +1,22 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import SelfSignAccessRequirementItem from '../../src/lib/containers/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem'
+import SelfSignAccessRequirementItem from '../../src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
-} from '../../src/lib/utils/SynapseContext'
+} from '../../src/utils/context/SynapseContext'
 import { mockSelfSignAccessRequirement } from '../../mocks/mockAccessRequirements'
-import { MOCK_REPO_ORIGIN } from '../../src/lib/utils/functions/getEndpoint'
+import { MOCK_REPO_ORIGIN } from '../../src/utils/functions/getEndpoint'
 import { rest } from 'msw'
 import {
   ACCESS_APPROVAL,
   ACCESS_REQUIREMENT_STATUS,
-} from '../../src/lib/utils/APIConstants'
+} from '../../src/utils/APIConstants'
 import {
   AccessApproval,
   AccessRequirementStatus,
   ApprovalState,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import { getAccessRequirementHandlers } from '../../mocks/msw/handlers/accessRequirementHandlers'
 import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'

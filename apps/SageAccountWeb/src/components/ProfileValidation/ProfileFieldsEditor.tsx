@@ -1,7 +1,7 @@
 import { Box, InputLabel, TextField, useTheme } from '@mui/material'
 import { StyledFormControl } from '../StyledComponents'
 import React, { useState } from 'react'
-import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
+import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import { ContinueButton } from './ContinueButton'
 
 const keysToValidate = ['firstName', 'lastName', 'location', 'company']

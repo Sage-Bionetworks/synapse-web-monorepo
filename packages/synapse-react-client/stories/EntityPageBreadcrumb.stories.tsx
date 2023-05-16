@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import EntityPageBreadcrumbs from '../src/lib/containers/entity/page/breadcrumbs/EntityPageBreadcrumbs'
+import EntityPageBreadcrumbs from '../src/components/entity/page/breadcrumbs/EntityPageBreadcrumbs'
 
 const meta: Meta = {
   title: 'Synapse/EntityPage/Breadcrumb',

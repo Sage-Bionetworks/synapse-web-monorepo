@@ -7,9 +7,9 @@ import {
   LARGE_USER_CARD,
   MEDIUM_USER_CARD,
   SMALL_USER_CARD,
-} from '../src/lib/utils/SynapseConstants'
-import { useGetCurrentUserProfile } from '../src/lib/utils/hooks/SynapseAPI/user/useUserBundle'
-import UserCard from '../src/lib/containers/UserCard'
+} from '../src/utils/SynapseConstants'
+import { useGetCurrentUserProfile } from '../src/synapse-queries/user/useUserBundle'
+import UserCard from '../src/components/UserCard/UserCard'
 
 const meta = {
   title: 'UI/UserCard',

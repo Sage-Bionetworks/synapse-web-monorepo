@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Link, Route, Switch, useRouteMatch } from 'react-router-dom'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
@@ -6,9 +6,9 @@ import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 import { WidgetDemo } from './WidgetDemo'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
-import Resources from '../../../src/lib/containers/home_page/resources/Resources'
+import Resources from '../../../src/components/Resources/Resources'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
-import { ExternalFileHandleLink } from '../../../src/lib/containers/ExternalFileHandleLink'
+import { ExternalFileHandleLink } from '../../../src/components/ExternalFileHandleLink/ExternalFileHandleLink'
 import ColorPaletteInspector from './ColorPaletteInspector'
 
 /**

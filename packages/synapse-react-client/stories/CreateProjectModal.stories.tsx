@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { CreateProjectModal } from '../src/lib/containers/CreateProjectModal'
+import { CreateProjectModal } from '../src/components/CreateProjectModal'
 
 const meta = {
   title: 'Synapse/CreateProjectModal',

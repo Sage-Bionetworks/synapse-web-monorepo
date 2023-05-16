@@ -1,6 +1,6 @@
 import { rest } from 'msw'
-import { ACCESS_REQUIREMENT_WIKI_PAGE } from '../../../src/lib/utils/APIConstants'
-import { WikiPage } from '../../../src/lib/utils/synapseTypes'
+import { ACCESS_REQUIREMENT_WIKI_PAGE } from '../../../src/utils/APIConstants'
+import { WikiPage } from '@sage-bionetworks/synapse-types'
 import { SynapseApiResponse } from '../handlers'
 import { mockWikiPages } from '../../mockWiki'
 

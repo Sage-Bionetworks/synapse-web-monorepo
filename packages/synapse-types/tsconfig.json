@@ -1,0 +1,13 @@
+{
+  "extends": "../../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "Node",
+    "noEmit": false
+  },
+  "files": ["src/index.ts"]
+}

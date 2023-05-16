@@ -1,12 +1,13 @@
-import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
 import {
-  CardConfiguration, CardLink,
-} from 'synapse-react-client/dist/containers/CardContainerLogic'
+  CardConfiguration,
+  CardLink,
+  GenericCardSchema,
+  SynapseConstants,
+} from 'synapse-react-client'
+import { SynapseConfig } from 'types/portal-config'
 import { challengeProjectsSql } from '../resources'
 import { DetailsPageProps, RowSynapseConfig } from 'types/portal-util-types'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 3
 
@@ -15,13 +16,9 @@ export const challengesSchema: GenericCardSchema = {
   title: 'name',
   subTitle: 'Status',
   description: 'Abstract',
-  secondaryLabels: [
-    'Difficulty',
-    'ChallengeType',
-    'Tags',
-  ]
+  secondaryLabels: ['Difficulty', 'ChallengeType', 'Tags'],
 }
-export const challengeTitleLinkConfig:CardLink = {
+export const challengeTitleLinkConfig: CardLink = {
   isMarkdown: false,
   baseURL: 'Challenges/DetailsPage',
   URLColumnName: 'id',
@@ -46,73 +43,72 @@ export const challenges: SynapseConfig = {
   },
 }
 
-const taskTabConfigs = (taskID:string) => {
+const taskTabConfigs = (taskID: string) => {
   /** Not currently using DataType or TaskType. */
-  const configs:RowSynapseConfig[] = []
+  const configs: RowSynapseConfig[] = []
   configs.push(
     {
-    name: 'Markdown',
-    columnName: `${taskID}.Description`,
-    title: 'Description',
-    props: {},
-  },
-  {
-    name: 'Markdown',
-    columnName: `${taskID}.Motivation`,
-    title: 'Motivation',
-    props: {},
-  },
-  {
-    name: 'Markdown',
-    columnName: `${taskID}.DataWiki`,
-    title: 'Data',
-    props: {},
-  },
-  // TODO: Add Training Data Folder component
-  // {
-  //   name: 'GenUIFileListing',
-  //   columnName: `${taskID}.DataFolder`,
-  //   title: 'Training Data',
-  //   props: {},
-  // },
-  {
-    name: 'Markdown',
-    columnName: `${taskID}.EvaluationWiki`,
-    title: 'Evaluation',
-    props: {},
-  },
-  {
-    name: 'Markdown',
-    columnName: `${taskID}.SubmissionWiki`,
-    title: 'Submission',
-    props: {},
-  },
-  // TODO: Add Submission component
-  // {
-  //   name: 'GenUISubmissionComponent',
-  //   columnName: `${taskID}.SubmissionType`, // Docker or File
-  //   props: {},
-  // },
-  {
-    name: 'Markdown',
-    columnName: `${taskID}.Leaderboard`,
-    title: 'Results',
-    props: {},
-  },
-  {
-    name: 'Markdown',
-    columnName: `${taskID}.AlgorithmWiki`,
-    props: {},
-  },
-  {
-    name: 'Markdown',
-    columnName: `${taskID}.WinningSubmission`,
-    props: {},
-  },
+      name: 'Markdown',
+      columnName: `${taskID}.Description`,
+      title: 'Description',
+      props: {},
+    },
+    {
+      name: 'Markdown',
+      columnName: `${taskID}.Motivation`,
+      title: 'Motivation',
+      props: {},
+    },
+    {
+      name: 'Markdown',
+      columnName: `${taskID}.DataWiki`,
+      title: 'Data',
+      props: {},
+    },
+    // TODO: Add Training Data Folder component
+    // {
+    //   name: 'GenUIFileListing',
+    //   columnName: `${taskID}.DataFolder`,
+    //   title: 'Training Data',
+    //   props: {},
+    // },
+    {
+      name: 'Markdown',
+      columnName: `${taskID}.EvaluationWiki`,
+      title: 'Evaluation',
+      props: {},
+    },
+    {
+      name: 'Markdown',
+      columnName: `${taskID}.SubmissionWiki`,
+      title: 'Submission',
+      props: {},
+    },
+    // TODO: Add Submission component
+    // {
+    //   name: 'GenUISubmissionComponent',
+    //   columnName: `${taskID}.SubmissionType`, // Docker or File
+    //   props: {},
+    // },
+    {
+      name: 'Markdown',
+      columnName: `${taskID}.Leaderboard`,
+      title: 'Results',
+      props: {},
+    },
+    {
+      name: 'Markdown',
+      columnName: `${taskID}.AlgorithmWiki`,
+      props: {},
+    },
+    {
+      name: 'Markdown',
+      columnName: `${taskID}.WinningSubmission`,
+      props: {},
+    },
   )
   return configs
 }
-
 
 export const challengeDetailsPageConfig: DetailsPageProps = {
   sql: challengeProjectsSql,
@@ -186,7 +182,7 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
           name: 'ChallengeParticipantGoogleMap',
           title: 'Participants',
           columnName: 'id',
-          props: undefined
+          props: undefined,
         },
         {
           name: 'Markdown',

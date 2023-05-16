@@ -1,7 +1,7 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { GenericCardSchema } from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { toolsSql } from '../resources'
 

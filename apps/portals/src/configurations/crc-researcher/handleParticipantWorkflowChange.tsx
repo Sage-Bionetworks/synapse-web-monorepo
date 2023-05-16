@@ -1,11 +1,8 @@
 import {
   PartialRow,
   TableUpdateTransactionRequest,
-} from 'synapse-react-client/dist/utils/synapseTypes/Table/TableUpdate'
-import {
-  Row,
-  QueryResultBundle,
-} from 'synapse-react-client/dist/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
+import { Row, QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { SynapseClient } from 'synapse-react-client'
 
 type CustomControlCallbackData = {

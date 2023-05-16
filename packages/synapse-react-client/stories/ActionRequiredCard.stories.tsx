@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { ActionRequiredCard } from '../src/lib/containers/download_list_v2/ActionRequiredCard'
+import { ActionRequiredCard } from '../src/components/DownloadCart/ActionRequiredCard'
 import React from 'react'
-import { WideButton } from '../src/lib/components/styled/WideButton'
-import { EASY_DIFFICULTY } from '../src/lib/utils/SynapseConstants'
+import { WideButton } from '../src/components/styled/WideButton'
+import { EASY_DIFFICULTY } from '../src/utils/SynapseConstants'
 import { Button, Typography } from '@mui/material'
 
 const meta = {

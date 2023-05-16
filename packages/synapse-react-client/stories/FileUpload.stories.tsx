@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import FileUpload from '../src/lib/containers/FileUpload'
+import FileUpload from '../src/components/FileUpload/FileUpload'
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
 
 const meta = {

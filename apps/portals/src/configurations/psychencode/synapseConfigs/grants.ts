@@ -1,16 +1,17 @@
-import { SynapseConstants } from 'synapse-react-client'
+import {
+  CardConfiguration,
+  GenericCardSchema,
+  IconOptions,
+  ProjectIcon,
+  SynapseConstants,
+} from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
-
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
-import { IconOptions } from 'synapse-react-client/dist/containers/row_renderers/utils/Icon'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { studyDetailPageProps } from './studies'
 import { publicationDetailPageProps } from './publications'
 import { peopleDetailPageProps } from './people'
-import { Project } from 'synapse-react-client/dist/assets/themed_icons/Project'
 import { grantSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 2
 
@@ -23,7 +24,7 @@ export const grantSchema: GenericCardSchema = {
 }
 
 const iconOptions: IconOptions = {
-  Grant: Project as unknown as string,
+  Grant: ProjectIcon as unknown as string,
 }
 
 export const grantCardConfiguration: CardConfiguration = {

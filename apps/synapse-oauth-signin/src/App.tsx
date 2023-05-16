@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import {
-  setAccessTokenCookie,
-  signOut,
-} from 'synapse-react-client/dist/utils/SynapseClient'
+  SynapseClient,
+  defaultQueryClientConfig,
+  SynapseTheme,
+} from 'synapse-react-client'
 import './App.scss'
 import AppInitializer from './AppInitializer'
 import { OAuth2Form } from './OAuth2Form'
@@ -11,13 +12,11 @@ import { getURLParam } from './URLUtils'
 import Versions from './Versions'
 import generalTheme from './style/theme'
 import { createTheme, StyledEngineProvider } from '@mui/material/styles'
-import { mergeTheme } from 'synapse-react-client/dist/utils/theme'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { defaultQueryClientConfig } from 'synapse-react-client/dist/utils/FullContextProvider'
 import { ThemeProvider } from '@mui/material'
 
 const queryClient = new QueryClient(defaultQueryClientConfig)
-const theme = createTheme(mergeTheme(generalTheme))
+const theme = createTheme(SynapseTheme.mergeTheme(generalTheme))
 
 function App() {
   const [isLoggedOut, setIsLoggedOut] = useState(false)
@@ -35,7 +34,7 @@ function App() {
                     exact
                     path="/logout"
                     render={() => {
-                      signOut().then(() => {
+                      SynapseClient.signOut().then(() => {
                         setIsLoggedOut(true)
                       })
                       return (
@@ -51,7 +50,7 @@ function App() {
                     render={() => {
                       // look for the code from the params
                       const code = getURLParam('code')
-                      setAccessTokenCookie(code).then(() => {
+                      SynapseClient.setAccessTokenCookie(code).then(() => {
                         setIsLoggedOut(false)
                       })
                       return (

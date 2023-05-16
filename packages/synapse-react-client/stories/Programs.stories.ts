@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import Programs from '../src/lib/containers/home_page/programs/Programs'
+import Programs from '../src/components/Programs/Programs'
 
 const meta = {
   title: 'Home Page/Programs',

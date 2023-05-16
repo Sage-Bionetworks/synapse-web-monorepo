@@ -4,9 +4,9 @@ import {
   GENERIC_CARD,
   OBSERVATION_CARD,
   PUBLICATION,
-} from '../src/lib/utils/SynapseConstants'
-import CardContainerLogic from '../src/lib/containers/CardContainerLogic'
-import { GenericCardSchema } from '../src/lib/containers/GenericCard'
+} from '../src/utils/SynapseConstants'
+import CardContainerLogic from '../src/components/CardContainerLogic'
+import { GenericCardSchema } from '../src/components/GenericCard'
 
 const meta = {
   title: 'Explore/CardContainerLogic',

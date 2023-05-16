@@ -4,14 +4,14 @@ import {
   EXPERIMENTAL_TOOL,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
-} from '../src/lib/utils/SynapseConstants'
-import { Query } from '../src/lib/utils/synapseTypes'
-import QueryWrapperPlotNav from '../src/lib/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
+} from '../src/utils/SynapseConstants'
+import { Query } from '@sage-bionetworks/synapse-types'
+import QueryWrapperPlotNav from '../src/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
-} from '../src/lib/utils/synapseTypes/Table/QueryFilter'
-import { displayToast } from '../src/lib/containers/ToastMessage'
+} from '@sage-bionetworks/synapse-types'
+import { displayToast } from '../src/components/ToastMessage'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',

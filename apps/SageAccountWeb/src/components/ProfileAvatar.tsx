@@ -1,23 +1,21 @@
 import Slider from '@mui/material/Slider'
 import React, { useEffect, useState } from 'react'
 import { Box, IconButton, SxProps } from '@mui/material'
-import { ConfirmationDialog } from 'synapse-react-client/dist/containers/ConfirmationDialog'
+import {
+  ConfirmationDialog,
+  displayToast,
+  IconSvg,
+  SynapseClient,
+  useSynapseContext,
+} from 'synapse-react-client'
 import Cropper from 'react-easy-crop'
 import { Area } from 'react-easy-crop/types'
 import Person from '@mui/icons-material/Person'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import {
-  getFileHandleByIdURL,
-  updateMyUserProfile,
-  uploadFile,
-} from 'synapse-react-client/dist/utils/SynapseClient'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import {
   FileUploadComplete,
   UserProfile,
-} from 'synapse-react-client/dist/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { getCroppedImg } from './CropImage'
-import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
 
 export type ProfileAvatarProps = {
   userProfile?: UserProfile
@@ -37,7 +35,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
 
   useEffect(() => {
     if (userProfile?.profilePicureFileHandleId) {
-      getFileHandleByIdURL(
+      SynapseClient.getFileHandleByIdURL(
         userProfile?.profilePicureFileHandleId as string,
         accessToken,
       ).then(picUrl => {
@@ -50,7 +48,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     try {
       if (userProfile) {
         userProfile.profilePicureFileHandleId = newFileHandleId as string
-        await updateMyUserProfile(userProfile, accessToken)
+        await SynapseClient.updateMyUserProfile(userProfile, accessToken)
         displayToast('Profile picture has been successfully updated', 'success')
         onProfileUpdated()
       }
@@ -109,7 +107,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     const file: File = await getCroppedImg(image!, croppedArea!)
     try {
       setImageLoading(true)
-      const resp: FileUploadComplete = await uploadFile(
+      const resp: FileUploadComplete = await SynapseClient.uploadFile(
         accessToken,
         file.name,
         file,

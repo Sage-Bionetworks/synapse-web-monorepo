@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { SynapseComponents } from 'synapse-react-client'
 
 type Config = {
@@ -36,7 +36,10 @@ const Ecosystem = (props: EcosystemProps) => {
           {config.map((el, curIndex) => {
             return (
               <span key={el.title} className={index === curIndex ? '' : 'hide'}>
-                <SynapseComponents.Markdown ownerId={el.ownerId} wikiId={el.wikiId} />
+                <SynapseComponents.Markdown
+                  ownerId={el.ownerId}
+                  wikiId={el.wikiId}
+                />
               </span>
             )
           })}

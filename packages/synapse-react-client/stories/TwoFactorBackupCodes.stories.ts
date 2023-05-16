@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import TwoFactorBackupCodes from '../src/lib/containers/auth/TwoFactorBackupCodes'
+import TwoFactorBackupCodes from '../src/components/Authentication/TwoFactorBackupCodes'
 
 const meta = {
   title: 'Authentication/TwoFactorBackupCodes',

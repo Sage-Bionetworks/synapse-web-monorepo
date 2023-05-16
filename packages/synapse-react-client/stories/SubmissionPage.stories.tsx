@@ -5,14 +5,14 @@ import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   DATA_ACCESS_SUBMISSION_BY_ID,
-} from '../src/lib/utils/APIConstants'
+} from '../src/utils/APIConstants'
 import { mockSubmissions } from '../mocks/dataaccess/MockSubmission'
 import { mockManagedACTAccessRequirement } from '../mocks/mockAccessRequirements'
-import { MOCK_REPO_ORIGIN } from '../src/lib/utils/functions/getEndpoint'
+import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
 import { getHandlersForTableQuery } from '../mocks/msw/handlers/tableQueryHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '../mocks/query/mockRejectionReasonsTableQueryResultBundle'
-import SubmissionPage from '../src/lib/containers/dataaccess/SubmissionPage'
-import { SynapseErrorBoundary } from '../src/lib/containers/error/ErrorBanner'
+import SubmissionPage from '../src/components/dataaccess/SubmissionPage'
+import { SynapseErrorBoundary } from '../src/components/error/ErrorBanner'
 
 const meta = {
   title: 'Governance/SubmissionPage',

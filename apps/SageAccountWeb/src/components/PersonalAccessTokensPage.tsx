@@ -3,7 +3,7 @@ import { SourceAppLogo } from './SourceApp'
 import { StyledOuterContainer } from './StyledComponents'
 import { Box, Paper, Typography } from '@mui/material'
 import { BackButton } from './BackButton'
-import { AccessTokenPage } from 'synapse-react-client/dist/containers/personal_access_token/AccessTokenPage'
+import { AccessTokenPage } from 'synapse-react-client'
 
 export const PersonalAccessTokensPage = () => {
   return (

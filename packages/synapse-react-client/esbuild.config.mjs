@@ -35,7 +35,7 @@ const globals = {
 
 /** @type {import('esbuild').BuildOptions} */
 const esBuildOptions = {
-  entryPoints: ['src/lib/umd.index.ts'],
+  entryPoints: ['src/umd.index.ts'],
   bundle: true,
   platform: 'browser',
   target: 'es2015',

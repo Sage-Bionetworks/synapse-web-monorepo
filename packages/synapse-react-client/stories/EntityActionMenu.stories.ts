@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import EntityActionMenu from '../src/lib/containers/entity/page/action_menu/EntityActionMenu'
+import EntityActionMenu from '../src/components/entity/page/action_menu/EntityActionMenu'
 
 const meta = {
   title: 'Synapse/EntityPage/ActionMenu',

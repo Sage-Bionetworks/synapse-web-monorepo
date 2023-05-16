@@ -27,8 +27,10 @@ We're using [pnpm workspaces](https://pnpm.io/workspaces) to manage multiple pro
 │  ├── ./SageAccountWeb - Standalone client-only React application for managing a Sage Bionetworks user account
 │  └── ./synapse-oauth-signin - Standalone client-only React application used to authenticate and consent to an app that uses Synapse OAuth2+OIDC services
 ├── ./projects - Libraries and utilities that may or may not be published to NPM
-│  └── ./synapse-react-client - React components and utilities used in Synapse.org and portals
-└── ./shared - Shared configurations that are referenced across all projects
+│  ├── ./synapse-react-client - React components and utilities used in Synapse.org and portals
+│  ├── ./synapse-types - TypeScript definitions and utility functions for Synapse REST API objects
+│  └── ./vite-config - Shared configuration files for Vite used by apps
+└── ./shared - Configuration files that are referenced across all projects
 ```
 
 ## Release Cycle

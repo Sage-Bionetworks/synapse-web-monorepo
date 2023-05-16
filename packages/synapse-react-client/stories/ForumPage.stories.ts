@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { ForumPage } from '../src/lib/containers/discussion_forum/ForumPage'
+import { ForumPage } from '../src/components/Forum/ForumPage'
 
 const meta = {
   title: 'Synapse/ForumPage',

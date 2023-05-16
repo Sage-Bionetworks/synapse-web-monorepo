@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { RouteControl, RouteControlProps } from '../RouteControl'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'

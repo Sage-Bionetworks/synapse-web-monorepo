@@ -1,9 +1,6 @@
-import { FileEntity } from '../src/lib/utils/synapseTypes/'
-import {
-  Step,
-  StepStateEnum,
-} from '../src/lib/containers/synapse_form_wrapper/types'
-import { ListResponse, StatusEnum } from '../src/lib/utils/synapseTypes/'
+import { FileEntity } from '@sage-bionetworks/synapse-types'
+import { Step, StepStateEnum } from '../src/components/SynapseForm/types'
+import { ListResponse, StatusEnum } from '@sage-bionetworks/synapse-types'
 import _mockFormData from './mockDrugToolFormData.json'
 import _mockNavSchema from './mockDrugToolFormNavSchema.json'
 import _mockFormSchema from './mockDrugToolFormSchema.json'

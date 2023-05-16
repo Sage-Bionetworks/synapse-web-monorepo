@@ -1,7 +1,7 @@
-import * as React from 'react'
+import React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { ReactCookieProps, withCookies } from 'react-cookie'
-import FullWidthAlert from 'synapse-react-client/dist/containers/FullWidthAlert'
+import { FullWidthAlert } from 'synapse-react-client'
 
 export type CookiesNotificationToken = {
   hasAgreedToCookies: boolean

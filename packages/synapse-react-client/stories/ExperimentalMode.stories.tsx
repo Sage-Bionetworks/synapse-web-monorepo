@@ -1,6 +1,6 @@
 import React, { Meta, StoryObj } from '@storybook/react'
 
-import ExperimentalMode from '../src/lib/containers/ExperimentalMode'
+import ExperimentalMode from '../src/components/ExperimentalMode/ExperimentalMode'
 
 const meta = {
   title: 'Authentication/ExperimentalMode',

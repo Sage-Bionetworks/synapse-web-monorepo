@@ -1,7 +1,7 @@
 import {
   ColumnTypeEnum,
   QueryResultBundle,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export const mockQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',

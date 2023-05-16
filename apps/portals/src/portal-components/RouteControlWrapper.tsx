@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { RouteControl, RouteControlProps } from '../RouteControl'
 import { useLocation, useHistory } from 'react-router-dom'
 import { SynapseComponent } from '../SynapseComponent'

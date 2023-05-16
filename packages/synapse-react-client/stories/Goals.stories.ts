@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import Goals from '../src/lib/containers/home_page/goals/Goals'
+import Goals from '../src/components/Goals/Goals'
 
 const meta = {
   title: 'Home Page/Goals',

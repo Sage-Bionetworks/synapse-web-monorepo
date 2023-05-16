@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import DataAccessRequestAccessorsFilesForm from '../../src/lib/containers/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm'
+import DataAccessRequestAccessorsFilesForm from '../../src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm'
 import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
 import { MOCK_FOLDER_ID } from '../../mocks/entity/mockEntity'
 import { MOCK_RESEARCH_PROJECT_ID } from '../../mocks/dataaccess/MockResearchProject'
@@ -8,7 +8,7 @@ import {
   MOCK_DATA_ACCESS_RENEWAL,
   MOCK_DATA_ACCESS_REQUEST,
 } from '../../mocks/dataaccess/MockDataAccessRequest'
-import { MOCK_REPO_ORIGIN } from '../../src/lib/utils/functions/getEndpoint'
+import { MOCK_REPO_ORIGIN } from '../../src/utils/functions/getEndpoint'
 import { getDataAccessRequestHandlers } from '../../mocks/msw/handlers/dataAccessRequestHandlers'
 import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
 import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'

@@ -1,13 +1,13 @@
 import $RefParser from '@apidevtools/json-schema-ref-parser'
-import * as React from 'react'
+import React from 'react'
 import { Alert } from 'react-bootstrap'
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
-import StandaloneLoginForm from '../../src/lib/containers/auth/StandaloneLoginForm'
-import SynapseForm from '../../src/lib/containers/synapse_form_wrapper/SynapseForm'
-import SynapseFormSubmissionsGrid from '../../src/lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
-import SynapseFormWrapper from '../../src/lib/containers/synapse_form_wrapper/SynapseFormWrapper'
-import { SynapseClient } from '../../src/lib/utils/'
-import { SynapseContextProvider } from '../../src/lib/utils/SynapseContext'
+import StandaloneLoginForm from '../../src/components/Authentication/StandaloneLoginForm'
+import SynapseForm from '../../src/components/SynapseForm/SynapseForm'
+import SynapseFormSubmissionsGrid from '../../src/components/SynapseForm/SynapseFormSubmissionsGrid'
+import SynapseFormWrapper from '../../src/components/SynapseForm/SynapseFormWrapper'
+import { SynapseClient } from '../../src/utils/'
+import { SynapseContextProvider } from '../../src/utils/context/SynapseContext'
 import {
   mockFormSchema as formSchema,
   mockNavSchema as formNavSchema,
@@ -17,8 +17,8 @@ import '../style/App.scss'
 import '../style/DemoStyle.scss'
 import Demo from './Demo'
 import Playground from './playground/Playground'
-import FullContextProvider from '../../src/lib/utils/FullContextProvider'
-// import { useDetectSSOCode } from '../../src/lib/utils/hooks/useDetectSSOCode'
+import FullContextProvider from '../../src/utils/context/FullContextProvider'
+// import { useDetectSSOCode } from '../../src/utils/hooks/useDetectSSOCode'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import TermsAndConditions from '../src/lib/containers/TermsAndConditions'
+import TermsAndConditions from '../src/components/TermsAndConditions/TermsAndConditions'
 
 const meta = {
   title: 'Synapse/TermsAndConditions',

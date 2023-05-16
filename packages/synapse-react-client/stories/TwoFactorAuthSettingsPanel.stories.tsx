@@ -1,7 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { displayToast } from '../src/lib/containers/ToastMessage'
-import TwoFactorAuthSettingsPanel from '../src/lib/containers/auth/TwoFactorAuthSettingsPanel'
+import { displayToast } from '../src/components/ToastMessage/ToastMessage'
+import TwoFactorAuthSettingsPanel from '../src/components/Authentication/TwoFactorAuthSettingsPanel'
 import { Paper } from '@mui/material'
 
 const meta = {

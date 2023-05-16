@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { HomePageCardProps } from './HomePageCard'
 import HomePageCardContainer from './HomePageCardContainer'
 

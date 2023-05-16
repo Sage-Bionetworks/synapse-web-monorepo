@@ -1,7 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 
-import PageProgress from '../src/lib/containers/PageProgress'
+import PageProgress from '../src/components/PageProgress/PageProgress'
 
 const meta = {
   title: 'UI/PageProgress',

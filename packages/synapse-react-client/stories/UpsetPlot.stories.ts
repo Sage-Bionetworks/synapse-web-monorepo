@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import UpsetPlot from '../src/lib/containers/UpsetPlot'
+import UpsetPlot from '../src/components/Plot/UpsetPlot'
 
 const meta = {
   title: 'Home Page/UpsetPlot',

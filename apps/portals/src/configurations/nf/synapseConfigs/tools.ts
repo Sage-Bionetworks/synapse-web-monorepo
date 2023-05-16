@@ -1,9 +1,9 @@
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import type { GenericCardSchema } from 'synapse-react-client'
 
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
 import { columnAliases } from './commonProps'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from 'synapse-react-client'
 import {
   toolsSql,
   observationsSql,
@@ -25,7 +25,7 @@ import { publicationsV2CardConfiguration } from './publications'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
-} from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+} from '@sage-bionetworks/synapse-types'
 
 export const newToolsSql = `${toolsSql} order by ROW_ID desc limit 3`
 

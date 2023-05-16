@@ -3,7 +3,7 @@ import React from 'react'
 import {
   WarningDialog,
   WarningDialogProps,
-} from '../src/lib/containers/synapse_form_wrapper/WarningDialog'
+} from '../src/components/SynapseForm/WarningDialog'
 
 const meta = {
   title: 'UI/WarningDialog',

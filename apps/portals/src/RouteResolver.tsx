@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Route, useLocation, useRouteMatch } from 'react-router-dom'
 import { SynapseComponent } from './SynapseComponent'
 import { SynapseConfig, GenericRoute } from './types/portal-config'

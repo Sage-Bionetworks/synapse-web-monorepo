@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { DownloadCartPage } from '../src/lib/containers/download_list_v2/DownloadCartPage'
+import { DownloadCartPage } from '../src/components/DownloadCart/DownloadCartPage'
 
 const meta = {
   title: 'Download/DownloadCartPage',

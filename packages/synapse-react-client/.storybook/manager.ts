@@ -1,6 +1,6 @@
 import { addons } from '@storybook/manager-api'
 import { create } from '@storybook/theming/create'
-import palettes from '../src/lib/utils/theme/palette/Palettes'
+import { palette } from '../src/theme/palette/Palettes'
 
 addons.setConfig({
   theme: create({
@@ -9,7 +9,6 @@ addons.setConfig({
     brandImage:
       'https://s3.amazonaws.com/static.synapse.org/images/synapse-logo-blue.svg',
   }),
-
-  colorPrimary: palettes.primary[500],
-  colorSecondary: palettes.secondary[500],
+  colorPrimary: palette.primary[500],
+  colorSecondary: palette.secondary[500],
 })

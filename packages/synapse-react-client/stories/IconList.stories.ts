@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import IconList from '../src/lib/containers/IconList'
+import IconList from '../src/components/IconList'
 
 const meta = {
   title: 'UI/IconList',

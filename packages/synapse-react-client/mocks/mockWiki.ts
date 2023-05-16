@@ -1,4 +1,4 @@
-import { WikiPage } from '../src/lib/utils/synapseTypes'
+import { WikiPage } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from './user/mock_user_profile'
 
 export const mockManagedACTAccessRequirementWikiPage: WikiPage = {

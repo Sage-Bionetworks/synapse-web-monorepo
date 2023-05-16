@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { SignedTokenInterface } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/SignedTokenInterface'
+import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
 
 export type AppContextType = {
   /** Source App ID */

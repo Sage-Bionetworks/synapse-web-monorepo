@@ -6,9 +6,9 @@
   "dependencies": {
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.11.16",
-    "@mui/styles": "^5.11.16",
     "@mui/system": "^5.11.16",
     "@mui/utils": "^5.11.13",
     "lodash-es": "^4.17.21",
@@ -27,10 +27,11 @@
     "universal-cookie": "^4.0.3"
   },
   "devDependencies": {
+    "@sage-bionetworks/synapse-types": "workspace:*",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/katex": "^0.5.0",
-    "@types/node": "11.10.4",
+    "@types/node": "^18.16.12",
     "@types/plotly.js": "^2.12.18",
     "@types/react": "18.0.17",
     "@types/react-dom": "18.0.6",
@@ -69,6 +70,7 @@
     "stream-http": "^3.2.0",
     "timers-browserify": "^2.0.12",
     "tslib": "^2.3.1",
+    "type-fest": "^3.7.2",
     "typescript": "5.0.4",
     "url": "^0.11.0",
     "util": "^0.12.4",
@@ -82,7 +84,8 @@
     "start": "vite",
     "build": "vite build",
     "test": "vitest",
-    "test:ci": "vitest run --coverage"
+    "test:ci": "vitest run --coverage",
+    "type-check": "tsc --noEmit"
   },
   "browserslist": {
     "production": [

@@ -1,11 +1,11 @@
-import 'synapse-react-client/dist/utils/theme/ThemeTypes'
+import 'synapse-react-client'
 import { ThemeOptions } from '@mui/material'
-import { palette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { Palettes } from 'synapse-react-client'
 
 export const latoFont = ['Lato', 'Roboto', 'Helvetica', 'Arial'].join(',')
 
 const themeOptions: ThemeOptions = {
-  palette,
+  palette: Palettes.palette,
   components: {
     MuiCssBaseline: {},
     MuiButton: {

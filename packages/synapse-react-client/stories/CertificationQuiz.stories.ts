@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 
-import CertificationQuiz from '../src/lib/containers/CertificationQuiz'
+import CertificationQuiz from '../src/components/CertificationQuiz/CertificationQuiz'
 
 const meta = {
   title: 'Synapse/CertificationQuiz',

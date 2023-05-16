@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { EnableTwoFaRequirementCard } from '../src/lib/containers/download_list_v2/EnableTwoFaRequirementCard'
+import { EnableTwoFaRequirementCard } from '../src/components/DownloadCart/EnableTwoFaRequirementCard'
 
 const meta = {
   title: 'Download/EnableTwoFaRequirementCard',
