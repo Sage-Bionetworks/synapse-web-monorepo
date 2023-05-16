@@ -1,12 +1,18 @@
 import { omitBy } from 'lodash-es'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button, FormControl, FormLabel, InputGroup } from 'react-bootstrap'
+import {
+  Box,
+  Button,
+  InputAdornment,
+  TextField,
+  Typography,
+} from '@mui/material'
+import { SearchOutlined } from '@mui/icons-material'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { EntityType } from '../../utils/synapseTypes'
 import { EntityFinderModal } from '../entity_finder/EntityFinderModal'
 import { FinderScope } from '../entity_finder/tree/EntityTree'
-import IconSvg from '../IconSvg'
 import UserSearchBoxV2 from '../UserSearchBoxV2'
 import {
   AccessRequirementTable,
@@ -112,7 +118,7 @@ export function AccessRequirementDashboard(
   }, [])
 
   return (
-    <div className="AccessRequirementDashboard bootstrap-4-backport">
+    <div className="AccessRequirementDashboard">
       <EntityFinderModal
         configuration={{
           initialScope: FinderScope.ALL_PROJECTS,
@@ -121,9 +127,6 @@ export function AccessRequirementDashboard(
           selectableTypes: [EntityType.PROJECT],
         }}
         show={showEntityFinder}
-        onClose={() => {
-          setShowEntityFinder(false)
-        }}
         onCancel={() => {
           setShowEntityFinder(false)
         }}
@@ -139,52 +142,60 @@ export function AccessRequirementDashboard(
       />
       <div className="InputPanel">
         <div>
-          <FormLabel htmlFor="ar-name-filter">
-            Filter by Access Requirement Name
-          </FormLabel>
-
-          <InputGroup>
-            <FormControl
-              id="ar-name-filter"
-              type="text"
-              placeholder="Search for an Access Requirement Name"
-              value={nameContains}
-              onChange={e => {
-                setNameContains(e.target.value)
-              }}
-            />
-            <IconSvg icon="searchOutlined" />
-          </InputGroup>
+          <TextField
+            label="Filter by Access Requirement Name"
+            id="ar-name-filter"
+            type="text"
+            fullWidth
+            placeholder="Search for an Access Requirement Name"
+            value={nameContains}
+            onChange={e => {
+              setNameContains(e.target.value)
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchOutlined />
+                </InputAdornment>
+              ),
+            }}
+          />
         </div>
+        <Box display="flex" gap="5px" alignItems="baseline">
+          <TextField
+            label="Filter by Project"
+            id="project-id-filter"
+            type="text"
+            fullWidth
+            placeholder="Enter a project SynID"
+            value={relatedProjectId}
+            onChange={e => {
+              const newValue = e.target.value
+              if (newValue === '') {
+                setRelatedProjectId(undefined)
+              } else {
+                setRelatedProjectId(newValue)
+              }
+            }}
+          />
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              setShowEntityFinder(true)
+            }}
+          >
+            Browse
+          </Button>
+        </Box>
         <div>
-          <FormLabel htmlFor="project-id-filter">Filter by Project</FormLabel>
-          <div className="ProjectIdInputGroup">
-            <FormControl
-              id="project-id-filter"
-              type="text"
-              placeholder="Enter a project SynID"
-              value={relatedProjectId}
-              onChange={e => {
-                const newValue = e.target.value
-                if (newValue === '') {
-                  setRelatedProjectId(undefined)
-                } else {
-                  setRelatedProjectId(newValue)
-                }
-              }}
-            />
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowEntityFinder(true)
-              }}
-            >
-              Browse
-            </Button>
-          </div>
-        </div>
-        <div>
-          <FormLabel htmlFor="reviewer-filter">Filter by Reviewer</FormLabel>
+          <Typography
+            component="label"
+            variant="smallText2"
+            htmlFor="reviewer-filter"
+          >
+            Filter by Reviewer
+          </Typography>
           <UserSearchBoxV2
             inputId="reviewer-filter"
             placeholder="Search for a username or team name"

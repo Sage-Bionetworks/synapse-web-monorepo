@@ -1,4 +1,5 @@
-import { Skeleton, Typography } from '@mui/material'
+import { Alert, Button, Skeleton, Typography } from '@mui/material'
+import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 import BaseTable, {
   AutoResizer,
   ColumnShape,
@@ -6,7 +7,6 @@ import BaseTable, {
 import { isEqual, upperFirst } from 'lodash-es'
 import pluralize from 'pluralize'
 import React, { useEffect, useMemo, useState } from 'react'
-import { Alert, Button } from 'react-bootstrap'
 import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
 import {
   convertToEntityType,
@@ -42,11 +42,11 @@ import {
 import { EntityFinderModal } from '../../entity_finder/EntityFinderModal'
 import { FinderScope } from '../../entity_finder/tree/EntityTree'
 import { VersionSelectionType } from '../../entity_finder/VersionSelectionType'
-import IconSvg from '../../IconSvg'
 import { BlockingLoader } from '../../LoadingScreen'
 import WarningDialog from '../../synapse_form_wrapper/WarningDialog'
 import { displayToast } from '../../ToastMessage'
 import { Checkbox } from '../../widgets/Checkbox'
+import WideButton from '../../../components/styled/WideButton'
 
 function getSelectableTypes(entity: EntityRefCollectionView) {
   if (isDataset(entity)) {
@@ -524,14 +524,15 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         <Typography variant={'headline3'}>
           {NO_ITEMS_IN_THIS_DATASET}
         </Typography>
-        <Button
-          className="AddItemsButton"
-          variant="sds-primary"
+        <WideButton
+          variant="contained"
+          color="primary"
           onClick={() => setShowEntityFinder(true)}
+          startIcon={<AddCircleTwoToneIcon />}
+          sx={{ mt: 2 }}
         >
-          <IconSvg icon="addCircleTwoTone" />
-          <span>{ADD_ITEMS}</span>
-        </Button>
+          {ADD_ITEMS}
+        </WideButton>
       </div>
     )
   }
@@ -545,7 +546,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   }, [fetchedDataset])
 
   return (
-    <div className="DatasetEditor bootstrap-4-backport">
+    <div className="DatasetEditor">
       <EntityFinderModal
         configuration={{
           projectId: projectId,
@@ -555,15 +556,13 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           selectableTypes: selectableTypes,
           versionSelection: VersionSelectionType.REQUIRED,
         }}
-        titlePopoverProps={{
+        titleHelpPopoverProps={{
           markdownText: ENTITY_FINDER_POPOVER,
           helpUrl: 'https://help.synapse.org/docs/Datasets.2611281979.html',
+          placement: 'right',
         }}
         promptCopy={ENTITY_FINDER_PROMPT}
         show={showEntityFinder}
-        onClose={() => {
-          setShowEntityFinder(false)
-        }}
         title={ADD_ITEMS_TO}
         confirmButtonCopy={ADD_ITEMS}
         onConfirm={items => {
@@ -605,7 +604,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         </div>
 
         <Button
-          variant="sds-primary"
+          variant="contained"
+          color="primary"
           disabled={datasetToUpdate == null}
           onClick={() => setShowEntityFinder(true)}
         >
@@ -613,7 +613,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         </Button>
         <Button
           disabled={selectedIds.size === 0}
-          variant="outline"
+          variant="outlined"
+          color="primary"
           onClick={removeSelectedItemsFromDataset}
         >
           {REMOVE_ITEMS}
@@ -658,26 +659,11 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       </div>
       <div className="DatasetEditorTopBottomPanel">
         {hasChangedSinceLastSave && (
-          <Alert
-            dismissible={false}
-            show={true}
-            transition={false}
-            variant="warning"
-          >
-            <IconSvg
-              icon="warning"
-              sx={{
-                color: 'warning.main',
-                paddingRight: '0.2rem',
-              }}
-            />
-            <Typography display="inline" component="span" variant="smallText2">
-              You have unsaved changes
-            </Typography>
-          </Alert>
+          <Alert severity="warning">You have unsaved changes</Alert>
         )}
         <Button
-          variant={'outline'}
+          variant="outlined"
+          color="primary"
           onClick={() => {
             if (hasChangedSinceLastSave) {
               setShowWarningDialog(true)
@@ -691,7 +677,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
 
         <Button
           disabled={!datasetToUpdate}
-          variant={'sds-primary'}
+          variant="contained"
+          color="primary"
           onClick={() => mutation.mutate(datasetToUpdate!)}
         >
           Save

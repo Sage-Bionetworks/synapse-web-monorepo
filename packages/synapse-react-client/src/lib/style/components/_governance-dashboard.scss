@@ -79,16 +79,17 @@
       margin-bottom: 0;
     }
 
-    .ProjectIdInputGroup {
-      display: flex;
-      gap: 5px;
+    label {
+      margin-top: 0;
+      margin-bottom: 5px;
     }
 
-    .styled-svg-wrapper {
-      position: absolute;
-      right: 5px;
-      z-index: 5;
-      margin-top: -2px;
+    .UserSearchBoxV2,
+    .AsyncSelect {
+      .form-control {
+        background-color: map.get(SRC.$colors, 'gray-200');
+        border-radius: 3px;
+      }
     }
   }
 }

@@ -1,11 +1,19 @@
 import pluralize from 'pluralize'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, FormControl } from 'react-bootstrap'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from '@mui/material'
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined'
+import ClearIcon from '@mui/icons-material/Clear'
+import SearchIcon from '@mui/icons-material/Search'
 import { useErrorHandler } from 'react-error-boundary'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
-import Arrow from '../../assets/icons/Arrow'
 import { SynapseClient } from '../../utils'
 import {
   entityTypeToFriendlyName,
@@ -17,7 +25,6 @@ import { Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import { KeyValue } from '../../utils/synapseTypes/Search'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
-import IconSvg from '../IconSvg'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
   EntityDetailsList,
@@ -108,8 +115,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     useState<EntityDetailsListDataConfiguration>({
       type: EntityDetailsListDataConfigurationType.PROMPT,
     })
-
-  const searchInputRef = useRef<HTMLInputElement>(null)
 
   // If a type is selectable, it should be visible in the tree/list (depending on treeOnly)
   const selectableAndVisibleTypesInTree = useMemo(
@@ -208,71 +213,85 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
 
   return (
     <SynapseErrorBoundary>
-      <div className="bootstrap-4-backport EntityFinder">
-        <div className="EntityFinder__Search" data-active={searchActive}>
+      <div className="EntityFinder">
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          alignItems="center"
+          pb={1}
+        >
           <>
-            {searchActive ? (
+            {!searchActive ? (
               <Button
-                variant="gray-primary-500"
-                onClick={() => {
-                  setSearchActive(false)
-                  setSearchInput('')
-                  setSearchTerms(undefined)
-                }}
-              >
-                <Arrow arrowDirection="left" style={{ height: '16px' }} />
-                Back to Browse
-              </Button>
-            ) : (
-              <Button
-                variant="sds-primary"
+                variant="contained"
+                color="primary"
                 className="EntityFinder__Search__SearchButton"
                 onClick={() => {
                   setSearchActive(true)
-                  searchInputRef.current!.focus()
                 }}
+                startIcon={<SearchIcon />}
+                sx={{ flexShrink: 0, height: '100%' }}
               >
-                <IconSvg icon="search" />
                 {searchButtonText}
               </Button>
-            )}
-            <span className="SearchIcon">
-              <IconSvg icon="search" />
-            </span>
-            <FormControl
-              role="textbox"
-              ref={searchInputRef}
-              aria-hidden={!searchActive}
-              className="EntityFinder__Search__Input"
-              type="search"
-              placeholder="Search by name, Wiki contents, or Synapse ID"
-              value={searchInput}
-              onChange={event => {
-                setSearchInput(event.target.value)
-              }}
-              onKeyDown={(event: any) => {
-                if (event.key === 'Enter') {
-                  if (event.target.value === '') {
+            ) : (
+              <>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => {
+                    setSearchActive(false)
+                    setSearchInput('')
                     setSearchTerms(undefined)
-                  } else {
-                    setSearchTerms(event.target.value.trim().split(' '))
-                  }
-                }
-              }}
-            />
-            {searchInput && (
-              <span
-                className="ClearSearchIcon"
-                onClick={() => {
-                  setSearchInput('')
-                  setSearchTerms(undefined)
-                }}
-              >
-                <IconSvg icon="close" label="Clear Search" />
-              </span>
+                  }}
+                  startIcon={<ArrowBackOutlinedIcon />}
+                  sx={{ flexShrink: 0, height: '100%', mr: 1 }}
+                >
+                  Back to Browse
+                </Button>
+                <TextField
+                  autoFocus
+                  fullWidth
+                  placeholder="Search by name, Wiki contents, or Synapse ID"
+                  value={searchInput}
+                  onChange={event => {
+                    setSearchInput(event.target.value)
+                  }}
+                  onKeyDown={(event: any) => {
+                    if (event.key === 'Enter') {
+                      if (event.target.value === '') {
+                        setSearchTerms(undefined)
+                      } else {
+                        setSearchTerms(event.target.value.trim().split(' '))
+                      }
+                    }
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => {
+                            setSearchInput('')
+                            setSearchTerms(undefined)
+                          }}
+                          aria-label="Clear Search"
+                          disabled={!searchInput}
+                        >
+                          <ClearIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </>
             )}
           </>
-        </div>
+        </Box>
         <div className={`EntityFinder__MainPanel ${mainPanelClass}`}>
           {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
           {searchActive && (

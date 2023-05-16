@@ -1,6 +1,5 @@
 import { omitBy } from 'lodash-es'
 import React, { useCallback, useEffect, useState } from 'react'
-import { FormLabel } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { SubmissionState } from '../../utils/synapseTypes'
@@ -97,12 +96,16 @@ export const DataAccessSubmissionDashboard = () => {
   )
 
   return (
-    <div className="AccessSubmissionDashboard bootstrap-4-backport">
+    <div className="AccessSubmissionDashboard">
       <div className="InputPanel">
         <div>
-          <FormLabel htmlFor="arId-filter">
+          <Typography
+            component="label"
+            variant="smallText2"
+            htmlFor="arId-filter"
+          >
             Filter by Access Requirement Name
-          </FormLabel>
+          </Typography>
           <AccessRequirementSearchBox
             inputId="arId-filter"
             onChange={setAccessRequirementId}
@@ -110,7 +113,13 @@ export const DataAccessSubmissionDashboard = () => {
           />
         </div>
         <div>
-          <FormLabel htmlFor="requester-filter">Filter by Requester</FormLabel>
+          <Typography
+            component="label"
+            variant="smallText2"
+            htmlFor="requester-filter"
+          >
+            Filter by Requester
+          </Typography>
           <UserSearchBoxV2
             inputId="requester-filter"
             placeholder="Search for a user name"
@@ -120,7 +129,13 @@ export const DataAccessSubmissionDashboard = () => {
           />
         </div>
         <div>
-          <FormLabel htmlFor="reviewer-filter">Filter by Reviewer</FormLabel>
+          <Typography
+            component="label"
+            variant="smallText2"
+            htmlFor="reviewer-filter"
+          >
+            Filter by Reviewer
+          </Typography>
           <UserSearchBoxV2
             inputId="reviewer-filter"
             placeholder="Search for a user or team name"

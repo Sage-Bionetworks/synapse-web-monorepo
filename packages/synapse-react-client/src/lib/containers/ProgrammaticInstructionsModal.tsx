@@ -135,6 +135,13 @@ export const ProgrammaticInstructionsModal = ({
     </>
   )
 
+  const titleHelpPopoverProps = helpMarkdown
+    ? {
+        markdownText: helpMarkdown,
+        helpUrl: helpUrl,
+      }
+    : undefined
+
   return (
     <ConfirmationDialog
       open={show}
@@ -142,8 +149,7 @@ export const ProgrammaticInstructionsModal = ({
       onCancel={onClose}
       onConfirm={onClose}
       maxWidth="md"
-      helpMarkdown={helpMarkdown}
-      helpUrl={helpUrl}
+      titleHelpPopoverProps={titleHelpPopoverProps}
       content={dialogContent}
     />
   )

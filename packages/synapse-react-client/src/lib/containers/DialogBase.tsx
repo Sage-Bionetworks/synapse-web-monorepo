@@ -11,7 +11,7 @@ import {
   SxProps,
 } from '@mui/material'
 import React from 'react'
-import { HelpPopover } from './HelpPopover'
+import { HelpPopover, HelpPopoverProps } from './HelpPopover'
 
 export type CloseButtonProps = {
   sx?: SxProps
@@ -39,8 +39,7 @@ export type DialogBaseProps = {
   className?: string
   onCancel: () => void
   hasCloseButton?: boolean
-  helpMarkdown?: string
-  helpUrl?: string
+  titleHelpPopoverProps?: HelpPopoverProps
   maxWidth?: DialogProps['maxWidth']
   fullWidth?: boolean
   sx?: DialogProps['sx']
@@ -57,8 +56,7 @@ export const DialogBase = ({
   className,
   onCancel,
   hasCloseButton = true,
-  helpMarkdown,
-  helpUrl,
+  titleHelpPopoverProps,
   maxWidth = 'sm',
   fullWidth = true,
   sx,
@@ -75,9 +73,7 @@ export const DialogBase = ({
       <DialogTitle>
         <Stack direction="row" alignItems={'center'} gap={'5px'}>
           {title}
-          {helpMarkdown && (
-            <HelpPopover markdownText={helpMarkdown} helpUrl={helpUrl} />
-          )}
+          {titleHelpPopoverProps && <HelpPopover {...titleHelpPopoverProps} />}
           <Box sx={{ flexGrow: 1 }} />
           {hasCloseButton && <CloseButton onClick={() => onCancel()} />}
         </Stack>

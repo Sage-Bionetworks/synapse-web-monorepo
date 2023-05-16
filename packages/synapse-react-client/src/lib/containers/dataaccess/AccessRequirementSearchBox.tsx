@@ -93,7 +93,7 @@ export default function AccessRequirementSearchBox(
 
   return (
     <AsyncSelect
-      className="bootstrap-4-backport"
+      className="bootstrap-4-backport AsyncSelect"
       defaultInputValue={
         initialId
           ? getOptionLabel(

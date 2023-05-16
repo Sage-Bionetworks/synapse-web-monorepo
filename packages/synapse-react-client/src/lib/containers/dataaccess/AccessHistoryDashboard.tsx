@@ -1,6 +1,5 @@
 import { omitBy } from 'lodash-es'
 import React, { useCallback, useEffect, useState } from 'react'
-import { FormLabel } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { TYPE_FILTER } from '../../utils/synapseTypes'
@@ -119,9 +118,13 @@ export const UserHistoryDashboard = () => {
     <div className="UserHistoryDashboard bootstrap-4-backport">
       <div className="InputPanel">
         <div>
-          <FormLabel htmlFor="user-filter">
+          <Typography
+            component="label"
+            variant="smallText2"
+            htmlFor="user-filter"
+          >
             Select a user to view their access history
-          </FormLabel>
+          </Typography>
           <UserSearchBoxV2
             inputId="user-filter"
             onChange={onAccessorChange}
@@ -133,9 +136,13 @@ export const UserHistoryDashboard = () => {
 
         {accessorId && (
           <div>
-            <FormLabel htmlFor="arName-filter">
+            <Typography
+              component="label"
+              variant="smallText2"
+              htmlFor="arName-filter"
+            >
               Filter by Access Requirement Name
-            </FormLabel>
+            </Typography>
             <AccessRequirementSearchBox
               inputId="arName-filter"
               placeholder="Search for an Access Requirement Name "
