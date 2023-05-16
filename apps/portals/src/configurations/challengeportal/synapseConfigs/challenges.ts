@@ -5,7 +5,7 @@ import {
   CardConfiguration, CardLink,
 } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { challengeProjectsSql } from '../resources'
-import { DetailsPageProps } from 'types/portal-util-types'
+import { DetailsPageProps, RowSynapseConfig } from 'types/portal-util-types'
 import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 3
@@ -44,6 +44,73 @@ export const challenges: SynapseConfig = {
     defaultColumn: 'name',
     name: 'Challenges',
   },
+}
+
+const taskTabConfigs = (taskID:string) => {
+  /** Not currently using DataType or TaskType. */
+  const configs:RowSynapseConfig[] = []
+  configs.push(
+    {
+    name: 'Markdown',
+    columnName: `${taskID}.Description`,
+    title: 'Description',
+    props: {},
+  },
+  {
+    name: 'Markdown',
+    columnName: `${taskID}.Motivation`,
+    title: 'Motivation',
+    props: {},
+  },
+  {
+    name: 'Markdown',
+    columnName: `${taskID}.DataWiki`,
+    title: 'Data',
+    props: {},
+  },
+  // TODO: Add Training Data Folder component
+  // {
+  //   name: 'GenUIFileListing',
+  //   columnName: `${taskID}.DataFolder`,
+  //   title: 'Training Data',
+  //   props: {},
+  // },
+  {
+    name: 'Markdown',
+    columnName: `${taskID}.EvaluationWiki`,
+    title: 'Evaluation',
+    props: {},
+  },
+  {
+    name: 'Markdown',
+    columnName: `${taskID}.SubmissionWiki`,
+    title: 'Submission',
+    props: {},
+  },
+  // TODO: Add Submission component
+  // {
+  //   name: 'GenUISubmissionComponent',
+  //   columnName: `${taskID}.SubmissionType`, // Docker or File
+  //   props: {},
+  // },
+  {
+    name: 'Markdown',
+    columnName: `${taskID}.Leaderboard`,
+    title: 'Results',
+    props: {},
+  },
+  {
+    name: 'Markdown',
+    columnName: `${taskID}.AlgorithmWiki`,
+    props: {},
+  },
+  {
+    name: 'Markdown',
+    columnName: `${taskID}.WinningSubmission`,
+    props: {},
+  },
+  )
+  return configs
 }
 
 
@@ -125,12 +192,72 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
       ],
     },
     {
+      title: 'Instructions',
+      uriValue: 'Instructions',
+      synapseConfigArray: [
+        {
+          name: 'Markdown',
+          columnName: 'Instructions',
+          title: 'Instructions',
+          props: {},
+        },
+        {
+          name: 'Markdown',
+          columnName: 'EligibilityRules',
+          title: 'Eligibility Rules',
+          props: {},
+        },
+        {
+          name: 'Markdown',
+          columnName: 'ConductRules',
+          title: 'Conduct Rules',
+          props: {},
+        },
+      ],
+    },
+    {
       title: 'Task 1',
       uriValue: 'Task1',
-      // TODO: add ability to specify a column that determines visibility (if truthy value).  For this case, set to a required Task0 annotation
+      // specify a column that determines visibility.  For this case, set to a required Task0 annotation (description)
       // toolTip: 'Task 1',
+      hideIfColumnValueUndefined: 'Task_0.Description',
+      synapseConfigArray: taskTabConfigs('Task_0'),
+    },
+    {
+      title: 'Task 2',
+      uriValue: 'Task2',
+      hideIfColumnValueUndefined: 'Task_1.Description',
+      synapseConfigArray: taskTabConfigs('Task_1'),
+    },
+    {
+      title: 'Task 3',
+      uriValue: 'Task3',
+      hideIfColumnValueUndefined: 'Task_2.Description',
+      synapseConfigArray: taskTabConfigs('Task_2'),
+    },
+    {
+      title: 'Task 4',
+      uriValue: 'Task4',
+      hideIfColumnValueUndefined: 'Task_3.Description',
+      synapseConfigArray: taskTabConfigs('Task_3'),
+    },
+    {
+      title: 'Task 5',
+      uriValue: 'Task5',
+      hideIfColumnValueUndefined: 'Task_4.Description',
+      synapseConfigArray: taskTabConfigs('Task_4'),
+    },
+    {
+      title: 'News',
+      uriValue: 'News',
+      hideIfColumnValueUndefined: 'Announcements',
       synapseConfigArray: [
-        // TODO: programmatically generate based on task number
+        {
+          name: 'Markdown',
+          columnName: 'Announcements',
+          title: 'Announcements',
+          props: {},
+        },
       ],
     },
   ],
