@@ -340,8 +340,11 @@ export const SplitStringToComponent: React.FC<{
   })
   if (overrideSqlSourceTable) {
     // use the search param value to override the sql param.
+    // TODO: Refactor to consider the the type of the original table
+    // For datasets and views, the rowVersionNumber corresponds to the actual version of the table. For TableEntities, the rowVersionNumber is meaningless. For now, just see if the columnName is `id`, which is always true for current view/dataset cases, and is never the case for current table cases.
+    // 
     injectedProps['sql'] = `SELECT  *  FROM  ${value}${
-      rowVersionNumber ? `.${rowVersionNumber}` : ''
+      rowVersionNumber && columnName == 'id' ? `.${rowVersionNumber}` : ''
     }`
   }
 

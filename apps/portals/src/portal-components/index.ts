@@ -8,7 +8,6 @@ import Ecosystem from './csbc-home-page/Ecosystem'
 import AboutPortal from './csbc-home-page/AboutPortal'
 import DevelopedBySage from './csbc-home-page/DevelopedBySage'
 import BrowseToolsPage from './nf/BrowseToolsPage'
-import ChallengeDetailsPage from './challengeportal/ChallengeDetailsPage'
 import NFSurveyToast from './nf/NFSurveyToast'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
 import ParticipantsBarPlot from './crc-researcher/ParticipantsBarPlot'
@@ -37,7 +36,6 @@ const PortalComponents = {
   BrowseToolsPage,
   NFSurveyToast,
   ARKWelcomePage,
-  ChallengeDetailsPage,
   TabbedSynapseObjects,
   Header,
 }
