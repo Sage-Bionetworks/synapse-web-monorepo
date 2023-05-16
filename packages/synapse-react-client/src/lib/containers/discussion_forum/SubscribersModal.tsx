@@ -1,8 +1,8 @@
 import React from 'react'
-import { Modal } from 'react-bootstrap'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 import { useSubscription } from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
 import { SubscriptionObjectType } from '../../utils/synapseTypes/Subscription'
-import { Button } from '@mui/material'
+import { Link } from '@mui/material'
 import UserCard from '../UserCard'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 
@@ -24,36 +24,29 @@ export const SubscribersModal: React.FC<SubscribersModalProps> = ({
   return (
     <div className="SubscribersModal">
       {subscribers && subscribers.subscribers.length > 0 && (
-        <a
+        <Link
           onClick={() => handleModal(true)}
-        >{`Followers (${subscribers.subscribers.length})`}</a>
+        >{`Followers (${subscribers.subscribers.length})`}</Link>
       )}
-      <Modal
-        className="bootstrap-4-backport"
-        show={showModal}
-        onHide={() => handleModal(false)}
-        animation={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Followers</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {subscribers &&
-            subscribers.subscribers.map(user => (
-              <UserCard
-                key={user}
-                ownerId={user}
-                size={SMALL_USER_CARD}
-                showCardOnHover={true}
-              />
-            ))}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="contained" onClick={() => handleModal(false)}>
-            Ok
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ConfirmationDialog
+        open={showModal}
+        onCancel={() => handleModal(false)}
+        title="Followers"
+        content={
+          subscribers &&
+          subscribers.subscribers.map(user => (
+            <UserCard
+              key={user}
+              ownerId={user}
+              size={SMALL_USER_CARD}
+              showCardOnHover={true}
+            />
+          ))
+        }
+        onConfirm={() => handleModal(false)}
+        confirmButtonText="Ok"
+        hasCancelButton={false}
+      />
     </div>
   )
 }

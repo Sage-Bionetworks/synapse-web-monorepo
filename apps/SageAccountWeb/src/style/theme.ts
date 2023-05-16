@@ -27,6 +27,7 @@ export const sageAccountWebThemeOverrides: ThemeOptions = {
             '0px 4px 4px rgba(0, 0, 0, 0.03), 0px 2px 2px rgba(0, 0, 0, 0.03), 0px 1px 1px rgba(0, 0, 0, 0.03)',
           borderRadius: '3px',
           fontWeight: 700,
+          fontSize: '16px',
           '&:hover': {
             backgroundColor: '#FFFFFF',
             border: '1px solid #b5bcc3',
