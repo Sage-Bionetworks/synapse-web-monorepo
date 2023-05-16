@@ -1,12 +1,42 @@
 import { GenericRoute } from 'types/portal-config'
-import { challengeDetailsLandingPage } from './synapseConfigs/challenges'
+import { challengeCardConfiguration, challengeDetailsLandingPage, challengeTitleLinkConfig } from './synapseConfigs/challenges'
+import { challengeProjectsSql } from './resources'
 
 const routes: GenericRoute[] = [
   {
     path: '',
     exact: true,
     synapseConfigArray: [
-      // TODO: Add list of challenge project cards
+      // Add list of challenge project cards
+      {
+        name: 'TabbedSynapseObjects',
+        props: {
+          centerTabs: true,
+          tabConfigs: [
+          {
+            label: 'Active',
+            synapseObject: {
+              name: 'CardContainerLogic',
+              props: {
+                sql: `${challengeProjectsSql} where Status='Active'`,
+                ...challengeCardConfiguration,
+                titleLinkConfig: challengeTitleLinkConfig
+              },
+            },
+          },
+          {
+            label: 'Completed',
+            synapseObject: {
+              name: 'CardContainerLogic',
+              props: {
+                sql: `${challengeProjectsSql} where Status='Closed'`,
+                ...challengeCardConfiguration,
+                titleLinkConfig: challengeTitleLinkConfig
+              },
+            },
+          },
+        ]},
+      },
     ],
   },
   {

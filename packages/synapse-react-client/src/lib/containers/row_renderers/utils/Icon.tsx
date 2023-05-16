@@ -4,6 +4,7 @@ import {
   DATASET,
   FUNDER,
   PUBLICATION,
+  CHALLENGE,
   STUDY_ACTIVE,
   STUDY_COMPLETE,
   TOOL,
@@ -53,6 +54,7 @@ import { ReactComponent as mouseSvg } from '../../../assets/icons/mouse.svg'
 import { ReactComponent as chart2Svg } from '../../../assets/icons/chart2.svg'
 import { ReactComponent as fileSvg } from '../../../assets/icons/file.svg'
 import {
+  Challenge,
   Program,
   Project,
   Publication,
@@ -128,6 +130,7 @@ const defaultIcons = {
   [SETTINGS]: Settings,
   [COLUMNS]: Columns,
   [COLUMNSDARK]: ColumnsDark,
+  [CHALLENGE]: Challenge,
   [VERTICAL_DOTS]: VerticalDots,
   [CHART2]: chart2Svg,
   [FILE]: fileSvg,

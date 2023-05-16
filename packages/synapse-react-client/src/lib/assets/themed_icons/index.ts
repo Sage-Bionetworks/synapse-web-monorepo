@@ -22,6 +22,7 @@ import { Columns } from './Columns'
 import { ColumnsDark } from './ColumnsDark'
 import { VerticalDots } from './VerticalDots'
 import { ExternalLink } from './ExternalLink'
+import { Challenge } from './Challenge'
 
 export {
   Project,
@@ -48,4 +49,5 @@ export {
   VerticalDots,
   ExternalLink,
   SqlEditorIcon,
+  Challenge,
 }
