@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
@@ -34,6 +34,7 @@ import ValidationRequirement from './RequirementItem/ValidationRequirement'
 import { StyledComponent } from '@emotion/styled'
 import {
   useGetAccessRequirementsForEntity,
+  useGetAccessRequirementsForTeam,
   useSortAccessRequirementIdsByCompletion,
 } from '../../utils/hooks/SynapseAPI'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
@@ -42,10 +43,12 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type AccessRequirementListProps = {
   entityId: string // will show this entity info
+  teamId?: string // will show this team info
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide: () => void
   renderAsModal?: boolean
   numberOfFilesAffected?: number // if provided, will show this instead of the entity information
+  requestObjectName?: string // if provided, will show this instead of the entity information or numberOfFilesAffected
 }
 
 const SUPPORTED_ACCESS_REQUIREMENTS = new Set<
@@ -117,10 +120,12 @@ export default function AccessRequirementList(
 ) {
   const {
     entityId,
+    teamId,
     onHide,
     accessRequirementFromProps,
     renderAsModal,
     numberOfFilesAffected,
+    requestObjectName,
   } = props
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
@@ -141,12 +146,20 @@ export default function AccessRequirementList(
 
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
-  const { data: fetchedRequirements } = useGetAccessRequirementsForEntity(
-    entityId,
+  const { data: fetchedRequirementsForTeam } = useGetAccessRequirementsForTeam(
+    teamId!,
     {
-      enabled: Boolean(!accessRequirementFromProps && entityId),
+      enabled: Boolean(!accessRequirementFromProps && teamId),
     },
   )
+  const { data: fetchedRequirementsForEntity } = useGetAccessRequirementsForEntity(
+    entityId,
+    {
+      enabled: Boolean(!accessRequirementFromProps && entityId && !teamId),
+    },
+  )
+
+  const fetchedRequirements = teamId ? fetchedRequirementsForTeam : fetchedRequirementsForEntity
 
   const accessRequirements = accessRequirementFromProps ?? fetchedRequirements
 
@@ -210,6 +223,28 @@ export default function AccessRequirementList(
       accessRequirement.isValidatedProfileRequired,
   )
 
+  const requestDetails = useMemo(() => {
+    // Prioritize requestObjectName, then the number of files affected, then the entity name
+    if (requestObjectName) return requestObjectName
+    if (numberOfFilesAffected)
+      return (
+        <>
+          <IconSvg icon="file" sx={{ width: '30px' }} /> {numberOfFilesAffected}{' '}
+          File(s)
+        </>
+      )
+    return (
+      <>
+        <IconSvg icon="file" sx={{ width: '30px' }} />{' '}
+        <Link
+          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityId}`}
+        >
+          {entityInformation[0]?.name}
+        </Link>
+      </>
+    )
+  }, [entityId, entityInformation, numberOfFilesAffected, requestObjectName])
+
   const content = (
     <>
       <DialogTitle>
@@ -224,19 +259,10 @@ export default function AccessRequirementList(
 
       <DialogContent>
         <DialogSubsectionHeader sx={{ mt: 0 }}>
-          Access For:
+          What is this request for?
         </DialogSubsectionHeader>
         <Typography variant={'body1'} component={'span'}>
-          <IconSvg icon="file" sx={{ width: '30px' }} />{' '}
-          {numberOfFilesAffected ? (
-            `${numberOfFilesAffected} File(s)`
-          ) : (
-            <Link
-              href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityId}`}
-            >
-              {entityInformation[0]?.name}
-            </Link>
-          )}
+          {requestDetails}
         </Typography>
         <DialogSubsectionHeader>What do I need to do?</DialogSubsectionHeader>
         <AuthenticatedRequirement />

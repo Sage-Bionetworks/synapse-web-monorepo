@@ -165,7 +165,7 @@ const ACCESS_REQUIREMENT_QUERY_KEY = 'accessRequirement'
  *
  * Co-location of react-query keys for queries related to Synapse data. Two objectives of this strategy are
  * - minimize the risk of inappropriate cache key collisions
- * - simplify clearing the approprate query caches when the entity data is updated
+ * - simplify clearing the appropriate query caches when the entity data is updated
  *
  * For more information, see https://tkdodo.eu/blog/leveraging-the-query-function-context
  */
@@ -514,6 +514,10 @@ export class KeyFactory {
 
   public getIsUserMemberOfTeamQueryKey(teamId: string, userId: string) {
     return this.getKey('team', teamId, 'member', userId)
+  }
+
+  public getTeamAccessRequirementsQueryKey(teamId: string) {
+    return this.getKey('team', teamId, 'accessRequirements')
   }
 
   public getFavoritesQueryKey() {

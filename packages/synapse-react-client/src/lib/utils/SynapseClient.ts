@@ -1437,6 +1437,32 @@ export const getUserTeamList = (
 }
 
 /**
+ * Get the access requirements associated with a team
+ *
+ * @param {(string | undefined)} accessToken token of user
+ * @param {*} teamId teamId of the synapse team - https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Team.html
+ * @param {*} offset   (optional) the starting index of the returned results (default 0)
+ * @param {*} limit    (optional) the maximum number of access requirements to return (default 50)
+ * @returns {Promise<Array<AccessRequirement>>}
+ */
+export const getTeamAccessRequirements = (
+  accessToken: string | undefined,
+  teamId: string,
+  offset: string | number = 0,
+  limit: string | number = 50,
+): Promise<AccessRequirement[]> => {
+  const url = `/repo/v1/team/${teamId}/accessRequirement?offset=${offset}&limit=${limit}`
+  const fn = () => {
+    return doGet<PaginatedResults<AccessRequirement>>(
+      url,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
+}
+
+/**
  * Get a list of members for a team
  *
  * @param {*} id ownerID of the synapse user see -https://rest-docs.synapse.org/rest/GET/teamMembers/id.html
