@@ -13,7 +13,6 @@ jobs:
   build-and-deploy:
     name: build-and-deploy
     # limit to this repository
-    if: github.repository == 'Sage-Bionetworks/synapse-web-monorepo'
     runs-on: ubuntu-latest
     # Allow OIDC Integration (so we can assume the AWS role to deploy)
     permissions:
