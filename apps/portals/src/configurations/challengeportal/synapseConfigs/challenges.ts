@@ -2,25 +2,28 @@ import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
 import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
 import {
-  CardConfiguration,
+  CardConfiguration, CardLink,
 } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { challengeProjectsSql } from '../resources'
 
 const rgbIndex = 3
 
 export const challengesSchema: GenericCardSchema = {
-  type: SynapseConstants.GENERIC_CARD,
-  title: 'softwareName',
-  subTitle: 'softwareType',
-  description: 'summary',
+  type: 'challenge',
+  title: 'name',
+  subTitle: 'Status',
+  description: 'Abstract',
   secondaryLabels: [
-    'digitalAssessmentCategory',
-    'inputDataType',
-    'outputDataType',
-    'softwareLanguage',
-    'softwareAuthor',
-  ],
-  link: 'url',
+    'Difficulty',
+    'ChallengeType',
+    'Tags',
+  ]
+}
+export const challengeTitleLinkConfig:CardLink = {
+  isMarkdown: false,
+  baseURL: 'Challenges/DetailsPage',
+  URLColumnName: 'id',
+  matchColumnName: 'id',
 }
 
 export const challengeCardConfiguration: CardConfiguration = {
@@ -28,7 +31,7 @@ export const challengeCardConfiguration: CardConfiguration = {
   genericCardSchema: challengesSchema,
 }
 
-export const tools: SynapseConfig = {
+export const challenges: SynapseConfig = {
   name: 'QueryWrapperPlotNav',
   props: {
     rgbIndex,
@@ -36,8 +39,8 @@ export const tools: SynapseConfig = {
     sql: challengeProjectsSql,
     hideDownload: true,
     shouldDeepLink: true,
-    defaultColumn: 'softwareType',
-    name: 'Tools',
+    defaultColumn: 'name',
+    name: 'Challenges',
   },
 }
 

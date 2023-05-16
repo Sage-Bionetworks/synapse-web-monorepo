@@ -1,6 +1,7 @@
 import StatefulButtonControlWrapper from './StatefulButtonControlWrapper'
 import RouteControlWrapper from './RouteControlWrapper'
 import DetailsPage from './DetailsPage'
+import TabbedSynapseObjects from './TabbedSynapseObjects'
 import ConsortiaGoals from './csbc-home-page/ConsortiaGoals'
 import HomePageCardContainer from './csbc-home-page/HomePageCardContainer'
 import Ecosystem from './csbc-home-page/Ecosystem'
@@ -37,6 +38,7 @@ const PortalComponents = {
   NFSurveyToast,
   ARKWelcomePage,
   ChallengeDetailsPage,
+  TabbedSynapseObjects,
   Header,
 }
 

@@ -34,6 +34,7 @@ import { MarkdownCollapseProps } from 'synapse-react-client/dist/containers/Mark
 import { DownloadListActionsRequiredProps } from 'synapse-react-client/dist/containers/download_list_v2/DownloadListActionsRequired'
 import { ToggleSynapseObjectsProps } from '../portal-components/ToggleSynapseObjects'
 import { CSSProperties } from 'react'
+import { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObjects'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -210,6 +211,11 @@ type ToggleSynapseObjects = {
   name: 'ToggleSynapseObjects'
   props: ToggleSynapseObjectsProps
 }
+type TabbedSynapseObjects = {
+  name: 'TabbedSynapseObjects'
+  props: TabbedSynapseObjectsProps
+}
+
 
 type Metadata = {
   title?: string
@@ -313,6 +319,7 @@ export type SynapseConfig = (
   | ARKWelcomePage
   | SubsectionRowRenderer
   | ToggleSynapseObjects
+  | TabbedSynapseObjects
   | ChallengeDetailsPage
   | Header
 ) &
