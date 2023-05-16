@@ -9,6 +9,7 @@ export type ConfirmationButtonsProps = {
   confirmButtonClassName?: string
   confirmButtonColor?: ButtonProps['color']
   confirmButtonVariant?: ButtonProps['variant']
+  confirmButtonDisabled?: boolean
   hasCancelButton?: boolean
 }
 
@@ -20,6 +21,7 @@ export const ConfirmationButtons = (props: ConfirmationButtonsProps) => {
     confirmButtonClassName,
     confirmButtonColor = 'primary',
     confirmButtonVariant = 'contained',
+    confirmButtonDisabled = false,
     onConfirm,
     onCancel,
     hasCancelButton = true,
@@ -36,6 +38,7 @@ export const ConfirmationButtons = (props: ConfirmationButtonsProps) => {
         className={confirmButtonClassName}
         color={confirmButtonColor}
         onClick={() => onConfirm()}
+        disabled={confirmButtonDisabled}
       >
         {confirmButtonText}
       </Button>

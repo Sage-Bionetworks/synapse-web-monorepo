@@ -1,7 +1,7 @@
 import Slider from '@mui/material/Slider'
 import React, { useEffect, useState } from 'react'
-import { Button, IconButton, SxProps } from '@mui/material'
-import { Modal } from 'react-bootstrap'
+import { Box, IconButton, SxProps } from '@mui/material'
+import { ConfirmationDialog } from 'synapse-react-client/dist/containers/ConfirmationDialog'
 import Cropper from 'react-easy-crop'
 import { Area } from 'react-easy-crop/types'
 import Person from '@mui/icons-material/Person'
@@ -130,6 +130,8 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     setOpenCropModal(false)
   }
 
+  const cropperSize = '400px'
+
   return (
     <div className="profile-avatar">
       <>
@@ -153,51 +155,46 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
         <UploadImageButton />
       </>
 
-      <Modal
-        className="bootstrap-4-backport"
-        show={openCropModal}
-        onHide={() => setOpenCropModal(false)}
-        animation={false}
-        centered
-      >
-        <Modal.Body className="cropper-modal-body">
-          <div>
-            <Cropper
-              image={image}
-              crop={crop}
-              zoom={zoom}
-              aspect={1}
-              cropShape="round"
-              onCropChange={setCrop}
-              onZoomChange={setZoom}
-              onCropComplete={onCropComplete}
-            />
-          </div>
-        </Modal.Body>
-        <Slider
-          min={1}
-          max={3}
-          step={0.1}
-          value={zoom}
-          onChange={(e, zoom) => setZoom(zoom as number)}
-        />
-        <div className="modal-btn-container">
-          <Button
-            className="modal-btn btn-container emptyButton"
-            onClick={closeCropModal}
-          >
-            Cancel
-          </Button>
-          <Button
-            disabled={imageLoading}
-            className="modal-btn btn-container"
-            variant="contained"
-            onClick={!imageLoading ? onCrop : () => ''}
-          >
-            {imageLoading ? 'Loading...' : 'Save'}
-          </Button>
-        </div>
-      </Modal>
+      <ConfirmationDialog
+        open={openCropModal}
+        title="Crop Image"
+        fullWidth
+        onCancel={() => setOpenCropModal(false)}
+        content={
+          <>
+            <Box
+              width={cropperSize}
+              height={cropperSize}
+              margin="20px auto"
+              position="relative"
+            >
+              <Cropper
+                image={image}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                cropShape="round"
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+              />
+            </Box>
+            <Box justifyContent="center" display="flex">
+              <Slider
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e, zoom) => setZoom(zoom as number)}
+                sx={{ width: cropperSize }}
+              />
+            </Box>
+          </>
+        }
+        onConfirm={!imageLoading ? onCrop : () => ''}
+        confirmButtonDisabled={imageLoading}
+        confirmButtonText={imageLoading ? 'Loading...' : 'Save'}
+      />
     </div>
   )
 }
