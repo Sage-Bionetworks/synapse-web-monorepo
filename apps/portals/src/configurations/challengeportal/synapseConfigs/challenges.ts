@@ -81,19 +81,53 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
           name: 'CardContainerLogic',
           title: 'Organizers',
           columnName: 'Organizers',
-          overrideSqlSourceTable: true, // Instead, modify the sql (SELECT * FROM <search_param_value>).<rowVersionNumber>
+          overrideSqlSourceTable: true, // Instead, modify the sql (SELECT * FROM <column value>)
           props: {
             sql: '',
             limit: 6,
             type: SynapseConstants.MEDIUM_USER_CARD,
           },
         },
+        {
+          name: 'CardContainerLogic',
+          title: 'Contributors',
+          columnName: 'Contributors',
+          overrideSqlSourceTable: true,
+          props: {
+            sql: '',
+            limit: 6,
+            type: SynapseConstants.MEDIUM_USER_CARD,
+          },
+        },
+        {
+          name: 'CardContainerLogic',
+          title: 'Sponsors',
+          columnName: 'Sponsors',
+          overrideSqlSourceTable: true,
+          props: {
+            sql: '',
+            limit: 6,
+            type: SynapseConstants.MEDIUM_USER_CARD,
+          },
+        },
+        {
+          name: 'ChallengeParticipantGoogleMap',
+          title: 'Participants',
+          columnName: 'id',
+          props: undefined
+        },
+        {
+          name: 'Markdown',
+          columnName: 'Incentives',
+          title: 'Incentives',
+          props: {},
+        },
       ],
     },
     {
       title: 'Task 1',
       uriValue: 'Task1',
-      // TODO: add ability to specify a column that determins visibility (if truthy value).  For this case, set to a required Task0 annotation
+      // TODO: add ability to specify a column that determines visibility (if truthy value).  For this case, set to a required Task0 annotation
       // toolTip: 'Task 1',
       synapseConfigArray: [
         // TODO: programmatically generate based on task number

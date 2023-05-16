@@ -11,6 +11,7 @@ const routes: GenericRoute[] = [
       {
         name: 'TabbedSynapseObjects',
         title: 'Listed Challenges',
+        subtitle: 'Explore and join our currently running challenges, or browse completed ones and review their findings.',
         centerTitle: true,
         outsideContainerClassName: 'home-spacer',
         props: {
