@@ -1,32 +1,8 @@
 @use '../../style/variables' as Portal;
 
-#footer,
-#header {
-  height: fit-content;
-  background-image: none;
-}
-
-#header {
-  position: relative;
-  .header-text {
-    position: absolute;
-    top: 20%;
-    min-height: 50%;
-    @media only screen and (max-width: 1200px) {
-      top: 5%;
-      width: 90%;
-      left: 5%;
-      height: 90%;
-    }
-    height: fit-content;
-    h2 {
-      margin-bottom: 20px;
-    }
-    width: 60%;
-    left: 10%;
-    margin: 0px;
-    padding: 25px;
-  }
+#header,
+#footer {
+  background-color: Portal.$primary-action-color;
 }
 
 #footer {

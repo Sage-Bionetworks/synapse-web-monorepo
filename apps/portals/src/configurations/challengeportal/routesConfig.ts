@@ -10,6 +10,9 @@ const routes: GenericRoute[] = [
       // Add list of challenge project cards
       {
         name: 'TabbedSynapseObjects',
+        title: 'Listed Challenges',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
         props: {
           centerTabs: true,
           tabConfigs: [
