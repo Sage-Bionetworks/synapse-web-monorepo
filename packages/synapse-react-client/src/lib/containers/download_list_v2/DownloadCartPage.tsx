@@ -16,6 +16,7 @@ import { ErrorBanner } from '../error/ErrorBanner'
 import { Button, Tooltip, Typography } from '@mui/material'
 import { HelpPopover } from '../HelpPopover'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal'
+import { DeleteTwoTone } from '@mui/icons-material'
 
 const pythonDownloadCode = `import synapseclient
 syn = synapseclient.login()
@@ -75,22 +76,16 @@ export const DownloadCartPage: React.FunctionComponent<
               enterNextDelay={300}
               placement="right"
             >
-              <a
-                className="clearDownloadListLink"
+              <Button
                 onClick={() => {
                   clearDownloadList()
                 }}
+                variant="text"
+                color="primary"
+                startIcon={<DeleteTwoTone />}
               >
-                <span>
-                  <IconSvg
-                    icon="delete"
-                    sx={{
-                      paddingRight: '0.2rem',
-                    }}
-                  />
-                </span>
                 Clear Your Download Cart
-              </a>
+              </Button>
             </Tooltip>
           </div>
           <Typography className="description" variant="body1">
@@ -268,7 +263,7 @@ export const DownloadCartPage: React.FunctionComponent<
                   </div>
                 </div>
               </div>
-              <div className="availableForDownloadTableContainer container bootstrap-4-backport">
+              <div className="availableForDownloadTableContainer container">
                 {isShowingCreatePackageUI && (
                   <CreatePackageV2
                     onPackageCreation={() => {

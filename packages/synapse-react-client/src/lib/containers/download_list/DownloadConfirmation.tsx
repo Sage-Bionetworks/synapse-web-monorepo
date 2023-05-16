@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { Alert } from 'react-bootstrap'
+import { Alert, Box, Button } from '@mui/material'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { SynapseClient, SynapseConstants } from '../../utils'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/download/useDownloadList'
@@ -93,7 +93,7 @@ const StatusConstruct: UiStateDictionary = {
         Note: Files that you add will be mixed in with the files already in your
         download cart.
         <br />
-        If you don’t want to mix these files, clear your download cart before
+        If you don't want to mix these files, clear your download cart before
         continuing.
       </>
     ),
@@ -149,7 +149,10 @@ const DownloadConfirmationContent = (props: {
             numFiles={props.fileCount}
             numBytes={props.fileSize}
           ></DownloadDetails>
-          <span className="download-confirmation-infoText">
+          <span
+            className="download-confirmation-infoText"
+            style={{ paddingLeft: '8px' }}
+          >
             {StatusConstruct[props.status].infoText}
           </span>
         </>
@@ -296,10 +299,7 @@ export const DownloadConfirmation: React.FunctionComponent<
   return (
     <>
       <Alert
-        dismissible={false}
-        show={true}
-        variant={'info'}
-        transition={false}
+        severity="info"
         className={`download-confirmation ${
           StatusConstruct[status].className
         } ${showDownloadConfirmation ? '' : 'hidden'}
@@ -310,31 +310,43 @@ export const DownloadConfirmation: React.FunctionComponent<
           }
         `}
       >
-        <DownloadConfirmationContent
-          status={status}
-          fileCount={fileCount}
-          fileSize={fileSize}
-        />
-        <div className="download-confirmation-action">
-          {status !== StatusEnum.PROCESSING && (
-            <button className="btn btn-link" onClick={onCancel}>
-              {StatusConstruct[status].closeText}
-            </button>
-          )}
+        <Box display="flex" justifyContent="space-evenly">
+          <DownloadConfirmationContent
+            status={status}
+            fileCount={fileCount}
+            fileSize={fileSize}
+          />
+          <Box
+            className="download-confirmation-action"
+            display="flex"
+            alignItems="center"
+            ml={2}
+          >
+            {status !== StatusEnum.PROCESSING && (
+              <Button
+                variant="text"
+                color="primary"
+                onClick={onCancel}
+                sx={{ mr: '5px' }}
+              >
+                {StatusConstruct[status].closeText}
+              </Button>
+            )}
 
-          {(status === StatusEnum.INFO ||
-            status === StatusEnum.INFO_ITEMS_IN_LIST) && (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => {
-                triggerAddToDownload()
-              }}
-            >
-              Add
-            </button>
-          )}
-        </div>
+            {(status === StatusEnum.INFO ||
+              status === StatusEnum.INFO_ITEMS_IN_LIST) && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  triggerAddToDownload()
+                }}
+              >
+                Add
+              </Button>
+            )}
+          </Box>
+        </Box>
       </Alert>
     </>
   )

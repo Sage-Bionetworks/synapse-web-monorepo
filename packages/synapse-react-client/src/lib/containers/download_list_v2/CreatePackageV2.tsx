@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { Box, Button, InputAdornment, TextField } from '@mui/material'
 import {
   createPackageFromDownloadListV2,
   getFileHandleByIdURL,
@@ -71,13 +71,13 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
     }
   }
 
-  const onChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    setZipFileName(event.currentTarget.value)
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setZipFileName(event.target.value)
   }
 
   return (
     <>
-      <div className="CreatePackageV2 bootstrap-4-backport">
+      <div className="CreatePackageV2">
         <div className="createPackageStep">
           <span className="createPackageTitle">
             Create your Download Package
@@ -87,26 +87,30 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
             started.
           </span>
           {!isLoading && !bulkFileDownloadResponse && (
-            <div className="inputAndCreateButton">
-              <input
+            <Box display="flex" alignItems="center">
+              <TextField
                 onChange={onChange}
                 type="text"
                 placeholder="PackageName"
-                style={{ width: '233px' }}
-              ></input>
-              <span className="zipUI">.zip</span>
+                sx={{ width: '233px' }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">.zip</InputAdornment>
+                  ),
+                }}
+              />
               <Button
-                variant={fileName ? 'primary' : 'dark'}
+                variant="contained"
+                color="primary"
                 onClick={e => {
                   createPackageHandler(e)
                 }}
-                type="button"
-                style={{ marginLeft: 20 }}
-                disabled={fileName ? false : true}
+                sx={{ marginLeft: '20px' }}
+                disabled={!fileName}
               >
                 Download Package
               </Button>
-            </div>
+            </Box>
           )}
           {isLoading && (
             <div className="creatingPackage">

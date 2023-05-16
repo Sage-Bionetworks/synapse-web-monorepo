@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, Table } from 'react-bootstrap'
+import { Table } from 'react-bootstrap'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetEntity } from '../../utils/hooks/SynapseAPI'
 import {
@@ -10,7 +10,7 @@ import {
 } from '../../utils/hooks/SynapseAPI/trash/useTrashCan'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { TrashedEntity } from '../../utils/synapseTypes'
-import { Button, Typography } from '@mui/material'
+import { Alert, Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import { BlockingLoader, SynapseSpinner } from '../LoadingScreen'
 import WarningDialog from '../synapse_form_wrapper/WarningDialog'
@@ -204,14 +204,9 @@ export function TrashCanList() {
             </tbody>
           </Table>
           {errors.length > 0 && (
-            <Alert
-              dismissible={false}
-              show={true}
-              variant={'danger'}
-              transition={false}
-            >
+            <Alert severity={'error'} sx={{ mb: 1 }}>
               The following errors were encountered:
-              <ul>
+              <ul style={{ marginBottom: 0 }}>
                 {errors.map(error => (
                   <li key={error.message}>{error.message}</li>
                 ))}
