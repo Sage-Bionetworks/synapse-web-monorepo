@@ -151,11 +151,6 @@ type BrowseToolsPage = {
   props: undefined
 }
 
-type ChallengeDetailsPage = {
-  name: 'ChallengeDetailsPage'
-  props: undefined
-}
-
 type NFSurveyToast = {
   name: 'NFSurveyToast'
   props: undefined
@@ -320,7 +315,6 @@ export type SynapseConfig = (
   | SubsectionRowRenderer
   | ToggleSynapseObjects
   | TabbedSynapseObjects
-  | ChallengeDetailsPage
   | Header
 ) &
   Metadata
