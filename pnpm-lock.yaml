@@ -1,10 +1,7 @@
 lockfileVersion: '6.0'
 
 overrides:
-  '@types/plotly.js': 1.54.22
-  '@types/plotly.js-basic-dist': 1.54.1
   '@types/react': 18.0.27
-  '@types/react-plotly.js': ^2.6.0
   goober: 2.1.9
   react-hot-toast: 2.2.0
 
@@ -87,8 +84,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       plotly.js-basic-dist:
-        specifier: ^1.47.3
-        version: 1.58.5
+        specifier: ^2.22.0
+        version: 2.22.0
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -139,8 +136,8 @@ importers:
         specifier: 11.10.4
         version: 11.10.4
       '@types/plotly.js':
-        specifier: 1.54.22
-        version: 1.54.22
+        specifier: ^2.12.18
+        version: 2.12.18
       '@types/react':
         specifier: 18.0.27
         version: 18.0.27
@@ -307,8 +304,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       plotly.js-basic-dist:
-        specifier: ^2.18.0
-        version: 2.18.0
+        specifier: ^2.22.0
+        version: 2.22.0
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -365,8 +362,8 @@ importers:
         specifier: 11.10.4
         version: 11.10.4
       '@types/plotly.js':
-        specifier: 1.54.22
-        version: 1.54.22
+        specifier: ^2.12.18
+        version: 2.12.18
       '@types/react':
         specifier: 18.0.27
         version: 18.0.27
@@ -524,8 +521,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       plotly.js-basic-dist:
-        specifier: ^1.47.3
-        version: 1.58.5
+        specifier: ^2.22.0
+        version: 2.22.0
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -576,8 +573,8 @@ importers:
         specifier: 11.10.4
         version: 11.10.4
       '@types/plotly.js':
-        specifier: 1.54.22
-        version: 1.54.22
+        specifier: ^2.12.18
+        version: 2.12.18
       '@types/react':
         specifier: 18.0.27
         version: 18.0.27
@@ -858,8 +855,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(@emotion/react@11.10.6)(@emotion/styled@11.10.6)(@mui/material@5.11.16)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0)
       plotly.js-basic-dist:
-        specifier: ^2.11.1
-        version: 2.18.0
+        specifier: ^2.22.0
+        version: 2.22.0
       pluralize:
         specifier: ^8.0.0
         version: 8.0.0
@@ -1099,10 +1096,10 @@ importers:
         specifier: ^14.14.31
         version: 14.18.36
       '@types/plotly.js':
-        specifier: 1.54.22
-        version: 1.54.22
+        specifier: ^2.12.18
+        version: 2.12.18
       '@types/plotly.js-basic-dist':
-        specifier: 1.54.1
+        specifier: ^1.54.1
         version: 1.54.1
       '@types/pluralize':
         specifier: ^0.0.29
@@ -6761,10 +6758,6 @@ packages:
       '@types/d3-selection': 3.0.4
     dev: false
 
-  /@types/d3@3.5.47:
-    resolution: {integrity: sha512-VkWIQoZXLFdcBGe5pdBKJmTU3fmpXvo/KV6ixvTzOMl1yJ2hbTXpfvsziag0kcaerPDwas2T0vxojwQG3YwivQ==}
-    dev: true
-
   /@types/d3@7.4.0:
     resolution: {integrity: sha512-jIfNVK0ZlxcuRDKtRS/SypEyOQ6UHaFQBKv032X45VvxSJ6Yi5G9behy9h6tNTHTDGh5Vq+KbmBjUWLgY4meCA==}
     dependencies:
@@ -7064,13 +7057,11 @@ packages:
   /@types/plotly.js-basic-dist@1.54.1:
     resolution: {integrity: sha512-PAowclM1Z9nfTGqLn2KrN3dDXF2M9TalggShN/k/6jyUZTkxfgSoJ3HGReyUqjxsRBgUZnWRIPmLOA+sDsGWFA==}
     dependencies:
-      '@types/plotly.js': 1.54.22
+      '@types/plotly.js': 2.12.18
     dev: true
 
-  /@types/plotly.js@1.54.22:
-    resolution: {integrity: sha512-/xL9++eA7VnIIZqNQOw6sZ7DtEmfoHj5rAD2CjU2LCOqem/BxTA1KlpdUWEHOiou6za4HKnM+Nvho3jTBPYJ/w==}
-    dependencies:
-      '@types/d3': 3.5.47
+  /@types/plotly.js@2.12.18:
+    resolution: {integrity: sha512-ff+CIEWnqZNjZqHtQZvkEAVuLs9fkm1f54QnPVmgoET7wMHdSqUka2hasVN4e5yfHD05YwGjsAtCseewJh/BMw==}
     dev: true
 
   /@types/pluralize@0.0.29:
@@ -7152,7 +7143,7 @@ packages:
   /@types/react-plotly.js@2.6.0:
     resolution: {integrity: sha512-nJJ57U0/CNDAO+F3dpnMgM8PtjLE/O1I3O6gq4+5Q13uKqrPnHGYOttfdzQJ4D7KYgF609miVzEYakUS2zds8w==}
     dependencies:
-      '@types/plotly.js': 1.54.22
+      '@types/plotly.js': 2.12.18
       '@types/react': 18.0.27
     dev: true
 
@@ -15470,12 +15461,8 @@ packages:
       uniq: 1.0.1
     dev: false
 
-  /plotly.js-basic-dist@1.58.5:
-    resolution: {integrity: sha512-Srbt1ACLknY2r655udWwc8cxEan0FvhQUDkX/VW9NATNs5g38mc+OTLmZIRmUrJu2Sr/jDXqZ4EqFnzN9dOXvQ==}
-    dev: false
-
-  /plotly.js-basic-dist@2.18.0:
-    resolution: {integrity: sha512-LnIcc6TBK25VdW605Njp2wNL9PVkFS6IRIWR0gCLx49GeOJYv6E+i/lr7KqKQj1MVBo4f/qNDKL5q/xWlpkzGQ==}
+  /plotly.js-basic-dist@2.22.0:
+    resolution: {integrity: sha512-aNOXARIJ60OzGpOLi3HEyV1dIZDtNW0iQbwYCNZmKLMzeT5dWWqLVcLq9hGWxS8R0rGmzlcz0YmZCflfQGlckw==}
     dev: false
 
   /plotly.js@1.58.5:
