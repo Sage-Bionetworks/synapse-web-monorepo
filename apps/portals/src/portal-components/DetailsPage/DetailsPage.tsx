@@ -340,7 +340,9 @@ export const SplitStringToComponent: React.FC<{
   })
   if (overrideSqlSourceTable) {
     // use the search param value to override the sql param.
-    injectedProps['sql'] = `SELECT  *  FROM  ${value}`
+    injectedProps['sql'] = `SELECT  *  FROM  ${value}${
+      rowVersionNumber && columnName == 'id' ? `.${rowVersionNumber}` : ''
+    }`
   }
 
   // For explorer 2.0, cannot assign key `lockedColumn` to deepCloneOfProps due to type errors,
