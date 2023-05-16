@@ -13,41 +13,10 @@ on:
       - "packages/synapse-react-client/**"
 
 jobs:
-  build-and-deploy:
-    name: build-and-deploy
-    # limit to this repository
-    if: github.repository == 'xschildw/synapse-web-monorepo-test'
-    runs-on: ubuntu-latest
-    # Allow OIDC Integration (so we can assume the AWS role to deploy)
+  deploy:
     permissions:
       id-token: write
       contents: read
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3.0.0
-      - name: setup
-        uses: ./.github/actions/pnpm-setup-action
-      - name: Assume AWS Role
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-region: us-east-1
-          role-to-assume: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
-          role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
-          role-duration-seconds: 1200
-      - name: build
-        run: |
-          cd apps/portals
-          chmod +x ./build.sh
-          ./build.sh challengeportal
-      - name: setup-outputbucket-staging
-        if: github.ref == 'refs/heads/releases/portals/staging'
-        run: |
-          cd apps/portals
-          echo chmod +x ./deploy.sh
-          echo ./deploy.sh push-staging challengeportal
-      - name: setup-outputbucket-prod
-        if: github.ref == 'refs/heads/releases/portals/production'
-        run: |
-          cd apps/portals
-          echo chmod +x ./deploy.sh
-          echo ./deploy.sh WARNING-push-production challengeportal
+    uses: ./.github/workflows/build-and-deploy-portal.yml
+    with:
+      portal-name: challengeportal
