@@ -12,29 +12,11 @@ import { SynapseClient } from '../../../../src/lib'
 import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 
 const defaultProps: LoginAwareButtonProps = {
-  variant: 'contained',
-  color: 'secondary',
-  sx: {
-    color: 'white',
-    fontWeight: 400,
-    ':hover': { color: 'white' },
-    ':active': { color: 'white' },
-    ':visited': { color: 'white' },
-  },
   children: 'Register for this Challenge',
   href: 'https://www.synapse.org/',
 }
 
 const toProps: LoginAwareButtonProps = {
-  variant: 'contained',
-  color: 'secondary',
-  sx: {
-    color: 'white',
-    fontWeight: 400,
-    ':hover': { color: 'white' },
-    ':active': { color: 'white' },
-    ':visited': { color: 'white' },
-  },
   children: 'Register for this Challenge',
   to: '/pathName?key=value#fragment',
 }
