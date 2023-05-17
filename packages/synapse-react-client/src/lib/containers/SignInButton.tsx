@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Link } from '@mui/material'
 import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
 
 export type SignInProps = {
@@ -9,13 +10,13 @@ export type SignInProps = {
 // modal
 const SignInButton = ({ className, style }: SignInProps) => {
   return (
-    <a
+    <Link
       type="button"
       style={style}
       className={`SignInButton ${SRC_SIGN_IN_CLASS} ${className}`}
     >
       Sign In
-    </a>
+    </Link>
   )
 }
 
