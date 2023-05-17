@@ -309,26 +309,10 @@ export const DownloadConfirmation: React.FunctionComponent<
               : QUERY_FILTERS_COLLAPSED_CSS
           }
         `}
-      >
-        <Box display="flex" justifyContent="space-evenly">
-          <DownloadConfirmationContent
-            status={status}
-            fileCount={fileCount}
-            fileSize={fileSize}
-          />
-          <Box
-            className="download-confirmation-action"
-            display="flex"
-            alignItems="center"
-            ml={2}
-          >
+        action={
+          <>
             {status !== StatusEnum.PROCESSING && (
-              <Button
-                variant="text"
-                color="primary"
-                onClick={onCancel}
-                sx={{ mr: '5px' }}
-              >
+              <Button variant="text" color="primary" onClick={onCancel}>
                 {StatusConstruct[status].closeText}
               </Button>
             )}
@@ -341,11 +325,20 @@ export const DownloadConfirmation: React.FunctionComponent<
                 onClick={() => {
                   triggerAddToDownload()
                 }}
+                sx={{ ml: '5px' }}
               >
                 Add
               </Button>
             )}
-          </Box>
+          </>
+        }
+      >
+        <Box display="flex">
+          <DownloadConfirmationContent
+            status={status}
+            fileCount={fileCount}
+            fileSize={fileSize}
+          />
         </Box>
       </Alert>
     </>
