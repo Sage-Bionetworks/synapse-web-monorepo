@@ -220,37 +220,37 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
       uriValue: 'Task1',
       // specify a column that determines visibility.  For this case, set to a required Task0 annotation (description)
       // toolTip: 'Task 1',
-      hideIfColumnValueUndefined: 'Task_0.Description',
+      hideIfColumnValueNull: 'Task_0.Description',
       synapseConfigArray: taskTabConfigs('Task_0'),
     },
     {
       title: 'Task 2',
       uriValue: 'Task2',
-      hideIfColumnValueUndefined: 'Task_1.Description',
+      hideIfColumnValueNull: 'Task_1.Description',
       synapseConfigArray: taskTabConfigs('Task_1'),
     },
     {
       title: 'Task 3',
       uriValue: 'Task3',
-      hideIfColumnValueUndefined: 'Task_2.Description',
+      hideIfColumnValueNull: 'Task_2.Description',
       synapseConfigArray: taskTabConfigs('Task_2'),
     },
     {
       title: 'Task 4',
       uriValue: 'Task4',
-      hideIfColumnValueUndefined: 'Task_3.Description',
+      hideIfColumnValueNull: 'Task_3.Description',
       synapseConfigArray: taskTabConfigs('Task_3'),
     },
     {
       title: 'Task 5',
       uriValue: 'Task5',
-      hideIfColumnValueUndefined: 'Task_4.Description',
+      hideIfColumnValueNull: 'Task_4.Description',
       synapseConfigArray: taskTabConfigs('Task_4'),
     },
     {
       title: 'News',
       uriValue: 'News',
-      hideIfColumnValueUndefined: 'Announcements',
+      hideIfColumnValueNull: 'Announcements',
       synapseConfigArray: [
         {
           name: 'Markdown',

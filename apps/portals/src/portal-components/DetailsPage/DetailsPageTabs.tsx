@@ -42,9 +42,9 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
       </Switch>
       <div className="tab-groups">
         {tabConfigs.map((tab, index) => {
-          if (tab.hideIfColumnValueUndefined) {
+          if (tab.hideIfColumnValueNull) {
             if (rowValues && headers) {
-              const colIndex = headers.findIndex(h => h.name == tab.hideIfColumnValueUndefined)
+              const colIndex = headers.findIndex(h => h.name == tab.hideIfColumnValueNull)
               if (!rowValues[colIndex]) {
                 return <></>
               }
