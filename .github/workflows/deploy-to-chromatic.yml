@@ -1,0 +1,29 @@
+name: 'Deploy Storybook to Chromatic'
+
+env:
+  NODE_OPTIONS: '--max-old-space-size=4096'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request_target:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+        with:
+          # Chromatic requires full git history to track changes
+          fetch-depth: 0
+      - uses: ./.github/actions/pnpm-setup-action
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: packages/synapse-react-client
+          exitZeroOnChanges: true
+          exitOnceUploaded: true

@@ -1,4 +1,4 @@
-name: 'Publish Storybook'
+name: 'Publish Storybook to GitHub Pages'
 
 env:
   NODE_OPTIONS: '--max-old-space-size=4096'
@@ -14,9 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/pnpm-setup-action
-      - name: Build docs
-        run: pnpm nx run synapse-react-client:build:docs
-      - name: Deploy docs to GitHub Pages
+      - name: Build Storybook
+        run: pnpm nx run synapse-react-client:build:gh-pages
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           branch: gh-pages
