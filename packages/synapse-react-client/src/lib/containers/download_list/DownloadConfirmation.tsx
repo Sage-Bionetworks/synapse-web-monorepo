@@ -93,8 +93,8 @@ const StatusConstruct: UiStateDictionary = {
         Note: Files that you add will be mixed in with the files already in your
         download cart.
         <br />
-        If you don't want to mix these files, clear your download cart before
-        continuing.
+        If you don&apos;t want to mix these files, clear your download cart
+        before continuing.
       </>
     ),
     closeText: 'Cancel',
