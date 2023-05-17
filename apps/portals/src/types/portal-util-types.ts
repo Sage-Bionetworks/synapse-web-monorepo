@@ -60,5 +60,5 @@ export type DetailsPageTabProps = DetailsPageContent & {
   cssClass?: string
   toolTip?: string
   /** Given this column name, if the assocated value in this column is not set, then this tab will be hidden */
-  hideIfColumnValueUndefined?: string
+  hideIfColumnValueNull?: string
 }
