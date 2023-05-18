@@ -229,7 +229,7 @@
     "build:esbuild": "rimraf dist/umd && node esbuild.config.mjs",
     "serve:docs": "pnpm storybook",
     "build:docs": "pnpm build:storybook",
-    "build:build:gh-pages": "pnpm build-storybook && touch storybook-static/.nojekyll",
+    "build:gh-pages": "pnpm build-storybook && touch storybook-static/.nojekyll",
     "build-storybook": "storybook build",
     "link-src": "pnpm link && cd ./node_modules/react && pnpm link && cd ../react-router && pnpm link && cd ../react-router-dom && pnpm link && cd ../../",
     "unlink-src": "pnpm unlink && cd ./node_modules/react && pnpm unlink && cd ../react-router && pnpm unlink && cd ../react-router-dom && pnpm unlink && cd ../../",
