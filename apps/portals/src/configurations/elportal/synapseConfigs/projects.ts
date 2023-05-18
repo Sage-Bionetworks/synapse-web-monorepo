@@ -6,10 +6,13 @@ import {
   publicationsSql,
   studiesSql,
   peopleSql,
+  computationalSql
 } from '../resources'
-import { DetailsPageProps, RowSynapseConfig } from 'types/portal-util-types'
+import { DetailsPageProps } from 'types/portal-util-types'
 import { studyCardConfiguration } from './studies'
 import { publicationCardProps } from './publications'
+import { computationalCardConfiguration } from './computational_tools'
+import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
 
 const rgbIndex = 4
 export const projectCardConfiguration: CardConfiguration = {
@@ -23,7 +26,6 @@ export const projectCardConfiguration: CardConfiguration = {
       'Institutions',
       'Program',
       'Grant Number',
-      'More Information',
     ],
   },
   secondaryLabelLimit: 4,
@@ -76,6 +78,17 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
         sql: peopleSql,
         limit: 6,
         type: SynapseConstants.MEDIUM_USER_CARD,
+      },
+    },
+    {
+      name: 'CardContainerLogic',
+      title: 'Computational Tools',
+      columnName: 'Grant',
+      tableSqlKeys: ['Grant Number'],
+      props: {
+        sqlOperator: ColumnMultiValueFunction.HAS,
+        sql: computationalSql,
+        ...computationalCardConfiguration,
       },
     },
   ],
