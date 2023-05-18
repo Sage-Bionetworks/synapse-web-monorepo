@@ -174,7 +174,10 @@ import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessT
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
-import { ChallengePagedResults } from './synapseTypes/ChallengePagedResults'
+import {
+  Challenge,
+  ChallengePagedResults,
+} from './synapseTypes/ChallengePagedResults'
 import {
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken,
@@ -1418,6 +1421,18 @@ export const getUserChallenges = (
   limit: string | number = 200,
 ): Promise<ChallengePagedResults> => {
   const url = `/repo/v1/challenge?participantId=${userId}&offset=${offset}&limit=${limit}`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Get the Challenge associated to a particular Project entity
+ * https://rest-docs.synapse.org/rest/GET/entity/id/challenge.html
+ */
+export const getEntityChallenge = (
+  entityId: string | number,
+  accessToken: string | undefined,
+): Promise<Challenge> => {
+  const url = `/repo/v1/entity/${entityId}/challenge`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 

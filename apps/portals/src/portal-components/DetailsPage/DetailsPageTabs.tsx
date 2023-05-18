@@ -26,6 +26,8 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
 ) => {
   const { tabConfigs, loading, queryResultBundle, showMenu } = props
   const { url } = useRouteMatch()
+  const rowValues = queryResultBundle?.queryResult?.queryResults.rows[0].values
+  const headers = queryResultBundle?.queryResult?.queryResults.headers
   const urlWithTrailingSlash = `${url}${url.endsWith('/') ? '' : '/'}`
   const { search } = useLocation()
   return (
@@ -40,6 +42,16 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
       </Switch>
       <div className="tab-groups">
         {tabConfigs.map((tab, index) => {
+          if (tab.hideIfColumnValueNull) {
+            if (rowValues && headers) {
+              const colIndex = headers.findIndex(h => h.name == tab.hideIfColumnValueNull)
+              if (!rowValues[colIndex]) {
+                return <></>
+              }
+            } else {
+              return <></>
+            }
+          }
           return (
             <Tooltip
               key={tab.uriValue}

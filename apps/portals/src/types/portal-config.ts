@@ -181,6 +181,10 @@ type SynapsePlot = {
   name: 'SynapsePlot'
   props: SynapsePlotProps
 }
+type ChallengeParticipantGoogleMap = {
+  name: 'ChallengeParticipantGoogleMap'
+  props: undefined
+}
 type UserCardListRotate = {
   name: 'UserCardListRotate'
   props: UserCardListRotateProps
@@ -315,6 +319,7 @@ export type SynapseConfig = (
   | SubsectionRowRenderer
   | ToggleSynapseObjects
   | TabbedSynapseObjects
+  | ChallengeParticipantGoogleMap
   | Header
 ) &
   Metadata
