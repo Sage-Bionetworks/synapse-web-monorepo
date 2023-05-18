@@ -2,23 +2,18 @@ import * as React from 'react'
 import DownloadDetails, {
   DownloadDetailsProps,
 } from '../../../../src/lib/containers/download_list/DownloadDetails'
-import ReactDOM from 'react-dom'
-import { act } from '@testing-library/react'
-import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
-import { screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+
+const renderComponent = async (props: DownloadDetailsProps) => {
+  return await act(async () => {
+    render(<DownloadDetails {...props} />, {
+      wrapper: createWrapper(),
+    })
+  })
+}
 
 describe('it performs all functionality', () => {
-  let container: HTMLDivElement
-  beforeEach(() => {
-    container = document.createElement('div')
-    document.body.appendChild(container)
-  })
-  afterEach(() => {
-    document.body.removeChild(container!)
-    // @ts-ignore
-    container = null
-  })
-
   const fn = require('../../../../src/lib/utils/functions/testDownloadSpeed')
   fn.testDownloadSpeed = jest.fn().mockResolvedValue(20)
   const props: DownloadDetailsProps = {
@@ -26,50 +21,30 @@ describe('it performs all functionality', () => {
     numBytes: 10,
   }
   it('renders without crashing', async () => {
-    await act(async () => {
-      ReactDOM.render(
-        <SynapseTestContext>
-          <DownloadDetails {...props} />
-        </SynapseTestContext>,
-        container,
-      )
-    })
-    const wrapper = container.querySelector<HTMLDivElement>('span')
-    expect(wrapper).toBeDefined()
+    await renderComponent(props)
+    const wrapper = document.querySelector('span')
+    expect(wrapper).toHaveClass('download-details-container')
   })
   it('renders with all the values set', async () => {
-    await act(async () => {
-      ReactDOM.render(
-        <SynapseTestContext>
-          <DownloadDetails {...props} />
-        </SynapseTestContext>,
-        container,
-      )
-    })
+    await renderComponent(props)
     expect(
-      container.querySelectorAll('span.SRC-primary-text-color'),
+      document.querySelectorAll('svg.SRC-primary-text-color'),
     ).toHaveLength(3)
+    expect(screen.getByText(`${props.numFiles} files`)).toBeInTheDocument()
   })
   it('renders with the numFiles is 0', async () => {
-    await act(async () => {
-      ReactDOM.render(
-        <SynapseTestContext>
-          <DownloadDetails {...{ ...props, numFiles: 0 }} />
-        </SynapseTestContext>,
-        container,
-      )
-    })
-    expect(container.querySelectorAll('span.SRC-inactive')).toHaveLength(1)
+    await renderComponent({ ...props, numFiles: 0 })
+    expect(document.querySelectorAll('svg.SRC-inactive')).toHaveLength(1)
   })
   it('renders with undefined bytes', async () => {
-    await act(async () => {
-      ReactDOM.render(
-        <SynapseTestContext>
-          <DownloadDetails {...{ ...props, numBytes: undefined }} />
-        </SynapseTestContext>,
-        container,
-      )
-    })
+    await renderComponent({ ...props, numBytes: undefined })
+    expect(screen.queryByTestId('numBytesUI')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('downloadTimeEstimateUI'),
+    ).not.toBeInTheDocument()
+  })
+  it('does not render size/time when 0 bytes', async () => {
+    await renderComponent({ ...props, numBytes: 0 })
     expect(screen.queryByTestId('numBytesUI')).not.toBeInTheDocument()
     expect(
       screen.queryByTestId('downloadTimeEstimateUI'),
