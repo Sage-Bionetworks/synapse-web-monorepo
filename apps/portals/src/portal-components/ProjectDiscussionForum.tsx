@@ -5,12 +5,12 @@ import { ForumPage } from 'synapse-react-client/dist/containers/discussion_forum
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Box, IconButton } from '@mui/material'
-import { generateExcludedSearchParamKey } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
+import { getIgnoredQueryFilterSearchParamKey } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
 
 const ProjectDiscussionForum = () => {
   const urlSearchParams = new URLSearchParams(window.location.search)
   const entityId = urlSearchParams.get('id') ?? ''
-  const threadIdSearchParamKey:string = generateExcludedSearchParamKey('threadId', 'forum')
+  const threadIdSearchParamKey:string = getIgnoredQueryFilterSearchParamKey('threadId', 'forum')
   const threadId = urlSearchParams.get(threadIdSearchParamKey) ?? ''
   const location = useLocation()
   const history = useHistory()

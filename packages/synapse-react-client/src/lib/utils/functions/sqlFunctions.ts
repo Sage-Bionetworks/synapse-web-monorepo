@@ -20,7 +20,7 @@ function removePrefixIfSynId(value: string) {
   }
   return value
 }
-export const generateExcludedSearchParamKey = (
+export const getIgnoredQueryFilterSearchParamKey = (
   key: string,
   namespace?: string,
 ) => {
