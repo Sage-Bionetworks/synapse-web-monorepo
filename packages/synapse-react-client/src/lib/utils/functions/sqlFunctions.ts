@@ -35,7 +35,8 @@ export const generateQueryFilterFromSearchParams = (
   if (!searchParams) {
     return
   }
-  const isQueryWrapperKey = (key: string) => key.startsWith('QueryWrapper')
+  const isQueryWrapperKey = (key: string) =>
+    key.startsWith('QueryWrapper') || key.endsWith('NotAQueryFilterKey')
   const searchParamKeys = Object.keys(searchParams)
   if (
     searchParamKeys.length === 0 ||

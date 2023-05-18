@@ -185,6 +185,10 @@ type ChallengeParticipantGoogleMap = {
   name: 'ChallengeParticipantGoogleMap'
   props: undefined
 }
+type ProjectDiscussionForum = {
+  name: 'ProjectDiscussionForum'
+  props: undefined
+}
 type UserCardListRotate = {
   name: 'UserCardListRotate'
   props: UserCardListRotateProps
@@ -320,6 +324,7 @@ export type SynapseConfig = (
   | ToggleSynapseObjects
   | TabbedSynapseObjects
   | ChallengeParticipantGoogleMap
+  | ProjectDiscussionForum
   | Header
 ) &
   Metadata

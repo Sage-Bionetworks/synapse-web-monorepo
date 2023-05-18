@@ -13,6 +13,13 @@ export type DiscussionReplyBundle = {
   isDeleted: boolean
 }
 
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/discussion/Forum.html
+export type Forum = {
+  id: string
+  projectId: string
+  etag: string
+}
+
 export type DiscussionThreadBundle = {
   id: string
   forumId: string

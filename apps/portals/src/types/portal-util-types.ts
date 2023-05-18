@@ -44,6 +44,7 @@ export type DetailsPageContent =
 
 export type DetailsPageProps = DetailsPageContent & {
   showMenu?: boolean // default to true
+  /** Note, to exclude from processing, use the suffix "NotAQueryFilterKey" */
   searchParams?: {
     [index: string]: string
   }

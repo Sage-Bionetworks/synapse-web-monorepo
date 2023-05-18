@@ -61,6 +61,10 @@ const entityQueryKeyObjects = {
     entityQueryKeyObjects.entity(id),
     'entityActions',
   ],
+  entityForum: (id: string) => [
+    entityQueryKeyObjects.entity(id),
+    'entityForum',
+  ],
   entityChallenge: (id: string) => [
     entityQueryKeyObjects.entity(id),
     'entityChallenge',
@@ -207,6 +211,10 @@ export class KeyFactory {
 
   public getEntityChallengeQueryKey(id: string) {
     return this.getKey(...entityQueryKeyObjects.entityChallenge(id))
+  }
+
+  public getForumQueryKey(id: string) {
+    return this.getKey(...entityQueryKeyObjects.entityForum(id))
   }
 
   public getEntityVersionQueryKey(id: string, versionNumber?: string | number) {
