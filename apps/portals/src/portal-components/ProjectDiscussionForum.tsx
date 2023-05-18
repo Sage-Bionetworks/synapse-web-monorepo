@@ -5,20 +5,22 @@ import { ForumPage } from 'synapse-react-client/dist/containers/discussion_forum
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Box, IconButton } from '@mui/material'
+import { generateExcludedSearchParamKey } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
 
 const ProjectDiscussionForum = () => {
   const urlSearchParams = new URLSearchParams(window.location.search)
   const entityId = urlSearchParams.get('id') ?? ''
-  const threadId = urlSearchParams.get('threadIdNotAQueryFilterKey') ?? ''
+  const threadIdSearchParamKey:string = generateExcludedSearchParamKey('threadId', 'forum')
+  const threadId = urlSearchParams.get(threadIdSearchParamKey) ?? ''
   const location = useLocation()
   const history = useHistory()
   const { data: forum } = useGetEntityForum(entityId)
   const updateThreadId = (threadId?:string) => {
     const searchParams = new URLSearchParams(location.search)
     if (threadId) {
-      searchParams.append('threadIdNotAQueryFilterKey', threadId)
+      searchParams.append(threadIdSearchParamKey, threadId)
     } else {
-      searchParams.delete('threadIdNotAQueryFilterKey')
+      searchParams.delete(threadIdSearchParamKey)
     }
     history.replace({ pathname: location.pathname, search: searchParams.toString() })
   }

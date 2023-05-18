@@ -20,7 +20,12 @@ function removePrefixIfSynId(value: string) {
   }
   return value
 }
-
+export const generateExcludedSearchParamKey = (
+  key: string,
+  namespace?: string,
+) => {
+  return `__${namespace ?? ''}_${key}`
+}
 /**
  * Given the search params, return a set of QueryFilters to narrow the the query to view just related data. May return null if a QueryFilter should not be added.
  * @param sql
@@ -36,7 +41,7 @@ export const generateQueryFilterFromSearchParams = (
     return
   }
   const isQueryWrapperKey = (key: string) =>
-    key.startsWith('QueryWrapper') || key.endsWith('NotAQueryFilterKey')
+    key.startsWith('QueryWrapper') || key.startsWith('__')
   const searchParamKeys = Object.keys(searchParams)
   if (
     searchParamKeys.length === 0 ||
