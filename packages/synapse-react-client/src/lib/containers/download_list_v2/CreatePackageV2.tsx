@@ -87,7 +87,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
             started.
           </span>
           {!isLoading && !bulkFileDownloadResponse && (
-            <Box display="flex" alignItems="center">
+            <Box display="flex" alignItems="stretch">
               <TextField
                 onChange={onChange}
                 type="text"

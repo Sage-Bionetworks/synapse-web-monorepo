@@ -299,6 +299,8 @@ export const DownloadConfirmation: React.FunctionComponent<
   return (
     <>
       <Alert
+        sx={{ pr: 4, py: 1 }}
+        icon={StatusConstruct[status].severity === 'error' ? undefined : false}
         severity={StatusConstruct[status].severity}
         className={`download-confirmation ${
           showDownloadConfirmation ? '' : 'hidden'

@@ -8,10 +8,14 @@
   span {
     flex: 1;
     white-space: nowrap;
-    margin-right: 8px;
+    margin-right: 24px;
+    &:last-child {
+      margin-right: 8px;
+    }
   }
   svg {
-    margin-right: 4px;
+    margin-right: 8px;
+    vertical-align: middle;
   }
 }
 
