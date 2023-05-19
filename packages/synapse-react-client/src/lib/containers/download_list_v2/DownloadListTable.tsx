@@ -181,7 +181,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     'ineligibleForPackaging',
   ]
   return (
-    <>
+    <div className="bootstrap-4-backport">
       <BlockingLoader show={copyingAllSynapseIDs} />
       <div className="filterFilesContainer">
         <span className="filterFilesByText">Filter Files By</span>
@@ -378,6 +378,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         </>
       )}
       {isLoading && <SkeletonTable numCols={5} numRows={3} />}
-    </>
+    </div>
   )
 }

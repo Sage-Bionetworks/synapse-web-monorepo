@@ -5,7 +5,11 @@ import dayjs from 'dayjs'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SkeletonInlineBlock } from '../../assets/skeletons/SkeletonInlineBlock'
-import IconSvg from '../IconSvg'
+import {
+  InsertDriveFileTwoTone,
+  LayersTwoTone,
+  WatchLaterTwoTone,
+} from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 import duration from 'dayjs/plugin/duration'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -32,9 +36,10 @@ type State = {
 export default function DownloadDetails(props: DownloadDetailsProps) {
   const { numFiles, numBytes } = props
   const { accessToken } = useSynapseContext()
+  const hasNumBytes = !!numBytes
 
   const [state, setState] = useState<State>({
-    isLoading: !!numBytes, // figure out the estimated download time iff we were given a byte count
+    isLoading: hasNumBytes, // figure out the estimated download time iff we were given a byte count
     downloadSpeed: 0,
   })
   const { isLoading, downloadSpeed } = state
@@ -68,25 +73,21 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   return (
     <span className="download-details-container">
       <span>
-        <span className={fileCountIconClass}>
-          <IconSvg icon="file" />
-        </span>
+        <InsertDriveFileTwoTone className={fileCountIconClass} />
         {isZeroFiles ? (
           <SkeletonInlineBlock width={50} />
         ) : (
-          <> {numFiles}&nbsp;files </>
+          <>{numFiles}&nbsp;files</>
         )}
       </span>
-      {numBytes && (
+      {hasNumBytes && (
         <Tooltip
           title="This is the total size of all files. Zipped package(s) will likely be smaller."
           enterNextDelay={TOOLTIP_DELAY_SHOW}
           placement="top"
         >
           <span data-testid="numBytesUI">
-            <span className={timeEstimateIconClass}>
-              <IconSvg icon="database" />
-            </span>
+            <LayersTwoTone className={timeEstimateIconClass} />
             {isTimeEstimateLoading ? (
               <SkeletonInlineBlock width={50} />
             ) : (
@@ -95,16 +96,14 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           </span>
         </Tooltip>
       )}
-      {numBytes && (
+      {hasNumBytes && (
         <Tooltip
           title="This is an estimate of how long package download will take."
           enterNextDelay={TOOLTIP_DELAY_SHOW}
           placement="top"
         >
           <span data-testid="downloadTimeEstimateUI">
-            <span className={timeEstimateIconClass}>
-              <IconSvg icon="clock" />
-            </span>
+            <WatchLaterTwoTone className={timeEstimateIconClass} />
             {isLoading && numFiles > 0 ? (
               <SkeletonInlineBlock width={50} />
             ) : (
