@@ -254,6 +254,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             )}
             <TextField
               className="EntityFinder__Search__Input"
+              aria-hidden={!searchActive}
               data-active={searchActive}
               inputRef={searchInputRef}
               placeholder="Search by name, Wiki contents, or Synapse ID"
