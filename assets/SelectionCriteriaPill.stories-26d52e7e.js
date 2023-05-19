@@ -1,8 +1,0 @@
-import{S as e}from"./SelectionCriteriaPill-c697ae00.js";import"./jsx-runtime-095bf462.js";import"./index-8db94870.js";import"./_commonjsHelpers-042e6b4d.js";import"./ElementWithTooltip-bd8f818b.js";import"./SynapseTableConstants-942d2b0b.js";import"./IconSvg-999128b5.js";import"./SvgIcon-2fc096fa.js";import"./extends-98964cd2.js";import"./objectWithoutPropertiesLoose-4f48578a.js";import"./styled-ec547c4d.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-29d231ba.js";import"./Tooltip-bd620372.js";import"./useTheme-b607537b.js";import"./isHostComponent-fa76b8d9.js";import"./index-8ce4a492.js";import"./useForkRef-f2aa3d66.js";import"./TransitionGroupContext-0df7f063.js";import"./utils-724ac38b.js";import"./inheritsLoose-c82a83d4.js";import"./Clear-64952050.js";import"./RegularExpressions-bc0adf55.js";import"./Icon-4ee84065.js";import"./SynapseConstants-667d004c.js";import"./Button-5637ed55.js";import"./createWithBsPrefix-0fdadc7a.js";import"./index-58d3fd43.js";import"./hasClass-ec9efd32.js";const j={title:"Explore/Tokens/SelectionCriteriaPill",component:e},t={args:{key:"key",innerText:"Facet Value: ABC",tooltipText:"You can add tooltip text too."}};var o,r,i;t.parameters={...t.parameters,docs:{...(o=t.parameters)==null?void 0:o.docs,source:{originalSource:`{
-  args: {
-    key: 'key',
-    innerText: 'Facet Value: ABC',
-    tooltipText: 'You can add tooltip text too.'
-  }
-}`,...(i=(r=t.parameters)==null?void 0:r.docs)==null?void 0:i.source}}};const q=["Pill"];export{t as Pill,q as __namedExportsOrder,j as default};
-//# sourceMappingURL=SelectionCriteriaPill.stories-26d52e7e.js.map
