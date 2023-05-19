@@ -1,5 +1,0 @@
-import{a,j as r}from"./jsx-runtime-095bf462.js";import{br as c}from"./EntityTypeUtils-0105e0d3.js";import"./index-8db94870.js";import{P as m}from"./getEndpoint-ac94413e.js";import{a as i,R as f}from"./RequirementItem-ed33578a.js";import{T as o}from"./Typography-26751034.js";import{L as p}from"./Link-76c266e8.js";function s(){const{data:e,isLoading:t}=c(),n=t?i.LOADING:e!=null&&e.isCertified?i.COMPLETE:i.LOCKED;return a(f,{status:n,children:[a(o,{variant:"body1",children:["You must first become a"," ",r(p,{href:`${m.PORTAL}#!Quiz:`,children:"certified user"})]}),t&&r("span",{className:"spinner"}),(e==null?void 0:e.isCertified)&&r(o,{variant:"body1",children:"You are a certified user"})]})}try{s.displayName="CertificationRequirement",s.__docgenInfo={description:`When creating requests for access requirements on a particular file, one or more access requirements may require that the
-user is certified.
-
-This component checks if the user is certified, and if not, provides a link on how to begin certification.`,displayName:"CertificationRequirement",props:{}}}catch{}export{s as C};
-//# sourceMappingURL=CertificationRequirement-5940af3e.js.map

@@ -1,2 +1,0 @@
-var L=(O=>(O.S3="S3",O.GOOGLECLOUDSTORAGE="GOOGLECLOUDSTORAGE",O.SFTP="SFTP",O.HTTPS="HTTPS",O.PROXYLOCAL="PROXYLOCAL",O.NONE="NONE",O))(L||{});export{L as U};
-//# sourceMappingURL=UploadDestination-5ff3844f.js.map
