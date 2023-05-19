@@ -19,6 +19,7 @@ export const Demo: Story = {
     title: 'My Dialog Title',
     confirmButtonText: 'Confirm',
     confirmButtonColor: 'error',
+    maxWidth: 'lg',
     content: (
       <>
         <p>
@@ -27,8 +28,10 @@ export const Demo: Story = {
         <Button variant="contained">Button</Button>
       </>
     ),
-    helpUrl: 'https://help.synapse.org',
-    helpMarkdown:
-      'Option to show a _HelpPopover_ in the title bar with a link to the docs site',
+    titleHelpPopoverProps: {
+      helpUrl: 'https://help.synapse.org',
+      markdownText:
+        'Option to show a _HelpPopover_ in the title bar with a link to the docs site',
+    },
   },
 }

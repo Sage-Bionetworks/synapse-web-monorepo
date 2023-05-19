@@ -79,16 +79,9 @@
       margin-bottom: 0;
     }
 
-    .ProjectIdInputGroup {
-      display: flex;
-      gap: 5px;
-    }
-
-    .styled-svg-wrapper {
-      position: absolute;
-      right: 5px;
-      z-index: 5;
-      margin-top: -2px;
+    label {
+      margin-top: 0;
+      margin-bottom: 5px;
     }
   }
 }

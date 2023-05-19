@@ -89,7 +89,6 @@ const defaultProps: EntityFinderProps = {
   initialContainer: 'syn123',
   selectMultiple: true,
   onSelectedChange: mockOnSelectionChange,
-  showVersionSelection: true,
   visibleTypesInList: [EntityType.FILE],
   visibleTypesInTree: [EntityType.PROJECT, EntityType.FOLDER],
   selectableTypes: Object.values(EntityType),

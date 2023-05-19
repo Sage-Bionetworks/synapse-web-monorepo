@@ -15,9 +15,6 @@
     align-items: center;
     padding: 15px 20px;
 
-    .alert {
-      margin-bottom: 0;
-    }
     .ItemCount {
       p {
         margin-bottom: 0;
@@ -45,13 +42,6 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-
-    .AddItemsButton {
-      min-width: 150px;
-      span {
-        margin: 5px;
-      }
-    }
   }
 
   select.form-control {
