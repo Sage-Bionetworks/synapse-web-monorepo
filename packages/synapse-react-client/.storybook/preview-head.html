@@ -1,8 +1,8 @@
 <script>
   window.global = window
-  window.sql = {}
 </script>
 
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" />
 <link
   rel="stylesheet"
   href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -51,18 +51,3 @@
 <script src="https://cdn.jsdelivr.net/npm/markdown-it-container@2.0.0/dist/markdown-it-container.min.js"></script>
 <!-- end synapse markdown imports -->
 <script crossorigin src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script
-  crossorigin
-  src="https://unpkg.com/react-plotly.js@1.0.2/dist/create-plotly-component.js"
-></script>
-
-<script>
-  const currentStack = JSON.parse(
-    window.localStorage.getItem('SynapseReactClientStyleGuideStack') ?? 'null',
-  )
-  if (currentStack) {
-    window.SRC = {
-      OVERRIDE_ENDPOINT_CONFIG: currentStack,
-    }
-  }
-</script>
