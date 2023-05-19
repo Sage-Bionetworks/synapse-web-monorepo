@@ -1,9 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react'
-
+import React from 'react'
 import FullWidthAlert from '../src/components/FullWidthAlert/FullWidthAlert'
 
 const meta = {
   title: 'UI/FullWidthAlert',
+  argTypes: {
+    variant: {
+      options: ['warning', 'info', 'danger', 'success', undefined],
+      control: { type: 'radio' },
+    },
+  },
   component: FullWidthAlert,
 } satisfies Meta
 export default meta
@@ -52,4 +58,15 @@ export const SuccessAlertWithPrimaryButtonOnly: Story = {
     isGlobal: true,
     onClose: undefined,
   },
+}
+
+export const SynapseNavDrawerIsShowing: Story = {
+  args: {
+    ...SuccessAlertWithPrimaryButtonOnly.args,
+  },
+  render: args => (
+    <body className="SynapseNavDrawerIsShowing">
+      <FullWidthAlert {...args} />
+    </body>
+  ),
 }

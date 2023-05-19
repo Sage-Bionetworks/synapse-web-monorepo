@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, FormControl, FormLabel } from 'react-bootstrap'
+import { Button, TextField, Typography } from '@mui/material'
 import { displayToast } from '../../../src/components/ToastMessage/ToastMessage'
 import { RadioGroup } from '../../../src/components/widgets/RadioGroup'
 
@@ -40,8 +40,15 @@ export const ToastDemo = () => {
     })
   }
   return (
-    <div className="bootstrap-4-backport">
-      <FormLabel>Alert Variant</FormLabel>
+    <div>
+      {/* 
+        theme will be provided by StorybookComponentWrapper when this component appears in a Story, 
+        which is the only place where this component is used, 
+        so ignore that "smallText2" is not a default MUI Typography variant
+      @ts-ignore */}
+      <Typography component="label" variant="smallText2">
+        Alert Variant
+      </Typography>
       <RadioGroup
         id="toast-demo-variant"
         options={[
@@ -55,28 +62,48 @@ export const ToastDemo = () => {
           setVariant(value as 'info' | 'success' | 'warning' | 'danger')
         }
       />
-      <FormLabel>Message</FormLabel>
-      <FormControl value={message} onChange={e => setMessage(e.target.value)} />
-      <FormLabel>Title</FormLabel>
-      <FormControl value={title} onChange={e => setTitle(e.target.value)} />
-      <FormLabel>Auto-close (ms)</FormLabel>
-      <FormControl
+      <TextField
+        fullWidth
+        margin="dense"
+        label="Message"
+        value={message}
+        onChange={e => setMessage(e.target.value)}
+      />
+      <TextField
+        fullWidth
+        margin="dense"
+        label="Title"
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+      />
+      <TextField
+        fullWidth
+        margin="dense"
+        label="Auto-close (ms)"
         type="number"
         value={autoClose}
         onChange={e => setAutoClose(Number.parseInt(e.target.value))}
       />
-      <FormLabel>Optional Button Text</FormLabel>
-      <FormControl
+      <TextField
+        fullWidth
+        margin="dense"
+        label="Optional Button Text"
         value={buttonText}
         onChange={e => setButtonText(e.target.value)}
       />
-      <FormLabel>Optional Link Text</FormLabel>
-      <FormControl
+      <TextField
+        fullWidth
+        margin="dense"
+        label="Optional Link Text"
         value={linkText}
         onChange={e => setLinkText(e.target.value)}
       />
-
-      <Button variant="primary-500" onClick={fireToast}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={fireToast}
+        sx={{ mt: 2 }}
+      >
         Push toast message
       </Button>
     </div>

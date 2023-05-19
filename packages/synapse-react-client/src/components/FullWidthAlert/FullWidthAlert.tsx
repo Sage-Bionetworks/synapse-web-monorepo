@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react'
-import { Button, Alert, AlertProps } from 'react-bootstrap'
 import {
-  InfoTwoTone,
-  ErrorTwoTone,
-  CheckCircleTwoTone,
-  HighlightOffTwoTone,
-  Clear,
-} from '@mui/icons-material'
-import { Typography } from '@mui/material'
-import { Tooltip } from '@mui/material'
+  Alert,
+  AlertProps,
+  AlertTitle,
+  Button,
+  ButtonProps,
+  Grid,
+  Snackbar,
+  Stack,
+  Tooltip,
+} from '@mui/material'
 
 export type AlertButtonConfig = {
   text: string
@@ -24,8 +25,11 @@ export type AlertButtonConfig = {
   | { href?: string }
 )
 
-export interface FullWidthAlertProps extends AlertProps {
-  variant: string
+export type FullWidthAlertVariant = 'warning' | 'info' | 'danger' | 'success'
+
+export interface FullWidthAlertProps {
+  variant?: FullWidthAlertVariant
+  show?: boolean
   title?: string
   description?: React.ReactNode
   primaryButtonConfig?: AlertButtonConfig
@@ -35,37 +39,24 @@ export interface FullWidthAlertProps extends AlertProps {
   isGlobal?: boolean
 }
 
-function getIcon(variant?: string) {
-  switch (variant) {
-    case 'warning':
-      return <ErrorTwoTone className="text-warning" fontSize={'large'} />
-    case 'info':
-      return <InfoTwoTone className="text-info" fontSize={'large'} />
-    case 'danger':
-      return <HighlightOffTwoTone className="text-danger" fontSize={'large'} />
-    case 'success':
-      return <CheckCircleTwoTone className="text-success" fontSize={'large'} />
-    default:
-      return <></>
-  }
+function variantToSeverity(variant: string | undefined) {
+  return (variant === 'danger' ? 'error' : variant) as AlertProps['severity']
 }
 
 function ButtonFromConfig(props: {
   config?: AlertButtonConfig
-  className?: string
-  variant: string
+  variant: ButtonProps['variant']
 }) {
-  const { config, variant, className } = props
+  const { config, variant } = props
   if (config && ('onClick' in config || 'href' in config)) {
     return (
       <Tooltip title={config.tooltipText ?? ''} enterNextDelay={300}>
         <span // See https://github.com/wwayne/react-tooltip/issues/304
-          className={className}
           data-tip-disable={false}
         >
           <Button
             variant={variant}
-            size={'sm'}
+            color="primary"
             disabled={config.isDisabled}
             onClick={e => {
               if ('onClick' in config) {
@@ -76,6 +67,7 @@ function ButtonFromConfig(props: {
                 window.open(config.href, '_blank', 'noopener')
               }
             }}
+            sx={{ flexShrink: 0 }}
           >
             {config.text}
           </Button>
@@ -96,14 +88,12 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     description,
     primaryButtonConfig,
     secondaryButtonConfig,
-    show,
+    show = true,
     onClose,
     autoCloseAfterDelayInSeconds,
     variant = 'info',
-    transition,
     isGlobal = true,
   } = props
-  const iconContent = getIcon(variant)
 
   useEffect(() => {
     let timer: NodeJS.Timeout
@@ -116,49 +106,103 @@ function FullWidthAlert(props: FullWidthAlertProps) {
       }
     }
   }, [onClose, autoCloseAfterDelayInSeconds])
-  const additionalAlertVariantClass = variant ? `alert-${variant}` : ''
-  return (
+
+  const gridSize = 12
+  const buttonGridSize = 4
+  const hasButtons = primaryButtonConfig || secondaryButtonConfig
+  const buttonGridSizeMap = {
+    sm: hasButtons ? buttonGridSize + 1 : 0,
+    md: hasButtons ? buttonGridSize - 1 : 0,
+    lg: hasButtons ? buttonGridSize : 0,
+  }
+
+  const alert = (
     <Alert
-      variant={variant}
-      show={show}
-      dismissible={false}
-      transition={transition}
-      className={`FullWidthAlert bootstrap-4-backport ${
-        isGlobal ? 'global' : ''
-      } ${additionalAlertVariantClass}`}
+      severity={variantToSeverity(variant)}
+      sx={{
+        width: '100%',
+        '.MuiAlert-message': {
+          flexGrow: 1,
+        },
+      }}
+      className={`FullWidthAlert ${isGlobal && 'global'}`}
+      onClose={onClose}
     >
-      <div className={`gridContainer ${onClose ? 'hasCloseButton' : ''}`}>
-        <span className="iconArea">{iconContent}</span>
-        <span className="mainContent">
-          <span className="messageArea">
-            <Typography variant="smallText2">{title}</Typography>
-            {title && description && <div className="SRC-marginBottomTen" />}
-            <Typography variant="smallText1">{description}</Typography>
-          </span>
-          <span className="buttonArea">
-            {secondaryButtonConfig && (
-              <ButtonFromConfig
-                className="secondaryButton"
-                config={secondaryButtonConfig}
-                variant="tertiary"
-              />
-            )}
-            {primaryButtonConfig && (
-              <ButtonFromConfig
-                className="primaryButton"
-                config={primaryButtonConfig}
-                variant="sds-primary"
-              />
-            )}
-          </span>
-        </span>
-        {onClose && (
-          <button className="closeAlert" onClick={onClose}>
-            <Clear fontSize={'large'} />
-          </button>
+      <Grid
+        container
+        rowSpacing={1}
+        columnSpacing={2}
+        direction={{ xs: 'column', sm: 'row' }}
+        alignItems={{ xs: 'start', sm: 'center' }}
+      >
+        <Grid
+          item
+          xs={gridSize}
+          sm={gridSize - buttonGridSizeMap.sm}
+          md={gridSize - buttonGridSizeMap.md}
+          lg={gridSize - buttonGridSizeMap.lg}
+        >
+          {title && <AlertTitle>{title}</AlertTitle>}
+          {description}
+        </Grid>
+        {hasButtons && (
+          <Grid
+            item
+            xs={gridSize}
+            sm={buttonGridSizeMap.sm}
+            md={buttonGridSizeMap.md}
+            lg={buttonGridSizeMap.lg}
+            display="flex"
+            justifyContent="flex-end"
+          >
+            <Stack
+              spacing={{ xs: 1, lg: 2 }}
+              direction={{
+                xs: 'column-reverse',
+                sm: 'column',
+                lg: 'row',
+              }}
+            >
+              {secondaryButtonConfig && (
+                <ButtonFromConfig
+                  config={secondaryButtonConfig}
+                  variant="text"
+                />
+              )}
+              {primaryButtonConfig && (
+                <ButtonFromConfig
+                  config={primaryButtonConfig}
+                  variant="contained"
+                />
+              )}
+            </Stack>
+          </Grid>
         )}
-      </div>
+      </Grid>
     </Alert>
+  )
+
+  return (
+    <>
+      {isGlobal ? (
+        <Snackbar
+          open={show}
+          sx={{
+            width: '96%',
+            filter:
+              'drop-shadow(0px 8px 8px rgba(0, 0, 0, 0.05)) drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.05)) drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.05))',
+          }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          TransitionProps={{
+            appear: false,
+          }}
+        >
+          {alert}
+        </Snackbar>
+      ) : (
+        show && alert
+      )}
+    </>
   )
 }
 

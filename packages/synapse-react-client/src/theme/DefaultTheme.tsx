@@ -2,6 +2,13 @@ import { alpha, Fade, inputBaseClasses, ThemeOptions } from '@mui/material'
 import { typographyOptions } from './typography/Typography'
 import { palette } from './palette/Palettes'
 import linkTheme from './typography/Link'
+import React from 'react'
+import {
+  CheckCircleTwoTone,
+  ErrorTwoTone,
+  HighlightOffTwoTone,
+  InfoTwoTone,
+} from '@mui/icons-material'
 
 const DIALOG_INNER_PADDING = '2px'
 
@@ -10,14 +17,44 @@ export const defaultMuiThemeOptions: ThemeOptions = {
   palette: palette,
   components: {
     MuiAlert: {
+      defaultProps: {
+        square: true,
+        iconMapping: {
+          error: <HighlightOffTwoTone />,
+          info: <InfoTwoTone />,
+          success: <CheckCircleTwoTone />,
+          warning: <ErrorTwoTone />,
+        },
+      },
       styleOverrides: {
         root: ({ ownerState, theme }) => ({
-          borderRadius: '0px',
-          fontSize: '16px',
+          alignItems: 'center',
+          fontSize: '14px',
           borderLeft: `10px solid ${
             // The default severity is 'success'.
             theme.palette[ownerState.severity || 'success']['main']
           }`,
+          color: theme.palette.grey[900],
+          padding: theme.spacing(2),
+          marginBottom: theme.spacing(1),
+          marginTop: theme.spacing(1),
+        }),
+        icon: ({ theme }) => ({
+          marginRight: theme.spacing(3),
+        }),
+        action: ({ ownerState, theme }) => ({
+          paddingRight: theme.spacing(2),
+          ...(ownerState.onClose &&
+            !ownerState.action && { color: theme.palette.grey[700] }),
+        }),
+      },
+    },
+    MuiAlertTitle: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: theme.palette.grey[900],
+          fontSize: '14px',
+          fontWeight: 700,
         }),
       },
     },
