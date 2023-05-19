@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { EntityFinderModal } from '../src/lib/containers/entity_finder/EntityFinderModal'
+import { EntityFinderModal } from '../src/components/EntityFinder/EntityFinderModal'
 import {
   SinglePane as EntityFinderSinglePane,
   DualPane as EntityFinderDualPane,
