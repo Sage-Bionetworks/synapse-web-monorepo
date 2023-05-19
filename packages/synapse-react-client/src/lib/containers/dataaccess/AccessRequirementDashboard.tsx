@@ -161,7 +161,7 @@ export function AccessRequirementDashboard(
             }}
           />
         </div>
-        <Box display="flex" gap="5px" alignItems="baseline">
+        <Box display="flex" gap="5px" alignItems="stretch">
           <TextField
             label="Filter by Project"
             id="project-id-filter"
@@ -184,6 +184,7 @@ export function AccessRequirementDashboard(
             onClick={() => {
               setShowEntityFinder(true)
             }}
+            sx={{ mt: 3, mb: 1.5 }}
           >
             Browse
           </Button>

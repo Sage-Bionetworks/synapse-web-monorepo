@@ -1,5 +1,5 @@
 import pluralize from 'pluralize'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Box,
   Button,
@@ -116,6 +116,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
       type: EntityDetailsListDataConfigurationType.PROMPT,
     })
 
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
   // If a type is selectable, it should be visible in the tree/list (depending on treeOnly)
   const selectableAndVisibleTypesInTree = useMemo(
     () => [...visibleTypesInTree, ...selectableTypes],
@@ -217,79 +219,79 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
         <Box
           display="flex"
           justifyContent="flex-end"
-          alignItems="center"
+          alignItems="stretch"
           pb={1}
         >
           <>
-            {!searchActive ? (
+            {searchActive ? (
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => {
+                  setSearchActive(false)
+                  setSearchInput('')
+                  setSearchTerms(undefined)
+                }}
+                startIcon={<ArrowBackOutlinedIcon />}
+                sx={{ flexShrink: 0, mr: 1 }}
+              >
+                Back to Browse
+              </Button>
+            ) : (
               <Button
                 variant="contained"
                 color="primary"
                 className="EntityFinder__Search__SearchButton"
                 onClick={() => {
                   setSearchActive(true)
+                  searchInputRef.current!.focus()
                 }}
                 startIcon={<SearchIcon />}
-                sx={{ flexShrink: 0, height: '100%' }}
+                sx={{ flexShrink: 0 }}
               >
                 {searchButtonText}
               </Button>
-            ) : (
-              <>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => {
-                    setSearchActive(false)
-                    setSearchInput('')
-                    setSearchTerms(undefined)
-                  }}
-                  startIcon={<ArrowBackOutlinedIcon />}
-                  sx={{ flexShrink: 0, height: '100%', mr: 1 }}
-                >
-                  Back to Browse
-                </Button>
-                <TextField
-                  autoFocus
-                  fullWidth
-                  placeholder="Search by name, Wiki contents, or Synapse ID"
-                  value={searchInput}
-                  onChange={event => {
-                    setSearchInput(event.target.value)
-                  }}
-                  onKeyDown={(event: any) => {
-                    if (event.key === 'Enter') {
-                      if (event.target.value === '') {
-                        setSearchTerms(undefined)
-                      } else {
-                        setSearchTerms(event.target.value.trim().split(' '))
-                      }
-                    }
-                  }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => {
-                            setSearchInput('')
-                            setSearchTerms(undefined)
-                          }}
-                          aria-label="Clear Search"
-                          disabled={!searchInput}
-                        >
-                          <ClearIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </>
             )}
+            <TextField
+              className="EntityFinder__Search__Input"
+              data-active={searchActive}
+              inputRef={searchInputRef}
+              placeholder="Search by name, Wiki contents, or Synapse ID"
+              value={searchInput}
+              onChange={event => {
+                setSearchInput(event.target.value)
+              }}
+              onKeyDown={(event: any) => {
+                if (event.key === 'Enter') {
+                  if (event.target.value === '') {
+                    setSearchTerms(undefined)
+                  } else {
+                    setSearchTerms(event.target.value.trim().split(' '))
+                  }
+                }
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => {
+                        setSearchInput('')
+                        setSearchTerms(undefined)
+                      }}
+                      aria-label="Clear Search"
+                      disabled={!searchInput}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
           </>
         </Box>
         <div className={`EntityFinder__MainPanel ${mainPanelClass}`}>

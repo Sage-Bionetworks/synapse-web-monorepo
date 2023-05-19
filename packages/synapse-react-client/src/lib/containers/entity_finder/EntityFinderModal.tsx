@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Reference } from '../../utils/synapseTypes'
-import { Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { HelpPopoverProps } from '../HelpPopover'
 import WarningDialog from '../synapse_form_wrapper/WarningDialog'
@@ -41,8 +41,8 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
       <ConfirmationDialog
         open={props.show}
         title={props.title}
-        fullWidth
-        maxWidth={false}
+        fullWidth={false}
+        maxWidth="lg"
         titleHelpPopoverProps={props.titleHelpPopoverProps}
         confirmButtonText={props.confirmButtonCopy}
         onConfirm={() => {
@@ -56,7 +56,7 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
           }
         }}
         content={
-          <>
+          <Box width="min-content">
             <Typography variant="body1" mb="10px">
               {props.promptCopy}
             </Typography>
@@ -64,7 +64,7 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
               {...props.configuration}
               onSelectedChange={setSelected}
             />
-          </>
+          </Box>
         }
       />
     </>

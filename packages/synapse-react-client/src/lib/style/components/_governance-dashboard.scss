@@ -83,14 +83,6 @@
       margin-top: 0;
       margin-bottom: 5px;
     }
-
-    .UserSearchBoxV2,
-    .AsyncSelect {
-      .form-control {
-        background-color: map.get(SRC.$colors, 'gray-200');
-        border-radius: 3px;
-      }
-    }
   }
 }
 

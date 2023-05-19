@@ -35,6 +35,20 @@ $-splitter-width: 12px;
 .EntityFinder {
   width: 100%;
   max-width: max-content;
+  margin: auto;
+
+  &__Search__Input {
+    transition: flex-grow 250ms ease-in-out, width 250ms ease-in-out;
+    &[data-active='true'] {
+      flex-grow: 1;
+      width: 100%;
+    }
+    &[data-active='false'] {
+      flex-grow: 0.00001;
+      overflow: hidden;
+      width: 0;
+    }
+  }
 
   &__MainPanel {
     max-width: 100%;
