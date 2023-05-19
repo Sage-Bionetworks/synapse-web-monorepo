@@ -11,7 +11,7 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   name: 'SubsectionRowRenderer',
   args: {
-    sql: 'SELECT abstract as "Summary" FROM syn21918972',
+    sql: 'SELECT abstract as "Summary" FROM syn21918972.488',
     searchParams: {
       grantNumber: 'CA217655',
     },
