@@ -155,7 +155,10 @@ type NFSurveyToast = {
   name: 'NFSurveyToast'
   props: undefined
 }
-
+type ELBetaLaunchBanner = {
+  name: 'ELBetaLaunchBanner'
+  props: undefined
+}
 type ARKWelcomePage = {
   name: 'ARKWelcomePage'
   props: undefined
@@ -319,6 +322,7 @@ export type SynapseConfig = (
   | DownloadCartPage
   | BrowseToolsPage
   | NFSurveyToast
+  | ELBetaLaunchBanner
   | ARKWelcomePage
   | SubsectionRowRenderer
   | ToggleSynapseObjects
