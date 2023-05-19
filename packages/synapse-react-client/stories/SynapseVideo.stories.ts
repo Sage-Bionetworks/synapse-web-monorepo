@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import SynapseVideo from '../src/lib/containers/widgets/SynapseVideo'
+import SynapseVideo from '../src/components/widgets/SynapseVideo'
 
 const meta = {
   title: 'Markdown/SynapseVideo',

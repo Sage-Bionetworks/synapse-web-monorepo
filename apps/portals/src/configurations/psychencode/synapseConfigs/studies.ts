@@ -1,7 +1,7 @@
 import { SynapseConstants } from 'synapse-react-client'
 
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { GenericCardSchema } from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { studiesSql, dataSql, metadataSql } from '../resources'
@@ -9,7 +9,7 @@ import { publicationDetailPageProps } from './publications'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
-} from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+} from '@sage-bionetworks/synapse-types'
 const rgbIndex = 1
 
 export const studySchema: GenericCardSchema = {

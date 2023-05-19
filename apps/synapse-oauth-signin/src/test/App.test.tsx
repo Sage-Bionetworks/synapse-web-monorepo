@@ -2,14 +2,32 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { server } from '../mocks/server'
 import { rest } from 'msw'
 import React from 'react'
-import { ACCESS_TOKEN_COOKIE_KEY } from 'synapse-react-client/dist/utils/SynapseClient'
+import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import App from '../App'
 import userEvent from '@testing-library/user-event'
-import { SynapseClient } from 'synapse-react-client'
-import { LoginResponse } from 'synapse-react-client/dist/utils/synapseTypes/LoginResponse'
-import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from 'synapse-react-client/dist/utils/AppUtils'
+import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
+vi.mock('synapse-react-client', async importActual => {
+  const actual = await importActual<typeof import('synapse-react-client')>()
+  return {
+    ...actual,
+    SynapseClient: {
+      ...actual.SynapseClient,
+      // Create mock but use actual implementation so we can spy on calls
+      consentToOAuth2Request: vi.fn(
+        actual.SynapseClient.consentToOAuth2Request,
+      ),
+    },
+  }
+})
+
+const mockConsentToOAuth2Request = vi.mocked(
+  SynapseClient.consentToOAuth2Request,
+)
+
+const { ACCESS_TOKEN_COOKIE_KEY, POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } =
+  SynapseConstants
 function createParams(prompt?: string) {
   const params = new URLSearchParams()
   params.set('response_type', 'code')
@@ -118,8 +136,6 @@ describe('App integration tests', () => {
   })
 
   test('Consent to app terms', async () => {
-    const consentSpy = vi.spyOn(SynapseClient, 'consentToOAuth2Request')
-
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
@@ -134,10 +150,9 @@ describe('App integration tests', () => {
     // Should redirect
     // TODO: Verify the redirect URL
     await waitFor(() => expect(window.location.replace).toHaveBeenCalled())
-    expect(consentSpy).toHaveBeenCalled()
+    expect(mockConsentToOAuth2Request).toHaveBeenCalled()
   })
   test('Deny consent to app terms', async () => {
-    const consentSpy = vi.spyOn(SynapseClient, 'consentToOAuth2Request')
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
@@ -152,7 +167,7 @@ describe('App integration tests', () => {
     // Should redirect
     // TODO: Verify the redirect URL
     await waitFor(() => expect(window.location.replace).toHaveBeenCalled())
-    expect(consentSpy).not.toHaveBeenCalled()
+    expect(mockConsentToOAuth2Request).not.toHaveBeenCalled()
   })
 
   test('Does not redirect if a token is provided and the user has already consented, if prompt is consent', () => {

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { TrashCanList } from '../src/lib/containers/trash/TrashCanList'
+import { TrashCanList } from '../src/components/trash/TrashCanList'
 
 const meta = {
   title: 'Synapse/TrashCanList',

@@ -1,6 +1,6 @@
 import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
 
 import { peopleSql } from '../resources'
 

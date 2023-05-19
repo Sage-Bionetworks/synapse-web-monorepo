@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import FeaturedToolsList from '../src/lib/containers/home_page/featured_tools/FeaturedToolsList'
+import FeaturedToolsList from '../src/components/FeaturedToolsList/FeaturedToolsList'
 
 const meta = {
   title: 'Home Page/FeaturedToolsList',

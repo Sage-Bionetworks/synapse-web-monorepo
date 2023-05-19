@@ -1,5 +1,5 @@
 import { SynapseConstants } from 'synapse-react-client'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from 'synapse-react-client'
 
 export const programCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
@@ -18,11 +18,13 @@ export const programCardConfiguration: CardConfiguration = {
     matchColumnName: 'Program',
   },
   secondaryLabelLimit: 4,
-  labelLinkConfig: [{
-    isMarkdown: false,
-    matchColumnName: 'More Information',
-    linkColumnName: 'More Information URL'
-  }]
+  labelLinkConfig: [
+    {
+      isMarkdown: false,
+      matchColumnName: 'More Information',
+      linkColumnName: 'More Information URL',
+    },
+  ],
 }
 
 export default programCardConfiguration

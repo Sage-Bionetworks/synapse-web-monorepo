@@ -11,17 +11,33 @@ import {
 import syn16787123Json from '../../mocks/syn16787123.json'
 import {
   AsynchronousJobStatus,
+  ColumnMultiValueFunction,
   EntityHeader,
   PaginatedResults,
   QueryBundleRequest,
   QueryResultBundle,
-} from 'synapse-react-client/dist/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import * as SynapseComponentModule from '../../SynapseComponent'
 import { MemoryRouter } from 'react-router-dom'
-import * as SynapseClient from 'synapse-react-client/dist/utils/SynapseClient'
-import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
-import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
-import { vi, describe, it, expect } from 'vitest'
+import {
+  FullContextProvider,
+  SynapseClientError,
+  SynapseQueries,
+} from 'synapse-react-client'
+import { describe, expect, it, vi } from 'vitest'
+import { UseQueryResult } from 'react-query'
+
+vi.mock('synapse-react-client', async (importActual) => {
+  const actual = await importActual<typeof import('synapse-react-client')>()
+  return {
+    ...actual,
+    SynapseQueries: {
+      ...actual.SynapseQueries,
+      useGetEntityHeaders: vi.fn(),
+      useGetQueryResultBundleWithAsyncStatus: vi.fn(),
+    },
+  }
+})
 
 function renderWithContext(component) {
   return render(
@@ -40,12 +56,19 @@ function renderWithContext(component) {
   )
 }
 
-// We have to mock fetching a table query result, but those details remain untested
-// eslint-disable-next-line no-import-assign
-vi.spyOn(SynapseClient, 'getQueryTableAsyncJobResults').mockResolvedValue({
-  jobState: 'COMPLETE',
-  responseBody: syn16787123Json as QueryResultBundle,
-} as AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>)
+const mockGetQueryTableResults = vi.mocked(
+  SynapseQueries.useGetQueryResultBundleWithAsyncStatus,
+)
+const mockGetEntityHeaders = vi.mocked(SynapseQueries.useGetEntityHeaders)
+
+mockGetQueryTableResults.mockResolvedValue({
+  isLoading: false,
+  error: null,
+  data: {
+    jobState: 'COMPLETE',
+    responseBody: syn16787123Json as QueryResultBundle,
+  } as AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+} as UseQueryResult<AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>, SynapseClientError>)
 
 const expected: PaginatedResults<EntityHeader> = {
   results: [
@@ -64,8 +87,10 @@ const expected: PaginatedResults<EntityHeader> = {
     },
   ],
 }
-
-vi.spyOn(SynapseClient, 'getEntityHeaders').mockResolvedValue(expected)
+mockGetEntityHeaders.mockResolvedValue({ data: expected } as UseQueryResult<
+  PaginatedResults<EntityHeader>,
+  SynapseClientError
+>)
 
 describe('DetailsPage tests', () => {
   it('Renders synapseConfigArray with no tabs', async () => {

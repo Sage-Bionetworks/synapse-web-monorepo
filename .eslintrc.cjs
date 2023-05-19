@@ -9,6 +9,7 @@ module.exports = {
     "jest-dom",
     "@typescript-eslint",
   ],
+    ignorePatterns: ["apps/portals/src/tests/*"],
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",

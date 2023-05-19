@@ -1,3 +1,3 @@
-import palette from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { Palettes } from 'synapse-react-client'
 
-export default palette
+export default Palettes.palette

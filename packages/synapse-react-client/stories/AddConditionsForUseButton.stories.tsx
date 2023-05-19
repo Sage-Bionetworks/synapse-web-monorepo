@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import AddConditionsForUseButton from '../src/lib/containers/access_requirements/AddConditionsForUseButton'
+import AddConditionsForUseButton from '../src/components/AccessRequirement/AddConditionsForUseButton'
 
 const meta = {
   title: 'Components/AddConditionsForUseButton',

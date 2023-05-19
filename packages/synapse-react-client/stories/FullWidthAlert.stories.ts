@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 
-import FullWidthAlert from '../src/lib/containers/FullWidthAlert'
+import FullWidthAlert from '../src/components/FullWidthAlert/FullWidthAlert'
 
 const meta = {
   title: 'UI/FullWidthAlert',

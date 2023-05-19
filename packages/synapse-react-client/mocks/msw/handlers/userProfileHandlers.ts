@@ -9,18 +9,18 @@ import {
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
-} from '../../../src/lib/utils/APIConstants'
+} from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
   MOCK_REPO_ORIGIN,
-} from '../../../src/lib/utils/functions/getEndpoint'
+} from '../../../src/utils/functions/getEndpoint'
 import {
   TYPE_FILTER,
   UserBundle,
   UserGroupHeaderResponsePage,
   UserProfile,
-} from '../../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
 import {
   mockUserBundle,
@@ -28,8 +28,8 @@ import {
   mockUserProfileData,
 } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
-import { UserProfileList } from '../../../src/lib/utils/SynapseClient'
-import { TwoFactorAuthStatus } from '../../../src/lib/utils/synapseTypes/TotpSecret'
+import { UserProfileList } from '../../../src/synapse-client/SynapseClient'
+import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 
 export const getUserProfileHandlers = (backendOrigin: string) => [
   /**

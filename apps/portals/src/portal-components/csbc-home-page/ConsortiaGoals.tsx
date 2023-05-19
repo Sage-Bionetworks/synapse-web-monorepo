@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { ReactComponent as ConsortiaGoalsSvg } from './assets/goals-icon.svg'
 import HomePageLinks from './HomePageLinks'
 

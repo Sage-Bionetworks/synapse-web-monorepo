@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import Resources from '../src/lib/containers/home_page/resources/Resources'
+import Resources from '../src/components/Resources/Resources'
 
 const meta = {
   title: 'Home Page/Resources',

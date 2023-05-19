@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import EntityPageTitleBar from '../src/lib/containers/entity/page/title_bar/EntityPageTitleBar'
+import EntityPageTitleBar from '../src/components/entity/page/title_bar/EntityPageTitleBar'
 
 const meta = {
   title: 'Synapse/EntityPage/TitleBar',

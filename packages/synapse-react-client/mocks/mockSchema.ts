@@ -1,9 +1,9 @@
 import {
   BoundObjectType,
   JsonSchemaObjectBinding,
-} from '../src/lib/utils/synapseTypes/Schema/JsonSchemaObjectBinding'
-import { ObjectType } from '../src/lib/utils/synapseTypes/Schema/ObjectType'
-import { ValidationResults } from '../src/lib/utils/synapseTypes/Schema/ValidationResults'
+} from '@sage-bionetworks/synapse-types'
+import { ObjectType } from '@sage-bionetworks/synapse-types'
+import { ValidationResults } from '@sage-bionetworks/synapse-types'
 import mockFileEntityData from './entity/mockFileEntity'
 import { JSONSchema7 } from 'json-schema'
 

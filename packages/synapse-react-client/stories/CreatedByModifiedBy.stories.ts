@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { CreatedByModifiedBy } from '../src/lib/containers/entity/page/CreatedByModifiedBy'
+import { CreatedByModifiedBy } from '../src/components/entity/page/CreatedByModifiedBy'
 
 const meta = {
   title: 'Synapse/EntityPage/CreatedByModifiedBy',

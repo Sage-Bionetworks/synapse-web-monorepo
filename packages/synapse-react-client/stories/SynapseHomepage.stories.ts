@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { SynapseHomepage } from '../src/lib/containers/SynapseHomepage'
+import { SynapseHomepage } from '../src/components/SynapseHomepage'
 
 const meta = {
   title: 'Synapse/HomePage',

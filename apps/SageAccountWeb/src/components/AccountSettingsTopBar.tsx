@@ -1,10 +1,12 @@
 import React from 'react'
-import { signOut } from 'synapse-react-client/dist/utils/SynapseClient'
 import { BadgeOutlined } from '@mui/icons-material'
 import { Box, Button, SxProps, Typography } from '@mui/material'
 import { useSourceApp } from './SourceApp'
 import { useAppContext } from '../AppContext'
-import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
+import {
+  SynapseClient,
+  useApplicationSessionContext,
+} from 'synapse-react-client'
 
 const AccountSettingsTopBar: React.FunctionComponent = () => {
   const sourceApp = useSourceApp()
@@ -42,7 +44,7 @@ const AccountSettingsTopBar: React.FunctionComponent = () => {
         variant="text"
         sx={{ color: '#515359', marginRight: '15px' }}
         onClick={() => {
-          signOut().then(() => {
+          SynapseClient.signOut().then(() => {
             refreshSession()
           })
         }}

@@ -1,12 +1,12 @@
-import { OAuthClient } from "synapse-react-client/dist/utils/synapseTypes/OAuthClient";
+import { OAuthClient } from '@sage-bionetworks/synapse-types'
 
 const mockOauthClient: Partial<OAuthClient> = {
-  client_id: "1234",
-  client_name: "OAuth Client Demo",
+  client_id: '1234',
+  client_name: 'OAuth Client Demo',
   verified: true,
-  client_uri: "https://yourhost.com/index.html",
-  policy_uri: "https://yourhost.com/policy",
-  tos_uri: "https://yourhost.com/terms_of_service",
-};
+  client_uri: 'https://yourhost.com/index.html',
+  policy_uri: 'https://yourhost.com/policy',
+  tos_uri: 'https://yourhost.com/terms_of_service',
+}
 
-export default mockOauthClient;
+export default mockOauthClient

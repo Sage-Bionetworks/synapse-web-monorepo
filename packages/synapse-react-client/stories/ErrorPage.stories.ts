@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ErrorPage from '../src/lib/containers/error/ErrorPage'
+import ErrorPage from '../src/components/error/ErrorPage'
 
 const meta = {
   title: 'Synapse/ErrorPage',

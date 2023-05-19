@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { ReactComponent as DataIconSvg } from './assets/data-icon.svg'
 import { ReactComponent as InsightIconSvg } from './assets/insight-icon.svg'
@@ -52,11 +52,13 @@ const PortalHomePageLinks = () => {
     <div className="HomePageLinks">
       <h2 className="title center-title">Portal Goals</h2>
       <p>
-      The Cancer Complexity Knowledge Portal is a Community Research resource which aims to 
+        The Cancer Complexity Knowledge Portal is a Community Research resource
+        which aims to
         <a href="https://www.synapse.org">
           &nbsp;<i>synthesize and expose the activities and outputs</i>&nbsp;
         </a>
-        of these consortia. In this portal, users can find information about and access to the following:
+        of these consortia. In this portal, users can find information about and
+        access to the following:
       </p>
       <div className="link-container">
         {links.map((el) => {

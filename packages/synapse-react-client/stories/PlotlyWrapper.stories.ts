@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import PlotlyWrapper from '../src/lib/containers/PlotlyWrapper'
+import PlotlyWrapper from '../src/components/PlotlyWrapper'
 import rawData from '../mocks/distribution_data.json'
 
 const meta = {

@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { getHandlersForTableQuery } from '../mocks/msw/handlers/tableQueryHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '../mocks/query/mockRejectionReasonsTableQueryResultBundle'
-import { MOCK_REPO_ORIGIN } from '../src/lib/utils/functions/getEndpoint'
-import RejectDataAccessRequestModal from '../src/lib/containers/dataaccess/RejectDataAccessRequestModal'
+import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
+import RejectDataAccessRequestModal from '../src/components/dataaccess/RejectDataAccessRequestModal'
 
 const meta = {
   title: 'Governance/RejectDataAccessRequestModal',

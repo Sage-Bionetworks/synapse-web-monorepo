@@ -1,8 +1,7 @@
 import { OAuthClientError } from './OAuthClientError'
 import React, { useCallback, useEffect, useState } from 'react'
-import { SynapseClient } from 'synapse-react-client/dist/utils'
+import { ApplicationSessionManager, SynapseClient } from 'synapse-react-client'
 import { handleErrorRedirect } from './URLUtils'
-import ApplicationSessionManager from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionManager'
 
 function AppInitializer(
   props: React.PropsWithChildren<Record<string, unknown>>,

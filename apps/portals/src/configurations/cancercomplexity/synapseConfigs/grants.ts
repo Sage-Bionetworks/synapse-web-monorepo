@@ -1,10 +1,13 @@
-import { SynapseConstants } from 'synapse-react-client'
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
-import { IconOptions } from 'synapse-react-client/dist/containers/row_renderers/utils/Icon'
-import { Project } from 'synapse-react-client/dist/assets/themed_icons/Project'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import {
+  CardConfiguration,
+  GenericCardSchema,
+  IconOptions,
+  SynapseComponents,
+  SynapseConstants,
+} from 'synapse-react-client'
 import { grantsSql } from '../resources'
 import { SynapseConfig } from 'types/portal-config'
+
 const rgbIndex = 3
 
 export const grantsSchema: GenericCardSchema = {
@@ -23,7 +26,7 @@ export const grantsSchema: GenericCardSchema = {
 
 // TODO: Change iconOptions type to map () => string | JSX.Element and remove cast
 const iconOptions: IconOptions = {
-  Grant: Project as unknown as string,
+  Grant: SynapseComponents.ProjectIcon as unknown as string,
 }
 
 export const grantsCardConfiguration: CardConfiguration = {

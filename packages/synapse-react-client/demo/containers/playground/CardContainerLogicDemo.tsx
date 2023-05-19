@@ -1,13 +1,13 @@
-import * as React from 'react'
+import React from 'react'
 import CardContainerLogic, {
   CardConfiguration,
-} from '../../../src/lib/containers/CardContainerLogic'
-import { SynapseConstants } from '../../../src/lib'
+} from '../../../src/components/CardContainerLogic'
+import { SynapseConstants } from '../../../src'
 import { ReactComponent as brainSvg } from './icons/brain.svg'
 import { ReactComponent as circleSvg } from './icons/circle.svg'
 import { ReactComponent as mouseSvg } from './icons/mouse.svg'
 import { ReactComponent as resilienceadSvg } from './icons/resiliencead.svg'
-import { IconOptions } from '../../../src/lib/containers/row_renderers/utils/Icon'
+import { IconOptions } from '../../../src/components/Icon/Icon'
 
 type State = {
   tabIndex: number

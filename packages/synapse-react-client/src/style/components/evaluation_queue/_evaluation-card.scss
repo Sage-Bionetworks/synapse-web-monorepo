@@ -1,0 +1,13 @@
+.evaluation-card {
+  .submit-button {
+    display: block;
+  }
+  .created-on {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  label:not(:first-child) {
+    margin-top: 1rem;
+  }
+}

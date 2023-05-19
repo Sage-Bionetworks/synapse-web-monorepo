@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
 
 export default defineConfig({
-  root: './demo',
+  root: './src',
   plugins: [
     react(),
     svgr({
@@ -17,8 +17,6 @@ export default defineConfig({
   define: {
     __TEST__: JSON.stringify(false),
     __DEV__: JSON.stringify(false),
-    'process.env': {},
-    sql: {},
   },
   optimizeDeps: {
     esbuildOptions: {

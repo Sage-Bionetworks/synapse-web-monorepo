@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import {
   BlockingLoader,
   BlockingLoaderProps,
-} from '../src/lib/containers/LoadingScreen'
+} from '../src/components/LoadingScreen'
 
 const meta = {
   title: 'UI/Loaders/BlockingLoader',

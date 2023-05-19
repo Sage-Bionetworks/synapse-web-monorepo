@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ThemesPlot from '../src/lib/containers/widgets/themes-plot/ThemesPlot'
+import ThemesPlot from '../src/components/Plot/ThemesPlot'
 
 const meta = {
   title: 'Home Page/ThemesPlot',

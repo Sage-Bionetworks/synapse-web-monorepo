@@ -52,3 +52,13 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
       - run: pnpm nx affected --target=lint --parallel=2 --base=remotes/origin/main
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/pnpm-setup-action
+      # Portals test configuration must be loaded for a successful type check
+      - run: pnpm nx run portals:copy-test-configuration
+      - run: pnpm nx affected --target=type-check --parallel=2 --base=remotes/origin/main

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { SchemaDrivenAnnotationEditor } from '../src/lib/containers/entity/annotations/SchemaDrivenAnnotationEditor'
+import { SchemaDrivenAnnotationEditor } from '../src/components/entity/annotations/SchemaDrivenAnnotationEditor'
 
 const meta = {
   title: 'Synapse/SchemaDrivenAnnotationEditor',

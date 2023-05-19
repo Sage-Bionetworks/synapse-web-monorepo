@@ -4,7 +4,8 @@
   "type": "module",
   "types": "dist/index.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "type-check": "tsc --noEmit"
   },
   "exports": [
     "./dist/index.js",
@@ -12,12 +13,25 @@
     "./dist/vitest-config.js"
   ],
   "peerDependencies": {
-    "vite": "^4.3.4"
-  },
-  "optionalDependencies": {
+    "vite": "^4.3.4",
     "vitest": "^0.31.0",
     "@vitest/coverage-c8": "^0.31.0",
-    "@vitest/ui": "^0.31.0"
+    "@vitest/ui": "^0.31.0",
+    "@vitest/utils": "^0.31.0"
+  },
+  "peerDependenciesMeta": {
+    "vitest": {
+      "optional": true
+    },
+    "@vitest/coverage-c8": {
+      "optional": true
+    },
+    "@vitest/ui": {
+      "optional": true
+    },
+    "@vitest/utils": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",

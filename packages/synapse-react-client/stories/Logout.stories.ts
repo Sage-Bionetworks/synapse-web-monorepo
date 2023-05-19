@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 
-import Logout from '../src/lib/containers/auth/Logout'
+import Logout from '../src/components/Authentication/Logout'
 
 const meta = {
   title: 'Authentication/Logout',

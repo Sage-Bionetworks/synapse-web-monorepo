@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { HelpPopover } from '../src/lib/containers/HelpPopover'
+import { HelpPopover } from '../src/components/HelpPopover'
 
 const meta = {
   title: 'UI/HelpPopover',

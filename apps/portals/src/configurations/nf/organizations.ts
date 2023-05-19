@@ -14,9 +14,9 @@ import {
   datasetsSql,
   publicationsSql,
 } from './resources'
-import { CardLink } from 'synapse-react-client/dist/containers/CardContainerLogic'
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import type { CardLink } from 'synapse-react-client'
+import type { GenericCardSchema } from 'synapse-react-client'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 export const organizationDetailsPageConfig: DetailsPageProps = {
   sql: fundersSql,

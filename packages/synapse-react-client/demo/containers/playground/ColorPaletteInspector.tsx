@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
-} from '../../../src/lib/utils/functions/colorPalette'
+} from '../../../src/utils/functions/colorPalette'
 
 type DivColorInputProps = {
   initialColor: string

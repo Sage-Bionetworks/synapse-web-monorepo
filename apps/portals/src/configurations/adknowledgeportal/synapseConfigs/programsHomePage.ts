@@ -1,7 +1,7 @@
-import { ProgramsProps } from 'synapse-react-client/dist/containers/home_page/programs/Programs'
+import type { ProgramsProps } from 'synapse-react-client'
 
 export const programsHomePageConfig: ProgramsProps = {
-  entityId:'syn17024173',
+  entityId: 'syn17024173',
   titleColumnName: 'Program',
   imageFileHandleColumnName: 'Homepage Image',
   linkColumnName: 'Website',

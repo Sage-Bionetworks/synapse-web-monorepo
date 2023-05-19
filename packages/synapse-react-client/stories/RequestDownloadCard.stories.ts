@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { RequestDownloadCard } from '../src/lib/containers/download_list_v2/RequestDownloadCard'
+import { RequestDownloadCard } from '../src/components/DownloadCart/RequestDownloadCard'
 
 const meta = {
   title: 'Download/RequestDownloadCard',

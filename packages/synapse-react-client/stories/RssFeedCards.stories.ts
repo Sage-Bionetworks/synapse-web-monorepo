@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import RssFeedCards from '../src/lib/containers/RssFeedCards'
+import RssFeedCards from '../src/components/RssFeedCards/RssFeedCards'
 
 const meta = {
   title: 'Home Page/RssFeedCards',

@@ -1,5 +1,5 @@
-import { stopAdPortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { Palettes } from 'synapse-react-client'
 
-const palette = stopAdPortalPalette
+const palette = Palettes.stopAdPortalPalette
 
 export default palette

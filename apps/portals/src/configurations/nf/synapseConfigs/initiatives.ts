@@ -2,7 +2,7 @@ import { SynapseConfig } from 'types/portal-config'
 
 import { columnAliases } from './commonProps'
 import { initiativesSql, studiesSql } from '../resources'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { studyCardConfiguration } from './studies'

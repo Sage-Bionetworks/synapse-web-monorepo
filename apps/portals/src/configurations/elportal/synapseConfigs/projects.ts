@@ -1,18 +1,17 @@
 import { SynapseConfig } from 'types/portal-config'
-import { SynapseConstants } from 'synapse-react-client'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import { CardConfiguration, SynapseConstants } from 'synapse-react-client'
 import {
+  computationalSql,
+  peopleSql,
   projectsSql,
   publicationsSql,
   studiesSql,
-  peopleSql,
-  computationalSql
 } from '../resources'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { studyCardConfiguration } from './studies'
 import { publicationCardProps } from './publications'
 import { computationalCardConfiguration } from './computational_tools'
-import { ColumnMultiValueFunction } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 4
 export const projectCardConfiguration: CardConfiguration = {
@@ -22,11 +21,7 @@ export const projectCardConfiguration: CardConfiguration = {
     title: 'Name',
     subTitle: 'Principal Investigators',
     description: 'Abstract',
-    secondaryLabels: [
-      'Institutions',
-      'Program',
-      'Grant Number',
-    ],
+    secondaryLabels: ['Institutions', 'Program', 'Grant Number'],
   },
   secondaryLabelLimit: 4,
   titleLinkConfig: {
@@ -113,7 +108,8 @@ const projects: SynapseConfig = {
         'Abstract',
       ],
     },
-    facetsToPlot: ['Name',
+    facetsToPlot: [
+      'Name',
       'Institutions',
       'Principal Investigators',
       'Grant Number',

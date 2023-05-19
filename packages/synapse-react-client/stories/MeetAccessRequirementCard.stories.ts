@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { MeetAccessRequirementCard } from '../src/lib/containers/download_list_v2/MeetAccessRequirementCard'
+import { MeetAccessRequirementCard } from '../src/components/DownloadCart/MeetAccessRequirementCard'
 
 const meta = {
   title: 'Download/MeetAccessRequirementCard',

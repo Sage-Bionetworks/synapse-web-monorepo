@@ -1,8 +1,5 @@
-import { ObjectType } from '../src/lib/utils/synapseTypes'
-import {
-  Quiz,
-  PassingRecord,
-} from '../src/lib/utils/synapseTypes/CertificationQuiz/Quiz'
+import { ObjectType } from '@sage-bionetworks/synapse-types'
+import { Quiz, PassingRecord } from '@sage-bionetworks/synapse-types'
 
 export const mockQuiz: Quiz = {
   id: 123,

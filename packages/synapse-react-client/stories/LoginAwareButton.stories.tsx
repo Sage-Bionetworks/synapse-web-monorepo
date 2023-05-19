@@ -1,11 +1,11 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
-import { LoginAwareButton } from '../src/lib/containers/widgets/LoginAwareButton'
+import { LoginAwareButton } from '../src/components/widgets/LoginAwareButton'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
-} from '../src/lib/utils/SynapseContext'
+} from '../src/utils/context'
 
 const meta: Meta = {
   title: 'UI/LoginAwareButton',

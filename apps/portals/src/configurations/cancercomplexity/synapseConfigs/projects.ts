@@ -1,6 +1,6 @@
 import { SynapseConstants } from 'synapse-react-client'
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { GenericCardSchema } from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client'
 import { projectsSql } from '../resources'
 import { SynapseConfig } from 'types/portal-config'
 
@@ -11,11 +11,7 @@ export const projectsSchema: GenericCardSchema = {
   title: 'projectName',
   subTitle: 'grantName',
   description: 'description',
-  secondaryLabels: [
-    'investigator',
-    'consortium', 
-    'grantType',
-  ],
+  secondaryLabels: ['investigator', 'consortium', 'grantType'],
 }
 
 export const projectCardConfiguration: CardConfiguration = {

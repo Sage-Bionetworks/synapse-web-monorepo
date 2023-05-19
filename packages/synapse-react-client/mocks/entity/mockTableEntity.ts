@@ -1,4 +1,4 @@
-import { EntityHeader, TableEntity } from '../../src/lib/utils/synapseTypes'
+import { EntityHeader, TableEntity } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import mockProject from './mockProject'
 import { MockEntityData } from './MockEntityData'

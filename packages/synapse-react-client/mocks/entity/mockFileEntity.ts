@@ -8,8 +8,8 @@ import {
   EntityType,
   FileEntity,
   RestrictionLevel,
-} from '../../src/lib/utils/synapseTypes'
-import { VersionInfo } from '../../src/lib/utils/synapseTypes/VersionInfo'
+} from '@sage-bionetworks/synapse-types'
+import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import {
   MOCK_FILE_HANDLE_ID,
   mockFileHandle,

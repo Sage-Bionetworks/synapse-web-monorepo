@@ -1,4 +1,4 @@
-import { ResearchProject } from '../../src/lib/utils/synapseTypes/ResearchProject'
+import { ResearchProject } from '@sage-bionetworks/synapse-types'
 import { mockManagedACTAccessRequirement } from '../mockAccessRequirements'
 
 export const MOCK_RESEARCH_PROJECT_ID = '1981321'

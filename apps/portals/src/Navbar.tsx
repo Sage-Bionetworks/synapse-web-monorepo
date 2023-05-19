@@ -1,24 +1,23 @@
-import * as React from 'react'
+import React from 'react'
 import { useEffect, useState } from 'react'
 import routesConfig from './config/routesConfig'
 import logoHeaderConfig from './config/logoHeaderConfig'
 import Dropdown from 'react-bootstrap/Dropdown'
-import { SynapseComponents } from 'synapse-react-client'
+import {
+  AppUtils,
+  IconSvg,
+  StandaloneLoginForm,
+  SynapseComponents,
+  SynapseQueries,
+  SystemUseNotification,
+  useSynapseContext,
+} from 'synapse-react-client'
 import NavLink from './portal-components/NavLink'
 import NavUserLink from './portal-components/NavUserLink'
 import { ConfigRoute, GenericRoute } from './types/portal-config'
 import { Button, Dialog, DialogContent, IconButton } from '@mui/material'
-import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
-import {
-  preparePostSSORedirect,
-  redirectAfterSSO,
-} from 'synapse-react-client/dist/utils/AppUtils'
-import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
 import { useLogInDialogContext } from './LogInDialogContext'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { useGetCurrentUserProfile } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
 import { useHistory } from 'react-router-dom'
-import SystemUseNotification from 'synapse-react-client/dist/containers/SystemUseNotification'
 
 type SynapseSettingLink = {
   text: string
@@ -49,13 +48,13 @@ function Navbar() {
   const isSignedIn = !!accessToken
   const history = useHistory()
 
-  const { data: userProfile } = useGetCurrentUserProfile()
+  const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
 
   const [showMenu, setShowMenu] = useState(false)
   const openBtnRef = React.useRef<HTMLDivElement>(null)
 
   const { refreshSession, clearSession, twoFactorAuthSSOErrorResponse } =
-    useApplicationSessionContext()
+    AppUtils.useApplicationSessionContext()
 
   const { showLoginDialog, setShowLoginDialog } = useLogInDialogContext()
 
@@ -237,16 +236,16 @@ function Navbar() {
                     />
                   </IconButton>
                   <DialogContent dividers={false}>
-                    <SynapseComponents.Login
+                    <StandaloneLoginForm
                       twoFactorAuthenticationRequired={
                         twoFactorAuthSSOErrorResponse
                       }
                       onBeginOAuthSignIn={() => {
-                        preparePostSSORedirect()
+                        AppUtils.preparePostSSORedirect()
                       }}
                       sessionCallback={() => {
                         refreshSession().then(() => {
-                          redirectAfterSSO(history)
+                          AppUtils.redirectAfterSSO(history)
                         })
                       }}
                     />

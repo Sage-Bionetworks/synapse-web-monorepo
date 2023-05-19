@@ -1,6 +1,6 @@
 import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import TwoFactorBackupCodes from 'synapse-react-client/dist/containers/auth/TwoFactorBackupCodes'
+import { TwoFactorBackupCodes } from 'synapse-react-client'
 
 /**
  * Shows a page used to regenerate 2FA backup codes.

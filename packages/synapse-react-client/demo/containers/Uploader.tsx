@@ -1,19 +1,19 @@
-import * as React from 'react'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../src/lib/utils/functions/getEndpoint'
+import React from 'react'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../src/utils/functions/getEndpoint'
 import {
   createEntity,
   getEntity,
   lookupChildEntity,
   updateEntity,
   uploadFile,
-} from '../../src/lib/utils/SynapseClient'
-import { SynapseContext } from '../../src/lib/utils/SynapseContext'
+} from '../../src/synapse-client/SynapseClient'
+import { SynapseContext } from '../../src/utils/context/SynapseContext'
 import {
   EntityId,
   EntityLookupRequest,
   FileEntity,
   FileUploadComplete,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 type UploaderState = {
   error?: any

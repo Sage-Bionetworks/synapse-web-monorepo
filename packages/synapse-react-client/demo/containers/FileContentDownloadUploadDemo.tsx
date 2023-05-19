@@ -1,15 +1,15 @@
-import * as React from 'react'
+import React from 'react'
 import {
   getEntity,
   updateEntity,
   uploadFile,
-} from '../../src/lib/utils/SynapseClient'
-import { SynapseContext } from '../../src/lib/utils/SynapseContext'
+} from '../../src/synapse-client/SynapseClient'
+import { SynapseContext } from '../../src/utils/context/SynapseContext'
 import {
   Entity,
   FileEntity,
   FileUploadComplete,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 type FileContentDownloadUploadDemoState = {
   error?: any

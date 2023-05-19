@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import FeaturedDataTabs from '../src/lib/containers/home_page/featured-data/FeaturedDataTabs'
+import FeaturedDataTabs from '../src/components/FeaturedDataTabs/FeaturedDataTabs'
 
 const meta = {
   title: 'Home Page/FeaturedDataTabs',

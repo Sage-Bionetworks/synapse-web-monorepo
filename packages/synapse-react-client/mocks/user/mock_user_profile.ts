@@ -1,9 +1,9 @@
-import { ACT_TEAM_ID } from '../../src/lib/utils/SynapseConstants'
+import { ACT_TEAM_ID } from '../../src/utils/SynapseConstants'
 import {
   UserBundle,
   UserGroupHeader,
   UserProfile,
-} from '../../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 
 export const MOCK_USER_ID = 999
 export const MOCK_USER_NAME = 'myUserName'

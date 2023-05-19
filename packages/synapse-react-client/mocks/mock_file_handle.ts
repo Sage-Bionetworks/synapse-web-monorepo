@@ -1,4 +1,4 @@
-import { S3FileHandle } from '../src/lib/utils/synapseTypes/File/S3FileHandle'
+import { S3FileHandle } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from './user/mock_user_profile'
 
 export const MOCK_FILE_HANDLE_ID = '987654321'

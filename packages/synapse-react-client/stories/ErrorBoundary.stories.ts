@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { SynapseClientError } from '../src/lib/utils/SynapseClientError'
-import { ErrorBanner } from '../src/lib/containers/error/ErrorBanner'
+import { SynapseClientError } from '../src/utils/SynapseClientError'
+import { ErrorBanner } from '../src/components/error/ErrorBanner'
 
 const meta = {
   title: 'UI/ErrorBoundary',

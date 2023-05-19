@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { SynapseClient } from 'synapse-react-client/dist/utils'
-import { FileHandleAssociateType } from 'synapse-react-client/dist/utils/synapseTypes'
+import { SynapseClient } from 'synapse-react-client'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import Skeleton from '@mui/material/Skeleton'
 
 export type SourceAppImageProps = {

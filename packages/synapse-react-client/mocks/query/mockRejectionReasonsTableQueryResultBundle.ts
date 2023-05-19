@@ -1,4 +1,4 @@
-import { QueryResultBundle } from '../../src/lib/utils/synapseTypes'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 
 /**
  * Mock data for the RejectDataAccessRequestModal

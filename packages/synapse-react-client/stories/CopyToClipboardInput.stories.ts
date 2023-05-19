@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { CopyToClipboardInput } from '../src/lib/containers/CopyToClipboardInput'
+import { CopyToClipboardInput } from '../src/components/CopyToClipboardInput'
 
 const meta = {
   title: 'Synapse/CopyToClipboardInput',

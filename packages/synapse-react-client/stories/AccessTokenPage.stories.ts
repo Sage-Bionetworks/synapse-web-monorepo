@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { AccessTokenPage } from '../src/lib/containers/personal_access_token/AccessTokenPage'
+import { AccessTokenPage } from '../src/components/AccessTokenPage/AccessTokenPage'
 
 const meta = {
   title: 'Synapse/AccessTokenPage',

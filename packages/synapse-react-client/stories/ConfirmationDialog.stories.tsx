@@ -4,7 +4,7 @@ import React from 'react'
 import {
   ConfirmationDialog,
   ConfirmationDialogProps,
-} from '../src/lib/containers/ConfirmationDialog'
+} from '../src/components/ConfirmationDialog/ConfirmationDialog'
 
 const meta = {
   title: 'UI/ConfirmationDialog',

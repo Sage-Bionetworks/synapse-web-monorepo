@@ -2,10 +2,10 @@ import React from 'react'
 import '../demo/style/DemoStyle.scss'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
-import { StorybookComponentWrapper } from '../src/lib/containers/StorybookComponentWrapper'
+import { StorybookComponentWrapper } from '../src/components/StorybookComponentWrapper'
 import { initialize, mswLoader } from 'msw-storybook-addon'
 import { getHandlers } from '../mocks/msw/handlers'
-import { MOCK_REPO_ORIGIN } from '../src/lib/utils/functions/getEndpoint'
+import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
 
 globalThis.Buffer = Buffer
 globalThis.process = {

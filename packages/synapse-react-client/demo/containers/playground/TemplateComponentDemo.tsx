@@ -1,5 +1,5 @@
-import * as React from 'react'
-import TemplateComponent from '../../../src/lib/containers/TemplateComponent'
+import React from 'react'
+import TemplateComponent from '../../../src/components/TemplateComponent'
 
 export default function TemplateComponentDemo() {
   /*

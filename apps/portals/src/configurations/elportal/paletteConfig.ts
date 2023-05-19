@@ -1,5 +1,5 @@
-import { elPortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { Palettes } from 'synapse-react-client'
 
-const palette = elPortalPalette
+const palette = Palettes.elPortalPalette
 
 export default palette

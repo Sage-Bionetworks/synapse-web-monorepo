@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import SelectionCriteriaPill from '../src/lib/containers/widgets/facet-nav/SelectionCriteriaPill'
+import SelectionCriteriaPill from '../src/components/widgets/facet-nav/SelectionCriteriaPill'
 
 const meta = {
   title: 'Explore/Tokens/SelectionCriteriaPill',

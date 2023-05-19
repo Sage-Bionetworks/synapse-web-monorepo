@@ -1,7 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { Button } from '@mui/material'
-import { MarkdownPopover } from '../src/lib/containers/MarkdownPopover'
+import { MarkdownPopover } from '../src/components/Markdown/MarkdownPopover'
 
 const meta = {
   title: 'Markdown/MarkdownPopover',

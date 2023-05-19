@@ -1,5 +1,5 @@
 import injectPropsIntoConfig from '../../portal-components/injectPropsIntoConfig'
-import { MarkdownSynapseProps } from 'synapse-react-client/dist/containers/markdown/MarkdownSynapse'
+import { MarkdownSynapseProps } from 'synapse-react-client'
 import { describe, expect, it } from 'vitest'
 
 describe('injectPropsIntoConfig works', () => {
