@@ -118,7 +118,6 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
   sql: challengeProjectsSql,
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
   showMenu: true,
-
   tabLayout: [
     {
       title: 'Overview',
@@ -142,6 +141,12 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
           name: 'Markdown',
           columnName: 'Description',
           title: 'Description',
+          props: {},
+        },
+        {
+          name: 'Markdown',
+          columnName: 'Timeline',
+          title: 'Timeline',
           props: {},
         },
         {
@@ -260,6 +265,18 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
         },
       ],
     },
+    {
+      title: 'Community',
+      uriValue: 'Community',
+      synapseConfigArray: [
+        {
+          name: 'ProjectDiscussionForum',
+          title: 'Discussion Forum',
+          columnName: 'id',
+          props: undefined
+        },
+      ]
+    }
   ],
 }
 

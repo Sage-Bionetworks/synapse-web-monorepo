@@ -15,7 +15,7 @@ import { ConfirmationDialog } from '../ConfirmationDialog'
 export type ForumPageProps = {
   forumId: string
   limit: number
-  onClickLink: () => void
+  onClickLink: (threadId: string) => void
 }
 
 const SIGN_IN_TEXT = 'You will need to sign in for access to that resource'

@@ -89,19 +89,12 @@ describe('useExportToCavatica', () => {
     await exportFunction()
     await waitFor(() => {
       expect(mockGetDownloadFromTableRequest).toHaveBeenCalled()
-      // TODO: change to production redirect link after the changes have been validated and they have released to prod
       expect(window.open).toHaveBeenCalledWith(
-        `https://synapse-vayu.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
+        `https://cavatica.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
           presignedURLResponse,
         )}`,
         '_blank',
       )
-      // expect(window.open).toHaveBeenCalledWith(
-      //   `https://cavatica.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
-      //     presignedURLResponse,
-      //   )}`,
-      //   '_blank',
-      // )
     })
   })
   it('Error in service call', async () => {

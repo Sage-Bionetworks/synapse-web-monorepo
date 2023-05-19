@@ -18,6 +18,7 @@ import RedirectWithQuery from './RedirectWithQuery'
 import { Redirect } from 'react-router-dom'
 import Header from './Header'
 import ChallengeParticipantGoogleMap from './challengeportal/ChallengeParticipantGoogleMap'
+import ProjectDiscussionForum from './ProjectDiscussionForum'
 
 const PortalComponents = {
   StatefulButtonControlWrapper,
@@ -39,7 +40,8 @@ const PortalComponents = {
   ARKWelcomePage,
   TabbedSynapseObjects,
   Header,
-  ChallengeParticipantGoogleMap
+  ChallengeParticipantGoogleMap,
+  ProjectDiscussionForum
 }
 
 export default PortalComponents

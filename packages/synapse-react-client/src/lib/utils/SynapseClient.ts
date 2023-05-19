@@ -190,6 +190,7 @@ import {
   DiscussionReplyOrder,
   DiscussionThreadBundle,
   DiscussionThreadOrder,
+  Forum,
   UpdateDiscussionReply,
   UpdateThreadMessageRequest,
   UpdateThreadTitleRequest,
@@ -3797,6 +3798,24 @@ export const updateNotificationEmail = (
   return doPut(
     '/repo/v1/notificationEmail',
     { email },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to get the Forum's metadata for a given project ID.
+ * Target users: anyone who has READ permission to the project.
+ * https://rest-docs.synapse.org/rest/GET/project/projectId/forum.html
+ * @param projectId
+ * @param accessToken
+ */
+export const getForum = (
+  projectId: string,
+  accessToken: string | undefined,
+) => {
+  return doGet<Forum>(
+    `/repo/v1/project/${projectId}/forum`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

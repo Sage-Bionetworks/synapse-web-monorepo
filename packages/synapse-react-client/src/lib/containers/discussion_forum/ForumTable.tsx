@@ -11,11 +11,12 @@ import {
 } from '../../utils/synapseTypes/DiscussionBundle'
 import IconSvg from '../IconSvg'
 import UserCard from '../UserCard'
+import { Link } from '@mui/material'
 
 export type ForumTableProps = {
   forumId: string
   limit: number
-  onClickLink: () => void
+  onClickLink: (threadId: string) => void
   filter: DiscussionFilter
 }
 
@@ -142,10 +143,10 @@ export const ForumTable: React.FC<ForumTableProps> = ({
             return (
               <tr key={item.id}>
                 <td>
-                  <a onClick={() => onClickLink()}>
+                  <Link onClick={() => onClickLink(item.id)}>
                     {item.isPinned ? <IconSvg icon="pushpin" /> : <></>}
                     {item.title}
-                  </a>
+                  </Link>
                 </td>
                 <td>
                   <UserCard size={SMALL_USER_CARD} ownerId={item.createdBy} />
