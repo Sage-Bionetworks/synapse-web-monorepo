@@ -238,7 +238,7 @@
   },
   "nx": {
     "targets": {
-      "build:storybook": {
+      "build:gh-pages": {
         "dependsOn": [
           "^build"
         ]
