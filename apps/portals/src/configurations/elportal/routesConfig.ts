@@ -109,11 +109,6 @@ const routes: GenericRoute[] = [
         props: {
           config: [
             {
-              title: 'Cross-Species Research Partners',
-              ownerId: 'syn27229419',
-              wikiId: '621472',
-            },
-            {
               title: 'Data Portals',
               ownerId: 'syn27229419',
               wikiId: '621470',
@@ -123,12 +118,17 @@ const routes: GenericRoute[] = [
               ownerId: 'syn27229419',
               wikiId: '621471',
             },
+            {
+              title: 'Cross-Species Research Partners',
+              ownerId: 'syn27229419',
+              wikiId: '621472',
+            },
           ],
         },
       },
       {
         name: 'UserCardListRotate',
-        title: 'Our People and Institutions',
+        title: 'Our People & Institutions',
         outsideContainerClassName: 'home-spacer home-bg-dark',
         centerTitle: true,
         props: {
@@ -137,7 +137,7 @@ const routes: GenericRoute[] = [
           size: SynapseConstants.MEDIUM_USER_CARD,
           useQueryResultUserData: true,
           summaryLink: 'Explore/People',
-          summaryLinkText: 'Explore All People',
+          summaryLinkText: 'View All People',
         },
       },
       // {
@@ -191,20 +191,6 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        path: 'Species',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: species,
-            },
-          },
-        ],
-      },
-      {
         path: 'Projects',
         routes: [
           {
@@ -239,6 +225,20 @@ const routes: GenericRoute[] = [
                 props: projectsDetailsPageConfiguration,
               },
             ],
+          },
+        ],
+      },
+      {
+        path: 'Species',
+        exact: true,
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: species,
+            },
           },
         ],
       },
@@ -283,20 +283,6 @@ const routes: GenericRoute[] = [
       },
       {
         exact: true,
-        path: 'People',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: people,
-            },
-          },
-        ],
-      },
-      {
-        exact: true,
         path: 'Computational Tools',
         synapseConfigArray: [
           {
@@ -305,6 +291,20 @@ const routes: GenericRoute[] = [
             props: {
               ...RouteControlWrapperProps,
               synapseConfig: computationalTools,
+            },
+          },
+        ],
+      },
+      {
+        exact: true,
+        path: 'People',
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: people,
             },
           },
         ],
