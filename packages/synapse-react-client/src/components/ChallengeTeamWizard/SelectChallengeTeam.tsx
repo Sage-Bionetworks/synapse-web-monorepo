@@ -1,8 +1,9 @@
 import { Box, Button } from '@mui/material'
 import React from 'react'
-import { Team } from '../../utils/synapseTypes/Team'
 import ControlPointIcon from '@mui/icons-material/ControlPoint'
 import ChallengeTeamTable from './ChallengeTeamTable'
+import { Stack } from '@mui/system'
+import { Team } from '@sage-bionetworks/synapse-types'
 
 type SelectChallengeTeamProps = {
   challengeId: string
@@ -20,25 +21,25 @@ export const SelectChallengeTeam = ({
     By default, the participant who creates a team is the "Team Captain" and has the ability to invite and remove members. \
     All team members will need a Synapse account so that they can login and accept the team invitation.'
   return (
-    <>
+    <Stack spacing={1}>
       <Box>{PARTICIPATION_CRITERIA}</Box>
-      <Box>
+      <Box sx={{ height: 270 }}>
         <ChallengeTeamTable
           challengeId={challengeId}
           onSelectTeam={onSelectTeam}
         />
-        <Box>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={onCreateTeam}
-            startIcon={<ControlPointIcon />}
-            sx={{ padding: '6px 18px' }}
-          >
-            Create New Team
-          </Button>
-        </Box>
       </Box>
-    </>
+      <Box>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={onCreateTeam}
+          startIcon={<ControlPointIcon />}
+          // sx={{ marginTop: '50px', padding: '6px 18px' }}
+        >
+          Create New Team
+        </Button>
+      </Box>
+    </Stack>
   )
 }

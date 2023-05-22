@@ -4,7 +4,7 @@ import { PartialUpdate } from './ChallengeTeamWizard'
 import TextField from '../TextField'
 
 type CreateChallengeTeamProps = {
-  onChangeTeamInfo: (update: PartialUpdate) => void
+  onChangeTeamInfo: (update: CreateTeamRequest) => void
 }
 
 export type CreateTeamRequest = {
@@ -24,9 +24,8 @@ export const CreateChallengeTeam = ({
     invitees: '',
   })
 
-  // TODO: Add validation (no empty team name, etc.)
   const handleTeamUpdate = (update: PartialUpdate) => {
-    const updatedTeam = { ...team, ...update }
+    const updatedTeam: CreateTeamRequest = { ...team, ...update }
     setTeam(updatedTeam)
     onChangeTeamInfo(updatedTeam)
   }

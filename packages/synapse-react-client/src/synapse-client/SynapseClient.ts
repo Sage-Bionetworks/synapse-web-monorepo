@@ -49,6 +49,7 @@ import {
   REGISTER_ACCOUNT_STEP_1,
   REGISTER_ACCOUNT_STEP_2,
   REGISTERED_SCHEMA_ID,
+  REPO,
   RESEARCH_PROJECT,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
@@ -1542,6 +1543,26 @@ export const addTeamMemberAsAuthenticatedUserOrAdmin = (
   return doPut(
     TEAM_ID_MEMBER_ID_WITH_NOTIFICATION(teamId, memberId),
     undefined,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Create a membership invitation and send an email notification to the invitee.
+ * https://rest-docs.synapse.org/rest/POST/membershipInvitation.html
+ */
+export function createMembershipInvitation(
+  accessToken: string | undefined,
+  teamId: string | number,
+  inviteeEmail: string,
+  inviteeId?: string | number,
+  message?: string,
+  expiresOn?: string,
+): Promise<EntityHeader> {
+  return doPost(
+    `${REPO}/membershipInvitation`,
+    { teamId, inviteeEmail, inviteeId, message, expiresOn },
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

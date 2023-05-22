@@ -10,6 +10,7 @@ import {
   useGetChallengeTeamList,
   useGetTeamList,
 } from '../../synapse-queries/team/useTeamList'
+import { Box } from '@mui/material'
 
 export type ChallengeTeamTableProps = {
   challengeId: string
@@ -113,19 +114,14 @@ export default function ChallengeTeamTable({
   ]
 
   return (
-    <div
-      style={{
-        height: '200px',
-        width: '100%',
-        padding: '10px 0',
-      }}
-    >
+    <Box sx={{ height: 220 }}>
       {!isLoading && (
         <>
           <ChallengeTeamSearch onChange={searchHandler} />
           <DataGrid
             rows={allRows}
             columns={columns}
+            rowCount={3}
             hideFooter
             density="compact"
             sx={{
@@ -146,7 +142,7 @@ export default function ChallengeTeamTable({
           />
         </>
       )}
-      {isLoading && <SkeletonTable numRows={8} numCols={1} />}
-    </div>
+      {isLoading && <SkeletonTable numRows={10} numCols={1} />}
+    </Box>
   )
 }
