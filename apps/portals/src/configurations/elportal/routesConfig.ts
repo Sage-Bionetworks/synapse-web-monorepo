@@ -34,6 +34,17 @@ const routes: GenericRoute[] = [
   },
   {
     path: '',
+    exact: false,
+    synapseConfigArray: [
+      {
+        name: 'ELBetaLaunchBanner',
+        centerTitle: true,
+        props: undefined,
+      },
+    ],
+  },
+  {
+    path: '',
     hideRouteFromNavbar: true,
     exact: true,
     synapseConfigArray: [
