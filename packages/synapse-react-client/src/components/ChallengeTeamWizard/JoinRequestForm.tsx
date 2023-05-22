@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from 'react'
 import { Box, TextField } from '@mui/material'
-import { Team } from '../../utils/synapseTypes/Team'
+import { Team } from '@sage-bionetworks/synapse-types'
 
 type JoinRequestFormProps = {
   team: Team | undefined

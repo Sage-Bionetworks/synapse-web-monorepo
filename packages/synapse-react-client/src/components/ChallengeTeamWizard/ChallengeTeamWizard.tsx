@@ -2,14 +2,18 @@ import React, { useState } from 'react'
 import FullWidthAlert from '../FullWidthAlert'
 import StepperDialog, { Step } from '../StepperDialog/StepperDialog'
 
-import { Team } from '@sage-bionetworks/synapse-types'
+import { ErrorResponse, Team } from '@sage-bionetworks/synapse-types'
 import { CreateChallengeTeam } from './CreateChallengeTeam'
 import { SelectChallengeTeam } from './SelectChallengeTeam'
 import { RegistrationSuccessful } from './RegistrationSuccessful'
 import { Box } from '@mui/system'
 import { JoinRequestForm } from './JoinRequestForm'
 import { useSynapseContext } from '../../utils'
-import SynapseClient, { createMembershipRequest } from '../../synapse-client'
+import SynapseClient, {
+  createMembershipRequest,
+  createTeam,
+  registerChallengeTeam,
+} from '../../synapse-client'
 
 // TODO: Organize / move types to proper location
 export type PartialUpdate = {
@@ -159,6 +163,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const handleRequestMembership = async () => {
     if (userId && selectedTeam) {
       setStep({ ...step, nextEnabled: false })
+      setErrorMessage('')
       await createMembershipRequest(
         selectedTeam.id,
         userId,
@@ -171,32 +176,45 @@ const ChallengeTeamWizard: React.FunctionComponent<
           // request successful, advance to next step
           setStep(steps[StepsEnum.JOIN_REQUEST_SENT])
         })
-        .catch(err => {
+        .catch((err: ErrorResponse) => {
           console.error({ err })
+          setErrorMessage(`Error requesting membership: ${err.reason}`)
         })
     }
   }
 
-  const handleCreateTeam = async () => {
-    // TODO: Validate input/state values before making any calls
-    console.log('Creating new team...')
-    try {
-      // Mock API call to create / return the team
-      const response: { data: Team } = await new Promise(resolve => {
-        setTimeout(() => {
-          setCreatedNewTeam(true)
-          console.log('New team created.', MOCK_TEAM)
-          resolve({ data: { ...MOCK_TEAM, name: newTeam.name } })
-        }, 750)
-      })
+  const handleRegisterChallengeTeam = async (teamId: string | number) => {
+    const msg = 'Error registering challenge team'
+    if (teamId) {
+      setErrorMessage('')
+      await registerChallengeTeam(accessToken, challengeId, teamId)
+        .then(response => {
+          console.log(response)
+          handleStepChange(step.confirmStep as StepsEnum)
+        })
+        .catch((err: ErrorResponse) => {
+          setErrorMessage(`${msg}: ${err.reason}`)
+        })
+    } else {
+      setErrorMessage(`${msg}: Invalid team.`)
+    }
+  }
 
-      if (response.data) {
-        console.log('Updated team from API: ', response.data)
-        setSelectedTeam(response.data)
-      }
-    } catch (e) {
-      // TODO: Verify error response object and parse error codes/messages
-      setErrorMessage('Error creating team. Please try again.')
+  const handleCreateTeam = async () => {
+    console.log('Creating new team...', newTeam)
+    if (newTeam && newTeam.name && newTeam.name.length > 1) {
+      setStep({ ...step, confirmEnabled: false })
+      setErrorMessage('')
+      await createTeam(accessToken, newTeam.name, newTeam.description)
+        .then(response => {
+          setSelectedTeam(response)
+          // Add newly created team to challenge
+          handleRegisterChallengeTeam(response.id)
+          // Invite team members
+        })
+        .catch((err: ErrorResponse) => {
+          setErrorMessage(`Error creating team: ${err.reason}`)
+        })
     }
   }
 

@@ -37,6 +37,7 @@ export type RadioOptionProps<T extends string | boolean | number = string> = {
   label: string
   value: T
   currentValue?: T
+  style?: object
   onChange: (value: T) => void
 }
 
@@ -55,7 +56,9 @@ export function RadioOption<T extends string | boolean | number = string>(
         checked={props.currentValue === props.value}
         value={props.value.toString()}
       />
-      <label htmlFor={uniqueId}>{props.label}</label>
+      <label htmlFor={uniqueId} style={props.style}>
+        {props.label}
+      </label>
     </div>
   )
 }

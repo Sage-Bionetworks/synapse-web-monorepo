@@ -271,6 +271,7 @@ import {
   WikiPageKey,
   MembershipRequest,
   ChallengeTeamPagedResults,
+  ChallengeTeam,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -1399,6 +1400,29 @@ export const getChallengeTeams = (
 }
 
 /**
+ * Register a Team with a Challenge.
+ * see https://rest-docs.synapse.org/rest/POST/challenge/challengeId/challengeTeam.html
+ */
+export const registerChallengeTeam = (
+  accessToken: string | undefined,
+  challengeId: string | number,
+  teamId: string | number,
+  message?: string,
+): Promise<ChallengeTeam> => {
+  const url = `/repo/v1/challenge/${challengeId}/challengeTeam`
+  return doPost(
+    url,
+    {
+      challengeId,
+      teamId,
+      message,
+    },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get the Challenge associated to a particular Project entity
  * https://rest-docs.synapse.org/rest/GET/entity/id/challenge.html
  */
@@ -1408,6 +1432,24 @@ export const getEntityChallenge = (
 ): Promise<Challenge> => {
   const url = `/repo/v1/entity/${entityId}/challenge`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Create a new Team
+ * https://rest-docs.synapse.org/rest/POST/team.html
+ */
+export function createTeam(
+  accessToken: string | undefined,
+  name: string,
+  description?: string,
+  icon?: string,
+): Promise<Team> {
+  return doPost(
+    `/repo/v1/team`,
+    { name, description, icon },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**
