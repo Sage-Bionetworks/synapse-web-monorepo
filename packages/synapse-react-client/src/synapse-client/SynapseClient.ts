@@ -185,6 +185,7 @@ import {
   JsonSchemaObjectBinding,
   ListRequest,
   ListResponse,
+  ListWrapper,
   LoginResponse,
   ManagedACTAccessRequirementStatus,
   MembershipInvitation,
@@ -268,6 +269,8 @@ import {
   VersionInfo,
   WikiPage,
   WikiPageKey,
+  MembershipRequest,
+  ChallengeTeamPagedResults,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -1382,6 +1385,20 @@ export const getUserChallenges = (
 }
 
 /**
+ * Get a list of teams registered to the given challenge.
+ * see http://rest-docs.synapse.org/rest/GET/challenge.html
+ */
+export const getChallengeTeams = (
+  accessToken: string | undefined,
+  challengeId: string | number,
+  offset: string | number = 0,
+  limit: string | number = 200,
+): Promise<ChallengeTeamPagedResults> => {
+  const url = `/repo/v1/challenge/${challengeId}/challengeTeam?&offset=${offset}&limit=${limit}`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
  * Get the Challenge associated to a particular Project entity
  * https://rest-docs.synapse.org/rest/GET/entity/id/challenge.html
  */
@@ -1541,6 +1558,44 @@ export const getIsUserMemberOfTeam = (
   const url = TEAM_ID_MEMBER_ID(teamId, userId)
   return allowNotFoundError(() =>
     doGet<TeamMember>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT),
+  )
+}
+
+/**
+ * Create a membership request and send an email notification to the administrators of the team.
+ *
+ * @returns a TeamMember if the user is a member of the team, or null if the user is not.
+ */
+export const createMembershipRequest = (
+  teamId: string,
+  userId: string,
+  message?: string,
+  expiresOn?: string,
+  accessToken?: string,
+): Promise<MembershipRequest | null> => {
+  const url = `/repo/v1/membershipRequest`
+  return doPost<MembershipRequest>(
+    url,
+    { teamId, userId, message, expiresOn },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get Teams that match the given list of IDs.
+ * https://rest-docs.synapse.org/rest/POST/teamList.html
+ */
+export const getTeamList = (
+  ids: string[] | number[],
+  accessToken?: string | undefined,
+) => {
+  const url = `/repo/v1/teamList`
+  return doPost<ListWrapper<Team>>(
+    url,
+    { list: ids },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
@@ -2465,7 +2520,7 @@ export const updateOAuthClient = (
 }
 
 /**
- 
+
  Note: Only the creator of a client can update it.
  https://rest-docs.synapse.org/rest/PUT/oauth2/client/id/verificationPrecheck.html
  */
@@ -2481,7 +2536,7 @@ export const isOAuthClientReverificationRequired = (
   )
 }
 
-/** 
+/**
 Get a secret credential to use when requesting an access token.
 Synapse supports 'client_secret_basic' and 'client_secret_post'.
 NOTE: This request will invalidate any previously issued secrets.

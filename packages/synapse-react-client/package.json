@@ -23,6 +23,7 @@
     "@mui/material": "^5.11.16",
     "@mui/system": "^5.11.16",
     "@mui/utils": "^5.11.13",
+    "@mui/x-data-grid": "5.17.26",
     "@mui/x-date-pickers": "^5.0.20",
     "@popperjs/core": "^2.10.2",
     "@react-google-maps/api": "^2.13.1",
