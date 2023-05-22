@@ -60,8 +60,8 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
       showTitleSeperator: false,
       tableSqlKeys: ['grant'],
       props: {
-        sql: publicationsSql,
         ...publicationCardProps,
+        sql: publicationsSql,
       },
     },
     {
@@ -78,12 +78,12 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
     {
       name: 'CardContainerLogic',
       title: 'Computational Tools',
-      columnName: 'Grant',
-      tableSqlKeys: ['Grant Number'],
+      columnName: 'Grant Number',
+      tableSqlKeys: ['grant'],
       props: {
+        ...computationalCardConfiguration,
         sqlOperator: ColumnMultiValueFunction.HAS,
         sql: computationalSql,
-        ...computationalCardConfiguration,
       },
     },
   ],
