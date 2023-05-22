@@ -1,20 +1,26 @@
-import { SkeletonButton } from './components/Skeleton/SkeletonButton'
-import { AccountLevelBadge } from './components/AccountLevelBadge/AccountLevelBadge'
+import {
+  AccessTokenPage,
+  AccountLevelBadge,
+  displayToast,
+  DownloadCartPage,
+  EntityBadgeIcons,
+  EvaluationCard,
+  EvaluationEditorPage,
+  SkeletonButton,
+  SynapseToastContainer,
+  SubscriptionPage,
+} from './components'
 import ChangePassword from './components/ChangePassword/ChangePassword'
 import { ReviewerDashboard } from './components/dataaccess/ReviewerDashboard'
-import { DownloadConfirmation } from './components/download_list/DownloadConfirmation'
+import { DownloadConfirmation } from './components/download_list'
 import DirectProgrammaticDownload from './components/DownloadCart/DirectProgrammaticDownload'
-import { DownloadCartPage } from './components/DownloadCart/DownloadCartPage'
 import ShowDownloadV2 from './components/DownloadCart/ShowDownloadV2'
 import { SchemaDrivenAnnotationEditor } from './components/entity/annotations/SchemaDrivenAnnotationEditor'
 import { EntityModal } from './components/entity/metadata/EntityModal'
-import { EntityBadgeIcons } from './components/EntityBadgeIcons/EntityBadgeIcons'
 import EntityForm from './components/EntityForm/EntityForm'
 import { EntityTypeIcon } from './components/EntityIcon'
-import { EntityFinder } from './components/EntityFinder/EntityFinder'
+import { EntityFinder } from './components/EntityFinder'
 import ErrorPage from './components/error/ErrorPage'
-import { EvaluationCard } from './components/Evaluation/EvaluationCard'
-import { EvaluationEditorPage } from './components/Evaluation/EvaluationEditorPage'
 import FavoritesPage from './components/favorites/FavoritesPage'
 import ForumSearch from './components/ForumSearch/ForumSearch'
 import FullWidthAlert from './components/FullWidthAlert/FullWidthAlert'
@@ -25,7 +31,6 @@ import IconSvg from './components/IconSvg/IconSvg'
 import StandaloneLoginForm from './components/Authentication/StandaloneLoginForm'
 import LoginPage from './components/Authentication/LoginPage'
 import PageProgress from './components/PageProgress/PageProgress'
-import { AccessTokenPage } from './components/AccessTokenPage/AccessTokenPage'
 import PlotlyWrapper from './components/PlotlyWrapper'
 import { ProgrammaticInstructionsModal } from './components/ProgrammaticInstructionsModal'
 import QueryWrapperPlotNav from './components/QueryWrapperPlotNav/QueryWrapperPlotNav'
@@ -36,10 +41,6 @@ import { DatasetItemsEditor } from './components/SynapseTable/datasets/DatasetIt
 import StandaloneQueryWrapper from './components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 import ProgrammaticTableDownload from './components/ProgrammaticTableDownload/ProgrammaticTableDownload'
 import TermsAndConditions from './components/TermsAndConditions/TermsAndConditions'
-import {
-  displayToast,
-  SynapseToastContainer,
-} from './components/ToastMessage/ToastMessage'
 import { TrashCanList } from './components/trash/TrashCanList'
 import { OAuthManagement } from './components/OAuthClientManagement/OAuthManagement'
 import UserCard from './components/UserCard/UserCard'
@@ -54,13 +55,13 @@ import EntityPageTitleBar from './components/entity/page/title_bar/EntityPageTit
 import { CreatedByModifiedBy } from './components/entity/page/CreatedByModifiedBy'
 import SynapseClient from './synapse-client'
 import * as SynapseQueries from './synapse-queries'
-import { SynapseConstants } from './utils'
-import Palettes from './theme/palette/Palettes'
 import {
+  SynapseConstants,
   SynapseContextConsumer,
   SynapseContextProvider,
   useSynapseContext,
-} from './utils/context/SynapseContext'
+} from './utils'
+import Palettes from './theme/palette/Palettes'
 import TwoFactorBackupCodes from './components/Authentication/TwoFactorBackupCodes'
 import TwoFactorEnrollmentForm from './components/Authentication/TwoFactorEnrollmentForm'
 import TwoFactorAuthSettingsPanel from './components/Authentication/TwoFactorAuthSettingsPanel'
@@ -132,6 +133,7 @@ const SynapseComponents = {
   TwoFactorAuthSettingsPanel,
   TwoFactorBackupCodes,
   TwoFactorEnrollmentForm,
+  SubscriptionPage,
 }
 
 // Include the version in the build

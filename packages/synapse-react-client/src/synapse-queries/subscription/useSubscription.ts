@@ -1,21 +1,27 @@
 import {
-  SubscriptionObjectType,
-  Subscription,
+  Direction,
   SortByType,
+  SubscriberPagedResults,
+  Subscription,
+  SubscriptionObjectType,
+  SubscriptionPagedResults,
+  SubscriptionQuery,
   SubscriptionRequest,
   Topic,
-  SubscriberPagedResults,
 } from '@sage-bionetworks/synapse-types'
 import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
   useMutation,
-  useQuery,
   UseMutationOptions,
-  UseQueryOptions,
+  useQuery,
   useQueryClient,
+  UseQueryOptions,
 } from 'react-query'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { Direction } from '@sage-bionetworks/synapse-types'
+import { useSynapseContext } from '../../utils'
 import SynapseClient from '../../synapse-client'
 import { useCallback } from 'react'
 
@@ -57,6 +63,52 @@ export function useGetSubscription(
   )
 }
 
+export function useGetAllSubscriptions(
+  query: SubscriptionQuery,
+  options?: UseInfiniteQueryOptions<
+    SubscriptionPagedResults,
+    SynapseClientError,
+    Subscription
+  >,
+  queryKeyOverride?: QueryKey,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useInfiniteQuery<
+    SubscriptionPagedResults,
+    SynapseClientError,
+    Subscription
+  >(
+    queryKeyOverride ?? keyFactory.getAllSubscriptionsQueryKey(query),
+    async context => {
+      const offset = context.pageParam as number | undefined
+      return await SynapseClient.getAllSubscriptions(
+        accessToken,
+        10,
+        offset,
+        query,
+      )
+    },
+    {
+      ...options,
+      select: data =>
+        ({
+          pages: data.pages.flatMap(page => page.results),
+          pageParams: data.pageParams,
+        } as InfiniteData<Subscription>),
+      getNextPageParam: (page, allPages) => {
+        const totalNumberOfFetchedResults = allPages.flatMap(
+          page => page.results,
+        ).length
+        if (page.totalNumberOfResults > totalNumberOfFetchedResults) {
+          return totalNumberOfFetchedResults
+        }
+        return undefined
+      },
+    },
+  )
+}
+
 export function usePostSubscription(
   options?: UseMutationOptions<Subscription, SynapseClientError, Topic>,
 ) {
@@ -69,7 +121,7 @@ export function usePostSubscription(
       ...options,
       onSuccess: async (updatedSubscription, variables, ctx) => {
         await queryClient.invalidateQueries(
-          keyFactory.getAllSubscriptionsQueryKey(),
+          keyFactory.getBaseSubscriptionQueryKey(),
         )
 
         await queryClient.invalidateQueries(
@@ -99,7 +151,7 @@ export function useDeleteSubscription(
       ...options,
       onSuccess: async (updatedSubscription, variables, ctx) => {
         await queryClient.invalidateQueries(
-          keyFactory.getAllSubscriptionsQueryKey(),
+          keyFactory.getBaseSubscriptionQueryKey(),
         )
 
         await queryClient.invalidateQueries(
@@ -121,7 +173,6 @@ export const useSubscription = (
     objectId,
     objectType,
   )
-  const { data: subscribers } = useGetSubscribers({ objectId, objectType })
   const { mutate: postSubscription, isLoading: isLoadingPost } =
     usePostSubscription()
   const { mutate: deleteSubscription, isLoading: isLoadingDelete } =
@@ -136,5 +187,10 @@ export const useSubscription = (
     }
   }, [deleteSubscription, objectId, objectType, postSubscription, subscription])
 
-  return { isLoading, subscription, toggleSubscribed, subscribers }
+  return {
+    isLoading,
+    subscription,
+    toggleSubscribed,
+    isSubscribed: Boolean(subscription),
+  }
 }
