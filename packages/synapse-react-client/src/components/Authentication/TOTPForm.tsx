@@ -25,7 +25,7 @@ export default function TOTPForm(props: TOTPFormProps) {
         validateChar={(character: string) => {
           return DIGIT_CHARACTERS.includes(character) || character === ''
         }}
-        gap={0}
+        gap={'2px'}
         sx={{
           '.MuiInputBase-root': {
             paddingLeft: '5px',
