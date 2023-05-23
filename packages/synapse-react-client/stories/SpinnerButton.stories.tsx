@@ -9,12 +9,6 @@ import {
 const meta: Meta = {
   title: 'UI/SpinnerButton',
   component: SpinnerButton,
-  //   parameters: {
-  //     backgrounds: {
-  //       default: 'Challenge Header',
-  //       values: [{ name: 'Challenge Header', value: '#3E68AA' }],
-  //     },
-  //   },
   argTypes: {
     isAuthenticated: {
       control: { type: 'boolean' },
