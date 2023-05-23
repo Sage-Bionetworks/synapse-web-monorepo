@@ -1,4 +1,10 @@
-import { alpha, Fade, inputBaseClasses, ThemeOptions } from '@mui/material'
+import {
+  alpha,
+  Fade,
+  inputBaseClasses,
+  lighten,
+  ThemeOptions,
+} from '@mui/material'
 import { typographyOptions } from './typography/Typography'
 import { palette } from './palette/Palettes'
 import linkTheme from './typography/Link'
@@ -35,9 +41,6 @@ export const defaultMuiThemeOptions: ThemeOptions = {
             theme.palette[ownerState.severity || 'success']['main']
           }`,
           color: theme.palette.grey[900],
-          padding: theme.spacing(2),
-          marginBottom: theme.spacing(1),
-          marginTop: theme.spacing(1),
         }),
         icon: ({ theme }) => ({
           marginRight: theme.spacing(3),
@@ -46,6 +49,18 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           paddingRight: theme.spacing(2),
           ...(ownerState.onClose &&
             !ownerState.action && { color: theme.palette.grey[700] }),
+        }),
+        standardSuccess: ({ theme }) => ({
+          backgroundColor: lighten(theme.palette.success.light, 0.8),
+        }),
+        standardError: ({ theme }) => ({
+          backgroundColor: lighten(theme.palette.error.light, 0.8),
+        }),
+        standardWarning: ({ theme }) => ({
+          backgroundColor: lighten(theme.palette.warning.light, 0.8),
+        }),
+        standardInfo: ({ theme }) => ({
+          backgroundColor: lighten(theme.palette.info.light, 0.8),
         }),
       },
     },

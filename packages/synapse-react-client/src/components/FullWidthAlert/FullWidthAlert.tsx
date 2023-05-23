@@ -3,9 +3,9 @@ import {
   Alert,
   AlertProps,
   AlertTitle,
+  Box,
   Button,
   ButtonProps,
-  Grid,
   Snackbar,
   Stack,
   Tooltip,
@@ -67,7 +67,6 @@ function ButtonFromConfig(props: {
                 window.open(config.href, '_blank', 'noopener')
               }
             }}
-            sx={{ flexShrink: 0 }}
           >
             {config.text}
           </Button>
@@ -107,78 +106,54 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     }
   }, [onClose, autoCloseAfterDelayInSeconds])
 
-  const gridSize = 12
-  const buttonGridSize = 4
-  const hasButtons = primaryButtonConfig || secondaryButtonConfig
-  const buttonGridSizeMap = {
-    sm: hasButtons ? buttonGridSize + 1 : 0,
-    md: hasButtons ? buttonGridSize - 1 : 0,
-    lg: hasButtons ? buttonGridSize : 0,
-  }
-
   const alert = (
     <Alert
       severity={variantToSeverity(variant)}
       sx={{
         width: '100%',
+        my: '10px',
         '.MuiAlert-message': {
           flexGrow: 1,
         },
       }}
-      className={`FullWidthAlert ${isGlobal && 'global'}`}
+      className="FullWidthAlert"
       onClose={onClose}
     >
-      <Grid
-        container
-        rowSpacing={1}
-        columnSpacing={2}
+      <Stack
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'start', sm: 'center' }}
+        spacing={{ xs: 1, sm: 2 }}
+        display="flex"
+        justifyContent="space-between"
       >
-        <Grid
-          item
-          xs={gridSize}
-          sm={gridSize - buttonGridSizeMap.sm}
-          md={gridSize - buttonGridSizeMap.md}
-          lg={gridSize - buttonGridSizeMap.lg}
-        >
+        <Box>
           {title && <AlertTitle>{title}</AlertTitle>}
           {description}
-        </Grid>
-        {hasButtons && (
-          <Grid
-            item
-            xs={gridSize}
-            sm={buttonGridSizeMap.sm}
-            md={buttonGridSizeMap.md}
-            lg={buttonGridSizeMap.lg}
+        </Box>
+        {(primaryButtonConfig || secondaryButtonConfig) && (
+          <Stack
+            spacing={{ xs: 1, lg: 2 }}
+            direction={{
+              xs: 'column-reverse',
+              sm: 'column',
+              lg: 'row',
+            }}
+            alignItems="center"
             display="flex"
-            justifyContent="flex-end"
+            flexShrink={0}
           >
-            <Stack
-              spacing={{ xs: 1, lg: 2 }}
-              direction={{
-                xs: 'column-reverse',
-                sm: 'column',
-                lg: 'row',
-              }}
-            >
-              {secondaryButtonConfig && (
-                <ButtonFromConfig
-                  config={secondaryButtonConfig}
-                  variant="text"
-                />
-              )}
-              {primaryButtonConfig && (
-                <ButtonFromConfig
-                  config={primaryButtonConfig}
-                  variant="contained"
-                />
-              )}
-            </Stack>
-          </Grid>
+            {secondaryButtonConfig && (
+              <ButtonFromConfig config={secondaryButtonConfig} variant="text" />
+            )}
+            {primaryButtonConfig && (
+              <ButtonFromConfig
+                config={primaryButtonConfig}
+                variant="contained"
+              />
+            )}
+          </Stack>
         )}
-      </Grid>
+      </Stack>
     </Alert>
   )
 
@@ -187,6 +162,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
       {isGlobal ? (
         <Snackbar
           open={show}
+          className={isGlobal ? 'FullWidthAlertGlobal' : undefined}
           sx={{
             width: '96%',
             filter:

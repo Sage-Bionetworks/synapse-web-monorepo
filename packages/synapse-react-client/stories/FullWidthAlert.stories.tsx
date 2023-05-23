@@ -64,9 +64,16 @@ export const SynapseNavDrawerIsShowing: Story = {
   args: {
     ...SuccessAlertWithPrimaryButtonOnly.args,
   },
-  render: args => (
-    <body className="SynapseNavDrawerIsShowing">
-      <FullWidthAlert {...args} />
-    </body>
-  ),
+  decorators: [
+    Story => {
+      React.useEffect(() => {
+        document.body.classList.add('SynapseNavDrawerIsShowing')
+        return () => {
+          document.body.classList.remove('SynapseNavDrawerIsShowing')
+        }
+      }, [])
+
+      return <Story />
+    },
+  ],
 }
