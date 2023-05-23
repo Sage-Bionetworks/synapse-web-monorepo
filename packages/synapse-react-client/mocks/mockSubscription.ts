@@ -2,36 +2,26 @@ import {
   Subscription,
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID } from './user/mock_user_profile'
-import { times } from 'lodash-es'
-import { faker } from '@faker-js/faker'
 import {
   mockDiscussionThreadBundles,
   mockForums,
 } from './discussion/mock_discussion'
+import { generateSubscription } from './faker/generateSubscription'
 
 const forumSubscriptions: Subscription[] = mockForums.map(
-  (forum): Subscription => {
-    return {
-      subscriptionId: String(parseInt(forum.id) * 10),
-      subscriberId: String(MOCK_USER_ID),
-      createdOn: faker.date.anytime().toISOString(),
+  (forum): Subscription =>
+    generateSubscription({
       objectId: forum.id,
       objectType: SubscriptionObjectType.FORUM,
-    }
-  },
+    }),
 )
 
 const threadSubscriptions: Subscription[] = mockDiscussionThreadBundles.map(
-  (dtb): Subscription => {
-    return {
-      subscriptionId: String(faker.number.int()),
-      subscriberId: String(MOCK_USER_ID),
+  (dtb): Subscription =>
+    generateSubscription({
       objectType: SubscriptionObjectType.THREAD,
       objectId: dtb.id,
-      createdOn: faker.date.anytime().toISOString(),
-    }
-  },
+    }),
 )
 
 export { forumSubscriptions, threadSubscriptions }
