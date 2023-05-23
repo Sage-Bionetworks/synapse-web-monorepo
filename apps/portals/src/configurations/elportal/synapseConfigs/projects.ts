@@ -18,23 +18,23 @@ export const projectCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     type: 'Project',
-    title: 'Name',
-    subTitle: 'Principal Investigators',
-    description: 'Abstract',
-    secondaryLabels: ['Institutions', 'Program', 'Grant Number'],
+    title: 'name',
+    subTitle: 'principalInvestigators',
+    description: 'abstract',
+    secondaryLabels: ['institutions', 'program', 'grantNumber'],
   },
   secondaryLabelLimit: 4,
   titleLinkConfig: {
     isMarkdown: false,
     baseURL: 'Explore/Projects/DetailsPage',
-    URLColumnName: 'Grant Number',
-    matchColumnName: 'Grant Number',
+    URLColumnName: 'grantNumber',
+    matchColumnName: 'grantNumber',
   },
   labelLinkConfig: [
     {
       isMarkdown: false,
-      matchColumnName: 'More Information',
-      linkColumnName: 'More Information URL',
+      matchColumnName: 'moreInformation',
+      linkColumnName: 'moreInformationURL',
     },
   ],
 }
@@ -45,7 +45,7 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
   synapseConfigArray: [
     {
       name: 'CardContainerLogic',
-      columnName: 'Grant Number',
+      columnName: 'grantNumber',
       title: 'Studies',
       tableSqlKeys: ['grantNumber'],
       props: {
@@ -55,7 +55,7 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
     },
     {
       name: 'CardContainerLogic',
-      columnName: 'Grant Number',
+      columnName: 'grantNumber',
       title: 'Publications',
       showTitleSeperator: false,
       tableSqlKeys: ['grant'],
@@ -67,8 +67,8 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
     {
       name: 'CardContainerLogic',
       title: 'People',
-      columnName: 'Grant Number',
-      tableSqlKeys: ['Grant Number'],
+      columnName: 'grantNumber',
+      tableSqlKeys: ['grantNumber'],
       props: {
         sql: peopleSql,
         limit: 6,
@@ -78,7 +78,7 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
     {
       name: 'CardContainerLogic',
       title: 'Computational Tools',
-      columnName: 'Grant Number',
+      columnName: 'grantNumber',
       tableSqlKeys: ['grant'],
       props: {
         ...computationalCardConfiguration,
@@ -100,19 +100,19 @@ const projects: SynapseConfig = {
     // unitDescription: 'Projects',
     searchConfiguration: {
       searchable: [
-        'Name',
-        'Grant Number',
-        'Program',
-        'Principal Investigators',
-        'Institutions',
-        'Abstract',
+        'name',
+        'grantNumber',
+        'program',
+        'principalInvestigators',
+        'institutions',
+        'abstract',
       ],
     },
     facetsToPlot: [
-      'Name',
-      'Institutions',
-      'Principal Investigators',
-      'Grant Number',
+      'name',
+      'institutions',
+      'principalInvestigators',
+      'grantNumber',
       // 'Program',
     ],
   },
