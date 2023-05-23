@@ -1,7 +1,8 @@
 import { Alert, Button, Box } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import { DialogBase } from '../DialogBase'
 import { SynapseSpinner } from '../LoadingScreen'
+import SpinnerButton from '../widgets/SpinnerButton'
 
 export type Step = {
   id: string
@@ -43,6 +44,7 @@ const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
   content,
   loading,
 }) => {
+  const [showSpinner, setShowSpinner] = useState<boolean>(false)
   if (!step) return null
 
   const dialogContent = (
@@ -87,14 +89,19 @@ const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
             </Button>
           )}
           {onConfirm && step?.confirmButtonText && (
-            <Button
+            <SpinnerButton
               variant="contained"
               color="primary"
               disabled={!step.confirmEnabled}
-              onClick={() => (onConfirm ? onConfirm() : undefined)}
+              onClick={() => {
+                setShowSpinner(true)
+                onConfirm()
+              }}
+              showSpinner={showSpinner}
+              sx={{ marginLeft: '8px' }}
             >
               {step.confirmButtonText}
-            </Button>
+            </SpinnerButton>
           )}
         </>
       }
