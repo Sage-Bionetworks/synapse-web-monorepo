@@ -200,7 +200,7 @@ describe('test EvaluationEditor', () => {
     await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
     expect(onCreateEvaluation).not.toBeCalled()
     await waitFor(() => expect(mockOnSaveSuccess).toBeCalledWith(evaluationId))
-    const alert = screen.getByRole('alert')
+    const alert = await screen.findByRole('alert')
     expect(alert).toHaveClass('save-success-alert')
   })
 

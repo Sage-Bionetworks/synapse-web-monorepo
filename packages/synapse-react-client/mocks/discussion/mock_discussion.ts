@@ -6,8 +6,29 @@ import {
   mockUserProfileData,
   mockUserProfileData2,
 } from '../user/mock_user_profile'
+import { times } from 'lodash-es'
+import {
+  generateDiscussionThreadBundle,
+  generateForum,
+} from '../faker/generateDiscussion'
+import { mockProjects } from '../entity/mockProject'
 
-export const MOCK_FORUM_ID = 'syn123'
+export const MOCK_FORUM_ID = '984321189'
+
+export const mockForums = mockProjects.map(project =>
+  generateForum({
+    projectId: project.id,
+  }),
+)
+const generatedDiscussionThreadBundles = mockForums.flatMap(forum => {
+  return times(10).map(i =>
+    generateDiscussionThreadBundle({
+      forumId: forum.id,
+      projectId: forum.projectId,
+    }),
+  )
+})
+
 export const MOCK_SUBSCRIPTION_ID = '123'
 
 export const mockDiscussionThreadBundle: DiscussionThreadBundle = {
@@ -45,3 +66,9 @@ export const mockDiscussionReplyBundle: DiscussionReplyBundle = {
   createdBy: mockUserProfileData2.ownerId,
   threadId: mockDiscussionThreadBundle.id,
 }
+
+export const mockDiscussionThreadBundles = [
+  ...generatedDiscussionThreadBundles,
+  mockDiscussionThreadBundle,
+  mockDiscussionThreadBundle2,
+]

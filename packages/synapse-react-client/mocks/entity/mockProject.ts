@@ -1,22 +1,26 @@
 import {
   ACCESS_TYPE,
   AnnotationsValueType,
-  Entity,
   EntityBundle,
   EntityHeader,
   EntityJson,
   EntityType,
   ObjectType,
+  Project,
   ProjectHeader,
   RestrictionLevel,
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
+import { generateProject } from '../faker/generateFakeEntity'
+import { times } from 'lodash-es'
 
-const MOCK_PROJECT_ID = 'syn12345'
+export const mockProjectIds = times(20).map(i => i + 10000)
+
+const MOCK_PROJECT_ID = `syn${mockProjectIds[0]}`
 const MOCK_PROJECT_NAME = 'A Mock Project'
 
-const mockProjectEntity: Entity = {
+const mockProjectEntity = {
   name: MOCK_PROJECT_NAME,
   id: MOCK_PROJECT_ID,
   etag: '7849ff2c-1c93-4104-adcf-9e6d6b0c50b5',
@@ -26,7 +30,7 @@ const mockProjectEntity: Entity = {
   modifiedBy: `${MOCK_USER_ID}`,
   parentId: 'syn4489',
   concreteType: 'org.sagebionetworks.repo.model.Project',
-}
+} satisfies Project
 
 const mockProjectEntityBundle: EntityBundle = {
   entity: mockProjectEntity,
@@ -65,6 +69,8 @@ const mockProjectEntityBundle: EntityBundle = {
     ownerPrincipalId: MOCK_USER_ID,
     canPublicRead: true,
     canModerate: true,
+    canMove: true,
+    isEntityOpenData: false,
     isCertificationRequired: true,
   },
   path: {
@@ -166,10 +172,11 @@ const mockProjectEntityHeader: EntityHeader = {
   versionNumber: 1,
   versionLabel: '1',
   benefactorId: 12345,
-  createdOn: mockProjectEntity.createdOn!,
-  modifiedOn: mockProjectEntity.modifiedOn!,
-  createdBy: mockProjectEntity.createdBy!,
-  modifiedBy: mockProjectEntity.modifiedBy!,
+  isLatestVersion: true,
+  createdOn: mockProjectEntity.createdOn,
+  modifiedOn: mockProjectEntity.modifiedOn,
+  createdBy: mockProjectEntity.createdBy,
+  modifiedBy: mockProjectEntity.modifiedBy,
 }
 
 const mockProjectHeader: ProjectHeader = {
@@ -184,15 +191,15 @@ const mockProjectJson: EntityJson = {
   name: MOCK_PROJECT_NAME,
   id: MOCK_PROJECT_ID,
   etag: mockProjectEntity.etag!,
-  createdOn: mockProjectEntity.createdOn!,
-  modifiedOn: mockProjectEntity.modifiedOn!,
-  createdBy: mockProjectEntity.createdBy!,
-  modifiedBy: mockProjectEntity.modifiedBy!,
+  createdOn: mockProjectEntity.createdOn,
+  modifiedOn: mockProjectEntity.modifiedOn,
+  createdBy: mockProjectEntity.createdBy,
+  modifiedBy: mockProjectEntity.modifiedBy,
   parentId: 'syn4489',
   concreteType: 'org.sagebionetworks.repo.model.Project',
 }
 
-const mockProjectEntityData: MockEntityData = {
+const mockProjectEntityData: MockEntityData<Project> = {
   id: MOCK_PROJECT_ID,
   name: MOCK_PROJECT_NAME,
   entity: mockProjectEntity,
@@ -201,5 +208,24 @@ const mockProjectEntityData: MockEntityData = {
   projectHeader: mockProjectHeader,
   json: mockProjectJson,
 }
+
+export const mockProjects: Project[] = mockProjectIds.map(id => {
+  if (`syn${id}` === MOCK_PROJECT_ID) {
+    return mockProjectEntity
+  }
+  return generateProject({ id: `syn${id}` })
+})
+
+export const mockProjectsEntityData: MockEntityData<Project>[] =
+  mockProjects.map(p => {
+    if (p.id === MOCK_PROJECT_ID) {
+      return mockProjectEntityData
+    }
+    return {
+      id: p.id,
+      name: p.name,
+      entity: p,
+    }
+  })
 
 export default mockProjectEntityData

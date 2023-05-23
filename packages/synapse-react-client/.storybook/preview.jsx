@@ -7,6 +7,9 @@ import { initialize, mswLoader } from 'msw-storybook-addon'
 import { getHandlers } from '../mocks/msw/handlers'
 import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
 import isChromatic from 'chromatic/isChromatic'
+import { faker } from '@faker-js/faker'
+
+faker.seed(12345)
 
 globalThis.Buffer = Buffer
 globalThis.process = {

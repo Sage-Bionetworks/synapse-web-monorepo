@@ -4,6 +4,12 @@ import '@testing-library/jest-dom/extend-expect'
 import crypto from 'crypto'
 import { ResizeObserver } from '@juggle/resize-observer'
 import { setupIntersectionMocking } from 'react-intersection-observer/test-utils'
+import { faker } from '@faker-js/faker'
+
+// Set a constant seed for faker so the generated data doesn't change
+beforeAll(() => {
+  faker.seed(12345)
+})
 
 // MarkdownSynapse dependencies below --
 // When using the component in production it relies on these imports being globals,

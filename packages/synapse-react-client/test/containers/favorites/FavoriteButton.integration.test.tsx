@@ -13,6 +13,7 @@ import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import userEvent from '@testing-library/user-event'
 import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import { DeferredPromise } from '@open-draft/deferred-promise'
 
 function renderComponent(wrapperProps?: SynapseContextType) {
   return render(<FavoriteButton entityId={mockFileEntityData.id} />, {
@@ -109,17 +110,18 @@ describe('FavoriteButton tests', () => {
 
   it('Disables the button while toggling the favorite', async () => {
     // Create a function that we'll use to delay the response from the mock server
-    let sendResponse: (() => void) | null
+    const deferResponse = new DeferredPromise<void>()
     server.use(
       rest.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}/:id`,
-        (req, res, ctx) => {
+        async (req, res, ctx) => {
           onAddFavoriteCalled(req.params.id)
           useIsInFavorites()
-          sendResponse = () => {
-            res(ctx.status(201), ctx.json(mockFileEntityData.entityHeader!))
-          }
-          return
+          await deferResponse
+          return res(
+            ctx.status(201),
+            ctx.json(mockFileEntityData.entityHeader!),
+          )
         },
       ),
     )
@@ -133,14 +135,11 @@ describe('FavoriteButton tests', () => {
     const button = await screen.findByRole('button')
     await userEvent.click(button)
 
-    // Wait for the server to get the request and assign the variable
-    await waitFor(() => expect(sendResponse).toBeDefined())
-
     // No response yet; the button should be disabled
     expect(button).toBeDisabled()
 
     // Allow the server to send the response
-    sendResponse!()
+    deferResponse.resolve()
 
     // Once the client receives the response, the button should be enabled again
     await waitFor(() => expect(button).not.toBeDisabled())

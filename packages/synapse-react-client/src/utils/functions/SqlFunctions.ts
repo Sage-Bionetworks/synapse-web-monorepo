@@ -14,7 +14,7 @@ export type SQLOperator =
 
 const WITHOUT_SYN_PREFIX = 3
 
-function removePrefixIfSynId(value: string) {
+export function removePrefixIfSynId(value: string) {
   if (value.match(SYNAPSE_ENTITY_ID_REGEX)) {
     return value.substring(WITHOUT_SYN_PREFIX)
   }

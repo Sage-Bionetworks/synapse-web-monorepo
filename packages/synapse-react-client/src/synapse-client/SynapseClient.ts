@@ -377,6 +377,7 @@ const fetchWithExponentialTimeout = async <TResponse>(
   try {
     response = await fetch(url, options)
   } catch (err) {
+    console.error(err)
     throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url.toString())
   }
 

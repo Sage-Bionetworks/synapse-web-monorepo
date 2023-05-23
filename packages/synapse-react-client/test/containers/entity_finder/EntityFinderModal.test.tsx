@@ -1,5 +1,11 @@
 import '@testing-library/jest-dom'
-import { render, waitFor, screen, within } from '@testing-library/react'
+import {
+  render,
+  waitFor,
+  screen,
+  within,
+  waitForElementToBeRemoved,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import * as EntityFinderModule from '../../../src/components/EntityFinder/EntityFinder'
@@ -103,6 +109,7 @@ describe('EntityFinderModal', () => {
       name: 'Cancel',
     })
     await userEvent.click(cancelWarning)
+    await waitForElementToBeRemoved(unsavedChangedModal)
 
     // The Entity Finder modal appears once more
     entityFinderModal = await screen.findByRole('dialog')

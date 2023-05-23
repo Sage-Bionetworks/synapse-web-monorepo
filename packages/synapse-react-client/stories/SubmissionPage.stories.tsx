@@ -13,6 +13,8 @@ import { getHandlersForTableQuery } from '../mocks/msw/handlers/tableQueryHandle
 import mockRejectionReasonsTableQueryResultBundle from '../mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import SubmissionPage from '../src/components/dataaccess/SubmissionPage'
 import { SynapseErrorBoundary } from '../src/components/error/ErrorBanner'
+import { getWikiHandlers } from '../mocks/msw/handlers/wikiHandlers'
+import { getUserProfileHandlers } from '../mocks/msw/handlers/userProfileHandlers'
 
 const meta = {
   title: 'Governance/SubmissionPage',
@@ -32,9 +34,12 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
+  name: 'SubmissionPage',
   parameters: {
     msw: {
       handlers: [
+        ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
+        ...getWikiHandlers(MOCK_REPO_ORIGIN),
         // Return submission based on ID
         rest.get(
           `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,

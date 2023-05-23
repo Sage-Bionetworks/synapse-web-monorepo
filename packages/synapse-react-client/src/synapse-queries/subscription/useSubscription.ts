@@ -73,6 +73,7 @@ export function useGetAllSubscriptions(
   queryKeyOverride?: QueryKey,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
 
   return useInfiniteQuery<
     SubscriptionPagedResults,
@@ -91,6 +92,23 @@ export function useGetAllSubscriptions(
     },
     {
       ...options,
+      onSuccess: data => {
+        // Set the query data for each individual subscription that was retrieved
+        data.pages.forEach(subscription => {
+          queryClient.setQueryData(
+            keyFactory.getSubscriptionQueryKey(
+              subscription.objectId,
+              subscription.objectType,
+            ),
+            subscription,
+          )
+        })
+
+        if (options?.onSuccess) {
+          options.onSuccess(data)
+        }
+      },
+
       select: data =>
         ({
           pages: data.pages.flatMap(page => page.results),
@@ -120,16 +138,24 @@ export function usePostSubscription(
     {
       ...options,
       onSuccess: async (updatedSubscription, variables, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getBaseSubscriptionQueryKey(),
-        )
-
-        await queryClient.invalidateQueries(
-          keyFactory.getSubscribersQueryKey(
-            variables.objectId,
-            variables.objectType,
+        await Promise.all([
+          queryClient.invalidateQueries(
+            keyFactory.getAllSubscriptionsQueryKey(),
           ),
-        )
+          queryClient.invalidateQueries(
+            keyFactory.getSubscriptionQueryKey(
+              variables.objectId,
+              variables.objectType,
+            ),
+          ),
+          queryClient.invalidateQueries(
+            keyFactory.getSubscribersQueryKey(
+              variables.objectId,
+              variables.objectType,
+            ),
+          ),
+        ])
+
         if (options?.onSuccess) {
           await options.onSuccess(updatedSubscription, variables, ctx)
         }
@@ -139,24 +165,38 @@ export function usePostSubscription(
 }
 
 export function useDeleteSubscription(
-  options?: UseMutationOptions<void, SynapseClientError, string>,
+  options?: UseMutationOptions<void, SynapseClientError, Subscription>,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, string>(
-    (subscriptionId: string) =>
-      SynapseClient.deleteSubscription(accessToken, subscriptionId),
+  return useMutation<void, SynapseClientError, Subscription>(
+    (subscription: Subscription) =>
+      SynapseClient.deleteSubscription(
+        accessToken,
+        subscription.subscriptionId,
+      ),
     {
       ...options,
       onSuccess: async (updatedSubscription, variables, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getBaseSubscriptionQueryKey(),
-        )
+        await Promise.all([
+          queryClient.invalidateQueries(
+            keyFactory.getAllSubscriptionsQueryKey(),
+          ),
+          queryClient.invalidateQueries(
+            keyFactory.getSubscriptionQueryKey(
+              variables.objectId,
+              variables.objectType,
+            ),
+          ),
+          queryClient.invalidateQueries(
+            keyFactory.getSubscribersQueryKey(
+              variables.objectId,
+              variables.objectType,
+            ),
+          ),
+        ])
 
-        await queryClient.invalidateQueries(
-          keyFactory.getAllSubscribersQueryKey(),
-        )
         if (options?.onSuccess) {
           await options.onSuccess(updatedSubscription, variables, ctx)
         }
@@ -181,7 +221,7 @@ export const useSubscription = (
   const isLoading: boolean = isLoadingGet || isLoadingPost || isLoadingDelete
   const toggleSubscribed = useCallback(() => {
     if (subscription) {
-      deleteSubscription(subscription.subscriptionId)
+      deleteSubscription(subscription)
     } else {
       postSubscription({ objectId, objectType })
     }

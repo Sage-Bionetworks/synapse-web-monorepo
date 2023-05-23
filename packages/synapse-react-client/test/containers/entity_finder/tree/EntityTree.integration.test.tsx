@@ -36,7 +36,10 @@ import {
 } from '../../../../src/utils/APIConstants'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
+import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
 import * as ToastMessageModule from '../../../../src/components/ToastMessage/ToastMessage'
+import mockProject, { mockProjects } from '../../../../mocks/entity/mockProject'
+import { mockFolderEntity } from '../../../../mocks/entity/mockEntity'
 
 const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'
 
@@ -61,8 +64,8 @@ const defaultProps: EntityTreeProps = {
   // We use JS arrays rather than Immutable.Map so we can easily inspect it in
   selectedEntities: [],
   initialScope: FinderScope.CURRENT_PROJECT,
-  projectId: 'syn5',
-  initialContainer: 'syn123',
+  projectId: mockProject.id,
+  initialContainer: mockProject.id,
   showDropdown: true,
   visibleTypes: [EntityType.PROJECT, EntityType.FOLDER],
   setDetailsViewConfiguration: mockSetDetailsViewConfiguration,
@@ -75,7 +78,7 @@ const defaultProps: EntityTreeProps = {
 
 const projectsPage1: Partial<ProjectHeader>[] = [
   {
-    id: 'syn1',
+    id: mockProjects[0].id,
     name: 'Project 1',
     modifiedOn: 'today',
     modifiedBy: 100000,
@@ -84,7 +87,7 @@ const projectsPage1: Partial<ProjectHeader>[] = [
 
 const projectsPage2: Partial<ProjectHeader>[] = [
   {
-    id: 'syn2',
+    id: mockProjects[1].id,
     name: 'Project 2',
     modifiedOn: 'today',
     modifiedBy: 100000,
@@ -94,8 +97,8 @@ const projectsPage2: Partial<ProjectHeader>[] = [
 const favorites: PaginatedResults<EntityHeader> = {
   results: [
     {
-      id: 'syn3',
-      name: 'Favorite 1 - A Project',
+      id: mockFolderEntity.id,
+      name: 'Favorite 1 - A Folder',
       modifiedOn: 'today',
       modifiedBy: '100000',
       type: 'org.sagebionetworks.repo.model.Folder',
@@ -107,7 +110,7 @@ const favorites: PaginatedResults<EntityHeader> = {
       isLatestVersion: true,
     },
     {
-      id: 'syn4',
+      id: mockFileEntity.id,
       name: 'Favorite 2 - A file',
       modifiedOn: 'today',
       modifiedBy: '100000',
@@ -125,7 +128,7 @@ const favorites: PaginatedResults<EntityHeader> = {
 const entityPath: EntityPath = {
   path: [
     {
-      id: 'syn0',
+      id: 'syn4489',
       name: 'The root entity that is never seen',
       modifiedOn: 'today',
       modifiedBy: '100000',
@@ -137,7 +140,7 @@ const entityPath: EntityPath = {
       createdBy: '10000',
     },
     {
-      id: 'syn5',
+      id: mockProjects[3].id,
       name: 'Project in entity path',
       modifiedOn: 'today',
       modifiedBy: '100000',
@@ -149,7 +152,7 @@ const entityPath: EntityPath = {
       createdBy: '10000',
     },
     {
-      id: 'syn6',
+      id: mockFolderEntity.id,
       name: 'Folder in entity path',
       modifiedOn: 'today',
       modifiedBy: '100000',
@@ -163,7 +166,7 @@ const entityPath: EntityPath = {
   ],
 }
 
-const projectIdWithNoReadAccess = 'syn984312'
+const projectIdWithNoReadAccess = mockProjects[4].id
 
 const setCurrentContainerSpy = jest.fn()
 
@@ -292,7 +295,7 @@ describe('EntityTree tests', () => {
     it('can select Current Project if initial container is provided', async () => {
       renderComponent({
         initialScope: FinderScope.ALL_PROJECTS,
-        projectId: 'syn123',
+        projectId: mockProject.id,
       })
 
       await userEvent.click(screen.getByRole('button'))
@@ -442,14 +445,14 @@ describe('EntityTree tests', () => {
 
       // Select an entity using callback prop in child component
       act(() => {
-        invokeSetSelectedId('syn123')
+        invokeSetSelectedId(mockProject.id)
       })
 
       await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
 
       expect(mockSetDetailsViewConfiguration).toHaveBeenLastCalledWith({
         type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
-        parentContainerId: 'syn123',
+        parentContainerId: mockProject.id,
       })
     })
   })
