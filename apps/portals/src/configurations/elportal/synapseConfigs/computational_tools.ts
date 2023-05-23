@@ -22,7 +22,7 @@ export const computationalCardConfiguration: CardConfiguration = {
     {
       isMarkdown: false,
       matchColumnName: 'grant',
-      URLColumnName: 'Grant Number',
+      URLColumnName: 'grantNumber',
       baseURL: 'Explore/Projects/DetailsPage',
     },
   ],
