@@ -4,10 +4,15 @@ import SearchIcon from '@mui/icons-material/Search'
 import { Box } from '@mui/system'
 
 export interface ChallengeTeamSearchProps {
+  rowCount: number
   onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-export const ChallengeTeamSearch = ({ onChange }: ChallengeTeamSearchProps) => {
+export const ChallengeTeamSearch = ({
+  rowCount,
+  onChange,
+}: ChallengeTeamSearchProps) => {
+  const width = rowCount > 5 ? 'calc(100% - 8px)' : '100%'
   return (
     <Box
       component="form"
@@ -15,6 +20,7 @@ export const ChallengeTeamSearch = ({ onChange }: ChallengeTeamSearchProps) => {
         p: '4px 4px',
         display: 'flex',
         flexGrow: 1,
+        width,
         border: '1px solid #F2F2F2',
         '& .Mui-focused': {
           border: 'none',

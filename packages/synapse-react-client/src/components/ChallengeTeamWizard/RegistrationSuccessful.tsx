@@ -18,10 +18,12 @@ export const RegistrationSuccessful = ({
         You have successfully {createdNewTeam ? 'created' : 'joined'} team{' '}
         <b>{teamName}</b> and have been added to this challenge.
       </Box>
-      <Box>
-        Invited team members will be automatically registered for the challenge
-        as soon as they accept the team member invitation.
-      </Box>
+      {createdNewTeam && (
+        <Box>
+          Invited team members will be automatically registered for the
+          challenge as soon as they accept the team member invitation.
+        </Box>
+      )}
     </>
   )
 }

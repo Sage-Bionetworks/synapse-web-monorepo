@@ -95,6 +95,9 @@ export default function ChallengeTeamTable({
       headerName: '',
       width: 25,
       sortable: false,
+      filterable: false,
+      hideable: false,
+      disableColumnMenu: true,
       renderCell: params => {
         return (
           <RadioOption
@@ -108,16 +111,39 @@ export default function ChallengeTeamTable({
         )
       },
     },
-    { field: 'name', headerName: 'Team Name', flex: 1 },
-    { field: 'created', headerName: 'Created On', width: 100 },
-    { field: 'description', headerName: 'Description', flex: 1 },
+    {
+      field: 'name',
+      headerName: 'Team Name',
+      flex: 1,
+      filterable: false,
+      hideable: false,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'created',
+      headerName: 'Created On',
+      width: 100,
+      filterable: false,
+      hideable: false,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
+      flex: 1,
+      filterable: false,
+      hideable: false,
+      disableColumnMenu: true,
+    },
   ]
-
   return (
     <Box sx={{ height: 220 }}>
       {!isLoading && (
         <>
-          <ChallengeTeamSearch onChange={searchHandler} />
+          <ChallengeTeamSearch
+            onChange={searchHandler}
+            rowCount={allRows.length}
+          />
           <DataGrid
             rows={allRows}
             columns={columns}
@@ -132,6 +158,9 @@ export default function ChallengeTeamTable({
               },
               '& .Mui-odd': {
                 backgroundColor: '#FBFBFC',
+              },
+              '.MuiDataGrid-columnHeaderTitleContainer': {
+                justifyContent: 'space-between',
               },
             }}
             getRowClassName={params =>
