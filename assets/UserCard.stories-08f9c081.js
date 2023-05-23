@@ -1,0 +1,19 @@
+import{a as L,F as z,j as s}from"./jsx-runtime-095bf462.js";import{S as I,W as E,J as M,R as f,aw as D}from"./SynapseConstants-1ebc8be6.js";import{a_ as w}from"./SynapseClient-c43c6534.js";import{U as p}from"./UserCard-6ee404cb.js";import"./index-8db94870.js";import"./_commonjsHelpers-042e6b4d.js";import"./getEndpoint-ac94413e.js";import"./inheritsLoose-c82a83d4.js";import"./index-8ce4a492.js";import"./extends-98964cd2.js";import"./Link-50e57cb4.js";import"./objectWithoutPropertiesLoose-4f48578a.js";import"./styled-2cba4329.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-29d231ba.js";import"./Typography-b4a6e0b5.js";import"./extendSxProp-a6a93bb0.js";import"./TransitionGroupContext-53ae1513.js";import"./useForkRef-2674f3de.js";import"./Button-5637ed55.js";import"./utils-8d96ae5c.js";import"./useTheme-d9b5c73e.js";import"./Alert-e578e9d5.js";import"./createWithBsPrefix-0fdadc7a.js";import"./index-58d3fd43.js";import"./isArray-5e3f9107.js";import"./dayjs.min-8d4ef725.js";import"./hoist-non-react-statics.cjs-775f1375.js";import"./inputBaseClasses-564a6ee4.js";import"./Fade-2249b304.js";import"./SkeletonTable-548d1d1b.js";import"./times-7d6556a7.js";import"./_baseTimes-8cccc40f.js";import"./isSymbol-7c514724.js";import"./Skeleton-cbf43066.js";import"./emotion-react.browser.esm-9ef79d4e.js";import"./IconSvg-f04d8c2b.js";import"./SvgIcon-bc070951.js";import"./Tooltip-b11baf92.js";import"./ownerDocument-613eb639.js";import"./useEnhancedEffect-c45cae33.js";import"./isHostComponent-73d6e646.js";import"./useControlled-be22aa93.js";import"./useEventCallback-65e61675.js";import"./createSvgIcon-02cd1a2a.js";import"./ErrorOutlined-fccff164.js";import"./InfoOutlined-d944994d.js";import"./Clear-398befb5.js";import"./ToastMessage-6e66d93f.js";import"./FullWidthAlert-51eedfbf.js";import"./TransitionGroup-5e0fc2af.js";import"./assertThisInitialized-081f9914.js";import"./hasClass-ec9efd32.js";import"./uniqueId-4d05949d.js";import"./toString-cc90cb98.js";import"./Popover-0894bcd3.js";import"./Modal-cf7a81a7.js";import"./Backdrop-0451e96c.js";import"./getScrollbarSize-ac846fe6.js";import"./ownerWindow-698471fc.js";import"./createChainedFunction-0bab83cf.js";import"./Paper-16fb121c.js";import"./Box-fe8ef83e.js";const br={title:"UI/UserCard",component:p,render:a=>{const{data:i}=w();let m=i==null?void 0:i.ownerId;return m===D.toString()&&(m=void 0),L(z,{children:[s("p",{children:"If you are logged in, your avatar or card will appear. If you are not logged in, enter an ownerId (e.g. 273960) or alias (e.g. brucehoff) below."}),s(p,{ownerId:a.ownerId??m,size:a.size??I,...a})]})}},r={args:{size:E,avatarSize:"SMALL"}},o={args:{size:I}},t={args:{size:M}},e={args:{size:f}};var n,d,c;r.parameters={...r.parameters,docs:{...(n=r.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    size: AVATAR,
+    avatarSize: 'SMALL'
+  }
+}`,...(c=(d=r.parameters)==null?void 0:d.docs)==null?void 0:c.source}}};var u,A,S;o.parameters={...o.parameters,docs:{...(u=o.parameters)==null?void 0:u.docs,source:{originalSource:`{
+  args: {
+    size: SMALL_USER_CARD
+  }
+}`,...(S=(A=o.parameters)==null?void 0:A.docs)==null?void 0:S.source}}};var g,U,l;t.parameters={...t.parameters,docs:{...(g=t.parameters)==null?void 0:g.docs,source:{originalSource:`{
+  args: {
+    size: MEDIUM_USER_CARD
+  }
+}`,...(l=(U=t.parameters)==null?void 0:U.docs)==null?void 0:l.source}}};var R,_,C;e.parameters={...e.parameters,docs:{...(R=e.parameters)==null?void 0:R.docs,source:{originalSource:`{
+  args: {
+    size: LARGE_USER_CARD
+  }
+}`,...(C=(_=e.parameters)==null?void 0:_.docs)==null?void 0:C.source}}};const Fr=["Avatar","SmallUserCard","MediumUserCard","LargeUserCard"];export{r as Avatar,e as LargeUserCard,t as MediumUserCard,o as SmallUserCard,Fr as __namedExportsOrder,br as default};
+//# sourceMappingURL=UserCard.stories-08f9c081.js.map
