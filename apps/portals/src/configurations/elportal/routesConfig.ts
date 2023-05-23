@@ -350,6 +350,14 @@ const routes: GenericRoute[] = [
           loadingSkeletonRowCount: 10,
         },
       },
+      {
+        name: 'Markdown',
+        props: {
+          ownerId: 'syn27229419',
+          wikiId: '622372',
+          loadingSkeletonRowCount: 10,
+        },
+      },
     ],
   },
 
