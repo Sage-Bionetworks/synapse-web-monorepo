@@ -1,9 +1,9 @@
-import { ExternalFileHandleInterface } from "./ExternalFileHandleInterface";
+import { ExternalFileHandleInterface } from './ExternalFileHandleInterface'
 
 export const EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE =
-  "org.sagebionetworks.repo.model.file.ExternalFileHandle";
+  'org.sagebionetworks.repo.model.file.ExternalFileHandle'
 export type EXTERNAL_FILE_HANDLE_CONCRETE_TYPE =
-  typeof EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE;
+  typeof EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE
 
 /**
  * An ExternalFileHandle represents a file that is not stored in Synapse. Instead, ExternalFileHandles reside somewhere accessible via a URL. Synapse will attempt to generate a preview for any external URL that can be publicly read.
@@ -12,6 +12,6 @@ export type EXTERNAL_FILE_HANDLE_CONCRETE_TYPE =
  */
 export interface ExternalFileHandle extends ExternalFileHandleInterface {
   /** The external URL of this file. */
-  readonly externalURL: string;
-  readonly concreteType: EXTERNAL_FILE_HANDLE_CONCRETE_TYPE;
+  readonly externalURL: string
+  readonly concreteType: EXTERNAL_FILE_HANDLE_CONCRETE_TYPE
 }

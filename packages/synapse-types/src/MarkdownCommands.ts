@@ -16,7 +16,7 @@ export const commandList = [
   'image',
 ] as const
 
-export type CommandListType = typeof commandList[number]
+export type CommandListType = (typeof commandList)[number]
 export type MarkdownEditorCommands = Record<
   CommandListType,
   MarkdownEditorCommandData

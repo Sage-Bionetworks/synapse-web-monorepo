@@ -1,13 +1,13 @@
-import { EntityPath } from "./EntityHeader";
-import { Annotations } from "./Annotations";
-import { Entity } from "./Entity";
-import { EntityType } from "./EntityType";
-import { FileHandle } from "./File";
-import { AccessControlList } from "./AccessControlList";
-import { RestrictionInformationResponse } from "./RestrictionInformation";
-import { UserEntityPermissions } from "./UserEntityPermissions";
-import { TableBundle } from "./Table/TableBundle";
-import { DoiAssociation } from "./DoiAssociation";
+import { EntityPath } from './EntityHeader'
+import { Annotations } from './Annotations'
+import { Entity } from './Entity'
+import { EntityType } from './EntityType'
+import { FileHandle } from './File'
+import { AccessControlList } from './AccessControlList'
+import { RestrictionInformationResponse } from './RestrictionInformation'
+import { UserEntityPermissions } from './UserEntityPermissions'
+import { TableBundle } from './Table/TableBundle'
+import { DoiAssociation } from './DoiAssociation'
 
 /**
  * The entity bundle type defined by Synapse. We are using Typescript to generate a more strongly-typed EntityBundle based on the passed EntityBundleRequest, which is exported below.
@@ -15,62 +15,62 @@ import { DoiAssociation } from "./DoiAssociation";
  * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/entitybundle/v2/EntityBundle.html
  */
 type _EntityBundle = {
-  entity: Entity;
-  entityType: EntityType;
-  annotations: Annotations;
-  permissions: UserEntityPermissions;
-  path: EntityPath;
-  hasChildren: boolean;
-  accessControlList: AccessControlList;
-  fileHandles: FileHandle[];
-  benefactorAcl: AccessControlList;
-  threadCount: number;
-  restrictionInformation: RestrictionInformationResponse;
+  entity: Entity
+  entityType: EntityType
+  annotations: Annotations
+  permissions: UserEntityPermissions
+  path: EntityPath
+  hasChildren: boolean
+  accessControlList: AccessControlList
+  fileHandles: FileHandle[]
+  benefactorAcl: AccessControlList
+  threadCount: number
+  restrictionInformation: RestrictionInformationResponse
   // The following fields may be undefined even if they are requested
-  tableBundle?: TableBundle;
-  rootWikiId?: string;
-  doiAssociation?: DoiAssociation;
-  fileName?: string;
-};
+  tableBundle?: TableBundle
+  rootWikiId?: string
+  doiAssociation?: DoiAssociation
+  fileName?: string
+}
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/entitybundle/v2/EntityBundleRequest.html
 export type EntityBundleRequest = {
-  includeEntity?: boolean;
-  includeAnnotations?: boolean;
-  includePermissions?: boolean;
-  includeEntityPath?: boolean;
-  includeHasChildren?: boolean;
-  includeAccessControlList?: boolean;
-  includeFileHandles?: boolean;
-  includeTableBundle?: boolean;
-  includeRootWikiId?: boolean;
-  includeBenefactorACL?: boolean;
-  includeDOIAssociation?: boolean;
-  includeFileName?: boolean;
-  includeThreadCount?: boolean;
-  includeRestrictionInformation?: boolean;
-};
+  includeEntity?: boolean
+  includeAnnotations?: boolean
+  includePermissions?: boolean
+  includeEntityPath?: boolean
+  includeHasChildren?: boolean
+  includeAccessControlList?: boolean
+  includeFileHandles?: boolean
+  includeTableBundle?: boolean
+  includeRootWikiId?: boolean
+  includeBenefactorACL?: boolean
+  includeDOIAssociation?: boolean
+  includeFileName?: boolean
+  includeThreadCount?: boolean
+  includeRestrictionInformation?: boolean
+}
 
 /**
  * Maps the fields of an Entity bundle to the EntityBundleRequest field that is required to return that field
  */
 interface BundleFieldToRequestFieldMapping
   extends Record<keyof _EntityBundle, keyof EntityBundleRequest> {
-  entity: "includeEntity";
-  entityType: "includeEntity";
-  annotations: "includeAnnotations";
-  permissions: "includePermissions";
-  path: "includeEntityPath";
-  hasChildren: "includeHasChildren";
-  accessControlList: "includeAccessControlList";
-  fileHandles: "includeFileHandles";
-  tableBundle: "includeTableBundle";
-  rootWikiId: "includeRootWikiId";
-  benefactorAcl: "includeBenefactorACL";
-  doiAssociation: "includeDOIAssociation";
-  fileName: "includeFileName";
-  threadCount: "includeThreadCount";
-  restrictionInformation: "includeRestrictionInformation";
+  entity: 'includeEntity'
+  entityType: 'includeEntity'
+  annotations: 'includeAnnotations'
+  permissions: 'includePermissions'
+  path: 'includeEntityPath'
+  hasChildren: 'includeHasChildren'
+  accessControlList: 'includeAccessControlList'
+  fileHandles: 'includeFileHandles'
+  tableBundle: 'includeTableBundle'
+  rootWikiId: 'includeRootWikiId'
+  benefactorAcl: 'includeBenefactorACL'
+  doiAssociation: 'includeDOIAssociation'
+  fileName: 'includeFileName'
+  threadCount: 'includeThreadCount'
+  restrictionInformation: 'includeRestrictionInformation'
 }
 
 /**
@@ -88,10 +88,10 @@ type IncludeOnlyIfRequested<
   TRequestConst extends Record<string, boolean>,
   TRequestField extends keyof TRequestConst,
   TResultObject,
-  TResultField extends keyof TResultObject
+  TResultField extends keyof TResultObject,
 > = TRequestConst[TRequestField] extends true
   ? TResultObject[TResultField]
-  : never;
+  : never
 
 /** Request object to return all Entity Bundle fields */
 export const ALL_ENTITY_BUNDLE_FIELDS = {
@@ -109,7 +109,7 @@ export const ALL_ENTITY_BUNDLE_FIELDS = {
   includeFileName: true,
   includeThreadCount: true,
   includeRestrictionInformation: true,
-} as const;
+} as const
 
 /**
  * Bundle to transport an Entity and related data objects. See [Synapse REST API](https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/entitybundle/v2/EntityBundle.html).
@@ -119,7 +119,7 @@ export const ALL_ENTITY_BUNDLE_FIELDS = {
  * @returns An EntityBundle type that only includes the fields that are requested in the request object.
  */
 export type EntityBundle<
-  T extends EntityBundleRequest = typeof ALL_ENTITY_BUNDLE_FIELDS
+  T extends EntityBundleRequest = typeof ALL_ENTITY_BUNDLE_FIELDS,
 > = {
   // Map over the keys of the EntityBundle type, and for each key, use the IncludeOnlyIfRequested type to determine whether the field is included in the result
   [EntityBundleField in keyof _EntityBundle]: IncludeOnlyIfRequested<
@@ -127,5 +127,5 @@ export type EntityBundle<
     BundleFieldToRequestFieldMapping[EntityBundleField],
     _EntityBundle,
     EntityBundleField
-  >;
-};
+  >
+}

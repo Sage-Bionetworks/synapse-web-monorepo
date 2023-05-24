@@ -1,3 +1,3 @@
-export * from "./Entity";
-export * from "./FileEntity";
-export * from "./Link";
+export * from './Entity'
+export * from './FileEntity'
+export * from './Link'
