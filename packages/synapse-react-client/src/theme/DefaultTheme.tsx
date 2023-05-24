@@ -40,7 +40,7 @@ export const defaultMuiThemeOptions: ThemeOptions = {
             // The default severity is 'success'.
             theme.palette[ownerState.severity || 'success']['main']
           }`,
-          color: theme.palette.grey[900],
+          color: theme.palette.text.primary,
         }),
         icon: ({ theme }) => ({
           marginRight: theme.spacing(3),
@@ -67,7 +67,7 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     MuiAlertTitle: {
       styleOverrides: {
         root: ({ theme }) => ({
-          color: theme.palette.grey[900],
+          color: theme.palette.text.primary,
           fontSize: '14px',
           fontWeight: 700,
         }),
