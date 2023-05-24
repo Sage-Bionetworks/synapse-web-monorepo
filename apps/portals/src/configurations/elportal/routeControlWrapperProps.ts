@@ -6,12 +6,12 @@ const routeControlWrapper: RouteControlWrapperProps = {
   customRoutes: [
     'Data by Files',
     'Data by Participants',
-    'Species',
     'Projects',
+    'Species',
     'Studies',
     'Publications',
+    'Computational Tools',
     'People',
-    'Computational Tools'
   ],
 }
 

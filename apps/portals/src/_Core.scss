@@ -23,7 +23,7 @@
 }
 
 %home-bg-util {
-  background: rgba(38, 153, 167, 0.03);
+  background: rgba(Portal.$primary-action-color, 0.05);
   &:last-child {
     // this handles the case when the last element on the home page
     // has its background colored and should not have padding on the bottom
@@ -722,9 +722,11 @@ div[data-id='tooltip'] {
 }
 
 .QueryWrapperPlotNav {
-  .TopLevelControls,
   .FacetFilterControls {
     padding: 10px 5px 10px 30px;
+  }
+  .TopLevelControls {
+    margin: 10px 5px 10px 30px;
   }
   .TotalQueryResults.hasFilters > * {
     margin-left: 30px;
@@ -734,9 +736,11 @@ div[data-id='tooltip'] {
 
 .DetailsPage {
   .QueryWrapperPlotNav {
-    .TopLevelControls,
     .FacetFilterControls {
       padding: 0px;
+    }
+    .TopLevelControls {
+      margin: 0px;
     }
     .TotalQueryResults.hasFilters > * {
       margin-left: 0px;
