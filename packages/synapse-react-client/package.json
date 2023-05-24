@@ -2,9 +2,24 @@
   "name": "synapse-react-client",
   "version": "3.1.34",
   "private": false,
-  "type": "module",
-  "main": "./dist/synapse-react-client.mjs",
-  "types": "./dist/synapse-react-client.d.ts",
+  "type": "commonjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./dist/*": {
+      "import": "./dist/*",
+      "require": "./dist/*"
+    },
+    "./package.json": {
+      "import": "./package.json",
+      "require": "./package.json"
+    }
+  },
   "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",
   "files": [
     "dist",
@@ -222,7 +237,7 @@
     "test:ci": "jest --watchAll=false --coverage",
     "test:coverage": "jest --coverage",
     "build": "rimraf dist && pnpm build:copy-assets && pnpm build:js && pnpm build:esbuild",
-    "build:js": "tsup && pnpm build:fix-extension",
+    "build:js": "tsup",
     "build:fix-extension": "mv dist/synapse-react-client.js dist/synapse-react-client.mjs",
     "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
     "build:esbuild": "node esbuild.config.mjs",
