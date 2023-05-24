@@ -359,7 +359,6 @@
 </script>
 <script>
   window.global = window
-  window.sql = {}
 </script>
 
 <link
@@ -410,23 +409,8 @@
 <script src="https://cdn.jsdelivr.net/npm/markdown-it-container@2.0.0/dist/markdown-it-container.min.js"></script>
 <!-- end synapse markdown imports -->
 <script crossorigin src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script
-  crossorigin
-  src="https://unpkg.com/react-plotly.js@1.0.2/dist/create-plotly-component.js"
-></script>
 
-<script>
-  const currentStack = JSON.parse(
-    window.localStorage.getItem('SynapseReactClientStyleGuideStack') ?? 'null',
-  )
-  if (currentStack) {
-    window.SRC = {
-      OVERRIDE_ENDPOINT_CONFIG: currentStack,
-    }
-  }
-</script>
-
-  <script type="module" crossorigin src="./assets/iframe-3f72e84b.js"></script>
+  <script type="module" crossorigin src="./assets/iframe-45ddc378.js"></script>
 </head>
 
 <body>
