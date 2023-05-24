@@ -48,6 +48,14 @@ export default function ImposeRestrictionDialog(
     useCreateLockAccessRequirement({
       onSuccess: () => {
         displayToast('Successfully imposed restriction', 'success')
+        // PORTALS-2664: Send the user to the the ACT Service Desk
+        // so they can tell ACT more information about what kind of
+        // Conditions For Use (or Data Access Restriction) should be
+        // added.
+        window.open(
+          'https://sagebionetworks.jira.com/servicedesk/customer/portal/8/group/15/create/134',
+          '_blank',
+        )
         onClose()
       },
       onError: e => {
