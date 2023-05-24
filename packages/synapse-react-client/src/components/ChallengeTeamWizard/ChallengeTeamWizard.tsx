@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import FullWidthAlert from '../FullWidthAlert'
 import StepperDialog, { Step } from '../StepperDialog/StepperDialog'
 
 import { Challenge, ErrorResponse, Team } from '@sage-bionetworks/synapse-types'
@@ -22,14 +21,15 @@ enum StepsEnum {
   SELECT_YOUR_CHALLENGE_TEAM = 'SELECT_YOUR_CHALLENGE_TEAM',
   JOIN_REQUEST_FORM = 'JOIN_REQUEST_FORM',
   JOIN_REQUEST_SENT = 'JOIN_REQUEST_SENT',
-  REGISTRATION_SUCCESSFUL = 'REGISTRATION_SUCCESSFUL',
   CREATE_NEW_TEAM = 'CREATE_NEW_TEAM',
+  REGISTRATION_SUCCESSFUL = 'REGISTRATION_SUCCESSFUL',
 }
 type StepKey = keyof typeof StepsEnum
 type StepList = {
   [key in StepKey]: Step
 }
-const createSteps = (): StepList => ({
+
+const steps: StepList = {
   SELECT_YOUR_CHALLENGE_TEAM: {
     id: StepsEnum.SELECT_YOUR_CHALLENGE_TEAM,
     title: 'Select Your Challenge Team',
@@ -41,8 +41,8 @@ const createSteps = (): StepList => ({
     title: 'Request Team Membership',
     previousStep: StepsEnum.SELECT_YOUR_CHALLENGE_TEAM,
     confirmStep: StepsEnum.JOIN_REQUEST_SENT,
-    confirmEnabled: true,
     confirmButtonText: 'Send Request',
+    confirmEnabled: true,
   },
   JOIN_REQUEST_SENT: {
     id: StepsEnum.JOIN_REQUEST_SENT,
@@ -50,19 +50,19 @@ const createSteps = (): StepList => ({
     confirmButtonText: 'Close',
     confirmEnabled: true,
   },
-  REGISTRATION_SUCCESSFUL: {
-    id: StepsEnum.REGISTRATION_SUCCESSFUL,
-    title: 'Registration Successful!',
-  },
   CREATE_NEW_TEAM: {
     id: StepsEnum.CREATE_NEW_TEAM,
     title: 'Create Team',
     confirmStep: StepsEnum.REGISTRATION_SUCCESSFUL,
     confirmButtonText: 'Finish Registration',
-    previousStep: StepsEnum.SELECT_YOUR_CHALLENGE_TEAM,
     confirmEnabled: false,
+    previousStep: StepsEnum.SELECT_YOUR_CHALLENGE_TEAM,
   },
-})
+  REGISTRATION_SUCCESSFUL: {
+    id: StepsEnum.REGISTRATION_SUCCESSFUL,
+    title: 'Registration Successful!',
+  },
+}
 
 export type ChallengeTeamWizardProps = {
   projectId: string
@@ -76,13 +76,27 @@ const ChallengeTeamWizard: React.FunctionComponent<
 > = ({ projectId, userId, isShowingModal = false, onClose }) => {
   const { accessToken } = useSynapseContext()
   const [loading, setLoading] = useState<boolean>(true)
-  const steps = createSteps()
   const [step, setStep] = useState<Step>(steps.SELECT_YOUR_CHALLENGE_TEAM)
   const [errorMessage, setErrorMessage] = useState<string>()
   const [challenge, setChallenge] = useState<Challenge>()
   const [canRequestChallenge, setCanRequestChallenge] = useState<boolean>(
     !!accessToken && !!projectId && challenge?.projectId !== projectId,
   )
+  const [selectedTeam, setSelectedTeam] = useState<Team | undefined>()
+  const [createdNewTeam, setCreatedNewTeam] = useState<boolean>(false)
+  const [confirming, setConfirming] = useState<boolean>(false)
+  const [inviteMembersSuccess, setInviteMembersSuccess] =
+    useState<boolean>(false)
+  const [registerChallengeSuccess, setRegisterChallengeSuccess] =
+    useState<boolean>(false)
+  const [newTeam, setNewTeam] = useState<CreateTeamRequest>({
+    name: '',
+    description: '',
+    message: '',
+    invitees: '',
+  })
+  const [joinMessage, setJoinMessage] = useState<string>('')
+
   useGetEntityChallenge(projectId, {
     enabled: canRequestChallenge,
     onSettled: (data, error) => {
@@ -99,25 +113,38 @@ const ChallengeTeamWizard: React.FunctionComponent<
     },
   })
 
-  const [selectedTeam, setSelectedTeam] = useState<Team | undefined>()
-  const [createdNewTeam, setCreatedNewTeam] = useState<boolean>(false)
-  const [confirming, setConfirming] = useState<boolean>(false)
-  const [inviteMembersSuccess, setInviteMembersSuccess] =
-    useState<boolean>(false)
-  const [registerChallengeSuccess, setRegisterChallengeSuccess] =
-    useState<boolean>(false)
-  // TODO: Show success alert and clear (if we need to use the success component at all)
-  const [isShowingSuccessAlert, setIsShowingSuccessAlert] =
-    useState<boolean>(false)
-  const [newTeam, setNewTeam] = useState<CreateTeamRequest>({
-    name: '',
-    description: '',
-    message: '',
-    invitees: '',
-  })
-  const [joinMessage, setJoinMessage] = useState<string>('')
+  useEffect(() => {
+    if (inviteMembersSuccess && registerChallengeSuccess) {
+      setConfirming(false)
+      handleStepChange(step.confirmStep as StepsEnum)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registerChallengeSuccess, inviteMembersSuccess, step])
 
-  // Add user to an existing public team
+  /************************
+   * Form update handlers
+   * *********************/
+
+  // SELECT_YOUR_CHALLENGE_TEAM: user has selected an existing challenge team from the table
+  const handleSelectTeam = (team: Team) => {
+    if (team) {
+      setSelectedTeam(team)
+      if (!step.nextEnabled) setStep({ ...step, nextEnabled: true })
+    }
+  }
+
+  // CREATE_NEW_TEAM: form change handler
+  const handleChangeTeamInfo = (updatedTeam: CreateTeamRequest) => {
+    setNewTeam(updatedTeam)
+    const confirmEnabled = updatedTeam.name.length > 1
+    setStep({ ...step, confirmEnabled })
+  }
+
+  /************************
+   * Step confirm handlers
+   * *********************/
+
+  // JOIN_REQUEST_FORM: Add user to an existing public team
   const addUserToPublicTeam = () => {
     if (!selectedTeam || !accessToken) return
     addTeamMemberAsAuthenticatedUserOrAdmin(
@@ -133,27 +160,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
       })
   }
 
-  useEffect(() => {
-    if (inviteMembersSuccess && registerChallengeSuccess) {
-      setConfirming(false)
-      handleStepChange(step.confirmStep as StepsEnum)
-    }
-  }, [registerChallengeSuccess, inviteMembersSuccess, step])
-
-  const handleChangeTeamInfo = (updatedTeam: CreateTeamRequest) => {
-    setNewTeam(updatedTeam)
-    const confirmEnabled = updatedTeam.name.length > 1
-    setStep({ ...step, confirmEnabled })
-  }
-
-  const handleSelectTeam = (team: Team) => {
-    if (team) {
-      setSelectedTeam(team)
-      if (!step.nextEnabled) setStep({ ...step, nextEnabled: true })
-    }
-  }
-
-  // User has asked to join an existing challenge team
+  // JOIN_REQUEST_FORM: User is requesting to join an existing non-public challenge team
   const handleRequestMembership = async () => {
     if (userId && selectedTeam) {
       setStep({ ...step, nextEnabled: false })
@@ -180,7 +187,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
     }
   }
 
-  // Add newly created team to the challenge
+  // CREATE_NEW_TEAM: Add newly created team to the challenge
   const handleRegisterChallengeTeam = async (teamId: string | number) => {
     const msg = 'Error registering challenge team'
     if (teamId && challenge) {
@@ -198,7 +205,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
     }
   }
 
-  // Invite a comma-delimited list of emails to join the team
+  // CREATE_NEW_TEAM: Invite a comma-delimited list of emails to join the team
   const handleInviteTeamMembers = async (
     teamId: string | number,
     invitees: string,
@@ -229,7 +236,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
     }
   }
 
-  // Create a new team to join the challenge
+  // CREATE_NEW_TEAM: Create a new team to join the challenge
   const handleCreateTeam = async () => {
     if (newTeam && newTeam.name && newTeam.name.length > 1) {
       setStep({ ...step, confirmEnabled: false })
@@ -327,29 +334,17 @@ const ChallengeTeamWizard: React.FunctionComponent<
     : () => undefined
 
   return (
-    <>
-      <StepperDialog
-        errorMessage={errorMessage}
-        onCancel={hide}
-        onStepChange={handleStepChange as (arg: string) => void}
-        open={isShowingModal}
-        onConfirm={onConfirmHandler}
-        confirming={confirming}
-        step={step}
-        content={createContent()}
-        loading={loading}
-      />
-      <FullWidthAlert
-        show={isShowingSuccessAlert}
-        variant="info"
-        title="Project created"
-        description=""
-        autoCloseAfterDelayInSeconds={10}
-        onClose={() => {
-          setIsShowingSuccessAlert(false)
-        }}
-      />
-    </>
+    <StepperDialog
+      errorMessage={errorMessage}
+      onCancel={hide}
+      onStepChange={handleStepChange as (arg: string) => void}
+      open={isShowingModal}
+      onConfirm={onConfirmHandler}
+      confirming={confirming}
+      step={step}
+      content={createContent()}
+      loading={loading}
+    />
   )
 }
 
