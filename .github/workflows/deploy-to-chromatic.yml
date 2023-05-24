@@ -32,3 +32,4 @@ jobs:
           workingDir: packages/synapse-react-client
           exitZeroOnChanges: true
           exitOnceUploaded: true
+          autoAcceptChanges: 'main'
