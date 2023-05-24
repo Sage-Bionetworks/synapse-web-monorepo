@@ -446,6 +446,13 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 </a>
                 <a
                   className="SRC-whiteText"
+                  href={`/#!Following:0`}
+                  rel="noopener noreferrer"
+                >
+                  Following
+                </a>
+                <a
+                  className="SRC-whiteText"
                   onClick={() => {
                     signOut()
                   }}
