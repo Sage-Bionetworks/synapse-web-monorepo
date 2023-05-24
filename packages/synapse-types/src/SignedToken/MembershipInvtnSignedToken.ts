@@ -1,17 +1,17 @@
-import { SignedTokenInterface } from "./SignedTokenInterface";
+import { SignedTokenInterface } from './SignedTokenInterface'
 import {
   MEMBERSHIP_INVITATION_CONCRETE_TYPE,
   MEMBERSHIP_INVITATION_CONCRETE_TYPE_VALUE,
-} from "./SignedTokenConcreteType";
-import { isTypeViaConcreteTypeFactory } from "../util/IsType";
+} from './SignedTokenConcreteType'
+import { isTypeViaConcreteTypeFactory } from '../util/IsType'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/MembershipInvtnSignedToken.html
 export interface MembershipInvtnSignedToken extends SignedTokenInterface {
-  readonly concreteType: MEMBERSHIP_INVITATION_CONCRETE_TYPE;
-  readonly membershipInvitationId: string; //The ID of the membership invitation.
+  readonly concreteType: MEMBERSHIP_INVITATION_CONCRETE_TYPE
+  readonly membershipInvitationId: string //The ID of the membership invitation.
 }
 
 export const isMembershipInvtnSignedToken =
   isTypeViaConcreteTypeFactory<MembershipInvtnSignedToken>(
-    MEMBERSHIP_INVITATION_CONCRETE_TYPE_VALUE
-  );
+    MEMBERSHIP_INVITATION_CONCRETE_TYPE_VALUE,
+  )

@@ -1,1 +1,1 @@
-export * from "./DockerRepository";
+export * from './DockerRepository'
