@@ -30,7 +30,7 @@ export const CreateChallengeTeam = ({
   }
 
   return (
-    <>
+    <Box>
       <Box>Create a new team for this Challenge!</Box>
       <TextField
         id="name"
@@ -81,6 +81,6 @@ export const CreateChallengeTeam = ({
         fullWidth
         onChange={event => handleTeamUpdate({ invitees: event.target.value })}
       />
-    </>
+    </Box>
   )
 }
