@@ -17,6 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
           # Chromatic requires full git history to track changes
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
