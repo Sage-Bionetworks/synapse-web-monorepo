@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Box } from '@mui/material'
-import { PartialUpdate } from './ChallengeTeamWizard'
 import TextField from '../TextField'
 
 type CreateChallengeTeamProps = {
@@ -24,7 +23,7 @@ export const CreateChallengeTeam = ({
     invitees: '',
   })
 
-  const handleTeamUpdate = (update: PartialUpdate) => {
+  const handleTeamUpdate = (update: Record<string, string>) => {
     const updatedTeam: CreateTeamRequest = { ...team, ...update }
     setTeam(updatedTeam)
     onChangeTeamInfo(updatedTeam)

@@ -8,8 +8,7 @@ export type Step = {
   id: string
   title: string
   cancelButtonText?: string
-  // TODO: Generically type this
-  onConfirm?: unknown
+  onConfirm?: (() => Promise<void>) | (() => undefined)
   confirmStep?: string
   confirmEnabled?: boolean
   confirmButtonText?: string
@@ -23,11 +22,12 @@ export type Steps = Step[]
 export type StepperDialogProps = {
   errorMessage: string | undefined
   onCancel: () => void
-  onConfirm: () => void
+  onConfirm: (() => Promise<void>) | (() => undefined)
+  confirming?: boolean
   onStepChange: (arg: string) => void
   open: boolean
   step: Step
-  content: React.ReactElement
+  content: JSX.Element
   loading: boolean
 }
 
@@ -38,13 +38,14 @@ const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
   errorMessage,
   onCancel,
   onConfirm,
+  confirming,
   onStepChange,
   open,
   step,
   content,
   loading,
 }) => {
-  const [showSpinner, setShowSpinner] = useState<boolean>(false)
+  // const [showSpinner, setShowSpinner] = useState<boolean>(false)
   if (!step) return null
 
   const dialogContent = (
@@ -94,10 +95,9 @@ const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
               color="primary"
               disabled={!step.confirmEnabled}
               onClick={() => {
-                setShowSpinner(true)
                 onConfirm()
               }}
-              showSpinner={showSpinner}
+              showSpinner={confirming === true}
               sx={{ marginLeft: '8px' }}
             >
               {step.confirmButtonText}
