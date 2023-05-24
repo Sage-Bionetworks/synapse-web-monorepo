@@ -115,6 +115,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
         setUserProfile(data)
       }
       if (error) {
+        setLoading(false)
         setErrorMessage(
           `Error: Could not retrieve challenge for project "${projectId}".`,
         )
@@ -130,6 +131,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
         setChallenge(data)
       }
       if (error) {
+        setLoading(false)
         setErrorMessage(
           `Error: Could not retrieve challenge for project "${projectId}".`,
         )
