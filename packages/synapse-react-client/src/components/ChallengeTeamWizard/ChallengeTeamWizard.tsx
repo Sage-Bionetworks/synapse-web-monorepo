@@ -4,6 +4,7 @@ import StepperDialog, { Step } from '../StepperDialog/StepperDialog'
 import {
   Challenge,
   ErrorResponse,
+  PaginatedIds,
   Team,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
@@ -23,6 +24,7 @@ import {
 import {
   useGetCurrentUserProfile,
   useGetEntityChallenge,
+  useGetUserSubmissionTeams,
 } from '../../synapse-queries'
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 
@@ -91,6 +93,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>()
   const [createdNewTeam, setCreatedNewTeam] = useState<boolean>(false)
   const [confirming, setConfirming] = useState<boolean>(false)
+  const [isRegistered, setIsRegistered] = useState<boolean>(false)
   const [inviteMembersSuccess, setInviteMembersSuccess] =
     useState<boolean>(false)
   const [registerChallengeSuccess, setRegisterChallengeSuccess] =
@@ -129,6 +132,29 @@ const ChallengeTeamWizard: React.FunctionComponent<
       if (error) {
         setErrorMessage(
           `Error: Could not retrieve challenge for project "${projectId}".`,
+        )
+      }
+    },
+  })
+
+  useGetUserSubmissionTeams(challenge?.id ?? '0', 500, {
+    enabled: !!challenge && !!accessToken,
+    onSettled: (data: PaginatedIds | undefined, error) => {
+      // console.log('settled', { data }, { error })
+      if (data) {
+        const isReg: boolean =
+          !!challenge &&
+          data.results.includes(challenge.participantTeamId.toString())
+        if (isReg) {
+          setErrorMessage(
+            'Error: You are already a member of a registered submission team for this Challenge.',
+          )
+          setIsRegistered(true)
+        }
+      }
+      if (error) {
+        setErrorMessage(
+          `Error: Could not determine if you are already registered for this Challenge`,
         )
       }
       setLoading(false)
@@ -215,7 +241,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
         accessToken,
       )
         .then(response => {
-          console.log({ response })
+          // console.log({ response })
           // request successful, advance to next step
           setStep(steps[StepsEnum.JOIN_REQUEST_SENT])
         })
@@ -232,6 +258,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   // CREATE_NEW_TEAM: Add newly created team to the challenge
   const handleRegisterChallengeTeam = async (teamId: string | number) => {
     const msg = 'Error registering challenge team'
+    // console.log({ teamId, challenge })
     if (teamId && challenge) {
       setErrorMessage(undefined)
       setRegisterChallengeSuccess(false)
@@ -241,9 +268,11 @@ const ChallengeTeamWizard: React.FunctionComponent<
         })
         .catch((err: ErrorResponse) => {
           setErrorMessage(`${msg}: ${err.reason}`)
+          setConfirming(false)
         })
     } else {
       setErrorMessage(`${msg}: Invalid team.`)
+      setConfirming(false)
     }
   }
 
@@ -252,8 +281,12 @@ const ChallengeTeamWizard: React.FunctionComponent<
     teamId: string | number,
     invitees: string,
   ) => {
+    if (!invitees.length) {
+      setInviteMembersSuccess(true)
+      return
+    }
     const msg = 'Error inviting members'
-    if (teamId && invitees) {
+    if (teamId) {
       setErrorMessage(undefined)
       setInviteMembersSuccess(false)
       const emails = invitees.split(',')
@@ -270,11 +303,13 @@ const ChallengeTeamWizard: React.FunctionComponent<
 
       if (errors.length) {
         setErrorMessage(`${msg}: ${errors.join(', ')}`)
+        setConfirming(false)
       } else {
         setInviteMembersSuccess(true)
       }
     } else {
       setErrorMessage(`${msg}: Invalid team.`)
+      setConfirming(false)
     }
   }
 
@@ -315,7 +350,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const createContent = () => {
     switch (step.id) {
       case StepsEnum.SELECT_YOUR_CHALLENGE_TEAM:
-        return accessToken && challenge ? (
+        return accessToken && challenge && !isRegistered ? (
           <SelectChallengeTeam
             challengeId={challenge.id}
             onCreateTeam={() => handleStepChange(StepsEnum.CREATE_NEW_TEAM)}
@@ -357,7 +392,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
     if (!value || !steps[value]) return
     setErrorMessage(undefined)
 
-    console.log('handleStepChange', value)
+    // console.log('handleStepChange', value)
     switch (value) {
       case StepsEnum.SELECT_YOUR_CHALLENGE_TEAM:
         setCreatedNewTeam(false)

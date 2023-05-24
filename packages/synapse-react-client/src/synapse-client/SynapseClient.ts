@@ -1401,6 +1401,21 @@ export const getChallengeTeams = (
 }
 
 /**
+ * List the Teams under which the given submitter may submit to the Challenge,
+ * i.e. the Teams on which the user is a member and which are registered for the Challenge.
+ * see https://rest-docs.synapse.org/rest/GET/challenge/challengeId/submissionTeams.html
+ */
+export const getSubmissionTeams = (
+  accessToken: string | undefined,
+  challengeId: string | number,
+  offset: string | number = 0,
+  limit: string | number = 200,
+): Promise<PaginatedIds> => {
+  const url = `/repo/v1/challenge/${challengeId}/submissionTeams?&offset=${offset}&limit=${limit}`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
  * Register a Team with a Challenge.
  * see https://rest-docs.synapse.org/rest/POST/challenge/challengeId/challengeTeam.html
  */

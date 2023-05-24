@@ -20,7 +20,10 @@ const SpinnerButton: React.FC<SpinnerButtonProps> = ({
     }
   }, [])
   return (
-    <div style={{ position: 'relative', width: 'max-content' }}>
+    <div
+      data-testid="SpinnerButton"
+      style={{ position: 'relative', width: 'max-content' }}
+    >
       {showSpinner && (
         <div
           style={{
@@ -29,7 +32,7 @@ const SpinnerButton: React.FC<SpinnerButtonProps> = ({
             left: `${width / 2 - 8}px`,
           }}
         >
-          <span className="spinner" />
+          <span data-testid="SpinnerButton-spinner" className="spinner" />
         </div>
       )}
       <Box sx={{ display: 'flex' }} ref={elementRef}>

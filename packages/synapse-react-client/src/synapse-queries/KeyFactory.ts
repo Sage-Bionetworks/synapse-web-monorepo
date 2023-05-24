@@ -569,6 +569,10 @@ export class KeyFactory {
     return this.getKey('userChallenges', userId)
   }
 
+  public getSubmissionTeamsQueryKey(challengeId: string) {
+    return this.getKey('submissionTeams', challengeId)
+  }
+
   public getUserProjectsQueryKey(
     userId: string,
     projectParams: GetProjectsParameters,

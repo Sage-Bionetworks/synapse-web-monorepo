@@ -1,9 +1,34 @@
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  useQuery,
+  UseQueryOptions,
+} from 'react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { PaginatedResults } from '@sage-bionetworks/synapse-types'
+import { PaginatedIds, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import { Team } from '@sage-bionetworks/synapse-types'
+
+export function useGetUserSubmissionTeams(
+  challengeId: string,
+  limit?: number,
+  options?: UseQueryOptions<PaginatedIds, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useQuery<PaginatedIds, SynapseClientError>(
+    keyFactory.getSubmissionTeamsQueryKey(challengeId),
+    () =>
+      SynapseClient.getSubmissionTeams(
+        accessToken,
+        challengeId,
+        0,
+        limit ?? 10,
+      ),
+    options,
+  )
+}
 
 export function useGetUserTeamsInfinite(
   userId: string,
