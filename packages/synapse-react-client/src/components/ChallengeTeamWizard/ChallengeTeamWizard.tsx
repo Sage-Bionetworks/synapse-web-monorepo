@@ -286,6 +286,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
       setErrorMessage(undefined)
       await createTeam(accessToken, newTeam.name, newTeam.description)
         .then(response => {
+          setCreatedNewTeam(true)
           setSelectedTeam(response)
           // Add newly created team to challenge
           handleRegisterChallengeTeam(response.id)
