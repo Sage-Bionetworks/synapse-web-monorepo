@@ -37,6 +37,8 @@ export interface FullWidthAlertProps {
   onClose?: () => void
   autoCloseAfterDelayInSeconds?: number
   isGlobal?: boolean
+  icon?: React.ReactNode
+  sx?: AlertProps['sx']
 }
 
 function variantToSeverity(variant: string | undefined) {
@@ -92,6 +94,8 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     autoCloseAfterDelayInSeconds,
     variant = 'info',
     isGlobal = true,
+    icon,
+    sx,
   } = props
 
   useEffect(() => {
@@ -115,9 +119,11 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         '.MuiAlert-message': {
           flexGrow: 1,
         },
+        ...sx,
       }}
       className="FullWidthAlert"
       onClose={onClose}
+      icon={icon}
     >
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
