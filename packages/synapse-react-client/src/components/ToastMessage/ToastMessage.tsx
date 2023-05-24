@@ -45,7 +45,7 @@ export const ToastMessage: React.FunctionComponent<ToastMessageProps> = ({
 export const SynapseToastContainer: React.FunctionComponent = () => {
   return (
     <Toaster
-      containerClassName="SynapseToastContainer bootstrap-4-backport"
+      containerClassName="SynapseToastContainer"
       position="bottom-center"
     >
       {t => (
