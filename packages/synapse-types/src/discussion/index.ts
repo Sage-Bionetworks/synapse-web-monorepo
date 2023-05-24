@@ -1,2 +1,2 @@
-export * from "./DiscussionBundle";
-export * from "./DiscussionSearch";
+export * from './DiscussionBundle'
+export * from './DiscussionSearch'
