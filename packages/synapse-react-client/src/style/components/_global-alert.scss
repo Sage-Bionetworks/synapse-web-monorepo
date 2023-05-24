@@ -1,6 +1,6 @@
 .SynapseNavDrawerIsShowing .FullWidthAlertGlobal {
-  width: 100%;
-  .FullWidthAlert[role='alert'] {
-    margin-left: 56px;
-  }
+  width: calc(100vw - 56px);
+  left: 56px;
+  right: 0px;
+  transform: none;
 }

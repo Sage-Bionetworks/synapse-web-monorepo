@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
 import FullWidthAlert from '../src/components/FullWidthAlert/FullWidthAlert'
+import { SynapseNavDrawer } from '../src/components/SynapseNavDrawer'
 
 const meta = {
   title: 'UI/FullWidthAlert',
@@ -64,11 +65,19 @@ export const SynapseNavDrawerIsShowing: Story = {
   args: {
     ...SuccessAlertWithPrimaryButtonOnly.args,
   },
+  render: args => (
+    <>
+      <SynapseNavDrawer initIsOpen={false} />
+      <FullWidthAlert {...args} />
+    </>
+  ),
   decorators: [
     Story => {
       React.useEffect(() => {
+        // SWC applies this class when SynapseNavDrawer is visible
         document.body.classList.add('SynapseNavDrawerIsShowing')
         return () => {
+          // ...and removes it when SynapseNavDrawer is not visible
           document.body.classList.remove('SynapseNavDrawerIsShowing')
         }
       }, [])
