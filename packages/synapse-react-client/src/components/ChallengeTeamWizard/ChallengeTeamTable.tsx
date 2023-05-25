@@ -1,5 +1,10 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import {
+  DataGrid,
+  GridCellParams,
+  GridColDef,
+  GridRenderCellParams,
+} from '@mui/x-data-grid'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { RadioOption } from '../widgets/RadioGroup'
@@ -11,6 +16,7 @@ import {
   useGetTeamList,
 } from '../../synapse-queries/team/useTeamList'
 import { Box } from '@mui/material'
+import { Link } from 'react-router-dom'
 
 export type ChallengeTeamTableProps = {
   challengeId: string
@@ -118,6 +124,14 @@ export default function ChallengeTeamTable({
       filterable: false,
       hideable: false,
       disableColumnMenu: true,
+      renderCell: (params: GridCellParams<Team, ChallengeTeamRow>) => (
+        <Link
+          to={{ pathname: `https://www.synapse.org/#!Team:${params.row.id}` }}
+          target="_blank"
+        >
+          {params.row.name}
+        </Link>
+      ),
     },
     {
       field: 'created',

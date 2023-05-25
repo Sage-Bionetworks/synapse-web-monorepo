@@ -356,6 +356,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const handleSelectTeam = (team: Team) => {
     if (team) {
       // Setting selectedTeam will trigger the useMembershipStatus hook
+      setErrorMessage(undefined)
       setSelectedTeam(team)
     }
   }
