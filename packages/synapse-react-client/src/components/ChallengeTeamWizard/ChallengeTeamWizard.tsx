@@ -202,14 +202,12 @@ const ChallengeTeamWizard: React.FunctionComponent<
     ) => {
       // console.log('settled', { data }, { error })
       if (data) {
-        const isReg: boolean =
-          !!challenge &&
-          data.results.includes(challenge.participantTeamId.toString())
+        const isReg = data.results.length > 0
         if (isReg) {
           setErrorMessage(
             'Error: You are already a member of a registered submission team for this Challenge.',
           )
-          setHasSubmissionTeam(true)
+          setHasSubmissionTeam(isReg)
         }
       }
       if (error) {
@@ -504,6 +502,8 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const hide = () => {
     setErrorMessage(undefined)
     setCreatedNewTeam(false)
+    setSelectedTeam(undefined)
+    setStep({ ...step, nextEnabled: false })
     onClose()
   }
 
