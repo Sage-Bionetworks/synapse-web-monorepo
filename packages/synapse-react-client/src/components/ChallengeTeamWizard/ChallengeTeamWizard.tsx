@@ -165,23 +165,22 @@ const ChallengeTeamWizard: React.FunctionComponent<
     {
       enabled: !!challenge && !!userProfile,
       onSettled: (data, error) => {
-        console.log('useGetIsUserMemberOfTeam', data, error)
+        // console.log('useGetIsUserMemberOfTeam', data, error)
         if (data === null) {
           /**
            * Somehow user is not a member of the participant team yet
            * auto-join member to participant team before we continue
            */
-          // if (challenge?.participantTeamId && userProfile && accessToken) {
-          //   addTeamMemberAsAuthenticatedUserOrAdmin(
-          //     challenge?.participantTeamId,
-          //     userProfile.ownerId,
-          //     accessToken,
-          //   )
-          // }
+          if (challenge?.participantTeamId && userProfile && accessToken) {
+            addTeamMemberAsAuthenticatedUserOrAdmin(
+              challenge?.participantTeamId,
+              userProfile.ownerId,
+              accessToken,
+            )
+          }
         }
         if (data !== null) {
-          // User is a member of the participant team
-          console.log(data)
+          // User is a member of the participant team, continue
         }
         if (error) {
           // Could not determine if user is a member of the participant team
@@ -232,7 +231,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
         error: SynapseClientError | null,
       ) => {
         if (data) {
-          console.log(data)
+          // console.log(data)
           setMembershipStatus({ [data.teamId]: data })
         }
         if (error) {
