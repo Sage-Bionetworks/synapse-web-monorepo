@@ -230,7 +230,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
       ) => {
         if (data) {
           // console.log(data)
-          setMembershipStatus({ [data.teamId]: data })
+          setMembershipStatus({ ...membershipStatus, [data.teamId]: data })
         }
         if (error) {
           // console.error(error)
