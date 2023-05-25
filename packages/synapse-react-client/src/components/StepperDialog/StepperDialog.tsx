@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { DialogBase } from '../DialogBase'
 import { SynapseSpinner } from '../LoadingScreen'
 import SpinnerButton from '../widgets/SpinnerButton'
+import { DialogContentProps } from '@mui/material'
 
 export type Step = {
   id: string
@@ -15,6 +16,7 @@ export type Step = {
   previousStep?: string
   nextStep?: string
   nextEnabled?: boolean
+  contentProps?: DialogContentProps
 }
 
 export type Steps = Step[]
@@ -112,9 +114,7 @@ const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
       sx={{
         h2: { paddingTop: 0, paddingBottom: '20px' },
       }}
-      contentProps={{
-        sx: { overflowY: 'hidden' },
-      }}
+      contentProps={step.contentProps}
     />
   )
 }

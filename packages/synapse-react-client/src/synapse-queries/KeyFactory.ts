@@ -540,6 +540,10 @@ export class KeyFactory {
     return this.getKey('team', teamId, 'member', userId)
   }
 
+  public getMembershipStatusQueryKey(teamId: string, userId: string) {
+    return this.getKey('team', teamId, 'membershipStatus', userId)
+  }
+
   public getTeamAccessRequirementsQueryKey(teamId: string) {
     return this.getKey('team', teamId, 'accessRequirements')
   }

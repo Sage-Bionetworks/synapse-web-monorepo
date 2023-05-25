@@ -56,6 +56,7 @@ import {
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  TEAM,
   TEAM_ID_MEMBER_ID,
   TEAM_ID_MEMBER_ID_WITH_NOTIFICATION,
   TEAM_MEMBER,
@@ -273,6 +274,7 @@ import {
   MembershipRequest,
   ChallengeTeamPagedResults,
   ChallengeTeam,
+  TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -1637,6 +1639,19 @@ export const getIsUserMemberOfTeam = (
   return allowNotFoundError(() =>
     doGet<TeamMember>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT),
   )
+}
+
+/**
+ * Retrieve the Team Membership Status bundle for a team and user.
+ * https://rest-docs.synapse.org/rest/GET/team/id/member/principalId/membershipStatus.html
+ */
+export const getMembershipStatus = (
+  teamId: string | number,
+  userId: string | number,
+  accessToken?: string,
+): Promise<TeamMembershipStatus> => {
+  const url = `${TEAM_ID_MEMBER_ID(teamId, userId)}/membershipStatus`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 /**

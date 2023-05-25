@@ -10,7 +10,7 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   args: {
-    projectId: 'syn51498253',
+    projectId: 'syn51565244',
     isShowingModal: true,
   },
 }

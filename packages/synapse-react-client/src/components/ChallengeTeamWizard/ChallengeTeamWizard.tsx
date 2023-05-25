@@ -6,6 +6,7 @@ import {
   ErrorResponse,
   PaginatedIds,
   Team,
+  TeamMembershipStatus,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
 import { CreateChallengeTeam, CreateTeamRequest } from './CreateChallengeTeam'
@@ -27,6 +28,9 @@ import {
   useGetUserSubmissionTeams,
 } from '../../synapse-queries'
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
+import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMembers'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useGetIsUserMemberOfTeam } from '../../synapse-queries/team/useTeamMembers'
 
 enum StepsEnum {
   SELECT_YOUR_CHALLENGE_TEAM = 'SELECT_YOUR_CHALLENGE_TEAM',
@@ -46,6 +50,9 @@ const steps: StepList = {
     title: 'Select Your Challenge Team',
     nextStep: StepsEnum.JOIN_REQUEST_FORM,
     nextEnabled: false,
+    // contentProps: {
+    //   sx: { overflowY: 'hidden' },
+    // },
   },
   JOIN_REQUEST_FORM: {
     id: StepsEnum.JOIN_REQUEST_FORM,
@@ -81,6 +88,8 @@ export type ChallengeTeamWizardProps = {
   onClose: () => void
 }
 
+const EMPTY_ID = ''
+
 const ChallengeTeamWizard: React.FunctionComponent<
   ChallengeTeamWizardProps
 > = ({ projectId, isShowingModal = false, onClose }) => {
@@ -93,7 +102,11 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>()
   const [createdNewTeam, setCreatedNewTeam] = useState<boolean>(false)
   const [confirming, setConfirming] = useState<boolean>(false)
-  const [isRegistered, setIsRegistered] = useState<boolean>(false)
+  const [hasSubmissionTeam, setHasSubmissionTeam] = useState<boolean>(false)
+  // membershipStatus is {teamId:TeamMembershipStatus}
+  const [membershipStatus, setMembershipStatus] = useState<
+    Record<string, TeamMembershipStatus>
+  >({})
   const [inviteMembersSuccess, setInviteMembersSuccess] =
     useState<boolean>(false)
   const [registerChallengeSuccess, setRegisterChallengeSuccess] =
@@ -107,6 +120,11 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const [joinMessage, setJoinMessage] = useState<string>('')
   const [canRequestChallenge, setCanRequestChallenge] = useState<boolean>(false)
 
+  /************************
+   * Data population hooks
+   ***********************/
+
+  // Use the existing accessToken if present to get the current user's profile / userId
   useGetCurrentUserProfile({
     enabled: !userProfile,
     onSettled: (data, error) => {
@@ -123,6 +141,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
     },
   })
 
+  // Retrieve the challenge associated with the projectId passed through props
   useGetEntityChallenge(projectId, {
     enabled: canRequestChallenge,
     onSettled: (data, error) => {
@@ -139,9 +158,49 @@ const ChallengeTeamWizard: React.FunctionComponent<
     },
   })
 
-  useGetUserSubmissionTeams(challenge?.id ?? '0', 500, {
+  // Verify that user is a member of the participant team
+  useGetIsUserMemberOfTeam(
+    challenge?.participantTeamId ?? EMPTY_ID,
+    userProfile?.ownerId ?? EMPTY_ID,
+    {
+      enabled: !!challenge && !!userProfile,
+      onSettled: (data, error) => {
+        console.log('useGetIsUserMemberOfTeam', data, error)
+        if (data === null) {
+          /**
+           * Somehow user is not a member of the participant team yet
+           * auto-join member to participant team before we continue
+           */
+          // if (challenge?.participantTeamId && userProfile && accessToken) {
+          //   addTeamMemberAsAuthenticatedUserOrAdmin(
+          //     challenge?.participantTeamId,
+          //     userProfile.ownerId,
+          //     accessToken,
+          //   )
+          // }
+        }
+        if (data !== null) {
+          // User is a member of the participant team
+          console.log(data)
+        }
+        if (error) {
+          // Could not determine if user is a member of the participant team
+          setLoading(false)
+          setErrorMessage(
+            'Error: could not determine if user is a member of this challenge.',
+          )
+        }
+      },
+    },
+  )
+
+  // Determine whether or not the given user belongs to any submission teams
+  useGetUserSubmissionTeams(challenge?.id ?? EMPTY_ID, 500, {
     enabled: !!challenge && !!accessToken,
-    onSettled: (data: PaginatedIds | undefined, error) => {
+    onSettled: (
+      data: PaginatedIds | undefined,
+      error: SynapseClientError | null,
+    ) => {
       // console.log('settled', { data }, { error })
       if (data) {
         const isReg: boolean =
@@ -151,34 +210,118 @@ const ChallengeTeamWizard: React.FunctionComponent<
           setErrorMessage(
             'Error: You are already a member of a registered submission team for this Challenge.',
           )
-          setIsRegistered(true)
+          setHasSubmissionTeam(true)
         }
       }
       if (error) {
         setErrorMessage(
-          `Error: Could not determine if you are already registered for this Challenge`,
+          `Error: Could not determine if you are already registered for this Challenge.`,
         )
       }
       setLoading(false)
     },
   })
 
+  useGetMembershipStatus(
+    selectedTeam?.id ?? EMPTY_ID,
+    userProfile?.ownerId ?? EMPTY_ID,
+    {
+      enabled: !!selectedTeam && !!userProfile,
+      onSettled: (
+        data: TeamMembershipStatus | undefined,
+        error: SynapseClientError | null,
+      ) => {
+        if (data) {
+          console.log(data)
+          setMembershipStatus({ [data.teamId]: data })
+        }
+        if (error) {
+          // console.error(error)
+          setErrorMessage(error.reason)
+        }
+      },
+    },
+  )
+
+  /*************************
+   * React to state changes
+   ************************/
+
+  const canUserJoinTeam = () => {
+    if (selectedTeam && selectedTeam.id in membershipStatus) {
+      const {
+        canJoin,
+        membershipApprovalRequired,
+        isMember,
+        hasOpenInvitation,
+        hasOpenRequest,
+      } = membershipStatus[selectedTeam.id]
+
+      if (isMember) {
+        // User cannot join this team, disable Next button
+        return {
+          canJoin: false,
+          errorMessage: 'You are already a member of this team.',
+        }
+      }
+
+      if (hasOpenRequest) {
+        // User already has an open request to join this team, disable Next button to avoid request spamming
+        return {
+          canJoin: false,
+          errorMessage:
+            'Your previous request to join this team is pending review.',
+        }
+      }
+
+      if (hasOpenInvitation || canJoin || membershipApprovalRequired) {
+        /**
+         * User has an open invitation, or the team is public, or
+         * user may request to join. Enable Next button.
+         */
+        return {
+          canJoin: true,
+          needsApproval: membershipApprovalRequired,
+          errorMessage: undefined,
+        }
+      }
+    }
+    return {
+      canJoin: false,
+    }
+  }
+
+  // Determine the login status of the user, and whether or not we can request the given projectId challenge.
   useEffect(() => {
+    /**
+     * The presence of an accessToken alone is not enough to determine the user's login status, since it may be expired.
+     * Neither is the presence of a userProfile, since it may belong to the anonymous user.
+     * A user is not necessarily logged out just because they are not logged in...
+     * for example, the request for their userProfile may be pending.
+     */
     const isLoggedIn =
       !!userProfile && userProfile.ownerId !== ANONYMOUS_PRINCIPAL_ID.toString()
 
     const isLoggedOut =
       !!userProfile && userProfile.ownerId === ANONYMOUS_PRINCIPAL_ID.toString()
 
+    /**
+     * We can only request challenges if we are not anonymous.
+     * Avoid repeated api calls by disabling hook once we have the challenge.
+     */
     const canRequest = isLoggedIn && !!projectId && !challenge
-    // console.log({ isLoggedIn, isLoggedOut, userProfile, canRequest })
     setCanRequestChallenge(canRequest)
+
     if (isLoggedOut) {
       setLoading(false)
       setErrorMessage('Please login to continue.')
     }
   }, [accessToken, userProfile, projectId, challenge])
 
+  /**
+   * When creating a new team, wait for the team to be registered to the challenge
+   * and for invited members to be invited before proceeding to confirmation view.
+   */
   useEffect(() => {
     if (inviteMembersSuccess && registerChallengeSuccess) {
       setConfirming(false)
@@ -187,14 +330,33 @@ const ChallengeTeamWizard: React.FunctionComponent<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerChallengeSuccess, inviteMembersSuccess, step])
 
+  // Determine the user's eligibility to join the selected team
+  useEffect(() => {
+    if (
+      selectedTeam &&
+      selectedTeam.id in membershipStatus &&
+      step.id === StepsEnum.SELECT_YOUR_CHALLENGE_TEAM
+    ) {
+      const { canJoin, errorMessage } = canUserJoinTeam()
+      if (canJoin) {
+        if (!step.nextEnabled) setStep({ ...step, nextEnabled: true })
+        return
+      }
+      if (step.nextEnabled) setStep({ ...step, nextEnabled: false })
+      if (errorMessage) setErrorMessage(errorMessage)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [membershipStatus, selectedTeam, step])
+
   /************************
    * Form update handlers
    * *********************/
+
   // SELECT_YOUR_CHALLENGE_TEAM: user has selected an existing challenge team from the table
   const handleSelectTeam = (team: Team) => {
     if (team) {
+      // Setting selectedTeam will trigger the useMembershipStatus hook
       setSelectedTeam(team)
-      if (!step.nextEnabled) setStep({ ...step, nextEnabled: true })
     }
   }
 
@@ -208,13 +370,14 @@ const ChallengeTeamWizard: React.FunctionComponent<
   /************************
    * Step confirm handlers
    * *********************/
-  // JOIN_REQUEST_FORM: Add user to an existing public team
-  const addUserToPublicTeam = () => {
-    if (!selectedTeam || !userProfile || !accessToken) return
+
+  // JOIN_REQUEST_FORM: Add user to an existing public team or a team the user has an open invitation to
+  const addUserToTeam = (teamId = selectedTeam?.id) => {
+    if (!teamId || !userProfile || !accessToken) return
     setConfirming(true)
     setErrorMessage(undefined)
     addTeamMemberAsAuthenticatedUserOrAdmin(
-      selectedTeam?.id,
+      teamId,
       userProfile.ownerId,
       accessToken,
     )
@@ -242,7 +405,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
         undefined,
         accessToken,
       )
-        .then(response => {
+        .then(() => {
           // console.log({ response })
           // request successful, advance to next step
           setStep(steps[StepsEnum.JOIN_REQUEST_SENT])
@@ -349,10 +512,11 @@ const ChallengeTeamWizard: React.FunctionComponent<
     JOIN_REQUEST_FORM: handleRequestMembership,
   }
 
+  // Determine modal content based on step.id
   const createContent = () => {
     switch (step.id) {
       case StepsEnum.SELECT_YOUR_CHALLENGE_TEAM:
-        return accessToken && challenge && !isRegistered ? (
+        return accessToken && challenge && !hasSubmissionTeam ? (
           <SelectChallengeTeam
             challengeId={challenge.id}
             onCreateTeam={() => handleStepChange(StepsEnum.CREATE_NEW_TEAM)}
@@ -390,18 +554,25 @@ const ChallengeTeamWizard: React.FunctionComponent<
     }
   }
 
+  // React to change in step
   function handleStepChange(value?: StepsEnum) {
     if (!value || !steps[value]) return
     setErrorMessage(undefined)
 
+    const { canJoin, errorMessage, needsApproval } = canUserJoinTeam()
     // console.log('handleStepChange', value)
     switch (value) {
       case StepsEnum.SELECT_YOUR_CHALLENGE_TEAM:
         setCreatedNewTeam(false)
         break
       case StepsEnum.JOIN_REQUEST_FORM:
-        if (selectedTeam?.canPublicJoin) {
-          return addUserToPublicTeam()
+        // If the team is public, or the user has an open invitation, add them to the team immediately
+        if (canJoin) {
+          if (!needsApproval) {
+            return addUserToTeam()
+          }
+        } else {
+          return setErrorMessage(errorMessage)
         }
         break
     }
