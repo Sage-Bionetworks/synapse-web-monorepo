@@ -232,6 +232,14 @@ export const defaultMuiThemeOptions: ThemeOptions = {
         },
       },
     },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          fontWeight: 900,
+          textTransform: 'capitalize',
+        },
+      },
+    },
     MuiTooltip: {
       defaultProps: {
         arrow: true,

@@ -2,6 +2,8 @@ import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
 import { LINK_CONCRETE_TYPE } from './Link'
 import { DOCKER_REPOSITORY_CONCRETE_TYPE } from '../docker/DockerRepository'
 import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/ConcreteType'
+import { PROJECT_CONCRETE_TYPE } from './Project'
+import { FOLDER_CONCRETE_TYPE } from './Folder'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
@@ -27,14 +29,6 @@ export interface Entity {
   /** Indicates which implementation of Entity this object represents. */
   readonly concreteType: ENTITY_CONCRETE_TYPE
 }
-
-export const FOLDER_CONCRETE_TYPE_VALUE =
-  'org.sagebionetworks.repo.model.Folder'
-export type FOLDER_CONCRETE_TYPE = typeof FOLDER_CONCRETE_TYPE_VALUE
-
-export const PROJECT_CONCRETE_TYPE_VALUE =
-  'org.sagebionetworks.repo.model.Project'
-export type PROJECT_CONCRETE_TYPE = typeof PROJECT_CONCRETE_TYPE_VALUE
 
 // This is not a real object in Synapse, merely a collection of potential string values to represent the "concreteType" field on Entities
 export type ENTITY_CONCRETE_TYPE =
