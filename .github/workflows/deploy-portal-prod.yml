@@ -1,11 +1,14 @@
-name: "Build a portal and deploy to staging if staging branch"
+name: Deploy a portal to production
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       portal-name:
-        required: true
-        type: string
+        type: choice
+        description: Which portal to deploy
+        options: 
+        - adknowledgportal
+        - challengeportal
 
 jobs:
   build-and-deploy:
@@ -19,8 +22,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3.0.0
-      - name: setup
-        uses: ./.github/actions/pnpm-setup-action
+        with:
+          ref: releases/portals/production
+      - uses: ./.github/actions/pnpm-setup-action
       - name: Assume AWS Role
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -28,14 +32,8 @@ jobs:
           role-to-assume: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
           role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
           role-duration-seconds: 1200
-      - name: build
-        run: |
-          cd apps/portals
-          chmod +x ./build.sh
-          ./build.sh ${{ inputs.portal-name }}
-      - name: setup-outputbucket-staging
-        if: github.ref == 'refs/heads/releases/portals/staging'
+      - name: setup-outputbucket-prod
         run: |
           cd apps/portals
           echo chmod +x ./deploy.sh
-          echo ./deploy.sh push-staging ${{ inputs.portal-name }}
+          echo ./deploy.sh WARNING-push-production ${{ inputs.portal-name }}
