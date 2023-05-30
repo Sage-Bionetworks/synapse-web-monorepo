@@ -10,18 +10,12 @@ import {
   species,
 } from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
-import {
-  studiesProgrammaticRouteConfig,
-} from './synapseConfigs/studies'
+import { studiesProgrammaticRouteConfig } from './synapseConfigs/studies'
 import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import {
-  dataSql,
-  projectsSql,
-  peopleSql,
-} from './resources'
+import { dataSql, projectsSql, peopleSql, upsetPlotSql } from './resources'
 import computationalTools from './synapseConfigs/computational_tools'
 
 const routes: GenericRoute[] = [
@@ -55,6 +49,20 @@ const routes: GenericRoute[] = [
         outsideContainerClassName: 'home-spacer',
         props: {
           entityId: 'syn51449135',
+        },
+      },
+      {
+        name: 'UpsetPlot',
+        outsideContainerClassName: 'home-spacer',
+        centerTitle: true,
+        props: {
+          sql: upsetPlotSql,
+          rgbIndex: 0,
+          maxBarCount: 20,
+          setName: '# Individuals per assay',
+          combinationName: '# Individuals',
+          // summaryLinkText: 'Explore All Data',
+          // summaryLink: '/Explore/Data',
         },
       },
       {
@@ -95,7 +103,8 @@ const routes: GenericRoute[] = [
                       '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
                   },
                   {
-                    title: 'The Single cell transcriptomic analysis of PBMCs in Extreme Longevity',
+                    title:
+                      'The Single cell transcriptomic analysis of PBMCs in Extreme Longevity',
                     description:
                       'This study provides data from 7 centenarian samples (> 100 years) and 2 younger control samples (20-59 years) from New England Centenarian Study (NECS) at Boston University and the Integrative Longevity Omics (ILO). Peripheral Blood Mononuclear Cells (PBMCs) transcriptional and protein expression were profiled at a single cell resolution. Pluripotent stem cells were also generated. Droplet-based single cell CITE-seq data (16,082 cells).',
                     facetsToPlot: ['dataType'],
@@ -114,8 +123,7 @@ const routes: GenericRoute[] = [
         name: 'Ecosystem',
         title: 'Related Resources',
         centerTitle: true,
-        subtitle:
-          '',
+        subtitle: '',
         outsideContainerClassName: 'home-spacer',
         props: {
           config: [
