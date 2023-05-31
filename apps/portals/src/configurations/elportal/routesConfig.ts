@@ -60,7 +60,7 @@ const routes: GenericRoute[] = [
           sql: upsetPlotSql,
           rgbIndex: 0,
           maxBarCount: 20,
-          setName: '# Individuals per assay',
+          setName: '# Individuals per data type',
           combinationName: '# Individuals',
           // summaryLinkText: 'Explore All Data',
           // summaryLink: '/Explore/Data',
