@@ -53,7 +53,8 @@ const routes: GenericRoute[] = [
       },
       {
         name: 'UpsetPlot',
-        outsideContainerClassName: 'home-spacer',
+        title: 'Exploring the Data',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
         centerTitle: true,
         props: {
           sql: upsetPlotSql,
@@ -67,7 +68,6 @@ const routes: GenericRoute[] = [
       },
       {
         name: 'FeaturedDataTabs',
-        title: 'Featured Data',
         centerTitle: true,
         outsideContainerClassName: 'home-spacer home-bg-dark',
         props: {
