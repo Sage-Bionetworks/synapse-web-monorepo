@@ -1002,7 +1002,7 @@ export const getUserBundle = (
 }
 
 /**
- * Return the ucurrent user's bundle
+ * Return the current user's bundle
  * http://rest-docs.synapse.org/rest/GET/user/bundle.html
  */
 export const getMyUserBundle = (
@@ -1676,6 +1676,22 @@ export const createMembershipRequest = (
 }
 
 /**
+ * Remove the given member from the specified Team. Note: The client must either be a Team administrator or the member being removed.
+ * https://rest-docs.synapse.org/rest/DELETE/team/id/member/principalId.html
+ */
+export const deleteMemberFromTeam = (
+  teamId: string,
+  userId: string,
+  accessToken: string | undefined,
+) => {
+  return doDelete(
+    `/repo/v1/team/${teamId}/member/${userId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get Teams that match the given list of IDs.
  * https://rest-docs.synapse.org/rest/POST/teamList.html
  */
@@ -1683,9 +1699,8 @@ export const getTeamList = (
   ids: string[] | number[],
   accessToken?: string | undefined,
 ) => {
-  const url = `/repo/v1/teamList`
   return doPost<ListWrapper<Team>>(
-    url,
+    `/repo/v1/teamList`,
     { list: ids },
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
