@@ -26,6 +26,10 @@
   }
   .TabContentContainer {
     margin: 20px 30px;
+    .FullWidthAlert {
+      margin: -20px -30px 20px -30px;
+      width: auto;
+    }
   }
 }
 

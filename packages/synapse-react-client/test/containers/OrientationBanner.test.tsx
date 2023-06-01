@@ -12,14 +12,12 @@ import OrientationBanner, {
 } from '../../src/components/OrientationBanner/OrientationBanner'
 import { createWrapper } from '../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../src/utils/context/SynapseContext'
-import Illustrations from '../../src/assets/illustrations'
 
 const onPrimaryButtonClicked = jest.fn()
 window.open = jest.fn()
 
 const defaultProps: OrientationBannerProps = {
   name: 'Projects',
-  illustration: <Illustrations.Projects />,
   title: 'Getting Started With Your Projects',
   text: 'Projects are the main "containers" where information is stored and organized in Synapse. They are online workspaces where you can collaborate and share your work with teammates. Projects can be shared with individuals, small teams, or large consortia. Projects can be private so only you and your team can see what\'s inside, or they can be shared publicly for anyone to browse.',
   primaryButtonConfig: {
