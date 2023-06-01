@@ -1,5 +1,5 @@
 import { Alert, Button, Box } from '@mui/material'
-import React, { useState } from 'react'
+import React from 'react'
 import { DialogBase } from '../DialogBase'
 import { SynapseSpinner } from '../LoadingScreen'
 import SpinnerButton from '../widgets/SpinnerButton'

@@ -4,8 +4,6 @@ import ChallengeTeamWizard from '../ChallengeTeamWizard'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
 import { useGetEntityChallenge } from '../../synapse-queries'
 import { Challenge } from '@sage-bionetworks/synapse-types'
-import { deleteMemberFromTeam } from '../../synapse-client'
-import { useSynapseContext } from '../../utils'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import { SynapseQueries } from '../..'
@@ -15,12 +13,11 @@ export type ChallengeDetailPageProps = {
 }
 
 const ChallengeDetailPage = ({ projectId }: ChallengeDetailPageProps) => {
-  const { accessToken } = useSynapseContext()
   const [showWizard, setShowWizard] = useState<boolean>(false)
   const [showRequirements, setShowRequirements] = useState<boolean>(false)
   const [challenge, setChallenge] = useState<Challenge>()
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<boolean>(false)
-  const [showRegister, setShowRegister] = useState<boolean>(true)
+  const [showRegister] = useState<boolean>(true)
   const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
 
   const toggleShowWizard = (b: boolean) => {
