@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash-es'
 import React, { useMemo } from 'react'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
-import { Query, QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import { Query, QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import {
   TopLevelControlsState,
   useQueryVisualizationContext,
@@ -39,9 +39,9 @@ type Control = {
   tooltipText: string
 }
 
-type CustomControlCallbackData = {
+export type CustomControlCallbackData = {
   data: QueryResultBundle | undefined
-  selectedRowIndices: number[] | undefined
+  selectedRows: Row[] | undefined
   refresh: () => void
 }
 
@@ -105,7 +105,8 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     topLevelControlsState,
     setTopLevelControlsState,
     columnsToShowInTable,
-    selectedRowIndices,
+    selectedRows,
+    setSelectedRows,
     setColumnsToShowInTable,
   } = useQueryVisualizationContext()
 
@@ -126,6 +127,9 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   }
 
   const refresh = () => {
+    // clear selection
+    setSelectedRows([])
+    // refresh the data
     executeQueryRequest(getLastQueryRequest())
   }
 
@@ -221,7 +225,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   style={{ marginRight: '5px' }}
                   type="button"
                   onClick={() =>
-                    customControl.onClick({ data, selectedRowIndices, refresh })
+                    customControl.onClick({ data, selectedRows, refresh })
                   }
                 >
                   {customControl.icon}&nbsp;

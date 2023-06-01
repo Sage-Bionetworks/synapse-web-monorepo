@@ -7,7 +7,7 @@ import { SynapseClient } from 'synapse-react-client'
 
 type CustomControlCallbackData = {
   data: QueryResultBundle | undefined
-  selectedRowIndices: number[] | undefined
+  selectedRows: Row[] | undefined
   refresh: () => void
 }
 
@@ -24,10 +24,9 @@ const handleParticipantWorkflowChange = async (
   )
   // collect all selected rows (create PartialRow objects)
   const rowUpdates: PartialRow[] = []
-  const rows: Row[] = event.data?.queryResult!.queryResults!.rows!
-  for (let index = 0; index < event.selectedRowIndices!.length; index++) {
+  for (let index = 0; index < event.selectedRows!.length; index++) {
     rowUpdates.push({
-      rowId: rows[event.selectedRowIndices![index]].rowId!,
+      rowId: event.selectedRows![index].rowId!,
       values: [
         {
           key: targetColumn?.id!,
