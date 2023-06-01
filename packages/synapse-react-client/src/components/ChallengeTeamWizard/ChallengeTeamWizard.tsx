@@ -128,7 +128,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   useGetCurrentUserProfile({
     enabled: !userProfile,
     onSettled: (data, error) => {
-      // console.log('settled profile', { data }, { error })
+      // console.log('useGetCurrentUserProfile', { data }, { error })
       if (data) {
         setUserProfile(data)
       }
@@ -145,7 +145,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   useGetEntityChallenge(projectId, {
     enabled: canRequestChallenge,
     onSettled: (data, error) => {
-      // console.log('settled', { data }, { error })
+      // console.log('useGetEntityChallenge', { data }, { error })
       if (data) {
         setChallenge(data)
       }
@@ -200,7 +200,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
       data: PaginatedIds | undefined,
       error: SynapseClientError | null,
     ) => {
-      // console.log('settled', { data }, { error })
+      // console.log('useGetUserSubmissionTeams', { data }, { error })
       if (data) {
         const isReg = data.results.length > 0
         if (isReg) {
@@ -228,12 +228,11 @@ const ChallengeTeamWizard: React.FunctionComponent<
         data: TeamMembershipStatus | undefined,
         error: SynapseClientError | null,
       ) => {
+        // console.log('useGetMembershipStatus', data, error)
         if (data) {
-          // console.log(data)
           setMembershipStatus({ ...membershipStatus, [data.teamId]: data })
         }
         if (error) {
-          // console.error(error)
           setErrorMessage(error.reason)
         }
       },

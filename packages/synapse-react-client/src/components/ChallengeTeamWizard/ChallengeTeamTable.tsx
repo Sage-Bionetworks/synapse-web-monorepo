@@ -156,7 +156,7 @@ export default function ChallengeTeamTable({
           <DataGrid
             rows={allRows}
             columns={columns}
-            rowCount={3}
+            rowCount={5}
             hideFooter
             density="compact"
             sx={{

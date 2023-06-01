@@ -47,7 +47,6 @@ const StepperDialog: React.FunctionComponent<StepperDialogProps> = ({
   content,
   loading,
 }) => {
-  // const [showSpinner, setShowSpinner] = useState<boolean>(false)
   if (!step) return null
 
   const dialogContent = (
