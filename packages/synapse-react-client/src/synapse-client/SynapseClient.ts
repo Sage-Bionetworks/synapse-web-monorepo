@@ -241,6 +241,7 @@ import {
   SubscriberPagedResults,
   Subscription,
   SubscriptionPagedResults,
+  SubscriptionQuery,
   SubscriptionRequest,
   SynapseVersion,
   TableUpdateTransactionRequest,
@@ -382,6 +383,7 @@ const fetchWithExponentialTimeout = async <TResponse>(
   try {
     response = await fetch(url, options)
   } catch (err) {
+    console.error(err)
     throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url.toString())
   }
 
@@ -4255,6 +4257,25 @@ export const getModerators = (
 }
 
 /**
+ * This API is used to get the Forum's metadata for a given its ID.
+ * Target users: anyone who has READ permission to the project.
+ * https://rest-docs.synapse.org/rest/GET/forum/forumId.html
+ * @param accessToken
+ * @param forumId
+ * @returns
+ */
+export const getForumMetadata = (
+  accessToken: string | undefined,
+  forumId: string,
+) => {
+  return doGet<Forum>(
+    `${FORUM}/${forumId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Performs a full text search in the forum defined by the given id.
  * Target users: anyone who has READ permission on the project of the forum.
  * http://rest-docs.synapse.org/rest/POST/forum/forumId/search.html
@@ -4496,6 +4517,30 @@ export async function getSynapseTeamGeoData(
 ): Promise<GeoData[]> {
   const response = await fetch(`${S3_GEODATA_ENDPOINT}${teamId}.json`)
   return (await response.json()) as GeoData[]
+}
+
+/**
+ * This API is used to retrieve all subscriptions one has.
+ * Target users: all Synapse users.
+ */
+export function getAllSubscriptions(
+  accessToken: string | undefined,
+  limit: number = 100,
+  offset: number = 0,
+  query: SubscriptionQuery,
+) {
+  const params = new URLSearchParams()
+  params.set('limit', limit.toString())
+  params.set('offset', offset.toString())
+  params.set('objectType', query.objectType)
+  if (query.sortBy) params.set('sortBy', query.sortBy)
+  if (query.sortDirection) params.set('sortDirection', query.sortDirection)
+
+  return doGet<SubscriptionPagedResults>(
+    `/repo/v1/subscription/all?${params.toString()}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**

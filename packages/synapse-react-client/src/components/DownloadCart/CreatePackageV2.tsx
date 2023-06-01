@@ -6,7 +6,9 @@ import {
 } from '../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { DownloadListPackageResponse } from '@sage-bionetworks/synapse-types'
-import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
+import FullWidthAlert, {
+  FullWidthAlertVariant,
+} from '../FullWidthAlert/FullWidthAlert'
 
 export type CreatePackageV2Props = {
   onPackageCreation: () => void
@@ -14,7 +16,7 @@ export type CreatePackageV2Props = {
 
 type AlertConfig = {
   message: string
-  variant?: string
+  variant?: FullWidthAlertVariant
 }
 
 export const TEMPLATE_ERROR_FILE_NAME =

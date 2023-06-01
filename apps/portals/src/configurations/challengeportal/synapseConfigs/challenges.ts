@@ -16,7 +16,7 @@ export const challengesSchema: GenericCardSchema = {
   title: 'name',
   subTitle: 'Status',
   description: 'Abstract',
-  secondaryLabels: ['Difficulty', 'ChallengeType', 'Tags'],
+  secondaryLabels: ['Difficulty', 'ChallengeType', 'DataType', 'Tags'],
 }
 export const challengeTitleLinkConfig: CardLink = {
   isMarkdown: false,
@@ -28,6 +28,7 @@ export const challengeTitleLinkConfig: CardLink = {
 export const challengeCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: challengesSchema,
+  secondaryLabelLimit: 5,
 }
 
 export const challenges: SynapseConfig = {
@@ -221,32 +222,32 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
       uriValue: 'Task1',
       // specify a column that determines visibility.  For this case, set to a required Task0 annotation (description)
       // toolTip: 'Task 1',
-      hideIfColumnValueNull: 'Task_0.Description',
-      synapseConfigArray: taskTabConfigs('Task_0'),
-    },
-    {
-      title: 'Task 2',
-      uriValue: 'Task2',
       hideIfColumnValueNull: 'Task_1.Description',
       synapseConfigArray: taskTabConfigs('Task_1'),
     },
     {
-      title: 'Task 3',
-      uriValue: 'Task3',
+      title: 'Task 2',
+      uriValue: 'Task2',
       hideIfColumnValueNull: 'Task_2.Description',
       synapseConfigArray: taskTabConfigs('Task_2'),
     },
     {
-      title: 'Task 4',
-      uriValue: 'Task4',
+      title: 'Task 3',
+      uriValue: 'Task3',
       hideIfColumnValueNull: 'Task_3.Description',
       synapseConfigArray: taskTabConfigs('Task_3'),
     },
     {
-      title: 'Task 5',
-      uriValue: 'Task5',
+      title: 'Task 4',
+      uriValue: 'Task4',
       hideIfColumnValueNull: 'Task_4.Description',
       synapseConfigArray: taskTabConfigs('Task_4'),
+    },
+    {
+      title: 'Task 5',
+      uriValue: 'Task5',
+      hideIfColumnValueNull: 'Task_5.Description',
+      synapseConfigArray: taskTabConfigs('Task_5'),
     },
     {
       title: 'News',
@@ -269,10 +270,10 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
           name: 'ProjectDiscussionForum',
           title: 'Discussion Forum',
           columnName: 'id',
-          props: undefined
+          props: undefined,
         },
-      ]
-    }
+      ],
+    },
   ],
 }
 

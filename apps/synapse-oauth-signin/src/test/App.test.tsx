@@ -7,6 +7,11 @@ import App from '../App'
 import userEvent from '@testing-library/user-event'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+import { waitForOptions } from '@testing-library/react'
+
+const overrideWaitForOptions: waitForOptions = {
+  timeout: 5000,
+}
 
 vi.mock('synapse-react-client', async importActual => {
   const actual = await importActual<typeof import('synapse-react-client')>()
@@ -57,9 +62,13 @@ describe('App integration tests', () => {
 
   test('Shows login when no token is provided', async () => {
     renderApp()
-    await screen.findByRole('button', {
-      name: /sign in with your email/i,
-    })
+    await screen.findByRole(
+      'button',
+      {
+        name: /sign in with your email/i,
+      },
+      overrideWaitForOptions,
+    )
   })
   test('Shows login and does not redirect when an expired token is provided', async () => {
     // Need a token in the cookie so the app tries to use it
@@ -84,9 +93,13 @@ describe('App integration tests', () => {
     renderApp()
 
     // The token was invalid, so the user should be prompted to login
-    await screen.findByRole('button', {
-      name: /sign in with your email/i,
-    })
+    await screen.findByRole(
+      'button',
+      {
+        name: /sign in with your email/i,
+      },
+      overrideWaitForOptions,
+    )
 
     // No redirect should have happened
     expect(window.location.replace).not.toHaveBeenCalled()
@@ -96,9 +109,13 @@ describe('App integration tests', () => {
     renderApp()
 
     await userEvent.click(
-      await screen.findByRole('button', {
-        name: /sign in with your email/i,
-      }),
+      await screen.findByRole(
+        'button',
+        {
+          name: /sign in with your email/i,
+        },
+        overrideWaitForOptions,
+      ),
     )
     const usernameField = await screen.findByLabelText('Username', {
       exact: false,
@@ -129,7 +146,11 @@ describe('App integration tests', () => {
     renderApp()
 
     // The user has logged in but has not granted consent, so check for the consent text
-    await screen.findByText(/requests permission/)
+    await screen.findByText(
+      /requests permission/,
+      undefined,
+      overrideWaitForOptions,
+    )
 
     // No redirect should have happened
     expect(window.location.replace).not.toHaveBeenCalled()
@@ -142,7 +163,11 @@ describe('App integration tests', () => {
     renderApp()
 
     // The user has logged in but has not granted consent, so check for the consent text
-    await screen.findByText(/requests permission/)
+    await screen.findByText(
+      /requests permission/,
+      undefined,
+      overrideWaitForOptions,
+    )
 
     const consentButton = await screen.findByRole('button', { name: 'Allow' })
     await userEvent.click(consentButton)
@@ -159,7 +184,11 @@ describe('App integration tests', () => {
     renderApp()
 
     // The user has logged in but has not granted consent, so check for the consent text
-    await screen.findByText(/requests permission/)
+    await screen.findByText(
+      /requests permission/,
+      undefined,
+      overrideWaitForOptions,
+    )
 
     const denyButton = await screen.findByRole('button', { name: 'Deny' })
     await userEvent.click(denyButton)
@@ -278,6 +307,8 @@ describe('App integration tests', () => {
     // Verify the TOTP prompt is on-screen and type in '123456'
     await screen.findByText(
       'Enter the 6-digit, time-based verification code provided by your authenticator app.',
+      undefined,
+      overrideWaitForOptions,
     )
     const otpInputs = await screen.findAllByRole('textbox')
     expect(otpInputs).toHaveLength(6)

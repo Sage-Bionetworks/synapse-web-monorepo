@@ -44,3 +44,12 @@ export interface SubscriberPagedResults {
   subscribers: string[]
   nextPageToken?: string
 }
+
+/**
+ * Represents query parameters for https://rest-docs.synapse.org/rest/GET/subscription/all.html
+ */
+export type SubscriptionQuery = {
+  objectType: SubscriptionObjectType
+  sortBy?: string
+  sortDirection?: SortDirection
+}

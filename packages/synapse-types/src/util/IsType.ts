@@ -10,13 +10,13 @@
  */
 export function isTypeViaConcreteTypeFactory<
   TTypeChecked extends ObjectType, // The type that you are trying to verify/assert
-  ObjectType extends { concreteType: string } = { concreteType: string }
->(...expectedConcreteTypes: TTypeChecked["concreteType"][]) {
+  ObjectType extends { concreteType: string } = { concreteType: string },
+>(...expectedConcreteTypes: TTypeChecked['concreteType'][]) {
   return (object: ObjectType): object is TTypeChecked =>
     !!(
       object &&
-      typeof object === "object" &&
-      "concreteType" in object &&
-      expectedConcreteTypes.includes(object["concreteType"])
-    );
+      typeof object === 'object' &&
+      'concreteType' in object &&
+      expectedConcreteTypes.includes(object['concreteType'])
+    )
 }

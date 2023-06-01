@@ -15,6 +15,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: [
+      '@mui/material',
       '@welldone-software/why-did-you-render',
       'buffer/',
       'msw-storybook-addon',

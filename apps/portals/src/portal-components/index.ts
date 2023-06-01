@@ -9,6 +9,7 @@ import AboutPortal from './csbc-home-page/AboutPortal'
 import DevelopedBySage from './csbc-home-page/DevelopedBySage'
 import BrowseToolsPage from './nf/BrowseToolsPage'
 import NFSurveyToast from './nf/NFSurveyToast'
+import ELBetaLaunchBanner from './elportal/ELBetaLaunchBanner'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
 import ParticipantsBarPlot from './crc-researcher/ParticipantsBarPlot'
 import StatusLineChart from './crc-researcher/StatusLineChart'
@@ -37,11 +38,12 @@ const PortalComponents = {
   Redirect,
   BrowseToolsPage,
   NFSurveyToast,
+  ELBetaLaunchBanner,
   ARKWelcomePage,
   TabbedSynapseObjects,
   Header,
   ChallengeParticipantGoogleMap,
-  ProjectDiscussionForum
+  ProjectDiscussionForum,
 }
 
 export default PortalComponents

@@ -4,7 +4,7 @@ import svgrPlugin from 'esbuild-plugin-svgr'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 
 export default defineConfig({
-  entry: { 'synapse-react-client': './src/index.ts' },
+  entry: { index: './src/index.ts' },
   format: ['esm', 'cjs'],
   dts: true,
   // MUI doesn't support directory import in ESM, but we can get around that by just bundling it

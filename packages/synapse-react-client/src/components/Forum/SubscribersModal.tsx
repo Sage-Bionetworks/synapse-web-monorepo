@@ -1,6 +1,6 @@
 import React from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
-import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
+import { useGetSubscribers } from '../../synapse-queries/subscription/useSubscription'
 import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 import { Link } from '@mui/material'
 import UserCard from '../UserCard/UserCard'
@@ -19,7 +19,7 @@ export const SubscribersModal: React.FC<SubscribersModalProps> = ({
   showModal,
   handleModal,
 }) => {
-  const { subscribers } = useSubscription(id, objectType)
+  const { data: subscribers } = useGetSubscribers({ objectId: id, objectType })
 
   return (
     <div className="SubscribersModal">

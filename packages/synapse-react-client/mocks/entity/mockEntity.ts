@@ -16,10 +16,10 @@ const mockProjectEntity = mockProject.entity
 const MOCK_FILE_NAME = mockFile.name
 const mockFileEntityHeader = mockFile.entityHeader
 
-export const MOCK_FOLDER_ID = 'syn1234'
+export const MOCK_FOLDER_ID = `syn20000`
 export const MOCK_INVALID_PROJECT_NAME = 'A $@*#$% terribly named Project'
-export const MOCK_FILE_VIEW_ENTITY_ID = 'syn456'
-export const MOCK_PROJECT_VIEW_ENTITY_ID = 'syn567'
+export const MOCK_FILE_VIEW_ENTITY_ID = `syn50000`
+export const MOCK_PROJECT_VIEW_ENTITY_ID = `syn500001`
 
 export const mockFolderEntity: Entity = {
   id: MOCK_FOLDER_ID,

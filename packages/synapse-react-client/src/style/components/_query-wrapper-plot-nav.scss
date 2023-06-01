@@ -151,8 +151,7 @@
       margin-top: 0px;
     }
   }
-  background-color: rgba(map.get(SRC.$primary-color-palette, 500), 0.05);
-  border-bottom: 1px solid map.get(SRC.$colors, 'gray-300');
+  background-color: map.get(SRC.$colors, 'gray-300');
   &__showhidefacetfilters {
     display: none;
   }

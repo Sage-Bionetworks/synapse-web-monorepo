@@ -8,8 +8,8 @@ import {
   EntityType,
   FileEntity,
   RestrictionLevel,
+  VersionInfo,
 } from '@sage-bionetworks/synapse-types'
-import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import {
   MOCK_FILE_HANDLE_ID,
   mockFileHandle,
@@ -22,7 +22,7 @@ import mockProject from './mockProject'
 const parentId = mockProject.id
 const projectName = mockProject.name
 
-export const MOCK_FILE_ENTITY_ID = 'syn123'
+export const MOCK_FILE_ENTITY_ID = `syn30000`
 const MOCK_FILE_NAME = 'My mock file entity'
 
 // TODO: Create a mock wiki

@@ -4,7 +4,10 @@ import { SynapseConstants } from 'synapse-react-client'
 import type { CardConfiguration } from 'synapse-react-client'
 import studyHeaderSvg from '../style/study-header.svg'
 import { studiesSql, dataSql, dataOnStudiesPageSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
 export const studyCardConfiguration: CardConfiguration = {
@@ -114,11 +117,11 @@ export const studiesDetailsPageProps: DetailsPageProps = {
         },
         {
           name: 'CardContainerLogic',
-          columnName: 'relatedStudies',
+          columnName: 'studyKey',
           title: 'Related Studies',
-          tableSqlKeys: ['studyKey'],
+          tableSqlKeys: ['relatedStudies'],
           props: {
-            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+            sqlOperator: ColumnMultiValueFunction.HAS,
             sql: studiesSql,
             ...studyCardConfiguration,
           },
