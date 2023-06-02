@@ -2,7 +2,7 @@ import React from 'react'
 import { SynapseConstants } from '../../utils'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
 import {
-  generateQueryFilterFromSearchParams,
+  getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/SqlFunctions'
@@ -115,10 +115,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     customControls,
   } = props
 
-  const additionalFilters = generateQueryFilterFromSearchParams(
-    searchParams,
-    sqlOperator,
-  )
+  const additionalFilters = getAdditionalFilters(searchParams, sqlOperator)
 
   // use initQuery if set, otherwise use sql
   const query: Query = initQueryJson

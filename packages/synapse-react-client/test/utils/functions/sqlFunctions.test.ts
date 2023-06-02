@@ -1,7 +1,8 @@
 import {
-  generateQueryFilterFromSearchParams,
+  getAdditionalFilters,
   parseEntityIdAndVersionFromSqlStatement,
   parseEntityIdFromSqlStatement,
+  QUERY_FILTERS_LOCAL_STORAGE_KEY,
   SQLOperator,
 } from '../../../src/utils/functions/SqlFunctions'
 import {
@@ -65,14 +66,10 @@ describe('generateQueryFilterFromSearchParams', () => {
     }
     const operator: SQLOperator = 'LIKE'
     // if no search params are there, then it should return undefined
-    expect(generateQueryFilterFromSearchParams(undefined, operator)).toBe(
-      undefined,
-    )
-    expect(generateQueryFilterFromSearchParams({}, operator)).toBe(undefined)
+    expect(getAdditionalFilters(undefined, operator)).toBe(undefined)
+    expect(getAdditionalFilters({}, operator)).toBe(undefined)
     // if the only search params set are from the QueryWrapper, then it should return the input sql
-    expect(generateQueryFilterFromSearchParams(searchParams, operator)).toBe(
-      undefined,
-    )
+    expect(getAdditionalFilters(searchParams, operator)).toBe(undefined)
   })
 
   it("Omits params beginning with 'QueryWrapper' when other searchParams are present", () => {
@@ -83,7 +80,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     }
     let operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
     // if no search params are there, then it should return the input sql
-    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
       {
         concreteType:
@@ -102,7 +99,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     }
     let operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
     // if no search params are there, then it should return the input sql
-    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
       {
         concreteType:
@@ -121,7 +118,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     }
     let operator: SQLOperator = ColumnSingleValueFilterOperator.IN
     // if no search params are there, then it should return the input sql
-    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
       {
         concreteType:
@@ -140,7 +137,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     }
     let operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
     // if no search params are there, then it should return the input sql
-    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
       {
         concreteType:
@@ -159,7 +156,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     }
     let operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
     // if no search params are there, then it should return the input sql
-    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
       {
         concreteType:
@@ -178,7 +175,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     }
     let operator: SQLOperator = ColumnMultiValueFunction.HAS
     // if no search params are there, then it should return the input sql
-    const actual = generateQueryFilterFromSearchParams(searchParams, operator)
+    const actual = getAdditionalFilters(searchParams, operator)
     const expectedResult: ColumnMultiValueFunctionQueryFilter[] = [
       {
         concreteType:
@@ -197,7 +194,7 @@ describe('generateQueryFilterFromSearchParams', () => {
     }
     let operator: SQLOperator = ColumnMultiValueFunction.HAS_LIKE
     // if no search params are there, then it should return the input sql
-    const actual = generateQueryFilterFromSearchParams(searchParams, operator)
+    const actual = getAdditionalFilters(searchParams, operator)
     const expectedResult: ColumnMultiValueFunctionQueryFilter[] = [
       {
         concreteType:
@@ -232,7 +229,7 @@ describe('generateQueryFilterFromSearchParams', () => {
       },
     ]
 
-    const actual = generateQueryFilterFromSearchParams(searchParams)
+    const actual = getAdditionalFilters(searchParams)
     expect(actual).toStrictEqual(expectedResults)
   })
 
@@ -252,20 +249,72 @@ describe('generateQueryFilterFromSearchParams', () => {
       },
     ]
 
-    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const result = getAdditionalFilters(searchParams, operator)
     expect(result).toStrictEqual(expectedResults)
   })
 
   it('handles every filter type', () => {
     Object.entries(ColumnSingleValueFilterOperator).forEach(([_, operator]) => {
-      expect(
-        generateQueryFilterFromSearchParams({ col: 'val' }, operator),
-      ).toBeDefined()
+      expect(getAdditionalFilters({ col: 'val' }, operator)).toBeDefined()
     })
     Object.entries(ColumnMultiValueFunction).forEach(([_, operator]) => {
-      expect(
-        generateQueryFilterFromSearchParams({ col: 'val' }, operator),
-      ).toBeDefined()
+      expect(getAdditionalFilters({ col: 'val' }, operator)).toBeDefined()
     })
+  })
+})
+
+describe('Local Storage QueryFilter[] tests', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('Load QueryFilter from local storage', () => {
+    const filter: ColumnSingleValueQueryFilter = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'a',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: ['b'],
+    }
+    localStorage.setItem(
+      QUERY_FILTERS_LOCAL_STORAGE_KEY,
+      JSON.stringify(filter),
+    )
+
+    const result = getAdditionalFilters(undefined, undefined)
+    expect(result?.length).toStrictEqual(1)
+    expect(result?.at(0)).toStrictEqual(filter)
+  })
+
+  it('Load QueryFilter from both search param and local storage', () => {
+    const localStorageFilter: ColumnSingleValueQueryFilter = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'study',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: ['syn21754060'],
+    }
+    localStorage.setItem(
+      QUERY_FILTERS_LOCAL_STORAGE_KEY,
+      JSON.stringify(localStorageFilter),
+    )
+    const searchParams = {
+      study: 'syn21754060',
+    }
+    const operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
+    // if no search params are there, then it should return the input sql
+    const result = getAdditionalFilters(searchParams, operator)
+    const searchParamFilter: ColumnSingleValueQueryFilter = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'study',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: ['syn21754060'],
+    }
+    const expectedResult: ColumnSingleValueQueryFilter[] = [
+      localStorageFilter,
+      searchParamFilter,
+    ]
+    expect(result).toStrictEqual(expectedResult)
   })
 })
