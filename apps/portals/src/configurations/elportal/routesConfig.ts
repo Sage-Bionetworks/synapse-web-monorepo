@@ -403,7 +403,7 @@ const routes: GenericRoute[] = [
     displayName: 'Help',
     path: undefined,
     target: '_blank',
-    link: 'https://elite-portal-docs.scrollhelp.site/help/',
+    link: 'https://help.eliteportal.org/',
     synapseConfigArray: [],
   },
 ]
