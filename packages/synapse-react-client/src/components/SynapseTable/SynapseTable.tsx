@@ -541,8 +541,8 @@ export class SynapseTable extends React.Component<
       queryContext: { data },
       queryVisualizationContext: {
         columnsToShowInTable,
-        selectedRowIndices,
-        setSelectedRowIndices,
+        selectedRows,
+        setSelectedRows,
       },
       columnLinks = [],
     } = this.props
@@ -639,24 +639,24 @@ export class SynapseTable extends React.Component<
         )
       }
 
-      if (isRowSelectionVisible && selectedRowIndices) {
+      if (isRowSelectionVisible && selectedRows) {
         rowContent.unshift(
           <td key={`(${rowIndex},rowSelectColumn)`} className="SRC_noBorderTop">
             <Checkbox
               label=""
-              checked={selectedRowIndices.includes(rowIndex)}
+              checked={!!selectedRows.find(r => r.rowId === row.rowId)}
               onChange={(checked: boolean) => {
-                const cloneSelectedRowIndices = [...selectedRowIndices]
+                const cloneSelectedRows = [...selectedRows]
                 if (checked) {
-                  cloneSelectedRowIndices.push(rowIndex)
+                  cloneSelectedRows.push(row)
                 } else {
-                  const index = cloneSelectedRowIndices.indexOf(rowIndex)
+                  const index = cloneSelectedRows.indexOf(row)
                   if (index > -1) {
-                    cloneSelectedRowIndices.splice(index, 1)
+                    cloneSelectedRows.splice(index, 1)
                   }
                 }
                 // update context on change
-                setSelectedRowIndices(cloneSelectedRowIndices)
+                setSelectedRows(cloneSelectedRows)
               }}
             ></Checkbox>
           </td>,

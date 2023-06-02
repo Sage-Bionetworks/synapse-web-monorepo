@@ -12,7 +12,7 @@ import { NoContentPlaceholderType } from './SynapseTable/NoContentPlaceholderTyp
 import SearchResultsNotFound from './SynapseTable/SearchResultsNotFound'
 import ThisTableIsEmpty from './SynapseTable/TableIsEmpty'
 import { unCamelCase } from '../utils/functions/unCamelCase'
-import { ColumnType } from '@sage-bionetworks/synapse-types'
+import { ColumnType, Row } from '@sage-bionetworks/synapse-types'
 import { getDisplayValue } from '../utils/functions/getDataFromFromStorage'
 
 export type QueryVisualizationContextType = {
@@ -22,8 +22,8 @@ export type QueryVisualizationContextType = {
   >
   columnsToShowInTable: string[]
   setColumnsToShowInTable: (newState: string[]) => void
-  selectedRowIndices: number[]
-  setSelectedRowIndices: (newState: number[]) => void
+  selectedRows: Row[]
+  setSelectedRows: (newState: Row[]) => void
   rgbIndex?: number
   unitDescription?: string
   /** Whether to show when the table or view was last updated. */
@@ -109,13 +109,8 @@ export function QueryVisualizationWrapper(
   const { noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE } =
     props
 
-  const {
-    data,
-    getLastQueryRequest,
-    isFacetsAvailable,
-    isLoadingNewBundle,
-    hasResettableFilters,
-  } = useQueryContext()
+  const { data, getLastQueryRequest, isFacetsAvailable, hasResettableFilters } =
+    useQueryContext()
 
   const { columnAliases = {} } = props
 
@@ -139,15 +134,8 @@ export function QueryVisualizationWrapper(
       }))
     }
   }, [isFacetsAvailable])
-
-  useEffect(() => {
-    if (isLoadingNewBundle) {
-      setSelectedRowIndices([])
-    }
-  }, [isLoadingNewBundle])
-
   const [visibleColumns, setVisibleColumns] = useState<string[]>([])
-  const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([])
+  const [selectedRows, setSelectedRows] = useState<Row[]>([])
 
   const lastQueryRequest = getLastQueryRequest()
 
@@ -199,8 +187,8 @@ export function QueryVisualizationWrapper(
     setTopLevelControlsState,
     columnsToShowInTable: visibleColumns,
     setColumnsToShowInTable: setVisibleColumns,
-    selectedRowIndices,
-    setSelectedRowIndices,
+    selectedRows,
+    setSelectedRows,
     rgbIndex: props.rgbIndex,
     unitDescription: props.unitDescription,
     showLastUpdatedOn: props.showLastUpdatedOn,
