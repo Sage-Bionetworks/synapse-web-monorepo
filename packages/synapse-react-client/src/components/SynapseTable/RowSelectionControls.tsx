@@ -59,8 +59,8 @@ export const RowSelectionControls: React.FunctionComponent<
               onClick={() =>
                 customControl.onClick({ data, selectedRows, refresh })
               }
+              startIcon={customControl.icon}
             >
-              {customControl.icon}&nbsp;
               {customControl.buttonText}
             </Button>
           )
