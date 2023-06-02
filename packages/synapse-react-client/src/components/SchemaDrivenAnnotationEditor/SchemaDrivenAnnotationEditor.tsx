@@ -56,6 +56,7 @@ export type SchemaDrivenAnnotationEditorProps = {
   entityId?: string
   /** If no entity ID is supplied, the schema to use for the form */
   schemaId?: string
+  /** May be used to directly provide a JSON Schema to use for the form */
   validationSchema?: JSONSchema7
   /** Optionally supply a ref to the form to handle submission externally with `formRef.current.submit()`. If provided, the editor will not render its own submit UI. */
   formRef?: React.RefObject<RJSF>
@@ -65,6 +66,7 @@ export type SchemaDrivenAnnotationEditorProps = {
   onSuccess?: () => void
   /** If defined and formRef is not supplied, shows a 'Cancel' button and runs this effect on click */
   onCancel?: () => void
+  /** Passes new form data upon each change to the form */
   onChange?: (annotations: Record<string, any>) => void
 }
 
@@ -342,7 +344,7 @@ export function SchemaDrivenAnnotationEditor(
                     onCancel={() => {
                       onCancel && onCancel()
                     }}
-                    onConfirm={e => {
+                    onConfirm={() => {
                       ref.current!.formElement.current!.requestSubmit()
                     }}
                     confirmButtonText={entityId ? 'Save' : 'Validate'}

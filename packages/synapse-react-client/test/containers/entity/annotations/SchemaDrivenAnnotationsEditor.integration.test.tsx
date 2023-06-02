@@ -520,7 +520,6 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     )
   })
 
-  // Skipped due to unstable execution on TravisCI.
   // Next two tests are the same as the previous two tests, but with an array.
   it('Converts data in a schema-defined array to an additionalProperty array when removed from the schema', async () => {
     // Converting an array of strings to an additional property array shouldn't change the data, because they are both arrays.
