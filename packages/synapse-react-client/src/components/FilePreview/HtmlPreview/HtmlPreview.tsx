@@ -4,7 +4,7 @@ import { xssOptions } from '../../../utils/functions/SanitizeHtmlUtils'
 import { useGetIsUserMemberOfTeam } from '../../../synapse-queries/team/useTeamMembers'
 import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../utils/SynapseConstants'
 import { SynapseSpinner } from '../../LoadingScreen'
-import { Alert } from 'react-bootstrap'
+import { Alert } from '@mui/material'
 
 /**
  * @param options
@@ -79,12 +79,7 @@ export default function HtmlPreview(props: HtmlPreviewProps) {
   return (
     <>
       {rawHtml !== cleanHtml && (
-        <Alert
-          variant="info"
-          dismissible={false}
-          show={true}
-          transition={false}
-        >
+        <Alert severity="info" sx={{ marginBottom: '20px' }}>
           Limited rendering only.
         </Alert>
       )}
