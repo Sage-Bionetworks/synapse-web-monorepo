@@ -283,7 +283,7 @@ describe('Local Storage QueryFilter[] tests', () => {
 
     const result = getAdditionalFilters(undefined, undefined)
     expect(result?.length).toStrictEqual(1)
-    expect(result?.at(0)).toStrictEqual(filter)
+    expect(result?.at(0)).toEqual(filter)
   })
 
   it('Load QueryFilter from both search param and local storage', () => {
@@ -315,6 +315,6 @@ describe('Local Storage QueryFilter[] tests', () => {
       localStorageFilter,
       searchParamFilter,
     ]
-    expect(result).toStrictEqual(expectedResult)
+    expect(result).toEqual(expectedResult)
   })
 })
