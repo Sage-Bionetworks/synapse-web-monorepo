@@ -1,7 +1,16 @@
-import { AjvError } from '@sage-bionetworks/rjsf-core'
+import {
+  ADDITIONAL_PROPERTY_FLAG,
+  PROPERTIES_KEY,
+  deepEquals,
+  FieldProps,
+  RJSFValidationError,
+  StrictRJSFSchema,
+  RJSFSchema,
+  FormContextType,
+} from '@rjsf/utils'
 import { flatMap, groupBy, isEmpty } from 'lodash-es'
 import { ENTITY_CONCRETE_TYPE } from '@sage-bionetworks/synapse-types'
-import { entityJsonKeys } from '../../../utils/functions/EntityTypeUtils'
+import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
 
 /**
  * Strips null values from arrays in the provided form data. If the array is empty after
@@ -32,19 +41,19 @@ export function dropNullishArrayValues(
  * @param error
  * @returns
  */
-export function getFriendlyPropertyName(error: AjvError) {
-  if (error.property.startsWith('[')) {
+export function getFriendlyPropertyName(error: RJSFValidationError): string {
+  if (error.property?.startsWith('[')) {
     // Additional properties are surrounded by brackets and quotations, so let's remove them
     return error.property.substring(2, error.property.length - 2)
-  } else if (error.property.startsWith('.')) {
+  } else if (error.property?.startsWith('.')) {
     return error.property.substring(1)
   } else {
-    return error.property
+    return error.property || ''
   }
 }
 
 export function getTransformErrors(concreteType?: ENTITY_CONCRETE_TYPE) {
-  return (errors: AjvError[]): AjvError[] => {
+  return (errors: RJSFValidationError[]): RJSFValidationError[] => {
     // Transform the errors in the following ways:
     // - Simplify the set of errors when failing to select an enumeration defined with an anyOf (SWC-5724)
     // - Show a custom error message when using a property that collides with an internal entity property (SWC-5678)
@@ -89,7 +98,10 @@ export function getTransformErrors(concreteType?: ENTITY_CONCRETE_TYPE) {
     if (concreteType) {
       errors = errors.map(error => {
         const propertyName = getFriendlyPropertyName(error)
-        if (entityJsonKeys[concreteType].includes(propertyName)) {
+        if (
+          propertyName &&
+          entityJsonKeys[concreteType].includes(propertyName)
+        ) {
           error.message = `"${propertyName}" is a reserved internal key and cannot be used.`
         }
         return error
@@ -98,5 +110,71 @@ export function getTransformErrors(concreteType?: ENTITY_CONCRETE_TYPE) {
 
     // Return the transformed errors.
     return errors
+  }
+}
+
+/**
+ * Custom annotations in Synapse are always arrays. This function converts initial data to be an array type.
+ * If the initial data is an array, return the data itself.
+ * If the initial data is a string, returns an array of substrings separated by commas.
+ * Otherwise, wrap the data in an array.
+ */
+export function convertToArray<T>(value: T): Array<unknown> {
+  if (Array.isArray(value)) {
+    return value
+  } else if (typeof value === 'string') {
+    return value.split(',').map(s => s.trim()) // split a string of comma-separated values, then trim whitespace
+  } else {
+    return [value]
+  }
+}
+
+/**
+ * `componentDidUpdate` function for RJSF ObjectField.
+ *
+ * For an object, this will
+ * - convert additionalProperties formData to arrays
+ * - convert schema-defined formData from an array to a non-array if the schema type is not an array
+ * @param props
+ */
+export function objectFieldComponentDidUpdate<
+  T = any,
+  S extends StrictRJSFSchema = RJSFSchema,
+  F extends FormContextType = any,
+>(props: FieldProps<T, S, F>) {
+  const { schema, formData, onChange } = props
+  const newFormData = { ...formData }
+  if (schema[PROPERTIES_KEY]) {
+    Object.entries(schema[PROPERTIES_KEY]).forEach(([key, propertySchema]) => {
+      const data = newFormData[key]
+      if (propertySchema[ADDITIONAL_PROPERTY_FLAG]) {
+        /**
+         * All additional properties should be converted to arrays.
+         *
+         * We need to convert it right away because the order of items is not stable, and seems to depend on if the item is an array or not
+         */
+        if (!Array.isArray(data)) {
+          newFormData[key] = convertToArray(data)
+        }
+      } else {
+        /**
+         * If the schema does not call for an array, but the formData is an array, then this will coerce it to a string.
+         *
+         * This can occur when a formData value is an additionalProperty, which we always treat as an array, then the key
+         * is added to the schema (e.g. conditionally).
+         */
+        if (
+          typeof propertySchema === 'object' &&
+          'type' in propertySchema &&
+          propertySchema.type !== 'array' &&
+          Array.isArray(data)
+        ) {
+          newFormData[key] = data.map(v => `${v}`).join(', ')
+        }
+      }
+    })
+    if (!deepEquals(formData, newFormData)) {
+      onChange(newFormData as T)
+    }
   }
 }

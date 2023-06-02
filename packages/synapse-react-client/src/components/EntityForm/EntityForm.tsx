@@ -13,6 +13,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { getFileHandleContent } from '../../synapse-client/SynapseClient'
 import { SynapseContext } from '../../utils/context/SynapseContext'
+import validator from '@rjsf/validator-ajv8'
 
 export type EntityFormProps = {
   // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.
@@ -329,11 +330,11 @@ export class EntityForm extends React.Component<
           this.state.formUiSchema &&
           !this.state.error && (
             <Form
+              validator={validator}
               formData={this.state.formData}
               schema={this.state.formSchema}
               uiSchema={this.state.formUiSchema}
               onSubmit={this.onSubmit}
-              showErrorList={true}
               ref={this.formRef}
             >
               <div style={{ display: 'none' }}>

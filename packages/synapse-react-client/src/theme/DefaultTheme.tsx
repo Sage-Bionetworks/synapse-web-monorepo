@@ -176,18 +176,19 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     },
     MuiInputBase: {
       styleOverrides: {
-        root: ({ theme }) => ({
+        root: ({ theme, ownerState }) => ({
           borderRadius: '3px',
           fontSize: '14px',
           position: 'relative',
           backgroundColor: theme.palette.grey[200],
-          border: 'none',
+          border: ownerState.error
+            ? `1px solid ${theme.palette.error.main}`
+            : 'none',
           '&.Mui-focused': {
             boxShadow: `${alpha(
               theme.palette.primary.main,
               0.25,
             )} 0 0 0 0.1rem`,
-            borderColor: theme.palette.primary.main,
           },
           '& fieldset': {
             border: 'none',

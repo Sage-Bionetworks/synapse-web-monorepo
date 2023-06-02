@@ -1,14 +1,27 @@
-import { utils } from '@sage-bionetworks/rjsf-core'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
   AdditionalPropertiesSchemaField,
-  getWidgetFromPropertyType,
+  getSchemaForPropertyType,
   guessPropertyType,
   PropertyType,
   transformDataFromPropertyType,
-} from '../../../../src/components/entity/annotations/AdditionalPropertiesSchemaField'
+} from '../../../../src/components/SchemaDrivenAnnotationEditor/field/AdditionalPropertiesSchemaField'
+import { getDefaultRegistry } from '@rjsf/core'
+import validator from '@rjsf/validator-ajv8'
+import { createSchemaUtils } from '@rjsf/utils'
+
+const schemaUtils = createSchemaUtils(
+  validator,
+  {},
+  { emptyObjectFields: 'skipDefaults' },
+)
+
+const registry = {
+  ...getDefaultRegistry(),
+  schemaUtils,
+}
 
 describe('AdditionalPropertiesSchemaField unit tests', () => {
   describe('guessPropertyType tests', () => {
@@ -91,29 +104,15 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
     })
   })
 
-  describe('getWidgetFromPropertyType tests', () => {
-    it('gets TextWidget for integer', () => {
-      expect(getWidgetFromPropertyType(PropertyType.INTEGER)).toBe('TextWidget')
-    })
-
-    it('gets TextWidget for float', () => {
-      expect(getWidgetFromPropertyType(PropertyType.FLOAT)).toBe('TextWidget')
-    })
-
-    it('gets DateTimeWidget for datetime', () => {
-      expect(getWidgetFromPropertyType(PropertyType.DATETIME)).toBe(
-        'DateTimeWidget',
-      )
-    })
-
-    it('gets CheckboxWidget for boolean', () => {
-      expect(getWidgetFromPropertyType(PropertyType.BOOLEAN)).toBe(
-        'CheckboxWidget',
-      )
-    })
-
-    it('gets TextWidget for string', () => {
-      expect(getWidgetFromPropertyType(PropertyType.STRING)).toBe('TextWidget')
+  describe('getSchemaForPropertyType tests', () => {
+    it.each([
+      [PropertyType.INTEGER, { type: 'integer' }],
+      [PropertyType.FLOAT, { type: 'number' }],
+      [PropertyType.DATETIME, { type: 'string', format: 'datetime' }],
+      [PropertyType.STRING, { type: 'string' }],
+      [PropertyType.BOOLEAN, { type: 'boolean' }],
+    ])('returns the correct schema for %p', (propertyType, expectedSchema) => {
+      expect(getSchemaForPropertyType(propertyType)).toEqual(expectedSchema)
     })
   })
   describe('Warning before data coercion', () => {
@@ -126,7 +125,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           uiSchema={{}}
           idSchema={{ $id: 'root' }}
           formData={initialData}
-          registry={utils.getDefaultRegistry()}
+          registry={registry}
           onChange={jest.fn()}
         />,
       )
@@ -138,8 +137,10 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       ).not.toBeInTheDocument()
 
       // Get the "Type" field
-      const typeInput = await screen.findByRole<HTMLSelectElement>('listbox')
-      expect(typeInput.value).toBe('String')
+      let typeInput = await screen.findByLabelText<HTMLSelectElement>('Type')
+      expect(
+        within(typeInput).getByText<HTMLOptionElement>('String').selected,
+      ).toBeTruthy()
 
       // Convert type from String -> Integer (destructive operation)
       await userEvent.selectOptions(typeInput, 'Integer')
@@ -161,7 +162,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           uiSchema={{}}
           idSchema={{ $id: 'root' }}
           formData={initialData}
-          registry={utils.getDefaultRegistry()}
+          registry={registry}
           onChange={jest.fn()}
         />,
       )
@@ -173,8 +174,10 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       ).not.toBeInTheDocument()
 
       // Get the "Type" field
-      const typeInput = await screen.findByRole<HTMLSelectElement>('listbox')
-      expect(typeInput.value).toBe('Datetime')
+      let typeInput = await screen.findByLabelText<HTMLSelectElement>('Type')
+      expect(
+        within(typeInput).getByText<HTMLOptionElement>('Datetime').selected,
+      ).toBeTruthy()
 
       // Convert type from Datetime -> String (non-destructive operation)
       await userEvent.selectOptions(typeInput, 'String')
@@ -209,7 +212,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           uiSchema={{}}
           idSchema={{ $id: 'root' }}
           formData={initialData}
-          registry={utils.getDefaultRegistry()}
+          registry={registry}
           onChange={jest.fn()}
         />,
       )
@@ -221,8 +224,10 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       ).not.toBeInTheDocument()
 
       // Get the "Type" field
-      const typeInput = await screen.findByRole<HTMLSelectElement>('listbox')
-      expect(typeInput.value).toBe('String')
+      let typeInput = await screen.findByLabelText<HTMLSelectElement>('Type')
+      expect(
+        within(typeInput).getByText<HTMLOptionElement>('String').selected,
+      ).toBeTruthy()
 
       // Convert type from String -> Datetime (destructive operation because not all values are valid datetimes)
       await userEvent.selectOptions(typeInput, 'Datetime')
