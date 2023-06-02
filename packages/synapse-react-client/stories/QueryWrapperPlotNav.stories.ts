@@ -12,6 +12,7 @@ import {
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../src/components/ToastMessage'
+import { CustomControlCallbackData } from '../src/components/SynapseTable/TopLevelControls'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',
@@ -189,6 +190,36 @@ export const SendToCavatica: Story = {
     hideSqlEditorControl: false,
     shouldDeepLink: false,
     showExportToCavatica: true,
+  },
+}
+
+const handleCustomCommandClick = async (event: CustomControlCallbackData) => {
+  displayToast(
+    `Custom action applied to ${
+      event.selectedRows!.length
+    } rows (see js console for more information)`,
+  )
+  console.log('Rows selected:')
+  console.log(event.selectedRows)
+}
+// See handleParticipantWorkflowChange in crc-researcher for a more complex example
+export const TableRowSelectionWithCustomCommand: Story = {
+  args: {
+    sql: 'SELECT * FROM syn51186974',
+    tableConfiguration: {
+      isRowSelectionVisible: true,
+    },
+    name: 'Row Selection Demo',
+    hideSqlEditorControl: true,
+    shouldDeepLink: false,
+    customControls: [
+      {
+        buttonText: 'Custom Command',
+        onClick: event => {
+          handleCustomCommandClick(event)
+        },
+      },
+    ],
   },
 }
 export const TableHasAccessRequirement: Story = {

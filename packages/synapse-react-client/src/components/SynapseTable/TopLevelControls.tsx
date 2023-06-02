@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
-import { Query, QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import { Query, QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import {
   TopLevelControlsState,
   useQueryVisualizationContext,
@@ -21,6 +21,7 @@ import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
 import { Cavatica } from '../../assets/icons/Cavatica'
 import ConfirmationDialog from '../ConfirmationDialog'
+import { RowSelectionControls } from './RowSelectionControls'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -34,19 +35,19 @@ export type TopLevelControlsProps = {
   showExportToCavatica?: boolean
 }
 
-type Control = {
+export type Control = {
   key: keyof TopLevelControlsState
   icon: string
   tooltipText: string
 }
 
-type CustomControlCallbackData = {
+export type CustomControlCallbackData = {
   data: QueryResultBundle | undefined
-  selectedRowIndices: number[] | undefined
+  selectedRows: Row[] | undefined
   refresh: () => void
 }
 
-type CustomControl = {
+export type CustomControl = {
   buttonText: string
   onClick: (event: CustomControlCallbackData) => void
   classNames?: string
@@ -106,7 +107,8 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     topLevelControlsState,
     setTopLevelControlsState,
     columnsToShowInTable,
-    selectedRowIndices,
+    selectedRows,
+    setSelectedRows,
     setColumnsToShowInTable,
   } = useQueryVisualizationContext()
 
@@ -129,6 +131,9 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   const [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal] =
     useState(false)
   const refresh = () => {
+    // clear selection
+    setSelectedRows([])
+    // refresh the data
     executeQueryRequest(getLastQueryRequest())
   }
 
@@ -213,25 +218,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           )}
         </div>
         <div className="TopLevelControls__actions">
-          {customControls &&
-            customControls.map(customControl => {
-              return (
-                <button
-                  key={customControl.buttonText}
-                  className={`btn SRC-roundBorder SRC-primary-background-color SRC-whiteText ${
-                    customControl.classNames ?? ''
-                  }`}
-                  style={{ marginRight: '5px' }}
-                  type="button"
-                  onClick={() =>
-                    customControl.onClick({ data, selectedRowIndices, refresh })
-                  }
-                >
-                  {customControl.icon}&nbsp;
-                  {customControl.buttonText}
-                </button>
-              )
-            })}
           {showExportToCavatica && (
             <Button
               variant="text"
@@ -270,6 +256,15 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               />
             )
           })}
+          {customControls && (
+            <RowSelectionControls
+              customControls={customControls}
+              data={data}
+              refresh={refresh}
+              selectedRows={selectedRows}
+              setSelectedRows={setSelectedRows}
+            />
+          )}
           {showColumnSelection && (
             <ColumnSelection
               headers={data?.selectColumns}
