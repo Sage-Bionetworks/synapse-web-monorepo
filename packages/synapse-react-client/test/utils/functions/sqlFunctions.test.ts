@@ -58,7 +58,7 @@ describe('parseEntityIdAndVersionFromSqlStatement', () => {
   })
 })
 
-describe('generateQueryFilterFromSearchParams', () => {
+describe('getAdditionalFilters', () => {
   it('Handles no search params', () => {
     const searchParams = {
       QueryWrapper0:

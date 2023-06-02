@@ -10,7 +10,7 @@ import type { SQLOperator } from './SqlFunctions'
 
 export {
   getNextPageOfData,
-  getAdditionalFilters as generateQueryFilterFromSearchParams,
+  getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   getIgnoredQueryFilterSearchParamKey,
   resultToJson,

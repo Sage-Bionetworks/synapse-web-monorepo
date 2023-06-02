@@ -114,11 +114,10 @@ export default function DetailsPage(props: DetailsPageProps) {
   useScrollOnMount()
 
   const queryBundleRequest = React.useMemo(() => {
-    const additionalFilters =
-      SynapseUtilityFunctions.generateQueryFilterFromSearchParams(
-        searchParams,
-        sqlOperator,
-      )
+    const additionalFilters = SynapseUtilityFunctions.getAdditionalFilters(
+      searchParams,
+      sqlOperator,
+    )
     const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
     const queryBundleRequest: QueryBundleRequest = {
       entityId,
