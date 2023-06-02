@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash-es'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
 import { Query, QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import {
@@ -14,12 +14,13 @@ import {
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { DownloadOptions } from './table-top'
 import { ColumnSelection } from './table-top/ColumnSelection'
-import { Button, Typography } from '@mui/material'
+import { Box, Button, Link, Typography } from '@mui/material'
 import QueryCount from '../QueryCount/QueryCount'
 import { Icon } from '../row_renderers/utils'
 import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
 import { Cavatica } from '../../assets/icons/Cavatica'
+import ConfirmationDialog from '../ConfirmationDialog'
 import { RowSelectionControls } from './RowSelectionControls'
 
 export type TopLevelControlsProps = {
@@ -127,6 +128,8 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     }))
   }
 
+  const [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal] =
+    useState(false)
   const refresh = () => {
     // clear selection
     setSelectedRows([])
@@ -219,7 +222,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             <Button
               variant="text"
               onClick={() => {
-                exportToCavatica()
+                setIsShowingExportToCavaticaModal(true)
               }}
             >
               <Cavatica sx={{ mr: 1 }} /> Send to Cavatica
@@ -270,6 +273,61 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               darkTheme={true}
             />
           )}
+          <ConfirmationDialog
+            open={isShowingExportToCavaticaModal}
+            title="Send to Cavatica"
+            content={
+              <>
+                <Typography
+                  variant="body1"
+                  sx={{ fontWeight: 700, marginBottom: '10px' }}
+                >
+                  You must meet these requirements from Cavatica to send data:
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ marginLeft: '10px', marginBottom: '10px' }}
+                >
+                  1. You must be logged in to a Cavatica account.
+                  <br />
+                  2. You must connect your Cavatica account to Sage.
+                </Typography>
+                <Typography variant="body1">
+                  <Link
+                    href="https://help.eliteportal.org/help/limited-data-commons#LimitedDataCommons-GainingAccess"
+                    target="_blank"
+                  >
+                    Click here for instructions
+                  </Link>
+                </Typography>
+                <Box
+                  sx={{
+                    backgroundColor: 'grey.100',
+                    marginTop: '15px',
+                    padding: '10px 20px 10px 20px',
+                  }}
+                >
+                  Note that we cannot provide support for Cavatica. Please
+                  contact Cavatica’s{' '}
+                  <Link href="mailto:support@sevenbridges.com "> support</Link>{' '}
+                  for issues related to the above.
+                </Box>
+                <Typography
+                  variant="body1"
+                  sx={{ fontWeight: 700, marginTop: '15px' }}
+                >
+                  When completed, click “Send to Cavatica” to finish the process
+                  outside this application. You will be redirected to Cavatica.
+                </Typography>
+              </>
+            }
+            confirmButtonText="Send to Cavatica"
+            onConfirm={() => {
+              exportToCavatica()
+            }}
+            onCancel={() => setIsShowingExportToCavaticaModal(false)}
+            maxWidth="sm"
+          />
         </div>
       </div>
     </div>
