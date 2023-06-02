@@ -71,7 +71,6 @@ export default function ArrayFieldItemTemplate<
               registry={registry}
             />
           )}
-          {/*<ButtonGroup orientation={'horizontal'} sx={{ marginLeft: 'auto' }}>*/}
           {hasCopy && (
             <CopyButton
               disabled={disabled || readonly}
@@ -89,7 +88,6 @@ export default function ArrayFieldItemTemplate<
               registry={registry}
             />
           )}
-
           <AddButton
             disabled={disabled || readonly}
             uiSchema={uiSchema}
