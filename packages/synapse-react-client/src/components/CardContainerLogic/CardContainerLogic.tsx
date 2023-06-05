@@ -146,6 +146,7 @@ export type CardContainerLogicProps = {
 export const CardContainerLogic = (props: CardContainerLogicProps) => {
   const entityId = parseEntityIdFromSqlStatement(props.sql)
   const queryFilters = getAdditionalFilters(
+    entityId,
     props.searchParams,
     props.sqlOperator,
   )

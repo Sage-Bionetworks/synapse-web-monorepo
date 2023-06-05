@@ -104,12 +104,12 @@ const StandaloneQueryWrapper: React.FunctionComponent<
   } = props
 
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
-
+  const entityId = parseEntityIdFromSqlStatement(sql)
   derivedQueryRequestFromSearchParams.query.additionalFilters =
-    getAdditionalFilters(searchParams, sqlOperator)
+    getAdditionalFilters(entityId, searchParams, sqlOperator)
 
   const synapseContext = useSynapseContext()
-  const entityId = parseEntityIdFromSqlStatement(sql)
+
   const { data: entity } = useGetEntity(entityId)
   return (
     <QueryWrapper

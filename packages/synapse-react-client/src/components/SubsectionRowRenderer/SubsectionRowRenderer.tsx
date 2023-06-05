@@ -61,8 +61,12 @@ const SubsectionRowRenderer: React.FunctionComponent<
   useDeepCompareEffectNoCheck(() => {
     const fetchData = async function () {
       setIsLoading(true)
-      const additionalFilters = getAdditionalFilters(searchParams, sqlOperator)
       const entityId = parseEntityIdFromSqlStatement(sql)
+      const additionalFilters = getAdditionalFilters(
+        entityId,
+        searchParams,
+        sqlOperator,
+      )
       const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
       const request: QueryBundleRequest = {
         partMask,

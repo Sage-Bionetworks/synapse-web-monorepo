@@ -115,8 +115,12 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     customControls,
   } = props
 
-  const additionalFilters = getAdditionalFilters(searchParams, sqlOperator)
-
+  const entityId = parseEntityIdFromSqlStatement(sql)
+  const additionalFilters = getAdditionalFilters(
+    entityId,
+    searchParams,
+    sqlOperator,
+  )
   // use initQuery if set, otherwise use sql
   const query: Query = initQueryJson
     ? (JSON.parse(initQueryJson) as Query)
@@ -126,7 +130,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
         limit: limit,
         offset: 0,
       }
-  const entityId = parseEntityIdFromSqlStatement(query.sql)
+
   const { data: entity } = useGetEntity(entityId)
   const isFullTextSearchEnabled =
     entity && isTable(entity) && entity.isSearchEnabled

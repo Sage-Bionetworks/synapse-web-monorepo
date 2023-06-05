@@ -114,11 +114,12 @@ export default function DetailsPage(props: DetailsPageProps) {
   useScrollOnMount()
 
   const queryBundleRequest = React.useMemo(() => {
+    const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
     const additionalFilters = SynapseUtilityFunctions.getAdditionalFilters(
+      entityId,
       searchParams,
       sqlOperator,
     )
-    const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
     const queryBundleRequest: QueryBundleRequest = {
       entityId,
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
