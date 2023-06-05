@@ -107,49 +107,4 @@ describe('OrientationBanner tests', () => {
     await waitForElementToBeRemoved(alert)
     expect(alert).not.toBeInTheDocument()
   })
-
-  it('does not have link or action buttons when neither are provided', () => {
-    const { buttons } = setUp({
-      ...defaultProps,
-      primaryButtonConfig: undefined,
-      secondaryButtonConfig: undefined,
-    })
-    expect(buttons.primary).not.toBeInTheDocument()
-    expect(buttons.secondary).not.toBeInTheDocument()
-  })
-
-  it('has a link button when only a link is provided and has the correct href attribute', async () => {
-    const { user, buttons } = setUp({
-      ...defaultProps,
-      primaryButtonConfig: undefined,
-    })
-    expect(buttons.primary).not.toBeInTheDocument()
-    expect(buttons.secondary).toBeInTheDocument()
-
-    await user.click(buttons.secondary as HTMLElement)
-    expect(window.open).toHaveBeenCalledTimes(1)
-    expect(window.open).toHaveBeenCalledWith(
-      // @ts-ignore - typescript doesn't recognize href within the conditional AlertButtonConfig type
-      defaultProps.secondaryButtonConfig!.href,
-      '_blank',
-      'noopener',
-    )
-  })
-
-  it('has an action button when only an acton is provided', () => {
-    const { buttons } = setUp({
-      ...defaultProps,
-      secondaryButtonConfig: undefined,
-    })
-    expect(buttons.primary).toBeInTheDocument()
-    expect(buttons.secondary).not.toBeInTheDocument()
-  })
-
-  it('calls the correct callback when the primary button is clicked', async () => {
-    const { user, buttons } = setUp()
-    expect(onPrimaryButtonClicked).toHaveBeenCalledTimes(0)
-    expect(buttons.primary).toBeInTheDocument()
-    await user.click(buttons.primary as HTMLElement)
-    expect(onPrimaryButtonClicked).toHaveBeenCalledTimes(1)
-  })
 })

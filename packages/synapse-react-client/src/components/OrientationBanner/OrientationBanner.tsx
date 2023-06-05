@@ -2,6 +2,7 @@ import React from 'react'
 import { useTheme } from '@mui/material'
 import FullWidthAlert, {
   AlertButtonConfig,
+  FullWidthAlertProps,
 } from '../FullWidthAlert/FullWidthAlert'
 import Illustrations from '../../assets/illustrations'
 
@@ -38,10 +39,11 @@ export interface OrientationBannerProps {
   text: React.ReactNode
   primaryButtonConfig?: AlertButtonConfig
   secondaryButtonConfig?: AlertButtonConfig
+  sx?: FullWidthAlertProps['sx']
 }
 
 function OrientationBanner(props: OrientationBannerProps) {
-  const { name, title, text, primaryButtonConfig, secondaryButtonConfig } =
+  const { name, title, text, primaryButtonConfig, secondaryButtonConfig, sx } =
     props
 
   const storageBannerId = getOrientationBannerKey(name)
@@ -50,6 +52,16 @@ function OrientationBanner(props: OrientationBannerProps) {
   )
 
   const theme = useTheme()
+  const defaultSx = {
+    backgroundColor: '#F9FAFB',
+    border: 'none',
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.05)',
+    minHeight: '152px',
+    mt: 0,
+    paddingLeft: 4,
+    '.MuiAlert-icon': { mr: 5 },
+    '.MuiAlertTitle-root': { color: theme.palette.grey[1000] },
+  }
   const BannerIllustration = Illustrations[name]
 
   return (
@@ -65,16 +77,7 @@ function OrientationBanner(props: OrientationBannerProps) {
         localStorage.setItem(storageBannerId, 'true')
         setShowBanner(false)
       }}
-      sx={{
-        backgroundColor: '#F9FAFB',
-        border: 'none',
-        boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.05)',
-        minHeight: theme.spacing(19),
-        mt: 0,
-        paddingLeft: 4,
-        '.MuiAlert-icon': { mr: 5 },
-        '.MuiAlertTitle-root': { color: theme.palette.grey[1000] },
-      }}
+      sx={{ ...defaultSx, ...sx }}
     />
   )
 }

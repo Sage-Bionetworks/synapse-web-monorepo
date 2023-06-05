@@ -108,6 +108,7 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
                       name="DataAccessManagement"
                       title="Getting Started With Data Access Management"
                       text="When someone requests access to data, that request will show up here. Clicking on the Request ID will take you to a page where you can review the request."
+                      sx={{ margin: '-20px -30px 20px -30px', width: 'auto' }}
                     />
                   )}
                   <DataAccessSubmissionDashboard />
