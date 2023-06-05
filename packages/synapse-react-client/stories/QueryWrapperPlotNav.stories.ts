@@ -214,7 +214,7 @@ const handleCustomCommandClick = async (event: CustomControlCallbackData) => {
     values: event.selectedRows!.map(row => row.values[idColIndex!]!),
   }
   localStorage.setItem(
-    QUERY_FILTERS_LOCAL_STORAGE_KEY,
+    QUERY_FILTERS_LOCAL_STORAGE_KEY('syn51186974'),
     JSON.stringify([localStorageFilter]),
   )
   console.log(
