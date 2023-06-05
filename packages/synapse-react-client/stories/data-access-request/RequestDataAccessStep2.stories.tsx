@@ -19,19 +19,8 @@ const meta: Meta = {
   title:
     'Governance/Data Access Request Flow/Managed Access Requirement/Step 2 - Accessors and Documentation',
   component: DataAccessRequestAccessorsFilesForm,
-} satisfies Meta
-
-export default meta
-
-type Story = StoryObj<typeof meta>
-
-export const Request: Story = {
-  args: {
-    entityId: MOCK_FOLDER_ID,
-    managedACTAccessRequirement: mockManagedACTAccessRequirement,
-    researchProjectId: MOCK_RESEARCH_PROJECT_ID,
-  },
   parameters: {
+    stack: 'mock',
     chromatic: { viewports: ['600', '1200'] },
     msw: {
       handlers: [
@@ -46,26 +35,23 @@ export const Request: Story = {
       ],
     },
   },
+} satisfies Meta
+
+export default meta
+
+type Story = StoryObj<typeof meta>
+
+export const Request: Story = {
+  args: {
+    entityId: MOCK_FOLDER_ID,
+    managedACTAccessRequirement: mockManagedACTAccessRequirement,
+    researchProjectId: MOCK_RESEARCH_PROJECT_ID,
+  },
 }
 export const Renewal: Story = {
   args: {
     entityId: MOCK_FOLDER_ID,
     managedACTAccessRequirement: mockManagedACTAccessRequirement,
     researchProjectId: MOCK_RESEARCH_PROJECT_ID,
-  },
-  parameters: {
-    chromatic: { viewports: ['600', '1200'] },
-    msw: {
-      handlers: [
-        ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
-        ...getFileHandlers(MOCK_REPO_ORIGIN),
-        ...getWikiHandlers(MOCK_REPO_ORIGIN),
-        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
-        ...getDataAccessRequestHandlers(
-          MOCK_REPO_ORIGIN,
-          MOCK_DATA_ACCESS_RENEWAL,
-        ),
-      ],
-    },
   },
 }

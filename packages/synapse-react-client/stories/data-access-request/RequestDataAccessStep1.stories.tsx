@@ -11,6 +11,7 @@ const meta: Meta = {
   title:
     'Governance/Data Access Request Flow/Managed Access Requirement/Step 1 - Research Project Information',
   component: ResearchProjectForm,
+  parameters: { stack: 'mock' },
 } satisfies Meta
 
 export default meta

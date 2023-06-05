@@ -44,6 +44,7 @@ const meta: Meta = {
       defaultValue: true,
     },
   },
+  parameters: { stack: 'mock' },
   render: args => (
     <SynapseContextConsumer>
       {context => (
@@ -55,11 +56,6 @@ const meta: Meta = {
               : undefined,
           }}
         >
-          <p>
-            First, use the StackChanger component to switch to the Mocked Data
-            stack
-          </p>
-
           <AccessRequirementList {...args} />
         </SynapseContextProvider>
       )}

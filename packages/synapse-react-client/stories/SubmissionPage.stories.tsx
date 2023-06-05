@@ -19,16 +19,7 @@ import { getUserProfileHandlers } from '../mocks/msw/handlers/userProfileHandler
 const meta = {
   title: 'Governance/SubmissionPage',
   component: SubmissionPage,
-  render: args => (
-    <>
-      <p>
-        First, use the StackChanger component to switch to the Mock Data stack
-      </p>
-      <SynapseErrorBoundary>
-        <SubmissionPage {...args} />
-      </SynapseErrorBoundary>
-    </>
-  ),
+  parameters: { stack: 'mock' },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
