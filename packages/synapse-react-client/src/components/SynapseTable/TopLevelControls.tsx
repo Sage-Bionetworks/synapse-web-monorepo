@@ -20,7 +20,7 @@ import { Icon } from '../row_renderers/utils'
 import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
 import { Cavatica } from '../../assets/icons/Cavatica'
-import ConfirmationDialog from '../ConfirmationDialog'
+import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { RowSelectionControls } from './RowSelectionControls'
 
 export type TopLevelControlsProps = {
