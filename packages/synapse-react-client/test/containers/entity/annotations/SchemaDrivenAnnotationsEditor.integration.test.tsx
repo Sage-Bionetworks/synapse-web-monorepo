@@ -544,7 +544,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
 
     expect(mockToastFn).toBeCalledWith(
       expect.stringContaining(
-        'The following annotations are no longer specified by the schema and have been converted to Custom Fields: stringArray.',
+        'The following annotations are no longer specified by the schema and have been converted to custom fields: stringArray.',
       ),
       'warning',
       expect.objectContaining({
