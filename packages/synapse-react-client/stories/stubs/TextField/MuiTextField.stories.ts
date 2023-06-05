@@ -12,7 +12,7 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   name: 'Text Field',
   args: {
-    label: 'My Button Text Here',
+    label: 'My Label Text Here',
     placeholder: 'Placeholder text',
     error: true,
   },

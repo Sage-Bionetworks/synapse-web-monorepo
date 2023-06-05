@@ -11,7 +11,7 @@ import {
 /** The `ArrayFieldDescriptionTemplate` component renders a `DescriptionFieldTemplate` with an `id` derived from
  * the `idSchema`.
  *
- * Identical to @rjsf/core ArrayFieldDescriptionTemplate except this doesn't render nothing if there is no description,
+ * Identical to @rjsf/core ArrayFieldDescriptionTemplate except this renders something if there is no description.
  * Our description field also includes the type, so it should always be rendered.
  * @param props - The `ArrayFieldDescriptionProps` for the component
  */
