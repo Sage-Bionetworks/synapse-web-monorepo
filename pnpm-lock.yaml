@@ -780,7 +780,7 @@ importers:
         specifier: ^0.7.36
         version: 0.7.36
       '@upsetjs/react':
-        specifier: ^1.6.2
+        specifier: ^1.11.0
         version: 1.11.0(react@18.2.0)
       animate.css:
         specifier: ^4.1.1

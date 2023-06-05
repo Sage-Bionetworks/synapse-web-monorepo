@@ -46,7 +46,7 @@
     "@sage-bionetworks/rjsf-core": "^3.1.4",
     "@types/tinycolor2": "^1.4.3",
     "@types/ua-parser-js": "^0.7.36",
-    "@upsetjs/react": "^1.6.2",
+    "@upsetjs/react": "^1.11.0",
     "animate.css": "^4.1.1",
     "bootstrap": "^4.6.1",
     "classnames": "^2.3.1",
