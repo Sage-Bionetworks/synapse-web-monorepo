@@ -21,7 +21,7 @@ const meta: Meta = {
   component: DataAccessRequestAccessorsFilesForm,
   parameters: {
     stack: 'mock',
-    chromatic: { viewports: ['600', '1200'] },
+    chromatic: { viewports: [600, 1200] },
     msw: {
       handlers: [
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),

@@ -11,7 +11,17 @@ const meta: Meta = {
   title:
     'Governance/Data Access Request Flow/Managed Access Requirement/Step 1 - Research Project Information',
   component: ResearchProjectForm,
-  parameters: { stack: 'mock' },
+  parameters: {
+    stack: 'mock',
+    chromatic: { viewports: [600, 1200] },
+    msw: {
+      handlers: [
+        ...getResearchProjectHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
+        ...getWikiHandlers(MOCK_REPO_ORIGIN),
+      ],
+    },
+  },
 } satisfies Meta
 
 export default meta
@@ -22,15 +32,5 @@ export const Step1: Story = {
   name: 'Step 1 - Research Project Information',
   args: {
     managedACTAccessRequirement: mockManagedACTAccessRequirement,
-  },
-  parameters: {
-    chromatic: { viewports: ['600', '1200'] },
-    msw: {
-      handlers: [
-        ...getResearchProjectHandlers(MOCK_REPO_ORIGIN),
-        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
-        ...getWikiHandlers(MOCK_REPO_ORIGIN),
-      ],
-    },
   },
 }
