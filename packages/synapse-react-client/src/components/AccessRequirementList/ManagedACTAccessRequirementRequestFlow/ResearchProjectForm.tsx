@@ -1,6 +1,8 @@
-import React from 'react'
-import { useState } from 'react'
-import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
+import React, { useState } from 'react'
+import {
+  ManagedACTAccessRequirement,
+  ResearchProject,
+} from '@sage-bionetworks/synapse-types'
 import { AlertProps } from './DataAccessRequestAccessorsFilesForm'
 import {
   Alert,
@@ -19,7 +21,7 @@ import {
   useUpdateResearchProject,
 } from '../../../synapse-queries'
 import TextField from '../../TextField/TextField'
-import { ResearchProject } from '@sage-bionetworks/synapse-types'
+import ManagedACTAccessRequirementFormWikiWrapper from './ManagedACTAccessRequirementFormWikiWrapper'
 
 export type ResearchProjectFormProps = {
   /* The access requirement to which the research project refers */
@@ -116,53 +118,56 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
         </Stack>
       </DialogTitle>
       <DialogContent>
-        <form onSubmit={handleSubmit}>
-          <Typography variant={'body1'}>
-            Please tell us about your project.
-          </Typography>
-          <TextField
-            id={'project-lead'}
-            label={'Project Lead'}
-            disabled={isLoading}
-            type="text"
-            value={projectLead}
-            required
-            onChange={e => setProjectLead(e.target.value)}
-          />
-          <TextField
-            id={'institution'}
-            label={'Institution'}
-            type="text"
-            disabled={isLoading}
-            value={institution}
-            required
-            onChange={e => setInstitution(e.target.value)}
-          />
-
-          {managedACTAccessRequirement.isIDURequired && (
+        <ManagedACTAccessRequirementFormWikiWrapper
+          managedACTAccessRequirementId={String(managedACTAccessRequirement.id)}
+        >
+          <form onSubmit={handleSubmit}>
+            <Typography variant={'body1'}>
+              Please tell us about your project.
+            </Typography>
             <TextField
-              id={'data-use'}
-              label={
-                <>
-                  Intended Data Use Statement -
-                  {managedACTAccessRequirement.isIDUPublic && (
-                    <i id={'idu-visible'}>this will be visible to the public</i>
-                  )}
-                </>
-              }
-              required
-              multiline
-              rows={10}
+              id={'project-lead'}
+              label={'Project Lead'}
               disabled={isLoading}
-              value={intendedDataUseStatement}
-              onChange={e => setIntendedDataUseStatement(e.target.value)}
+              type="text"
+              value={projectLead}
+              required
+              onChange={e => setProjectLead(e.target.value)}
             />
-          )}
-          {
-            /* Alert message */
-            alert && <Alert severity={alert.key}>{alert.message}</Alert>
-          }
-        </form>
+            <TextField
+              id={'institution'}
+              label={'Institution'}
+              type="text"
+              disabled={isLoading}
+              value={institution}
+              required
+              onChange={e => setInstitution(e.target.value)}
+            />
+
+            {managedACTAccessRequirement.isIDURequired && (
+              <TextField
+                id={'data-use'}
+                label={
+                  <>
+                    Intended Data Use Statement -
+                    {managedACTAccessRequirement.isIDUPublic && (
+                      <i id={'idu-visible'}>
+                        this will be visible to the public
+                      </i>
+                    )}
+                  </>
+                }
+                required
+                multiline
+                rows={9}
+                disabled={isLoading}
+                value={intendedDataUseStatement}
+                onChange={e => setIntendedDataUseStatement(e.target.value)}
+              />
+            )}
+          </form>
+        </ManagedACTAccessRequirementFormWikiWrapper>
+        {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" disabled={isLoading} onClick={onHide}>

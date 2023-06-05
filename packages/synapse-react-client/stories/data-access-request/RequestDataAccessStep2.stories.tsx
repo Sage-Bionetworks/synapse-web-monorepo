@@ -12,6 +12,8 @@ import { MOCK_REPO_ORIGIN } from '../../src/utils/functions/getEndpoint'
 import { getDataAccessRequestHandlers } from '../../mocks/msw/handlers/dataAccessRequestHandlers'
 import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
 import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
+import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
+import { getAccessRequirementHandlers } from '../../mocks/msw/handlers/accessRequirementHandlers'
 
 const meta: Meta = {
   title:
@@ -30,10 +32,13 @@ export const Request: Story = {
     researchProjectId: MOCK_RESEARCH_PROJECT_ID,
   },
   parameters: {
+    chromatic: { viewports: ['600', '1200'] },
     msw: {
       handlers: [
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
         ...getFileHandlers(MOCK_REPO_ORIGIN),
+        ...getWikiHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
         ...getDataAccessRequestHandlers(
           MOCK_REPO_ORIGIN,
           MOCK_DATA_ACCESS_REQUEST,
@@ -49,10 +54,13 @@ export const Renewal: Story = {
     researchProjectId: MOCK_RESEARCH_PROJECT_ID,
   },
   parameters: {
+    chromatic: { viewports: ['600', '1200'] },
     msw: {
       handlers: [
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
         ...getFileHandlers(MOCK_REPO_ORIGIN),
+        ...getWikiHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
         ...getDataAccessRequestHandlers(
           MOCK_REPO_ORIGIN,
           MOCK_DATA_ACCESS_RENEWAL,

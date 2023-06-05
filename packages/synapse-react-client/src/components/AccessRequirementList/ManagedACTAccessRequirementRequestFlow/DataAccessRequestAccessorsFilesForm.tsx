@@ -1,5 +1,4 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
   AccessorChange,
   AccessType,
@@ -40,6 +39,7 @@ import DataAccessRequestAccessorsEditor, {
 } from './DataAccessRequestAccessorsEditor'
 import { UploadDocumentField } from './UploadDocumentField'
 import DocumentTemplate from './DocumentTemplate'
+import ManagedACTAccessRequirementFormWikiWrapper from './ManagedACTAccessRequirementFormWikiWrapper'
 
 export type DataAccessRequestAccessorsFilesFormProps = {
   /**
@@ -335,164 +335,168 @@ export default function DataAccessRequestAccessorsFilesForm(
         </Stack>
       </DialogTitle>
       <DialogContent>
-        <Box
-          component={'form'}
-          sx={{
-            // Must set a minHeight to ensure the user picker in the DataAccessRequestAccessorsEditor doesn't get cut off
-            minHeight: '475px',
-          }}
-          onSubmit={e => e.preventDefault()}
+        <ManagedACTAccessRequirementFormWikiWrapper
+          managedACTAccessRequirementId={String(managedACTAccessRequirement.id)}
         >
-          <Typography variant={'body1'} sx={{ mb: 2 }}>
-            Please provide the information below to submit the request for
-            access.
-          </Typography>
+          <Box
+            component={'form'}
+            sx={{
+              // Must set a minHeight to ensure the user picker in the DataAccessRequestAccessorsEditor doesn't get cut off
+              minHeight: '475px',
+            }}
+            onSubmit={e => e.preventDefault()}
+          >
+            <Typography variant={'body1'} sx={{ mb: 2 }}>
+              Please provide the information below to submit the request for
+              access.
+            </Typography>
 
-          {dataAccessRequest && (
-            <DataAccessRequestAccessorsEditor
-              accessorChanges={dataAccessRequest.accessorChanges || []}
-              onChange={onAccessorChange}
-              isRenewal={isRenewal}
-              helpText={<AccessorRequirementHelpText />}
-            />
-          )}
-
-          {(managedACTAccessRequirement?.isDUCRequired ||
-            managedACTAccessRequirement?.isIRBApprovalRequired ||
-            managedACTAccessRequirement?.areOtherAttachmentsRequired ||
-            isRenewal) && <Divider sx={{ my: 4 }} />}
-          {/* DUC */}
-          {managedACTAccessRequirement?.isDUCRequired && (
-            <>
-              {managedACTAccessRequirement?.ducTemplateFileHandleId && (
-                <DocumentTemplate
-                  title={'Download DUC Template'}
-                  description={
-                    'As a first step, you will need to download the most current version of the Data Use Certificate.'
-                  }
-                  fileHandleAssociation={{
-                    fileHandleId:
-                      managedACTAccessRequirement.ducTemplateFileHandleId,
-                    associateObjectType:
-                      FileHandleAssociateType.AccessRequirementAttachment,
-                    associateObjectId: String(managedACTAccessRequirement.id),
-                  }}
-                  downloadButtonText={'Download DUC Template'}
-                />
-              )}
-              <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
-                Fill out and upload a Data Use Certificate
-              </Typography>
-              <Typography variant={'body1'} sx={{ my: 2 }}>
-                You must download and fill out a Data Use Certificate (DUC). Be
-                sure to upload the completed DUC below once you&apos;ve
-                completed it.
-              </Typography>
-              <Typography variant={'body1'} component={'ol'}>
-                <li>Download the DUC template file.</li>
-                <li>
-                  Fill out the DUC template, following the instructions in the
-                  file.
-                </li>
-                <li>
-                  Upload the completed certificate using the button below:
-                </li>
-              </Typography>
-              <UploadDocumentField
-                id={'duc'}
-                uploadCallback={resp => uploadCallback(resp, 'ducFileHandleId')}
-                documentName={'Data Use Certificate'}
-                fileHandleAssociations={ducFileHandleAssociation}
+            {dataAccessRequest && (
+              <DataAccessRequestAccessorsEditor
+                accessorChanges={dataAccessRequest.accessorChanges || []}
+                onChange={onAccessorChange}
+                isRenewal={isRenewal}
+                helpText={<AccessorRequirementHelpText />}
               />
-              {(managedACTAccessRequirement?.isIRBApprovalRequired ||
-                managedACTAccessRequirement?.areOtherAttachmentsRequired ||
-                isRenewal) && <Divider sx={{ my: 4 }} />}
-            </>
-          )}
+            )}
 
-          {/* IRB */}
-          {managedACTAccessRequirement?.isIRBApprovalRequired && (
-            <>
-              <Typography variant={'headline3'} sx={{ my: 2 }}>
-                IRB Approval
-              </Typography>
-              <Typography variant={'body1'} sx={{ my: 2 }}>
-                Upload a signed IRB letter on institutional letterhead. The
-                letter must include the names of all the datasets requested, as
-                well as the names of the data requesters above. Use the button
-                below to upload the document.
-              </Typography>
-              <UploadDocumentField
-                id={'irb'}
-                documentName={'IRB Approval Letter'}
-                uploadCallback={resp => uploadCallback(resp, 'irbFileHandleId')}
-                fileHandleAssociations={irbFileHandleAssociation}
-              />
-
-              {(managedACTAccessRequirement?.areOtherAttachmentsRequired ||
-                isRenewal) && <Divider sx={{ my: 4 }} />}
-            </>
-          )}
-
-          {
-            /* Attachments */
-            managedACTAccessRequirement?.areOtherAttachmentsRequired && (
+            {(managedACTAccessRequirement?.isDUCRequired ||
+              managedACTAccessRequirement?.isIRBApprovalRequired ||
+              managedACTAccessRequirement?.areOtherAttachmentsRequired ||
+              isRenewal) && <Divider sx={{ my: 4 }} />}
+            {/* DUC */}
+            {managedACTAccessRequirement?.isDUCRequired && (
               <>
-                <Typography variant={'headline3'} sx={{ my: 2 }}>
-                  Upload other required documents
+                {managedACTAccessRequirement?.ducTemplateFileHandleId && (
+                  <DocumentTemplate
+                    title={'Download DUC Template'}
+                    description={
+                      'As a first step, you will need to download the most current version of the Data Use Certificate.'
+                    }
+                    fileHandleAssociation={{
+                      fileHandleId:
+                        managedACTAccessRequirement.ducTemplateFileHandleId,
+                      associateObjectType:
+                        FileHandleAssociateType.AccessRequirementAttachment,
+                      associateObjectId: String(managedACTAccessRequirement.id),
+                    }}
+                    downloadButtonText={'Download DUC Template'}
+                  />
+                )}
+                <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
+                  Fill out and upload a Data Use Certificate
                 </Typography>
                 <Typography variant={'body1'} sx={{ my: 2 }}>
-                  You must upload other required documents. Please review the
-                  instructions to gain data access to determine which documents
-                  must also be uploaded.
+                  You must download and fill out a Data Use Certificate (DUC).
+                  Be sure to upload the completed DUC below once you&apos;ve
+                  completed it.
+                </Typography>
+                <Typography variant={'body1'} component={'ol'}>
+                  <li>Download the DUC template file.</li>
+                  <li>
+                    Fill out the DUC template, following the instructions in the
+                    file.
+                  </li>
+                  <li>
+                    Upload the completed certificate using the button below:
+                  </li>
                 </Typography>
                 <UploadDocumentField
-                  id={'file-attachment'}
-                  documentName={'Attachment'}
-                  uploadCallback={res => uploadCallback(res, 'attachments')}
-                  isMultiFileUpload={true}
-                  fileHandleAssociations={attachmentFileHandleAssociations}
-                  onClearAttachment={onClearAttachment}
+                  id={'duc'}
+                  uploadCallback={resp =>
+                    uploadCallback(resp, 'ducFileHandleId')
+                  }
+                  documentName={'Data Use Certificate'}
+                  fileHandleAssociations={ducFileHandleAssociation}
                 />
-
-                {isRenewal && <Divider sx={{ my: 4 }} />}
+                {(managedACTAccessRequirement?.isIRBApprovalRequired ||
+                  managedACTAccessRequirement?.areOtherAttachmentsRequired ||
+                  isRenewal) && <Divider sx={{ my: 4 }} />}
               </>
-            )
-          }
+            )}
 
-          {
-            // Publications & Summary of Use
-            isRenewal && (
+            {/* IRB */}
+            {managedACTAccessRequirement?.isIRBApprovalRequired && (
               <>
-                <TextField
-                  id={'publications'}
-                  label={'Publication(s)'}
-                  multiline
-                  rows={3}
-                  value={dataAccessRequest?.publication}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    handleTextAreaInputChange(e, 'publication')
+                <Typography variant={'headline3'} sx={{ my: 2 }}>
+                  IRB Approval
+                </Typography>
+                <Typography variant={'body1'} sx={{ my: 2 }}>
+                  Upload a signed IRB letter on institutional letterhead. The
+                  letter must include the names of all the datasets requested,
+                  as well as the names of the data requesters above. Use the
+                  button below to upload the document.
+                </Typography>
+                <UploadDocumentField
+                  id={'irb'}
+                  documentName={'IRB Approval Letter'}
+                  uploadCallback={resp =>
+                    uploadCallback(resp, 'irbFileHandleId')
                   }
+                  fileHandleAssociations={irbFileHandleAssociation}
                 />
-                <TextField
-                  id={'summaryOfUse'}
-                  label={'Summary of use'}
-                  value={dataAccessRequest?.summaryOfUse}
-                  multiline
-                  rows={3}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    handleTextAreaInputChange(e, 'summaryOfUse')
-                  }
-                />
-              </>
-            )
-          }
 
-          {
-            /* Alert message */
-            alert && <Alert severity={alert.key}>{alert.message}</Alert>
-          }
-        </Box>
+                {(managedACTAccessRequirement?.areOtherAttachmentsRequired ||
+                  isRenewal) && <Divider sx={{ my: 4 }} />}
+              </>
+            )}
+
+            {
+              /* Attachments */
+              managedACTAccessRequirement?.areOtherAttachmentsRequired && (
+                <>
+                  <Typography variant={'headline3'} sx={{ my: 2 }}>
+                    Upload other required documents
+                  </Typography>
+                  <Typography variant={'body1'} sx={{ my: 2 }}>
+                    You must upload other required documents. Please review the
+                    instructions to gain data access to determine which
+                    documents must also be uploaded.
+                  </Typography>
+                  <UploadDocumentField
+                    id={'file-attachment'}
+                    documentName={'Attachment'}
+                    uploadCallback={res => uploadCallback(res, 'attachments')}
+                    isMultiFileUpload={true}
+                    fileHandleAssociations={attachmentFileHandleAssociations}
+                    onClearAttachment={onClearAttachment}
+                  />
+
+                  {isRenewal && <Divider sx={{ my: 4 }} />}
+                </>
+              )
+            }
+
+            {
+              // Publications & Summary of Use
+              isRenewal && (
+                <>
+                  <TextField
+                    id={'publications'}
+                    label={'Publication(s)'}
+                    multiline
+                    rows={3}
+                    value={dataAccessRequest?.publication}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      handleTextAreaInputChange(e, 'publication')
+                    }
+                  />
+                  <TextField
+                    id={'summaryOfUse'}
+                    label={'Summary of use'}
+                    value={dataAccessRequest?.summaryOfUse}
+                    multiline
+                    rows={3}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      handleTextAreaInputChange(e, 'summaryOfUse')
+                    }
+                  />
+                </>
+              )
+            }
+          </Box>
+        </ManagedACTAccessRequirementFormWikiWrapper>
+        {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
       </DialogContent>
       <DialogActions>
         {
