@@ -1,6 +1,6 @@
 import { getNextPageOfData } from './queryUtils'
 import {
-  generateQueryFilterFromSearchParams,
+  getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   resultToJson,
   getIgnoredQueryFilterSearchParamKey,
@@ -10,7 +10,7 @@ import type { SQLOperator } from './SqlFunctions'
 
 export {
   getNextPageOfData,
-  generateQueryFilterFromSearchParams,
+  getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   getIgnoredQueryFilterSearchParamKey,
   resultToJson,

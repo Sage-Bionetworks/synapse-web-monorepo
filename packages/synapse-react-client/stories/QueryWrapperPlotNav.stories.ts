@@ -5,7 +5,10 @@ import {
   GENERIC_CARD,
   MEDIUM_USER_CARD,
 } from '../src/utils/SynapseConstants'
-import { Query } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueQueryFilter,
+  Query,
+} from '@sage-bionetworks/synapse-types'
 import QueryWrapperPlotNav from '../src/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import {
   ColumnMultiValueFunction,
@@ -13,6 +16,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../src/components/ToastMessage'
 import { CustomControlCallbackData } from '../src/components/SynapseTable/TopLevelControls'
+import { QUERY_FILTERS_LOCAL_STORAGE_KEY } from '../src/utils/functions/SqlFunctions'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',
@@ -201,6 +205,23 @@ const handleCustomCommandClick = async (event: CustomControlCallbackData) => {
   )
   console.log('Rows selected:')
   console.log(event.selectedRows)
+  const idColIndex = event.data?.columnModels?.findIndex(cm => cm.name === 'id')
+  const localStorageFilter: ColumnSingleValueQueryFilter = {
+    concreteType:
+      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+    columnName: 'id',
+    operator: ColumnSingleValueFilterOperator.IN,
+    values: event.selectedRows!.map(row => row.values[idColIndex!]!),
+  }
+  localStorage.setItem(
+    QUERY_FILTERS_LOCAL_STORAGE_KEY('syn51186974'),
+    JSON.stringify([localStorageFilter]),
+  )
+  console.log(
+    'Local Storage value set, refresh table to see additionalFilter QueryFilter being utilized',
+  )
+  // TODO: PORTALS-2682: event.refresh() should refresh the data but it currently doesn't
+  event.refresh()
 }
 // See handleParticipantWorkflowChange in crc-researcher for a more complex example
 export const TableRowSelectionWithCustomCommand: Story = {

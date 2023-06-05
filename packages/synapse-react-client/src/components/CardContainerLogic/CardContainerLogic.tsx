@@ -1,7 +1,7 @@
 import React from 'react'
 import { SynapseConstants } from '../../utils'
 import {
-  generateQueryFilterFromSearchParams,
+  getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/SqlFunctions'
@@ -145,7 +145,8 @@ export type CardContainerLogicProps = {
  */
 export const CardContainerLogic = (props: CardContainerLogicProps) => {
   const entityId = parseEntityIdFromSqlStatement(props.sql)
-  const queryFilters = generateQueryFilterFromSearchParams(
+  const queryFilters = getAdditionalFilters(
+    entityId,
     props.searchParams,
     props.sqlOperator,
   )

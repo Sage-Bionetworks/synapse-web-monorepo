@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  generateQueryFilterFromSearchParams,
+  getAdditionalFilters,
   parseEntityIdFromSqlStatement,
 } from '../../utils/functions/SqlFunctions'
 import SynapseTable, { SynapseTableProps } from '../SynapseTable/SynapseTable'
@@ -104,14 +104,12 @@ const StandaloneQueryWrapper: React.FunctionComponent<
   } = props
 
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
-
-  if (searchParams) {
-    derivedQueryRequestFromSearchParams.query.additionalFilters =
-      generateQueryFilterFromSearchParams(searchParams, sqlOperator)
-  }
+  const entityId = parseEntityIdFromSqlStatement(sql)
+  derivedQueryRequestFromSearchParams.query.additionalFilters =
+    getAdditionalFilters(entityId, searchParams, sqlOperator)
 
   const synapseContext = useSynapseContext()
-  const entityId = parseEntityIdFromSqlStatement(sql)
+
   const { data: entity } = useGetEntity(entityId)
   return (
     <QueryWrapper
