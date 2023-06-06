@@ -448,10 +448,10 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
               cellRenderer={NameRenderer}
             />
             <Column<EntityFinderTableViewRowData>
-              key={'size'}
+              key={'SIZE'}
               title="Size"
               width={200}
-              sortable={sort != null}
+              sortable={false}
               resizable={true}
               cellRenderer={SizeRenderer}
             />

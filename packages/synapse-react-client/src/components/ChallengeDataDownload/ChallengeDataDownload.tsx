@@ -86,6 +86,7 @@ export function ChallengeDataDownload({
           variant={'outlined'}
           sx={{ alignSelf: 'flex-end', height: '47px' }}
           onClick={onAddClick}
+          disabled={!selectedEntities.toArray().length}
         >
           Add to Download List
         </Button>
