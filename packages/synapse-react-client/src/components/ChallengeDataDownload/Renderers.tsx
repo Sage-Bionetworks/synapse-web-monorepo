@@ -37,6 +37,7 @@ export function DownloadRenderer<T extends EntityIdAndVersionNumber>(
   return (
     <DirectDownload
       associatedObjectId={props.rowData.entityId}
+      stopPropagation={true}
     ></DirectDownload>
   )
 }
