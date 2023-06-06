@@ -2053,6 +2053,26 @@ export const getFileResult = (
 }
 
 /**
+ * Add a batch of files to the user's download list.
+ * Uses http://rest-docs.synapse.org/rest/POST/download/list/add.html
+ * @param batchToAdd
+ */
+export const addFileBatchToDownloadListV2 = (
+  batchToAdd: { fileEntityId: string; versionNumber?: number }[],
+  accessToken?: string,
+): Promise<AddBatchOfFilesToDownloadListResponse> => {
+  const request: AddBatchOfFilesToDownloadListRequest = {
+    batchToAdd,
+  }
+  return doPost(
+    '/repo/v1/download/list/add',
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Add a file to the user's download list.
  * Uses http://rest-docs.synapse.org/rest/POST/download/list/add.html
  * @param fileEntityId
@@ -2063,14 +2083,9 @@ export const addFileToDownloadListV2 = (
   versionNumber?: number,
   accessToken?: string,
 ): Promise<AddBatchOfFilesToDownloadListResponse> => {
-  const request: AddBatchOfFilesToDownloadListRequest = {
-    batchToAdd: [{ fileEntityId, versionNumber }],
-  }
-  return doPost(
-    '/repo/v1/download/list/add',
-    request,
+  return addFileBatchToDownloadListV2(
+    [{ fileEntityId, versionNumber }],
     accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
@@ -2467,7 +2482,7 @@ export const updateOAuthClient = (
 }
 
 /**
- 
+
  Note: Only the creator of a client can update it.
  https://rest-docs.synapse.org/rest/PUT/oauth2/client/id/verificationPrecheck.html
  */
@@ -2483,7 +2498,7 @@ export const isOAuthClientReverificationRequired = (
   )
 }
 
-/** 
+/**
 Get a secret credential to use when requesting an access token.
 Synapse supports 'client_secret_basic' and 'client_secret_post'.
 NOTE: This request will invalidate any previously issued secrets.
