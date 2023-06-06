@@ -12,12 +12,12 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const SynapseClientErrorDemo: Story = {
-  render: args => (
+  decorators: [Story => (
     <>
       <div>Note: login to see the unauthorized SynapseClientError.</div>
-      <ErrorBanner {...args} />
+      <Story />
     </>
-  ),
+  )],
   args: {
     error: new SynapseClientError(
       403,
