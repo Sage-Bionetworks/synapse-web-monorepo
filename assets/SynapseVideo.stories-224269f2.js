@@ -1,8 +1,0 @@
-import{S as p}from"./SynapseVideo-3d9e7567.js";import"./jsx-runtime-095bf462.js";import"./index-8db94870.js";import"./_commonjsHelpers-042e6b4d.js";import"./SynapseClient-11177bbe.js";import"./SynapseConstants-1ebc8be6.js";import"./getEndpoint-ac94413e.js";import"./inheritsLoose-c82a83d4.js";import"./index-8ce4a492.js";import"./extends-98964cd2.js";import"./Link-255af83b.js";import"./objectWithoutPropertiesLoose-4f48578a.js";import"./styled-8ebe2b7d.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-29d231ba.js";import"./Typography-fa1f2f14.js";import"./extendSxProp-8b7baf65.js";import"./useIsFocusVisible-bbf13f29.js";import"./useForkRef-2674f3de.js";import"./Button-5637ed55.js";import"./utils-34c6eda8.js";import"./TransitionGroupContext-1e5fd21a.js";import"./useTheme-df5273c4.js";import"./createWithBsPrefix-0fdadc7a.js";import"./index-58d3fd43.js";import"./isArray-5e3f9107.js";import"./dayjs.min-8d4ef725.js";import"./hoist-non-react-statics.cjs-3f8ebaa8.js";import"./createSvgIcon-075f7759.js";import"./SvgIcon-147e032d.js";import"./CheckCircleTwoTone-64ad58ef.js";import"./inputBaseClasses-29b56ac5.js";import"./Fade-3d404265.js";const F={title:"Markdown/SynapseVideo",component:p},o={args:{params:{vimeoId:"355433104"}}};var r,m,t;o.parameters={...o.parameters,docs:{...(r=o.parameters)==null?void 0:r.docs,source:{originalSource:`{
-  args: {
-    params: {
-      vimeoId: '355433104'
-    }
-  }
-}`,...(t=(m=o.parameters)==null?void 0:m.docs)==null?void 0:t.source}}};const G=["SynapseVideoDemo"];export{o as SynapseVideoDemo,G as __namedExportsOrder,F as default};
-//# sourceMappingURL=SynapseVideo.stories-224269f2.js.map
