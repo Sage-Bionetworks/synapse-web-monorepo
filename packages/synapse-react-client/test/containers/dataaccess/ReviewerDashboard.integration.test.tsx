@@ -40,7 +40,24 @@ jest
     return <div data-testid={HISTORY_DASHBOARD_TEST_ID}></div>
   })
 
-function renderComponent() {
+// By default, ensure the user has permission to see all tabs before trying to render them
+function renderComponent(
+  isACTMember: boolean = true,
+  isARReviewer: boolean = true,
+) {
+  server.use(
+    rest.get(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
+      async (req, res, ctx) => {
+        const response: UserBundle = {
+          userId: MOCK_USER_ID.toString(),
+          isACTMember: isACTMember,
+          isARReviewer: isARReviewer,
+        }
+        return res(ctx.status(200), ctx.json(response))
+      },
+    ),
+  )
   return render(<ReviewerDashboard routerBaseName={'/'} />, {
     wrapper: createWrapper(),
   })
@@ -52,27 +69,6 @@ describe('ReviewerDashboard tests', () => {
   afterAll(() => server.close())
 
   describe('Tabs render the correct content', () => {
-    beforeEach(() => {
-      // Ensure the user has permission to see all tabs before trying to render them
-
-      const isACTMember = true
-      const isARReviewer = true
-
-      server.use(
-        rest.get(
-          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
-          async (req, res, ctx) => {
-            const response: UserBundle = {
-              userId: MOCK_USER_ID.toString(),
-              isACTMember: isACTMember,
-              isARReviewer: isARReviewer,
-            }
-            return res(ctx.status(200), ctx.json(response))
-          },
-        ),
-      )
-    })
-
     it('Renders the AR Dashboard', async () => {
       renderComponent()
 
@@ -111,48 +107,14 @@ describe('ReviewerDashboard tests', () => {
   })
 
   it('Unauthorized user cannot see any tabs', async () => {
-    const isACTMember = false
-    const isARReviewer = false
-
-    server.use(
-      rest.get(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
-        async (req, res, ctx) => {
-          const response: UserBundle = {
-            userId: MOCK_USER_ID.toString(),
-            isACTMember: isACTMember,
-            isARReviewer: isARReviewer,
-          }
-          return res(ctx.status(200), ctx.json(response))
-        },
-      ),
-    )
-
-    renderComponent()
+    renderComponent(false, false)
 
     await screen.findByRole('tablist')
     expect(screen.queryByRole('tab')).not.toBeInTheDocument()
   })
 
   it('ACT can see all tabs', async () => {
-    const isACTMember = true
-    const isARReviewer = false
-
-    server.use(
-      rest.get(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
-        async (req, res, ctx) => {
-          const response: UserBundle = {
-            userId: MOCK_USER_ID.toString(),
-            isACTMember: isACTMember,
-            isARReviewer: isARReviewer,
-          }
-          return res(ctx.status(200), ctx.json(response))
-        },
-      ),
-    )
-
-    renderComponent()
+    renderComponent(true, false)
 
     await screen.findByRole('tablist')
     const tabs = screen.getAllByRole('tab')
@@ -164,24 +126,7 @@ describe('ReviewerDashboard tests', () => {
   })
 
   it('AR Reviewer can see Submissions and User Access History tabs', async () => {
-    const isACTMember = false
-    const isARReviewer = true
-
-    server.use(
-      rest.get(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
-        async (req, res, ctx) => {
-          const response: UserBundle = {
-            userId: MOCK_USER_ID.toString(),
-            isACTMember: isACTMember,
-            isARReviewer: isARReviewer,
-          }
-          return res(ctx.status(200), ctx.json(response))
-        },
-      ),
-    )
-
-    renderComponent()
+    renderComponent(false, true)
 
     await screen.findByRole('tablist')
     const tabs = screen.getAllByRole('tab')
@@ -192,5 +137,32 @@ describe('ReviewerDashboard tests', () => {
     ).not.toBeInTheDocument()
     screen.getByRole('tab', { name: 'Submissions' })
     screen.getByRole('tab', { name: 'User Access History' })
+  })
+
+  it('Renders the OrientationBanner for non-ACT reviewers on the Submissions Dashboard', async () => {
+    renderComponent(false, true)
+
+    const submissionsTab = await screen.findByRole('tab', {
+      name: 'Submissions',
+    })
+
+    await userEvent.click(submissionsTab)
+
+    const alert = screen.getByRole('alert')
+    expect(alert).toHaveTextContent(
+      'Getting Started With Data Access Management',
+    )
+  })
+
+  it('Does not render the OrientationBanner for ACT reviewers on the Submissions Dashboard', async () => {
+    renderComponent(true, true)
+
+    const submissionsTab = await screen.findByRole('tab', {
+      name: 'Submissions',
+    })
+
+    await userEvent.click(submissionsTab)
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 })

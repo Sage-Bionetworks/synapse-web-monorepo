@@ -3,7 +3,7 @@ import React from 'react'
 import { DialogBase, DialogBaseProps } from '../DialogBase'
 
 export type ConfirmationButtonsProps = {
-  onConfirm: () => void
+  onConfirm: React.MouseEventHandler<HTMLButtonElement>
   onCancel: DialogBaseProps['onCancel']
   confirmButtonText?: string
   confirmButtonClassName?: string
@@ -37,7 +37,7 @@ export const ConfirmationButtons = (props: ConfirmationButtonsProps) => {
         variant={confirmButtonVariant}
         className={confirmButtonClassName}
         color={confirmButtonColor}
-        onClick={() => onConfirm()}
+        onClick={onConfirm}
         disabled={confirmButtonDisabled}
       >
         {confirmButtonText}
