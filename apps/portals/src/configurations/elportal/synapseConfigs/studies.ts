@@ -88,7 +88,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
       synapseConfigArray: [
         {
           name: 'Markdown',
-          columnName: 'studyMetadata',
+          columnName: 'studyDescription',
           title: 'Study Description',
           props: {},
         },
