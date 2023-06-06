@@ -51,7 +51,7 @@ export type ConfirmationDialogProps = DialogBaseProps & ConfirmationButtonsProps
 /**
  * A confirmation dialog built using MUI components.
  */
-export const ConfirmationDialog = (props: ConfirmationDialogProps) => {
+export function ConfirmationDialog(props: ConfirmationDialogProps) {
   const {
     confirmButtonText,
     confirmButtonClassName,

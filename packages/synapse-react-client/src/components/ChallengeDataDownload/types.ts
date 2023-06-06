@@ -1,5 +1,4 @@
-import { EntityType } from '@sage-bionetworks/synapse-types'
-import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
+import { EntityHeader, EntityType } from '@sage-bionetworks/synapse-types'
 import BaseTable, { ColumnShape } from '@sage-bionetworks/react-base-table'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
 
@@ -19,7 +18,7 @@ export interface ChallengeDataTableProps {
   isFetchingNextPage?: boolean
   isLoading?: boolean
   minTableWidth?: number
-  tableData: ChallengeDataTableRowData[]
+  tableData: EntityHeader[]
   tableHeight?: number
   versionSelection: VersionSelectionType
 }
@@ -27,7 +26,7 @@ export interface ChallengeDataTableProps {
 /**
  * Describes the shape of the data passed to the BaseTable
  */
-export type ChallengeDataTableRowData = EntityFinderHeader & {
+export type ChallengeDataTableRowData = EntityHeader & {
   currentSelectedVersion?: number
   entityId: string
   entityType: EntityType

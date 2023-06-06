@@ -1,45 +1,42 @@
 import React from 'react'
-import { CellRendererProps, ChallengeDataTableRowData } from './types'
-import { Checkbox } from '../widgets/Checkbox'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import dayjs from 'dayjs'
+import { CellRendererProps } from './types'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
+import { EntityIdAndVersionNumber } from '../EntityFinder/details/view/DetailsViewTableRenderers'
+import { Skeleton } from '@mui/material'
+import { useGetEntityBundle } from '../../synapse-queries'
+import { FileHandle } from '@sage-bionetworks/synapse-types'
+import DirectDownload from '../DirectDownload'
 
-export function CheckboxRenderer<T extends ChallengeDataTableRowData>({
-  rowData: { entityId, isSelected, isDisabled, onChangeSelected },
-}: CellRendererProps<T>): JSX.Element | false {
-  return (
-    !isDisabled && (
-      <Checkbox
-        label={`Select ${entityId}`}
-        hideLabel={true}
-        className={`SRC-pointer-events-none`}
-        checked={isSelected}
-        onChange={onChangeSelected}
-      />
-    )
+type FileHandleWithPreview = FileHandle & {
+  isPreview?: boolean
+}
+
+export function SizeRenderer<T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) {
+  const { data: bundle, isLoading } = useGetEntityBundle(
+    props.rowData.entityId,
+    props.rowData.versionNumber,
   )
-}
 
-export function DateRenderer({ cellData }: { cellData?: string }): JSX.Element {
-  return <>{(cellData && formatDate(dayjs(cellData))) ?? <></>}</>
-}
-
-export function ModifiedOnRenderer<T extends ChallengeDataTableRowData>({
-  rowData: { modifiedOn },
-}: CellRendererProps<T>): JSX.Element | false {
-  return !!modifiedOn && <DateRenderer cellData={modifiedOn} />
-}
-
-export function NameRenderer<T extends ChallengeDataTableRowData>({
-  rowData: { name },
-}: CellRendererProps<T>): JSX.Element | false {
-  return !!name && <span>{name}</span>
-}
-
-export function SizeRenderer<T extends ChallengeDataTableRowData>({
-  rowData: { size },
-}: CellRendererProps<T>): JSX.Element {
-  const friendlySize = calculateFriendlyFileSize(size)
+  if (isLoading) {
+    return <Skeleton width={200} />
+  }
+  const file = bundle?.fileHandles.find(
+    (file: FileHandleWithPreview) => file.isPreview !== true,
+  )
+  const friendlySize = file?.contentSize
+    ? calculateFriendlyFileSize(file?.contentSize)
+    : ''
   return <span>{friendlySize}</span>
+}
+
+export function DownloadRenderer<T extends EntityIdAndVersionNumber>(
+  props: CellRendererProps<T>,
+) {
+  return (
+    <DirectDownload
+      associatedObjectId={props.rowData.entityId}
+    ></DirectDownload>
+  )
 }

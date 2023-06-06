@@ -1,125 +1,344 @@
-import React, { useMemo, useState } from 'react'
 import BaseTable, {
   AutoResizer,
   Column,
 } from '@sage-bionetworks/react-base-table'
-import { ChallengeDataTableRowData, ChallengeDataTableProps } from './types'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useQueryClient } from 'react-query'
+import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
 import {
   Direction,
   EntityHeader,
-  EntityType,
-  Reference,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
-import { NO_VERSION_NUMBER } from '../EntityFinder/EntityFinder'
+import { useSynapseContext } from '../../utils'
 import {
-  CustomSortIndicator,
-  EmptyRenderer,
-  LoadingRenderer,
-} from '../EntityFinder/details/view/DetailsViewTableRenderers'
+  getEntityTypeFromHeader,
+  isContainerType,
+  isVersionableEntityType,
+} from '../../utils/functions/EntityTypeUtils'
+import { NO_VERSION_NUMBER } from '../EntityFinder/EntityFinder'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
-import { getEntityTypeFromHeader } from '../../utils/functions/EntityTypeUtils'
 import { Checkbox } from '../widgets/Checkbox'
 import {
-  CheckboxRenderer,
+  CellRendererProps,
+  CustomSortIndicator,
+  DetailsViewCheckboxRenderer,
+  EmptyRenderer,
+  EntityIdAndVersionNumber,
+  LoadingRenderer,
   ModifiedOnRenderer,
-  NameRenderer,
-  SizeRenderer,
-} from './Renderers'
+  TypeIconRenderer,
+} from '../EntityFinder/details/view/DetailsViewTableRenderers'
+import { BlockingLoader } from '../LoadingScreen'
+import { getEntityVersions } from '../../synapse-client'
+import { DownloadRenderer, SizeRenderer } from './Renderers'
+import {
+  DetailsViewProps,
+  EntityFinderTableViewRowData,
+} from '../EntityFinder/details/view/DetailsView'
 
-// Move these string constants to a constants file for localization?
-const ACTION = `Action`
-const ID = `ID`
-const MODIFIED_ON = `Modified On`
-const NAME = `File Name`
-const NO_RESULTS = `No Results`
-const SELECT_ALL = `Select All`
-const SIZE = `Size`
-
-const noResultsPlaceholder = <p>{NO_RESULTS}</p>
+const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
-const selectAllIsChecked = false
-const selectableTypes = [EntityType.FILE]
-const visibleTypes = [EntityType.FILE]
 
 /**
- * TODO:
- * * Fix Select All and individual select.
- * * Create render for Action column
- * * Create button
- * * Connect button to `add to download list` functionality
- * * Create download button and connect to download as zip functionality
+ * Displays a list of entities in a table.
+ *
+ * If the list of entities is paginated, the `hasNextPage` prop can be set to indicate that there is more data to load.
+ * When the view is ready to load more data, the `fetchNextPage` callback will be invoked. The view is designed to handle
+ * an "infinite scroll" pattern, so entities should not be removed from the list when loading the next page.
+ *
+ * @param param0
  */
-export function ChallengeDataTable({
-  hasNextPage,
-  isFetchingNextPage,
+export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
+  entities,
   isLoading,
-  minTableWidth = 1200,
-  tableData,
-  tableHeight = 350,
+  hasNextPage,
+  fetchNextPage,
+  isFetchingNextPage,
   versionSelection,
-}: ChallengeDataTableProps) {
-  const [sort, setSort] = useState({
-    sortBy: SortBy.NAME,
-    sortDirection: Direction.ASC,
-  })
-  const [shouldSelectAll, setShouldSelectAll] = useState(false)
+  selectColumnType,
+  selected,
+  visibleTypes,
+  selectableTypes,
+  toggleSelection,
+  sort,
+  setSort,
+  noResultsPlaceholder,
+  enableSelectAll,
+  selectAllIsChecked = false,
+  getChildrenInfiniteRequestObject,
+  totalEntities,
+  setCurrentContainer,
+}) => {
+  const queryClient = useQueryClient()
 
-  function fetchNextPage(): Promise<any> {
-    return new Promise(() => {})
+  const { accessToken } = useSynapseContext()
+
+  const showSelectColumn = selectColumnType !== 'none'
+
+  const [shouldSelectAll, setShouldSelectAll] = useState(false)
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false)
+
+  const cancelQuery = () => {
+    // It's likely that the user will be throttled by the Synapse backend and may be waiting a
+    // noticeable amount of time for the current request, so cancel it (in addition to cancelling future requests)
+    queryClient.cancelQueries([
+      'entitychildren',
+      getChildrenInfiniteRequestObject,
+    ])
+    setShowLoadingScreen(false)
+    setShouldSelectAll(false)
   }
-  function toggleSelection(entity: Reference | Reference[]): void {
-    console.log(`entity:`, entity)
+  type DetailsViewRowAppearance = 'hidden' | 'disabled' | 'selected' | 'default'
+
+  const determineRowAppearance = (
+    entity: EntityFinderHeader,
+  ): DetailsViewRowAppearance => {
+    if (!visibleTypes.includes(getEntityTypeFromHeader(entity))) {
+      return 'hidden'
+    } else if (!selectableTypes.includes(getEntityTypeFromHeader(entity))) {
+      return 'disabled'
+    } else if (selected.has(entity.id)) {
+      return 'selected'
+    } else {
+      return 'default'
+    }
   }
+
+  useEffect(() => {
+    async function handleSelectAll() {
+      if (shouldSelectAll) {
+        if (hasNextPage && fetchNextPage) {
+          // Show the loading screen since we must fetch data (potentially a lot) to finish the task
+          setShowLoadingScreen(true)
+          if (!isFetchingNextPage) {
+            fetchNextPage()
+          }
+        } else {
+          if (selectAllIsChecked) {
+            // All of the items are selected, so we will deselect all
+            toggleSelection(
+              entities
+                .filter(e => {
+                  // Collect just entities that are selected
+                  // An entity may be in the list and unselected because it isn't of a selectable type
+                  return selected.has(e.id)
+                })
+                .map(e => {
+                  const selectedVersion = selected.get(e.id)
+                  return {
+                    targetId: e.id,
+                    targetVersionNumber:
+                      selectedVersion === NO_VERSION_NUMBER
+                        ? undefined
+                        : selectedVersion,
+                  }
+                }),
+            )
+          } else {
+            // Not all of the items are selected, so we will select all
+            toggleSelection(
+              await Promise.all(
+                entities
+                  .filter(e => {
+                    // must filter just selectable types or else any entities of unselectable types will get selected
+                    const type = getEntityTypeFromHeader(e)
+                    // also exclude already-selected entities, since we don't want to toggle those
+                    return (
+                      !selected.has(e.id) &&
+                      selectableTypes.includes(type) &&
+                      visibleTypes.includes(type)
+                    )
+                  })
+                  .map(async e => {
+                    let latestVersion: number | undefined
+                    if (
+                      versionSelection === VersionSelectionType.REQUIRED &&
+                      isVersionableEntityType(getEntityTypeFromHeader(e))
+                    ) {
+                      // If VersionSelectionType.REQUIRED, then we need to supply a version with the entity.
+                      // We may already have the version from the header:
+                      if (
+                        Object.prototype.hasOwnProperty.call(e, 'versionNumber')
+                      ) {
+                        latestVersion = (e as EntityHeader).versionNumber
+                      }
+                      if (!latestVersion) {
+                        // Failsafe if we didn't get the version in the header. This is rare/unlikely, since the only cases we're sure we don't get versions are:
+                        //  - ProjectHeaders (which are versionless)
+                        //  - Search Results (for which we don't support Select All)
+                        // For large lists, there's a good chance for this to trigger throttling.
+
+                        // Show the loading screen since we must fetch data (potentially a lot) to finish the task
+                        setShowLoadingScreen(true)
+
+                        const versions = await queryClient.fetchQuery(
+                          ['entity', e.id, 'versions', { offset: 0, limit: 1 }],
+                          () => getEntityVersions(e.id, accessToken, 0, 1),
+                        )
+                        // we pick the first version in the list because it is the most recent
+                        latestVersion = versions.results[0]?.versionNumber
+                      }
+                    }
+                    return {
+                      targetId: e.id,
+                      targetVersionNumber: latestVersion,
+                    }
+                  }),
+              ),
+            )
+          }
+          setShouldSelectAll(false)
+          setShowLoadingScreen(false)
+        }
+      }
+    }
+    handleSelectAll()
+  }, [
+    accessToken,
+    entities,
+    fetchNextPage,
+    hasNextPage,
+    versionSelection,
+    queryClient,
+    isFetchingNextPage,
+    selectAllIsChecked,
+    selectableTypes,
+    selected,
+    shouldSelectAll,
+    toggleSelection,
+    visibleTypes,
+  ])
+
+  const tableData = entities.reduce(
+    (entities: EntityFinderTableViewRowData[], entity) => {
+      const appearance = determineRowAppearance(entity)
+      if (appearance !== 'hidden') {
+        // only include entities that should not be hidden
+        const entityType = getEntityTypeFromHeader(entity)
+
+        const currentSelectedVersion = selected.get(entity.id)
+        let versionNumber: number | undefined = undefined
+        if ('versionNumber' in entity) {
+          if (
+            currentSelectedVersion != null &&
+            currentSelectedVersion !== NO_VERSION_NUMBER
+          ) {
+            // if a version is selected, the row should show that version's data
+            versionNumber = currentSelectedVersion
+          } else if (versionSelection === VersionSelectionType.REQUIRED) {
+            // if a version is not selected, but version selection is required, the row should show the latest version's data
+            versionNumber = entity.versionNumber
+          }
+          // otherwise, show the current version's data (versionNumber is undefined)
+        }
+
+        entities.push({
+          ...entity,
+          entityId: entity.id,
+          versionNumber: versionNumber,
+          entityType: entityType,
+          isSelected: appearance === 'selected',
+          isDisabled: appearance === 'disabled',
+          isVersionableEntity: isVersionableEntityType(entityType),
+          currentSelectedVersion: currentSelectedVersion,
+        })
+      }
+      return entities
+    },
+    [],
+  )
 
   const SelectAllCheckboxRenderer = useMemo(() => {
     // Enabled if there's at least one visible & selectable entity, OR there's a page we haven't fetched
     const isEnabled =
       hasNextPage ||
-      tableData.filter(
+      entities.filter(
         e =>
           selectableTypes.includes(getEntityTypeFromHeader(e)) &&
           visibleTypes.includes(getEntityTypeFromHeader(e)),
       ).length > 0
     return (
-      <div
-        data-testid={SELECT_ALL}
-        style={isEnabled ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}
-        onClick={() => {
-          if (isEnabled) {
-            setShouldSelectAll(true)
-          }
-        }}
-      >
-        <Checkbox
-          label={SELECT_ALL}
-          hideLabel={true}
-          className={`SRC-pointer-events-none`}
-          checked={selectAllIsChecked}
-          disabled={!isEnabled}
-          onChange={() => {
-            // no-op
+      enableSelectAll && (
+        <div
+          data-testid="Select All"
+          style={isEnabled ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}
+          onClick={() => {
+            if (isEnabled) {
+              setShouldSelectAll(true)
+            }
           }}
-        />
-      </div>
+        >
+          <Checkbox
+            label="Select All"
+            hideLabel={true}
+            className="SRC-pointer-events-none"
+            checked={selectAllIsChecked}
+            disabled={!isEnabled}
+            onChange={() => {
+              // no-op
+            }}
+          />
+        </div>
+      )
     )
-  }, [hasNextPage, tableData])
+  }, [
+    enableSelectAll,
+    entities,
+    hasNextPage,
+    selectAllIsChecked,
+    selectableTypes,
+    visibleTypes,
+  ])
+
+  const NameRenderer = useCallback(
+    (props: CellRendererProps<EntityFinderTableViewRowData>) => {
+      if (setCurrentContainer && isContainerType(props.rowData.entityType)) {
+        return (
+          <span
+            role="link"
+            className="EntityFinderTableCellContainerLink"
+            onClick={e => {
+              e.stopPropagation()
+              setCurrentContainer(props.rowData.id)
+            }}
+          >
+            {props.rowData.name}
+          </span>
+        )
+      } else {
+        return props.rowData.name
+      }
+    },
+    [setCurrentContainer],
+  )
 
   const sortState = {}
   if (sort) {
     sortState[sort.sortBy] = sort.sortDirection.toLowerCase()
   }
 
-  // This is taken from the `DeviceView` component (packages/synapse-react-client/src/components/EntityFinder/details/view/DetailsView.tsx)
   return (
-    <AutoResizer className={`DetailsViewAutosizer`} height={tableHeight}>
-      {({ height, width }: { height: number; width: number }) => {
-        return (
-          <BaseTable<ChallengeDataTableRowData>
-            classPrefix={`DetailsViewTable`}
+    <div className="EntityFinderDetailsView bootstrap-4-backport">
+      <BlockingLoader
+        show={showLoadingScreen}
+        currentProgress={entities.length}
+        totalProgress={totalEntities}
+        hintText={
+          totalEntities
+            ? `${entities.length.toLocaleString()} of ${totalEntities?.toLocaleString()}`
+            : `Fetching ${entities.length.toLocaleString()}`
+        }
+        headlineText={'Fetching selected items'}
+        onCancel={cancelQuery}
+      />
+      <AutoResizer className="DetailsViewAutosizer">
+        {({ height, width }: { height: number; width: number }) => (
+          <BaseTable<EntityFinderTableViewRowData>
+            classPrefix="DetailsViewTable"
             data={tableData}
             height={height}
-            width={width > minTableWidth ? width : minTableWidth}
+            width={width > MIN_TABLE_WIDTH ? width : MIN_TABLE_WIDTH}
             rowHeight={ROW_HEIGHT}
             overscanRowCount={5}
             // Apply classes to the rows for styling
@@ -147,11 +366,10 @@ export function ChallengeDataTable({
             components={{ SortIndicator: CustomSortIndicator }}
             onColumnSort={({ key, order }) => {
               if (sort && setSort) {
-                setSort({
-                  sortBy: key as SortBy,
-                  sortDirection:
-                    order === 'asc' ? Direction.ASC : Direction.DESC,
-                })
+                setSort(
+                  key as SortBy,
+                  order === 'asc' ? Direction.ASC : Direction.DESC,
+                )
               }
             }}
             rowEventHandlers={{
@@ -190,67 +408,79 @@ export function ChallengeDataTable({
               }
             }}
             emptyRenderer={
-              isLoading ? (
-                LoadingRenderer
-              ) : (
-                <EmptyRenderer noResultsPlaceholder={noResultsPlaceholder} />
-              )
+              isLoading
+                ? LoadingRenderer
+                : () => (
+                    <EmptyRenderer
+                      noResultsPlaceholder={noResultsPlaceholder}
+                    />
+                  )
             }
           >
-            <Column<ChallengeDataTableRowData>
-              key={`isSelected`}
-              title={``}
-              minWidth={50}
-              maxWidth={50}
-              width={50}
-              dataKey={`isSelected`}
-              headerRenderer={SelectAllCheckboxRenderer}
-              cellRenderer={CheckboxRenderer}
+            {showSelectColumn && (
+              <Column<EntityFinderTableViewRowData>
+                key="isSelected"
+                title=""
+                minWidth={50}
+                maxWidth={50}
+                width={50}
+                dataKey="isSelected"
+                headerRenderer={SelectAllCheckboxRenderer}
+                cellRenderer={DetailsViewCheckboxRenderer}
+              />
+            )}
+            <Column<EntityFinderTableViewRowData>
+              key="type"
+              title=""
+              minWidth={45}
+              maxWidth={45}
+              width={45}
+              dataKey="entityType"
+              align="center"
+              cellRenderer={TypeIconRenderer}
             />
-            <Column<ChallengeDataTableRowData>
+            <Column<EntityFinderTableViewRowData>
               key={SortBy.NAME}
-              title={NAME}
-              minWidth={90}
-              maxWidth={800}
-              width={220}
+              title="File Name"
+              width={500}
               sortable={sort != null}
               resizable={true}
               cellRenderer={NameRenderer}
             />
-            <Column<ChallengeDataTableRowData>
-              key={`size`}
-              title={SIZE}
-              width={90}
-              maxWidth={220}
-              minWidth={90}
+            <Column<EntityFinderTableViewRowData>
+              key={'size'}
+              title="Size"
+              width={200}
+              sortable={sort != null}
+              resizable={true}
               cellRenderer={SizeRenderer}
             />
-            <Column<ChallengeDataTableRowData>
+            <Column<EntityIdAndVersionNumber>
               key={SortBy.MODIFIED_ON}
-              title={MODIFIED_ON}
+              title="Modified On"
               width={220}
               minWidth={170}
               sortable={sort != null}
               cellRenderer={ModifiedOnRenderer}
             />
-            <Column<ChallengeDataTableRowData>
-              key={`id`}
+            <Column<EntityFinderTableViewRowData>
+              key="id"
               width={130}
-              dataKey={`id`}
-              title={ID}
+              dataKey="id"
+              title="ID"
               minWidth={130}
             />
-            <Column<ChallengeDataTableRowData>
-              key={`action`}
-              title={ACTION}
-              minWidth={70}
-              maxWidth={70}
-              width={70}
-              cellRenderer={<></>}
+            <Column<EntityIdAndVersionNumber>
+              key={'actions'}
+              title={'Actions'}
+              minWidth={100}
+              maxWidth={100}
+              width={100}
+              cellRenderer={DownloadRenderer}
             />
           </BaseTable>
-        )
-      }}
-    </AutoResizer>
+        )}
+      </AutoResizer>
+    </div>
   )
 }
