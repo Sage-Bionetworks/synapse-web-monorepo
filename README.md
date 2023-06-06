@@ -43,9 +43,13 @@ Sometimes, due to Synapse.org's deployment cadence, a hotfix must be based on an
 
 ## CI/CD
 
-On latest commit for a PR where changes will be merged to main `main`, multiple jobs will be triggered in GitHub Actions.
+On the latest commit for a PR where changes will be merged to `main`, multiple jobs will be triggered in GitHub Actions.
 
-All changed projects and their dependents will be built, linted, and tested. Some notes:
+All changed projects and their dependents will be built, linted, tested, and type-checked.
+
+Additionally, the project Storybook(s) will be published to Chromatic, where each story will be tested and snapshotted. To reduce usage, this job only runs on pull requests that are "ready-for-review" i.e. not drafts. For this reason, please mark your pull request as a draft until these checks are necessary.
+
+Some notes:
 
 - If the test step fails, you can find the failed tests by downloading the artifacts from the job, which includes HTML reports of the tests.
 - We currently have many warnings and errors emitted in each test, so we have configured each test run to silence the output. If you need to see these warnings and errors, remove the 'silent' parameter from the script or configuration file.
