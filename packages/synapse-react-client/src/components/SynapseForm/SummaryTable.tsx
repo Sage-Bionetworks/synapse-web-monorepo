@@ -1,17 +1,16 @@
 import React from 'react'
-
-import { UiSchema } from '@rjsf/core'
-import { SummaryFormat, Step, FormSchema } from './types'
+import { UiSchema } from '@rjsf/utils'
+import { FormSchema, Step, SummaryFormat } from './types'
 import {
-  first,
   cloneDeep,
-  keys,
   find,
-  isObject,
+  first,
   get,
   isArray,
-  isString,
   isDate,
+  isObject,
+  isString,
+  keys,
 } from 'lodash-es'
 
 export interface SummaryTableProps {

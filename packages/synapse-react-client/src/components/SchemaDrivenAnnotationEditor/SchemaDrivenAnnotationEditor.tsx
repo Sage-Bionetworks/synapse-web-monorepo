@@ -1,58 +1,73 @@
-import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
+import Form from '@rjsf/mui'
 import { JSONSchema7 } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
-import { Alert, Box, Link } from '@mui/material'
-import AddToList from '../../../assets/icons/AddToList'
+import { Alert, Box, Divider, Link } from '@mui/material'
+import AddToList from '../../assets/icons/AddToList'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../utils/functions/getEndpoint'
+} from '../../utils/functions/getEndpoint'
 import {
   useGetJson,
   useGetSchema,
   useGetSchemaBinding,
   useUpdateViaJson,
-} from '../../../synapse-queries'
-import { SynapseClientError } from '../../../utils/SynapseClientError'
+} from '../../synapse-queries'
+import { SynapseClientError } from '../../utils/SynapseClientError'
 import {
   ENTITY_CONCRETE_TYPE,
   EntityJson,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../../LoadingScreen'
-import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
+import { SynapseSpinner } from '../LoadingScreen'
+import { AdditionalPropertiesSchemaField } from './field/AdditionalPropertiesSchemaField'
 import {
   dropNullishArrayValues,
   getFriendlyPropertyName,
   getTransformErrors,
 } from './AnnotationEditorUtils'
-import { CustomAdditionalPropertiesFieldTemplate } from './CustomAdditionalPropertiesFieldTemplate'
-import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
-import { CustomBooleanWidget } from './CustomBooleanWidget'
-import { CustomDateTimeWidget } from './CustomDateTimeWidget'
-import { CustomDefaultTemplate } from './CustomDefaultTemplate'
-import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
-import { CustomSelectWidget } from './CustomSelectWidget'
-import CustomTextWidget from './CustomTextWidget'
-import { entityJsonKeys } from '../../../utils/functions/EntityTypeUtils'
+import { BooleanWidget } from './widget/BooleanWidget'
+import { DateTimeWidget } from './widget/DateTimeWidget'
+import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
+import { SelectWidget } from './widget/SelectWidget'
+import TextWidget from './widget/TextWidget'
+import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
 import {
   ConfirmationButtons,
   ConfirmationDialog,
-} from '../../ConfirmationDialog/ConfirmationDialog'
+} from '../ConfirmationDialog/ConfirmationDialog'
+import { RJSFValidationError } from '@rjsf/utils'
+import validator from '@rjsf/validator-ajv8'
+import CustomObjectField from './field/CustomObjectField'
+import ArrayFieldItemTemplate from './template/ArrayFieldItemTemplate'
+import ArrayFieldTemplate from './template/ArrayFieldTemplate'
+import WrapIfAdditionalTemplate from './template/WrapIfAdditionalTemplate'
+import { FieldTemplate } from './template/FieldTemplate'
+import ArrayFieldTitleTemplate from './template/ArrayFieldTitleTemplate'
+import ButtonTemplate from './template/ButtonTemplate'
+import DescriptionFieldTemplate from './template/DescriptionFieldTemplate'
+import ArrayFieldDescriptionTemplate from './template/ArrayFieldDescriptionTemplate'
+import BaseInputTemplate from './template/BaseInputTemplate'
+import RJSF from '@rjsf/core'
+import FieldErrorTemplate from './template/FieldErrorTemplate'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
   entityId?: string
   /** If no entity ID is supplied, the schema to use for the form */
   schemaId?: string
+  /** May be used to directly provide a JSON Schema to use for the form */
+  validationSchema?: JSONSchema7
   /** Optionally supply a ref to the form to handle submission externally with `formRef.current.submit()`. If provided, the editor will not render its own submit UI. */
-  formRef?: React.RefObject<Form<Record<string, unknown>>>
+  formRef?: React.RefObject<RJSF>
   /** Provide live input validation. This can cause major performance degradation. */
   liveValidate?: boolean
   /** Invoked after a successful form submission */
   onSuccess?: () => void
   /** If defined and formRef is not supplied, shows a 'Cancel' button and runs this effect on click */
   onCancel?: () => void
+  /** Passes new form data upon each change to the form */
+  onChange?: (annotations: Record<string, any>) => void
 }
 
 /**
@@ -77,20 +92,23 @@ function getPatternPropertiesBannedKeys(
  * Renders a form for editing an entity's annotations. The component also supports supplying just a schema ID,
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
  */
-export const SchemaDrivenAnnotationEditor = (
+export function SchemaDrivenAnnotationEditor(
   props: SchemaDrivenAnnotationEditorProps,
-) => {
+) {
   const {
     entityId,
     schemaId,
+    validationSchema: validationSchemaFromProps,
     liveValidate = false,
     onSuccess = () => {
       /* no-op */
     },
     onCancel,
     formRef: formRefFromParent,
+    onChange,
   } = props
-  const formRef = useRef<Form<Record<string, unknown>>>(null)
+  const localRef = useRef<RJSF>(null)
+  const ref = formRefFromParent ?? localRef
 
   // Annotation fields fetched and modified via the form
   const [formData, setFormData] = React.useState<
@@ -99,7 +117,7 @@ export const SchemaDrivenAnnotationEditor = (
 
   // Client-side validation errors
   const [validationError, setValidationError] = React.useState<
-    AjvError[] | undefined
+    RJSFValidationError[] | undefined
   >(undefined)
 
   // Errors from the backend response
@@ -111,7 +129,9 @@ export const SchemaDrivenAnnotationEditor = (
   const [showConfirmation, setShowConfirmation] = React.useState(false)
 
   const { entityMetadata: entityJson, annotations } = useGetJson(entityId!, {
-    enabled: !!entityId && !formData, // once we have data, don't refetch. it would overwrite the user's entries
+    // Metadata is being edited, so don't refetch
+    staleTime: Infinity,
+    enabled: !!entityId,
     useErrorBoundary: true,
   })
 
@@ -145,19 +165,13 @@ export const SchemaDrivenAnnotationEditor = (
     },
   )
 
-  const { data: validationSchema, isLoading: isLoadingSchema } = useGetSchema(
-    schemaId ?? schema?.jsonSchemaVersionInfo.$id ?? '',
-    {
+  const { data: fetchedValidationSchema, isLoading: isLoadingSchema } =
+    useGetSchema(schemaId ?? schema?.jsonSchemaVersionInfo.$id ?? '', {
       enabled: !!schemaId || !!schema,
-      select: schema => {
-        // Have to remove the ID because of a bug in RJSF
-        // https://github.com/rjsf-team/react-jsonschema-form/issues/2471
-        delete schema.$id
-        return schema
-      },
       useErrorBoundary: true,
-    },
-  )
+    })
+
+  const validationSchema = validationSchemaFromProps || fetchedValidationSchema
 
   const isLoading = isLoadingBinding || isLoadingSchema
 
@@ -179,7 +193,7 @@ export const SchemaDrivenAnnotationEditor = (
   }
 
   return (
-    <div className="bootstrap-4-backport AnnotationEditor">
+    <div className="AnnotationEditor">
       {isLoading ? (
         <div className="LoadingPlaceholder">
           <SynapseSpinner size={30} />
@@ -215,16 +229,33 @@ export const SchemaDrivenAnnotationEditor = (
               </Alert>
             )}
           <Form
+            validator={validator}
             className="AnnotationEditorForm"
             liveValidate={liveValidate}
             noHtml5Validate={true}
-            ArrayFieldTemplate={CustomArrayFieldTemplate}
-            ObjectFieldTemplate={CustomObjectFieldTemplate}
-            FieldTemplate={CustomDefaultTemplate}
-            ref={formRefFromParent ?? formRef}
+            experimental_defaultFormStateBehavior={{
+              emptyObjectFields: 'skipDefaults',
+            }}
+            fields={{
+              ObjectField: CustomObjectField,
+            }}
+            templates={{
+              ArrayFieldDescriptionTemplate: ArrayFieldDescriptionTemplate,
+              ArrayFieldItemTemplate: ArrayFieldItemTemplate,
+              ArrayFieldTemplate: ArrayFieldTemplate,
+              ArrayFieldTitleTemplate: ArrayFieldTitleTemplate,
+              BaseInputTemplate: BaseInputTemplate,
+              FieldErrorTemplate: FieldErrorTemplate,
+              FieldTemplate: FieldTemplate,
+              ObjectFieldTemplate: ObjectFieldTemplate,
+              WrapIfAdditionalTemplate: WrapIfAdditionalTemplate,
+              ButtonTemplates: ButtonTemplate,
+              DescriptionFieldTemplate: DescriptionFieldTemplate,
+              /* Errors are displayed by an Alert component below, so we don't show the builtin ErrorList */
+              ErrorListTemplate: () => null,
+            }}
+            ref={ref}
             disabled={mutation.isLoading}
-            /* Errors are displayed by an Alert component below, so we don't show the builtin ErrorList */
-            ErrorList={() => null}
             schema={
               {
                 ...(validationSchema ?? {}),
@@ -237,19 +268,25 @@ export const SchemaDrivenAnnotationEditor = (
               } as JSONSchema7
             }
             uiSchema={{
-              'ui:DuplicateKeySuffixSeparator': '_',
+              'ui:options': {
+                copyable: true,
+                duplicateKeySuffixSeparator: '_',
+              },
               additionalProperties: {
                 'ui:field': AdditionalPropertiesSchemaField,
-                'ui:FieldTemplate': CustomAdditionalPropertiesFieldTemplate,
               },
             }}
             transformErrors={transformErrors}
             formData={formData}
             onChange={({ formData }) => {
+              if (onChange) {
+                onChange(formData)
+              }
               setFormData(formData)
               setValidationError(undefined)
             }}
-            onSubmit={({ formData, errors }) => {
+            onSubmit={({ formData, errors }, event) => {
+              event.preventDefault()
               if (errors && errors.length > 0) {
                 setValidationError(errors)
               }
@@ -257,7 +294,7 @@ export const SchemaDrivenAnnotationEditor = (
               setFormData(formData)
               submitChangedEntity()
             }}
-            onError={(errors: AjvError[]) => {
+            onError={(errors: RJSFValidationError[]) => {
               // invoked when submit is clicked and there are client-side validation errors
               setValidationError(errors)
               if (validationError && entityId) {
@@ -265,36 +302,38 @@ export const SchemaDrivenAnnotationEditor = (
               }
             }}
             widgets={{
-              TextWidget: CustomTextWidget,
-              DateTimeWidget: CustomDateTimeWidget,
-              SelectWidget: CustomSelectWidget,
-              CheckboxWidget: CustomBooleanWidget,
+              TextWidget: TextWidget,
+              DateTimeWidget: DateTimeWidget,
+              SelectWidget: SelectWidget,
+              CheckboxWidget: BooleanWidget,
             }}
           >
             {validationError && (
-              <Alert severity="error" sx={{ mt: 2 }}>
+              <Alert severity="error" sx={{ my: 2 }}>
                 <b>Validation errors found:</b>
                 <ul>
-                  {validationError.map((e: AjvError, index: number) => {
-                    return (
-                      <li key={index}>
-                        <b>{`${getFriendlyPropertyName(e)}: `}</b>{' '}
-                        {`${e.message}`}
-                      </li>
-                    )
-                  })}
+                  {validationError.map(
+                    (e: RJSFValidationError, index: number) => {
+                      return (
+                        <li key={index}>
+                          <b>{`${getFriendlyPropertyName(e)}: `}</b>{' '}
+                          {`${e.message}`}
+                        </li>
+                      )
+                    },
+                  )}
                 </ul>
               </Alert>
             )}
 
             {submissionError && showSubmissionError && (
-              <Alert severity="error">
+              <Alert severity="error" sx={{ my: 2 }}>
                 Annotations could not be updated: {submissionError.reason}
               </Alert>
             )}
             {!formRefFromParent && (
               <>
-                <hr />
+                <Divider sx={{ my: 2 }} />
                 <Box
                   display="flex"
                   justifyContent="space-between"
@@ -306,7 +345,7 @@ export const SchemaDrivenAnnotationEditor = (
                       onCancel && onCancel()
                     }}
                     onConfirm={() => {
-                      formRef.current!.submit()
+                      ref.current!.formElement.current!.requestSubmit()
                     }}
                     confirmButtonText={entityId ? 'Save' : 'Validate'}
                   />
@@ -333,7 +372,7 @@ export const SchemaDrivenAnnotationEditor = (
                   <div>
                     <ul>
                       {(validationError ?? []).map(
-                        (e: AjvError, index: number) => (
+                        (e: RJSFValidationError, index: number) => (
                           <li key={index}>
                             <b>{`${getFriendlyPropertyName(e)}: `}</b>{' '}
                             {`${e.message}`}
@@ -342,7 +381,9 @@ export const SchemaDrivenAnnotationEditor = (
                       )}
                     </ul>
                   </div>
-                  <div>Are you sure you want to save them?</div>
+                  <div>
+                    Are you sure you want to save the invalid annotations?
+                  </div>
                 </>
               }
               confirmButtonText="Save"
