@@ -66,6 +66,7 @@ import TwoFactorEnrollmentForm from './components/Authentication/TwoFactorEnroll
 import TwoFactorAuthSettingsPanel from './components/Authentication/TwoFactorAuthSettingsPanel'
 import { FullContextProvider } from './utils/context/FullContextProvider'
 import SubscriptionPage from './components/SubscriptionPage'
+import OrientationBanner from './components/OrientationBanner/OrientationBanner'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -134,6 +135,7 @@ const SynapseComponents = {
   TwoFactorBackupCodes,
   TwoFactorEnrollmentForm,
   SubscriptionPage,
+  OrientationBanner,
 }
 
 // Include the version in the build
