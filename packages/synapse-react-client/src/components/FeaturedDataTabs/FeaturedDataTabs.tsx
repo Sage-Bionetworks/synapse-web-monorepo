@@ -2,7 +2,9 @@ import React from 'react'
 import { useState } from 'react'
 import FeaturedDataPlots, { FeaturedDataPlotsProps } from './FeaturedDataPlots'
 import { Icon } from '../row_renderers/utils'
-import { Button } from 'react-bootstrap'
+import NoContentAvailable from '../SynapseTable/NoContentAvailable'
+import { Button } from '@mui/material'
+import { Paper } from '@mui/material'
 
 export type FeatureDataTabProps = {
   title: string // type of data being shown, used for the tab title and explore all button
@@ -54,23 +56,30 @@ const FeaturedDataTabs: React.FunctionComponent<
       {/* tab content */}
       {selectedTabProps && (
         <>
-          <FeaturedDataPlots
-            key={`${sql}-${selectedTabIndex}`}
-            {...selectedTabProps.plotsConfig}
-            rgbIndex={rgbIndex}
-            sql={sql}
-            explorePagePath={selectedTabProps.explorePagePath}
-          />
-          {selectedTabProps.explorePagePath && (
-            <div className="bootstrap-4-backport FeaturedDataTabs__explore-all">
-              <Button
-                variant="secondary"
-                size="lg"
-                href={selectedTabProps.explorePagePath}
-              >
-                View All {selectedTabProps.exploreObjectType}
-              </Button>
-            </div>
+          {selectedTabProps.plotsConfig.configs.length > 0 ? (
+            <>
+              <FeaturedDataPlots
+                key={`${sql}-${selectedTabIndex}`}
+                {...selectedTabProps.plotsConfig}
+                rgbIndex={rgbIndex}
+                sql={sql}
+                explorePagePath={selectedTabProps.explorePagePath}
+              />
+              {selectedTabProps.explorePagePath && (
+                <div className="FeaturedDataTabs__explore-all">
+                  <Button
+                    variant="contained"
+                    href={selectedTabProps.explorePagePath}
+                  >
+                    View All {selectedTabProps.exploreObjectType}
+                  </Button>
+                </div>
+              )}
+            </>
+          ) : (
+            <Paper sx={{ p: 2 }}>
+              <NoContentAvailable />
+            </Paper>
           )}
         </>
       )}
