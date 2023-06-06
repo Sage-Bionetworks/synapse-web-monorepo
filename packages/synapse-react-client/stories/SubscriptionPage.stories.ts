@@ -6,6 +6,9 @@ import { getHandlers } from '../mocks/msw/handlers'
 const meta = {
   title: 'Synapse/Following/SubscriptionPage',
   component: SubscriptionPage,
+  parameters: {
+    stack: 'mock',
+  },
 } satisfies Meta
 export default meta
 

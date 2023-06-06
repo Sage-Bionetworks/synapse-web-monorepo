@@ -2,14 +2,13 @@ import React from 'react'
 import ResearchProjectForm, {
   ResearchProjectFormProps,
 } from '../../../src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/ResearchProjectForm'
-import {
-  ACCESS_TYPE,
-  ManagedACTAccessRequirement,
-} from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { mockManagedACTAccessRequirement } from '../../../mocks/mockAccessRequirements'
+import {
+  mockManagedACTAccessRequirement,
+  mockManagedACTAccessRequirementWikiPageKey,
+} from '../../../mocks/mockAccessRequirements'
 import { SynapseClient } from '../../../src'
 import {
   MOCK_EMPTY_RESEARCH_PROJECT,
@@ -17,6 +16,8 @@ import {
 } from '../../../mocks/dataaccess/MockResearchProject'
 import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
 import { SynapseClientError } from '../../../src/utils/SynapseClientError'
+import * as AccessRequirementListUtils from '../../../src/components/AccessRequirementList/AccessRequirementListUtils'
+import * as MarkdownSynapseModule from '../../../src/components/Markdown/MarkdownSynapse'
 
 const CREATED_RESEARCH_PROJECT_ID = MOCK_RESEARCH_PROJECT.id
 
@@ -32,6 +33,20 @@ const mockSaveResearchProject = jest
       ...submitted,
     }),
   )
+
+const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
+
+const mockMarkdownSynapse = jest
+  .spyOn(MarkdownSynapseModule, 'default')
+  .mockReturnValue(<div data-testid={MARKDOWN_SYNAPSE_TEST_ID}></div>)
+
+jest
+  .spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement')
+  .mockResolvedValue(mockManagedACTAccessRequirementWikiPageKey)
+
+jest
+  .spyOn(AccessRequirementListUtils, 'useCanShowManagedACTWikiInWizard')
+  .mockReturnValue(true)
 
 const mockOnSave = jest.fn()
 const mockOnHide = jest.fn()
@@ -62,6 +77,7 @@ async function setUp(props: ResearchProjectFormProps) {
     name: 'Save changes',
   })
   const cancelButton = screen.getByRole('button', { name: 'Cancel' })
+  const wiki = screen.queryByTestId(MARKDOWN_SYNAPSE_TEST_ID)
   return {
     component,
     user,
@@ -70,6 +86,7 @@ async function setUp(props: ResearchProjectFormProps) {
     iduInput,
     saveChangesButton,
     cancelButton,
+    wiki,
   }
 }
 
@@ -259,5 +276,21 @@ describe('ResearchProjectForm', () => {
     within(alert).getByText(errorReason)
 
     consoleErrorSpy.mockRestore()
+  })
+
+  it('Shows the AR wiki', async () => {
+    const { wiki } = await setUp({
+      ...defaultProps,
+    })
+
+    expect(wiki).toBeInTheDocument()
+    expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+      expect.objectContaining({
+        wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
+        ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
+        objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
+      }),
+      expect.anything(),
+    )
   })
 })

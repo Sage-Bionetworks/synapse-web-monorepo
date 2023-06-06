@@ -24,7 +24,10 @@ import {
   MOCK_DATA_ACCESS_REQUEST,
   MOCK_DATA_ACCESS_REQUEST_ID,
 } from '../../../mocks/dataaccess/MockDataAccessRequest'
-import { mockManagedACTAccessRequirement } from '../../../mocks/mockAccessRequirements'
+import {
+  mockManagedACTAccessRequirement,
+  mockManagedACTAccessRequirementWikiPageKey,
+} from '../../../mocks/mockAccessRequirements'
 import { mockSubmittedSubmission } from '../../../mocks/dataaccess/MockSubmission'
 import {
   AccessorChange,
@@ -36,10 +39,18 @@ import userEvent from '@testing-library/user-event'
 import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
 import * as UserSearchBoxV2Module from '../../../src/components/UserSearchBoxV2'
 import { SynapseClientError } from '../../../src/utils/SynapseClientError'
+import * as MarkdownSynapseModule from '../../../src/components/Markdown/MarkdownSynapse'
+import * as AccessRequirementListUtils from '../../../src/components/AccessRequirementList/AccessRequirementListUtils'
 
 jest
   .spyOn(SynapseClient, 'getUserProfile')
   .mockResolvedValue(mockUserProfileData)
+
+const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
+
+const mockMarkdownSynapse = jest
+  .spyOn(MarkdownSynapseModule, 'default')
+  .mockReturnValue(<div data-testid={MARKDOWN_SYNAPSE_TEST_ID}></div>)
 
 jest.spyOn(SynapseClient, 'getUserProfileById').mockImplementation((_, id) => {
   return Promise.resolve(
@@ -70,6 +81,14 @@ const mockUpdateDataAccessRequest = jest
   .mockImplementation(req => Promise.resolve(req))
 
 jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue({ requestedFiles: [] })
+
+jest
+  .spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement')
+  .mockResolvedValue(mockManagedACTAccessRequirementWikiPageKey)
+
+jest
+  .spyOn(AccessRequirementListUtils, 'useCanShowManagedACTWikiInWizard')
+  .mockReturnValue(true)
 
 const mockCreateSubmission = jest
   .spyOn(SynapseClient, 'submitDataAccessRequest')
@@ -483,6 +502,20 @@ describe('RequestDataAccessStep2: basic functionality', () => {
         subjectType: RestrictableObjectType.ENTITY,
       },
       MOCK_ACCESS_TOKEN,
+    )
+  })
+
+  it('Shows the AR wiki', async () => {
+    mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+    await renderComponent(defaultProps)
+    await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
+    expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+      expect.objectContaining({
+        wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
+        ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
+        objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
+      }),
+      expect.anything(),
     )
   })
 })

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
@@ -40,6 +40,7 @@ import {
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
 import { AccessRequirementListItem } from './AccessRequirementListItem'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
 
 export type AccessRequirementListProps = {
   entityId: string // will show this entity info
@@ -143,6 +144,7 @@ export default function AccessRequirementList(
     ids: [entityId],
     type: 'ENTITY_HEADER',
   }
+  const canShowManagedACTWikiInWizard = useCanShowManagedACTWikiInWizard()
 
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
@@ -152,14 +154,14 @@ export default function AccessRequirementList(
       enabled: Boolean(!accessRequirementFromProps && teamId),
     },
   )
-  const { data: fetchedRequirementsForEntity } = useGetAccessRequirementsForEntity(
-    entityId,
-    {
+  const { data: fetchedRequirementsForEntity } =
+    useGetAccessRequirementsForEntity(entityId, {
       enabled: Boolean(!accessRequirementFromProps && entityId && !teamId),
-    },
-  )
+    })
 
-  const fetchedRequirements = teamId ? fetchedRequirementsForTeam : fetchedRequirementsForEntity
+  const fetchedRequirements = teamId
+    ? fetchedRequirementsForTeam
+    : fetchedRequirementsForEntity
 
   const accessRequirements = accessRequirementFromProps ?? fetchedRequirements
 
@@ -294,6 +296,14 @@ export default function AccessRequirementList(
     </>
   )
 
+  const dialogWidth =
+    [
+      RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
+      RequestDataStep.UPDATE_RESEARCH_PROJECT,
+    ].includes(requestDataStep) && canShowManagedACTWikiInWizard
+      ? 'xl'
+      : 'md'
+
   let renderContent = content
   if (renderAsModal) {
     switch (requestDataStep) {
@@ -363,7 +373,7 @@ export default function AccessRequirementList(
         renderContent = content
     }
     return (
-      <Dialog maxWidth="md" fullWidth open={true} onClose={onHide}>
+      <Dialog maxWidth={dialogWidth} fullWidth open={true} onClose={onHide}>
         {renderContent}
       </Dialog>
     )
