@@ -84,7 +84,7 @@ describe('CreateAccessTokenModal tests', () => {
 
   it('does not dispatch request when there is no token name or permission', async () => {
     const { user, tokenInput, checkboxes, initialButtons } = setUp(props)
-    expect(screen.queryByTestId('ErrorBanner')).not.toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 
     // Try to create with no name or permissions
     await user.click(checkboxes.view)
@@ -93,14 +93,14 @@ describe('CreateAccessTokenModal tests', () => {
     expect(checkboxes.download.checked).toBe(false)
     await user.click(initialButtons.create)
 
-    await screen.findByTestId('ErrorBanner')
+    await screen.findByRole('alert')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
   })
 
   it('does not dispatch request when there is a token name, but no permissions', async () => {
     const { user, tokenInput, checkboxes, initialButtons } = setUp(props)
-    expect(screen.queryByTestId('ErrorBanner')).not.toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 
     // Try to create with name, but no permissions
     await user.click(checkboxes.view)
@@ -110,14 +110,14 @@ describe('CreateAccessTokenModal tests', () => {
     await user.type(tokenInput, 'some name')
 
     await user.click(initialButtons.create)
-    await screen.findByTestId('ErrorBanner')
+    await screen.findByRole('alert')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
   })
 
   it('does not dispatch request when there is a permission, but no token name', async () => {
     const { user, tokenInput, checkboxes, initialButtons } = setUp(props)
-    expect(screen.queryByTestId('ErrorBanner')).not.toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 
     // Try to create with permisions, but no name
     expect(tokenInput).toHaveTextContent('')
@@ -125,7 +125,7 @@ describe('CreateAccessTokenModal tests', () => {
 
     // Submit and verify that an error is shown
     await user.click(initialButtons.create)
-    await screen.findByTestId('ErrorBanner')
+    await screen.findByRole('alert')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
   })
@@ -143,7 +143,7 @@ describe('CreateAccessTokenModal tests', () => {
     await user.type(tokenInput, 'some name')
     await user.click(initialButtons.create)
 
-    await screen.findByTestId('ErrorBanner')
+    await screen.findByRole('alert')
     screen.getByText(errorReason)
   })
 

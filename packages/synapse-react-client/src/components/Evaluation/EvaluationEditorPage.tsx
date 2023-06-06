@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { EvaluationEditor } from './EvaluationEditor'
 import { EvaluationRoundEditorList } from './EvaluationRoundEditorList'
-import { Alert, Button } from 'react-bootstrap'
+import { Alert, Button } from '@mui/material'
 
 export type EvaluationEditorPageProps = {
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */
@@ -68,18 +68,14 @@ const FakeEvaluationRoundEditorList: React.FunctionComponent = () => {
   return (
     <div data-testid="FakeEvaluationRoundEditorList">
       {showEvaluationNotExistAlert ? (
-        <Alert
-          dismissible={false}
-          show={true}
-          variant={'info'}
-          transition={false}
-        >
+        <Alert severity={'info'}>
           Evaluation Rounds can be edited once the Evaluation has been created.
         </Alert>
       ) : (
         <Button
           className="add-round-button"
-          variant="primary"
+          variant="contained"
+          color="primary"
           onClick={() => {
             setShowEvaluationNotExistAlert(true)
           }}
