@@ -13,7 +13,7 @@ import useGetEntityBundle from '../../../synapse-queries/entity/useEntityBundle'
 import { VersionableEntity } from '@sage-bionetworks/synapse-types'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { displayToast } from '../../ToastMessage/ToastMessage'
-import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
+import { SchemaDrivenAnnotationEditor } from '../../SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
 import { Button, Tooltip } from '@mui/material'
@@ -46,7 +46,7 @@ export function EntityModal(props: EntityModalProps) {
     initialTab = EntityModalTabs.METADATA,
     showTabs = true,
   } = props
-  const annotationEditorFormRef = useRef<Form<Record<string, unknown>>>(null)
+  const annotationEditorFormRef = useRef<Form>(null)
 
   const [currentTab, setCurrentTab] = useState<EntityModalTabs>(initialTab)
   const [isInEditMode, setIsInEditMode] = useState(false)

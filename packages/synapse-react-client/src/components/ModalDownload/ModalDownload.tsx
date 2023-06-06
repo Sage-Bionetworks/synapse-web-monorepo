@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '@mui/material'
 import Form, { IChangeEvent } from '@rjsf/core'
+import validator from '@rjsf/validator-ajv8'
 import SynapseClient from '../../synapse-client'
 import {
   DownloadFromTableRequest,
@@ -24,7 +25,7 @@ type ModalDownloadState = {
   isLoading: boolean
   step: number
   data?: DownloadFromTableResult
-  formData: any
+  formData: Record<string, unknown>
 }
 
 export type ModalDownloadProps = {
@@ -139,6 +140,7 @@ export class ModalDownload extends React.Component<
         content={
           <>
             <Form
+              validator={validator}
               id="modal-download-form"
               schema={formSchemaArray[this.state.step]}
               uiSchema={formSchemaUIArray[this.state.step]}

@@ -3,16 +3,28 @@ import { SortConfiguration } from './CardContainerLogic'
 import { useQueryContext } from './QueryContext/QueryContext'
 import { SortDirection, SortItem } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
-import Select from 'react-select'
-import {
-  EnumOption,
-  findValueOption,
-  Control,
-} from './entity/annotations/CustomSelectWidget'
+import Select, { components, ControlProps, GroupBase } from 'react-select'
+import { findValueOption } from './SchemaDrivenAnnotationEditor/widget/SelectWidget'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 
 export type QuerySortSelectorProps = {
   sortConfig: SortConfiguration
+}
+
+export type EnumOption = { value: string; label: string }
+
+/**
+ * We want to apply the 'form-control' bootstrap class to react-select's Control component, and the easiest way to do that is to make a custom version
+ */
+export const Control = ({
+  children,
+  ...rest
+}: ControlProps<any, boolean, GroupBase<any>>) => {
+  return (
+    <components.Control {...rest} className="form-control">
+      {children}
+    </components.Control>
+  )
 }
 
 const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({

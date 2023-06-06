@@ -1,7 +1,9 @@
 import React from 'react'
 import _ from 'lodash-es'
 import { Engine, EngineResult } from 'json-rules-engine'
-import { default as Form, UiSchema, AjvError, ErrorListProps } from '@rjsf/core'
+import Form from '@rjsf/core'
+import validator from '@rjsf/validator-ajv8'
+import { UiSchema, ErrorListProps, RJSFValidationError } from '@rjsf/utils'
 import {
   Step,
   StepStateEnum,
@@ -85,7 +87,7 @@ export default class SynapseForm extends React.Component<
   navAction: NavActionEnum = NavActionEnum.NONE
   uiSchema: UiSchema
   nextStep: Step | undefined
-  extraErrors: AjvError[] = []
+  extraErrors: RJSFValidationError[] = []
 
   isNewForm = (formData: IFormData): boolean => {
     return (
@@ -414,7 +416,7 @@ export default class SynapseForm extends React.Component<
   }
 
   setStepStatusForFailedValidation = (
-    errors: AjvError[],
+    errors: RJSFValidationError[],
     steps: Step[],
     isWizard: boolean,
     formData: IFormData,
@@ -666,8 +668,8 @@ export default class SynapseForm extends React.Component<
     formData: IFormData,
     currentStep: Step,
     allSteps: Step[],
-  ): Promise<AjvError[]> => {
-    const errors: AjvError[] = []
+  ): Promise<RJSFValidationError[]> => {
+    const errors: RJSFValidationError[] = []
 
     //default - running on current step
     let rules = currentStep.validationRules || []
@@ -723,7 +725,7 @@ export default class SynapseForm extends React.Component<
       const result: EngineResult = await engine.run(data)
       const validationEvents = result.events as IRulesValidationEvent[]
       validationEvents.forEach(event => {
-        const err: AjvError = {
+        const err: RJSFValidationError = {
           ...event.params,
           ...{
             params: {},
@@ -739,7 +741,7 @@ export default class SynapseForm extends React.Component<
     return errors
   }
 
-  transformErrors = (errors: AjvError[]): AjvError[] => {
+  transformErrors = (errors: RJSFValidationError[]): RJSFValidationError[] => {
     // if we are not in wizard mode and not trying to submit or validate we just want to skip
     // over the errors and just set the step status
     // https://github.com/rjsf-team/react-jsonschema-form/issues/1263
@@ -775,21 +777,24 @@ export default class SynapseForm extends React.Component<
 
     const reqErrors = errors.filter(error => error.name === 'required')
     reqErrors.forEach(error => {
-      const parentPath = error.property.substring(
-        0,
-        error.property.lastIndexOf('.'),
-      )
-      _.remove(errors, (error: AjvError) => {
-        return (
-          error.property.indexOf(parentPath) > -1 &&
-          (error.name === 'enum' || error.name === 'oneOf')
+      if (error.property) {
+        const parentPath = error.property.substring(
+          0,
+          error.property.lastIndexOf('.'),
         )
-      })
+        _.remove(errors, (error: RJSFValidationError) => {
+          return (
+            (error.property || '').indexOf(parentPath) > -1 &&
+            (error.name === 'enum' || error.name === 'oneOf')
+          )
+        })
+      }
     })
 
     return errors.map(error => {
-      error.message = error.message.replace('property', 'field')
-
+      if (error.message) {
+        error.message = error.message.replace('property', 'field')
+      }
       return error
     })
   }
@@ -900,6 +905,7 @@ export default class SynapseForm extends React.Component<
                   } `}
                 >
                   <Form
+                    validator={validator}
                     noHtml5Validate
                     className={
                       this.state.doShowHelp
@@ -919,9 +925,13 @@ export default class SynapseForm extends React.Component<
                       })
                     }
                     showErrorList={
-                      !!this.state.doShowErrors || !!this.props.isWizardMode
+                      this.state.doShowErrors || this.props.isWizardMode
+                        ? 'top'
+                        : false
                     }
-                    ErrorList={this.renderErrorListTemplate}
+                    templates={{
+                      ErrorListTemplate: this.renderErrorListTemplate,
+                    }}
                     transformErrors={this.transformErrors}
                     ref={this.formRef}
                     disabled={
@@ -990,7 +1000,7 @@ export default class SynapseForm extends React.Component<
 // used by renderErrorListTemplate
 function renderTransformedErrorObject(
   steps: Step[],
-  error: AjvError,
+  error: RJSFValidationError,
   uiSchema: UiSchema,
   i: number,
   schema: any,
