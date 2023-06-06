@@ -1,0 +1,15 @@
+import{S as p}from"./StandaloneLoginForm-df233524.js";import{d as e}from"./ToastMessage-86aa22ee.js";import{s as n}from"./StorybookComponentWrapper-0f6b5a8a.js";import"./jsx-runtime-095bf462.js";import"./index-8db94870.js";import"./_commonjsHelpers-042e6b4d.js";import"./LoginFlowBackButton-22a3c07c.js";import"./SynapseConstants-b4e8f39a.js";import"./OrientationBanner-f49a763f.js";import"./FullWidthAlert-81b4d296.js";import"./AlertTitle-78f79fc0.js";import"./objectWithoutPropertiesLoose-4f48578a.js";import"./extends-98964cd2.js";import"./styled-55b76ab0.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-29d231ba.js";import"./createSvgIcon-c95ac3df.js";import"./Paper-18b94b55.js";import"./IconButton-693072d1.js";import"./ButtonBase-808eaa85.js";import"./emotion-react.browser.esm-6281246a.js";import"./assertThisInitialized-081f9914.js";import"./inheritsLoose-c82a83d4.js";import"./TransitionGroupContext-f2b81dde.js";import"./useForkRef-f2aa3d66.js";import"./useIsFocusVisible-bbf13f29.js";import"./Typography-2ef1cd4b.js";import"./extendSxProp-a7783ced.js";import"./Stack-eddb74b2.js";import"./Box-402daddb.js";import"./useTheme-c3897ed6.js";import"./Grow-aadb01f1.js";import"./isHostComponent-fa76b8d9.js";import"./index-8ce4a492.js";import"./utils-fc362ac6.js";import"./ClickAwayListener-36b79525.js";import"./Tooltip-8e07f653.js";import"./Button-79de9a0b.js";import"./SynapseClient-a4e4b778.js";import"./getEndpoint-ac94413e.js";import"./Link-f298db32.js";import"./isArray-5e3f9107.js";import"./dayjs.min-8d4ef725.js";import"./index-58d3fd43.js";import"./CheckCircleTwoTone-8c851187.js";import"./inputBaseClasses-529452bb.js";import"./Fade-fa965c6f.js";import"./useMutation-0e9148bd.js";import"./TextField-d07f3639.js";import"./InputLabel-65463e27.js";import"./ownerWindow-2c76219e.js";import"./isMuiElement-08f54e3c.js";import"./index-953d39fd.js";import"./Popover-a2db6266.js";import"./Modal-99a88e12.js";import"./Backdrop-0086dc9a.js";import"./getScrollbarSize-ac846fe6.js";import"./createChainedFunction-0bab83cf.js";import"./MenuList-7e44d0fb.js";import"./TextField-50ff84d4.js";import"./IconSvg-ef9afca2.js";import"./ErrorOutlined-77fe1f54.js";import"./InfoOutlined-c40241a8.js";import"./hasClass-ec9efd32.js";import"./uniqueId-4d05949d.js";import"./toString-cc90cb98.js";import"./isSymbol-7c514724.js";const Lo={title:"Authentication/Login",component:p},o={args:{sessionCallback:()=>{n().then(({profile:m})=>{e(`You are currently logged in as ${m.userName}`,"info",{autoCloseInMs:5e3})})},renderBackButton:!0}};var r,t,i;o.parameters={...o.parameters,docs:{...(r=o.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  args: {
+    sessionCallback: () => {
+      sessionChangeHandler().then(({
+        profile
+      }) => {
+        displayToast(\`You are currently logged in as \${profile.userName}\`, 'info', {
+          autoCloseInMs: 5000
+        });
+      });
+    },
+    renderBackButton: true
+  }
+}`,...(i=(t=o.parameters)==null?void 0:t.docs)==null?void 0:i.source}}};const So=["LoginDemo"];export{o as LoginDemo,So as __namedExportsOrder,Lo as default};
+//# sourceMappingURL=Login.stories-47e23370.js.map
