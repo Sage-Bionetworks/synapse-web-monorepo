@@ -95,11 +95,19 @@ export const defaultMuiThemeOptions: ThemeOptions = {
             // Overrides a base style in bootstrap 3
             color: theme.palette[ownerState.color || 'primary'].contrastText,
           },
+          '&:visited': {
+            // Overrides an SWC style
+            color: theme.palette[ownerState.color || 'primary'].contrastText,
+          },
         }),
         outlined: ({ theme, ownerState }) => ({
           '&:hover': {
             // Overrides a base style in Bootstrap 3
             color: theme.palette[ownerState.color || 'primary'][800],
+          },
+          '&:visited': {
+            // Overrides an SWC style
+            color: theme.palette[ownerState.color || 'primary'].contrastText,
           },
         }),
         text: ({ theme, ownerState }) => ({
@@ -111,6 +119,10 @@ export const defaultMuiThemeOptions: ThemeOptions = {
                 ? ownerState.color
                 : theme.palette[ownerState.color || 'primary']['main'],
             textDecorationThickness: '2px',
+          },
+          '&:visited': {
+            // Overrides an SWC style
+            color: theme.palette[ownerState.color || 'primary'].contrastText,
           },
         }),
       },
