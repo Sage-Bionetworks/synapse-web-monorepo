@@ -13,7 +13,6 @@ import {
   usageRequirementsSql,
   vendorSql,
   catalogNumberSql,
-  mtaRequiredSql,
   toolApplicationsSql,
   mutationsSql,
   publicationsV2Sql,
