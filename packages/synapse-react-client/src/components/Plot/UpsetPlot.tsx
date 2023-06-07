@@ -21,7 +21,7 @@ import getColorPalette from '../ColorGradient'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen'
-import { Button } from 'react-bootstrap'
+import LargeButton from '../../components/styled/LargeButton'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export type UpsetPlotProps = {
@@ -161,7 +161,7 @@ export const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
       {!isLoading && data && (
         <SizeMe>
           {({ size }) => (
-            <div className="UpsetPlot bootstrap-4-backport">
+            <div className="UpsetPlot">
               <UpSetJS
                 sets={data.sets}
                 combinations={data.combinations}
@@ -183,9 +183,13 @@ export const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
               />
               {summaryLink && summaryLinkText && (
                 <div className="UpsetPlot__summary">
-                  <Button variant="secondary" size="lg" href={summaryLink}>
+                  <LargeButton
+                    color="secondary"
+                    variant="contained"
+                    href={summaryLink}
+                  >
                     {summaryLinkText}
-                  </Button>
+                  </LargeButton>
                 </div>
               )}
             </div>

@@ -2,9 +2,6 @@
 @use 'sass:color';
 
 .UserCardListGroups {
-  a {
-    color: SRC.$primary-action-color;
-  }
   &__Desktop {
     .control-container {
       background: white;
@@ -38,6 +35,8 @@
           font-weight: bold;
           flex-grow: 1;
           flex-shrink: 1;
+          text-transform: capitalize;
+          box-sizing: border-box;
         }
         .gap-fill {
           max-height: unset;

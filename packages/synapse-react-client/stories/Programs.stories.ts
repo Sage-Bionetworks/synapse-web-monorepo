@@ -4,6 +4,9 @@ import Programs from '../src/components/Programs/Programs'
 const meta = {
   title: 'Home Page/Programs',
   component: Programs,
+  parameters: {
+    chromatic: { viewports: [600, 1200] },
+  },
 } satisfies Meta
 
 export default meta

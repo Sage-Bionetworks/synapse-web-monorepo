@@ -2,7 +2,7 @@ import React from 'react'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import UserCardListGroupsMobile from './UserCardListGroups.Mobile'
 import UserCardListGroupsDesktop from './UserCardListGroups.Desktop'
-import { Button } from 'react-bootstrap'
+import LargeButton from '../../../components/styled/LargeButton'
 import { UserCardSize } from '../../../utils/SynapseConstants'
 
 export type UserCardListGroupsProps = {
@@ -20,11 +20,7 @@ export default function UserCardListGroups(props: UserCardListGroupsProps) {
   const { summaryLink, summaryLinkText, ...rest } = props
   const showDesktop = useShowDesktop()
   return (
-    <div
-      className={`bootstrap-4-backport UserCardListGroups${
-        showDesktop ? '__Desktop' : ''
-      }`}
-    >
+    <div className={`UserCardListGroups${showDesktop ? '__Desktop' : ''}`}>
       <div>
         {showDesktop ? (
           <UserCardListGroupsDesktop {...rest} />
@@ -33,9 +29,13 @@ export default function UserCardListGroups(props: UserCardListGroupsProps) {
         )}
         {summaryLink && summaryLinkText && (
           <div className="UserCardListGroups__summary">
-            <Button variant="secondary" size="lg" href={summaryLink}>
+            <LargeButton
+              color="secondary"
+              variant="contained"
+              href={summaryLink}
+            >
               {summaryLinkText}
-            </Button>
+            </LargeButton>
           </div>
         )}
       </div>

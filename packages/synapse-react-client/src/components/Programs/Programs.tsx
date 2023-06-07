@@ -68,11 +68,7 @@ export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
     queryResultBundle,
   )
   return (
-    <div
-      className={`bootstrap-4-backport Programs${
-        showDesktop ? '__Desktop' : ''
-      }`}
-    >
+    <div className={`Programs${showDesktop ? '__Desktop' : ''}`}>
       {queryResultBundle?.queryResult!.queryResults.rows.map(el => {
         const values = el.values as string[]
         if (values.some(value => value === null)) {

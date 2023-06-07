@@ -1,6 +1,6 @@
 import React from 'react'
 import { ProgramsDataProps } from './Programs'
-import { Button } from 'react-bootstrap'
+import LargeButton from '../../components/styled/LargeButton'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
 
 export default function ProgramsDesktop({
@@ -40,9 +40,14 @@ export default function ProgramsDesktop({
       </div>
       <div className="Programs__Card__summary">
         <p> {summary} </p>
-        <Button variant="secondary" size="lg" href={exploreLink}>
+        <LargeButton
+          color="secondary"
+          variant="contained"
+          href={exploreLink}
+          sx={{ width: '120px', marginLeft: 0 }}
+        >
           Explore
-        </Button>
+        </LargeButton>
       </div>
     </div>
   )

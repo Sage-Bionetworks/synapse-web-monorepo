@@ -1,7 +1,7 @@
 import React from 'react'
 import { ProgramsDataProps } from './Programs'
 import ExpandableContent from '../home_page/ExpandableContent'
-import { Button } from 'react-bootstrap'
+import LargeButton from '../../components/styled/LargeButton'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
 
 export default function ProgramsMobile({
@@ -37,9 +37,14 @@ export default function ProgramsMobile({
         </p>
       )}
       <p>{summary}</p>
-      <Button variant="secondary" size="lg" href={exploreLink}>
+      <LargeButton
+        color="secondary"
+        variant="contained"
+        href={exploreLink}
+        sx={{ marginLeft: 0 }}
+      >
         Explore
-      </Button>
+      </LargeButton>
     </div>
   )
   return <ExpandableContent title={titleElement} content={content} />

@@ -5,6 +5,9 @@ import UserCardListGroups from '../src/components/UserCardList/UserCardListGroup
 const meta = {
   title: 'Home Page/UserCardListGroups',
   component: UserCardListGroups,
+  parameters: {
+    chromatic: { viewports: [600, 1200] },
+  },
 } satisfies Meta<typeof UserCardListGroups>
 
 export default meta

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 import { useGetPersonalAccessTokensInfinite } from '../../synapse-queries/user/usePersonalAccessToken'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen'
@@ -34,7 +34,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
   const tokenRecords = infiniteData?.pages.flatMap(page => page.results) ?? []
 
   return (
-    <div className="PersonalAccessTokenPage bootstrap-4-backport">
+    <div className="PersonalAccessTokenPage">
       <div className="PersonalAccessTokenPage__Header">
         <div className="PersonalAccessTokenPage__Header__CopyText">
           <h1>{title}</h1>
@@ -42,7 +42,8 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
         </div>
         <div className="PersonalAccessTokenPage__Header__CreateButton">
           <Button
-            variant="sds-primary"
+            variant="contained"
+            color="primary"
             onClick={() => setShowCreateTokenModal(true)}
           >
             Create New Token
@@ -78,7 +79,8 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
               <div className="PersonalAccessTokenPage__CardList__LoadMore">
                 <Button
                   className="PersonalAccessTokenPage__CardList__LoadMore__Button"
-                  variant="sds-primary"
+                  variant="contained"
+                  color="primary"
                   onClick={() => {
                     fetchNextPage()
                   }}

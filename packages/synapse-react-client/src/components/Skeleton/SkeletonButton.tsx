@@ -1,9 +1,8 @@
 import React from 'react'
-import Skeleton from '@mui/material/Skeleton'
-import { Button } from 'react-bootstrap'
+import { Button, Skeleton } from '@mui/material'
 
 /**
- * Skeleton of a bootstrap button. The `placeholderText` prompt can be used to customise the length to roughly match the existing button
+ * Skeleton of a MUI button. The `placeholderText` prompt can be used to customise the length to roughly match the existing button
  */
 export const SkeletonButton: React.FC<{ placeholderText?: string }> = ({
   placeholderText = 'Placeholder',

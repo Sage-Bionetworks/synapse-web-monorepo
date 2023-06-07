@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import {
+  DATASET,
   FUNDER,
   GENERIC_CARD,
   OBSERVATION_CARD,
@@ -63,6 +64,14 @@ export const FunderCard: Story = {
   args: {
     sql: `SELECT * FROM syn16858699`,
     type: FUNDER,
+    limit: 3,
+  },
+}
+
+export const DatasetCard: Story = {
+  args: {
+    sql: `SELECT * FROM syn16859580`,
+    type: DATASET,
     limit: 3,
   },
 }
