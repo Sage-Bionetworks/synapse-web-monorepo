@@ -88,6 +88,8 @@ export const palette: PaletteOptions = {
     200: '#f1f3f5',
     100: '#fbfbfc',
   }),
+  darkPrimary: generatePalette('#0b1218'), // primary-900
+  light: { ...generatePalette('#f8f9fa'), contrastText: '#22252a' }, // grey-1000
   success: { main: '#32a330' },
   info: { main: '#017fa5' },
   warning: { main: '#cc9f00' },
