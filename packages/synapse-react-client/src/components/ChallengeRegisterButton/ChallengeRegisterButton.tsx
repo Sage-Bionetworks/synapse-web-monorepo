@@ -6,7 +6,7 @@ import { useSynapseContext } from '../../utils'
 import {
   useGetCurrentUserProfile,
   useGetEntityChallenge,
-  useGetUserSubmissionTeams,
+  useGetUserSubmissionTeamsInfinite,
 } from '../../synapse-queries'
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import {
@@ -112,7 +112,7 @@ const ChallengeRegisterButton = ({
     },
   )
 
-  useGetUserSubmissionTeams(challenge?.id ?? '0', 500, {
+  useGetUserSubmissionTeamsInfinite(challenge?.id ?? '0', 500, {
     enabled: !!challenge && !!accessToken,
     onSettled: (data: PaginatedIds | undefined, error) => {
       if (data) {

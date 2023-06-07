@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import ChallengeTeamWizard from '../src/components/ChallengeTeamWizard/ChallengeTeamWizard'
 
 const meta = {
-  title: 'Synapse/ChallengeTeamWizard',
+  title: 'Synapse/Challenge/ChallengeTeamWizard',
   component: ChallengeTeamWizard,
 } satisfies Meta
 export default meta

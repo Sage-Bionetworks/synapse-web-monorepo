@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import ChallengeDetailPage from '../src/components/ChallengeDetailPage/ChallengeDetailPage'
 
 const meta = {
-  title: 'Synapse/ChallengeDetailPage',
+  title: 'Synapse/Challenge/ChallengeDetailPage',
   component: ChallengeDetailPage,
   parameters: {
     backgrounds: {
