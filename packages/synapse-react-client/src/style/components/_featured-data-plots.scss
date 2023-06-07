@@ -14,7 +14,7 @@
 @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
   .FeaturedDataPlots {
     &__queryPerCard,
-    &__singleQuery .SRC-wrapper {
+    &__singleQuery .SingleQueryFacetPlotsCards {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;

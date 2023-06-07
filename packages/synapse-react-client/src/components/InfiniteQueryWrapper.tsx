@@ -224,17 +224,9 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
    * Render the children without any formatting
    */
   const { children } = props
-  const loadingCursorClass =
-    isLoadingNewBundle || isFetchingNextPage ? 'SRC-logo-cursor' : ''
   return (
     <QueryContextProvider queryContext={context}>
-      <div
-        className={`SRC-wrapper ${loadingCursorClass} ${
-          isFacetsAvailable ? 'has-facets' : ''
-        }`}
-      >
-        {children}
-      </div>
+      {children}
     </QueryContextProvider>
   )
 }
