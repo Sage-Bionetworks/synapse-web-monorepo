@@ -7,6 +7,8 @@ export const WideButton: StyledComponent<ButtonProps> = styled(Button, {
   minWidth: '168px',
   padding: '10px',
   fontSize: '16px',
+  // TODO: remove this line after we have removed bootstrap
+  '&:hover': { color: theme.palette.common.white }, // otherwise tab-focus.less overrides color
 }))
 
 export default WideButton
