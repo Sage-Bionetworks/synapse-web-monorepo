@@ -8,6 +8,7 @@ const meta: Meta = {
   title:
     'Governance/Data Access Request Flow/Requirements/ValidationRequirement',
   component: ValidationRequirement,
+  parameters: { stack: 'mock' },
 } satisfies Meta
 
 export default meta

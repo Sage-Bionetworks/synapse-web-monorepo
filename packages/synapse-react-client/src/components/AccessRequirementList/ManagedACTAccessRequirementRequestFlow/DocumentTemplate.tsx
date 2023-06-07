@@ -48,7 +48,12 @@ export default function DocumentTemplate(props: DownloadDocumentTemplateProps) {
         alignItems={'center'}
         justifyContent={'flex-start'}
         gap={2}
-        sx={{ backgroundColor: 'tertiary.100', p: 2.5, my: 2 }}
+        sx={{
+          backgroundColor: 'tertiary.100',
+          p: 2.5,
+          my: 2,
+          flexWrap: { xs: 'nowrap', md: 'wrap-reverse' },
+        }}
       >
         <DirectDownloadButton
           variant={'outlined'}

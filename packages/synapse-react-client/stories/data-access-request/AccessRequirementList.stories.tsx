@@ -20,10 +20,10 @@ import {
   AccessRequirementStatus,
   ApprovalState,
   SubmissionState,
+  TwoFactorAuthStatus,
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import AccessRequirementList from '../../src/components/AccessRequirementList/AccessRequirementList'
-import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
 import {
   getAccessRequirementEntityBindingHandlers,
@@ -33,6 +33,7 @@ import {
 import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
 import { mockApprovedSubmission } from '../../mocks/dataaccess/MockSubmission'
 import { getCurrentUserCertifiedValidatedHandler } from '../../mocks/msw/handlers/userProfileHandlers'
+import { getResearchProjectHandlers } from '../../mocks/msw/handlers/researchProjectHandlers'
 
 const meta: Meta = {
   title: 'Governance/Data Access Request Flow/AccessRequirementList',
@@ -43,6 +44,7 @@ const meta: Meta = {
       defaultValue: true,
     },
   },
+  parameters: { stack: 'mock' },
   render: args => (
     <SynapseContextConsumer>
       {context => (
@@ -54,11 +56,6 @@ const meta: Meta = {
               : undefined,
           }}
         >
-          <p>
-            First, use the StackChanger component to switch to the Mocked Data
-            stack
-          </p>
-
           <AccessRequirementList {...args} />
         </SynapseContextProvider>
       )}
@@ -209,6 +206,7 @@ export const HasUnmetRequirements: Story = {
           },
         }),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
+        ...getResearchProjectHandlers(MOCK_REPO_ORIGIN),
         rest.post(
           `${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`,
           async (req, res, ctx) => {

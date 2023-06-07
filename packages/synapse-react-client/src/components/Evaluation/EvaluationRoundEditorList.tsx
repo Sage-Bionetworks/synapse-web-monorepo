@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useListState } from '../../utils/hooks/useListState'
 import { EvaluationRoundEditor } from './EvaluationRoundEditor'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 import {
   convertEvaluationRoundToInput,
   EvaluationRoundInput,
@@ -111,7 +111,8 @@ export const EvaluationRoundEditorList: React.FunctionComponent<
       <div>
         <Button
           className="add-round-button"
-          variant="primary"
+          variant="contained"
+          color="primary"
           onClick={() => {
             appendToEvaluationRoundInputList({
               reactListKey: shortid(),

@@ -32,7 +32,7 @@ export const studyCardConfiguration: CardConfiguration = {
     title: 'studyName',
     subTitle: 'dataContributor',
     icon: 'Access_Type',
-    description: 'studyDescription',
+    description: 'studyAbstract',
     secondaryLabels: [
       'dataTypeAll',
       'studyFocus',
@@ -88,7 +88,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
       synapseConfigArray: [
         {
           name: 'Markdown',
-          columnName: 'studyMetadata',
+          columnName: 'studyDescription',
           title: 'Study Description',
           props: {},
         },

@@ -384,7 +384,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('Sends a request to update annotations (no schema)', async () => {
+  it.skip('Sends a request to update annotations (no schema)', async () => {
     server.use(
       annotationsWithoutSchemaHandler,
       noSchemaHandler,

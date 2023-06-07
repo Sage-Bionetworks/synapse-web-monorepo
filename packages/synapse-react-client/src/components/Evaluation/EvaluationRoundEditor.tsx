@@ -3,16 +3,8 @@ import {
   EvaluationRoundLimit,
 } from '@sage-bionetworks/synapse-types'
 import React, { useEffect, useState } from 'react'
-import {
-  Alert,
-  Button,
-  Card,
-  Col,
-  Form,
-  FormControl,
-  FormGroup,
-  Row,
-} from 'react-bootstrap'
+import { Alert, Button } from '@mui/material'
+import { Card, Col, Form, FormControl, FormGroup, Row } from 'react-bootstrap'
 import dayjs, { Dayjs } from 'dayjs'
 import { CalendarWithIconFormGroup } from './CalendarWithIconFormGroup'
 import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitOptionsList'
@@ -312,8 +304,10 @@ export const EvaluationRoundEditor: React.FunctionComponent<
             <Row className="mb-3">
               <Col>
                 <Button
-                  variant="link"
-                  className="advanced-limits-link font-weight-bold"
+                  variant="text"
+                  color="primary"
+                  sx={{ fontSize: '16px !important' }}
+                  className="advanced-limits-link"
                   onClick={() => setAdvancedMode(!advancedMode)}
                 >
                   Advanced Limits
@@ -343,10 +337,9 @@ export const EvaluationRoundEditor: React.FunctionComponent<
                 <Col>
                   <Alert
                     className="save-success-alert"
-                    dismissible={true}
-                    variant="success"
-                    transition={false}
+                    severity="success"
                     onClose={() => setShowSaveSuccess(false)}
+                    sx={{ mb: '20px' }}
                   >
                     Successfully saved.
                   </Alert>
@@ -357,6 +350,8 @@ export const EvaluationRoundEditor: React.FunctionComponent<
             <Row className="mt-3">
               <Col>
                 <Button
+                  variant="contained"
+                  color="primary"
                   className="save-button float-right border-0"
                   onClick={onSaveButtonClick}
                 >

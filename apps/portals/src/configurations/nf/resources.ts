@@ -16,7 +16,6 @@ export const fundingAgencySql = `SELECT funderName as "Funding Agency" FROM syn2
 export const usageRequirementsSql = `SELECT usageRequirements as "Usage Restrictions" FROM syn26450069 WHERE usageRequirements IS NOT NULL`
 export const vendorSql = `SELECT vendorName as "Vendor", vendorUrl as "Vendor Url" FROM syn26450043 WHERE vendorName IS NOT NULL`
 export const catalogNumberSql = `SELECT catalogNumber as "Catalog Number", catalogNumberURL as "Catalog Number URL" FROM syn26450043 WHERE catalogNumber IS NOT NULL`
-export const mtaRequiredSql = `SELECT mTARequired as "MTA Requirements" FROM syn26450069 WHERE mTARequired IS NOT NULL`
 export const toolApplicationsSql = `SELECT applications as "Tool Applications" FROM syn26470588 WHERE applications IS NOT NULL`
 export const toolStudySql = `SELECT * FROM syn26461958`
 export const mutationsSql =

@@ -7,12 +7,8 @@ import RejectDataAccessRequestModal from '../src/components/dataaccess/RejectDat
 const meta = {
   title: 'Governance/RejectDataAccessRequestModal',
   component: RejectDataAccessRequestModal,
-} satisfies Meta
-export default meta
-type Story = StoryObj<typeof meta>
-
-export const Demo: Story = {
   parameters: {
+    stack: 'mock',
     msw: {
       handlers: [
         ...getHandlersForTableQuery(
@@ -22,5 +18,11 @@ export const Demo: Story = {
       ],
     },
   },
+} satisfies Meta
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Demo: Story = {
+  name: 'RejectDataAccessRequestModal',
   args: { open: true, tableId: 'syn50683097' },
 }

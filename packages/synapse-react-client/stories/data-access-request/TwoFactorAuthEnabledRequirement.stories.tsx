@@ -11,6 +11,7 @@ const meta: Meta = {
   title:
     'Governance/Data Access Request Flow/Requirements/TwoFactorAuthEnabledRequirement',
   component: TwoFactorAuthEnabledRequirement,
+  parameters: { stack: 'mock' },
   render: args => (
     <SynapseContextConsumer>
       {context => (

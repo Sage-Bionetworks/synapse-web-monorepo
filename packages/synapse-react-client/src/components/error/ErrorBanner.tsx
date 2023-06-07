@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, Button } from 'react-bootstrap'
+import { Box, Button, Collapse, Stack } from '@mui/material'
 import {
   ErrorBoundary,
   ErrorBoundaryPropsWithComponent,
@@ -9,8 +9,8 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { Optional } from '../../utils/types/Optional'
 import { useJiraIssueCollector } from '../JiraIssueCollector'
+import FullWidthAlert from '../FullWidthAlert'
 import SignInButton from '../SignInButton'
-import { Collapse } from '@mui/material'
 
 type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null
@@ -49,19 +49,22 @@ export const ClientError = (props: { error: SynapseClientError }) => {
   } else if (accessDenied) {
     return (
       <>
-        <div>{YOU_ARE_NOT_AUTHORIZED_MESSAGE}</div>
-        <Button
-          variant={'tertiary'}
-          style={{ fontSize: '12px' }}
-          onClick={() => setShowDetailedError(show => !show)}
-        >
-          {showDetailedError ? 'Hide' : 'Show'} details
-        </Button>
-        <div>
-          <Collapse in={showDetailedError}>
+        <Stack direction="row" spacing={2}>
+          <Box display="flex" alignItems="center">
+            {YOU_ARE_NOT_AUTHORIZED_MESSAGE}
+          </Box>
+          <Button
+            variant="text"
+            onClick={() => setShowDetailedError(show => !show)}
+          >
+            {showDetailedError ? 'Hide' : 'Show'} details
+          </Button>
+        </Stack>
+        <Collapse in={showDetailedError}>
+          <Box paddingTop={1}>
             <pre>{error.reason}</pre>
-          </Collapse>
-        </div>
+          </Box>
+        </Collapse>
       </>
     )
   } else {
@@ -87,25 +90,23 @@ export const ErrorBanner = (props: ErrorBannerProps) => {
     stringError = error
   }
   return (
-    <div data-testid="ErrorBanner" className="Error bootstrap-4-backport">
-      <Alert
-        dismissible={false}
-        show={true}
-        variant={'danger'}
-        transition={false}
-      >
-        <p>
+    <FullWidthAlert
+      variant={'danger'}
+      isGlobal={false}
+      description={
+        <>
           {synapseClientError && <ClientError error={synapseClientError} />}
           {jsError && jsError.message}
           {stringError && stringError}
-        </p>
-        {reloadButtonFn && (
-          <Button variant="default" onClick={reloadButtonFn}>
-            Reload
-          </Button>
-        )}
-      </Alert>
-    </div>
+        </>
+      }
+      primaryButtonConfig={
+        reloadButtonFn && {
+          text: 'Reload',
+          onClick: reloadButtonFn,
+        }
+      }
+    />
   )
 }
 
@@ -114,7 +115,7 @@ export const ErrorFallbackComponent: React.FunctionComponent<FallbackProps> = ({
   resetErrorBoundary,
 }) => {
   return (
-    <div className="bootstrap-4-backport SRC-marginBottomTop">
+    <div className="SRC-marginBottomTop">
       <ErrorBanner
         error={error}
         reloadButtonFn={resetErrorBoundary}
