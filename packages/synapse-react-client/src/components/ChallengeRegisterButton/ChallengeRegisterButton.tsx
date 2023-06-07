@@ -48,7 +48,6 @@ const ChallengeRegisterButton = ({
 
       const loggedOut =
         userProfile.ownerId === ANONYMOUS_PRINCIPAL_ID.toString()
-      console.log({ userProfile, loggedIn, loggedOut })
       setIsLoggedIn(loggedIn)
       setIsLoggedOut(loggedOut)
     }
@@ -65,7 +64,6 @@ const ChallengeRegisterButton = ({
   useGetCurrentUserProfile({
     enabled: !isLoggedOut && !userProfile,
     onSettled: (data, error) => {
-      // console.log('settled profile', { data }, { error })
       if (data) {
         setUserProfile(data)
       }
@@ -79,7 +77,6 @@ const ChallengeRegisterButton = ({
   useGetEntityChallenge(projectId, {
     enabled: isLoggedIn && !challenge,
     onSettled: (data, error) => {
-      // console.log('settled', { data }, { error })
       if (data) {
         setChallenge(data)
       }
@@ -97,7 +94,6 @@ const ChallengeRegisterButton = ({
     {
       enabled: !!challenge && !!userProfile,
       onSettled: (data, error) => {
-        // console.log('useGetIsUserMemberOfTeam', data, error)
         if (data === null) {
           // User is not a member of the participant team
           setIsRegistered(false)
@@ -119,7 +115,6 @@ const ChallengeRegisterButton = ({
   useGetUserSubmissionTeams(challenge?.id ?? '0', 500, {
     enabled: !!challenge && !!accessToken,
     onSettled: (data: PaginatedIds | undefined, error) => {
-      // console.log('settled', { data }, { error })
       if (data) {
         setHasSubmissionTeam(data.results.length > 0)
       }
@@ -129,8 +124,6 @@ const ChallengeRegisterButton = ({
       setLoading(false)
     },
   })
-
-  // console.log({ userProfile, isRegistered, hasSubmissionTeam })
 
   if (loading) {
     return <SpinnerButton showSpinner>Loading...</SpinnerButton>
