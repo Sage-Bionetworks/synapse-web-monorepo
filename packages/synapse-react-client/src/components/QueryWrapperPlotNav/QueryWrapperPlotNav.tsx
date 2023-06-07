@@ -191,7 +191,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                     <Box
                       className="QueryWrapperPlotNav"
                       sx={{
-                        cursor: isLoadingNewBundle ? 'wait' : 'unset',
+                        '*': {
+                          cursor: isLoadingNewBundle ? 'wait' : undefined,
+                        },
                       }}
                     >
                       <div
