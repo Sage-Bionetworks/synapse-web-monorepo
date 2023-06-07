@@ -51,7 +51,6 @@ export function ChallengeDataDownload({
   )
 
   const onAddClick = useCallback(() => {
-    console.log({ selectedEntities })
     const entities = selectedEntities.toArray().map(entity => {
       return {
         fileEntityId: entity[0],
