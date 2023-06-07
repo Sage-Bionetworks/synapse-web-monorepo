@@ -16,6 +16,7 @@ const ASYNC_START = '/async/start'
 const ASYNC_GET = '/async/get'
 
 export const ENTITY = `${REPO}/entity`
+export const ENTITY_ALIAS = (alias: string) => `${REPO}/entity/alias/${alias}`
 export const ENTITY_ID = (id: string | number) => `${REPO}/entity/${id}`
 /**
  * Some services allow (but do not require) you to specify the version in the path.

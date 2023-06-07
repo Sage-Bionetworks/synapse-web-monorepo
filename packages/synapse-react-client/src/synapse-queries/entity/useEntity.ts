@@ -28,6 +28,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
+import { EntityId } from '@sage-bionetworks/synapse-types'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
@@ -227,6 +228,18 @@ export function useGetEntityPath(
   return useQuery<EntityPath, SynapseClientError>(
     keyFactory.getEntityPathQueryKey(entityId),
     () => SynapseClient.getEntityPath(entityId, accessToken),
+    options,
+  )
+}
+
+export function useGetEntityAlias(
+  alias: string,
+  options?: UseQueryOptions<EntityId | null, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery<EntityId | null, SynapseClientError>(
+    keyFactory.getEntityAliasQueryKey(alias),
+    () => SynapseClient.getEntityAlias(alias, accessToken),
     options,
   )
 }

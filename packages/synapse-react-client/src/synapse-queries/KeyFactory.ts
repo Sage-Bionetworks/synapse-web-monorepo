@@ -252,6 +252,10 @@ export class KeyFactory {
     return this.getKey(entityQueryKeyObjects.path(id))
   }
 
+  public getEntityAliasQueryKey(alias: string) {
+    return this.getKey('entityAlias', alias)
+  }
+
   public getEntityBoundJsonSchemaQueryKey(id: string) {
     return this.getKey(entityQueryKeyObjects.boundJSONSchema(id))
   }
@@ -527,6 +531,10 @@ export class KeyFactory {
 
   public getSearchEntitiesQueryKey(query: SearchQuery) {
     return this.getKey('searchEntities', query)
+  }
+
+  public getTeamQueryKey(teamId: string) {
+    return this.getKey('team', teamId)
   }
 
   public getTeamListQueryKey(teamIds: string) {

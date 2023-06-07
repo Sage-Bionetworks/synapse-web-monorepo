@@ -26,6 +26,7 @@ import {
   ENTITY_ACCESS,
   ENTITY_ACCESS_REQUIREMENTS,
   ENTITY_ACTIONS_REQUIRED,
+  ENTITY_ALIAS,
   ENTITY_BUNDLE_V2,
   ENTITY_HEADER_BY_ID,
   ENTITY_HEADERS,
@@ -56,6 +57,7 @@ import {
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  TEAM,
   TEAM_ID_MEMBER_ID,
   TEAM_ID_MEMBER_ID_WITH_NOTIFICATION,
   TEAM_MEMBER,
@@ -1247,6 +1249,18 @@ export const getEntityHeaders = (
 }
 
 /**
+ * Lookup an Entity ID using an alias.
+ * https://rest-docs.synapse.org/rest/GET/entity/alias/alias.html
+ */
+export const getEntityAlias = (alias: string, accessToken?: string) => {
+  return doGet<EntityId>(
+    ENTITY_ALIAS(alias),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get the EntityHeader for a single entity
  * https://rest-docs.synapse.org/rest/GET/entity/id/type.html
  */
@@ -1687,6 +1701,21 @@ export const deleteMemberFromTeam = (
 ) => {
   return doDelete(
     `/repo/v1/team/${teamId}/member/${userId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get Team that matches the given ID.
+ * https://rest-docs.synapse.org/rest/GET/team/id.html
+ */
+export const getTeam = (
+  id: string | number,
+  accessToken?: string | undefined,
+) => {
+  return doGet<Team>(
+    TEAM(id),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
