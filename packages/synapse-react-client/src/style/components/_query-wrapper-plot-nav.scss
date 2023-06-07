@@ -11,12 +11,6 @@
     > * {
       grid-column: 1 / span 2;
     }
-    &.has-facets {
-      grid-template-columns: 25% 75%;
-      > * {
-        grid-column: 1 / span 2;
-      }
-    }
 
     // column (depends on if we are showing facet filters)
     .isShowingFacetFilters {
