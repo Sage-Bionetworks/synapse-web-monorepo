@@ -58,10 +58,10 @@ describe('ComplexMenu Tests', function () {
   afterEach(() => jest.clearAllMocks())
   it('Renders an icon button', async () => {
     renderComponent(defaultProps)
-    const buttonWrapperForTooltip = await screen.findByLabelText(
+    const buttonWrapperForTooltipAndButton = await screen.findAllByLabelText(
       'Icon button tooltip',
     )
-    const iconButton = within(buttonWrapperForTooltip).getByRole('button')
+    const iconButton = buttonWrapperForTooltipAndButton[1]
 
     await userEvent.click(iconButton)
 

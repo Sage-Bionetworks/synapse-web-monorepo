@@ -81,10 +81,10 @@ describe('EntityActionMenu tests', () => {
       layout,
     })
 
-    const buttonWrapperForTooltip = await screen.findByLabelText(
+    const buttonWrapperForTooltipAndButton = await screen.findAllByLabelText(
       'action 1 text',
     )
-    const iconButton = within(buttonWrapperForTooltip).getByRole('button')
+    const iconButton = buttonWrapperForTooltipAndButton[1]
 
     await userEvent.click(iconButton)
     expect(onClickFn).toHaveBeenCalledWith(ACTION_1)
