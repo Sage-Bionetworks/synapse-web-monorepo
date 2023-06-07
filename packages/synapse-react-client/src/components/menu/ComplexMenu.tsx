@@ -48,6 +48,7 @@ export function ComplexMenu(props: ComplexMenuProps) {
                 color="primary"
                 disabled={iconButton.disabled}
                 onClick={iconButton.onClick}
+                aria-label={iconButton.tooltipText}
               >
                 <IconSvg icon={iconButton.icon} wrap={false} />
               </IconButton>
