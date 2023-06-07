@@ -1,4 +1,5 @@
-import { Alert, Button, Col, Dropdown, Form, Row } from 'react-bootstrap'
+import { Alert, Button } from '@mui/material'
+import { Col, Dropdown, Form, Row } from 'react-bootstrap'
 import React, { useEffect, useState } from 'react'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
@@ -185,16 +186,20 @@ export const EvaluationEditor: React.FunctionComponent<
           {showSaveSuccess && (
             <Alert
               className="save-success-alert"
-              dismissible={true}
-              variant="success"
-              transition={false}
+              severity="success"
               onClose={() => setShowSaveSuccess(false)}
+              sx={{ marginBottom: '20px' }}
             >
               Successfully saved.
             </Alert>
           )}
           <div className="d-flex justify-content-end">
-            <Button className="save-button" onClick={onSave}>
+            <Button
+              variant="contained"
+              color="primary"
+              className="save-button"
+              onClick={onSave}
+            >
               Save
             </Button>
           </div>

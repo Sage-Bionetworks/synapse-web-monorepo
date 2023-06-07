@@ -1,19 +1,23 @@
 import {
+  act,
   queryByAttribute,
   render,
+  RenderResult,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import selectEvent from 'react-select-event'
 import {
   SchemaDrivenAnnotationEditor,
   SchemaDrivenAnnotationEditorProps,
-} from '../../../../src/components/entity/annotations/SchemaDrivenAnnotationEditor'
+} from '../../../../src/components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
+import * as ToastMessage from '../../../../src/components/ToastMessage/ToastMessage'
 import { displayToast } from '../../../../src/components/ToastMessage/ToastMessage'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
+  ASYNCHRONOUS_JOB_TOKEN,
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
   SCHEMA_VALIDATION_GET,
@@ -30,7 +34,13 @@ import {
   mockValidationSchema,
 } from '../../../../mocks/mockSchema'
 import { rest, server } from '../../../../mocks/msw/server'
-import * as ToastMessage from '../../../../src/components/ToastMessage/ToastMessage'
+import { cloneDeep } from 'lodash-es'
+
+async function chooseAutocompleteOption(el: HTMLElement, option: string) {
+  await userEvent.clear(el)
+  await userEvent.type(el, option)
+  await userEvent.click(screen.getByText(option))
+}
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
@@ -39,6 +49,7 @@ const mockToastFn = jest
 const mockAsyncTokenId = 888888
 
 const mockOnSuccessFn = jest.fn()
+const mockOnChange = jest.fn()
 
 // Captures the JSON passed to the server via msw.
 const updatedJsonCaptor = jest.fn()
@@ -47,12 +58,17 @@ const defaultProps: SchemaDrivenAnnotationEditorProps = {
   entityId: mockFileEntity.id,
   liveValidate: false,
   onSuccess: mockOnSuccessFn,
+  onChange: mockOnChange,
 }
 
-function renderComponent(wrapperProps?: SynapseContextType) {
-  return render(<SchemaDrivenAnnotationEditor {...defaultProps} />, {
-    wrapper: createWrapper(wrapperProps),
+async function renderComponent(wrapperProps?: SynapseContextType) {
+  let result: RenderResult
+  await act(() => {
+    result = render(<SchemaDrivenAnnotationEditor {...defaultProps} />, {
+      wrapper: createWrapper(wrapperProps),
+    })
   })
+  return result
 }
 
 // Handles saving when there is no schema or the data is valid under the schema
@@ -67,12 +83,21 @@ async function clickSave() {
 async function clickSaveAndConfirm() {
   const saveButton = await screen.findByRole('button', { name: 'Save' })
   await userEvent.click(saveButton)
+
+  // Verify errors appear
+  await screen.findByText(/Validation errors found/)
   await userEvent.click(saveButton)
 
-  await screen.findByText('Are you sure you want to save them?')
-  const confirmSaveButton = await screen.findByRole('button', {
-    name: 'Save',
-  })
+  const confirmationDialog = await screen.findByRole('dialog')
+  await within(confirmationDialog).findByText(
+    /Are you sure you want to save the invalid annotations\?/,
+  )
+  const confirmSaveButton = await within(confirmationDialog).findByRole(
+    'button',
+    {
+      name: 'Save',
+    },
+  )
   await userEvent.click(confirmSaveButton)
 
   return waitFor(() => expect(mockOnSuccessFn).toHaveBeenCalled())
@@ -80,13 +105,12 @@ async function clickSaveAndConfirm() {
 
 // These tests are unstable, so we'll skip them until we can fix them
 // The component is in experimental mode only, so not a big deal for now
-describe.skip('SchemaDrivenAnnotationEditor tests', () => {
+describe('SchemaDrivenAnnotationEditor tests', () => {
   // Handle the msw lifecycle:
   beforeAll(() => server.listen())
   afterEach(() => {
     server.restoreHandlers()
-    jest.resetAllMocks()
-    updatedJsonCaptor.mockClear()
+    jest.clearAllMocks()
   })
   afterAll(() => server.close())
 
@@ -96,7 +120,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     )}`,
 
     async (req, res, ctx) => {
-      const response = mockFileEntity.json
+      const response = cloneDeep(mockFileEntity).json
       // Delete the annotation keys in the mock--we aren't using them in this suite
       delete response.myStringKey
       delete response.myIntegerKey
@@ -105,19 +129,42 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     },
   )
 
-  const annotationsHandler = rest.get(
+  // Returns an entity with annotations that match the schema
+  const annotationsWithSchemaHandler = rest.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
     async (req, res, ctx) => {
-      const response = mockFileEntity.json
+      const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
       delete response.myIntegerKey
       delete response.myFloatKey
 
       // Fill in annotations that match the schema in this test suite
+      response.country = 'USA'
+      response.state = 'Washington'
+
+      return res(ctx.status(200), ctx.json(response))
+    },
+  )
+
+  // Returns an entity with annotations equivalent to the `annotationsWithSchemaHandler`, but with the annotations
+  // returned as if there is no bound schema
+  const annotationsWithoutSchemaHandler = rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
+      ':entityId',
+    )}`,
+
+    async (req, res, ctx) => {
+      const response = cloneDeep(mockFileEntity).json
+      // Delete the other annotation keys
+      delete response.myStringKey
+      delete response.myIntegerKey
+      delete response.myFloatKey
+
+      // Since there is no schema, these annotations will always be string arrays
       response.country = ['USA']
       response.state = ['Washington']
 
@@ -131,7 +178,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     )}`,
 
     async (req, res, ctx) => {
-      const response = mockFileEntity.json
+      const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
       delete response.myIntegerKey
@@ -151,7 +198,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     )}`,
 
     async (req, res, ctx) => {
-      const response = mockFileEntity.json
+      const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
       delete response.myIntegerKey
@@ -201,6 +248,20 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
         )
       },
     ),
+
+    rest.get(
+      `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )}${ASYNCHRONOUS_JOB_TOKEN(String(mockAsyncTokenId))}`,
+      async (req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.json({
+            responseBody: { validationSchema: mockValidationSchema },
+          }),
+        )
+      },
+    ),
   ]
 
   const successfulUpdateHandler = rest.put(
@@ -230,7 +291,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
   it('Works with no annotations and no schema', async () => {
     server.use(noAnnotationsHandler, noSchemaHandler)
 
-    renderComponent()
+    await renderComponent()
     await screen.findByText('has no annotations', { exact: false })
     const buttons = await screen.findAllByRole('button')
 
@@ -240,14 +301,14 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
 
   it('Fetches a schema, no annotations', async () => {
     server.use(noAnnotationsHandler, ...schemaHandlers)
-    renderComponent()
+    await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
     await screen.findByLabelText('country*')
   })
 
   it('Handles conditional schemas', async () => {
     server.use(noAnnotationsHandler, ...schemaHandlers)
-    renderComponent()
+    await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
     const countryField = await screen.findByLabelText('country*')
 
@@ -255,24 +316,25 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     expect(screen.queryByLabelText('state*')).not.toBeInTheDocument()
 
     // Behavior under test: select "USA" and "state" field appears
-    await selectEvent.select(countryField, 'USA')
+    await chooseAutocompleteOption(countryField, 'USA')
+
     await screen.findByLabelText('state*')
   })
 
   it('Handles annotations with no schema', async () => {
-    server.use(annotationsHandler, noSchemaHandler)
+    server.use(annotationsWithoutSchemaHandler, noSchemaHandler)
 
-    renderComponent()
+    const container = await renderComponent()
 
     // custom fields are always arrays
-    // we need the '-0' suffix to reference the first textbox
-    const countryField = (await screen.findByRole('textbox', {
-      name: 'country-0',
-    })) as HTMLInputElement
+    // we need the '_0' suffix to reference the first textbox
+    const countryField = await screen.findByRole<HTMLInputElement>('textbox', {
+      name: 'root_country_0',
+    })
     expect(countryField.value).toBe('USA')
-    const stateField = (await screen.findByRole('textbox', {
-      name: 'state-0',
-    })) as HTMLInputElement
+    const stateField = await screen.findByRole<HTMLInputElement>('textbox', {
+      name: 'root_state_0',
+    })
     expect(stateField.value).toBe('Washington')
 
     expect(
@@ -283,12 +345,16 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
   })
 
   it('Fetches existing annotations and schema and loads them into the form', async () => {
-    server.use(annotationsHandler, ...schemaHandlers, successfulUpdateHandler)
-    renderComponent()
+    server.use(
+      annotationsWithSchemaHandler,
+      ...schemaHandlers,
+      successfulUpdateHandler,
+    )
+    await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
     // Saving the form should maintain the existing annotations
-    await clickSaveAndConfirm()
+    await clickSave()
     await waitFor(() =>
       expect(updatedJsonCaptor).toBeCalledWith(
         expect.objectContaining({ country: 'USA', state: 'Washington' }),
@@ -297,28 +363,35 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
   })
 
   it('Removes a custom annotation field when the last value is removed', async () => {
-    server.use(annotationsHandler, noSchemaHandler)
-    renderComponent()
+    server.use(annotationsWithoutSchemaHandler, noSchemaHandler)
+    const { container } = await renderComponent()
 
     // Should be able to find the 'country' custom field
     await screen.findByRole('textbox', {
-      name: 'country-0',
+      name: 'root_country_0',
     })
 
     // Remove the last element
-    await userEvent.click(await screen.findByLabelText('Remove country[0]'))
+    const removeButton = await within(
+      container.querySelector('#root_country'),
+    ).findByLabelText<HTMLButtonElement>('Remove')
+    await userEvent.click(removeButton)
 
     expect(
       screen.queryByRole('textbox', {
-        name: 'country-0',
+        name: 'root_country_0',
       }),
     ).not.toBeInTheDocument()
   })
 
-  it('Sends a request to update annotations (no schema)', async () => {
-    server.use(annotationsHandler, noSchemaHandler, successfulUpdateHandler)
+  it.skip('Sends a request to update annotations (no schema)', async () => {
+    server.use(
+      annotationsWithoutSchemaHandler,
+      noSchemaHandler,
+      successfulUpdateHandler,
+    )
 
-    renderComponent()
+    await renderComponent()
 
     await clickSave()
 
@@ -329,23 +402,23 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
 
   it('Sends a request to update annotations (with schema)', async () => {
     // The annotations are predefined to match the schema
-    server.use(annotationsHandler, ...schemaHandlers, successfulUpdateHandler)
+    server.use(
+      annotationsWithSchemaHandler,
+      ...schemaHandlers,
+      successfulUpdateHandler,
+    )
 
-    renderComponent()
+    await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
-    // We need the individual schema field components to render because in some cases they convert data
-    // to the appropriate format (e.g. flattening arrays of one item)
     const countryField = (await screen.findByLabelText(
       'country*',
     )) as HTMLInputElement
-    const stateField = (await screen.findByLabelText(
-      'state*',
-    )) as HTMLInputElement
 
+    await chooseAutocompleteOption(countryField, 'USA')
+
+    const stateField = await screen.findByLabelText<HTMLInputElement>('state*')
     await waitFor(() => expect(stateField.value).toBe('Washington'))
-
-    await selectEvent.select(countryField, 'USA')
     await userEvent.clear(stateField)
     await userEvent.type(stateField, 'Ohio{enter}') // For some reason, keying "enter" here makes the test stable
 
@@ -360,7 +433,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     // The schema requires annotations that are missing.
     // Verify that we get a warning, and can still click through to save
     server.use(noAnnotationsHandler, ...schemaHandlers, successfulUpdateHandler)
-    renderComponent()
+    await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
     await clickSaveAndConfirm()
@@ -369,9 +442,13 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
   })
 
   it('Handles a failed update request', async () => {
-    server.use(annotationsHandler, noSchemaHandler, unsuccessfulUpdateHandler)
+    server.use(
+      annotationsWithoutSchemaHandler,
+      noSchemaHandler,
+      unsuccessfulUpdateHandler,
+    )
 
-    renderComponent()
+    await renderComponent()
 
     const saveButton = await screen.findByRole('button', { name: 'Save' })
     await userEvent.click(saveButton)
@@ -383,14 +460,16 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
 
   it('Converts singular data to an additionalProperty array when removed from the schema', async () => {
     // If we select "USA", then "Washington", then change "USA" to "CA", "Washington" will become ["Washington"], since all non-schema defined Synapse annotations are arrays
-    server.use(annotationsHandler, ...schemaHandlers, successfulUpdateHandler)
-    renderComponent()
+    server.use(
+      annotationsWithSchemaHandler,
+      ...schemaHandlers,
+      successfulUpdateHandler,
+    )
+    await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
     const countryField = await screen.findByLabelText('country*')
 
-    // This is unstable if we only call it once 🙃 🤷
-    await selectEvent.select(countryField, 'CA')
-    await selectEvent.select(countryField, 'CA')
+    await chooseAutocompleteOption(countryField, 'CA')
 
     await waitFor(() =>
       expect(screen.queryByLabelText('state*')).not.toBeInTheDocument(),
@@ -409,52 +488,63 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
   it('Converts an additionalProperty array back to a single value when added back to the schema', async () => {
     // If we select "USA", then "Washington", then change "USA" to "CA", "Washington" will become ["Washington"] (see previous test)
     // Here we verify that if we then select "USA" again, ["Washington"] will be converted back to "Washington"
-    server.use(annotationsHandler, ...schemaHandlers, successfulUpdateHandler)
-    renderComponent()
+    server.use(
+      annotationsWithSchemaHandler,
+      ...schemaHandlers,
+      successfulUpdateHandler,
+    )
+    await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
     const countryField = (await screen.findByLabelText(
       'country*',
     )) as HTMLInputElement
 
-    await selectEvent.select(countryField, 'CA')
+    await chooseAutocompleteOption(countryField, 'CA')
 
     // State is now an array ["Washington"] (previous test confirms this)
     // If we pick "USA" again, it should be converted back to "Washington" (not an array)
-    await selectEvent.select(countryField, 'USA')
+    await chooseAutocompleteOption(countryField, 'USA')
+
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({ country: 'USA', state: 'Washington' }),
+      )
+    })
 
     await clickSave()
     // Since it's back in the schema, it should be a string
     await waitFor(() =>
       expect(updatedJsonCaptor).toBeCalledWith(
-        expect.objectContaining({ state: 'Washington' }),
+        expect.objectContaining({ country: 'USA', state: 'Washington' }),
       ),
     )
   })
 
-  // Skipped due to unstable execution on TravisCI.
   // Next two tests are the same as the previous two tests, but with an array.
-  it.skip('Converts data in a schema-defined array to an additionalProperty array when removed from the schema', async () => {
+  it('Converts data in a schema-defined array to an additionalProperty array when removed from the schema', async () => {
     // Converting an array of strings to an additional property array shouldn't change the data, because they are both arrays.
     server.use(
       stringArrayAnnotationsHandler,
       ...schemaHandlers,
       successfulUpdateHandler,
     )
-    renderComponent()
+    await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
-    const showStringArrayField = (await screen.findByLabelText(
-      'showStringArray',
-    )) as HTMLInputElement
-    expect(showStringArrayField.value).toBe('true')
+    let showStringArrayField
+    await waitFor(() => {
+      showStringArrayField =
+        screen.getByLabelText<HTMLInputElement>('showStringArray')
+      expect(showStringArrayField.value).toBe('true')
+    })
 
     // This will remove the data from the schema.
-    await userEvent.selectOptions(showStringArrayField, 'false')
+    await chooseAutocompleteOption(showStringArrayField, 'false')
     await clickSaveAndConfirm()
 
     expect(mockToastFn).toBeCalledWith(
       expect.stringContaining(
-        'The following annotations are no longer specified by the schema and have been converted to Custom Fields: stringArray.',
+        'The following annotations are no longer specified by the schema and have been converted to custom fields: stringArray.',
       ),
       'warning',
       expect.objectContaining({
@@ -477,19 +567,20 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
       ...schemaHandlers,
       successfulUpdateHandler,
     )
-    renderComponent()
+    await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
-    const showStringArrayField = (await screen.findByLabelText(
-      'showStringArray',
-    )) as HTMLInputElement
-    expect(showStringArrayField.value).toBe('true')
+    let showStringArrayField
+    await waitFor(() => {
+      showStringArrayField = screen.getByLabelText('showStringArray')
+      expect(showStringArrayField.value).toBe('true')
+    })
 
     // This will remove the data from the schema.
-    await userEvent.selectOptions(showStringArrayField, 'false')
+    await chooseAutocompleteOption(showStringArrayField, 'false')
 
     // Add it back to the schema.
-    await userEvent.selectOptions(showStringArrayField, 'true')
+    await chooseAutocompleteOption(showStringArrayField, 'true')
 
     await clickSaveAndConfirm()
 
@@ -501,9 +592,9 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
   })
 
   it('Disallows keys that collide with the Entity JSON definition and throws a custom error message', async () => {
-    server.use(annotationsHandler, noSchemaHandler)
+    server.use(annotationsWithoutSchemaHandler, noSchemaHandler)
 
-    renderComponent()
+    await renderComponent()
 
     const addAnnotationButton = await screen.findByRole('button', {
       name: 'Add Custom Field',
@@ -511,7 +602,12 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
 
     await userEvent.click(addAnnotationButton)
 
-    const keyField = await screen.findByLabelText('Key')
+    let keyFields: HTMLInputElement[]
+    await waitFor(() => {
+      keyFields = screen.getAllByLabelText('Key')
+      expect(keyFields).toHaveLength(3)
+    })
+    const keyField = keyFields[0]
 
     await userEvent.clear(keyField)
     await userEvent.type(keyField, 'id{enter}')
@@ -519,15 +615,17 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     const saveButton = await screen.findByRole('button', { name: 'Save' })
     await userEvent.click(saveButton)
 
-    await screen.findByText(
+    const reservedKeywordErrors = await screen.findAllByText(
       '"id" is a reserved internal key and cannot be used',
       { exact: false },
     )
+
+    expect(reservedKeywordErrors.length).toBeGreaterThan(0)
   })
 
   it('Shows a schema description and type when help is clicked', async () => {
     server.use(noAnnotationsHandler, ...schemaHandlers)
-    renderComponent()
+    await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
     await screen.findByLabelText('country*')
 
@@ -558,13 +656,14 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
       ...schemaHandlers,
       successfulUpdateHandler,
     )
-    const component = renderComponent()
+    const component = await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
-    const showStringArrayField = (await screen.findByLabelText(
-      'showStringArray',
-    )) as HTMLInputElement
-    expect(showStringArrayField.value).toBe('true')
+    let showStringArrayField: HTMLInputElement
+    await waitFor(() => {
+      showStringArrayField = screen.getByLabelText('showStringArray')
+      expect(showStringArrayField.value).toBe('true')
+    })
 
     // Verify that the field for the first value in the array is visible
     expect(

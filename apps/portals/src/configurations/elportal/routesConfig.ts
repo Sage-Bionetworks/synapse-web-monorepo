@@ -60,8 +60,8 @@ const routes: GenericRoute[] = [
           sql: upsetPlotSql,
           rgbIndex: 0,
           maxBarCount: 20,
-          setName: '# Individuals per data type',
-          combinationName: '# Individuals',
+          setName: '# Files per data type',
+          combinationName: '# Files',
           // summaryLinkText: 'Explore All Data',
           // summaryLink: '/Explore/Data',
         },
@@ -116,6 +116,15 @@ const routes: GenericRoute[] = [
                 ],
               },
             },
+            {
+              title: 'Animal Model Studies',
+              icon: 'MOUSE',
+              explorePagePath: '/Explore/Studies',
+              exploreObjectType: 'Studies',
+              plotsConfig: {
+                configs: [],
+              },
+            },
           ],
         },
       },
@@ -128,7 +137,7 @@ const routes: GenericRoute[] = [
         props: {
           config: [
             {
-              title: 'Data Portals',
+              title: 'Data Repositories',
               ownerId: 'syn27229419',
               wikiId: '621470',
             },
@@ -138,7 +147,7 @@ const routes: GenericRoute[] = [
               wikiId: '621471',
             },
             {
-              title: 'Cross-Species Research Partners',
+              title: 'Cross-Species Research Resources',
               ownerId: 'syn27229419',
               wikiId: '621472',
             },
@@ -151,7 +160,7 @@ const routes: GenericRoute[] = [
         outsideContainerClassName: 'home-spacer home-bg-dark',
         centerTitle: true,
         props: {
-          sql: `${peopleSql} where isFeatured=true`,
+          sql: `${peopleSql} WHERE isFeatured=true ORDER BY firstName`,
           count: 3,
           size: SynapseConstants.MEDIUM_USER_CARD,
           useQueryResultUserData: true,

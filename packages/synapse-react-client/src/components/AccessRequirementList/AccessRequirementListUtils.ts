@@ -1,5 +1,6 @@
 import { sortBy } from 'lodash-es'
 import { getAccessRequirementStatus } from '../../synapse-client/SynapseClient'
+import { useMediaQuery, useTheme } from '@mui/material'
 
 /**
  * Given an array of access requirement IDs, return the IDs sorted by the user's status, where
@@ -28,4 +29,14 @@ export const sortAccessRequirementsByCompletion = async (
       )
     )
   })
+}
+
+/**
+ * Determines if we can show ManagedACTAccessRequirement wiki content alongside the forms using a media query.
+ * See SWC-6432.
+ */
+export function useCanShowManagedACTWikiInWizard(): boolean {
+  const theme = useTheme()
+  const matchesBreakpoint = useMediaQuery(theme.breakpoints.up('md'))
+  return matchesBreakpoint
 }

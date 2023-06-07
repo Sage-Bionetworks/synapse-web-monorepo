@@ -64,12 +64,13 @@ export const globalTypes = {
     title: 'Stack Changer',
     description:
       'Choose the stack that Synapse should point to. You may need to re-authenticate after changing stacks.',
-    defaultValue: 'production',
+    defaultValue: null,
     toolbar: {
       icon: 'database',
       dynamicTitle: true,
       showName: true,
       items: [
+        { value: null, title: 'default (usually production)' },
         { value: 'production', title: 'Production' },
         { value: 'staging', title: 'Staging' },
         { value: 'development', title: 'Development' },

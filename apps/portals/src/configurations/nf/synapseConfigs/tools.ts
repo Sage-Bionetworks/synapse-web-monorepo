@@ -195,24 +195,6 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           name: 'SubsectionRowRenderer',
           outsideContainerClassName: 'home-spacer',
           props: {
-            sql: mtaRequiredSql,
-            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-            columnNameIsSectionTitle: true,
-            isMarkdown: true,
-            friendlyValuesMap: {
-              no: 'A MTA is **not** required for usage of this resource.',
-              yes: 'A MTA is required for usage of this resource.',
-              unknown:
-                'It is unknown whether a MTA is required for usage of this resource.',
-            },
-          },
-          tableSqlKeys: ['resourceId'],
-          columnName: 'resourceId',
-        },
-        {
-          name: 'SubsectionRowRenderer',
-          outsideContainerClassName: 'home-spacer',
-          props: {
             sql: toolApplicationsSql,
             columnNameIsSectionTitle: true,
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,

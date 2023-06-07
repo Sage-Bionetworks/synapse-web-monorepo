@@ -10,7 +10,7 @@ import {
   getPreviewFileHandleRenderer,
 } from './PreviewUtils'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { Alert } from 'react-bootstrap'
+import { Alert } from '@mui/material'
 import { SignInPrompt } from '../error/ErrorBanner'
 import {
   implementsCloudProviderFileHandleInterface,
@@ -49,12 +49,7 @@ export default function FileEntityPreview(props: FileEntityPreviewProps) {
   if (!dataFileHandle && !isLoggedIn) {
     // We may be previewing a file handle that the anonymous user cannot see. Prompt the user to log in.
     return (
-      <Alert
-        dismissible={false}
-        show={true}
-        variant={'danger'}
-        transition={false}
-      >
+      <Alert severity={'error'}>
         <SignInPrompt />
       </Alert>
     )

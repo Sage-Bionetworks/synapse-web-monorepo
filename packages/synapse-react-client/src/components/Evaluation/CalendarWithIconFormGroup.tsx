@@ -46,7 +46,13 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<
               />
             )}
           />
-          <span style={{ margin: 'auto 8px' }}>
+          <span
+            style={{
+              display: 'table-cell',
+              verticalAlign: 'middle',
+              paddingLeft: '8px',
+            }}
+          >
             {dayjs().tz(dayjs.tz.guess()).format('z')}
           </span>
         </InputGroup>

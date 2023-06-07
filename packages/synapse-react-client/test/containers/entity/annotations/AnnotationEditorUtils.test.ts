@@ -3,7 +3,7 @@ import {
   dropNullishArrayValues,
   getFriendlyPropertyName,
   getTransformErrors,
-} from '../../../../src/components/entity/annotations/AnnotationEditorUtils'
+} from '../../../../src/components/SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 
 describe('AnnotationEditorUtils tests', () => {

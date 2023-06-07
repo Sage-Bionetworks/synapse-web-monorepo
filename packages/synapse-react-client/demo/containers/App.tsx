@@ -1,6 +1,6 @@
 import $RefParser from '@apidevtools/json-schema-ref-parser'
 import React from 'react'
-import { Alert } from 'react-bootstrap'
+import { Alert } from '@mui/material'
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
 import StandaloneLoginForm from '../../src/components/Authentication/StandaloneLoginForm'
 import SynapseForm from '../../src/components/SynapseForm/SynapseForm'
@@ -141,12 +141,7 @@ export default class App extends React.Component<{}, AppState> {
     const { token, getSessionCalled } = this.state
 
     const alert = (
-      <Alert
-        dismissible={false}
-        show={true}
-        variant={'warning'}
-        transition={false}
-      >
+      <Alert severity={'warning'}>
         <h4>@Deprecated</h4>
         <p>
           Demo a new component by creating a .md file of the same name

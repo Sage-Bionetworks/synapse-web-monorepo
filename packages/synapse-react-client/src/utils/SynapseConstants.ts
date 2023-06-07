@@ -1,3 +1,5 @@
+import { ORIENTATION_BANNER_KEYS } from '../components/OrientationBanner'
+
 /** Bootstrapped principals */
 /** The group representing all users logged-in to Synapse */
 export const AUTHENTICATED_PRINCIPAL_ID = 273948
@@ -140,3 +142,6 @@ export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
 export const ACCESS_TOKEN_COOKIE_KEY =
   'org.sagebionetworks.security.user.login.token'
 export const POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY = 'after-sso-login-url'
+
+/* Persistent localStorage keys */
+export const PERSISTENT_LOCAL_STORAGE_KEYS = ORIENTATION_BANNER_KEYS

@@ -1,4 +1,4 @@
-import { UiSchema } from '@rjsf/core'
+import { UiSchema } from '@rjsf/utils'
 import { JSONSchema7 } from 'json-schema'
 
 export const writeHeaderOption = 'First line is the columns names.'

@@ -21,6 +21,7 @@ const meta: Meta = {
       defaultValue: true,
     },
   },
+  parameters: { stack: 'mock' },
   render: args => {
     const { isAuthenticated, ...rest } = args
     return (
@@ -36,11 +37,6 @@ const meta: Meta = {
                 accessToken: token,
               }}
             >
-              <p>
-                First, use the StackChanger component to switch to the Mocked
-                Data stack. Then, change `isAuthenticated` to 'true'.
-              </p>
-
               <SynapseFormSubmissionGrid token={token} {...rest} />
             </FullContextProvider>
           )

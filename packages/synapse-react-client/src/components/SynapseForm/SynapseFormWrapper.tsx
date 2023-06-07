@@ -1,9 +1,9 @@
 import $RefParser from '@apidevtools/json-schema-ref-parser'
 import { get, includes } from 'lodash-es'
 import React from 'react'
-import { Button } from 'react-bootstrap'
-import { Alert } from 'react-bootstrap'
-import { UiSchema } from '@rjsf/core'
+import { Button } from '@mui/material'
+import FullWidthAlert from '../FullWidthAlert'
+import { UiSchema } from '@rjsf/utils'
 import SynapseClient from '../../synapse-client'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { FormData } from '@sage-bionetworks/synapse-types'
@@ -347,16 +347,17 @@ export class SynapseFormWrapper extends React.Component<
     }
     if (notification.type === StatusEnum.ERROR) {
       return (
-        <Alert
+        <FullWidthAlert
           variant="danger"
+          title="Error"
+          isGlobal={false}
+          description={
+            <>
+              {notification.name} {notification.message}
+            </>
+          }
           onClose={() => this.setState({ status: undefined })}
-        >
-          <Alert.Heading>Error</Alert.Heading>
-
-          <p>
-            {notification.name} {notification.message}
-          </p>
-        </Alert>
+        />
       )
     }
 
@@ -368,11 +369,17 @@ export class SynapseFormWrapper extends React.Component<
       return <></>
     } else {
       return (
-        <div className="panel padding-full unauthenticated text-center bootstrap-4-backport">
+        <div className="panel padding-full unauthenticated text-center">
           Please
           <Button
-            variant="light-primary-base"
-            style={{ margin: '10px' }}
+            variant="text"
+            color="primary"
+            sx={{
+              mx: 1,
+              fontSize: '1.4rem',
+              verticalAlign: 'baseline',
+              textTransform: 'none',
+            }}
             className={`${SRC_SIGN_IN_CLASS}`}
           >
             sign in
