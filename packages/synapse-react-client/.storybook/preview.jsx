@@ -103,6 +103,7 @@ export const globalTypes = {
           value: 'cancerComplexityPortal',
           title: 'Cancer Complexity Portal',
         },
+        { value: 'elPortal', title: 'Exceptional Longevity Portal' },
       ],
     },
   },
