@@ -98,16 +98,6 @@ const projects: SynapseConfig = {
     name: 'Projects',
     cardConfiguration: projectCardConfiguration,
     // unitDescription: 'Projects',
-    searchConfiguration: {
-      searchable: [
-        'name',
-        'grantNumber',
-        'program',
-        'principalInvestigators',
-        'institutions',
-        'abstract',
-      ],
-    },
     facetsToPlot: [
       'name',
       'institutions',
