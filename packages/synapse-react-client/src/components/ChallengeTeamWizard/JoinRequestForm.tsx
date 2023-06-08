@@ -14,7 +14,7 @@ export const JoinRequestForm = ({
   const [message, setMessage] = useState<string>('')
   if (!team) return null
 
-  const handleMesageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const value = event.target.value
     setMessage(value)
     joinMessageChange(value)
