@@ -25,6 +25,7 @@ import {
   ENTITY,
   ENTITY_ACCESS,
   ENTITY_ACCESS_REQUIREMENTS,
+  ENTITY_ACL,
   ENTITY_ACTIONS_REQUIRED,
   ENTITY_ALIAS,
   ENTITY_BUNDLE_V2,
@@ -281,6 +282,7 @@ import {
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import { SynapseError } from '../utils/SynapseError'
+import { ResourceAccess } from '@sage-bionetworks/synapse-types'
 
 const cookies = new UniversalCookies()
 
@@ -1267,6 +1269,23 @@ export const getEntityAlias = (alias: string, accessToken?: string) => {
 export const getEntityHeader = (entityId: string, accessToken?: string) => {
   return doGet<EntityHeader>(
     ENTITY_HEADER_BY_ID(entityId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update an Entity's ACL
+ * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
+ * https://rest-docs.synapse.org/rest/PUT/entity/id/acl.html
+ */
+export const updateEntityACL = <AccessControlList>(
+  acl: AccessControlList,
+  accessToken: string | undefined = undefined,
+): Promise<AccessControlList> => {
+  return doPut<AccessControlList>(
+    ENTITY_ACL(acl.id),
+    acl,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3355,6 +3374,15 @@ export const getUserProjects = (
   )
   return doGet<ProjectHeaderList>(
     `/repo/v1/projects/user/${userId}?${urlParams.toString()}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/acl.html
+export const getEntityACL = (entityId: string, accessToken?: string) => {
+  return doGet<AccessControlList>(
+    ENTITY_ACL(entityId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

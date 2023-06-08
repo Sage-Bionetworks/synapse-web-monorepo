@@ -33,7 +33,7 @@ export const ENTITY_BUNDLE_V2 = (
 ) => `${ENTITY_ID_VERSION(id, version)}/bundle2`
 export const ENTITY_ACCESS = (id: string | number) =>
   `${REPO}/entity/${id}/access`
-
+export const ENTITY_ACL = (id: string | number) => `${ENTITY_ID(id)}/acl`
 export const ENTITY_PATH = (id: string | number) => `${ENTITY_ID(id)}/path`
 export const ENTITY_HEADER_BY_ID = (id: string | number) =>
   `${ENTITY_ID(id)}/type`

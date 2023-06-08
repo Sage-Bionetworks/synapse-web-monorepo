@@ -29,6 +29,7 @@ import {
 import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
 import { EntityId } from '@sage-bionetworks/synapse-types'
+import { AccessControlList } from '@sage-bionetworks/synapse-types'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
@@ -232,6 +233,18 @@ export function useGetEntityPath(
   )
 }
 
+export function useGetEntityACL(
+  entityId: string,
+  options?: UseQueryOptions<AccessControlList, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery<AccessControlList, SynapseClientError>(
+    keyFactory.getEntityPathQueryKey(entityId),
+    () => SynapseClient.getEntityACL(entityId, accessToken),
+    options,
+  )
+}
+
 export function useGetEntityAlias(
   alias: string,
   options?: UseQueryOptions<EntityId | null, SynapseClientError>,
@@ -241,5 +254,39 @@ export function useGetEntityAlias(
     keyFactory.getEntityAliasQueryKey(alias),
     () => SynapseClient.getEntityAlias(alias, accessToken),
     options,
+  )
+}
+
+export function useUpdateEntityACL<AccessControlList>(
+  options?: UseMutationOptions<
+    AccessControlList,
+    SynapseClientError,
+    AccessControlList
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<AccessControlList, SynapseClientError, AccessControlList>(
+    (acl: AccessControlList) =>
+      SynapseClient.updateEntityACL<AccessControlList>(acl, accessToken),
+    {
+      ...options,
+      onSuccess: async (updatedACL: AccessControlList, variables, ctx) => {
+        await invalidateAllQueriesForEntity(
+          queryClient,
+          keyFactory,
+          updatedACL.id,
+        )
+        queryClient.setQueryData(
+          keyFactory.getEntityACLQueryKey(updatedACL.id),
+          updatedACL,
+        )
+
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedACL, variables, ctx)
+        }
+      },
+    },
   )
 }

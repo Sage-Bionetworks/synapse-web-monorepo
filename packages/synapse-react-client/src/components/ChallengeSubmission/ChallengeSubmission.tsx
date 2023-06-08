@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import {
   useGetCurrentUserProfile,
-  useGetEntity,
+  useGetEntityACL,
   useGetEntityAlias,
   useGetEntityChallenge,
   useGetUserSubmissionTeamsInfinite,
+  useUpdateEntityACL,
 } from '../../synapse-queries'
 import { useSynapseContext } from '../../utils'
 import {
+  ACCESS_TYPE,
+  AccessControlList,
   Challenge,
-  Entity,
   EntityId,
   PaginatedIds,
   Project,
+  ResourceAccess,
   Team,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
@@ -20,7 +23,7 @@ import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import { useGetTeam } from '../../synapse-queries/team/useTeam'
-import { createEntity, getEntityAlias } from '../../synapse-client'
+import { createEntity } from '../../synapse-client'
 import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 
 type ChallengeSubmissionProps = {
@@ -36,9 +39,11 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const [canRequestChallenge, setCanRequestChallenge] = useState<boolean>(false)
   const [submissionTeamId, setSubmissionTeamId] = useState<string>()
   const [submissionTeam, setSubmissionTeam] = useState<Team>()
-  const [challengeProject, setChallengeProject] = useState<string>()
+  const [challengeProjectId, setChallengeProjectId] = useState<string>()
   const [newProject, setNewProject] = useState<Project>()
+  const [isProjectNewlyCreated, setIsProjectNewlyCreated] = useState<boolean>()
   const [projectAliasFound, setProjectAliasFound] = useState<boolean>()
+  const { mutate: updateACL } = useUpdateEntityACL()
   const EMPTY_ID = ''
 
   const getProject = (c: Challenge, t: Team): Project => {
@@ -85,6 +90,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
       }
     },
   })
+
   // Determine whether or not the given user belongs to any submission teams
   useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 2, {
     enabled: !!challenge && !!accessToken,
@@ -103,7 +109,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
         }
         if (data.results.length > 1) {
           setErrorMessage(
-            'Error: You are a member of more than one Submission Team.',
+            'Error: You are a member of more than one Submission Team. You may only belong to one Submission Team per Challenge.',
           )
           return
         }
@@ -114,7 +120,6 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
           `Error: Could not determine if you are already registered for this Challenge.`,
         )
       }
-      setLoading(false)
     },
   })
 
@@ -140,7 +145,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
       console.log({ newProject })
       if (data) {
         setProjectAliasFound(true)
-        setChallengeProject(data.id)
+        setChallengeProjectId(data.id)
       }
       if (error) {
         setProjectAliasFound(false)
@@ -149,8 +154,43 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     },
   })
 
-  //   useGetEntityAlias
-  //PROJECT_CONCRETE_TYPE_VALUE
+  /**
+   * If the challenge project was just created, retrieve its ACL
+   * and add the submission team to it
+   */
+  useGetEntityACL(challengeProjectId ?? EMPTY_ID, {
+    enabled: !!challengeProjectId && isProjectNewlyCreated === true,
+    onSettled: (
+      data: AccessControlList | undefined,
+      error: SynapseClientError | null,
+    ) => {
+      console.log('useGetEntityACL', { data }, { error })
+      if (data) {
+        // Give submission team admin access to challenge project
+        const teamResourceAccess: ResourceAccess = {
+          principalId: Number(submissionTeam!.id),
+          accessType: [
+            ACCESS_TYPE.CHANGE_PERMISSIONS,
+            ACCESS_TYPE.CHANGE_SETTINGS,
+            ACCESS_TYPE.CREATE,
+            ACCESS_TYPE.DELETE,
+            ACCESS_TYPE.DOWNLOAD,
+            ACCESS_TYPE.MODERATE,
+            ACCESS_TYPE.READ,
+            ACCESS_TYPE.UPDATE,
+          ],
+        }
+        updateACL({
+          ...data,
+          resourceAccess: [...data.resourceAccess, teamResourceAccess],
+        })
+        setIsProjectNewlyCreated(false)
+      }
+      if (error) {
+        setErrorMessage(`Error: Could not retrieve project ACL.`)
+      }
+    },
+  })
 
   useEffect(() => {
     const isLoggedIn =
@@ -176,6 +216,14 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   }, [accessToken, submissionTeam, challenge, newProject])
 
   useEffect(() => {
+    async function createChallengeProject() {
+      const project: Project = getProject(challenge!, submissionTeam!)
+      const challengeProject = await createEntity(project, accessToken)
+      if (challengeProject && challengeProject.id) {
+        setChallengeProjectId(challengeProject.id)
+        setIsProjectNewlyCreated(true)
+      }
+    }
     if (
       accessToken &&
       submissionTeam &&
@@ -183,8 +231,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
       newProject &&
       projectAliasFound === false
     ) {
-      const project: Project = getProject(challenge, submissionTeam)
-      createEntity(project, accessToken)
+      createChallengeProject()
     }
   }, [accessToken, submissionTeam, challenge, newProject, projectAliasFound])
 
