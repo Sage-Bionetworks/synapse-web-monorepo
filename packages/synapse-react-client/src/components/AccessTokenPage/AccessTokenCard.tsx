@@ -105,7 +105,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
       <div className="PersonalAccessTokenCard__DeleteButton">
         <Button
           variant="outlined"
-          color="primary"
+          color="error"
           aria-label="delete"
           onClick={() => {
             if (isExpired) {

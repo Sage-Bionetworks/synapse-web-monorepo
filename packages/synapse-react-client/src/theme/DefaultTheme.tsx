@@ -91,23 +91,15 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           },
         },
         contained: ({ theme, ownerState }) => ({
-          '&:hover': {
-            // Overrides a base style in bootstrap 3
-            color: theme.palette[ownerState.color || 'primary'].contrastText,
-          },
-          '&:visited': {
-            // Overrides an SWC style
+          '&:hover, &:visited': {
+            // Overrides a base style in bootstrap 3 and in SWC
             color: theme.palette[ownerState.color || 'primary'].contrastText,
           },
         }),
         outlined: ({ theme, ownerState }) => ({
-          '&:hover': {
-            // Overrides a base style in Bootstrap 3
-            color: theme.palette[ownerState.color || 'primary'][800],
-          },
-          '&:visited': {
-            // Overrides an SWC style
-            color: theme.palette[ownerState.color || 'primary'].contrastText,
+          '&:hover, &:visited': {
+            // Overrides a base style in Bootstrap 3 and in SWC
+            color: theme.palette[ownerState.color || 'primary'].dark,
           },
         }),
         text: ({ theme, ownerState }) => ({
@@ -120,9 +112,12 @@ export const defaultMuiThemeOptions: ThemeOptions = {
                 : theme.palette[ownerState.color || 'primary']['main'],
             textDecorationThickness: '2px',
           },
-          '&:visited': {
-            // Overrides an SWC style
-            color: theme.palette[ownerState.color || 'primary'].contrastText,
+          '&:hover, &:visited': {
+            // Overrides a base style in Bootstrap 3 and in SWC
+            color:
+              ownerState.color === 'inherit'
+                ? ownerState.color
+                : theme.palette[ownerState.color || 'primary']['main'],
           },
         }),
       },

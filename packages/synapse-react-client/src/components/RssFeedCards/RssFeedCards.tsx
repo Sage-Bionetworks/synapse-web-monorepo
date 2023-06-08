@@ -190,7 +190,7 @@ export class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
                   onClick={() =>
                     window.open(this.state.allItemsUrl, '_blank', 'noopener')
                   }
-                  // @ts-ignore - target prop exists, but TS doesn't recognize on styled component
+                  // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
                   target="_blank"
                 >
                   {viewAllNewsButtonText ?? 'View All News'}

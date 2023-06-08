@@ -5,7 +5,7 @@ import {
   Match,
 } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import DiscussionReply from '../DiscussionSearchResult'
+import DiscussionSearchResult from '../DiscussionSearchResult'
 import { Entity } from '@sage-bionetworks/synapse-types'
 import { Button, Typography } from '@mui/material'
 import NoSearchResults from '../../assets/icons/NoSearchResults'
@@ -149,11 +149,8 @@ export const ForumSearch = (props: ForumSearchProps) => {
             </Typography>
           )}
           {matchList.map(match => (
-            <div
-              className="bootstrap-4-backport"
-              key={`${match.forumId}-${match.threadId}-${match.replyId}`}
-            >
-              <DiscussionReply
+            <div key={`${match.forumId}-${match.threadId}-${match.replyId}`}>
+              <DiscussionSearchResult
                 threadId={match.threadId}
                 replyId={match.replyId}
               />
