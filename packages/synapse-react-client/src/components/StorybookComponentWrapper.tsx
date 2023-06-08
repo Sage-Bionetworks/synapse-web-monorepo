@@ -22,6 +22,7 @@ import {
   cancerComplexityPortalPalette,
   crcResearcherPortalPalette,
   digitalHealthPortalPalette,
+  elPortalPalette,
   mtbPalette,
   nfPortalPalette,
   palette,
@@ -85,6 +86,7 @@ const paletteMap = {
   digitalHealthPortal: digitalHealthPortalPalette,
   crcResearcherPortal: crcResearcherPortalPalette,
   cancerComplexityPortal: cancerComplexityPortalPalette,
+  elPortal: elPortalPalette,
 }
 
 /**
