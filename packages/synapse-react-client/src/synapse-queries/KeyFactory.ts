@@ -252,6 +252,10 @@ export class KeyFactory {
     return this.getKey(entityQueryKeyObjects.path(id))
   }
 
+  public getEntityACLQueryKey(entityId: string) {
+    return this.getKey('entityACL', entityId)
+  }
+
   public getEntityAliasQueryKey(alias: string) {
     return this.getKey('entityAlias', alias)
   }
