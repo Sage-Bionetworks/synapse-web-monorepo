@@ -8,20 +8,11 @@ const people: SynapseConfig = {
   name: 'QueryWrapperPlotNav',
   props: {
     rgbIndex,
-    sql: peopleSql,
+    sql: `${peopleSql} ORDER BY firstName`,
     name: 'People',
     shouldDeepLink: true,
     cardConfiguration: {
       type: SynapseConstants.MEDIUM_USER_CARD,
-    },
-    searchConfiguration: {
-      searchable: [
-        'firstName',
-        'lastName',
-        'institution',
-        'program',
-        'grantNumber',
-      ],
     },
     facetsToPlot: [
       'institution',

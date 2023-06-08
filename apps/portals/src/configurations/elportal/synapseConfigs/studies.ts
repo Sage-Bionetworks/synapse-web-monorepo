@@ -60,19 +60,6 @@ const studies: SynapseConfig = {
     name: 'Studies',
     shouldDeepLink: true,
     cardConfiguration: studyCardConfiguration,
-    searchConfiguration: {
-      searchable: [
-        'Study_Name',
-        'Study_Description',
-        'DataType_All',
-        'studyFocus',
-        'Data_Contributor',
-        'specimenType',
-        'Species',
-        'Grant Number',
-        'Program',
-      ],
-    },
   },
 }
 
