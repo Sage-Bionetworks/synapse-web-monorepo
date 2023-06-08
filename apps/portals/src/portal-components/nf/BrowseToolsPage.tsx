@@ -239,7 +239,7 @@ const BrowseToolsPage = () => {
             href="https://forms.gle/htFkH5yewLzP1RAu7"
             className="highlightSubmitToolButton"
             variant="contained"
-            // @ts-ignore - target prop exists, but TS doesn't recognize on styled component
+            // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
             target="_blank"
           >
             Submit A Tool

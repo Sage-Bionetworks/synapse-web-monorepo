@@ -51,7 +51,7 @@ function Card(props: { propsToPass: any; type: string }) {
   }
 }
 
-export const CardContainer = (props: CardContainerProps) => {
+export function CardContainer(props: CardContainerProps) {
   const {
     isHeader = false,
     unitDescription,

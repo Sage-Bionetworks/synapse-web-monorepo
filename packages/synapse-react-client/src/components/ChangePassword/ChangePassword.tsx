@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FormGroup, FormControl, FormLabel, Button } from 'react-bootstrap'
+import { Button, TextField } from '@mui/material'
 import { ChangePasswordWithCurrentPassword } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import SynapseClient from '../../synapse-client'
@@ -62,35 +62,40 @@ export const ChangePassword: React.FunctionComponent = () => {
           handleChangePassword(e)
         }}
       >
-        <FormGroup controlId="oldPassword">
-          <FormLabel>Current Password</FormLabel>
-          <FormControl
-            type="password"
-            onChange={e => setOldPassword(e.target.value)}
-            value={oldPassword}
-          />
-        </FormGroup>
-        <FormGroup controlId="newPassword">
-          <FormLabel>New Password</FormLabel>
-          <FormControl
-            type="password"
-            onChange={e => setNewPassword(e.target.value)}
-            value={newPassword}
-          />
-        </FormGroup>
-        <FormGroup controlId="confirmPassword">
-          <FormLabel>Confirm Password</FormLabel>
-          <FormControl
-            type="password"
-            onChange={e => setConfirmPassword(e.target.value)}
-            value={confirmPassword}
-          />
-        </FormGroup>
+        <TextField
+          id="oldPassword"
+          label="Current Password"
+          type="password"
+          onChange={e => setOldPassword(e.target.value)}
+          value={oldPassword}
+          fullWidth
+        />
+        <TextField
+          id="newPassword"
+          label="New Password"
+          type="password"
+          onChange={e => setNewPassword(e.target.value)}
+          value={newPassword}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          id="confirmPassword"
+          label="Confirm Password"
+          type="password"
+          onChange={e => setConfirmPassword(e.target.value)}
+          value={confirmPassword}
+          fullWidth
+          margin="normal"
+        />
         <Button
+          variant="contained"
+          color="primary"
           type="submit"
           onSubmit={e => {
             handleChangePassword(e)
           }}
+          sx={{ mt: 2 }}
         >
           Change Password
         </Button>

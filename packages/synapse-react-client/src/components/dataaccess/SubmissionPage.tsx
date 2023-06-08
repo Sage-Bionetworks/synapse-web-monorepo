@@ -1,8 +1,7 @@
-import { Skeleton } from '@mui/material'
+import { Button, Skeleton, Typography } from '@mui/material'
 import { toLower, upperFirst } from 'lodash-es'
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
-import { Button } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import useGetDataAccessSubmission, {
@@ -19,7 +18,6 @@ import {
   ManagedACTAccessRequirement,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import WarningDialog, { WarningDialogProps } from '../SynapseForm/WarningDialog'
@@ -182,12 +180,13 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         <br />
         {submission ? (
           submission.state === 'SUBMITTED' && (
-            <div className="bootstrap-4-backport ButtonContainer">
+            <div className="ButtonContainer">
               <Button
                 onClick={() => {
                   setShowApprovalConfirmation(true)
                 }}
-                variant="success"
+                color="success"
+                variant="contained"
               >
                 Approve
               </Button>
@@ -195,7 +194,8 @@ export default function SubmissionPage(props: SubmissionPageProps) {
                 onClick={() => {
                   setShowRejectionDialog(true)
                 }}
-                variant="danger"
+                color="error"
+                variant="contained"
               >
                 Reject
               </Button>

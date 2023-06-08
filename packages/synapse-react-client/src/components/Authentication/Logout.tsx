@@ -1,6 +1,6 @@
 import SynapseClient from '../../synapse-client'
 import React from 'react'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 
 export type LogoutProps = {
   callback: () => void
@@ -9,9 +9,10 @@ export type LogoutProps = {
 export default function Logout(props: LogoutProps) {
   const { callback } = props
   return (
-    <div className="bootstrap-4-backport">
+    <div>
       <Button
-        variant="default"
+        variant="contained"
+        color="primary"
         onClick={() => {
           SynapseClient.signOut().then(callback)
         }}

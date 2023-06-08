@@ -472,8 +472,6 @@ export class SynapseFormSubmissionGrid extends React.Component<
                     color="primary"
                     sx={{
                       padding: '0.75rem 1.5rem',
-                      // TODO: remove this line after we have removed bootstrap
-                      '&:hover': { color: 'common.white' }, // otherwise tab-focus.less overrides color
                     }}
                     href={`${this.props.pathpart}?formGroupId=${this.props.formGroupId}`}
                   >

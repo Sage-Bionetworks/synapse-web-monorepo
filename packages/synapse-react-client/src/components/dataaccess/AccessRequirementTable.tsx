@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
-import { Button, Table } from 'react-bootstrap'
+import { Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
@@ -11,9 +11,9 @@ import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchSort,
 } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
-import IconSvg from '../IconSvg/IconSvg'
+import { StarTwoTone } from '@mui/icons-material'
 import { SynapseSpinner } from '../LoadingScreen'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
@@ -71,10 +71,11 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
         </Typography>
         {onCreateNewAccessRequirementClicked && (
           <Button
-            variant={'outline'}
+            variant="outlined"
+            color="primary"
             onClick={onCreateNewAccessRequirementClicked}
+            startIcon={<StarTwoTone />}
           >
-            <IconSvg icon="favTwoTone" sx={{ paddingRight: '0.2rem' }} />
             New Access Requirement
           </Button>
         )}
@@ -170,7 +171,8 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
           <></>
         ) : (
           <Button
-            variant="outline"
+            variant="outlined"
+            color="primary"
             onClick={() => {
               fetchNextPage()
             }}

@@ -64,11 +64,6 @@
       padding-bottom: 20px;
       @extend %space-between;
       flex-direction: column;
-
-      .btn {
-        width: 120px;
-        margin-left: 0px;
-      }
     }
   }
   &__Mobile {
@@ -82,11 +77,6 @@
         font-weight: bold;
         font-size: 18px;
         margin-left: 10px;
-      }
-    }
-    &__Content {
-      .btn {
-        margin-left: 0px;
       }
     }
   }

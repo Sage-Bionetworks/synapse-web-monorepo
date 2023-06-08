@@ -5,11 +5,10 @@ import {
   Match,
 } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import DiscussionReply from '../DiscussionSearchResult'
+import DiscussionSearchResult from '../DiscussionSearchResult'
 import { Entity } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import NoSearchResults from '../../assets/icons/NoSearchResults'
-import { Button } from 'react-bootstrap'
 import IconSvg from '../IconSvg/IconSvg'
 import { displayToast } from '../ToastMessage/ToastMessage'
 
@@ -101,7 +100,7 @@ export const ForumSearch = (props: ForumSearchProps) => {
   }
 
   return (
-    <div className="bootstrap-4-backport ForumSearch">
+    <div className="ForumSearch">
       <div>
         <span className="SearchIcon">
           <IconSvg icon="search" />
@@ -151,7 +150,7 @@ export const ForumSearch = (props: ForumSearchProps) => {
           )}
           {matchList.map(match => (
             <div key={`${match.forumId}-${match.threadId}-${match.replyId}`}>
-              <DiscussionReply
+              <DiscussionSearchResult
                 threadId={match.threadId}
                 replyId={match.replyId}
               />
@@ -162,7 +161,8 @@ export const ForumSearch = (props: ForumSearchProps) => {
       {searchResult?.nextPageToken && (
         <div className="text-center">
           <Button
-            variant="primary"
+            variant="contained"
+            color="primary"
             onClick={() => {
               onLoadMore()
             }}

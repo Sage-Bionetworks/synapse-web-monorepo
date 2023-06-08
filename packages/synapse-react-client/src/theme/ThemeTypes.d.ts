@@ -52,6 +52,8 @@ declare module '@mui/material/styles' {
     /* Neutral is same as grey, but provides a full palette so it can be used for components like buttons.
        This is necessary because the builtin grey cannot be overridden for this purpose. */
     neutral: Palette['primary']
+    darkPrimary: Palette['primary']
+    light: Palette['primary']
   }
 
   interface PaletteOptions {
@@ -59,6 +61,8 @@ declare module '@mui/material/styles' {
     /* Neutral is same as grey, but provides a full palette so it can be used for components like buttons.
        This is necessary because the builtin grey cannot be overridden for this purpose. */
     neutral: PaletteOptions['primary']
+    darkPrimary: PaletteOptions['primary']
+    light: PaletteOptions['primary']
   }
 }
 
@@ -70,6 +74,8 @@ declare module '@mui/material' {
 
   interface ButtonPropsColorOverrides {
     neutral: true
+    darkPrimary: true
+    light: true
   }
 }
 

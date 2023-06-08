@@ -12,6 +12,9 @@ const meta = {
     },
   },
   component: FullWidthAlert,
+  parameters: {
+    chromatic: { viewports: [300, 600, 1200] },
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
