@@ -260,7 +260,11 @@ function Navbar() {
             isSynapseSubdomainOrLocal && ( // desktop version, show dropdown
               <>
                 <Dropdown className="user-loggedIn">
-                  <Dropdown.Toggle variant="light" id="user-menu-button">
+                  <Dropdown.Toggle
+                    variant="light"
+                    id="user-menu-button"
+                    aria-label="User Dropdown Menu"
+                  >
                     <NavUserLink userProfile={userProfile} />
                   </Dropdown.Toggle>
                   <Dropdown.Menu className="nav-user-menu portal-nav-menu">
