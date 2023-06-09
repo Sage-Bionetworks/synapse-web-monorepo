@@ -43,7 +43,7 @@ export type MarkdownSynapseProps = {
   renderInline?: boolean
   objectType?: ObjectType
   loadingSkeletonRowCount?: number
-  onMarkdownProcessingDone?: (ref: HTMLInputElement | null) => void
+  onMarkdownProcessingDone?: (textContent: string | null | undefined) => void
 }
 const md = markdownit({ html: true })
 
@@ -116,6 +116,7 @@ export class MarkdownSynapse extends React.Component<
     this.getWikiAttachments = this.getWikiAttachments.bind(this)
     this.getWikiPageMarkdown = this.getWikiPageMarkdown.bind(this)
     this.createHTML = this.createHTML.bind(this)
+    this.stripHTML = this.stripHTML.bind(this)
     this.addBookmarks = this.addBookmarks.bind(this)
     this.addIdsToReferenceWidgets = this.addIdsToReferenceWidgets.bind(this)
     this.addIdsToTocWidgets = this.addIdsToTocWidgets.bind(this)
@@ -229,6 +230,12 @@ export class MarkdownSynapse extends React.Component<
     return
   }
 
+  public stripHTML(myHtmlString: string): string {
+    const el = document.createElement('div')
+    el.innerHTML = myHtmlString
+    return el.textContent || el.innerText || ''
+  }
+
   /**
    * Get wiki page markdown and file attachment handles
    */
@@ -248,6 +255,12 @@ export class MarkdownSynapse extends React.Component<
         const fileHandles = await this.getWikiAttachments(
           wikiId ? wikiId : wikiPage.id,
         )
+        if (this.props.onMarkdownProcessingDone) {
+          const plainText = this.stripHTML(
+            this.createHTML(wikiPage.markdown).__html,
+          )
+          this.props.onMarkdownProcessingDone(plainText)
+        }
         this.setState({
           data: wikiPage,
           fileHandles,
@@ -540,7 +553,10 @@ export class MarkdownSynapse extends React.Component<
     if (this.state.data.markdown) {
       this.setState({ isLoading: false })
       if (this.props.onMarkdownProcessingDone) {
-        this.props.onMarkdownProcessingDone(this.markupRef.current)
+        const plainText = this.stripHTML(
+          this.createHTML(this.state.data.markdown).__html,
+        )
+        this.props.onMarkdownProcessingDone(plainText)
       }
       return
     }
@@ -554,9 +570,6 @@ export class MarkdownSynapse extends React.Component<
     await this.getWikiPageMarkdown()
     this.processMath()
     this.setState({ isLoading: false })
-    if (this.props.onMarkdownProcessingDone) {
-      this.props.onMarkdownProcessingDone(this.markupRef.current)
-    }
   }
 
   // on component update find and re-render the math/widget items accordingly
