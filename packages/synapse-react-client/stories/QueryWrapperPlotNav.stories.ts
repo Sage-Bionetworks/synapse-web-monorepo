@@ -194,6 +194,8 @@ export const SendToCavatica: Story = {
     hideSqlEditorControl: false,
     shouldDeepLink: false,
     showExportToCavatica: true,
+    cavaticaHelpURL:
+      'https://staging.eliteportal.synapse.org/Limited%20Data%20Commons',
   },
 }
 
