@@ -257,7 +257,7 @@ export function useGetEntityAlias(
   )
 }
 
-export function useUpdateEntityACL<AccessControlList>(
+export function useUpdateEntityACL(
   options?: UseMutationOptions<
     AccessControlList,
     SynapseClientError,

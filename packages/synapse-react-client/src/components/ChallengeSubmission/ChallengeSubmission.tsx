@@ -17,7 +17,6 @@ import {
   Project,
   ResourceAccess,
   Team,
-  UserProfile,
 } from '@sage-bionetworks/synapse-types'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { SynapseClientError } from '../../utils/SynapseClientError'
@@ -32,10 +31,10 @@ type ChallengeSubmissionProps = {
 
 function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const { accessToken } = useSynapseContext()
+  const isLoggedIn = Boolean(accessToken)
   const [loading, setLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string>()
   const [challenge, setChallenge] = useState<Challenge>()
-  const [userProfile, setUserProfile] = useState<UserProfile>()
   const [canRequestChallenge, setCanRequestChallenge] = useState<boolean>(false)
   const [submissionTeamId, setSubmissionTeamId] = useState<string>()
   const [submissionTeam, setSubmissionTeam] = useState<Team>()
@@ -58,19 +57,13 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   }
 
   // Use the existing accessToken if present to get the current user's profile / userId
-  useGetCurrentUserProfile({
-    enabled: !userProfile,
-    onSettled: (data, error) => {
-      console.log('useGetCurrentUserProfile', { data }, { error })
-      if (data) {
-        setUserProfile(data)
-      }
-      if (error) {
-        setLoading(false)
-        setErrorMessage(
-          `Error: Could not retrieve challenge for project "${projectId}".`,
-        )
-      }
+  const { data: userProfile } = useGetCurrentUserProfile({
+    enabled: isLoggedIn,
+    onError: () => {
+      setLoading(false)
+      setErrorMessage(
+        `Error: Could not retrieve challenge for project "${projectId}".`,
+      )
     },
   })
 
@@ -193,9 +186,6 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   })
 
   useEffect(() => {
-    const isLoggedIn =
-      !!userProfile && userProfile.ownerId !== ANONYMOUS_PRINCIPAL_ID.toString()
-
     const isLoggedOut =
       !!userProfile && userProfile.ownerId === ANONYMOUS_PRINCIPAL_ID.toString()
 
@@ -206,7 +196,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
       setLoading(false)
       setErrorMessage('Please login to continue.')
     }
-  }, [accessToken, userProfile, projectId, challenge])
+  }, [accessToken, userProfile, projectId, challenge, isLoggedIn])
 
   useEffect(() => {
     if (accessToken && submissionTeam && challenge && !newProject) {
