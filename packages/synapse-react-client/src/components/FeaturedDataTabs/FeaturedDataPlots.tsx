@@ -7,6 +7,7 @@ import SingleQueryFacetPlotsCards, {
 } from './SingleQueryFacetPlotsCards'
 import { chunk, times } from 'lodash-es'
 import { FacetPlotsCardGridContainer } from './FacetPlotsCardGrid'
+import { CARDS_PER_ROW } from './FeaturedDataTabsUtils'
 
 export type QueryFacetPlotsCardsProps =
   | QueryPerFacetPlotsCardProps
@@ -46,7 +47,7 @@ const FeaturedDataPlots: React.FunctionComponent<
   } else if (isQueryPerCard) {
     return (
       <>
-        {chunk(configs as QueryPerFacetPlotsCardProps[], 3).map(
+        {chunk(configs as QueryPerFacetPlotsCardProps[], CARDS_PER_ROW).map(
           (configRow, rowIndex) => {
             let cssGridTemplateRows = '[title] auto'
 

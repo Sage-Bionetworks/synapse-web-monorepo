@@ -11,6 +11,7 @@ import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
 import { chunk } from 'lodash-es'
 import { FacetPlotsCardGridContainer } from './FacetPlotsCardGrid'
+import { CARDS_PER_ROW } from './FeaturedDataTabsUtils'
 
 export type SingleQueryFacetPlotsCardsProps = {
   rgbIndex?: number
@@ -35,8 +36,6 @@ export function getQueryRequest(sql: string): QueryBundleRequest {
   }
 }
 
-const PLOTS_PER_ROW = 3
-
 const SingleQueryFacetPlotsCards: React.FunctionComponent<
   SingleQueryFacetPlotsCardsProps
 > = props => {
@@ -50,7 +49,7 @@ const SingleQueryFacetPlotsCards: React.FunctionComponent<
         unitDescription={unitDescription}
       >
         <QueryWrapperErrorBanner />
-        {chunk(facetsToPlot, PLOTS_PER_ROW).map((facets, rowIndex) => {
+        {chunk(facetsToPlot, CARDS_PER_ROW).map((facets, rowIndex) => {
           return (
             <FacetPlotsCardGridContainer
               key={rowIndex}
