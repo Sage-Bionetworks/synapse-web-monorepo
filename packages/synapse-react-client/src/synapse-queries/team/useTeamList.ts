@@ -5,7 +5,6 @@ import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   ChallengeTeam,
   ListWrapper,
-  PaginatedResults,
   Team,
 } from '@sage-bionetworks/synapse-types'
 
