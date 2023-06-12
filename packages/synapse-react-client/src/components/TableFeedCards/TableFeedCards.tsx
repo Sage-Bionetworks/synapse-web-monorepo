@@ -9,7 +9,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import loadingScreen from '../LoadingScreen'
-import { Button } from 'react-bootstrap'
+import LargeButton from '../../components/styled/LargeButton'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export type TableFeedCardsProps = {
@@ -62,7 +62,7 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
   )
 
   return (
-    <div className="Feed bootstrap-4-backport">
+    <div className="Feed">
       <div className="FeedItems">
         {rowSet.rows.map((row, index) => {
           if (index > itemCountShowing - 1) {
@@ -112,13 +112,13 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
       </div>
       {rowSet.rows.length > itemCountShowing && (
         <div className="FeedViewAllNewsButtonContainer">
-          <Button
-            variant="primary"
-            size="lg"
+          <LargeButton
+            color="primary"
+            variant="contained"
             onClick={() => setItemCountShowing(itemCountShowing + 3)}
           >
             View More News
-          </Button>
+          </LargeButton>
         </div>
       )}
     </div>

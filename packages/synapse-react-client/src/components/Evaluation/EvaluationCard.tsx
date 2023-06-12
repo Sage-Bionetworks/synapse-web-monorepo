@@ -5,7 +5,8 @@ import {
 } from '../../synapse-client/SynapseClient'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { Evaluation } from '@sage-bionetworks/synapse-types'
-import { Button, Card, Col, Dropdown, Row } from 'react-bootstrap'
+import { Button } from '@mui/material'
+import { Card, Col, Dropdown, Row } from 'react-bootstrap'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
@@ -107,7 +108,8 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
               {permissions?.canSubmit && (
                 <Button
                   className="submit-button"
-                  type="primary"
+                  color="primary"
+                  variant="contained"
                   onClick={onSubmit}
                 >
                   Submit

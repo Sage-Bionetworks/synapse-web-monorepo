@@ -80,7 +80,7 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
   }
 
   return (
-    <div className="search-result-container">
+    <div className="bootstrap-4-backport search-result-container">
       <Row>
         <Col xs={1}>
           {isLoading ? (

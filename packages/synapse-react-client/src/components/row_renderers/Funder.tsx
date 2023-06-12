@@ -42,8 +42,6 @@ export default class Funder extends React.Component<FunderProps, never> {
             href={organizationPath}
             variant="contained"
             color="secondary"
-            // TODO: remove this line after we have removed bootstrap
-            sx={{ '&:hover': { color: 'common.white' } }} // otherwise tab-focus.less overrides color
           >
             View Funded Research
           </WideButton>

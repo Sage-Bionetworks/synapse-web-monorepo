@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 export type ProjectCardProps = {
@@ -15,9 +15,7 @@ export const ProjectViewCard: React.FunctionComponent<
   return (
     <div
       {...domProps}
-      className={`cardContainer ProjectViewCard bootstrap-4-backport ${
-        domProps.className ?? ''
-      }`}
+      className={`cardContainer ProjectViewCard ${domProps.className ?? ''}`}
     >
       {image ? image : <div className={'ProjectViewCard__ImagePlaceholder'} />}
       <div>
@@ -27,7 +25,8 @@ export const ProjectViewCard: React.FunctionComponent<
         </div>
       </div>
       <Button
-        variant="primary"
+        variant="contained"
+        color="primary"
         className="ProjectViewCard__ViewProjectButton"
         onClick={() =>
           window.open(

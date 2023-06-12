@@ -23,8 +23,7 @@ export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
   const [wordCount, setWordCount] = useState<number>()
   const [plainText, setPlainText] = useState<string>()
 
-  const onMarkdownProcessingDone = (ref: HTMLInputElement | null) => {
-    const textContent = ref?.textContent
+  const onMarkdownProcessingDone = (textContent: string | null | undefined) => {
     if (textContent) {
       setPlainText(textContent.trim())
       setWordCount(textContent.trim().split(/\s+/).length)
@@ -71,8 +70,8 @@ export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
       <Collapse in={show}>
         <div id="collapse-text">
           <MarkdownSynapse
-            onMarkdownProcessingDone={onMarkdownProcessingDone}
             {...props}
+            onMarkdownProcessingDone={onMarkdownProcessingDone}
           />
         </div>
       </Collapse>

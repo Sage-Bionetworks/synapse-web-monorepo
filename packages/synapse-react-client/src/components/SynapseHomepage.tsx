@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 import RLogo from '../assets/icons/RLogo'
 import Python from '../assets/icons/Python'
 import Terminal from '../assets/icons/Terminal'
@@ -16,6 +16,10 @@ import IconSvg from './IconSvg/IconSvg'
 
 export type SynapseHomepageProps = {
   projectViewId: string
+}
+
+const buttonSx = {
+  textAlign: 'center',
 }
 
 export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
@@ -35,7 +39,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
   )}#!Profile:v/projects`
 
   return (
-    <div className="bootstrap-4-backport SynapseHomepage">
+    <div className="SynapseHomepage">
       <div className="SynapseHomepage__Section PrimaryBackground">
         <div className="HeroContainer">
           <div className="Headline WhiteText">
@@ -69,7 +73,12 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           <div className="SignUpButtonContainer">
             {accessToken ? (
               <>
-                <Button href={DASHBOARD_LINK} variant="light">
+                <Button
+                  href={DASHBOARD_LINK}
+                  variant="contained"
+                  color="light"
+                  sx={buttonSx}
+                >
                   View Your Dashboard
                 </Button>
                 <Button
@@ -80,17 +89,29 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                       'noopener',
                     )
                   }
-                  variant="primary-900"
+                  variant="contained"
+                  color="darkPrimary"
+                  sx={buttonSx}
                 >
                   Get Help With Synapse
                 </Button>
               </>
             ) : (
               <>
-                <Button href={LOGIN_LINK} variant="light">
+                <Button
+                  href={LOGIN_LINK}
+                  variant="contained"
+                  color="light"
+                  sx={buttonSx}
+                >
                   Log in to Synapse
                 </Button>
-                <Button href={REGISTRATION_LINK} variant="primary-900">
+                <Button
+                  href={REGISTRATION_LINK}
+                  variant="contained"
+                  color="darkPrimary"
+                  sx={buttonSx}
+                >
                   Register Now
                 </Button>
               </>
@@ -159,7 +180,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               </p>
             </div>
             <Button
-              variant="primary"
+              variant="contained"
+              color="primary"
+              sx={buttonSx}
               href={accessToken ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
               {accessToken ? 'View Your Dashboard' : 'Get Started Now'}
@@ -192,7 +215,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               </p>
             </div>
             <Button
-              variant="primary"
+              variant="contained"
+              color="primary"
+              sx={buttonSx}
               href={accessToken ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
               {accessToken ? 'View Your Dashboard' : 'Get Started Now'}
@@ -226,7 +251,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               </p>
             </div>
             <Button
-              variant="primary"
+              variant="contained"
+              color="primary"
+              sx={buttonSx}
               href={accessToken ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
               {accessToken ? 'View Your Dashboard' : 'Get Started Now'}
@@ -252,7 +279,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               </p>
             </div>
             <Button
-              variant="primary"
+              variant="contained"
+              color="primary"
+              sx={buttonSx}
               onClick={() =>
                 window.open(
                   'https://help.synapse.org/docs/Synapse-Governance.2004255211.html',
@@ -323,7 +352,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                   'noopener',
                 )
               }
-              variant="primary"
+              variant="contained"
+              color="primary"
+              sx={buttonSx}
             >
               Learn More About Synapse APIs
             </Button>
@@ -494,7 +525,12 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           <div className="SignUpButtonContainer SynapseHomepage__MarginAutoDesktop">
             {accessToken ? (
               <>
-                <Button href={DASHBOARD_LINK} variant="light">
+                <Button
+                  href={DASHBOARD_LINK}
+                  variant="contained"
+                  color="light"
+                  sx={buttonSx}
+                >
                   View Your Dashboard
                 </Button>
                 <Button
@@ -505,17 +541,29 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                       'noopener',
                     )
                   }
-                  variant="primary-900"
+                  variant="contained"
+                  color="darkPrimary"
+                  sx={buttonSx}
                 >
                   Get Help With Synapse
                 </Button>
               </>
             ) : (
               <>
-                <Button href={LOGIN_LINK} variant="light">
+                <Button
+                  href={LOGIN_LINK}
+                  variant="contained"
+                  color="light"
+                  sx={buttonSx}
+                >
                   Log in to Synapse
                 </Button>
-                <Button href={REGISTRATION_LINK} variant="primary-900">
+                <Button
+                  href={REGISTRATION_LINK}
+                  variant="contained"
+                  color="darkPrimary"
+                  sx={buttonSx}
+                >
                   Register Now
                 </Button>
               </>

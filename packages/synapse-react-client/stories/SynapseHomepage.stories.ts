@@ -4,6 +4,9 @@ import { SynapseHomepage } from '../src/components/SynapseHomepage'
 const meta = {
   title: 'Synapse/HomePage',
   component: SynapseHomepage,
+  parameters: {
+    chromatic: { viewports: [600, 1200] },
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>

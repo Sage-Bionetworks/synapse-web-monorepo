@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from 'react'
-import { Button } from 'react-bootstrap'
-import { ReactComponent as IconPlusSquareFilled } from '../../../assets/icons/icon_plus_square_filled.svg'
-import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.svg'
+import { IconButton } from '@mui/material'
+import { CloseTwoTone, AddBox } from '@mui/icons-material'
 import { EvaluationRoundLimitType } from '@sage-bionetworks/synapse-types'
 import { EvaluationRoundLimitInput } from '../input_models/models'
 import {
@@ -67,15 +66,14 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<
             />
 
             {/*remove button for the EvaluationRoundLimitOptions*/}
-            <Button
-              // use an invalid variant, we just want the basic bootstrap 4 "btn" class behavior
-              variant=""
+            <IconButton
+              color="primary"
               aria-label="Remove"
               className="remove-button"
               onClick={handleDeleteLimit(index)}
             >
-              <IconTimes className="SRC-icon-fill" />
-            </Button>
+              <CloseTwoTone />
+            </IconButton>
 
             {/*conditionally create a "add" button*/}
             {
@@ -83,15 +81,14 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<
               index === limitInputs.length - 1 &&
                 // if the are unused limit types
                 limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
-                  <Button
-                    // use an invalid variant, we just want the basic bootstrap 4 "btn" class behavior
-                    variant=""
+                  <IconButton
+                    color="primary"
                     aria-label="Add"
                     onClick={addNewLimit}
                     className="add-button"
                   >
-                    <IconPlusSquareFilled className="SRC-icon-fill" />
-                  </Button>
+                    <AddBox />
+                  </IconButton>
                 )
             }
           </React.Fragment>

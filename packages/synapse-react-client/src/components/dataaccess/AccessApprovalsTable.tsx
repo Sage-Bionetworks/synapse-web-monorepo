@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
-import { Button, Table } from 'react-bootstrap'
+import { Table } from 'react-bootstrap'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import {
   AccessApprovalSearchRequest,
@@ -8,7 +8,7 @@ import {
   AccessApprovalSortField,
   Direction,
 } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import UserCard from '../UserCard/UserCard'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useSearchAccessApprovalsInfinite } from '../../synapse-queries/dataaccess/useAccessApprovals'
@@ -144,7 +144,11 @@ export const AccessApprovalsTable: React.FunctionComponent<
       {!hasNextPage ? (
         ''
       ) : (
-        <Button variant="outline" onClick={() => fetchNextPage}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => fetchNextPage}
+        >
           Show More
         </Button>
       )}

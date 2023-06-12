@@ -51,7 +51,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
       >
         header 
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1qzjv42-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-e43ad7-MuiTypography-root-MuiLink-root"
           href="https://synapse.org"
           target="_blank"
         >
@@ -78,7 +78,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
       >
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-jep8qk-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-1bhx6gc-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Help/How It Works"
             tabindex="0"
           >
@@ -87,7 +87,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] 
         </span>
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-jep8qk-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-1bhx6gc-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Apply"
             tabindex="0"
           >

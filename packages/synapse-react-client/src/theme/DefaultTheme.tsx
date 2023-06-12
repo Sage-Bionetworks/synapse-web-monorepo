@@ -90,6 +90,18 @@ export const defaultMuiThemeOptions: ThemeOptions = {
             transition: '0.2s',
           },
         },
+        contained: ({ theme, ownerState }) => ({
+          '&:hover, &:visited': {
+            // Overrides a base style in bootstrap 3 and in SWC
+            color: theme.palette[ownerState.color || 'primary'].contrastText,
+          },
+        }),
+        outlined: ({ theme, ownerState }) => ({
+          '&:hover, &:visited': {
+            // Overrides a base style in Bootstrap 3 and in SWC
+            color: theme.palette[ownerState.color || 'primary'].dark,
+          },
+        }),
         text: ({ theme, ownerState }) => ({
           '&:hover': {
             textDecoration: 'underline',
@@ -99,6 +111,13 @@ export const defaultMuiThemeOptions: ThemeOptions = {
                 ? ownerState.color
                 : theme.palette[ownerState.color || 'primary']['main'],
             textDecorationThickness: '2px',
+          },
+          '&:hover, &:visited': {
+            // Overrides a base style in Bootstrap 3 and in SWC
+            color:
+              ownerState.color === 'inherit'
+                ? ownerState.color
+                : theme.palette[ownerState.color || 'primary']['main'],
           },
         }),
       },

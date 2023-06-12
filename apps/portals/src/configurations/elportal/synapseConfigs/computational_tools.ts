@@ -39,16 +39,6 @@ const computationalTools: SynapseConfig = {
     shouldDeepLink: true,
     name: 'Computational Tools',
     facetsToPlot: ['grant', 'softwareType'],
-    searchConfiguration: {
-      searchable: [
-        'contributor',
-        'name',
-        'grant',
-        'program',
-        'softwareType',
-        'summary',
-      ],
-    },
   },
 }
 

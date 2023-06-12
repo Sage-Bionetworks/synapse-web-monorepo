@@ -137,15 +137,17 @@ const NavDrawerListItem = (props: MenuItemParams) => {
   )
 
   return onClickGoToUrl ? (
-    <a
-      href={onClickGoToUrl}
-      rel="noopener noreferrer"
-      className="SRC-whiteText"
-    >
-      {listItem}
-    </a>
+    <li>
+      <a
+        href={onClickGoToUrl}
+        rel="noopener noreferrer"
+        className="SRC-whiteText"
+      >
+        {listItem}
+      </a>
+    </li>
   ) : (
-    listItem
+    <li>{listItem}</li>
   )
 }
 
@@ -231,7 +233,12 @@ export const SynapseNavDrawer: React.FunctionComponent<
         className={`SynapseNavDrawerMenu ${isOpen ? 'tempDrawerOpen' : ''}`}
       >
         <div onClick={handleDrawerClose}>
-          <a className="synapseIcon" rel="noopener noreferrer" href="/#!Home:0">
+          <a
+            className="synapseIcon"
+            rel="noopener noreferrer"
+            href="/#!Home:0"
+            aria-label="Synapse Home"
+          >
             <SynapseIconWhite />
           </a>
         </div>

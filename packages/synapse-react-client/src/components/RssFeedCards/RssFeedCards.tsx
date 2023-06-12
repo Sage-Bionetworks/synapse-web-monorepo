@@ -5,7 +5,7 @@ import { ReactComponent as SubscribePlus } from '../../assets/icons/subscribe_pl
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 import { LockedColumn } from '../QueryContext/QueryContext'
 import NoData from '../../assets/icons/NoData'
-import { Button } from 'react-bootstrap'
+import LargeButton from '../../components/styled/LargeButton'
 
 const rssParser = new Parser()
 type RssState = {
@@ -112,7 +112,7 @@ export class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
             )}
           </div>
         )}
-        <div className="Feed bootstrap-4-backport">
+        <div className="Feed">
           <div className="FeedItems">
             {this.state.rssFeed.items &&
               this.state.rssFeed.items.map((item: any, index: any) => {
@@ -184,16 +184,17 @@ export class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
             this.state.rssFeed.items.length > this.props.itemsToShow &&
             this.state.allItemsUrl && (
               <div className="FeedViewAllNewsButtonContainer">
-                <Button
-                  variant="secondary"
-                  size="lg"
+                <LargeButton
+                  color="secondary"
+                  variant="contained"
                   onClick={() =>
                     window.open(this.state.allItemsUrl, '_blank', 'noopener')
                   }
+                  // @ts-expect-error - target prop exists, but TS doesn't recognize on styled component
                   target="_blank"
                 >
                   {viewAllNewsButtonText ?? 'View All News'}
-                </Button>
+                </LargeButton>
               </div>
             )}
           {this.state.isLoadingError && (

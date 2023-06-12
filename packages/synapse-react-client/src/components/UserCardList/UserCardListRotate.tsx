@@ -14,7 +14,7 @@ import {
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import UserCardList from './UserCardList'
 import { LARGE_USER_CARD, UserCardSize } from '../../utils/SynapseConstants'
-import { Button } from 'react-bootstrap'
+import LargeButton from '../../components/styled/LargeButton'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { LoadingUserCardMedium } from '../UserCard/UserCardMedium'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
@@ -144,7 +144,7 @@ export const UserCardListRotate: React.FunctionComponent<
   }, [sql, selectedFacets, count, accessToken, searchParams, sqlOperator])
 
   return (
-    <div className="UserCardListRotate bootstrap-4-backport">
+    <div className="UserCardListRotate">
       {isLoading && <LoadingUserCardMedium />}
       {!isLoading && userIds.length === 0 && (
         <p className="font-italic">No one was found.</p>
@@ -154,9 +154,9 @@ export const UserCardListRotate: React.FunctionComponent<
       )}
       {summaryLink && summaryLinkText && (
         <div className="UserCardListRotate__summary">
-          <Button variant="secondary" size="lg" href={summaryLink}>
+          <LargeButton color="secondary" variant="contained" href={summaryLink}>
             {summaryLinkText}
-          </Button>
+          </LargeButton>
         </div>
       )}
     </div>

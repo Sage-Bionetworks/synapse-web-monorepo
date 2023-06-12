@@ -1,7 +1,7 @@
 import { upperFirst } from 'lodash-es'
 import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
-import { Button, Table } from 'react-bootstrap'
+import { Table } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import SortIcon from '../../assets/icons/Sort'
 import { formatDate } from '../../utils/functions/DateFormatter'
@@ -16,7 +16,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen'
 import UserCard from '../UserCard/UserCard'
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 export type AccessRequestSubmissionTableProps = {
@@ -172,7 +172,8 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
         ''
       ) : (
         <Button
-          variant="outline"
+          variant="outlined"
+          color="primary"
           onClick={() => {
             fetchNextPage()
           }}

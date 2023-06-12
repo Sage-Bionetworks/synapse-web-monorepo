@@ -1,12 +1,12 @@
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
-import { Button } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { AccessTokenRecord } from '@sage-bionetworks/synapse-types'
 import { scopeDescriptions } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
+import { Button, Tooltip } from '@mui/material'
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import IconSvg from '../IconSvg/IconSvg'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -104,7 +104,8 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
       {/* Delete button */}
       <div className="PersonalAccessTokenCard__DeleteButton">
         <Button
-          variant="default"
+          variant="outlined"
+          color="error"
           aria-label="delete"
           onClick={() => {
             if (isExpired) {
@@ -121,7 +122,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
             }
           }}
         >
-          <IconSvg icon="delete" aria-hidden="true" />
+          <DeleteTwoToneIcon />
         </Button>
       </div>
     </div>

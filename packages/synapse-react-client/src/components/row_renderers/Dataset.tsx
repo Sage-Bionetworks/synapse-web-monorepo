@@ -4,7 +4,7 @@ import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriend
 import * as Utils from './utils'
 import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
 import { SelectColumn, ColumnModel } from '@sage-bionetworks/synapse-types'
-import { Button } from 'react-bootstrap'
+import { Button } from '@mui/material'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 
@@ -107,11 +107,12 @@ class Dataset extends React.Component<DatasetProps, never> {
           </div>
           <div className="SRC-description-dataset">
             <p className="SRC-description-text">{summary}</p>
-            <div className="SRC-cardAction bootstrap-4-backport">
+            <div className="SRC-cardAction">
               <Button
                 className="SRC-datasetButton"
                 onClick={this.handleLinkClick(id)}
-                variant="secondary"
+                color="secondary"
+                variant="contained"
               >
                 Download Dataset
               </Button>
