@@ -222,7 +222,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
         <div className="TopLevelControls__actions">
           {showExportToCavatica && (
             <Tooltip
-              title={`This action will send a reference to every file in the current table to Cavatica. ${
+              title={`This action will send a reference to every file in the current table to CAVATICA. ${
                 topLevelControlsState.showFacetFilter
                   ? 'You can change what is sent by applying filters using the controls in the sidebar.'
                   : ''
@@ -234,7 +234,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   setIsShowingExportToCavaticaModal(true)
                 }}
               >
-                <Cavatica sx={{ mr: 1 }} /> Send to Cavatica
+                <Cavatica sx={{ mr: 1 }} /> Send to CAVATICA
               </Button>
             </Tooltip>
           )}
@@ -285,7 +285,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           )}
           <ConfirmationDialog
             open={isShowingExportToCavaticaModal}
-            title="Send to Cavatica"
+            title="Send to CAVATICA"
             content={
               <>
                 <Box
@@ -313,15 +313,15 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   variant="body1"
                   sx={{ fontWeight: 700, marginBottom: '10px' }}
                 >
-                  You must meet these requirements from Cavatica to send data:
+                  You must meet these requirements from CAVATICA to send data:
                 </Typography>
                 <Typography
                   variant="body1"
                   sx={{ marginLeft: '10px', marginBottom: '10px' }}
                 >
-                  1. You must be logged in to a Cavatica account.
+                  1. You must be logged in to a CAVATICA account.
                   <br />
-                  2. You must connect your Cavatica account to Sage.
+                  2. You must connect your CAVATICA account to Synapse.
                 </Typography>
                 <Typography variant="body1">
                   <Link
@@ -338,8 +338,8 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     padding: '10px 20px 10px 20px',
                   }}
                 >
-                  Note that we cannot provide support for Cavatica. Please
-                  contact Cavatica’s{' '}
+                  Note that we cannot provide support for CAVATICA. Please
+                  contact CAVATICA’s{' '}
                   <Link href="mailto:support@sevenbridges.com "> support</Link>{' '}
                   for issues related to the above.
                 </Box>
@@ -347,12 +347,12 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   variant="body1"
                   sx={{ fontWeight: 700, marginTop: '15px' }}
                 >
-                  When completed, click “Send to Cavatica” to finish the process
-                  outside this application. You will be redirected to Cavatica.
+                  When completed, click “Send to CAVATICA“ to finish the process
+                  outside this application. You will be redirected to CAVATICA.
                 </Typography>
               </>
             }
-            confirmButtonText="Send to Cavatica"
+            confirmButtonText="Send to CAVATICA"
             onConfirm={() => {
               exportToCavatica()
             }}

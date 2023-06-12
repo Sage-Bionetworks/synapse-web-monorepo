@@ -190,7 +190,7 @@ export const SendToCavatica: Story = {
       showAccessColumn: true,
       showDownloadColumn: true,
     },
-    name: 'Cavatica Integration Demo',
+    name: 'CAVATICA Integration Demo',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
     showExportToCavatica: true,

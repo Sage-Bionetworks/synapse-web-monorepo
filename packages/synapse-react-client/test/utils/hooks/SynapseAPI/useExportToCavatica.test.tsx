@@ -77,7 +77,7 @@ describe('useExportToCavatica', () => {
     expect(mockGetFileHandleByIdURL).not.toHaveBeenCalled()
   })
 
-  it('Successfully send to Cavatica', async () => {
+  it('Successfully send to CAVATICA', async () => {
     mockGetDownloadFromTableRequest.mockResolvedValue(downloadFromTableResult)
     mockGetFileHandleByIdURL.mockResolvedValue(presignedURLResponse)
     const {
