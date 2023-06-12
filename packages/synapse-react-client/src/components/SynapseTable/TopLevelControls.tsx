@@ -297,17 +297,19 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     padding: '10px 20px 10px 20px',
                   }}
                 >
-                  CAVATICA is a data analysis and sharing platform.
-                  {cavaticaHelpURL && (
-                    <>
-                      {' '}
-                      Read more about CAVATICA{' '}
-                      <Link href={cavaticaHelpURL} target="_blank">
-                        here
-                      </Link>
-                      .
-                    </>
-                  )}
+                  <Typography variant="body1" sx={{ textAlign: 'center' }}>
+                    CAVATICA is a data analysis and sharing platform.
+                    {cavaticaHelpURL && (
+                      <>
+                        {' '}
+                        Read more about CAVATICA{' '}
+                        <Link href={cavaticaHelpURL} target="_blank">
+                          here
+                        </Link>
+                        .
+                      </>
+                    )}
+                  </Typography>
                 </Box>
                 <Typography
                   variant="body1"
@@ -338,10 +340,15 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     padding: '10px 20px 10px 20px',
                   }}
                 >
-                  Note that we cannot provide support for CAVATICA. Please
-                  contact CAVATICA’s{' '}
-                  <Link href="mailto:support@sevenbridges.com "> support</Link>{' '}
-                  for issues related to the above.
+                  <Typography variant="body1">
+                    Note that we cannot provide support for CAVATICA. Please
+                    contact CAVATICA’s{' '}
+                    <Link href="mailto:support@sevenbridges.com ">
+                      {' '}
+                      support
+                    </Link>{' '}
+                    for issues related to the above.
+                  </Typography>
                 </Box>
                 <Typography
                   variant="body1"
