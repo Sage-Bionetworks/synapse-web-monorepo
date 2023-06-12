@@ -27,7 +27,7 @@ export const JoinRequestForm = ({
         <strong>{team.name}</strong> team.
       </Box>
       <Box>
-        <strong>Your Mesage to Team Managers(s)</strong>
+        <strong>Your Message to Team Managers(s)</strong>
       </Box>
       <Box>
         <TextField
