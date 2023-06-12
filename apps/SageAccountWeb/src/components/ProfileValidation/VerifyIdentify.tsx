@@ -1,6 +1,6 @@
 import { ORCiDButton } from './ORCiDButton'
 import React, { useEffect, useState } from 'react'
-import { VerificationSubmission } from 'synapse-react-client/dist/utils/synapseTypes'
+import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import CheckIcon from '@mui/icons-material/Check'
 //agendelTODO: mobe to sage account page
 //import { UnbindORCiDDialog } from 'components/ProfileValidation/UnbindORCiD'

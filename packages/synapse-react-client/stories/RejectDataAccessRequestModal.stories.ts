@@ -1,18 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { getHandlersForTableQuery } from '../mocks/msw/handlers/tableQueryHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '../mocks/query/mockRejectionReasonsTableQueryResultBundle'
-import { MOCK_REPO_ORIGIN } from '../src/lib/utils/functions/getEndpoint'
-import RejectDataAccessRequestModal from '../src/lib/containers/dataaccess/RejectDataAccessRequestModal'
+import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
+import RejectDataAccessRequestModal from '../src/components/dataaccess/RejectDataAccessRequestModal'
 
 const meta = {
   title: 'Governance/RejectDataAccessRequestModal',
   component: RejectDataAccessRequestModal,
-} satisfies Meta
-export default meta
-type Story = StoryObj<typeof meta>
-
-export const Demo: Story = {
   parameters: {
+    stack: 'mock',
     msw: {
       handlers: [
         ...getHandlersForTableQuery(
@@ -22,5 +18,11 @@ export const Demo: Story = {
       ],
     },
   },
+} satisfies Meta
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Demo: Story = {
+  name: 'RejectDataAccessRequestModal',
   args: { open: true, tableId: 'syn50683097' },
 }

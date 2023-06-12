@@ -27,8 +27,10 @@ We're using [pnpm workspaces](https://pnpm.io/workspaces) to manage multiple pro
 │  ├── ./SageAccountWeb - Standalone client-only React application for managing a Sage Bionetworks user account
 │  └── ./synapse-oauth-signin - Standalone client-only React application used to authenticate and consent to an app that uses Synapse OAuth2+OIDC services
 ├── ./projects - Libraries and utilities that may or may not be published to NPM
-│  └── ./synapse-react-client - React components and utilities used in Synapse.org and portals
-└── ./shared - Shared configurations that are referenced across all projects
+│  ├── ./synapse-react-client - React components and utilities used in Synapse.org and portals
+│  ├── ./synapse-types - TypeScript definitions and utility functions for Synapse REST API objects
+│  └── ./vite-config - Shared configuration files for Vite used by apps
+└── ./shared - Configuration files that are referenced across all projects
 ```
 
 ## Release Cycle
@@ -41,9 +43,13 @@ Sometimes, due to Synapse.org's deployment cadence, a hotfix must be based on an
 
 ## CI/CD
 
-On latest commit for a PR where changes will be merged to main `main`, multiple jobs will be triggered in GitHub Actions.
+On the latest commit for a PR where changes will be merged to `main`, multiple jobs will be triggered in GitHub Actions.
 
-All changed projects and their dependents will be built, linted, and tested. Some notes:
+All changed projects and their dependents will be built, linted, tested, and type-checked.
+
+Additionally, the project Storybook(s) will be published to Chromatic, where each story will be tested and snapshotted. To reduce usage, this job only runs on pull requests that are "ready-for-review" i.e. not drafts. For this reason, please mark your pull request as a draft until these checks are necessary.
+
+Some notes:
 
 - If the test step fails, you can find the failed tests by downloading the artifacts from the job, which includes HTML reports of the tests.
 - We currently have many warnings and errors emitted in each test, so we have configured each test run to silence the output. If you need to see these warnings and errors, remove the 'silent' parameter from the script or configuration file.

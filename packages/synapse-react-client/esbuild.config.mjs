@@ -15,7 +15,6 @@ const globals = {
   'rss-parser': 'Parser',
   'react-mailchimp-subscribe': 'ReactMailchimpSubscribe',
   'plotly.js-basic-dist': 'Plotly',
-  '@rjsf/core': 'JSONSchemaForm',
   'react-measure': 'ReactMeasure',
   markdownit: 'markdownit',
   markdownitSynapse: 'markdownitSynapse',
@@ -35,7 +34,7 @@ const globals = {
 
 /** @type {import('esbuild').BuildOptions} */
 const esBuildOptions = {
-  entryPoints: ['src/lib/umd.index.ts'],
+  entryPoints: ['src/umd.index.ts'],
   bundle: true,
   platform: 'browser',
   target: 'es2015',
@@ -62,7 +61,6 @@ const esBuildOptions = {
     'react-bootstrap',
     'react-plotly.js/factory',
     'plotly.js-basic-dist',
-    '@rjsf/core',
     'katex',
     'rss-parser',
     'react-mailchimp-subscribe',

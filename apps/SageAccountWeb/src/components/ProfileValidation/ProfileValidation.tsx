@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
-import { SynapseConstants } from 'synapse-react-client/dist/utils'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
+import {
+  displayToast,
+  SynapseClient,
+  SynapseConstants,
+  SynapseContextUtils,
+} from 'synapse-react-client'
 import CloseIcon from '@mui/icons-material/Close'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
-import {
-  createProfileVerificationSubmission,
-  getMyUserBundle,
-  updateMyUserProfile,
-} from 'synapse-react-client/dist/utils/SynapseClient'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
 import {
   UserBundle,
   UserProfile,
   VerificationSubmission,
-} from 'synapse-react-client/dist/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { getSearchParam } from '../../URLUtils'
 import { ProfileFieldsEditor } from './ProfileFieldsEditor'
 import { VerifyIdentify } from './VerifyIdentify'
@@ -278,7 +276,7 @@ function BodyControlFactory(args: {
 export type ProfileValidationProps = {}
 
 export const ProfileValidation = (props: ProfileValidationProps) => {
-  const { accessToken } = useSynapseContext()
+  const { accessToken } = SynapseContextUtils.useSynapseContext()
   const [verificationSubmission, setVerificationSubmission] =
     useState<VerificationSubmission>()
   const [profile, setProfile] = useState<UserProfile>()
@@ -298,7 +296,10 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
           SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
           SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION
 
-        const bundle: UserBundle = await getMyUserBundle(mask, accessToken)
+        const bundle: UserBundle = await SynapseClient.getMyUserBundle(
+          mask,
+          accessToken,
+        )
         let verificationSubmission = bundle.verificationSubmission
         const profile = bundle.userProfile!
         // is this the first verification submission
@@ -342,7 +343,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
   const onSubmit = async () => {
     if (profile && verificationSubmission) {
       try {
-        await createProfileVerificationSubmission(
+        await SynapseClient.createProfileVerificationSubmission(
           verificationSubmission,
           accessToken!,
         )
@@ -360,7 +361,10 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
       profile.firstName = verificationSubmission.firstName
       profile.lastName = verificationSubmission.lastName
       profile.location = verificationSubmission.location
-      const updatedProfile = await updateMyUserProfile(profile, accessToken)
+      const updatedProfile = await SynapseClient.updateMyUserProfile(
+        profile,
+        accessToken,
+      )
       setProfile(updatedProfile)
     }
   }

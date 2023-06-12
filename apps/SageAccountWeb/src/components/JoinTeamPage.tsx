@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, useTheme, Typography } from '@mui/material'
+import { Box, Button, Typography, useTheme } from '@mui/material'
 import { useAppContext } from '../AppContext'
-import { SynapseClient } from 'synapse-react-client/dist/utils'
+import {
+  displayToast,
+  SynapseClient,
+  UserOrTeamBadge,
+} from 'synapse-react-client'
 import { Redirect } from 'react-router-dom'
 import {
   isJoinTeamSignedToken,
+  isMembershipInvtnSignedToken,
   JoinTeamSignedToken,
-} from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/JoinTeamSignedToken'
-import { isMembershipInvtnSignedToken } from 'synapse-react-client/dist/utils/synapseTypes/SignedToken/MembershipInvtnSignedToken'
+  MembershipInvitation,
+  ResponseMessage,
+} from '@sage-bionetworks/synapse-types'
 import { CelebrationOutlined, Groups2Outlined } from '@mui/icons-material'
-import UserOrTeamBadge from 'synapse-react-client/dist/containers/UserOrTeamBadge'
-import { MembershipInvitation } from 'synapse-react-client/dist/utils/synapseTypes/MembershipInvitation'
-import { ResponseMessage } from 'synapse-react-client/dist/utils/synapseTypes/ResponseMessage'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
 import { StyledOuterContainer } from './StyledComponents'
 
 export type JoinTeamPageProps = {}

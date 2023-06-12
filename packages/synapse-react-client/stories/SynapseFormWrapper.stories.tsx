@@ -1,7 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { SynapseContextConsumer } from '../src/lib/utils/SynapseContext'
-import SynapseFormWrapper from '../src/lib/containers/synapse_form_wrapper/SynapseFormWrapper'
+import { SynapseContextConsumer } from '../src/utils/context/SynapseContext'
+import SynapseFormWrapper from '../src/components/SynapseForm/SynapseFormWrapper'
 
 const meta = {
   title: 'Synapse/SynapseFormWrapper',

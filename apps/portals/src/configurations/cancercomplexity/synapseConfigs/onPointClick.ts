@@ -6,8 +6,8 @@ import {
   toolsSql,
   projectsSql,
 } from '../resources'
-import { Query } from 'synapse-react-client/dist/utils/synapseTypes'
-import { ClickCallbackParams } from 'synapse-react-client/dist/containers/widgets/themes-plot/types'
+import { Query } from '@sage-bionetworks/synapse-types'
+import type { ClickCallbackParams } from 'synapse-react-client'
 
 const sqlAndEntityMap: {
   [value: string]: string

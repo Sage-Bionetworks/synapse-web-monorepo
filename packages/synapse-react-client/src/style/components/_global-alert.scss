@@ -1,0 +1,7 @@
+.SynapseNavDrawerIsShowing .FullWidthAlertGlobal {
+  $-synapse-nav-drawer-width: 56px;
+  width: calc(100vw - $-synapse-nav-drawer-width);
+  left: $-synapse-nav-drawer-width;
+  right: 0px;
+  transform: none;
+}

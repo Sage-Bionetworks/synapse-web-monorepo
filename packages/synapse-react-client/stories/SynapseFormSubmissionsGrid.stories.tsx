@@ -1,11 +1,11 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
-import { MOCK_REPO_ORIGIN } from '../src/lib/utils/functions/getEndpoint'
-import SynapseFormSubmissionGrid from '../src/lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
-import { SynapseContextConsumer } from '../src/lib/utils/SynapseContext'
-import FullContextProvider from '../src/lib/utils/FullContextProvider'
-import { ListRequest, StatusEnum } from '../src/lib/utils/synapseTypes'
+import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
+import SynapseFormSubmissionGrid from '../src/components/SynapseForm/SynapseFormSubmissionsGrid'
+import { SynapseContextConsumer } from '../src/utils/context/SynapseContext'
+import FullContextProvider from '../src/utils/context/FullContextProvider'
+import { ListRequest, StatusEnum } from '@sage-bionetworks/synapse-types'
 import {
   formListDataInProgress,
   formListDataSubmitted,
@@ -21,6 +21,7 @@ const meta: Meta = {
       defaultValue: true,
     },
   },
+  parameters: { stack: 'mock' },
   render: args => {
     const { isAuthenticated, ...rest } = args
     return (
@@ -36,11 +37,6 @@ const meta: Meta = {
                 accessToken: token,
               }}
             >
-              <p>
-                First, use the StackChanger component to switch to the Mocked
-                Data stack. Then, change `isAuthenticated` to 'true'.
-              </p>
-
               <SynapseFormSubmissionGrid token={token} {...rest} />
             </FullContextProvider>
           )

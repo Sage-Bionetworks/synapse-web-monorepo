@@ -1,5 +1,5 @@
-import { challengePortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { Palettes } from 'synapse-react-client'
 
-const palette = challengePortalPalette
+const palette = Palettes.challengePortalPalette
 
 export default palette

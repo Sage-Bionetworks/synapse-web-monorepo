@@ -1,7 +1,7 @@
 import {
   RestrictionInformationResponse,
   RestrictionLevel,
-} from '../src/lib/utils/synapseTypes/'
+} from '@sage-bionetworks/synapse-types'
 
 export const mockUnmetControlledDataRestrictionInformationACT: RestrictionInformationResponse =
   {

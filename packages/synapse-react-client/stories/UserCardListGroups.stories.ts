@@ -1,10 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { MEDIUM_USER_CARD } from '../src/lib/utils/SynapseConstants'
-import UserCardListGroups from '../src/lib/containers/home_page/people/UserCardListGroups'
+import { MEDIUM_USER_CARD } from '../src/utils/SynapseConstants'
+import UserCardListGroups from '../src/components/UserCardList/UserCardListGroups/UserCardListGroups'
 
 const meta = {
   title: 'Home Page/UserCardListGroups',
   component: UserCardListGroups,
+  parameters: {
+    chromatic: { viewports: [600, 1200] },
+  },
 } satisfies Meta<typeof UserCardListGroups>
 
 export default meta

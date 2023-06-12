@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import Quiz from 'synapse-react-client/dist/containers/CertificationQuiz'
+import { CertificationQuiz as Quiz } from 'synapse-react-client'
 import ReturnArrow from '../assets/ReturnArrow.svg'
 
 export const CertificationQuiz = () => {

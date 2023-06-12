@@ -1,0 +1,17 @@
+{
+  "name": "@sage-bionetworks/synapse-types",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf ./dist && tsup ./src/index.ts --format esm,cjs --dts",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "tsup": "^6.7.0",
+    "typescript": "5.0.4"
+  }
+}

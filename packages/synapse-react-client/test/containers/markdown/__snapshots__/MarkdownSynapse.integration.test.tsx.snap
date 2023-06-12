@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loose text 1`] = `
+<div>
+  <div
+    class="markdown"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+      >
+        some more free
+      </p>
+      
+
+      <h1
+        class="MuiTypography-root MuiTypography-headline1 css-1ix3kim-MuiTypography-root"
+        id="SRC-header-1"
+        toc="true"
+      >
+        header
+      </h1>
+      
+
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+      >
+        loose text
+      </p>
+      
+
+    </span>
+  </div>
+</div>
+`;
+
+exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] = `
+<div>
+  <div
+    class="markdown"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+    >
+      <h1
+        class="MuiTypography-root MuiTypography-headline1 css-1ix3kim-MuiTypography-root"
+        id="SRC-header-1"
+        toc="true"
+      >
+        header 
+        <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-e43ad7-MuiTypography-root-MuiLink-root"
+          href="https://synapse.org"
+          target="_blank"
+        >
+          text
+        </a>
+      </h1>
+      
+
+    </span>
+  </div>
+</div>
+`;
+
+exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] = `
+<div>
+  <div
+    class="markdown"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-1kkok3b-MuiTypography-root"
+      >
+        <span>
+          <a
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-1bhx6gc-MuiButtonBase-root-MuiButton-root-WideButton"
+            href="#/Help/How It Works"
+            tabindex="0"
+          >
+            sometext
+          </a>
+        </span>
+        <span>
+          <a
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium  css-1bhx6gc-MuiButtonBase-root-MuiButton-root-WideButton"
+            href="#/Apply"
+            tabindex="0"
+          >
+            APPLY
+          </a>
+        </span>
+      </p>
+      
+
+    </span>
+  </div>
+</div>
+`;

@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
-import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
-import TermsAndConditions from 'synapse-react-client/dist/containers/TermsAndConditions'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
+import {
+  displayToast,
+  SynapseClient,
+  TermsAndConditions,
+  IconSvg,
+  SynapseContextUtils,
+} from 'synapse-react-client'
 import { SourceAppLogo, useSourceApp } from './SourceApp'
 import { Box, Button, useTheme } from '@mui/material'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
 import { TermsAndConditionsLink } from './TermsAndConditionsLink'
-import { SynapseClient } from 'synapse-react-client/dist/utils'
 
 export type TermsOfUsePageProps = {}
 
@@ -17,7 +19,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isFormComplete, setIsFormComplete] = useState(false)
   const [isDone, setIsDone] = useState(false)
-  const { accessToken } = useSynapseContext()
+  const { accessToken } = SynapseContextUtils.useSynapseContext()
   const sourceApp = useSourceApp()
 
   const onSignTermsOfUse = async (event: React.SyntheticEvent) => {

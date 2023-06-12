@@ -1,13 +1,14 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { MOCK_REPO_ORIGIN } from '../../src/lib/utils/functions/getEndpoint'
-import ValidationRequirement from '../../src/lib/containers/AccessRequirementList/RequirementItem/ValidationRequirement'
+import { MOCK_REPO_ORIGIN } from '../../src/utils/functions/getEndpoint'
+import ValidationRequirement from '../../src/components/AccessRequirementList/RequirementItem/ValidationRequirement'
 import { getCurrentUserCertifiedValidatedHandler } from '../../mocks/msw/handlers/userProfileHandlers'
 
 const meta: Meta = {
   title:
     'Governance/Data Access Request Flow/Requirements/ValidationRequirement',
   component: ValidationRequirement,
+  parameters: { stack: 'mock' },
 } satisfies Meta
 
 export default meta

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import {
   NavLink,
   Route,
@@ -7,12 +7,12 @@ import {
   useRouteMatch,
 } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
-import { Icon } from 'synapse-react-client/dist/containers/row_renderers/utils'
-import { QueryResultBundle } from 'synapse-react-client/dist/utils/synapseTypes'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { Tooltip } from '@mui/material'
 import { DetailsPageTabProps } from '../../types/portal-util-types'
 import RedirectWithQuery from '../RedirectWithQuery'
 import { DetailsPageSynapseConfigArray } from './DetailsPage'
+import { SynapseComponents } from 'synapse-react-client'
 
 export type DetailsPageTabsProps = {
   tabConfigs: DetailsPageTabProps[]
@@ -26,6 +26,8 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
 ) => {
   const { tabConfigs, loading, queryResultBundle, showMenu } = props
   const { url } = useRouteMatch()
+  const rowValues = queryResultBundle?.queryResult?.queryResults.rows[0].values
+  const headers = queryResultBundle?.queryResult?.queryResults.headers
   const urlWithTrailingSlash = `${url}${url.endsWith('/') ? '' : '/'}`
   const { search } = useLocation()
   return (
@@ -40,6 +42,16 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
       </Switch>
       <div className="tab-groups">
         {tabConfigs.map((tab, index) => {
+          if (tab.hideIfColumnValueNull) {
+            if (rowValues && headers) {
+              const colIndex = headers.findIndex(h => h.name == tab.hideIfColumnValueNull)
+              if (!rowValues[colIndex]) {
+                return <></>
+              }
+            } else {
+              return <></>
+            }
+          }
           return (
             <Tooltip
               key={tab.uriValue}
@@ -52,7 +64,11 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
                 className={'tab-item ignoreLink'}
                 aria-current="true"
               >
-                {tab.iconName && <Icon type={tab.iconName}></Icon>}
+                {tab.iconName && (
+                  <SynapseComponents.Icon
+                    type={tab.iconName}
+                  ></SynapseComponents.Icon>
+                )}
                 {tab.title}
               </NavLink>
             </Tooltip>

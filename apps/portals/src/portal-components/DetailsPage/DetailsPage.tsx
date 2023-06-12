@@ -1,28 +1,23 @@
 import { cloneDeep, Dictionary } from 'lodash'
 import pluralize from 'pluralize'
-import * as React from 'react'
+import React from 'react'
 import { useState } from 'react'
 import { BarLoader } from 'react-spinners'
-import { Typography } from '@mui/material'
-import IconSvg from 'synapse-react-client/dist/containers/IconSvg'
-import { LockedColumn } from 'synapse-react-client/dist/containers/QueryContext'
-import { SYNAPSE_ENTITY_ID_REGEX } from 'synapse-react-client/dist/utils/functions/RegularExpressions'
 import {
-  generateQueryFilterFromSearchParams,
-  parseEntityIdFromSqlStatement,
-} from 'synapse-react-client/dist/utils/functions/sqlFunctions'
-import { useGetEntityHeaders } from 'synapse-react-client/dist/utils/hooks/SynapseAPI/entity/useGetEntityHeaders'
-import {
-SynapseQueries,
-SynapseConstants
-} from 'synapse-react-client/dist/utils'
+  RegularExpressions,
+  SynapseConstants,
+  SynapseQueries,
+  IconSvg,
+  SynapseUtilityFunctions,
+} from 'synapse-react-client'
+import type { LockedColumn } from 'synapse-react-client'
 import {
   ColumnType,
   ColumnTypeEnum,
   QueryBundleRequest,
   QueryResultBundle,
-} from 'synapse-react-client/dist/utils/synapseTypes/'
-import { Tooltip } from '@mui/material'
+} from '@sage-bionetworks/synapse-types'
+import { Tooltip, Typography } from '@mui/material'
 import { SynapseComponent } from '../../SynapseComponent'
 import { SynapseConfig } from '../../types/portal-config'
 import {
@@ -119,11 +114,12 @@ export default function DetailsPage(props: DetailsPageProps) {
   useScrollOnMount()
 
   const queryBundleRequest = React.useMemo(() => {
-    const additionalFilters = generateQueryFilterFromSearchParams(
+    const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
+    const additionalFilters = SynapseUtilityFunctions.getAdditionalFilters(
+      entityId,
       searchParams,
       sqlOperator,
     )
-    const entityId = parseEntityIdFromSqlStatement(sql)
     const queryBundleRequest: QueryBundleRequest = {
       entityId,
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -293,7 +289,7 @@ export const SplitStringToComponent: React.FC<{
 }) => {
   let value = splitString.trim()
   const valueIsSynId = React.useMemo(
-    () => !!SYNAPSE_ENTITY_ID_REGEX.exec(value),
+    () => !!RegularExpressions.SYNAPSE_ENTITY_ID_REGEX.exec(value),
     [value],
   )
 
@@ -304,9 +300,12 @@ export const SplitStringToComponent: React.FC<{
     columnName: columnName,
   }
 
-  const { data: entityHeaders } = useGetEntityHeaders([{ targetId: value }], {
-    enabled: valueIsSynId,
-  })
+  const { data: entityHeaders } = SynapseQueries.useGetEntityHeaders(
+    [{ targetId: value }],
+    {
+      enabled: valueIsSynId,
+    },
+  )
 
   if (resolveSynId) {
     // use entity name as either title or value according to resolveSynId
@@ -340,8 +339,11 @@ export const SplitStringToComponent: React.FC<{
   })
   if (overrideSqlSourceTable) {
     // use the search param value to override the sql param.
+    // TODO: Refactor to consider the the type of the original table
+    // For datasets and views, the rowVersionNumber corresponds to the actual version of the table. For TableEntities, the rowVersionNumber is meaningless. For now, just see if the columnName is `id`, which is always true for current view/dataset cases, and is never the case for current table cases.
+    //
     injectedProps['sql'] = `SELECT  *  FROM  ${value}${
-      rowVersionNumber ? `.${rowVersionNumber}` : ''
+      rowVersionNumber && columnName == 'id' ? `.${rowVersionNumber}` : ''
     }`
   }
 

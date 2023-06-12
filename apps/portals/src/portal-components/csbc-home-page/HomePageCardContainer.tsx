@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import HomePageCard, { HomePageCardProps } from './HomePageCard'
 
 export type HomePageCardContainerProps = {

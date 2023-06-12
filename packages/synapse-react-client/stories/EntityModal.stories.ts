@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import {
   EntityModal,
   EntityModalTabs,
-} from '../src/lib/containers/entity/metadata/EntityModal'
+} from '../src/components/entity/metadata/EntityModal'
 
 const meta = {
   title: 'Synapse/EntityModal',

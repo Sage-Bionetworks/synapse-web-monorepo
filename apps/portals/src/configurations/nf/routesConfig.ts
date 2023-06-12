@@ -40,7 +40,7 @@ import {
 } from './resources'
 import { toolsDetailsPage } from './synapseConfigs/tools'
 import datasetsV2, { datasetsDetailsPage } from './synapseConfigs/datasetsV2'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const limit = 3
 

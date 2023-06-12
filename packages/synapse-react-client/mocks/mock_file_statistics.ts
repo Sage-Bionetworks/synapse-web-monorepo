@@ -1,4 +1,4 @@
-import { FilesStatisticsResponse } from '../src/lib/utils/synapseTypes/DownloadListV2/QueryResponseDetails'
+import { FilesStatisticsResponse } from '@sage-bionetworks/synapse-types'
 
 export const mockFileStatistics: FilesStatisticsResponse = {
   concreteType:

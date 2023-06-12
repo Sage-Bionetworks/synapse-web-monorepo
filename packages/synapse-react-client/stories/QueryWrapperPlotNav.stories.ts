@@ -4,14 +4,19 @@ import {
   EXPERIMENTAL_TOOL,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
-} from '../src/lib/utils/SynapseConstants'
-import { Query } from '../src/lib/utils/synapseTypes'
-import QueryWrapperPlotNav from '../src/lib/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
+} from '../src/utils/SynapseConstants'
+import {
+  ColumnSingleValueQueryFilter,
+  Query,
+} from '@sage-bionetworks/synapse-types'
+import QueryWrapperPlotNav from '../src/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
-} from '../src/lib/utils/synapseTypes/Table/QueryFilter'
-import { displayToast } from '../src/lib/containers/ToastMessage'
+} from '@sage-bionetworks/synapse-types'
+import { displayToast } from '../src/components/ToastMessage'
+import { CustomControlCallbackData } from '../src/components/SynapseTable/TopLevelControls'
+import { QUERY_FILTERS_LOCAL_STORAGE_KEY } from '../src/utils/functions/SqlFunctions'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',
@@ -185,10 +190,59 @@ export const SendToCavatica: Story = {
       showAccessColumn: true,
       showDownloadColumn: true,
     },
-    name: 'Cavatica Integration Demo',
+    name: 'CAVATICA Integration Demo',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
     showExportToCavatica: true,
+    cavaticaHelpURL:
+      'https://staging.eliteportal.synapse.org/Limited%20Data%20Commons',
+  },
+}
+
+const handleCustomCommandClick = async (event: CustomControlCallbackData) => {
+  displayToast(
+    `Custom action applied to ${
+      event.selectedRows!.length
+    } rows (see js console for more information)`,
+  )
+  console.log('Rows selected:')
+  console.log(event.selectedRows)
+  const idColIndex = event.data?.columnModels?.findIndex(cm => cm.name === 'id')
+  const localStorageFilter: ColumnSingleValueQueryFilter = {
+    concreteType:
+      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+    columnName: 'id',
+    operator: ColumnSingleValueFilterOperator.IN,
+    values: event.selectedRows!.map(row => row.values[idColIndex!]!),
+  }
+  localStorage.setItem(
+    QUERY_FILTERS_LOCAL_STORAGE_KEY('syn51186974'),
+    JSON.stringify([localStorageFilter]),
+  )
+  console.log(
+    'Local Storage value set, refresh table to see additionalFilter QueryFilter being utilized',
+  )
+  // TODO: PORTALS-2682: event.refresh() should refresh the data but it currently doesn't
+  event.refresh()
+}
+// See handleParticipantWorkflowChange in crc-researcher for a more complex example
+export const TableRowSelectionWithCustomCommand: Story = {
+  args: {
+    sql: 'SELECT * FROM syn51186974',
+    tableConfiguration: {
+      isRowSelectionVisible: true,
+    },
+    name: 'Row Selection Demo',
+    hideSqlEditorControl: true,
+    shouldDeepLink: false,
+    customControls: [
+      {
+        buttonText: 'Custom Command',
+        onClick: event => {
+          handleCustomCommandClick(event)
+        },
+      },
+    ],
   },
 }
 export const TableHasAccessRequirement: Story = {

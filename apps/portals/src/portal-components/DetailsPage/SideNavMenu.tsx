@@ -1,7 +1,7 @@
 import { Dictionary } from 'lodash'
-import * as React from 'react'
-import { ExternalFileHandleLink } from 'synapse-react-client/dist/containers/ExternalFileHandleLink'
-import { QueryResultBundle } from 'synapse-react-client/dist/utils/synapseTypes/'
+import React from 'react'
+import { SynapseComponents } from 'synapse-react-client'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { RowSynapseConfig } from '../../types/portal-util-types'
 import { scrollToWithOffset } from '../../utils'
 import { getComponentId } from './utils'
@@ -47,7 +47,7 @@ export const SideNavMenu: React.FC<{
           }`
           if (el.name === 'ExternalFileHandleLink') {
             return (
-              <ExternalFileHandleLink
+              <SynapseComponents.ExternalFileHandleLink
                 key={index}
                 className={className}
                 synId={el.props.synId}

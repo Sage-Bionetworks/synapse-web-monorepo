@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { AccountLevelBadge } from '../src/lib/containers/AccountLevelBadge'
+import { AccountLevelBadge } from '../src/components/AccountLevelBadge/AccountLevelBadge'
 
 const meta = {
   title: 'UI/AccountLevelBadge',

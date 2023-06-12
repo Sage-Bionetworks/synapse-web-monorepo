@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import IconSvg, { IconStrings } from '../src/lib/containers/IconSvg'
+import IconSvg, { IconStrings } from '../src/components/IconSvg/IconSvg'
 
 const meta = {
   title: 'UI/IconSvg',

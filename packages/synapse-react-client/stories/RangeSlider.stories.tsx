@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { RangeSlider } from '../src/lib/containers/widgets/RangeSlider'
+import { RangeSlider } from '../src/components/widgets/RangeSlider'
 import { Paper } from '@mui/material'
 
 const meta = {

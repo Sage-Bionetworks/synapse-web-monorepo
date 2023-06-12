@@ -1,13 +1,8 @@
 import { Button, InputLabel, TextField, Typography } from '@mui/material'
 import { StyledFormControl } from './StyledComponents'
 import React, { useEffect, useState } from 'react'
-import { displayToast } from 'synapse-react-client/dist/containers/ToastMessage'
-import {
-  isAliasAvailable,
-  registerAccountStep2,
-  setAccessTokenCookie,
-} from 'synapse-react-client/dist/utils/SynapseClient'
-import { AliasType } from 'synapse-react-client/dist/utils/synapseTypes/Principal/PrincipalServices'
+import { displayToast, SynapseClient } from 'synapse-react-client'
+import { AliasType } from '@sage-bionetworks/synapse-types'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'
@@ -61,7 +56,7 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
     }
     try {
       setIsLoading(true)
-      const aliasCheckResponse = await isAliasAvailable({
+      const aliasCheckResponse = await SynapseClient.isAliasAvailable({
         alias: username,
         type: AliasType.USER_NAME,
       })
@@ -73,14 +68,14 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
         return
       }
       // capture loginResponse here
-      const loginResponse = await registerAccountStep2({
+      const loginResponse = await SynapseClient.registerAccountStep2({
         username,
         emailValidationSignedToken,
         password: password1,
         firstName,
         lastName,
       })
-      setAccessTokenCookie(loginResponse.accessToken).then(() =>
+      SynapseClient.setAccessTokenCookie(loginResponse.accessToken).then(() =>
         window.location.replace('/authenticated/signTermsOfUse'),
       )
     } catch (err: any) {

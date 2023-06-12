@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import MarkdownSynapse from '../src/lib/containers/markdown/MarkdownSynapse'
+import MarkdownSynapse from '../src/components/Markdown/MarkdownSynapse'
 
 const meta = {
   title: 'Markdown/MarkdownSynapse',

@@ -1,0 +1,36 @@
+name: 'Deploy Storybook to Chromatic'
+
+env:
+  NODE_OPTIONS: '--max-old-space-size=4096'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request_target:
+    branches:
+      - main
+
+jobs:
+  build:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+          # Chromatic requires full git history to track changes
+          fetch-depth: 0
+      - uses: ./.github/actions/pnpm-setup-action
+      - name: Prebuild dependencies
+        # we technically only need to build the dependencies of SRC, but Nx doesn't expose an easy way to do that
+        run: pnpm nx run synapse-react-client:build
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: packages/synapse-react-client
+          exitZeroOnChanges: true
+          exitOnceUploaded: true
+          autoAcceptChanges: 'main'

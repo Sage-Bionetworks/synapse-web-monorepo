@@ -1,42 +1,37 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  SynapseClient,
-  SynapseConstants,
-} from 'synapse-react-client/dist/utils'
-import StandaloneLoginForm from 'synapse-react-client/dist/containers/auth/StandaloneLoginForm'
-import { StyledOuterContainer } from 'synapse-react-client/dist/components/styled/LeftRightPanel'
-import UserCard from 'synapse-react-client/dist/containers/UserCard'
-import { useGetCurrentUserProfile } from 'synapse-react-client/dist/utils/hooks/SynapseAPI'
-import { SynapseClientError } from 'synapse-react-client/dist/utils/SynapseClientError'
-import {
-  FileHandleAssociateType,
-  OAuthConsentGrantedResponse,
-} from 'synapse-react-client/dist/utils/synapseTypes'
-import { AccessCodeResponse } from 'synapse-react-client/dist/utils/synapseTypes/AccessCodeResponse'
-import { OAuthClientPublic } from 'synapse-react-client/dist/utils/synapseTypes/OAuthClientPublic'
-import { OIDCAuthorizationRequest } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequest'
-import { OIDCAuthorizationRequestDescription } from 'synapse-react-client/dist/utils/synapseTypes/OIDCAuthorizationRequestDescription'
-import { getStateParam, getURLParam, handleErrorRedirect } from './URLUtils'
 import { Button, Link, Paper, Typography } from '@mui/material'
-import FullWidthAlert from 'synapse-react-client/dist/containers/FullWidthAlert'
+import {
+  AccessCodeResponse,
+  FileHandleAssociateType,
+  OAuthClientPublic,
+  OAuthConsentGrantedResponse,
+  OIDCAuthorizationRequest,
+  OIDCAuthorizationRequestDescription,
+} from '@sage-bionetworks/synapse-types'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import {
+  AppUtils,
+  FullWidthAlert,
+  StandaloneLoginForm,
+  StyledOuterContainer,
+  SynapseClient,
+  SynapseClientError,
+  SynapseConstants,
+  SynapseQueries,
+  SystemUseNotification,
+  UserCard,
+  useSynapseContext,
+} from 'synapse-react-client'
 import { OAuthClientError } from './OAuthClientError'
 import { StyledInnerContainer } from './StyledInnerContainer'
-import {
-  preparePostSSORedirect,
-  redirectAfterSSO,
-} from 'synapse-react-client/dist/utils/AppUtils'
-import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
-import { useHistory } from 'react-router-dom'
-import { useSynapseContext } from 'synapse-react-client/dist/utils/SynapseContext'
-import { getPortalFileHandleServletUrl } from 'synapse-react-client/dist/utils/SynapseClient'
-import SystemUseNotification from 'synapse-react-client/dist/containers/SystemUseNotification'
+import { getStateParam, getURLParam, handleErrorRedirect } from './URLUtils'
 
 export function OAuth2Form() {
   const isMounted = useRef(true)
 
   const { accessToken } = useSynapseContext()
   const { refreshSession, twoFactorAuthSSOErrorResponse, clearSession } =
-    useApplicationSessionContext()
+    AppUtils.useApplicationSessionContext()
   const history = useHistory()
 
   const [error, setError] = useState<any>()
@@ -55,13 +50,13 @@ export function OAuth2Form() {
   )
 
   // In addition to fetching the current user profile, the success of this request will determine if the current access token is valid.
-  const { data: profile } = useGetCurrentUserProfile({
+  const { data: profile } = SynapseQueries.useGetCurrentUserProfile({
     enabled: !!accessToken,
     onError,
   })
 
   if (profile?.profilePicureFileHandleId) {
-    profile.clientPreSignedURL = getPortalFileHandleServletUrl(
+    profile.clientPreSignedURL = SynapseClient.getPortalFileHandleServletUrl(
       profile.profilePicureFileHandleId,
       profile.ownerId,
       FileHandleAssociateType.UserProfileAttachment,
@@ -409,11 +404,11 @@ export function OAuth2Form() {
           <StandaloneLoginForm
             onBeginOAuthSignIn={() => {
               // save current route (so that we can go back here after SSO)
-              preparePostSSORedirect()
+              AppUtils.preparePostSSORedirect()
             }}
             sessionCallback={() => {
               refreshSession().then(() => {
-                redirectAfterSSO(history)
+                AppUtils.redirectAfterSSO(history)
               })
             }}
             twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}

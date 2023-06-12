@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ModalDownload from '../src/lib/containers/ModalDownload'
+import ModalDownload from '../src/components/ModalDownload'
 
 const meta = {
   title: 'UI/ModalDownload',

@@ -1,0 +1,128 @@
+@use '../abstracts/variables' as SRC;
+
+.AnnotationEditor {
+  .react-select-container > .form-control {
+    height: 53.33px;
+  }
+  .form-group.calendar-with-icon-form-group {
+    margin-bottom: 0px;
+  }
+  .form-group.field-array {
+    margin-bottom: 0px;
+  }
+  .form-control {
+    height: unset;
+  }
+  .MuiTextField-root:not(.datetime-picker) {
+    display: flex;
+  }
+
+  .LoadingPlaceholder {
+    display: flex;
+    margin: 60px auto;
+  }
+
+  .array-item .LabelContainer {
+    display: none !important;
+  }
+
+  .AnnotationEditorForm {
+    display: grid;
+    // We can't rearrange the order of the HTML elements, so we use grid rows to reorder them.
+    grid-template-rows: auto auto auto auto auto;
+    margin-bottom: 15px;
+
+    > .form-group {
+      grid-row-start: 1;
+    }
+
+    > hr {
+      grid-row-start: 4;
+      width: 100%;
+    }
+
+    .row {
+      padding: 0px 10px;
+    }
+    .calendar-with-icon-form-group.form-group {
+      input {
+        margin-bottom: 0;
+      }
+      .input-group-prepend {
+        margin-bottom: 0;
+      }
+    }
+
+    .field-description {
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
+    .field-array > .field-description {
+      margin-top: 0px;
+      margin-bottom: 8px;
+    }
+
+    .array-item {
+      .field-description {
+        display: none;
+      }
+
+      .HelpButton {
+        display: none;
+      }
+
+      .form-control,
+      .react-select-container,
+      .calendar-with-icon-form-group {
+        grid-row-start: widget;
+      }
+
+      div {
+        grid-row-start: errors;
+      }
+    }
+
+    .LabelContainer {
+      display: flex;
+      label {
+        flex-grow: 1;
+        span.required {
+          color: SRC.$red-required;
+          margin-left: 2px;
+        }
+      }
+    }
+    select {
+      background-color: SRC.$gray-light;
+    }
+
+    .field-array > .array-item > label.form-label {
+      display: none;
+    }
+
+    .HelpButton {
+      float: right;
+      margin: 0 0 0.5rem;
+      cursor: pointer;
+    }
+
+    table.FieldDescriptionTable {
+      tr {
+        th,
+        td {
+          padding: 3px 0px;
+          vertical-align: middle;
+
+          .field-description {
+            margin-bottom: 0;
+          }
+        }
+        th {
+          padding-right: 25px;
+          font-weight: 400;
+          color: SRC.$text-color-disabled;
+        }
+      }
+    }
+  }
+}

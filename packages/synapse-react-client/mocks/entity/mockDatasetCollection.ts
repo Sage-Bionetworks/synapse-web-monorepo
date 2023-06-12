@@ -1,10 +1,10 @@
-import { DatasetCollection, EntityPath } from '../../src/lib/utils/synapseTypes'
+import { DatasetCollection, EntityPath } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 import mockDatasetData from './mockDataset'
 import { MockEntityData } from './MockEntityData'
 import mockProjectEntityData from './mockProject'
 
-const MOCK_DATASET_COLLECTION_ENTITY_ID = 'syn654651'
+const MOCK_DATASET_COLLECTION_ENTITY_ID = `syn70000`
 const MOCK_DATASET_COLLECTION_NAME = 'A Mocked Dataset Collection'
 
 export const mockDatasetCollectionEntity: DatasetCollection = {

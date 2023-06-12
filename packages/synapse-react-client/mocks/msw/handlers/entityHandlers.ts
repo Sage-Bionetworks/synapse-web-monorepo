@@ -8,11 +8,11 @@ import {
   ENTITY_ID_VERSIONS,
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
-} from '../../../src/lib/utils/APIConstants'
+} from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../src/lib/utils/functions/getEndpoint'
+} from '../../../src/utils/functions/getEndpoint'
 import {
   Entity,
   EntityBundle,
@@ -22,16 +22,13 @@ import {
   PaginatedResults,
   Reference,
   VersionableEntity,
-} from '../../../src/lib/utils/synapseTypes'
-import { VersionInfo } from '../../../src/lib/utils/synapseTypes/VersionInfo'
+} from '@sage-bionetworks/synapse-types'
+import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import mockEntities from '../../entity'
 import { MOCK_INVALID_PROJECT_NAME } from '../../entity/mockEntity'
 import { mockSchemaBinding } from '../../mockSchema'
 import { SynapseApiResponse } from '../handlers'
-import {
-  UploadDestination,
-  UploadType,
-} from '../../../src/lib/utils/synapseTypes/File/UploadDestination'
+import { UploadDestination, UploadType } from '@sage-bionetworks/synapse-types'
 
 export const getEntityHandlers = (backendOrigin: string) => [
   /**

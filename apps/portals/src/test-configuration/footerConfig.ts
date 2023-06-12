@@ -1,8 +1,8 @@
-import { URL_TERMS_CONDITIONS_AGREEMENT } from 'synapse-react-client/dist/utils/SynapseConstants'
+import { SynapseConstants } from 'synapse-react-client'
 import { FooterConfig } from '../types/portal-config'
 
 const footer: FooterConfig = {
-  termsOfService: URL_TERMS_CONDITIONS_AGREEMENT,
+  termsOfService: SynapseConstants.URL_TERMS_CONDITIONS_AGREEMENT,
   contactUs: 'mailto:',
 }
 

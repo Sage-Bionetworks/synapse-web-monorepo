@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import UserProfileLinks from '../src/lib/containers/user_profile_links/UserProfileLinks'
+import UserProfileLinks from '../src/components/UserProfileLinks/UserProfileLinks'
 
 const meta = {
   title: 'Synapse/UserProfileLinks',

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ShowDownloadV2 from '../src/lib/containers/download_list_v2/ShowDownloadV2'
+import ShowDownloadV2 from '../src/components/DownloadCart/ShowDownloadV2'
 
 const meta: Meta = {
   title: 'Download/ShowDownloadV2',

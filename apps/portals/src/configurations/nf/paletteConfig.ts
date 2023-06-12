@@ -1,5 +1,5 @@
-import { nfPortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { Palettes } from 'synapse-react-client'
 
-const palette = nfPortalPalette
+const palette = Palettes.nfPortalPalette
 
 export default palette

@@ -1,12 +1,13 @@
 import { SynapseConfig } from 'types/portal-config'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { SynapseConstants } from 'synapse-react-client'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { CardConfiguration } from 'synapse-react-client'
 import studyHeaderSvg from '../style/study-header.svg'
 import { studiesSql, dataSql, dataOnStudiesPageSql } from '../resources'
 import {
+  ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
-} from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+} from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
 export const studyCardConfiguration: CardConfiguration = {
@@ -31,7 +32,7 @@ export const studyCardConfiguration: CardConfiguration = {
     title: 'studyName',
     subTitle: 'dataContributor',
     icon: 'Access_Type',
-    description: 'studyDescription',
+    description: 'studyAbstract',
     secondaryLabels: [
       'dataTypeAll',
       'studyFocus',
@@ -59,19 +60,6 @@ const studies: SynapseConfig = {
     name: 'Studies',
     shouldDeepLink: true,
     cardConfiguration: studyCardConfiguration,
-    searchConfiguration: {
-      searchable: [
-        'Study_Name',
-        'Study_Description',
-        'DataType_All',
-        'studyFocus',
-        'Data_Contributor',
-        'specimenType',
-        'Species',
-        'Grant Number',
-        'Program',
-      ],
-    },
   },
 }
 
@@ -87,7 +75,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
       synapseConfigArray: [
         {
           name: 'Markdown',
-          columnName: 'studyMetadata',
+          columnName: 'studyDescription',
           title: 'Study Description',
           props: {},
         },
@@ -116,11 +104,11 @@ export const studiesDetailsPageProps: DetailsPageProps = {
         },
         {
           name: 'CardContainerLogic',
-          columnName: 'relatedStudies',
+          columnName: 'studyKey',
           title: 'Related Studies',
-          tableSqlKeys: ['studyKey'],
+          tableSqlKeys: ['relatedStudies'],
           props: {
-            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+            sqlOperator: ColumnMultiValueFunction.HAS,
             sql: studiesSql,
             ...studyCardConfiguration,
           },

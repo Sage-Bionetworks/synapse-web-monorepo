@@ -1,5 +1,5 @@
 import React from 'react'
-import TwoFactorEnrollmentForm from 'synapse-react-client/dist/containers/auth/TwoFactorEnrollmentForm'
+import { TwoFactorEnrollmentForm } from 'synapse-react-client'
 import { useHistory } from 'react-router-dom'
 
 export default function TwoFactorAuthEnrollmentPage() {

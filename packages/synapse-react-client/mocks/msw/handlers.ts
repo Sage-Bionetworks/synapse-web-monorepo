@@ -7,7 +7,7 @@ import {
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../src/lib/utils/functions/getEndpoint'
+} from '../../src/utils/functions/getEndpoint'
 import {
   getAccessRequirementEntityBindingHandlers,
   getAccessRequirementHandlers,
@@ -17,7 +17,9 @@ import { getWikiHandlers } from './handlers/wikiHandlers'
 import { getDataAccessRequestHandlers } from './handlers/dataAccessRequestHandlers'
 import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
 import { getFileHandlers } from './handlers/fileHandlers'
-import { SynapseError } from '../../src/lib/utils/SynapseError'
+import { SynapseError } from '../../src/utils/SynapseError'
+import { getDiscussionHandlers } from './handlers/discussionHandlers'
+import { getSubscriptionHandlers } from './handlers/subscriptionHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
@@ -45,6 +47,8 @@ const getHandlers = (backendOrigin: string) => [
   ...getDataAccessRequestHandlers(backendOrigin),
   ...getResearchProjectHandlers(backendOrigin),
   ...getFileHandlers(backendOrigin),
+  ...getDiscussionHandlers(backendOrigin),
+  ...getSubscriptionHandlers(backendOrigin),
 ]
 
 const handlers = getHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT))

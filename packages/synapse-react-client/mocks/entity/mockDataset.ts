@@ -4,13 +4,13 @@ import {
   EntityHeader,
   EntityPath,
   EntityType,
-} from '../../src/lib/utils/synapseTypes'
-import { VersionInfo } from '../../src/lib/utils/synapseTypes/VersionInfo'
+} from '@sage-bionetworks/synapse-types'
+import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 import mockProjectEntityData from './mockProject'
 
-const MOCK_DATASET_ENTITY_ID = 'syn234'
+const MOCK_DATASET_ENTITY_ID = `syn60000`
 const MOCK_DATASET_NAME = 'A Mocked Dataset'
 
 export const mockDatasetEntity: Dataset = {

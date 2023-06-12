@@ -1,4 +1,4 @@
-import { QueryResultBundle } from '../src/lib/utils/synapseTypes'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 
 const mockQueryResponseData: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',

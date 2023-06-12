@@ -1,5 +1,5 @@
-import { bsmnPortalPalette } from 'synapse-react-client/dist/utils/theme/palette/Palettes'
+import { Palettes } from 'synapse-react-client'
 
-const palette = bsmnPortalPalette
+const palette = Palettes.bsmnPortalPalette
 
 export default palette

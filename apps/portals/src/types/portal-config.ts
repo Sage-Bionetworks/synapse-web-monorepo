@@ -1,39 +1,40 @@
-import { CardContainerLogicProps } from 'synapse-react-client/dist/containers/CardContainerLogic'
-import { QueryWrapperProps } from 'synapse-react-client/dist/containers/QueryWrapper'
-import { UserCardProps } from 'synapse-react-client/dist/containers/UserCard'
-import { ExternalFileHandleLinkProps } from 'synapse-react-client/dist/containers/ExternalFileHandleLink'
-import { UpsetPlotProps } from 'synapse-react-client/dist/containers/UpsetPlot'
-import { SynapsePlotProps } from 'synapse-react-client/dist/containers/widgets/SynapsePlot'
-import { MarkdownSynapseProps } from 'synapse-react-client/dist/containers/markdown/MarkdownSynapse'
-import { GoalsProps } from 'synapse-react-client/dist/containers/home_page/goals/Goals'
-import { ProgramsProps } from 'synapse-react-client/dist/containers/home_page/programs/Programs'
-import { ResourcesProps } from 'synapse-react-client/dist/containers/home_page/resources/Resources'
-import { UserCardListRotateProps } from 'synapse-react-client/dist/containers/UserCardListRotate'
-import { SubsectionRowRendererProps } from 'synapse-react-client/dist/containers/SubsectionRowRenderer'
-import { SynapseFormSubmissionGridProps } from 'synapse-react-client/dist/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
-import { QueryWrapperPlotNavProps } from 'synapse-react-client/dist/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
-import { SynapseFormWrapperProps } from 'synapse-react-client/dist/containers/synapse_form_wrapper/SynapseFormWrapper'
-import { ThemesPlotProps } from 'synapse-react-client/dist/containers/widgets/themes-plot/ThemesPlot'
+import { CardContainerLogicProps } from 'synapse-react-client'
+import { QueryWrapperProps } from 'synapse-react-client'
+import { UserCardProps } from 'synapse-react-client'
+import { ExternalFileHandleLinkProps } from 'synapse-react-client'
+import { UpsetPlotProps } from 'synapse-react-client'
+import { SynapsePlotProps } from 'synapse-react-client'
+import { MarkdownSynapseProps } from 'synapse-react-client'
+import { GoalsProps } from 'synapse-react-client'
+import { ProgramsProps } from 'synapse-react-client'
+import { ResourcesProps } from 'synapse-react-client'
+import { UserCardListRotateProps } from 'synapse-react-client'
+import { SubsectionRowRendererProps } from 'synapse-react-client'
+import { SynapseFormSubmissionGridProps } from 'synapse-react-client'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client'
+import { SynapseFormWrapperProps } from 'synapse-react-client'
+import { ThemesPlotProps } from 'synapse-react-client'
 import { StatefulButtonControlWrapperProps } from '../portal-components/StatefulButtonControlWrapper'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
 import { AboutPortalProps } from '../portal-components/csbc-home-page/AboutPortal'
 import { EcosystemProps } from '../portal-components/csbc-home-page/Ecosystem'
 import { DetailsPageProps } from './portal-util-types'
-import { StandaloneQueryWrapperProps } from 'synapse-react-client/dist/containers/table/StandaloneQueryWrapper'
+import { StandaloneQueryWrapperProps } from 'synapse-react-client'
 import { ParticipantsBarPlotProps } from '../portal-components/crc-researcher/ParticipantsBarPlot'
 import { StatusLineChartProps } from '../portal-components/crc-researcher/StatusLineChart'
 import { SurveysCompletedPlotsProps } from '../portal-components/crc-researcher/SurveysCompletedPlots'
 import { ImageProps } from '../portal-components/Image'
-import { RssFeedCardsProps } from 'synapse-react-client/dist/containers/RssFeedCards'
-import { FeaturedDataTabsProps } from 'synapse-react-client/dist/containers/home_page/featured-data/FeaturedDataTabs'
-import { UserCardListGroupsProps } from 'synapse-react-client/dist/containers/home_page/people/UserCardListGroups'
-import { TableFeedCardsProps } from 'synapse-react-client/dist/containers/TableFeedCards'
+import { RssFeedCardsProps } from 'synapse-react-client'
+import { FeaturedDataTabsProps } from 'synapse-react-client'
+import { UserCardListGroupsProps } from 'synapse-react-client'
+import { TableFeedCardsProps } from 'synapse-react-client'
 import { RedirectProps } from 'react-router-dom'
-import { MarkdownCollapseProps } from 'synapse-react-client/dist/containers/MarkdownCollapse'
-import { DownloadListActionsRequiredProps } from 'synapse-react-client/dist/containers/download_list_v2/DownloadListActionsRequired'
+import { MarkdownCollapseProps } from 'synapse-react-client'
+import { DownloadCartPageProps } from 'synapse-react-client'
 import { ToggleSynapseObjectsProps } from '../portal-components/ToggleSynapseObjects'
 import { CSSProperties } from 'react'
+import { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObjects'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -127,7 +128,7 @@ type HomePageCardContainer = {
 
 type DownloadCartPage = {
   name: 'DownloadCartPage'
-  props: DownloadListActionsRequiredProps
+  props: DownloadCartPageProps
 }
 
 type Ecosystem = {
@@ -150,16 +151,14 @@ type BrowseToolsPage = {
   props: undefined
 }
 
-type ChallengeDetailsPage = {
-  name: 'ChallengeDetailsPage'
-  props: undefined
-}
-
 type NFSurveyToast = {
   name: 'NFSurveyToast'
   props: undefined
 }
-
+type ELBetaLaunchBanner = {
+  name: 'ELBetaLaunchBanner'
+  props: undefined
+}
 type ARKWelcomePage = {
   name: 'ARKWelcomePage'
   props: undefined
@@ -184,6 +183,14 @@ type TableFeedCards = {
 type SynapsePlot = {
   name: 'SynapsePlot'
   props: SynapsePlotProps
+}
+type ChallengeParticipantGoogleMap = {
+  name: 'ChallengeParticipantGoogleMap'
+  props: undefined
+}
+type ProjectDiscussionForum = {
+  name: 'ProjectDiscussionForum'
+  props: undefined
 }
 type UserCardListRotate = {
   name: 'UserCardListRotate'
@@ -210,6 +217,11 @@ type ToggleSynapseObjects = {
   name: 'ToggleSynapseObjects'
   props: ToggleSynapseObjectsProps
 }
+type TabbedSynapseObjects = {
+  name: 'TabbedSynapseObjects'
+  props: TabbedSynapseObjectsProps
+}
+
 
 type Metadata = {
   title?: string
@@ -310,10 +322,13 @@ export type SynapseConfig = (
   | DownloadCartPage
   | BrowseToolsPage
   | NFSurveyToast
+  | ELBetaLaunchBanner
   | ARKWelcomePage
   | SubsectionRowRenderer
   | ToggleSynapseObjects
-  | ChallengeDetailsPage
+  | TabbedSynapseObjects
+  | ChallengeParticipantGoogleMap
+  | ProjectDiscussionForum
   | Header
 ) &
   Metadata

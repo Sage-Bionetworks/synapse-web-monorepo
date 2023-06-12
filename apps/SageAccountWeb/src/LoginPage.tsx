@@ -1,20 +1,20 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
-import StandaloneLoginForm from 'synapse-react-client/dist/containers/auth/StandaloneLoginForm'
-import { SourceAppDescription, SourceAppLogo } from './components/SourceApp'
-import {
-  StyledInnerContainer,
-  StyledOuterContainer,
-} from './components/StyledComponents'
 import {
   preparePostSSORedirect,
   redirectAfterSSO,
-} from 'synapse-react-client/dist/utils/AppUtils'
+  StandaloneLoginForm,
+  SynapseConstants,
+  SystemUseNotification,
+  useApplicationSessionContext,
+} from 'synapse-react-client'
+import { SourceAppDescription, SourceAppLogo } from './components/SourceApp.js'
+import {
+  StyledInnerContainer,
+  StyledOuterContainer,
+} from './components/StyledComponents.js'
 import { useHistory } from 'react-router-dom'
-import { useApplicationSessionContext } from 'synapse-react-client/dist/utils/apputils/session/ApplicationSessionContext'
-import { backButtonSx } from './components/BackButton'
-import { LOGIN_BACK_BUTTON_CLASS_NAME } from 'synapse-react-client/dist/utils/SynapseConstants'
-import SystemUseNotification from 'synapse-react-client/dist/containers/SystemUseNotification'
+import { backButtonSx } from './components/BackButton.js'
 
 export type LoginPageProps = {
   returnToUrl?: string
@@ -22,7 +22,7 @@ export type LoginPageProps = {
 
 function LoginPage(props: LoginPageProps) {
   const { returnToUrl } = props
-  const { refreshSession, twoFactorAuthErrorResponse } =
+  const { refreshSession, twoFactorAuthSSOErrorResponse } =
     useApplicationSessionContext()
   const history = useHistory()
   return (
@@ -34,7 +34,7 @@ function LoginPage(props: LoginPageProps) {
             px: 8,
             height: '100%',
             position: 'relative',
-            [`.${LOGIN_BACK_BUTTON_CLASS_NAME}`]: backButtonSx,
+            [`.${SynapseConstants.LOGIN_BACK_BUTTON_CLASS_NAME}`]: backButtonSx,
           }}
         >
           <Box
@@ -58,7 +58,7 @@ function LoginPage(props: LoginPageProps) {
                   // save current route (so that we can go back here after SSO)
                   preparePostSSORedirect()
                 }}
-                twoFactorAuthenticationRequired={twoFactorAuthErrorResponse}
+                twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
               />
             </Box>
           </Box>

@@ -1,17 +1,15 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src/lib",
-    "outDir": "dist",
+    "rootDir": "./src",
+    "outDir": "./dist/types",
     "module": "esnext",
     "target": "esnext",
     "moduleResolution": "Node",
     "allowJs": false,
-    "noEmit": false,
+    "noEmit": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/lib/**/*.ts", "src/lib/**/*.tsx"]
-  // TODO: break each folder out into its own buildable TypeScript project and reference it, so we can get incremental builds
-  // We will have to break circular dependencies to accomplish this
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

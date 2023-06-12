@@ -1,43 +1,40 @@
 import { SynapseConfig } from 'types/portal-config'
-import { SynapseConstants } from 'synapse-react-client'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import { CardConfiguration, SynapseConstants } from 'synapse-react-client'
 import {
+  computationalSql,
+  peopleSql,
   projectsSql,
   publicationsSql,
   studiesSql,
-  peopleSql,
 } from '../resources'
-import { DetailsPageProps, RowSynapseConfig } from 'types/portal-util-types'
+import { DetailsPageProps } from 'types/portal-util-types'
 import { studyCardConfiguration } from './studies'
 import { publicationCardProps } from './publications'
+import { computationalCardConfiguration } from './computational_tools'
+import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 4
 export const projectCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     type: 'Project',
-    title: 'Name',
-    subTitle: 'Principal Investigators',
-    description: 'Abstract',
-    secondaryLabels: [
-      'Institutions',
-      'Program',
-      'Grant Number',
-      'More Information',
-    ],
+    title: 'name',
+    subTitle: 'principalInvestigators',
+    description: 'abstract',
+    secondaryLabels: ['institutions', 'program', 'grantNumber'],
   },
   secondaryLabelLimit: 4,
   titleLinkConfig: {
     isMarkdown: false,
     baseURL: 'Explore/Projects/DetailsPage',
-    URLColumnName: 'Grant Number',
-    matchColumnName: 'Grant Number',
+    URLColumnName: 'grantNumber',
+    matchColumnName: 'grantNumber',
   },
   labelLinkConfig: [
     {
       isMarkdown: false,
-      matchColumnName: 'More Information',
-      linkColumnName: 'More Information URL',
+      matchColumnName: 'moreInformation',
+      linkColumnName: 'moreInformationURL',
     },
   ],
 }
@@ -48,7 +45,7 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
   synapseConfigArray: [
     {
       name: 'CardContainerLogic',
-      columnName: 'Grant Number',
+      columnName: 'grantNumber',
       title: 'Studies',
       tableSqlKeys: ['grantNumber'],
       props: {
@@ -58,24 +55,35 @@ export const projectsDetailsPageConfiguration: DetailsPageProps = {
     },
     {
       name: 'CardContainerLogic',
-      columnName: 'Grant Number',
+      columnName: 'grantNumber',
       title: 'Publications',
       showTitleSeperator: false,
       tableSqlKeys: ['grant'],
       props: {
-        sql: publicationsSql,
         ...publicationCardProps,
+        sql: publicationsSql,
       },
     },
     {
       name: 'CardContainerLogic',
       title: 'People',
-      columnName: 'Grant Number',
-      tableSqlKeys: ['Grant Number'],
+      columnName: 'grantNumber',
+      tableSqlKeys: ['grantNumber'],
       props: {
         sql: peopleSql,
         limit: 6,
         type: SynapseConstants.MEDIUM_USER_CARD,
+      },
+    },
+    {
+      name: 'CardContainerLogic',
+      title: 'Computational Tools',
+      columnName: 'grantNumber',
+      tableSqlKeys: ['grant'],
+      props: {
+        ...computationalCardConfiguration,
+        sqlOperator: ColumnMultiValueFunction.HAS,
+        sql: computationalSql,
       },
     },
   ],
@@ -90,20 +98,11 @@ const projects: SynapseConfig = {
     name: 'Projects',
     cardConfiguration: projectCardConfiguration,
     // unitDescription: 'Projects',
-    searchConfiguration: {
-      searchable: [
-        'Name',
-        'Grant Number',
-        'Program',
-        'Principal Investigators',
-        'Institutions',
-        'Abstract',
-      ],
-    },
-    facetsToPlot: ['Name',
-      'Institutions',
-      'Principal Investigators',
-      'Grant Number',
+    facetsToPlot: [
+      'name',
+      'institutions',
+      'principalInvestigators',
+      'grantNumber',
       // 'Program',
     ],
   },

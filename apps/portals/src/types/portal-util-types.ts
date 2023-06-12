@@ -1,10 +1,13 @@
 import { SynapseConfig } from './portal-config'
-import { SQLOperator } from 'synapse-react-client/dist/utils/functions/sqlFunctions'
-import { Icon } from 'synapse-react-client/dist/containers/IconSvg'
+import { IconName } from 'synapse-react-client'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
 
 /* 
   These are types that come up frequently between portals but are an
-  implementation detail, not a core type that should be relied up in 
+  implementation detail, not a core type that should be relied up in
   the portal.
 */
 // The props for DetailsPageProps are kept here so that
@@ -16,9 +19,9 @@ export type ResolveSynId = {
 }
 
 type ToggleConfigs = {
-  icon1: Icon
+  icon1: IconName
   config1: RowSynapseConfig
-  icon2: Icon
+  icon2: IconName
   config2: RowSynapseConfig
 }
 
@@ -44,11 +47,12 @@ export type DetailsPageContent =
 
 export type DetailsPageProps = DetailsPageContent & {
   showMenu?: boolean // default to true
+  /** Note, to exclude from processing, use the suffix "NotAQueryFilterKey" */
   searchParams?: {
     [index: string]: string
   }
   sql: string
-  sqlOperator?: SQLOperator
+  sqlOperator?: ColumnSingleValueFilterOperator | ColumnMultiValueFunction
 }
 
 export type DetailsPageTabProps = DetailsPageContent & {
@@ -59,4 +63,6 @@ export type DetailsPageTabProps = DetailsPageContent & {
   iconName?: string
   cssClass?: string
   toolTip?: string
+  /** Given this column name, if the assocated value in this column is not set, then this tab will be hidden */
+  hideIfColumnValueNull?: string
 }

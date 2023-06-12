@@ -3,8 +3,8 @@ import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { SynapseComponent } from '../SynapseComponent'
 import { SynapseConfig } from '../types/portal-config'
-import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
 import { describe, it } from 'vitest'
+import { FullContextProvider } from 'synapse-react-client'
 
 describe('SynapseComponent tests', () => {
   it('renders SRC components correctly', () => {

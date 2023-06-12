@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ReviewerDashboard from '../src/lib/containers/dataaccess/ReviewerDashboard'
+import ReviewerDashboard from '../src/components/dataaccess/ReviewerDashboard'
 
 const meta = {
   title: 'Governance/ReviewerDashboard',

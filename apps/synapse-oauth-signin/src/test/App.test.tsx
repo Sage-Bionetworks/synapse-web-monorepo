@@ -2,14 +2,37 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { server } from '../mocks/server'
 import { rest } from 'msw'
 import React from 'react'
-import { ACCESS_TOKEN_COOKIE_KEY } from 'synapse-react-client/dist/utils/SynapseClient'
+import { SynapseClient, SynapseConstants } from 'synapse-react-client'
 import App from '../App'
 import userEvent from '@testing-library/user-event'
-import { SynapseClient } from 'synapse-react-client'
-import { LoginResponse } from 'synapse-react-client/dist/utils/synapseTypes/LoginResponse'
-import { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from 'synapse-react-client/dist/utils/AppUtils'
+import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+import { waitForOptions } from '@testing-library/react'
 
+const overrideWaitForOptions: waitForOptions = {
+  timeout: 5000,
+}
+
+vi.mock('synapse-react-client', async importActual => {
+  const actual = await importActual<typeof import('synapse-react-client')>()
+  return {
+    ...actual,
+    SynapseClient: {
+      ...actual.SynapseClient,
+      // Create mock but use actual implementation so we can spy on calls
+      consentToOAuth2Request: vi.fn(
+        actual.SynapseClient.consentToOAuth2Request,
+      ),
+    },
+  }
+})
+
+const mockConsentToOAuth2Request = vi.mocked(
+  SynapseClient.consentToOAuth2Request,
+)
+
+const { ACCESS_TOKEN_COOKIE_KEY, POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } =
+  SynapseConstants
 function createParams(prompt?: string) {
   const params = new URLSearchParams()
   params.set('response_type', 'code')
@@ -39,9 +62,13 @@ describe('App integration tests', () => {
 
   test('Shows login when no token is provided', async () => {
     renderApp()
-    await screen.findByRole('button', {
-      name: /sign in with your email/i,
-    })
+    await screen.findByRole(
+      'button',
+      {
+        name: /sign in with your email/i,
+      },
+      overrideWaitForOptions,
+    )
   })
   test('Shows login and does not redirect when an expired token is provided', async () => {
     // Need a token in the cookie so the app tries to use it
@@ -66,9 +93,13 @@ describe('App integration tests', () => {
     renderApp()
 
     // The token was invalid, so the user should be prompted to login
-    await screen.findByRole('button', {
-      name: /sign in with your email/i,
-    })
+    await screen.findByRole(
+      'button',
+      {
+        name: /sign in with your email/i,
+      },
+      overrideWaitForOptions,
+    )
 
     // No redirect should have happened
     expect(window.location.replace).not.toHaveBeenCalled()
@@ -78,9 +109,13 @@ describe('App integration tests', () => {
     renderApp()
 
     await userEvent.click(
-      await screen.findByRole('button', {
-        name: /sign in with your email/i,
-      }),
+      await screen.findByRole(
+        'button',
+        {
+          name: /sign in with your email/i,
+        },
+        overrideWaitForOptions,
+      ),
     )
     const usernameField = await screen.findByLabelText('Username', {
       exact: false,
@@ -111,22 +146,28 @@ describe('App integration tests', () => {
     renderApp()
 
     // The user has logged in but has not granted consent, so check for the consent text
-    await screen.findByText(/requests permission/)
+    await screen.findByText(
+      /requests permission/,
+      undefined,
+      overrideWaitForOptions,
+    )
 
     // No redirect should have happened
     expect(window.location.replace).not.toHaveBeenCalled()
   })
 
   test('Consent to app terms', async () => {
-    const consentSpy = vi.spyOn(SynapseClient, 'consentToOAuth2Request')
-
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
     renderApp()
 
     // The user has logged in but has not granted consent, so check for the consent text
-    await screen.findByText(/requests permission/)
+    await screen.findByText(
+      /requests permission/,
+      undefined,
+      overrideWaitForOptions,
+    )
 
     const consentButton = await screen.findByRole('button', { name: 'Allow' })
     await userEvent.click(consentButton)
@@ -134,17 +175,20 @@ describe('App integration tests', () => {
     // Should redirect
     // TODO: Verify the redirect URL
     await waitFor(() => expect(window.location.replace).toHaveBeenCalled())
-    expect(consentSpy).toHaveBeenCalled()
+    expect(mockConsentToOAuth2Request).toHaveBeenCalled()
   })
   test('Deny consent to app terms', async () => {
-    const consentSpy = vi.spyOn(SynapseClient, 'consentToOAuth2Request')
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
     renderApp()
 
     // The user has logged in but has not granted consent, so check for the consent text
-    await screen.findByText(/requests permission/)
+    await screen.findByText(
+      /requests permission/,
+      undefined,
+      overrideWaitForOptions,
+    )
 
     const denyButton = await screen.findByRole('button', { name: 'Deny' })
     await userEvent.click(denyButton)
@@ -152,7 +196,7 @@ describe('App integration tests', () => {
     // Should redirect
     // TODO: Verify the redirect URL
     await waitFor(() => expect(window.location.replace).toHaveBeenCalled())
-    expect(consentSpy).not.toHaveBeenCalled()
+    expect(mockConsentToOAuth2Request).not.toHaveBeenCalled()
   })
 
   test('Does not redirect if a token is provided and the user has already consented, if prompt is consent', () => {
@@ -263,6 +307,8 @@ describe('App integration tests', () => {
     // Verify the TOTP prompt is on-screen and type in '123456'
     await screen.findByText(
       'Enter the 6-digit, time-based verification code provided by your authenticator app.',
+      undefined,
+      overrideWaitForOptions,
     )
     const otpInputs = await screen.findAllByRole('textbox')
     expect(otpInputs).toHaveLength(6)

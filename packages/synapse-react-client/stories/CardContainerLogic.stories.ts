@@ -1,12 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react'
 import {
+  DATASET,
   FUNDER,
   GENERIC_CARD,
   OBSERVATION_CARD,
   PUBLICATION,
-} from '../src/lib/utils/SynapseConstants'
-import CardContainerLogic from '../src/lib/containers/CardContainerLogic'
-import { GenericCardSchema } from '../src/lib/containers/GenericCard'
+} from '../src/utils/SynapseConstants'
+import CardContainerLogic from '../src/components/CardContainerLogic'
+import { GenericCardSchema } from '../src/components/GenericCard'
 
 const meta = {
   title: 'Explore/CardContainerLogic',
@@ -63,6 +64,14 @@ export const FunderCard: Story = {
   args: {
     sql: `SELECT * FROM syn16858699`,
     type: FUNDER,
+    limit: 3,
+  },
+}
+
+export const DatasetCard: Story = {
+  args: {
+    sql: `SELECT * FROM syn16859580`,
+    type: DATASET,
     limit: 3,
   },
 }

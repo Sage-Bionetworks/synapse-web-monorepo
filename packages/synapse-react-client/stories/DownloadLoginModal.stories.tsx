@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { DownloadLoginModal } from '../src/lib/containers/table/table-top/DownloadLoginModal'
+import { DownloadLoginModal } from '../src/components/SynapseTable/table-top/DownloadLoginModal'
 
 const meta = {
   title: 'Download/DownloadLoginModal',

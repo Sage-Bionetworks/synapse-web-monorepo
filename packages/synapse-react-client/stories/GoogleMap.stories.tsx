@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import GoogleMap from '../src/lib/containers/GoogleMap/GoogleMap'
+import GoogleMap from '../src/components/GoogleMap/GoogleMap'
 
 const meta = {
   title: 'Synapse/GoogleMap',

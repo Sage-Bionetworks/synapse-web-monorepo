@@ -10,18 +10,12 @@ import {
   species,
 } from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
-import {
-  studiesProgrammaticRouteConfig,
-} from './synapseConfigs/studies'
+import { studiesProgrammaticRouteConfig } from './synapseConfigs/studies'
 import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import {
-  dataSql,
-  projectsSql,
-  peopleSql,
-} from './resources'
+import { dataSql, projectsSql, peopleSql, upsetPlotSql } from './resources'
 import computationalTools from './synapseConfigs/computational_tools'
 
 const routes: GenericRoute[] = [
@@ -31,6 +25,17 @@ const routes: GenericRoute[] = [
     path: undefined,
     link: '/',
     synapseConfigArray: [],
+  },
+  {
+    path: '',
+    exact: false,
+    synapseConfigArray: [
+      {
+        name: 'ELBetaLaunchBanner',
+        centerTitle: true,
+        props: undefined,
+      },
+    ],
   },
   {
     path: '',
@@ -47,8 +52,22 @@ const routes: GenericRoute[] = [
         },
       },
       {
+        name: 'UpsetPlot',
+        title: 'Exploring the Data',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        centerTitle: true,
+        props: {
+          sql: upsetPlotSql,
+          rgbIndex: 0,
+          maxBarCount: 20,
+          setName: '# Files per data type',
+          combinationName: '# Files',
+          // summaryLinkText: 'Explore All Data',
+          // summaryLink: '/Explore/Data',
+        },
+      },
+      {
         name: 'FeaturedDataTabs',
-        title: 'Featured Data',
         centerTitle: true,
         outsideContainerClassName: 'home-spacer home-bg-dark',
         props: {
@@ -73,16 +92,6 @@ const routes: GenericRoute[] = [
                       '/Explore/Studies/DetailsPage?studyKey=LLFS',
                   },
                   {
-                    title: 'The Single cell transcriptomic analysis of PBMCs in Extreme Longevity',
-                    description:
-                      'This study provides data from 7 centenarian samples (> 100 years) and 2 younger control samples (20-59 years) from New England Centenarian Study (NECS) at Boston University and the Integrative Longevity Omics (ILO). Peripheral Blood Mononuclear Cells (PBMCs) transcriptional and protein expression were profiled at a single cell resolution. Pluripotent stem cells were also generated. Droplet-based single cell CITE-seq data (16,082 cells).',
-                    facetsToPlot: ['dataType'],
-                    selectFacetColumnName: 'study',
-                    selectFacetColumnValue: 'ELPSCRNA',
-                    detailsPagePath:
-                      '/Explore/Studies/DetailsPage?studyKey=ELPSCRNA',
-                  },
-                  {
                     title:
                       'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study',
                     description:
@@ -93,7 +102,27 @@ const routes: GenericRoute[] = [
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
                   },
+                  {
+                    title:
+                      'The Single cell transcriptomic analysis of PBMCs in Extreme Longevity',
+                    description:
+                      'This study provides data from 7 centenarian samples (> 100 years) and 2 younger control samples (20-59 years) from New England Centenarian Study (NECS) at Boston University and the Integrative Longevity Omics (ILO). Peripheral Blood Mononuclear Cells (PBMCs) transcriptional and protein expression were profiled at a single cell resolution. Pluripotent stem cells were also generated. Droplet-based single cell CITE-seq data (16,082 cells).',
+                    facetsToPlot: ['dataType'],
+                    selectFacetColumnName: 'study',
+                    selectFacetColumnValue: 'ELPSCRNA',
+                    detailsPagePath:
+                      '/Explore/Studies/DetailsPage?studyKey=ELPSCRNA',
+                  },
                 ],
+              },
+            },
+            {
+              title: 'Animal Model Studies',
+              icon: 'MOUSE',
+              explorePagePath: '/Explore/Studies',
+              exploreObjectType: 'Studies',
+              plotsConfig: {
+                configs: [],
               },
             },
           ],
@@ -103,18 +132,12 @@ const routes: GenericRoute[] = [
         name: 'Ecosystem',
         title: 'Related Resources',
         centerTitle: true,
-        subtitle:
-          '',
+        subtitle: '',
         outsideContainerClassName: 'home-spacer',
         props: {
           config: [
             {
-              title: 'Cross-Species Research Partners',
-              ownerId: 'syn27229419',
-              wikiId: '621472',
-            },
-            {
-              title: 'Data Portals',
+              title: 'Data Repositories',
               ownerId: 'syn27229419',
               wikiId: '621470',
             },
@@ -123,21 +146,26 @@ const routes: GenericRoute[] = [
               ownerId: 'syn27229419',
               wikiId: '621471',
             },
+            {
+              title: 'Cross-Species Research Resources',
+              ownerId: 'syn27229419',
+              wikiId: '621472',
+            },
           ],
         },
       },
       {
         name: 'UserCardListRotate',
-        title: 'Our People and Institutions',
+        title: 'Our People & Institutions',
         outsideContainerClassName: 'home-spacer home-bg-dark',
         centerTitle: true,
         props: {
-          sql: `${peopleSql} where isFeatured=true`,
+          sql: `${peopleSql} WHERE isFeatured=true ORDER BY firstName`,
           count: 3,
           size: SynapseConstants.MEDIUM_USER_CARD,
           useQueryResultUserData: true,
           summaryLink: 'Explore/People',
-          summaryLinkText: 'Explore All People',
+          summaryLinkText: 'View All People',
         },
       },
       // {
@@ -191,20 +219,6 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        path: 'Species',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: species,
-            },
-          },
-        ],
-      },
-      {
         path: 'Projects',
         routes: [
           {
@@ -239,6 +253,20 @@ const routes: GenericRoute[] = [
                 props: projectsDetailsPageConfiguration,
               },
             ],
+          },
+        ],
+      },
+      {
+        path: 'Species',
+        exact: true,
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: species,
+            },
           },
         ],
       },
@@ -283,20 +311,6 @@ const routes: GenericRoute[] = [
       },
       {
         exact: true,
-        path: 'People',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: people,
-            },
-          },
-        ],
-      },
-      {
-        exact: true,
         path: 'Computational Tools',
         synapseConfigArray: [
           {
@@ -305,6 +319,20 @@ const routes: GenericRoute[] = [
             props: {
               ...RouteControlWrapperProps,
               synapseConfig: computationalTools,
+            },
+          },
+        ],
+      },
+      {
+        exact: true,
+        path: 'People',
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: {
+              ...RouteControlWrapperProps,
+              synapseConfig: people,
             },
           },
         ],
@@ -336,6 +364,14 @@ const routes: GenericRoute[] = [
         props: {
           ownerId: 'syn27229419',
           wikiId: '621276',
+          loadingSkeletonRowCount: 10,
+        },
+      },
+      {
+        name: 'Markdown',
+        props: {
+          ownerId: 'syn27229419',
+          wikiId: '622372',
           loadingSkeletonRowCount: 10,
         },
       },
@@ -376,7 +412,7 @@ const routes: GenericRoute[] = [
     displayName: 'Help',
     path: undefined,
     target: '_blank',
-    link: 'https://elite-portal-docs.scrollhelp.site/help/',
+    link: 'https://help.eliteportal.org/',
     synapseConfigArray: [],
   },
 ]

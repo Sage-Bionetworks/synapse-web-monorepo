@@ -1,9 +1,9 @@
 import { ThemeOptions } from '@mui/material'
-
+import { PartialDeep } from 'type-fest'
 export const latoFont = ['Lato', 'Roboto', 'Helvetica', 'Arial'].join(',')
 
 // Merge the default theme (defined in synapse-react-client) with the SageAccountWeb overrides defined here.
-export const sageAccountWebThemeOverrides: ThemeOptions = {
+export const sageAccountWebThemeOverrides: PartialDeep<ThemeOptions> = {
   styledBackground:
     "linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg')",
 
@@ -16,7 +16,6 @@ export const sageAccountWebThemeOverrides: ThemeOptions = {
           padding: '14px 16px',
           height: '52px',
           fontWeight: '900',
-          fontSize: '16px',
           borderRadius: '3px',
         },
         outlined: {
@@ -72,6 +71,9 @@ export const sageAccountWebThemeOverrides: ThemeOptions = {
     allVariants: {
       fontFamily: latoFont,
       fontSize: '14px',
+    },
+    button: {
+      fontSize: '16px',
     },
     headline2: {
       fontWeight: 700,

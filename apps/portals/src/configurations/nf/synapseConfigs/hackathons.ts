@@ -4,10 +4,10 @@ import { columnAliases } from './commonProps'
 
 import hackathonActiveSvg from '../style/hackathon-active.svg'
 import hackathonCompleteSvg from '../style/hackathon-complete.svg'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { hackathonsSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from 'synapse-react-client/dist/utils/synapseTypes/Table/QueryFilter'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import type { CardConfiguration } from 'synapse-react-client'
 
 const type = SynapseConstants.GENERIC_CARD
 const rgbIndex = 5

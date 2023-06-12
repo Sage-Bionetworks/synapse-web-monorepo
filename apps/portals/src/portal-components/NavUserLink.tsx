@@ -1,8 +1,7 @@
-import React from "react"
-import {UserProfile} from "synapse-react-client/dist/utils/synapseTypes";
-import UserCard from "synapse-react-client/dist/containers/UserCard";
-import {SynapseConstants} from "synapse-react-client";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import React from 'react'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
+import { SynapseConstants, SynapseComponents } from 'synapse-react-client'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 type NavUserLinkProps = {
   userProfile: UserProfile | undefined
@@ -11,20 +10,17 @@ type NavUserLinkProps = {
 const NavUserLink: React.FunctionComponent<NavUserLinkProps> = ({
   userProfile,
 }) => {
-
-  return(
+  return (
     <>
       {/* this div is an overlay to capture click events (the UserCard Avatar stops propogation) */}
-      <div
-        style={{width:'50px', height:'50px', position:'absolute'}}
+      <div style={{ width: '50px', height: '50px', position: 'absolute' }} />
+      <SynapseComponents.UserCard
+        userProfile={userProfile}
+        size={SynapseConstants.AVATAR}
+        avatarSize="MEDIUM"
+        preSignedURL={userProfile?.clientPreSignedURL}
+        link="javascript:void(0)"
       />
-      <UserCard
-          userProfile={userProfile}
-          size={SynapseConstants.AVATAR}
-          avatarSize="MEDIUM"
-          preSignedURL={userProfile?.clientPreSignedURL}
-          link="javascript:void(0)"
-        />
       <ExpandMoreIcon className="user-expand" />
       <div className="mb-user-extra">
         <div className="user-fullname">

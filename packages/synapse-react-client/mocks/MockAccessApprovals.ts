@@ -2,7 +2,7 @@ import {
   AccessApprovalSearchResult,
   AccessApprovalSearchResponse,
   ApprovalState,
-} from '../src/lib/utils/synapseTypes'
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from './user/mock_user_profile'
 
 let mockSearchResults = []

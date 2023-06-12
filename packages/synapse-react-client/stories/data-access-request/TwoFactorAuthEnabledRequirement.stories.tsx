@@ -1,16 +1,17 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
-import { MOCK_REPO_ORIGIN } from '../../src/lib/utils/functions/getEndpoint'
-import TwoFactorAuthEnabledRequirement from '../../src/lib/containers/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement'
-import { TwoFactorAuthStatus } from '../../src/lib/utils/synapseTypes/TotpSecret'
-import { SynapseContextConsumer } from '../../src/lib/utils/SynapseContext'
-import FullContextProvider from '../../src/lib/utils/FullContextProvider'
+import { MOCK_REPO_ORIGIN } from '../../src/utils/functions/getEndpoint'
+import TwoFactorAuthEnabledRequirement from '../../src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement'
+import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
+import { SynapseContextConsumer } from '../../src/utils/context/SynapseContext'
+import FullContextProvider from '../../src/utils/context/FullContextProvider'
 
 const meta: Meta = {
   title:
     'Governance/Data Access Request Flow/Requirements/TwoFactorAuthEnabledRequirement',
   component: TwoFactorAuthEnabledRequirement,
+  parameters: { stack: 'mock' },
   render: args => (
     <SynapseContextConsumer>
       {context => (

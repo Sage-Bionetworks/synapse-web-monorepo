@@ -2,10 +2,14 @@ import React from 'react'
 import '../demo/style/DemoStyle.scss'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
-import { StorybookComponentWrapper } from '../src/lib/containers/StorybookComponentWrapper'
+import { StorybookComponentWrapper } from '../src/components/StorybookComponentWrapper'
 import { initialize, mswLoader } from 'msw-storybook-addon'
 import { getHandlers } from '../mocks/msw/handlers'
-import { MOCK_REPO_ORIGIN } from '../src/lib/utils/functions/getEndpoint'
+import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
+import isChromatic from 'chromatic/isChromatic'
+import { faker } from '@faker-js/faker'
+
+faker.seed(12345)
 
 globalThis.Buffer = Buffer
 globalThis.process = {
@@ -60,12 +64,13 @@ export const globalTypes = {
     title: 'Stack Changer',
     description:
       'Choose the stack that Synapse should point to. You may need to re-authenticate after changing stacks.',
-    defaultValue: 'production',
+    defaultValue: null,
     toolbar: {
       icon: 'database',
       dynamicTitle: true,
       showName: true,
       items: [
+        { value: null, title: 'default (usually production)' },
         { value: 'production', title: 'Production' },
         { value: 'staging', title: 'Staging' },
         { value: 'development', title: 'Development' },
@@ -98,6 +103,7 @@ export const globalTypes = {
           value: 'cancerComplexityPortal',
           title: 'Cancer Complexity Portal',
         },
+        { value: 'elPortal', title: 'Exceptional Longevity Portal' },
       ],
     },
   },
@@ -113,7 +119,15 @@ initialize({
   },
 })
 
+const fontLoader = async () => ({
+  fonts: await Promise.all([document.fonts.load('700 1em Lato')]),
+})
+
 export const loaders = [mswLoader]
+
+if (isChromatic && document.fonts) {
+  loaders.push(fontLoader)
+}
 
 export const decorators = [
   (Story, context) => {

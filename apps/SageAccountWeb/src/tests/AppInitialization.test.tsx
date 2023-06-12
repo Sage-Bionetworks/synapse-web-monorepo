@@ -3,7 +3,7 @@ import { AppContextProvider } from '../AppContext'
 import LoginPage from '../LoginPage'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import FullContextProvider from 'synapse-react-client/dist/utils/FullContextProvider'
+import { FullContextProvider } from 'synapse-react-client'
 import { describe, it } from 'vitest'
 
 describe('App initialization tests', () => {

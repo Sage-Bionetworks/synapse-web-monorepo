@@ -1,7 +1,7 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
-import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import type { GenericCardSchema } from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { datasetsSql, programSql, projectsSql } from '../resources'
@@ -35,10 +35,10 @@ export const programsCardConfiguration: CardConfiguration = {
     },
   ],
   descriptionConfig: {
-    showFullDescriptionByDefault: true
+    showFullDescriptionByDefault: true,
   },
   iconOptions: {
-    "AMP-RA/SLE": tagCloudSvg,
+    'AMP-RA/SLE': tagCloudSvg,
   },
 }
 
@@ -53,7 +53,7 @@ export const programs: SynapseConfig = {
     name: 'Programs',
     columnAliases,
     facetsToPlot: [],
-    defaultShowFacetVisualization: false
+    defaultShowFacetVisualization: false,
   },
 }
 

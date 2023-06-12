@@ -41,3 +41,5 @@ apps/*/dist
 packages/*/dist
 storybook-static/
 src/umd
+
+build-storybook.log

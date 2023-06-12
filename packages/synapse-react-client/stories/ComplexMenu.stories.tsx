@@ -1,7 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import IconSvg from '../src/lib/containers/IconSvg'
-import { ComplexMenu } from '../src/lib/containers/menu/ComplexMenu'
+import IconSvg from '../src/components/IconSvg/IconSvg'
+import { ComplexMenu } from '../src/components/menu/ComplexMenu'
 
 const meta = {
   title: 'UI/ComplexMenu',

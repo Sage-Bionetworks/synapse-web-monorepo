@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { EvaluationCard } from '../src/lib/containers/evaluation_queues/EvaluationCard'
+import { EvaluationCard } from '../src/components/Evaluation/EvaluationCard'
 
 const meta = {
   title: 'Synapse/Challenge/EvaluationCard',
