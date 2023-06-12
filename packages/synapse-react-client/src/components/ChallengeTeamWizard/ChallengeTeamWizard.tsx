@@ -2,12 +2,10 @@ import React, { useEffect, useState } from 'react'
 import StepperDialog, { Step } from '../StepperDialog/StepperDialog'
 
 import {
-  Challenge,
   ErrorResponse,
   PaginatedIds,
   Team,
   TeamMembershipStatus,
-  UserProfile,
 } from '@sage-bionetworks/synapse-types'
 import { CreateChallengeTeam, CreateTeamRequest } from './CreateChallengeTeam'
 import { SelectChallengeTeam } from './SelectChallengeTeam'
@@ -31,6 +29,7 @@ import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMembers'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useGetIsUserMemberOfTeam } from '../../synapse-queries/team/useTeamMembers'
+import { Typography } from '@mui/material'
 
 enum StepsEnum {
   SELECT_YOUR_CHALLENGE_TEAM = 'SELECT_YOUR_CHALLENGE_TEAM',
@@ -50,9 +49,6 @@ const steps: StepList = {
     title: 'Select Your Challenge Team',
     nextStep: StepsEnum.JOIN_REQUEST_FORM,
     nextEnabled: false,
-    // contentProps: {
-    //   sx: { overflowY: 'hidden' },
-    // },
   },
   JOIN_REQUEST_FORM: {
     id: StepsEnum.JOIN_REQUEST_FORM,
@@ -97,7 +93,6 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const [loading, setLoading] = useState<boolean>(true)
   const [step, setStep] = useState<Step>(steps.SELECT_YOUR_CHALLENGE_TEAM)
   const [errorMessage, setErrorMessage] = useState<string>()
-  const [challenge, setChallenge] = useState<Challenge>()
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>()
   const [createdNewTeam, setCreatedNewTeam] = useState<boolean>(false)
   const [confirming, setConfirming] = useState<boolean>(false)
@@ -127,19 +122,13 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const { data: userProfile } = useGetCurrentUserProfile()
 
   // Retrieve the challenge associated with the projectId passed through props
-  useGetEntityChallenge(projectId, {
+  const { data: challenge } = useGetEntityChallenge(projectId, {
     enabled: canRequestChallenge,
-    onSettled: (data, error) => {
-      // console.log('useGetEntityChallenge', { data }, { error })
-      if (data) {
-        setChallenge(data)
-      }
-      if (error) {
-        setLoading(false)
-        setErrorMessage(
-          `Error: Could not retrieve challenge for project "${projectId}".`,
-        )
-      }
+    onError: () => {
+      setLoading(false)
+      setErrorMessage(
+        `Error: Could not retrieve challenge for project "${projectId}".`,
+      )
     },
   })
 
@@ -179,7 +168,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   )
 
   // Determine whether or not the given user belongs to any submission teams
-  useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 500, {
+  useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 1, {
     enabled: !!challenge && !!accessToken,
     onSettled: (
       data: PaginatedIds | undefined,
@@ -275,14 +264,9 @@ const ChallengeTeamWizard: React.FunctionComponent<
   // Determine the login status of the user, and whether or not we can request the given projectId challenge.
   useEffect(() => {
     /**
-     * The presence of an accessToken alone is not enough to determine the user's login status, since it may be expired.
-     * Neither is the presence of a userProfile, since it may belong to the anonymous user.
      * A user is not necessarily logged out just because they are not logged in...
      * for example, the request for their userProfile may be pending.
      */
-    const isLoggedIn =
-      !!userProfile && userProfile.ownerId !== ANONYMOUS_PRINCIPAL_ID.toString()
-
     const isLoggedOut =
       !!userProfile && userProfile.ownerId === ANONYMOUS_PRINCIPAL_ID.toString()
 
@@ -290,7 +274,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
      * We can only request challenges if we are not anonymous.
      * Avoid repeated api calls by disabling hook once we have the challenge.
      */
-    const canRequest = isLoggedIn && !!projectId && !challenge
+    const canRequest = Boolean(accessToken) && !!projectId && !challenge
     setCanRequestChallenge(canRequest)
 
     if (isLoggedOut) {
@@ -519,10 +503,10 @@ const ChallengeTeamWizard: React.FunctionComponent<
 
       case StepsEnum.JOIN_REQUEST_SENT:
         return (
-          <Box>
+          <Typography variant="body1" sx={{ lineHeight: '20px' }}>
             Team Manager(s) have received your request. Check your Synapse email
             address for status of your request.
-          </Box>
+          </Typography>
         )
       case StepsEnum.REGISTRATION_SUCCESSFUL:
         return (
