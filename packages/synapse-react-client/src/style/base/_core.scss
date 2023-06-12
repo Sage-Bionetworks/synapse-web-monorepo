@@ -583,14 +583,6 @@ button.SRC-roundBorder {
   transition: opacity 300ms ease-in;
 }
 
-span.SRC-logo-cursor * {
-  cursor: wait;
-}
-
-div.SRC-logo-cursor * {
-  cursor: wait;
-}
-
 /*
   UserCard Styling
 */
@@ -1112,7 +1104,7 @@ a.dropdown-item {
   }
 }
 
-hr ~ .SRC-wrapper {
+hr ~ .QueryWrapperPlotNav {
   margin-top: 11px;
   .SRC-marginTopMinusTen {
     margin-top: 0;
