@@ -90,6 +90,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'LLFS',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?studyKey=LLFS',
+                    unitDescription: 'Files',
                   },
                   {
                     title:
@@ -101,6 +102,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'ADAMTS7',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
+                    unitDescription: 'Files',
                   },
                   {
                     title:
@@ -112,6 +114,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'ELPSCRNA',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?studyKey=ELPSCRNA',
+                    unitDescription: 'Files',
                   },
                 ],
               },

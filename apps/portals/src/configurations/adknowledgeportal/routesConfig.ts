@@ -74,6 +74,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'WGS_Harmonization',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?Study=syn22264775',
+                    unitDescription: 'Files',
                   },
                   {
                     title: 'The RNAseq Harmonization Study',
@@ -84,6 +85,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'RNAseq_Harmonization',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?Study=syn21241740',
+                    unitDescription: 'Files',
                   },
                   {
                     title:
@@ -95,6 +97,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'ROSMAP',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?Study=syn3219045',
+                    unitDescription: 'Files',
                   },
                 ],
               },
@@ -115,6 +118,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'UCI_5XFAD',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?Study=syn16798076',
+                    unitDescription: 'Files',
                   },
                   {
                     title: 'The IU/Jax/Pitt MODEL-AD Levetiracetam 5XFAD Study',
@@ -125,6 +129,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'Jax.IU.Pitt_Levetiracetam-5XFAD',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?Study=syn21784897',
+                    unitDescription: 'Files',
                   },
                   {
                     title: 'The IU/Jax/Pitt MODEL-AD Verubecestat 5XFAD Study',
@@ -135,6 +140,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'Jax.IU.Pitt_Verubecestat_5XFAD',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?Study=syn21863375',
+                    unitDescription: 'Files',
                   },
                 ],
               },

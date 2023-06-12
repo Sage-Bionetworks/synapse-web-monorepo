@@ -1,15 +1,8 @@
 @use '../abstracts/variables' as SRC;
 
 .FacetPlotsCard {
-  background-color: white;
   overflow: hidden;
-  &__titlebar {
-    min-height: 64px;
-    padding: 12px 25px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+
   &__title {
     font-size: 16px;
     font-weight: bold;
@@ -26,7 +19,6 @@
     font-weight: bold;
   }
   &__body {
-    padding: 33px 44px;
     &__row {
       min-height: 130px;
     }
@@ -41,9 +33,7 @@
     }
     &__legend {
       margin-top: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      width: 100%;
     }
     &__footer {
       display: flex;
@@ -53,9 +43,6 @@
     hr {
       margin: 33px 0px;
     }
-  }
-  &__loading {
-    min-height: 400px;
   }
   @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
     margin: 15px 0px;
