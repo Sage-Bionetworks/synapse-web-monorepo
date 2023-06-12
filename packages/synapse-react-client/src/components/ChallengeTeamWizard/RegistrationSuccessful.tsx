@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material'
 import { Box } from '@mui/material'
 import React from 'react'
 
@@ -14,10 +15,10 @@ export const RegistrationSuccessful = ({
 
   return (
     <>
-      <Box>
+      <Typography variant="body1" sx={{ lineHeight: '20px' }}>
         You have successfully {createdNewTeam ? 'created' : 'joined'} team{' '}
         <b>{teamName}</b> and have been added to this challenge.
-      </Box>
+      </Typography>
       {createdNewTeam && (
         <Box>
           Invited team members will be automatically registered for the
