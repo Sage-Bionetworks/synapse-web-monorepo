@@ -533,8 +533,8 @@ export class KeyFactory {
     return this.getKey('team', teamIds, 'teamList')
   }
 
-  public getChallengeTeamListQueryKey(challengeId: string) {
-    return this.getKey('challenge', challengeId, 'teamList')
+  public getChallengeTeamListQueryKey(challengeId: string, offset: number) {
+    return this.getKey('challenge', challengeId, 'teamList', offset)
   }
 
   public getTeamMembersQueryKey(teamId: string) {

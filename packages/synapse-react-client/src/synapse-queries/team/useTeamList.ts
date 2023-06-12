@@ -34,9 +34,14 @@ export function useGetChallengeTeamList(
   const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<PaginatedResults<ChallengeTeam>, SynapseClientError>(
-    keyFactory.getChallengeTeamListQueryKey(challengeId),
+    keyFactory.getChallengeTeamListQueryKey(challengeId, offset ?? 0),
     () =>
-      SynapseClient.getChallengeTeams(accessToken, challengeId, offset, limit),
+      SynapseClient.getChallengeTeams(
+        accessToken,
+        challengeId,
+        offset ?? 0,
+        limit ?? 10,
+      ),
     options,
   )
 }
