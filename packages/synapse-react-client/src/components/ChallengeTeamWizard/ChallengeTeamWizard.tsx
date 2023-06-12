@@ -10,7 +10,6 @@ import {
 import { CreateChallengeTeam, CreateTeamRequest } from './CreateChallengeTeam'
 import { SelectChallengeTeam } from './SelectChallengeTeam'
 import { RegistrationSuccessful } from './RegistrationSuccessful'
-import { Box } from '@mui/system'
 import { JoinRequestForm } from './JoinRequestForm'
 import { useSynapseContext } from '../../utils'
 import {
@@ -90,6 +89,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   ChallengeTeamWizardProps
 > = ({ projectId, isShowingModal = false, onClose }) => {
   const { accessToken } = useSynapseContext()
+  const isLoggedIn = Boolean(accessToken)
   const [loading, setLoading] = useState<boolean>(true)
   const [step, setStep] = useState<Step>(steps.SELECT_YOUR_CHALLENGE_TEAM)
   const [errorMessage, setErrorMessage] = useState<string>()
@@ -119,7 +119,13 @@ const ChallengeTeamWizard: React.FunctionComponent<
    ***********************/
 
   // Use the existing accessToken if present to get the current user's profile / userId
-  const { data: userProfile } = useGetCurrentUserProfile()
+  const { data: userProfile } = useGetCurrentUserProfile({
+    enabled: isLoggedIn,
+    onError: error => {
+      setLoading(false)
+      setErrorMessage(error.reason)
+    },
+  })
 
   // Retrieve the challenge associated with the projectId passed through props
   const { data: challenge } = useGetEntityChallenge(projectId, {
