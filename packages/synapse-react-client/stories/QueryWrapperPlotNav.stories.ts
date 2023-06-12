@@ -190,10 +190,12 @@ export const SendToCavatica: Story = {
       showAccessColumn: true,
       showDownloadColumn: true,
     },
-    name: 'Cavatica Integration Demo',
+    name: 'CAVATICA Integration Demo',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
     showExportToCavatica: true,
+    cavaticaHelpURL:
+      'https://staging.eliteportal.synapse.org/Limited%20Data%20Commons',
   },
 }
 

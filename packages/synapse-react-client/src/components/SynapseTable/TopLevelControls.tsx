@@ -14,7 +14,7 @@ import {
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { DownloadOptions } from './table-top'
 import { ColumnSelection } from './table-top/ColumnSelection'
-import { Box, Button, Link, Typography } from '@mui/material'
+import { Box, Button, Link, Tooltip, Typography } from '@mui/material'
 import QueryCount from '../QueryCount/QueryCount'
 import { Icon } from '../row_renderers/utils'
 import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
@@ -33,6 +33,7 @@ export type TopLevelControlsProps = {
   showColumnSelection?: boolean
   customControls?: CustomControl[]
   showExportToCavatica?: boolean
+  cavaticaHelpURL?: string
 }
 
 export type Control = {
@@ -88,6 +89,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     hideSqlEditorControl = true,
     customControls,
     showExportToCavatica = false,
+    cavaticaHelpURL,
   } = props
 
   const {
@@ -219,14 +221,22 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
         </div>
         <div className="TopLevelControls__actions">
           {showExportToCavatica && (
-            <Button
-              variant="text"
-              onClick={() => {
-                setIsShowingExportToCavaticaModal(true)
-              }}
+            <Tooltip
+              title={`This action will send a reference to every file in the current table to CAVATICA. ${
+                topLevelControlsState.showFacetFilter
+                  ? 'You can change what is sent by applying filters using the controls in the sidebar.'
+                  : ''
+              }`}
             >
-              <Cavatica sx={{ mr: 1 }} /> Send to Cavatica
-            </Button>
+              <Button
+                variant="text"
+                onClick={() => {
+                  setIsShowingExportToCavaticaModal(true)
+                }}
+              >
+                <Cavatica sx={{ mr: 1 }} /> Send to CAVATICA
+              </Button>
+            </Tooltip>
           )}
           {controls.map(control => {
             const { key, icon, tooltipText } = control
@@ -275,22 +285,45 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           )}
           <ConfirmationDialog
             open={isShowingExportToCavaticaModal}
-            title="Send to Cavatica"
+            title="Send to CAVATICA"
             content={
               <>
+                <Box
+                  sx={{
+                    backgroundColor: 'grey.100',
+                    border: '1px solid',
+                    borderColor: 'grey.300',
+                    marginBottom: '15px',
+                    padding: '10px 20px 10px 20px',
+                  }}
+                >
+                  <Typography variant="body1" sx={{ textAlign: 'center' }}>
+                    CAVATICA is a data analysis and sharing platform.
+                    {cavaticaHelpURL && (
+                      <>
+                        {' '}
+                        Read more about CAVATICA{' '}
+                        <Link href={cavaticaHelpURL} target="_blank">
+                          here
+                        </Link>
+                        .
+                      </>
+                    )}
+                  </Typography>
+                </Box>
                 <Typography
                   variant="body1"
                   sx={{ fontWeight: 700, marginBottom: '10px' }}
                 >
-                  You must meet these requirements from Cavatica to send data:
+                  You must meet these requirements from CAVATICA to send data:
                 </Typography>
                 <Typography
                   variant="body1"
                   sx={{ marginLeft: '10px', marginBottom: '10px' }}
                 >
-                  1. You must be logged in to a Cavatica account.
+                  1. You must be logged in to a CAVATICA account.
                   <br />
-                  2. You must connect your Cavatica account to Sage.
+                  2. You must connect your CAVATICA account to Synapse.
                 </Typography>
                 <Typography variant="body1">
                   <Link
@@ -307,26 +340,31 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     padding: '10px 20px 10px 20px',
                   }}
                 >
-                  Note that we cannot provide support for Cavatica. Please
-                  contact Cavatica’s{' '}
-                  <Link href="mailto:support@sevenbridges.com "> support</Link>{' '}
-                  for issues related to the above.
+                  <Typography variant="body1">
+                    Note that we cannot provide support for CAVATICA. Please
+                    contact CAVATICA’s{' '}
+                    <Link href="mailto:support@sevenbridges.com ">
+                      {' '}
+                      support
+                    </Link>{' '}
+                    for issues related to the above.
+                  </Typography>
                 </Box>
                 <Typography
                   variant="body1"
                   sx={{ fontWeight: 700, marginTop: '15px' }}
                 >
-                  When completed, click “Send to Cavatica” to finish the process
-                  outside this application. You will be redirected to Cavatica.
+                  When completed, click “Send to CAVATICA“ to finish the process
+                  outside this application. You will be redirected to CAVATICA.
                 </Typography>
               </>
             }
-            confirmButtonText="Send to Cavatica"
+            confirmButtonText="Send to CAVATICA"
             onConfirm={() => {
               exportToCavatica()
             }}
             onCancel={() => setIsShowingExportToCavaticaModal(false)}
-            maxWidth="sm"
+            maxWidth="md"
           />
         </div>
       </div>
