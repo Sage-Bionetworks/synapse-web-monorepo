@@ -4,6 +4,7 @@ import TextField from '../TextField'
 
 type CreateChallengeTeamProps = {
   onChangeTeamInfo: (update: CreateTeamRequest) => void
+  onError?: (msg: string) => void
 }
 
 export type CreateTeamRequest = {
@@ -15,6 +16,7 @@ export type CreateTeamRequest = {
 
 export const CreateChallengeTeam = ({
   onChangeTeamInfo,
+  onError,
 }: CreateChallengeTeamProps) => {
   const [team, setTeam] = useState<CreateTeamRequest>({
     name: '',
@@ -27,6 +29,17 @@ export const CreateChallengeTeam = ({
     const updatedTeam: CreateTeamRequest = { ...team, ...update }
     setTeam(updatedTeam)
     onChangeTeamInfo(updatedTeam)
+  }
+
+  const handleInviteesUpdate = (inviteeString: string) => {
+    const invitees = inviteeString.split(',')
+    if (invitees.length > 3) {
+      if (onError)
+        return onError(
+          'Please limit the initial number of invited members to three. You may add additional members after the team has been created.',
+        )
+    }
+    handleTeamUpdate({ invitees: inviteeString })
   }
 
   return (
@@ -77,11 +90,11 @@ export const CreateChallengeTeam = ({
       </Box>
       <TextField
         id="invitees"
-        label="Emails of Additional Members to Invite"
+        label="Emails of Additional Members to Invite (max 3)"
         placeholder="Enter emails separated by comma"
         value={team.invitees}
         fullWidth
-        onChange={event => handleTeamUpdate({ invitees: event.target.value })}
+        onChange={event => handleInviteesUpdate(event.target.value)}
       />
     </Box>
   )

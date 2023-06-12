@@ -516,7 +516,12 @@ const ChallengeTeamWizard: React.FunctionComponent<
           />
         )
       case StepsEnum.CREATE_NEW_TEAM:
-        return <CreateChallengeTeam onChangeTeamInfo={handleChangeTeamInfo} />
+        return (
+          <CreateChallengeTeam
+            onChangeTeamInfo={handleChangeTeamInfo}
+            onError={setErrorMessage}
+          />
+        )
       default:
         return <></>
     }
