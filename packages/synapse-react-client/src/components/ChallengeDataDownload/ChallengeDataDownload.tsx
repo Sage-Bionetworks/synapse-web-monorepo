@@ -87,7 +87,7 @@ export function ChallengeDataDownload({
           onClick={onAddClick}
           disabled={!selectedEntities.toArray().length}
         >
-          Add to Download List
+          Add to Download Cart
         </Button>
       </Box>
     </>
