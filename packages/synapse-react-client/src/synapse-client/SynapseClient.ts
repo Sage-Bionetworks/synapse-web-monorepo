@@ -1404,6 +1404,27 @@ export const getChallengeTeams = (
 }
 
 /**
+ * Get a list of all teams registered to the given challenge.
+ * see http://rest-docs.synapse.org/rest/GET/challenge.html
+ */
+export const getAllChallengeTeams = (
+  accessToken: string | undefined,
+  challengeId: string | number,
+  offset: string | number = 0,
+  limit: string | number = 200,
+): Promise<ChallengeTeam[]> => {
+  const url = `/repo/v1/challenge/${challengeId}/challengeTeam?&offset=${offset}&limit=${limit}`
+  const fn = () => {
+    return doGet<PaginatedResults<ChallengeTeam>>(
+      url,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
+}
+
+/**
  * List the Teams under which the given submitter may submit to the Challenge,
  * i.e. the Teams on which the user is a member and which are registered for the Challenge.
  * see https://rest-docs.synapse.org/rest/GET/challenge/challengeId/submissionTeams.html

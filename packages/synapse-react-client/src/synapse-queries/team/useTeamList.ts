@@ -24,24 +24,12 @@ export function useGetTeamList(
 
 export function useGetChallengeTeamList(
   challengeId: string,
-  offset?: number,
-  limit?: number,
-  options?: UseQueryOptions<
-    PaginatedResults<ChallengeTeam>,
-    SynapseClientError
-  >,
+  options?: UseQueryOptions<ChallengeTeam[], SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-
-  return useQuery<PaginatedResults<ChallengeTeam>, SynapseClientError>(
-    keyFactory.getChallengeTeamListQueryKey(challengeId, offset ?? 0),
-    () =>
-      SynapseClient.getChallengeTeams(
-        accessToken,
-        challengeId,
-        offset ?? 0,
-        limit ?? 10,
-      ),
+  return useQuery<ChallengeTeam[], SynapseClientError>(
+    keyFactory.getChallengeTeamListQueryKey(challengeId),
+    () => SynapseClient.getAllChallengeTeams(accessToken, challengeId),
     options,
   )
 }

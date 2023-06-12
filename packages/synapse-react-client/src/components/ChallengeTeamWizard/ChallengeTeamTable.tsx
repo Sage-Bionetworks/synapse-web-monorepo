@@ -32,7 +32,8 @@ export default function ChallengeTeamTable({
   const [allRows, setAllRows] = useState<ChallengeTeamRow[]>([])
   const [teamIdList, setTeamIdList] = useState<string[]>([])
   const [teamsById, setTeamsById] = useState<Record<string, Team>>({})
-  const { data: regTeams } = useGetChallengeTeamList(challengeId, 0, 500)
+  const { data: regTeams } = useGetChallengeTeamList(challengeId)
+
   const [selectedTeam, setSelectedTeam] = useState<
     string | number | undefined
   >()
@@ -56,7 +57,7 @@ export default function ChallengeTeamTable({
   }
 
   useEffect(() => {
-    const ids = regTeams?.results.map(team => team.teamId) ?? []
+    const ids = regTeams?.map(team => team.teamId) ?? []
     setTeamIdList(ids)
   }, [regTeams])
 
