@@ -37,7 +37,7 @@ export type RadioOptionProps<T extends string | boolean | number = string> = {
   label: string
   value: T
   currentValue?: T
-  style?: object
+  style?: React.CSSProperties
   onChange: (value: T) => void
 }
 
