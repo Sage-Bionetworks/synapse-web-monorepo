@@ -98,7 +98,6 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const [step, setStep] = useState<Step>(steps.SELECT_YOUR_CHALLENGE_TEAM)
   const [errorMessage, setErrorMessage] = useState<string>()
   const [challenge, setChallenge] = useState<Challenge>()
-  const [userProfile, setUserProfile] = useState<UserProfile>()
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>()
   const [createdNewTeam, setCreatedNewTeam] = useState<boolean>(false)
   const [confirming, setConfirming] = useState<boolean>(false)
@@ -125,21 +124,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
    ***********************/
 
   // Use the existing accessToken if present to get the current user's profile / userId
-  useGetCurrentUserProfile({
-    enabled: !userProfile,
-    onSettled: (data, error) => {
-      // console.log('useGetCurrentUserProfile', { data }, { error })
-      if (data) {
-        setUserProfile(data)
-      }
-      if (error) {
-        setLoading(false)
-        setErrorMessage(
-          `Error: Could not retrieve challenge for project "${projectId}".`,
-        )
-      }
-    },
-  })
+  const { data: userProfile } = useGetCurrentUserProfile()
 
   // Retrieve the challenge associated with the projectId passed through props
   useGetEntityChallenge(projectId, {

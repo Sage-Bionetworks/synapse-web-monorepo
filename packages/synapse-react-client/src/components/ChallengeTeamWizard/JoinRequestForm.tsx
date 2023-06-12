@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
-import { Box, TextField } from '@mui/material'
+import { Box, TextField, Typography } from '@mui/material'
 import { Team } from '@sage-bionetworks/synapse-types'
 
 type JoinRequestFormProps = {
@@ -22,10 +22,10 @@ export const JoinRequestForm = ({
 
   return (
     <>
-      <Box>
+      <Typography variant="body1" sx={{ lineHeight: '20px' }}>
         The following message will be sent to the Team Manager(s) of the{' '}
         <strong>{team.name}</strong> team.
-      </Box>
+      </Typography>
       <Box>
         <strong>Your Message to Team Managers(s)</strong>
       </Box>
@@ -37,7 +37,7 @@ export const JoinRequestForm = ({
           multiline
           rows={4}
           autoFocus
-          onChange={handleMesageChange}
+          onChange={handleMessageChange}
         />
       </Box>
     </>

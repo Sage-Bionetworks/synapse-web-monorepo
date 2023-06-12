@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import TextField from '../TextField'
 
 type CreateChallengeTeamProps = {
@@ -31,7 +31,9 @@ export const CreateChallengeTeam = ({
 
   return (
     <Box>
-      <Box>Create a new team for this Challenge!</Box>
+      <Typography variant="body1" sx={{ lineHeight: '20px' }}>
+        Create a new team for this Challenge!
+      </Typography>
       <TextField
         id="name"
         label="Team Name"

@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import React from 'react'
 import ControlPointIcon from '@mui/icons-material/ControlPoint'
 import ChallengeTeamTable from './ChallengeTeamTable'
@@ -22,7 +22,9 @@ export const SelectChallengeTeam = ({
     All team members will need a Synapse account so that they can login and accept the team invitation.'
   return (
     <Stack spacing={1}>
-      <Box>{PARTICIPATION_CRITERIA}</Box>
+      <Typography variant="body1" sx={{ lineHeight: '20px' }}>
+        {PARTICIPATION_CRITERIA}
+      </Typography>
       <Box sx={{ height: 270 }}>
         <ChallengeTeamTable
           challengeId={challengeId}
