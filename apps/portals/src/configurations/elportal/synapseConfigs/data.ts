@@ -9,6 +9,7 @@ const data: SynapseConfig = {
     rgbIndex,
     name: 'Data',
     showExportToCavatica: true,
+    cavaticaHelpURL: '/Limited%20Data%20Commons',
     visibleColumnCount: 10,
     tableConfiguration: {
       showAccessColumn: true,

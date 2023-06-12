@@ -113,6 +113,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     initQueryJson,
     showLastUpdatedOn,
     showExportToCavatica = false,
+    cavaticaHelpURL,
     customControls,
   } = props
 
@@ -234,6 +235,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                         hideVisualizationsControl={!isFaceted}
                         hideSqlEditorControl={hideSqlEditorControl}
                         showExportToCavatica={showExportToCavatica}
+                        cavaticaHelpURL={cavaticaHelpURL}
                         customControls={customControls}
                       />
                       {isFaceted && (

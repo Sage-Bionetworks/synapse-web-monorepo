@@ -43,7 +43,7 @@ export function useExportToCavatica(
         result.resultsFileHandleId,
         accessToken,
       )
-      // Send this presigned URL to the Cavatica landing page where it can be processed
+      // Send this presigned URL to the CAVATICA landing page where it can be processed
       // NOTE: This dev environment redirect link only works if you are in the Seven Bridges VPN, so this cannot be tested by Sage
       // const cavaticaURL = `https://synapse-vayu.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
       //   presignedURL,

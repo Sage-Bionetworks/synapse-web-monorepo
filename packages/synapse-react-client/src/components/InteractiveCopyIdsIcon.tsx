@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tooltip } from '@mui/material'
+import { IconButton, Tooltip } from '@mui/material'
 import { TOOLTIP_DELAY_SHOW } from './SynapseTable/SynapseTableConstants'
 import IconSvg from './IconSvg/IconSvg'
 
@@ -15,13 +15,13 @@ export const InteractiveCopyIdsIcon = (props: InteractiveCopyIdsIconProps) => {
       enterNextDelay={TOOLTIP_DELAY_SHOW}
       placement="right"
     >
-      <span>
-        <button data-testid="copySynIdsButton" onClick={onCopy}>
-          <span style={{ height: 15, marginTop: -1 }}>
-            <IconSvg icon="contentCopy" />
-          </span>
-        </button>
-      </span>
+      <IconButton
+        sx={{ height: '40px' }}
+        data-testid="copySynIdsButton"
+        onClick={onCopy}
+      >
+        <IconSvg icon="contentCopy" />
+      </IconButton>
     </Tooltip>
   )
 }
