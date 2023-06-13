@@ -80,7 +80,8 @@ const allEntityTypes = [
 
 /**
  * The purpose of these tests is more to ensure that we're handling all entity types as new ones are added.
- * A key assumption is that that the EntityType enum is the "source of truth", so these tests will check that we handle all of the entity types in our test list.
+ * A key assumption is that the EntityType enum is the "source of truth", so these tests will check that we handle all
+ * the entity types in our test list.
  */
 describe('EntityTypeUtils tests', () => {
   it('Verify that our test list captures all entity types', () => {

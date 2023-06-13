@@ -9,6 +9,8 @@ export type VIRTUAL_TABLE_CONCRETE_TYPE =
  * A virtual table is a type of table whose content is defined by a synapse SQL query. Its content is NOT persisted and
  * any query on a virtual table will run the defined SQL statement. The defining SQL of the virtual table CANNOT contain
  * JOIN clauses on multiple tables.
+ *
+ * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/VirtualTable.html
  */
 export interface VirtualTable extends Table {
   concreteType: VIRTUAL_TABLE_CONCRETE_TYPE
