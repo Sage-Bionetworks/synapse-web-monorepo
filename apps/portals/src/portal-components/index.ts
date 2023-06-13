@@ -43,7 +43,7 @@ const PortalComponents = {
   TabbedSynapseObjects,
   Header,
   ChallengeParticipantGoogleMap,
-  ProjectDiscussionForum
+  ProjectDiscussionForum,
 }
 
 export default PortalComponents

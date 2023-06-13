@@ -23,3 +23,18 @@ export type ChallengeWithProjectHeader = {
   challenge: Challenge // The Challenge
   projectHeader: EntityHeader // to optimize, include the EntityHeader for the associated Project
 }
+
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/ChallengeTeam.html
+export type ChallengeTeam = {
+  id: string
+  etag: string
+  challengeId: string
+  teamId: string
+  message: string
+}
+
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/ChallengeTeamPagedResults.html
+export type ChallengeTeamPagedResults = {
+  results: ChallengeTeam[]
+  totalNumberOfResults: number
+}

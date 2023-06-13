@@ -222,7 +222,6 @@ type TabbedSynapseObjects = {
   props: TabbedSynapseObjectsProps
 }
 
-
 type Metadata = {
   title?: string
   centerTitle?: boolean
