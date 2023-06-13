@@ -67,9 +67,6 @@
   display: block;
   position: relative;
   padding-bottom: 60px;
-  @media screen and (max-width: 768px) {
-    padding-top: Portal.$header-height; // reserve space for fixed position nav bar and site logo.
-  }
 }
 
 .uppercase {
@@ -178,9 +175,9 @@ body {
   }
 }
 .explore-content {
-  margin-right: 65px; 
+  margin-right: 65px;
   @media screen and (max-width: 768px) {
-      margin-right: 18px;
+    margin-right: 18px;
   }
 }
 .DownloadCartPage .pageHeader {
@@ -307,7 +304,7 @@ button.dropdown-toggle.nav-button:hover {
   color: #404b63;
   box-shadow: none;
   outline: none;
-  border-radius: 0; 
+  border-radius: 0;
   border-right: 0;
   border-left: 0;
 }
