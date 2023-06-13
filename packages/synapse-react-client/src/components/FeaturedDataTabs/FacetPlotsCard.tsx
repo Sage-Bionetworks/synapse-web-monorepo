@@ -231,7 +231,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                       </Box>
                     )}
                   </SizeMe>
-                  <Box sx={{ mt: 1, width: '100%' }}>
+                  <Box sx={{ mt: 4, width: '100%' }}>
                     <FacetPlotLegendTable
                       facetName={getColumnDisplayName(
                         facetDataArray[index].columnName,
