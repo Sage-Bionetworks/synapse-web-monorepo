@@ -71,6 +71,11 @@ const allEntityTypes = [
     concreteType: 'org.sagebionetworks.repo.model.table.MaterializedView',
     friendlyName: 'Materialized View',
   },
+  {
+    type: EntityType.VIRTUAL_TABLE,
+    concreteType: 'org.sagebionetworks.repo.model.table.VirtualTable',
+    friendlyName: 'Virtual Table',
+  },
 ]
 
 /**
