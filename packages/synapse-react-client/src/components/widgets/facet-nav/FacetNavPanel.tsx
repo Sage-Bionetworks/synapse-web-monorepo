@@ -24,9 +24,11 @@ import {
   applyChangesToValuesColumn,
   applyMultipleChangesToValuesColumn,
 } from '../query-filter/FacetFilterControls'
-import { Box, Tooltip, Typography } from '@mui/material'
+import { Tooltip } from '@mui/material'
 import { useQuery } from 'react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
+import { FacetPlotLegendList } from './FacetPlotLegendList'
+import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -47,7 +49,6 @@ export type FacetNavPanelProps = {
 }
 
 const maxLabelLength: number = 19
-const maxLegendLength: number = 30
 
 export type PlotType = 'PIE' | 'BAR'
 
@@ -69,14 +70,6 @@ export type GraphData = {
   data: Plotly.Data[]
   labels: FacetWithLabel[]
   colors: string[]
-}
-
-export function truncate(str: string | undefined, n: number) {
-  if (!str) {
-    return str
-  }
-  const trimmedStr: string = str.trim()
-  return trimmedStr.length > n ? trimmedStr.substr(0, n - 1) + '…' : str
 }
 
 export async function extractPlotDataArray(
@@ -188,7 +181,7 @@ export async function extractPlotDataArray(
       plotType === 'BAR'
         ? facetToPlot.facetValues.map(facet => facet.count)
         : undefined,
-    // @ts-ignore
+    // @ts-expect-error
     facetEnumerationValues: facetToPlot.facetValues.map(
       facetValue => facetValue.value,
     ),
@@ -259,62 +252,6 @@ export function getPlotStyle(
     width: `${width}px`,
     height: `${height}px`,
   }
-}
-
-export type FacetWithLabel = {
-  label: string
-  count: number
-}
-
-type FacetPlotLegendProps = {
-  labels?: FacetWithLabel[]
-  colors?: string[]
-  isExpanded: boolean
-}
-
-export function FacetPlotLegend(props: FacetPlotLegendProps) {
-  const { labels, colors = [], isExpanded } = props
-  if (!labels) {
-    return <></>
-  }
-  const numLegendItems = isExpanded
-    ? Math.min(labels.length, 9)
-    : Math.min(labels.length, 4)
-  if (numLegendItems === 0) {
-    return <></>
-  }
-  return (
-    <div
-      className={`FacetNavPanel__body__legend${isExpanded ? '--expanded' : ''}`}
-    >
-      {labels.slice(0, numLegendItems).map((facetValue, index) => {
-        const labelDisplay = truncate(facetValue.label, maxLegendLength)
-        return (
-          <ElementWithTooltip
-            tooltipText={facetValue.label}
-            key={facetValue.label}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Box
-                sx={{
-                  width: '14px',
-                  height: '14px',
-                  cursor: 'default',
-                  backgroundColor: colors[index],
-                }}
-                key={`legendLabel_${index}`}
-                style={{ cursor: 'default' }}
-              />
-              <Typography variant="body2">{labelDisplay}</Typography>
-              <Typography variant="body2" sx={{ color: 'grey.600' }}>
-                {facetValue.count}
-              </Typography>
-            </Box>
-          </ElementWithTooltip>
-        )
-      })}
-    </div>
-  )
 }
 
 const getClassNameForPlotDiv = (isExpanded: boolean, plotType: PlotType) => {
@@ -542,7 +479,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                 </div>
               )}
             </SizeMe>
-            <FacetPlotLegend
+            <FacetPlotLegendList
               labels={plotData?.labels}
               colors={plotData?.colors}
               isExpanded={isModalView}

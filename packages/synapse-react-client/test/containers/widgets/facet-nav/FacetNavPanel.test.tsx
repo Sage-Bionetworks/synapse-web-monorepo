@@ -1,7 +1,6 @@
 import React from 'react'
 import FacetNavPanel, {
   FacetNavPanelProps,
-  truncate,
 } from '../../../../src/components/widgets/facet-nav/FacetNavPanel'
 import { render, screen, within } from '@testing-library/react'
 import { FacetColumnResultValues } from '@sage-bionetworks/synapse-types'
@@ -14,6 +13,7 @@ import {
 import { QueryVisualizationContextProvider } from '../../../../src/components/QueryVisualizationWrapper'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import failOnConsole from 'jest-fail-on-console'
+import { truncate } from '../../../../src/components/widgets/facet-nav/FacetPlotLegendUtils'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)

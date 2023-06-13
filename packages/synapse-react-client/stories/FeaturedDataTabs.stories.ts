@@ -1,9 +1,18 @@
 import { Meta, StoryObj } from '@storybook/react'
 import FeaturedDataTabs from '../src/components/FeaturedDataTabs/FeaturedDataTabs'
+import { getHandlersForTableQuery } from '../mocks/msw/handlers/tableQueryHandlers'
+import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
+import {
+  mockQueryPerCardResult,
+  mockSingleQueryResult,
+} from '../mocks/query/mockFeaturedDataTabsQueryData'
 
 const meta = {
   title: 'Home Page/FeaturedDataTabs',
   component: FeaturedDataTabs,
+  parameters: {
+    stack: 'mock',
+  },
 } satisfies Meta<typeof FeaturedDataTabs>
 
 export default meta
@@ -11,6 +20,14 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const SingleQuery: Story = {
+  parameters: {
+    chromatic: { viewports: [600, 1200] },
+    msw: {
+      handlers: [
+        ...getHandlersForTableQuery(mockSingleQueryResult, MOCK_REPO_ORIGIN),
+      ],
+    },
+  },
   args: {
     rgbIndex: 1,
     sql: 'SELECT * FROM syn21994974',
@@ -26,7 +43,6 @@ export const SingleQuery: Story = {
             {
               facetsToPlot: [
                 'dataCollectionMethod',
-                'deviceType',
                 'devicePlatform',
                 'diagnosis',
                 'reportedOutcome',
@@ -41,6 +57,16 @@ export const SingleQuery: Story = {
 }
 
 export const QueryPerCard: Story = {
+  parameters: {
+    chromatic: { viewports: [600, 1200] },
+    msw: {
+      handlers: [
+        // In reality, we actually make multiple table queries that return different data
+        // It will suffice if all queries return the same data for this example
+        ...getHandlersForTableQuery(mockQueryPerCardResult, MOCK_REPO_ORIGIN),
+      ],
+    },
+  },
   args: {
     rgbIndex: 1,
     sql: 'select * from syn11346063',
@@ -60,6 +86,7 @@ export const QueryPerCard: Story = {
               selectFacetColumnName: 'study',
               selectFacetColumnValue: 'ROSMAP',
               detailsPagePath: '/Explore/Studies/DetailsPage?Study=syn3219045',
+              unitDescription: 'Files',
             },
             {
               title: 'The Mount Sinai Brain Bank Study',
@@ -69,6 +96,7 @@ export const QueryPerCard: Story = {
               selectFacetColumnName: 'study',
               selectFacetColumnValue: 'MSBB',
               detailsPagePath: '/Explore/Studies/DetailsPage?Study=syn3159438',
+              unitDescription: 'Files',
             },
             {
               title: 'The RNAseq Harmonization Study',
@@ -78,6 +106,7 @@ export const QueryPerCard: Story = {
               selectFacetColumnName: 'study',
               selectFacetColumnValue: 'rnaSeqReprocessing',
               detailsPagePath: '/Explore/Studies/DetailsPage?Study=syn5550404',
+              unitDescription: 'Files',
             },
           ],
         },
