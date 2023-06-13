@@ -1,0 +1,2 @@
+import{bt as T,bu as a,bv as e,bw as C,bx as t,bp as n,by as L,bz as i,bA as o,bl as R,bo as c,bB as r,bC as A}from"./SynapseClient-37e23fa2.js";function E(...s){return _=>!!(_&&typeof _=="object"&&"concreteType"in _&&s.includes(_.concreteType))}const U=E(a,T),O=E(e),l=E(c),F=E(t,C,e),u=E(n),V=E(L),Y=E(r),I=E(A),m=E(i),P=E(o),b=E(R),p=E("org.sagebionetworks.repo.model.TermsOfUseAccessRequirement");export{O as a,l as b,U as c,V as d,m as e,P as f,p as g,I as h,b as i,Y as j,F as k,E as l,u as m};
+//# sourceMappingURL=IsType-3e2bb5f2.js.map

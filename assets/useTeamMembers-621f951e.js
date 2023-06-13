@@ -1,0 +1,2 @@
+import{u as n,f as o,a as u}from"./SynapseClient-37e23fa2.js";function c(e,s,t){const{accessToken:r,keyFactory:a}=n();return o(a.getIsUserMemberOfTeamQueryKey(e,s),()=>u.getIsUserMemberOfTeam(e,s,r),t)}function i(e,s,t){const{accessToken:r,keyFactory:a}=n();return o(a.getMembershipStatusQueryKey(e.toString(),s.toString()),()=>u.getMembershipStatus(e,s,r),t)}export{i as a,c as u};
+//# sourceMappingURL=useTeamMembers-621f951e.js.map

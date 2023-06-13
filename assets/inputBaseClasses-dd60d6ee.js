@@ -1,0 +1,2 @@
+import{g as t,a as n}from"./styled-29603136.js";function s(e){return n("MuiInputBase",e)}const i=t("MuiInputBase",["root","formControl","focused","disabled","adornedStart","adornedEnd","error","sizeSmall","multiline","colorSecondary","fullWidth","hiddenLabel","readOnly","input","inputSizeSmall","inputMultiline","inputTypeSearch","inputAdornedStart","inputAdornedEnd","inputHiddenLabel"]),l=i;export{s as g,l as i};
+//# sourceMappingURL=inputBaseClasses-dd60d6ee.js.map
