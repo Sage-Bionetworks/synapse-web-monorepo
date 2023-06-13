@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import {
   useGetCurrentUserProfile,
+  useGetEntity,
   useGetEntityACL,
   useGetEntityAlias,
   useGetEntityChallenge,
+  useGetEntityChildren,
   useGetEntityPermissions,
   useGetUserSubmissionTeamsInfinite,
   useUpdateEntityACL,
@@ -33,6 +35,7 @@ type ChallengeSubmissionProps = {
 function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const { accessToken } = useSynapseContext()
   const isLoggedIn = Boolean(accessToken)
+
   const [loading, setLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string>()
   const [submissionTeamId, setSubmissionTeamId] = useState<string>()
@@ -55,14 +58,14 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     }
   }
 
-  // // Use the existing accessToken if present to get the current user's profile / userId
-  // const { data: userProfile } = useGetCurrentUserProfile({
-  //   enabled: isLoggedIn,
-  //   onError: () => {
-  //     setLoading(false)
-  //     setErrorMessage(`Error: Could not retrieve user profile`)
-  //   },
-  // })
+  // Use the existing accessToken if present to get the current user's profile / userId
+  const { data: userProfile } = useGetCurrentUserProfile({
+    enabled: isLoggedIn,
+    onError: () => {
+      setLoading(false)
+      setErrorMessage(`Error: Could not retrieve user profile`)
+    },
+  })
 
   // Retrieve the challenge associated with the projectId passed through props
   const { data: challenge } = useGetEntityChallenge(projectId, {
@@ -70,8 +73,6 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     refetchInterval: Infinity,
     useErrorBoundary: true,
   })
-
-  console.log({ challenge })
 
   // Determine whether or not the given user belongs to any submission teams
   useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 2, {
@@ -170,10 +171,9 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     },
   })
 
-  const { isLoading } = useGetEntityPermissions(challengeProjectId!, {
+  useGetEntityPermissions(challengeProjectId!, {
     enabled: !!challengeProjectId,
     refetchInterval: Infinity,
-    useErrorBoundary: true,
     onSettled: (data, error) => {
       if (data && data.canView && data.canAddChild) {
         setCanSubmit(true)
@@ -183,15 +183,16 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
           'You do not have permission to submit for this challenge team.',
         )
       }
+      setLoading(false)
     },
   })
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!isLoggedIn && !!userProfile) {
       setLoading(false)
       setErrorMessage('Please login to continue.')
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn, userProfile])
 
   useEffect(() => {
     if (accessToken && submissionTeam && challenge && !newProject) {
@@ -223,7 +224,15 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   return (
     <>
       <SynapseErrorBoundary>
-        {canSubmit && <SubmissionDirectoryList loading={false} />}
+        {loading && (
+          <span data-testid="SpinnerButton-spinner" className="spinner" />
+        )}
+        {canSubmit && (
+          <SubmissionDirectoryList
+            loading={false}
+            challengeProjectId={challengeProjectId}
+          />
+        )}
         {errorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
       </SynapseErrorBoundary>
     </>
