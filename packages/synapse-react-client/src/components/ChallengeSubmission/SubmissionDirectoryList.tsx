@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import LinkIcon from '@mui/icons-material/Link'
+import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { RadioOption } from '../widgets/RadioGroup'
 import {
@@ -122,7 +123,7 @@ function SubmissionDirectoryList({
           Your Submission Directory
         </Typography>
       </Box>
-      <Box sx={{ height: 220 }}>
+      <Box>
         {loading && <SkeletonTable numRows={10} numCols={1} />}
         {!loading && (
           <DataGrid
@@ -130,6 +131,7 @@ function SubmissionDirectoryList({
             rows={rows}
             rowCount={response?.totalChildCount ?? 0}
             density="compact"
+            autoHeight
             sx={{
               border: 'none',
               height: '100%',
@@ -150,6 +152,20 @@ function SubmissionDirectoryList({
             }
           />
         )}
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button
+          color="primary"
+          variant="outlined"
+          onClick={() => undefined}
+          endIcon={<LinkIcon />}
+        >
+          Add External Docker Repository
+        </Button>
+
+        <Button color="primary" variant="contained" onClick={() => undefined}>
+          Submit Selection
+        </Button>
       </Box>
     </Box>
   )
