@@ -1,6 +1,8 @@
 import { Box, BoxProps, styled } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
 
+export const FACET_PLOTS_CARD_CLASSNAME = 'FacetPlotsCard'
+
 export const FACET_PLOTS_CARD_TITLE_CONTAINER_CLASSNAME =
   'FacetPlotsCardTitleContainer'
 
@@ -31,23 +33,23 @@ export const FacetPlotsCardGridContainer: StyledComponent<BoxProps> = styled(
     gridTemplateColumns: '[col1] 32% [col2] 32% [col3] 32%',
     columnGap: '2%',
 
-    '.FacetPlotsCard': {
+    [`.${FACET_PLOTS_CARD_CLASSNAME}`]: {
       display: 'contents',
     },
 
     // Since we're using display: contents, we must assign the column based on the
     // order of the containers
-    '.FacetPlotsCard:nth-of-type(1)': {
+    [`.${FACET_PLOTS_CARD_CLASSNAME}:nth-of-type(1)`]: {
       [`.${FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}`]: {
         gridColumn: 'col1',
       },
     },
-    '.FacetPlotsCard:nth-of-type(2)': {
+    [`.${FACET_PLOTS_CARD_CLASSNAME}:nth-of-type(2)`]: {
       [`.${FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}`]: {
         gridColumn: 'col2',
       },
     },
-    '.FacetPlotsCard:nth-of-type(3)': {
+    [`.${FACET_PLOTS_CARD_CLASSNAME}:nth-of-type(3)`]: {
       [`.${FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}`]: {
         gridColumn: 'col3',
       },

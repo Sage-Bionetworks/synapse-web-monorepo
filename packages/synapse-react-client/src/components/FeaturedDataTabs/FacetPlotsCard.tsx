@@ -28,6 +28,7 @@ import {
 } from '@mui/material'
 import { FacetPlotLegendTable } from '../widgets/facet-nav/FacetPlotLegendTable'
 import {
+  FACET_PLOTS_CARD_CLASSNAME,
   FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME,
   FACET_PLOTS_CARD_TITLE_CONTAINER_CLASSNAME,
   FacetPlotsCardPlotContainer,
@@ -62,22 +63,15 @@ const layout: Partial<Plotly.Layout> = {
 function LoadingCard(props: { numPlots: number }) {
   const { numPlots } = props
   return (
-    <Paper className="FacetPlotsCard">
+    <Paper className={FACET_PLOTS_CARD_CLASSNAME}>
       <FacetPlotsCardTitleContainer
         className={FACET_PLOTS_CARD_TITLE_CONTAINER_CLASSNAME}
       >
-        <Skeleton
-          className="FacetPlotsCard__title"
-          width={'60%'}
-          height={'24px'}
-        />
+        <Skeleton width={'60%'} height={'24px'} />
 
-        <SkeletonParagraph
-          className="FacetPlotsCard__description"
-          numRows={5}
-        />
+        <SkeletonParagraph numRows={5} />
 
-        <Skeleton width={'40%'} className={'FacetPlotsCard__link'}>
+        <Skeleton width={'40%'}>
           <Button variant={'contained'}>Explore</Button>
         </Skeleton>
       </FacetPlotsCardTitleContainer>
@@ -180,26 +174,24 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         ? selectedFacetValue
         : getColumnDisplayName(facetDataArray[0].columnName))
     return (
-      <Paper className="FacetPlotsCard">
+      <Paper className={FACET_PLOTS_CARD_CLASSNAME} sx={{ overflow: 'hidden' }}>
         <FacetPlotsCardTitleContainer
           className={FACET_PLOTS_CARD_TITLE_CONTAINER_CLASSNAME}
         >
-          <Typography variant={'headline1'} className="FacetPlotsCard__title">
-            {cardTitle}
-          </Typography>
+          <Typography variant={'headline1'}>{cardTitle}</Typography>
           {description && (
-            <Typography
-              variant={'body1'}
-              sx={{ color: 'grey.700' }}
-              className="FacetPlotsCard__description"
-            >
+            <Typography variant={'body1'} sx={{ color: 'grey.700', my: 2 }}>
               <ShowMore summary={description} maxCharacterCount={200} />
             </Typography>
           )}
 
           {detailsPagePath && selectedFacetValue && (
-            <Box className={'FacetPlotsCard__link'}>
-              <Button variant={'contained'} href={detailsPagePath}>
+            <Box sx={{ my: 2 }}>
+              <Button
+                variant={'contained'}
+                href={detailsPagePath}
+                color={'secondary'}
+              >
                 Explore {selectedFacetValue}
               </Button>
             </Box>
@@ -219,10 +211,16 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                 key={index}
               >
                 {index != 0 && <Divider sx={{ mt: 2, mb: 4 }} />}
-                <div className="FacetPlotsCard__body__row">
+                <Box sx={{ minHeight: '130px' }}>
                   <SizeMe monitorHeight noPlaceholder>
                     {({ size }) => (
-                      <div className="FacetPlotsCard__body__plot">
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
                         <Plot
                           key={`${facetsToPlot![index]}-${size.width!}`}
                           layout={layout}
@@ -230,21 +228,21 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                           style={getPlotStyle(size.width, 'PIE', 150)}
                           config={{ displayModeBar: false }}
                         />
-                      </div>
+                      </Box>
                     )}
                   </SizeMe>
-                  <div className="FacetPlotsCard__body__legend">
+                  <Box sx={{ mt: 1, width: '100%' }}>
                     <FacetPlotLegendTable
-                      facetName={
-                        getColumnDisplayName(facetDataArray[index].columnName)!
-                      }
+                      facetName={getColumnDisplayName(
+                        facetDataArray[index].columnName,
+                      )}
                       labels={plotData?.labels}
                       colors={plotData?.colors}
                       isExpanded={false}
                       linkToFullQuery={detailsPagePath}
                     />
-                  </div>
-                </div>
+                  </Box>
+                </Box>
               </FacetPlotsCardPlotContainer>
             </React.Fragment>
           )
