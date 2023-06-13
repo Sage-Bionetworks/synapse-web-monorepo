@@ -35,6 +35,8 @@ export const ENTITY_ACCESS = (id: string | number) =>
   `${REPO}/entity/${id}/access`
 export const ENTITY_ACL = (id: string | number) => `${ENTITY_ID(id)}/acl`
 export const ENTITY_PATH = (id: string | number) => `${ENTITY_ID(id)}/path`
+export const ENTITY_PERMISSIONS = (id: string | number) =>
+  `${ENTITY_ID(id)}/permissions`
 export const ENTITY_HEADER_BY_ID = (id: string | number) =>
   `${ENTITY_ID(id)}/type`
 export const ENTITY_HEADERS = `${REPO}/entity/header`

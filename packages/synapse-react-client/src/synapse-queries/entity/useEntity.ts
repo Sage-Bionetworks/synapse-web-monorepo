@@ -30,6 +30,7 @@ import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
 import { EntityId } from '@sage-bionetworks/synapse-types'
 import { AccessControlList } from '@sage-bionetworks/synapse-types'
+import { UserEntityPermissions } from '@sage-bionetworks/synapse-types'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
@@ -253,6 +254,18 @@ export function useGetEntityAlias(
   return useQuery<EntityId | null, SynapseClientError>(
     keyFactory.getEntityAliasQueryKey(alias),
     () => SynapseClient.getEntityAlias(alias, accessToken),
+    options,
+  )
+}
+
+export function useGetEntityPermissions(
+  entityId: string,
+  options?: UseQueryOptions<UserEntityPermissions | null, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery<UserEntityPermissions | null, SynapseClientError>(
+    keyFactory.getEntityAliasQueryKey(entityId),
+    () => SynapseClient.getEntityPermissions(entityId, accessToken),
     options,
   )
 }

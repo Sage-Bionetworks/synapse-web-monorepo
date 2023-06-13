@@ -260,6 +260,10 @@ export class KeyFactory {
     return this.getKey('entityAlias', alias)
   }
 
+  public getEntityPermissionsQueryKey(entityId: string) {
+    return this.getKey('entityPermissions', entityId)
+  }
+
   public getEntityBoundJsonSchemaQueryKey(id: string) {
     return this.getKey(entityQueryKeyObjects.boundJSONSchema(id))
   }

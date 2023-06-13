@@ -5,13 +5,14 @@ import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { Team } from '@sage-bionetworks/synapse-types'
 
 export function useGetTeam(
-  teamId: string | number,
+  teamId: string,
   options?: UseQueryOptions<Team, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
+  console.log({ teamId })
 
   return useQuery<Team, SynapseClientError>(
-    keyFactory.getTeamQueryKey(teamId.toString()),
+    keyFactory.getTeamQueryKey(teamId),
     () => SynapseClient.getTeam(teamId, accessToken),
     options,
   )

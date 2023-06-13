@@ -34,6 +34,7 @@ import {
   ENTITY_ID,
   ENTITY_JSON,
   ENTITY_PATH,
+  ENTITY_PERMISSIONS,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
   EVALUATION,
@@ -278,6 +279,7 @@ import {
   ChallengeTeamPagedResults,
   ChallengeTeam,
   TeamMembershipStatus,
+  UserEntityPermissions,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -3383,6 +3385,18 @@ export const getUserProjects = (
 export const getEntityACL = (entityId: string, accessToken?: string) => {
   return doGet<AccessControlList>(
     ENTITY_ACL(entityId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/permissions.html
+export const getEntityPermissions = (
+  entityId: string,
+  accessToken?: string,
+) => {
+  return doGet<UserEntityPermissions>(
+    ENTITY_PERMISSIONS(entityId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
