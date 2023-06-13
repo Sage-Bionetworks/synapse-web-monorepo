@@ -25,11 +25,13 @@ type SubmissionDirectoryRow = {
 type SubmissionDirectoryListProps = {
   loading: boolean
   challengeProjectId: string | undefined
+  onAddRepo: () => void
 }
 
 function SubmissionDirectoryList({
   loading,
   challengeProjectId,
+  onAddRepo,
 }: SubmissionDirectoryListProps) {
   const [selectedRepo, setSelectedRepo] = useState<
     string | number | undefined
@@ -111,6 +113,7 @@ function SubmissionDirectoryList({
       disableColumnMenu: true,
     },
   ]
+
   return (
     <Box>
       <Box
@@ -157,13 +160,18 @@ function SubmissionDirectoryList({
         <Button
           color="primary"
           variant="outlined"
-          onClick={() => undefined}
+          onClick={onAddRepo}
           endIcon={<LinkIcon />}
         >
           Add External Docker Repository
         </Button>
 
-        <Button color="primary" variant="contained" onClick={() => undefined}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => undefined}
+          disabled={!selectedRepo}
+        >
           Submit Selection
         </Button>
       </Box>

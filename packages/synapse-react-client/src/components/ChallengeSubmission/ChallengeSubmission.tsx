@@ -27,6 +27,8 @@ import { useGetTeam } from '../../synapse-queries/team/useTeam'
 import { createEntity } from '../../synapse-client'
 import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import SubmissionDirectoryList from './SubmissionDirectoryList'
+import { DialogBase } from '../DialogBase'
+import AddExternalRepo from './AddExternalRepo'
 
 type ChallengeSubmissionProps = {
   projectId: string
@@ -45,6 +47,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const [projectAliasFound, setProjectAliasFound] = useState<boolean>()
   const { mutate: updateACL } = useUpdateEntityACL()
   const [canSubmit, setCanSubmit] = useState<boolean>(false)
+  const [showAddRepo, setShowAddRepo] = useState<boolean>(false)
   const EMPTY_ID = ''
 
   const getProject = (c: Challenge, t: Team): Project => {
@@ -222,20 +225,27 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   }, [accessToken, submissionTeam, challenge, newProject, projectAliasFound])
 
   return (
-    <>
-      <SynapseErrorBoundary>
-        {loading && (
-          <span data-testid="SpinnerButton-spinner" className="spinner" />
-        )}
-        {canSubmit && (
+    <SynapseErrorBoundary>
+      {loading && (
+        <span data-testid="SpinnerButton-spinner" className="spinner" />
+      )}
+      {canSubmit && (
+        <>
           <SubmissionDirectoryList
             loading={false}
             challengeProjectId={challengeProjectId}
+            onAddRepo={() => setShowAddRepo(true)}
           />
-        )}
-        {errorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
-      </SynapseErrorBoundary>
-    </>
+          <DialogBase
+            open={showAddRepo}
+            title="Add External Repository"
+            onCancel={() => {}}
+            content={<AddExternalRepo />}
+          />
+        </>
+      )}
+      {errorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
+    </SynapseErrorBoundary>
   )
 }
 
