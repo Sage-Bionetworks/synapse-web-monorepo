@@ -171,3 +171,32 @@ export function useAddFileToDownloadList(
     },
   })
 }
+
+export function useAddFileBatchToDownloadList(
+  options?: UseMutationOptions<
+    AddBatchOfFilesToDownloadListResponse,
+    SynapseClientError,
+    {
+      fileEntityId: string
+      versionNumber?: number
+    }[]
+  >,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: batchToAdd =>
+      SynapseClient.addFileBatchToDownloadListV2(batchToAdd, accessToken),
+    mutationKey: ['addFileBatchToDownloadList'],
+    onSuccess: async (data, variables, ctx) => {
+      // PORTALS-2222: Invalidate to load the accurate results
+      await queryClient.invalidateQueries(
+        keyFactory.getDownloadListBaseQueryKey(),
+      )
+      if (options?.onSuccess) {
+        return options.onSuccess(data, variables, ctx)
+      }
+    },
+  })
+}
