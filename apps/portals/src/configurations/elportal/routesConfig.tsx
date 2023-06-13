@@ -228,10 +228,10 @@ const routes: GenericRoute[] = [
               ),
               sx: { position: 'relative', zIndex: 1, marginBottom: '0px' },
               // TODO DOCS-122
-              secondaryButtonConfig: {
-                text: 'Learn more about Cohort Builder',
-                href: '',
-              },
+              // secondaryButtonConfig: {
+              //   text: 'Learn more about Cohort Builder',
+              //   href: '',
+              // },
             },
           },
           {
