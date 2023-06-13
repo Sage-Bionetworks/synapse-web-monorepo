@@ -4,6 +4,7 @@ import {
   useGetEntityACL,
   useGetEntityAlias,
   useGetEntityChallenge,
+  useGetEntityPermissions,
   useGetUserSubmissionTeamsInfinite,
   useUpdateEntityACL,
 } from '../../synapse-queries'
@@ -20,10 +21,10 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import { useGetTeam } from '../../synapse-queries/team/useTeam'
 import { createEntity } from '../../synapse-client'
 import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
+import SubmissionDirectoryList from './SubmissionDirectoryList'
 
 type ChallengeSubmissionProps = {
   projectId: string
@@ -34,15 +35,13 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const isLoggedIn = Boolean(accessToken)
   const [loading, setLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string>()
-  const [challenge, setChallenge] = useState<Challenge>()
-  const [canRequestChallenge, setCanRequestChallenge] = useState<boolean>(false)
   const [submissionTeamId, setSubmissionTeamId] = useState<string>()
-  const [submissionTeam, setSubmissionTeam] = useState<Team>()
   const [challengeProjectId, setChallengeProjectId] = useState<string>()
   const [newProject, setNewProject] = useState<Project>()
   const [isProjectNewlyCreated, setIsProjectNewlyCreated] = useState<boolean>()
   const [projectAliasFound, setProjectAliasFound] = useState<boolean>()
   const { mutate: updateACL } = useUpdateEntityACL()
+  const [canSubmit, setCanSubmit] = useState<boolean>(false)
   const EMPTY_ID = ''
 
   const getProject = (c: Challenge, t: Team): Project => {
@@ -56,37 +55,27 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     }
   }
 
-  // Use the existing accessToken if present to get the current user's profile / userId
-  const { data: userProfile } = useGetCurrentUserProfile({
-    enabled: isLoggedIn,
-    onError: () => {
-      setLoading(false)
-      setErrorMessage(
-        `Error: Could not retrieve challenge for project "${projectId}".`,
-      )
-    },
-  })
+  // // Use the existing accessToken if present to get the current user's profile / userId
+  // const { data: userProfile } = useGetCurrentUserProfile({
+  //   enabled: isLoggedIn,
+  //   onError: () => {
+  //     setLoading(false)
+  //     setErrorMessage(`Error: Could not retrieve user profile`)
+  //   },
+  // })
 
   // Retrieve the challenge associated with the projectId passed through props
-  useGetEntityChallenge(projectId, {
-    enabled: canRequestChallenge,
-    onSettled: (data, error) => {
-      console.log('useGetEntityChallenge', { data }, { error })
-      if (data) {
-        setChallenge(data)
-      }
-      if (error) {
-        setLoading(false)
-        setErrorMessage(
-          `Error: Could not retrieve challenge for project "${projectId}".`,
-        )
-      }
-    },
+  const { data: challenge } = useGetEntityChallenge(projectId, {
+    enabled: isLoggedIn && !!projectId,
+    refetchInterval: Infinity,
+    useErrorBoundary: true,
   })
+
+  console.log({ challenge })
 
   // Determine whether or not the given user belongs to any submission teams
   useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 2, {
-    enabled: !!challenge && !!accessToken,
+    enabled: isLoggedIn && !!challenge,
     onSettled: (
       data: PaginatedIds | undefined,
       error: SynapseClientError | null,
@@ -106,6 +95,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
           )
           return
         }
+        console.log({ setSubmissionTeamId: data.results[0] })
         setSubmissionTeamId(data.results[0])
       }
       if (error) {
@@ -116,17 +106,10 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     },
   })
 
-  useGetTeam(submissionTeamId ?? EMPTY_ID, {
+  const { data: submissionTeam } = useGetTeam(submissionTeamId!, {
     enabled: !!submissionTeamId,
-    onSettled: (data: Team | undefined, error: SynapseClientError | null) => {
-      console.log('useGetTeam', { data }, { error })
-      if (data) {
-        setSubmissionTeam(data)
-      }
-      if (error) {
-        setErrorMessage(`Error: Could not retrieve your submission team.`)
-      }
-    },
+    refetchInterval: Infinity,
+    useErrorBoundary: true,
   })
 
   useGetEntityAlias(newProject?.alias ?? EMPTY_ID, {
@@ -153,6 +136,8 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
    */
   useGetEntityACL(challengeProjectId ?? EMPTY_ID, {
     enabled: !!challengeProjectId && isProjectNewlyCreated === true,
+    refetchInterval: Infinity,
+    useErrorBoundary: true,
     onSettled: (
       data: AccessControlList | undefined,
       error: SynapseClientError | null,
@@ -185,18 +170,28 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     },
   })
 
+  const { isLoading } = useGetEntityPermissions(challengeProjectId!, {
+    enabled: !!challengeProjectId,
+    refetchInterval: Infinity,
+    useErrorBoundary: true,
+    onSettled: (data, error) => {
+      if (data && data.canView && data.canAddChild) {
+        setCanSubmit(true)
+      }
+      if (error) {
+        setErrorMessage(
+          'You do not have permission to submit for this challenge team.',
+        )
+      }
+    },
+  })
+
   useEffect(() => {
-    const isLoggedOut =
-      !!userProfile && userProfile.ownerId === ANONYMOUS_PRINCIPAL_ID.toString()
-
-    const canRequest = isLoggedIn && !!projectId && !challenge
-    setCanRequestChallenge(canRequest)
-
-    if (isLoggedOut) {
+    if (!isLoggedIn) {
       setLoading(false)
       setErrorMessage('Please login to continue.')
     }
-  }, [accessToken, userProfile, projectId, challenge, isLoggedIn])
+  }, [isLoggedIn])
 
   useEffect(() => {
     if (accessToken && submissionTeam && challenge && !newProject) {
@@ -228,7 +223,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   return (
     <>
       <SynapseErrorBoundary>
-        Challenge Submission
+        {canSubmit && <SubmissionDirectoryList loading={false} />}
         {errorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
       </SynapseErrorBoundary>
     </>
