@@ -1410,11 +1410,10 @@ export const getChallengeTeams = (
 export const getAllChallengeTeams = (
   accessToken: string | undefined,
   challengeId: string | number,
-  offset: string | number = 0,
-  limit: string | number = 200,
 ): Promise<ChallengeTeam[]> => {
-  const url = `/repo/v1/challenge/${challengeId}/challengeTeam?&offset=${offset}&limit=${limit}`
-  const fn = () => {
+  // format function to be callable by getAllOfPaginatedService
+  const fn = (limit: number, offset: number) => {
+    const url = `/repo/v1/challenge/${challengeId}/challengeTeam?&offset=${offset}&limit=${limit}`
     return doGet<PaginatedResults<ChallengeTeam>>(
       url,
       accessToken,
@@ -1433,7 +1432,7 @@ export const getSubmissionTeams = (
   accessToken: string | undefined,
   challengeId: string | number,
   offset: string | number = 0,
-  limit: string | number = 200,
+  limit: string | number = 50,
 ): Promise<PaginatedIds> => {
   const url = `/repo/v1/challenge/${challengeId}/submissionTeams?&offset=${offset}&limit=${limit}`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
@@ -1519,11 +1518,9 @@ export const getUserTeamList = (
 export const getTeamAccessRequirements = (
   accessToken: string | undefined,
   teamId: string,
-  offset: string | number = 0,
-  limit: string | number = 50,
 ): Promise<AccessRequirement[]> => {
-  const url = `/repo/v1/team/${teamId}/accessRequirement?offset=${offset}&limit=${limit}`
-  const fn = () => {
+  const fn = (limit: number, offset: number) => {
+    const url = `/repo/v1/team/${teamId}/accessRequirement?offset=${offset}&limit=${limit}`
     return doGet<PaginatedResults<AccessRequirement>>(
       url,
       accessToken,
