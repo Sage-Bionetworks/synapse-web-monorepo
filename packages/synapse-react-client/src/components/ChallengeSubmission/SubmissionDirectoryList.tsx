@@ -2,13 +2,18 @@ import React, { useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { RadioOption } from '../widgets/RadioGroup'
-import { Entity } from '@sage-bionetworks/synapse-types'
+import {
+  Entity,
+  EntityChildrenRequest,
+  EntityType,
+} from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
 import { SkeletonTable } from '../Skeleton'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
+import { useGetEntityChildren } from '../../synapse-queries'
 
 type SubmissionDirectoryRow = {
   id: string
@@ -18,12 +23,29 @@ type SubmissionDirectoryRow = {
 
 type SubmissionDirectoryListProps = {
   loading: boolean
+  challengeProjectId: string | undefined
 }
 
-function SubmissionDirectoryList({ loading }: SubmissionDirectoryListProps) {
+function SubmissionDirectoryList({
+  loading,
+  challengeProjectId,
+}: SubmissionDirectoryListProps) {
   const [selectedRepo, setSelectedRepo] = useState<
     string | number | undefined
   >()
+  const [rows, setRows] = useState<SubmissionDirectoryRow[]>([])
+
+  const request: EntityChildrenRequest = {
+    parentId: challengeProjectId,
+    nextPageToken: null,
+    includeTypes: [EntityType.DOCKER_REPO],
+    includeTotalChildCount: true,
+  }
+
+  const { data: response } = useGetEntityChildren(request, {
+    enabled: !!challengeProjectId,
+    refetchInterval: Infinity,
+  })
 
   const repoChangeHandler = (value: string | number) => {
     setSelectedRepo(value)
@@ -71,6 +93,22 @@ function SubmissionDirectoryList({ loading }: SubmissionDirectoryListProps) {
         </Link>
       ),
     },
+    {
+      field: 'updated',
+      headerName: 'Updated On',
+      width: 100,
+      filterable: false,
+      hideable: false,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'id',
+      headerName: 'ID',
+      width: 200,
+      filterable: false,
+      hideable: false,
+      disableColumnMenu: true,
+    },
   ]
   return (
     <Box>
@@ -89,9 +127,8 @@ function SubmissionDirectoryList({ loading }: SubmissionDirectoryListProps) {
         {!loading && (
           <DataGrid
             columns={columns}
-            rows={[]}
-            rowCount={5}
-            hideFooter
+            rows={rows}
+            rowCount={response?.totalChildCount ?? 0}
             density="compact"
             sx={{
               border: 'none',
