@@ -222,7 +222,7 @@ const routes: GenericRoute[] = [
                   you have a list of participant IDs, click{' '}
                   <strong>Filter by Participant</strong> to add them. Once
                   you’ve built your cohort, you can download the related data
-                  files, <strong>Send to Cavatica</strong> for analysis, or just{' '}
+                  files, <strong>Send to CAVATICA</strong> for analysis, or just{' '}
                   <strong>Save your Query</strong> and come back to it later.
                 </>
               ),
