@@ -17,6 +17,10 @@ import { ChallengeTeamWizardProps } from '../../src/components/ChallengeTeamWiza
 import userEvent from '@testing-library/user-event'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../src/utils/functions/getEndpoint'
 
 const challengeTeamResults = mockChallengeTeamResults()
 const challengeTeams = mockTeamList(challengeTeamResults.results)
@@ -31,8 +35,8 @@ jest
 jest.spyOn(SynapseClient, 'getEntityChallenge').mockResolvedValue(mockChallenge)
 
 jest
-  .spyOn(SynapseClient, 'getChallengeTeams')
-  .mockResolvedValue(challengeTeamResults)
+  .spyOn(SynapseClient, 'getAllChallengeTeams')
+  .mockResolvedValue(challengeTeamResults.results)
 
 jest.spyOn(SynapseClient, 'getTeamList').mockResolvedValue(challengeTeams)
 
@@ -99,7 +103,9 @@ describe('ChallengeTeamWizard tests', () => {
     const teamLink = await screen.findByRole('link', { name: team1.name })
     expect(teamLink).toHaveAttribute(
       'href',
-      `https://www.synapse.org/#!Team:${team1.id}`,
+      `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}/#!Team:${
+        team1.id
+      }`,
     )
   })
 
@@ -119,10 +125,6 @@ describe('ChallengeTeamWizard tests', () => {
     await userEvent.click(ele)
     console.log({ radio })
     expect(row).toHaveAttribute('aria-selected', 'true')
-    // btn = await screen.findByRole('button', { name: 'Next' })
-    // expect(btn).not.toHaveAttribute('disabled')
-    // await userEvent.click(btn)
-    // await screen.findByText('Request Team Membership')
   })
 
   it('shows Create Team form on button click', async () => {
