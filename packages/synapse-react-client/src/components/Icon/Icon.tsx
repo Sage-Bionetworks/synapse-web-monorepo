@@ -93,6 +93,7 @@ export type IconProps = {
 }
 
 const iconSvgMapping = {
+  clipboard: <IconSvg icon="clipboard" />,
   [DATASET]: <IconSvg icon="dataset" />,
 }
 
