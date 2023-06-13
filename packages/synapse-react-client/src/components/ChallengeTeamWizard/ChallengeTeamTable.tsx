@@ -12,6 +12,10 @@ import {
 } from '../../synapse-queries/team/useTeamList'
 import { Box } from '@mui/material'
 import { Link } from 'react-router-dom'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 
 export type ChallengeTeamTableProps = {
   challengeId: string
@@ -122,7 +126,11 @@ export default function ChallengeTeamTable({
       disableColumnMenu: true,
       renderCell: (params: GridCellParams<Team, ChallengeTeamRow>) => (
         <Link
-          to={{ pathname: `https://www.synapse.org/#!Team:${params.row.id}` }}
+          to={{
+            pathname: `${getEndpoint(
+              BackendDestinationEnum.PORTAL_ENDPOINT,
+            )}/#!Team:${params.row.id}`,
+          }}
           target="_blank"
         >
           {params.row.name}
