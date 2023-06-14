@@ -9,7 +9,6 @@ export function useGetTeam(
   options?: UseQueryOptions<Team, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  console.log({ teamId })
 
   return useQuery<Team, SynapseClientError>(
     keyFactory.getTeamQueryKey(teamId),

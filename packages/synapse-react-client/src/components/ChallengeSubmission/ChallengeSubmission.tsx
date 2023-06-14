@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import {
   useGetCurrentUserProfile,
-  useGetEntity,
   useGetEntityACL,
   useGetEntityAlias,
   useGetEntityChallenge,
-  useGetEntityChildren,
   useGetEntityPermissions,
   useGetUserSubmissionTeamsInfinite,
   useUpdateEntityACL,
@@ -15,6 +13,7 @@ import {
   ACCESS_TYPE,
   AccessControlList,
   Challenge,
+  DockerRepository,
   EntityId,
   PaginatedIds,
   Project,
@@ -27,8 +26,9 @@ import { useGetTeam } from '../../synapse-queries/team/useTeam'
 import { createEntity } from '../../synapse-client'
 import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import SubmissionDirectoryList from './SubmissionDirectoryList'
-import { DialogBase } from '../DialogBase'
 import AddExternalRepo from './AddExternalRepo'
+import ConfirmationDialog from '../ConfirmationDialog'
+import { DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 
 type ChallengeSubmissionProps = {
   projectId: string
@@ -48,6 +48,9 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const { mutate: updateACL } = useUpdateEntityACL()
   const [canSubmit, setCanSubmit] = useState<boolean>(false)
   const [showAddRepo, setShowAddRepo] = useState<boolean>(false)
+  const [repoName, setRepoName] = useState<string>('')
+  const [repoError, setRepoError] = useState<string>()
+
   const EMPTY_ID = ''
 
   const getProject = (c: Challenge, t: Team): Project => {
@@ -62,13 +65,14 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   }
 
   // Use the existing accessToken if present to get the current user's profile / userId
-  const { data: userProfile } = useGetCurrentUserProfile({
-    enabled: isLoggedIn,
-    onError: () => {
-      setLoading(false)
-      setErrorMessage(`Error: Could not retrieve user profile`)
-    },
-  })
+  const { data: userProfile, isLoading: isProfileLoading } =
+    useGetCurrentUserProfile({
+      enabled: isLoggedIn,
+      onError: () => {
+        setLoading(false)
+        setErrorMessage(`Error: Could not retrieve user profile`)
+      },
+    })
 
   // Retrieve the challenge associated with the projectId passed through props
   const { data: challenge } = useGetEntityChallenge(projectId, {
@@ -191,11 +195,12 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   })
 
   useEffect(() => {
-    if (!isLoggedIn && !!userProfile) {
+    console.log({ isLoggedIn, userProfile, isProfileLoading })
+    if (!isLoggedIn && (!!userProfile || !isProfileLoading)) {
       setLoading(false)
       setErrorMessage('Please login to continue.')
     }
-  }, [isLoggedIn, userProfile])
+  }, [isLoggedIn, userProfile, isProfileLoading])
 
   useEffect(() => {
     if (accessToken && submissionTeam && challenge && !newProject) {
@@ -224,6 +229,46 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     }
   }, [accessToken, submissionTeam, challenge, newProject, projectAliasFound])
 
+  const handleAddRepo = () => {
+    setRepoError(undefined)
+    async function createRepo() {
+      // When creating a Docker Repo Entity we omit name
+      const repo: Omit<DockerRepository, 'name'> = {
+        parentId: challengeProjectId,
+        repositoryName: repoName,
+        isManaged: false,
+        concreteType: DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE,
+      }
+      try {
+        /**
+         * createEntity expects a type that extends Entity
+         * "name" is a required property of Entity
+         * but when creating a repo, we want the backend to provide the name
+         * so it cannot be set on the request
+         */
+        // @ts-ignore
+        const createdRepo = await createEntity(repo, accessToken)
+        console.log({ createdRepo })
+        closeAddRepoDialog()
+      } catch (error) {
+        console.warn(error)
+        const msg: string = error.message ? error.message : 'An error occurred.'
+        setRepoError(msg)
+      }
+    }
+    createRepo()
+  }
+
+  const onRepoNameChange = (value: string) => {
+    setRepoName(value)
+  }
+
+  const closeAddRepoDialog = () => {
+    setShowAddRepo(false)
+    setRepoName('')
+    setRepoError(undefined)
+  }
+
   return (
     <SynapseErrorBoundary>
       {loading && (
@@ -236,11 +281,18 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
             challengeProjectId={challengeProjectId}
             onAddRepo={() => setShowAddRepo(true)}
           />
-          <DialogBase
+          <ConfirmationDialog
             open={showAddRepo}
             title="Add External Repository"
-            onCancel={() => {}}
-            content={<AddExternalRepo />}
+            onCancel={closeAddRepoDialog}
+            onConfirm={handleAddRepo}
+            content={
+              <AddExternalRepo
+                repoName={repoName}
+                onRepoNameChange={onRepoNameChange}
+                errorMessage={repoError}
+              />
+            }
           />
         </>
       )}

@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import LinkIcon from '@mui/icons-material/Link'
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { RadioOption } from '../widgets/RadioGroup'
 import {
+  DockerRepository,
   Entity,
   EntityChildrenRequest,
   EntityType,
@@ -14,12 +15,18 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { useGetEntityChildren } from '../../synapse-queries'
+import {
+  useGetEntities,
+  useGetEntityChildren,
+  useGetEntityChildrenWithEntities,
+} from '../../synapse-queries'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import dayjs from 'dayjs'
 
 type SubmissionDirectoryRow = {
   id: string
-  repo: string
-  updated: string
+  repositoryName: string
+  modifiedOn: string
 }
 
 type SubmissionDirectoryListProps = {
@@ -33,6 +40,7 @@ function SubmissionDirectoryList({
   challengeProjectId,
   onAddRepo,
 }: SubmissionDirectoryListProps) {
+  const [page, setPage] = useState<number>(0)
   const [selectedRepo, setSelectedRepo] = useState<
     string | number | undefined
   >()
@@ -45,10 +53,22 @@ function SubmissionDirectoryList({
     includeTotalChildCount: true,
   }
 
-  const { data: response } = useGetEntityChildren(request, {
+  const { data: headers } = useGetEntityChildren(request, {
     enabled: !!challengeProjectId,
     refetchInterval: Infinity,
+    useErrorBoundary: true,
   })
+
+  const { isLoading: areEntitiesLoading, results: entities } = useGetEntities(
+    headers?.page ?? [],
+    {
+      enabled: headers !== undefined && !!headers.page,
+    },
+  )
+
+  // const entities = useGetEntities(headers?.page ?? [], {
+  //   enabled: headers !== undefined && !!headers.page,
+  // })
 
   const repoChangeHandler = (value: string | number) => {
     setSelectedRepo(value)
@@ -77,7 +97,7 @@ function SubmissionDirectoryList({
       },
     },
     {
-      field: 'repo',
+      field: 'repositoryName',
       headerName: 'Docker Repository',
       flex: 1,
       filterable: false,
@@ -88,16 +108,16 @@ function SubmissionDirectoryList({
           to={{
             pathname: `${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}/#!Team:${params.row.id}`,
+            )}/#!Synapse:${params.row.id}`,
           }}
           target="_blank"
         >
-          {params.row.repo}
+          {params.row.repositoryName}
         </Link>
       ),
     },
     {
-      field: 'updated',
+      field: 'modifiedOn',
       headerName: 'Updated On',
       width: 100,
       filterable: false,
@@ -113,6 +133,25 @@ function SubmissionDirectoryList({
       disableColumnMenu: true,
     },
   ]
+
+  useEffect(() => {
+    // const areEntitiesLoading = entities.some(result => result.isLoading)
+    if (!areEntitiesLoading) {
+      console.log({ entities })
+      const newRows: SubmissionDirectoryRow[] = []
+      entities.forEach(result => {
+        if (result.data !== undefined) {
+          const repo = result.data as DockerRepository
+          newRows.push({
+            id: repo.id!,
+            repositoryName: repo.repositoryName,
+            modifiedOn: formatDate(dayjs(repo.modifiedOn), 'MM/DD/YY'),
+          })
+        }
+      })
+      setRows(newRows)
+    }
+  }, [areEntitiesLoading, entities])
 
   return (
     <Box>
@@ -132,9 +171,11 @@ function SubmissionDirectoryList({
           <DataGrid
             columns={columns}
             rows={rows}
-            rowCount={response?.totalChildCount ?? 0}
+            rowCount={headers?.totalChildCount ?? 0}
+            page={0}
             density="compact"
             autoHeight
+            rowsPerPageOptions={[]}
             sx={{
               border: 'none',
               height: '100%',
