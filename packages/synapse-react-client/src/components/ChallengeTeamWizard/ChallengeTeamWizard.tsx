@@ -16,7 +16,6 @@ import {
   createMembershipInvitation,
   createMembershipRequest,
   createTeam,
-  getMembershipStatus,
   registerChallengeTeam,
 } from '../../synapse-client'
 import {
@@ -122,24 +121,23 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const { data: challenge } = useGetEntityChallenge(projectId)
   const participantTeamId = challenge ? challenge.participantTeamId : EMPTY_ID
   const userId = userProfile ? userProfile.ownerId : EMPTY_ID
+
   // Verify that user is a member of the participant team
-  if (participantTeamId && userId) {
-    getMembershipStatus(participantTeamId, userId)
-      .then(challengeTeamMembershipStatus => {
-        if (!challengeTeamMembershipStatus.isMember && accessToken) {
-          addTeamMemberAsAuthenticatedUserOrAdmin(
-            participantTeamId,
-            userId,
-            accessToken,
-          ).catch(error => {
-            setErrorMessage(error.reason)
-          })
-        }
-      })
-      .catch(error => {
+  const { data: challengeTeamMembershipStatus } = useGetMembershipStatus(
+    participantTeamId,
+    userId,
+  )
+  useEffect(() => {
+    if (!challengeTeamMembershipStatus?.isMember && accessToken) {
+      addTeamMemberAsAuthenticatedUserOrAdmin(
+        participantTeamId,
+        userId,
+        accessToken,
+      ).catch(error => {
         setErrorMessage(error.reason)
       })
-  }
+    }
+  }, [accessToken, participantTeamId, userId, challengeTeamMembershipStatus])
 
   // Determine whether or not the given user belongs to any submission teams
   const { data: userSubmissionTeams, error: userSubmissionTeamError } =

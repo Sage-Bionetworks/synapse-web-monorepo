@@ -1301,7 +1301,7 @@ importers:
         version: 0.12.5
       vite:
         specifier: ^4.3.4
-        version: 4.3.4(@types/node@14.18.36)(sass@1.57.1)
+        version: 4.3.4(@types/node@18.16.12)(sass@1.57.1)
       vite-plugin-svgr:
         specifier: ^2.4.0
         version: 2.4.0(rollup@2.79.1)(vite@4.3.4)
