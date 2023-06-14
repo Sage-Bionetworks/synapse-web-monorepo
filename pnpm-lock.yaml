@@ -752,6 +752,9 @@ importers:
       '@mui/utils':
         specifier: ^5.11.13
         version: 5.11.13(react@18.2.0)
+      '@mui/x-data-grid':
+        specifier: 5.17.26
+        version: 5.17.26(@mui/material@5.11.16)(@mui/system@5.11.16)(react-dom@18.2.0)(react@18.2.0)
       '@mui/x-date-pickers':
         specifier: ^5.0.20
         version: 5.0.20(@emotion/react@11.10.6)(@emotion/styled@11.10.6)(@mui/material@5.11.16)(@mui/system@5.11.16)(dayjs@1.11.7)(moment@2.29.4)(react-dom@18.2.0)(react@18.2.0)
@@ -1353,7 +1356,7 @@ importers:
         version: 5.0.4
       vite:
         specifier: ^4.3.4
-        version: 4.3.4(@types/node@14.18.36)(sass@1.57.1)
+        version: 4.3.4(@types/node@18.16.12)(sass@1.57.1)
       vite-plugin-svgr:
         specifier: ^2.4.0
         version: 2.4.0(rollup@2.79.1)(vite@4.3.4)
@@ -5028,6 +5031,26 @@ packages:
       prop-types: 15.8.1
       react: 18.2.0
       react-is: 18.2.0
+    dev: false
+
+  /@mui/x-data-grid@5.17.26(@mui/material@5.11.16)(@mui/system@5.11.16)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-eGJq9J0g9cDGLFfMmugOadZx0mJeOd/yQpHwEa5gUXyONS6qF0OhXSWyDOhDdA3l2TOoQzotMN5dY/T4Wl1KYA==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      '@mui/material': ^5.4.1
+      '@mui/system': ^5.4.1
+      react: ^17.0.2 || ^18.0.0
+      react-dom: ^17.0.2 || ^18.0.0
+    dependencies:
+      '@babel/runtime': 7.21.0
+      '@mui/material': 5.11.16(@emotion/react@11.10.6)(@emotion/styled@11.10.6)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0)
+      '@mui/system': 5.11.16(@emotion/react@11.10.6)(@emotion/styled@11.10.6)(@types/react@18.0.27)(react@18.2.0)
+      '@mui/utils': 5.11.13(react@18.2.0)
+      clsx: 1.2.1
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      reselect: 4.1.8
     dev: false
 
   /@mui/x-date-pickers@5.0.20(@emotion/react@11.10.6)(@emotion/styled@11.10.6)(@mui/material@5.11.16)(@mui/system@5.11.16)(dayjs@1.11.7)(moment@2.29.4)(react-dom@18.2.0)(react@18.2.0):
@@ -17511,6 +17534,10 @@ packages:
 
   /requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
+
+  /reselect@4.1.8:
+    resolution: {integrity: sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==}
+    dev: false
 
   /resize-observer-polyfill@1.5.1:
     resolution: {integrity: sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==}

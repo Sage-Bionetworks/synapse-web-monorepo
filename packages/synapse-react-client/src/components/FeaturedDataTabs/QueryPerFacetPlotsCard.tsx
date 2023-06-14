@@ -1,10 +1,13 @@
 import React from 'react'
 import { SynapseConstants } from '../../utils'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
-import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
+import {
+  QueryVisualizationContextType,
+  QueryVisualizationWrapper,
+} from '../QueryVisualizationWrapper'
+import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
 
@@ -17,7 +20,8 @@ export type QueryPerFacetPlotsCardProps = {
   selectFacetColumnValue: string
   sql?: string
   detailsPagePath: string
-}
+} & Pick<QueryVisualizationContextType, 'unitDescription'>
+
 export function getQueryRequest(
   sql: string,
   selectFacetColumnName: string,
@@ -29,9 +33,7 @@ export function getQueryRequest(
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
     query: {
       sql,
       offset: 0,
@@ -67,19 +69,17 @@ const QueryPerFacetPlotsCard: React.FunctionComponent<
     selectFacetColumnValue,
   )
   return (
-    <div className="QueryPerFacetPlotsCard">
-      <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-        <QueryVisualizationWrapper rgbIndex={rgbIndex} {...rest}>
-          <QueryWrapperErrorBanner />
-          <FacetPlotsCard
-            title={title}
-            description={description}
-            facetsToPlot={facetsToPlot}
-            detailsPagePath={detailsPagePath}
-          />
-        </QueryVisualizationWrapper>
-      </QueryWrapper>
-    </div>
+    <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
+      <QueryVisualizationWrapper rgbIndex={rgbIndex} {...rest}>
+        <QueryWrapperErrorBanner />
+        <FacetPlotsCard
+          title={title}
+          description={description}
+          facetsToPlot={facetsToPlot}
+          detailsPagePath={detailsPagePath}
+        />
+      </QueryVisualizationWrapper>
+    </QueryWrapper>
   )
 }
 

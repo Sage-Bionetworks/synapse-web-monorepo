@@ -97,6 +97,7 @@ export type TopLevelControlsState = {
   showDownloadConfirmation: boolean
   showColumnSelectDropdown: boolean
   showSqlEditor: boolean
+  showCopyToClipboard: boolean
 }
 
 /**
@@ -123,6 +124,7 @@ export function QueryVisualizationWrapper(
       showDownloadConfirmation: false,
       showColumnSelectDropdown: false,
       showSqlEditor: false,
+      showCopyToClipboard: true,
     })
 
   useEffect(() => {

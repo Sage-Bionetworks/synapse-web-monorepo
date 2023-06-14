@@ -15,7 +15,7 @@ const ELBetaLaunchBanner = () => {
       }}
       variant={'info'}
       show={true}
-      title='Welcome to the beta version of the ELITE Portal!'
+      title="Welcome to the beta version of the ELITE Portal!"
       description={
         'This version of the portal is open to members of the National Institute on Aging (NIA)-funded exceptional longevity translational research projects. We will be launching the ELITE Portal to the general research community and public later this year, with more data and features to be added. Get updates and stay connected with us by signing up for the EL DMCC newsletter.'
       }

@@ -1,8 +1,31 @@
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  useQuery,
+  UseQueryOptions,
+} from 'react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { ChallengeWithProjectHeaderPagedResults } from '@sage-bionetworks/synapse-types'
+import {
+  Challenge,
+  ChallengeWithProjectHeaderPagedResults,
+  PaginatedResults,
+} from '@sage-bionetworks/synapse-types'
+
+export function useGetUserChallenges(
+  userId: string,
+  limit?: number,
+  options?: UseQueryOptions<PaginatedResults<Challenge>, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useQuery<PaginatedResults<Challenge>, SynapseClientError>(
+    keyFactory.getUserChallengesQueryKey(userId),
+    () => SynapseClient.getUserChallenges(accessToken, userId, 0, limit ?? 10),
+    options,
+  )
+}
 
 export function useGetUserChallengesInfinite(
   userId: string,

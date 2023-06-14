@@ -2,7 +2,10 @@ import { useQuery, UseQueryOptions } from 'react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { PaginatedResults } from '@sage-bionetworks/synapse-types'
+import {
+  PaginatedResults,
+  TeamMembershipStatus,
+} from '@sage-bionetworks/synapse-types'
 import { TeamMember } from '@sage-bionetworks/synapse-types'
 
 export function useGetTeamMembers(
@@ -27,6 +30,23 @@ export function useGetIsUserMemberOfTeam(
   return useQuery<TeamMember | null, SynapseClientError>(
     keyFactory.getIsUserMemberOfTeamQueryKey(teamId, userId),
     () => SynapseClient.getIsUserMemberOfTeam(teamId, userId, accessToken),
+    options,
+  )
+}
+
+export function useGetMembershipStatus(
+  teamId: string | number,
+  userId: string | number,
+  options?: UseQueryOptions<TeamMembershipStatus, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useQuery<TeamMembershipStatus, SynapseClientError>(
+    keyFactory.getMembershipStatusQueryKey(
+      teamId.toString(),
+      userId.toString(),
+    ),
+    () => SynapseClient.getMembershipStatus(teamId, userId, accessToken),
     options,
   )
 }

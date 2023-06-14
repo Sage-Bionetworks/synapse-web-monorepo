@@ -12,6 +12,7 @@ import {
   ArrowForward,
   ArticleTwoTone,
   AssessmentTwoTone,
+  AssignmentOutlined,
   AssignmentTurnedInTwoTone,
   Block,
   Cached,
@@ -202,6 +203,7 @@ export const IconStrings = [
   'cross',
   'verticalEllipsis',
   'sync',
+  'clipboard',
   'clipboardCheck',
   'add',
   'warning',
@@ -325,6 +327,8 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <SyncTwoTone sx={sx} />
     case 'public':
       return <PublicTwoTone sx={sx} />
+    case 'clipboard':
+      return <AssignmentOutlined sx={sx} />
     case 'clipboardCheck':
       return <AssignmentTurnedInTwoTone sx={sx} />
     case 'info':
@@ -524,6 +528,7 @@ export const type2SvgIconName: Record<EntityType, IconName> = {
   link: 'link',
   entityview: 'entityview',
   materializedview: 'entityview',
+  virtualtable: 'entityview',
   dockerrepo: 'docker',
   submissionview: 'submissionview',
   dataset: 'dataset',

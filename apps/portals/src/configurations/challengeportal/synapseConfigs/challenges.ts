@@ -270,10 +270,10 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
           name: 'ProjectDiscussionForum',
           title: 'Discussion Forum',
           columnName: 'id',
-          props: undefined
+          props: undefined,
         },
-      ]
-    }
+      ],
+    },
   ],
 }
 

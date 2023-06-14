@@ -529,12 +529,24 @@ export class KeyFactory {
     return this.getKey('searchEntities', query)
   }
 
+  public getTeamListQueryKey(teamIds: string) {
+    return this.getKey('team', teamIds, 'teamList')
+  }
+
+  public getChallengeTeamListQueryKey(challengeId: string) {
+    return this.getKey('challenge', challengeId, 'teamList')
+  }
+
   public getTeamMembersQueryKey(teamId: string) {
     return this.getKey('team', teamId, 'membersList')
   }
 
   public getIsUserMemberOfTeamQueryKey(teamId: string, userId: string) {
     return this.getKey('team', teamId, 'member', userId)
+  }
+
+  public getMembershipStatusQueryKey(teamId: string, userId: string) {
+    return this.getKey('team', teamId, 'membershipStatus', userId)
   }
 
   public getTeamAccessRequirementsQueryKey(teamId: string) {
@@ -564,6 +576,10 @@ export class KeyFactory {
 
   public getUserChallengesQueryKey(userId: string) {
     return this.getKey('userChallenges', userId)
+  }
+
+  public getSubmissionTeamsQueryKey(challengeId: string) {
+    return this.getKey('submissionTeams', challengeId)
   }
 
   public getUserProjectsQueryKey(
