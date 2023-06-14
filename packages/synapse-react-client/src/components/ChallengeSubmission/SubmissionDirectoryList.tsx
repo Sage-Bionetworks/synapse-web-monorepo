@@ -4,10 +4,12 @@ import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { RadioOption } from '../widgets/RadioGroup'
 import {
+  Direction,
   DockerRepository,
   Entity,
   EntityChildrenRequest,
   EntityType,
+  SortBy,
 } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
 import { SkeletonTable } from '../Skeleton'
@@ -15,11 +17,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import {
-  useGetEntities,
-  useGetEntityChildren,
-  useGetEntityChildrenWithEntities,
-} from '../../synapse-queries'
+import { useGetEntities, useGetEntityChildren } from '../../synapse-queries'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 
@@ -31,12 +29,14 @@ type SubmissionDirectoryRow = {
 
 type SubmissionDirectoryListProps = {
   loading: boolean
+  needsRefetch: boolean
   challengeProjectId: string | undefined
   onAddRepo: () => void
 }
 
 function SubmissionDirectoryList({
   loading,
+  needsRefetch,
   challengeProjectId,
   onAddRepo,
 }: SubmissionDirectoryListProps) {
@@ -51,13 +51,18 @@ function SubmissionDirectoryList({
     nextPageToken: null,
     includeTypes: [EntityType.DOCKER_REPO],
     includeTotalChildCount: true,
+    sortBy: SortBy.MODIFIED_ON,
+    sortDirection: Direction.DESC,
   }
 
-  const { data: headers } = useGetEntityChildren(request, {
+  const { data: headers, refetch } = useGetEntityChildren(request, {
     enabled: !!challengeProjectId,
-    refetchInterval: Infinity,
     useErrorBoundary: true,
   })
+
+  if (needsRefetch) {
+    refetch()
+  }
 
   const { isLoading: areEntitiesLoading, results: entities } = useGetEntities(
     headers?.page ?? [],
@@ -65,10 +70,6 @@ function SubmissionDirectoryList({
       enabled: headers !== undefined && !!headers.page,
     },
   )
-
-  // const entities = useGetEntities(headers?.page ?? [], {
-  //   enabled: headers !== undefined && !!headers.page,
-  // })
 
   const repoChangeHandler = (value: string | number) => {
     setSelectedRepo(value)
@@ -169,10 +170,14 @@ function SubmissionDirectoryList({
         {loading && <SkeletonTable numRows={10} numCols={1} />}
         {!loading && (
           <DataGrid
+            initialState={{ pagination: { page: page } }}
             columns={columns}
             rows={rows}
+            pageSize={20}
             rowCount={headers?.totalChildCount ?? 0}
-            page={0}
+            page={page}
+            pagination
+            onPageChange={n => setPage(n)}
             density="compact"
             autoHeight
             rowsPerPageOptions={[]}
