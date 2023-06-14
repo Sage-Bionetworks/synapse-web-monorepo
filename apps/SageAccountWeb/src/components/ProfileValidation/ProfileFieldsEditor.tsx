@@ -8,11 +8,10 @@ const keysToValidate = ['firstName', 'lastName', 'location', 'company']
 
 function validate(values: Partial<VerificationSubmission>) {
   const requiredError = 'This field cannot be empty.'
-  let errors = {}
-  const keys = Object.keys(values)
-  for (var key of keys) {
+  let errors: Record<string, string> = {}
+  for (const [key, value] of Object.entries(values)) {
     if (keysToValidate.includes(key)) {
-      if (!values[key]) {
+      if (!value) {
         errors[key] = requiredError
       }
     }

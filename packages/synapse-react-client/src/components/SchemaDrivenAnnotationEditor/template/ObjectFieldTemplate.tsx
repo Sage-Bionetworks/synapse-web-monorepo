@@ -14,6 +14,7 @@ import { Button, Tooltip } from '@mui/material'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { displayToast } from '../../ToastMessage'
 import AddToList from '../../../assets/icons/AddToList'
+import { JSONSchema7Definition } from 'json-schema'
 
 /**
  * Derived from the base ObjectFieldTemplate with annotations-editor-specific changes
@@ -26,7 +27,7 @@ import AddToList from '../../../assets/icons/AddToList'
  * @returns
  */
 export function ObjectFieldTemplate<
-  T = any,
+  T extends Record<string, any> | null | undefined = Record<string, any>,
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
 >(props: ObjectFieldTemplateProps<T, S, F>) {
@@ -78,7 +79,10 @@ export function ObjectFieldTemplate<
       // Schema-defined properties are those properties in the schema without the additional property flag.
       const schemaDefinedProperties = new Set<string>(
         propertyKeys.filter(key => {
-          const propertyObject = schema.properties![key]
+          const propertyObject = schema.properties![
+            key
+          ] as JSONSchema7Definition &
+            Record<typeof ADDITIONAL_PROPERTY_FLAG, any>
           return !propertyObject[ADDITIONAL_PROPERTY_FLAG]
         }),
       )
@@ -98,7 +102,7 @@ export function ObjectFieldTemplate<
             formData[schemaDefinedProperty] != null &&
             // Property matches `additionalProperties` requirements: is an array and contains non-null values
             Array.isArray(formData[schemaDefinedProperty]) &&
-            (formData[schemaDefinedProperty] as Array<any>).filter(
+            (formData[schemaDefinedProperty] as Array<never>).filter(
               item => item != null,
             ).length > 0
           )

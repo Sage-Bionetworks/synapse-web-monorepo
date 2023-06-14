@@ -27,40 +27,40 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
   describe('guessPropertyType tests', () => {
     it('should return "string" for string properties', () => {
       const data = ['some string', 'some other string']
-      expect(guessPropertyType(data)).toBe(PropertyType.STRING)
+      expect(guessPropertyType(data)).toBe(PropertyType.String)
     })
     it('should return "integer" for integer properties', () => {
       const data = [-1, 0, 1, 2, 3]
-      expect(guessPropertyType(data)).toBe(PropertyType.INTEGER)
+      expect(guessPropertyType(data)).toBe(PropertyType.Integer)
     })
     it('should return "float" for float properties', () => {
       const data = [1.1, 2.2, 3.3, 4.4, 5] // not all have to be float
-      expect(guessPropertyType(data)).toBe(PropertyType.FLOAT)
+      expect(guessPropertyType(data)).toBe(PropertyType.Float)
     })
     it('should return "float" for float properties with NaN', () => {
       const data = [4.4, 'NaN', 53]
-      expect(guessPropertyType(data)).toBe(PropertyType.FLOAT)
+      expect(guessPropertyType(data)).toBe(PropertyType.Float)
     })
     it('should return "boolean" for boolean properties', () => {
       const data = [true, false]
-      expect(guessPropertyType(data)).toBe(PropertyType.BOOLEAN)
+      expect(guessPropertyType(data)).toBe(PropertyType.Boolean)
     })
     it('should return "datetime" for datetime properties', () => {
       const data = ['1970-01-01T00:00:00.000Z', '2021-06-09T19:07:11.453Z']
-      expect(guessPropertyType(data)).toBe(PropertyType.DATETIME)
+      expect(guessPropertyType(data)).toBe(PropertyType.Datetime)
     })
   })
   describe('transformDataFromPropertyType tests', () => {
     it('converts strings to numbers', () => {
       const data = ['1', '2', '3']
-      expect(transformDataFromPropertyType(data, PropertyType.INTEGER)).toEqual(
+      expect(transformDataFromPropertyType(data, PropertyType.Integer)).toEqual(
         [1, 2, 3],
       )
     })
 
     it('converts numbers to strings', () => {
       const data = [1, 2, 3]
-      expect(transformDataFromPropertyType(data, PropertyType.STRING)).toEqual([
+      expect(transformDataFromPropertyType(data, PropertyType.String)).toEqual([
         '1',
         '2',
         '3',
@@ -69,7 +69,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
 
     it('converts integers to floats', () => {
       const data = [1, 2, 3]
-      expect(transformDataFromPropertyType(data, PropertyType.FLOAT)).toEqual([
+      expect(transformDataFromPropertyType(data, PropertyType.Float)).toEqual([
         '1.0',
         '2.0',
         '3.0',
@@ -79,7 +79,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
     it('converts strings to floats', () => {
       const data = ['abc', '3.4', '4', 'NaN']
       expect(4.0).toEqual(4)
-      expect(transformDataFromPropertyType(data, PropertyType.FLOAT)).toEqual([
+      expect(transformDataFromPropertyType(data, PropertyType.Float)).toEqual([
         'NaN',
         3.4,
         '4.0',
@@ -89,7 +89,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
 
     it('converts booleans to strings', () => {
       const data = [true, false]
-      expect(transformDataFromPropertyType(data, PropertyType.STRING)).toEqual([
+      expect(transformDataFromPropertyType(data, PropertyType.String)).toEqual([
         'true',
         'false',
       ])
@@ -99,18 +99,18 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       // Mostly just ensuring that these aren't modified
       const data = ['1970-01-01T00:00:00.000Z', '2021-06-09T19:07:11.453Z']
       expect(
-        transformDataFromPropertyType(data, PropertyType.DATETIME),
+        transformDataFromPropertyType(data, PropertyType.Datetime),
       ).toEqual(['1970-01-01T00:00:00.000Z', '2021-06-09T19:07:11.453Z'])
     })
   })
 
   describe('getSchemaForPropertyType tests', () => {
     it.each([
-      [PropertyType.INTEGER, { type: 'integer' }],
-      [PropertyType.FLOAT, { type: 'number' }],
-      [PropertyType.DATETIME, { type: 'string', format: 'datetime' }],
-      [PropertyType.STRING, { type: 'string' }],
-      [PropertyType.BOOLEAN, { type: 'boolean' }],
+      [PropertyType.Integer, { type: 'integer' }],
+      [PropertyType.Float, { type: 'number' }],
+      [PropertyType.Datetime, { type: 'string', format: 'datetime' }],
+      [PropertyType.String, { type: 'string' }],
+      [PropertyType.Boolean, { type: 'boolean' }],
     ])('returns the correct schema for %p', (propertyType, expectedSchema) => {
       expect(getSchemaForPropertyType(propertyType)).toEqual(expectedSchema)
     })

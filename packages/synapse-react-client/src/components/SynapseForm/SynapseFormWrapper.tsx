@@ -110,7 +110,7 @@ export class SynapseFormWrapper extends React.Component<
       return
     }
     try {
-      let formData = {}
+      let formData: Record<string, any> = {}
       let dataFileHandleId: string | undefined
       let submitted: boolean | undefined
       let formSchemaVersion = undefined
@@ -122,7 +122,7 @@ export class SynapseFormWrapper extends React.Component<
       }
 
       //for not new form we need to get the data
-      //and if it is submitted form we need to pull appropriave schema versions
+      //and if it is submitted form we need to pull appropriaves schema versions
       //for new form (no dataFileHandleId) we need to populate schema versions
 
       if (dataFileHandleId) {

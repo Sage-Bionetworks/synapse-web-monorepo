@@ -16,37 +16,37 @@ const ISO_TIMESTAMP_REGEX = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/
 
 // Types that correspond to the different input fields that the annotation editor supports
 export enum PropertyType {
-  STRING = 'String',
-  INTEGER = 'Integer',
-  FLOAT = 'Float',
-  BOOLEAN = 'Boolean',
-  DATETIME = 'Datetime',
+  String = 'String',
+  Integer = 'Integer',
+  Float = 'Float',
+  Boolean = 'Boolean',
+  Datetime = 'Datetime',
 }
 
 export function guessPropertyType(list: Array<unknown>): PropertyType {
   if (list.length === 0) {
     // The field was just added, so default to string
-    return PropertyType.STRING
+    return PropertyType.String
   } else if (
     list.every(
       item => typeof item === 'number' || item === 'NaN', // "NaN" is technically a float value
     )
   ) {
     if (list.every(item => Number.isInteger(item))) {
-      return PropertyType.INTEGER
+      return PropertyType.Integer
     } else {
-      return PropertyType.FLOAT
+      return PropertyType.Float
     }
   } else if (list.every(item => typeof item === 'boolean')) {
-    return PropertyType.BOOLEAN
+    return PropertyType.Boolean
   } else if (
     list.every(item => typeof item === 'string') &&
     (list as string[]).every((item: string) => !!ISO_TIMESTAMP_REGEX.exec(item))
   ) {
-    return PropertyType.DATETIME
+    return PropertyType.Datetime
   }
   // otherwise, default type is 'string'
-  return PropertyType.STRING
+  return PropertyType.String
 }
 
 export function transformDataFromPropertyType(
@@ -54,12 +54,12 @@ export function transformDataFromPropertyType(
   propertyType: PropertyType,
 ) {
   switch (propertyType) {
-    case PropertyType.INTEGER:
+    case PropertyType.Integer:
       return list.map(item =>
         Number.isNaN(Number(item)) ? 0 : Math.floor(Number(item)),
       )
 
-    case PropertyType.FLOAT:
+    case PropertyType.Float:
       return list.map(item => {
         const asFloat = parseFloat(item as string)
         if (Number.isNaN(asFloat)) {
@@ -70,7 +70,7 @@ export function transformDataFromPropertyType(
           return asFloat
         }
       })
-    case PropertyType.DATETIME:
+    case PropertyType.Datetime:
       return list.map(item => {
         if (typeof item === 'string' && ISO_TIMESTAMP_REGEX.exec(item)) {
           return item
@@ -78,9 +78,9 @@ export function transformDataFromPropertyType(
           return new Date().toISOString()
         }
       })
-    case PropertyType.BOOLEAN:
+    case PropertyType.Boolean:
       return list.map(item => !!item)
-    case PropertyType.STRING:
+    case PropertyType.String:
     default:
       return list.map(item => String(item))
   }
@@ -92,15 +92,15 @@ export function transformDataFromPropertyType(
  */
 export function getSchemaForPropertyType(propertyType: PropertyType) {
   switch (propertyType) {
-    case PropertyType.DATETIME:
+    case PropertyType.Datetime:
       return { type: 'string', format: 'datetime' }
-    case PropertyType.BOOLEAN:
+    case PropertyType.Boolean:
       return { type: 'boolean' }
-    case PropertyType.FLOAT:
+    case PropertyType.Float:
       return { type: 'number' }
-    case PropertyType.INTEGER:
+    case PropertyType.Integer:
       return { type: 'integer' }
-    case PropertyType.STRING:
+    case PropertyType.String:
     default:
       return { type: 'string' }
   }
@@ -228,8 +228,8 @@ export function AdditionalPropertiesSchemaField<
           schema={{} as S}
           options={{
             enumOptions: Object.keys(PropertyType).map(type => ({
-              label: PropertyType[type],
-              value: PropertyType[type],
+              label: type,
+              value: type,
             })),
           }}
           value={propertyType}

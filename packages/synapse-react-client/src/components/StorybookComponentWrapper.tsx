@@ -63,11 +63,12 @@ export async function sessionChangeHandler() {
   }
   return { accessToken, profile, authenticatedOn: date }
 }
+
 const storybookQueryClient = new QueryClient(defaultQueryClientConfig)
 
 function overrideEndpoint(stack: SynapseStack) {
   const endpointConfig = STACK_MAP[stack]
-  window['SRC'] = {
+  ;(window as any)['SRC'] = {
     OVERRIDE_ENDPOINT_CONFIG: endpointConfig,
   }
   storybookQueryClient.resetQueries()
@@ -97,7 +98,16 @@ const paletteMap = {
 export function StorybookComponentWrapper(props: {
   children: React.ReactNode
   /* This will match the `globalTypes` object in preview.jsx. */
-  storybookContext: any
+  storybookContext: {
+    globals: {
+      stack?: SynapseStack
+      palette: keyof typeof paletteMap
+      showReactQueryDevtools?: boolean
+    }
+    parameters: {
+      stack?: SynapseStack
+    }
+  }
 }) {
   const { storybookContext } = props
 
@@ -126,6 +136,7 @@ export function StorybookComponentWrapper(props: {
       storybookQueryClient.removeQueries()
       await storybookQueryClient.invalidateQueries()
     }
+
     resetCache()
   }, [accessToken])
 

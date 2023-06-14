@@ -5,7 +5,7 @@ import {
   getEntityTypeFromHeader,
 } from '../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import { useGetEntity } from '../synapse-queries/entity/useEntity'
+import { useGetEntity } from '../synapse-queries'
 import { Entity, EntityHeader } from '@sage-bionetworks/synapse-types'
 import { EntityTypeIcon } from './EntityIcon'
 import { ErrorBanner } from './error/ErrorBanner'
@@ -20,7 +20,7 @@ type EntityLinkProps = {
   /** Whether to display an icon identifying the entity type. Default true */
   showIcon?: boolean
   /** The field of the entity to display. Default is 'name' */
-  displayTextField?: keyof Entity
+  displayTextField?: keyof Entity | keyof EntityHeader
 }
 
 export const EntityLink = (props: EntityLinkProps) => {
@@ -64,14 +64,14 @@ export const EntityLink = (props: EntityLinkProps) => {
           {showIcon && (
             <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
           )}
-          {entity[displayTextField]}
+          {entity[displayTextField as keyof typeof entity]}
         </Link>
       )
     } else {
       return (
         <p className={className}>
           <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
-          {entity[displayTextField]}
+          {entity[displayTextField as keyof typeof entity]}
         </p>
       )
     }

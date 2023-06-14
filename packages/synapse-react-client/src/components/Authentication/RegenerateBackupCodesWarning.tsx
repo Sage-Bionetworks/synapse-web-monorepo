@@ -16,7 +16,7 @@ export function RegenerateBackupCodesWarning(
     <Paper sx={{ m: 'auto', maxWidth: '500px', p: 8 }}>
       <Avatar
         sx={{
-          bgcolor: theme.palette.primary[500],
+          bgcolor: theme.palette.primary.main,
           height: '100px',
           width: '100px',
         }}

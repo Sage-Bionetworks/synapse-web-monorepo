@@ -10,12 +10,13 @@ import {
   RJSFSchema,
   StrictRJSFSchema,
 } from '@rjsf/utils'
+import { JSONSchema7Definition } from 'json-schema'
 
 /**
  * Extends the @rjsf/core `ObjectField` and just adds a custom hook for Synapse annotation business logic
  */
 export function CustomObjectField<
-  T = any,
+  T extends Record<string, any> | null | undefined = Record<string, any>,
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
 >(props: FieldProps<T, S, F>) {
@@ -30,12 +31,17 @@ export function CustomObjectField<
    */
   useEffect(() => {
     const { schema, formData, onChange } = props
-    const newFormData = { ...formData }
+    const newFormData: Record<string, any> = { ...formData }
     if (schema[PROPERTIES_KEY]) {
       Object.entries(schema[PROPERTIES_KEY]).forEach(
         ([key, propertySchema]) => {
           const data = newFormData[key]
-          if (propertySchema[ADDITIONAL_PROPERTY_FLAG]) {
+          if (
+            (
+              propertySchema as JSONSchema7Definition &
+                Record<typeof ADDITIONAL_PROPERTY_FLAG, any>
+            )[ADDITIONAL_PROPERTY_FLAG]
+          ) {
             /**
              * All additional properties should be converted to arrays.
              *

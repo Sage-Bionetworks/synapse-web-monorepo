@@ -1,6 +1,7 @@
 import BaseTable, {
   AutoResizer,
   Column,
+  SortOrder,
 } from '@sage-bionetworks/react-base-table'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from 'react-query'
@@ -348,9 +349,9 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     [setCurrentContainer],
   )
 
-  const sortState = {}
+  const sortState: Record<string, SortOrder> = {}
   if (sort) {
-    sortState[sort.sortBy] = sort.sortDirection.toLowerCase()
+    sortState[sort.sortBy] = sort.sortDirection.toLowerCase() as SortOrder
   }
 
   return (
