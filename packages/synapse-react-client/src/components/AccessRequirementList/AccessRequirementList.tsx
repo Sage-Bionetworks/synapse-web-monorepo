@@ -50,6 +50,7 @@ export type AccessRequirementListProps = {
   renderAsModal?: boolean
   numberOfFilesAffected?: number // if provided, will show this instead of the entity information
   requestObjectName?: string // if provided, will show this instead of the entity information or numberOfFilesAffected
+  dialogTitle?: string // if provided, will show this instead of Data Access Request
 }
 
 const SUPPORTED_ACCESS_REQUIREMENTS = new Set<
@@ -127,6 +128,7 @@ export default function AccessRequirementList(
     renderAsModal,
     numberOfFilesAffected,
     requestObjectName,
+    dialogTitle = 'Data Access Request',
   } = props
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
@@ -251,7 +253,7 @@ export default function AccessRequirementList(
     <>
       <DialogTitle>
         <Stack direction="row" alignItems={'center'} gap={'5px'}>
-          Data Access Request
+          {dialogTitle}
           <Box sx={{ flexGrow: 1 }} />
           <IconButton onClick={onHide}>
             <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />

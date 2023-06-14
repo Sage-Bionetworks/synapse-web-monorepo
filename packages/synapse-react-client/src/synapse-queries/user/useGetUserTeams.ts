@@ -12,7 +12,6 @@ import { Team } from '@sage-bionetworks/synapse-types'
 
 export function useGetUserSubmissionTeamsInfinite(
   challengeId: string,
-  limit?: number,
   options?: UseQueryOptions<PaginatedIds, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
@@ -24,13 +23,13 @@ export function useGetUserSubmissionTeamsInfinite(
         accessToken,
         challengeId,
         context.pageParam, // pass the context.pageParam for the new offset,
-        limit ?? 10,
+        20,
       )
     },
     {
       ...options,
       getNextPageParam: (lastPage, pages) => {
-        if (lastPage.results.length > 0) return pages.length * (limit ?? 10)
+        if (lastPage.results.length > 0) return pages.length * 20
         //set the new offset to (page * limit)
         else return undefined
       },

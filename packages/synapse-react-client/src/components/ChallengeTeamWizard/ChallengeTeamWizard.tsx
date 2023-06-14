@@ -89,7 +89,6 @@ const ChallengeTeamWizard: React.FunctionComponent<
   ChallengeTeamWizardProps
 > = ({ projectId, isShowingModal = false, onClose }) => {
   const { accessToken } = useSynapseContext()
-  const isLoggedIn = Boolean(accessToken)
   const [loading, setLoading] = useState<boolean>(true)
   const [step, setStep] = useState<Step>(steps.SELECT_YOUR_CHALLENGE_TEAM)
   const [errorMessage, setErrorMessage] = useState<string>()
@@ -120,7 +119,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
 
   // Use the existing accessToken if present to get the current user's profile / userId
   const { data: userProfile } = useGetCurrentUserProfile({
-    enabled: isLoggedIn,
+    enabled: !!accessToken,
     onError: error => {
       setLoading(false)
       setErrorMessage(error.reason)
@@ -174,7 +173,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   )
 
   // Determine whether or not the given user belongs to any submission teams
-  useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 1, {
+  useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, {
     enabled: !!challenge && !!accessToken,
     onSettled: (
       data: PaginatedIds | undefined,

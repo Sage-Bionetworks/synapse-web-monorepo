@@ -5,11 +5,10 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils'
 
 export function useGetEntityChallenge(
-  entityId: string,
+  entityId: string = '',
   options?: UseQueryOptions<Challenge, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-
   return useQuery<Challenge, SynapseClientError>(
     keyFactory.getEntityChallengeQueryKey(entityId),
     () => SynapseClient.getEntityChallenge(entityId, accessToken),

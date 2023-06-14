@@ -14,6 +14,8 @@ import { SynapseFormSubmissionGridProps } from 'synapse-react-client'
 import { QueryWrapperPlotNavProps } from 'synapse-react-client'
 import { SynapseFormWrapperProps } from 'synapse-react-client'
 import { ThemesPlotProps } from 'synapse-react-client'
+import { ChallengeDetailPageProps } from 'synapse-react-client'
+import { ChallengeDataDownloadProps } from 'synapse-react-client'
 import { StatefulButtonControlWrapperProps } from '../portal-components/StatefulButtonControlWrapper'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
@@ -204,7 +206,14 @@ type Image = {
   name: 'Image'
   props: ImageProps
 }
-
+type ChallengeDetailPageWrapper = {
+  name: 'ChallengeDetailPageWrapper'
+  props: undefined
+}
+type ChallengeDataDownload = {
+  name: 'ChallengeDataDownload'
+  props: ChallengeDataDownloadProps
+}
 type FeaturedDataTabs = {
   name: 'FeaturedDataTabs'
   props: FeaturedDataTabsProps
@@ -329,6 +338,8 @@ export type SynapseConfig = (
   | ChallengeParticipantGoogleMap
   | ProjectDiscussionForum
   | Header
+  | ChallengeDetailPageWrapper
+  | ChallengeDataDownload
 ) &
   Metadata
 
