@@ -1,0 +1,129 @@
+.
+s
+.
+<p>s</p>
+.
+
+.
+a ${widget} in a paragraph
+.
+<p>a <span data-widgetparams="widget" class="widgetContainer" id="widget-0undefined" data-widget-type="">&lt;Synapse widget&gt;</span> in a paragraph</p>
+.
+
+.
+clearly not a widget $1.23 definition
+.
+<p>clearly not a widget $1.23 definition</p>
+.
+
+.
+${image?fileName=joy%2Epng&align=None}
+.
+<p><span data-widgetparams="image?fileName=joy%2Epng&amp;align=None" class="widgetContainer" id="widget-1undefined" data-widget-type="image">&lt;Synapse widget&gt;</span></p>
+.
+
+.
+${toc}
+.
+<p><span data-widgetparams="toc" class="widgetContainer" id="widget-2undefined" data-widget-type="">&lt;Synapse widget&gt;</span></p>
+.
+
+.
+\${toc}
+.
+<p>${toc}</p>
+.
+
+.
+$\{toc}
+.
+<p>${toc}</p>
+.
+
+.
+${evalsubmit?subchallengeIdList=12345&unavailableMessage=Join the team to submit to the challenge}
+.
+<p><span data-widgetparams="evalsubmit?subchallengeIdList=12345&amp;unavailableMessage=Join the team to submit to the challenge" class="widgetContainer" id="widget-3undefined" data-widget-type="evalsubmit">&lt;Synapse widget&gt;</span></p>
+.
+
+.
+This is a ref ${reference?inlineWidget=true&text=K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049}.
+.
+<p>This is a ref <span id="wikiReference1"></span><span data-widgetparams="reference?inlineWidget=true&amp;text=K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049&amp;footnoteId=1" class="inlineWidgetContainer" id="widget-4undefined" data-widget-type="reference">&lt;Synapse widget&gt;</span>.</p>
+.
+
+.
+${bookmark?text=[1]&inlineWidget=true&bookmarkID=wikiReference1} K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049
+.
+<p><span id="wikiFootnote2"></span><span data-widgetparams="bookmark?text=[1]&amp;inlineWidget=true&amp;bookmarkID=wikiReference1" class="inlineWidgetContainer" id="widget-5undefined" data-widget-type="bookmark">&lt;Synapse widget&gt;</span> K%2EA%2E Hoadley%2C C%2E Yau%2C D%2EM%2E Wolf%2C A%2ED%2E Cherniack%2C D%2E Tamborero%2C S%2E Ng%2C M%2ED%2EM%2E Leiserson%2C B%2E Niu%2C M%2ED%2E McLellan%2C V%2E Uzunangelov%2C J%2E Zhang%2C C%2E Kandoth%2C R%2E Akbani%2C H%2E Shen%2C L%2E Omberg%2C A%2E Chu%2C A%2EA%2E Margolin%2C L%2EJ%2E van’t Veer%2C N%2E Lopez%2DBigas%2C P%2EW%2E Laird%2C B%2EJ%2E Raphael%2C L%2E Ding%2C A%2EG%2E Robertson%2C L%2EA%2E Byers%2C G%2EB%2E Mills%2C J%2EN%2E Weinstein%2C C%2E Van Waes%2C Z%2E Chen%2C E%2EA%2E Collisson%2C The Cancer Genome Atlas Research Network%2C C%2EC%2E Benz%2C C%2EM%2E Perou%2C and J%2EM%2E Stuart %282014%29%2E Multiplatform Analysis of 12 Cancer Types Reveals Molecular Classification within and across Tissues of Origin%2E Cell 158%2E http%3A%2F%2Fdx%2Edoi%2Eorg%2F10%2E1016%2Fj%2Ecell%2E2014%2E06%2E049</p>
+.
+
+.
+And here's another ${reference?inlineWidget=true&text=My %5Freference%5F with processing that %2Aneeds%2A to take place%2E} down below.
+.
+<p>And here's another <span id="wikiReference3"></span><span data-widgetparams="reference?inlineWidget=true&amp;text=My %5Freference%5F with processing that %2Aneeds%2A to take place%2E&amp;footnoteId=3" class="inlineWidgetContainer" id="widget-6undefined" data-widget-type="reference">&lt;Synapse widget&gt;</span> down below.</p>
+.
+
+.
+What if I mention @jay in a comment?
+.
+<p>What if I mention <span data-widgetparams="badge?alias=jay" data-widget-type="badge" class="widgetContainer" id="widget-7undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=jay" target="_blank" ref="noopener noreferrer">@jay</a></span> in a comment?</p>
+.
+
+.
+@Beginning of line mention
+.
+<p><span data-widgetparams="badge?alias=Beginning" data-widget-type="badge" class="widgetContainer" id="widget-8undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=Beginning" target="_blank" ref="noopener noreferrer">@Beginning</a></span> of line mention</p>
+.
+
+.
+Mention at the @end
+.
+<p>Mention at the <span data-widgetparams="badge?alias=end" data-widget-type="badge" class="widgetContainer" id="widget-9undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=end" target="_blank" ref="noopener noreferrer">@end</a></span></p>
+.
+
+.
+Mention @xschildw, @withSupportedSpecialCharacters-._, @test! Expectation that it will not eat the comma or exclamation point.
+.
+<p>Mention <span data-widgetparams="badge?alias=xschildw" data-widget-type="badge" class="widgetContainer" id="widget-10undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=xschildw" target="_blank" ref="noopener noreferrer">@xschildw</a></span>, <span data-widgetparams="badge?alias=withSupportedSpecialCharacters-._" data-widget-type="badge" class="widgetContainer" id="widget-11undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=withSupportedSpecialCharacters-._" target="_blank" ref="noopener noreferrer">@withSupportedSpecialCharacters-._</a></span>, <span data-widgetparams="badge?alias=test" data-widget-type="badge" class="widgetContainer" id="widget-12undefined"><a href="https://www.synapse.org/Portal/aliasredirector?alias=test" target="_blank" ref="noopener noreferrer">@test</a></span>! Expectation that it will not eat the comma or exclamation point.</p>
+.
+
+.
+An email@address.com is not a mention
+.
+<p>An <a href="mailto:email@address.com" target="_blank" ref="noopener noreferrer">email@address.com</a> is not a mention</p>
+.
+
+.
+testing standard [link](http://link.com)
+.
+<p>testing standard <a href="http://link.com" target="_blank" ref="noopener noreferrer">link</a></p>
+.
+
+.
+testing standard linkify syn123 auto-link
+.
+<p>testing standard linkify <a href="#!Synapse:syn123">syn123</a> auto-link</p>
+.
+
+.
+testing standard https://www.google.com auto-link
+.
+<p>testing standard <a href="https://www.google.com" target="_blank" ref="noopener noreferrer">https://www.google.com</a> auto-link</p>
+.
+
+.
+testing internal link [Explore/Data](/Explore/Data)
+.
+<p>testing internal link <a href="/Explore/Data">Explore/Data</a></p>
+.
+
+coverage
+.
+*~f
+.
+<p>*~f</p>
+.
+
+clean up init (constructor)
+remove icon
