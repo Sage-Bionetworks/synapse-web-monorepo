@@ -333,7 +333,6 @@ export type SynapseConfig = (
   | ProjectDiscussionForum
   | Header
   | ChallengeDetailPageWrapper
-  | ChallengeDataDownload
 ) &
   Metadata
 

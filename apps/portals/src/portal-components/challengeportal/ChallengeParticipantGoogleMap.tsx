@@ -3,7 +3,7 @@ import * as React from 'react'
 import { AppUtils, SynapseQueries, Map } from 'synapse-react-client'
 
 const ChallengeParticipantGoogleMap = () => {
-  const projectId = AppUtils.useQuerySearchParam('id')
+  const projectId = AppUtils.useQuerySearchParam('id') ?? ''
   const { data: challenge } = SynapseQueries.useGetEntityChallenge(projectId)
   if (challenge && challenge.participantTeamId) {
     return (
