@@ -4,7 +4,7 @@ export * from './Authentication'
 export * from './CardContainer'
 export * from './CardContainerLogic'
 export * from './CertificationQuiz'
-export * from './ChallengeDetailPage'
+export * from './ChallengeDetailPage' // this line breaks Storybook ChallengeDetailPage rendering
 export * from './ConfirmationDialog'
 export * from './DownloadCart'
 export * from './EntityBadgeIcons'

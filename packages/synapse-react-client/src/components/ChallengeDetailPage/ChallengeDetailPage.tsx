@@ -12,7 +12,9 @@ export type ChallengeDetailPageProps = {
   projectId: string
 }
 
-const ChallengeDetailPage = ({ projectId }: ChallengeDetailPageProps) => {
+export const ChallengeDetailPage = ({
+  projectId,
+}: ChallengeDetailPageProps) => {
   const { accessToken } = useSynapseContext()
   const [showWizard, setShowWizard] = useState<boolean>(false)
   const [showRequirements, setShowRequirements] = useState<boolean>(false)
@@ -112,5 +114,3 @@ const ChallengeDetailPage = ({ projectId }: ChallengeDetailPageProps) => {
     </>
   )
 }
-
-export default ChallengeDetailPage

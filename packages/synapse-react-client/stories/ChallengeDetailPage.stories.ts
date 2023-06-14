@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ChallengeDetailPage from '../src/components/ChallengeDetailPage/ChallengeDetailPage'
+import { ChallengeDetailPage } from '../src/components/ChallengeDetailPage/ChallengeDetailPage'
 
 const meta = {
   title: 'Synapse/Challenge/ChallengeDetailPage',
