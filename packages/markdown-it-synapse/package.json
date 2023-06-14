@@ -3,6 +3,7 @@
   "version": "1.1.11",
   "description": "tag for markdown-it markdown parser.",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "keywords": [
     "markdown-it-plugin",
     "markdown-it",
