@@ -77,7 +77,7 @@ const ChallengeRegisterButton = ({
     },
   )
 
-  useGetUserSubmissionTeamsInfinite(challenge?.id ?? '', {
+  useGetUserSubmissionTeamsInfinite(challenge?.id ?? '0', 20, {
     enabled: !!challenge && !!accessToken,
     onSettled: (data: PaginatedIds | undefined, error) => {
       if (data) {

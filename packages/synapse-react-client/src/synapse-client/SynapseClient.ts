@@ -4549,7 +4549,9 @@ export async function getSynapseTeamGeoData(
   teamId: string,
 ): Promise<GeoData[]> {
   const response = await fetch(`${S3_GEODATA_ENDPOINT}${teamId}.json`)
-  return (await response.json()) as GeoData[]
+  if (response.status == 200) {
+    return (await response.json()) as GeoData[]
+  } else return []
 }
 
 /**

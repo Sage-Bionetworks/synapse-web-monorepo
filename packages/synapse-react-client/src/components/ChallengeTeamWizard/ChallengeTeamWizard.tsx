@@ -111,31 +111,15 @@ const ChallengeTeamWizard: React.FunctionComponent<
     invitees: '',
   })
   const [joinMessage, setJoinMessage] = useState<string>('')
-  const [canRequestChallenge, setCanRequestChallenge] = useState<boolean>(false)
 
   /************************
    * Data population hooks
    ***********************/
 
   // Use the existing accessToken if present to get the current user's profile / userId
-  const { data: userProfile } = useGetCurrentUserProfile({
-    enabled: !!accessToken,
-    onError: error => {
-      setLoading(false)
-      setErrorMessage(error.reason)
-    },
-  })
-
+  const { data: userProfile } = useGetCurrentUserProfile()
   // Retrieve the challenge associated with the projectId passed through props
-  const { data: challenge } = useGetEntityChallenge(projectId, {
-    enabled: canRequestChallenge,
-    onError: () => {
-      setLoading(false)
-      setErrorMessage(
-        `Error: Could not retrieve challenge for project "${projectId}".`,
-      )
-    },
-  })
+  const { data: challenge } = useGetEntityChallenge(projectId)
 
   // Verify that user is a member of the participant team
   useGetIsUserMemberOfTeam(
@@ -173,7 +157,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   )
 
   // Determine whether or not the given user belongs to any submission teams
-  useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, {
+  useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 1, {
     enabled: !!challenge && !!accessToken,
     onSettled: (
       data: PaginatedIds | undefined,
@@ -274,13 +258,6 @@ const ChallengeTeamWizard: React.FunctionComponent<
      */
     const isLoggedOut =
       !!userProfile && userProfile.ownerId === ANONYMOUS_PRINCIPAL_ID.toString()
-
-    /**
-     * We can only request challenges if we are not anonymous.
-     * Avoid repeated api calls by disabling hook once we have the challenge.
-     */
-    const canRequest = Boolean(accessToken) && !!projectId && !challenge
-    setCanRequestChallenge(canRequest)
 
     if (isLoggedOut) {
       setLoading(false)
