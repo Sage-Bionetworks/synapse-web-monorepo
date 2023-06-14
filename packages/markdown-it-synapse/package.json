@@ -58,9 +58,5 @@
   "directories": {
     "test": "test"
   },
-  "author": "Jay",
-  "lint-staged": {
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
-  }
+  "author": "Jay"
 }
