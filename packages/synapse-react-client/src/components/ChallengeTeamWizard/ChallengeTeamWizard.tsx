@@ -492,7 +492,6 @@ const ChallengeTeamWizard: React.FunctionComponent<
 
   // React to change in step
   function handleStepChange(value?: StepsEnum) {
-    debugger
     if (!value || !steps[value]) return
     setErrorMessage(undefined)
 
