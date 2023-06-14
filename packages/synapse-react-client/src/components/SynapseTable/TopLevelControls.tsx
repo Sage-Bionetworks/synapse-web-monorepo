@@ -7,9 +7,9 @@ import {
   useQueryVisualizationContext,
 } from '../QueryVisualizationWrapper'
 import {
-  useQueryContext,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
+  useQueryContext,
 } from '../QueryContext/QueryContext'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { DownloadOptions } from './table-top'
@@ -60,6 +60,11 @@ const controls: Control[] = [
     icon: 'search',
     key: 'showSearchBar',
     tooltipText: 'Show / Hide Search Bar',
+  },
+  {
+    icon: 'clipboard',
+    key: 'showCopyToClipboard',
+    tooltipText: 'Copy this search to the clipboard',
   },
   {
     icon: 'chart',
@@ -113,6 +118,11 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     setSelectedRows,
     setColumnsToShowInTable,
   } = useQueryVisualizationContext()
+
+  const { showCopyToClipboard } = topLevelControlsState
+
+  const [hasRecentlyCopiedToClipboard, setHasRecentlyCopiedToClipboard] =
+    useState(false)
 
   const setControlState = (control: keyof TopLevelControlsState) => {
     const updatedTopLevelControlsState: Partial<TopLevelControlsState> = {
@@ -243,7 +253,8 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             if (
               (key === 'showDownloadConfirmation' && hideDownload) ||
               (key === 'showFacetVisualization' && hideVisualizationsControl) ||
-              (key === 'showSqlEditor' && hideSqlEditorControl)
+              (key === 'showSqlEditor' && hideSqlEditorControl) ||
+              (key === 'showCopyToClipboard' && !showCopyToClipboard)
             ) {
               // needs to be a file view in order for download to make sense
               return <React.Fragment key={key}></React.Fragment>
@@ -253,6 +264,26 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   key={key}
                   darkTheme={true}
                   onDownloadFiles={() => setControlState(key)}
+                />
+              )
+            } else if (key === 'showCopyToClipboard') {
+              return (
+                <ElementWithTooltip
+                  tooltipText={
+                    hasRecentlyCopiedToClipboard
+                      ? 'Copied to clipboard'
+                      : tooltipText
+                  }
+                  key={key}
+                  callbackFn={() => {
+                    navigator.clipboard.writeText(window.location.href)
+                    setHasRecentlyCopiedToClipboard(true)
+                    setTimeout(() => {
+                      setHasRecentlyCopiedToClipboard(false)
+                    }, 3000)
+                  }}
+                  darkTheme={true}
+                  icon={icon}
                 />
               )
             }
