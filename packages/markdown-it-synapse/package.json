@@ -24,13 +24,13 @@
     "test": "jest",
     "coverage": "jest --coverage"
   },
-  "homepage": "https://github.com/Sage-Bionetworks/markdown-it-synapse",
+  "homepage": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/tree/main/packages/markdown-it-synapse",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Sage-Bionetworks/markdown-it-synapse.git"
+    "url": "git://github.com/Sage-Bionetworks/synapse-web-monorepo.git"
   },
   "bugs": {
-    "url": "https://github.com/Sage-Bionetworks/markdown-it-synapse/issues"
+    "url": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/issues"
   },
   "license": "MIT",
   "devDependencies": {

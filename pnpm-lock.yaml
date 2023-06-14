@@ -882,7 +882,7 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2
       markdown-it-synapse:
-        specifier: workspace:*
+        specifier: ^1.1.10
         version: link:../markdown-it-synapse
       markdown-it-synapse-heading:
         specifier: ^1.0.1
