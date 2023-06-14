@@ -9,6 +9,11 @@
     "markdown",
     "synapse"
   ],
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "build": "rimraf ./dist && tsup ./src/index.ts --format esm,cjs --dts",
     "predist": "rm -rf dist && pnpm build && pnpm test",
