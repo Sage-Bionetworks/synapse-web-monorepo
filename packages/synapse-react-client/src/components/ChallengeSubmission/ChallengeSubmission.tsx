@@ -50,6 +50,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const [showAddRepo, setShowAddRepo] = useState<boolean>(false)
   const [repoName, setRepoName] = useState<string>('')
   const [repoError, setRepoError] = useState<string>()
+  const [needsRefetch, setNeedsRefetch] = useState<boolean>(false)
 
   const EMPTY_ID = ''
 
@@ -246,6 +247,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
          * but when creating a repo, we want the backend to provide the name
          * so it cannot be set on the request
          */
+        setNeedsRefetch(true)
         // @ts-ignore
         const createdRepo = await createEntity(repo, accessToken)
         console.log({ createdRepo })
@@ -254,6 +256,8 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
         console.warn(error)
         const msg: string = error.message ? error.message : 'An error occurred.'
         setRepoError(msg)
+      } finally {
+        setNeedsRefetch(false)
       }
     }
     createRepo()
@@ -278,9 +282,11 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
         <>
           <SubmissionDirectoryList
             loading={false}
+            needsRefetch={needsRefetch}
             challengeProjectId={challengeProjectId}
             onAddRepo={() => setShowAddRepo(true)}
           />
+
           <ConfirmationDialog
             open={showAddRepo}
             title="Add External Repository"

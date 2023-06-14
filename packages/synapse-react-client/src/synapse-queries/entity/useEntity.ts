@@ -78,6 +78,7 @@ export function useGetEntities(
   }, [queries])
   return useMemo(() => {
     return { isLoading, results: queries }
+    // Adding queries would defeat memoization
   }, [isLoading])
 }
 
