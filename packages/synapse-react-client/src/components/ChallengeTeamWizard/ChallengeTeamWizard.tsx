@@ -28,6 +28,7 @@ import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMember
 import { SynapseClientError } from '../../utils/SynapseClientError'
 
 import { Typography } from '@mui/material'
+import { useQueryClient } from 'react-query'
 
 enum StepsEnum {
   SELECT_YOUR_CHALLENGE_TEAM = 'SELECT_YOUR_CHALLENGE_TEAM',
@@ -87,7 +88,7 @@ const EMPTY_ID = ''
 const ChallengeTeamWizard: React.FunctionComponent<
   ChallengeTeamWizardProps
 > = ({ projectId, isShowingModal = false, onClose }) => {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   const [loading, setLoading] = useState<boolean>(true)
   const [step, setStep] = useState<Step>(steps.SELECT_YOUR_CHALLENGE_TEAM)
   const [errorMessage, setErrorMessage] = useState<string>()
@@ -95,6 +96,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const [createdNewTeam, setCreatedNewTeam] = useState<boolean>(false)
   const [confirming, setConfirming] = useState<boolean>(false)
   const [hasSubmissionTeam, setHasSubmissionTeam] = useState<boolean>(false)
+  const queryClient = useQueryClient()
   // membershipStatus is {teamId:TeamMembershipStatus}
   const [membershipStatus, setMembershipStatus] = useState<
     Record<string, TeamMembershipStatus>
@@ -119,7 +121,9 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const { data: userProfile } = useGetCurrentUserProfile()
   // Retrieve the challenge associated with the projectId passed through props
   const { data: challenge } = useGetEntityChallenge(projectId)
-  const participantTeamId = challenge ? challenge.participantTeamId : EMPTY_ID
+  const participantTeamId: string = challenge
+    ? challenge.participantTeamId
+    : EMPTY_ID
   const userId = userProfile ? userProfile.ownerId : EMPTY_ID
 
   // Verify that user is a member of the participant team
@@ -128,16 +132,33 @@ const ChallengeTeamWizard: React.FunctionComponent<
     userId,
   )
   useEffect(() => {
-    if (!challengeTeamMembershipStatus?.isMember && accessToken) {
+    if (
+      challengeTeamMembershipStatus &&
+      !challengeTeamMembershipStatus?.isMember &&
+      accessToken
+    ) {
       addTeamMemberAsAuthenticatedUserOrAdmin(
         participantTeamId,
         userId,
         accessToken,
-      ).catch(error => {
-        setErrorMessage(error.reason)
-      })
+      )
+        .then(() => {
+          queryClient.invalidateQueries(
+            keyFactory.getMembershipStatusQueryKey(participantTeamId, userId),
+          )
+        })
+        .catch(error => {
+          setErrorMessage(error.reason)
+        })
     }
-  }, [accessToken, participantTeamId, userId, challengeTeamMembershipStatus])
+  }, [
+    accessToken,
+    participantTeamId,
+    userId,
+    challengeTeamMembershipStatus,
+    queryClient,
+    keyFactory,
+  ])
 
   // Determine whether or not the given user belongs to any submission teams
   const { data: userSubmissionTeams, error: userSubmissionTeamError } =
