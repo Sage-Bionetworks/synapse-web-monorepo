@@ -9,7 +9,6 @@ export function useGetEntityChallenge(
   options?: UseQueryOptions<Challenge, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-
   return useQuery<Challenge, SynapseClientError>(
     keyFactory.getEntityChallengeQueryKey(entityId),
     () => SynapseClient.getEntityChallenge(entityId, accessToken),

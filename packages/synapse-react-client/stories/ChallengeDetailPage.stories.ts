@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ChallengeDetailPage from '../src/components/ChallengeDetailPage/ChallengeDetailPage'
+import { ChallengeDetailPage } from '../src/components/ChallengeDetailPage/ChallengeDetailPage'
 
 const meta = {
   title: 'Synapse/Challenge/ChallengeDetailPage',
@@ -16,6 +16,6 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   args: {
-    projectId: 'syn51565244',
+    projectId: 'syn51208606',
   },
 }

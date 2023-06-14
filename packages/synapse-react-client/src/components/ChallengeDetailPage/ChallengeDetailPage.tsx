@@ -2,23 +2,24 @@ import React, { useState } from 'react'
 import ChallengeRegisterButton from '../ChallengeRegisterButton'
 import ChallengeTeamWizard from '../ChallengeTeamWizard'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
-import { useGetEntityChallenge } from '../../synapse-queries'
+import { useGetEntity, useGetEntityChallenge } from '../../synapse-queries'
 import { Challenge } from '@sage-bionetworks/synapse-types'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
-import { SynapseQueries } from '../..'
+import { SynapseQueries, useSynapseContext } from '../..'
+import { deleteMemberFromTeam } from '../../synapse-client'
 
 export type ChallengeDetailPageProps = {
   projectId: string
 }
 
-const ChallengeDetailPage = ({ projectId }: ChallengeDetailPageProps) => {
+export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
+  const { accessToken } = useSynapseContext()
   const [showWizard, setShowWizard] = useState<boolean>(false)
   const [showRequirements, setShowRequirements] = useState<boolean>(false)
   const [challenge, setChallenge] = useState<Challenge>()
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<boolean>(false)
-  const [showRegister] = useState<boolean>(true)
   const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
+  const { data: project } = useGetEntity(projectId)
 
   const toggleShowWizard = (b: boolean) => {
     setShowWizard(b)
@@ -31,11 +32,7 @@ const ChallengeDetailPage = ({ projectId }: ChallengeDetailPageProps) => {
   }
 
   const doLeaveChallenge = () => {
-    if (
-      challenge &&
-      userProfile &&
-      userProfile?.ownerId !== ANONYMOUS_PRINCIPAL_ID.toString()
-    ) {
+    if (accessToken && challenge && userProfile) {
       /**
        * What does it mean to leave a challenge?
        * Simply leaving the participant team may not be enough...
@@ -45,19 +42,20 @@ const ChallengeDetailPage = ({ projectId }: ChallengeDetailPageProps) => {
        * Should the team be removed from the challenge instead?
        * Only a team admin can request this however.
        */
-      /*
+
       deleteMemberFromTeam(
         challenge.participantTeamId,
         userProfile.ownerId,
         accessToken,
       )
-      */
     }
   }
 
   const handleRequirementsHide = () => {
-    console.log('handleRequirementsHide')
     setShowRequirements(false)
+    if (accessToken) {
+      setShowWizard(true)
+    }
   }
 
   useGetEntityChallenge(projectId, {
@@ -73,18 +71,24 @@ const ChallengeDetailPage = ({ projectId }: ChallengeDetailPageProps) => {
     },
   })
 
-  const getModal = () => {
-    if (showRequirements)
-      return (
+  return (
+    <>
+      <ChallengeRegisterButton
+        projectId={projectId}
+        onJoinClick={onJoinClick}
+        onLeaveClick={onLeaveClick}
+      />
+      {showRequirements && (
         <AccessRequirementList
           entityId={projectId}
           teamId={challenge?.participantTeamId}
           onHide={handleRequirementsHide}
           renderAsModal={true}
+          requestObjectName={project?.name}
+          dialogTitle="Challenge Terms and Conditions"
         />
-      )
-    if (showWizard)
-      return (
+      )}
+      {showWizard && (
         <ChallengeTeamWizard
           projectId={projectId}
           onClose={() => {
@@ -92,9 +96,8 @@ const ChallengeDetailPage = ({ projectId }: ChallengeDetailPageProps) => {
           }}
           isShowingModal={true}
         />
-      )
-    if (showLeaveConfirm) {
-      return (
+      )}
+      {showLeaveConfirm && (
         <ConfirmationDialog
           open={showLeaveConfirm}
           title={'Leave this Challenge?'}
@@ -105,23 +108,7 @@ const ChallengeDetailPage = ({ projectId }: ChallengeDetailPageProps) => {
             setShowLeaveConfirm(false)
           }}
         />
-      )
-    }
-    return null
-  }
-
-  return (
-    <>
-      {showRegister && (
-        <ChallengeRegisterButton
-          projectId={projectId}
-          onJoinClick={onJoinClick}
-          onLeaveClick={onLeaveClick}
-        />
       )}
-      {getModal()}
     </>
   )
 }
-
-export default ChallengeDetailPage

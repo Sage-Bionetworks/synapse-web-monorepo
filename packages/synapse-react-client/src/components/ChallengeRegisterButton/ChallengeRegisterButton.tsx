@@ -8,12 +8,7 @@ import {
   useGetEntityChallenge,
   useGetUserSubmissionTeamsInfinite,
 } from '../../synapse-queries'
-import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
-import {
-  Challenge,
-  PaginatedIds,
-  UserProfile,
-} from '@sage-bionetworks/synapse-types'
+import { Challenge, PaginatedIds } from '@sage-bionetworks/synapse-types'
 import { useGetIsUserMemberOfTeam } from '../../synapse-queries/team/useTeamMembers'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 
@@ -33,49 +28,19 @@ const ChallengeRegisterButton = ({
   onLeaveClick,
 }: ChallengeRegisterButtonProps) => {
   const { accessToken } = useSynapseContext()
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
-  const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false)
   const [challenge, setChallenge] = useState<Challenge>()
-  const [userProfile, setUserProfile] = useState<UserProfile>()
+  const { data: userProfile } = useGetCurrentUserProfile()
   const [isRegistered, setIsRegistered] = useState<boolean>(false)
   const [hasSubmissionTeam, setHasSubmissionTeam] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
   const [requestError, setRequestError] = useState<SynapseClientError>()
 
   useEffect(() => {
-    if (userProfile) {
-      const loggedIn = userProfile.ownerId !== ANONYMOUS_PRINCIPAL_ID.toString()
-
-      const loggedOut =
-        userProfile.ownerId === ANONYMOUS_PRINCIPAL_ID.toString()
-      setIsLoggedIn(loggedIn)
-      setIsLoggedOut(loggedOut)
-    }
-  }, [userProfile])
-
-  useEffect(() => {
-    setUserProfile(undefined)
-  }, [accessToken])
-
-  useEffect(() => {
     if (requestError && onChallengeError) onChallengeError(requestError)
   }, [requestError, onChallengeError])
 
-  useGetCurrentUserProfile({
-    enabled: !isLoggedOut && !userProfile,
-    onSettled: (data, error) => {
-      if (data) {
-        setUserProfile(data)
-      }
-      if (error) {
-        setLoading(false)
-        setRequestError(error)
-      }
-    },
-  })
-
   useGetEntityChallenge(projectId, {
-    enabled: isLoggedIn && !challenge,
+    enabled: !!accessToken && !challenge,
     onSettled: (data, error) => {
       if (data) {
         setChallenge(data)
@@ -112,7 +77,7 @@ const ChallengeRegisterButton = ({
     },
   )
 
-  useGetUserSubmissionTeamsInfinite(challenge?.id ?? '0', 500, {
+  useGetUserSubmissionTeamsInfinite(challenge?.id ?? '0', 20, {
     enabled: !!challenge && !!accessToken,
     onSettled: (data: PaginatedIds | undefined, error) => {
       if (data) {
@@ -135,17 +100,19 @@ const ChallengeRegisterButton = ({
         <SpinnerButton
           disableElevation={true}
           variant="contained"
-          color="secondary"
-          onClick={() => (onJoinClick ? onJoinClick() : undefined)}
+          onClick={() =>
+            accessToken && onJoinClick ? onJoinClick() : undefined
+          }
           sx={{
             color: 'white',
+            backgroundColor: '#109488',
             fontSize: '1.12em',
             textTransform: 'none',
             padding: '4px 18px',
             fontWeight: 400,
-            ':hover': { color: 'white' },
-            ':active': { color: 'white' },
-            ':visited': { color: 'white' },
+            ':hover': { color: 'white', backgroundColor: '#109488' },
+            ':active': { color: 'white', backgroundColor: '#109488' },
+            ':visited': { color: 'white', backgroundColor: '#109488' },
           }}
         >
           Register for this Challenge

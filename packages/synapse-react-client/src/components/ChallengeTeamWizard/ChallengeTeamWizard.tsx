@@ -3,7 +3,6 @@ import StepperDialog, { Step } from '../StepperDialog/StepperDialog'
 
 import {
   ErrorResponse,
-  PaginatedIds,
   Team,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
@@ -27,8 +26,9 @@ import {
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMembers'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useGetIsUserMemberOfTeam } from '../../synapse-queries/team/useTeamMembers'
+
 import { Typography } from '@mui/material'
+import { useQueryClient } from 'react-query'
 
 enum StepsEnum {
   SELECT_YOUR_CHALLENGE_TEAM = 'SELECT_YOUR_CHALLENGE_TEAM',
@@ -88,8 +88,7 @@ const EMPTY_ID = ''
 const ChallengeTeamWizard: React.FunctionComponent<
   ChallengeTeamWizardProps
 > = ({ projectId, isShowingModal = false, onClose }) => {
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = Boolean(accessToken)
+  const { accessToken, keyFactory } = useSynapseContext()
   const [loading, setLoading] = useState<boolean>(true)
   const [step, setStep] = useState<Step>(steps.SELECT_YOUR_CHALLENGE_TEAM)
   const [errorMessage, setErrorMessage] = useState<string>()
@@ -97,6 +96,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const [createdNewTeam, setCreatedNewTeam] = useState<boolean>(false)
   const [confirming, setConfirming] = useState<boolean>(false)
   const [hasSubmissionTeam, setHasSubmissionTeam] = useState<boolean>(false)
+  const queryClient = useQueryClient()
   // membershipStatus is {teamId:TeamMembershipStatus}
   const [membershipStatus, setMembershipStatus] = useState<
     Record<string, TeamMembershipStatus>
@@ -112,92 +112,75 @@ const ChallengeTeamWizard: React.FunctionComponent<
     invitees: '',
   })
   const [joinMessage, setJoinMessage] = useState<string>('')
-  const [canRequestChallenge, setCanRequestChallenge] = useState<boolean>(false)
 
   /************************
    * Data population hooks
    ***********************/
 
   // Use the existing accessToken if present to get the current user's profile / userId
-  const { data: userProfile } = useGetCurrentUserProfile({
-    enabled: isLoggedIn,
-    onError: error => {
-      setLoading(false)
-      setErrorMessage(error.reason)
-    },
-  })
-
+  const { data: userProfile } = useGetCurrentUserProfile()
   // Retrieve the challenge associated with the projectId passed through props
-  const { data: challenge } = useGetEntityChallenge(projectId, {
-    enabled: canRequestChallenge,
-    onError: () => {
-      setLoading(false)
-      setErrorMessage(
-        `Error: Could not retrieve challenge for project "${projectId}".`,
-      )
-    },
-  })
+  const { data: challenge } = useGetEntityChallenge(projectId)
+  const participantTeamId: string = challenge
+    ? challenge.participantTeamId
+    : EMPTY_ID
+  const userId = userProfile ? userProfile.ownerId : EMPTY_ID
 
   // Verify that user is a member of the participant team
-  useGetIsUserMemberOfTeam(
-    challenge?.participantTeamId ?? EMPTY_ID,
-    userProfile?.ownerId ?? EMPTY_ID,
-    {
-      enabled: !!challenge && !!userProfile,
-      onSettled: (data, error) => {
-        // console.log('useGetIsUserMemberOfTeam', data, error)
-        if (data === null) {
-          /**
-           * Somehow user is not a member of the participant team yet
-           * auto-join member to participant team before we continue
-           */
-          if (challenge?.participantTeamId && userProfile && accessToken) {
-            addTeamMemberAsAuthenticatedUserOrAdmin(
-              challenge?.participantTeamId,
-              userProfile.ownerId,
-              accessToken,
-            )
-          }
-        }
-        if (data !== null) {
-          // User is a member of the participant team, continue
-        }
-        if (error) {
-          // Could not determine if user is a member of the participant team
-          setLoading(false)
-          setErrorMessage(
-            'Error: could not determine if user is a member of this challenge.',
-          )
-        }
-      },
-    },
+  const { data: challengeTeamMembershipStatus } = useGetMembershipStatus(
+    participantTeamId,
+    userId,
   )
+  useEffect(() => {
+    if (
+      challengeTeamMembershipStatus &&
+      !challengeTeamMembershipStatus?.isMember &&
+      accessToken
+    ) {
+      addTeamMemberAsAuthenticatedUserOrAdmin(
+        participantTeamId,
+        userId,
+        accessToken,
+      )
+        .then(() => {
+          queryClient.invalidateQueries(
+            keyFactory.getMembershipStatusQueryKey(participantTeamId, userId),
+          )
+        })
+        .catch(error => {
+          setErrorMessage(error.reason)
+        })
+    }
+  }, [
+    accessToken,
+    participantTeamId,
+    userId,
+    challengeTeamMembershipStatus,
+    queryClient,
+    keyFactory,
+  ])
 
   // Determine whether or not the given user belongs to any submission teams
-  useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 1, {
-    enabled: !!challenge && !!accessToken,
-    onSettled: (
-      data: PaginatedIds | undefined,
-      error: SynapseClientError | null,
-    ) => {
-      // console.log('useGetUserSubmissionTeams', { data }, { error })
-      if (data) {
-        const isReg = data.results.length > 0
-        if (isReg) {
-          setErrorMessage(
-            'Error: You are already a member of a registered submission team for this Challenge.',
-          )
-          setHasSubmissionTeam(isReg)
-        }
-      }
-      if (error) {
+  const { data: userSubmissionTeams, error: userSubmissionTeamError } =
+    useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 1)
+  useEffect(() => {
+    if (userSubmissionTeams) {
+      const isReg = userSubmissionTeams.results.length > 0
+      if (isReg) {
         setErrorMessage(
-          `Error: Could not determine if you are already registered for this Challenge.`,
+          'Error: You are already a member of a registered submission team for this Challenge.',
         )
+        setHasSubmissionTeam(isReg)
       }
       setLoading(false)
-    },
-  })
+    }
+    if (userSubmissionTeamError) {
+      setErrorMessage(
+        `Error: Could not determine if you are already registered for this Challenge.`,
+      )
+      setLoading(false)
+    }
+  }, [userSubmissionTeams, userSubmissionTeamError])
 
   useGetMembershipStatus(
     selectedTeam?.id ?? EMPTY_ID,
@@ -275,13 +258,6 @@ const ChallengeTeamWizard: React.FunctionComponent<
      */
     const isLoggedOut =
       !!userProfile && userProfile.ownerId === ANONYMOUS_PRINCIPAL_ID.toString()
-
-    /**
-     * We can only request challenges if we are not anonymous.
-     * Avoid repeated api calls by disabling hook once we have the challenge.
-     */
-    const canRequest = Boolean(accessToken) && !!projectId && !challenge
-    setCanRequestChallenge(canRequest)
 
     if (isLoggedOut) {
       setLoading(false)

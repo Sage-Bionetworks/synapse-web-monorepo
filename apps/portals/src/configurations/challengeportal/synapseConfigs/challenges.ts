@@ -278,6 +278,12 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
 }
 
 export const challengeDetailsLandingPage: SynapseConfig[] = [
+  // Register For Challenge component is here, and the wrapper positions it properly in the header card
+  {
+    name: 'ChallengeDetailPageWrapper',
+    isOutsideContainer: true,
+    props: undefined,
+  },
   {
     name: 'CardContainerLogic',
     isOutsideContainer: true,
@@ -287,7 +293,7 @@ export const challengeDetailsLandingPage: SynapseConfig[] = [
       isHeader: true,
     },
   },
-  // TODO: Add Register For Challenge component here, and position it properly in the header card
+
   {
     name: 'DetailsPage',
     props: challengeDetailsPageConfig,

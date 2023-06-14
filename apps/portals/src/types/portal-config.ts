@@ -207,7 +207,10 @@ type Image = {
   name: 'Image'
   props: ImageProps
 }
-
+type ChallengeDetailPageWrapper = {
+  name: 'ChallengeDetailPageWrapper'
+  props: undefined
+}
 type FeaturedDataTabs = {
   name: 'FeaturedDataTabs'
   props: FeaturedDataTabsProps
@@ -338,6 +341,7 @@ export type SynapseConfig = (
   | ProjectDiscussionForum
   | OrientationBanner
   | Header
+  | ChallengeDetailPageWrapper
 ) &
   Metadata
 
