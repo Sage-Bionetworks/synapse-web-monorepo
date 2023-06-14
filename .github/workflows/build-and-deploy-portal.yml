@@ -33,7 +33,6 @@ jobs:
           chmod +x ./build.sh
           ./build.sh ${{ inputs.portal-name }}
       - name: setup-outputbucket-staging
-        if: github.ref == 'refs/heads/releases/portals/staging'
         run: |
           cd apps/portals
           echo chmod +x ./deploy.sh

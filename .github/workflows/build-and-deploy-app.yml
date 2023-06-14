@@ -39,8 +39,7 @@ jobs:
           role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
           role-duration-seconds: 1200
       # if not main branch deploy build to S3 bucket
-      - name: deploy-build
-        if: ${{ inputs.bucket-name }} != ''
+      - name: deploy
         run: |
           echo aws s3 sync ./apps/${{ inputs.app-name }}/build s3://${{ inputs.bucket-name }}/ --delete
           echo aws cloudfront create-invalidation --distribution-id ${{ inputs.cfdist-id }} --paths '/*'
