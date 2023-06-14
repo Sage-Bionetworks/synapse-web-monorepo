@@ -67,9 +67,6 @@
   display: block;
   position: relative;
   padding-bottom: 60px;
-  @media screen and (max-width: 768px) {
-    padding-top: Portal.$header-height; // reserve space for fixed position nav bar and site logo.
-  }
 }
 
 .uppercase {

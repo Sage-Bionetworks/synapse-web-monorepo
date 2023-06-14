@@ -1,37 +1,40 @@
-import { CardContainerLogicProps } from 'synapse-react-client'
-import { QueryWrapperProps } from 'synapse-react-client'
-import { UserCardProps } from 'synapse-react-client'
-import { ExternalFileHandleLinkProps } from 'synapse-react-client'
-import { UpsetPlotProps } from 'synapse-react-client'
-import { SynapsePlotProps } from 'synapse-react-client'
-import { MarkdownSynapseProps } from 'synapse-react-client'
-import { GoalsProps } from 'synapse-react-client'
-import { ProgramsProps } from 'synapse-react-client'
-import { ResourcesProps } from 'synapse-react-client'
-import { UserCardListRotateProps } from 'synapse-react-client'
-import { SubsectionRowRendererProps } from 'synapse-react-client'
-import { SynapseFormSubmissionGridProps } from 'synapse-react-client'
-import { QueryWrapperPlotNavProps } from 'synapse-react-client'
-import { SynapseFormWrapperProps } from 'synapse-react-client'
-import { ThemesPlotProps } from 'synapse-react-client'
+import {
+  CardContainerLogicProps,
+  DownloadCartPageProps,
+  ExternalFileHandleLinkProps,
+  FeaturedDataTabsProps,
+  GoalsProps,
+  MarkdownCollapseProps,
+  MarkdownSynapseProps,
+  OrientationBannerProps,
+  ProgramsProps,
+  QueryWrapperPlotNavProps,
+  QueryWrapperProps,
+  ResourcesProps,
+  RssFeedCardsProps,
+  StandaloneQueryWrapperProps,
+  SubsectionRowRendererProps,
+  SynapseFormSubmissionGridProps,
+  SynapseFormWrapperProps,
+  SynapsePlotProps,
+  TableFeedCardsProps,
+  ThemesPlotProps,
+  UpsetPlotProps,
+  UserCardListGroupsProps,
+  UserCardListRotateProps,
+  UserCardProps,
+} from 'synapse-react-client'
 import { StatefulButtonControlWrapperProps } from '../portal-components/StatefulButtonControlWrapper'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
 import { AboutPortalProps } from '../portal-components/csbc-home-page/AboutPortal'
 import { EcosystemProps } from '../portal-components/csbc-home-page/Ecosystem'
 import { DetailsPageProps } from './portal-util-types'
-import { StandaloneQueryWrapperProps } from 'synapse-react-client'
 import { ParticipantsBarPlotProps } from '../portal-components/crc-researcher/ParticipantsBarPlot'
 import { StatusLineChartProps } from '../portal-components/crc-researcher/StatusLineChart'
 import { SurveysCompletedPlotsProps } from '../portal-components/crc-researcher/SurveysCompletedPlots'
 import { ImageProps } from '../portal-components/Image'
-import { RssFeedCardsProps } from 'synapse-react-client'
-import { FeaturedDataTabsProps } from 'synapse-react-client'
-import { UserCardListGroupsProps } from 'synapse-react-client'
-import { TableFeedCardsProps } from 'synapse-react-client'
 import { RedirectProps } from 'react-router-dom'
-import { MarkdownCollapseProps } from 'synapse-react-client'
-import { DownloadCartPageProps } from 'synapse-react-client'
 import { ToggleSynapseObjectsProps } from '../portal-components/ToggleSynapseObjects'
 import { CSSProperties } from 'react'
 import { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObjects'
@@ -266,6 +269,11 @@ type SurveysCompletedPlots = {
   props: SurveysCompletedPlotsProps
 }
 
+type OrientationBanner = {
+  name: 'OrientationBanner'
+  props: OrientationBannerProps
+}
+
 type RedirectWithQuery = {
   name: 'RedirectWithQuery'
   props: RedirectProps
@@ -328,6 +336,7 @@ export type SynapseConfig = (
   | TabbedSynapseObjects
   | ChallengeParticipantGoogleMap
   | ProjectDiscussionForum
+  | OrientationBanner
   | Header
 ) &
   Metadata
