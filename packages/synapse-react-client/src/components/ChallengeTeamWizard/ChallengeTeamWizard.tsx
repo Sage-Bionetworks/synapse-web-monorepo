@@ -3,7 +3,6 @@ import StepperDialog, { Step } from '../StepperDialog/StepperDialog'
 
 import {
   ErrorResponse,
-  PaginatedIds,
   Team,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
@@ -17,6 +16,7 @@ import {
   createMembershipInvitation,
   createMembershipRequest,
   createTeam,
+  getMembershipStatus,
   registerChallengeTeam,
 } from '../../synapse-client'
 import {
@@ -27,7 +27,7 @@ import {
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMembers'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useGetIsUserMemberOfTeam } from '../../synapse-queries/team/useTeamMembers'
+
 import { Typography } from '@mui/material'
 
 enum StepsEnum {
@@ -120,67 +120,48 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const { data: userProfile } = useGetCurrentUserProfile()
   // Retrieve the challenge associated with the projectId passed through props
   const { data: challenge } = useGetEntityChallenge(projectId)
-
+  const participantTeamId = challenge ? challenge.participantTeamId : EMPTY_ID
+  const userId = userProfile ? userProfile.ownerId : EMPTY_ID
   // Verify that user is a member of the participant team
-  useGetIsUserMemberOfTeam(
-    challenge?.participantTeamId ?? EMPTY_ID,
-    userProfile?.ownerId ?? EMPTY_ID,
-    {
-      enabled: !!challenge && !!userProfile,
-      onSettled: (data, error) => {
-        // console.log('useGetIsUserMemberOfTeam', data, error)
-        if (data === null) {
-          /**
-           * Somehow user is not a member of the participant team yet
-           * auto-join member to participant team before we continue
-           */
-          if (challenge?.participantTeamId && userProfile && accessToken) {
-            addTeamMemberAsAuthenticatedUserOrAdmin(
-              challenge?.participantTeamId,
-              userProfile.ownerId,
-              accessToken,
-            )
-          }
+  if (participantTeamId && userId) {
+    getMembershipStatus(participantTeamId, userId)
+      .then(challengeTeamMembershipStatus => {
+        if (!challengeTeamMembershipStatus.isMember && accessToken) {
+          addTeamMemberAsAuthenticatedUserOrAdmin(
+            participantTeamId,
+            userId,
+            accessToken,
+          ).catch(error => {
+            setErrorMessage(error.reason)
+          })
         }
-        if (data !== null) {
-          // User is a member of the participant team, continue
-        }
-        if (error) {
-          // Could not determine if user is a member of the participant team
-          setLoading(false)
-          setErrorMessage(
-            'Error: could not determine if user is a member of this challenge.',
-          )
-        }
-      },
-    },
-  )
+      })
+      .catch(error => {
+        setErrorMessage(error.reason)
+      })
+  }
 
   // Determine whether or not the given user belongs to any submission teams
-  useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 1, {
-    enabled: !!challenge && !!accessToken,
-    onSettled: (
-      data: PaginatedIds | undefined,
-      error: SynapseClientError | null,
-    ) => {
-      // console.log('useGetUserSubmissionTeams', { data }, { error })
-      if (data) {
-        const isReg = data.results.length > 0
-        if (isReg) {
-          setErrorMessage(
-            'Error: You are already a member of a registered submission team for this Challenge.',
-          )
-          setHasSubmissionTeam(isReg)
-        }
-      }
-      if (error) {
+  const { data: userSubmissionTeams, error: userSubmissionTeamError } =
+    useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 1)
+  useEffect(() => {
+    if (userSubmissionTeams) {
+      const isReg = userSubmissionTeams.results.length > 0
+      if (isReg) {
         setErrorMessage(
-          `Error: Could not determine if you are already registered for this Challenge.`,
+          'Error: You are already a member of a registered submission team for this Challenge.',
         )
+        setHasSubmissionTeam(isReg)
       }
       setLoading(false)
-    },
-  })
+    }
+    if (userSubmissionTeamError) {
+      setErrorMessage(
+        `Error: Could not determine if you are already registered for this Challenge.`,
+      )
+      setLoading(false)
+    }
+  }, [userSubmissionTeams, userSubmissionTeamError])
 
   useGetMembershipStatus(
     selectedTeam?.id ?? EMPTY_ID,
@@ -511,6 +492,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
 
   // React to change in step
   function handleStepChange(value?: StepsEnum) {
+    debugger
     if (!value || !steps[value]) return
     setErrorMessage(undefined)
 
