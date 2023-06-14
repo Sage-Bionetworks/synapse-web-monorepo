@@ -3,7 +3,7 @@
  */
 
 import { omit, pick } from 'lodash-es'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   QueryFunctionContext,
   QueryKey,
@@ -11,6 +11,7 @@ import {
   UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
+  useQueries,
   useQuery,
   useQueryClient,
   UseQueryOptions,
@@ -21,6 +22,7 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   Entity,
+  EntityHeader,
   EntityJson,
   EntityJsonValue,
   EntityPath,
@@ -48,6 +50,35 @@ export function useGetEntity<T extends Entity>(
       ),
     options,
   )
+}
+
+export function useGetEntities(
+  entityHeaders: Pick<EntityHeader, 'id' | 'versionNumber'>[],
+  options?: UseQueryOptions<
+    Pick<EntityHeader, 'id' | 'versionNumber'>[],
+    SynapseClientError
+  >,
+) {
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queries = useQueries(
+    entityHeaders.map(header => {
+      return {
+        queryKey: keyFactory.getEntityVersionQueryKey(
+          header.id,
+          header.versionNumber,
+        ),
+        queryFn: () =>
+          SynapseClient.getEntity(accessToken, header.id, header.versionNumber),
+      }
+    }, options),
+  )
+  useEffect(() => {
+    setIsLoading(queries.some(result => result.isLoading))
+  }, [queries])
+  return useMemo(() => {
+    return { isLoading, results: queries }
+  }, [isLoading])
 }
 
 export function useUpdateEntity<T extends Entity>(
