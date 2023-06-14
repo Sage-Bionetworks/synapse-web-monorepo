@@ -528,6 +528,7 @@ export const type2SvgIconName: Record<EntityType, IconName> = {
   link: 'link',
   entityview: 'entityview',
   materializedview: 'entityview',
+  virtualtable: 'entityview',
   dockerrepo: 'docker',
   submissionview: 'submissionview',
   dataset: 'dataset',

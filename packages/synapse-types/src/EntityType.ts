@@ -11,4 +11,6 @@ export enum EntityType {
   DATASET = 'dataset',
   DATASET_COLLECTION = 'datasetcollection',
   MATERIALIZED_VIEW = 'materializedview',
+  /* A virtual table is represents the results of Synapse SQL query. The results are not persisted and the query is run each time the virtual table is queried. */
+  VIRTUAL_TABLE = 'virtualtable',
 }

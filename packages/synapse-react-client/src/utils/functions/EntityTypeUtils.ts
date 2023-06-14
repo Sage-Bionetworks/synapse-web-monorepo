@@ -3,6 +3,7 @@ import {
   DATASET_COLLECTION_CONCRETE_TYPE_VALUE,
   DATASET_CONCRETE_TYPE_VALUE,
   DatasetCollection,
+  DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE,
   Entity,
   ENTITY_CONCRETE_TYPE,
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
@@ -12,7 +13,10 @@ import {
   EntityView,
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
   FOLDER_CONCRETE_TYPE_VALUE,
+  Hit,
   LINK_CONCRETE_TYPE_VALUE,
+  MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
+  MaterializedView,
   PROJECT_CONCRETE_TYPE_VALUE,
   ProjectHeader,
   SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
@@ -24,13 +28,8 @@ import {
   VersionableEntity,
   View,
   VIEW_CONCRETE_TYPE_VALUES,
+  VIRTUAL_TABLE_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import { Hit } from '@sage-bionetworks/synapse-types'
-import {
-  MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
-  MaterializedView,
-} from '@sage-bionetworks/synapse-types'
-import { DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import { isTypeViaConcreteTypeFactory } from '../types/IsType'
 
 export function getEntityTypeFromHeader(
@@ -64,6 +63,7 @@ export function isContainerType(type: EntityType): boolean {
     case EntityType.DATASET:
     case EntityType.DATASET_COLLECTION:
     case EntityType.MATERIALIZED_VIEW:
+    case EntityType.VIRTUAL_TABLE:
       return false
     default:
       throw new Error(`Unknown entity type: ${type}`)
@@ -84,6 +84,7 @@ export function isTableType(type: EntityType): boolean {
     case EntityType.DATASET:
     case EntityType.DATASET_COLLECTION:
     case EntityType.MATERIALIZED_VIEW:
+    case EntityType.VIRTUAL_TABLE:
       return true
     default:
       throw new Error(`Unknown entity type: ${type}`)
@@ -114,6 +115,8 @@ export function entityTypeToFriendlyName(entityType: EntityType): string {
       return 'Dataset Collection'
     case EntityType.MATERIALIZED_VIEW:
       return 'Materialized View'
+    case EntityType.VIRTUAL_TABLE:
+      return 'Virtual Table'
     default:
       console.warn('Entity type could not be mapped to name:', entityType)
       return ''
@@ -157,6 +160,9 @@ export function convertToEntityType(
     case EntityType.MATERIALIZED_VIEW:
     case MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE:
       return EntityType.MATERIALIZED_VIEW
+    case EntityType.VIRTUAL_TABLE:
+    case VIRTUAL_TABLE_CONCRETE_TYPE_VALUE:
+      return EntityType.VIRTUAL_TABLE
     default:
       throw new Error(`Unknown entity type: ${typeString}`)
   }
@@ -188,6 +194,8 @@ export function convertToConcreteEntityType(
       return 'org.sagebionetworks.repo.model.table.DatasetCollection'
     case EntityType.MATERIALIZED_VIEW:
       return 'org.sagebionetworks.repo.model.table.MaterializedView'
+    case EntityType.VIRTUAL_TABLE:
+      return 'org.sagebionetworks.repo.model.table.VirtualTable'
     default:
       throw new Error(`Unknown entity type: ${type}`)
   }
@@ -204,11 +212,12 @@ export function isVersionableEntityType(type: EntityType): boolean {
     case EntityType.FOLDER:
     case EntityType.LINK:
     case EntityType.DOCKER_REPO:
+    case EntityType.SUBMISSION_VIEW: // SubmissionView implements VersionableEntity, but versions aren't supported
     case EntityType.MATERIALIZED_VIEW: // MaterializedView implements VersionableEntity, but versions aren't supported.
+    case EntityType.VIRTUAL_TABLE: // VirtualTable implements VersionableEntity, but versions aren't supported.
       return false
     case EntityType.FILE:
     case EntityType.TABLE:
-    case EntityType.SUBMISSION_VIEW:
     case EntityType.ENTITY_VIEW:
     case EntityType.DATASET:
     case EntityType.DATASET_COLLECTION:
@@ -360,6 +369,7 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
   ],
   [TABLE_ENTITY_CONCRETE_TYPE_VALUE]: tableKeys,
   [MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
+  [VIRTUAL_TABLE_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
   [FOLDER_CONCRETE_TYPE_VALUE]: allEntityKeys,
   [PROJECT_CONCRETE_TYPE_VALUE]: [...allEntityKeys, 'alias'],
 }
