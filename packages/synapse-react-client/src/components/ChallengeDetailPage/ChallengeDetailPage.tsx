@@ -7,19 +7,21 @@ import { Challenge } from '@sage-bionetworks/synapse-types'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { SynapseQueries, useSynapseContext } from '../..'
 import { deleteMemberFromTeam } from '../../synapse-client'
+import { useQueryClient } from 'react-query'
 
 export type ChallengeDetailPageProps = {
   projectId: string
 }
 
 export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   const [showWizard, setShowWizard] = useState<boolean>(false)
   const [showRequirements, setShowRequirements] = useState<boolean>(false)
   const [challenge, setChallenge] = useState<Challenge>()
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<boolean>(false)
   const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
   const { data: project } = useGetEntity(projectId)
+  const queryClient = useQueryClient()
 
   const toggleShowWizard = (b: boolean) => {
     setShowWizard(b)
@@ -47,7 +49,14 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
         challenge.participantTeamId,
         userProfile.ownerId,
         accessToken,
-      )
+      ).then(() => {
+        queryClient.invalidateQueries(
+          keyFactory.getIsUserMemberOfTeamQueryKey(
+            challenge.participantTeamId,
+            userProfile.ownerId,
+          ),
+        )
+      })
     }
   }
 
