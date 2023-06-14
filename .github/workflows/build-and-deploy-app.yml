@@ -1,0 +1,46 @@
+name: "Build and deploy an app"
+
+on:
+  workflow_call:
+    inputs:
+      app-name:
+        required: true
+        type: string
+      bucket-name:
+        required: true
+        type: string
+      cfdist-id:
+        required: true
+        type: string
+      deployment-role-arn:
+        required: true
+        type: string
+
+jobs:
+  build-and-deploy:
+    name: build-and-deploy
+    runs-on: ubuntu-latest
+    # Allow OIDC Integration (so we can assume the AWS role to deploy)
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      # checkout and build
+      - name: checkout
+        uses: actions/checkout@v3.0.0
+      - uses: ./.github/actions/pnpm-setup-action
+      - name: build
+        run: pnpm nx run ${ inoputs.app-name }:build
+      - name: Assume AWS Role
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ inputs.deployment-role-arn }}
+          role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
+          role-duration-seconds: 1200
+      # if not main branch deploy build to S3 bucket
+      - name: deploy-build
+        if: ${{ inputs.bucket-name }} != ''
+        run: |
+          echo aws s3 sync ./apps/${{ inputs.app-name }}/build s3://${{ inputs.bucket-name }}/ --delete
+          echo aws cloudfront create-invalidation --distribution-id ${{ inputs.cfdist-id }} --paths '/*'

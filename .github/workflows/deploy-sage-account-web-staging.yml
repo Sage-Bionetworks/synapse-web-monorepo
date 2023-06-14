@@ -1,0 +1,20 @@
+name: "Deploy sage-account-web"
+
+on:
+  push:
+    branches:
+      - releases/sage-account-web/staging
+    paths:
+      - "packages/synapse-react-client/**"
+      - "apps/sage-account-web/**"
+jobs:
+  build-and-deploy:
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/build-and-deploy-app.yml
+    with:
+      app-name: sage-account-web
+      bucket-name: staging.accounts.sagebionetworks.org
+      cfdist-id: EY52HOUGKDP1F
+      deployment-role-arn: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
