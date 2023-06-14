@@ -1,0 +1,53 @@
+name: "Deploy synapse-oauth-signin"
+
+on:
+  push:
+    branches:
+      - releases/synapse_oauth_signin/production
+      - releases/synapse_oauth_signin/staging
+      - main
+    paths:
+      - "packages/synapse-react-client/**"
+      - "apps/synapse-oauth-signin/**"
+jobs:
+  build-and-deploy:
+    name: build-and-deploy
+    # limit to this repository
+    runs-on: ubuntu-latest
+    # Allow OIDC Integration (so we can assume the AWS role to deploy)
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      # if in staging branch set then bucket name to staging bucket
+      - name: setup-outputbucket-staging
+        if: github.ref == 'refs/heads/releases/synapse_oauth_signin/staging'
+        run: |
+          echo 'BUCKET_NAME=staging-signin.synapse.org' >> $GITHUB_ENV
+          echo 'CFDIST_ID=EUE2TU70O0M2M' >> $GITHUB_ENV
+      # if in production branch then set bucket name to production bucket
+      - name: setup-outputbucket-prod
+        if: github.ref == 'refs/heads/releases/synapse_oauth_signin/production'
+        run: |
+          echo 'BUCKET_NAME=prod-signin-synapse-websitebucket-u91v422hx5bs' >> $GITHUB_ENV
+          echo 'CFDIST_ID=E1HPVCTTKTU4MN' >> $GITHUB_ENV
+      # if in main branch then bucket name is empty
+      # checkout and build
+      - name: checkout
+        uses: actions/checkout@v3.0.0
+      - uses: ./.github/actions/pnpm-setup-action
+      - name: build
+        run: pnpm nx run synapse-oauth-signin:build
+      - name: Assume AWS Role
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::325565585839:role/sagebase-github-oidc-synapseprod-web-monorepo-infra
+          role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
+          role-duration-seconds: 1200
+      # if not main branch deploy build to S3 bucket
+      - name: deploy-build
+        if: env.BUCKET_NAME != ''
+        run: |
+          aws s3 sync ./apps/synapse-oauth-signin/build s3://$BUCKET_NAME/ --delete
+          aws cloudfront create-invalidation --distribution-id $CFDIST_ID --paths '/*'
