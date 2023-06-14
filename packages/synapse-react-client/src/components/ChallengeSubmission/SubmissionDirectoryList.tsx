@@ -8,6 +8,7 @@ import {
   DockerRepository,
   Entity,
   EntityChildrenRequest,
+  EntityHeader,
   EntityType,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
@@ -44,30 +45,60 @@ function SubmissionDirectoryList({
   const [selectedRepo, setSelectedRepo] = useState<
     string | number | undefined
   >()
+  const [fetchedHeaders, setFetchedHeaders] = useState<EntityHeader[]>([])
+  const [headerPage, setHeaderPage] = useState<number>(0)
+  // const [pageHeaders, setPageHeaders] = useState<EntityHeader[]>([])
+  const [total, setTotal] = useState<number>(0)
+  const [nextPageToken, setNextPageToken] = useState<string | null>(null)
   const [rows, setRows] = useState<SubmissionDirectoryRow[]>([])
+  const PER_PAGE = 20
+  const HEADERS_PER_PAGE = 50
 
   const request: EntityChildrenRequest = {
     parentId: challengeProjectId,
-    nextPageToken: null,
+    nextPageToken,
     includeTypes: [EntityType.DOCKER_REPO],
     includeTotalChildCount: true,
     sortBy: SortBy.MODIFIED_ON,
     sortDirection: Direction.DESC,
   }
 
-  const { data: headers, refetch } = useGetEntityChildren(request, {
+  const { refetch } = useGetEntityChildren(request, {
     enabled: !!challengeProjectId,
     useErrorBoundary: true,
+    onSuccess: data => {
+      // const headers = fetchedHeaders.splice(
+      //   page * PER_PAGE,
+      //   data.page.length,
+      //   ...data.page,
+      // )
+      const newHeaders = [...fetchedHeaders]
+      const start = headerPage * HEADERS_PER_PAGE
+      newHeaders.splice(start, start + HEADERS_PER_PAGE, ...data.page)
+      setFetchedHeaders(newHeaders)
+      setTotal(data.totalChildCount!)
+      // setPageHeaders()
+      setNextPageToken(data.nextPageToken)
+    },
   })
 
+  useEffect(() => {}, [page])
+
+  // A new repo had been added
   if (needsRefetch) {
+    setNextPageToken(null)
+    setPage(0)
     refetch()
   }
 
+  const start = page * PER_PAGE
+  const pageHeaders = fetchedHeaders.slice(start, start + PER_PAGE)
+  console.log({ fetchedHeaders, pageHeaders })
+
   const { isLoading: areEntitiesLoading, results: entities } = useGetEntities(
-    headers?.page ?? [],
+    pageHeaders,
     {
-      enabled: headers !== undefined && !!headers.page,
+      enabled: fetchedHeaders !== undefined,
     },
   )
 
@@ -154,6 +185,10 @@ function SubmissionDirectoryList({
     }
   }, [areEntitiesLoading, entities])
 
+  const handlePageChange = (newPageNum: number) => {
+    setPage(newPageNum)
+  }
+
   return (
     <Box>
       <Box
@@ -173,11 +208,12 @@ function SubmissionDirectoryList({
             initialState={{ pagination: { page: page } }}
             columns={columns}
             rows={rows}
-            pageSize={20}
-            rowCount={headers?.totalChildCount ?? 0}
+            pageSize={PER_PAGE}
+            rowCount={total}
             page={page}
             pagination
-            onPageChange={n => setPage(n)}
+            paginationMode="server"
+            onPageChange={n => handlePageChange(n)}
             density="compact"
             autoHeight
             rowsPerPageOptions={[]}
