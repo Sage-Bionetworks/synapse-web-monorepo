@@ -29,7 +29,7 @@ export type QueryVisualizationContextType = {
   /** Whether to show when the table or view was last updated. */
   showLastUpdatedOn?: boolean
   /** Given a column name, return the display name for the column */
-  getColumnDisplayName: (columnName?: string) => string | undefined
+  getColumnDisplayName: (columnName: string) => string
   /** Given a cell value and a column type, returns the displayed value for the data */
   getDisplayValue: (value: string, columnType: ColumnType) => string
   /** React node to display in place of cards/table when there are no results. */
@@ -154,7 +154,7 @@ export function QueryVisualizationWrapper(
   }, [selectColumns, lastQueryRequest.query.sql, props.visibleColumnCount])
 
   const getColumnDisplayName = useCallback(
-    (columnName?: string) => {
+    (columnName: string) => {
       // SWC-5982: if force-display-original-column-names is set, then just return the string
       const forceDisplayOriginalColumnName =
         localStorage.getItem('force-display-original-column-names') === 'true'
