@@ -32,6 +32,10 @@ const injectPropsIntoConfig = (
         markdownProps.ownerId = value
       }
     }
+  } else if (el.name === 'ChallengeDataDownload') {
+    const challengeDataDownloadProps =
+      internalProps as ChallengeDataDownloadProps
+    challengeDataDownloadProps.parentContainerId = value
   }
   return internalProps
 }
