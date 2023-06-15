@@ -146,6 +146,9 @@ const ChallengeTeamWizard: React.FunctionComponent<
           queryClient.invalidateQueries(
             keyFactory.getMembershipStatusQueryKey(participantTeamId, userId),
           )
+          queryClient.invalidateQueries(
+            keyFactory.getIsUserMemberOfTeamQueryKey(participantTeamId, userId),
+          )
         })
         .catch(error => {
           setErrorMessage(error.reason)
@@ -330,6 +333,12 @@ const ChallengeTeamWizard: React.FunctionComponent<
       accessToken,
     )
       .then(() => {
+        // invalidate submissions team membership status to update the ChallengeRegisterButton
+        if (challenge) {
+          queryClient.invalidateQueries(
+            keyFactory.getSubmissionTeamsQueryKey(challenge?.id),
+          )
+        }
         handleStepChange(StepsEnum.REGISTRATION_SUCCESSFUL)
       })
       .catch((err: ErrorResponse) => {

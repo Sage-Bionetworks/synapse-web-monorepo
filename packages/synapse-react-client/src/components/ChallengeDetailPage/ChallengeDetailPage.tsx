@@ -5,8 +5,8 @@ import AccessRequirementList from '../AccessRequirementList/AccessRequirementLis
 import { useGetEntity, useGetEntityChallenge } from '../../synapse-queries'
 import { Challenge } from '@sage-bionetworks/synapse-types'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { SynapseQueries, useSynapseContext } from '../..'
-import { deleteMemberFromTeam } from '../../synapse-client'
+import { SynapseQueries, displayToast, useSynapseContext } from '../..'
+import { useDeleteTeamMembership } from '../../synapse-queries/team/useTeamMembers'
 
 export type ChallengeDetailPageProps = {
   projectId: string
@@ -31,6 +31,12 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
     setShowLeaveConfirm(true)
   }
 
+  const { mutate: leaveChallenge } = useDeleteTeamMembership({
+    onSuccess: () => {
+      displayToast('You are no longer registered for this challenge', 'info')
+    },
+  })
+
   const doLeaveChallenge = () => {
     if (accessToken && challenge && userProfile) {
       /**
@@ -43,11 +49,10 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
        * Only a team admin can request this however.
        */
 
-      deleteMemberFromTeam(
-        challenge.participantTeamId,
-        userProfile.ownerId,
-        accessToken,
-      )
+      leaveChallenge({
+        teamId: challenge.participantTeamId,
+        userId: userProfile.ownerId,
+      })
     }
   }
 
