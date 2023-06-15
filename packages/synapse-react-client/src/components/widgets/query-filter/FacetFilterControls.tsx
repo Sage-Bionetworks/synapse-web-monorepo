@@ -20,6 +20,7 @@ import { EnumFacetFilter } from './EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
 import { Box, Skeleton, Stack } from '@mui/material'
+import { sortBy } from 'lodash-es'
 
 export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with at least one non-null value will be shown. */
@@ -311,7 +312,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
         <div className="AvailableFacet">
           <label className="AvailableFacet__label">Available Facets</label>
         </div>
-        {facets.map(facet => {
+        {sortBy(facets, ['columnName']).map(facet => {
           return (
             <FacetChip
               key={facet.columnName}
