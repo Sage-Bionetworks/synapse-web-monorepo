@@ -70,7 +70,9 @@ const taskTabConfigs = (taskID: string) => {
       name: 'ChallengeDataDownload',
       columnName: `${taskID}.DataFolder`,
       title: 'Training Data',
-      props: {},
+      props: {
+        parentContainerId: '', // filled in dynamically by DetailsPage using value from `${taskID}.DataFolder`
+      },
     },
     {
       name: 'Markdown',
