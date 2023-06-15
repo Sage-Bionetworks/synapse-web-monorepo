@@ -5,7 +5,6 @@ import React from 'react'
 import {
   EntityModal,
   EntityModalProps,
-  EntityModalTabs,
 } from '../../../../src/components/entity/metadata/EntityModal'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { ENTITY_BUNDLE_V2 } from '../../../../src/utils/APIConstants'
@@ -87,7 +86,7 @@ describe('EntityModal tests', () => {
       ),
     )
 
-    renderComponent({ initialTab: EntityModalTabs.ANNOTATIONS })
+    renderComponent({ initialTab: 'ANNOTATIONS' })
     await screen.findByRole('button', { name: 'Edit' })
   })
 
@@ -105,7 +104,7 @@ describe('EntityModal tests', () => {
       ),
     )
 
-    renderComponent({ initialTab: EntityModalTabs.ANNOTATIONS })
+    renderComponent({ initialTab: 'ANNOTATIONS' })
     expect(
       screen.queryByRole('button', { name: 'Edit' }),
     ).not.toBeInTheDocument()
@@ -127,7 +126,7 @@ describe('EntityModal tests', () => {
       ),
     )
 
-    renderComponent({ initialTab: EntityModalTabs.ANNOTATIONS })
+    renderComponent({ initialTab: 'ANNOTATIONS' })
     expect(
       screen.queryByRole('button', { name: 'Edit' }),
     ).not.toBeInTheDocument()
@@ -148,7 +147,7 @@ describe('EntityModal tests', () => {
       ),
     )
 
-    renderComponent({ initialTab: EntityModalTabs.ANNOTATIONS })
+    renderComponent({ initialTab: 'ANNOTATIONS' })
 
     const editButton = await screen.findByRole('button', { name: 'Edit' })
     await userEvent.click(editButton)
