@@ -200,7 +200,7 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           fontSize: '14px',
           position: 'relative',
           backgroundColor: theme.palette.grey[200],
-          border: ownerState.error
+          outline: ownerState.error
             ? `1px solid ${theme.palette.error.main}`
             : 'none',
           '&.Mui-focused': {

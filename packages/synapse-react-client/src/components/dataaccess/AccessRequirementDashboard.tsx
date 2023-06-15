@@ -1,12 +1,6 @@
 import { omitBy } from 'lodash-es'
-import React, { useCallback, useEffect, useState } from 'react'
-import {
-  Box,
-  Button,
-  InputAdornment,
-  TextField,
-  Typography,
-} from '@mui/material'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Box, InputAdornment, TextField, Typography } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
@@ -18,6 +12,8 @@ import {
   AccessRequirementTable,
   AccessRequirementTableProps,
 } from './AccessRequirementTable'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
+import { InputSizedButton } from '../styled/InputSizedButton'
 
 export type AccessRequirementDashboardProps = {
   onCreateNewAccessRequirementClicked?: () => void
@@ -39,6 +35,12 @@ export function AccessRequirementDashboard(
     undefined,
   )
   const [reviewerId, setReviewerId] = useState<string | undefined>(undefined)
+
+  const projectFilterFieldIsError: boolean = useMemo(
+    () =>
+      !!(relatedProjectId && !SYNAPSE_ENTITY_ID_REGEX.exec(relatedProjectId)),
+    [relatedProjectId],
+  )
 
   useEffect(() => {
     function initializeFromSearchParams() {
@@ -140,7 +142,7 @@ export function AccessRequirementDashboard(
         }}
         confirmButtonCopy={'Select'}
       />
-      <div className="InputPanel">
+      <form className="InputPanel">
         <div>
           <TextField
             label="Filter by Access Requirement Name"
@@ -168,6 +170,12 @@ export function AccessRequirementDashboard(
             type="text"
             fullWidth
             placeholder="Enter a project SynID"
+            error={projectFilterFieldIsError}
+            helperText={
+              projectFilterFieldIsError
+                ? 'Value must be a Synapse ID, e.g. "syn1234"'
+                : undefined
+            }
             value={relatedProjectId}
             onChange={e => {
               const newValue = e.target.value
@@ -178,16 +186,15 @@ export function AccessRequirementDashboard(
               }
             }}
           />
-          <Button
+          <InputSizedButton
             variant="outlined"
             color="primary"
             onClick={() => {
               setShowEntityFinder(true)
             }}
-            sx={{ mt: 3, mb: 1.5 }}
           >
             Browse
-          </Button>
+          </InputSizedButton>
         </Box>
         <div>
           <Typography
@@ -204,7 +211,7 @@ export function AccessRequirementDashboard(
             onChange={onReviewerChange}
           />
         </div>
-      </div>
+      </form>
       <AccessRequirementTable {...tableProps} />
     </div>
   )
