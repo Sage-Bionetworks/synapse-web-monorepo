@@ -66,7 +66,9 @@ function getPillPropsFromColumnQueryFilter(
       filterValue,
       columnModel.columnType,
     )
-    const text = `${queryFilter.columnName}: ${filterValue}`
+    const text = `${getColumnDisplayName(
+      queryFilter.columnName,
+    )}: ${filterValue}`
     return {
       key: `queryFilter-${queryFilter.concreteType}-${queryFilter.columnName}-${value}`,
       innerText: text,
