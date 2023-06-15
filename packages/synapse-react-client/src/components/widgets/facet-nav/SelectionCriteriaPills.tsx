@@ -143,7 +143,7 @@ function getPillPropsFromFacetFilters(
         )}: ${selectedFacet.facetValues.length.toLocaleString()} values selected`
         return [
           {
-            key: `queryFilter-${selectedFacet.concreteType}-${selectedFacet.columnName}`,
+            key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}`,
             innerText: text,
             tooltipText: text,
             onRemoveFilter: () => {
