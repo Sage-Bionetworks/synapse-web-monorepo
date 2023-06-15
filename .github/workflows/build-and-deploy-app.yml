@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v3.0.0
       - uses: ./.github/actions/pnpm-setup-action
       - name: build
-        run: pnpm nx run ${ inoputs.app-name }:build
+        run: pnpm nx run ${ inputs.app-name }:build
       - name: Assume AWS Role
         uses: aws-actions/configure-aws-credentials@v2
         with:
