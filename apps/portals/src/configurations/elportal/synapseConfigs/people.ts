@@ -1,6 +1,6 @@
 import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import { peopleSql } from '../resources'
+import { defaultSearchConfiguration, peopleSql } from '../resources'
 
 const rgbIndex = 2
 
@@ -19,6 +19,7 @@ const people: SynapseConfig = {
       'grantNumber',
       // 'Program',
     ],
+    searchConfiguration: defaultSearchConfiguration,
   },
 }
 

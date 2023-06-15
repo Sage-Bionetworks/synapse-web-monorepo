@@ -1,5 +1,5 @@
 import { SynapseConfig } from 'types/portal-config'
-import { dataSql } from '../resources'
+import { dataSql, defaultSearchConfiguration } from '../resources'
 
 const rgbIndex = 1
 
@@ -25,6 +25,7 @@ const data: SynapseConfig = {
     },
     sql: dataSql,
     shouldDeepLink: true,
+    searchConfiguration: defaultSearchConfiguration,
   },
 }
 

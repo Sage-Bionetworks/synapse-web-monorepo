@@ -1,6 +1,6 @@
 import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import { publicationsSql } from '../resources'
+import { defaultSearchConfiguration, publicationsSql } from '../resources'
 
 const rgbIndex = 5
 
@@ -36,6 +36,7 @@ const publications: SynapseConfig = {
     facetsToPlot: ['Program', 'year', 'grant', 'journal'],
     cardConfiguration: publicationCardProps,
     columnAliases,
+    searchConfiguration: defaultSearchConfiguration,
   },
 }
 
