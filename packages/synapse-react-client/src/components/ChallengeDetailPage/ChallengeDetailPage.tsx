@@ -5,23 +5,21 @@ import AccessRequirementList from '../AccessRequirementList/AccessRequirementLis
 import { useGetEntity, useGetEntityChallenge } from '../../synapse-queries'
 import { Challenge } from '@sage-bionetworks/synapse-types'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { SynapseQueries, useSynapseContext } from '../..'
-import { deleteMemberFromTeam } from '../../synapse-client'
-import { useQueryClient } from 'react-query'
+import { SynapseQueries, displayToast, useSynapseContext } from '../..'
+import { useDeleteTeamMembership } from '../../synapse-queries/team/useTeamMembers'
 
 export type ChallengeDetailPageProps = {
   projectId: string
 }
 
 export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { accessToken } = useSynapseContext()
   const [showWizard, setShowWizard] = useState<boolean>(false)
   const [showRequirements, setShowRequirements] = useState<boolean>(false)
   const [challenge, setChallenge] = useState<Challenge>()
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<boolean>(false)
   const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
   const { data: project } = useGetEntity(projectId)
-  const queryClient = useQueryClient()
 
   const toggleShowWizard = (b: boolean) => {
     setShowWizard(b)
@@ -32,6 +30,12 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
   const onLeaveClick = () => {
     setShowLeaveConfirm(true)
   }
+
+  const { mutate: leaveChallenge } = useDeleteTeamMembership({
+    onSuccess: () => {
+      displayToast('You are no longer registered for this challenge', 'info')
+    },
+  })
 
   const doLeaveChallenge = () => {
     if (accessToken && challenge && userProfile) {
@@ -45,17 +49,9 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
        * Only a team admin can request this however.
        */
 
-      deleteMemberFromTeam(
-        challenge.participantTeamId,
-        userProfile.ownerId,
-        accessToken,
-      ).then(() => {
-        queryClient.invalidateQueries(
-          keyFactory.getIsUserMemberOfTeamQueryKey(
-            challenge.participantTeamId,
-            userProfile.ownerId,
-          ),
-        )
+      leaveChallenge({
+        teamId: challenge.participantTeamId,
+        userId: userProfile.ownerId,
       })
     }
   }
