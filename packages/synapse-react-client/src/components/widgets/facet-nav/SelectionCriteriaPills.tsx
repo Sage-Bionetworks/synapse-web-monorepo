@@ -24,6 +24,7 @@ import {
   isFacetColumnRangeRequest,
   isTextMatchesQueryFilter,
 } from '../../../utils/types/IsType'
+import pluralize from 'pluralize'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
 
@@ -39,9 +40,9 @@ function getPillPropsFromColumnQueryFilter(
   // ColumnSingleValueQueryFilter and ColumnMultiValueQueryFilter both allow for a list of values
   // If there are more than _n_ values, consolidate to one pill
   if (queryFilter.values.length > MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS) {
-    const text = `${getColumnDisplayName(
-      queryFilter.columnName,
-    )}: ${queryFilter.values.length.toLocaleString()} values selected`
+    const text = `${pluralize(
+      getColumnDisplayName(queryFilter.columnName),
+    )} (${queryFilter.values.length.toLocaleString()})`
 
     return [
       {
@@ -138,9 +139,9 @@ function getPillPropsFromFacetFilters(
         selectedFacet.facetValues.length >
         MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS
       ) {
-        const text = `${getColumnDisplayName(
-          selectedFacet.columnName,
-        )}: ${selectedFacet.facetValues.length.toLocaleString()} values selected`
+        const text = `${pluralize(
+          getColumnDisplayName(selectedFacet.columnName),
+        )} (${selectedFacet.facetValues.length.toLocaleString()})`
         return [
           {
             key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}`,
