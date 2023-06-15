@@ -13,7 +13,6 @@ import {
   SortBy,
 } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
-import { SkeletonTable } from '../Skeleton'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -29,14 +28,12 @@ type SubmissionDirectoryRow = {
 }
 
 type SubmissionDirectoryListProps = {
-  loading: boolean
   needsRefetch: boolean
   challengeProjectId: string | undefined
   onAddRepo: () => void
 }
 
 function SubmissionDirectoryList({
-  loading,
   needsRefetch,
   challengeProjectId,
   onAddRepo,
@@ -46,19 +43,17 @@ function SubmissionDirectoryList({
     string | number | undefined
   >()
   const [fetchedHeaders, setFetchedHeaders] = useState<EntityHeader[]>([])
-  const [headerPage, setHeaderPage] = useState<number>(0)
   const [entities, setEntities] = useState<DockerRepository[]>([])
-  const [entityPage, setEntityPage] = useState<DockerRepository[]>([])
-  // const [pageHeaders, setPageHeaders] = useState<EntityHeader[]>([])
   const [total, setTotal] = useState<number>(0)
   const [nextPageToken, setNextPageToken] = useState<string | null>(null)
+  const [fetchNextPage, setFetchNextPage] = useState<boolean>(false)
   const [rows, setRows] = useState<SubmissionDirectoryRow[]>([])
   const PER_PAGE = 20
   const HEADERS_PER_PAGE = 50
 
   const request: EntityChildrenRequest = {
     parentId: challengeProjectId,
-    nextPageToken,
+    nextPageToken: fetchNextPage ? nextPageToken : null,
     includeTypes: [EntityType.DOCKER_REPO],
     includeTotalChildCount: true,
     sortBy: SortBy.MODIFIED_ON,
@@ -69,27 +64,22 @@ function SubmissionDirectoryList({
     enabled: !!challengeProjectId,
     useErrorBoundary: true,
     onSuccess: data => {
-      console.log('useGetEntityChildren', data)
-      // const headers = fetchedHeaders.splice(
-      //   page * PER_PAGE,
-      //   data.page.length,
-      //   ...data.page,
-      // )
       const newHeaders = [...fetchedHeaders]
+      const headerPage = Math.floor(((page + 1) * PER_PAGE) / HEADERS_PER_PAGE)
       const start = headerPage * HEADERS_PER_PAGE
       newHeaders.splice(start, start + HEADERS_PER_PAGE, ...data.page)
-      console.log('children', data.page, { newHeaders })
       setFetchedHeaders(newHeaders)
       setTotal(data.totalChildCount!)
-      // setPageHeaders()
+      setFetchNextPage(false)
       setNextPageToken(data.nextPageToken)
     },
   })
 
-  // useEffect(() => {}, [page])
-
   // A new repo had been added
   if (needsRefetch) {
+    setFetchedHeaders([])
+    setEntities([])
+    setTotal(0)
     setNextPageToken(null)
     setPage(0)
     refetch()
@@ -97,12 +87,10 @@ function SubmissionDirectoryList({
 
   const start = page * PER_PAGE
   const pageHeaders = fetchedHeaders.slice(start, start + PER_PAGE)
-  console.log({ page, fetchedHeaders, pageHeaders })
 
   const { isLoading: areEntitiesLoading } = useGetEntities(pageHeaders, {
     enabled: fetchedHeaders.length > 0 && pageHeaders.length > 0,
     onSuccess: data => {
-      console.log('onSuccess', { pageHeaders }, { data })
       const newEntities = [...entities]
       const start = page * PER_PAGE
       newEntities.splice(
@@ -110,12 +98,9 @@ function SubmissionDirectoryList({
         start + data.length,
         ...(data as DockerRepository[]),
       )
-      console.log({ newEntities })
       setEntities(newEntities)
     },
   })
-
-  console.log('ent', { entities })
 
   const repoChangeHandler = (value: string | number) => {
     setSelectedRepo(value)
@@ -199,13 +184,15 @@ function SubmissionDirectoryList({
   }
 
   useEffect(() => {
-    // const areEntitiesLoading = entities.some(result => result.isLoading)
     const r = getRows(getEntityPage(page))
-    console.log('ENTITIES CHANGED', r, entities)
     setRows(r)
   }, [entities])
 
   const handlePageChange = (newPageNum: number) => {
+    const lastIndexNeeded = Math.min(total, (newPageNum + 1) * PER_PAGE)
+    if (lastIndexNeeded > fetchedHeaders.length) {
+      setFetchNextPage(true)
+    }
     setPage(newPageNum)
     setRows(getRows(getEntityPage(newPageNum)))
   }
@@ -223,41 +210,37 @@ function SubmissionDirectoryList({
         </Typography>
       </Box>
       <Box>
-        {loading && <SkeletonTable numRows={10} numCols={1} />}
-        {!loading && (
-          <DataGrid
-            initialState={{ pagination: { page: page } }}
-            columns={columns}
-            rows={rows}
-            pageSize={PER_PAGE}
-            rowCount={total}
-            page={page}
-            pagination
-            paginationMode="server"
-            onPageChange={n => handlePageChange(n)}
-            density="compact"
-            autoHeight
-            rowsPerPageOptions={[PER_PAGE]}
-            sx={{
-              border: 'none',
-              height: '100%',
-              '& .MuiDataGrid-columnHeader': {
-                backgroundColor: '#F1F3F5',
-              },
-              '& .Mui-odd': {
-                backgroundColor: '#FBFBFC',
-              },
-              '.MuiDataGrid-columnHeaderTitleContainer': {
-                justifyContent: 'space-between',
-              },
-            }}
-            getRowClassName={params =>
-              params.indexRelativeToCurrentPage % 2 === 0
-                ? 'Mui-even'
-                : 'Mui-odd'
-            }
-          />
-        )}
+        <DataGrid
+          initialState={{ pagination: { page: page } }}
+          loading={areEntitiesLoading}
+          columns={columns}
+          rows={rows}
+          pageSize={PER_PAGE}
+          rowCount={total}
+          page={page}
+          pagination
+          paginationMode="server"
+          onPageChange={n => handlePageChange(n)}
+          density="compact"
+          autoHeight
+          rowsPerPageOptions={[PER_PAGE]}
+          sx={{
+            border: 'none',
+            height: '100%',
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: '#F1F3F5',
+            },
+            '& .Mui-odd': {
+              backgroundColor: '#FBFBFC',
+            },
+            '.MuiDataGrid-columnHeaderTitleContainer': {
+              justifyContent: 'space-between',
+            },
+          }}
+          getRowClassName={params =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? 'Mui-even' : 'Mui-odd'
+          }
+        />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Button

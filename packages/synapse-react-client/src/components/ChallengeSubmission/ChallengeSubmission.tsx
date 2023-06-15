@@ -281,7 +281,6 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
       {canSubmit && (
         <>
           <SubmissionDirectoryList
-            loading={false}
             needsRefetch={needsRefetch}
             challengeProjectId={challengeProjectId}
             onAddRepo={() => setShowAddRepo(true)}
