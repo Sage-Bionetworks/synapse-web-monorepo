@@ -54,10 +54,7 @@ export function useGetEntity<T extends Entity>(
 
 export function useGetEntities(
   entityHeaders: Pick<EntityHeader, 'id' | 'versionNumber'>[],
-  options?: UseQueryOptions<
-    Pick<EntityHeader, 'id' | 'versionNumber'>[],
-    SynapseClientError
-  >,
+  options?: UseQueryOptions<Entity[], SynapseClientError>,
 ) {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { accessToken, keyFactory } = useSynapseContext()
@@ -74,9 +71,17 @@ export function useGetEntities(
     }, options),
   )
   useEffect(() => {
-    setIsLoading(queries.some(result => result.isLoading))
+    const loading = queries.some(result => result.isLoading)
+    setIsLoading(loading)
   }, [queries])
   return useMemo(() => {
+    if (!isLoading && options?.onSuccess) {
+      const entities = queries
+        .filter(query => query.data !== null)
+        .map(query => query.data)
+      // @ts-ignore
+      options.onSuccess(entities)
+    }
     return { isLoading, results: queries }
     // Adding queries would defeat memoization
   }, [isLoading])

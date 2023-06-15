@@ -47,6 +47,8 @@ function SubmissionDirectoryList({
   >()
   const [fetchedHeaders, setFetchedHeaders] = useState<EntityHeader[]>([])
   const [headerPage, setHeaderPage] = useState<number>(0)
+  const [entities, setEntities] = useState<DockerRepository[]>([])
+  const [entityPage, setEntityPage] = useState<DockerRepository[]>([])
   // const [pageHeaders, setPageHeaders] = useState<EntityHeader[]>([])
   const [total, setTotal] = useState<number>(0)
   const [nextPageToken, setNextPageToken] = useState<string | null>(null)
@@ -67,6 +69,7 @@ function SubmissionDirectoryList({
     enabled: !!challengeProjectId,
     useErrorBoundary: true,
     onSuccess: data => {
+      console.log('useGetEntityChildren', data)
       // const headers = fetchedHeaders.splice(
       //   page * PER_PAGE,
       //   data.page.length,
@@ -75,6 +78,7 @@ function SubmissionDirectoryList({
       const newHeaders = [...fetchedHeaders]
       const start = headerPage * HEADERS_PER_PAGE
       newHeaders.splice(start, start + HEADERS_PER_PAGE, ...data.page)
+      console.log('children', data.page, { newHeaders })
       setFetchedHeaders(newHeaders)
       setTotal(data.totalChildCount!)
       // setPageHeaders()
@@ -82,7 +86,7 @@ function SubmissionDirectoryList({
     },
   })
 
-  useEffect(() => {}, [page])
+  // useEffect(() => {}, [page])
 
   // A new repo had been added
   if (needsRefetch) {
@@ -93,14 +97,25 @@ function SubmissionDirectoryList({
 
   const start = page * PER_PAGE
   const pageHeaders = fetchedHeaders.slice(start, start + PER_PAGE)
-  console.log({ fetchedHeaders, pageHeaders })
+  console.log({ page, fetchedHeaders, pageHeaders })
 
-  const { isLoading: areEntitiesLoading, results: entities } = useGetEntities(
-    pageHeaders,
-    {
-      enabled: fetchedHeaders !== undefined,
+  const { isLoading: areEntitiesLoading } = useGetEntities(pageHeaders, {
+    enabled: fetchedHeaders.length > 0 && pageHeaders.length > 0,
+    onSuccess: data => {
+      console.log('onSuccess', { pageHeaders }, { data })
+      const newEntities = [...entities]
+      const start = page * PER_PAGE
+      newEntities.splice(
+        start,
+        start + data.length,
+        ...(data as DockerRepository[]),
+      )
+      console.log({ newEntities })
+      setEntities(newEntities)
     },
-  )
+  })
+
+  console.log('ent', { entities })
 
   const repoChangeHandler = (value: string | number) => {
     setSelectedRepo(value)
@@ -166,27 +181,33 @@ function SubmissionDirectoryList({
     },
   ]
 
+  const getEntityPage = (newPageNum: number) => {
+    const start = newPageNum * PER_PAGE
+    return entities.slice(start, start + PER_PAGE)
+  }
+
+  const getRows = (entities: DockerRepository[]) => {
+    const newRows: SubmissionDirectoryRow[] = []
+    entities.forEach(entity => {
+      newRows.push({
+        id: entity.id!,
+        repositoryName: entity.repositoryName,
+        modifiedOn: formatDate(dayjs(entity.modifiedOn), 'MM/DD/YY'),
+      })
+    })
+    return newRows
+  }
+
   useEffect(() => {
     // const areEntitiesLoading = entities.some(result => result.isLoading)
-    if (!areEntitiesLoading) {
-      console.log({ entities })
-      const newRows: SubmissionDirectoryRow[] = []
-      entities.forEach(result => {
-        if (result.data !== undefined) {
-          const repo = result.data as DockerRepository
-          newRows.push({
-            id: repo.id!,
-            repositoryName: repo.repositoryName,
-            modifiedOn: formatDate(dayjs(repo.modifiedOn), 'MM/DD/YY'),
-          })
-        }
-      })
-      setRows(newRows)
-    }
-  }, [areEntitiesLoading, entities])
+    const r = getRows(getEntityPage(page))
+    console.log('ENTITIES CHANGED', r, entities)
+    setRows(r)
+  }, [entities])
 
   const handlePageChange = (newPageNum: number) => {
     setPage(newPageNum)
+    setRows(getRows(getEntityPage(newPageNum)))
   }
 
   return (
@@ -216,7 +237,7 @@ function SubmissionDirectoryList({
             onPageChange={n => handlePageChange(n)}
             density="compact"
             autoHeight
-            rowsPerPageOptions={[]}
+            rowsPerPageOptions={[PER_PAGE]}
             sx={{
               border: 'none',
               height: '100%',
