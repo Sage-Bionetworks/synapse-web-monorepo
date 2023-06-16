@@ -1,0 +1,2 @@
+import{c as s}from"./Box-653de305.js";import{u as a,l as r,a as i}from"./SynapseClient-a57981a2.js";import"./OrientationBanner-646a27ec.js";import"./index-8db94870.js";import"./getEndpoint-ac94413e.js";import"./jsx-runtime-095bf462.js";const c=s(),x=c;function C(e,t){const{accessToken:o,keyFactory:n}=a();return r(n.getEntityChallengeQueryKey(e),()=>i.getEntityChallenge(e,o),t)}export{x as B,C as u};
+//# sourceMappingURL=useGetEntityChallenge-241d1ee1.js.map
