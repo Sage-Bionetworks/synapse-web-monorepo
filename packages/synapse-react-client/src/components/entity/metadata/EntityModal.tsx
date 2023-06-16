@@ -89,14 +89,10 @@ export function EntityModal(props: EntityModalProps) {
     <Button
       variant={'contained'}
       onClick={() => {
-        // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/2104#issuecomment-847924986
-        // Should be fixed if we upgrade to RJSF v5
-        ;(annotationEditorFormRef.current as any).formElement.dispatchEvent(
-          new CustomEvent('submit', {
-            cancelable: true,
-            bubbles: true,
-          }),
-        )
+        // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/3121
+        ;(
+          annotationEditorFormRef.current as any
+        ).formElement.current.requestSubmit()
       }}
     >
       Save Annotations
