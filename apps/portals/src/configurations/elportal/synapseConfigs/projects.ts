@@ -2,6 +2,7 @@ import { SynapseConfig } from 'types/portal-config'
 import { CardConfiguration, SynapseConstants } from 'synapse-react-client'
 import {
   computationalSql,
+  defaultSearchConfiguration,
   peopleSql,
   projectsSql,
   publicationsSql,
@@ -105,6 +106,7 @@ const projects: SynapseConfig = {
       'grantNumber',
       // 'Program',
     ],
+    searchConfiguration: defaultSearchConfiguration,
   },
 }
 

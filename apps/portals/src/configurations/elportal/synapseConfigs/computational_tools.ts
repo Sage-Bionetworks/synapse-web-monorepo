@@ -4,7 +4,7 @@ import {
   SynapseConstants,
 } from 'synapse-react-client'
 import { SynapseConfig } from 'types/portal-config'
-import { computationalSql } from '../resources'
+import { computationalSql, defaultSearchConfiguration } from '../resources'
 
 const computationalSchema: GenericCardSchema = {
   type: SynapseConstants.COMPUTATIONAL,
@@ -39,6 +39,7 @@ const computationalTools: SynapseConfig = {
     shouldDeepLink: true,
     name: 'Computational Tools',
     facetsToPlot: ['grant', 'softwareType'],
+    searchConfiguration: defaultSearchConfiguration,
   },
 }
 

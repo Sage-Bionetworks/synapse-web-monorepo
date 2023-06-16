@@ -66,13 +66,14 @@ const taskTabConfigs = (taskID: string) => {
       title: 'Data',
       props: {},
     },
-    // TODO: Add Training Data Folder component
-    // {
-    //   name: 'GenUIFileListing',
-    //   columnName: `${taskID}.DataFolder`,
-    //   title: 'Training Data',
-    //   props: {},
-    // },
+    {
+      name: 'ChallengeDataDownload',
+      columnName: `${taskID}.DataFolder`,
+      title: 'Training Data',
+      props: {
+        parentContainerId: '', // filled in dynamically by DetailsPage using value from `${taskID}.DataFolder`
+      },
+    },
     {
       name: 'Markdown',
       columnName: `${taskID}.EvaluationWiki`,
@@ -280,11 +281,6 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
 export const challengeDetailsLandingPage: SynapseConfig[] = [
   // Register For Challenge component is here, and the wrapper positions it properly in the header card
   {
-    name: 'ChallengeDetailPageWrapper',
-    isOutsideContainer: true,
-    props: undefined,
-  },
-  {
     name: 'CardContainerLogic',
     isOutsideContainer: true,
     props: {
@@ -292,8 +288,13 @@ export const challengeDetailsLandingPage: SynapseConfig[] = [
       sql: challengeProjectsSql,
       isHeader: true,
     },
+    className: 'challengeDetailPageHeaderCard',
   },
-
+  {
+    name: 'ChallengeDetailPageWrapper',
+    isOutsideContainer: true,
+    props: undefined,
+  },
   {
     name: 'DetailsPage',
     props: challengeDetailsPageConfig,
