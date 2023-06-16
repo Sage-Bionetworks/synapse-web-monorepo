@@ -23,6 +23,7 @@ import {
   UserCardListGroupsProps,
   UserCardListRotateProps,
   UserCardProps,
+  ChallengeDataDownloadProps,
 } from 'synapse-react-client'
 import { StatefulButtonControlWrapperProps } from '../portal-components/StatefulButtonControlWrapper'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
@@ -211,6 +212,10 @@ type ChallengeDetailPageWrapper = {
   name: 'ChallengeDetailPageWrapper'
   props: undefined
 }
+type ChallengeDataDownload = {
+  name: 'ChallengeDataDownload'
+  props: ChallengeDataDownloadProps
+}
 type FeaturedDataTabs = {
   name: 'FeaturedDataTabs'
   props: FeaturedDataTabsProps
@@ -342,6 +347,7 @@ export type SynapseConfig = (
   | OrientationBanner
   | Header
   | ChallengeDetailPageWrapper
+  | ChallengeDataDownload
 ) &
   Metadata
 

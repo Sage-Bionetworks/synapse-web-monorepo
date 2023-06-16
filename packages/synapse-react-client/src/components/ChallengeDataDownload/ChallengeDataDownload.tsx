@@ -11,7 +11,7 @@ import { useAddFileBatchToDownloadList } from '../../synapse-queries'
 import { displayToast } from '../ToastMessage'
 import { useSynapseContext } from '../../utils'
 
-type ChallengeDataDownloadProps = {
+export type ChallengeDataDownloadProps = {
   parentContainerId: string
 }
 

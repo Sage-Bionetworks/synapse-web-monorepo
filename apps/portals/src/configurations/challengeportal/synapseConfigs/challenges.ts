@@ -66,13 +66,14 @@ const taskTabConfigs = (taskID: string) => {
       title: 'Data',
       props: {},
     },
-    // TODO: Add Training Data Folder component
-    // {
-    //   name: 'GenUIFileListing',
-    //   columnName: `${taskID}.DataFolder`,
-    //   title: 'Training Data',
-    //   props: {},
-    // },
+    {
+      name: 'ChallengeDataDownload',
+      columnName: `${taskID}.DataFolder`,
+      title: 'Training Data',
+      props: {
+        parentContainerId: '', // filled in dynamically by DetailsPage using value from `${taskID}.DataFolder`
+      },
+    },
     {
       name: 'Markdown',
       columnName: `${taskID}.EvaluationWiki`,
