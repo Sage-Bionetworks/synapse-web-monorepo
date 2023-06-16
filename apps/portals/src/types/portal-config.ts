@@ -47,12 +47,6 @@ export type HomePageHeaderConfig = {
   showBlur?: boolean
   centerText?: boolean
   HeaderSvg?: any
-  subscriptionConfig?: SubscriptionConfig
-}
-
-type SubscriptionConfig = {
-  text?: string
-  url: string
 }
 
 // Generic SynapseConfigArray Representation -- maps each component to its props

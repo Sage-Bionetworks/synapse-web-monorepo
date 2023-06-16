@@ -10,7 +10,6 @@ function Header() {
     showBlur = true,
     centerText = false,
     HeaderSvg,
-    subscriptionConfig,
   } = headerConfig
   const hasImg = HeaderSvg !== undefined
   const content = (
@@ -32,26 +31,6 @@ function Header() {
           {title}
         </Typography>
         <Typography variant="body1">{summary}</Typography>
-        {subscriptionConfig && (
-          <>
-            <Link
-              href={subscriptionConfig.url}
-              target="_blank"
-              sx={{
-                color: 'white',
-                '&:hover': { color: 'white' },
-                '&:focus': { color: 'white' },
-                marginTop: '15px',
-                display: 'block',
-              }}
-            >
-              <AddAlertTwoTone
-                sx={{ width: '16px', height: '16px', marginRight: '7px' }}
-              />
-              {subscriptionConfig.text ?? 'Subscribe to the newsletter'}
-            </Link>
-          </>
-        )}
       </div>
     </>
   )
