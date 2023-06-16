@@ -29,6 +29,7 @@ import {
   ENTITY_ACTIONS_REQUIRED,
   ENTITY_ALIAS,
   ENTITY_BUNDLE_V2,
+  ENTITY_EVALUATION,
   ENTITY_HEADER_BY_ID,
   ENTITY_HEADERS,
   ENTITY_ID,
@@ -280,6 +281,8 @@ import {
   ChallengeTeam,
   TeamMembershipStatus,
   UserEntityPermissions,
+  GetEvaluationParameters,
+  DockerCommit,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -3357,6 +3360,28 @@ export const getEntityACL = (entityId: string, accessToken?: string) => {
   )
 }
 
+// https://rest-docs.synapse.org/rest/GET/entity/id/evaluation.html
+export const getAllEntityEvaluations = (
+  entityId: string,
+  params: GetEvaluationParameters = {},
+  accessToken?: string,
+): Promise<Evaluation[]> => {
+  const urlParams = new URLSearchParams(
+    removeUndefined(params) as Record<string, string>,
+  )
+  const fn = (limit: number, offset: number) => {
+    const url = `${ENTITY_EVALUATION(
+      entityId,
+    )}?offset=${offset}&limit=${limit}&${urlParams.toString()}`
+    return doGet<PaginatedResults<Evaluation>>(
+      url,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
+}
+
 // https://rest-docs.synapse.org/rest/GET/entity/id/permissions.html
 export const getEntityPermissions = (
   entityId: string,
@@ -4780,6 +4805,20 @@ export const getEntityDownloadActionsRequired = (
 ) => {
   return doGet<ActionRequiredList>(
     ENTITY_ACTIONS_REQUIRED(entityId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/actions/download.html
+export const getDockerTag = (
+  entityId: string,
+  accessToken?: string,
+  offset: string | number = 0,
+  limit: string | number = 50,
+) => {
+  return doGet<PaginatedResults<DockerCommit>>(
+    `/repo/v1/entity/${entityId}/dockerTag?limit=${limit}&offset=${offset}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

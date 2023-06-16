@@ -260,6 +260,10 @@ export class KeyFactory {
     return this.getKey('entityAlias', alias)
   }
 
+  public getEntityEvaluationsQueryKey(entityId: string) {
+    return this.getKey('entityEvaluations', entityId)
+  }
+
   public getEntityPermissionsQueryKey(entityId: string) {
     return this.getKey('entityPermissions', entityId)
   }
@@ -657,5 +661,13 @@ export class KeyFactory {
 
   public getBatchOfFiles(request: BatchFileRequest) {
     return this.getKey('fileBatch', request)
+  }
+
+  public getPaginatedDockerTagQueryKey(
+    id: string,
+    limit: number,
+    offset: number,
+  ) {
+    return this.getKey('dockerTag', id, limit, offset)
   }
 }

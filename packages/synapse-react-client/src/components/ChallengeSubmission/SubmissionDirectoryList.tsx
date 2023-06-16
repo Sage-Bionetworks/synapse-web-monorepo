@@ -31,16 +31,18 @@ type SubmissionDirectoryListProps = {
   needsRefetch: boolean
   challengeProjectId: string | undefined
   onAddRepo: () => void
+  onRepoSelected: (selectedRepo: DockerRepository) => void
 }
 
 function SubmissionDirectoryList({
   needsRefetch,
   challengeProjectId,
   onAddRepo,
+  onRepoSelected,
 }: SubmissionDirectoryListProps) {
   const [page, setPage] = useState<number>(0)
   const [selectedRepo, setSelectedRepo] = useState<
-    string | number | undefined
+    DockerRepository | undefined
   >()
   const [fetchedHeaders, setFetchedHeaders] = useState<EntityHeader[]>([])
   const [entities, setEntities] = useState<DockerRepository[]>([])
@@ -60,6 +62,13 @@ function SubmissionDirectoryList({
     sortDirection: Direction.DESC,
   }
 
+  const getEntityPage = (newPageNum: number) => {
+    const start = newPageNum * PER_PAGE
+    return entities.slice(start, start + PER_PAGE)
+  }
+
+  console.log({ request })
+
   const { refetch } = useGetEntityChildren(request, {
     enabled: !!challengeProjectId,
     useErrorBoundary: true,
@@ -76,34 +85,51 @@ function SubmissionDirectoryList({
   })
 
   // A new repo had been added
-  if (needsRefetch) {
-    setFetchedHeaders([])
-    setEntities([])
-    setTotal(0)
-    setNextPageToken(null)
-    setPage(0)
-    refetch()
-  }
+  useEffect(() => {
+    console.log({ needsRefetch })
+    if (needsRefetch) {
+      setEntities([])
+      setFetchedHeaders([])
+      // setTotal(0)
+      setPage(0)
+      setNextPageToken(null)
+      refetch()
+    }
+  }, [needsRefetch, refetch])
 
   const start = page * PER_PAGE
   const pageHeaders = fetchedHeaders.slice(start, start + PER_PAGE)
-
-  const { isLoading: areEntitiesLoading } = useGetEntities(pageHeaders, {
-    enabled: fetchedHeaders.length > 0 && pageHeaders.length > 0,
-    onSuccess: data => {
-      const newEntities = [...entities]
-      const start = page * PER_PAGE
-      newEntities.splice(
-        start,
-        start + data.length,
-        ...(data as DockerRepository[]),
-      )
-      setEntities(newEntities)
-    },
+  console.log('pageHeaders', {
+    len: pageHeaders.length,
+    id: pageHeaders[pageHeaders.length - 1]?.id ?? -1,
   })
 
-  const repoChangeHandler = (value: string | number) => {
-    setSelectedRepo(value)
+  const { isLoading: areEntitiesLoading, data: results } = useGetEntities(
+    pageHeaders,
+    {
+      enabled: true, // getEntityPage(page).length < pageHeaders.length,
+      onSuccess: data => {
+        console.log('useGetEntities', data)
+        const newEntities = [...entities]
+        const start = page * PER_PAGE
+        newEntities.splice(
+          start,
+          start + data.length,
+          ...(data as DockerRepository[]),
+        )
+        setEntities(newEntities)
+      },
+    },
+  )
+
+  console.log('results', {
+    len: results.length,
+    id: results[results.length - 1]?.id ?? -1,
+  })
+
+  const repoChangeHandler = (value: string) => {
+    const repo = entities.find(entity => entity.id === value)
+    setSelectedRepo(repo)
   }
 
   const columns: GridColDef[] = [
@@ -119,7 +145,7 @@ function SubmissionDirectoryList({
         return (
           <RadioOption
             value={params.id}
-            currentValue={selectedRepo}
+            currentValue={selectedRepo?.id}
             onChange={repoChangeHandler}
             label=""
             groupId="radiogroup"
@@ -166,11 +192,6 @@ function SubmissionDirectoryList({
     },
   ]
 
-  const getEntityPage = (newPageNum: number) => {
-    const start = newPageNum * PER_PAGE
-    return entities.slice(start, start + PER_PAGE)
-  }
-
   const getRows = (entities: DockerRepository[]) => {
     const newRows: SubmissionDirectoryRow[] = []
     entities.forEach(entity => {
@@ -195,6 +216,10 @@ function SubmissionDirectoryList({
     }
     setPage(newPageNum)
     setRows(getRows(getEntityPage(newPageNum)))
+  }
+
+  const repoSelectedHandler = () => {
+    onRepoSelected(selectedRepo)
   }
 
   return (
@@ -225,6 +250,7 @@ function SubmissionDirectoryList({
           autoHeight
           rowsPerPageOptions={[PER_PAGE]}
           sx={{
+            fontSize: '14px',
             border: 'none',
             height: '100%',
             '& .MuiDataGrid-columnHeader': {
@@ -255,7 +281,7 @@ function SubmissionDirectoryList({
         <Button
           color="primary"
           variant="contained"
-          onClick={() => undefined}
+          onClick={repoSelectedHandler}
           disabled={!selectedRepo}
         >
           Submit Selection
