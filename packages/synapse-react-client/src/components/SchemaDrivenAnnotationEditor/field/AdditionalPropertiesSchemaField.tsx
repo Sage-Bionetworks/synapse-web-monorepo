@@ -15,38 +15,40 @@ import { AdditionalPropertyContextProvider } from '../template/AdditionalPropert
 const ISO_TIMESTAMP_REGEX = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/
 
 // Types that correspond to the different input fields that the annotation editor supports
-export enum PropertyType {
-  String = 'String',
-  Integer = 'Integer',
-  Float = 'Float',
-  Boolean = 'Boolean',
-  Datetime = 'Datetime',
-}
+const propertyTypeArray = [
+  'String',
+  'Integer',
+  'Float',
+  'Boolean',
+  'Datetime',
+] as const
+
+export type PropertyType = (typeof propertyTypeArray)[number]
 
 export function guessPropertyType(list: Array<unknown>): PropertyType {
   if (list.length === 0) {
     // The field was just added, so default to string
-    return PropertyType.String
+    return 'String'
   } else if (
     list.every(
       item => typeof item === 'number' || item === 'NaN', // "NaN" is technically a float value
     )
   ) {
     if (list.every(item => Number.isInteger(item))) {
-      return PropertyType.Integer
+      return 'Integer'
     } else {
-      return PropertyType.Float
+      return 'Float'
     }
   } else if (list.every(item => typeof item === 'boolean')) {
-    return PropertyType.Boolean
+    return 'Boolean'
   } else if (
     list.every(item => typeof item === 'string') &&
     (list as string[]).every((item: string) => !!ISO_TIMESTAMP_REGEX.exec(item))
   ) {
-    return PropertyType.Datetime
+    return 'Datetime'
   }
   // otherwise, default type is 'string'
-  return PropertyType.String
+  return 'String'
 }
 
 export function transformDataFromPropertyType(
@@ -54,12 +56,12 @@ export function transformDataFromPropertyType(
   propertyType: PropertyType,
 ) {
   switch (propertyType) {
-    case PropertyType.Integer:
+    case 'Integer':
       return list.map(item =>
         Number.isNaN(Number(item)) ? 0 : Math.floor(Number(item)),
       )
 
-    case PropertyType.Float:
+    case 'Float':
       return list.map(item => {
         const asFloat = parseFloat(item as string)
         if (Number.isNaN(asFloat)) {
@@ -70,7 +72,7 @@ export function transformDataFromPropertyType(
           return asFloat
         }
       })
-    case PropertyType.Datetime:
+    case 'Datetime':
       return list.map(item => {
         if (typeof item === 'string' && ISO_TIMESTAMP_REGEX.exec(item)) {
           return item
@@ -78,9 +80,9 @@ export function transformDataFromPropertyType(
           return new Date().toISOString()
         }
       })
-    case PropertyType.Boolean:
+    case 'Boolean':
       return list.map(item => !!item)
-    case PropertyType.String:
+    case 'String':
     default:
       return list.map(item => String(item))
   }
@@ -92,15 +94,15 @@ export function transformDataFromPropertyType(
  */
 export function getSchemaForPropertyType(propertyType: PropertyType) {
   switch (propertyType) {
-    case PropertyType.Datetime:
+    case 'Datetime':
       return { type: 'string', format: 'datetime' }
-    case PropertyType.Boolean:
+    case 'Boolean':
       return { type: 'boolean' }
-    case PropertyType.Float:
+    case 'Float':
       return { type: 'number' }
-    case PropertyType.Integer:
+    case 'Integer':
       return { type: 'integer' }
-    case PropertyType.String:
+    case 'String':
     default:
       return { type: 'string' }
   }
@@ -227,7 +229,7 @@ export function AdditionalPropertiesSchemaField<
           id={`${id}-type`}
           schema={{} as S}
           options={{
-            enumOptions: Object.keys(PropertyType).map(type => ({
+            enumOptions: propertyTypeArray.map(type => ({
               label: type,
               value: type,
             })),
