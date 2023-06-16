@@ -1,7 +1,6 @@
 import React from 'react'
 import headerConfig from '../config/headerConfig'
-import { Link, Typography } from '@mui/material'
-import { AddAlertTwoTone } from '@mui/icons-material'
+import { Typography } from '@mui/material'
 
 function Header() {
   const {
