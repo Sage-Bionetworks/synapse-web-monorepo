@@ -200,11 +200,14 @@ export const CreateOAuthModal: React.FunctionComponent<
     }
   }
 
-  const handleUriChange = (e: any, index: number) => {
+  const handleUriChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number,
+  ) => {
     if (redirectUris) {
       const { name, value } = e.target
       const list = [...redirectUris]
-      list[index][name] = value
+      list[index][name as 'uri'] = value
       setRedirectUris(list)
     }
   }

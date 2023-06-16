@@ -27,7 +27,7 @@ import {
   EntityBundle,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
-import { EntityModal, EntityModalTabs } from '../entity/metadata/EntityModal'
+import { EntityModal } from '../entity/metadata/EntityModal'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { Tooltip } from '@mui/material'
 
@@ -247,7 +247,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
               show={showModal}
               showTabs={false}
               onClose={() => setShowModal(false)}
-              initialTab={EntityModalTabs.ANNOTATIONS}
+              initialTab={'ANNOTATIONS'}
             />
           </div>
           {showIsPublicPrivate && bundle.benefactorAcl && isPublic(bundle) ? (

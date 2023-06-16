@@ -73,7 +73,7 @@ export type SynapseTableState = {
   isExportTableDownloadOpen: boolean
   isExpanded: boolean
   mapEntityIdToHeader: Record<string, EntityHeader>
-  mapUserIdToHeader: Record<string, Partial<UserGroupHeader & UserProfile>>
+  mapUserIdToHeader: Record<string, UserGroupHeader | UserProfile>
   isColumnSelectionOpen: boolean
   isFetchingEntityHeaders: boolean
 }

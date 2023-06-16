@@ -69,7 +69,7 @@ export default function ChallengeTeamTable({
     const teams =
       teamsList?.list.filter(team => team.canRequestMembership !== false) ?? []
     const row: ChallengeTeamRow[] = []
-    const teamRecords = {}
+    const teamRecords: Record<string, Team> = {}
     teams.forEach(team => {
       row.push(getTeamRow(team))
       teamRecords[team.id] = team

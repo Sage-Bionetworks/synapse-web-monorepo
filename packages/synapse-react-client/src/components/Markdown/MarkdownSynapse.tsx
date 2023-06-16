@@ -390,7 +390,7 @@ export class MarkdownSynapse extends React.Component<
       // be unforseen issues with attributes being misnamed according to what react will respect
       // e.g. class instead of className
       const attributes = element.attributes
-      const props = {}
+      const props: Record<string, string> = {}
       for (let i = 0; i < attributes.length; i++) {
         let name = ''
         let value = ''
@@ -488,9 +488,12 @@ export class MarkdownSynapse extends React.Component<
       '&lt;': '<',
       '&quot;': '"',
     }
-    return xml.replace(/(&quot;|&lt;|&gt;|&amp;)/g, (str, item) => {
-      return escapedOneToXmlSpecialMap[item]
-    })
+    return xml.replace(
+      /(&quot;|&lt;|&gt;|&amp;)/g,
+      (str: string, item: keyof typeof escapedOneToXmlSpecialMap) => {
+        return escapedOneToXmlSpecialMap[item]
+      },
+    )
   }
 
   /**
@@ -529,7 +532,7 @@ export class MarkdownSynapse extends React.Component<
       )
     }
     const widgetType = decodedWidgetParams.substring(0, questionIndex)
-    const widgetParamsMapped = {}
+    const widgetParamsMapped: Record<string, string> = {}
     // map out params and their values
     decodedWidgetParams
       .substring(questionIndex + 1)

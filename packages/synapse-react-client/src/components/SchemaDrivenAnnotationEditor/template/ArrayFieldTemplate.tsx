@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react'
 import { Box, Collapse, IconButton, Tooltip } from '@mui/material'
 import { HelpOutline } from '@mui/icons-material'
 import { useAdditionalPropertyContext } from './AdditionalPropertyContext'
+import { JSONSchema7 } from 'json-schema'
 
 /** The `ArrayFieldTemplate` component is the template used to render all items in an array.
  *
@@ -43,7 +44,9 @@ function ArrayFieldTemplate<
     uiOptions,
   )
 
-  const isAdditionalProperty = !!props.schema[ADDITIONAL_PROPERTY_FLAG]
+  const isAdditionalProperty = !!(
+    props.schema as JSONSchema7 & Record<typeof ADDITIONAL_PROPERTY_FLAG, any>
+  )[ADDITIONAL_PROPERTY_FLAG]
   const additionalPropertyContext = useAdditionalPropertyContext()
 
   const [showDetails, setShowDetails] = useState(false)

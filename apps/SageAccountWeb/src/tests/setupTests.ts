@@ -72,7 +72,7 @@ window.location = Object.defineProperties(
 ) as Location
 
 const localStorageMock = (function () {
-  let store = {}
+  let store: Record<string, string> = {}
   return {
     getItem: function (key: string) {
       return store[key]

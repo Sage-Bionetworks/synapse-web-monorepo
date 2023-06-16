@@ -81,7 +81,7 @@ export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
         const link = values[linkColumnIndex] ?? ''
         const iconFileHandleIdValue = values[iconColumnIndex]
 
-        const schema = {}
+        const schema: Record<string, number> = {}
         queryResultBundle?.queryResult!.queryResults.headers.forEach(
           (header, colIndex) => {
             schema[header.name] = colIndex
