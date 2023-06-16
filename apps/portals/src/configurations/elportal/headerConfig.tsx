@@ -1,5 +1,5 @@
 import { AddAlertTwoTone } from '@mui/icons-material'
-import { Link, Typography } from '@mui/material'
+import { Link } from '@mui/material'
 import React from 'react'
 import { HomePageHeaderConfig } from 'types/portal-config'
 
