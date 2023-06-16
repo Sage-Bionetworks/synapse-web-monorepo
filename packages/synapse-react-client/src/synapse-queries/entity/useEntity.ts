@@ -26,6 +26,8 @@ import {
   EntityJson,
   EntityJsonValue,
   EntityPath,
+  Evaluation,
+  GetEvaluationParameters,
   PaginatedResults,
 } from '@sage-bionetworks/synapse-types'
 import { VersionInfo } from '@sage-bionetworks/synapse-types'
@@ -57,6 +59,7 @@ export function useGetEntities(
   options?: UseQueryOptions<Entity[], SynapseClientError>,
 ) {
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [entities, setEntities] = useState<Entity[]>([])
   const { accessToken, keyFactory } = useSynapseContext()
   const queries = useQueries(
     entityHeaders.map(header => {
@@ -70,19 +73,24 @@ export function useGetEntities(
       }
     }, options),
   )
+
   useEffect(() => {
+    console.log({ queries })
     const loading = queries.some(result => result.isLoading)
     setIsLoading(loading)
   }, [queries])
+
   return useMemo(() => {
-    if (!isLoading && options?.onSuccess) {
-      const entities = queries
-        .filter(query => query.data !== null)
+    if (!isLoading) {
+      const ent = queries
+        .filter(query => query.data !== undefined)
         .map(query => query.data)
       // @ts-ignore
-      options.onSuccess(entities)
+      setEntities(ent)
+      // @ts-ignore
+      if (options.onSuccess) options.onSuccess(ent)
     }
-    return { isLoading, results: queries }
+    return { isLoading, data: entities }
     // Adding queries would defeat memoization
   }, [isLoading])
 }
@@ -291,6 +299,19 @@ export function useGetEntityAlias(
   return useQuery<EntityId | null, SynapseClientError>(
     keyFactory.getEntityAliasQueryKey(alias),
     () => SynapseClient.getEntityAlias(alias, accessToken),
+    options,
+  )
+}
+
+export function useGetEntityEvaluations(
+  entityId: string,
+  params?: GetEvaluationParameters,
+  options?: UseQueryOptions<Evaluation[] | null, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery<Evaluation[] | null, SynapseClientError>(
+    keyFactory.getEntityEvaluationsQueryKey(entityId),
+    () => SynapseClient.getAllEntityEvaluations(entityId, params, accessToken),
     options,
   )
 }

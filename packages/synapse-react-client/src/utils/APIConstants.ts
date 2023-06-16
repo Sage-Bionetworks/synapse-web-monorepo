@@ -34,6 +34,8 @@ export const ENTITY_BUNDLE_V2 = (
 export const ENTITY_ACCESS = (id: string | number) =>
   `${REPO}/entity/${id}/access`
 export const ENTITY_ACL = (id: string | number) => `${ENTITY_ID(id)}/acl`
+export const ENTITY_EVALUATION = (id: string | number) =>
+  `${ENTITY_ID(id)}/evaluation`
 export const ENTITY_PATH = (id: string | number) => `${ENTITY_ID(id)}/path`
 export const ENTITY_PERMISSIONS = (id: string | number) =>
   `${ENTITY_ID(id)}/permissions`

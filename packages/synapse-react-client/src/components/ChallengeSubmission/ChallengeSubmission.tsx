@@ -15,6 +15,7 @@ import {
   Challenge,
   DockerRepository,
   EntityId,
+  EvaluationSubmission,
   PaginatedIds,
   Project,
   ResourceAccess,
@@ -23,12 +24,15 @@ import {
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useGetTeam } from '../../synapse-queries/team/useTeam'
-import { createEntity } from '../../synapse-client'
+import SynapseClient, { createEntity } from '../../synapse-client'
 import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import SubmissionDirectoryList from './SubmissionDirectoryList'
 import AddExternalRepo from './AddExternalRepo'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
+import ChallengeSubmit from './ChallengeSubmit'
+import { DockerCommit } from '@sage-bionetworks/synapse-types'
+import { PaginatedResults } from '@sage-bionetworks/synapse-types'
 
 type ChallengeSubmissionProps = {
   projectId: string
@@ -48,9 +52,15 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const { mutate: updateACL } = useUpdateEntityACL()
   const [canSubmit, setCanSubmit] = useState<boolean>(false)
   const [showAddRepo, setShowAddRepo] = useState<boolean>(false)
+  const [showSubmitDialog, setShowSubmitDialog] = useState<boolean>(false)
   const [repoName, setRepoName] = useState<string>('')
   const [repoError, setRepoError] = useState<string>()
   const [needsRefetch, setNeedsRefetch] = useState<boolean>(false)
+  const [selectedRepo, setSelectedRepo] = useState<DockerRepository>()
+
+  const [submissionName, setSubmissionName] = useState<string>('')
+  const [selectedEval, setSelectedEval] = useState<string | undefined>()
+  const [submissionError, setSubmissionError] = useState<string | undefined>()
 
   const EMPTY_ID = ''
 
@@ -230,9 +240,12 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     }
   }, [accessToken, submissionTeam, challenge, newProject, projectAliasFound])
 
-  const handleAddRepo = () => {
+  const handleAddRepo = async () => {
+    setNeedsRefetch(false)
     setRepoError(undefined)
+
     async function createRepo() {
+      setNeedsRefetch(false)
       // When creating a Docker Repo Entity we omit name
       const repo: Omit<DockerRepository, 'name'> = {
         parentId: challengeProjectId,
@@ -247,20 +260,18 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
          * but when creating a repo, we want the backend to provide the name
          * so it cannot be set on the request
          */
-        setNeedsRefetch(true)
         // @ts-ignore
         const createdRepo = await createEntity(repo, accessToken)
         console.log({ createdRepo })
+        setNeedsRefetch(true)
         closeAddRepoDialog()
       } catch (error) {
         console.warn(error)
         const msg: string = error.message ? error.message : 'An error occurred.'
         setRepoError(msg)
-      } finally {
-        setNeedsRefetch(false)
       }
     }
-    createRepo()
+    await createRepo()
   }
 
   const onRepoNameChange = (value: string) => {
@@ -271,6 +282,51 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     setShowAddRepo(false)
     setRepoName('')
     setRepoError(undefined)
+  }
+
+  const onRepoSelected = (selectedRepo: DockerRepository) => {
+    console.log({ selectedRepo })
+    setSelectedRepo(selectedRepo)
+    setShowSubmitDialog(true)
+  }
+
+  const closeSubmitDialog = () => {
+    setShowSubmitDialog(false)
+  }
+
+  const submitRepoForEvaluation = async () => {
+    if (!selectedRepo?.id) return
+    let commits
+    try {
+      commits = await SynapseClient.getDockerTag(
+        selectedRepo.id,
+        accessToken,
+        0,
+        1,
+      )
+    } catch (e) {
+      return setSubmissionError(e.message)
+    }
+    if (commits.totalNumberOfResults === 0) {
+      return setSubmissionError(
+        'No commits have been made to this repository. Please select a repository with at least one commit.',
+      )
+    }
+    const latestCommit = commits[0]
+    const submission: EvaluationSubmission = {
+      userId: userProfile!.ownerId,
+      evaluationId: selectedEval!,
+      entityId: selectedRepo!.id!,
+      dockerRepositoryName: selectedRepo?.name,
+      dockerDigest: latestCommit.digest,
+      versionNumber: 1,
+      teamId: submissionTeamId,
+    }
+    SynapseClient.submitToEvaluation(
+      submission,
+      selectedRepo?.etag!,
+      accessToken,
+    )
   }
 
   return (
@@ -284,13 +340,16 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
             needsRefetch={needsRefetch}
             challengeProjectId={challengeProjectId}
             onAddRepo={() => setShowAddRepo(true)}
+            onRepoSelected={onRepoSelected}
           />
 
           <ConfirmationDialog
             open={showAddRepo}
             title="Add External Repository"
             onCancel={closeAddRepoDialog}
-            onConfirm={handleAddRepo}
+            onConfirm={() => {
+              handleAddRepo()
+            }}
             content={
               <AddExternalRepo
                 repoName={repoName}
@@ -299,6 +358,28 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
               />
             }
           />
+          {selectedRepo && (
+            <ConfirmationDialog
+              open={showSubmitDialog}
+              title="Submit to Challenge"
+              onCancel={closeSubmitDialog}
+              onConfirm={() => {
+                submitRepoForEvaluation()
+              }}
+              content={
+                <ChallengeSubmit
+                  projectId={projectId}
+                  submissonName={submissionName}
+                  selectedEvaluation={selectedEval}
+                  onSubmissionNameChange={(value: string) =>
+                    setSubmissionName(value)
+                  }
+                  onEvaluationChange={(value: string) => setSelectedEval(value)}
+                  submissionError={submissionError}
+                />
+              }
+            />
+          )}
         </>
       )}
       {errorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
