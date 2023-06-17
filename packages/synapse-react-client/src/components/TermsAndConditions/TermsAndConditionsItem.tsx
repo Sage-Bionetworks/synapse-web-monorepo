@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { CheckIcon } from '../../assets/icons/terms/CheckIcon'
+import { termsAndConditionsTableID } from './TermsAndConditions'
+import {
+  FileHandleAssociateType,
+  FileResult,
+} from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { Link, Paper, Skeleton } from '@mui/material'
+import { SkeletonButton, SkeletonParagraph } from '../Skeleton'
+import { times } from 'lodash-es'
 
 export type tcItem = {
-  icon: any
+  iconFileHandleId: string
   label: string
   description: string
 }
@@ -19,6 +28,43 @@ const TermsAndConditionsItem: React.FunctionComponent<
   TermsAndConditionsItemProps
 > = props => {
   const { id, item, enabled, checked, onChange } = props
+  const { iconFileHandleId, label, description } = item
+  const [iconFileResult, setIconFileResult] = useState<FileResult | undefined>(
+    undefined,
+  )
+  const [iconFileContent, setIconFileContent] = useState<string | undefined>(
+    undefined,
+  )
+
+  useEffect(() => {
+    if (iconFileHandleId) {
+      SynapseClient.getFiles({
+        requestedFiles: [
+          {
+            associateObjectId: termsAndConditionsTableID,
+            associateObjectType: FileHandleAssociateType.TableEntity,
+            fileHandleId: iconFileHandleId,
+          },
+        ],
+        includeFileHandles: true,
+        includePreSignedURLs: true,
+        includePreviewPreSignedURLs: false,
+      }).then(fileResults => {
+        setIconFileResult(fileResults.requestedFiles[0])
+      })
+    }
+  }, [iconFileHandleId])
+
+  useEffect(() => {
+    if (iconFileResult) {
+      SynapseClient.getFileHandleContent(
+        iconFileResult.fileHandle!,
+        iconFileResult.preSignedURL!,
+      ).then(content => {
+        setIconFileContent(content)
+      })
+    }
+  }, [iconFileResult])
   const [showDesc, setShowDes] = useState<boolean>(false)
   const [isChecked, setIsChecked] = useState<boolean>(false)
   let mounted = true
@@ -46,28 +92,33 @@ const TermsAndConditionsItem: React.FunctionComponent<
   }
 
   return (
-    <>
-      <span className="terms-icon">{item.icon}</span>
+    <li className={enabled ? 'terms-enabled' : ''}>
+      {iconFileContent && (
+        <span
+          className="terms-icon"
+          dangerouslySetInnerHTML={{ __html: iconFileContent }}
+        />
+      )}
       <span className="terms-desc">
         <label
           id={`toc-item-${id}`}
-          dangerouslySetInnerHTML={{ __html: item.label }}
+          dangerouslySetInnerHTML={{ __html: label }}
         />
-        {showDesc && item.description && (
+        {showDesc && description && (
           <div
             className="terms-desc-content"
-            dangerouslySetInnerHTML={{ __html: item.description }}
+            dangerouslySetInnerHTML={{ __html: description }}
           />
         )}
-        {item.description && (
+        {description && (
           <div>
-            <a
+            <Link
               className="terms-show-desc highlight-link"
               href=""
               onClick={handleShowDescLink}
             >
               {showDesc ? 'Show Less' : 'Show More'}
-            </a>
+            </Link>
           </div>
         )}
       </span>
@@ -81,6 +132,39 @@ const TermsAndConditionsItem: React.FunctionComponent<
         </span>
         I agree
       </span>
+    </li>
+  )
+}
+
+export function LoadingItem(props: { numLoadingItems: number }) {
+  const { numLoadingItems } = props
+  return (
+    <>
+      {times(numLoadingItems).map(index => {
+        return (
+          <li key={index}>
+            <span className="terms-icon">
+              <Skeleton
+                variant="rectangular"
+                height="80px"
+                width="80px"
+                sx={{ margin: 'auto' }}
+              />
+            </span>
+            <span className="terms-desc">
+              <SkeletonParagraph numRows={5} />
+            </span>
+            <span className="terms-checkbox">
+              <Skeleton
+                variant="circular"
+                height="40px"
+                width="40px"
+                sx={{ margin: 'auto' }}
+              />
+            </span>
+          </li>
+        )
+      })}
     </>
   )
 }
