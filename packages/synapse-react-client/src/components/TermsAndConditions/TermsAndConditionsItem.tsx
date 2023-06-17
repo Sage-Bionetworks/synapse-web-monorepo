@@ -6,8 +6,8 @@ import {
   FileResult,
 } from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
-import { Link, Paper, Skeleton } from '@mui/material'
-import { SkeletonButton, SkeletonParagraph } from '../Skeleton'
+import { Link, Skeleton } from '@mui/material'
+import { SkeletonParagraph } from '../Skeleton'
 import { times } from 'lodash-es'
 
 export type tcItem = {
