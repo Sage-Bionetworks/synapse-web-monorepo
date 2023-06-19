@@ -41,5 +41,5 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: packages/synapse-react-client
           exitZeroOnChanges: true
-          exitOnceUploaded: true # Wait for snapshot tests to complete so we can report the results
+          exitOnceUploaded: true
           autoAcceptChanges: 'main'
