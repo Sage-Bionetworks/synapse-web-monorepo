@@ -120,6 +120,7 @@ const TermsAndConditionsItem: React.FunctionComponent<
       </span>
       <span className="terms-checkbox">
         <span
+          role="checkbox"
           aria-labelledby={`toc-item-${id}`}
           className={isChecked ? 'terms-circle terms-checked' : 'terms-circle'}
           onClick={handleCheckboxClick}
@@ -138,7 +139,12 @@ export function LoadingItem(props: { numLoadingItems: number }) {
     <>
       {times(numLoadingItems).map(index => {
         return (
-          <li key={index}>
+          <li
+            key={index}
+            aria-busy="true"
+            aria-live="polite"
+            data-testid="loading-terms-and-conditions"
+          >
             <span className="terms-icon">
               <Skeleton
                 variant="rectangular"
