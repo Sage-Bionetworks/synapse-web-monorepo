@@ -1,17 +1,35 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { ChatBubblesIcon } from '../../src/assets/icons/terms/ChatBubblesIcon'
-import TermsAndConditionsItem from '../../src/components/TermsAndConditions/TermsAndConditionsItem'
+import TermsAndConditionsItem, {
+  tcItem,
+} from '../../src/components/TermsAndConditions/TermsAndConditionsItem'
+import { SynapseClient } from '../../src'
+import { BatchFileResult, FileResult } from '@sage-bionetworks/synapse-types'
+import { mockFileHandle } from '../../mocks/mock_file_handle'
 
 describe('Terms and Conditions Item: basic functionality', () => {
-  const mockItem = {
-    icon: <ChatBubblesIcon />,
+  const mockIconSvg = '<svg>definition</svg>'
+  const mockItem: tcItem = {
+    iconFileHandleId: '123',
     label: 'Item 1',
     description: 'Item 1 desc',
   }
+  const mockFileResult: FileResult = {
+    fileHandleId: '123',
+    fileHandle: mockFileHandle,
+  }
+  const mockBatchFileResult: BatchFileResult = {
+    requestedFiles: [mockFileResult],
+  }
+
   const onChange = jest.fn()
 
+  beforeEach(() => {
+    jest.clearAllMocks()
+    jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+    jest.spyOn(SynapseClient, 'getFileContent').mockResolvedValue(mockIconSvg)
+  })
   it('render component without crashing', () => {
     const { container } = render(
       <TermsAndConditionsItem
