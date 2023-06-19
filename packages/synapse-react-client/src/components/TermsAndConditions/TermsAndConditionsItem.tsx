@@ -32,9 +32,7 @@ const TermsAndConditionsItem: React.FunctionComponent<
   const [iconFileResult, setIconFileResult] = useState<FileResult | undefined>(
     undefined,
   )
-  const [iconFileContent, setIconFileContent] = useState<string | undefined>(
-    undefined,
-  )
+  const [iconFileContent, setIconFileContent] = useState<string>('')
 
   useEffect(() => {
     if (iconFileHandleId) {
@@ -93,12 +91,10 @@ const TermsAndConditionsItem: React.FunctionComponent<
 
   return (
     <li className={enabled ? 'terms-enabled' : ''}>
-      {iconFileContent && (
-        <span
-          className="terms-icon"
-          dangerouslySetInnerHTML={{ __html: iconFileContent }}
-        />
-      )}
+      <span
+        className="terms-icon"
+        dangerouslySetInnerHTML={{ __html: iconFileContent }}
+      />
       <span className="terms-desc">
         <label
           id={`toc-item-${id}`}
@@ -146,8 +142,8 @@ export function LoadingItem(props: { numLoadingItems: number }) {
             <span className="terms-icon">
               <Skeleton
                 variant="rectangular"
-                height="80px"
-                width="80px"
+                height="30px"
+                width="30px"
                 sx={{ margin: 'auto' }}
               />
             </span>
