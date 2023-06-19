@@ -17,6 +17,14 @@ jobs:
     name: Deploy to Chromatic
     runs-on: ubuntu-latest
     steps:
+      - name: Check PR label
+        if: ${{ github.event_name == 'pull_request' && github.event.label.name != 'chromatic' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # The following script will cancel the rest of the job
+        run: |
+          gh run cancel ${{ github.run_id }}
+          gh run watch ${{ github.run_id }}
       - uses: actions/checkout@v3.1.0
         with:
           ref: ${{ github.event.pull_request.head.ref }}
@@ -35,5 +43,3 @@ jobs:
           exitZeroOnChanges: true
           exitOnceUploaded: true # Wait for snapshot tests to complete so we can report the results
           autoAcceptChanges: 'main'
-          # Only run UI Tests for PRs with label "chromatic"
-          skip: ${{ !(github.event_name == 'pull_request_target' && github.event.label.name != 'chromatic') }}
