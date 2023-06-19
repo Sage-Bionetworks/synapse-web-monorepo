@@ -8,6 +8,8 @@ import {
   DownloadFromTableResult,
   SortItem,
   QueryBundleRequest,
+  FacetColumnRequest,
+  QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 
 import {
@@ -20,6 +22,7 @@ import {
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { SynapseContext } from '../../utils/context/SynapseContext'
 import { DialogBase } from '../DialogBase'
+import { ReadonlyDeep } from 'type-fest'
 
 type ModalDownloadState = {
   isLoading: boolean
@@ -31,8 +34,7 @@ type ModalDownloadState = {
 export type ModalDownloadProps = {
   onClose: (...args: any[]) => void
   includeEntityEtag?: boolean
-  queryBundleRequest?: QueryBundleRequest // either the query bundle request needs to be provided, or getLastQueryRequest
-  getLastQueryRequest?: () => QueryBundleRequest
+  queryBundleRequest: ReadonlyDeep<QueryBundleRequest>
   offset?: number
   limit?: number
   sort?: SortItem[]
@@ -72,24 +74,24 @@ export class ModalDownload extends React.Component<
     const { formData } = event
     const fileType = formData['File Type']
     const contents = formData.Contents as string[]
-    const { queryBundleRequest, getLastQueryRequest } = this.props
+    const { queryBundleRequest } = this.props
     const separator = fileType === csvOption ? ',' : '\t'
     const writeHeader = contents.includes(writeHeaderOption)
     const includeRowIdAndRowVersion = contents.includes(
       includeRowIdAndRowVersionOption,
     )
-    const queryRequest = queryBundleRequest ?? getLastQueryRequest!()
+    const queryRequest = queryBundleRequest
     const sql = queryRequest.query.sql
     const downloadFromTableRequest: DownloadFromTableRequest = {
       sql,
       entityId: parseEntityIdFromSqlStatement(sql),
-      selectedFacets: queryRequest.query.selectedFacets,
+      selectedFacets: queryRequest.query.selectedFacets as FacetColumnRequest[],
       concreteType:
         'org.sagebionetworks.repo.model.table.DownloadFromTableRequest',
       writeHeader,
       includeRowIdAndRowVersion,
       csvTableDescriptor: { separator },
-      additionalFilters: queryRequest.query.additionalFilters,
+      additionalFilters: queryRequest.query.additionalFilters as QueryFilter[],
     }
     SynapseClient.getDownloadFromTableRequest(
       downloadFromTableRequest,

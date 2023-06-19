@@ -8,6 +8,7 @@ import {
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
   ColumnTypeEnum,
+  QueryBundleRequest,
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { QueryVisualizationContextType } from './QueryVisualizationWrapper'
@@ -22,6 +23,7 @@ import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
 } from '../utils/types/IsType'
+import { cloneDeep } from 'lodash-es'
 
 type SearchState = {
   show: boolean
@@ -134,9 +136,11 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     this.setState({
       show: false,
     })
-    const { executeQueryRequest, getLastQueryRequest } = this.props.queryContext
+    const { executeQueryRequest, lastQueryRequest } = this.props.queryContext
 
-    const lastQueryRequestDeepClone = getLastQueryRequest()
+    const lastQueryRequestDeepClone = cloneDeep(
+      lastQueryRequest,
+    ) as QueryBundleRequest
 
     const { additionalFilters = [] } = lastQueryRequestDeepClone.query
 

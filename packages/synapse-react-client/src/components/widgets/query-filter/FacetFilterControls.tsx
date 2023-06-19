@@ -20,7 +20,8 @@ import { EnumFacetFilter } from './EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
 import { Box, Skeleton, Stack } from '@mui/material'
-import { sortBy } from 'lodash-es'
+import { cloneDeep, sortBy } from 'lodash-es'
+import { ReadonlyDeep } from 'type-fest'
 
 export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with at least one non-null value will be shown. */
@@ -54,9 +55,11 @@ const convertFacetColumnRangeRequest = (
 
 const patchRequestFacets = (
   changedFacet: FacetColumnRequest,
-  lastRequest?: QueryBundleRequest,
+  lastRequest?: ReadonlyDeep<QueryBundleRequest>,
 ): FacetColumnRequest[] => {
-  const selections = lastRequest?.query?.selectedFacets ?? []
+  const selections = cloneDeep(
+    lastRequest?.query?.selectedFacets ?? [],
+  ) as FacetColumnRequest[]
   const changedFacetIndex = selections.findIndex(
     facet => facet.columnName === changedFacet.columnName,
   )
@@ -78,7 +81,7 @@ const patchRequestFacets = (
 }
 
 export function applyChangesToValuesColumn(
-  lastRequest: QueryBundleRequest | undefined,
+  lastRequest: ReadonlyDeep<QueryBundleRequest> | undefined,
   facet: FacetColumnResultValues,
   onChangeFn: (result: FacetColumnRequest[]) => void,
   facetName?: string,
@@ -104,7 +107,7 @@ export function applyChangesToValuesColumn(
 
 // This handles multiple checkbox selection with delay refresh
 export const applyMultipleChangesToValuesColumn = (
-  lastRequest: QueryBundleRequest | undefined,
+  lastRequest: ReadonlyDeep<QueryBundleRequest> | undefined,
   facet: FacetColumnResultValues,
   onChangeFn: (result: FacetColumnRequest[]) => void,
   facetNameMap?: Record<string, string | boolean>,
@@ -126,7 +129,7 @@ export const applyMultipleChangesToValuesColumn = (
 
 //rangeChanges
 export const applyChangesToRangeColumn = (
-  lastRequest: QueryBundleRequest | undefined,
+  lastRequest: ReadonlyDeep<QueryBundleRequest> | undefined,
   facet: FacetColumnResultRange,
   onChangeFn: (result: FacetColumnRequest[]) => void,
   values: string[],
@@ -146,8 +149,8 @@ export const applyChangesToRangeColumn = (
  * @returns the columnNames of the facets that should be shown.
  */
 export function getDefaultShownFacetFilters(
-  facets: FacetColumnResult[],
-  selectedFacets?: FacetColumnRequest[],
+  facets: ReadonlyDeep<FacetColumnResult[]>,
+  selectedFacets?: ReadonlyDeep<FacetColumnRequest[]>,
 ): Set<string> {
   const columnsWithExistingFilters = (selectedFacets ?? []).map(
     fcr => fcr.columnName,
@@ -202,10 +205,9 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
   const { availableFacets } = props
   const {
     data: data,
-    getLastQueryRequest,
     executeQueryRequest,
+    lastQueryRequest,
   } = useQueryContext()
-  const lastRequest = getLastQueryRequest()
 
   const facets = data!
     .facets!.filter(
@@ -221,7 +223,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
 
   // Controls which facet filter sections are shown/hidden by clicking on chips
   const [facetFiltersShown, setFacetFiltersShown] = React.useState<Set<string>>(
-    getDefaultShownFacetFilters(facets, lastRequest.query.selectedFacets),
+    getDefaultShownFacetFilters(facets, lastQueryRequest.query.selectedFacets),
   )
   const { topLevelControlsState } = useQueryVisualizationContext()
   const { showFacetFilter } = topLevelControlsState
@@ -232,17 +234,26 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
   useDeepCompareEffectNoCheck(() => {
     // Select the first three facet columns, plus any columns where a facet is already filtered
     setFacetFiltersShown(
-      getDefaultShownFacetFilters(facets, lastRequest.query.selectedFacets),
+      getDefaultShownFacetFilters(
+        facets,
+        lastQueryRequest.query.selectedFacets,
+      ),
     )
   }, [facets])
 
   const columnModels = data!.selectColumns
 
   const applyChanges = (facets: FacetColumnRequest[]) => {
-    const queryRequest: QueryBundleRequest = getLastQueryRequest()
-    queryRequest.query.selectedFacets = facets
-    queryRequest.query.offset = 0
-    executeQueryRequest(queryRequest)
+    executeQueryRequest(queryRequest => {
+      return {
+        ...queryRequest,
+        query: {
+          ...queryRequest.query,
+          selectedFacets: facets,
+          offset: 0,
+        },
+      }
+    })
   }
 
   const toggleShowFacetFilter = (facet: FacetColumnResult) => {
@@ -279,14 +290,18 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
                   columnModel={columnModel}
                   onChange={(facetNamesMap: Record<string, boolean>) =>
                     applyMultipleChangesToValuesColumn(
-                      lastRequest,
+                      lastQueryRequest,
                       facet,
                       applyChanges,
                       facetNamesMap,
                     )
                   }
                   onClear={() =>
-                    applyChangesToValuesColumn(lastRequest, facet, applyChanges)
+                    applyChangesToValuesColumn(
+                      lastQueryRequest,
+                      facet,
+                      applyChanges,
+                    )
                   }
                 ></EnumFacetFilter>
               )}
@@ -297,7 +312,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
                   collapsed={false}
                   onChange={(values: (string | number | undefined)[]) =>
                     applyChangesToRangeColumn(
-                      lastRequest,
+                      lastQueryRequest,
                       facet,
                       applyChanges,
                       values as string[],

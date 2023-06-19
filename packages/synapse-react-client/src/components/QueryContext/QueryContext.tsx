@@ -9,7 +9,7 @@ import {
   Table,
 } from '@sage-bionetworks/synapse-types'
 import { ImmutableTableQueryResult } from '../useImmutableTableQuery'
-import { SetRequired } from 'type-fest'
+import { ReadonlyDeep, SetRequired } from 'type-fest'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -51,12 +51,16 @@ export type QueryContextType<
           : never
       >
     | undefined
+  /** The current query bundle request */
+  lastQueryRequest: ReadonlyDeep<QueryBundleRequest>
+  /** The initial query bundle request */
+  initQueryRequest: ReadonlyDeep<QueryBundleRequest>
   /** Returns a deep clone of the current query bundle request */
   getLastQueryRequest: () => QueryBundleRequest
   /** Returns a deep clone of the initial query bundle request */
   getInitQueryRequest: () => QueryBundleRequest
-  /** Updates the current query with the passed request */
-  executeQueryRequest: (param: QueryBundleRequest) => void
+  /** Updates the current query with the passed request. Also accepts a dispatch function. */
+  executeQueryRequest: ImmutableTableQueryResult['setQuery']
   /** Resets the query to its initial state, clearing all filters added by the user */
   resetQuery: ImmutableTableQueryResult['resetQuery']
   removeSelectedFacet: ImmutableTableQueryResult['removeSelectedFacet']

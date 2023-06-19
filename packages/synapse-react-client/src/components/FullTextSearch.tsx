@@ -1,6 +1,9 @@
 import { Collapse } from '@mui/material'
 import React, { useRef, useState } from 'react'
-import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  TextMatchesQueryFilter,
+} from '@sage-bionetworks/synapse-types'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
@@ -9,6 +12,7 @@ import {
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { HelpPopover } from './HelpPopover'
 import IconSvg from './IconSvg/IconSvg'
+import { cloneDeep } from 'lodash-es'
 
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
@@ -22,7 +26,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
   helpMessage = 'This search bar is powered by MySQL Full Text Search.',
   helpUrl,
 }: FullTextSearchProps) => {
-  const { executeQueryRequest, getLastQueryRequest } = useQueryContext()
+  const { executeQueryRequest, lastQueryRequest } = useQueryContext()
   const {
     topLevelControlsState: { showSearchBar, showFacetFilter },
   } = useQueryVisualizationContext()
@@ -39,7 +43,9 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
         `Search term must have a minimum of ${MIN_SEARCH_QUERY_LENGTH} characters`,
       )
     } else {
-      const lastQueryRequestDeepClone = getLastQueryRequest()
+      const lastQueryRequestDeepClone = cloneDeep(
+        lastQueryRequest,
+      ) as QueryBundleRequest
 
       const { additionalFilters = [] } = lastQueryRequestDeepClone.query
 

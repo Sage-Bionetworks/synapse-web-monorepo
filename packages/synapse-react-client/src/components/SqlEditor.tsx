@@ -8,6 +8,8 @@ import {
   QUERY_FILTERS_EXPANDED_CSS,
   useQueryContext,
 } from './QueryContext/QueryContext'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { cloneDeep } from 'lodash-es'
 
 export type SqlEditorProps = {
   helpMessage?: string
@@ -23,7 +25,7 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
   helpMessage = helpMessageCopy,
   helpUrl = helpLink,
 }: SqlEditorProps) => {
-  const { executeQueryRequest, getLastQueryRequest } = useQueryContext()
+  const { executeQueryRequest, lastQueryRequest } = useQueryContext()
   const {
     topLevelControlsState: { showSqlEditor, showFacetFilter },
   } = useQueryVisualizationContext()
@@ -32,16 +34,18 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     if (showSqlEditor) {
-      const defaultSql = getLastQueryRequest().query.sql
+      const defaultSql = lastQueryRequest.query.sql
 
       setSql(defaultSql)
       inputRef.current?.focus()
     }
-  }, [showSqlEditor, getLastQueryRequest])
+  }, [showSqlEditor, lastQueryRequest])
 
   const search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const lastQueryRequestDeepClone = getLastQueryRequest()
+    const lastQueryRequestDeepClone = cloneDeep(
+      lastQueryRequest,
+    ) as QueryBundleRequest
     lastQueryRequestDeepClone.query.sql = sql
     lastQueryRequestDeepClone.query.offset = 0
     lastQueryRequestDeepClone.query.additionalFilters = []

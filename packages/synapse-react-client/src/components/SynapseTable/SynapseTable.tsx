@@ -9,7 +9,6 @@ import {
   isDatasetCollection,
   isEntityView,
 } from '../../utils/functions/EntityTypeUtils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import {
@@ -52,6 +51,7 @@ import {
 import { TablePagination } from './TablePagination'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import ExpandableTableDataCell from './ExpandableTableDataCell'
+import { ReadonlyDeep } from 'type-fest'
 
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
@@ -102,7 +102,6 @@ export class SynapseTable extends React.Component<
     this.shouldComponentUpdate = this.shouldComponentUpdate.bind(this)
     this.handleColumnSortPress = this.handleColumnSortPress.bind(this)
     this.findSelectionIndex = this.findSelectionIndex.bind(this)
-    this.advancedSearch = this.advancedSearch.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
     this.enableResize = this.enableResize.bind(this)
@@ -336,7 +335,7 @@ export class SynapseTable extends React.Component<
     const { queryResult, columnModels = [] } = data
     const { facets = [] } = data
     const { isExpanded, isExportTableDownloadOpen } = this.state
-    const queryRequest = this.props.queryContext.getLastQueryRequest()
+    const queryRequest = this.props.queryContext.lastQueryRequest
     const className = ''
     const hasResults = (data.queryResult?.queryResults.rows.length ?? 0) > 0
     // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
@@ -419,7 +418,7 @@ export class SynapseTable extends React.Component<
     facets: FacetColumnResult[],
     rows: Row[],
   ) => {
-    const lastQueryRequest = this.props.queryContext.getLastQueryRequest?.()!
+    const lastQueryRequest = this.props.queryContext.lastQueryRequest
     const {
       queryContext: { entity },
       showAccessColumn,
@@ -518,10 +517,16 @@ export class SynapseTable extends React.Component<
         direction: SORT_STATE[columnIconSortState[dict.index]],
       })
     }
-    const queryRequest = this.props.queryContext.getLastQueryRequest()
-    queryRequest.query.sort = sortedColumnSelection
-    queryRequest.query.offset = 0
-    this.props.queryContext.executeQueryRequest(queryRequest)
+    this.props.queryContext.executeQueryRequest(queryRequest => {
+      return {
+        ...queryRequest,
+        query: {
+          ...queryRequest.query,
+          sort: sortedColumnSelection,
+          offset: 0,
+        },
+      }
+    })
     this.setState({
       columnIconSortState,
       sortedColumnSelection,
@@ -694,7 +699,7 @@ export class SynapseTable extends React.Component<
     isShowingDownloadColumn: boolean | undefined,
     isShowingAddToV2DownloadListColumn: boolean,
     isRowSelectionVisible: boolean | undefined,
-    lastQueryRequest: QueryBundleRequest,
+    lastQueryRequest: ReadonlyDeep<QueryBundleRequest>,
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
     const {
@@ -843,20 +848,6 @@ export class SynapseTable extends React.Component<
     return -1
   }
 
-  // Direct user to corresponding query on synapse
-  private advancedSearch(event: React.SyntheticEvent) {
-    event && event.preventDefault()
-    const lastQueryRequest = this.props.queryContext.getLastQueryRequest()
-    const { query } = lastQueryRequest
-    // base 64 encode the json of the query and go to url with the encoded object
-    const encodedQuery = btoa(JSON.stringify(query))
-    const synTable = lastQueryRequest.entityId
-    window.open(
-      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synTable}/tables/query/${encodedQuery}`,
-      '_blank',
-    )
-  }
-
   private getLengthOfPropsData() {
     const { data } = this.props.queryContext
     return data?.queryResult?.queryResults.headers.length ?? 0
@@ -875,7 +866,7 @@ export class SynapseTable extends React.Component<
   public configureFacetDropdown(
     facetColumnResult: FacetColumnResultValues,
     columnModel: ColumnModel,
-    lastQueryRequest: QueryBundleRequest,
+    lastQueryRequest: ReadonlyDeep<QueryBundleRequest>,
   ) {
     return (
       <EnumFacetFilter
@@ -902,11 +893,16 @@ export class SynapseTable extends React.Component<
   }
 
   public applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
-    const queryRequest: QueryBundleRequest =
-      this.props.queryContext.getLastQueryRequest()
-    queryRequest.query.selectedFacets = facets
-    queryRequest.query.offset = 0
-    this.props.queryContext.executeQueryRequest(queryRequest)
+    this.props.queryContext.executeQueryRequest(queryRequest => {
+      return {
+        ...queryRequest,
+        query: {
+          ...queryRequest.query,
+          selectedFacets: facets,
+          offset: 0,
+        },
+      }
+    })
   }
 }
 

@@ -110,7 +110,7 @@ export function QueryVisualizationWrapper(
   const { noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE } =
     props
 
-  const { data, getLastQueryRequest, isFacetsAvailable, hasResettableFilters } =
+  const { data, lastQueryRequest, isFacetsAvailable, hasResettableFilters } =
     useQueryContext()
 
   const { columnAliases = {} } = props
@@ -138,8 +138,6 @@ export function QueryVisualizationWrapper(
   }, [isFacetsAvailable])
   const [visibleColumns, setVisibleColumns] = useState<string[]>([])
   const [selectedRows, setSelectedRows] = useState<Row[]>([])
-
-  const lastQueryRequest = getLastQueryRequest()
 
   // We deep-compare-memoize the selectColumns so we don't reset visible columns when the reference changes, but not the contents (e.g. on page change)
   const selectColumns = useDeepCompareMemoize(data?.selectColumns)

@@ -14,13 +14,18 @@ import {
   isColumnSingleValueQueryFilter,
   isFacetColumnValuesRequest,
 } from '../utils/types/IsType'
+import { ReadonlyDeep } from 'type-fest'
 
 export type ImmutableTableQueryResult = {
   /** The ID of the table parsed from the SQL query */
   entityId: string
   /** The version number of the table parsed from the SQL query */
   versionNumber?: number
+  initQueryRequest: ReadonlyDeep<QueryBundleRequest>
+  /** @deprecated */
   getInitQueryRequest: () => QueryBundleRequest
+  lastQueryRequest: ReadonlyDeep<QueryBundleRequest>
+  /** @deprecated */
   getLastQueryRequest: () => QueryBundleRequest
   setQuery: (
     queryRequest:
@@ -134,7 +139,7 @@ export default function useImmutableTableQuery(
     ): void => {
       let newQueryRequest: QueryBundleRequest
       if (typeof queryRequest === 'function') {
-        newQueryRequest = queryRequest(getLastQueryRequest())
+        newQueryRequest = queryRequest(lastQueryRequest)
       } else {
         newQueryRequest = queryRequest
       }
@@ -158,7 +163,7 @@ export default function useImmutableTableQuery(
         }
       }
     },
-    [componentIndex, getLastQueryRequest, onQueryChange, shouldDeepLink],
+    [componentIndex, lastQueryRequest, onQueryChange, shouldDeepLink],
   )
 
   const { entityId, versionNumber } = useMemo(
@@ -305,7 +310,9 @@ export default function useImmutableTableQuery(
   return {
     entityId,
     versionNumber,
+    initQueryRequest,
     getInitQueryRequest,
+    lastQueryRequest,
     getLastQueryRequest,
     setQuery,
     pageSize,

@@ -277,7 +277,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     onSetPlotType,
   } = props
   const { accessToken } = useSynapseContext()
-  const { data, isLoadingNewBundle, getLastQueryRequest } = useQueryContext()
+  const { data, isLoadingNewBundle, lastQueryRequest } = useQueryContext()
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
@@ -379,7 +379,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   }
                   onChange={facetNamesMap => {
                     applyMultipleChangesToValuesColumn(
-                      getLastQueryRequest(),
+                      lastQueryRequest,
                       facetToPlot,
                       applyChangesToFacetFilter,
                       facetNamesMap,
@@ -387,7 +387,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   }}
                   onClear={() => {
                     applyChangesToValuesColumn(
-                      getLastQueryRequest(),
+                      lastQueryRequest,
                       facetToPlot,
                       applyChangesToFacetFilter,
                     )
@@ -428,7 +428,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   }
                   onChange={facetNamesMap => {
                     applyMultipleChangesToValuesColumn(
-                      getLastQueryRequest(),
+                      lastQueryRequest,
                       facetToPlot,
                       applyChangesToFacetFilter,
                       facetNamesMap,
@@ -436,7 +436,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   }}
                   onClear={() => {
                     applyChangesToValuesColumn(
-                      getLastQueryRequest(),
+                      lastQueryRequest,
                       facetToPlot,
                       applyChangesToFacetFilter,
                     )

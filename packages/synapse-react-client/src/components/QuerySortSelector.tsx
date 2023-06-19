@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
 import { SortConfiguration } from './CardContainerLogic'
 import { useQueryContext } from './QueryContext/QueryContext'
-import { SortDirection, SortItem } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  SortDirection,
+  SortItem,
+} from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import Select, { components, ControlProps, GroupBase } from 'react-select'
 import { findValueOption } from './SchemaDrivenAnnotationEditor/widget/SelectWidget'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
+import { cloneDeep } from 'lodash-es'
 
 export type QuerySortSelectorProps = {
   sortConfig: SortConfiguration
@@ -32,7 +37,7 @@ const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
 }) => {
   const { defaultColumn, defaultDirection, sortableColumns } = sortConfig
   const queryContext = useQueryContext()
-  const { getLastQueryRequest, executeQueryRequest } = queryContext
+  const { executeQueryRequest, lastQueryRequest } = queryContext
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const [sortColumn, setSortColumn] = useState<string | undefined>(
     defaultColumn,
@@ -47,7 +52,9 @@ const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
   })
 
   const onChange = (value?: string) => {
-    const lastQueryRequestDeepClone = getLastQueryRequest()
+    const lastQueryRequestDeepClone = cloneDeep(
+      lastQueryRequest,
+    ) as QueryBundleRequest
     let newSortDirection: SortDirection = 'ASC'
     if (value === sortColumn) {
       // flip sort direction

@@ -3,11 +3,16 @@ import { useQueryContext } from '../QueryContext/QueryContext'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  QueryResultBundle,
+  Row,
+} from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen'
 import { SynapseConstants } from '../../utils'
 import { getFullQueryTableResults } from '../../synapse-client/SynapseClient'
 import { parseEntityIdAndVersionFromSqlStatement } from '../../utils/functions/SqlFunctions'
+import { cloneDeep } from 'lodash-es'
 
 const EntityIDColumnCopyIcon = () => {
   const synapseContext = useSynapseContext()
@@ -35,8 +40,8 @@ const EntityIDColumnCopyIcon = () => {
     setIsLoading(true)
 
     // ask for all pages of data
-    const { getLastQueryRequest } = queryContext
-    const queryRequestClone = getLastQueryRequest()
+    const { lastQueryRequest } = queryContext
+    const queryRequestClone = cloneDeep(lastQueryRequest) as QueryBundleRequest
     const { sql: oldSql } = queryRequestClone.query
     const { entityId, versionNumber } =
       parseEntityIdAndVersionFromSqlStatement(oldSql)!

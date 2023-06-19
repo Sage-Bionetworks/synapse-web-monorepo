@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from '@mui/material'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { SynapseConstants } from '../../utils'
+import { ReadonlyDeep } from 'type-fest'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 
 export type ProgrammaticTableDownloadProps = {
-  queryBundleRequest: QueryBundleRequest
+  queryBundleRequest: ReadonlyDeep<QueryBundleRequest>
   onHide: () => void
 }
 
@@ -22,7 +23,7 @@ export function ProgrammaticTableDownload({
     isPreviousData: newQueryIsFetching,
   } = useGetQueryResultBundleWithAsyncStatus(
     {
-      ...queryBundleRequest,
+      ...(queryBundleRequest as QueryBundleRequest),
       partMask: SynapseConstants.BUNDLE_MASK_COMBINED_SQL,
     },
     {

@@ -4,12 +4,15 @@ import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunction
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   DownloadFromTableRequest,
+  FacetColumnRequest,
   QueryBundleRequest,
+  QueryFilter,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
+import { ReadonlyDeep } from 'type-fest'
 
 export function useExportToCavatica(
-  queryBundleRequest: QueryBundleRequest,
+  queryBundleRequest: ReadonlyDeep<QueryBundleRequest>,
   selectColumns?: SelectColumn[],
 ) {
   const { accessToken } = useSynapseContext()
@@ -27,13 +30,15 @@ export function useExportToCavatica(
       const downloadFromTableRequest: DownloadFromTableRequest = {
         sql,
         entityId: parseEntityIdFromSqlStatement(sql),
-        selectedFacets: queryBundleRequest.query.selectedFacets,
+        selectedFacets: queryBundleRequest.query
+          .selectedFacets as FacetColumnRequest[],
         concreteType:
           'org.sagebionetworks.repo.model.table.DownloadFromTableRequest',
         writeHeader,
         includeRowIdAndRowVersion,
         csvTableDescriptor: { separator },
-        additionalFilters: queryBundleRequest.query.additionalFilters,
+        additionalFilters: queryBundleRequest.query
+          .additionalFilters as QueryFilter[],
       }
       const result = await SynapseClient.getDownloadFromTableRequest(
         downloadFromTableRequest,

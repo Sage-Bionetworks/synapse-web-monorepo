@@ -8,9 +8,11 @@ import { useSynapseContext } from '../utils'
  * Error banner that automatically pulls the error from QueryContext.  If 403, shows entity actions required
  */
 export const QueryWrapperErrorBanner = () => {
-  const { error, getLastQueryRequest, onViewSharingSettingsClicked } =
-    useQueryContext()
-  const { entityId } = getLastQueryRequest()
+  const {
+    error,
+    lastQueryRequest: { entityId },
+    onViewSharingSettingsClicked,
+  } = useQueryContext()
   const { accessToken } = useSynapseContext()
 
   if (error?.status == 403 && accessToken) {

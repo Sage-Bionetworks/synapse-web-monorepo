@@ -101,12 +101,13 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     data,
     entity,
     executeQueryRequest,
-    getLastQueryRequest,
+    lastQueryRequest,
     getInitQueryRequest,
     lockedColumn,
   } = useQueryContext()
+
   const exportToCavatica = useExportToCavatica(
-    getLastQueryRequest(),
+    lastQueryRequest,
     data?.queryResult?.queryResults.headers,
   )
 
@@ -146,7 +147,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     // clear selection
     setSelectedRows([])
     // refresh the data
-    executeQueryRequest(getLastQueryRequest())
+    executeQueryRequest(qrb => qrb)
   }
 
   /**

@@ -51,6 +51,7 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
   const {
     entityId,
     versionNumber,
+    lastQueryRequest,
     getInitQueryRequest,
     getLastQueryRequest,
     setQuery,
@@ -66,10 +67,6 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     onQueryChange,
   })
 
-  const lastQueryRequest = useMemo(() => {
-    return getLastQueryRequest()
-  }, [getLastQueryRequest])
-
   const {
     data: infiniteData,
     hasNextPage,
@@ -80,7 +77,7 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     error,
     isPreviousData: newQueryIsFetching,
   } = useInfiniteQueryResultBundle(
-    lastQueryRequest,
+    lastQueryRequest as QueryBundleRequest,
     {
       // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
       keepPreviousData: true,
@@ -183,9 +180,8 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
   }, [data, lockedColumn])
 
   const hasResettableFilters = useMemo(() => {
-    const request = getLastQueryRequest()
-    return isFilteredUtil(request.query, lockedColumn)
-  }, [getLastQueryRequest, lockedColumn])
+    return isFilteredUtil(lastQueryRequest.query, lockedColumn)
+  }, [lastQueryRequest, lockedColumn])
 
   const getColumnModel = useCallback(
     (columnName: string) => {
@@ -200,6 +196,8 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
     hasNextPage: !!hasNextPage,
     hasPreviousPage: hasPreviousPage,
     isLoadingNewBundle: isLoadingNewBundle,
+    initQueryRequest,
+    lastQueryRequest,
     getLastQueryRequest,
     getInitQueryRequest,
     error: error,

@@ -45,7 +45,9 @@ import {
  */
 export function isTypeViaConcreteTypeFactory<
   TTypeChecked extends ObjectType, // The type that you are trying to verify/assert
-  ObjectType extends { concreteType: string } = { concreteType: string },
+  ObjectType extends { readonly concreteType: string } = {
+    readonly concreteType: string
+  },
 >(...expectedConcreteTypes: TTypeChecked['concreteType'][]) {
   return (object: ObjectType): object is TTypeChecked =>
     !!(

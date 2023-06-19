@@ -12,6 +12,7 @@ import { useQueryContext } from '../../QueryContext/QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 
@@ -21,6 +22,8 @@ export type DownloadOptionsProps = {
 }
 
 export const DOWNLOAD_FILES_MENU_TEXT = 'Add To Download Cart'
+export const DOWNLOAD_SELECTED_FILES_MENU_TEXT =
+  'Add Selected Files To Download Cart'
 
 export const DownloadOptions: React.FunctionComponent<
   DownloadOptionsProps
@@ -29,9 +32,9 @@ export const DownloadOptions: React.FunctionComponent<
   const {
     entity,
     data: queryResultBundle,
-    getLastQueryRequest,
+    lastQueryRequest: queryBundleRequest,
   } = useQueryContext()
-  const queryBundleRequest = getLastQueryRequest()
+  const { isRowSelectionVisible, selectedRows } = useQueryVisualizationContext()
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] =
@@ -90,6 +93,23 @@ export const DownloadOptions: React.FunctionComponent<
               </Dropdown.Item>
             </Tooltip>
           )}
+          {isFileViewOrDataset &&
+            isRowSelectionVisible &&
+            selectedRows.length > 0 && (
+              <Dropdown.Item
+                role="button"
+                className={disableDownload ? 'ignoreLink' : undefined}
+                disabled={disableDownload}
+                // If disabled, add pointer-events-auto so the tooltip still works
+                style={disableDownload ? { pointerEvents: 'auto' } : {}}
+                onClick={() =>
+                  accessToken ? onDownloadFiles() : setShowLoginModal(true)
+                }
+              >
+                {DOWNLOAD_SELECTED_FILES_MENU_TEXT}
+              </Dropdown.Item>
+            )}
+
           <Tooltip
             title={
               disableDownload

@@ -6,6 +6,7 @@ import {
   FacetColumnResult,
   Query,
   QueryBundleRequest,
+  QueryFilter,
   QueryResultBundle,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
@@ -14,6 +15,7 @@ import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
 } from '../types/IsType'
+import { ReadonlyDeep } from 'type-fest'
 
 type PartialStateObject = {
   hasMoreData: boolean
@@ -131,7 +133,7 @@ export function removeLockedColumnFromFacetData(
  * This includes facet filters and additional filters that are not applied to a locked column.
  */
 export function hasResettableFilters(
-  query: Query,
+  query: ReadonlyDeep<Query>,
   lockedColumn?: LockedColumn,
 ): boolean {
   const hasFacetFilters =
@@ -141,7 +143,7 @@ export function hasResettableFilters(
     ).length > 0
   const hasAdditionalFilters =
     Array.isArray(query.additionalFilters) &&
-    query.additionalFilters.filter(queryFilter =>
+    query.additionalFilters.filter((queryFilter: ReadonlyDeep<QueryFilter>) =>
       isColumnSingleValueQueryFilter(queryFilter) ||
       isColumnMultiValueFunctionQueryFilter(queryFilter)
         ? queryFilter.columnName !== lockedColumn?.columnName

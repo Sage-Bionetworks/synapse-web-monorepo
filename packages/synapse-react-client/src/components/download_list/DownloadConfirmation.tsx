@@ -166,15 +166,15 @@ const DownloadConfirmationContent = (props: {
 
 //============= DownloadConfirmation component =============
 
-export const DownloadConfirmation: React.FunctionComponent<
-  DownloadConfirmationProps
-> = ({
-  getLastQueryRequest,
-  folderId,
-  fnClose,
-  setTopLevelControlsState,
-  topLevelControlsState,
-}) => {
+export function DownloadConfirmation(props: DownloadConfirmationProps) {
+  const {
+    getLastQueryRequest,
+    folderId,
+    fnClose,
+    setTopLevelControlsState,
+    topLevelControlsState,
+  } = props
+
   const { accessToken, downloadCartPageUrl } = useSynapseContext()
   const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
   const [status, setStatus] = useState<StatusEnum>(

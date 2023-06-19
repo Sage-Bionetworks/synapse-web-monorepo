@@ -626,7 +626,7 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
   )
   setCurrentAsyncStatus?.(response)
   while (response.jobState && response.jobState === 'PROCESSING') {
-    await delay(500)
+    await delay(1000)
     response = await doGet<AsynchronousJobStatus<TRequest, TResponse>>(
       ASYNCHRONOUS_JOB_TOKEN(asyncJobId),
       accessToken,

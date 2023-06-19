@@ -25,6 +25,7 @@ import {
   isTextMatchesQueryFilter,
 } from '../../../utils/types/IsType'
 import pluralize from 'pluralize'
+import { ReadonlyDeep } from 'type-fest'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
 
@@ -96,7 +97,7 @@ function getPillPropsFromTextMatchesQueryFilter(
 }
 
 function getPillPropsFromQueryFilters(
-  queryFilters: QueryFilter[],
+  queryFilters: ReadonlyDeep<QueryFilter[]>,
   queryContext: QueryContextType,
   queryVisualizationContext: QueryVisualizationContextType,
 ): SelectionCriteriaPillProps[] {
@@ -123,7 +124,7 @@ function getPillPropsFromQueryFilters(
 }
 
 function getPillPropsFromFacetFilters(
-  selectedFacets: FacetColumnRequest[],
+  selectedFacets: ReadonlyDeep<FacetColumnRequest[]>,
   queryContext: QueryContextType,
   queryVisualizationContext: QueryVisualizationContextType,
 ): SelectionCriteriaPillProps[] {
@@ -195,8 +196,7 @@ function getPillPropsFromFacetFilters(
 function SelectionCriteriaPills() {
   const queryContext = useQueryContext()
   const queryVisualizationContext = useQueryVisualizationContext()
-  const { getLastQueryRequest } = queryContext
-  const lastQueryRequest = getLastQueryRequest()
+  const { lastQueryRequest } = queryContext
 
   const queryFilterPillProps = getPillPropsFromQueryFilters(
     lastQueryRequest.query?.additionalFilters ?? [],

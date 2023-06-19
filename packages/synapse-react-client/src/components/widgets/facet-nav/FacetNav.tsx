@@ -63,7 +63,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
 }: FacetNavProps): JSX.Element => {
   const {
     data,
-    getLastQueryRequest,
+    lastQueryRequest,
     isLoadingNewBundle,
     executeQueryRequest,
     error,
@@ -74,8 +74,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [isFirstTime, setIsFirstTime] = useState(true)
   const { showFacetVisualization, showFacetFilter } = topLevelControlsState
-
-  const lastQueryRequest = getLastQueryRequest()
 
   useEffect(() => {
     const result = getFacets(data, facetsToPlot)
@@ -110,9 +108,16 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
 
   // what needs to happen after the filters are adjusted from the plot
   const applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
-    lastQueryRequest.query.selectedFacets = facets
-    lastQueryRequest.query.offset = 0
-    executeQueryRequest(lastQueryRequest)
+    executeQueryRequest(lastQueryRequest => {
+      return {
+        ...lastQueryRequest,
+        query: {
+          ...lastQueryRequest.query,
+          selectedFacets: facets,
+          offset: 0,
+        },
+      }
+    })
   }
 
   // don't show hidden facets

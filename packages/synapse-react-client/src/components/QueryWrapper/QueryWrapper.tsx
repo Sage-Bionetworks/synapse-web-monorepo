@@ -56,6 +56,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
   const {
     entityId,
     versionNumber,
+    lastQueryRequest,
     getInitQueryRequest,
     getLastQueryRequest,
     setQuery,
@@ -75,17 +76,13 @@ export function QueryWrapper(props: QueryWrapperProps) {
     onQueryChange,
   })
 
-  const lastQueryRequest = useMemo(() => {
-    return getLastQueryRequest()
-  }, [getLastQueryRequest])
-
   const {
     data: asyncJobStatus,
     isLoading: queryIsLoading,
     error,
     isPreviousData: newQueryIsFetching,
   } = useGetQueryResultBundleWithAsyncStatus(
-    lastQueryRequest,
+    lastQueryRequest as QueryBundleRequest,
     {
       // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
       keepPreviousData: true,
@@ -121,9 +118,8 @@ export function QueryWrapper(props: QueryWrapperProps) {
   }, [data, lockedColumn])
 
   const hasResettableFilters = useMemo(() => {
-    const request = getLastQueryRequest()
-    return hasResettableFiltersUtil(request.query, lockedColumn)
-  }, [getLastQueryRequest, lockedColumn])
+    return hasResettableFiltersUtil(lastQueryRequest.query, lockedColumn)
+  }, [lastQueryRequest, lockedColumn])
 
   const getColumnModel = useCallback(
     (columnName: string) => {
@@ -138,6 +134,8 @@ export function QueryWrapper(props: QueryWrapperProps) {
     pageSize,
     setPageSize,
     isLoadingNewBundle: isLoadingNewBundle,
+    initQueryRequest,
+    lastQueryRequest,
     getLastQueryRequest,
     getInitQueryRequest,
     error: error,
