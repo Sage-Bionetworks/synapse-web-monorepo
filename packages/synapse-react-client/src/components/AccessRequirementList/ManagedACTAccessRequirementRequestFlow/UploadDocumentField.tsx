@@ -17,6 +17,7 @@ type UploadDocumentFieldProps = {
   fileHandleAssociations?: FileHandleAssociation[]
   isMultiFileUpload?: boolean
   onClearAttachment?: (fileHandleId: string) => void
+  isLoading?: boolean
 }
 
 export function UploadDocumentField(props: UploadDocumentFieldProps) {
@@ -27,6 +28,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
     documentName,
     isMultiFileUpload = false,
     onClearAttachment,
+    isLoading = false,
   } = props
   const { data: fileData } = useGetFileBatch(
     {
@@ -53,6 +55,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
         uploadCallback={uploadCallback}
         label={`Upload ${documentName}`}
         buttonProps={{
+          disabled: isLoading,
           variant: 'outlined',
           endIcon: <IconSvg icon={'upload'} wrap={false} />,
         }}
