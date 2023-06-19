@@ -3,7 +3,7 @@ name: "Deploy sage-account-web"
 on:
   push:
     branches:
-      - releases/sage-account-web/staging
+      - main
     paths:
       - "packages/synapse-react-client/**"
       - "apps/sage-account-web/**"

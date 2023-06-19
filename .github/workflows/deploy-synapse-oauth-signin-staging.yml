@@ -3,7 +3,7 @@ name: "Deploy synapse-oauth-signin"
 on:
   push:
     branches:
-      - releases/synapse_oauth_signin/staging
+      - main
     paths:
       - "packages/synapse-react-client/**"
       - "apps/synapse-oauth-signin/**"

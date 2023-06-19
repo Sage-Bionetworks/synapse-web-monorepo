@@ -3,7 +3,7 @@ name: "Deploy Challenges Portal"
 on:
   push:
     branches:
-      - releases/portals/staging
+      - main
     paths:
       - "apps/portals/**"
       - "!apps/portals/src/configurations/**"
