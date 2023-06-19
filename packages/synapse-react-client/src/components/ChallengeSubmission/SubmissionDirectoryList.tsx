@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import LinkIcon from '@mui/icons-material/Link'
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { RadioOption } from '../widgets/RadioGroup'
@@ -20,6 +19,7 @@ import {
 import { useGetEntities, useGetEntityChildren } from '../../synapse-queries'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
+import CopyToClipboardIcon from '../CopyToClipboardIcon'
 
 type SubmissionDirectoryRow = {
   id: string
@@ -29,15 +29,12 @@ type SubmissionDirectoryRow = {
 
 type SubmissionDirectoryListProps = {
   needsRefetch: boolean
-  challengeProjectId: string | undefined
-  onAddRepo: () => void
+  challengeProjectId: string
   onRepoSelected: (selectedRepo: DockerRepository) => void
 }
 
 function SubmissionDirectoryList({
-  needsRefetch,
   challengeProjectId,
-  onAddRepo,
   onRepoSelected,
 }: SubmissionDirectoryListProps) {
   const [page, setPage] = useState<number>(0)
@@ -52,6 +49,9 @@ function SubmissionDirectoryList({
   const [rows, setRows] = useState<SubmissionDirectoryRow[]>([])
   const PER_PAGE = 20
   const HEADERS_PER_PAGE = 50
+  const PROJECT_URL = `${getEndpoint(
+    BackendDestinationEnum.PORTAL_ENDPOINT,
+  )}#!Synapse:${challengeProjectId}`
 
   const request: EntityChildrenRequest = {
     parentId: challengeProjectId,
@@ -67,9 +67,7 @@ function SubmissionDirectoryList({
     return entities.slice(start, start + PER_PAGE)
   }
 
-  console.log({ request })
-
-  const { refetch } = useGetEntityChildren(request, {
+  useGetEntityChildren(request, {
     enabled: !!challengeProjectId,
     useErrorBoundary: true,
     onSuccess: data => {
@@ -84,19 +82,6 @@ function SubmissionDirectoryList({
     },
   })
 
-  // A new repo had been added
-  useEffect(() => {
-    console.log({ needsRefetch })
-    if (needsRefetch) {
-      setEntities([])
-      setFetchedHeaders([])
-      // setTotal(0)
-      setPage(0)
-      setNextPageToken(null)
-      refetch()
-    }
-  }, [needsRefetch, refetch])
-
   const start = page * PER_PAGE
   const pageHeaders = fetchedHeaders.slice(start, start + PER_PAGE)
   console.log('pageHeaders', {
@@ -107,7 +92,7 @@ function SubmissionDirectoryList({
   const { isLoading: areEntitiesLoading, data: results } = useGetEntities(
     pageHeaders,
     {
-      enabled: true, // getEntityPage(page).length < pageHeaders.length,
+      enabled: getEntityPage(page).length < pageHeaders.length,
       onSuccess: data => {
         console.log('useGetEntities', data)
         const newEntities = [...entities]
@@ -122,10 +107,10 @@ function SubmissionDirectoryList({
     },
   )
 
-  console.log('results', {
-    len: results.length,
-    id: results[results.length - 1]?.id ?? -1,
-  })
+  // console.log('results', {
+  //   len: results.length,
+  //   id: results[results.length - 1]?.id ?? -1,
+  // })
 
   const repoChangeHandler = (value: string) => {
     const repo = entities.find(entity => entity.id === value)
@@ -166,7 +151,7 @@ function SubmissionDirectoryList({
           to={{
             pathname: `${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}/#!Synapse:${params.row.id}`,
+            )}#!Synapse:${params.row.id}`,
           }}
           target="_blank"
         >
@@ -225,7 +210,12 @@ function SubmissionDirectoryList({
   return (
     <Box>
       <Box
-        sx={{ display: 'flex', backgroundColor: '#FBFBFC', padding: '10px' }}
+        sx={{
+          display: 'flex',
+          backgroundColor: '#FBFBFC',
+          padding: '10px',
+          justifyContent: 'space-between',
+        }}
       >
         <Typography
           variant="h6"
@@ -233,6 +223,18 @@ function SubmissionDirectoryList({
         >
           Your Submission Directory
         </Typography>
+        <Box sx={{ display: 'flex' }}>
+          <Typography
+            variant="body1"
+            sx={{ fontSize: '14px', color: '#71767F' }}
+          >
+            Project SynID:{'  '}
+            <Link to={{ pathname: PROJECT_URL }} target="_blank">
+              {challengeProjectId}
+            </Link>
+          </Typography>
+          <CopyToClipboardIcon value={PROJECT_URL} sx={{ marginTop: '-4px' }} />
+        </Box>
       </Box>
       <Box>
         <DataGrid
@@ -268,16 +270,7 @@ function SubmissionDirectoryList({
           }
         />
       </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button
-          color="primary"
-          variant="outlined"
-          onClick={onAddRepo}
-          endIcon={<LinkIcon />}
-        >
-          Add External Docker Repository
-        </Button>
-
+      <Box>
         <Button
           color="primary"
           variant="contained"
