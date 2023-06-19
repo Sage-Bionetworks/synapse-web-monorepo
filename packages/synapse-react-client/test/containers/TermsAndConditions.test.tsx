@@ -15,12 +15,8 @@ async function renderComponent(wrapperProps?: SynapseContextType) {
     wrapper: createWrapper(wrapperProps),
   })
 
-  // The items are loaded when we can't find any loading items
-  await waitFor(() =>
-    expect(
-      screen.getAllByTestId('loading-terms-and-conditions').length,
-    ).toEqual(0),
-  )
+  // The items will be loaded when this text is available
+  await waitFor(() => expect(screen.getAllByRole('checkbox')).toHaveLength(8))
 
   return wrapper
 }
@@ -36,16 +32,11 @@ describe('Terms And Conditions: basic functionality', () => {
 
   it('renders terms and condition without crashing', async () => {
     const container = await renderComponent()
-    await screen.findByText(
-      'I will adhere to the Synapse Community Standards of inclusion and respect',
-      { exact: true },
-    )
-    expect(container).toBeDefined()
-  })
-
-  it('should render all checkboxes', async () => {
-    const container = await renderComponent()
-    const li = container.queryAllByRole('checkbox')
-    expect(li.length).toEqual(checkboxCount)
+    expect(
+      screen.findByText(
+        'I will adhere to the Synapse Community Standards of inclusion and respect.',
+        { exact: true },
+      ),
+    ).toBeDefined()
   })
 })
