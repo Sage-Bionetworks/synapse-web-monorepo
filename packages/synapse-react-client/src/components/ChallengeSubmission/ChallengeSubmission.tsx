@@ -27,12 +27,8 @@ import { useGetTeam } from '../../synapse-queries/team/useTeam'
 import SynapseClient, { createEntity } from '../../synapse-client'
 import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import SubmissionDirectoryList from './SubmissionDirectoryList'
-import AddExternalRepo from './AddExternalRepo'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import ChallengeSubmit from './ChallengeSubmit'
-import { DockerCommit } from '@sage-bionetworks/synapse-types'
-import { PaginatedResults } from '@sage-bionetworks/synapse-types'
 
 type ChallengeSubmissionProps = {
   projectId: string
@@ -51,11 +47,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const [projectAliasFound, setProjectAliasFound] = useState<boolean>()
   const { mutate: updateACL } = useUpdateEntityACL()
   const [canSubmit, setCanSubmit] = useState<boolean>(false)
-  const [showAddRepo, setShowAddRepo] = useState<boolean>(false)
   const [showSubmitDialog, setShowSubmitDialog] = useState<boolean>(false)
-  const [repoName, setRepoName] = useState<string>('')
-  const [repoError, setRepoError] = useState<string>()
-  const [needsRefetch, setNeedsRefetch] = useState<boolean>(false)
   const [selectedRepo, setSelectedRepo] = useState<DockerRepository>()
 
   const [submissionName, setSubmissionName] = useState<string>('')
@@ -240,50 +232,6 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     }
   }, [accessToken, submissionTeam, challenge, newProject, projectAliasFound])
 
-  const handleAddRepo = async () => {
-    setNeedsRefetch(false)
-    setRepoError(undefined)
-
-    async function createRepo() {
-      setNeedsRefetch(false)
-      // When creating a Docker Repo Entity we omit name
-      const repo: Omit<DockerRepository, 'name'> = {
-        parentId: challengeProjectId,
-        repositoryName: repoName,
-        isManaged: false,
-        concreteType: DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE,
-      }
-      try {
-        /**
-         * createEntity expects a type that extends Entity
-         * "name" is a required property of Entity
-         * but when creating a repo, we want the backend to provide the name
-         * so it cannot be set on the request
-         */
-        // @ts-ignore
-        const createdRepo = await createEntity(repo, accessToken)
-        console.log({ createdRepo })
-        setNeedsRefetch(true)
-        closeAddRepoDialog()
-      } catch (error) {
-        console.warn(error)
-        const msg: string = error.message ? error.message : 'An error occurred.'
-        setRepoError(msg)
-      }
-    }
-    await createRepo()
-  }
-
-  const onRepoNameChange = (value: string) => {
-    setRepoName(value)
-  }
-
-  const closeAddRepoDialog = () => {
-    setShowAddRepo(false)
-    setRepoName('')
-    setRepoError(undefined)
-  }
-
   const onRepoSelected = (selectedRepo: DockerRepository) => {
     console.log({ selectedRepo })
     setSelectedRepo(selectedRepo)
@@ -337,27 +285,10 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
       {canSubmit && (
         <>
           <SubmissionDirectoryList
-            needsRefetch={needsRefetch}
-            challengeProjectId={challengeProjectId}
-            onAddRepo={() => setShowAddRepo(true)}
+            challengeProjectId={challengeProjectId!}
             onRepoSelected={onRepoSelected}
           />
 
-          <ConfirmationDialog
-            open={showAddRepo}
-            title="Add External Repository"
-            onCancel={closeAddRepoDialog}
-            onConfirm={() => {
-              handleAddRepo()
-            }}
-            content={
-              <AddExternalRepo
-                repoName={repoName}
-                onRepoNameChange={onRepoNameChange}
-                errorMessage={repoError}
-              />
-            }
-          />
           {selectedRepo && (
             <ConfirmationDialog
               open={showSubmitDialog}
