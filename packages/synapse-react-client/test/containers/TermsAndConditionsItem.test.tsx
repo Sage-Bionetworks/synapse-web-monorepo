@@ -28,7 +28,9 @@ describe('Terms and Conditions Item: basic functionality', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
-    jest.spyOn(SynapseClient, 'getFileContent').mockResolvedValue(mockIconSvg)
+    jest
+      .spyOn(SynapseClient, 'getFileHandleContent')
+      .mockResolvedValue(mockIconSvg)
   })
   it('render component without crashing', () => {
     const { container } = render(
