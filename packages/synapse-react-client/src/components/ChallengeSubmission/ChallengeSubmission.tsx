@@ -27,8 +27,7 @@ import { useGetTeam } from '../../synapse-queries/team/useTeam'
 import SynapseClient, { createEntity } from '../../synapse-client'
 import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import SubmissionDirectoryList from './SubmissionDirectoryList'
-import ConfirmationDialog from '../ConfirmationDialog'
-import ChallengeSubmit from './ChallengeSubmit'
+import ChallengeSubmissionStepper from './ChallengeSubmissionStepper'
 
 type ChallengeSubmissionProps = {
   projectId: string
@@ -47,12 +46,8 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const [projectAliasFound, setProjectAliasFound] = useState<boolean>()
   const { mutate: updateACL } = useUpdateEntityACL()
   const [canSubmit, setCanSubmit] = useState<boolean>(false)
-  const [showSubmitDialog, setShowSubmitDialog] = useState<boolean>(false)
   const [selectedRepo, setSelectedRepo] = useState<DockerRepository>()
-
-  const [submissionName, setSubmissionName] = useState<string>('')
-  const [selectedEval, setSelectedEval] = useState<string | undefined>()
-  const [submissionError, setSubmissionError] = useState<string | undefined>()
+  const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
 
   const EMPTY_ID = ''
 
@@ -232,49 +227,13 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     }
   }, [accessToken, submissionTeam, challenge, newProject, projectAliasFound])
 
-  const onRepoSelected = (selectedRepo: DockerRepository) => {
-    console.log({ selectedRepo })
-    setSelectedRepo(selectedRepo)
-    setShowSubmitDialog(true)
+  const onRepoSelected = (newRepo: DockerRepository) => {
+    setSelectedRepo(newRepo)
+    setIsShowingModal(true)
   }
 
-  const closeSubmitDialog = () => {
-    setShowSubmitDialog(false)
-  }
-
-  const submitRepoForEvaluation = async () => {
-    if (!selectedRepo?.id) return
-    let commits
-    try {
-      commits = await SynapseClient.getDockerTag(
-        selectedRepo.id,
-        accessToken,
-        0,
-        1,
-      )
-    } catch (e) {
-      return setSubmissionError(e.message)
-    }
-    if (commits.totalNumberOfResults === 0) {
-      return setSubmissionError(
-        'No commits have been made to this repository. Please select a repository with at least one commit.',
-      )
-    }
-    const latestCommit = commits[0]
-    const submission: EvaluationSubmission = {
-      userId: userProfile!.ownerId,
-      evaluationId: selectedEval!,
-      entityId: selectedRepo!.id!,
-      dockerRepositoryName: selectedRepo?.name,
-      dockerDigest: latestCommit.digest,
-      versionNumber: 1,
-      teamId: submissionTeamId,
-    }
-    SynapseClient.submitToEvaluation(
-      submission,
-      selectedRepo?.etag!,
-      accessToken,
-    )
+  const onModalClose = () => {
+    setIsShowingModal(false)
   }
 
   return (
@@ -288,27 +247,14 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
             challengeProjectId={challengeProjectId!}
             onRepoSelected={onRepoSelected}
           />
-
-          {selectedRepo && (
-            <ConfirmationDialog
-              open={showSubmitDialog}
-              title="Submit to Challenge"
-              onCancel={closeSubmitDialog}
-              onConfirm={() => {
-                submitRepoForEvaluation()
-              }}
-              content={
-                <ChallengeSubmit
-                  projectId={projectId}
-                  submissonName={submissionName}
-                  selectedEvaluation={selectedEval}
-                  onSubmissionNameChange={(value: string) =>
-                    setSubmissionName(value)
-                  }
-                  onEvaluationChange={(value: string) => setSelectedEval(value)}
-                  submissionError={submissionError}
-                />
-              }
+          {userProfile && selectedRepo && (
+            <ChallengeSubmissionStepper
+              projectId={projectId}
+              userId={userProfile?.ownerId}
+              teamId={submissionTeamId}
+              repository={selectedRepo}
+              isShowingModal={isShowingModal}
+              onClose={onModalClose}
             />
           )}
         </>

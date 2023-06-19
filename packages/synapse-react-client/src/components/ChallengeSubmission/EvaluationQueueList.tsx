@@ -1,11 +1,11 @@
 import { Alert, Box, TextField, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React from 'react'
 import { useGetEntityEvaluations } from '../../synapse-queries'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { RadioOption } from '../widgets/RadioGroup'
 
-type ChallengeSubmitProps = {
+type EvaluationQueueListProps = {
   projectId: string
   submissonName: string
   selectedEvaluation: string | undefined
@@ -14,14 +14,14 @@ type ChallengeSubmitProps = {
   submissionError?: string
 }
 
-function ChallengeSubmit({
+function EvaluationQueueList({
   projectId,
   submissonName,
   selectedEvaluation,
   onSubmissionNameChange,
   onEvaluationChange,
   submissionError,
-}: ChallengeSubmitProps) {
+}: EvaluationQueueListProps) {
   const { isLoading, data: evaluations } = useGetEntityEvaluations(projectId, {
     activeOnly: true,
     accessType: ACCESS_TYPE.SUBMIT,
@@ -129,4 +129,4 @@ function ChallengeSubmit({
   )
 }
 
-export default ChallengeSubmit
+export default EvaluationQueueList

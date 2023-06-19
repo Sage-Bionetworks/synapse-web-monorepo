@@ -283,6 +283,8 @@ import {
   UserEntityPermissions,
   GetEvaluationParameters,
   DockerCommit,
+  SortBy,
+  Direction,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -4850,10 +4852,17 @@ export const getDockerTag = (
   entityId: string,
   accessToken?: string,
   offset: string | number = 0,
-  limit: string | number = 50,
+  limit: string | number = 20,
+  sort: SortBy = SortBy.CREATED_ON,
+  sortDirection: Direction = Direction.DESC,
 ) => {
+  const params = new URLSearchParams()
+  params.set('offset', offset.toString())
+  params.set('limit', limit.toString())
+  params.set('sort', sort)
+  params.set('sortDirection', sortDirection)
   return doGet<PaginatedResults<DockerCommit>>(
-    `/repo/v1/entity/${entityId}/dockerTag?limit=${limit}&offset=${offset}`,
+    `/repo/v1/entity/${entityId}/dockerTag?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

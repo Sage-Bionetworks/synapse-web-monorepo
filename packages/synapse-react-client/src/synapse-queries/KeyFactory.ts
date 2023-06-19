@@ -665,9 +665,11 @@ export class KeyFactory {
 
   public getPaginatedDockerTagQueryKey(
     id: string,
-    limit: number,
-    offset: number,
+    offset: string,
+    limit: string,
+    sort: string,
+    sortDirection: string,
   ) {
-    return this.getKey('dockerTag', id, limit, offset)
+    return this.getKey('dockerTag', id, offset, limit, sort, sortDirection)
   }
 }

@@ -3,6 +3,7 @@ import { Box, IconButton } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { ToastMessage } from './ToastMessage/ToastMessage'
 import { BoxProps } from '@mui/material'
+import IconSvg from './IconSvg'
 
 export type CopyToClipboardIconProps = BoxProps & {
   value: string
@@ -41,7 +42,11 @@ export const CopyToClipboardIcon: React.FunctionComponent<
       ></ToastMessage>
       <Box display="flex" ref={ref} {...props}>
         <IconButton onClick={copyToClipboard(ref, value)}>
-          <ContentCopyIcon sx={{ width: `${size}px`, height: `${size}px` }} />
+          <IconSvg
+            icon="contentCopy"
+            wrap={false}
+            sx={{ width: `${size}px`, height: `${size}px` }}
+          />
         </IconButton>
       </Box>
     </>

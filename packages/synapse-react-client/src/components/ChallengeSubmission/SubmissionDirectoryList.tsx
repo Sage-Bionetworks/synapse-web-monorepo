@@ -20,6 +20,10 @@ import { useGetEntities, useGetEntityChildren } from '../../synapse-queries'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
+import { InfoTwoTone } from '@mui/icons-material'
+import SynapseClient from '../../synapse-client'
+import { useSynapseContext } from '../../utils'
+import { ErrorBanner } from '../error/ErrorBanner'
 
 type SubmissionDirectoryRow = {
   id: string
@@ -28,7 +32,6 @@ type SubmissionDirectoryRow = {
 }
 
 type SubmissionDirectoryListProps = {
-  needsRefetch: boolean
   challengeProjectId: string
   onRepoSelected: (selectedRepo: DockerRepository) => void
 }
@@ -41,6 +44,9 @@ function SubmissionDirectoryList({
   const [selectedRepo, setSelectedRepo] = useState<
     DockerRepository | undefined
   >()
+  const { accessToken } = useSynapseContext()
+  const [errorMessage, setErrorMessage] = useState<string>()
+  const [hasCommits, setHasCommits] = useState<boolean>()
   const [fetchedHeaders, setFetchedHeaders] = useState<EntityHeader[]>([])
   const [entities, setEntities] = useState<DockerRepository[]>([])
   const [total, setTotal] = useState<number>(0)
@@ -107,14 +113,25 @@ function SubmissionDirectoryList({
     },
   )
 
-  // console.log('results', {
-  //   len: results.length,
-  //   id: results[results.length - 1]?.id ?? -1,
-  // })
-
-  const repoChangeHandler = (value: string) => {
+  const repoChangeHandler = async (value: string) => {
+    setHasCommits(false)
     const repo = entities.find(entity => entity.id === value)
-    setSelectedRepo(repo)
+    if (repo) {
+      setSelectedRepo(repo)
+      let commits
+      try {
+        commits = await SynapseClient.getDockerTag(repo.id!, accessToken, 0, 1)
+      } catch (e) {
+        return setErrorMessage(e.message)
+      }
+      if (commits.totalNumberOfResults === 0) {
+        return setErrorMessage(
+          'No commits have been made to this repository. Please select a repository with at least one commit.',
+        )
+      }
+      setErrorMessage(undefined)
+      setHasCommits(true)
+    }
   }
 
   const columns: GridColDef[] = [
@@ -131,7 +148,9 @@ function SubmissionDirectoryList({
           <RadioOption
             value={params.id}
             currentValue={selectedRepo?.id}
-            onChange={repoChangeHandler}
+            onChange={selectedRepoId => {
+              repoChangeHandler(selectedRepoId as string)
+            }}
             label=""
             groupId="radiogroup"
             style={{ marginBottom: '16px' }}
@@ -204,7 +223,7 @@ function SubmissionDirectoryList({
   }
 
   const repoSelectedHandler = () => {
-    onRepoSelected(selectedRepo)
+    onRepoSelected(selectedRepo!)
   }
 
   return (
@@ -270,15 +289,29 @@ function SubmissionDirectoryList({
           }
         />
       </Box>
+      {errorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
       <Box>
         <Button
           color="primary"
           variant="contained"
           onClick={repoSelectedHandler}
-          disabled={!selectedRepo}
+          disabled={!hasCommits}
         >
           Submit Selection
         </Button>
+      </Box>
+      <Box mt={4} display={'flex'}>
+        <InfoTwoTone
+          sx={{
+            width: '16px',
+            height: '16px',
+            verticalAlign: 'text-bottom',
+          }}
+        />
+        <Box ml={2}>
+          To learn more about how to create and submit the Docker containers
+          using command line, see our Docker model submission guide.
+        </Box>
       </Box>
     </Box>
   )
