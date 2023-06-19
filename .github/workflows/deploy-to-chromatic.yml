@@ -11,12 +11,36 @@ on:
     types: [created]
 
 jobs:
-  main-deploy-to-chromatic:
-    if: github.event_name == 'push'
+  deploy-to-chromatic:
+    name: Deploy to Chromatic
     runs-on: ubuntu-latest
     steps:
+      - name: Get PR if triggered by comment
+        if: github.event.issue.pull_request
+        uses: alessbell/pull-request-comment-branch@v1.1
+        id: comment-branch
+      - name: Configure to use main
+        if: github.event_name == 'push'
+        env:
+          FULL_REPO_NAME: ${{ github.repository }}
+          HEAD_REF: ${{ github.ref }}
+        run: |
+          echo "FULL_REPO_NAME=$FULL_REPO_NAME" >> "$GITHUB_ENV"
+          echo "HEAD_REF=$HEAD_REF" >> "$GITHUB_ENV"
+      - name: Configure to use PR
+        if: github.event.issue.pull_request
+        env:
+          FULL_REPO_NAME: ${{ steps.comment-branch.outputs.head_owner }}/${{ steps.comment-branch.outputs.head_repo }}"
+          HEAD_REF: ${{ steps.comment-branch.outputs.head_ref }}
+        run: |
+          echo "FULL_REPO_NAME=$FULL_REPO_NAME" >> "$GITHUB_ENV"
+          echo "HEAD_REF=$HEAD_REF" >> "$GITHUB_ENV"
+      - name: Output configuration
+        run: echo "Deploying $FULL_REPO_NAME to Chromatic using branch $HEAD_REF"
       - uses: actions/checkout@v3.1.0
         with:
+          repository: ${{ env.FULL_REPO_NAME }}
+          ref: ${{ env.HEAD_REF }}
           # Chromatic requires full git history to track changes
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
@@ -29,40 +53,13 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: packages/synapse-react-client
           exitZeroOnChanges: true
-          exitOnceUploaded: true
-          autoAcceptChanges: 'main'
-  pr-deploy-to-chromatic:
-    if: github.event.issue.pull_request && contains(github.event.comment.body, '/chromatic')
-    runs-on: ubuntu-latest
-    steps:
-      - if: github.event.issue.pull_request
-        name: Get PR branch
-        uses: alessbell/pull-request-comment-branch@v1.1
-        id: comment-branch
-      - uses: actions/checkout@v3.1.0
-        with:
-          repository: ${{ steps.comment-branch.outputs.head_owner }}/${{ steps.comment-branch.outputs.head_repo }}
-          ref: ${{ steps.comment-branch.outputs.head_ref }}
-          # Chromatic requires full git history to track changes
-          fetch-depth: 0
-      - uses: ./.github/actions/pnpm-setup-action
-      - name: Prebuild dependencies
-        # we technically only need to build the dependencies of SRC, but Nx doesn't expose an easy way to do that
-        run: pnpm nx run synapse-react-client:build
-      - id: chromatic-deploy
-        name: Publish to Chromatic
-        uses: chromaui/action@v1
-        with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          workingDir: packages/synapse-react-client
-          exitZeroOnChanges: true
           exitOnceUploaded: false # Wait for snapshot tests to complete so we can report the results
           autoAcceptChanges: 'main'
-          repositorySlug: ${{ steps.comment-branch.outputs.head_owner }}/${{ steps.comment-branch.outputs.head_repo }}
-          branchName: ${{ steps.comment-branch.outputs.head_ref }}
+          repositorySlug: ${{ env.FULL_REPO_NAME }}
+          branchName: ${{ env.HEAD_REF }}
       - name: Add comment to PR
         uses: actions/github-script@v6
-        if: always()
+        if: github.event.issue.pull_request
         with:
           script: |
             const name = '${{ github.workflow }}';
