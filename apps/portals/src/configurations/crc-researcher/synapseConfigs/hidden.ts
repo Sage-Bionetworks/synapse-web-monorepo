@@ -16,9 +16,8 @@ export const hidden: SynapseConfig = {
     name: 'Hidden Participants',
     columnAliases,
     facetsToPlot: allFacetsToPlot,
-    tableConfiguration: {
-      isRowSelectionVisible: true,
-    },
+    tableConfiguration: {},
+    isRowSelectionVisible: true,
     visibleColumnCount: 10,
     customControls: [
       {

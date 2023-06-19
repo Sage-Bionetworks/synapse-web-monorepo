@@ -57,9 +57,8 @@ export const uncategorized: SynapseConfig = {
     sql,
     name: 'Uncategorized Participants',
     columnAliases,
-    tableConfiguration: {
-      isRowSelectionVisible: true,
-    },
+    tableConfiguration: {},
+    isRowSelectionVisible: true,
     facetsToPlot: allFacetsToPlot,
     customControls: [
       {
