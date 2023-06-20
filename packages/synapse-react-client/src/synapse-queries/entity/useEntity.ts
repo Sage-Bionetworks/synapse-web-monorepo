@@ -336,8 +336,7 @@ export function useUpdateEntityACL(
   const { accessToken, keyFactory } = useSynapseContext()
 
   return useMutation<AccessControlList, SynapseClientError, AccessControlList>(
-    (acl: AccessControlList) =>
-      SynapseClient.updateEntityACL<AccessControlList>(acl, accessToken),
+    (acl: AccessControlList) => SynapseClient.updateEntityACL(acl, accessToken),
     {
       ...options,
       onSuccess: async (updatedACL: AccessControlList, variables, ctx) => {
