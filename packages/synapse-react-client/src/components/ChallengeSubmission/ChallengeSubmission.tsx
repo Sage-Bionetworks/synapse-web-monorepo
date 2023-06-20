@@ -181,9 +181,6 @@ function ChallengeSubmission({
         })
         setIsProjectNewlyCreated(false)
       }
-      if (error) {
-        setErrorMessage(`Error: Could not retrieve project ACL.`)
-      }
     },
   })
 
