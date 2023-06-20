@@ -58,41 +58,38 @@ export function useGetEntities(
   entityHeaders: Pick<EntityHeader, 'id' | 'versionNumber'>[],
   options?: UseQueryOptions<Entity[], SynapseClientError>,
 ) {
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [entities, setEntities] = useState<Entity[]>([])
   const { accessToken, keyFactory } = useSynapseContext()
-  const queries = useQueries(
-    entityHeaders.map(header => {
-      return {
-        queryKey: keyFactory.getEntityVersionQueryKey(
-          header.id,
-          header.versionNumber,
-        ),
-        queryFn: () =>
-          SynapseClient.getEntity(accessToken, header.id, header.versionNumber),
-      }
-    }, options),
+  const headerIds = entityHeaders.map(header => header.id).join()
+  const queries = useMemo(
+    () =>
+      entityHeaders.map(header => {
+        return {
+          queryKey: keyFactory.getEntityVersionQueryKey(
+            header.id,
+            header.versionNumber,
+          ),
+          queryFn: () =>
+            SynapseClient.getEntity(
+              accessToken,
+              header.id,
+              header.versionNumber,
+            ),
+        }
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [headerIds],
   )
-
-  useEffect(() => {
-    console.log({ queries })
-    const loading = queries.some(result => result.isLoading)
-    setIsLoading(loading)
-  }, [queries])
-
+  const results = useQueries(queries)
+  const isLoading = results.some(result => result.isLoading)
+  const entities = results
+    .filter(query => query.data !== undefined)
+    .map(query => query.data)
   return useMemo(() => {
-    if (!isLoading) {
-      const ent = queries
-        .filter(query => query.data !== undefined)
-        .map(query => query.data)
-      // @ts-ignore
-      setEntities(ent)
-      // @ts-ignore
-      if (options.onSuccess) options.onSuccess(ent)
-    }
+    // @ts-ignore
+    if (!isLoading && options?.onSuccess) options.onSuccess(entities)
     return { isLoading, data: entities }
-    // Adding queries would defeat memoization
-  }, [isLoading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, headerIds])
 }
 
 export function useUpdateEntity<T extends Entity>(
