@@ -165,7 +165,9 @@ describe('RequestDataAccessStep2: basic functionality', () => {
 
     // Add user 2
     expect(interceptedOnSelectUserCallback).toBeDefined()
-    interceptedOnSelectUserCallback(MOCK_USER_ID_2, mockUserGroupHeader2)
+    await act(() => {
+      interceptedOnSelectUserCallback(MOCK_USER_ID_2, mockUserGroupHeader2)
+    })
 
     // Both users are now visible as accessors
     await screen.findByText(
@@ -440,7 +442,7 @@ describe('RequestDataAccessStep2: basic functionality', () => {
 
     await waitFor(() => {
       expect(mockUpdateDataAccessRequest).toHaveBeenCalled()
-      const updatedRequest = mockUpdateDataAccessRequest.mock.calls[0][0]
+      const updatedRequest = mockUpdateDataAccessRequest.mock.lastCall[0]
       expect(updatedRequest.accessorChanges).toHaveLength(1)
       expect(updatedRequest.accessorChanges).toContainEqual({
         userId: String(MOCK_USER_ID),
