@@ -53,7 +53,7 @@ const Attestation: React.FC<AttestationProps> = (props: AttestationProps) => {
         </>
       )}
       <FileUpload
-        uploadCallback={uploadCallback}
+        onComplete={uploadCallback}
         label="Upload from your computer"
         buttonProps={{
           variant: 'outlined',

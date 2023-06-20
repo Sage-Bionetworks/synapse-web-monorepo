@@ -3502,7 +3502,7 @@ export const getDataAccessRequestForUpdate = (
   )
 }
 
-// http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
+// https://rest-docs.synapse.org/rest/POST/dataAccessRequest.html
 export function updateDataAccessRequest(
   requestObj: Request | Renewal,
   accessToken: string,

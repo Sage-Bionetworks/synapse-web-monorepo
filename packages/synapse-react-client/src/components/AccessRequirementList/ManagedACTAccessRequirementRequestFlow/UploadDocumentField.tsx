@@ -7,7 +7,7 @@ import { Box, Button } from '@mui/material'
 import FileUpload from '../../FileUpload/FileUpload'
 import IconSvg from '../../IconSvg/IconSvg'
 import DirectDownloadButton from '../../DirectDownloadButton'
-import React from 'react'
+import React, { useState } from 'react'
 
 type UploadDocumentFieldProps = {
   id: string
@@ -17,6 +17,7 @@ type UploadDocumentFieldProps = {
   fileHandleAssociations?: FileHandleAssociation[]
   isMultiFileUpload?: boolean
   onClearAttachment?: (fileHandleId: string) => void
+  isLoading?: boolean
 }
 
 export function UploadDocumentField(props: UploadDocumentFieldProps) {
@@ -27,7 +28,10 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
     documentName,
     isMultiFileUpload = false,
     onClearAttachment,
+    isLoading = false,
   } = props
+  const [isUploading, setIsUploading] = useState(false)
+
   const { data: fileData } = useGetFileBatch(
     {
       includeFileHandles: true,
@@ -50,9 +54,14 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
     >
       <FileUpload
         id={`${id}-upload`}
-        uploadCallback={uploadCallback}
+        onUploadStart={() => setIsUploading(true)}
+        onComplete={res => {
+          setIsUploading(false)
+          uploadCallback(res)
+        }}
         label={`Upload ${documentName}`}
         buttonProps={{
+          disabled: isLoading,
           variant: 'outlined',
           endIcon: <IconSvg icon={'upload'} wrap={false} />,
         }}
@@ -88,6 +97,15 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
           </Box>
         )
       })}
+      {isUploading && (
+        <Button
+          disabled={true}
+          variant={'text'}
+          endIcon={<IconSvg icon={'download'} wrap={false} />}
+        >
+          Uploading...
+        </Button>
+      )}
     </Box>
   )
 }
