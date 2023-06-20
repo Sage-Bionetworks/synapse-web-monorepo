@@ -305,7 +305,7 @@ export default function DataAccessRequestAccessorsFilesForm(
   const onAccessorChange: DataAccessRequestAccessorsEditorProps['onChange'] =
     updater => {
       // Copy the array so the caller doesn't have to worry about immutability
-      setAccessorChanges([...updater(dataAccessRequest!.accessorChanges || [])])
+      setAccessorChanges([...updater(accessorChanges || [])])
     }
 
   const onClearAttachment = (fid: string) => {
