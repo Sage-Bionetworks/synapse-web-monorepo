@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { DockerCommit, DockerRepository } from '@sage-bionetworks/synapse-types'
+import { DockerCommit } from '@sage-bionetworks/synapse-types'
 import StepperDialog from '../StepperDialog'
 import { Step } from '../StepperDialog/StepperDialog'
 import { useSynapseContext } from '../../utils'
@@ -94,9 +94,7 @@ function ChallengeSubmissionStepper({
 
   const [submissionName, setSubmissionName] = useState<string>('')
   const [selectedEval, setSelectedEval] = useState<string | undefined>()
-  const [submissionError, setSubmissionError] = useState<string | undefined>()
   const [confirming, setConfirming] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(false)
 
   const submitRepoForEvaluation = async () => {
     if (!entity.id || !selectedCommit) return
@@ -128,7 +126,6 @@ function ChallengeSubmissionStepper({
     setSelectedCommit(undefined)
     setSubmissionName('')
     setSelectedEval(undefined)
-    setSubmissionError(undefined)
     setConfirming(false)
     onClose()
     setStep(initialStep)
@@ -198,7 +195,7 @@ function ChallengeSubmissionStepper({
       confirming={confirming}
       step={step}
       content={stepperContent()}
-      loading={loading}
+      loading={false}
     />
   )
 }

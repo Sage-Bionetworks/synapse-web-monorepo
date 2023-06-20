@@ -5,7 +5,6 @@ import { RadioOption } from '../widgets/RadioGroup'
 import {
   Direction,
   DockerCommit,
-  DockerRepository,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
 import { formatDate } from '../../utils/functions/DateFormatter'

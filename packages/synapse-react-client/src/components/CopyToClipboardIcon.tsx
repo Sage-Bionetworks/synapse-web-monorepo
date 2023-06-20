@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, IconButton } from '@mui/material'
-import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { ToastMessage } from './ToastMessage/ToastMessage'
 import { BoxProps } from '@mui/material'
 import IconSvg from './IconSvg'
