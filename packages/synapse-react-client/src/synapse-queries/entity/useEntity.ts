@@ -81,9 +81,9 @@ export function useGetEntities(
   )
   const results = useQueries(queries)
   const isLoading = results.some(result => result.isLoading)
-  const entities = results
+  const entities: Entity[] = results
     .filter(query => query.data !== undefined)
-    .map(query => query.data)
+    .map(query => query.data!)
   return useMemo(() => {
     // @ts-ignore
     if (!isLoading && options?.onSuccess) options.onSuccess(entities)

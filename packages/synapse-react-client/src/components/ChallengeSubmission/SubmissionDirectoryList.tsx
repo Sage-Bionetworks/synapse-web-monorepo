@@ -331,7 +331,7 @@ function SubmissionDirectoryList({
               endIcon: <IconSvg icon="upload" />,
               sx: { lineHeight: 1 },
             }}
-            uploadCallback={handleUpload}
+            onComplete={handleUpload}
           />
         )}
         <Button
