@@ -133,7 +133,6 @@ export default function DataAccessRequestAccessorsFilesForm(
 
   const { data: dataAccessRequest, isLoading: isLoadingGetDataAccessRequest } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
-      // We append the current user onto the accessorChanges, so we wait for that data to populate
       enabled: isLoggedIn,
       // Infinite staleTime ensures this won't get re-fetched unless explicitly invalidated by the mutation
       staleTime: Infinity,
