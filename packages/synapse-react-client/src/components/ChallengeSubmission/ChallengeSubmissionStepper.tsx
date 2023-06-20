@@ -103,10 +103,12 @@ function ChallengeSubmissionStepper({
       userId: userId,
       evaluationId: selectedEval!,
       entityId: entity.id,
-      dockerRepositoryName: entity.repositoryName,
-      dockerDigest: selectedCommit.digest,
-      versionNumber: 1,
+      versionNumber: entity.versionNumber ?? 1,
       teamId: teamId,
+    }
+    if (entityType === EntityType.DOCKER_REPO) {
+      submission.dockerRepositoryName = entity.repositoryName
+      submission.dockerDigest = selectedCommit.digest
     }
 
     if (submissionName !== '') submission['name'] = submissionName
