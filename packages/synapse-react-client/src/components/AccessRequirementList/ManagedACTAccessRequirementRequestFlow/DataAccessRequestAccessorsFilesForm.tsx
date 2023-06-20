@@ -42,6 +42,7 @@ import DocumentTemplate from './DocumentTemplate'
 import ManagedACTAccessRequirementFormWikiWrapper from './ManagedACTAccessRequirementFormWikiWrapper'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { deepEquals } from '@rjsf/utils'
+import { useSynapseContext } from '../../../utils'
 
 function AccessorRequirementHelpText(props: {
   managedACTAccessRequirement: ManagedACTAccessRequirement
@@ -125,21 +126,19 @@ export default function DataAccessRequestAccessorsFilesForm(
     researchProjectId,
     onCancel,
   } = props
-  const { data: user } = useGetCurrentUserProfile()
+  const { accessToken } = useSynapseContext()
+  const isLoggedIn = Boolean(accessToken)
+  const { data: user } = useGetCurrentUserProfile({ enabled: isLoggedIn })
   const [alert, setAlert] = useState<AlertProps | undefined>()
 
   const { data: dataAccessRequest, isLoading: isLoadingGetDataAccessRequest } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
       // We append the current user onto the accessorChanges, so we wait for that data to populate
-      enabled: !!user,
+      enabled: isLoggedIn,
       // Infinite staleTime ensures this won't get re-fetched unless explicitly invalidated by the mutation
       staleTime: Infinity,
-      onError: err => {
-        setAlert({
-          key: 'error',
-          message: err.reason,
-        })
-      },
+      // This call should never fail, so if we run into an error, throwing to an error boundary is acceptable
+      useErrorBoundary: true,
     })
 
   const isRenewal =
@@ -163,7 +162,6 @@ export default function DataAccessRequestAccessorsFilesForm(
     })
 
   const {
-    mutate: updateRequest,
     mutateAsync: updateRequestAsync,
     isLoading: isLoadingUpdateDataAccessRequest,
   } = useUpdateDataAccessRequest({
@@ -179,7 +177,7 @@ export default function DataAccessRequestAccessorsFilesForm(
    * This effect comprises a collection of updates we should immediately apply to a data access request.
    */
   useEffect(() => {
-    if (dataAccessRequest) {
+    if (dataAccessRequest && user) {
       let shouldUpdate = false
 
       // Attach the researchProjectId to the request
@@ -190,7 +188,7 @@ export default function DataAccessRequestAccessorsFilesForm(
 
       // Add the current user with GAIN_ACCESS to the list of accessors
       const currentUserWithGainAccess: AccessorChange = {
-        userId: user!.ownerId,
+        userId: user.ownerId,
         type: isRenewal ? AccessType.RENEW_ACCESS : AccessType.GAIN_ACCESS,
       }
       if (
@@ -224,10 +222,16 @@ export default function DataAccessRequestAccessorsFilesForm(
       }
 
       if (shouldUpdate) {
-        updateRequest(dataAccessRequest)
+        updateRequestAsync(dataAccessRequest)
       }
     }
-  }, [dataAccessRequest, isRenewal, researchProjectId, updateRequest, user])
+  }, [
+    dataAccessRequest,
+    isRenewal,
+    researchProjectId,
+    updateRequestAsync,
+    user,
+  ])
 
   async function handleSubmit() {
     if (dataAccessRequest) {
@@ -258,7 +262,7 @@ export default function DataAccessRequestAccessorsFilesForm(
 
   const onAccessorChange: DataAccessRequestAccessorsEditorProps['onChange'] =
     updater => {
-      updateRequest({
+      updateRequestAsync({
         ...dataAccessRequest!,
         // Copy the array so the caller doesn't have to worry about immutability
         accessorChanges: [...updater(dataAccessRequest!.accessorChanges || [])],
@@ -266,7 +270,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     }
 
   const onClearAttachment = (fid: string) => {
-    updateRequest({
+    updateRequestAsync({
       ...dataAccessRequest!,
       attachments: dataAccessRequest!.attachments?.filter(item => item !== fid),
     })
@@ -282,7 +286,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     if (data.resp && data.success) {
       const uploadResponse: FileUploadComplete = data.resp
       if (context === 'attachments') {
-        updateRequest({
+        updateRequestAsync({
           ...dataAccessRequest!,
           attachments: [
             ...(dataAccessRequest!.attachments || []),
@@ -290,7 +294,7 @@ export default function DataAccessRequestAccessorsFilesForm(
           ],
         })
       } else {
-        updateRequest({
+        updateRequestAsync({
           ...dataAccessRequest!,
           [context]: uploadResponse.fileHandleId,
         })
@@ -313,7 +317,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     key: keyof Pick<Renewal, 'publication' | 'summaryOfUse'>,
   ) => {
     const value = e.target.value
-    updateRequest({
+    updateRequestAsync({
       ...(dataAccessRequest as Renewal)!,
       [key]: value,
     })
@@ -377,7 +381,7 @@ export default function DataAccessRequestAccessorsFilesForm(
               access.
             </Typography>
 
-            {dataAccessRequest && (
+            {dataAccessRequest && user && (
               <DataAccessRequestAccessorsEditor
                 accessorChanges={dataAccessRequest.accessorChanges || []}
                 onChange={onAccessorChange}

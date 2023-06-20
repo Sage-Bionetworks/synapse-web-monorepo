@@ -301,6 +301,7 @@ describe('RequestDataAccessStep2: basic functionality', () => {
     const consoleErrorSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {})
+
     const errorMessage = 'Some error happened when getting the request'
     mockGetDataRequestForUpdate.mockRejectedValue(
       new SynapseClientError(
@@ -309,10 +310,9 @@ describe('RequestDataAccessStep2: basic functionality', () => {
         expect.getState().currentTestName,
       ),
     )
-    await renderComponent(defaultProps)
 
-    const alert = await screen.findByRole('alert')
-    within(alert).getByText(errorMessage)
+    await expect(renderComponent(defaultProps)).rejects.toThrow(errorMessage)
+
     consoleErrorSpy.mockRestore()
   })
 
