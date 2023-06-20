@@ -64,7 +64,7 @@ function ChallengeSubmission({
 
   const getProject = (c: Challenge, t: Team): Project => {
     const name = `Challenge Submission Project-${c.projectId}-${t.id}`
-    const alias = name.replace(/\s+/g, '_').replace(/\-+/g, '_').toLowerCase()
+    const alias = name.replace(/\s+/g, '_').replace(/-+/g, '_').toLowerCase()
     return {
       name,
       alias,
