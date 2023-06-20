@@ -289,7 +289,6 @@ import {
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
 import { SynapseError } from '../utils/SynapseError'
-import { ResourceAccess } from '@sage-bionetworks/synapse-types'
 
 const cookies = new UniversalCookies()
 
@@ -1286,7 +1285,7 @@ export const getEntityHeader = (entityId: string, accessToken?: string) => {
  * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
  * https://rest-docs.synapse.org/rest/PUT/entity/id/acl.html
  */
-export const updateEntityACL = <AccessControlList>(
+export const updateEntityACL = (
   acl: AccessControlList,
   accessToken: string | undefined = undefined,
 ): Promise<AccessControlList> => {
