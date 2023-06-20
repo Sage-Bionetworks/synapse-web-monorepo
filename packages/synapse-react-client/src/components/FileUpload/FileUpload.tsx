@@ -11,7 +11,8 @@ export type FileUploadProps = {
   id?: string
   label?: string
   buttonProps?: ButtonProps
-  uploadCallback?: (response: UploadCallbackResp) => void
+  onUploadStart?: () => void
+  onComplete?: (response: UploadCallbackResp) => void
 }
 
 export const FileUpload: React.FC<FileUploadProps> = props => {
@@ -19,7 +20,8 @@ export const FileUpload: React.FC<FileUploadProps> = props => {
     id,
     buttonProps = { variant: 'contained' },
     label = 'Browse...',
-    uploadCallback,
+    onUploadStart,
+    onComplete,
   } = props
   const { accessToken } = useSynapseContext()
   const hiddenFileInput = React.useRef<HTMLInputElement>(null)
@@ -32,6 +34,9 @@ export const FileUpload: React.FC<FileUploadProps> = props => {
 
   const changeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
+      if (onUploadStart) {
+        onUploadStart()
+      }
       const file = e.target.files[0]
       try {
         const resp: FileUploadComplete = await uploadFile(
@@ -39,16 +44,16 @@ export const FileUpload: React.FC<FileUploadProps> = props => {
           file.name,
           file,
         )
-        if (uploadCallback) {
-          uploadCallback({
+        if (onComplete) {
+          onComplete({
             success: true,
             resp: resp,
           })
         }
       } catch (e) {
         console.log('FileUpload: fail to upload file', e)
-        if (uploadCallback) {
-          uploadCallback({
+        if (onComplete) {
+          onComplete({
             success: false,
             error: e,
           })
