@@ -13,9 +13,7 @@ import {
   ACCESS_TYPE,
   AccessControlList,
   Challenge,
-  DockerRepository,
   EntityId,
-  EvaluationSubmission,
   PaginatedIds,
   Project,
   ResourceAccess,
@@ -24,16 +22,29 @@ import {
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useGetTeam } from '../../synapse-queries/team/useTeam'
-import SynapseClient, { createEntity } from '../../synapse-client'
+import { createEntity } from '../../synapse-client'
 import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import SubmissionDirectoryList from './SubmissionDirectoryList'
 import ChallengeSubmissionStepper from './ChallengeSubmissionStepper'
+import { EntityType } from '@sage-bionetworks/synapse-types'
+import { Entity } from '@sage-bionetworks/synapse-types'
+
+export type EntityItem = Entity & {
+  repositoryName?: string
+  versionNumber?: number
+}
 
 type ChallengeSubmissionProps = {
+  entityType: EntityType.DOCKER_REPO | EntityType.FILE
+  pageSize: number
   projectId: string
 }
 
-function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
+function ChallengeSubmission({
+  entityType,
+  projectId,
+  pageSize = 10,
+}: ChallengeSubmissionProps) {
   const { accessToken } = useSynapseContext()
   const isLoggedIn = Boolean(accessToken)
 
@@ -46,7 +57,7 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
   const [projectAliasFound, setProjectAliasFound] = useState<boolean>()
   const { mutate: updateACL } = useUpdateEntityACL()
   const [canSubmit, setCanSubmit] = useState<boolean>(false)
-  const [selectedRepo, setSelectedRepo] = useState<DockerRepository>()
+  const [selectedEntity, setSelectedEntity] = useState<EntityItem>()
   const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
 
   const EMPTY_ID = ''
@@ -227,8 +238,8 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
     }
   }, [accessToken, submissionTeam, challenge, newProject, projectAliasFound])
 
-  const onRepoSelected = (newRepo: DockerRepository) => {
-    setSelectedRepo(newRepo)
+  const itemSelectedHandler = (entity: EntityItem) => {
+    setSelectedEntity(entity)
     setIsShowingModal(true)
   }
 
@@ -244,15 +255,18 @@ function ChallengeSubmission({ projectId }: ChallengeSubmissionProps) {
       {canSubmit && (
         <>
           <SubmissionDirectoryList
+            entityType={entityType}
+            pageSize={pageSize}
             challengeProjectId={challengeProjectId!}
-            onRepoSelected={onRepoSelected}
+            onItemSelected={itemSelectedHandler}
           />
-          {userProfile && selectedRepo && (
+          {userProfile && selectedEntity && (
             <ChallengeSubmissionStepper
               projectId={projectId}
               userId={userProfile?.ownerId}
               teamId={submissionTeamId}
-              repository={selectedRepo}
+              entity={selectedEntity}
+              entityType={entityType}
               isShowingModal={isShowingModal}
               onClose={onModalClose}
             />

@@ -8,6 +8,8 @@ import EvaluationQueueList from './EvaluationQueueList'
 import { Typography } from '@mui/material'
 import { EvaluationSubmission } from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
+import { EntityItem } from './ChallengeSubmission'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 
 enum StepsEnum {
   SELECT_COMMIT = 'SELECT_COMMIT',
@@ -19,7 +21,7 @@ type StepList = {
   [key in StepKey]: Step
 }
 
-const steps: StepList = {
+const stepsDocker: StepList = {
   SELECT_COMMIT: {
     id: StepsEnum.SELECT_COMMIT,
     title: 'Select Commit for Submission',
@@ -41,11 +43,32 @@ const steps: StepList = {
   },
 }
 
+const stepsFile: StepList = {
+  SELECT_COMMIT: { id: StepsEnum.SELECT_COMMIT, title: '' },
+  SELECT_EVALUATION: {
+    id: StepsEnum.SELECT_EVALUATION,
+    title: 'Select Evaluation Queue',
+    confirmStep: StepsEnum.SUBMISSION_SUCCESS,
+    confirmButtonText: 'Submit',
+  },
+  SUBMISSION_SUCCESS: {
+    id: StepsEnum.SUBMISSION_SUCCESS,
+    title: 'Submission Successful!',
+    confirmButtonText: 'Close',
+    confirmEnabled: true,
+  },
+}
+
+const getSteps = (entityType: EntityType.DOCKER_REPO | EntityType.FILE) => {
+  return entityType === EntityType.DOCKER_REPO ? stepsDocker : stepsFile
+}
+
 type ChallengeSubmissionStepperProps = {
   projectId: string
   userId: string
   teamId: string | undefined
-  repository: DockerRepository
+  entity: EntityItem
+  entityType: EntityType.DOCKER_REPO | EntityType.FILE
   isShowingModal: boolean
   onClose: () => void
 }
@@ -54,12 +77,18 @@ function ChallengeSubmissionStepper({
   projectId,
   userId,
   teamId,
-  repository,
+  entity,
+  entityType,
   isShowingModal,
   onClose,
 }: ChallengeSubmissionStepperProps) {
   const { accessToken } = useSynapseContext()
-  const [step, setStep] = useState<Step>(steps.SELECT_COMMIT)
+  const steps = getSteps(entityType)
+  const initialStep =
+    entityType === EntityType.DOCKER_REPO
+      ? steps.SELECT_COMMIT
+      : steps.SELECT_EVALUATION
+  const [step, setStep] = useState<Step>(initialStep)
   const [errorMessage, setErrorMessage] = useState<string>()
   const [selectedCommit, setSelectedCommit] = useState<DockerCommit>()
 
@@ -70,22 +99,23 @@ function ChallengeSubmissionStepper({
   const [loading, setLoading] = useState<boolean>(false)
 
   const submitRepoForEvaluation = async () => {
-    if (!repository.id || !selectedCommit) return
+    if (!entity.id || !selectedCommit) return
 
     const submission: EvaluationSubmission = {
       userId: userId,
       evaluationId: selectedEval!,
-      entityId: repository.id,
-      dockerRepositoryName: repository.name,
+      entityId: entity.id,
+      dockerRepositoryName: entity.repositoryName,
       dockerDigest: selectedCommit.digest,
       versionNumber: 1,
       teamId: teamId,
     }
+
     if (submissionName !== '') submission['name'] = submissionName
     try {
       await SynapseClient.submitToEvaluation(
         submission,
-        repository.etag!,
+        entity.etag!,
         accessToken,
       )
     } catch (e) {
@@ -101,7 +131,7 @@ function ChallengeSubmissionStepper({
     setSubmissionError(undefined)
     setConfirming(false)
     onClose()
-    setStep(steps.SELECT_COMMIT)
+    setStep(initialStep)
   }
 
   function handleStepChange(value?: StepsEnum) {
@@ -127,7 +157,7 @@ function ChallengeSubmissionStepper({
       case StepsEnum.SELECT_COMMIT:
         return (
           <SubmissionCommitList
-            repository={repository}
+            repository={entity}
             selectedCommit={selectedCommit}
             onCommitChanged={onCommitChanged}
           />

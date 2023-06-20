@@ -11,6 +11,7 @@ import {
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { useGetDockerTags } from '../../synapse-queries/docker'
+import { EntityItem } from './ChallengeSubmission'
 
 type SubmissionCommitRow = {
   id: string
@@ -20,7 +21,7 @@ type SubmissionCommitRow = {
 }
 
 type SubmissionCommitListProps = {
-  repository: DockerRepository
+  repository: EntityItem
   selectedCommit: DockerCommit | undefined
   onCommitChanged: (value: DockerCommit) => void
 }

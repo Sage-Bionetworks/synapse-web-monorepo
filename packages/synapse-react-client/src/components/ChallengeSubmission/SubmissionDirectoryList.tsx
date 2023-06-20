@@ -4,11 +4,11 @@ import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { RadioOption } from '../widgets/RadioGroup'
 import {
   Direction,
-  DockerRepository,
   Entity,
   EntityChildrenRequest,
   EntityHeader,
   EntityType,
+  FILE_ENTITY_CONCRETE_TYPE_VALUE,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
@@ -24,45 +24,68 @@ import { InfoTwoTone } from '@mui/icons-material'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils'
 import { ErrorBanner } from '../error/ErrorBanner'
+import FileUpload from '../FileUpload'
+import IconSvg from '../IconSvg'
+import { UploadCallbackResp } from '@sage-bionetworks/synapse-types'
+import { FileEntity } from '@sage-bionetworks/synapse-types'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { EntityItem } from './ChallengeSubmission'
 
 type SubmissionDirectoryRow = {
   id: string
-  repositoryName: string
+  name: string
   modifiedOn: string
 }
 
 type SubmissionDirectoryListProps = {
+  pageSize: number
   challengeProjectId: string
-  onRepoSelected: (selectedRepo: DockerRepository) => void
+  entityType: EntityType.DOCKER_REPO | EntityType.FILE
+  onItemSelected: (selected: EntityItem) => void
 }
 
 function SubmissionDirectoryList({
+  pageSize,
   challengeProjectId,
-  onRepoSelected,
+  entityType,
+  onItemSelected,
 }: SubmissionDirectoryListProps) {
   const [page, setPage] = useState<number>(0)
-  const [selectedRepo, setSelectedRepo] = useState<
-    DockerRepository | undefined
-  >()
+  const [selectedItem, setSelectedItem] = useState<EntityItem | undefined>()
   const { accessToken } = useSynapseContext()
   const [errorMessage, setErrorMessage] = useState<string>()
-  const [hasCommits, setHasCommits] = useState<boolean>()
+  const [canSubmit, setCanSubmit] = useState<boolean>()
   const [fetchedHeaders, setFetchedHeaders] = useState<EntityHeader[]>([])
-  const [entities, setEntities] = useState<DockerRepository[]>([])
+  const [entities, setEntities] = useState<EntityItem[]>([])
   const [total, setTotal] = useState<number>(0)
   const [nextPageToken, setNextPageToken] = useState<string | null>(null)
   const [fetchNextPage, setFetchNextPage] = useState<boolean>(false)
   const [rows, setRows] = useState<SubmissionDirectoryRow[]>([])
-  const PER_PAGE = 20
+  const PER_PAGE = pageSize
   const HEADERS_PER_PAGE = 50
   const PROJECT_URL = `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )}#!Synapse:${challengeProjectId}`
 
+  const reset = () => {
+    setErrorMessage(undefined)
+    setCanSubmit(undefined)
+    setFetchedHeaders([])
+    setEntities([])
+    setTotal(0)
+    setNextPageToken(null)
+    setFetchNextPage(false)
+    setRows([])
+  }
+
+  useEffect(() => {
+    reset()
+  }, [entityType, pageSize])
+
   const request: EntityChildrenRequest = {
     parentId: challengeProjectId,
     nextPageToken: fetchNextPage ? nextPageToken : null,
-    includeTypes: [EntityType.DOCKER_REPO],
+    includeTypes: [entityType],
     includeTotalChildCount: true,
     sortBy: SortBy.MODIFIED_ON,
     sortDirection: Direction.DESC,
@@ -95,10 +118,14 @@ function SubmissionDirectoryList({
     id: pageHeaders[pageHeaders.length - 1]?.id ?? -1,
   })
 
+  console.log({ entityType, docker: entityType === EntityType.DOCKER_REPO })
+
   const { isLoading: areEntitiesLoading, data: results } = useGetEntities(
     pageHeaders,
     {
-      enabled: getEntityPage(page).length < pageHeaders.length,
+      enabled:
+        getEntityPage(page).length < pageHeaders.length &&
+        entityType === EntityType.DOCKER_REPO,
       onSuccess: data => {
         console.log('useGetEntities', data)
         const newEntities = [...entities]
@@ -106,31 +133,38 @@ function SubmissionDirectoryList({
         newEntities.splice(
           start,
           start + data.length,
-          ...(data as DockerRepository[]),
+          ...(data as EntityItem[]),
         )
         setEntities(newEntities)
       },
     },
   )
 
-  const repoChangeHandler = async (value: string) => {
-    setHasCommits(false)
-    const repo = entities.find(entity => entity.id === value)
-    if (repo) {
-      setSelectedRepo(repo)
-      let commits
-      try {
-        commits = await SynapseClient.getDockerTag(repo.id!, accessToken, 0, 1)
-      } catch (e) {
-        return setErrorMessage(e.message)
+  const entityChangeHandler = async (value: string) => {
+    setCanSubmit(false)
+    const entity = entities.find(entity => entity.id === value)
+    if (entity) {
+      setSelectedItem(entity)
+      if (entityType === EntityType.DOCKER_REPO) {
+        let commits
+        try {
+          commits = await SynapseClient.getDockerTag(
+            entity.id!,
+            accessToken,
+            0,
+            1,
+          )
+        } catch (e) {
+          return setErrorMessage(e.message)
+        }
+        if (commits.totalNumberOfResults === 0) {
+          return setErrorMessage(
+            'No commits have been made to this repository. Please select a repository with at least one commit.',
+          )
+        }
       }
-      if (commits.totalNumberOfResults === 0) {
-        return setErrorMessage(
-          'No commits have been made to this repository. Please select a repository with at least one commit.',
-        )
-      }
+      setCanSubmit(true)
       setErrorMessage(undefined)
-      setHasCommits(true)
     }
   }
 
@@ -147,9 +181,9 @@ function SubmissionDirectoryList({
         return (
           <RadioOption
             value={params.id}
-            currentValue={selectedRepo?.id}
-            onChange={selectedRepoId => {
-              repoChangeHandler(selectedRepoId as string)
+            currentValue={selectedItem?.id}
+            onChange={selectedItemId => {
+              entityChangeHandler(selectedItemId as string)
             }}
             label=""
             groupId="radiogroup"
@@ -159,8 +193,11 @@ function SubmissionDirectoryList({
       },
     },
     {
-      field: 'repositoryName',
-      headerName: 'Docker Repository',
+      field: 'name',
+      headerName:
+        entityType === EntityType.DOCKER_REPO
+          ? 'Docker Repository'
+          : 'File Name',
       flex: 1,
       filterable: false,
       hideable: false,
@@ -174,7 +211,7 @@ function SubmissionDirectoryList({
           }}
           target="_blank"
         >
-          {params.row.repositoryName}
+          {params.row.name}
         </Link>
       ),
     },
@@ -196,12 +233,15 @@ function SubmissionDirectoryList({
     },
   ]
 
-  const getRows = (entities: DockerRepository[]) => {
+  const getRows = (entities: EntityItem[]) => {
     const newRows: SubmissionDirectoryRow[] = []
     entities.forEach(entity => {
       newRows.push({
         id: entity.id!,
-        repositoryName: entity.repositoryName,
+        name:
+          entityType === EntityType.DOCKER_REPO
+            ? entity.repositoryName
+            : entity.name,
         modifiedOn: formatDate(dayjs(entity.modifiedOn), 'MM/DD/YY'),
       })
     })
@@ -222,8 +262,33 @@ function SubmissionDirectoryList({
     setRows(getRows(getEntityPage(newPageNum)))
   }
 
-  const repoSelectedHandler = () => {
-    onRepoSelected(selectedRepo!)
+  const itemSelectedHandler = () => {
+    onItemSelected(selectedItem!)
+  }
+
+  const handleUpload = (response: UploadCallbackResp) => {
+    if (response.success && response.resp) {
+      // Create Entity
+      const { fileHandleId, fileName } = response.resp
+      const newFileEntity: FileEntity = {
+        parentId: challengeProjectId,
+        name: fileName,
+        concreteType: FILE_ENTITY_CONCRETE_TYPE_VALUE,
+        dataFileHandleId: fileHandleId,
+      }
+      SynapseClient.createEntity(newFileEntity, accessToken)
+        .then(() => {
+          // TODO: Invalidate entity query
+          reset()
+        })
+        .catch((err: SynapseClientError) => {
+          setErrorMessage(err.reason)
+        })
+    } else if (!response.success && response.error) {
+      setErrorMessage(response.error.reason as string)
+    } else {
+      setErrorMessage('An unknown error occurred. Please try again.')
+    }
   }
 
   return (
@@ -290,29 +355,53 @@ function SubmissionDirectoryList({
         />
       </Box>
       {errorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
-      <Box>
+      <Box display="flex" justifyContent="space-between">
+        {entityType === EntityType.FILE && (
+          <FileUpload
+            label="Upload File"
+            buttonProps={{
+              variant: 'outlined',
+              endIcon: <IconSvg icon="upload" />,
+              sx: { lineHeight: 1 },
+            }}
+            uploadCallback={handleUpload}
+          />
+        )}
         <Button
           color="primary"
           variant="contained"
-          onClick={repoSelectedHandler}
-          disabled={!hasCommits}
+          onClick={itemSelectedHandler}
+          disabled={!canSubmit}
         >
           Submit Selection
         </Button>
       </Box>
-      <Box mt={4} display={'flex'}>
-        <InfoTwoTone
-          sx={{
-            width: '16px',
-            height: '16px',
-            verticalAlign: 'text-bottom',
-          }}
-        />
-        <Box ml={2}>
-          To learn more about how to create and submit the Docker containers
-          using command line, see our Docker model submission guide.
+      {entityType === EntityType.DOCKER_REPO && (
+        <Box mt={4} display={'flex'}>
+          <InfoTwoTone
+            sx={{
+              width: '16px',
+              height: '16px',
+              verticalAlign: 'text-bottom',
+            }}
+          />
+
+          <Box ml={2}>
+            To learn more about how to create and submit the Docker containers
+            using command line, see our{' '}
+            <Link
+              to={{
+                pathname:
+                  'https://github.com/Sage-Bionetworks-Challenges/sample-model-templates#build-your-model',
+              }}
+              target="_blank"
+            >
+              Docker model submission guide
+            </Link>
+            .
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   )
 }
