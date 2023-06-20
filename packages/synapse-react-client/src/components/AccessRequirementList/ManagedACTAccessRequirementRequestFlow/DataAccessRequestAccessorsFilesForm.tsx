@@ -267,7 +267,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     return {
       ...dataAccessRequest,
       // append local state to the request
-      accessorChanges,
+      accessorChanges: accessorChanges!,
       publication,
       summaryOfUse,
     }
