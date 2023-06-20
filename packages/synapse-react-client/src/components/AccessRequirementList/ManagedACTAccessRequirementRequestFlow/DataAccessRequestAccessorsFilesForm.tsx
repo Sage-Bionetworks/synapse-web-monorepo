@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   AccessorChange,
   AccessType,
@@ -41,6 +41,7 @@ import { UploadDocumentField } from './UploadDocumentField'
 import DocumentTemplate from './DocumentTemplate'
 import ManagedACTAccessRequirementFormWikiWrapper from './ManagedACTAccessRequirementFormWikiWrapper'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
+import { deepEquals } from '@rjsf/utils'
 
 function AccessorRequirementHelpText(props: {
   managedACTAccessRequirement: ManagedACTAccessRequirement
@@ -133,39 +134,6 @@ export default function DataAccessRequestAccessorsFilesForm(
       enabled: !!user,
       // Infinite staleTime ensures this won't get re-fetched unless explicitly invalidated by the mutation
       staleTime: Infinity,
-      select: data => {
-        const isRenewal =
-          data.concreteType ===
-          'org.sagebionetworks.repo.model.dataaccess.Renewal'
-        // Add the current user with GAIN_ACCESS to the list of accessors
-        const currentUserWithGainAccess: AccessorChange = {
-          userId: user!.ownerId,
-          type: isRenewal ? AccessType.RENEW_ACCESS : AccessType.GAIN_ACCESS,
-        }
-        if (!data.accessorChanges) {
-          data.accessorChanges = [currentUserWithGainAccess]
-        } else {
-          data.accessorChanges = [
-            currentUserWithGainAccess,
-            ...data.accessorChanges,
-          ]
-        }
-
-        // SWC-5765: Filter out duplicate accessors
-        const seen = new Set()
-        data.accessorChanges = data.accessorChanges.filter(accessorChange => {
-          return seen.has(accessorChange.userId)
-            ? false
-            : seen.add(accessorChange.userId)
-        })
-
-        // Attach the researchProjectId to the request
-        data.researchProjectId = researchProjectId
-        return data
-      },
-      onSuccess: data => {
-        setAlert(undefined)
-      },
       onError: err => {
         setAlert({
           key: 'error',
@@ -206,6 +174,60 @@ export default function DataAccessRequestAccessorsFilesForm(
     isLoadingGetDataAccessRequest ||
     isLoadingUpdateDataAccessRequest ||
     isLoadingSubmitDataAccessRequest
+
+  /**
+   * This effect comprises a collection of updates we should immediately apply to a data access request.
+   */
+  useEffect(() => {
+    if (dataAccessRequest) {
+      let shouldUpdate = false
+
+      // Attach the researchProjectId to the request
+      if (!dataAccessRequest.researchProjectId) {
+        dataAccessRequest.researchProjectId = researchProjectId
+        shouldUpdate = true
+      }
+
+      // Add the current user with GAIN_ACCESS to the list of accessors
+      const currentUserWithGainAccess: AccessorChange = {
+        userId: user!.ownerId,
+        type: isRenewal ? AccessType.RENEW_ACCESS : AccessType.GAIN_ACCESS,
+      }
+      if (
+        !dataAccessRequest.accessorChanges ||
+        !dataAccessRequest.accessorChanges.find(item =>
+          deepEquals(item, currentUserWithGainAccess),
+        )
+      ) {
+        dataAccessRequest.accessorChanges = [
+          currentUserWithGainAccess,
+          ...(dataAccessRequest.accessorChanges || []),
+        ]
+        shouldUpdate = true
+      }
+
+      // SWC-5765: Filter out duplicate accessors
+      const seen = new Set()
+      const uniqueAccessorChanges = dataAccessRequest.accessorChanges.filter(
+        accessorChange => {
+          return seen.has(accessorChange.userId)
+            ? false
+            : seen.add(accessorChange.userId)
+        },
+      )
+      if (
+        uniqueAccessorChanges.length !==
+        dataAccessRequest.accessorChanges.length
+      ) {
+        dataAccessRequest.accessorChanges = uniqueAccessorChanges
+        shouldUpdate = true
+      }
+
+      if (shouldUpdate) {
+        updateRequest(dataAccessRequest)
+      }
+    }
+  }, [dataAccessRequest, isRenewal, researchProjectId, updateRequest, user])
 
   async function handleSubmit() {
     if (dataAccessRequest) {
