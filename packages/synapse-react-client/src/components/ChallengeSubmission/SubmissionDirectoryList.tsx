@@ -211,7 +211,7 @@ function SubmissionDirectoryList({
         id: entity.id!,
         name:
           entityType === EntityType.DOCKER_REPO
-            ? entity.repositoryName
+            ? entity.repositoryName ?? entity.name
             : entity.name,
         modifiedOn: formatDate(dayjs(entity.modifiedOn), 'MM/DD/YY'),
       })
