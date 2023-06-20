@@ -130,6 +130,11 @@ export default function DataAccessRequestAccessorsFilesForm(
   const isLoggedIn = Boolean(accessToken)
   const { data: user } = useGetCurrentUserProfile({ enabled: isLoggedIn })
   const [alert, setAlert] = useState<AlertProps | undefined>()
+  const [accessorChanges, setAccessorChanges] = useState<
+    AccessorChange[] | undefined
+  >()
+  const [summaryOfUse, setSummaryOfUse] = useState<string | undefined>()
+  const [publication, setPublication] = useState<string | undefined>()
 
   const { data: dataAccessRequest, isLoading: isLoadingGetDataAccessRequest } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
@@ -232,10 +237,48 @@ export default function DataAccessRequestAccessorsFilesForm(
     user,
   ])
 
+  /**
+   * Fields other than uploaded files are NOT immediately synced with the server. Set local state if these values exist in the
+   * fetched object, and no value exists in local state.
+   */
+  useEffect(() => {
+    if (dataAccessRequest) {
+      if (dataAccessRequest.accessorChanges && accessorChanges == undefined) {
+        setAccessorChanges(dataAccessRequest.accessorChanges)
+      }
+      if (
+        isRenewal &&
+        dataAccessRequest.publication &&
+        publication == undefined
+      ) {
+        setPublication(dataAccessRequest.publication)
+      }
+      if (
+        isRenewal &&
+        dataAccessRequest.summaryOfUse &&
+        summaryOfUse == undefined
+      ) {
+        setSummaryOfUse(dataAccessRequest.summaryOfUse)
+      }
+    }
+  }, [dataAccessRequest])
+
+  function getDataAccessRequestWithLocalState(): Request | Renewal {
+    return {
+      ...dataAccessRequest,
+      // append local state to the request
+      accessorChanges,
+      publication,
+      summaryOfUse,
+    }
+  }
+
   async function handleSubmit() {
     if (dataAccessRequest) {
       // Save the request
-      const requestObject = await updateRequestAsync(dataAccessRequest)
+      const requestObject = await updateRequestAsync(
+        getDataAccessRequestWithLocalState(),
+      )
       // Create a submission and attach the request
       submit({
         request: {
@@ -261,11 +304,8 @@ export default function DataAccessRequestAccessorsFilesForm(
 
   const onAccessorChange: DataAccessRequestAccessorsEditorProps['onChange'] =
     updater => {
-      updateRequestAsync({
-        ...dataAccessRequest!,
-        // Copy the array so the caller doesn't have to worry about immutability
-        accessorChanges: [...updater(dataAccessRequest!.accessorChanges || [])],
-      })
+      // Copy the array so the caller doesn't have to worry about immutability
+      setAccessorChanges([...updater(dataAccessRequest!.accessorChanges || [])])
     }
 
   const onClearAttachment = (fid: string) => {
@@ -283,6 +323,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     >,
   ) => {
     if (data.resp && data.success) {
+      // Files are uploaded and synced with the server immediately
       const uploadResponse: FileUploadComplete = data.resp
       if (context === 'attachments') {
         updateRequestAsync({
@@ -309,17 +350,6 @@ export default function DataAccessRequestAccessorsFilesForm(
         message: getErrorMessage(data.error.reason),
       })
     }
-  }
-
-  const handleTextAreaInputChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-    key: keyof Pick<Renewal, 'publication' | 'summaryOfUse'>,
-  ) => {
-    const value = e.target.value
-    updateRequestAsync({
-      ...(dataAccessRequest as Renewal)!,
-      [key]: value,
-    })
   }
 
   const ducFileHandleAssociation: FileHandleAssociation[] =
@@ -382,7 +412,7 @@ export default function DataAccessRequestAccessorsFilesForm(
 
             {dataAccessRequest && user && (
               <DataAccessRequestAccessorsEditor
-                accessorChanges={dataAccessRequest.accessorChanges || []}
+                accessorChanges={accessorChanges || []}
                 onChange={onAccessorChange}
                 isRenewal={isRenewal}
                 helpText={
@@ -515,21 +545,23 @@ export default function DataAccessRequestAccessorsFilesForm(
                   <TextField
                     id={'publications'}
                     label={'Publication(s)'}
+                    disabled={isLoadingSubmitDataAccessRequest}
                     multiline
                     rows={3}
-                    value={dataAccessRequest?.publication}
+                    value={publication}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                      handleTextAreaInputChange(e, 'publication')
+                      setPublication(e.target.value)
                     }
                   />
                   <TextField
                     id={'summaryOfUse'}
                     label={'Summary of use'}
-                    value={dataAccessRequest?.summaryOfUse}
+                    value={summaryOfUse}
+                    disabled={isLoadingSubmitDataAccessRequest}
                     multiline
                     rows={3}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                      handleTextAreaInputChange(e, 'summaryOfUse')
+                      setSummaryOfUse(e.target.value)
                     }
                   />
                 </>
@@ -544,9 +576,11 @@ export default function DataAccessRequestAccessorsFilesForm(
           <>
             <Button
               variant="outlined"
+              disabled={isLoadingSubmitDataAccessRequest}
               onClick={() => {
                 if (dataAccessRequest) {
-                  onCancel(dataAccessRequest)
+                  // include the local state in the onCancel callback so the user may save their changes
+                  onCancel(getDataAccessRequestWithLocalState())
                 }
               }}
             >
@@ -554,6 +588,7 @@ export default function DataAccessRequestAccessorsFilesForm(
             </Button>
             <Button
               variant="contained"
+              disabled={isLoadingSubmitDataAccessRequest}
               onClick={() => {
                 handleSubmit()
               }}
