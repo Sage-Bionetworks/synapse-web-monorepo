@@ -30,7 +30,6 @@ import { UploadCallbackResp } from '@sage-bionetworks/synapse-types'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { EntityItem } from './ChallengeSubmission'
-import { useQueryClient } from 'react-query'
 
 type SubmissionDirectoryRow = {
   id: string
@@ -105,6 +104,7 @@ function SubmissionDirectoryList({
 
   useEffect(() => {
     reset()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entityType, pageSize])
 
   const { isLoading: areEntitiesLoading, data: entities } = useGetEntities(
