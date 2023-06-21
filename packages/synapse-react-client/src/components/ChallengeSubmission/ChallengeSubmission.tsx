@@ -133,7 +133,6 @@ function ChallengeSubmission({
       data: EntityId | null | undefined,
       error: SynapseClientError | null,
     ) => {
-      console.log({ newProject })
       if (data) {
         setProjectAliasFound(true)
         setChallengeProjectId(data.id)
@@ -141,7 +140,6 @@ function ChallengeSubmission({
       if (error) {
         setProjectAliasFound(false)
       }
-      console.log('useGetEntityAlias', { data }, { error })
     },
   })
 
@@ -153,11 +151,7 @@ function ChallengeSubmission({
     enabled: !!challengeProjectId && isProjectNewlyCreated === true,
     refetchInterval: Infinity,
     useErrorBoundary: true,
-    onSettled: (
-      data: AccessControlList | undefined,
-      error: SynapseClientError | null,
-    ) => {
-      console.log('useGetEntityACL', { data }, { error })
+    onSettled: (data: AccessControlList | undefined) => {
       if (data) {
         // Give submission team admin access to challenge project
         const teamResourceAccess: ResourceAccess = {
@@ -199,7 +193,6 @@ function ChallengeSubmission({
   })
 
   useEffect(() => {
-    console.log({ isLoggedIn, userProfile, isProfileLoading })
     if (!isLoggedIn && (!!userProfile || !isProfileLoading)) {
       setLoading(false)
       setErrorMessage('Please login to continue.')

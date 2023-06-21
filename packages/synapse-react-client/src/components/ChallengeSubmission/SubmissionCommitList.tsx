@@ -41,8 +41,6 @@ function SubmissionCommitList({
     Direction.DESC,
   )
 
-  console.log({ isLoading, commitResults })
-
   const commitChangeHandler = (digest: string) => {
     const commits = commitResults?.results ?? []
     const commit = commits.find(commit => commit.digest === digest)

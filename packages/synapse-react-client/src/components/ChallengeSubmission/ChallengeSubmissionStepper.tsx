@@ -111,7 +111,6 @@ function ChallengeSubmissionStepper({
   }
 
   function handleStepChange(value?: StepsEnum) {
-    console.log({ handleStepChange: value })
     if (!value || !steps[value]) return
     setErrorMessage(undefined)
     setStep(steps[value])
@@ -137,7 +136,6 @@ function ChallengeSubmissionStepper({
     )
       return setErrorMessage('Error: Invalid entity or commit.')
 
-    console.log({ entity })
     const submission: EvaluationSubmission = {
       userId: userId,
       evaluationId: selectedEval!,
@@ -167,16 +165,13 @@ function ChallengeSubmissionStepper({
   }
 
   const onConfirmHandler = async () => {
-    console.log('onConfirm')
     const eligibility = await confirmEligibility()
-    console.log({ eligibility })
     if (eligibility) {
       await submitForEvaluation(eligibility)
     }
   }
 
   const onCommitChanged = (value: DockerCommit) => {
-    console.log(value)
     setSelectedCommit(value)
     setStep({ ...step, nextEnabled: true })
   }
