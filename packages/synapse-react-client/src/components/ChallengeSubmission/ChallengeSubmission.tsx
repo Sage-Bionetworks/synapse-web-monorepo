@@ -121,6 +121,10 @@ export function ChallengeSubmission({
     newProject?.alias ?? EMPTY_ID,
     {
       enabled: newProject !== undefined && !!challenge && !!submissionTeam,
+      onError: error => {
+        setLoading(false)
+        setErrorMessage(error.reason)
+      },
     },
   )
   useEffect(() => {
@@ -137,7 +141,10 @@ export function ChallengeSubmission({
   const { data: entityACL } = useGetEntityACL(challengeProjectId ?? EMPTY_ID, {
     enabled: !!challengeProjectId && isProjectNewlyCreated === true,
     refetchInterval: Infinity,
-    useErrorBoundary: true,
+    onError: error => {
+      setLoading(false)
+      setErrorMessage(error.reason)
+    },
   })
 
   useEffect(() => {
@@ -169,6 +176,10 @@ export function ChallengeSubmission({
     {
       enabled: !!challengeProjectId,
       refetchInterval: Infinity,
+      onError: error => {
+        setLoading(false)
+        setErrorMessage(error.reason)
+      },
     },
   )
 
