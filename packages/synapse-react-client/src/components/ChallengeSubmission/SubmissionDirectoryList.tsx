@@ -7,8 +7,10 @@ import {
   Entity,
   EntityChildrenRequest,
   EntityHeader,
+  EntityLookupRequest,
   EntityType,
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
+  FileUploadComplete,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
@@ -16,7 +18,12 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { useGetEntities, useGetEntityChildren } from '../../synapse-queries'
+import {
+  KeyFactory,
+  invalidateAllQueriesForEntity,
+  useGetEntities,
+  useGetEntityChildren,
+} from '../../synapse-queries'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
@@ -30,6 +37,8 @@ import { UploadCallbackResp } from '@sage-bionetworks/synapse-types'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { EntityItem } from './ChallengeSubmission'
+import ConfirmationDialog from '../ConfirmationDialog'
+import { useQueryClient } from 'react-query'
 
 type SubmissionDirectoryRow = {
   id: string
@@ -44,13 +53,18 @@ type SubmissionDirectoryListProps = {
   onItemSelected: (selected: EntityItem) => void
 }
 
+type FileUploadAttempt = FileUploadComplete & {
+  entityId?: string
+}
+
 function SubmissionDirectoryList({
   pageSize,
   challengeProjectId,
   entityType,
   onItemSelected,
 }: SubmissionDirectoryListProps) {
-  const { accessToken } = useSynapseContext()
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
   const [page, setPage] = useState<number>(0)
   const [selectedItem, setSelectedItem] = useState<EntityItem | undefined>()
   const [errorMessage, setErrorMessage] = useState<string>()
@@ -58,6 +72,9 @@ function SubmissionDirectoryList({
   const [fetchedHeaders, setFetchedHeaders] = useState<EntityHeader[]>([])
   const [nextPageToken, setNextPageToken] = useState<string | null>(null)
   const [fetchNextPage, setFetchNextPage] = useState<boolean>(false)
+  const [confirmOpen, setConfirmOpen] = useState<boolean>(false)
+  const [uploadAttempt, setUploadAttempt] = useState<FileUploadAttempt>()
+
   const PER_PAGE = pageSize
   const HEADERS_PER_PAGE = 50
   const PROJECT_URL = `${getEndpoint(
@@ -234,23 +251,84 @@ function SubmissionDirectoryList({
     onItemSelected(selectedItem!)
   }
 
-  const handleUpload = (response: UploadCallbackResp) => {
+  function createEntity(file: FileUploadAttempt) {
+    // Create Entity
+    if (!file) return
+    const { fileHandleId, fileName } = file
+    const newFileEntity: FileEntity = {
+      parentId: challengeProjectId,
+      name: fileName,
+      concreteType: FILE_ENTITY_CONCRETE_TYPE_VALUE,
+      dataFileHandleId: fileHandleId,
+    }
+    SynapseClient.createEntity(newFileEntity, accessToken)
+      .then(() => {
+        reset()
+      })
+      .catch((err: SynapseClientError) => {
+        setErrorMessage(err.reason)
+      })
+  }
+
+  async function updateEntity() {
+    if (!uploadAttempt) return
+    const { fileHandleId, entityId } = uploadAttempt
+    if (!entityId)
+      return setErrorMessage('Error: missing entityId. Please try again.')
+    // Get the entity
+    let entity: FileEntity
+    try {
+      entity = await SynapseClient.getEntity(accessToken, entityId)
+    } catch (err) {
+      return setErrorMessage(`The entity ${entityId} could not be retrieved.`)
+    }
+
+    entity.dataFileHandleId = fileHandleId
+
+    try {
+      const updatedEntity = await SynapseClient.updateEntity(
+        entity,
+        accessToken,
+      )
+      await invalidateAllQueriesForEntity(
+        queryClient,
+        keyFactory,
+        updatedEntity.id!,
+      )
+      queryClient.setQueryData(
+        keyFactory.getEntityQueryKey(updatedEntity.id!),
+        updatedEntity,
+      )
+      reset()
+    } catch (err) {
+      setErrorMessage(err.reason)
+    }
+  }
+
+  const handleUpload = async (response: UploadCallbackResp) => {
     if (response.success && response.resp) {
-      // Create Entity
-      const { fileHandleId, fileName } = response.resp
-      const newFileEntity: FileEntity = {
+      const { fileName } = response.resp
+
+      // Lookup entity
+      const entityLookupRequest: EntityLookupRequest = {
+        entityName: fileName,
         parentId: challengeProjectId,
-        name: fileName,
-        concreteType: FILE_ENTITY_CONCRETE_TYPE_VALUE,
-        dataFileHandleId: fileHandleId,
       }
-      SynapseClient.createEntity(newFileEntity, accessToken)
-        .then(() => {
-          reset()
-        })
-        .catch((err: SynapseClientError) => {
-          setErrorMessage(err.reason)
-        })
+      try {
+        const entityId = await SynapseClient.lookupChildEntity(
+          entityLookupRequest,
+          accessToken,
+        )
+        // Entity exists, prompt user to update it
+        if (entityId) {
+          setUploadAttempt({ ...response.resp, entityId: entityId.id })
+          setConfirmOpen(true)
+        }
+      } catch (err) {
+        // An existing entity was not found for this file, create it
+        setUploadAttempt(undefined)
+        createEntity(response.resp)
+      }
     } else if (!response.success && response.error) {
       setErrorMessage(response.error.reason as string)
     } else {
@@ -331,7 +409,9 @@ function SubmissionDirectoryList({
               endIcon: <IconSvg icon="upload" />,
               sx: { lineHeight: 1 },
             }}
-            onComplete={handleUpload}
+            onComplete={resp => {
+              handleUpload(resp)
+            }}
           />
         )}
         <Button
@@ -369,6 +449,22 @@ function SubmissionDirectoryList({
           </Box>
         </Box>
       )}
+      <ConfirmationDialog
+        open={confirmOpen}
+        title="File exists"
+        content={
+          <Typography variant="body1" sx={{ fontSize: '16px' }}>
+            A file named &quot;{uploadAttempt?.fileName}&quot; (
+            {uploadAttempt?.entityId}) already exists in this location. Do you
+            want to update the existing file and create a new version?
+          </Typography>
+        }
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={() => {
+          updateEntity()
+          setConfirmOpen(false)
+        }}
+      />
     </Box>
   )
 }
