@@ -34,13 +34,13 @@ export type EntityItem = Entity & {
   versionNumber?: number
 }
 
-type ChallengeSubmissionProps = {
+export type ChallengeSubmissionProps = {
   entityType: EntityType.DOCKER_REPO | EntityType.FILE
   pageSize: number
   projectId: string
 }
 
-function ChallengeSubmission({
+export function ChallengeSubmission({
   entityType,
   projectId,
   pageSize = 10,
@@ -265,5 +265,3 @@ function ChallengeSubmission({
     </SynapseErrorBoundary>
   )
 }
-
-export default ChallengeSubmission

@@ -1,3 +1,4 @@
-import ChallengeSubmission from './ChallengeSubmission'
+import { ChallengeSubmission } from './ChallengeSubmission'
+import type { ChallengeSubmissionProps } from './ChallengeSubmission'
 
-export default ChallengeSubmission
+export { ChallengeSubmission, ChallengeSubmissionProps }
