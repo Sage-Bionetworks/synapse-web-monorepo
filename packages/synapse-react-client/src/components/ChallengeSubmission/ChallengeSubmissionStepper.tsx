@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
-import { DockerCommit } from '@sage-bionetworks/synapse-types'
+import {
+  DockerCommit,
+  TeamSubmissionEligibility,
+} from '@sage-bionetworks/synapse-types'
 import StepperDialog from '../StepperDialog'
 import { Step } from '../StepperDialog/StepperDialog'
 import { useSynapseContext } from '../../utils'
@@ -10,6 +13,7 @@ import { EvaluationSubmission } from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
 import { EntityItem } from './ChallengeSubmission'
 import { EntityType } from '@sage-bionetworks/synapse-types'
+import { displayToast } from '../ToastMessage'
 
 enum StepsEnum {
   SELECT_COMMIT = 'SELECT_COMMIT',
@@ -66,7 +70,7 @@ const getSteps = (entityType: EntityType.DOCKER_REPO | EntityType.FILE) => {
 type ChallengeSubmissionStepperProps = {
   projectId: string
   userId: string
-  teamId: string | undefined
+  teamId: string
   entity: EntityItem
   entityType: EntityType.DOCKER_REPO | EntityType.FILE
   isShowingModal: boolean
@@ -96,33 +100,6 @@ function ChallengeSubmissionStepper({
   const [selectedEval, setSelectedEval] = useState<string | undefined>()
   const [confirming, setConfirming] = useState<boolean>(false)
 
-  const submitRepoForEvaluation = async () => {
-    if (!entity.id || !selectedCommit) return
-
-    const submission: EvaluationSubmission = {
-      userId: userId,
-      evaluationId: selectedEval!,
-      entityId: entity.id,
-      versionNumber: entity.versionNumber ?? 1,
-      teamId: teamId,
-    }
-    if (entityType === EntityType.DOCKER_REPO) {
-      submission.dockerRepositoryName = entity.repositoryName
-      submission.dockerDigest = selectedCommit.digest
-    }
-
-    if (submissionName !== '') submission['name'] = submissionName
-    try {
-      await SynapseClient.submitToEvaluation(
-        submission,
-        entity.etag!,
-        accessToken,
-      )
-    } catch (e) {
-      setErrorMessage(e.message)
-    }
-  }
-
   const hide = () => {
     setErrorMessage(undefined)
     setSelectedCommit(undefined)
@@ -140,9 +117,62 @@ function ChallengeSubmissionStepper({
     setStep(steps[value])
   }
 
+  async function confirmEligibility() {
+    if (!selectedEval) return setErrorMessage('Please select an evaluation.')
+    try {
+      return await SynapseClient.getSubmissionEligibility(
+        selectedEval,
+        teamId,
+        accessToken,
+      )
+    } catch (err) {
+      return setErrorMessage(err.message)
+    }
+  }
+
+  async function submitForEvaluation(eligibility: TeamSubmissionEligibility) {
+    if (
+      !entity.id ||
+      (entityType === EntityType.DOCKER_REPO && !selectedCommit)
+    )
+      return setErrorMessage('Error: Invalid entity or commit.')
+
+    console.log({ entity })
+    const submission: EvaluationSubmission = {
+      userId: userId,
+      evaluationId: selectedEval!,
+      entityId: entity.id,
+      versionNumber: entity.versionNumber ?? 1,
+      teamId: teamId,
+    }
+    if (entityType === EntityType.DOCKER_REPO) {
+      submission.dockerRepositoryName = entity.repositoryName
+      submission.dockerDigest = selectedCommit!.digest
+    }
+
+    if (submissionName !== '') submission['name'] = submissionName
+
+    try {
+      await SynapseClient.submitToEvaluation(
+        submission,
+        entity.etag!,
+        eligibility.eligibilityStateHash,
+        accessToken,
+      )
+      displayToast('Submitted successfully!', 'success')
+      hide()
+    } catch (e) {
+      setErrorMessage(e.message)
+    }
+  }
+
   const onConfirmHandler = async () => {
     console.log('onConfirm')
-    await submitRepoForEvaluation()
+    const eligibility = await confirmEligibility()
+    console.log({ eligibility })
+    if (eligibility) {
+      await submitForEvaluation(eligibility)
+    }
   }
 
   const onCommitChanged = (value: DockerCommit) => {

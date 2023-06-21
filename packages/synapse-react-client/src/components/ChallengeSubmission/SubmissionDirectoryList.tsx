@@ -283,12 +283,21 @@ function SubmissionDirectoryList({
       return setErrorMessage(`The entity ${entityId} could not be retrieved.`)
     }
 
-    entity.dataFileHandleId = fileHandleId
+    const updateRequest: FileEntity = {
+      id: entity.id,
+      name: entity.name,
+      dataFileHandleId: fileHandleId,
+      concreteType: FILE_ENTITY_CONCRETE_TYPE_VALUE,
+      parentId: entity.parentId,
+      etag: entity.etag,
+      modifiedOn: entity.modifiedOn,
+    }
 
     try {
       const updatedEntity = await SynapseClient.updateEntity(
-        entity,
+        updateRequest,
         accessToken,
+        true,
       )
       await invalidateAllQueriesForEntity(
         queryClient,

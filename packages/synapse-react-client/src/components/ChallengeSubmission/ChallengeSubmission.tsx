@@ -97,7 +97,6 @@ function ChallengeSubmission({
       data: PaginatedIds | undefined,
       error: SynapseClientError | null,
     ) => {
-      console.log('useGetUserSubmissionTeams', { data }, { error })
       if (data) {
         const isReg = data.results.length > 0
         if (!isReg) {
@@ -112,7 +111,6 @@ function ChallengeSubmission({
           )
           return
         }
-        console.log({ setSubmissionTeamId: data.results[0] })
         setSubmissionTeamId(data.results[0])
       }
       if (error) {
@@ -261,7 +259,7 @@ function ChallengeSubmission({
             <ChallengeSubmissionStepper
               projectId={projectId}
               userId={userProfile?.ownerId}
-              teamId={submissionTeamId}
+              teamId={submissionTeamId!}
               entity={selectedEntity}
               entityType={entityType}
               isShowingModal={isShowingModal}

@@ -285,6 +285,7 @@ import {
   DockerCommit,
   SortBy,
   Direction,
+  TeamSubmissionEligibility,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -1300,8 +1301,10 @@ export const updateEntityACL = (
 export const updateEntity = <T extends Entity>(
   entity: T,
   accessToken: string | undefined = undefined,
+  newVersion?: boolean,
 ): Promise<T> => {
-  const url = `/repo/v1/entity/${entity.id}`
+  let url = `/repo/v1/entity/${entity.id}`
+  if (newVersion) url += '?newVersion=true'
   return doPut<T>(
     url,
     entity,
@@ -1474,6 +1477,19 @@ export const getSubmissionTeams = (
   limit: string | number = 50,
 ): Promise<PaginatedIds> => {
   const url = `/repo/v1/challenge/${challengeId}/submissionTeams?&offset=${offset}&limit=${limit}`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Find out whether a Team and its members are eligible to submit to a given Evaluation queue (at the current time).
+ * see https://rest-docs.synapse.org/rest/GET/evaluation/evalId/team/id/submissionEligibility.html
+ */
+export const getSubmissionEligibility = (
+  evaluationId: string,
+  teamId: string,
+  accessToken?: string,
+): Promise<TeamSubmissionEligibility> => {
+  const url = `/repo/v1/evaluation/${evaluationId}/team/${teamId}/submissionEligibility`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
@@ -2418,10 +2434,11 @@ export const createACL = (
 export const submitToEvaluation = (
   submission: EvaluationSubmission,
   etag: string,
+  submissionEligibilityHash: number,
   accessToken: string | undefined,
 ) => {
   return doPost(
-    `/repo/v1/evaluation/submission?etag=${etag}`,
+    `/repo/v1/evaluation/submission?etag=${etag}&submissionEligibilityHash=${submissionEligibilityHash}`,
     submission,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
