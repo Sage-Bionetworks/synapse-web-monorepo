@@ -11,15 +11,12 @@ import {
 import { useSynapseContext } from '../../utils'
 import {
   ACCESS_TYPE,
-  AccessControlList,
   Challenge,
-  EntityId,
   Project,
   ResourceAccess,
   Team,
 } from '@sage-bionetworks/synapse-types'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
-import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useGetTeam } from '../../synapse-queries/team/useTeam'
 import { createEntity } from '../../synapse-client'
 import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
@@ -120,70 +117,83 @@ export function ChallengeSubmission({
     useErrorBoundary: true,
   })
 
-  useGetEntityAlias(newProject?.alias ?? EMPTY_ID, {
-    enabled: newProject !== undefined && !!challenge && !!submissionTeam,
-    onSettled: (
-      data: EntityId | null | undefined,
-      error: SynapseClientError | null,
-    ) => {
-      if (data) {
-        setProjectAliasFound(true)
-        setChallengeProjectId(data.id)
-      }
-      if (error) {
+  const { data: entityAlias } = useGetEntityAlias(
+    newProject?.alias ?? EMPTY_ID,
+    {
+      enabled: newProject !== undefined && !!challenge && !!submissionTeam,
+      onError: error => {
+        setLoading(false)
         setProjectAliasFound(false)
-      }
+        setErrorMessage(error.reason)
+      },
     },
-  })
+  )
+  useEffect(() => {
+    if (entityAlias) {
+      setProjectAliasFound(true)
+      setChallengeProjectId(entityAlias.id)
+    }
+  }, [entityAlias])
 
   /**
    * If the challenge project was just created, retrieve its ACL
    * and add the submission team to it
    */
-  useGetEntityACL(challengeProjectId ?? EMPTY_ID, {
+  const { data: entityACL } = useGetEntityACL(challengeProjectId ?? EMPTY_ID, {
     enabled: !!challengeProjectId && isProjectNewlyCreated === true,
     refetchInterval: Infinity,
-    useErrorBoundary: true,
-    onSettled: (data: AccessControlList | undefined) => {
-      if (data) {
-        // Give submission team admin access to challenge project
-        const teamResourceAccess: ResourceAccess = {
-          principalId: Number(submissionTeam!.id),
-          accessType: [
-            ACCESS_TYPE.CHANGE_PERMISSIONS,
-            ACCESS_TYPE.CHANGE_SETTINGS,
-            ACCESS_TYPE.CREATE,
-            ACCESS_TYPE.DELETE,
-            ACCESS_TYPE.DOWNLOAD,
-            ACCESS_TYPE.MODERATE,
-            ACCESS_TYPE.READ,
-            ACCESS_TYPE.UPDATE,
-          ],
-        }
-        updateACL({
-          ...data,
-          resourceAccess: [...data.resourceAccess, teamResourceAccess],
-        })
-        setIsProjectNewlyCreated(false)
-      }
+    onError: error => {
+      setLoading(false)
+      setErrorMessage(error.reason)
     },
   })
 
-  useGetEntityPermissions(challengeProjectId!, {
-    enabled: !!challengeProjectId,
-    refetchInterval: Infinity,
-    onSettled: (data, error) => {
-      if (data && data.canView && data.canAddChild) {
-        setCanSubmit(true)
+  useEffect(() => {
+    if (entityACL && isProjectNewlyCreated === true) {
+      // Give submission team admin access to challenge project
+      const teamResourceAccess: ResourceAccess = {
+        principalId: Number(submissionTeam!.id),
+        accessType: [
+          ACCESS_TYPE.CHANGE_PERMISSIONS,
+          ACCESS_TYPE.CHANGE_SETTINGS,
+          ACCESS_TYPE.CREATE,
+          ACCESS_TYPE.DELETE,
+          ACCESS_TYPE.DOWNLOAD,
+          ACCESS_TYPE.MODERATE,
+          ACCESS_TYPE.READ,
+          ACCESS_TYPE.UPDATE,
+        ],
       }
-      if (error) {
-        setErrorMessage(
-          'You do not have permission to submit for this challenge team.',
-        )
-      }
-      setLoading(false)
+      updateACL({
+        ...entityACL,
+        resourceAccess: [...entityACL.resourceAccess, teamResourceAccess],
+      })
+      setIsProjectNewlyCreated(false)
+    }
+  }, [entityACL])
+
+  const { data: entityPermissions } = useGetEntityPermissions(
+    challengeProjectId!,
+    {
+      enabled: !!challengeProjectId,
+      refetchInterval: Infinity,
+      onError: error => {
+        setLoading(false)
+        setErrorMessage(error.reason)
+      },
     },
-  })
+  )
+
+  useEffect(() => {
+    if (
+      entityPermissions &&
+      entityPermissions.canView &&
+      entityPermissions.canAddChild
+    ) {
+      setCanSubmit(true)
+    }
+    setLoading(false)
+  }, [entityPermissions])
 
   useEffect(() => {
     if (!isLoggedIn && (!!userProfile || !isProfileLoading)) {
