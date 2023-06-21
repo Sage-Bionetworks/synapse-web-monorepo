@@ -2432,13 +2432,16 @@ export const createACL = (
  * https://rest-docs.synapse.org/rest/POST/evaluation/submission.html
  */
 export const submitToEvaluation = (
+  accessToken: string | undefined,
   submission: EvaluationSubmission,
   etag: string,
-  submissionEligibilityHash: number,
-  accessToken: string | undefined,
+  submissionEligibilityHash?: number,
 ) => {
+  let url = `/repo/v1/evaluation/submission?etag=${etag}`
+  if (submissionEligibilityHash)
+    url += `&submissionEligibilityHash=${submissionEligibilityHash}`
   return doPost(
-    `/repo/v1/evaluation/submission?etag=${etag}&submissionEligibilityHash=${submissionEligibilityHash}`,
+    url,
     submission,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,

@@ -136,12 +136,25 @@ function ChallengeSubmissionStepper({
     )
       return setErrorMessage('Error: Invalid entity or commit.')
 
+    const contributors = eligibility.membersEligibility
+      .filter(
+        member =>
+          !member.hasConflictingSubmission &&
+          member.isEligible &&
+          !member.isQuotaFilled &&
+          member.isRegistered,
+      )
+      .map(member => {
+        return { principalId: member.principalId.toString() }
+      })
+
     const submission: EvaluationSubmission = {
       userId: userId,
       evaluationId: selectedEval!,
       entityId: entity.id,
       versionNumber: entity.versionNumber ?? 1,
       teamId: teamId,
+      contributors,
     }
     if (entityType === EntityType.DOCKER_REPO) {
       submission.dockerRepositoryName = entity.repositoryName
@@ -152,10 +165,10 @@ function ChallengeSubmissionStepper({
 
     try {
       await SynapseClient.submitToEvaluation(
+        accessToken,
         submission,
         entity.etag!,
         eligibility.eligibilityStateHash,
-        accessToken,
       )
       displayToast('Submitted successfully!', 'success')
       hide()

@@ -15,5 +15,5 @@ export type EvaluationSubmission = {
   name?: string
   createdOn?: string
   teamId?: string
-  contributors?: SubmissionContributor
+  contributors?: SubmissionContributor[]
 }
