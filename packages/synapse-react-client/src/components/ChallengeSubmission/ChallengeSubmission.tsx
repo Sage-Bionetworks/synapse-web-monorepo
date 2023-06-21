@@ -266,3 +266,5 @@ export function ChallengeSubmission({
     </SynapseErrorBoundary>
   )
 }
+
+export default ChallengeSubmission
