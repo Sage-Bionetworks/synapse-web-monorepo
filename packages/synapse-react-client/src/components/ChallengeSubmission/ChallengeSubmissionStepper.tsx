@@ -152,7 +152,7 @@ function ChallengeSubmissionStepper({
       userId: userId,
       evaluationId: selectedEval!,
       entityId: entity.id,
-      versionNumber: entity.versionNumber ?? 1,
+      versionNumber: entity.versionNumber ?? -1,
       teamId: teamId,
       contributors,
     }
