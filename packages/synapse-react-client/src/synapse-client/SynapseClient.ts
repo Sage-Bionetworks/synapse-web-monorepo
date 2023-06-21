@@ -25,13 +25,17 @@ import {
   ENTITY,
   ENTITY_ACCESS,
   ENTITY_ACCESS_REQUIREMENTS,
+  ENTITY_ACL,
   ENTITY_ACTIONS_REQUIRED,
+  ENTITY_ALIAS,
   ENTITY_BUNDLE_V2,
+  ENTITY_EVALUATION,
   ENTITY_HEADER_BY_ID,
   ENTITY_HEADERS,
   ENTITY_ID,
   ENTITY_JSON,
   ENTITY_PATH,
+  ENTITY_PERMISSIONS,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
   EVALUATION,
@@ -56,6 +60,7 @@ import {
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  TEAM,
   TEAM_ID_MEMBER_ID,
   TEAM_ID_MEMBER_ID_WITH_NOTIFICATION,
   TEAM_MEMBER,
@@ -275,6 +280,12 @@ import {
   ChallengeTeamPagedResults,
   ChallengeTeam,
   TeamMembershipStatus,
+  UserEntityPermissions,
+  GetEvaluationParameters,
+  DockerCommit,
+  SortBy,
+  Direction,
+  TeamSubmissionEligibility,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -1247,6 +1258,18 @@ export const getEntityHeaders = (
 }
 
 /**
+ * Lookup an Entity ID using an alias.
+ * https://rest-docs.synapse.org/rest/GET/entity/alias/alias.html
+ */
+export const getEntityAlias = (alias: string, accessToken?: string) => {
+  return doGet<EntityId>(
+    ENTITY_ALIAS(alias),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get the EntityHeader for a single entity
  * https://rest-docs.synapse.org/rest/GET/entity/id/type.html
  */
@@ -1258,11 +1281,30 @@ export const getEntityHeader = (entityId: string, accessToken?: string) => {
   )
 }
 
+/**
+ * Update an Entity's ACL
+ * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
+ * https://rest-docs.synapse.org/rest/PUT/entity/id/acl.html
+ */
+export const updateEntityACL = (
+  acl: AccessControlList,
+  accessToken: string | undefined = undefined,
+): Promise<AccessControlList> => {
+  return doPut<AccessControlList>(
+    ENTITY_ACL(acl.id),
+    acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 export const updateEntity = <T extends Entity>(
   entity: T,
   accessToken: string | undefined = undefined,
+  newVersion?: boolean,
 ): Promise<T> => {
-  const url = `/repo/v1/entity/${entity.id}`
+  let url = `/repo/v1/entity/${entity.id}`
+  if (newVersion) url += '?newVersion=true'
   return doPut<T>(
     url,
     entity,
@@ -1435,6 +1477,19 @@ export const getSubmissionTeams = (
   limit: string | number = 50,
 ): Promise<PaginatedIds> => {
   const url = `/repo/v1/challenge/${challengeId}/submissionTeams?&offset=${offset}&limit=${limit}`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Find out whether a Team and its members are eligible to submit to a given Evaluation queue (at the current time).
+ * see https://rest-docs.synapse.org/rest/GET/evaluation/evalId/team/id/submissionEligibility.html
+ */
+export const getSubmissionEligibility = (
+  evaluationId: string,
+  teamId: string,
+  accessToken?: string,
+): Promise<TeamSubmissionEligibility> => {
+  const url = `/repo/v1/evaluation/${evaluationId}/team/${teamId}/submissionEligibility`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
@@ -1705,6 +1760,21 @@ export const deleteMemberFromTeam = (
 ) => {
   return doDelete(
     `/repo/v1/team/${teamId}/member/${userId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get Team that matches the given ID.
+ * https://rest-docs.synapse.org/rest/GET/team/id.html
+ */
+export const getTeam = (
+  id: string | number,
+  accessToken?: string | undefined,
+) => {
+  return doGet<Team>(
+    TEAM(id),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2362,12 +2432,16 @@ export const createACL = (
  * https://rest-docs.synapse.org/rest/POST/evaluation/submission.html
  */
 export const submitToEvaluation = (
+  accessToken: string | undefined,
   submission: EvaluationSubmission,
   etag: string,
-  accessToken: string | undefined,
+  submissionEligibilityHash?: number,
 ) => {
+  let url = `/repo/v1/evaluation/submission?etag=${etag}`
+  if (submissionEligibilityHash)
+    url += `&submissionEligibilityHash=${submissionEligibilityHash}`
   return doPost(
-    `/repo/v1/evaluation/submission?etag=${etag}`,
+    url,
     submission,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3326,6 +3400,49 @@ export const getUserProjects = (
   )
   return doGet<ProjectHeaderList>(
     `/repo/v1/projects/user/${userId}?${urlParams.toString()}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/acl.html
+export const getEntityACL = (entityId: string, accessToken?: string) => {
+  return doGet<AccessControlList>(
+    ENTITY_ACL(entityId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/evaluation.html
+export const getAllEntityEvaluations = (
+  entityId: string,
+  params: GetEvaluationParameters = {},
+  accessToken?: string,
+): Promise<Evaluation[]> => {
+  const urlParams = new URLSearchParams(
+    removeUndefined(params) as Record<string, string>,
+  )
+  const fn = (limit: number, offset: number) => {
+    const url = `${ENTITY_EVALUATION(
+      entityId,
+    )}?offset=${offset}&limit=${limit}&${urlParams.toString()}`
+    return doGet<PaginatedResults<Evaluation>>(
+      url,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/permissions.html
+export const getEntityPermissions = (
+  entityId: string,
+  accessToken?: string,
+) => {
+  return doGet<UserEntityPermissions>(
+    ENTITY_PERMISSIONS(entityId),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -4744,6 +4861,27 @@ export const getEntityDownloadActionsRequired = (
 ) => {
   return doGet<ActionRequiredList>(
     ENTITY_ACTIONS_REQUIRED(entityId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/actions/download.html
+export const getDockerTag = (
+  entityId: string,
+  accessToken?: string,
+  offset: string | number = 0,
+  limit: string | number = 20,
+  sort: SortBy = SortBy.CREATED_ON,
+  sortDirection: Direction = Direction.DESC,
+) => {
+  const params = new URLSearchParams()
+  params.set('offset', offset.toString())
+  params.set('limit', limit.toString())
+  params.set('sort', sort)
+  params.set('sortDirection', sortDirection)
+  return doGet<PaginatedResults<DockerCommit>>(
+    `/repo/v1/entity/${entityId}/dockerTag?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

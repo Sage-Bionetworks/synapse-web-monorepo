@@ -86,12 +86,14 @@ const taskTabConfigs = (taskID: string) => {
       title: 'Submission',
       props: {},
     },
-    // TODO: Add Submission component
-    // {
-    //   name: 'GenUISubmissionComponent',
-    //   columnName: `${taskID}.SubmissionType`, // Docker or File
-    //   props: {},
-    // },
+    {
+      name: 'ChallengeSubmissionWrapper',
+      columnName: `${taskID}.SubmissionType`, // Docker or File
+      props: {
+        //entityType will be set by the DetailsPage, using the value in the column
+        //projectId will be set in the ChallengeSubmissionWrapper by looking at the query param
+      },
+    },
     {
       name: 'Markdown',
       columnName: `${taskID}.Leaderboard`,

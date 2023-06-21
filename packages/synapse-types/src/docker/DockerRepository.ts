@@ -13,3 +13,10 @@ export interface DockerRepository extends Entity {
   /** Indicates that the repository is managed by Synapse, rather than by an external registry. */
   isManaged: boolean
 }
+
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/docker/DockerCommit.html
+export type DockerCommit = {
+  tag: string
+  digest: string
+  createdOn: string
+}
