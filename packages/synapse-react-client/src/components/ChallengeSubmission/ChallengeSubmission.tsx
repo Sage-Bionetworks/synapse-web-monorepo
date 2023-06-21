@@ -103,13 +103,13 @@ export function ChallengeSubmission({
           setErrorMessage(
             'Error: Please join a Submission Team before continuing.',
           )
-          return
+          return setLoading(false)
         }
         if (data.results.length > 1) {
           setErrorMessage(
             'Error: You are a member of more than one Submission Team. You may only belong to one Submission Team per Challenge.',
           )
-          return
+          return setLoading(false)
         }
         setSubmissionTeamId(data.results[0])
       }
@@ -117,6 +117,7 @@ export function ChallengeSubmission({
         setErrorMessage(
           `Error: Could not determine if you are already registered for this Challenge.`,
         )
+        setLoading(false)
       }
     },
   })
