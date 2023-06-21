@@ -12,7 +12,7 @@ const ChallengeSubmissionWrapper = (props: ChallengeSubmissionWrapperProps) => {
     return (
       <ChallengeSubmission
         projectId={projectId}
-        entityType={props.entityType}
+        entityType={props.entityType!}
         pageSize={10}
       />
     )
