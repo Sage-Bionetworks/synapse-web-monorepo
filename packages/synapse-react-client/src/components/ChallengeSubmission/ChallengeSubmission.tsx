@@ -14,7 +14,6 @@ import {
   AccessControlList,
   Challenge,
   EntityId,
-  PaginatedIds,
   Project,
   ResourceAccess,
   Team,
@@ -91,36 +90,29 @@ export function ChallengeSubmission({
   })
 
   // Determine whether or not the given user belongs to any submission teams
-  useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 2, {
-    enabled: isLoggedIn && !!challenge,
-    onSettled: (
-      data: PaginatedIds | undefined,
-      error: SynapseClientError | null,
-    ) => {
-      if (data) {
-        const isReg = data.results.length > 0
-        if (!isReg) {
-          setErrorMessage(
-            'Error: Please join a Submission Team before continuing.',
-          )
-          return setLoading(false)
-        }
-        if (data.results.length > 1) {
-          setErrorMessage(
-            'Error: You are a member of more than one Submission Team. You may only belong to one Submission Team per Challenge.',
-          )
-          return setLoading(false)
-        }
-        setSubmissionTeamId(data.results[0])
-      }
-      if (error) {
+  const { data: userSubmissionTeams } = useGetUserSubmissionTeamsInfinite(
+    challenge?.id ?? EMPTY_ID,
+    2,
+  )
+
+  useEffect(() => {
+    if (isLoggedIn && !!challenge && userSubmissionTeams) {
+      const isReg = userSubmissionTeams.results.length > 0
+      if (!isReg) {
         setErrorMessage(
-          `Error: Could not determine if you are already registered for this Challenge.`,
+          'Error: Please join a Submission Team before continuing.',
         )
-        setLoading(false)
+        return setLoading(false)
       }
-    },
-  })
+      if (userSubmissionTeams.results.length > 1) {
+        setErrorMessage(
+          'Error: You are a member of more than one Submission Team. You may only belong to one Submission Team per Challenge.',
+        )
+        return setLoading(false)
+      }
+      setSubmissionTeamId(userSubmissionTeams.results[0])
+    }
+  }, [challenge, isLoggedIn, userSubmissionTeams])
 
   const { data: submissionTeam } = useGetTeam(submissionTeamId!, {
     enabled: !!submissionTeamId,
