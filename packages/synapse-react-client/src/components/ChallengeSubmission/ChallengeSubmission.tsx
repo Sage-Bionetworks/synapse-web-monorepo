@@ -71,14 +71,13 @@ export function ChallengeSubmission({
 
   // Use the existing accessToken if present to get the current user's profile / userId
   const { data: userProfile, isLoading: isProfileLoading } =
-    useGetCurrentUserProfile()
-  useGetCurrentUserProfile({
-    enabled: isLoggedIn,
-    onError: () => {
-      setLoading(false)
-      setErrorMessage(`Error: Could not retrieve user profile`)
-    },
-  })
+    useGetCurrentUserProfile({
+      enabled: isLoggedIn,
+      onError: () => {
+        setLoading(false)
+        setErrorMessage(`Error: Could not retrieve user profile`)
+      },
+    })
 
   // Retrieve the challenge associated with the projectId passed through props
   const { data: challenge } = useGetEntityChallenge(projectId, {
