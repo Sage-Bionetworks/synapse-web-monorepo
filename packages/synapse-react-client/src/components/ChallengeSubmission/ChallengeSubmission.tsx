@@ -123,6 +123,7 @@ export function ChallengeSubmission({
       enabled: newProject !== undefined && !!challenge && !!submissionTeam,
       onError: error => {
         setLoading(false)
+        setProjectAliasFound(false)
         setErrorMessage(error.reason)
       },
     },
