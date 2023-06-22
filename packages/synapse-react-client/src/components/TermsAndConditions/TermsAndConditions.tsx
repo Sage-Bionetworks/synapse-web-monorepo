@@ -8,28 +8,32 @@ import {
 } from '../../utils/SynapseConstants'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 
-export const termsAndConditionsTableID = 'syn51718002'
-
 export type TermsAndConditionsProps = {
+  termsAndConditionsTableID: string
+  termsAndConditionsTableVersion: string
   onFormChange: (formComplete: boolean) => void
   hideLinkToFullTC?: boolean
 }
 
 const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
+  termsAndConditionsTableID,
+  termsAndConditionsTableVersion,
   onFormChange,
   hideLinkToFullTC = false,
 }) => {
   const [tcList, setTcList] = useState<tcItem[]>([])
   // Fetch the table data
-  const tableQuery = useGetFullTableQueryResults({
-    entityId: termsAndConditionsTableID,
-    query: {
-      sql: `SELECT * FROM ${termsAndConditionsTableID} ORDER BY order asc`,
+  const { data, isLoading } = useGetFullTableQueryResults(
+    {
+      entityId: termsAndConditionsTableID,
+      query: {
+        sql: `SELECT * FROM ${termsAndConditionsTableID}.${termsAndConditionsTableVersion} ORDER BY order asc`,
+      },
+      partMask: BUNDLE_MASK_QUERY_RESULTS,
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     },
-    partMask: BUNDLE_MASK_QUERY_RESULTS,
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-  })
-  const { data, isLoading } = tableQuery
+    { staleTime: Infinity },
+  )
 
   // update tcList when data changes (transform)
   useEffect(() => {
@@ -131,6 +135,7 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
                   id={i}
                   checked={checkboxChecked[i]}
                   enabled={checkboxEnabled[i]}
+                  termsAndConditionsTableID={termsAndConditionsTableID}
                   onChange={updateCheckboxState}
                 />
               )

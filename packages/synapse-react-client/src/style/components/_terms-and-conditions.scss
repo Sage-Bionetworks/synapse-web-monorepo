@@ -73,6 +73,7 @@ $signatureLine-width: 420px;
         margin-right: 14px;
         display: inline-block;
         line-height: $terms-checkbox-dimension;
+        cursor: pointer;
       }
       .terms-checked {
         background-color: #28a745;

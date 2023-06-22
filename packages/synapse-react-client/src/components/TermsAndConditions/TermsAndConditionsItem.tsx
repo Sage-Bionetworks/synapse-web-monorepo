@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { CheckIcon } from '../../assets/icons/terms/CheckIcon'
-import { termsAndConditionsTableID } from './TermsAndConditions'
-import {
-  FileHandleAssociateType,
-  FileResult,
-} from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { Link, Skeleton } from '@mui/material'
 import { SkeletonParagraph } from '../Skeleton'
 import { times } from 'lodash-es'
+import { useGetPresignedUrlContentFromFHA } from '../../synapse-queries/file/useFiles'
+import { MarkdownSynapse } from '../Markdown'
 
 export type tcItem = {
   iconFileHandleId: string
@@ -21,48 +18,22 @@ export type TermsAndConditionsItemProps = {
   enabled: boolean
   checked: boolean
   item: tcItem
+  termsAndConditionsTableID: string
   onChange: (id: number) => void
 }
 
 const TermsAndConditionsItem: React.FunctionComponent<
   TermsAndConditionsItemProps
 > = props => {
-  const { id, item, enabled, checked, onChange } = props
+  const { id, item, enabled, checked, onChange, termsAndConditionsTableID } =
+    props
   const { iconFileHandleId, label, description } = item
-  const [iconFileResult, setIconFileResult] = useState<FileResult | undefined>(
-    undefined,
-  )
-  const [iconFileContent, setIconFileContent] = useState<string>('')
+  const { data: iconFileContent } = useGetPresignedUrlContentFromFHA({
+    associateObjectId: termsAndConditionsTableID,
+    associateObjectType: FileHandleAssociateType.TableEntity,
+    fileHandleId: iconFileHandleId,
+  })
 
-  useEffect(() => {
-    if (iconFileHandleId) {
-      SynapseClient.getFiles({
-        requestedFiles: [
-          {
-            associateObjectId: termsAndConditionsTableID,
-            associateObjectType: FileHandleAssociateType.TableEntity,
-            fileHandleId: iconFileHandleId,
-          },
-        ],
-        includeFileHandles: true,
-        includePreSignedURLs: true,
-        includePreviewPreSignedURLs: false,
-      }).then(fileResults => {
-        setIconFileResult(fileResults.requestedFiles[0])
-      })
-    }
-  }, [iconFileHandleId])
-
-  useEffect(() => {
-    if (iconFileResult) {
-      SynapseClient.getFileHandleContent(
-        iconFileResult.fileHandle!,
-        iconFileResult.preSignedURL!,
-      ).then(content => {
-        setIconFileContent(content)
-      })
-    }
-  }, [iconFileResult])
   const [showDesc, setShowDes] = useState<boolean>(false)
   const [isChecked, setIsChecked] = useState<boolean>(false)
   let mounted = true
@@ -93,18 +64,16 @@ const TermsAndConditionsItem: React.FunctionComponent<
     <li className={enabled ? 'terms-enabled' : ''}>
       <span
         className="terms-icon"
-        dangerouslySetInnerHTML={{ __html: iconFileContent }}
+        dangerouslySetInnerHTML={{ __html: iconFileContent ?? '' }}
       />
       <span className="terms-desc">
-        <label
-          id={`toc-item-${id}`}
-          dangerouslySetInnerHTML={{ __html: label }}
-        />
+        <label id={`toc-item-${id}`}>
+          <MarkdownSynapse markdown={label} />
+        </label>
         {showDesc && description && (
-          <div
-            className="terms-desc-content"
-            dangerouslySetInnerHTML={{ __html: description }}
-          />
+          <div className="terms-desc-content">
+            <MarkdownSynapse markdown={description} />
+          </div>
         )}
         {description && (
           <div>
