@@ -20,6 +20,7 @@ import { Redirect } from 'react-router-dom'
 import Header from './Header'
 import ChallengeParticipantGoogleMap from './challengeportal/ChallengeParticipantGoogleMap'
 import ChallengeDetailPageWrapper from './challengeportal/ChallengeDetailPageWrapper'
+import ChallengeSubmissionWrapper from './challengeportal/ChallengeSubmissionWrapper'
 import ProjectDiscussionForum from './ProjectDiscussionForum'
 
 const PortalComponents = {
@@ -46,6 +47,7 @@ const PortalComponents = {
   ChallengeParticipantGoogleMap,
   ChallengeDetailPageWrapper,
   ProjectDiscussionForum,
+  ChallengeSubmissionWrapper,
 }
 
 export default PortalComponents

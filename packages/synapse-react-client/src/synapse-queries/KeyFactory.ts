@@ -252,6 +252,22 @@ export class KeyFactory {
     return this.getKey(entityQueryKeyObjects.path(id))
   }
 
+  public getEntityACLQueryKey(entityId: string) {
+    return this.getKey('entityACL', entityId)
+  }
+
+  public getEntityAliasQueryKey(alias: string) {
+    return this.getKey('entityAlias', alias)
+  }
+
+  public getEntityEvaluationsQueryKey(entityId: string) {
+    return this.getKey('entityEvaluations', entityId)
+  }
+
+  public getEntityPermissionsQueryKey(entityId: string) {
+    return this.getKey('entityPermissions', entityId)
+  }
+
   public getEntityBoundJsonSchemaQueryKey(id: string) {
     return this.getKey(entityQueryKeyObjects.boundJSONSchema(id))
   }
@@ -529,6 +545,10 @@ export class KeyFactory {
     return this.getKey('searchEntities', query)
   }
 
+  public getTeamQueryKey(teamId: string) {
+    return this.getKey('team', teamId)
+  }
+
   public getTeamListQueryKey(teamIds: string) {
     return this.getKey('team', teamIds, 'teamList')
   }
@@ -641,5 +661,15 @@ export class KeyFactory {
 
   public getBatchOfFiles(request: BatchFileRequest) {
     return this.getKey('fileBatch', request)
+  }
+
+  public getPaginatedDockerTagQueryKey(
+    id: string,
+    offset: string,
+    limit: string,
+    sort: string,
+    sortDirection: string,
+  ) {
+    return this.getKey('dockerTag', id, offset, limit, sort, sortDirection)
   }
 }

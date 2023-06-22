@@ -25,16 +25,12 @@ function DirectDownloadButton(props: DirectFileDownloadButtonProps) {
       includeFileHandles: false,
       includePreviewPreSignedURLs: false,
     }
-    try {
-      const file = await getFiles(batchFileRequest, accessToken)
-      const preSignedURL = file.requestedFiles[0].preSignedURL
-      if (!preSignedURL) {
-        console.log('Fail to get file download link')
-      } else {
-        window.open(preSignedURL)
-      }
-    } catch (e) {
-      console.log('Fail to get file download link', e)
+    const file = await getFiles(batchFileRequest, accessToken)
+    const preSignedURL = file.requestedFiles[0].preSignedURL
+    if (!preSignedURL) {
+      console.log('Fail to get file download link')
+    } else {
+      window.open(preSignedURL)
     }
   }
 

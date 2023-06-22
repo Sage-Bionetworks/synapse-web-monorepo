@@ -129,6 +129,7 @@ export default function DataAccessRequestAccessorsEditor(
                 }
                 {
                   // Renewal/Revoke data access, only display if isRenewal is true
+                  // TODO: It's possible to that the accessors list is in an illegal state with no way to recover -- see PLFM-7893
                   isRenewal &&
                     user?.ownerId !== ac.userId &&
                     ac.type !== AccessType.GAIN_ACCESS && (

@@ -2,6 +2,13 @@ import { Box } from '@mui/material'
 import * as React from 'react'
 import { AppUtils, ChallengeDetailPage } from 'synapse-react-client'
 
+/**
+ * This is the Challenge Registration button.  This includes:
+ * - Agree to terms
+ * - Join Challenge registration/participant team
+ * - Create/join a submission team
+ * @returns
+ */
 const ChallengeDetailPageWrapper = () => {
   const projectId = AppUtils.useQuerySearchParam('id')
   if (projectId) {
