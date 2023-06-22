@@ -9,15 +9,15 @@ import {
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 
 export type TermsAndConditionsProps = {
-  termsAndConditionsTableID: string
-  termsAndConditionsTableVersion: string
   onFormChange: (formComplete: boolean) => void
+  termsAndConditionsTableID?: string
+  termsAndConditionsTableVersion?: string
   hideLinkToFullTC?: boolean
 }
 
 const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
-  termsAndConditionsTableID,
-  termsAndConditionsTableVersion,
+  termsAndConditionsTableID = 'syn51718002',
+  termsAndConditionsTableVersion = '4',
   onFormChange,
   hideLinkToFullTC = false,
 }) => {
