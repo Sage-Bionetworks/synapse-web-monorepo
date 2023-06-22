@@ -6,6 +6,7 @@ import {
   BatchFileRequest,
   BatchFileResult,
   FileHandle,
+  FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 
 export function useGetPresignedUrlContent(
@@ -33,6 +34,38 @@ export function useGetPresignedUrlContent(
       request,
       maxFileSizeBytes,
     ),
+
+    queryFn,
+    {
+      staleTime: Infinity,
+      ...options,
+    },
+  )
+}
+
+export function useGetPresignedUrlContentFromFHA(
+  fileHandleAssociation: FileHandleAssociation,
+  options?: Omit<UseQueryOptions<string, SynapseClientError>, 'staleTime'>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryFn = async () => {
+    const batchFileResult = await SynapseClient.getFiles(
+      {
+        requestedFiles: [fileHandleAssociation],
+        includeFileHandles: true,
+        includePreSignedURLs: true,
+        includePreviewPreSignedURLs: false,
+      },
+      accessToken,
+    )
+    const data = await SynapseClient.getFileHandleContent(
+      batchFileResult.requestedFiles[0].fileHandle!,
+      batchFileResult.requestedFiles[0].preSignedURL!,
+    )
+    return data
+  }
+  return useQuery<string, SynapseClientError>(
+    keyFactory.getPresignedUrlFromFHAContentQueryKey(fileHandleAssociation),
 
     queryFn,
     {

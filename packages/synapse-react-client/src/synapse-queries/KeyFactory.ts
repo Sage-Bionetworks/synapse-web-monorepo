@@ -11,6 +11,7 @@ import {
   FavoriteSortBy,
   FavoriteSortDirection,
   FileHandle,
+  FileHandleAssociation,
   GetProjectsParameters,
   PrincipalAliasRequest,
   QueryBundleRequest,
@@ -430,6 +431,12 @@ export class KeyFactory {
     maxSizeBytes?: number,
   ) {
     return this.getKey('presignedUrlContent', fileHandle, request, maxSizeBytes)
+  }
+
+  public getPresignedUrlFromFHAContentQueryKey(
+    fileHandleAssociation: FileHandleAssociation,
+  ) {
+    return this.getKey('presignedUrlContentFromFHA', fileHandleAssociation)
   }
 
   public getProfileImageQueryKey(userId: string) {

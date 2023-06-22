@@ -1,68 +1,96 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { ChatBubblesIcon } from '../../src/assets/icons/terms/ChatBubblesIcon'
-import TermsAndConditionsItem from '../../src/components/TermsAndConditions/TermsAndConditionsItem'
+import TermsAndConditionsItem, {
+  TermsAndConditionsItemProps,
+  tcItem,
+} from '../../src/components/TermsAndConditions/TermsAndConditionsItem'
+import { SynapseClient, SynapseContextType } from '../../src'
+import { BatchFileResult, FileResult } from '@sage-bionetworks/synapse-types'
+import { mockFileHandle } from '../../mocks/mock_file_handle'
+import { createWrapper } from '../testutils/TestingLibraryUtils'
+
+async function renderComponent(
+  itemProps: TermsAndConditionsItemProps,
+  wrapperProps?: SynapseContextType,
+) {
+  const wrapper = render(<TermsAndConditionsItem {...itemProps} />, {
+    wrapper: createWrapper(wrapperProps),
+  })
+}
 
 describe('Terms and Conditions Item: basic functionality', () => {
-  const mockItem = {
-    icon: <ChatBubblesIcon />,
+  const mockIconSvg = '<svg>definition</svg>'
+  const mockItem: tcItem = {
+    iconFileHandleId: '123',
     label: 'Item 1',
     description: 'Item 1 desc',
   }
+  const mockFileResult: FileResult = {
+    fileHandleId: '123',
+    fileHandle: mockFileHandle,
+  }
+  const mockBatchFileResult: BatchFileResult = {
+    requestedFiles: [mockFileResult],
+  }
+
   const onChange = jest.fn()
 
+  beforeEach(() => {
+    jest.clearAllMocks()
+    jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+    jest
+      .spyOn(SynapseClient, 'getFileHandleContent')
+      .mockResolvedValue(mockIconSvg)
+  })
   it('render component without crashing', () => {
-    const { container } = render(
-      <TermsAndConditionsItem
-        id={1}
-        enabled={true}
-        checked={false}
-        item={mockItem}
-        onChange={onChange}
-      />,
-    )
+    const container = renderComponent({
+      id: 1,
+      enabled: true,
+      checked: false,
+      item: mockItem,
+      onChange: onChange,
+      termsAndConditionsTableID: 'syn51718002',
+    })
+
     expect(container).toBeDefined()
   })
 
   it('should populate the right content', () => {
-    render(
-      <TermsAndConditionsItem
-        id={1}
-        enabled={true}
-        checked={false}
-        item={mockItem}
-        onChange={onChange}
-      />,
-    )
+    renderComponent({
+      id: 1,
+      enabled: true,
+      checked: false,
+      item: mockItem,
+      onChange: onChange,
+      termsAndConditionsTableID: 'syn51718002',
+    })
 
     screen.getByLabelText(mockItem.label)
   })
 
   it('should display show more link when there is description', () => {
-    render(
-      <TermsAndConditionsItem
-        id={1}
-        enabled={true}
-        checked={false}
-        item={mockItem}
-        onChange={onChange}
-      />,
-    )
+    renderComponent({
+      id: 1,
+      enabled: true,
+      checked: false,
+      item: mockItem,
+      onChange: onChange,
+      termsAndConditionsTableID: 'syn51718002',
+    })
 
     screen.getByText('Show More')
   })
 
   it('should display show less link when show more link is clicked', async () => {
-    render(
-      <TermsAndConditionsItem
-        id={1}
-        enabled={true}
-        checked={false}
-        item={mockItem}
-        onChange={onChange}
-      />,
-    )
+    renderComponent({
+      id: 1,
+      enabled: true,
+      checked: false,
+      item: mockItem,
+      onChange: onChange,
+      termsAndConditionsTableID: 'syn51718002',
+    })
 
     await userEvent.click(screen.getByText('Show More'))
     await userEvent.click(screen.getByText('Show Less'))
@@ -70,15 +98,15 @@ describe('Terms and Conditions Item: basic functionality', () => {
   })
 
   it('should call event handler when checkbox is checked', async () => {
-    render(
-      <TermsAndConditionsItem
-        id={1}
-        enabled={true}
-        checked={false}
-        item={mockItem}
-        onChange={onChange}
-      />,
-    )
+    renderComponent({
+      id: 1,
+      enabled: true,
+      checked: false,
+      item: mockItem,
+      onChange: onChange,
+      termsAndConditionsTableID: 'syn51718002',
+    })
+
     await userEvent.click(screen.getByLabelText(mockItem.label))
     expect(onChange).toHaveBeenCalledTimes(1)
   })
