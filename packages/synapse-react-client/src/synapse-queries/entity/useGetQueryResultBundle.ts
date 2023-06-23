@@ -304,12 +304,16 @@ export function useInfiniteQueryResultBundle(
 export function useGetFullTableQueryResults(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
+  forceAnonymous: boolean = false,
 ): UseQueryResult<QueryResultBundle, SynapseClientError> {
   const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<QueryResultBundle, SynapseClientError>(
     keyFactory.getFullTableQueryResultQueryKey(queryBundleRequest),
     () =>
-      SynapseClient.getFullQueryTableResults(queryBundleRequest, accessToken),
+      SynapseClient.getFullQueryTableResults(
+        queryBundleRequest,
+        forceAnonymous ? undefined : accessToken,
+      ),
     {
       ...sharedQueryDefaults,
       ...options,
