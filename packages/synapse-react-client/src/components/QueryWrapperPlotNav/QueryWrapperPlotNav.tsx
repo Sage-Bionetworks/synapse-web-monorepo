@@ -76,6 +76,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'rgbIndex'
     | 'showLastUpdatedOn'
     | 'noContentPlaceholderType'
+    | 'isRowSelectionVisible'
   >
 
 export type SearchParams = {
@@ -115,6 +116,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     showExportToCavatica = false,
     cavaticaHelpURL,
     customControls,
+    isRowSelectionVisible,
   } = props
 
   const entityId = parseEntityIdFromSqlStatement(sql)
@@ -167,6 +169,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
         }
         showLastUpdatedOn={showLastUpdatedOn}
         noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
+        isRowSelectionVisible={isRowSelectionVisible}
       >
         <QueryContextConsumer>
           {queryContext => {
