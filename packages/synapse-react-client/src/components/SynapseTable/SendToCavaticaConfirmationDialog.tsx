@@ -25,13 +25,11 @@ export default function SendToCavaticaConfirmationDialog(
   const queryRequestCopy = getLastQueryRequest()
   queryRequestCopy.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
   const { data: asyncJobStatus, isLoading } =
-    useGetQueryResultBundleWithAsyncStatus(queryRequestCopy, {
-      keepPreviousData: false,
-      useErrorBoundary: true,
-    })
+    useGetQueryResultBundleWithAsyncStatus(queryRequestCopy)
 
   const queryResultBundle = asyncJobStatus?.responseBody
-  const actions = queryResultBundle?.actionsRequired
+  const actions: ActionRequiredCount[] | undefined =
+    queryResultBundle?.actionsRequired
   return (
     <ConfirmationDialog
       open={true}
@@ -145,6 +143,7 @@ export default function SendToCavaticaConfirmationDialog(
         </>
       }
       confirmButtonText="Send to CAVATICA"
+      confirmButtonDisabled={isLoading || (actions && actions.length > 0)}
       onConfirm={() => {
         exportToCavatica()
       }}

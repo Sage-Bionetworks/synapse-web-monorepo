@@ -150,7 +150,6 @@ export const FileView: Story = {
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     sql: 'SELECT * FROM syn11346063.28',
     hideSqlEditorControl: false,
-    showExportToCavatica: true,
   },
 }
 
