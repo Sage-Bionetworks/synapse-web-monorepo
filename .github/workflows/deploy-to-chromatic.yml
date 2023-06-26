@@ -8,14 +8,23 @@ on:
     branches:
       - main
   pull_request_target:
+    types: [labeled]
     branches:
       - main
 
 jobs:
-  build:
-    if: github.event.pull_request.draft == false
+  deploy-to-chromatic:
+    name: Deploy to Chromatic
     runs-on: ubuntu-latest
     steps:
+      - name: Check PR label
+        if: ${{ github.event_name == 'pull_request' && github.event.label.name != 'chromatic' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # The following script will cancel the rest of the job
+        run: |
+          gh run cancel ${{ github.run_id }}
+          gh run watch ${{ github.run_id }}
       - uses: actions/checkout@v3.1.0
         with:
           ref: ${{ github.event.pull_request.head.ref }}
