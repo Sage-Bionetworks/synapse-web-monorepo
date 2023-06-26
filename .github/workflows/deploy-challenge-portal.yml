@@ -18,3 +18,4 @@ jobs:
     uses: ./.github/workflows/build-and-deploy-portal.yml
     with:
       portal-name: challengeportal
+      branch-or-tag: main

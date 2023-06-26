@@ -12,6 +12,7 @@ on:
       tag:
         required: true
         type: string
+        description: Which tag to deploy from
   
 jobs:
   build-and-deploy:

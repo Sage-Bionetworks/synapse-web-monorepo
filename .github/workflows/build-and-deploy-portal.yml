@@ -6,6 +6,11 @@ on:
       portal-name:
         required: true
         type: string
+        description: The portal to deploy
+      branch-or-tag:
+        required: true
+        type: string
+        description: The branch or tag to deploy from
 
 jobs:
   build-and-deploy:
@@ -18,6 +23,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3.0.0
+        with:
+          ref: ${{ inputs.branch-or-tag }}
       - name: setup
         uses: ./.github/actions/pnpm-setup-action
       - name: Assume AWS Role

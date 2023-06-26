@@ -18,4 +18,5 @@ jobs:
     uses: ./.github/workflows/build-and-deploy-portal.yml
     with:
       portal-name: adknowledgeportal
+      branch-or-tag: main
 
