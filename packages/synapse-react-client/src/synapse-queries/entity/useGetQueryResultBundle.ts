@@ -308,7 +308,10 @@ export function useGetFullTableQueryResults(
 ): UseQueryResult<QueryResultBundle, SynapseClientError> {
   const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<QueryResultBundle, SynapseClientError>(
-    keyFactory.getFullTableQueryResultQueryKey(queryBundleRequest),
+    keyFactory.getFullTableQueryResultQueryKey(
+      queryBundleRequest,
+      forceAnonymous,
+    ),
     () =>
       SynapseClient.getFullQueryTableResults(
         queryBundleRequest,
