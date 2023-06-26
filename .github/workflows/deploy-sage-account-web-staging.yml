@@ -15,6 +15,7 @@ jobs:
     uses: ./.github/workflows/build-and-deploy-app.yml
     with:
       app-name: sage-account-web
+      branch-or-tag: main
       bucket-name: staging.accounts.sagebionetworks.org
       cfdist-id: EY52HOUGKDP1F
       deployment-role-arn: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra

@@ -6,15 +6,23 @@ on:
       app-name:
         required: true
         type: string
+        description: The app to build/deploy
+      branch-or-tag:
+        required: true
+        type: string
+        description: The branch or tag to deploy
       bucket-name:
         required: true
         type: string
+        description: The bucket to deploy to
       cfdist-id:
         required: true
         type: string
+        description: The distribution to invvalidate
       deployment-role-arn:
         required: true
         type: string
+        description: The IAM role used to deploy
 
 jobs:
   build-and-deploy:
@@ -28,6 +36,8 @@ jobs:
       # checkout and build
       - name: checkout
         uses: actions/checkout@v3.0.0
+        with:
+          ref: ${{ inputs.branch-or-tag }}
       - uses: ./.github/actions/pnpm-setup-action
       - name: build
         run: pnpm nx run ${ inputs.app-name }:build
