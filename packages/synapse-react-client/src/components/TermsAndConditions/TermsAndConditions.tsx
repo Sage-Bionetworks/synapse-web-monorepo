@@ -33,6 +33,7 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     },
     { staleTime: Infinity },
+    true, // force this query to be run as the anonymous user (without an access token)
   )
 
   // update tcList when data changes (transform)

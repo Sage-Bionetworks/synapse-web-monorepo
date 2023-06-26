@@ -229,9 +229,8 @@ const handleCustomCommandClick = async (event: CustomControlCallbackData) => {
 export const TableRowSelectionWithCustomCommand: Story = {
   args: {
     sql: 'SELECT * FROM syn51186974',
-    tableConfiguration: {
-      isRowSelectionVisible: true,
-    },
+    isRowSelectionVisible: true,
+    tableConfiguration: {},
     name: 'Row Selection Demo',
     hideSqlEditorControl: true,
     shouldDeepLink: false,

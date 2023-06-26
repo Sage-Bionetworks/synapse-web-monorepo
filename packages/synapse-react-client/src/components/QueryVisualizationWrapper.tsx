@@ -34,6 +34,7 @@ export type QueryVisualizationContextType = {
   getDisplayValue: (value: string, columnType: ColumnType) => string
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => JSX.Element
+  isRowSelectionVisible: boolean
 }
 
 /**
@@ -87,6 +88,7 @@ export type QueryVisualizationWrapperProps = {
   showLastUpdatedOn?: boolean
   /** Default is INTERACTIVE */
   noContentPlaceholderType?: NoContentPlaceholderType
+  isRowSelectionVisible?: boolean
 }
 
 export type TopLevelControlsState = {
@@ -107,8 +109,10 @@ export type TopLevelControlsState = {
 export function QueryVisualizationWrapper(
   props: QueryVisualizationWrapperProps,
 ) {
-  const { noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE } =
-    props
+  const {
+    noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE,
+    isRowSelectionVisible = false,
+  } = props
 
   const { data, getLastQueryRequest, isFacetsAvailable, hasResettableFilters } =
     useQueryContext()
@@ -197,6 +201,7 @@ export function QueryVisualizationWrapper(
     getColumnDisplayName,
     getDisplayValue,
     NoContentPlaceholder,
+    isRowSelectionVisible,
   }
   /**
    * Render the children without any formatting

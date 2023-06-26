@@ -114,10 +114,14 @@ const entityQueryKeyObjects = {
     tableQueryBundleRequest: queryBundleRequest,
   }),
 
-  fullTableQueryResult: (queryBundleRequest: QueryBundleRequest) => ({
+  fullTableQueryResult: (
+    queryBundleRequest: QueryBundleRequest,
+    forceAnonymous: boolean,
+  ) => ({
     ...entityQueryKeyObjects.entity(queryBundleRequest.entityId),
     scope: 'fullTableQueryResult',
     tableQueryBundleRequest: queryBundleRequest,
+    forceAnonymous,
   }),
 
   boundJSONSchema: (id: string) => ({
@@ -312,9 +316,13 @@ export class KeyFactory {
 
   public getFullTableQueryResultQueryKey(
     queryBundleRequest: QueryBundleRequest,
+    forceAnonymous: boolean,
   ) {
     return this.getKey(
-      entityQueryKeyObjects.fullTableQueryResult(queryBundleRequest),
+      entityQueryKeyObjects.fullTableQueryResult(
+        queryBundleRequest,
+        forceAnonymous,
+      ),
     )
   }
 
