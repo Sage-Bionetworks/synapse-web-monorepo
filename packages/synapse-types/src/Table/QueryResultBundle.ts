@@ -1,3 +1,4 @@
+import { ActionRequiredCount } from '../DownloadListV2'
 import { ColumnModel } from './ColumnModel'
 import { FacetColumnResult } from './FacetColumnResult'
 import { QueryResult } from './QueryResult'
@@ -16,4 +17,5 @@ export interface QueryResultBundle {
   sumFileSizes?: SumFileSizes
   lastUpdatedOn?: string
   combinedSql?: string //The SQL that is combination of a the input SQL, FacetRequests, AdditionalFilters, Sorting, and Pagination. Use mask = 0x100 to include in the bundle.
+  actionsRequired?: ActionRequiredCount[]
 }

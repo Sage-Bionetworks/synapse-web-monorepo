@@ -22,6 +22,7 @@ export const BUNDLE_MASK_QUERY_FACETS: number = 32
 export const BUNDLE_MASK_SUM_FILES_SIZE_BYTES: number = 64
 export const BUNDLE_MASK_LAST_UPDATED_ON = 0x80
 export const BUNDLE_MASK_COMBINED_SQL = 0x100
+export const BUNDLE_MASK_ACTIONS_REQUIRED = 0x200
 
 /** Row Types  */
 export const STUDY: string = 'study'

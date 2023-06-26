@@ -14,14 +14,14 @@ import {
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { DownloadOptions } from './table-top'
 import { ColumnSelection } from './table-top/ColumnSelection'
-import { Box, Button, Link, Tooltip, Typography } from '@mui/material'
+import { Button, Tooltip, Typography } from '@mui/material'
 import QueryCount from '../QueryCount/QueryCount'
 import { Icon } from '../row_renderers/utils'
 import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
 import { Cavatica } from '../../assets/icons/Cavatica'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { RowSelectionControls } from './RowSelectionControls'
+import SendToCavaticaConfirmationDialog from './SendToCavaticaConfirmationDialog'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -314,89 +314,13 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               darkTheme={true}
             />
           )}
-          <ConfirmationDialog
-            open={isShowingExportToCavaticaModal}
-            title="Send to CAVATICA"
-            content={
-              <>
-                <Box
-                  sx={{
-                    backgroundColor: 'grey.100',
-                    border: '1px solid',
-                    borderColor: 'grey.300',
-                    marginBottom: '15px',
-                    padding: '10px 20px 10px 20px',
-                  }}
-                >
-                  <Typography variant="body1" sx={{ textAlign: 'center' }}>
-                    CAVATICA is a data analysis and sharing platform.
-                    {cavaticaHelpURL && (
-                      <>
-                        {' '}
-                        Read more about CAVATICA{' '}
-                        <Link href={cavaticaHelpURL} target="_blank">
-                          here
-                        </Link>
-                        .
-                      </>
-                    )}
-                  </Typography>
-                </Box>
-                <Typography
-                  variant="body1"
-                  sx={{ fontWeight: 700, marginBottom: '10px' }}
-                >
-                  You must meet these requirements from CAVATICA to send data:
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ marginLeft: '10px', marginBottom: '10px' }}
-                >
-                  1. You must be logged in to a CAVATICA account.
-                  <br />
-                  2. You must connect your CAVATICA account to Synapse.
-                </Typography>
-                <Typography variant="body1">
-                  <Link
-                    href="https://help.eliteportal.org/help/limited-data-commons#LimitedDataCommons-GainingAccess"
-                    target="_blank"
-                  >
-                    Click here for instructions
-                  </Link>
-                </Typography>
-                <Box
-                  sx={{
-                    backgroundColor: 'grey.100',
-                    marginTop: '15px',
-                    padding: '10px 20px 10px 20px',
-                  }}
-                >
-                  <Typography variant="body1">
-                    Note that we cannot provide support for CAVATICA. Please
-                    contact CAVATICA’s{' '}
-                    <Link href="mailto:support@sevenbridges.com ">
-                      {' '}
-                      support
-                    </Link>{' '}
-                    for issues related to the above.
-                  </Typography>
-                </Box>
-                <Typography
-                  variant="body1"
-                  sx={{ fontWeight: 700, marginTop: '15px' }}
-                >
-                  When completed, click “Send to CAVATICA“ to finish the process
-                  outside this application. You will be redirected to CAVATICA.
-                </Typography>
-              </>
-            }
-            confirmButtonText="Send to CAVATICA"
-            onConfirm={() => {
-              exportToCavatica()
-            }}
-            onCancel={() => setIsShowingExportToCavaticaModal(false)}
-            maxWidth="md"
-          />
+          {isShowingExportToCavaticaModal && (
+            <SendToCavaticaConfirmationDialog
+              cavaticaHelpURL={cavaticaHelpURL}
+              exportToCavatica={exportToCavatica}
+              onHide={() => setIsShowingExportToCavaticaModal(false)}
+            />
+          )}
         </div>
       </div>
     </div>
