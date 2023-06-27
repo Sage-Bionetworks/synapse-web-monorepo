@@ -293,6 +293,7 @@ export const Dataset: Story = {
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
     hideSqlEditorControl: false,
     shouldDeepLink: false,
+    showExportToCavatica: true,
   },
 }
 

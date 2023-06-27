@@ -25,7 +25,9 @@ export default function SendToCavaticaConfirmationDialog(
   const queryRequestCopy = getLastQueryRequest()
   queryRequestCopy.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
   const { data: asyncJobStatus, isLoading } =
-    useGetQueryResultBundleWithAsyncStatus(queryRequestCopy)
+    useGetQueryResultBundleWithAsyncStatus(queryRequestCopy, {
+      useErrorBoundary: true,
+    })
 
   const queryResultBundle = asyncJobStatus?.responseBody
   const actions: ActionRequiredCount[] | undefined =
@@ -95,43 +97,47 @@ export default function SendToCavaticaConfirmationDialog(
               issues related to the above.
             </Typography>
           </Box>
-          {isLoading && <SkeletonParagraph numRows={4} />}
-          {!isLoading && actions && actions.length > 0 && (
-            <>
-              <Typography
-                variant="body1"
-                sx={{ fontWeight: 700, marginBottom: '10px' }}
-              >
-                You must also take these actions before sending the selected
-                data to Cavatica:
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ marginLeft: '10px', marginBottom: '10px' }}
-              >
-                The data you’ve selected is contains potentially identifying
-                information about study participants.
-                <br />
-                You must take the following actions before we can send this data
-                to Cavatica.
-              </Typography>
-              <Box>
-                {actions.map((item: ActionRequiredCount, index) => {
-                  if (item) {
-                    return (
-                      <ActionRequiredListItem
-                        key={index}
-                        action={item.action}
-                        count={item.count}
-                        onViewSharingSettingsClicked={
-                          onViewSharingSettingsClicked
-                        }
-                      />
-                    )
-                  } else return false
-                })}
-              </Box>
-            </>
+          {isLoading ? (
+            <SkeletonParagraph numRows={4} />
+          ) : (
+            actions &&
+            actions.length > 0 && (
+              <>
+                <Typography
+                  variant="body1"
+                  sx={{ fontWeight: 700, marginBottom: '10px' }}
+                >
+                  You must also take these actions before sending the selected
+                  data to Cavatica:
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ marginLeft: '10px', marginBottom: '10px' }}
+                >
+                  The data you’ve selected is contains potentially identifying
+                  information about study participants.
+                  <br />
+                  You must take the following actions before we can send this
+                  data to Cavatica.
+                </Typography>
+                <Box>
+                  {actions.map((item: ActionRequiredCount, index) => {
+                    if (item) {
+                      return (
+                        <ActionRequiredListItem
+                          key={index}
+                          action={item.action}
+                          count={item.count}
+                          onViewSharingSettingsClicked={
+                            onViewSharingSettingsClicked
+                          }
+                        />
+                      )
+                    } else return false
+                  })}
+                </Box>
+              </>
+            )
           )}
           <Typography
             variant="body1"
