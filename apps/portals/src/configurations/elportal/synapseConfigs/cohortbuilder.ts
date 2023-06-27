@@ -12,10 +12,10 @@ const cohortbuilder: SynapseConfig = {
     // showExportToCavatica: true,
     visibleColumnCount: 10,
     facetsToPlot: ['diagnosis', 'sex'],
+    isRowSelectionVisible: true,
     tableConfiguration: {
       showAccessColumn: false,
       showDownloadColumn: false,
-      isRowSelectionVisible: true,
       columnLinks: [
         {
           matchColumnName: 'study',
