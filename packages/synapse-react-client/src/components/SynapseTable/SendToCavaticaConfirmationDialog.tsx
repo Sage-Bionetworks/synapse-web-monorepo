@@ -1,33 +1,71 @@
-import React from 'react'
-import ConfirmationDialog from '../ConfirmationDialog'
-import { Box } from '@mui/material'
-import { Typography } from '@mui/material'
-import { Link } from '@mui/material'
+import React, { useMemo } from 'react'
+import { ConfirmationDialog } from '../ConfirmationDialog'
+import { Box, Link, Typography } from '@mui/material'
 import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
-import { ActionRequiredCount } from '@sage-bionetworks/synapse-types'
+import {
+  ActionRequiredCount,
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
+} from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../QueryContext'
 import { SynapseConstants } from '../../utils'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { SkeletonParagraph } from '../Skeleton'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
+import { cloneDeep } from 'lodash-es'
+import pluralize from 'pluralize'
 
 export type SendToCavaticaConfirmationDialogProps = {
-  showing: boolean
   cavaticaHelpURL?: string
-  onHide: () => void
 }
 
 export default function SendToCavaticaConfirmationDialog(
   props: SendToCavaticaConfirmationDialogProps,
 ) {
-  const { cavaticaHelpURL, onHide, showing } = props
+  const { cavaticaHelpURL } = props
   const { data, getLastQueryRequest, onViewSharingSettingsClicked } =
     useQueryContext()
+  const {
+    isShowingExportToCavaticaModal,
+    setIsShowingExportToCavaticaModal,
+    isRowSelectionVisible,
+    selectedRows,
+    unitDescription,
+  } = useQueryVisualizationContext()
+
+  const hasSelectedRows = isRowSelectionVisible && selectedRows.length > 0
+
+  const cavaticaQueryRequest = useMemo(() => {
+    const request = getLastQueryRequest()
+    if (!hasSelectedRows) {
+      return request
+    } else {
+      // Add a filter that will just return the selected rows.
+      const idColIndex = data?.columnModels?.findIndex(cm => cm.name === 'id')
+      const idColumnFilter: ColumnSingleValueQueryFilter = {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        columnName: 'id',
+        operator: ColumnSingleValueFilterOperator.IN,
+        values: selectedRows!.map(row => row.values[idColIndex!]!),
+      }
+      request.query.additionalFilters = [
+        ...(request.query.additionalFilters || []),
+        idColumnFilter,
+      ]
+      return request
+    }
+  }, [data?.columnModels, getLastQueryRequest, selectedRows, hasSelectedRows])
+
   const exportToCavatica = useExportToCavatica(
-    getLastQueryRequest(),
+    cavaticaQueryRequest,
     data?.queryResult?.queryResults.headers,
   )
-  const queryRequestCopy = getLastQueryRequest()
+  const queryRequestCopy = useMemo(
+    () => cloneDeep(cavaticaQueryRequest),
+    [cavaticaQueryRequest],
+  )
   queryRequestCopy.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
   const { data: asyncJobStatus, isLoading } =
     useGetQueryResultBundleWithAsyncStatus(queryRequestCopy, {
@@ -37,9 +75,22 @@ export default function SendToCavaticaConfirmationDialog(
   const queryResultBundle = asyncJobStatus?.responseBody
   const actions: ActionRequiredCount[] | undefined =
     queryResultBundle?.actionsRequired
+
+  let confirmButtonText
+  if (!hasSelectedRows) {
+    confirmButtonText = `Send all ${data?.queryCount?.toLocaleString()} ${pluralize(
+      unitDescription,
+    )} to CAVATICA`
+  } else {
+    confirmButtonText = `Send ${selectedRows.length.toLocaleString()} selected ${pluralize(
+      unitDescription,
+      selectedRows.length,
+    )} to CAVATICA`
+  }
+
   return (
     <ConfirmationDialog
-      open={showing}
+      open={isShowingExportToCavaticaModal}
       title="Send to CAVATICA"
       content={
         <>
@@ -153,12 +204,12 @@ export default function SendToCavaticaConfirmationDialog(
           </Typography>
         </>
       }
-      confirmButtonText="Send to CAVATICA"
+      confirmButtonText={confirmButtonText}
       confirmButtonDisabled={isLoading || (actions && actions.length > 0)}
       onConfirm={() => {
         exportToCavatica()
       }}
-      onCancel={onHide}
+      onCancel={() => setIsShowingExportToCavaticaModal(false)}
       maxWidth="md"
     />
   )

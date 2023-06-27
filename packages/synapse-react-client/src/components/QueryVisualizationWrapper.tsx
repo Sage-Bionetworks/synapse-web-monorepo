@@ -25,7 +25,7 @@ export type QueryVisualizationContextType = {
   selectedRows: Row[]
   setSelectedRows: (newState: Row[]) => void
   rgbIndex?: number
-  unitDescription?: string
+  unitDescription: string
   /** Whether to show when the table or view was last updated. */
   showLastUpdatedOn?: boolean
   /** Given a column name, return the display name for the column */
@@ -35,6 +35,10 @@ export type QueryVisualizationContextType = {
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => JSX.Element
   isRowSelectionVisible: boolean
+  isShowingExportToCavaticaModal: boolean
+  setIsShowingExportToCavaticaModal: React.Dispatch<
+    React.SetStateAction<boolean>
+  >
 }
 
 /**
@@ -78,6 +82,7 @@ export const QueryVisualizationContextConsumer =
 export type QueryVisualizationWrapperProps = {
   children: React.ReactNode | React.ReactNode[]
   rgbIndex?: number
+  /** The singular word to use to describe a what a row represents (e.g. "file"). Defaults to "result" */
   unitDescription?: string
   /** Mapping from column name to the name that should be shown for the column */
   columnAliases?: Record<string, string>
@@ -130,6 +135,9 @@ export function QueryVisualizationWrapper(
       showSqlEditor: false,
       showCopyToClipboard: true,
     })
+
+  const [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal] =
+    useState<boolean>(false)
 
   useEffect(() => {
     if (!isFacetsAvailable) {
@@ -196,12 +204,14 @@ export function QueryVisualizationWrapper(
     selectedRows,
     setSelectedRows,
     rgbIndex: props.rgbIndex,
-    unitDescription: props.unitDescription,
+    unitDescription: props.unitDescription || 'result',
     showLastUpdatedOn: props.showLastUpdatedOn,
     getColumnDisplayName,
     getDisplayValue,
     NoContentPlaceholder,
     isRowSelectionVisible,
+    isShowingExportToCavaticaModal,
+    setIsShowingExportToCavaticaModal,
   }
   /**
    * Render the children without any formatting

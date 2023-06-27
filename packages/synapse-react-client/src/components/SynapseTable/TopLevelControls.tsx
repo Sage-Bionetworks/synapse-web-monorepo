@@ -19,7 +19,7 @@ import QueryCount from '../QueryCount/QueryCount'
 import { Icon } from '../row_renderers/utils'
 import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 import { Cavatica } from '../../assets/icons/Cavatica'
-import { RowSelectionControls } from './RowSelectionControls'
+import { RowSelectionControls } from './RowSelection/RowSelectionControls'
 import SendToCavaticaConfirmationDialog from './SendToCavaticaConfirmationDialog'
 
 export type TopLevelControlsProps = {
@@ -51,7 +51,7 @@ export type CustomControl = {
   buttonText: string
   onClick: (event: CustomControlCallbackData) => void
   classNames?: string
-  icon?: string
+  icon?: React.ReactNode
 }
 
 const controls: Control[] = [
@@ -96,22 +96,16 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     cavaticaHelpURL,
   } = props
 
-  const {
-    data,
-    entity,
-    executeQueryRequest,
-    getLastQueryRequest,
-    getInitQueryRequest,
-    lockedColumn,
-  } = useQueryContext()
+  const { data, entity, getInitQueryRequest, lockedColumn } = useQueryContext()
 
   const {
     topLevelControlsState,
     setTopLevelControlsState,
     columnsToShowInTable,
+    isRowSelectionVisible,
     selectedRows,
-    setSelectedRows,
     setColumnsToShowInTable,
+    setIsShowingExportToCavaticaModal,
   } = useQueryVisualizationContext()
 
   const { showCopyToClipboard } = topLevelControlsState
@@ -133,15 +127,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       ...state,
       ...updatedTopLevelControlsState,
     }))
-  }
-
-  const [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal] =
-    useState(false)
-  const refresh = () => {
-    // clear selection
-    setSelectedRows([])
-    // refresh the data
-    executeQueryRequest(getLastQueryRequest())
   }
 
   /**
@@ -183,6 +168,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     setColumnsToShowInTable(columnsToShowInTableCopy)
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
+  const hasSelectedRows = isRowSelectionVisible && selectedRows.length > 0
   return (
     <div
       className={`TopLevelControls ${
@@ -227,11 +213,28 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
         <div className="TopLevelControls__actions">
           {showExportToCavatica && (
             <Tooltip
-              title={`This action will send a reference to every file in the current table to CAVATICA. ${
-                topLevelControlsState.showFacetFilter
-                  ? 'You can change what is sent by applying filters using the controls in the sidebar.'
-                  : ''
-              }`}
+              title={
+                <>
+                  This action will send a reference to{' '}
+                  {hasSelectedRows
+                    ? 'each selected file'
+                    : 'every file in the current table'}{' '}
+                  to CAVATICA.{' '}
+                  {!hasSelectedRows &&
+                    topLevelControlsState.showFacetFilter && (
+                      <>
+                        You can change what is sent by applying filters using
+                        the controls in the sidebar.
+                      </>
+                    )}
+                  {hasSelectedRows && (
+                    <>
+                      You can change what is sent by selecting a different set
+                      of files.
+                    </>
+                  )}
+                </>
+              }
             >
               <Button
                 variant="text"
@@ -292,13 +295,10 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               />
             )
           })}
-          {customControls && (
+          {isRowSelectionVisible && (
             <RowSelectionControls
               customControls={customControls}
-              data={data}
-              refresh={refresh}
-              selectedRows={selectedRows}
-              setSelectedRows={setSelectedRows}
+              showExportToCavatica={showExportToCavatica}
             />
           )}
           {showColumnSelection && (
@@ -309,11 +309,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               darkTheme={true}
             />
           )}
-          <SendToCavaticaConfirmationDialog
-            showing={isShowingExportToCavaticaModal}
-            cavaticaHelpURL={cavaticaHelpURL}
-            onHide={() => setIsShowingExportToCavaticaModal(false)}
-          />
+          <SendToCavaticaConfirmationDialog cavaticaHelpURL={cavaticaHelpURL} />
         </div>
       </div>
     </div>
