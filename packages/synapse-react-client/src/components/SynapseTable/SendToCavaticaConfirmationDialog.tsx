@@ -113,7 +113,7 @@ export default function SendToCavaticaConfirmationDialog(
                   sx={{ fontWeight: 700, marginBottom: '10px' }}
                 >
                   You must also take these actions before sending the selected
-                  data to Cavatica:
+                  data to CAVATICA:
                 </Typography>
                 <Typography
                   variant="body1"
@@ -123,7 +123,7 @@ export default function SendToCavaticaConfirmationDialog(
                   information about study participants.
                   <br />
                   You must take the following actions before we can send this
-                  data to Cavatica.
+                  data to CAVATICA.
                 </Typography>
                 <Box>
                   {actions.map((item: ActionRequiredCount, index) => {
