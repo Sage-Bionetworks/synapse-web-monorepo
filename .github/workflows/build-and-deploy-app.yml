@@ -18,7 +18,7 @@ on:
       cfdist-id:
         required: true
         type: string
-        description: The distribution to invvalidate
+        description: The distribution to invalidate
       deployment-role-arn:
         required: true
         type: string
@@ -48,7 +48,6 @@ jobs:
           role-to-assume: ${{ inputs.deployment-role-arn }}
           role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
           role-duration-seconds: 1200
-      # if not main branch deploy build to S3 bucket
       - name: deploy
         run: |
           echo aws s3 sync ./apps/${{ inputs.app-name }}/build s3://${{ inputs.bucket-name }}/ --delete

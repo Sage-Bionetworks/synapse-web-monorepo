@@ -7,7 +7,7 @@ on:
         type: choice
         description: Which app to deploy
         options: 
-        - sage-account-web
+        - SageAccountWeb
         - synapse-oauth-signin
       tag:
         type: string
@@ -15,13 +15,13 @@ on:
 
 jobs:
   build-and-deploy-sage-account-web:
-    if: ${{ inputs.app-name }} == 'sage-account-web'
+    if: ${{ inputs.app-name }} == 'SageAccountWeb'
     permissions:
       id-token: write
       contents: read
     uses: ./.github/workflows/build-and-deploy-app.yml
     with:
-      app-name: sage-account-web
+      app-name: SageAccountWeb
       branch-or-tag: ${{ inputs.tag }}
       bucket-name: prod.accounts.sagebionetworks.org
       cfdist-id: E2656IE63W1MXI

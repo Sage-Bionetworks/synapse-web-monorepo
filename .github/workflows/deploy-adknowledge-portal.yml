@@ -7,7 +7,7 @@ on:
     paths:
       - "apps/portals/**"
       - "!apps/portals/src/configurations/**"
-      - "apps/portals/src/configurations/adknowldgeportal/**"
+      - "apps/portals/src/configurations/adknowledgeportal/**"
       - "packages/synapse-react-client/**"
 
 jobs:

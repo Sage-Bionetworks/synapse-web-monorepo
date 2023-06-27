@@ -7,7 +7,7 @@ on:
         type: choice
         description: Which portal to deploy
         options: 
-        - adknowledgportal
+        - adknowledgeportal
         - challengeportal
       tag:
         required: true

@@ -15,7 +15,7 @@ PORTAL_CONFIGURATION=src/configurations/$1/
 
 # Check that directory exists
 if [ ! -d $PORTAL_CONFIGURATION ]; then
-  echo "Error: Folder $PORTAL_CONFIGURATION doesn't exit"
+  echo "Error: Folder $PORTAL_CONFIGURATION doesn't exist"
   exit 1
 fi
 

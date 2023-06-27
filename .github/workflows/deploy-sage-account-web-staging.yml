@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "packages/synapse-react-client/**"
-      - "apps/sage-account-web/**"
+      - "apps/SageAccountWeb/**"
 jobs:
   build-and-deploy:
     permissions:
