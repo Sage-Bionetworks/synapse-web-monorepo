@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches: [main]
 
 jobs:
   publish:
@@ -10,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/pnpm-setup-action
-      - run: pnpm -r publish --access public
+      - run: pnpm -r publish --access public ${{ (github.event_name == 'pull_request' && '--dry-run') || '' }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   tag:
@@ -23,11 +25,11 @@ jobs:
       - id: package-version-check
         uses: EndBug/version-check@v2
         with:
-          file-name: ./packages/${{ matrix.publishablePackage }}/package.json
+          file-name: './packages/${{ matrix.publishablePackage }}/package.json'
       # If the package version changed, create the tag using the output of the previous step.
       - name: Create tag
         uses: actions/github-script@v6
-        if: steps.package-version-check.outputs.changed == 'true'
+        if: github.event_name == 'push' && steps.package-version-check.outputs.changed == 'true'
         with:
           github-token: ${{ github.token }}
           script: |

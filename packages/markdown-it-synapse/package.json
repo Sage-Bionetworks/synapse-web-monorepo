@@ -17,10 +17,7 @@
   ],
   "scripts": {
     "build": "rimraf ./dist && tsup ./src/index.ts --format esm,cjs --dts",
-    "predist": "rm -rf dist && pnpm build && pnpm test",
-    "dist": "pnpm browserify && pnpm minify",
     "lint": "eslint src/*",
-    "prepublish": "pnpm dist",
     "test": "jest",
     "coverage": "jest --coverage"
   },
