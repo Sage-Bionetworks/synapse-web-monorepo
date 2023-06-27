@@ -5,3 +5,4 @@ export {
   useApplicationSessionContext,
 } from './session/ApplicationSessionContext'
 export { ApplicationSessionManager } from './session/ApplicationSessionManager'
+export { useQuerySearchParam } from '../hooks/useQuerySearchParam'

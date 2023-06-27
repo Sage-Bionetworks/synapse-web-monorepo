@@ -1,3 +1,4 @@
+import React from 'react'
 import { GenericRoute } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
 import {
@@ -90,6 +91,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'LLFS',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?studyKey=LLFS',
+                    unitDescription: 'Files',
                   },
                   {
                     title:
@@ -101,6 +103,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'ADAMTS7',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
+                    unitDescription: 'Files',
                   },
                   {
                     title:
@@ -112,6 +115,7 @@ const routes: GenericRoute[] = [
                     selectFacetColumnValue: 'ELPSCRNA',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?studyKey=ELPSCRNA',
+                    unitDescription: 'Files',
                   },
                 ],
               },
@@ -208,6 +212,31 @@ const routes: GenericRoute[] = [
         exact: true,
         path: 'Data by Participants',
         synapseConfigArray: [
+          {
+            name: 'OrientationBanner',
+            isOutsideContainer: true,
+            props: {
+              name: 'CohortBuilder',
+              title: 'Getting Started With Explore Data by Participants',
+              text: (
+                <>
+                  This page helps you find data related to anonymized
+                  Participants. Add filters to build a list of participants. If
+                  you have a list of participant IDs, click{' '}
+                  <strong>Filter by Participant</strong> to add them. Once
+                  you’ve built your cohort, you can download the related data
+                  files, <strong>Send to CAVATICA</strong> for analysis, or just{' '}
+                  <strong>Save your Query</strong> and come back to it later.
+                </>
+              ),
+              sx: { position: 'relative', zIndex: 1, marginBottom: '0px' },
+              // TODO DOCS-122
+              // secondaryButtonConfig: {
+              //   text: 'Learn more about Cohort Builder',
+              //   href: '',
+              // },
+            },
+          },
           {
             name: 'RouteControlWrapper',
             isOutsideContainer: true,

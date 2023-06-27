@@ -1,30 +1,41 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
-
 import {
-  FacetColumnResultValues,
   ColumnTypeEnum,
   FacetColumnResult,
   FacetColumnResultValueCount,
+  FacetColumnResultValues,
 } from '@sage-bionetworks/synapse-types'
-
-import { getColorPalette } from '../ColorGradient'
-import { useEffect, useState } from 'react'
-import loadingScreen from '../LoadingScreen'
 import {
-  GraphData,
   extractPlotDataArray,
   getPlotStyle,
-  FacetPlotLegend,
+  GraphData,
 } from '../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../widgets/facet-nav/FacetNav'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { ShowMore } from '../row_renderers/utils'
-import { Link } from '@mui/material'
+import {
+  Box,
+  Button,
+  Divider,
+  Paper,
+  Skeleton,
+  Typography,
+} from '@mui/material'
+import { FacetPlotLegendTable } from '../widgets/facet-nav/FacetPlotLegendTable'
+import {
+  FACET_PLOTS_CARD_CLASSNAME,
+  FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME,
+  FACET_PLOTS_CARD_TITLE_CONTAINER_CLASSNAME,
+  FacetPlotsCardPlotContainer,
+  FacetPlotsCardTitleContainer,
+} from './FacetPlotsCardGrid'
+import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
+import { times } from 'lodash-es'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -49,6 +60,37 @@ const layout: Partial<Plotly.Layout> = {
   },
 }
 
+function LoadingCard(props: { numPlots: number }) {
+  const { numPlots } = props
+  return (
+    <Paper className={FACET_PLOTS_CARD_CLASSNAME}>
+      <FacetPlotsCardTitleContainer
+        className={FACET_PLOTS_CARD_TITLE_CONTAINER_CLASSNAME}
+      >
+        <Skeleton width={'60%'} height={'24px'} />
+
+        <SkeletonParagraph numRows={5} />
+
+        <Skeleton width={'40%'}>
+          <Button variant={'contained'}>Explore</Button>
+        </Skeleton>
+      </FacetPlotsCardTitleContainer>
+      {times(numPlots).map(index => (
+        <FacetPlotsCardPlotContainer
+          key={index}
+          className={FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}
+          sx={{
+            py: 3,
+            gridRow: `plot${index}`,
+          }}
+        >
+          <Skeleton width={'100%'} height={'300px'} />
+          <SkeletonTable numRows={4} numCols={2} />
+        </FacetPlotsCardPlotContainer>
+      ))}
+    </Paper>
+  )
+}
 const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   title,
   description,
@@ -56,12 +98,14 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   detailsPagePath,
 }: FacetPlotsCardProps): JSX.Element => {
   const { accessToken } = useSynapseContext()
-  const { data, isLoadingNewBundle } = useQueryContext()
-  const { getColumnDisplayName, rgbIndex } = useQueryVisualizationContext()
+  const { data, isLoadingNewBundle } = useQueryContext<
+    'columnModels' | 'facets',
+    true
+  >()
+  const { getColumnDisplayName } = useQueryVisualizationContext()
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
-  const { colorPalette } = getColorPalette(rgbIndex ?? 0, 2)
 
   useEffect(() => {
     if (!facetsToPlot || !data) {
@@ -70,7 +114,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       const getColumnType = (
         facetToPlot: FacetColumnResult,
       ): ColumnTypeEnum | undefined =>
-        data?.columnModels?.find(
+        data?.columnModels.find(
           columnModel => columnModel.name === facetToPlot.columnName,
         )?.columnType as ColumnTypeEnum
 
@@ -91,7 +135,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
       const selectedFacet: FacetColumnResultValueCount | undefined =
         data?.facets
-          ?.map(item => {
+          .map(item => {
             const facetValues: FacetColumnResultValueCount[] = (
               item as FacetColumnResultValues
             ).facetValues
@@ -113,7 +157,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         setSelectedFacetValue(selectedFacet?.value)
       }
     }
-  }, [facetsToPlot, data])
+  }, [facetsToPlot, data, accessToken])
 
   if (
     isLoadingNewBundle ||
@@ -121,20 +165,8 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     !facetDataArray ||
     facetDataArray.length === 0
   ) {
-    return (
-      <div className="FacetPlotsCard FacetPlotsCard__loading SRC-centerContentColumn">
-        {loadingScreen}
-      </div>
-    )
+    return <LoadingCard numPlots={(facetsToPlot ?? []).length} />
   } else {
-    let detailsPageLink = <></>
-    if (detailsPagePath && selectedFacetValue) {
-      detailsPageLink = (
-        <div>
-          <Link href={detailsPagePath}>Explore {selectedFacetValue}</Link>
-        </div>
-      )
-    }
     const isShowingMultiplePlots = facetPlotDataArray.length > 1
     const cardTitle =
       title ??
@@ -142,65 +174,80 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         ? selectedFacetValue
         : getColumnDisplayName(facetDataArray[0].columnName))
     return (
-      <div className="FacetPlotsCard cardContainer">
-        <div
-          className="FacetPlotsCard__titlebar"
-          style={{ backgroundColor: colorPalette[0].replace(')', ',.05)') }}
+      <Paper className={FACET_PLOTS_CARD_CLASSNAME} sx={{ overflow: 'hidden' }}>
+        <FacetPlotsCardTitleContainer
+          className={FACET_PLOTS_CARD_TITLE_CONTAINER_CLASSNAME}
         >
-          <span className="FacetPlotsCard__title">{cardTitle}</span>
+          <Typography variant={'headline1'}>{cardTitle}</Typography>
           {description && (
-            <span className="FacetPlotsCard__description">
-              <ShowMore
-                summary={description}
-                maxCharacterCount={200}
-              ></ShowMore>
-            </span>
+            <Typography variant={'body1'} sx={{ color: 'grey.700', my: 2 }}>
+              <ShowMore summary={description} maxCharacterCount={200} />
+            </Typography>
           )}
-          {detailsPageLink}
-          {isLoadingNewBundle && (
-            <span style={{ marginLeft: '2px' }} className={'spinner'} />
+
+          {detailsPagePath && selectedFacetValue && (
+            <Box sx={{ my: 2 }}>
+              <Button
+                variant={'contained'}
+                href={detailsPagePath}
+                color={'secondary'}
+              >
+                Explore {selectedFacetValue}
+              </Button>
+            </Box>
           )}
-        </div>
-        <div className="FacetPlotsCard__body">
-          {/* create a plot for every facet to be plotted */}
-          {facetPlotDataArray.map((plotData, index) => {
-            return (
-              <div key={index}>
-                {index !== 0 && <hr></hr>}
-                {isShowingMultiplePlots && (
-                  <div className="FacetPlotsCard__body__facetname">
-                    <span>
-                      {getColumnDisplayName(facetDataArray[index].columnName)}
-                    </span>
-                  </div>
-                )}
-                <div className="FacetPlotsCard__body__row">
+        </FacetPlotsCardTitleContainer>
+
+        {/* create a plot for every facet to be plotted */}
+        {facetPlotDataArray.map((plotData, index) => {
+          return (
+            <React.Fragment key={index}>
+              <FacetPlotsCardPlotContainer
+                className={FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME}
+                sx={{
+                  pt: index === 0 ? 5 : 0,
+                  gridRow: `plot${index}`,
+                }}
+                key={index}
+              >
+                {index != 0 && <Divider sx={{ mt: 2, mb: 4 }} />}
+                <Box sx={{ minHeight: '130px' }}>
                   <SizeMe monitorHeight noPlaceholder>
                     {({ size }) => (
-                      <div className="FacetPlotsCard__body__plot">
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
                         <Plot
-                          key={`${facetsToPlot![index]}-${size.width}`}
+                          key={`${facetsToPlot![index]}-${size.width!}`}
                           layout={layout}
                           data={plotData?.data ?? []}
                           style={getPlotStyle(size.width, 'PIE', 150)}
                           config={{ displayModeBar: false }}
                         />
-                      </div>
+                      </Box>
                     )}
                   </SizeMe>
-                  <div className="FacetPlotsCard__body__legend">
-                    <FacetPlotLegend
+                  <Box sx={{ mt: 4, width: '100%' }}>
+                    <FacetPlotLegendTable
+                      facetName={getColumnDisplayName(
+                        facetDataArray[index].columnName,
+                      )}
                       labels={plotData?.labels}
                       colors={plotData?.colors}
                       isExpanded={false}
+                      linkToFullQuery={detailsPagePath}
                     />
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
+                  </Box>
+                </Box>
+              </FacetPlotsCardPlotContainer>
+            </React.Fragment>
+          )
+        })}
+      </Paper>
     )
   }
 }

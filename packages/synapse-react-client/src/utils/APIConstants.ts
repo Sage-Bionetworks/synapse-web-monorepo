@@ -16,6 +16,7 @@ const ASYNC_START = '/async/start'
 const ASYNC_GET = '/async/get'
 
 export const ENTITY = `${REPO}/entity`
+export const ENTITY_ALIAS = (alias: string) => `${REPO}/entity/alias/${alias}`
 export const ENTITY_ID = (id: string | number) => `${REPO}/entity/${id}`
 /**
  * Some services allow (but do not require) you to specify the version in the path.
@@ -32,8 +33,12 @@ export const ENTITY_BUNDLE_V2 = (
 ) => `${ENTITY_ID_VERSION(id, version)}/bundle2`
 export const ENTITY_ACCESS = (id: string | number) =>
   `${REPO}/entity/${id}/access`
-
+export const ENTITY_ACL = (id: string | number) => `${ENTITY_ID(id)}/acl`
+export const ENTITY_EVALUATION = (id: string | number) =>
+  `${ENTITY_ID(id)}/evaluation`
 export const ENTITY_PATH = (id: string | number) => `${ENTITY_ID(id)}/path`
+export const ENTITY_PERMISSIONS = (id: string | number) =>
+  `${ENTITY_ID(id)}/permissions`
 export const ENTITY_HEADER_BY_ID = (id: string | number) =>
   `${ENTITY_ID(id)}/type`
 export const ENTITY_HEADERS = `${REPO}/entity/header`

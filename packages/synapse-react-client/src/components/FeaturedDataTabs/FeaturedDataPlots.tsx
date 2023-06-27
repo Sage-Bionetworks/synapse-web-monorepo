@@ -5,6 +5,9 @@ import QueryPerFacetPlotsCard, {
 import SingleQueryFacetPlotsCards, {
   SingleQueryFacetPlotsCardsProps,
 } from './SingleQueryFacetPlotsCards'
+import { chunk, times } from 'lodash-es'
+import { FacetPlotsCardGridContainer } from './FacetPlotsCardGrid'
+import { CARDS_PER_ROW } from './FeaturedDataTabsUtils'
 
 export type QueryFacetPlotsCardsProps =
   | QueryPerFacetPlotsCardProps
@@ -23,35 +26,63 @@ const FeaturedDataPlots: React.FunctionComponent<
   const { configs, rgbIndex, sql } = props
   // What mode are we in?  Either every card has a different selected facet (requiring a different query),
   // or we're showing the facet counts for a single query.  This controls the layout, and how the cards are populated.
-  const isQueryPerCard = (configs[0] as any).selectFacetColumnName
-  return (
-    <div
-      className={`FeaturedDataPlots${
-        isQueryPerCard ? '__queryPerCard' : '__singleQuery'
-      }`}
-    >
-      {configs.map((config: any) => {
-        return (
-          <>
-            {isQueryPerCard && (
-              <QueryPerFacetPlotsCard
-                {...config}
-                rgbIndex={rgbIndex}
-                sql={sql}
-              />
-            )}
-            {!isQueryPerCard && (
+  const isQueryPerCard = configs && 'selectFacetColumnName' in configs[0]
+
+  if (!isQueryPerCard) {
+    return (
+      <>
+        {(configs as SingleQueryFacetPlotsCardsProps[]).map(config => {
+          return (
+            !isQueryPerCard && (
               <SingleQueryFacetPlotsCards
                 {...config}
                 rgbIndex={rgbIndex}
                 sql={sql}
               />
-            )}
-          </>
-        )
-      })}
-    </div>
-  )
+            )
+          )
+        })}
+      </>
+    )
+  } else if (isQueryPerCard) {
+    return (
+      <>
+        {chunk(configs as QueryPerFacetPlotsCardProps[], CARDS_PER_ROW).map(
+          (configRow, rowIndex) => {
+            let cssGridTemplateRows = '[title] auto'
+
+            // There may be more than one plot per card, so add a row for each one
+            times(configRow[0].facetsToPlot?.length ?? 1).forEach(
+              (value, index) => {
+                cssGridTemplateRows += ` [plot${index}] auto`
+              },
+            )
+
+            return (
+              <FacetPlotsCardGridContainer
+                key={rowIndex}
+                sx={{
+                  gridTemplateRows: cssGridTemplateRows,
+                }}
+              >
+                {configRow.map(config => {
+                  return (
+                    <QueryPerFacetPlotsCard
+                      key={config.selectFacetColumnName}
+                      {...config}
+                      rgbIndex={rgbIndex}
+                      sql={sql}
+                    />
+                  )
+                })}
+              </FacetPlotsCardGridContainer>
+            )
+          },
+        )}
+      </>
+    )
+  }
+  return <></>
 }
 
 export default FeaturedDataPlots

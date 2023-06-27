@@ -93,13 +93,19 @@ export const defaultMuiThemeOptions: ThemeOptions = {
         contained: ({ theme, ownerState }) => ({
           '&:hover, &:visited': {
             // Overrides a base style in bootstrap 3 and in SWC
-            color: theme.palette[ownerState.color || 'primary'].contrastText,
+            color:
+              ownerState.color === 'inherit'
+                ? ownerState.color
+                : theme.palette[ownerState.color || 'primary'].contrastText,
           },
         }),
         outlined: ({ theme, ownerState }) => ({
           '&:hover, &:visited': {
             // Overrides a base style in Bootstrap 3 and in SWC
-            color: theme.palette[ownerState.color || 'primary'].dark,
+            color:
+              ownerState.color === 'inherit'
+                ? ownerState.color
+                : theme.palette[ownerState.color || 'primary'].dark,
           },
         }),
         text: ({ theme, ownerState }) => ({
@@ -200,7 +206,7 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           fontSize: '14px',
           position: 'relative',
           backgroundColor: theme.palette.grey[200],
-          border: ownerState.error
+          outline: ownerState.error
             ? `1px solid ${theme.palette.error.main}`
             : 'none',
           '&.Mui-focused': {

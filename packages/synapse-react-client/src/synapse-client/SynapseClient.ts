@@ -25,13 +25,17 @@ import {
   ENTITY,
   ENTITY_ACCESS,
   ENTITY_ACCESS_REQUIREMENTS,
+  ENTITY_ACL,
   ENTITY_ACTIONS_REQUIRED,
+  ENTITY_ALIAS,
   ENTITY_BUNDLE_V2,
+  ENTITY_EVALUATION,
   ENTITY_HEADER_BY_ID,
   ENTITY_HEADERS,
   ENTITY_ID,
   ENTITY_JSON,
   ENTITY_PATH,
+  ENTITY_PERMISSIONS,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
   EVALUATION,
@@ -49,12 +53,14 @@ import {
   REGISTER_ACCOUNT_STEP_1,
   REGISTER_ACCOUNT_STEP_2,
   REGISTERED_SCHEMA_ID,
+  REPO,
   RESEARCH_PROJECT,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  TEAM,
   TEAM_ID_MEMBER_ID,
   TEAM_ID_MEMBER_ID_WITH_NOTIFICATION,
   TEAM_MEMBER,
@@ -185,6 +191,7 @@ import {
   JsonSchemaObjectBinding,
   ListRequest,
   ListResponse,
+  ListWrapper,
   LoginResponse,
   ManagedACTAccessRequirementStatus,
   MembershipInvitation,
@@ -269,6 +276,16 @@ import {
   VersionInfo,
   WikiPage,
   WikiPageKey,
+  MembershipRequest,
+  ChallengeTeamPagedResults,
+  ChallengeTeam,
+  TeamMembershipStatus,
+  UserEntityPermissions,
+  GetEvaluationParameters,
+  DockerCommit,
+  SortBy,
+  Direction,
+  TeamSubmissionEligibility,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -997,7 +1014,7 @@ export const getUserBundle = (
 }
 
 /**
- * Return the ucurrent user's bundle
+ * Return the current user's bundle
  * http://rest-docs.synapse.org/rest/GET/user/bundle.html
  */
 export const getMyUserBundle = (
@@ -1241,6 +1258,18 @@ export const getEntityHeaders = (
 }
 
 /**
+ * Lookup an Entity ID using an alias.
+ * https://rest-docs.synapse.org/rest/GET/entity/alias/alias.html
+ */
+export const getEntityAlias = (alias: string, accessToken?: string) => {
+  return doGet<EntityId>(
+    ENTITY_ALIAS(alias),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get the EntityHeader for a single entity
  * https://rest-docs.synapse.org/rest/GET/entity/id/type.html
  */
@@ -1252,11 +1281,30 @@ export const getEntityHeader = (entityId: string, accessToken?: string) => {
   )
 }
 
+/**
+ * Update an Entity's ACL
+ * Note: The caller must be granted ACCESS_TYPE.CHANGE_PERMISSIONS on the Entity to call this method.
+ * https://rest-docs.synapse.org/rest/PUT/entity/id/acl.html
+ */
+export const updateEntityACL = (
+  acl: AccessControlList,
+  accessToken: string | undefined = undefined,
+): Promise<AccessControlList> => {
+  return doPut<AccessControlList>(
+    ENTITY_ACL(acl.id),
+    acl,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 export const updateEntity = <T extends Entity>(
   entity: T,
   accessToken: string | undefined = undefined,
+  newVersion?: boolean,
 ): Promise<T> => {
-  const url = `/repo/v1/entity/${entity.id}`
+  let url = `/repo/v1/entity/${entity.id}`
+  if (newVersion) url += '?newVersion=true'
   return doPut<T>(
     url,
     entity,
@@ -1384,6 +1432,91 @@ export const getUserChallenges = (
 }
 
 /**
+ * Get a list of teams registered to the given challenge.
+ * see http://rest-docs.synapse.org/rest/GET/challenge.html
+ */
+export const getChallengeTeams = (
+  accessToken: string | undefined,
+  challengeId: string | number,
+  offset: string | number = 0,
+  limit: string | number = 200,
+): Promise<ChallengeTeamPagedResults> => {
+  const url = `/repo/v1/challenge/${challengeId}/challengeTeam?&offset=${offset}&limit=${limit}`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Get a list of all teams registered to the given challenge.
+ * see http://rest-docs.synapse.org/rest/GET/challenge.html
+ */
+export const getAllChallengeTeams = (
+  accessToken: string | undefined,
+  challengeId: string | number,
+): Promise<ChallengeTeam[]> => {
+  // format function to be callable by getAllOfPaginatedService
+  const fn = (limit: number, offset: number) => {
+    const url = `/repo/v1/challenge/${challengeId}/challengeTeam?&offset=${offset}&limit=${limit}`
+    return doGet<PaginatedResults<ChallengeTeam>>(
+      url,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
+}
+
+/**
+ * List the Teams under which the given submitter may submit to the Challenge,
+ * i.e. the Teams on which the user is a member and which are registered for the Challenge.
+ * see https://rest-docs.synapse.org/rest/GET/challenge/challengeId/submissionTeams.html
+ */
+export const getSubmissionTeams = (
+  accessToken: string | undefined,
+  challengeId: string | number,
+  offset: string | number = 0,
+  limit: string | number = 50,
+): Promise<PaginatedIds> => {
+  const url = `/repo/v1/challenge/${challengeId}/submissionTeams?&offset=${offset}&limit=${limit}`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Find out whether a Team and its members are eligible to submit to a given Evaluation queue (at the current time).
+ * see https://rest-docs.synapse.org/rest/GET/evaluation/evalId/team/id/submissionEligibility.html
+ */
+export const getSubmissionEligibility = (
+  evaluationId: string,
+  teamId: string,
+  accessToken?: string,
+): Promise<TeamSubmissionEligibility> => {
+  const url = `/repo/v1/evaluation/${evaluationId}/team/${teamId}/submissionEligibility`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Register a Team with a Challenge.
+ * see https://rest-docs.synapse.org/rest/POST/challenge/challengeId/challengeTeam.html
+ */
+export const registerChallengeTeam = (
+  accessToken: string | undefined,
+  challengeId: string | number,
+  teamId: string | number,
+  message?: string,
+): Promise<ChallengeTeam> => {
+  const url = `/repo/v1/challenge/${challengeId}/challengeTeam`
+  return doPost(
+    url,
+    {
+      challengeId,
+      teamId,
+      message,
+    },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get the Challenge associated to a particular Project entity
  * https://rest-docs.synapse.org/rest/GET/entity/id/challenge.html
  */
@@ -1393,6 +1526,24 @@ export const getEntityChallenge = (
 ): Promise<Challenge> => {
   const url = `/repo/v1/entity/${entityId}/challenge`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Create a new Team
+ * https://rest-docs.synapse.org/rest/POST/team.html
+ */
+export function createTeam(
+  accessToken: string | undefined,
+  name: string,
+  description?: string,
+  icon?: string,
+): Promise<Team> {
+  return doPost(
+    `/repo/v1/team`,
+    { name, description, icon },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**
@@ -1422,11 +1573,9 @@ export const getUserTeamList = (
 export const getTeamAccessRequirements = (
   accessToken: string | undefined,
   teamId: string,
-  offset: string | number = 0,
-  limit: string | number = 50,
 ): Promise<AccessRequirement[]> => {
-  const url = `/repo/v1/team/${teamId}/accessRequirement?offset=${offset}&limit=${limit}`
-  const fn = () => {
+  const fn = (limit: number, offset: number) => {
+    const url = `/repo/v1/team/${teamId}/accessRequirement?offset=${offset}&limit=${limit}`
     return doGet<PaginatedResults<AccessRequirement>>(
       url,
       accessToken,
@@ -1490,6 +1639,26 @@ export const addTeamMemberAsAuthenticatedUserOrAdmin = (
   )
 }
 
+/**
+ * Create a membership invitation and send an email notification to the invitee.
+ * https://rest-docs.synapse.org/rest/POST/membershipInvitation.html
+ */
+export function createMembershipInvitation(
+  accessToken: string | undefined,
+  teamId: string | number,
+  inviteeEmail: string,
+  inviteeId?: string | number,
+  message?: string,
+  expiresOn?: string,
+): Promise<EntityHeader> {
+  return doPost(
+    `${REPO}/membershipInvitation`,
+    { teamId, inviteeEmail, inviteeId, message, expiresOn },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 // https://rest-docs.synapse.org/rest/POST/membershipInvitation/id.html
 export const getMembershipInvitation = (
   membershipInvitationSignedToken: MembershipInvtnSignedToken,
@@ -1543,6 +1712,87 @@ export const getIsUserMemberOfTeam = (
   const url = TEAM_ID_MEMBER_ID(teamId, userId)
   return allowNotFoundError(() =>
     doGet<TeamMember>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT),
+  )
+}
+
+/**
+ * Retrieve the Team Membership Status bundle for a team and user.
+ * https://rest-docs.synapse.org/rest/GET/team/id/member/principalId/membershipStatus.html
+ */
+export const getMembershipStatus = (
+  teamId: string | number,
+  userId: string | number,
+  accessToken?: string,
+): Promise<TeamMembershipStatus> => {
+  const url = `${TEAM_ID_MEMBER_ID(teamId, userId)}/membershipStatus`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Create a membership request and send an email notification to the administrators of the team.
+ *
+ * @returns a TeamMember if the user is a member of the team, or null if the user is not.
+ */
+export const createMembershipRequest = (
+  teamId: string,
+  userId: string,
+  message?: string,
+  expiresOn?: string,
+  accessToken?: string,
+): Promise<MembershipRequest | null> => {
+  const url = `/repo/v1/membershipRequest`
+  return doPost<MembershipRequest>(
+    url,
+    { teamId, userId, message, expiresOn },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Remove the given member from the specified Team. Note: The client must either be a Team administrator or the member being removed.
+ * https://rest-docs.synapse.org/rest/DELETE/team/id/member/principalId.html
+ */
+export const deleteMemberFromTeam = (
+  teamId: string,
+  userId: string,
+  accessToken: string | undefined,
+) => {
+  return doDelete(
+    `/repo/v1/team/${teamId}/member/${userId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get Team that matches the given ID.
+ * https://rest-docs.synapse.org/rest/GET/team/id.html
+ */
+export const getTeam = (
+  id: string | number,
+  accessToken?: string | undefined,
+) => {
+  return doGet<Team>(
+    TEAM(id),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get Teams that match the given list of IDs.
+ * https://rest-docs.synapse.org/rest/POST/teamList.html
+ */
+export const getTeamList = (
+  ids: string[] | number[],
+  accessToken?: string | undefined,
+) => {
+  return doPost<ListWrapper<Team>>(
+    `/repo/v1/teamList`,
+    { list: ids },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
@@ -2053,6 +2303,26 @@ export const getFileResult = (
 }
 
 /**
+ * Add a batch of files to the user's download list.
+ * Uses http://rest-docs.synapse.org/rest/POST/download/list/add.html
+ * @param batchToAdd
+ */
+export const addFileBatchToDownloadListV2 = (
+  batchToAdd: { fileEntityId: string; versionNumber?: number }[],
+  accessToken?: string,
+): Promise<AddBatchOfFilesToDownloadListResponse> => {
+  const request: AddBatchOfFilesToDownloadListRequest = {
+    batchToAdd,
+  }
+  return doPost(
+    '/repo/v1/download/list/add',
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Add a file to the user's download list.
  * Uses http://rest-docs.synapse.org/rest/POST/download/list/add.html
  * @param fileEntityId
@@ -2063,14 +2333,9 @@ export const addFileToDownloadListV2 = (
   versionNumber?: number,
   accessToken?: string,
 ): Promise<AddBatchOfFilesToDownloadListResponse> => {
-  const request: AddBatchOfFilesToDownloadListRequest = {
-    batchToAdd: [{ fileEntityId, versionNumber }],
-  }
-  return doPost(
-    '/repo/v1/download/list/add',
-    request,
+  return addFileBatchToDownloadListV2(
+    [{ fileEntityId, versionNumber }],
     accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
@@ -2167,12 +2432,16 @@ export const createACL = (
  * https://rest-docs.synapse.org/rest/POST/evaluation/submission.html
  */
 export const submitToEvaluation = (
+  accessToken: string | undefined,
   submission: EvaluationSubmission,
   etag: string,
-  accessToken: string | undefined,
+  submissionEligibilityHash?: number,
 ) => {
+  let url = `/repo/v1/evaluation/submission?etag=${etag}`
+  if (submissionEligibilityHash)
+    url += `&submissionEligibilityHash=${submissionEligibilityHash}`
   return doPost(
-    `/repo/v1/evaluation/submission?etag=${etag}`,
+    url,
     submission,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2467,7 +2736,7 @@ export const updateOAuthClient = (
 }
 
 /**
- 
+
  Note: Only the creator of a client can update it.
  https://rest-docs.synapse.org/rest/PUT/oauth2/client/id/verificationPrecheck.html
  */
@@ -2483,7 +2752,7 @@ export const isOAuthClientReverificationRequired = (
   )
 }
 
-/** 
+/**
 Get a secret credential to use when requesting an access token.
 Synapse supports 'client_secret_basic' and 'client_secret_post'.
 NOTE: This request will invalidate any previously issued secrets.
@@ -3136,6 +3405,49 @@ export const getUserProjects = (
   )
 }
 
+// https://rest-docs.synapse.org/rest/GET/entity/id/acl.html
+export const getEntityACL = (entityId: string, accessToken?: string) => {
+  return doGet<AccessControlList>(
+    ENTITY_ACL(entityId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/evaluation.html
+export const getAllEntityEvaluations = (
+  entityId: string,
+  params: GetEvaluationParameters = {},
+  accessToken?: string,
+): Promise<Evaluation[]> => {
+  const urlParams = new URLSearchParams(
+    removeUndefined(params) as Record<string, string>,
+  )
+  const fn = (limit: number, offset: number) => {
+    const url = `${ENTITY_EVALUATION(
+      entityId,
+    )}?offset=${offset}&limit=${limit}&${urlParams.toString()}`
+    return doGet<PaginatedResults<Evaluation>>(
+      url,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/permissions.html
+export const getEntityPermissions = (
+  entityId: string,
+  accessToken?: string,
+) => {
+  return doGet<UserEntityPermissions>(
+    ENTITY_PERMISSIONS(entityId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 // https://rest-docs.synapse.org/rest/GET/entity/id/path.html
 export const getEntityPath = (entityId: string, accessToken?: string) => {
   return doGet<EntityPath>(
@@ -3307,7 +3619,7 @@ export const getDataAccessRequestForUpdate = (
   )
 }
 
-// http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
+// https://rest-docs.synapse.org/rest/POST/dataAccessRequest.html
 export function updateDataAccessRequest(
   requestObj: Request | Renewal,
   accessToken: string,
@@ -4354,7 +4666,9 @@ export async function getSynapseTeamGeoData(
   teamId: string,
 ): Promise<GeoData[]> {
   const response = await fetch(`${S3_GEODATA_ENDPOINT}${teamId}.json`)
-  return (await response.json()) as GeoData[]
+  if (response.status == 200) {
+    return (await response.json()) as GeoData[]
+  } else return []
 }
 
 /**
@@ -4547,6 +4861,27 @@ export const getEntityDownloadActionsRequired = (
 ) => {
   return doGet<ActionRequiredList>(
     ENTITY_ACTIONS_REQUIRED(entityId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/actions/download.html
+export const getDockerTag = (
+  entityId: string,
+  accessToken?: string,
+  offset: string | number = 0,
+  limit: string | number = 20,
+  sort: SortBy = SortBy.CREATED_ON,
+  sortDirection: Direction = Direction.DESC,
+) => {
+  const params = new URLSearchParams()
+  params.set('offset', offset.toString())
+  params.set('limit', limit.toString())
+  params.set('sort', sort)
+  params.set('sortDirection', sortDirection)
+  return doGet<PaginatedResults<DockerCommit>>(
+    `/repo/v1/entity/${entityId}/dockerTag?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

@@ -66,13 +66,14 @@ const taskTabConfigs = (taskID: string) => {
       title: 'Data',
       props: {},
     },
-    // TODO: Add Training Data Folder component
-    // {
-    //   name: 'GenUIFileListing',
-    //   columnName: `${taskID}.DataFolder`,
-    //   title: 'Training Data',
-    //   props: {},
-    // },
+    {
+      name: 'ChallengeDataDownload',
+      columnName: `${taskID}.DataFolder`,
+      title: 'Training Data',
+      props: {
+        parentContainerId: '', // filled in dynamically by DetailsPage using value from `${taskID}.DataFolder`
+      },
+    },
     {
       name: 'Markdown',
       columnName: `${taskID}.EvaluationWiki`,
@@ -85,12 +86,14 @@ const taskTabConfigs = (taskID: string) => {
       title: 'Submission',
       props: {},
     },
-    // TODO: Add Submission component
-    // {
-    //   name: 'GenUISubmissionComponent',
-    //   columnName: `${taskID}.SubmissionType`, // Docker or File
-    //   props: {},
-    // },
+    {
+      name: 'ChallengeSubmissionWrapper',
+      columnName: `${taskID}.SubmissionType`, // Docker or File
+      props: {
+        //entityType will be set by the DetailsPage, using the value in the column
+        //projectId will be set in the ChallengeSubmissionWrapper by looking at the query param
+      },
+    },
     {
       name: 'Markdown',
       columnName: `${taskID}.Leaderboard`,
@@ -270,14 +273,15 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
           name: 'ProjectDiscussionForum',
           title: 'Discussion Forum',
           columnName: 'id',
-          props: undefined
+          props: undefined,
         },
-      ]
-    }
+      ],
+    },
   ],
 }
 
 export const challengeDetailsLandingPage: SynapseConfig[] = [
+  // Register For Challenge component is here, and the wrapper positions it properly in the header card
   {
     name: 'CardContainerLogic',
     isOutsideContainer: true,
@@ -286,8 +290,13 @@ export const challengeDetailsLandingPage: SynapseConfig[] = [
       sql: challengeProjectsSql,
       isHeader: true,
     },
+    className: 'challengeDetailPageHeaderCard',
   },
-  // TODO: Add Register For Challenge component here, and position it properly in the header card
+  {
+    name: 'ChallengeDetailPageWrapper',
+    isOutsideContainer: true,
+    props: undefined,
+  },
   {
     name: 'DetailsPage',
     props: challengeDetailsPageConfig,

@@ -78,7 +78,11 @@ const mockGetDataRequestForUpdate = jest.spyOn(
 
 const mockUpdateDataAccessRequest = jest
   .spyOn(SynapseClient, 'updateDataAccessRequest')
-  .mockImplementation(req => Promise.resolve(req))
+  .mockImplementation(req => {
+    // Update the 'GET' mock to return the updated object
+    mockGetDataRequestForUpdate.mockResolvedValue(req)
+    return Promise.resolve(req)
+  })
 
 jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue({ requestedFiles: [] })
 
@@ -185,13 +189,16 @@ describe('RequestDataAccessStep2: basic functionality', () => {
       `${mockUserProfileData.firstName} ${mockUserProfileData.lastName}`,
       { exact: false },
     )
-    expect(
-      screen.queryByText(
-        `${mockUserProfileData2.firstName} ${mockUserProfileData2.lastName}`,
-        { exact: false },
-      ),
-    ).not.toBeInTheDocument()
-    expect(screen.queryByLabelText('Remove user')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(
+        screen.queryByText(
+          `${mockUserProfileData2.firstName} ${mockUserProfileData2.lastName}`,
+          { exact: false },
+        ),
+      ).not.toBeInTheDocument()
+
+      expect(screen.queryByLabelText('Remove user')).not.toBeInTheDocument()
+    })
   })
 
   it('Shows renew/revoke controls for existing accessors on a renewal', async () => {
@@ -206,6 +213,7 @@ describe('RequestDataAccessStep2: basic functionality', () => {
         { userId: String(MOCK_USER_ID_2), type: AccessType.RENEW_ACCESS },
       ],
     })
+
     await renderComponent(defaultProps)
 
     // Verify that both users appear
@@ -262,7 +270,7 @@ describe('RequestDataAccessStep2: basic functionality', () => {
 
     await waitFor(() => {
       expect(mockUpdateDataAccessRequest).toHaveBeenCalled()
-      const updatedRequest = mockUpdateDataAccessRequest.mock.calls[0][0]
+      const updatedRequest = mockUpdateDataAccessRequest.mock.lastCall[0]
       expect(updatedRequest.accessorChanges).toHaveLength(3)
       expect(updatedRequest.accessorChanges).toContainEqual({
         userId: String(MOCK_USER_ID),
@@ -293,6 +301,7 @@ describe('RequestDataAccessStep2: basic functionality', () => {
     const consoleErrorSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {})
+
     const errorMessage = 'Some error happened when getting the request'
     mockGetDataRequestForUpdate.mockRejectedValue(
       new SynapseClientError(
@@ -301,10 +310,9 @@ describe('RequestDataAccessStep2: basic functionality', () => {
         expect.getState().currentTestName,
       ),
     )
-    await renderComponent(defaultProps)
 
-    const alert = await screen.findByRole('alert')
-    within(alert).getByText(errorMessage)
+    await expect(renderComponent(defaultProps)).rejects.toThrow(errorMessage)
+
     consoleErrorSpy.mockRestore()
   })
 
@@ -434,7 +442,7 @@ describe('RequestDataAccessStep2: basic functionality', () => {
 
     await waitFor(() => {
       expect(mockUpdateDataAccessRequest).toHaveBeenCalled()
-      const updatedRequest = mockUpdateDataAccessRequest.mock.calls[0][0]
+      const updatedRequest = mockUpdateDataAccessRequest.mock.lastCall[0]
       expect(updatedRequest.accessorChanges).toHaveLength(1)
       expect(updatedRequest.accessorChanges).toContainEqual({
         userId: String(MOCK_USER_ID),

@@ -1,29 +1,29 @@
-import React, { FunctionComponent, useState, useEffect } from 'react' // importing FunctionComponent
+import React, { useEffect, useState } from 'react' // importing FunctionComponent
 import Plotly from 'plotly.js-basic-dist'
 import {
   ElementWithTooltip,
   TooltipVisualProps,
 } from '../widgets/ElementWithTooltip'
 import { unCamelCase } from '../../utils/functions/unCamelCase'
-import { SynapseConstants } from '../../utils'
-import { getFullQueryTableResults } from '../../synapse-client/SynapseClient'
+import { SynapseConstants, useSynapseContext } from '../../utils'
+import { getFullQueryTableResults } from '../../synapse-client'
 import {
-  QueryResultBundle,
   QueryBundleRequest,
+  QueryResultBundle,
   RowSet,
 } from '@sage-bionetworks/synapse-types'
-import { resultToJson } from '../../utils/functions/SqlFunctions'
+import { resultToJson } from '../../utils/functions'
 import {
-  GraphItem,
-  PlotProps,
   BarPlotColors,
   ClickCallbackParams,
+  GraphItem,
+  PlotProps,
 } from './types'
 import _ from 'lodash-es'
 import DotPlot from './DotPlot'
 import BarPlot from './BarPlot'
 import loadingScreen from '../LoadingScreen'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { RequiredKeysOf } from 'type-fest'
 
 export type ThemesPlotProps = {
   onPointClick: ({ facetValue, type, event }: ClickCallbackParams) => void
@@ -112,9 +112,8 @@ function fetchData(
 ): Promise<RowSet> {
   const sql = `SELECT ${xField} as "x", ${yField} as "y", ${
     infoField ? infoField + ' as "info", ' : ''
-  }   ${groupField} as "group" FROM ${entityId} ${
-    whereClause ? ' WHERE ' + whereClause : ''
-  }`
+  } ${groupField} as "group"
+                 FROM ${entityId} ${whereClause ? ' WHERE ' + whereClause : ''}`
 
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -132,8 +131,11 @@ function fetchData(
   )
 }
 
-function getTotalsByProp<T>(data: GraphItem[], prop: string): T[] {
-  const resultObject = data.reduce((res, obj) => {
+function getTotalsByProp<T>(
+  data: GraphItem[],
+  prop: RequiredKeysOf<GraphItem>,
+): T[] {
+  const resultObject = data.reduce((res: Record<string, number>, obj) => {
     res[obj[prop]] =
       (obj[prop] in res ? Number(res[obj[prop]]) : 0) + Number(obj.x)
     return res
@@ -158,7 +160,6 @@ const getClickTargetData = (
   let type = pointData.name
 
   if (swap) {
-    // @ts-ignore
     ;[facetValue, type] = [type, facetValue]
   }
   return { facetValue, type, event: e.event }
@@ -199,14 +200,14 @@ const getTooltip = (data: GraphItem[], filter: string) => {
   return _.first(data.filter(item => item.y === filter).map(item => item.info))
 }
 
-export const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
+export function ThemesPlot({
   dotPlot,
   topBarPlot,
   sideBarPlot,
   tooltipProps = tooltipVisualProps,
   onPointClick,
   dotPlotYAxisLabel = 'Research Themes',
-}: ThemesPlotProps) => {
+}: ThemesPlotProps) {
   const { accessToken } = useSynapseContext()
   const [isLoaded, setIsLoaded] = useState(false)
   const [dotPlotQueryData, setDotPlotQueryData] = useState<GraphItem[]>([])

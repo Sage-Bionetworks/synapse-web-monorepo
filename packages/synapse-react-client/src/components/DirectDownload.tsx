@@ -26,6 +26,7 @@ export type DirectFileDownloadProps = {
   fileHandleId?: string
   displayFileName?: boolean
   onClickCallback?: (isExternalLink: boolean) => void // callback if you want to know when the link was clicked
+  stopPropagation?: boolean
 }
 
 const DirectDownload: React.FunctionComponent<
@@ -39,6 +40,7 @@ const DirectDownload: React.FunctionComponent<
     fileHandleId,
     displayFileName,
     onClickCallback,
+    stopPropagation = false,
   } = props
   const { ref, inView } = useInView()
   const [isExternalFile, setIsExternalFile] = useState<boolean>(false)
@@ -106,7 +108,7 @@ const DirectDownload: React.FunctionComponent<
   }
 
   const hasFileHandle = (fh: FileHandle) => {
-    if (fh && !fh['isPreview']) {
+    if (fh && !(fh as any)['isPreview']) {
       setHasFileAccess(true)
       return true
     } else {
@@ -151,7 +153,7 @@ const DirectDownload: React.FunctionComponent<
                 // have file access and not file preview
                 if (implementsExternalFileHandleInterface(fh)) {
                   setIsExternalFile(true)
-                  setExternalURL(fh['externalURL'])
+                  setExternalURL((fh as any)['externalURL'])
                 }
               }
             })
@@ -180,9 +182,10 @@ const DirectDownload: React.FunctionComponent<
       return (
         <button
           className={'btn-download-icon'}
-          onClick={() => {
+          onClick={event => {
             if (onClickCallback) {
               onClickCallback(isExternalFile)
+              if (stopPropagation) event.stopPropagation()
             }
           }}
         >
@@ -201,8 +204,9 @@ const DirectDownload: React.FunctionComponent<
       return (
         <button
           className={'btn-download-icon'}
-          onClick={() => {
+          onClick={event => {
             getDownloadLink()
+            if (stopPropagation) event.stopPropagation()
           }}
         >
           <IconSvg icon="download" />

@@ -32,15 +32,16 @@ export function RadioGroup<T extends string | boolean | number = string>(
   )
 }
 
-type RadioOptionProps<T extends string | boolean | number = string> = {
+export type RadioOptionProps<T extends string | boolean | number = string> = {
   groupId: string
   label: string
   value: T
   currentValue?: T
+  style?: React.CSSProperties
   onChange: (value: T) => void
 }
 
-function RadioOption<T extends string | boolean | number = string>(
+export function RadioOption<T extends string | boolean | number = string>(
   props: RadioOptionProps<T>,
 ) {
   const [uniqueId] = useState(_uniqueId('src-radio-'))
@@ -55,7 +56,9 @@ function RadioOption<T extends string | boolean | number = string>(
         checked={props.currentValue === props.value}
         value={props.value.toString()}
       />
-      <label htmlFor={uniqueId}>{props.label}</label>
+      <label htmlFor={uniqueId} style={props.style}>
+        {props.label}
+      </label>
     </div>
   )
 }

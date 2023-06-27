@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentProps,
   DialogProps,
   DialogTitle,
   IconButton,
@@ -43,6 +44,7 @@ export type DialogBaseProps = {
   maxWidth?: DialogProps['maxWidth']
   fullWidth?: boolean
   sx?: DialogProps['sx']
+  contentProps?: DialogContentProps
 }
 
 /**
@@ -60,6 +62,7 @@ export const DialogBase = ({
   maxWidth = 'sm',
   fullWidth = true,
   sx,
+  contentProps = {},
 }: DialogBaseProps) => {
   return (
     <Dialog
@@ -78,7 +81,7 @@ export const DialogBase = ({
           {hasCloseButton && <CloseButton onClick={() => onCancel()} />}
         </Stack>
       </DialogTitle>
-      <DialogContent>{content}</DialogContent>
+      <DialogContent {...contentProps}>{content}</DialogContent>
       {actions && <DialogActions>{actions}</DialogActions>}
     </Dialog>
   )

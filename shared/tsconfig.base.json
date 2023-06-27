@@ -22,8 +22,6 @@
     "importHelpers": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "ignoreDeprecations": "5.0",
     "noUnusedLocals": true,
     "useUnknownInCatchVariables": false
   }

@@ -9,10 +9,7 @@ import MarkdownSynapse from './MarkdownSynapse'
 import { UserMentionModal } from './UserMentionModal'
 import { startCase } from 'lodash-es'
 
-export enum MarkdownEditorTabs {
-  WRITE = 'WRITE',
-  PREVIEW = 'PREVIEW',
-}
+const MarkdownEditorTabs = ['WRITE', 'PREVIEW'] as const
 
 export type MarkdownEditorProps = {
   placeholder?: string
@@ -25,9 +22,8 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
   text,
   setText,
 }) => {
-  const [currentTab, setCurrentTab] = useState<MarkdownEditorTabs>(
-    MarkdownEditorTabs.WRITE,
-  )
+  const [currentTab, setCurrentTab] =
+    useState<(typeof MarkdownEditorTabs)[number]>('WRITE')
   const [selectionStart, setSelectionStart] = useState<number>(0)
   const [isShowingTagModal, setIsShowingTagModal] = useState<boolean>(false)
   const [tagModalWithKeyboard, setTagModalWithKeyboard] =
@@ -125,7 +121,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
     <div className="bootstrap-4-backport MarkdownEditor">
       <div className="MarkdownEditorControls">
         <div className="Tabs">
-          {Object.keys(MarkdownEditorTabs).map((tabName: string) => {
+          {MarkdownEditorTabs.map(tabName => {
             return (
               <button
                 className="Tab"
@@ -134,7 +130,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
                 key={tabName}
                 onClick={e => {
                   e.stopPropagation()
-                  setCurrentTab(MarkdownEditorTabs[tabName])
+                  setCurrentTab(tabName)
                 }}
               >
                 {tabName}
@@ -142,7 +138,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
             )
           })}
         </div>
-        {currentTab === MarkdownEditorTabs.WRITE && (
+        {currentTab === 'WRITE' && (
           <div className="MarkdownEditorControlsToolbar">
             {commandList.map(type => {
               return (
@@ -158,7 +154,7 @@ export const MarkdownEditor: React.FunctionComponent<MarkdownEditorProps> = ({
         )}
       </div>
       <div>
-        {currentTab === MarkdownEditorTabs.WRITE ? (
+        {currentTab === 'WRITE' ? (
           <textarea
             onChange={e => {
               setText(e.target.value)

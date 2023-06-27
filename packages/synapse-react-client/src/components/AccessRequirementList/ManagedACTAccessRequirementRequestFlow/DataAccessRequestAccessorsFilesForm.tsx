@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   AccessorChange,
   AccessType,
@@ -40,6 +40,52 @@ import DataAccessRequestAccessorsEditor, {
 import { UploadDocumentField } from './UploadDocumentField'
 import DocumentTemplate from './DocumentTemplate'
 import ManagedACTAccessRequirementFormWikiWrapper from './ManagedACTAccessRequirementFormWikiWrapper'
+import { SynapseErrorBoundary } from '../../error/ErrorBanner'
+import { deepEquals } from '@rjsf/utils'
+import { useSynapseContext } from '../../../utils'
+
+function AccessorRequirementHelpText(props: {
+  managedACTAccessRequirement: ManagedACTAccessRequirement
+}) {
+  const { managedACTAccessRequirement } = props
+  let link: string = ''
+  let msg: string = ''
+
+  if (
+    managedACTAccessRequirement.isCertifiedUserRequired &&
+    managedACTAccessRequirement.isValidatedProfileRequired
+  ) {
+    link = 'https://help.synapse.org/docs/User-Types.2007072795.html'
+    msg =
+      'All data requesters must be certified users and have a validated user profile.'
+  } else if (managedACTAccessRequirement.isCertifiedUserRequired) {
+    link =
+      'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers'
+    msg = 'All data requesters must be a certified user.'
+  } else if (managedACTAccessRequirement.isValidatedProfileRequired) {
+    link =
+      'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
+    msg = 'All data requesters must have a validated user profile.'
+  }
+  return link && msg ? (
+    <>
+      {managedACTAccessRequirement.isDUCRequired ? (
+        <>
+          This list should match those listed on your DUC.
+          <br />
+        </>
+      ) : (
+        ''
+      )}
+      {msg}{' '}
+      <Link href={link} target={'_blank'} rel={'noreferrer'}>
+        Learn more
+      </Link>
+    </>
+  ) : (
+    <></>
+  )
+}
 
 export type DataAccessRequestAccessorsFilesFormProps = {
   /**
@@ -80,58 +126,24 @@ export default function DataAccessRequestAccessorsFilesForm(
     researchProjectId,
     onCancel,
   } = props
-  const { data: user } = useGetCurrentUserProfile()
+  const { accessToken } = useSynapseContext()
+  const isLoggedIn = Boolean(accessToken)
+  const { data: user } = useGetCurrentUserProfile({ enabled: isLoggedIn })
   const [alert, setAlert] = useState<AlertProps | undefined>()
-  const [dataAccessRequest, setDataAccessRequest] = useState<
-    Request | Renewal | undefined
+  const [accessorChanges, setAccessorChanges] = useState<
+    AccessorChange[] | undefined
   >()
+  const [summaryOfUse, setSummaryOfUse] = useState<string | undefined>()
+  const [publication, setPublication] = useState<string | undefined>()
 
-  useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
-    // We append the current user onto the accessorChanges, so we wait for that data to populate
-    enabled: !!user,
-    // Infinite staleTime ensures this won't get re-fetched unless explicitly invalidated by the mutation
-    staleTime: Infinity,
-    select: data => {
-      const isRenewal =
-        data.concreteType ===
-        'org.sagebionetworks.repo.model.dataaccess.Renewal'
-      // Add the current user with GAIN_ACCESS to the list of accessors
-      const currentUserWithGainAccess: AccessorChange = {
-        userId: user!.ownerId,
-        type: isRenewal ? AccessType.RENEW_ACCESS : AccessType.GAIN_ACCESS,
-      }
-      if (!data.accessorChanges) {
-        data.accessorChanges = [currentUserWithGainAccess]
-      } else {
-        data.accessorChanges = [
-          currentUserWithGainAccess,
-          ...data.accessorChanges,
-        ]
-      }
-
-      // SWC-5765: Filter out duplicate accessors
-      const seen = new Set()
-      data.accessorChanges = data.accessorChanges.filter(accessorChange => {
-        return seen.has(accessorChange.userId)
-          ? false
-          : seen.add(accessorChange.userId)
-      })
-
-      // Attach the researchProjectId to the request
-      data.researchProjectId = researchProjectId
-      return data
-    },
-    onSuccess: data => {
-      setAlert(undefined)
-      setDataAccessRequest(data)
-    },
-    onError: err => {
-      setAlert({
-        key: 'error',
-        message: err.reason,
-      })
-    },
-  })
+  const { data: dataAccessRequest, isLoading: isLoadingGetDataAccessRequest } =
+    useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
+      enabled: isLoggedIn,
+      // Infinite staleTime ensures this won't get re-fetched unless explicitly invalidated by the mutation
+      staleTime: Infinity,
+      // This call should never fail, so if we run into an error, throwing to an error boundary is acceptable
+      useErrorBoundary: true,
+    })
 
   const isRenewal =
     dataAccessRequest?.concreteType ===
@@ -145,21 +157,128 @@ export default function DataAccessRequestAccessorsFilesForm(
     })
   }
 
-  const { mutate: submit } = useSubmitDataAccessRequest({
-    onSuccess: () => {
-      onSubmissionCreated()
-    },
+  const { mutate: submit, isLoading: isLoadingSubmitDataAccessRequest } =
+    useSubmitDataAccessRequest({
+      onSuccess: () => {
+        onSubmissionCreated()
+      },
+      onError: onError,
+    })
+
+  const {
+    mutateAsync: updateRequestAsync,
+    isLoading: isLoadingUpdateDataAccessRequest,
+  } = useUpdateDataAccessRequest({
     onError: onError,
   })
 
-  const { mutateAsync: updateRequestAsync } = useUpdateDataAccessRequest({
-    onError: onError,
-  })
+  const isLoading =
+    isLoadingGetDataAccessRequest ||
+    isLoadingUpdateDataAccessRequest ||
+    isLoadingSubmitDataAccessRequest
+
+  /**
+   * This effect comprises a collection of updates we should immediately apply to a data access request.
+   */
+  useEffect(() => {
+    if (dataAccessRequest && user) {
+      let shouldUpdate = false
+
+      // Attach the researchProjectId to the request
+      if (!dataAccessRequest.researchProjectId) {
+        dataAccessRequest.researchProjectId = researchProjectId
+        shouldUpdate = true
+      }
+
+      // Add the current user with GAIN_ACCESS to the list of accessors
+      const currentUserWithGainAccess: AccessorChange = {
+        userId: user.ownerId,
+        type: isRenewal ? AccessType.RENEW_ACCESS : AccessType.GAIN_ACCESS,
+      }
+      if (
+        !dataAccessRequest.accessorChanges ||
+        !dataAccessRequest.accessorChanges.find(item =>
+          deepEquals(item, currentUserWithGainAccess),
+        )
+      ) {
+        dataAccessRequest.accessorChanges = [
+          currentUserWithGainAccess,
+          ...(dataAccessRequest.accessorChanges || []),
+        ]
+        shouldUpdate = true
+      }
+
+      // SWC-5765: Filter out duplicate accessors
+      const seen = new Set()
+      const uniqueAccessorChanges = dataAccessRequest.accessorChanges.filter(
+        accessorChange => {
+          return seen.has(accessorChange.userId)
+            ? false
+            : seen.add(accessorChange.userId)
+        },
+      )
+      if (
+        uniqueAccessorChanges.length !==
+        dataAccessRequest.accessorChanges.length
+      ) {
+        dataAccessRequest.accessorChanges = uniqueAccessorChanges
+        shouldUpdate = true
+      }
+
+      if (shouldUpdate) {
+        updateRequestAsync(dataAccessRequest)
+      }
+    }
+  }, [
+    dataAccessRequest,
+    isRenewal,
+    researchProjectId,
+    updateRequestAsync,
+    user,
+  ])
+
+  /**
+   * Fields other than uploaded files are NOT immediately synced with the server. Set local state if these values exist in the
+   * fetched object, and no value exists in local state.
+   */
+  useEffect(() => {
+    if (dataAccessRequest) {
+      if (dataAccessRequest.accessorChanges && accessorChanges == undefined) {
+        setAccessorChanges(dataAccessRequest.accessorChanges)
+      }
+      if (
+        isRenewal &&
+        dataAccessRequest.publication &&
+        publication == undefined
+      ) {
+        setPublication(dataAccessRequest.publication)
+      }
+      if (
+        isRenewal &&
+        dataAccessRequest.summaryOfUse &&
+        summaryOfUse == undefined
+      ) {
+        setSummaryOfUse(dataAccessRequest.summaryOfUse)
+      }
+    }
+  }, [dataAccessRequest])
+
+  function getDataAccessRequestWithLocalState(): Request | Renewal {
+    return {
+      ...dataAccessRequest,
+      // append local state to the request
+      accessorChanges: accessorChanges,
+      publication,
+      summaryOfUse,
+    } as Request | Renewal
+  }
 
   async function handleSubmit() {
     if (dataAccessRequest) {
       // Save the request
-      const requestObject = await updateRequestAsync(dataAccessRequest)
+      const requestObject = await updateRequestAsync(
+        getDataAccessRequestWithLocalState(),
+      )
       // Create a submission and attach the request
       submit({
         request: {
@@ -185,22 +304,14 @@ export default function DataAccessRequestAccessorsFilesForm(
 
   const onAccessorChange: DataAccessRequestAccessorsEditorProps['onChange'] =
     updater => {
-      setDataAccessRequest(req => ({
-        ...req!,
-        // Copy the array so the caller doesn't have to worry about immutability
-        accessorChanges: [...updater(req!.accessorChanges || [])],
-      }))
+      // Copy the array so the caller doesn't have to worry about immutability
+      setAccessorChanges([...updater(accessorChanges || [])])
     }
 
   const onClearAttachment = (fid: string) => {
-    setDataAccessRequest(req => {
-      if (req) {
-        return {
-          ...req,
-          attachments: req.attachments?.filter(item => item !== fid),
-        }
-      }
-      return req
+    updateRequestAsync({
+      ...dataAccessRequest!,
+      attachments: dataAccessRequest!.attachments?.filter(item => item !== fid),
     })
   }
 
@@ -212,22 +323,21 @@ export default function DataAccessRequestAccessorsFilesForm(
     >,
   ) => {
     if (data.resp && data.success) {
+      // Files are uploaded and synced with the server immediately
       const uploadResponse: FileUploadComplete = data.resp
       if (context === 'attachments') {
-        setDataAccessRequest(req => {
-          return {
-            ...req!,
-            attachments: [
-              ...(req!.attachments || []),
-              uploadResponse.fileHandleId,
-            ],
-          }
+        updateRequestAsync({
+          ...dataAccessRequest!,
+          attachments: [
+            ...(dataAccessRequest!.attachments || []),
+            uploadResponse.fileHandleId,
+          ],
         })
       } else {
-        setDataAccessRequest(req => ({
-          ...req!,
+        updateRequestAsync({
+          ...dataAccessRequest!,
           [context]: uploadResponse.fileHandleId,
-        }))
+        })
       }
     } else if (!data.success && data.error) {
       // show the error
@@ -242,65 +352,14 @@ export default function DataAccessRequestAccessorsFilesForm(
     }
   }
 
-  const handleTextAreaInputChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-    key: keyof Pick<Renewal, 'publication' | 'summaryOfUse'>,
-  ) => {
-    const value = e.target.value
-    setDataAccessRequest(req => ({
-      ...(req as Renewal),
-      [key]: value,
-    }))
-  }
-
-  const AccessorRequirementHelpText = () => {
-    let link: string = ''
-    let msg: string = ''
-
-    if (
-      managedACTAccessRequirement.isCertifiedUserRequired &&
-      managedACTAccessRequirement.isValidatedProfileRequired
-    ) {
-      link = 'https://help.synapse.org/docs/User-Types.2007072795.html'
-      msg =
-        'All data requesters must be certified users and have a validated user profile.'
-    } else if (managedACTAccessRequirement.isCertifiedUserRequired) {
-      link =
-        'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers'
-      msg = 'All data requesters must be a certified user.'
-    } else if (managedACTAccessRequirement.isValidatedProfileRequired) {
-      link =
-        'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
-      msg = 'All data requesters must have a validated user profile.'
-    }
-    return link && msg ? (
-      <>
-        {managedACTAccessRequirement.isDUCRequired ? (
-          <>
-            This list should match those listed on your DUC.
-            <br />
-          </>
-        ) : (
-          ''
-        )}
-        {msg}{' '}
-        <Link href={link} target={'_blank'} rel={'noreferrer'}>
-          Learn more
-        </Link>
-      </>
-    ) : (
-      <></>
-    )
-  }
-
   const ducFileHandleAssociation: FileHandleAssociation[] =
     dataAccessRequest?.ducFileHandleId
       ? [
           {
             fileHandleId: dataAccessRequest?.ducFileHandleId,
             associateObjectType:
-              FileHandleAssociateType.AccessRequirementAttachment,
-            associateObjectId: String(managedACTAccessRequirement.id),
+              FileHandleAssociateType.DataAccessRequestAttachment,
+            associateObjectId: String(dataAccessRequest.id),
           },
         ]
       : []
@@ -310,8 +369,8 @@ export default function DataAccessRequestAccessorsFilesForm(
           {
             fileHandleId: dataAccessRequest.irbFileHandleId,
             associateObjectType:
-              FileHandleAssociateType.AccessRequirementAttachment,
-            associateObjectId: String(managedACTAccessRequirement.id),
+              FileHandleAssociateType.DataAccessRequestAttachment,
+            associateObjectId: String(dataAccessRequest.id),
           },
         ]
       : []
@@ -319,8 +378,8 @@ export default function DataAccessRequestAccessorsFilesForm(
   const attachmentFileHandleAssociations: FileHandleAssociation[] =
     (dataAccessRequest?.attachments || []).map(attachmentFileHandleId => ({
       fileHandleId: attachmentFileHandleId,
-      associateObjectType: FileHandleAssociateType.AccessRequirementAttachment,
-      associateObjectId: String(managedACTAccessRequirement.id),
+      associateObjectType: FileHandleAssociateType.DataAccessRequestAttachment,
+      associateObjectId: String(dataAccessRequest!.id),
     })) ?? []
 
   return (
@@ -351,12 +410,16 @@ export default function DataAccessRequestAccessorsFilesForm(
               access.
             </Typography>
 
-            {dataAccessRequest && (
+            {dataAccessRequest && user && (
               <DataAccessRequestAccessorsEditor
-                accessorChanges={dataAccessRequest.accessorChanges || []}
+                accessorChanges={accessorChanges || []}
                 onChange={onAccessorChange}
                 isRenewal={isRenewal}
-                helpText={<AccessorRequirementHelpText />}
+                helpText={
+                  <AccessorRequirementHelpText
+                    managedACTAccessRequirement={managedACTAccessRequirement}
+                  />
+                }
               />
             )}
 
@@ -401,14 +464,17 @@ export default function DataAccessRequestAccessorsFilesForm(
                     Upload the completed certificate using the button below:
                   </li>
                 </Typography>
-                <UploadDocumentField
-                  id={'duc'}
-                  uploadCallback={resp =>
-                    uploadCallback(resp, 'ducFileHandleId')
-                  }
-                  documentName={'Data Use Certificate'}
-                  fileHandleAssociations={ducFileHandleAssociation}
-                />
+                <SynapseErrorBoundary>
+                  <UploadDocumentField
+                    id={'duc'}
+                    isLoading={isLoading}
+                    uploadCallback={resp =>
+                      uploadCallback(resp, 'ducFileHandleId')
+                    }
+                    documentName={'Data Use Certificate'}
+                    fileHandleAssociations={ducFileHandleAssociation}
+                  />
+                </SynapseErrorBoundary>
                 {(managedACTAccessRequirement?.isIRBApprovalRequired ||
                   managedACTAccessRequirement?.areOtherAttachmentsRequired ||
                   isRenewal) && <Divider sx={{ my: 4 }} />}
@@ -427,15 +493,17 @@ export default function DataAccessRequestAccessorsFilesForm(
                   as well as the names of the data requesters above. Use the
                   button below to upload the document.
                 </Typography>
-                <UploadDocumentField
-                  id={'irb'}
-                  documentName={'IRB Approval Letter'}
-                  uploadCallback={resp =>
-                    uploadCallback(resp, 'irbFileHandleId')
-                  }
-                  fileHandleAssociations={irbFileHandleAssociation}
-                />
-
+                <SynapseErrorBoundary>
+                  <UploadDocumentField
+                    id={'irb'}
+                    isLoading={isLoading}
+                    documentName={'IRB Approval Letter'}
+                    uploadCallback={resp =>
+                      uploadCallback(resp, 'irbFileHandleId')
+                    }
+                    fileHandleAssociations={irbFileHandleAssociation}
+                  />
+                </SynapseErrorBoundary>
                 {(managedACTAccessRequirement?.areOtherAttachmentsRequired ||
                   isRenewal) && <Divider sx={{ my: 4 }} />}
               </>
@@ -453,14 +521,17 @@ export default function DataAccessRequestAccessorsFilesForm(
                     instructions to gain data access to determine which
                     documents must also be uploaded.
                   </Typography>
-                  <UploadDocumentField
-                    id={'file-attachment'}
-                    documentName={'Attachment'}
-                    uploadCallback={res => uploadCallback(res, 'attachments')}
-                    isMultiFileUpload={true}
-                    fileHandleAssociations={attachmentFileHandleAssociations}
-                    onClearAttachment={onClearAttachment}
-                  />
+                  <SynapseErrorBoundary>
+                    <UploadDocumentField
+                      id={'file-attachment'}
+                      isLoading={isLoading}
+                      documentName={'Attachment'}
+                      uploadCallback={res => uploadCallback(res, 'attachments')}
+                      isMultiFileUpload={true}
+                      fileHandleAssociations={attachmentFileHandleAssociations}
+                      onClearAttachment={onClearAttachment}
+                    />
+                  </SynapseErrorBoundary>
 
                   {isRenewal && <Divider sx={{ my: 4 }} />}
                 </>
@@ -474,21 +545,23 @@ export default function DataAccessRequestAccessorsFilesForm(
                   <TextField
                     id={'publications'}
                     label={'Publication(s)'}
+                    disabled={isLoadingSubmitDataAccessRequest}
                     multiline
                     rows={3}
-                    value={dataAccessRequest?.publication}
+                    value={publication}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                      handleTextAreaInputChange(e, 'publication')
+                      setPublication(e.target.value)
                     }
                   />
                   <TextField
                     id={'summaryOfUse'}
                     label={'Summary of use'}
-                    value={dataAccessRequest?.summaryOfUse}
+                    value={summaryOfUse}
+                    disabled={isLoadingSubmitDataAccessRequest}
                     multiline
                     rows={3}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                      handleTextAreaInputChange(e, 'summaryOfUse')
+                      setSummaryOfUse(e.target.value)
                     }
                   />
                 </>
@@ -503,9 +576,11 @@ export default function DataAccessRequestAccessorsFilesForm(
           <>
             <Button
               variant="outlined"
+              disabled={isLoadingSubmitDataAccessRequest}
               onClick={() => {
                 if (dataAccessRequest) {
-                  onCancel(dataAccessRequest)
+                  // include the local state in the onCancel callback so the user may save their changes
+                  onCancel(getDataAccessRequestWithLocalState())
                 }
               }}
             >
@@ -513,6 +588,7 @@ export default function DataAccessRequestAccessorsFilesForm(
             </Button>
             <Button
               variant="contained"
+              disabled={isLoadingSubmitDataAccessRequest}
               onClick={() => {
                 handleSubmit()
               }}

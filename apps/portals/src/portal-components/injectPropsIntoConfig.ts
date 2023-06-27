@@ -1,6 +1,11 @@
 import { cloneDeep } from 'lodash'
-import { MarkdownSynapseProps } from 'synapse-react-client'
+import {
+  ChallengeDataDownloadProps,
+  MarkdownSynapseProps,
+} from 'synapse-react-client'
 import { RowSynapseConfig } from '../types/portal-util-types'
+import { ChallengeSubmissionWrapperProps } from './challengeportal/ChallengeSubmissionWrapper'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 /**
  * Given a value and synapse config, returns the props with the value injected into the synapse object accordingly.
  *
@@ -32,6 +37,15 @@ const injectPropsIntoConfig = (
         markdownProps.ownerId = value
       }
     }
+  } else if (el.name === 'ChallengeDataDownload') {
+    const challengeDataDownloadProps =
+      internalProps as ChallengeDataDownloadProps
+    challengeDataDownloadProps.parentContainerId = value
+  } else if (el.name === 'ChallengeSubmissionWrapper') {
+    const challengeSubmissionWrapperProps =
+      internalProps as ChallengeSubmissionWrapperProps
+    challengeSubmissionWrapperProps.entityType =
+      value === 'Docker' ? EntityType.DOCKER_REPO : EntityType.FILE
   }
   return internalProps
 }

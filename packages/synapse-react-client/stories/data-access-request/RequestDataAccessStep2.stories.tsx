@@ -14,6 +14,8 @@ import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHand
 import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
 import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
 import { getAccessRequirementHandlers } from '../../mocks/msw/handlers/accessRequirementHandlers'
+import { SynapseContextConsumer, SynapseContextProvider } from '../../src'
+import AccessRequirementList from '../../src/components/AccessRequirementList/AccessRequirementList'
 
 const meta: Meta = {
   title:
@@ -35,6 +37,28 @@ const meta: Meta = {
       ],
     },
   },
+  argTypes: {
+    isAuthenticated: {
+      control: { type: 'boolean' },
+      defaultValue: true,
+    },
+  },
+  render: args => (
+    <SynapseContextConsumer>
+      {context => (
+        <SynapseContextProvider
+          synapseContext={{
+            ...context,
+            accessToken: args.isAuthenticated
+              ? context.accessToken ?? 'fake token'
+              : undefined,
+          }}
+        >
+          <DataAccessRequestAccessorsFilesForm {...args} />
+        </SynapseContextProvider>
+      )}
+    </SynapseContextConsumer>
+  ),
 } satisfies Meta
 
 export default meta
@@ -43,6 +67,7 @@ type Story = StoryObj<typeof meta>
 
 export const Request: Story = {
   args: {
+    isAuthenticated: true,
     entityId: MOCK_FOLDER_ID,
     managedACTAccessRequirement: mockManagedACTAccessRequirement,
     researchProjectId: MOCK_RESEARCH_PROJECT_ID,
@@ -50,6 +75,7 @@ export const Request: Story = {
 }
 export const Renewal: Story = {
   args: {
+    isAuthenticated: true,
     entityId: MOCK_FOLDER_ID,
     managedACTAccessRequirement: mockManagedACTAccessRequirement,
     researchProjectId: MOCK_RESEARCH_PROJECT_ID,

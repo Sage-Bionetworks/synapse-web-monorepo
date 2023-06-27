@@ -44,6 +44,7 @@ const routes: GenericRoute[] = [
                       'sensorType',
                       'devicePlatform',
                     ],
+                    unitDescription: 'Collections',
                   },
                 ],
               },
@@ -64,6 +65,7 @@ const routes: GenericRoute[] = [
                       'sensorType',
                       'devicePlatform',
                     ],
+                    unitDescription: 'Collections',
                   },
                 ],
               },
@@ -171,7 +173,7 @@ const routes: GenericRoute[] = [
         className: 'AboutPage',
         props: {
           ownerId: 'syn22130826',
-          loadingSkeletonRowCount: 20
+          loadingSkeletonRowCount: 20,
         },
       },
     ],

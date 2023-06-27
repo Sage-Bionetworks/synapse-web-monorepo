@@ -60,15 +60,16 @@ const FeaturedDataTabs: React.FunctionComponent<
             <>
               <FeaturedDataPlots
                 key={`${sql}-${selectedTabIndex}`}
-                {...selectedTabProps.plotsConfig}
-                rgbIndex={rgbIndex}
                 sql={sql}
+                rgbIndex={rgbIndex}
                 explorePagePath={selectedTabProps.explorePagePath}
+                {...selectedTabProps.plotsConfig}
               />
               {selectedTabProps.explorePagePath && (
                 <div className="FeaturedDataTabs__explore-all">
                   <Button
                     variant="contained"
+                    color="secondary"
                     href={selectedTabProps.explorePagePath}
                   >
                     View All {selectedTabProps.exploreObjectType}

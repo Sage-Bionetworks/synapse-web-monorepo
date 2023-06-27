@@ -1,40 +1,45 @@
-import { CardContainerLogicProps } from 'synapse-react-client'
-import { QueryWrapperProps } from 'synapse-react-client'
-import { UserCardProps } from 'synapse-react-client'
-import { ExternalFileHandleLinkProps } from 'synapse-react-client'
-import { UpsetPlotProps } from 'synapse-react-client'
-import { SynapsePlotProps } from 'synapse-react-client'
-import { MarkdownSynapseProps } from 'synapse-react-client'
-import { GoalsProps } from 'synapse-react-client'
-import { ProgramsProps } from 'synapse-react-client'
-import { ResourcesProps } from 'synapse-react-client'
-import { UserCardListRotateProps } from 'synapse-react-client'
-import { SubsectionRowRendererProps } from 'synapse-react-client'
-import { SynapseFormSubmissionGridProps } from 'synapse-react-client'
-import { QueryWrapperPlotNavProps } from 'synapse-react-client'
-import { SynapseFormWrapperProps } from 'synapse-react-client'
-import { ThemesPlotProps } from 'synapse-react-client'
+import {
+  CardContainerLogicProps,
+  DownloadCartPageProps,
+  ExternalFileHandleLinkProps,
+  FeaturedDataTabsProps,
+  GoalsProps,
+  MarkdownCollapseProps,
+  MarkdownSynapseProps,
+  OrientationBannerProps,
+  ProgramsProps,
+  QueryWrapperPlotNavProps,
+  QueryWrapperProps,
+  ResourcesProps,
+  RssFeedCardsProps,
+  StandaloneQueryWrapperProps,
+  SubsectionRowRendererProps,
+  SynapseFormSubmissionGridProps,
+  SynapseFormWrapperProps,
+  SynapsePlotProps,
+  TableFeedCardsProps,
+  ThemesPlotProps,
+  UpsetPlotProps,
+  UserCardListGroupsProps,
+  UserCardListRotateProps,
+  UserCardProps,
+  ChallengeDataDownloadProps,
+} from 'synapse-react-client'
 import { StatefulButtonControlWrapperProps } from '../portal-components/StatefulButtonControlWrapper'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
 import { AboutPortalProps } from '../portal-components/csbc-home-page/AboutPortal'
 import { EcosystemProps } from '../portal-components/csbc-home-page/Ecosystem'
 import { DetailsPageProps } from './portal-util-types'
-import { StandaloneQueryWrapperProps } from 'synapse-react-client'
 import { ParticipantsBarPlotProps } from '../portal-components/crc-researcher/ParticipantsBarPlot'
 import { StatusLineChartProps } from '../portal-components/crc-researcher/StatusLineChart'
 import { SurveysCompletedPlotsProps } from '../portal-components/crc-researcher/SurveysCompletedPlots'
 import { ImageProps } from '../portal-components/Image'
-import { RssFeedCardsProps } from 'synapse-react-client'
-import { FeaturedDataTabsProps } from 'synapse-react-client'
-import { UserCardListGroupsProps } from 'synapse-react-client'
-import { TableFeedCardsProps } from 'synapse-react-client'
 import { RedirectProps } from 'react-router-dom'
-import { MarkdownCollapseProps } from 'synapse-react-client'
-import { DownloadCartPageProps } from 'synapse-react-client'
 import { ToggleSynapseObjectsProps } from '../portal-components/ToggleSynapseObjects'
 import { CSSProperties } from 'react'
 import { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObjects'
+import { ChallengeSubmissionWrapperProps } from 'portal-components/challengeportal/ChallengeSubmissionWrapper'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -204,7 +209,18 @@ type Image = {
   name: 'Image'
   props: ImageProps
 }
-
+type ChallengeDetailPageWrapper = {
+  name: 'ChallengeDetailPageWrapper'
+  props: undefined
+}
+type ChallengeDataDownload = {
+  name: 'ChallengeDataDownload'
+  props: ChallengeDataDownloadProps
+}
+type ChallengeSubmissionWrapper = {
+  name: 'ChallengeSubmissionWrapper'
+  props: ChallengeSubmissionWrapperProps
+}
 type FeaturedDataTabs = {
   name: 'FeaturedDataTabs'
   props: FeaturedDataTabsProps
@@ -221,7 +237,6 @@ type TabbedSynapseObjects = {
   name: 'TabbedSynapseObjects'
   props: TabbedSynapseObjectsProps
 }
-
 
 type Metadata = {
   title?: string
@@ -265,6 +280,11 @@ type StatusLineChart = {
 type SurveysCompletedPlots = {
   name: 'SurveysCompletedPlots'
   props: SurveysCompletedPlotsProps
+}
+
+type OrientationBanner = {
+  name: 'OrientationBanner'
+  props: OrientationBannerProps
 }
 
 type RedirectWithQuery = {
@@ -329,7 +349,11 @@ export type SynapseConfig = (
   | TabbedSynapseObjects
   | ChallengeParticipantGoogleMap
   | ProjectDiscussionForum
+  | OrientationBanner
   | Header
+  | ChallengeDetailPageWrapper
+  | ChallengeDataDownload
+  | ChallengeSubmissionWrapper
 ) &
   Metadata
 

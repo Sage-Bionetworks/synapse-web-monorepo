@@ -86,7 +86,7 @@ export function CardContainer(props: CardContainerProps) {
     // Show "no results" UI (see PORTALS-1497)
     return <NoContentPlaceholder />
   }
-  const schema = {}
+  const schema: Record<string, number> = {}
   data.queryResult!.queryResults.headers.forEach((element, index) => {
     schema[element.name] = index
   })

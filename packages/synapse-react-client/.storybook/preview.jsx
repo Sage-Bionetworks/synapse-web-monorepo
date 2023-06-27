@@ -8,6 +8,24 @@ import { getHandlers } from '../mocks/msw/handlers'
 import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
 import isChromatic from 'chromatic/isChromatic'
 import { faker } from '@faker-js/faker'
+import { ThemeProvider } from '@mui/material'
+import { withThemeFromJSXProvider } from '@storybook/addon-styling'
+import {
+  adKnowledgePortalPalette,
+  arkPortalPalette,
+  bsmnPortalPalette,
+  cancerComplexityPortalPalette,
+  crcResearcherPortalPalette,
+  digitalHealthPortalPalette,
+  elPortalPalette,
+  mtbPalette,
+  nfPortalPalette,
+  psychEncodePortalPalette,
+  sageBionetworksPalette,
+  stopAdPortalPalette,
+} from '../src/theme/palette/Palettes'
+import { createTheme } from '@mui/material/styles'
+import defaultMuiThemeOptions from '../src/theme/DefaultTheme'
 
 faker.seed(12345)
 
@@ -78,35 +96,6 @@ export const globalTypes = {
       ],
     },
   },
-  palette: {
-    name: 'Theme',
-    title: 'Theme',
-    description: 'Choose the theme to apply.',
-    defaultValue: 'default',
-    toolbar: {
-      icon: 'paintbrush',
-      dynamicTitle: true,
-      showName: true,
-      items: [
-        { value: 'default', title: 'Default (Synapse.org)' },
-        { value: 'sageBionetworks', title: 'Sage Bionetworks' },
-        { value: 'mtb', title: 'MTB' },
-        { value: 'arkPortal', title: 'ARK Portal' },
-        { value: 'adKnowledgePortal', title: 'AD Knowledge Portal' },
-        { value: 'nfPortal', title: 'NF Portal' },
-        { value: 'bsmnPortal', title: 'BSMN Portal' },
-        { value: 'psychEncodePortal', title: 'PsychENCODE Portal' },
-        { value: 'stopAdPortal', title: 'STOP AD Portal' },
-        { value: 'digitalHealthPortal', title: 'Digital Health Portal' },
-        { value: 'crcResearcherPortal', title: 'CRC Researcher Portal' },
-        {
-          value: 'cancerComplexityPortal',
-          title: 'Cancer Complexity Portal',
-        },
-        { value: 'elPortal', title: 'Exceptional Longevity Portal' },
-      ],
-    },
-  },
 }
 
 // Initialize MSW
@@ -137,6 +126,49 @@ export const decorators = [
       </StorybookComponentWrapper>
     )
   },
+  // Adds global styles and theme switching support.
+  withThemeFromJSXProvider({
+    Provider: ThemeProvider,
+    themes: {
+      ['Synapse']: createTheme(defaultMuiThemeOptions),
+      ['Sage Bionetworks']: createTheme(defaultMuiThemeOptions, {
+        palette: sageBionetworksPalette,
+      }),
+      ['MTB']: createTheme(defaultMuiThemeOptions, { palette: mtbPalette }),
+      ['ARK Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: arkPortalPalette,
+      }),
+      ['NF Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: nfPortalPalette,
+      }),
+      ['BSMN Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: bsmnPortalPalette,
+      }),
+      ['PsychENCODE Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: psychEncodePortalPalette,
+      }),
+      ['STOP AD Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: stopAdPortalPalette,
+      }),
+      ['dhealth Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: digitalHealthPortalPalette,
+      }),
+      ['CRC Researcher Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: crcResearcherPortalPalette,
+      }),
+      ['Cancer Complexity Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: cancerComplexityPortalPalette,
+      }),
+
+      ['AD Knowledge Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: adKnowledgePortalPalette,
+      }),
+      ['EL Portal']: createTheme(defaultMuiThemeOptions, {
+        palette: elPortalPalette,
+      }),
+    },
+    defaultTheme: 'Synapse',
+  }),
 ]
 
 export default {

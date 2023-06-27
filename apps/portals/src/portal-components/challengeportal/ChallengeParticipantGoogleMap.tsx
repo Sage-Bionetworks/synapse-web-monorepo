@@ -1,11 +1,10 @@
 import { Box } from '@mui/material'
 import * as React from 'react'
-import { SynapseQueries, Map } from 'synapse-react-client'
+import { AppUtils, SynapseQueries, Map } from 'synapse-react-client'
 
 const ChallengeParticipantGoogleMap = () => {
-  const urlSearchParams = new URLSearchParams(window.location.search)
-  const entityId = urlSearchParams.get('id') ?? ''
-  const { data: challenge } = SynapseQueries.useGetEntityChallenge(entityId)
+  const projectId = AppUtils.useQuerySearchParam('id') ?? ''
+  const { data: challenge } = SynapseQueries.useGetEntityChallenge(projectId)
   if (challenge && challenge.participantTeamId) {
     return (
       <Box sx={{ height: '500px' }}>

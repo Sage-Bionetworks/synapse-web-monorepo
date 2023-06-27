@@ -1,7 +1,10 @@
 import React, { useEffect, useMemo } from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { SynapseContextType } from '../utils/context/SynapseContext'
-import { QueryClient } from 'react-query'
+import {
+  SynapseContextProvider,
+  SynapseContextType,
+} from '../utils/context/SynapseContext'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import SynapseClient from '../synapse-client'
 import { SynapseToastContainer } from './ToastMessage/ToastMessage'
 import { ReactQueryDevtools } from 'react-query/devtools'
@@ -14,28 +17,8 @@ import {
 } from '../synapse-client/SynapseClient'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { STACK_MAP, SynapseStack } from '../utils/functions/getEndpoint'
-import defaultMuiThemeOptions from '../theme/DefaultTheme'
-import {
-  adKnowledgePortalPalette,
-  arkPortalPalette,
-  bsmnPortalPalette,
-  cancerComplexityPortalPalette,
-  crcResearcherPortalPalette,
-  digitalHealthPortalPalette,
-  elPortalPalette,
-  mtbPalette,
-  nfPortalPalette,
-  palette,
-  psychEncodePortalPalette,
-  sageBionetworksPalette,
-  stopAdPortalPalette,
-} from '../theme/palette/Palettes'
 import useDetectSSOCode from '../utils/hooks/useDetectSSOCode'
-import {
-  defaultQueryClientConfig,
-  FullContextProvider,
-} from '../utils/context/FullContextProvider'
-import { createTheme } from '@mui/material/styles'
+import { defaultQueryClientConfig } from '../utils/context/FullContextProvider'
 
 export async function sessionChangeHandler() {
   let accessToken: string | undefined = await getAccessTokenFromCookie()
@@ -63,30 +46,15 @@ export async function sessionChangeHandler() {
   }
   return { accessToken, profile, authenticatedOn: date }
 }
+
 const storybookQueryClient = new QueryClient(defaultQueryClientConfig)
 
 function overrideEndpoint(stack: SynapseStack) {
   const endpointConfig = STACK_MAP[stack]
-  window['SRC'] = {
+  ;(window as any)['SRC'] = {
     OVERRIDE_ENDPOINT_CONFIG: endpointConfig,
   }
   storybookQueryClient.resetQueries()
-}
-
-const paletteMap = {
-  default: palette,
-  sageBionetworks: sageBionetworksPalette,
-  mtb: mtbPalette,
-  arkPortal: arkPortalPalette,
-  adKnowledgePortal: adKnowledgePortalPalette,
-  nfPortal: nfPortalPalette,
-  bsmnPortal: bsmnPortalPalette,
-  psychEncodePortal: psychEncodePortalPalette,
-  stopAdPortal: stopAdPortalPalette,
-  digitalHealthPortal: digitalHealthPortalPalette,
-  crcResearcherPortal: crcResearcherPortalPalette,
-  cancerComplexityPortal: cancerComplexityPortalPalette,
-  elPortal: elPortalPalette,
 }
 
 /**
@@ -97,7 +65,15 @@ const paletteMap = {
 export function StorybookComponentWrapper(props: {
   children: React.ReactNode
   /* This will match the `globalTypes` object in preview.jsx. */
-  storybookContext: any
+  storybookContext: {
+    globals: {
+      stack?: SynapseStack
+      showReactQueryDevtools?: boolean
+    }
+    parameters: {
+      stack?: SynapseStack
+    }
+  }
 }) {
   const { storybookContext } = props
 
@@ -126,6 +102,7 @@ export function StorybookComponentWrapper(props: {
       storybookQueryClient.removeQueries()
       await storybookQueryClient.invalidateQueries()
     }
+
     resetCache()
   }, [accessToken])
 
@@ -140,25 +117,18 @@ export function StorybookComponentWrapper(props: {
     [accessToken],
   )
 
-  const theme = createTheme(defaultMuiThemeOptions, {
-    palette: paletteMap[storybookContext.globals.palette],
-  })
-
   return (
-    <FullContextProvider
-      queryClient={storybookQueryClient}
-      key={accessToken}
-      synapseContext={synapseContext}
-      theme={theme}
-    >
-      {storybookContext.globals.showReactQueryDevtools && (
-        <ReactQueryDevtools />
-      )}
-      <MemoryRouter>
-        <SynapseToastContainer />
-        <main>{props.children}</main>
-      </MemoryRouter>
-    </FullContextProvider>
+    <QueryClientProvider client={storybookQueryClient}>
+      <SynapseContextProvider synapseContext={synapseContext}>
+        {storybookContext.globals.showReactQueryDevtools && (
+          <ReactQueryDevtools />
+        )}
+        <MemoryRouter>
+          <SynapseToastContainer />
+          <main>{props.children}</main>
+        </MemoryRouter>
+      </SynapseContextProvider>
+    </QueryClientProvider>
   )
 }
 

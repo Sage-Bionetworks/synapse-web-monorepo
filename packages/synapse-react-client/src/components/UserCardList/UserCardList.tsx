@@ -19,11 +19,8 @@ export type UserCardListProps = {
   data?: QueryResultBundle
 }
 
-type MapOwnerIdToUserProfile = {
-  [index: number]: UserProfile
-}
 export type UserCardListState = {
-  userProfileMap: MapOwnerIdToUserProfile
+  userProfileMap: Record<string, UserProfile>
 }
 export class UserCardList extends React.Component<
   UserCardListProps,
@@ -59,7 +56,7 @@ export class UserCardList extends React.Component<
       list.filter((el): el is string => !!el),
     )
       .then((data: UserProfileList) => {
-        const newEntries = {}
+        const newEntries: Record<string, UserProfile> = {}
         data.list.forEach(el => {
           const { ownerId } = el
           newEntries[ownerId] = el

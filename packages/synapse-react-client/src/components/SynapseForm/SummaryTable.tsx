@@ -63,10 +63,10 @@ export function getFlatData(
   //takes nested json and converts it into flattened item list
 
   function flatten(
-    object: any,
-    flattenedObject: any,
+    object: Record<string, any>,
+    flattenedObject: Record<string, any>,
     prefix: string,
-  ): string[] {
+  ): Record<string, any> {
     const separator = '.'
     Object.keys(object).forEach(key => {
       if (object[key] === null) {
@@ -103,7 +103,8 @@ export function getFlatData(
     return flattenedObject
   }
 
-  const flatData = flatten(cloneDeep(formData), [], '')
+  const flatData = flatten(cloneDeep(formData), {}, '')
+  console.log(flatData)
   const flatFormData = keys(flatData)
     .map(key => {
       let val = flatData[key]
