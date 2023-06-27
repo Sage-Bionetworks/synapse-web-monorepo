@@ -1,6 +1,6 @@
 import Skeleton from '@mui/material/Skeleton'
-import React, { useState } from 'react'
-import { useGetUserProfile } from '../../synapse-queries/user/useUserBundle'
+import React, { useState, useMemo } from 'react'
+import { useGetUserProfile } from '../../synapse-queries'
 import Typography from '@mui/material/Typography'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
@@ -8,10 +8,10 @@ import UserChallenges from './UserChallenges'
 import UserProjects from './UserProjects'
 import UserTeams from './UserTeams'
 
-export enum UserProfileLinksTabs {
-  PROJECTS = 'Projects',
-  TEAMS = 'Teams',
-  CHALLENGES = 'Challenges',
+type UserProfileLinkConfig = {
+  name: 'Projects' | 'Teams' | 'Challenges'
+  iconName: IconName
+  render: React.ReactNode
 }
 
 export type UserProfileLinksProps = {
@@ -19,21 +19,31 @@ export type UserProfileLinksProps = {
 }
 
 export function UserProfileLinks({ userId }: UserProfileLinksProps) {
-  const [currentTab, setCurrentTab] = useState<UserProfileLinksTabs>(
-    UserProfileLinksTabs.PROJECTS,
-  )
+  const [currentTab, setCurrentTab] =
+    useState<UserProfileLinkConfig['name']>('Projects')
   const { data: userProfile } = useGetUserProfile(userId)
 
-  function getIconName(currentTab: UserProfileLinksTabs): IconName {
-    switch (currentTab) {
-      case UserProfileLinksTabs.PROJECTS:
-        return 'dashboard'
-      case UserProfileLinksTabs.TEAMS:
-        return 'peopleTwoTone'
-      case UserProfileLinksTabs.CHALLENGES:
-        return 'challengesTwoTone'
-    }
-  }
+  const userProfileLinksConfig: UserProfileLinkConfig[] = useMemo(
+    () => [
+      {
+        name: 'Projects',
+        iconName: 'dashboard',
+        render: <UserProjects userId={userId} />,
+      },
+      {
+        name: 'Teams',
+        iconName: 'peopleTwoTone',
+        render: <UserTeams userId={userId} />,
+      },
+      {
+        name: 'Challenges',
+        iconName: 'challengesTwoTone',
+        render: <UserChallenges userId={userId} />,
+      },
+    ],
+    [userId],
+  )
+
   return (
     <div className="UserProfileLinks">
       <Typography variant="headline2" className="title">
@@ -41,21 +51,20 @@ export function UserProfileLinks({ userId }: UserProfileLinksProps) {
         {!userProfile && <Skeleton width="75%" />}
       </Typography>
       <div className="Tabs">
-        {Object.keys(UserProfileLinksTabs).map((keyName: string) => {
+        {userProfileLinksConfig.map(config => {
           return (
             <div
               className="Tab"
               role="tab"
-              key={keyName}
+              key={config.name}
               onClick={e => {
                 e.stopPropagation()
-                setCurrentTab(UserProfileLinksTabs[keyName])
+                setCurrentTab(config.name)
               }}
-              aria-selected={UserProfileLinksTabs[keyName] === currentTab}
+              aria-selected={currentTab === config.name}
             >
               <Typography variant="buttonLink">
-                <IconSvg icon={getIconName(UserProfileLinksTabs[keyName])} />{' '}
-                {UserProfileLinksTabs[keyName]}
+                <IconSvg icon={config.iconName} /> {config.name}
               </Typography>
             </div>
           )
@@ -63,21 +72,10 @@ export function UserProfileLinks({ userId }: UserProfileLinksProps) {
       </div>
       <div className="TabContent">
         <SynapseErrorBoundary>
-          {currentTab === UserProfileLinksTabs.PROJECTS && (
-            <>
-              <UserProjects userId={userId} />
-            </>
-          )}
-          {currentTab === UserProfileLinksTabs.TEAMS && (
-            <>
-              <UserTeams userId={userId} />
-            </>
-          )}
-          {currentTab === UserProfileLinksTabs.CHALLENGES && (
-            <>
-              <UserChallenges userId={userId} />
-            </>
-          )}
+          {
+            userProfileLinksConfig.find(config => currentTab === config.name)
+              ?.render
+          }
         </SynapseErrorBoundary>
       </div>
     </div>

@@ -1,0 +1,115 @@
+{
+  "concreteType": "org.sagebionetworks.repo.model.table.QueryResultBundle",
+  "queryResult": {
+    "concreteType": "org.sagebionetworks.repo.model.table.QueryResult",
+    "queryResults": {
+      "concreteType": "org.sagebionetworks.repo.model.table.RowSet",
+      "tableId": "syn51718002",
+      "etag": "c4617759-6efa-4fcf-805f-0360e642a364",
+      "headers": [
+        {
+          "name": "icon",
+          "columnType": "FILEHANDLEID",
+          "id": "193809"
+        },
+        {
+          "name": "label",
+          "columnType": "STRING",
+          "id": "123221"
+        },
+        {
+          "name": "description",
+          "columnType": "STRING",
+          "id": "87941"
+        },
+        {
+          "name": "order",
+          "columnType": "INTEGER",
+          "id": "193682"
+        }
+      ],
+      "rows": [
+        {
+          "rowId": 1,
+          "versionNumber": 10,
+          "values": [
+            "125817615",
+            "I will adhere to the Synapse Community Standards of inclusion and respect.",
+            "A participant in the Synapse Community: <ul>     <li>Welcomes others</li>     <li>Uses inclusive language</li>     <li>Shares experiences and knowledge</li>     <li>Respects other viewpoints and ideas</li>     <li>Shows empathy and kindness when interacting with others</li>     </ul> Please refer to our full <a target=\"_blank\" href=\"https://help.synapse.org/docs/Synapse-Governance.2004255211.html#SynapseGovernance-SynapseCodeofConduct\">Synapse Code of Conduct</a>.",
+            "1"
+          ]
+        },
+        {
+          "rowId": 2,
+          "versionNumber": 10,
+          "values": [
+            "125817616",
+            "I will adhere to all conditions and use limitations, including privacy laws and regulations.",
+            "For more information about how Sage Bionetworks regulates data access and privacy, please refer to the  <a target=\"_blank\" href=\"https://s3.amazonaws.com/static.synapse.org/governance/SynapseCommonsDataUseProcedure.pdf\">Synapse Commons Data Use Procedure</a>.",
+            "2"
+          ]
+        },
+        {
+          "rowId": 3,
+          "versionNumber": 10,
+          "values": [
+            "125817619",
+            "I will act ethically and responsibly.",
+            "You agree to the following Synapse Operating Ethics Principles, outlined in our <a target=\"_blank\" href=\"https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf\">Terms and Conditions of Use</a>.<br><br>Consequences of misconduct can include loss of both data use privileges and future use of Synapse.",
+            "3"
+          ]
+        },
+        {
+          "rowId": 4,
+          "versionNumber": 10,
+          "values": [
+            "125817622",
+            "I will use appropriate physical, technical and administrative measures to keep data secure and protect participants' privacy.",
+            "In your use of Synapse, you agree to:<ul>     <li>Keep your login information secure and not share with others.</li>     <li>Keep data safe from breach or misuse through appropriate security measures.</li>     <li>Not attempt to re-identify or contact participants.</li>     <li>Refrain from unauthorized data redistribution. Please refer to the      <a target=\"_blank\" href=\"https://s3.amazonaws.com/static.synapse.org/governance/SynapseCommonsDataUseProcedure.pdf\">Synapse Commons Data Use Procedure</a>.</li>     </ul>     For more information, please refer to the full <a target=\"_blank\" href=\"https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf\">Synapse Terms and Conditions of Use</a>.",
+            "4"
+          ]
+        },
+        {
+          "rowId": 5,
+          "versionNumber": 10,
+          "values": [
+            "125817623",
+            "I will support open access best practices for public facing data.",
+            "The Synapse open access platform promotes data accessibility and collaboration. We encourage you to      contribute your research findings to open access journals when applicable.<br><br>     You agree to support open access best practices when possible (e.g., sharing code, metadata, annotating files for discovery).",
+            "5"
+          ]
+        },
+        {
+          "rowId": 6,
+          "versionNumber": 10,
+          "values": [
+            "125817627",
+            "I will credit research participants and all data sources.",
+            "You agree to acknowledge data participants and to cite contributors and data sources using the language provided with the dataset.<br><br>     It is our policy to terminate the access privileges of those who infringe the intellectual property rights of others. For more information, please refer to our full      <a target=\"_blank\" href=\"https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf\">Terms and Conditions of Use</a>.",
+            "6"
+          ]
+        },
+        {
+          "rowId": 7,
+          "versionNumber": 10,
+          "values": [
+            "125817629",
+            "I will not use data for marketing and/or advertising.",
+            "Data may not be used for marketing or advertising purposes. You agree not to upload or otherwise transmit      any unsolicited or unauthorized advertising, promotional materials, junk mail, spam, or any other form of solicitation (commercial or otherwise). <br><br>     Please review the <a target=\"_blank\" href=\"https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf?v=5\">Synapse Privacy Policy</a> for Sage's commitment to privacy protections.",
+            "7"
+          ]
+        },
+        {
+          "rowId": 8,
+          "versionNumber": 10,
+          "values": [
+            "125817633",
+            "I will report any suspected data breach or misuse to privacyofficer@sagebase.org within 2 business days of initial incident knowledge.",
+            "Data misuse includes violating dataset access requirements, unauthorized use or      redistribution, lack of data accreditation, and unethical data handling.<br><br>     For more information about what classifies as a violation of our data governance policies, please refer to our      <a target=\"_blank\" href=\"https://s3.amazonaws.com/static.synapse.org/governance/SynapseCommonsDataUseProcedure.pdf\">Data Use Procedure</a> and <a target=\"_blank\" href=\"https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf\">Terms and Conditions of Use</a>.",
+            "8"
+          ]
+        }
+      ]
+    }
+  }
+}

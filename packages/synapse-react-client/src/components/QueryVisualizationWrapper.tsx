@@ -29,11 +29,12 @@ export type QueryVisualizationContextType = {
   /** Whether to show when the table or view was last updated. */
   showLastUpdatedOn?: boolean
   /** Given a column name, return the display name for the column */
-  getColumnDisplayName: (columnName?: string) => string | undefined
+  getColumnDisplayName: (columnName: string) => string
   /** Given a cell value and a column type, returns the displayed value for the data */
   getDisplayValue: (value: string, columnType: ColumnType) => string
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => JSX.Element
+  isRowSelectionVisible: boolean
 }
 
 /**
@@ -87,6 +88,7 @@ export type QueryVisualizationWrapperProps = {
   showLastUpdatedOn?: boolean
   /** Default is INTERACTIVE */
   noContentPlaceholderType?: NoContentPlaceholderType
+  isRowSelectionVisible?: boolean
 }
 
 export type TopLevelControlsState = {
@@ -107,8 +109,10 @@ export type TopLevelControlsState = {
 export function QueryVisualizationWrapper(
   props: QueryVisualizationWrapperProps,
 ) {
-  const { noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE } =
-    props
+  const {
+    noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE,
+    isRowSelectionVisible = false,
+  } = props
 
   const { data, getLastQueryRequest, isFacetsAvailable, hasResettableFilters } =
     useQueryContext()
@@ -154,7 +158,7 @@ export function QueryVisualizationWrapper(
   }, [selectColumns, lastQueryRequest.query.sql, props.visibleColumnCount])
 
   const getColumnDisplayName = useCallback(
-    (columnName?: string) => {
+    (columnName: string) => {
       // SWC-5982: if force-display-original-column-names is set, then just return the string
       const forceDisplayOriginalColumnName =
         localStorage.getItem('force-display-original-column-names') === 'true'
@@ -197,6 +201,7 @@ export function QueryVisualizationWrapper(
     getColumnDisplayName,
     getDisplayValue,
     NoContentPlaceholder,
+    isRowSelectionVisible,
   }
   /**
    * Render the children without any formatting

@@ -41,7 +41,7 @@ export type SynapseTableCellProps = {
   isBold: string
   columnLinkConfig?: CardLink | MarkdownLink | ColumnSpecifiedLink
   mapEntityIdToHeader: Record<string, EntityHeader>
-  mapUserIdToHeader: Partial<UserGroupHeader & UserProfile>
+  mapUserIdToHeader: Record<string, UserGroupHeader | UserProfile>
   columnName: string
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
@@ -207,9 +207,10 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
       if (
         Object.prototype.hasOwnProperty.call(mapUserIdToHeader, columnValue)
       ) {
-        const { ownerId, userName } = mapUserIdToHeader[columnValue]
-        if (mapUserIdToHeader[columnValue].isIndividual === false) {
-          // isUserGroupHeader
+        const cachedData = mapUserIdToHeader[columnValue]
+        const { ownerId, userName } = cachedData
+        if ('isIndividual' in cachedData) {
+          // is UserGroupHeader
           const icon: IconName =
             userName === AUTHENTICATED_USERS ? 'public' : 'people'
           if (userName === AUTHENTICATED_USERS) {
@@ -232,8 +233,8 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
           // isUserCard
           return (
             <UserCard
-              userProfile={mapUserIdToHeader[columnValue]}
-              preSignedURL={mapUserIdToHeader[columnValue].clientPreSignedURL}
+              userProfile={cachedData}
+              preSignedURL={cachedData.clientPreSignedURL}
               size={'SMALL USER CARD'}
             />
           )

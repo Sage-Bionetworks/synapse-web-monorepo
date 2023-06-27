@@ -19,21 +19,24 @@ import { MetadataTable } from './MetadataTable'
 import { Button, Tooltip } from '@mui/material'
 import { DialogBase } from '../../DialogBase'
 
-export enum EntityModalTabs {
-  METADATA = 'METADATA', // non-annotation metadata about the entity
-  ANNOTATIONS = 'ANNOTATIONS', // annotation and schema information
+export const EntityModalTabs = [
+  // non-annotation metadata about the entity
+  'METADATA',
+  // annotation and schema information
+  'ANNOTATIONS',
   // TODO: Access -- we haven't yet built a viewer/editor for ACLs in SRC -- consider a redesign before building
-  // ACCESS = 'ACCESS', // ACLs (and maybe ARs?)
+  //'ACCESS', // ACLs (and maybe ARs?)
   // TODO: Previews - we would need preview renderers that accomplish feature parity with SWC
-  // PREVIEW = 'PREVIEW' // should only show this tab if a preview exists
-}
+  //'PREVIEW' // should only show this tab if a preview exists
+] as const
+type EntityModalTab = (typeof EntityModalTabs)[number]
 
 export type EntityModalProps = {
   readonly show: boolean
   readonly entityId: string
   readonly versionNumber?: number
   readonly onClose: () => void
-  readonly initialTab?: EntityModalTabs
+  readonly initialTab?: EntityModalTab
   readonly showTabs?: boolean
 }
 
@@ -43,12 +46,12 @@ export function EntityModal(props: EntityModalProps) {
     versionNumber,
     show,
     onClose,
-    initialTab = EntityModalTabs.METADATA,
+    initialTab = 'METADATA',
     showTabs = true,
   } = props
   const annotationEditorFormRef = useRef<Form>(null)
 
-  const [currentTab, setCurrentTab] = useState<EntityModalTabs>(initialTab)
+  const [currentTab, setCurrentTab] = useState<EntityModalTab>(initialTab)
   const [isInEditMode, setIsInEditMode] = useState(false)
   const [hasClickedCancel, setHasClickedCancel] = useState(false)
 
@@ -62,7 +65,7 @@ export function EntityModal(props: EntityModalProps) {
     isVersionable && (entityBundle.entity as VersionableEntity).isLatestVersion!
 
   const showOpenEntityPageButton =
-    currentTab === EntityModalTabs.METADATA &&
+    currentTab === 'METADATA' &&
     entityBundle &&
     !window.location.href.includes(entityId)
   const openEntityPageButton = (
@@ -83,20 +86,15 @@ export function EntityModal(props: EntityModalProps) {
     </Button>
   )
 
-  const showSaveAnnotationsButton =
-    currentTab === EntityModalTabs.ANNOTATIONS && isInEditMode
+  const showSaveAnnotationsButton = currentTab === 'ANNOTATIONS' && isInEditMode
   const saveAnnotationsButton = (
     <Button
       variant={'contained'}
       onClick={() => {
-        // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/2104#issuecomment-847924986
-        // Should be fixed if we upgrade to RJSF v5
-        ;(annotationEditorFormRef.current as any).formElement.dispatchEvent(
-          new CustomEvent('submit', {
-            cancelable: true,
-            bubbles: true,
-          }),
-        )
+        // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/3121
+        ;(
+          annotationEditorFormRef.current as any
+        ).formElement.current.requestSubmit()
       }}
     >
       Save Annotations
@@ -104,7 +102,7 @@ export function EntityModal(props: EntityModalProps) {
   )
 
   const showCancelAnnotationEditsButton =
-    currentTab === EntityModalTabs.ANNOTATIONS && isInEditMode
+    currentTab === 'ANNOTATIONS' && isInEditMode
   const cancelAnnotationEditsButton = (
     <Button
       variant={'outlined'}
@@ -122,7 +120,7 @@ export function EntityModal(props: EntityModalProps) {
   )
 
   const showEditAnnotationsButton =
-    canEdit && currentTab === EntityModalTabs.ANNOTATIONS && !isInEditMode
+    canEdit && currentTab === 'ANNOTATIONS' && !isInEditMode
   const editAnnotationsButton = (
     <Tooltip
       title={
@@ -147,7 +145,7 @@ export function EntityModal(props: EntityModalProps) {
     <>
       {showTabs && !isInEditMode ? (
         <div className="Tabs">
-          {Object.keys(EntityModalTabs).map((tabName: string) => {
+          {EntityModalTabs.map(tabName => {
             return (
               <div
                 className="Tab"
@@ -155,7 +153,7 @@ export function EntityModal(props: EntityModalProps) {
                 key={tabName}
                 onClick={e => {
                   e.stopPropagation()
-                  setCurrentTab(EntityModalTabs[tabName])
+                  setCurrentTab(tabName)
                 }}
                 aria-selected={tabName === currentTab}
               >
@@ -165,11 +163,7 @@ export function EntityModal(props: EntityModalProps) {
           })}
         </div>
       ) : null}
-      <div
-        style={
-          currentTab === EntityModalTabs.ANNOTATIONS ? {} : { display: 'none' }
-        }
-      >
+      <div style={currentTab === 'ANNOTATIONS' ? {} : { display: 'none' }}>
         {isInEditMode ? (
           <SynapseErrorBoundary>
             <SchemaDrivenAnnotationEditor
@@ -186,11 +180,7 @@ export function EntityModal(props: EntityModalProps) {
           <AnnotationsTable entityId={entityId} versionNumber={versionNumber} />
         )}
       </div>
-      <div
-        style={
-          currentTab === EntityModalTabs.METADATA ? {} : { display: 'none' }
-        }
-      >
+      <div style={currentTab === 'METADATA' ? {} : { display: 'none' }}>
         <MetadataTable entityId={entityId} versionNumber={versionNumber} />
       </div>
     </>

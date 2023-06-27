@@ -3,10 +3,9 @@ import ChallengeRegisterButton from '../ChallengeRegisterButton'
 import ChallengeTeamWizard from '../ChallengeTeamWizard'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
 import { useGetEntity, useGetEntityChallenge } from '../../synapse-queries'
-import { Challenge } from '@sage-bionetworks/synapse-types'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { SynapseQueries, useSynapseContext } from '../..'
-import { deleteMemberFromTeam } from '../../synapse-client'
+import { SynapseQueries, displayToast, useSynapseContext } from '../..'
+import { useDeleteTeamMembership } from '../../synapse-queries/team/useTeamMembers'
 
 export type ChallengeDetailPageProps = {
   projectId: string
@@ -16,7 +15,6 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
   const { accessToken } = useSynapseContext()
   const [showWizard, setShowWizard] = useState<boolean>(false)
   const [showRequirements, setShowRequirements] = useState<boolean>(false)
-  const [challenge, setChallenge] = useState<Challenge>()
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<boolean>(false)
   const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
   const { data: project } = useGetEntity(projectId)
@@ -31,6 +29,15 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
     setShowLeaveConfirm(true)
   }
 
+  const { mutate: leaveChallenge } = useDeleteTeamMembership({
+    onSuccess: () => {
+      displayToast('You are no longer registered for this challenge', 'info')
+    },
+    onError: error => {
+      displayToast(error.reason, 'danger')
+    },
+  })
+
   const doLeaveChallenge = () => {
     if (accessToken && challenge && userProfile) {
       /**
@@ -43,11 +50,10 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
        * Only a team admin can request this however.
        */
 
-      deleteMemberFromTeam(
-        challenge.participantTeamId,
-        userProfile.ownerId,
-        accessToken,
-      )
+      leaveChallenge({
+        teamId: challenge.participantTeamId,
+        userId: userProfile.ownerId,
+      })
     }
   }
 
@@ -58,18 +64,7 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
     }
   }
 
-  useGetEntityChallenge(projectId, {
-    enabled: !challenge,
-    onSettled: (data, error) => {
-      // console.log('settled', { data }, { error })
-      if (data) {
-        setChallenge(data)
-      }
-      if (error) {
-        console.warn(error)
-      }
-    },
-  })
+  const { data: challenge } = useGetEntityChallenge(projectId)
 
   return (
     <>

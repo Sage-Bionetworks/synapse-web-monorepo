@@ -1,5 +1,5 @@
 import Form from '@rjsf/mui'
-import { JSONSchema7 } from 'json-schema'
+import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Alert, Box, Divider, Link } from '@mui/material'
@@ -76,16 +76,19 @@ export type SchemaDrivenAnnotationEditorProps = {
  */
 function getPatternPropertiesBannedKeys(
   concreteType?: ENTITY_CONCRETE_TYPE,
-): JSONSchema7 {
+): Record<string, JSONSchema7Definition> {
   if (!concreteType) {
     return {}
   }
   // for each property (e.g. id, name, etag, etc.)
   //  Add to the JSON Schema `"^id$": { "not": {} }` to ban the property from being added as an additional property.
-  return entityJsonKeys[concreteType].reduce((current, item) => {
-    current[`^${item}$`] = { not: {} }
-    return current
-  }, {})
+  return entityJsonKeys[concreteType].reduce(
+    (current: Record<string, JSONSchema7Definition>, item) => {
+      current[`^${item}$`] = { not: {} }
+      return current
+    },
+    {},
+  )
 }
 
 /**

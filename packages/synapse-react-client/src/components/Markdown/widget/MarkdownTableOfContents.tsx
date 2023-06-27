@@ -27,7 +27,7 @@ export default function MarkdownTableOfContents(
       <div key={p4}>
         <a
           role="link"
-          className={`link ${TOC_CLASS[Number(p2)]}`}
+          className={`link ${TOC_CLASS[Number(p2) as keyof typeof TOC_CLASS]}`}
           data-anchor={p3}
         >
           {p4}

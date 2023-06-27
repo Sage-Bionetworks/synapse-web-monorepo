@@ -108,7 +108,7 @@ const DirectDownload: React.FunctionComponent<
   }
 
   const hasFileHandle = (fh: FileHandle) => {
-    if (fh && !fh['isPreview']) {
+    if (fh && !(fh as any)['isPreview']) {
       setHasFileAccess(true)
       return true
     } else {
@@ -153,7 +153,7 @@ const DirectDownload: React.FunctionComponent<
                 // have file access and not file preview
                 if (implementsExternalFileHandleInterface(fh)) {
                   setIsExternalFile(true)
-                  setExternalURL(fh['externalURL'])
+                  setExternalURL((fh as any)['externalURL'])
                 }
               }
             })

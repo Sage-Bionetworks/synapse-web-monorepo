@@ -87,10 +87,16 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
             return (
               <span
                 className="PersonalAccessTokenCard__ScopeName SRC-primary-text-color SRC-primary-color-hover SRC-hand-cursor SRC-inlineFlex"
-                data-tip={scopeDescriptions[scope].description}
+                data-tip={
+                  scopeDescriptions[scope as keyof typeof scopeDescriptions]
+                    .description
+                }
                 key={scope}
               >
-                {scopeDescriptions[scope].displayName}
+                {
+                  scopeDescriptions[scope as keyof typeof scopeDescriptions]
+                    .displayName
+                }
               </span>
             )
           })}

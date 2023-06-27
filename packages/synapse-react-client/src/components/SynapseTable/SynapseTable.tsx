@@ -73,7 +73,7 @@ export type SynapseTableState = {
   isExportTableDownloadOpen: boolean
   isExpanded: boolean
   mapEntityIdToHeader: Record<string, EntityHeader>
-  mapUserIdToHeader: Record<string, Partial<UserGroupHeader & UserProfile>>
+  mapUserIdToHeader: Record<string, UserGroupHeader | UserProfile>
   isColumnSelectionOpen: boolean
   isFetchingEntityHeaders: boolean
 }
@@ -87,7 +87,6 @@ export type SynapseTableProps = {
   showDownloadColumn?: boolean
   columnLinks?: LabelLinkConfig
   hideDownload?: boolean
-  isRowSelectionVisible?: boolean
 }
 
 export class SynapseTable extends React.Component<
@@ -422,9 +421,9 @@ export class SynapseTable extends React.Component<
     const lastQueryRequest = this.props.queryContext.getLastQueryRequest?.()!
     const {
       queryContext: { entity },
+      queryVisualizationContext: { isRowSelectionVisible },
       showAccessColumn,
       showDownloadColumn,
-      isRowSelectionVisible,
     } = this.props
 
     /**

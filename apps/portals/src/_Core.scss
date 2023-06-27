@@ -421,10 +421,6 @@ button.dropdown-toggle.nav-button:hover {
 }
 
 .header-text {
-  h2 {
-    font-weight: bold;
-    margin-bottom: 30px;
-  }
   height: fit-content;
   color: white;
   &.blur {
@@ -437,9 +433,6 @@ button.dropdown-toggle.nav-button:hover {
   padding: 30px;
   margin-top: 30px;
   margin-bottom: 30px;
-  p {
-    font-size: 16px;
-  }
 }
 // end header
 

@@ -20,6 +20,7 @@
 @use './portal-components/DetailsPage/DetailsPage';
 @use './portal-components/nf/style/_BrowseToolsPage';
 @use './portal-components/arkportal/style/_ARKWelcomePage';
+@use './portal-components/challengeportal/style/_challengeportal';
 
 // style_overrides should be last to ensure its styles have highest priority
 @use './config/style/style_overrides';

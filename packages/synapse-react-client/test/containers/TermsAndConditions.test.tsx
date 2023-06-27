@@ -1,21 +1,42 @@
-import { render } from '@testing-library/react'
 import React from 'react'
 import TermsAndConditions from '../../src/components/TermsAndConditions/TermsAndConditions'
+import { SynapseClient, SynapseContextType } from '../../src'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import mockSyn51718002 from '../../mocks/query/syn51718002.json'
+import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { render, screen, waitFor } from '@testing-library/react'
 
-describe('Terms And Conditions: basic functionality', () => {
-  const props = {
-    onFormChange: jest.fn(),
-  }
-  const checkboxCount = 8
+const defaultProps = {
+  onFormChange: jest.fn(),
+}
 
-  it('renders terms and condition without crashing', () => {
-    const { container } = render(<TermsAndConditions {...props} />)
-    expect(container).toBeDefined()
+async function renderComponent(wrapperProps?: SynapseContextType) {
+  const wrapper = render(<TermsAndConditions {...defaultProps} />, {
+    wrapper: createWrapper(wrapperProps),
   })
 
-  it('should render all checkboxes', () => {
-    const { container } = render(<TermsAndConditions {...props} />)
-    const li = container.querySelectorAll('.term-list > li')
-    expect(li.length).toEqual(checkboxCount)
+  // The items will be loaded when this text is available
+  await waitFor(() => expect(screen.getAllByRole('checkbox')).toHaveLength(8))
+
+  return wrapper
+}
+describe('Terms And Conditions: basic functionality', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    jest
+      .spyOn(SynapseClient, 'getFullQueryTableResults')
+      .mockResolvedValue(mockSyn51718002 as QueryResultBundle)
+  })
+
+  const checkboxCount = 8
+
+  it('renders terms and condition without crashing', async () => {
+    const container = await renderComponent()
+    expect(
+      screen.findByText(
+        'I will adhere to the Synapse Community Standards of inclusion and respect.',
+        { exact: true },
+      ),
+    ).toBeDefined()
   })
 })

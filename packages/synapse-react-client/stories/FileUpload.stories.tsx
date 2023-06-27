@@ -9,7 +9,7 @@ const meta = {
   render: args => (
     <>
       <FileUpload
-        uploadCallback={resp => {
+        onComplete={resp => {
           if (resp.success) {
             document.getElementById(
               'demo-upload-file',

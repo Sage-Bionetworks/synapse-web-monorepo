@@ -418,7 +418,7 @@ type ValueOrMultiValue = {
 export function getCardLinkHref(
   cardLink: CardLink | undefined,
   data: string[] | undefined,
-  schema: Record<string, number> | undefined,
+  schema?: Record<string, number>,
   rowId?: number,
 ): string | undefined {
   if (cardLink) {
@@ -463,7 +463,7 @@ export function getLinkParams(
   link: string,
   cardLinkConfig: CardLink | undefined,
   data: string[] | undefined,
-  schema: any | undefined,
+  schema?: Record<string, number>,
   rowId?: number,
 ) {
   link = link.trim()
@@ -491,7 +491,7 @@ export function getLinkParams(
 export function LongDescription(props: {
   description: string
   hasClickedShowMore: boolean
-  descriptionSubTitle: any
+  descriptionSubTitle: string
   descriptionConfig?: DescriptionConfig
 }) {
   const {
@@ -521,7 +521,7 @@ export function LongDescription(props: {
 export function ShortDescription(props: {
   description: string
   hasClickedShowMore: boolean
-  descriptionSubTitle: any
+  descriptionSubTitle: string
   descriptionConfig?: DescriptionConfig
   toggleShowMore: () => void
 }) {
@@ -758,7 +758,13 @@ export default class GenericCard extends React.Component<
         )}
         {useTypeColumnForIcon && (
           <div className="SRC-cardThumbnail">
-            <IconSvg icon={type2SvgIconName[data[schema['type']]]} />
+            <IconSvg
+              icon={
+                type2SvgIconName[
+                  data[schema['type']] as keyof typeof type2SvgIconName
+                ]
+              }
+            />
           </div>
         )}
       </>
@@ -787,10 +793,10 @@ export default class GenericCard extends React.Component<
       genericCardSchemaDefined.title,
     )
     const stubTitleSearchHandle = getColumnDisplayName(
-      genericCardSchemaDefined.subTitle,
+      genericCardSchemaDefined.subTitle || '',
     )
     const descriptionSubTitle = getColumnDisplayName(
-      genericCardSchemaDefined.description,
+      genericCardSchemaDefined.description || '',
     )
 
     let ctaHref: string | undefined = undefined,

@@ -23,6 +23,7 @@ import {
   UserCardListGroupsProps,
   UserCardListRotateProps,
   UserCardProps,
+  ChallengeDataDownloadProps,
 } from 'synapse-react-client'
 import { StatefulButtonControlWrapperProps } from '../portal-components/StatefulButtonControlWrapper'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
@@ -38,6 +39,7 @@ import { RedirectProps } from 'react-router-dom'
 import { ToggleSynapseObjectsProps } from '../portal-components/ToggleSynapseObjects'
 import { CSSProperties } from 'react'
 import { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObjects'
+import { ChallengeSubmissionWrapperProps } from 'portal-components/challengeportal/ChallengeSubmissionWrapper'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -211,6 +213,14 @@ type ChallengeDetailPageWrapper = {
   name: 'ChallengeDetailPageWrapper'
   props: undefined
 }
+type ChallengeDataDownload = {
+  name: 'ChallengeDataDownload'
+  props: ChallengeDataDownloadProps
+}
+type ChallengeSubmissionWrapper = {
+  name: 'ChallengeSubmissionWrapper'
+  props: ChallengeSubmissionWrapperProps
+}
 type FeaturedDataTabs = {
   name: 'FeaturedDataTabs'
   props: FeaturedDataTabsProps
@@ -342,6 +352,8 @@ export type SynapseConfig = (
   | OrientationBanner
   | Header
   | ChallengeDetailPageWrapper
+  | ChallengeDataDownload
+  | ChallengeSubmissionWrapper
 ) &
   Metadata
 

@@ -1,9 +1,13 @@
 import { SynapseConfig } from 'types/portal-config'
 import { DetailsPageProps } from 'types/portal-util-types'
-import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
+import { SynapseConstants, CardConfiguration } from 'synapse-react-client'
 import studyHeaderSvg from '../style/study-header.svg'
-import { studiesSql, dataSql, dataOnStudiesPageSql } from '../resources'
+import {
+  studiesSql,
+  dataSql,
+  dataOnStudiesPageSql,
+  defaultSearchConfiguration,
+} from '../resources'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
@@ -60,6 +64,7 @@ const studies: SynapseConfig = {
     name: 'Studies',
     shouldDeepLink: true,
     cardConfiguration: studyCardConfiguration,
+    searchConfiguration: defaultSearchConfiguration,
   },
 }
 
