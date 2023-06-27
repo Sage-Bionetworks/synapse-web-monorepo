@@ -9,19 +9,24 @@ import { useQueryContext } from '../QueryContext'
 import { SynapseConstants } from '../../utils'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { SkeletonParagraph } from '../Skeleton'
+import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
 
 export type SendToCavaticaConfirmationDialogProps = {
+  showing: boolean
   cavaticaHelpURL?: string
-  exportToCavatica: () => Promise<void>
   onHide: () => void
 }
 
 export default function SendToCavaticaConfirmationDialog(
   props: SendToCavaticaConfirmationDialogProps,
 ) {
-  const { exportToCavatica, cavaticaHelpURL, onHide } = props
-  const { getLastQueryRequest, onViewSharingSettingsClicked } =
+  const { cavaticaHelpURL, onHide, showing } = props
+  const { data, getLastQueryRequest, onViewSharingSettingsClicked } =
     useQueryContext()
+  const exportToCavatica = useExportToCavatica(
+    getLastQueryRequest(),
+    data?.queryResult?.queryResults.headers,
+  )
   const queryRequestCopy = getLastQueryRequest()
   queryRequestCopy.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
   const { data: asyncJobStatus, isLoading } =
@@ -34,7 +39,7 @@ export default function SendToCavaticaConfirmationDialog(
     queryResultBundle?.actionsRequired
   return (
     <ConfirmationDialog
-      open={true}
+      open={showing}
       title="Send to CAVATICA"
       content={
         <>

@@ -105,10 +105,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     getInitQueryRequest,
     lockedColumn,
   } = useQueryContext()
-  const exportToCavatica = useExportToCavatica(
-    getLastQueryRequest(),
-    data?.queryResult?.queryResults.headers,
-  )
 
   const {
     topLevelControlsState,
@@ -314,13 +310,11 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               darkTheme={true}
             />
           )}
-          {isShowingExportToCavaticaModal && (
-            <SendToCavaticaConfirmationDialog
-              cavaticaHelpURL={cavaticaHelpURL}
-              exportToCavatica={exportToCavatica}
-              onHide={() => setIsShowingExportToCavaticaModal(false)}
-            />
-          )}
+          <SendToCavaticaConfirmationDialog
+            showing={isShowingExportToCavaticaModal}
+            cavaticaHelpURL={cavaticaHelpURL}
+            onHide={() => setIsShowingExportToCavaticaModal(false)}
+          />
         </div>
       </div>
     </div>
