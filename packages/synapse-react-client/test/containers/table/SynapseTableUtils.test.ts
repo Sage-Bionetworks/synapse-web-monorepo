@@ -1,8 +1,10 @@
 import {
   getColumnIndicesWithType,
+  getFileColumnModelId,
   getUniqueEntities,
 } from '../../../src/components/SynapseTable/SynapseTableUtils'
 import {
+  ColumnModel,
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
@@ -229,6 +231,66 @@ describe('Synapse Table Utilities tests', () => {
         indicies,
       )
       expect(uniqueEntities.size).toEqual(1)
+    })
+  })
+  describe('test getFileColumnModelId', () => {
+    it('undefined column models', () => {
+      expect(getFileColumnModelId(undefined)).toEqual(undefined)
+    })
+    it('single entityid column model', () => {
+      const columnModels: ColumnModel[] = [
+        {
+          id: '1',
+          columnType: ColumnTypeEnum.BOOLEAN,
+          name: 'boolColumn',
+        },
+        {
+          id: '2',
+          columnType: ColumnTypeEnum.ENTITYID,
+          name: 'fileID',
+        },
+      ]
+      expect(getFileColumnModelId(columnModels)).toEqual('2')
+    })
+    it('multiple entityid column models, one is the id column', () => {
+      const columnModels: ColumnModel[] = [
+        {
+          id: '1',
+          columnType: ColumnTypeEnum.BOOLEAN,
+          name: 'boolColumn',
+        },
+        {
+          id: '2',
+          columnType: ColumnTypeEnum.ENTITYID,
+          name: 'benefactorID',
+        },
+        {
+          id: '3',
+          columnType: ColumnTypeEnum.ENTITYID,
+          name: 'id',
+        },
+      ]
+      expect(getFileColumnModelId(columnModels)).toEqual('3')
+    })
+    it('multiple entityid column models, no id column', () => {
+      const columnModels: ColumnModel[] = [
+        {
+          id: '1',
+          columnType: ColumnTypeEnum.BOOLEAN,
+          name: 'boolColumn',
+        },
+        {
+          id: '2',
+          columnType: ColumnTypeEnum.ENTITYID,
+          name: 'fileID1',
+        },
+        {
+          id: '3',
+          columnType: ColumnTypeEnum.ENTITYID,
+          name: 'fileID2',
+        },
+      ]
+      expect(getFileColumnModelId(columnModels)).toEqual(undefined)
     })
   })
 })

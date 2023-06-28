@@ -10,6 +10,7 @@ import { SynapseConstants } from '../../utils'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { SkeletonParagraph } from '../Skeleton'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
+import { getFileColumnModelId } from './SynapseTableUtils'
 
 export type SendToCavaticaConfirmationDialogProps = {
   showing: boolean
@@ -28,9 +29,15 @@ export default function SendToCavaticaConfirmationDialog(
     data?.queryResult?.queryResults.headers,
   )
   const queryRequestCopy = getLastQueryRequest()
+
+  const fileColumnId = getFileColumnModelId(data?.columnModels)
+  if (fileColumnId) {
+    queryRequestCopy.query.selectFileColumn = Number(fileColumnId)
+  }
   queryRequestCopy.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
   const { data: asyncJobStatus, isLoading } =
     useGetQueryResultBundleWithAsyncStatus(queryRequestCopy, {
+      enabled: fileColumnId !== undefined,
       useErrorBoundary: true,
     })
 
