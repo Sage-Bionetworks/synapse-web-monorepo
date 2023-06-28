@@ -1,5 +1,6 @@
 import React from 'react'
 import { Badge, Box, Button, Paper, Typography } from '@mui/material'
+import InlineBadge from '../../styled/InlineBadge'
 
 export type RowSelectionUIProps = {
   show?: boolean
@@ -34,27 +35,29 @@ export function RowSelectionUI(props: RowSelectionUIProps) {
         width: '100%',
         height: '70px',
         zIndex: 1,
+        px: 2.5,
       }}
     >
       <Button
         variant="text"
         color="error"
-        sx={{ ml: 1 }}
         onClick={() => {
           onClearSelection()
         }}
       >
         Clear Selection
       </Button>
-      <Box sx={{ display: 'grid', gridTemplateColumns: '30px 140px' }}>
-        <Badge
-          badgeContent={selectedRowCount}
-          color="primary"
-          sx={{ right: '18px', top: '12px' }}
-        />{' '}
-        <Typography variant="body1">Rows Selected</Typography>
+      <Box display={'flex'} gap={2.5} alignItems={'center'}>
+        <Box display={'flex'} gap={1.5}>
+          <InlineBadge
+            badgeContent={selectedRowCount.toLocaleString()}
+            color="primary"
+            max={Infinity}
+          />
+          <Typography variant="body1">Rows Selected</Typography>
+        </Box>
+        {customControls}
       </Box>
-      <div>{customControls}</div>
     </Paper>
   )
 }

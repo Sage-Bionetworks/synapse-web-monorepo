@@ -1,5 +1,5 @@
 import React from 'react'
-import { CustomControl } from '../TopLevelControls'
+import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { Button } from '@mui/material'
 import { RowSelectionUI } from './RowSelectionUI'
 import { useQueryContext } from '../../QueryContext'
@@ -42,7 +42,6 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
               <Button
                 key={customControl.buttonText}
                 variant="contained"
-                sx={{ mx: 1 }}
                 onClick={() =>
                   customControl.onClick({ data, selectedRows, refresh })
                 }
@@ -55,7 +54,6 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
           {showExportToCavatica && (
             <Button
               variant="outlined"
-              sx={{ mx: 1 }}
               onClick={() => {
                 setIsShowingExportToCavaticaModal(true)
               }}

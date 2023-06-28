@@ -14,7 +14,7 @@ import { SkeletonParagraph } from '../Skeleton'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { cloneDeep } from 'lodash-es'
-import pluralize from 'pluralize'
+import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 
 export type SendToCavaticaConfirmationDialogProps = {
   cavaticaHelpURL?: string
@@ -24,8 +24,12 @@ export default function SendToCavaticaConfirmationDialog(
   props: SendToCavaticaConfirmationDialogProps,
 ) {
   const { cavaticaHelpURL } = props
-  const { data, getLastQueryRequest, onViewSharingSettingsClicked } =
-    useQueryContext()
+  const {
+    data,
+    getLastQueryRequest,
+    onViewSharingSettingsClicked,
+    hasResettableFilters,
+  } = useQueryContext()
   const {
     isShowingExportToCavaticaModal,
     setIsShowingExportToCavaticaModal,
@@ -76,17 +80,13 @@ export default function SendToCavaticaConfirmationDialog(
   const actions: ActionRequiredCount[] | undefined =
     queryResultBundle?.actionsRequired
 
-  let confirmButtonText
-  if (!hasSelectedRows) {
-    confirmButtonText = `Send all ${data?.queryCount?.toLocaleString()} ${pluralize(
-      unitDescription,
-    )} to CAVATICA`
-  } else {
-    confirmButtonText = `Send ${selectedRows.length.toLocaleString()} selected ${pluralize(
-      unitDescription,
-      selectedRows.length,
-    )} to CAVATICA`
-  }
+  const confirmButtonText = `Send ${getNumberOfResultsToInvokeActionCopy(
+    hasResettableFilters,
+    isRowSelectionVisible,
+    selectedRows,
+    data,
+    unitDescription,
+  )} to CAVATICA`
 
   return (
     <ConfirmationDialog

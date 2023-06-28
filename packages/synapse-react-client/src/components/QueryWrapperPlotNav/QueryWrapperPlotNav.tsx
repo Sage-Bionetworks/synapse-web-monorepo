@@ -33,7 +33,7 @@ import SqlEditor from '../SqlEditor'
 import { SynapseTableProps } from '../SynapseTable/SynapseTable'
 import TopLevelControls, {
   TopLevelControlsProps,
-} from '../SynapseTable/TopLevelControls'
+} from '../SynapseTable/TopLevelControls/TopLevelControls'
 import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
 import FacetFilterControls, {
   FacetFilterControlsProps,
@@ -76,7 +76,8 @@ type QueryWrapperPlotNavOwnProps = {
     | 'rgbIndex'
     | 'showLastUpdatedOn'
     | 'noContentPlaceholderType'
-    | 'isRowSelectionVisible'
+    | 'isRowSelectionVisible',
+    'unitDescription'
   >
 
 export type SearchParams = {
@@ -117,6 +118,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     cavaticaHelpURL,
     customControls,
     isRowSelectionVisible,
+    unitDescription,
   } = props
 
   const entityId = parseEntityIdFromSqlStatement(sql)
@@ -159,7 +161,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
   return (
     <QueryWrapper {...props} initQueryRequest={initQueryRequest}>
       <QueryVisualizationWrapper
-        unitDescription={'results'}
+        unitDescription={unitDescription}
         rgbIndex={props.rgbIndex}
         columnAliases={props.columnAliases}
         visibleColumnCount={props.visibleColumnCount}

@@ -4,10 +4,45 @@ import { displayToast } from '../src'
 import { GetApp } from '@mui/icons-material'
 import { RowSelectionUI } from '../src/components/SynapseTable/RowSelection/RowSelectionUI'
 import { Button } from '@mui/material'
+import { times } from 'lodash-es'
 
 const meta = {
   title: 'Explore/RowSelection',
   component: RowSelectionUI,
+  argTypes: {
+    numberOfActions: {
+      type: 'number',
+      description: 'The number of actions to display',
+    },
+  },
+  render: args => {
+    const { numberOfActions = 0, ...props } = args
+    return (
+      <RowSelectionUI
+        {...props}
+        customControls={
+          <>
+            {times(numberOfActions, i => (
+              <Button
+                variant={i === numberOfActions - 1 ? 'contained' : 'outlined'}
+                color={i % 3 == 3 ? 'secondary' : 'primary'}
+                startIcon={<GetApp />}
+                onClick={() => displayToast(`clicked action ${i}`)}
+              >
+                Action {i}
+              </Button>
+            ))}
+          </>
+        }
+      />
+    )
+  },
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/3l3RjDnKnv8jms2XFR5BQu/Main?type=design&node-id=462-39826',
+    },
+  },
 } satisfies Meta
 
 export default meta
@@ -18,25 +53,10 @@ export const Demo: Story = {
   name: 'RowSelection',
   args: {
     show: true,
-    customControls: (
-      <>
-        <Button
-          variant={'outlined'}
-          onClick={() => displayToast('something boring happens')}
-          sx={{ mx: 1 }}
-        >
-          Do something boring
-        </Button>
-        <Button
-          variant={'contained'}
-          startIcon={<GetApp />}
-          onClick={() => displayToast('something interesting happens')}
-          sx={{ mx: 1 }}
-        >
-          Do something interesting
-        </Button>
-      </>
-    ),
     selectedRowCount: 5,
+    onClearSelection: () => {
+      displayToast('clear selection called')
+    },
+    numberOfActions: 2,
   },
 }

@@ -24,6 +24,12 @@ const meta = {
       control: { type: 'text' },
     },
   },
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/3l3RjDnKnv8jms2XFR5BQu/Main?type=design&node-id=1909-58523',
+    },
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
