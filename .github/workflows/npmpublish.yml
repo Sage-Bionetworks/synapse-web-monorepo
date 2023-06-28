@@ -7,26 +7,24 @@ on:
     branches: [main]
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/pnpm-setup-action
-      - run: pnpm -r publish --access public ${{ (github.event_name == 'pull_request' && '--dry-run') || '' }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   tag:
     strategy:
       matrix:
         publishablePackage: [synapse-react-client, markdown-it-synapse]
     runs-on: ubuntu-latest
     steps:
-      # Now check if the package version changed
+      - uses: actions/checkout@v3.1.0
+      - uses: ./.github/actions/pnpm-setup-action
+      # Check if the package version changed
       - id: package-version-check
         uses: EndBug/version-check@v2
         with:
           file-name: './packages/${{ matrix.publishablePackage }}/package.json'
-      # If the package version changed, create the tag using the output of the previous step.
+      # Build the package to publish
+      - name: Build package
+        if: steps.package-version-check.outputs.changed == 'true'
+        run: pnpm nx run ${{ matrix.publishablePackage }}:build
+      # If the package version changed, and the build succeeded, create the tag using the output of the previous step.
       - name: Create tag
         uses: actions/github-script@v6
         if: github.event_name == 'push' && steps.package-version-check.outputs.changed == 'true'
@@ -39,3 +37,8 @@ jobs:
               ref: "refs/tags/${{ matrix.publishablePackage }}/v${{ steps.package-version-check.outputs.version }}",
               sha: context.sha
             })
+      - name: Publish to NPM # or simulate the publish for PRs
+        run: pnpm publish --access public ${{ (github.event_name == 'pull_request' && '--dry-run --no-git-checks') || '' }}
+        working-directory: ./packages/${{ matrix.publishablePackage }}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
