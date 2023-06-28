@@ -250,7 +250,7 @@ describe('Synapse Table Utilities tests', () => {
           name: 'fileID',
         },
       ]
-      expect(getFileColumnModelId(columnModels)).toEqual(1)
+      expect(getFileColumnModelId(columnModels)).toEqual('2')
     })
     it('multiple entityid column models, one is the id column', () => {
       const columnModels: ColumnModel[] = [
@@ -270,7 +270,7 @@ describe('Synapse Table Utilities tests', () => {
           name: 'id',
         },
       ]
-      expect(getFileColumnModelId(columnModels)).toEqual(3)
+      expect(getFileColumnModelId(columnModels)).toEqual('3')
     })
     it('multiple entityid column models, no id column', () => {
       const columnModels: ColumnModel[] = [
