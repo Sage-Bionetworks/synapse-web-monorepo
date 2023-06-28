@@ -4,11 +4,7 @@ import { Box } from '@mui/material'
 import { Typography } from '@mui/material'
 import { Link } from '@mui/material'
 import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
-import {
-  ActionRequiredCount,
-  ColumnModel,
-  ColumnTypeEnum,
-} from '@sage-bionetworks/synapse-types'
+import { ActionRequiredCount } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../QueryContext'
 import { SynapseConstants } from '../../utils'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
