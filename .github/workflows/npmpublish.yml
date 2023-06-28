@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  tag:
+  tag-and-publish:
     strategy:
       matrix:
         publishablePackage: [synapse-react-client, markdown-it-synapse]
@@ -22,7 +22,6 @@ jobs:
           file-name: './packages/${{ matrix.publishablePackage }}/package.json'
       # Build the package to publish
       - name: Build package
-        if: steps.package-version-check.outputs.changed == 'true'
         run: pnpm nx run ${{ matrix.publishablePackage }}:build
       # If the package version changed, and the build succeeded, create the tag using the output of the previous step.
       - name: Create tag

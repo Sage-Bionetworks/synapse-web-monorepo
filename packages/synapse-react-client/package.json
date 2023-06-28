@@ -234,7 +234,7 @@
   },
   "scripts": {
     "clean": "rimraf dist storybook-static coverage",
-    "prepublishOnly": "pnpm install && pnpm build",
+    "prepublishOnly": "pnpm install && pnpm nx run synapse-react-client:build",
     "start-js": "vite",
     "start": "pnpm storybook",
     "start-deprecated-demo": "start-js",
