@@ -4,7 +4,11 @@ import { Box } from '@mui/material'
 import { Typography } from '@mui/material'
 import { Link } from '@mui/material'
 import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
-import { ActionRequiredCount } from '@sage-bionetworks/synapse-types'
+import {
+  ActionRequiredCount,
+  ColumnModel,
+  ColumnTypeEnum,
+} from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../QueryContext'
 import { SynapseConstants } from '../../utils'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
@@ -15,6 +19,28 @@ export type SendToCavaticaConfirmationDialogProps = {
   showing: boolean
   cavaticaHelpURL?: string
   onHide: () => void
+}
+
+const getFileColumnModelId = (
+  columnModels?: ColumnModel[],
+): string | undefined => {
+  if (!columnModels) {
+    return undefined
+  }
+  const entityIdColumnModels: ColumnModel[] | undefined = columnModels?.filter(
+    el => el.columnType === ColumnTypeEnum.ENTITYID,
+  )
+  // if there's a single ENTITYID type column, return that column id
+  if (entityIdColumnModels?.length === 1) {
+    return entityIdColumnModels[0].id
+  }
+  // otherwise, if there's an 'id' column, return that column id
+  const idColumnModel = entityIdColumnModels?.filter(el => el.name === 'id')
+  if (idColumnModel.length === 1) {
+    return idColumnModel[0].id
+  }
+  // else the file ID column was not found
+  return undefined
 }
 
 export default function SendToCavaticaConfirmationDialog(
@@ -28,9 +54,16 @@ export default function SendToCavaticaConfirmationDialog(
     data?.queryResult?.queryResults.headers,
   )
   const queryRequestCopy = getLastQueryRequest()
+
+  const fileColumnId = getFileColumnModelId(data?.columnModels)
+
+  if (fileColumnId) {
+    queryRequestCopy.query.selectFileColumn = Number(fileColumnId)
+  }
   queryRequestCopy.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
   const { data: asyncJobStatus, isLoading } =
     useGetQueryResultBundleWithAsyncStatus(queryRequestCopy, {
+      enabled: fileColumnId !== undefined,
       useErrorBoundary: true,
     })
 
