@@ -17,12 +17,10 @@
   ],
   "scripts": {
     "build": "rimraf ./dist && tsup ./src/index.ts --format esm,cjs --dts",
-    "predist": "rm -rf dist && pnpm build && pnpm test",
-    "dist": "pnpm browserify && pnpm minify",
     "lint": "eslint src/*",
-    "prepublish": "pnpm dist",
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "prepublishOnly": "pnpm install && pnpm nx run markdown-it-synapse:build"
   },
   "homepage": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/tree/main/packages/markdown-it-synapse",
   "repository": {
