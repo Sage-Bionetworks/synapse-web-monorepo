@@ -14,33 +14,12 @@ import { SynapseConstants } from '../../utils'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { SkeletonParagraph } from '../Skeleton'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
+import { getFileColumnModelId } from './SynapseTableUtils'
 
 export type SendToCavaticaConfirmationDialogProps = {
   showing: boolean
   cavaticaHelpURL?: string
   onHide: () => void
-}
-
-const getFileColumnModelId = (
-  columnModels?: ColumnModel[],
-): string | undefined => {
-  if (!columnModels) {
-    return undefined
-  }
-  const entityIdColumnModels: ColumnModel[] | undefined = columnModels?.filter(
-    el => el.columnType === ColumnTypeEnum.ENTITYID,
-  )
-  // if there's a single ENTITYID type column, return that column id
-  if (entityIdColumnModels?.length === 1) {
-    return entityIdColumnModels[0].id
-  }
-  // otherwise, if there's an 'id' column, return that column id
-  const idColumnModel = entityIdColumnModels?.filter(el => el.name === 'id')
-  if (idColumnModel.length === 1) {
-    return idColumnModel[0].id
-  }
-  // else the file ID column was not found
-  return undefined
 }
 
 export default function SendToCavaticaConfirmationDialog(
@@ -56,7 +35,6 @@ export default function SendToCavaticaConfirmationDialog(
   const queryRequestCopy = getLastQueryRequest()
 
   const fileColumnId = getFileColumnModelId(data?.columnModels)
-
   if (fileColumnId) {
     queryRequestCopy.query.selectFileColumn = Number(fileColumnId)
   }
