@@ -37,7 +37,7 @@ jobs:
               sha: context.sha
             })
       - name: Publish to NPM # or simulate the publish for PRs
-        run: pnpm publish --access public ${{ (github.event_name == 'pull_request' && '--dry-run --no-git-checks') || '' }}
+        run: pnpm publish --access public ${{ ((github.event_name == 'pull_request' || steps.package-version-check.outputs.changed == 'false') && '--dry-run --no-git-checks') || '' }}
         working-directory: ./packages/${{ matrix.publishablePackage }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

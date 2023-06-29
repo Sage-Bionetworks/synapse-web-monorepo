@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-synapse",
-  "version": "1.1.11",
+  "version": "1.1.12",
   "description": "tag for markdown-it markdown parser.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -16,7 +16,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rimraf ./dist && tsup ./src/index.ts --format esm,cjs --dts",
+    "build": "rimraf ./dist && tsup ./src/index.ts --format esm,cjs,iife --dts --minify --global-name markdownitSynapse",
     "lint": "eslint src/*",
     "test": "jest",
     "coverage": "jest --coverage",
