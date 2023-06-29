@@ -34,8 +34,8 @@ const TermsAndConditionsItem: React.FunctionComponent<
       associateObjectType: FileHandleAssociateType.TableEntity,
       fileHandleId: iconFileHandleId,
     },
-    true,
-  ) // force this query to be run as the anonymous user (without an access token)
+    true, // force this query to be run as the anonymous user (without an access token)
+  )
 
   const [showDesc, setShowDes] = useState<boolean>(false)
   const [isChecked, setIsChecked] = useState<boolean>(false)
