@@ -10,7 +10,7 @@ import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
 import { QueryContextConsumer } from '../QueryContext/QueryContext'
 import TopLevelControls, {
   TopLevelControlsProps,
-} from '../SynapseTable/TopLevelControls'
+} from '../SynapseTable/TopLevelControls/TopLevelControls'
 import FullTextSearch from '../FullTextSearch'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import { useGetEntity } from '../../synapse-queries/entity/useEntity'

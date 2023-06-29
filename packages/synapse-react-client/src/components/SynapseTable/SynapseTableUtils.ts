@@ -4,9 +4,15 @@ import {
   ColumnTypeEnum,
   EntityHeader,
   QueryResultBundle,
+  Table,
   UserGroupHeader,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
+import {
+  hasFilesInView,
+  isDataset,
+  isEntityView,
+} from '../../utils/functions/EntityTypeUtils'
 
 export const getColumnIndicesWithType = (
   data: QueryResultBundle | undefined,
@@ -44,6 +50,18 @@ export const getUniqueEntities = (
     })
   })
   return distinctEntities
+}
+
+/**
+ * i.e. the view may have FileEntities in it
+ *
+ * PORTALS-2010:  Enhance change made for PORTALS-1973.  File specific action will only be shown for rows that represent FileEntities.
+ */
+export function isFileViewOrDataset(entity?: Table) {
+  return (
+    entity &&
+    ((isEntityView(entity) && hasFilesInView(entity)) || isDataset(entity))
+  )
 }
 
 export const getFileColumnModelId = (

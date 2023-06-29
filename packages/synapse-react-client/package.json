@@ -220,6 +220,7 @@
     "react-test-renderer": "^18.2.0",
     "rollup-plugin-polyfill-node": "^0.10.2",
     "storybook": "^7.0.23",
+    "storybook-addon-designs": "7.0.0-beta.2",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "timers-browserify": "^2.0.12",

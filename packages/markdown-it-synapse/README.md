@@ -6,10 +6,9 @@
 
 > Synapse tag plugin for [markdown-it](https://github.com/markdown-it/markdown-it) markdown parser.
 
-__v1.+ requires `markdown-it` v4.+, see changelog.__
+**v1.+ requires `markdown-it` v4.+, see changelog.**
 
 `${image?fileName=joy%2Epng&align=None}` => `<span id="widget-0my-unique-div-id" class="widgetContainer" widgetparams="image?fileName=joy%2Epng&amp;align=None" />`
-
 
 ## Install
 
@@ -23,11 +22,9 @@ bower install markdown-it-synapse --save
 ## Use
 
 ```js
-var md = require('markdown-it')()
-            .use(require('markdown-it-synapse'));
+var md = require('markdown-it')().use(require('markdown-it-synapse'))
 
 md.render('${image?fileName=joy%2Epng&align=None}', 'my-unique-div-id') // => '<span id="widget-0my-unique-div-id" class="widgetContainer" widgetparams="image?fileName=joy%2Epng&amp;align=None" />'
-
 ```
 
 The widgetparams can be used to determine what kind of html widget should be rendered in the output container.
@@ -35,6 +32,6 @@ The widgetparams can be used to determine what kind of html widget should be ren
 _Differences in browser._ If you load script directly into the page, without
 package system, module will add itself globally as `window.markdownitSynapse`.
 
-
 ## License
+
 [MIT](https://github.com/jay-hodgson/markdown-it-synapse/blob/master/LICENSE)

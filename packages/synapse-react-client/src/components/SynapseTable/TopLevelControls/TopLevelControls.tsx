@@ -1,26 +1,29 @@
 import { cloneDeep } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
-import { SQL_EDITOR } from '../../utils/SynapseConstants'
+import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import { Query, QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import {
   TopLevelControlsState,
   useQueryVisualizationContext,
-} from '../QueryVisualizationWrapper'
+} from '../../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
   useQueryContext,
-} from '../QueryContext/QueryContext'
-import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
-import { DownloadOptions } from './table-top'
-import { ColumnSelection } from './table-top/ColumnSelection'
-import { Button, Tooltip, Typography } from '@mui/material'
-import QueryCount from '../QueryCount/QueryCount'
-import { Icon } from '../row_renderers/utils'
-import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
-import { Cavatica } from '../../assets/icons/Cavatica'
-import { RowSelectionControls } from './RowSelectionControls'
-import SendToCavaticaConfirmationDialog from './SendToCavaticaConfirmationDialog'
+} from '../../QueryContext/QueryContext'
+import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
+import { ColumnSelection, DownloadOptions } from '../table-top'
+import { Button, Divider, Tooltip, Typography } from '@mui/material'
+import QueryCount from '../../QueryCount/QueryCount'
+import { Icon } from '../../row_renderers/utils'
+import MissingQueryResultsWarning from '../../MissingQueryResultsWarning'
+import { Cavatica } from '../../../assets/icons/Cavatica'
+import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
+import SendToCavaticaConfirmationDialog from '../SendToCavaticaConfirmationDialog'
+import {
+  getNumberOfResultsToInvokeAction,
+  getNumberOfResultsToInvokeActionCopy,
+} from './TopLevelControlsUtils'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -51,7 +54,7 @@ export type CustomControl = {
   buttonText: string
   onClick: (event: CustomControlCallbackData) => void
   classNames?: string
-  icon?: string
+  icon?: React.ReactNode
 }
 
 const controls: Control[] = [
@@ -99,19 +102,20 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   const {
     data,
     entity,
-    executeQueryRequest,
-    getLastQueryRequest,
     getInitQueryRequest,
     lockedColumn,
+    hasResettableFilters,
   } = useQueryContext()
 
   const {
     topLevelControlsState,
     setTopLevelControlsState,
     columnsToShowInTable,
+    isRowSelectionVisible,
     selectedRows,
-    setSelectedRows,
     setColumnsToShowInTable,
+    setIsShowingExportToCavaticaModal,
+    unitDescription,
   } = useQueryVisualizationContext()
 
   const { showCopyToClipboard } = topLevelControlsState
@@ -133,15 +137,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       ...state,
       ...updatedTopLevelControlsState,
     }))
-  }
-
-  const [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal] =
-    useState(false)
-  const refresh = () => {
-    // clear selection
-    setSelectedRows([])
-    // refresh the data
-    executeQueryRequest(getLastQueryRequest())
   }
 
   /**
@@ -183,6 +178,20 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     setColumnsToShowInTable(columnsToShowInTableCopy)
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
+  const hasSelectedRows = isRowSelectionVisible && selectedRows.length > 0
+  const numberOfResultsToInvokeAction = getNumberOfResultsToInvokeAction(
+    isRowSelectionVisible,
+    selectedRows,
+    data,
+  )
+  const numberOfResultsToInvokeActionAsText =
+    getNumberOfResultsToInvokeActionCopy(
+      hasResettableFilters,
+      isRowSelectionVisible,
+      selectedRows,
+      data,
+      unitDescription,
+    )
   return (
     <div
       className={`TopLevelControls ${
@@ -226,22 +235,44 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
         </div>
         <div className="TopLevelControls__actions">
           {showExportToCavatica && (
-            <Tooltip
-              title={`This action will send a reference to every file in the current table to CAVATICA. ${
-                topLevelControlsState.showFacetFilter
-                  ? 'You can change what is sent by applying filters using the controls in the sidebar.'
-                  : ''
-              }`}
-            >
-              <Button
-                variant="text"
-                onClick={() => {
-                  setIsShowingExportToCavaticaModal(true)
-                }}
+            <>
+              <Tooltip
+                title={
+                  <>
+                    This action will send a reference to{' '}
+                    {hasSelectedRows
+                      ? 'each selected file'
+                      : 'every file in the current table'}{' '}
+                    to CAVATICA.{' '}
+                    {!hasSelectedRows &&
+                      topLevelControlsState.showFacetFilter && (
+                        <>
+                          You can change what is sent by applying filters using
+                          the controls in the sidebar.
+                        </>
+                      )}
+                    {hasSelectedRows && (
+                      <>
+                        You can change what is sent by selecting a different set
+                        of files.
+                      </>
+                    )}
+                  </>
+                }
               >
-                <Cavatica sx={{ mr: 1 }} /> Send to CAVATICA
-              </Button>
-            </Tooltip>
+                <Button
+                  variant="text"
+                  disabled={!numberOfResultsToInvokeAction}
+                  onClick={() => {
+                    setIsShowingExportToCavaticaModal(true)
+                  }}
+                  startIcon={<Cavatica />}
+                >
+                  Send {numberOfResultsToInvokeActionAsText} to CAVATICA
+                </Button>
+              </Tooltip>
+              <Divider orientation="vertical" variant="middle" flexItem />
+            </>
           )}
           {controls.map(control => {
             const { key, icon, tooltipText } = control
@@ -292,13 +323,10 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               />
             )
           })}
-          {customControls && (
+          {isRowSelectionVisible && (
             <RowSelectionControls
               customControls={customControls}
-              data={data}
-              refresh={refresh}
-              selectedRows={selectedRows}
-              setSelectedRows={setSelectedRows}
+              showExportToCavatica={showExportToCavatica}
             />
           )}
           {showColumnSelection && (
@@ -309,11 +337,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               darkTheme={true}
             />
           )}
-          <SendToCavaticaConfirmationDialog
-            showing={isShowingExportToCavaticaModal}
-            cavaticaHelpURL={cavaticaHelpURL}
-            onHide={() => setIsShowingExportToCavaticaModal(false)}
-          />
+          <SendToCavaticaConfirmationDialog cavaticaHelpURL={cavaticaHelpURL} />
         </div>
       </div>
     </div>

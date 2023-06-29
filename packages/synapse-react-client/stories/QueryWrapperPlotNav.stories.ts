@@ -15,7 +15,7 @@ import {
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../src/components/ToastMessage'
-import { CustomControlCallbackData } from '../src/components/SynapseTable/TopLevelControls'
+import { CustomControlCallbackData } from '../src/components/SynapseTable/TopLevelControls/TopLevelControls'
 import { QUERY_FILTERS_LOCAL_STORAGE_KEY } from '../src/utils/functions/SqlFunctions'
 
 const meta = {
@@ -186,10 +186,12 @@ export const FileViewWithLockedColumn: Story = {
 export const SendToCavatica: Story = {
   args: {
     sql: 'SELECT * FROM syn51186974',
+    isRowSelectionVisible: true,
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,
     },
+    unitDescription: 'file',
     name: 'CAVATICA Integration Demo',
     hideSqlEditorControl: false,
     shouldDeepLink: false,

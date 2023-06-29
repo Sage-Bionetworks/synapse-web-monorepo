@@ -33,7 +33,7 @@ import SqlEditor from '../SqlEditor'
 import { SynapseTableProps } from '../SynapseTable/SynapseTable'
 import TopLevelControls, {
   TopLevelControlsProps,
-} from '../SynapseTable/TopLevelControls'
+} from '../SynapseTable/TopLevelControls/TopLevelControls'
 import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
 import FacetFilterControls, {
   FacetFilterControlsProps,
@@ -41,6 +41,7 @@ import FacetFilterControls, {
 import FilterAndView from './FilterAndView'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { Box } from '@mui/material'
+import { SynapseErrorBoundary } from '../error/ErrorBanner'
 
 type QueryWrapperPlotNavOwnProps = {
   sql: string
@@ -77,6 +78,8 @@ type QueryWrapperPlotNavOwnProps = {
     | 'showLastUpdatedOn'
     | 'noContentPlaceholderType'
     | 'isRowSelectionVisible'
+    | 'unitDescription'
+    | 'rowSelectionPrimaryKey'
   >
 
 export type SearchParams = {
@@ -117,6 +120,8 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     cavaticaHelpURL,
     customControls,
     isRowSelectionVisible,
+    unitDescription,
+    rowSelectionPrimaryKey,
   } = props
 
   const entityId = parseEntityIdFromSqlStatement(sql)
@@ -159,7 +164,8 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
   return (
     <QueryWrapper {...props} initQueryRequest={initQueryRequest}>
       <QueryVisualizationWrapper
-        unitDescription={'results'}
+        unitDescription={unitDescription}
+        rowSelectionPrimaryKey={rowSelectionPrimaryKey}
         rgbIndex={props.rgbIndex}
         columnAliases={props.columnAliases}
         visibleColumnCount={props.visibleColumnCount}
@@ -229,18 +235,20 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                           queryVisualizationContext.setTopLevelControlsState
                         }
                       />
-                      <TopLevelControls
-                        showColumnSelection={tableConfiguration !== undefined}
-                        name={name}
-                        hideDownload={hideDownload}
-                        hideQueryCount={hideQueryCount}
-                        hideFacetFilterControl={!isFaceted}
-                        hideVisualizationsControl={!isFaceted}
-                        hideSqlEditorControl={hideSqlEditorControl}
-                        showExportToCavatica={showExportToCavatica}
-                        cavaticaHelpURL={cavaticaHelpURL}
-                        customControls={customControls}
-                      />
+                      <SynapseErrorBoundary>
+                        <TopLevelControls
+                          showColumnSelection={tableConfiguration !== undefined}
+                          name={name}
+                          hideDownload={hideDownload}
+                          hideQueryCount={hideQueryCount}
+                          hideFacetFilterControl={!isFaceted}
+                          hideVisualizationsControl={!isFaceted}
+                          hideSqlEditorControl={hideSqlEditorControl}
+                          showExportToCavatica={showExportToCavatica}
+                          cavaticaHelpURL={cavaticaHelpURL}
+                          customControls={customControls}
+                        />
+                      </SynapseErrorBoundary>
                       {isFaceted && (
                         <>
                           <FacetFilterControls
