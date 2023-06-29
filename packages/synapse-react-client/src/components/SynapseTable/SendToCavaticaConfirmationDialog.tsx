@@ -1,21 +1,19 @@
 import React, { useMemo } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog'
-import { Box, Link, Typography } from '@mui/material'
+import { Box, Link, Stack, Typography } from '@mui/material'
 import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
 import {
   ActionRequiredCount,
+  ColumnModel,
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../QueryContext'
-import { SynapseConstants } from '../../utils'
-import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { SkeletonParagraph } from '../Skeleton'
 import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { cloneDeep } from 'lodash-es'
 import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
-import { getFileColumnModelId } from './SynapseTableUtils'
+import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 
 export type SendToCavaticaConfirmationDialogProps = {
   cavaticaHelpURL?: string
@@ -37,6 +35,7 @@ export default function SendToCavaticaConfirmationDialog(
     isRowSelectionVisible,
     selectedRows,
     unitDescription,
+    rowSelectionPrimaryKey,
   } = useQueryVisualizationContext()
 
   const hasSelectedRows = isRowSelectionVisible && selectedRows.length > 0
@@ -46,12 +45,18 @@ export default function SendToCavaticaConfirmationDialog(
     if (!hasSelectedRows) {
       return request
     } else {
+      if (!rowSelectionPrimaryKey || rowSelectionPrimaryKey.length !== 1) {
+        // TODO: Handle composite/undefined key
+        throw new Error(
+          'rowSelectionPrimaryKey must be defined and have length 1',
+        )
+      }
       // Add a filter that will just return the selected rows.
       const idColIndex = data?.columnModels?.findIndex(cm => cm.name === 'id')
       const idColumnFilter: ColumnSingleValueQueryFilter = {
         concreteType:
           'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-        columnName: 'id',
+        columnName: rowSelectionPrimaryKey[0],
         operator: ColumnSingleValueFilterOperator.IN,
         values: selectedRows!.map(row => row.values[idColIndex!]!),
       }
@@ -67,25 +72,16 @@ export default function SendToCavaticaConfirmationDialog(
     cavaticaQueryRequest,
     data?.queryResult?.queryResults.headers,
   )
-  const queryRequestCopy = useMemo(() => {
-    const request = cloneDeep(cavaticaQueryRequest)
-    const fileColumnId = getFileColumnModelId(data?.columnModels)
-    if (fileColumnId) {
-      request.query.selectFileColumn = Number(fileColumnId)
-    }
-    request.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
-    return request
-  }, [cavaticaQueryRequest, data?.columnModels])
 
-  const { data: asyncJobStatus, isLoading } =
-    useGetQueryResultBundleWithAsyncStatus(queryRequestCopy, {
-      enabled: fileColumnId !== undefined,
+  const { data: actions, isLoading } = useGetActionsRequiredForTableQuery(
+    cavaticaQueryRequest,
+    data?.columnModels as ColumnModel[],
+    undefined,
+    {
       useErrorBoundary: true,
-    })
-
-  const queryResultBundle = asyncJobStatus?.responseBody
-  const actions: ActionRequiredCount[] | undefined =
-    queryResultBundle?.actionsRequired
+      enabled: !!data?.columnModels,
+    },
+  )
 
   const confirmButtonText = `Send ${getNumberOfResultsToInvokeActionCopy(
     hasResettableFilters,
@@ -168,7 +164,7 @@ export default function SendToCavaticaConfirmationDialog(
               <>
                 <Typography
                   variant="body1"
-                  sx={{ fontWeight: 700, marginBottom: '10px' }}
+                  sx={{ fontWeight: 700, my: '10px' }}
                 >
                   You must also take these actions before sending the selected
                   data to CAVATICA:
@@ -183,7 +179,7 @@ export default function SendToCavaticaConfirmationDialog(
                   You must take the following actions before we can send this
                   data to CAVATICA.
                 </Typography>
-                <Box>
+                <Stack gap={3}>
                   {actions.map((item: ActionRequiredCount, index) => {
                     if (item) {
                       return (
@@ -198,7 +194,7 @@ export default function SendToCavaticaConfirmationDialog(
                       )
                     } else return false
                   })}
-                </Box>
+                </Stack>
               </>
             )
           )}

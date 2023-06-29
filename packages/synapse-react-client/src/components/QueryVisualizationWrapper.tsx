@@ -14,6 +14,7 @@ import ThisTableIsEmpty from './SynapseTable/TableIsEmpty'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import { ColumnType, Row } from '@sage-bionetworks/synapse-types'
 import { getDisplayValue } from '../utils/functions/getDataFromFromStorage'
+import { isFileViewOrDataset } from './SynapseTable/SynapseTableUtils'
 
 export type QueryVisualizationContextType = {
   topLevelControlsState: TopLevelControlsState
@@ -39,6 +40,10 @@ export type QueryVisualizationContextType = {
   setIsShowingExportToCavaticaModal: React.Dispatch<
     React.SetStateAction<boolean>
   >
+  /** The set of columns that defines a uniqueness constraint on the table for the purposes of filtering based on row selection.
+   * Note that Synapse tables have no internal concept of a primary key.
+   */
+  rowSelectionPrimaryKey?: string[]
 }
 
 /**
@@ -94,6 +99,10 @@ export type QueryVisualizationWrapperProps = {
   /** Default is INTERACTIVE */
   noContentPlaceholderType?: NoContentPlaceholderType
   isRowSelectionVisible?: boolean
+  /** The set of columns that defines a uniqueness constraint on the table for the purposes of filtering based on row selection.
+   * Note that Synapse tables have no internal concept of a primary key.
+   */
+  rowSelectionPrimaryKey?: string[]
 }
 
 export type TopLevelControlsState = {
@@ -117,12 +126,22 @@ export function QueryVisualizationWrapper(
   const {
     noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE,
     isRowSelectionVisible = false,
+    columnAliases = {},
   } = props
 
-  const { data, getLastQueryRequest, isFacetsAvailable, hasResettableFilters } =
-    useQueryContext()
+  const {
+    data,
+    entity,
+    getLastQueryRequest,
+    isFacetsAvailable,
+    hasResettableFilters,
+  } = useQueryContext()
 
-  const { columnAliases = {} } = props
+  let { rowSelectionPrimaryKey } = props
+  if (!rowSelectionPrimaryKey && isFileViewOrDataset(entity)) {
+    // If the primary key isn't specified on a file view/dataset, we can safely use the 'id' column
+    rowSelectionPrimaryKey = ['id']
+  }
 
   const [topLevelControlsState, setTopLevelControlsState] =
     useState<TopLevelControlsState>({
@@ -212,6 +231,7 @@ export function QueryVisualizationWrapper(
     isRowSelectionVisible,
     isShowingExportToCavaticaModal,
     setIsShowingExportToCavaticaModal,
+    rowSelectionPrimaryKey,
   }
   /**
    * Render the children without any formatting

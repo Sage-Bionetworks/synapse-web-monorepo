@@ -19,7 +19,10 @@ import {
 } from '../../../src/components/QueryVisualizationWrapper'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
+import { mockManagedACTAccessRequirement } from '../../../mocks/mockAccessRequirements'
 import * as UseExportToCavaticaModule from '../../../src/synapse-queries/entity/useExportToCavatica'
+import * as UseActionsRequiredForTableQueryModule from '../../../src/synapse-queries/entity/useActionsRequiredForTableQuery'
+import * as ActionRequiredListItem from '../../../src/components/DownloadCart/ActionRequiredListItem'
 
 const onExportToCavatica = jest.fn()
 
@@ -28,6 +31,13 @@ const mockUseExportToCavatica = jest
   .mockImplementation(() => {
     return onExportToCavatica
   })
+
+const mockUseGetActionsRequiredForTableQuery = jest
+  .spyOn(
+    UseActionsRequiredForTableQueryModule,
+    'useGetActionsRequiredForTableQuery',
+  )
+  .mockReturnValue({ isLoading: false, data: [] })
 
 function renderComponent(
   wrapperProps?: SynapseContextType,
@@ -52,6 +62,7 @@ function renderComponent(
           selectedRows: [],
           resultsToExportToCavatica: 'ALL',
           unitDescription: 'result',
+          rowSelectionPrimaryKey: ['id'],
           ...queryVisualizationContextOverrides,
         }}
       >
@@ -79,7 +90,7 @@ function setUp(
   return { component, user, sendToCavatica }
 }
 
-describe('Export to CAVATICA Modal', () => {
+describe('Send to CAVATICA Confirmation Dialog', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -128,5 +139,38 @@ describe('Export to CAVATICA Modal', () => {
       }),
       mockQueryResultBundle.queryResult.queryResults.headers,
     )
+  })
+
+  it('blocks submission while loading actions required', async () => {
+    mockUseGetActionsRequiredForTableQuery.mockReturnValue({
+      isLoading: true,
+      data: undefined,
+    })
+    const { user, sendToCavatica } = setUp(undefined, undefined, {
+      isRowSelectionVisible: false,
+      selectedRows: [],
+    })
+
+    expect(sendToCavatica).toBeDisabled()
+  })
+  it('blocks submission if actions required exist', async () => {
+    mockUseGetActionsRequiredForTableQuery.mockReturnValue({
+      isLoading: false,
+      data: [
+        {
+          action: {
+            concreteType: 'org.sagebionetworks.repo.model.download.EnableTwoFa',
+            accessRequirementId: mockManagedACTAccessRequirement.id,
+          },
+          count: 1,
+        },
+      ],
+    })
+    const { user, sendToCavatica } = setUp(undefined, undefined, {
+      isRowSelectionVisible: false,
+      selectedRows: [],
+    })
+
+    expect(sendToCavatica).toBeDisabled()
   })
 })

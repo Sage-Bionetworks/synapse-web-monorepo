@@ -1,5 +1,5 @@
 import React from 'react'
-import { Badge, Box, Button, Paper, Typography } from '@mui/material'
+import { Box, Button, Paper, Typography } from '@mui/material'
 import InlineBadge from '../../styled/InlineBadge'
 
 export type RowSelectionUIProps = {

@@ -61,6 +61,7 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
     confirmButtonClassName,
     confirmButtonColor,
     confirmButtonVariant,
+    confirmButtonDisabled,
     onConfirm,
     onCancel,
     hasCancelButton,
@@ -75,6 +76,7 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
           confirmButtonClassName={confirmButtonClassName}
           confirmButtonColor={confirmButtonColor}
           confirmButtonVariant={confirmButtonVariant}
+          confirmButtonDisabled={confirmButtonDisabled}
           onConfirm={onConfirm}
           onCancel={onCancel}
           hasCancelButton={hasCancelButton}
