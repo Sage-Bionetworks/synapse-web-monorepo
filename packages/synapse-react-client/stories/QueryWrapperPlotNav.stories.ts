@@ -186,6 +186,7 @@ export const FileViewWithLockedColumn: Story = {
 export const SendToCavatica: Story = {
   args: {
     sql: 'SELECT * FROM syn51186974',
+    isRowSelectionVisible: true,
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,

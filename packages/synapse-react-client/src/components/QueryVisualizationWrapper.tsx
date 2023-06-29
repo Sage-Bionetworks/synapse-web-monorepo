@@ -22,8 +22,8 @@ export type QueryVisualizationContextType = {
   >
   columnsToShowInTable: string[]
   setColumnsToShowInTable: (newState: string[]) => void
-  selectedRows: Row[]
-  setSelectedRows: (newState: Row[]) => void
+  selectedRows: Record<string, Row>
+  setSelectedRows: (newState: Record<string, Row>) => void
   rgbIndex?: number
   unitDescription?: string
   /** Whether to show when the table or view was last updated. */
@@ -141,7 +141,7 @@ export function QueryVisualizationWrapper(
     }
   }, [isFacetsAvailable])
   const [visibleColumns, setVisibleColumns] = useState<string[]>([])
-  const [selectedRows, setSelectedRows] = useState<Row[]>([])
+  const [selectedRows, setSelectedRows] = useState<Record<string, Row>>({})
 
   const lastQueryRequest = getLastQueryRequest()
 

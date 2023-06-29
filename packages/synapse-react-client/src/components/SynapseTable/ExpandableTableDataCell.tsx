@@ -1,10 +1,9 @@
 import React, { useRef, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import useResizeObserver from '@react-hook/resize-observer'
+import { TableCell, TableCellProps } from '@mui/material'
 
-export default function ExpandableTableDataCell(
-  props: JSX.IntrinsicElements['td'],
-) {
+export default function ExpandableTableDataCell(props: TableCellProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowingWhenNotExpanded, setIsOverflowingWhenNotExpanded] =
     useState(false)
@@ -37,11 +36,12 @@ export default function ExpandableTableDataCell(
   })
 
   return (
-    <td
+    <TableCell
       {...props}
       className={`ExpandableTableData ${
         props.className ? props.className : ''
       }`}
+      sx={{}}
       aria-expanded={isExpanded}
       ref={tdRef}
     >
@@ -61,6 +61,6 @@ export default function ExpandableTableDataCell(
         </button>
       )}
       {props.children}
-    </td>
+    </TableCell>
   )
 }

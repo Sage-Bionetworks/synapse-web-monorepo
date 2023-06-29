@@ -1,7 +1,7 @@
 import { Collapse } from '@mui/material'
 import React, { useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import useDeepCompareEffect from 'use-deep-compare-effect'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { ElementWithTooltip } from '../ElementWithTooltip'
 import { SynapseConstants } from '../../../utils'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
@@ -81,7 +81,7 @@ function formatFacetValuesForDisplay(
   }
 }
 
-/************* QUERY ENUM CONMPONENT  *************/
+/************* QUERY ENUM COMPONENT  *************/
 
 export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   facetValues,
@@ -100,7 +100,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const [filteredSet, setFilteredSet] =
     useState<FacetColumnResultValueCount[]>(facetValues)
 
-  useDeepCompareEffect(() => {
+  useDeepCompareEffectNoCheck(() => {
     setFilteredSet(facetValues)
   }, [facetValues])
 

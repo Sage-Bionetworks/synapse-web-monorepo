@@ -463,7 +463,7 @@ describe('SynapseTable tests', () => {
     }
 
     const tableCellProps: SynapseTableCellProps = {
-      isBold: '',
+      className: '',
       mapUserIdToHeader: {},
       columnLinkConfig: undefined,
       rowIndex: undefined,

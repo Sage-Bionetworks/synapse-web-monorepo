@@ -34,11 +34,12 @@ import { useQueryContext } from '../QueryContext/QueryContext'
 import { NOT_SET_DISPLAY_VALUE } from '../SynapseTable/SynapseTableConstants'
 import UserCard from '../UserCard/UserCard'
 import UserIdList from '../UserIdList'
+import useTraceUpdate from '../../utils/hooks/useTraceUpdate'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
   columnValue: string | null
-  isBold: string
+  className: string
   columnLinkConfig?: CardLink | MarkdownLink | ColumnSpecifiedLink
   mapEntityIdToHeader: Record<string, EntityHeader>
   mapUserIdToHeader: Record<string, UserGroupHeader | UserProfile>
@@ -50,20 +51,23 @@ export type SynapseTableCellProps = {
   rowVersionNumber?: number
 }
 
-export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
-  columnType,
-  columnValue,
-  isBold,
-  mapEntityIdToHeader,
-  mapUserIdToHeader,
-  columnLinkConfig,
-  columnName,
-  selectColumns,
-  columnModels,
-  rowData,
-  rowId,
-  rowVersionNumber,
-}) => {
+export const SynapseTableCell: React.FC<SynapseTableCellProps> = props => {
+  const {
+    columnType,
+    columnValue,
+    className,
+    mapEntityIdToHeader,
+    mapUserIdToHeader,
+    columnLinkConfig,
+    columnName,
+    selectColumns,
+    columnModels,
+    rowData,
+    rowId,
+    rowVersionNumber,
+  } = props
+
+  useTraceUpdate(props)
   const { entity } = useQueryContext()
 
   if (!columnValue) {
@@ -104,7 +108,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         <EntityLink
           entity={entity}
           versionNumber={rowVersionNumber}
-          className={`${isBold}`}
+          className={`${className}`}
           showIcon={false}
           displayTextField={columnName}
         />
@@ -118,7 +122,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         <p>
           <EntityLink
             entity={mapEntityIdToHeader[columnValue] ?? columnValue}
-            className={`${isBold}`}
+            className={`${className}`}
             displayTextField={'name'}
           />
         </p>
@@ -130,7 +134,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         <p>
           {jsonData.map((val: number, index: number) => {
             return (
-              <span key={index} className={isBold}>
+              <span key={index} className={className}>
                 {formatDate(dayjs(Number(val)))}
                 {index !== jsonData.length - 1 ? ', ' : ''}
               </span>
@@ -145,7 +149,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         <p>
           {jsonData.map((val: boolean, index: number) => {
             return (
-              <span key={index} className={isBold}>
+              <span key={index} className={className}>
                 {val ? 'true' : 'false'}
                 {index !== jsonData.length - 1 ? ', ' : ''}
               </span>
@@ -184,7 +188,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     case ColumnTypeEnum.INTEGER_LIST: {
       const jsonData: string[] = JSON.parse(columnValue)
       return (
-        <p className={isBold}>
+        <p className={className}>
           {jsonData.map((val: string, index: number) => {
             return (
               <React.Fragment key={val}>
@@ -201,7 +205,9 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     }
 
     case ColumnTypeEnum.DATE:
-      return <p className={isBold}>{formatDate(dayjs(Number(columnValue)))}</p>
+      return (
+        <p className={className}>{formatDate(dayjs(Number(columnValue)))}</p>
+      )
 
     case ColumnTypeEnum.USERID:
       if (
@@ -253,15 +259,15 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     case ColumnTypeEnum.BOOLEAN:
     case ColumnTypeEnum.MEDIUMTEXT:
     case ColumnTypeEnum.LARGETEXT: {
-      return <p className={isBold}>{columnValue}</p>
+      return <p className={className}>{columnValue}</p>
     }
     default:
       console.warn(
         `ColumnType ${columnType} has unspecified handler. Rendering the column value.`,
       )
-      return <p className={isBold}>{columnValue}</p>
+      return <p className={className}>{columnValue}</p>
   }
   // We can reach this if we don't get a mapping of IDs to entities or principals.
   // TODO: If we don't have a id:data mapping, we should render a component that can fetch the required data, rather than breaking from the case.
-  return <p className={isBold}>{columnValue}</p>
+  return <p className={className}>{columnValue}</p>
 }

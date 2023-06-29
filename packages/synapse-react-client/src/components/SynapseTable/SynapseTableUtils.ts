@@ -1,7 +1,9 @@
 import {
   ColumnType,
+  ColumnTypeEnum,
   EntityHeader,
   QueryResultBundle,
+  SortItem,
   UserGroupHeader,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
@@ -42,4 +44,41 @@ export const getUniqueEntities = (
     })
   })
   return distinctEntities
+}
+
+export function isSortableColumn(columnType: ColumnType) {
+  switch (columnType) {
+    case ColumnTypeEnum.USERID:
+    case ColumnTypeEnum.ENTITYID:
+    case ColumnTypeEnum.FILEHANDLEID:
+    case ColumnTypeEnum.STRING_LIST:
+    case ColumnTypeEnum.INTEGER_LIST:
+    case ColumnTypeEnum.BOOLEAN_LIST:
+    case ColumnTypeEnum.DATE_LIST:
+    case ColumnTypeEnum.USERID_LIST:
+    case ColumnTypeEnum.ENTITYID_LIST:
+      return false
+    default:
+      return true
+  }
+}
+
+/**
+ * Utility to search through array of objects and find object with key "column"
+ * equal to input parameter "name"
+ *
+ * @param {*} sortedColumnSelection
+ * @param {*} name
+ * @returns -1 if not present, otherwise the index of the object
+ * @memberof SynapseTable
+ */
+export function findSelectionIndex(
+  sortedColumnSelection: SortItem[],
+  name: string,
+) {
+  if (sortedColumnSelection.length !== 0) {
+    // find if the current selection exists already and remove it
+    return sortedColumnSelection.findIndex((el: SortItem) => el.column === name)
+  }
+  return -1
 }

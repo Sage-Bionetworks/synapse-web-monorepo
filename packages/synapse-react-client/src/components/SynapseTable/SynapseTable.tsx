@@ -573,7 +573,7 @@ export class SynapseTable extends React.Component<
                 <SynapseTableCell
                   columnType={headers[colIndex].columnType}
                   columnValue={columnValue}
-                  isBold={isBold}
+                  className={isBold}
                   mapEntityIdToHeader={mapEntityIdToHeader}
                   mapUserIdToHeader={mapUserIdToHeader}
                   columnLinkConfig={columnLinkConfig}

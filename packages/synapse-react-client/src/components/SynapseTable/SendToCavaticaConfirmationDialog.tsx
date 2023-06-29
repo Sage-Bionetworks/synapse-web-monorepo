@@ -28,7 +28,8 @@ export default function SendToCavaticaConfirmationDialog(
     data?.queryResult?.queryResults.headers,
   )
   const queryRequestCopy = getLastQueryRequest()
-  queryRequestCopy.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
+
+  queryRequestCopy.partMask = 0
   const { data: asyncJobStatus, isLoading } =
     useGetQueryResultBundleWithAsyncStatus(queryRequestCopy, {
       useErrorBoundary: true,

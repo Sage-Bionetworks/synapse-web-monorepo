@@ -116,6 +116,7 @@ import Rat from '../../assets/mui_components/Rat'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { SxProps, Tooltip } from '@mui/material'
 import CreateVersion from '../../assets/icons/CreateVersion'
+import { SortDown, SortUp } from '../../assets/themed_icons'
 
 export const IconStrings = [
   'accessOpen',
@@ -235,6 +236,8 @@ export const IconStrings = [
   'createVersion',
   'email',
   'addConditions',
+  'sortAscending',
+  'sortDescending',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -490,6 +493,10 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <FlagTwoTone sx={sx} />
     case 'email':
       return <MailOutlineTwoTone sx={sx} />
+    case 'sortAscending':
+      return <SortUp sx={sx} />
+    case 'sortDescending':
+      return <SortDown sx={sx} />
     default:
       return <></>
   }
