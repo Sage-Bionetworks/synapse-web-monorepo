@@ -1,5 +1,7 @@
 import {
+  ColumnModel,
   ColumnType,
+  ColumnTypeEnum,
   EntityHeader,
   QueryResultBundle,
   UserGroupHeader,
@@ -42,4 +44,26 @@ export const getUniqueEntities = (
     })
   })
   return distinctEntities
+}
+
+export const getFileColumnModelId = (
+  columnModels?: ColumnModel[],
+): string | undefined => {
+  if (!columnModels) {
+    return undefined
+  }
+  const entityIdColumnModels: ColumnModel[] | undefined = columnModels?.filter(
+    el => el.columnType === ColumnTypeEnum.ENTITYID,
+  )
+  // if there's a single ENTITYID type column, return that column id
+  if (entityIdColumnModels?.length === 1) {
+    return entityIdColumnModels[0].id
+  }
+  // otherwise, if there's an 'id' column, return that column id
+  const idColumnModel = entityIdColumnModels?.filter(el => el.name === 'id')
+  if (idColumnModel.length === 1) {
+    return idColumnModel[0].id
+  }
+  // else the file ID column was not found
+  return undefined
 }

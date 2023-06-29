@@ -15,6 +15,7 @@ import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCav
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { cloneDeep } from 'lodash-es'
 import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
+import { getFileColumnModelId } from './SynapseTableUtils'
 
 export type SendToCavaticaConfirmationDialogProps = {
   cavaticaHelpURL?: string
@@ -66,13 +67,19 @@ export default function SendToCavaticaConfirmationDialog(
     cavaticaQueryRequest,
     data?.queryResult?.queryResults.headers,
   )
-  const queryRequestCopy = useMemo(
-    () => cloneDeep(cavaticaQueryRequest),
-    [cavaticaQueryRequest],
-  )
-  queryRequestCopy.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
+  const queryRequestCopy = useMemo(() => {
+    const request = cloneDeep(cavaticaQueryRequest)
+    const fileColumnId = getFileColumnModelId(data?.columnModels)
+    if (fileColumnId) {
+      request.query.selectFileColumn = Number(fileColumnId)
+    }
+    request.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
+    return request
+  }, [cavaticaQueryRequest, data?.columnModels])
+
   const { data: asyncJobStatus, isLoading } =
     useGetQueryResultBundleWithAsyncStatus(queryRequestCopy, {
+      enabled: fileColumnId !== undefined,
       useErrorBoundary: true,
     })
 

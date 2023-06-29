@@ -1,38 +1,43 @@
-name: "NPM Publish and GitHub tag"
+name: 'NPM Publish and GitHub tag'
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches: [main]
 
 jobs:
-  build:
+  tag-and-publish:
+    strategy:
+      matrix:
+        publishablePackage: [synapse-react-client, markdown-it-synapse]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/pnpm-setup-action
-      - run: pnpm -r publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-      # Set PACKAGE_VERSION, pull from package.json
-      - name: package-version
-        run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
-
-      # Now check if the synapse-react-client version changed, and if so, create a tag.
-      # We will need to revise/generalize this workflow if we publish multiple packages to npm.
-      - id: synapse-react-client-version-check
+      # Check if the package version changed
+      - id: package-version-check
         uses: EndBug/version-check@v2
         with:
-          file-name: ./packages/synapse-react-client/package.json
-      # Create the tag using the new PACKAGE_VERSION value
+          file-name: './packages/${{ matrix.publishablePackage }}/package.json'
+      # Build the package to publish
+      - name: Build package
+        run: pnpm nx run ${{ matrix.publishablePackage }}:build
+      # If the package version changed, and the build succeeded, create the tag using the output of the previous step.
       - name: Create tag
         uses: actions/github-script@v6
-        if: steps.synapse-react-client-version-check.outputs.changed == 'true'
+        if: github.event_name == 'push' && steps.package-version-check.outputs.changed == 'true'
         with:
           github-token: ${{ github.token }}
           script: |
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/synapse-react-client/v${{ steps.synapse-react-client-version-check.outputs.version }}",
+              ref: "refs/tags/${{ matrix.publishablePackage }}/v${{ steps.package-version-check.outputs.version }}",
               sha: context.sha
             })
+      - name: Publish to NPM # or simulate the publish for PRs
+        run: pnpm publish --access public ${{ (github.event_name == 'pull_request' && '--dry-run --no-git-checks') || '' }}
+        working-directory: ./packages/${{ matrix.publishablePackage }}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

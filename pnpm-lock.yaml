@@ -212,7 +212,7 @@ importers:
         version: 1.0.2
       markdown-it-synapse:
         specifier: ^1.1.7
-        version: 1.1.10
+        version: link:../../packages/markdown-it-synapse
       markdown-it-synapse-heading:
         specifier: ^1.0.1
         version: 1.0.1
@@ -438,7 +438,7 @@ importers:
         version: 1.0.2
       markdown-it-synapse:
         specifier: ^1.1.10
-        version: 1.1.10
+        version: link:../../packages/markdown-it-synapse
       markdown-it-synapse-heading:
         specifier: ^1.0.1
         version: 1.0.1
@@ -658,7 +658,7 @@ importers:
         version: 1.0.2
       markdown-it-synapse:
         specifier: ^1.1.10
-        version: 1.1.10
+        version: link:../../packages/markdown-it-synapse
       markdown-it-synapse-heading:
         specifier: ^1.0.1
         version: 1.0.1
@@ -725,6 +725,30 @@ importers:
       vitest:
         specifier: ^0.31.0
         version: 0.31.0(@vitest/ui@0.31.0)(jsdom@21.1.1)(sass@1.57.1)
+
+  packages/markdown-it-synapse:
+    devDependencies:
+      '@types/markdown-it':
+        specifier: ^12.2.3
+        version: 12.2.3
+      '@types/node':
+        specifier: ^18.16.12
+        version: 18.16.12
+      jest:
+        specifier: ^29.4.3
+        version: 29.4.3(@types/node@18.16.12)
+      markdown-it:
+        specifier: ^13.0.1
+        version: 13.0.1
+      markdown-it-testgen:
+        specifier: ~0.1.0
+        version: 0.1.0
+      tsup:
+        specifier: ^6.7.0
+        version: 6.7.0(postcss@8.4.23)(typescript@5.0.4)
+      typescript:
+        specifier: 5.0.4
+        version: 5.0.4
 
   packages/synapse-react-client:
     dependencies:
@@ -859,7 +883,7 @@ importers:
         version: 1.0.2
       markdown-it-synapse:
         specifier: ^1.1.10
-        version: 1.1.10
+        version: link:../markdown-it-synapse
       markdown-it-synapse-heading:
         specifier: ^1.0.1
         version: 1.0.1
@@ -11492,6 +11516,12 @@ packages:
       eslint-visitor-keys: 3.4.0
     dev: true
 
+  /esprima@2.0.0:
+    resolution: {integrity: sha512-Nn4dBM9pwAzo5GSAbfKWiT66gqBh3elZgrC242j42cbKpkmnkgX9UINXeC++e013U0qXq5xowcB0Bgkwg09s0g==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+    dev: true
+
   /esprima@4.0.1:
     resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
     engines: {node: '>=4'}
@@ -14281,6 +14311,14 @@ packages:
       esprima: 4.0.1
     dev: true
 
+  /js-yaml@3.2.7:
+    resolution: {integrity: sha512-mV4Mf9iZluwNTw5dU93TJoQFTes57+KAQi+70G9XKChV7uBi3u+fd7+JSa2fQRGfii+YVSMunxgFtD29PLpj6g==}
+    hasBin: true
+    dependencies:
+      argparse: 1.0.10
+      esprima: 2.0.0
+    dev: true
+
   /js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
@@ -14845,6 +14883,11 @@ packages:
     resolution: {integrity: sha512-r0RwvdCv8id9TUblb/O7rYPwVy6lerCbcawrfdo9iC/1t1wsNMJknO79WNBgwkH0hIeJ08jmvvESbFpNb4jH0Q==}
     dev: true
 
+  /lodash@2.4.2:
+    resolution: {integrity: sha512-Kak1hi6/hYHGVPmdyiZijoQyz5x2iGVzs6w9GYB/HiXEtylY7tIoYEROMjvM1d9nXJqPOrG2MNPMn01bJ+S0Rw==}
+    engines: {'0': node, '1': rhino}
+    dev: true
+
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
@@ -15026,8 +15069,12 @@ packages:
   /markdown-it-synapse-table@1.0.6:
     resolution: {integrity: sha512-znhzQZhMxZ8sSQ9IBfdVv4ufW54i+P8M//rHEswcgg7SI3J0AN1s2T7T0KqYGG+9rHf/ORsdcUZst9hMiBC9xA==}
 
-  /markdown-it-synapse@1.1.10:
-    resolution: {integrity: sha512-Gabq6WPk9nKonh1aib3aMg5CjeYjaKDKwyyj9CowjrA/I6TXs6xwiKGU6sTNIDQJ0KmfCz721+hNuFdnDsHW0A==}
+  /markdown-it-testgen@0.1.0:
+    resolution: {integrity: sha512-ID8SYhqnTdhY06NDzJB6AlZ0S1Qm/rVKlB9/6nS0Kg0RNKb2Y4WYP810sY1vJu9fRzqIJyp6L32ppD3d823rRQ==}
+    dependencies:
+      js-yaml: 3.2.7
+      lodash: 2.4.2
+    dev: true
 
   /markdown-it@12.3.2:
     resolution: {integrity: sha512-TchMembfxfNVpHkbtriWltGWc+m3xszaRD0CZup7GFFhzIgQqxIfn3eGj1yZpfuflzPvfkt611B2Q/Bsk1YnGg==}
