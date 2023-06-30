@@ -45,6 +45,7 @@ export function useGetPresignedUrlContent(
 
 export function useGetPresignedUrlContentFromFHA(
   fileHandleAssociation: FileHandleAssociation,
+  forceAnonymous: boolean = false,
   options?: Omit<UseQueryOptions<string, SynapseClientError>, 'staleTime'>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
@@ -56,7 +57,7 @@ export function useGetPresignedUrlContentFromFHA(
         includePreSignedURLs: true,
         includePreviewPreSignedURLs: false,
       },
-      accessToken,
+      forceAnonymous ? undefined : accessToken,
     )
     const data = await SynapseClient.getFileHandleContent(
       batchFileResult.requestedFiles[0].fileHandle!,
@@ -65,7 +66,10 @@ export function useGetPresignedUrlContentFromFHA(
     return data
   }
   return useQuery<string, SynapseClientError>(
-    keyFactory.getPresignedUrlFromFHAContentQueryKey(fileHandleAssociation),
+    keyFactory.getPresignedUrlFromFHAContentQueryKey(
+      fileHandleAssociation,
+      forceAnonymous,
+    ),
 
     queryFn,
     {

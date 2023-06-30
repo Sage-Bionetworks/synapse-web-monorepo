@@ -28,11 +28,14 @@ const TermsAndConditionsItem: React.FunctionComponent<
   const { id, item, enabled, checked, onChange, termsAndConditionsTableID } =
     props
   const { iconFileHandleId, label, description } = item
-  const { data: iconFileContent } = useGetPresignedUrlContentFromFHA({
-    associateObjectId: termsAndConditionsTableID,
-    associateObjectType: FileHandleAssociateType.TableEntity,
-    fileHandleId: iconFileHandleId,
-  })
+  const { data: iconFileContent } = useGetPresignedUrlContentFromFHA(
+    {
+      associateObjectId: termsAndConditionsTableID,
+      associateObjectType: FileHandleAssociateType.TableEntity,
+      fileHandleId: iconFileHandleId,
+    },
+    true, // force this query to be run as the anonymous user (without an access token)
+  )
 
   const [showDesc, setShowDes] = useState<boolean>(false)
   const [isChecked, setIsChecked] = useState<boolean>(false)

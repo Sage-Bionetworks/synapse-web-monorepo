@@ -443,8 +443,13 @@ export class KeyFactory {
 
   public getPresignedUrlFromFHAContentQueryKey(
     fileHandleAssociation: FileHandleAssociation,
+    forceAnonymous: boolean,
   ) {
-    return this.getKey('presignedUrlContentFromFHA', fileHandleAssociation)
+    return this.getKey(
+      'presignedUrlContentFromFHA',
+      fileHandleAssociation,
+      forceAnonymous,
+    )
   }
 
   public getProfileImageQueryKey(userId: string) {
