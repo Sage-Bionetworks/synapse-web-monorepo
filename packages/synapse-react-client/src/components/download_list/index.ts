@@ -1,5 +1,12 @@
 import DownloadDetails from './DownloadDetails'
-import { DownloadConfirmation } from './DownloadConfirmation'
+import { FolderDownloadConfirmation } from './FolderDownloadConfirmation'
+import type { FolderDownloadConfirmationProps } from './FolderDownloadConfirmation'
+import { TableQueryDownloadConfirmation } from './TableQueryDownloadConfirmation'
 
 export default { DownloadDetails }
-export { DownloadDetails, DownloadConfirmation }
+export {
+  DownloadDetails,
+  FolderDownloadConfirmation,
+  FolderDownloadConfirmationProps,
+  TableQueryDownloadConfirmation,
+}

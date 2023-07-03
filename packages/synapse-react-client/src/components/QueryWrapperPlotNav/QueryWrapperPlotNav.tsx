@@ -10,7 +10,6 @@ import { useGetEntity } from '../../synapse-queries'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from '../CardContainerLogic'
-import { DownloadConfirmation } from '../download_list'
 import FullTextSearch from '../FullTextSearch'
 import ModalDownload from '../ModalDownload/ModalDownload'
 import {
@@ -39,6 +38,7 @@ import FilterAndView from './FilterAndView'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { Box } from '@mui/material'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
+import { TableQueryDownloadConfirmation } from '../download_list'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -226,12 +226,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                       )}
                       <SqlEditor />
                       {queryVisualizationContext.showDownloadConfirmation && (
-                        <DownloadConfirmation
-                          getLastQueryRequest={queryContext.getLastQueryRequest}
-                          setShowDownloadConfirmation={
-                            queryVisualizationContext.setShowDownloadConfirmation
-                          }
-                        />
+                        <TableQueryDownloadConfirmation />
                       )}
                       <SynapseErrorBoundary>
                         <TopLevelControls

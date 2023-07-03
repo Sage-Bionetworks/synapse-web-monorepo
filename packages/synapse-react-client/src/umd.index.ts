@@ -2,7 +2,7 @@ import { SkeletonButton } from './components/Skeleton/SkeletonButton'
 import { AccountLevelBadge } from './components/AccountLevelBadge/AccountLevelBadge'
 import ChangePassword from './components/ChangePassword/ChangePassword'
 import { ReviewerDashboard } from './components/dataaccess/ReviewerDashboard'
-import { DownloadConfirmation } from './components/download_list/DownloadConfirmation'
+import { FolderDownloadConfirmation } from './components/download_list/FolderDownloadConfirmation'
 import DirectProgrammaticDownload from './components/DownloadCart/DirectProgrammaticDownload'
 import { DownloadCartPage } from './components/DownloadCart/DownloadCartPage'
 import ShowDownloadV2 from './components/DownloadCart/ShowDownloadV2'
@@ -99,7 +99,7 @@ const SynapseComponents = {
   EntityBadgeIcons,
   DownloadCartPage,
   ShowDownloadV2,
-  DownloadConfirmation,
+  DownloadConfirmation: FolderDownloadConfirmation,
   FullWidthAlert: FullWidthAlert,
   SchemaDrivenAnnotationEditor,
   SynapseNavDrawer,

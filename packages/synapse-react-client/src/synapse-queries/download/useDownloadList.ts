@@ -1,5 +1,7 @@
 import {
   ActionRequiredRequest,
+  AddToDownloadListRequest,
+  AddToDownloadListResponse,
   AvailableFilesRequest,
   AvailableFilter,
   Sort,
@@ -191,6 +193,32 @@ export function useAddFileBatchToDownloadList(
     mutationKey: ['addFileBatchToDownloadList'],
     onSuccess: async (data, variables, ctx) => {
       // PORTALS-2222: Invalidate to load the accurate results
+      await queryClient.invalidateQueries(
+        keyFactory.getDownloadListBaseQueryKey(),
+      )
+      if (options?.onSuccess) {
+        return options.onSuccess(data, variables, ctx)
+      }
+    },
+  })
+}
+
+export function useAddQueryToDownloadList(
+  options?: UseMutationOptions<
+    AddToDownloadListResponse,
+    SynapseClientError,
+    AddToDownloadListRequest
+  >,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: request =>
+      SynapseClient.addFilesToDownloadListV2(request, accessToken),
+    mutationKey: ['addQueryToDownloadList'],
+    onSuccess: async (data, variables, ctx) => {
+      // Invalidate all download list queries
       await queryClient.invalidateQueries(
         keyFactory.getDownloadListBaseQueryKey(),
       )
