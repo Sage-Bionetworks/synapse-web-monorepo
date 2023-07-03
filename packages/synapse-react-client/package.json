@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.1.38",
+  "version": "3.1.38-SWC-6490",
   "private": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
