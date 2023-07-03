@@ -114,8 +114,18 @@ export function useSubmitDataAccessRequest(
     SynapseClientError,
     { request: CreateSubmissionRequest; accessRequirementId: string }
   >(
-    ({ request }): Promise<ACTSubmissionStatus> =>
-      SynapseClient.submitDataAccessRequest(request, accessToken!),
+    async ({ request, accessRequirementId }): Promise<ACTSubmissionStatus> => {
+      // The subjectId or subjectType may not be known, so pick an arbitrary one off of the AR (SWC-6490)
+      if (request.subjectId == null || request.subjectType == null) {
+        const { subjects } = await SynapseClient.getSubjects(
+          accessToken,
+          accessRequirementId,
+        )
+        request.subjectId = subjects[0].id
+        request.subjectType = subjects[0].type
+      }
+      return SynapseClient.submitDataAccessRequest(request, accessToken!)
+    },
     {
       ...options,
       onSuccess: async (data, variables, ctx) => {

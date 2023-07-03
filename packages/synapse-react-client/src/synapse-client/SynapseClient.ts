@@ -275,6 +275,7 @@ import {
   ChallengeTeamPagedResults,
   ChallengeTeam,
   TeamMembershipStatus,
+  RestrictableObjectDescriptor,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -4744,6 +4745,26 @@ export const getEntityDownloadActionsRequired = (
 ) => {
   return doGet<ActionRequiredList>(
     ENTITY_ACTIONS_REQUIRED(entityId),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/subjects.html
+export function getSubjects(
+  accessToken: string | undefined,
+  requirementId: string,
+  nextPageToken?: string,
+) {
+  const params = new URLSearchParams()
+  if (nextPageToken) {
+    params.set('nextPageToken', nextPageToken)
+  }
+  return doGet<{
+    subjects: RestrictableObjectDescriptor[]
+    nextPageToken?: string
+  }>(
+    `/repo/v1/accessRequirement/${requirementId}/subjects?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
