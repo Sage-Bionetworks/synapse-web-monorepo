@@ -4,7 +4,6 @@ import React from 'react'
 import { DialogBase } from '../DialogBase'
 import SynapseClient from '../../synapse-client'
 import {
-  hasFilesInView,
   isDataset,
   isDatasetCollection,
   isEntityView,
@@ -48,6 +47,7 @@ import { ICON_STATE } from './SynapseTableConstants'
 import {
   getColumnIndicesWithType,
   getUniqueEntities,
+  isFileViewOrDataset,
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
@@ -87,7 +87,6 @@ export type SynapseTableProps = {
   showDownloadColumn?: boolean
   columnLinks?: LabelLinkConfig
   hideDownload?: boolean
-  isRowSelectionVisible?: boolean
 }
 
 export class SynapseTable extends React.Component<
@@ -422,19 +421,10 @@ export class SynapseTable extends React.Component<
     const lastQueryRequest = this.props.queryContext.getLastQueryRequest?.()!
     const {
       queryContext: { entity },
+      queryVisualizationContext: { isRowSelectionVisible },
       showAccessColumn,
       showDownloadColumn,
-      isRowSelectionVisible,
     } = this.props
-
-    /**
-     * i.e. the view may have FileEntities in it
-     *
-     * PORTALS-2010:  Enhance change made for PORTALS-1973.  File specific action will only be shown for rows that represent FileEntities.
-     */
-    const isFileViewOrDataset =
-      entity &&
-      ((isEntityView(entity) && hasFilesInView(entity)) || isDataset(entity))
 
     const isShowingAccessColumn: boolean | undefined =
       showAccessColumn &&
@@ -444,7 +434,10 @@ export class SynapseTable extends React.Component<
     const isLoggedIn = !!this.props.synapseContext.accessToken
 
     const rowsAreDownloadable =
-      entity && isFileViewOrDataset && isLoggedIn && this.allRowsHaveId()
+      entity &&
+      isFileViewOrDataset(entity) &&
+      isLoggedIn &&
+      this.allRowsHaveId()
 
     const isShowingAddToV2DownloadListColumn: boolean = !!(
       rowsAreDownloadable && !this.props.hideDownload

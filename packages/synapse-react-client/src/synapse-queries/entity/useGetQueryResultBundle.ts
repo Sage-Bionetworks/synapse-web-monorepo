@@ -50,11 +50,14 @@ export default function useGetQueryResultBundle(
   )
 }
 
-function _useGetQueryResultBundleWithAsyncStatus(
+function _useGetQueryResultBundleWithAsyncStatus<
+  TData = AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+>(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-    SynapseClientError
+    SynapseClientError,
+    TData
   >,
   setCurrentAsyncStatus?: (
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
@@ -64,7 +67,8 @@ function _useGetQueryResultBundleWithAsyncStatus(
 
   return useQuery<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-    SynapseClientError
+    SynapseClientError,
+    TData
   >(
     keyFactory.getEntityTableQueryResultWithAsyncStatusQueryKey(
       queryBundleRequest,
@@ -83,11 +87,14 @@ function _useGetQueryResultBundleWithAsyncStatus(
   )
 }
 
-function useGetQueryRows(
+function useGetQueryRows<
+  TData = AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+>(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-    SynapseClientError
+    SynapseClientError,
+    TData
   >,
   setCurrentAsyncStatus?: (
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
@@ -103,7 +110,7 @@ function useGetQueryRows(
 
   const enableQuery = queryRowsBundleRequestMask > 0 ? options?.enabled : false
 
-  return _useGetQueryResultBundleWithAsyncStatus(
+  return _useGetQueryResultBundleWithAsyncStatus<TData>(
     rowsOnlyQueryBundleRequest,
     {
       ...options,
@@ -113,11 +120,14 @@ function useGetQueryRows(
   )
 }
 
-function useGetQueryStats(
+function useGetQueryStats<
+  TData = AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+>(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-    SynapseClientError
+    SynapseClientError,
+    TData
   >,
   setCurrentAsyncStatus?: (
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
@@ -140,7 +150,7 @@ function useGetQueryStats(
 
   const enableQuery = queryStatsMask > 0 ? options?.enabled : false
 
-  return _useGetQueryResultBundleWithAsyncStatus(
+  return _useGetQueryResultBundleWithAsyncStatus<TData>(
     queryStatsRequest,
     {
       ...options,
@@ -150,11 +160,14 @@ function useGetQueryStats(
   )
 }
 
-export function useGetQueryResultBundleWithAsyncStatus(
+export function useGetQueryResultBundleWithAsyncStatus<
+  TData = AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+>(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-    SynapseClientError
+    SynapseClientError,
+    TData
   >,
   setCurrentAsyncStatus?: (
     status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
@@ -165,12 +178,12 @@ export function useGetQueryResultBundleWithAsyncStatus(
    *  - Query result rows, which will change each page
    *  - Everything else, which does not change each page
    */
-  const rowResult = useGetQueryRows(
+  const rowResult = useGetQueryRows<TData>(
     queryBundleRequest,
     options,
     setCurrentAsyncStatus,
   )
-  const statsResult = useGetQueryStats(
+  const statsResult = useGetQueryStats<TData>(
     queryBundleRequest,
     options,
     setCurrentAsyncStatus,
@@ -304,12 +317,19 @@ export function useInfiniteQueryResultBundle(
 export function useGetFullTableQueryResults(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
+  forceAnonymous: boolean = false,
 ): UseQueryResult<QueryResultBundle, SynapseClientError> {
   const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<QueryResultBundle, SynapseClientError>(
-    keyFactory.getFullTableQueryResultQueryKey(queryBundleRequest),
+    keyFactory.getFullTableQueryResultQueryKey(
+      queryBundleRequest,
+      forceAnonymous,
+    ),
     () =>
-      SynapseClient.getFullQueryTableResults(queryBundleRequest, accessToken),
+      SynapseClient.getFullQueryTableResults(
+        queryBundleRequest,
+        forceAnonymous ? undefined : accessToken,
+      ),
     {
       ...sharedQueryDefaults,
       ...options,

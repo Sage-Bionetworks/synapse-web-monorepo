@@ -34,7 +34,7 @@ type ElementWithTooltipProps = React.PropsWithChildren<{
   tooltipVisualProps?: Partial<TooltipVisualProps>
   darkTheme?: boolean
   size?: string
-  icon?: string
+  icon?: React.ReactNode
 }>
 
 function getTooltipTriggerContents(
@@ -62,7 +62,13 @@ export const ElementWithTooltip = ({
   icon,
 }: ElementWithTooltipProps) => {
   const { place } = tooltipVisualProps
-  const iconComponent = icon ? <Icon type={icon}></Icon> : undefined
+  const iconComponent = icon ? (
+    typeof icon === 'string' ? (
+      <Icon type={icon}></Icon>
+    ) : (
+      icon
+    )
+  ) : undefined
   const tooltipTriggerContents = iconComponent
     ? iconComponent
     : image

@@ -5,6 +5,22 @@ import { Dialog } from './MuiDialog'
 const meta = {
   title: 'UI/MUI/Dialog',
   component: Dialog,
+  argTypes: {
+    fullWidth: {
+      options: [false, true],
+      control: { type: 'boolean' },
+    },
+    maxWidth: {
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      control: { type: 'radio' },
+    },
+  },
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/0oPm5lLSUva8kyfVNMS6FA/Sage-Style-%26-Component-Library?type=design&node-id=1361-18613',
+    },
+  },
 } satisfies Meta
 
 export default meta
@@ -14,6 +30,7 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   args: {
     open: true,
+    maxWidth: 'sm',
     title: 'My Dialog Title',
     content: (
       <>

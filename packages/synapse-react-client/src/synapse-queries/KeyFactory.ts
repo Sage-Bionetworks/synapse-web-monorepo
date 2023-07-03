@@ -11,6 +11,7 @@ import {
   FavoriteSortBy,
   FavoriteSortDirection,
   FileHandle,
+  FileHandleAssociation,
   GetProjectsParameters,
   PrincipalAliasRequest,
   QueryBundleRequest,
@@ -113,10 +114,14 @@ const entityQueryKeyObjects = {
     tableQueryBundleRequest: queryBundleRequest,
   }),
 
-  fullTableQueryResult: (queryBundleRequest: QueryBundleRequest) => ({
+  fullTableQueryResult: (
+    queryBundleRequest: QueryBundleRequest,
+    forceAnonymous: boolean,
+  ) => ({
     ...entityQueryKeyObjects.entity(queryBundleRequest.entityId),
     scope: 'fullTableQueryResult',
     tableQueryBundleRequest: queryBundleRequest,
+    forceAnonymous,
   }),
 
   boundJSONSchema: (id: string) => ({
@@ -252,6 +257,22 @@ export class KeyFactory {
     return this.getKey(entityQueryKeyObjects.path(id))
   }
 
+  public getEntityACLQueryKey(entityId: string) {
+    return this.getKey('entityACL', entityId)
+  }
+
+  public getEntityAliasQueryKey(alias: string) {
+    return this.getKey('entityAlias', alias)
+  }
+
+  public getEntityEvaluationsQueryKey(entityId: string) {
+    return this.getKey('entityEvaluations', entityId)
+  }
+
+  public getEntityPermissionsQueryKey(entityId: string) {
+    return this.getKey('entityPermissions', entityId)
+  }
+
   public getEntityBoundJsonSchemaQueryKey(id: string) {
     return this.getKey(entityQueryKeyObjects.boundJSONSchema(id))
   }
@@ -295,9 +316,13 @@ export class KeyFactory {
 
   public getFullTableQueryResultQueryKey(
     queryBundleRequest: QueryBundleRequest,
+    forceAnonymous: boolean,
   ) {
     return this.getKey(
-      entityQueryKeyObjects.fullTableQueryResult(queryBundleRequest),
+      entityQueryKeyObjects.fullTableQueryResult(
+        queryBundleRequest,
+        forceAnonymous,
+      ),
     )
   }
 
@@ -416,6 +441,17 @@ export class KeyFactory {
     return this.getKey('presignedUrlContent', fileHandle, request, maxSizeBytes)
   }
 
+  public getPresignedUrlFromFHAContentQueryKey(
+    fileHandleAssociation: FileHandleAssociation,
+    forceAnonymous: boolean,
+  ) {
+    return this.getKey(
+      'presignedUrlContentFromFHA',
+      fileHandleAssociation,
+      forceAnonymous,
+    )
+  }
+
   public getProfileImageQueryKey(userId: string) {
     return this.getKey('profileImageData', userId)
   }
@@ -527,6 +563,10 @@ export class KeyFactory {
 
   public getSearchEntitiesQueryKey(query: SearchQuery) {
     return this.getKey('searchEntities', query)
+  }
+
+  public getTeamQueryKey(teamId: string) {
+    return this.getKey('team', teamId)
   }
 
   public getTeamListQueryKey(teamIds: string) {
@@ -641,5 +681,15 @@ export class KeyFactory {
 
   public getBatchOfFiles(request: BatchFileRequest) {
     return this.getKey('fileBatch', request)
+  }
+
+  public getPaginatedDockerTagQueryKey(
+    id: string,
+    offset: string,
+    limit: string,
+    sort: string,
+    sortDirection: string,
+  ) {
+    return this.getKey('dockerTag', id, offset, limit, sort, sortDirection)
   }
 }

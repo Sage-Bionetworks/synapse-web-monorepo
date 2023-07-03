@@ -3,7 +3,7 @@
  */
 
 import { omit, pick } from 'lodash-es'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   QueryFunctionContext,
   QueryKey,
@@ -11,6 +11,7 @@ import {
   UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
+  useQueries,
   useQuery,
   useQueryClient,
   UseQueryOptions,
@@ -21,13 +22,19 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   Entity,
+  EntityHeader,
   EntityJson,
   EntityJsonValue,
   EntityPath,
+  Evaluation,
+  GetEvaluationParameters,
   PaginatedResults,
 } from '@sage-bionetworks/synapse-types'
 import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
+import { EntityId } from '@sage-bionetworks/synapse-types'
+import { AccessControlList } from '@sage-bionetworks/synapse-types'
+import { UserEntityPermissions } from '@sage-bionetworks/synapse-types'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
@@ -45,6 +52,44 @@ export function useGetEntity<T extends Entity>(
       ),
     options,
   )
+}
+
+export function useGetEntities(
+  entityHeaders: Pick<EntityHeader, 'id' | 'versionNumber'>[],
+  options?: UseQueryOptions<Entity[], SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const headerIds = entityHeaders.map(header => header.id).join()
+  const queries = useMemo(
+    () =>
+      entityHeaders.map(header => {
+        return {
+          queryKey: keyFactory.getEntityVersionQueryKey(
+            header.id,
+            header.versionNumber,
+          ),
+          queryFn: () =>
+            SynapseClient.getEntity(
+              accessToken,
+              header.id,
+              header.versionNumber,
+            ),
+        }
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [headerIds],
+  )
+  const results = useQueries(queries)
+  const isLoading = results.some(result => result.isLoading)
+  const entities: Entity[] = results
+    .filter(query => query.data !== undefined)
+    .map(query => query.data!)
+  return useMemo(() => {
+    // @ts-ignore
+    if (!isLoading && options?.onSuccess) options.onSuccess(entities)
+    return { isLoading, data: entities }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, headerIds])
 }
 
 export function useUpdateEntity<T extends Entity>(
@@ -228,5 +273,87 @@ export function useGetEntityPath(
     keyFactory.getEntityPathQueryKey(entityId),
     () => SynapseClient.getEntityPath(entityId, accessToken),
     options,
+  )
+}
+
+export function useGetEntityACL(
+  entityId: string,
+  options?: UseQueryOptions<AccessControlList, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery<AccessControlList, SynapseClientError>(
+    keyFactory.getEntityPathQueryKey(entityId),
+    () => SynapseClient.getEntityACL(entityId, accessToken),
+    options,
+  )
+}
+
+export function useGetEntityAlias(
+  alias: string,
+  options?: UseQueryOptions<EntityId | null, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery<EntityId | null, SynapseClientError>(
+    keyFactory.getEntityAliasQueryKey(alias),
+    () => SynapseClient.getEntityAlias(alias, accessToken),
+    options,
+  )
+}
+
+export function useGetEntityEvaluations(
+  entityId: string,
+  params?: GetEvaluationParameters,
+  options?: UseQueryOptions<Evaluation[] | null, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery<Evaluation[] | null, SynapseClientError>(
+    keyFactory.getEntityEvaluationsQueryKey(entityId),
+    () => SynapseClient.getAllEntityEvaluations(entityId, params, accessToken),
+    options,
+  )
+}
+
+export function useGetEntityPermissions(
+  entityId: string,
+  options?: UseQueryOptions<UserEntityPermissions | null, SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery<UserEntityPermissions | null, SynapseClientError>(
+    keyFactory.getEntityAliasQueryKey(entityId),
+    () => SynapseClient.getEntityPermissions(entityId, accessToken),
+    options,
+  )
+}
+
+export function useUpdateEntityACL(
+  options?: UseMutationOptions<
+    AccessControlList,
+    SynapseClientError,
+    AccessControlList
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<AccessControlList, SynapseClientError, AccessControlList>(
+    (acl: AccessControlList) => SynapseClient.updateEntityACL(acl, accessToken),
+    {
+      ...options,
+      onSuccess: async (updatedACL: AccessControlList, variables, ctx) => {
+        await invalidateAllQueriesForEntity(
+          queryClient,
+          keyFactory,
+          updatedACL.id,
+        )
+        queryClient.setQueryData(
+          keyFactory.getEntityACLQueryKey(updatedACL.id),
+          updatedACL,
+        )
+
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedACL, variables, ctx)
+        }
+      },
+    },
   )
 }

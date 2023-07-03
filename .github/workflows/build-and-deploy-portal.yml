@@ -1,0 +1,46 @@
+name: 'Build a portal and deploy to staging'
+
+on:
+  workflow_call:
+    inputs:
+      portal-name:
+        required: true
+        type: string
+        description: The portal to deploy
+      branch-or-tag:
+        required: true
+        type: string
+        description: The branch or tag to deploy from
+
+jobs:
+  build-and-deploy:
+    name: build-and-deploy
+    runs-on: ubuntu-latest
+    # Allow OIDC Integration (so we can assume the AWS role to deploy)
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3.0.0
+        with:
+          ref: ${{ inputs.branch-or-tag }}
+      - name: setup
+        uses: ./.github/actions/pnpm-setup-action
+      - name: Assume AWS Role
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
+          role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
+          role-duration-seconds: 1200
+      - name: build
+        run: |
+          cd apps/portals
+          chmod +x ./build.sh
+          ./build.sh ${{ inputs.portal-name }}
+      - name: setup-outputbucket-staging
+        run: |
+          cd apps/portals
+          echo chmod +x ./deploy.sh
+          echo ./deploy.sh push-staging ${{ inputs.portal-name }}

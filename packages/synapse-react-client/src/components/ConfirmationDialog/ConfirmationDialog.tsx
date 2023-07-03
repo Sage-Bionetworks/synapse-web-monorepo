@@ -15,6 +15,14 @@ export type ConfirmationButtonsProps = {
 
 export const CANCEL_BUTTON_TEXT = 'Cancel'
 
+export function CancelButton(props: { onCancel: () => void }) {
+  return (
+    <Button variant="outlined" onClick={() => props.onCancel()}>
+      {CANCEL_BUTTON_TEXT}
+    </Button>
+  )
+}
+
 export const ConfirmationButtons = (props: ConfirmationButtonsProps) => {
   const {
     confirmButtonText = 'OK',
@@ -28,11 +36,7 @@ export const ConfirmationButtons = (props: ConfirmationButtonsProps) => {
   } = props
   return (
     <>
-      {hasCancelButton && (
-        <Button variant="outlined" onClick={() => onCancel()}>
-          {CANCEL_BUTTON_TEXT}
-        </Button>
-      )}
+      {hasCancelButton && <CancelButton onCancel={onCancel} />}
       <Button
         variant={confirmButtonVariant}
         className={confirmButtonClassName}
@@ -57,6 +61,7 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
     confirmButtonClassName,
     confirmButtonColor,
     confirmButtonVariant,
+    confirmButtonDisabled,
     onConfirm,
     onCancel,
     hasCancelButton,
@@ -71,6 +76,7 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
           confirmButtonClassName={confirmButtonClassName}
           confirmButtonColor={confirmButtonColor}
           confirmButtonVariant={confirmButtonVariant}
+          confirmButtonDisabled={confirmButtonDisabled}
           onConfirm={onConfirm}
           onCancel={onCancel}
           hasCancelButton={hasCancelButton}

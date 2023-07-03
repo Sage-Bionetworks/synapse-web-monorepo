@@ -1,0 +1,21 @@
+name: 'Deploy Challenges Portal'
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/portals/**'
+      - '!apps/portals/src/configurations/**'
+      - 'apps/portals/src/configurations/challengeportal/**'
+      - 'packages/synapse-react-client/**'
+
+jobs:
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/build-and-deploy-portal.yml
+    with:
+      portal-name: challengeportal
+      branch-or-tag: main

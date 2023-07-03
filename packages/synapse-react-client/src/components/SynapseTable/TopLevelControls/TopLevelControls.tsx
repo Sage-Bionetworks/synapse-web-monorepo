@@ -1,27 +1,29 @@
 import { cloneDeep } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
-import { SQL_EDITOR } from '../../utils/SynapseConstants'
+import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import { Query, QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import {
   TopLevelControlsState,
   useQueryVisualizationContext,
-} from '../QueryVisualizationWrapper'
+} from '../../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
   useQueryContext,
-} from '../QueryContext/QueryContext'
-import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
-import { DownloadOptions } from './table-top'
-import { ColumnSelection } from './table-top/ColumnSelection'
-import { Box, Button, Link, Tooltip, Typography } from '@mui/material'
-import QueryCount from '../QueryCount/QueryCount'
-import { Icon } from '../row_renderers/utils'
-import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
-import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCavatica'
-import { Cavatica } from '../../assets/icons/Cavatica'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
-import { RowSelectionControls } from './RowSelectionControls'
+} from '../../QueryContext/QueryContext'
+import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
+import { ColumnSelection, DownloadOptions } from '../table-top'
+import { Button, Divider, Tooltip, Typography } from '@mui/material'
+import QueryCount from '../../QueryCount/QueryCount'
+import { Icon } from '../../row_renderers/utils'
+import MissingQueryResultsWarning from '../../MissingQueryResultsWarning'
+import { Cavatica } from '../../../assets/icons/Cavatica'
+import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
+import SendToCavaticaConfirmationDialog from '../SendToCavaticaConfirmationDialog'
+import {
+  getNumberOfResultsToInvokeAction,
+  getNumberOfResultsToInvokeActionCopy,
+} from './TopLevelControlsUtils'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -52,7 +54,7 @@ export type CustomControl = {
   buttonText: string
   onClick: (event: CustomControlCallbackData) => void
   classNames?: string
-  icon?: string
+  icon?: React.ReactNode
 }
 
 const controls: Control[] = [
@@ -100,23 +102,20 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   const {
     data,
     entity,
-    executeQueryRequest,
-    getLastQueryRequest,
     getInitQueryRequest,
     lockedColumn,
+    hasResettableFilters,
   } = useQueryContext()
-  const exportToCavatica = useExportToCavatica(
-    getLastQueryRequest(),
-    data?.queryResult?.queryResults.headers,
-  )
 
   const {
     topLevelControlsState,
     setTopLevelControlsState,
     columnsToShowInTable,
+    isRowSelectionVisible,
     selectedRows,
-    setSelectedRows,
     setColumnsToShowInTable,
+    setIsShowingExportToCavaticaModal,
+    unitDescription,
   } = useQueryVisualizationContext()
 
   const { showCopyToClipboard } = topLevelControlsState
@@ -138,15 +137,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       ...state,
       ...updatedTopLevelControlsState,
     }))
-  }
-
-  const [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal] =
-    useState(false)
-  const refresh = () => {
-    // clear selection
-    setSelectedRows([])
-    // refresh the data
-    executeQueryRequest(getLastQueryRequest())
   }
 
   /**
@@ -188,6 +178,20 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     setColumnsToShowInTable(columnsToShowInTableCopy)
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
+  const hasSelectedRows = isRowSelectionVisible && selectedRows.length > 0
+  const numberOfResultsToInvokeAction = getNumberOfResultsToInvokeAction(
+    isRowSelectionVisible,
+    selectedRows,
+    data,
+  )
+  const numberOfResultsToInvokeActionAsText =
+    getNumberOfResultsToInvokeActionCopy(
+      hasResettableFilters,
+      isRowSelectionVisible,
+      selectedRows,
+      data,
+      unitDescription,
+    )
   return (
     <div
       className={`TopLevelControls ${
@@ -231,22 +235,44 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
         </div>
         <div className="TopLevelControls__actions">
           {showExportToCavatica && (
-            <Tooltip
-              title={`This action will send a reference to every file in the current table to CAVATICA. ${
-                topLevelControlsState.showFacetFilter
-                  ? 'You can change what is sent by applying filters using the controls in the sidebar.'
-                  : ''
-              }`}
-            >
-              <Button
-                variant="text"
-                onClick={() => {
-                  setIsShowingExportToCavaticaModal(true)
-                }}
+            <>
+              <Tooltip
+                title={
+                  <>
+                    This action will send a reference to{' '}
+                    {hasSelectedRows
+                      ? 'each selected file'
+                      : 'every file in the current table'}{' '}
+                    to CAVATICA.{' '}
+                    {!hasSelectedRows &&
+                      topLevelControlsState.showFacetFilter && (
+                        <>
+                          You can change what is sent by applying filters using
+                          the controls in the sidebar.
+                        </>
+                      )}
+                    {hasSelectedRows && (
+                      <>
+                        You can change what is sent by selecting a different set
+                        of files.
+                      </>
+                    )}
+                  </>
+                }
               >
-                <Cavatica sx={{ mr: 1 }} /> Send to CAVATICA
-              </Button>
-            </Tooltip>
+                <Button
+                  variant="text"
+                  disabled={!numberOfResultsToInvokeAction}
+                  onClick={() => {
+                    setIsShowingExportToCavaticaModal(true)
+                  }}
+                  startIcon={<Cavatica />}
+                >
+                  Send {numberOfResultsToInvokeActionAsText} to CAVATICA
+                </Button>
+              </Tooltip>
+              <Divider orientation="vertical" variant="middle" flexItem />
+            </>
           )}
           {controls.map(control => {
             const { key, icon, tooltipText } = control
@@ -297,13 +323,10 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               />
             )
           })}
-          {customControls && (
+          {isRowSelectionVisible && (
             <RowSelectionControls
               customControls={customControls}
-              data={data}
-              refresh={refresh}
-              selectedRows={selectedRows}
-              setSelectedRows={setSelectedRows}
+              showExportToCavatica={showExportToCavatica}
             />
           )}
           {showColumnSelection && (
@@ -314,89 +337,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               darkTheme={true}
             />
           )}
-          <ConfirmationDialog
-            open={isShowingExportToCavaticaModal}
-            title="Send to CAVATICA"
-            content={
-              <>
-                <Box
-                  sx={{
-                    backgroundColor: 'grey.100',
-                    border: '1px solid',
-                    borderColor: 'grey.300',
-                    marginBottom: '15px',
-                    padding: '10px 20px 10px 20px',
-                  }}
-                >
-                  <Typography variant="body1" sx={{ textAlign: 'center' }}>
-                    CAVATICA is a data analysis and sharing platform.
-                    {cavaticaHelpURL && (
-                      <>
-                        {' '}
-                        Read more about CAVATICA{' '}
-                        <Link href={cavaticaHelpURL} target="_blank">
-                          here
-                        </Link>
-                        .
-                      </>
-                    )}
-                  </Typography>
-                </Box>
-                <Typography
-                  variant="body1"
-                  sx={{ fontWeight: 700, marginBottom: '10px' }}
-                >
-                  You must meet these requirements from CAVATICA to send data:
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ marginLeft: '10px', marginBottom: '10px' }}
-                >
-                  1. You must be logged in to a CAVATICA account.
-                  <br />
-                  2. You must connect your CAVATICA account to Synapse.
-                </Typography>
-                <Typography variant="body1">
-                  <Link
-                    href="https://help.eliteportal.org/help/limited-data-commons#LimitedDataCommons-GainingAccess"
-                    target="_blank"
-                  >
-                    Click here for instructions
-                  </Link>
-                </Typography>
-                <Box
-                  sx={{
-                    backgroundColor: 'grey.100',
-                    marginTop: '15px',
-                    padding: '10px 20px 10px 20px',
-                  }}
-                >
-                  <Typography variant="body1">
-                    Note that we cannot provide support for CAVATICA. Please
-                    contact CAVATICA’s{' '}
-                    <Link href="mailto:support@sevenbridges.com ">
-                      {' '}
-                      support
-                    </Link>{' '}
-                    for issues related to the above.
-                  </Typography>
-                </Box>
-                <Typography
-                  variant="body1"
-                  sx={{ fontWeight: 700, marginTop: '15px' }}
-                >
-                  When completed, click “Send to CAVATICA“ to finish the process
-                  outside this application. You will be redirected to CAVATICA.
-                </Typography>
-              </>
-            }
-            confirmButtonText="Send to CAVATICA"
-            onConfirm={() => {
-              exportToCavatica()
-            }}
-            onCancel={() => setIsShowingExportToCavaticaModal(false)}
-            maxWidth="md"
-          />
+          <SendToCavaticaConfirmationDialog cavaticaHelpURL={cavaticaHelpURL} />
         </div>
       </div>
     </div>

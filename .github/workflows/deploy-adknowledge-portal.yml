@@ -1,0 +1,21 @@
+name: 'Deploy AD Knowledge portal'
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/portals/**'
+      - '!apps/portals/src/configurations/**'
+      - 'apps/portals/src/configurations/adknowledgeportal/**'
+      - 'packages/synapse-react-client/**'
+
+jobs:
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/build-and-deploy-portal.yml
+    with:
+      portal-name: adknowledgeportal
+      branch-or-tag: main

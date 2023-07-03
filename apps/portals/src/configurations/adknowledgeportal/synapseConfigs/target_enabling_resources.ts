@@ -62,7 +62,6 @@ export const targetEnablingResourcesTableConfiguration: QueryWrapperPlotNavProps
       },
     ],
     hideDownload: true,
-    isRowSelectionVisible: false,
   }
 
 const rgbIndex = 6

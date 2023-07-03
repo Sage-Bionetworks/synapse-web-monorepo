@@ -1,10 +1,18 @@
 import {
+  ColumnModel,
   ColumnType,
+  ColumnTypeEnum,
   EntityHeader,
   QueryResultBundle,
+  Table,
   UserGroupHeader,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
+import {
+  hasFilesInView,
+  isDataset,
+  isEntityView,
+} from '../../utils/functions/EntityTypeUtils'
 
 export const getColumnIndicesWithType = (
   data: QueryResultBundle | undefined,
@@ -42,4 +50,38 @@ export const getUniqueEntities = (
     })
   })
   return distinctEntities
+}
+
+/**
+ * i.e. the view may have FileEntities in it
+ *
+ * PORTALS-2010:  Enhance change made for PORTALS-1973.  File specific action will only be shown for rows that represent FileEntities.
+ */
+export function isFileViewOrDataset(entity?: Table) {
+  return (
+    entity &&
+    ((isEntityView(entity) && hasFilesInView(entity)) || isDataset(entity))
+  )
+}
+
+export const getFileColumnModelId = (
+  columnModels?: ColumnModel[],
+): string | undefined => {
+  if (!columnModels) {
+    return undefined
+  }
+  const entityIdColumnModels: ColumnModel[] | undefined = columnModels?.filter(
+    el => el.columnType === ColumnTypeEnum.ENTITYID,
+  )
+  // if there's a single ENTITYID type column, return that column id
+  if (entityIdColumnModels?.length === 1) {
+    return entityIdColumnModels[0].id
+  }
+  // otherwise, if there's an 'id' column, return that column id
+  const idColumnModel = entityIdColumnModels?.filter(el => el.name === 'id')
+  if (idColumnModel.length === 1) {
+    return idColumnModel[0].id
+  }
+  // else the file ID column was not found
+  return undefined
 }

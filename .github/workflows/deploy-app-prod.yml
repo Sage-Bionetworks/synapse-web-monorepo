@@ -1,0 +1,40 @@
+name: Deploy an app to production
+
+on:
+  workflow_dispatch:
+    inputs:
+      app-name:
+        type: choice
+        description: Which app to deploy
+        options:
+          - SageAccountWeb
+          - synapse-oauth-signin
+      tag:
+        type: string
+        description: Which tag to deploy from
+
+jobs:
+  build-and-deploy-sage-account-web:
+    if: ${{ inputs.app-name }} == 'SageAccountWeb'
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/build-and-deploy-app.yml
+    with:
+      app-name: SageAccountWeb
+      branch-or-tag: ${{ inputs.tag }}
+      bucket-name: prod.accounts.sagebionetworks.org
+      cfdist-id: E2656IE63W1MXI
+      deployment-role-arn: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
+  build-and-deploy-synapse-oauth-signin:
+    if: ${{ inputs.app-name }} == 'synapse-oauth-signin'
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/build-and-deploy-app.yml
+    with:
+      app-name: synapse-oauth-signin
+      branch-or-tag: ${{ inputs.tag }}
+      bucket-name: prod-signin-synapse-websitebucket-u91v422hx5bs
+      cfdist-id: E1HPVCTTKTU4MN
+      deployment-role-arn: arn:aws:iam::325565585839:role/sagebase-github-oidc-synapseprod-web-monorepo-infra
