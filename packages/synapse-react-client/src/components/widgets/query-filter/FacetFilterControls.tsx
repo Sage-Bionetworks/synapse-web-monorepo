@@ -2,20 +2,15 @@ import React from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import {
-  QueryBundleRequest,
   FacetColumnRangeRequest,
   FacetColumnRequest,
-  FacetColumnValuesRequest,
   FacetColumnResult,
   FacetColumnResultRange,
   FacetColumnResultValues,
+  FacetColumnValuesRequest,
+  QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import {
-  useQueryContext,
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-} from '../../QueryContext/QueryContext'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 import { EnumFacetFilter } from './EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
@@ -180,16 +175,8 @@ function FacetFilterSkeleton() {
 }
 
 function FacetFilterControlsSkeleton() {
-  const { topLevelControlsState } = useQueryVisualizationContext()
-  const { showFacetFilter } = topLevelControlsState
   return (
-    <div
-      className={`FacetFilterControls ${
-        showFacetFilter
-          ? QUERY_FILTERS_EXPANDED_CSS
-          : QUERY_FILTERS_COLLAPSED_CSS
-      }`}
-    >
+    <div className={`FacetFilterControls`}>
       <FacetFilterSkeleton />
       <FacetFilterSkeleton />
       <FacetFilterSkeleton />
@@ -223,8 +210,6 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
   const [facetFiltersShown, setFacetFiltersShown] = React.useState<Set<string>>(
     getDefaultShownFacetFilters(facets, lastRequest.query.selectedFacets),
   )
-  const { topLevelControlsState } = useQueryVisualizationContext()
-  const { showFacetFilter } = topLevelControlsState
 
   /**
    * When the data facets change, reset the initially-selected chips
@@ -256,13 +241,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
   }
 
   return (
-    <div
-      className={`FacetFilterControls ${
-        showFacetFilter
-          ? QUERY_FILTERS_EXPANDED_CSS
-          : QUERY_FILTERS_COLLAPSED_CSS
-      }`}
-    >
+    <div className={`FacetFilterControls`}>
       {(facets ?? [])
         .filter(facet => facetFiltersShown.has(facet.columnName))
         .map(facet => {

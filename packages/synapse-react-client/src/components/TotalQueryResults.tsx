@@ -2,11 +2,7 @@ import React from 'react'
 import { SkeletonInlineBlock } from './Skeleton/SkeletonInlineBlock'
 import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
-import {
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-  useQueryContext,
-} from './QueryContext/QueryContext'
+import { useQueryContext } from './QueryContext/QueryContext'
 import IconSvg from './IconSvg/IconSvg'
 import SelectionCriteriaPills from './widgets/facet-nav/SelectionCriteriaPills'
 
@@ -23,12 +19,9 @@ function TotalQueryResults(props: TotalQueryResultsProps) {
   const { data, isLoadingNewBundle, resetQuery, error, hasResettableFilters } =
     useQueryContext()
 
-  const { topLevelControlsState, unitDescription } =
-    useQueryVisualizationContext()
+  const { unitDescription } = useQueryVisualizationContext()
 
   const total = data?.queryCount
-
-  const showFacetFilter = topLevelControlsState?.showFacetFilter
 
   const showClearAll = hasResettableFilters
   if (error) {
@@ -37,10 +30,8 @@ function TotalQueryResults(props: TotalQueryResultsProps) {
   return (
     <div
       className={`TotalQueryResults ${
-        showFacetFilter
-          ? QUERY_FILTERS_EXPANDED_CSS
-          : QUERY_FILTERS_COLLAPSED_CSS
-      } ${hasResettableFilters ? 'hasFilters' : ''}`}
+        hasResettableFilters ? 'hasFilters' : ''
+      }`}
       style={style}
     >
       {isLoadingNewBundle ? (

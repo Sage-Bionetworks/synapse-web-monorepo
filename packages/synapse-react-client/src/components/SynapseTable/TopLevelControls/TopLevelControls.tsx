@@ -2,15 +2,8 @@ import { cloneDeep } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
 import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import { Query, QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
-import {
-  TopLevelControlsState,
-  useQueryVisualizationContext,
-} from '../../QueryVisualizationWrapper'
-import {
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-  useQueryContext,
-} from '../../QueryContext/QueryContext'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { ColumnSelection, DownloadOptions } from '../table-top'
 import { Button, Divider, Tooltip, Typography } from '@mui/material'
@@ -39,7 +32,7 @@ export type TopLevelControlsProps = {
 }
 
 export type Control = {
-  key: keyof TopLevelControlsState
+  key: string
   icon: string
   tooltipText: string
 }
@@ -56,34 +49,6 @@ export type CustomControl = {
   classNames?: string
   icon?: React.ReactNode
 }
-
-const controls: Control[] = [
-  {
-    icon: 'search',
-    key: 'showSearchBar',
-    tooltipText: 'Show / Hide Search Bar',
-  },
-  {
-    icon: 'clipboard',
-    key: 'showCopyToClipboard',
-    tooltipText: 'Copy this search to the clipboard',
-  },
-  {
-    icon: 'chart',
-    key: 'showFacetVisualization',
-    tooltipText: 'Show / Hide Visualizations',
-  },
-  {
-    icon: 'download',
-    key: 'showDownloadConfirmation',
-    tooltipText: 'Show options for download',
-  },
-  {
-    icon: SQL_EDITOR,
-    key: 'showSqlEditor',
-    tooltipText: 'Show / Hide the Advanced Query Editor',
-  },
-]
 
 const TopLevelControls = (props: TopLevelControlsProps) => {
   const {
@@ -108,36 +73,23 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   } = useQueryContext()
 
   const {
-    topLevelControlsState,
-    setTopLevelControlsState,
+    setShowSearchBar,
     columnsToShowInTable,
     isRowSelectionVisible,
     selectedRows,
     setColumnsToShowInTable,
     setIsShowingExportToCavaticaModal,
     unitDescription,
+    setShowDownloadConfirmation,
+    showCopyToClipboard,
+    setShowFacetVisualization,
+    setShowSqlEditor,
+    showFacetFilter,
+    setShowFacetFilter,
   } = useQueryVisualizationContext()
-
-  const { showCopyToClipboard } = topLevelControlsState
 
   const [hasRecentlyCopiedToClipboard, setHasRecentlyCopiedToClipboard] =
     useState(false)
-
-  const setControlState = (control: keyof TopLevelControlsState) => {
-    const updatedTopLevelControlsState: Partial<TopLevelControlsState> = {
-      [control]: !topLevelControlsState[control],
-    }
-    if (control === 'showSearchBar') {
-      updatedTopLevelControlsState.showDownloadConfirmation = false
-    }
-    if (control === 'showDownloadConfirmation') {
-      updatedTopLevelControlsState.showSearchBar = false
-    }
-    setTopLevelControlsState(state => ({
-      ...state,
-      ...updatedTopLevelControlsState,
-    }))
-  }
 
   /**
    * We show the total number of results that would be shown if the user removed their filters.
@@ -177,7 +129,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     }
     setColumnsToShowInTable(columnsToShowInTableCopy)
   }
-  const showFacetFilter = topLevelControlsState?.showFacetFilter
   const hasSelectedRows = isRowSelectionVisible && selectedRows.length > 0
   const numberOfResultsToInvokeAction = getNumberOfResultsToInvokeAction(
     isRowSelectionVisible,
@@ -193,14 +144,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       unitDescription,
     )
   return (
-    <div
-      className={`TopLevelControls ${
-        showFacetFilter
-          ? QUERY_FILTERS_EXPANDED_CSS
-          : QUERY_FILTERS_COLLAPSED_CSS
-      }`}
-      data-testid="TopLevelControls"
-    >
+    <div className={`TopLevelControls`} data-testid="TopLevelControls">
       <div>
         <div className="TopLevelControls__querycount">
           {name && (
@@ -218,17 +162,12 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           )}
           {!hideFacetFilterControl && (
             <a
-              onClick={() => setControlState('showFacetFilter')}
+              onClick={() => setShowFacetFilter(value => !value)}
               className="TopLevelControls__querycount__facetFilterLink SRC-no-underline-on-hover"
             >
-              <Icon
-                type={
-                  topLevelControlsState.showFacetFilter ? 'close' : 'filter'
-                }
-              ></Icon>
+              <Icon type={showFacetFilter ? 'close' : 'filter'}></Icon>
               <span className="TopLevelControls__querycount__facetFilterLink__text">
-                {topLevelControlsState.showFacetFilter ? 'Hide' : 'Show'}{' '}
-                filters
+                {showFacetFilter ? 'Hide' : 'Show'} filters
               </span>
             </a>
           )}
@@ -244,13 +183,12 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                       ? 'each selected file'
                       : 'every file in the current table'}{' '}
                     to CAVATICA.{' '}
-                    {!hasSelectedRows &&
-                      topLevelControlsState.showFacetFilter && (
-                        <>
-                          You can change what is sent by applying filters using
-                          the controls in the sidebar.
-                        </>
-                      )}
+                    {!hasSelectedRows && showFacetFilter && (
+                      <>
+                        You can change what is sent by applying filters using
+                        the controls in the sidebar.
+                      </>
+                    )}
                     {hasSelectedRows && (
                       <>
                         You can change what is sent by selecting a different set
@@ -274,55 +212,54 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               <Divider orientation="vertical" variant="middle" flexItem />
             </>
           )}
-          {controls.map(control => {
-            const { key, icon, tooltipText } = control
-            if (
-              (key === 'showDownloadConfirmation' && hideDownload) ||
-              (key === 'showFacetVisualization' && hideVisualizationsControl) ||
-              (key === 'showSqlEditor' && hideSqlEditorControl) ||
-              (key === 'showCopyToClipboard' && !showCopyToClipboard)
-            ) {
-              // needs to be a file view in order for download to make sense
-              return <React.Fragment key={key}></React.Fragment>
-            } else if (key === 'showDownloadConfirmation') {
-              return (
-                <DownloadOptions
-                  key={key}
-                  darkTheme={true}
-                  onDownloadFiles={() => setControlState(key)}
-                />
-              )
-            } else if (key === 'showCopyToClipboard') {
-              return (
-                <ElementWithTooltip
-                  tooltipText={
-                    hasRecentlyCopiedToClipboard
-                      ? 'Copied to clipboard'
-                      : tooltipText
-                  }
-                  key={key}
-                  callbackFn={() => {
-                    navigator.clipboard.writeText(window.location.href)
-                    setHasRecentlyCopiedToClipboard(true)
-                    setTimeout(() => {
-                      setHasRecentlyCopiedToClipboard(false)
-                    }, 3000)
-                  }}
-                  darkTheme={true}
-                  icon={icon}
-                />
-              )
-            }
-            return (
-              <ElementWithTooltip
-                tooltipText={tooltipText}
-                key={key}
-                callbackFn={() => setControlState(key)}
-                darkTheme={true}
-                icon={icon}
-              />
-            )
-          })}
+          <ElementWithTooltip
+            tooltipText={'Show / Hide Search Bar'}
+            callbackFn={() => setShowSearchBar(value => !value)}
+            darkTheme={true}
+            icon={'search'}
+          />
+          {showCopyToClipboard && (
+            <ElementWithTooltip
+              tooltipText={
+                hasRecentlyCopiedToClipboard
+                  ? 'Copied to clipboard'
+                  : 'Copy this search to the clipboard'
+              }
+              callbackFn={() => {
+                navigator.clipboard.writeText(window.location.href)
+                setHasRecentlyCopiedToClipboard(true)
+                setTimeout(() => {
+                  setHasRecentlyCopiedToClipboard(false)
+                }, 3000)
+              }}
+              darkTheme={true}
+              icon={'clipboard'}
+            />
+          )}
+          {!hideVisualizationsControl && (
+            <ElementWithTooltip
+              tooltipText={'Show / Hide Visualizations'}
+              callbackFn={() => setShowFacetVisualization(value => !value)}
+              darkTheme={true}
+              icon={'chart'}
+            />
+          )}
+          {!hideDownload && (
+            <DownloadOptions
+              darkTheme={true}
+              onDownloadFiles={() => setShowDownloadConfirmation(true)}
+            />
+          )}
+
+          {!hideSqlEditorControl && (
+            <ElementWithTooltip
+              tooltipText={'Show / Hide the Advanced Query Editor'}
+              callbackFn={() => setShowSqlEditor(value => !value)}
+              darkTheme={true}
+              icon={SQL_EDITOR}
+            />
+          )}
+
           {isRowSelectionVisible && (
             <RowSelectionControls
               customControls={customControls}

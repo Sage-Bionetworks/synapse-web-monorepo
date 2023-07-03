@@ -8,11 +8,7 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import {
-  useQueryContext,
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-} from '../../QueryContext/QueryContext'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
 import FacetNavPanel, { PlotType } from './FacetNavPanel'
 import TotalQueryResults from '../../TotalQueryResults'
@@ -70,10 +66,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     asyncJobStatus,
   } = useQueryContext()
 
-  const { topLevelControlsState } = useQueryVisualizationContext()
+  const { showFacetVisualization } = useQueryVisualizationContext()
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [isFirstTime, setIsFirstTime] = useState(true)
-  const { showFacetVisualization, showFacetFilter } = topLevelControlsState
 
   const lastQueryRequest = getLastQueryRequest()
 
@@ -202,10 +197,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
         {facets.length > 0 && (
           <div
             className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${
-              showFacetFilter
-                ? QUERY_FILTERS_EXPANDED_CSS
-                : QUERY_FILTERS_COLLAPSED_CSS
-            } ${showMoreButtonState === 'LESS' ? 'less' : ''}`}
+              showMoreButtonState === 'LESS' ? 'less' : ''
+            }`}
           >
             <div className="FacetNav__row" role="list">
               {facets.map(facet => (

@@ -1,11 +1,7 @@
 import { Collapse } from '@mui/material'
 import React, { useRef, useState } from 'react'
 import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
-import {
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-  useQueryContext,
-} from './QueryContext/QueryContext'
+import { useQueryContext } from './QueryContext/QueryContext'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { HelpPopover } from './HelpPopover'
 import IconSvg from './IconSvg/IconSvg'
@@ -23,9 +19,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
   helpUrl,
 }: FullTextSearchProps) => {
   const { executeQueryRequest, getLastQueryRequest } = useQueryContext()
-  const {
-    topLevelControlsState: { showSearchBar, showFacetFilter },
-  } = useQueryVisualizationContext()
+  const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -73,13 +67,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
   }
 
   return (
-    <div
-      className={`QueryWrapperSearchInput ${
-        showFacetFilter
-          ? QUERY_FILTERS_EXPANDED_CSS
-          : QUERY_FILTERS_COLLAPSED_CSS
-      }`}
-    >
+    <div className={`QueryWrapperSearchInput`}>
       <Collapse in={showSearchBar} timeout={{ enter: 300, exit: 300 }}>
         <div className="QueryWrapperSearchInput__helppopoverwrapper">
           <form

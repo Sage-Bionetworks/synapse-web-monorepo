@@ -2,12 +2,8 @@ import React from 'react'
 import CardContainer from '../CardContainer'
 import SynapseTable, { SynapseTableProps } from '../SynapseTable'
 import { CardConfiguration } from '../CardContainerLogic'
-import {
-  useQueryContext,
-  QUERY_FILTERS_EXPANDED_CSS,
-  QUERY_FILTERS_COLLAPSED_CSS,
-} from '../QueryContext/QueryContext'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useQueryContext } from '../QueryContext'
+import { useSynapseContext } from '../../utils'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import LastUpdatedOn from './LastUpdatedOn'
 
@@ -28,13 +24,7 @@ const FilterAndView = (props: FilterAndViewProps) => {
   const queryContext = useQueryContext()
   const queryVisualizationContext = useQueryVisualizationContext()
   return (
-    <div
-      className={`FilterAndView ${
-        queryVisualizationContext.topLevelControlsState.showFacetFilter
-          ? QUERY_FILTERS_EXPANDED_CSS
-          : QUERY_FILTERS_COLLAPSED_CSS
-      }`}
-    >
+    <div className={`FilterAndView`}>
       {tableConfiguration ? (
         <SynapseTable
           {...tableConfiguration}

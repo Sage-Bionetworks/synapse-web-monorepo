@@ -5,8 +5,8 @@ import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   SQLOperator,
-} from '../../utils/functions/SqlFunctions'
-import { useGetEntity } from '../../synapse-queries/entity/useEntity'
+} from '../../utils/functions'
+import { useGetEntity } from '../../synapse-queries'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from '../CardContainerLogic'
@@ -23,14 +23,11 @@ import {
   QueryWrapperProps,
 } from '../QueryWrapper/QueryWrapper'
 import { InfiniteQueryWrapper } from '../InfiniteQueryWrapper'
-import {
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QueryContextConsumer,
-} from '../QueryContext/QueryContext'
+import { QueryContextConsumer } from '../QueryContext'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import SqlEditor from '../SqlEditor'
-import { SynapseTableProps } from '../SynapseTable/SynapseTable'
+import { SynapseTableProps } from '../SynapseTable'
 import TopLevelControls, {
   TopLevelControlsProps,
 } from '../SynapseTable/TopLevelControls/TopLevelControls'
@@ -42,6 +39,9 @@ import FilterAndView from './FilterAndView'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { Box } from '@mui/material'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
+
+export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
+export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
 
 type QueryWrapperPlotNavOwnProps = {
   sql: string
@@ -199,19 +199,18 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
 
                   return (
                     <Box
-                      className="QueryWrapperPlotNav"
+                      className={`QueryWrapperPlotNav ${
+                        queryVisualizationContext.showFacetFilter
+                          ? QUERY_FILTERS_EXPANDED_CSS
+                          : QUERY_FILTERS_COLLAPSED_CSS
+                      }`}
                       sx={{
                         '*': {
                           cursor: isLoadingNewBundle ? 'wait' : undefined,
                         },
                       }}
                     >
-                      <div
-                        className={`ErrorBannerWrapper ${
-                          // if there's a query error, show full width
-                          QUERY_FILTERS_COLLAPSED_CSS
-                        }`}
-                      >
+                      <div className={`ErrorBannerWrapper`}>
                         <QueryWrapperErrorBanner />
                       </div>
                       {isFullTextSearchEnabled ? (
@@ -226,15 +225,14 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                         />
                       )}
                       <SqlEditor />
-                      <DownloadConfirmation
-                        getLastQueryRequest={queryContext.getLastQueryRequest}
-                        topLevelControlsState={
-                          queryVisualizationContext.topLevelControlsState
-                        }
-                        setTopLevelControlsState={
-                          queryVisualizationContext.setTopLevelControlsState
-                        }
-                      />
+                      {queryVisualizationContext.showDownloadConfirmation && (
+                        <DownloadConfirmation
+                          getLastQueryRequest={queryContext.getLastQueryRequest}
+                          setShowDownloadConfirmation={
+                            queryVisualizationContext.setShowDownloadConfirmation
+                          }
+                        />
+                      )}
                       <SynapseErrorBoundary>
                         <TopLevelControls
                           showColumnSelection={tableConfiguration !== undefined}

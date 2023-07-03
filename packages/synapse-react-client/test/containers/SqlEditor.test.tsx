@@ -39,10 +39,8 @@ const defaultQueryContext: Partial<QueryContextType> = {
 }
 const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
   {
-    topLevelControlsState: {
-      showSqlEditor: true,
-      showFacetFilter: true,
-    },
+    showSqlEditor: true,
+    showFacetFilter: true,
   }
 
 describe('SqlEditor tests', () => {
@@ -61,10 +59,8 @@ describe('SqlEditor tests', () => {
     component.container.querySelector('.MuiCollapse-entered')
     renderComponent(defaultQueryContext, {
       ...defaultQueryVisualizationContext,
-      topLevelControlsState: {
-        showSqlEditor: false, // call under test
-        showFacetFilter: true,
-      },
+      showSqlEditor: false, // call under test
+      showFacetFilter: true,
     })
     component.container.querySelector('.MuiCollapse-hidden')
   })
