@@ -11,6 +11,7 @@ const data: SynapseConfig = {
     showExportToCavatica: true,
     cavaticaHelpURL: '/Limited%20Data%20Commons',
     visibleColumnCount: 10,
+    isRowSelectionVisible: true,
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,
