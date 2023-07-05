@@ -1,12 +1,12 @@
-name: "Deploy synapse-oauth-signin"
+name: 'Deploy synapse-oauth-signin'
 
 on:
   push:
     branches:
       - main
     paths:
-      - "packages/synapse-react-client/**"
-      - "apps/synapse-oauth-signin/**"
+      - 'packages/synapse-react-client/**'
+      - 'apps/synapse-oauth-signin/**'
 jobs:
   build-and-deploy:
     permissions:

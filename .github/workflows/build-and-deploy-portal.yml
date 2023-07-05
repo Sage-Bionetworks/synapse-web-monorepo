@@ -1,4 +1,4 @@
-name: "Build a portal and deploy to staging"
+name: 'Build a portal and deploy to staging'
 
 on:
   workflow_call:

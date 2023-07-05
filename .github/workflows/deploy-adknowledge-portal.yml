@@ -1,14 +1,14 @@
-name: "Deploy AD Knowledge portal"
+name: 'Deploy AD Knowledge portal'
 
 on:
   push:
     branches:
       - main
     paths:
-      - "apps/portals/**"
-      - "!apps/portals/src/configurations/**"
-      - "apps/portals/src/configurations/adknowledgeportal/**"
-      - "packages/synapse-react-client/**"
+      - 'apps/portals/**'
+      - '!apps/portals/src/configurations/**'
+      - 'apps/portals/src/configurations/adknowledgeportal/**'
+      - 'packages/synapse-react-client/**'
 
 jobs:
   deploy:
@@ -19,4 +19,3 @@ jobs:
     with:
       portal-name: adknowledgeportal
       branch-or-tag: main
-

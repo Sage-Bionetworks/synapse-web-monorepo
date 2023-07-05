@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   ManagedACTAccessRequirement,
   ResearchProject,
@@ -35,28 +35,17 @@ export type ResearchProjectFormProps = {
  */
 export default function ResearchProjectForm(props: ResearchProjectFormProps) {
   const { onSave, managedACTAccessRequirement, onHide } = props
-  const [projectLead, setProjectLead] = useState<string>('')
-  const [institution, setInstitution] = useState<string>('')
+  const [projectLead, setProjectLead] = useState<string | undefined>(undefined)
+  const [institution, setInstitution] = useState<string | undefined>(undefined)
   const [intendedDataUseStatement, setIntendedDataUseStatement] = useState<
     string | undefined
-  >(managedACTAccessRequirement.isIDURequired ? '' : undefined)
+  >(undefined)
   const [alert, setAlert] = useState<AlertProps | undefined>()
 
   const { data: existingResearchProject, isLoading: isLoadingInitialData } =
     useGetResearchProject(String(managedACTAccessRequirement.id), {
       // Infinite staleTime ensures this won't be refetched unless explicitly invalidated by the mutation
       staleTime: Infinity,
-      onSuccess: data => {
-        if (data?.projectLead) {
-          setProjectLead(data?.projectLead)
-        }
-        if (data?.institution) {
-          setInstitution(data?.institution)
-        }
-        if (data?.intendedDataUseStatement) {
-          setIntendedDataUseStatement(data?.intendedDataUseStatement)
-        }
-      },
       onError: e => {
         console.log(
           'RequestDataAccessStep1: Error getting research project data: ',
@@ -64,6 +53,31 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
         )
       },
     })
+
+  // Populate the form with existing data if it exists
+  useEffect(() => {
+    if (projectLead == undefined && existingResearchProject?.projectLead) {
+      setProjectLead(existingResearchProject?.projectLead)
+    }
+    if (institution == undefined && existingResearchProject?.institution) {
+      setInstitution(existingResearchProject?.institution)
+    }
+    if (
+      intendedDataUseStatement == undefined &&
+      existingResearchProject?.intendedDataUseStatement
+    ) {
+      setIntendedDataUseStatement(
+        existingResearchProject?.intendedDataUseStatement,
+      )
+    }
+  }, [
+    existingResearchProject?.institution,
+    existingResearchProject?.intendedDataUseStatement,
+    existingResearchProject?.projectLead,
+    institution,
+    intendedDataUseStatement,
+    projectLead,
+  ])
 
   const { mutate, isLoading: isLoadingUpdate } = useUpdateResearchProject({
     onSuccess: data => {

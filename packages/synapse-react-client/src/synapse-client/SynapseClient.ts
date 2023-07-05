@@ -286,6 +286,7 @@ import {
   SortBy,
   Direction,
   TeamSubmissionEligibility,
+  RestrictableObjectDescriptor,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
@@ -4882,6 +4883,26 @@ export const getDockerTag = (
   params.set('sortDirection', sortDirection)
   return doGet<PaginatedResults<DockerCommit>>(
     `/repo/v1/entity/${entityId}/dockerTag?${params.toString()}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/subjects.html
+export function getSubjects(
+  accessToken: string | undefined,
+  requirementId: string,
+  nextPageToken?: string,
+) {
+  const params = new URLSearchParams()
+  if (nextPageToken) {
+    params.set('nextPageToken', nextPageToken)
+  }
+  return doGet<{
+    subjects: RestrictableObjectDescriptor[]
+    nextPageToken?: string
+  }>(
+    `/repo/v1/accessRequirement/${requirementId}/subjects?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

@@ -172,6 +172,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
             gridArea: '1 / 2 / 4 / 4 !important',
           },
         }),
+        menu: base => ({ ...base, zIndex: 2 }),
       }}
       components={customSelectComponents}
       onChange={option => {

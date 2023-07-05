@@ -6,9 +6,9 @@ on:
       app-name:
         type: choice
         description: Which app to deploy
-        options: 
-        - SageAccountWeb
-        - synapse-oauth-signin
+        options:
+          - SageAccountWeb
+          - synapse-oauth-signin
       tag:
         type: string
         description: Which tag to deploy from
@@ -38,5 +38,3 @@ jobs:
       bucket-name: prod-signin-synapse-websitebucket-u91v422hx5bs
       cfdist-id: E1HPVCTTKTU4MN
       deployment-role-arn: arn:aws:iam::325565585839:role/sagebase-github-oidc-synapseprod-web-monorepo-infra
-    
-    

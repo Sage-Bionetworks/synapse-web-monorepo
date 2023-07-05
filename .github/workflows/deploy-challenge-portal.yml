@@ -1,14 +1,14 @@
-name: "Deploy Challenges Portal"
+name: 'Deploy Challenges Portal'
 
 on:
   push:
     branches:
       - main
     paths:
-      - "apps/portals/**"
-      - "!apps/portals/src/configurations/**"
-      - "apps/portals/src/configurations/challengeportal/**"
-      - "packages/synapse-react-client/**"
+      - 'apps/portals/**'
+      - '!apps/portals/src/configurations/**'
+      - 'apps/portals/src/configurations/challengeportal/**'
+      - 'packages/synapse-react-client/**'
 
 jobs:
   deploy:

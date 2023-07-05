@@ -1,12 +1,12 @@
-name: "Deploy sage-account-web"
+name: 'Deploy sage-account-web'
 
 on:
   push:
     branches:
       - main
     paths:
-      - "packages/synapse-react-client/**"
-      - "apps/SageAccountWeb/**"
+      - 'packages/synapse-react-client/**'
+      - 'apps/SageAccountWeb/**'
 jobs:
   build-and-deploy:
     permissions:
