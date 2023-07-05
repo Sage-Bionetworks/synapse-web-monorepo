@@ -11,12 +11,7 @@ import {
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { QueryVisualizationContextType } from './QueryVisualizationWrapper'
-import {
-  LockedColumn,
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-  QueryContextType,
-} from './QueryContext/QueryContext'
+import { LockedColumn, QueryContextType } from './QueryContext/QueryContext'
 import IconSvg from './IconSvg/IconSvg'
 import {
   isColumnMultiValueFunctionQueryFilter,
@@ -73,9 +68,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   componentDidUpdate(prevProps: InternalSearchProps) {
     if (
-      !prevProps.queryVisualizationContext?.topLevelControlsState
-        .showSearchBar &&
-      this.props.queryVisualizationContext?.topLevelControlsState.showSearchBar
+      !prevProps.queryVisualizationContext?.showSearchBar &&
+      this.props.queryVisualizationContext?.showSearchBar
     ) {
       this.setState({
         show: true,
@@ -220,10 +214,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       searchable,
       lockedColumn,
       queryContext: { data },
-      queryVisualizationContext: {
-        topLevelControlsState,
-        getColumnDisplayName,
-      },
+      queryVisualizationContext: { showSearchBar, getColumnDisplayName },
     } = this.props
     const { searchText, show, columnName } = this.state
     let searchColumns: string[] = []
@@ -246,16 +237,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         el => el !== lockedColumn?.columnName,
       )
     }
-    const showFacetFilter = topLevelControlsState?.showFacetFilter
     return (
-      <div
-        className={`QueryWrapperSearchInput ${
-          showFacetFilter
-            ? QUERY_FILTERS_EXPANDED_CSS
-            : QUERY_FILTERS_COLLAPSED_CSS
-        }`}
-      >
-        <Collapse in={topLevelControlsState?.showSearchBar}>
+      <div className={`QueryWrapperSearchInput`}>
+        <Collapse in={showSearchBar}>
           <form
             className="QueryWrapperSearchInput__searchbar"
             onSubmit={this.search}

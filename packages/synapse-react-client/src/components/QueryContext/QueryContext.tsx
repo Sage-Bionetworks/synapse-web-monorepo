@@ -11,9 +11,6 @@ import {
 import { ImmutableTableQueryResult } from '../useImmutableTableQuery'
 import { SetRequired } from 'type-fest'
 
-export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
-export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
-
 /*
   For details page: to lock a column (e.g. study, grant) so that the facet values and active filters
   will not appear on the details page. The facet name is given by the URL search param.

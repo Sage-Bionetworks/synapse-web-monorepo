@@ -3,11 +3,7 @@ import { Collapse } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { HelpPopover } from './HelpPopover'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
-import {
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-  useQueryContext,
-} from './QueryContext/QueryContext'
+import { useQueryContext } from './QueryContext/QueryContext'
 
 export type SqlEditorProps = {
   helpMessage?: string
@@ -24,9 +20,7 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
   helpUrl = helpLink,
 }: SqlEditorProps) => {
   const { executeQueryRequest, getLastQueryRequest } = useQueryContext()
-  const {
-    topLevelControlsState: { showSqlEditor, showFacetFilter },
-  } = useQueryVisualizationContext()
+  const { showSqlEditor } = useQueryVisualizationContext()
 
   const [sql, setSql] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -55,13 +49,7 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
   }
 
   return (
-    <div
-      className={`QueryWrapperSqlEditorInput ${
-        showFacetFilter
-          ? QUERY_FILTERS_EXPANDED_CSS
-          : QUERY_FILTERS_COLLAPSED_CSS
-      }`}
-    >
+    <div className={`QueryWrapperSqlEditorInput`}>
       <Collapse in={showSqlEditor} timeout={{ enter: 300, exit: 300 }}>
         <div className="QueryWrapperSqlEditorInput__helppopoverwrapper">
           <form

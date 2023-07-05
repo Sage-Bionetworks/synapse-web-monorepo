@@ -39,10 +39,8 @@ const queryContext: Partial<QueryContextType> = {
 }
 
 const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
-  topLevelControlsState: {
-    showSearchBar: true,
-    showFacetFilter: true,
-  },
+  showSearchBar: true,
+  showFacetFilter: true,
 }
 
 describe('FullTextSearch tests', () => {
@@ -59,10 +57,8 @@ describe('FullTextSearch tests', () => {
     component.container.querySelector('.MuiCollapse-entered')
 
     renderComponent(queryContext, {
-      topLevelControlsState: {
-        showSearchBar: false, // call under test
-        showFacetFilter: true,
-      },
+      showSearchBar: false, // call under test
+      showFacetFilter: true,
     })
 
     component.container.querySelector('.MuiCollapse-hidden')

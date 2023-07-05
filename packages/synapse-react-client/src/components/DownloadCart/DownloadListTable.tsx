@@ -346,7 +346,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                             />
                           </span>
                           <Tooltip
-                            title="Remove from Download List"
+                            title="Remove from Download Cart"
                             placement="left"
                             enterNextDelay={TOOLTIP_DELAY_SHOW}
                           >

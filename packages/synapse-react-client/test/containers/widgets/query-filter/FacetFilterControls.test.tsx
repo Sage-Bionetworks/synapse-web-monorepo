@@ -108,15 +108,11 @@ const defaultQueryContext: Partial<QueryContextType> = {
 
 const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
   {
-    topLevelControlsState: {
-      showColumnFilter: true,
-      showFacetFilter: true,
-      showFacetVisualization: true,
-      showSearchBar: false,
-      showDownloadConfirmation: false,
-      showColumnSelectDropdown: false,
-      showSqlEditor: false,
-    },
+    showFacetFilter: true,
+    showFacetVisualization: true,
+    showSearchBar: false,
+    showDownloadConfirmation: false,
+    showSqlEditor: false,
     getColumnDisplayName: jest.fn(col => col),
   }
 

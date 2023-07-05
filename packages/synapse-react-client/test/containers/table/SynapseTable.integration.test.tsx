@@ -127,15 +127,12 @@ const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
     'tumorType',
     'diseaseFocus',
   ],
-  topLevelControlsState: {
-    showColumnFilter: true,
-    showFacetFilter: true,
-    showFacetVisualization: true,
-    showSearchBar: false,
-    showDownloadConfirmation: false,
-    showColumnSelectDropdown: false,
-    showSqlEditor: false,
-  },
+  showFacetFilter: true,
+  showFacetVisualization: true,
+  showSearchBar: false,
+  showDownloadConfirmation: false,
+  showSqlEditor: false,
+
   getColumnDisplayName: jest.fn((col: string) => col),
 }
 

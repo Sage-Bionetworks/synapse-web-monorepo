@@ -13,26 +13,26 @@
     }
 
     // column (depends on if we are showing facet filters)
-    .isShowingFacetFilters {
-      &.FacetFilterControls {
+    &.isShowingFacetFilters {
+      .FacetFilterControls {
         grid-column: 1 / span 1;
         grid-row: 3 / span 100;
       }
-      &.download-confirmation,
-      &.FacetNav,
-      &.QueryWrapperSearchInput,
-      &.QueryWrapperSqlEditorInput,
-      &.ErrorBannerWrapper,
-      &.FilterAndView {
+      .download-confirmation,
+      .FacetNav,
+      .QueryWrapperSearchInput,
+      .QueryWrapperSqlEditorInput,
+      .ErrorBannerWrapper,
+      .FilterAndView {
         grid-column: 2 / span 1;
       }
 
-      &.TopLevelControls,
-      &.TotalQueryResults {
+      .TopLevelControls,
+      .TotalQueryResults {
         grid-column: 1 / span 2;
       }
 
-      &.TotalQueryResults {
+      .TotalQueryResults {
         margin-left: 0;
       }
     }
@@ -75,14 +75,14 @@
     grid-row: 9 / span 1;
   }
 
-  .isHidingFacetFilters {
-    &.FacetFilterControls {
+  &.isHidingFacetFilters {
+    .FacetFilterControls {
       grid-column: 1 / span 1;
       > * {
         display: none;
       }
     }
-    &.FilterAndView {
+    .FilterAndView {
       margin-top: 10px;
     }
   }

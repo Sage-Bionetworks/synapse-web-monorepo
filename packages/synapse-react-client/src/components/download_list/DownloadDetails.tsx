@@ -29,7 +29,7 @@ type State = {
 
 /**
  * Displays download information including number of files, size of download, and time to download.
- * Prefer to use {@link download_list_v2/DownloadDetails} instead, particularly when you have information about file packaging in/eligibility
+ * Prefer to use {@link ../DownloadCart/DownloadDetails} instead, particularly when you have information about file packaging in/eligibility
  * @param props
  * @returns
  */
@@ -77,7 +77,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         {isZeroFiles ? (
           <SkeletonInlineBlock width={50} />
         ) : (
-          <>{numFiles}&nbsp;files</>
+          <>{numFiles.toLocaleString()}&nbsp;files</>
         )}
       </span>
       {hasNumBytes && (

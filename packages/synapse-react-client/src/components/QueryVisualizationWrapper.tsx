@@ -15,12 +15,9 @@ import { unCamelCase } from '../utils/functions/unCamelCase'
 import { ColumnType, Row } from '@sage-bionetworks/synapse-types'
 import { getDisplayValue } from '../utils/functions/getDataFromFromStorage'
 import { isFileViewOrDataset } from './SynapseTable/SynapseTableUtils'
+import useMutuallyExclusiveState from '../utils/hooks/useMutuallyExclusiveState'
 
 export type QueryVisualizationContextType = {
-  topLevelControlsState: TopLevelControlsState
-  setTopLevelControlsState: React.Dispatch<
-    React.SetStateAction<TopLevelControlsState>
-  >
   columnsToShowInTable: string[]
   setColumnsToShowInTable: (newState: string[]) => void
   selectedRows: Row[]
@@ -44,6 +41,18 @@ export type QueryVisualizationContextType = {
    * Note that Synapse tables have no internal concept of a primary key.
    */
   rowSelectionPrimaryKey?: string[]
+  showFacetFilter: boolean
+  setShowFacetFilter: React.Dispatch<React.SetStateAction<boolean>>
+  showSearchBar: boolean
+  setShowSearchBar: React.Dispatch<React.SetStateAction<boolean>>
+  showDownloadConfirmation: boolean
+  setShowDownloadConfirmation: React.Dispatch<React.SetStateAction<boolean>>
+  showSqlEditor: boolean
+  setShowSqlEditor: React.Dispatch<React.SetStateAction<boolean>>
+  showCopyToClipboard: boolean
+  setShowCopyToClipboard: React.Dispatch<React.SetStateAction<boolean>>
+  showFacetVisualization: boolean
+  setShowFacetVisualization: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 /**
@@ -105,17 +114,6 @@ export type QueryVisualizationWrapperProps = {
   rowSelectionPrimaryKey?: string[]
 }
 
-export type TopLevelControlsState = {
-  showFacetVisualization: boolean
-  showFacetFilter?: boolean
-  showColumnFilter: boolean
-  showSearchBar: boolean
-  showDownloadConfirmation: boolean
-  showColumnSelectDropdown: boolean
-  showSqlEditor: boolean
-  showCopyToClipboard: boolean
-}
-
 /**
  * QueryVisualizationWrapper manages UI state for components that query tables in Synapse. That state can be accessed
  * or updated using QueryVisualizationContext. A QueryVisualizationWrapper must be used within a QueryWrapper.
@@ -127,6 +125,8 @@ export function QueryVisualizationWrapper(
     noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE,
     isRowSelectionVisible = false,
     columnAliases = {},
+    defaultShowSearchBar = false,
+    defaultShowFacetVisualization = true,
   } = props
 
   const {
@@ -142,31 +142,24 @@ export function QueryVisualizationWrapper(
     // If the primary key isn't specified on a file view/dataset, we can safely use the 'id' column
     rowSelectionPrimaryKey = ['id']
   }
+  const [showSqlEditor, setShowSqlEditor] = useState(false)
+  const [showFacetVisualization, setShowFacetVisualization] = useState(
+    defaultShowFacetVisualization,
+  )
+  const [showCopyToClipboard, setShowCopyToClipboard] = useState(true)
+  const [showFacetFilter, setShowFacetFilter] = useState(true)
 
-  const [topLevelControlsState, setTopLevelControlsState] =
-    useState<TopLevelControlsState>({
-      showColumnFilter: true,
-      showFacetFilter: true,
-      showFacetVisualization: props.defaultShowFacetVisualization ?? true,
-      showSearchBar: props.defaultShowSearchBar ?? false,
-      showDownloadConfirmation: false,
-      showColumnSelectDropdown: false,
-      showSqlEditor: false,
-      showCopyToClipboard: true,
-    })
+  // The search bar and download confirmation should not be shown at the same time.
+  const [
+    showSearchBar,
+    setShowSearchBar,
+    showDownloadConfirmation,
+    setShowDownloadConfirmation,
+  ] = useMutuallyExclusiveState(defaultShowSearchBar, false)
 
   const [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal] =
     useState<boolean>(false)
 
-  useEffect(() => {
-    if (!isFacetsAvailable) {
-      setTopLevelControlsState(state => ({
-        ...state,
-        showFacetFilter: false,
-        showFacetVisualization: false,
-      }))
-    }
-  }, [isFacetsAvailable])
   const [visibleColumns, setVisibleColumns] = useState<string[]>([])
   const [selectedRows, setSelectedRows] = useState<Row[]>([])
 
@@ -216,8 +209,6 @@ export function QueryVisualizationWrapper(
   }, [noContentPlaceholderType, hasResettableFilters])
 
   const context: QueryVisualizationContextType = {
-    topLevelControlsState,
-    setTopLevelControlsState,
     columnsToShowInTable: visibleColumns,
     setColumnsToShowInTable: setVisibleColumns,
     selectedRows,
@@ -232,6 +223,18 @@ export function QueryVisualizationWrapper(
     isShowingExportToCavaticaModal,
     setIsShowingExportToCavaticaModal,
     rowSelectionPrimaryKey,
+    showFacetFilter: isFacetsAvailable ? showFacetFilter : false,
+    setShowFacetFilter,
+    showSearchBar,
+    setShowSearchBar,
+    showDownloadConfirmation,
+    setShowDownloadConfirmation,
+    showSqlEditor,
+    setShowSqlEditor,
+    showFacetVisualization: isFacetsAvailable ? showFacetVisualization : false,
+    setShowFacetVisualization,
+    showCopyToClipboard,
+    setShowCopyToClipboard,
   }
   /**
    * Render the children without any formatting

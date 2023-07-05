@@ -10,14 +10,9 @@ import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { EntityType, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { AddToDownloadListRequest } from '@sage-bionetworks/synapse-types'
 import { FilesStatisticsResponse } from '@sage-bionetworks/synapse-types'
-import { TopLevelControlsState } from '../QueryVisualizationWrapper'
 import SignInButton from '../SignInButton'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import DownloadDetails from './DownloadDetails'
-import {
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-} from '../QueryContext/QueryContext'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -31,10 +26,7 @@ export type DownloadConfirmationProps = {
   fnClose?: () => void
   getLastQueryRequest?: () => QueryBundleRequest
   folderId?: string
-  topLevelControlsState?: TopLevelControlsState
-  setTopLevelControlsState?: React.Dispatch<
-    React.SetStateAction<TopLevelControlsState>
-  >
+  setShowDownloadConfirmation?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 // add files to download list
@@ -172,11 +164,10 @@ export const DownloadConfirmation: React.FunctionComponent<
   getLastQueryRequest,
   folderId,
   fnClose,
-  setTopLevelControlsState,
-  topLevelControlsState,
+  setShowDownloadConfirmation,
 }) => {
   const { accessToken, downloadCartPageUrl } = useSynapseContext()
-  const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
+  const showDownloadConfirmation = true
   const [status, setStatus] = useState<StatusEnum>(
     accessToken ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
   )
@@ -265,11 +256,8 @@ export const DownloadConfirmation: React.FunctionComponent<
   const onCancel = fnClose
     ? () => fnClose()
     : () => {
-        if (setTopLevelControlsState) {
-          setTopLevelControlsState(topLevelControlsState => ({
-            ...topLevelControlsState,
-            showDownloadConfirmation: false,
-          }))
+        if (setShowDownloadConfirmation) {
+          setShowDownloadConfirmation(false)
         }
       }
 
@@ -296,7 +284,6 @@ export const DownloadConfirmation: React.FunctionComponent<
     // go to the Download Cart Page
     window.location.href = downloadCartPageUrl
   }
-  const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
     <>
       <Alert
@@ -305,13 +292,7 @@ export const DownloadConfirmation: React.FunctionComponent<
         severity={StatusConstruct[status].severity}
         className={`download-confirmation ${
           showDownloadConfirmation ? '' : 'hidden'
-        }
-          ${
-            showFacetFilter
-              ? QUERY_FILTERS_EXPANDED_CSS
-              : QUERY_FILTERS_COLLAPSED_CSS
-          }
-        `}
+        }`}
         action={
           <>
             {status !== StatusEnum.PROCESSING && (

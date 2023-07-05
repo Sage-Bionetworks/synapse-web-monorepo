@@ -72,7 +72,7 @@ export const DownloadCartPage: React.FunctionComponent<
           <div className="grid">
             <h3 className="pageHeaderTitle">Your Download Cart</h3>
             <Tooltip
-              title="Immediately removes all items from your download list"
+              title="Immediately removes all items from your download cart"
               enterNextDelay={300}
               placement="right"
             >
@@ -291,7 +291,7 @@ export const DownloadCartPage: React.FunctionComponent<
           )}
           {data.numberOfFilesAvailableForDownload === 0 && (
             <div className="placeholder">
-              <div>Your Download List is currently empty.</div>
+              <div>Your Download Cart is currently empty.</div>
             </div>
           )}
         </div>
