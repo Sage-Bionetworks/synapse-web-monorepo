@@ -15,6 +15,7 @@ import { unCamelCase } from '../utils/functions/unCamelCase'
 import { ColumnType, Row } from '@sage-bionetworks/synapse-types'
 import { getDisplayValue } from '../utils/functions/getDataFromFromStorage'
 import { isFileViewOrDataset } from './SynapseTable/SynapseTableUtils'
+import useMutuallyExclusiveState from '../utils/hooks/useMutuallyExclusiveState'
 
 export type QueryVisualizationContextType = {
   columnsToShowInTable: string[]
@@ -141,9 +142,6 @@ export function QueryVisualizationWrapper(
     // If the primary key isn't specified on a file view/dataset, we can safely use the 'id' column
     rowSelectionPrimaryKey = ['id']
   }
-  const [showDownloadConfirmation, setShowDownloadConfirmation] =
-    useState(false)
-  const [showSearchBar, setShowSearchBar] = useState(defaultShowSearchBar)
   const [showSqlEditor, setShowSqlEditor] = useState(false)
   const [showFacetVisualization, setShowFacetVisualization] = useState(
     defaultShowFacetVisualization,
@@ -152,17 +150,12 @@ export function QueryVisualizationWrapper(
   const [showFacetFilter, setShowFacetFilter] = useState(true)
 
   // The search bar and download confirmation should not be shown at the same time.
-  // TODO: convert to reducer that handles this in one pass
-  useEffect(() => {
-    if (showSearchBar) {
-      setShowDownloadConfirmation(false)
-    }
-  }, [showSearchBar])
-  useEffect(() => {
-    if (showDownloadConfirmation) {
-      setShowSearchBar(false)
-    }
-  }, [showDownloadConfirmation])
+  const [
+    showSearchBar,
+    setShowSearchBar,
+    showDownloadConfirmation,
+    setShowDownloadConfirmation,
+  ] = useMutuallyExclusiveState(defaultShowSearchBar, false)
 
   const [isShowingExportToCavaticaModal, setIsShowingExportToCavaticaModal] =
     useState<boolean>(false)
