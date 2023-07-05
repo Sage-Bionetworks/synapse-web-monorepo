@@ -9,17 +9,36 @@ import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
+import { getValueFilter } from '../../utils/functions/QueryFilterUtils'
 
 export function TableQueryDownloadConfirmation() {
-  const { getLastQueryRequest } = useQueryContext()
-  const { setShowDownloadConfirmation } = useQueryVisualizationContext()
+  const { data, getLastQueryRequest } = useQueryContext()
+  const {
+    setShowDownloadConfirmation,
+    hasSelectedRows,
+    selectedRows,
+    rowSelectionPrimaryKey,
+  } = useQueryVisualizationContext()
   const queryBundleRequest = useMemo(() => {
     const requestCopy = getLastQueryRequest()
     requestCopy.partMask =
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
+
+    if (hasSelectedRows && rowSelectionPrimaryKey && data?.columnModels) {
+      requestCopy.query.additionalFilters = [
+        ...(requestCopy.query.additionalFilters || []),
+        getValueFilter(rowSelectionPrimaryKey, selectedRows, data.columnModels),
+      ]
+    }
     return requestCopy
-  }, [getLastQueryRequest])
+  }, [
+    data?.columnModels,
+    getLastQueryRequest,
+    hasSelectedRows,
+    rowSelectionPrimaryKey,
+    selectedRows,
+  ])
   const { downloadCartPageUrl } = useSynapseContext()
 
   function onClose() {

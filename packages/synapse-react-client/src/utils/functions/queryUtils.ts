@@ -8,12 +8,14 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   SelectColumn,
+  Table,
 } from '@sage-bionetworks/synapse-types'
 
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
 } from '../types/IsType'
+import { isDataset, isEntityView, isFileView } from './EntityTypeUtils'
 
 type PartialStateObject = {
   hasMoreData: boolean
@@ -149,4 +151,13 @@ export function hasResettableFilters(
     ).length > 0
 
   return hasFacetFilters || hasAdditionalFilters
+}
+
+export function canTableQueryBeAddedToDownloadList<T extends Table = Table>(
+  entity?: T,
+) {
+  return Boolean(
+    entity &&
+      ((isEntityView(entity) && isFileView(entity)) || isDataset(entity)),
+  )
 }

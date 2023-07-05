@@ -1,19 +1,16 @@
 import React from 'react'
 import { Dropdown } from 'react-bootstrap'
 import ModalDownload from '../../ModalDownload/ModalDownload'
-import {
-  isDataset,
-  isEntityView,
-  isFileView,
-} from '../../../utils/functions/EntityTypeUtils'
+import { isDataset } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import { Tooltip } from '@mui/material'
 import { useQueryContext } from '../../QueryContext/QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
-
-export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
+import { getNumberOfResultsToAddToDownloadListCopy } from '../TopLevelControls/TopLevelControlsUtils'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
 
 export type DownloadOptionsProps = {
   onDownloadFiles: () => void
@@ -30,7 +27,9 @@ export const DownloadOptions: React.FunctionComponent<
     entity,
     data: queryResultBundle,
     getLastQueryRequest,
+    hasResettableFilters,
   } = useQueryContext()
+  const { hasSelectedRows, selectedRows } = useQueryVisualizationContext()
   const queryBundleRequest = getLastQueryRequest()
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
@@ -38,9 +37,7 @@ export const DownloadOptions: React.FunctionComponent<
     React.useState(false)
   const { onDownloadFiles, darkTheme = true } = props
 
-  const isFileViewOrDataset =
-    entity &&
-    ((isEntityView(entity) && isFileView(entity)) || isDataset(entity))
+  const showAddQueryToDownloadList = canTableQueryBeAddedToDownloadList(entity)
 
   // SWC-5878 - Disable downloading a "Draft" dataset
   const disableDownload = entity && isDataset(entity) && entity.isLatestVersion
@@ -58,14 +55,7 @@ export const DownloadOptions: React.FunctionComponent<
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
         >
-          <Dropdown.Item
-            onClick={() => {
-              setShowExportMetadata(true)
-            }}
-          >
-            Export Table
-          </Dropdown.Item>
-          {isFileViewOrDataset && (
+          {showAddQueryToDownloadList && (
             <Tooltip
               title={
                 disableDownload
@@ -86,10 +76,23 @@ export const DownloadOptions: React.FunctionComponent<
                   accessToken ? onDownloadFiles() : setShowLoginModal(true)
                 }
               >
-                {DOWNLOAD_FILES_MENU_TEXT}
+                {getNumberOfResultsToAddToDownloadListCopy(
+                  hasResettableFilters,
+                  hasSelectedRows,
+                  selectedRows,
+                  queryResultBundle,
+                  'file',
+                )}
               </Dropdown.Item>
             </Tooltip>
           )}
+          <Dropdown.Item
+            onClick={() => {
+              setShowExportMetadata(true)
+            }}
+          >
+            Export Table
+          </Dropdown.Item>
           <Tooltip
             title={
               disableDownload

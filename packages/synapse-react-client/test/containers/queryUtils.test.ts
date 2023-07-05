@@ -1,18 +1,30 @@
 import { getNextPageOfData } from '../../src/utils/functions'
 import { SynapseConstants } from '../../src/utils'
 import syn16787123Json from '../../mocks/query/syn16787123.json'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import {
+  COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+  ColumnSingleValueFilterOperator,
+  ColumnTypeEnum,
+  ENTITY_VIEW_TYPE_MASK_FILE,
+  ENTITY_VIEW_TYPE_MASK_FOLDER,
+  FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+  FacetColumnResult,
+  FacetColumnResultValues,
+  Query,
+  QueryResultBundle,
+  SelectColumn,
+} from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
 import {
+  canTableQueryBeAddedToDownloadList,
+  hasResettableFilters,
   isFacetAvailable,
   isSingleNotSetValue,
 } from '../../src/utils/functions/queryUtils'
-import {
-  ColumnTypeEnum,
-  FacetColumnResult,
-  FacetColumnResultValues,
-  SelectColumn,
-} from '@sage-bionetworks/synapse-types'
+import { LockedColumn } from '../../src'
+import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
+import { mockFileViewEntity } from '../../mocks/entity/mockEntity'
+import mockDataset from '../../mocks/entity/mockDataset'
 
 describe('get next page of data', () => {
   const sql = 'SELECT * FROM syn16787123'
@@ -148,9 +160,139 @@ describe('facet support', () => {
     expect(isSingleNotSetValue(facet)).toEqual(false)
   })
 
+  describe('hasResettableFilters', function () {
+    it('does not have facet filters', () => {
+      const query: Query = {
+        sql: 'select * from syn123',
+        selectedFacets: undefined,
+      }
+      expect(hasResettableFilters(query)).toEqual(false)
+    })
+
+    it('only selectedFacet is a locked column', () => {
+      const query: Query = {
+        sql: 'select * from syn123',
+        selectedFacets: [
+          {
+            columnName: 'study',
+            concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+            facetValues: ['abc', 'def'],
+          },
+        ],
+      }
+      const lockedColumn: LockedColumn = {
+        columnName: 'study',
+        value: 'abc',
+      }
+      expect(hasResettableFilters(query, lockedColumn)).toEqual(false)
+    })
+
+    it('has a selectedFacet which is not locked', () => {
+      const query: Query = {
+        sql: 'select * from syn123',
+        selectedFacets: [
+          {
+            columnName: 'study',
+            concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+            facetValues: ['abc', 'def'],
+          },
+          {
+            columnName: 'category',
+            concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+            facetValues: ['abc', 'def'],
+          },
+        ],
+      }
+      const lockedColumn: LockedColumn = {
+        columnName: 'study',
+        value: 'abc',
+      }
+      expect(hasResettableFilters(query, lockedColumn)).toEqual(true)
+    })
+
+    it('only additionalFilter is locked', () => {
+      const query: Query = {
+        sql: 'select * from syn123',
+        additionalFilters: [
+          {
+            columnName: 'study',
+            operator: ColumnSingleValueFilterOperator.EQUAL,
+            values: ['abc'],
+            concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+          },
+        ],
+      }
+      const lockedColumn: LockedColumn = {
+        columnName: 'study',
+        value: 'abc',
+      }
+      expect(hasResettableFilters(query, lockedColumn)).toEqual(false)
+    })
+
+    it('has an additionalFilter which is not locked', () => {
+      const query: Query = {
+        sql: 'select * from syn123',
+        additionalFilters: [
+          {
+            columnName: 'study',
+            operator: ColumnSingleValueFilterOperator.EQUAL,
+            values: ['abc'],
+            concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+          },
+          {
+            columnName: 'category',
+            operator: ColumnSingleValueFilterOperator.EQUAL,
+            values: ['def'],
+            concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+          },
+        ],
+      }
+      const lockedColumn: LockedColumn = {
+        columnName: 'study',
+        value: 'abc',
+      }
+      expect(hasResettableFilters(query, lockedColumn)).toEqual(true)
+    })
+  })
+
   // it('facets are unavailable, but would be relevant to the resultset schema', () => {
   //   expect(isFacetCountInSyncWithRowData('select * from syn123')).toEqual(true)
   //   expect(isFacetCountInSyncWithRowData('select * from syn123 where a=\'b\'')).toEqual(true)
   //   expect(isFacetCountInSyncWithRowData('select count(id) from syn123 group by study')).toEqual(false)
   // })
+
+  describe('canTableQueryBeAddedToDownloadList', () => {
+    test('undefined entity', () => {
+      expect(canTableQueryBeAddedToDownloadList(undefined)).toEqual(false)
+    })
+
+    test('table entity query cannot be added to download list', () => {
+      expect(canTableQueryBeAddedToDownloadList(mockTableEntity)).toEqual(false)
+    })
+
+    test('entity view that includes non-files cannot be added to download list', () => {
+      expect(
+        canTableQueryBeAddedToDownloadList({
+          ...mockFileViewEntity,
+          viewTypeMask:
+            ENTITY_VIEW_TYPE_MASK_FILE & ENTITY_VIEW_TYPE_MASK_FOLDER,
+        }),
+      ).toEqual(false)
+    })
+
+    test('file-only view can be added to download list', () => {
+      expect(
+        canTableQueryBeAddedToDownloadList({
+          ...mockFileViewEntity,
+          viewTypeMask: ENTITY_VIEW_TYPE_MASK_FILE,
+        }),
+      ).toEqual(true)
+    })
+
+    test('dataset can be added to download list', () => {
+      expect(canTableQueryBeAddedToDownloadList(mockDataset.entity)).toEqual(
+        true,
+      )
+    })
+  })
 })
