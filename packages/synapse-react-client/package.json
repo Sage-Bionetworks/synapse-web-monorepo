@@ -57,12 +57,11 @@
     "dagre": "^0.8.5",
     "dayjs": "^1.11.6",
     "downshift": "^6.1.2",
-    "gh-pages": "^3.2.3",
     "history": "^5.3.0",
     "immutable": "4.1.0",
     "json-rules-engine": "^4.0.0",
     "katex": "0.11.1",
-    "lodash-es": ">=4.17.14",
+    "lodash-es": "^4.17.21",
     "markdown-it": "^12.3.2",
     "markdown-it-br": "^1.0.0",
     "markdown-it-center-text": "^1.0.4",
@@ -90,7 +89,6 @@
     "react-mailchimp-subscribe": "^2.1.0",
     "react-measure": "^2.1.2",
     "react-plotly.js": "^2.6.0",
-    "react-plotlyjs-ts": "^2.2.2",
     "react-popper": "^2.2.5",
     "react-query": "3.39.1",
     "react-reflex": "^4.0.0",
@@ -163,7 +161,7 @@
     "@types/jquery": "^3.5.14",
     "@types/json-schema": "^7.0.11",
     "@types/katex": "^0.10.2",
-    "@types/lodash-es": "4.17.3",
+    "@types/lodash-es": "4.17.7",
     "@types/markdown-it": "^12.0.1",
     "@types/node": "^18.16.12",
     "@types/plotly.js": "^2.12.18",
@@ -228,7 +226,7 @@
     "type-fest": "^3.7.2",
     "typescript": "5.0.4",
     "util": "^0.12.4",
-    "vite": "^4.3.4",
+    "vite": "^4.4.0",
     "vite-plugin-svgr": "^2.4.0",
     "weak-napi": "^2.0.2",
     "whatwg-fetch": "^3.6.2"
@@ -265,13 +263,6 @@
         ]
       }
     }
-  },
-  "resolutions": {
-    "js-yaml": "3.13.1",
-    "@types/react": "18.0.17",
-    "@types/webpack": "^5.28.0",
-    "trim": "^0.0.3",
-    "terser": "5.14.2"
   },
   "browser": {
     "timers": "timers-browserify"
