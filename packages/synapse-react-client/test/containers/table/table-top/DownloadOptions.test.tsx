@@ -6,14 +6,14 @@ import {
   QueryContextType,
 } from '../../../../src/components/QueryContext/QueryContext'
 import { DownloadOptions } from '../../../../src/components/SynapseTable/table-top'
-import {
-  DownloadOptionsProps,
-  DOWNLOAD_FILES_MENU_TEXT,
-} from '../../../../src/components/SynapseTable/table-top/DownloadOptions'
+import { DownloadOptionsProps } from '../../../../src/components/SynapseTable/table-top/DownloadOptions'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { mockFileViewEntity } from '../../../../mocks/entity/mockEntity'
 import mockDatasetData from '../../../../mocks/entity/mockDataset'
 import { mockTableEntity } from '../../../../mocks/entity/mockTableEntity'
+import { QueryVisualizationContextProvider } from '../../../../src/components/QueryVisualizationWrapper'
+
+const ADD_ALL_FILES_TO_DOWNLOAD_CART = 'Add All Files to Download Cart'
 
 const mockDatasetEntity = mockDatasetData.entity
 
@@ -23,7 +23,11 @@ function renderComponent(
 ) {
   return render(
     <QueryContextProvider queryContext={queryContext}>
-      <DownloadOptions {...props} />
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={{ hasSelectedRows: false, selectedRows: [] }}
+      >
+        <DownloadOptions {...props} />
+      </QueryVisualizationContextProvider>
     </QueryContextProvider>,
     { wrapper: createWrapper() },
   )
@@ -55,7 +59,7 @@ describe('Download Options tests', () => {
 
     // Download files should not be visible for tables
     expect(
-      screen.queryByRole('button', { name: DOWNLOAD_FILES_MENU_TEXT }),
+      screen.queryByRole('button', { name: ADD_ALL_FILES_TO_DOWNLOAD_CART }),
     ).not.toBeInTheDocument()
 
     // Verify that programmatic download isn't disabled
@@ -79,7 +83,7 @@ describe('Download Options tests', () => {
 
     await screen.findByRole('button', { name: 'Export Table' })
     const downloadFilesMenuItem = await screen.findByRole('button', {
-      name: DOWNLOAD_FILES_MENU_TEXT,
+      name: ADD_ALL_FILES_TO_DOWNLOAD_CART,
     })
     const programmaticOptionsMenuItem = await screen.findByRole('button', {
       name: 'Programmatic Options',
@@ -108,7 +112,7 @@ describe('Download Options tests', () => {
 
     // Download files should not be visible for project views
     expect(
-      screen.queryByRole('button', { name: DOWNLOAD_FILES_MENU_TEXT }),
+      screen.queryByRole('button', { name: ADD_ALL_FILES_TO_DOWNLOAD_CART }),
     ).not.toBeInTheDocument()
 
     // Verify that programmatic download isn't disabled
@@ -137,7 +141,7 @@ describe('Download Options tests', () => {
 
     await screen.findByRole('button', { name: 'Export Table' })
     const downloadFilesMenuItem = await screen.findByRole('button', {
-      name: DOWNLOAD_FILES_MENU_TEXT,
+      name: ADD_ALL_FILES_TO_DOWNLOAD_CART,
     })
     const programmaticOptionsMenuItem = await screen.findByRole('button', {
       name: 'Programmatic Options',
@@ -170,7 +174,7 @@ describe('Download Options tests', () => {
 
     await screen.findByRole('button', { name: 'Export Table' })
     const downloadFilesMenuItem = await screen.findByRole('button', {
-      name: DOWNLOAD_FILES_MENU_TEXT,
+      name: ADD_ALL_FILES_TO_DOWNLOAD_CART,
     })
     const programmaticOptionsMenuItem = await screen.findByRole('button', {
       name: 'Programmatic Options',

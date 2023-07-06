@@ -17,8 +17,6 @@ export type DownloadOptionsProps = {
   darkTheme?: boolean
 }
 
-export const DOWNLOAD_FILES_MENU_TEXT = 'Add To Download Cart'
-
 export const DownloadOptions: React.FunctionComponent<
   DownloadOptionsProps
 > = props => {
