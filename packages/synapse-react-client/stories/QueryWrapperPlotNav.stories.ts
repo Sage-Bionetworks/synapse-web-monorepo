@@ -286,7 +286,7 @@ export const TableWithNoDownloadAccess: Story = {
 
 export const Dataset: Story = {
   args: {
-    sql: 'SELECT * FROM syn26302617',
+    sql: 'SELECT * FROM syn51929910',
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,
