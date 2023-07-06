@@ -5,6 +5,10 @@ import DownloadDetails, {
 import { act, render, screen } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
+jest.mock('../../../src/utils/functions/testDownloadSpeed', () => ({
+  testDownloadSpeed: jest.fn().mockResolvedValue(20),
+}))
+
 const renderComponent = async (props: DownloadDetailsProps) => {
   return await act(async () => {
     render(<DownloadDetails {...props} />, {
@@ -14,8 +18,6 @@ const renderComponent = async (props: DownloadDetailsProps) => {
 }
 
 describe('it performs all functionality', () => {
-  const fn = require('../../../src/utils/functions/testDownloadSpeed')
-  fn.testDownloadSpeed = jest.fn().mockResolvedValue(20)
   const props: DownloadDetailsProps = {
     numFiles: 3,
     numBytes: 10,

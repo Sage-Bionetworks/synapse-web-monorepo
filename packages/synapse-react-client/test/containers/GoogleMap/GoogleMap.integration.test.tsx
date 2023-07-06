@@ -73,6 +73,7 @@ describe('GoogleMap tests', () => {
     initialize()
   })
   afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
 
   it('Fetches all data if no team ID is specified', async () => {
     const props: MapProps = {}
