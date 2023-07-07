@@ -40,7 +40,7 @@ export function getNumberOfResultsToInvokeAction(
  */
 export function getNumberOfResultsToInvokeActionCopy(
   hasResettableFilters: QueryContextType['hasResettableFilters'],
-  hasSelectedRows: QueryVisualizationContextType['isRowSelectionVisible'],
+  hasSelectedRows: QueryVisualizationContextType['hasSelectedRows'],
   selectedRows: QueryVisualizationContextType['selectedRows'],
   data: QueryContextType['data'],
   unitDescription: QueryVisualizationContextType['unitDescription'],

@@ -12,7 +12,7 @@ import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCav
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
-import { getValueFilter } from '../../utils/functions/QueryFilterUtils'
+import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 
 export type SendToCavaticaConfirmationDialogProps = {
   cavaticaHelpURL?: string
@@ -42,7 +42,11 @@ export default function SendToCavaticaConfirmationDialog(
     if (hasSelectedRows && rowSelectionPrimaryKey && data?.columnModels) {
       request.query.additionalFilters = [
         ...(request.query.additionalFilters || []),
-        getValueFilter(rowSelectionPrimaryKey, selectedRows, data.columnModels),
+        getPrimaryKeyINFilter(
+          rowSelectionPrimaryKey,
+          selectedRows,
+          data.columnModels,
+        ),
       ]
     }
     return request

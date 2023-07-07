@@ -144,7 +144,8 @@ export function QueryVisualizationWrapper(
     isFileViewOrDataset(entity) &&
     data?.columnModels?.find(cm => cm.name === 'id')
   ) {
-    // If the primary key isn't specified on a file view/dataset, we can safely use the 'id' column, if it is present
+    // If the primary key isn't specified via props, and this is a file view/dataset, we can safely use the 'id' column as primary key, if it is present
+    // Note: Synapse tables don't have an internal concept of a primary key
     rowSelectionPrimaryKey = ['id']
   }
   const [showSqlEditor, setShowSqlEditor] = useState(false)

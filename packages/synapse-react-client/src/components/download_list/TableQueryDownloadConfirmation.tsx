@@ -9,7 +9,7 @@ import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
-import { getValueFilter } from '../../utils/functions/QueryFilterUtils'
+import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 
 export function TableQueryDownloadConfirmation() {
   const { data, getLastQueryRequest } = useQueryContext()
@@ -28,7 +28,11 @@ export function TableQueryDownloadConfirmation() {
     if (hasSelectedRows && rowSelectionPrimaryKey && data?.columnModels) {
       requestCopy.query.additionalFilters = [
         ...(requestCopy.query.additionalFilters || []),
-        getValueFilter(rowSelectionPrimaryKey, selectedRows, data.columnModels),
+        getPrimaryKeyINFilter(
+          rowSelectionPrimaryKey,
+          selectedRows,
+          data.columnModels,
+        ),
       ]
     }
     return requestCopy

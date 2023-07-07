@@ -6,7 +6,7 @@ import {
   Row,
 } from '@sage-bionetworks/synapse-types'
 
-export function getValueFilter(
+export function getPrimaryKeyINFilter(
   primaryKeyColumnNames: string[],
   selectedRows: Row[],
   columnModels: ColumnModel[],
