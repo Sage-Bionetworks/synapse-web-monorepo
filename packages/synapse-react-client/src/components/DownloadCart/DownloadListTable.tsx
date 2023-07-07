@@ -322,12 +322,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                               associatedObjectType={
                                 FileHandleAssociateType.FileEntity
                               }
-                              {...(item.versionNumber !== null
-                                ? {
-                                    entityVersionNumber:
-                                      item.versionNumber.toString(),
-                                  }
-                                : {})}
+                              entityVersionNumber={item.versionNumber?.toString()}
                               displayFileName={false}
                               onClickCallback={(isExternalLink: boolean) => {
                                 // SWC-5944: remove the item from the download list, unless it's an external link.
