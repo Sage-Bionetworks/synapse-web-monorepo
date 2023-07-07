@@ -47,7 +47,7 @@ describe('DownloadConfirmationUI', () => {
 
     await screen.findByTestId(DOWNLOAD_DETAILS_TEST_ID)
     await screen.findByText(
-      /Would you like to add all files to the download cart?/i,
+      /Would you like to add these files to the download cart?/i,
     )
 
     expect(addButton).toBeInTheDocument()

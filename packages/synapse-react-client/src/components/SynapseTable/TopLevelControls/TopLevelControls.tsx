@@ -77,6 +77,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     columnsToShowInTable,
     isRowSelectionVisible,
     selectedRows,
+    hasSelectedRows,
     setColumnsToShowInTable,
     setIsShowingExportToCavaticaModal,
     unitDescription,
@@ -129,16 +130,16 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     }
     setColumnsToShowInTable(columnsToShowInTableCopy)
   }
-  const hasSelectedRows = isRowSelectionVisible && selectedRows.length > 0
+
   const numberOfResultsToInvokeAction = getNumberOfResultsToInvokeAction(
-    isRowSelectionVisible,
+    hasSelectedRows,
     selectedRows,
     data,
   )
   const numberOfResultsToInvokeActionAsText =
     getNumberOfResultsToInvokeActionCopy(
       hasResettableFilters,
-      isRowSelectionVisible,
+      hasSelectedRows,
       selectedRows,
       data,
       unitDescription,
