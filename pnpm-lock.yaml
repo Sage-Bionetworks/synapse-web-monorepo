@@ -889,8 +889,8 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6
       mui-one-time-password-input:
-        specifier: ^1.1.2
-        version: 1.1.2(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/material@5.13.7)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 1.1.0
+        version: 1.1.0(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/material@5.13.7)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0)
       plotly.js-basic-dist:
         specifier: ^2.24.3
         version: 2.24.3
@@ -14336,8 +14336,8 @@ packages:
       - supports-color
     dev: true
 
-  /mui-one-time-password-input@1.1.2(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/material@5.13.7)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-FNe2NX0++5u4roQne2baOXE8Ot9wc8vr09zwEUVJqZLNxs27Mts5x2jCeKbOwhMyg7tSmuYVrKzBudeuSJjLLw==}
+  /mui-one-time-password-input@1.1.0(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/material@5.13.7)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-PUAsTHZk9HNewrpqo2z+xlQqnI36ltzYvvVFFe2HLsRk42TNM3W0GM6oZXpCrhNLBE4rCcujU6PhICqyzDlsXw==}
     peerDependencies:
       '@emotion/react': ^11.5.0
       '@emotion/styled': ^11.3.0

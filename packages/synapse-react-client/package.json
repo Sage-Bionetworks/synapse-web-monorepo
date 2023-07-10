@@ -75,7 +75,7 @@
     "markdown-it-synapse-heading": "^1.0.1",
     "markdown-it-synapse-math": "^3.0.5",
     "markdown-it-synapse-table": "^1.0.6",
-    "mui-one-time-password-input": "^1.1.2",
+    "mui-one-time-password-input": "1.1.0",
     "plotly.js-basic-dist": "^2.24.3",
     "pluralize": "^8.0.0",
     "qrcode": "^1.5.3",

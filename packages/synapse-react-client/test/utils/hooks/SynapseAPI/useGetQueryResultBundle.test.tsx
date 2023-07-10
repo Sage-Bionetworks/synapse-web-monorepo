@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import SynapseClient from '../../../../src/synapse-client'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import useGetQueryResultBundle, {
@@ -122,12 +122,13 @@ describe('Hooks for fetching table query bundles using react-query', () => {
       .spyOn(SynapseClient, 'getQueryTableResults')
       .mockResolvedValue(expected)
 
-    const { result, waitFor } = renderHook(
-      () => useGetQueryResultBundle(request),
-      { wrapper: createWrapper() },
-    )
+    const { result } = renderHook(() => useGetQueryResultBundle(request), {
+      wrapper: createWrapper(),
+    })
 
-    await waitFor(() => result.current.isSuccess)
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true)
+    })
 
     expect(SynapseClient.getQueryTableResults).toBeCalledWith(
       request,
@@ -138,7 +139,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
 
   describe('useGetQueryResultBundleWithAsyncStatus', () => {
     it('Splits requests into rows and statistics', async () => {
-      const { result, waitFor } = renderHook(
+      const { result } = renderHook(
         () =>
           useGetQueryResultBundleWithAsyncStatus(
             request,
@@ -147,7 +148,9 @@ describe('Hooks for fetching table query bundles using react-query', () => {
           ),
         { wrapper: createWrapper() },
       )
-      await waitFor(() => result.current.isSuccess)
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
 
       // Verify that two separate requests to synapse are made
       // Request for results
@@ -187,7 +190,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
       request.partMask = BUNDLE_MASK_QUERY_RESULTS
       delete expected.queryCount
 
-      const { result, waitFor } = renderHook(
+      const { result } = renderHook(
         () =>
           useGetQueryResultBundleWithAsyncStatus(
             request,
@@ -196,7 +199,9 @@ describe('Hooks for fetching table query bundles using react-query', () => {
           ),
         { wrapper: createWrapper() },
       )
-      await waitFor(() => result.current.isSuccess)
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
 
       // Request for results
       expect(SynapseClient.getQueryTableAsyncJobResults).toHaveBeenCalledWith(
@@ -226,7 +231,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
       request.partMask = BUNDLE_MASK_QUERY_COUNT
       delete expected.queryResult
 
-      const { result, waitFor } = renderHook(
+      const { result } = renderHook(
         () =>
           useGetQueryResultBundleWithAsyncStatus(
             request,
@@ -235,7 +240,9 @@ describe('Hooks for fetching table query bundles using react-query', () => {
           ),
         { wrapper: createWrapper() },
       )
-      await waitFor(() => result.current.isSuccess)
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
 
       // Request for statistics
       expect(SynapseClient.getQueryTableAsyncJobResults).toHaveBeenCalledWith(
@@ -289,7 +296,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
         }
       })
 
-      const { result, waitFor } = renderHook(
+      const { result } = renderHook(
         () =>
           useGetQueryResultBundleWithAsyncStatus(
             request,
@@ -298,8 +305,8 @@ describe('Hooks for fetching table query bundles using react-query', () => {
           ),
         { wrapper: createWrapper() },
       )
-      await act(async () => {
-        await waitFor(() => result.current.isLoading)
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(true)
       })
 
       // Verify that two separate requests to synapse are made
@@ -334,7 +341,9 @@ describe('Hooks for fetching table query bundles using react-query', () => {
 
       // The job completes, so the data should be available
       resolvePromise()
-      await waitFor(() => result.current.isSuccess)
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
       expect(result.current.data).toBeDefined()
     })
     it('Fails if one query fails', async () => {
@@ -355,7 +364,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
         }
       })
 
-      const { result, waitFor } = renderHook(
+      const { result } = renderHook(
         () =>
           useGetQueryResultBundleWithAsyncStatus(
             request,
@@ -365,7 +374,9 @@ describe('Hooks for fetching table query bundles using react-query', () => {
         { wrapper: createWrapper() },
       )
 
-      await waitFor(() => result.current.isError)
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true)
+      })
       // The job fails, so the result should be in error
       expect(result.current.data).not.toBeDefined()
       expect(result.current.error).toBeInstanceOf(SynapseClientError)
