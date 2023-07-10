@@ -126,7 +126,7 @@ const routes: GenericRoute[] = [
                       'This study provides pharmacokinetic, imaging, and behavior data on the 5XFAD mouse model dosed with levetiracetam.',
                     facetsToPlot: ['dataType', 'assay'],
                     selectFacetColumnName: 'study',
-                    selectFacetColumnValue: 'Jax.IU.Pitt_Levetiracetam-5XFAD',
+                    selectFacetColumnValue: 'Jax.IU.Pitt_Levetiracetam_5XFAD',
                     detailsPagePath:
                       '/Explore/Studies/DetailsPage?Study=syn21784897',
                     unitDescription: 'Files',
