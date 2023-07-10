@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook } from '@testing-library/react'
 import React from 'react'
 import { QueryClient } from 'react-query'
 import useGetEntityBundle from '../../../../src/synapse-queries/entity/useEntityBundle'

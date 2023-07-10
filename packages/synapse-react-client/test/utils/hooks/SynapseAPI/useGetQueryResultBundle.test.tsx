@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react-hooks'
+import { renderHook, act } from '@testing-library/react'
 import SynapseClient from '../../../../src/synapse-client'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import useGetQueryResultBundle, {

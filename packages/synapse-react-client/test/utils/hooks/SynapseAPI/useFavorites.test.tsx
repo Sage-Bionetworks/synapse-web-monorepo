@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook } from '@testing-library/react'
 import React from 'react'
 import { useGetFavorites } from '../../../../src/synapse-queries/user/useFavorites'
 import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
