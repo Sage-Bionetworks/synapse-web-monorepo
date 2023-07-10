@@ -1,25 +1,16 @@
-import { renderHook } from '@testing-library/react'
-import React from 'react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import {
   useSearch,
   useSearchInfinite,
 } from '../../../../src/synapse-queries/search/useSearch'
-import { EntityType } from '@sage-bionetworks/synapse-types'
-import { SearchQuery, SearchResults } from '@sage-bionetworks/synapse-types'
+import {
+  EntityType,
+  SearchQuery,
+  SearchResults,
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
-import { QueryClient } from 'react-query'
-import { FullContextProvider } from '../../../../src/utils/context/FullContextProvider'
-
-const queryClient = new QueryClient()
-
-const wrapper = (props: { children: React.ReactChildren }) => (
-  <FullContextProvider
-    synapseContext={MOCK_CONTEXT_VALUE}
-    queryClient={queryClient}
-  >
-    {props.children}
-  </FullContextProvider>
-)
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import SynapseClient from '../../../../src/synapse-client'
 
 const request: SearchQuery = {
   queryTerm: ['search', 'terms'],
@@ -75,27 +66,25 @@ const page2: SearchResults = {
   facets: [],
 }
 
-const SynapseClient = require('../../../../src/synapse-client/SynapseClient')
-SynapseClient.searchEntities = jest.fn()
+const mockSearchEntities = jest.spyOn(SynapseClient, 'searchEntities')
 
 describe('basic functionality', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    queryClient.clear()
   })
 
   it('correctly calls SynapseClient', async () => {
-    SynapseClient.searchEntities.mockResolvedValueOnce(page1)
+    mockSearchEntities.mockResolvedValueOnce(page1)
 
-    const { result, waitFor } = renderHook(() => useSearch(request), {
-      wrapper,
+    const { result } = renderHook(() => useSearch(request), {
+      wrapper: createWrapper(),
     })
 
     await waitFor(() => {
-      return result.current.isSuccess
+      expect(result.current.isSuccess).toBe(true)
     })
 
-    expect(SynapseClient.searchEntities).toBeCalledWith(
+    expect(mockSearchEntities).toBeCalledWith(
       request,
       MOCK_CONTEXT_VALUE.accessToken,
     )
@@ -103,35 +92,36 @@ describe('basic functionality', () => {
   })
 
   it('works with infinite query pagination', async () => {
-    SynapseClient.searchEntities
-      .mockResolvedValueOnce(page1)
-      .mockResolvedValueOnce(page2)
+    mockSearchEntities.mockResolvedValueOnce(page1).mockResolvedValueOnce(page2)
 
-    const { result, waitFor } = renderHook(() => useSearchInfinite(request), {
-      wrapper,
+    const { result } = renderHook(() => useSearchInfinite(request), {
+      wrapper: createWrapper(),
     })
-    await waitFor(() => result.current.isSuccess)
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(SynapseClient.searchEntities).toBeCalledWith(
+    expect(mockSearchEntities).toBeCalledWith(
       request,
       MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(result.current.data?.pages[0]).toEqual(page1)
     expect(result.current.hasNextPage).toBe(true)
 
-    result.current.fetchNextPage()
+    act(() => {
+      result.current.fetchNextPage()
+    })
 
-    await waitFor(() => result.current.isFetching)
-    await waitFor(() => !result.current.isFetching)
+    await waitFor(() => {
+      expect(result.current.isFetching).toBe(false)
 
-    expect(SynapseClient.searchEntities).toBeCalledWith(
-      {
-        ...request,
-        start: 1,
-      },
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
-    expect(result.current.data?.pages[1]).toEqual(page2)
-    expect(result.current.hasNextPage).toBe(false)
+      expect(mockSearchEntities).toBeCalledWith(
+        {
+          ...request,
+          start: 1,
+        },
+        MOCK_CONTEXT_VALUE.accessToken,
+      )
+      expect(result.current.data?.pages[1]).toEqual(page2)
+      expect(result.current.hasNextPage).toBe(false)
+    })
   })
 })
