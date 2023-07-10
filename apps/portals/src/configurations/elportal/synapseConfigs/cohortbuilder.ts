@@ -35,6 +35,7 @@ const cohortbuilder: SynapseConfig = {
           )
           console.log(event)
         },
+        isRowSelectionSupported: true,
       },
     ],
     sql: cohortBuilderSql,

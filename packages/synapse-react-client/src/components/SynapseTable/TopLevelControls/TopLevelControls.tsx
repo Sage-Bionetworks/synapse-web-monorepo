@@ -1,7 +1,12 @@
 import { cloneDeep } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
 import { SQL_EDITOR } from '../../../utils/SynapseConstants'
-import { Query, QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
+import {
+  Query,
+  QueryBundleRequest,
+  QueryResultBundle,
+  Row,
+} from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
@@ -41,11 +46,13 @@ export type CustomControlCallbackData = {
   data: QueryResultBundle | undefined
   selectedRows: Row[] | undefined
   refresh: () => void
+  request?: QueryBundleRequest
 }
 
 export type CustomControl = {
   buttonText: string
   onClick: (event: CustomControlCallbackData) => void
+  isRowSelectionSupported: boolean
   classNames?: string
   icon?: React.ReactNode
 }
@@ -63,14 +70,22 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     showExportToCavatica = false,
     cavaticaHelpURL,
   } = props
-
+  const rowSelectionCustomControls = customControls?.filter(
+    control => control?.isRowSelectionSupported,
+  )
+  const topLevelCustomControls = customControls?.filter(
+    control => !control?.isRowSelectionSupported,
+  )
   const {
     data,
     entity,
     getInitQueryRequest,
     lockedColumn,
     hasResettableFilters,
+    getLastQueryRequest,
+    executeQueryRequest,
   } = useQueryContext()
+  useQueryContext()
 
   const {
     setShowSearchBar,
@@ -112,6 +127,11 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       ),
     }
   }, [getInitQueryRequest, lockedColumn?.columnName])
+
+  const refresh = () => {
+    // refresh the data
+    executeQueryRequest(getLastQueryRequest())
+  }
 
   /**
    * Handles the toggle of a column select, this will cause the table to
@@ -174,6 +194,29 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           )}
         </div>
         <div className="TopLevelControls__actions">
+          {topLevelCustomControls &&
+            topLevelCustomControls.map(customControl => {
+              return (
+                <>
+                  <Button
+                    variant="text"
+                    disabled={!numberOfResultsToInvokeAction}
+                    onClick={() =>
+                      customControl.onClick({
+                        data,
+                        selectedRows,
+                        refresh,
+                        request: getLastQueryRequest(),
+                      })
+                    }
+                    startIcon={customControl.icon}
+                  >
+                    {customControl.buttonText}
+                  </Button>
+                  <Divider orientation="vertical" variant="middle" flexItem />
+                </>
+              )
+            })}
           {showExportToCavatica && (
             <>
               <Tooltip
@@ -263,7 +306,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
 
           {isRowSelectionVisible && (
             <RowSelectionControls
-              customControls={customControls}
+              customControls={rowSelectionCustomControls}
               showExportToCavatica={showExportToCavatica}
             />
           )}

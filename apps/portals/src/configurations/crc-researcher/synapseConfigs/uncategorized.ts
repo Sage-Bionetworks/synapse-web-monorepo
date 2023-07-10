@@ -67,6 +67,7 @@ export const uncategorized: SynapseConfig = {
         onClick: (event) => {
           handleParticipantWorkflowChange(event, 'Potential')
         },
+        isRowSelectionSupported: true,
       },
       {
         buttonText: 'Hide from view',
@@ -74,6 +75,7 @@ export const uncategorized: SynapseConfig = {
         onClick: (event) => {
           handleParticipantWorkflowChange(event, 'Hidden')
         },
+        isRowSelectionSupported: true,
       },
     ],
   },

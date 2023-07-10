@@ -26,6 +26,7 @@ export const potential: SynapseConfig = {
         onClick: (event) => {
           handleParticipantWorkflowChange(event, 'Invited')
         },
+        isRowSelectionSupported: true,
       },
       {
         buttonText: 'Move to uncategorized',
@@ -33,6 +34,7 @@ export const potential: SynapseConfig = {
         onClick: (event) => {
           handleParticipantWorkflowChange(event, 'Uncategorized')
         },
+        isRowSelectionSupported: true,
       },
     ],
   },

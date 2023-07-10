@@ -52,7 +52,12 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
                 key={customControl.buttonText}
                 variant="contained"
                 onClick={() =>
-                  customControl.onClick({ data, selectedRows, refresh })
+                  customControl.onClick({
+                    data,
+                    selectedRows,
+                    refresh,
+                    request: getLastQueryRequest(),
+                  })
                 }
                 startIcon={customControl.icon}
               >
