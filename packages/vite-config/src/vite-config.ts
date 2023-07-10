@@ -1,6 +1,6 @@
 import react from '@vitejs/plugin-react'
 import { resolve, dirname } from 'path'
-import { defineConfig } from 'vite'
+import { defineConfig, UserConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-export default defineConfig({
+export const config: UserConfig = {
   server: { port: 3000 },
   build: {
     outDir: './build',
@@ -18,7 +18,6 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     rollupOptions: {
-      // @ts-ignore
       plugins: [rollupNodePolyFill()],
     },
   },
@@ -66,4 +65,6 @@ export default defineConfig({
       util: 'util',
     },
   },
-})
+}
+
+export default defineConfig(config)

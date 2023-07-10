@@ -13,11 +13,11 @@
     "./dist/vitest-config.js"
   ],
   "peerDependencies": {
-    "@vitest/coverage-c8": "^0.32.4",
-    "@vitest/ui": "^0.32.4",
-    "@vitest/utils": "^0.32.4",
+    "@vitest/coverage-c8": "^0.33.0",
+    "@vitest/ui": "^0.33.0",
+    "@vitest/utils": "^0.33.0",
     "vite": "^4.4.0",
-    "vitest": "^0.32.4"
+    "vitest": "^0.33.0"
   },
   "peerDependenciesMeta": {
     "vitest": {
@@ -37,11 +37,11 @@
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@vitejs/plugin-react": "^4.0.3",
-    "rollup-plugin-polyfill-node": "^0.10.2",
+    "rollup-plugin-polyfill-node": "^0.12.0",
     "svgo": "^3.0.2",
     "typescript": "5.1.6",
     "vite": "^4.4.2",
     "vite-plugin-svgr": "^2.4.0",
-    "vitest": "^0.32.4"
+    "vitest": "^0.33.0"
   }
 }

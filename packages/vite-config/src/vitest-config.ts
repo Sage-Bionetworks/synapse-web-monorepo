@@ -1,22 +1,19 @@
-import { defineConfig, mergeConfig } from 'vitest/config'
-import viteConfig from './vite-config.js'
-import type { UserConfig } from 'vite'
-export default mergeConfig(
-  viteConfig as UserConfig,
-  defineConfig({
-    optimizeDeps: {
-      exclude: ['vitest/utils'],
-      include: ['@vitest/utils', 'vitest/browser'],
+import { mergeConfig } from 'vitest/config'
+import { config } from './vite-config.js'
+
+export default mergeConfig(config, {
+  optimizeDeps: {
+    exclude: ['vitest/utils'],
+    include: ['@vitest/utils', 'vitest/browser'],
+  },
+  test: {
+    environment: 'jsdom',
+    reporters: ['default', 'html'],
+    outputFile: { html: './coverage/report/index.html' },
+    coverage: {
+      provider: 'c8',
+      reporter: ['text-summary', 'html-spa'],
+      reportsDirectory: './coverage/cov',
     },
-    test: {
-      environment: 'jsdom',
-      reporters: ['default', 'html'],
-      outputFile: { html: './coverage/report/index.html' },
-      coverage: {
-        provider: 'c8',
-        reporter: ['text-summary', 'html-spa'],
-        reportsDirectory: './coverage/cov',
-      },
-    },
-  }) as UserConfig,
-)
+  },
+})
