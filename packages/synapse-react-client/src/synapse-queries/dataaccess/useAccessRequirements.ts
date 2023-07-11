@@ -158,6 +158,7 @@ export function useCreateLockAccessRequirement(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
+      return
     },
   })
 }
@@ -237,6 +238,7 @@ export function useUpdateResearchProject(
         if (options?.onSuccess) {
           return options.onSuccess(data, variables, ctx)
         }
+        return
       },
     },
   )
@@ -285,6 +287,7 @@ export function useUpdateDataAccessRequest(
         if (options?.onSuccess) {
           return options.onSuccess(data, variables, ctx)
         }
+        return
       },
     },
   )
@@ -315,6 +318,7 @@ export function useCreateAccessApproval(
         if (options?.onSuccess) {
           return options.onSuccess(data, variables, ctx)
         }
+        return
       },
     },
   )
@@ -350,6 +354,7 @@ export function useCancelDataAccessRequest(
         if (options?.onSuccess) {
           return options.onSuccess(data, variables, ctx)
         }
+        return
       },
     },
   )
