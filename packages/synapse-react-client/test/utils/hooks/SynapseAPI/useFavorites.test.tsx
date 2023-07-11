@@ -1,9 +1,22 @@
-import { renderHook, waitFor } from '@testing-library/react'
+import { renderHook } from '@testing-library/react-hooks'
+import React from 'react'
 import { useGetFavorites } from '../../../../src/synapse-queries/user/useFavorites'
 import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
+import { QueryClient } from 'react-query'
+import { SynapseContextProvider } from '../../../../src/utils/context/SynapseContext'
 import SynapseClient from '../../../../src/synapse-client'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import FullContextProvider from '../../../../src/utils/context/FullContextProvider'
+const queryClient = new QueryClient()
+
+const wrapper = (props: { children: React.ReactChildren }) => (
+  <FullContextProvider
+    synapseContext={MOCK_CONTEXT_VALUE}
+    queryClient={queryClient}
+  >
+    {props.children}
+  </FullContextProvider>
+)
 
 const expected: PaginatedResults<EntityHeader> = {
   results: [
@@ -28,12 +41,14 @@ const mockGetUserFavorites = jest
   .mockResolvedValue(expected)
 
 describe('useFavorites functionality', () => {
-  it('correctly calls SynapseClient', async () => {
-    const { result } = renderHook(() => useGetFavorites(), {
-      wrapper: createWrapper(),
-    })
+  beforeEach(() => {
+    queryClient.clear()
+  })
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+  it('correctly calls SynapseClient', async () => {
+    const { result, waitFor } = renderHook(() => useGetFavorites(), { wrapper })
+
+    await waitFor(() => result.current.isSuccess)
 
     expect(mockGetUserFavorites).toBeCalledWith(
       MOCK_CONTEXT_VALUE.accessToken,

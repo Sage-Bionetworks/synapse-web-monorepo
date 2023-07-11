@@ -6,7 +6,7 @@ import defaultMuiThemeOptions from './DefaultTheme'
 import type { PartialDeep } from 'type-fest'
 
 export function mergeTheme(
-  themeOverrides: ThemeOptions | PartialDeep<ThemeOptions>,
+  themeOverrides: PartialDeep<ThemeOptions>,
 ): ThemeOptions {
   // TODO: Handle merging color palettes where an entire palette can be generated from a single base color.
   return deepmerge(defaultMuiThemeOptions, themeOverrides)
