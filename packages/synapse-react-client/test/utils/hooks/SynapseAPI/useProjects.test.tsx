@@ -1,5 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks'
-import React from 'react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import {
   useGetProjects,
   useGetProjectsInfinite,
@@ -10,20 +9,8 @@ import {
   ProjectHeaderList,
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
-import { QueryClient } from 'react-query'
-import { SynapseContextProvider } from '../../../../src/utils/context/SynapseContext'
-import FullContextProvider from '../../../../src/utils/context/FullContextProvider'
-
-const queryClient = new QueryClient()
-
-const wrapper = (props: { children: React.ReactChildren }) => (
-  <FullContextProvider
-    synapseContext={MOCK_CONTEXT_VALUE}
-    queryClient={queryClient}
-  >
-    {props.children}
-  </FullContextProvider>
-)
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import SynapseClient from '../../../../src/synapse-client'
 
 const request: EntityChildrenRequest = {
   parentId: 'syn123',
@@ -56,23 +43,19 @@ const page2: ProjectHeaderList = {
   nextPageToken: null,
 }
 
-const SynapseClient = require('../../../../src/synapse-client/SynapseClient')
-SynapseClient.getMyProjects = jest.fn()
+const mockGetMyProjects = jest.spyOn(SynapseClient, 'getMyProjects')
 
 describe('basic functionality', () => {
-  beforeEach(() => {
-    queryClient.clear()
-  })
   it('correctly calls SynapseClient', async () => {
-    SynapseClient.getMyProjects.mockResolvedValueOnce(page1)
+    mockGetMyProjects.mockResolvedValueOnce(page1)
 
-    const { result, waitFor } = renderHook(() => useGetProjects(request), {
-      wrapper,
+    const { result } = renderHook(() => useGetProjects(request), {
+      wrapper: createWrapper(),
     })
 
-    await waitFor(() => result.current.isSuccess)
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(
+    expect(mockGetMyProjects).toBeCalledWith(
       MOCK_CONTEXT_VALUE.accessToken,
       request,
     )
@@ -80,37 +63,34 @@ describe('basic functionality', () => {
   })
 
   it('works with infinite query pagination', async () => {
-    SynapseClient.getMyProjects
-      .mockResolvedValueOnce(page1)
-      .mockResolvedValueOnce(page2)
+    mockGetMyProjects.mockResolvedValueOnce(page1).mockResolvedValueOnce(page2)
 
-    const { result, waitFor } = renderHook(
-      () => useGetProjectsInfinite(request),
-      { wrapper },
-    )
+    const { result } = renderHook(() => useGetProjectsInfinite(request), {
+      wrapper: createWrapper(),
+    })
 
-    await waitFor(() => result.current.isSuccess)
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(
+    expect(mockGetMyProjects).toBeCalledWith(
       MOCK_CONTEXT_VALUE.accessToken,
       request,
     )
     expect(result.current.data?.pages[0]).toEqual(page1)
     expect(result.current.hasNextPage).toBe(true)
 
-    result.current.fetchNextPage()
+    act(() => {
+      result.current.fetchNextPage()
+    })
 
-    await waitFor(() => result.current.isFetching)
-    await waitFor(() => !result.current.isFetching)
+    await waitFor(() => {
+      expect(result.current.isFetching).toBe(false)
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(
-      MOCK_CONTEXT_VALUE.accessToken,
-      {
+      expect(mockGetMyProjects).toBeCalledWith(MOCK_CONTEXT_VALUE.accessToken, {
         ...request,
         nextPageToken: page1.nextPageToken,
-      },
-    )
-    expect(result.current.data?.pages[1]).toEqual(page2)
-    expect(result.current.hasNextPage).toBe(false)
+      })
+      expect(result.current.data?.pages[1]).toEqual(page2)
+      expect(result.current.hasNextPage).toBe(false)
+    })
   })
 })
