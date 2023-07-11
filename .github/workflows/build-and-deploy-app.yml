@@ -40,7 +40,7 @@ jobs:
           ref: ${{ inputs.branch-or-tag }}
       - uses: ./.github/actions/pnpm-setup-action
       - name: build
-        run: pnpm nx run ${ inputs.app-name }:build
+        run: pnpm nx run ${{ inputs.app-name }}:build
       - name: Assume AWS Role
         uses: aws-actions/configure-aws-credentials@v2
         with:
