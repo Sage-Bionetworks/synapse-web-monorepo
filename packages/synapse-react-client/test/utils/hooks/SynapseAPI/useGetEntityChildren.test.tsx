@@ -1,13 +1,13 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
 import {
-  useGetProjects,
-  useGetProjectsInfinite,
-} from '../../../../src/synapse-queries/user/useProjects'
+  useGetEntityChildren,
+  useGetEntityChildrenInfinite,
+} from '../../../../src/synapse-queries/entity/useGetEntityChildren'
 import {
   EntityChildrenRequest,
+  EntityChildrenResponse,
   EntityType,
-  ProjectHeaderList,
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
@@ -28,72 +28,86 @@ const wrapper = (props: { children: React.ReactChildren }) => (
 const request: EntityChildrenRequest = {
   parentId: 'syn123',
   includeTypes: [EntityType.FILE],
+  includeTotalChildCount: true,
 }
 
-const page1: ProjectHeaderList = {
-  results: [
+const page1: EntityChildrenResponse = {
+  page: [
     {
       id: 'syn123',
-      name: 'Project 1',
+      name: 'Child 1',
+      type: 'org.sagebionetworks.repo.model.FileEntity',
+      versionNumber: 1,
+      versionLabel: '1',
+      benefactorId: 122,
+      createdOn: 'today',
       modifiedOn: 'earlier',
-      lastActivity: 'last activity',
-      modifiedBy: 100000,
+      createdBy: 'me',
+      modifiedBy: 'you',
     },
   ],
+  totalChildCount: 2,
   nextPageToken: 'token',
 }
 
-const page2: ProjectHeaderList = {
-  results: [
+const page2: EntityChildrenResponse = {
+  page: [
     {
-      id: 'syn321',
-      name: 'Project 2',
+      id: 'syn124',
+      name: 'Child 2',
+      type: 'org.sagebionetworks.repo.model.FileEntity',
+      versionNumber: 1,
+      versionLabel: '1',
+      benefactorId: 122,
+      createdOn: 'today',
       modifiedOn: 'earlier',
-      lastActivity: 'last activity',
-      modifiedBy: 100000,
+      createdBy: 'me',
+      modifiedBy: 'you',
     },
   ],
   nextPageToken: null,
 }
 
 const SynapseClient = require('../../../../src/synapse-client/SynapseClient')
-SynapseClient.getMyProjects = jest.fn()
+SynapseClient.getEntityChildren = jest.fn()
 
 describe('basic functionality', () => {
   beforeEach(() => {
     queryClient.clear()
   })
   it('correctly calls SynapseClient', async () => {
-    SynapseClient.getMyProjects.mockResolvedValueOnce(page1)
-
-    const { result, waitFor } = renderHook(() => useGetProjects(request), {
-      wrapper,
-    })
-
-    await waitFor(() => result.current.isSuccess)
-
-    expect(SynapseClient.getMyProjects).toBeCalledWith(
-      MOCK_CONTEXT_VALUE.accessToken,
-      request,
-    )
-    expect(result.current.data).toEqual(page1)
-  })
-
-  it('works with infinite query pagination', async () => {
-    SynapseClient.getMyProjects
-      .mockResolvedValueOnce(page1)
-      .mockResolvedValueOnce(page2)
+    SynapseClient.getEntityChildren.mockResolvedValueOnce(page1)
 
     const { result, waitFor } = renderHook(
-      () => useGetProjectsInfinite(request),
+      () => useGetEntityChildren(request),
       { wrapper },
     )
 
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(
-      MOCK_CONTEXT_VALUE.accessToken,
+    expect(SynapseClient.getEntityChildren).toBeCalledWith(
       request,
+      MOCK_CONTEXT_VALUE.accessToken,
+    )
+    expect(result.current.data).toEqual(page1)
+  })
+
+  it('works with infinite query pagination', async () => {
+    SynapseClient.getEntityChildren
+      .mockResolvedValueOnce(page1)
+      .mockResolvedValueOnce(page2)
+    const controller = new AbortController()
+
+    const { result, waitFor } = renderHook(
+      () => useGetEntityChildrenInfinite(request),
+      { wrapper },
+    )
+
+    await waitFor(() => result.current.isSuccess)
+
+    expect(SynapseClient.getEntityChildren).toBeCalledWith(
+      request,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(result.current.data?.pages[0]).toEqual(page1)
     expect(result.current.hasNextPage).toBe(true)
@@ -103,12 +117,14 @@ describe('basic functionality', () => {
     await waitFor(() => result.current.isFetching)
     await waitFor(() => !result.current.isFetching)
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(
-      MOCK_CONTEXT_VALUE.accessToken,
+    expect(SynapseClient.getEntityChildren).toBeCalledWith(
       {
         ...request,
+        includeTotalChildCount: false,
         nextPageToken: page1.nextPageToken,
       },
+      MOCK_CONTEXT_VALUE.accessToken,
+      controller.signal,
     )
     expect(result.current.data?.pages[1]).toEqual(page2)
     expect(result.current.hasNextPage).toBe(false)
