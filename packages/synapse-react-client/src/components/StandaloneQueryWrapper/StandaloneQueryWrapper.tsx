@@ -46,6 +46,7 @@ type StandaloneQueryWrapperOwnProps = {
     | 'columnAliases'
     | 'noContentPlaceholderType'
     | 'showLastUpdatedOn'
+    | 'additionalFiltersLocalStorageKey'
   >
 
 export type StandaloneQueryWrapperProps = Partial<
@@ -97,6 +98,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
     unitDescription = 'Results',
     rgbIndex,
     showLastUpdatedOn,
+    additionalFiltersLocalStorageKey,
     noContentPlaceholderType = showTopLevelControls
       ? NoContentPlaceholderType.INTERACTIVE
       : NoContentPlaceholderType.STATIC,
@@ -106,7 +108,11 @@ const StandaloneQueryWrapper: React.FunctionComponent<
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
   const entityId = parseEntityIdFromSqlStatement(sql)
   derivedQueryRequestFromSearchParams.query.additionalFilters =
-    getAdditionalFilters(entityId, searchParams, sqlOperator)
+    getAdditionalFilters(
+      additionalFiltersLocalStorageKey ?? entityId,
+      searchParams,
+      sqlOperator,
+    )
 
   const synapseContext = useSynapseContext()
 

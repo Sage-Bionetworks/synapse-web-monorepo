@@ -138,6 +138,7 @@ export type CardContainerLogicProps = {
     | 'unitDescription'
     | 'columnAliases'
     | 'noContentPlaceholderType'
+    | 'additionalFiltersLocalStorageKey'
   >
 
 /**
@@ -146,7 +147,7 @@ export type CardContainerLogicProps = {
 export const CardContainerLogic = (props: CardContainerLogicProps) => {
   const entityId = parseEntityIdFromSqlStatement(props.sql)
   const queryFilters = getAdditionalFilters(
-    entityId,
+    props.additionalFiltersLocalStorageKey ?? entityId,
     props.searchParams,
     props.sqlOperator,
   )

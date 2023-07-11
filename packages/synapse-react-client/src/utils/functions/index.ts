@@ -4,6 +4,7 @@ import {
   parseEntityIdFromSqlStatement,
   resultToJson,
   getIgnoredQueryFilterSearchParamKey,
+  QUERY_FILTERS_LOCAL_STORAGE_KEY,
 } from './SqlFunctions'
 import { hex2ascii } from './StringUtils'
 import type { SQLOperator } from './SqlFunctions'
@@ -16,4 +17,5 @@ export {
   resultToJson,
   hex2ascii,
   SQLOperator,
+  QUERY_FILTERS_LOCAL_STORAGE_KEY,
 }

@@ -80,6 +80,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'isRowSelectionVisible'
     | 'unitDescription'
     | 'rowSelectionPrimaryKey'
+    | 'additionalFiltersLocalStorageKey'
   >
 
 export type SearchParams = {
@@ -122,11 +123,12 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     isRowSelectionVisible,
     unitDescription,
     rowSelectionPrimaryKey,
+    additionalFiltersLocalStorageKey,
   } = props
 
   const entityId = parseEntityIdFromSqlStatement(sql)
   const additionalFilters = getAdditionalFilters(
-    entityId,
+    additionalFiltersLocalStorageKey ?? entityId,
     searchParams,
     sqlOperator,
   )
