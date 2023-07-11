@@ -1,6 +1,6 @@
 import { SynapseConfig } from 'types/portal-config'
 import { cohortBuilderSql, defaultSearchConfiguration } from '../resources'
-import { displayToast, SynapseUtilityFunctions } from 'synapse-react-client'
+import { SynapseUtilityFunctions } from 'synapse-react-client'
 import {
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
