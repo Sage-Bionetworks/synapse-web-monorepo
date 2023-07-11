@@ -14,7 +14,7 @@ jobs:
       contents: read
     uses: ./.github/workflows/build-and-deploy-app.yml
     with:
-      app-name: sage-account-web
+      app-name: SageAccountWeb
       branch-or-tag: main
       bucket-name: staging.accounts.sagebionetworks.org
       cfdist-id: EY52HOUGKDP1F
