@@ -25,6 +25,7 @@ export const config: UserConfig = {
     react(),
     svgr({
       svgrOptions: {
+        plugins: ['@svgr/plugin-jsx'],
         ref: true,
       },
     }),
