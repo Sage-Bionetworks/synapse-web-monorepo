@@ -46,7 +46,7 @@ export type Control = {
 export type CustomControlCallbackData = {
   data: QueryResultBundle | undefined
   selectedRows: Row[] | undefined
-  refresh?: () => void
+  refresh: () => void
   request?: QueryBundleRequest
 }
 
@@ -159,6 +159,11 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       data,
       unitDescription,
     )
+
+  const refresh = () => {
+    if (remount) remount()
+  }
+
   return (
     <div className={`TopLevelControls`} data-testid="TopLevelControls">
       <div>
@@ -200,7 +205,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                       customControl.onClick({
                         data,
                         selectedRows,
-                        refresh: remount,
+                        refresh,
                         request: getLastQueryRequest(),
                       })
                     }
