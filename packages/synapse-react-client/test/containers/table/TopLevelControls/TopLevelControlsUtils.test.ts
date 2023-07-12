@@ -3,6 +3,7 @@ import {
   getNumberOfResultsToInvokeAction,
   getNumberOfResultsToInvokeActionCopy,
 } from '../../../../src/components/SynapseTable/TopLevelControls/TopLevelControlsUtils'
+import { CustomControl } from '../../../../src/components/SynapseTable/TopLevelControls/TopLevelControls'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 
 describe('TopLevelControlsUtils', () => {

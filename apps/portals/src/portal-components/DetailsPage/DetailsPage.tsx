@@ -109,14 +109,20 @@ function HeadlineWithLink(props: { title: string; id: string }) {
  * @extends {React.Component<DetailsPageProps, State>}
  */
 export default function DetailsPage(props: DetailsPageProps) {
-  const { sql, searchParams = {}, sqlOperator, showMenu = true } = props
+  const {
+    sql,
+    searchParams = {},
+    sqlOperator,
+    showMenu = true,
+    additionalFiltersLocalStorageKey,
+  } = props
 
   useScrollOnMount()
 
   const queryBundleRequest = React.useMemo(() => {
     const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
     const additionalFilters = SynapseUtilityFunctions.getAdditionalFilters(
-      entityId,
+      additionalFiltersLocalStorageKey ?? entityId,
       searchParams,
       sqlOperator,
     )

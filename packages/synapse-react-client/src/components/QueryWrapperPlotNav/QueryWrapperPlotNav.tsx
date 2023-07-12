@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { SynapseConstants } from '../../utils'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
 import {
@@ -80,6 +80,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'isRowSelectionVisible'
     | 'unitDescription'
     | 'rowSelectionPrimaryKey'
+    | 'additionalFiltersLocalStorageKey'
   >
 
 export type SearchParams = {
@@ -122,11 +123,12 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     isRowSelectionVisible,
     unitDescription,
     rowSelectionPrimaryKey,
+    additionalFiltersLocalStorageKey,
   } = props
 
   const entityId = parseEntityIdFromSqlStatement(sql)
   const additionalFilters = getAdditionalFilters(
-    entityId,
+    additionalFiltersLocalStorageKey ?? entityId,
     searchParams,
     sqlOperator,
   )
@@ -140,6 +142,10 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
         offset: 0,
       }
 
+  const [componentKey, setComponentKey] = useState(1)
+  const remount = () => {
+    setComponentKey(componentKey + 1)
+  }
   const { data: entity } = useGetEntity(entityId)
   const isFullTextSearchEnabled =
     entity && isTable(entity) && entity.isSearchEnabled
@@ -162,7 +168,11 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     : InfiniteQueryWrapper
 
   return (
-    <QueryWrapper {...props} initQueryRequest={initQueryRequest}>
+    <QueryWrapper
+      {...props}
+      initQueryRequest={initQueryRequest}
+      key={componentKey}
+    >
       <QueryVisualizationWrapper
         unitDescription={unitDescription}
         rowSelectionPrimaryKey={rowSelectionPrimaryKey}
@@ -240,6 +250,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                           showExportToCavatica={showExportToCavatica}
                           cavaticaHelpURL={cavaticaHelpURL}
                           customControls={customControls}
+                          remount={remount}
                         />
                       </SynapseErrorBoundary>
                       {isFaceted && (
