@@ -254,7 +254,7 @@ const handleAllDataCustomCommandClick = async (
   const localStorageFilter: ColumnSingleValueQueryFilter = {
     concreteType:
       'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-    columnName: 'fileSynapseId',
+    columnName: 'id',
     operator: ColumnSingleValueFilterOperator.IN,
     values: ids,
   }
@@ -265,7 +265,7 @@ const handleAllDataCustomCommandClick = async (
   console.log(
     'Local Storage value set, refresh table to see additionalFilter QueryFilter being utilized',
   )
-  // TODO: PORTALS-2682: event.refresh() should refresh the data but it currently doesn't
+  // refresh causes the component to remount, which picks up the new filter from localstorage
   event.refresh()
 }
 
