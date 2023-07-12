@@ -38,6 +38,21 @@ const iconOptions: IconOptions = {
   Grant: SynapseComponents.ProjectIcon as unknown as string,
 }
 
+export const educationSchema: GenericCardSchema = {
+  type: 'Educational Resource',
+  title: 'title',
+  subTitle: 'topic',
+  description: 'description',
+  secondaryLabels: [
+    'link',
+    'activityType',
+    'primaryFormat',
+    'educationalLevel',
+    'originInstitution',
+    'language',
+  ],
+}
+
 export const educationCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 3,
@@ -45,22 +60,14 @@ export const educationCardConfiguration: CardConfiguration = {
   genericCardSchema: educationSchema,
   titleLinkConfig: {
     isMarkdown: false,
-    URLColumnName: 'resourceTitle',
-    matchColumnName: 'resourceTitle',
+    URLColumnName: 'title',
+    matchColumnName: 'title',
     baseURL: 'Explore/Education/DetailsPage',
   },
   labelLinkConfig: [
     {
       isMarkdown: true,
-      matchColumnName: 'resourceLink',
-    },
-    {
-      isMarkdown: true,
-      matchColumnName: 'resourceDatasetAlias',
-    },
-    {
-      isMarkdown: true,
-      matchColumnName: 'resourceToolLink',
+      matchColumnName: 'link',
     },
   ],
 }
@@ -73,9 +80,9 @@ export const education: SynapseConfig = {
     cardConfiguration: educationCardConfiguration,
     shouldDeepLink: true,
     name: 'Educational Resources',
-    facetsToPlot: ['resourceTopic', 'resourceActivityType'],
+    facetsToPlot: ['topic', 'activityType'],
     searchConfiguration: {
-      searchable: ['resourceTitle', 'resourceDescription'],
+      searchable: ['title', 'description'],
     },
   },
 }
