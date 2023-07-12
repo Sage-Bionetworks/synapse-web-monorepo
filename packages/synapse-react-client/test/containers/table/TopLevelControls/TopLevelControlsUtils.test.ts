@@ -1,8 +1,10 @@
 import {
+  getFilteredCustomControls,
   getNumberOfResultsToAddToDownloadListCopy,
   getNumberOfResultsToInvokeAction,
   getNumberOfResultsToInvokeActionCopy,
 } from '../../../../src/components/SynapseTable/TopLevelControls/TopLevelControlsUtils'
+import { CustomControl } from '../../../../src/components/SynapseTable/TopLevelControls/TopLevelControls'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 
 describe('TopLevelControlsUtils', () => {
@@ -238,6 +240,38 @@ describe('TopLevelControlsUtils', () => {
           unitDescription,
         ),
       ).toEqual('Add to Download Cart')
+    })
+  })
+  describe('getFilteredCustomControls', () => {
+    it('has no custom controls', () => {
+      expect(getFilteredCustomControls(true, undefined)).toEqual(undefined)
+      expect(getFilteredCustomControls(false, undefined)).toEqual(undefined)
+      expect(getFilteredCustomControls(true, [])).toEqual([])
+      expect(getFilteredCustomControls(false, [])).toEqual([])
+    })
+    it('return correct subset of custom controls', () => {
+      const rowSelectionCustomControl: CustomControl = {
+        buttonText: 'Apply to selection',
+        isRowSelectionSupported: true,
+        onClick: () => {},
+      }
+      const allDataCustomControl: CustomControl = {
+        buttonText: 'Apply to all data',
+        isRowSelectionSupported: false,
+        onClick: () => {},
+      }
+      expect(
+        getFilteredCustomControls(true, [
+          rowSelectionCustomControl,
+          allDataCustomControl,
+        ]),
+      ).toEqual([rowSelectionCustomControl])
+      expect(
+        getFilteredCustomControls(false, [
+          rowSelectionCustomControl,
+          allDataCustomControl,
+        ]),
+      ).toEqual([allDataCustomControl])
     })
   })
 })

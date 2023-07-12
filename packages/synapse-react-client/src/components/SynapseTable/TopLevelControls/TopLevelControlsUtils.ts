@@ -2,6 +2,7 @@ import { QueryContextType } from '../../QueryContext'
 import { QueryVisualizationContextType } from '../../QueryVisualizationWrapper'
 import pluralize from 'pluralize'
 import { upperFirst } from 'lodash-es'
+import { CustomControl } from './TopLevelControls'
 
 const TO_DOWNLOAD_CART = 'to Download Cart'
 
@@ -62,6 +63,22 @@ export function getNumberOfResultsToInvokeActionCopy(
   }
   // Null count, so just return the pluralized unit description
   return pluralize(unitDescription)
+}
+
+/**
+ * If customControls are available, return the set of custom controls where row selection is
+ * supported if isRowSelectionSupported is true, or unsupported if isRowSelectionSupported is false.
+ * @param isRowSelectionSupported
+ * @param customControls
+ * @returns
+ */
+export function getFilteredCustomControls(
+  isRowSelectionSupported: boolean,
+  customControls?: CustomControl[],
+) {
+  return customControls?.filter(
+    control => control?.isRowSelectionSupported === isRowSelectionSupported,
+  )
 }
 
 /**

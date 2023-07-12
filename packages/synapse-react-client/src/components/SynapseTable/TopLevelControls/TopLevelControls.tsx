@@ -19,6 +19,7 @@ import { Cavatica } from '../../../assets/icons/Cavatica'
 import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
 import SendToCavaticaConfirmationDialog from '../SendToCavaticaConfirmationDialog'
 import {
+  getFilteredCustomControls,
   getNumberOfResultsToInvokeAction,
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
@@ -70,12 +71,16 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     showExportToCavatica = false,
     cavaticaHelpURL,
   } = props
-  const rowSelectionCustomControls = customControls?.filter(
-    control => control?.isRowSelectionSupported,
+
+  const rowSelectionCustomControls = getFilteredCustomControls(
+    true,
+    customControls,
   )
-  const topLevelCustomControls = customControls?.filter(
-    control => !control?.isRowSelectionSupported,
+  const topLevelCustomControls = getFilteredCustomControls(
+    false,
+    customControls,
   )
+
   const {
     data,
     entity,
