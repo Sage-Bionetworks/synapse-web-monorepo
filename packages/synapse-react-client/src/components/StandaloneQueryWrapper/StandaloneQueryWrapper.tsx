@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
@@ -106,6 +106,10 @@ const StandaloneQueryWrapper: React.FunctionComponent<
     ...rest
   } = props
 
+  const [componentKey, setComponentKey] = useState(1)
+  const remount = () => {
+    setComponentKey(componentKey + 1)
+  }
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
   const entityId = parseEntityIdFromSqlStatement(sql)
   derivedQueryRequestFromSearchParams.query.additionalFilters =
@@ -122,6 +126,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
     <QueryWrapper
       {...rest}
       initQueryRequest={derivedQueryRequestFromSearchParams}
+      key={componentKey}
     >
       <QueryVisualizationWrapper
         rgbIndex={rgbIndex}
@@ -156,6 +161,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                           hideQueryCount={hideQueryCount}
                           hideFacetFilterControl={true}
                           hideVisualizationsControl={true}
+                          remount={remount}
                         />
                       )}
                       {entity && isTable(entity) && entity.isSearchEnabled ? (

@@ -11,7 +11,7 @@ import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/que
 export type RowSelectionControlsProps = {
   showExportToCavatica?: boolean
   customControls?: CustomControl[]
-  remount: () => void
+  remount?: () => void
 }
 
 /**
@@ -33,7 +33,9 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
   const refresh = () => {
     // clear selection
     setSelectedRows([])
-    remount()
+    if (remount) {
+      remount()
+    }
   }
 
   const showAddToDownloadCart = canTableQueryBeAddedToDownloadList(entity)

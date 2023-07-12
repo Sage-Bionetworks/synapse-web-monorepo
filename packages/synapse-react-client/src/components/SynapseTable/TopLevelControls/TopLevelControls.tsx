@@ -34,7 +34,7 @@ export type TopLevelControlsProps = {
   customControls?: CustomControl[]
   showExportToCavatica?: boolean
   cavaticaHelpURL?: string
-  remount: () => void
+  remount?: () => void
 }
 
 export type Control = {
@@ -46,7 +46,7 @@ export type Control = {
 export type CustomControlCallbackData = {
   data: QueryResultBundle | undefined
   selectedRows: Row[] | undefined
-  refresh: () => void
+  refresh?: () => void
   request?: QueryBundleRequest
 }
 
@@ -128,11 +128,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     }
   }, [getInitQueryRequest, lockedColumn?.columnName])
 
-  const refresh = () => {
-    // refresh the data
-    remount()
-  }
-
   /**
    * Handles the toggle of a column select, this will cause the table to
    * either show the column or hide depending on the prior state of the column
@@ -205,7 +200,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                       customControl.onClick({
                         data,
                         selectedRows,
-                        refresh,
+                        refresh: remount,
                         request: getLastQueryRequest(),
                       })
                     }
