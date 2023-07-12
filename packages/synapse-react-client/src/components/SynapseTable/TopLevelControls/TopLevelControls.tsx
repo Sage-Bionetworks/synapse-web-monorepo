@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, partition } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
 import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import {
@@ -19,7 +19,6 @@ import { Cavatica } from '../../../assets/icons/Cavatica'
 import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
 import SendToCavaticaConfirmationDialog from '../SendToCavaticaConfirmationDialog'
 import {
-  getFilteredCustomControls,
   getNumberOfResultsToInvokeAction,
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
@@ -35,6 +34,7 @@ export type TopLevelControlsProps = {
   customControls?: CustomControl[]
   showExportToCavatica?: boolean
   cavaticaHelpURL?: string
+  remount: () => void
 }
 
 export type Control = {
@@ -70,17 +70,13 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     customControls,
     showExportToCavatica = false,
     cavaticaHelpURL,
+    remount,
   } = props
 
-  const rowSelectionCustomControls = getFilteredCustomControls(
-    true,
+  const [rowSelectionCustomControls, topLevelCustomControls] = partition(
     customControls,
+    { isRowSelectionSupported: true },
   )
-  const topLevelCustomControls = getFilteredCustomControls(
-    false,
-    customControls,
-  )
-
   const {
     data,
     entity,
@@ -88,7 +84,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     lockedColumn,
     hasResettableFilters,
     getLastQueryRequest,
-    executeQueryRequest,
   } = useQueryContext()
   useQueryContext()
 
@@ -135,7 +130,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
 
   const refresh = () => {
     // refresh the data
-    executeQueryRequest(getLastQueryRequest())
+    remount()
   }
 
   /**
@@ -200,9 +195,9 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
         </div>
         <div className="TopLevelControls__actions">
           {topLevelCustomControls &&
-            topLevelCustomControls.map(customControl => {
+            topLevelCustomControls.map((customControl, index) => {
               return (
-                <>
+                <React.Fragment key={index}>
                   <Button
                     variant="text"
                     disabled={!numberOfResultsToInvokeAction}
@@ -219,7 +214,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     {customControl.buttonText}
                   </Button>
                   <Divider orientation="vertical" variant="middle" flexItem />
-                </>
+                </React.Fragment>
               )
             })}
           {showExportToCavatica && (
@@ -313,6 +308,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             <RowSelectionControls
               customControls={rowSelectionCustomControls}
               showExportToCavatica={showExportToCavatica}
+              remount={remount}
             />
           )}
           {showColumnSelection && (

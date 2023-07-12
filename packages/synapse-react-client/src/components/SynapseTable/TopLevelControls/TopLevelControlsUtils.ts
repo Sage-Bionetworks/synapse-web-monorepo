@@ -66,22 +66,6 @@ export function getNumberOfResultsToInvokeActionCopy(
 }
 
 /**
- * If customControls are available, return the set of custom controls where row selection is
- * supported if isRowSelectionSupported is true, or unsupported if isRowSelectionSupported is false.
- * @param isRowSelectionSupported
- * @param customControls
- * @returns
- */
-export function getFilteredCustomControls(
-  isRowSelectionSupported: boolean,
-  customControls?: CustomControl[],
-) {
-  return customControls?.filter(
-    control => control?.isRowSelectionSupported === isRowSelectionSupported,
-  )
-}
-
-/**
  * Returns copy for how to reference the number of results that will be sent to the download list.
  * Utilizes the unit description to return a count and pluralized unit description.
  * @param hasResettableFilters
