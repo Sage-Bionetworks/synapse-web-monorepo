@@ -9,7 +9,7 @@ const routeControlProps: RouteControlWrapperProps = {
     'Publications',
     'Datasets',
     'Tools',
-    'Education',
+    'Educational Resources',
   ],
 }
 

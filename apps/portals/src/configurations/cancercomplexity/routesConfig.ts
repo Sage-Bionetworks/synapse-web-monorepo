@@ -636,7 +636,7 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        path: 'Education',
+        path: 'Educational Resources',
         routes: [
           {
             path: '',

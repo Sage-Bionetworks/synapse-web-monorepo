@@ -31,7 +31,7 @@ export const educationCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     URLColumnName: 'title',
     matchColumnName: 'title',
-    baseURL: 'Explore/Education/DetailsPage',
+    baseURL: 'Explore/Educational Resources/DetailsPage',
   },
   labelLinkConfig: [
     {
