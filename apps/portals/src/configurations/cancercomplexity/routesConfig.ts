@@ -15,7 +15,7 @@ import DatasetSvg from './style/Dataset.svg'
 import { publicationsCardConfiguration } from './synapseConfigs/publications'
 import { grantsCardConfiguration } from './synapseConfigs/grants'
 import { peopleCardConfiguration } from './synapseConfigs/people'
-import { educationCardConfiguration } from './synapseConfigs/education'
+import { educationDetailsCardConfiguration } from './synapseConfigs/education'
 import { onPointClick } from './synapseConfigs/onPointClick'
 import columnAliases from './columnAliases'
 import {
@@ -662,7 +662,7 @@ const routes: GenericRoute[] = [
                 props: {
                   isHeader: true,
                   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-                  ...educationCardConfiguration,
+                  ...educationDetailsCardConfiguration,
                   secondaryLabelLimit: Infinity,
                   sql: educationSql,
                   columnAliases,
@@ -676,7 +676,7 @@ const routes: GenericRoute[] = [
                   synapseConfigArray: [
                     {
                       name: 'CardContainerLogic',
-                      columnName: 'resourceGrantNumber',
+                      columnName: 'grantNumber',
                       title: 'Related Grants',
                       tableSqlKeys: ['grantNumber'],
                       props: {

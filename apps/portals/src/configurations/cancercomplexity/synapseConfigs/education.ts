@@ -1,42 +1,12 @@
 import {
   CardConfiguration,
   GenericCardSchema,
-  IconOptions,
-  SynapseComponents,
   SynapseConstants,
 } from 'synapse-react-client'
 import { educationSql } from '../resources'
 import { SynapseConfig } from 'types/portal-config'
 
 const rgbIndex = 8
-
-export const educationSchema: GenericCardSchema = {
-  type: 'Educational Resource',
-  title: 'resourceTitle',
-  subTitle: 'resourceTopic',
-  description: 'resourceDescription',
-  secondaryLabels: [
-    'resourceLink',
-    'resourceActivityType',
-    'resourcePrimaryFormat',
-    'resourceIntendedUse',
-    'resourcePrimaryAudience',
-    'resourceEducationalLevel',
-    'resourceOriginInstitution',
-    'resourceLanguage',
-    'resourceLicense',
-    'resourceUseRequirements',
-    'resourceMediaAccessibility',
-    'resourceAccessHazard',
-    'resourceDatasetAlias',
-    'resourceToolLink',
-  ],
-}
-
-// TODO: Change iconOptions type to map () => string | JSX.Element and remove cast
-const iconOptions: IconOptions = {
-  Grant: SynapseComponents.ProjectIcon as unknown as string,
-}
 
 export const educationSchema: GenericCardSchema = {
   type: 'Educational Resource',
@@ -56,7 +26,6 @@ export const educationSchema: GenericCardSchema = {
 export const educationCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 3,
-  iconOptions,
   genericCardSchema: educationSchema,
   titleLinkConfig: {
     isMarkdown: false,
@@ -85,4 +54,51 @@ export const education: SynapseConfig = {
       searchable: ['title', 'description'],
     },
   },
+}
+
+/**
+ *  Request to show different labels on Details Page vs Explore page.
+ */
+export const educationDetailsSchema: GenericCardSchema = {
+  type: 'Educational Resource',
+  title: 'title',
+  subTitle: 'topic',
+  description: 'description',
+  secondaryLabels: [
+    'link',
+    'activityType',
+    'primaryFormat',
+    'intendedUse',
+    'primaryAudience',
+    'educationalLevel',
+    'originInstitution',
+    'language',
+    'contributors',
+    'license',
+    'useRequirements',
+    'mediaAccessibility',
+    'accessHazard',
+    'datasetLink',
+    'toolLink',
+  ],
+}
+
+export const educationDetailsCardConfiguration: CardConfiguration = {
+  type: SynapseConstants.GENERIC_CARD,
+  secondaryLabelLimit: 3,
+  genericCardSchema: educationDetailsSchema,
+  labelLinkConfig: [
+    {
+      isMarkdown: true,
+      matchColumnName: 'link',
+    },
+    {
+      isMarkdown: true,
+      matchColumnName: 'datasetLink',
+    },
+    {
+      isMarkdown: true,
+      matchColumnName: 'toolLink',
+    },
+  ],
 }
