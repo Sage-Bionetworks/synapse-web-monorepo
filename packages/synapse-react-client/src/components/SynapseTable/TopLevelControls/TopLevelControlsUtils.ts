@@ -2,7 +2,6 @@ import { QueryContextType } from '../../QueryContext'
 import { QueryVisualizationContextType } from '../../QueryVisualizationWrapper'
 import pluralize from 'pluralize'
 import { upperFirst } from 'lodash-es'
-import { CustomControl } from './TopLevelControls'
 
 const TO_DOWNLOAD_CART = 'to Download Cart'
 
