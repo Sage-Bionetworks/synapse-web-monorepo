@@ -46,6 +46,7 @@ type StandaloneQueryWrapperOwnProps = {
     | 'columnAliases'
     | 'noContentPlaceholderType'
     | 'showLastUpdatedOn'
+    | 'visibleColumnCount'
     | 'additionalFiltersLocalStorageKey'
   >
 
