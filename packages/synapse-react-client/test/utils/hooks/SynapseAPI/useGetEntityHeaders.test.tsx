@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook, waitFor } from '@testing-library/react'
 import React from 'react'
 import { useGetEntityHeaders } from '../../../../src/synapse-queries/entity/useGetEntityHeaders'
 import {
@@ -8,19 +8,10 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
-import { SynapseContextProvider } from '../../../../src/utils/context/SynapseContext'
 import FullContextProvider from '../../../../src/utils/context/FullContextProvider'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import SynapseClient from '../../../../src/synapse-client'
 
-const queryClient = new QueryClient()
-
-const wrapper = (props: { children: React.ReactChildren }) => (
-  <FullContextProvider
-    synapseContext={MOCK_CONTEXT_VALUE}
-    queryClient={queryClient}
-  >
-    {props.children}
-  </FullContextProvider>
-)
 const expected: PaginatedResults<EntityHeader> = {
   results: [
     {
@@ -38,25 +29,21 @@ const expected: PaginatedResults<EntityHeader> = {
   ],
 }
 
-const SynapseClient = require('../../../../src/synapse-client/SynapseClient')
-SynapseClient.getEntityHeaders = jest.fn().mockResolvedValue(expected)
+const mockGetEntityHeaders = jest
+  .spyOn(SynapseClient, 'getEntityHeaders')
+  .mockResolvedValue(expected)
 
 describe('basic functionality', () => {
-  beforeEach(() => {
-    queryClient.clear()
-  })
-
   it('correctly calls SynapseClient', async () => {
     const references: ReferenceList = [{ targetId: 'syn123' }]
 
-    const { result, waitFor } = renderHook(
-      () => useGetEntityHeaders(references),
-      { wrapper },
-    )
+    const { result } = renderHook(() => useGetEntityHeaders(references), {
+      wrapper: createWrapper(),
+    })
 
-    await waitFor(() => result.current.isSuccess)
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(SynapseClient.getEntityHeaders).toBeCalledWith(
+    expect(mockGetEntityHeaders).toBeCalledWith(
       references,
       MOCK_CONTEXT_VALUE.accessToken,
     )

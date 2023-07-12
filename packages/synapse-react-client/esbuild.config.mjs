@@ -45,6 +45,7 @@ const esBuildOptions = {
       loadPaths: ['../../node_modules', 'node_modules'],
     }),
     svgrPlugin({
+      plugins: ['@svgr/plugin-jsx'],
       ref: true,
       namedExport: 'ReactComponent',
       exportType: 'named',

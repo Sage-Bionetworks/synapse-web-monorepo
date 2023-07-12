@@ -1,4 +1,4 @@
-import { cleanup, renderHook } from '@testing-library/react-hooks'
+import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import usePreFetchResource from '../../../src/utils/hooks/usePreFetchResource'
 import { rest, server } from '../../../mocks/msw/server'
 
@@ -36,14 +36,13 @@ describe('usePreFetchResource tests', () => {
       ),
     )
 
-    const { result, waitForNextUpdate } = renderHook(() =>
-      usePreFetchResource(PRESIGNED_URL),
-    )
+    const { result } = renderHook(() => usePreFetchResource(PRESIGNED_URL))
 
-    await waitForNextUpdate()
-    expect(onRecievedRequest).toHaveBeenCalled()
-    expect(URL.createObjectURL).toHaveBeenCalled()
-    expect(result.current).toBeDefined()
+    await waitFor(() => {
+      expect(onRecievedRequest).toHaveBeenCalled()
+      expect(URL.createObjectURL).toHaveBeenCalled()
+      expect(result.current).toBeDefined()
+    })
 
     cleanup()
 
