@@ -146,6 +146,9 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             showColumnSelection: true,
             rgbIndex,
             name: 'Metadata Files',
+            showExportToCavatica: true,
+            cavaticaHelpURL: '/Limited%20Data%20Commons',
+            isRowSelectionVisible: true,
             visibleColumnCount: 10,
             tableConfiguration: {
               showAccessColumn: true,
@@ -166,6 +169,9 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             rgbIndex,
             visibleColumnCount: 10,
+            showExportToCavatica: true,
+            cavaticaHelpURL: '/Limited%20Data%20Commons',
+            isRowSelectionVisible: true,
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,
