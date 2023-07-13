@@ -737,7 +737,12 @@ export class SynapseTable extends React.Component<
           return (
             <th key={column.name}>
               <div className="SRC-split">
-                <span style={{ whiteSpace: 'nowrap' }}>
+                <span
+                  style={{
+                    whiteSpace: 'nowrap',
+                    paddingTop: isEntityIDColumn ? '12px' : '',
+                  }}
+                >
                   {displayColumnName}
                 </span>
                 <div className="SRC-centerContent">
