@@ -1,10 +1,13 @@
-import { Box, Button } from '@mui/material'
-import { GoogleIcon24 } from '../../assets/GoogleIcon24'
-import IconSvg from '../IconSvg/IconSvg'
+import { Box } from '@mui/material'
 import React from 'react'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { OAUTH2_PROVIDERS } from '../../utils/SynapseConstants'
+import {
+  LOGIN_METHOD_EMAIL,
+  LOGIN_METHOD_OAUTH2_GOOGLE,
+  OAUTH2_PROVIDERS,
+} from '../../utils/SynapseConstants'
+import LoginMethodButton from './LoginMethodButton'
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
@@ -44,34 +47,16 @@ export default function AuthenticationMethodSelection(
 
   return (
     <Box>
-      <Button
-        fullWidth
-        variant="outlined"
+      <LoginMethodButton
+        loginMethod={LOGIN_METHOD_OAUTH2_GOOGLE}
+        iconName="google24"
         onClick={onGoogleSignIn}
-        sx={{
-          color: 'grey.800',
-          height: '50px',
-          mb: '10px',
-        }}
-        startIcon={<GoogleIcon24 sx={{ width: '28px', height: '28px' }} />}
-      >
-        Sign in with Google
-      </Button>
-      <Button
-        fullWidth
-        variant="outlined"
-        startIcon={
-          <IconSvg icon="email" sx={{ width: '28px', height: '28px' }} />
-        }
-        sx={{
-          color: 'grey.800',
-          height: '50px',
-          mb: '10px',
-        }}
+      />
+      <LoginMethodButton
+        loginMethod={LOGIN_METHOD_EMAIL}
+        iconName="email"
         onClick={onSelectUsernameAndPassword}
-      >
-        Sign in with your email
-      </Button>
+      />
     </Box>
   )
 }

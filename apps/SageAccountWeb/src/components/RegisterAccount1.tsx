@@ -10,9 +10,11 @@ import {
 } from '@mui/material'
 import {
   IconSvg,
+  LastLoginInfo,
   SynapseClient,
   SynapseConstants,
   displayToast,
+  getLastLoginInfo,
 } from 'synapse-react-client'
 import {
   AliasType,
@@ -160,6 +162,11 @@ export const RegisterAccount1 = () => {
     }
   }
 
+  const lastLoginInfo = LastLoginInfo({
+    display: 'box',
+    ...getLastLoginInfo(),
+  })
+
   return (
     <>
       <StyledOuterContainer className="RegisterAccount1">
@@ -173,31 +180,38 @@ export const RegisterAccount1 = () => {
                     <SourceAppLogo />
                   </div>
                   {page === Pages.CHOOSE_REGISTRATION && (
-                    <div style={{ marginTop: '30px' }}>
-                      <Button
-                        onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
-                        sx={chooseButtonSx}
-                        variant="outlined"
-                      >
-                        <img
-                          className="googleLogo"
-                          src={GoogleLogo}
-                          alt="Google Logo"
-                          style={{ width: 25, marginRight: 5 }}
-                        />
-                        <span className="signInText">
-                          Create account with Google
-                        </span>
-                      </Button>
-                      <Button
-                        onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
-                        sx={chooseButtonSx}
-                        variant="outlined"
-                      >
-                        <IconSvg icon="email" sx={{ marginRight: '5px' }} />
-                        Create account with your email
-                      </Button>
-                    </div>
+                    <>
+                      <div style={{ marginTop: '30px' }}>
+                        <Button
+                          onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
+                          sx={chooseButtonSx}
+                          variant="outlined"
+                        >
+                          <img
+                            className="googleLogo"
+                            src={GoogleLogo}
+                            alt="Google Logo"
+                            style={{ width: 25, marginRight: 5 }}
+                          />
+                          <span className="signInText">
+                            Create account with Google
+                          </span>
+                        </Button>
+                        <Button
+                          onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
+                          sx={chooseButtonSx}
+                          variant="outlined"
+                        >
+                          <IconSvg icon="email" sx={{ marginRight: '5px' }} />
+                          Create account with your email
+                        </Button>
+                      </div>
+                      {lastLoginInfo && (
+                        <Box position="absolute" bottom={0} pb="54px" pr="64px">
+                          {lastLoginInfo}
+                        </Box>
+                      )}
+                    </>
                   )}
                   {page === Pages.EMAIL_REGISTRATION && (
                     <div className="EmailAddressUI">

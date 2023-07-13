@@ -1,23 +1,55 @@
-import React from 'react'
 import { Box, Typography } from '@mui/material'
+import React from 'react'
+import { useHistory } from 'react-router-dom'
 import {
-  preparePostSSORedirect,
-  redirectAfterSSO,
+  LoginMethod,
   StandaloneLoginForm,
   SynapseConstants,
   SystemUseNotification,
+  preparePostSSORedirect,
+  redirectAfterSSO,
+  setLastLoginInfo,
   useApplicationSessionContext,
 } from 'synapse-react-client'
-import { SourceAppDescription, SourceAppLogo } from './components/SourceApp.js'
+import { backButtonSx } from './components/BackButton.js'
+import {
+  SourceAppDescription,
+  SourceAppLogo,
+  useSourceApp,
+} from './components/SourceApp.js'
 import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from './components/StyledComponents.js'
-import { useHistory } from 'react-router-dom'
-import { backButtonSx } from './components/BackButton.js'
 
 export type LoginPageProps = {
   returnToUrl?: string
+}
+
+function formatDate(date: Date) {
+  const monthDay = date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+  })
+  const year = date.toLocaleDateString('en-US', { year: 'numeric' })
+  return `${monthDay}, ${year}`
+}
+
+function getLoginMethodByProviderQueryParam(providerQueryParam: string | null) {
+  for (const [key, value] of Object.entries(
+    SynapseConstants.OAUTH2_PROVIDERS,
+  )) {
+    if (providerQueryParam === value) {
+      return key as LoginMethod
+    }
+  }
+  // if there isn't a provider query param, then assume logged in via email
+  return SynapseConstants.LOGIN_METHOD_EMAIL
+}
+
+function getLoginMethod(history: ReturnType<typeof useHistory>) {
+  const provider = new URLSearchParams(history.location.search).get('provider')
+  return getLoginMethodByProviderQueryParam(provider)
 }
 
 function LoginPage(props: LoginPageProps) {
@@ -25,6 +57,8 @@ function LoginPage(props: LoginPageProps) {
   const { refreshSession, twoFactorAuthSSOErrorResponse } =
     useApplicationSessionContext()
   const history = useHistory()
+  const sourceApp = useSourceApp()
+
   return (
     <StyledOuterContainer>
       <StyledInnerContainer>
@@ -48,6 +82,14 @@ function LoginPage(props: LoginPageProps) {
             <Box sx={{ my: 4 }}>
               <StandaloneLoginForm
                 sessionCallback={() => {
+                  if (sourceApp?.friendlyName && sourceApp.appURL) {
+                    setLastLoginInfo(
+                      getLoginMethod(history),
+                      formatDate(new Date()),
+                      sourceApp?.friendlyName,
+                      sourceApp?.appURL,
+                    )
+                  }
                   redirectAfterSSO(history, returnToUrl)
                   // If we didn't redirect, refresh the session
                   refreshSession()

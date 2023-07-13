@@ -8,6 +8,7 @@ import { useSourceApp } from './components/SourceApp.js'
 import { sageAccountWebThemeOverrides } from './style/theme'
 import { Theme } from '@mui/material'
 import {
+  setCurrentAppInfo,
   SynapseTheme,
   SynapseUtilityFunctions,
   useApplicationSessionContext,
@@ -53,6 +54,9 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   }, [])
 
   const sourceApp = useSourceApp(appId)
+  if (sourceApp?.friendlyName) {
+    setCurrentAppInfo(sourceApp.friendlyName)
+  }
 
   useEffect(() => {
     if (sourceApp?.palette) {

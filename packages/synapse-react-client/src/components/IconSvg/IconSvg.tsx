@@ -116,6 +116,7 @@ import Rat from '../../assets/mui_components/Rat'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { SxProps, Tooltip } from '@mui/material'
 import CreateVersion from '../../assets/icons/CreateVersion'
+import { GoogleIcon24 } from '../../assets/GoogleIcon24'
 
 export const IconStrings = [
   'accessOpen',
@@ -235,6 +236,7 @@ export const IconStrings = [
   'createVersion',
   'email',
   'addConditions',
+  'google24',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -490,6 +492,8 @@ function IconMapping(props: { icon: string; sx?: SxProps }) {
       return <FlagTwoTone sx={sx} />
     case 'email':
       return <MailOutlineTwoTone sx={sx} />
+    case 'google24':
+      return <GoogleIcon24 sx={sx} />
     default:
       return <></>
   }
