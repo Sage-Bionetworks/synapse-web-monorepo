@@ -736,8 +736,11 @@ export class SynapseTable extends React.Component<
             columnModel.columnType == ColumnTypeEnum.ENTITYID
           return (
             <th key={column.name}>
-              <div className="SRC-split">
-                <div className="SRC-centerContent" style={{ height: '22px' }}>
+              <div
+                className="SRC-split"
+                style={{ justifyContent: 'space-between' }}
+              >
+                <div className="SRC-centerContent">
                   <span
                     style={{
                       whiteSpace: 'nowrap',
@@ -745,6 +748,8 @@ export class SynapseTable extends React.Component<
                   >
                     {displayColumnName}
                   </span>
+                </div>
+                <div className="SRC-centerContent" style={{ height: '22px' }}>
                   {isFacetSelection && !isLockedColumn && (
                     <span>
                       {this.configureFacetDropdown(
@@ -775,7 +780,11 @@ export class SynapseTable extends React.Component<
                       ></Icon>
                     </span>
                   )}
-                  {isEntityIDColumn && <EntityIDColumnCopyIcon />}
+                  {isEntityIDColumn && (
+                    <span style={{ paddingBottom: '6px' }}>
+                      <EntityIDColumnCopyIcon />
+                    </span>
+                  )}
                 </div>
               </div>
             </th>
