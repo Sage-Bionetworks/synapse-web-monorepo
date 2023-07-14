@@ -174,6 +174,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             rgbIndex,
             name: 'Metadata Files',
             visibleColumnCount: 10,
+            isRowSelectionVisible: true,
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,
@@ -196,6 +197,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             sqlOperator: ColumnMultiValueFunction.HAS,
             rgbIndex,
             visibleColumnCount: 10,
+            isRowSelectionVisible: true,
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,

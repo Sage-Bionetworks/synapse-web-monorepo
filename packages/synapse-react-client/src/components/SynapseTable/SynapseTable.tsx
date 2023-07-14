@@ -440,7 +440,9 @@ export class SynapseTable extends React.Component<
       this.allRowsHaveId()
 
     const isShowingAddToV2DownloadListColumn: boolean = !!(
-      rowsAreDownloadable && !this.props.hideDownload
+      rowsAreDownloadable &&
+      !this.props.hideDownload &&
+      !isRowSelectionVisible
     )
 
     const isShowingDirectDownloadColumn =

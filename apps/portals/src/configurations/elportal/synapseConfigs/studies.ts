@@ -26,9 +26,9 @@ export const studyCardConfiguration: CardConfiguration = {
   labelLinkConfig: [
     {
       isMarkdown: false,
-      matchColumnName: 'grantNumber',
-      URLColumnName: 'Grant Number',
       baseURL: 'Explore/Projects/DetailsPage',
+      URLColumnName: 'grantNumber',
+      matchColumnName: 'grantNumber',
     },
   ],
   genericCardSchema: {
@@ -145,11 +145,11 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             showColumnSelection: true,
             rgbIndex,
+            visibleColumnCount: 10,
             name: 'Metadata Files',
             showExportToCavatica: true,
             cavaticaHelpURL: '/Limited%20Data%20Commons',
             isRowSelectionVisible: true,
-            visibleColumnCount: 10,
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,
