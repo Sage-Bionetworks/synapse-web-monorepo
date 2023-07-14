@@ -16,7 +16,7 @@ export const InteractiveCopyIdsIcon = (props: InteractiveCopyIdsIconProps) => {
       placement="right"
     >
       <IconButton
-        sx={{ height: '40px' }}
+        sx={{ height: '30px' }}
         data-testid="copySynIdsButton"
         onClick={onCopy}
       >

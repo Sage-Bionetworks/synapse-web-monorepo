@@ -740,19 +740,20 @@ export class SynapseTable extends React.Component<
                 <span
                   style={{
                     whiteSpace: 'nowrap',
-                    paddingTop: isEntityIDColumn ? '12px' : '',
                   }}
                 >
                   {displayColumnName}
                 </span>
                 <div className="SRC-centerContent">
-                  {isFacetSelection &&
-                    !isLockedColumn &&
-                    this.configureFacetDropdown(
-                      facet,
-                      columnModel,
-                      lastQueryRequest,
-                    )}
+                  {isFacetSelection && !isLockedColumn && (
+                    <span style={{ height: '30px' }}>
+                      {this.configureFacetDropdown(
+                        facet,
+                        columnModel,
+                        lastQueryRequest,
+                      )}
+                    </span>
+                  )}
                   {this.isSortableColumn(column.columnType) && (
                     <span
                       role="button"
@@ -767,6 +768,7 @@ export class SynapseTable extends React.Component<
                         index,
                         name: column.name,
                       })}
+                      style={{ height: '30px' }}
                     >
                       <Icon
                         type={ICON_STATE[columnIndex]}
@@ -774,7 +776,11 @@ export class SynapseTable extends React.Component<
                       ></Icon>
                     </span>
                   )}
-                  {isEntityIDColumn && <EntityIDColumnCopyIcon />}
+                  {isEntityIDColumn && (
+                    <span style={{ height: '30px' }}>
+                      <EntityIDColumnCopyIcon />
+                    </span>
+                  )}
                 </div>
               </div>
             </th>
@@ -789,7 +795,7 @@ export class SynapseTable extends React.Component<
       tableColumnHeaderElements.unshift(
         <th key="accessColumn">
           <div className="SRC-centerContent">
-            <span style={{ whiteSpace: 'nowrap' }}>Access</span>
+            <span style={{ whiteSpace: 'nowrap', height: '25px' }}>Access</span>
           </div>
         </th>,
       )
