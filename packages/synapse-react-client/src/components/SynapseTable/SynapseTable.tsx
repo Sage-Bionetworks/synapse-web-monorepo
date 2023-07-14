@@ -737,16 +737,16 @@ export class SynapseTable extends React.Component<
           return (
             <th key={column.name}>
               <div className="SRC-split">
-                <span
-                  style={{
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {displayColumnName}
-                </span>
-                <div className="SRC-centerContent">
+                <div className="SRC-centerContent" style={{ height: '22px' }}>
+                  <span
+                    style={{
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {displayColumnName}
+                  </span>
                   {isFacetSelection && !isLockedColumn && (
-                    <span style={{ height: '30px' }}>
+                    <span>
                       {this.configureFacetDropdown(
                         facet,
                         columnModel,
@@ -768,7 +768,6 @@ export class SynapseTable extends React.Component<
                         index,
                         name: column.name,
                       })}
-                      style={{ height: '30px' }}
                     >
                       <Icon
                         type={ICON_STATE[columnIndex]}
@@ -776,11 +775,7 @@ export class SynapseTable extends React.Component<
                       ></Icon>
                     </span>
                   )}
-                  {isEntityIDColumn && (
-                    <span style={{ height: '30px' }}>
-                      <EntityIDColumnCopyIcon />
-                    </span>
-                  )}
+                  {isEntityIDColumn && <EntityIDColumnCopyIcon />}
                 </div>
               </div>
             </th>
@@ -795,7 +790,7 @@ export class SynapseTable extends React.Component<
       tableColumnHeaderElements.unshift(
         <th key="accessColumn">
           <div className="SRC-centerContent">
-            <span style={{ whiteSpace: 'nowrap', height: '25px' }}>Access</span>
+            <span style={{ whiteSpace: 'nowrap' }}>Access</span>
           </div>
         </th>,
       )
