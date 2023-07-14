@@ -15,7 +15,7 @@ const data: SynapseConfig = {
     additionalFiltersLocalStorageKey: 'cohort-builder-files-perspective',
     tableConfiguration: {
       showAccessColumn: true,
-      showDownloadColumn: true,
+      showDownloadColumn: false,
       columnLinks: [
         {
           matchColumnName: 'study',
