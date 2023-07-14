@@ -150,9 +150,9 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             showExportToCavatica: true,
             cavaticaHelpURL: '/Limited%20Data%20Commons',
             isRowSelectionVisible: true,
-            showDownloadColumn: false,
             tableConfiguration: {
               showAccessColumn: true,
+              showDownloadColumn: true,
             },
             availableFacets: ['metadataType', 'dataType', 'assay'],
             sql: dataOnStudiesPageSql,
@@ -172,9 +172,9 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             showExportToCavatica: true,
             cavaticaHelpURL: '/Limited%20Data%20Commons',
             isRowSelectionVisible: true,
-            showDownloadColumn: false,
             tableConfiguration: {
               showAccessColumn: true,
+              showDownloadColumn: true,
               columnLinks: [
                 {
                   matchColumnName: 'study',
