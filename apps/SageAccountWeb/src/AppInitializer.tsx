@@ -54,9 +54,12 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   }, [])
 
   const sourceApp = useSourceApp(appId)
-  if (sourceApp?.friendlyName) {
-    setCurrentAppInfo(sourceApp.friendlyName)
-  }
+
+  useEffect(() => {
+    if (sourceApp?.friendlyName) {
+      setCurrentAppInfo(sourceApp.friendlyName)
+    }
+  }, [sourceApp?.friendlyName])
 
   useEffect(() => {
     if (sourceApp?.palette) {

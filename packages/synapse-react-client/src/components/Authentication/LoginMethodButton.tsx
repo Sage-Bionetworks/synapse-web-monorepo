@@ -1,7 +1,7 @@
 import { Box, Button } from '@mui/material'
 import React from 'react'
 import IconSvg, { IconName } from '../IconSvg'
-import LastLoginInfo, { getLastLoginInfo } from './LastLoginInfo'
+import LastLoginInfo, { useLastLoginInfo } from './LastLoginInfo'
 import { LoginMethod, getLoginMethodFriendlyName } from './LoginMethod'
 
 export type LoginMethodButtonProps = {
@@ -13,7 +13,7 @@ export type LoginMethodButtonProps = {
 export default function LoginMethodButton(props: LoginMethodButtonProps) {
   const { loginMethod, iconName, onClick } = props
 
-  const { lastLoginMethod, ...rest } = getLastLoginInfo()
+  const { lastLoginMethod, ...rest } = useLastLoginInfo()
   const lastLoginInfo = LastLoginInfo({
     lastLoginMethod: lastLoginMethod,
     display: 'sentence',

@@ -8,6 +8,7 @@ import {
   LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
   LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
 } from '../../utils/SynapseConstants'
+import { setLocalStorage, useLocalStorage } from '../../utils/hooks'
 import { LoginMethod, getLoginMethodFriendlyName } from './LoginMethod'
 
 export type LastLoginInfoProps = {
@@ -19,29 +20,26 @@ export type LastLoginInfoProps = {
   display: 'sentence' | 'box'
 }
 
-export function getLastLoginInfo(): Omit<LastLoginInfoProps, 'display'> {
+export function useLastLoginInfo(): Omit<LastLoginInfoProps, 'display'> {
   return {
-    currentSourceAppName: localStorage.getItem(
+    currentSourceAppName: useLocalStorage(
       CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
     ),
-    lastLoginMethod: localStorage.getItem(
+    lastLoginMethod: useLocalStorage(
       LAST_LOGIN_METHOD_LOCALSTORAGE_KEY,
     ) as LoginMethod,
-    lastLoginSourceAppName: localStorage.getItem(
+    lastLoginSourceAppName: useLocalStorage(
       LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
     ),
-    lastLoginSourceAppURL: localStorage.getItem(
+    lastLoginSourceAppURL: useLocalStorage(
       LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
     ),
-    lastLoginDate: localStorage.getItem(LAST_LOGIN_DATE_LOCALSTORAGE_KEY),
+    lastLoginDate: useLocalStorage(LAST_LOGIN_DATE_LOCALSTORAGE_KEY),
   }
 }
 
 export function setCurrentAppInfo(currentSourceAppName: string) {
-  localStorage.setItem(
-    CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
-    currentSourceAppName,
-  )
+  setLocalStorage(CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY, currentSourceAppName)
 }
 
 export function setLastLoginInfo(
@@ -50,13 +48,13 @@ export function setLastLoginInfo(
   lastLoginSourceAppName: string,
   lastLoginSourceAppURL: string,
 ) {
-  localStorage.setItem(LAST_LOGIN_DATE_LOCALSTORAGE_KEY, lastLoginDate)
-  localStorage.setItem(LAST_LOGIN_METHOD_LOCALSTORAGE_KEY, lastLoginMethod)
-  localStorage.setItem(
+  setLocalStorage(LAST_LOGIN_DATE_LOCALSTORAGE_KEY, lastLoginDate)
+  setLocalStorage(LAST_LOGIN_METHOD_LOCALSTORAGE_KEY, lastLoginMethod)
+  setLocalStorage(
     LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
     lastLoginSourceAppName,
   )
-  localStorage.setItem(
+  setLocalStorage(
     LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
     lastLoginSourceAppURL,
   )

@@ -14,7 +14,7 @@ import {
   SynapseClient,
   SynapseConstants,
   displayToast,
-  getLastLoginInfo,
+  useLastLoginInfo,
 } from 'synapse-react-client'
 import {
   AliasType,
@@ -164,7 +164,7 @@ export const RegisterAccount1 = () => {
 
   const lastLoginInfo = LastLoginInfo({
     display: 'box',
-    ...getLastLoginInfo(),
+    ...useLastLoginInfo(),
   })
 
   return (
