@@ -257,7 +257,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             <tbody>
               {allRows.map((item: DownloadListItemResult) => {
                 if (item) {
-                  item.versionNumber = null
                   const addedOn = dayjs(item.addedOn).format('L LT')
                   const createdOn = dayjs(item.createdOn).format('L LT')
                   return (
