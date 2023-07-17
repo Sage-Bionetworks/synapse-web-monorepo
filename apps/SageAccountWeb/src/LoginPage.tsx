@@ -8,7 +8,7 @@ import {
   SystemUseNotification,
   preparePostSSORedirect,
   redirectAfterSSO,
-  setLastLoginInfo,
+  useLastLoginInfoStatePairs,
   useApplicationSessionContext,
 } from 'synapse-react-client'
 import { backButtonSx } from './components/BackButton.js'
@@ -49,6 +49,12 @@ function LoginPage(props: LoginPageProps) {
     useApplicationSessionContext()
   const history = useHistory()
   const sourceApp = useSourceApp()
+  const {
+    lastLoginDateStatePair,
+    lastLoginMethodStatePair,
+    lastLoginSourceAppNameStatePair,
+    lastLoginSourceAppURLStatePair,
+  } = useLastLoginInfoStatePairs()
 
   return (
     <StyledOuterContainer>
@@ -74,12 +80,10 @@ function LoginPage(props: LoginPageProps) {
               <StandaloneLoginForm
                 sessionCallback={() => {
                   if (sourceApp?.friendlyName && sourceApp.appURL) {
-                    setLastLoginInfo(
-                      getLoginMethod(window),
-                      new Date(),
-                      sourceApp?.friendlyName,
-                      sourceApp?.appURL,
-                    )
+                    lastLoginMethodStatePair.set(getLoginMethod(window))
+                    lastLoginDateStatePair.set(new Date().toISOString())
+                    lastLoginSourceAppNameStatePair.set(sourceApp?.friendlyName)
+                    lastLoginSourceAppURLStatePair.set(sourceApp?.appURL)
                   }
                   redirectAfterSSO(history, returnToUrl)
                   // If we didn't redirect, refresh the session

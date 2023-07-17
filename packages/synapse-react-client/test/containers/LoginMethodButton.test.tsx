@@ -1,16 +1,16 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import {
-  clearLastLoginInfo,
-  setLastLoginInfo,
-} from '../../src/components/Authentication/LastLoginInfo'
-import { LoginMethod } from '../../src/components/Authentication/LoginMethod'
+import { clearLastLoginInfo } from '../../src/components/Authentication/LastLoginInfo'
 import LoginMethodButton, {
   LoginMethodButtonProps,
 } from '../../src/components/Authentication/LoginMethodButton'
 import {
   CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
+  LAST_LOGIN_DATE_LOCALSTORAGE_KEY,
+  LAST_LOGIN_METHOD_LOCALSTORAGE_KEY,
+  LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
+  LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_GOOGLE,
 } from '../../src/utils/SynapseConstants'
@@ -28,7 +28,7 @@ const defaultButtonText = 'Sign in with Google'
 const defaultCurrentAppSourceName = 'AD Knowledge Portal'
 const defaultLastLoginInfo = {
   lastLoginMethod: LOGIN_METHOD_EMAIL,
-  lastLoginDate: new Date('2023-05-10T16:54:53.333Z'),
+  lastLoginDate: '2023-05-10T16:54:53.333Z',
   lastLoginSourceAppName: 'ARK Portal',
   lastLoginSourceAppURL: 'https://arkportal.synapse.org',
 }
@@ -48,15 +48,25 @@ function setUp(
   props: LoginMethodButtonProps = defaultProps,
   wrapperProps?: SynapseContextType,
 ) {
-  setLastLoginInfo(
-    lastLoginInfo.lastLoginMethod as LoginMethod,
-    lastLoginInfo.lastLoginDate,
-    lastLoginInfo.lastLoginSourceAppName,
-    lastLoginInfo.lastLoginSourceAppURL,
+  localStorage.setItem(
+    LAST_LOGIN_METHOD_LOCALSTORAGE_KEY,
+    JSON.stringify(lastLoginInfo.lastLoginMethod),
+  )
+  localStorage.setItem(
+    LAST_LOGIN_DATE_LOCALSTORAGE_KEY,
+    JSON.stringify(lastLoginInfo.lastLoginDate),
+  )
+  localStorage.setItem(
+    LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
+    JSON.stringify(lastLoginInfo.lastLoginSourceAppName),
+  )
+  localStorage.setItem(
+    LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
+    JSON.stringify(lastLoginInfo.lastLoginSourceAppURL),
   )
   localStorage.setItem(
     CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
-    currentSourceApp,
+    JSON.stringify(currentSourceApp),
   )
 
   const user = userEvent.setup()

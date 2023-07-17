@@ -1,5 +1,6 @@
 import { InfoTwoTone } from '@mui/icons-material'
 import { Box, Link, Tooltip, Typography } from '@mui/material'
+import { useLocalStorageValue } from '@react-hookz/web'
 import dayjs from 'dayjs'
 import React from 'react'
 import {
@@ -10,56 +11,46 @@ import {
   LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
 } from '../../utils/SynapseConstants'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import { setLocalStorage, useLocalStorage } from '../../utils/hooks'
 import { LoginMethod, getLoginMethodFriendlyName } from './LoginMethod'
 
 export type LastLoginInfoProps = {
-  currentSourceAppName: string | null
-  lastLoginMethod: LoginMethod | null
-  lastLoginSourceAppName: string | null
-  lastLoginSourceAppURL: string | null
-  lastLoginDate: string | null
+  currentSourceAppName: string | undefined
+  lastLoginMethod: LoginMethod | undefined
+  lastLoginSourceAppName: string | undefined
+  lastLoginSourceAppURL: string | undefined
+  lastLoginDate: string | undefined
   display: 'sentence' | 'box'
 }
 
-export function useLastLoginInfo(): Omit<LastLoginInfoProps, 'display'> {
+export function useLastLoginInfoStatePairs() {
   return {
-    currentSourceAppName: useLocalStorage(
+    currentSourceAppNameStatePair: useLocalStorageValue<string>(
       CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
     ),
-    lastLoginMethod: useLocalStorage(
+    lastLoginMethodStatePair: useLocalStorageValue<LoginMethod>(
       LAST_LOGIN_METHOD_LOCALSTORAGE_KEY,
-    ) as LoginMethod,
-    lastLoginSourceAppName: useLocalStorage(
+    ),
+    lastLoginSourceAppNameStatePair: useLocalStorageValue<string>(
       LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
     ),
-    lastLoginSourceAppURL: useLocalStorage(
+    lastLoginSourceAppURLStatePair: useLocalStorageValue<string>(
       LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
     ),
-    lastLoginDate: useLocalStorage(LAST_LOGIN_DATE_LOCALSTORAGE_KEY),
+    lastLoginDateStatePair: useLocalStorageValue<string>(
+      LAST_LOGIN_DATE_LOCALSTORAGE_KEY,
+    ),
   }
 }
 
-export function setCurrentAppInfo(currentSourceAppName: string) {
-  setLocalStorage(CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY, currentSourceAppName)
-}
-
-export function setLastLoginInfo(
-  lastLoginMethod: LoginMethod,
-  lastLoginDate: Date,
-  lastLoginSourceAppName: string,
-  lastLoginSourceAppURL: string,
-) {
-  setLocalStorage(LAST_LOGIN_DATE_LOCALSTORAGE_KEY, lastLoginDate.toISOString())
-  setLocalStorage(LAST_LOGIN_METHOD_LOCALSTORAGE_KEY, lastLoginMethod)
-  setLocalStorage(
-    LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
-    lastLoginSourceAppName,
-  )
-  setLocalStorage(
-    LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
-    lastLoginSourceAppURL,
-  )
+export function useLastLoginInfo() {
+  const pairs = useLastLoginInfoStatePairs()
+  return {
+    currentSourceAppName: pairs.currentSourceAppNameStatePair.value,
+    lastLoginMethod: pairs.lastLoginMethodStatePair.value,
+    lastLoginSourceAppName: pairs.lastLoginSourceAppNameStatePair.value,
+    lastLoginSourceAppURL: pairs.lastLoginSourceAppURLStatePair.value,
+    lastLoginDate: pairs.lastLoginDateStatePair.value,
+  }
 }
 
 export function clearLastLoginInfo() {
@@ -91,15 +82,15 @@ export default function LastLoginInfo(props: LastLoginInfoProps) {
     display,
   } = props
 
-  const shouldNotShowLastLoginInfo =
-    currentSourceAppName === null ||
-    lastLoginMethod === null ||
-    lastLoginSourceAppName === null ||
-    lastLoginSourceAppURL === null ||
-    lastLoginDate === null ||
-    currentSourceAppName === lastLoginSourceAppName
+  const showLastLoginInfo =
+    currentSourceAppName &&
+    lastLoginMethod &&
+    lastLoginSourceAppName &&
+    lastLoginSourceAppURL &&
+    lastLoginDate &&
+    currentSourceAppName !== lastLoginSourceAppName
 
-  if (shouldNotShowLastLoginInfo) {
+  if (!showLastLoginInfo) {
     return null
   }
 

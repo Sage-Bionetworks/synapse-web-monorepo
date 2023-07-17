@@ -1,7 +1,6 @@
 import {
   default as LastLoginInfo,
-  setCurrentAppInfo,
-  setLastLoginInfo,
+  useLastLoginInfoStatePairs,
   useLastLoginInfo,
 } from './LastLoginInfo'
 import type { LastLoginInfoProps } from './LastLoginInfo'
@@ -16,8 +15,7 @@ import { default as TwoFactorBackupCodes } from './TwoFactorBackupCodes'
 import type { TwoFactorBackupCodesProps } from './TwoFactorBackupCodes'
 
 export {
-  setCurrentAppInfo,
-  setLastLoginInfo,
+  useLastLoginInfoStatePairs,
   useLastLoginInfo,
   LastLoginInfo,
   LastLoginInfoProps,
