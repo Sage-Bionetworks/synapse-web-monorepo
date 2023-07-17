@@ -1,8 +1,18 @@
-import { Box, Button } from '@mui/material'
+import { Box, Button, SxProps } from '@mui/material'
 import React from 'react'
 import IconSvg, { IconName } from '../IconSvg'
 import LastLoginInfo, { useLastLoginInfo } from './LastLoginInfo'
 import { LoginMethod, getLoginMethodFriendlyName } from './LoginMethod'
+
+const buttonSx: SxProps = {
+  color: 'grey.800',
+  mb: '10px',
+}
+
+const iconSx: SxProps = {
+  width: '28px',
+  height: '28px',
+}
 
 export type LoginMethodButtonProps = {
   loginMethod: LoginMethod
@@ -23,15 +33,6 @@ export default function LoginMethodButton(props: LoginMethodButtonProps) {
   const shouldShowLastLoginInfo =
     lastLoginMethod === loginMethod && lastLoginInfo
 
-  const buttonSx = {
-    color: 'grey.800',
-    mb: '10px',
-  }
-  const iconSx = {
-    width: '28px',
-    height: '28px',
-  }
-
   const buttonText = `Sign in with ${getLoginMethodFriendlyName(loginMethod)}`
 
   return (
@@ -42,6 +43,7 @@ export default function LoginMethodButton(props: LoginMethodButtonProps) {
           variant="outlined"
           onClick={onClick}
           sx={{ ...buttonSx, height: '74px', py: 1.5 }}
+          data-testid="button-with-last-login-info"
         >
           <Box flexDirection="column">
             <Box
@@ -63,6 +65,7 @@ export default function LoginMethodButton(props: LoginMethodButtonProps) {
           onClick={onClick}
           sx={{ ...buttonSx, height: '50px' }}
           startIcon={<IconSvg icon={iconName} sx={iconSx} />}
+          data-testid="button-without-last-login-info"
         >
           {buttonText}
         </Button>

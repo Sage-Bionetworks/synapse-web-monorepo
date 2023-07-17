@@ -95,6 +95,10 @@ describe('LoginMethodButton tests', () => {
   it('does not display help text when previous and current login method are different', () => {
     const { subText } = setUp()
     expect(subText).not.toBeInTheDocument()
+    expect(screen.queryByTestId('button-with-last-login-info')).toBeFalsy()
+    expect(
+      screen.queryByTestId('button-without-last-login-info'),
+    ).toBeInTheDocument()
   })
 
   it('does not display help text when apps are the same, even if previous and current login methods are the same', () => {
@@ -103,7 +107,10 @@ describe('LoginMethodButton tests', () => {
       'ARK Portal',
     )
     expect(subText).not.toBeInTheDocument()
-    expect(button.querySelector('div')).toBeFalsy()
+    expect(screen.queryByTestId('button-with-last-login-info')).toBeFalsy()
+    expect(
+      screen.queryByTestId('button-without-last-login-info'),
+    ).toBeInTheDocument()
   })
 
   it('displays help text and tooltip when previous and current login method are the same, but apps are different', async () => {
@@ -113,6 +120,9 @@ describe('LoginMethodButton tests', () => {
     })
     expect(button).toHaveTextContent(defaultButtonText)
     expect(subText).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('button-with-last-login-info'),
+    ).toBeInTheDocument()
 
     const tooltipIcon = screen.getByTestId('InfoTwoToneIcon')
     await user.hover(tooltipIcon)

@@ -175,42 +175,42 @@ export const RegisterAccount1 = () => {
             <>
               <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
                 <BackButtonForPage />
-                <Box sx={{ minHeight: '530px' }}>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  sx={{ minHeight: '530px' }}
+                >
                   <div className="panel-logo logo-wrapper">
                     <SourceAppLogo />
                   </div>
                   {page === Pages.CHOOSE_REGISTRATION && (
                     <>
-                      <div style={{ marginTop: '30px' }}>
+                      <div>
                         <Button
                           onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
                           sx={chooseButtonSx}
                           variant="outlined"
+                          startIcon={
+                            <img
+                              className="googleLogo"
+                              src={GoogleLogo}
+                              alt="Google Logo"
+                              style={{ width: 25 }}
+                            />
+                          }
                         >
-                          <img
-                            className="googleLogo"
-                            src={GoogleLogo}
-                            alt="Google Logo"
-                            style={{ width: 25, marginRight: 5 }}
-                          />
-                          <span className="signInText">
-                            Create account with Google
-                          </span>
+                          Create account with Google
                         </Button>
                         <Button
                           onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
                           sx={chooseButtonSx}
                           variant="outlined"
+                          startIcon={<IconSvg icon="email" />}
                         >
-                          <IconSvg icon="email" sx={{ marginRight: '5px' }} />
                           Create account with your email
                         </Button>
                       </div>
-                      {lastLoginInfo && (
-                        <Box position="absolute" bottom={0} pb="54px" pr="64px">
-                          {lastLoginInfo}
-                        </Box>
-                      )}
+                      {lastLoginInfo && <Box mt="auto">{lastLoginInfo}</Box>}
                     </>
                   )}
                   {page === Pages.EMAIL_REGISTRATION && (

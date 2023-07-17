@@ -47,8 +47,8 @@ function getLoginMethodByProviderQueryParam(providerQueryParam: string | null) {
   return SynapseConstants.LOGIN_METHOD_EMAIL
 }
 
-function getLoginMethod(history: ReturnType<typeof useHistory>) {
-  const provider = new URLSearchParams(history.location.search).get('provider')
+function getLoginMethod(window: Window) {
+  const provider = new URLSearchParams(window.location.search).get('provider')
   return getLoginMethodByProviderQueryParam(provider)
 }
 
@@ -84,7 +84,7 @@ function LoginPage(props: LoginPageProps) {
                 sessionCallback={() => {
                   if (sourceApp?.friendlyName && sourceApp.appURL) {
                     setLastLoginInfo(
-                      getLoginMethod(history),
+                      getLoginMethod(window),
                       formatDate(new Date()),
                       sourceApp?.friendlyName,
                       sourceApp?.appURL,
