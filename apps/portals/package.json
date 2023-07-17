@@ -8,6 +8,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.13.7",
     "@mui/material": "^5.13.7",
+    "@react-hookz/web": "^23.1.0",
     "@sage-bionetworks/react-base-table": "^1.13.4",
     "clone-deep": "^4.0.1",
     "dayjs": "^1.11.9",
@@ -23,7 +24,6 @@
     "react-router-dom": "^5.3.4",
     "react-spinners": "^0.13.8",
     "react-switch": "^7.0.0",
-    "react-use": "^17.4.0",
     "sass": "^1.63.6",
     "synapse-react-client": "workspace:*"
   },
