@@ -69,7 +69,7 @@ export default function SendToCavaticaConfirmationDialog(
     undefined,
     {
       useErrorBoundary: true,
-      enabled: !!data?.columnModels,
+      enabled: !!data?.columnModels && isShowingExportToCavaticaModal,
     },
   )
 
