@@ -11,6 +11,7 @@
     "@mui/material": "^5.13.7",
     "@mui/system": "^5.13.7",
     "@mui/utils": "^5.13.7",
+    "@react-hookz/web": "^23.1.0",
     "lodash-es": "^4.17.21",
     "plotly.js-basic-dist": "^2.24.3",
     "react": "18.2.0",
@@ -20,7 +21,6 @@
     "react-easy-crop": "^4.7.5",
     "react-query": "3.39.3",
     "react-router-dom": "^5.3.4",
-    "react-use": "^17.4.0",
     "sass": "^1.63.6",
     "synapse-react-client": "workspace:*",
     "universal-cookie": "^4.0.4"
