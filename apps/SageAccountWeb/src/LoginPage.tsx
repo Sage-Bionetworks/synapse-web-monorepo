@@ -26,15 +26,6 @@ export type LoginPageProps = {
   returnToUrl?: string
 }
 
-function formatDate(date: Date) {
-  const monthDay = date.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-  })
-  const year = date.toLocaleDateString('en-US', { year: 'numeric' })
-  return `${monthDay}, ${year}`
-}
-
 function getLoginMethodByProviderQueryParam(providerQueryParam: string | null) {
   for (const [key, value] of Object.entries(
     SynapseConstants.OAUTH2_PROVIDERS,
@@ -85,7 +76,7 @@ function LoginPage(props: LoginPageProps) {
                   if (sourceApp?.friendlyName && sourceApp.appURL) {
                     setLastLoginInfo(
                       getLoginMethod(window),
-                      formatDate(new Date()),
+                      new Date(),
                       sourceApp?.friendlyName,
                       sourceApp?.appURL,
                     )

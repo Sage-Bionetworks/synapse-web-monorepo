@@ -12,9 +12,6 @@ const meta = {
       options: LoginMethods,
       control: 'radio',
     },
-    lastLoginDate: {
-      control: 'text',
-    },
   },
   parameters: {
     design: [
@@ -40,7 +37,7 @@ export const Demo: Story = {
     lastLoginMethod: LOGIN_METHOD_EMAIL,
     lastLoginSourceAppName: 'AD Knowledge Portal',
     lastLoginSourceAppURL: 'https://adknowledgeportal.synapse.org/',
-    lastLoginDate: 'May 10, 2023',
+    lastLoginDate: '2023-05-10T16:54:53.333Z',
     display: 'sentence',
   },
 }

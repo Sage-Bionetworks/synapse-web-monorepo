@@ -28,7 +28,7 @@ const defaultButtonText = 'Sign in with Google'
 const defaultCurrentAppSourceName = 'AD Knowledge Portal'
 const defaultLastLoginInfo = {
   lastLoginMethod: LOGIN_METHOD_EMAIL,
-  lastLoginDate: 'May 10, 2023',
+  lastLoginDate: new Date('2023-05-10T16:54:53.333Z'),
   lastLoginSourceAppName: 'ARK Portal',
   lastLoginSourceAppURL: 'https://arkportal.synapse.org',
 }

@@ -1,5 +1,6 @@
 import { InfoTwoTone } from '@mui/icons-material'
 import { Box, Link, Tooltip, Typography } from '@mui/material'
+import dayjs from 'dayjs'
 import React from 'react'
 import {
   CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
@@ -8,6 +9,7 @@ import {
   LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
   LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
 } from '../../utils/SynapseConstants'
+import { formatDate } from '../../utils/functions/DateFormatter'
 import { setLocalStorage, useLocalStorage } from '../../utils/hooks'
 import { LoginMethod, getLoginMethodFriendlyName } from './LoginMethod'
 
@@ -44,11 +46,11 @@ export function setCurrentAppInfo(currentSourceAppName: string) {
 
 export function setLastLoginInfo(
   lastLoginMethod: LoginMethod,
-  lastLoginDate: string,
+  lastLoginDate: Date,
   lastLoginSourceAppName: string,
   lastLoginSourceAppURL: string,
 ) {
-  setLocalStorage(LAST_LOGIN_DATE_LOCALSTORAGE_KEY, lastLoginDate)
+  setLocalStorage(LAST_LOGIN_DATE_LOCALSTORAGE_KEY, lastLoginDate.toISOString())
   setLocalStorage(LAST_LOGIN_METHOD_LOCALSTORAGE_KEY, lastLoginMethod)
   setLocalStorage(
     LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
@@ -110,6 +112,10 @@ export default function LastLoginInfo(props: LastLoginInfoProps) {
   )
 
   const title = `You may already have ${currentSourceAppIndefiniteArticle} ${currentSourceAppName} account`
+  const accountLastUsed = `Account last used on ${formatDate(
+    dayjs(lastLoginDate),
+    'MMMM D, YYYY',
+  )}`
 
   const tooltipText = (
     <>
@@ -121,7 +127,7 @@ export default function LastLoginInfo(props: LastLoginInfoProps) {
           You can use the same account to sign in to ${currentSourceAppDefiniteArticle}${currentSourceAppName}.`}
       </Typography>
       <Typography variant="smallText1" color="white">
-        {`Account last used on ${lastLoginDate}`}
+        {accountLastUsed}
       </Typography>
     </>
   )
@@ -151,7 +157,7 @@ export default function LastLoginInfo(props: LastLoginInfoProps) {
         variant="smallText1"
         sx={{ color: 'grey.700', fontSize: '10px' }}
       >
-        {`Account last used on ${lastLoginDate}`}
+        {accountLastUsed}
       </Typography>
     </>
   )

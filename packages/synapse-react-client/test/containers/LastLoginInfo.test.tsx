@@ -13,9 +13,11 @@ const defaultProps: LastLoginInfoProps = {
   lastLoginMethod: LOGIN_METHOD_OAUTH2_GOOGLE,
   lastLoginSourceAppName: 'ARK Portal',
   lastLoginSourceAppURL: 'https://arkportal.synapse.org',
-  lastLoginDate: 'May 10, 2023',
+  lastLoginDate: '2023-05-10T16:54:53.333Z',
   display: 'sentence',
 }
+
+const defaultDateFormatted = 'May 10, 2023'
 
 function renderComponent(
   props: LastLoginInfoProps,
@@ -54,7 +56,7 @@ describe('LastLoginInfo tests', () => {
     const tooltip = await screen.findByRole('tooltip')
 
     expect(tooltip.textContent).toMatch(defaultProps.currentSourceAppName)
-    expect(tooltip.textContent).toMatch(defaultProps.lastLoginDate)
+    expect(tooltip.textContent).toMatch(defaultDateFormatted)
     expect(tooltip.textContent).toMatch(defaultProps.lastLoginSourceAppName)
   })
 
@@ -68,7 +70,7 @@ describe('LastLoginInfo tests', () => {
 
     expect(paragraphs.length).toEqual(3)
     expect(paragraphs[0].textContent).toMatch(defaultProps.currentSourceAppName)
-    expect(paragraphs[2].textContent).toMatch(defaultProps.lastLoginDate)
+    expect(paragraphs[2].textContent).toMatch(defaultDateFormatted)
 
     const link = within(paragraphs[1]).getByRole('link')
     expect(link).toHaveAttribute('href', defaultProps.lastLoginSourceAppURL)
