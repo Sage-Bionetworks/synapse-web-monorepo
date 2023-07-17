@@ -81,7 +81,7 @@ function formatFacetValuesForDisplay(
   }
 }
 
-/************* QUERY ENUM CONMPONENT  *************/
+/************* QUERY ENUM COMPONENT  *************/
 
 export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   facetValues,

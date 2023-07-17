@@ -12,17 +12,13 @@ import { NoContentPlaceholderType } from './SynapseTable/NoContentPlaceholderTyp
 import SearchResultsNotFound from './SynapseTable/SearchResultsNotFound'
 import ThisTableIsEmpty from './SynapseTable/TableIsEmpty'
 import { unCamelCase } from '../utils/functions/unCamelCase'
-import { ColumnType, Row } from '@sage-bionetworks/synapse-types'
+import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { getDisplayValue } from '../utils/functions/getDataFromFromStorage'
-import { isFileViewOrDataset } from './SynapseTable/SynapseTableUtils'
 import useMutuallyExclusiveState from '../utils/hooks/useMutuallyExclusiveState'
 
 export type QueryVisualizationContextType = {
   columnsToShowInTable: string[]
   setColumnsToShowInTable: (newState: string[]) => void
-  selectedRows: Row[]
-  setSelectedRows: (newState: Row[]) => void
-  hasSelectedRows: boolean
   rgbIndex?: number
   unitDescription: string
   /** Whether to show when the table or view was last updated. */
@@ -33,15 +29,10 @@ export type QueryVisualizationContextType = {
   getDisplayValue: (value: string, columnType: ColumnType) => string
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => JSX.Element
-  isRowSelectionVisible: boolean
   isShowingExportToCavaticaModal: boolean
   setIsShowingExportToCavaticaModal: React.Dispatch<
     React.SetStateAction<boolean>
   >
-  /** The set of columns that defines a uniqueness constraint on the table for the purposes of filtering based on row selection.
-   * Note that Synapse tables have no internal concept of a primary key.
-   */
-  rowSelectionPrimaryKey?: string[]
   showFacetFilter: boolean
   setShowFacetFilter: React.Dispatch<React.SetStateAction<boolean>>
   showSearchBar: boolean
@@ -126,30 +117,14 @@ export function QueryVisualizationWrapper(
 ) {
   const {
     noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE,
-    isRowSelectionVisible = false,
     columnAliases = {},
     defaultShowSearchBar = false,
     defaultShowFacetVisualization = true,
   } = props
 
-  const {
-    data,
-    entity,
-    getLastQueryRequest,
-    isFacetsAvailable,
-    hasResettableFilters,
-  } = useQueryContext()
+  const { data, getLastQueryRequest, isFacetsAvailable, hasResettableFilters } =
+    useQueryContext()
 
-  let { rowSelectionPrimaryKey } = props
-  if (
-    !rowSelectionPrimaryKey &&
-    isFileViewOrDataset(entity) &&
-    data?.columnModels?.find(cm => cm.name === 'id')
-  ) {
-    // If the primary key isn't specified via props, and this is a file view/dataset, we can safely use the 'id' column as primary key, if it is present
-    // Note: Synapse tables don't have an internal concept of a primary key
-    rowSelectionPrimaryKey = ['id']
-  }
   const [showSqlEditor, setShowSqlEditor] = useState(false)
   const [showFacetVisualization, setShowFacetVisualization] = useState(
     defaultShowFacetVisualization,
@@ -169,7 +144,6 @@ export function QueryVisualizationWrapper(
     useState<boolean>(false)
 
   const [visibleColumns, setVisibleColumns] = useState<string[]>([])
-  const [selectedRows, setSelectedRows] = useState<Row[]>([])
 
   const lastQueryRequest = getLastQueryRequest()
 
@@ -219,18 +193,14 @@ export function QueryVisualizationWrapper(
   const context: QueryVisualizationContextType = {
     columnsToShowInTable: visibleColumns,
     setColumnsToShowInTable: setVisibleColumns,
-    selectedRows,
-    setSelectedRows,
     rgbIndex: props.rgbIndex,
     unitDescription: props.unitDescription || 'result',
     showLastUpdatedOn: props.showLastUpdatedOn,
     getColumnDisplayName,
     getDisplayValue,
     NoContentPlaceholder,
-    isRowSelectionVisible,
     isShowingExportToCavaticaModal,
     setIsShowingExportToCavaticaModal,
-    rowSelectionPrimaryKey,
     showFacetFilter: isFacetsAvailable ? showFacetFilter : false,
     setShowFacetFilter,
     showSearchBar,
@@ -243,7 +213,6 @@ export function QueryVisualizationWrapper(
     setShowFacetVisualization,
     showCopyToClipboard,
     setShowCopyToClipboard,
-    hasSelectedRows: isRowSelectionVisible && selectedRows.length > 0,
   }
   /**
    * Render the children without any formatting

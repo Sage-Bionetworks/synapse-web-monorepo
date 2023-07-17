@@ -420,8 +420,7 @@ export class SynapseTable extends React.Component<
   ) => {
     const lastQueryRequest = this.props.queryContext.getLastQueryRequest?.()!
     const {
-      queryContext: { entity },
-      queryVisualizationContext: { isRowSelectionVisible },
+      queryContext: { entity, isRowSelectionVisible },
       showAccessColumn,
       showDownloadColumn,
     } = this.props
@@ -533,12 +532,8 @@ export class SynapseTable extends React.Component<
   ) {
     const rowsFormatted: JSX.Element[] = []
     const {
-      queryContext: { data },
-      queryVisualizationContext: {
-        columnsToShowInTable,
-        selectedRows,
-        setSelectedRows,
-      },
+      queryContext: { data, selectedRows, setSelectedRows },
+      queryVisualizationContext: { columnsToShowInTable },
       columnLinks = [],
     } = this.props
     const { selectColumns = [], columnModels = [] } = data!

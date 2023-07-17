@@ -25,11 +25,6 @@ export type RangeFacetFilterProps = {
   collapsed?: boolean
 }
 
-export type RangeFacetFilterState = {
-  facetResult: FacetColumnResultRange
-  columnModel: SelectColumn
-}
-
 export const RangeFacetFilter: React.FunctionComponent<
   RangeFacetFilterProps
 > = ({
@@ -80,7 +75,7 @@ export const RangeFacetFilter: React.FunctionComponent<
     getRadioValue(selectedMin, hasAnyValue),
   )
 
-  const result = (
+  return (
     <div>
       <FacetFilterHeader
         isCollapsed={isCollapsed}
@@ -135,5 +130,4 @@ export const RangeFacetFilter: React.FunctionComponent<
       </Collapse>
     </div>
   )
-  return result
 }

@@ -11,6 +11,7 @@ import {
   FacetColumnResult,
   FacetColumnResultValues,
   Query,
+  QueryBundleRequest,
   QueryResultBundle,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
@@ -20,15 +21,23 @@ import {
   hasResettableFilters,
   isFacetAvailable,
   isSingleNotSetValue,
+  queryRequestsHaveSameTotalResults,
 } from '../../src/utils/functions/queryUtils'
 import { LockedColumn } from '../../src'
 import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
 import { mockFileViewEntity } from '../../mocks/entity/mockEntity'
 import mockDataset from '../../mocks/entity/mockDataset'
+import SynapseClient from '../../src/synapse-client'
+
+jest.mock('../../src/synapse-client/SynapseClient', () => ({
+  getQueryTableResults: jest.fn(),
+}))
+
+const mockGetQueryTableResults = jest.mocked(SynapseClient.getQueryTableResults)
 
 describe('get next page of data', () => {
   const sql = 'SELECT * FROM syn16787123'
-  const getNextPageOfDataRequest = {
+  const getNextPageOfDataRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
@@ -42,28 +51,25 @@ describe('get next page of data', () => {
     },
   }
   const data = syn16787123Json as QueryResultBundle
-  const SynapseClient = require('../../src/synapse-client/SynapseClient')
-  SynapseClient.getQueryTableResults = jest.fn(() =>
-    Promise.resolve(syn16787123Json),
-  )
+  mockGetQueryTableResults.mockResolvedValue(data)
 
   it('works when there is PAGE_SIZE results coming back', () => {
     getNextPageOfData(getNextPageOfDataRequest, data, '').then(partialState => {
       const lengthOfNewData =
-        partialState.data.queryResult.queryResults.rows.length
-      const lengthOfOldData = data.queryResult.queryResults.rows.length
+        partialState.data.queryResult?.queryResults.rows.length
+      const lengthOfOldData = data.queryResult?.queryResults.rows.length
+      expect(lengthOfOldData).toBeDefined()
       expect(partialState.hasMoreData).toEqual(true)
-      expect(lengthOfNewData).toEqual(lengthOfOldData * 2)
+      expect(lengthOfNewData).toEqual(lengthOfOldData! * 2)
     })
   })
 
   it('works when there is less then PAGE_SIZE results coming back', () => {
     // setup test to return half the number of rows
-    const emptyData = cloneDeep(syn16787123Json)
-    emptyData.queryResult.queryResults.rows = []
-    SynapseClient.getQueryTableResults = jest.fn(() =>
-      Promise.resolve(emptyData),
-    )
+    const emptyData = cloneDeep(syn16787123Json) as QueryResultBundle
+    emptyData.queryResult!.queryResults.rows = []
+    mockGetQueryTableResults.mockResolvedValue(emptyData)
+    mockGetQueryTableResults.mockResolvedValue(emptyData)
 
     getNextPageOfData(getNextPageOfDataRequest, data, '').then(partialState => {
       // hasMoreData should be false since there are less than PAGE_SIZE results
@@ -293,6 +299,93 @@ describe('facet support', () => {
       expect(canTableQueryBeAddedToDownloadList(mockDataset.entity)).toEqual(
         true,
       )
+    })
+  })
+
+  describe('queryRequestsHaveDifferentTotalResults', () => {
+    const query: Query = {
+      sql: 'select * from syn123',
+      selectedFacets: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          columnName: 'foo',
+          facetValues: ['bar'],
+        },
+      ],
+      additionalFilters: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          columnName: 'baz',
+          operator: ColumnSingleValueFilterOperator.EQUAL,
+          values: ['qux'],
+        },
+      ],
+      sort: [
+        {
+          column: 'foo',
+          direction: 'ASC',
+        },
+      ],
+      limit: 10,
+      offset: 10,
+    }
+
+    it('returns false when sql is changed', () => {
+      const newQuery = cloneDeep(query)
+      newQuery.sql = "select * from syn123 where foo = 'abc'"
+      expect(queryRequestsHaveSameTotalResults(query, newQuery)).toEqual(false)
+    })
+
+    it('returns false when selectedFacets is changed', () => {
+      const newQuery = cloneDeep(query)
+      newQuery.selectedFacets = [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          columnName: 'foo',
+          facetValues: ['abc'],
+        },
+      ]
+      expect(queryRequestsHaveSameTotalResults(query, newQuery)).toEqual(false)
+    })
+
+    it('returns false when additionalFilters is changed', () => {
+      const newQuery = cloneDeep(query)
+      newQuery.additionalFilters = [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          columnName: 'baz',
+          operator: ColumnSingleValueFilterOperator.EQUAL,
+          values: ['abc'],
+        },
+      ]
+      expect(queryRequestsHaveSameTotalResults(query, newQuery)).toEqual(false)
+    })
+
+    it('returns true when limit is changed', () => {
+      const newQuery = cloneDeep(query)
+      newQuery.limit = 20
+      expect(queryRequestsHaveSameTotalResults(query, newQuery)).toEqual(true)
+    })
+
+    it('returns true when offset is changed', () => {
+      const newQuery = cloneDeep(query)
+      newQuery.offset = 20
+      expect(queryRequestsHaveSameTotalResults(query, newQuery)).toEqual(true)
+    })
+
+    it('returns true when sort is changed', () => {
+      const newQuery = cloneDeep(query)
+      newQuery.sort = [
+        {
+          column: 'foo',
+          direction: 'DESC',
+        },
+      ]
+      expect(queryRequestsHaveSameTotalResults(query, newQuery)).toEqual(true)
     })
   })
 })

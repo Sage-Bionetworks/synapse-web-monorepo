@@ -6,6 +6,7 @@ import {
   ColumnModel,
   QueryBundleRequest,
   QueryResultBundle,
+  Row,
   Table,
 } from '@sage-bionetworks/synapse-types'
 import { ImmutableTableQueryResult } from '../useImmutableTableQuery'
@@ -53,7 +54,7 @@ export type QueryContextType<
   /** Returns a deep clone of the initial query bundle request */
   getInitQueryRequest: () => QueryBundleRequest
   /** Updates the current query with the passed request */
-  executeQueryRequest: (param: QueryBundleRequest) => void
+  executeQueryRequest: (param: React.SetStateAction<QueryBundleRequest>) => void
   /** Resets the query to its initial state, clearing all filters added by the user */
   resetQuery: ImmutableTableQueryResult['resetQuery']
   removeSelectedFacet: ImmutableTableQueryResult['removeSelectedFacet']
@@ -81,6 +82,18 @@ export type QueryContextType<
   getColumnModel: (columnName: string) => ColumnModel | null
   // Either open benefactor entity page in a new window or open the sharing settings dialog (in Synapse.org)
   onViewSharingSettingsClicked?: (benefactorId: string) => void
+  /** Whether the user can select individual rows on which to perform an action */
+  isRowSelectionVisible: boolean
+  /** The collection of selected rows */
+  selectedRows: Row[]
+  /** State updater for `selectedRows`  */
+  setSelectedRows: React.Dispatch<React.SetStateAction<Row[]>>
+  /** The set of columns that defines a uniqueness constraint on the table for the purposes of filtering based on row selection.
+   * Note that Synapse tables have no internal concept of a primary key.
+   */
+  rowSelectionPrimaryKey?: string[]
+  /** Whether the user has selected any rows */
+  hasSelectedRows: boolean
 }
 
 export type PaginatedQueryContextType<
@@ -104,7 +117,7 @@ export type InfiniteQueryContextType<
   /** Returns true when loading a new page of query results */
   isLoadingNewPage: boolean
   /** Whether the query result bundle has a next page */
-  hasNextPage: boolean
+  hasNextPage?: boolean
   /** Invoke this method to fetch and append the next page of rows to the data  */
   appendNextPageToResults: () => Promise<void>
   /** Invoke to fetch and update the data with the next page of query results */

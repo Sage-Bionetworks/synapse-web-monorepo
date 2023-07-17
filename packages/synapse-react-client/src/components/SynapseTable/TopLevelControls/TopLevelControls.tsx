@@ -84,15 +84,15 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     lockedColumn,
     hasResettableFilters,
     getLastQueryRequest,
+    isRowSelectionVisible,
+    selectedRows,
+    hasSelectedRows,
   } = useQueryContext()
   useQueryContext()
 
   const {
     setShowSearchBar,
     columnsToShowInTable,
-    isRowSelectionVisible,
-    selectedRows,
-    hasSelectedRows,
     setColumnsToShowInTable,
     setIsShowingExportToCavaticaModal,
     unitDescription,
