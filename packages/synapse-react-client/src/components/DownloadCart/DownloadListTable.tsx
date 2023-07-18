@@ -228,6 +228,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 <th>
                   SynID
                   <InteractiveCopyIdsIcon
+                    size={'small'}
                     onCopy={() => {
                       // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
                       setCopyingAllSynapseIDs(true)

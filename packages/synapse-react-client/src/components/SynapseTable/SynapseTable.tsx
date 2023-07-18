@@ -35,7 +35,7 @@ import loadingScreen from '../LoadingScreen'
 import ModalDownload from '../ModalDownload/ModalDownload'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 import { QueryContextType } from '../QueryContext/QueryContext'
-import { Icon } from '../row_renderers/utils'
+import IconSvg from '../IconSvg'
 import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
 import { Checkbox } from '../widgets/Checkbox'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
@@ -716,13 +716,6 @@ export class SynapseTable extends React.Component<
           const isFacetSelection: boolean =
             facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
           const facet = facets[facetIndex] as FacetColumnResultValues
-          const isSelectedSpanClass = isSelected
-            ? 'SRC-primary-background-color SRC-anchor-light'
-            : ''
-          const isSelectedIconClass = isSelected
-            ? 'SRC-selected-table-icon tool-icon'
-            : 'SRC-primary-text-color tool-icon'
-          const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
           const displayColumnName: string | undefined = getColumnDisplayName(
             column.name,
           )
@@ -763,8 +756,8 @@ export class SynapseTable extends React.Component<
                     <span
                       role="button"
                       aria-label="sort"
+                      aria-selected={isSelected}
                       tabIndex={0}
-                      className={sortSpanBackgoundClass}
                       onKeyPress={this.handleColumnSortPress({
                         index,
                         name: column.name,
@@ -774,16 +767,25 @@ export class SynapseTable extends React.Component<
                         name: column.name,
                       })}
                     >
-                      <Icon
-                        type={ICON_STATE[columnIndex]}
-                        cssClass={isSelectedIconClass}
-                      ></Icon>
+                      <IconSvg
+                        icon={ICON_STATE[columnIndex]}
+                        wrap={false}
+                        sx={{
+                          color: isSelected
+                            ? 'primary.contrastText'
+                            : 'primary.main',
+                          backgroundColor: isSelected ? 'primary.main' : 'none',
+
+                          '&:hover': {
+                            color: 'primary.contrastText',
+                            backgroundColor: 'primary.600',
+                          },
+                        }}
+                      />
                     </span>
                   )}
                   {isEntityIDColumn && (
-                    <span style={{ paddingBottom: '6px' }}>
-                      <EntityIDColumnCopyIcon />
-                    </span>
+                    <EntityIDColumnCopyIcon size={'small'} />
                   )}
                 </div>
               </div>

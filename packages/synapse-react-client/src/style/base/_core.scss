@@ -112,28 +112,13 @@ svg.SRC-hoverBox {
     display: flex;
     text-align: left;
   }
-  .SRC-selected-table-icon {
-    svg {
-      width: 18px;
-      height: 18px;
-    }
-    svg,
-    path {
-      fill: #fff;
-    }
-  }
+
   .dropdown button.btn {
     margin: 0 1px;
     border: 0;
     border-radius: 0;
   }
-  .SRC-sortPadding {
-    padding: 3px;
-    margin: 0 1px;
-  }
-  .tool-icon {
-    display: flex;
-  }
+
   .SRC-primary-background-color-hover {
     &:hover,
     &[aria-expanded='true'] {
@@ -219,10 +204,6 @@ span.SRC-facets svg.SRC-facets-icon {
 
 .SRC-boldText {
   font-weight: bold;
-}
-
-a.SRC-anchor-light {
-  color: white;
 }
 
 .SRC-marginRightFivePx .SRC-paddingSevenPx {
@@ -356,10 +337,6 @@ button.SRC-roundBorder {
   font-size: 25px;
 }
 
-.SRC-selected-table-icon {
-  color: white;
-}
-
 .SRC-center-text {
   text-align: center;
 }
@@ -482,17 +459,6 @@ button.SRC-roundBorder {
   width: 0;
 }
 
-.SRC-tableHead {
-  font-size: 14px;
-  text-transform: capitalize;
-  font-weight: 700;
-}
-
-.SRC-sortPadding {
-  outline: none;
-  padding: 2px 3px;
-}
-
 .SRC-forceLeftDropdown {
   right: auto;
   left: 0;
@@ -527,13 +493,6 @@ button.SRC-roundBorder {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-.SRC-tableHeader {
-  font-size: 18px;
-  margin: 0px;
-  display: inline-block;
-  color: white;
 }
 
 .SRC-hidden {
