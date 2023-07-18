@@ -42,6 +42,7 @@
     "@popperjs/core": "^2.11.8",
     "@react-google-maps/api": "^2.18.1",
     "@react-hook/resize-observer": "^1.2.6",
+    "@react-hookz/web": "^23.1.0",
     "@rjsf/core": "^5.9.0",
     "@rjsf/mui": "^5.9.0",
     "@rjsf/utils": "^5.9.0",

@@ -134,15 +134,30 @@ export const URL_TERMS_CONDITIONS_AGREEMENT =
 /** Class names */
 export const LOGIN_BACK_BUTTON_CLASS_NAME = 'login-flow-back-button'
 
+/* Login methods */
+export const LOGIN_METHOD_EMAIL = 'EMAIL'
+export const LOGIN_METHOD_OAUTH2_GOOGLE = 'GOOGLE'
+export const LOGIN_METHOD_OAUTH2_ORCID = 'ORCID'
+
 export const OAUTH2_PROVIDERS = {
-  GOOGLE: 'GOOGLE_OAUTH_2_0',
-  ORCID: 'ORCID',
+  [LOGIN_METHOD_OAUTH2_GOOGLE]: 'GOOGLE_OAUTH_2_0',
+  [LOGIN_METHOD_OAUTH2_ORCID]: 'ORCID',
 }
+
+/* Last login information */
+export const CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY =
+  'current_sourceapp_friendly_name'
+export const LAST_LOGIN_METHOD_LOCALSTORAGE_KEY = 'last_login_method'
+export const LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY =
+  'last_login_sourceapp_friendly_name'
+export const LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY =
+  'last_login_sourceapp_url'
+export const LAST_LOGIN_DATE_LOCALSTORAGE_KEY = 'last_login_date'
 
 export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
 export const ACCESS_TOKEN_COOKIE_KEY =
   'org.sagebionetworks.security.user.login.token'
 export const POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY = 'after-sso-login-url'
 
-/* Persistent localStorage keys */
+/* Persistent localStorage keys on SWC logout */
 export const PERSISTENT_LOCAL_STORAGE_KEYS = ORIENTATION_BANNER_KEYS

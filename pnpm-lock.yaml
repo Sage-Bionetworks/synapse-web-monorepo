@@ -792,6 +792,9 @@ importers:
       '@react-hook/resize-observer':
         specifier: ^1.2.6
         version: 1.2.6(react@18.2.0)
+      '@react-hookz/web':
+        specifier: ^23.1.0
+        version: 23.1.0(react-dom@18.2.0)(react@18.2.0)
       '@rjsf/core':
         specifier: ^5.9.0
         version: 5.9.0(@rjsf/utils@5.9.0)(react@18.2.0)
