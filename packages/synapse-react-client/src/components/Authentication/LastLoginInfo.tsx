@@ -22,34 +22,34 @@ export type LastLoginInfoProps = {
   display: 'sentence' | 'box'
 }
 
-export function useLastLoginInfoStatePairs() {
+export function useLastLoginInfoState() {
   return {
-    currentSourceAppNameStatePair: useLocalStorageValue<string>(
+    currentSourceAppNameState: useLocalStorageValue<string>(
       CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
     ),
-    lastLoginMethodStatePair: useLocalStorageValue<LoginMethod>(
+    lastLoginMethodState: useLocalStorageValue<LoginMethod>(
       LAST_LOGIN_METHOD_LOCALSTORAGE_KEY,
     ),
-    lastLoginSourceAppNameStatePair: useLocalStorageValue<string>(
+    lastLoginSourceAppNameState: useLocalStorageValue<string>(
       LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
     ),
-    lastLoginSourceAppURLStatePair: useLocalStorageValue<string>(
+    lastLoginSourceAppURLState: useLocalStorageValue<string>(
       LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
     ),
-    lastLoginDateStatePair: useLocalStorageValue<string>(
+    lastLoginDateState: useLocalStorageValue<string>(
       LAST_LOGIN_DATE_LOCALSTORAGE_KEY,
     ),
   }
 }
 
 export function useLastLoginInfo() {
-  const pairs = useLastLoginInfoStatePairs()
+  const states = useLastLoginInfoState()
   return {
-    currentSourceAppName: pairs.currentSourceAppNameStatePair.value,
-    lastLoginMethod: pairs.lastLoginMethodStatePair.value,
-    lastLoginSourceAppName: pairs.lastLoginSourceAppNameStatePair.value,
-    lastLoginSourceAppURL: pairs.lastLoginSourceAppURLStatePair.value,
-    lastLoginDate: pairs.lastLoginDateStatePair.value,
+    currentSourceAppName: states.currentSourceAppNameState.value,
+    lastLoginMethod: states.lastLoginMethodState.value,
+    lastLoginSourceAppName: states.lastLoginSourceAppNameState.value,
+    lastLoginSourceAppURL: states.lastLoginSourceAppURLState.value,
+    lastLoginDate: states.lastLoginDateState.value,
   }
 }
 

@@ -8,7 +8,7 @@ import { useSourceApp } from './components/SourceApp.js'
 import { sageAccountWebThemeOverrides } from './style/theme'
 import { Theme } from '@mui/material'
 import {
-  useLastLoginInfoStatePairs,
+  useLastLoginInfoState,
   SynapseTheme,
   SynapseUtilityFunctions,
   useApplicationSessionContext,
@@ -28,7 +28,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
   >()
-  const { currentSourceAppNameStatePair } = useLastLoginInfoStatePairs()
+  const { currentSourceAppNameState } = useLastLoginInfoState()
   useEffect(() => {
     // SWC-6294: on mount, detect and attempt a client-side framebuster (mitigation only, easily bypassed by attacker)
     if (window.top && window.top !== window) {
@@ -58,9 +58,9 @@ function AppInitializer(props: { children?: React.ReactNode }) {
 
   useEffect(() => {
     if (sourceApp?.friendlyName) {
-      currentSourceAppNameStatePair.set(sourceApp.friendlyName)
+      currentSourceAppNameState.set(sourceApp.friendlyName)
     }
-  }, [currentSourceAppNameStatePair, sourceApp?.friendlyName])
+  }, [currentSourceAppNameState, sourceApp?.friendlyName])
 
   useEffect(() => {
     if (sourceApp?.palette) {
