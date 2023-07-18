@@ -6,11 +6,18 @@ import CardContainerLogic, {
 } from '../../../src/components/CardContainerLogic'
 import * as QueryVisualizationWrapperModule from '../../../src/components/QueryVisualizationWrapper'
 import { QueryVisualizationWrapper } from '../../../src/components/QueryVisualizationWrapper'
-import * as InfiniteQueryWrapperModule from '../../../src/components/InfiniteQueryWrapper'
-import { InfiniteQueryWrapper } from '../../../src/components/InfiniteQueryWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { NoContentPlaceholderType } from '../../../src/components/SynapseTable/NoContentPlaceholderType'
 import * as CardContainerModule from '../../../src/components/CardContainer/CardContainer'
+import QueryWrapper from '../../../src/components/QueryWrapper'
+
+jest.mock('../../../src/components/QueryWrapper/QueryWrapper', () => ({
+  QueryWrapper: jest.fn(props => {
+    return <div data-testid="QueryWrapper">{props.children}</div>
+  }),
+}))
+
+const mockQueryWrapper = jest.mocked(QueryWrapper)
 
 const renderComponent = (props: CardContainerLogicProps) => {
   return render(<CardContainerLogic {...props} />, { wrapper: createWrapper() })
@@ -20,12 +27,6 @@ const mockCardContainer = jest
   .spyOn(CardContainerModule, 'default')
   .mockImplementation(props => {
     return <div data-testid="CardContainer"></div>
-  })
-
-jest
-  .spyOn(InfiniteQueryWrapperModule, 'InfiniteQueryWrapper')
-  .mockImplementation(props => {
-    return <div data-testid="InfiniteQueryWrapper">{props.children}</div>
   })
 
 jest
@@ -51,15 +52,16 @@ describe('it performs basic functionality', () => {
     expect(container).toBeDefined()
     await screen.findByTestId('CardContainer')
     await screen.findByTestId('QueryVisualizationWrapper')
-    await screen.findByTestId('InfiniteQueryWrapper')
+    await screen.findByTestId('QueryWrapper')
   })
 
   it('passes down props correctly', async () => {
     renderComponent(props)
 
     await waitFor(() =>
-      expect(InfiniteQueryWrapper).toHaveBeenCalledWith(
+      expect(mockQueryWrapper).toHaveBeenCalledWith(
         expect.objectContaining({
+          isInfinite: true,
           initQueryRequest: expect.objectContaining({
             concreteType:
               'org.sagebionetworks.repo.model.table.QueryBundleRequest',

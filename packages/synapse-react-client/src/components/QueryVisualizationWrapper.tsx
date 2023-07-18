@@ -120,6 +120,7 @@ export function QueryVisualizationWrapper(
     columnAliases = {},
     defaultShowSearchBar = false,
     defaultShowFacetVisualization = true,
+    unitDescription = 'result',
   } = props
 
   const { data, getLastQueryRequest, isFacetsAvailable, hasResettableFilters } =
@@ -194,7 +195,7 @@ export function QueryVisualizationWrapper(
     columnsToShowInTable: visibleColumns,
     setColumnsToShowInTable: setVisibleColumns,
     rgbIndex: props.rgbIndex,
-    unitDescription: props.unitDescription || 'result',
+    unitDescription: unitDescription,
     showLastUpdatedOn: props.showLastUpdatedOn,
     getColumnDisplayName,
     getDisplayValue,
