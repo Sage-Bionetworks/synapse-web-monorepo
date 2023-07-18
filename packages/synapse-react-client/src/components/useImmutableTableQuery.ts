@@ -109,12 +109,19 @@ export default function useImmutableTableQuery(
    * Inspect the URL on mount to see if we have a particular query request that we must show.
    */
   useEffect(() => {
-    const query = DeepLinkingUtils.getQueryRequestFromLink(
+    const queryRequestFromLink = DeepLinkingUtils.getQueryRequestFromLink(
       'QueryWrapper',
       componentIndex,
     )
-    if (query) {
-      setLastQueryRequest(query)
+    if (queryRequestFromLink) {
+      setLastQueryRequest(prevState => ({
+        ...prevState,
+        ...queryRequestFromLink,
+        query: {
+          ...prevState.query,
+          ...queryRequestFromLink.query,
+        },
+      }))
     }
   }, [componentIndex])
 

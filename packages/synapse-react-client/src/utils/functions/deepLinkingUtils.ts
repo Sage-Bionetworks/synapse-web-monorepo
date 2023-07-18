@@ -93,24 +93,18 @@ export function updateUrlWithNewSearchParam(
 export function getQueryRequestFromLink(
   componentName: string,
   componentIndex: number,
-): QueryBundleRequest | undefined {
+): Partial<QueryBundleRequest> | undefined {
   const searchParamValue = getSearchParamValueFromUrl(
     componentName,
     componentIndex,
   )
 
-  let initQueryRequest: QueryBundleRequest | undefined = undefined
+  let initQueryRequest: Partial<QueryBundleRequest> | undefined = undefined
   if (searchParamValue) {
     const query = JSON.parse(searchParamValue) as Query
     if (query.sql) {
       initQueryRequest = {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-          SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
         entityId: parseEntityIdFromSqlStatement(query.sql),
         query,
       }

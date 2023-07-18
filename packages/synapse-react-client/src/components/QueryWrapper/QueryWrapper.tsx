@@ -188,6 +188,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
         }
         confirmButtonText={'Clear Selection and Update Query'}
         onConfirm={() => {
+          setSelectedRows([])
           onConfirmChange()
         }}
         onCancel={() => {

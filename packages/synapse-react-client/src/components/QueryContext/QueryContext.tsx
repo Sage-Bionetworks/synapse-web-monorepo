@@ -54,7 +54,7 @@ export type QueryContextType<
   /** Returns a deep clone of the initial query bundle request */
   getInitQueryRequest: () => QueryBundleRequest
   /** Updates the current query with the passed request */
-  executeQueryRequest: (param: React.SetStateAction<QueryBundleRequest>) => void
+  executeQueryRequest: React.Dispatch<React.SetStateAction<QueryBundleRequest>>
   /** Resets the query to its initial state, clearing all filters added by the user */
   resetQuery: ImmutableTableQueryResult['resetQuery']
   removeSelectedFacet: ImmutableTableQueryResult['removeSelectedFacet']
