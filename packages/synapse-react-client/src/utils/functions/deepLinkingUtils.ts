@@ -1,6 +1,4 @@
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { Query } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '../index'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { parseEntityIdFromSqlStatement } from './SqlFunctions'
 
 //id consists of a component class/function name and it's index
