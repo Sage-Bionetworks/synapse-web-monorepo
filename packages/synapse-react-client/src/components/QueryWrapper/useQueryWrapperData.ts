@@ -155,7 +155,7 @@ export default function useQueryWrapperData<T extends boolean = boolean>(
           setCurrentPage: setInfiniteDataCurrentPage,
         }
       : {}
-  ) as T extends true ? InfiniteDataQueryPageControls : Record<string, never>
+  ) as T extends true ? InfiniteDataQueryPageControls : object
 
   return {
     data,

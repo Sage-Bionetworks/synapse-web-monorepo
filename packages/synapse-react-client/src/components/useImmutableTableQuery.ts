@@ -145,7 +145,7 @@ export default function useImmutableTableQuery(
    * @param {*} queryRequest Query request as specified by
    *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    */
-  const _setQuery: ImmutableTableQueryResult['setQuery'] = useCallback(
+  const setQuery: ImmutableTableQueryResult['setQuery'] = useCallback(
     (queryRequest): void => {
       const newQueryRequest = cloneDeep(
         typeof queryRequest === 'function'
@@ -172,36 +172,37 @@ export default function useImmutableTableQuery(
     [componentIndex, getLastQueryRequest, onQueryChange, shouldDeepLink],
   )
 
-  const setQuery = useCallback(
-    (queryRequest: React.SetStateAction<QueryBundleRequest>) => {
-      const nextQueryRequest =
-        typeof queryRequest === 'function'
-          ? queryRequest(getLastQueryRequest())
-          : queryRequest
-      // Check if we need to confirm the change, and eventually call _setQuery
-      if (
-        requireConfirmationOnChange &&
-        !queryRequestsHaveSameTotalResults(
-          lastQueryRequest.query,
-          nextQueryRequest.query,
-        )
-      ) {
-        setOnConfirmChangeQuery(() => () => {
-          _setQuery(queryRequest)
-          setIsConfirmingChange(false)
-        })
-        setIsConfirmingChange(true)
-      } else {
-        _setQuery(queryRequest)
-      }
-    },
-    [
-      _setQuery,
-      getLastQueryRequest,
-      lastQueryRequest.query,
-      requireConfirmationOnChange,
-    ],
-  )
+  const setQueryOrPromptConfirmation: ImmutableTableQueryResult['setQuery'] =
+    useCallback(
+      (queryRequest: React.SetStateAction<QueryBundleRequest>) => {
+        const nextQueryRequest =
+          typeof queryRequest === 'function'
+            ? queryRequest(getLastQueryRequest())
+            : queryRequest
+        // Check if we need to confirm the change, and eventually call _setQuery
+        if (
+          requireConfirmationOnChange &&
+          !queryRequestsHaveSameTotalResults(
+            lastQueryRequest.query,
+            nextQueryRequest.query,
+          )
+        ) {
+          setOnConfirmChangeQuery(() => () => {
+            setQuery(queryRequest)
+            setIsConfirmingChange(false)
+          })
+          setIsConfirmingChange(true)
+        } else {
+          setQuery(queryRequest)
+        }
+      },
+      [
+        setQuery,
+        getLastQueryRequest,
+        lastQueryRequest.query,
+        requireConfirmationOnChange,
+      ],
+    )
 
   const onCancelChangeQuery = useCallback(() => {
     setIsConfirmingChange(false)
@@ -219,27 +220,27 @@ export default function useImmutableTableQuery(
 
   const setPageSize = useCallback(
     (pageSize: number) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.limit = pageSize
         return currentQuery
       })
     },
-    [setQuery],
+    [setQueryOrPromptConfirmation],
   )
 
   const goToPage = useCallback(
     (pageNumber: number) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.offset = (pageNumber - 1) * pageSize
         return currentQuery
       })
     },
-    [pageSize, setQuery],
+    [pageSize, setQueryOrPromptConfirmation],
   )
 
   const resetQuery = useCallback(() => {
-    setQuery(initQueryRequest)
-  }, [initQueryRequest, setQuery])
+    setQueryOrPromptConfirmation(initQueryRequest)
+  }, [initQueryRequest, setQueryOrPromptConfirmation])
 
   /* If the initial query changes, then reset the query to match the new prop */
   useDeepCompareEffect(() => {
@@ -250,7 +251,7 @@ export default function useImmutableTableQuery(
 
   const removeSelectedFacet = useCallback(
     (facetColumnRequest: FacetColumnRequest) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.selectedFacets = (
           currentQuery.query.selectedFacets ?? []
         ).filter(facet => {
@@ -260,12 +261,12 @@ export default function useImmutableTableQuery(
         return currentQuery
       })
     },
-    [setQuery],
+    [setQueryOrPromptConfirmation],
   )
 
   const removeValueFromSelectedFacet = useCallback(
     (facet: FacetColumnRequest, value: string) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.selectedFacets = (
           currentQuery.query.selectedFacets ?? []
         )
@@ -295,12 +296,12 @@ export default function useImmutableTableQuery(
         return currentQuery
       })
     },
-    [setQuery],
+    [setQueryOrPromptConfirmation],
   )
 
   const removeQueryFilter = useCallback(
     (queryFilter: QueryFilter) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.additionalFilters = (
           currentQuery.query.additionalFilters ?? []
         ).filter(qf => {
@@ -310,12 +311,12 @@ export default function useImmutableTableQuery(
         return currentQuery
       })
     },
-    [setQuery],
+    [setQueryOrPromptConfirmation],
   )
 
   const removeValueFromQueryFilter = useCallback(
     (queryFilter: QueryFilter, value: string) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.additionalFilters = (
           currentQuery.query.additionalFilters ?? []
         )
@@ -345,7 +346,7 @@ export default function useImmutableTableQuery(
         return currentQuery
       })
     },
-    [setQuery],
+    [setQueryOrPromptConfirmation],
   )
 
   return {
@@ -353,7 +354,7 @@ export default function useImmutableTableQuery(
     versionNumber,
     getInitQueryRequest,
     getLastQueryRequest,
-    setQuery,
+    setQuery: setQueryOrPromptConfirmation,
     pageSize,
     currentPage,
     setPageSize,
