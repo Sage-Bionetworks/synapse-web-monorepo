@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '@mui/material'
+import { Button, Grid, Link, Typography } from '@mui/material'
 import RLogo from '../assets/icons/RLogo'
 import Python from '../assets/icons/Python'
 import Terminal from '../assets/icons/Terminal'
@@ -13,6 +13,12 @@ import { SynapsePoweredPortal } from './SynapsePoweredPortal'
 import { useSynapseContext } from '../utils/context/SynapseContext'
 import SynapseFullLogo from '../assets/icons/SynapseFullLogo'
 import IconSvg from './IconSvg/IconSvg'
+import { SynapseFeatureItem } from './SynapseFeatureItem'
+import AccessDataAnywhere from '../assets/icons/AccessDataAnywhere'
+import CommunicateFindings from '../assets/icons/CommunicateFindings'
+import RecordProvenance from '../assets/icons/RecordProvenance'
+import ShareYourResearch from '../assets/icons/ShareYourResearch'
+import MintDoi from '../assets/icons/MintDoi'
 
 export type SynapseHomepageProps = {
   projectViewId: string
@@ -132,132 +138,182 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
         </div>
       </div>
       <div className="SynapseHomepage__Section WhiteBackground">
-        <div className="FlexContainerReverse">
-          <img
-            src="https://s3.amazonaws.com/static.synapse.org/images/explore-research.svg"
-            className="SectionGraphic"
-            alt=""
-          />
-          <div className="SectionTextFlexContainer">
-            <h2>Organize Your Digital Research Assets</h2>
-            <div>
-              <h3>Access Your Data Anywhere</h3>
-              <p className="SectionBody">
-                Synapse provides APIs to store or access your data from the web
-                or programmatically via one of our supported analytical clients
-                (
-                <a
-                  href="https://r-docs.synapse.org/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  R
-                </a>
-                ,{' '}
-                <a
-                  href="https://python-docs.synapse.org/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Python
-                </a>
-                ,{' '}
-                <a
-                  href="https://python-docs.synapse.org/build/html/CommandLineClient.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Command Line
-                </a>
-                ).
-              </p>
-            </div>
-            <div>
-              <h3>Query Structured Data</h3>
-              <p className="SectionBody">
-                Use Synapse Tables to query structured data right from your web
-                browser or from any analytical client.
-              </p>
-            </div>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={buttonSx}
-              href={accessToken ? DASHBOARD_LINK : REGISTRATION_LINK}
-            >
-              {accessToken ? 'View Your Dashboard' : 'Get Started Now'}
-            </Button>
-          </div>
-        </div>
+        <Typography
+          variant="h2"
+          sx={{ textAlign: 'center', paddingBottom: '30px' }}
+        >
+          Synapse Features
+        </Typography>
+        <Grid container spacing={8}>
+          <Grid item xs={12} md={4}>
+            <SynapseFeatureItem
+              logo={<AccessDataAnywhere />}
+              title="Access your data anywhere"
+              description={
+                <Typography variant="body1">
+                  Synapse provides APIs to store or access your data from the
+                  web or programmatically via one of our supported analytical
+                  clients (
+                  <Link
+                    href="https://r-docs.synapse.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    R
+                  </Link>
+                  ,{' '}
+                  <Link
+                    href="https://python-docs.synapse.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Python
+                  </Link>
+                  ,{' '}
+                  <Link
+                    href="https://python-docs.synapse.org/build/html/CommandLineClient.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Command Line
+                  </Link>
+                  ).
+                </Typography>
+              }
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <SynapseFeatureItem
+              logo={<CommunicateFindings />}
+              title="Communicate your findings"
+              description={
+                <Typography variant="body1">
+                  Use the Synapse Wiki services to communicate your Project's
+                  research findings by embedding rich content such as images,
+                  Tables, Provenance, and even LaTeX equations.
+                </Typography>
+              }
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <SynapseFeatureItem
+              logo={<RecordProvenance />}
+              title="Record Provenance"
+              description={
+                <Typography variant="body1">
+                  Synapse provides tools to record and display provenance of
+                  your analysis - giving you credit for each step of the work
+                  you do!
+                </Typography>
+              }
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <SynapseFeatureItem
+              logo={<RecordProvenance />}
+              title="Query Structured Data"
+              description={
+                <Typography variant="body1">
+                  Use Synapse Tables to query structured data right from your
+                  web browser, or from any analytical client.
+                </Typography>
+              }
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <SynapseFeatureItem
+              logo={<ShareYourResearch />}
+              title="Share Your Research"
+              description={
+                <Typography variant="body1">
+                  New Synapse Projects are private by default - share with your
+                  colleagues, collaborators, and even make your work public!
+                  Create Synapse Teams to manage your collaborations.
+                </Typography>
+              }
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <SynapseFeatureItem
+              logo={<MintDoi />}
+              title="Mint a DOI"
+              description={
+                <Typography variant="body1">
+                  A digital object identifier (DOI) provides a persistent and
+                  easy way to reference your digital assets in publications -
+                  including data, code, or analysis results.
+                </Typography>
+              }
+            />
+          </Grid>
+        </Grid>
       </div>
       <div className="SynapseHomepage__Section OffWhiteBackground">
-        <div className="FlexContainer">
-          <img
-            src="https://s3.amazonaws.com/static.synapse.org/images/certified-microscope.svg"
-            className="SectionGraphic"
-            alt=""
-          />
-          <div className="SectionTextFlexContainer">
-            <h2>Get Credit For Your Research</h2>
-            <div>
-              <h3>Record Provenance</h3>
-              <p className="SectionBody">
-                Synapse provides tools to record and display Provenance for each
-                step of your analysis.
-              </p>
-            </div>
-            <div>
-              <h3>Mint a DOI</h3>
-              <p className="SectionBody">
-                A digital object identifier (DOI) provides a persistent and easy
-                way to reference your digital assets in publications &mdash;
-                including data, code, or analysis results.
-              </p>
-            </div>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={buttonSx}
-              href={accessToken ? DASHBOARD_LINK : REGISTRATION_LINK}
-            >
-              {accessToken ? 'View Your Dashboard' : 'Get Started Now'}
-            </Button>
-          </div>
+        <div className="SynapseHomepage__Section__Centered">
+          <Typography
+            variant="h2"
+            sx={{ textAlign: 'center', paddingBottom: '30px' }}
+          >
+            Synapse In Action
+          </Typography>
+          <ProjectViewCarousel entityId={projectViewId} />
         </div>
       </div>
       <div className="SynapseHomepage__Section WhiteBackground">
-        <div className="FlexContainerReverse">
-          <img
-            src="https://s3.amazonaws.com/static.synapse.org/images/collaborate.svg"
-            className="SectionGraphic"
-            alt=""
-          />
-          <div className="SectionTextFlexContainer">
-            <h2>Collaborate</h2>
-            <div>
-              <h3>Communicate Your Findings</h3>
-              <p className="SectionBody">
-                Use the Synapse Wiki services to communicate your findings by
-                embedding rich content such as images, Tables, Provenance, and
-                LaTeX equations.
-              </p>
-            </div>
-            <div>
-              <h3>Share Your Research</h3>
-              <p className="SectionBody">
-                New Synapse Projects are private by default &mdash; share with
-                your colleagues, collaborators, or make your work public! Create
-                Synapse Teams to manage your collaborations.
-              </p>
-            </div>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={buttonSx}
-              href={accessToken ? DASHBOARD_LINK : REGISTRATION_LINK}
-            >
-              {accessToken ? 'View Your Dashboard' : 'Get Started Now'}
-            </Button>
+        <div className="SynapseHomepage__Section__Centered">
+          <Typography
+            variant="h2"
+            sx={{ textAlign: 'center', paddingBottom: '30px' }}
+          >
+            Powered By Synapse
+          </Typography>
+          <p>
+            Our knowledge portals are community-specific interfaces that enable
+            researchers to explore and share data, analyses, and tools.
+          </p>
+          <div className="PoweredBySynapseFlexContainer">
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/ADKnowledgePortal.svg"
+              name="AD Knowledge Portal"
+              description="Data and tools for the study of Alzheimer's disease, related dementias, and healthy aging."
+              url="https://adknowledgeportal.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/BSMN.svg"
+              name="BSMN Portal"
+              description="Data and tools to study the role of brain somatic mosaicism in neuropsychiatric disease."
+              url="https://bsmn.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/CSBC.svg"
+              name="Cancer Complexity Knowledge Portal"
+              description="Approaches, data, and tools to address important questions in basic and translational cancer research."
+              url="https://cancercomplexity.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/dHealth.svg"
+              name="dHealth Digital Health Knowledge Portal"
+              description="Discover and download digital and mobile health data, tools, benchmarked outcomes and digital biomarkers."
+              url="https://dhealth.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/NFPortal.svg"
+              name="NF Data Portal"
+              description="Datasets, analysis tools, resources, and publications related to neurofibromatosis and schwannomatosis."
+              url="https://nf.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/Psychencode.svg"
+              name="Psychencode Knowledge Portal"
+              description="Investigation and large-scale data sets of genomic influences on neuropsychiatric disease."
+              url="https://psychencode.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://arkportal.synapse.org/favicon.svg"
+              name="ARK Portal"
+              description="The ARK Portal hosts data generated by a network of research teams working collaboratively to deepen the understanding of Arthritis and Autoimmune and Related Diseases."
+              url="https://arkportal.synapse.org/"
+            />
           </div>
         </div>
       </div>
@@ -269,7 +325,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             alt=""
           />
           <div className="SectionTextFlexContainer">
-            <h2>Our Data Sharing Principles</h2>
+            <Typography variant="h2">Our Data Sharing Principles</Typography>
             <div>
               <p className="SectionBody">
                 Synapse operates under a complete governance process that
@@ -336,7 +392,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             </a>
           </div>
           <div className="SectionTextFlexContainer">
-            <h2>Synapse Easily Integrates Into Your Workflow</h2>
+            <Typography variant="h2">
+              Synapse Easily Integrates Into Your Workflow
+            </Typography>
             <div>
               <p className="SectionBody">
                 Create Projects, upload &amp; download Files, generate
@@ -363,67 +421,28 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
       </div>
       <div className="SynapseHomepage__Section OffWhiteBackground">
         <div className="SynapseHomepage__Section__Centered">
-          <h2>Synapse In Action</h2>
-          <ProjectViewCarousel entityId={projectViewId} />
+          <Typography
+            variant="h2"
+            sx={{ textAlign: 'center', paddingBottom: '10px' }}
+          >
+            Sage’s Data Platform Offerings
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ textAlign: 'center', paddingBottom: '30px' }}
+          >
+            Sage offers the following service plans to the scientific community.
+          </Typography>
         </div>
       </div>
       <div className="SynapseHomepage__Section WhiteBackground">
         <div className="SynapseHomepage__Section__Centered">
-          <h2>Powered By Synapse</h2>
-          <p>
-            Our knowledge portals are community-specific interfaces that enable
-            researchers to explore and share data, analyses, and tools.
-          </p>
-          <div className="PoweredBySynapseFlexContainer">
-            <SynapsePoweredPortal
-              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/ADKnowledgePortal.svg"
-              name="AD Knowledge Portal"
-              description="Data and tools for the study of Alzheimer's disease, related dementias, and healthy aging."
-              url="https://adknowledgeportal.synapse.org/"
-            />
-            <SynapsePoweredPortal
-              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/BSMN.svg"
-              name="BSMN Portal"
-              description="Data and tools to study the role of brain somatic mosaicism in neuropsychiatric disease."
-              url="https://bsmn.synapse.org/"
-            />
-            <SynapsePoweredPortal
-              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/CSBC.svg"
-              name="Cancer Complexity Knowledge Portal"
-              description="Approaches, data, and tools to address important questions in basic and translational cancer research."
-              url="https://cancercomplexity.synapse.org/"
-            />
-            <SynapsePoweredPortal
-              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/dHealth.svg"
-              name="dHealth Digital Health Knowledge Portal"
-              description="Discover and download digital and mobile health data, tools, benchmarked outcomes and digital biomarkers."
-              url="https://dhealth.synapse.org/"
-            />
-            <SynapsePoweredPortal
-              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/NFPortal.svg"
-              name="NF Data Portal"
-              description="Datasets, analysis tools, resources, and publications related to neurofibromatosis and schwannomatosis."
-              url="https://nf.synapse.org/"
-            />
-            <SynapsePoweredPortal
-              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/Psychencode.svg"
-              name="Psychencode Knowledge Portal"
-              description="Investigation and large-scale data sets of genomic influences on neuropsychiatric disease."
-              url="https://psychencode.synapse.org/"
-            />
-            <SynapsePoweredPortal
-              logoUrl="https://arkportal.synapse.org/favicon.svg"
-              name="ARK Portal"
-              description="The ARK Portal hosts data generated by a network of research teams working collaboratively to deepen the understanding of Arthritis and Autoimmune and Related Diseases."
-              url="https://arkportal.synapse.org/"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="SynapseHomepage__Section OffWhiteBackground">
-        <div className="SynapseHomepage__Section__Centered">
-          <h2>Our Partners</h2>
+          <Typography
+            variant="h2"
+            sx={{ textAlign: 'center', paddingBottom: '30px' }}
+          >
+            Our Partners
+          </Typography>
           <div className="PartnerFlexContainer">
             <div className="PartnerFlexItem">
               <a
