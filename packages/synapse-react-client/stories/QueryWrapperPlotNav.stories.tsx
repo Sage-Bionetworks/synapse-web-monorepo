@@ -22,6 +22,16 @@ import { SynapseClient } from '../src'
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',
   component: QueryWrapperPlotNav,
+  decorators: [
+    Story => {
+      // Add bottom padding so row selection doesn't obscure other UI
+      return (
+        <div style={{ paddingBottom: '50px' }}>
+          <Story />
+        </div>
+      )
+    },
+  ],
 } satisfies Meta
 
 export default meta
