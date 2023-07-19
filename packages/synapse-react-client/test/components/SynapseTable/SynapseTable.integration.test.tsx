@@ -13,7 +13,7 @@ import {
 import {
   SynapseTableCell,
   SynapseTableCellProps,
-} from '../../../src/components/synapse_table_functions/SynapseTableCell'
+} from '../../../src/components/SynapseTable/SynapseTableCell/SynapseTableCell'
 import SynapseTable, {
   SORT_STATE,
   SynapseTableProps,

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { getEntityHeadersByIds } from '../synapse-client/SynapseClient'
-import { useSynapseContext } from '../utils/context/SynapseContext'
-import { EntityLink } from './EntityLink'
+import { getEntityHeadersByIds } from '../../../synapse-client/SynapseClient'
+import { useSynapseContext } from '../../../utils/context/SynapseContext'
+import { EntityLink } from '../../EntityLink'
 
 export type EntityIdListProps = {
   entityIdList: string[]

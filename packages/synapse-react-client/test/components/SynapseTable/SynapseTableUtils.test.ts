@@ -2,6 +2,7 @@ import {
   getColumnIndicesWithType,
   getFileColumnModelId,
   getUniqueEntities,
+  isSortableColumn,
 } from '../../../src/components/SynapseTable/SynapseTableUtils'
 import {
   ColumnModel,
@@ -291,6 +292,28 @@ describe('Synapse Table Utilities tests', () => {
         },
       ]
       expect(getFileColumnModelId(columnModels)).toEqual(undefined)
+    })
+  })
+
+  describe('isSortableColumn', () => {
+    it('throws a warning and returns false for an unknown type', () => {
+      const consoleWarnSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
+
+      // Call under test
+      isSortableColumn('FAKE_COLUMN_TYPE' as ColumnTypeEnum)
+
+      expect(consoleWarnSpy).toHaveBeenCalled()
+      consoleWarnSpy.mockRestore()
+    })
+
+    it('explicitly handles all known types', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn')
+      Object.keys(ColumnTypeEnum).forEach(key => {
+        isSortableColumn(key)
+      })
+      expect(consoleWarnSpy).not.toHaveBeenCalled()
     })
   })
 })
