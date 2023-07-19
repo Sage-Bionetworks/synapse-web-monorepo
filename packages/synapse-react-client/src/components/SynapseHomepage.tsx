@@ -1,5 +1,13 @@
 import React from 'react'
-import { Button, Grid, Link, Typography } from '@mui/material'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  Grid,
+  Link,
+  Typography,
+} from '@mui/material'
 import RLogo from '../assets/icons/RLogo'
 import Python from '../assets/icons/Python'
 import Terminal from '../assets/icons/Terminal'
@@ -19,6 +27,10 @@ import CommunicateFindings from '../assets/icons/CommunicateFindings'
 import RecordProvenance from '../assets/icons/RecordProvenance'
 import ShareYourResearch from '../assets/icons/ShareYourResearch'
 import MintDoi from '../assets/icons/MintDoi'
+import { Box } from '@mui/material'
+import { SynapsePriceTableCell } from './SynapsePriceTableCell'
+import { ExpandMoreTwoTone } from '@mui/icons-material'
+import { SynapsePriceFeatureRow } from './SynapsePriceFeatureRow'
 
 export type SynapseHomepageProps = {
   projectViewId: string
@@ -188,9 +200,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               title="Communicate your findings"
               description={
                 <Typography variant="body1">
-                  Use the Synapse Wiki services to communicate your Project's
-                  research findings by embedding rich content such as images,
-                  Tables, Provenance, and even LaTeX equations.
+                  Use the Synapse Wiki services to communicate your
+                  Project&apos;s research findings by embedding rich content
+                  such as images, Tables, Provenance, and even LaTeX equations.
                 </Typography>
               }
             />
@@ -427,14 +439,251 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           >
             Sage’s Data Platform Offerings
           </Typography>
-          <Typography
-            variant="body1"
-            sx={{ textAlign: 'center', paddingBottom: '30px' }}
-          >
+          <p className="SectionBody">
             Sage offers the following service plans to the scientific community.
+          </p>
+          <Button
+            variant="contained"
+            target="_blank"
+            href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
+            sx={{ marginTop: '25px' }}
+          >
+            Contact us for more information
+          </Button>
+          <Link
+            target="_blank"
+            href="https://help.synapse.org/docs/FAQ.2047967233.html"
+            sx={{ display: 'block', marginTop: '25px', marginBottom: '50px' }}
+          >
+            View Frequently Asked Questions
+          </Link>
+          <Box sx={{ display: 'grid', gridTemplateColumns: '40% 20% 20% 20%' }}>
+            <p></p>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateRows: '50px auto',
+                justifyContent: 'stretch',
+                alignItems: 'stretch',
+              }}
+            >
+              <SynapsePriceTableCell sx={{ backgroundColor: '#b6cedf' }}>
+                <Typography
+                  className="no-margin"
+                  variant="body1"
+                  sx={{ fontWeight: 700 }}
+                >
+                  Standard Plan
+                </Typography>
+              </SynapsePriceTableCell>
+              <SynapsePriceTableCell sx={{ backgroundColor: '#c4d9e4' }}>
+                <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                  Free
+                </Typography>
+              </SynapsePriceTableCell>
+            </Box>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateRows: '50px auto',
+                justifyContent: 'stretch',
+                alignItems: 'stretch',
+              }}
+            >
+              <SynapsePriceTableCell sx={{ backgroundColor: '#f0a675' }}>
+                <Typography
+                  className="no-margin"
+                  variant="body1"
+                  sx={{ fontWeight: 700 }}
+                >
+                  Managed Plan
+                </Typography>
+              </SynapsePriceTableCell>
+              <SynapsePriceTableCell sx={{ backgroundColor: '#f9d6c0' }}>
+                <Typography variant="body2" sx={{ paddingTop: '20px' }}>
+                  <strong>
+                    Starting at $6,000/year, <br />
+                    min 5 years*{' '}
+                  </strong>
+                  <em>
+                    <br />
+                    Can be customized <br />
+                    Recommended for NIH DMSP
+                  </em>
+                </Typography>
+              </SynapsePriceTableCell>
+            </Box>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateRows: '50px auto',
+                justifyContent: 'stretch',
+                alignItems: 'stretch',
+              }}
+            >
+              <SynapsePriceTableCell sx={{ backgroundColor: '#c7e0cb' }}>
+                <Typography
+                  className="no-margin"
+                  variant="body1"
+                  sx={{ fontWeight: 700 }}
+                >
+                  Data Coordination Plan
+                </Typography>
+              </SynapsePriceTableCell>
+              <SynapsePriceTableCell sx={{ backgroundColor: '#d2e6d5' }}>
+                <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                  Contact Sage**
+                </Typography>
+              </SynapsePriceTableCell>
+            </Box>
+          </Box>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+              <Typography className="PricingFeaturesHeader no-margin">
+                Project Setup Features
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ padding: 0 }}>
+              <SynapsePriceFeatureRow
+                featureDescription="Materials for DMSP plan and budget"
+                managedPlanValue={true}
+                dataCoordinationPlanValue={true}
+              />
+              <SynapsePriceFeatureRow
+                featureDescription="Setup of Synapse project and storage using our documentation"
+                standardPlanValue="Self-Service"
+                managedPlanValue="Self-Service"
+                dataCoordinationPlanValue="Managed"
+              />
+              <SynapsePriceFeatureRow
+                featureDescription="DOIs for publications and grants"
+                standardPlanValue={true}
+                managedPlanValue={true}
+                dataCoordinationPlanValue={true}
+              />
+              <SynapsePriceFeatureRow
+                featureDescription="Consulting with Sage experts to assist with setup, uploading, and establishing F.A.I.R. access to your data"
+                managedPlanValue="5 hours"
+                dataCoordinationPlanValue="Custom"
+              />
+              <SynapsePriceFeatureRow
+                featureDescription="Help desk support through the life of the project"
+                managedPlanValue="5 hours"
+                dataCoordinationPlanValue="Unlimited"
+              />
+              <SynapsePriceFeatureRow
+                featureDescription="Dedicated Sage point of contact"
+                dataCoordinationPlanValue={true}
+              />
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+              <Typography className="PricingFeaturesHeader no-margin">
+                Data Storage Features
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ padding: 0 }}>
+              <SynapsePriceFeatureRow
+                featureDescription="Data limits ***"
+                standardPlanValue="<=100GB*"
+                managedPlanValue="<=500GB*"
+                dataCoordinationPlanValue="Unlimited"
+              />
+              <SynapsePriceFeatureRow
+                featureDescription="5 years of secure, guaranteed storage in the cloud"
+                managedPlanValue={true}
+                dataCoordinationPlanValue={true}
+              />
+              <SynapsePriceFeatureRow
+                featureDescription="Data storage location"
+                standardPlanValue="US Default***"
+                managedPlanValue="US Default***"
+                dataCoordinationPlanValue="Custom"
+              />
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+              <Typography className="PricingFeaturesHeader no-margin">
+                Data Governance Features
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ padding: 0 }}>
+              <SynapsePriceFeatureRow
+                featureDescription="Option to make data available through controlled-access"
+                managedPlanValue={true}
+                dataCoordinationPlanValue={true}
+              />
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+              <Typography className="PricingFeaturesHeader no-margin">
+                Data Access Features
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ padding: 0 }}>
+              <SynapsePriceFeatureRow
+                featureDescription="Data access management"
+                standardPlanValue="Self-Service*"
+                managedPlanValue="Self-Service"
+                dataCoordinationPlanValue="Custom"
+              />
+              <SynapsePriceFeatureRow
+                featureDescription="Seamless data access integration with compute environments"
+                dataCoordinationPlanValue={true}
+              />
+              <SynapsePriceFeatureRow
+                featureDescription="Customized data portal"
+                standardPlanValue="Basic"
+                managedPlanValue="Basic"
+                dataCoordinationPlanValue={true}
+              />
+              <SynapsePriceFeatureRow
+                featureDescription="Contract length"
+                managedPlanValue="Length of grant"
+                dataCoordinationPlanValue="Contact Sage**"
+              />
+            </AccordionDetails>
+          </Accordion>
+
+          <Typography
+            className="text-align-left"
+            sx={{
+              fontWeight: 300,
+              fontSize: '12px',
+              lineHeight: '16px',
+              paddingTop: '15px',
+            }}
+          >
+            Sage can create a customized quote for you if, for example, you need
+            to store {'>'}100GB, get help with public data sharing, or want a
+            “click wrap” for displaying terms of data sharing. You may also
+            qualify for free storage depending on your program.
+            <br />
+            <br />
+            ** Due to the level of customization afforded, this option does not
+            follow a fixed pricing model.
+            <br />
+            ** Size limitations are removed and regions can be customized if you
+            use your own cloud storage bucket.
+            <br />‡ 5 years or the length of your grant if you contact us for a
+            custom quote.
           </Typography>
         </div>
       </div>
+
+      {/* /**
+       * 
+Data access management
+
+Seamless data access integration with compute environments 
+
+Customized data portal 
+
+Contract length
+            */}
       <div className="SynapseHomepage__Section WhiteBackground">
         <div className="SynapseHomepage__Section__Centered">
           <Typography
