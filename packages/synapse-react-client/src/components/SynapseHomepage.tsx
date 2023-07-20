@@ -22,7 +22,8 @@ import { useSynapseContext } from '../utils/context/SynapseContext'
 import SynapseFullLogo from '../assets/icons/SynapseFullLogo'
 import IconSvg from './IconSvg/IconSvg'
 import { SynapseFeatureItem } from './SynapseFeatureItem'
-import AccessDataAnywhere from '../assets/icons/AccessDataAnywhere'
+import { ReactComponent as AccessDataAnywhere } from '../assets/icons/AccessDataAnywhere.svg'
+import { ReactComponent as QueryStructuredData } from '../assets/icons/QueryStructuredData.svg'
 import CommunicateFindings from '../assets/icons/CommunicateFindings'
 import RecordProvenance from '../assets/icons/RecordProvenance'
 import ShareYourResearch from '../assets/icons/ShareYourResearch'
@@ -222,7 +223,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           </Grid>
           <Grid item xs={12} md={4}>
             <SynapseFeatureItem
-              logo={<RecordProvenance />}
+              logo={<QueryStructuredData />}
               title="Query Structured Data"
               description={
                 <Typography variant="body1">
