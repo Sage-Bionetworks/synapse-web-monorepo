@@ -644,7 +644,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               <SynapsePriceFeatureRow
                 featureDescription="Contract length"
                 managedPlanValue="Length of grant"
-                dataCoordinationPlanValue="Contact Sage**"
+                dataCoordinationPlanValue="Contact Sage‡"
               />
             </AccordionDetails>
           </Accordion>
@@ -667,8 +667,8 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             ** Due to the level of customization afforded, this option does not
             follow a fixed pricing model.
             <br />
-            ** Size limitations are removed and regions can be customized if you
-            use your own cloud storage bucket.
+            *** Size limitations are removed and regions can be customized if
+            you use your own cloud storage bucket.
             <br />‡ 5 years or the length of your grant if you contact us for a
             custom quote.
           </Typography>
