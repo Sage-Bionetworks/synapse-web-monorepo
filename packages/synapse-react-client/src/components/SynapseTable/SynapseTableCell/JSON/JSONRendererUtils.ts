@@ -9,9 +9,13 @@ export type JSONPrimitiveType = string | number | boolean | null
  * @param value
  */
 export function isJSONPrimitive(value: unknown): value is JSONPrimitiveType {
-  return (
-    value === null || ['string', 'number', 'boolean'].includes(typeof value)
-  )
+  if (value === null) {
+    return true
+  }
+  if (typeof value === 'number') {
+    return !Number.isNaN(value) && Number.isFinite(value)
+  }
+  return ['string', 'boolean'].includes(typeof value)
 }
 
 export function isJSONObjectAllPrimitiveKeys(
