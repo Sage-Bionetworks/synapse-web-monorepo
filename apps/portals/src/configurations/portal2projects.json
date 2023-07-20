@@ -1,0 +1,114 @@
+{
+  "adknowledgeportal": [
+    {
+      "name": "AD Knowledge Portal - backend",
+      "id": "syn2580853",
+      "type": "org.sagebionetworks.repo.model.Project"
+    },
+    {
+      "name": "TREAT-AD Internal Sharing Site",
+      "id": "syn25612522",
+      "type": "org.sagebionetworks.repo.model.Project"
+    },
+    {
+      "name": "AD Knowledge Portal - backend Sage Internal",
+      "id": "syn12666371",
+      "type": "org.sagebionetworks.repo.model.Project"
+    },
+    {
+      "name": "AD Knowledge Portal Analytical Workspace",
+      "id": "syn22300949",
+      "type": "org.sagebionetworks.repo.model.Project"
+    },
+    {
+      "name": "Knowledge Portal contribution request",
+      "id": "syn20692909",
+      "type": "org.sagebionetworks.repo.model.Project"
+    }
+  ],
+  "psychencode": [
+    {
+      "name": "PsychENCODE Knowledge Portal - backend",
+      "id": "syn4921369",
+      "type": "org.sagebionetworks.repo.model.Project"
+    },
+    {
+      "name": "PEC Portal",
+      "id": "syn21557271",
+      "type": "org.sagebionetworks.repo.model.Project"
+    }
+  ],
+  "challengeportal": [
+    {
+      "name": "Challenge Portal - backend",
+      "id": "syn51476216",
+      "type": "org.sagebionetworks.repo.model.Project"
+    }
+  ],
+  "nf": [
+    {
+      "name": "NF Data Portal (backend)",
+      "id": "syn26451327",
+      "type": "org.sagebionetworks.repo.model.Project"
+    },
+    {
+      "name": "Neurofibromatosis Research Tools Central",
+      "id": "syn26338068",
+      "type": "org.sagebionetworks.repo.model.Project"
+    }
+  ],
+  "stopadportal": [
+    {
+      "name": "MODEL-AD STOP-AD Tool Backend",
+      "id": "syn20717442",
+      "type": "org.sagebionetworks.repo.model.Project"
+    },
+    {
+      "name": "DrugUploadTool STOP-AD",
+      "id": "syn20673186",
+      "type": "org.sagebionetworks.repo.model.Project"
+    }
+  ],
+  "elportal": [
+    {
+      "name": "ELITE Portal - backend",
+      "id": "syn27229419",
+      "type": "org.sagebionetworks.repo.model.Project"
+    }
+  ],
+  "crc-researcher": [],
+  "arkportal": [
+    {
+      "name": "ARK Portal - backend",
+      "id": "syn26710600",
+      "type": "org.sagebionetworks.repo.model.Project"
+    }
+  ],
+  "digitalhealth": [
+    {
+      "name": "Digital Health Portal Backend",
+      "id": "syn21574434",
+      "type": "org.sagebionetworks.repo.model.Project"
+    }
+  ],
+  "bsmn": [
+    {
+      "name": "BSMN Knowledge Portal",
+      "id": "syn7344947",
+      "type": "org.sagebionetworks.repo.model.Project"
+    }
+  ],
+  "cancercomplexity": [
+    {
+      "name": "Cancer Complexity Knowledge Portal - Database",
+      "id": "syn21498902",
+      "type": "org.sagebionetworks.repo.model.Project"
+    },
+    {
+      "name": "Redacted",
+      "id": "syn21624547",
+      "type": "org.sagebionetworks.repo.model.Project"
+    }
+  ],
+  "icons": []
+}

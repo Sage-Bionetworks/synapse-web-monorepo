@@ -1,7 +1,8 @@
-import { Box, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import React, { useMemo } from 'react'
 import { SynapsePriceTableCell } from './SynapsePriceTableCell'
 import { CheckTwoTone } from '@mui/icons-material'
+import PlatformOfferingsGrid from './PlatformOfferingsGrid'
 
 export type SynapsePriceFeatureRowProps = {
   featureDescription: string
@@ -9,8 +10,8 @@ export type SynapsePriceFeatureRowProps = {
   managedPlanValue?: boolean | string
   dataCoordinationPlanValue?: boolean | string
 }
-
-export function getPriceFeatureCellContent(value?: boolean | string) {
+export function PriceFeatureCellContent(props: { value?: boolean | string }) {
+  const { value } = props
   if (value === undefined) {
     return <></>
   }
@@ -44,22 +45,20 @@ export const SynapsePriceFeatureRow: React.FunctionComponent<
   dataCoordinationPlanValue,
 }) => {
   const standardPlanElement = useMemo(
-    () => getPriceFeatureCellContent(standardPlanValue),
+    () => PriceFeatureCellContent({ value: standardPlanValue }),
     [standardPlanValue],
   )
   const managedPlanElement = useMemo(
-    () => getPriceFeatureCellContent(managedPlanValue),
+    () => PriceFeatureCellContent({ value: managedPlanValue }),
     [managedPlanValue],
   )
   const dataCoordinationPlanElement = useMemo(
-    () => getPriceFeatureCellContent(dataCoordinationPlanValue),
+    () => PriceFeatureCellContent({ value: dataCoordinationPlanValue }),
     [dataCoordinationPlanValue],
   )
   return (
-    <Box
+    <PlatformOfferingsGrid
       sx={{
-        display: 'grid',
-        gridTemplateColumns: '40% 20% 20% 20%',
         marginBottom: '2px',
       }}
     >
@@ -88,6 +87,6 @@ export const SynapsePriceFeatureRow: React.FunctionComponent<
       >
         {dataCoordinationPlanElement}
       </SynapsePriceTableCell>
-    </Box>
+    </PlatformOfferingsGrid>
   )
 }

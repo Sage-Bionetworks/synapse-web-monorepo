@@ -8,30 +8,31 @@ import {
   Link,
   Typography,
 } from '@mui/material'
-import RLogo from '../assets/icons/RLogo'
-import Python from '../assets/icons/Python'
-import Terminal from '../assets/icons/Terminal'
-import Java from '../assets/icons/Java'
-import ProjectViewCarousel from './ProjectViewCarousel/ProjectViewCarousel'
+import RLogo from '../../assets/icons/RLogo'
+import Python from '../../assets/icons/Python'
+import Terminal from '../../assets/icons/Terminal'
+import Java from '../../assets/icons/Java'
+import ProjectViewCarousel from '../ProjectViewCarousel/ProjectViewCarousel'
 import {
   getEndpoint,
   BackendDestinationEnum,
-} from '../utils/functions/getEndpoint'
+} from '../../utils/functions/getEndpoint'
 import { SynapsePoweredPortal } from './SynapsePoweredPortal'
-import { useSynapseContext } from '../utils/context/SynapseContext'
-import SynapseFullLogo from '../assets/icons/SynapseFullLogo'
-import IconSvg from './IconSvg/IconSvg'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import SynapseFullLogo from '../../assets/icons/SynapseFullLogo'
+import IconSvg from '../IconSvg/IconSvg'
 import { SynapseFeatureItem } from './SynapseFeatureItem'
-import AccessDataAnywhere from '../assets/icons/AccessDataAnywhere'
-import QueryStructuredData from '../assets/icons/QueryStructuredData'
-import CommunicateFindings from '../assets/icons/CommunicateFindings'
-import RecordProvenance from '../assets/icons/RecordProvenance'
-import ShareYourResearch from '../assets/icons/ShareYourResearch'
-import MintDoi from '../assets/icons/MintDoi'
+import AccessDataAnywhere from '../../assets/icons/AccessDataAnywhere'
+import QueryStructuredData from '../../assets/icons/QueryStructuredData'
+import CommunicateFindings from '../../assets/icons/CommunicateFindings'
+import RecordProvenance from '../../assets/icons/RecordProvenance'
+import ShareYourResearch from '../../assets/icons/ShareYourResearch'
+import MintDoi from '../../assets/icons/MintDoi'
 import { Box } from '@mui/material'
 import { SynapsePriceTableCell } from './SynapsePriceTableCell'
 import { ExpandMoreTwoTone } from '@mui/icons-material'
 import { SynapsePriceFeatureRow } from './SynapsePriceFeatureRow'
+import PlatformOfferingsGrid from './PlatformOfferingsGrid'
 
 export type SynapseHomepageProps = {
   projectViewId: string
@@ -458,8 +459,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           >
             View Frequently Asked Questions
           </Link>
-          <Box sx={{ display: 'grid', gridTemplateColumns: '40% 20% 20% 20%' }}>
-            <p></p>
+          <PlatformOfferingsGrid>
+            {/* Div is a placeholder so that all items align in the Pricing table */}
+            <div />
             <Box
               sx={{
                 display: 'grid',
@@ -544,8 +546,8 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 </Typography>
               </SynapsePriceTableCell>
             </Box>
-          </Box>
-          <Accordion expanded={true}>
+          </PlatformOfferingsGrid>
+          <Accordion defaultExpanded={true}>
             <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
               <Typography sx={{ fontSize: '18px' }} className="no-margin">
                 Project Setup Features
@@ -680,17 +682,6 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           </Typography>
         </div>
       </div>
-
-      {/* /**
-       * 
-Data access management
-
-Seamless data access integration with compute environments 
-
-Customized data portal 
-
-Contract length
-            */}
       <div className="SynapseHomepage__Section WhiteBackground">
         <div className="SynapseHomepage__Section__Centered">
           <Typography
@@ -849,3 +840,5 @@ Contract length
     </div>
   )
 }
+
+export default SynapseHomepage
