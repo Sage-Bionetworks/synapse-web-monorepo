@@ -229,6 +229,7 @@
     "util": "^0.12.5",
     "vite": "^4.4.2",
     "vite-plugin-svgr": "^3.2.0",
+    "vite-plugin-turbosnap": "^1.0.2",
     "weak-napi": "^2.0.2",
     "whatwg-fetch": "^3.6.2"
   },
