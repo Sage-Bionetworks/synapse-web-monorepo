@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { SynapsePriceTableCell } from './SynapsePriceTableCell'
 import { CheckTwoTone } from '@mui/icons-material'
 
@@ -10,6 +10,24 @@ export type SynapsePriceFeatureRowProps = {
   dataCoordinationPlanValue?: boolean | string
 }
 
+export function getPriceFeatureCellContent(value?: boolean | string) {
+  if (value === undefined) {
+    return <></>
+  }
+  if ('boolean' === typeof value) {
+    if (value) {
+      return (
+        <Typography variant="body2">
+          <CheckTwoTone htmlColor="#878E95" />
+        </Typography>
+      )
+    } else {
+      return <></>
+    }
+  }
+  return <Typography variant="body2">{value}</Typography>
+}
+
 export const SynapsePriceFeatureRow: React.FunctionComponent<
   SynapsePriceFeatureRowProps
 > = ({
@@ -18,6 +36,18 @@ export const SynapsePriceFeatureRow: React.FunctionComponent<
   managedPlanValue,
   dataCoordinationPlanValue,
 }) => {
+  const standardPlanElement = useMemo(
+    () => getPriceFeatureCellContent(standardPlanValue),
+    [standardPlanValue],
+  )
+  const managedPlanElement = useMemo(
+    () => getPriceFeatureCellContent(managedPlanValue),
+    [managedPlanValue],
+  )
+  const dataCoordinationPlanElement = useMemo(
+    () => getPriceFeatureCellContent(dataCoordinationPlanValue),
+    [dataCoordinationPlanValue],
+  )
   return (
     <Box
       sx={{
@@ -34,36 +64,17 @@ export const SynapsePriceFeatureRow: React.FunctionComponent<
       <SynapsePriceTableCell
         sx={{ backgroundColor: '#c4d9e4', paddingTop: '20px' }}
       >
-        <Typography variant="body2">
-          {standardPlanValue && 'boolean' === typeof standardPlanValue ? (
-            <CheckTwoTone />
-          ) : (
-            standardPlanValue
-          )}
-        </Typography>
+        {standardPlanElement}
       </SynapsePriceTableCell>
       <SynapsePriceTableCell
         sx={{ backgroundColor: '#f9d6c0', paddingTop: '20px' }}
       >
-        <Typography variant="body2">
-          {managedPlanValue && 'boolean' === typeof managedPlanValue ? (
-            <CheckTwoTone />
-          ) : (
-            managedPlanValue
-          )}
-        </Typography>
+        {managedPlanElement}
       </SynapsePriceTableCell>
       <SynapsePriceTableCell
         sx={{ backgroundColor: '#d2e6d5', paddingTop: '20px' }}
       >
-        <Typography variant="body2">
-          {dataCoordinationPlanValue &&
-          'boolean' === typeof dataCoordinationPlanValue ? (
-            <CheckTwoTone />
-          ) : (
-            dataCoordinationPlanValue
-          )}
-        </Typography>
+        {dataCoordinationPlanElement}
       </SynapsePriceTableCell>
     </Box>
   )
