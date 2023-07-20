@@ -538,7 +538,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               </SynapsePriceTableCell>
             </Box>
           </Box>
-          <Accordion>
+          <Accordion expanded={true}>
             <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
               <Typography sx={{ fontSize: '18px' }} className="no-margin">
                 Project Setup Features
@@ -658,11 +658,10 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               paddingTop: '15px',
             }}
           >
-            Sage can create a customized quote for you if, for example, you need
-            to store {'>'}100GB, get help with public data sharing, or want a
-            “click wrap” for displaying terms of data sharing. You may also
+            * Sage can create a customized quote for you if, for example, you
+            need to store {'>'}100GB, get help with public data sharing, or want
+            a “click wrap” for displaying terms of data sharing. You may also
             qualify for free storage depending on your program.
-            <br />
             <br />
             ** Due to the level of customization afforded, this option does not
             follow a fixed pricing model.
