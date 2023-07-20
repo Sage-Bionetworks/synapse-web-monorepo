@@ -302,7 +302,7 @@ describe('Synapse Table Utilities tests', () => {
         .mockImplementation(() => {})
 
       // Call under test
-      isSortableColumn('FAKE_COLUMN_TYPE' as ColumnTypeEnum)
+      expect(isSortableColumn('FAKE_COLUMN_TYPE' as ColumnTypeEnum)).toBe(false)
 
       expect(consoleWarnSpy).toHaveBeenCalled()
       consoleWarnSpy.mockRestore()

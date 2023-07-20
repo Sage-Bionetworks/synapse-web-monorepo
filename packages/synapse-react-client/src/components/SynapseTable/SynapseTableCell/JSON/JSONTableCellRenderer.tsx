@@ -24,7 +24,7 @@ export default function JSONTableCellRenderer(
     console.warn('JSONTableCellRenderer: failed to parse JSON', e)
   }
 
-  if (value === null) {
+  if (isJSONPrimitive(value) || value === null) {
     return <JSONPrimitiveRenderer value={value} />
   } else if (Array.isArray(value) && value.every(isJSONPrimitive)) {
     return <JSONArrayRenderer value={value} />
