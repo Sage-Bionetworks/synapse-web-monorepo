@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { SynapsePriceTableCell } from './SynapsePriceTableCell'
 import { CheckTwoTone } from '@mui/icons-material'
 import PlatformOfferingsGrid from './PlatformOfferingsGrid'
@@ -44,23 +44,12 @@ export const SynapsePriceFeatureRow: React.FunctionComponent<
   managedPlanValue,
   dataCoordinationPlanValue,
 }) => {
-  const standardPlanElement = useMemo(
-    () => PriceFeatureCellContent({ value: standardPlanValue }),
-    [standardPlanValue],
-  )
-  const managedPlanElement = useMemo(
-    () => PriceFeatureCellContent({ value: managedPlanValue }),
-    [managedPlanValue],
-  )
-  const dataCoordinationPlanElement = useMemo(
-    () => PriceFeatureCellContent({ value: dataCoordinationPlanValue }),
-    [dataCoordinationPlanValue],
-  )
   return (
     <PlatformOfferingsGrid
       sx={{
         marginBottom: '2px',
       }}
+      role="row"
     >
       <SynapsePriceTableCell
         sx={{ backgroundColor: '#e8edf1', paddingTop: '20px' }}
@@ -75,17 +64,17 @@ export const SynapsePriceFeatureRow: React.FunctionComponent<
       <SynapsePriceTableCell
         sx={{ backgroundColor: '#c4d9e4', paddingTop: '20px' }}
       >
-        {standardPlanElement}
+        <PriceFeatureCellContent value={standardPlanValue} />
       </SynapsePriceTableCell>
       <SynapsePriceTableCell
         sx={{ backgroundColor: '#f9d6c0', paddingTop: '20px' }}
       >
-        {managedPlanElement}
+        <PriceFeatureCellContent value={managedPlanValue} />
       </SynapsePriceTableCell>
       <SynapsePriceTableCell
         sx={{ backgroundColor: '#d2e6d5', paddingTop: '20px' }}
       >
-        {dataCoordinationPlanElement}
+        <PriceFeatureCellContent value={dataCoordinationPlanValue} />
       </SynapsePriceTableCell>
     </PlatformOfferingsGrid>
   )

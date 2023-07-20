@@ -3,11 +3,12 @@ import React from 'react'
 
 export type SynapsePriceTableCellProps = {
   sx?: SxProps
+  role?: string
 }
 
 export const SynapsePriceTableCell: React.FunctionComponent<
   React.PropsWithChildren<SynapsePriceTableCellProps>
-> = ({ children, sx = {} }) => {
+> = ({ children, sx = {}, role = 'cell' }) => {
   return (
     <Box
       sx={{
@@ -17,7 +18,7 @@ export const SynapsePriceTableCell: React.FunctionComponent<
         alignItems: 'center',
       }}
     >
-      {children}
+      <span role={role}>{children}</span>
     </Box>
   )
 }

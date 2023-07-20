@@ -459,204 +459,215 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           >
             View Frequently Asked Questions
           </Link>
-          <PlatformOfferingsGrid>
-            {/* Div is a placeholder so that all items align in the Pricing table */}
-            <div />
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateRows: '65px auto',
-                justifyContent: 'stretch',
-                alignItems: 'stretch',
-              }}
-            >
-              <SynapsePriceTableCell sx={{ backgroundColor: '#b6cedf' }}>
-                <Typography
-                  className="no-margin"
-                  variant="body1"
-                  sx={{ fontWeight: 700 }}
+          <div role="table">
+            <PlatformOfferingsGrid role="rowgroup">
+              {/* Div is a placeholder so that all items align in the Pricing table */}
+              <div />
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateRows: '65px auto',
+                  justifyContent: 'stretch',
+                  alignItems: 'stretch',
+                }}
+              >
+                <SynapsePriceTableCell
+                  sx={{ backgroundColor: '#b6cedf' }}
+                  role="columnheader"
                 >
-                  Standard Plan
-                </Typography>
-              </SynapsePriceTableCell>
-              <SynapsePriceTableCell sx={{ backgroundColor: '#c4d9e4' }}>
-                <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                  Free
-                </Typography>
-              </SynapsePriceTableCell>
-            </Box>
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateRows: '65px auto',
-                justifyContent: 'stretch',
-                alignItems: 'stretch',
-              }}
-            >
-              <SynapsePriceTableCell sx={{ backgroundColor: '#f0a675' }}>
-                <Typography
-                  className="no-margin"
-                  variant="body1"
-                  sx={{ fontWeight: 700 }}
+                  <Typography
+                    className="no-margin"
+                    variant="body1"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    Standard Plan
+                  </Typography>
+                </SynapsePriceTableCell>
+                <SynapsePriceTableCell sx={{ backgroundColor: '#c4d9e4' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                    Free
+                  </Typography>
+                </SynapsePriceTableCell>
+              </Box>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateRows: '65px auto',
+                  justifyContent: 'stretch',
+                  alignItems: 'stretch',
+                }}
+              >
+                <SynapsePriceTableCell
+                  sx={{ backgroundColor: '#f0a675' }}
+                  role="columnheader"
                 >
-                  Managed Plan
-                </Typography>
-              </SynapsePriceTableCell>
-              <SynapsePriceTableCell sx={{ backgroundColor: '#f9d6c0' }}>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    paddingTop: '20px',
-                    marginLeft: '10px',
-                    marginRight: '10px',
-                  }}
+                  <Typography
+                    className="no-margin"
+                    variant="body1"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    Managed Plan
+                  </Typography>
+                </SynapsePriceTableCell>
+                <SynapsePriceTableCell sx={{ backgroundColor: '#f9d6c0' }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      paddingTop: '20px',
+                      marginLeft: '10px',
+                      marginRight: '10px',
+                    }}
+                  >
+                    <strong>
+                      Starting at $6,000/year, <br />
+                      min 5 years*{' '}
+                    </strong>
+                    <em>
+                      <br />
+                      Can be customized <br />
+                      Recommended for NIH DMSP
+                    </em>
+                  </Typography>
+                </SynapsePriceTableCell>
+              </Box>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateRows: '65px auto',
+                  justifyContent: 'stretch',
+                  alignItems: 'stretch',
+                }}
+              >
+                <SynapsePriceTableCell
+                  sx={{ backgroundColor: '#c7e0cb' }}
+                  role="columnheader"
                 >
-                  <strong>
-                    Starting at $6,000/year, <br />
-                    min 5 years*{' '}
-                  </strong>
-                  <em>
-                    <br />
-                    Can be customized <br />
-                    Recommended for NIH DMSP
-                  </em>
+                  <Typography
+                    className="no-margin"
+                    variant="body1"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    Data Coordination Plan
+                  </Typography>
+                </SynapsePriceTableCell>
+                <SynapsePriceTableCell sx={{ backgroundColor: '#d2e6d5' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                    Contact Sage**
+                  </Typography>
+                </SynapsePriceTableCell>
+              </Box>
+            </PlatformOfferingsGrid>
+            <Accordion defaultExpanded={true}>
+              <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+                <Typography sx={{ fontSize: '18px' }} className="no-margin">
+                  Project Setup Features
                 </Typography>
-              </SynapsePriceTableCell>
-            </Box>
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateRows: '65px auto',
-                justifyContent: 'stretch',
-                alignItems: 'stretch',
-              }}
-            >
-              <SynapsePriceTableCell sx={{ backgroundColor: '#c7e0cb' }}>
-                <Typography
-                  className="no-margin"
-                  variant="body1"
-                  sx={{ fontWeight: 700 }}
-                >
-                  Data Coordination Plan
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: 0 }}>
+                <SynapsePriceFeatureRow
+                  featureDescription="Materials for DMSP plan and budget"
+                  managedPlanValue={true}
+                  dataCoordinationPlanValue={true}
+                />
+                <SynapsePriceFeatureRow
+                  featureDescription="Setup of Synapse project and storage using our documentation"
+                  standardPlanValue="Self-Service"
+                  managedPlanValue="Self-Service"
+                  dataCoordinationPlanValue="Managed"
+                />
+                <SynapsePriceFeatureRow
+                  featureDescription="DOIs for publications and grants"
+                  standardPlanValue={true}
+                  managedPlanValue={true}
+                  dataCoordinationPlanValue={true}
+                />
+                <SynapsePriceFeatureRow
+                  featureDescription="Consulting with Sage experts to assist with setup, uploading, and establishing F.A.I.R. access to your data"
+                  managedPlanValue="5 hours"
+                  dataCoordinationPlanValue="Custom"
+                />
+                <SynapsePriceFeatureRow
+                  featureDescription="Help desk support through the life of the project"
+                  managedPlanValue="5 hours"
+                  dataCoordinationPlanValue="Unlimited"
+                />
+                <SynapsePriceFeatureRow
+                  featureDescription="Dedicated Sage point of contact"
+                  dataCoordinationPlanValue={true}
+                />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+                <Typography sx={{ fontSize: '18px' }} className="no-margin">
+                  Data Storage Features
                 </Typography>
-              </SynapsePriceTableCell>
-              <SynapsePriceTableCell sx={{ backgroundColor: '#d2e6d5' }}>
-                <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                  Contact Sage**
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: 0 }}>
+                <SynapsePriceFeatureRow
+                  featureDescription="Data limits ***"
+                  standardPlanValue="<=100GB*"
+                  managedPlanValue="<=500GB*"
+                  dataCoordinationPlanValue="Unlimited"
+                />
+                <SynapsePriceFeatureRow
+                  featureDescription="5 years of secure, guaranteed storage in the cloud"
+                  managedPlanValue={true}
+                  dataCoordinationPlanValue={true}
+                />
+                <SynapsePriceFeatureRow
+                  featureDescription="Data storage location"
+                  standardPlanValue="US Default***"
+                  managedPlanValue="US Default***"
+                  dataCoordinationPlanValue="Custom"
+                />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+                <Typography sx={{ fontSize: '18px' }} className="no-margin">
+                  Data Governance Features
                 </Typography>
-              </SynapsePriceTableCell>
-            </Box>
-          </PlatformOfferingsGrid>
-          <Accordion defaultExpanded={true}>
-            <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
-              <Typography sx={{ fontSize: '18px' }} className="no-margin">
-                Project Setup Features
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ padding: 0 }}>
-              <SynapsePriceFeatureRow
-                featureDescription="Materials for DMSP plan and budget"
-                managedPlanValue={true}
-                dataCoordinationPlanValue={true}
-              />
-              <SynapsePriceFeatureRow
-                featureDescription="Setup of Synapse project and storage using our documentation"
-                standardPlanValue="Self-Service"
-                managedPlanValue="Self-Service"
-                dataCoordinationPlanValue="Managed"
-              />
-              <SynapsePriceFeatureRow
-                featureDescription="DOIs for publications and grants"
-                standardPlanValue={true}
-                managedPlanValue={true}
-                dataCoordinationPlanValue={true}
-              />
-              <SynapsePriceFeatureRow
-                featureDescription="Consulting with Sage experts to assist with setup, uploading, and establishing F.A.I.R. access to your data"
-                managedPlanValue="5 hours"
-                dataCoordinationPlanValue="Custom"
-              />
-              <SynapsePriceFeatureRow
-                featureDescription="Help desk support through the life of the project"
-                managedPlanValue="5 hours"
-                dataCoordinationPlanValue="Unlimited"
-              />
-              <SynapsePriceFeatureRow
-                featureDescription="Dedicated Sage point of contact"
-                dataCoordinationPlanValue={true}
-              />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
-              <Typography sx={{ fontSize: '18px' }} className="no-margin">
-                Data Storage Features
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ padding: 0 }}>
-              <SynapsePriceFeatureRow
-                featureDescription="Data limits ***"
-                standardPlanValue="<=100GB*"
-                managedPlanValue="<=500GB*"
-                dataCoordinationPlanValue="Unlimited"
-              />
-              <SynapsePriceFeatureRow
-                featureDescription="5 years of secure, guaranteed storage in the cloud"
-                managedPlanValue={true}
-                dataCoordinationPlanValue={true}
-              />
-              <SynapsePriceFeatureRow
-                featureDescription="Data storage location"
-                standardPlanValue="US Default***"
-                managedPlanValue="US Default***"
-                dataCoordinationPlanValue="Custom"
-              />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
-              <Typography sx={{ fontSize: '18px' }} className="no-margin">
-                Data Governance Features
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ padding: 0 }}>
-              <SynapsePriceFeatureRow
-                featureDescription="Option to make data available through controlled-access"
-                managedPlanValue={true}
-                dataCoordinationPlanValue={true}
-              />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
-              <Typography sx={{ fontSize: '18px' }} className="no-margin">
-                Data Access Features
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ padding: 0 }}>
-              <SynapsePriceFeatureRow
-                featureDescription="Data access management"
-                standardPlanValue="Self-Service*"
-                managedPlanValue="Self-Service"
-                dataCoordinationPlanValue="Custom"
-              />
-              <SynapsePriceFeatureRow
-                featureDescription="Seamless data access integration with compute environments"
-                dataCoordinationPlanValue={true}
-              />
-              <SynapsePriceFeatureRow
-                featureDescription="Customized data portal"
-                standardPlanValue="Basic"
-                managedPlanValue="Basic"
-                dataCoordinationPlanValue={true}
-              />
-              <SynapsePriceFeatureRow
-                featureDescription="Contract length"
-                managedPlanValue="Length of grant"
-                dataCoordinationPlanValue="Contact Sage‡"
-              />
-            </AccordionDetails>
-          </Accordion>
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: 0 }}>
+                <SynapsePriceFeatureRow
+                  featureDescription="Option to make data available through controlled-access"
+                  managedPlanValue={true}
+                  dataCoordinationPlanValue={true}
+                />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+                <Typography sx={{ fontSize: '18px' }} className="no-margin">
+                  Data Access Features
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: 0 }}>
+                <SynapsePriceFeatureRow
+                  featureDescription="Data access management"
+                  standardPlanValue="Self-Service*"
+                  managedPlanValue="Self-Service"
+                  dataCoordinationPlanValue="Custom"
+                />
+                <SynapsePriceFeatureRow
+                  featureDescription="Seamless data access integration with compute environments"
+                  dataCoordinationPlanValue={true}
+                />
+                <SynapsePriceFeatureRow
+                  featureDescription="Customized data portal"
+                  standardPlanValue="Basic"
+                  managedPlanValue="Basic"
+                  dataCoordinationPlanValue={true}
+                />
+                <SynapsePriceFeatureRow
+                  featureDescription="Contract length"
+                  managedPlanValue="Length of grant"
+                  dataCoordinationPlanValue="Contact Sage‡"
+                />
+              </AccordionDetails>
+            </Accordion>
+          </div>
 
           <Typography
             className="text-align-left"
