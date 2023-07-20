@@ -540,7 +540,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           </Box>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
-              <Typography className="PricingFeaturesHeader no-margin">
+              <Typography sx={{ fontSize: '18px' }} className="no-margin">
                 Project Setup Features
               </Typography>
             </AccordionSummary>
@@ -580,7 +580,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
-              <Typography className="PricingFeaturesHeader no-margin">
+              <Typography sx={{ fontSize: '18px' }} className="no-margin">
                 Data Storage Features
               </Typography>
             </AccordionSummary>
@@ -606,7 +606,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
-              <Typography className="PricingFeaturesHeader no-margin">
+              <Typography sx={{ fontSize: '18px' }} className="no-margin">
                 Data Governance Features
               </Typography>
             </AccordionSummary>
@@ -620,7 +620,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
-              <Typography className="PricingFeaturesHeader no-margin">
+              <Typography sx={{ fontSize: '18px' }} className="no-margin">
                 Data Access Features
               </Typography>
             </AccordionSummary>
