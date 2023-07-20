@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { SynapsePriceTableCell } from './SynapsePriceTableCell'
 import { CheckTwoTone } from '@mui/icons-material'
 
