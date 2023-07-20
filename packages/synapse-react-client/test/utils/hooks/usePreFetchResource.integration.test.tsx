@@ -1,8 +1,9 @@
 import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import usePreFetchResource from '../../../src/utils/hooks/usePreFetchResource'
 import { rest, server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
-const onRecievedRequest = jest.fn()
+const onReceivedRequest = jest.fn()
 
 const PRESIGNED_URL = 'https://test-url.notarealurl/presigned.pdf'
 
@@ -16,7 +17,9 @@ describe('usePreFetchResource tests', () => {
   })
 
   it('Returns undefined when passed URL is undefined', () => {
-    const { result } = renderHook(() => usePreFetchResource(undefined))
+    const { result } = renderHook(() => usePreFetchResource(undefined), {
+      wrapper: createWrapper(),
+    })
     expect(result.current).toBe(undefined)
   })
 
@@ -26,7 +29,7 @@ describe('usePreFetchResource tests', () => {
         PRESIGNED_URL,
 
         async (req, res, ctx) => {
-          onRecievedRequest()
+          onReceivedRequest()
           return res(
             ctx.status(200),
             ctx.set('Content-Type', 'image/jpeg'),
@@ -36,10 +39,12 @@ describe('usePreFetchResource tests', () => {
       ),
     )
 
-    const { result } = renderHook(() => usePreFetchResource(PRESIGNED_URL))
+    const { result } = renderHook(() => usePreFetchResource(PRESIGNED_URL), {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => {
-      expect(onRecievedRequest).toHaveBeenCalled()
+      expect(onReceivedRequest).toHaveBeenCalled()
       expect(URL.createObjectURL).toHaveBeenCalled()
       expect(result.current).toBeDefined()
     })
