@@ -25,7 +25,14 @@ export function getPriceFeatureCellContent(value?: boolean | string) {
       return <></>
     }
   }
-  return <Typography variant="body2">{value}</Typography>
+  return (
+    <Typography
+      variant="body2"
+      sx={{ marginLeft: '10px', marginRight: '10px' }}
+    >
+      {value}
+    </Typography>
+  )
 }
 
 export const SynapsePriceFeatureRow: React.FunctionComponent<
@@ -59,7 +66,12 @@ export const SynapsePriceFeatureRow: React.FunctionComponent<
       <SynapsePriceTableCell
         sx={{ backgroundColor: '#e8edf1', paddingTop: '20px' }}
       >
-        <Typography variant="body2">{featureDescription}</Typography>
+        <Typography
+          variant="body2"
+          sx={{ marginLeft: '10px', marginRight: '10px' }}
+        >
+          {featureDescription}
+        </Typography>
       </SynapsePriceTableCell>
       <SynapsePriceTableCell
         sx={{ backgroundColor: '#c4d9e4', paddingTop: '20px' }}

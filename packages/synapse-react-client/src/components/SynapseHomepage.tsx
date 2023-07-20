@@ -463,7 +463,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateRows: '50px auto',
+                gridTemplateRows: '65px auto',
                 justifyContent: 'stretch',
                 alignItems: 'stretch',
               }}
@@ -486,7 +486,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateRows: '50px auto',
+                gridTemplateRows: '65px auto',
                 justifyContent: 'stretch',
                 alignItems: 'stretch',
               }}
@@ -501,7 +501,14 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 </Typography>
               </SynapsePriceTableCell>
               <SynapsePriceTableCell sx={{ backgroundColor: '#f9d6c0' }}>
-                <Typography variant="body2" sx={{ paddingTop: '20px' }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    paddingTop: '20px',
+                    marginLeft: '10px',
+                    marginRight: '10px',
+                  }}
+                >
                   <strong>
                     Starting at $6,000/year, <br />
                     min 5 years*{' '}
@@ -517,7 +524,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateRows: '50px auto',
+                gridTemplateRows: '65px auto',
                 justifyContent: 'stretch',
                 alignItems: 'stretch',
               }}
