@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import ExpandCollapseButton from '../../ExpandCollapseButton'
 import { chromeLight, Inspector } from 'react-inspector'
 
@@ -36,21 +36,23 @@ export function ComplexJSONRenderer(props: ComplexJSONRendererProps) {
           onClick={() => setExpandAll(v => !v)}
         />
       </Typography>
-      <Inspector
-        data={value}
-        theme={theme}
-        table={false}
-        key={
-          // Setting `expandLevel` to 0 doesn't trigger a re-render, so force the rerender by updating the key
-          String(expandAll)
-        }
-        expandLevel={
-          expandAll
-            ? // making this number very large actually results in a performance hit, so choose a reasonably small number
-              20
-            : 0
-        }
-      />
+      <Box sx={{ pl: '2px' }}>
+        <Inspector
+          data={value}
+          theme={theme}
+          table={false}
+          key={
+            // Setting `expandLevel` to 0 doesn't trigger a re-render, so force the rerender by updating the key
+            String(expandAll)
+          }
+          expandLevel={
+            expandAll
+              ? // making this number very large actually results in a performance hit, so choose a reasonably small number
+                20
+              : 0
+          }
+        />
+      </Box>
     </>
   )
 }

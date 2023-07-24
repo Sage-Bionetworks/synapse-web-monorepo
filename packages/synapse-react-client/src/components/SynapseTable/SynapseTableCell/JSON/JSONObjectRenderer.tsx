@@ -14,7 +14,7 @@ function JSONObjectKeyValuePair(props: JSONObjectKeyValuePairProps) {
   const { keyName, value } = props
 
   return (
-    <Box display={'flex'} py={0.5}>
+    <Box display={'flex'} mb={1}>
       <Typography variant={'smallText1'}>
         <JSONPrimitiveRenderer value={keyName} />
       </Typography>
@@ -46,7 +46,7 @@ export function JSONObjectRenderer(props: JSONObjectRendererProps) {
   if (numKeys === 0) {
     return (
       <Typography variant={'smallText1'} className="SRC-inactive">
-        {'empty object'}
+        {'Empty object'}
       </Typography>
     )
   }
@@ -71,7 +71,7 @@ export function JSONObjectRenderer(props: JSONObjectRendererProps) {
           </Collapse>
           <Typography
             variant={'smallText1'}
-            sx={{ py: 0.5, color: 'grey.600', fontStyle: 'italic' }}
+            sx={{ mb: 0.5, color: 'grey.600', fontStyle: 'italic' }}
           >
             {expanded
               ? ''

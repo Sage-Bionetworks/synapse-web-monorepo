@@ -19,7 +19,7 @@ export function JSONArrayRenderer(props: JSONArrayRendererProps) {
   if (value.length === 0) {
     return (
       <Typography variant={'smallText1'} className="SRC-inactive">
-        {'empty array'}
+        {'Empty array'}
       </Typography>
     )
   }
@@ -31,7 +31,7 @@ export function JSONArrayRenderer(props: JSONArrayRendererProps) {
       {showCollapseText && (
         <Typography
           variant={'smallText1'}
-          sx={{ color: 'grey.600', fontStyle: 'italic' }}
+          sx={{ color: 'grey.600', fontStyle: 'italic', mb: 1 }}
         >
           {`${value.length.toLocaleString()} items`}
           <ExpandCollapseButton
@@ -43,7 +43,7 @@ export function JSONArrayRenderer(props: JSONArrayRendererProps) {
       )}
       <Collapse in={expanded}>
         {value.map((val: JSONPrimitiveType, index: number) => (
-          <Box display={'flex'} gap={0.5} my={1} key={index}>
+          <Box display={'flex'} gap={0.5} mb={1} key={index}>
             <Typography variant={'smallText1'}>
               <JSONPrimitiveRenderer value={val} />
             </Typography>

@@ -35,6 +35,7 @@ import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
 import UserCard from '../../UserCard/UserCard'
 import UserIdList from './UserIdList'
 import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
+import { Typography } from '@mui/material'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
@@ -255,7 +256,11 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
     case ColumnTypeEnum.BOOLEAN:
     case ColumnTypeEnum.MEDIUMTEXT:
     case ColumnTypeEnum.LARGETEXT: {
-      return <p className={isBold}>{columnValue}</p>
+      return (
+        <Typography variant={'smallText1'} className={isBold}>
+          {columnValue}
+        </Typography>
+      )
     }
     case ColumnTypeEnum.JSON:
       return <JSONTableCellRenderer value={columnValue} />
@@ -263,7 +268,11 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
       console.warn(
         `ColumnType ${columnType} has unspecified handler. Rendering the column value.`,
       )
-      return <p className={isBold}>{columnValue}</p>
+      return (
+        <Typography variant={'smallText1'} className={isBold}>
+          {columnValue}
+        </Typography>
+      )
   }
   // We can reach this if we don't get a mapping of IDs to entities or principals.
   // TODO: If we don't have a id:data mapping, we should render a component that can fetch the required data, rather than breaking from the case.

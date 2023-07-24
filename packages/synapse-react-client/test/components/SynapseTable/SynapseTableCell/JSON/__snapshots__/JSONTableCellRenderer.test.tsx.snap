@@ -3,7 +3,7 @@
 exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-1vf1ua7-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-1tqx9ty-MuiTypography-root"
   >
     6 items
     <button
@@ -42,7 +42,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
         class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
       >
         <div
-          class="MuiBox-root css-cnf6qf"
+          class="MuiBox-root css-70fdo6"
         >
           <span
             class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -51,7 +51,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
           </span>
         </div>
         <div
-          class="MuiBox-root css-cnf6qf"
+          class="MuiBox-root css-70fdo6"
         >
           <span
             class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -60,7 +60,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
           </span>
         </div>
         <div
-          class="MuiBox-root css-cnf6qf"
+          class="MuiBox-root css-70fdo6"
         >
           <span
             class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -69,7 +69,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
           </span>
         </div>
         <div
-          class="MuiBox-root css-cnf6qf"
+          class="MuiBox-root css-70fdo6"
         >
           <span
             class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -82,7 +82,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
           </span>
         </div>
         <div
-          class="MuiBox-root css-cnf6qf"
+          class="MuiBox-root css-70fdo6"
         >
           <span
             class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -91,7 +91,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
           </span>
         </div>
         <div
-          class="MuiBox-root css-cnf6qf"
+          class="MuiBox-root css-70fdo6"
         >
           <span
             class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -110,7 +110,7 @@ exports[`JSONTableCellRenderer handles "Empty array" case 1`] = `
   <span
     class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
   >
-    empty array
+    Empty array
   </span>
 </div>
 `;
@@ -120,7 +120,7 @@ exports[`JSONTableCellRenderer handles "Empty object" case 1`] = `
   <span
     class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
   >
-    empty object
+    Empty object
   </span>
 </div>
 `;
@@ -128,7 +128,7 @@ exports[`JSONTableCellRenderer handles "Empty object" case 1`] = `
 exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
 <div>
   <div
-    class="MuiBox-root css-5s04d1"
+    class="MuiBox-root css-34ji4n"
   >
     <span
       class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -142,7 +142,7 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
     </span>
   </div>
   <div
-    class="MuiBox-root css-5s04d1"
+    class="MuiBox-root css-34ji4n"
   >
     <span
       class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -156,7 +156,7 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
     </span>
   </div>
   <div
-    class="MuiBox-root css-5s04d1"
+    class="MuiBox-root css-34ji4n"
   >
     <span
       class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -180,7 +180,7 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
         class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
       >
         <div
-          class="MuiBox-root css-5s04d1"
+          class="MuiBox-root css-34ji4n"
         >
           <span
             class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -198,7 +198,7 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
           </span>
         </div>
         <div
-          class="MuiBox-root css-5s04d1"
+          class="MuiBox-root css-34ji4n"
         >
           <span
             class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -212,7 +212,7 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
           </span>
         </div>
         <div
-          class="MuiBox-root css-5s04d1"
+          class="MuiBox-root css-34ji4n"
         >
           <span
             class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -229,7 +229,7 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
     </div>
   </div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-1i0dbvc-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-e8wjbd-MuiTypography-root"
   >
     3 more
     <button
@@ -292,52 +292,56 @@ exports[`JSONTableCellRenderer handles "complex array" case 1`] = `
       </span>
     </button>
   </span>
-  <ol
-    role="tree"
-    style="padding: 0px; margin: 0px; list-style-type: none;"
+  <div
+    class="MuiBox-root css-yc55n3"
   >
-    <li
-      aria-expanded="false"
-      role="treeitem"
-      style="color: black; line-height: 1.2; cursor: default; box-sizing: border-box; list-style: none; font-family: Menlo, monospace; font-size: 11px;"
+    <ol
+      role="tree"
+      style="padding: 0px; margin: 0px; list-style-type: none;"
     >
-      <div>
-        <span
-          style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; transform: rotateZ(0deg);"
-        >
-          ▶
-        </span>
-        <span
-          style="font-style: italic;"
-        >
-          (3) 
-        </span>
-        <span
-          style="font-style: italic;"
-        >
-          [
-          <span>
-            Object
-          </span>
-          , 
+      <li
+        aria-expanded="false"
+        role="treeitem"
+        style="color: black; line-height: 1.2; cursor: default; box-sizing: border-box; list-style: none; font-family: Menlo, monospace; font-size: 11px;"
+      >
+        <div>
           <span
-            style="color: rgb(128, 128, 128);"
+            style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; transform: rotateZ(0deg);"
           >
-            null
+            ▶
           </span>
-          , 
-          <span>
-            Array(2)
+          <span
+            style="font-style: italic;"
+          >
+            (3) 
           </span>
-          ]
-        </span>
-      </div>
-      <ol
-        role="group"
-        style="margin: 0px; padding-left: 12px;"
-      />
-    </li>
-  </ol>
+          <span
+            style="font-style: italic;"
+          >
+            [
+            <span>
+              Object
+            </span>
+            , 
+            <span
+              style="color: rgb(128, 128, 128);"
+            >
+              null
+            </span>
+            , 
+            <span>
+              Array(2)
+            </span>
+            ]
+          </span>
+        </div>
+        <ol
+          role="group"
+          style="margin: 0px; padding-left: 12px;"
+        />
+      </li>
+    </ol>
+  </div>
 </div>
 `;
 
@@ -373,90 +377,94 @@ exports[`JSONTableCellRenderer handles "complex object" case 1`] = `
       </span>
     </button>
   </span>
-  <ol
-    role="tree"
-    style="padding: 0px; margin: 0px; list-style-type: none;"
+  <div
+    class="MuiBox-root css-yc55n3"
   >
-    <li
-      aria-expanded="false"
-      role="treeitem"
-      style="color: black; line-height: 1.2; cursor: default; box-sizing: border-box; list-style: none; font-family: Menlo, monospace; font-size: 11px;"
+    <ol
+      role="tree"
+      style="padding: 0px; margin: 0px; list-style-type: none;"
     >
-      <div>
-        <span
-          style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; transform: rotateZ(0deg);"
-        >
-          ▶
-        </span>
-        <span
-          style="font-style: italic;"
+      <li
+        aria-expanded="false"
+        role="treeitem"
+        style="color: black; line-height: 1.2; cursor: default; box-sizing: border-box; list-style: none; font-family: Menlo, monospace; font-size: 11px;"
+      >
+        <div>
+          <span
+            style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; transform: rotateZ(0deg);"
+          >
+            ▶
+          </span>
+          <span
+            style="font-style: italic;"
+          />
+          <span
+            style="font-style: italic;"
+          >
+            {
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                foo
+              </span>
+              : 
+              <span>
+                Array(3)
+              </span>
+            </span>
+            , 
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                null
+              </span>
+              : 
+              <span
+                style="color: rgb(128, 128, 128);"
+              >
+                null
+              </span>
+            </span>
+            , 
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                bar
+              </span>
+              : 
+              <span
+                style="color: rgb(196, 26, 22);"
+              >
+                "
+                baz
+                "
+              </span>
+            </span>
+            , 
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                zxcv
+              </span>
+              : 
+              <span>
+                Object
+              </span>
+            </span>
+            }
+          </span>
+        </div>
+        <ol
+          role="group"
+          style="margin: 0px; padding-left: 12px;"
         />
-        <span
-          style="font-style: italic;"
-        >
-          {
-          <span>
-            <span
-              style="color: rgb(136, 19, 145);"
-            >
-              foo
-            </span>
-            : 
-            <span>
-              Array(3)
-            </span>
-          </span>
-          , 
-          <span>
-            <span
-              style="color: rgb(136, 19, 145);"
-            >
-              null
-            </span>
-            : 
-            <span
-              style="color: rgb(128, 128, 128);"
-            >
-              null
-            </span>
-          </span>
-          , 
-          <span>
-            <span
-              style="color: rgb(136, 19, 145);"
-            >
-              bar
-            </span>
-            : 
-            <span
-              style="color: rgb(196, 26, 22);"
-            >
-              "
-              baz
-              "
-            </span>
-          </span>
-          , 
-          <span>
-            <span
-              style="color: rgb(136, 19, 145);"
-            >
-              zxcv
-            </span>
-            : 
-            <span>
-              Object
-            </span>
-          </span>
-          }
-        </span>
-      </div>
-      <ol
-        role="group"
-        style="margin: 0px; padding-left: 12px;"
-      />
-    </li>
-  </ol>
+      </li>
+    </ol>
+  </div>
 </div>
 `;
 
