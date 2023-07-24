@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
-import IconSvg from '../IconSvg/IconSvg'
 import useResizeObserver from '@react-hook/resize-observer'
+import ExpandCollapseButton from './ExpandCollapseButton'
 
 export default function ExpandableTableDataCell(
   props: JSX.IntrinsicElements['td'],
@@ -46,19 +46,11 @@ export default function ExpandableTableDataCell(
       ref={tdRef}
     >
       {isOverflowingWhenNotExpanded && (
-        <button
+        <ExpandCollapseButton
+          isExpanded={isExpanded}
           className="ExpandableTableData__expandButton"
           onClick={() => setIsExpanded(!isExpanded)}
-        >
-          <IconSvg
-            icon={isExpanded ? 'minusBoxOutline' : 'addBoxOutline'}
-            sx={{
-              color: 'grey.600',
-              height: '16px',
-              verticalAlign: 'top',
-            }}
-          ></IconSvg>
-        </button>
+        />
       )}
       {props.children}
     </td>

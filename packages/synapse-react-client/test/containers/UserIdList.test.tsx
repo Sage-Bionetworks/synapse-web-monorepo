@@ -1,6 +1,8 @@
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import UserIdList, { UserIdListProps } from '../../src/components/UserIdList'
+import UserIdList, {
+  UserIdListProps,
+} from '../../src/components/SynapseTable/SynapseTableCell/UserIdList'
 import { act } from '@testing-library/react'
 import {
   MOCK_CONTEXT_VALUE,

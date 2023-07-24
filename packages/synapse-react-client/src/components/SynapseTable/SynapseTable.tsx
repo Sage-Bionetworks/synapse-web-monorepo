@@ -13,7 +13,6 @@ import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getU
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import {
   ColumnModel,
-  ColumnType,
   ColumnTypeEnum,
   EntityHeader,
   FacetColumnRequest,
@@ -36,7 +35,7 @@ import ModalDownload from '../ModalDownload/ModalDownload'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 import { QueryContextType } from '../QueryContext/QueryContext'
 import { Icon } from '../row_renderers/utils'
-import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
+import { SynapseTableCell } from './SynapseTableCell/SynapseTableCell'
 import { Checkbox } from '../widgets/Checkbox'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
 import {
@@ -48,6 +47,7 @@ import {
   getColumnIndicesWithType,
   getUniqueEntities,
   isFileViewOrDataset,
+  isSortableColumn,
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
@@ -550,19 +550,24 @@ export class SynapseTable extends React.Component<
           const columnLinkConfig = columnLinks.find(el => {
             return el.matchColumnName === columnName
           })
+          const columnType = headers[colIndex].columnType
+          const shouldWrapInExpandable = columnType !== ColumnTypeEnum.JSON // JSON handles its own overflow
           const index = this.findSelectionIndex(
             this.state.sortedColumnSelection,
             columnName,
           )
           const isBold = index === -1 ? '' : 'SRC-boldText'
+          const TableDataCellElement = shouldWrapInExpandable
+            ? ExpandableTableDataCell
+            : 'td'
           if (isColumnActive) {
             return (
-              <ExpandableTableDataCell
-                className="SRC_noBorderTop"
+              <TableDataCellElement
                 key={`(${rowIndex}${columnValue}${colIndex})`}
+                className="SRC_noBorderTop"
               >
                 <SynapseTableCell
-                  columnType={headers[colIndex].columnType}
+                  columnType={columnType}
                   columnValue={columnValue}
                   isBold={isBold}
                   mapEntityIdToHeader={mapEntityIdToHeader}
@@ -575,7 +580,7 @@ export class SynapseTable extends React.Component<
                   rowId={row.rowId}
                   rowVersionNumber={row.versionNumber}
                 />
-              </ExpandableTableDataCell>
+              </TableDataCellElement>
             )
           }
           return <td className="SRC-hidden" key={`(${rowIndex},${colIndex})`} />
@@ -659,23 +664,6 @@ export class SynapseTable extends React.Component<
     return rowsFormatted
   }
 
-  public isSortableColumn(column: ColumnType) {
-    switch (column) {
-      case ColumnTypeEnum.USERID:
-      case ColumnTypeEnum.ENTITYID:
-      case ColumnTypeEnum.FILEHANDLEID:
-      case ColumnTypeEnum.STRING_LIST:
-      case ColumnTypeEnum.INTEGER_LIST:
-      case ColumnTypeEnum.BOOLEAN_LIST:
-      case ColumnTypeEnum.DATE_LIST:
-      case ColumnTypeEnum.USERID_LIST:
-      case ColumnTypeEnum.ENTITYID_LIST:
-        return false
-      default:
-        return true
-    }
-  }
-
   private createTableHeader(
     headers: SelectColumn[],
     columnModels: ColumnModel[],
@@ -745,7 +733,7 @@ export class SynapseTable extends React.Component<
                       columnModel,
                       lastQueryRequest,
                     )}
-                  {this.isSortableColumn(column.columnType) && (
+                  {isSortableColumn(column.columnType) && (
                     <span
                       role="button"
                       aria-label="sort"
@@ -763,7 +751,7 @@ export class SynapseTable extends React.Component<
                       <Icon
                         type={ICON_STATE[columnIndex]}
                         cssClass={isSelectedIconClass}
-                      ></Icon>
+                      />
                     </span>
                   )}
                   {isEntityIDColumn && <EntityIDColumnCopyIcon />}

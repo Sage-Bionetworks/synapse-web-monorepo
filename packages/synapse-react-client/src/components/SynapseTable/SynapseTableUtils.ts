@@ -85,3 +85,32 @@ export const getFileColumnModelId = (
   // else the file ID column was not found
   return undefined
 }
+
+export function isSortableColumn(column: ColumnType) {
+  switch (column) {
+    case ColumnTypeEnum.STRING:
+    case ColumnTypeEnum.DOUBLE:
+    case ColumnTypeEnum.BOOLEAN:
+    case ColumnTypeEnum.INTEGER:
+    case ColumnTypeEnum.DATE:
+    case ColumnTypeEnum.LINK:
+    case ColumnTypeEnum.MEDIUMTEXT:
+    case ColumnTypeEnum.LARGETEXT:
+      return true
+    case ColumnTypeEnum.USERID:
+    case ColumnTypeEnum.ENTITYID:
+    case ColumnTypeEnum.FILEHANDLEID:
+    case ColumnTypeEnum.STRING_LIST:
+    case ColumnTypeEnum.INTEGER_LIST:
+    case ColumnTypeEnum.BOOLEAN_LIST:
+    case ColumnTypeEnum.DATE_LIST:
+    case ColumnTypeEnum.USERID_LIST:
+    case ColumnTypeEnum.ENTITYID_LIST:
+    case ColumnTypeEnum.EVALUATIONID:
+    case ColumnTypeEnum.JSON:
+      return false
+    default:
+      console.warn(`Unhandled column type: ${column}`)
+      return false
+  }
+}
