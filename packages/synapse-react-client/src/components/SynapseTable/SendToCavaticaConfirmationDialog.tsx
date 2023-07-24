@@ -27,14 +27,15 @@ export default function SendToCavaticaConfirmationDialog(
     getLastQueryRequest,
     onViewSharingSettingsClicked,
     hasResettableFilters,
+    selectedRows,
+    hasSelectedRows,
+    rowSelectionPrimaryKey,
   } = useQueryContext()
+
   const {
     isShowingExportToCavaticaModal,
     setIsShowingExportToCavaticaModal,
-    selectedRows,
-    hasSelectedRows,
     unitDescription,
-    rowSelectionPrimaryKey,
   } = useQueryVisualizationContext()
 
   const cavaticaQueryRequest = useMemo(() => {
@@ -69,7 +70,7 @@ export default function SendToCavaticaConfirmationDialog(
     undefined,
     {
       useErrorBoundary: true,
-      enabled: !!data?.columnModels,
+      enabled: !!data?.columnModels && isShowingExportToCavaticaModal,
     },
   )
 

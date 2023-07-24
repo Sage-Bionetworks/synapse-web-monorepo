@@ -18,6 +18,7 @@ export enum ColumnTypeEnum {
   USERID_LIST = 'USERID_LIST',
   ENTITYID_LIST = 'ENTITYID_LIST',
   EVALUATIONID = 'EVALUATIONID',
+  JSON = 'JSON',
 }
 
 // Allow an instance of the enum or any of the values in the num

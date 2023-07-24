@@ -9,7 +9,6 @@ import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
 import { getNumberOfResultsToAddToDownloadListCopy } from '../TopLevelControls/TopLevelControlsUtils'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
 
 export type DownloadOptionsProps = {
@@ -26,8 +25,9 @@ export const DownloadOptions: React.FunctionComponent<
     data: queryResultBundle,
     getLastQueryRequest,
     hasResettableFilters,
+    hasSelectedRows,
+    selectedRows,
   } = useQueryContext()
-  const { hasSelectedRows, selectedRows } = useQueryVisualizationContext()
   const queryBundleRequest = getLastQueryRequest()
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)

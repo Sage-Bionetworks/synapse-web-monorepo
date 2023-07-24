@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
 
 export async function fetchBlob(url: string): Promise<Blob> {
   const response = await fetch(url)
@@ -18,35 +19,36 @@ export function releaseResourceUrl(resourceUrl: string) {
 export default function usePreFetchResource(
   preSignedURL?: string,
 ): string | undefined {
-  const [blob, setBlob] = useState<Blob | undefined>(undefined)
-  const url = useCreateUrlForData(blob)
+  const { data: blob, error } = useQuery(
+    ['usePreFetchResource', preSignedURL],
+    () => fetchBlob(preSignedURL!),
+    {
+      enabled: !!preSignedURL,
+      // The URL may expire, so the fetched item should never be marked as 'stale'; a refetch may not work.
+      staleTime: Infinity,
+    },
+  )
 
   useEffect(() => {
-    let isMounted = true
-    const getData = async (url: string) => {
-      try {
-        const blob = await fetchBlob(url)
-        if (isMounted) {
-          setBlob(blob)
-        }
-      } catch (e) {
-        console.error(
-          `Failed to fetch object with presigned URL ${url}. See network log for details`,
-        )
-      }
+    if (error) {
+      console.error(
+        `Failed to fetch object with presigned URL ${preSignedURL}. See network log for details`,
+      )
     }
-    if (preSignedURL) {
-      getData(preSignedURL)
-    }
+  }, [error, preSignedURL])
 
-    return () => {
-      isMounted = false
-    }
-  }, [preSignedURL])
-
-  return url
+  // While the retrieved data is cached by react-query, the object created by URL.createObjectURL is not. More specifically,
+  // the stored object is different for each instance of this hook, so when one instance tears down and deletes its object,
+  // other instances of the hook are not affected.
+  // This uses more memory than necessary in cases where the same object is fetched multiple times, but it's a tradeoff
+  // for simple cache and resource management.
+  return useCreateUrlForData(blob)
 }
 
+/**
+ * Uses URL.createObjectURL to create a URL for the given blob. When this hook unmounts, the URL is released.
+ * @param blob
+ */
 export function useCreateUrlForData(blob: Blob | null | undefined) {
   const [resourceUrl, setResourceURL] = useState<string | undefined>(undefined)
 

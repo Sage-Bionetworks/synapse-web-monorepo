@@ -5,6 +5,7 @@ import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { useQueryContext } from './QueryContext/QueryContext'
 import IconSvg from './IconSvg/IconSvg'
 import SelectionCriteriaPills from './widgets/facet-nav/SelectionCriteriaPills'
+import pluralize from 'pluralize'
 
 export type TotalQueryResultsProps = {
   style?: React.CSSProperties
@@ -41,8 +42,8 @@ function TotalQueryResults(props: TotalQueryResultsProps) {
           {(hasResettableFilters || !hideIfUnfiltered) && (
             <div className="TotalQueryResults__topbar">
               <span className="SRC-boldText">
-                {frontText} {total?.toLocaleString()} {unitDescription}{' '}
-                {endText}
+                {frontText} {total?.toLocaleString()}{' '}
+                {pluralize(unitDescription, total)} {endText}
               </span>
               {showClearAll && (
                 <a

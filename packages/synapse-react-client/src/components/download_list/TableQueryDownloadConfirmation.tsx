@@ -12,13 +12,14 @@ import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmati
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 
 export function TableQueryDownloadConfirmation() {
-  const { data, getLastQueryRequest } = useQueryContext()
   const {
-    setShowDownloadConfirmation,
+    data,
+    getLastQueryRequest,
     hasSelectedRows,
     selectedRows,
     rowSelectionPrimaryKey,
-  } = useQueryVisualizationContext()
+  } = useQueryContext()
+  const { setShowDownloadConfirmation } = useQueryVisualizationContext()
   const queryBundleRequest = useMemo(() => {
     const requestCopy = getLastQueryRequest()
     requestCopy.partMask =

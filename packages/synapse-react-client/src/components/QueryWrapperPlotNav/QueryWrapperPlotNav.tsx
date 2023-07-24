@@ -17,11 +17,7 @@ import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
-import {
-  QueryWrapper as PaginatedQueryWrapper,
-  QueryWrapperProps,
-} from '../QueryWrapper/QueryWrapper'
-import { InfiniteQueryWrapper } from '../InfiniteQueryWrapper'
+import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import { QueryContextConsumer } from '../QueryContext'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
 import SearchV2, { SearchV2Props } from '../SearchV2'
@@ -69,6 +65,7 @@ type QueryWrapperPlotNavOwnProps = {
   lockedColumn?: QueryWrapperProps['lockedColumn']
   onViewSharingSettingsClicked?: (benefactorId: string) => void
 } & Omit<TopLevelControlsProps, 'entityId'> &
+  Pick<QueryWrapperProps, 'isRowSelectionVisible' | 'rowSelectionPrimaryKey'> &
   Pick<
     QueryVisualizationWrapperProps,
     | 'defaultShowFacetVisualization'
@@ -77,9 +74,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'rgbIndex'
     | 'showLastUpdatedOn'
     | 'noContentPlaceholderType'
-    | 'isRowSelectionVisible'
     | 'unitDescription'
-    | 'rowSelectionPrimaryKey'
     | 'additionalFiltersLocalStorageKey'
   >
 
@@ -120,9 +115,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     showExportToCavatica = false,
     cavaticaHelpURL,
     customControls,
-    isRowSelectionVisible,
     unitDescription,
-    rowSelectionPrimaryKey,
     additionalFiltersLocalStorageKey,
   } = props
 
@@ -163,19 +156,16 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
       SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
     query,
   }
-  const QueryWrapper = tableConfiguration
-    ? PaginatedQueryWrapper
-    : InfiniteQueryWrapper
 
   return (
     <QueryWrapper
       {...props}
       initQueryRequest={initQueryRequest}
       key={componentKey}
+      isInfinite={!tableConfiguration}
     >
       <QueryVisualizationWrapper
         unitDescription={unitDescription}
-        rowSelectionPrimaryKey={rowSelectionPrimaryKey}
         rgbIndex={props.rgbIndex}
         columnAliases={props.columnAliases}
         visibleColumnCount={props.visibleColumnCount}
@@ -185,7 +175,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
         }
         showLastUpdatedOn={showLastUpdatedOn}
         noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
-        isRowSelectionVisible={isRowSelectionVisible}
       >
         <QueryContextConsumer>
           {queryContext => {

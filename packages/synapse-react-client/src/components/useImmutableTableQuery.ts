@@ -1,19 +1,20 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   FacetColumnRequest,
   QueryBundleRequest,
+  QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { cloneDeep, isEqual } from 'lodash-es'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
 import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/SqlFunctions'
-import { QueryFilter } from '@sage-bionetworks/synapse-types'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
   isFacetColumnValuesRequest,
 } from '../utils/types/IsType'
+import { queryRequestsHaveSameTotalResults } from '../utils/functions/queryUtils'
 
 export type ImmutableTableQueryResult = {
   /** The ID of the table parsed from the SQL query */
@@ -46,6 +47,12 @@ export type ImmutableTableQueryResult = {
   removeQueryFilter: (filter: QueryFilter) => void
   /** Removes a particular value from a QueryFilter. If the value is the last value in the filter, the filter will be removed. */
   removeValueFromQueryFilter: (filter: QueryFilter, value: string) => void
+  /** If `requireConfirmationOnChange` is true, this will become true when a function that triggers a query change is invoked. */
+  isConfirmingChange: boolean
+  /** If `isConfirmingChange` is true, invoke this function to complete the query change */
+  onConfirmChange: () => void
+  /** If `isConfirmingChange` is true, invoke this function to cancel the query change */
+  onCancelChange: () => void
 
   /**
    * TODO: This hook could handle all potential query transformations, such as
@@ -66,6 +73,8 @@ export type UseImmutableTableQueryOptions = {
   componentIndex?: number
   /** Callback invoked when the query is modified */
   onQueryChange?: (newQueryJson: string) => void
+  /** Whether to require explicit user confirmation before changing the query. */
+  requireConfirmationOnChange?: boolean
 }
 
 /**
@@ -81,21 +90,38 @@ export default function useImmutableTableQuery(
     componentIndex = 0,
     shouldDeepLink = false,
     onQueryChange,
+    requireConfirmationOnChange = false,
   } = options
 
   const [lastQueryRequest, setLastQueryRequest] =
     useState<QueryBundleRequest>(initQueryRequest)
 
+  const [isConfirmingChange, setIsConfirmingChange] = useState(false)
+
+  // State variable to track the operation that should be invoked when the user confirms a query change
+  const [onConfirmChangeQuery, setOnConfirmChangeQuery] = useState<() => void>(
+    () => {
+      setIsConfirmingChange(false)
+    },
+  )
+
   /**
    * Inspect the URL on mount to see if we have a particular query request that we must show.
    */
   useEffect(() => {
-    const query = DeepLinkingUtils.getQueryRequestFromLink(
+    const queryRequestFromLink = DeepLinkingUtils.getQueryRequestFromLink(
       'QueryWrapper',
       componentIndex,
     )
-    if (query) {
-      setLastQueryRequest(query)
+    if (queryRequestFromLink) {
+      setLastQueryRequest(prevState => ({
+        ...prevState,
+        ...queryRequestFromLink,
+        query: {
+          ...prevState.query,
+          ...queryRequestFromLink.query,
+        },
+      }))
     }
   }, [componentIndex])
 
@@ -126,25 +152,17 @@ export default function useImmutableTableQuery(
    * @param {*} queryRequest Query request as specified by
    *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    */
-  const setQuery = useCallback(
-    (
-      queryRequest:
-        | QueryBundleRequest
-        | ((lastQueryRequest: QueryBundleRequest) => QueryBundleRequest),
-    ): void => {
-      let newQueryRequest: QueryBundleRequest
-      if (typeof queryRequest === 'function') {
-        newQueryRequest = queryRequest(getLastQueryRequest())
-      } else {
-        newQueryRequest = queryRequest
-      }
+  const setQuery: ImmutableTableQueryResult['setQuery'] = useCallback(
+    (queryRequest): void => {
+      const newQueryRequest = cloneDeep(
+        typeof queryRequest === 'function'
+          ? queryRequest(getLastQueryRequest())
+          : queryRequest,
+      )
+      setLastQueryRequest(newQueryRequest)
 
-      // Clone the query request before storing it in state, in case the original is mutated
-      const clonedQueryRequest = cloneDeep(newQueryRequest)
-      setLastQueryRequest(clonedQueryRequest)
-
-      if (clonedQueryRequest.query) {
-        const clonedQueryJson = JSON.stringify(clonedQueryRequest.query)
+      if (newQueryRequest.query) {
+        const clonedQueryJson = JSON.stringify(newQueryRequest.query)
         if (shouldDeepLink) {
           const encodedQuery = encodeURIComponent(clonedQueryJson)
           DeepLinkingUtils.updateUrlWithNewSearchParam(
@@ -161,6 +179,42 @@ export default function useImmutableTableQuery(
     [componentIndex, getLastQueryRequest, onQueryChange, shouldDeepLink],
   )
 
+  const setQueryOrPromptConfirmation: ImmutableTableQueryResult['setQuery'] =
+    useCallback(
+      (queryRequest: React.SetStateAction<QueryBundleRequest>) => {
+        const nextQueryRequest =
+          typeof queryRequest === 'function'
+            ? queryRequest(getLastQueryRequest())
+            : queryRequest
+        // Check if we need to confirm the change, and eventually call _setQuery
+        if (
+          requireConfirmationOnChange &&
+          !queryRequestsHaveSameTotalResults(
+            lastQueryRequest.query,
+            nextQueryRequest.query,
+          )
+        ) {
+          setOnConfirmChangeQuery(() => () => {
+            setQuery(queryRequest)
+            setIsConfirmingChange(false)
+          })
+          setIsConfirmingChange(true)
+        } else {
+          setQuery(queryRequest)
+        }
+      },
+      [
+        setQuery,
+        getLastQueryRequest,
+        lastQueryRequest.query,
+        requireConfirmationOnChange,
+      ],
+    )
+
+  const onCancelChangeQuery = useCallback(() => {
+    setIsConfirmingChange(false)
+  }, [])
+
   const { entityId, versionNumber } = useMemo(
     () => parseEntityIdAndVersionFromSqlStatement(lastQueryRequest.query.sql)!,
     [lastQueryRequest.query.sql],
@@ -173,27 +227,27 @@ export default function useImmutableTableQuery(
 
   const setPageSize = useCallback(
     (pageSize: number) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.limit = pageSize
         return currentQuery
       })
     },
-    [setQuery],
+    [setQueryOrPromptConfirmation],
   )
 
   const goToPage = useCallback(
     (pageNumber: number) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.offset = (pageNumber - 1) * pageSize
         return currentQuery
       })
     },
-    [pageSize, setQuery],
+    [pageSize, setQueryOrPromptConfirmation],
   )
 
   const resetQuery = useCallback(() => {
-    setQuery(initQueryRequest)
-  }, [initQueryRequest, setQuery])
+    setQueryOrPromptConfirmation(initQueryRequest)
+  }, [initQueryRequest, setQueryOrPromptConfirmation])
 
   /* If the initial query changes, then reset the query to match the new prop */
   useDeepCompareEffect(() => {
@@ -204,7 +258,7 @@ export default function useImmutableTableQuery(
 
   const removeSelectedFacet = useCallback(
     (facetColumnRequest: FacetColumnRequest) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.selectedFacets = (
           currentQuery.query.selectedFacets ?? []
         ).filter(facet => {
@@ -214,12 +268,12 @@ export default function useImmutableTableQuery(
         return currentQuery
       })
     },
-    [setQuery],
+    [setQueryOrPromptConfirmation],
   )
 
   const removeValueFromSelectedFacet = useCallback(
     (facet: FacetColumnRequest, value: string) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.selectedFacets = (
           currentQuery.query.selectedFacets ?? []
         )
@@ -249,12 +303,12 @@ export default function useImmutableTableQuery(
         return currentQuery
       })
     },
-    [setQuery],
+    [setQueryOrPromptConfirmation],
   )
 
   const removeQueryFilter = useCallback(
     (queryFilter: QueryFilter) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.additionalFilters = (
           currentQuery.query.additionalFilters ?? []
         ).filter(qf => {
@@ -264,12 +318,12 @@ export default function useImmutableTableQuery(
         return currentQuery
       })
     },
-    [setQuery],
+    [setQueryOrPromptConfirmation],
   )
 
   const removeValueFromQueryFilter = useCallback(
     (queryFilter: QueryFilter, value: string) => {
-      setQuery(currentQuery => {
+      setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.additionalFilters = (
           currentQuery.query.additionalFilters ?? []
         )
@@ -299,7 +353,7 @@ export default function useImmutableTableQuery(
         return currentQuery
       })
     },
-    [setQuery],
+    [setQueryOrPromptConfirmation],
   )
 
   return {
@@ -307,7 +361,7 @@ export default function useImmutableTableQuery(
     versionNumber,
     getInitQueryRequest,
     getLastQueryRequest,
-    setQuery,
+    setQuery: setQueryOrPromptConfirmation,
     pageSize,
     currentPage,
     setPageSize,
@@ -317,5 +371,8 @@ export default function useImmutableTableQuery(
     removeValueFromSelectedFacet,
     removeQueryFilter,
     removeValueFromQueryFilter,
+    isConfirmingChange,
+    onConfirmChange: onConfirmChangeQuery,
+    onCancelChange: onCancelChangeQuery,
   }
 }

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { getUserProfiles } from '../synapse-client/SynapseClient'
-import { useSynapseContext } from '../utils/context/SynapseContext'
-import { UserCardSmall } from './UserCard/UserCardSmall'
+import { getUserProfiles } from '../../../synapse-client/SynapseClient'
+import { useSynapseContext } from '../../../utils/context/SynapseContext'
+import { UserCardSmall } from '../../UserCard/UserCardSmall'
 
 export type UserIdListProps = {
   userIds: string[]

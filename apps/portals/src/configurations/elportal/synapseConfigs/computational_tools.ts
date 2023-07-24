@@ -21,9 +21,9 @@ export const computationalCardConfiguration: CardConfiguration = {
   labelLinkConfig: [
     {
       isMarkdown: false,
-      matchColumnName: 'grant',
-      URLColumnName: 'grantNumber',
       baseURL: 'Explore/Projects/DetailsPage',
+      URLColumnName: 'grantNumber',
+      matchColumnName: 'grant',
     },
   ],
 }
