@@ -3,6 +3,7 @@ import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriend
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import IconSvg from '../IconSvg/IconSvg'
 import { Tooltip } from '@mui/material'
+import pluralize from 'pluralize'
 
 export type DownloadDetailsProps = {
   numFiles: number
@@ -17,13 +18,22 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const iconClassName = isInactive ? 'SRC-inactive' : 'SRC-primary-text-color'
   return (
     <span className="DownloadDetailsV2">
-      <span className="item">{!isInactive && <> {numFiles} Files </>}</span>
+      <span className="item">
+        {!isInactive && (
+          <>
+            {numFiles.toLocaleString()} {pluralize('File', numFiles)}
+          </>
+        )}
+      </span>
       <span className="item">
         <span className={iconClassName}>
-          <IconSvg icon="packagableFile" />
+          <IconSvg wrap={false} icon="packagableFile" />
         </span>
         {!isInactive && (
-          <> {numPackagableFiles} Files eligible for packaging </>
+          <>
+            {numPackagableFiles.toLocaleString()}{' '}
+            {pluralize('File', numPackagableFiles)} eligible for packaging
+          </>
         )}
       </span>
       {numBytes > 0 && (
@@ -41,7 +51,10 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
             <IconSvg icon="warningOutlined" />
           </span>
           {!isInactive && (
-            <> {numIneligibleFiles} Files ineligible for packaging </>
+            <>
+              {numIneligibleFiles.toLocaleString()}{' '}
+              {pluralize('File', numIneligibleFiles)} ineligible for packaging
+            </>
           )}
         </span>
       )}

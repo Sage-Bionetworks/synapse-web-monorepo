@@ -3,7 +3,7 @@ import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
 const Docker = (props: SvgIconProps) => {
   return (
-    <SvgIcon {...props}>
+    <SvgIcon viewBox="-2 0 26 17" {...props}>
       <path
         d="M9.80371 2.02862V0.25H11.5823V2.02862H9.80371Z"
         fillOpacity="0.3"
