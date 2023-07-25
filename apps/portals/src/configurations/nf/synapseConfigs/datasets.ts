@@ -56,8 +56,7 @@ const datasets: SynapseConfig = {
 export const datasetDetailsPageConfig: DetailsPageProps = {
   sql: datasetsSql,
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-  showMenu: true,
-
+  showMenu: false,
   synapseConfigArray: [
     // {
     //   name: 'Markdown',
@@ -73,7 +72,7 @@ export const datasetDetailsPageConfig: DetailsPageProps = {
     // },
     {
       name: 'QueryWrapperPlotNav',
-      title: 'Files',
+      // title: 'Files',
       props: {
         rgbIndex,
         sql: '',
