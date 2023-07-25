@@ -164,7 +164,8 @@ describe('useImmutableTableQuery tests', () => {
       }),
     )
 
-    expect(mockUpdateUrl).not.toHaveBeenCalled()
+    // called with `null`, which would remove the query parameter, if it exists
+    expect(mockUpdateUrl).toHaveBeenCalledWith('QueryWrapper', 4, null)
 
     const newQuery = cloneDeep(options.initQueryRequest)
     newQuery.query.sql = 'SELECT * FROM syn123.3 WHERE "foo"=\'baz\''
@@ -176,7 +177,7 @@ describe('useImmutableTableQuery tests', () => {
     expect(mockUpdateUrl).toHaveBeenCalledWith(
       'QueryWrapper',
       4,
-      encodeURIComponent(JSON.stringify(newQuery.query)),
+      JSON.stringify(newQuery.query),
     )
   })
 

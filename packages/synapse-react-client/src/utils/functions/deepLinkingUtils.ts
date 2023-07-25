@@ -9,92 +9,48 @@ function getComponentSearchHashId(
   return `${componentName}${componentIndex}`
 }
 
-//returns updated search string with the component's info
-function patchSearchString(
-  componentSearchHashId: string,
-  stringifiedQuery: string,
-): string | undefined {
-  const searchString = window.location.search
-
-  const searchFragment = `${componentSearchHashId}=${stringifiedQuery}`
-  if (!searchString) {
-    return searchFragment
-  }
-
-  if (!searchString.includes(`${componentSearchHashId}=`)) {
-    //substr(1) because we don't want '?' character
-    return `${searchString.substr(1)}&${searchFragment}`
-  }
-  const searchHashes = window.location.search
-    .slice(searchString.indexOf('?') + 1)
-    .split('&')
-
-  const searchHashesUpdated = searchHashes
-    .map(item => {
-      const split = item.split('=')
-      if (split[0] === componentSearchHashId) {
-        return `${searchFragment}`
-      } else return item
-    })
-    .join('&')
-  return searchHashesUpdated
-}
-
-//gets a value for the search param for the component from the url
-export function getSearchParamValueFromUrl(
-  componentName: string,
-  componentIndex: number,
-): string | undefined {
-  if (!window.location.search) {
-    return undefined
-  }
-  const componentSearchHashId = getComponentSearchHashId(
-    componentName,
-    componentIndex,
-  )
-  const hashes = window.location.search
-    .slice(window.location.search.indexOf('?') + 1)
-    .split('&')
-  const getSearchParamValue = hashes
-    .filter(item => {
-      const hash = item.split('=')
-      return hash[0] === componentSearchHashId
-    })
-    .map(item => item.split('=')[1])[0]
-  return getSearchParamValue
-    ? decodeURIComponent(getSearchParamValue)
-    : undefined
-}
-
-//updates the url with the components new search params
+/**
+ * Updates the url with the components' new search params. If stringifiedQuery
+ * is null, the related search param will be removed.
+ * @param componentName
+ * @param componentIndex
+ * @param stringifiedQuery
+ */
 export function updateUrlWithNewSearchParam(
   componentName: string,
   componentIndex: number | undefined,
-  stringifiedQuery: string,
+  stringifiedQuery: string | null,
 ) {
   const componentSearchHashId =
     componentIndex !== undefined
       ? getComponentSearchHashId(componentName, componentIndex)
       : componentName
-  const searchString = patchSearchString(
-    componentSearchHashId,
-    stringifiedQuery,
-  )
-  const location = window.location
-  const newURL = `${location.protocol}//${location.hostname}${
-    location.port ? ':' + location.port : ''
-  }${location.pathname}?${searchString}`
 
-  window.history.replaceState('object or string', 'Title', newURL)
+  const currentSearch = new URLSearchParams(window.location.search)
+
+  if (stringifiedQuery) {
+    currentSearch.set(componentSearchHashId, stringifiedQuery)
+  } else {
+    currentSearch.delete(componentSearchHashId)
+  }
+
+  const searchString = currentSearch.toString()
+
+  window.history.replaceState(
+    null,
+    '',
+    window.location.pathname +
+      (currentSearch.size > 0 ? `?${searchString.toString()}` : ''),
+  )
 }
 
 export function getQueryRequestFromLink(
   componentName: string,
   componentIndex: number,
 ): Partial<QueryBundleRequest> | undefined {
-  const searchParamValue = getSearchParamValueFromUrl(
-    componentName,
-    componentIndex,
+  const paramKey = getComponentSearchHashId(componentName, componentIndex)
+  const searchParamValue = new URLSearchParams(window.location.search).get(
+    paramKey,
   )
 
   let initQueryRequest: Partial<QueryBundleRequest> | undefined = undefined

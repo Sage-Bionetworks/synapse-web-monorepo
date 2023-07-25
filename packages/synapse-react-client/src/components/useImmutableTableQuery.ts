@@ -14,7 +14,10 @@ import {
   isColumnSingleValueQueryFilter,
   isFacetColumnValuesRequest,
 } from '../utils/types/IsType'
-import { queryRequestsHaveSameTotalResults } from '../utils/functions/queryUtils'
+import {
+  queryRequestsHaveSameTotalResults,
+  removeEmptyQueryParams,
+} from '../utils/functions/queryUtils'
 
 export type ImmutableTableQueryResult = {
   /** The ID of the table parsed from the SQL query */
@@ -86,15 +89,33 @@ export default function useImmutableTableQuery(
   options: UseImmutableTableQueryOptions,
 ): ImmutableTableQueryResult {
   const {
-    initQueryRequest,
+    initQueryRequest: initQueryRequestFromProps,
     componentIndex = 0,
     shouldDeepLink = false,
     onQueryChange,
     requireConfirmationOnChange = false,
   } = options
 
-  const [lastQueryRequest, setLastQueryRequest] =
+  const initQueryRequest = useMemo(() => {
+    const request = cloneDeep(initQueryRequestFromProps)
+    request.query = removeEmptyQueryParams(request.query)
+    return request
+  }, [initQueryRequestFromProps])
+
+  const [lastQueryRequest, setLastQueryRequestInternal] =
     useState<QueryBundleRequest>(initQueryRequest)
+
+  function setLastQueryRequest(
+    newState: React.SetStateAction<QueryBundleRequest>,
+  ) {
+    setLastQueryRequestInternal(newState)
+    const request =
+      typeof newState === 'function' ? newState(lastQueryRequest) : newState
+
+    if (onQueryChange) {
+      onQueryChange(JSON.stringify(request.query))
+    }
+  }
 
   const [isConfirmingChange, setIsConfirmingChange] = useState(false)
 
@@ -104,26 +125,6 @@ export default function useImmutableTableQuery(
       setIsConfirmingChange(false)
     },
   )
-
-  /**
-   * Inspect the URL on mount to see if we have a particular query request that we must show.
-   */
-  useEffect(() => {
-    const queryRequestFromLink = DeepLinkingUtils.getQueryRequestFromLink(
-      'QueryWrapper',
-      componentIndex,
-    )
-    if (queryRequestFromLink) {
-      setLastQueryRequest(prevState => ({
-        ...prevState,
-        ...queryRequestFromLink,
-        query: {
-          ...prevState.query,
-          ...queryRequestFromLink.query,
-        },
-      }))
-    }
-  }, [componentIndex])
 
   /**
    * Pass down a deep clone (so no side effects on the child's part) of the
@@ -159,24 +160,13 @@ export default function useImmutableTableQuery(
           ? queryRequest(getLastQueryRequest())
           : queryRequest,
       )
-      setLastQueryRequest(newQueryRequest)
 
-      if (newQueryRequest.query) {
-        const clonedQueryJson = JSON.stringify(newQueryRequest.query)
-        if (shouldDeepLink) {
-          const encodedQuery = encodeURIComponent(clonedQueryJson)
-          DeepLinkingUtils.updateUrlWithNewSearchParam(
-            'QueryWrapper',
-            componentIndex,
-            encodedQuery,
-          )
-        }
-        if (onQueryChange) {
-          onQueryChange(clonedQueryJson)
-        }
-      }
+      // Remove null/empty array fields
+      lastQueryRequest.query = removeEmptyQueryParams(lastQueryRequest.query)
+
+      setLastQueryRequest(newQueryRequest)
     },
-    [componentIndex, getLastQueryRequest, onQueryChange, shouldDeepLink],
+    [getLastQueryRequest],
   )
 
   const setQueryOrPromptConfirmation: ImmutableTableQueryResult['setQuery'] =
@@ -210,6 +200,47 @@ export default function useImmutableTableQuery(
         requireConfirmationOnChange,
       ],
     )
+
+  /**
+   * Inspect the URL on mount to see if we have a particular query request that we must show.
+   */
+  useEffect(() => {
+    const queryRequestFromLink = DeepLinkingUtils.getQueryRequestFromLink(
+      'QueryWrapper',
+      componentIndex,
+    )
+    if (queryRequestFromLink && queryRequestFromLink.query) {
+      setQuery(prevState => ({
+        ...prevState,
+        ...queryRequestFromLink,
+        query: {
+          ...prevState.query,
+          ...queryRequestFromLink.query,
+        },
+      }))
+    }
+  }, [componentIndex])
+
+  // If `shouldDeepLink` is true, synchronize the URL
+  useEffect(() => {
+    if (shouldDeepLink) {
+      if (isEqual(initQueryRequest, lastQueryRequest)) {
+        // reset URL...somehow
+        DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'QueryWrapper',
+          componentIndex,
+          null,
+        )
+      } else {
+        const queryJsonString = JSON.stringify(lastQueryRequest.query)
+        DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'QueryWrapper',
+          componentIndex,
+          queryJsonString,
+        )
+      }
+    }
+  }, [componentIndex, lastQueryRequest, initQueryRequest, shouldDeepLink])
 
   const onCancelChangeQuery = useCallback(() => {
     setIsConfirmingChange(false)
