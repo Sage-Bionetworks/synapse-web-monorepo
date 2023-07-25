@@ -2,7 +2,7 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EntityIdList, {
   EntityIdListProps,
-} from '../../src/components/EntityIdList'
+} from '../../src/components/SynapseTable/SynapseTableCell/EntityIdList'
 import { act } from '@testing-library/react'
 import {
   MOCK_CONTEXT_VALUE,

@@ -17,8 +17,8 @@ const TO_DOWNLOAD_CART = 'to Download Cart'
  * @param data
  */
 export function getNumberOfResultsToInvokeAction(
-  hasSelectedRows: QueryVisualizationContextType['hasSelectedRows'],
-  selectedRows: QueryVisualizationContextType['selectedRows'],
+  hasSelectedRows: QueryContextType['hasSelectedRows'],
+  selectedRows: QueryContextType['selectedRows'],
   data: QueryContextType['data'],
 ) {
   return hasSelectedRows ? selectedRows.length : data?.queryCount
@@ -40,8 +40,8 @@ export function getNumberOfResultsToInvokeAction(
  */
 export function getNumberOfResultsToInvokeActionCopy(
   hasResettableFilters: QueryContextType['hasResettableFilters'],
-  hasSelectedRows: QueryVisualizationContextType['hasSelectedRows'],
-  selectedRows: QueryVisualizationContextType['selectedRows'],
+  hasSelectedRows: QueryContextType['hasSelectedRows'],
+  selectedRows: QueryContextType['selectedRows'],
   data: QueryContextType['data'],
   unitDescription: QueryVisualizationContextType['unitDescription'],
 ) {
@@ -75,8 +75,8 @@ export function getNumberOfResultsToInvokeActionCopy(
  */
 export function getNumberOfResultsToAddToDownloadListCopy(
   hasResettableFilters: QueryContextType['hasResettableFilters'],
-  hasSelectedRows: QueryVisualizationContextType['hasSelectedRows'],
-  selectedRows: QueryVisualizationContextType['selectedRows'],
+  hasSelectedRows: QueryContextType['hasSelectedRows'],
+  selectedRows: QueryContextType['selectedRows'],
   data: QueryContextType['data'],
   unitDescription: QueryVisualizationContextType['unitDescription'],
 ) {

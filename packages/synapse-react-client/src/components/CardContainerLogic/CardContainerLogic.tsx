@@ -18,7 +18,7 @@ import {
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { QueryContextConsumer } from '../QueryContext'
-import { InfiniteQueryWrapper } from '../InfiniteQueryWrapper'
+import { QueryWrapper } from '../QueryWrapper'
 import QuerySortSelector from '../QuerySortSelector'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { IconOptions } from '../Icon/Icon'
@@ -181,7 +181,7 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
   }
 
   return (
-    <InfiniteQueryWrapper {...props} initQueryRequest={initQueryRequest}>
+    <QueryWrapper {...props} initQueryRequest={initQueryRequest} isInfinite>
       <QueryVisualizationWrapper
         rgbIndex={props.rgbIndex}
         unitDescription={props.unitDescription}
@@ -196,7 +196,7 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
           {queryContext => <ErrorBanner error={queryContext?.error} />}
         </QueryContextConsumer>
       </QueryVisualizationWrapper>
-    </InfiniteQueryWrapper>
+    </QueryWrapper>
   )
 }
 

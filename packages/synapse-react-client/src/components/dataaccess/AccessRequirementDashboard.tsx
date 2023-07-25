@@ -127,6 +127,7 @@ export function AccessRequirementDashboard(
           initialContainer: null,
           selectMultiple: false,
           selectableTypes: [EntityType.PROJECT],
+          treeOnly: true,
         }}
         show={showEntityFinder}
         onCancel={() => {

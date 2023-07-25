@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isEqual, isEqualWith, isNil } from 'lodash-es'
 import * as SynapseConstants from '../SynapseConstants'
 import SynapseClient from '../../synapse-client'
 import { LockedColumn } from '../../components/QueryContext/QueryContext'
@@ -160,4 +160,31 @@ export function canTableQueryBeAddedToDownloadList<T extends Table = Table>(
     entity &&
       ((isEntityView(entity) && isFileView(entity)) || isDataset(entity)),
   )
+}
+
+/**
+ * Returns true if the queries necessarily return the same result set, i.e. if they have identical parameters other than
+ * limit, offset, sort.
+ *
+ * Note that this does not query the actual tables, so this only captures the semantic equivalence of the queries.
+ */
+export function queryRequestsHaveSameTotalResults(
+  request1: Query,
+  request2: Query,
+) {
+  const clone1 = cloneDeep(request1)
+  delete clone1.limit
+  delete clone1.offset
+  delete clone1.sort
+  const clone2 = cloneDeep(request2)
+  delete clone2.limit
+  delete clone2.offset
+  delete clone2.sort
+  return isEqualWith(clone1, clone2, (value1, value2) => {
+    if (isNil(value1) && isNil(value2)) {
+      // Consider all nil (e.g. undefined/null) values equal
+      return true
+    }
+    return isEqual(value1, value2)
+  })
 }

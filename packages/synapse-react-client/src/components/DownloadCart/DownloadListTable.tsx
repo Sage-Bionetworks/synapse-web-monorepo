@@ -305,7 +305,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                         {item.fileSizeBytes &&
                           calculateFriendlyFileSize(item.fileSizeBytes)}
                       </td>
-                      <td>{`${item.fileEntityId}.${item.versionNumber}`}</td>
+                      <td>{`${item.fileEntityId}${
+                        item.versionNumber ? `.${item.versionNumber}` : ''
+                      }`}</td>
                       <td>{item.projectName}</td>
                       <td>{addedOn}</td>
                       <td>

@@ -94,10 +94,14 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
     jest.clearAllMocks()
   })
   it('allows exporting all results', async () => {
-    const { user, sendToCavatica } = setUp(undefined, undefined, {
-      isRowSelectionVisible: false,
-      selectedRows: [],
-    })
+    const { user, sendToCavatica } = setUp(
+      undefined,
+      {
+        isRowSelectionVisible: false,
+        selectedRows: [],
+      },
+      undefined,
+    )
 
     await user.click(sendToCavatica)
 
@@ -108,15 +112,19 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
   })
 
   it('allows exporting selected results', async () => {
-    const { user, sendToCavatica } = setUp(undefined, undefined, {
-      isRowSelectionVisible: true,
-      hasSelectedRows: true,
-      selectedRows: mockQueryResultBundle.queryResult.queryResults.rows.slice(
-        0,
-        2,
-      ),
-      rowSelectionPrimaryKey: ['id'],
-    })
+    const { user, sendToCavatica } = setUp(
+      undefined,
+      {
+        isRowSelectionVisible: true,
+        hasSelectedRows: true,
+        selectedRows: mockQueryResultBundle.queryResult.queryResults.rows.slice(
+          0,
+          2,
+        ),
+        rowSelectionPrimaryKey: ['id'],
+      },
+      undefined,
+    )
 
     await user.click(sendToCavatica)
 
@@ -147,10 +155,14 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
       isLoading: true,
       data: undefined,
     })
-    const { user, sendToCavatica } = setUp(undefined, undefined, {
-      isRowSelectionVisible: false,
-      selectedRows: [],
-    })
+    const { user, sendToCavatica } = setUp(
+      undefined,
+      {
+        isRowSelectionVisible: false,
+        selectedRows: [],
+      },
+      undefined,
+    )
 
     expect(sendToCavatica).toBeDisabled()
   })
@@ -167,10 +179,14 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
         },
       ],
     })
-    const { user, sendToCavatica } = setUp(undefined, undefined, {
-      isRowSelectionVisible: false,
-      selectedRows: [],
-    })
+    const { user, sendToCavatica } = setUp(
+      undefined,
+      {
+        isRowSelectionVisible: false,
+        selectedRows: [],
+      },
+      undefined,
+    )
 
     expect(sendToCavatica).toBeDisabled()
   })

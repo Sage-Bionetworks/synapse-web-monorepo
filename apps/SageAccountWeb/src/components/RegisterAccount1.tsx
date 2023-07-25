@@ -10,9 +10,11 @@ import {
 } from '@mui/material'
 import {
   IconSvg,
+  LastLoginInfo,
   SynapseClient,
   SynapseConstants,
   displayToast,
+  useLastLoginInfo,
 } from 'synapse-react-client'
 import {
   AliasType,
@@ -160,6 +162,11 @@ export const RegisterAccount1 = () => {
     }
   }
 
+  const lastLoginInfo = LastLoginInfo({
+    display: 'box',
+    ...useLastLoginInfo(),
+  })
+
   return (
     <>
       <StyledOuterContainer className="RegisterAccount1">
@@ -168,36 +175,43 @@ export const RegisterAccount1 = () => {
             <>
               <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
                 <BackButtonForPage />
-                <Box sx={{ minHeight: '530px' }}>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  sx={{ minHeight: '530px' }}
+                >
                   <div className="panel-logo logo-wrapper">
                     <SourceAppLogo />
                   </div>
                   {page === Pages.CHOOSE_REGISTRATION && (
-                    <div style={{ marginTop: '30px' }}>
-                      <Button
-                        onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
-                        sx={chooseButtonSx}
-                        variant="outlined"
-                      >
-                        <img
-                          className="googleLogo"
-                          src={GoogleLogo}
-                          alt="Google Logo"
-                          style={{ width: 25, marginRight: 5 }}
-                        />
-                        <span className="signInText">
+                    <>
+                      <div>
+                        <Button
+                          onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
+                          sx={chooseButtonSx}
+                          variant="outlined"
+                          startIcon={
+                            <img
+                              className="googleLogo"
+                              src={GoogleLogo}
+                              alt="Google Logo"
+                              style={{ width: 25 }}
+                            />
+                          }
+                        >
                           Create account with Google
-                        </span>
-                      </Button>
-                      <Button
-                        onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
-                        sx={chooseButtonSx}
-                        variant="outlined"
-                      >
-                        <IconSvg icon="email" sx={{ marginRight: '5px' }} />
-                        Create account with your email
-                      </Button>
-                    </div>
+                        </Button>
+                        <Button
+                          onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
+                          sx={chooseButtonSx}
+                          variant="outlined"
+                          startIcon={<IconSvg icon="email" />}
+                        >
+                          Create account with your email
+                        </Button>
+                      </div>
+                      {lastLoginInfo && <Box mt="auto">{lastLoginInfo}</Box>}
+                    </>
                   )}
                   {page === Pages.EMAIL_REGISTRATION && (
                     <div className="EmailAddressUI">

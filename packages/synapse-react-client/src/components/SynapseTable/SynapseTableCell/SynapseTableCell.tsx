@@ -1,13 +1,13 @@
 import React from 'react'
 import dayjs from 'dayjs'
-import { formatDate } from '../../utils/functions/DateFormatter'
+import { formatDate } from '../../../utils/functions/DateFormatter'
 import {
   isDataset,
   isDatasetCollection,
   isEntityView,
-} from '../../utils/functions/EntityTypeUtils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
+} from '../../../utils/functions/EntityTypeUtils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
+import { AUTHENTICATED_USERS } from '../../../utils/SynapseConstants'
 import {
   ColumnModel,
   ColumnType,
@@ -23,17 +23,19 @@ import {
   CardLink,
   ColumnSpecifiedLink,
   MarkdownLink,
-} from '../CardContainerLogic'
-import DirectDownload from '../DirectDownload'
-import EntityIdList from '../EntityIdList'
-import { EntityLink } from '../EntityLink'
-import EvaluationIdRenderer from '../EvaluationIdRenderer'
-import { SynapseCardLabel } from '../GenericCard'
-import IconSvg, { IconName } from '../IconSvg/IconSvg'
-import { useQueryContext } from '../QueryContext/QueryContext'
-import { NOT_SET_DISPLAY_VALUE } from '../SynapseTable/SynapseTableConstants'
-import UserCard from '../UserCard/UserCard'
-import UserIdList from '../UserIdList'
+} from '../../CardContainerLogic'
+import DirectDownload from '../../DirectDownload'
+import EntityIdList from './EntityIdList'
+import { EntityLink } from '../../EntityLink'
+import EvaluationIdRenderer from './EvaluationIdRenderer'
+import { SynapseCardLabel } from '../../GenericCard'
+import IconSvg, { IconName } from '../../IconSvg/IconSvg'
+import { useQueryContext } from '../../QueryContext/QueryContext'
+import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
+import UserCard from '../../UserCard/UserCard'
+import UserIdList from './UserIdList'
+import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
+import { Typography } from '@mui/material'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
@@ -50,20 +52,21 @@ export type SynapseTableCellProps = {
   rowVersionNumber?: number
 }
 
-export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
-  columnType,
-  columnValue,
-  isBold,
-  mapEntityIdToHeader,
-  mapUserIdToHeader,
-  columnLinkConfig,
-  columnName,
-  selectColumns,
-  columnModels,
-  rowData,
-  rowId,
-  rowVersionNumber,
-}) => {
+export function SynapseTableCell(props: SynapseTableCellProps) {
+  const {
+    columnType,
+    columnValue,
+    isBold,
+    mapEntityIdToHeader,
+    mapUserIdToHeader,
+    columnLinkConfig,
+    columnName,
+    selectColumns,
+    columnModels,
+    rowData,
+    rowId,
+    rowVersionNumber,
+  } = props
   const { entity } = useQueryContext()
 
   if (!columnValue) {
@@ -253,13 +256,23 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     case ColumnTypeEnum.BOOLEAN:
     case ColumnTypeEnum.MEDIUMTEXT:
     case ColumnTypeEnum.LARGETEXT: {
-      return <p className={isBold}>{columnValue}</p>
+      return (
+        <Typography variant={'smallText1'} className={isBold}>
+          {columnValue}
+        </Typography>
+      )
     }
+    case ColumnTypeEnum.JSON:
+      return <JSONTableCellRenderer value={columnValue} />
     default:
       console.warn(
         `ColumnType ${columnType} has unspecified handler. Rendering the column value.`,
       )
-      return <p className={isBold}>{columnValue}</p>
+      return (
+        <Typography variant={'smallText1'} className={isBold}>
+          {columnValue}
+        </Typography>
+      )
   }
   // We can reach this if we don't get a mapping of IDs to entities or principals.
   // TODO: If we don't have a id:data mapping, we should render a component that can fetch the required data, rather than breaking from the case.

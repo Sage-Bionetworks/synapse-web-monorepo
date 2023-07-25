@@ -42,7 +42,7 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
         open={props.show}
         title={props.title}
         fullWidth={false}
-        maxWidth="lg"
+        maxWidth="xl"
         titleHelpPopoverProps={props.titleHelpPopoverProps}
         confirmButtonText={props.confirmButtonCopy}
         onConfirm={() => {

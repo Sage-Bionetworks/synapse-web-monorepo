@@ -118,6 +118,7 @@ import { Tooltip } from '@mui/material'
 import CreateVersion from '../../assets/icons/CreateVersion'
 import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
 import { SortDown, SortUp } from '../../assets/themed_icons'
+import { GoogleIcon24 } from '../../assets/GoogleIcon24'
 
 export const IconStrings = [
   'accessOpen',
@@ -239,6 +240,7 @@ export const IconStrings = [
   'addConditions',
   'sortUp',
   'sortDown',
+  'google24',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -497,6 +499,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <SortUp {...otherProps} />
     case 'sortDown':
       return <SortDown {...otherProps} />
+    case 'google24':
+      return <GoogleIcon24 sx={sx} />
     default:
       return <></>
   }

@@ -2,7 +2,7 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EvaluationIdRenderer, {
   EvaluationIdRendererProps,
-} from '../../src/components/EvaluationIdRenderer'
+} from '../../src/components/SynapseTable/SynapseTableCell/EvaluationIdRenderer'
 import { act } from '@testing-library/react'
 import {
   MOCK_CONTEXT_VALUE,

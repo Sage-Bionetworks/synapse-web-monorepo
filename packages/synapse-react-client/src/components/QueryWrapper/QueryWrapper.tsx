@@ -1,27 +1,23 @@
-import React, { useCallback } from 'react'
-import { useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import {
-  isFacetAvailable,
   hasResettableFilters as hasResettableFiltersUtil,
+  isFacetAvailable,
   removeLockedColumnFromFacetData,
 } from '../../utils/functions/queryUtils'
+import { useGetEntity } from '../../synapse-queries'
+import { QueryBundleRequest, Table } from '@sage-bionetworks/synapse-types'
 import {
-  useGetEntity,
-  useGetQueryResultBundleWithAsyncStatus,
-} from '../../synapse-queries'
-import {
-  AsynchronousJobStatus,
-  QueryBundleRequest,
-  QueryResultBundle,
-  Table,
-} from '@sage-bionetworks/synapse-types'
-import {
+  InfiniteQueryContextType,
   LockedColumn,
   PaginatedQueryContextType,
   QueryContextProvider,
 } from '../QueryContext/QueryContext'
 import useImmutableTableQuery from '../useImmutableTableQuery'
+import { ConfirmationDialog } from '../ConfirmationDialog'
+import useTableRowSelection from './useTableRowSelection'
+import useQueryWrapperData from './useQueryWrapperData'
+import { useQueryWrapperPaginationControls } from './useQueryWrapperPaginationControls'
 
 export type QueryWrapperProps = {
   children: React.ReactNode | React.ReactNode[]
@@ -32,6 +28,12 @@ export type QueryWrapperProps = {
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   lockedColumn?: LockedColumn
   onViewSharingSettingsClicked?: (benefactorId: string) => void
+  isRowSelectionVisible?: boolean
+  /** The set of columns that defines a uniqueness constraint on the table for the purposes of filtering based on row selection.
+   * Note that Synapse tables have no internal concept of a primary key.
+   */
+  rowSelectionPrimaryKey?: string[]
+  isInfinite?: boolean
 }
 
 /**
@@ -47,56 +49,52 @@ export function QueryWrapper(props: QueryWrapperProps) {
     componentIndex,
     shouldDeepLink,
     onViewSharingSettingsClicked,
+    isRowSelectionVisible: isRowSelectionVisibleFromProps = false,
+    rowSelectionPrimaryKey: rowSelectionPrimaryKeyFromProps,
+    isInfinite = false,
   } = props
 
-  const [currentAsyncStatus, setCurrentAsyncStatus] = useState<
-    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle> | undefined
-  >(undefined)
+  // Must store requireConfirmationOnChange in state to break dependency cycle between useImmutableTableQuery and useTableRowsSelection
+  // TODO: consider combining these two hooks, or decoupling them in some other way
+  const [requireConfirmationOnChange, setRequireConfirmationOnChange] =
+    useState(false)
 
+  const immutableTableQueryResult = useImmutableTableQuery({
+    initQueryRequest,
+    shouldDeepLink,
+    componentIndex,
+    onQueryChange,
+    requireConfirmationOnChange,
+  })
   const {
     entityId,
     versionNumber,
     getInitQueryRequest,
     getLastQueryRequest,
     setQuery,
-    currentPage,
-    pageSize,
-    goToPage,
-    setPageSize,
     resetQuery,
     removeSelectedFacet,
     removeValueFromSelectedFacet,
     removeQueryFilter,
     removeValueFromQueryFilter,
-  } = useImmutableTableQuery({
-    initQueryRequest,
-    shouldDeepLink,
-    componentIndex,
-    onQueryChange,
-  })
+    onConfirmChange,
+    isConfirmingChange,
+    onCancelChange,
+  } = immutableTableQueryResult
 
   const lastQueryRequest = useMemo(() => {
     return getLastQueryRequest()
   }, [getLastQueryRequest])
 
-  const {
-    data: asyncJobStatus,
-    isLoading: queryIsLoading,
-    error,
-    isPreviousData: newQueryIsFetching,
-  } = useGetQueryResultBundleWithAsyncStatus(
-    lastQueryRequest,
-    {
-      // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
-      keepPreviousData: true,
-    },
-    setCurrentAsyncStatus,
-  )
+  const queryWrapperData = useQueryWrapperData(lastQueryRequest, isInfinite)
+  const { data, isLoadingNewBundle, error, currentAsyncStatus } =
+    queryWrapperData
 
-  const data = asyncJobStatus?.responseBody
-
-  // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand-new query (newQueryIsFetching)
-  const isLoadingNewBundle = queryIsLoading || newQueryIsFetching
+  const paginationControls = useQueryWrapperPaginationControls({
+    immutableTableQueryResult,
+    queryWrapperData,
+    isInfinite,
+  })
 
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
 
@@ -132,11 +130,25 @@ export function QueryWrapper(props: QueryWrapperProps) {
     [data?.columnModels],
   )
 
-  const context: PaginatedQueryContextType = {
+  const {
+    isRowSelectionVisible,
+    rowSelectionPrimaryKey,
+    hasSelectedRows,
+    selectedRows,
+    setSelectedRows,
+  } = useTableRowSelection({
+    entity: entity,
+    columnModels: data?.columnModels,
+    isRowSelectionVisible: isRowSelectionVisibleFromProps,
+    rowSelectionPrimaryKey: rowSelectionPrimaryKeyFromProps,
+  })
+
+  useEffect(() => {
+    setRequireConfirmationOnChange(hasSelectedRows)
+  }, [hasSelectedRows])
+
+  const context: InfiniteQueryContextType | PaginatedQueryContextType = {
     data: dataWithLockedColumnFacetRemoved,
-    currentPage,
-    pageSize,
-    setPageSize,
     isLoadingNewBundle: isLoadingNewBundle,
     getLastQueryRequest,
     getInitQueryRequest,
@@ -145,7 +157,6 @@ export function QueryWrapper(props: QueryWrapperProps) {
     executeQueryRequest: setQuery,
     isFacetsAvailable,
     asyncJobStatus: currentAsyncStatus,
-    goToPage,
     hasResettableFilters,
     removeSelectedFacet,
     removeValueFromSelectedFacet,
@@ -155,13 +166,35 @@ export function QueryWrapper(props: QueryWrapperProps) {
     lockedColumn,
     getColumnModel,
     onViewSharingSettingsClicked,
+    isRowSelectionVisible,
+    rowSelectionPrimaryKey,
+    hasSelectedRows,
+    selectedRows,
+    setSelectedRows,
+    ...paginationControls,
   }
+
   /**
    * Render the children without any formatting
    */
   const { children } = props
   return (
     <QueryContextProvider queryContext={context}>
+      <ConfirmationDialog
+        open={isConfirmingChange}
+        title={'Change Query and Clear Selection?'}
+        content={
+          'Changing the current query will cause your current selection to be lost. Are you sure you want to proceed?'
+        }
+        confirmButtonText={'Clear Selection and Update Query'}
+        onConfirm={() => {
+          setSelectedRows([])
+          onConfirmChange()
+        }}
+        onCancel={() => {
+          onCancelChange()
+        }}
+      />
       {children}
     </QueryContextProvider>
   )

@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import useImmutableTableQuery, {
   UseImmutableTableQueryOptions,
@@ -14,11 +14,12 @@ const options: UseImmutableTableQueryOptions = {
       sql: 'SELECT * FROM syn123.3 WHERE "foo"=\'bar\'',
     },
   },
+  requireConfirmationOnChange: false,
 }
 
 describe('useImmutableTableQuery tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.resetAllMocks()
   })
 
   it('Returns the entity ID and version in the passed query', () => {
@@ -132,10 +133,9 @@ describe('useImmutableTableQuery tests', () => {
 
   it('Updates the query if initQueryRequest changes', () => {
     const onQueryChange = jest.fn()
-    const { result, rerender } = renderHook(
-      props => useImmutableTableQuery(props),
-      { initialProps: { ...options, onQueryChange } },
-    )
+    const { rerender } = renderHook(props => useImmutableTableQuery(props), {
+      initialProps: { ...options, onQueryChange },
+    })
 
     expect(onQueryChange).not.toHaveBeenCalled()
 
@@ -203,5 +203,97 @@ describe('useImmutableTableQuery tests', () => {
     expect(mockUpdateUrl).toHaveBeenCalledTimes(1)
 
     expect(result.current.getLastQueryRequest().query.sql).toEqual(sqlInURL)
+  })
+
+  it('onConfirmChange works when required', () => {
+    const onQueryChange = jest.fn()
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        onQueryChange,
+        requireConfirmationOnChange: true,
+      }),
+    )
+
+    expect(onQueryChange).not.toHaveBeenCalled()
+    expect(result.current.isConfirmingChange).toBe(false)
+
+    const newQuery = cloneDeep(options.initQueryRequest)
+    newQuery.query.sql = 'SELECT * FROM syn123.3 WHERE "foo"=\'baz\''
+
+    // Call under test - change the query
+    act(() => {
+      result.current.setQuery(newQuery)
+    })
+
+    expect(onQueryChange).not.toHaveBeenCalled()
+    expect(result.current.isConfirmingChange).toBe(true)
+
+    // Call under test - confirm the change
+    act(() => {
+      result.current.onConfirmChange()
+    })
+
+    expect(result.current.isConfirmingChange).toBe(false)
+    expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery.query))
+  })
+
+  it('onCancelChange works when confirmation is required', () => {
+    const onQueryChange = jest.fn()
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        onQueryChange,
+        requireConfirmationOnChange: true,
+      }),
+    )
+
+    expect(onQueryChange).not.toHaveBeenCalled()
+    expect(result.current.isConfirmingChange).toBe(false)
+
+    const newQuery = cloneDeep(options.initQueryRequest)
+    newQuery.query.sql = 'SELECT * FROM syn123.3 WHERE "foo"=\'baz\''
+
+    // Call under test - change the query
+    act(() => {
+      result.current.setQuery(newQuery)
+    })
+
+    expect(onQueryChange).not.toHaveBeenCalled()
+    expect(result.current.isConfirmingChange).toBe(true)
+
+    // Call under test - cancel the change
+    act(() => {
+      result.current.onCancelChange()
+    })
+
+    expect(result.current.isConfirmingChange).toBe(false)
+    expect(onQueryChange).not.toHaveBeenCalled()
+  })
+
+  it('does not trigger required confirmation if only pagination parameters change', () => {
+    const onQueryChange = jest.fn()
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        onQueryChange,
+        requireConfirmationOnChange: true,
+      }),
+    )
+
+    expect(onQueryChange).not.toHaveBeenCalled()
+    expect(result.current.isConfirmingChange).toBe(false)
+
+    const newQuery = cloneDeep(options.initQueryRequest)
+    newQuery.query.limit = 5
+    newQuery.query.offset = 50
+
+    // Call under test - change the query
+    act(() => {
+      result.current.setQuery(newQuery)
+    })
+
+    expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery.query))
+    expect(result.current.isConfirmingChange).toBe(false)
   })
 })

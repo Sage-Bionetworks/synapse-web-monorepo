@@ -28,12 +28,14 @@ import mockUserCardTableQueryResultBundle from '../../../mocks/query/mockUserCar
 import { server } from '../../../mocks/msw/server'
 import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
 
+const unitDescription = 'study'
+
 const renderComponent = (
   props: CardContainerProps,
   queryContext: Partial<QueryContextType>,
 ) => {
   const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
-    {}
+    { unitDescription: unitDescription }
 
   return render(
     <QueryContextProvider queryContext={queryContext}>
@@ -73,11 +75,10 @@ describe('CardContainer tests', () => {
   }
   const getLastQueryRequest = jest.fn(() => lastQueryRequest)
 
-  const unitDescription = 'studies'
   const type = SynapseConstants.STUDY
   // cast the data to ignore ts warning
   const data = syn16787123Json as QueryResultBundle
-  const props = {
+  const props: CardContainerProps = {
     unitDescription,
     type,
   }
