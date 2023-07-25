@@ -203,8 +203,10 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
             <div className="FacetNav__row" role="list">
               {facets.map(facet => (
                 <div
-                  className="col-sm-12 col-md-4"
                   style={{
+                    paddingLeft: '20px',
+                    paddingRight: '20px',
+                    minWidth: '435px',
                     display: isFacetHiddenInGrid(facet.columnName)
                       ? 'none'
                       : 'block',
