@@ -225,7 +225,6 @@ export default function useImmutableTableQuery(
   useEffect(() => {
     if (shouldDeepLink) {
       if (isEqual(initQueryRequest, lastQueryRequest)) {
-        // reset URL...somehow
         DeepLinkingUtils.updateUrlWithNewSearchParam(
           'QueryWrapper',
           componentIndex,
