@@ -15,13 +15,15 @@ export const datasetCardConfiguration: CardConfiguration = {
     title: 'title',
     description: 'description',
     secondaryLabels: [
+      // 'assay',
+      'doi',
+      'datasetSizeInBytes',
       'diseaseFocus',
       'fundingAgency',
       'datasetItemCount',
       'dataType',
       'series',
       'yearProcessed',
-      'datasetSizeInBytes',
     ],
   },
   titleLinkConfig: {

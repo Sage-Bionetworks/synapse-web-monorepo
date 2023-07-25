@@ -1,7 +1,10 @@
 import { isEmpty } from 'lodash-es'
 import React from 'react'
 import { SynapseConstants } from '../../utils'
-import { isTableEntity } from '../../utils/functions/EntityTypeUtils'
+import {
+  isDatasetCollection,
+  isTableEntity,
+} from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import {
   DOI_REGEX,
@@ -40,6 +43,7 @@ import { FileHandleLink } from '../widgets/FileHandleLink'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 import { IconOptions } from '../Icon/Icon'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 
 export type KeyToAlias = {
   key: string
@@ -688,8 +692,15 @@ export default class GenericCard extends React.Component<
       let value: any = data[schema[columnName]]
       let columnDisplayName
       if (value) {
-        // SWC-6115: special rendering of the version column (for Views)
-        if (isView && columnName === 'currentVersion') {
+        // PORTALS-2750: special rendering of the datasetSizeInBytes (for Dataset Collections)
+        if (
+          isDatasetCollection(table as Entity) &&
+          columnName === 'datasetSizeInBytes'
+        ) {
+          columnDisplayName = 'Size'
+          value = calculateFriendlyFileSize(parseInt(value))
+        } // SWC-6115: special rendering of the version column (for Views)
+        else if (isView && columnName === 'currentVersion') {
           const synapseId = data[schema.id]
           const version = value
           value = VersionLabel({ synapseId, version })
