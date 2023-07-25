@@ -22,7 +22,6 @@ import { cloneDeep } from 'lodash-es'
 import { mockManagedACTAccessRequirement } from '../../../mocks/mockAccessRequirements'
 import * as UseExportToCavaticaModule from '../../../src/synapse-queries/entity/useExportToCavatica'
 import * as UseActionsRequiredForTableQueryModule from '../../../src/synapse-queries/entity/useActionsRequiredForTableQuery'
-import * as ActionRequiredListItem from '../../../src/components/DownloadCart/ActionRequiredListItem'
 
 const onExportToCavatica = jest.fn()
 
@@ -111,10 +110,12 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
   it('allows exporting selected results', async () => {
     const { user, sendToCavatica } = setUp(undefined, undefined, {
       isRowSelectionVisible: true,
+      hasSelectedRows: true,
       selectedRows: mockQueryResultBundle.queryResult.queryResults.rows.slice(
         0,
         2,
       ),
+      rowSelectionPrimaryKey: ['id'],
     })
 
     await user.click(sendToCavatica)

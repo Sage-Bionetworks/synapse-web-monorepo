@@ -34,7 +34,7 @@ type UiStateDictionary = {
 const StatusConstruct: UiStateDictionary = {
   [StatusEnum.INFO]: {
     severity: 'info',
-    infoText: 'Would you like to add all files to the download cart?',
+    infoText: 'Would you like to add these files to the download cart?',
     closeText: 'Cancel',
   },
   [StatusEnum.INFO_ITEMS_IN_LIST]: {

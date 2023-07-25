@@ -5,10 +5,13 @@ import { RowSelectionUI } from './RowSelectionUI'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { Cavatica } from '../../../assets/icons/Cavatica'
+import { GetAppTwoTone } from '@mui/icons-material'
+import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
 
 export type RowSelectionControlsProps = {
   showExportToCavatica?: boolean
   customControls?: CustomControl[]
+  remount?: () => void
 }
 
 /**
@@ -18,17 +21,24 @@ export type RowSelectionControlsProps = {
  * @constructor
  */
 export function RowSelectionControls(props: RowSelectionControlsProps) {
-  const { customControls = [], showExportToCavatica = false } = props
-  const { data, executeQueryRequest, getLastQueryRequest } = useQueryContext()
-  const { selectedRows, setSelectedRows, setIsShowingExportToCavaticaModal } =
-    useQueryVisualizationContext()
+  const { customControls = [], showExportToCavatica = false, remount } = props
+  const { data, entity, getLastQueryRequest } = useQueryContext()
+  const {
+    selectedRows,
+    setSelectedRows,
+    setIsShowingExportToCavaticaModal,
+    setShowDownloadConfirmation,
+  } = useQueryVisualizationContext()
 
   const refresh = () => {
     // clear selection
     setSelectedRows([])
-    // refresh the data
-    executeQueryRequest(getLastQueryRequest())
+    if (remount) {
+      remount()
+    }
   }
+
+  const showAddToDownloadCart = canTableQueryBeAddedToDownloadList(entity)
 
   return (
     <RowSelectionUI
@@ -43,7 +53,12 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
                 key={customControl.buttonText}
                 variant="contained"
                 onClick={() =>
-                  customControl.onClick({ data, selectedRows, refresh })
+                  customControl.onClick({
+                    data,
+                    selectedRows,
+                    refresh,
+                    request: getLastQueryRequest(),
+                  })
                 }
                 startIcon={customControl.icon}
               >
@@ -60,6 +75,17 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
               startIcon={<Cavatica />}
             >
               Send to CAVATICA
+            </Button>
+          )}
+          {showAddToDownloadCart && (
+            <Button
+              variant="contained"
+              onClick={() => {
+                setShowDownloadConfirmation(true)
+              }}
+              startIcon={<GetAppTwoTone />}
+            >
+              Add to Download Cart
             </Button>
           )}
         </>

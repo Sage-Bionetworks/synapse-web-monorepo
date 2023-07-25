@@ -22,6 +22,7 @@ export type QueryVisualizationContextType = {
   setColumnsToShowInTable: (newState: string[]) => void
   selectedRows: Row[]
   setSelectedRows: (newState: Row[]) => void
+  hasSelectedRows: boolean
   rgbIndex?: number
   unitDescription: string
   /** Whether to show when the table or view was last updated. */
@@ -112,6 +113,8 @@ export type QueryVisualizationWrapperProps = {
    * Note that Synapse tables have no internal concept of a primary key.
    */
   rowSelectionPrimaryKey?: string[]
+  /* Look for additional filters using the given key.  If not provided, the entity ID will be used. */
+  additionalFiltersLocalStorageKey?: string
 }
 
 /**
@@ -138,8 +141,13 @@ export function QueryVisualizationWrapper(
   } = useQueryContext()
 
   let { rowSelectionPrimaryKey } = props
-  if (!rowSelectionPrimaryKey && isFileViewOrDataset(entity)) {
-    // If the primary key isn't specified on a file view/dataset, we can safely use the 'id' column
+  if (
+    !rowSelectionPrimaryKey &&
+    isFileViewOrDataset(entity) &&
+    data?.columnModels?.find(cm => cm.name === 'id')
+  ) {
+    // If the primary key isn't specified via props, and this is a file view/dataset, we can safely use the 'id' column as primary key, if it is present
+    // Note: Synapse tables don't have an internal concept of a primary key
     rowSelectionPrimaryKey = ['id']
   }
   const [showSqlEditor, setShowSqlEditor] = useState(false)
@@ -235,6 +243,7 @@ export function QueryVisualizationWrapper(
     setShowFacetVisualization,
     showCopyToClipboard,
     setShowCopyToClipboard,
+    hasSelectedRows: isRowSelectionVisible && selectedRows.length > 0,
   }
   /**
    * Render the children without any formatting

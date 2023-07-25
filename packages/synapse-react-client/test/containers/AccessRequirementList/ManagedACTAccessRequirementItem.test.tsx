@@ -123,6 +123,16 @@ const approvedStatus: AccessRequirementStatus = {
     modifiedOn: '2023-04-21T14:52:18+00:00',
   },
 }
+const revokedStatus: AccessRequirementStatus = {
+  ...noSubmissionStatus,
+  isApproved: false,
+  currentSubmissionStatus: {
+    submissionId: '1234',
+    submittedBy: String(MOCK_USER_ID),
+    state: SubmissionState.APPROVED,
+    modifiedOn: '2023-04-21T14:52:18+00:00',
+  },
+}
 
 async function testWikiToggle() {
   expect(screen.queryByText(mockRenderedMarkdown)).not.toBeInTheDocument()
@@ -280,6 +290,21 @@ describe('ManagedACTAccessRequirementItem', () => {
     })
   })
 
+  describe('Submission is revoked', () => {
+    beforeEach(async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(revokedStatus)
+      await renderComponent(defaultProps)
+    })
+
+    it('Request can be updated', async () => {
+      await screen.findByText('Your data access request has been revoked.')
+      const button = await screen.findByRole('button', {
+        name: 'Update Request',
+      })
+      await userEvent.click(button)
+      expect(mockOnRequestAccess).toHaveBeenCalled()
+    })
+  })
   // See PLFM-7800
   it.todo('Informs a user when their submission has expired')
 })

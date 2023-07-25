@@ -170,6 +170,7 @@ export function useAddFileToDownloadList(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
+      return
     },
   })
 }
@@ -199,6 +200,7 @@ export function useAddFileBatchToDownloadList(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
+      return
     },
   })
 }
@@ -225,6 +227,7 @@ export function useAddQueryToDownloadList(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
+      return
     },
   })
 }

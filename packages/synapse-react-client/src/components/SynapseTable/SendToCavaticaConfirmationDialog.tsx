@@ -5,8 +5,6 @@ import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
 import {
   ActionRequiredCount,
   ColumnModel,
-  ColumnSingleValueFilterOperator,
-  ColumnSingleValueQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../QueryContext'
 import { SkeletonParagraph } from '../Skeleton'
@@ -14,6 +12,7 @@ import { useExportToCavatica } from '../../synapse-queries/entity/useExportToCav
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
+import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 
 export type SendToCavaticaConfirmationDialogProps = {
   cavaticaHelpURL?: string
@@ -32,41 +31,32 @@ export default function SendToCavaticaConfirmationDialog(
   const {
     isShowingExportToCavaticaModal,
     setIsShowingExportToCavaticaModal,
-    isRowSelectionVisible,
     selectedRows,
+    hasSelectedRows,
     unitDescription,
     rowSelectionPrimaryKey,
   } = useQueryVisualizationContext()
 
-  const hasSelectedRows = isRowSelectionVisible && selectedRows.length > 0
-
   const cavaticaQueryRequest = useMemo(() => {
     const request = getLastQueryRequest()
-    if (!hasSelectedRows) {
-      return request
-    } else {
-      if (!rowSelectionPrimaryKey || rowSelectionPrimaryKey.length !== 1) {
-        // TODO: Handle composite/undefined key
-        throw new Error(
-          'rowSelectionPrimaryKey must be defined and have length 1',
-        )
-      }
-      // Add a filter that will just return the selected rows.
-      const idColIndex = data?.columnModels?.findIndex(cm => cm.name === 'id')
-      const idColumnFilter: ColumnSingleValueQueryFilter = {
-        concreteType:
-          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-        columnName: rowSelectionPrimaryKey[0],
-        operator: ColumnSingleValueFilterOperator.IN,
-        values: selectedRows!.map(row => row.values[idColIndex!]!),
-      }
+    if (hasSelectedRows && rowSelectionPrimaryKey && data?.columnModels) {
       request.query.additionalFilters = [
         ...(request.query.additionalFilters || []),
-        idColumnFilter,
+        getPrimaryKeyINFilter(
+          rowSelectionPrimaryKey,
+          selectedRows,
+          data.columnModels,
+        ),
       ]
-      return request
     }
-  }, [data?.columnModels, getLastQueryRequest, selectedRows, hasSelectedRows])
+    return request
+  }, [
+    getLastQueryRequest,
+    hasSelectedRows,
+    rowSelectionPrimaryKey,
+    data?.columnModels,
+    selectedRows,
+  ])
 
   const exportToCavatica = useExportToCavatica(
     cavaticaQueryRequest,
@@ -85,7 +75,7 @@ export default function SendToCavaticaConfirmationDialog(
 
   const confirmButtonText = `Send ${getNumberOfResultsToInvokeActionCopy(
     hasResettableFilters,
-    isRowSelectionVisible,
+    hasSelectedRows,
     selectedRows,
     data,
     unitDescription,

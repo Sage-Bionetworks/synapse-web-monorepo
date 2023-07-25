@@ -9,6 +9,7 @@ const data: SynapseConfig = {
     rgbIndex,
     name: 'Data',
     visibleColumnCount: 10,
+    isRowSelectionVisible: true,
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,

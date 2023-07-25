@@ -116,7 +116,10 @@ function getPillPropsFromQueryFilters(
     } else if (isTextMatchesQueryFilter(queryFilter)) {
       return [getPillPropsFromTextMatchesQueryFilter(queryFilter, queryContext)]
     } else {
-      console.log('Unknown query filter type', queryFilter.concreteType)
+      console.log(
+        'Unknown query filter type',
+        (queryFilter as any).concreteType,
+      )
       return []
     }
   })

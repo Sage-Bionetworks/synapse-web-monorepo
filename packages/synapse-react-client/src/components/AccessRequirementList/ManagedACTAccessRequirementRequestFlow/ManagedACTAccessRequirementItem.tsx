@@ -57,9 +57,7 @@ export default function ManagedACTAccessRequirementItem(
   const [hideMarkdown, setHideMarkdown] = useState<boolean>(true)
   const [alert, setAlert] = useState<AlertProps | undefined>()
 
-  const isApproved =
-    accessRequirementStatus?.currentSubmissionStatus?.state ===
-    SubmissionState.APPROVED
+  const isApproved = accessRequirementStatus?.isApproved
 
   let markdown = <></>
 
@@ -91,14 +89,25 @@ export default function ManagedACTAccessRequirementItem(
           </Alert>
         )}
         {accessRequirementStatus?.currentSubmissionStatus?.state ===
-          SubmissionState.APPROVED && (
-          <Alert
-            className={'access-requirement-list-alert'}
-            severity={'success'}
-          >
-            <strong>Your data access request has been approved.</strong>
-          </Alert>
-        )}
+          SubmissionState.APPROVED &&
+          isApproved && (
+            <Alert
+              className={'access-requirement-list-alert'}
+              severity={'success'}
+            >
+              <strong>Your data access request has been approved.</strong>
+            </Alert>
+          )}
+        {accessRequirementStatus?.currentSubmissionStatus?.state ===
+          SubmissionState.APPROVED &&
+          !isApproved && (
+            <Alert
+              className={'access-requirement-list-alert'}
+              severity={'warning'}
+            >
+              <strong>Your data access request has been revoked.</strong>
+            </Alert>
+          )}
         {accessRequirementStatus?.currentSubmissionStatus?.state ===
           SubmissionState.REJECTED && (
           <Alert className={'access-requirement-list-alert'} severity={'error'}>
@@ -172,7 +181,9 @@ export default function ManagedACTAccessRequirementItem(
   if (!isLoading) {
     switch (accessRequirementStatus?.currentSubmissionStatus?.state) {
       case SubmissionState.APPROVED:
-        requirementItemState = RequirementItemStatus.COMPLETE
+        requirementItemState = accessRequirementStatus?.isApproved
+          ? RequirementItemStatus.COMPLETE
+          : RequirementItemStatus.LOCKED
         break
       case SubmissionState.SUBMITTED:
         requirementItemState = RequirementItemStatus.PENDING

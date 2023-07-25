@@ -1,7 +1,12 @@
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, partition } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
 import { SQL_EDITOR } from '../../../utils/SynapseConstants'
-import { Query, QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
+import {
+  Query,
+  QueryBundleRequest,
+  QueryResultBundle,
+  Row,
+} from '@sage-bionetworks/synapse-types'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
@@ -29,6 +34,7 @@ export type TopLevelControlsProps = {
   customControls?: CustomControl[]
   showExportToCavatica?: boolean
   cavaticaHelpURL?: string
+  remount?: () => void
 }
 
 export type Control = {
@@ -41,11 +47,13 @@ export type CustomControlCallbackData = {
   data: QueryResultBundle | undefined
   selectedRows: Row[] | undefined
   refresh: () => void
+  request?: QueryBundleRequest
 }
 
 export type CustomControl = {
   buttonText: string
   onClick: (event: CustomControlCallbackData) => void
+  isRowSelectionSupported: boolean
   classNames?: string
   icon?: React.ReactNode
 }
@@ -62,21 +70,29 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     customControls,
     showExportToCavatica = false,
     cavaticaHelpURL,
+    remount,
   } = props
 
+  const [rowSelectionCustomControls, topLevelCustomControls] = partition(
+    customControls,
+    { isRowSelectionSupported: true },
+  )
   const {
     data,
     entity,
     getInitQueryRequest,
     lockedColumn,
     hasResettableFilters,
+    getLastQueryRequest,
   } = useQueryContext()
+  useQueryContext()
 
   const {
     setShowSearchBar,
     columnsToShowInTable,
     isRowSelectionVisible,
     selectedRows,
+    hasSelectedRows,
     setColumnsToShowInTable,
     setIsShowingExportToCavaticaModal,
     unitDescription,
@@ -129,20 +145,25 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     }
     setColumnsToShowInTable(columnsToShowInTableCopy)
   }
-  const hasSelectedRows = isRowSelectionVisible && selectedRows.length > 0
+
   const numberOfResultsToInvokeAction = getNumberOfResultsToInvokeAction(
-    isRowSelectionVisible,
+    hasSelectedRows,
     selectedRows,
     data,
   )
   const numberOfResultsToInvokeActionAsText =
     getNumberOfResultsToInvokeActionCopy(
       hasResettableFilters,
-      isRowSelectionVisible,
+      hasSelectedRows,
       selectedRows,
       data,
       unitDescription,
     )
+
+  const refresh = () => {
+    if (remount) remount()
+  }
+
   return (
     <div className={`TopLevelControls`} data-testid="TopLevelControls">
       <div>
@@ -173,6 +194,29 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           )}
         </div>
         <div className="TopLevelControls__actions">
+          {topLevelCustomControls &&
+            topLevelCustomControls.map((customControl, index) => {
+              return (
+                <React.Fragment key={index}>
+                  <Button
+                    variant="text"
+                    disabled={!numberOfResultsToInvokeAction}
+                    onClick={() =>
+                      customControl.onClick({
+                        data,
+                        selectedRows,
+                        refresh,
+                        request: getLastQueryRequest(),
+                      })
+                    }
+                    startIcon={customControl.icon}
+                  >
+                    {customControl.buttonText}
+                  </Button>
+                  <Divider orientation="vertical" variant="middle" flexItem />
+                </React.Fragment>
+              )
+            })}
           {showExportToCavatica && (
             <>
               <Tooltip
@@ -262,8 +306,9 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
 
           {isRowSelectionVisible && (
             <RowSelectionControls
-              customControls={customControls}
+              customControls={rowSelectionCustomControls}
               showExportToCavatica={showExportToCavatica}
+              remount={remount}
             />
           )}
           {showColumnSelection && (

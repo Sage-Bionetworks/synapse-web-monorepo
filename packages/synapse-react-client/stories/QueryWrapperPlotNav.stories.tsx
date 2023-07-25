@@ -1,5 +1,5 @@
+import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-
 import {
   EXPERIMENTAL_TOOL,
   GENERIC_CARD,
@@ -17,11 +17,13 @@ import {
 import { displayToast } from '../src/components/ToastMessage'
 import { CustomControlCallbackData } from '../src/components/SynapseTable/TopLevelControls/TopLevelControls'
 import { QUERY_FILTERS_LOCAL_STORAGE_KEY } from '../src/utils/functions/SqlFunctions'
+import { SynapseClient } from '../src'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',
   component: QueryWrapperPlotNav,
 } satisfies Meta
+
 export default meta
 type Story = StoryObj<typeof meta>
 
@@ -201,7 +203,9 @@ export const SendToCavatica: Story = {
   },
 }
 
-const handleCustomCommandClick = async (event: CustomControlCallbackData) => {
+const handleRowSelectionCustomCommandClick = async (
+  event: CustomControlCallbackData,
+) => {
   displayToast(
     `Custom action applied to ${
       event.selectedRows!.length
@@ -218,7 +222,7 @@ const handleCustomCommandClick = async (event: CustomControlCallbackData) => {
     values: event.selectedRows!.map(row => row.values[idColIndex!]!),
   }
   localStorage.setItem(
-    QUERY_FILTERS_LOCAL_STORAGE_KEY('syn51186974'),
+    QUERY_FILTERS_LOCAL_STORAGE_KEY('syn51186974-selectedfiles'),
     JSON.stringify([localStorageFilter]),
   )
   console.log(
@@ -227,6 +231,44 @@ const handleCustomCommandClick = async (event: CustomControlCallbackData) => {
   // TODO: PORTALS-2682: event.refresh() should refresh the data but it currently doesn't
   event.refresh()
 }
+
+const handleAllDataCustomCommandClick = async (
+  event: CustomControlCallbackData,
+) => {
+  displayToast(
+    `Custom action applied to all results (see js console for more information)`,
+  )
+
+  const ids: string[] = []
+  if (event.request) {
+    console.log('Query request is available')
+    console.log(event.request)
+    // get all ids
+    event.request.query.sql = 'select id from syn51186974'
+    const results = await SynapseClient.getFullQueryTableResults(event.request)
+    results.queryResult?.queryResults.rows.map(row => {
+      if (row.values && row.values[0]) ids.push(row.values[0])
+    })
+  }
+
+  const localStorageFilter: ColumnSingleValueQueryFilter = {
+    concreteType:
+      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+    columnName: 'id',
+    operator: ColumnSingleValueFilterOperator.IN,
+    values: ids,
+  }
+  localStorage.setItem(
+    QUERY_FILTERS_LOCAL_STORAGE_KEY('syn51186974-selectedfiles'),
+    JSON.stringify([localStorageFilter]),
+  )
+  console.log(
+    'Local Storage value set, refresh table to see additionalFilter QueryFilter being utilized',
+  )
+  // refresh causes the component to remount, which picks up the new filter from localstorage
+  event.refresh()
+}
+
 // See handleParticipantWorkflowChange in crc-researcher for a more complex example
 export const TableRowSelectionWithCustomCommand: Story = {
   args: {
@@ -236,12 +278,26 @@ export const TableRowSelectionWithCustomCommand: Story = {
     name: 'Row Selection Demo',
     hideSqlEditorControl: true,
     shouldDeepLink: false,
+    // demo custom additional filter local storage key.
+    // In the cohort builder, the file view of the Virtual Table should have one value,
+    // while the participant view of the same Virtual Table should have another.
+    // The custom commands should add filters that target the other perspective
+    // (file command adds filter for participant perspective, participant command adds filter for the file perspective)
+    additionalFiltersLocalStorageKey: 'syn51186974-selectedfiles',
     customControls: [
       {
-        buttonText: 'Custom Command',
+        buttonText: 'Row Selection Custom Command',
         onClick: event => {
-          handleCustomCommandClick(event)
+          handleRowSelectionCustomCommandClick(event)
         },
+        isRowSelectionSupported: true,
+      },
+      {
+        buttonText: 'All Results Custom Command',
+        onClick: event => {
+          handleAllDataCustomCommandClick(event)
+        },
+        isRowSelectionSupported: false,
       },
     ],
   },

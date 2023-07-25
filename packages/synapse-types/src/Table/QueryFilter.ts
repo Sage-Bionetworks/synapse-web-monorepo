@@ -19,7 +19,7 @@ export type COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE =
   typeof COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE
 
 // A filter using a single value against a column. Values within the values list have an OR relationship
-export interface ColumnSingleValueQueryFilter extends QueryFilter {
+export interface ColumnSingleValueQueryFilter {
   concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE
   columnName: string // name of the column to filter
   operator: ColumnSingleValueFilterOperator // Determines the filter operation to perform
@@ -32,7 +32,7 @@ export type COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE =
   typeof COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE
 
 // A filter that applies multi-value columns functions.
-export interface ColumnMultiValueFunctionQueryFilter extends QueryFilter {
+export interface ColumnMultiValueFunctionQueryFilter {
   concreteType: COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE
   columnName: string // name of the column to filter
   function: ColumnMultiValueFunction // Determines the filter operation to perform
@@ -44,14 +44,12 @@ export const TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE =
   'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter'
 export type TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE =
   typeof TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE
-export interface TextMatchesQueryFilter extends QueryFilter {
+export interface TextMatchesQueryFilter {
   concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE
   searchExpression: string
 }
 
-export interface QueryFilter {
-  concreteType:
-    | TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE
-    | COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE
-    | COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE
-}
+export type QueryFilter =
+  | TextMatchesQueryFilter
+  | ColumnSingleValueQueryFilter
+  | ColumnMultiValueFunctionQueryFilter
