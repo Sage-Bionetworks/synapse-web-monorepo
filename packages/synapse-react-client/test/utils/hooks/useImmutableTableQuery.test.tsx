@@ -179,6 +179,12 @@ describe('useImmutableTableQuery tests', () => {
       4,
       JSON.stringify(newQuery.query),
     )
+
+    // Change the query back to the initial query, and the parameter should be removed
+    act(() => {
+      result.current.setQuery(options.initQueryRequest)
+    })
+    expect(mockUpdateUrl).toHaveBeenLastCalledWith('QueryWrapper', 4, null)
   })
 
   it('Updates the query on mount one is found in the URL', () => {

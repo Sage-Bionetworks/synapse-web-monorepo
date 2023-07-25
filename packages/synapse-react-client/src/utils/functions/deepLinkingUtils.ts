@@ -35,12 +35,13 @@ export function updateUrlWithNewSearchParam(
   }
 
   const searchString = currentSearch.toString()
-
   window.history.replaceState(
     null,
     '',
     window.location.pathname +
-      (currentSearch.size > 0 ? `?${searchString.toString()}` : ''),
+      (Array.from(currentSearch).length > 0
+        ? `?${searchString.toString()}`
+        : ''),
   )
 }
 
