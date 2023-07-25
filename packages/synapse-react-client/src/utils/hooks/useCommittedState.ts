@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 type UseCommittedStateReturn<T> = {
   committedState: T
@@ -12,24 +12,34 @@ type UseCommittedStateReturn<T> = {
  * A hook that allows you to track an 'uncommitted' version of a state variable, and batch all state updates into
  * one transaction.
  * @param initialCommittedState
+ * @param onCommit
  */
 export default function useCommittedState<T>(
   initialCommittedState: T,
+  onCommit?: (newCommittedValue: T) => void,
 ): UseCommittedStateReturn<T> {
-  const [committedState, setCommittedState] = React.useState<T>(
-    initialCommittedState,
-  )
-  const [uncommittedState, setUncommittedState] = React.useState<T>(
+  const [committedState, setCommittedState] = useState<T>(initialCommittedState)
+  const [uncommittedState, setUncommittedState] = useState<T>(
     initialCommittedState,
   )
 
-  const isDirty = committedState !== uncommittedState
+  const [shouldCommit, setShouldCommit] = useState(false)
 
   const commit = React.useCallback(() => {
-    if (isDirty) {
+    setShouldCommit(true)
+  }, [])
+
+  // We must synchronize state on commit in a `useEffect` hook to ensure updates to `setUncommittedState` are completed
+  // before we commit
+  useEffect(() => {
+    if (shouldCommit) {
       setCommittedState(uncommittedState)
+      setShouldCommit(false)
+      if (onCommit) {
+        onCommit(uncommittedState)
+      }
     }
-  }, [isDirty, uncommittedState])
+  }, [shouldCommit, uncommittedState])
 
   return {
     committedState,
