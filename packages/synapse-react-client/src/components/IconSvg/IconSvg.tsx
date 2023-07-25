@@ -256,10 +256,10 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
   const { icon, ...otherProps } = props
   const color = undefined
 
-  otherProps.sx = {
+  const sx = (otherProps.sx = {
     verticalAlign: 'middle',
     ...otherProps.sx,
-  }
+  })
 
   switch (icon) {
     case 'accessOpen':
