@@ -1,4 +1,4 @@
-export const datasetsSql = 'SELECT * FROM syn16859580'
+export const datasetsSql = 'SELECT * FROM syn50913342.3'
 export const publicationsSql = 'SELECT * FROM syn16857542'
 export const studiesSql = 'SELECT * FROM syn16787123'
 export const initiativesSql = 'SELECT * FROM syn24189696'
