@@ -456,9 +456,9 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
             sx={{
               display: 'grid',
               gridTemplateColumns: '50% 50%',
-              marginTop: '15px',
             }}
             role="graphics-object"
+            className="FacetNavPanel__body"
           >
             <SizeMe monitorHeight noPlaceholder>
               {({ size }) => (
