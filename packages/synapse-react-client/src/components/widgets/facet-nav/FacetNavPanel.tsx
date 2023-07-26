@@ -255,15 +255,6 @@ export function getPlotStyle(
   }
 }
 
-const getClassNameForPlotDiv = (isExpanded: boolean, plotType: PlotType) => {
-  if (!isExpanded) {
-    return 'FacetNavPanel__body__plot'
-  }
-  return `FacetNavPanel__body__plot--expanded${
-    plotType === 'BAR' ? 'Bar' : 'Pie'
-  }`
-}
-
 const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   props: FacetNavPanelProps,
 ): JSX.Element => {
@@ -462,26 +453,20 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
           >
             <SizeMe monitorHeight noPlaceholder>
               {({ size }) => (
-                <div className={getClassNameForPlotDiv(isModalView, plotType)}>
-                  <Plot
-                    key={`${facetToPlot.columnName}-${plotType}-${size.width}`}
-                    layout={layout}
-                    data={plotData?.data ?? []}
-                    style={getPlotStyle(
-                      size.width,
-                      plotType,
-                      isModalView ? 300 : 150,
-                    )}
-                    config={{ displayModeBar: false }}
-                    onClick={evt =>
-                      applyFacetFilter(
-                        evt,
-                        facetToPlot,
-                        applyChangesToGraphSlice,
-                      )
-                    }
-                  ></Plot>
-                </div>
+                <Plot
+                  key={`${facetToPlot.columnName}-${plotType}-${size.width}`}
+                  layout={layout}
+                  data={plotData?.data ?? []}
+                  style={getPlotStyle(
+                    size.width,
+                    plotType,
+                    isModalView ? 300 : 150,
+                  )}
+                  config={{ displayModeBar: false }}
+                  onClick={evt =>
+                    applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
+                  }
+                />
               )}
             </SizeMe>
             <FacetPlotLegendList
