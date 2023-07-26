@@ -29,6 +29,7 @@ import { useQuery } from 'react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
+import { Box } from '@mui/material'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -451,8 +452,12 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               <ChartSelectionToggle />
             </>
           )}
-          <div
-            className={`FacetNavPanel__body${isModalView ? '--expanded' : ''}`}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '50% 50%',
+              marginTop: '15px',
+            }}
             role="graphics-object"
           >
             <SizeMe monitorHeight noPlaceholder>
@@ -484,7 +489,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               colors={plotData?.colors}
               isExpanded={isModalView}
             />
-          </div>
+          </Box>
         </div>
       </>
     )
