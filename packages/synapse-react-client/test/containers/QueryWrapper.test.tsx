@@ -153,17 +153,26 @@ describe('QueryWrapper', () => {
         shouldDeepLink: true,
       })
 
+      const newSql = initialQueryRequest.query.sql + ' WHERE x = 1'
+
       await waitFor(() => expect(providedContext).toBeDefined())
-      act(() => {
-        providedContext!.executeQueryRequest(initialQueryRequest)
+
+      await act(async () => {
+        providedContext!.executeQueryRequest({
+          ...initialQueryRequest,
+          query: {
+            ...initialQueryRequest.query,
+            sql: newSql,
+          },
+        })
       })
+
       await waitFor(() => {
-        const location = window.location
         expect(location.search).toContain('QueryWrapper0')
         const query = JSON.parse(
-          decodeURIComponent(location.search.split('QueryWrapper0=')[1]),
+          new URLSearchParams(location.search).get('QueryWrapper0'),
         )
-        expect(query.sql).toEqual(initialQueryRequest.query.sql)
+        expect(query.sql).toEqual(newSql)
         expect(mockGetQueryTableAsyncJobResults).toHaveBeenCalled()
       })
     })

@@ -22,6 +22,7 @@ import {
   isFacetAvailable,
   isSingleNotSetValue,
   queryRequestsHaveSameTotalResults,
+  removeEmptyQueryParams,
 } from '../../src/utils/functions/queryUtils'
 import { LockedColumn } from '../../src'
 import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
@@ -387,5 +388,63 @@ describe('facet support', () => {
       ]
       expect(queryRequestsHaveSameTotalResults(query, newQuery)).toEqual(true)
     })
+  })
+})
+
+describe('removeEmptyQueryParams', () => {
+  it('removes empty arrays', () => {
+    const query: Query = {
+      sql: 'select * from syn123',
+      selectedFacets: [],
+      additionalFilters: [],
+      sort: [],
+      limit: 10,
+      offset: 20,
+    }
+
+    const expected = {
+      sql: 'select * from syn123',
+      limit: 10,
+      offset: 20,
+    }
+
+    const actual = removeEmptyQueryParams(query)
+    expect(actual).toEqual(expected)
+  })
+
+  it('removes null values', () => {
+    const query: Query = {
+      sql: 'select * from syn123',
+      selectedFacets: null,
+      additionalFilters: null,
+      sort: null,
+      limit: null,
+      offset: null,
+    }
+
+    const expected = {
+      sql: 'select * from syn123',
+    }
+
+    const actual = removeEmptyQueryParams(query)
+    expect(actual).toEqual(expected)
+  })
+
+  it('removes undefined values', () => {
+    const query: Query = {
+      sql: 'select * from syn123',
+      selectedFacets: undefined,
+      additionalFilters: undefined,
+      sort: undefined,
+      limit: undefined,
+      offset: undefined,
+    }
+
+    const expected = {
+      sql: 'select * from syn123',
+    }
+
+    const actual = removeEmptyQueryParams(query)
+    expect(actual).toEqual(expected)
   })
 })
