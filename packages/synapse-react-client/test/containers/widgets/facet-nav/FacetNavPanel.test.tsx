@@ -121,8 +121,7 @@ describe('FacetNavPanel tests', () => {
     await within(panel).findByText('Filter All Data By')
 
     const panelBody = await within(panel).findByRole('graphics-object')
-    expect(panelBody).not.toHaveClass('FacetNavPanel__body')
-    expect(panelBody).toHaveClass('FacetNavPanel__body--expanded')
+    expect(panelBody).toHaveClass('FacetNavPanel__body')
   })
 
   it('should truncate values', () => {
