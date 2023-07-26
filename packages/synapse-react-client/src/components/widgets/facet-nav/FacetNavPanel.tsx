@@ -20,10 +20,7 @@ import loadingScreen from '../../LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext/QueryContext'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
-import {
-  applyChangesToValuesColumn,
-  applyMultipleChangesToValuesColumn,
-} from '../query-filter/FacetFilterControls'
+import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
 import { Tooltip } from '@mui/material'
 import { useQuery } from 'react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
@@ -277,7 +274,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     onSetPlotType,
   } = props
   const { accessToken } = useSynapseContext()
-  const { data, isLoadingNewBundle, getLastQueryRequest } = useQueryContext()
+  const { data, isLoadingNewBundle, getCurrentQueryRequest } = useQueryContext()
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
@@ -377,17 +374,9 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                       el => el.name === facetToPlot.columnName,
                     )!
                   }
-                  onChange={facetNamesMap => {
-                    applyMultipleChangesToValuesColumn(
-                      getLastQueryRequest(),
-                      facetToPlot,
-                      applyChangesToFacetFilter,
-                      facetNamesMap,
-                    )
-                  }}
                   onClear={() => {
                     applyChangesToValuesColumn(
-                      getLastQueryRequest(),
+                      getCurrentQueryRequest(),
                       facetToPlot,
                       applyChangesToFacetFilter,
                     )
@@ -426,17 +415,9 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                       el => el.name === facetToPlot.columnName,
                     )!
                   }
-                  onChange={facetNamesMap => {
-                    applyMultipleChangesToValuesColumn(
-                      getLastQueryRequest(),
-                      facetToPlot,
-                      applyChangesToFacetFilter,
-                      facetNamesMap,
-                    )
-                  }}
                   onClear={() => {
                     applyChangesToValuesColumn(
-                      getLastQueryRequest(),
+                      getCurrentQueryRequest(),
                       facetToPlot,
                       applyChangesToFacetFilter,
                     )

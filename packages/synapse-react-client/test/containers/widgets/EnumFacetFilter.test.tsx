@@ -13,12 +13,16 @@ import { act } from '@testing-library/react'
 import { SynapseConstants } from '../../../src/utils'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 import { QueryVisualizationContextProvider } from '../../../src/components/QueryVisualizationWrapper'
+import { QueryContextProvider } from '../../../src'
+import { mockQueryBundleRequest } from '../../../mocks/mockFileViewQuery'
+import userEvent from '@testing-library/user-event'
 
 const SynapseClient = require('../../../src/synapse-client/SynapseClient')
 
 const mockCallback = jest.fn(() => null)
 const mockOnClear = jest.fn(() => null)
-
+const mockAddValueToSelectedFacet = jest.fn()
+const mockRemoveValueFromSelectedFacet = jest.fn()
 SynapseClient.getGroupHeadersBatch = jest.fn().mockResolvedValue({
   children: [
     { ownerId: '123', userName: 'somename', isIndividual: false },
@@ -62,7 +66,7 @@ const columnModel: ColumnModel = {
 
 function generateManyFacetColumnResultValueCounts(): FacetColumnResultValueCount[] {
   const result: FacetColumnResultValueCount[] = []
-  // create ranom facet values with 6th item having largest count
+  // create random facet values with 6th item having largest count
   //and have an item with count = 1
   for (let i = 0; i < 20; i++) {
     result.push({
@@ -94,13 +98,37 @@ function init(overrides?: Partial<EnumFacetFilterProps>) {
   props = createTestProps(overrides)
   container = render(
     <SynapseTestContext>
-      <QueryVisualizationContextProvider
-        queryVisualizationContext={{
-          getColumnDisplayName: jest.fn(col => col),
+      <QueryContextProvider
+        queryContext={{
+          nextQueryRequest: {
+            entityId: 'syn21450294',
+            query: {
+              sql: 'select * from syn21450294',
+              selectedFacets: [
+                {
+                  columnName: 'Make',
+                  facetValues: ['Chevy'],
+                  concreteType:
+                    'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+                },
+              ],
+            },
+            partMask: 0xffff,
+            concreteType:
+              'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          },
+          addValueToSelectedFacet: mockAddValueToSelectedFacet,
+          removeValueFromSelectedFacet: mockRemoveValueFromSelectedFacet,
         }}
       >
-        <EnumFacetFilter {...props} />
-      </QueryVisualizationContextProvider>
+        <QueryVisualizationContextProvider
+          queryVisualizationContext={{
+            getColumnDisplayName: jest.fn(col => col),
+          }}
+        >
+          <EnumFacetFilter {...props} />
+        </QueryVisualizationContextProvider>
+      </QueryContextProvider>
     </SynapseTestContext>,
   ).container
 }
@@ -314,19 +342,24 @@ describe('initialization', () => {
 })
 
 describe('callbacks', () => {
-  it('should trigger callback on checkbox change after delay', () => {
+  it('should trigger callback on checkbox change after delay', async () => {
     const individualFacetCheckboxes = screen.getAllByRole('checkbox').slice(1)
 
-    jest.useFakeTimers()
     jest.spyOn(global, 'setTimeout')
-    fireEvent.click(individualFacetCheckboxes[0])
-    fireEvent.click(individualFacetCheckboxes[1])
-    expect(setTimeout).toHaveBeenCalledTimes(2)
-    jest.runOnlyPendingTimers()
-    expect(mockCallback).toHaveBeenCalledWith({
-      [stringFacetValues[0].value]: true,
-      [stringFacetValues[1].value]: false,
-    })
+    await userEvent.click(individualFacetCheckboxes[0])
+    await userEvent.click(individualFacetCheckboxes[1])
+    expect(mockAddValueToSelectedFacet).toHaveBeenCalledTimes(1)
+    expect(mockAddValueToSelectedFacet).toHaveBeenCalledWith(
+      'Make',
+      stringFacetValues[0].value,
+      { debounce: true },
+    )
+    expect(mockRemoveValueFromSelectedFacet).toHaveBeenCalledTimes(1)
+    expect(mockRemoveValueFromSelectedFacet).toHaveBeenCalledWith(
+      'Make',
+      stringFacetValues[1].value,
+      { debounce: true },
+    )
   })
 
   it('should trigger callback on clear', () => {

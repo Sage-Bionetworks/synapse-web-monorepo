@@ -35,7 +35,7 @@ const mockGetLastQueryRequest = jest.fn()
 
 const queryContext: Partial<QueryContextType> = {
   executeQueryRequest: mockExecuteQueryRequest,
-  getLastQueryRequest: mockGetLastQueryRequest,
+  getCurrentQueryRequest: mockGetLastQueryRequest,
 }
 
 const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
@@ -72,7 +72,10 @@ describe('FullTextSearch tests', () => {
     const searchQuery = 'NF1'
     await userEvent.type(searchBox, searchQuery + '{enter}')
 
-    expect(mockExecuteQueryRequest).toBeCalledWith(
+    expect(mockExecuteQueryRequest).toHaveBeenCalled()
+    const queryTransformFn = mockExecuteQueryRequest.mock.lastCall[0]
+    expect(typeof queryTransformFn).toBe('function')
+    expect(queryTransformFn({ query: {} })).toEqual(
       expect.objectContaining({
         query: expect.objectContaining({
           additionalFilters: [

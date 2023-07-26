@@ -257,7 +257,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                       />
                       {showExportMetadata && (
                         <ModalDownload
-                          getLastQueryRequest={queryContext.getLastQueryRequest}
+                          getLastQueryRequest={
+                            queryContext?.getCurrentQueryRequest
+                          }
                           onClose={() => setShowExportMetadata(false)}
                         />
                       )}

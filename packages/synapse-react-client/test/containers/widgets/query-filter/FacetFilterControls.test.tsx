@@ -1,8 +1,7 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import _ from 'lodash-es'
 import React from 'react'
-import { act } from '@testing-library/react'
 import {
   QueryContextProvider,
   QueryContextType,
@@ -15,7 +14,6 @@ import FacetFilterControls, {
   FacetFilterControlsProps,
   getDefaultShownFacetFilters,
 } from '../../../../src/components/widgets/query-filter/FacetFilterControls'
-import { SynapseContextProvider } from '../../../../src/utils/context/SynapseContext'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import mockQueryResponseData from '../../../../mocks/mockQueryResponseData'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
@@ -101,7 +99,7 @@ function createTestProps(
 
 const defaultQueryContext: Partial<QueryContextType> = {
   data: mockQueryResponseData as QueryResultBundle,
-  getLastQueryRequest: mockGetQueryRequest,
+  getCurrentQueryRequest: mockGetQueryRequest,
   executeQueryRequest: mockExecuteQueryRequest,
   isLoadingNewBundle: false,
 }
@@ -186,7 +184,12 @@ describe('FacetFilterControls tests', () => {
       })
       const expected = _.cloneDeep(lastQueryRequestResult)
       expected.query = { ...expected.query, selectedFacets: expectedResult }
-      expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
+      expect(mockExecuteQueryRequest).toHaveBeenCalled()
+      const queryUpdateFn = mockExecuteQueryRequest.mock.lastCall![0]
+      expect(typeof queryUpdateFn).toBe('function')
+      expect(queryUpdateFn(_.cloneDeep(lastQueryRequestResult))).toEqual(
+        expected,
+      )
     })
 
     it('should propagate enum clear correctly', async () => {
@@ -209,7 +212,12 @@ describe('FacetFilterControls tests', () => {
       })
       const expected = _.cloneDeep(lastQueryRequestResult)
       expected.query = { ...expected.query, selectedFacets: expectedResult }
-      expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
+      expect(mockExecuteQueryRequest).toHaveBeenCalled()
+      const queryUpdateFn = mockExecuteQueryRequest.mock.lastCall![0]
+      expect(typeof queryUpdateFn).toBe('function')
+      expect(queryUpdateFn(_.cloneDeep(lastQueryRequestResult))).toEqual(
+        expected,
+      )
     })
 
     it('should propagate range correctly', async () => {
@@ -237,7 +245,12 @@ describe('FacetFilterControls tests', () => {
       })
       const expected = _.cloneDeep(lastQueryRequestResult)
       expected.query = { ...expected.query, selectedFacets: expectedResult }
-      expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
+      expect(mockExecuteQueryRequest).toHaveBeenCalled()
+      const queryUpdateFn = mockExecuteQueryRequest.mock.lastCall![0]
+      expect(typeof queryUpdateFn).toBe('function')
+      expect(queryUpdateFn(_.cloneDeep(lastQueryRequestResult))).toEqual(
+        expected,
+      )
     })
 
     it('renders all available facet chips', async () => {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import {
@@ -97,28 +97,6 @@ export function applyChangesToValuesColumn(
   onChangeFn(result)
 }
 
-// This handles multiple checkbox selection with delay refresh
-export const applyMultipleChangesToValuesColumn = (
-  lastRequest: QueryBundleRequest | undefined,
-  facet: FacetColumnResultValues,
-  onChangeFn: (result: FacetColumnRequest[]) => void,
-  facetNameMap?: Record<string, string | boolean>,
-) => {
-  const facetNames = (facetNameMap && Object.keys(facetNameMap)) || []
-  if (facetNames.length) {
-    facet.facetValues.forEach(facetValue => {
-      if (facetNames.includes(facetValue.value)) {
-        facetValue.isSelected = facetNameMap
-          ? !!facetNameMap[facetValue.value]
-          : false
-      }
-    })
-  }
-  const changedFacet = convertFacetToFacetColumnValuesRequest(facet)
-  const result = patchRequestFacets(changedFacet, lastRequest)
-  onChangeFn(result)
-}
-
 //rangeChanges
 export const applyChangesToRangeColumn = (
   lastRequest: QueryBundleRequest | undefined,
@@ -189,10 +167,10 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
   const { availableFacets } = props
   const {
     data: data,
-    getLastQueryRequest,
+    getCurrentQueryRequest,
     executeQueryRequest,
   } = useQueryContext()
-  const lastRequest = getLastQueryRequest()
+  const lastRequest = getCurrentQueryRequest()
 
   const facets = data!
     .facets!.filter(
@@ -223,22 +201,32 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
 
   const columnModels = data!.selectColumns
 
-  const applyChanges = (facets: FacetColumnRequest[]) => {
-    const queryRequest: QueryBundleRequest = getLastQueryRequest()
-    queryRequest.query.selectedFacets = facets
-    queryRequest.query.offset = 0
-    executeQueryRequest(queryRequest)
-  }
+  const applyChanges = useCallback(
+    (facets: FacetColumnRequest[]) => {
+      executeQueryRequest(
+        queryRequest => {
+          queryRequest.query.selectedFacets = facets
+          queryRequest.query.offset = 0
+          return queryRequest
+        },
+        { debounce: true },
+      )
+    },
+    [executeQueryRequest],
+  )
 
-  const toggleShowFacetFilter = (facet: FacetColumnResult) => {
-    const newFacetFilterShown = new Set(facetFiltersShown)
-    if (newFacetFilterShown.has(facet.columnName)) {
-      newFacetFilterShown.delete(facet.columnName)
-    } else {
-      newFacetFilterShown.add(facet.columnName)
-    }
-    setFacetFiltersShown(newFacetFilterShown)
-  }
+  const toggleShowFacetFilter = useCallback(
+    (facet: FacetColumnResult) => {
+      const newFacetFilterShown = new Set(facetFiltersShown)
+      if (newFacetFilterShown.has(facet.columnName)) {
+        newFacetFilterShown.delete(facet.columnName)
+      } else {
+        newFacetFilterShown.add(facet.columnName)
+      }
+      setFacetFiltersShown(newFacetFilterShown)
+    },
+    [facetFiltersShown],
+  )
 
   return (
     <div className={`FacetFilterControls`}>
@@ -256,14 +244,6 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
                   collapsed={false}
                   facetValues={facet.facetValues}
                   columnModel={columnModel}
-                  onChange={(facetNamesMap: Record<string, boolean>) =>
-                    applyMultipleChangesToValuesColumn(
-                      lastRequest,
-                      facet,
-                      applyChanges,
-                      facetNamesMap,
-                    )
-                  }
                   onClear={() =>
                     applyChangesToValuesColumn(lastRequest, facet, applyChanges)
                   }

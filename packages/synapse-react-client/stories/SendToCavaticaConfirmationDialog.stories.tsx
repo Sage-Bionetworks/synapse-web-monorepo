@@ -46,7 +46,7 @@ export const Demo: Story = {
         <QueryContextProvider
           queryContext={{
             data: mockQueryResultBundle,
-            getLastQueryRequest: () => deepClone(mockQueryBundleRequest),
+            getCurrentQueryRequest: () => deepClone(mockQueryBundleRequest),
           }}
         >
           <QueryVisualizationContextProvider

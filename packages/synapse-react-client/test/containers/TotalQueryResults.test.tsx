@@ -104,7 +104,9 @@ describe('TotalQueryResults test', () => {
 
   const queryContext: Partial<QueryContextType> = {
     data: mockQueryReturn,
-    getLastQueryRequest: () => mockQueryRequest,
+    getCurrentQueryRequest: () => mockQueryRequest,
+    currentQueryRequest: mockQueryRequest,
+    nextQueryRequest: mockQueryRequest,
     isLoadingNewBundle: false,
   }
 

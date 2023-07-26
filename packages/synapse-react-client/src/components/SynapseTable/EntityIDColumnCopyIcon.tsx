@@ -35,8 +35,8 @@ const EntityIDColumnCopyIcon = () => {
     setIsLoading(true)
 
     // ask for all pages of data
-    const { getLastQueryRequest } = queryContext
-    const queryRequestClone = getLastQueryRequest()
+    const { getCurrentQueryRequest } = queryContext
+    const queryRequestClone = getCurrentQueryRequest()
     const { sql: oldSql } = queryRequestClone.query
     const { entityId, versionNumber } =
       parseEntityIdAndVersionFromSqlStatement(oldSql)!
