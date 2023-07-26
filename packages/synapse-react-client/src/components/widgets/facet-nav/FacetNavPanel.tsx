@@ -453,20 +453,26 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
           >
             <SizeMe monitorHeight noPlaceholder>
               {({ size }) => (
-                <Plot
-                  key={`${facetToPlot.columnName}-${plotType}-${size.width}`}
-                  layout={layout}
-                  data={plotData?.data ?? []}
-                  style={getPlotStyle(
-                    size.width,
-                    plotType,
-                    isModalView ? 300 : 150,
-                  )}
-                  config={{ displayModeBar: false }}
-                  onClick={evt =>
-                    applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
-                  }
-                />
+                <div>
+                  <Plot
+                    key={`${facetToPlot.columnName}-${plotType}-${size.width}`}
+                    layout={layout}
+                    data={plotData?.data ?? []}
+                    style={getPlotStyle(
+                      size.width,
+                      plotType,
+                      isModalView ? 300 : 150,
+                    )}
+                    config={{ displayModeBar: false }}
+                    onClick={evt =>
+                      applyFacetFilter(
+                        evt,
+                        facetToPlot,
+                        applyChangesToGraphSlice,
+                      )
+                    }
+                  ></Plot>
+                </div>
               )}
             </SizeMe>
             <FacetPlotLegendList
