@@ -256,10 +256,10 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
   const { icon, ...otherProps } = props
   const color = undefined
 
-  const otherProps.sx = {
+  otherProps.sx = {
     verticalAlign: 'middle',
     ...otherProps.sx,
-  })
+  }
 
   switch (icon) {
     case 'accessOpen':
@@ -500,7 +500,7 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
     case 'sortDown':
       return <SortDown {...otherProps} />
     case 'google24':
-      return <GoogleIcon24 {...otherProps} />
+      return <GoogleIcon24 sx={sx} />
     default:
       return <></>
   }
