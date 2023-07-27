@@ -6,15 +6,15 @@ import {
   EvaluationEditor,
   EvaluationEditorProps,
 } from '../../../src/components/Evaluation/EvaluationEditor'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { EVALUATION, EVALUATION_BY_ID } from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../src/utils/functions/getEndpoint'
 import { Evaluation } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../../mocks/msw/server'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+import { rest, server } from '../../../src/mocks/msw/server'
+import { MOCK_USER_ID } from '../../../src/mocks/user/mock_user_profile'
 
 describe('test EvaluationEditor', () => {
   const evaluationId = '1234'

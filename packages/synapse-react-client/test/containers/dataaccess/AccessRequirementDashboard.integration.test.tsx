@@ -8,12 +8,12 @@ import {
   AccessRequirementDashboard,
   AccessRequirementDashboardProps,
 } from '../../../src/components/dataaccess/AccessRequirementDashboard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
+import { server } from '../../../src/mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 
 const AR_TABLE_TEST_ID = 'AccessRequirementTableTestId'
 const NAME_CONTAINS_PREFIX = 'abc'

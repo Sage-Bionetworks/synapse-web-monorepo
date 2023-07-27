@@ -4,17 +4,17 @@ import ResearchProjectForm, {
 } from '../../../src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/ResearchProjectForm'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import {
   mockManagedACTAccessRequirement,
   mockManagedACTAccessRequirementWikiPageKey,
-} from '../../../mocks/mockAccessRequirements'
+} from '../../../src/mocks/mockAccessRequirements'
 import { SynapseClient } from '../../../src'
 import {
   MOCK_EMPTY_RESEARCH_PROJECT,
   MOCK_RESEARCH_PROJECT,
-} from '../../../mocks/dataaccess/MockResearchProject'
-import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
+} from '../../../src/mocks/dataaccess/MockResearchProject'
+import { MOCK_ACCESS_TOKEN } from '../../../src/mocks/MockSynapseContext'
 import { SynapseClientError } from '../../../src/utils/SynapseClientError'
 import * as AccessRequirementListUtils from '../../../src/components/AccessRequirementList/AccessRequirementListUtils'
 import * as MarkdownSynapseModule from '../../../src/components/Markdown/MarkdownSynapse'

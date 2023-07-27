@@ -10,7 +10,7 @@ import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../../src/utils/SynapseConstants'
 
 const username = 'myUsername'

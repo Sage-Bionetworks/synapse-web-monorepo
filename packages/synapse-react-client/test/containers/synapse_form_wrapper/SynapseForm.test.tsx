@@ -7,13 +7,13 @@ import { MemoryRouter } from 'react-router-dom'
 import SynapseForm, {
   SynapseFormProps,
 } from '../../../src/components/SynapseForm/SynapseForm'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import {
   mockFormData as submissionData,
   mockFormSchema as formSchema,
   mockNavSchema as formNavSchema,
   mockUiSchema as formUiSchema,
-} from '../../../mocks/mock_drug_tool_data'
+} from '../../../src/mocks/mock_drug_tool_data'
 
 const formTitle = 'my submission'
 

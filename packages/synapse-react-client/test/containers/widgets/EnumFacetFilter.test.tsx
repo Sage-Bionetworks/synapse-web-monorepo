@@ -11,7 +11,7 @@ import {
 import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import { act } from '@testing-library/react'
 import { SynapseConstants } from '../../../src/utils'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
+import { SynapseTestContext } from '../../../src/mocks/MockSynapseContext'
 import { QueryVisualizationContextProvider } from '../../../src/components/QueryVisualizationWrapper'
 
 const SynapseClient = require('../../../src/synapse-client/SynapseClient')

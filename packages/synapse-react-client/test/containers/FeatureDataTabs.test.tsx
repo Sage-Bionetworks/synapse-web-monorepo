@@ -3,9 +3,9 @@ import React from 'react'
 import FeaturedDataTabs, {
   FeaturedDataTabsProps,
 } from '../../src/components/FeaturedDataTabs/FeaturedDataTabs'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../mocks/query/syn16787123.json'
+import syn16787123Json from '../../src/mocks/query/syn16787123.json'
 import SynapseClient from '../../src/synapse-client'
 
 const data = syn16787123Json as QueryResultBundle

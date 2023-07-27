@@ -1,9 +1,9 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn26433429CatalogNumberJson from '../../mocks/query/syn26433429CatalogNumber.json'
-import mockMultiValueColumnResultsJson from '../../mocks/query/mockMultiValueColumnResults.json'
+import syn26433429CatalogNumberJson from '../../src/mocks/query/syn26433429CatalogNumber.json'
+import mockMultiValueColumnResultsJson from '../../src/mocks/query/mockMultiValueColumnResults.json'
 import SubsectionRowRenderer, {
   SubsectionRowRendererProps,
 } from '../../src/components/SubsectionRowRenderer/SubsectionRowRenderer'

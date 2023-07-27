@@ -4,7 +4,7 @@ import HtmlPreview, {
   EXPORTED_FOR_UNIT_TESTING,
   HtmlPreviewProps,
 } from '../../../../../src/components/FilePreview/HtmlPreview/HtmlPreview'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../../src/testutils/TestingLibraryUtils'
 import { TEAM_ID_MEMBER_ID } from '../../../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
@@ -12,12 +12,12 @@ import {
 } from '../../../../../src/utils/functions/getEndpoint'
 import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../../../src/utils/SynapseConstants'
 import { TeamMember } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../../../../mocks/msw/server'
+import { rest, server } from '../../../../../src/mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
   MOCK_USER_NAME,
-} from '../../../../../mocks/user/mock_user_profile'
+} from '../../../../../src/mocks/user/mock_user_profile'
 
 function renderComponent(props: HtmlPreviewProps) {
   return render(<HtmlPreview {...props} />, { wrapper: createWrapper() })

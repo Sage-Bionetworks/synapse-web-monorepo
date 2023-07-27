@@ -7,7 +7,7 @@ import UserCardContextMenu, {
   MenuAction,
   UserCardContextMenuProps,
 } from '../../src/components/UserCard/UserCardContextMenu'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../src/utils'
 import { PROFILE_IMAGE_PREVIEW } from '../../src/utils/APIConstants'
 import {
@@ -21,11 +21,11 @@ import {
   SEPERATOR,
   SMALL_USER_CARD,
 } from '../../src/utils/SynapseConstants'
-import { rest, server } from '../../mocks/msw/server'
+import { rest, server } from '../../src/mocks/msw/server'
 import {
   MOCK_USER_NAME,
   mockUserProfileData,
-} from '../../mocks/user/mock_user_profile'
+} from '../../src/mocks/user/mock_user_profile'
 
 const { firstName } = mockUserProfileData
 

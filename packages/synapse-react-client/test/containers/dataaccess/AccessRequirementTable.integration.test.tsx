@@ -7,7 +7,7 @@ import {
   AccessRequirementTable,
   AccessRequirementTableProps,
 } from '../../../src/components/dataaccess/AccessRequirementTable'
-import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
+import { createWrapperAndQueryClient } from '../../../src/testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_SEARCH } from '../../../src/utils/APIConstants'
 import { formatDate } from '../../../src/utils/functions/DateFormatter'
 import {
@@ -19,10 +19,10 @@ import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
 } from '@sage-bionetworks/synapse-types'
-import mockProjectData from '../../../mocks/entity/mockProject'
-import { mockSearchResults } from '../../../mocks/mockAccessRequirements'
-import { rest, server } from '../../../mocks/msw/server'
-import { MOCK_USER_NAME } from '../../../mocks/user/mock_user_profile'
+import mockProjectData from '../../../src/mocks/entity/mockProject'
+import { mockSearchResults } from '../../../src/mocks/mockAccessRequirements'
+import { rest, server } from '../../../src/mocks/msw/server'
+import { MOCK_USER_NAME } from '../../../src/mocks/user/mock_user_profile'
 
 const MOCK_PROJECT_ID = mockProjectData.id
 const MOCK_PROJECT_NAME = mockProjectData.name

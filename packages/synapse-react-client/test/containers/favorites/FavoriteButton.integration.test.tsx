@@ -1,9 +1,9 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import FavoriteButton from '../../../src/components/favorites/FavoriteButton'
-import { rest, server } from '../../../mocks/msw/server'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
+import { rest, server } from '../../../src/mocks/msw/server'
+import mockFileEntityData from '../../../src/mocks/entity/mockFileEntity'
 import { FAVORITES } from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
@@ -12,7 +12,7 @@ import {
 import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import userEvent from '@testing-library/user-event'
 import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
 import { DeferredPromise } from '@open-draft/deferred-promise'
 
 function renderComponent(wrapperProps?: SynapseContextType) {

@@ -9,8 +9,8 @@ import { ListRequest, StatusEnum } from '@sage-bionetworks/synapse-types'
 import {
   formListDataInProgress,
   formListDataSubmitted,
-} from '../mocks/mock_drug_tool_data'
-import { getHandlers } from '../mocks/msw/handlers'
+} from '../src/mocks/mock_drug_tool_data'
+import { getHandlers } from '../src/mocks/msw/handlers'
 
 const meta: Meta = {
   title: 'Portals/SynapseFormSubmissionsGrid',

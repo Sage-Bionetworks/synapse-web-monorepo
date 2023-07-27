@@ -14,19 +14,19 @@ import {
   QueryContextProvider,
   QueryContextType,
 } from '../../../src/components/QueryContext/QueryContext'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../../mocks/query/syn16787123.json'
+import syn16787123Json from '../../../src/mocks/query/syn16787123.json'
 import {
   DEFAULT_PAGE_SIZE,
   MEDIUM_USER_CARD,
 } from '../../../src/utils/SynapseConstants'
-import mockUserCardTableQueryResultBundle from '../../../mocks/query/mockUserCardTableQueryResultBundle'
-import { server } from '../../../mocks/msw/server'
-import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
+import mockUserCardTableQueryResultBundle from '../../../src/mocks/query/mockUserCardTableQueryResultBundle'
+import { server } from '../../../src/mocks/msw/server'
+import { mockUserProfileData } from '../../../src/mocks/user/mock_user_profile'
 
 const unitDescription = 'study'
 

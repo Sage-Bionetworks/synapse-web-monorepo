@@ -8,7 +8,7 @@ import EntityActionMenu, {
   EXPORTED_FOR_UNIT_TESTING,
   MenuConfigurationMap,
 } from '../../../../src/components/entity/page/action_menu/EntityActionMenu'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 

@@ -12,7 +12,7 @@ import {
 import { NO_VERSION_NUMBER } from '../../../../src/components/EntityFinder/EntityFinder'
 import { EntityFinderHeader } from '../../../../src/components/EntityFinder/EntityFinderHeader'
 import { VersionSelectionType } from '../../../../src/components/EntityFinder/VersionSelectionType'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import { ENTITY_ID_VERSIONS } from '../../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
@@ -27,10 +27,10 @@ import {
   SortBy,
 } from '@sage-bionetworks/synapse-types'
 import { VersionInfo } from '@sage-bionetworks/synapse-types'
-import { mockProjectHeader } from '../../../../mocks/entity/mockEntity'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../../../mocks/msw/server'
-import { MOCK_USER_ID } from '../../../../mocks/user/mock_user_profile'
+import { mockProjectHeader } from '../../../../src/mocks/entity/mockEntity'
+import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
+import { rest, server } from '../../../../src/mocks/msw/server'
+import { MOCK_USER_ID } from '../../../../src/mocks/user/mock_user_profile'
 import * as EntityBadgeModule from '../../../../src/components/EntityBadgeIcons/EntityBadgeIcons'
 
 const mockEntityBadgeIcons = jest

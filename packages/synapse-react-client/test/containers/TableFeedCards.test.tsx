@@ -1,10 +1,10 @@
 import React from 'react'
 import TableFeedCards from '../../src/components/TableFeedCards/TableFeedCards'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn23519444Json from '../../mocks/query/syn23519444.json'
+import syn23519444Json from '../../src/mocks/query/syn23519444.json'
 import { act } from '@testing-library/react'
 import { render, fireEvent } from '@testing-library/react'
-import { SynapseTestContext } from '../../mocks/MockSynapseContext'
+import { SynapseTestContext } from '../../src/mocks/MockSynapseContext'
 
 const SynapseClient = require('../../src/synapse-client/SynapseClient')
 const data = syn23519444Json as QueryResultBundle

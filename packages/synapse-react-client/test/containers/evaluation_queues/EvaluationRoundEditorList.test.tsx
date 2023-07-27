@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
 import React from 'react'
 import { EvaluationRoundEditorList } from '../../../src/components/Evaluation/EvaluationRoundEditorList'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../../src/synapse-client'
 import { EvaluationRound } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
 
 describe('test EvaluationRoundEditorList', () => {
   const evaluationId = '123123123'

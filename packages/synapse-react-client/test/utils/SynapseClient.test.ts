@@ -11,7 +11,7 @@ import {
   AsynchronousJobStatus,
   PaginatedResults,
 } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../mocks/msw/server'
+import { rest, server } from '../../src/mocks/msw/server'
 import {
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,

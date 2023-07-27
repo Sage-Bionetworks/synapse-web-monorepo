@@ -6,7 +6,7 @@ import StepsSideNav, {
   StepsSideNavProps,
 } from '../../../src/components/SynapseForm/StepsSideNav'
 import { Step } from '../../../src/components/SynapseForm/types'
-import { stepsWithChildren } from '../../../mocks/mock_drug_tool_data'
+import { stepsWithChildren } from '../../../src/mocks/mock_drug_tool_data'
 
 const stepsArray: Step[] = _.cloneDeep(stepsWithChildren)
 

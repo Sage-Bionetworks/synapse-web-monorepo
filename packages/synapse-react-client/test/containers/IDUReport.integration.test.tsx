@@ -6,12 +6,12 @@ import {
   SubmissionInfoPageRequest,
 } from '@sage-bionetworks/synapse-types'
 import IDUReport from '../../src/components/IDUReport'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
-} from '../../mocks/user/mock_user_profile'
-import { rest, server } from '../../mocks/msw/server'
+} from '../../src/mocks/user/mock_user_profile'
+import { rest, server } from '../../src/mocks/msw/server'
 import { APPROVED_SUBMISSION_INFO } from '../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,

@@ -5,7 +5,7 @@ import {
   DiscussionThread,
   DiscussionThreadProps,
 } from '../../../src/components/Forum/DiscussionThread'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import {
   THREAD,
   THREAD_ID,
@@ -26,13 +26,13 @@ import {
 import {
   mockDiscussionReplyBundle,
   mockDiscussionThreadBundle,
-} from '../../../mocks/discussion/mock_discussion'
-import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
-import { rest, server } from '../../../mocks/msw/server'
+} from '../../../src/mocks/discussion/mock_discussion'
+import { MOCK_ACCESS_TOKEN } from '../../../src/mocks/MockSynapseContext'
+import { rest, server } from '../../../src/mocks/msw/server'
 import {
   mockUserProfileData,
   mockUserProfileData2,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 
 const MOCK_THREAD_ID = '123'
 const MOCK_SUBSCRIPTION_ID = '999'

@@ -1,14 +1,14 @@
 import React from 'react'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import RejectDataAccessRequestModal, {
   RejectDataAccessRequestModalProps,
 } from '../../../src/components/dataaccess/RejectDataAccessRequestModal'
-import { rest, server } from '../../../mocks/msw/server'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
-import mockRejectionReasonsTableQueryResultBundle from '../../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
+import { rest, server } from '../../../src/mocks/msw/server'
+import { getHandlersForTableQuery } from '../../../src/mocks/msw/handlers/tableQueryHandlers'
+import mockRejectionReasonsTableQueryResultBundle from '../../../src/mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import userEvent from '@testing-library/user-event'
-import { mockSubmittedSubmission } from '../../../mocks/dataaccess/MockSubmission'
+import { mockSubmittedSubmission } from '../../../src/mocks/dataaccess/MockSubmission'
 import {
   BackendDestinationEnum,
   getEndpoint,

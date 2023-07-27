@@ -3,8 +3,8 @@ import { UseQueryWrapperDataReturn } from '../../../src/components/QueryWrapper/
 import {
   mockCompleteAsyncJob,
   mockQueryResultBundle,
-} from '../../../mocks/mockFileViewQuery'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+} from '../../../src/mocks/mockFileViewQuery'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { useQueryWrapperPaginationControls } from '../../../src/components/QueryWrapper/useQueryWrapperPaginationControls'
 import { ImmutableTableQueryResult } from '../../../src/components/useImmutableTableQuery'
 

@@ -3,7 +3,7 @@ import DownloadDetails, {
   DownloadDetailsProps,
 } from '../../../src/components/download_list/DownloadDetails'
 import { act, render, screen } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 
 jest.mock('../../../src/utils/functions/testDownloadSpeed', () => ({
   testDownloadSpeed: jest.fn().mockResolvedValue(20),

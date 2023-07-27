@@ -10,7 +10,7 @@ import {
   QueryContextProvider,
   QueryContextType,
 } from '../../src/components/QueryContext/QueryContext'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 
 const renderComponent = (
   queryContext: Partial<QueryContextType>,

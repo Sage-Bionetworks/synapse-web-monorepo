@@ -1,6 +1,6 @@
 import { act, render, screen } from '@testing-library/react'
 import React from 'react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
 import SynapseClient from '../../../src/synapse-client'
 import {
@@ -8,7 +8,7 @@ import {
   EnableTwoFaRequirementCardProps,
   REQUIRES_2FA_CARD_TITLE,
 } from '../../../src/components/DownloadCart/EnableTwoFaRequirementCard'
-import { mockManagedACTAccessRequirement } from '../../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../../src/mocks/mockAccessRequirements'
 import * as AccessRequirementListModule from '../../../src/components/AccessRequirementList/AccessRequirementList'
 
 const MOCK_ACCESS_REQUIREMENT_LIST_COMPONENT =

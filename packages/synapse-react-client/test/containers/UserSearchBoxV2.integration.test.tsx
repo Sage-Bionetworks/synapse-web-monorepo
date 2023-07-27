@@ -3,13 +3,13 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import selectEvent from 'react-select-event'
 import UserSearchBox from '../../src/components/UserSearchBoxV2'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
-import { server } from '../../mocks/msw/server'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
+import { server } from '../../src/mocks/msw/server'
 import {
   mockUserGroupHeader,
   MOCK_USER_ID,
   MOCK_USER_NAME,
-} from '../../mocks/user/mock_user_profile'
+} from '../../src/mocks/user/mock_user_profile'
 
 describe('UserSearchBoxV2 tests', () => {
   beforeAll(() => server.listen())
