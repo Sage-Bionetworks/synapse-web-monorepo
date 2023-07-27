@@ -256,7 +256,7 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
   const { icon, ...otherProps } = props
   const color = undefined
 
-  const sx = (otherProps.sx = {
+  const otherProps.sx = {
     verticalAlign: 'middle',
     ...otherProps.sx,
   })
