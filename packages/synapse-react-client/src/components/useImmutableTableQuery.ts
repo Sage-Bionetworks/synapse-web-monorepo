@@ -193,9 +193,9 @@ export default function useImmutableTableQuery(
         setCommitAfterDebounce(false)
       }
     },
+    // nextQueryRequest MUST be included in the dependencies to ensure the debounce resets when it changes
     [nextQueryRequest, commit, commitAfterDebounce],
     DEBOUNCE_DELAY_MS,
-    0,
   )
 
   /**
@@ -256,10 +256,10 @@ export default function useImmutableTableQuery(
         }
       },
       [
-        setQuery,
-        getCurrentQueryRequest,
-        currentQueryRequest.query,
+        getNextQueryRequest,
         requireConfirmationOnChange,
+        currentQueryRequest.query,
+        setQuery,
       ],
     )
 
@@ -282,6 +282,8 @@ export default function useImmutableTableQuery(
       }))
       commit()
     }
+    // should only run on mount, or if the component index changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [componentIndex])
 
   // If `shouldDeepLink` is true, synchronize the URL
