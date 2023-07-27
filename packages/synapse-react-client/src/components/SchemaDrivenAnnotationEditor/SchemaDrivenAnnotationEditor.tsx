@@ -348,7 +348,7 @@ export function SchemaDrivenAnnotationEditor(
                       onCancel && onCancel()
                     }}
                     onConfirm={() => {
-                      ref.current!.formElement.current!.requestSubmit()
+                      ref.current!.formElement.current.requestSubmit()
                     }}
                     confirmButtonText={entityId ? 'Save' : 'Validate'}
                   />

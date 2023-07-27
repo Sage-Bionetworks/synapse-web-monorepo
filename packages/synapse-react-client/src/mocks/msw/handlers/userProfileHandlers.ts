@@ -137,9 +137,7 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
    * Get userGroupHeaders by prefix
    */
   rest.get(`${backendOrigin}${USER_GROUP_HEADERS}`, async (req, res, ctx) => {
-    const prefix = (
-      req.url.searchParams.get('prefix') ?? ''
-    ).toLowerCase() as string
+    const prefix = (req.url.searchParams.get('prefix') ?? '').toLowerCase()
     const typeFilter = req.url.searchParams.get('typeFilter') as TYPE_FILTER
     const responsePage: UserGroupHeaderResponsePage = {
       children: mockUserData
@@ -206,8 +204,8 @@ export function getCurrentUserCertifiedValidatedHandler(
   isValidated: boolean,
 ) {
   return rest.get(`${backendOrigin}${USER_BUNDLE}`, async (req, res, ctx) => {
-    let status = 200
-    let response: UserBundle = {
+    const status = 200
+    const response: UserBundle = {
       ...mockUserBundle,
       isCertified: isCertified,
       isVerified: isValidated,

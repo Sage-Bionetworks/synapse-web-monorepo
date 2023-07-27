@@ -65,8 +65,8 @@ describe('ImposeRestrictionDialog', () => {
     const submitButton = await screen.findByRole('button', { name: 'OK' })
 
     await userEvent.click(submitButton)
-    await waitFor(() => expect(onApplyLock).toBeCalledTimes(1))
-    await waitFor(() => expect(mockOnClose).toBeCalled())
+    await waitFor(() => expect(onApplyLock).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalled())
   })
   it("Shows a warning and does nothing if the user chooses 'No'", async () => {
     renderComponent()
@@ -83,7 +83,7 @@ describe('ImposeRestrictionDialog', () => {
     const submitButton = await screen.findByRole('button', { name: 'OK' })
 
     await userEvent.click(submitButton)
-    await waitFor(() => expect(mockOnClose).toBeCalled())
-    await waitFor(() => expect(onApplyLock).not.toBeCalled())
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalled())
+    await waitFor(() => expect(onApplyLock).not.toHaveBeenCalled())
   })
 })

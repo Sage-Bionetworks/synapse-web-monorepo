@@ -183,14 +183,14 @@ const mockProjectHeader: ProjectHeader = {
   id: MOCK_PROJECT_ID,
   name: MOCK_PROJECT_NAME,
   lastActivity: '2021-04-28T18:49:48.000Z',
-  modifiedBy: parseInt(mockProjectEntity.modifiedBy!),
-  modifiedOn: mockProjectEntity.modifiedOn!,
+  modifiedBy: parseInt(mockProjectEntity.modifiedBy),
+  modifiedOn: mockProjectEntity.modifiedOn,
 }
 
 const mockProjectJson: EntityJson = {
   name: MOCK_PROJECT_NAME,
   id: MOCK_PROJECT_ID,
-  etag: mockProjectEntity.etag!,
+  etag: mockProjectEntity.etag,
   createdOn: mockProjectEntity.createdOn,
   modifiedOn: mockProjectEntity.modifiedOn,
   createdBy: mockProjectEntity.createdBy,

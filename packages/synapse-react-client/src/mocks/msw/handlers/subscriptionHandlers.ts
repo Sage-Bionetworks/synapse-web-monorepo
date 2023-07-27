@@ -48,7 +48,7 @@ export function getSubscriptionHandlers(backendOrigin: string) {
           offsetValue + (limitValue ?? 0),
         )
 
-        let resp: SynapseApiResponse<SubscriptionPagedResults> = {
+        const resp: SynapseApiResponse<SubscriptionPagedResults> = {
           results: allResults,
           totalNumberOfResults: totalResults,
         }
@@ -72,7 +72,7 @@ export function getSubscriptionHandlers(backendOrigin: string) {
 
         const totalResults = allResults.length
 
-        let resp: SynapseApiResponse<SubscriptionPagedResults> = {
+        const resp: SynapseApiResponse<SubscriptionPagedResults> = {
           results: allResults,
           totalNumberOfResults: totalResults,
         }

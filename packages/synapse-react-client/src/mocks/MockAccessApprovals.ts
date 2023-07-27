@@ -5,7 +5,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from './user/mock_user_profile'
 
-let mockSearchResults = []
+const mockSearchResults = []
 for (let i = 0; i < 50; i++) {
   mockSearchResults.push({
     accessRequirementId: '9602629',
@@ -25,7 +25,7 @@ export const mockApprovalSearchResponse: AccessApprovalSearchResponse = {
   nextPageToken: '50a0',
 }
 
-export let mockAccessApprovalSearchResult2: AccessApprovalSearchResult = {
+export const mockAccessApprovalSearchResult2: AccessApprovalSearchResult = {
   accessRequirementId: '9602629',
   accessRequirementName: 'Access Requirement2',
   accessRequirementVersion: '3',

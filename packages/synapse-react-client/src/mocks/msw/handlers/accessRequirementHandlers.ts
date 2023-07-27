@@ -73,8 +73,8 @@ export const getAccessRequirementEntityBindingHandlers = (
     `${MOCK_REPO_ORIGIN}${ENTITY_ACCESS_REQUIREMENTS(entityId)}`,
 
     async (req, res, ctx) => {
-      let status = 200
-      let response: PaginatedResults<AccessRequirement> = {
+      const status = 200
+      const response: PaginatedResults<AccessRequirement> = {
         results: accessRequirements,
         totalNumberOfResults: accessRequirements.length,
       }
