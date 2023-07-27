@@ -346,10 +346,9 @@ describe('EnumFacetFilter', () => {
   })
 
   describe('callbacks', () => {
-    it('should trigger callback on checkbox change after delay', async () => {
+    it('should call addValueToSelectedFacet with debounce option', async () => {
       const individualFacetCheckboxes = screen.getAllByRole('checkbox').slice(1)
 
-      jest.spyOn(global, 'setTimeout')
       await userEvent.click(individualFacetCheckboxes[0])
       await userEvent.click(individualFacetCheckboxes[1])
       expect(mockAddValueToSelectedFacet).toHaveBeenCalledTimes(1)

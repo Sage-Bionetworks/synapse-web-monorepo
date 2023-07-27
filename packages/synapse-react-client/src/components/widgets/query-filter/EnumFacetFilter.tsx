@@ -1,5 +1,5 @@
 import { Collapse } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { ElementWithTooltip } from '../ElementWithTooltip'
@@ -131,15 +131,19 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     setFilteredSet(facetValues)
   }, [facetValues])
 
-  const currentSelectedFacet: FacetColumnValuesRequest | undefined = cloneDeep(
-    nextQueryRequest.query.selectedFacets?.find(
-      (selectedFacet): selectedFacet is FacetColumnValuesRequest => {
-        return (
-          selectedFacet.columnName === columnModel.name &&
-          isFacetColumnValuesRequest(selectedFacet)
-        )
-      },
-    ),
+  const currentSelectedFacet: FacetColumnValuesRequest | undefined = useMemo(
+    () =>
+      cloneDeep(
+        nextQueryRequest.query.selectedFacets?.find(
+          (selectedFacet): selectedFacet is FacetColumnValuesRequest => {
+            return (
+              selectedFacet.columnName === columnModel.name &&
+              isFacetColumnValuesRequest(selectedFacet)
+            )
+          },
+        ),
+      ),
+    [columnModel.name, nextQueryRequest.query.selectedFacets],
   )
 
   const visibleItemsCount = 5
