@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import SynapseClient from '../../../src/synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import TwoFactorBackupCodes, {
   TwoFactorBackupCodesProps,
 } from '../../../src/components/Authentication/TwoFactorBackupCodes'

@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
-import { rest, server } from '../../../mocks/msw/server'
+import { rest, server } from '../../../src/mocks/msw/server'
 import { ENTITY_HEADERS } from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,

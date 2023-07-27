@@ -19,7 +19,7 @@ import SynapseTable, {
   SynapseTableProps,
 } from '../../../src/components/SynapseTable/SynapseTable'
 import { NOT_SET_DISPLAY_VALUE } from '../../../src/components/SynapseTable/SynapseTableConstants'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import {
   ENTITY_HEADERS,
   ENTITY_ID_VERSION,
@@ -46,15 +46,15 @@ import {
   UserProfile,
   Entity,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
-import { rest, server } from '../../../mocks/msw/server'
-import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
+import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
+import { rest, server } from '../../../src/mocks/msw/server'
+import queryResultBundleJson from '../../../src/mocks/query/syn16787123.json'
 import dayjs from 'dayjs'
 import { formatDate } from '../../../src/utils/functions/DateFormatter'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 import * as HasAccessModule from '../../../src/components/HasAccess/HasAccessV2'
 import * as EntityLinkModule from '../../../src/components/EntityLink'
 import * as UserCardModule from '../../../src/components/UserCard/UserCard'

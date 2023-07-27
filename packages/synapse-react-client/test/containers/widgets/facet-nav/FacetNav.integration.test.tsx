@@ -13,14 +13,14 @@ import {
 import FacetNav, {
   FacetNavProps,
 } from '../../../../src/components/widgets/facet-nav/FacetNav'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../../../src/utils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import testData from '../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
-import { server } from '../../../../mocks/msw/server'
+import testData from '../../../../src/mocks/mockQueryResponseDataWithManyEnumFacets'
+import { server } from '../../../../src/mocks/msw/server'
 import failOnConsole from 'jest-fail-on-console'
 import { DEFAULT_PAGE_SIZE } from '../../../../src/utils/SynapseConstants'
 import { CLOSE_BUTTON_LABEL } from '../../../../src/components/DialogBase'

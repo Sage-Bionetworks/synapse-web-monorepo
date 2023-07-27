@@ -6,7 +6,7 @@ import CardContainerLogic, {
 } from '../../../src/components/CardContainerLogic'
 import * as QueryVisualizationWrapperModule from '../../../src/components/QueryVisualizationWrapper'
 import { QueryVisualizationWrapper } from '../../../src/components/QueryVisualizationWrapper'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { NoContentPlaceholderType } from '../../../src/components/SynapseTable/NoContentPlaceholderType'
 import * as CardContainerModule from '../../../src/components/CardContainer/CardContainer'
 import QueryWrapper from '../../../src/components/QueryWrapper'

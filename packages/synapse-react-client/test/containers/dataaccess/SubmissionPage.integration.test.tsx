@@ -10,7 +10,7 @@ import React from 'react'
 import SubmissionPage, {
   SubmissionPageProps,
 } from '../../../src/components/dataaccess/SubmissionPage'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
@@ -32,14 +32,14 @@ import {
   mockRejectedSubmission,
   mockSubmissions,
   mockSubmittedSubmission,
-} from '../../../mocks/dataaccess/MockSubmission'
-import { mockManagedACTAccessRequirement } from '../../../mocks/mockAccessRequirements'
-import { rest, server } from '../../../mocks/msw/server'
+} from '../../../src/mocks/dataaccess/MockSubmission'
+import { mockManagedACTAccessRequirement } from '../../../src/mocks/mockAccessRequirements'
+import { rest, server } from '../../../src/mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 import * as RejectDataAccessRequestModalModule from '../../../src/components/dataaccess/RejectDataAccessRequestModal'
 import failOnConsoleError from 'jest-fail-on-console'
 

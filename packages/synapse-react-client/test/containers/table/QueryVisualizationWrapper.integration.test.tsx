@@ -14,16 +14,16 @@ import {
   QueryWrapper,
   QueryWrapperProps,
 } from '../../../src/components/QueryWrapper/QueryWrapper'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../../src/utils'
 import {
   ColumnTypeEnum,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import queryResponse from '../../../mocks/mockQueryResponseDataWithManyEnumFacets'
-import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
-import { server } from '../../../mocks/msw/server'
-import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
+import queryResponse from '../../../src/mocks/mockQueryResponseDataWithManyEnumFacets'
+import { getHandlersForTableQuery } from '../../../src/mocks/msw/handlers/tableQueryHandlers'
+import { server } from '../../../src/mocks/msw/server'
+import { MOCK_TABLE_ENTITY_ID } from '../../../src/mocks/entity/mockTableEntity'
 import { DEFAULT_PAGE_SIZE } from '../../../src/utils/SynapseConstants'
 
 const onQueryContextReceived = jest.fn<void, [PaginatedQueryContextType]>()

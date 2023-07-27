@@ -3,10 +3,10 @@ import React from 'react'
 import StandaloneQueryWrapper, {
   StandaloneQueryWrapperProps,
 } from '../../../src/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn20337467Json from '../../../mocks/query/syn20337467.json'
+import syn20337467Json from '../../../src/mocks/query/syn20337467.json'
 
 const SynapseClient = require('../../../src/synapse-client/SynapseClient')
 

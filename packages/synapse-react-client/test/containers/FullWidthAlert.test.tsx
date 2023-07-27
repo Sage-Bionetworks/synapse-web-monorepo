@@ -4,7 +4,7 @@ import React from 'react'
 import FullWidthAlert, {
   FullWidthAlertProps,
 } from '../../src/components/FullWidthAlert/FullWidthAlert'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../src/utils/context/SynapseContext'
 
 const onPrimaryButtonClicked = jest.fn()

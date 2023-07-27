@@ -11,7 +11,7 @@ import {
 } from '../../../src/utils'
 import { MemoryRouter } from 'react-router-dom'
 import SynapseClient from '../../../src/synapse-client'
-import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
+import { MOCK_ACCESS_TOKEN } from '../../../src/mocks/MockSynapseContext'
 
 const defaultProps: LoginAwareButtonProps = {
   children: 'Register for this Challenge',

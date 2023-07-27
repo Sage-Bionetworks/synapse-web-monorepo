@@ -8,7 +8,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import useLogin from '../../../src/utils/hooks/useLogin'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../../../src/utils/SynapseConstants'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 
 const successfulLoginResponse: LoginResponse = {
   accessToken: 'abcd',

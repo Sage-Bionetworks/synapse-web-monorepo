@@ -2,8 +2,8 @@ import React from 'react'
 import userEvent from '@testing-library/user-event'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { SubscriptionPage, SynapseClient } from '../../../src'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
+import { server } from '../../../src/mocks/msw/server'
 import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 
 async function setUp() {

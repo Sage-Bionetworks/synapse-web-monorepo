@@ -1,8 +1,8 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import useGetEntityBundle from '../../../../src/synapse-queries/entity/useEntityBundle'
 import { EntityBundle } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { MOCK_CONTEXT_VALUE } from '../../../../src/mocks/MockSynapseContext'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../../../src/synapse-client'
 
 const expected: EntityBundle = {

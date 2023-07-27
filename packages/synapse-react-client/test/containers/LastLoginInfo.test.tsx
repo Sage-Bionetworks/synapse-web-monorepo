@@ -6,7 +6,7 @@ import LastLoginInfo, {
 } from '../../src/components/Authentication/LastLoginInfo'
 import { LOGIN_METHOD_OAUTH2_GOOGLE } from '../../src/utils/SynapseConstants'
 import { SynapseContextType } from '../../src/utils/context/SynapseContext'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 
 const defaultProps: LastLoginInfoProps = {
   currentSourceAppName: 'AD Knowledge Portal',

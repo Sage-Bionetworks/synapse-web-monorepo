@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import React from 'react'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -8,13 +8,13 @@ import {
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { TABLE_QUERY_ASYNC_START } from '../../../../src/utils/APIConstants'
 
-import { rest, server } from '../../../../mocks/msw/server'
+import { rest, server } from '../../../../src/mocks/msw/server'
 import { SynapseContextType } from '../../../../src/utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../src/mocks/MockSynapseContext'
 import ProgrammaticTableDownload, {
   ProgrammaticTableDownloadProps,
 } from '../../../../src/components/ProgrammaticTableDownload/ProgrammaticTableDownload'
-import { getHandlersForTableQuery } from '../../../../mocks/msw/handlers/tableQueryHandlers'
+import { getHandlersForTableQuery } from '../../../../src/mocks/msw/handlers/tableQueryHandlers'
 import { SynapseConstants } from '../../../../src'
 import { DEFAULT_PAGE_SIZE } from '../../../../src/utils/SynapseConstants'
 

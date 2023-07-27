@@ -4,12 +4,12 @@ import {
   MetadataTable,
   MetadataTableProps,
 } from '../../../../src/components/entity/metadata/MetadataTable'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../../src/utils/context/SynapseContext'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
-import { server } from '../../../../mocks/msw/server'
-import { mockUserProfileData } from '../../../../mocks/user/mock_user_profile'
-import mockProjectEntityData from '../../../../mocks/entity/mockProject'
+import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
+import { server } from '../../../../src/mocks/msw/server'
+import { mockUserProfileData } from '../../../../src/mocks/user/mock_user_profile'
+import mockProjectEntityData from '../../../../src/mocks/entity/mockProject'
 
 const { id: MOCK_FILE_ENTITY_ID } = mockFileEntityData
 const { id: MOCK_PROJECT_ID, bundle: mockProjectEntityBundle } =

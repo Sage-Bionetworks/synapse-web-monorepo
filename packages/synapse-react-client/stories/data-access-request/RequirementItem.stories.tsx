@@ -4,7 +4,7 @@ import { Paper } from '@mui/material'
 import RequirementItem from '../../src/components/AccessRequirementList/RequirementItem/RequirementItem'
 import { displayToast } from '../../src/components/ToastMessage/ToastMessage'
 import MarkdownSynapse from '../../src/components/Markdown/MarkdownSynapse'
-import { mockManagedACTAccessRequirementWikiPage } from '../../mocks/mockWiki'
+import { mockManagedACTAccessRequirementWikiPage } from '../../src/mocks/mockWiki'
 import { RequirementItemStatus } from '../../src/components/AccessRequirementList/AccessApprovalCheckMark'
 
 const meta: Meta = {

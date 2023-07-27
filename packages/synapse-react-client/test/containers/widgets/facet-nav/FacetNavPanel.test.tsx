@@ -4,14 +4,14 @@ import FacetNavPanel, {
 } from '../../../../src/components/widgets/facet-nav/FacetNavPanel'
 import { render, screen, within } from '@testing-library/react'
 import { FacetColumnResultValues } from '@sage-bionetworks/synapse-types'
-import testData from '../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
+import testData from '../../../../src/mocks/mockQueryResponseDataWithManyEnumFacets'
 import { SynapseConstants } from '../../../../src/utils'
 import {
   QueryContextProvider,
   QueryContextType,
 } from '../../../../src/components/QueryContext/QueryContext'
 import { QueryVisualizationContextProvider } from '../../../../src/components/QueryVisualizationWrapper'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import failOnConsole from 'jest-fail-on-console'
 import { truncate } from '../../../../src/components/widgets/facet-nav/FacetPlotLegendUtils'
 

@@ -7,8 +7,8 @@ import TermsAndConditionsItem, {
 } from '../../src/components/TermsAndConditions/TermsAndConditionsItem'
 import { SynapseClient, SynapseContextType } from '../../src'
 import { BatchFileResult, FileResult } from '@sage-bionetworks/synapse-types'
-import { mockFileHandle } from '../../mocks/mock_file_handle'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { mockFileHandle } from '../../src/mocks/mock_file_handle'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 
 async function renderComponent(
   itemProps: TermsAndConditionsItemProps,

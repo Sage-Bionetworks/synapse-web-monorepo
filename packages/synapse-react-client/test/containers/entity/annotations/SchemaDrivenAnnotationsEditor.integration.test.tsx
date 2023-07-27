@@ -15,7 +15,7 @@ import {
 } from '../../../../src/components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
 import * as ToastMessage from '../../../../src/components/ToastMessage/ToastMessage'
 import { displayToast } from '../../../../src/components/ToastMessage/ToastMessage'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import {
   ASYNCHRONOUS_JOB_TOKEN,
   ENTITY_JSON,
@@ -28,12 +28,12 @@ import {
   getEndpoint,
 } from '../../../../src/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../src/utils/context/SynapseContext'
-import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
+import mockFileEntity from '../../../../src/mocks/entity/mockFileEntity'
 import {
   mockSchemaBinding,
   mockValidationSchema,
-} from '../../../../mocks/mockSchema'
-import { rest, server } from '../../../../mocks/msw/server'
+} from '../../../../src/mocks/mockSchema'
+import { rest, server } from '../../../../src/mocks/msw/server'
 import { cloneDeep } from 'lodash-es'
 
 async function chooseAutocompleteOption(el: HTMLElement, option: string) {

@@ -5,16 +5,16 @@ import React from 'react'
 import { Router } from 'react-router-dom'
 import selectEvent from 'react-select-event'
 import { DataAccessSubmissionDashboard } from '../../../src/components/dataaccess/AccessSubmissionDashboard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { rest, server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
+import { rest, server } from '../../../src/mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
   mockSearchResults,
-} from '../../../mocks/mockAccessRequirements'
+} from '../../../src/mocks/mockAccessRequirements'
 import { getOptionLabel } from '../../../src/components/dataaccess/AccessRequirementSearchBox'
 import {
   BackendDestinationEnum,
