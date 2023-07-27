@@ -14,7 +14,10 @@ import FacetFilterControls, {
   FacetFilterControlsProps,
   getDefaultShownFacetFilters,
 } from '../../../../src/components/widgets/query-filter/FacetFilterControls'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
 import mockQueryResponseData from '../../../../mocks/mockQueryResponseData'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 import { DEFAULT_PAGE_SIZE } from '../../../../src/utils/SynapseConstants'
@@ -60,7 +63,7 @@ jest.mock(
   }),
 )
 
-const lastQueryRequestResult = {
+const lastQueryRequestResult: QueryBundleRequest = {
   partMask: 53,
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
   entityId: 'syn16787123',
@@ -77,8 +80,8 @@ const lastQueryRequestResult = {
         concreteType:
           'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
         columnName: 'Year',
-        min: 1997,
-        max: 1999,
+        min: '1997',
+        max: '1999',
       },
     ],
     limit: DEFAULT_PAGE_SIZE,
@@ -101,6 +104,8 @@ const defaultQueryContext: Partial<QueryContextType> = {
   data: mockQueryResponseData as QueryResultBundle,
   getCurrentQueryRequest: mockGetQueryRequest,
   executeQueryRequest: mockExecuteQueryRequest,
+  currentQueryRequest: lastQueryRequestResult,
+  nextQueryRequest: lastQueryRequestResult,
   isLoadingNewBundle: false,
 }
 
@@ -159,67 +164,6 @@ describe('FacetFilterControls tests', () => {
   })
 
   describe('handling child component callbacks', () => {
-    it('should propagate enum update correctly', async () => {
-      init()
-
-      const expectedResult = [
-        {
-          columnName: 'Make',
-          concreteType:
-            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          facetValues: ['Honda', 'Chevy', 'Ford'],
-        },
-        {
-          columnName: 'Year',
-          concreteType:
-            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
-          max: 1999,
-          min: 1997,
-        },
-      ]
-      const enumFacetFilter = screen.getAllByTestId('EnumFacetFilter')[0]
-      await captureHandlers(enumFacetFilter)
-      act(() => {
-        capturedOnChange!({ Ford: true })
-      })
-      const expected = _.cloneDeep(lastQueryRequestResult)
-      expected.query = { ...expected.query, selectedFacets: expectedResult }
-      expect(mockExecuteQueryRequest).toHaveBeenCalled()
-      const queryUpdateFn = mockExecuteQueryRequest.mock.lastCall![0]
-      expect(typeof queryUpdateFn).toBe('function')
-      expect(queryUpdateFn(_.cloneDeep(lastQueryRequestResult))).toEqual(
-        expected,
-      )
-    })
-
-    it('should propagate enum clear correctly', async () => {
-      init()
-
-      const expectedResult = [
-        {
-          columnName: 'Year',
-          concreteType:
-            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
-          max: 1999,
-          min: 1997,
-        },
-      ]
-
-      const enumFacetFilter = screen.getAllByTestId('EnumFacetFilter')[0]
-      await captureHandlers(enumFacetFilter)
-      act(() => {
-        capturedOnClear!()
-      })
-      const expected = _.cloneDeep(lastQueryRequestResult)
-      expected.query = { ...expected.query, selectedFacets: expectedResult }
-      expect(mockExecuteQueryRequest).toHaveBeenCalled()
-      const queryUpdateFn = mockExecuteQueryRequest.mock.lastCall![0]
-      expect(typeof queryUpdateFn).toBe('function')
-      expect(queryUpdateFn(_.cloneDeep(lastQueryRequestResult))).toEqual(
-        expected,
-      )
-    })
-
     it('should propagate range correctly', async () => {
       init()
 

@@ -244,10 +244,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
                   collapsed={false}
                   facetValues={facet.facetValues}
                   columnModel={columnModel}
-                  onClear={() =>
-                    applyChangesToValuesColumn(lastRequest, facet, applyChanges)
-                  }
-                ></EnumFacetFilter>
+                />
               )}
               {facet.facetType === 'range' && columnModel && (
                 <RangeFacetFilter

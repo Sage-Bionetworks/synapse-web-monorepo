@@ -10,6 +10,7 @@ import {
   EntityHeader,
   Evaluation,
   FacetColumnResultValueCount,
+  FacetColumnValuesRequest,
   QueryBundleRequest,
   SelectColumn,
   UserGroupHeader,
@@ -19,11 +20,12 @@ import { Checkbox } from '../Checkbox'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { useQueryContext } from '../../QueryContext'
 import { ReadonlyDeep } from 'type-fest'
+import { isFacetColumnValuesRequest } from '../../../utils/types/IsType'
+import { cloneDeep } from 'lodash-es'
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
   columnModel: SelectColumn
-  onClear: () => void
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
   collapsed?: boolean
@@ -107,7 +109,6 @@ function getAllIsSelected(
 export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   facetValues,
   columnModel,
-  onClear,
   containerAs = 'Collapsible',
   dropdownType = 'Icon',
   collapsed = false,
@@ -115,6 +116,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const {
     nextQueryRequest,
     addValueToSelectedFacet,
+    removeSelectedFacet,
     removeValueFromSelectedFacet,
   } = useQueryContext()
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
@@ -128,6 +130,17 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   useDeepCompareEffect(() => {
     setFilteredSet(facetValues)
   }, [facetValues])
+
+  const currentSelectedFacet: FacetColumnValuesRequest | undefined = cloneDeep(
+    nextQueryRequest.query.selectedFacets?.find(
+      (selectedFacet): selectedFacet is FacetColumnValuesRequest => {
+        return (
+          selectedFacet.columnName === columnModel.name &&
+          isFacetColumnValuesRequest(selectedFacet)
+        )
+      },
+    ),
+  )
 
   const visibleItemsCount = 5
   const textInput: React.RefObject<HTMLInputElement> = React.createRef()
@@ -248,7 +261,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
             <Checkbox
               className="EnumFacetFilter__checkbox"
               onChange={() => {
-                onClear()
+                if (currentSelectedFacet) {
+                  removeSelectedFacet(currentSelectedFacet)
+                }
               }}
               key="select_all"
               checked={allIsSelected}
@@ -277,16 +292,10 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
             isShowAll || isDropdown,
             visibleItemsCount,
           ).map((facet, index: number) => {
-            const isSelected = !!nextQueryRequest.query.selectedFacets?.find(
-              facetRequest => {
-                return (
-                  facetRequest.concreteType ===
-                    'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' &&
-                  facetRequest.columnName === columnModel.name &&
-                  facetRequest.facetValues.includes(facet.value)
-                )
-              },
+            const isSelected = !!currentSelectedFacet?.facetValues?.includes(
+              facet.value,
             )
+
             return (
               <EnumFacetFilterOption
                 key={`checkLabel${index}`}

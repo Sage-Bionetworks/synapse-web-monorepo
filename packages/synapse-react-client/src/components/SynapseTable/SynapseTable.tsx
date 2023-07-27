@@ -18,7 +18,6 @@ import {
   FacetColumnRequest,
   FacetColumnResult,
   FacetColumnResultValues,
-  QueryBundleRequest,
   ReferenceList,
   Row,
   SelectColumn,
@@ -38,7 +37,6 @@ import { Icon } from '../row_renderers/utils'
 import { SynapseTableCell } from './SynapseTableCell/SynapseTableCell'
 import { Checkbox } from '../widgets/Checkbox'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
-import { applyChangesToValuesColumn } from '../widgets/query-filter/FacetFilterControls'
 import { ICON_STATE } from './SynapseTableConstants'
 import {
   getColumnIndicesWithType,
@@ -415,7 +413,6 @@ export class SynapseTable extends React.Component<
     facets: FacetColumnResult[],
     rows: Row[],
   ) => {
-    const lastQueryRequest = this.props.queryContext.getCurrentQueryRequest?.()!
     const {
       queryContext: { entity, isRowSelectionVisible },
       showAccessColumn,
@@ -461,7 +458,6 @@ export class SynapseTable extends React.Component<
                 isShowingDirectDownloadColumn,
                 isShowingAddToV2DownloadListColumn,
                 isRowSelectionVisible,
-                lastQueryRequest,
               )}
             </tr>
           </thead>
@@ -670,7 +666,6 @@ export class SynapseTable extends React.Component<
     isShowingDownloadColumn: boolean | undefined,
     isShowingAddToV2DownloadListColumn: boolean,
     isRowSelectionVisible: boolean | undefined,
-    lastQueryRequest: QueryBundleRequest,
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
     const {
@@ -726,11 +721,7 @@ export class SynapseTable extends React.Component<
                 <div className="SRC-centerContent">
                   {isFacetSelection &&
                     !isLockedColumn &&
-                    this.configureFacetDropdown(
-                      facet,
-                      columnModel,
-                      lastQueryRequest,
-                    )}
+                    this.configureFacetDropdown(facet, columnModel)}
                   {isSortableColumn(column.columnType) && (
                     <span
                       role="button"
@@ -843,27 +834,18 @@ export class SynapseTable extends React.Component<
    *
    * @param {FacetColumnResult[]} facetColumnResult
    * @param {ColumnModel} columnModel
-   * @param {QueryBundleRequest} lastQueryRequest
    * @returns
    * @memberof SynapseTable
    */
   public configureFacetDropdown(
     facetColumnResult: FacetColumnResultValues,
     columnModel: ColumnModel,
-    lastQueryRequest: QueryBundleRequest,
   ) {
     return (
       <EnumFacetFilter
         containerAs="Dropdown"
         facetValues={facetColumnResult.facetValues}
         columnModel={columnModel}
-        onClear={() => {
-          applyChangesToValuesColumn(
-            lastQueryRequest,
-            facetColumnResult,
-            this.applyChangesFromQueryFilter,
-          )
-        }}
       />
     )
   }
