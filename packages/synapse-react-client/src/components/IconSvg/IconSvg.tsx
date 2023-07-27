@@ -500,7 +500,7 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
     case 'sortDown':
       return <SortDown {...otherProps} />
     case 'google24':
-      return <GoogleIcon24 sx={sx} />
+      return <GoogleIcon24 {...otherProps} />
     default:
       return <></>
   }
