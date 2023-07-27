@@ -60,7 +60,7 @@ type MarkdownSynapseState = {
  * @class Markdown
  * @extends {React.Component}
  */
-export class MarkdownSynapse extends React.Component<
+class MarkdownSynapse extends React.Component<
   MarkdownSynapseProps,
   MarkdownSynapseState
 > {
@@ -632,4 +632,4 @@ export class MarkdownSynapse extends React.Component<
   }
 }
 
-export default MarkdownSynapse
+export default MarkdownSynapse as React.ComponentType<MarkdownSynapseProps>

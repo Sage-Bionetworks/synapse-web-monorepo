@@ -199,7 +199,7 @@ const mockProjectJson: EntityJson = {
   concreteType: 'org.sagebionetworks.repo.model.Project',
 }
 
-const mockProjectEntityData: MockEntityData<Project> = {
+const mockProjectEntityData = {
   id: MOCK_PROJECT_ID,
   name: MOCK_PROJECT_NAME,
   entity: mockProjectEntity,
@@ -207,7 +207,7 @@ const mockProjectEntityData: MockEntityData<Project> = {
   entityHeader: mockProjectEntityHeader,
   projectHeader: mockProjectHeader,
   json: mockProjectJson,
-}
+} satisfies MockEntityData<Project>
 
 export const mockProjects: Project[] = mockProjectIds.map(id => {
   if (`syn${id}` === MOCK_PROJECT_ID) {

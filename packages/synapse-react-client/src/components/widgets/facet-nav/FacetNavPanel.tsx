@@ -5,7 +5,7 @@ import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import { SkeletonInlineBlock } from '../../Skeleton/SkeletonInlineBlock'
-import getColorPalette from '../../ColorGradient'
+import getColorPalette from '../../ColorGradient/ColorGradient'
 import { ElementWithTooltip } from '../ElementWithTooltip'
 import { SynapseConstants } from '../../../utils'
 import SynapseClient from '../../../synapse-client'
@@ -16,7 +16,7 @@ import {
   FacetColumnResultValueCount,
   FacetColumnResultValues,
 } from '@sage-bionetworks/synapse-types'
-import loadingScreen from '../../LoadingScreen'
+import loadingScreen from '../../LoadingScreen/LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext/QueryContext'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'

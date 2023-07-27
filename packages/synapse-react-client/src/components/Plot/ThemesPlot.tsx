@@ -22,7 +22,7 @@ import {
 import _ from 'lodash-es'
 import DotPlot from './DotPlot'
 import BarPlot from './BarPlot'
-import loadingScreen from '../LoadingScreen'
+import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { RequiredKeysOf } from 'type-fest'
 
 export type ThemesPlotProps = {

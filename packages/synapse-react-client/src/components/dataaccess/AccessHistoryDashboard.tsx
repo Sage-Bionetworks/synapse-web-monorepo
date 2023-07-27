@@ -13,7 +13,7 @@ import {
   AccessRequestSubmissionTableProps,
 } from './AccessRequestSubmissionTable'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
-import UserSearchBoxV2 from '../UserSearchBoxV2'
+import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox'
 import { useGetCurrentUserBundle } from '../../synapse-queries'
 

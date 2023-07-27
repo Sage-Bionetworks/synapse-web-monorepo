@@ -18,7 +18,7 @@ import {
 
 const DIALOG_INNER_PADDING = '2px'
 
-export const defaultMuiThemeOptions: ThemeOptions = {
+export const defaultMuiThemeOptions = {
   typography: typographyOptions,
   palette: palette,
   components: {
@@ -309,6 +309,6 @@ export const defaultMuiThemeOptions: ThemeOptions = {
   },
   styledBackground:
     "url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg')",
-}
+} satisfies ThemeOptions
 
 export default defaultMuiThemeOptions

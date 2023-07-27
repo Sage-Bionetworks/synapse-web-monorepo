@@ -7,7 +7,7 @@ import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'
-import UserSearchBoxV2 from '../UserSearchBoxV2'
+import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import {
   AccessRequirementTable,
   AccessRequirementTableProps,

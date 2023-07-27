@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import UserSearchBox from '../src/components/UserSearchBox'
+import UserSearchBox from '../src/components/UserSearchBox/UserSearchBox'
 
 const meta = {
   title: 'UI/UserSearchBox',

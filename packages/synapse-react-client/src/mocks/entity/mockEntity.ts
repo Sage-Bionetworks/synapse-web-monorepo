@@ -14,7 +14,7 @@ import mockProject from './mockProject'
 const MOCK_PROJECT_ID = mockProject.id
 const mockProjectEntity = mockProject.entity
 const MOCK_FILE_NAME = mockFile.name
-const mockFileEntityHeader = mockFile.entityHeader!
+const mockFileEntityHeader = mockFile.entityHeader
 
 export const MOCK_FOLDER_ID = `syn20000`
 export const MOCK_INVALID_PROJECT_NAME = 'A $@*#$% terribly named Project'

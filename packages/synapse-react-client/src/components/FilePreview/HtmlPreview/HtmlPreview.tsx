@@ -3,7 +3,7 @@ import xss from 'xss'
 import { xssOptions } from '../../../utils/functions/SanitizeHtmlUtils'
 import { useGetIsUserMemberOfTeam } from '../../../synapse-queries/team/useTeamMembers'
 import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../utils/SynapseConstants'
-import { SynapseSpinner } from '../../LoadingScreen'
+import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import { Alert } from '@mui/material'
 
 /**

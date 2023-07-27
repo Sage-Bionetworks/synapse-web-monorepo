@@ -7,8 +7,17 @@ import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import syn20337467Json from '../../../src/mocks/query/syn20337467.json'
+import SynapseClient from '../../../src/synapse-client'
 
-const SynapseClient = require('../../../src/synapse-client/SynapseClient')
+jest.mock('../../../src/synapse-client', () => ({
+  getEntity: jest.fn(),
+  getQueryTableAsyncJobResults: jest.fn(),
+}))
+
+const mockGetEntity = jest.mocked(SynapseClient.getEntity)
+const mockGetQueryTableAsyncJobResults = jest.mocked(
+  SynapseClient.getQueryTableAsyncJobResults,
+)
 
 const defaultProps: StandaloneQueryWrapperProps = {
   sql: 'select * from syn123',
@@ -30,11 +39,11 @@ function renderComponent(
 describe('StandaloneQueryWrapper rendering tests', () => {
   it('renders a Synapse table', async () => {
     const data = syn20337467Json as QueryResultBundle
-    SynapseClient.getEntity = jest.fn().mockResolvedValue({
+    mockGetEntity.mockResolvedValue({
       id: 'syn123',
       concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
     })
-    SynapseClient.getQueryTableAsyncJobResults = jest.fn(queryBundleRequest => {
+    mockGetQueryTableAsyncJobResults.mockImplementation(queryBundleRequest => {
       return Promise.resolve({
         requestBody: queryBundleRequest,
         jobState: 'COMPLETE',
@@ -57,11 +66,11 @@ describe('StandaloneQueryWrapper rendering tests', () => {
 
   it('renders a Synapse table with top level controls', async () => {
     const data = syn20337467Json as QueryResultBundle
-    SynapseClient.getEntity = jest.fn().mockResolvedValue({
+    mockGetEntity.mockResolvedValue({
       id: 'syn123',
       concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
     })
-    SynapseClient.getQueryTableAsyncJobResults = jest.fn(queryBundleRequest => {
+    mockGetQueryTableAsyncJobResults.mockImplementation(queryBundleRequest => {
       return Promise.resolve({
         requestBody: queryBundleRequest,
         jobState: 'COMPLETE',

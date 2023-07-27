@@ -5,7 +5,7 @@ import { EntityIdAndVersionNumber } from '../EntityFinder/details/view/DetailsVi
 import { Skeleton } from '@mui/material'
 import { useGetEntityBundle } from '../../synapse-queries'
 import { FileHandle } from '@sage-bionetworks/synapse-types'
-import DirectDownload from '../DirectDownload'
+import DirectDownload from '../DirectDownload/DirectDownload'
 
 type FileHandleWithPreview = FileHandle & {
   isPreview?: boolean

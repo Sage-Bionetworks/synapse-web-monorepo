@@ -49,7 +49,7 @@ export const mockRejectedSubmission: Submission = {
   subjectId: 'syn12156790',
   subjectType: RestrictableObjectType.ENTITY,
 }
-export const mockSubmittedSubmission: Submission = {
+export const mockSubmittedSubmission = {
   id: '1',
   accessRequirementId: '9602626',
   accessRequirementVersion: 1,
@@ -89,7 +89,8 @@ export const mockSubmittedSubmission: Submission = {
   etag: '40820b64-c436-486b-8fb8-afef931fbcb3',
   subjectId: 'syn12156790',
   subjectType: RestrictableObjectType.ENTITY,
-}
+} satisfies Submission
+
 export const mockApprovedSubmission: Submission = {
   id: '2',
   accessRequirementId: '9602626',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Box, Divider, Link, Stack, Typography } from '@mui/material'
 import { useGetEntityBundle } from '../../../../synapse-queries'
-import AddConditionsForUseButton from '../../../AccessRequirement/AddConditionsForUseButton'
+import AddConditionsForUseButton from '../../../AccessRequirement/AddConditionsForUseButton/AddConditionsForUseButton'
 import { useSynapseContext } from '../../../../utils/context/SynapseContext'
 import { useGetEntityTitleBarProperties } from './useGetEntityTitleBarProperties'
 

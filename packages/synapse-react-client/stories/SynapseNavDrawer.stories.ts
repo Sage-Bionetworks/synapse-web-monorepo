@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { SynapseNavDrawer } from '../src/components/SynapseNavDrawer'
+import { SynapseNavDrawer } from '../src/components/SynapseNavDrawer/SynapseNavDrawer'
 
 const meta = {
   title: 'Synapse/SynapseNavDrawer',

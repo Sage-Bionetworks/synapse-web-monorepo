@@ -3,7 +3,7 @@ import * as ReactBootstrap from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
 import { Direction, EntityHeader } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   useGetFavorites,
   useRemoveFavorite,

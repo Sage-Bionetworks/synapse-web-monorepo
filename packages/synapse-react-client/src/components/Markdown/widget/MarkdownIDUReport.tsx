@@ -1,5 +1,5 @@
 import React from 'react'
-import IDUReport from '../../IDUReport'
+import IDUReport from '../../IDUReport/IDUReport'
 
 export type MarkdownIDUReportProps = {
   accessRestrictionId: string

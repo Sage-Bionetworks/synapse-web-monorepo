@@ -31,7 +31,7 @@ module.exports = {
     },
     {
       displayName: 'synapse-react-client integration tests',
-      testMatch: ['<rootDir>/test/**/*.integration.test.[jt]s?(x)'],
+      testMatch: ['<rootDir>/**/*.integration.test.[jt]s?(x)'],
       // Use jest-serial-runner since these integration tests use a shared mock server
       runner: 'jest-serial-runner',
       ...shared,

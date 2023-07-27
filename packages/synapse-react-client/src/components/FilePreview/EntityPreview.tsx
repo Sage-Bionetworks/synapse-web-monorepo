@@ -5,7 +5,7 @@ import {
   ALL_ENTITY_BUNDLE_FIELDS,
   FileEntity,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import FileEntityPreview from './FileEntityPreview'
 import { isFileEntity } from '../../utils/types/IsType'
 

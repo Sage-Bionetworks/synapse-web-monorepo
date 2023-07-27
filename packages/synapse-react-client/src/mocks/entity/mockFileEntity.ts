@@ -234,7 +234,7 @@ const mockFileEntityHeader: EntityHeader = {
   isLatestVersion: true,
 }
 
-const mockFileEntityData: MockEntityData<FileEntity> = {
+const mockFileEntityData = {
   id: MOCK_FILE_ENTITY_ID,
   name: MOCK_FILE_NAME,
   entity: mockFileEntity,
@@ -244,6 +244,6 @@ const mockFileEntityData: MockEntityData<FileEntity> = {
   versionInfo: mockFileEntityVersionInfo,
   entityHeader: mockFileEntityHeader,
   path: filePath,
-}
+} satisfies MockEntityData<FileEntity>
 
 export default mockFileEntityData

@@ -7,7 +7,7 @@ import {
   getGoogleMapsApiKey,
   getSynapseTeamGeoData,
 } from '../../synapse-client'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { SynapseUserMarker } from './SynapseUserMarker'
 
 // Load the google maps types -- note that the script is dynamically loaded, so the module will not be immediately available

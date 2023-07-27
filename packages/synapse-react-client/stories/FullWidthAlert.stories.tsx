@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
 import FullWidthAlert from '../src/components/FullWidthAlert/FullWidthAlert'
-import { SynapseNavDrawer } from '../src/components/SynapseNavDrawer'
+import { SynapseNavDrawer } from '../src/components/SynapseNavDrawer/SynapseNavDrawer'
 
 const meta = {
   title: 'UI/FullWidthAlert',

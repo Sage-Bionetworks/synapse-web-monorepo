@@ -14,7 +14,7 @@ import {
 import { Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import { StarTwoTone } from '@mui/icons-material'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 export type AccessRequirementTableProps = {
