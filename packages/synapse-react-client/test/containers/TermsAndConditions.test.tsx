@@ -2,8 +2,8 @@ import React from 'react'
 import TermsAndConditions from '../../src/components/TermsAndConditions/TermsAndConditions'
 import { SynapseClient, SynapseContextType } from '../../src'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import mockSyn51718002 from '../../mocks/query/syn51718002.json'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import mockSyn51718002 from '../../src/mocks/query/syn51718002.json'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
 
 const defaultProps = {

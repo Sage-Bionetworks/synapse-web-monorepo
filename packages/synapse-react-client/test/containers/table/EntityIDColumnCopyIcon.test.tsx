@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EntityIDColumnCopyIcon from '../../../src/components/SynapseTable/EntityIDColumnCopyIcon'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
 import {
   QueryBundleRequest,
@@ -14,7 +14,7 @@ import {
   QueryContextProvider,
   QueryContextType,
 } from '../../../src/components/QueryContext/QueryContext'
-import idsQueryResponse from '../../../mocks/mockIDListQueryResponseData.json'
+import idsQueryResponse from '../../../src/mocks/mockIDListQueryResponseData.json'
 import { SynapseClient, SynapseConstants } from '../../../src'
 import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 

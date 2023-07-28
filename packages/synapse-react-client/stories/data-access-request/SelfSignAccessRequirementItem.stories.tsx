@@ -5,7 +5,7 @@ import {
   SynapseContextConsumer,
   SynapseContextProvider,
 } from '../../src/utils/context/SynapseContext'
-import { mockSelfSignAccessRequirement } from '../../mocks/mockAccessRequirements'
+import { mockSelfSignAccessRequirement } from '../../src/mocks/mockAccessRequirements'
 import { MOCK_REPO_ORIGIN } from '../../src/utils/functions/getEndpoint'
 import { rest } from 'msw'
 import {
@@ -17,10 +17,10 @@ import {
   AccessRequirementStatus,
   ApprovalState,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import { getAccessRequirementHandlers } from '../../mocks/msw/handlers/accessRequirementHandlers'
-import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
-import { getCurrentUserCertifiedValidatedHandler } from '../../mocks/msw/handlers/userProfileHandlers'
+import { MOCK_USER_ID } from '../../src/mocks/user/mock_user_profile'
+import { getAccessRequirementHandlers } from '../../src/mocks/msw/handlers/accessRequirementHandlers'
+import { getWikiHandlers } from '../../src/mocks/msw/handlers/wikiHandlers'
+import { getCurrentUserCertifiedValidatedHandler } from '../../src/mocks/msw/handlers/userProfileHandlers'
 
 const meta: Meta = {
   title:

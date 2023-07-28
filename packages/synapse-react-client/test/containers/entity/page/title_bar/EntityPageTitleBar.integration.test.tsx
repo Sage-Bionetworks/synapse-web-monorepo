@@ -3,11 +3,11 @@ import EntityPageTitleBar, {
   EntityPageTitleBarProps,
 } from '../../../../../src/components/entity/page/title_bar/EntityPageTitleBar'
 import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import mockFileEntity from '../../../../../mocks/entity/mockFileEntity'
+import { createWrapper } from '../../../../../src/testutils/TestingLibraryUtils'
+import mockFileEntity from '../../../../../src/mocks/entity/mockFileEntity'
 import { EntityActionMenuProps } from '../../../../../src/components/entity/page/action_menu/EntityActionMenu'
 import { EntityBundle, EntityType } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../../../../mocks/msw/server'
+import { rest, server } from '../../../../../src/mocks/msw/server'
 import {
   BackendDestinationEnum,
   getEndpoint,

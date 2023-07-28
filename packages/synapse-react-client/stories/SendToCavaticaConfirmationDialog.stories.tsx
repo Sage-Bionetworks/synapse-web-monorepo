@@ -5,7 +5,7 @@ import { QueryVisualizationContextProvider } from '../src/components/QueryVisual
 import {
   mockQueryBundleRequest,
   mockQueryResultBundle,
-} from '../mocks/mockFileViewQuery'
+} from '../src/mocks/mockFileViewQuery'
 import { deepClone } from '@mui/x-data-grid/utils/utils'
 import { displayToast } from '../src/components/ToastMessage'
 import SendToCavaticaConfirmationDialog from '../src/components/SynapseTable/SendToCavaticaConfirmationDialog'

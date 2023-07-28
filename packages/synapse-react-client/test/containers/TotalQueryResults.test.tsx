@@ -12,7 +12,7 @@ import {
 import TotalQueryResults, {
   TotalQueryResultsProps,
 } from '../../src/components/TotalQueryResults'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import {
   ColumnTypeEnum,
   QueryBundleRequest,

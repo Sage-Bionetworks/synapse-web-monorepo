@@ -144,7 +144,7 @@ function getTotalsByProp<T>(
   for (const property in resultObject) {
     result.push({
       [prop]: property,
-      count: resultObject[property] as number,
+      count: resultObject[property],
     } as unknown as T)
   }
   return result

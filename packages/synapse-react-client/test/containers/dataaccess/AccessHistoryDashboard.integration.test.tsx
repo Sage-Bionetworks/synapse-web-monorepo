@@ -2,9 +2,9 @@ import React from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { UserHistoryDashboard } from '../../../src/components/dataaccess/AccessHistoryDashboard'
 import { createMemoryHistory, MemoryHistory } from 'history'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { Router } from 'react-router-dom'
-import { rest, server } from '../../../mocks/msw/server'
+import { rest, server } from '../../../src/mocks/msw/server'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -17,12 +17,12 @@ import {
 import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
   mockSearchResults,
-} from '../../../mocks/mockAccessRequirements'
+} from '../../../src/mocks/mockAccessRequirements'
 import userEvent from '@testing-library/user-event'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 import selectEvent from 'react-select-event'
 import { getOptionLabel } from '../../../src/components/dataaccess/AccessRequirementSearchBox'
 import * as AccessApprovalsTableModule from '../../../src/components/dataaccess/AccessApprovalsTable'

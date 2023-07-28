@@ -6,15 +6,15 @@ import {
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   DATA_ACCESS_SUBMISSION_BY_ID,
 } from '../src/utils/APIConstants'
-import { mockSubmissions } from '../mocks/dataaccess/MockSubmission'
-import { mockManagedACTAccessRequirement } from '../mocks/mockAccessRequirements'
+import { mockSubmissions } from '../src/mocks/dataaccess/MockSubmission'
+import { mockManagedACTAccessRequirement } from '../src/mocks/mockAccessRequirements'
 import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
-import { getHandlersForTableQuery } from '../mocks/msw/handlers/tableQueryHandlers'
-import mockRejectionReasonsTableQueryResultBundle from '../mocks/query/mockRejectionReasonsTableQueryResultBundle'
+import { getHandlersForTableQuery } from '../src/mocks/msw/handlers/tableQueryHandlers'
+import mockRejectionReasonsTableQueryResultBundle from '../src/mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import SubmissionPage from '../src/components/dataaccess/SubmissionPage'
 import { SynapseErrorBoundary } from '../src/components/error/ErrorBanner'
-import { getWikiHandlers } from '../mocks/msw/handlers/wikiHandlers'
-import { getUserProfileHandlers } from '../mocks/msw/handlers/userProfileHandlers'
+import { getWikiHandlers } from '../src/mocks/msw/handlers/wikiHandlers'
+import { getUserProfileHandlers } from '../src/mocks/msw/handlers/userProfileHandlers'
 
 const meta = {
   title: 'Governance/SubmissionPage',

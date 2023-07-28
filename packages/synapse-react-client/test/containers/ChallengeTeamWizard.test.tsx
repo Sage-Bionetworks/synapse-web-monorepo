@@ -1,7 +1,7 @@
 import React from 'react'
 import { FullContextProviderProps } from '../../src/utils/context/FullContextProvider'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../src'
 import ChallengeTeamWizard from '../../src/components/ChallengeTeamWizard'
 import {
@@ -11,8 +11,8 @@ import {
   mockChallengeTeamMembershipStatus,
   mockChallengeTeamResults,
   mockTeamList,
-} from '../../mocks/mockChallenge'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
+} from '../../src/mocks/mockChallenge'
+import { mockUserProfileData } from '../../src/mocks/user/mock_user_profile'
 import { ChallengeTeamWizardProps } from '../../src/components/ChallengeTeamWizard/ChallengeTeamWizard'
 import userEvent from '@testing-library/user-event'
 import { Router } from 'react-router-dom'

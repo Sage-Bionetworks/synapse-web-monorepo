@@ -6,10 +6,10 @@ import {
   PaginatedResults,
   ReferenceList,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../src/mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
 import FullContextProvider from '../../../../src/utils/context/FullContextProvider'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../../../src/synapse-client'
 
 const expected: PaginatedResults<EntityHeader> = {

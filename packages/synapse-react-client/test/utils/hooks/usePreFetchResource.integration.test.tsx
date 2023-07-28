@@ -1,7 +1,7 @@
 import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import usePreFetchResource from '../../../src/utils/hooks/usePreFetchResource'
-import { rest, server } from '../../../mocks/msw/server'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { rest, server } from '../../../src/mocks/msw/server'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 
 const onReceivedRequest = jest.fn()
 

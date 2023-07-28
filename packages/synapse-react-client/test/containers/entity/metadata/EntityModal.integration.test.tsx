@@ -6,15 +6,15 @@ import {
   EntityModal,
   EntityModalProps,
 } from '../../../../src/components/entity/metadata/EntityModal'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import { ENTITY_BUNDLE_V2 } from '../../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../src/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../src/utils/context/SynapseContext'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../../../mocks/msw/server'
+import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
+import { rest, server } from '../../../../src/mocks/msw/server'
 
 const {
   id: MOCK_FILE_ENTITY_ID,

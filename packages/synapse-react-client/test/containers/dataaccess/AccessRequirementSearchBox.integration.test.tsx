@@ -5,7 +5,7 @@ import selectEvent from 'react-select-event'
 import AccessRequirementSearchBox, {
   getOptionLabel,
 } from '../../../src/components/dataaccess/AccessRequirementSearchBox'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_SEARCH,
@@ -17,8 +17,8 @@ import {
 import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
   mockSearchResults,
-} from '../../../mocks/mockAccessRequirements'
-import { rest, server } from '../../../mocks/msw/server'
+} from '../../../src/mocks/mockAccessRequirements'
+import { rest, server } from '../../../src/mocks/msw/server'
 
 const mockOnChange = jest.fn()
 const onServiceRecievedRequest = jest.fn()

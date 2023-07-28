@@ -45,8 +45,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
         const found = additionalFilters.find(
           filter =>
             filter.concreteType == textMatchesQueryFilter.concreteType &&
-            (filter as TextMatchesQueryFilter).searchExpression ==
-              textMatchesQueryFilter.searchExpression,
+            filter.searchExpression == textMatchesQueryFilter.searchExpression,
         )
         if (found) {
           return request

@@ -9,7 +9,7 @@ import {
   MarkdownPopover,
   MarkdownPopoverProps,
 } from '../../src/components/Markdown/MarkdownPopover'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../src/utils/context/SynapseContext'
 
 const markdownText = 'This is markdown text.'

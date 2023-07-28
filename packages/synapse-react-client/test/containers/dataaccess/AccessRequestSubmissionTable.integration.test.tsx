@@ -5,24 +5,24 @@ import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,
 } from '../../../src/components/dataaccess/AccessRequestSubmissionTable'
-import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
+import { createWrapperAndQueryClient } from '../../../src/testutils/TestingLibraryUtils'
 import {
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,
   SubmissionSearchResponse,
 } from '@sage-bionetworks/synapse-types'
 import { AccessType, SubmissionState } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../../mocks/msw/server'
+import { rest, server } from '../../../src/mocks/msw/server'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../src/utils/functions/getEndpoint'
 import { ACCESS_REQUEST_SUBMISSION_SEARCH } from '../../../src/utils/APIConstants'
-import { mockSubmissionSearchResponse } from '../../../mocks/mockAccessRequest'
+import { mockSubmissionSearchResponse } from '../../../src/mocks/mockAccessRequest'
 import {
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 import { upperFirst } from 'lodash-es'
 import { formatDate } from '../../../src/utils/functions/DateFormatter'
 import dayjs from 'dayjs'

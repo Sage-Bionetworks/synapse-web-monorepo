@@ -5,7 +5,7 @@ import FileHandleContentRenderer, {
 } from '../../../../src/components/FilePreview/FileHandleContentRenderer'
 import * as HtmlPreviewModule from '../../../../src/components/FilePreview/HtmlPreview/HtmlPreview'
 import { PreviewRendererType } from '../../../../src/components/FilePreview/PreviewRendererType'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -17,9 +17,9 @@ import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
-import { MOCK_FILE_HANDLE_ID } from '../../../../mocks/mock_file_handle'
-import { rest, server } from '../../../../mocks/msw/server'
+import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
+import { MOCK_FILE_HANDLE_ID } from '../../../../src/mocks/mock_file_handle'
+import { rest, server } from '../../../../src/mocks/msw/server'
 
 jest.spyOn(HtmlPreviewModule, 'default').mockImplementation(() => {
   return <div data-testid="HtmlPreview"></div>

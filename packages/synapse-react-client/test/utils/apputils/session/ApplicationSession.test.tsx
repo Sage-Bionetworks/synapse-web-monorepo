@@ -11,7 +11,7 @@ import { SynapseClient } from '../../../../src'
 import {
   MOCK_USER_ID,
   mockUserProfileData,
-} from '../../../../mocks/user/mock_user_profile'
+} from '../../../../src/mocks/user/mock_user_profile'
 import { SynapseClientError } from '../../../../src/utils/SynapseClientError'
 import { MemoryRouter } from 'react-router-dom'
 import * as UseDetectSSOCodeModule from '../../../../src/utils/hooks/useDetectSSOCode'
@@ -21,7 +21,7 @@ import {
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
+import { MOCK_ACCESS_TOKEN } from '../../../../src/mocks/MockSynapseContext'
 
 function render(props?: ApplicationSessionManagerProps) {
   return renderHook(() => useApplicationSessionContext(), {

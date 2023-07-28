@@ -15,7 +15,7 @@ import {
 } from '../../../../src/components/SynapseTable/datasets/DatasetItemsEditor'
 import * as ToastMessageModule from '../../../../src/components/ToastMessage/ToastMessage'
 import { displayToast } from '../../../../src/components/ToastMessage/ToastMessage'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import { ENTITY_ID } from '../../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
@@ -27,10 +27,10 @@ import {
   EntityType,
   Reference,
 } from '@sage-bionetworks/synapse-types'
-import mockDatasetEntityData from '../../../../mocks/entity/mockDataset'
-import mockDatasetCollectionData from '../../../../mocks/entity/mockDatasetCollection'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../../../mocks/msw/server'
+import mockDatasetEntityData from '../../../../src/mocks/entity/mockDataset'
+import mockDatasetCollectionData from '../../../../src/mocks/entity/mockDatasetCollection'
+import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
+import { rest, server } from '../../../../src/mocks/msw/server'
 import * as EntityFinderModal from '../../../../src/components/EntityFinder/EntityFinderModal'
 import * as EntityBadgeModule from '../../../../src/components/EntityBadgeIcons/EntityBadgeIcons'
 

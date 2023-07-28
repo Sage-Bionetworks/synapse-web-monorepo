@@ -4,14 +4,14 @@ import React from 'react'
 import UserFileGrid, {
   SynapseFormSubmissionGridProps,
 } from '../../../src/components/SynapseForm/SynapseFormSubmissionsGrid'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../../src/synapse-client'
 import { StatusEnum } from '@sage-bionetworks/synapse-types'
 import {
   formListDataInProgress,
   formListDataSubmitted,
-} from '../../../mocks/mock_drug_tool_data'
-import { server } from '../../../mocks/msw/server'
+} from '../../../src/mocks/mock_drug_tool_data'
+import { server } from '../../../src/mocks/msw/server'
 
 const token: string = '123444'
 const pathpart = 'someTool'

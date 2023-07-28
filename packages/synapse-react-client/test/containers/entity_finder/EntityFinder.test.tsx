@@ -23,7 +23,7 @@ import {
 import {
   MOCK_ACCESS_TOKEN,
   SynapseTestContext,
-} from '../../../mocks/MockSynapseContext'
+} from '../../../src/mocks/MockSynapseContext'
 import { Map } from 'immutable'
 import * as useEntityBundleModule from '../../../src/synapse-queries/entity/useEntityBundle'
 import SynapseClient from '../../../src/synapse-client'

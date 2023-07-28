@@ -1,7 +1,7 @@
 import React from 'react'
 import { FullContextProviderProps } from '../../../src/utils/context/FullContextProvider'
 import { act, render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../src'
 import {
   AccessApproval,
@@ -13,8 +13,8 @@ import {
   mockSelfSignAccessRequirement,
   mockSelfSignAccessRequirementWikiPageKey,
   mockToUAccessRequirement,
-} from '../../../mocks/mockAccessRequirements'
-import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockFileEntity'
+} from '../../../src/mocks/mockAccessRequirements'
+import { MOCK_FILE_ENTITY_ID } from '../../../src/mocks/entity/mockFileEntity'
 import userEvent from '@testing-library/user-event'
 import * as MarkdownSynapseModule from '../../../src/components/Markdown/MarkdownSynapse'
 import { MarkdownSynapseProps } from '../../../src/components/Markdown/MarkdownSynapse'
@@ -25,7 +25,7 @@ import {
   MOCK_USER_ID,
   mockUserBundle,
   mockUserProfileData,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 
 async function renderComponent(
   props: SelfSignAccessRequirementItemProps,

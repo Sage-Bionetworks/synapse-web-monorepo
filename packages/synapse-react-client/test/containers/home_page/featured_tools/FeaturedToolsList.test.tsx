@@ -1,10 +1,10 @@
 import React from 'react'
 import FeaturedToolsList from '../../../../src/components/FeaturedToolsList/FeaturedToolsList'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn26344826Json from '../../../../mocks/query/syn26344826.json'
+import syn26344826Json from '../../../../src/mocks/query/syn26344826.json'
 import { render } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
-import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
+import { SynapseTestContext } from '../../../../src/mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../../src/synapse-client/SynapseClient')
 const data = syn26344826Json as QueryResultBundle

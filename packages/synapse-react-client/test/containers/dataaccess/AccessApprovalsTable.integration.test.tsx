@@ -1,17 +1,17 @@
 import React from 'react'
-import { server } from '../../../mocks/msw/server'
+import { server } from '../../../src/mocks/msw/server'
 import { render, screen } from '@testing-library/react'
 import { AccessApprovalSearchResult } from '@sage-bionetworks/synapse-types'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
 } from '../../../src/components/dataaccess/AccessApprovalsTable'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
+import { MOCK_USER_ID } from '../../../src/mocks/user/mock_user_profile'
 import {
   mockApprovalSearchResponse,
   mockAccessApprovalSearchResult2,
-} from '../../../mocks/MockAccessApprovals'
+} from '../../../src/mocks/MockAccessApprovals'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { useSearchAccessApprovalsInfinite } from '../../../src/synapse-queries/dataaccess/useAccessApprovals'
 import userEvent from '@testing-library/user-event'

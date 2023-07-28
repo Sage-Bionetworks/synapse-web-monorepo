@@ -1,7 +1,7 @@
 import React from 'react'
 import { FullContextProviderProps } from '../../../src/utils/context/FullContextProvider'
 import { act, render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import UnmanagedACTAccessRequirementItem, {
   UnmanagedACTAccessRequirementItemProps,
 } from '../../../src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem'
@@ -10,8 +10,8 @@ import { AccessRequirementStatus } from '@sage-bionetworks/synapse-types'
 import {
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,
-} from '../../../mocks/mockAccessRequirements'
-import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockFileEntity'
+} from '../../../src/mocks/mockAccessRequirements'
+import { MOCK_FILE_ENTITY_ID } from '../../../src/mocks/entity/mockFileEntity'
 import userEvent from '@testing-library/user-event'
 
 async function renderComponent(

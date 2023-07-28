@@ -8,16 +8,16 @@ import {
   ACT_TITLE,
   LOCK_TITLE,
 } from '../../../src/components/DownloadCart/MeetAccessRequirementCard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
-import { rest, server } from '../../../mocks/msw/server'
+import { rest, server } from '../../../src/mocks/msw/server'
 import {
   mockToUAccessRequirement,
   // mockACTAccessRequirement,
   mockLockAccessRequirement,
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
-} from '../../../mocks/mockAccessRequirements'
+} from '../../../src/mocks/mockAccessRequirements'
 import { ACCESS_REQUIREMENT_BY_ID } from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,

@@ -15,7 +15,7 @@ import {
   UNSAVED_CHANGES,
 } from '../../../src/components/EntityFinder/EntityFinderModal'
 import { FinderScope } from '../../../src/components/EntityFinder/tree/EntityTree'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 
 let capturedOnSelectionChange: ((selected: Reference[]) => void) | undefined
