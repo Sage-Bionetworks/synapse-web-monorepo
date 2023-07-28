@@ -15,7 +15,7 @@ import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import failOnConsole from 'jest-fail-on-console'
 import { truncate } from '../../../../src/components/widgets/facet-nav/FacetPlotLegendUtils'
 import { cloneDeep } from 'lodash-es'
-import { mockQueryBundleRequest } from '../../../../mocks/mockFileViewQuery'
+import { mockQueryBundleRequest } from '../../../../src/mocks/mockFileViewQuery'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
