@@ -442,7 +442,23 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             Sage’s Data Platform Offerings
           </Typography>
           <p className="SectionBody">
-            Sage offers the following service plans to the scientific community.
+            Sage offers multiple service plans to help you with your data
+            sharing needs including NIH Data Management and Sharing plans.
+            <br />
+            <Link
+              href="https://help.synapse.org/docs/Synapse-Pricing.2965078125.html"
+              target="_blank"
+            >
+              Learn more
+            </Link>{' '}
+            and{' '}
+            <Link
+              href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
+              target="_blank"
+            >
+              contact us
+            </Link>{' '}
+            to get started.
           </p>
           <Button
             variant="contained"
