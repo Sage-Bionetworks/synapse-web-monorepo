@@ -40,9 +40,8 @@ export function useExportToCavatica(
         accessToken,
       )
       // Send this DRS URI to the CAVATICA landing page where it can be processed
-      // TODO: test on staging stack (point to repo-staging.prod.sagebase.org)
       const cavaticaURL = `https://cavatica.sbgenomics.com/import-redirect/drs/csv?DRS_URI=${encodeURIComponent(
-        `drs://repo-prod.prod.sagebase.org/filehandle-${result.resultsFileHandleId}`,
+        `drs://repo-prod.prod.sagebase.org/fh${result.resultsFileHandleId}`,
       )}`
       window.open(cavaticaURL, '_blank')
     } catch (_err) {
