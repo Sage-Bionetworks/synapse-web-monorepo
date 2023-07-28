@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { SortConfiguration } from './CardContainerLogic'
 import { useQueryContext } from './QueryContext/QueryContext'
-import { SortDirection, SortItem } from '@sage-bionetworks/synapse-types'
+import { SortDirection } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import Select, { components, ControlProps, GroupBase } from 'react-select'
 import { findValueOption } from './SchemaDrivenAnnotationEditor/widget/SelectWidget'
@@ -32,7 +32,7 @@ const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
 }) => {
   const { defaultColumn, defaultDirection, sortableColumns } = sortConfig
   const queryContext = useQueryContext()
-  const { getLastQueryRequest, executeQueryRequest } = queryContext
+  const { executeQueryRequest } = queryContext
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const [sortColumn, setSortColumn] = useState<string | undefined>(
     defaultColumn,
@@ -47,25 +47,27 @@ const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
   })
 
   const onChange = (value?: string) => {
-    const lastQueryRequestDeepClone = getLastQueryRequest()
-    let newSortDirection: SortDirection = 'ASC'
-    if (value === sortColumn) {
-      // flip sort direction
-      newSortDirection = sortDirection === 'ASC' ? 'DESC' : 'ASC'
-    }
+    executeQueryRequest(request => {
+      let newSortDirection: SortDirection = 'ASC'
+      if (value === sortColumn) {
+        // flip sort direction
+        newSortDirection = sortDirection === 'ASC' ? 'DESC' : 'ASC'
+      }
 
-    const newSortItems: SortItem[] | undefined = value
-      ? [
-          {
-            column: value,
-            direction: newSortDirection,
-          },
-        ]
-      : undefined
-    lastQueryRequestDeepClone.query.sort = newSortItems
-    executeQueryRequest(lastQueryRequestDeepClone)
-    setSortColumn(value)
-    setSortDirection(newSortDirection)
+      request.query.sort = value
+        ? [
+            {
+              column: value,
+              direction: newSortDirection,
+            },
+          ]
+        : undefined
+
+      setSortColumn(value)
+      setSortDirection(newSortDirection)
+
+      return request
+    })
   }
 
   return (

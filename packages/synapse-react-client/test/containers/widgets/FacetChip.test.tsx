@@ -41,7 +41,7 @@ const mockGetQueryRequest = jest.fn()
 
 const defaultQueryContext: Partial<QueryContextType> = {
   data: mockQueryResponseData as QueryResultBundle,
-  getLastQueryRequest: mockGetQueryRequest,
+  getCurrentQueryRequest: mockGetQueryRequest,
   executeQueryRequest: mockExecuteQueryRequest,
   isLoadingNewBundle: false,
 }

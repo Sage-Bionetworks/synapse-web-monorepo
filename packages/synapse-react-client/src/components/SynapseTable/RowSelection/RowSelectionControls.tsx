@@ -22,8 +22,13 @@ export type RowSelectionControlsProps = {
  */
 export function RowSelectionControls(props: RowSelectionControlsProps) {
   const { customControls = [], showExportToCavatica = false, remount } = props
-  const { data, entity, getLastQueryRequest, selectedRows, setSelectedRows } =
-    useQueryContext()
+  const {
+    data,
+    entity,
+    getCurrentQueryRequest,
+    selectedRows,
+    setSelectedRows,
+  } = useQueryContext()
   const { setIsShowingExportToCavaticaModal, setShowDownloadConfirmation } =
     useQueryVisualizationContext()
 
@@ -54,7 +59,7 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
                     data,
                     selectedRows,
                     refresh,
-                    request: getLastQueryRequest(),
+                    request: getCurrentQueryRequest(),
                   })
                 }
                 startIcon={customControl.icon}

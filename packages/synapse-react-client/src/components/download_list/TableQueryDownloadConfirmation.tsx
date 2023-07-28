@@ -14,14 +14,14 @@ import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 export function TableQueryDownloadConfirmation() {
   const {
     data,
-    getLastQueryRequest,
+    getCurrentQueryRequest,
     hasSelectedRows,
     selectedRows,
     rowSelectionPrimaryKey,
   } = useQueryContext()
   const { setShowDownloadConfirmation } = useQueryVisualizationContext()
   const queryBundleRequest = useMemo(() => {
-    const requestCopy = getLastQueryRequest()
+    const requestCopy = getCurrentQueryRequest()
     requestCopy.partMask =
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
@@ -39,7 +39,7 @@ export function TableQueryDownloadConfirmation() {
     return requestCopy
   }, [
     data?.columnModels,
-    getLastQueryRequest,
+    getCurrentQueryRequest,
     hasSelectedRows,
     rowSelectionPrimaryKey,
     selectedRows,

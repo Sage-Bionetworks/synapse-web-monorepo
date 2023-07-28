@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   FacetColumnRequest,
+  FacetColumnValuesRequest,
   QueryBundleRequest,
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
@@ -18,18 +19,36 @@ import {
   queryRequestsHaveSameTotalResults,
   removeEmptyQueryParams,
 } from '../utils/functions/queryUtils'
+import { ReadonlyDeep } from 'type-fest'
+import useCommittedState from '../utils/hooks/useCommittedState'
+import { useDebouncedEffect } from '@react-hookz/web'
+
+type QueryChangeCommitOptions =
+  | {
+      // This and future changes including debounce will not be committed until the debounceDelay has elapsed
+      debounce: true
+    }
+  | {
+      // The change will not be committed until the commit function is invoked.
+      noCommit: true
+    }
 
 export type ImmutableTableQueryResult = {
   /** The ID of the table parsed from the SQL query */
   entityId: string
   /** The version number of the table parsed from the SQL query */
   versionNumber?: number
+  /** The current query request, which is passed on to the server for results */
+  currentQueryRequest: ReadonlyDeep<QueryBundleRequest>
+  /** The next (uncommitted) query request. This will become the current query request when commitChanges is called, or the configured debounced timer elapses. */
+  nextQueryRequest: ReadonlyDeep<QueryBundleRequest>
+  /** Update the currentQueryRequest to be the nextQueryRequest */
+  commitChanges: () => void
   getInitQueryRequest: () => QueryBundleRequest
-  getLastQueryRequest: () => QueryBundleRequest
+  getCurrentQueryRequest: () => QueryBundleRequest
   setQuery: (
-    queryRequest:
-      | QueryBundleRequest
-      | ((lastQueryRequest: QueryBundleRequest) => QueryBundleRequest),
+    queryRequest: React.SetStateAction<QueryBundleRequest>,
+    commitOptions?: QueryChangeCommitOptions,
   ) => void
   pageSize: number
   /** The current page of results. The first page is `1` */
@@ -39,12 +58,18 @@ export type ImmutableTableQueryResult = {
   goToPage: (pageNumber: number) => void
   /** Resets the query to the initial state, clearing all user-specified filters */
   resetQuery: () => void
+  addValueToSelectedFacet: (
+    columnName: string,
+    value: string,
+    commitOptions?: QueryChangeCommitOptions,
+  ) => void
   /** Removes a particular selected facet from the query */
   removeSelectedFacet: (facet: FacetColumnRequest) => void
   /** Removes a particular value from a selected facet. If the value is the last value in the FacetColumnRequest, the selected facet will be removed. */
   removeValueFromSelectedFacet: (
-    facet: FacetColumnRequest,
+    facet: FacetColumnRequest | string,
     value: string,
+    commitOptions?: QueryChangeCommitOptions,
   ) => void
   /** Removes a particular QueryFilter from the query */
   removeQueryFilter: (filter: QueryFilter) => void
@@ -80,6 +105,9 @@ export type UseImmutableTableQueryOptions = {
   requireConfirmationOnChange?: boolean
 }
 
+// When changing the query with the debounce option, the amount of time to wait for additional debounced changes before updating the query
+export const DEBOUNCE_DELAY_MS = 1500
+
 /**
  * Custom hook that maintains and manages the state of a Synapse Table query.
  * @param options
@@ -102,20 +130,17 @@ export default function useImmutableTableQuery(
     return request
   }, [initQueryRequestFromProps])
 
-  const [lastQueryRequest, setLastQueryRequestInternal] =
-    useState<QueryBundleRequest>(initQueryRequest)
-
-  function setLastQueryRequest(
-    newState: React.SetStateAction<QueryBundleRequest>,
-  ) {
-    setLastQueryRequestInternal(newState)
-    const request =
-      typeof newState === 'function' ? newState(lastQueryRequest) : newState
-
+  const {
+    committedState: currentQueryRequest,
+    uncommittedState: nextQueryRequest,
+    commit,
+    setUncommittedState: setNextQueryRequest,
+  } = useCommittedState<QueryBundleRequest>(initQueryRequest, queryRequest => {
     if (onQueryChange) {
-      onQueryChange(JSON.stringify(request.query))
+      const queryJsonString = JSON.stringify(queryRequest.query)
+      onQueryChange(queryJsonString)
     }
-  }
+  })
 
   const [isConfirmingChange, setIsConfirmingChange] = useState(false)
 
@@ -128,14 +153,25 @@ export default function useImmutableTableQuery(
 
   /**
    * Pass down a deep clone (so no side effects on the child's part) of the
-   * last query request made
+   * next query request
    *
    * @returns
    * @memberof QueryWrapper
    */
-  const getLastQueryRequest = useCallback(() => {
-    return cloneDeep(lastQueryRequest)
-  }, [lastQueryRequest])
+  const getNextQueryRequest = useCallback(() => {
+    return cloneDeep(nextQueryRequest)
+  }, [nextQueryRequest])
+
+  /**
+   * Pass down a deep clone (so no side effects on the child's part) of the
+   * current query request
+   *
+   * @returns
+   * @memberof QueryWrapper
+   */
+  const getCurrentQueryRequest = useCallback(() => {
+    return cloneDeep(currentQueryRequest)
+  }, [currentQueryRequest])
 
   /**
    * Pass down a deep clone (so no side effects on the child's part) of the
@@ -148,56 +184,82 @@ export default function useImmutableTableQuery(
     return cloneDeep(initQueryRequest)
   }, [initQueryRequest])
 
+  const [commitAfterDebounce, setCommitAfterDebounce] = useState(false)
+
+  useDebouncedEffect(
+    () => {
+      if (commitAfterDebounce) {
+        commit()
+        setCommitAfterDebounce(false)
+      }
+    },
+    // nextQueryRequest MUST be included in the dependencies to ensure the debounce resets when it changes
+    [nextQueryRequest, commit, commitAfterDebounce],
+    DEBOUNCE_DELAY_MS,
+  )
+
   /**
    * Execute the given query request, updating all the data in the QueryContext to match the new query
    * @param {*} queryRequest Query request as specified by
    *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    */
   const setQuery: ImmutableTableQueryResult['setQuery'] = useCallback(
-    (queryRequest): void => {
-      const newQueryRequest = cloneDeep(
+    (
+      queryRequest: React.SetStateAction<QueryBundleRequest>,
+      commitOptions?: QueryChangeCommitOptions,
+    ): void => {
+      const nextQueryRequest =
         typeof queryRequest === 'function'
-          ? queryRequest(getLastQueryRequest())
-          : queryRequest,
-      )
+          ? queryRequest(getNextQueryRequest())
+          : queryRequest
 
       // Remove null/empty array fields
-      lastQueryRequest.query = removeEmptyQueryParams(lastQueryRequest.query)
+      nextQueryRequest.query = removeEmptyQueryParams(nextQueryRequest.query)
 
-      setLastQueryRequest(newQueryRequest)
+      setNextQueryRequest(nextQueryRequest)
+      if (commitOptions) {
+        if ('debounce' in commitOptions && commitOptions.debounce) {
+          setCommitAfterDebounce(true)
+        }
+      } else {
+        commit()
+      }
     },
-    [getLastQueryRequest],
+    [commit, getNextQueryRequest, setNextQueryRequest],
   )
 
   const setQueryOrPromptConfirmation: ImmutableTableQueryResult['setQuery'] =
     useCallback(
-      (queryRequest: React.SetStateAction<QueryBundleRequest>) => {
+      (
+        queryRequest: React.SetStateAction<QueryBundleRequest>,
+        commitOptions?: QueryChangeCommitOptions,
+      ) => {
         const nextQueryRequest =
           typeof queryRequest === 'function'
-            ? queryRequest(getLastQueryRequest())
+            ? queryRequest(getNextQueryRequest())
             : queryRequest
         // Check if we need to confirm the change, and eventually call _setQuery
         if (
           requireConfirmationOnChange &&
           !queryRequestsHaveSameTotalResults(
-            lastQueryRequest.query,
+            currentQueryRequest.query,
             nextQueryRequest.query,
           )
         ) {
           setOnConfirmChangeQuery(() => () => {
-            setQuery(queryRequest)
+            setQuery(queryRequest, commitOptions)
             setIsConfirmingChange(false)
           })
           setIsConfirmingChange(true)
         } else {
-          setQuery(queryRequest)
+          setQuery(queryRequest, commitOptions)
         }
       },
       [
-        setQuery,
-        getLastQueryRequest,
-        lastQueryRequest.query,
+        getNextQueryRequest,
         requireConfirmationOnChange,
+        currentQueryRequest.query,
+        setQuery,
       ],
     )
 
@@ -218,20 +280,23 @@ export default function useImmutableTableQuery(
           ...queryRequestFromLink.query,
         },
       }))
+      commit()
     }
+    // should only run on mount, or if the component index changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [componentIndex])
 
   // If `shouldDeepLink` is true, synchronize the URL
   useEffect(() => {
     if (shouldDeepLink) {
-      if (isEqual(initQueryRequest, lastQueryRequest)) {
+      if (isEqual(initQueryRequest, currentQueryRequest)) {
         DeepLinkingUtils.updateUrlWithNewSearchParam(
           'QueryWrapper',
           componentIndex,
           null,
         )
       } else {
-        const queryJsonString = JSON.stringify(lastQueryRequest.query)
+        const queryJsonString = JSON.stringify(currentQueryRequest.query)
         DeepLinkingUtils.updateUrlWithNewSearchParam(
           'QueryWrapper',
           componentIndex,
@@ -239,20 +304,22 @@ export default function useImmutableTableQuery(
         )
       }
     }
-  }, [componentIndex, lastQueryRequest, initQueryRequest, shouldDeepLink])
+  }, [componentIndex, currentQueryRequest, initQueryRequest, shouldDeepLink])
 
   const onCancelChangeQuery = useCallback(() => {
     setIsConfirmingChange(false)
-  }, [])
+    setNextQueryRequest(currentQueryRequest)
+  }, [currentQueryRequest, setNextQueryRequest])
 
   const { entityId, versionNumber } = useMemo(
-    () => parseEntityIdAndVersionFromSqlStatement(lastQueryRequest.query.sql)!,
-    [lastQueryRequest.query.sql],
+    () =>
+      parseEntityIdAndVersionFromSqlStatement(currentQueryRequest.query.sql)!,
+    [currentQueryRequest.query.sql],
   )
 
-  const pageSize = lastQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE
+  const pageSize = currentQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE
   const currentPage = Math.ceil(
-    ((lastQueryRequest.query.offset ?? 0) + Number(pageSize)) / pageSize,
+    ((currentQueryRequest.query.offset ?? 0) + Number(pageSize)) / pageSize,
   )
 
   const setPageSize = useCallback(
@@ -281,10 +348,45 @@ export default function useImmutableTableQuery(
 
   /* If the initial query changes, then reset the query to match the new prop */
   useDeepCompareEffect(() => {
-    if (lastQueryRequest != initQueryRequest) {
+    if (currentQueryRequest != initQueryRequest) {
       resetQuery()
     }
   }, [initQueryRequest])
+
+  const addValueToSelectedFacet = useCallback(
+    (
+      columnName: string,
+      value: string,
+      commitOptions?: QueryChangeCommitOptions,
+    ) => {
+      setQueryOrPromptConfirmation(request => {
+        const newFacets = request.query.selectedFacets ?? []
+
+        const existingFacetSelection = newFacets.find(
+          (facet): facet is FacetColumnValuesRequest =>
+            facet.concreteType ===
+              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' &&
+            facet.columnName === columnName,
+        )
+
+        if (existingFacetSelection) {
+          if (!existingFacetSelection.facetValues.includes(value)) {
+            existingFacetSelection.facetValues.push(value)
+          }
+        } else {
+          newFacets.push({
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            columnName: columnName,
+            facetValues: [value],
+          })
+        }
+        request.query.selectedFacets = newFacets
+        return request
+      }, commitOptions)
+    },
+    [setQueryOrPromptConfirmation],
+  )
 
   const removeSelectedFacet = useCallback(
     (facetColumnRequest: FacetColumnRequest) => {
@@ -302,7 +404,13 @@ export default function useImmutableTableQuery(
   )
 
   const removeValueFromSelectedFacet = useCallback(
-    (facet: FacetColumnRequest, value: string) => {
+    (
+      facet: FacetColumnRequest | string,
+      value: string,
+      commitOptions?: QueryChangeCommitOptions,
+    ) => {
+      const facetColumnName =
+        typeof facet === 'object' ? facet.columnName : facet
       setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.selectedFacets = (
           currentQuery.query.selectedFacets ?? []
@@ -311,7 +419,7 @@ export default function useImmutableTableQuery(
           .map(facetColumnRequest => {
             if (
               isFacetColumnValuesRequest(facetColumnRequest) &&
-              isEqual(facetColumnRequest, facet)
+              isEqual(facetColumnRequest.columnName, facetColumnName)
             ) {
               // Remove the value from the filter
               facetColumnRequest.facetValues =
@@ -331,7 +439,7 @@ export default function useImmutableTableQuery(
             return true
           })
         return currentQuery
-      })
+      }, commitOptions)
     },
     [setQueryOrPromptConfirmation],
   )
@@ -388,9 +496,12 @@ export default function useImmutableTableQuery(
 
   return {
     entityId,
+    commitChanges: commit,
+    currentQueryRequest,
+    nextQueryRequest,
     versionNumber,
     getInitQueryRequest,
-    getLastQueryRequest,
+    getCurrentQueryRequest: getCurrentQueryRequest,
     setQuery: setQueryOrPromptConfirmation,
     pageSize,
     currentPage,
@@ -404,5 +515,6 @@ export default function useImmutableTableQuery(
     isConfirmingChange,
     onConfirmChange: onConfirmChangeQuery,
     onCancelChange: onCancelChangeQuery,
+    addValueToSelectedFacet,
   }
 }

@@ -199,17 +199,16 @@ function getPillPropsFromFacetFilters(
 function SelectionCriteriaPills() {
   const queryContext = useQueryContext()
   const queryVisualizationContext = useQueryVisualizationContext()
-  const { getLastQueryRequest } = queryContext
-  const lastQueryRequest = getLastQueryRequest()
+  const { currentQueryRequest } = queryContext
 
   const queryFilterPillProps = getPillPropsFromQueryFilters(
-    lastQueryRequest.query?.additionalFilters ?? [],
+    currentQueryRequest.query?.additionalFilters ?? [],
     queryContext,
     queryVisualizationContext,
   )
 
   const facetPillProps = getPillPropsFromFacetFilters(
-    lastQueryRequest.query.selectedFacets ?? [],
+    currentQueryRequest.query.selectedFacets ?? [],
     queryContext,
     queryVisualizationContext,
   )

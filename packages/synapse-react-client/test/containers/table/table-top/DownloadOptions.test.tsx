@@ -40,7 +40,7 @@ describe('Download Options tests', () => {
 
   const queryContext: Partial<QueryContextType> = {
     entity: mockTableEntity,
-    getLastQueryRequest: () => ({}),
+    getCurrentQueryRequest: () => ({}),
   }
 
   it('Shows correct options for a TableEntity', async () => {

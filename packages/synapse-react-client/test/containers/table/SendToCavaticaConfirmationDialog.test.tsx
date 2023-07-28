@@ -47,7 +47,7 @@ function renderComponent(
     <QueryContextProvider
       queryContext={{
         data: mockQueryResultBundle,
-        getLastQueryRequest: () => cloneDeep(mockQueryBundleRequest),
+        getCurrentQueryRequest: () => cloneDeep(mockQueryBundleRequest),
         ...queryContextOverrides,
       }}
     >

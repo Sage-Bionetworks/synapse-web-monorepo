@@ -24,7 +24,7 @@ export default function SendToCavaticaConfirmationDialog(
   const { cavaticaHelpURL } = props
   const {
     data,
-    getLastQueryRequest,
+    getCurrentQueryRequest,
     onViewSharingSettingsClicked,
     hasResettableFilters,
     selectedRows,
@@ -39,7 +39,7 @@ export default function SendToCavaticaConfirmationDialog(
   } = useQueryVisualizationContext()
 
   const cavaticaQueryRequest = useMemo(() => {
-    const request = getLastQueryRequest()
+    const request = getCurrentQueryRequest()
     if (hasSelectedRows && rowSelectionPrimaryKey && data?.columnModels) {
       request.query.additionalFilters = [
         ...(request.query.additionalFilters || []),
@@ -52,7 +52,7 @@ export default function SendToCavaticaConfirmationDialog(
     }
     return request
   }, [
-    getLastQueryRequest,
+    getCurrentQueryRequest,
     hasSelectedRows,
     rowSelectionPrimaryKey,
     data?.columnModels,
