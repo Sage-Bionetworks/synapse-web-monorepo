@@ -6,14 +6,14 @@ import {
 } from '../../mocks/mockFileViewQuery'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { useQueryWrapperPaginationControls } from './useQueryWrapperPaginationControls'
-import { ImmutableTableQueryResult } from '../useImmutableTableQuery'
+import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 
 describe('useQueryWrapperPaginationControls tests', () => {
   const immutableTableQueryResult: ImmutableTableQueryResult = {
     currentPage: 1,
     entityId: 'syn123',
     getInitQueryRequest: jest.fn(),
-    getLastQueryRequest: jest.fn(),
+    getCurrentQueryRequest: jest.fn(),
     goToPage: jest.fn(),
     isConfirmingChange: false,
     onCancelChange: jest.fn(),

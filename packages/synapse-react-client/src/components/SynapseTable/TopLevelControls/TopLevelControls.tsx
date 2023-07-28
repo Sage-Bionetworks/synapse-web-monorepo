@@ -83,7 +83,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     getInitQueryRequest,
     lockedColumn,
     hasResettableFilters,
-    getLastQueryRequest,
+    getCurrentQueryRequest,
     isRowSelectionVisible,
     selectedRows,
     hasSelectedRows,
@@ -206,7 +206,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                         data,
                         selectedRows,
                         refresh,
-                        request: getLastQueryRequest(),
+                        request: getCurrentQueryRequest(),
                       })
                     }
                     startIcon={customControl.icon}

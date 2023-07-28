@@ -18,7 +18,6 @@ import {
   FacetColumnRequest,
   FacetColumnResult,
   FacetColumnResultValues,
-  QueryBundleRequest,
   ReferenceList,
   Row,
   SelectColumn,
@@ -34,14 +33,10 @@ import loadingScreen from '../LoadingScreen/LoadingScreen'
 import ModalDownload from '../ModalDownload/ModalDownload'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 import { QueryContextType } from '../QueryContext/QueryContext'
-import { Icon } from '../row_renderers/utils'
+import IconSvg from '../IconSvg'
 import { SynapseTableCell } from './SynapseTableCell/SynapseTableCell'
 import { Checkbox } from '../widgets/Checkbox'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
-import {
-  applyChangesToValuesColumn,
-  applyMultipleChangesToValuesColumn,
-} from '../widgets/query-filter/FacetFilterControls'
 import { ICON_STATE } from './SynapseTableConstants'
 import {
   getColumnIndicesWithType,
@@ -335,7 +330,7 @@ export class SynapseTable extends React.Component<
     const { queryResult, columnModels = [] } = data
     const { facets = [] } = data
     const { isExpanded, isExportTableDownloadOpen } = this.state
-    const queryRequest = this.props.queryContext.getLastQueryRequest()
+    const queryRequest = this.props.queryContext.getCurrentQueryRequest()
     const className = ''
     const hasResults = (data.queryResult?.queryResults.rows.length ?? 0) > 0
     // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
@@ -418,7 +413,6 @@ export class SynapseTable extends React.Component<
     facets: FacetColumnResult[],
     rows: Row[],
   ) => {
-    const lastQueryRequest = this.props.queryContext.getLastQueryRequest?.()!
     const {
       queryContext: { entity, isRowSelectionVisible },
       showAccessColumn,
@@ -464,7 +458,6 @@ export class SynapseTable extends React.Component<
                 isShowingDirectDownloadColumn,
                 isShowingAddToV2DownloadListColumn,
                 isRowSelectionVisible,
-                lastQueryRequest,
               )}
             </tr>
           </thead>
@@ -512,10 +505,11 @@ export class SynapseTable extends React.Component<
         direction: SORT_STATE[columnIconSortState[dict.index]],
       })
     }
-    const queryRequest = this.props.queryContext.getLastQueryRequest()
-    queryRequest.query.sort = sortedColumnSelection
-    queryRequest.query.offset = 0
-    this.props.queryContext.executeQueryRequest(queryRequest)
+    this.props.queryContext.executeQueryRequest(request => {
+      request.query.sort = sortedColumnSelection
+      request.query.offset = 0
+      return request
+    })
     this.setState({
       columnIconSortState,
       sortedColumnSelection,
@@ -672,7 +666,6 @@ export class SynapseTable extends React.Component<
     isShowingDownloadColumn: boolean | undefined,
     isShowingAddToV2DownloadListColumn: boolean,
     isRowSelectionVisible: boolean | undefined,
-    lastQueryRequest: QueryBundleRequest,
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
     const {
@@ -701,13 +694,6 @@ export class SynapseTable extends React.Component<
           const isFacetSelection: boolean =
             facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
           const facet = facets[facetIndex] as FacetColumnResultValues
-          const isSelectedSpanClass = isSelected
-            ? 'SRC-primary-background-color SRC-anchor-light'
-            : ''
-          const isSelectedIconClass = isSelected
-            ? 'SRC-selected-table-icon tool-icon'
-            : 'SRC-primary-text-color tool-icon'
-          const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
           const displayColumnName: string | undefined = getColumnDisplayName(
             column.name,
           )
@@ -721,24 +707,31 @@ export class SynapseTable extends React.Component<
             columnModel.columnType == ColumnTypeEnum.ENTITYID
           return (
             <th key={column.name}>
-              <div className="SRC-split">
-                <span style={{ whiteSpace: 'nowrap' }}>
-                  {displayColumnName}
-                </span>
+              <div
+                className="SRC-split"
+                style={{ justifyContent: 'space-between' }}
+              >
                 <div className="SRC-centerContent">
-                  {isFacetSelection &&
-                    !isLockedColumn &&
-                    this.configureFacetDropdown(
-                      facet,
-                      columnModel,
-                      lastQueryRequest,
-                    )}
+                  <span
+                    style={{
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {displayColumnName}
+                  </span>
+                </div>
+                <div className="SRC-centerContent" style={{ height: '22px' }}>
+                  {isFacetSelection && !isLockedColumn && (
+                    <span>
+                      {this.configureFacetDropdown(facet, columnModel)}
+                    </span>
+                  )}
                   {isSortableColumn(column.columnType) && (
                     <span
                       role="button"
                       aria-label="sort"
+                      aria-selected={isSelected}
                       tabIndex={0}
-                      className={sortSpanBackgoundClass}
                       onKeyPress={this.handleColumnSortPress({
                         index,
                         name: column.name,
@@ -748,13 +741,26 @@ export class SynapseTable extends React.Component<
                         name: column.name,
                       })}
                     >
-                      <Icon
-                        type={ICON_STATE[columnIndex]}
-                        cssClass={isSelectedIconClass}
+                      <IconSvg
+                        icon={ICON_STATE[columnIndex]}
+                        wrap={false}
+                        sx={{
+                          color: isSelected
+                            ? 'primary.contrastText'
+                            : 'primary.main',
+                          backgroundColor: isSelected ? 'primary.main' : 'none',
+
+                          '&:hover': {
+                            color: 'primary.contrastText',
+                            backgroundColor: 'primary.600',
+                          },
+                        }}
                       />
                     </span>
                   )}
-                  {isEntityIDColumn && <EntityIDColumnCopyIcon />}
+                  {isEntityIDColumn && (
+                    <EntityIDColumnCopyIcon size={'small'} />
+                  )}
                 </div>
               </div>
             </th>
@@ -824,7 +830,7 @@ export class SynapseTable extends React.Component<
   // Direct user to corresponding query on synapse
   private advancedSearch(event: React.SyntheticEvent) {
     event && event.preventDefault()
-    const lastQueryRequest = this.props.queryContext.getLastQueryRequest()
+    const lastQueryRequest = this.props.queryContext.getCurrentQueryRequest()
     const { query } = lastQueryRequest
     // base 64 encode the json of the query and go to url with the encoded object
     const encodedQuery = btoa(JSON.stringify(query))
@@ -843,48 +849,30 @@ export class SynapseTable extends React.Component<
   /**
    * Show the dropdown menu for a column that has been faceted
    *
-   * @param {number} index this is column index of the query table data
-   * @param {string} columnName this is the name of the column
-   * @param {FacetColumnResult[]} facetColumnResults
-   * @param {number} facetIndex
+   * @param {FacetColumnResult[]} facetColumnResult
+   * @param {ColumnModel} columnModel
    * @returns
    * @memberof SynapseTable
    */
   public configureFacetDropdown(
     facetColumnResult: FacetColumnResultValues,
     columnModel: ColumnModel,
-    lastQueryRequest: QueryBundleRequest,
   ) {
     return (
       <EnumFacetFilter
         containerAs="Dropdown"
         facetValues={facetColumnResult.facetValues}
         columnModel={columnModel}
-        onChange={facetNamesMap => {
-          applyMultipleChangesToValuesColumn(
-            lastQueryRequest,
-            facetColumnResult,
-            this.applyChangesFromQueryFilter,
-            facetNamesMap,
-          )
-        }}
-        onClear={() => {
-          applyChangesToValuesColumn(
-            lastQueryRequest,
-            facetColumnResult,
-            this.applyChangesFromQueryFilter,
-          )
-        }}
       />
     )
   }
 
   public applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
-    const queryRequest: QueryBundleRequest =
-      this.props.queryContext.getLastQueryRequest()
-    queryRequest.query.selectedFacets = facets
-    queryRequest.query.offset = 0
-    this.props.queryContext.executeQueryRequest(queryRequest)
+    this.props.queryContext.executeQueryRequest(request => {
+      request.query.selectedFacets = facets
+      request.query.offset = 0
+      return request
+    })
   }
 }
 

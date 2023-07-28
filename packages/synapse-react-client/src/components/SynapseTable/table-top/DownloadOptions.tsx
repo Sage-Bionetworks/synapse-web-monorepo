@@ -23,12 +23,12 @@ export const DownloadOptions: React.FunctionComponent<
   const {
     entity,
     data: queryResultBundle,
-    getLastQueryRequest,
+    getCurrentQueryRequest,
     hasResettableFilters,
     hasSelectedRows,
     selectedRows,
   } = useQueryContext()
-  const queryBundleRequest = getLastQueryRequest()
+  const queryBundleRequest = getCurrentQueryRequest()
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] =

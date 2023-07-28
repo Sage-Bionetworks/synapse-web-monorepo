@@ -6,15 +6,9 @@ table.DownloadListTableV2 {
   white-space: pre;
   .eligibileIcon {
     color: map.get(SRC.$colors, 'gray-800');
-    svg {
-      width: 15px;
-    }
   }
   .ineligibileIcon {
     color: map.get(SRC.$colors, 'warning');
-    svg {
-      width: 18px;
-    }
   }
   td.ineligibleForPackagingTd:first-child {
     background-color: #f9f5e7;

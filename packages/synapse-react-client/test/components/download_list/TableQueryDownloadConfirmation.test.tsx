@@ -64,7 +64,7 @@ async function setUp() {
     component = render(
       <QueryContextProvider
         queryContext={{
-          getLastQueryRequest: () => cloneDeep(mockQueryBundleRequest),
+          getCurrentQueryRequest: () => cloneDeep(mockQueryBundleRequest),
         }}
       >
         <QueryVisualizationContextProvider

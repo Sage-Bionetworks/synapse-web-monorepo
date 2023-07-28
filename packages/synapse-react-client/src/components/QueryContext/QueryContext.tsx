@@ -1,5 +1,4 @@
-import React from 'react'
-import { createContext, useContext } from 'react'
+import React, { createContext, useContext } from 'react'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import {
   AsynchronousJobStatus,
@@ -9,8 +8,8 @@ import {
   Row,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { ImmutableTableQueryResult } from '../useImmutableTableQuery'
-import { SetRequired } from 'type-fest'
+import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
+import { ReadonlyDeep, SetRequired } from 'type-fest'
 
 /*
   For details page: to lock a column (e.g. study, grant) so that the facet values and active filters
@@ -49,14 +48,17 @@ export type QueryContextType<
           : never
       >
     | undefined
+  currentQueryRequest: ReadonlyDeep<QueryBundleRequest>
+  nextQueryRequest: ReadonlyDeep<QueryBundleRequest>
   /** Returns a deep clone of the current query bundle request */
-  getLastQueryRequest: () => QueryBundleRequest
+  getCurrentQueryRequest: () => QueryBundleRequest
   /** Returns a deep clone of the initial query bundle request */
   getInitQueryRequest: () => QueryBundleRequest
   /** Updates the current query with the passed request */
-  executeQueryRequest: React.Dispatch<React.SetStateAction<QueryBundleRequest>>
+  executeQueryRequest: ImmutableTableQueryResult['setQuery']
   /** Resets the query to its initial state, clearing all filters added by the user */
   resetQuery: ImmutableTableQueryResult['resetQuery']
+  addValueToSelectedFacet: ImmutableTableQueryResult['addValueToSelectedFacet']
   removeSelectedFacet: ImmutableTableQueryResult['removeSelectedFacet']
   removeValueFromSelectedFacet: ImmutableTableQueryResult['removeValueFromSelectedFacet']
   /** Removes a matching QueryFilter from the query */

@@ -86,7 +86,9 @@ describe('CardContainer tests', () => {
   const queryContext: Partial<InfiniteQueryContextType> = {
     data,
     hasNextPage: true,
-    getLastQueryRequest: getLastQueryRequest,
+    nextQueryRequest: lastQueryRequest,
+    currentQueryRequest: lastQueryRequest,
+    getCurrentQueryRequest: getLastQueryRequest,
     appendNextPageToResults: getNextPageOfData,
   }
 
@@ -116,7 +118,6 @@ describe('CardContainer tests', () => {
     // go through calling handle view more
     const viewMoreButton = screen.getByRole('button', { name: 'View More' })
     await userEvent.click(viewMoreButton)
-    expect(getLastQueryRequest).toHaveBeenCalled()
     expect(getNextPageOfData).toHaveBeenCalled()
   })
 

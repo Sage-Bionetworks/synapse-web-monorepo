@@ -1,4 +1,4 @@
-import { ImmutableTableQueryResult } from '../useImmutableTableQuery'
+import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { UseQueryWrapperDataReturn } from './useQueryWrapperData'
 
 type PaginatedControls = {

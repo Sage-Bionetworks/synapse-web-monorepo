@@ -228,6 +228,18 @@ const queryResponse: QueryResultBundle = {
       columnType: 'BOOLEAN',
       facetType: 'enumeration',
     },
+    {
+      id: '87907',
+      name: 'Color',
+      columnType: 'STRING',
+      facetType: 'enumeration',
+    },
+    {
+      id: '87908',
+      name: 'MadeIn',
+      columnType: 'STRING',
+      facetType: 'enumeration',
+    },
   ],
   facets: [
     {

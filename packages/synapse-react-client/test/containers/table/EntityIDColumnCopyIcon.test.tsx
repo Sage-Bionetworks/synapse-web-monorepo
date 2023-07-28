@@ -43,7 +43,7 @@ const mockQueryRequest: QueryBundleRequest = {
 
 const queryContext: Partial<QueryContextType> = {
   data: idsQueryResponse as QueryResultBundle,
-  getLastQueryRequest: () => mockQueryRequest,
+  getCurrentQueryRequest: () => mockQueryRequest,
   isLoadingNewBundle: false,
 }
 

@@ -35,7 +35,7 @@ const mockGetLastQueryRequest = jest.fn()
 
 const defaultQueryContext: Partial<QueryContextType> = {
   executeQueryRequest: mockExecuteQueryRequest,
-  getLastQueryRequest: mockGetLastQueryRequest,
+  getCurrentQueryRequest: mockGetLastQueryRequest,
 }
 const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
   {
@@ -70,7 +70,15 @@ describe('SqlEditor tests', () => {
     const box = screen.getByRole('textbox')
     const newSql = 'select study from syn456'
     await userEvent.type(box, newSql + '{enter}')
-    expect(mockExecuteQueryRequest).toBeCalledWith(
+
+    expect(mockExecuteQueryRequest).toHaveBeenCalled()
+    const queryTransformFn = mockExecuteQueryRequest.mock.lastCall[0]
+    expect(typeof queryTransformFn).toBe('function')
+    expect(
+      queryTransformFn({
+        query: {},
+      }),
+    ).toEqual(
       expect.objectContaining({
         query: expect.objectContaining({
           sql: newSql,

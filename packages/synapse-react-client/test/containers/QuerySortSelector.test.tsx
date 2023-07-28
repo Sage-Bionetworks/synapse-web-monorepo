@@ -74,7 +74,7 @@ describe('QuerySortSelector tests', () => {
   const queryContext: Partial<QueryContextType> = {
     data,
     hasNextPage: false,
-    getLastQueryRequest: getLastQueryRequest,
+    getCurrentQueryRequest: getLastQueryRequest,
     executeQueryRequest: executeQueryRequest,
   }
 
@@ -93,14 +93,18 @@ describe('QuerySortSelector tests', () => {
 
   const verifyExpectedSortItem = async (expectedSortItem: SortItem) => {
     await waitFor(
-      () =>
-        expect(executeQueryRequest).toHaveBeenCalledWith(
+      () => {
+        expect(executeQueryRequest).toHaveBeenCalled()
+        const queryTransformFn = executeQueryRequest.mock.lastCall![0]
+        expect(typeof queryTransformFn).toBe('function')
+        expect(queryTransformFn(lastQueryRequest)).toEqual(
           expect.objectContaining({
             query: expect.objectContaining({
               sort: expect.arrayContaining([expectedSortItem]),
             }),
           }),
-        ),
+        )
+      },
       {
         timeout: 15000,
       },
