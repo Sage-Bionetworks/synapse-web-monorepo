@@ -2,6 +2,7 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import { UseQueryWrapperDataReturn } from './useQueryWrapperData'
 import {
   mockCompleteAsyncJob,
+  mockQueryBundleRequest,
   mockQueryResultBundle,
 } from '../../mocks/mockFileViewQuery'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -12,6 +13,9 @@ describe('useQueryWrapperPaginationControls tests', () => {
   const immutableTableQueryResult: ImmutableTableQueryResult = {
     currentPage: 1,
     entityId: 'syn123',
+    currentQueryRequest: mockQueryBundleRequest,
+    nextQueryRequest: mockQueryBundleRequest,
+    commitChanges: jest.fn(),
     getInitQueryRequest: jest.fn(),
     getCurrentQueryRequest: jest.fn(),
     goToPage: jest.fn(),
@@ -20,6 +24,7 @@ describe('useQueryWrapperPaginationControls tests', () => {
     onConfirmChange: jest.fn(),
     pageSize: 10,
     removeQueryFilter: jest.fn(),
+    addValueToSelectedFacet: jest.fn(),
     removeSelectedFacet: jest.fn(),
     removeValueFromQueryFilter: jest.fn(),
     removeValueFromSelectedFacet: jest.fn(),

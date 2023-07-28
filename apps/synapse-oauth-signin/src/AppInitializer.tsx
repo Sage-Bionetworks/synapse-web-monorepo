@@ -58,7 +58,7 @@ function AppInitializer(
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search)
     SynapseClient.getAccessTokenFromCookie().then(
-      (accessToken: string | null) => {
+      (accessToken: string | undefined) => {
         if (accessToken) {
           // check max age when re-establishing the session, not to auto-consent.
           const maxAgeURLParam = urlSearchParams.get('max_age')

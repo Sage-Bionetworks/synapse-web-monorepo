@@ -21,13 +21,13 @@ describe('Synapse Theme tests', () => {
     // @ts-expect-error -- we added a custom color to the palette
     expect(mergedTheme.palette!.success!.main).toEqual(customColor)
     expect(mergedTheme.palette!.warning).toEqual(
-      defaultMuiThemeOptions.palette.warning,
+      defaultMuiThemeOptions.palette!.warning,
     )
     expect(mergedTheme.palette!.info).toEqual(
-      defaultMuiThemeOptions.palette.info,
+      defaultMuiThemeOptions.palette!.info,
     )
     expect(mergedTheme.palette!.error).toEqual(
-      defaultMuiThemeOptions.palette.error,
+      defaultMuiThemeOptions.palette!.error,
     )
   })
 
