@@ -5,7 +5,7 @@ import {
   ForumPage,
   ForumPageProps,
 } from '../../../src/components/Forum/ForumPage'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { FORUM, FORUM_THREAD } from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
@@ -22,9 +22,9 @@ import {
 import {
   mockDiscussionThreadBundle,
   mockDiscussionThreadBundle2,
-} from '../../../mocks/discussion/mock_discussion'
-import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
-import { rest, server } from '../../../mocks/msw/server'
+} from '../../../src/mocks/discussion/mock_discussion'
+import { MOCK_ACCESS_TOKEN } from '../../../src/mocks/MockSynapseContext'
+import { rest, server } from '../../../src/mocks/msw/server'
 import SynapseClient from '../../../src/synapse-client'
 import { PaginatedIds } from '@sage-bionetworks/synapse-types'
 import failOnConsole from 'jest-fail-on-console'

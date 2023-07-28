@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { getHandlersForTableQuery } from '../mocks/msw/handlers/tableQueryHandlers'
-import mockRejectionReasonsTableQueryResultBundle from '../mocks/query/mockRejectionReasonsTableQueryResultBundle'
+import { getHandlersForTableQuery } from '../src/mocks/msw/handlers/tableQueryHandlers'
+import mockRejectionReasonsTableQueryResultBundle from '../src/mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
 import RejectDataAccessRequestModal from '../src/components/dataaccess/RejectDataAccessRequestModal'
 

@@ -5,7 +5,7 @@ import {
   DownloadConfirmationUI,
   DownloadConfirmationUIProps,
 } from '../../../src/components/download_list/DownloadConfirmationUI'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
 import * as DownloadDetailsModule from '../../../src/components/download_list/DownloadDetails'
 

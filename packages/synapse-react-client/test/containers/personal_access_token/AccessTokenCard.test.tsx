@@ -6,9 +6,9 @@ import {
   AccessTokenCard,
   AccessTokenCardProps,
 } from '../../../src/components/AccessTokenPage/AccessTokenCard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import * as SynapseContext from '../../../src/utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
 
 const mockOnDelete = jest.fn(() => null)
 

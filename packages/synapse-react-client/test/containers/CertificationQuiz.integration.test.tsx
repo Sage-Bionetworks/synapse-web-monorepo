@@ -3,13 +3,16 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import CertificationQuiz from '../../src/components/CertificationQuiz/CertificationQuiz'
 import * as ToastMessage from '../../src/components/ToastMessage/ToastMessage'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../src/utils/functions/getEndpoint'
-import { rest, server } from '../../mocks/msw/server'
-import { mockQuiz, mockPassingRecord } from '../../mocks/mockCertificationQuiz'
+import { rest, server } from '../../src/mocks/msw/server'
+import {
+  mockQuiz,
+  mockPassingRecord,
+} from '../../src/mocks/mockCertificationQuiz'
 
 window.open = jest.fn()
 

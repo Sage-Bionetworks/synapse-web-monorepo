@@ -18,7 +18,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
   helpMessage = 'This search bar is powered by MySQL Full Text Search.',
   helpUrl,
 }: FullTextSearchProps) => {
-  const { executeQueryRequest, getLastQueryRequest } = useQueryContext()
+  const { executeQueryRequest } = useQueryContext()
   const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -33,31 +33,30 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
         `Search term must have a minimum of ${MIN_SEARCH_QUERY_LENGTH} characters`,
       )
     } else {
-      const lastQueryRequestDeepClone = getLastQueryRequest()
+      executeQueryRequest(request => {
+        const { additionalFilters = [] } = request.query
 
-      const { additionalFilters = [] } = lastQueryRequestDeepClone.query
+        const textMatchesQueryFilter: TextMatchesQueryFilter = {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+          searchExpression: searchText,
+        }
+        // PORTALS-2093: does this additional filter already exist?
+        const found = additionalFilters.find(
+          filter =>
+            filter.concreteType == textMatchesQueryFilter.concreteType &&
+            filter.searchExpression == textMatchesQueryFilter.searchExpression,
+        )
+        if (found) {
+          return request
+        }
+        additionalFilters.push(textMatchesQueryFilter)
 
-      const textMatchesQueryFilter: TextMatchesQueryFilter = {
-        concreteType:
-          'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
-        searchExpression: searchText,
-      }
-      // PORTALS-2093: does this additional filter already exist?
-      const found = additionalFilters.find(
-        filter =>
-          filter.concreteType == textMatchesQueryFilter.concreteType &&
-          (filter as TextMatchesQueryFilter).searchExpression ==
-            textMatchesQueryFilter.searchExpression,
-      )
-      if (found) {
-        return
-      }
-      additionalFilters.push(textMatchesQueryFilter)
-
-      lastQueryRequestDeepClone.query.additionalFilters = additionalFilters
-      executeQueryRequest(lastQueryRequestDeepClone)
-      // reset the search text after adding this filter
-      setSearchText('')
+        request.query.additionalFilters = additionalFilters
+        // reset the search text after adding this filter
+        setSearchText('')
+        return request
+      })
     }
   }
 

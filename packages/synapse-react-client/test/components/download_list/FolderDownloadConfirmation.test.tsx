@@ -15,7 +15,7 @@ import {
 } from '../../../src/components/download_list/DownloadConfirmationUI'
 import { FolderDownloadConfirmation } from '../../../src/components/download_list'
 import { SynapseClientError } from '../../../src'
-import { mockQueryBundleRequest } from '../../../mocks/mockFileViewQuery'
+import { mockQueryBundleRequest } from '../../../src/mocks/mockFileViewQuery'
 import {
   useAddQueryToDownloadList,
   useGetEntityChildren,
@@ -23,7 +23,7 @@ import {
 import {
   getUseMutationMock,
   getUseQuerySuccessMock,
-} from '../../testutils/ReactQueryMockUtils'
+} from '../../../src/testutils/ReactQueryMockUtils'
 
 jest.mock('../../../src/synapse-queries', () => ({
   useGetEntityChildren: jest.fn(),

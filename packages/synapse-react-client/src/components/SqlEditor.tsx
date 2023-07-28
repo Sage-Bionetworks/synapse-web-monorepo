@@ -19,28 +19,29 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
   helpMessage = helpMessageCopy,
   helpUrl = helpLink,
 }: SqlEditorProps) => {
-  const { executeQueryRequest, getLastQueryRequest } = useQueryContext()
+  const { executeQueryRequest, getCurrentQueryRequest } = useQueryContext()
   const { showSqlEditor } = useQueryVisualizationContext()
 
   const [sql, setSql] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     if (showSqlEditor) {
-      const defaultSql = getLastQueryRequest().query.sql
+      const defaultSql = getCurrentQueryRequest().query.sql
 
       setSql(defaultSql)
       inputRef.current?.focus()
     }
-  }, [showSqlEditor, getLastQueryRequest])
+  }, [showSqlEditor, getCurrentQueryRequest])
 
   const search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const lastQueryRequestDeepClone = getLastQueryRequest()
-    lastQueryRequestDeepClone.query.sql = sql
-    lastQueryRequestDeepClone.query.offset = 0
-    lastQueryRequestDeepClone.query.additionalFilters = []
-    lastQueryRequestDeepClone.query.selectedFacets = []
-    executeQueryRequest(lastQueryRequestDeepClone)
+    executeQueryRequest(request => {
+      request.query.sql = sql
+      request.query.offset = 0
+      request.query.additionalFilters = []
+      request.query.selectedFacets = []
+      return request
+    })
   }
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {

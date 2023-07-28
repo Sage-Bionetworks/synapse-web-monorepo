@@ -5,7 +5,7 @@ import FileEntityPreview, {
 } from '../../../../src/components/FilePreview/FileEntityPreview'
 import * as FileHandleContentRendererModule from '../../../../src/components/FilePreview/FileHandleContentRenderer'
 import { PreviewRendererType } from '../../../../src/components/FilePreview/PreviewRendererType'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -17,12 +17,12 @@ import {
   FileHandleAssociation,
   S3FileHandle,
 } from '@sage-bionetworks/synapse-types'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
-import { MOCK_FILE_HANDLE_ID } from '../../../../mocks/mock_file_handle'
-import { rest, server } from '../../../../mocks/msw/server'
-import mockDatasetData from '../../../../mocks/entity/mockDataset'
+import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
+import { MOCK_FILE_HANDLE_ID } from '../../../../src/mocks/mock_file_handle'
+import { rest, server } from '../../../../src/mocks/msw/server'
+import mockDatasetData from '../../../../src/mocks/entity/mockDataset'
 import { SynapseContextType } from '../../../../src/utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../src/mocks/MockSynapseContext'
 
 jest
   .spyOn(FileHandleContentRendererModule, 'default')

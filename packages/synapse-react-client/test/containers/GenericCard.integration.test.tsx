@@ -18,17 +18,17 @@ import GenericCard, {
 import * as IconSvg from '../../src/components/IconSvg/IconSvg'
 import * as FileHandleLinkModule from '../../src/components/widgets/FileHandleLink'
 import * as ImageFileHandleModule from '../../src/components/widgets/ImageFileHandle'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import {
   ColumnTypeEnum,
   FileHandleAssociateType,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import { server } from '../../mocks/msw/server'
+import { server } from '../../src/mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
-} from '../../mocks/user/mock_user_profile'
+} from '../../src/mocks/user/mock_user_profile'
 import { QueryVisualizationContextProvider } from '../../src/components/QueryVisualizationWrapper'
 
 const renderComponent = (props: GenericCardProps) => {

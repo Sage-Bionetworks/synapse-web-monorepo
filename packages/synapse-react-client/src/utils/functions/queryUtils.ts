@@ -139,14 +139,17 @@ export function hasResettableFilters(
   const hasFacetFilters =
     Array.isArray(query.selectedFacets) &&
     query.selectedFacets.filter(
-      facet => facet.columnName !== lockedColumn?.columnName,
+      facet =>
+        facet.columnName.toLowerCase() !==
+        lockedColumn?.columnName?.toLowerCase(),
     ).length > 0
   const hasAdditionalFilters =
     Array.isArray(query.additionalFilters) &&
     query.additionalFilters.filter(queryFilter =>
       isColumnSingleValueQueryFilter(queryFilter) ||
       isColumnMultiValueFunctionQueryFilter(queryFilter)
-        ? queryFilter.columnName !== lockedColumn?.columnName
+        ? queryFilter.columnName.toLowerCase() !==
+          lockedColumn?.columnName?.toLowerCase()
         : true,
     ).length > 0
 
@@ -187,4 +190,36 @@ export function queryRequestsHaveSameTotalResults(
     }
     return isEqual(value1, value2)
   })
+}
+
+/**
+ * Remove null/empty values from the query parameters where an undefined value is equivalent.
+ *
+ * This will ensure a query object is as simple as possible for URL search parameters and also increases the
+ * likelihood of a cache hit.
+ * @param q
+ */
+export function removeEmptyQueryParams(q: Query) {
+  const query = cloneDeep(q)
+
+  if (query.limit == null) {
+    delete query.limit
+  }
+  if (query.offset == null) {
+    delete query.offset
+  }
+
+  if (query.sort == null || query.sort.length == 0) {
+    delete query.sort
+  }
+
+  if (query.selectedFacets == null || query.selectedFacets.length == 0) {
+    delete query.selectedFacets
+  }
+
+  if (query.additionalFilters == null || query.additionalFilters.length == 0) {
+    delete query.additionalFilters
+  }
+
+  return query
 }

@@ -4,16 +4,18 @@ import FacetNavPanel, {
 } from '../../../../src/components/widgets/facet-nav/FacetNavPanel'
 import { render, screen, within } from '@testing-library/react'
 import { FacetColumnResultValues } from '@sage-bionetworks/synapse-types'
-import testData from '../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
+import testData from '../../../../src/mocks/mockQueryResponseDataWithManyEnumFacets'
 import { SynapseConstants } from '../../../../src/utils'
 import {
   QueryContextProvider,
   QueryContextType,
 } from '../../../../src/components/QueryContext/QueryContext'
 import { QueryVisualizationContextProvider } from '../../../../src/components/QueryVisualizationWrapper'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import failOnConsole from 'jest-fail-on-console'
 import { truncate } from '../../../../src/components/widgets/facet-nav/FacetPlotLegendUtils'
+import { cloneDeep } from 'lodash-es'
+import { mockQueryBundleRequest } from '../../../../src/mocks/mockFileViewQuery'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -53,7 +55,9 @@ function createTestProps(overrides?: FacetNavPanelProps): FacetNavPanelProps {
 
 const defaultQueryContext: Partial<QueryContextType> = {
   data: testData,
-  getLastQueryRequest: () => ({}),
+  currentQueryRequest: cloneDeep(mockQueryBundleRequest),
+  nextQueryRequest: cloneDeep(mockQueryBundleRequest),
+  getCurrentQueryRequest: () => cloneDeep(mockQueryBundleRequest),
   isLoadingNewBundle: false,
 }
 
@@ -121,8 +125,7 @@ describe('FacetNavPanel tests', () => {
     await within(panel).findByText('Filter All Data By')
 
     const panelBody = await within(panel).findByRole('graphics-object')
-    expect(panelBody).not.toHaveClass('FacetNavPanel__body')
-    expect(panelBody).toHaveClass('FacetNavPanel__body--expanded')
+    expect(panelBody).toHaveClass('FacetNavPanel__body')
   })
 
   it('should truncate values', () => {

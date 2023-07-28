@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import SynapseClient from '../../../../src/synapse-client'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import useGetQueryResultBundle, {
   useGetQueryResultBundleWithAsyncStatus,
 } from '../../../../src/synapse-queries/entity/useGetQueryResultBundle'
@@ -16,8 +16,8 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
-import { MOCK_USER_ID } from '../../../../mocks/user/mock_user_profile'
+import { MOCK_CONTEXT_VALUE } from '../../../../src/mocks/MockSynapseContext'
+import { MOCK_USER_ID } from '../../../../src/mocks/user/mock_user_profile'
 
 let request: QueryBundleRequest
 

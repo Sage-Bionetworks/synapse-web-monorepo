@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import FavoritesPage from '../../src/components/favorites/FavoritesPage'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../src/utils/context/SynapseContext'
-import { mockFolderEntityHeader } from '../../mocks/entity/mockEntity'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { server } from '../../mocks/msw/server'
+import { mockFolderEntityHeader } from '../../src/mocks/entity/mockEntity'
+import mockFileEntityData from '../../src/mocks/entity/mockFileEntity'
+import { server } from '../../src/mocks/msw/server'
 
 function renderComponent(wrapperProps?: SynapseContextType) {
   render(<FavoritesPage />, {

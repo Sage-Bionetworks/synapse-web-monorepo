@@ -392,3 +392,13 @@ export const People: Story = {
     },
   },
 }
+
+export const TableWithJSONColumns: Story = {
+  args: {
+    sql: 'SELECT * FROM syn52115635',
+    tableConfiguration: {},
+    name: 'JSON Column Demo',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+  },
+}

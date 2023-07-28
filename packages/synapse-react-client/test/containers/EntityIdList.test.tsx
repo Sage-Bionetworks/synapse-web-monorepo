@@ -2,14 +2,14 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EntityIdList, {
   EntityIdListProps,
-} from '../../src/components/EntityIdList'
+} from '../../src/components/SynapseTable/SynapseTableCell/EntityIdList'
 import { act } from '@testing-library/react'
 import {
   MOCK_CONTEXT_VALUE,
   SynapseTestContext,
-} from '../../mocks/MockSynapseContext'
+} from '../../src/mocks/MockSynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
-import mockFileEntity from '../../mocks/entity/mockFileEntity'
+import mockFileEntity from '../../src/mocks/entity/mockFileEntity'
 import { getEntityHeadersByIds } from '../../src/synapse-client/SynapseClient'
 import SynapseClient from '../../src/synapse-client'
 

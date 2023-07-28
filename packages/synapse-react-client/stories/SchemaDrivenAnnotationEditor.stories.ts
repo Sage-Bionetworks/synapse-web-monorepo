@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { SchemaDrivenAnnotationEditor } from '../src/components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
-import { mockSchemaBinding } from '../mocks/mockSchema'
+import { mockSchemaBinding } from '../src/mocks/mockSchema'
 
 const meta = {
   title: 'Synapse/SchemaDrivenAnnotationEditor',

@@ -2,14 +2,14 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EvaluationIdRenderer, {
   EvaluationIdRendererProps,
-} from '../../src/components/EvaluationIdRenderer'
+} from '../../src/components/SynapseTable/SynapseTableCell/EvaluationIdRenderer'
 import { act } from '@testing-library/react'
 import {
   MOCK_CONTEXT_VALUE,
   SynapseTestContext,
-} from '../../mocks/MockSynapseContext'
+} from '../../src/mocks/MockSynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
-import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
+import { mockEvaluationQueue } from '../../src/mocks/entity/mockEvaluationQueue'
 import SynapseClient from '../../src/synapse-client'
 
 jest

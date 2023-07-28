@@ -7,10 +7,10 @@ import {
 } from '../../../../src/components/QueryContext/QueryContext'
 import { DownloadOptions } from '../../../../src/components/SynapseTable/table-top'
 import { DownloadOptionsProps } from '../../../../src/components/SynapseTable/table-top/DownloadOptions'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { mockFileViewEntity } from '../../../../mocks/entity/mockEntity'
-import mockDatasetData from '../../../../mocks/entity/mockDataset'
-import { mockTableEntity } from '../../../../mocks/entity/mockTableEntity'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
+import { mockFileViewEntity } from '../../../../src/mocks/entity/mockEntity'
+import mockDatasetData from '../../../../src/mocks/entity/mockDataset'
+import { mockTableEntity } from '../../../../src/mocks/entity/mockTableEntity'
 import { QueryVisualizationContextProvider } from '../../../../src/components/QueryVisualizationWrapper'
 
 const ADD_ALL_FILES_TO_DOWNLOAD_CART = 'Add All Files to Download Cart'
@@ -40,7 +40,7 @@ describe('Download Options tests', () => {
 
   const queryContext: Partial<QueryContextType> = {
     entity: mockTableEntity,
-    getLastQueryRequest: () => ({}),
+    getCurrentQueryRequest: () => ({}),
   }
 
   it('Shows correct options for a TableEntity', async () => {

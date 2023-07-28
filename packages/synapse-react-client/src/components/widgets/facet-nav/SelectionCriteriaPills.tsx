@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-  QueryContextType,
-  useQueryContext,
-} from '../../QueryContext/QueryContext'
+import { QueryContextType, useQueryContext } from '../../QueryContext'
 import {
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueQueryFilter,
@@ -25,6 +22,7 @@ import {
   isTextMatchesQueryFilter,
 } from '../../../utils/types/IsType'
 import pluralize from 'pluralize'
+import { ReadonlyDeep } from 'type-fest'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
 
@@ -96,7 +94,7 @@ function getPillPropsFromTextMatchesQueryFilter(
 }
 
 function getPillPropsFromQueryFilters(
-  queryFilters: QueryFilter[],
+  queryFilters: ReadonlyDeep<QueryFilter[]>,
   queryContext: QueryContextType,
   queryVisualizationContext: QueryVisualizationContextType,
 ): SelectionCriteriaPillProps[] {
@@ -105,7 +103,10 @@ function getPillPropsFromQueryFilters(
       isColumnSingleValueQueryFilter(queryFilter) ||
       isColumnMultiValueFunctionQueryFilter(queryFilter)
     ) {
-      if (queryFilter.columnName === queryContext.lockedColumn?.columnName) {
+      if (
+        queryFilter.columnName.toLowerCase() ===
+        queryContext.lockedColumn?.columnName?.toLowerCase()
+      ) {
         return []
       }
       return getPillPropsFromColumnQueryFilter(
@@ -116,22 +117,22 @@ function getPillPropsFromQueryFilters(
     } else if (isTextMatchesQueryFilter(queryFilter)) {
       return [getPillPropsFromTextMatchesQueryFilter(queryFilter, queryContext)]
     } else {
-      console.log(
-        'Unknown query filter type',
-        (queryFilter as any).concreteType,
-      )
+      console.log('Unknown query filter type', queryFilter)
       return []
     }
   })
 }
 
 function getPillPropsFromFacetFilters(
-  selectedFacets: FacetColumnRequest[],
+  selectedFacets: ReadonlyDeep<FacetColumnRequest[]>,
   queryContext: QueryContextType,
   queryVisualizationContext: QueryVisualizationContextType,
 ): SelectionCriteriaPillProps[] {
   return selectedFacets.flatMap(selectedFacet => {
-    if (selectedFacet.columnName === queryContext.lockedColumn?.columnName) {
+    if (
+      selectedFacet.columnName.toLowerCase() ===
+      queryContext.lockedColumn?.columnName?.toLowerCase()
+    ) {
       return []
     }
     const columnModel = queryContext.getColumnModel(selectedFacet.columnName)!
@@ -198,17 +199,16 @@ function getPillPropsFromFacetFilters(
 function SelectionCriteriaPills() {
   const queryContext = useQueryContext()
   const queryVisualizationContext = useQueryVisualizationContext()
-  const { getLastQueryRequest } = queryContext
-  const lastQueryRequest = getLastQueryRequest()
+  const { currentQueryRequest } = queryContext
 
   const queryFilterPillProps = getPillPropsFromQueryFilters(
-    lastQueryRequest.query?.additionalFilters ?? [],
+    currentQueryRequest.query?.additionalFilters ?? [],
     queryContext,
     queryVisualizationContext,
   )
 
   const facetPillProps = getPillPropsFromFacetFilters(
-    lastQueryRequest.query.selectedFacets ?? [],
+    currentQueryRequest.query.selectedFacets ?? [],
     queryContext,
     queryVisualizationContext,
   )

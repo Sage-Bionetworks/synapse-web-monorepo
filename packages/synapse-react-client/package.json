@@ -85,6 +85,7 @@
     "react-datetime": "^3.2.0",
     "react-error-boundary": "^3.1.4",
     "react-hot-toast": "2.2.0",
+    "react-inspector": "^6.0.2",
     "react-intersection-observer": "^9.5.2",
     "react-mailchimp-subscribe": "^2.1.3",
     "react-measure": "^2.5.2",
@@ -229,6 +230,7 @@
     "util": "^0.12.5",
     "vite": "^4.4.2",
     "vite-plugin-svgr": "^3.2.0",
+    "vite-plugin-turbosnap": "^1.0.2",
     "weak-napi": "^2.0.2",
     "whatwg-fetch": "^3.6.2"
   },

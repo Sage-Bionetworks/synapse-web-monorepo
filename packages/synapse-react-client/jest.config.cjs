@@ -11,7 +11,7 @@ const shared = {
   moduleNameMapper: {
     '\\.(css|less|scss)$': 'identity-obj-proxy',
     // Mock SVGs, loaded by SVGR https://react-svgr.com/docs/jest/
-    '\\.svg$': '<rootDir>/mocks/svg.js',
+    '\\.svg$': '<rootDir>/test/testutils/svg.js',
   },
   transformIgnorePatterns: [
     `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
@@ -25,7 +25,7 @@ module.exports = {
   projects: [
     {
       displayName: 'synapse-react-client unit tests',
-      testMatch: ['<rootDir>/test/**/*.test.[jt]s?(x)'],
+      testMatch: ['<rootDir>/**/*.test.[jt]s?(x)'],
       testPathIgnorePatterns: ['/node_modules/', 'integration.test\\.'],
       ...shared,
     },

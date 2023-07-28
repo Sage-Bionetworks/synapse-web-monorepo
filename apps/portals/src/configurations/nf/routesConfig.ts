@@ -39,8 +39,8 @@ import {
   studiesSql,
 } from './resources'
 import { toolsDetailsPage } from './synapseConfigs/tools'
-import datasetsV2, { datasetsDetailsPage } from './synapseConfigs/datasetsV2'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { datasetsDetailsPage } from './synapseConfigs/datasets'
 
 const limit = 3
 
@@ -290,22 +290,7 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        exact: true,
         path: 'Datasets',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...routeControlWrapperProps,
-              synapseConfig: datasets,
-            },
-          },
-        ],
-      },
-      {
-        path: 'DatasetsV2',
-        hideRouteFromNavbar: true,
         routes: [
           {
             path: '',
@@ -316,7 +301,7 @@ const routes: GenericRoute[] = [
                 isOutsideContainer: true,
                 props: {
                   ...routeControlWrapperProps,
-                  synapseConfig: datasetsV2,
+                  synapseConfig: datasets,
                 },
               },
             ],

@@ -9,9 +9,9 @@ import {
   tsvOption,
   writeHeaderOption,
 } from '../../src/components/ModalDownload/ModalDownload.FormSchema'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../src/synapse-client'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../src/mocks/MockSynapseContext'
 
 const renderComponent = (props: ModalDownloadProps) => {
   return render(<ModalDownload {...props} />, {

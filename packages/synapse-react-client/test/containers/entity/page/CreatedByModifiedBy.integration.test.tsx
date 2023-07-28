@@ -6,16 +6,16 @@ import {
   CreatedByModifiedBy,
   CreatedByModifiedByProps,
 } from '../../../../src/components/entity/page/CreatedByModifiedBy'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { server } from '../../../../mocks/msw/server'
-import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
+import { server } from '../../../../src/mocks/msw/server'
+import mockFileEntity from '../../../../src/mocks/entity/mockFileEntity'
 import {
   mockUserProfileData,
   mockUserProfileData2,
-} from '../../../../mocks/user/mock_user_profile'
-import { mockTableEntity } from '../../../../mocks/entity/mockTableEntity'
-import { getHandlersForTableQuery } from '../../../../mocks/msw/handlers/tableQueryHandlers'
-import { mockDatasetEntity } from '../../../../mocks/entity/mockDataset'
+} from '../../../../src/mocks/user/mock_user_profile'
+import { mockTableEntity } from '../../../../src/mocks/entity/mockTableEntity'
+import { getHandlersForTableQuery } from '../../../../src/mocks/msw/handlers/tableQueryHandlers'
+import { mockDatasetEntity } from '../../../../src/mocks/entity/mockDataset'
 
 function renderComponent(props: CreatedByModifiedByProps) {
   return render(<CreatedByModifiedBy {...props} />, {

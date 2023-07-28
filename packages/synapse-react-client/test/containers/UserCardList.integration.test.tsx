@@ -3,9 +3,9 @@ import React from 'react'
 import UserCardList, {
   UserCardListProps,
 } from '../../src/components/UserCardList/UserCardList'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../src/utils'
-import { server } from '../../mocks/msw/server'
+import { server } from '../../src/mocks/msw/server'
 
 function renderComponent(props: UserCardListProps) {
   return render(<UserCardList {...props} />, { wrapper: createWrapper() })

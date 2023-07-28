@@ -5,11 +5,11 @@ import {
   CreateProjectModal,
   CreateProjectModalProps,
 } from '../../src/components/CreateProjectModal'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../src/utils/context/SynapseContext'
-import { MOCK_INVALID_PROJECT_NAME } from '../../mocks/entity/mockEntity'
-import mockProjectEntityData from '../../mocks/entity/mockProject'
-import { server } from '../../mocks/msw/server'
+import { MOCK_INVALID_PROJECT_NAME } from '../../src/mocks/entity/mockEntity'
+import mockProjectEntityData from '../../src/mocks/entity/mockProject'
+import { server } from '../../src/mocks/msw/server'
 import { CLOSE_BUTTON_LABEL } from '../../src/components/DialogBase'
 import { CANCEL_BUTTON_TEXT } from '../../src/components/ConfirmationDialog/ConfirmationDialog'
 

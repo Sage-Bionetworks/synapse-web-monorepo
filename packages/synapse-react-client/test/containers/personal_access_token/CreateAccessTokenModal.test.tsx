@@ -5,9 +5,9 @@ import {
   CreateAccessTokenModal,
   CreateAccessTokenModalProps,
 } from '../../../src/components/AccessTokenPage/CreateAccessTokenModal'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import * as SynapseContext from '../../../src/utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
 import { CLOSE_BUTTON_LABEL } from '../../../src/components/DialogBase'
 import { CANCEL_BUTTON_TEXT } from '../../../src/components/ConfirmationDialog/ConfirmationDialog'
 
