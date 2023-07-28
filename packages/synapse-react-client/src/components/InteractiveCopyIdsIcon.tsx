@@ -1,14 +1,14 @@
 import React from 'react'
-import { IconButton, Tooltip } from '@mui/material'
+import { IconButton, IconButtonProps, Tooltip } from '@mui/material'
 import { TOOLTIP_DELAY_SHOW } from './SynapseTable/SynapseTableConstants'
 import IconSvg from './IconSvg/IconSvg'
 
-export type InteractiveCopyIdsIconProps = {
+export type InteractiveCopyIdsIconProps = Omit<IconButtonProps, 'onClick'> & {
   onCopy: () => void
 }
 
 export const InteractiveCopyIdsIcon = (props: InteractiveCopyIdsIconProps) => {
-  const { onCopy } = props
+  const { onCopy, ...buttonProps } = props
   return (
     <Tooltip
       title="Copy IDs to the clipboard"
@@ -16,11 +16,11 @@ export const InteractiveCopyIdsIcon = (props: InteractiveCopyIdsIconProps) => {
       placement="right"
     >
       <IconButton
-        sx={{ height: '40px' }}
         data-testid="copySynIdsButton"
+        {...buttonProps}
         onClick={onCopy}
       >
-        <IconSvg icon="contentCopy" />
+        <IconSvg wrap={false} icon="contentCopy" fontSize={'inherit'} />
       </IconButton>
     </Tooltip>
   )
