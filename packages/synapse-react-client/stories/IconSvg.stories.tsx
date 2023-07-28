@@ -8,7 +8,7 @@ const meta = {
   render: args => {
     return (
       <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}>
-        {IconStrings.toSorted().map(icon => (
+        {IconStrings.sort().map(icon => (
           <div style={{ margin: '10px', textAlign: 'center' }} key={icon}>
             <div>
               <IconSvg {...args} icon={icon} label={icon} />
