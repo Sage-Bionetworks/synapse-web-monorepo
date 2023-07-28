@@ -2,15 +2,15 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import ReviewerDashboard from '../../../src/components/dataaccess/ReviewerDashboard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { USER_BUNDLE } from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../src/utils/functions/getEndpoint'
 import { UserBundle } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../../mocks/msw/server'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+import { rest, server } from '../../../src/mocks/msw/server'
+import { MOCK_USER_ID } from '../../../src/mocks/user/mock_user_profile'
 import * as AccessRequirementDashboardModule from '../../../src/components/dataaccess/AccessRequirementDashboard'
 import * as AccessRequestSubmissionDashboardModule from '../../../src/components/dataaccess/AccessSubmissionDashboard'
 import * as UserAccessHistoryDashboardModule from '../../../src/components/dataaccess/AccessHistoryDashboard'

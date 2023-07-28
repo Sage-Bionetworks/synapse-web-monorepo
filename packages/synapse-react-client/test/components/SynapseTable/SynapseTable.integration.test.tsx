@@ -19,7 +19,7 @@ import SynapseTable, {
   SynapseTableProps,
 } from '../../../src/components/SynapseTable/SynapseTable'
 import { NOT_SET_DISPLAY_VALUE } from '../../../src/components/SynapseTable/SynapseTableConstants'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import {
   ENTITY_HEADERS,
   ENTITY_ID_VERSION,
@@ -46,15 +46,15 @@ import {
   UserProfile,
   Entity,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
-import { rest, server } from '../../../mocks/msw/server'
-import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
+import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
+import { rest, server } from '../../../src/mocks/msw/server'
+import queryResultBundleJson from '../../../src/mocks/query/syn16787123.json'
 import dayjs from 'dayjs'
 import { formatDate } from '../../../src/utils/functions/DateFormatter'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 import * as HasAccessModule from '../../../src/components/HasAccess/HasAccessV2'
 import * as EntityLinkModule from '../../../src/components/EntityLink'
 import * as UserCardModule from '../../../src/components/UserCard/UserCard'
@@ -115,7 +115,9 @@ const queryContext: Partial<PaginatedQueryContextType> = {
     concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
   },
   pageSize: 25,
-  getLastQueryRequest: getLastQueryRequest,
+  currentQueryRequest: cloneDeep(lastQueryRequest),
+  nextQueryRequest: cloneDeep(lastQueryRequest),
+  getCurrentQueryRequest: getLastQueryRequest,
   executeQueryRequest,
 }
 
@@ -315,15 +317,17 @@ describe('SynapseTable tests', () => {
         direction: SORT_STATE[1],
       }
       // below we match only the part of the object that we expect to have changed
-      await waitFor(() =>
-        expect(executeQueryRequest).toHaveBeenCalledWith(
+      await waitFor(() => {
+        expect(executeQueryRequest).toHaveBeenCalled()
+        expect(typeof executeQueryRequest.mock.lastCall[0]).toBe('function')
+        expect(executeQueryRequest.mock.lastCall[0](lastQueryRequest)).toEqual(
           expect.objectContaining({
             query: expect.objectContaining({
               sort: [descendingColumnObject],
             }),
           }),
-        ),
-      )
+        )
+      })
 
       // simulate second button click
       // simulate having clicked the sort button on the first column
@@ -338,13 +342,18 @@ describe('SynapseTable tests', () => {
         direction: SORT_STATE[2],
       }
       // below we match only the part of the object that we expect to have changed
-      expect(executeQueryRequest).toHaveBeenCalledWith(
-        expect.objectContaining({
-          query: expect.objectContaining({
-            sort: [ascendingColumnObject],
+      await waitFor(() => {
+        expect(executeQueryRequest).toHaveBeenCalled()
+        expect(typeof executeQueryRequest.mock.lastCall[0]).toBe('function')
+        expect(executeQueryRequest.mock.lastCall[0](lastQueryRequest)).toEqual(
+          expect.objectContaining({
+            query: expect.objectContaining({
+              sort: [ascendingColumnObject],
+            }),
           }),
-        }),
-      )
+        )
+      })
+
       // simulate second button click
       // simulate having clicked the sort button on the first column
       // projectStatus -- this should set it to descend
@@ -355,13 +364,17 @@ describe('SynapseTable tests', () => {
         )[0],
       )
       // below we match only the part of the object that we expect to have changed
-      expect(executeQueryRequest).toHaveBeenCalledWith(
-        expect.objectContaining({
-          query: expect.objectContaining({
-            sort: [],
+      await waitFor(() => {
+        expect(executeQueryRequest).toHaveBeenCalled()
+        expect(typeof executeQueryRequest.mock.lastCall[0]).toBe('function')
+        expect(executeQueryRequest.mock.lastCall[0](lastQueryRequest)).toEqual(
+          expect.objectContaining({
+            query: expect.objectContaining({
+              sort: [],
+            }),
           }),
-        }),
-      )
+        )
+      })
     })
   })
 

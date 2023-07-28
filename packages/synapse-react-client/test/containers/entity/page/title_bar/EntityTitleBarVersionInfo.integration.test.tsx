@@ -4,19 +4,19 @@ import {
   EntityTitleBarVersionInfoProps,
   EXPORTED_FOR_UNIT_TESTING,
 } from '../../../../../src/components/entity/page/title_bar/EntityTitleBarVersionInfo'
-import { mockFolderEntity } from '../../../../../mocks/entity/mockEntity'
-import mockFileEntity from '../../../../../mocks/entity/mockFileEntity'
-import { mockDatasetEntity } from '../../../../../mocks/entity/mockDataset'
+import { mockFolderEntity } from '../../../../../src/mocks/entity/mockEntity'
+import mockFileEntity from '../../../../../src/mocks/entity/mockFileEntity'
+import { mockDatasetEntity } from '../../../../../src/mocks/entity/mockDataset'
 import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../../src/testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
-import { rest, server } from '../../../../../mocks/msw/server'
+import { rest, server } from '../../../../../src/mocks/msw/server'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../../src/utils/functions/getEndpoint'
 import { ENTITY_BUNDLE_V2 } from '../../../../../src/utils/APIConstants'
-import { mockTableEntity } from '../../../../../mocks/entity/mockTableEntity'
+import { mockTableEntity } from '../../../../../src/mocks/entity/mockTableEntity'
 
 function renderComponent(props: EntityTitleBarVersionInfoProps) {
   return render(<EntityTitleBarVersionInfo {...props} />, {

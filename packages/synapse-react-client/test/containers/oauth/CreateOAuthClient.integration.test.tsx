@@ -1,13 +1,13 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { rest, server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
+import { rest, server } from '../../../src/mocks/msw/server'
 import {
   CreateOAuthModal,
   CreateOAuthModalProps,
 } from '../../../src/components/OAuthClientManagement/CreateOAuthClient'
-import { mockClientList1 } from '../../../mocks/oauth/MockClient'
+import { mockClientList1 } from '../../../src/mocks/oauth/MockClient'
 import * as ToastMessage from '../../../src/components/ToastMessage/ToastMessage'
 import {
   BackendDestinationEnum,

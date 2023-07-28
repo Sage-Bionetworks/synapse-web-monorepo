@@ -116,8 +116,8 @@ export const RangeFacetFilter: React.FunctionComponent<
                 <Range
                   key="Range"
                   initialValues={{
-                    min: selectedMin,
-                    max: selectedMax,
+                    min: parseInt(selectedMin),
+                    max: parseInt(selectedMax),
                   }}
                   type={rangeType}
                   onChange={(values: RangeValues) =>

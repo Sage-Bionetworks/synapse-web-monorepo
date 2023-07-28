@@ -20,7 +20,7 @@ import {
   S3UploadDestination,
   UploadType,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+import { MOCK_USER_ID } from '../../../src/mocks/user/mock_user_profile'
 import {
   getDataFileHandle,
   getFileHandleStorageInfo,

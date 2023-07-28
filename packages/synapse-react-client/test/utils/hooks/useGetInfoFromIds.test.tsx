@@ -5,7 +5,7 @@ import useGetInfoFromIds, {
 import { act } from 'react-dom/test-utils'
 import ReactDOM from 'react-dom'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
+import { SynapseTestContext } from '../../../src/mocks/MockSynapseContext'
 
 const HookWrapper = (props: UseGetInfoFromIdsProps) => {
   const useHookGetProfilesHook = useGetInfoFromIds(props) as UserProfile[]

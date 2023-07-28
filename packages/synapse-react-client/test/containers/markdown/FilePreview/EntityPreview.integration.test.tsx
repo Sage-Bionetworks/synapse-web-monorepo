@@ -1,12 +1,12 @@
 import { render, screen, within } from '@testing-library/react'
 import React from 'react'
 import * as FileEntityPreviewModule from '../../../../src/components/FilePreview/FileEntityPreview'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
-import { server } from '../../../../mocks/msw/server'
-import mockDatasetData from '../../../../mocks/entity/mockDataset'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
+import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
+import { server } from '../../../../src/mocks/msw/server'
+import mockDatasetData from '../../../../src/mocks/entity/mockDataset'
 import { SynapseContextType } from '../../../../src/utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../src/mocks/MockSynapseContext'
 import EntityPreview, {
   EntityPreviewProps,
 } from '../../../../src/components/FilePreview/EntityPreview'

@@ -18,10 +18,10 @@ import {
   EvaluationRoundInput,
   EvaluationRoundLimitInput,
 } from '../../../src/components/Evaluation/input_models/models'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../../src/synapse-client'
 import { EvaluationRound } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
 
 dayjs.extend(duration)
 

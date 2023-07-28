@@ -4,18 +4,18 @@ import {
   SynapseNavDrawer,
   SynapseNavDrawerProps,
 } from '../../src/components/SynapseNavDrawer'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../src/utils/context/SynapseContext'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
   mockUserBundle,
-} from '../../mocks/user/mock_user_profile'
+} from '../../src/mocks/user/mock_user_profile'
 import { SynapseClient } from '../../src'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import { SubmissionSearchResult } from '@sage-bionetworks/synapse-types'
-import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
-import { mockSubmittedSubmission } from '../../mocks/dataaccess/MockSubmission'
+import { mockManagedACTAccessRequirement } from '../../src/mocks/mockAccessRequirements'
+import { mockSubmittedSubmission } from '../../src/mocks/dataaccess/MockSubmission'
 
 const defaultProps: SynapseNavDrawerProps = {
   initIsOpen: false,

@@ -9,7 +9,7 @@ import {
   NextStepLinkProps,
 } from '../../../src/components/SynapseForm/NavButtons'
 import { NavActionEnum, Step } from '../../../src/components/SynapseForm/types'
-import { steps } from '../../../mocks/mock_drug_tool_data'
+import { steps } from '../../../src/mocks/mock_drug_tool_data'
 
 const stepsArray: Step[] = _.cloneDeep(steps)
 

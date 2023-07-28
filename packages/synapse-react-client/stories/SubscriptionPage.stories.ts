@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import SubscriptionPage from '../src/components/SubscriptionPage'
 import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
-import { getHandlers } from '../mocks/msw/handlers'
+import { getHandlers } from '../src/mocks/msw/handlers'
 
 const meta = {
   title: 'Synapse/Following/SubscriptionPage',

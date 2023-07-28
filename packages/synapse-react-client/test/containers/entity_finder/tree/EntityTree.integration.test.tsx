@@ -22,7 +22,7 @@ import {
   EntityTreeNodeType,
   VirtualizedTreeProps,
 } from '../../../../src/components/EntityFinder/tree/VirtualizedTree'
-import { rest, server } from '../../../../mocks/msw/server'
+import { rest, server } from '../../../../src/mocks/msw/server'
 import failOnConsole from 'jest-fail-on-console'
 import {
   BackendDestinationEnum,
@@ -34,12 +34,14 @@ import {
   FAVORITES,
   PROJECTS,
 } from '../../../../src/utils/APIConstants'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
-import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
+import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
+import mockFileEntity from '../../../../src/mocks/entity/mockFileEntity'
 import * as ToastMessageModule from '../../../../src/components/ToastMessage/ToastMessage'
-import mockProject, { mockProjects } from '../../../../mocks/entity/mockProject'
-import { mockFolderEntity } from '../../../../mocks/entity/mockEntity'
+import mockProject, {
+  mockProjects,
+} from '../../../../src/mocks/entity/mockProject'
+import { mockFolderEntity } from '../../../../src/mocks/entity/mockEntity'
 
 const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'
 

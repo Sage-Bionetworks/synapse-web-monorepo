@@ -1,19 +1,19 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import DataAccessRequestAccessorsFilesForm from '../../src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm'
-import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
-import { MOCK_FOLDER_ID } from '../../mocks/entity/mockEntity'
-import { MOCK_RESEARCH_PROJECT_ID } from '../../mocks/dataaccess/MockResearchProject'
+import { mockManagedACTAccessRequirement } from '../../src/mocks/mockAccessRequirements'
+import { MOCK_FOLDER_ID } from '../../src/mocks/entity/mockEntity'
+import { MOCK_RESEARCH_PROJECT_ID } from '../../src/mocks/dataaccess/MockResearchProject'
 import {
   MOCK_DATA_ACCESS_RENEWAL,
   MOCK_DATA_ACCESS_REQUEST,
-} from '../../mocks/dataaccess/MockDataAccessRequest'
+} from '../../src/mocks/dataaccess/MockDataAccessRequest'
 import { MOCK_REPO_ORIGIN } from '../../src/utils/functions/getEndpoint'
-import { getDataAccessRequestHandlers } from '../../mocks/msw/handlers/dataAccessRequestHandlers'
-import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
-import { getFileHandlers } from '../../mocks/msw/handlers/fileHandlers'
-import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
-import { getAccessRequirementHandlers } from '../../mocks/msw/handlers/accessRequirementHandlers'
+import { getDataAccessRequestHandlers } from '../../src/mocks/msw/handlers/dataAccessRequestHandlers'
+import { getUserProfileHandlers } from '../../src/mocks/msw/handlers/userProfileHandlers'
+import { getFileHandlers } from '../../src/mocks/msw/handlers/fileHandlers'
+import { getWikiHandlers } from '../../src/mocks/msw/handlers/wikiHandlers'
+import { getAccessRequirementHandlers } from '../../src/mocks/msw/handlers/accessRequirementHandlers'
 import { SynapseContextConsumer, SynapseContextProvider } from '../../src'
 import AccessRequirementList from '../../src/components/AccessRequirementList/AccessRequirementList'
 

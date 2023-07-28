@@ -4,17 +4,17 @@ import AddConditionsForUseButton, {
   AddConditionsForUseButtonProps,
 } from '../../../src/components/AccessRequirement/AddConditionsForUseButton'
 import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { rest, server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
+import { rest, server } from '../../../src/mocks/msw/server'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../src/utils/functions/getEndpoint'
 import { ENTITY_BUNDLE_V2, USER_BUNDLE } from '../../../src/utils/APIConstants'
-import mockFileEntity from '../../../mocks/entity/mockFileEntity'
+import mockFileEntity from '../../../src/mocks/entity/mockFileEntity'
 import userEvent from '@testing-library/user-event'
-import { mockUnmetControlledDataRestrictionInformationACT } from '../../../mocks/mock_has_access_data'
-import { mockUserBundle } from '../../../mocks/user/mock_user_profile'
+import { mockUnmetControlledDataRestrictionInformationACT } from '../../../src/mocks/mock_has_access_data'
+import { mockUserBundle } from '../../../src/mocks/user/mock_user_profile'
 
 function renderComponent(props: AddConditionsForUseButtonProps) {
   return render(<AddConditionsForUseButton {...props} />, {

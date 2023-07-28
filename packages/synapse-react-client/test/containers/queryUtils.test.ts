@@ -1,6 +1,6 @@
 import { getNextPageOfData } from '../../src/utils/functions'
 import { SynapseConstants } from '../../src/utils'
-import syn16787123Json from '../../mocks/query/syn16787123.json'
+import syn16787123Json from '../../src/mocks/query/syn16787123.json'
 import {
   COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
   ColumnSingleValueFilterOperator,
@@ -22,11 +22,12 @@ import {
   isFacetAvailable,
   isSingleNotSetValue,
   queryRequestsHaveSameTotalResults,
+  removeEmptyQueryParams,
 } from '../../src/utils/functions/queryUtils'
 import { LockedColumn } from '../../src'
-import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
-import { mockFileViewEntity } from '../../mocks/entity/mockEntity'
-import mockDataset from '../../mocks/entity/mockDataset'
+import { mockTableEntity } from '../../src/mocks/entity/mockTableEntity'
+import { mockFileViewEntity } from '../../src/mocks/entity/mockEntity'
+import mockDataset from '../../src/mocks/entity/mockDataset'
 import SynapseClient from '../../src/synapse-client'
 
 jest.mock('../../src/synapse-client/SynapseClient', () => ({
@@ -387,5 +388,63 @@ describe('facet support', () => {
       ]
       expect(queryRequestsHaveSameTotalResults(query, newQuery)).toEqual(true)
     })
+  })
+})
+
+describe('removeEmptyQueryParams', () => {
+  it('removes empty arrays', () => {
+    const query: Query = {
+      sql: 'select * from syn123',
+      selectedFacets: [],
+      additionalFilters: [],
+      sort: [],
+      limit: 10,
+      offset: 20,
+    }
+
+    const expected = {
+      sql: 'select * from syn123',
+      limit: 10,
+      offset: 20,
+    }
+
+    const actual = removeEmptyQueryParams(query)
+    expect(actual).toEqual(expected)
+  })
+
+  it('removes null values', () => {
+    const query: Query = {
+      sql: 'select * from syn123',
+      selectedFacets: null,
+      additionalFilters: null,
+      sort: null,
+      limit: null,
+      offset: null,
+    }
+
+    const expected = {
+      sql: 'select * from syn123',
+    }
+
+    const actual = removeEmptyQueryParams(query)
+    expect(actual).toEqual(expected)
+  })
+
+  it('removes undefined values', () => {
+    const query: Query = {
+      sql: 'select * from syn123',
+      selectedFacets: undefined,
+      additionalFilters: undefined,
+      sort: undefined,
+      limit: undefined,
+      offset: undefined,
+    }
+
+    const expected = {
+      sql: 'select * from syn123',
+    }
+
+    const actual = removeEmptyQueryParams(query)
+    expect(actual).toEqual(expected)
   })
 })

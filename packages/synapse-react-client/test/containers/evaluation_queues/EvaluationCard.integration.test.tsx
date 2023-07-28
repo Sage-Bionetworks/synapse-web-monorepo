@@ -8,9 +8,9 @@ import {
   EvaluationCardProps,
   ExistingEvaluation,
 } from '../../../src/components/Evaluation/EvaluationCard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
-import { server } from '../../../mocks/msw/server'
+import { server } from '../../../src/mocks/msw/server'
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 
 describe('test Evaluation Card', () => {

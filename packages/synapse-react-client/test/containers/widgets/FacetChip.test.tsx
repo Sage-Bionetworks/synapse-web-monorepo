@@ -13,8 +13,8 @@ import {
   FacetColumnResult,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
-import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
+import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
+import mockQueryResponseData from '../../../src/mocks/mockQueryResponseData'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
@@ -41,7 +41,7 @@ const mockGetQueryRequest = jest.fn()
 
 const defaultQueryContext: Partial<QueryContextType> = {
   data: mockQueryResponseData as QueryResultBundle,
-  getLastQueryRequest: mockGetQueryRequest,
+  getCurrentQueryRequest: mockGetQueryRequest,
   executeQueryRequest: mockExecuteQueryRequest,
   isLoadingNewBundle: false,
 }

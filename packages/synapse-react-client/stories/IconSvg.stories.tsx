@@ -27,8 +27,7 @@ export const Icon: Story = {
   args: {
     sx: {
       color: 'primary.main',
-      width: '40px',
-      height: '40px',
     },
+    fontSize: 'large',
   },
 }

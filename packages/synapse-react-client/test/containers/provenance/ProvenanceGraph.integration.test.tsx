@@ -3,18 +3,18 @@ import React from 'react'
 import ProvenanceGraph, {
   ProvenanceProps,
 } from '../../../src/components/ProvenanceGraph/ProvenanceGraph'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { ACTIVITY_FOR_ENTITY } from '../../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../src/utils/functions/getEndpoint'
-import { mockActivity } from '../../../mocks/provenance/mockActivity'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../../mocks/msw/server'
-import { SynapseApiResponse } from '../../../mocks/msw/handlers'
+import { mockActivity } from '../../../src/mocks/provenance/mockActivity'
+import mockFileEntityData from '../../../src/mocks/entity/mockFileEntity'
+import { rest, server } from '../../../src/mocks/msw/server'
+import { SynapseApiResponse } from '../../../src/mocks/msw/handlers'
 import { Activity } from '@sage-bionetworks/synapse-types'
-import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
+import { MOCK_TABLE_ENTITY_ID } from '../../../src/mocks/entity/mockTableEntity'
 
 function renderComponent(props: ProvenanceProps) {
   return render(<ProvenanceGraph {...props} />, { wrapper: createWrapper() })
