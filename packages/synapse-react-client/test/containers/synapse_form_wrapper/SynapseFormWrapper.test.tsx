@@ -8,15 +8,15 @@ import SynapseFormWrapper, {
   SynapseFormWrapperProps,
   UploadToolSearchParams,
 } from '../../../src/components/SynapseForm/SynapseFormWrapper'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../../src/synapse-client'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
+import mockFileEntityData from '../../../src/mocks/entity/mockFileEntity'
 import {
   mockFileEntityWithVersion,
   mockFormData,
   mockFormSchema as formschemaJson,
-} from '../../../mocks/mock_drug_tool_data'
-import { mockFileHandle } from '../../../mocks/mock_file_handle'
+} from '../../../src/mocks/mock_drug_tool_data'
+import { mockFileHandle } from '../../../src/mocks/mock_file_handle'
 
 let onSaveCaptor: SynapseFormProps['onSave'] | undefined = undefined
 let onSubmitCaptor: SynapseFormProps['onSubmit'] | undefined = undefined

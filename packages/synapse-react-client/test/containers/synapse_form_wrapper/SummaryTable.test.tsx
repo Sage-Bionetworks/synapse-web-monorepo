@@ -11,7 +11,7 @@ import {
   mockFormSchema as formSchema,
   mockUiSchema as formUiSchema,
   stepsWithUserData,
-} from '../../../mocks/mock_drug_tool_data'
+} from '../../../src/mocks/mock_drug_tool_data'
 
 const stepsArray: Step[] = _.cloneDeep(stepsWithUserData)
 

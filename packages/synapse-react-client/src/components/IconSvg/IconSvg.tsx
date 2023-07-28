@@ -114,8 +114,10 @@ import PackagableFile from '../../assets/mui_components/PackagableFile'
 import Proteomics from '../../assets/mui_components/Proteomics'
 import Rat from '../../assets/mui_components/Rat'
 import { EntityType } from '@sage-bionetworks/synapse-types'
-import { SxProps, Tooltip } from '@mui/material'
+import { Tooltip } from '@mui/material'
 import CreateVersion from '../../assets/icons/CreateVersion'
+import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
+import { SortDown, SortUp } from '../../assets/themed_icons'
 import { GoogleIcon24 } from '../../assets/GoogleIcon24'
 
 export const IconStrings = [
@@ -236,6 +238,8 @@ export const IconStrings = [
   'createVersion',
   'email',
   'addConditions',
+  'sortUp',
+  'sortDown',
   'google24',
 ] as const
 
@@ -245,262 +249,265 @@ export type IconSvgProps = {
   icon: IconName
   // If provided, will be shown in tooltip
   label?: string
-  sx?: SxProps
   wrap?: boolean
-}
+} & SvgIconProps
 
-function IconMapping(props: { icon: string; sx?: SxProps }) {
-  const { icon } = props
+function IconMapping(props: { icon: string } & SvgIconProps) {
+  const { icon, ...otherProps } = props
   const color = undefined
 
-  const sx: SxProps = {
+  otherProps.sx = {
     verticalAlign: 'middle',
-    ...props.sx,
+    ...otherProps.sx,
   }
 
   switch (icon) {
     case 'accessOpen':
-      return <LockOpenTwoTone sx={sx} />
+      return <LockOpenTwoTone {...otherProps} />
     case 'accessClosed':
-      return <VpnKeyTwoTone sx={sx} />
+      return <VpnKeyTwoTone {...otherProps} />
     case 'add':
-      return <AddTwoTone sx={sx} />
+      return <AddTwoTone {...otherProps} />
     case 'addConditions':
-      return <FactCheckTwoTone sx={sx} />
+      return <FactCheckTwoTone {...otherProps} />
     case 'arrowBack':
-      return <ArrowBack sx={sx} />
+      return <ArrowBack {...otherProps} />
     case 'arrowForward':
-      return <ArrowForward sx={sx} />
+      return <ArrowForward {...otherProps} />
     case 'arrowDropUp':
-      return <ArrowDropUpTwoTone sx={sx} />
+      return <ArrowDropUpTwoTone {...otherProps} />
     case 'arrowDropDown':
-      return <ArrowDropDownTwoTone sx={sx} />
+      return <ArrowDropDownTwoTone {...otherProps} />
     case 'article':
-      return <ArticleTwoTone sx={sx} />
+      return <ArticleTwoTone {...otherProps} />
     case 'block':
-      return <Block sx={sx} />
+      return <Block {...otherProps} />
     case 'check':
-      return <Check sx={sx}></Check>
+      return <Check {...otherProps} />
     case 'clear':
-      return <Clear sx={sx}></Clear>
+      return <Clear {...otherProps} />
     case 'cart':
-      return <ShoppingCartOutlined sx={sx}></ShoppingCartOutlined>
+      return <ShoppingCartOutlined {...otherProps} />
     case 'cards':
-      return <ViewAgendaTwoTone sx={sx}></ViewAgendaTwoTone>
+      return <ViewAgendaTwoTone {...otherProps} />
     case 'clock':
-      return <AccessTimeTwoTone sx={sx} />
+      return <AccessTimeTwoTone {...otherProps} />
     case 'code':
-      return <Code sx={sx}></Code>
+      return <Code {...otherProps} />
     case 'columns':
-      return <ViewColumnTwoTone sx={sx}></ViewColumnTwoTone>
+      return <ViewColumnTwoTone {...otherProps} />
     case 'circle':
-      return <RadioButtonUncheckedTwoTone sx={sx} />
+      return <RadioButtonUncheckedTwoTone {...otherProps} />
     case 'checkCircle':
-      return <CheckCircleTwoTone sx={sx} />
+      return <CheckCircleTwoTone {...otherProps} />
     case 'createVersion':
-      return <CreateVersion sx={sx} />
+      return <CreateVersion {...otherProps} />
     case 'dashboard':
-      return <DashboardTwoTone sx={sx}></DashboardTwoTone>
+      return <DashboardTwoTone {...otherProps} />
     case 'delete':
-      return <DeleteTwoTone sx={sx} />
+      return <DeleteTwoTone {...otherProps} />
     case 'deleteSweep':
-      return <DeleteSweepTwoTone sx={sx} />
+      return <DeleteSweepTwoTone {...otherProps} />
     case 'openInNewWindow':
-      return <OpenInNewTwoTone sx={sx} />
+      return <OpenInNewTwoTone {...otherProps} />
     case 'phone':
-      return <PhoneTwoTone sx={sx} />
+      return <PhoneTwoTone {...otherProps} />
     case 'people':
-      return <PeopleTwoTone sx={sx} />
+      return <PeopleTwoTone {...otherProps} />
     case 'addToCart':
-      return <AddShoppingCart sx={sx}></AddShoppingCart>
+      return <AddShoppingCart {...otherProps} />
     case 'addCircleOutline':
-      return <AddCircleOutline sx={sx}></AddCircleOutline>
+      return <AddCircleOutline {...otherProps} />
     case 'addCircleTwoTone':
-      return <AddCircleTwoTone sx={sx}></AddCircleTwoTone>
+      return <AddCircleTwoTone {...otherProps} />
     case 'reload':
-      return <Cached sx={sx}></Cached>
+      return <Cached {...otherProps} />
     case 'team':
-      return <Group sx={sx}></Group>
+      return <Group {...otherProps} />
     case 'photoCamera':
-      return <PhotoCameraOutlined sx={sx}></PhotoCameraOutlined>
+      return <PhotoCameraOutlined {...otherProps} />
     case 'verticalEllipsis':
-      return <MoreVertTwoTone sx={sx} />
+      return <MoreVertTwoTone {...otherProps} />
     case 'sync':
-      return <SyncTwoTone sx={sx} />
+      return <SyncTwoTone {...otherProps} />
     case 'public':
-      return <PublicTwoTone sx={sx} />
+      return <PublicTwoTone {...otherProps} />
     case 'clipboard':
-      return <AssignmentOutlined sx={sx} />
+      return <AssignmentOutlined {...otherProps} />
     case 'clipboardCheck':
-      return <AssignmentTurnedInTwoTone sx={sx} />
+      return <AssignmentTurnedInTwoTone {...otherProps} />
     case 'info':
-      return <InfoOutlined sx={sx}></InfoOutlined>
+      return <InfoOutlined {...otherProps} />
     case 'favTwoTone':
-      return <StarTwoTone sx={sx}></StarTwoTone>
+      return <StarTwoTone {...otherProps} />
     case 'favOutline':
-      return <StarOutline sx={sx}></StarOutline>
+      return <StarOutline {...otherProps} />
     case 'fav':
-      return <Star sx={sx}></Star>
+      return <Star {...otherProps} />
     case 'github':
-      return <GitHub sx={sx} />
+      return <GitHub {...otherProps} />
     case 'peopleTwoTone':
-      return <PeopleTwoTone sx={sx}></PeopleTwoTone>
+      return <PeopleTwoTone {...otherProps} />
     case 'challengesTwoTone':
-      return <AssessmentTwoTone sx={sx}></AssessmentTwoTone>
+      return <AssessmentTwoTone {...otherProps} />
     case 'download':
-      return <GetAppTwoTone sx={sx}></GetAppTwoTone>
+      return <GetAppTwoTone {...otherProps} />
     case 'errorOutlined':
-      return <ErrorOutlined sx={sx} />
+      return <ErrorOutlined {...otherProps} />
     case 'searchOutlined':
-      return <SearchOutlined sx={sx}></SearchOutlined>
+      return <SearchOutlined {...otherProps} />
     case 'search':
-      return <SearchTwoTone sx={sx}></SearchTwoTone>
+      return <SearchTwoTone {...otherProps} />
     case 'history':
-      return <HistoryTwoTone sx={sx}></HistoryTwoTone>
+      return <HistoryTwoTone {...otherProps} />
     case 'time':
-      return <WatchLater sx={sx}></WatchLater>
+      return <WatchLater {...otherProps} />
     case 'login':
-      return <Login sx={sx}></Login>
+      return <Login {...otherProps} />
     case 'helpOutlineTwoTone':
-      return <HelpOutlineTwoTone sx={sx}></HelpOutlineTwoTone>
+      return <HelpOutlineTwoTone {...otherProps} />
     case 'helpOutlined':
-      return <HelpOutlined sx={sx}></HelpOutlined>
+      return <HelpOutlined {...otherProps} />
     case 'close':
     case 'cross':
-      return <CloseTwoTone sx={sx} />
+      return <CloseTwoTone {...otherProps} />
     case 'expandLess':
-      return <ExpandLess sx={sx}></ExpandLess>
+      return <ExpandLess {...otherProps} />
     case 'expandMore':
-      return <ExpandMore sx={sx}></ExpandMore>
+      return <ExpandMore {...otherProps} />
     case 'rat':
-      return <Rat sx={sx}></Rat>
+      return <Rat {...otherProps} />
     case 'chromatin':
-      return <Chromatin sx={sx}></Chromatin>
+      return <Chromatin {...otherProps} />
     case 'clinical':
-      return <Clinical sx={sx}></Clinical>
+      return <Clinical {...otherProps} />
     case 'contentCopy':
-      return <ContentCopyTwoTone sx={sx} />
+      return <ContentCopyTwoTone {...otherProps} />
     case 'data':
-      return <Data sx={sx}></Data>
+      return <Data {...otherProps} />
     case 'dataLocked':
-      return <DataLocked sx={sx}></DataLocked>
+      return <DataLocked {...otherProps} />
     case 'geneExpression':
-      return <GeneExpression sx={sx}></GeneExpression>
+      return <GeneExpression {...otherProps} />
     case 'geneVariants':
-      return <GeneVariants sx={sx}></GeneVariants>
+      return <GeneVariants {...otherProps} />
     case 'imaging':
-      return <Imaging sx={sx}></Imaging>
+      return <Imaging {...otherProps} />
     case 'lineGraph':
-      return <LineGraph sx={sx}></LineGraph>
+      return <LineGraph {...otherProps} />
     case 'kinomics':
-      return <Kinomics sx={sx}></Kinomics>
+      return <Kinomics {...otherProps} />
     case 'proteomics':
-      return <Proteomics sx={sx}></Proteomics>
+      return <Proteomics {...otherProps} />
     case 'packagableFile':
-      return <PackagableFile sx={sx}></PackagableFile>
+      return <PackagableFile {...otherProps} />
     case 'other':
-      return <Other fill={color} sx={sx}></Other>
+      return <Other fill={color} {...otherProps} />
     case 'wiki':
-      return <LanguageTwoTone sx={sx} />
+      return <LanguageTwoTone {...otherProps} />
     case 'file':
-      return <InsertDriveFileTwoTone sx={sx} />
+      return <InsertDriveFileTwoTone {...otherProps} />
     case 'fileOutlined':
-      return <InsertDriveFileOutlined sx={sx} />
+      return <InsertDriveFileOutlined {...otherProps} />
     case 'folder':
-      return <FolderTwoTone sx={sx} />
+      return <FolderTwoTone {...otherProps} />
     case 'newFolder':
-      return <CreateNewFolderTwoTone sx={sx} />
+      return <CreateNewFolderTwoTone {...otherProps} />
     case 'link':
-      return <LinkTwoTone sx={sx} />
+      return <LinkTwoTone {...otherProps} />
     case 'table':
-      return <TableChartTwoTone sx={sx} />
+      return <TableChartTwoTone {...otherProps} />
     case 'entityview':
-      return <ListTwoTone sx={sx} />
+      return <ListTwoTone {...otherProps} />
     case 'submissionview':
-      return <StorageTwoTone sx={sx} />
+      return <StorageTwoTone {...otherProps} />
     case 'challenge':
-      return <AssessmentTwoTone sx={sx} />
+      return <AssessmentTwoTone {...otherProps} />
     case 'discussion':
-      return <QuestionAnswerTwoTone sx={sx} />
+      return <QuestionAnswerTwoTone {...otherProps} />
     case 'dataset':
-      return <Dataset sx={sx} />
+      return <Dataset {...otherProps} />
     case 'datasetcollection':
-      return <DatasetCollection sx={sx} />
+      return <DatasetCollection {...otherProps} />
     case 'database':
-      return <LayersTwoTone sx={sx} />
+      return <LayersTwoTone {...otherProps} />
     case 'docker':
-      return <Docker sx={sx} />
+      return <Docker {...otherProps} />
     case 'accountCertified':
-      return <AccountCertified sx={sx} />
+      return <AccountCertified {...otherProps} />
     case 'accountRegistered':
-      return <AccountRegistered sx={sx} />
+      return <AccountRegistered {...otherProps} />
     case 'accountValidated':
-      return <AccountValidated sx={sx} />
+      return <AccountValidated {...otherProps} />
     case 'warningOutlined':
-      return <ReportProblemOutlined sx={sx}></ReportProblemOutlined>
+      return <ReportProblemOutlined {...otherProps} />
     case 'warning':
-      return <WarningTwoTone sx={sx} />
+      return <WarningTwoTone {...otherProps} />
     case 'removeCircle':
-      return <RemoveCircleTwoTone sx={sx}></RemoveCircleTwoTone>
+      return <RemoveCircleTwoTone {...otherProps} />
     case 'replyTwoTone':
-      return <ReplyTwoTone sx={sx}></ReplyTwoTone>
+      return <ReplyTwoTone {...otherProps} />
     case 'chatTwoTone':
-      return <ChatTwoTone sx={sx}></ChatTwoTone>
+      return <ChatTwoTone {...otherProps} />
     case 'accessManagement':
-      return <AccessManagement sx={sx}></AccessManagement>
+      return <AccessManagement {...otherProps} />
     case 'chevronRight':
-      return <ChevronRight sx={sx} />
+      return <ChevronRight {...otherProps} />
     case 'chevronLeft':
-      return <ChevronLeft sx={sx} />
+      return <ChevronLeft {...otherProps} />
     case 'pushpin':
-      return <PushPinTwoTone sx={sx} />
+      return <PushPinTwoTone {...otherProps} />
     case 'addBoxOutline':
-      return <AddBoxOutlined sx={sx} />
+      return <AddBoxOutlined {...otherProps} />
     case 'minusBoxOutline':
-      return <IndeterminateCheckBoxOutlined sx={sx} />
+      return <IndeterminateCheckBoxOutlined {...otherProps} />
     case 'italic':
-      return <FormatItalic sx={sx} />
+      return <FormatItalic {...otherProps} />
     case 'bold':
-      return <FormatBold sx={sx} />
+      return <FormatBold {...otherProps} />
     case 'title':
-      return <Title sx={sx} />
+      return <Title {...otherProps} />
     case 'visibility':
-      return <VisibilityTwoTone sx={sx} />
+      return <VisibilityTwoTone {...otherProps} />
     case 'visibilityOff':
-      return <VisibilityOffTwoTone sx={sx} />
+      return <VisibilityOffTwoTone {...otherProps} />
     case 'strikethrough':
-      return <StrikethroughS sx={sx} />
+      return <StrikethroughS {...otherProps} />
     case 'latex':
       return <span>TeX</span>
     case 'image':
-      return <Image sx={sx} />
+      return <Image {...otherProps} />
     case 'superscript':
-      return <Superscript sx={sx} />
+      return <Superscript {...otherProps} />
     case 'subscript':
-      return <Subscript sx={sx} />
+      return <Subscript {...otherProps} />
     case 'edit':
-      return <EditTwoTone sx={sx} />
+      return <EditTwoTone {...otherProps} />
     case 'tag':
-      return <AlternateEmail sx={sx} />
+      return <AlternateEmail {...otherProps} />
     case 'restore':
-      return <RestoreFromTrashTwoTone sx={sx} />
+      return <RestoreFromTrashTwoTone {...otherProps} />
     case 'label':
-      return <LabelTwoTone sx={sx} />
+      return <LabelTwoTone {...otherProps} />
     case 'upload':
-      return <UploadTwoTone sx={sx} />
+      return <UploadTwoTone {...otherProps} />
     case 'flag':
-      return <FlagTwoTone sx={sx} />
+      return <FlagTwoTone {...otherProps} />
     case 'email':
-      return <MailOutlineTwoTone sx={sx} />
+      return <MailOutlineTwoTone {...otherProps} />
+    case 'sortUp':
+      return <SortUp {...otherProps} />
+    case 'sortDown':
+      return <SortDown {...otherProps} />
     case 'google24':
-      return <GoogleIcon24 sx={sx} />
+      return <GoogleIcon24 {...otherProps} />
     default:
       return <></>
   }
 }
 
 function IconSvg(props: IconSvgProps) {
-  const { icon, label = '', sx, wrap = true } = props
+  const { icon, label = '', wrap = true, ...svgIconProps } = props
 
   const Wrapper = wrap ? 'span' : React.Fragment
   const wrapperProps = wrap
@@ -515,7 +522,7 @@ function IconSvg(props: IconSvgProps) {
   return (
     <Tooltip placement="top" title={label}>
       <Wrapper {...wrapperProps}>
-        <IconMapping icon={icon} sx={sx} />
+        <IconMapping icon={icon} {...svgIconProps} />
       </Wrapper>
     </Tooltip>
   )

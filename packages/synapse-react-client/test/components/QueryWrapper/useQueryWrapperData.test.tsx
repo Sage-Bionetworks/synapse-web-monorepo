@@ -6,8 +6,8 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { getQueryTableAsyncJobResults } from '../../../src/synapse-client'
-import { mockCompleteAsyncJob } from '../../../mocks/mockFileViewQuery'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { mockCompleteAsyncJob } from '../../../src/mocks/mockFileViewQuery'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { SynapseClientError } from '../../../src'
 
 jest.mock('../../../src/synapse-client', () => ({

@@ -20,15 +20,12 @@ import loadingScreen from '../../LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext/QueryContext'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
-import {
-  applyChangesToValuesColumn,
-  applyMultipleChangesToValuesColumn,
-} from '../query-filter/FacetFilterControls'
 import { Tooltip } from '@mui/material'
 import { useQuery } from 'react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
+import { Box } from '@mui/material'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -254,22 +251,12 @@ export function getPlotStyle(
   }
 }
 
-const getClassNameForPlotDiv = (isExpanded: boolean, plotType: PlotType) => {
-  if (!isExpanded) {
-    return 'FacetNavPanel__body__plot'
-  }
-  return `FacetNavPanel__body__plot--expanded${
-    plotType === 'BAR' ? 'Bar' : 'Pie'
-  }`
-}
-
 const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   props: FacetNavPanelProps,
 ): JSX.Element => {
   const {
     onHide,
     isModalView,
-    applyChangesToFacetFilter,
     applyChangesToGraphSlice,
     index,
     facetToPlot,
@@ -277,7 +264,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     onSetPlotType,
   } = props
   const { accessToken } = useSynapseContext()
-  const { data, isLoadingNewBundle, getLastQueryRequest } = useQueryContext()
+  const { data, isLoadingNewBundle } = useQueryContext()
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
@@ -377,21 +364,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                       el => el.name === facetToPlot.columnName,
                     )!
                   }
-                  onChange={facetNamesMap => {
-                    applyMultipleChangesToValuesColumn(
-                      getLastQueryRequest(),
-                      facetToPlot,
-                      applyChangesToFacetFilter,
-                      facetNamesMap,
-                    )
-                  }}
-                  onClear={() => {
-                    applyChangesToValuesColumn(
-                      getLastQueryRequest(),
-                      facetToPlot,
-                      applyChangesToFacetFilter,
-                    )
-                  }}
                   containerAs="Dropdown"
                 />
                 <ElementWithTooltip
@@ -426,21 +398,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                       el => el.name === facetToPlot.columnName,
                     )!
                   }
-                  onChange={facetNamesMap => {
-                    applyMultipleChangesToValuesColumn(
-                      getLastQueryRequest(),
-                      facetToPlot,
-                      applyChangesToFacetFilter,
-                      facetNamesMap,
-                    )
-                  }}
-                  onClear={() => {
-                    applyChangesToValuesColumn(
-                      getLastQueryRequest(),
-                      facetToPlot,
-                      applyChangesToFacetFilter,
-                    )
-                  }}
                   containerAs="Dropdown"
                   dropdownType="SelectBox"
                 />
@@ -451,13 +408,17 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               <ChartSelectionToggle />
             </>
           )}
-          <div
-            className={`FacetNavPanel__body${isModalView ? '--expanded' : ''}`}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '50% 50%',
+            }}
             role="graphics-object"
+            className="FacetNavPanel__body"
           >
             <SizeMe monitorHeight noPlaceholder>
               {({ size }) => (
-                <div className={getClassNameForPlotDiv(isModalView, plotType)}>
+                <div>
                   <Plot
                     key={`${facetToPlot.columnName}-${plotType}-${size.width}`}
                     layout={layout}
@@ -484,7 +445,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               colors={plotData?.colors}
               isExpanded={isModalView}
             />
-          </div>
+          </Box>
         </div>
       </>
     )

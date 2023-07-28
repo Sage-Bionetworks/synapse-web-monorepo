@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import React from 'react'
 import { OAuthManagement } from '../../../src/components/OAuthClientManagement/OAuthManagement'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import { formatDate } from '../../../src/utils/functions/DateFormatter'
 import {
   useCreateOAuthClient,
@@ -11,11 +11,11 @@ import {
   useGetOAuthClientInfinite,
   useUpdateOAuthClient,
 } from '../../../src/synapse-queries'
-import { server } from '../../../mocks/msw/server'
+import { server } from '../../../src/mocks/msw/server'
 import {
   mockClientList1,
   mockClientList2,
-} from '../../../mocks/oauth/MockClient'
+} from '../../../src/mocks/oauth/MockClient'
 
 jest.mock('../../../src/synapse-queries/oauth/useOAuthClient', () => {
   return {

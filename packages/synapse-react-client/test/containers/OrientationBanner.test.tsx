@@ -10,7 +10,7 @@ import OrientationBanner, {
   OrientationBannerName,
   OrientationBannerProps,
 } from '../../src/components/OrientationBanner/OrientationBanner'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../src/utils/context/SynapseContext'
 
 const onPrimaryButtonClicked = jest.fn()

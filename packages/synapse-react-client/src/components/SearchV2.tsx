@@ -128,9 +128,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     this.setState({
       show: false,
     })
-    const { executeQueryRequest, getLastQueryRequest } = this.props.queryContext
+    const { executeQueryRequest, getCurrentQueryRequest } =
+      this.props.queryContext
 
-    const lastQueryRequestDeepClone = getLastQueryRequest()
+    const lastQueryRequestDeepClone = getCurrentQueryRequest()
 
     const { additionalFilters = [] } = lastQueryRequestDeepClone.query
 

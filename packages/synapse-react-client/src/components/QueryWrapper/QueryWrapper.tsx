@@ -70,7 +70,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     entityId,
     versionNumber,
     getInitQueryRequest,
-    getLastQueryRequest,
+    getCurrentQueryRequest,
     setQuery,
     resetQuery,
     removeSelectedFacet,
@@ -80,11 +80,14 @@ export function QueryWrapper(props: QueryWrapperProps) {
     onConfirmChange,
     isConfirmingChange,
     onCancelChange,
+    nextQueryRequest,
+    currentQueryRequest,
+    addValueToSelectedFacet,
   } = immutableTableQueryResult
 
   const lastQueryRequest = useMemo(() => {
-    return getLastQueryRequest()
-  }, [getLastQueryRequest])
+    return getCurrentQueryRequest()
+  }, [getCurrentQueryRequest])
 
   const queryWrapperData = useQueryWrapperData(lastQueryRequest, isInfinite)
   const { data, isLoadingNewBundle, error, currentAsyncStatus } =
@@ -119,9 +122,9 @@ export function QueryWrapper(props: QueryWrapperProps) {
   }, [data, lockedColumn])
 
   const hasResettableFilters = useMemo(() => {
-    const request = getLastQueryRequest()
+    const request = getCurrentQueryRequest()
     return hasResettableFiltersUtil(request.query, lockedColumn)
-  }, [getLastQueryRequest, lockedColumn])
+  }, [getCurrentQueryRequest, lockedColumn])
 
   const getColumnModel = useCallback(
     (columnName: string) => {
@@ -149,8 +152,10 @@ export function QueryWrapper(props: QueryWrapperProps) {
 
   const context: InfiniteQueryContextType | PaginatedQueryContextType = {
     data: dataWithLockedColumnFacetRemoved,
+    nextQueryRequest,
+    currentQueryRequest,
     isLoadingNewBundle: isLoadingNewBundle,
-    getLastQueryRequest,
+    getCurrentQueryRequest: getCurrentQueryRequest,
     getInitQueryRequest,
     error: error,
     entity,
@@ -171,6 +176,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     hasSelectedRows,
     selectedRows,
     setSelectedRows,
+    addValueToSelectedFacet,
     ...paginationControls,
   }
 

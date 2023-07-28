@@ -7,13 +7,13 @@ import { act } from '@testing-library/react'
 import {
   MOCK_CONTEXT_VALUE,
   SynapseTestContext,
-} from '../../mocks/MockSynapseContext'
+} from '../../src/mocks/MockSynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
 import {
   mockUserProfileData,
   MOCK_USER_ID,
   MOCK_USER_NAME,
-} from '../../mocks/user/mock_user_profile'
+} from '../../src/mocks/user/mock_user_profile'
 import SynapseClient from '../../src/synapse-client'
 
 jest

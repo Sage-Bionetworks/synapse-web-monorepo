@@ -7,19 +7,19 @@ import {
   SynapseContextType,
 } from '../../../src'
 import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
 import {
   mockQueryBundleRequest,
   mockQueryResultBundle,
-} from '../../../mocks/mockFileViewQuery'
+} from '../../../src/mocks/mockFileViewQuery'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
 } from '../../../src/components/QueryVisualizationWrapper'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
-import { mockManagedACTAccessRequirement } from '../../../mocks/mockAccessRequirements'
+import { mockManagedACTAccessRequirement } from '../../../src/mocks/mockAccessRequirements'
 import * as UseExportToCavaticaModule from '../../../src/synapse-queries/entity/useExportToCavatica'
 import * as UseActionsRequiredForTableQueryModule from '../../../src/synapse-queries/entity/useActionsRequiredForTableQuery'
 
@@ -47,7 +47,7 @@ function renderComponent(
     <QueryContextProvider
       queryContext={{
         data: mockQueryResultBundle,
-        getLastQueryRequest: () => cloneDeep(mockQueryBundleRequest),
+        getCurrentQueryRequest: () => cloneDeep(mockQueryBundleRequest),
         ...queryContextOverrides,
       }}
     >

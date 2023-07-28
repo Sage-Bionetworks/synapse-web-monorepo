@@ -15,13 +15,13 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../mocks/query/syn16787123.json'
+import syn16787123Json from '../../src/mocks/query/syn16787123.json'
 import { DEFAULT_PAGE_SIZE } from '../../src/utils/SynapseConstants'
 import useTableRowSelection from '../../src/components/QueryWrapper/useTableRowSelection'
 import SynapseClient from '../../src/synapse-client'
-import { mockCompleteAsyncJob } from '../../mocks/mockFileViewQuery'
+import { mockCompleteAsyncJob } from '../../src/mocks/mockFileViewQuery'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 
 jest.mock('../../src/synapse-client', () => ({
   getQueryTableAsyncJobResults: jest.fn(),
@@ -126,7 +126,7 @@ describe('QueryWrapper', () => {
       expect(providedContext?.getInitQueryRequest()).toEqual(
         initialQueryRequest,
       )
-      expect(providedContext?.getLastQueryRequest()).toEqual(
+      expect(providedContext?.getCurrentQueryRequest()).toEqual(
         initialQueryRequest,
       )
 
@@ -139,7 +139,9 @@ describe('QueryWrapper', () => {
 
       // Last query should be the new query
       await waitFor(() =>
-        expect(providedContext?.getLastQueryRequest()).toEqual(newQueryRequest),
+        expect(providedContext?.getCurrentQueryRequest()).toEqual(
+          newQueryRequest,
+        ),
       )
       // Initial query should not change
       expect(providedContext?.getInitQueryRequest()).toEqual(
@@ -153,17 +155,26 @@ describe('QueryWrapper', () => {
         shouldDeepLink: true,
       })
 
+      const newSql = initialQueryRequest.query.sql + ' WHERE x = 1'
+
       await waitFor(() => expect(providedContext).toBeDefined())
-      act(() => {
-        providedContext!.executeQueryRequest(initialQueryRequest)
+
+      await act(async () => {
+        providedContext!.executeQueryRequest({
+          ...initialQueryRequest,
+          query: {
+            ...initialQueryRequest.query,
+            sql: newSql,
+          },
+        })
       })
+
       await waitFor(() => {
-        const location = window.location
         expect(location.search).toContain('QueryWrapper0')
         const query = JSON.parse(
-          decodeURIComponent(location.search.split('QueryWrapper0=')[1]),
+          new URLSearchParams(location.search).get('QueryWrapper0'),
         )
-        expect(query.sql).toEqual(initialQueryRequest.query.sql)
+        expect(query.sql).toEqual(newSql)
         expect(mockGetQueryTableAsyncJobResults).toHaveBeenCalled()
       })
     })
@@ -201,7 +212,7 @@ describe('QueryWrapper', () => {
       window.history.pushState({}, 'Page Title', '/any/url/you/like')
       await renderComponent({ initQueryRequest: initialQueryRequest })
       await waitFor(() =>
-        expect(providedContext?.getLastQueryRequest()).toEqual(
+        expect(providedContext?.getCurrentQueryRequest()).toEqual(
           initialQueryRequest,
         ),
       )
@@ -215,7 +226,7 @@ describe('QueryWrapper', () => {
       await renderComponent({ initQueryRequest: initialQueryRequest })
 
       await waitFor(() =>
-        expect(providedContext?.getLastQueryRequest()).toEqual(
+        expect(providedContext?.getCurrentQueryRequest()).toEqual(
           initialQueryRequest,
         ),
       )
@@ -233,7 +244,7 @@ describe('QueryWrapper', () => {
       await renderComponent({ initQueryRequest: initialQueryRequest })
       await waitFor(() => {
         expect(providedContext).toBeDefined()
-        const lastQuery = providedContext!.getLastQueryRequest()
+        const lastQuery = providedContext!.getCurrentQueryRequest()
         expect(lastQuery).not.toEqual(initialQueryRequest)
         expect(lastQuery.entityId).toBe('syn12345')
         expect(lastQuery.query.sql).toBe(lqr.query.sql)
@@ -251,7 +262,7 @@ describe('QueryWrapper', () => {
       await renderComponent({ initQueryRequest: initialQueryRequest })
       await waitFor(() => expect(providedContext).toBeDefined())
 
-      const lastQuery = providedContext!.getLastQueryRequest()
+      const lastQuery = providedContext!.getCurrentQueryRequest()
       expect(lastQuery).not.toEqual(initialQueryRequest)
       expect(lastQuery.entityId).toBe('syn12345')
       expect(lastQuery.query.sql).toBe(lqr.query.sql)
@@ -358,7 +369,7 @@ describe('QueryWrapper', () => {
       await userEvent.click(confirmButton!)
 
       // verify that our change was applied to the query
-      expect(providedContext!.getLastQueryRequest()).toEqual(
+      expect(providedContext!.getCurrentQueryRequest()).toEqual(
         expect.objectContaining({
           query: expect.objectContaining({ sql: newQuery }),
         }),
@@ -420,7 +431,7 @@ describe('QueryWrapper', () => {
       await userEvent.click(cancelButton!)
 
       // verify that our change was applied to the query
-      expect(providedContext!.getLastQueryRequest()).toEqual(
+      expect(providedContext!.getCurrentQueryRequest()).toEqual(
         initialQueryRequest,
       )
       expect(mockOnQueryChange).not.toHaveBeenCalled()

@@ -8,8 +8,8 @@ import {
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
-} from '../../mocks/mockAccessRequirements'
-import mockFileEntity from '../../mocks/entity/mockFileEntity'
+} from '../../src/mocks/mockAccessRequirements'
+import mockFileEntity from '../../src/mocks/entity/mockFileEntity'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
@@ -22,18 +22,18 @@ import {
   SubmissionState,
   TwoFactorAuthStatus,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import { MOCK_USER_ID } from '../../src/mocks/user/mock_user_profile'
 import AccessRequirementList from '../../src/components/AccessRequirementList/AccessRequirementList'
-import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
+import { getWikiHandlers } from '../../src/mocks/msw/handlers/wikiHandlers'
 import {
   getAccessRequirementEntityBindingHandlers,
   getAccessRequirementHandlers,
   getAccessRequirementStatusHandlers,
-} from '../../mocks/msw/handlers/accessRequirementHandlers'
-import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
-import { mockApprovedSubmission } from '../../mocks/dataaccess/MockSubmission'
-import { getCurrentUserCertifiedValidatedHandler } from '../../mocks/msw/handlers/userProfileHandlers'
-import { getResearchProjectHandlers } from '../../mocks/msw/handlers/researchProjectHandlers'
+} from '../../src/mocks/msw/handlers/accessRequirementHandlers'
+import { getEntityHandlers } from '../../src/mocks/msw/handlers/entityHandlers'
+import { mockApprovedSubmission } from '../../src/mocks/dataaccess/MockSubmission'
+import { getCurrentUserCertifiedValidatedHandler } from '../../src/mocks/msw/handlers/userProfileHandlers'
+import { getResearchProjectHandlers } from '../../src/mocks/msw/handlers/researchProjectHandlers'
 
 const meta: Meta = {
   title: 'Governance/Data Access Request Flow/AccessRequirementList',

@@ -1,5 +1,5 @@
 import { Collapse } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { ElementWithTooltip } from '../ElementWithTooltip'
@@ -7,23 +7,25 @@ import { SynapseConstants } from '../../../utils'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
 import {
   ColumnTypeEnum,
+  EntityHeader,
   Evaluation,
-  UserGroupHeader,
-} from '@sage-bionetworks/synapse-types'
-import { EntityHeader } from '@sage-bionetworks/synapse-types'
-import {
   FacetColumnResultValueCount,
+  FacetColumnValuesRequest,
+  QueryBundleRequest,
   SelectColumn,
+  UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg/IconSvg'
 import { Checkbox } from '../Checkbox'
 import { FacetFilterHeader } from './FacetFilterHeader'
+import { useQueryContext } from '../../QueryContext'
+import { ReadonlyDeep } from 'type-fest'
+import { isFacetColumnValuesRequest } from '../../../utils/types/IsType'
+import { cloneDeep } from 'lodash-es'
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
   columnModel: SelectColumn
-  onChange: (facetNamesMap: Record<string, boolean>) => void
-  onClear: () => void
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
   collapsed?: boolean
@@ -81,17 +83,42 @@ function formatFacetValuesForDisplay(
   }
 }
 
+/**
+ * Based on the uncommitted query, should the "All" checkbox be selected?
+ * This only considers filters applied via selectedFacets. Filters applied via
+ * sql or additionalFilters will be ignored.
+ *
+ * @returns true iff no values have been selected for this facet filter
+ * @param nextQueryRequest
+ * @param columnModel
+ */
+function getAllIsSelected(
+  nextQueryRequest: ReadonlyDeep<QueryBundleRequest>,
+  columnModel: SelectColumn,
+) {
+  return !nextQueryRequest.query.selectedFacets?.find(
+    facetRequest =>
+      facetRequest.concreteType ===
+        'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' &&
+      facetRequest.columnName === columnModel.name,
+  )
+}
+
 /************* QUERY ENUM COMPONENT  *************/
 
 export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   facetValues,
   columnModel,
-  onClear,
-  onChange,
   containerAs = 'Collapsible',
   dropdownType = 'Icon',
   collapsed = false,
 }: EnumFacetFilterProps) => {
+  const {
+    nextQueryRequest,
+    addValueToSelectedFacet,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
+  } = useQueryContext()
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
   const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false)
@@ -104,13 +131,26 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     setFilteredSet(facetValues)
   }, [facetValues])
 
-  const visibleItemsCount = 5
-  const selectionDelay = 1500 // in ms
-  const textInput: React.RefObject<HTMLInputElement> = React.createRef()
-  const selectedValuesMap: Record<string, boolean> = {}
-  let timer: ReturnType<typeof setTimeout>
+  const currentSelectedFacet: FacetColumnValuesRequest | undefined = useMemo(
+    () =>
+      cloneDeep(
+        nextQueryRequest.query.selectedFacets?.find(
+          (selectedFacet): selectedFacet is FacetColumnValuesRequest => {
+            return (
+              selectedFacet.columnName === columnModel.name &&
+              isFacetColumnValuesRequest(selectedFacet)
+            )
+          },
+        ),
+      ),
+    [columnModel.name, nextQueryRequest.query.selectedFacets],
+  )
 
-  const allIsSelected = facetValues.filter(item => item.isSelected).length === 0
+  const visibleItemsCount = 5
+  const textInput: React.RefObject<HTMLInputElement> = React.createRef()
+
+  // Must compare the known facet values to the "uncommitted" current query
+  const allIsSelected = getAllIsSelected(nextQueryRequest, columnModel)
 
   const userIds =
     columnModel?.columnType === ColumnTypeEnum.USERID ||
@@ -225,13 +265,15 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
             <Checkbox
               className="EnumFacetFilter__checkbox"
               onChange={() => {
-                onClear()
+                if (currentSelectedFacet) {
+                  removeSelectedFacet(currentSelectedFacet)
+                }
               }}
               key="select_all"
               checked={allIsSelected}
               label="All"
               isSelectAll={true}
-            ></Checkbox>
+            />
             <button
               className="EnumFacetFilter__searchbtn"
               onClick={() => {
@@ -253,30 +295,43 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
             filteredSet,
             isShowAll || isDropdown,
             visibleItemsCount,
-          ).map((facet, index: number) => (
-            <EnumFacetFilterOption
-              key={`checkLabel${index}`}
-              id={valueToId(facet.value)}
-              index={index}
-              label={valueToLabel(
-                facet,
-                userGroupHeaders,
-                entityHeaders,
-                evaluations,
-              )}
-              count={facet.count}
-              isDropdown={isDropdown}
-              initialIsSelected={facet.isSelected}
-              onChange={(isChecked: boolean) => {
-                selectedValuesMap[facet.value] = isChecked
-                clearTimeout(timer)
-                timer = setTimeout(() => {
-                  onChange(selectedValuesMap)
-                  setIsShowDropdown(false)
-                }, selectionDelay)
-              }}
-            />
-          ))}
+          ).map((facet, index: number) => {
+            const isSelected = !!currentSelectedFacet?.facetValues?.includes(
+              facet.value,
+            )
+
+            return (
+              <EnumFacetFilterOption
+                key={`checkLabel${index}`}
+                id={valueToId(facet.value)}
+                index={index}
+                label={valueToLabel(
+                  facet,
+                  userGroupHeaders,
+                  entityHeaders,
+                  evaluations,
+                )}
+                count={facet.count}
+                isDropdown={isDropdown}
+                checked={isSelected}
+                onChange={(isChecked: boolean) => {
+                  if (isChecked) {
+                    addValueToSelectedFacet(columnModel.name, facet.value, {
+                      debounce: true,
+                    })
+                  } else {
+                    removeValueFromSelectedFacet(
+                      columnModel.name,
+                      facet.value,
+                      {
+                        debounce: true,
+                      },
+                    )
+                  }
+                }}
+              />
+            )
+          })}
         {!isDropdown && (
           <>
             {!isShowAll && filteredSet.length > visibleItemsCount && (
@@ -373,32 +428,19 @@ type EnumFacetFilterOptionProps = {
   readonly label: string
   readonly count: number
   readonly isDropdown: boolean
-  readonly initialIsSelected: boolean
+  readonly checked: boolean
   readonly onChange: (selected: boolean) => void
 }
 
-function EnumFacetFilterOption({
-  id,
-  index,
-  label,
-  count,
-  isDropdown,
-  initialIsSelected,
-  onChange,
-}: EnumFacetFilterOptionProps) {
-  const [isSelected, setIsSelected] = useState(initialIsSelected)
-
-  React.useEffect(() => {
-    setIsSelected(initialIsSelected)
-  }, [initialIsSelected])
-
+function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
+  const { id, index, label, count, isDropdown, checked, onChange } = props
   return (
     <div
       className="EnumFacetFilter__checkboxContainer"
       onClick={() => {
+        // If this is a dropdown option, clicking anywhere in the field should toggle selection
         if (isDropdown) {
-          setIsSelected(!isSelected)
-          onChange(!isSelected)
+          onChange(!checked)
         }
       }}
     >
@@ -406,15 +448,20 @@ function EnumFacetFilterOption({
         className="EnumFacetFilter__checkbox"
         onClick={event => event.stopPropagation()}
         onChange={newValue => {
-          setIsSelected(newValue)
           onChange(newValue)
         }}
         key={`${id}-${index}`}
-        checked={isSelected}
+        checked={checked}
         label={label}
       ></Checkbox>
-      {isDropdown && <span className="EnumFacetFilter__count">({count})</span>}
-      {!isDropdown && <div className="EnumFacetFilter__count">{count}</div>}
+      {isDropdown && (
+        <span className="EnumFacetFilter__count">
+          ({count.toLocaleString()})
+        </span>
+      )}
+      {!isDropdown && (
+        <div className="EnumFacetFilter__count">{count.toLocaleString()}</div>
+      )}
     </div>
   )
 }

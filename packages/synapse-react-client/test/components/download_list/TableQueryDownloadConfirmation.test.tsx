@@ -17,7 +17,7 @@ import {
 import { TableQueryDownloadConfirmation } from '../../../src/components/download_list'
 import { QueryContextProvider, SynapseClientError } from '../../../src'
 import { QueryVisualizationContextProvider } from '../../../src/components/QueryVisualizationWrapper'
-import { mockQueryBundleRequest } from '../../../mocks/mockFileViewQuery'
+import { mockQueryBundleRequest } from '../../../src/mocks/mockFileViewQuery'
 import { cloneDeep } from 'lodash-es'
 import {
   useAddQueryToDownloadList,
@@ -26,7 +26,7 @@ import {
 import {
   getUseMutationMock,
   getUseQuerySuccessMock,
-} from '../../testutils/ReactQueryMockUtils'
+} from '../../../src/testutils/ReactQueryMockUtils'
 
 jest.mock('../../../src/synapse-queries', () => ({
   useGetQueryResultBundleWithAsyncStatus: jest.fn(),
@@ -64,7 +64,7 @@ async function setUp() {
     component = render(
       <QueryContextProvider
         queryContext={{
-          getLastQueryRequest: () => cloneDeep(mockQueryBundleRequest),
+          getCurrentQueryRequest: () => cloneDeep(mockQueryBundleRequest),
         }}
       >
         <QueryVisualizationContextProvider

@@ -6,15 +6,15 @@ import { GeoData } from '../../../src/components/GoogleMap/GeoData'
 import GoogleMap, {
   MapProps,
 } from '../../../src/components/GoogleMap/GoogleMap'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { rest, server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
+import { rest, server } from '../../../src/mocks/msw/server'
 import {
   MOCK_TEAM_ID,
   MOCK_USER_ID,
   MOCK_USER_ID_2,
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 
 /** Mock the Google Maps library */
 jest.mock('@react-google-maps/api', () => ({

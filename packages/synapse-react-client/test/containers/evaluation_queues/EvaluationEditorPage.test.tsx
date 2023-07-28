@@ -5,7 +5,7 @@ import {
   EvaluationEditorPage,
   EvaluationEditorPageProps,
 } from '../../../src/components/Evaluation/EvaluationEditorPage'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 
 jest.mock(
   '../../../src/components/Evaluation/EvaluationRoundEditorList',

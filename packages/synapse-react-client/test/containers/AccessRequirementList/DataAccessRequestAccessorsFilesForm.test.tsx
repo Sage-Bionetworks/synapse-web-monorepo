@@ -3,9 +3,9 @@ import { act, render, screen, waitFor, within } from '@testing-library/react'
 import DataAccessRequestAccessorsFilesForm, {
   DataAccessRequestAccessorsFilesFormProps,
 } from '../../../src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm'
-import { MOCK_RESEARCH_PROJECT_ID } from '../../../mocks/dataaccess/MockResearchProject'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockFileEntity'
+import { MOCK_RESEARCH_PROJECT_ID } from '../../../src/mocks/dataaccess/MockResearchProject'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
+import { MOCK_FILE_ENTITY_ID } from '../../../src/mocks/entity/mockFileEntity'
 import { SynapseClient } from '../../../src'
 import {
   MOCK_USER_ID,
@@ -17,18 +17,18 @@ import {
   mockUserProfileData,
   mockUserProfileData2,
   mockUserProfileData3,
-} from '../../../mocks/user/mock_user_profile'
+} from '../../../src/mocks/user/mock_user_profile'
 import {
   MOCK_DATA_ACCESS_RENEWAL,
   MOCK_DATA_ACCESS_RENEWAL_ID,
   MOCK_DATA_ACCESS_REQUEST,
   MOCK_DATA_ACCESS_REQUEST_ID,
-} from '../../../mocks/dataaccess/MockDataAccessRequest'
+} from '../../../src/mocks/dataaccess/MockDataAccessRequest'
 import {
   mockManagedACTAccessRequirement,
   mockManagedACTAccessRequirementWikiPageKey,
-} from '../../../mocks/mockAccessRequirements'
-import { mockSubmittedSubmission } from '../../../mocks/dataaccess/MockSubmission'
+} from '../../../src/mocks/mockAccessRequirements'
+import { mockSubmittedSubmission } from '../../../src/mocks/dataaccess/MockSubmission'
 import {
   AccessorChange,
   AccessType,
@@ -36,7 +36,7 @@ import {
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
 import userEvent from '@testing-library/user-event'
-import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
+import { MOCK_ACCESS_TOKEN } from '../../../src/mocks/MockSynapseContext'
 import * as UserSearchBoxV2Module from '../../../src/components/UserSearchBoxV2'
 import { SynapseClientError } from '../../../src/utils/SynapseClientError'
 import * as MarkdownSynapseModule from '../../../src/components/Markdown/MarkdownSynapse'

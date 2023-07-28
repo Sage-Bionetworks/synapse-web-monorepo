@@ -15,7 +15,7 @@ import {
   RootNodeConfiguration,
   TreeData,
 } from '../../../../src/components/EntityFinder/tree/VirtualizedTree'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 
 describe('VirtualizedTree tests', () => {

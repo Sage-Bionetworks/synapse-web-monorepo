@@ -3,9 +3,9 @@ import React from 'react'
 import EntityForm, {
   EntityFormProps,
 } from '../../src/components/EntityForm/EntityForm'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
-import { mockFileEntity } from '../../mocks/entity/mockEntity'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
+import { mockFileEntity } from '../../src/mocks/entity/mockEntity'
+import { mockUserProfileData } from '../../src/mocks/user/mock_user_profile'
 
 describe('EntityForm', () => {
   // Test setup

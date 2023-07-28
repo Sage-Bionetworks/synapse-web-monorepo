@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { TrashCanList } from '../../../src/components/trash/TrashCanList'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import {
   TRASHCAN_PURGE,
   TRASHCAN_RESTORE,
@@ -16,10 +16,10 @@ import {
   PaginatedResults,
   TrashedEntity,
 } from '@sage-bionetworks/synapse-types'
-import mockDatasetData from '../../../mocks/entity/mockDataset'
-import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../../mocks/msw/server'
-import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+import mockDatasetData from '../../../src/mocks/entity/mockDataset'
+import mockFileEntityData from '../../../src/mocks/entity/mockFileEntity'
+import { rest, server } from '../../../src/mocks/msw/server'
+import { MOCK_USER_ID } from '../../../src/mocks/user/mock_user_profile'
 
 function renderComponent() {
   return render(<TrashCanList />, { wrapper: createWrapper() })

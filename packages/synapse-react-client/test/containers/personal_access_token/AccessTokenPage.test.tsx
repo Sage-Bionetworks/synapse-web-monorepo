@@ -7,7 +7,7 @@ import {
   AccessTokenPageProps,
 } from '../../../src/components/AccessTokenPage/AccessTokenPage'
 import { CreateAccessTokenModalProps } from '../../../src/components/AccessTokenPage/CreateAccessTokenModal'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../../src/synapse-client'
 import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
 import { AccessTokenRecordList } from '@sage-bionetworks/synapse-types'
