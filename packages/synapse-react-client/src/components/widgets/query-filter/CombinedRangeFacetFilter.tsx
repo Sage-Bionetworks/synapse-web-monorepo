@@ -1,52 +1,55 @@
 import { Collapse } from '@mui/material'
 import React from 'react'
 import { useState } from 'react'
-import {
-  FRIENDLY_VALUE_NOT_SET,
-  VALUE_NOT_SET,
-} from '../../../utils/SynapseConstants'
+import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
 import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
 import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
 import { RangeSlider } from '../RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
+import { RadioValuesEnum, options } from './RangeFacetFilter'
 
-export enum RadioValuesEnum {
-  NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
-  RANGE = 'RANGE',
-  ANY = '',
-}
-export const options = [
-  { label: FRIENDLY_VALUE_NOT_SET, value: RadioValuesEnum.NOT_SET },
-  { label: 'Any', value: RadioValuesEnum.ANY },
-  { label: 'Range', value: RadioValuesEnum.RANGE },
-]
-export type RangeFacetFilterProps = {
-  facetResult: FacetColumnResultRange
+export type CombinedRangeFacetFilterProps = {
+  facetResults: FacetColumnResultRange[]
   label: string
   columnType: ColumnType
   onChange: (range: (RadioValuesEnum | number | string | undefined)[]) => void
   collapsed?: boolean
 }
 
-export const RangeFacetFilter: React.FunctionComponent<
-  RangeFacetFilterProps
+/**
+ * Inclusive range selector across two columns (column 1 is the min, column 2 is the max).
+ * Written for the ELITE portal cohort builder, may have other uses.
+ */
+export const CombinedRangeFacetFilter: React.FunctionComponent<
+  CombinedRangeFacetFilterProps
 > = ({
-  facetResult,
+  facetResults,
   label,
   columnType,
   onChange,
   collapsed = false,
-}: RangeFacetFilterProps) => {
+}: CombinedRangeFacetFilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
+  let {
+    columnMin: col1Min,
+    // columnMax: col1Max,
+    selectedMin: col1SelectedMin,
+    selectedMax: col1SelectedMax,
+  } = facetResults[0]
+  let {
+    //columnMin: col2Min,
+    columnMax: col2Max,
+    selectedMin: col2SelectedMin,
+    selectedMax: col2SelectedMax,
+  } = facetResults[1]
 
-  let { columnMin, columnMax, selectedMin, selectedMax } = facetResult // the upper bound of the selected range
+  const hasAnyValue =
+    !col1SelectedMin && !col1SelectedMax && !col2SelectedMin && !col2SelectedMax
 
-  const hasAnyValue = !selectedMin && !selectedMax
-
-  selectedMin = selectedMin || columnMin
-  selectedMax = selectedMax || columnMax
+  const selectedMin = col2SelectedMin || col1Min
+  const selectedMax = col1SelectedMax || col2Max
 
   const rangeType = columnType === 'DOUBLE' ? 'number' : 'date'
 
@@ -93,22 +96,22 @@ export const RangeFacetFilter: React.FunctionComponent<
           }
         ></RadioGroup>
         {radioValue === RadioValuesEnum.RANGE &&
-          (columnMin === columnMax ? (
-            <label>{columnMax}</label>
+          (col1Min === col2Max ? (
+            <label>{col2Max}</label>
           ) : (
             <>
               {columnType === 'INTEGER' && (
                 <RangeSlider
                   key="RangeSlider"
-                  domain={[columnMin, columnMax]}
+                  domain={[col1Min, col2Max]}
                   initialValues={{ min: selectedMin, max: selectedMax }}
                   step={1}
                   doUpdateOnApply={true}
                   onChange={(values: RangeValues) =>
-                    onChange([values.min, values.max])
+                    onChange([col1Min, values.max, values.min, col2Max])
                   }
                 >
-                  ) {'>'}
+                  {'>'}
                 </RangeSlider>
               )}
 
@@ -121,7 +124,7 @@ export const RangeFacetFilter: React.FunctionComponent<
                   }}
                   type={rangeType}
                   onChange={(values: RangeValues) =>
-                    onChange([values.min, values.max])
+                    onChange([col1Min, values.max, values.min, col2Max])
                   }
                 ></Range>
               )}
