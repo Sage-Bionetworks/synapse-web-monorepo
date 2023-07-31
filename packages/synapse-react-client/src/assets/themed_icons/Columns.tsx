@@ -16,7 +16,7 @@ export const Columns = () => (
       y="0.5"
       width="4.66667"
       height="16"
-      stroke="white"
+      stroke="none"
       fill="none"
     />
   </svg>
