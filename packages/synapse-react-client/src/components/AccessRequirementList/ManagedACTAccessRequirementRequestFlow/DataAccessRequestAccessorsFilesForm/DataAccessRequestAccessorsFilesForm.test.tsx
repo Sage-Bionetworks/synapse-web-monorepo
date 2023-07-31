@@ -43,7 +43,7 @@ import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 
 const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
-jest.mock('../../Markdown/MarkdownSynapse', () => ({
+jest.mock('../../../Markdown/MarkdownSynapse', () => ({
   __esModule: true,
   default: jest.fn(),
 }))

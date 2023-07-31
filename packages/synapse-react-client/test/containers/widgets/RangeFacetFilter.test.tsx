@@ -26,7 +26,7 @@ jest.mock('../../../src/components/widgets/Range', () => ({
     return <div data-testid="Range"></div>
   }),
 }))
-jest.mock('../../../src/components/widgets/RangeSlider', () => ({
+jest.mock('../../../src/components/widgets/RangeSlider/RangeSlider', () => ({
   RangeSlider: jest.fn((props: any) => {
     capturedOnChange = props.onChange
     return <div data-testid="RangeSlider"></div>
