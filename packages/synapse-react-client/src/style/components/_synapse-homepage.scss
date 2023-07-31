@@ -9,6 +9,9 @@
     margin-top: 0;
     margin-bottom: 1rem;
   }
+  p.no-margin {
+    margin: 0;
+  }
   &__Section {
     &__Centered {
       text-align: center;
@@ -17,6 +20,9 @@
 
       p {
         text-align: center;
+      }
+      p.text-align-left {
+        text-align: left;
       }
     }
   }
@@ -62,7 +68,6 @@
       min-width: fit-content;
     }
   }
-
   .HeroContainer {
     margin: auto;
     max-width: 1400px;
