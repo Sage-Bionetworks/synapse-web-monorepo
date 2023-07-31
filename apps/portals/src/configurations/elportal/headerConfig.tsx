@@ -14,8 +14,9 @@ const homePageHeader: HomePageHeaderConfig = {
         target="_blank"
         sx={{
           color: 'white',
-          '&:hover': { color: 'white' },
+          '&:hover': { color: 'white', textDecorationColor: 'white' },
           '&:focus': { color: 'white' },
+          textDecorationColor: 'white',
           marginTop: '15px',
           display: 'block',
         }}
