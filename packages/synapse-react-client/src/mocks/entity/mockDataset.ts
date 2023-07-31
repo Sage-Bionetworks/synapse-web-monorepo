@@ -147,7 +147,7 @@ const bundle: EntityBundle = {
   },
 }
 
-const mockDatasetData: MockEntityData<Dataset> = {
+const mockDatasetData = {
   id: MOCK_DATASET_ENTITY_ID,
   name: MOCK_DATASET_NAME,
   entity: mockDatasetEntity,
@@ -156,6 +156,6 @@ const mockDatasetData: MockEntityData<Dataset> = {
   bundle: bundle,
   versions: versions,
   versionInfo: versionInfo,
-}
+} satisfies MockEntityData<Dataset>
 
 export default mockDatasetData

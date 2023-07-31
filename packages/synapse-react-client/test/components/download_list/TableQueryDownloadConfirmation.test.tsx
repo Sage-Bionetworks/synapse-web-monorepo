@@ -60,7 +60,7 @@ const mockSetShowDownloadConfirmation = jest.fn()
 async function setUp() {
   const user = userEvent.setup()
   let component
-  await act(() => {
+  await act(async () => {
     component = render(
       <QueryContextProvider
         queryContext={{

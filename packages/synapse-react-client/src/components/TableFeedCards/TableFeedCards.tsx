@@ -8,7 +8,7 @@ import {
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import loadingScreen from '../LoadingScreen'
+import loadingScreen from '../LoadingScreen/LoadingScreen'
 import LargeButton from '../../components/styled/LargeButton'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 

@@ -19,7 +19,7 @@ import {
   EntityType,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
-import { BlockingLoader } from '../../../LoadingScreen'
+import { BlockingLoader } from '../../../LoadingScreen/LoadingScreen'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { EntityFinderHeader } from '../../EntityFinderHeader'

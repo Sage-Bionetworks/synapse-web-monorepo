@@ -8,7 +8,7 @@ import {
   Row,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { ImmutableTableQueryResult } from '../useImmutableTableQuery'
+import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { ReadonlyDeep, SetRequired } from 'type-fest'
 
 /*

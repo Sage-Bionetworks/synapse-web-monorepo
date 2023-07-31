@@ -84,10 +84,7 @@ import {
   getEndpoint,
 } from '../utils/functions/getEndpoint'
 import { removeUndefined } from '../utils/functions/ObjectUtils'
-import {
-  DATETIME_UTC_COOKIE_KEY,
-  NETWORK_UNAVAILABLE_MESSAGE,
-} from '../utils/SynapseConstants'
+import { DATETIME_UTC_COOKIE_KEY } from '../utils/SynapseConstants'
 import {
   ACCESS_TYPE,
   AccessApproval,
@@ -128,11 +125,14 @@ import {
   BulkFileDownloadResponse,
   Challenge,
   ChallengePagedResults,
+  ChallengeTeam,
+  ChallengeTeamPagedResults,
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken,
   CreateDiscussionReply,
   CreateDiscussionThread,
   CreateSubmissionRequest,
+  Direction,
   DiscussionFilter,
   DiscussionReplyBundle,
   DiscussionReplyOrder,
@@ -140,6 +140,7 @@ import {
   DiscussionSearchResponse,
   DiscussionThreadBundle,
   DiscussionThreadOrder,
+  DockerCommit,
   DoiAssociation,
   DownloadFromTableRequest,
   DownloadFromTableResult,
@@ -162,7 +163,6 @@ import {
   EntityJson,
   EntityLookupRequest,
   EntityPath,
-  ErrorResponseCode,
   Evaluation,
   EvaluationRound,
   EvaluationRoundListRequest,
@@ -184,6 +184,7 @@ import {
   FormGroup,
   FormRejection,
   Forum,
+  GetEvaluationParameters,
   GetProjectsParameters,
   HasAccessResponse,
   InviteeVerificationSignedToken,
@@ -196,6 +197,7 @@ import {
   ManagedACTAccessRequirementStatus,
   MembershipInvitation,
   MembershipInvtnSignedToken,
+  MembershipRequest,
   MessageURL,
   MultipartUploadRequest,
   MultipartUploadStatus,
@@ -232,10 +234,12 @@ import {
   Request,
   ResearchProject,
   ResponseMessage,
+  RestrictableObjectDescriptor,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   SearchQuery,
   SearchResults,
+  SortBy,
   SqlTransformResponse,
   Submission as DataAccessSubmission,
   SubmissionInfoPage,
@@ -252,6 +256,8 @@ import {
   TableUpdateTransactionRequest,
   Team,
   TeamMember,
+  TeamMembershipStatus,
+  TeamSubmissionEligibility,
   Topic,
   TotpSecret,
   TotpSecretActivationRequest,
@@ -267,6 +273,7 @@ import {
   UpdateThreadTitleRequest,
   UploadDestination,
   UserBundle,
+  UserEntityPermissions,
   UserEvaluationPermissions,
   UserGroupHeaderResponse,
   UserGroupHeaderResponsePage,
@@ -276,28 +283,16 @@ import {
   VersionInfo,
   WikiPage,
   WikiPageKey,
-  MembershipRequest,
-  ChallengeTeamPagedResults,
-  ChallengeTeam,
-  TeamMembershipStatus,
-  UserEntityPermissions,
-  GetEvaluationParameters,
-  DockerCommit,
-  SortBy,
-  Direction,
-  TeamSubmissionEligibility,
-  RestrictableObjectDescriptor,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
-import { SynapseError } from '../utils/SynapseError'
+import {
+  allowNotFoundError,
+  isOutsideSynapseOrg,
+  returnIfTwoFactorAuthError,
+} from './SynapseClientUtils'
+import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
 
 const cookies = new UniversalCookies()
-
-// TODO: Create JSON response types for all return types
-export const IS_OUTSIDE_SYNAPSE_ORG = !window.location.hostname
-  .toLowerCase()
-  .includes('.synapse.org')
 
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
@@ -306,230 +301,6 @@ export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export function getRootURL(): string {
   const portString = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
-}
-
-/**
- * Waits t number of milliseconds
- *
- * @export
- * @param {number} t milliseconds
- * @returns after t milliseconds
- */
-export function delay(t: number) {
-  return new Promise(resolve => {
-    setTimeout(resolve.bind(null, {}), t)
-  })
-}
-
-/**
- * Invokes a function that makes a request to Synapse and returns null if the server responds with a 404.
- * @param fn a function that may throw a SynapseClientError when encountering an HTTP Error Code
- * @returns The result of the function call, or null if the result is a 404 "Not Found" error.
- */
-export async function allowNotFoundError<T>(
-  fn: () => Promise<T>,
-): Promise<T | null> {
-  let response = null
-  try {
-    response = await fn()
-  } catch (e) {
-    if (e instanceof SynapseClientError && e.status === 404) {
-      // Permitted
-    } else {
-      throw e
-    }
-  }
-  return response
-}
-
-/**
- * If the asynchronous request returns a TwoFactorAuthErrorResponse, return that error instead of throwing it. Other
- * types of errors will still be thrown.
- * @param fn
- */
-export async function returnIfTwoFactorAuthError<T>(
-  fn: () => Promise<T>,
-): Promise<T | TwoFactorAuthErrorResponse> {
-  let response = null
-  try {
-    response = await fn()
-  } catch (e) {
-    if (
-      e instanceof SynapseClientError &&
-      e.status === 401 &&
-      e.errorResponse &&
-      'errorCode' in e.errorResponse &&
-      e.errorResponse.errorCode === ErrorResponseCode.TWO_FA_REQUIRED &&
-      e.errorResponse.concreteType ===
-        'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse'
-    ) {
-      return e.errorResponse
-    } else {
-      throw e
-    }
-  }
-  return response
-}
-
-/*
-  0 - no internet connection
-  429 - Too Many Requests
-  502 - Bad Gateway
-  503 - Service Unavailable
-  504 - Gateway Timeout
-*/
-const RETRY_STATUS_CODES = [0, 429, 502, 503, 504]
-const MAX_RETRY_STATUS_CODES = [502, 503]
-const MAX_RETRY = 3
-/**
- * Fetches data, retrying if the HTTP status code indicates that it could be retried. Contains custom logic for
- * handling errors returned by the Synapse backend.
- * @throws SynapseClientError
- */
-const fetchWithExponentialTimeout = async <TResponse>(
-  url: RequestInfo,
-  options: RequestInit,
-  delayMs = 1000,
-): Promise<TResponse> => {
-  let response
-  try {
-    response = await fetch(url, options)
-  } catch (err) {
-    console.error(err)
-    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url.toString())
-  }
-
-  let numOfTry = 1
-  while (response.status && RETRY_STATUS_CODES.includes(response.status)) {
-    await delay(delayMs)
-    // Exponential backoff if we re-fetch
-    delayMs = delayMs * 2
-    response = await fetch(url, options)
-    if (MAX_RETRY_STATUS_CODES.includes(response.status)) {
-      numOfTry++
-      if (numOfTry == MAX_RETRY) {
-        break
-      }
-    }
-  }
-
-  const contentType = response.headers.get('Content-Type')
-  const responseBody = await response.text()
-  let responseObject: TResponse | SynapseError | string = responseBody
-  try {
-    // try to parse it as json
-    if (contentType && contentType.includes('application/json')) {
-      responseObject = JSON.parse(responseBody) as TResponse | SynapseError
-    }
-  } catch (error) {
-    console.warn('Failed to parse response as JSON', responseBody)
-  }
-
-  if (response.ok) {
-    return responseObject as TResponse
-  } else if (
-    responseObject !== null &&
-    typeof responseObject === 'object' &&
-    'reason' in responseObject
-  ) {
-    throw new SynapseClientError(
-      response.status,
-      responseObject.reason,
-      url.toString(),
-      responseObject,
-    )
-  } else {
-    throw new SynapseClientError(
-      response.status,
-      JSON.stringify(responseObject),
-      url.toString(),
-    )
-  }
-}
-
-export const doPost = <T>(
-  url: string,
-  requestJsonObject: unknown,
-  accessToken: string | undefined,
-  endpoint: BackendDestinationEnum,
-  additionalOptions: RequestInit = {},
-): Promise<T> => {
-  const options: RequestInit = {
-    body: JSON.stringify(requestJsonObject),
-    headers: {
-      Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
-      'Content-Type': 'application/json',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
-    method: 'POST',
-    mode: 'cors',
-    ...additionalOptions,
-  }
-  const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
-}
-export const doGet = <T>(
-  url: string,
-  accessToken: string | undefined,
-  endpoint: BackendDestinationEnum,
-  additionalOptions: RequestInit = {},
-) => {
-  const options: RequestInit = {
-    headers: {
-      Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
-    method: 'GET',
-    mode: 'cors',
-    ...additionalOptions,
-  }
-  const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
-}
-
-export const doDelete = (
-  url: string,
-  accessToken: string | undefined,
-  endpoint: BackendDestinationEnum,
-  additionalOptions: RequestInit = {},
-) => {
-  const options: RequestInit = {
-    headers: {
-      Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
-    method: 'DELETE',
-    mode: 'cors',
-    ...additionalOptions,
-  }
-  const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<void>(usedEndpoint + url, options)
-}
-
-export const doPut = <T>(
-  url: string,
-  requestJsonObject: unknown,
-  accessToken: string | undefined,
-  endpoint: BackendDestinationEnum,
-  additionalOptions: RequestInit = {},
-): Promise<T> => {
-  const options: RequestInit = {
-    body: JSON.stringify(requestJsonObject),
-    headers: {
-      Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
-      'Content-Type': 'application/json',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
-    method: 'PUT',
-    mode: 'cors',
-    ...additionalOptions,
-  }
-  const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 
 export const getVersion = (): Promise<SynapseVersion> => {
@@ -1878,7 +1649,7 @@ export const isInSynapseExperimentalMode = (): boolean => {
 export const setAccessTokenCookie = async (
   token: string | undefined,
 ): Promise<void> => {
-  if (IS_OUTSIDE_SYNAPSE_ORG) {
+  if (isOutsideSynapseOrg()) {
     if (!token) {
       cookies.remove(ACCESS_TOKEN_COOKIE_KEY, { path: '/' })
       // See - https://github.com/reactivestack/cookies/issues/189
@@ -1905,9 +1676,13 @@ export const setAccessTokenCookie = async (
 /**
  * Get the current access token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
+ *
+ * @throws SynapseClientError if the token is expired or not found by the servlet
  */
-export const getAccessTokenFromCookie = async (): Promise<string> => {
-  if (IS_OUTSIDE_SYNAPSE_ORG) {
+export const getAccessTokenFromCookie = async (): Promise<
+  string | undefined
+> => {
+  if (isOutsideSynapseOrg()) {
     return Promise.resolve(cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
   }
   return doGet<string>(

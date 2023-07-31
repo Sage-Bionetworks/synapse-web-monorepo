@@ -42,7 +42,7 @@ import {
 import { EntityFinderModal } from '../../EntityFinder/EntityFinderModal'
 import { FinderScope } from '../../EntityFinder/tree/EntityTree'
 import { VersionSelectionType } from '../../EntityFinder/VersionSelectionType'
-import { BlockingLoader } from '../../LoadingScreen'
+import { BlockingLoader } from '../../LoadingScreen/LoadingScreen'
 import WarningDialog from '../../SynapseForm/WarningDialog'
 import { displayToast } from '../../ToastMessage/ToastMessage'
 import { Checkbox } from '../../widgets/Checkbox'

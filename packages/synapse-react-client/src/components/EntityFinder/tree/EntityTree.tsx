@@ -23,7 +23,7 @@ import {
   EntityType,
   Reference,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../../LoadingScreen'
+import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import { BreadcrumbItem } from '../Breadcrumbs'
 import { toEntityHeader } from '../details/configurations/ProjectListDetails'
 import {

@@ -30,7 +30,7 @@ import {
   Row,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { UseQueryResult } from 'react-query'

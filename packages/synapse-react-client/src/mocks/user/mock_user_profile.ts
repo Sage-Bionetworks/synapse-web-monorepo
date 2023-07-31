@@ -8,7 +8,7 @@ import {
 export const MOCK_USER_ID = 999
 export const MOCK_USER_NAME = 'myUserName'
 
-export const mockUserProfileData: UserProfile = {
+export const mockUserProfileData = {
   summary: 'My summary bio',
   firstName: 'First',
   lastName: 'Last',
@@ -20,7 +20,8 @@ export const mockUserProfileData: UserProfile = {
   userName: MOCK_USER_NAME,
   createdOn: '2018-06-18T21:42:48.000Z',
   url: 'https://sagebase.org',
-}
+  email: 'mockemail@fakeemailprovider.xyz',
+} satisfies UserProfile
 
 export const mockUserBundle: UserBundle = {
   userId: MOCK_USER_ID.toString(),

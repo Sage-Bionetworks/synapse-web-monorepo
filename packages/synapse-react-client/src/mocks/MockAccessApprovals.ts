@@ -20,10 +20,10 @@ for (let i = 0; i < 50; i++) {
   })
 }
 
-export const mockApprovalSearchResponse: AccessApprovalSearchResponse = {
+export const mockApprovalSearchResponse = {
   results: mockSearchResults,
   nextPageToken: '50a0',
-}
+} satisfies AccessApprovalSearchResponse
 
 export const mockAccessApprovalSearchResult2: AccessApprovalSearchResult = {
   accessRequirementId: '9602629',

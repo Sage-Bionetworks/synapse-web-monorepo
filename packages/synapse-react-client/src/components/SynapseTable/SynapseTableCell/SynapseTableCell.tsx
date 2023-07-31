@@ -24,7 +24,7 @@ import {
   ColumnSpecifiedLink,
   MarkdownLink,
 } from '../../CardContainerLogic'
-import DirectDownload from '../../DirectDownload'
+import DirectDownload from '../../DirectDownload/DirectDownload'
 import EntityIdList from './EntityIdList'
 import { EntityLink } from '../../EntityLink'
 import EvaluationIdRenderer from './EvaluationIdRenderer'

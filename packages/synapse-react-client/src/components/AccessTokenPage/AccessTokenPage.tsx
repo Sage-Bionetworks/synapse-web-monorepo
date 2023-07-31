@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { Button } from '@mui/material'
 import { useGetPersonalAccessTokensInfinite } from '../../synapse-queries/user/usePersonalAccessToken'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
-import loadingScreen from '../LoadingScreen'
-import { AccessTokenCard } from './AccessTokenCard'
+import loadingScreen from '../LoadingScreen/LoadingScreen'
+import { AccessTokenCard } from './AccessTokenCard/AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
 
 export type AccessTokenPageProps = {

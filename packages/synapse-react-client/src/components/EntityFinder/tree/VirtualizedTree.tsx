@@ -26,7 +26,7 @@ import { Writable } from '../../../utils/types/Writable'
 import { Typography } from '@mui/material'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons/EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
-import { SynapseSpinner } from '../../LoadingScreen'
+import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import { UserCard } from '../../UserCard/UserCard'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 

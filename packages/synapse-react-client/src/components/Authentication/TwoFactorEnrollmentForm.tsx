@@ -17,7 +17,7 @@ import { TotpSecret } from '@sage-bionetworks/synapse-types'
 import { useGetNotificationEmail } from '../../synapse-queries'
 import { toCanvas } from 'qrcode'
 import TextField from '../TextField/TextField'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import {
   useFinishTwoFactorEnrollment,

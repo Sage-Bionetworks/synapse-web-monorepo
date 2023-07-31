@@ -20,7 +20,7 @@ import {
 import { WarningDialog } from '../SynapseForm/WarningDialog'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import SynapseClient from '../../synapse-client'
 import { useDebouncedEffect } from '../../utils/hooks'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'

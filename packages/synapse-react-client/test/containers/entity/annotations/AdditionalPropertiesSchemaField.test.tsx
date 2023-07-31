@@ -5,11 +5,14 @@ import {
   AdditionalPropertiesSchemaField,
   getSchemaForPropertyType,
   guessPropertyType,
+  PropertyType,
   transformDataFromPropertyType,
 } from '../../../../src/components/SchemaDrivenAnnotationEditor/field/AdditionalPropertiesSchemaField'
 import { getDefaultRegistry } from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
 import { createSchemaUtils } from '@rjsf/utils'
+import { JSONSchema } from '@apidevtools/json-schema-ref-parser'
+import { JSONSchema7 } from 'json-schema'
 
 const schemaUtils = createSchemaUtils(
   validator,
@@ -103,7 +106,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
   })
 
   describe('getSchemaForPropertyType tests', () => {
-    it.each([
+    it.each<[PropertyType, JSONSchema7]>([
       ['Integer', { type: 'integer' }],
       ['Float', { type: 'number' }],
       ['Datetime', { type: 'string', format: 'datetime' }],

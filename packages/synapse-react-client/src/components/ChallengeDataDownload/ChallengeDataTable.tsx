@@ -30,7 +30,7 @@ import {
   ModifiedOnRenderer,
   TypeIconRenderer,
 } from '../EntityFinder/details/view/DetailsViewTableRenderers'
-import { BlockingLoader } from '../LoadingScreen'
+import { BlockingLoader } from '../LoadingScreen/LoadingScreen'
 import { getEntityVersions } from '../../synapse-client'
 import { DownloadRenderer, SizeRenderer } from './Renderers'
 import {

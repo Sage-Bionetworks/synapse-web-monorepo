@@ -12,7 +12,7 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import { TrashedEntity } from '@sage-bionetworks/synapse-types'
 import { Alert, Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
-import { BlockingLoader, SynapseSpinner } from '../LoadingScreen'
+import { BlockingLoader, SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { Checkbox } from '../widgets/Checkbox'
 

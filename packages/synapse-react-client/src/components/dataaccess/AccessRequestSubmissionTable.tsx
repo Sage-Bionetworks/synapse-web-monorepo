@@ -14,7 +14,7 @@ import {
   SubmissionSearchSort,
   SubmissionSortField,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import UserCard from '../UserCard/UserCard'
 import { Button, Typography } from '@mui/material'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'

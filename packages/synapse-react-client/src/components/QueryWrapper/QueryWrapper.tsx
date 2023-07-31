@@ -13,7 +13,7 @@ import {
   PaginatedQueryContextType,
   QueryContextProvider,
 } from '../QueryContext/QueryContext'
-import useImmutableTableQuery from '../useImmutableTableQuery'
+import useImmutableTableQuery from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import useTableRowSelection from './useTableRowSelection'
 import useQueryWrapperData from './useQueryWrapperData'

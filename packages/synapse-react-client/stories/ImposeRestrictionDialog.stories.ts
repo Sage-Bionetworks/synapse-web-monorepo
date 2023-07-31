@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ImposeRestrictionDialog from '../src/components/AccessRequirement/ImposeRestrictionDialog'
+import ImposeRestrictionDialog from '../src/components/AccessRequirement/ImposeRestrictionDialog/ImposeRestrictionDialog'
 
 const meta = {
   title: 'Governance/ImposeRestrictionDialog',

@@ -14,7 +14,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from '../CardContainerLogic'
 import GenericCard from '../GenericCard'
-import loadingScreen from '../LoadingScreen'
+import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { useInfiniteQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { Dataset, Funder } from '../row_renderers'

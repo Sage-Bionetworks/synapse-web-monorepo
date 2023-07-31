@@ -19,7 +19,7 @@ import {
   ENTITY_CONCRETE_TYPE,
   EntityJson,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './field/AdditionalPropertiesSchemaField'
 import {
   dropNullishArrayValues,

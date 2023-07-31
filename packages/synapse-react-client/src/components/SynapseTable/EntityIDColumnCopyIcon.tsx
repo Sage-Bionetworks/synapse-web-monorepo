@@ -7,7 +7,7 @@ import {
 } from '../InteractiveCopyIdsIcon'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { SynapseConstants } from '../../utils'
 import { getFullQueryTableResults } from '../../synapse-client/SynapseClient'
 import { parseEntityIdAndVersionFromSqlStatement } from '../../utils/functions/SqlFunctions'
