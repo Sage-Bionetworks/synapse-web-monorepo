@@ -14,8 +14,8 @@ import { CreatePackageV2 } from './CreatePackageV2'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { Button, Tooltip, Typography } from '@mui/material'
-import { HelpPopover } from '../HelpPopover'
-import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal'
+import { HelpPopover } from '../HelpPopover/HelpPopover'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { DeleteTwoTone } from '@mui/icons-material'
 
 const pythonDownloadCode = `import synapseclient

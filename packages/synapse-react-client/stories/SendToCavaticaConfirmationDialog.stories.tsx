@@ -8,7 +8,9 @@ import {
 } from '../src/mocks/mockFileViewQuery'
 import { deepClone } from '@mui/x-data-grid/utils/utils'
 import { displayToast } from '../src/components/ToastMessage'
-import SendToCavaticaConfirmationDialog from '../src/components/SynapseTable/SendToCavaticaConfirmationDialog'
+import SendToCavaticaConfirmationDialog, {
+  SendToCavaticaConfirmationDialogProps,
+} from '../src/components/SynapseTable/SendToCavaticaConfirmationDialog'
 
 const meta = {
   title: 'Explore/Send to CAVATICA Dialog',
@@ -30,7 +32,12 @@ const meta = {
       url: 'https://www.figma.com/file/3l3RjDnKnv8jms2XFR5BQu/Main?type=design&node-id=1909-58523',
     },
   },
-} satisfies Meta
+} satisfies Meta<
+  SendToCavaticaConfirmationDialogProps & {
+    hasRowSelection: boolean
+    unitDescription: string
+  }
+>
 export default meta
 type Story = StoryObj<typeof meta>
 
@@ -41,12 +48,16 @@ export const Demo: Story = {
     unitDescription: 'file',
   },
   decorators: [
-    (Story, { args }) => {
+    (Story, args) => {
       return (
         <QueryContextProvider
           queryContext={{
             data: mockQueryResultBundle,
             getCurrentQueryRequest: () => deepClone(mockQueryBundleRequest),
+            isRowSelectionVisible: args.hasRowSelection,
+            selectedRows: args.hasRowSelection
+              ? mockQueryResultBundle.queryResult!.queryResults.rows.slice(0, 2)
+              : [],
           }}
         >
           <QueryVisualizationContextProvider
@@ -55,13 +66,6 @@ export const Demo: Story = {
               setIsShowingExportToCavaticaModal: () => {
                 displayToast('close modal called')
               },
-              isRowSelectionVisible: args.hasRowSelection,
-              selectedRows: args.hasRowSelection
-                ? mockQueryResultBundle.queryResult!.queryResults.rows.slice(
-                    0,
-                    2,
-                  )
-                : [],
               unitDescription: args.unitDescription,
             }}
           >

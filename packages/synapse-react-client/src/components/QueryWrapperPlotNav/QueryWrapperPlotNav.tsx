@@ -20,8 +20,8 @@ import {
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import { QueryContextConsumer } from '../QueryContext'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
-import SearchV2, { SearchV2Props } from '../SearchV2'
-import SqlEditor from '../SqlEditor'
+import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
+import SqlEditor from '../SynapseTable/SqlEditor'
 import { SynapseTableProps } from '../SynapseTable'
 import TopLevelControls, {
   TopLevelControlsProps,

@@ -64,7 +64,7 @@ function overrideEndpoint(stack: SynapseStack) {
  */
 export function StorybookComponentWrapper(props: {
   children: React.ReactNode
-  /* This will match the `globalTypes` object in preview.jsx. */
+  /* This will match the `globalTypes` object in preview.tsx. */
   storybookContext: {
     globals: {
       stack?: SynapseStack

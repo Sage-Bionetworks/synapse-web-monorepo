@@ -24,7 +24,7 @@ import {
   MOCK_USER_NAME,
 } from '../../mocks/user/mock_user_profile'
 import selectEvent from 'react-select-event'
-import { getOptionLabel } from './AccessRequirementSearchBox'
+import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 import * as AccessApprovalsTableModule from './AccessApprovalsTable'
 import * as AccessRequestSubmissionTableModule from './AccessRequestSubmissionTable'
 import { UserBundle } from '@sage-bionetworks/synapse-types'

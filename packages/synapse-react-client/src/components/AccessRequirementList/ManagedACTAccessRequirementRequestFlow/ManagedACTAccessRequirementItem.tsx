@@ -6,7 +6,7 @@ import {
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
 import { ManagedACTAccessRequirementStatus } from '@sage-bionetworks/synapse-types'
-import { AlertProps } from './DataAccessRequestAccessorsFilesForm'
+import { AlertProps } from './DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
 import RequirementItem from '../RequirementItem/RequirementItem'
 import {

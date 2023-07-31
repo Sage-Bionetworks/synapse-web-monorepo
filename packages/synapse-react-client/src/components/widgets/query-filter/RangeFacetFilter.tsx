@@ -9,7 +9,7 @@ import { SelectColumn } from '@sage-bionetworks/synapse-types'
 import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
 import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
-import { RangeSlider } from '../RangeSlider'
+import { RangeSlider } from '../RangeSlider/RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
 
 export enum RadioValuesEnum {

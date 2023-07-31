@@ -14,7 +14,7 @@ import {
 } from './AccessRequestSubmissionTable'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
-import AccessRequirementSearchBox from './AccessRequirementSearchBox'
+import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 import { useGetCurrentUserBundle } from '../../synapse-queries'
 
 export const UserHistoryDashboard = () => {

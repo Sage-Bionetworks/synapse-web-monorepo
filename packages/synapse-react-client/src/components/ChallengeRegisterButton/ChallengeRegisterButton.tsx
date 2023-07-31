@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { Box } from '@mui/system'
-import SpinnerButton from '../widgets/SpinnerButton'
+import SpinnerButton from '../SpinnerButton/SpinnerButton'
 import { useSynapseContext } from '../../utils'
 import {
   useGetCurrentUserProfile,

@@ -1,5 +1,5 @@
 import React from 'react'
-import { HelpPopover } from '../../../HelpPopover'
+import { HelpPopover } from '../../../HelpPopover/HelpPopover'
 import { VersionSelectionType } from '../../VersionSelectionType'
 
 const CHOOSE_REFERENCE =

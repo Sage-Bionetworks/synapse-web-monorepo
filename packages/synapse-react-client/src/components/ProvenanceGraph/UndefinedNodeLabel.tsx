@@ -1,6 +1,6 @@
 import React from 'react'
 import { Typography } from '@mui/material'
-import { HelpPopover } from '../HelpPopover'
+import { HelpPopover } from '../HelpPopover/HelpPopover'
 
 export const UndefinedNodeLabel = () => {
   return (
