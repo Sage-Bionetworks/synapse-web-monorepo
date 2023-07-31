@@ -14,7 +14,7 @@ type Story = StoryObj<typeof meta>
 export const AccessRequirementSearchBoxDemo: Story = {
   args: {
     onChange: id => {
-      displayToast('Selected id: ' + id, 'info')
+      displayToast('Selected id: ' + String(id), 'info')
     },
   },
 }

@@ -19,7 +19,7 @@ describe('UserCardListRotate Component Testing', () => {
     count: 3,
   }
 
-  let set = 3
+  const set = 3
   const data = ['1', '2', '3', '4', '5', '6', '7']
   const data_even = ['1', '2', '3', '4', '5', '6']
   const storage_name = 'sage_rotate_uids'

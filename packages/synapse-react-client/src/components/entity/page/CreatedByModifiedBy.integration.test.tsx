@@ -76,7 +76,7 @@ describe('CreatedByModifiedBy tests', () => {
       }),
     )
 
-    renderComponent({ entityId: mockTableEntity.id! })
+    renderComponent({ entityId: mockTableEntity.id })
 
     // Created by
     await screen.findByText('Table created by', { exact: false })

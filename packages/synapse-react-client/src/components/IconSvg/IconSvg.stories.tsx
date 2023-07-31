@@ -10,11 +10,7 @@ const meta = {
         {[...IconStrings].sort().map(icon => (
           <div style={{ margin: '10px', textAlign: 'center' }} key={icon}>
             <div>
-              <IconSvg
-                {...args}
-                icon={icon as IconSvgProps['icon']}
-                label={icon}
-              />
+              <IconSvg {...args} icon={icon} label={icon} />
             </div>
             <div style={{ fontSize: '10px' }}>{icon}</div>
           </div>

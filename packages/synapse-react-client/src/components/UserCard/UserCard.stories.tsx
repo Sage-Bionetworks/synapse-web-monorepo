@@ -14,7 +14,7 @@ import UserCard from './UserCard'
 const meta = {
   title: 'UI/UserCard',
   component: UserCard,
-  render: args => {
+  render: function RenderFn(args) {
     const { data: currentUserProfile } = useGetCurrentUserProfile()
     let currentUserId = currentUserProfile?.ownerId
     if (currentUserId === ANONYMOUS_PRINCIPAL_ID.toString()) {

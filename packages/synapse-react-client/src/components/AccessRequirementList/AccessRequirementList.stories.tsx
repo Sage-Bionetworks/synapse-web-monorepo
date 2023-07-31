@@ -73,8 +73,8 @@ function getTwoFactorAuthStatusHandler(enabled: boolean) {
       `${MOCK_REPO_ORIGIN}/auth/v1/2fa`,
 
       async (req, res, ctx) => {
-        let status = 200
-        let response: TwoFactorAuthStatus = {
+        const status = 200
+        const response: TwoFactorAuthStatus = {
           status: enabled ? 'ENABLED' : 'DISABLED',
         }
         return res(ctx.status(status), ctx.json(response))

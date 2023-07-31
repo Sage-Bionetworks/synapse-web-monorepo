@@ -77,12 +77,12 @@ describe('getAdditionalFilters', () => {
   })
 
   it("Omits params beginning with 'QueryWrapper' when other searchParams are present", () => {
-    let searchParams = {
+    const searchParams = {
       QueryWrapper0:
         '{"sql":"SELECT id AS "File ID", assay, dataType, diagnosis, tumorType,  species, individualID,  fileFormat, dataSubtype, nf1Genotype as \\"NF1 Genotype\\", nf2Genotype as \\"NF2 Genotype\\", studyName, fundingAgency, consortium, name AS \\"File Name\\", accessType, accessTeam  FROM syn16858331 WHERE resourceType = \'experimentalData\'","limit":25,"offset":0,"selectedFacets":[{"concreteType":"org.sagebionetworks.repo.model.table.FacetColumnValuesRequest","columnName":"assay","facetValues":["exomeSeq"]}]}',
       study: 'syn21754060',
     }
-    let operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
+    const operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
     // if no search params are there, then it should return the input sql
     const result = getAdditionalFilters('syn16858331', searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
@@ -98,10 +98,10 @@ describe('getAdditionalFilters', () => {
   })
 
   it('Generates a queryFilter for EQUALS', () => {
-    let searchParams = {
+    const searchParams = {
       study: 'syn21754060',
     }
-    let operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
+    const operator: SQLOperator = ColumnSingleValueFilterOperator.EQUAL
     // if no search params are there, then it should return the input sql
     const result = getAdditionalFilters('syn123', searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
@@ -117,10 +117,10 @@ describe('getAdditionalFilters', () => {
   })
 
   it('Generates a queryFilter for IN', () => {
-    let searchParams = {
+    const searchParams = {
       study: 'someValue1,someValue2',
     }
-    let operator: SQLOperator = ColumnSingleValueFilterOperator.IN
+    const operator: SQLOperator = ColumnSingleValueFilterOperator.IN
     // if no search params are there, then it should return the input sql
     const result = getAdditionalFilters('syn123', searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
@@ -136,10 +136,10 @@ describe('getAdditionalFilters', () => {
   })
 
   it('Generates a queryFilter for LIKE', () => {
-    let searchParams = {
+    const searchParams = {
       study: 'someValue',
     }
-    let operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
+    const operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
     // if no search params are there, then it should return the input sql
     const result = getAdditionalFilters('syn123', searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
@@ -155,10 +155,10 @@ describe('getAdditionalFilters', () => {
   })
 
   it('Omits the syn prefix when querying a SynID with LIKE', () => {
-    let searchParams = {
+    const searchParams = {
       study: 'syn21754060',
     }
-    let operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
+    const operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE
     // if no search params are there, then it should return the input sql
     const result = getAdditionalFilters('syn123', searchParams, operator)
     const expectedResult: ColumnSingleValueQueryFilter[] = [
@@ -174,10 +174,10 @@ describe('getAdditionalFilters', () => {
   })
 
   it('Generates a queryFilter for HAS', () => {
-    let searchParams = {
+    const searchParams = {
       study: 'syn21754060',
     }
-    let operator: SQLOperator = ColumnMultiValueFunction.HAS
+    const operator: SQLOperator = ColumnMultiValueFunction.HAS
     // if no search params are there, then it should return the input sql
     const actual = getAdditionalFilters('syn123', searchParams, operator)
     const expectedResult: ColumnMultiValueFunctionQueryFilter[] = [
@@ -193,10 +193,10 @@ describe('getAdditionalFilters', () => {
   })
 
   it('Generates a queryFilter for HAS_LIKE', () => {
-    let searchParams = {
+    const searchParams = {
       study: 'abc,def',
     }
-    let operator: SQLOperator = ColumnMultiValueFunction.HAS_LIKE
+    const operator: SQLOperator = ColumnMultiValueFunction.HAS_LIKE
     // if no search params are there, then it should return the input sql
     const actual = getAdditionalFilters('syn123', searchParams, operator)
     const expectedResult: ColumnMultiValueFunctionQueryFilter[] = [

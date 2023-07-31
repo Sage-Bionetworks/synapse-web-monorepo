@@ -100,7 +100,7 @@ const previewFileHandle: S3FileHandle = {
 }
 
 const entityBundle: EntityBundle = {
-  ...mockFileEntityData.bundle!,
+  ...mockFileEntityData.bundle,
   entity: {
     ...mockFileEntityData.entity,
     dataFileHandleId: MOCK_FILE_HANDLE_ID,

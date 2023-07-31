@@ -13,7 +13,7 @@ const steps: Record<string, Step & { content: React.ReactNode }> = {
     nextEnabled: true,
     content: (
       <>
-        <p>Some child component with it's own actions</p>
+        <p>Some child component with it&apos;s own actions</p>
         <div>
           <Button
             onClick={() => alert('Passing this data back up to Stepper parent')}
@@ -33,13 +33,13 @@ const steps: Record<string, Step & { content: React.ReactNode }> = {
     previousStep: 'STEP_1',
     content: (
       <>
-        'Proin laoreet semper tortor ac posuere. Cras non leo at ipsum fringilla
+        Proin laoreet semper tortor ac posuere. Cras non leo at ipsum fringilla
         ullamcorper. Etiam velit est, tempor id lobortis eu, lacinia id sem. Nam
         ornare mattis dui a porta. Aliquam a ullamcorper velit, et hendrerit
         eros. Etiam accumsan porta neque in viverra. Proin eleifend, eros in
         tristique hendrerit, nisi purus cursus sapien, id ultrices nunc tellus a
         ipsum. Donec et fringilla neque. Aenean consequat purus quis lectus
-        maximus fermentum.',
+        maximus fermentum.,
       </>
     ),
   },
@@ -49,7 +49,7 @@ const steps: Record<string, Step & { content: React.ReactNode }> = {
     previousStep: 'STEP_2',
     content: (
       <>
-        'Maecenas quam nunc, sagittis non condimentum at, rutrum sit amet eros.
+        Maecenas quam nunc, sagittis non condimentum at, rutrum sit amet eros.
         Fusce rutrum, lectus in blandit sagittis, mi tortor ullamcorper mi,
         vitae vestibulum libero quam a nisi. In eu mauris et neque sodales porta
         eu eget dui. Nunc eu quam sit amet justo elementum mollis. Orci varius
@@ -58,7 +58,7 @@ const steps: Record<string, Step & { content: React.ReactNode }> = {
         semper tortor ac posuere. Cras non leo at ipsum fringilla ullamcorper.
         Etiam velit est, tempor id lobortis eu, lacinia id sem. Nam ornare
         mattis dui a porta. Aliquam a ullamcorper velit, et hendrerit eros.
-        Etiam accumsan porta neque in viverra.',
+        Etiam accumsan porta neque in viverra.,
       </>
     ),
   },
@@ -67,7 +67,7 @@ const steps: Record<string, Step & { content: React.ReactNode }> = {
 const meta = {
   title: 'UI/StepperDialog',
   component: StepperDialog,
-  render: args => {
+  render: function RenderFn(args) {
     const [step, setStep] = useState<Step & { content: React.ReactNode }>(
       steps.STEP_1,
     )

@@ -213,7 +213,7 @@ export const SendToCavatica: Story = {
   },
 }
 
-const handleRowSelectionCustomCommandClick = async (
+const handleRowSelectionCustomCommandClick = (
   event: CustomControlCallbackData,
 ) => {
   displayToast(

@@ -5,7 +5,7 @@ import PageProgress, { PageProgressProps } from './PageProgress'
 
 const meta = {
   title: 'UI/PageProgress',
-  render: args => {
+  render: function RenderFn(args) {
     const [percent, setPercent] = React.useState(0)
     return (
       <PageProgress

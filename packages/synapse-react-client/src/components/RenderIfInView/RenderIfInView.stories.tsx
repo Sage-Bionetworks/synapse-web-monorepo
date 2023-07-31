@@ -15,7 +15,7 @@ const meta = {
       >
         RenderIfInView uses the IntersectionObserver API to allow conditional
         child rendering and callbacks based on viewport visibility. It will
-        render children when it's scrolled into view.
+        render children when it&apos;s scrolled into view.
       </div>
     </RenderIfInView>
   ),
