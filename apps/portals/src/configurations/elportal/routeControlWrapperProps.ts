@@ -5,7 +5,7 @@ const routeControlWrapper: RouteControlWrapperProps = {
   synapseConfig: {} as SynapseConfig,
   customRoutes: [
     'Data by Files',
-    'Data by Participants',
+    // 'Data by Participants',
     'Projects',
     'Species',
     'Studies',

@@ -211,6 +211,7 @@ const routes: GenericRoute[] = [
       {
         exact: true,
         path: 'Data by Participants',
+        hideRouteFromNavbar: true, // remove on release
         synapseConfigArray: [
           {
             name: 'OrientationBanner',
