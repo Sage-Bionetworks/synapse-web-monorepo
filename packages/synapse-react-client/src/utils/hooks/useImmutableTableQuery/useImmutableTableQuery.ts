@@ -64,7 +64,9 @@ export type ImmutableTableQueryResult = {
     commitOptions?: QueryChangeCommitOptions,
   ) => void
   /** Removes a particular selected facet from the query */
-  removeSelectedFacet: (facet: FacetColumnRequest) => void
+  removeSelectedFacet: (
+    facet: FacetColumnRequest | FacetColumnRequest[],
+  ) => void
   /** Removes a particular value from a selected facet. If the value is the last value in the FacetColumnRequest, the selected facet will be removed. */
   removeValueFromSelectedFacet: (
     facet: FacetColumnRequest | string,
@@ -389,13 +391,20 @@ export default function useImmutableTableQuery(
   )
 
   const removeSelectedFacet = useCallback(
-    (facetColumnRequest: FacetColumnRequest) => {
+    (facetColumnRequest: FacetColumnRequest | FacetColumnRequest[]) => {
+      const isArray = Array.isArray(facetColumnRequest)
       setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.selectedFacets = (
           currentQuery.query.selectedFacets ?? []
         ).filter(facet => {
           // Use lodash for deep comparison
-          return !isEqual(facet, facetColumnRequest)
+          if (isArray) {
+            return !facetColumnRequest.find(item => {
+              return isEqual(facet, item)
+            })
+          } else {
+            return !isEqual(facet, facetColumnRequest)
+          }
         })
         return currentQuery
       })

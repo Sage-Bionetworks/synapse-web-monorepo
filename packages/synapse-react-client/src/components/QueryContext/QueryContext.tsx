@@ -96,7 +96,7 @@ export type QueryContextType<
   rowSelectionPrimaryKey?: string[]
   /** Whether the user has selected any rows */
   hasSelectedRows: boolean
-  /** Combine two faceted columns into a single range facet UI selector */
+  /** Combines two faceted columns into a single inclusive range selector */
   combineRangeFacetConfig?: ReadonlyDeep<CombineRangeFacetConfig>
 }
 

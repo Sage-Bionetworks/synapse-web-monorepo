@@ -20,7 +20,7 @@ export type CombinedRangeFacetFilterProps = {
 }
 
 /**
- * Inclusive range selector across two columns (column 1 is the min, column 2 is the max).
+ * Inclusive range selector across two columns
  * Written for the ELITE portal cohort builder, may have other uses.
  */
 export const CombinedRangeFacetFilter: React.FunctionComponent<

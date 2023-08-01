@@ -200,7 +200,7 @@ function getPillPropsFromFacetFilters(
               innerText: innerText,
               tooltipText: `${combineRangeFacetConfig.label}: ${innerText}`,
               onRemoveFilter: () => {
-                queryContext.removeSelectedFacet(selectedFacet)
+                queryContext.removeSelectedFacet([minFacet, maxFacet])
               },
             },
           ]
