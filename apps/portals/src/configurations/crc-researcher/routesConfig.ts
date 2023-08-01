@@ -1,12 +1,4 @@
 import { GenericRoute } from 'types/portal-config'
-import {
-  uncategorized,
-  potential,
-  invited,
-  scheduled,
-  tested,
-  hidden,
-} from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 
 const routes: GenericRoute[] = [
@@ -54,88 +46,40 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
-        path: '1. Uncategorized',
+        path: ':slug/',
+        hideRouteFromNavbar: true,
         exact: true,
         synapseConfigArray: [
           {
             name: 'RouteControlWrapper',
             isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: uncategorized,
-            },
+            props: RouteControlWrapperProps,
           },
         ],
+      },
+      {
+        path: '1. Uncategorized',
+        hideRouteFromNavbar: false,
       },
       {
         path: '2. Potential',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: potential,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: '3. Invited',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: invited,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: '4. Scheduled',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: scheduled,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: '5. Tested',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: tested,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: 'Hidden',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: hidden,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
     ],
   },
