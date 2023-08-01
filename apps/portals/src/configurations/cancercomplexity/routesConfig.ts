@@ -176,22 +176,21 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
-        path: 'Grants',
-        routes: [
+        path: ':slug/',
+        hideRouteFromNavbar: true,
+        exact: true,
+        synapseConfigArray: [
           {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: grants,
-                },
-              },
-            ],
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: RouteControlWrapperProps,
           },
+        ],
+      },
+      {
+        path: 'Grants',
+        hideRouteFromNavbar: false,
+        routes: [
           {
             path: 'DetailsPage',
             exact: false,
@@ -280,21 +279,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'People',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: people,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
@@ -374,21 +360,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Publications',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: publications,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
@@ -467,21 +440,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Datasets',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: datasets,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
@@ -552,21 +512,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Tools',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: tools,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
@@ -637,21 +584,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Educational Resources',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: education,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
