@@ -11,6 +11,7 @@ import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
 import { RangeSlider } from '../RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
+import dayjs from 'dayjs'
 
 export enum RadioValuesEnum {
   NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
@@ -41,12 +42,12 @@ export const RangeFacetFilter: React.FunctionComponent<
 }: RangeFacetFilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
 
-  let { columnMin, columnMax, selectedMin, selectedMax } = facetResult // the upper bound of the selected range
+  const { columnMin, columnMax, selectedMin, selectedMax } = facetResult // the upper bound of the selected range
 
   const hasAnyValue = !selectedMin && !selectedMax
 
-  selectedMin = selectedMin || columnMin
-  selectedMax = selectedMax || columnMax
+  const currentMin = selectedMin || columnMin
+  const currentMax = selectedMax || columnMax
 
   const rangeType = columnType === 'DOUBLE' ? 'number' : 'date'
 
@@ -73,9 +74,8 @@ export const RangeFacetFilter: React.FunctionComponent<
   }
 
   const [radioValue, setRadioValue] = useState(
-    getRadioValue(selectedMin, hasAnyValue),
+    getRadioValue(currentMin, hasAnyValue),
   )
-
   return (
     <div>
       <FacetFilterHeader
@@ -101,23 +101,40 @@ export const RangeFacetFilter: React.FunctionComponent<
                 <RangeSlider
                   key="RangeSlider"
                   domain={[columnMin, columnMax]}
-                  initialValues={{ min: selectedMin, max: selectedMax }}
+                  initialValues={{
+                    min: parseInt(currentMin),
+                    max: parseInt(currentMax),
+                  }}
                   step={1}
                   doUpdateOnApply={true}
                   onChange={(values: RangeValues) =>
                     onChange([values.min, values.max])
                   }
                 >
-                  ) {'>'}
+                  {'>'}
                 </RangeSlider>
               )}
 
-              {(columnType === 'DATE' || columnType === 'DOUBLE') && (
+              {columnType === 'DATE' && (
                 <Range
                   key="Range"
                   initialValues={{
-                    min: parseInt(selectedMin),
-                    max: parseInt(selectedMax),
+                    // From the backend, selectedMin is a formatted date (like "2021-06-15"), but columnMin is a unix timestamp in millis (like "1624651794856")
+                    min: selectedMin ?? dayjs(parseInt(columnMin)).toString(),
+                    max: selectedMax ?? dayjs(parseInt(columnMax)).toString(),
+                  }}
+                  type={rangeType}
+                  onChange={(values: RangeValues) =>
+                    onChange([values.min, values.max])
+                  }
+                ></Range>
+              )}
+              {columnType === 'DOUBLE' && (
+                <Range
+                  key="Range"
+                  initialValues={{
+                    min: parseFloat(currentMin),
+                    max: parseFloat(currentMax),
                   }}
                   type={rangeType}
                   onChange={(values: RangeValues) =>

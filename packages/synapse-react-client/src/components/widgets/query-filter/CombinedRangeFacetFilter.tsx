@@ -9,6 +9,7 @@ import { Range, RangeValues } from '../Range'
 import { RangeSlider } from '../RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { RadioValuesEnum, options } from './RangeFacetFilter'
+import dayjs from 'dayjs'
 
 export type CombinedRangeFacetFilterProps = {
   facetResults: FacetColumnResultRange[]
@@ -113,13 +114,26 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
                   {'>'}
                 </RangeSlider>
               )}
-
-              {(columnType === 'DATE' || columnType === 'DOUBLE') && (
+              {columnType === 'DATE' && (
                 <Range
                   key="Range"
                   initialValues={{
-                    min: parseInt(selectedMin),
-                    max: parseInt(selectedMax),
+                    // From the backend, selectedMin is a formatted date (like "2021-06-15"), but columnMin is a unix timestamp in millis (like "1624651794856")
+                    min: col2SelectedMin ?? dayjs(parseInt(col1Min)).toString(),
+                    max: col1SelectedMax ?? dayjs(parseInt(col2Max)).toString(),
+                  }}
+                  type={rangeType}
+                  onChange={(values: RangeValues) =>
+                    onChange([col1Min, values.max, values.min, col2Max])
+                  }
+                ></Range>
+              )}
+              {columnType === 'DOUBLE' && (
+                <Range
+                  key="Range"
+                  initialValues={{
+                    min: parseFloat(selectedMin),
+                    max: parseFloat(selectedMax),
                   }}
                   type={rangeType}
                   onChange={(values: RangeValues) =>
