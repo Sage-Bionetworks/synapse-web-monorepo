@@ -62,13 +62,17 @@ const patchRequestFacets = (
   const changedFacetIndex = selections.findIndex(
     facet => facet.columnName === changedFacet.columnName,
   )
-
   const isEmptyValuesFacet =
     changedFacet.concreteType ===
       'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' &&
     (!changedFacet.facetValues || !changedFacet.facetValues.length)
+  const isEmptyRangesFacet =
+    changedFacet.concreteType ===
+      'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest' &&
+    (!changedFacet.min || !changedFacet.max)
+
   if (changedFacetIndex > -1) {
-    if (isEmptyValuesFacet) {
+    if (isEmptyValuesFacet || isEmptyRangesFacet) {
       selections.splice(changedFacetIndex, 1)
     } else {
       selections[changedFacetIndex] = changedFacet
@@ -136,7 +140,7 @@ export const applyCombinedChangesToRangeColumn = (
   combinedRangeFacets[1].columnMax = values[3]
   const changedFacet0 = convertFacetColumnRangeRequest(combinedRangeFacets[0])
   const changedFacet1 = convertFacetColumnRangeRequest(combinedRangeFacets[1])
-  let selections = lastRequest?.query?.selectedFacets
+  let selections = lastRequest?.query?.selectedFacets ?? []
   selections = patchRequestFacets(changedFacet0, selections)
   selections = patchRequestFacets(changedFacet1, selections)
   onChangeFn(selections)

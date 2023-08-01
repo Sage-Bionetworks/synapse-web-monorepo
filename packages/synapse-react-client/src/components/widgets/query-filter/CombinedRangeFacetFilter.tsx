@@ -32,22 +32,21 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
   collapsed = false,
 }: CombinedRangeFacetFilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
-  let {
+  const {
     columnMin: col1Min,
-    // columnMax: col1Max,
+    // columnMax: col1Max  // not used
     selectedMin: col1SelectedMin,
     selectedMax: col1SelectedMax,
   } = facetResults[0]
-  let {
-    //columnMin: col2Min,
+  const {
+    //columnMin: col2Min,  // not used
     columnMax: col2Max,
     selectedMin: col2SelectedMin,
     selectedMax: col2SelectedMax,
   } = facetResults[1]
 
-  const hasAnyValue =
+  const isAnyValue =
     !col1SelectedMin && !col1SelectedMax && !col2SelectedMin && !col2SelectedMax
-
   const selectedMin = col2SelectedMin || col1Min
   const selectedMax = col1SelectedMax || col2Max
 
@@ -76,7 +75,7 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
   }
 
   const [radioValue, setRadioValue] = useState(
-    getRadioValue(selectedMin, hasAnyValue),
+    getRadioValue(selectedMin, isAnyValue),
   )
 
   return (
