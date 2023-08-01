@@ -88,6 +88,7 @@ export function RouteControl(props: RouteControlProps) {
               borderBottom: '4px solid',
               borderBottomColor: 'transparent',
               '&.Mui-selected': {
+                color: 'secondary.main',
                 borderBottomColor: 'secondary.main',
               },
               '&:hover:not(.Mui-selected)': {
