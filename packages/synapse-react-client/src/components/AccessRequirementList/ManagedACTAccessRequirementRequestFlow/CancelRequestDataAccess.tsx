@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Renewal, Request } from '@sage-bionetworks/synapse-types'
-import { AlertProps } from './DataAccessRequestAccessorsFilesForm'
+import { AlertProps } from './DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import {
   Alert,
   Box,

@@ -6,10 +6,10 @@ import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
 import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
-import { RangeSlider } from '../RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { RadioValuesEnum, options } from './RangeFacetFilter'
 import dayjs from 'dayjs'
+import RangeSlider from '../RangeSlider/RangeSlider'
 
 export type CombinedRangeFacetFilterProps = {
   facetResults: FacetColumnResultRange[]

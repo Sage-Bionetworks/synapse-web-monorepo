@@ -4,7 +4,7 @@ import React from 'react'
 import {
   RangeSlider,
   RangeSliderProps,
-} from '../../../src/components/widgets/RangeSlider'
+} from '../../../src/components/widgets/RangeSlider/RangeSlider'
 import { Slider } from '@mui/material'
 
 const mockCallback = jest.fn()

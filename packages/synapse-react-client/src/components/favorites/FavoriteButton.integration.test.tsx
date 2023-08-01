@@ -31,7 +31,7 @@ function useIsInFavorites() {
 
       async (req, res, ctx) => {
         const response: PaginatedResults<EntityHeader> = {
-          results: [mockFileEntityData.entityHeader!],
+          results: [mockFileEntityData.entityHeader],
         }
 
         return res(ctx.status(200), ctx.json(response))
@@ -61,7 +61,7 @@ server.use(
     async (req, res, ctx) => {
       onAddFavoriteCalled(req.params.id)
       useIsInFavorites()
-      return res(ctx.status(201), ctx.json(mockFileEntityData.entityHeader!))
+      return res(ctx.status(201), ctx.json(mockFileEntityData.entityHeader))
     },
   ),
   rest.delete(
@@ -118,10 +118,7 @@ describe('FavoriteButton tests', () => {
           onAddFavoriteCalled(req.params.id)
           useIsInFavorites()
           await deferResponse
-          return res(
-            ctx.status(201),
-            ctx.json(mockFileEntityData.entityHeader!),
-          )
+          return res(ctx.status(201), ctx.json(mockFileEntityData.entityHeader))
         },
       ),
     )

@@ -6,14 +6,16 @@ import { useJiraIssueCollector } from '../JiraIssueCollector'
 import { SignInPrompt, YOU_ARE_NOT_AUTHORIZED_MESSAGE } from './ErrorBanner'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 
+export type ErrorChipProps = {
+  chipText: string
+  error: SynapseClientError
+}
+
 /**
  * A chip component for handling inline errors, where some information can be shown (e.g. an ID) without breaking an entire component.
  * @constructor
  */
-export default function ErrorChip(props: {
-  chipText: string
-  error: SynapseClientError
-}) {
+export default function ErrorChip(props: ErrorChipProps) {
   const { chipText, error } = props
   const { accessToken } = useSynapseContext()
 

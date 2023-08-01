@@ -48,10 +48,10 @@ export const mockPaginatedEntityHeaders: PaginatedResults<EntityHeader> = {
 }
 
 export const mockProjectHeader: ProjectHeader = {
-  id: mockProjectEntity.id!,
+  id: mockProjectEntity.id,
   name: mockProjectEntity.name,
   lastActivity: '2022-02-03T12:44:35.457Z',
-  modifiedOn: mockProjectEntity.modifiedOn!,
+  modifiedOn: mockProjectEntity.modifiedOn,
   modifiedBy: MOCK_USER_ID,
 }
 

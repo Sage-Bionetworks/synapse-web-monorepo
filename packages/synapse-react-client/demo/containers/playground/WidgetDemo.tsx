@@ -7,7 +7,7 @@ import {
   ClickCallbackParams,
 } from '../../../src/components/Plot/types'
 import { Range, RangeValues } from '../../../src/components/widgets/Range'
-import { RangeSlider } from '../../../src/components/widgets/RangeSlider'
+import { RangeSlider } from '../../../src/components/widgets/RangeSlider/RangeSlider'
 import { useState } from 'react'
 
 export const WidgetDemo: React.FunctionComponent = () => {

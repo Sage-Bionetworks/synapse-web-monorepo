@@ -17,7 +17,7 @@ import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
 import IconSvg from '../../IconSvg/IconSvg'
 import { useCreateLockAccessRequirement } from '../../../synapse-queries'
 import { displayToast } from '../../ToastMessage/ToastMessage'
-import { HelpPopover } from '../../HelpPopover'
+import { HelpPopover } from '../../HelpPopover/HelpPopover'
 
 export type ImposeRestrictionFormProps = {
   /* The ID of the entity that the user may choose to restrict */

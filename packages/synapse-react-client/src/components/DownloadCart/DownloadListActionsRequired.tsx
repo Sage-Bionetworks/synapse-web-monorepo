@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useGetDownloadListActionsRequiredInfinite } from '../../synapse-queries/download/useDownloadList'
 import { useInView } from 'react-intersection-observer'
 import { ActionRequiredCount } from '@sage-bionetworks/synapse-types'
-import { LoadingActionRequiredCard } from './ActionRequiredCard'
+import { LoadingActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import { Box } from '@mui/material'
 import { ActionRequiredListItem } from './ActionRequiredListItem'
 

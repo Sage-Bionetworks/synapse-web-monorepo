@@ -10,7 +10,7 @@ import {
   IconButton,
   Stack,
 } from '@mui/material'
-import { HelpPopover } from '../../../src/components/HelpPopover'
+import { HelpPopover } from '../../../src/components/HelpPopover/HelpPopover'
 import IconSvg from '../../../src/components/IconSvg/IconSvg'
 
 export interface DialogProps extends MuiDialogProps {

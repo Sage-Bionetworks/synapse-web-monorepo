@@ -9,7 +9,7 @@ import {
   QueryContextProvider,
   QueryContextType,
 } from '../../src/components/QueryContext/QueryContext'
-import SqlEditor from '../../src/components/SqlEditor'
+import SqlEditor from '../../src/components/SynapseTable/SqlEditor'
 import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 
 const renderComponent = (
