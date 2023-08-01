@@ -1,13 +1,12 @@
 import { Collapse } from '@mui/material'
 import React from 'react'
 import { useState } from 'react'
-import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
 import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
 import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
 import { FacetFilterHeader } from './FacetFilterHeader'
-import { RadioValuesEnum, options } from './RangeFacetFilter'
+import { RadioValuesEnum, getRadioValue, options } from './RangeFacetFilter'
 import dayjs from 'dayjs'
 import RangeSlider from '../RangeSlider/RangeSlider'
 
@@ -68,15 +67,6 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
   const selectedMax = col1SelectedMax || col2Max
 
   const rangeType = columnType === 'DOUBLE' ? 'number' : 'date'
-
-  const getRadioValue = (min: string, isAnyValue: boolean) => {
-    if (isAnyValue) {
-      return RadioValuesEnum.ANY
-    } else if (min === VALUE_NOT_SET) {
-      return RadioValuesEnum.NOT_SET
-    }
-    return RadioValuesEnum.RANGE
-  }
 
   const handleRadioGroupChange = (
     radioValue: RadioValuesEnum,

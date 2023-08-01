@@ -31,6 +31,15 @@ export type RangeFacetFilterProps = {
   collapsed?: boolean
 }
 
+export const getRadioValue = (min: string, isAnyValue: boolean) => {
+  if (isAnyValue) {
+    return RadioValuesEnum.ANY
+  } else if (min === VALUE_NOT_SET) {
+    return RadioValuesEnum.NOT_SET
+  }
+  return RadioValuesEnum.RANGE
+}
+
 export const RangeFacetFilter: React.FunctionComponent<
   RangeFacetFilterProps
 > = ({
@@ -50,15 +59,6 @@ export const RangeFacetFilter: React.FunctionComponent<
   const currentMax = selectedMax || columnMax
 
   const rangeType = columnType === 'DOUBLE' ? 'number' : 'date'
-
-  const getRadioValue = (min: string, isAnyValue: boolean) => {
-    if (isAnyValue) {
-      return RadioValuesEnum.ANY
-    } else if (min === VALUE_NOT_SET) {
-      return RadioValuesEnum.NOT_SET
-    }
-    return RadioValuesEnum.RANGE
-  }
 
   const handleRadioGroupChange = (
     radioValue: RadioValuesEnum,
