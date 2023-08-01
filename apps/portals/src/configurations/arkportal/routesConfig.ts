@@ -1,11 +1,4 @@
 import { GenericRoute } from 'types/portal-config'
-import {
-  programs,
-  projects,
-  data,
-  datasets,
-  datasetCollections,
-} from './synapseConfigs'
 import routeControlWrapperProps from './routeControlWrapperProps'
 import { projectDetailPage } from './synapseConfigs/projects'
 import { programDetailPage } from './synapseConfigs/programs'

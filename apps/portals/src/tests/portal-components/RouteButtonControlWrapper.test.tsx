@@ -10,13 +10,19 @@ import { describe, it } from 'vitest'
 describe('RouteControlWrapper works', () => {
   const routeName = 'custom route'
   const props: RouteControlWrapperProps = {
-    synapseConfig: {
-      name: 'Markdown',
-      props: {
-        markdown: '## This is a markdown component',
+    customRoutes: [
+      {
+        path: routeName,
+        synapseConfigArray: [
+          {
+            name: 'Markdown',
+            props: {
+              markdown: '## This is a markdown component',
+            },
+          },
+        ],
       },
-    },
-    customRoutes: [routeName],
+    ],
   }
 
   it('renders correctly', () => {

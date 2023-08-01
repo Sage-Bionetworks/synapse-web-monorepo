@@ -1,12 +1,4 @@
 import { GenericRoute } from 'types/portal-config'
-import {
-  publications,
-  datasets,
-  grants,
-  tools,
-  people,
-  education,
-} from './synapseConfigs'
 import { projectCardConfiguration } from './synapseConfigs/projects'
 import { datasetCardConfiguration } from './synapseConfigs/datasets'
 import RouteControlWrapperProps from './routeControlWrapperProps'
@@ -20,12 +12,12 @@ import { onPointClick } from './synapseConfigs/onPointClick'
 import columnAliases from './columnAliases'
 import {
   datasetsSql,
-  grantsSql,
-  publicationSql,
-  projectsSql,
-  toolsSql,
-  peopleSql,
   educationSql,
+  grantsSql,
+  peopleSql,
+  projectsSql,
+  publicationSql,
+  toolsSql,
 } from './resources'
 import consortiaHomePageConfig from './synapseConfigs/consortiaHomePage'
 import {

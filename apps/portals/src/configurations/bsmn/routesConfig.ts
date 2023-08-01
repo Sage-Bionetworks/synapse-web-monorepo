@@ -1,17 +1,14 @@
 import { GenericRoute } from 'types/portal-config'
 import RouteControlWrapperProps from './routeControlWrapperProps'
-import projects, {
+import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import studies, {
-  studyCardConfiguration,
+import {
   studiesDetailPageConfiguration,
+  studyCardConfiguration,
 } from './synapseConfigs/studies'
-import publications from './synapseConfigs/publications'
-import tools from './synapseConfigs/tools'
-import people from './synapseConfigs/people'
-import { studiesSql, projectsSql } from './resources'
+import { projectsSql, studiesSql } from './resources'
 import { SynapseConstants } from 'synapse-react-client'
 
 const routes: GenericRoute[] = [
