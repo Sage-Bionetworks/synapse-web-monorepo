@@ -1,10 +1,18 @@
-import { SynapseConfig } from 'types/portal-config'
 import { RouteControlWrapperProps } from 'portal-components/RouteControlWrapper'
+import projects from './synapseConfigs/projects'
+import studies from './synapseConfigs/studies'
+import tools from './synapseConfigs/tools'
+import people from './synapseConfigs/people'
+import publications from './synapseConfigs/publications'
 
 const routeControlProps: RouteControlWrapperProps = {
-  // this has to get overriden,
-  synapseConfig: {} as SynapseConfig,
-  customRoutes: ['Projects', 'Data', 'Tools', 'People', 'Publications'],
+  customRoutes: [
+    { path: 'Projects', synapseConfigArray: [projects] },
+    { path: 'Data', synapseConfigArray: [studies] },
+    { path: 'Tools', synapseConfigArray: [tools] },
+    { path: 'People', synapseConfigArray: [people] },
+    { path: 'Publications', synapseConfigArray: [publications] },
+  ],
 }
 
 export default routeControlProps

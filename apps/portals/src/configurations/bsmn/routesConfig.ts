@@ -25,7 +25,7 @@ const routes: GenericRoute[] = [
         name: 'Markdown',
         props: {
           ownerId: 'syn21645000',
-          loadingSkeletonRowCount: 10
+          loadingSkeletonRowCount: 10,
         },
       },
       {
@@ -67,7 +67,7 @@ const routes: GenericRoute[] = [
         name: 'Markdown',
         props: {
           ownerId: 'syn23308351',
-          loadingSkeletonRowCount: 10
+          loadingSkeletonRowCount: 10,
         },
       },
     ],
@@ -76,22 +76,22 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
-        path: 'Projects',
-        routes: [
+        path: ':slug/',
+        hideRouteFromNavbar: true,
+        exact: true,
+        synapseConfigArray: [
           {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: projects,
-                },
-              },
-            ],
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: RouteControlWrapperProps,
           },
+        ],
+      },
+
+      {
+        path: 'Projects',
+        hideRouteFromNavbar: false,
+        routes: [
           {
             path: 'DetailsPage',
             synapseConfigArray: [
@@ -116,22 +116,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Data',
-
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: studies,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
@@ -158,42 +144,15 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Tools',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: tools,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: 'People',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: people,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: 'Publications',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: publications,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
     ],
   },
@@ -205,7 +164,7 @@ const routes: GenericRoute[] = [
         name: 'Markdown',
         props: {
           ownerId: 'syn21896405',
-          loadingSkeletonRowCount: 20
+          loadingSkeletonRowCount: 20,
         },
       },
     ],
