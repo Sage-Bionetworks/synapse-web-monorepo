@@ -1,5 +1,8 @@
 import React from 'react'
-import { RouteControl, RouteControlProps } from '../RouteControl'
+import {
+  RouteControl,
+  RouteControlProps,
+} from '../portal-components/RouteControl'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 

@@ -15,9 +15,10 @@ import {
 import NavLink from './portal-components/NavLink'
 import NavUserLink from './portal-components/NavUserLink'
 import { ConfigRoute, GenericRoute } from './types/portal-config'
-import { Button, Dialog, DialogContent, IconButton } from '@mui/material'
+import { Box, Button, Dialog, DialogContent, IconButton } from '@mui/material'
 import { useLogInDialogContext } from './LogInDialogContext'
 import { useHistory } from 'react-router-dom'
+import { RESPONSIVE_SIDE_PADDING } from './utils'
 
 type SynapseSettingLink = {
   text: string
@@ -145,16 +146,19 @@ function Navbar() {
   // if the home route does not contain any titles, then just show a link
   const homeConfigTitleCount = homeRouteConfig?.synapseConfigArray?.filter(
     (config) => config.title !== undefined,
+    (config) => config.title !== undefined,
   ).length
   const isHomeDropdown = homeConfigTitleCount ? homeConfigTitleCount > 0 : false
   return (
     <React.Fragment>
-      <nav
+      <Box
+        component={'nav'}
         className={
           !showMenu
             ? 'flex-display nav top-nav'
             : 'flex-display nav top-nav mb-active'
         }
+        sx={RESPONSIVE_SIDE_PADDING}
       >
         <div className="nav-logo-container">
           <NavLink
@@ -476,7 +480,7 @@ function Navbar() {
               ))
           }
         </div>
-      </nav>
+      </Box>
       <div className="spacer" />
     </React.Fragment>
   )
