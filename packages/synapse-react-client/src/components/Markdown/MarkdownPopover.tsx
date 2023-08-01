@@ -17,7 +17,7 @@ export type MarkdownPopoverProps = {
   placement?: TooltipProps['placement']
   showCloseButton?: boolean
   actionButton?: {
-    content: React.ReactElement
+    content: React.ReactNode
     color?: ButtonProps['color']
     variant?: ButtonProps['variant']
     onClick: () => void

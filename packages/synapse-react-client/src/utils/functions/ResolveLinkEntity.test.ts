@@ -72,27 +72,27 @@ describe('ResolveLinkEntity tests', () => {
     })
   })
   it('Resolves a non-link', async () => {
-    const actual = await resolveLinkEntity(fileEntity.id!)
+    const actual = await resolveLinkEntity(fileEntity.id)
     expect(actual).toEqual(fileEntity)
   })
   it('Resolves a link to a non-link', async () => {
-    const actual = await resolveLinkEntity(linksToFileEntity.id!)
+    const actual = await resolveLinkEntity(linksToFileEntity.id)
     expect(actual).toEqual(fileEntity)
   })
 
   it('Handles a chain of links', async () => {
-    const actual = await resolveLinkEntity(linksToLinkToFileEntity.id!)
+    const actual = await resolveLinkEntity(linksToLinkToFileEntity.id)
     expect(actual).toEqual(fileEntity)
   })
 
   it('Throws an error on a self referential link', async () => {
-    await expect(resolveLinkEntity(linksToSelf.id!)).rejects.toThrow(
+    await expect(resolveLinkEntity(linksToSelf.id)).rejects.toThrow(
       `${linksToSelf.id} could not be resolved.\nLink forms a cycle.`,
     )
   })
 
   it('Throws an error on a cycle', async () => {
-    await expect(resolveLinkEntity(linkCycleA.id!)).rejects.toThrow(
+    await expect(resolveLinkEntity(linkCycleA.id)).rejects.toThrow(
       `${linkCycleA.id} could not be resolved.\nLink forms a cycle.`,
     )
   })

@@ -15,7 +15,7 @@ import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
   mockSearchResults,
 } from '../../mocks/mockAccessRequirements'
-import { getOptionLabel } from './AccessRequirementSearchBox'
+import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 import {
   BackendDestinationEnum,
   getEndpoint,

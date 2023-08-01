@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react'
 import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from './QueryContext/QueryContext'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
-import { HelpPopover } from './HelpPopover'
+import { HelpPopover } from './HelpPopover/HelpPopover'
 import IconSvg from './IconSvg/IconSvg'
 
 // See PLFM-7011

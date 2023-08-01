@@ -7,7 +7,7 @@ import {
   RangeFacetFilterProps,
 } from '../../../src/components/widgets/query-filter/RangeFacetFilter'
 import { Range } from '../../../src/components/widgets/Range'
-import { RangeSlider } from '../../../src/components/widgets/RangeSlider'
+import { RangeSlider } from '../../../src/components/widgets/RangeSlider/RangeSlider'
 import { VALUE_NOT_SET } from '../../../src/utils/SynapseConstants'
 import {
   ColumnModel,
@@ -26,7 +26,7 @@ jest.mock('../../../src/components/widgets/Range', () => ({
     return <div data-testid="Range"></div>
   }),
 }))
-jest.mock('../../../src/components/widgets/RangeSlider', () => ({
+jest.mock('../../../src/components/widgets/RangeSlider/RangeSlider', () => ({
   RangeSlider: jest.fn((props: any) => {
     capturedOnChange = props.onChange
     return <div data-testid="RangeSlider"></div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Reference } from '@sage-bionetworks/synapse-types'
 import { Box, Typography } from '@mui/material'
 import { ConfirmationDialog } from '../ConfirmationDialog'
-import { HelpPopoverProps } from '../HelpPopover'
+import { HelpPopoverProps } from '../HelpPopover/HelpPopover'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import EntityFinder, { EntityFinderProps } from './EntityFinder'
 

@@ -3,7 +3,7 @@ import { useGetEntityHeaders } from '../../synapse-queries/entity/useGetEntityHe
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
 import { Button, Typography } from '@mui/material'
-import { ActionRequiredCard } from './ActionRequiredCard'
+import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 
 export type RequestDownloadCardProps = {
   entityId: string

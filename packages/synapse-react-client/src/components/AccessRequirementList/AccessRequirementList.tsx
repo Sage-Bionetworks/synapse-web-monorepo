@@ -13,8 +13,8 @@ import {
 import IconSvg from '../IconSvg/IconSvg'
 import StandaloneLoginForm from '../Authentication/StandaloneLoginForm'
 import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/CancelRequestDataAccess'
-import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm'
-import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm'
+import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
+import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
 import {
   Box,

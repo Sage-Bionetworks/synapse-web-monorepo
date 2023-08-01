@@ -33,11 +33,11 @@ describe('MetadataTable tests', () => {
   it('Renders all rows for a project', async () => {
     renderComponent()
     await screen.findByText('Name')
-    await screen.findByText(mockProjectEntityBundle.entity!.name)
+    await screen.findByText(mockProjectEntityBundle.entity.name)
     await screen.findByText('Type')
     await screen.findByText('Project')
     await screen.findByText('Synapse ID')
-    await screen.findByText(mockProjectEntityBundle.entity!.id!)
+    await screen.findByText(mockProjectEntityBundle.entity.id!)
     /* Not checking the values of dates, they are passed through a formatter. */
     await screen.findByText('Last Modified By')
     await screen.findByText('Created By')

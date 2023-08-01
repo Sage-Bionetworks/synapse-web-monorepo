@@ -7,7 +7,7 @@ import {
   VARIABLE_DIFFICULTY,
 } from '../../utils/SynapseConstants'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
-import { ActionRequiredCard } from './ActionRequiredCard'
+import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import WideButton from '../../components/styled/WideButton'
 
 export type MeetAccessRequirementCardProps = {

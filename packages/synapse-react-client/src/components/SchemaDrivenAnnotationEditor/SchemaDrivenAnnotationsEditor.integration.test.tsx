@@ -409,9 +409,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
-    const countryField = (await screen.findByLabelText(
-      'country*',
-    )) as HTMLInputElement
+    const countryField = await screen.findByLabelText('country*')
 
     await chooseAutocompleteOption(countryField, 'USA')
 
@@ -493,9 +491,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     )
     await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
-    const countryField = (await screen.findByLabelText(
-      'country*',
-    )) as HTMLInputElement
+    const countryField = await screen.findByLabelText('country*')
 
     await chooseAutocompleteOption(countryField, 'CA')
 
@@ -529,15 +525,15 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
-    let showStringArrayField
+    const showStringArrayField = await screen.findByLabelText<HTMLInputElement>(
+      'showStringArray',
+    )
     await waitFor(() => {
-      showStringArrayField =
-        screen.getByLabelText<HTMLInputElement>('showStringArray')
       expect(showStringArrayField.value).toBe('true')
     })
 
     // This will remove the data from the schema.
-    await chooseAutocompleteOption(showStringArrayField!, 'false')
+    await chooseAutocompleteOption(showStringArrayField, 'false')
     await clickSaveAndConfirm()
 
     expect(mockToastFn).toHaveBeenCalledWith(
@@ -568,18 +564,18 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
-    let showStringArrayField
+    const showStringArrayField = await screen.findByLabelText<HTMLInputElement>(
+      'showStringArray',
+    )
     await waitFor(() => {
-      showStringArrayField =
-        screen.getByLabelText<HTMLInputElement>('showStringArray')
       expect(showStringArrayField.value).toBe('true')
     })
 
     // This will remove the data from the schema.
-    await chooseAutocompleteOption(showStringArrayField!, 'false')
+    await chooseAutocompleteOption(showStringArrayField, 'false')
 
     // Add it back to the schema.
-    await chooseAutocompleteOption(showStringArrayField!, 'true')
+    await chooseAutocompleteOption(showStringArrayField, 'true')
 
     await clickSaveAndConfirm()
 

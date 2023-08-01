@@ -5,7 +5,7 @@ import { isDataset } from '../../utils/functions/EntityTypeUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { QueryBundleRequest, Table } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
-import { HelpPopover } from '../HelpPopover'
+import { HelpPopover } from '../HelpPopover/HelpPopover'
 
 const DATASETS_CURRENT_VERSION_HELP =
   'Files may be unavailable because you do not have permission to see them, they have been deleted, or the Dataset has been misconfigured.'
