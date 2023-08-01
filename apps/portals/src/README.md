@@ -5,7 +5,6 @@ Structure of the codebase
 <pre>
 ├── App.scss              # Main styling for the application, uses variables from test-configuration/_overrides.scss
 ├── App.tsx               # Main entry point with route configuration
-├── ButtonControl.tsx     # Explore buttons that are used both on the home page and the explore page
 ├── Footer.tsx            # Footer with contact us/terms of service
 ├── Header.tsx            # Home page header with summary and title
 ├── Home.tsx              # Home page
