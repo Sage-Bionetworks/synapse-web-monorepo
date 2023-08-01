@@ -200,6 +200,7 @@ function getPillPropsFromFacetFilters(
               innerText: innerText,
               tooltipText: `${combineRangeFacetConfig.label}: ${innerText}`,
               onRemoveFilter: () => {
+                // Remove both facets on pill click
                 queryContext.removeSelectedFacet([minFacet, maxFacet])
               },
             },

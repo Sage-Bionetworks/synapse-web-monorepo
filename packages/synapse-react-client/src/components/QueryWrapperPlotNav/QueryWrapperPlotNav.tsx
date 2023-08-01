@@ -59,6 +59,7 @@ type QueryWrapperPlotNavOwnProps = {
     'queryContext' | 'queryVisualizationContext'
   >
   facetsToPlot?: string[]
+  availableFacets?: FacetFilterControlsProps['availableFacets']
   defaultColumn?: string
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
@@ -75,8 +76,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'noContentPlaceholderType'
     | 'unitDescription'
     | 'additionalFiltersLocalStorageKey'
-  > &
-  Pick<FacetFilterControlsProps, 'availableFacets'>
+  >
 
 export type SearchParams = {
   searchParams?: {

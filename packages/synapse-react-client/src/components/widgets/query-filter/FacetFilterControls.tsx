@@ -127,15 +127,17 @@ export const applyCombinedChangesToRangeColumn = (
   onChangeFn: (result: FacetColumnRequest[]) => void,
   values: string[],
 ) => {
-  combinedRangeFacets[0].columnMin = values[0]
-  combinedRangeFacets[0].columnMax = values[1]
-  combinedRangeFacets[1].columnMin = values[2]
-  combinedRangeFacets[1].columnMax = values[3]
-  const changedFacet0 = convertFacetColumnRangeRequest(combinedRangeFacets[0])
-  const changedFacet1 = convertFacetColumnRangeRequest(combinedRangeFacets[1])
+  const minColumn = combinedRangeFacets[0]
+  const maxColumn = combinedRangeFacets[1]
+  minColumn.columnMin = values[0]
+  minColumn.columnMax = values[1]
+  maxColumn.columnMin = values[2]
+  maxColumn.columnMax = values[3]
+  const minColumnChangedFacet = convertFacetColumnRangeRequest(minColumn)
+  const maxColumnChangedFacet = convertFacetColumnRangeRequest(maxColumn)
   let selections = lastRequest?.query?.selectedFacets ?? []
-  selections = patchRequestFacets(changedFacet0, selections)
-  selections = patchRequestFacets(changedFacet1, selections)
+  selections = patchRequestFacets(minColumnChangedFacet, selections)
+  selections = patchRequestFacets(maxColumnChangedFacet, selections)
   onChangeFn(selections)
 }
 
@@ -224,7 +226,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
     ? data!.facets!.filter(
         facet =>
           combineRangeFacetConfig.maxFacetColumn === facet.columnName ||
-          combineRangeFacetConfig?.minFacetColumn === facet.columnName,
+          combineRangeFacetConfig.minFacetColumn === facet.columnName,
       )
     : []
   // Controls which facet filter sections are shown/hidden by clicking on chips
