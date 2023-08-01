@@ -21,13 +21,6 @@ import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
 export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with at least one non-null value will be shown. */
   availableFacets?: string[]
-  combineRangeFacetConfig?: CombineRangeFacetConfig
-}
-
-export type CombineRangeFacetConfig = {
-  minFacetColumn: string
-  maxFacetColumn: string
-  label: string
 }
 
 const convertFacetToFacetColumnValuesRequest = (
@@ -199,11 +192,12 @@ function FacetFilterControlsSkeleton() {
 }
 
 function FacetFilterControls(props: FacetFilterControlsProps) {
-  const { availableFacets, combineRangeFacetConfig } = props
+  const { availableFacets } = props
   const {
     data: data,
     getCurrentQueryRequest,
     executeQueryRequest,
+    combineRangeFacetConfig,
   } = useQueryContext()
   const lastRequest = getCurrentQueryRequest()
 

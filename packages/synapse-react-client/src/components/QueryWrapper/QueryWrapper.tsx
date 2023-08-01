@@ -8,6 +8,7 @@ import {
 import { useGetEntity } from '../../synapse-queries'
 import { QueryBundleRequest, Table } from '@sage-bionetworks/synapse-types'
 import {
+  CombineRangeFacetConfig,
   InfiniteQueryContextType,
   LockedColumn,
   PaginatedQueryContextType,
@@ -34,6 +35,7 @@ export type QueryWrapperProps = {
    */
   rowSelectionPrimaryKey?: string[]
   isInfinite?: boolean
+  combineRangeFacetConfig?: CombineRangeFacetConfig
 }
 
 /**
@@ -52,6 +54,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     isRowSelectionVisible: isRowSelectionVisibleFromProps = false,
     rowSelectionPrimaryKey: rowSelectionPrimaryKeyFromProps,
     isInfinite = false,
+    combineRangeFacetConfig,
   } = props
 
   // Must store requireConfirmationOnChange in state to break dependency cycle between useImmutableTableQuery and useTableRowsSelection
@@ -177,6 +180,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     selectedRows,
     setSelectedRows,
     addValueToSelectedFacet,
+    combineRangeFacetConfig,
     ...paginationControls,
   }
 

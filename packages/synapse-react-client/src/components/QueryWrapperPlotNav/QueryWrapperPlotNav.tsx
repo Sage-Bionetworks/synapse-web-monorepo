@@ -76,7 +76,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'unitDescription'
     | 'additionalFiltersLocalStorageKey'
   > &
-  Pick<FacetFilterControlsProps, 'availableFacets' | 'combineRangeFacetConfig'>
+  Pick<FacetFilterControlsProps, 'availableFacets'>
 
 export type SearchParams = {
   searchParams?: {
@@ -105,7 +105,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     cardConfiguration,
     facetsToPlot,
     availableFacets,
-    combineRangeFacetConfig,
     hideDownload,
     hideQueryCount,
     hideSqlEditorControl,
@@ -247,7 +246,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                         <>
                           <FacetFilterControls
                             availableFacets={availableFacets}
-                            combineRangeFacetConfig={combineRangeFacetConfig}
                           />
                         </>
                       )}
