@@ -1,10 +1,7 @@
 import { GenericRoute } from 'types/portal-config'
-import { studies, studyDetailPage } from './synapseConfigs/studies'
-import { publications } from './synapseConfigs/publications'
+import { studyDetailPage } from './synapseConfigs/studies'
 import RouteControlWrapperProps from './routeControlWrapperProps'
-import { grants, grantsDetailPage } from './synapseConfigs/grants'
-import { people } from './synapseConfigs/people'
-import { data } from './synapseConfigs/data'
+import { grantsDetailPage } from './synapseConfigs/grants'
 import { peopleSql, upsetplotSql } from './resources'
 
 const routes: GenericRoute[] = [
@@ -30,7 +27,7 @@ const routes: GenericRoute[] = [
         props: {
           ownerId: 'syn21557271',
           wikiId: '605319',
-          loadingSkeletonRowCount: 10
+          loadingSkeletonRowCount: 10,
         },
       },
       {
@@ -98,7 +95,7 @@ const routes: GenericRoute[] = [
         props: {
           ownerId: 'syn21557271',
           wikiId: '605340',
-          loadingSkeletonRowCount: 10
+          loadingSkeletonRowCount: 10,
         },
       },
     ],
@@ -107,22 +104,21 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
-        path: 'Studies',
-        routes: [
+        path: ':slug/',
+        hideRouteFromNavbar: true,
+        exact: true,
+        synapseConfigArray: [
           {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: studies,
-                },
-              },
-            ],
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: RouteControlWrapperProps,
           },
+        ],
+      },
+      {
+        path: 'Studies',
+        hideRouteFromNavbar: false,
+        routes: [
           {
             path: 'DetailsPage',
             synapseConfigArray: studyDetailPage,
@@ -131,34 +127,12 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Data',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: data,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: 'Grants',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: grants,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             synapseConfigArray: grantsDetailPage,
@@ -167,29 +141,11 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Publications',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: publications,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: 'People',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: people,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
     ],
   },
@@ -204,7 +160,7 @@ const routes: GenericRoute[] = [
         props: {
           ownerId: 'syn4921369',
           wikiId: '477467',
-          loadingSkeletonRowCount: 20
+          loadingSkeletonRowCount: 20,
         },
       },
     ],
@@ -226,7 +182,7 @@ const routes: GenericRoute[] = [
         props: {
           ownerId: 'syn4921369',
           wikiId: '607829',
-          loadingSkeletonRowCount: 20
+          loadingSkeletonRowCount: 20,
         },
       },
     ],
