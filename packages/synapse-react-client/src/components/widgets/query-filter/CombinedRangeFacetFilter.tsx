@@ -22,7 +22,23 @@ export type CombinedRangeFacetFilterProps = {
 /**
  * Inclusive range selector across two columns
  * Written for the ELITE portal cohort builder, may have other uses.
- */
+ * The following diagram shows how the Range Selector min and max values are used
+ * to define the facet range values:
+ * 
+
+                                   │     Range Selector     │
+                               min ├────────────────────────┤ max
+                                   │                        │
+
+                                       Min Column facet     │
+Column Min value ◄──────────────────────────────────────────┤  Range Selector max
+                                                            │
+
+                                   │   Max Column facet
+              Range Selector min   ├─────────────────────────────────────────► Column Max value
+                                   │
+
+*/
 export const CombinedRangeFacetFilter: React.FunctionComponent<
   CombinedRangeFacetFilterProps
 > = ({
