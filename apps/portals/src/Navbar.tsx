@@ -146,7 +146,6 @@ function Navbar() {
   // if the home route does not contain any titles, then just show a link
   const homeConfigTitleCount = homeRouteConfig?.synapseConfigArray?.filter(
     (config) => config.title !== undefined,
-    (config) => config.title !== undefined,
   ).length
   const isHomeDropdown = homeConfigTitleCount ? homeConfigTitleCount > 0 : false
   return (
