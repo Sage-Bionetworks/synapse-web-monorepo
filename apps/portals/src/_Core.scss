@@ -108,9 +108,6 @@ body {
   transition: all 400ms;
 }
 
-%defaultBoxShadow {
-  box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.5);
-}
 // end utilities
 
 %center {
@@ -400,10 +397,6 @@ button.dropdown-toggle.nav-button:hover {
   height: 39px;
   padding: 5px 38px;
   border: none;
-  &:hover {
-    @extend %hoverFade;
-    @extend %defaultBoxShadow;
-  }
 }
 
 .footer-help {
@@ -441,53 +434,6 @@ button.dropdown-toggle.nav-button:hover {
   font-weight: bold;
   margin-bottom: 10px;
 }
-// ExploreButtons
-
-.explore-buttons {
-  margin-top: 30px;
-  margin-bottom: 30px;
-  text-transform: uppercase;
-  display: flex;
-  align-content: center;
-  justify-content: space-between;
-  button {
-    text-transform: uppercase;
-    border-radius: 6px;
-    letter-spacing: 0.4px; /* make buttons more readable */
-    flex-basis: 22%; /* make buttons wider on home page */
-    margin: 0px 8px;
-    border: none;
-    position: relative;
-    height: 50px;
-    color: white;
-    &:first-child {
-      margin-left: 0px;
-    }
-    &:last-child {
-      margin-right: 0px;
-    }
-    // caret dropdown
-    &.active-button::after {
-      border-top-color: inherit !important;
-      border-right: solid 12px transparent;
-      border-left: solid 12px transparent;
-      border-top: solid 12px;
-      transform: translateX(-50%);
-      position: absolute;
-      z-index: 3;
-      content: '';
-      top: 100%;
-      left: 50%;
-      height: 0;
-      width: 0;
-    }
-    &:hover {
-      @extend %hoverFade;
-      @extend %defaultBoxShadow;
-    }
-  }
-}
-// end ExploreButtons
 
 // title
 .title {

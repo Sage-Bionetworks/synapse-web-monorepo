@@ -5,29 +5,6 @@
   background-blend-mode: multiply;
 }
 
-.explore-buttons button.active-button {
-  background: black !important;
-  color: white;
-}
-.explore-buttons button.active-button::after {
-  border-top-color: black !important;
-}
-.explore-buttons button {
-  border-top-color: black !important;
-  border: black 2px solid;
-  color: black;
-  white-space: nowrap;
-}
-.explore-buttons button:last-child {
-  border: none !important;
-}
-
-.SRC-chart-link {
-  a {
-    background: Portal.$primary-action-color !important;
-  }
-}
-
 td.SRC_noBorderTop {
   .markdown.markdown-inline {
     a {
