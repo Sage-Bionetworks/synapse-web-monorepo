@@ -45,6 +45,17 @@ export default function RouteControlWrapper(props: RouteControlWrapperProps) {
   const theme = useTheme()
   const isDesktopView = useMediaQuery(theme.breakpoints.up('sm'))
 
+  const currentRoute = customRoutes.find((route) => route.path === selectedTab)
+  if (currentRoute) {
+    const pageName =
+      currentRoute.displayName ?? currentRoute.path?.replaceAll('/', '')
+    const documentTitle = `${import.meta.env.VITE_PORTAL_NAME} - ${pageName}`
+    const newTitle: string = documentTitle
+    if (document.title !== newTitle) {
+      document.title = newTitle
+    }
+  }
+
   return (
     <>
       <Box
