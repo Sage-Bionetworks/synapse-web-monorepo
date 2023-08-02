@@ -5,7 +5,10 @@ import { SynapseComponent } from '../SynapseComponent'
 import { ConfigRoute, NestedRoute } from '../types/portal-config'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
-import { RESPONSIVE_SIDE_PADDING } from '../utils'
+import {
+  NEGATIVE_RESPONSIVE_SIDE_MARGIN,
+  RESPONSIVE_SIDE_PADDING,
+} from '../utils'
 
 export type RouteControlWrapperProps = NestedRoute & {
   // we have to pass in all the custom routes because unlike the home page the explore buttons configs aren't held in state
@@ -95,7 +98,20 @@ export default function RouteControlWrapper(props: RouteControlWrapperProps) {
           <RouteControl {...routeControlProps} />
         )}
       </Box>
-      <Box sx={RESPONSIVE_SIDE_PADDING}>
+      <Box
+        sx={{
+          ...RESPONSIVE_SIDE_PADDING,
+          ['.TopLevelControls, .TotalQueryResults.hasFilters']: {
+            ...NEGATIVE_RESPONSIVE_SIDE_MARGIN,
+            mt: 0,
+            px: RESPONSIVE_SIDE_PADDING['px'],
+          },
+          '.TopLevelControls > div': {
+            px: 0,
+            py: 2.5,
+          },
+        }}
+      >
         {customRoutes.map((route) => (
           <Route
             key={route.path}
