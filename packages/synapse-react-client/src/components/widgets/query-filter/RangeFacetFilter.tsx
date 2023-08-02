@@ -1,5 +1,5 @@
 import { Collapse } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import {
   FRIENDLY_VALUE_NOT_SET,
@@ -72,6 +72,10 @@ export const RangeFacetFilter: React.FunctionComponent<
       onChangeCallback([radioValue, radioValue])
     }
   }
+
+  useEffect(() => {
+    setRadioValue(getRadioValue(currentMin, hasAnyValue))
+  }, [currentMin, hasAnyValue])
 
   const [radioValue, setRadioValue] = useState(
     getRadioValue(currentMin, hasAnyValue),

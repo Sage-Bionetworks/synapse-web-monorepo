@@ -1,5 +1,5 @@
 import { Collapse } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
@@ -84,6 +84,10 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
   const [radioValue, setRadioValue] = useState(
     getRadioValue(selectedMin, isAnyValue),
   )
+
+  useEffect(() => {
+    getRadioValue(selectedMin, isAnyValue)
+  }, [selectedMin, isAnyValue])
 
   return (
     <div>
