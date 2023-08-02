@@ -8,7 +8,7 @@ import { Range, RangeValues } from '../Range'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { RadioValuesEnum, getRadioValue, options } from './RangeFacetFilter'
 import dayjs from 'dayjs'
-import RangeSlider from '../RangeSlider/RangeSlider'
+import { RangeSlider } from '../RangeSlider/RangeSlider'
 
 export type CombinedRangeFacetFilterProps = {
   facetResults: FacetColumnResultRange[]
