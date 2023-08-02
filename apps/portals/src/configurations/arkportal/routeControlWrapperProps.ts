@@ -1,11 +1,25 @@
-import { SynapseConfig } from 'types/portal-config'
 import { RouteControlWrapperProps } from 'portal-components/RouteControlWrapper'
-
+import {
+  data,
+  datasetCollections,
+  datasets,
+  programs,
+  projects,
+} from './synapseConfigs'
 
 const routeButtonControlProps: RouteControlWrapperProps = {
-  // this has to get overriden,
-  synapseConfig: {} as SynapseConfig,
-  customRoutes: ['Programs', 'Projects', 'Collections', 'Datasets', 'All Data'],
+  customRoutes: [
+    { path: 'Programs', synapseConfigArray: [programs] },
+    { path: 'Projects', synapseConfigArray: [projects] },
+    {
+      path: 'Collections',
+      synapseConfigArray: [
+        { className: 'CollectionList', ...datasetCollections },
+      ],
+    },
+    { path: 'Datasets', synapseConfigArray: [datasets] },
+    { path: 'All Data', synapseConfigArray: [data] },
+  ],
 }
 
 export default routeButtonControlProps

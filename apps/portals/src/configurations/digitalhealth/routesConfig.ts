@@ -1,5 +1,4 @@
 import { GenericRoute } from 'types/portal-config'
-import { publications, studies, data, tools } from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import { studyDetailPage } from './synapseConfigs/studies'
 import { toolsDetailsLandingPage } from './synapseConfigs/tools'
@@ -87,22 +86,21 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
-        path: 'Collections',
-        routes: [
+        path: ':slug/',
+        hideRouteFromNavbar: true,
+        exact: true,
+        synapseConfigArray: [
           {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: studies,
-                },
-              },
-            ],
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: RouteControlWrapperProps,
           },
+        ],
+      },
+      {
+        path: 'Collections',
+        hideRouteFromNavbar: false,
+        routes: [
           {
             path: 'DetailsPage',
             exact: false,
@@ -112,35 +110,12 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Data',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: data,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: 'Tools',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: tools,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             synapseConfigArray: toolsDetailsLandingPage,
@@ -149,17 +124,7 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Publications',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: publications,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
     ],
   },

@@ -1,17 +1,14 @@
 import { GenericRoute } from 'types/portal-config'
 import RouteControlWrapperProps from './routeControlWrapperProps'
-import projects, {
+import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import studies, {
-  studyCardConfiguration,
+import {
   studiesDetailPageConfiguration,
+  studyCardConfiguration,
 } from './synapseConfigs/studies'
-import publications from './synapseConfigs/publications'
-import tools from './synapseConfigs/tools'
-import people from './synapseConfigs/people'
-import { studiesSql, projectsSql } from './resources'
+import { projectsSql, studiesSql } from './resources'
 import { SynapseConstants } from 'synapse-react-client'
 
 const routes: GenericRoute[] = [
@@ -25,7 +22,7 @@ const routes: GenericRoute[] = [
         name: 'Markdown',
         props: {
           ownerId: 'syn21645000',
-          loadingSkeletonRowCount: 10
+          loadingSkeletonRowCount: 10,
         },
       },
       {
@@ -67,7 +64,7 @@ const routes: GenericRoute[] = [
         name: 'Markdown',
         props: {
           ownerId: 'syn23308351',
-          loadingSkeletonRowCount: 10
+          loadingSkeletonRowCount: 10,
         },
       },
     ],
@@ -76,22 +73,22 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
-        path: 'Projects',
-        routes: [
+        path: ':slug/',
+        hideRouteFromNavbar: true,
+        exact: true,
+        synapseConfigArray: [
           {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: projects,
-                },
-              },
-            ],
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: RouteControlWrapperProps,
           },
+        ],
+      },
+
+      {
+        path: 'Projects',
+        hideRouteFromNavbar: false,
+        routes: [
           {
             path: 'DetailsPage',
             synapseConfigArray: [
@@ -116,22 +113,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Data',
-
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: studies,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
@@ -158,42 +141,15 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Tools',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: tools,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: 'People',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: people,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: 'Publications',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: publications,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
     ],
   },
@@ -205,7 +161,7 @@ const routes: GenericRoute[] = [
         name: 'Markdown',
         props: {
           ownerId: 'syn21896405',
-          loadingSkeletonRowCount: 20
+          loadingSkeletonRowCount: 20,
         },
       },
     ],
