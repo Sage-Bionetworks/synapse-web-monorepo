@@ -107,6 +107,27 @@ describe('CombinedRangeFacetFilter tests', () => {
       <QueryVisualizationContextProvider
         queryVisualizationContext={{
           getColumnDisplayName: jest.fn(col => col),
+          columnsToShowInTable: [],
+          setColumnsToShowInTable: jest.fn(() => null),
+          unitDescription: '',
+          getDisplayValue: jest.fn(() => ''),
+          NoContentPlaceholder: () => <></>,
+          isShowingExportToCavaticaModal: false,
+          setIsShowingExportToCavaticaModal: jest
+            .fn()
+            .mockImplementation(() => ''),
+          showFacetFilter: false,
+          setShowFacetFilter: jest.fn().mockImplementation(() => ''),
+          showSearchBar: false,
+          setShowSearchBar: jest.fn().mockImplementation(() => ''),
+          showDownloadConfirmation: false,
+          setShowDownloadConfirmation: jest.fn().mockImplementation(() => ''),
+          showSqlEditor: false,
+          setShowSqlEditor: jest.fn().mockImplementation(() => ''),
+          showCopyToClipboard: false,
+          setShowCopyToClipboard: jest.fn().mockImplementation(() => ''),
+          showFacetVisualization: false,
+          setShowFacetVisualization: jest.fn().mockImplementation(() => ''),
         }}
       >
         <CombinedRangeFacetFilter {...props} />

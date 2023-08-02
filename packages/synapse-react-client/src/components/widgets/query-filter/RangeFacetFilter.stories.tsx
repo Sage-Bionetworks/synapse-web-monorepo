@@ -41,11 +41,8 @@ export const NoneSelected: Story = {
       columnMin: '0',
       columnMax: '100',
     },
-    columnModel: {
-      id: '123',
-      name: 'fooColumn',
-      columnType: ColumnTypeEnum.INTEGER,
-    },
+    columnType: ColumnTypeEnum.INTEGER,
+    label: 'fooColumn',
     collapsed: false,
   },
 }
@@ -62,11 +59,8 @@ export const Selected: Story = {
       selectedMin: '5',
       selectedMax: '95',
     },
-    columnModel: {
-      id: '123',
-      name: 'fooColumn',
-      columnType: ColumnTypeEnum.INTEGER,
-    },
+    columnType: ColumnTypeEnum.INTEGER,
+    label: 'fooColumn',
     collapsed: false,
   },
 }
