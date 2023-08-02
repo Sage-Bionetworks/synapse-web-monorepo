@@ -12,6 +12,10 @@
       grid-column: 1 / span 2;
     }
 
+    .ErrorBannerWrapper {
+      grid-column: 1 / span 2;
+    }
+
     // column (depends on if we are showing facet filters)
     &.isShowingFacetFilters {
       .FacetFilterControls {
@@ -20,9 +24,9 @@
       }
       .download-confirmation,
       .FacetNav,
+      .QueryWrapperFullTextSearchInput,
       .QueryWrapperSearchInput,
       .QueryWrapperSqlEditorInput,
-      .ErrorBannerWrapper,
       .FilterAndView {
         grid-column: 2 / span 1;
       }
@@ -48,6 +52,7 @@
   .download-confirmation {
     grid-row: 3 / span 1;
   }
+  .QueryWrapperFullTextSearchInput,
   .QueryWrapperSearchInput {
     grid-row: 4 / span 1;
     .MuiCollapse-entered {
@@ -85,14 +90,23 @@
     .FilterAndView {
       margin-top: 10px;
     }
+    .FacetNav,
+    .FilterAndView,
+    .ErrorBannerWrapper,
+    .QueryWrapperFullTextSearchInput,
+    .QueryWrapperSearchInput,
+    .QueryWrapperSqlEditorInput,
+    .download-confirmation {
+      margin-left: 0px;
+    }
   }
 
   > .FacetFilterControls,
   > .download-confirmation,
   > .FacetNav,
+  > .QueryWrapperFullTextSearchInput,
   > .QueryWrapperSearchInput,
   > .QueryWrapperSqlEditorInput,
-  > .ErrorBannerWrapper,
   > .FilterAndView {
     margin-left: 15px;
   }
@@ -124,6 +138,11 @@
     .direct-download {
       text-align: center;
     }
+  }
+
+  .ErrorBannerWrapper,
+  .download-confirmation {
+    margin-top: 8px;
   }
 }
 

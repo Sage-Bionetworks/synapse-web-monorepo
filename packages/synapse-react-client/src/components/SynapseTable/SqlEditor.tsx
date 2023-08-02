@@ -1,9 +1,9 @@
-import { SearchTwoTone } from '@mui/icons-material'
-import { Collapse } from '@mui/material'
-import React, { useEffect, useRef, useState } from 'react'
+import { Collapse, TextField } from '@mui/material'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { useQueryContext } from '../QueryContext/QueryContext'
+import { useQueryContext } from '../QueryContext'
+import IconSvg from '../IconSvg'
 
 export type SqlEditorProps = {
   helpMessage?: string
@@ -44,7 +44,7 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
     })
   }
 
-  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     inputRef.current?.setCustomValidity('')
     setSql(event.currentTarget.value)
   }
@@ -52,28 +52,37 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
   return (
     <div className={`QueryWrapperSqlEditorInput`}>
       <Collapse in={showSqlEditor} timeout={{ enter: 300, exit: 300 }}>
-        <div className="QueryWrapperSqlEditorInput__helppopoverwrapper">
-          <form
-            className="QueryWrapperSqlEditorInput__searchbar"
-            onSubmit={search}
-          >
-            <SearchTwoTone className="QueryWrapperSqlEditorInput__searchbar__searchicon" />
-            <input
-              ref={inputRef}
-              onChange={handleChange}
-              placeholder="Enter Query"
-              value={sql}
-              type="text"
-            />
-          </form>
-          <div className="QueryWrapperSqlEditorInput__helppopover">
-            <HelpPopover
-              markdownText={helpMessage}
-              helpUrl={helpUrl}
-              placement="right"
-            />
-          </div>
-        </div>
+        <form onSubmit={search}>
+          <TextField
+            inputProps={{
+              ref: inputRef,
+            }}
+            sx={{ width: '100%' }}
+            InputProps={{
+              startAdornment: (
+                <IconSvg
+                  icon="search"
+                  wrap={false}
+                  sx={{
+                    mr: 1,
+                    color: 'grey.600',
+                  }}
+                />
+              ),
+              endAdornment: (
+                <HelpPopover
+                  markdownText={helpMessage}
+                  helpUrl={helpUrl}
+                  placement="right"
+                />
+              ),
+            }}
+            onChange={handleChange}
+            placeholder="Enter Query"
+            value={sql}
+            type="text"
+          />
+        </form>
       </Collapse>
     </div>
   )

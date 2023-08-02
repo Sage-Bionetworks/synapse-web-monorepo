@@ -1,7 +1,7 @@
-import { Collapse } from '@mui/material'
-import React, { useRef, useState } from 'react'
+import { Collapse, IconButton, TextField } from '@mui/material'
+import React, { ChangeEvent, useRef, useState } from 'react'
 import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
-import { useQueryContext } from './QueryContext/QueryContext'
+import { useQueryContext } from './QueryContext'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { HelpPopover } from './HelpPopover/HelpPopover'
 import IconSvg from './IconSvg/IconSvg'
@@ -60,50 +60,58 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
     }
   }
 
-  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     searchInputRef.current?.setCustomValidity('')
     setSearchText(event.currentTarget.value)
   }
 
   return (
-    <div className={`QueryWrapperSearchInput`}>
+    <div className={`QueryWrapperFullTextSearchInput`}>
       <Collapse in={showSearchBar} timeout={{ enter: 300, exit: 300 }}>
-        <div className="QueryWrapperSearchInput__helppopoverwrapper">
-          <form
-            className="QueryWrapperSearchInput__searchbar"
-            onSubmit={search}
-          >
-            <span className="QueryWrapperSearchInput__searchbar__searchicon">
-              <IconSvg icon="search" />
-            </span>
-            <input
-              ref={searchInputRef}
-              minLength={MIN_SEARCH_QUERY_LENGTH}
-              onChange={handleChange}
-              placeholder="Enter Search Terms"
-              value={searchText}
-              type="text"
-            />
-            {searchText.length > 0 && (
-              <button
-                className="QueryWrapperSearchInput__searchbar__clearbutton"
-                type="button"
-                onClick={() => {
-                  setSearchText('')
-                }}
-              >
-                <IconSvg icon="close" />
-              </button>
-            )}
-          </form>
-          <div className="QueryWrapperSearchInput__helppopover">
-            <HelpPopover
-              markdownText={helpMessage}
-              helpUrl={helpUrl}
-              placement="left"
-            />
-          </div>
-        </div>
+        <form onSubmit={search}>
+          <TextField
+            sx={{ width: '100%' }}
+            inputProps={{
+              minLength: MIN_SEARCH_QUERY_LENGTH,
+              ref: searchInputRef,
+            }}
+            InputProps={{
+              startAdornment: (
+                <IconSvg
+                  icon="search"
+                  wrap={false}
+                  sx={{
+                    mr: 1,
+                    color: 'grey.600',
+                  }}
+                />
+              ),
+              endAdornment: (
+                <>
+                  {searchText.length > 0 && (
+                    <IconButton
+                      size={'small'}
+                      onClick={() => {
+                        setSearchText('')
+                      }}
+                    >
+                      <IconSvg icon="close" wrap={false} fontSize={'inherit'} />
+                    </IconButton>
+                  )}
+                  <HelpPopover
+                    markdownText={helpMessage}
+                    helpUrl={helpUrl}
+                    placement="left"
+                  />
+                </>
+              ),
+            }}
+            onChange={handleChange}
+            placeholder="Enter Search Terms"
+            value={searchText}
+            type="text"
+          />
+        </form>
       </Collapse>
     </div>
   )
