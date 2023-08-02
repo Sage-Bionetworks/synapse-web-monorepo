@@ -1,12 +1,4 @@
 import { GenericRoute } from 'types/portal-config'
-import {
-  publications,
-  datasets,
-  grants,
-  tools,
-  people,
-  education,
-} from './synapseConfigs'
 import { projectCardConfiguration } from './synapseConfigs/projects'
 import { datasetCardConfiguration } from './synapseConfigs/datasets'
 import RouteControlWrapperProps from './routeControlWrapperProps'
@@ -20,12 +12,12 @@ import { onPointClick } from './synapseConfigs/onPointClick'
 import columnAliases from './columnAliases'
 import {
   datasetsSql,
-  grantsSql,
-  publicationSql,
-  projectsSql,
-  toolsSql,
-  peopleSql,
   educationSql,
+  grantsSql,
+  peopleSql,
+  projectsSql,
+  publicationSql,
+  toolsSql,
 } from './resources'
 import consortiaHomePageConfig from './synapseConfigs/consortiaHomePage'
 import {
@@ -176,22 +168,21 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
-        path: 'Grants',
-        routes: [
+        path: ':slug/',
+        hideRouteFromNavbar: true,
+        exact: true,
+        synapseConfigArray: [
           {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: grants,
-                },
-              },
-            ],
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: RouteControlWrapperProps,
           },
+        ],
+      },
+      {
+        path: 'Grants',
+        hideRouteFromNavbar: false,
+        routes: [
           {
             path: 'DetailsPage',
             exact: false,
@@ -280,21 +271,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'People',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: people,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
@@ -374,21 +352,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Publications',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: publications,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
@@ -467,21 +432,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Datasets',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: datasets,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
@@ -552,21 +504,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Tools',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: tools,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,
@@ -637,21 +576,8 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Educational Resources',
+        hideRouteFromNavbar: false,
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: education,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: false,

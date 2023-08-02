@@ -1,4 +1,5 @@
 import { useMediaQuery } from '@react-hookz/web'
+import { SxProps } from '@mui/material'
 
 // This code scrolls an element into view, and accounts for the fixed top nav bar height.
 export const scrollToWithOffset = (el: HTMLElement) => {
@@ -12,3 +13,10 @@ export const DESKTOP_VIEWPORT_MIN_WIDTH_MEDIA_QUERY = `(min-width: ${DESKTOP_VIE
 
 export const useShowDesktop = () =>
   useMediaQuery(DESKTOP_VIEWPORT_MIN_WIDTH_MEDIA_QUERY)
+
+export const RESPONSIVE_SIDE_PADDING: SxProps = {
+  px: {
+    xs: 2,
+    md: 5,
+  },
+}

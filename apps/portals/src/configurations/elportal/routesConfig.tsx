@@ -1,23 +1,13 @@
 import React from 'react'
 import { GenericRoute } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import {
-  projects,
-  studies,
-  data,
-  people,
-  publications,
-  cohortbuilder,
-  species,
-} from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import { studiesProgrammaticRouteConfig } from './synapseConfigs/studies'
 import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import { dataSql, projectsSql, peopleSql, upsetPlotSql } from './resources'
-import computationalTools from './synapseConfigs/computational_tools'
+import { dataSql, peopleSql, projectsSql, upsetPlotSql } from './resources'
 
 const routes: GenericRoute[] = [
   {
@@ -195,18 +185,21 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
+        path: ':slug/',
+        hideRouteFromNavbar: true,
         exact: true,
-        path: 'Data by Files',
         synapseConfigArray: [
           {
             name: 'RouteControlWrapper',
             isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: data,
-            },
+            props: RouteControlWrapperProps,
           },
         ],
+      },
+      {
+        exact: true,
+        path: 'Data by Files',
+        hideRouteFromNavbar: false,
       },
       {
         exact: true,
@@ -238,33 +231,11 @@ const routes: GenericRoute[] = [
               // },
             },
           },
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: cohortbuilder,
-            },
-          },
         ],
       },
       {
         path: 'Projects',
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: projects,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: true,
@@ -288,35 +259,11 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Species',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: species,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: 'Studies',
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: studies,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             routes: [
@@ -326,46 +273,16 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        exact: true,
         path: 'Publications',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: publications,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
-        exact: true,
         path: 'Computational Tools',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: computationalTools,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
-        exact: true,
         path: 'People',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: people,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
     ],
   },

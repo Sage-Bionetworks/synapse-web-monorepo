@@ -1,9 +1,21 @@
-import { SynapseConfig } from 'types/portal-config'
 import { RouteControlWrapperProps } from 'portal-components/RouteControlWrapper'
+import {
+  hidden,
+  invited,
+  potential,
+  scheduled,
+  tested,
+  uncategorized,
+} from './synapseConfigs'
 const routeControlProps: RouteControlWrapperProps = {
-  // this has to get overriden,
-  synapseConfig: {} as SynapseConfig,
-  customRoutes: ['1. Uncategorized', '2. Potential', '3. Invited', '4. Scheduled', '5. Tested', 'Hidden'],
+  customRoutes: [
+    { path: '1. Uncategorized', synapseConfigArray: [uncategorized] },
+    { path: '2. Potential', synapseConfigArray: [potential] },
+    { path: '3. Invited', synapseConfigArray: [invited] },
+    { path: '4. Scheduled', synapseConfigArray: [scheduled] },
+    { path: '5. Tested', synapseConfigArray: [tested] },
+    { path: 'Hidden', synapseConfigArray: [hidden] },
+  ],
 }
 
 export default routeControlProps
