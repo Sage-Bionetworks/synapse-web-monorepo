@@ -12,7 +12,7 @@ import {
   CombinedRangeFacetFilterProps,
 } from './CombinedRangeFacetFilter'
 import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
-import RangeSlider, { RangeSliderProps } from '../RangeSlider/RangeSlider'
+import { RangeSliderProps } from '../RangeSlider/RangeSlider'
 import { QueryVisualizationContextProvider } from '../../QueryVisualizationWrapper'
 import { Range, RangeProps } from '../Range'
 
