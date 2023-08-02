@@ -3,30 +3,29 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
-  RangeFacetFilter,
-  RangeFacetFilterProps,
-} from '../../../src/components/widgets/query-filter/RangeFacetFilter'
-import { Range } from '../../../src/components/widgets/Range'
-import { RangeSlider } from '../../../src/components/widgets/RangeSlider/RangeSlider'
-import { VALUE_NOT_SET } from '../../../src/utils/SynapseConstants'
-import {
   ColumnModel,
   ColumnTypeEnum,
   FacetColumnResultRange,
 } from '@sage-bionetworks/synapse-types'
-import { QueryVisualizationContextProvider } from '../../../src/components/QueryVisualizationWrapper'
+import {
+  CombinedRangeFacetFilter,
+  CombinedRangeFacetFilterProps,
+} from './CombinedRangeFacetFilter'
+import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
+import RangeSlider from '../RangeSlider/RangeSlider'
+import { QueryVisualizationContextProvider } from '../../QueryVisualizationWrapper'
 
 let capturedOnChange:
   | ((range: { min: string | number; max: string | number }) => void)
   | undefined
 
-jest.mock('../../../src/components/widgets/Range', () => ({
+jest.mock('../Range', () => ({
   Range: jest.fn((props: any) => {
     capturedOnChange = props.onChange
     return <div data-testid="Range"></div>
   }),
 }))
-jest.mock('../../../src/components/widgets/RangeSlider/RangeSlider', () => ({
+jest.mock('../RangeSlider/RangeSlider', () => ({
   RangeSlider: jest.fn((props: any) => {
     capturedOnChange = props.onChange
     return <div data-testid="RangeSlider"></div>
@@ -72,20 +71,20 @@ const columnModel: ColumnModel = {
 }
 
 function createTestProps(
-  overrides?: RangeFacetFilterProps,
-): RangeFacetFilterProps {
+  overrides?: CombinedRangeFacetFilterProps,
+): CombinedRangeFacetFilterProps {
   return {
-    facetResult: intFacetResult,
-    label: columnModel.name,
+    facetResults: [intFacetResult, intFacetResult],
     columnType: columnModel.columnType,
+    label: columnModel.name,
     onChange: mockCallback,
     ...overrides,
   }
 }
 
 describe('RangeFacetFilter tests', () => {
-  let props: RangeFacetFilterProps
-  function init(overrides?: RangeFacetFilterProps) {
+  let props: CombinedRangeFacetFilterProps
+  function init(overrides?: CombinedRangeFacetFilterProps) {
     props = createTestProps(overrides)
     return render(
       <QueryVisualizationContextProvider
@@ -93,7 +92,7 @@ describe('RangeFacetFilter tests', () => {
           getColumnDisplayName: jest.fn(col => col),
         }}
       >
-        <RangeFacetFilter {...props} />
+        <CombinedRangeFacetFilter {...props} />
       </QueryVisualizationContextProvider>,
     )
   }
@@ -107,14 +106,14 @@ describe('RangeFacetFilter tests', () => {
     })
 
     it('should set for Unannotated', () => {
-      init({ ...props, facetResult: notSetFacetResult })
+      init({ ...props, facetResults: [notSetFacetResult, notSetFacetResult] })
       const notAssignedOption =
         screen.getByLabelText<HTMLInputElement>('Not Assigned')
       expect(notAssignedOption.checked).toBe(true)
     })
 
     it('interval', () => {
-      init({ ...props, facetResult: rangeFacetResult })
+      init({ ...props, facetResults: [rangeFacetResult, rangeFacetResult] })
       const rangeOption = screen.getByLabelText<HTMLInputElement>('Range')
       expect(rangeOption.checked).toBe(true)
     })
@@ -175,16 +174,16 @@ describe('RangeFacetFilter tests', () => {
       columnType: ColumnTypeEnum.DOUBLE,
     }
     it('should set for integer', () => {
-      init({ ...props, facetResult: rangeFacetResult })
+      init({ ...props, facetResults: [rangeFacetResult, rangeFacetResult] })
       screen.getByTestId('RangeSlider')
     })
 
     it('should set for date', () => {
       init({
         ...props,
-        facetResult: rangeFacetResult,
-        label: dateColumnModel.name,
+        facetResults: [rangeFacetResult, rangeFacetResult],
         columnType: dateColumnModel.columnType,
+        label: dateColumnModel.name,
       })
       screen.getByTestId('Range')
 
@@ -199,9 +198,9 @@ describe('RangeFacetFilter tests', () => {
     it('should set for double', () => {
       init({
         ...props,
-        facetResult: rangeFacetResult,
-        label: doubleColumnModel.name,
+        facetResults: [rangeFacetResult, rangeFacetResult],
         columnType: doubleColumnModel.columnType,
+        label: doubleColumnModel.name,
       })
       screen.getByTestId('Range')
 
@@ -226,7 +225,12 @@ describe('RangeFacetFilter tests', () => {
       const notAssignedOption =
         screen.getByLabelText<HTMLInputElement>('Not Assigned')
       await userEvent.click(notAssignedOption)
-      expect(mockCallback).toHaveBeenCalledWith([VALUE_NOT_SET, VALUE_NOT_SET])
+      expect(mockCallback).toHaveBeenCalledWith([
+        VALUE_NOT_SET,
+        VALUE_NOT_SET,
+        VALUE_NOT_SET,
+        VALUE_NOT_SET,
+      ])
       expect(mockCallback).toBeCalledTimes(1)
 
       //get updated wrapper and clear mocks
@@ -265,7 +269,8 @@ describe('RangeFacetFilter tests', () => {
       const updatedProps = {
         ...props,
         facetResult: rangeFacetResult,
-        columnModel: dateColumnModel,
+        columnType: dateColumnModel.columnType,
+        label: dateColumnModel.name,
       }
       init(updatedProps)
       await waitFor(() => expect(Range).toHaveBeenCalled())
@@ -276,7 +281,12 @@ describe('RangeFacetFilter tests', () => {
 
     it('should update from a range slider control', async () => {
       capturedOnChange = undefined
-      init({ facetResult: rangeFacetResult })
+      init({
+        facetResults: [rangeFacetResult, rangeFacetResult],
+        columnType: ColumnTypeEnum.INTEGER,
+        label: '',
+        onChange: mockCallback,
+      })
       await waitFor(() => expect(RangeSlider).toHaveBeenCalled())
       await waitFor(() => expect(capturedOnChange).toBeDefined())
       capturedOnChange!({ min: '22', max: '23' })

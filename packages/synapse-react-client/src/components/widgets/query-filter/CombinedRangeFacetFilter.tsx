@@ -25,17 +25,15 @@ export type CombinedRangeFacetFilterProps = {
  * to define the facet range values:
  * 
 
-                                   │     Range Selector     │
-                               min ├────────────────────────┤ max
-                                   │                        │
-
-                                       Min Column facet     │
-Column Min value ◄──────────────────────────────────────────┤  Range Selector max
-                                                            │
-
-                                   │   Max Column facet
-              Range Selector min   ├─────────────────────────────────────────► Column Max value
-                                   │
+                            Range Selector      
+                  min ├────────────────────────┤ max
+                                                
+                          Min Column facet      
+ Column Min value ◄────────────────────────────┤  Range Selector max
+                                                
+                          Max Column facet
+ Range Selector min   ├────────────────────────────► Column Max value
+                       
 
 */
 export const CombinedRangeFacetFilter: React.FunctionComponent<
@@ -99,7 +97,7 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
       <Collapse in={!isCollapsed}>
         <RadioGroup
           value={radioValue}
-          id="rangeSelector"
+          id="combinedRangeSelector"
           options={options}
           onChange={(radioValue: string) =>
             handleRadioGroupChange(radioValue as RadioValuesEnum, onChange)
