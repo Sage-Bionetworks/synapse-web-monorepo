@@ -86,7 +86,7 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
   )
 
   useEffect(() => {
-    getRadioValue(selectedMin, isAnyValue)
+    setRadioValue(getRadioValue(selectedMin, isAnyValue))
   }, [selectedMin, isAnyValue])
 
   return (
