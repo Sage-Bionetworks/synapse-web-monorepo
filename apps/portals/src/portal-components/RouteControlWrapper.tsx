@@ -31,9 +31,10 @@ export default function RouteControlWrapper(props: RouteControlWrapperProps) {
   )
   const routeControlProps: RouteControlProps = useMemo(
     () => ({
-      customRoutes: customRoutes
-        .map((route) => route.path)
-        .filter(Boolean) as string[],
+      customRoutes: customRoutes.map((route) => ({
+        name: route.path!,
+        hide: !!route.hideRouteFromNavbar,
+      })),
       handleChanges: handleChangesFn,
       isSelected: (name: string) => name === subPath,
     }),

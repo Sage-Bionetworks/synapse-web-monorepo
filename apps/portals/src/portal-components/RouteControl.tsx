@@ -11,7 +11,7 @@ import {
 export type RouteControlProps = {
   handleChanges: (text: string, index: number) => void
   isSelected: (name: string) => boolean
-  customRoutes: string[]
+  customRoutes: { name: string; hide: boolean }[]
 }
 
 function CustomScrollButton(props: TabScrollButtonProps) {
@@ -53,7 +53,7 @@ export function RouteControl(props: RouteControlProps) {
    */
   return (
     <Tabs
-      value={customRoutes.find((name) => isSelected(name))}
+      value={customRoutes.find(({ name }) => isSelected(name))?.name!}
       variant="scrollable"
       orientation={isMobileView ? 'vertical' : 'horizontal'}
       scrollButtons="auto"
@@ -69,7 +69,8 @@ export function RouteControl(props: RouteControlProps) {
         style: { background: 'transparent' },
       }}
     >
-      {customRoutes.map((name, index) => {
+      {customRoutes.map((route, index) => {
+        const { name, hide } = route
         return (
           <Tab
             key={name}
@@ -78,6 +79,7 @@ export function RouteControl(props: RouteControlProps) {
             label={name}
             onClick={() => handleChanges(name, index)}
             sx={{
+              display: hide && !isSelected(name) ? 'none' : undefined,
               transition: 'all 400ms',
               fontSize: '16px',
               fontWeight: 700,

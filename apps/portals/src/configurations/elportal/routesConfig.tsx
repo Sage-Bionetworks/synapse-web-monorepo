@@ -200,12 +200,7 @@ const routes: GenericRoute[] = [
       {
         exact: true,
         path: 'Data by Files',
-        synapseConfigArray: [
-          {
-            isOutsideContainer: true,
-            ...data,
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         exact: true,
@@ -237,7 +232,6 @@ const routes: GenericRoute[] = [
               // },
             },
           },
-          { isOutsideContainer: true, ...cohortbuilder },
         ],
       },
       {
