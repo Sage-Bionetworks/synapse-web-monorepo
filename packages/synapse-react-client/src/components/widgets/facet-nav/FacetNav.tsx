@@ -12,7 +12,7 @@ import { useQueryContext } from '../../QueryContext/QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
 import FacetNavPanel, { PlotType } from './FacetNavPanel'
 import TotalQueryResults from '../../TotalQueryResults'
-import WideButton from '../../styled/WideButton'
+import { Box, Button } from '@mui/material'
 
 /*
 TODO: This component has a few bugs when its props are updated with new data, this should be handled
@@ -254,20 +254,28 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               ))}
             </div>
             {showMoreButtonState !== 'NONE' && (
-              <div className="FacetNav__showMoreContainer">
-                <WideButton
+              <Box
+                display="flex"
+                justifyContent="center"
+                sx={{
+                  backgroundColor: 'grey.100',
+                  p: 2,
+                  mt: 2,
+                }}
+              >
+                <Button
                   variant="contained"
                   color="secondary"
                   onClick={() =>
                     onShowMoreClick(showMoreButtonState === 'MORE')
                   }
-                  sx={{ width: '250px' }}
+                  sx={{ width: '150px' }}
                 >
                   {showMoreButtonState === 'LESS'
                     ? 'Hide Charts'
                     : 'View All Charts'}
-                </WideButton>
-              </div>
+                </Button>
+              </Box>
             )}
           </div>
         )}
