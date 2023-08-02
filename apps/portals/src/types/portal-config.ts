@@ -25,7 +25,6 @@ import {
   UserCardProps,
   ChallengeDataDownloadProps,
 } from 'synapse-react-client'
-import { StatefulButtonControlWrapperProps } from '../portal-components/StatefulButtonControlWrapper'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
 import { AboutPortalProps } from '../portal-components/csbc-home-page/AboutPortal'
@@ -99,11 +98,6 @@ type Programs = {
 type Resources = {
   name: 'Resources'
   props: ResourcesProps
-}
-
-type StatefulButtonControl = {
-  name: 'StatefulButtonControlWrapper'
-  props: StatefulButtonControlWrapperProps
 }
 
 type RouteControl = {
@@ -305,7 +299,6 @@ type Header = {
 export type SynapseConfig = (
   | RedirectWithQuery
   | Redirect
-  | StatefulButtonControl
   | RouteControl
   | CardContainerLogic
   | QueryWrapper

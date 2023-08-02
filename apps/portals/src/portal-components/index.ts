@@ -1,4 +1,3 @@
-import StatefulButtonControlWrapper from './StatefulButtonControlWrapper'
 import RouteControlWrapper from './RouteControlWrapper'
 import DetailsPage from './DetailsPage'
 import TabbedSynapseObjects from './TabbedSynapseObjects'
@@ -24,7 +23,6 @@ import ChallengeSubmissionWrapper from './challengeportal/ChallengeSubmissionWra
 import ProjectDiscussionForum from './ProjectDiscussionForum'
 
 const PortalComponents = {
-  StatefulButtonControlWrapper,
   RouteControlWrapper,
   DetailsPage,
   ConsortiaGoals,
