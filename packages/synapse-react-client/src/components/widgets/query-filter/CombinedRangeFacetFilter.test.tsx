@@ -252,7 +252,7 @@ describe('CombinedRangeFacetFilter tests', () => {
         screen.getByLabelText<HTMLInputElement>('Not Assigned')
       await userEvent.click(notAssignedOption)
       expect(mockCallback).toHaveBeenCalledWith([VALUE_NOT_SET, VALUE_NOT_SET])
-      expect(mockCallback).toBeCalledTimes(1)
+      expect(mockCallback).toHaveBeenCalledTimes(1)
 
       //get updated wrapper and clear mocks
       mockCallback.mockClear()
