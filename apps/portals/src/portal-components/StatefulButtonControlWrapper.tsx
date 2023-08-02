@@ -54,7 +54,10 @@ class StatefulButtonControl extends React.Component<
     const { name, synapseConfigArray, sql, entityId } =
       configs[this.state.index]
     const buttonControlProps: RouteControlProps = {
-      customRoutes: configs.map((el) => el.name),
+      customRoutes: configs.map((el) => ({
+        name: el.name,
+        hide: false,
+      })),
       handleChanges: this.handleChange,
       isSelected: (val: string) => val === name,
     }

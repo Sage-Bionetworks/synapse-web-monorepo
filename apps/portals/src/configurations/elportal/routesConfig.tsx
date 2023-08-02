@@ -1,7 +1,6 @@
 import React from 'react'
 import { GenericRoute } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import { cohortbuilder, data } from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import { studiesProgrammaticRouteConfig } from './synapseConfigs/studies'
 import {
