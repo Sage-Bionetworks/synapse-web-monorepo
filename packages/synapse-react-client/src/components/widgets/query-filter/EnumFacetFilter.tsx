@@ -1,4 +1,4 @@
-import { Collapse, Fade, IconButton, Menu } from '@mui/material'
+import { Collapse, Fade, IconButton, Menu, Tooltip } from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
@@ -400,17 +400,18 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     } else {
       return (
         <div className="EnumFacetFilter">
-          <IconButton onClick={handleClickDropdownIcon} size={'small'}>
-            <IconSvg
-              icon={'filter'}
-              wrap={false}
-              label={'Filter by specific facet'}
-              sx={{
-                color: allIsSelected ? 'grey.700' : 'primary.main',
-                fontSize: '20px',
-              }}
-            />
-          </IconButton>
+          <Tooltip title={'Filter by specific facet'}>
+            <IconButton onClick={handleClickDropdownIcon} size={'small'}>
+              <IconSvg
+                icon={'filter'}
+                wrap={false}
+                sx={{
+                  color: allIsSelected ? 'grey.700' : 'primary.main',
+                  fontSize: '20px',
+                }}
+              />
+            </IconButton>
+          </Tooltip>
           <Menu
             anchorEl={anchorEl}
             open={open}
