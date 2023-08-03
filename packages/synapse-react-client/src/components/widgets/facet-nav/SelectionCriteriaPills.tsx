@@ -3,6 +3,7 @@ import { QueryContextType, useQueryContext } from '../../QueryContext'
 import {
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueQueryFilter,
+  FacetColumnRangeRequest,
   QueryFilter,
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
@@ -53,6 +54,7 @@ function getPillPropsFromColumnQueryFilter(
       },
     ]
   }
+
   // otherwise render one pill per value
   return queryFilter.values.map(value => {
     let filterValue = value
@@ -157,6 +159,7 @@ function getPillPropsFromFacetFilters(
           },
         ]
       }
+
       // otherwise render one pill per value
 
       return selectedFacet.facetValues.map(facetValue => {
@@ -173,6 +176,38 @@ function getPillPropsFromFacetFilters(
         }
       })
     } else if (isFacetColumnRangeRequest(selectedFacet)) {
+      // Include a single pill for both facet filters if a combined range facet filter config is defined
+      const { combineRangeFacetConfig } = queryContext
+      if (
+        combineRangeFacetConfig &&
+        (selectedFacet.columnName == combineRangeFacetConfig.minFacetColumn ||
+          selectedFacet.columnName == combineRangeFacetConfig.maxFacetColumn)
+      ) {
+        if (
+          selectedFacet.columnName == combineRangeFacetConfig.minFacetColumn
+        ) {
+          return []
+        } else {
+          // find the min facet also
+          const maxFacet = selectedFacet
+          const minFacet = selectedFacets.find(
+            v => v.columnName == combineRangeFacetConfig.minFacetColumn,
+          ) as FacetColumnRangeRequest
+          const innerText = `${maxFacet.min} - ${minFacet.max}`
+          return [
+            {
+              key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${innerText}`,
+              innerText: innerText,
+              tooltipText: `${combineRangeFacetConfig.label}: ${innerText}`,
+              onRemoveFilter: () => {
+                // Remove both facets on pill click
+                queryContext.removeSelectedFacet([minFacet, maxFacet])
+              },
+            },
+          ]
+        }
+      }
+
       const innerText = `${selectedFacet.min} - ${selectedFacet.max}`
       return [
         {

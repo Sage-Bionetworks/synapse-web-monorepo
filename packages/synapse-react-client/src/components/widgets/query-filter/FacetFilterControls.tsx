@@ -16,6 +16,7 @@ import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
 import { Box, Skeleton, Stack } from '@mui/material'
 import { sortBy } from 'lodash-es'
+import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
 
 export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with at least one non-null value will be shown. */
@@ -49,19 +50,22 @@ const convertFacetColumnRangeRequest = (
 
 const patchRequestFacets = (
   changedFacet: FacetColumnRequest,
-  lastRequest?: QueryBundleRequest,
+  selections: FacetColumnRequest[] = [],
 ): FacetColumnRequest[] => {
-  const selections = lastRequest?.query?.selectedFacets ?? []
   const changedFacetIndex = selections.findIndex(
     facet => facet.columnName === changedFacet.columnName,
   )
-
   const isEmptyValuesFacet =
     changedFacet.concreteType ===
       'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' &&
     (!changedFacet.facetValues || !changedFacet.facetValues.length)
+  const isEmptyRangesFacet =
+    changedFacet.concreteType ===
+      'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest' &&
+    (!changedFacet.min || !changedFacet.max)
+
   if (changedFacetIndex > -1) {
-    if (isEmptyValuesFacet) {
+    if (isEmptyValuesFacet || isEmptyRangesFacet) {
       selections.splice(changedFacetIndex, 1)
     } else {
       selections[changedFacetIndex] = changedFacet
@@ -93,7 +97,10 @@ export function applyChangesToValuesColumn(
   }
 
   const changedFacet = convertFacetToFacetColumnValuesRequest(facet)
-  const result = patchRequestFacets(changedFacet, lastRequest)
+  const result = patchRequestFacets(
+    changedFacet,
+    lastRequest?.query?.selectedFacets,
+  )
   onChangeFn(result)
 }
 
@@ -107,8 +114,31 @@ export const applyChangesToRangeColumn = (
   facet.columnMin = values[0]
   facet.columnMax = values[1]
   const changedFacet = convertFacetColumnRangeRequest(facet)
-  const result = patchRequestFacets(changedFacet, lastRequest)
+  const result = patchRequestFacets(
+    changedFacet,
+    lastRequest?.query?.selectedFacets,
+  )
   onChangeFn(result)
+}
+
+export const applyCombinedChangesToRangeColumn = (
+  lastRequest: QueryBundleRequest | undefined,
+  combinedRangeFacets: FacetColumnResultRange[],
+  onChangeFn: (result: FacetColumnRequest[]) => void,
+  values: string[],
+) => {
+  const minColumn = combinedRangeFacets[0]
+  const maxColumn = combinedRangeFacets[1]
+  minColumn.columnMin = values[0]
+  minColumn.columnMax = values[1]
+  maxColumn.columnMin = values[2]
+  maxColumn.columnMax = values[3]
+  const minColumnChangedFacet = convertFacetColumnRangeRequest(minColumn)
+  const maxColumnChangedFacet = convertFacetColumnRangeRequest(maxColumn)
+  let selections = lastRequest?.query?.selectedFacets ?? []
+  selections = patchRequestFacets(minColumnChangedFacet, selections)
+  selections = patchRequestFacets(maxColumnChangedFacet, selections)
+  onChangeFn(selections)
 }
 
 /**
@@ -169,6 +199,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
     data: data,
     getCurrentQueryRequest,
     executeQueryRequest,
+    combineRangeFacetConfig,
   } = useQueryContext()
   const lastRequest = getCurrentQueryRequest()
 
@@ -180,10 +211,24 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
     )
     .filter(
       facet =>
+        // Don't show facets if included in the combine range facet config
+        combineRangeFacetConfig == null ||
+        (combineRangeFacetConfig.maxFacetColumn !== facet.columnName &&
+          combineRangeFacetConfig.minFacetColumn !== facet.columnName),
+    )
+    .filter(
+      facet =>
         // Don't show facets where there are no values
         !isSingleNotSetValue(facet),
     )
 
+  const combinedRangeFacets = combineRangeFacetConfig
+    ? data!.facets!.filter(
+        facet =>
+          combineRangeFacetConfig.maxFacetColumn === facet.columnName ||
+          combineRangeFacetConfig.minFacetColumn === facet.columnName,
+      )
+    : []
   // Controls which facet filter sections are shown/hidden by clicking on chips
   const [facetFiltersShown, setFacetFiltersShown] = React.useState<Set<string>>(
     getDefaultShownFacetFilters(facets, lastRequest.query.selectedFacets),
@@ -227,9 +272,30 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
     },
     [facetFiltersShown],
   )
+  const combinedRangeFacetsColumnModelType = combineRangeFacetConfig
+    ? columnModels!.find(
+        model => model.name === combineRangeFacetConfig.minFacetColumn,
+      )?.columnType
+    : undefined
 
   return (
     <div className={`FacetFilterControls`}>
+      {combineRangeFacetConfig && (
+        <CombinedRangeFacetFilter
+          facetResults={combinedRangeFacets as FacetColumnResultRange[]}
+          label={combineRangeFacetConfig.label}
+          columnType={combinedRangeFacetsColumnModelType!}
+          collapsed={false}
+          onChange={(values: (string | number | undefined)[]) =>
+            applyCombinedChangesToRangeColumn(
+              lastRequest,
+              combinedRangeFacets as FacetColumnResultRange[],
+              applyChanges,
+              values as string[],
+            )
+          }
+        ></CombinedRangeFacetFilter>
+      )}
       {(facets ?? [])
         .filter(facet => facetFiltersShown.has(facet.columnName))
         .map(facet => {
@@ -249,7 +315,8 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
               {facet.facetType === 'range' && columnModel && (
                 <RangeFacetFilter
                   facetResult={facet}
-                  columnModel={columnModel}
+                  label={columnModel.name}
+                  columnType={columnModel.columnType}
                   collapsed={false}
                   onChange={(values: (string | number | undefined)[]) =>
                     applyChangesToRangeColumn(

@@ -96,6 +96,8 @@ export type QueryContextType<
   rowSelectionPrimaryKey?: string[]
   /** Whether the user has selected any rows */
   hasSelectedRows: boolean
+  /** Combines two faceted columns into a single inclusive range selector */
+  combineRangeFacetConfig?: ReadonlyDeep<CombineRangeFacetConfig>
 }
 
 export type PaginatedQueryContextType<
@@ -196,6 +198,12 @@ export function useInfiniteQueryContext(): InfiniteQueryContextType {
   }
   // TODO: Identify more type-safe alternative to casting
   return context as InfiniteQueryContextType
+}
+
+export type CombineRangeFacetConfig = {
+  minFacetColumn: string
+  maxFacetColumn: string
+  label: string
 }
 
 export const QueryContextConsumer = QueryContext.Consumer
