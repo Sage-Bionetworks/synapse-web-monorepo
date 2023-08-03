@@ -22,7 +22,7 @@ import {
   Row,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
+import { Box, Link, Tooltip } from '@mui/material'
 import {
   CardLink,
   ColumnIconConfigs,
@@ -286,14 +286,14 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     if (str.match(SYNAPSE_ENTITY_ID_REGEX)) {
       // its a synId
       return (
-        <a
+        <Link
           target={TargetEnum.NEW_WINDOW}
           rel="noopener noreferrer"
           href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${str}`}
           className={newClassName}
         >
           {str}
-        </a>
+        </Link>
       )
     } else {
       // they don't need a link
@@ -348,7 +348,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
               {split.map((el, index) => {
                 return (
                   <React.Fragment key={el}>
-                    <a
+                    <Link
                       href={href ?? undefined}
                       target={linkTarget ?? TargetEnum.NEW_WINDOW}
                       rel="noopener noreferrer"
@@ -357,7 +357,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
                       style={style}
                     >
                       {el}
-                    </a>
+                    </Link>
                     {index < split.length - 1 && (
                       <span style={{ marginRight: 4 }}>, </span>
                     )}
@@ -381,7 +381,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
 
             return (
               <React.Fragment key={el}>
-                <a
+                <Link
                   href={href}
                   key={el}
                   className={newClassName}
@@ -389,7 +389,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
                   target={linkTarget ?? TargetEnum.CURRENT_WINDOW}
                 >
                   {el}
-                </a>
+                </Link>
                 {index < split.length - 1 && (
                   <span style={{ marginRight: 4 }}>, </span>
                 )}
@@ -548,17 +548,16 @@ export function ShortDescription(props: {
         {getCutoff(description).previewText}
       </span>
       {description.length >= CHAR_COUNT_CUTOFF && (
-        <a
+        <Link
           style={{
             fontSize: '16px',
             cursor: 'pointer',
             marginLeft: '5px',
           }}
-          className="highlight-link"
           onClick={toggleShowMore}
         >
           ...Show More
-        </a>
+        </Link>
       )}
     </div>
   )
@@ -612,14 +611,13 @@ export default class GenericCard extends React.Component<
   }) => {
     if (href) {
       return (
-        <a
+        <Link
           data-search-handle={titleSearchHandle}
           target={target}
           href={href}
-          className="highlight-link"
         >
           {title}
-        </a>
+        </Link>
       )
     } else {
       return <span data-search-handle={titleSearchHandle}> {title} </span>
@@ -900,11 +898,15 @@ export default class GenericCard extends React.Component<
               />
             )}
             {ctaLinkConfig && ctaHref && ctaTarget && (
-              <div className="SRC-portalCardCTALink bootstrap-4-backport">
-                <a target={ctaTarget} rel="noopener noreferrer" href={ctaHref}>
+              <Box sx={{ mt: '20px' }}>
+                <Link
+                  target={ctaTarget}
+                  rel="noopener noreferrer"
+                  href={ctaHref}
+                >
                   {ctaLinkConfig.text}
-                </a>
-              </div>
+                </Link>
+              </Box>
             )}
           </div>
         </div>
