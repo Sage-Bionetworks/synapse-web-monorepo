@@ -1,4 +1,4 @@
-import { Collapse, IconButton, Menu } from '@mui/material'
+import { Collapse, Fade, IconButton, Menu } from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
@@ -417,6 +417,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
             onClose={handleClose}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
             transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+            TransitionComponent={Fade}
           >
             {content}
           </Menu>
