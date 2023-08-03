@@ -8,7 +8,6 @@ import {
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
 import { dataSql, peopleSql, projectsSql, upsetPlotSql } from './resources'
-import { individualsView, filesView } from './synapseConfigs'
 
 const routes: GenericRoute[] = [
   {
@@ -203,19 +202,15 @@ const routes: GenericRoute[] = [
         hideRouteFromNavbar: false,
       },
       {
-        // TODO: move to routeControlWrapperProps.ts for release
         exact: true,
         path: 'Data by Files v2',
         hideRouteFromNavbar: true, // this replaces Data by Files on release of the cohort builder
-        synapseConfigArray: [filesView],
       },
       {
-        // TODO: move to routeControlWrapperProps.ts for release
         exact: true,
         path: 'Data by Participants',
         hideRouteFromNavbar: true, // remove on release of the cohort builder
         synapseConfigArray: [
-          individualsView,
           {
             name: 'OrientationBanner',
             isOutsideContainer: true,
