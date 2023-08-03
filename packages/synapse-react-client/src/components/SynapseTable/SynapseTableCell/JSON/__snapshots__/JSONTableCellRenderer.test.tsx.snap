@@ -471,25 +471,37 @@ exports[`JSONTableCellRenderer handles "complex object" case 1`] = `
 exports[`JSONTableCellRenderer handles "null" case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
   >
-    &lt;null value&gt;
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+    >
+      &lt;null value&gt;
+    </span>
   </span>
 </div>
 `;
 
 exports[`JSONTableCellRenderer handles "one item" case 1`] = `
 <div>
-  foo
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+  >
+    foo
+  </span>
 </div>
 `;
 
 exports[`JSONTableCellRenderer handles "one null item" case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
   >
-    &lt;null value&gt;
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+    >
+      &lt;null value&gt;
+    </span>
   </span>
 </div>
 `;

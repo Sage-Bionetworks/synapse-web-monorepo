@@ -24,7 +24,11 @@ export function JSONArrayRenderer(props: JSONArrayRendererProps) {
     )
   }
   if (value.length === 1) {
-    return <JSONPrimitiveRenderer value={value[0]} />
+    return (
+      <Typography variant={'smallText1'}>
+        <JSONPrimitiveRenderer value={value[0]} />
+      </Typography>
+    )
   }
   return (
     <>
