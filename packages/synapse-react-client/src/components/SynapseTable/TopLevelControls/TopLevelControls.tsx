@@ -13,7 +13,6 @@ import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { ColumnSelection, DownloadOptions } from '../table-top'
 import { Button, Divider, Tooltip, Typography } from '@mui/material'
 import QueryCount from '../../QueryCount/QueryCount'
-import { Icon } from '../../row_renderers/utils'
 import MissingQueryResultsWarning from '../../MissingQueryResultsWarning/MissingQueryResultsWarning'
 import { Cavatica } from '../../../assets/icons/Cavatica'
 import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
@@ -22,6 +21,7 @@ import {
   getNumberOfResultsToInvokeAction,
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
+import IconSvg from '../../IconSvg'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -182,15 +182,24 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             </>
           )}
           {!hideFacetFilterControl && (
-            <a
+            <Button
+              variant={'text'}
               onClick={() => setShowFacetFilter(value => !value)}
-              className="TopLevelControls__querycount__facetFilterLink SRC-no-underline-on-hover"
+              startIcon={
+                <IconSvg
+                  icon={showFacetFilter ? 'close' : 'filter'}
+                  wrap={false}
+                />
+              }
+              sx={{
+                ml: 2,
+                fontWeight: 400,
+                fontSize: '14px',
+                textDecoration: 'none !important',
+              }}
             >
-              <Icon type={showFacetFilter ? 'close' : 'filter'}></Icon>
-              <span className="TopLevelControls__querycount__facetFilterLink__text">
-                {showFacetFilter ? 'Hide' : 'Show'} filters
-              </span>
-            </a>
+              {showFacetFilter ? 'Hide' : 'Show'} filters
+            </Button>
           )}
         </div>
         <div className="TopLevelControls__actions">

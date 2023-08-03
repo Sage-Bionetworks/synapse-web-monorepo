@@ -11,7 +11,7 @@ import {
   getFileResult,
   getEntity,
 } from '../../synapse-client/SynapseClient'
-import IconSvg from '../IconSvg/IconSvg'
+import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
 import { useInView } from 'react-intersection-observer'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
@@ -27,6 +27,70 @@ export type DirectFileDownloadProps = {
   displayFileName?: boolean
   onClickCallback?: (isExternalLink: boolean) => void // callback if you want to know when the link was clicked
   stopPropagation?: boolean
+  iconSvgPropOverrides?: Partial<IconSvgProps>
+}
+
+type DirectDownloadIconProps = {
+  isExternalFile: boolean
+  hasFileAccess: boolean
+  onClick?: (isExternalFile: boolean) => void
+  getDownloadLink: () => Promise<void>
+  stopPropagation: boolean
+  externalURL?: string
+  displayFileName: boolean
+  fileName: string
+  iconSvgPropOverrides?: Partial<IconSvgProps>
+}
+
+function DirectDownloadIcon(props: DirectDownloadIconProps) {
+  const {
+    isExternalFile,
+    onClick,
+    getDownloadLink,
+    stopPropagation,
+    externalURL,
+    hasFileAccess,
+    displayFileName,
+    fileName,
+    iconSvgPropOverrides = {},
+  } = props
+  if (isExternalFile) {
+    return (
+      <button
+        className={'btn-download-icon'}
+        onClick={event => {
+          if (onClick) {
+            onClick(isExternalFile)
+            if (stopPropagation) event.stopPropagation()
+          }
+        }}
+      >
+        <a
+          className="ignoreLink"
+          rel="noreferrer"
+          href={externalURL}
+          target="_blank"
+        >
+          <IconSvg icon="openInNewWindow" {...iconSvgPropOverrides} />
+        </a>
+      </button>
+    )
+  }
+  if (hasFileAccess) {
+    return (
+      <button
+        className={'btn-download-icon'}
+        onClick={event => {
+          getDownloadLink()
+          if (stopPropagation) event.stopPropagation()
+        }}
+      >
+        <IconSvg icon="download" {...iconSvgPropOverrides} />
+        {displayFileName && fileName ? fileName : ''}
+      </button>
+    )
+  }
+  return <></>
 }
 
 const DirectDownload: React.FunctionComponent<
@@ -38,9 +102,10 @@ const DirectDownload: React.FunctionComponent<
     entityVersionNumber,
     associatedObjectType,
     fileHandleId,
-    displayFileName,
+    displayFileName = false,
     onClickCallback,
     stopPropagation = false,
+    iconSvgPropOverrides,
   } = props
   const { ref, inView } = useInView()
   const [isExternalFile, setIsExternalFile] = useState<boolean>(false)
@@ -177,46 +242,6 @@ const DirectDownload: React.FunctionComponent<
       })
   }
 
-  const getIcon = () => {
-    if (isExternalFile) {
-      return (
-        <button
-          className={'btn-download-icon'}
-          onClick={event => {
-            if (onClickCallback) {
-              onClickCallback(isExternalFile)
-              if (stopPropagation) event.stopPropagation()
-            }
-          }}
-        >
-          <a
-            className="ignoreLink"
-            rel="noreferrer"
-            href={externalURL}
-            target="_blank"
-          >
-            <IconSvg icon="openInNewWindow" />
-          </a>
-        </button>
-      )
-    }
-    if (hasFileAccess) {
-      return (
-        <button
-          className={'btn-download-icon'}
-          onClick={event => {
-            getDownloadLink()
-            if (stopPropagation) event.stopPropagation()
-          }}
-        >
-          <IconSvg icon="download" />
-          {displayFileName && fileName ? fileName : ''}
-        </button>
-      )
-    }
-    return <></>
-  }
-
   return (
     <Tooltip
       title={
@@ -227,7 +252,19 @@ const DirectDownload: React.FunctionComponent<
       enterNextDelay={TOOLTIP_DELAY_SHOW}
       placement="left"
     >
-      <span ref={ref}>{getIcon()}</span>
+      <div ref={ref}>
+        <DirectDownloadIcon
+          isExternalFile={isExternalFile}
+          hasFileAccess={hasFileAccess}
+          onClick={onClickCallback}
+          getDownloadLink={getDownloadLink}
+          stopPropagation={stopPropagation}
+          externalURL={externalURL}
+          displayFileName={displayFileName}
+          fileName={fileName}
+          iconSvgPropOverrides={iconSvgPropOverrides}
+        />
+      </div>
     </Tooltip>
   )
 }

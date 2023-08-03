@@ -79,18 +79,6 @@ svg.SRC-hoverBox {
   overflow: auto;
 }
 
-.table > tbody > tr > td.SRC_noBorderTop {
-  border-top: none;
-}
-
-.table > thead.SRC_borderTop {
-  border-top: 1px solid #dddddd;
-}
-
-.table > thead.SRC_bordered th {
-  border: 1px solid #dddddd !important;
-}
-
 .table {
   .SRC-primary-text-color {
     svg {
@@ -1147,6 +1135,24 @@ hr ~ .QueryWrapperPlotNav {
 
 .SynapseTable {
   min-height: 400px;
+  th {
+    background-color: map.get(SRC.$colors, 'gray-100');
+    border-right: 1px solid map.get(SRC.$colors, 'gray-400');
+  }
+  td,
+  th {
+    & > * {
+      padding: 8px 10px;
+    }
+  }
+
+  tr:nth-of-type(2n) {
+    background-color: #fbfbfc;
+  }
+
+  tbody > tr > td {
+    vertical-align: top;
+  }
 }
 
 .table > tbody > tr > td {

@@ -34,6 +34,7 @@ import {
   ExpandLess,
   ExpandMore,
   FactCheckTwoTone,
+  FilterAltTwoTone,
   FlagTwoTone,
   FolderTwoTone,
   FormatBold,
@@ -58,6 +59,7 @@ import {
   Login,
   MailOutlineTwoTone,
   MoreVertTwoTone,
+  OpenInFull,
   OpenInNewTwoTone,
   PeopleTwoTone,
   PhoneTwoTone,
@@ -73,6 +75,7 @@ import {
   SearchOutlined,
   SearchTwoTone,
   ShoppingCartOutlined,
+  Sort,
   Star,
   StarOutline,
   StarTwoTone,
@@ -117,7 +120,6 @@ import { EntityType } from '@sage-bionetworks/synapse-types'
 import { Tooltip } from '@mui/material'
 import CreateVersion from '../../assets/icons/CreateVersion'
 import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
-import { SortDown, SortUp } from '../../assets/themed_icons'
 import { GoogleIcon24 } from '../../assets/GoogleIcon24'
 
 export const IconStrings = [
@@ -139,6 +141,7 @@ export const IconStrings = [
   'dashboard',
   'delete',
   'deleteSweep',
+  'filter',
   'addToCart',
   'addCircleOutline',
   'addCircleTwoTone',
@@ -241,6 +244,7 @@ export const IconStrings = [
   'sortUp',
   'sortDown',
   'google24',
+  'openInFull',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -496,11 +500,23 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
     case 'email':
       return <MailOutlineTwoTone {...otherProps} />
     case 'sortUp':
-      return <SortUp {...otherProps} />
+      return (
+        <Sort
+          {...otherProps}
+          sx={{
+            transform: 'scale(1, -1)',
+            ...otherProps.sx,
+          }}
+        />
+      )
     case 'sortDown':
-      return <SortDown {...otherProps} />
+      return <Sort {...otherProps} />
     case 'google24':
       return <GoogleIcon24 {...otherProps} />
+    case 'filter':
+      return <FilterAltTwoTone {...otherProps} />
+    case 'openInFull':
+      return <OpenInFull {...otherProps} />
     default:
       return <></>
   }

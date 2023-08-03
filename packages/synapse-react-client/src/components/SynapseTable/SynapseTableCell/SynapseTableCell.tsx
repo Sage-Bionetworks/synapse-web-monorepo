@@ -30,12 +30,12 @@ import { EntityLink } from '../../EntityLink'
 import EvaluationIdRenderer from './EvaluationIdRenderer'
 import { SynapseCardLabel } from '../../GenericCard'
 import IconSvg, { IconName } from '../../IconSvg/IconSvg'
-import { useQueryContext } from '../../QueryContext/QueryContext'
+import { useQueryContext } from '../../QueryContext'
 import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
 import UserCard from '../../UserCard/UserCard'
 import UserIdList from './UserIdList'
 import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
-import { Typography } from '@mui/material'
+import { Link, Typography } from '@mui/material'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
@@ -161,12 +161,15 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
       return (
         <>
           {entity && (
-            <DirectDownload
-              associatedObjectId={entity.id!}
-              associatedObjectType={FileHandleAssociateType.TableEntity}
-              fileHandleId={columnValue}
-              displayFileName={true}
-            />
+            <p>
+              <DirectDownload
+                iconSvgPropOverrides={{ sx: { color: 'primary.main' } }}
+                associatedObjectId={entity.id!}
+                associatedObjectType={FileHandleAssociateType.TableEntity}
+                fileHandleId={columnValue}
+                displayFileName={true}
+              />
+            </p>
           )}
         </>
       )
@@ -224,13 +227,13 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
             )
           }
           return (
-            <a
+            <Link
               target="_blank"
               rel="noopener noreferrer"
               href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${ownerId}`}
             >
               <IconSvg icon={icon} /> {userName}
-            </a>
+            </Link>
           )
         } else {
           // isUserCard
@@ -246,13 +249,11 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
       break
     case ColumnTypeEnum.LINK:
       return (
-        <a target="_blank" rel="noopener noreferrer" href={columnValue}>
+        <Link target="_blank" rel="noopener noreferrer" href={columnValue}>
           {columnValue}
-        </a>
+        </Link>
       )
     case ColumnTypeEnum.STRING:
-    case ColumnTypeEnum.DOUBLE:
-    case ColumnTypeEnum.INTEGER:
     case ColumnTypeEnum.BOOLEAN:
     case ColumnTypeEnum.MEDIUMTEXT:
     case ColumnTypeEnum.LARGETEXT: {
@@ -262,6 +263,26 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
         </Typography>
       )
     }
+    case ColumnTypeEnum.INTEGER:
+      return (
+        <Typography
+          variant={'smallText1'}
+          sx={{ textAlign: 'right' }}
+          className={isBold}
+        >
+          {parseInt(columnValue).toLocaleString()}
+        </Typography>
+      )
+    case ColumnTypeEnum.DOUBLE:
+      return (
+        <Typography
+          variant={'smallText1'}
+          sx={{ textAlign: 'right' }}
+          className={isBold}
+        >
+          {parseFloat(columnValue).toLocaleString()}
+        </Typography>
+      )
     case ColumnTypeEnum.JSON:
       return <JSONTableCellRenderer value={columnValue} />
     default:

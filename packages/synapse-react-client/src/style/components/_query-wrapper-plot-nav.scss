@@ -5,7 +5,8 @@
   display: grid;
 
   @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
-    grid-template-columns: 25% 75%;
+    grid-template-columns: 23% 75%;
+    grid-column-gap: 2%;
 
     // by default, children take up the full row
     > * {
@@ -90,25 +91,6 @@
     .FilterAndView {
       margin-top: 10px;
     }
-    .FacetNav,
-    .FilterAndView,
-    .ErrorBannerWrapper,
-    .QueryWrapperFullTextSearchInput,
-    .QueryWrapperSearchInput,
-    .QueryWrapperSqlEditorInput,
-    .download-confirmation {
-      margin-left: 0px;
-    }
-  }
-
-  > .FacetFilterControls,
-  > .download-confirmation,
-  > .FacetNav,
-  > .QueryWrapperFullTextSearchInput,
-  > .QueryWrapperSearchInput,
-  > .QueryWrapperSqlEditorInput,
-  > .FilterAndView {
-    margin-left: 15px;
   }
 
   .QueryWrapperTextInput {
@@ -163,23 +145,6 @@
   &__querycount {
     display: inline-flex;
     align-items: center;
-    &__facetFilterLink {
-      height: 100%;
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: flex-start;
-      align-items: center;
-      margin-left: 15px;
-      font-weight: 400 !important;
-      &__text {
-        font-size: 14px;
-        margin-top: 4px;
-      }
-      svg {
-        margin-right: 7px;
-        margin-top: 8px;
-      }
-    }
   }
   &__actions {
     display: inline-flex;

@@ -7,6 +7,7 @@ import { JSONPrimitiveRenderer } from './JSONPrimitiveRenderer'
 import { JSONArrayRenderer } from './JSONArrayRenderer'
 import { JSONObjectRenderer } from './JSONObjectRenderer'
 import { ComplexJSONRenderer } from './ComplexJSONRenderer'
+import { Typography } from '@mui/material'
 
 export type JSONTableCellRendererProps = {
   value: string | null
@@ -25,7 +26,11 @@ export default function JSONTableCellRenderer(
   }
 
   if (isJSONPrimitive(value) || value === null) {
-    return <JSONPrimitiveRenderer value={value} />
+    return (
+      <Typography variant="smallText1">
+        <JSONPrimitiveRenderer value={value} />
+      </Typography>
+    )
   } else if (Array.isArray(value) && value.every(isJSONPrimitive)) {
     return <JSONArrayRenderer value={value} />
   } else if (

@@ -96,15 +96,9 @@ describe('FacetNavPanel tests', () => {
 
     const buttons = await screen.findAllByRole<HTMLButtonElement>('button')
     expect(buttons.length).toBe(3)
-    expect(buttons[0].querySelector('svg')!.getAttribute('data-icon')).toBe(
-      'filter',
-    )
-    expect(buttons[1].querySelector('svg')!.getAttribute('data-icon')).toBe(
-      'expand',
-    )
-    expect(buttons[2].querySelector('svg')!.getAttribute('data-icon')).toBe(
-      'close',
-    )
+    await screen.findByRole('button', { name: 'Filter by specific facet' })
+    await screen.findByRole('button', { name: 'Expand to large graph' })
+    await screen.findByRole('button', { name: 'Hide graph under Show More' })
 
     const panelBody = await within(panel).findByRole('graphics-object')
     expect(panelBody).toHaveClass('FacetNavPanel__body')
