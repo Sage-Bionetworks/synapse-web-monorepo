@@ -1,7 +1,8 @@
 import { RouteControlWrapperProps } from 'portal-components/RouteControlWrapper'
 import {
-  cohortbuilder,
   data,
+  filesView,
+  individualsView,
   people,
   projects,
   publications,
@@ -14,8 +15,13 @@ const routeControlWrapper: RouteControlWrapperProps = {
   customRoutes: [
     { path: 'Data by Files', synapseConfigArray: [data] },
     {
+      path: 'Data by Files v2',
+      synapseConfigArray: [filesView],
+      hideRouteFromNavbar: true,
+    },
+    {
       path: 'Data by Participants',
-      synapseConfigArray: [cohortbuilder],
+      synapseConfigArray: [individualsView],
       hideRouteFromNavbar: true,
     },
     { path: 'Projects', synapseConfigArray: [projects] },

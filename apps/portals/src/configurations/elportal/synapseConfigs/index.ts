@@ -4,9 +4,18 @@ import studies from './studies'
 import data from './data'
 import people from './people'
 import publications from './publications'
-import cohortbuilder from './cohortbuilder'
+import { individualsView, filesView } from './cohortbuilder'
 
-export { species, projects, studies, data, people, publications, cohortbuilder }
+export {
+  species,
+  projects,
+  studies,
+  data,
+  people,
+  publications,
+  individualsView,
+  filesView,
+}
 
 export default {
   species,
@@ -15,5 +24,6 @@ export default {
   data,
   people,
   publications,
-  cohortbuilder,
+  individualsView,
+  filesView,
 }
