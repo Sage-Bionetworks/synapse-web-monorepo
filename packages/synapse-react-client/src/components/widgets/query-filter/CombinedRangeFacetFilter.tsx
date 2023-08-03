@@ -1,62 +1,68 @@
 import { Collapse } from '@mui/material'
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import {
-  FRIENDLY_VALUE_NOT_SET,
-  VALUE_NOT_SET,
-} from '../../../utils/SynapseConstants'
 import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
 import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
-import { RangeSlider } from '../RangeSlider/RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
+import { RadioValuesEnum, getRadioValue, options } from './RangeFacetFilter'
 import dayjs from 'dayjs'
+import { RangeSlider } from '../RangeSlider/RangeSlider'
 
-export enum RadioValuesEnum {
-  NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
-  RANGE = 'RANGE',
-  ANY = '',
-}
-export const options = [
-  { label: FRIENDLY_VALUE_NOT_SET, value: RadioValuesEnum.NOT_SET },
-  { label: 'Any', value: RadioValuesEnum.ANY },
-  { label: 'Range', value: RadioValuesEnum.RANGE },
-]
-export type RangeFacetFilterProps = {
-  facetResult: FacetColumnResultRange
+export type CombinedRangeFacetFilterProps = {
+  facetResults: FacetColumnResultRange[]
   label: string
   columnType: ColumnType
   onChange: (range: (RadioValuesEnum | number | string | undefined)[]) => void
   collapsed?: boolean
 }
 
-export const getRadioValue = (min: string, isAnyValue: boolean) => {
-  if (isAnyValue) {
-    return RadioValuesEnum.ANY
-  } else if (min === VALUE_NOT_SET) {
-    return RadioValuesEnum.NOT_SET
-  }
-  return RadioValuesEnum.RANGE
-}
+/**
+ * Inclusive range selector across two columns
+ * Written for the ELITE portal cohort builder, may have other uses.
+ * The following diagram shows how the Range Selector min and max values are used
+ * to define the facet range values:
+ * 
 
-export const RangeFacetFilter: React.FunctionComponent<
-  RangeFacetFilterProps
+                            Range Selector      
+                  min ├────────────────────────┤ max
+                                                
+                          Min Column facet      
+ Column Min value ◄────────────────────────────┤  Range Selector max
+                                                
+                          Max Column facet
+ Range Selector min   ├────────────────────────────► Column Max value
+                       
+
+*/
+export const CombinedRangeFacetFilter: React.FunctionComponent<
+  CombinedRangeFacetFilterProps
 > = ({
-  facetResult,
+  facetResults,
   label,
   columnType,
   onChange,
   collapsed = false,
-}: RangeFacetFilterProps) => {
+}: CombinedRangeFacetFilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
+  const {
+    columnMin: col1Min,
+    // columnMax: col1Max  // not used
+    selectedMin: col1SelectedMin,
+    selectedMax: col1SelectedMax,
+  } = facetResults[0]
+  const {
+    //columnMin: col2Min,  // not used
+    columnMax: col2Max,
+    selectedMin: col2SelectedMin,
+    selectedMax: col2SelectedMax,
+  } = facetResults[1]
 
-  const { columnMin, columnMax, selectedMin, selectedMax } = facetResult // the upper bound of the selected range
-
-  const hasAnyValue = !selectedMin && !selectedMax
-
-  const currentMin = selectedMin || columnMin
-  const currentMax = selectedMax || columnMax
+  const isAnyValue =
+    !col1SelectedMin && !col1SelectedMax && !col2SelectedMin && !col2SelectedMax
+  const selectedMin = col2SelectedMin || col1Min
+  const selectedMax = col1SelectedMax || col2Max
 
   const rangeType = columnType === 'DOUBLE' ? 'number' : 'date'
 
@@ -73,13 +79,14 @@ export const RangeFacetFilter: React.FunctionComponent<
     }
   }
 
-  useEffect(() => {
-    setRadioValue(getRadioValue(currentMin, hasAnyValue))
-  }, [currentMin, hasAnyValue])
-
   const [radioValue, setRadioValue] = useState(
-    getRadioValue(currentMin, hasAnyValue),
+    getRadioValue(selectedMin, isAnyValue),
   )
+
+  useEffect(() => {
+    setRadioValue(getRadioValue(selectedMin, isAnyValue))
+  }, [selectedMin, isAnyValue])
+
   return (
     <div>
       <FacetFilterHeader
@@ -90,46 +97,42 @@ export const RangeFacetFilter: React.FunctionComponent<
       <Collapse in={!isCollapsed}>
         <RadioGroup
           value={radioValue}
-          id="rangeSelector"
+          id="combinedRangeSelector"
           options={options}
           onChange={(radioValue: string) =>
             handleRadioGroupChange(radioValue as RadioValuesEnum, onChange)
           }
         ></RadioGroup>
         {radioValue === RadioValuesEnum.RANGE &&
-          (columnMin === columnMax ? (
-            <label>{columnMax}</label>
+          (col1Min === col2Max ? (
+            <label>{col2Max}</label>
           ) : (
             <>
               {columnType === 'INTEGER' && (
                 <RangeSlider
                   key="RangeSlider"
-                  domain={[columnMin, columnMax]}
-                  initialValues={{
-                    min: parseInt(currentMin),
-                    max: parseInt(currentMax),
-                  }}
+                  domain={[col1Min, col2Max]}
+                  initialValues={{ min: selectedMin, max: selectedMax }}
                   step={1}
                   doUpdateOnApply={true}
                   onChange={(values: RangeValues) =>
-                    onChange([values.min, values.max])
+                    onChange([col1Min, values.max, values.min, col2Max])
                   }
                 >
                   {'>'}
                 </RangeSlider>
               )}
-
               {columnType === 'DATE' && (
                 <Range
                   key="Range"
                   initialValues={{
                     // From the backend, selectedMin is a formatted date (like "2021-06-15"), but columnMin is a unix timestamp in millis (like "1624651794856")
-                    min: selectedMin ?? dayjs(parseInt(columnMin)).toString(),
-                    max: selectedMax ?? dayjs(parseInt(columnMax)).toString(),
+                    min: col2SelectedMin ?? dayjs(parseInt(col1Min)).toString(),
+                    max: col1SelectedMax ?? dayjs(parseInt(col2Max)).toString(),
                   }}
                   type={rangeType}
                   onChange={(values: RangeValues) =>
-                    onChange([values.min, values.max])
+                    onChange([col1Min, values.max, values.min, col2Max])
                   }
                 ></Range>
               )}
@@ -137,12 +140,12 @@ export const RangeFacetFilter: React.FunctionComponent<
                 <Range
                   key="Range"
                   initialValues={{
-                    min: parseFloat(currentMin),
-                    max: parseFloat(currentMax),
+                    min: parseFloat(selectedMin),
+                    max: parseFloat(selectedMax),
                   }}
                   type={rangeType}
                   onChange={(values: RangeValues) =>
-                    onChange([values.min, values.max])
+                    onChange([col1Min, values.max, values.min, col2Max])
                   }
                 ></Range>
               )}

@@ -18,7 +18,7 @@ import {
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
-import { QueryContextConsumer } from '../QueryContext'
+import { QueryContextConsumer, QueryContextType } from '../QueryContext'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
 import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import SqlEditor from '../SynapseTable/SqlEditor'
@@ -76,7 +76,8 @@ type QueryWrapperPlotNavOwnProps = {
     | 'noContentPlaceholderType'
     | 'unitDescription'
     | 'additionalFiltersLocalStorageKey'
-  >
+  > &
+  Pick<QueryContextType, 'combineRangeFacetConfig'>
 
 export type SearchParams = {
   searchParams?: {
