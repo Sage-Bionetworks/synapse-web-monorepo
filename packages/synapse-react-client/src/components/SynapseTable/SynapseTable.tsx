@@ -1,5 +1,5 @@
 import ColumnResizer from 'column-resizer'
-import { cloneDeep, eq } from 'lodash-es'
+import { cloneDeep, eq, isEqual } from 'lodash-es'
 import React from 'react'
 import { DialogBase } from '../DialogBase'
 import SynapseClient from '../../synapse-client'
@@ -648,7 +648,9 @@ export class SynapseTable extends React.Component<
                 if (checked) {
                   cloneSelectedRows.push(row)
                 } else {
-                  const index = cloneSelectedRows.indexOf(row)
+                  const index = cloneSelectedRows.findIndex(selectedRow =>
+                    isEqual(selectedRow, row),
+                  )
                   if (index > -1) {
                     cloneSelectedRows.splice(index, 1)
                   }
