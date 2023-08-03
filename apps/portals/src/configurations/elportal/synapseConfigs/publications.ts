@@ -8,10 +8,17 @@ export const publicationCardProps = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     type: SynapseConstants.PUBLICATION,
-    title: 'Title',
-    subTitle: 'Authors',
+    title: 'title',
+    subTitle: 'authors',
     link: 'DOI',
-    secondaryLabels: ['Year', 'Journal', 'Program', 'Grant', 'DOI', 'PubmedId'],
+    secondaryLabels: [
+      'year',
+      'journal',
+      'Program',
+      'grant',
+      'DOI',
+      'pubmed_id',
+    ],
   },
 }
 
@@ -22,7 +29,7 @@ const publications: SynapseConfig = {
     sql: publicationsSql,
     name: 'Publications',
     shouldDeepLink: true,
-    facetsToPlot: ['Program', 'Year', 'Grant', 'Journal'],
+    facetsToPlot: ['Program', 'year', 'grant', 'journal'],
     cardConfiguration: publicationCardProps,
     searchConfiguration: defaultSearchConfiguration,
   },
