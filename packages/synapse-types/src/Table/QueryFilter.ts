@@ -21,7 +21,7 @@ export type COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE =
 // A filter using a single value against a column. Values within the values list have an OR relationship
 export interface ColumnSingleValueQueryFilter {
   concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE
-  isDefiningCondition: boolean //When null (default) or false, this condition will be applied to WHERE clause of table/view query.  When set to true, for a query against a VirtualTable, this condition will be applied to the WHERE clause of the VirtualTable's definingSQL
+  isDefiningCondition?: boolean //When null (default) or false, this condition will be applied to WHERE clause of table/view query.  When set to true, for a query against a VirtualTable, this condition will be applied to the WHERE clause of the VirtualTable's definingSQL
   columnName: string // name of the column to filter
   operator: ColumnSingleValueFilterOperator // Determines the filter operation to perform
   values: string[] // Values to used with the filter.
@@ -35,7 +35,7 @@ export type COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE =
 // A filter that applies multi-value columns functions.
 export interface ColumnMultiValueFunctionQueryFilter {
   concreteType: COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE
-  isDefiningCondition: boolean //When null (default) or false, this condition will be applied to WHERE clause of table/view query.  When set to true, for a query against a VirtualTable, this condition will be applied to the WHERE clause of the VirtualTable's definingSQL
+  isDefiningCondition?: boolean //When null (default) or false, this condition will be applied to WHERE clause of table/view query.  When set to true, for a query against a VirtualTable, this condition will be applied to the WHERE clause of the VirtualTable's definingSQL
   columnName: string // name of the column to filter
   function: ColumnMultiValueFunction // Determines the filter operation to perform
   values: string[] // Values to used with the filter.
@@ -48,7 +48,7 @@ export type TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE =
   typeof TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE
 export interface TextMatchesQueryFilter {
   concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE
-  isDefiningCondition: boolean //When null (default) or false, this condition will be applied to WHERE clause of table/view query.  When set to true, for a query against a VirtualTable, this condition will be applied to the WHERE clause of the VirtualTable's definingSQL
+  isDefiningCondition?: boolean //When null (default) or false, this condition will be applied to WHERE clause of table/view query.  When set to true, for a query against a VirtualTable, this condition will be applied to the WHERE clause of the VirtualTable's definingSQL
   searchExpression: string
 }
 
