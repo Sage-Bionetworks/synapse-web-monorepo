@@ -63,7 +63,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     isLoadingNewBundle,
     executeQueryRequest,
     error,
-    asyncJobStatus,
   } = useQueryContext()
 
   const { showFacetVisualization } = useQueryVisualizationContext()
@@ -178,19 +177,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       lastQueryRequest.query.selectedFacets.length > 0) ||
     (lastQueryRequest?.query.additionalFilters !== undefined &&
       lastQueryRequest?.query.additionalFilters.length > 0)
-  if (error) {
+  if (error || (!data && isLoadingNewBundle)) {
     return <></>
-  } else if (!data && isLoadingNewBundle) {
-    return (
-      <div className="SRC-loadingContainer SRC-centerContentColumn">
-        {asyncJobStatus?.progressMessage && (
-          <div>
-            <span className="spinner" />
-            {asyncJobStatus.progressMessage}
-          </div>
-        )}
-      </div>
-    )
   } else {
     return (
       <>
@@ -209,8 +197,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               {facets.map(facet => (
                 <div
                   style={{
-                    paddingLeft: '20px',
-                    paddingRight: '20px',
                     minWidth: '435px',
                     display: isFacetHiddenInGrid(facet.columnName)
                       ? 'none'
