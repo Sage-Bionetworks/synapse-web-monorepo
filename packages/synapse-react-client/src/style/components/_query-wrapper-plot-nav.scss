@@ -163,23 +163,6 @@
   &__querycount {
     display: inline-flex;
     align-items: center;
-    &__facetFilterLink {
-      height: 100%;
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: flex-start;
-      align-items: center;
-      margin-left: 15px;
-      font-weight: 400 !important;
-      &__text {
-        font-size: 14px;
-        margin-top: 4px;
-      }
-      svg {
-        margin-right: 7px;
-        margin-top: 8px;
-      }
-    }
   }
   &__actions {
     display: inline-flex;

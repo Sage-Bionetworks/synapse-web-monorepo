@@ -1,8 +1,7 @@
-import { Collapse } from '@mui/material'
+import { Collapse, IconButton, Menu } from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { ElementWithTooltip } from '../ElementWithTooltip'
 import { SynapseConstants } from '../../../utils'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
 import {
@@ -126,6 +125,15 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const [searchTerm, setSearchText] = useState<string>('')
   const [filteredSet, setFilteredSet] =
     useState<FacetColumnResultValueCount[]>(facetValues)
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleClickDropdownIcon = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
 
   useDeepCompareEffect(() => {
     setFilteredSet(facetValues)
@@ -391,19 +399,28 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       )
     } else {
       return (
-        <Dropdown
-          className="EnumFacetFilter"
-          show={isShowDropdown}
-          onToggle={onToggle}
-        >
-          <ElementWithTooltip
-            tooltipText="Filter by specific facet"
-            key="facetFilterTooltip"
-            darkTheme={false}
-            icon={'filter'}
-          />
-          <Dropdown.Menu>{content}</Dropdown.Menu>
-        </Dropdown>
+        <div className="EnumFacetFilter">
+          <IconButton onClick={handleClickDropdownIcon} size={'small'}>
+            <IconSvg
+              icon={'filter'}
+              wrap={false}
+              label={'Filter by specific facet'}
+              sx={{
+                color: allIsSelected ? 'grey.700' : 'primary.main',
+                fontSize: '20px',
+              }}
+            />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          >
+            {content}
+          </Menu>
+        </div>
       )
     }
   } else {

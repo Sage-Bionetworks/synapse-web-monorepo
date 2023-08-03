@@ -6,7 +6,6 @@ import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import { SkeletonInlineBlock } from '../../Skeleton/SkeletonInlineBlock'
 import getColorPalette from '../../ColorGradient/ColorGradient'
-import { ElementWithTooltip } from '../ElementWithTooltip'
 import { SynapseConstants } from '../../../utils'
 import SynapseClient from '../../../synapse-client'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
@@ -20,12 +19,12 @@ import loadingScreen from '../../LoadingScreen/LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext/QueryContext'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
-import { Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip } from '@mui/material'
 import { useQuery } from 'react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
-import { Box } from '@mui/material'
+import IconSvg from '../../IconSvg'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -366,22 +365,20 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   }
                   containerAs="Dropdown"
                 />
-                <ElementWithTooltip
-                  tooltipText="Expand to large graph"
-                  key="expandGraph"
-                  callbackFn={() => setShowModal(true)}
-                  className="SRC-primary-color"
-                  darkTheme={false}
-                  icon={'expand'}
-                />
-                <ElementWithTooltip
-                  tooltipText="Hide graph under Show More"
-                  key="hideGraph"
-                  callbackFn={() => onHide()}
-                  className="SRC-primary-color"
-                  darkTheme={false}
-                  icon={'close'}
-                />
+                <Tooltip title={'Expand to large graph'}>
+                  <IconButton onClick={() => setShowModal(true)} size={'small'}>
+                    <IconSvg
+                      icon={'openInFull'}
+                      wrap={false}
+                      fontSize={'inherit'}
+                    />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={'Hide graph under Show More'}>
+                  <IconButton onClick={() => onHide()} size={'small'}>
+                    <IconSvg icon={'close'} wrap={false} fontSize={'inherit'} />
+                  </IconButton>
+                </Tooltip>
               </div>
             </div>
           )}
