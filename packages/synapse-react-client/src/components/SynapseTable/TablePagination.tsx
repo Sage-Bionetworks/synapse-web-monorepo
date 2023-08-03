@@ -30,7 +30,12 @@ export const TablePagination = () => {
         count={Math.ceil(queryCount! / pageSize)}
         color="secondary"
         onChange={handlePage}
-        style={{ display: 'inline-block', float: 'left' }}
+        shape={'rounded'}
+        sx={{
+          display: 'inline-block',
+          float: 'left',
+          '.MuiPaginationItem-root': { fontSize: '14px' },
+        }}
       />
       <Typography variant="body1" style={{ display: 'inline-block' }}>
         {`${queryCount?.toLocaleString()} total rows /`}

@@ -36,7 +36,7 @@
 // targets all columns that are 4 from the beginning
 // https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-child
 // relying on having specified the order in the studies sql
-td.SRC_noBorderTop:nth-child(n + 4) {
+.SynapseTable td:nth-child(n + 4) {
   .markdown.markdown-inline {
     a {
       font-size: 0px;

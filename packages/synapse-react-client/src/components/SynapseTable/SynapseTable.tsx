@@ -47,6 +47,7 @@ import {
 import { TablePagination } from './TablePagination'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import ExpandableTableDataCell from './ExpandableTableDataCell'
+import { Box, IconButton, Tooltip } from '@mui/material'
 
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
@@ -443,39 +444,41 @@ export class SynapseTable extends React.Component<
 
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
-      <div className="SynapseTable SRC-overflowAuto" data-testid="SynapseTable">
-        <table
-          ref={node => (this.tableElement = node)}
-          className="table table-striped table-condensed"
+      <>
+        <div
+          className="SynapseTable SRC-overflowAuto"
+          data-testid="SynapseTable"
         >
-          <thead className="SRC_bordered">
-            <tr>
-              {this.createTableHeader(
+          <table ref={node => (this.tableElement = node)}>
+            <thead>
+              <tr>
+                {this.createTableHeader(
+                  headers,
+                  columnModels,
+                  facets,
+                  isShowingAccessColumn,
+                  isShowingDirectDownloadColumn,
+                  isShowingAddToV2DownloadListColumn,
+                  isRowSelectionVisible,
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {this.createTableRows(
+                rows,
                 headers,
-                columnModels,
-                facets,
                 isShowingAccessColumn,
                 isShowingDirectDownloadColumn,
                 isShowingAddToV2DownloadListColumn,
                 isRowSelectionVisible,
               )}
-            </tr>
-          </thead>
-          <tbody>
-            {this.createTableRows(
-              rows,
-              headers,
-              isShowingAccessColumn,
-              isShowingDirectDownloadColumn,
-              isShowingAddToV2DownloadListColumn,
-              isRowSelectionVisible,
-            )}
-          </tbody>
-        </table>
-        <div className="bootstrap-4-backport" style={{ textAlign: 'right' }}>
-          <TablePagination />
+            </tbody>
+          </table>
         </div>
-      </div>
+        <Box sx={{ mt: 2, textAlign: 'right' }}>
+          <TablePagination />
+        </Box>
+      </>
     )
   }
 
@@ -558,7 +561,6 @@ export class SynapseTable extends React.Component<
             return (
               <TableDataCellElement
                 key={`(${rowIndex}${columnValue}${colIndex})`}
-                className="SRC_noBorderTop"
               >
                 <SynapseTableCell
                   columnType={columnType}
@@ -584,12 +586,14 @@ export class SynapseTable extends React.Component<
       // also push the access column value if we are showing user access for individual items (still shown if not logged in)
       if (isShowingAccessColumn) {
         rowContent.unshift(
-          <td key={rowSynapseId} className="SRC_noBorderTop">
-            <HasAccessV2
-              key={rowSynapseId}
-              entityId={rowSynapseId}
-              entityVersionNumber={entityVersionNumber}
-            />
+          <td key={rowSynapseId}>
+            <div className="SRC-centerAndJustifyContent">
+              <HasAccessV2
+                key={rowSynapseId}
+                entityId={rowSynapseId}
+                entityVersionNumber={entityVersionNumber}
+              />
+            </div>
           </td>,
         )
       }
@@ -601,14 +605,17 @@ export class SynapseTable extends React.Component<
         rowContent.unshift(
           <td
             key={`direct-download-${rowSynapseId}`}
-            className="SRC_noBorderTop direct-download"
+            className="direct-download"
           >
-            {isFileEntity && (
-              <DirectDownload
-                associatedObjectId={rowSynapseId}
-                entityVersionNumber={entityVersionNumber}
-              ></DirectDownload>
-            )}
+            <div className="SRC-centerAndJustifyContent">
+              {isFileEntity && (
+                <DirectDownload
+                  iconSvgPropOverrides={{ sx: { color: 'primary.main' } }}
+                  associatedObjectId={rowSynapseId}
+                  entityVersionNumber={entityVersionNumber}
+                ></DirectDownload>
+              )}
+            </div>
           </td>,
         )
       }
@@ -616,21 +623,23 @@ export class SynapseTable extends React.Component<
         rowContent.unshift(
           <td
             key={`add-to-download-list-v2-${rowSynapseId}`}
-            className="SRC_noBorderTop add-to-download-list-v2"
+            className="add-to-download-list-v2"
           >
-            {isFileEntity && (
-              <AddToDownloadListV2
-                entityId={rowSynapseId}
-                entityVersionNumber={parseInt(entityVersionNumber!)}
-              ></AddToDownloadListV2>
-            )}
+            <div className="SRC-centerAndJustifyContent">
+              {isFileEntity && (
+                <AddToDownloadListV2
+                  entityId={rowSynapseId}
+                  entityVersionNumber={parseInt(entityVersionNumber!)}
+                ></AddToDownloadListV2>
+              )}
+            </div>
           </td>,
         )
       }
 
       if (isRowSelectionVisible && selectedRows) {
         rowContent.unshift(
-          <td key={`(${rowIndex},rowSelectColumn)`} className="SRC_noBorderTop">
+          <td key={`(${rowIndex},rowSelectColumn)`}>
             <Checkbox
               label=""
               checked={!!selectedRows.find(r => r.rowId === row.rowId)}
@@ -672,7 +681,7 @@ export class SynapseTable extends React.Component<
       queryVisualizationContext: { getColumnDisplayName, columnsToShowInTable },
       queryContext: { lockedColumn },
     } = this.props
-    const tableColumnHeaderElements: JSX.Element[] = headers.map(
+    const tableColumnHeaderElements: React.ReactNode[] = headers.map(
       (column: SelectColumn, index: number) => {
         const isHeaderSelected = columnsToShowInTable.includes(column.name)
         if (isHeaderSelected) {
@@ -727,36 +736,35 @@ export class SynapseTable extends React.Component<
                     </span>
                   )}
                   {isSortableColumn(column.columnType) && (
-                    <span
-                      role="button"
-                      aria-label="sort"
-                      aria-selected={isSelected}
-                      tabIndex={0}
-                      onKeyPress={this.handleColumnSortPress({
-                        index,
-                        name: column.name,
-                      })}
-                      onClick={this.handleColumnSortPress({
-                        index,
-                        name: column.name,
-                      })}
+                    <Tooltip
+                      title={`Sort ${getColumnDisplayName(column.name)}`}
+                      placement={'top'}
                     >
-                      <IconSvg
-                        icon={ICON_STATE[columnIndex]}
-                        wrap={false}
-                        sx={{
-                          color: isSelected
-                            ? 'primary.contrastText'
-                            : 'primary.main',
-                          backgroundColor: isSelected ? 'primary.main' : 'none',
-
-                          '&:hover': {
-                            color: 'primary.contrastText',
-                            backgroundColor: 'primary.600',
-                          },
-                        }}
-                      />
-                    </span>
+                      <IconButton
+                        role="button"
+                        aria-label="sort"
+                        size={'small'}
+                        aria-selected={isSelected}
+                        tabIndex={0}
+                        onKeyPress={this.handleColumnSortPress({
+                          index,
+                          name: column.name,
+                        })}
+                        onClick={this.handleColumnSortPress({
+                          index,
+                          name: column.name,
+                        })}
+                      >
+                        <IconSvg
+                          icon={ICON_STATE[columnIndex]}
+                          wrap={false}
+                          sx={{
+                            color: isSelected ? 'primary.main' : 'grey.700',
+                            backgroundColor: 'none',
+                          }}
+                        />
+                      </IconButton>
+                    </Tooltip>
                   )}
                   {isEntityIDColumn && (
                     <EntityIDColumnCopyIcon size={'small'} />
