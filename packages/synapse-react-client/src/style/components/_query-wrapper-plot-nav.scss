@@ -5,7 +5,8 @@
   display: grid;
 
   @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
-    grid-template-columns: 25% 75%;
+    grid-template-columns: 23% 75%;
+    grid-column-gap: 2%;
 
     // by default, children take up the full row
     > * {
@@ -90,25 +91,6 @@
     .FilterAndView {
       margin-top: 10px;
     }
-    .FacetNav,
-    .FilterAndView,
-    .ErrorBannerWrapper,
-    .QueryWrapperFullTextSearchInput,
-    .QueryWrapperSearchInput,
-    .QueryWrapperSqlEditorInput,
-    .download-confirmation {
-      margin-left: 0px;
-    }
-  }
-
-  > .FacetFilterControls,
-  > .download-confirmation,
-  > .FacetNav,
-  > .QueryWrapperFullTextSearchInput,
-  > .QueryWrapperSearchInput,
-  > .QueryWrapperSqlEditorInput,
-  > .FilterAndView {
-    margin-left: 15px;
   }
 
   .QueryWrapperTextInput {
