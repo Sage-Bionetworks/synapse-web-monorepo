@@ -225,6 +225,10 @@ body {
   @extend %fillerBorder;
 }
 
+.nav-button-signin {
+  margin-left: 20px;
+}
+
 .nav-button,
 a.nav-button {
   height: -webkit-fill-available;
