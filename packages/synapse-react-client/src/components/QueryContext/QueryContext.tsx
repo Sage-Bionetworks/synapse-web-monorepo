@@ -3,6 +3,7 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import {
   AsynchronousJobStatus,
   ColumnModel,
+  ColumnType,
   QueryBundleRequest,
   QueryResultBundle,
   Row,
@@ -204,6 +205,7 @@ export type CombineRangeFacetConfig = {
   minFacetColumn: string
   maxFacetColumn: string
   label: string
+  overrideColumnType?: ColumnType
 }
 
 export const QueryContextConsumer = QueryContext.Consumer

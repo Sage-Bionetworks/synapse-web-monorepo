@@ -8,6 +8,7 @@ import { SynapseUtilityFunctions } from 'synapse-react-client'
 import {
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
+  ColumnTypeEnum,
 } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 1
@@ -24,6 +25,7 @@ export const individualsView: SynapseConfig = {
       label: 'Age',
       minFacetColumn: 'minAge',
       maxFacetColumn: 'maxAge',
+      overrideColumnType: ColumnTypeEnum.INTEGER,
     },
     tableConfiguration: {
       showAccessColumn: false,

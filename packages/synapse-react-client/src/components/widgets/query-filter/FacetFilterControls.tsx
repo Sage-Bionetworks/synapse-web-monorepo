@@ -272,11 +272,14 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
     },
     [facetFiltersShown],
   )
-  const combinedRangeFacetsColumnModelType = combineRangeFacetConfig
-    ? columnModels!.find(
+  let combinedRangeFacetsColumnModelType = undefined
+  if (combineRangeFacetConfig) {
+    combinedRangeFacetsColumnModelType =
+      combineRangeFacetConfig.overrideColumnType ??
+      columnModels!.find(
         model => model.name === combineRangeFacetConfig.minFacetColumn,
       )?.columnType
-    : undefined
+  }
 
   return (
     <div className={`FacetFilterControls`}>
