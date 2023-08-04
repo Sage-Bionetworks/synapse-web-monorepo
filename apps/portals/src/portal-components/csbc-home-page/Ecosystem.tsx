@@ -26,11 +26,11 @@ const Ecosystem = (props: EcosystemProps) => {
                 onClick={() => setIndex(curIndex)}
                 key={el.title}
               >
-                {' '}
-                {el.title}{' '}
+                {el.title}
               </button>
             )
           })}
+          <div className={'flex-spacer'} />
         </div>
         <div className="content-container">
           {config.map((el, curIndex) => {
