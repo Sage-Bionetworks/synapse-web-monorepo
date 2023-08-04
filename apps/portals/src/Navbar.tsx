@@ -208,7 +208,7 @@ function Navbar() {
             )}
           {!isSignedIn &&
             isSynapseSubdomainOrLocal && ( // desktop sign in
-              <div className="center-content nav-button nav-button-signin">
+              <div className="center-content nav-button-signin">
                 <Button
                   id="signin-button"
                   color="secondary"
