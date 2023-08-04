@@ -17,10 +17,14 @@ export const individualsView: SynapseConfig = {
   props: {
     rgbIndex,
     name: 'Participants',
-    // showExportToCavatica: true,
     visibleColumnCount: 10,
-    facetsToPlot: ['diagnosis', 'sex'],
+    facetsToPlot: ['Diagnosis'],
     isRowSelectionVisible: true,
+    combineRangeFacetConfig: {
+      label: 'Age',
+      minFacetColumn: 'minAge',
+      maxFacetColumn: 'maxAge',
+    },
     tableConfiguration: {
       showAccessColumn: false,
       showDownloadColumn: false,
