@@ -96,6 +96,8 @@ export type QueryContextType<
   rowSelectionPrimaryKey?: string[]
   /** Whether the user has selected any rows */
   hasSelectedRows: boolean
+  /** Method used to determine if an individual row is selected */
+  getIsRowSelected: (row: Row) => boolean
   /** Combines two faceted columns into a single inclusive range selector */
   combineRangeFacetConfig?: ReadonlyDeep<CombineRangeFacetConfig>
 }

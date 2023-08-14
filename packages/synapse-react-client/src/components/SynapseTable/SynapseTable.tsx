@@ -529,7 +529,7 @@ export class SynapseTable extends React.Component<
   ) {
     const rowsFormatted: JSX.Element[] = []
     const {
-      queryContext: { data, selectedRows, setSelectedRows },
+      queryContext: { data, selectedRows, setSelectedRows, getIsRowSelected },
       queryVisualizationContext: { columnsToShowInTable },
       columnLinks = [],
     } = this.props
@@ -642,7 +642,7 @@ export class SynapseTable extends React.Component<
           <td key={`(${rowIndex},rowSelectColumn)`}>
             <Checkbox
               label=""
-              checked={!!selectedRows.find(r => r.rowId === row.rowId)}
+              checked={getIsRowSelected(row)}
               onChange={(checked: boolean) => {
                 const cloneSelectedRows = [...selectedRows]
                 if (checked) {

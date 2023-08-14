@@ -142,6 +142,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     hasSelectedRows,
     selectedRows,
     setSelectedRows,
+    getIsRowSelected,
   } = useTableRowSelection({
     entity: entity,
     columnModels: data?.columnModels,
@@ -179,6 +180,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     hasSelectedRows,
     selectedRows,
     setSelectedRows,
+    getIsRowSelected,
     addValueToSelectedFacet,
     combineRangeFacetConfig,
     ...paginationControls,
