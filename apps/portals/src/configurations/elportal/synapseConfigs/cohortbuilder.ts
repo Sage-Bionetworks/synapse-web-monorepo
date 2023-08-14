@@ -20,6 +20,7 @@ export const individualsView: SynapseConfig = {
     visibleColumnCount: 10,
     facetsToPlot: ['Diagnosis'],
     isRowSelectionVisible: true,
+    rowSelectionPrimaryKey: ['individualID'],
     combineRangeFacetConfig: {
       label: 'Age',
       minFacetColumn: 'minAge',
@@ -82,6 +83,7 @@ export const filesView: SynapseConfig = {
     cavaticaHelpURL: '/Limited%20Data%20Commons',
     visibleColumnCount: 10,
     isRowSelectionVisible: true,
+    rowSelectionPrimaryKey: ['fileId'],
     additionalFiltersLocalStorageKey: 'cohort-builder-files-perspective',
     tableConfiguration: {
       showAccessColumn: true,
