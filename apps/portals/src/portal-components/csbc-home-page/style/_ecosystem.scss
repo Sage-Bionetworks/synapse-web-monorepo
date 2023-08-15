@@ -18,7 +18,7 @@
   }
   .control-container {
     display: flex;
-    height: 500px;
+    height: 450px;
     .button-container {
       flex: 1;
       display: flex;
@@ -32,7 +32,7 @@
         &:hover {
           background-color: color.change(
             Portal.$primary-action-color,
-            $alpha: 0.04
+            $alpha: 0.08
           );
         }
         &.isSelected {
