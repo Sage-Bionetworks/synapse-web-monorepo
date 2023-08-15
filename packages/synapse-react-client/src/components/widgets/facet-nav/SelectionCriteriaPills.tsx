@@ -35,10 +35,13 @@ function getPillPropsFromColumnQueryFilter(
   queryVisualizationContext: QueryVisualizationContextType,
 ): SelectionCriteriaPillProps[] {
   const { getColumnDisplayName } = queryVisualizationContext
-  const columnModel = queryContext.getColumnModel(queryFilter.columnName)!
+  const columnModel = queryContext.getColumnModel(queryFilter.columnName)
   // ColumnSingleValueQueryFilter and ColumnMultiValueQueryFilter both allow for a list of values
   // If there are more than _n_ values, consolidate to one pill
-  if (queryFilter.values.length > MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS) {
+  if (
+    queryFilter.values.length > MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS ||
+    !columnModel
+  ) {
     const text = `${pluralize(
       getColumnDisplayName(queryFilter.columnName),
     )} (${queryFilter.values.length.toLocaleString()})`
@@ -137,13 +140,14 @@ function getPillPropsFromFacetFilters(
     ) {
       return []
     }
-    const columnModel = queryContext.getColumnModel(selectedFacet.columnName)!
+    const columnModel = queryContext.getColumnModel(selectedFacet.columnName)
     const { getColumnDisplayName, getDisplayValue } = queryVisualizationContext
     if (isFacetColumnValuesRequest(selectedFacet)) {
       // If there are more than _n_ values, consolidate to one pill
       if (
         selectedFacet.facetValues.length >
-        MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS
+          MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS ||
+        !columnModel
       ) {
         const text = `${pluralize(
           getColumnDisplayName(selectedFacet.columnName),

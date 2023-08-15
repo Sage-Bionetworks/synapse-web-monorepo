@@ -46,12 +46,12 @@ export const individualsView: SynapseConfig = {
         onClick: (event) => {
           // add filter for files perspective, to show files associated to the selected participants only.
           const idColIndex = event.data?.columnModels?.findIndex(
-            (cm) => cm.name === 'Individual ID',
+            (cm) => cm.name === 'individualID',
           )
           const localStorageFilter: ColumnSingleValueQueryFilter = {
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-            columnName: 'Individual ID',
+            columnName: 'individualID',
             operator: ColumnSingleValueFilterOperator.IN,
             isDefiningCondition: true,
             values: event.selectedRows!.map((row) => row.values[idColIndex!]!),
@@ -110,7 +110,7 @@ export const filesView: SynapseConfig = {
           const localStorageFilter: ColumnSingleValueQueryFilter = {
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-            columnName: 'fileIds',
+            columnName: 'fileId',
             operator: ColumnSingleValueFilterOperator.IN,
             isDefiningCondition: true,
             values: event.selectedRows!.map((row) => row.values[idColIndex!]!),
