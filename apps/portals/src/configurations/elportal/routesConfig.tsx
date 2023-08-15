@@ -185,28 +185,6 @@ const routes: GenericRoute[] = [
     path: 'Explore',
     routes: [
       {
-        path: ':slug/',
-        hideRouteFromNavbar: true,
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: RouteControlWrapperProps,
-          },
-        ],
-      },
-      {
-        exact: true,
-        path: 'Data by Files',
-        hideRouteFromNavbar: false,
-      },
-      {
-        exact: true,
-        path: 'Data by Files v2',
-        hideRouteFromNavbar: true, // this replaces Data by Files on release of the cohort builder
-      },
-      {
         exact: true,
         path: 'Data by Participants',
         hideRouteFromNavbar: true, // remove on release of the cohort builder
@@ -235,6 +213,29 @@ const routes: GenericRoute[] = [
           },
         ],
       },
+      {
+        path: ':slug/',
+        hideRouteFromNavbar: true,
+        exact: true,
+        synapseConfigArray: [
+          {
+            name: 'RouteControlWrapper',
+            isOutsideContainer: true,
+            props: RouteControlWrapperProps,
+          },
+        ],
+      },
+      {
+        exact: true,
+        path: 'Data by Files',
+        hideRouteFromNavbar: false,
+      },
+      {
+        exact: true,
+        path: 'Data by Files v2',
+        hideRouteFromNavbar: true, // this replaces Data by Files on release of the cohort builder
+      },
+
       {
         path: 'Projects',
         routes: [
