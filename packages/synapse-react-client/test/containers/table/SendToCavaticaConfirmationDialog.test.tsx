@@ -108,6 +108,9 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
     expect(mockUseExportToCavatica).toHaveBeenCalledWith(
       mockQueryBundleRequest,
       mockQueryResultBundle.queryResult.queryResults.headers,
+      undefined,
+      undefined,
+      undefined,
     )
   })
 
@@ -147,6 +150,9 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
         },
       }),
       mockQueryResultBundle.queryResult.queryResults.headers,
+      undefined,
+      undefined,
+      undefined,
     )
   })
 
