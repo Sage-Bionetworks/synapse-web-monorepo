@@ -33,6 +33,9 @@ export type TopLevelControlsProps = {
   showColumnSelection?: boolean
   customControls?: CustomControl[]
   showExportToCavatica?: boolean
+  fileIdColumnName?: string
+  fileNameColumnName?: string
+  fileVersionColumnName?: string
   cavaticaHelpURL?: string
   remount?: () => void
 }
@@ -70,6 +73,9 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     customControls,
     showExportToCavatica = false,
     cavaticaHelpURL,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
     remount,
   } = props
 
@@ -328,7 +334,12 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               darkTheme={true}
             />
           )}
-          <SendToCavaticaConfirmationDialog cavaticaHelpURL={cavaticaHelpURL} />
+          <SendToCavaticaConfirmationDialog
+            cavaticaHelpURL={cavaticaHelpURL}
+            fileIdColumnName={fileIdColumnName}
+            fileNameColumnName={fileNameColumnName}
+            fileVersionColumnName={fileVersionColumnName}
+          />
         </div>
       </div>
     </div>
