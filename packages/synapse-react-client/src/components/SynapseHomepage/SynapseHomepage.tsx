@@ -58,6 +58,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )}#!Profile:v/projects`
 
+  const contactUsHref =
+    'https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/16/create/85?summary=Synapse%20Hosting%20Plan%20Request&description=%3CPlease%20add%20a%20paragraph%20describing%20your%20project%20and%20your%20expected%20data%20storage%20need%20(e.g.%2C%20duration%20and%20expected%20volume)%3E'
+
   return (
     <div className="SynapseHomepage">
       <div className="SynapseHomepage__Section PrimaryBackground">
@@ -452,10 +455,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               Learn more
             </Link>{' '}
             and{' '}
-            <Link
-              href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
-              target="_blank"
-            >
+            <Link href={contactUsHref} target="_blank">
               contact us
             </Link>{' '}
             to get started.
@@ -463,7 +463,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           <Button
             variant="contained"
             target="_blank"
-            href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
+            href={contactUsHref}
             sx={{ marginTop: '25px' }}
           >
             Contact us for more information
