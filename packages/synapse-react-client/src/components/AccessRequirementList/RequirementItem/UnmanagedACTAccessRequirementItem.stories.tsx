@@ -1,6 +1,5 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import SelfSignAccessRequirementItem from './SelfSignAccessRequirementItem'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
@@ -8,7 +7,6 @@ import {
 import {
   mockACTAccessRequirement,
   mockACTAccessRequirementWithWiki,
-  mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
   mockToUAccessRequirementWithWiki,
 } from '../../../mocks/mockAccessRequirements'

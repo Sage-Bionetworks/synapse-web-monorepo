@@ -25,7 +25,6 @@ import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
 import { getAccessRequirementHandlers } from '../../../mocks/msw/handlers/accessRequirementHandlers'
 import { getWikiHandlers } from '../../../mocks/msw/handlers/wikiHandlers'
 import { getCurrentUserCertifiedValidatedHandler } from '../../../mocks/msw/handlers/userProfileHandlers'
-import { getHandlers } from '../../../mocks/msw/handlers'
 
 const meta: Meta = {
   title:
