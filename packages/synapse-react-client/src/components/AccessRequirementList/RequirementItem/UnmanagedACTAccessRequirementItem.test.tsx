@@ -55,7 +55,7 @@ const approvedStatus: AccessRequirementStatus = {
 
 // The first 54 characters of the instructions map to the first sentence. This selection has no markdown formatting, so it's easy to query.
 const mockInstructionsToQuery =
-  mockACTAccessRequirement.actContactInfo.substring(0, 54)
+  mockACTAccessRequirement.actContactInfo!.substring(0, 54)
 
 async function testInstructionsToggle() {
   await waitFor(() => {

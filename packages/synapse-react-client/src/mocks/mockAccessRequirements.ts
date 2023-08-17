@@ -14,8 +14,10 @@ import { AccessRequirementSearchResponse } from '@sage-bionetworks/synapse-types
 import mockProjectData from './entity/mockProject'
 import { MOCK_USER_ID } from './user/mock_user_profile'
 import {
+  mockACTAccessRequirementWikiPage,
   mockManagedACTAccessRequirementWikiPage,
   mockSelfSignAccessRequirementWikiPage,
+  mockToUAccessRequirementWikiPage,
 } from './mockWiki'
 import { mockDucTemplateFileHandle } from './mock_file_handle'
 
@@ -68,7 +70,7 @@ export const mockToUAccessRequirement: TermsOfUseAccessRequirement = {
   id: 2,
   concreteType: 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
   termsOfUse:
-    'These are the terms of use for a TermsOfUseAccessRequirement. The content is inlined in the object, but **markdown** is supported.',
+    'These are the termsOfUse for a TermsOfUseAccessRequirement. The content is inlined in the object, but **markdown** is supported.',
   description: '',
   subjectsDefinedByAnnotations: false,
 }
@@ -94,7 +96,7 @@ export const mockACTAccessRequirement: ACTAccessRequirement = {
   id: 4,
   concreteType: 'org.sagebionetworks.repo.model.ACTAccessRequirement',
   actContactInfo:
-    'This is the contact info for the ACTAccessRequirement. You would probably email some documentation to act@sagebase.org, or something like that. **Markdown is supported**.',
+    'This is the actContactInfo for the ACTAccessRequirement. You would probably email some documentation to act@sagebase.org, or something like that. **Markdown is supported**.',
   openJiraIssue: true,
   description: '',
   subjectsDefinedByAnnotations: false,
@@ -107,6 +109,39 @@ export const mockLockAccessRequirement: LockAccessRequirement = {
   description: '',
   subjectsDefinedByAnnotations: false,
   jiraKey: '',
+}
+
+export const mockToUAccessRequirementWithWiki: TermsOfUseAccessRequirement = {
+  ...defaultAccessRequirement,
+  id: 6,
+  concreteType: 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
+  // termsOfUse:
+  //   'These are the terms of use for a TermsOfUseAccessRequirement. The content is inlined in the object, but **markdown** is supported.',
+  description: '',
+  subjectsDefinedByAnnotations: false,
+}
+
+export const mockToUAccessRequirementWithWikiPageKey: WikiPageKey = {
+  wikiPageId: mockToUAccessRequirementWikiPage.id,
+  ownerObjectId: mockToUAccessRequirementWithWiki.id.toString(),
+  ownerObjectType: ObjectType.ACCESS_REQUIREMENT,
+}
+
+export const mockACTAccessRequirementWithWiki: ACTAccessRequirement = {
+  ...defaultAccessRequirement,
+  id: 7,
+  concreteType: 'org.sagebionetworks.repo.model.ACTAccessRequirement',
+  // actContactInfo:
+  //   'This is the contact info for the ACTAccessRequirement. You would probably email some documentation to act@sagebase.org, or something like that. **Markdown is supported**.',
+  openJiraIssue: true,
+  description: '',
+  subjectsDefinedByAnnotations: false,
+}
+
+export const mockACTAccessRequirementWithWikiPageKey: WikiPageKey = {
+  wikiPageId: mockACTAccessRequirementWikiPage.id,
+  ownerObjectId: mockACTAccessRequirementWithWiki.id.toString(),
+  ownerObjectType: ObjectType.ACCESS_REQUIREMENT,
 }
 
 export const mockSearchResults: AccessRequirementSearchResponse = {
@@ -156,9 +191,13 @@ export const mockAccessRequirements: AccessRequirement[] = [
   mockSelfSignAccessRequirement,
   mockACTAccessRequirement,
   mockLockAccessRequirement,
+  mockToUAccessRequirementWithWiki,
+  mockACTAccessRequirementWithWiki,
 ]
 
 export const mockAccessRequirementWikiPageKeys: WikiPageKey[] = [
   mockManagedACTAccessRequirementWikiPageKey,
   mockSelfSignAccessRequirementWikiPageKey,
+  mockToUAccessRequirementWithWikiPageKey,
+  mockACTAccessRequirementWithWikiPageKey,
 ]

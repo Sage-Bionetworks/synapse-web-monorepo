@@ -28,6 +28,6 @@ export interface TermsOfUseAccessRequirement {
   accessType: ACCESS_TYPE
   /* Indicates which type of AccessRequirement this object represents. Provided by the system, the user may not set this field. */
   concreteType: 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement'
-  /* Terms Of Use for Access, stored directly in the document (versus in a referenced Location) Required when creating or updating.*/
-  termsOfUse: string
+  /* Terms Of Use for Access, stored directly in the document (versus in a referenced Location)*/
+  termsOfUse?: string
 }
