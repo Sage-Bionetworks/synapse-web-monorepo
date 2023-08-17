@@ -35,7 +35,7 @@ export default function UnmanagedACTAccessRequirementItem(
 
   const { data: wikiPage } = useGetAccessRequirementWikiPageKey(
     accessRequirement.id.toString(),
-    // TermsOfUse ARs may have the terms embedded in the AR or a no Wiki.
+    // ACT ARs may have the contact info embedded in the AR or may have an associated Wiki.
   )
 
   const isApproved = accessRequirementStatus?.isApproved

@@ -61,7 +61,7 @@ export default function SelfSignAccessRequirementItem(
 
   const { data: wikiPage } = useGetAccessRequirementWikiPageKey(
     accessRequirement.id.toString(),
-    // TermsOfUse ARs may have the terms embedded in the AR or a no Wiki.
+    // TermsOfUse ARs may have the terms embedded in the AR or an associated Wiki.
   )
 
   const [showTerms, setShowTerms] = useState<boolean>(false)
