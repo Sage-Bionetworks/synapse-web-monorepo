@@ -15,13 +15,21 @@ import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 
 export type SendToCavaticaConfirmationDialogProps = {
+  fileIdColumnName?: string
+  fileNameColumnName?: string
+  fileVersionColumnName?: string
   cavaticaHelpURL?: string
 }
 
 export default function SendToCavaticaConfirmationDialog(
   props: SendToCavaticaConfirmationDialogProps,
 ) {
-  const { cavaticaHelpURL } = props
+  const {
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
+    cavaticaHelpURL,
+  } = props
   const {
     data,
     getCurrentQueryRequest,
@@ -62,6 +70,9 @@ export default function SendToCavaticaConfirmationDialog(
   const exportToCavatica = useExportToCavatica(
     cavaticaQueryRequest,
     data?.queryResult?.queryResults.headers,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
   )
 
   const { data: actions, isLoading } = useGetActionsRequiredForTableQuery(

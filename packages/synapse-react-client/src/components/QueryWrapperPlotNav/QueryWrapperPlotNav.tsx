@@ -115,6 +115,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     showLastUpdatedOn,
     showExportToCavatica = false,
     cavaticaHelpURL,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
     customControls,
     unitDescription,
     additionalFiltersLocalStorageKey,
@@ -239,6 +242,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                           hideSqlEditorControl={hideSqlEditorControl}
                           showExportToCavatica={showExportToCavatica}
                           cavaticaHelpURL={cavaticaHelpURL}
+                          fileIdColumnName={fileIdColumnName}
+                          fileNameColumnName={fileNameColumnName}
+                          fileVersionColumnName={fileVersionColumnName}
                           customControls={customControls}
                           remount={remount}
                         />
