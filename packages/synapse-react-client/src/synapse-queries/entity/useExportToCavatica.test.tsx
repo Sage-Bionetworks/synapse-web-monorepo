@@ -72,6 +72,8 @@ describe('useExportToCavatica', () => {
   })
 
   it('Successfully send to CAVATICA', async () => {
+    const expectedSql =
+      "SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', id, '.', currentVersion) AS drs_uri, name as file_name, id,annotation FROM syn42"
     mockGetDownloadFromTableRequest.mockResolvedValue(downloadFromTableResult)
     const {
       result: { current: exportFunction },
@@ -81,12 +83,47 @@ describe('useExportToCavatica', () => {
     await exportFunction()
     await waitFor(() => {
       expect(mockGetDownloadFromTableRequest).toHaveBeenCalled()
+      expect(mockGetDownloadFromTableRequest.mock.calls[0][0]['sql']).toEqual(
+        expectedSql,
+      )
       const cavaticaURL = `https://cavatica.sbgenomics.com/import-redirect/drs/csv?DRS_URI=${encodeURIComponent(
         `drs://repo-prod.prod.sagebase.org/fh${resultsFileHandleId}`,
       )}`
       expect(window.open).toHaveBeenCalledWith(cavaticaURL, '_blank')
     })
   })
+
+  it('Successfully send to CAVATICA with customized columns', async () => {
+    const fileIdColumnName = 'fileId',
+      fileNameColumnName = 'fileName',
+      fileVersionColumnName = 'fileVersion'
+    const expectedSql =
+      "SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', fileId, '.', fileVersion) AS drs_uri, fileName as file_name, id,annotation FROM syn42"
+    mockGetDownloadFromTableRequest.mockResolvedValue(downloadFromTableResult)
+    const {
+      result: { current: exportFunction },
+    } = renderHook(() =>
+      useExportToCavatica(
+        testQueryRequest,
+        testSelectColumns,
+        fileIdColumnName,
+        fileNameColumnName,
+        fileVersionColumnName,
+      ),
+    )
+    await exportFunction()
+    await waitFor(() => {
+      expect(mockGetDownloadFromTableRequest).toHaveBeenCalled()
+      expect(mockGetDownloadFromTableRequest.mock.calls[0][0]['sql']).toEqual(
+        expectedSql,
+      )
+      const cavaticaURL = `https://cavatica.sbgenomics.com/import-redirect/drs/csv?DRS_URI=${encodeURIComponent(
+        `drs://repo-prod.prod.sagebase.org/fh${resultsFileHandleId}`,
+      )}`
+      expect(window.open).toHaveBeenCalledWith(cavaticaURL, '_blank')
+    })
+  })
+
   it('Error in service call', async () => {
     const errorMessage = 'there was an error'
     const error: SynapseError = {
