@@ -61,8 +61,7 @@ export default function SelfSignAccessRequirementItem(
 
   const { data: wikiPage } = useGetAccessRequirementWikiPageKey(
     accessRequirement.id.toString(),
-    // TermsOfUse ARs have the terms embedded in the AR, there is no Wiki.
-    { enabled: !isTermsOfUse },
+    // TermsOfUse ARs may have the terms embedded in the AR or an associated Wiki.
   )
 
   const [showTerms, setShowTerms] = useState<boolean>(false)
@@ -89,7 +88,7 @@ export default function SelfSignAccessRequirementItem(
   }
 
   let renderedTerms = <></>
-  if (isTermsOfUse) {
+  if (isTermsOfUse && accessRequirement.termsOfUse) {
     renderedTerms = <MarkdownSynapse markdown={accessRequirement.termsOfUse} />
   } else if (wikiPage) {
     renderedTerms = (

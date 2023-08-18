@@ -4,7 +4,10 @@ import { ACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
 import { Box, ButtonProps, Link, Typography } from '@mui/material'
-import { useGetAccessRequirementStatus } from '../../../synapse-queries'
+import {
+  useGetAccessRequirementStatus,
+  useGetAccessRequirementWikiPageKey,
+} from '../../../synapse-queries'
 import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 
@@ -29,6 +32,11 @@ export default function UnmanagedACTAccessRequirementItem(
 
   const { data: accessRequirementStatus, isLoading: isLoadingStatus } =
     useGetAccessRequirementStatus(String(accessRequirement.id))
+
+  const { data: wikiPage } = useGetAccessRequirementWikiPageKey(
+    accessRequirement.id.toString(),
+    // ACT ARs may have the contact info embedded in the AR or may have an associated Wiki.
+  )
 
   const isApproved = accessRequirementStatus?.isApproved
 
@@ -77,6 +85,18 @@ export default function UnmanagedACTAccessRequirementItem(
     ]
   }
 
+  let renderedTerms = <></>
+  if (actContactInfo) {
+    renderedTerms = <MarkdownSynapse markdown={actContactInfo} />
+  } else if (wikiPage) {
+    renderedTerms = (
+      <MarkdownSynapse
+        wikiId={wikiPage?.wikiPageId}
+        ownerId={wikiPage?.ownerObjectId}
+        objectType={wikiPage?.ownerObjectType}
+      />
+    )
+  }
   return (
     <RequirementItem
       data-testid={'UnmanagedACTAccessRequirementItem'}
@@ -107,13 +127,11 @@ export default function UnmanagedACTAccessRequirementItem(
             </Link>
           </Typography>
           {showACTContactInfoInstructions && (
-            <Box sx={{ my: 1 }}>
-              <MarkdownSynapse markdown={actContactInfo} />
-            </Box>
+            <Box sx={{ my: 1 }}>{renderedTerms}</Box>
           )}
         </>
       ) : (
-        <MarkdownSynapse markdown={actContactInfo} />
+        renderedTerms
       )}
     </RequirementItem>
   )
