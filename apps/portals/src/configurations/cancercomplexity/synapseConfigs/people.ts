@@ -24,14 +24,12 @@ export const peopleSchema: GenericCardSchema = {
   ],
 }
 
-const iconOptions: IconOptions = {
-  Person: personSvg,
-}
-
 export const peopleCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 3,
-  iconOptions,
+  iconOptions: {
+    Person: personSvg,
+  },
   genericCardSchema: peopleSchema,
   titleLinkConfig: {
     isMarkdown: false,
