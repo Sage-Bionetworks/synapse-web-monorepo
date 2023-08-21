@@ -1,10 +1,12 @@
 import {
   CardConfiguration,
   GenericCardSchema,
+  IconOptions,
   SynapseConstants,
 } from 'synapse-react-client'
 import { educationSql } from '../resources'
 import { SynapseConfig } from 'types/portal-config'
+import educationalResourceSvg from '../style/EducationalResource.svg'
 
 const rgbIndex = 8
 
@@ -22,11 +24,15 @@ export const educationSchema: GenericCardSchema = {
     'language',
   ],
 }
+const iconOptions: IconOptions = {
+  'Educational Resource': educationalResourceSvg,
+}
 
 export const educationCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 3,
   genericCardSchema: educationSchema,
+  iconOptions,
   titleLinkConfig: {
     isMarkdown: false,
     URLColumnName: 'title',
@@ -87,6 +93,7 @@ export const educationDetailsCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 3,
   genericCardSchema: educationDetailsSchema,
+  iconOptions,
   labelLinkConfig: [
     {
       isMarkdown: true,

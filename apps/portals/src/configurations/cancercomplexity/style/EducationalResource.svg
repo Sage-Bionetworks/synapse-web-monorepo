@@ -1,0 +1,11 @@
+<svg width="57" height="69" viewBox="0 0 57 69" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M54 3H6V66H54V3ZM6 0C4.34315 0 3 1.34315 3 3V66C3 67.6569 4.34315 69 6 69H54C55.6569 69 57 67.6569 57 66V3C57 1.34315 55.6569 0 54 0H6Z" fill="#DFE2E6"/>
+<path opacity="0.3" fill-rule="evenodd" clip-rule="evenodd" d="M54 3H6V66H54V3ZM45 12H16V27H45V12Z" fill="#DFE2E6"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M44 13H17L17 26H44V13ZM17 10C15.3431 10 14 11.3431 14 13V26C14 27.6569 15.3431 29 17 29H44C45.6569 29 47 27.6569 47 26V13C47 11.3431 45.6569 10 44 10H17Z" fill="#DFE2E6"/>
+<rect y="10" width="10" height="3" rx="1.5" fill="#DFE2E6"/>
+<rect y="19" width="10" height="3" rx="1.5" fill="#DFE2E6"/>
+<rect y="28" width="10" height="3" rx="1.5" fill="#DFE2E6"/>
+<rect y="37" width="10" height="3" rx="1.5" fill="#DFE2E6"/>
+<rect y="46" width="10" height="3" rx="1.5" fill="#DFE2E6"/>
+<rect y="55" width="10" height="3" rx="1.5" fill="#DFE2E6"/>
+</svg>
