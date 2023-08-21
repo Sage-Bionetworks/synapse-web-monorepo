@@ -31,11 +31,6 @@
     "typescript": "5.1.6"
   },
   "npmClient": "pnpm",
-  "resolutions": {
-    "@types/react": "18.0.27",
-    "goober": "2.1.9",
-    "react-hot-toast": "2.2.0"
-  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --write"
   },
