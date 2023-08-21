@@ -24,6 +24,7 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
+import personGraySvg from './style/PersonGray.svg'
 
 const routes: GenericRoute[] = [
   {
@@ -284,6 +285,9 @@ const routes: GenericRoute[] = [
                   isHeader: true,
                   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
                   ...peopleCardConfiguration,
+                  iconOptions: {
+                    Person: personGraySvg,
+                  },
                   secondaryLabelLimit: Infinity,
                   sql: peopleSql,
                   columnAliases,
