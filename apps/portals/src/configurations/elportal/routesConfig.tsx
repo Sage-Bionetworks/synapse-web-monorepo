@@ -7,7 +7,7 @@ import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import { dataSql, peopleSql, projectsSql, upsetPlotSql } from './resources'
+import { peopleSql, projectsSql } from './resources'
 
 const routes: GenericRoute[] = [
   {
