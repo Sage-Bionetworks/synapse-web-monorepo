@@ -20,7 +20,6 @@ export function TableQueryDownloadConfirmation() {
     selectedRows,
     rowSelectionPrimaryKey,
   } = useQueryContext()
-  const fileColumnId = getFileColumnModelId(data?.columnModels)
   const { setShowDownloadConfirmation } = useQueryVisualizationContext()
   const queryBundleRequest = useMemo(() => {
     const requestCopy = getCurrentQueryRequest()
@@ -28,6 +27,7 @@ export function TableQueryDownloadConfirmation() {
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
 
+    const fileColumnId = getFileColumnModelId(data?.columnModels)
     if (fileColumnId) {
       requestCopy.query.selectFileColumn = Number(fileColumnId)
     }
