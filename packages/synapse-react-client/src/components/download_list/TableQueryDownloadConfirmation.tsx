@@ -10,6 +10,7 @@ import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
+import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
 
 export function TableQueryDownloadConfirmation() {
   const {
@@ -71,11 +72,15 @@ export function TableQueryDownloadConfirmation() {
     ? undefined
     : queryResultResponse?.responseBody?.sumFileSizes?.sumFileSizesBytes
 
+  const fileColumnId = getFileColumnModelId(data?.columnModels)
   return (
     <DownloadConfirmationUI
       onAddToDownloadCart={() =>
         addToDownloadList({
-          query: queryBundleRequest?.query,
+          query: {
+            ...queryBundleRequest?.query,
+            selectFileColumn: fileColumnId ? Number(fileColumnId) : undefined,
+          },
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
         })

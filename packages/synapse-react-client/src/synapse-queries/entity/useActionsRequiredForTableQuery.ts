@@ -16,7 +16,6 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 export function useGetActionsRequiredForTableQuery(
   queryBundleRequest: QueryBundleRequest,
   columnModels: ColumnModel[],
-  fileColumnModelId?: number,
   options?: UseQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError,
@@ -25,13 +24,13 @@ export function useGetActionsRequiredForTableQuery(
 ) {
   const queryRequestCopy = useMemo(() => {
     const request = cloneDeep(queryBundleRequest)
-    const fileColumnId = fileColumnModelId || getFileColumnModelId(columnModels)
+    const fileColumnId = getFileColumnModelId(columnModels)
     if (fileColumnId) {
       request.query.selectFileColumn = Number(fileColumnId)
     }
     request.partMask = SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED
     return request
-  }, [columnModels, fileColumnModelId, queryBundleRequest])
+  }, [columnModels, queryBundleRequest])
 
   return useGetQueryResultBundleWithAsyncStatus<ActionRequiredCount[]>(
     queryRequestCopy,

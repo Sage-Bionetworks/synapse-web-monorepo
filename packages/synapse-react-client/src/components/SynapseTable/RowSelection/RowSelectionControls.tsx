@@ -7,6 +7,7 @@ import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { Cavatica } from '../../../assets/icons/Cavatica'
 import { GetAppTwoTone } from '@mui/icons-material'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
+import { getFileColumnModelId } from '../SynapseTableUtils'
 
 export type RowSelectionControlsProps = {
   showExportToCavatica?: boolean
@@ -39,8 +40,9 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
       remount()
     }
   }
-
-  const showAddToDownloadCart = canTableQueryBeAddedToDownloadList(entity)
+  const fileColumnId = getFileColumnModelId(data?.columnModels)
+  const showAddToDownloadCart =
+    fileColumnId ?? canTableQueryBeAddedToDownloadList(entity)
 
   return (
     <RowSelectionUI
