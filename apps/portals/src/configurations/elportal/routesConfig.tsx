@@ -42,21 +42,22 @@ const routes: GenericRoute[] = [
           entityId: 'syn51449135',
         },
       },
-      {
-        name: 'UpsetPlot',
-        title: 'Exploring the Data',
-        outsideContainerClassName: 'home-spacer home-bg-dark',
-        centerTitle: true,
-        props: {
-          sql: upsetPlotSql,
-          rgbIndex: 0,
-          maxBarCount: 20,
-          setName: '# Files per data type',
-          combinationName: '# Files',
-          // summaryLinkText: 'Explore All Data',
-          // summaryLink: '/Explore/Data',
-        },
-      },
+      // Commented out for v1
+      // {
+      //   name: 'UpsetPlot',
+      //   title: 'Exploring the Data',
+      //   outsideContainerClassName: 'home-spacer home-bg-dark',
+      //   centerTitle: true,
+      //   props: {
+      //     sql: upsetPlotSql,
+      //     rgbIndex: 0,
+      //     maxBarCount: 20,
+      //     setName: '# Files per data type',
+      //     combinationName: '# Files',
+      //     // summaryLinkText: 'Explore All Data',
+      //     // summaryLink: '/Explore/Data',
+      //   },
+      // },
       {
         name: 'FeaturedDataTabs',
         centerTitle: true,
@@ -73,14 +74,15 @@ const routes: GenericRoute[] = [
               plotsConfig: {
                 configs: [
                   {
-                    title: 'The Long Life Family Study',
+                    title:
+                      'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog study',
                     description:
-                      'This study is an international collaborative study of the genetics and familial components of exceptional survival, longevity, and healthy aging.',
+                      'This study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS traits and five distinct definitions of longevity.',
                     facetsToPlot: ['dataType'],
                     selectFacetColumnName: 'study',
-                    selectFacetColumnValue: 'LLFS',
+                    selectFacetColumnValue: 'MRGWAS',
                     detailsPagePath:
-                      '/Explore/Studies/DetailsPage?studyKey=LLFS',
+                      '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
                     unitDescription: 'Files',
                   },
                   {
@@ -97,14 +99,14 @@ const routes: GenericRoute[] = [
                   },
                   {
                     title:
-                      'The Single cell transcriptomic analysis of PBMCs in Extreme Longevity',
+                      'The Phenome-wide association study of aging: data files and a web resource',
                     description:
-                      'This study provides data from 7 centenarian samples (> 100 years) and 2 younger control samples (20-59 years) from New England Centenarian Study (NECS) at Boston University and the Integrative Longevity Omics (ILO). Peripheral Blood Mononuclear Cells (PBMCs) transcriptional and protein expression were profiled at a single cell resolution. Pluripotent stem cells were also generated. Droplet-based single cell CITE-seq data (16,082 cells).',
+                      'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
                     facetsToPlot: ['dataType'],
                     selectFacetColumnName: 'study',
-                    selectFacetColumnValue: 'ELPSCRNA',
+                    selectFacetColumnValue: 'Aging-PheWAS',
                     detailsPagePath:
-                      '/Explore/Studies/DetailsPage?studyKey=ELPSCRNA',
+                      '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
                     unitDescription: 'Files',
                   },
                 ],
