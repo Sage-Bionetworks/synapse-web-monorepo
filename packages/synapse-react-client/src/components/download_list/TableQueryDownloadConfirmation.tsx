@@ -20,6 +20,7 @@ export function TableQueryDownloadConfirmation() {
     selectedRows,
     rowSelectionPrimaryKey,
   } = useQueryContext()
+  const fileColumnId = getFileColumnModelId(data?.columnModels)
   const { setShowDownloadConfirmation } = useQueryVisualizationContext()
   const queryBundleRequest = useMemo(() => {
     const requestCopy = getCurrentQueryRequest()
@@ -27,6 +28,9 @@ export function TableQueryDownloadConfirmation() {
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
 
+    if (fileColumnId) {
+      requestCopy.query.selectFileColumn = Number(fileColumnId)
+    }
     if (hasSelectedRows && rowSelectionPrimaryKey && data?.columnModels) {
       requestCopy.query.additionalFilters = [
         ...(requestCopy.query.additionalFilters || []),
@@ -72,15 +76,11 @@ export function TableQueryDownloadConfirmation() {
     ? undefined
     : queryResultResponse?.responseBody?.sumFileSizes?.sumFileSizesBytes
 
-  const fileColumnId = getFileColumnModelId(data?.columnModels)
   return (
     <DownloadConfirmationUI
       onAddToDownloadCart={() =>
         addToDownloadList({
-          query: {
-            ...queryBundleRequest?.query,
-            selectFileColumn: fileColumnId ? Number(fileColumnId) : undefined,
-          },
+          query: queryBundleRequest?.query,
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
         })
