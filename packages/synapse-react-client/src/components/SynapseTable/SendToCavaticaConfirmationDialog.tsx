@@ -78,7 +78,6 @@ export default function SendToCavaticaConfirmationDialog(
   const { data: actions, isLoading } = useGetActionsRequiredForTableQuery(
     cavaticaQueryRequest,
     data?.columnModels as ColumnModel[],
-    undefined,
     {
       useErrorBoundary: true,
       enabled: !!data?.columnModels && isShowingExportToCavaticaModal,

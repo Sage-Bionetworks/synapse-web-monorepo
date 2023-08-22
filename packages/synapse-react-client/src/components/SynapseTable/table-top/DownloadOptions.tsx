@@ -10,6 +10,7 @@ import { DownloadLoginModal } from './DownloadLoginModal'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
 import { getNumberOfResultsToAddToDownloadListCopy } from '../TopLevelControls/TopLevelControlsUtils'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
+import { getFileColumnModelId } from '../SynapseTableUtils'
 
 export type DownloadOptionsProps = {
   onDownloadFiles: () => void
@@ -35,7 +36,9 @@ export const DownloadOptions: React.FunctionComponent<
     React.useState(false)
   const { onDownloadFiles, darkTheme = true } = props
 
-  const showAddQueryToDownloadList = canTableQueryBeAddedToDownloadList(entity)
+  const fileColumnId = getFileColumnModelId(queryResultBundle?.columnModels)
+  const showAddQueryToDownloadList =
+    fileColumnId ?? canTableQueryBeAddedToDownloadList(entity)
 
   // SWC-5878 - Disable downloading a "Draft" dataset
   const disableDownload = entity && isDataset(entity) && entity.isLatestVersion

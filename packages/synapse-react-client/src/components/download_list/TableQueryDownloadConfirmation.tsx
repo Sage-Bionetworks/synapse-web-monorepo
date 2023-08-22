@@ -10,6 +10,7 @@ import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
+import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
 
 export function TableQueryDownloadConfirmation() {
   const {
@@ -26,6 +27,10 @@ export function TableQueryDownloadConfirmation() {
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
 
+    const fileColumnId = getFileColumnModelId(data?.columnModels)
+    if (fileColumnId) {
+      requestCopy.query.selectFileColumn = Number(fileColumnId)
+    }
     if (hasSelectedRows && rowSelectionPrimaryKey && data?.columnModels) {
       requestCopy.query.additionalFilters = [
         ...(requestCopy.query.additionalFilters || []),

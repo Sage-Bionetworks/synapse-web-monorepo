@@ -1,7 +1,6 @@
 import {
   CardConfiguration,
   GenericCardSchema,
-  IconOptions,
   SynapseConstants,
 } from 'synapse-react-client'
 import { peopleSql } from '../resources'
