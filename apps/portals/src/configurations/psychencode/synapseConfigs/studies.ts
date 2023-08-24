@@ -145,7 +145,6 @@ export const details: DetailsPageProps = {
               assay: 'Assay',
             },
             rgbIndex,
-            title: 'Metadata',
             sqlOperator: ColumnMultiValueFunction.HAS,
           },
           resolveSynId: {

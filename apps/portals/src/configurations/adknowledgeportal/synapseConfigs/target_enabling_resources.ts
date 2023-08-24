@@ -39,7 +39,6 @@ export const targetEnablingResourcesCardConfiguration: CardConfiguration = {
 
 export const targetEnablingResourcesTableConfiguration: QueryWrapperPlotNavProps['tableConfiguration'] =
   {
-    title: 'Target Enabling Resources',
     showAccessColumn: false,
     showDownloadColumn: false,
     columnLinks: [
