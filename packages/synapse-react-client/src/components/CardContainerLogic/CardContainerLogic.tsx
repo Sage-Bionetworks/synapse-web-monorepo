@@ -16,7 +16,7 @@ import { IconSvgProps } from '../IconSvg'
 import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
-} from '../QueryVisualizationWrapper'
+} from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryContextConsumer } from '../QueryContext'
 import { QueryWrapper } from '../QueryWrapper'
 import QuerySortSelector from '../QuerySortSelector'

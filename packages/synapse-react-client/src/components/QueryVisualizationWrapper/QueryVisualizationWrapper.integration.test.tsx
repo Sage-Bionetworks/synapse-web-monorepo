@@ -3,28 +3,25 @@ import React from 'react'
 import {
   PaginatedQueryContextType,
   usePaginatedQueryContext,
-} from '../../../src/components/QueryContext/QueryContext'
+} from '../QueryContext/QueryContext'
 import {
   QueryVisualizationContextType,
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
   useQueryVisualizationContext,
-} from '../../../src/components/QueryVisualizationWrapper'
-import {
-  QueryWrapper,
-  QueryWrapperProps,
-} from '../../../src/components/QueryWrapper/QueryWrapper'
-import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../../src/utils'
+} from './QueryVisualizationWrapper'
+import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { SynapseConstants } from '../../utils'
 import {
   ColumnTypeEnum,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import queryResponse from '../../../src/mocks/mockQueryResponseDataWithManyEnumFacets'
-import { getHandlersForTableQuery } from '../../../src/mocks/msw/handlers/tableQueryHandlers'
-import { server } from '../../../src/mocks/msw/server'
-import { MOCK_TABLE_ENTITY_ID } from '../../../src/mocks/entity/mockTableEntity'
-import { DEFAULT_PAGE_SIZE } from '../../../src/utils/SynapseConstants'
+import queryResponse from '../../mocks/mockQueryResponseDataWithManyEnumFacets'
+import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
+import { server } from '../../mocks/msw/server'
+import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 
 const onQueryContextReceived = jest.fn<void, [PaginatedQueryContextType]>()
 const onContextReceived = jest.fn<void, [QueryVisualizationContextType]>()
@@ -82,12 +79,6 @@ describe('QueryVisualizationWrapper', () => {
   test('Initialize selectColumns', async () => {
     render(<TestComponent />, { wrapper: createWrapper() })
 
-    await waitFor(() => {
-      const data = onQueryContextReceived.mock.lastCall[0].data
-      expect(data).toBeDefined()
-      expect(data!.selectColumns!.length).toBeGreaterThan(0)
-    })
-
     await waitFor(() =>
       expect(onContextReceived).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -112,7 +103,7 @@ describe('QueryVisualizationWrapper', () => {
         }),
       )
       firstSetOfVisibleColumns =
-        onContextReceived.mock.lastCall[0].columnsToShowInTable
+        onContextReceived.mock.lastCall![0].columnsToShowInTable
     })
 
     server.use(
@@ -140,21 +131,13 @@ describe('QueryVisualizationWrapper', () => {
 
     let secondSetOfVisibleColumns
     await waitFor(() => {
-      const data = onQueryContextReceived.mock.lastCall[0].data
-      expect(data?.selectColumns).toEqual([
-        {
-          id: '123',
-          name: 'someOtherColumns',
-          columnType: ColumnTypeEnum.STRING,
-        },
-      ])
       expect(onContextReceived).toHaveBeenLastCalledWith(
         expect.objectContaining({
           columnsToShowInTable: ['someOtherColumns'],
         }),
       )
       secondSetOfVisibleColumns =
-        onContextReceived.mock.lastCall[0].columnsToShowInTable
+        onContextReceived.mock.lastCall![0].columnsToShowInTable
     })
 
     // The select columns should have changed
@@ -164,11 +147,8 @@ describe('QueryVisualizationWrapper', () => {
   test('Do not reset when selectColumns deep equals the previous value', async () => {
     render(<TestComponent />, { wrapper: createWrapper() })
 
-    let firstSetOfVisibleColumns
+    let firstSetOfVisibleColumns: string[] = []
     await waitFor(() => {
-      expect(onQueryContextReceived).toHaveBeenCalled()
-      const data = onQueryContextReceived.mock.lastCall[0].data
-      expect(data).toBeDefined()
       expect(onContextReceived).toHaveBeenLastCalledWith(
         expect.objectContaining({
           columnsToShowInTable: queryResponse.selectColumns!.map(
@@ -177,10 +157,8 @@ describe('QueryVisualizationWrapper', () => {
         }),
       )
       firstSetOfVisibleColumns =
-        onContextReceived.mock.lastCall[0].columnsToShowInTable
+        onContextReceived.mock.lastCall![0].columnsToShowInTable
     })
-
-    const prevData = onQueryContextReceived.mock.lastCall[0].data
 
     // The results are different (e.g. on another page of data), but the selectColumns do not change
     server.use(
@@ -214,26 +192,18 @@ describe('QueryVisualizationWrapper', () => {
 
     // e.g. navigate to the next page of data:
     act(() => {
-      onQueryContextReceived.mock.lastCall[0].goToPage(2)
+      onQueryContextReceived.mock.lastCall![0].goToPage(2)
     })
 
     let secondSetOfVisibleColumns
 
     // Wait for the data to update.
     await waitFor(() => {
-      const data = onQueryContextReceived.mock.lastCall[0].data
-      expect(data).toBeDefined()
-      expect(data?.queryResult?.queryResults.rows).not.toEqual(
-        prevData?.queryResult?.queryResults.rows,
-      )
-
-      expect(data!.queryResult!.queryResults.rows).toHaveLength(1)
       secondSetOfVisibleColumns =
-        onContextReceived.mock.lastCall[0].columnsToShowInTable
+        onContextReceived.mock.lastCall![0].columnsToShowInTable
+      // The array of visible columns should not have changed, and should have referential equality
+      expect(firstSetOfVisibleColumns).toBe(secondSetOfVisibleColumns)
     })
-
-    // The array of visible columns should not have changed, and should have referential equality
-    expect(firstSetOfVisibleColumns).toBe(secondSetOfVisibleColumns)
   })
 
   describe('getColumnDisplayName', () => {
@@ -244,7 +214,7 @@ describe('QueryVisualizationWrapper', () => {
 
       await waitFor(() => {
         const getColumnDisplayName =
-          onContextReceived.mock.lastCall[0].getColumnDisplayName
+          onContextReceived.mock.lastCall![0].getColumnDisplayName
         expect(getColumnDisplayName).toBeDefined()
         expect(getColumnDisplayName('testColumnName')).toBe('testColumnName')
       })
@@ -256,7 +226,7 @@ describe('QueryVisualizationWrapper', () => {
 
       await waitFor(() => {
         const getColumnDisplayName =
-          onContextReceived.mock.lastCall[0].getColumnDisplayName
+          onContextReceived.mock.lastCall![0].getColumnDisplayName
         expect(getColumnDisplayName).toBeDefined()
         expect(getColumnDisplayName('testColumnName')).toBe('Test Column Name')
       })
@@ -274,7 +244,7 @@ describe('QueryVisualizationWrapper', () => {
 
       await waitFor(() => {
         const getColumnDisplayName =
-          onContextReceived.mock.lastCall[0].getColumnDisplayName
+          onContextReceived.mock.lastCall![0].getColumnDisplayName
         expect(getColumnDisplayName).toBeDefined()
         expect(getColumnDisplayName('testColumnName')).toBe('test column alias')
       })

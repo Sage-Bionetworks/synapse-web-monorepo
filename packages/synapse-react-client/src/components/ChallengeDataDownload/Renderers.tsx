@@ -3,8 +3,12 @@ import { CellRendererProps } from './types'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { EntityIdAndVersionNumber } from '../EntityFinder/details/view/DetailsViewTableRenderers'
 import { Skeleton } from '@mui/material'
-import { useGetEntityBundle } from '../../synapse-queries'
-import { FileHandle } from '@sage-bionetworks/synapse-types'
+import { useGetEntity, useGetEntityBundle } from '../../synapse-queries'
+import {
+  FileEntity,
+  FileHandle,
+  FileHandleAssociateType,
+} from '@sage-bionetworks/synapse-types'
 import DirectDownload from '../DirectDownload/DirectDownload'
 
 type FileHandleWithPreview = FileHandle & {
@@ -34,10 +38,19 @@ export function SizeRenderer<T extends EntityIdAndVersionNumber>(
 export function DownloadRenderer<T extends EntityIdAndVersionNumber>(
   props: CellRendererProps<T>,
 ) {
+  const { data: entity } = useGetEntity<FileEntity>(
+    props.rowData.entityId,
+    props.rowData.versionNumber,
+  )
+  if (!entity) {
+    return <></>
+  }
   return (
     <DirectDownload
+      fileHandleId={entity?.dataFileHandleId}
       associatedObjectId={props.rowData.entityId}
+      associatedObjectType={FileHandleAssociateType.FileEntity}
       stopPropagation={true}
-    ></DirectDownload>
+    />
   )
 }

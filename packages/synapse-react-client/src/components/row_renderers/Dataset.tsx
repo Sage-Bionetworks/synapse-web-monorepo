@@ -6,7 +6,7 @@ import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
 import { SelectColumn, ColumnModel } from '@sage-bionetworks/synapse-types'
 import { Button } from '@mui/material'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
+import { QueryVisualizationContextType } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 
 export type DatasetProps = {
   data?: any

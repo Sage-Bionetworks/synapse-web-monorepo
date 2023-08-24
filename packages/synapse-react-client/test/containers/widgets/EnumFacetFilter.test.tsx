@@ -11,7 +11,7 @@ import {
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { SynapseConstants } from '../../../src/utils'
 import { SynapseTestContext } from '../../../src/mocks/MockSynapseContext'
-import { QueryVisualizationContextProvider } from '../../../src/components/QueryVisualizationWrapper'
+import { QueryVisualizationContextProvider } from '../../../src/components/QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryContextProvider } from '../../../src'
 import userEvent from '@testing-library/user-event'
 

@@ -4,7 +4,7 @@ import React from 'react'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
-} from '../../src/components/QueryVisualizationWrapper'
+} from '../../src/components/QueryVisualizationWrapper/QueryVisualizationWrapper'
 import {
   QueryContextProvider,
   QueryContextType,

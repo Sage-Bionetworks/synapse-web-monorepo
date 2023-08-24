@@ -1,29 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   BatchFileRequest,
-  FileEntity,
-  FileHandle,
+  ExternalFileHandle,
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import {
-  getFiles,
-  getFileResult,
-  getEntity,
-} from '../../synapse-client/SynapseClient'
+import { getFiles } from '../../synapse-client/SynapseClient'
 import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
-import { useInView } from 'react-intersection-observer'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import { UAParser } from 'ua-parser-js'
 import { Tooltip } from '@mui/material'
 import { implementsExternalFileHandleInterface } from '../../utils/types/IsType'
+import { useGetFileBatch } from '../../synapse-queries/file/useFiles'
 
 export type DirectFileDownloadProps = {
   associatedObjectId: string
-  entityVersionNumber?: string
-  associatedObjectType?: FileHandleAssociateType
-  fileHandleId?: string
+  associatedObjectType: FileHandleAssociateType
+  fileHandleId: string
   displayFileName?: boolean
   onClickCallback?: (isExternalLink: boolean) => void // callback if you want to know when the link was clicked
   stopPropagation?: boolean
@@ -31,14 +25,14 @@ export type DirectFileDownloadProps = {
 }
 
 type DirectDownloadIconProps = {
-  isExternalFile: boolean
+  isExternalFile?: boolean
   hasFileAccess: boolean
   onClick?: (isExternalFile: boolean) => void
   getDownloadLink: () => Promise<void>
   stopPropagation: boolean
   externalURL?: string
   displayFileName: boolean
-  fileName: string
+  fileName?: string
   iconSvgPropOverrides?: Partial<IconSvgProps>
 }
 
@@ -99,7 +93,6 @@ const DirectDownload: React.FunctionComponent<
   const { accessToken } = useSynapseContext()
   const {
     associatedObjectId,
-    entityVersionNumber,
     associatedObjectType,
     fileHandleId,
     displayFileName = false,
@@ -107,22 +100,31 @@ const DirectDownload: React.FunctionComponent<
     stopPropagation = false,
     iconSvgPropOverrides,
   } = props
-  const { ref, inView } = useInView()
-  const [isExternalFile, setIsExternalFile] = useState<boolean>(false)
-  const [hasFileAccess, setHasFileAccess] = useState<boolean>(false)
-  const [fileEntity, setFileEntity] = useState<FileEntity>()
-  const [externalURL, setExternalURL] = useState<string>()
-  const [fileName, setFileName] = useState<string>('')
-  let mounted = true
 
-  useEffect(() => {
-    if (mounted && inView) {
-      getFileEntityFileHandle()
-    }
-    return () => {
-      mounted = false
-    }
-  }, [accessToken, inView])
+  const fileHandleAssociation = {
+    fileHandleId: fileHandleId,
+    associateObjectId: associatedObjectId,
+    associateObjectType: associatedObjectType,
+  }
+
+  // Get file handle data to ensure we have access / display information
+  const { data } = useGetFileBatch({
+    requestedFiles: [fileHandleAssociation],
+    includeFileHandles: true,
+    // don't get the presigned URL with this query, it may expire before the user clicks the download button
+    includePreSignedURLs: false,
+    includePreviewPreSignedURLs: false,
+  })
+
+  const fileHandle = data?.requestedFiles[0]?.fileHandle
+  const hasFileAccess = Boolean(fileHandle)
+  const fileName = fileHandle?.fileName
+  const isExternalFile = fileHandle
+    ? implementsExternalFileHandleInterface(fileHandle)
+    : undefined
+  const externalURL: string | undefined = fileHandle
+    ? (fileHandle as ExternalFileHandle).externalURL
+    : undefined
 
   const getDownloadLink = async () => {
     let preSignedURL
@@ -145,7 +147,17 @@ const DirectDownload: React.FunctionComponent<
         const files = await getTableEntityFileHandle(true)
         preSignedURL = files.requestedFiles[0].preSignedURL!
       } else {
-        const file = await getFileResult(fileEntity!, accessToken, false, true)
+        const file = (
+          await getFiles(
+            {
+              requestedFiles: [fileHandleAssociation],
+              includePreSignedURLs: true,
+              includePreviewPreSignedURLs: false,
+              includeFileHandles: false,
+            },
+            accessToken,
+          )
+        ).requestedFiles[0]
         preSignedURL = file.preSignedURL
       }
     } catch (e) {
@@ -167,18 +179,8 @@ const DirectDownload: React.FunctionComponent<
         window.open(preSignedURL)
       }
       if (onClickCallback) {
-        onClickCallback(isExternalFile)
+        onClickCallback(isExternalFile!)
       }
-    }
-  }
-
-  const hasFileHandle = (fh: FileHandle) => {
-    if (fh && !(fh as any)['isPreview']) {
-      setHasFileAccess(true)
-      return true
-    } else {
-      setHasFileAccess(false)
-      return false
     }
   }
 
@@ -186,8 +188,8 @@ const DirectDownload: React.FunctionComponent<
     const fileHandleAssociationList: FileHandleAssociation[] = [
       {
         associateObjectId: associatedObjectId,
-        associateObjectType: associatedObjectType!,
-        fileHandleId: fileHandleId!,
+        associateObjectType: associatedObjectType,
+        fileHandleId: fileHandleId,
       },
     ]
     const batchFileRequest: BatchFileRequest = {
@@ -197,49 +199,6 @@ const DirectDownload: React.FunctionComponent<
       requestedFiles: fileHandleAssociationList,
     }
     return getFiles(batchFileRequest, accessToken)
-  }
-
-  const getFileEntityFileHandle = () => {
-    return getEntity(accessToken, associatedObjectId, entityVersionNumber)
-      .then(async entity => {
-        // From file view
-        if (Object.hasOwn(entity, 'dataFileHandleId')) {
-          // looks like a FileEntity, get the FileHandle
-          setFileEntity(entity as FileEntity)
-          return getFileResult(
-            // TODO: Why can we just use getFiles here?
-            entity as FileEntity,
-            accessToken,
-            true,
-          )
-            .then(data => {
-              const fh = data.fileHandle
-              if (fh && hasFileHandle(fh)) {
-                // have file access and not file preview
-                if (implementsExternalFileHandleInterface(fh)) {
-                  setIsExternalFile(true)
-                  setExternalURL((fh as any)['externalURL'])
-                }
-              }
-            })
-            .catch(err => {
-              console.log('Error on getFileEntityFileHandle = ', err)
-            })
-        } else if (
-          associatedObjectType === FileHandleAssociateType.TableEntity
-        ) {
-          const files = await getTableEntityFileHandle()
-          const fh: FileHandle = files.requestedFiles[0].fileHandle!
-          if (displayFileName && fh && hasFileHandle(fh)) {
-            setFileName(fh.fileName)
-          }
-        }
-
-        return Promise.resolve()
-      })
-      .catch(err => {
-        console.log('Error on getEntity = ', err)
-      })
   }
 
   return (
@@ -252,7 +211,7 @@ const DirectDownload: React.FunctionComponent<
       enterNextDelay={TOOLTIP_DELAY_SHOW}
       placement="left"
     >
-      <div ref={ref}>
+      <div>
         <DirectDownloadIcon
           isExternalFile={isExternalFile}
           hasFileAccess={hasFileAccess}

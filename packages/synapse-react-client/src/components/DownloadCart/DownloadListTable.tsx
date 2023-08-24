@@ -1,45 +1,177 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { DownloadListItemResult } from '@sage-bionetworks/synapse-types'
-import { Dropdown, Table } from 'react-bootstrap'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { useGetAvailableFilesToDownloadInfinite } from '../../synapse-queries/download/useDownloadList'
-import { useInView } from 'react-intersection-observer'
 import {
   AvailableFilter,
+  Direction,
+  DownloadListItem,
+  DownloadListItemResult,
+  FileEntity,
+  FileHandleAssociateType,
+  FilesStatisticsResponse,
   Sort,
   SortField,
 } from '@sage-bionetworks/synapse-types'
-import { DownloadListItem } from '@sage-bionetworks/synapse-types'
+import { Dropdown, Table } from 'react-bootstrap'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
+import {
+  useGetAvailableFilesToDownloadInfinite,
+  useGetEntity,
+} from '../../synapse-queries'
+import { useInView } from 'react-intersection-observer'
 import SynapseClient from '../../synapse-client'
 import dayjs from 'dayjs'
 import UserCard from '../UserCard/UserCard'
 import SortIcon from '../../assets/icons/Sort'
-import {
-  Direction,
-  FileHandleAssociateType,
-} from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useSynapseContext } from '../../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg/IconSvg'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
-import { SkeletonTable } from '../Skeleton/SkeletonTable'
+import { SkeletonTable } from '../Skeleton'
 import DirectDownload from '../DirectDownload/DirectDownload'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import { FilesStatisticsResponse } from '@sage-bionetworks/synapse-types'
+import { displayToast } from '../ToastMessage'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
 import { BlockingLoader } from '../LoadingScreen/LoadingScreen'
 import { Tooltip } from '@mui/material'
 import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
-export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
 dayjs.extend(localizedFormat)
 
 export type DownloadListTableProps = {
   filesStatistics: FilesStatisticsResponse
   refetchStatistics: () => Promise<any>
+}
+
+type DownloadListTableRowProps = {
+  item: DownloadListItemResult
+  removeItem: (
+    item: DownloadListItem,
+    fileName: string,
+    title: string,
+  ) => Promise<void>
+}
+
+function DownloadListTableRow(props: DownloadListTableRowProps) {
+  const { item, removeItem } = props
+  const { data: entity } = useGetEntity<FileEntity>(
+    item.fileEntityId,
+    item.versionNumber,
+  )
+  if (item) {
+    const addedOn = dayjs(item.addedOn).format('L LT')
+    const createdOn = dayjs(item.createdOn).format('L LT')
+    return (
+      <tr key={item.fileEntityId}>
+        <td
+          className={
+            item.isEligibleForPackaging ? '' : 'ineligibleForPackagingTd'
+          }
+        >
+          {item.isEligibleForPackaging && (
+            <Tooltip
+              title="Eligible for packaging"
+              enterNextDelay={TOOLTIP_DELAY_SHOW}
+              placement="right"
+            >
+              <span className="eligibileIcon">
+                <IconSvg wrap={false} icon="packagableFile" />
+              </span>
+            </Tooltip>
+          )}
+          {!item.isEligibleForPackaging && (
+            <Tooltip
+              title="This file is ineligible for Web packaging because it is >100MB, or it is an external link, or it is not stored on Synapse native storage"
+              enterNextDelay={TOOLTIP_DELAY_SHOW}
+              placement="right"
+            >
+              <span className="ineligibileIcon">
+                <IconSvg wrap={false} icon="warningOutlined" />
+              </span>
+            </Tooltip>
+          )}
+        </td>
+        <td>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.fileEntityId}.${item.versionNumber}`}
+          >
+            {item.fileName}
+          </a>
+        </td>
+        <td>
+          {item.fileSizeBytes && calculateFriendlyFileSize(item.fileSizeBytes)}
+        </td>
+        <td>{`${item.fileEntityId}${
+          item.versionNumber ? `.${item.versionNumber}` : ''
+        }`}</td>
+        <td>{item.projectName}</td>
+        <td>{addedOn}</td>
+        <td>
+          <UserCard size={'SMALL USER CARD'} ownerId={item.createdBy} />
+        </td>
+        <td>{createdOn}</td>
+        <td className="stickyColumn">
+          <div className="actionsContainer">
+            <span className="downloadItem">
+              {entity && (
+                <DirectDownload
+                  fileHandleId={entity.dataFileHandleId}
+                  associatedObjectId={item.fileEntityId}
+                  associatedObjectType={FileHandleAssociateType.FileEntity}
+                  displayFileName={false}
+                  onClickCallback={(isExternalLink: boolean) => {
+                    // SWC-5944: remove the item from the download list, unless it's an external link.
+                    if (!isExternalLink) {
+                      removeItem(
+                        {
+                          fileEntityId: item.fileEntityId,
+                          versionNumber: item.versionNumber,
+                        },
+                        item.fileName,
+                        'File Downloaded',
+                      )
+                    }
+                  }}
+                />
+              )}
+            </span>
+            <span className="programmaticAccessItem">
+              <DirectProgrammaticDownload
+                entityId={item.fileEntityId}
+                version={item.versionNumber}
+              />
+            </span>
+            <Tooltip
+              title="Remove from Download Cart"
+              placement="left"
+              enterNextDelay={TOOLTIP_DELAY_SHOW}
+            >
+              <span className="removeItem">
+                <button
+                  className={TESTING_TRASH_BTN_CLASS}
+                  onClick={() => {
+                    removeItem(
+                      {
+                        fileEntityId: item.fileEntityId,
+                        versionNumber: item.versionNumber,
+                      },
+                      item.fileName,
+                      'File Removed',
+                    )
+                  }}
+                >
+                  <IconSvg icon="removeCircle" />
+                </button>
+              </span>
+            </Tooltip>
+          </div>
+        </td>
+      </tr>
+    )
+  } else return <></>
 }
 
 export default function DownloadListTable(props: DownloadListTableProps) {
@@ -256,127 +388,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               </tr>
             </thead>
             <tbody>
-              {allRows.map((item: DownloadListItemResult) => {
-                if (item) {
-                  const addedOn = dayjs(item.addedOn).format('L LT')
-                  const createdOn = dayjs(item.createdOn).format('L LT')
-                  return (
-                    <tr key={item.fileEntityId}>
-                      <td
-                        className={
-                          item.isEligibleForPackaging
-                            ? ''
-                            : 'ineligibleForPackagingTd'
-                        }
-                      >
-                        {item.isEligibleForPackaging && (
-                          <Tooltip
-                            title="Eligible for packaging"
-                            enterNextDelay={TOOLTIP_DELAY_SHOW}
-                            placement="right"
-                          >
-                            <span className="eligibileIcon">
-                              <IconSvg wrap={false} icon="packagableFile" />
-                            </span>
-                          </Tooltip>
-                        )}
-                        {!item.isEligibleForPackaging && (
-                          <Tooltip
-                            title="This file is ineligible for Web packaging because it is >100MB, or it is an external link, or it is not stored on Synapse native storage"
-                            enterNextDelay={TOOLTIP_DELAY_SHOW}
-                            placement="right"
-                          >
-                            <span className="ineligibileIcon">
-                              <IconSvg wrap={false} icon="warningOutlined" />
-                            </span>
-                          </Tooltip>
-                        )}
-                      </td>
-                      <td>
-                        <a
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.fileEntityId}.${item.versionNumber}`}
-                        >
-                          {item.fileName}
-                        </a>
-                      </td>
-                      <td>
-                        {item.fileSizeBytes &&
-                          calculateFriendlyFileSize(item.fileSizeBytes)}
-                      </td>
-                      <td>{`${item.fileEntityId}${
-                        item.versionNumber ? `.${item.versionNumber}` : ''
-                      }`}</td>
-                      <td>{item.projectName}</td>
-                      <td>{addedOn}</td>
-                      <td>
-                        <UserCard
-                          size={'SMALL USER CARD'}
-                          ownerId={item.createdBy}
-                        />
-                      </td>
-                      <td>{createdOn}</td>
-                      <td className="stickyColumn">
-                        <div className="actionsContainer">
-                          <span className="downloadItem">
-                            <DirectDownload
-                              associatedObjectId={item.fileEntityId}
-                              associatedObjectType={
-                                FileHandleAssociateType.FileEntity
-                              }
-                              entityVersionNumber={item.versionNumber?.toString()}
-                              displayFileName={false}
-                              onClickCallback={(isExternalLink: boolean) => {
-                                // SWC-5944: remove the item from the download list, unless it's an external link.
-                                if (!isExternalLink) {
-                                  removeItem(
-                                    {
-                                      fileEntityId: item.fileEntityId,
-                                      versionNumber: item.versionNumber,
-                                    },
-                                    item.fileName,
-                                    'File Downloaded',
-                                  )
-                                }
-                              }}
-                            />
-                          </span>
-                          <span className="programmaticAccessItem">
-                            <DirectProgrammaticDownload
-                              entityId={item.fileEntityId}
-                              version={item.versionNumber}
-                            />
-                          </span>
-                          <Tooltip
-                            title="Remove from Download Cart"
-                            placement="left"
-                            enterNextDelay={TOOLTIP_DELAY_SHOW}
-                          >
-                            <span className="removeItem">
-                              <button
-                                className={TESTING_TRASH_BTN_CLASS}
-                                onClick={() => {
-                                  removeItem(
-                                    {
-                                      fileEntityId: item.fileEntityId,
-                                      versionNumber: item.versionNumber,
-                                    },
-                                    item.fileName,
-                                    'File Removed',
-                                  )
-                                }}
-                              >
-                                <IconSvg icon="removeCircle" />
-                              </button>
-                            </span>
-                          </Tooltip>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                } else return false
-              })}
+              {allRows.map(item => (
+                <DownloadListTableRow
+                  key={`${item.fileEntityId}.${item.versionNumber ?? ''}`}
+                  item={item}
+                  removeItem={removeItem}
+                />
+              ))}
               {/* To trigger loading the next page */}
               <tr ref={ref} />
             </tbody>

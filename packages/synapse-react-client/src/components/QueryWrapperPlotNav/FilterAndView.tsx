@@ -3,28 +3,35 @@ import CardContainer from '../CardContainer'
 import SynapseTable, { SynapseTableProps } from '../SynapseTable'
 import { CardConfiguration } from '../CardContainerLogic'
 import { useQueryContext } from '../QueryContext'
-import { useSynapseContext } from '../../utils'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import LastUpdatedOn from './LastUpdatedOn'
 import { Box, LinearProgress, Typography } from '@mui/material'
+import { useDeepCompareMemoize } from 'use-deep-compare-effect'
+import { useAtomValue } from 'jotai'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+} from '../QueryWrapper/QueryWrapper'
 
 export type FilterAndViewProps = {
-  tableConfiguration:
-    | Omit<
-        SynapseTableProps,
-        'synapseContext' | 'queryContext' | 'queryVisualizationContext'
-      >
-    | undefined
+  tableConfiguration?: SynapseTableProps
   cardConfiguration: CardConfiguration | undefined
   hideDownload?: boolean
 }
 
 const FilterAndView = (props: FilterAndViewProps) => {
-  const { tableConfiguration, cardConfiguration, hideDownload } = props
-  const synapseContext = useSynapseContext()
+  const { cardConfiguration, hideDownload } = props
+  const tableConfiguration = useDeepCompareMemoize(
+    props.tableConfiguration
+      ? {
+          ...props.tableConfiguration,
+          hideDownload,
+        }
+      : undefined,
+  )
   const queryContext = useQueryContext()
-  const { data, isLoadingNewBundle, asyncJobStatus } = queryContext
-  const queryVisualizationContext = useQueryVisualizationContext()
+  const { asyncJobStatus } = queryContext
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
+  const data = useAtomValue(tableQueryDataAtom)
   return (
     <div className={`FilterAndView`}>
       {!data && isLoadingNewBundle && (
@@ -45,17 +52,7 @@ const FilterAndView = (props: FilterAndViewProps) => {
           )}
         </Box>
       )}
-      {tableConfiguration ? (
-        <SynapseTable
-          {...tableConfiguration}
-          synapseContext={synapseContext}
-          queryContext={queryContext}
-          queryVisualizationContext={queryVisualizationContext}
-          hideDownload={hideDownload}
-        />
-      ) : (
-        <></>
-      )}
+      {tableConfiguration ? <SynapseTable {...tableConfiguration} /> : <></>}
       {cardConfiguration ? <CardContainer {...cardConfiguration} /> : <></>}
       <LastUpdatedOn />
     </div>

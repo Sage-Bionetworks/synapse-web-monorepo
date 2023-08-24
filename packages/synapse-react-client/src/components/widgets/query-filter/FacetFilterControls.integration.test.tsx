@@ -1,33 +1,37 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import _ from 'lodash-es'
 import React from 'react'
-import {
-  QueryContextProvider,
-  QueryContextType,
-} from '../../../../src/components/QueryContext/QueryContext'
-import {
-  QueryVisualizationContextProvider,
-  QueryVisualizationContextType,
-} from '../../../../src/components/QueryVisualizationWrapper'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import FacetFilterControls, {
   FacetFilterControlsProps,
   getDefaultShownFacetFilters,
-} from '../../../../src/components/widgets/query-filter/FacetFilterControls'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import mockQueryResponseData from '../../../../src/mocks/mockQueryResponseData'
-import { MOCK_CONTEXT_VALUE } from '../../../../src/mocks/MockSynapseContext'
-import { DEFAULT_PAGE_SIZE } from '../../../../src/utils/SynapseConstants'
-import FullContextProvider from '../../../../src/utils/context/FullContextProvider'
+} from './FacetFilterControls'
+import {
+  FacetColumnRequest,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
+import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
+import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import QueryWrapper from '../../QueryWrapper'
+import { server } from '../../../mocks/msw/server'
+import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
+import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
+import { QueryContextConsumer, QueryContextType } from '../../QueryContext'
+import { RangeFacetFilterProps } from './RangeFacetFilter'
 
-let capturedOnChange: Function | undefined
-let capturedOnClear: Function | undefined
+let capturedOnChange: RangeFacetFilterProps['onChange'] | undefined
 
 const captureHandlers = async (facetFilterElement: HTMLElement) => {
   await userEvent.click(facetFilterElement)
 }
 
-const MockFacetFilter = props => {
+const MockFacetFilter = (props: {
+  onChange: RangeFacetFilterProps['onChange']
+  testid: string
+  collapsed: boolean
+}) => {
   return (
     <div
       data-testid={props.testid}
@@ -36,7 +40,6 @@ const MockFacetFilter = props => {
         // There's no good way to capture passed callbacks passed to a component when the same mock could appear multiple times on one page.
         // So we'll capture the callbacks via a click handler.
         capturedOnChange = props.onChange
-        capturedOnClear = props.onClear
       }}
     ></div>
   )
@@ -60,12 +63,12 @@ jest.mock(
   }),
 )
 
-const lastQueryRequestResult: QueryBundleRequest = {
-  partMask: 53,
+const queryRequest: QueryBundleRequest = {
+  partMask: 255,
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-  entityId: 'syn16787123',
+  entityId: MOCK_TABLE_ENTITY_ID,
   query: {
-    sql: 'SELECT * FROM syn21450294',
+    sql: `SELECT * FROM ${MOCK_TABLE_ENTITY_ID}`,
     selectedFacets: [
       {
         concreteType:
@@ -86,61 +89,40 @@ const lastQueryRequestResult: QueryBundleRequest = {
   },
 }
 
-const mockExecuteQueryRequest = jest.fn(_selectedFacets => null)
-const mockGetQueryRequest = jest.fn(() => _.cloneDeep(lastQueryRequestResult))
+let capturedQueryContext: QueryContextType | undefined = undefined
 
-function createTestProps(
-  overrides?: FacetFilterControlsProps,
-): FacetFilterControlsProps {
-  return {
-    ...overrides,
-  }
-}
-
-const defaultQueryContext: Partial<QueryContextType> = {
-  data: mockQueryResponseData as QueryResultBundle,
-  getCurrentQueryRequest: mockGetQueryRequest,
-  executeQueryRequest: mockExecuteQueryRequest,
-  currentQueryRequest: lastQueryRequestResult,
-  nextQueryRequest: lastQueryRequestResult,
-  isLoadingNewBundle: false,
-}
-
-const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
-  {
-    showFacetFilter: true,
-    showFacetVisualization: true,
-    showSearchBar: false,
-    showDownloadConfirmation: false,
-    showSqlEditor: false,
-    getColumnDisplayName: jest.fn(col => col),
-  }
-
-let props: FacetFilterControlsProps
 function init(overrides?: FacetFilterControlsProps) {
-  jest.clearAllMocks()
-  props = createTestProps(overrides)
-  return render(<FacetFilterControls {...props} />, {
-    wrapper: ({ children }) => {
-      return (
-        <FullContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
-          <QueryContextProvider queryContext={defaultQueryContext}>
-            <QueryVisualizationContextProvider
-              queryVisualizationContext={defaultQueryVisualizationContext}
-            >
-              {children}
-            </QueryVisualizationContextProvider>
-          </QueryContextProvider>
-        </FullContextProvider>
-      )
+  return render(
+    <QueryWrapper initQueryRequest={queryRequest}>
+      <QueryContextConsumer>
+        {queryContext => {
+          capturedQueryContext = queryContext
+          return (
+            <QueryVisualizationWrapper>
+              <FacetFilterControls {...overrides} />
+            </QueryVisualizationWrapper>
+          )
+        }}
+      </QueryContextConsumer>
+    </QueryWrapper>,
+    {
+      wrapper: createWrapper(),
     },
-  })
+  )
 }
 
 describe('FacetFilterControls tests', () => {
-  it('should only show three facets and be expanded', () => {
+  beforeAll(() => server.listen())
+  beforeEach(() => {
+    jest.clearAllMocks()
+    server.use(...getHandlersForTableQuery(mockQueryResponseData))
+  })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
+  it('should only show three facets and be expanded', async () => {
     init()
-    const facetFilters = screen.getAllByTestId(/(Enum|Range)FacetFilter/)
+    const facetFilters = await screen.findAllByTestId(/(Enum|Range)FacetFilter/)
     expect(facetFilters).toHaveLength(3)
 
     facetFilters.forEach(facet => {
@@ -151,8 +133,10 @@ describe('FacetFilterControls tests', () => {
   it('should respect availableFacets', async () => {
     // set availableFacets to make the component only show a filter for Year (a range type facet) and not Make (a values/enum type)
     init({ availableFacets: ['Year'] })
-    expect(screen.queryByTestId('EnumFacetFilter')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('RangeFacetFilter')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByTestId('EnumFacetFilter')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('RangeFacetFilter')).toBeInTheDocument()
+    })
     // expects the facet chips to only show facets within facetToFilter
     expect(
       await screen.findByRole('button', { name: 'Year' }),
@@ -164,7 +148,7 @@ describe('FacetFilterControls tests', () => {
     it('should propagate range correctly', async () => {
       init()
 
-      const expectedResult = [
+      const expectedResult: FacetColumnRequest[] = [
         {
           columnName: 'Make',
           concreteType:
@@ -179,32 +163,34 @@ describe('FacetFilterControls tests', () => {
           min: '1997',
         },
       ]
-      const rangeFacetFilter = screen.getAllByTestId('RangeFacetFilter')[0]
+      const rangeFacetFilter = (
+        await screen.findAllByTestId('RangeFacetFilter')
+      )[0]
       await captureHandlers(rangeFacetFilter)
+      expect(capturedOnChange).toBeDefined()
       act(() => {
         capturedOnChange!(['1997', '1998'])
       })
-      const expected = _.cloneDeep(lastQueryRequestResult)
+      const expected = _.cloneDeep(queryRequest)
       expected.query = { ...expected.query, selectedFacets: expectedResult }
-      expect(mockExecuteQueryRequest).toHaveBeenCalled()
-      const queryUpdateFn = mockExecuteQueryRequest.mock.lastCall![0]
-      expect(typeof queryUpdateFn).toBe('function')
-      expect(queryUpdateFn(_.cloneDeep(lastQueryRequestResult))).toEqual(
-        expected,
-      )
+      await waitFor(() => {
+        expect(capturedQueryContext?.nextQueryRequest.query).toEqual(
+          expected.query,
+        )
+      })
     })
 
     it('renders all available facet chips', async () => {
       init()
       expect(await screen.findAllByRole('button')).toHaveLength(
-        mockQueryResponseData.facets.length,
+        mockQueryResponseData.facets!.length,
       )
     })
 
     it('facet chip changes color onClick', async () => {
       init()
       const facetChip = await screen.findByRole('button', {
-        name: mockQueryResponseData.facets[0].columnName,
+        name: mockQueryResponseData.facets![0].columnName,
       })
       expect(facetChip.className).toEqual('Chip Checked')
       await userEvent.click(facetChip)

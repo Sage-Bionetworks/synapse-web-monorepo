@@ -19,7 +19,6 @@ const options: UseImmutableTableQueryOptions = {
       sql: 'SELECT * FROM syn123.3 WHERE "foo"=\'bar\'',
     },
   },
-  requireConfirmationOnChange: false,
 }
 
 const initialQueryWithFacet: QueryBundleRequest = {

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Button, Paper, Typography } from '@mui/material'
 import InlineBadge from '../../styled/InlineBadge'
+import pluralize from 'pluralize'
 
 export type RowSelectionUIProps = {
   show?: boolean
@@ -54,7 +55,9 @@ export function RowSelectionUI(props: RowSelectionUIProps) {
             color="primary"
             max={Infinity}
           />
-          <Typography variant="body1">Rows Selected</Typography>
+          <Typography variant="body1">
+            {pluralize('Row', selectedRowCount)} Selected
+          </Typography>
         </Box>
         {customControls}
       </Box>

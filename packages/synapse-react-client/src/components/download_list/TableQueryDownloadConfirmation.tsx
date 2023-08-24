@@ -7,19 +7,24 @@ import {
 import { displayToast } from '../ToastMessage'
 import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { useQueryContext } from '../QueryContext'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
+import {
+  hasSelectedRowsAtom,
+  rowSelectionPrimaryKeyAtom,
+  selectedRowsAtom,
+} from '../QueryWrapper/TableRowSelectionState'
 
 export function TableQueryDownloadConfirmation() {
-  const {
-    data,
-    getCurrentQueryRequest,
-    hasSelectedRows,
-    selectedRows,
-    rowSelectionPrimaryKey,
-  } = useQueryContext()
+  const { getCurrentQueryRequest } = useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
+  const selectedRows = useAtomValue(selectedRowsAtom)
+  const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
   const { setShowDownloadConfirmation } = useQueryVisualizationContext()
   const queryBundleRequest = useMemo(() => {
     const requestCopy = getCurrentQueryRequest()

@@ -5,7 +5,7 @@ import {
   getEntityTypeFromHeader,
 } from '../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import { useGetEntity } from '../synapse-queries'
+import { useGetEntityHeader } from '../synapse-queries'
 import { Entity, EntityHeader } from '@sage-bionetworks/synapse-types'
 import { EntityTypeIcon } from './EntityIcon'
 import { ErrorBanner } from './error/ErrorBanner'
@@ -38,9 +38,13 @@ export const EntityLink = (props: EntityLinkProps) => {
     entityId = entityOrId
   }
 
-  const { data: fetchedEntity, error } = useGetEntity(entityId, versionNumber, {
-    enabled: !!entityId && typeof entityOrId === 'string',
-  })
+  const { data: fetchedEntity, error } = useGetEntityHeader(
+    entityId,
+    versionNumber,
+    {
+      enabled: !!entityId && typeof entityOrId === 'string',
+    },
+  )
 
   if (fetchedEntity || typeof entityOrId !== 'string') {
     const entity = fetchedEntity ?? (entityOrId as Entity | EntityHeader)

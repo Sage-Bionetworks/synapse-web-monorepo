@@ -1,17 +1,23 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { DownloadOptions } from './index'
+import { DownloadOptionsProps } from './DownloadOptions'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import mockDatasetData from '../../../mocks/entity/mockDataset'
+import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { mockFileViewEntity } from '../../../mocks/entity/mockFileView'
+import QueryWrapper from '../../QueryWrapper'
+import { rest, server } from '../../../mocks/msw/server'
+import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
+import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import {
-  QueryContextProvider,
-  QueryContextType,
-} from '../../../../src/components/QueryContext/QueryContext'
-import { DownloadOptions } from '../../../../src/components/SynapseTable/table-top'
-import { DownloadOptionsProps } from '../../../../src/components/SynapseTable/table-top/DownloadOptions'
-import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
-import { mockFileViewEntity } from '../../../../src/mocks/entity/mockEntity'
-import mockDatasetData from '../../../../src/mocks/entity/mockDataset'
-import { mockTableEntity } from '../../../../src/mocks/entity/mockTableEntity'
-import { QueryVisualizationContextProvider } from '../../../../src/components/QueryVisualizationWrapper'
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../utils/functions/getEndpoint'
+import { mockProjectViewEntity } from '../../../mocks/entity/mockProjectView'
 
 const ADD_ALL_FILES_TO_DOWNLOAD_CART = 'Add All Files to Download Cart'
 
@@ -19,32 +25,67 @@ const mockDatasetEntity = mockDatasetData.entity
 
 function renderComponent(
   props: DownloadOptionsProps,
-  queryContext: Partial<QueryContextType>,
+  queryRequest: QueryBundleRequest,
 ) {
   return render(
-    <QueryContextProvider queryContext={queryContext}>
-      <QueryVisualizationContextProvider
-        queryVisualizationContext={{ hasSelectedRows: false, selectedRows: [] }}
-      >
+    <QueryWrapper initQueryRequest={queryRequest}>
+      <QueryVisualizationWrapper>
         <DownloadOptions {...props} />
-      </QueryVisualizationContextProvider>
-    </QueryContextProvider>,
+      </QueryVisualizationWrapper>
+    </QueryWrapper>,
     { wrapper: createWrapper() },
   )
 }
+const props: DownloadOptionsProps = {
+  onDownloadFiles: jest.fn(),
+}
+
+const tableEntityQueryRequest: QueryBundleRequest = {
+  concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  entityId: mockTableEntity.id,
+  partMask: 255,
+  query: {
+    sql: `SELECT * FROM ${mockTableEntity.id}`,
+  },
+}
+
+const fileViewQueryRequest: QueryBundleRequest = {
+  concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  entityId: mockFileViewEntity.id,
+  partMask: 255,
+  query: {
+    sql: `SELECT * FROM ${mockFileViewEntity.id}`,
+  },
+}
+
+const projectViewQueryRequest: QueryBundleRequest = {
+  concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  entityId: mockProjectViewEntity.id,
+  partMask: 255,
+  query: {
+    sql: `SELECT * FROM ${mockProjectViewEntity.id}`,
+  },
+}
+
+const datasetQueryRequest: QueryBundleRequest = {
+  concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  entityId: mockDatasetEntity.id!,
+  partMask: 255,
+  query: {
+    sql: `SELECT * FROM ${mockDatasetEntity.id}`,
+  },
+}
 
 describe('Download Options tests', () => {
-  const props: DownloadOptionsProps = {
-    onDownloadFiles: jest.fn(),
-  }
-
-  const queryContext: Partial<QueryContextType> = {
-    entity: mockTableEntity,
-    getCurrentQueryRequest: () => ({}),
-  }
+  beforeAll(() => server.listen())
+  beforeEach(() => {
+    server.use(...getHandlersForTableQuery(mockQueryResponseData))
+  })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
 
   it('Shows correct options for a TableEntity', async () => {
-    renderComponent(props, queryContext)
+    renderComponent(props, tableEntityQueryRequest)
 
     const downloadOptionsButton = await screen.findByRole('button', {
       name: 'Download Options',
@@ -69,11 +110,7 @@ describe('Download Options tests', () => {
   })
 
   it('Shows correct options for a File View', async () => {
-    const fileViewQueryContext = {
-      ...queryContext,
-      entity: mockFileViewEntity,
-    }
-    renderComponent(props, fileViewQueryContext)
+    renderComponent(props, fileViewQueryRequest)
 
     const downloadOptionsButton = await screen.findByRole('button', {
       name: 'Download Options',
@@ -97,7 +134,7 @@ describe('Download Options tests', () => {
   })
 
   it('Shows correct options for a Project View', async () => {
-    renderComponent(props, queryContext)
+    renderComponent(props, projectViewQueryRequest)
 
     const downloadOptionsButton = await screen.findByRole('button', {
       name: 'Download Options',
@@ -123,15 +160,24 @@ describe('Download Options tests', () => {
 
   it('Shows correct options for a stable version of a dataset', async () => {
     const isStableVersion = true
-    const fileViewQueryContext = {
-      ...queryContext,
-      entity: {
-        ...mockDatasetEntity,
-        isLatestVersion: !isStableVersion,
-      },
-    }
+    server.use(
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/entity/${mockDatasetEntity.id!}`,
+        (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              ...mockDatasetEntity,
+              isLatestVersion: !isStableVersion,
+            }),
+          )
+        },
+      ),
+    )
 
-    renderComponent(props, fileViewQueryContext)
+    renderComponent(props, datasetQueryRequest)
 
     const downloadOptionsButton = await screen.findByRole('button', {
       name: 'Download Options',
@@ -156,15 +202,24 @@ describe('Download Options tests', () => {
 
   it('Shows correct options for a draft Dataset', async () => {
     const isStableVersion = false
-    const fileViewQueryContext = {
-      ...queryContext,
-      entity: {
-        ...mockDatasetEntity,
-        isLatestVersion: !isStableVersion,
-      },
-    }
+    server.use(
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/entity/${mockDatasetEntity.id!}`,
+        (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              ...mockDatasetEntity,
+              isLatestVersion: !isStableVersion,
+            }),
+          )
+        },
+      ),
+    )
 
-    renderComponent(props, fileViewQueryContext)
+    renderComponent(props, datasetQueryRequest)
 
     const downloadOptionsButton = await screen.findByRole('button', {
       name: 'Download Options',

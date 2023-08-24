@@ -5,7 +5,7 @@ import { SortDirection } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import Select, { components, ControlProps, GroupBase } from 'react-select'
 import { findValueOption } from './SchemaDrivenAnnotationEditor/widget/SelectWidget'
-import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper/QueryVisualizationWrapper'
 
 export type QuerySortSelectorProps = {
   sortConfig: SortConfiguration

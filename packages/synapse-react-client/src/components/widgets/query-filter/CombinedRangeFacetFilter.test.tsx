@@ -13,7 +13,7 @@ import {
 } from './CombinedRangeFacetFilter'
 import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
 import { RangeSliderProps } from '../RangeSlider/RangeSlider'
-import { QueryVisualizationContextProvider } from '../../QueryVisualizationWrapper'
+import { QueryVisualizationContextProvider } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { Range, RangeProps } from '../Range'
 
 let capturedOnChange:

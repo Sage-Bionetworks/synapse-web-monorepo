@@ -1,44 +1,60 @@
 import { render, screen, within } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import {
-  CardLink,
-  LabelLinkConfig,
-  TargetEnum,
-} from '../../src/components/CardContainerLogic'
+import { CardLink, TargetEnum } from '../CardContainerLogic'
 import GenericCard, {
   CARD_SHORT_DESCRIPTION_CSS,
-  GenericCardProps,
   GenericCardSchema,
   getLinkParams,
   LongDescription,
   ShortDescription,
-  SynapseCardLabel,
-} from '../../src/components/GenericCard'
-import * as IconSvg from '../../src/components/IconSvg/IconSvg'
-import * as FileHandleLinkModule from '../../src/components/widgets/FileHandleLink'
-import * as ImageFileHandleModule from '../../src/components/widgets/ImageFileHandle'
-import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
+} from './index'
+import * as IconSvg from '../IconSvg/IconSvg'
+import * as FileHandleLinkModule from '../widgets/FileHandleLink'
+import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   ColumnTypeEnum,
   FileHandleAssociateType,
-  SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import { server } from '../../src/mocks/msw/server'
+import { server } from '../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
-} from '../../src/mocks/user/mock_user_profile'
-import { QueryVisualizationContextProvider } from '../../src/components/QueryVisualizationWrapper'
+} from '../../mocks/user/mock_user_profile'
+import mockTableEntityData, {
+  mockTableEntity,
+} from '../../mocks/entity/mockTableEntity'
+import { GenericCardProps } from './GenericCard'
+import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import QueryWrapper from '../QueryWrapper'
+import {
+  mockQueryBundleRequest,
+  mockQueryResultBundle,
+} from '../../mocks/mockFileViewQuery'
+import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
+import { cloneDeep } from 'lodash-es'
+import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 
-const renderComponent = (props: GenericCardProps) => {
+const renderComponent = (
+  props: GenericCardProps,
+  tableType: 'TableEntity' | 'EntityView',
+) => {
+  const request = cloneDeep(mockQueryBundleRequest)
+  if (tableType === 'TableEntity') {
+    request.entityId = mockTableEntity.id
+    request.query.sql = `SELECT * FROM ${mockTableEntity.id}`
+  } else if (tableType === 'EntityView') {
+    request.entityId = mockFileViewEntity.id
+    request.query.sql = `SELECT * FROM ${mockFileViewEntity.id}`
+  }
+
   return render(
-    <GenericCard
-      {...props}
-      queryVisualizationContext={{
-        getColumnDisplayName: jest.fn().mockImplementation(col => col),
-      }}
-    />,
+    <QueryWrapper initQueryRequest={request}>
+      <QueryVisualizationWrapper>
+        <GenericCard {...props} />
+      </QueryVisualizationWrapper>
+    </QueryWrapper>,
     {
       wrapper: createWrapper(),
     },
@@ -57,8 +73,6 @@ const mockFileHandleLink = jest
 const mockImageFileHandle = jest
   .spyOn(ImageFileHandleModule, 'ImageFileHandle')
   .mockImplementation(() => <div data-testid="ImageFileHandle" />)
-
-const tableId = 'TABLE_ID_MOCK'
 
 const iconOptions = {
   'AMP-AD': 'MOCKED_IMG_SVG_STRING',
@@ -129,12 +143,6 @@ const propsForNonHeaderMode: GenericCardProps = {
   secondaryLabelLimit: 3,
   selectColumns: [],
   columnModels: [],
-  queryContext: {
-    entity: {
-      id: tableId,
-      concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-    },
-  },
 }
 
 const propsForHeaderMode: GenericCardProps = {
@@ -145,20 +153,17 @@ const propsForHeaderMode: GenericCardProps = {
   isHeader: true,
   selectColumns: [],
   columnModels: [],
-  queryContext: {
-    entity: {
-      id: tableId,
-      concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-    },
-  },
 }
 
 describe('GenericCard tests', () => {
   beforeAll(() => server.listen())
+  beforeEach(() => {
+    server.use(...getHandlersForTableQuery(mockQueryResultBundle))
+  })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
   test('renders the correct UI in non header mode', () => {
-    const { container } = renderComponent(propsForNonHeaderMode)
+    const { container } = renderComponent(propsForNonHeaderMode, 'TableEntity')
     screen.getByRole('img')
     within(container.querySelector('div.SRC-type')!).getByText(commonProps.type)
     within(container.querySelector('a')!).getByText(data[0])
@@ -169,7 +174,7 @@ describe('GenericCard tests', () => {
   })
 
   test('renders as a Header without crashing', () => {
-    const { container } = renderComponent(propsForHeaderMode)
+    const { container } = renderComponent(propsForHeaderMode, 'TableEntity')
     within(container.querySelector('div.SRC-type')!).getByText(commonProps.type)
     within(container.querySelector('h3')!).getByText(data[0])
     expect(
@@ -188,40 +193,32 @@ describe('GenericCard tests', () => {
       },
     ]
     test('Renders a UserCard with an EntityView associate type', async () => {
-      renderComponent({
-        ...propsForNonHeaderMode,
-        genericCardSchema: {
-          ...genericCardSchema,
-          secondaryLabels: ['userIdList'],
-        },
-        queryContext: {
-          entity: {
-            id: tableId,
-            concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            secondaryLabels: ['userIdList'],
           },
+          columnModels: columnModelWithUserIdList,
+          titleLinkConfig: undefined,
         },
-        columnModels: columnModelWithUserIdList,
-        titleLinkConfig: undefined,
-        tableId,
-      })
+        'TableEntity',
+      )
 
       await screen.findByText('@' + MOCK_USER_NAME)
     })
   })
 
   test('Renders expected entity type icon when useTypeColumnForIcon is set to true', () => {
-    renderComponent({
-      ...propsForNonHeaderMode,
-      queryContext: {
-        entity: {
-          id: tableId,
-          concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-        },
+    renderComponent(
+      {
+        ...propsForNonHeaderMode,
+        useTypeColumnForIcon: true,
+        titleLinkConfig: undefined,
       },
-      useTypeColumnForIcon: true,
-      titleLinkConfig: undefined,
-      tableId,
-    })
+      'TableEntity',
+    )
     screen.getByTestId('IconSvg')
     expect(mockIconSvg).toHaveBeenCalledWith(
       { icon: 'folder' },
@@ -230,33 +227,27 @@ describe('GenericCard tests', () => {
   })
 
   describe('Renders a FileHandleLink when the title is a file handle', () => {
-    const FILE_HANDLE_COLUMN_TYPE = ColumnTypeEnum.FILEHANDLEID
-    const tableId = 'TABLE_ID_MOCK'
     const columnModelWithFileHandleTitle = [
       {
-        columnType: FILE_HANDLE_COLUMN_TYPE,
+        columnType: ColumnTypeEnum.FILEHANDLEID,
         id: 'MOCKID',
         name: 'link',
       },
     ]
 
-    test('Renders a FileHandleLink with an EntityView associate type', () => {
+    test('Renders a FileHandleLink with an EntityView associate type', async () => {
       const mockFileHandleLink = jest
         .spyOn(FileHandleLinkModule, 'FileHandleLink')
         .mockImplementation(() => <div data-testid="FileHandleLink" />)
-      renderComponent({
-        ...propsForNonHeaderMode,
-        queryContext: {
-          entity: {
-            id: tableId,
-            concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-          },
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          columnModels: columnModelWithFileHandleTitle,
+          titleLinkConfig: undefined,
         },
-        columnModels: columnModelWithFileHandleTitle,
-        titleLinkConfig: undefined,
-        tableId,
-      })
-      screen.getByTestId('FileHandleLink')
+        'EntityView',
+      )
+      await screen.findByTestId('FileHandleLink')
       expect(mockFileHandleLink).toHaveBeenCalledWith(
         {
           showDownloadIcon: true,
@@ -271,26 +262,22 @@ describe('GenericCard tests', () => {
       )
     })
 
-    test('Renders a FileHandleLink with a table associate type', () => {
-      renderComponent({
-        ...propsForNonHeaderMode,
-        queryContext: {
-          entity: {
-            id: tableId,
-            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
-          },
+    test('Renders a FileHandleLink with a table associate type', async () => {
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          columnModels: columnModelWithFileHandleTitle,
+          titleLinkConfig: undefined,
         },
-        columnModels: columnModelWithFileHandleTitle,
-        titleLinkConfig: undefined,
-        tableId,
-      })
-      screen.getByTestId('FileHandleLink')
+        'TableEntity',
+      )
+      await screen.findByTestId('FileHandleLink')
       expect(mockFileHandleLink).toHaveBeenCalledWith(
         {
           showDownloadIcon: true,
           fileHandleAssociation: {
             fileHandleId: MOCKED_LINK,
-            associateObjectId: tableId,
+            associateObjectId: mockTableEntityData.id,
             associateObjectType: FileHandleAssociateType.TableEntity,
           },
           displayValue: MOCKED_TITLE,
@@ -302,7 +289,6 @@ describe('GenericCard tests', () => {
 
   describe('Renders a ImageFileHandle when imageFileHandleColumnName is set', () => {
     const FILE_HANDLE_COLUMN_TYPE = ColumnTypeEnum.FILEHANDLEID
-    const tableId = 'TABLE_ID_MOCK'
     const columnModelWithFileHandle = [
       {
         columnType: FILE_HANDLE_COLUMN_TYPE,
@@ -310,24 +296,20 @@ describe('GenericCard tests', () => {
         name: 'image',
       },
     ]
-    test('Renders a ImageFileHandle with an EntityView associate type', () => {
-      renderComponent({
-        ...propsForNonHeaderMode,
-        genericCardSchema: {
-          ...genericCardSchema,
-          imageFileHandleColumnName: 'image',
-        },
-        queryContext: {
-          entity: {
-            id: tableId,
-            concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+    test('Renders a ImageFileHandle with an EntityView associate type', async () => {
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            imageFileHandleColumnName: 'image',
           },
+          columnModels: columnModelWithFileHandle,
+          titleLinkConfig: undefined,
         },
-        columnModels: columnModelWithFileHandle,
-        titleLinkConfig: undefined,
-        tableId,
-      })
-      screen.getByTestId('ImageFileHandle')
+        'EntityView',
+      )
+      await screen.findByTestId('ImageFileHandle')
       expect(mockImageFileHandle).toHaveBeenCalledWith(
         {
           fileHandleAssociation: {
@@ -339,29 +321,25 @@ describe('GenericCard tests', () => {
         expect.anything(),
       )
     })
-    test('Renders a ImageFileHandle with a table associate type', () => {
-      renderComponent({
-        ...propsForNonHeaderMode,
-        genericCardSchema: {
-          ...genericCardSchema,
-          imageFileHandleColumnName: 'image',
-        },
-        queryContext: {
-          entity: {
-            id: tableId,
-            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+    test('Renders a ImageFileHandle with a table associate type', async () => {
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            imageFileHandleColumnName: 'image',
           },
+          columnModels: columnModelWithFileHandle,
+          titleLinkConfig: undefined,
         },
-        columnModels: columnModelWithFileHandle,
-        titleLinkConfig: undefined,
-        tableId,
-      })
-      screen.getByTestId('ImageFileHandle')
+        'TableEntity',
+      )
+      await screen.findByTestId('ImageFileHandle')
       expect(mockImageFileHandle).toHaveBeenCalledWith(
         {
           fileHandleAssociation: {
             fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
-            associateObjectId: tableId,
+            associateObjectId: mockTableEntityData.id,
             associateObjectType: FileHandleAssociateType.TableEntity,
           },
         },
@@ -467,196 +445,6 @@ describe('GenericCard tests', () => {
       expect(target2).toEqual(TargetEnum.FULL_WINDOW_BODY)
     })
   })
-  describe('it makes the correct URL for the secondary labels', () => {
-    const DATASETS = 'datasets'
-    const datasetBaseURL = 'Explore/Datasets'
-    const labelLinkConfig: LabelLinkConfig = [
-      {
-        isMarkdown: false,
-        baseURL: datasetBaseURL,
-        URLColumnName: DATASETS,
-        matchColumnName: 'dataset',
-      },
-      {
-        isMarkdown: true,
-        matchColumnName: 'dataset',
-      },
-    ]
-    const selectColumns: SelectColumn[] = [
-      {
-        columnType: ColumnTypeEnum.STRING,
-        id: 'a',
-        name: 'dataset',
-      },
-    ]
-
-    test('works with a single value', () => {
-      const value = 'syn1234567'
-      const { container } = render(
-        <SynapseCardLabel
-          value={value}
-          labelLink={labelLinkConfig[0]}
-          isHeader={false}
-          selectColumns={selectColumns}
-          columnModels={undefined}
-          columnName={DATASETS}
-        />,
-        { wrapper: createWrapper() },
-      )
-
-      const link = container.querySelector('a')!
-      expect(link.getAttribute('href')).toEqual(
-        `/${datasetBaseURL}?${DATASETS}=${value}`,
-      )
-    })
-
-    test('works with a header', () => {
-      const value = 'syn1234567'
-      const { container } = render(
-        <SynapseCardLabel
-          value={value}
-          labelLink={labelLinkConfig[0]}
-          isHeader={true}
-          selectColumns={selectColumns}
-          columnModels={undefined}
-          columnName={DATASETS}
-        />,
-        { wrapper: createWrapper() },
-      )
-      const link = container.querySelector('a')!
-      expect(link).toBeDefined()
-    })
-
-    test('works with a multi string value', () => {
-      // add commas to ensure its not piecing those out
-      const val1 = 'syn12,,34567'
-      const val2 = 'syn1234,568'
-      const val3 = 'syn,,12345,69'
-      const value = `["${val1}","${val2}","${val3}"]`
-      const { container } = render(
-        <SynapseCardLabel
-          value={value}
-          labelLink={labelLinkConfig[0]}
-          isHeader={false}
-          selectColumns={[
-            {
-              columnType: ColumnTypeEnum.STRING_LIST,
-              id: 'a',
-              name: DATASETS,
-            },
-          ]}
-          columnModels={undefined}
-          columnName={DATASETS}
-        />,
-        { wrapper: createWrapper() },
-      )
-      const links = container.querySelectorAll('a')!
-      expect(links).toHaveLength(3)
-      expect(links[0].getAttribute('href')).toEqual(
-        `/${datasetBaseURL}?${DATASETS}=${val1}`,
-      )
-      expect(links[1].getAttribute('href')).toEqual(
-        `/${datasetBaseURL}?${DATASETS}=${val2}`,
-      )
-      expect(links[2].getAttribute('href')).toEqual(
-        `/${datasetBaseURL}?${DATASETS}=${val3}`,
-      )
-    })
-
-    test('works with a comma separated value', () => {
-      const val1 = 'syn1234567'
-      const val2 = 'syn1234568'
-      const val3 = 'syn1234569'
-      const value = `${val1},${val2},${val3}`
-      const { container } = render(
-        <SynapseCardLabel
-          value={value}
-          labelLink={labelLinkConfig[0]}
-          isHeader={false}
-          selectColumns={selectColumns}
-          columnModels={undefined}
-          columnName={DATASETS}
-        />,
-        { wrapper: createWrapper() },
-      )
-      const links = container.querySelectorAll('a')
-      expect(links).toHaveLength(3)
-      expect(links[0].getAttribute('href')).toEqual(
-        `/${datasetBaseURL}?${DATASETS}=${val1}`,
-      )
-      expect(links[1].getAttribute('href')).toEqual(
-        `/${datasetBaseURL}?${DATASETS}=${val2}`,
-      )
-      expect(links[2].getAttribute('href')).toEqual(
-        `/${datasetBaseURL}?${DATASETS}=${val3}`,
-      )
-    })
-
-    test('works with a markdown link', () => {
-      const value = '[link](www.synapse.org)'
-      const { container } = render(
-        <SynapseCardLabel
-          value={value}
-          labelLink={labelLinkConfig[1]}
-          isHeader={false}
-          selectColumns={undefined}
-          columnModels={undefined}
-          columnName=""
-        />,
-        { wrapper: createWrapper() },
-      )
-
-      const markdown = container.querySelector('.markdown')!
-      // double check the html elements show up correctly from the markdown component
-      expect(within(markdown).queryByRole('paragraph')).not.toBeInTheDocument()
-      within(markdown).getByRole('link')
-    })
-
-    test('works with a multi string markdown link', () => {
-      const selectColumnsMultiString: SelectColumn[] = [
-        {
-          name: DATASETS,
-          id: 'a',
-          columnType: ColumnTypeEnum.STRING_LIST,
-        },
-      ]
-      // make sure it doesn't parse out the extra commas
-      const value =
-        '["[link],,(www.synapse.org)","[link2](w,,ww.synapse.org/#!)"]'
-      const { container } = render(
-        <SynapseCardLabel
-          value={value}
-          labelLink={labelLinkConfig[1]}
-          isHeader={false}
-          selectColumns={selectColumnsMultiString}
-          columnModels={undefined}
-          columnName={DATASETS}
-        />,
-        { wrapper: createWrapper() },
-      )
-      const markdown = container.querySelectorAll('.markdown')
-      expect(markdown).toHaveLength(2)
-    })
-
-    it('auto-links a single Synapse ID value', () => {
-      const value = 'syn1234567'
-      render(
-        <SynapseCardLabel
-          value={value}
-          labelLink={undefined}
-          isHeader={false}
-          selectColumns={selectColumns}
-          columnModels={undefined}
-          columnName={DATASETS}
-        />,
-        { wrapper: createWrapper() },
-      )
-      const link = screen.getByRole('link')
-      expect(link.getAttribute('href')).toEqual(
-        `https://www.synapse.org/#!Synapse:${value}`,
-      )
-    })
-  })
 
   describe('It renders markdown for the description', () => {
     const descriptionLinkConfig = {
@@ -700,7 +488,7 @@ describe('GenericCard tests', () => {
         />,
         { wrapper: createWrapper() },
       )
-      const markdown = container.querySelector('.markdown')!
+      const markdown = container.querySelector<HTMLElement>('.markdown')!
       within(markdown).getByText('header', { exact: false })
     })
   })

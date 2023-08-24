@@ -1,7 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { QueryContextProvider } from '../src/components/QueryContext'
-import { QueryVisualizationContextProvider } from '../src/components/QueryVisualizationWrapper'
+import { QueryVisualizationContextProvider } from '../src/components/QueryVisualizationWrapper/QueryVisualizationWrapper'
 import {
   mockQueryBundleRequest,
   mockQueryResultBundle,

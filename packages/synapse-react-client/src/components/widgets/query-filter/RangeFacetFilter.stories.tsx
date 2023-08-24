@@ -1,7 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
 import { RangeFacetFilter } from './RangeFacetFilter'
 

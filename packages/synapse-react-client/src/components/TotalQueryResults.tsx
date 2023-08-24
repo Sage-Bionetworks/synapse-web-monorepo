@@ -1,11 +1,16 @@
 import React from 'react'
 import { SkeletonInlineBlock } from './Skeleton/SkeletonInlineBlock'
 import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
-import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { useQueryContext } from './QueryContext/QueryContext'
 import IconSvg from './IconSvg/IconSvg'
 import SelectionCriteriaPills from './widgets/facet-nav/SelectionCriteriaPills'
 import pluralize from 'pluralize'
+import { useAtomValue } from 'jotai'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+} from './QueryWrapper/QueryWrapper'
 
 export type TotalQueryResultsProps = {
   style?: React.CSSProperties
@@ -17,9 +22,9 @@ export type TotalQueryResultsProps = {
 
 function TotalQueryResults(props: TotalQueryResultsProps) {
   const { style, frontText, endText = '', hideIfUnfiltered = false } = props
-  const { data, isLoadingNewBundle, resetQuery, error, hasResettableFilters } =
-    useQueryContext()
-
+  const { resetQuery, error, hasResettableFilters } = useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
   const { unitDescription } = useQueryVisualizationContext()
 
   const total = data?.queryCount

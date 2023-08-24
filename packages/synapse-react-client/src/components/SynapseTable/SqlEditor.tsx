@@ -1,7 +1,7 @@
 import { Collapse, TextField } from '@mui/material'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { useQueryContext } from '../QueryContext'
 import IconSvg from '../IconSvg'
 

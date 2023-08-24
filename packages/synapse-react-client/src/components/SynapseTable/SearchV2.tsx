@@ -9,14 +9,17 @@ import {
   ColumnSingleValueQueryFilter,
   ColumnTypeEnum,
   QueryFilter,
+  QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
+import { QueryVisualizationContextType } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { LockedColumn, QueryContextType } from '../QueryContext/QueryContext'
 import IconSvg from '../IconSvg/IconSvg'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
 } from '../../utils/types/IsType'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 type SearchState = {
   show: boolean
@@ -43,9 +46,11 @@ export type SearchV2Props = {
   fullTextSearchHelpURL?: string
 }
 
-type InternalSearchProps = SearchV2Props
+type InternalSearchProps = SearchV2Props & {
+  data: QueryResultBundle | undefined
+}
 
-class Search extends React.Component<InternalSearchProps, SearchState> {
+class _Search extends React.Component<InternalSearchProps, SearchState> {
   public searchFormRef: React.RefObject<HTMLFormElement>
   public radioFormRef: React.RefObject<HTMLFormElement>
 
@@ -118,10 +123,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       } else {
         // Otherwise, get the first column model that can be searched.
         // And for study details page: if lockedColumn is defined, remove it from the search
-        const searchableColumnModels =
-          this.props.queryContext?.data?.columnModels
-            ?.filter(el => el.name !== lockedColumn?.columnName)
-            .filter(el => this.isSupportedColumn(el))
+        const searchableColumnModels = this.props.data?.columnModels
+          ?.filter(el => el.name !== lockedColumn?.columnName)
+          .filter(el => this.isSupportedColumn(el))
         columnName = searchableColumnModels?.[0].name ?? ''
       }
     }
@@ -148,9 +152,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     if (indexOfColumn === -1) {
       // get the column model to figure out what kind of filter we should apply.
       const columnModel: ColumnModel | undefined =
-        this.props.queryContext?.data?.columnModels?.filter(
-          el => el.name === columnName,
-        )[0]
+        this.props.data?.columnModels?.filter(el => el.name === columnName)[0]
       if (columnModel?.columnType.endsWith('_LIST')) {
         const columnMultiValueQueryFilter: ColumnMultiValueFunctionQueryFilter =
           {
@@ -214,7 +216,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const {
       searchable,
       lockedColumn,
-      queryContext: { data },
+      data,
       queryVisualizationContext: { showSearchBar, getColumnDisplayName },
     } = this.props
     const { searchText, show, columnName } = this.state
@@ -327,4 +329,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 }
 
-export default Search
+export default function Search(props: SearchV2Props) {
+  const data = useAtomValue(tableQueryDataAtom)
+  return <_Search {...props} data={data} />
+}

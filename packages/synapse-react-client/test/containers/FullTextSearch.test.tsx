@@ -5,7 +5,7 @@ import { FullTextSearch } from '../../src/components/FullTextSearch'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
-} from '../../src/components/QueryVisualizationWrapper'
+} from '../../src/components/QueryVisualizationWrapper/QueryVisualizationWrapper'
 import {
   QueryContextProvider,
   QueryContextType,

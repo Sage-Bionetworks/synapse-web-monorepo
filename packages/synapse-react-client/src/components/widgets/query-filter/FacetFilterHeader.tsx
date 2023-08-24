@@ -1,7 +1,7 @@
 import React from 'react'
 import IconPlus from '../../../assets/icons/IconPlus'
 import IconMinus from '../../../assets/icons/IconMinus'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 
 export type FacetFilterHeaderProps = {
   label: string

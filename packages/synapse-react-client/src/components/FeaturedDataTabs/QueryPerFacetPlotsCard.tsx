@@ -6,7 +6,7 @@ import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import {
   QueryVisualizationContextType,
   QueryVisualizationWrapper,
-} from '../QueryVisualizationWrapper'
+} from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'

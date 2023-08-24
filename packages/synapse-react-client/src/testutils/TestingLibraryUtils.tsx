@@ -5,6 +5,9 @@ import { SynapseContextType } from '../utils/context/SynapseContext'
 import FullContextProvider, {
   defaultQueryClientConfig,
 } from '../utils/context/FullContextProvider'
+import { useHydrateAtoms } from 'jotai/utils'
+import ArgsType = jest.ArgsType
+import { Provider } from 'jotai/index'
 
 type RtlWrapperProps = {
   children?: ReactNode
@@ -44,4 +47,28 @@ export const createWrapperAndQueryClient = (
  */
 export const createWrapper = (props?: Partial<SynapseContextType>) => {
   return createWrapperAndQueryClient(props).wrapperFn
+}
+
+type HydrateAtomsProps = React.PropsWithChildren<{
+  initialValues?: ArgsType<typeof useHydrateAtoms>[0]
+}>
+
+function HydrateAtoms(props: HydrateAtomsProps) {
+  const {
+    initialValues = [] as unknown as ArgsType<typeof useHydrateAtoms>[0],
+    children,
+  } = props
+  useHydrateAtoms(initialValues)
+  return <>{children}</>
+}
+
+export type AtomProviderProps = HydrateAtomsProps
+
+export function AtomProvider(props: AtomProviderProps) {
+  const { initialValues, children } = props
+  return (
+    <Provider>
+      <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </Provider>
+  )
 }

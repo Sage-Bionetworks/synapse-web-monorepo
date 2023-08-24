@@ -7,7 +7,7 @@ import {
   QueryResultBundle,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { ColumnSelection, DownloadOptions } from '../table-top'
@@ -22,6 +22,17 @@ import {
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
 import IconSvg from '../../IconSvg'
+import { useAtomValue } from 'jotai'
+import {
+  lockedColumnAtom,
+  tableQueryDataAtom,
+  tableQueryEntityAtom,
+} from '../../QueryWrapper/QueryWrapper'
+import {
+  hasSelectedRowsAtom,
+  isRowSelectionVisibleAtom,
+  selectedRowsAtom,
+} from '../../QueryWrapper/TableRowSelectionState'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -83,18 +94,14 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     customControls,
     { isRowSelectionSupported: true },
   )
-  const {
-    data,
-    entity,
-    getInitQueryRequest,
-    lockedColumn,
-    hasResettableFilters,
-    getCurrentQueryRequest,
-    isRowSelectionVisible,
-    selectedRows,
-    hasSelectedRows,
-  } = useQueryContext()
-  useQueryContext()
+  const { getInitQueryRequest, hasResettableFilters, getCurrentQueryRequest } =
+    useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const entity = useAtomValue(tableQueryEntityAtom)
+  const lockedColumn = useAtomValue(lockedColumnAtom)
+  const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
+  const selectedRows = useAtomValue(selectedRowsAtom)
+  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
 
   const {
     setShowSearchBar,
@@ -137,8 +144,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   /**
    * Handles the toggle of a column select, this will cause the table to
    * either show the column or hide depending on the prior state of the column
-   *
-   * @memberof SynapseTable
    */
   const toggleColumnSelection = (columnName: string) => {
     let columnsToShowInTableCopy = cloneDeep(columnsToShowInTable)

@@ -18,7 +18,7 @@ import mockQueryResponseData from '../../../src/mocks/mockQueryResponseData'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
-} from '../../../src/components/QueryVisualizationWrapper'
+} from '../../../src/components/QueryVisualizationWrapper/QueryVisualizationWrapper'
 import FullContextProvider from '../../../src/utils/context/FullContextProvider'
 
 const mockFacetColumn: FacetColumnResult = {

@@ -5,7 +5,7 @@ import {
   MAX_LEGEND_LENGTH,
   truncate,
 } from './FacetPlotLegendUtils'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 
 type FacetPlotLegendTableProps = FacetPlotLegendProps & {
   facetName?: string

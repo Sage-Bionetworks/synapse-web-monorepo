@@ -2,11 +2,12 @@ import dayjs from 'dayjs'
 import React from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { Typography } from '@mui/material'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { useQueryContext } from '../QueryContext/QueryContext'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 export default function LastUpdatedOn() {
-  const { data } = useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
   const { showLastUpdatedOn } = useQueryVisualizationContext()
   return showLastUpdatedOn && data && data.lastUpdatedOn ? (
     <div

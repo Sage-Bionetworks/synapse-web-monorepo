@@ -8,7 +8,7 @@ import QuerySortSelector, {
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
-} from '../../src/components/QueryVisualizationWrapper'
+} from '../../src/components/QueryVisualizationWrapper/QueryVisualizationWrapper'
 import {
   QueryContextProvider,
   QueryContextType,
@@ -19,7 +19,7 @@ import {
   QueryResultBundle,
   SortItem,
 } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../src/mocks/query/syn16787123.json'
+import syn16787123Json from '../../src/mocks/query/syn16787123'
 import selectEvent from 'react-select-event'
 import { DEFAULT_PAGE_SIZE } from '../../src/utils/SynapseConstants'
 

@@ -3,18 +3,21 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
-import { useQueryContext } from './QueryContext/QueryContext'
-import NoContentAvailable from './SynapseTable/NoContentAvailable'
-import { NoContentPlaceholderType } from './SynapseTable/NoContentPlaceholderType'
-import SearchResultsNotFound from './SynapseTable/SearchResultsNotFound'
-import ThisTableIsEmpty from './SynapseTable/TableIsEmpty'
-import { unCamelCase } from '../utils/functions/unCamelCase'
+import { useQueryContext } from '../QueryContext/QueryContext'
+import NoContentAvailable from '../SynapseTable/NoContentAvailable'
+import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
+import SearchResultsNotFound from '../SynapseTable/SearchResultsNotFound'
+import ThisTableIsEmpty from '../SynapseTable/TableIsEmpty'
+import { unCamelCase } from '../../utils/functions/unCamelCase'
 import { ColumnType } from '@sage-bionetworks/synapse-types'
-import { getDisplayValue } from '../utils/functions/getDataFromFromStorage'
-import useMutuallyExclusiveState from '../utils/hooks/useMutuallyExclusiveState'
+import { getDisplayValue } from '../../utils/functions/getDataFromFromStorage'
+import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveState'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 export type QueryVisualizationContextType = {
   columnsToShowInTable: string[]
@@ -117,18 +120,19 @@ export function QueryVisualizationWrapper(
 ) {
   const {
     noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE,
-    columnAliases = {},
     defaultShowSearchBar = false,
     defaultShowFacetVisualization = true,
     unitDescription = 'result',
   } = props
 
-  const {
-    data,
-    getCurrentQueryRequest,
-    isFacetsAvailable,
-    hasResettableFilters,
-  } = useQueryContext()
+  const columnAliases = useMemo(
+    () => props.columnAliases ?? {},
+    [props.columnAliases],
+  )
+
+  const { getCurrentQueryRequest, isFacetsAvailable, hasResettableFilters } =
+    useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
 
   const [showSqlEditor, setShowSqlEditor] = useState(false)
   const [showFacetVisualization, setShowFacetVisualization] = useState(
@@ -195,30 +199,52 @@ export function QueryVisualizationWrapper(
     }
   }, [noContentPlaceholderType, hasResettableFilters])
 
-  const context: QueryVisualizationContextType = {
-    columnsToShowInTable: visibleColumns,
-    setColumnsToShowInTable: setVisibleColumns,
-    rgbIndex: props.rgbIndex,
-    unitDescription: unitDescription,
-    showLastUpdatedOn: props.showLastUpdatedOn,
-    getColumnDisplayName,
-    getDisplayValue,
-    NoContentPlaceholder,
-    isShowingExportToCavaticaModal,
-    setIsShowingExportToCavaticaModal,
-    showFacetFilter: isFacetsAvailable ? showFacetFilter : false,
-    setShowFacetFilter,
-    showSearchBar,
-    setShowSearchBar,
-    showDownloadConfirmation,
-    setShowDownloadConfirmation,
-    showSqlEditor,
-    setShowSqlEditor,
-    showFacetVisualization: isFacetsAvailable ? showFacetVisualization : false,
-    setShowFacetVisualization,
-    showCopyToClipboard,
-    setShowCopyToClipboard,
-  }
+  const context: QueryVisualizationContextType = useMemo(
+    () => ({
+      columnsToShowInTable: visibleColumns,
+      setColumnsToShowInTable: setVisibleColumns,
+      rgbIndex: props.rgbIndex,
+      unitDescription: unitDescription,
+      showLastUpdatedOn: props.showLastUpdatedOn,
+      getColumnDisplayName,
+      getDisplayValue,
+      NoContentPlaceholder,
+      isShowingExportToCavaticaModal,
+      setIsShowingExportToCavaticaModal,
+      showFacetFilter: isFacetsAvailable ? showFacetFilter : false,
+      setShowFacetFilter,
+      showSearchBar,
+      setShowSearchBar,
+      showDownloadConfirmation,
+      setShowDownloadConfirmation,
+      showSqlEditor,
+      setShowSqlEditor,
+      showFacetVisualization: isFacetsAvailable
+        ? showFacetVisualization
+        : false,
+      setShowFacetVisualization,
+      showCopyToClipboard,
+      setShowCopyToClipboard,
+    }),
+    [
+      NoContentPlaceholder,
+      getColumnDisplayName,
+      isFacetsAvailable,
+      isShowingExportToCavaticaModal,
+      props.rgbIndex,
+      props.showLastUpdatedOn,
+      setShowDownloadConfirmation,
+      setShowSearchBar,
+      showCopyToClipboard,
+      showDownloadConfirmation,
+      showFacetFilter,
+      showFacetVisualization,
+      showSearchBar,
+      showSqlEditor,
+      unitDescription,
+      visibleColumns,
+    ],
+  )
   /**
    * Render the children without any formatting
    */

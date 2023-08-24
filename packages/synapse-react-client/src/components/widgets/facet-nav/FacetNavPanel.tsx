@@ -16,8 +16,7 @@ import {
   FacetColumnResultValues,
 } from '@sage-bionetworks/synapse-types'
 import loadingScreen from '../../LoadingScreen/LoadingScreen'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { useQueryContext } from '../../QueryContext/QueryContext'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import { Box, IconButton, Tooltip } from '@mui/material'
 import { useQuery } from 'react-query'
@@ -25,6 +24,11 @@ import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
 import IconSvg from '../../IconSvg'
+import { useAtomValue } from 'jotai'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+} from '../../QueryWrapper/QueryWrapper'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -263,7 +267,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     onSetPlotType,
   } = props
   const { accessToken } = useSynapseContext()
-  const { data, isLoadingNewBundle } = useQueryContext()
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
+  const data = useAtomValue(tableQueryDataAtom)
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
@@ -326,7 +331,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     </div>
   )
 
-  if ((!data && isLoadingNewBundle) || !facetToPlot) {
+  const columnModel = data?.columnModels?.find(
+    columnModel => columnModel.name === facetToPlot.columnName,
+  )
+
+  if ((!data && isLoadingNewBundle) || !facetToPlot || !columnModel) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}
@@ -358,11 +367,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               <div className="FacetNavPanel__title__tools">
                 <EnumFacetFilter
                   facetValues={facetToPlot.facetValues}
-                  columnModel={
-                    data?.columnModels!.find(
-                      el => el.name === facetToPlot.columnName,
-                    )!
-                  }
+                  columnModel={columnModel}
                   containerAs="Dropdown"
                 />
                 <Tooltip title={'Expand to large graph'}>

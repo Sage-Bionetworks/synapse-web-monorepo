@@ -1,6 +1,6 @@
 import { getNextPageOfData } from '../../src/utils/functions'
 import { SynapseConstants } from '../../src/utils'
-import syn16787123Json from '../../src/mocks/query/syn16787123.json'
+import syn16787123Json from '../../src/mocks/query/syn16787123'
 import {
   COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
   ColumnSingleValueFilterOperator,
@@ -26,9 +26,9 @@ import {
 } from '../../src/utils/functions/queryUtils'
 import { LockedColumn } from '../../src'
 import { mockTableEntity } from '../../src/mocks/entity/mockTableEntity'
-import { mockFileViewEntity } from '../../src/mocks/entity/mockEntity'
 import mockDataset from '../../src/mocks/entity/mockDataset'
 import SynapseClient from '../../src/synapse-client'
+import { mockFileViewEntity } from '../../src/mocks/entity/mockFileView'
 
 jest.mock('../../src/synapse-client/SynapseClient', () => ({
   getQueryTableResults: jest.fn(),

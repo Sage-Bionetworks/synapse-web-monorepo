@@ -1,7 +1,7 @@
 import React from 'react'
 import { FacetColumnResult } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg/IconSvg'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 
 export type FacetChipProps = {
   facet: FacetColumnResult

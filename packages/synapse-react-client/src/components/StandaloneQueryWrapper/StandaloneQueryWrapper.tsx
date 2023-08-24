@@ -16,12 +16,11 @@ import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import TotalQueryResults from '../TotalQueryResults'
 import SqlEditor from '../SynapseTable/SqlEditor'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
-} from '../QueryVisualizationWrapper'
+} from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
 import LastUpdatedOn from '../QueryWrapperPlotNav/LastUpdatedOn'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
@@ -86,12 +85,11 @@ const StandaloneQueryWrapper: React.FunctionComponent<
   StandaloneQueryWrapperProps
 > = (props: StandaloneQueryWrapperProps) => {
   const {
-    title,
     searchParams,
     sqlOperator,
     showAccessColumn,
     sql,
-    hideDownload,
+    hideAddToDownloadListColumn,
     hideQueryCount,
     name,
     showTopLevelControls = false,
@@ -118,8 +116,6 @@ const StandaloneQueryWrapper: React.FunctionComponent<
       searchParams,
       sqlOperator,
     )
-
-  const synapseContext = useSynapseContext()
 
   const { data: entity } = useGetEntity(entityId)
   return (
@@ -157,7 +153,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                         <TopLevelControls
                           showColumnSelection={true}
                           name={name}
-                          hideDownload={hideDownload}
+                          hideDownload={hideAddToDownloadListColumn}
                           hideQueryCount={hideQueryCount}
                           hideFacetFilterControl={true}
                           hideVisualizationsControl={true}
@@ -180,11 +176,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                         <TotalQueryResults frontText={''} />
                       )}
                       <SynapseTable
-                        synapseContext={synapseContext}
-                        queryContext={queryContext}
-                        queryVisualizationContext={queryVisualizationContext}
                         showAccessColumn={showAccessColumn}
-                        title={title}
                         data-testid="SynapseTable"
                         {...rest}
                       />

@@ -3,7 +3,7 @@ import { Dropdown } from 'react-bootstrap'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { SelectColumn } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg/IconSvg'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 
 type ColumnSelectionProps = {
   headers?: SelectColumn[]

@@ -5,7 +5,7 @@ import {
   ColumnTypeEnum,
   FacetColumnResultValueCount,
 } from '@sage-bionetworks/synapse-types'
-import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
 import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
 import { cloneDeep } from 'lodash-es'

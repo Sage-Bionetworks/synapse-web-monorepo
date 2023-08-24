@@ -2,7 +2,7 @@ import { Collapse, IconButton, TextField } from '@mui/material'
 import React, { ChangeEvent, useRef, useState } from 'react'
 import { TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from './QueryContext'
-import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { HelpPopover } from './HelpPopover/HelpPopover'
 import IconSvg from './IconSvg/IconSvg'
 

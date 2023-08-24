@@ -3,10 +3,16 @@ import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { Button } from '@mui/material'
 import { RowSelectionUI } from './RowSelectionUI'
 import { useQueryContext } from '../../QueryContext'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { Cavatica } from '../../../assets/icons/Cavatica'
 import { GetAppTwoTone } from '@mui/icons-material'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
+import { useAtom, useAtomValue } from 'jotai'
+import {
+  tableQueryDataAtom,
+  tableQueryEntityAtom,
+} from '../../QueryWrapper/QueryWrapper'
+import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { getFileColumnModelId } from '../SynapseTableUtils'
 
 export type RowSelectionControlsProps = {
@@ -23,13 +29,11 @@ export type RowSelectionControlsProps = {
  */
 export function RowSelectionControls(props: RowSelectionControlsProps) {
   const { customControls = [], showExportToCavatica = false, remount } = props
-  const {
-    data,
-    entity,
-    getCurrentQueryRequest,
-    selectedRows,
-    setSelectedRows,
-  } = useQueryContext()
+  const { getCurrentQueryRequest } = useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const entity = useAtomValue(tableQueryEntityAtom)
+  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
+
   const { setIsShowingExportToCavaticaModal, setShowDownloadConfirmation } =
     useQueryVisualizationContext()
 

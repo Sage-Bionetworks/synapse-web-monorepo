@@ -14,7 +14,7 @@ import {
   ColumnTypeEnum,
   FacetColumnResultRange,
 } from '@sage-bionetworks/synapse-types'
-import { QueryVisualizationContextProvider } from '../../../src/components/QueryVisualizationWrapper'
+import { QueryVisualizationContextProvider } from '../../../src/components/QueryVisualizationWrapper/QueryVisualizationWrapper'
 
 let capturedOnChange:
   | ((range: { min: string | number; max: string | number }) => void)
