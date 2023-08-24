@@ -5,53 +5,52 @@ import {
   LockedColumn,
   QueryContextType,
   useQueryContext,
-} from '../../src/components/QueryContext/QueryContext'
-import {
-  QueryWrapper,
-  QueryWrapperProps,
-} from '../../src/components/QueryWrapper/QueryWrapper'
-import { SynapseConstants } from '../../src/utils'
+} from '../QueryContext'
+import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
+import { SynapseConstants } from '../../utils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
+  Row,
 } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../src/mocks/query/syn16787123'
-import { DEFAULT_PAGE_SIZE } from '../../src/utils/SynapseConstants'
-import useTableRowSelection from '../../src/components/QueryWrapper/useTableRowSelection'
-import SynapseClient from '../../src/synapse-client'
-import { mockCompleteAsyncJob } from '../../src/mocks/mockFileViewQuery'
+import syn16787123Json from '../../mocks/query/syn16787123'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import SynapseClient from '../../synapse-client'
+import { mockCompleteAsyncJob } from '../../mocks/mockFileViewQuery'
 import userEvent from '@testing-library/user-event'
-import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
-jest.mock('../../src/synapse-client', () => ({
+jest.mock('../../synapse-client', () => ({
   getQueryTableAsyncJobResults: jest.fn(),
   getEntity: jest.fn(),
-}))
-
-jest.mock('../../src/components/QueryWrapper/useTableRowSelection', () => ({
-  __esModule: true,
-  default: jest.fn(),
 }))
 
 const mockGetQueryTableAsyncJobResults = jest.mocked(
   SynapseClient.getQueryTableAsyncJobResults,
 )
-const mockUseTableRowSelection = jest.mocked(useTableRowSelection)
 
 let providedContext: QueryContextType | undefined
 const renderedTextConfirmation = 'QueryWrapper rendered!'
+let isLoadingNewBundleValue: boolean | undefined
+let currentQueryDataValue: QueryResultBundle | undefined
+let selectedRows: Row[] | undefined
+let setSelectedRows: QueryContextType['setSelectedRows'] | undefined
 
-const QueryContextReceiver = jest.fn((props: any) => {
+const QueryContextReceiver = () => {
   // An error would be thrown if context was not provided by QueryWrapper
   const context = useQueryContext()
+  isLoadingNewBundleValue = context.isLoadingNewBundle
+  currentQueryDataValue = context.data
+  selectedRows = context.selectedRows
+  setSelectedRows = context.setSelectedRows
   providedContext = context
   return <>{renderedTextConfirmation}</>
-})
+}
 
 // utility function
-async function renderComponent(props: Partial<QueryWrapperProps>) {
+function renderComponent(props: QueryWrapperProps) {
   let renderResult
-  await act(async () => {
+  act(() => {
     renderResult = render(
       <QueryWrapper {...props}>
         <QueryContextReceiver />
@@ -79,6 +78,10 @@ const initialQueryRequest: QueryBundleRequest = {
 
 describe('QueryWrapper', () => {
   beforeEach(() => {
+    isLoadingNewBundleValue = undefined
+    currentQueryDataValue = undefined
+    selectedRows = undefined
+    setSelectedRows = undefined
     jest.clearAllMocks()
     window.history.pushState({}, 'Page Title', '/')
 
@@ -88,36 +91,27 @@ describe('QueryWrapper', () => {
         ...mockCompleteAsyncJob,
         requestBody: queryBundleRequest,
         jobState: 'COMPLETE',
-        responseBody: syn16787123Json as QueryResultBundle,
+        responseBody: syn16787123Json,
       })
-    })
-
-    mockUseTableRowSelection.mockReturnValue({
-      isRowSelectionVisible: false,
-      selectedRows: [],
-      setSelectedRows: jest.fn(),
-      hasSelectedRows: false,
     })
   })
 
   describe('basic functionality', () => {
     it('renders without crashing', async () => {
-      await renderComponent({ initQueryRequest: initialQueryRequest })
+      renderComponent({ initQueryRequest: initialQueryRequest })
       await screen.findByText(renderedTextConfirmation)
     })
 
-    it('Context values are accurate', async () => {
-      await renderComponent({ initQueryRequest: initialQueryRequest })
-      await waitFor(() => providedContext?.isLoadingNewBundle === false)
-      expect(providedContext).toEqual(
-        expect.objectContaining({
-          data: syn16787123Json,
-        }),
-      )
+    it('Data is set', async () => {
+      renderComponent({ initQueryRequest: initialQueryRequest })
+      await waitFor(() => {
+        expect(isLoadingNewBundleValue).toBe(false)
+        expect(currentQueryDataValue).toEqual(syn16787123Json)
+      })
     })
 
     it('Executing a new query updates the last query request', async () => {
-      await renderComponent({ initQueryRequest: initialQueryRequest })
+      renderComponent({ initQueryRequest: initialQueryRequest })
 
       // Wait for the children to render to ensure context is created
       await screen.findByText(renderedTextConfirmation)
@@ -133,7 +127,7 @@ describe('QueryWrapper', () => {
       // Update the query with new SQL
       const newQueryRequest = cloneDeep(initialQueryRequest)
       newQueryRequest.query.sql = 'SELECT new_columns FROM syn16787123'
-      await act(async () => {
+      act(() => {
         providedContext?.executeQueryRequest(newQueryRequest)
       })
 
@@ -150,7 +144,7 @@ describe('QueryWrapper', () => {
     })
 
     it('executeQueryRequest updates url if param is set', async () => {
-      await renderComponent({
+      renderComponent({
         initQueryRequest: initialQueryRequest,
         shouldDeepLink: true,
       })
@@ -159,7 +153,7 @@ describe('QueryWrapper', () => {
 
       await waitFor(() => expect(providedContext).toBeDefined())
 
-      await act(async () => {
+      act(() => {
         providedContext!.executeQueryRequest({
           ...initialQueryRequest,
           query: {
@@ -172,7 +166,7 @@ describe('QueryWrapper', () => {
       await waitFor(() => {
         expect(location.search).toContain('QueryWrapper0')
         const query = JSON.parse(
-          new URLSearchParams(location.search).get('QueryWrapper0'),
+          new URLSearchParams(location.search).get('QueryWrapper0')!,
         )
         expect(query.sql).toEqual(newSql)
         expect(mockGetQueryTableAsyncJobResults).toHaveBeenCalled()
@@ -182,7 +176,7 @@ describe('QueryWrapper', () => {
     it('test onQueryChange and onQueryResultBundleChange', async () => {
       const mockOnQueryChange = jest.fn()
       const mockOnQueryResultBundleChange = jest.fn()
-      await renderComponent({
+      renderComponent({
         initQueryRequest: initialQueryRequest,
         shouldDeepLink: true,
         onQueryChange: mockOnQueryChange,
@@ -196,7 +190,7 @@ describe('QueryWrapper', () => {
       })
 
       await waitFor(() => {
-        expect(mockOnQueryChange).toBeCalledWith(
+        expect(mockOnQueryChange).toHaveBeenLastCalledWith(
           expect.stringContaining(initialQueryRequest.query.sql),
         )
 
@@ -210,7 +204,7 @@ describe('QueryWrapper', () => {
   describe('deep linking', () => {
     it('when there are no searchParams', async () => {
       window.history.pushState({}, 'Page Title', '/any/url/you/like')
-      await renderComponent({ initQueryRequest: initialQueryRequest })
+      renderComponent({ initQueryRequest: initialQueryRequest })
       await waitFor(() =>
         expect(providedContext?.getCurrentQueryRequest()).toEqual(
           initialQueryRequest,
@@ -223,7 +217,7 @@ describe('QueryWrapper', () => {
         'Page Title',
         '/any/url/you/like?someparam=someValue',
       )
-      await renderComponent({ initQueryRequest: initialQueryRequest })
+      renderComponent({ initQueryRequest: initialQueryRequest })
 
       await waitFor(() =>
         expect(providedContext?.getCurrentQueryRequest()).toEqual(
@@ -241,7 +235,7 @@ describe('QueryWrapper', () => {
         '/any/url/you/like?QueryWrapper0=' +
           encodeURIComponent(JSON.stringify(lqr.query)),
       )
-      await renderComponent({ initQueryRequest: initialQueryRequest })
+      renderComponent({ initQueryRequest: initialQueryRequest })
       await waitFor(() => {
         expect(providedContext).toBeDefined()
         const lastQuery = providedContext!.getCurrentQueryRequest()
@@ -259,7 +253,7 @@ describe('QueryWrapper', () => {
         '/any/url/you/like?someotherParam=param&QueryWrapper0=' +
           encodeURIComponent(JSON.stringify(lqr.query)),
       ) + '&anotherPram=somethingElse'
-      await renderComponent({ initQueryRequest: initialQueryRequest })
+      renderComponent({ initQueryRequest: initialQueryRequest })
       await waitFor(() => expect(providedContext).toBeDefined())
 
       const lastQuery = providedContext!.getCurrentQueryRequest()
@@ -277,38 +271,44 @@ describe('QueryWrapper', () => {
     const noLockedColumn: LockedColumn = {}
 
     it('removeLockedColumnData should remove locked facet data', async () => {
-      await renderComponent({
+      renderComponent({
         initQueryRequest: initialQueryRequest,
         lockedColumn: lockedColumn,
       })
 
-      await waitFor(() => expect(providedContext).toBeDefined())
+      await waitFor(() => {
+        expect(providedContext).toBeDefined()
+        expect(currentQueryDataValue).toBeDefined()
+      })
 
       // One facet should be removed
-      expect(providedContext!.data!.facets!.length).toEqual(
+      expect(currentQueryDataValue!.facets!.length).toEqual(
         syn16787123Json.facets!.length - 1,
       )
       // The removed facet should match the locked facet name
       expect(
-        providedContext!.data!.facets!.find(
+        currentQueryDataValue!.facets!.find(
           facet => facet.columnName === 'tumorType',
         ),
       ).not.toBeDefined()
     })
 
     it('removeLockedColumnData should not remove any data if locked facet value is not set', async () => {
-      await renderComponent({
+      renderComponent({
         initQueryRequest: initialQueryRequest,
         lockedColumn: noLockedColumn,
       })
-      await waitFor(() => expect(providedContext).toBeDefined())
+      await waitFor(() => {
+        expect(providedContext).toBeDefined()
+        expect(currentQueryDataValue).toBeDefined()
+      })
 
-      expect(providedContext!.data!.facets!.length).toEqual(
+      expect(currentQueryDataValue!.facets!.length).toEqual(
         syn16787123Json.facets!.length,
       )
 
       expect(
-        providedContext!.data!.facets!.find(
+        currentQueryDataValue!.facets!.find(
           facet => facet.columnName === 'tumorType',
         ),
       ).toBeDefined()
@@ -317,31 +317,36 @@ describe('QueryWrapper', () => {
 
   describe('query change when rows are selected', () => {
     it('requires confirmation to change the query when rows are selected', async () => {
-      const mockSetSelectedRows = jest.fn()
-      mockUseTableRowSelection.mockClear().mockReturnValue({
-        isRowSelectionVisible: true,
-        selectedRows: [
-          {
-            rowId: 123,
-            values: [],
-          },
-        ],
-        setSelectedRows: mockSetSelectedRows,
-        hasSelectedRows: true,
-      })
       const mockOnQueryChange = jest.fn()
 
       const newQuery = 'SELECT * FROM syn98765'
 
-      await renderComponent({
+      renderComponent({
         initQueryRequest: initialQueryRequest,
         onQueryChange: mockOnQueryChange,
+        isRowSelectionVisible: true,
       })
 
-      expect(providedContext!.executeQueryRequest).toBeDefined()
+      // Select a row
+      await waitFor(() => {
+        expect(providedContext).toBeDefined()
+        expect(currentQueryDataValue).toBeDefined()
+        expect(selectedRows).toBeDefined()
+        expect(setSelectedRows).toBeDefined()
+      })
+      act(() => {
+        setSelectedRows!([
+          {
+            rowId: 123,
+            values: [],
+          },
+        ])
+      })
+      await waitFor(() => expect(selectedRows).toHaveLength(1))
 
       //  call under test - make a change that will trigger the confirmation dialog
-      await act(async () => {
+      expect(providedContext!.executeQueryRequest).toBeDefined()
+      act(() => {
         providedContext!.executeQueryRequest(old => ({
           ...old,
           query: {
@@ -375,35 +380,40 @@ describe('QueryWrapper', () => {
         }),
       )
       expect(mockOnQueryChange).toHaveBeenCalled()
-      expect(mockSetSelectedRows.mock.lastCall[0]).toEqual([])
+      // Verify that the selection was cleared
+      expect(selectedRows).toEqual([])
     })
 
     it('handles canceling the change request when rows are selected', async () => {
-      const mockSetSelectedRows = jest.fn()
-      mockUseTableRowSelection.mockReturnValue({
-        isRowSelectionVisible: true,
-        selectedRows: [
-          {
-            rowId: 123,
-            values: [],
-          },
-        ],
-        setSelectedRows: mockSetSelectedRows,
-        hasSelectedRows: true,
-      })
       const mockOnQueryChange = jest.fn()
 
       const newQuery = 'SELECT * FROM syn98765'
 
-      await renderComponent({
+      renderComponent({
         initQueryRequest: initialQueryRequest,
         onQueryChange: mockOnQueryChange,
+        isRowSelectionVisible: true,
       })
 
-      expect(providedContext!.executeQueryRequest).toBeDefined()
+      await waitFor(() => {
+        expect(providedContext).toBeDefined()
+        expect(currentQueryDataValue).toBeDefined()
+        expect(selectedRows).toBeDefined()
+        expect(setSelectedRows).toBeDefined()
+      })
+      act(() => {
+        setSelectedRows!([
+          {
+            rowId: 123,
+            values: [],
+          },
+        ])
+      })
+      await waitFor(() => expect(selectedRows).toHaveLength(1))
 
       // call under test - make a change that will trigger the confirmation dialog
-      await act(async () => {
+      expect(providedContext!.executeQueryRequest).toBeDefined()
+      act(() => {
         providedContext!.executeQueryRequest(old => ({
           ...old,
           query: {
@@ -435,7 +445,8 @@ describe('QueryWrapper', () => {
         initialQueryRequest,
       )
       expect(mockOnQueryChange).not.toHaveBeenCalled()
-      expect(mockSetSelectedRows).not.toHaveBeenCalled()
+      // Selection was not changed
+      expect(selectedRows).toHaveLength(1)
     })
   })
 })

@@ -8,11 +8,11 @@ import {
 } from '../../../mocks/MockSynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
 import mockFileEntity from '../../../mocks/entity/mockFileEntity'
-import { getEntityHeadersByIds } from '../../../synapse-client/SynapseClient'
+import { getEntityHeaders } from '../../../synapse-client/SynapseClient'
 import SynapseClient from '../../../synapse-client'
 
 jest
-  .spyOn(SynapseClient, 'getEntityHeadersByIds')
+  .spyOn(SynapseClient, 'getEntityHeaders')
   .mockResolvedValue({ results: [mockFileEntity.entityHeader] })
 
 describe('EntityIdList: basic functionality', () => {
@@ -28,8 +28,11 @@ describe('EntityIdList: basic functionality', () => {
       mockAllIsIntersecting(true)
     })
     await waitFor(() =>
-      expect(getEntityHeadersByIds).toHaveBeenCalledWith(
-        props.entityIdList,
+      expect(getEntityHeaders).toHaveBeenCalledWith(
+        [
+          { targetId: props.entityIdList[0] },
+          { targetId: props.entityIdList[1] },
+        ],
         MOCK_CONTEXT_VALUE.accessToken,
       ),
     )

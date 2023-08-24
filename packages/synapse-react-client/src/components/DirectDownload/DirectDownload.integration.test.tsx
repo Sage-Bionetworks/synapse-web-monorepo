@@ -21,9 +21,9 @@ const mockFileEntity = mockFileEntityData.entity
 
 describe('DirectDownload: basic functionality', () => {
   const props: DirectFileDownloadProps = {
+    fileHandleId: mockFileEntity.dataFileHandleId,
     associatedObjectId: MOCK_FILE_ENTITY_ID,
     associatedObjectType: FileHandleAssociateType.FileEntity,
-    entityVersionNumber: mockFileEntity.versionNumber?.toString(),
   }
 
   beforeAll(() => server.listen())

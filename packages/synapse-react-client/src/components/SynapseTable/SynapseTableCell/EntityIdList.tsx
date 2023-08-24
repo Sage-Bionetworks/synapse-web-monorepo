@@ -1,51 +1,28 @@
-import React, { useEffect, useState } from 'react'
-import { useInView } from 'react-intersection-observer'
-import { getEntityHeadersByIds } from '../../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
+import React from 'react'
 import { EntityLink } from '../../EntityLink'
+import { useGetEntityHeaders } from '../../../synapse-queries'
 
 export type EntityIdListProps = {
   entityIdList: string[]
 }
 
-const EntityIdList: React.FC<EntityIdListProps> = props => {
-  const { accessToken } = useSynapseContext()
+function EntityIdList(props: EntityIdListProps) {
   const { entityIdList } = props
-  const [entityLinkArray, setEntityLinkArray] = useState([<></>])
-  const { ref, inView } = useInView()
-  let mounted: boolean = true
 
-  useEffect(() => {
-    if (inView) {
-      getEntityTypes()
-    }
-    return () => {
-      mounted = false
-    }
-  }, [entityIdList, inView])
+  const { data: entityHeaders } = useGetEntityHeaders(
+    entityIdList.map(id => ({ targetId: id })),
+    {},
+  )
 
-  const getEntityTypes = () => {
-    if (!entityIdList.length) return
-
-    getEntityHeadersByIds(entityIdList, accessToken)
-      .then(entity => {
-        if (mounted) {
-          const newEntityList = entity.results.map(el => {
-            return (
-              <p key={el.id}>
-                <EntityLink entity={el} displayTextField={'name'} />
-              </p>
-            )
-          })
-          setEntityLinkArray(newEntityList)
-        }
-      })
-      .catch(e => {
-        console.log('EntityIdList: Error getting entity headers', e)
-      })
-  }
-
-  return <span ref={ref}>{entityLinkArray}</span>
+  return (
+    <span>
+      {entityHeaders?.results.map(header => (
+        <p key={header.id}>
+          <EntityLink entity={header} displayTextField={'name'} />
+        </p>
+      ))}
+    </span>
+  )
 }
 
 export default EntityIdList

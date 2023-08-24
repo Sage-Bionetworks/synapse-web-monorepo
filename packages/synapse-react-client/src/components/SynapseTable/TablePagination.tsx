@@ -1,7 +1,6 @@
 import React from 'react'
-import { Pagination } from '@mui/material'
+import { Pagination, Typography } from '@mui/material'
 import { usePaginatedQueryContext } from '../QueryContext/QueryContext'
-import { Typography } from '@mui/material'
 
 export const TablePagination = () => {
   const { data, goToPage, pageSize, setPageSize, currentPage } =

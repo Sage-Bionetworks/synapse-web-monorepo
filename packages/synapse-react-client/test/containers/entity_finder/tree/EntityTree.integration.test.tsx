@@ -13,6 +13,7 @@ import {
   EntityPath,
   EntityType,
   PaginatedResults,
+  Project,
   ProjectHeader,
   ProjectHeaderList,
 } from '@sage-bionetworks/synapse-types'
@@ -29,7 +30,10 @@ import {
   getEndpoint,
 } from '../../../../src/utils/functions/getEndpoint'
 import {
+  ENTITY,
   ENTITY_HEADER_BY_ID,
+  ENTITY_HEADERS,
+  ENTITY_ID,
   ENTITY_PATH,
   FAVORITES,
   PROJECTS,
@@ -211,20 +215,27 @@ describe('EntityTree tests', () => {
           return res(ctx.status(200), ctx.json(entityPath))
         },
       ),
-      rest.get(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}${ENTITY_HEADER_BY_ID(':id')}`,
+
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
         async (req, res, ctx) => {
-          if (req.params.id === projectIdWithNoReadAccess) {
+          const { references } = await req.json()
+          if (references[0].targetId === projectIdWithNoReadAccess) {
             return res(
-              ctx.status(403),
+              ctx.status(200),
               ctx.json({
-                reason: 'You do not have READ access on this entity.',
+                results: [],
+                totalNumberOfResults: 0,
               }),
             )
           }
-          return res(ctx.status(200), ctx.json(entityPath.path[1]))
+          return res(
+            ctx.status(200),
+            ctx.json({
+              results: [entityPath.path[1]],
+              totalNumberOfResults: 1,
+            }),
+          )
         },
       ),
       rest.get(

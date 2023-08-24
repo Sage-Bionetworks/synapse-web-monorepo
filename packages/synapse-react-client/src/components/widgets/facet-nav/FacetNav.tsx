@@ -67,26 +67,24 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
 
   const { showFacetVisualization } = useQueryVisualizationContext()
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
-  const [isFirstTime, setIsFirstTime] = useState(true)
 
   const lastQueryRequest = getCurrentQueryRequest()
+  const facets = useMemo(
+    () => getFacets(data, facetsToPlot),
+    [data, facetsToPlot],
+  )
 
   useEffect(() => {
-    const result = getFacets(data, facetsToPlot)
-    if (result.length === 0) {
-      return
-    }
-    if (isFirstTime) {
+    if (facets.length > 0 && facetUiStateArray.length === 0) {
       setFacetUiStateArray(
-        result.map((item, index) => ({
+        facets.map((item, index) => ({
           name: item.columnName,
           isHidden: index >= DEFAULT_VISIBLE_FACETS,
           plotType: 'PIE',
         })),
       )
-      setIsFirstTime(false)
     }
-  }, [data, isFirstTime, facetsToPlot])
+  }, [facetUiStateArray.length, facets])
 
   // when 'show more/less' is clicked
   const onShowMoreClick = (shouldShowMore: boolean) => {
@@ -163,8 +161,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       ),
     )
   }
-
-  const facets = getFacets(data, facetsToPlot)
 
   const colorTracker = getFacets(data, facetsToPlot).map((el, index) => {
     return {

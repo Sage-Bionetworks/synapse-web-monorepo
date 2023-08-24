@@ -18,7 +18,7 @@ export function hex2ascii(inputString: string): string {
 }
 
 /**
- * Returns a hash code from a string
+ * Returns a hash code from a string. Uses Java's String.hashCode() algorithm: https://devdocs.io/openjdk~8/java/lang/string#hashCode--
  * @param  {String} str The string to hash.
  * @return {Number}    A 32bit integer
  * @see https://stackoverflow.com/a/8831937

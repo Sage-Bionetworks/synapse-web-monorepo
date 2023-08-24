@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { SynapseTableCell } from '../src/components/SynapseTable/SynapseTableCell/SynapseTableCell'
+import SynapseTableCell from '../src/components/SynapseTable/SynapseTableCell/SynapseTableCell'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import { QueryContextProvider } from '../src'
 import { mockTableEntity } from '../src/mocks/entity/mockTableEntity'

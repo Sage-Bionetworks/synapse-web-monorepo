@@ -134,8 +134,8 @@ const entityQueryKeyObjects = {
     ...entityQueryKeyObjects.entity(id),
     scope: 'schemaValidationResults',
   }),
-  header: (id: string) => ({
-    ...entityQueryKeyObjects.entity(id),
+  header: (id: string, versionNumber?: number) => ({
+    ...entityQueryKeyObjects.version(id, versionNumber),
     scope: 'entityHeaders',
   }),
   headers: (references: ReferenceList) => ({
@@ -287,8 +287,8 @@ export class KeyFactory {
     return this.getKey(entityQueryKeyObjects.schemaValidationResults(id))
   }
 
-  public getEntityHeaderQueryKey(id: string) {
-    return this.getKey(entityQueryKeyObjects.header(id))
+  public getEntityHeaderQueryKey(id: string, versionNumber?: number) {
+    return this.getKey(entityQueryKeyObjects.header(id, versionNumber))
   }
 
   public getEntityAccessRequirementsQueryKey(id: string) {
@@ -669,6 +669,10 @@ export class KeyFactory {
 
   public getUserGroupHeaderQueryKey(id: string) {
     return this.getKey('userGroupHeader', id)
+  }
+
+  public getUserGroupHeaderBatchQueryKey(id: string[]) {
+    return this.getKey('userGroupHeaderBatch', id)
   }
   public getUserGroupHeaderWithAliasQueryKey(aliases: string[]) {
     return this.getKey('userGroupHeader', aliases)
