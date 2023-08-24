@@ -1,7 +1,7 @@
 import React from 'react'
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import * as ToastMessage from '../../../src/components/ToastMessage/ToastMessage'
+import * as ToastMessage from '../ToastMessage/ToastMessage'
 import {
   AddToDownloadListRequest,
   AddToDownloadListResponse,
@@ -9,29 +9,35 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import * as DownloadConfirmationUIModule from '../../../src/components/download_list/DownloadConfirmationUI'
+import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
+import { TableQueryDownloadConfirmation } from './index'
+import { SynapseClientError } from '../../index'
 import {
-  DownloadConfirmationUI,
-  DownloadConfirmationUIProps,
-} from '../../../src/components/download_list/DownloadConfirmationUI'
-import { TableQueryDownloadConfirmation } from '../../../src/components/download_list'
-import { QueryContextProvider, SynapseClientError } from '../../../src'
-import { QueryVisualizationContextProvider } from '../../../src/components/QueryVisualizationWrapper'
-import { mockQueryBundleRequest } from '../../../src/mocks/mockFileViewQuery'
-import { cloneDeep } from 'lodash-es'
+  QueryVisualizationContextConsumer,
+  QueryVisualizationContextType,
+  QueryVisualizationWrapper,
+} from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { mockQueryBundleRequest } from '../../mocks/mockFileViewQuery'
 import {
   useAddQueryToDownloadList,
   useGetQueryResultBundleWithAsyncStatus,
-} from '../../../src/synapse-queries'
+} from '../../synapse-queries'
 import {
   getUseMutationMock,
   getUseQuerySuccessMock,
-} from '../../../src/testutils/ReactQueryMockUtils'
+} from '../../testutils/ReactQueryMockUtils'
+import QueryWrapper from '../QueryWrapper'
+import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
-jest.mock('../../../src/synapse-queries', () => ({
-  useGetQueryResultBundleWithAsyncStatus: jest.fn(),
-  useAddQueryToDownloadList: jest.fn(),
-}))
+jest.mock('../../../src/synapse-queries', () => {
+  const actual = jest.requireActual('../../../src/synapse-queries')
+  return {
+    ...actual,
+    useGetQueryResultBundleWithAsyncStatus: jest.fn(),
+    useAddQueryToDownloadList: jest.fn(),
+  }
+})
 
 const mockUseGetQueryResultBundle = jest.mocked(
   useGetQueryResultBundleWithAsyncStatus,
@@ -55,29 +61,43 @@ const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   numberOfFilesAdded: 1,
 }
 
-const mockSetShowDownloadConfirmation = jest.fn()
+let receivedQueryVisualizationContext: QueryVisualizationContextType | undefined
 
 async function setUp() {
   const user = userEvent.setup()
   let component
-  await act(async () => {
+  act(() => {
     component = render(
-      <QueryContextProvider
-        queryContext={{
-          getCurrentQueryRequest: () => cloneDeep(mockQueryBundleRequest),
-        }}
+      <QueryWrapper
+        initQueryRequest={mockQueryBundleRequest}
+        rowSelectionPrimaryKey={['id']}
       >
-        <QueryVisualizationContextProvider
-          queryVisualizationContext={{
-            setShowDownloadConfirmation: mockSetShowDownloadConfirmation,
-          }}
-        >
-          <TableQueryDownloadConfirmation />
-        </QueryVisualizationContextProvider>
-      </QueryContextProvider>,
+        <QueryVisualizationWrapper>
+          <QueryVisualizationContextConsumer>
+            {context => {
+              receivedQueryVisualizationContext = context
+              return <TableQueryDownloadConfirmation />
+            }}
+          </QueryVisualizationContextConsumer>
+        </QueryVisualizationWrapper>
+      </QueryWrapper>,
+      {
+        wrapper: createWrapper(),
+      },
     )
   })
 
+  await waitFor(() => expect(receivedQueryVisualizationContext).toBeDefined())
+
+  act(() => {
+    receivedQueryVisualizationContext!.setShowDownloadConfirmation(true)
+  })
+
+  await waitFor(() =>
+    expect(receivedQueryVisualizationContext!.showDownloadConfirmation).toBe(
+      true,
+    ),
+  )
   await screen.findByTestId(DOWNLOAD_CONFIRMATION_UI_TEST_ID)
   return { component, user }
 }
@@ -97,7 +117,18 @@ describe('TableQueryDownloadConfirmation', () => {
       getUseQuerySuccessMock<
         AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
       >({
+        jobState: 'COMPLETE',
+        jobCanceling: false,
+        requestBody: mockQueryBundleRequest,
+        startedOn: '2021-01-01T00:00:00.000Z',
+        changedOn: '2021-01-01T00:00:00.000Z',
+        runtimeMS: 1000,
+        startedByUserId: MOCK_USER_ID,
+        etag: '000',
+        jobId: '123',
         responseBody: {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.QueryResultBundle',
           queryCount: 100,
           sumFileSizes: {
             sumFileSizesBytes: 40128868,
@@ -119,8 +150,7 @@ describe('TableQueryDownloadConfirmation', () => {
   it('passes the correct props to DownloadConfirmationUI', async () => {
     await setUp()
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
     expect(passedProps).toEqual({
       onAddToDownloadCart: expect.any(Function),
       onCancel: expect.any(Function),
@@ -134,8 +164,7 @@ describe('TableQueryDownloadConfirmation', () => {
   it('adds files to download list using a table query when invoked', async () => {
     await setUp()
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
 
     // Call under test
     act(() => {
@@ -150,21 +179,37 @@ describe('TableQueryDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall[0].onSuccess()
+      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onSuccess!(
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
+          numberOfFilesAdded: 1,
+        },
+        {
+          query: mockQueryBundleRequest.query,
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        },
+        undefined,
+      )
     })
-    expect(mockToastFn).toHaveBeenCalledWith(
-      expect.any(String),
-      'success',
-      expect.any(Object),
-    )
-    expect(mockSetShowDownloadConfirmation).toHaveBeenCalledWith(false)
+
+    await waitFor(() => {
+      expect(mockToastFn).toHaveBeenCalledWith(
+        expect.any(String),
+        'success',
+        expect.any(Object),
+      )
+      expect(receivedQueryVisualizationContext?.showDownloadConfirmation).toBe(
+        false,
+      )
+    })
   })
 
   it('handles onCancel passed to DownloadConfirmationUI', async () => {
     await setUp()
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
 
     // Call under test
     act(() => {
@@ -172,14 +217,15 @@ describe('TableQueryDownloadConfirmation', () => {
     })
 
     expect(mutationMockReturnValue.mutate).not.toHaveBeenCalled()
-    expect(mockSetShowDownloadConfirmation).toHaveBeenCalledWith(false)
+    expect(receivedQueryVisualizationContext?.showDownloadConfirmation).toBe(
+      false,
+    )
   })
 
   it('handles case where adding files to the download list results in an error', async () => {
     await setUp()
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
-    const passedProps = mockDownloadConfirmationUi.mock
-      .lastCall![0] as DownloadConfirmationUIProps
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
 
     // Call under test
     act(() => {
@@ -194,11 +240,23 @@ describe('TableQueryDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall[0].onError({
-        reason: 'some error message',
-      })
+      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onError!(
+        new SynapseClientError(
+          400,
+          'some error message',
+          expect.getState().currentTestName!,
+        ),
+        {
+          query: mockQueryBundleRequest.query,
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        },
+        undefined,
+      )
     })
     expect(mockToastFn).toHaveBeenCalledWith(expect.any(String), 'danger')
-    expect(mockSetShowDownloadConfirmation).toHaveBeenCalledWith(false)
+    expect(receivedQueryVisualizationContext?.showDownloadConfirmation).toBe(
+      false,
+    )
   })
 })

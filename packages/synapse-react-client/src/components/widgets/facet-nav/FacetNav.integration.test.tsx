@@ -2,57 +2,40 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
-import {
-  QueryContextProvider,
-  QueryContextType,
-} from '../../../../src/components/QueryContext/QueryContext'
-import {
-  QueryVisualizationContextProvider,
-  QueryVisualizationContextType,
-} from '../../../../src/components/QueryVisualizationWrapper'
-import FacetNav, {
-  FacetNavProps,
-} from '../../../../src/components/widgets/facet-nav/FacetNav'
-import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../../../src/utils'
-import {
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
-import testData from '../../../../src/mocks/mockQueryResponseDataWithManyEnumFacets'
-import { server } from '../../../../src/mocks/msw/server'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import FacetNav, { FacetNavProps } from './FacetNav'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { SynapseConstants } from '../../../utils'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import testData from '../../../mocks/mockQueryResponseDataWithManyEnumFacets'
+import { server } from '../../../mocks/msw/server'
 import failOnConsole from 'jest-fail-on-console'
-import { DEFAULT_PAGE_SIZE } from '../../../../src/utils/SynapseConstants'
-import { CLOSE_BUTTON_LABEL } from '../../../../src/components/DialogBase'
+import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
+import { CLOSE_BUTTON_LABEL } from '../../DialogBase'
+import { QueryWrapper } from '../../QueryWrapper'
+import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
+import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-  partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-  entityId: 'syn21450294',
+  partMask:
+    SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+    SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+    SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+    SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
+    SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+    SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+    SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
+    SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON |
+    SynapseConstants.BUNDLE_MASK_COMBINED_SQL |
+    SynapseConstants.BUNDLE_MASK_ACTIONS_REQUIRED,
+  entityId: mockTableEntity.id,
   query: {
-    sql: '',
+    sql: `select * from ${mockTableEntity.id}`,
     limit: DEFAULT_PAGE_SIZE,
     offset: 0,
   },
 }
-const mockGetLastQueryRequest = jest.fn(() => lastQueryRequest)
-
-const defaultQueryContext: Partial<QueryContextType> = {
-  isLoadingNewBundle: false,
-  currentQueryRequest: lastQueryRequest,
-  nextQueryRequest: lastQueryRequest,
-  getCurrentQueryRequest: mockGetLastQueryRequest,
-  data: testData as QueryResultBundle,
-}
-
-const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
-  {
-    showFacetVisualization: true,
-    showFacetFilter: true,
-    showSearchBar: true,
-    showDownloadConfirmation: false,
-    getColumnDisplayName: jest.fn(col => col),
-  }
 
 function getButtonOnFacet(
   text: string,
@@ -60,33 +43,19 @@ function getButtonOnFacet(
 ): HTMLElement | undefined {
   const itemList = screen.getAllByLabelText(text, { exact: false })
   if (itemList ? [facetIndex] : undefined) {
-    return itemList[facetIndex] as HTMLElement
+    return itemList[facetIndex]
   } else {
     return undefined
   }
 }
 
-function init(
-  props?: FacetNavProps,
-  queryContextProps?: Partial<QueryContextType>,
-  queryVisualizationContextProps?: Partial<QueryVisualizationContextType>,
-) {
+function init(props?: FacetNavProps) {
   render(
-    <QueryContextProvider
-      queryContext={{
-        ...defaultQueryContext,
-        ...queryContextProps,
-      }}
-    >
-      <QueryVisualizationContextProvider
-        queryVisualizationContext={{
-          ...defaultQueryVisualizationContext,
-          ...queryVisualizationContextProps,
-        }}
-      >
+    <QueryWrapper initQueryRequest={lastQueryRequest}>
+      <QueryVisualizationWrapper>
         <FacetNav {...props} />
-      </QueryVisualizationContextProvider>
-    </QueryContextProvider>,
+      </QueryVisualizationWrapper>
+    </QueryWrapper>,
     {
       wrapper: createWrapper(),
     },
@@ -96,18 +65,25 @@ function init(
 describe('facets display hide/show', () => {
   failOnConsole()
   beforeAll(() => server.listen())
+  beforeEach(() => {
+    server.use(...getHandlersForTableQuery(testData))
+  })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
   it("should display 2 facets with 'show more' button", async () => {
     init()
-    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
+    await waitFor(() => {
+      expect(screen.getAllByRole('graphics-document')).toHaveLength(2)
+    })
     await screen.findByRole('button', { name: 'View All Charts' })
   })
 
   it('shows all facet plots when show more is clicked', async () => {
     init()
-    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
+    await waitFor(() => {
+      expect(screen.getAllByRole('graphics-document')).toHaveLength(2)
+    })
 
     const showMoreButton = await screen.findByRole('button', {
       name: 'View All Charts',
@@ -115,7 +91,7 @@ describe('facets display hide/show', () => {
 
     await userEvent.click(showMoreButton)
 
-    const expectedLength = defaultQueryContext.data?.facets?.filter(
+    const expectedLength = testData.facets!.filter(
       facet => facet.facetType === 'enumeration',
     ).length
 
@@ -127,11 +103,10 @@ describe('facets display hide/show', () => {
   })
 
   it('if there are only 2 facets, show more button should not exist', async () => {
-    const data = cloneDeep(defaultQueryContext.data)
-    data!.facets = [data!.facets[0], data!.facets[2]]
-    init(undefined, {
-      data: data,
-    })
+    const data = cloneDeep(testData)
+    data.facets = [data.facets![0], data.facets![2]]
+    server.use(...getHandlersForTableQuery(data))
+    init()
     expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
 
     await waitFor(() =>
@@ -153,9 +128,9 @@ describe('facets display hide/show', () => {
 
   it('hiding facet should hide it from facet grid', async () => {
     init()
-
-    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
-
+    await waitFor(() => {
+      expect(screen.getAllByRole('graphics-document')).toHaveLength(2)
+    })
     const closeFacetPlotButton = getButtonOnFacet('Hide graph', 0)!
     await userEvent.click(closeFacetPlotButton)
     expect(await screen.findAllByRole('graphics-document')).toHaveLength(1)
@@ -163,7 +138,9 @@ describe('facets display hide/show', () => {
 
   it('expanding facet should additionally show the facet in a modal', async () => {
     init()
-    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
+    await waitFor(() => {
+      expect(screen.getAllByRole('graphics-document')).toHaveLength(2)
+    })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     const expandButton = getButtonOnFacet('expand', 1)!

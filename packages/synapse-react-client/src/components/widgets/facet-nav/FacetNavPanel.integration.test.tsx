@@ -1,21 +1,20 @@
 import React from 'react'
-import FacetNavPanel, {
-  FacetNavPanelProps,
-} from '../../../../src/components/widgets/facet-nav/FacetNavPanel'
+import FacetNavPanel, { FacetNavPanelProps } from './FacetNavPanel'
 import { render, screen, within } from '@testing-library/react'
-import { FacetColumnResultValues } from '@sage-bionetworks/synapse-types'
-import testData from '../../../../src/mocks/mockQueryResponseDataWithManyEnumFacets'
-import { SynapseConstants } from '../../../../src/utils'
 import {
-  QueryContextProvider,
-  QueryContextType,
-} from '../../../../src/components/QueryContext/QueryContext'
-import { QueryVisualizationContextProvider } from '../../../../src/components/QueryVisualizationWrapper'
-import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
-import failOnConsole from 'jest-fail-on-console'
-import { truncate } from '../../../../src/components/widgets/facet-nav/FacetPlotLegendUtils'
-import { cloneDeep } from 'lodash-es'
-import { mockQueryBundleRequest } from '../../../../src/mocks/mockFileViewQuery'
+  FacetColumnResultValues,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
+import testData from '../../../mocks/mockQueryResponseDataWithManyEnumFacets'
+import { SynapseConstants } from '../../../utils'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { truncate } from './FacetPlotLegendUtils'
+import { mockQueryBundleRequest } from '../../../mocks/mockFileViewQuery'
+import QueryWrapper from '../../QueryWrapper'
+import { server } from '../../../mocks/msw/server'
+import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
+import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -53,44 +52,38 @@ function createTestProps(overrides?: FacetNavPanelProps): FacetNavPanelProps {
   }
 }
 
-const defaultQueryContext: Partial<QueryContextType> = {
-  data: testData,
-  currentQueryRequest: cloneDeep(mockQueryBundleRequest),
-  nextQueryRequest: cloneDeep(mockQueryBundleRequest),
-  getCurrentQueryRequest: () => cloneDeep(mockQueryBundleRequest),
-  isLoadingNewBundle: false,
-}
-
 let props: FacetNavPanelProps
 
-function init(
-  overrides?: FacetNavPanelProps,
-  queryContextProps?: Partial<QueryContextType>,
-) {
+const request: QueryBundleRequest = {
+  ...mockQueryBundleRequest,
+  entityId: mockTableEntity.id,
+  query: {
+    sql: `SELECT * FROM ${mockTableEntity.id}`,
+  },
+}
+
+function renderComponent(overrides?: FacetNavPanelProps) {
   props = createTestProps(overrides)
   return render(
-    <QueryContextProvider
-      queryContext={{
-        ...defaultQueryContext,
-        ...queryContextProps,
-      }}
-    >
-      <QueryVisualizationContextProvider
-        queryVisualizationContext={{
-          getColumnDisplayName: jest.fn(col => col),
-        }}
-      >
+    <QueryWrapper initQueryRequest={request}>
+      <QueryVisualizationWrapper>
         <FacetNavPanel {...props} />
-      </QueryVisualizationContextProvider>
-    </QueryContextProvider>,
+      </QueryVisualizationWrapper>
+    </QueryWrapper>,
     { wrapper: createWrapper() },
   )
 }
 
 describe('FacetNavPanel tests', () => {
-  failOnConsole()
+  beforeAll(() => server.listen())
+  beforeEach(() => {
+    server.use(...getHandlersForTableQuery(testData))
+  })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
-    init()
+    renderComponent()
     const panel = await screen.findByRole('graphics-document')
     expect(panel).toHaveClass('FacetNavPanel')
 
@@ -107,7 +100,7 @@ describe('FacetNavPanel tests', () => {
 
   it('should initiate the panel with correct buttons and class when expanded', async () => {
     //when expanded the onCollapse callback is passed but onExpand is not
-    init({
+    renderComponent({
       ...props,
       onSetPlotType: mockSetPlotTypeCallback,
       isModalView: true,

@@ -4,6 +4,8 @@ import { MockEntityData } from './MockEntityData'
 import mockFileEntityData from './mockFileEntity'
 import { mockProjectsEntityData } from './mockProject'
 import mockTableEntityData from './mockTableEntity'
+import { mockFileViewData } from './mockFileView'
+import { mockProjectViewData } from './mockProjectView'
 
 const mockEntities: MockEntityData[] = [
   mockFileEntityData,
@@ -11,6 +13,8 @@ const mockEntities: MockEntityData[] = [
   mockDatasetData,
   mockDatasetCollectionData,
   mockTableEntityData,
+  mockFileViewData,
+  mockProjectViewData,
 ]
 
 export default mockEntities

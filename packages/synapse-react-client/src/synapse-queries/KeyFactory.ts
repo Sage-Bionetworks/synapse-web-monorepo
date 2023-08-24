@@ -26,6 +26,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from 'react-query'
 import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
+import { hashCode } from '../utils/functions/StringUtils'
 
 const entityQueryKeyObjects = {
   /* Query key for all entities */
@@ -192,7 +193,12 @@ export class KeyFactory {
    * @private
    */
   private getKey(...args: any[]): QueryKey {
-    return [this.accessToken, ...removeTrailingUndefinedElements(args)]
+    return [
+      this.accessToken === undefined
+        ? this.accessToken
+        : btoa(String(hashCode(this.accessToken))),
+      ...removeTrailingUndefinedElements(args),
+    ]
   }
 
   public getAllEntityDataQueryKey() {

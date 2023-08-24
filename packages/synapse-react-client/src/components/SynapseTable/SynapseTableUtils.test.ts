@@ -1,5 +1,6 @@
 import {
   getColumnIndicesWithType,
+  getDefaultPrimaryKey,
   getFileColumnModelId,
   getUniqueEntities,
   isSortableColumn,
@@ -9,6 +10,9 @@ import {
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
+import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
+import mockDataset from '../../mocks/entity/mockDataset'
+import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 
 describe('Synapse Table Utilities tests', () => {
   describe('Table cell renderer utilities', () => {
@@ -334,6 +338,32 @@ describe('Synapse Table Utilities tests', () => {
         isSortableColumn(key as ColumnTypeEnum)
       })
       expect(consoleWarnSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('getDefaultPrimaryKey', () => {
+    it('returns id for file view', () => {
+      expect(
+        getDefaultPrimaryKey(mockFileViewEntity, [
+          { id: '1234', name: 'id', columnType: ColumnTypeEnum.ENTITYID },
+        ]),
+      ).toEqual(['id'])
+    })
+
+    it('returns id for dataset', () => {
+      expect(
+        getDefaultPrimaryKey(mockDataset.entity, [
+          { id: '1234', name: 'id', columnType: ColumnTypeEnum.ENTITYID },
+        ]),
+      ).toEqual(['id'])
+    })
+
+    it('returns undefined for other types', () => {
+      expect(
+        getDefaultPrimaryKey(mockTableEntity, [
+          { id: '1234', name: 'id', columnType: ColumnTypeEnum.ENTITYID },
+        ]),
+      ).toEqual(undefined)
     })
   })
 })

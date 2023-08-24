@@ -48,7 +48,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../../src/mocks/MockSynapseContext'
 import { rest, server } from '../../../src/mocks/msw/server'
-import queryResultBundleJson from '../../../src/mocks/query/syn16787123.json'
+import queryResultBundleJson from '../../../src/mocks/query/syn16787123'
 import dayjs from 'dayjs'
 import { formatDate } from '../../../src/utils/functions/DateFormatter'
 import {

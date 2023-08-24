@@ -11,7 +11,7 @@ const queryResponse: QueryResultBundle = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
     queryResults: {
       concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
-      tableId: 'syn21450294',
+      tableId: MOCK_TABLE_ENTITY_ID,
       etag: '406c475c-8cd1-4c4b-9d37-4e5a4686d70b',
       headers: [
         {

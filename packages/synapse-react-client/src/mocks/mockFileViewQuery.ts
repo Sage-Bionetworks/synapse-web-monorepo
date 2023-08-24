@@ -11,7 +11,6 @@ export const mockQueryBundleRequest: QueryBundleRequest = {
   query: {
     sql: 'SELECT * FROM syn11346063',
     includeEntityEtag: true,
-    selectedFacets: [],
   },
 }
 
