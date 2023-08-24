@@ -6,15 +6,15 @@ import React, {
   useState,
 } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
-import { useQueryContext } from './QueryContext/QueryContext'
-import NoContentAvailable from './SynapseTable/NoContentAvailable'
-import { NoContentPlaceholderType } from './SynapseTable/NoContentPlaceholderType'
-import SearchResultsNotFound from './SynapseTable/SearchResultsNotFound'
-import ThisTableIsEmpty from './SynapseTable/TableIsEmpty'
-import { unCamelCase } from '../utils/functions/unCamelCase'
+import { useQueryContext } from '../QueryContext/QueryContext'
+import NoContentAvailable from '../SynapseTable/NoContentAvailable'
+import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
+import SearchResultsNotFound from '../SynapseTable/SearchResultsNotFound'
+import ThisTableIsEmpty from '../SynapseTable/TableIsEmpty'
+import { unCamelCase } from '../../utils/functions/unCamelCase'
 import { ColumnType } from '@sage-bionetworks/synapse-types'
-import { getDisplayValue } from '../utils/functions/getDataFromFromStorage'
-import useMutuallyExclusiveState from '../utils/hooks/useMutuallyExclusiveState'
+import { getDisplayValue } from '../../utils/functions/getDataFromFromStorage'
+import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveState'
 
 export type QueryVisualizationContextType = {
   columnsToShowInTable: string[]

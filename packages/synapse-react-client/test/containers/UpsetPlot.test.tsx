@@ -4,7 +4,7 @@ import UpsetPlot, { UpsetPlotProps } from '../../src/components/Plot/UpsetPlot'
 import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../src/synapse-client'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../src/mocks/query/syn16787123.json'
+import syn16787123Json from '../../src/mocks/query/syn16787123'
 import * as UpSetJsModule from '@upsetjs/react'
 
 const data = syn16787123Json as QueryResultBundle

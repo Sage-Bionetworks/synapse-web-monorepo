@@ -2,7 +2,7 @@ import useTableRowSelection from './useTableRowSelection'
 import { act, renderHook } from '@testing-library/react'
 import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
 import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
-import { mockFileViewEntity } from '../../mocks/entity/mockEntity'
+import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
 

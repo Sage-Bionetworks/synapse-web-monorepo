@@ -2,11 +2,10 @@ import { render } from '@testing-library/react'
 import React from 'react'
 import FeaturedDataTabs, { FeaturedDataTabsProps } from './FeaturedDataTabs'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../mocks/query/syn16787123.json'
+import syn16787123Json from '../../mocks/query/syn16787123'
 import SynapseClient from '../../synapse-client'
 
-const data = syn16787123Json as QueryResultBundle
+const data = syn16787123Json
 
 const renderComponent = (props: FeaturedDataTabsProps) => {
   return render(<FeaturedDataTabs {...props} />, {

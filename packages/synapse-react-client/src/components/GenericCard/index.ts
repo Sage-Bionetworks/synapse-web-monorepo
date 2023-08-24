@@ -1,3 +1,5 @@
+import { SynapseCardLabel } from './SynapseCardLabel'
+
 export type {
   KeyToAlias,
   KeyToAliasMap,
@@ -8,7 +10,6 @@ export type {
 export {
   default,
   default as GenericCard,
-  SynapseCardLabel,
   getCardLinkHref,
   getLinkParams,
   LongDescription,
@@ -17,3 +18,4 @@ export {
   getValueOrMultiValue,
   CARD_SHORT_DESCRIPTION_CSS,
 } from './GenericCard'
+export { SynapseCardLabel }

@@ -15,7 +15,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../src/mocks/query/syn16787123.json'
+import syn16787123Json from '../../src/mocks/query/syn16787123'
 import { DEFAULT_PAGE_SIZE } from '../../src/utils/SynapseConstants'
 import useTableRowSelection from '../../src/components/QueryWrapper/useTableRowSelection'
 import SynapseClient from '../../src/synapse-client'

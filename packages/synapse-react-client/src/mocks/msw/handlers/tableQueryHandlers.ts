@@ -54,14 +54,15 @@ export function getHandlersForTableQuery(
   response: QueryResultBundle,
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
 ) {
-  const asyncJobId = uniqueId()
-  let queryBundleRequest: QueryBundleRequest | undefined
+  // We must map generated async job IDs to requests to disambiguate multiple calls to these endpoints
+  const mapOfRequests = new Map<string, QueryBundleRequest>()
 
   return [
     rest.post(
       `${backendOrigin}${TABLE_QUERY_ASYNC_START(':id')}`,
       async (req, res, ctx) => {
-        queryBundleRequest = req.body as QueryBundleRequest
+        const asyncJobId = uniqueId()
+        mapOfRequests.set(asyncJobId, await req.json())
         return res(
           ctx.status(201),
           ctx.json<AsyncJobId>({
@@ -72,11 +73,20 @@ export function getHandlersForTableQuery(
     ),
 
     rest.get(
-      `${backendOrigin}${ASYNCHRONOUS_JOB_TOKEN(asyncJobId)}`,
+      `${backendOrigin}${ASYNCHRONOUS_JOB_TOKEN(':id')}`,
       async (req, res, ctx) => {
+        const id = req.params.id as string
+        const queryBundleRequest = mapOfRequests.get(id)
+        if (!id || !queryBundleRequest) {
+          return res(
+            ctx.status(404),
+            ctx.json({ message: 'The mocked asynchronous job was not found' }),
+          )
+        }
+
         const resultBundle = removeBundleFieldsUsingMask(
           response,
-          queryBundleRequest!.partMask,
+          queryBundleRequest.partMask,
         )
 
         return res(
@@ -86,9 +96,9 @@ export function getHandlersForTableQuery(
           >({
             jobState: 'COMPLETE',
             jobCanceling: false,
-            requestBody: queryBundleRequest!,
+            requestBody: queryBundleRequest,
             etag: '00000000-0000-0000-0000-000000000000',
-            jobId: asyncJobId,
+            jobId: id,
             responseBody: resultBundle,
             startedByUserId: 0,
             startedOn: '',
@@ -106,11 +116,19 @@ export function getHandlersForTableQuery(
     ),
 
     rest.get(
-      `${backendOrigin}${TABLE_QUERY_ASYNC_GET(':id', asyncJobId)}`,
+      `${backendOrigin}${TABLE_QUERY_ASYNC_GET(':entityId', ':asyncJobToken')}`,
       async (req, res, ctx) => {
+        const asyncJobToken = req.params.asyncJobToken as string
+        const request = mapOfRequests.get(asyncJobToken)
+        if (!asyncJobToken || !request) {
+          return res(
+            ctx.status(404),
+            ctx.json({ message: 'The mocked asynchronous job was not found' }),
+          )
+        }
         const resultBundle = removeBundleFieldsUsingMask(
           response,
-          queryBundleRequest!.partMask,
+          request.partMask,
         )
 
         return res(ctx.status(201), ctx.json<QueryResultBundle>(resultBundle))

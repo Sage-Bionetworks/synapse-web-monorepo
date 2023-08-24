@@ -1,4 +1,5 @@
 import {
+  QueryObserverLoadingResult,
   QueryObserverSuccessResult,
   UseMutationResult,
   UseQueryResult,
@@ -30,6 +31,36 @@ export function getUseQuerySuccessMock<TData>(
     refetch: jest.fn(),
     remove: jest.fn(),
     status: 'success',
+  }
+}
+
+export function getUseQueryLoadingMock<TData>(): QueryObserverLoadingResult<
+  TData,
+  never
+> {
+  return {
+    data: undefined,
+    dataUpdatedAt: Date.now(),
+    error: null,
+    errorUpdateCount: 0,
+    errorUpdatedAt: 0,
+    failureCount: 0,
+    isError: false,
+    isFetched: true,
+    isFetchedAfterMount: true,
+    isFetching: false,
+    isIdle: false,
+    isLoading: true,
+    isLoadingError: false,
+    isPlaceholderData: false,
+    isPreviousData: false,
+    isRefetchError: false,
+    isRefetching: false,
+    isStale: false,
+    isSuccess: false,
+    refetch: jest.fn(),
+    remove: jest.fn(),
+    status: 'loading',
   }
 }
 
