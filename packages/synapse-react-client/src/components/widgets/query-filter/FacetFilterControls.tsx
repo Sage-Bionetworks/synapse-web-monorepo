@@ -17,6 +17,11 @@ import { RangeFacetFilter } from './RangeFacetFilter'
 import { Box, Skeleton, Stack } from '@mui/material'
 import { sortBy } from 'lodash-es'
 import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
+import { useAtomValue } from 'jotai'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+} from '../../QueryWrapper/QueryWrapper'
 
 export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with at least one non-null value will be shown. */
@@ -196,12 +201,12 @@ function FacetFilterControlsSkeleton() {
 function FacetFilterControls(props: FacetFilterControlsProps) {
   const { availableFacets } = props
   const {
-    data: data,
     getCurrentQueryRequest,
     executeQueryRequest,
     combineRangeFacetConfig,
   } = useQueryContext()
   const lastRequest = getCurrentQueryRequest()
+  const data = useAtomValue(tableQueryDataAtom)
 
   const facets = data!
     .facets!.filter(
@@ -353,7 +358,9 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
 export default function FacetFilterControlsOrLoader(
   props: FacetFilterControlsProps,
 ) {
-  const { data, isLoadingNewBundle } = useQueryContext()
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
+  const data = useAtomValue(tableQueryDataAtom)
+
   if (isLoadingNewBundle) {
     return <FacetFilterControlsSkeleton />
   } else if (data == null || data.facets == null) {

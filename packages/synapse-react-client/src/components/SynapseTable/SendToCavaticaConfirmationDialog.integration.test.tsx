@@ -1,6 +1,6 @@
 import React from 'react'
 import SendToCavaticaConfirmationDialog from './SendToCavaticaConfirmationDialog'
-import { QueryContextType, QueryWrapper, useQueryContext } from '../../index'
+import { QueryWrapper } from '../../index'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
@@ -19,6 +19,8 @@ import * as UseExportToCavaticaModule from '../../synapse-queries/entity/useExpo
 import * as UseActionsRequiredForTableQueryModule from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { server } from '../../mocks/msw/server'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
+import { useSetAtom } from 'jotai'
+import { selectedRowsAtom } from '../QueryWrapper/TableRowSelectionState'
 import {
   getUseQueryLoadingMock,
   getUseQuerySuccessMock,
@@ -42,10 +44,10 @@ const mockUseGetActionsRequiredForTableQuery = jest
 let showSendToCavaticaModal:
   | QueryVisualizationContextType['setIsShowingExportToCavaticaModal']
   | undefined
-let setSelectedRows: QueryContextType['setSelectedRows'] | undefined
+let setSelectedRows: ReturnType<typeof useSetAtom> | undefined
 
 function ContextReceiver(props: React.PropsWithChildren<any>) {
-  setSelectedRows = useQueryContext().setSelectedRows
+  setSelectedRows = useSetAtom(selectedRowsAtom)
   showSendToCavaticaModal =
     useQueryVisualizationContext().setIsShowingExportToCavaticaModal
   return <>{props.children}</>

@@ -13,6 +13,11 @@ import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
 import FacetNavPanel, { PlotType } from './FacetNavPanel'
 import TotalQueryResults from '../../TotalQueryResults'
 import { Box, Button } from '@mui/material'
+import { useAtomValue } from 'jotai'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+} from '../../QueryWrapper/QueryWrapper'
 
 /*
 TODO: This component has a few bugs when its props are updated with new data, this should be handled
@@ -57,14 +62,10 @@ export function getFacets(
 const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   facetsToPlot,
 }: FacetNavProps): JSX.Element => {
-  const {
-    data,
-    getCurrentQueryRequest,
-    isLoadingNewBundle,
-    executeQueryRequest,
-    error,
-  } = useQueryContext()
-
+  const { getCurrentQueryRequest, executeQueryRequest, error } =
+    useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
   const { showFacetVisualization } = useQueryVisualizationContext()
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
 

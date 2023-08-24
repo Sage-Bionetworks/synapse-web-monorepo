@@ -1,12 +1,19 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
+import React, { useCallback, useEffect, useMemo } from 'react'
+import {
+  useDeepCompareEffectNoCheck,
+  useDeepCompareMemoize,
+} from 'use-deep-compare-effect'
 import {
   hasResettableFilters as hasResettableFiltersUtil,
   isFacetAvailable,
   removeLockedColumnFromFacetData,
 } from '../../utils/functions/queryUtils'
 import { useGetEntity } from '../../synapse-queries'
-import { QueryBundleRequest, Table } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  QueryResultBundle,
+  Table,
+} from '@sage-bionetworks/synapse-types'
 import {
   CombineRangeFacetConfig,
   InfiniteQueryContextType,
@@ -16,9 +23,16 @@ import {
 } from '../QueryContext/QueryContext'
 import useImmutableTableQuery from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { ConfirmationDialog } from '../ConfirmationDialog'
-import useTableRowSelection from './useTableRowSelection'
+import {
+  hasSelectedRowsAtom,
+  isRowSelectionVisibleAtom,
+  rowSelectionPrimaryKeyAtom,
+  selectedRowsAtom,
+} from './TableRowSelectionState'
 import useQueryWrapperData from './useQueryWrapperData'
 import { useQueryWrapperPaginationControls } from './useQueryWrapperPaginationControls'
+import { getDefaultPrimaryKey } from '../SynapseTable/SynapseTableUtils'
+import { atom, Provider, useAtomValue, useSetAtom } from 'jotai'
 
 export type QueryWrapperProps = React.PropsWithChildren<{
   initQueryRequest: QueryBundleRequest
@@ -37,11 +51,26 @@ export type QueryWrapperProps = React.PropsWithChildren<{
   combineRangeFacetConfig?: CombineRangeFacetConfig
 }>
 
+/** The query results, which will be undefined while initially fetching a new bundle, but will not be unloaded when fetching new pages */
+export const tableQueryDataAtom = atom<QueryResultBundle | undefined>(undefined)
+
+/** The entity being queried. Will be undefined while initially fetching */
+export const tableQueryEntityAtom = atom<Table | undefined>(undefined)
+/** Returns true when loading a brand-new query result bundle. Will not be true when just loading the next page of query results. */
+export const isLoadingNewBundleAtom = atom<boolean>(false)
+
+/**
+ * A column name may be "locked" so that it is both (1) not shown to the user that the filter is active, and (2) not modifiable by the user.
+ * For example, we may show only the data matching a particular facet value on a Details Page without implying that the shown data is part of a larger table.
+ * The presence of a locked filter will result in a client-side modification of the active query and result bundle data.
+ */
+export const lockedColumnAtom = atom<LockedColumn | undefined>(undefined)
+
 /**
  * Component that manages the state of a Synapse table query. Data can be accessed via QueryContext using
  * either `useQueryContext` or `QueryContextConsumer`.
  */
-export function QueryWrapper(props: QueryWrapperProps) {
+function _QueryWrapper(props: QueryWrapperProps) {
   const {
     initQueryRequest,
     onQueryChange,
@@ -56,17 +85,14 @@ export function QueryWrapper(props: QueryWrapperProps) {
     combineRangeFacetConfig,
   } = props
 
-  // Must store requireConfirmationOnChange in state to break dependency cycle between useImmutableTableQuery and useTableRowsSelection
-  // TODO: consider combining these two hooks, or decoupling them in some other way
-  const [requireConfirmationOnChange, setRequireConfirmationOnChange] =
-    useState(false)
+  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
 
   const immutableTableQueryResult = useImmutableTableQuery({
     initQueryRequest,
     shouldDeepLink,
     componentIndex,
     onQueryChange,
-    requireConfirmationOnChange,
+    requireConfirmationOnChange: hasSelectedRows,
   })
   const {
     entityId,
@@ -91,7 +117,9 @@ export function QueryWrapper(props: QueryWrapperProps) {
     return getCurrentQueryRequest()
   }, [getCurrentQueryRequest])
 
-  const queryWrapperData = useQueryWrapperData(lastQueryRequest, isInfinite)
+  const queryWrapperData = useDeepCompareMemoize(
+    useQueryWrapperData(lastQueryRequest, isInfinite),
+  )
   const { data, isLoadingNewBundle, error, currentAsyncStatus } =
     queryWrapperData
 
@@ -114,6 +142,16 @@ export function QueryWrapper(props: QueryWrapperProps) {
     ? isFacetAvailable(data.facets, data.selectColumns)
     : true
 
+  const setIsLoadingNewBundle = useSetAtom(isLoadingNewBundleAtom)
+  useEffect(() => {
+    setIsLoadingNewBundle(isLoadingNewBundle)
+  }, [isLoadingNewBundle, setIsLoadingNewBundle])
+
+  const setLockedColumn = useSetAtom(lockedColumnAtom)
+  useEffect(() => {
+    setLockedColumn(lockedColumn)
+  }, [lockedColumn, setLockedColumn])
+
   /**
    * Remove a particular facet name (e.g. study) and all possible values based on the parameter specified in the url
    * this is to remove the facet from the charts, search and filter.
@@ -122,6 +160,16 @@ export function QueryWrapper(props: QueryWrapperProps) {
   const dataWithLockedColumnFacetRemoved = useMemo(() => {
     return removeLockedColumnFromFacetData(data, lockedColumn)
   }, [data, lockedColumn])
+
+  const setTableQueryData = useSetAtom(tableQueryDataAtom)
+  useEffect(() => {
+    setTableQueryData(dataWithLockedColumnFacetRemoved)
+  }, [dataWithLockedColumnFacetRemoved, setTableQueryData])
+
+  const setTableQueryEntityData = useSetAtom(tableQueryEntityAtom)
+  useEffect(() => {
+    setTableQueryEntityData(entity)
+  }, [entity, setTableQueryEntityData])
 
   const hasResettableFilters = useMemo(() => {
     const request = getCurrentQueryRequest()
@@ -135,55 +183,49 @@ export function QueryWrapper(props: QueryWrapperProps) {
     [data?.columnModels],
   )
 
-  const {
-    isRowSelectionVisible,
-    rowSelectionPrimaryKey,
-    hasSelectedRows,
-    selectedRows,
-    setSelectedRows,
-    getIsRowSelected,
-  } = useTableRowSelection({
-    entity: entity,
-    columnModels: data?.columnModels,
-    isRowSelectionVisible: isRowSelectionVisibleFromProps,
-    rowSelectionPrimaryKey: rowSelectionPrimaryKeyFromProps,
-  })
-
+  const setIsRowSelectionVisible = useSetAtom(isRowSelectionVisibleAtom)
   useEffect(() => {
-    setRequireConfirmationOnChange(hasSelectedRows)
-  }, [hasSelectedRows])
+    setIsRowSelectionVisible(isRowSelectionVisibleFromProps)
+  }, [isRowSelectionVisibleFromProps, setIsRowSelectionVisible])
 
-  const context: InfiniteQueryContextType | PaginatedQueryContextType = {
-    data: dataWithLockedColumnFacetRemoved,
-    nextQueryRequest,
-    currentQueryRequest,
-    isLoadingNewBundle: isLoadingNewBundle,
-    getCurrentQueryRequest: getCurrentQueryRequest,
-    getInitQueryRequest,
-    error: error,
-    entity,
-    executeQueryRequest: setQuery,
-    isFacetsAvailable,
-    asyncJobStatus: currentAsyncStatus,
-    hasResettableFilters,
-    removeSelectedFacet,
-    removeValueFromSelectedFacet,
-    resetQuery,
-    removeQueryFilter,
-    removeValueFromQueryFilter,
-    lockedColumn,
-    getColumnModel,
-    onViewSharingSettingsClicked,
-    isRowSelectionVisible,
-    rowSelectionPrimaryKey,
-    hasSelectedRows,
-    selectedRows,
-    setSelectedRows,
-    getIsRowSelected,
-    addValueToSelectedFacet,
-    combineRangeFacetConfig,
-    ...paginationControls,
-  }
+  const rowSelectionPrimaryKey = useMemo(() => {
+    if (rowSelectionPrimaryKeyFromProps) {
+      return rowSelectionPrimaryKeyFromProps
+    } else {
+      return getDefaultPrimaryKey(entity, data?.columnModels)
+    }
+  }, [data?.columnModels, entity, rowSelectionPrimaryKeyFromProps])
+
+  const setRowSelectionPrimaryKey = useSetAtom(rowSelectionPrimaryKeyAtom)
+  useEffect(() => {
+    setRowSelectionPrimaryKey(rowSelectionPrimaryKey)
+  }, [rowSelectionPrimaryKey, setRowSelectionPrimaryKey])
+
+  const setSelectedRows = useSetAtom(selectedRowsAtom)
+
+  const context: InfiniteQueryContextType | PaginatedQueryContextType =
+    useDeepCompareMemoize({
+      nextQueryRequest,
+      currentQueryRequest,
+      isLoadingNewBundle: isLoadingNewBundle,
+      getCurrentQueryRequest: getCurrentQueryRequest,
+      getInitQueryRequest,
+      error: error,
+      executeQueryRequest: setQuery,
+      isFacetsAvailable,
+      asyncJobStatus: currentAsyncStatus,
+      hasResettableFilters,
+      removeSelectedFacet,
+      removeValueFromSelectedFacet,
+      resetQuery,
+      removeQueryFilter,
+      removeValueFromQueryFilter,
+      getColumnModel,
+      onViewSharingSettingsClicked,
+      addValueToSelectedFacet,
+      combineRangeFacetConfig,
+      ...paginationControls,
+    })
 
   /**
    * Render the children without any formatting
@@ -208,5 +250,15 @@ export function QueryWrapper(props: QueryWrapperProps) {
       />
       {children}
     </QueryContextProvider>
+  )
+}
+
+export function QueryWrapper(props: QueryWrapperProps) {
+  // Wrap in a Jotai provider to ensure the Jotai atomic state is unique to this component tree
+  // i.e. other instances of QueryWrapper will not share state with this instance
+  return (
+    <Provider>
+      <_QueryWrapper {...props} />
+    </Provider>
   )
 }

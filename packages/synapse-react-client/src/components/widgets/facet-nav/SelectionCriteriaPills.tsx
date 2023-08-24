@@ -1,5 +1,9 @@
 import React from 'react'
-import { QueryContextType, useQueryContext } from '../../QueryContext'
+import {
+  LockedColumn,
+  QueryContextType,
+  useQueryContext,
+} from '../../QueryContext'
 import {
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueQueryFilter,
@@ -24,6 +28,8 @@ import {
 } from '../../../utils/types/IsType'
 import pluralize from 'pluralize'
 import { ReadonlyDeep } from 'type-fest'
+import { useAtomValue } from 'jotai'
+import { lockedColumnAtom } from '../../QueryWrapper/QueryWrapper'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
 
@@ -102,6 +108,7 @@ function getPillPropsFromQueryFilters(
   queryFilters: ReadonlyDeep<QueryFilter[]>,
   queryContext: QueryContextType,
   queryVisualizationContext: QueryVisualizationContextType,
+  lockedColumn?: LockedColumn,
 ): SelectionCriteriaPillProps[] {
   return queryFilters.flatMap(queryFilter => {
     if (
@@ -110,7 +117,7 @@ function getPillPropsFromQueryFilters(
     ) {
       if (
         queryFilter.columnName.toLowerCase() ===
-        queryContext.lockedColumn?.columnName?.toLowerCase()
+        lockedColumn?.columnName?.toLowerCase()
       ) {
         return []
       }
@@ -132,11 +139,12 @@ function getPillPropsFromFacetFilters(
   selectedFacets: ReadonlyDeep<FacetColumnRequest[]>,
   queryContext: QueryContextType,
   queryVisualizationContext: QueryVisualizationContextType,
+  lockedColumn?: LockedColumn,
 ): SelectionCriteriaPillProps[] {
   return selectedFacets.flatMap(selectedFacet => {
     if (
       selectedFacet.columnName.toLowerCase() ===
-      queryContext.lockedColumn?.columnName?.toLowerCase()
+      lockedColumn?.columnName?.toLowerCase()
     ) {
       return []
     }
@@ -237,6 +245,7 @@ function getPillPropsFromFacetFilters(
 
 function SelectionCriteriaPills() {
   const queryContext = useQueryContext()
+  const lockedColumn = useAtomValue(lockedColumnAtom)
   const queryVisualizationContext = useQueryVisualizationContext()
   const { currentQueryRequest } = queryContext
 
@@ -244,12 +253,14 @@ function SelectionCriteriaPills() {
     currentQueryRequest.query?.additionalFilters ?? [],
     queryContext,
     queryVisualizationContext,
+    lockedColumn,
   )
 
   const facetPillProps = getPillPropsFromFacetFilters(
     currentQueryRequest.query.selectedFacets ?? [],
     queryContext,
     queryVisualizationContext,
+    lockedColumn,
   )
 
   const allPills = [...queryFilterPillProps, ...facetPillProps]

@@ -13,6 +13,13 @@ import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { getNumberOfResultsToInvokeActionCopy } from './TopLevelControls/TopLevelControlsUtils'
 import { useGetActionsRequiredForTableQuery } from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
+import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
+import { useAtomValue } from 'jotai'
+import {
+  hasSelectedRowsAtom,
+  rowSelectionPrimaryKeyAtom,
+  selectedRowsAtom,
+} from '../QueryWrapper/TableRowSelectionState'
 
 export type SendToCavaticaConfirmationDialogProps = {
   fileIdColumnName?: string
@@ -31,15 +38,14 @@ export default function SendToCavaticaConfirmationDialog(
     cavaticaHelpURL,
   } = props
   const {
-    data,
     getCurrentQueryRequest,
     onViewSharingSettingsClicked,
     hasResettableFilters,
-    selectedRows,
-    hasSelectedRows,
-    rowSelectionPrimaryKey,
   } = useQueryContext()
-
+  const data = useAtomValue(tableQueryDataAtom)
+  const selectedRows = useAtomValue(selectedRowsAtom)
+  const rowSelectionPrimaryKey = useAtomValue(rowSelectionPrimaryKeyAtom)
+  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
   const {
     isShowingExportToCavaticaModal,
     setIsShowingExportToCavaticaModal,

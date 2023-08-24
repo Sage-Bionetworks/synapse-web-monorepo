@@ -35,6 +35,8 @@ import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderTy
 import { Box } from '@mui/material'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { TableQueryDownloadConfirmation } from '../download_list'
+import { useAtomValue } from 'jotai'
+import { isLoadingNewBundleAtom } from '../QueryWrapper/QueryWrapper'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -135,7 +137,8 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
 
-  const { isFacetsAvailable: isFaceted, isLoadingNewBundle } = queryContext
+  const { isFacetsAvailable: isFaceted } = queryContext
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
 
   return (
     <QueryVisualizationContextConsumer>

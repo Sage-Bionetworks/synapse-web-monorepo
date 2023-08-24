@@ -1,10 +1,14 @@
 import React from 'react'
 import { Pagination, Typography } from '@mui/material'
 import { usePaginatedQueryContext } from '../QueryContext/QueryContext'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 export const TablePagination = () => {
-  const { data, goToPage, pageSize, setPageSize, currentPage } =
+  const { goToPage, pageSize, setPageSize, currentPage } =
     usePaginatedQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+
   const queryCount = data?.queryCount
 
   const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
