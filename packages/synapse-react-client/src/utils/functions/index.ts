@@ -8,6 +8,7 @@ import {
 } from './SqlFunctions'
 import { hex2ascii } from './StringUtils'
 import type { SQLOperator } from './SqlFunctions'
+import type { BackendDestinationEnum } from './getEndpoint'
 
 export {
   getNextPageOfData,
@@ -16,6 +17,7 @@ export {
   getIgnoredQueryFilterSearchParamKey,
   resultToJson,
   hex2ascii,
+  BackendDestinationEnum,
   SQLOperator,
   QUERY_FILTERS_LOCAL_STORAGE_KEY,
 }
