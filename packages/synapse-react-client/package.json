@@ -103,7 +103,7 @@
     "react-window": "^1.8.9",
     "reactflow": "^11.7.4",
     "rss-parser": "^3.13.0",
-    "sass": "^1.63.6",
+    "sass": "^1.66.1",
     "shortid": "^2.2.16",
     "spark-md5": "^3.0.2",
     "tinycolor2": "^1.6.0",
