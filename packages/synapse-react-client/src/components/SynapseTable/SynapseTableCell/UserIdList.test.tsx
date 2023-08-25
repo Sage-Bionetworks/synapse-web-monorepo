@@ -1,41 +1,31 @@
 import React from 'react'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserIdList, { UserIdListProps } from './UserIdList'
-import { act } from '@testing-library/react'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../mocks/MockSynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
 import {
-  mockUserProfileData,
   MOCK_USER_ID,
-  MOCK_USER_NAME,
+  MOCK_USER_ID_2,
 } from '../../../mocks/user/mock_user_profile'
-import SynapseClient from '../../../synapse-client'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 
-jest
-  .spyOn(SynapseClient, 'getUserProfiles')
-  .mockResolvedValue({ list: [mockUserProfileData] })
+const USER_OR_TEAM_BADGE_TEST_ID = 'UserOrTeamBadge'
+
+jest.mock('../../UserOrTeamBadge', () => ({
+  __esModule: true,
+  default: () => <div data-testid={USER_OR_TEAM_BADGE_TEST_ID}></div>,
+}))
 
 describe('UserIdList: basic functionality', () => {
   const props: UserIdListProps = {
-    userIds: [`${MOCK_USER_ID}`],
+    userIds: [MOCK_USER_ID.toString(), MOCK_USER_ID_2.toString()],
   }
 
-  it('renders and retrieves data without crashing', async () => {
+  it('renders badges', async () => {
     render(<UserIdList {...props} />, {
-      wrapper: SynapseTestContext,
+      wrapper: createWrapper(),
     })
-    act(() => {
-      mockAllIsIntersecting(true)
+    await waitFor(() => {
+      const badges = screen.getAllByTestId(USER_OR_TEAM_BADGE_TEST_ID)
+      expect(badges).toHaveLength(2)
     })
-    await waitFor(() =>
-      expect(SynapseClient.getUserProfiles).toHaveBeenCalledWith(
-        props.userIds,
-        MOCK_CONTEXT_VALUE.accessToken,
-      ),
-    )
-    await screen.findByText(`@${MOCK_USER_NAME}`)
   })
 })
