@@ -42,7 +42,7 @@ jobs:
       - name: build
         run: pnpm nx run ${{ inputs.app-name }}:build
       - name: Assume AWS Role
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-region: us-east-1
           role-to-assume: ${{ inputs.deployment-role-arn }}
