@@ -239,7 +239,6 @@ import {
   SearchQuery,
   SearchResults,
   SortBy,
-  SqlTransformResponse,
   Submission as DataAccessSubmission,
   SubmissionInfoPage,
   SubmissionInfoPageRequest,
@@ -260,7 +259,6 @@ import {
   Topic,
   TotpSecret,
   TotpSecretActivationRequest,
-  TransformSqlWithFacetsRequest,
   TrashedEntity,
   TwoFactorAuthErrorResponse,
   TwoFactorAuthLoginRequest,
@@ -3105,17 +3103,6 @@ export const updateTable = async (
     asyncJobId.token,
     `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/get/${asyncJobId.token}`,
     accessToken,
-  )
-}
-
-export const getTransformSqlWithFacetsRequest = (
-  transformSqlWithFacetsRequest: TransformSqlWithFacetsRequest,
-) => {
-  return doPost<SqlTransformResponse>(
-    '/repo/v1/table/sql/transform',
-    transformSqlWithFacetsRequest,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
