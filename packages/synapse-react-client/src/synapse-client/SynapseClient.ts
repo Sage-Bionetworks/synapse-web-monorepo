@@ -3108,17 +3108,6 @@ export const updateTable = async (
   )
 }
 
-export const getTransformSqlWithFacetsRequest = (
-  transformSqlWithFacetsRequest: TransformSqlWithFacetsRequest,
-) => {
-  return doPost<SqlTransformResponse>(
-    '/repo/v1/table/sql/transform',
-    transformSqlWithFacetsRequest,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-}
-
 export const createPersonalAccessToken = (
   accessTokenGenerationRequest: AccessTokenGenerationRequest,
   accessToken: string | undefined,
