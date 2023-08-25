@@ -23,7 +23,10 @@ export function hex2ascii(inputString: string): string {
  * @return {Number}    A 32bit integer
  * @see https://stackoverflow.com/a/8831937
  */
-export function hashCode(str: string) {
+export function hashCode(str?: string | null) {
+  if (str == null) {
+    str = ''
+  }
   let hash = 0
   for (let i = 0, len = str.length; i < len; i++) {
     const chr = str.charCodeAt(i)
