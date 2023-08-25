@@ -29,6 +29,7 @@ import {
   Operator,
   SearchParams,
 } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
+import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
 
 type StandaloneQueryWrapperOwnProps = {
   sql: string
@@ -172,6 +173,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                       {showTopLevelControls && (
                         <TotalQueryResults frontText={''} />
                       )}
+                      <QueryWrapperLoadingScreen />
                       <SynapseTable
                         showAccessColumn={showAccessColumn}
                         data-testid="SynapseTable"
