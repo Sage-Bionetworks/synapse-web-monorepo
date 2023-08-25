@@ -1,10 +1,11 @@
+/* eslint jest/no-conditional-expect: 0 */
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { SynapseConstants } from '../../utils'
-import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '../../utils/APIConstants'
@@ -40,6 +41,7 @@ import { mockProjectIds } from '../../mocks/entity/mockProject'
 import { mockFileHandle } from '../../mocks/mock_file_handle'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import { mockProjectViewEntity } from '../../mocks/entity/mockProjectView'
+import { mockDatasetEntity } from '../../mocks/entity/mockDataset'
 
 const synapseTableEntityId = 'syn16787123'
 
@@ -185,15 +187,70 @@ describe('SynapseTable tests', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  describe('Properly renders supplemental UI columns', () => {
-    // TODO
-    // - SubmissionView
-    // - Dataset
-    // - Dataset Collection
-    // - MaterializedView
-    // - VirtualTable
-    describe('EntityView (mixed types)', () => {
-      it('Renders the supplemental columns correctly', async () => {
+  const entityTypeCases: [
+    string,
+    Table,
+    {
+      expectAccessToBeVisible: boolean
+      expectAddToDownloadListToBeVisible: boolean
+      expectDirectDownloadToBeVisible: boolean
+    },
+  ][] = [
+    [
+      'EntityView (mixed types)',
+      mixedEntityView,
+      {
+        expectAccessToBeVisible: true,
+        expectAddToDownloadListToBeVisible: true,
+        expectDirectDownloadToBeVisible: true,
+      },
+    ],
+    [
+      'File View',
+      mockFileViewEntity,
+      {
+        expectAccessToBeVisible: true,
+        expectAddToDownloadListToBeVisible: true,
+        expectDirectDownloadToBeVisible: true,
+      },
+    ],
+    [
+      'Project View',
+      mockProjectViewEntity,
+      {
+        expectAccessToBeVisible: true,
+        expectAddToDownloadListToBeVisible: false,
+        expectDirectDownloadToBeVisible: false,
+      },
+    ],
+    [
+      'TableEntity',
+      mockTableEntity,
+      {
+        expectAccessToBeVisible: false,
+        expectAddToDownloadListToBeVisible: false,
+        expectDirectDownloadToBeVisible: false,
+      },
+    ],
+    [
+      'Dataset',
+      mockDatasetEntity,
+      {
+        expectAccessToBeVisible: true,
+        expectAddToDownloadListToBeVisible: true,
+        expectDirectDownloadToBeVisible: true,
+      },
+    ],
+  ]
+  // TODO
+  // - SubmissionView
+  // - Dataset Collection
+  // - MaterializedView
+  // - VirtualTable
+  describe.each(entityTypeCases)(
+    'Properly renders supplemental UI columns for %p',
+    (name, entity, expected) => {
+      it(`Renders the supplemental columns correctly for ${name}`, async () => {
         renderTable(
           {
             showAccessColumn: true,
@@ -203,25 +260,33 @@ describe('SynapseTable tests', () => {
           {
             isRowSelectionVisible: false,
           },
-          mixedEntityView,
+          entity,
         )
 
         await waitFor(() => {
           // Row selection feature is not shown (per props)
           expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
-          // Access column
-          expect(screen.queryAllByTestId('AccessCell').length).toBeGreaterThan(
-            0,
+          const accessCells = screen.queryAllByTestId('AccessCell')
+          const downloadListCells = screen.queryAllByTestId(
+            'AddToDownloadListCell',
           )
-          // Add to download list column
-          expect(
-            screen.queryAllByTestId('AddToDownloadListCell').length,
-          ).toBeGreaterThan(0)
-
-          // Direct download column
-          expect(
-            screen.queryAllByTestId('DirectDownloadCell').length,
-          ).toBeGreaterThan(0)
+          const directDownloadCells =
+            screen.queryAllByTestId('DirectDownloadCell')
+          if (expected.expectAccessToBeVisible) {
+            expect(accessCells.length).toBeGreaterThan(0)
+          } else {
+            expect(accessCells.length).toBe(0)
+          }
+          if (expected.expectAddToDownloadListToBeVisible) {
+            expect(downloadListCells.length).toBeGreaterThan(0)
+          } else {
+            expect(downloadListCells.length).toBe(0)
+          }
+          if (expected.expectDirectDownloadToBeVisible) {
+            expect(directDownloadCells.length).toBeGreaterThan(0)
+          } else {
+            expect(directDownloadCells.length).toBe(0)
+          }
         })
       })
 
@@ -267,234 +332,8 @@ describe('SynapseTable tests', () => {
           screen.queryByTestId('DirectDownloadCell'),
         ).not.toBeInTheDocument()
       })
-    })
-    describe('File View (EntityView with only files)', () => {
-      it('Renders the supplemental columns correctly', async () => {
-        renderTable(
-          {
-            showAccessColumn: true,
-            showDirectDownloadColumn: true,
-            hideAddToDownloadListColumn: false,
-          },
-          {
-            isRowSelectionVisible: false,
-          },
-          mockFileViewEntity,
-        )
-
-        await waitFor(() => {
-          // Row selection feature is not shown (per props)
-          expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
-          // Access column
-          expect(screen.queryAllByTestId('AccessCell').length).toBeGreaterThan(
-            0,
-          )
-          // Add to download list column
-          expect(
-            screen.queryAllByTestId('AddToDownloadListCell').length,
-          ).toBeGreaterThan(0)
-
-          // Direct download column
-          expect(
-            screen.queryAllByTestId('DirectDownloadCell').length,
-          ).toBeGreaterThan(0)
-        })
-      })
-
-      it('With row selection', async () => {
-        renderTable(
-          {
-            showAccessColumn: true,
-            showDirectDownloadColumn: true,
-            hideAddToDownloadListColumn: false,
-          },
-          {
-            isRowSelectionVisible: true,
-          },
-        )
-
-        await waitFor(() => {
-          expect(screen.queryAllByRole('checkbox').length).toBeGreaterThan(0)
-          // Add to download list is never shown because you can add one or more files using the row selection feature
-          expect(
-            screen.queryByTestId('AddToDownloadListCell'),
-          ).not.toBeInTheDocument()
-        })
-      })
-
-      it('Hides columns correctly', () => {
-        renderTable(
-          {
-            showAccessColumn: false,
-            showDirectDownloadColumn: false,
-            hideAddToDownloadListColumn: true,
-          },
-          {
-            isRowSelectionVisible: false,
-          },
-        )
-
-        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
-        expect(screen.queryByTestId('AccessCell')).not.toBeInTheDocument()
-        expect(
-          screen.queryByTestId('AddToDownloadListCell'),
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByTestId('DirectDownloadCell'),
-        ).not.toBeInTheDocument()
-      })
-    })
-    describe('Project View (EntityView with only projects)', () => {
-      it('Renders the supplemental columns correctly', async () => {
-        renderTable(
-          {
-            showAccessColumn: true,
-            showDirectDownloadColumn: true,
-            hideAddToDownloadListColumn: false,
-          },
-          {
-            isRowSelectionVisible: false,
-          },
-          mockProjectViewEntity,
-        )
-
-        await waitFor(() => {
-          // Row selection feature is not shown (per props)
-          expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
-          // Access column
-          expect(screen.queryAllByTestId('AccessCell').length).toBeGreaterThan(
-            0,
-          )
-          // Add to download list column
-          expect(
-            screen.queryByTestId('AddToDownloadListCell'),
-          ).not.toBeInTheDocument()
-
-          // Direct download column
-          expect(
-            screen.queryByTestId('DirectDownloadCell'),
-          ).not.toBeInTheDocument()
-        })
-      })
-
-      it('With row selection', async () => {
-        renderTable(
-          {
-            showAccessColumn: true,
-            showDirectDownloadColumn: true,
-            hideAddToDownloadListColumn: false,
-          },
-          {
-            isRowSelectionVisible: true,
-          },
-        )
-
-        await waitFor(() => {
-          expect(screen.queryAllByRole('checkbox').length).toBeGreaterThan(0)
-          // Add to download list is never shown because you can add one or more files using the row selection feature
-          expect(
-            screen.queryByTestId('AddToDownloadListCell'),
-          ).not.toBeInTheDocument()
-        })
-      })
-
-      it('Hides columns correctly', () => {
-        renderTable(
-          {
-            showAccessColumn: false,
-            showDirectDownloadColumn: false,
-            hideAddToDownloadListColumn: true,
-          },
-          {
-            isRowSelectionVisible: false,
-          },
-        )
-
-        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
-        expect(screen.queryByTestId('AccessCell')).not.toBeInTheDocument()
-        expect(
-          screen.queryByTestId('AddToDownloadListCell'),
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByTestId('DirectDownloadCell'),
-        ).not.toBeInTheDocument()
-      })
-    })
-    describe('TableEntity', () => {
-      it('Renders the supplemental columns correctly', async () => {
-        renderTable(
-          {
-            showAccessColumn: true,
-            showDirectDownloadColumn: true,
-            hideAddToDownloadListColumn: false,
-          },
-          {
-            isRowSelectionVisible: false,
-          },
-          mockTableEntity,
-        )
-
-        await waitFor(() => {
-          // Row selection feature is not shown (per props)
-          expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
-          // Access column
-          expect(screen.queryByTestId('AccessCell')).not.toBeInTheDocument()
-          // Add to download list column
-          expect(
-            screen.queryByTestId('AddToDownloadListCell'),
-          ).not.toBeInTheDocument()
-
-          // Direct download column
-          expect(
-            screen.queryByTestId('DirectDownloadCell'),
-          ).not.toBeInTheDocument()
-        })
-      })
-
-      it('With row selection', async () => {
-        renderTable(
-          {
-            showAccessColumn: true,
-            showDirectDownloadColumn: true,
-            hideAddToDownloadListColumn: false,
-          },
-          {
-            isRowSelectionVisible: true,
-          },
-        )
-
-        await waitFor(() => {
-          expect(screen.queryAllByRole('checkbox').length).toBeGreaterThan(0)
-          // Add to download list is never shown because you can add one or more files using the row selection feature
-          expect(
-            screen.queryByTestId('AddToDownloadListCell'),
-          ).not.toBeInTheDocument()
-        })
-      })
-
-      it('Hides columns correctly', () => {
-        renderTable(
-          {
-            showAccessColumn: false,
-            showDirectDownloadColumn: false,
-            hideAddToDownloadListColumn: true,
-          },
-          {
-            isRowSelectionVisible: false,
-          },
-        )
-
-        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
-        expect(screen.queryByTestId('AccessCell')).not.toBeInTheDocument()
-        expect(
-          screen.queryByTestId('AddToDownloadListCell'),
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByTestId('DirectDownloadCell'),
-        ).not.toBeInTheDocument()
-      })
-    })
-  })
+    },
+  )
 
   it('renders facet controls in the column headers', async () => {
     renderTable()
