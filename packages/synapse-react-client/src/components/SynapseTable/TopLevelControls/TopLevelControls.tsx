@@ -137,8 +137,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   /**
    * Handles the toggle of a column select, this will cause the table to
    * either show the column or hide depending on the prior state of the column
-   *
-   * @memberof SynapseTable
    */
   const toggleColumnSelection = (columnName: string) => {
     let columnsToShowInTableCopy = cloneDeep(columnsToShowInTable)

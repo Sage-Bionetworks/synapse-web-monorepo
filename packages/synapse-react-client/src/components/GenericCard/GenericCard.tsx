@@ -1,5 +1,5 @@
 import React from 'react'
-import { SynapseConstants } from '../../utils'
+import { SynapseConstants, SynapseContext } from '../../utils'
 import {
   isDatasetCollection,
   isTableEntity,
@@ -9,7 +9,6 @@ import {
   DOI_REGEX,
   SYNAPSE_ENTITY_ID_REGEX,
 } from '../../utils/functions/RegularExpressions'
-import { SynapseContext } from '../../utils/context/SynapseContext'
 import {
   ColumnModel,
   ColumnType,
@@ -18,6 +17,7 @@ import {
   FileHandleAssociateType,
   FileHandleAssociation,
   SelectColumn,
+  Table,
 } from '@sage-bionetworks/synapse-types'
 import { Box, Link } from '@mui/material'
 import {
@@ -31,14 +31,17 @@ import HeaderCard from '../HeaderCard'
 import IconList from '../IconList'
 import IconSvg, { type2SvgIconName } from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import { QueryContextType } from '../QueryContext'
 import { CardFooter, Icon } from '../row_renderers/utils'
 import { FileHandleLink } from '../widgets/FileHandleLink'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
-import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
-import { IconOptions } from '../Icon/Icon'
+import {
+  QueryVisualizationContextType,
+  useQueryVisualizationContext,
+} from '../QueryVisualizationWrapper'
+import { IconOptions } from '../Icon'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { SynapseCardLabel } from './SynapseCardLabel'
+import { useQueryContext } from '../QueryContext'
 
 export type KeyToAlias = {
   key: string
@@ -63,7 +66,7 @@ export type GenericCardSchema = {
   dataTypeIconNames?: string
 }
 
-export type GenericCardProps = {
+export type GenericCardPropsInternal = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
   iconOptions?: IconOptions
@@ -75,11 +78,15 @@ export type GenericCardProps = {
   // Row values
   data: string[]
   rowId?: number
-  tableId: string | undefined
   columnIconOptions?: ColumnIconConfigs
-  queryContext: QueryContextType
+  table: Table | undefined
   queryVisualizationContext: QueryVisualizationContextType
 } & CommonCardProps
+
+export type GenericCardProps = Omit<
+  GenericCardPropsInternal,
+  'table' | 'queryVisualizationContext'
+>
 
 export type GenericCardState = {
   hasClickedShowMore: boolean
@@ -359,13 +366,13 @@ export function ShortDescription(props: {
 /**
  * Renders a card from a table query
  */
-export default class GenericCard extends React.Component<
-  GenericCardProps,
+class _GenericCard extends React.Component<
+  GenericCardPropsInternal,
   GenericCardState
 > {
   static contextType = SynapseContext
 
-  constructor(props: GenericCardProps) {
+  constructor(props: GenericCardPropsInternal) {
     super(props)
     this.state = {
       hasClickedShowMore: false,
@@ -435,7 +442,7 @@ export default class GenericCard extends React.Component<
       descriptionConfig,
       rgbIndex,
       columnIconOptions,
-      queryContext: { entity: table },
+      table,
       queryVisualizationContext: { getColumnDisplayName },
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
@@ -715,4 +722,16 @@ export default class GenericCard extends React.Component<
       </div>
     )
   }
+}
+
+export default function GenericCard(props: GenericCardProps) {
+  const { entity: table } = useQueryContext()
+  const queryVisualizationContext = useQueryVisualizationContext()
+  return (
+    <_GenericCard
+      {...props}
+      table={table}
+      queryVisualizationContext={queryVisualizationContext}
+    />
+  )
 }

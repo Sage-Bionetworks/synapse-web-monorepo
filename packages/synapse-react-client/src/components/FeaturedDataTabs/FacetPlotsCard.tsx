@@ -114,7 +114,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       const getColumnType = (
         facetToPlot: FacetColumnResult,
       ): ColumnTypeEnum | undefined =>
-        data?.columnModels.find(
+        data?.columnModels!.find(
           columnModel => columnModel.name === facetToPlot.columnName,
         )?.columnType as ColumnTypeEnum
 
@@ -133,25 +133,24 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         }),
       ).then(newPlotData => setFacetPlotDataArray(newPlotData))
       // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
-      const selectedFacet: FacetColumnResultValueCount | undefined =
-        data?.facets
-          .map(item => {
-            const facetValues: FacetColumnResultValueCount[] = (
-              item as FacetColumnResultValues
-            ).facetValues
-            if (facetValues) {
-              const filteredFacetValues: FacetColumnResultValueCount[] =
-                facetValues.filter(facetValue => {
-                  return facetValue.isSelected
-                })
-              return filteredFacetValues.length > 0
-                ? filteredFacetValues[0]
-                : undefined
-            } else {
-              return undefined
-            }
-          })
-          .filter(x => x !== undefined)[0]
+      const selectedFacet: FacetColumnResultValueCount | undefined = data
+        ?.facets!.map(item => {
+          const facetValues: FacetColumnResultValueCount[] = (
+            item as FacetColumnResultValues
+          ).facetValues
+          if (facetValues) {
+            const filteredFacetValues: FacetColumnResultValueCount[] =
+              facetValues.filter(facetValue => {
+                return facetValue.isSelected
+              })
+            return filteredFacetValues.length > 0
+              ? filteredFacetValues[0]
+              : undefined
+          } else {
+            return undefined
+          }
+        })
+        .filter(x => x !== undefined)[0]
 
       if (selectedFacet && selectedFacet.value) {
         setSelectedFacetValue(selectedFacet?.value)

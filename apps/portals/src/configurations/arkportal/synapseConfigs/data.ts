@@ -51,7 +51,6 @@ const data: SynapseConfig = {
 export const dataDetailPageProps: StandaloneQueryWrapperProps = {
   sql: dataSql,
   rgbIndex,
-  title: 'Files',
   columnLinks: dataColumnLinks,
   hideDownload: true,
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,

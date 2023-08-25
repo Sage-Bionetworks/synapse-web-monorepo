@@ -90,7 +90,6 @@ export type UserCardSize =
   | typeof LARGE_USER_CARD
 
 export const SEPERATOR = 'SEPERATOR'
-export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS'
 
 // For internal testing only
 export const _TIME_DELAY = 75

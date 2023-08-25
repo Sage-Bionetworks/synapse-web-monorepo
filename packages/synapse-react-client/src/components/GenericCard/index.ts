@@ -4,7 +4,7 @@ export type {
   KeyToAlias,
   KeyToAliasMap,
   GenericCardSchema,
-  GenericCardProps,
+  GenericCardPropsInternal,
   GenericCardState,
 } from './GenericCard'
 export {

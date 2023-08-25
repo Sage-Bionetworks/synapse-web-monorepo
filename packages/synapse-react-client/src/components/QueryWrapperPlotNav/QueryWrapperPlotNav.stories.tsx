@@ -101,7 +101,7 @@ export const FileView: Story = {
   args: {
     tableConfiguration: {
       showAccessColumn: true,
-      showDownloadColumn: true,
+      showDirectDownloadColumn: true,
       columnLinks: [
         {
           matchColumnName: 'study',
@@ -201,7 +201,7 @@ export const SendToCavatica: Story = {
     isRowSelectionVisible: true,
     tableConfiguration: {
       showAccessColumn: true,
-      showDownloadColumn: true,
+      showDirectDownloadColumn: true,
     },
     unitDescription: 'file',
     name: 'CAVATICA Integration Demo',
@@ -329,7 +329,7 @@ export const TableHasAccessRequirement: Story = {
     sql: 'SELECT * FROM syn51425243',
     tableConfiguration: {
       showAccessColumn: true,
-      showDownloadColumn: true,
+      showDirectDownloadColumn: true,
     },
     name: 'Table Has Access Requirement',
     hideSqlEditorControl: false,
@@ -341,7 +341,7 @@ export const TableWithNoDownloadAccess: Story = {
     sql: 'SELECT * FROM syn51489955',
     tableConfiguration: {
       showAccessColumn: false,
-      showDownloadColumn: false,
+      showDirectDownloadColumn: false,
     },
     name: 'No Table Download Access',
     hideSqlEditorControl: false,
@@ -367,7 +367,7 @@ export const Dataset: Story = {
     sql: 'SELECT * FROM syn26302617',
     tableConfiguration: {
       showAccessColumn: true,
-      showDownloadColumn: true,
+      showDirectDownloadColumn: true,
     },
     name: 'Dataset Demo',
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
@@ -382,7 +382,7 @@ export const DatasetCollection: Story = {
     sql: 'SELECT * FROM syn33199585',
     tableConfiguration: {
       showAccessColumn: true,
-      showDownloadColumn: true,
+      showDirectDownloadColumn: true,
     },
     name: 'Dataset Collection Demo',
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,

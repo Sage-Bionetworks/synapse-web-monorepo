@@ -30,7 +30,6 @@ import {
   ENTITY_ALIAS,
   ENTITY_BUNDLE_V2,
   ENTITY_EVALUATION,
-  ENTITY_HEADER_BY_ID,
   ENTITY_HEADERS,
   ENTITY_ID,
   ENTITY_JSON,
@@ -1042,15 +1041,21 @@ export const getEntityAlias = (alias: string, accessToken?: string) => {
 }
 
 /**
- * Get the EntityHeader for a single entity
- * https://rest-docs.synapse.org/rest/GET/entity/id/type.html
+ * Get the EntityHeader for a single entity.
+ *
+ * Note that this will not throw an error if not found or unauthorized.
+ * See https://sagebionetworks.jira.com/browse/PLFM-7989
  */
-export const getEntityHeader = (entityId: string, accessToken?: string) => {
-  return doGet<EntityHeader>(
-    ENTITY_HEADER_BY_ID(entityId),
+export const getEntityHeader = async (
+  entityId: string,
+  versionNumber?: number,
+  accessToken?: string,
+): Promise<EntityHeader | undefined> => {
+  const batchResult = await getEntityHeaders(
+    [{ targetId: entityId, targetVersionNumber: versionNumber }],
     accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
   )
+  return batchResult.results[0]
 }
 
 /**

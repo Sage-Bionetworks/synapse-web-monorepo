@@ -326,7 +326,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     </div>
   )
 
-  if ((!data && isLoadingNewBundle) || !facetToPlot) {
+  const columnModel = data?.columnModels?.find(
+    columnModel => columnModel.name === facetToPlot.columnName,
+  )
+
+  if ((!data && isLoadingNewBundle) || !facetToPlot || !columnModel) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}
@@ -358,11 +362,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               <div className="FacetNavPanel__title__tools">
                 <EnumFacetFilter
                   facetValues={facetToPlot.facetValues}
-                  columnModel={
-                    data?.columnModels!.find(
-                      el => el.name === facetToPlot.columnName,
-                    )!
-                  }
+                  columnModel={columnModel}
                   containerAs="Dropdown"
                 />
                 <Tooltip title={'Expand to large graph'}>

@@ -242,7 +242,6 @@ export const studiesDetailPage: DetailsPageProps = {
             visibleColumnCount: 7,
             sql: metadataFilesSql,
             rgbIndex,
-            title: 'Metadata Files',
           },
           className: 'metadata-table',
         },

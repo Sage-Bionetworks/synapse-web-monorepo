@@ -205,7 +205,6 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         {
           name: 'StandaloneQueryWrapper',
           props: {
-            title: 'Mutations',
             name: 'Mutations',
             unitDescription: 'Mutations',
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,

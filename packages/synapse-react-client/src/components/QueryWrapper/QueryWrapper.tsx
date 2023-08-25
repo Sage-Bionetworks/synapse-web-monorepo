@@ -20,8 +20,7 @@ import useTableRowSelection from './useTableRowSelection'
 import useQueryWrapperData from './useQueryWrapperData'
 import { useQueryWrapperPaginationControls } from './useQueryWrapperPaginationControls'
 
-export type QueryWrapperProps = {
-  children: React.ReactNode | React.ReactNode[]
+export type QueryWrapperProps = React.PropsWithChildren<{
   initQueryRequest: QueryBundleRequest
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
@@ -36,7 +35,7 @@ export type QueryWrapperProps = {
   rowSelectionPrimaryKey?: string[]
   isInfinite?: boolean
   combineRangeFacetConfig?: CombineRangeFacetConfig
-}
+}>
 
 /**
  * Component that manages the state of a Synapse table query. Data can be accessed via QueryContext using
