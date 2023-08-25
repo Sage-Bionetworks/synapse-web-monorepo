@@ -117,9 +117,8 @@ function _QueryWrapper(props: QueryWrapperProps) {
     return getCurrentQueryRequest()
   }, [getCurrentQueryRequest])
 
-  const queryWrapperData = useDeepCompareMemoize(
-    useQueryWrapperData(lastQueryRequest, isInfinite),
-  )
+  const queryWrapperData = useQueryWrapperData(lastQueryRequest, isInfinite)
+
   const { data, isLoadingNewBundle, error, currentAsyncStatus } =
     queryWrapperData
 

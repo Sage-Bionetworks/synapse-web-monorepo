@@ -81,20 +81,11 @@ function usePrefetchFileHandleData() {
 function usePrefetchEntityData() {
   const entity = useAtomValue(tableQueryEntityAtom)
   const data = useAtomValue(tableQueryDataAtom)
-  const entityIdColumnIndices = (data?.columnModels ?? []).reduce(
-    (prev: number[], curr, index) => {
-      if (curr.columnType === ColumnTypeEnum.ENTITYID) {
-        return [...prev, index]
-      }
-      return prev
-    },
-    [],
-  )
 
   let entitiesToPrefetch: ReferenceList = []
 
+  // If this is a file view/dataset, collect all of the row IDs; they correspond to entities that we'll end up fetching
   if (entity && isEntityViewOrDataset(entity)) {
-    // We'll have to fetch the row IDs
     entitiesToPrefetch = (data?.queryResult?.queryResults?.rows ?? []).reduce(
       (prev: ReferenceList, curr) => {
         const { rowId, versionNumber } = curr
@@ -110,12 +101,30 @@ function usePrefetchEntityData() {
     )
   }
 
+  const entityIdColumnIndices = (data?.columnModels ?? []).reduce(
+    (prev: number[], curr, index) => {
+      if (curr.columnType === ColumnTypeEnum.ENTITYID) {
+        if (entity && isEntityViewOrDataset(entity) && curr.name === 'id') {
+          // If this is a view/dataset, we don't need to fetch the entities in the entity ID column
+          // Collecting the row IDs in the last step was sufficient
+          return prev
+        }
+        return [...prev, index]
+      }
+      return prev
+    },
+    [],
+  )
+
   // Now add all IDs from the entity ID columns
   entitiesToPrefetch = (data?.queryResult?.queryResults?.rows ?? []).reduce(
     (prev: ReferenceList, curr) => {
       entityIdColumnIndices.forEach(index => {
         const value = curr.values[index]
-        if (value) {
+        if (
+          value &&
+          !prev.find(e => e.targetId === value && e.targetVersionNumber == null)
+        ) {
           prev.push({ targetId: value })
         }
       })
