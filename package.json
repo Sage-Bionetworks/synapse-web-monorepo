@@ -26,7 +26,7 @@
     "eslint-plugin-testing-library": "^5.11.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
-    "nx": "^16.5.0",
+    "nx": "^16.7.4",
     "rimraf": "^5.0.1",
     "typescript": "5.1.6"
   },
