@@ -1,5 +1,5 @@
 /* eslint jest/no-conditional-expect: 0 */
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
@@ -19,6 +19,7 @@ import {
   FileEntity,
   PaginatedResults,
   QueryBundleRequest,
+  QueryResultBundle,
   Reference,
   ReferenceList,
   Table,
@@ -36,7 +37,10 @@ import {
   QueryWrapperProps,
 } from '../../index'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
+import {
+  MOCK_TABLE_ENTITY_ID,
+  mockTableEntity,
+} from '../../mocks/entity/mockTableEntity'
 import { mockProjectIds } from '../../mocks/entity/mockProject'
 import { mockFileHandle } from '../../mocks/mock_file_handle'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
@@ -446,5 +450,48 @@ describe('SynapseTable tests', () => {
     expect(
       screen.queryByTestId('AddToDownloadListCell'),
     ).not.toBeInTheDocument()
+  })
+
+  it('handles case where selectColumns do not match column models (SWC-6540)', async () => {
+    const queryResultBundleWithRenamedColumn: QueryResultBundle = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+      queryCount: 1,
+      selectColumns: [{ name: 'Number of Studies', columnType: 'INTEGER' }],
+      columnModels: [
+        { name: 'studyName', columnType: 'LARGETEXT', id: '82659' },
+        { name: 'studyId', columnType: 'ENTITYID', id: '82658' },
+      ],
+      facets: [],
+      lastUpdatedOn: '2023-08-28T07:27:00.667Z',
+      queryResult: {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
+        queryResults: {
+          concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
+          tableId: MOCK_TABLE_ENTITY_ID,
+          etag: '53e1e27a-dbf3-4db3-acd1-dafca30b894c',
+          headers: [{ name: 'Number of Studies', columnType: 'INTEGER' }],
+          rows: [{ values: ['123'] }],
+        },
+      },
+    }
+
+    server.use(
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/entity/${synapseTableEntityId}`,
+        (req, res, ctx) => {
+          return res(ctx.status(200), ctx.json(mockFileViewEntity))
+        },
+      ),
+      ...getHandlersForTableQuery(queryResultBundleWithRenamedColumn),
+    )
+
+    renderTable({ showDirectDownloadColumn: true })
+    mockAllIsIntersecting(true)
+
+    const column = await screen.findByRole('columnheader')
+    within(column).getByText('Number of Studies')
+    screen.getByText('123')
   })
 })

@@ -150,19 +150,21 @@ export function TableDataColumnHeader(
   const lockedColumn = useAtomValue(lockedColumnAtom)
   const data = useAtomValue(tableQueryDataAtom)
   const columnModels = data?.columnModels ?? []
+  const selectColumns = data?.selectColumns ?? []
+  const selectColumn = selectColumns.find(sc => sc.name === column.id)
   const columnModel = columnModels.find(cm => cm.name === column.id)
   const facets = data?.facets ?? []
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
-  if (!columnModel) {
+  if (!selectColumn) {
     return <>{column.id}</>
   }
 
-  const displayColumnName = getColumnDisplayName(columnModel.name)
+  const displayColumnName = getColumnDisplayName(selectColumn!.name)
   // we have to figure out if the current column is a facet selection
   const facetIndex: number = facets.findIndex(
     (facetColumnResult: FacetColumnResult) => {
-      return facetColumnResult.columnName === columnModel.name
+      return facetColumnResult.columnName === columnModel?.name
     },
   )
   // the header must be included in the facets and it has to be enumerable for current rendering capabilities
@@ -170,11 +172,11 @@ export function TableDataColumnHeader(
     facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
   const facet = facets[facetIndex] as FacetColumnResultValues
   const isLockedColumn =
-    columnModel.name.toLowerCase() === lockedColumn?.columnName?.toLowerCase() // used in details page to disable filter the column
+    selectColumn.name.toLowerCase() === lockedColumn?.columnName?.toLowerCase() // used in details page to disable filter the column
   const isEntityIDColumn =
-    columnModel &&
-    columnModel.name == 'id' &&
-    columnModel.columnType == ColumnTypeEnum.ENTITYID
+    selectColumn &&
+    selectColumn.name == 'id' &&
+    selectColumn.columnType == ColumnTypeEnum.ENTITYID
   return (
     <div className="SRC-split">
       <div className="SRC-centerContent">
@@ -187,7 +189,7 @@ export function TableDataColumnHeader(
         </span>
       </div>
       <div className="SRC-centerContent" style={{ height: '22px' }}>
-        {isFacetSelection && !isLockedColumn && (
+        {isFacetSelection && !isLockedColumn && columnModel && (
           <span>
             <EnumFacetFilter
               containerAs="Dropdown"
@@ -198,7 +200,7 @@ export function TableDataColumnHeader(
         )}
         {column.getCanSort() && (
           <Tooltip
-            title={`Sort ${getColumnDisplayName(columnModel.name)}`}
+            title={`Sort ${getColumnDisplayName(selectColumn.name)}`}
             placement={'top'}
           >
             <IconButton
@@ -231,14 +233,14 @@ export function TableDataCell(props: CellContext<Row, string | null>) {
   const data = useAtomValue(tableQueryDataAtom)
 
   const selectColumns = data?.selectColumns ?? []
+  const selectColumn = selectColumns.find(cm => cm.name === cell.column.id)
   const columnModels = data?.columnModels ?? []
-  const columnModel = columnModels.find(cm => cm.name === cell.column.id)
   const { columnLinks } = useSynapseTableContext()
-  if (columnModel) {
+  if (selectColumn) {
     const columnLinkConfig = (columnLinks ?? []).find(el => {
-      return el.matchColumnName === columnModel.name
+      return el.matchColumnName === selectColumn.name
     })
-    const columnType = columnModel.columnType
+    const columnType = selectColumn.columnType
     const isBold = cell.column.getIsSorted() ? 'SRC-boldText' : ''
     return (
       <SynapseTableCell
@@ -247,7 +249,7 @@ export function TableDataCell(props: CellContext<Row, string | null>) {
         columnValue={cell.getValue()}
         isBold={isBold}
         columnLinkConfig={columnLinkConfig}
-        columnName={columnModel.name}
+        columnName={selectColumn.name}
         rowData={cell.row.original.values}
         selectColumns={selectColumns}
         columnModels={columnModels}

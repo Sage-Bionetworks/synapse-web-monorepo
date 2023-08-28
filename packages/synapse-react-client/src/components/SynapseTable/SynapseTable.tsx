@@ -78,7 +78,7 @@ export function SynapseTable(props: SynapseTableProps) {
     useQueryVisualizationContext()
   const synapseTableContext = useMemo(() => ({ columnLinks }), [columnLinks])
 
-  const { columnModels = [] } = data ?? {}
+  const { selectColumns = [] } = data ?? {}
 
   const isLoggedIn = !!useSynapseContext().accessToken
 
@@ -114,17 +114,17 @@ export function SynapseTable(props: SynapseTableProps) {
       addToDownloadListColumn,
       directDownloadColumn,
       accessColumn,
-      ...(data?.columnModels?.map((columnModel, index) => {
+      ...(data?.selectColumns?.map((selectColumn, index) => {
         return columnHelper.accessor(row => row.values[index], {
-          id: columnModel.name,
-          enableSorting: isSortableColumn(columnModel.columnType),
+          id: selectColumn.name,
+          enableSorting: isSortableColumn(selectColumn.columnType),
           enableResizing: true,
           header: TableDataColumnHeader,
           cell: TableDataCell,
         })
       }) ?? []),
     ],
-    [data?.columnModels],
+    [data?.selectColumns],
   )
 
   const prependColumnVisibility: VisibilityState = useMemo(
@@ -146,13 +146,13 @@ export function SynapseTable(props: SynapseTableProps) {
   // Transform our `columnsToShowInTable` to @tanstack/react-table's `VisibilityState`
   const columnVisibility: VisibilityState = useMemo(
     () =>
-      (data?.columnModels ?? []).reduce((prev: VisibilityState, curr) => {
+      (data?.selectColumns ?? []).reduce((prev: VisibilityState, curr) => {
         return {
           ...prev,
           [curr.name]: columnsToShowInTable.includes(curr.name),
         }
       }, prependColumnVisibility),
-    [columnsToShowInTable, data?.columnModels, prependColumnVisibility],
+    [columnsToShowInTable, data?.selectColumns, prependColumnVisibility],
   )
 
   const table = useReactTable({
@@ -238,13 +238,13 @@ export function SynapseTable(props: SynapseTableProps) {
               {table.getRowModel().rows.map(row => (
                 <tr key={row.id}>
                   {row.getVisibleCells().map(cell => {
-                    const columnModel = columnModels.find(
+                    const selectColumn = selectColumns.find(
                       cm => cm.name === cell.column.id,
                     )
 
                     const shouldWrapInExpandable =
-                      columnModel &&
-                      columnModel.columnType !==
+                      selectColumn &&
+                      selectColumn.columnType !==
                         ColumnTypeEnum.JSON /* JSON handles its own overflow*/
                     const TableDataCellElement = shouldWrapInExpandable
                       ? ExpandableTableDataCell
