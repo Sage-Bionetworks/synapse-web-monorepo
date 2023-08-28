@@ -475,7 +475,6 @@ describe('SynapseTable tests', () => {
       },
     }
 
-    // Return a file view entity, so the download column would be shown if not for the missing row IDs
     server.use(
       rest.get(
         `${getEndpoint(
