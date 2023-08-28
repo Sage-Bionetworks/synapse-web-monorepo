@@ -172,7 +172,6 @@ export function SynapseTable(props: SynapseTableProps) {
 
   const { dataHasBeenPrefetched } = usePrefetchTableData()
 
-  console.log(columns, data)
   /**
    * Display the view
    */
