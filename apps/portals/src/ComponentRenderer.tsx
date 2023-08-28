@@ -5,6 +5,14 @@ import { scrollToWithOffset } from './utils'
 import { SynapseComponent } from './SynapseComponent'
 import Layout from './portal-components/Layout'
 
+const ignoreSearchParamsSet: Set<string> = new Set([
+  'utm_source',
+  'utm_campaign',
+  'utm_medium',
+  'utm_term',
+  'utm_content',
+])
+
 export function ComponentRenderer(props: { config: SynapseConfig }) {
   const {
     containerClassName,
@@ -23,7 +31,9 @@ export function ComponentRenderer(props: { config: SynapseConfig }) {
     // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
     const searchParams = new URLSearchParams(search)
     searchParams.forEach((value, key) => {
-      searchParamsProps[key] = value
+      if (!ignoreSearchParamsSet.has(key)) {
+        searchParamsProps[key] = value
+      }
     })
   }
   const scrollToRef = React.useRef(null)
