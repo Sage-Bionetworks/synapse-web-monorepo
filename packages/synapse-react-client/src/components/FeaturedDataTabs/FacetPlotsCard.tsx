@@ -15,7 +15,6 @@ import {
 } from '../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../widgets/facet-nav/FacetNav'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { ShowMore } from '../row_renderers/utils'
 import {
@@ -36,6 +35,11 @@ import {
 } from './FacetPlotsCardGrid'
 import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
 import { times } from 'lodash-es'
+import { useAtomValue } from 'jotai'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+} from '../QueryWrapper/QueryWrapper'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -98,10 +102,9 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   detailsPagePath,
 }: FacetPlotsCardProps): JSX.Element => {
   const { accessToken } = useSynapseContext()
-  const { data, isLoadingNewBundle } = useQueryContext<
-    'columnModels' | 'facets',
-    true
-  >()
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
+  const data = useAtomValue(tableQueryDataAtom)
+
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])

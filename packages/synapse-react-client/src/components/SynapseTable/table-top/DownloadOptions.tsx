@@ -6,15 +6,24 @@ import {
   isDataset,
   isEntityView,
 } from '../../../utils/functions/EntityTypeUtils'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
+import { useSynapseContext } from '../../../utils'
 import { Tooltip } from '@mui/material'
-import { useQueryContext } from '../../QueryContext/QueryContext'
+import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
 import { getNumberOfResultsToAddToDownloadListCopy } from '../TopLevelControls/TopLevelControlsUtils'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
 import { getFileColumnModelId } from '../SynapseTableUtils'
+import { useAtomValue } from 'jotai'
+import {
+  tableQueryDataAtom,
+  tableQueryEntityAtom,
+} from '../../QueryWrapper/QueryWrapper'
+import {
+  hasSelectedRowsAtom,
+  selectedRowsAtom,
+} from '../../QueryWrapper/TableRowSelectionState'
 
 export type DownloadOptionsProps = {
   onDownloadFiles: () => void
@@ -25,14 +34,13 @@ export const DownloadOptions: React.FunctionComponent<
   DownloadOptionsProps
 > = props => {
   const { accessToken } = useSynapseContext()
-  const {
-    entity,
-    data: queryResultBundle,
-    getCurrentQueryRequest,
-    hasResettableFilters,
-    hasSelectedRows,
-    selectedRows,
-  } = useQueryContext()
+  const { getCurrentQueryRequest, hasResettableFilters } = useQueryContext()
+  const queryResultBundle = useAtomValue(tableQueryDataAtom)
+  const entity = useAtomValue(tableQueryEntityAtom)
+
+  const selectedRows = useAtomValue(selectedRowsAtom)
+  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
+
   const queryBundleRequest = getCurrentQueryRequest()
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)

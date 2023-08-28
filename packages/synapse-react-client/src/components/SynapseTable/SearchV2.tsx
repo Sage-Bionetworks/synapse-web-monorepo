@@ -11,17 +11,15 @@ import {
   QueryFilter,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { QueryVisualizationContextType } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
-import {
-  LockedColumn,
-  QueryContextType,
-  useQueryContext,
-} from '../QueryContext/QueryContext'
+import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
+import { LockedColumn, QueryContextType } from '../QueryContext/QueryContext'
 import IconSvg from '../IconSvg/IconSvg'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
 } from '../../utils/types/IsType'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 type SearchState = {
   show: boolean
@@ -332,6 +330,6 @@ class _Search extends React.Component<InternalSearchProps, SearchState> {
 }
 
 export default function Search(props: SearchV2Props) {
-  const { data } = useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
   return <_Search {...props} data={data} />
 }

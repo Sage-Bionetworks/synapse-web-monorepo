@@ -17,7 +17,7 @@ import {
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
 import ExpandableTableDataCell from './ExpandableTableDataCell'
-import { Box } from '@mui/material'
+import { Box, Skeleton } from '@mui/material'
 import {
   ColumnDef,
   createColumnHelper,
@@ -36,6 +36,14 @@ import {
   TableDataColumnHeader,
 } from './SynapseTableRenderers'
 import { SynapseTableContext } from './SynapseTableContext'
+import { usePrefetchTableData } from './usePrefetchTableData'
+import { useAtomValue } from 'jotai'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+  tableQueryEntityAtom,
+} from '../QueryWrapper/QueryWrapper'
+import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
 
 export type SynapseTableProps = {
   /** If true and entity is a view or dataset, renders a column that represents if the caller has permission to download the entity represented by the row */
@@ -63,8 +71,9 @@ export function SynapseTable(props: SynapseTableProps) {
     columnLinks,
   } = props
   const { getCurrentQueryRequest } = useQueryContext()
-  const { data, entity, isLoadingNewBundle, isRowSelectionVisible } =
-    useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
+  const entity = useAtomValue(tableQueryEntityAtom)
   const { columnsToShowInTable, NoContentPlaceholder } =
     useQueryVisualizationContext()
   const synapseTableContext = useMemo(() => ({ columnLinks }), [columnLinks])
@@ -77,6 +86,7 @@ export function SynapseTable(props: SynapseTableProps) {
     useState(false)
 
   const { sort, setSort } = useTableSort()
+  const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
 
   const isShowingAccessColumn: boolean = Boolean(
     showAccessColumn &&
@@ -160,6 +170,8 @@ export function SynapseTable(props: SynapseTableProps) {
     },
   })
 
+  const { dataHasBeenPrefetched } = usePrefetchTableData()
+
   /**
    * Display the view
    */
@@ -238,6 +250,8 @@ export function SynapseTable(props: SynapseTableProps) {
                       ? ExpandableTableDataCell
                       : 'td'
 
+                    const renderPlaceholder = !dataHasBeenPrefetched
+
                     return (
                       <TableDataCellElement
                         key={cell.id}
@@ -245,9 +259,15 @@ export function SynapseTable(props: SynapseTableProps) {
                           width: cell.column.getSize(),
                         }}
                       >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
+                        {renderPlaceholder ? (
+                          <p>
+                            <Skeleton width={'80%'} height={'20px'} />
+                          </p>
+                        ) : (
+                          flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )
                         )}
                       </TableDataCellElement>
                     )

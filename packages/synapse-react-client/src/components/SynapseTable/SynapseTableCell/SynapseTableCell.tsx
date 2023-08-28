@@ -30,7 +30,8 @@ import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
 import { Link, Typography } from '@mui/material'
 import UserOrTeamBadge from '../../UserOrTeamBadge'
 import { isFileViewOrDataset } from '../SynapseTableUtils'
-import { useQueryContext } from '../../QueryContext'
+import { useAtomValue } from 'jotai'
+import { tableQueryEntityAtom } from '../../QueryWrapper/QueryWrapper'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
@@ -58,7 +59,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
     rowId,
     rowVersionNumber,
   } = props
-  const { entity } = useQueryContext()
+  const entity = useAtomValue(tableQueryEntityAtom)
 
   if (!columnValue) {
     return <p className="SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>

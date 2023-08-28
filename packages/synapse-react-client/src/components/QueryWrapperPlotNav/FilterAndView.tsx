@@ -6,6 +6,11 @@ import { useQueryContext } from '../QueryContext'
 import LastUpdatedOn from './LastUpdatedOn'
 import { Box, LinearProgress, Typography } from '@mui/material'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
+import { useAtomValue } from 'jotai'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+} from '../QueryWrapper/QueryWrapper'
 
 export type FilterAndViewProps = {
   tableConfiguration?: SynapseTableProps
@@ -15,7 +20,6 @@ export type FilterAndViewProps = {
 
 const FilterAndView = (props: FilterAndViewProps) => {
   const { cardConfiguration, hideDownload } = props
-
   const tableConfiguration = useDeepCompareMemoize(
     props.tableConfiguration
       ? {
@@ -25,7 +29,9 @@ const FilterAndView = (props: FilterAndViewProps) => {
       : undefined,
   )
   const queryContext = useQueryContext()
-  const { data, isLoadingNewBundle, asyncJobStatus } = queryContext
+  const { asyncJobStatus } = queryContext
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
+  const data = useAtomValue(tableQueryDataAtom)
   return (
     <div className={`FilterAndView`}>
       {!data && isLoadingNewBundle && (

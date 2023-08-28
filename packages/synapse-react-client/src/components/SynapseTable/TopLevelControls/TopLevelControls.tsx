@@ -22,6 +22,17 @@ import {
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
 import IconSvg from '../../IconSvg'
+import { useAtomValue } from 'jotai'
+import {
+  lockedColumnAtom,
+  tableQueryDataAtom,
+  tableQueryEntityAtom,
+} from '../../QueryWrapper/QueryWrapper'
+import {
+  hasSelectedRowsAtom,
+  isRowSelectionVisibleAtom,
+  selectedRowsAtom,
+} from '../../QueryWrapper/TableRowSelectionState'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -83,18 +94,14 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     customControls,
     { isRowSelectionSupported: true },
   )
-  const {
-    data,
-    entity,
-    getInitQueryRequest,
-    lockedColumn,
-    hasResettableFilters,
-    getCurrentQueryRequest,
-    isRowSelectionVisible,
-    selectedRows,
-    hasSelectedRows,
-  } = useQueryContext()
-  useQueryContext()
+  const { getInitQueryRequest, hasResettableFilters, getCurrentQueryRequest } =
+    useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const entity = useAtomValue(tableQueryEntityAtom)
+  const lockedColumn = useAtomValue(lockedColumnAtom)
+  const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
+  const selectedRows = useAtomValue(selectedRowsAtom)
+  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
 
   const {
     setShowSearchBar,

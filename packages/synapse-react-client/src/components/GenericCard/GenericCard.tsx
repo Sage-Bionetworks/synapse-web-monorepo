@@ -41,7 +41,8 @@ import {
 import { IconOptions } from '../Icon'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { SynapseCardLabel } from './SynapseCardLabel'
-import { useQueryContext } from '../QueryContext'
+import { useAtomValue } from 'jotai'
+import { tableQueryEntityAtom } from '../QueryWrapper/QueryWrapper'
 
 export type KeyToAlias = {
   key: string
@@ -725,7 +726,7 @@ class _GenericCard extends React.Component<
 }
 
 export default function GenericCard(props: GenericCardProps) {
-  const { entity: table } = useQueryContext()
+  const table = useAtomValue(tableQueryEntityAtom)
   const queryVisualizationContext = useQueryVisualizationContext()
   return (
     <_GenericCard

@@ -33,11 +33,15 @@ jest.mock('../../../src/components/widgets/RangeSlider/RangeSlider', () => ({
   }),
 }))
 
-jest.mock('@mui/material', () => ({
-  Collapse: jest.fn(props => (
-    <div data-testid="Collapse">{props.children}</div>
-  )),
-}))
+jest.mock('@mui/material', () => {
+  const actual = jest.requireActual('@mui/material')
+  return {
+    ...actual,
+    Collapse: jest.fn(props => (
+      <div data-testid="Collapse">{props.children}</div>
+    )),
+  }
+})
 
 const mockCallback = jest.fn(() => null)
 const intFacetResult: FacetColumnResultRange = {

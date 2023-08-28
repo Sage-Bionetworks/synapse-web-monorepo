@@ -6,7 +6,12 @@ import {
   QueryContextType,
   useQueryContext,
 } from '../QueryContext'
-import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
+import {
+  isLoadingNewBundleAtom,
+  QueryWrapper,
+  QueryWrapperProps,
+  tableQueryDataAtom,
+} from './QueryWrapper'
 import { SynapseConstants } from '../../utils'
 import {
   QueryBundleRequest,
@@ -19,6 +24,9 @@ import SynapseClient from '../../synapse-client'
 import { mockCompleteAsyncJob } from '../../mocks/mockFileViewQuery'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { useAtomValue } from 'jotai'
+import { useSetAtom } from 'jotai'
+import { selectedRowsAtom } from './TableRowSelectionState'
 
 jest.mock('../../synapse-client', () => ({
   getQueryTableAsyncJobResults: jest.fn(),
@@ -34,15 +42,15 @@ const renderedTextConfirmation = 'QueryWrapper rendered!'
 let isLoadingNewBundleValue: boolean | undefined
 let currentQueryDataValue: QueryResultBundle | undefined
 let selectedRows: Row[] | undefined
-let setSelectedRows: QueryContextType['setSelectedRows'] | undefined
+let setSelectedRows: ReturnType<typeof useSetAtom> | undefined
 
 const QueryContextReceiver = () => {
   // An error would be thrown if context was not provided by QueryWrapper
   const context = useQueryContext()
-  isLoadingNewBundleValue = context.isLoadingNewBundle
-  currentQueryDataValue = context.data
-  selectedRows = context.selectedRows
-  setSelectedRows = context.setSelectedRows
+  isLoadingNewBundleValue = useAtomValue(isLoadingNewBundleAtom)
+  currentQueryDataValue = useAtomValue(tableQueryDataAtom)
+  selectedRows = useAtomValue(selectedRowsAtom)
+  setSelectedRows = useSetAtom(selectedRowsAtom)
   providedContext = context
   return <>{renderedTextConfirmation}</>
 }
@@ -102,7 +110,7 @@ describe('QueryWrapper', () => {
       await screen.findByText(renderedTextConfirmation)
     })
 
-    it('Data is set', async () => {
+    it('Data atom is set', async () => {
       renderComponent({ initQueryRequest: initialQueryRequest })
       await waitFor(() => {
         expect(isLoadingNewBundleValue).toBe(false)

@@ -14,6 +14,7 @@ import { isEqual } from 'lodash-es'
 import React from 'react'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { useGetEntityHeader } from '../../synapse-queries'
+import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
 import { IconButton, Tooltip } from '@mui/material'
@@ -22,8 +23,15 @@ import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import SynapseTableCell from './SynapseTableCell'
 import { useSynapseTableContext } from './SynapseTableContext'
-import { useQueryContext } from '../QueryContext'
-import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
+import { useAtom, useAtomValue } from 'jotai'
+import {
+  lockedColumnAtom,
+  tableQueryDataAtom,
+} from '../QueryWrapper/QueryWrapper'
+import {
+  isRowSelectedAtom,
+  selectedRowsAtom,
+} from '../QueryWrapper/TableRowSelectionState'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -33,12 +41,13 @@ const columnHelper = createColumnHelper<Row>()
 
 function RowSelectionCell(props: CellContext<Row, unknown>) {
   const { row } = props
-  const { getIsRowSelected, selectedRows, setSelectedRows } = useQueryContext()
+  const isRowSelected = useAtomValue(isRowSelectedAtom)
+  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
 
   return (
     <Checkbox
       label=""
-      checked={getIsRowSelected(row.original)}
+      checked={isRowSelected(row.original)}
       onChange={(checked: boolean) => {
         const cloneSelectedRows = [...selectedRows]
         if (checked) {
@@ -138,7 +147,8 @@ export function TableDataColumnHeader(
   props: HeaderContext<Row, string | null>,
 ) {
   const { column } = props
-  const { lockedColumn, data } = useQueryContext()
+  const lockedColumn = useAtomValue(lockedColumnAtom)
+  const data = useAtomValue(tableQueryDataAtom)
   const columnModels = data?.columnModels ?? []
   const columnModel = columnModels.find(cm => cm.name === column.id)
   const facets = data?.facets ?? []
@@ -218,7 +228,7 @@ export function TableDataColumnHeader(
 
 export function TableDataCell(props: CellContext<Row, string | null>) {
   const { cell } = props
-  const { data } = useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
 
   const selectColumns = data?.selectColumns ?? []
   const columnModels = data?.columnModels ?? []
