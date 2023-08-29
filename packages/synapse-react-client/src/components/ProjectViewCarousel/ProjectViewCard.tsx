@@ -23,6 +23,7 @@ export function ProjectViewCard(props: ProjectCardProps) {
         height: '325px',
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
       }}
     >
       {image ? (
