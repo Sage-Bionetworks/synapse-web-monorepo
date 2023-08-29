@@ -1,13 +1,13 @@
 import SynapseClient from '../../synapse-client'
-import { SynapseConstants } from '../../utils'
+import { SynapseConstants, useSynapseContext } from '../../utils'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Carousel from '../Carousel/Carousel'
 import { ProjectViewCard } from './ProjectViewCard'
 import { ErrorBanner } from '../error/ErrorBanner'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { Box } from '@mui/system'
 
 export type ProjectViewCarouselProps = {
   entityId: string
@@ -160,7 +160,15 @@ export const ProjectViewCarousel: React.FunctionComponent<
                   src={project.imageUrl}
                   alt={`Logo for ${project.projectName}`}
                 />
-              ) : undefined
+              ) : (
+                <Box
+                  sx={{
+                    width: '100%',
+                    height: '25%',
+                    backgroundColor: 'primary.300',
+                  }}
+                />
+              )
             }
           />
         )
