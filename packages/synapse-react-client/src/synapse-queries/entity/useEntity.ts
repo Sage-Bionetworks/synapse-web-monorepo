@@ -3,7 +3,7 @@
  */
 
 import { omit, pick } from 'lodash-es'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import {
   QueryFunctionContext,
   QueryKey,
@@ -21,20 +21,19 @@ import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
+  AccessControlList,
   Entity,
   EntityHeader,
+  EntityId,
   EntityJson,
-  EntityJsonValue,
   EntityPath,
   Evaluation,
   GetEvaluationParameters,
   PaginatedResults,
+  UserEntityPermissions,
+  VersionInfo,
 } from '@sage-bionetworks/synapse-types'
-import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
-import { EntityId } from '@sage-bionetworks/synapse-types'
-import { AccessControlList } from '@sage-bionetworks/synapse-types'
-import { UserEntityPermissions } from '@sage-bionetworks/synapse-types'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
@@ -209,10 +208,6 @@ export function useGetJson(
   entityId: string,
   options?: UseQueryOptions<EntityJson, SynapseClientError>,
 ) {
-  const [entityMetadata, setEntityMetadata] = useState<EntityJson | undefined>()
-  const [annotations, setAnnotations] = useState<
-    Record<string, EntityJsonValue> | undefined
-  >()
   const { accessToken, keyFactory } = useSynapseContext()
   const query = useQuery<EntityJson, SynapseClientError>(
     keyFactory.getEntityJsonQueryKey(entityId),
@@ -221,12 +216,21 @@ export function useGetJson(
   )
 
   // Separate the standard fields and annotations.
-  useEffect(() => {
-    if (query.data) {
-      setEntityMetadata(getStandardEntityFields(query.data))
-      setAnnotations(removeStandardEntityFields(query.data))
-    }
-  }, [query.data])
+  const entityMetadata = useMemo(
+    () =>
+      query?.data == undefined
+        ? undefined
+        : getStandardEntityFields(query.data),
+    [query.data],
+  )
+
+  const annotations = useMemo(
+    () =>
+      query?.data == undefined
+        ? undefined
+        : removeStandardEntityFields(query.data),
+    [query.data],
+  )
 
   return {
     ...query,

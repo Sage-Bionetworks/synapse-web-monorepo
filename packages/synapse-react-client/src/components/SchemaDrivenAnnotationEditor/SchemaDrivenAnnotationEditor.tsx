@@ -2,7 +2,7 @@ import Form from '@rjsf/mui'
 import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
-import { Alert, Box, Divider, Link } from '@mui/material'
+import { Alert, Box, Divider, Link, Typography } from '@mui/material'
 import AddToList from '../../assets/icons/AddToList'
 import {
   BackendDestinationEnum,
@@ -113,11 +113,6 @@ export function SchemaDrivenAnnotationEditor(
   const localRef = useRef<RJSF>(null)
   const ref = formRefFromParent ?? localRef
 
-  // Annotation fields fetched and modified via the form
-  const [formData, setFormData] = React.useState<
-    Record<string, unknown> | undefined
-  >(undefined)
-
   // Client-side validation errors
   const [validationError, setValidationError] = React.useState<
     RJSFValidationError[] | undefined
@@ -137,6 +132,11 @@ export function SchemaDrivenAnnotationEditor(
     enabled: !!entityId,
     useErrorBoundary: true,
   })
+
+  // Annotation fields fetched and modified via the form
+  const [formData, setFormData] = React.useState<
+    Record<string, unknown> | undefined
+  >(annotations)
 
   /**
    * patternProperties lets us define how to treat additionalProperties in a JSON schema by property name.
@@ -223,139 +223,146 @@ export function SchemaDrivenAnnotationEditor(
               </b>
             </Alert>
           )}
-          {entityJson &&
-            (!formData || isEmpty(formData)) &&
-            schema === null && (
-              <Alert severity="info">
-                <b>{entityJson.name}</b> has no annotations. Click the{' '}
-                <AddToList /> button to annotate.
-              </Alert>
-            )}
-          <Form
-            validator={validator}
-            className="AnnotationEditorForm"
-            liveValidate={liveValidate}
-            noHtml5Validate={true}
-            experimental_defaultFormStateBehavior={{
-              emptyObjectFields: 'skipDefaults',
-            }}
-            fields={{
-              ObjectField: CustomObjectField,
-            }}
-            templates={{
-              ArrayFieldDescriptionTemplate: ArrayFieldDescriptionTemplate,
-              ArrayFieldItemTemplate: ArrayFieldItemTemplate,
-              ArrayFieldTemplate: ArrayFieldTemplate,
-              ArrayFieldTitleTemplate: ArrayFieldTitleTemplate,
-              BaseInputTemplate: BaseInputTemplate,
-              FieldErrorTemplate: FieldErrorTemplate,
-              FieldTemplate: FieldTemplate,
-              ObjectFieldTemplate: ObjectFieldTemplate,
-              WrapIfAdditionalTemplate: WrapIfAdditionalTemplate,
-              ButtonTemplates: ButtonTemplate,
-              DescriptionFieldTemplate: DescriptionFieldTemplate,
-              /* Errors are displayed by an Alert component below, so we don't show the builtin ErrorList */
-              ErrorListTemplate: () => null,
-            }}
-            ref={ref}
-            disabled={mutation.isLoading}
-            schema={
-              {
-                ...(validationSchema ?? {}),
-                patternProperties: {
-                  ...(validationSchema?.patternProperties ?? {}),
-                  ...patternPropertiesBannedKeys,
+          {entityJson && isEmpty(formData) && schema === null && (
+            <Alert severity="info">
+              <Box display={'flex'} alignItems={'center'} gap={0.5}>
+                <Typography variant={'smallText1'}>
+                  <b>{entityJson.name}</b> has no annotations. Click the{' '}
+                </Typography>
+                <AddToList />
+                <Typography variant={'smallText1'}>
+                  button to annotate.
+                </Typography>
+              </Box>
+            </Alert>
+          )}
+          {formData != undefined && (
+            <Form
+              validator={validator}
+              className="AnnotationEditorForm"
+              liveValidate={liveValidate}
+              noHtml5Validate={true}
+              experimental_defaultFormStateBehavior={{
+                emptyObjectFields: 'skipDefaults',
+              }}
+              fields={{
+                ObjectField: CustomObjectField,
+              }}
+              templates={{
+                ArrayFieldDescriptionTemplate: ArrayFieldDescriptionTemplate,
+                ArrayFieldItemTemplate: ArrayFieldItemTemplate,
+                ArrayFieldTemplate: ArrayFieldTemplate,
+                ArrayFieldTitleTemplate: ArrayFieldTitleTemplate,
+                BaseInputTemplate: BaseInputTemplate,
+                FieldErrorTemplate: FieldErrorTemplate,
+                FieldTemplate: FieldTemplate,
+                ObjectFieldTemplate: ObjectFieldTemplate,
+                WrapIfAdditionalTemplate: WrapIfAdditionalTemplate,
+                ButtonTemplates: ButtonTemplate,
+                DescriptionFieldTemplate: DescriptionFieldTemplate,
+                /* Errors are displayed by an Alert component below, so we don't show the builtin ErrorList */
+                ErrorListTemplate: () => null,
+              }}
+              ref={ref}
+              disabled={mutation.isLoading}
+              schema={
+                {
+                  ...(validationSchema ?? {}),
+                  patternProperties: {
+                    ...(validationSchema?.patternProperties ?? {}),
+                    ...patternPropertiesBannedKeys,
+                  },
+                  additionalProperties:
+                    validationSchema?.additionalProperties ?? true,
+                } as JSONSchema7
+              }
+              uiSchema={{
+                'ui:options': {
+                  copyable: true,
+                  duplicateKeySuffixSeparator: '_',
                 },
-                additionalProperties:
-                  validationSchema?.additionalProperties ?? true,
-              } as JSONSchema7
-            }
-            uiSchema={{
-              'ui:options': {
-                copyable: true,
-                duplicateKeySuffixSeparator: '_',
-              },
-              additionalProperties: {
-                'ui:field': AdditionalPropertiesSchemaField,
-              },
-            }}
-            transformErrors={transformErrors}
-            formData={formData}
-            onChange={({ formData }) => {
-              if (onChange) {
-                onChange(formData)
-              }
-              setFormData(formData)
-              setValidationError(undefined)
-            }}
-            onSubmit={({ formData, errors }, event) => {
-              event.preventDefault()
-              if (errors && errors.length > 0) {
+                additionalProperties: {
+                  'ui:field': AdditionalPropertiesSchemaField,
+                },
+              }}
+              transformErrors={transformErrors}
+              formData={formData}
+              onChange={({ formData }) => {
+                if (onChange) {
+                  onChange(formData)
+                }
+                setFormData(formData)
+                setValidationError(undefined)
+              }}
+              onSubmit={({ formData, errors }, event) => {
+                event.preventDefault()
+                if (errors && errors.length > 0) {
+                  setValidationError(errors)
+                }
+                setShowSubmissionError(false)
+                setFormData(formData)
+                submitChangedEntity()
+              }}
+              onError={(errors: RJSFValidationError[]) => {
+                // invoked when submit is clicked and there are client-side validation errors
                 setValidationError(errors)
-              }
-              setShowSubmissionError(false)
-              setFormData(formData)
-              submitChangedEntity()
-            }}
-            onError={(errors: RJSFValidationError[]) => {
-              // invoked when submit is clicked and there are client-side validation errors
-              setValidationError(errors)
-              if (validationError && entityId) {
-                setShowConfirmation(true)
-              }
-            }}
-            widgets={{
-              TextWidget: TextWidget,
-              DateTimeWidget: DateTimeWidget,
-              SelectWidget: SelectWidget,
-              CheckboxWidget: BooleanWidget,
-            }}
-          >
-            {validationError && (
-              <Alert severity="error" sx={{ my: 2 }}>
-                <b>Validation errors found:</b>
-                <ul>
-                  {validationError.map(
-                    (e: RJSFValidationError, index: number) => {
-                      return (
-                        <li key={index}>
-                          <b>{`${getFriendlyPropertyName(e)}: `}</b>{' '}
-                          {`${e.message}`}
-                        </li>
-                      )
-                    },
-                  )}
-                </ul>
-              </Alert>
-            )}
+                if (validationError && entityId) {
+                  setShowConfirmation(true)
+                }
+              }}
+              widgets={{
+                TextWidget: TextWidget,
+                DateTimeWidget: DateTimeWidget,
+                SelectWidget: SelectWidget,
+                CheckboxWidget: BooleanWidget,
+              }}
+            >
+              {validationError && (
+                <Alert severity="error" sx={{ my: 2 }}>
+                  <b>Validation errors found:</b>
+                  <ul>
+                    {validationError.map(
+                      (e: RJSFValidationError, index: number) => {
+                        return (
+                          <li key={index}>
+                            <b>{`${getFriendlyPropertyName(e)}: `}</b>{' '}
+                            {`${e.message}`}
+                          </li>
+                        )
+                      },
+                    )}
+                  </ul>
+                </Alert>
+              )}
 
-            {submissionError && showSubmissionError && (
-              <Alert severity="error" sx={{ my: 2 }}>
-                Annotations could not be updated: {submissionError.reason}
-              </Alert>
-            )}
-            {!formRefFromParent && (
-              <>
-                <Divider sx={{ my: 2 }} />
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  sx={{ gridRowStart: 5 }}
-                >
-                  <ConfirmationButtons
-                    hasCancelButton={onCancel !== undefined}
-                    onCancel={() => {
-                      onCancel && onCancel()
-                    }}
-                    onConfirm={() => {
-                      ref.current!.formElement.current.requestSubmit()
-                    }}
-                    confirmButtonText={entityId ? 'Save' : 'Validate'}
-                  />
-                </Box>
-              </>
-            )}
-          </Form>
+              {submissionError && showSubmissionError && (
+                <Alert severity="error" sx={{ my: 2 }}>
+                  Annotations could not be updated: {submissionError.reason}
+                </Alert>
+              )}
+              {!formRefFromParent && (
+                <>
+                  <Divider sx={{ my: 2 }} />
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    sx={{ gridRowStart: 5 }}
+                  >
+                    <ConfirmationButtons
+                      hasCancelButton={onCancel !== undefined}
+                      onCancel={() => {
+                        onCancel && onCancel()
+                      }}
+                      onConfirm={() => {
+                        ref.current!.formElement.current.requestSubmit()
+                      }}
+                      confirmButtonText={entityId ? 'Save' : 'Validate'}
+                    />
+                  </Box>
+                </>
+              )}
+            </Form>
+          )}
           {showConfirmation && (
             <ConfirmationDialog
               open={true}

@@ -5,6 +5,7 @@ import {
   RenderResult,
   screen,
   waitFor,
+  waitForElementToBeRemoved,
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -101,8 +102,6 @@ async function clickSaveAndConfirm() {
   return waitFor(() => expect(mockOnSuccessFn).toHaveBeenCalled())
 }
 
-// These tests are unstable, so we'll skip them until we can fix them
-// The component is in experimental mode only, so not a big deal for now
 describe('SchemaDrivenAnnotationEditor tests', () => {
   // Handle the msw lifecycle:
   beforeAll(() => server.listen())
@@ -348,8 +347,64 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       ...schemaHandlers,
       successfulUpdateHandler,
     )
-    await renderComponent()
+    const { container } = await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
+
+    await waitFor(() => {
+      const countryInput = container.querySelector(
+        '#root_country',
+      ) as HTMLInputElement
+      expect(countryInput.value).toBe('USA')
+    })
+
+    // Saving the form should maintain the existing annotations
+    await clickSave()
+    await waitFor(() =>
+      expect(updatedJsonCaptor).toHaveBeenCalledWith(
+        expect.objectContaining({ country: 'USA', state: 'Washington' }),
+      ),
+    )
+  })
+
+  it('Reloads the form data properly after remounting the component (SWC-6486)', async () => {
+    server.use(
+      annotationsWithSchemaHandler,
+      ...schemaHandlers,
+      successfulUpdateHandler,
+    )
+    const { container, rerender } = await renderComponent()
+    const schemaAlert = await screen.findByText(
+      'requires scientific annotations',
+      { exact: false },
+    )
+
+    await waitFor(() => {
+      const countryInput = container.querySelector(
+        '#root_country',
+      ) as HTMLInputElement
+      expect(countryInput.value).toBe('USA')
+    })
+
+    // Clear the component to ensure we get a full re-render
+    await Promise.all([
+      waitForElementToBeRemoved(schemaAlert),
+      act(() => {
+        rerender(<></>)
+      }),
+    ])
+
+    // Re-rendering the editor should reload the existing annotations
+    act(() => {
+      rerender(<SchemaDrivenAnnotationEditor {...defaultProps} />)
+    })
+    await screen.findByText('requires scientific annotations', { exact: false })
+
+    await waitFor(() => {
+      const countryInput = container.querySelector(
+        '#root_country',
+      ) as HTMLInputElement
+      expect(countryInput.value).toBe('USA')
+    })
 
     // Saving the form should maintain the existing annotations
     await clickSave()
