@@ -45,25 +45,27 @@ function RowSelectionCell(props: CellContext<Row, unknown>) {
   const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
 
   return (
-    <Checkbox
-      label=""
-      checked={isRowSelected(row.original)}
-      onChange={(checked: boolean) => {
-        const cloneSelectedRows = [...selectedRows]
-        if (checked) {
-          cloneSelectedRows.push(row.original)
-        } else {
-          const index = cloneSelectedRows.findIndex(selectedRow =>
-            isEqual(selectedRow, row.original),
-          )
-          if (index > -1) {
-            cloneSelectedRows.splice(index, 1)
+    <div>
+      <Checkbox
+        label=""
+        checked={isRowSelected(row.original)}
+        onChange={(checked: boolean) => {
+          const cloneSelectedRows = [...selectedRows]
+          if (checked) {
+            cloneSelectedRows.push(row.original)
+          } else {
+            const index = cloneSelectedRows.findIndex(selectedRow =>
+              isEqual(selectedRow, row.original),
+            )
+            if (index > -1) {
+              cloneSelectedRows.splice(index, 1)
+            }
           }
-        }
-        // update context on change
-        setSelectedRows(cloneSelectedRows)
-      }}
-    />
+          // update context on change
+          setSelectedRows(cloneSelectedRows)
+        }}
+      />
+    </div>
   )
 }
 
@@ -71,17 +73,17 @@ export const rowSelectionColumn = columnHelper.display({
   id: `${columnIdPrefix}.RowSelectionColumn`,
   enableResizing: false,
   cell: RowSelectionCell,
-  maxSize: 50,
+  maxSize: 36,
+  meta: {
+    align: 'center',
+  },
 })
 
 function AddToDownloadListCell(props: CellContext<Row, unknown>) {
   const { row } = props
   const { data: entityHeader } = useGetEntityHeader(`syn${row.original.rowId!}`)
   return (
-    <div
-      className="SRC-centerAndJustifyContent"
-      data-testid={'AddToDownloadListCell'}
-    >
+    <div data-testid={'AddToDownloadListCell'}>
       {entityHeader?.type === 'org.sagebionetworks.repo.model.FileEntity' && (
         <AddToDownloadListV2
           entityId={row.original.rowId!.toString()}
@@ -99,15 +101,15 @@ export const addToDownloadListColumn = columnHelper.display({
   enableResizing: false,
   cell: AddToDownloadListCell,
   maxSize: 50,
+  meta: {
+    align: 'center',
+  },
 })
 
 function DirectDownloadCell(props: CellContext<Row, unknown>) {
   const { row } = props
   return (
-    <div
-      className="SRC-centerAndJustifyContent"
-      data-testid={'DirectDownloadCell'}
-    >
+    <div data-testid={'DirectDownloadCell'}>
       <FileEntityDirectDownload
         entityId={row.original.rowId!.toString()}
         entityVersionNumber={row.original.versionNumber}
@@ -122,12 +124,15 @@ export const directDownloadColumn = columnHelper.display({
   enableResizing: false,
   cell: DirectDownloadCell,
   maxSize: 50,
+  meta: {
+    align: 'center',
+  },
 })
 
 function AccessCell(props: CellContext<Row, unknown>) {
   const { row } = props
   return (
-    <div className="SRC-centerAndJustifyContent" data-testid={'AccessCell'}>
+    <div data-testid={'AccessCell'}>
       <HasAccessV2
         key={row.original.rowId!.toString()}
         entityId={row.original.rowId!.toString()}
@@ -141,6 +146,9 @@ export const accessColumn = columnHelper.display({
   id: `${columnIdPrefix}.Access`,
   enableResizing: false,
   cell: AccessCell,
+  meta: {
+    align: 'center',
+  },
 })
 
 export function TableDataColumnHeader(
