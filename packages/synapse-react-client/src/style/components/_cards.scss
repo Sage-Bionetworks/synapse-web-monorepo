@@ -67,12 +67,9 @@ $text-color-lighter: #898989;
       }
     }
     a,
-    .SRC-userCard {
+    .MuiLink-root {
       color: white !important;
-      border-bottom: 1px solid white !important;
-      &:hover {
-        border-bottom: 1px solid white !important;
-      }
+      text-decoration-color: white !important;
     }
     .SRC-cardMetadata .SRC-row-label {
       text-transform: uppercase;
