@@ -258,6 +258,7 @@ export function SynapseTable(props: SynapseTableProps) {
                         style={{
                           width: cell.column.getSize(),
                         }}
+                        align={(cell.column.columnDef.meta as any)?.align}
                       >
                         {renderPlaceholder ? (
                           <p>
