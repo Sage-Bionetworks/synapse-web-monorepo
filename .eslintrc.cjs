@@ -17,6 +17,8 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:storybook/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
   ],
   parserOptions: {
     tsconfigRootDir: __dirname,
@@ -59,11 +61,16 @@ module.exports = {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-extra-semi": "warn",
+    "import/order": ["error", { "groups": ["builtin", "external", "internal", "parent", "sibling", "index", "object", "type"]}]
   },
   settings: {
     react: {
       version: "detect",
     },
+    "import/resolver": {
+      typescript: true,
+      node: true,
+    }
   },
   globals: {
     JSX: true,
