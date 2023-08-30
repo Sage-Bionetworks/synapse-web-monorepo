@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
-import { getSearchParam } from './URLUtils'
-import useAnalytics from './useAnalytics'
 import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { useSourceApp } from './components/SourceApp.js'
-import { sageAccountWebThemeOverrides } from './style/theme'
 import { Theme } from '@mui/material'
 import {
   useLastLoginInfoState,
@@ -13,6 +9,10 @@ import {
   SynapseUtilityFunctions,
   useApplicationSessionContext,
 } from 'synapse-react-client'
+import { getSearchParam } from './URLUtils'
+import useAnalytics from './useAnalytics'
+import { useSourceApp } from './components/SourceApp.js'
+import { sageAccountWebThemeOverrides } from './style/theme'
 import { AppContextProvider } from './AppContext'
 
 function AppInitializer(props: { children?: React.ReactNode }) {

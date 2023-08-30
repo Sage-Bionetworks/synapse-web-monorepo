@@ -58,7 +58,7 @@ export const UnbindORCiDDialog = (props: UnbindORCiDDialogProps) => {
         </Button>
         <Button
           variant="contained"
-          onClick={event =>
+          onClick={event => {
             unbindORCiD(
               event,
               props.orcid,
@@ -66,7 +66,7 @@ export const UnbindORCiDDialog = (props: UnbindORCiDDialogProps) => {
               props.setShow,
               props.redirectAfter,
             )
-          }
+          }}
         >
           Yes, unlink ORCID
         </Button>

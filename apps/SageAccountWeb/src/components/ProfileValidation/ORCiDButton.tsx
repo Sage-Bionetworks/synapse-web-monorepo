@@ -5,9 +5,9 @@ import {
   SynapseConstants,
   SynapseClient,
 } from 'synapse-react-client'
-import { ValidationWizardStep } from './ProfileValidation'
 import OrcId from '../../assets/ORCID.svg'
 import EditIcon from '../../assets/RedEditPencil.svg'
+import { ValidationWizardStep } from './ProfileValidation'
 
 export type ORCiDButtonProps = {
   redirectAfter?: string

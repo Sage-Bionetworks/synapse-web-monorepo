@@ -80,6 +80,7 @@
   },
   "scripts": {
     "clean": "rimraf build coverage",
+    "lint": "eslint src",
     "start": "vite",
     "build": "vite build",
     "test": "vitest",

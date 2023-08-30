@@ -1,5 +1,4 @@
 import { Box, Button, InputLabel, TextField, Typography } from '@mui/material'
-import { StyledFormControl } from '../components/StyledComponents'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { SynapseClient } from 'synapse-react-client'
@@ -8,6 +7,7 @@ import {
   ChangePasswordWithToken,
   PasswordResetSignedToken,
 } from '@sage-bionetworks/synapse-types'
+import { StyledFormControl } from '../components/StyledComponents'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { BackButton } from './BackButton'
 import { LeftRightPanel } from './LeftRightPanel'
@@ -97,7 +97,11 @@ export const ResetPassword = (props: ResetPasswordProps) => {
           token ? (
             <>
               <SourceAppLogo />
-              <form onSubmit={handleChangePasswordWithToken}>
+              <form
+                onSubmit={e => {
+                  handleChangePasswordWithToken(e)
+                }}
+              >
                 <StyledFormControl
                   fullWidth
                   required
@@ -141,7 +145,9 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                   variant="contained"
                   type="submit"
                   fullWidth
-                  onSubmit={handleChangePasswordWithToken}
+                  onSubmit={e => {
+                    handleChangePasswordWithToken(e)
+                  }}
                   sx={buttonSx}
                   disabled={!newPassword || !confirmPassword}
                 >
@@ -178,7 +184,9 @@ export const ResetPassword = (props: ResetPasswordProps) => {
               <Button
                 variant="contained"
                 fullWidth
-                onClick={handleResetPassword}
+                onClick={e => {
+                  handleResetPassword(e)
+                }}
                 sx={buttonSx}
                 type="button"
                 disabled={!userName}
@@ -202,8 +210,8 @@ export const ResetPassword = (props: ResetPasswordProps) => {
             <div>
               <Typography variant="headline2">Reset your password</Typography>
               <Typography variant="subtitle1">
-                Please enter your email address or username and we'll send you
-                instructions to reset your password
+                Please enter your email address or username and we&apos;ll send
+                you instructions to reset your password
               </Typography>
             </div>
           )

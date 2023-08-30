@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useAppContext } from '../AppContext'
 import {
   displayToast,
   SynapseClient,
@@ -11,6 +10,7 @@ import {
   MembershipInvitation,
   SignedTokenInterface,
 } from '@sage-bionetworks/synapse-types'
+import { useAppContext } from '../AppContext'
 
 export default function useMembershipInvitationTokenHandler():
   | MembershipInvitation

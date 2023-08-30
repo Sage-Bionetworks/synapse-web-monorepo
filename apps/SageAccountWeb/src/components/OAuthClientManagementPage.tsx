@@ -1,9 +1,9 @@
 import React from 'react'
+import { Box, Paper, Typography } from '@mui/material'
+import { OAuthClientManagement } from 'synapse-react-client'
 import { SourceAppLogo } from './SourceApp'
 import { StyledOuterContainer } from './StyledComponents'
-import { Box, Paper, Typography } from '@mui/material'
 import { BackButton } from './BackButton'
-import { OAuthClientManagement } from 'synapse-react-client'
 
 export const OAuthClientManagementPage = () => {
   return (

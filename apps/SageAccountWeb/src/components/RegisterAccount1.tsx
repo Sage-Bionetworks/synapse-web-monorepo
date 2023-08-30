@@ -20,11 +20,11 @@ import {
   AliasType,
   isMembershipInvtnSignedToken,
 } from '@sage-bionetworks/synapse-types'
-import { SourceAppLogo, useSourceApp } from './SourceApp'
 import { Link as RouterLink } from 'react-router-dom'
-import { EmailConfirmationPage } from './EmailConfirmationPage'
 import GoogleLogo from '../assets/g-logo.png'
 import { useAppContext } from '../AppContext'
+import { EmailConfirmationPage } from './EmailConfirmationPage'
+import { SourceAppLogo, useSourceApp } from './SourceApp'
 import { BackButton } from './BackButton'
 import {
   StyledFormControl,
@@ -256,7 +256,9 @@ export const RegisterAccount1 = () => {
                       <Button
                         sx={buttonSx}
                         variant="contained"
-                        onClick={onSendRegistrationInfo}
+                        onClick={e => {
+                          onSendRegistrationInfo(e)
+                        }}
                         type="button"
                         disabled={email && !isLoading ? false : true}
                       >
@@ -292,7 +294,9 @@ export const RegisterAccount1 = () => {
                       <Button
                         sx={buttonSx}
                         variant="contained"
-                        onClick={onSignUpWithGoogle}
+                        onClick={e => {
+                          onSignUpWithGoogle(e)
+                        }}
                         type="button"
                         disabled={username && !isLoading ? false : true}
                       >

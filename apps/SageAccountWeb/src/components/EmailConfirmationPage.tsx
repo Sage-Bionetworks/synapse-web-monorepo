@@ -36,7 +36,7 @@ export const EmailConfirmationPage: React.FunctionComponent<
         <div className="thankYouText">
           <h3>Please check your email.</h3>
           <p>
-            We've sent an email to <strong>{email}</strong>
+            We&apos;ve sent an email to <strong>{email}</strong>
           </p>
           <p>
             Click the link in the message to verify your address, then continue
@@ -49,7 +49,7 @@ export const EmailConfirmationPage: React.FunctionComponent<
             }
             target="_blank"
           >
-            I didn't receive an email
+            I didn&apos;t receive an email
           </Link>
         </div>
         <Button

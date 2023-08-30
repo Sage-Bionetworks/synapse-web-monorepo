@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SourceAppLogo, useSourceApp } from './SourceApp'
 import { InputLabel, TextField, Typography } from '@mui/material'
-import { LeftRightPanel } from './LeftRightPanel'
-import { StyledFormControl } from './StyledComponents'
 import {
   displayToast,
   SynapseClient,
@@ -10,6 +7,9 @@ import {
   useSynapseContext,
 } from 'synapse-react-client'
 import { Redirect } from 'react-router-dom'
+import { SourceAppLogo, useSourceApp } from './SourceApp'
+import { LeftRightPanel } from './LeftRightPanel'
+import { StyledFormControl } from './StyledComponents'
 import { ContinueButton } from './ProfileValidation/ContinueButton'
 
 export const CurrentAffiliationPage = () => {

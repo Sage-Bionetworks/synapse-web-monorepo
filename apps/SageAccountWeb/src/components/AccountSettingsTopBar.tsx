@@ -1,12 +1,12 @@
 import React from 'react'
 import { BadgeOutlined } from '@mui/icons-material'
 import { Box, Button, SxProps, Typography } from '@mui/material'
-import { useSourceApp } from './SourceApp'
-import { useAppContext } from '../AppContext'
 import {
   SynapseClient,
   useApplicationSessionContext,
 } from 'synapse-react-client'
+import { useAppContext } from '../AppContext'
+import { useSourceApp } from './SourceApp'
 
 const AccountSettingsTopBar: React.FunctionComponent = () => {
   const sourceApp = useSourceApp()
