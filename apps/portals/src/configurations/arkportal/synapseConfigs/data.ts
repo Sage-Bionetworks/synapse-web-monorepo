@@ -1,11 +1,11 @@
-import { SynapseConfig } from 'types/portal-config'
-import columnAliases from '../columnAliases'
 import {
   LabelLinkConfig,
   StandaloneQueryWrapperProps,
 } from 'synapse-react-client'
-import { dataSql } from '../resources'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
+import columnAliases from '../columnAliases'
+import { dataSql } from '../resources'
 
 const rgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [

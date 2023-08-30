@@ -9,10 +9,10 @@ import {
 import { BarLoader } from 'react-spinners'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { Tooltip } from '@mui/material'
+import { SynapseComponents } from 'synapse-react-client'
 import { DetailsPageTabProps } from '../../types/portal-util-types'
 import RedirectWithQuery from '../RedirectWithQuery'
 import { DetailsPageSynapseConfigArray } from './DetailsPage'
-import { SynapseComponents } from 'synapse-react-client'
 
 export type DetailsPageTabsProps = {
   tabConfigs: DetailsPageTabProps[]
@@ -44,7 +44,9 @@ const DetailsPageTabs: React.FunctionComponent<DetailsPageTabsProps> = (
         {tabConfigs.map((tab, index) => {
           if (tab.hideIfColumnValueNull) {
             if (rowValues && headers) {
-              const colIndex = headers.findIndex(h => h.name == tab.hideIfColumnValueNull)
+              const colIndex = headers.findIndex(
+                (h) => h.name == tab.hideIfColumnValueNull,
+              )
               if (!rowValues[colIndex]) {
                 return <></>
               }

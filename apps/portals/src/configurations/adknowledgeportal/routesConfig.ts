@@ -1,5 +1,6 @@
-import { GenericRoute } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { GenericRoute } from '../../types/portal-config'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import {
   studiesProgrammaticRouteConfig,
@@ -20,7 +21,6 @@ import {
   projectsSql,
   studiesSql,
 } from './resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const routes: GenericRoute[] = [
   {

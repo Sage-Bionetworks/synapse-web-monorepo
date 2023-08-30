@@ -3,9 +3,9 @@ import {
   ChallengeDataDownloadProps,
   MarkdownSynapseProps,
 } from 'synapse-react-client'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import { RowSynapseConfig } from '../types/portal-util-types'
 import { ChallengeSubmissionWrapperProps } from './challengeportal/ChallengeSubmissionWrapper'
-import { EntityType } from '@sage-bionetworks/synapse-types'
 /**
  * Given a value and synapse config, returns the props with the value injected into the synapse object accordingly.
  *

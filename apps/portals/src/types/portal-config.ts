@@ -25,20 +25,20 @@ import {
   UserCardProps,
   ChallengeDataDownloadProps,
 } from 'synapse-react-client'
+import { RedirectProps } from 'react-router-dom'
+import { CSSProperties } from 'react'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
 import { AboutPortalProps } from '../portal-components/csbc-home-page/AboutPortal'
 import { EcosystemProps } from '../portal-components/csbc-home-page/Ecosystem'
-import { DetailsPageProps } from './portal-util-types'
 import { ParticipantsBarPlotProps } from '../portal-components/crc-researcher/ParticipantsBarPlot'
 import { StatusLineChartProps } from '../portal-components/crc-researcher/StatusLineChart'
 import { SurveysCompletedPlotsProps } from '../portal-components/crc-researcher/SurveysCompletedPlots'
 import { ImageProps } from '../portal-components/Image'
-import { RedirectProps } from 'react-router-dom'
 import { ToggleSynapseObjectsProps } from '../portal-components/ToggleSynapseObjects'
-import { CSSProperties } from 'react'
-import { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObjects'
-import { ChallengeSubmissionWrapperProps } from 'portal-components/challengeportal/ChallengeSubmissionWrapper'
+import { DetailsPageProps } from './portal-util-types'
+import type { ChallengeSubmissionWrapperProps } from 'portal-components/challengeportal/ChallengeSubmissionWrapper'
+import type { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObjects'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -46,7 +46,7 @@ export type HomePageHeaderConfig = {
   title: string
   showBlur?: boolean
   centerText?: boolean
-  HeaderSvg?: any
+  HeaderSvg?: React.ComponentType<Record<string, never>>
 }
 
 // Generic SynapseConfigArray Representation -- maps each component to its props

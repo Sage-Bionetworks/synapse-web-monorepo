@@ -1,8 +1,7 @@
 import { SynapseConstants } from 'synapse-react-client'
-import type { GenericCardSchema } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
+import { SynapseConfig } from '../../../types/portal-config'
 import { projectsSql } from '../resources'
-import { SynapseConfig } from 'types/portal-config'
+import type { GenericCardSchema, CardConfiguration } from 'synapse-react-client'
 
 const rgbIndex = 1
 

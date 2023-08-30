@@ -1,9 +1,10 @@
-import type { GenericCardSchema } from 'synapse-react-client'
-
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
-import { columnAliases } from './commonProps'
-import type { CardConfiguration } from 'synapse-react-client'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
 import {
   toolsSql,
   observationsSql,
@@ -19,12 +20,9 @@ import {
   filesSql,
   studiesSql,
 } from '../resources'
-import { DetailsPageProps } from 'types/portal-util-types'
+import { columnAliases } from './commonProps'
 import { publicationsV2CardConfiguration } from './publications'
-import {
-  ColumnMultiValueFunction,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
+import type { GenericCardSchema, CardConfiguration } from 'synapse-react-client'
 
 export const newToolsSql = `${toolsSql} order by ROW_ID desc limit 3`
 

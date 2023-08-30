@@ -1,11 +1,11 @@
-import { SynapseConfig } from 'types/portal-config'
-
-import { columnAliases } from './commonProps'
-import { initiativesSql, studiesSql } from '../resources'
-import type { CardConfiguration } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import { DetailsPageProps } from 'types/portal-util-types'
+import { SynapseConfig } from '../../../types/portal-config'
+
+import { DetailsPageProps } from '../../../types/portal-util-types'
+import { initiativesSql, studiesSql } from '../resources'
+import { columnAliases } from './commonProps'
 import { studyCardConfiguration } from './studies'
+import type { CardConfiguration } from 'synapse-react-client'
 
 export const newSql = `${initiativesSql} order by ROW_ID desc limit 3`
 const rgbIndex = 8

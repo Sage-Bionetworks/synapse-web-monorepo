@@ -1,5 +1,5 @@
 import React from 'react'
-import { HomePageHeaderConfig } from 'types/portal-config'
+import { HomePageHeaderConfig } from '../../types/portal-config'
 import { ReactComponent as HeaderImg } from './style/dna_header.svg'
 
 const homePageHeader: HomePageHeaderConfig = {

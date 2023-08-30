@@ -1,9 +1,9 @@
-import { columnAliases } from './commonProps'
-import { datasetsSql } from '../resources'
-import { SynapseConfig } from 'types/portal-config'
 import { CardConfiguration, SynapseConstants } from 'synapse-react-client'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { DetailsPageProps } from 'types/portal-util-types'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
+import { datasetsSql } from '../resources'
+import { columnAliases } from './commonProps'
 
 export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
 const rgbIndex = 8

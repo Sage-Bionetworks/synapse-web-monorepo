@@ -1,6 +1,7 @@
 import { SynapseConstants } from 'synapse-react-client'
-import { DetailsPageProps } from 'types/portal-util-types'
-import { SynapseConfig } from 'types/portal-config'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { DetailsPageProps } from '../../types/portal-util-types'
+import { SynapseConfig } from '../../types/portal-config'
 import {
   columnAliases,
   searchConfiguration,
@@ -14,9 +15,7 @@ import {
   datasetsSql,
   publicationsSql,
 } from './resources'
-import type { CardLink } from 'synapse-react-client'
-import type { GenericCardSchema } from 'synapse-react-client'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import type { CardLink, GenericCardSchema } from 'synapse-react-client'
 
 export const organizationDetailsPageConfig: DetailsPageProps = {
   sql: fundersSql,

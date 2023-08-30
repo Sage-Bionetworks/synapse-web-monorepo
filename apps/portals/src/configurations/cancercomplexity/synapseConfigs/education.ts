@@ -4,8 +4,8 @@ import {
   IconOptions,
   SynapseConstants,
 } from 'synapse-react-client'
+import { SynapseConfig } from '../../../types/portal-config'
 import { educationSql } from '../resources'
-import { SynapseConfig } from 'types/portal-config'
 import educationalResourceSvg from '../style/EducationalResource.svg'
 
 const rgbIndex = 8

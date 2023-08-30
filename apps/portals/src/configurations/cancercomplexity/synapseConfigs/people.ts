@@ -3,8 +3,8 @@ import {
   GenericCardSchema,
   SynapseConstants,
 } from 'synapse-react-client'
+import { SynapseConfig } from '../../../types/portal-config'
 import { peopleSql } from '../resources'
-import { SynapseConfig } from 'types/portal-config'
 import personSvg from '../style/Person.svg'
 
 const rgbIndex = 3

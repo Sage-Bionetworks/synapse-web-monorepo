@@ -1,6 +1,6 @@
-import { SynapseConfig } from 'types/portal-config'
-import { columnAliases } from './commonProps'
+import { SynapseConfig } from '../../../types/portal-config'
 import { filesSql } from '../resources'
+import { columnAliases } from './commonProps'
 
 const rgbIndex = 1
 export const visibleColumnCount = 7

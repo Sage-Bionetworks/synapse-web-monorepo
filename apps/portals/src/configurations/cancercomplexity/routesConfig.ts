@@ -1,4 +1,8 @@
-import { GenericRoute } from 'types/portal-config'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
+import { GenericRoute } from '../../types/portal-config'
 import { projectCardConfiguration } from './synapseConfigs/projects'
 import { datasetCardConfiguration } from './synapseConfigs/datasets'
 import RouteControlWrapperProps from './routeControlWrapperProps'
@@ -20,10 +24,6 @@ import {
   toolsSql,
 } from './resources'
 import consortiaHomePageConfig from './synapseConfigs/consortiaHomePage'
-import {
-  ColumnMultiValueFunction,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
 import personGraySvg from './style/PersonGray.svg'
 
 const routes: GenericRoute[] = [

@@ -6,8 +6,8 @@ import {
   SynapseUtilityFunctions,
 } from 'synapse-react-client'
 import { QueryBundleRequest, RowSet } from '@sage-bionetworks/synapse-types'
-import { gotoExploreToolsWithFullTextSearch } from './BrowseToolsPage'
 import { Link } from '@mui/material'
+import { gotoExploreToolsWithFullTextSearch } from './BrowseToolsPage'
 
 export type PopularSearchesProps = {
   sql: string
@@ -22,7 +22,7 @@ const PopularSearches: React.FunctionComponent<PopularSearchesProps> = ({
   const { accessToken } = SynapseContextUtils.useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
   const [isLoading, setIsLoading] = useState<boolean>()
-  let mounted = true
+
   useEffect(() => {
     const fetchData = async function () {
       setIsLoading(true)
@@ -47,18 +47,12 @@ const PopularSearches: React.FunctionComponent<PopularSearchesProps> = ({
       const { queryResult } = queryResultBundle
       const queryResults = queryResult?.queryResults
       if (queryResults) {
-        if (mounted) {
-          setRowSet(queryResults)
-        }
+        setRowSet(queryResults)
       } else {
         console.log('PopularSearches: Error getting data')
       }
     }
     fetchData()
-
-    return () => {
-      mounted = false
-    }
   }, [sql, accessToken])
 
   return (

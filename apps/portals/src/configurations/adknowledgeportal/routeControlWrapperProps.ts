@@ -1,4 +1,4 @@
-import { RouteControlWrapperProps } from 'portal-components/RouteControlWrapper'
+import { RouteControlWrapperProps } from '../../portal-components/RouteControlWrapper'
 import {
   data,
   people,

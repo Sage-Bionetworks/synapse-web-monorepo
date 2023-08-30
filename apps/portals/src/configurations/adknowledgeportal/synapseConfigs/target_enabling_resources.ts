@@ -4,7 +4,7 @@ import {
   QueryWrapperPlotNavProps,
   SynapseConstants,
 } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseConfig } from '../../../types/portal-config'
 import { targetEnablingResourcesExploreSql } from '../resources'
 
 // https://sagebionetworks.jira.com/wiki/spaces/PS/pages/2501607563/AMP-AD+Target+Enabling+Resources+Schema

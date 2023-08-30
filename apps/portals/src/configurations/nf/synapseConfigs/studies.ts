@@ -1,15 +1,12 @@
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
-import { columnAliases, searchConfiguration } from './commonProps'
-
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
 import studyActiveSvg from '../style/study-active.svg'
+
 import studyCompleteSvg from '../style/study-complete.svg'
 import studyCompleteHeaderSvg from '../style/study-completed-header.svg'
 import studyActiveHeaderSvg from '../style/study-active-header.svg'
-import type { CardConfiguration } from 'synapse-react-client'
-import { DetailsPageProps } from 'types/portal-util-types'
-import { toolsCardConfiguration } from './tools'
-import { publicationsCardConfiguration } from './publications'
 import {
   studiesSql,
   datasetsSql,
@@ -18,7 +15,10 @@ import {
   metadataFilesSql,
   toolStudySql,
 } from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { toolsCardConfiguration } from './tools'
+import { publicationsCardConfiguration } from './publications'
+import { columnAliases, searchConfiguration } from './commonProps'
+import type { CardConfiguration } from 'synapse-react-client'
 
 export const newStudiesSql = `${studiesSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD

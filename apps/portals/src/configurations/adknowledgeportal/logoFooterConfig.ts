@@ -1,4 +1,4 @@
-import { LogoConfig } from 'types/portal-config'
+import { LogoConfig } from '../../types/portal-config'
 import ampFooterLogoSvg from './style/amp-footer-logo.svg'
 
 const logo: LogoConfig = {

@@ -1,4 +1,4 @@
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseConfig } from '../../../types/portal-config'
 import columnAliases from '../columnAliases'
 import { filesSql } from '../resources'
 

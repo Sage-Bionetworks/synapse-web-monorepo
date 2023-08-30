@@ -1,5 +1,6 @@
-import { GenericRoute } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { GenericRoute } from '../../types/portal-config'
 import {
   newStudiesSql,
   studiesDetailPage,
@@ -30,7 +31,6 @@ import {
   studiesSql,
 } from './resources'
 import { toolsDetailsPage } from './synapseConfigs/tools'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { datasetsDetailsPage } from './synapseConfigs/datasets'
 
 const limit = 3

@@ -1,9 +1,12 @@
-import type { GenericCardSchema } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
-import type { CardConfiguration, LabelLinkConfig } from 'synapse-react-client'
+import { SynapseConfig } from '../../../types/portal-config'
 import { experimentalModelsSql } from '../resources'
-import type { QueryWrapperPlotNavProps } from 'synapse-react-client'
+import type {
+  CardConfiguration,
+  LabelLinkConfig,
+  GenericCardSchema,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
 
 // https://sagebionetworks.jira.com/wiki/spaces/PS/pages/1254293523/AMP-AD+Experimental+Models+Schema
 

@@ -1,5 +1,5 @@
-import { GenericRoute } from 'types/portal-config'
+import { GenericRoute } from '../../types/portal-config'
 
-const routes: GenericRoute [] = []
+const routes: GenericRoute[] = []
 
 export default routes

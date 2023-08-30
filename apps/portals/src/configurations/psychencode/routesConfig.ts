@@ -1,4 +1,4 @@
-import { GenericRoute } from 'types/portal-config'
+import { GenericRoute } from '../../types/portal-config'
 import { studyDetailPage } from './synapseConfigs/studies'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import { grantsDetailPage } from './synapseConfigs/grants'

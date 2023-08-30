@@ -1,8 +1,8 @@
-import { GenericRoute } from 'types/portal-config'
+import { SynapseConstants } from 'synapse-react-client'
+import { GenericRoute } from '../../types/portal-config'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import { studyDetailPage } from './synapseConfigs/studies'
 import { toolsDetailsLandingPage } from './synapseConfigs/tools'
-import { SynapseConstants } from 'synapse-react-client'
 
 const routes: GenericRoute[] = [
   {

@@ -1,8 +1,8 @@
 import React from 'react'
-import { HomePageHeaderConfig } from 'types/portal-config'
+import { Box } from '@mui/material'
+import { HomePageHeaderConfig } from '../../types/portal-config'
 import { ReactComponent as SageLogo } from './style/SageLogo.svg'
 import { ReactComponent as DreamLogo } from './style/DreamLogo.svg'
-import { Box } from '@mui/material'
 
 const homePageHeader: HomePageHeaderConfig = {
   title: 'Welcome to the Sage Challenge Portal!',

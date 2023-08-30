@@ -1,6 +1,6 @@
-import { LogoConfig } from 'types/portal-config'
+import { LogoConfig } from '../../types/portal-config'
 
 const logoHeader: LogoConfig = {
-  name: 'TODO'
+  name: 'TODO',
 }
 export default logoHeader

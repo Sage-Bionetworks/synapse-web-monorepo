@@ -1,13 +1,12 @@
-import { SynapseConfig } from 'types/portal-config'
-import { columnAliases } from './commonProps'
-import { DetailsPageProps } from 'types/portal-util-types'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
-import type { GenericCardSchema } from 'synapse-react-client'
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
+import { columnAliases } from './commonProps'
+import type { GenericCardSchema, CardConfiguration } from 'synapse-react-client'
 
 const datasetsSql = 'SELECT * FROM syn31543490'
 export const datasetSchema: GenericCardSchema = {

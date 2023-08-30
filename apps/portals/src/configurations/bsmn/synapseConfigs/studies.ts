@@ -1,9 +1,9 @@
-import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
-import { DetailsPageProps } from 'types/portal-util-types'
-import { publicationsCardConfiguration } from './publications'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
 import { publicationsSql, studiesSql } from '../resources'
+import { publicationsCardConfiguration } from './publications'
+import type { CardConfiguration } from 'synapse-react-client'
 
 const rgbIndex = 0
 

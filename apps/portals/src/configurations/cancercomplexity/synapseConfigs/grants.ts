@@ -5,8 +5,8 @@ import {
   SynapseComponents,
   SynapseConstants,
 } from 'synapse-react-client'
+import { SynapseConfig } from '../../../types/portal-config'
 import { grantsSql } from '../resources'
-import { SynapseConfig } from 'types/portal-config'
 
 const rgbIndex = 3
 

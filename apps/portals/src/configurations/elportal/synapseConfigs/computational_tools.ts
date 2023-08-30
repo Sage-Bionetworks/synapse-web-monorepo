@@ -3,7 +3,7 @@ import {
   GenericCardSchema,
   SynapseConstants,
 } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseConfig } from '../../../types/portal-config'
 import { computationalSql, defaultSearchConfiguration } from '../resources'
 
 const computationalSchema: GenericCardSchema = {

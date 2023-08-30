@@ -4,10 +4,13 @@ import {
   GenericCardSchema,
   SynapseConstants,
 } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
-import { challengeProjectsSql } from '../resources'
-import { DetailsPageProps, RowSynapseConfig } from 'types/portal-util-types'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
+import {
+  DetailsPageProps,
+  RowSynapseConfig,
+} from '../../../types/portal-util-types'
+import { challengeProjectsSql } from '../resources'
 
 const rgbIndex = 3
 

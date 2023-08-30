@@ -1,20 +1,20 @@
 import { BrowserRouter, Switch } from 'react-router-dom'
 import React from 'react'
 import './App.scss'
-import Footer from './Footer'
-import AppInitializer from './AppInitializer'
-import Navbar from './Navbar'
-import CookiesNotification from './CookiesNotification'
 import { CookiesProvider } from 'react-cookie'
 import {
   SynapseTheme,
   SynapseToastContainer,
   defaultQueryClientConfig,
 } from 'synapse-react-client'
-import { LogInDialogContextProvider } from './LogInDialogContext'
 import { createTheme, ThemeProvider } from '@mui/material'
-import palette from './config/paletteConfig'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import Footer from './Footer'
+import AppInitializer from './AppInitializer'
+import Navbar from './Navbar'
+import CookiesNotification from './CookiesNotification'
+import { LogInDialogContextProvider } from './LogInDialogContext'
+import palette from './config/paletteConfig'
 
 const RouteResolver = React.lazy(() => import('./RouteResolver'))
 const theme = createTheme(SynapseTheme.mergeTheme({ palette }))

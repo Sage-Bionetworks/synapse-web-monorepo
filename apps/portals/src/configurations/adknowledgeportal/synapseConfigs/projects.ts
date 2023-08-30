@@ -1,6 +1,7 @@
-import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
 import {
   computationalSql,
   projectsSql,
@@ -8,8 +9,8 @@ import {
   studiesSql,
   experimentalModelsSql,
   peopleSql,
+  targetEnablingResourcesDetailsPageSql,
 } from '../resources'
-import { DetailsPageProps } from 'types/portal-util-types'
 import { studyCardConfiguration } from './studies'
 import { publicationCardProps } from './publications'
 import {
@@ -17,9 +18,8 @@ import {
   experimentalToolsCardConfiguration,
 } from './experimental_tools'
 import { computationalCardConfiguration } from './computational_tools'
-import { targetEnablingResourcesDetailsPageSql } from '../resources'
 import { targetEnablingResourcesCardConfiguration } from './target_enabling_resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import type { CardConfiguration } from 'synapse-react-client'
 
 const rgbIndex = 4
 export const projectCardConfiguration: CardConfiguration = {
