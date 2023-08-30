@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { Box } from '@mui/material'
+import { useAtomValue } from 'jotai'
 import { SynapseConstants } from '../../utils'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
 import {
@@ -8,7 +11,6 @@ import {
 } from '../../utils/functions'
 import { useGetEntity } from '../../synapse-queries'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from '../CardContainerLogic'
 import FullTextSearch from '../FullTextSearch'
 import ModalDownload from '../ModalDownload/ModalDownload'
@@ -30,13 +32,11 @@ import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
 import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
-import FilterAndView from './FilterAndView'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
-import { Box } from '@mui/material'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { TableQueryDownloadConfirmation } from '../download_list'
-import { useAtomValue } from 'jotai'
 import { isLoadingNewBundleAtom } from '../QueryWrapper/QueryWrapper'
+import FilterAndView from './FilterAndView'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'

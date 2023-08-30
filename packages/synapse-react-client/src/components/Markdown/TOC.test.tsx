@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import MarkdownSynapse from './MarkdownSynapse'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import MarkdownSynapse from './MarkdownSynapse'
 describe('renders without crashing', () => {
   let SynapseClient: any
   beforeAll(() => {

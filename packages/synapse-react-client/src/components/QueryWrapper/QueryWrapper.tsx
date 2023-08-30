@@ -4,16 +4,17 @@ import {
   useDeepCompareMemoize,
 } from 'use-deep-compare-effect'
 import {
+  QueryBundleRequest,
+  QueryResultBundle,
+  Table,
+} from '@sage-bionetworks/synapse-types'
+import { atom, Provider, useAtomValue, useSetAtom } from 'jotai'
+import {
   hasResettableFilters as hasResettableFiltersUtil,
   isFacetAvailable,
   removeLockedColumnFromFacetData,
 } from '../../utils/functions/queryUtils'
 import { useGetEntity } from '../../synapse-queries'
-import {
-  QueryBundleRequest,
-  QueryResultBundle,
-  Table,
-} from '@sage-bionetworks/synapse-types'
 import {
   CombineRangeFacetConfig,
   InfiniteQueryContextType,
@@ -23,6 +24,7 @@ import {
 } from '../QueryContext/QueryContext'
 import useImmutableTableQuery from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { ConfirmationDialog } from '../ConfirmationDialog'
+import { getDefaultPrimaryKey } from '../SynapseTable/SynapseTableUtils'
 import {
   hasSelectedRowsAtom,
   isRowSelectionVisibleAtom,
@@ -31,8 +33,6 @@ import {
 } from './TableRowSelectionState'
 import useQueryWrapperData from './useQueryWrapperData'
 import { useQueryWrapperPaginationControls } from './useQueryWrapperPaginationControls'
-import { getDefaultPrimaryKey } from '../SynapseTable/SynapseTableUtils'
-import { atom, Provider, useAtomValue, useSetAtom } from 'jotai'
 
 export type QueryWrapperProps = React.PropsWithChildren<{
   initQueryRequest: QueryBundleRequest

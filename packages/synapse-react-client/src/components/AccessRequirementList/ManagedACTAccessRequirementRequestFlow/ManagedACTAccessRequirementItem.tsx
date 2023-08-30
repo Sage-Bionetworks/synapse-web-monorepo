@@ -1,13 +1,11 @@
-import React from 'react'
-import { useState } from 'react'
-import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
+import React, { useState } from 'react'
 import {
   ManagedACTAccessRequirement,
   SubmissionState,
+  ManagedACTAccessRequirementStatus,
 } from '@sage-bionetworks/synapse-types'
-import { ManagedACTAccessRequirementStatus } from '@sage-bionetworks/synapse-types'
-import { AlertProps } from './DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import RequirementItem from '../RequirementItem/RequirementItem'
 import {
   useCancelDataAccessRequest,
@@ -15,6 +13,7 @@ import {
   useGetAccessRequirementWikiPageKey,
 } from '../../../synapse-queries'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import { AlertProps } from './DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 
 export type ManagedACTAccessRequirementItemProps = {
   entityId: string

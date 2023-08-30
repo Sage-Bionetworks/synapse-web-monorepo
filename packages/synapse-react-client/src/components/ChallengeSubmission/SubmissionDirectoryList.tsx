@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
-import { RadioOption } from '../widgets/RadioGroup'
 import {
   Direction,
   Entity,
@@ -12,8 +11,14 @@ import {
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
   FileUploadComplete,
   SortBy,
+  UploadCallbackResp,
+  FileEntity,
 } from '@sage-bionetworks/synapse-types'
 import { Link } from 'react-router-dom'
+import dayjs from 'dayjs'
+import { InfoTwoTone } from '@mui/icons-material'
+import { useQueryClient } from 'react-query'
+import { RadioOption } from '../widgets/RadioGroup'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -24,20 +29,15 @@ import {
   useGetEntityChildren,
 } from '../../synapse-queries'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import dayjs from 'dayjs'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
-import { InfoTwoTone } from '@mui/icons-material'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils'
 import { ErrorBanner } from '../error/ErrorBanner'
 import FileUpload from '../FileUpload'
 import IconSvg from '../IconSvg'
-import { UploadCallbackResp } from '@sage-bionetworks/synapse-types'
-import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { EntityItem } from './ChallengeSubmission'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { useQueryClient } from 'react-query'
+import { EntityItem } from './ChallengeSubmission'
 
 type SubmissionDirectoryRow = {
   id: string

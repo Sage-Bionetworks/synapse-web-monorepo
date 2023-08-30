@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
+import Plotly from 'plotly.js-basic-dist'
 import PlotlyWrapper from '../PlotlyWrapper'
 import rawData from '../../mocks/distribution_data.json'
-import Plotly from 'plotly.js-basic-dist'
 
 const meta = {
   title: 'Components/PlotlyWrapper',

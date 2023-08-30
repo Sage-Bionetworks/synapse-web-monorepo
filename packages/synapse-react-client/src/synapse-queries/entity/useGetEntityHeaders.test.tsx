@@ -1,5 +1,4 @@
 import { renderHook, waitFor } from '@testing-library/react'
-import { useGetEntityHeaders } from './useGetEntityHeaders'
 import {
   EntityHeader,
   PaginatedResults,
@@ -8,6 +7,7 @@ import {
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SynapseClient from '../../synapse-client'
+import { useGetEntityHeaders } from './useGetEntityHeaders'
 
 const expected: PaginatedResults<EntityHeader> = {
   results: [

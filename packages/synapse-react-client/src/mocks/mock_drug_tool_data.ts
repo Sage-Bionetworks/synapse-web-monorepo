@@ -1,6 +1,9 @@
-import { FileEntity } from '@sage-bionetworks/synapse-types'
+import {
+  FileEntity,
+  ListResponse,
+  StatusEnum,
+} from '@sage-bionetworks/synapse-types'
 import { Step, StepStateEnum } from '../components/SynapseForm/types'
-import { ListResponse, StatusEnum } from '@sage-bionetworks/synapse-types'
 import _mockFormData from './mockDrugToolFormData.json'
 import _mockNavSchema from './mockDrugToolFormNavSchema.json'
 import _mockFormSchema from './mockDrugToolFormSchema.json'

@@ -1,14 +1,12 @@
 import { Clear } from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
-import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
 import { Reference } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
-import { EntityTypeIcon } from '../EntityIcon'
-import { NO_VERSION_NUMBER } from './EntityFinder'
+import { Typography, Skeleton, Tooltip } from '@mui/material'
 import { Map } from 'immutable'
-import { Skeleton } from '@mui/material'
-import { Tooltip } from '@mui/material'
+import { EntityTypeIcon } from '../EntityIcon'
+import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
+import { NO_VERSION_NUMBER } from './EntityFinder'
 
 export type SelectionPaneProps = {
   title: string | ((count: number) => string)

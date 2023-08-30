@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import { Skeleton, Tooltip, Typography } from '@mui/material'
 import { Map } from 'immutable'
 import { cloneDeep } from 'lodash-es'
 import dayjs from 'dayjs'
@@ -13,6 +13,7 @@ import {
   VariableSizeTree,
 } from 'react-vtree'
 import { NodeComponentProps } from 'react-vtree/dist/es/Tree'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../../synapse-client'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import {
@@ -20,10 +21,7 @@ import {
   isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
-import { EntityType } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
 import { Writable } from '../../../utils/types/Writable'
-import { Typography } from '@mui/material'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons/EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'

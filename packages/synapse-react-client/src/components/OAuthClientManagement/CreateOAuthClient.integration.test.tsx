@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { rest, server } from '../../mocks/msw/server'
-import { CreateOAuthModal, CreateOAuthModalProps } from './CreateOAuthClient'
 import { mockClientList1 } from '../../mocks/oauth/MockClient'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import {
@@ -12,6 +11,7 @@ import {
 } from '../../utils/functions/getEndpoint'
 import { WarningDialog } from '../SynapseForm/WarningDialog'
 import SynapseClient from '../../synapse-client'
+import { CreateOAuthModal, CreateOAuthModalProps } from './CreateOAuthClient'
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')

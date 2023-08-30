@@ -1,12 +1,14 @@
 import { useQuery, UseQueryOptions } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   NotificationEmail,
   UserBundle,
   UserProfile,
+  PrincipalAliasRequest,
+  PrincipalAliasResponse,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
   USER_BUNDLE_MASK_IS_AR_REVIEWER,
@@ -16,10 +18,6 @@ import {
   USER_BUNDLE_MASK_USER_PROFILE,
   USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
 } from '../../utils/SynapseConstants'
-import {
-  PrincipalAliasRequest,
-  PrincipalAliasResponse,
-} from '@sage-bionetworks/synapse-types'
 
 export function useGetNotificationEmail(
   options?: UseQueryOptions<NotificationEmail, SynapseClientError>,

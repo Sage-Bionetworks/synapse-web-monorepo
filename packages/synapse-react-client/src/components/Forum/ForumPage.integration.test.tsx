@@ -1,21 +1,22 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { ForumPage, ForumPageProps } from './ForumPage'
+import {
+  PaginatedResults,
+  DiscussionThreadBundle,
+  SubscriptionObjectType,
+  Topic,
+  SubscriptionPagedResults,
+  SubscriberPagedResults,
+  PaginatedIds,
+} from '@sage-bionetworks/synapse-types'
+import failOnConsole from 'jest-fail-on-console'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { FORUM, FORUM_THREAD } from '../../utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { PaginatedResults } from '@sage-bionetworks/synapse-types'
-import { DiscussionThreadBundle } from '@sage-bionetworks/synapse-types'
-import {
-  SubscriptionObjectType,
-  Topic,
-  SubscriptionPagedResults,
-  SubscriberPagedResults,
-} from '@sage-bionetworks/synapse-types'
 import {
   mockDiscussionThreadBundle,
   mockDiscussionThreadBundle2,
@@ -23,8 +24,7 @@ import {
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import { rest, server } from '../../mocks/msw/server'
 import SynapseClient from '../../synapse-client'
-import { PaginatedIds } from '@sage-bionetworks/synapse-types'
-import failOnConsole from 'jest-fail-on-console'
+import { ForumPage, ForumPageProps } from './ForumPage'
 
 const MOCK_FORUM_ID = 'syn123'
 const MOCK_SUBSCRIPTION_ID = '123'

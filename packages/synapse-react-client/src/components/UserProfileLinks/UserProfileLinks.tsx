@@ -1,7 +1,7 @@
 import Skeleton from '@mui/material/Skeleton'
 import React, { useState, useMemo } from 'react'
-import { useGetUserProfile } from '../../synapse-queries'
 import Typography from '@mui/material/Typography'
+import { useGetUserProfile } from '../../synapse-queries'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import UserChallenges from './UserChallenges'

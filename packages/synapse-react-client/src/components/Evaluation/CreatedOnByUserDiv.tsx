@@ -1,6 +1,6 @@
+import React from 'react'
 import UserCard from '../UserCard/UserCard'
 import { SynapseConstants } from '../../utils'
-import React from 'react'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export type CreatedOnByUserDivProps = {

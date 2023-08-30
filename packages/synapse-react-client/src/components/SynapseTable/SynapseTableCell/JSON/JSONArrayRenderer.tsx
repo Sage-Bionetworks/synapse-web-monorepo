@@ -1,8 +1,8 @@
-import { JSONPrimitiveType } from './JSONRendererUtils'
 import React, { useState } from 'react'
 import { Box, Collapse, Typography } from '@mui/material'
-import { JSONPrimitiveRenderer } from './JSONPrimitiveRenderer'
 import ExpandCollapseButton from '../../ExpandCollapseButton'
+import { JSONPrimitiveRenderer } from './JSONPrimitiveRenderer'
+import { JSONPrimitiveType } from './JSONRendererUtils'
 
 type JSONArrayRendererProps = { value: JSONPrimitiveType[] }
 

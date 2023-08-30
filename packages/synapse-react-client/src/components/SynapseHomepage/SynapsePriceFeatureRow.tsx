@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material'
 import React from 'react'
-import { SynapsePriceTableCell } from './SynapsePriceTableCell'
 import { CheckTwoTone } from '@mui/icons-material'
+import { SynapsePriceTableCell } from './SynapsePriceTableCell'
 import PlatformOfferingsGrid from './PlatformOfferingsGrid'
 
 export type SynapsePriceFeatureRowProps = {

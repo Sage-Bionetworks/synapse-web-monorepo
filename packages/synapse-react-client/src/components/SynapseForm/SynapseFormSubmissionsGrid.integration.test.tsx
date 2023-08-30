@@ -1,17 +1,17 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import UserFileGrid, {
-  SynapseFormSubmissionGridProps,
-} from './SynapseFormSubmissionsGrid'
+import { StatusEnum } from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SynapseClient from '../../synapse-client'
-import { StatusEnum } from '@sage-bionetworks/synapse-types'
 import {
   formListDataInProgress,
   formListDataSubmitted,
 } from '../../mocks/mock_drug_tool_data'
 import { server } from '../../mocks/msw/server'
+import UserFileGrid, {
+  SynapseFormSubmissionGridProps,
+} from './SynapseFormSubmissionsGrid'
 
 const token: string = '123444'
 const pathpart = 'someTool'

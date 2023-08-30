@@ -1,16 +1,18 @@
 import { Button, Typography } from '@mui/material'
 import React, { useState } from 'react'
+import {
+  DiscussionFilter,
+  SubscriptionObjectType,
+} from '@sage-bionetworks/synapse-types'
 import { useGetCurrentUserProfile } from '../../synapse-queries'
 import { useGetModerators } from '../../synapse-queries/forum/useForum'
 import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import { DiscussionFilter } from '@sage-bionetworks/synapse-types'
-import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage/ToastMessage'
+import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { ForumTable } from './ForumTable'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { SubscribersModal } from './SubscribersModal'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 
 export type ForumPageProps = {
   forumId: string

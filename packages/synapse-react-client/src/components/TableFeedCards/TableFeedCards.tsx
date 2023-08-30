@@ -1,5 +1,3 @@
-import { SynapseConstants } from '../../utils'
-import SynapseClient from '../../synapse-client'
 import React, { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import {
@@ -7,6 +5,8 @@ import {
   RowSet,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseConstants } from '../../utils'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import LargeButton from '../../components/styled/LargeButton'

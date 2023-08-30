@@ -1,12 +1,12 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { MetadataTable, MetadataTableProps } from './MetadataTable'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../utils/context/SynapseContext'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { server } from '../../../mocks/msw/server'
 import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
 import mockProjectEntityData from '../../../mocks/entity/mockProject'
+import { MetadataTable, MetadataTableProps } from './MetadataTable'
 
 const { id: MOCK_FILE_ENTITY_ID } = mockFileEntityData
 const { id: MOCK_PROJECT_ID, bundle: mockProjectEntityBundle } =

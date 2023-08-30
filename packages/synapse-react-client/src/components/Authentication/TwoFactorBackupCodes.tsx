@@ -7,17 +7,17 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
+import { useMutation } from 'react-query'
+import { TwoFactorAuthRecoveryCodes } from '@sage-bionetworks/synapse-types'
 import { LeftRightPanel, StyledOuterContainer } from '../styled/LeftRightPanel'
 import IconSvg from '../IconSvg/IconSvg'
-import { useMutation } from 'react-query'
 import { createRecoveryCodes } from '../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import { RegenerateBackupCodesWarning } from './RegenerateBackupCodesWarning'
-import { RecoveryCodeGrid } from './RecoveryCodeGrid'
-import { TwoFactorAuthRecoveryCodes } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useMediaPrintOnly } from '../../utils/hooks/useMediaPrintOnly'
+import { RegenerateBackupCodesWarning } from './RegenerateBackupCodesWarning'
+import { RecoveryCodeGrid } from './RecoveryCodeGrid'
 
 export type TwoFactorBackupCodesProps = {
   /* Whether to show a warning before generating new codes, to prevent users from overwriting their existing codes */

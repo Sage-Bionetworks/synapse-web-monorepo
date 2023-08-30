@@ -1,24 +1,24 @@
 import React from 'react'
 import MarkdownIt from 'markdown-it'
 import xss from 'xss'
-import SynapseClient from '../../synapse-client'
-import { xssOptions } from '../../utils/functions/SanitizeHtmlUtils'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { SynapseContext } from '../../utils/context/SynapseContext'
 import {
   FileHandleResults,
   ObjectType,
   WikiPage,
 } from '@sage-bionetworks/synapse-types'
+import { Link, Typography } from '@mui/material'
+import SynapseClient from '../../synapse-client'
+import { xssOptions } from '../../utils/functions/SanitizeHtmlUtils'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseContext } from '../../utils/context/SynapseContext'
 import { ErrorBanner } from '../error/ErrorBanner'
+import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import MarkdownWidget from './MarkdownWidget'
 import {
   SynapseWikiContextProvider,
   SynapseWikiContextType,
 } from './SynapseWikiContext'
 import Bookmarks from './widget/Bookmarks'
-import { SkeletonTable } from '../Skeleton/SkeletonTable'
-import { Link, Typography } from '@mui/material'
 
 declare const katex: any
 declare const markdownitSynapse: any

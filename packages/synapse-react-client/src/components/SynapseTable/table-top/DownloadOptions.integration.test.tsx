@@ -1,8 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { DownloadOptions } from './index'
-import { DownloadOptionsProps } from './DownloadOptions'
+import {
+  ColumnTypeEnum,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
+import { cloneDeep } from 'lodash-es'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import mockDatasetData from '../../../mocks/entity/mockDataset'
 import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
@@ -13,15 +16,12 @@ import { rest, server } from '../../../mocks/msw/server'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
 import {
-  ColumnTypeEnum,
-  QueryBundleRequest,
-} from '@sage-bionetworks/synapse-types'
-import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import { mockProjectViewEntity } from '../../../mocks/entity/mockProjectView'
-import { cloneDeep } from 'lodash-es'
+import { DownloadOptionsProps } from './DownloadOptions'
+import { DownloadOptions } from './index'
 
 const ADD_ALL_FILES_TO_DOWNLOAD_CART = 'Add All Files to Download Cart'
 

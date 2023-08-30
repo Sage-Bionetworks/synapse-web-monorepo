@@ -1,5 +1,13 @@
 import React from 'react'
 import { Node, Position, ConnectionLineType, Edge, MarkerType } from 'reactflow'
+import dagre from 'dagre'
+import { differenceWith, isEqual } from 'lodash-es'
+import {
+  EntityHeader,
+  Reference,
+  Activity,
+  UsedURL,
+} from '@sage-bionetworks/synapse-types'
 import { ActivityNodeLabel } from './ActivityNodeLabel'
 import { EntityNodeLabel } from './EntityNodeLabel'
 import {
@@ -7,11 +15,7 @@ import {
   ExpandGraphNodeLabel,
 } from './ExpandGraphNodeLabel'
 import { ExternalGraphNodeLabel } from './ExternalGraphNodeLabel'
-import dagre from 'dagre'
-import { differenceWith, isEqual } from 'lodash-es'
 import { UndefinedNodeLabel } from './UndefinedNodeLabel'
-import { EntityHeader, Reference } from '@sage-bionetworks/synapse-types'
-import { Activity, UsedURL } from '@sage-bionetworks/synapse-types'
 import { EntityPlaceholderNodeLabel } from './EntityPlaceholderNodeLabel'
 
 export enum NodeType {

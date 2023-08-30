@@ -7,11 +7,11 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
 import { cloneDeep } from 'lodash-es'
+import { UseQueryOptions } from 'react-query'
 import { getFileColumnModelId } from '../../components/SynapseTable/SynapseTableUtils'
 import { SynapseConstants } from '../../utils'
-import { useGetQueryResultBundleWithAsyncStatus } from './useGetQueryResultBundle'
-import { UseQueryOptions } from 'react-query'
 import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useGetQueryResultBundleWithAsyncStatus } from './useGetQueryResultBundle'
 
 export function useGetActionsRequiredForTableQuery(
   queryBundleRequest: QueryBundleRequest,

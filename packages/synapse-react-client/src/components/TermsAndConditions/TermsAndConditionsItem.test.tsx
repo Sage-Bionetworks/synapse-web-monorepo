@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { BatchFileResult, FileResult } from '@sage-bionetworks/synapse-types'
+import { SynapseClient, SynapseContextType } from '../../index'
+import { mockFileHandle } from '../../mocks/mock_file_handle'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import TermsAndConditionsItem, {
   TermsAndConditionsItemProps,
   tcItem,
 } from './TermsAndConditionsItem'
-import { SynapseClient, SynapseContextType } from '../../index'
-import { BatchFileResult, FileResult } from '@sage-bionetworks/synapse-types'
-import { mockFileHandle } from '../../mocks/mock_file_handle'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 function renderComponent(
   itemProps: TermsAndConditionsItemProps,

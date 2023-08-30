@@ -1,4 +1,11 @@
 import React from 'react'
+import {
+  ColumnTypeEnum,
+  EntityHeader,
+  Row,
+} from '@sage-bionetworks/synapse-types'
+import { Box } from '@mui/material'
+import { useAtomValue } from 'jotai'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import {
   DATASET,
@@ -7,11 +14,6 @@ import {
   MEDIUM_USER_CARD,
   OBSERVATION_CARD,
 } from '../../utils/SynapseConstants'
-import {
-  ColumnTypeEnum,
-  EntityHeader,
-  Row,
-} from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from '../CardContainerLogic'
 import GenericCard from '../GenericCard'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
@@ -25,8 +27,6 @@ import {
 import TotalQueryResults from '../TotalQueryResults'
 import UserCardList from '../UserCardList/UserCardList'
 import WideButton from '../styled/WideButton'
-import { Box } from '@mui/material'
-import { useAtomValue } from 'jotai'
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 export type CardContainerProps = {

@@ -5,6 +5,10 @@ import {
   AvailableFilesRequest,
   AvailableFilter,
   Sort,
+  ActionRequiredResponse,
+  AvailableFilesResponse,
+  FilesStatisticsResponse,
+  AddBatchOfFilesToDownloadListResponse,
 } from '@sage-bionetworks/synapse-types'
 import {
   useInfiniteQuery,
@@ -15,15 +19,9 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from 'react-query'
-import {
-  ActionRequiredResponse,
-  AvailableFilesResponse,
-  FilesStatisticsResponse,
-} from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import SynapseClient from '../../synapse-client'
-import { AddBatchOfFilesToDownloadListResponse } from '@sage-bionetworks/synapse-types'
 
 export function useGetAvailableFilesToDownload(
   request: AvailableFilesRequest,

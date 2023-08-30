@@ -1,8 +1,8 @@
 import { DiscussionThreadBundle, Forum } from '@sage-bionetworks/synapse-types'
 import { faker } from '@faker-js/faker'
+import { SetRequired } from 'type-fest'
 import { mockUserData } from '../user/mock_user_profile'
 import { pickRandomMockUser } from './fakerUtils'
-import { SetRequired } from 'type-fest'
 
 export function generateForum(
   overrides: SetRequired<Partial<Forum>, 'projectId'>,

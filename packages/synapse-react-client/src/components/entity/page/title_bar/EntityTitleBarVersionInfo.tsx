@@ -1,3 +1,6 @@
+import { Box, Link, Tooltip, Typography } from '@mui/material'
+import React from 'react'
+import { Entity } from '@sage-bionetworks/synapse-types'
 import { useGetEntityBundle } from '../../../../synapse-queries'
 import {
   isEntityRefCollectionView,
@@ -5,9 +8,6 @@ import {
   isVersionableEntity,
 } from '../../../../utils/functions/EntityTypeUtils'
 import { truncateString } from '../../../../utils/functions/StringUtils'
-import { Box, Link, Tooltip, Typography } from '@mui/material'
-import React from 'react'
-import { Entity } from '@sage-bionetworks/synapse-types'
 import { ActionConfiguration } from '../action_menu/EntityActionMenu'
 
 const MAX_VERSION_LABEL_LENGTH = 50

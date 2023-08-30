@@ -1,12 +1,12 @@
 import Plotly from 'plotly.js-basic-dist'
 import React from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { SynapseConstants } from '../../utils'
-import { getFullQueryTableResults } from '../../synapse-client/SynapseClient'
 import {
   QueryResultBundle,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
+import { SynapseConstants } from '../../utils'
+import { getFullQueryTableResults } from '../../synapse-client/SynapseClient'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { SynapseContext } from '../../utils/context/SynapseContext'
 const Plot = createPlotlyComponent(Plotly)

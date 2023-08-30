@@ -5,8 +5,8 @@ import {
   FileEntity,
   ExternalFileHandle,
 } from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
 import { OpenInNewTwoTone } from '@mui/icons-material'
+import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { isFileEntity, isExternalFileHandle } from '../../utils/types/IsType'
 

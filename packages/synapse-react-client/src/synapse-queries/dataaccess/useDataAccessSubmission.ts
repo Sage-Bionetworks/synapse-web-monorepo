@@ -7,19 +7,17 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { Submission } from '@sage-bionetworks/synapse-types'
-import { SubmissionStateChangeRequest } from '@sage-bionetworks/synapse-types'
 import {
+  Submission,
+  SubmissionStateChangeRequest,
   SubmissionSearchRequest,
   SubmissionSearchResponse,
-} from '@sage-bionetworks/synapse-types'
-import {
   ACTSubmissionStatus,
   CreateSubmissionRequest,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export default function useGetDataAccessSubmission(
   submissionId: string | number,

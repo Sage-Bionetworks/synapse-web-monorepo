@@ -3,6 +3,12 @@ import { toLower, upperFirst } from 'lodash-es'
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
+import {
+  FileHandleAssociateType,
+  ManagedACTAccessRequirement,
+  SubmissionState,
+} from '@sage-bionetworks/synapse-types'
+import duration from 'dayjs/plugin/duration'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import useGetDataAccessSubmission, {
   useUpdateDataAccessSubmissionState,
@@ -13,18 +19,12 @@ import {
   useGetAccessRequirementWikiPageKey,
 } from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
-import {
-  FileHandleAssociateType,
-  ManagedACTAccessRequirement,
-  SubmissionState,
-} from '@sage-bionetworks/synapse-types'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import WarningDialog, { WarningDialogProps } from '../SynapseForm/WarningDialog'
 import UserCard from '../UserCard/UserCard'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 import { FileHandleLink } from '../widgets/FileHandleLink'
-import duration from 'dayjs/plugin/duration'
 import RejectDataAccessRequestModal from './RejectDataAccessRequestModal'
 
 dayjs.extend(duration)

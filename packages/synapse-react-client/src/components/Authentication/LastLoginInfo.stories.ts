@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
 
+import { LOGIN_METHOD_EMAIL } from '../../utils/SynapseConstants'
 import LastLoginInfo from './LastLoginInfo'
 import { LoginMethods } from './LoginMethod'
-import { LOGIN_METHOD_EMAIL } from '../../utils/SynapseConstants'
 
 const meta = {
   title: 'Authentication/LastLoginInfo',

@@ -1,15 +1,10 @@
 import React from 'react'
-import {
-  EntityTitleBarVersionInfo,
-  EntityTitleBarVersionInfoProps,
-  EXPORTED_FOR_UNIT_TESTING,
-} from './EntityTitleBarVersionInfo'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { mockFolderEntity } from '../../../../mocks/entity/mockEntity'
 import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
 import { mockDatasetEntity } from '../../../../mocks/entity/mockDataset'
-import { render, screen } from '@testing-library/react'
 import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import userEvent from '@testing-library/user-event'
 import { rest, server } from '../../../../mocks/msw/server'
 import {
   BackendDestinationEnum,
@@ -17,6 +12,11 @@ import {
 } from '../../../../utils/functions/getEndpoint'
 import { ENTITY_BUNDLE_V2 } from '../../../../utils/APIConstants'
 import { mockTableEntity } from '../../../../mocks/entity/mockTableEntity'
+import {
+  EntityTitleBarVersionInfo,
+  EntityTitleBarVersionInfoProps,
+  EXPORTED_FOR_UNIT_TESTING,
+} from './EntityTitleBarVersionInfo'
 
 function renderComponent(props: EntityTitleBarVersionInfoProps) {
   return render(<EntityTitleBarVersionInfo {...props} />, {

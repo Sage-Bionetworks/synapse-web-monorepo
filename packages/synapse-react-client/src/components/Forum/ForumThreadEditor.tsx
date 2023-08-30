@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { Box } from '@mui/material'
 import { FormControl } from 'react-bootstrap'
+import { CreateDiscussionThread } from '@sage-bionetworks/synapse-types'
 import {
   useCreateThread,
   useUpdateThreadTitle,
   useUpdateThreadMessage,
 } from '../../synapse-queries/forum/useThread'
 import { usePostReply, usePutReply } from '../../synapse-queries/forum/useReply'
-import { CreateDiscussionThread } from '@sage-bionetworks/synapse-types'
 import { MarkdownEditor } from '../Markdown/MarkdownEditor'
 import {
   ConfirmationButtons,

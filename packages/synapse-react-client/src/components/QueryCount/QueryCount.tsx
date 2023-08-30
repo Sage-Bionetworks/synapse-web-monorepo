@@ -1,8 +1,8 @@
 import React from 'react'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 
 export type QueryCountProps = {
   query: Query

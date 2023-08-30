@@ -1,7 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { RangeSlider } from './RangeSlider'
 import { Paper } from '@mui/material'
+import { RangeSlider } from './RangeSlider'
 
 const meta = {
   title: 'UI/RangeSlider',

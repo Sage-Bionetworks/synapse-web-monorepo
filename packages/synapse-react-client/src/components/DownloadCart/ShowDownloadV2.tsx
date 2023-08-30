@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
+import { useErrorHandler } from 'react-error-boundary'
+import { Tooltip } from '@mui/material'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { useErrorHandler } from 'react-error-boundary'
 import { useGetDownloadListStatistics } from '../../synapse-queries/download/useDownloadList'
 import IconSvg from '../IconSvg/IconSvg'
-import { Tooltip } from '@mui/material'
 
 export type ShowDownloadV2Props = {
   to: string

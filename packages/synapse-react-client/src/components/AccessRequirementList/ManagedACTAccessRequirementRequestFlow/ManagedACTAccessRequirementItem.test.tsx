@@ -1,13 +1,11 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
-import ManagedACTAccessRequirementItem, {
-  ManagedACTAccessRequirementItemProps,
-} from './ManagedACTAccessRequirementItem'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   AccessRequirementStatus,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
+import userEvent from '@testing-library/user-event'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockFileEntity'
 import {
   mockManagedACTAccessRequirement,
@@ -15,9 +13,11 @@ import {
 } from '../../../mocks/mockAccessRequirements'
 import { SynapseClient, SynapseContextType } from '../../../index'
 import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
-import userEvent from '@testing-library/user-event'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
+import ManagedACTAccessRequirementItem, {
+  ManagedACTAccessRequirementItemProps,
+} from './ManagedACTAccessRequirementItem'
 
 async function renderComponent(
   props: ManagedACTAccessRequirementItemProps,

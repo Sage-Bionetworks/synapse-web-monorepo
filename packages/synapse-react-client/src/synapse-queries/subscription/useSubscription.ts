@@ -20,10 +20,10 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from 'react-query'
+import { useCallback } from 'react'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils'
 import SynapseClient from '../../synapse-client'
-import { useCallback } from 'react'
 
 export function useGetSubscribers(
   topic: Topic,

@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
 
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import EntityFinder from './EntityFinder'
 import { FinderScope } from './tree/EntityTree'
-import { EntityType } from '@sage-bionetworks/synapse-types'
 import { VersionSelectionType } from './VersionSelectionType'
 
 const meta = {

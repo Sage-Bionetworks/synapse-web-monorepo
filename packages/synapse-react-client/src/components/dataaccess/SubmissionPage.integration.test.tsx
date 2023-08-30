@@ -7,7 +7,13 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import SubmissionPage, { SubmissionPageProps } from './SubmissionPage'
+import {
+  AccessControlList,
+  ACCESS_TYPE,
+  SubmissionState,
+  FileHandleAssociation,
+} from '@sage-bionetworks/synapse-types'
+import failOnConsoleError from 'jest-fail-on-console'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_ACL,
@@ -19,12 +25,6 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import {
-  AccessControlList,
-  ACCESS_TYPE,
-  SubmissionState,
-  FileHandleAssociation,
-} from '@sage-bionetworks/synapse-types'
 import {
   mockApprovedSubmission,
   mockRejectedSubmission,
@@ -38,8 +38,8 @@ import {
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
 } from '../../mocks/user/mock_user_profile'
+import SubmissionPage, { SubmissionPageProps } from './SubmissionPage'
 import * as RejectDataAccessRequestModalModule from './RejectDataAccessRequestModal'
-import failOnConsoleError from 'jest-fail-on-console'
 
 function renderComponent(props: SubmissionPageProps) {
   render(<SubmissionPage {...props} />, {

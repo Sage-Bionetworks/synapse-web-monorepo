@@ -3,20 +3,21 @@ import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
 import { Table } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import SortIcon from '../../assets/icons/Sort'
-import { formatDate } from '../../utils/functions/DateFormatter'
-import { useSearchAccessSubmissionsInfinite } from '../../synapse-queries/dataaccess/useDataAccessSubmission'
-import { ACT_TEAM_ID, SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { Direction, SubmissionState } from '@sage-bionetworks/synapse-types'
 import {
+  Direction,
+  SubmissionState,
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,
   SubmissionSearchSort,
   SubmissionSortField,
 } from '@sage-bionetworks/synapse-types'
+import { Button, Typography } from '@mui/material'
+import SortIcon from '../../assets/icons/Sort'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import { useSearchAccessSubmissionsInfinite } from '../../synapse-queries/dataaccess/useDataAccessSubmission'
+import { ACT_TEAM_ID, SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import UserCard from '../UserCard/UserCard'
-import { Button, Typography } from '@mui/material'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 export type AccessRequestSubmissionTableProps = {

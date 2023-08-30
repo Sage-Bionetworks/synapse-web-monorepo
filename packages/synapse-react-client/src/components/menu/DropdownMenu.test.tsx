@@ -1,8 +1,8 @@
 import React from 'react'
-import { DropdownMenu, DropdownMenuProps } from './DropdownMenu'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { DropdownMenu, DropdownMenuProps } from './DropdownMenu'
 
 const DROPDOWN_BUTTON_TEXT = 'Open Dropdown Menu'
 const onClickFn = jest.fn()

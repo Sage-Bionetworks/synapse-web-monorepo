@@ -1,5 +1,6 @@
 import React from 'react'
 import { ButtonProps, Typography } from '@mui/material'
+import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -7,9 +8,8 @@ import {
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import { TWO_FACTOR_DOCS_LINK } from '../../Authentication/TwoFactorEnrollmentForm'
 import { useGetTwoFactorEnrollmentStatus } from '../../../synapse-queries/auth/useTwoFactorEnrollment'
-import RequirementItem, { RequirementItemProps } from './RequirementItem'
-import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import RequirementItem, { RequirementItemProps } from './RequirementItem'
 
 const TWO_FACTOR_ENROLLMENT_LINK = `${getEndpoint(
   BackendDestinationEnum.PORTAL_ENDPOINT,

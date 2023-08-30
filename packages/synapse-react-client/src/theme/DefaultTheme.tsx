@@ -5,9 +5,6 @@ import {
   lighten,
   ThemeOptions,
 } from '@mui/material'
-import { typographyOptions } from './typography/Typography'
-import { palette } from './palette/Palettes'
-import linkTheme from './typography/Link'
 import React from 'react'
 import {
   CheckCircleTwoTone,
@@ -15,6 +12,9 @@ import {
   HighlightOffTwoTone,
   InfoTwoTone,
 } from '@mui/icons-material'
+import { typographyOptions } from './typography/Typography'
+import { palette } from './palette/Palettes'
+import linkTheme from './typography/Link'
 
 const DIALOG_INNER_PADDING = '2px'
 

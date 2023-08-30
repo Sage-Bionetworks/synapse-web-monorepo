@@ -1,5 +1,5 @@
-import { mockUserData } from '../user/mock_user_profile'
 import { faker } from '@faker-js/faker'
+import { mockUserData } from '../user/mock_user_profile'
 
 /**
  * Use faker to pick a random mock user out of those that have already been created.

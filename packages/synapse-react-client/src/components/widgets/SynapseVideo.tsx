@@ -1,6 +1,4 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
-import { getEntity, getFiles } from '../../synapse-client/SynapseClient'
+import React, { useEffect, useState } from 'react'
 import {
   FileEntity,
   FileHandleAssociateType,
@@ -8,6 +6,7 @@ import {
   BatchFileRequest,
   BatchFileResult,
 } from '@sage-bionetworks/synapse-types'
+import { getEntity, getFiles } from '../../synapse-client/SynapseClient'
 import { SynapseConstants } from '../../utils'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 

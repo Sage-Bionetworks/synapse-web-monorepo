@@ -1,15 +1,17 @@
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import SynapseClient from '../../../synapse-client'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
-import { AccessTokenRecord } from '@sage-bionetworks/synapse-types'
-import { scopeDescriptions } from '@sage-bionetworks/synapse-types'
+import {
+  AccessTokenRecord,
+  scopeDescriptions,
+} from '@sage-bionetworks/synapse-types'
 import { Button, Tooltip } from '@mui/material'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import SynapseClient from '../../../synapse-client'
+import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import IconSvg from '../../IconSvg/IconSvg'
 import WarningDialog from '../../SynapseForm/WarningDialog'
-import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(relativeTime)
 

@@ -4,14 +4,14 @@ import {
   FileHandleAssociation,
   ReferenceList,
 } from '@sage-bionetworks/synapse-types'
-import { isEntityViewOrDataset, isFileViewOrDataset } from './SynapseTableUtils'
+import { useAtomValue } from 'jotai'
 import { useGetFileBatch } from '../../synapse-queries/file/useFiles'
 import { useGetEntityHeaders } from '../../synapse-queries'
-import { useAtomValue } from 'jotai'
 import {
   tableQueryDataAtom,
   tableQueryEntityAtom,
 } from '../QueryWrapper/QueryWrapper'
+import { isEntityViewOrDataset, isFileViewOrDataset } from './SynapseTableUtils'
 
 function usePrefetchFileHandleData() {
   const entity = useAtomValue(tableQueryEntityAtom)

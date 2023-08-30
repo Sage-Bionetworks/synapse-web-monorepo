@@ -1,9 +1,9 @@
 import React from 'react'
-import { useGetEntity } from '../../synapse-queries'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
+import { Skeleton } from '@mui/material'
+import { useGetEntity } from '../../synapse-queries'
 import { isFileEntity } from '../../utils/types/IsType'
 import DirectDownload, { DirectFileDownloadProps } from './DirectDownload'
-import { Skeleton } from '@mui/material'
 
 export type FileEntityDirectDownloadProps = Omit<
   DirectFileDownloadProps,

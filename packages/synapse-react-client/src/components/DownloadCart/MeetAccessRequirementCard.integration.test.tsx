@@ -1,13 +1,5 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import {
-  MeetAccessRequirementCard,
-  MeetAccessRequirementCardProps,
-  TERMS_OF_USE_TITLE,
-  SELF_SIGN_TITLE,
-  ACT_TITLE,
-  LOCK_TITLE,
-} from './MeetAccessRequirementCard'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { rest, server } from '../../mocks/msw/server'
@@ -22,6 +14,14 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
+import {
+  MeetAccessRequirementCard,
+  MeetAccessRequirementCardProps,
+  TERMS_OF_USE_TITLE,
+  SELF_SIGN_TITLE,
+  ACT_TITLE,
+  LOCK_TITLE,
+} from './MeetAccessRequirementCard'
 
 const ACCESS_REQUIREMENT_ID = 1111
 const defaultProps: MeetAccessRequirementCardProps = {

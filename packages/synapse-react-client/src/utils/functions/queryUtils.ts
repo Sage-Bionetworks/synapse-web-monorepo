@@ -1,7 +1,4 @@
 import { cloneDeep, isEqual, isEqualWith, isNil } from 'lodash-es'
-import * as SynapseConstants from '../SynapseConstants'
-import SynapseClient from '../../synapse-client'
-import { LockedColumn } from '../../components/QueryContext/QueryContext'
 import {
   FacetColumnResult,
   Query,
@@ -10,6 +7,9 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
+import * as SynapseConstants from '../SynapseConstants'
+import SynapseClient from '../../synapse-client'
+import { LockedColumn } from '../../components/QueryContext/QueryContext'
 
 import {
   isColumnMultiValueFunctionQueryFilter,

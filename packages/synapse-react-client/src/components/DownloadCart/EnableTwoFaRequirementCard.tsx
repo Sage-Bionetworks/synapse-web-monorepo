@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { EASY_DIFFICULTY } from '../../utils/SynapseConstants'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
-import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import WideButton from '../../components/styled/WideButton'
 import { useGetAccessRequirements } from '../../synapse-queries'
+import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 
 export type EnableTwoFaRequirementCardProps = {
   accessRequirementId: number

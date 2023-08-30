@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import MissingQueryResultsWarning from './MissingQueryResultsWarning'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { EntityRef, Table } from '@sage-bionetworks/synapse-types'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import mockDatasetEntityData from '../../mocks/entity/mockDataset'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { server } from '../../mocks/msw/server'
+import MissingQueryResultsWarning from './MissingQueryResultsWarning'
 
 const mockDatasetEntity = mockDatasetEntityData.entity
 

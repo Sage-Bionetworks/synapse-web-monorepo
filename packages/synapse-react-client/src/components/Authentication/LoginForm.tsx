@@ -1,12 +1,12 @@
 import React from 'react'
+import { Box, Link } from '@mui/material'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { Box, Link } from '@mui/material'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { UseLoginReturn } from '../../utils/hooks'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import TOTPForm from './TOTPForm'
 import UsernamePasswordForm from './UsernamePasswordForm'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'

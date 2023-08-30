@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
+import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { rest, server } from '../../mocks/msw/server'
@@ -13,7 +14,6 @@ import {
   RequestDownloadCardProps,
   REQUEST_DOWNLOAD_TITLE,
 } from './RequestDownloadCard'
-import userEvent from '@testing-library/user-event'
 
 const ENTITY_ID = 'syn29218'
 const onViewSharingSettingsClicked = jest.fn()

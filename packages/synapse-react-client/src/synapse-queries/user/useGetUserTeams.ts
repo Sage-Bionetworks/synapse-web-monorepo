@@ -4,11 +4,14 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query'
+import {
+  PaginatedIds,
+  PaginatedResults,
+  Team,
+} from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { PaginatedIds, PaginatedResults } from '@sage-bionetworks/synapse-types'
-import { Team } from '@sage-bionetworks/synapse-types'
 
 export function useGetUserSubmissionTeamsInfinite(
   challengeId: string,

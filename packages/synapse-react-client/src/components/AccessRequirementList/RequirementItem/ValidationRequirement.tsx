@@ -1,9 +1,9 @@
 import React from 'react'
-import { useGetCurrentUserBundle } from '../../../synapse-queries'
 import { Link, Typography } from '@mui/material'
+import { useGetCurrentUserBundle } from '../../../synapse-queries'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
-import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import RequirementItem from './RequirementItem'
 
 /**
  * When creating requests for access requirements on a particular file, one or more access requirements may require that the

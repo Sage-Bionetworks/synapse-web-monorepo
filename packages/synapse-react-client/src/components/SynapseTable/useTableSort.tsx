@@ -1,9 +1,9 @@
-import { useQueryContext } from '../QueryContext'
 import { useMemo } from 'react'
 import { SortingState, Updater } from '@tanstack/react-table'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { SortItem } from '@sage-bionetworks/synapse-types'
 import { ReadonlyDeep } from 'type-fest'
+import { useQueryContext } from '../QueryContext'
 
 function transformQueryWrapperSortToTanStackSort(
   sort: ReadonlyDeep<SortItem[]>,

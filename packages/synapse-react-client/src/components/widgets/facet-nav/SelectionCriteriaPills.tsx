@@ -1,24 +1,15 @@
 import React from 'react'
 import {
-  LockedColumn,
-  QueryContextType,
-  useQueryContext,
-} from '../../QueryContext'
-import {
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueQueryFilter,
   FacetColumnRangeRequest,
   QueryFilter,
   TextMatchesQueryFilter,
+  FacetColumnRequest,
 } from '@sage-bionetworks/synapse-types'
-import SelectionCriteriaPill, {
-  SelectionCriteriaPillProps,
-} from './SelectionCriteriaPill'
-import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
-import {
-  QueryVisualizationContextType,
-  useQueryVisualizationContext,
-} from '../../QueryVisualizationWrapper'
+import pluralize from 'pluralize'
+import { ReadonlyDeep } from 'type-fest'
+import { useAtomValue } from 'jotai'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
@@ -26,10 +17,19 @@ import {
   isFacetColumnRangeRequest,
   isTextMatchesQueryFilter,
 } from '../../../utils/types/IsType'
-import pluralize from 'pluralize'
-import { ReadonlyDeep } from 'type-fest'
-import { useAtomValue } from 'jotai'
+import {
+  QueryVisualizationContextType,
+  useQueryVisualizationContext,
+} from '../../QueryVisualizationWrapper'
+import {
+  LockedColumn,
+  QueryContextType,
+  useQueryContext,
+} from '../../QueryContext'
 import { lockedColumnAtom } from '../../QueryWrapper/QueryWrapper'
+import SelectionCriteriaPill, {
+  SelectionCriteriaPillProps,
+} from './SelectionCriteriaPill'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
 

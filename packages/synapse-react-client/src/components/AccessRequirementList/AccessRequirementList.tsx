@@ -1,8 +1,4 @@
 import React, { useMemo, useState } from 'react'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import useGetInfoFromIds, {
-  UseGetInfoFromIdsProps,
-} from '../../utils/hooks/useGetInfoFromIds'
 import {
   AccessRequirement,
   EntityHeader,
@@ -10,12 +6,6 @@ import {
   Renewal,
   Request,
 } from '@sage-bionetworks/synapse-types'
-import IconSvg from '../IconSvg/IconSvg'
-import StandaloneLoginForm from '../Authentication/StandaloneLoginForm'
-import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/CancelRequestDataAccess'
-import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
-import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
-import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
 import {
   Box,
   Dialog,
@@ -28,18 +18,28 @@ import {
   Typography,
   TypographyProps,
 } from '@mui/material'
-import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement'
-import CertificationRequirement from './RequirementItem/CertificationRequirement'
-import ValidationRequirement from './RequirementItem/ValidationRequirement'
 import { StyledComponent } from '@emotion/styled'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import useGetInfoFromIds, {
+  UseGetInfoFromIdsProps,
+} from '../../utils/hooks/useGetInfoFromIds'
+import IconSvg from '../IconSvg/IconSvg'
+import StandaloneLoginForm from '../Authentication/StandaloneLoginForm'
 import {
   useGetAccessRequirementsForEntity,
   useGetAccessRequirementsForTeam,
   useSortAccessRequirementIdsByCompletion,
 } from '../../synapse-queries'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/CancelRequestDataAccess'
+import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
+import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
+import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
+import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement'
+import CertificationRequirement from './RequirementItem/CertificationRequirement'
+import ValidationRequirement from './RequirementItem/ValidationRequirement'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
 import { AccessRequirementListItem } from './AccessRequirementListItem'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
 
 export type AccessRequirementListProps = {

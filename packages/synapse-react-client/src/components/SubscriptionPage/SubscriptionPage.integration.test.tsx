@@ -1,10 +1,10 @@
 import React from 'react'
 import userEvent from '@testing-library/user-event'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
+import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 import { SubscriptionPage, SynapseClient } from '../../index'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { server } from '../../mocks/msw/server'
-import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 
 function setUp() {
   const user = userEvent.setup()

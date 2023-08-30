@@ -1,8 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { noop } from 'lodash-es'
-import useQueryWrapperData, {
-  UseQueryWrapperDataReturn,
-} from './useQueryWrapperData'
 import {
   QueryBundleRequest,
   QueryResultBundle,
@@ -11,6 +8,9 @@ import { getQueryTableAsyncJobResults } from '../../synapse-client'
 import { mockCompleteAsyncJob } from '../../mocks/mockFileViewQuery'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseClientError } from '../../index'
+import useQueryWrapperData, {
+  UseQueryWrapperDataReturn,
+} from './useQueryWrapperData'
 
 jest.mock('../../../src/synapse-client', () => ({
   getQueryTableAsyncJobResults: jest.fn(),

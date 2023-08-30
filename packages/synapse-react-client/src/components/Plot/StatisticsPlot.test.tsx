@@ -6,14 +6,14 @@ import {
   waitFor,
 } from '@testing-library/react'
 import React from 'react'
-import SynapseClient from '../../synapse-client'
-import StatisticsPlot, { StatisticsPlotProps } from '../StatisticsPlot'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   MonthlyFilesStatistics,
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import StatisticsPlot, { StatisticsPlotProps } from '../StatisticsPlot'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 const projectFilesStatsRequest: ProjectFilesStatisticsRequest = {
   concreteType:

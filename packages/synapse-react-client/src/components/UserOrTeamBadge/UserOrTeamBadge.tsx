@@ -1,9 +1,9 @@
 import { Skeleton } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import { useGetUserGroupHeader } from '../../synapse-queries/user/useUserGroupHeader'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import TeamBadge from '../TeamBadge'
 import UserCard from '../UserCard/UserCard'
 

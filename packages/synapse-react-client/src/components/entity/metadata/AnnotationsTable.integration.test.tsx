@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import { AnnotationsTable, AnnotationsTableProps } from './AnnotationsTable'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { ENTITY_JSON } from '../../../utils/APIConstants'
 import {
@@ -12,6 +11,7 @@ import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { mockSchemaBinding } from '../../../mocks/mockSchema'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../mocks/msw/server'
+import { AnnotationsTable, AnnotationsTableProps } from './AnnotationsTable'
 
 const { id: MOCK_FILE_ENTITY_ID, json: mockFileEntityJson } = mockFileEntityData
 

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
-import { EntityModal, EntityModalProps } from './EntityModal'
+import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { ENTITY_BUNDLE_V2 } from '../../../utils/APIConstants'
 import {
@@ -12,7 +12,7 @@ import {
 import { SynapseContextType } from '../../../utils/context/SynapseContext'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../mocks/msw/server'
-import { FileEntity } from '@sage-bionetworks/synapse-types'
+import { EntityModal, EntityModalProps } from './EntityModal'
 
 const {
   id: MOCK_FILE_ENTITY_ID,

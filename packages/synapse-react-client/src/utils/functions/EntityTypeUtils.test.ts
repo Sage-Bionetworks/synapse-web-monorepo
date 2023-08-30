@@ -1,11 +1,4 @@
 import {
-  convertToEntityType,
-  entityTypeToFriendlyName,
-  getVersionDisplay,
-  isContainerType,
-  isVersionableEntityType,
-} from './EntityTypeUtils'
-import {
   Dataset,
   DATASET_CONCRETE_TYPE_VALUE,
   EntityType,
@@ -15,6 +8,13 @@ import {
   TABLE_ENTITY_CONCRETE_TYPE_VALUE,
   Entity,
 } from '@sage-bionetworks/synapse-types'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+  getVersionDisplay,
+  isContainerType,
+  isVersionableEntityType,
+} from './EntityTypeUtils'
 
 const allEntityTypes = [
   {

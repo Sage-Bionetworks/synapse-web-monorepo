@@ -1,13 +1,13 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { SynapseConstants } from '../../utils'
-import CardContainerLogic, { CardContainerLogicProps } from './index'
 import * as QueryVisualizationWrapperModule from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import * as CardContainerModule from '../CardContainer/CardContainer'
 import QueryWrapper from '../QueryWrapper'
+import CardContainerLogic, { CardContainerLogicProps } from './index'
 
 jest.mock('../../../src/components/QueryWrapper/QueryWrapper', () => ({
   QueryWrapper: jest.fn(props => {

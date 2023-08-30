@@ -1,8 +1,8 @@
 import React from 'react'
-import { GoalsDataProps } from './Goals'
+import { Button } from '@mui/material'
 import ExpandableContent from '../home_page/ExpandableContent'
 import QueryCount from '../QueryCount/QueryCount'
-import { Button } from '@mui/material'
+import { GoalsDataProps } from './Goals'
 
 export default function GoalsMobile({
   link,

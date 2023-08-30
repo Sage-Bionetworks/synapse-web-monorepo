@@ -2,14 +2,14 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
-import { mockFileStatistics } from '../../mocks/mock_file_statistics'
 import userEvent from '@testing-library/user-event'
-import DownloadListTableV2 from './DownloadListTable'
 import { DownloadListItemResult } from '@sage-bionetworks/synapse-types'
+import { mockFileStatistics } from '../../mocks/mock_file_statistics'
+import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import { SynapseTestContext } from '../../mocks/MockSynapseContext'
 import * as useDownloadList from '../../synapse-queries/download/useDownloadList'
 import SynapseClient from '../../synapse-client'
+import DownloadListTableV2 from './DownloadListTable'
 
 jest.spyOn(SynapseClient, 'removeItemFromDownloadListV2').mockResolvedValue({
   numberOfFilesRemoved: 2,

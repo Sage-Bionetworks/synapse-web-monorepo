@@ -9,21 +9,18 @@ import {
   FacetColumnResultValues,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { Checkbox } from '../widgets/Checkbox'
 import { isEqual } from 'lodash-es'
 import React from 'react'
+import { IconButton, Tooltip } from '@mui/material'
+import { useAtom, useAtomValue } from 'jotai'
+import { Checkbox } from '../widgets/Checkbox'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { useGetEntityHeader } from '../../synapse-queries'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
-import { IconButton, Tooltip } from '@mui/material'
 import IconSvg from '../IconSvg'
-import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
-import SynapseTableCell from './SynapseTableCell'
-import { useSynapseTableContext } from './SynapseTableContext'
-import { useAtom, useAtomValue } from 'jotai'
 import {
   lockedColumnAtom,
   tableQueryDataAtom,
@@ -32,6 +29,9 @@ import {
   isRowSelectedAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
+import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
+import SynapseTableCell from './SynapseTableCell'
+import { useSynapseTableContext } from './SynapseTableContext'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -168,7 +168,7 @@ export function TableDataColumnHeader(
     return <>{column.id}</>
   }
 
-  const displayColumnName = getColumnDisplayName(selectColumn!.name)
+  const displayColumnName = getColumnDisplayName(selectColumn.name)
   // we have to figure out if the current column is a facet selection
   const facetIndex: number = facets.findIndex(
     (facetColumnResult: FacetColumnResult) => {

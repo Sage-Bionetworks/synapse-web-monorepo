@@ -1,10 +1,10 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { displayToast } from '../../../index'
 import { GetApp } from '@mui/icons-material'
-import { RowSelectionUI, RowSelectionUIProps } from './RowSelectionUI'
 import { Button } from '@mui/material'
 import { times } from 'lodash-es'
+import { displayToast } from '../../../index'
+import { RowSelectionUI, RowSelectionUIProps } from './RowSelectionUI'
 
 const meta = {
   title: 'Explore/RowSelection',

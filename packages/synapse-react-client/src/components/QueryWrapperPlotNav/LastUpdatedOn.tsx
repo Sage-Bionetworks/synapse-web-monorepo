@@ -1,9 +1,9 @@
 import dayjs from 'dayjs'
 import React from 'react'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import { Typography } from '@mui/material'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useAtomValue } from 'jotai'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 export default function LastUpdatedOn() {

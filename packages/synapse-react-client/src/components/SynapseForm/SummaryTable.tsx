@@ -1,6 +1,5 @@
 import React from 'react'
 import { UiSchema } from '@rjsf/utils'
-import { FormSchema, Step, SummaryFormat } from './types'
 import {
   cloneDeep,
   find,
@@ -12,6 +11,7 @@ import {
   isString,
   keys,
 } from 'lodash-es'
+import { FormSchema, Step, SummaryFormat } from './types'
 
 export interface SummaryTableProps {
   isWizard?: boolean

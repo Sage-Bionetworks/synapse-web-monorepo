@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
 import SynapseClient from '../../../synapse-client'
 import useDetectSSOCode from '../../hooks/useDetectSSOCode'
 import { redirectAfterSSO } from '../AppUtils'
-import { useHistory } from 'react-router-dom'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
-import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { SynapseContextProvider } from '../../context/SynapseContext'
-import dayjs from 'dayjs'
+import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 
 export type ApplicationSessionManagerProps = React.PropsWithChildren<{
   downloadCartPageUrl?: string

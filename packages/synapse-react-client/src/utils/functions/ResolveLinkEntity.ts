@@ -1,7 +1,7 @@
 import { QueryOptions, useQuery } from 'react-query'
+import { Entity } from '@sage-bionetworks/synapse-types'
 import { getEntity } from '../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../context/SynapseContext'
-import { Entity } from '@sage-bionetworks/synapse-types'
 import { isLink } from '../types/IsType'
 
 /**

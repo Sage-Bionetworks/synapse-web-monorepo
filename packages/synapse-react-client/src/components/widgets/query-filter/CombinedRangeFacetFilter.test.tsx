@@ -7,14 +7,14 @@ import {
   ColumnTypeEnum,
   FacetColumnResultRange,
 } from '@sage-bionetworks/synapse-types'
-import {
-  CombinedRangeFacetFilter,
-  CombinedRangeFacetFilterProps,
-} from './CombinedRangeFacetFilter'
 import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
 import { RangeSliderProps } from '../RangeSlider/RangeSlider'
 import { QueryVisualizationContextProvider } from '../../QueryVisualizationWrapper'
 import { Range, RangeProps } from '../Range'
+import {
+  CombinedRangeFacetFilter,
+  CombinedRangeFacetFilterProps,
+} from './CombinedRangeFacetFilter'
 
 let capturedOnChange:
   | ((range: { min: string | number; max: string | number }) => void)

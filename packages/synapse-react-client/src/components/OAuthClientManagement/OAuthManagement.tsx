@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
 import { Table } from 'react-bootstrap'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
-import { useGetOAuthClientInfinite } from '../../synapse-queries'
-import { CreateOAuthModal } from './CreateOAuthClient'
 import { OAuthClient } from '@sage-bionetworks/synapse-types'
+import { Button, Link } from '@mui/material'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import { useGetOAuthClientInfinite } from '../../synapse-queries'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import CopyToClipboardInput from '../CopyToClipboardInput/CopyToClipboardInput'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { DialogBase } from '../DialogBase'
-import { Button, Link } from '@mui/material'
+import { CreateOAuthModal } from './CreateOAuthClient'
 
 export const OAuthManagement: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()

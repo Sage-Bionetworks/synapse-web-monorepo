@@ -14,9 +14,9 @@ import UpSetJS, {
   UpSetFontSizes,
 } from '@upsetjs/react'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { SizeMe } from 'react-sizeme'
 import SynapseClient from '../../synapse-client'
 import { SynapseConstants } from '../../utils'
-import { SizeMe } from 'react-sizeme'
 import getColorPalette from '../ColorGradient/ColorGradient'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { ErrorBanner } from '../error/ErrorBanner'

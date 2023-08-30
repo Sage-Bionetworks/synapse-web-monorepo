@@ -1,11 +1,11 @@
 import { render, screen, act } from '@testing-library/react'
 import React from 'react'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { EvaluationEditor as mockEvaluationEditor } from './EvaluationEditor'
 import {
   EvaluationEditorPage,
   EvaluationEditorPageProps,
 } from './EvaluationEditorPage'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 jest.mock(
   '../../../src/components/Evaluation/EvaluationRoundEditorList',

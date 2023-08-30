@@ -1,10 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import {
-  CreateProjectModal,
-  CreateProjectModalProps,
-} from './CreateProjectModal'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { MOCK_INVALID_PROJECT_NAME } from '../../mocks/entity/mockEntity'
@@ -12,6 +8,10 @@ import mockProjectEntityData from '../../mocks/entity/mockProject'
 import { server } from '../../mocks/msw/server'
 import { CLOSE_BUTTON_LABEL } from '../DialogBase'
 import { CANCEL_BUTTON_TEXT } from '../ConfirmationDialog/ConfirmationDialog'
+import {
+  CreateProjectModal,
+  CreateProjectModalProps,
+} from './CreateProjectModal'
 
 const MOCK_PROJECT_NAME = mockProjectEntityData.name
 

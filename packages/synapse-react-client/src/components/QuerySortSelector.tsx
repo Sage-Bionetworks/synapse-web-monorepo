@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { SortConfiguration } from './CardContainerLogic'
-import { useQueryContext } from './QueryContext/QueryContext'
 import { SortDirection } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 import Select, { components, ControlProps, GroupBase } from 'react-select'
+import { useQueryContext } from './QueryContext/QueryContext'
+import { SortConfiguration } from './CardContainerLogic'
 import { findValueOption } from './SchemaDrivenAnnotationEditor/widget/SelectWidget'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 

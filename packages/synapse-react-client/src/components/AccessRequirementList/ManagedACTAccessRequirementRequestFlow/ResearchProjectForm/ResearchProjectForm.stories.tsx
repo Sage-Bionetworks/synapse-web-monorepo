@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { mockManagedACTAccessRequirement } from '../../../../mocks/mockAccessRequirements'
 import { MOCK_REPO_ORIGIN } from '../../../../utils/functions/getEndpoint'
-import ResearchProjectForm from './ResearchProjectForm'
 import { getResearchProjectHandlers } from '../../../../mocks/msw/handlers/researchProjectHandlers'
 import { getAccessRequirementHandlers } from '../../../../mocks/msw/handlers/accessRequirementHandlers'
 import { getWikiHandlers } from '../../../../mocks/msw/handlers/wikiHandlers'
+import ResearchProjectForm from './ResearchProjectForm'
 
 const meta: Meta = {
   title:

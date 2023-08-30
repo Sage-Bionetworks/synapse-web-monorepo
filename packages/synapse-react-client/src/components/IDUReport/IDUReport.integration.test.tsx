@@ -1,11 +1,10 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
   SubmissionInfoPage,
   SubmissionInfoPageRequest,
 } from '@sage-bionetworks/synapse-types'
-import IDUReport from './IDUReport'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   MOCK_USER_ID,
@@ -17,7 +16,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { act } from '@testing-library/react'
+import IDUReport from './IDUReport'
 
 const page1: SubmissionInfoPage = {
   results: [

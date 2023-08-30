@@ -1,10 +1,10 @@
 import { WarningSharp } from '@mui/icons-material'
 import React from 'react'
+import { QueryBundleRequest, Table } from '@sage-bionetworks/synapse-types'
+import { Typography } from '@mui/material'
 import { SynapseConstants } from '../../utils'
 import { isDataset } from '../../utils/functions/EntityTypeUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { QueryBundleRequest, Table } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 
 const DATASETS_CURRENT_VERSION_HELP =

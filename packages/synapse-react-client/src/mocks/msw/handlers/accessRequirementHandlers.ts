@@ -1,12 +1,5 @@
 import { rest } from 'msw'
 import {
-  ACCESS_REQUIREMENT_BY_ID,
-  ACCESS_REQUIREMENT_STATUS,
-  ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
-  ENTITY_ACCESS_REQUIREMENTS,
-} from '../../../utils/APIConstants'
-import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
-import {
   AccessRequirement,
   AccessRequirementStatus,
   ObjectType,
@@ -14,6 +7,13 @@ import {
   SubmissionState,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
+import {
+  ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_STATUS,
+  ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
+  ENTITY_ACCESS_REQUIREMENTS,
+} from '../../../utils/APIConstants'
+import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
 import { SynapseApiResponse } from '../handlers'
 import {
   mockAccessRequirements,

@@ -11,6 +11,7 @@ import {
   QueryFilter,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
+import { useAtomValue } from 'jotai'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 import { LockedColumn, QueryContextType } from '../QueryContext/QueryContext'
 import IconSvg from '../IconSvg/IconSvg'
@@ -18,7 +19,6 @@ import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
 } from '../../utils/types/IsType'
-import { useAtomValue } from 'jotai'
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 type SearchState = {

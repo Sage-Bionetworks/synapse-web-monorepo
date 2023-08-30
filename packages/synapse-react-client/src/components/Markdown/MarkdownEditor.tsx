@@ -4,10 +4,10 @@ import {
   CommandListType,
   MARKDOWN_COMMANDS_DATA,
 } from '@sage-bionetworks/synapse-types'
+import { startCase } from 'lodash-es'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from './MarkdownSynapse'
 import { UserMentionModal } from './UserMentionModal'
-import { startCase } from 'lodash-es'
 
 const MarkdownEditorTabs = ['WRITE', 'PREVIEW'] as const
 

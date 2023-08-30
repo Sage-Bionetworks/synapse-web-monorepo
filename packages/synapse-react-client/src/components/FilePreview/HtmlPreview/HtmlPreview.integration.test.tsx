@@ -1,9 +1,6 @@
 import { render, renderHook, screen, waitFor } from '@testing-library/react'
 import React from 'react'
-import HtmlPreview, {
-  EXPORTED_FOR_UNIT_TESTING,
-  HtmlPreviewProps,
-} from './HtmlPreview'
+import { TeamMember } from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { TEAM_ID_MEMBER_ID } from '../../../utils/APIConstants'
 import {
@@ -11,13 +8,16 @@ import {
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../utils/SynapseConstants'
-import { TeamMember } from '@sage-bionetworks/synapse-types'
 import { rest, server } from '../../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
   MOCK_USER_NAME,
 } from '../../../mocks/user/mock_user_profile'
+import HtmlPreview, {
+  EXPORTED_FOR_UNIT_TESTING,
+  HtmlPreviewProps,
+} from './HtmlPreview'
 
 function renderComponent(props: HtmlPreviewProps) {
   return render(<HtmlPreview {...props} />, { wrapper: createWrapper() })

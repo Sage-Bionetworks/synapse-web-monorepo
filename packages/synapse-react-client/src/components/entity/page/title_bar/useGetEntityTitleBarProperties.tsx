@@ -1,12 +1,13 @@
 import React from 'react'
 import {
-  useGetEntityBundle,
-  useGetEntityChildren,
-} from '../../../../synapse-queries'
-import {
   EntityRefCollectionView,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
+import { Box, Link } from '@mui/material'
+import {
+  useGetEntityBundle,
+  useGetEntityChildren,
+} from '../../../../synapse-queries'
 import {
   isContainerType,
   isEntityRefCollectionView,
@@ -19,7 +20,6 @@ import {
   getUploadDestinationString,
 } from '../../../../utils/functions/FileHandleUtils'
 import { calculateFriendlyFileSize } from '../../../../utils/functions/calculateFriendlyFileSize'
-import { Box, Link } from '@mui/material'
 import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
 import CopyToClipboardString from '../../../CopyToClipboardString/CopyToClipboardString'
 import { useGetDOIAssociation } from '../../../../synapse-queries/doi/useDOI'

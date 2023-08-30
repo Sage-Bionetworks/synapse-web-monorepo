@@ -1,6 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { displayToast } from '../ToastMessage/ToastMessage'
 import {
   Alert,
   Box,
@@ -12,13 +10,15 @@ import {
   Typography,
 } from '@mui/material'
 import { OAuthClient } from '@sage-bionetworks/synapse-types'
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { displayToast } from '../ToastMessage/ToastMessage'
 import {
   useCreateOAuthClient,
   useDeleteOAuthClient,
   useUpdateOAuthClient,
 } from '../../synapse-queries'
 import { WarningDialog } from '../SynapseForm/WarningDialog'
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import SynapseClient from '../../synapse-client'

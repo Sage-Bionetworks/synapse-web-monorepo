@@ -10,9 +10,9 @@ import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequireme
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
-import SubmissionPage from './SubmissionPage'
 import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
 import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
+import SubmissionPage from './SubmissionPage'
 
 const meta = {
   title: 'Governance/SubmissionPage',

@@ -1,11 +1,10 @@
 import React from 'react'
-import TableFeedCards from './TableFeedCards'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import { act, render, fireEvent } from '@testing-library/react'
 import syn23519444Json from '../../mocks/query/syn23519444.json'
-import { act } from '@testing-library/react'
-import { render, fireEvent } from '@testing-library/react'
 import { SynapseTestContext } from '../../mocks/MockSynapseContext'
 import SynapseClient from '../../synapse-client'
+import TableFeedCards from './TableFeedCards'
 
 jest.mock('../../synapse-client', () => ({
   getQueryTableResults: jest.fn(),

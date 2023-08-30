@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
+import { Team } from '@sage-bionetworks/synapse-types'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserTeamsInfinite } from '../../synapse-queries/user/useGetUserTeams'
-import { Team } from '@sage-bionetworks/synapse-types'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 
 export type UserTeamsProps = {

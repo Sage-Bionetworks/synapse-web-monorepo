@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
-import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import {
   FacetColumnRangeRequest,
   FacetColumnRequest,
@@ -10,18 +9,19 @@ import {
   FacetColumnValuesRequest,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { useQueryContext } from '../../QueryContext/QueryContext'
-import { EnumFacetFilter } from './EnumFacetFilter'
-import { FacetChip } from './FacetChip'
-import { RangeFacetFilter } from './RangeFacetFilter'
 import { Box, Skeleton, Stack } from '@mui/material'
 import { sortBy } from 'lodash-es'
-import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
 import { useAtomValue } from 'jotai'
+import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
+import { useQueryContext } from '../../QueryContext/QueryContext'
 import {
   isLoadingNewBundleAtom,
   tableQueryDataAtom,
 } from '../../QueryWrapper/QueryWrapper'
+import { EnumFacetFilter } from './EnumFacetFilter'
+import { FacetChip } from './FacetChip'
+import { RangeFacetFilter } from './RangeFacetFilter'
+import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
 
 export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with at least one non-null value will be shown. */

@@ -1,8 +1,12 @@
 import {
+  LoginResponse,
+  TwoFactorAuthErrorResponse,
+} from '@sage-bionetworks/synapse-types'
+import { useEffect, useState } from 'react'
+import {
   BackendDestinationEnum,
   PRODUCTION_ENDPOINT_CONFIG,
 } from '../functions/getEndpoint'
-import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../SynapseClientError'
 import {
   bindOAuthProviderToAccount,
@@ -11,8 +15,6 @@ import {
   oAuthSessionRequest,
   setAccessTokenCookie,
 } from '../../synapse-client/SynapseClient'
-import { useEffect, useState } from 'react'
-import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
 

@@ -13,8 +13,6 @@ import {
   ProxyFileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   S3FileHandle,
-} from '@sage-bionetworks/synapse-types'
-import {
   ExternalGoogleCloudUploadDestination,
   ExternalObjectStoreUploadDestination,
   ExternalS3UploadDestination,

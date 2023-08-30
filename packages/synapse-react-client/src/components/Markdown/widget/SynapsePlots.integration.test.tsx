@@ -1,8 +1,8 @@
 import { render, waitFor } from '@testing-library/react'
 import React from 'react'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import MarkdownSynapse from '../MarkdownSynapse'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { server } from '../../../mocks/msw/server'
 

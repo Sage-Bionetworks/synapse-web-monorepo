@@ -1,6 +1,8 @@
 import dayjs from 'dayjs'
 import React, { useEffect, useRef, useState } from 'react'
 import { Table } from 'react-bootstrap'
+import { TrashedEntity } from '@sage-bionetworks/synapse-types'
+import { Alert, Button, Typography } from '@mui/material'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetEntity } from '../../synapse-queries'
 import {
@@ -9,8 +11,6 @@ import {
   useRestoreEntities,
 } from '../../synapse-queries/trash/useTrashCan'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { TrashedEntity } from '@sage-bionetworks/synapse-types'
-import { Alert, Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 import { BlockingLoader, SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import WarningDialog from '../SynapseForm/WarningDialog'

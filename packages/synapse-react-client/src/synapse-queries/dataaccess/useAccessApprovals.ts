@@ -1,11 +1,11 @@
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchResponse,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useSearchAccessApprovalsInfinite(
   params: AccessApprovalSearchRequest,

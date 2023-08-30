@@ -1,15 +1,15 @@
 import React from 'react'
-import IconSvg, { type2SvgIconName } from '../../../IconSvg/IconSvg'
 import { Avatar, Box, Skeleton, Stack, Typography } from '@mui/material'
+import IconSvg, { type2SvgIconName } from '../../../IconSvg/IconSvg'
 import { useGetEntityBundle } from '../../../../synapse-queries'
 import FavoriteButton from '../../../favorites/FavoriteButton'
 import ConditionalWrapper from '../../../utils/ConditionalWrapper'
 import EntityActionMenu, {
   EntityActionMenuProps,
 } from '../action_menu/EntityActionMenu'
+import { isDockerRepository } from '../../../../utils/types/IsType'
 import TitleBarProperties from './TitleBarProperties'
 import { EntityTitleBarVersionInfo } from './EntityTitleBarVersionInfo'
-import { isDockerRepository } from '../../../../utils/types/IsType'
 
 export type EntityPageTitleBarProps = {
   entityId: string

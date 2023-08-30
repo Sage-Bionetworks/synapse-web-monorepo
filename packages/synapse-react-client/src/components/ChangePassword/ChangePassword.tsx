@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Button, TextField } from '@mui/material'
-import { ChangePasswordWithCurrentPassword } from '@sage-bionetworks/synapse-types'
+import {
+  ChangePasswordWithCurrentPassword,
+  UserProfile,
+} from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
 
 export const ChangePassword: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()

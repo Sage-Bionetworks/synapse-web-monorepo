@@ -1,7 +1,6 @@
 import React from 'react'
-import { Box, IconButton } from '@mui/material'
+import { Box, IconButton, BoxProps } from '@mui/material'
 import { ToastMessage } from './ToastMessage/ToastMessage'
-import { BoxProps } from '@mui/material'
 import IconSvg from './IconSvg'
 
 export type CopyToClipboardIconProps = BoxProps & {

@@ -4,16 +4,16 @@
 // Will give you the Synapse ID of the FileEntity that contains the user form data.
 import React from 'react'
 import Form from '@rjsf/core'
-import SynapseClient from '../../synapse-client'
 import {
   EntityId,
   EntityLookupRequest,
   FileEntity,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
+import validator from '@rjsf/validator-ajv8'
+import SynapseClient from '../../synapse-client'
 import { getFileHandleContent } from '../../synapse-client/SynapseClient'
 import { SynapseContext } from '../../utils/context/SynapseContext'
-import validator from '@rjsf/validator-ajv8'
 
 export type EntityFormProps = {
   // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.

@@ -9,6 +9,10 @@ import JestMockPromise from 'jest-mock-promise'
 import dayjs, { Dayjs } from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import React from 'react'
+import { EvaluationRound } from '@sage-bionetworks/synapse-types'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import SynapseClient from '../../synapse-client'
+import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import {
   EvaluationRoundEditor,
   EvaluationRoundEditorProps,
@@ -18,10 +22,6 @@ import {
   EvaluationRoundInput,
   EvaluationRoundLimitInput,
 } from './input_models/models'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import SynapseClient from '../../synapse-client'
-import { EvaluationRound } from '@sage-bionetworks/synapse-types'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 
 dayjs.extend(duration)
 

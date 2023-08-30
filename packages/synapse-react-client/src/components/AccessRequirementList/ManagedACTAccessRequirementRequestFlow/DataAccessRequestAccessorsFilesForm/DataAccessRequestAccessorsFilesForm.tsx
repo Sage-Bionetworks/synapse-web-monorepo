@@ -11,7 +11,6 @@ import {
   RestrictableObjectType,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import IconSvg from '../../../IconSvg/IconSvg'
 import {
   Alert,
   AlertProps as MuiAlertProps,
@@ -26,6 +25,8 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
+import { deepEquals } from '@rjsf/utils'
+import IconSvg from '../../../IconSvg/IconSvg'
 import {
   useGetCurrentUserProfile,
   useGetDataAccessRequestForUpdate,
@@ -41,7 +42,6 @@ import { UploadDocumentField } from '../UploadDocumentField'
 import DocumentTemplate from '../DocumentTemplate'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 import { SynapseErrorBoundary } from '../../../error/ErrorBanner'
-import { deepEquals } from '@rjsf/utils'
 import { useSynapseContext } from '../../../../utils'
 
 function AccessorRequirementHelpText(props: {

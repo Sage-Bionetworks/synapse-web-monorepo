@@ -1,9 +1,9 @@
 import { Box, Button, Typography } from '@mui/material'
 import React from 'react'
 import ControlPointIcon from '@mui/icons-material/ControlPoint'
-import ChallengeTeamTable from './ChallengeTeamTable'
 import { Stack } from '@mui/system'
 import { Team } from '@sage-bionetworks/synapse-types'
+import ChallengeTeamTable from './ChallengeTeamTable'
 
 type SelectChallengeTeamProps = {
   challengeId: string

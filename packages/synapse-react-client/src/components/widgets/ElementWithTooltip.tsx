@@ -1,9 +1,9 @@
 import React from 'react'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import { Dropdown } from 'react-bootstrap'
+import { Tooltip } from '@mui/material'
+import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import { Icon } from '../row_renderers/utils'
 import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
-import { Tooltip } from '@mui/material'
 
 type CustomImageProps = {
   svgImg: React.ComponentElement<any, any>

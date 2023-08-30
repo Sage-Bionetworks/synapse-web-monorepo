@@ -1,9 +1,9 @@
 import React from 'react'
 import * as _ from 'lodash-es'
 
-import WarningDialog, { WarningDialogProps } from './WarningDialog'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import WarningDialog, { WarningDialogProps } from './WarningDialog'
 
 const renderComponent = (props: WarningDialogProps) => {
   return render(<WarningDialog {...props} />)

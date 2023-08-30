@@ -1,17 +1,17 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 import React from 'react'
-import { EvaluationEditor, EvaluationEditorProps } from './EvaluationEditor'
+import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { EVALUATION, EVALUATION_BY_ID } from '../../utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { rest, server } from '../../mocks/msw/server'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import { EvaluationEditor, EvaluationEditorProps } from './EvaluationEditor'
+import type { UserEvent } from '@testing-library/user-event/setup/setup'
 
 describe('test EvaluationEditor', () => {
   const evaluationId = '1234'

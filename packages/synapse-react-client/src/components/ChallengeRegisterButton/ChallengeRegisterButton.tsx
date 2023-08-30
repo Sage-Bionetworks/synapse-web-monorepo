@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { Box } from '@mui/system'
+import { Challenge, PaginatedIds } from '@sage-bionetworks/synapse-types'
 import SpinnerButton from '../SpinnerButton/SpinnerButton'
 import { useSynapseContext } from '../../utils'
 import {
@@ -8,7 +9,6 @@ import {
   useGetEntityChallenge,
   useGetUserSubmissionTeamsInfinite,
 } from '../../synapse-queries'
-import { Challenge, PaginatedIds } from '@sage-bionetworks/synapse-types'
 import { useGetIsUserMemberOfTeam } from '../../synapse-queries/team/useTeamMembers'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 

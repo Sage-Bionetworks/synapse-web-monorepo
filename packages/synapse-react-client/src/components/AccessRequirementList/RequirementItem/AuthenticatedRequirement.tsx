@@ -1,11 +1,11 @@
 import React from 'react'
-import { useGetCurrentUserProfile } from '../../../synapse-queries'
 import { Link, Typography } from '@mui/material'
+import { useGetCurrentUserProfile } from '../../../synapse-queries'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
 import { SynapseConstants } from '../../../utils'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
-import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import RequirementItem from './RequirementItem'
 
 /**
  * Displays a data access request requirement prompts the user to authenticate if not already signed in.

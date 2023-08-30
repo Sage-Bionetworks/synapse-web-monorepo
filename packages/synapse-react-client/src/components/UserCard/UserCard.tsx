@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { UserProfile, AliasType } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
 import { useGetProfileImage } from '../../synapse-queries/file/useFiles'
 import {
@@ -8,13 +9,11 @@ import {
 import usePreFetchResource, {
   useCreateUrlForData,
 } from '../../utils/hooks/usePreFetchResource'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
+import { UserCardSize } from '../../utils/SynapseConstants'
 import { Avatar, AvatarSize } from './Avatar'
 import { MenuAction } from './UserCardContextMenu'
 import UserCardMedium from './UserCardMedium'
 import { UserCardSmall } from './UserCardSmall'
-import { AliasType } from '@sage-bionetworks/synapse-types'
-import { UserCardSize } from '../../utils/SynapseConstants'
 
 export type UserCardProps = {
   /** A UserProfile may be used for data for the card. You must supply one of `userProfile`, `alias`, `ownerId` */

@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
 
-import LoginPage from './LoginPage'
 import { sessionChangeHandler } from '../StorybookComponentWrapper'
 import { displayToast } from '../ToastMessage/ToastMessage'
+import LoginPage from './LoginPage'
 
 const meta = {
   title: 'Authentication/LoginPage',

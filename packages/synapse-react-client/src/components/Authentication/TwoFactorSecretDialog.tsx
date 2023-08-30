@@ -9,8 +9,8 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import IconSvg from '../IconSvg/IconSvg'
 import React from 'react'
+import IconSvg from '../IconSvg/IconSvg'
 import { monospaceFontFamily } from '../../theme/typography/Typography'
 
 type TwoFactorSecretDialogProps = {

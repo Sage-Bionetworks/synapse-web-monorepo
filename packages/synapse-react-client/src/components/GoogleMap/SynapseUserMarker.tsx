@@ -1,8 +1,7 @@
-import { Divider } from '@mui/material'
+import { Divider, Typography } from '@mui/material'
 import { InfoWindow, Marker } from '@react-google-maps/api'
 import React, { useMemo } from 'react'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { Typography } from '@mui/material'
 import UserCard from '../UserCard/UserCard'
 import { GeoData } from '../../synapse-client'
 

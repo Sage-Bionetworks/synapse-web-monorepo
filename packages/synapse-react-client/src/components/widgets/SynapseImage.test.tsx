@@ -1,6 +1,6 @@
 import React from 'react'
-import SynapseImage from './SynapseImage'
 import { render } from '@testing-library/react'
+import SynapseImage from './SynapseImage'
 
 it('renders without failing', () => {
   const { container } = render(

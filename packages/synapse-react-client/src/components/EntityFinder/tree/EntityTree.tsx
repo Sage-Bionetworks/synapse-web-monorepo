@@ -8,6 +8,12 @@ import React, {
   useState,
 } from 'react'
 import { Dropdown } from 'react-bootstrap'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  EntityPath,
+  EntityType,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
 import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../../synapse-queries/entity/useEntityBundle'
@@ -17,12 +23,6 @@ import {
   useGetFavorites,
   useGetProjectsInfinite,
 } from '../../../synapse-queries'
-import {
-  ALL_ENTITY_BUNDLE_FIELDS,
-  EntityPath,
-  EntityType,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import { BreadcrumbItem } from '../Breadcrumbs'
 import { toEntityHeader } from '../details/configurations/ProjectListDetails'
@@ -31,12 +31,12 @@ import {
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
 import { EntityFinderHeader } from '../EntityFinderHeader'
+import { displayToast } from '../../ToastMessage/ToastMessage'
 import {
   EntityTreeNodeType,
   RootNodeConfiguration,
   VirtualizedTree,
 } from './VirtualizedTree'
-import { displayToast } from '../../ToastMessage/ToastMessage'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {

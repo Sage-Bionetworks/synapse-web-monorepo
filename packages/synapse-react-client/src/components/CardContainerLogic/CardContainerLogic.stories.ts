@@ -6,8 +6,8 @@ import {
   OBSERVATION_CARD,
   PUBLICATION,
 } from '../../utils/SynapseConstants'
-import CardContainerLogic from './index'
 import { GenericCardSchema } from '../GenericCard'
+import CardContainerLogic from './index'
 
 const meta = {
   title: 'Explore/CardContainerLogic',

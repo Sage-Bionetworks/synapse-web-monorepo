@@ -11,11 +11,11 @@ import {
   styled,
   Typography,
 } from '@mui/material'
-import { StyledOuterContainer } from '../styled/LeftRightPanel'
 import { StyledComponent } from '@emotion/styled'
 import { TotpSecret } from '@sage-bionetworks/synapse-types'
-import { useGetNotificationEmail } from '../../synapse-queries'
 import { toCanvas } from 'qrcode'
+import { useGetNotificationEmail } from '../../synapse-queries'
+import { StyledOuterContainer } from '../styled/LeftRightPanel'
 import TextField from '../TextField/TextField'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
@@ -23,8 +23,8 @@ import {
   useFinishTwoFactorEnrollment,
   useStartTwoFactorEnrollment,
 } from '../../synapse-queries/auth/useTwoFactorEnrollment'
-import TwoFactorSecretDialog from './TwoFactorSecretDialog'
 import IconSvg from '../IconSvg/IconSvg'
+import TwoFactorSecretDialog from './TwoFactorSecretDialog'
 
 /**
  * Returns a URL that can be used to generate a QR code that 2FA authenticator apps can interpret

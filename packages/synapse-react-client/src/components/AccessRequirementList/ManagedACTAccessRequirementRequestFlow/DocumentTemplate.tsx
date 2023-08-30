@@ -1,8 +1,8 @@
 import { Box, Typography } from '@mui/material'
-import DirectDownloadButton from '../../DirectDownloadButton'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
-import IconSvg from '../../IconSvg/IconSvg'
 import React from 'react'
+import DirectDownloadButton from '../../DirectDownloadButton'
+import IconSvg from '../../IconSvg/IconSvg'
 import { useGetFileBatch } from '../../../synapse-queries/file/useFiles'
 
 export type DownloadDocumentTemplateProps = {

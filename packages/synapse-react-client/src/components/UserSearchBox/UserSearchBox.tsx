@@ -1,12 +1,11 @@
 import Downshift from 'downshift'
-import React from 'react'
-import { useState } from 'react'
-import { getUserGroupHeaders } from '../../synapse-client/SynapseClient'
+import React, { useState } from 'react'
 import {
   UserGroupHeader,
   UserGroupHeaderResponsePage,
+  TYPE_FILTER,
 } from '@sage-bionetworks/synapse-types'
-import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
+import { getUserGroupHeaders } from '../../synapse-client/SynapseClient'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 export type UserSearchBoxProps = {

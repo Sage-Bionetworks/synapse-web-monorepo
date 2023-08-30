@@ -1,7 +1,7 @@
 import React from 'react'
+import { Button, Typography } from '@mui/material'
 import { useGetEntityHeader } from '../../synapse-queries/entity/useGetEntityHeaders'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
-import { Button, Typography } from '@mui/material'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 
 export type RequestDownloadCardProps = {

@@ -1,12 +1,12 @@
-import SynapseClient from '../../synapse-client'
-import { displayToast } from '../../components/ToastMessage/ToastMessage'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   DownloadFromTableRequest,
   QueryBundleRequest,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { displayToast } from '../../components/ToastMessage/ToastMessage'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useExportToCavatica(
   queryBundleRequest: QueryBundleRequest,

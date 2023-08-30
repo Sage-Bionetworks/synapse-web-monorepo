@@ -3,8 +3,8 @@ import { ErrorOutlined, LockOutlined } from '@mui/icons-material'
 import React from 'react'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useJiraIssueCollector } from '../JiraIssueCollector'
-import { SignInPrompt, YOU_ARE_NOT_AUTHORIZED_MESSAGE } from './ErrorBanner'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SignInPrompt, YOU_ARE_NOT_AUTHORIZED_MESSAGE } from './ErrorBanner'
 
 export type ErrorChipProps = {
   chipText: string

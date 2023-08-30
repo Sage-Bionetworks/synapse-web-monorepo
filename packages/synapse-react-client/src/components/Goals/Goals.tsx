@@ -11,10 +11,10 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import { ErrorBanner } from '../error/ErrorBanner'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
-import GoalsMobile from './Goals.Mobile'
-import GoalsDesktop from './Goals.Desktop'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
+import GoalsMobile from './Goals.Mobile'
+import GoalsDesktop from './Goals.Desktop'
 
 export type GoalsProps = {
   entityId: string

@@ -1,11 +1,11 @@
 import React from 'react'
 import { Button, ButtonProps } from '@mui/material'
-import { uploadFile } from '../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   FileUploadComplete,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
+import { uploadFile } from '../../synapse-client/SynapseClient'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export type FileUploadProps = {
   id?: string

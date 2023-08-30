@@ -1,6 +1,4 @@
 import React from 'react'
-import { getEntity, getFiles } from '../../synapse-client/SynapseClient'
-import { SynapseContext } from '../../utils/context/SynapseContext'
 import {
   BatchFileRequest,
   BatchFileResult,
@@ -9,6 +7,8 @@ import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
+import { getEntity, getFiles } from '../../synapse-client/SynapseClient'
+import { SynapseContext } from '../../utils/context/SynapseContext'
 
 export type SynapseImageProps = {
   wikiId?: string

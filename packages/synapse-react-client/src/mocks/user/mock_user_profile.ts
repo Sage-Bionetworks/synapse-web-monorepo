@@ -1,13 +1,13 @@
 import {
-  ACT_TEAM_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '../../utils/SynapseConstants'
-import {
   UserBundle,
   UserGroupHeader,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
+import {
+  ACT_TEAM_ID,
+  AUTHENTICATED_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_ID,
+} from '../../utils/SynapseConstants'
 
 export const MOCK_USER_ID = 999
 export const MOCK_USER_NAME = 'myUserName'

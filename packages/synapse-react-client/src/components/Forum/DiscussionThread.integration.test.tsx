@@ -1,21 +1,20 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { DiscussionThread, DiscussionThreadProps } from './DiscussionThread'
+import {
+  PaginatedResults,
+  DiscussionReplyBundle,
+  MessageURL,
+  SubscriptionObjectType,
+  SubscriptionPagedResults,
+  Topic,
+} from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { THREAD, THREAD_ID, THREAD_REPLIES } from '../../utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { PaginatedResults } from '@sage-bionetworks/synapse-types'
-import { DiscussionReplyBundle } from '@sage-bionetworks/synapse-types'
-import { MessageURL } from '@sage-bionetworks/synapse-types'
-import {
-  SubscriptionObjectType,
-  SubscriptionPagedResults,
-  Topic,
-} from '@sage-bionetworks/synapse-types'
 import {
   mockDiscussionReplyBundle,
   mockDiscussionThreadBundle,
@@ -27,6 +26,7 @@ import {
   mockUserProfileData2,
 } from '../../mocks/user/mock_user_profile'
 import SynapseClient from '../../synapse-client'
+import { DiscussionThread, DiscussionThreadProps } from './DiscussionThread'
 
 const MOCK_THREAD_ID = '123'
 const MOCK_SUBSCRIPTION_ID = '999'

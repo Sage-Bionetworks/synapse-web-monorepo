@@ -7,8 +7,8 @@ import {
   styled,
   Typography,
 } from '@mui/material'
-import Icon from '../../Icon'
 import { StyledComponent } from '@emotion/styled'
+import Icon from '../../Icon'
 
 export type ActionRequiredCardProps =
   | {

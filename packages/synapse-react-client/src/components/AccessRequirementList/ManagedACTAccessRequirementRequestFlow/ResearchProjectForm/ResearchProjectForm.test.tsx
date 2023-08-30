@@ -1,7 +1,4 @@
 import React from 'react'
-import ResearchProjectForm, {
-  ResearchProjectFormProps,
-} from './ResearchProjectForm'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
@@ -18,6 +15,9 @@ import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 import { SynapseClientError } from '../../../../utils/SynapseClientError'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
+import ResearchProjectForm, {
+  ResearchProjectFormProps,
+} from './ResearchProjectForm'
 
 const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
 jest.mock('../../../Markdown/MarkdownSynapse', () => ({

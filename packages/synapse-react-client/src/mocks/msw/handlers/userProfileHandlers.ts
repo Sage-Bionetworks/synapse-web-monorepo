@@ -1,5 +1,12 @@
 import { rest } from 'msw'
 import {
+  TwoFactorAuthStatus,
+  TYPE_FILTER,
+  UserBundle,
+  UserGroupHeaderResponsePage,
+  UserProfile,
+} from '@sage-bionetworks/synapse-types'
+import {
   FAVORITES,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
@@ -14,13 +21,6 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import {
-  TwoFactorAuthStatus,
-  TYPE_FILTER,
-  UserBundle,
-  UserGroupHeaderResponsePage,
-  UserProfile,
-} from '@sage-bionetworks/synapse-types'
 import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
 import {
   mockUserBundle,

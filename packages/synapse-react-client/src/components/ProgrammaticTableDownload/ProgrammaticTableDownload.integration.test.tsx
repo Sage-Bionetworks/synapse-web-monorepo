@@ -1,22 +1,22 @@
 import { render, screen, within } from '@testing-library/react'
 import React from 'react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { TABLE_QUERY_ASYNC_START } from '../../utils/APIConstants'
 
 import { rest, server } from '../../mocks/msw/server'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import ProgrammaticTableDownload, {
-  ProgrammaticTableDownloadProps,
-} from './ProgrammaticTableDownload'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { SynapseConstants } from '../../index'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import ProgrammaticTableDownload, {
+  ProgrammaticTableDownloadProps,
+} from './ProgrammaticTableDownload'
 
 const onHide = jest.fn()
 

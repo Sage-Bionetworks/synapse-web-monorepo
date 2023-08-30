@@ -4,16 +4,6 @@ import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { SynapseConstants } from '../../utils'
-import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
-import SynapseTable, { SynapseTableProps } from './SynapseTable'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '../../utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import {
   EntityHeader,
   FileEntity,
@@ -24,6 +14,15 @@ import {
   ReferenceList,
   Table,
 } from '@sage-bionetworks/synapse-types'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '../../utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
+import { SynapseConstants } from '../../utils'
 import { rest, server } from '../../mocks/msw/server'
 import queryResultBundle from '../../mocks/query/syn16787123'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
@@ -46,6 +45,7 @@ import { mockFileHandle } from '../../mocks/mock_file_handle'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import { mockProjectViewEntity } from '../../mocks/entity/mockProjectView'
 import { mockDatasetEntity } from '../../mocks/entity/mockDataset'
+import SynapseTable, { SynapseTableProps } from './SynapseTable'
 
 const synapseTableEntityId = 'syn16787123'
 

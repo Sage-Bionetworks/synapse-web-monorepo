@@ -1,13 +1,13 @@
 import React, { useId, useState } from 'react'
-import { useGetAllSubscriptions } from '../../synapse-queries/subscription/useSubscription'
 import {
   SortByType as SubscriptionSortField,
   SortDirection,
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
-import SubscriptionItem from './SubscriptionItem'
 import { Box, Button, Stack, Tab, Tabs } from '@mui/material'
+import { useGetAllSubscriptions } from '../../synapse-queries/subscription/useSubscription'
 import DropdownSelect from '../DropdownSelect'
+import SubscriptionItem from './SubscriptionItem'
 
 type SortOption = { value: SortDirection; label: string }
 

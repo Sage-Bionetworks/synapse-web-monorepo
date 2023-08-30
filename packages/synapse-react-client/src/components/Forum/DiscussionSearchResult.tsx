@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import {
+  UserProfile,
+  DiscussionReplyBundle,
+  DiscussionThreadBundle,
+} from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
+import { Typography, Skeleton } from '@mui/material'
+import { Col, Row } from 'react-bootstrap'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import {
   getReply,
   getReplyMessageUrl,
   getThreadMessageUrl,
   getThread,
   getUserProfileById,
 } from '../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
-import {
-  DiscussionReplyBundle,
-  DiscussionThreadBundle,
-} from '@sage-bionetworks/synapse-types'
-import dayjs from 'dayjs'
-import { Typography } from '@mui/material'
-import { Col, Row } from 'react-bootstrap'
 import UserCard from '../UserCard/UserCard'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import IconSvg from '../IconSvg/IconSvg'
-import { Skeleton } from '@mui/material'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { formatDate } from '../../utils/functions/DateFormatter'

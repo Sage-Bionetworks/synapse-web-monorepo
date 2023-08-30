@@ -1,10 +1,13 @@
 import { Map } from 'immutable'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
+import {
+  EntityType,
+  Reference,
+  GetProjectsParameters,
+  SearchQuery,
+} from '@sage-bionetworks/synapse-types'
 import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
-import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
-import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'
-import { SearchQuery } from '@sage-bionetworks/synapse-types'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 import { EntityTreeContainer } from '../tree/EntityTree'

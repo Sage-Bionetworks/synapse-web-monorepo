@@ -1,11 +1,5 @@
 import React from 'react'
 import dayjs from 'dayjs'
-import { formatDate } from '../../../utils/functions/DateFormatter'
-import {
-  isDataset,
-  isDatasetCollection,
-  isEntityView,
-} from '../../../utils/functions/EntityTypeUtils'
 import {
   ColumnModel,
   ColumnType,
@@ -14,24 +8,30 @@ import {
   Row,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
+import { Link, Typography } from '@mui/material'
+import { useAtomValue } from 'jotai'
+import { formatDate } from '../../../utils/functions/DateFormatter'
+import {
+  isDataset,
+  isDatasetCollection,
+  isEntityView,
+} from '../../../utils/functions/EntityTypeUtils'
 import {
   CardLink,
   ColumnSpecifiedLink,
   MarkdownLink,
 } from '../../CardContainerLogic'
 import DirectDownload from '../../DirectDownload/DirectDownload'
-import EntityIdList from './EntityIdList'
 import { EntityLink } from '../../EntityLink'
-import EvaluationIdRenderer from './EvaluationIdRenderer'
 import { SynapseCardLabel } from '../../GenericCard'
 import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
-import UserIdList from './UserIdList'
-import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
-import { Link, Typography } from '@mui/material'
 import UserOrTeamBadge from '../../UserOrTeamBadge'
 import { isFileViewOrDataset } from '../SynapseTableUtils'
-import { useAtomValue } from 'jotai'
 import { tableQueryEntityAtom } from '../../QueryWrapper/QueryWrapper'
+import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
+import UserIdList from './UserIdList'
+import EvaluationIdRenderer from './EvaluationIdRenderer'
+import EntityIdList from './EntityIdList'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType

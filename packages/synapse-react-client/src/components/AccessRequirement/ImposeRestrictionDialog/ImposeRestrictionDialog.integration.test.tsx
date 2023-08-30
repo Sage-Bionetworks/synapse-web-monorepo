@@ -1,15 +1,15 @@
 import React from 'react'
 import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import ImposeRestrictionDialog from './ImposeRestrictionDialog'
 import { rest, server } from '../../../mocks/msw/server'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import userEvent from '@testing-library/user-event'
 import { mockLockAccessRequirement } from '../../../mocks/mockAccessRequirements'
+import ImposeRestrictionDialog from './ImposeRestrictionDialog'
 
 const mockOnClose = jest.fn()
 

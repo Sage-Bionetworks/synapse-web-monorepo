@@ -1,17 +1,18 @@
 import { Collapse } from '@mui/material'
-import React, { useEffect } from 'react'
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import {
+  ColumnType,
+  FacetColumnResultRange,
+} from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
 import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,
 } from '../../../utils/SynapseConstants'
-import { ColumnType } from '@sage-bionetworks/synapse-types'
-import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
 import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
 import { RangeSlider } from '../RangeSlider/RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
-import dayjs from 'dayjs'
 
 export enum RadioValuesEnum {
   NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',

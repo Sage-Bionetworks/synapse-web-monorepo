@@ -1,15 +1,15 @@
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
+import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import queryResultBundleJson from '../../mocks/query/syn16787123'
-import SynapseTable from './SynapseTable'
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { SynapseConstants } from '../../utils'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
+import SynapseTable from './SynapseTable'
 
 const meta: Meta = {
   title: 'Explore/SynapseTable',

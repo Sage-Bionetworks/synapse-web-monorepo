@@ -2,18 +2,18 @@ import React, { useState } from 'react'
 import {
   DockerCommit,
   TeamSubmissionEligibility,
+  EvaluationSubmission,
+  EntityType,
 } from '@sage-bionetworks/synapse-types'
+import { Typography } from '@mui/material'
 import StepperDialog from '../StepperDialog'
 import { Step } from '../StepperDialog/StepperDialog'
 import { useSynapseContext } from '../../utils'
+import SynapseClient from '../../synapse-client'
+import { displayToast } from '../ToastMessage'
 import SubmissionCommitList from './SubmissionCommitList'
 import EvaluationQueueList from './EvaluationQueueList'
-import { Typography } from '@mui/material'
-import { EvaluationSubmission } from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
 import { EntityItem } from './ChallengeSubmission'
-import { EntityType } from '@sage-bionetworks/synapse-types'
-import { displayToast } from '../ToastMessage'
 
 enum StepsEnum {
   SELECT_COMMIT = 'SELECT_COMMIT',

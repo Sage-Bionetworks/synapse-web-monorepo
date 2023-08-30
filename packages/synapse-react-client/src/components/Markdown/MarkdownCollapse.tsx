@@ -3,8 +3,8 @@ import { Collapse, SafeAnchor } from 'react-bootstrap'
 import IconMinus from '../../assets/icons/IconMinus'
 import IconPlus from '../../assets/icons/IconPlus'
 import IconCopy from '../../assets/icons/IconCopy'
-import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 import { displayToast } from '../ToastMessage/ToastMessage'
+import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 
 export type MarkdownCollapseProps = {
   // The text that should be shown.  If not given, will default to "full text"

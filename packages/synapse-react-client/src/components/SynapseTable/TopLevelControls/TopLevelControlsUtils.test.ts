@@ -1,9 +1,9 @@
+import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import {
   getNumberOfResultsToAddToDownloadListCopy,
   getNumberOfResultsToInvokeAction,
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
-import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 
 describe('TopLevelControlsUtils', () => {
   describe('getNumberOfResultsToInvokeAction', () => {

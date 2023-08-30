@@ -1,23 +1,23 @@
 import React, { useState } from 'react'
 import {
+  ColumnType,
+  ColumnTypeEnum,
+  QueryBundleRequest,
+  RowSet,
+} from '@sage-bionetworks/synapse-types'
+import { Typography } from '@mui/material'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
+import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/SqlFunctions'
 import { SynapseConstants } from '../../utils'
 import SynapseClient from '../../synapse-client'
-import {
-  ColumnType,
-  ColumnTypeEnum,
-  QueryBundleRequest,
-  RowSet,
-} from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { ColumnSpecifiedLink } from '../CardContainerLogic'
-import { Typography } from '@mui/material'
-import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 
 export type FriendlyValuesMap = {
   [index: string]: string

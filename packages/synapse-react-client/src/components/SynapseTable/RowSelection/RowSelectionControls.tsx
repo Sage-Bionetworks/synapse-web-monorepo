@@ -1,19 +1,19 @@
 import React from 'react'
-import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { Button } from '@mui/material'
-import { RowSelectionUI } from './RowSelectionUI'
+import { GetAppTwoTone } from '@mui/icons-material'
+import { useAtom, useAtomValue } from 'jotai'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { Cavatica } from '../../../assets/icons/Cavatica'
-import { GetAppTwoTone } from '@mui/icons-material'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
-import { useAtom, useAtomValue } from 'jotai'
+import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import {
   tableQueryDataAtom,
   tableQueryEntityAtom,
 } from '../../QueryWrapper/QueryWrapper'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { getFileColumnModelId } from '../SynapseTableUtils'
+import { RowSelectionUI } from './RowSelectionUI'
 
 export type RowSelectionControlsProps = {
   showExportToCavatica?: boolean

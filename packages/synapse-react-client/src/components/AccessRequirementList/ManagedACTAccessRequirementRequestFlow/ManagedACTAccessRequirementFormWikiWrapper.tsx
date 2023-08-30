@@ -1,7 +1,7 @@
 import React from 'react'
+import { Grid, Typography } from '@mui/material'
 import { useGetAccessRequirementWikiPageKey } from '../../../synapse-queries'
 import { useCanShowManagedACTWikiInWizard } from '../AccessRequirementListUtils'
-import { Grid, Typography } from '@mui/material'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 
 type ManagedACTAccessRequirementFormWikiWrapperProps = React.PropsWithChildren<{

@@ -1,12 +1,12 @@
 import React from 'react'
-import { SkeletonInlineBlock } from './Skeleton/SkeletonInlineBlock'
 import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
+import pluralize from 'pluralize'
+import { useAtomValue } from 'jotai'
+import { SkeletonInlineBlock } from './Skeleton/SkeletonInlineBlock'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { useQueryContext } from './QueryContext/QueryContext'
 import IconSvg from './IconSvg/IconSvg'
 import SelectionCriteriaPills from './widgets/facet-nav/SelectionCriteriaPills'
-import pluralize from 'pluralize'
-import { useAtomValue } from 'jotai'
 import {
   isLoadingNewBundleAtom,
   tableQueryDataAtom,

@@ -15,6 +15,13 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import { Set } from 'immutable'
+import {
+  QueryResultBundle,
+  Row,
+  SubmissionState,
+} from '@sage-bionetworks/synapse-types'
+import { UseQueryResult } from 'react-query'
 import IconSvg from '../IconSvg/IconSvg'
 import {
   useGetFullTableQueryResults,
@@ -24,16 +31,9 @@ import {
   BUNDLE_MASK_QUERY_RESULTS,
   REJECT_SUBMISSION_CANNED_RESPONSES_TABLE,
 } from '../../utils/SynapseConstants'
-import { Set } from 'immutable'
-import {
-  QueryResultBundle,
-  Row,
-  SubmissionState,
-} from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { UseQueryResult } from 'react-query'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { displayToast } from '../ToastMessage/ToastMessage'
 

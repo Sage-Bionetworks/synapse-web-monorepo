@@ -1,10 +1,10 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
+import { SynapseContextConsumer, SynapseContextProvider } from '../../index'
 import {
   DownloadConfirmationUI,
   DownloadConfirmationUIProps,
 } from './DownloadConfirmationUI'
-import { SynapseContextConsumer, SynapseContextProvider } from '../../index'
 
 const meta = {
   title: 'Download/DownloadConfirmationUI',

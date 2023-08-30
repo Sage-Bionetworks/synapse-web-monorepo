@@ -1,10 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
-import AccessRequirementList, {
-  AccessRequirementListProps,
-} from './AccessRequirementList'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { AccessRequirement } from '@sage-bionetworks/synapse-types'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
 import { server } from '../../mocks/msw/server'
 import {
@@ -13,6 +10,9 @@ import {
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '../../mocks/mockAccessRequirements'
+import AccessRequirementList, {
+  AccessRequirementListProps,
+} from './AccessRequirementList'
 import * as AccessRequirementListUtils from './AccessRequirementListUtils'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id

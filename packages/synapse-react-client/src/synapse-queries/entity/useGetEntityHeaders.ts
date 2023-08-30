@@ -1,13 +1,13 @@
 import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   EntityHeader,
   PaginatedResults,
   Reference,
   ReferenceList,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useGetEntityHeaders(
   references: ReferenceList,

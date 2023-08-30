@@ -1,6 +1,8 @@
 import Skeleton from '@mui/material/Skeleton'
 import Form from '@rjsf/core'
 import React, { useRef, useState } from 'react'
+import { VersionableEntity } from '@sage-bionetworks/synapse-types'
+import { Button, Tooltip } from '@mui/material'
 import {
   entityTypeToFriendlyName,
   isVersionableEntityType,
@@ -10,14 +12,12 @@ import {
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import useGetEntityBundle from '../../../synapse-queries/entity/useEntityBundle'
-import { VersionableEntity } from '@sage-bionetworks/synapse-types'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import { displayToast } from '../../ToastMessage/ToastMessage'
 import { SchemaDrivenAnnotationEditor } from '../../SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
+import { DialogBase } from '../../DialogBase'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
-import { Button, Tooltip } from '@mui/material'
-import { DialogBase } from '../../DialogBase'
 
 export const EntityModalTabs = [
   // non-annotation metadata about the entity

@@ -1,10 +1,10 @@
 import React from 'react'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import IconSvg, { IconName } from './IconSvg/IconSvg'
 import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
 } from '../utils/SynapseConstants'
+import IconSvg, { IconName } from './IconSvg/IconSvg'
 
 export type TeamBadgeProps = {
   teamId: string | number

@@ -4,16 +4,17 @@ import {
   UseQueryOptions,
   useQuery,
 } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils'
-import { Forum, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import {
+  Forum,
+  PaginatedResults,
   DiscussionFilter,
   DiscussionThreadBundle,
   DiscussionThreadOrder,
+  PaginatedIds,
 } from '@sage-bionetworks/synapse-types'
-import { PaginatedIds } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils'
 
 export function useGetModerators(
   forumId: string,

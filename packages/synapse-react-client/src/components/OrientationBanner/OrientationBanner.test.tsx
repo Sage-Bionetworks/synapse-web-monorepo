@@ -5,13 +5,13 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../utils/context/SynapseContext'
 import OrientationBanner, {
   getOrientationBannerKey,
   OrientationBannerName,
   OrientationBannerProps,
 } from './OrientationBanner'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils/context/SynapseContext'
 
 const onPrimaryButtonClicked = jest.fn()
 window.open = jest.fn()

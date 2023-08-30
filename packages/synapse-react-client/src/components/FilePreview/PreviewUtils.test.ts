@@ -1,3 +1,4 @@
+import { ProxyFileHandle, S3FileHandle } from '@sage-bionetworks/synapse-types'
 import {
   CODE_EXTENSIONS,
   getOriginalFileHandleRenderer,
@@ -7,7 +8,6 @@ import {
   VIDEO_EXTENSIONS,
 } from './PreviewUtils'
 import { PreviewRendererType } from './PreviewRendererType'
-import { ProxyFileHandle, S3FileHandle } from '@sage-bionetworks/synapse-types'
 
 const s3FileHandle: S3FileHandle = {
   bucketName: '',

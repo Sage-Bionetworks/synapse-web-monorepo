@@ -1,14 +1,14 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { EnumFacetFilter } from './EnumFacetFilter'
 import {
   ColumnTypeEnum,
   FacetColumnResultValueCount,
 } from '@sage-bionetworks/synapse-types'
+import { cloneDeep } from 'lodash-es'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
 import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
-import { cloneDeep } from 'lodash-es'
+import { EnumFacetFilter } from './EnumFacetFilter'
 
 const meta = {
   title: 'Explore/Components/Facets/EnumFacetFilter',

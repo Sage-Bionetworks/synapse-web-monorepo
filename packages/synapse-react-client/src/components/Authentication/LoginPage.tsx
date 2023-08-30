@@ -8,13 +8,13 @@ import {
   TypographyProps,
   useTheme,
 } from '@mui/material'
+import { StyledComponent } from '@emotion/styled'
 import { LeftRightPanel } from '../styled/LeftRightPanel'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
-import LoginFlowBackButton from './LoginFlowBackButton'
 import useLogin from '../../utils/hooks/useLogin'
-import LoginForm from './LoginForm'
-import { StyledComponent } from '@emotion/styled'
 import SystemUseNotification from '../SystemUseNotification/SystemUseNotification'
+import LoginFlowBackButton from './LoginFlowBackButton'
+import LoginForm from './LoginForm'
 
 const LOST_ACCOUNT_SERVICE_DESK_ISSUE_TITLE = encodeURIComponent(
   'Lost access to my Synapse account',

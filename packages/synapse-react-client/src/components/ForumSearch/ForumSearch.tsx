@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { forumSearch, getEntity } from '../../synapse-client/SynapseClient'
 import {
   DiscussionSearchResponse,
   Match,
+  Entity,
 } from '@sage-bionetworks/synapse-types'
+import { Button, Typography } from '@mui/material'
+import { forumSearch, getEntity } from '../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import DiscussionSearchResult from '../Forum/DiscussionSearchResult'
-import { Entity } from '@sage-bionetworks/synapse-types'
-import { Button, Typography } from '@mui/material'
 import NoSearchResults from '../../assets/icons/NoSearchResults'
 import IconSvg from '../IconSvg/IconSvg'
 import { displayToast } from '../ToastMessage/ToastMessage'

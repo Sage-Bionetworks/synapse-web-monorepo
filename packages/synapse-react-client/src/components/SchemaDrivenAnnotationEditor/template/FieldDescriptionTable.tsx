@@ -1,6 +1,6 @@
 import { Collapse } from '@mui/material'
 import React from 'react'
-import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
+import type { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 
 export type FieldDescriptionTableProps = {
   schema: JSONSchema7

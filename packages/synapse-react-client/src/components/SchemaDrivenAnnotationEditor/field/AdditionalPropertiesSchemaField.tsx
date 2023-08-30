@@ -6,9 +6,9 @@ import {
 } from '@rjsf/utils'
 import { isEqual } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
+import { Grid, InputLabel } from '@mui/material'
 import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
 import { convertToArray } from '../AnnotationEditorUtils'
-import { Grid, InputLabel } from '@mui/material'
 import { AdditionalPropertyContextProvider } from '../template/AdditionalPropertyContext'
 
 // Matches ####-##-##T##:##:##.###Z, e.g. 1970-01-01T12:00:000Z

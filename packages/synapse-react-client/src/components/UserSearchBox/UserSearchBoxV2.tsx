@@ -6,11 +6,10 @@ import Select, {
   PropsValue,
   SelectComponentsConfig,
 } from 'react-select'
+import { UserGroupHeader, TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useSearchUserGroupHeaders } from '../../synapse-queries'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
-import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
-import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 type UserSearchBoxValueType = {

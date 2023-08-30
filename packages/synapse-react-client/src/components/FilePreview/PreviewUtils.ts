@@ -1,6 +1,6 @@
 import { FileHandle } from '@sage-bionetworks/synapse-types'
-import { PreviewRendererType } from './PreviewRendererType'
 import { implementsCloudProviderFileHandleInterface } from '../../utils/types/IsType'
+import { PreviewRendererType } from './PreviewRendererType'
 
 export const IMAGE_CONTENT_TYPES = [
   'image/bmp',

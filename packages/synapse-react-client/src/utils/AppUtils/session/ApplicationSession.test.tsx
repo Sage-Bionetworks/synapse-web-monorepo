@@ -1,27 +1,27 @@
 import React from 'react'
 import { renderHook, waitFor } from '@testing-library/react'
-import ApplicationSessionManager, {
-  ApplicationSessionManagerProps,
-} from './ApplicationSessionManager'
+import { MemoryRouter } from 'react-router-dom'
 import {
-  ApplicationSessionContextType,
-  useApplicationSessionContext,
-} from './ApplicationSessionContext'
+  ErrorResponseCode,
+  TwoFactorAuthErrorResponse,
+} from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
 import { SynapseClient } from '../../../index'
 import {
   MOCK_USER_ID,
   mockUserProfileData,
 } from '../../../mocks/user/mock_user_profile'
 import { SynapseClientError } from '../../SynapseClientError'
-import { MemoryRouter } from 'react-router-dom'
 import * as UseDetectSSOCodeModule from '../../hooks/useDetectSSOCode'
 import { UseDetectSSOCodeOptions } from '../../hooks/useDetectSSOCode'
-import {
-  ErrorResponseCode,
-  TwoFactorAuthErrorResponse,
-} from '@sage-bionetworks/synapse-types'
-import dayjs from 'dayjs'
 import { MOCK_ACCESS_TOKEN } from '../../../mocks/MockSynapseContext'
+import {
+  ApplicationSessionContextType,
+  useApplicationSessionContext,
+} from './ApplicationSessionContext'
+import ApplicationSessionManager, {
+  ApplicationSessionManagerProps,
+} from './ApplicationSessionManager'
 
 function render(props?: ApplicationSessionManagerProps) {
   return renderHook(() => useApplicationSessionContext(), {

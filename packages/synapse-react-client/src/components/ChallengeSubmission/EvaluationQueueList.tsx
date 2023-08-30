@@ -1,8 +1,8 @@
 import { Alert, Box, TextField, Typography } from '@mui/material'
 import React from 'react'
-import { useGetEntityEvaluations } from '../../synapse-queries'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { useGetEntityEvaluations } from '../../synapse-queries'
 import { RadioOption } from '../widgets/RadioGroup'
 
 type EvaluationQueueListProps = {

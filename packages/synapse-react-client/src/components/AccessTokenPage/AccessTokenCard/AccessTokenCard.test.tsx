@@ -2,10 +2,10 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { SynapseClient } from '../../../index'
-import { AccessTokenCard, AccessTokenCardProps } from './AccessTokenCard'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import * as SynapseContext from '../../../utils/context/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import { AccessTokenCard, AccessTokenCardProps } from './AccessTokenCard'
 
 const mockOnDelete = jest.fn(() => null)
 

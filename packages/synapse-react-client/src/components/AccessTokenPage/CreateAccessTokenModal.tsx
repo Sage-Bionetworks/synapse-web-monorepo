@@ -1,9 +1,11 @@
 import React from 'react'
 import { Typography } from '@mui/material'
+import {
+  AccessTokenGenerationRequest,
+  scopeDescriptions,
+} from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { AccessTokenGenerationRequest } from '@sage-bionetworks/synapse-types'
-import { scopeDescriptions } from '@sage-bionetworks/synapse-types'
 import { CopyToClipboardInput } from '../CopyToClipboardInput/CopyToClipboardInput'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'

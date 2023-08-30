@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Button, Paper, Typography } from '@mui/material'
-import InlineBadge from '../../styled/InlineBadge'
 import pluralize from 'pluralize'
+import InlineBadge from '../../styled/InlineBadge'
 
 export type RowSelectionUIProps = {
   show?: boolean

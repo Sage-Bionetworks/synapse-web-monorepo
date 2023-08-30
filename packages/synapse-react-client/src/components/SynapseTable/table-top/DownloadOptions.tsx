@@ -1,5 +1,7 @@
 import React from 'react'
 import { Dropdown } from 'react-bootstrap'
+import { Tooltip } from '@mui/material'
+import { useAtomValue } from 'jotai'
 import ModalDownload from '../../ModalDownload/ModalDownload'
 import {
   hasFilesInView,
@@ -7,15 +9,12 @@ import {
   isEntityView,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils'
-import { Tooltip } from '@mui/material'
 import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
-import { DownloadLoginModal } from './DownloadLoginModal'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
 import { getNumberOfResultsToAddToDownloadListCopy } from '../TopLevelControls/TopLevelControlsUtils'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
 import { getFileColumnModelId } from '../SynapseTableUtils'
-import { useAtomValue } from 'jotai'
 import {
   tableQueryDataAtom,
   tableQueryEntityAtom,
@@ -24,6 +23,7 @@ import {
   hasSelectedRowsAtom,
   selectedRowsAtom,
 } from '../../QueryWrapper/TableRowSelectionState'
+import { DownloadLoginModal } from './DownloadLoginModal'
 
 export type DownloadOptionsProps = {
   onDownloadFiles: () => void

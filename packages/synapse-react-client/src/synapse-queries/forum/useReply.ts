@@ -7,18 +7,18 @@ import {
   UseQueryOptions,
   useQuery,
 } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   CreateDiscussionReply,
   DiscussionFilter,
   DiscussionReplyBundle,
   DiscussionReplyOrder,
   UpdateDiscussionReply,
+  PaginatedResults,
+  Match,
 } from '@sage-bionetworks/synapse-types'
-import { PaginatedResults } from '@sage-bionetworks/synapse-types'
-import { Match } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useGetRepliesInfinite(
   threadId: string,

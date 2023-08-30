@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
-import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import {
   AccessApproval,
   ApprovalState,
   SelfSignAccessRequirement,
   TermsOfUseAccessRequirement,
 } from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
+import { useSynapseContext } from '../../../utils/context/SynapseContext'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import {
   useCreateAccessApproval,
   useGetAccessRequirementStatus,
@@ -15,9 +15,9 @@ import {
   useGetCurrentUserBundle,
   useGetCurrentUserProfile,
 } from '../../../synapse-queries'
-import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 import { isTermsOfUseAccessRequirement } from '../../../utils/types/IsType'
+import RequirementItem from './RequirementItem'
 
 export type SelfSignAccessRequirementItemProps = {
   accessRequirement: SelfSignAccessRequirement | TermsOfUseAccessRequirement

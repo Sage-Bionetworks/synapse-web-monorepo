@@ -1,5 +1,4 @@
 import React from 'react'
-import FacetNavPanel, { FacetNavPanelProps } from './FacetNavPanel'
 import { render, screen, within } from '@testing-library/react'
 import {
   FacetColumnResultValues,
@@ -9,12 +8,13 @@ import testData from '../../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { SynapseConstants } from '../../../utils'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { truncate } from './FacetPlotLegendUtils'
 import { mockQueryBundleRequest } from '../../../mocks/mockFileViewQuery'
 import QueryWrapper from '../../QueryWrapper'
 import { server } from '../../../mocks/msw/server'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
+import { truncate } from './FacetPlotLegendUtils'
+import FacetNavPanel, { FacetNavPanelProps } from './FacetNavPanel'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)

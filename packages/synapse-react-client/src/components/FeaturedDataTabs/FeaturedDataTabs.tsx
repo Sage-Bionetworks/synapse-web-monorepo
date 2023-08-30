@@ -1,10 +1,8 @@
-import React from 'react'
-import { useState } from 'react'
-import FeaturedDataPlots, { FeaturedDataPlotsProps } from './FeaturedDataPlots'
+import React, { useState } from 'react'
+import { Button, Paper } from '@mui/material'
 import { Icon } from '../row_renderers/utils'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
-import { Button } from '@mui/material'
-import { Paper } from '@mui/material'
+import FeaturedDataPlots, { FeaturedDataPlotsProps } from './FeaturedDataPlots'
 
 export type FeatureDataTabProps = {
   title: string // type of data being shown, used for the tab title and explore all button

@@ -1,14 +1,13 @@
 import React, { useEffect, useMemo } from 'react'
 import { MemoryRouter } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
+import dayjs from 'dayjs'
+import SynapseClient from '../synapse-client'
 import {
   SynapseContextProvider,
   SynapseContextType,
 } from '../utils/context/SynapseContext'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import SynapseClient from '../synapse-client'
-import { SynapseToastContainer } from './ToastMessage/ToastMessage'
-import { ReactQueryDevtools } from 'react-query/devtools'
-import dayjs from 'dayjs'
 import {
   getAccessTokenFromCookie,
   getAuthenticatedOn,
@@ -19,6 +18,7 @@ import { SynapseClientError } from '../utils/SynapseClientError'
 import { STACK_MAP, SynapseStack } from '../utils/functions/getEndpoint'
 import useDetectSSOCode from '../utils/hooks/useDetectSSOCode'
 import { defaultQueryClientConfig } from '../utils/context/FullContextProvider'
+import { SynapseToastContainer } from './ToastMessage/ToastMessage'
 
 export async function sessionChangeHandler() {
   let accessToken: string | undefined = await getAccessTokenFromCookie()

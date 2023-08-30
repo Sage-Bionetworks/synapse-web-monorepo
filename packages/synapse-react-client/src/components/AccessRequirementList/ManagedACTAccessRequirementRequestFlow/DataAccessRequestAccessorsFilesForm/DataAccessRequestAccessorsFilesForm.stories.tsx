@@ -1,8 +1,5 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import DataAccessRequestAccessorsFilesForm, {
-  DataAccessRequestAccessorsFilesFormProps,
-} from './DataAccessRequestAccessorsFilesForm'
 import { mockManagedACTAccessRequirement } from '../../../../mocks/mockAccessRequirements'
 import { MOCK_FOLDER_ID } from '../../../../mocks/entity/mockEntity'
 import { MOCK_RESEARCH_PROJECT_ID } from '../../../../mocks/dataaccess/MockResearchProject'
@@ -17,6 +14,9 @@ import {
   SynapseContextConsumer,
   SynapseContextProvider,
 } from '../../../../index'
+import DataAccessRequestAccessorsFilesForm, {
+  DataAccessRequestAccessorsFilesFormProps,
+} from './DataAccessRequestAccessorsFilesForm'
 
 const meta = {
   title:

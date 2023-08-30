@@ -96,6 +96,9 @@ import {
   WatchLater,
 } from '@mui/icons-material'
 import React from 'react'
+import { EntityType } from '@sage-bionetworks/synapse-types'
+import { Tooltip } from '@mui/material'
+import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
 import AccessManagement from '../../assets/mui_components/AccessManagement'
 import AccountCertified from '../../assets/mui_components/AccountCertified'
 import AccountRegistered from '../../assets/mui_components/AccountRegistered'
@@ -116,10 +119,7 @@ import Other from '../../assets/mui_components/Other'
 import PackagableFile from '../../assets/mui_components/PackagableFile'
 import Proteomics from '../../assets/mui_components/Proteomics'
 import Rat from '../../assets/mui_components/Rat'
-import { EntityType } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
 import CreateVersion from '../../assets/icons/CreateVersion'
-import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
 import { GoogleIcon24 } from '../../assets/GoogleIcon24'
 
 export const IconStrings = [

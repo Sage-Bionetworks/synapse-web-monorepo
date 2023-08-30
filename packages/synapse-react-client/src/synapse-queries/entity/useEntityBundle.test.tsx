@@ -1,10 +1,10 @@
 import { renderHook, waitFor } from '@testing-library/react'
-import useGetEntityBundle from './useEntityBundle'
 import { EntityBundle } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SynapseClient from '../../synapse-client'
 import mockFileEntity from '../../mocks/entity/mockFileEntity'
+import useGetEntityBundle from './useEntityBundle'
 
 const expected: EntityBundle = mockFileEntity.bundle
 

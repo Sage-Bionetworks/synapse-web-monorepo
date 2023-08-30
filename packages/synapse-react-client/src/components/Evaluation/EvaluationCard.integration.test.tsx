@@ -2,16 +2,16 @@ import React from 'react'
 import { render, screen, within } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
+import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { server } from '../../mocks/msw/server'
 import {
   EvaluationCard,
   EvaluationCardProps,
   ExistingEvaluation,
 } from './EvaluationCard'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
-import { server } from '../../mocks/msw/server'
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
+import type { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 
 describe('test Evaluation Card', () => {
   let permissions: UserEvaluationPermissions

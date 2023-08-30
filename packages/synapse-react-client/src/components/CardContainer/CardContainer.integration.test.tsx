@@ -1,11 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { SynapseConstants } from '../../utils'
-import CardContainer, { CardContainerProps } from './CardContainer'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { cloneDeep } from 'lodash-es'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import syn16787123Json from '../../mocks/query/syn16787123'
 import {
   DEFAULT_PAGE_SIZE,
@@ -16,9 +15,10 @@ import { server } from '../../mocks/msw/server'
 import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import { QueryWrapper } from '../QueryWrapper'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import { cloneDeep } from 'lodash-es'
+import { SynapseConstants } from '../../utils'
 import { QueryContextConsumer } from '../QueryContext'
 import { InfiniteQueryContextType } from '../QueryContext/QueryContext'
+import CardContainer, { CardContainerProps } from './CardContainer'
 
 const sql = 'SELECT * FROM syn16787123'
 

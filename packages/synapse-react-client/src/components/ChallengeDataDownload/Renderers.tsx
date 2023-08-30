@@ -1,11 +1,11 @@
 import React from 'react'
-import { CellRendererProps } from './types'
+import { Skeleton } from '@mui/material'
+import { FileHandle } from '@sage-bionetworks/synapse-types'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { EntityIdAndVersionNumber } from '../EntityFinder/details/view/DetailsViewTableRenderers'
-import { Skeleton } from '@mui/material'
 import { useGetEntityBundle } from '../../synapse-queries'
-import { FileHandle } from '@sage-bionetworks/synapse-types'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
+import { CellRendererProps } from './types'
 
 type FileHandleWithPreview = FileHandle & {
   isPreview?: boolean

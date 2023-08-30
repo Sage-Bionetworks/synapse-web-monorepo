@@ -1,14 +1,15 @@
 import { Collapse } from '@mui/material'
-import React, { useEffect } from 'react'
-import { useState } from 'react'
-import { ColumnType } from '@sage-bionetworks/synapse-types'
-import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
+import React, { useEffect, useState } from 'react'
+import {
+  ColumnType,
+  FacetColumnResultRange,
+} from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
 import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
+import { RangeSlider } from '../RangeSlider/RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { RadioValuesEnum, getRadioValue, options } from './RangeFacetFilter'
-import dayjs from 'dayjs'
-import { RangeSlider } from '../RangeSlider/RangeSlider'
 
 export type CombinedRangeFacetFilterProps = {
   facetResults: FacetColumnResultRange[]

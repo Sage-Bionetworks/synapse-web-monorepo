@@ -1,29 +1,29 @@
 import React, { useEffect, useState } from 'react' // importing FunctionComponent
 import Plotly from 'plotly.js-basic-dist'
 import {
+  QueryBundleRequest,
+  QueryResultBundle,
+  RowSet,
+} from '@sage-bionetworks/synapse-types'
+import { RequiredKeysOf } from 'type-fest'
+import { cloneDeep, first, noop, orderBy } from 'lodash-es'
+import {
   ElementWithTooltip,
   TooltipVisualProps,
 } from '../widgets/ElementWithTooltip'
 import { unCamelCase } from '../../utils/functions/unCamelCase'
 import { SynapseConstants, useSynapseContext } from '../../utils'
 import { getFullQueryTableResults } from '../../synapse-client'
-import {
-  QueryBundleRequest,
-  QueryResultBundle,
-  RowSet,
-} from '@sage-bionetworks/synapse-types'
 import { resultToJson } from '../../utils/functions'
+import loadingScreen from '../LoadingScreen/LoadingScreen'
 import {
   BarPlotColors,
   ClickCallbackParams,
   GraphItem,
   PlotProps,
 } from './types'
-import _ from 'lodash-es'
 import DotPlot from './DotPlot'
 import BarPlot from './BarPlot'
-import loadingScreen from '../LoadingScreen/LoadingScreen'
-import { RequiredKeysOf } from 'type-fest'
 
 export type ThemesPlotProps = {
   onPointClick: ({ facetValue, type, event }: ClickCallbackParams) => void
@@ -197,7 +197,7 @@ const fadeColors = (colors: { [key: string]: string }, opacity: string) => {
 }
 
 const getTooltip = (data: GraphItem[], filter: string) => {
-  return _.first(data.filter(item => item.y === filter).map(item => item.info))
+  return first(data.filter(item => item.y === filter).map(item => item.info))
 }
 
 export function ThemesPlot({
@@ -243,10 +243,8 @@ export function ThemesPlot({
       .map(item => item.y)
     xMaxForSideBarPlot = Math.max(...totalsByDotPlotY.map(item => item.count))
     xMaxForDotPlot = Math.max(...dotPlotQueryData.map(item => Number(item.x)))
-    topBarPlotDataSorted = _.orderBy(getTotalsByProp(topBarPlotData, 'y'), [
-      'y',
-    ])
-    xLabelsForTopBarPlot = _.orderBy(
+    topBarPlotDataSorted = orderBy(getTotalsByProp(topBarPlotData, 'y'), ['y'])
+    xLabelsForTopBarPlot = orderBy(
       getTotalsByProp<TotalsGroupByGroup>(topBarPlotData, 'group'),
       ['group'],
     ).map(item => item.group)
@@ -287,7 +285,7 @@ export function ThemesPlot({
               <div className="ThemesPlot__topBarPlot__plot">
                 <BarPlot
                   style={{ width: '100%', height: '100%' }}
-                  layoutConfig={_.cloneDeep(barLayoutConfig)}
+                  layoutConfig={cloneDeep(barLayoutConfig)}
                   optionsConfig={{ ...optionsConfig }}
                   plotData={topBarPlotData}
                   isTop={true}
@@ -321,7 +319,7 @@ export function ThemesPlot({
                     <ElementWithTooltip
                       tooltipText={`${getTooltip(dotPlotQueryData, label)} `}
                       tooltipVisualProps={tooltipProps}
-                      callbackFn={() => _.noop}
+                      callbackFn={() => noop}
                     >
                       <div>
                         <span className="ThemesPlot__dotPlot__themeLabel">
