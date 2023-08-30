@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch' // polyfill for fetch
-import { server } from '../mocks/server'
 import { cleanup } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll, vi } from 'vitest'
+import { server } from '../mocks/server'
 
 declare const global: any
 global.markdownit = require('markdown-it')

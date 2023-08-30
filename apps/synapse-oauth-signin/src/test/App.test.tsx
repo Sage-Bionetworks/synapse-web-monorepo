@@ -1,13 +1,13 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import { server } from '../mocks/server'
 import { rest } from 'msw'
 import React from 'react'
 import { SynapseClient, SynapseConstants } from 'synapse-react-client'
-import App from '../App'
 import userEvent from '@testing-library/user-event'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { waitForOptions } from '@testing-library/react'
+import App from '../App'
+import { server } from '../mocks/server'
 
 const overrideWaitForOptions: waitForOptions = {
   timeout: 5000,
