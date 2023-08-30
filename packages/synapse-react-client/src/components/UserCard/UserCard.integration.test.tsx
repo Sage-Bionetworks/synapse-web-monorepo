@@ -193,7 +193,14 @@ describe('UserCard tests', () => {
       })
     })
 
-    it.skip('displays the context menu on toggle', async () => {
+    it('does not show a menu with empty menuActions', async () => {
+      const menuActions: MenuAction[] = []
+      renderMediumUserCard({ ...props, menuActions })
+      await screen.findByText('ORCID', { exact: false })
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+    })
+
+    it('displays the context menu on toggle', async () => {
       const menuActions = [
         {
           field: 'text',

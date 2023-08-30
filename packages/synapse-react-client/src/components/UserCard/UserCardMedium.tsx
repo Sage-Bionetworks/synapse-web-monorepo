@@ -230,8 +230,8 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
           </a>
         )}
       </div>
-      {/* conditionally render menu actions, if its not defined then we don't show the button */}
-      {menuActions && (
+      {/* conditionally render menu actions, if there are no actions then we don't show the button */}
+      {menuActions && menuActions.length > 0 && (
         <React.Fragment>
           <span
             role="menu"
