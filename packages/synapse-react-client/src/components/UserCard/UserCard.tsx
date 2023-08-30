@@ -41,10 +41,10 @@ export type UserCardProps = {
   disableLink?: boolean
   isCertified?: boolean
   isValidated?: boolean
-  /** Determines the size of the avatar when size === 'AVATAR' or (size === 'SMALL' and showAvatar is true) */
+  /** Determines the size of the avatar when size === 'AVATAR' or (size === 'SMALL' and withAvatar is true) */
   avatarSize?: AvatarSize
   /** Whether to show the avatar with the name for the small user card */
-  showAvatar?: boolean
+  withAvatar?: boolean
   /** @deprecated Whether to show the full name in the small user card */
   showFullName?: boolean
   className?: string

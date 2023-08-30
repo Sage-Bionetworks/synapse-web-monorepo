@@ -122,7 +122,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           </div>
           <UserBadge
             userId={threadData.createdBy}
-            showAvatar={true}
+            withAvatar={true}
             avatarSize="MEDIUM"
             showCardOnHover={true}
           />

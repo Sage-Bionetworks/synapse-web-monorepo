@@ -13,7 +13,7 @@ export type UserBadgeProps = {
   /* The ID of the user to show. If undefined, a skeleton will be shown */
   userId?: string
   /* If true, shows the user's avatar with their name. Default false */
-  showAvatar?: boolean
+  withAvatar?: boolean
   /* Whether a card containing additional profile information should be shown on hover. Default true. */
   showCardOnHover?: boolean
   /* Whether to disable the profile linking to the user's profile page */
@@ -24,7 +24,7 @@ export type UserBadgeProps = {
   showAccountLevelIcon?: boolean
   /* Whether to open the clicked link in a new tab. Default is false */
   openLinkInNewTab?: boolean
-  /* Defines the size of the avatar if `showAvatar` is true. Default is 'SMALL' */
+  /* Defines the size of the avatar if `withAvatar` is true. Default is 'SMALL' */
   avatarSize?: AvatarSize
   /* If true, shows the user's full name. Default is false */
   showFullName?: boolean
@@ -44,7 +44,7 @@ export function UserBadge(props: UserBadgeProps) {
     disableLink,
     showAccountLevelIcon = false,
     openLinkInNewTab = false,
-    showAvatar = false,
+    withAvatar = false,
     avatarSize = 'SMALL',
     className,
     showFullName = false,
@@ -86,7 +86,7 @@ export function UserBadge(props: UserBadgeProps) {
     { sx: { maxWidth: '425px' } },
   )
 
-  const avatar = showAvatar ? (
+  const avatar = withAvatar ? (
     <span className="SRC-inline-avatar">
       <UserCard ownerId={userId} size={'AVATAR'} avatarSize={avatarSize} />
     </span>

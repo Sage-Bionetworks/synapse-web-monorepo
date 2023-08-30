@@ -56,7 +56,7 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
               <div>
                 <UserBadge
                   userId={reply.createdBy}
-                  showAvatar={true}
+                  withAvatar={true}
                   avatarSize="MEDIUM"
                   showCardOnHover={true}
                 />
