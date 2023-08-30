@@ -25,7 +25,7 @@ jobs:
         # Portals won't build without a configuration. For now, copy the test configuration.
         # We may want to invert the model and give each portal its own project in the workspace, so we can build the portals in parallel.
       - run: pnpm nx run portals:copy-test-configuration
-      - run: pnpm nx run-many --target=build --base=remotes/origin/main
+      - run: pnpm nx run-many --target=build
   test:
     runs-on:
       labels: ubuntu-22.04-4core-16GBRAM-150GBSSD
@@ -38,7 +38,7 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
       - run: pnpm nx run portals:copy-test-configuration
       - id: test
-        run: pnpm nx run-many --target test --base=remotes/origin/main
+        run: pnpm nx run-many --target test
       - name: Upload test report
         if: success() || steps.test.conclusion == 'failure'
         uses: actions/upload-artifact@v3
@@ -54,7 +54,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
-      - run: pnpm nx run-many --target=lint --base=remotes/origin/main
+      - run: pnpm nx run-many --target=lint
   typecheck:
     runs-on: ubuntu-latest
     steps:
@@ -64,4 +64,4 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
       # Portals test configuration must be loaded for a successful type check
       - run: pnpm nx run portals:copy-test-configuration
-      - run: pnpm nx run-many --target=type-check --base=remotes/origin/main
+      - run: pnpm nx run-many --target=type-check
