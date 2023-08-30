@@ -11,7 +11,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on:
+      labels: ubuntu-22.04-4core-16GBRAM-150GBSSD
+    # Job should not last longer than 60 minutes--and the larger runner is billed per-minute ;)
+    timeout-minutes: 60
     # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     # We should test all active LTS releases, but not until our test suite is less flaky
     strategy:
@@ -25,7 +28,7 @@ jobs:
         # Portals won't build without a configuration. For now, copy the test configuration.
         # We may want to invert the model and give each portal its own project in the workspace, so we can build the portals in parallel.
       - run: pnpm nx run portals:copy-test-configuration
-      - run: pnpm nx affected --target=build --parallel=2 --base=remotes/origin/main
+      - run: pnpm nx affected --target=build --base=remotes/origin/main
   test:
     runs-on: ubuntu-latest
     steps:
@@ -35,7 +38,7 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
       - run: pnpm nx run portals:copy-test-configuration
       - id: test
-        run: pnpm nx affected --target test --parallel=2 --base=remotes/origin/main
+        run: pnpm nx affected --target test --base=remotes/origin/main
       - name: Upload test report
         if: success() || steps.test.conclusion == 'failure'
         uses: actions/upload-artifact@v3
@@ -51,7 +54,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
-      - run: pnpm nx affected --target=lint --parallel=2 --base=remotes/origin/main
+      - run: pnpm nx affected --target=lint --base=remotes/origin/main
   typecheck:
     runs-on: ubuntu-latest
     steps:
@@ -61,4 +64,4 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
       # Portals test configuration must be loaded for a successful type check
       - run: pnpm nx run portals:copy-test-configuration
-      - run: pnpm nx affected --target=type-check --parallel=2 --base=remotes/origin/main
+      - run: pnpm nx affected --target=type-check --base=remotes/origin/main
