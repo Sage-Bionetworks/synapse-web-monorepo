@@ -1,8 +1,8 @@
-import { useQueryContext } from '../QueryContext'
 import { useAtomValue } from 'jotai'
-import { isLoadingNewBundleAtom, tableQueryDataAtom } from './QueryWrapper'
 import { Box, LinearProgress, Typography } from '@mui/material'
 import React from 'react'
+import { useQueryContext } from '../QueryContext'
+import { isLoadingNewBundleAtom, tableQueryDataAtom } from './QueryWrapper'
 
 export default function QueryWrapperLoadingScreen() {
   const { asyncJobStatus } = useQueryContext()

@@ -1,10 +1,10 @@
 import React from 'react'
+import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import CardContainer from '../CardContainer'
 import SynapseTable, { SynapseTableProps } from '../SynapseTable'
 import { CardConfiguration } from '../CardContainerLogic'
-import LastUpdatedOn from './LastUpdatedOn'
-import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
+import LastUpdatedOn from './LastUpdatedOn'
 
 export type FilterAndViewProps = {
   tableConfiguration?: SynapseTableProps
