@@ -3,25 +3,33 @@ import { SynapseConstants } from '../../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { useOverlay } from '../../utils/hooks/useOverlay'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
-import { Avatar, AvatarSize } from './Avatar'
+import { AvatarSize } from './Avatar'
 import IconSvg from '../IconSvg/IconSvg'
-import UserCardMedium from './UserCardMedium'
-import { Box, Link } from '@mui/material'
+import { Box, Link, Skeleton } from '@mui/material'
+import { useGetUserGroupHeader } from '../../synapse-queries'
+import UserCard from './UserCard'
 
-export type UserCardSmallProps = {
-  userProfile: UserProfile
+export type UserBadgeProps = {
+  /* The ID of the user to show. If undefined, a skeleton will be shown */
+  userId?: string
+  /* If true, shows the user's avatar with their name. Default false */
+  showAvatar?: boolean
+  /* Whether a card containing additional profile information should be shown on hover. Default true. */
   showCardOnHover?: boolean
+  /* Whether to disable the profile linking to the user's profile page */
   disableLink?: boolean
+  /* Override the href of the UserBadge component. Default is the Synapse profile page */
   link?: string
+  /* Shows icons to denote profile certification and validation. Default is false. */
   showAccountLevelIcon?: boolean
+  /* Whether to open the clicked link in a new tab. Default is false */
   openLinkInNewTab?: boolean
-  withAvatar?: boolean
+  /* Defines the size of the avatar if `showAvatar` is true. Default is 'SMALL' */
   avatarSize?: AvatarSize
-  isLoadingAvatar?: boolean
-  imageURL?: string
-  className?: string
+  /* If true, shows the user's full name. Default is false */
   showFullName?: boolean
+
+  className?: string
 }
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
@@ -29,20 +37,17 @@ const TIMER_DELAY_HIDE = 500
 
 const NONBREAKING_SPACE = '\u00A0'
 
-export const UserCardSmall = (props: UserCardSmallProps) => {
+export function UserBadge(props: UserBadgeProps) {
   const {
-    userProfile,
+    userId,
     showCardOnHover = true,
     disableLink,
     showAccountLevelIcon = false,
-    openLinkInNewTab,
-    withAvatar = false,
+    openLinkInNewTab = false,
+    showAvatar = false,
     avatarSize = 'SMALL',
-    imageURL,
     className,
     showFullName = false,
-    isLoadingAvatar,
-    ...rest
   } = props
   let { link } = props
 
@@ -51,20 +56,26 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
     SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
     SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
 
+  const { data: userGroupHeader } = useGetUserGroupHeader(userId!, {
+    enabled: Boolean(userId),
+  })
+
+  // To show certification/validation status, we need the full bundle. Only fetch if these should be shown.
   const { data: userBundle } = useGetUserBundle(
-    userProfile.ownerId,
+    userId!,
     certificationOrVerification,
+    {
+      enabled: Boolean(userId) && showAccountLevelIcon,
+    },
   )
 
   const mediumUserCard = useMemo(
-    () => (
-      <UserCardMedium userProfile={userProfile} imageURL={imageURL} {...rest} />
-    ),
-    [imageURL, rest, userProfile],
+    () => <UserCard ownerId={userId} size={'MEDIUM USER CARD'} />,
+    [userId],
   )
 
   if (link == null) {
-    link = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Profile:${userProfile.ownerId}`
+    link = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Profile:${userId}`
   }
 
   const { OverlayComponent, toggleShow, toggleHide } = useOverlay(
@@ -75,14 +86,9 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
     { sx: { maxWidth: '425px' } },
   )
 
-  const avatar = withAvatar ? (
+  const avatar = showAvatar ? (
     <span className="SRC-inline-avatar">
-      <Avatar
-        userProfile={userProfile}
-        avatarSize={avatarSize}
-        imageURL={imageURL}
-        isLoadingAvatar={isLoadingAvatar}
-      />
+      <UserCard ownerId={userId} size={'AVATAR'} avatarSize={avatarSize} />
     </span>
   ) : (
     <></>
@@ -115,11 +121,14 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
   )
 
   const fullName =
-    showFullName && (userProfile.firstName || userProfile.lastName) ? (
+    showFullName &&
+    (userGroupHeader?.firstName || userGroupHeader?.lastName) ? (
       <span className={'user-fullname'}>
-        {`${userProfile.firstName ?? ''}`}
-        {userProfile.firstName && userProfile.lastName ? NONBREAKING_SPACE : ''}
-        {`${userProfile.lastName ?? ''}`}
+        {`${userGroupHeader?.firstName ?? ''}`}
+        {userGroupHeader?.firstName && userGroupHeader?.lastName
+          ? NONBREAKING_SPACE
+          : ''}
+        {`${userGroupHeader?.lastName ?? ''}`}
       </span>
     ) : null
 
@@ -135,8 +144,9 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
   return (
     <>
       {showCardOnHover && <OverlayComponent />}
+      {avatar}
       <Tag
-        className={`SRC-userCard UserCardSmall SRC-boldText ${className ?? ''}`}
+        className={`SRC-userCard UserBadge SRC-boldText ${className ?? ''}`}
         style={style}
         href={disableLink ? undefined : link}
         target={openLinkInNewTab ? '_blank' : ''}
@@ -145,10 +155,13 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
         onMouseEnter={() => toggleShow()}
         onMouseLeave={() => toggleHide()}
       >
-        {avatar}
         {fullName}
         {fullName ? `${NONBREAKING_SPACE}(` : ''}
-        {`@${userProfile.userName}`}
+        {userGroupHeader ? (
+          `@${userGroupHeader.userName}`
+        ) : (
+          <Skeleton width={'100px'} />
+        )}
         {fullName ? ')' : ''}
         {showAccountLevelIcon && accountLevelIcon}
       </Tag>

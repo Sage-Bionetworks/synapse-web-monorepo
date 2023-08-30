@@ -1,7 +1,6 @@
-import UserCard from '../UserCard/UserCard'
-import { SynapseConstants } from '../../utils'
 import React from 'react'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export type CreatedOnByUserDivProps = {
   userId: string
@@ -32,7 +31,7 @@ export const CreatedOnByUserDiv: React.FunctionComponent<
           .replace(',', '')}{' '}
         by{' '}
       </span>
-      <UserCard size={SynapseConstants.SMALL_USER_CARD} ownerId={userId} />
+      <UserBadge userId={userId} />
     </div>
   )
 }

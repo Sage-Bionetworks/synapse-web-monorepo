@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query'
+import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -25,6 +25,37 @@ export function useGetUserGroupHeader(
       }
       return responsePage.children[0]
     },
+    options,
+  )
+}
+
+export function useGetUserGroupHeaders(
+  principalIds: string[],
+  options?: UseQueryOptions<UserGroupHeader[], SynapseClientError>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  const queryKey = keyFactory.getUserGroupHeaderBatchQueryKey(principalIds)
+  const queryFn = async () => {
+    const response = await SynapseClient.getGroupHeadersBatch(
+      principalIds,
+      accessToken,
+    )
+
+    // Update the cache with each individual header
+    response.children.forEach(userGroupHeader => {
+      queryClient.setQueryData(
+        keyFactory.getUserGroupHeaderQueryKey(userGroupHeader.ownerId),
+        userGroupHeader,
+      )
+    })
+
+    return response.children
+  }
+
+  return useQuery<UserGroupHeader[], SynapseClientError>(
+    queryKey,
+    queryFn,
     options,
   )
 }

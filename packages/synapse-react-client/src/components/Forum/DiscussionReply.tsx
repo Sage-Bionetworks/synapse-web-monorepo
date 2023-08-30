@@ -1,11 +1,11 @@
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { DiscussionReplyBundle } from '@sage-bionetworks/synapse-types'
-import UserCard from '../UserCard/UserCard'
+import {
+  DiscussionReplyBundle,
+  ObjectType,
+} from '@sage-bionetworks/synapse-types'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import { ObjectType } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../IconSvg/IconSvg'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import {
@@ -19,6 +19,7 @@ import {
 import { displayToast } from '../ToastMessage/ToastMessage'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle
@@ -53,12 +54,11 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
           {message && (
             <>
               <div>
-                <UserCard
-                  withAvatar={true}
+                <UserBadge
+                  userId={reply.createdBy}
+                  showAvatar={true}
                   avatarSize="MEDIUM"
                   showCardOnHover={true}
-                  size={SMALL_USER_CARD}
-                  ownerId={reply.createdBy}
                 />
                 <div className="message-body">
                   <MarkdownSynapse

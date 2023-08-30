@@ -534,52 +534,16 @@ button.SRC-roundBorder {
   UserCard Styling
 */
 
-.SRC-userImg,
-.SRC-userImg.MuiSkeleton-circle {
-  text-transform: uppercase;
-  border-radius: 50%;
-  height: 80px;
-  width: 80px;
-  font-size: 26px;
-  min-width: 80px;
-}
-
-.UserCardSmall {
+.UserBadge {
   height: fit-content;
   width: fit-content;
   cursor: pointer;
 }
 
-.SRC-userImgSmall,
-.SRC-userImgSmall.MuiSkeleton-circle {
-  font-size: 12px;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  padding: 10px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  text-transform: capitalize;
-  color: white;
-}
-
-.SRC-userImgMedium,
-.SRC-userImgMedium.MuiSkeleton-circle {
-  font-size: 18px;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  padding: 20px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  text-transform: capitalize;
-  color: white;
-}
-
 .SRC-inline-avatar {
+  display: inline-block;
   margin-right: 5px;
+  vertical-align: middle;
 }
 
 .extraSmall {
@@ -587,18 +551,6 @@ button.SRC-roundBorder {
   height: 10px !important;
   padding: 10px !important;
   font-size: 14px;
-}
-
-div.SRC-userImg {
-  text-transform: uppercase;
-  height: 80px;
-  width: 80px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  border: 1px solid #dcdcdc;
-  text-transform: capitalize;
-  color: white;
 }
 
 .SRC-isLargeCard {

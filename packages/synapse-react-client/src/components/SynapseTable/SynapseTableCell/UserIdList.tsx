@@ -10,13 +10,13 @@ function UserIdList(props: UserIdListProps) {
   const { userIds } = props
 
   return (
-    <span>
+    <p>
       {userIds.map(userId => (
-        <Box key={userId} sx={{ mx: 2 }}>
+        <Box key={userId}>
           <UserOrTeamBadge principalId={userId} />
         </Box>
       ))}
-    </span>
+    </p>
   )
 }
 

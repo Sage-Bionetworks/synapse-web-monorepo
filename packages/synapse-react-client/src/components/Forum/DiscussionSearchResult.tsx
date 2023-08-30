@@ -1,27 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   getReply,
   getReplyMessageUrl,
-  getThreadMessageUrl,
   getThread,
+  getThreadMessageUrl,
   getUserProfileById,
 } from '../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
 import {
   DiscussionReplyBundle,
   DiscussionThreadBundle,
+  UserProfile,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { Typography } from '@mui/material'
+import { Skeleton, Typography } from '@mui/material'
 import { Col, Row } from 'react-bootstrap'
-import UserCard from '../UserCard/UserCard'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import IconSvg from '../IconSvg/IconSvg'
-import { Skeleton } from '@mui/material'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export const getMessage = async (url: string): Promise<string> => {
   const response = await fetch(url, {
@@ -113,12 +111,7 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
               </div>
               <div className="search-result-footer">
                 {replyId ? 'Reply' : 'Thread'} by{' '}
-                {
-                  <UserCard
-                    size={SMALL_USER_CARD}
-                    ownerId={replyAuthor?.ownerId}
-                  />
-                }{' '}
+                {<UserBadge userId={replyAuthor?.ownerId} />}{' '}
                 {formatDate(dayjs(replyBundle?.createdOn))}
               </div>
             </>

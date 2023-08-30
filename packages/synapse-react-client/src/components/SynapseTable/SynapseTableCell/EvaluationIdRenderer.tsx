@@ -38,7 +38,7 @@ const EvaluationIdRenderer: React.FC<EvaluationIdRendererProps> = props => {
       })
   }
 
-  return <span ref={ref}>{evaluationName}</span>
+  return <p ref={ref}>{evaluationName}</p>
 }
 
 export default EvaluationIdRenderer

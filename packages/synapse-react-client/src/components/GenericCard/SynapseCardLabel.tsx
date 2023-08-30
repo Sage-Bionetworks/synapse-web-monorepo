@@ -5,8 +5,6 @@ import {
   Row,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import UserCard from '../UserCard/UserCard'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { Link, Tooltip } from '@mui/material'
 import {
@@ -19,6 +17,7 @@ import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { isEmpty } from 'lodash-es'
 import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
+import { UserBadge } from '../UserCard/UserBadge'
 
 type SynapseCardLabelProps = {
   value: string
@@ -70,11 +69,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         {strList.map((val: string, index: number) => {
           return (
             <React.Fragment key={val}>
-              <UserCard
-                ownerId={val}
-                size={SMALL_USER_CARD}
-                className={newClassName}
-              />
+              <UserBadge userId={val} className={newClassName} />
               {/* \u00a0 is a nbsp; */}
               {index < strList.length - 1 && ',\u00a0\u00a0'}
             </React.Fragment>
@@ -84,9 +79,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     )
   }
   if (columnModelType === ColumnTypeEnum.USERID && str) {
-    return (
-      <UserCard ownerId={str} size={SMALL_USER_CARD} className={newClassName} />
-    )
+    return <UserBadge userId={str} className={newClassName} />
   }
 
   if (!labelLink) {

@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import { Skeleton, Tooltip, Typography } from '@mui/material'
 import { Map } from 'immutable'
 import { cloneDeep } from 'lodash-es'
 import dayjs from 'dayjs'
@@ -21,14 +21,12 @@ import {
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import { EntityType } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
 import { Writable } from '../../../utils/types/Writable'
-import { Typography } from '@mui/material'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons/EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
-import { UserCard } from '../../UserCard/UserCard'
 import { EntityFinderHeader } from '../EntityFinderHeader'
+import { UserBadge } from '../../UserCard/UserBadge'
 
 export enum EntityTreeNodeType {
   /** The tree component's appearance and interactions will facilitate selection. Nodes will be larger and styles will indicate primary selection */
@@ -289,12 +287,11 @@ export function Node(
             <>
               <br />
               <b>Modified By: </b>
-              <UserCard
+              <UserBadge
+                userId={node.modifiedBy.toString()}
                 showFullName
                 disableLink
                 showCardOnHover={false}
-                size="SMALL USER CARD"
-                ownerId={node.modifiedBy.toString()}
               />
             </>
           )}

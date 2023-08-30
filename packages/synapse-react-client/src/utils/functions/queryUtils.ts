@@ -3,6 +3,7 @@ import * as SynapseConstants from '../SynapseConstants'
 import SynapseClient from '../../synapse-client'
 import { LockedColumn } from '../../components/QueryContext/QueryContext'
 import {
+  ColumnTypeEnum,
   FacetColumnResult,
   Query,
   QueryBundleRequest,
@@ -37,6 +38,23 @@ export const getFieldIndex = (
       return el.name === name
     }) ?? -1
   )
+}
+
+/**
+ * Returns the indices of the selectColumns with the specified type
+ * @param columnType
+ * @param data
+ */
+export function getTypeIndices(
+  columnType: ColumnTypeEnum,
+  data?: QueryResultBundle,
+): number[] {
+  return (data?.selectColumns ?? []).reduce((prev: number[], curr, index) => {
+    if (curr.columnType === columnType) {
+      return [...prev, index]
+    }
+    return prev
+  }, [])
 }
 
 /**

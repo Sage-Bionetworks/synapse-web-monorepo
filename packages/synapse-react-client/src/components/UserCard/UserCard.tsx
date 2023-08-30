@@ -8,12 +8,11 @@ import {
 import usePreFetchResource, {
   useCreateUrlForData,
 } from '../../utils/hooks/usePreFetchResource'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
+import { AliasType, UserProfile } from '@sage-bionetworks/synapse-types'
 import { Avatar, AvatarSize } from './Avatar'
 import { MenuAction } from './UserCardContextMenu'
 import UserCardMedium from './UserCardMedium'
-import { UserCardSmall } from './UserCardSmall'
-import { AliasType } from '@sage-bionetworks/synapse-types'
+import { UserBadge } from './UserBadge'
 import { UserCardSize } from '../../utils/SynapseConstants'
 
 export type UserCardProps = {
@@ -31,7 +30,7 @@ export type UserCardProps = {
   size: UserCardSize
   /** For the small user card or avatar, shows the medium user card on mouseover */
   showCardOnHover?: boolean
-  /** For the small user card, hides the tooltip observed when hovering over the profile image. */
+  /** @deprecated For the small user card, hides the tooltip observed when hovering over the profile image. */
   hideTooltip?: boolean
   /** Specifies the dropdown menu functionality for the ellipsis on medium/large cards. If field === 'SEPERATOR' then a break will occur in the menu. If left undefined, the menu will not render to the screen. */
   menuActions?: MenuAction[]
@@ -42,19 +41,18 @@ export type UserCardProps = {
   disableLink?: boolean
   isCertified?: boolean
   isValidated?: boolean
-  /** Determines the size of the avatar when size === 'AVATAR' or (size === 'SMALL' and withAvatar is true) */
+  /** Determines the size of the avatar when size === 'AVATAR' or (size === 'SMALL' and showAvatar is true) */
   avatarSize?: AvatarSize
   /** Whether to show the avatar with the name for the small user card */
-  withAvatar?: boolean
-  /** Whether to show the full name in the small user card */
+  showAvatar?: boolean
+  /** @deprecated Whether to show the full name in the small user card */
   showFullName?: boolean
   className?: string
+  /** @deprecated show certification/validation badges for small user card */
   showAccountLevelIcon?: boolean
 }
 
-export const UserCard: React.FunctionComponent<UserCardProps> = (
-  props: UserCardProps,
-) => {
+export function UserCard(props: UserCardProps) {
   const {
     userProfile: initialProfile,
     preSignedURL: initialPreSignedURL,
@@ -123,7 +121,9 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
     case SynapseConstants.AVATAR:
       return <Avatar {...propsForChild} />
     case SynapseConstants.SMALL_USER_CARD:
-      return <UserCardSmall {...propsForChild} />
+      return (
+        <UserBadge userId={ownerId ?? userProfile.ownerId} {...propsForChild} />
+      )
     case SynapseConstants.MEDIUM_USER_CARD:
       return <UserCardMedium {...propsForChild} />
     case SynapseConstants.LARGE_USER_CARD:

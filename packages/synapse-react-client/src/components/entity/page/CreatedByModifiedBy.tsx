@@ -7,10 +7,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import {
-  BUNDLE_MASK_LAST_UPDATED_ON,
-  SMALL_USER_CARD,
-} from '../../../utils/SynapseConstants'
+import { BUNDLE_MASK_LAST_UPDATED_ON } from '../../../utils/SynapseConstants'
 import {
   useGetEntity,
   useGetQueryResultBundleWithAsyncStatus,
@@ -21,11 +18,11 @@ import {
   isDataset,
   isTable,
 } from '../../../utils/functions/EntityTypeUtils'
-import UserCard from '../../UserCard/UserCard'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import ConditionalWrapper from '../../utils/ConditionalWrapper'
 import dayjs from 'dayjs'
 import { InfoTwoTone } from '@mui/icons-material'
+import { UserBadge } from '../../UserCard/UserBadge'
 
 export type CreatedByModifiedByProps = {
   entityId: string
@@ -122,9 +119,8 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
             variant={'breadcrumb1'}
             aria-describedby={createdByTooltipId}
           >
-            {friendlyName} created by{' '}
-            <UserCard ownerId={entity?.createdBy} size={SMALL_USER_CARD} /> on{' '}
-            {formatDate(dayjs(entity?.createdOn))}
+            {friendlyName} created by <UserBadge userId={entity?.createdBy} />{' '}
+            on {formatDate(dayjs(entity?.createdOn))}
             {entity && isDataset(entity) && (
               <Tooltip
                 id={createdByTooltipId}
@@ -142,8 +138,7 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
             aria-describedby={modifiedByTooltipId}
           >
             {entity && isTable(entity) ? 'Configuration' : friendlyName} last
-            modified by{' '}
-            <UserCard ownerId={entity?.modifiedBy} size={SMALL_USER_CARD} /> on{' '}
+            modified by <UserBadge userId={entity?.modifiedBy} /> on{' '}
             {formatDate(dayjs(entity?.modifiedOn))}
             {entity && isTable(entity) && (
               <Tooltip

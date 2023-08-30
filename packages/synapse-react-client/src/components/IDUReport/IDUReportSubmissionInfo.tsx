@@ -1,12 +1,11 @@
 import React from 'react'
 import { Skeleton } from '@mui/material'
 import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import UserCard from '../UserCard/UserCard'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export type SubmissionInfoCardProps = {
   info: SubmissionInfo
@@ -23,7 +22,7 @@ export const SubmissionInfoCard: React.FunctionComponent<
           <br />
           <strong> Institution: </strong> <span>{info.institution}</span> <br />
           <strong> Data Access Request Submitted By: </strong>{' '}
-          <UserCard ownerId={info.submittedBy} size={SMALL_USER_CARD} /> <br />
+          <UserBadge userId={info.submittedBy} /> <br />
           <strong>
             {' '}
             Intended Data Use Statement &#40;accepted on{' '}
@@ -33,10 +32,7 @@ export const SubmissionInfoCard: React.FunctionComponent<
           {info.accessorChanges &&
             info.accessorChanges.map(accessorChange => (
               <div key={`${accessorChange.userId}-${accessorChange.type}`}>
-                <UserCard
-                  ownerId={accessorChange.userId}
-                  size={SMALL_USER_CARD}
-                />{' '}
+                <UserBadge userId={accessorChange.userId} />{' '}
                 {accessorChange.type}
               </div>
             ))}

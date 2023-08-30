@@ -8,8 +8,8 @@ import useGetDataAccessSubmission, {
   useUpdateDataAccessSubmissionState,
 } from '../../synapse-queries/dataaccess/useDataAccessSubmission'
 import {
-  useGetAccessRequirements,
   useGetAccessRequirementACL,
+  useGetAccessRequirements,
   useGetAccessRequirementWikiPageKey,
 } from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
@@ -21,11 +21,11 @@ import {
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import WarningDialog, { WarningDialogProps } from '../SynapseForm/WarningDialog'
-import UserCard from '../UserCard/UserCard'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 import { FileHandleLink } from '../widgets/FileHandleLink'
 import duration from 'dayjs/plugin/duration'
 import RejectDataAccessRequestModal from './RejectDataAccessRequestModal'
+import { UserBadge } from '../UserCard/UserBadge'
 
 dayjs.extend(duration)
 
@@ -271,10 +271,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           <Typography variant="dataFieldKey">Submitted By</Typography>
           <Typography variant="smallText1">
             {submission ? (
-              <UserCard
-                size={'SMALL USER CARD'}
-                ownerId={submission.submittedBy}
-              />
+              <UserBadge userId={submission.submittedBy} />
             ) : (
               <Skeleton width={100} />
             )}
@@ -290,10 +287,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           <Typography variant="dataFieldKey">Modified By</Typography>
           <Typography variant="smallText1">
             {submission ? (
-              <UserCard
-                size={'SMALL USER CARD'}
-                ownerId={submission.modifiedBy}
-              />
+              <UserBadge userId={submission.modifiedBy} />
             ) : (
               <Skeleton width={100} />
             )}
@@ -315,10 +309,9 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               <React.Fragment key={accessorChange.userId}>
                 <Typography className="Key DataAccessor" variant="smallText1">
                   <span style={{ whiteSpace: 'nowrap' }}>
-                    <UserCard
+                    <UserBadge
                       key={accessorChange.userId}
-                      size="SMALL USER CARD"
-                      ownerId={accessorChange.userId}
+                      userId={accessorChange.userId}
                     />
                   </span>
                 </Typography>
