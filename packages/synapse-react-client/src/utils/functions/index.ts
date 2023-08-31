@@ -8,7 +8,7 @@ import {
 } from './SqlFunctions'
 import { hex2ascii } from './StringUtils'
 import type { SQLOperator } from './SqlFunctions'
-import type { BackendDestinationEnum } from './getEndpoint'
+import { BackendDestinationEnum } from './getEndpoint'
 
 export {
   getNextPageOfData,

@@ -52,7 +52,7 @@ import EntityPageBreadcrumbs from './components/entity/page/breadcrumbs/EntityPa
 import EntityActionMenu from './components/entity/page/action_menu/EntityActionMenu'
 import EntityPageTitleBar from './components/entity/page/title_bar/EntityPageTitleBar'
 import { CreatedByModifiedBy } from './components/entity/page/CreatedByModifiedBy'
-import SynapseClient from './synapse-client'
+import SynapseClient, { HttpClient } from './synapse-client'
 import * as SynapseQueries from './synapse-queries'
 import { SynapseConstants } from './utils'
 import Palettes from './theme/palette/Palettes'
@@ -68,9 +68,14 @@ import { FullContextProvider } from './utils/context/FullContextProvider'
 import SubscriptionPage from './components/SubscriptionPage'
 import OrientationBanner from './components/OrientationBanner/OrientationBanner'
 import AccessRequirementList from './components/AccessRequirementList/AccessRequirementList'
+import { BackendDestinationEnum } from './utils/functions'
 
 // Also include scss in the bundle
 import './style/main.scss'
+
+const SynapseEnums = {
+  BackendDestinationEnum,
+}
 
 const SynapseContext = {
   FullContextProvider,
@@ -145,11 +150,13 @@ const SynapseComponents = {
 const SynapseReactClientVersion = require('../package.json').version
 
 export {
+  HttpClient,
   SynapseReactClientVersion,
   SynapseComponents,
   SynapseConstants,
   SynapseClient,
   SynapseContext,
+  SynapseEnums,
   SynapseQueries,
   Palettes,
 }
