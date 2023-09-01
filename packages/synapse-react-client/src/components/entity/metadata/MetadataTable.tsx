@@ -11,7 +11,7 @@ import {
   getStorageLocationName,
 } from '../../../utils/functions/FileHandleUtils'
 import useGetEntityBundle from '../../../synapse-queries/entity/useEntityBundle'
-import UserCard from '../../UserCard/UserCard'
+import { UserBadge } from '../../UserCard/UserBadge'
 
 export type MetadataTableProps = {
   readonly entityId: string
@@ -73,21 +73,15 @@ export const MetadataTable = ({
         <tr className="MetadataTable__Row">
           <td className="MetadataTable__Row__Key"> Last Modified By</td>
           <td className="MetadataTable__Row__Value">
-            <UserCard
-              size="SMALL USER CARD"
-              ownerId={entityBundle.entity?.modifiedBy}
-            />{' '}
-            at {formatDate(dayjs(entityBundle.entity?.modifiedOn))}
+            <UserBadge userId={entityBundle.entity?.modifiedBy!} /> at{' '}
+            {formatDate(dayjs(entityBundle.entity?.modifiedOn))}
           </td>
         </tr>
         <tr className="MetadataTable__Row">
           <td className="MetadataTable__Row__Key">Created By</td>
           <td className="MetadataTable__Row__Value">
-            <UserCard
-              size="SMALL USER CARD"
-              ownerId={entityBundle.entity?.createdBy}
-            />{' '}
-            at {formatDate(dayjs(entityBundle.entity?.createdOn))}
+            <UserBadge userId={entityBundle.entity?.createdBy!} /> at{' '}
+            {formatDate(dayjs(entityBundle.entity?.createdOn))}
           </td>
         </tr>
       </tbody>

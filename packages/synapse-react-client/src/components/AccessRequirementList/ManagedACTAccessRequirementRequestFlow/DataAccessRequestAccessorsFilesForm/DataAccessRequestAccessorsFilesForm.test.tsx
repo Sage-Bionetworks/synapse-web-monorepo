@@ -12,6 +12,7 @@ import {
   MOCK_USER_ID_2,
   MOCK_USER_ID_3,
   mockUserData,
+  mockUserGroupHeader,
   mockUserGroupHeader2,
   mockUserGroupHeader3,
   mockUserProfileData,
@@ -56,6 +57,25 @@ mockMarkdownSynapse.mockImplementation(
 jest
   .spyOn(SynapseClient, 'getUserProfile')
   .mockResolvedValue(mockUserProfileData)
+
+jest.spyOn(SynapseClient, 'getGroupHeadersBatch').mockImplementation(ids => {
+  const headers = []
+  if (ids.includes(mockUserGroupHeader.ownerId)) {
+    headers.push(mockUserGroupHeader)
+  }
+
+  if (ids.includes(mockUserGroupHeader2.ownerId)) {
+    headers.push(mockUserGroupHeader2)
+  }
+
+  if (ids.includes(mockUserGroupHeader3.ownerId)) {
+    headers.push(mockUserGroupHeader3)
+  }
+
+  return Promise.resolve({
+    children: headers,
+  })
+})
 
 jest.spyOn(SynapseClient, 'getUserProfileById').mockImplementation((_, id) => {
   return Promise.resolve(
@@ -140,7 +160,7 @@ const UPLOAD_IRB_LETTER_BUTTON_TEXT = 'Upload IRB Approval Letter'
 const UPLOAD_ATTACHMENT_BUTTON_TEXT = 'Upload Attachment'
 const PUBLICATIONS_FIELD_LABEL_TEXT = 'Publication(s)'
 const SUMMARY_OF_USE_FIELD_LABEL_TEXT = 'Summary of use'
-describe('RequestDataAccessStep2: basic functionality', () => {
+describe('DataAccessRequestAccessorsFilesForm tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })

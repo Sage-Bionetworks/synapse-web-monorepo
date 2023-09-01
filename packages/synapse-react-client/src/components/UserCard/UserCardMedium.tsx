@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import { Skeleton, Tooltip } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import IconCopy from '../../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../../assets/icons/ValidatedProfile'
@@ -7,7 +7,6 @@ import { SynapseConstants } from '../../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
 import { Avatar } from './Avatar'
 import IconSvg from '../IconSvg/IconSvg'
 import { ToastMessage } from '../ToastMessage/ToastMessage'
@@ -231,8 +230,8 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
           </a>
         )}
       </div>
-      {/* conditionally render menu actions, if its not defined then we don't show the button */}
-      {menuActions && (
+      {/* conditionally render menu actions, if there are no actions then we don't show the button */}
+      {menuActions && menuActions.length > 0 && (
         <React.Fragment>
           <span
             role="menu"

@@ -6,30 +6,30 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { isEntityViewOrDataset, isFileViewOrDataset } from './SynapseTableUtils'
 import { useGetFileBatch } from '../../synapse-queries/file/useFiles'
-import { useGetEntityHeaders } from '../../synapse-queries'
+import {
+  useGetEntityHeaders,
+  useGetUserGroupHeaders,
+} from '../../synapse-queries'
 import { useAtomValue } from 'jotai'
 import {
   tableQueryDataAtom,
   tableQueryEntityAtom,
 } from '../QueryWrapper/QueryWrapper'
+import { getFieldIndex, getTypeIndices } from '../../utils/functions/queryUtils'
 
 function usePrefetchFileHandleData() {
   const entity = useAtomValue(tableQueryEntityAtom)
   const data = useAtomValue(tableQueryDataAtom)
-  const fileHandleIdColumnIndices = (data?.columnModels ?? []).reduce(
-    (prev: number[], curr, index) => {
-      if (curr.columnType === ColumnTypeEnum.FILEHANDLEID) {
-        return [...prev, index]
-      }
-      return prev
-    },
-    [],
+
+  const fileHandleIdColumnIndices = getTypeIndices(
+    ColumnTypeEnum.FILEHANDLEID,
+    data,
   )
 
   let fileHandlesToPrefetch: FileHandleAssociation[] = []
 
   // Now add all IDs from the entity ID columns
-  if (entity && data && data.columnModels) {
+  if (entity && data && data.selectColumns) {
     fileHandlesToPrefetch = (
       data?.queryResult?.queryResults?.rows ?? []
     ).reduce(
@@ -37,10 +37,10 @@ function usePrefetchFileHandleData() {
         fileHandleIdColumnIndices.forEach(index => {
           const value = curr.values[index]
           if (value) {
-            const columnModel = data?.columnModels![index]
+            const selectColumn = data?.selectColumns![index]
             if (
               isFileViewOrDataset(entity) &&
-              columnModel.name === 'dataFileHandleId'
+              selectColumn.name === 'dataFileHandleId'
             ) {
               // The association is the entity
               prev.push({
@@ -84,7 +84,7 @@ function usePrefetchEntityData() {
 
   let entitiesToPrefetch: ReferenceList = []
 
-  // If this is a file view/dataset, collect all of the row IDs; they correspond to entities that we'll end up fetching
+  // If this is a file view/dataset, collect all the row IDs; they correspond to entities that we'll end up fetching
   if (entity && isEntityViewOrDataset(entity)) {
     entitiesToPrefetch = (data?.queryResult?.queryResults?.rows ?? []).reduce(
       (prev: ReferenceList, curr) => {
@@ -101,24 +101,25 @@ function usePrefetchEntityData() {
     )
   }
 
-  const entityIdColumnIndices = (data?.columnModels ?? []).reduce(
-    (prev: number[], curr, index) => {
-      if (curr.columnType === ColumnTypeEnum.ENTITYID) {
-        if (entity && isEntityViewOrDataset(entity) && curr.name === 'id') {
-          // If this is a view/dataset, we don't need to fetch the entities in the entity ID column
-          // Collecting the row IDs in the last step was sufficient
-          return prev
-        }
-        return [...prev, index]
-      }
-      return prev
-    },
-    [],
+  let entityIdColumnIndices = getTypeIndices(ColumnTypeEnum.ENTITYID, data)
+
+  if (entity && isEntityViewOrDataset(entity)) {
+    // If this is a view/dataset, we don't need to fetch the entities in the entity ID column
+    // Collecting the row IDs in the last step was sufficient
+    const idColumnIndex = getFieldIndex('id', data)
+    entityIdColumnIndices = entityIdColumnIndices.filter(
+      index => index !== idColumnIndex,
+    )
+  }
+
+  let entityIdListColumnIndices = getTypeIndices(
+    ColumnTypeEnum.ENTITYID_LIST,
+    data,
   )
 
-  // Now add all IDs from the entity ID columns
   entitiesToPrefetch = (data?.queryResult?.queryResults?.rows ?? []).reduce(
     (prev: ReferenceList, curr) => {
+      // Get all IDs from the entity ID columns
       entityIdColumnIndices.forEach(index => {
         const value = curr.values[index]
         if (
@@ -128,6 +129,24 @@ function usePrefetchEntityData() {
           prev.push({ targetId: value })
         }
       })
+      // Get all IDs from the entity ID list columns
+      entityIdListColumnIndices.forEach(index => {
+        const value = curr.values[index]
+        if (value) {
+          const ids = JSON.parse(value) as string[]
+          ids.forEach(id => {
+            if (
+              id &&
+              !prev.find(
+                e => e.targetId === id && e.targetVersionNumber == null,
+              )
+            ) {
+              prev.push({ targetId: id })
+            }
+          })
+        }
+      })
+
       return prev
     },
     entitiesToPrefetch,
@@ -135,6 +154,46 @@ function usePrefetchEntityData() {
 
   return useGetEntityHeaders(entitiesToPrefetch, {
     enabled: entitiesToPrefetch.length > 0,
+  })
+}
+
+function usePrefetchUserGroupHeaderData() {
+  const data = useAtomValue(tableQueryDataAtom)
+
+  const userIdColumnIndices = getTypeIndices(ColumnTypeEnum.USERID, data)
+
+  const userIdListColumnIndices = getTypeIndices(
+    ColumnTypeEnum.USERID_LIST,
+    data,
+  )
+
+  const principalIdsToPrefetch: string[] = (
+    data?.queryResult?.queryResults?.rows ?? []
+  ).reduce((prev: string[], curr) => {
+    // Add all IDs from the USERID columns
+    userIdColumnIndices.forEach(index => {
+      const value = curr.values[index]
+      if (value && !prev.includes(value)) {
+        prev.push(value)
+      }
+    })
+    // Add all IDs from the USERID_LIST columns
+    userIdListColumnIndices.forEach(index => {
+      const value = curr.values[index]
+      if (value) {
+        const userIds = JSON.parse(value) as number[]
+        userIds.forEach(userId => {
+          if (!prev.includes(String(userId))) {
+            prev.push(String(userId))
+          }
+        })
+      }
+    })
+    return prev
+  }, [])
+
+  return useGetUserGroupHeaders(principalIdsToPrefetch, {
+    enabled: principalIdsToPrefetch.length > 0,
   })
 }
 
@@ -147,12 +206,12 @@ function usePrefetchEntityData() {
 export function usePrefetchTableData(): { dataHasBeenPrefetched: boolean } {
   const { isLoading: isLoadingEntityData } = usePrefetchEntityData()
   const { isLoading: isLoadingFileHandleData } = usePrefetchFileHandleData()
-
-  // TODO: Add user profile prefetch
-  // User profile prefetch may not be easy/possible because the user card component fetches the UserProfile,
-  // But only UserGroupHeaders can be fetched in a batch request.
+  const { isLoading: isLoadingUserGroupData } = usePrefetchUserGroupHeaderData()
 
   return {
-    dataHasBeenPrefetched: !isLoadingEntityData && !isLoadingFileHandleData,
+    dataHasBeenPrefetched:
+      !isLoadingEntityData &&
+      !isLoadingFileHandleData &&
+      !isLoadingUserGroupData,
   }
 }

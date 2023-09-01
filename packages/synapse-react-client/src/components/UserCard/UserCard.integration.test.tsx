@@ -1,31 +1,27 @@
-import { render, screen, waitFor, act } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
-import UserCard, { UserCardProps } from '../../src/components/UserCard/UserCard'
+import UserCard, { UserCardProps } from './UserCard'
 import UserCardContextMenu, {
   MenuAction,
   UserCardContextMenuProps,
-} from '../../src/components/UserCard/UserCardContextMenu'
-import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../src/utils'
-import { PROFILE_IMAGE_PREVIEW } from '../../src/utils/APIConstants'
+} from './UserCardContextMenu'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { SynapseConstants } from '../../utils'
+import { PROFILE_IMAGE_PREVIEW } from '../../utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../src/utils/functions/getEndpoint'
+} from '../../utils/functions/getEndpoint'
 import {
   AVATAR,
   LARGE_USER_CARD,
   MEDIUM_USER_CARD,
   SEPERATOR,
-  SMALL_USER_CARD,
-} from '../../src/utils/SynapseConstants'
-import { rest, server } from '../../src/mocks/msw/server'
-import {
-  MOCK_USER_NAME,
-  mockUserProfileData,
-} from '../../src/mocks/user/mock_user_profile'
+} from '../../utils/SynapseConstants'
+import { rest, server } from '../../mocks/msw/server'
+import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 
 const { firstName } = mockUserProfileData
 
@@ -39,10 +35,6 @@ const renderUserCardContextMenu = (props: UserCardContextMenuProps) => {
   return render(<UserCardContextMenu {...props} />, {
     wrapper: createWrapper(),
   })
-}
-
-const renderSmallUserCard = (props: Omit<UserCardProps, 'size'>) => {
-  return renderUserCard({ ...props, size: SMALL_USER_CARD })
 }
 
 const renderMediumUserCard = (props: Omit<UserCardProps, 'size'>) => {
@@ -77,11 +69,6 @@ describe('UserCard tests', () => {
       await screen.findByRole('img')
     })
 
-    it('renders a small card', async () => {
-      renderSmallUserCard(props)
-      await screen.findByText('@' + MOCK_USER_NAME)
-    })
-
     it('renders a medium card', async () => {
       renderMediumUserCard(props)
       await screen.findByText(
@@ -111,7 +98,7 @@ describe('UserCard tests', () => {
       const imageElement = await screen.findByRole('img')
       // No profile pic fetched, so the avatar should have the first initial
       await screen.findByText(firstName[0])
-      expect(imageElement.classList.contains('SRC-userImgSmall')).toBe(true)
+      expect(getComputedStyle(imageElement).width).toBe('20px')
       expect(imageElement.style.backgroundImage).toBe('')
     })
 
@@ -126,7 +113,7 @@ describe('UserCard tests', () => {
       const imageElement = await screen.findByRole('img')
       // No profile pic fetched, so the avatar should have the first initial
       await screen.findByText(mockUserProfileData.userName[0])
-      expect(imageElement.classList.contains('SRC-userImgSmall')).toBe(true)
+      expect(getComputedStyle(imageElement).width).toBe('20px')
       expect(imageElement.style.backgroundImage).toBe('')
     })
 
@@ -135,7 +122,7 @@ describe('UserCard tests', () => {
       const imageElement = await screen.findByRole('img')
       // No profile pic fetched, so the avatar should have the first initial
       await screen.findByText(firstName[0])
-      expect(imageElement.classList.contains('SRC-userImg')).toBe(true)
+      expect(getComputedStyle(imageElement).width).toBe('80px')
       expect(imageElement.style.backgroundImage).toBe('')
     })
 
@@ -181,101 +168,6 @@ describe('UserCard tests', () => {
     })
   })
 
-  describe('it creates the correct UI for the small card', () => {
-    const props: Omit<UserCardProps, 'size'> = {
-      userProfile: mockUserProfileData,
-      showCardOnHover: true,
-    }
-
-    it('displays a anchor with text for a user without an img', async () => {
-      const { container } = renderSmallUserCard({ ...props })
-      expect(container.querySelector('a.UserCardSmall')).not.toBeNull()
-
-      await screen.findByText(`@${mockUserProfileData.userName}`)
-      expect(screen.queryByRole('img')).not.toBeInTheDocument()
-    })
-
-    it('shows a medium user card when mouse enters', async () => {
-      jest.useFakeTimers()
-      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
-
-      renderSmallUserCard(props)
-
-      const smallUserCard = await screen.findByText(
-        `@${mockUserProfileData.userName}`,
-      )
-
-      // There is no medium user card, so we shouldn't be able to find the full name anywhere
-      await waitFor(() => {
-        expect(
-          screen.queryByText(
-            `${mockUserProfileData.firstName} ${mockUserProfileData.lastName}`,
-          ),
-        ).not.toBeInTheDocument()
-      })
-
-      // Hover over the username
-      await user.hover(smallUserCard)
-      act(() => {
-        jest.advanceTimersByTime(1000)
-      })
-
-      // The card should appear, which would let us see first/last name
-      await screen.findByText(
-        `${mockUserProfileData.firstName} ${mockUserProfileData.lastName}`,
-      )
-
-      // Unhover and confirm that the card disappears (we will no longer see a full name anywhere)
-      await user.unhover(smallUserCard)
-      act(() => {
-        jest.advanceTimersByTime(1000)
-      })
-
-      await waitFor(() =>
-        expect(
-          screen.queryByText(
-            `${mockUserProfileData.firstName} ${mockUserProfileData.lastName}`,
-          ),
-        ).not.toBeInTheDocument(),
-      )
-    })
-
-    it('creates an anchor link when showCardOnHover is false', async () => {
-      const link = 'someweblink.domain'
-      renderSmallUserCard({
-        ...props,
-        showCardOnHover: false,
-        link,
-      })
-      const smallUserCard = await screen.findByText(
-        `@${mockUserProfileData.userName}`,
-      )
-      expect(smallUserCard.getAttribute('href')).toEqual(link)
-    })
-
-    it('just shows the username when showCardOnHover is false and disableLink is true', async () => {
-      const { container } = renderSmallUserCard({
-        ...props,
-        showCardOnHover: false,
-        disableLink: true,
-      })
-
-      await screen.findByText(`@${mockUserProfileData.userName}`)
-      expect(container.querySelector('span.UserCardSmall')).not.toBeNull()
-    })
-
-    test('showFullName', async () => {
-      renderSmallUserCard({
-        ...props,
-        showFullName: true,
-      })
-      await screen.findByText(
-        `${mockUserProfileData.firstName} ${mockUserProfileData.lastName}`,
-      )
-      await screen.findByText(`(@${mockUserProfileData.userName})`)
-    })
-  })
-
   describe('it creates the correct UI for the medium card', () => {
     const props = {
       userProfile: mockUserProfileData,
@@ -301,7 +193,14 @@ describe('UserCard tests', () => {
       })
     })
 
-    it.skip('displays the context menu on toggle', async () => {
+    it('does not show a menu with empty menuActions', async () => {
+      const menuActions: MenuAction[] = []
+      renderMediumUserCard({ ...props, menuActions })
+      await screen.findByText('ORCID', { exact: false })
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+    })
+
+    it('displays the context menu on toggle', async () => {
       const menuActions = [
         {
           field: 'text',

@@ -3,8 +3,7 @@ import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { useGetSubscribers } from '../../synapse-queries/subscription/useSubscription'
 import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 import { Link } from '@mui/material'
-import UserCard from '../UserCard/UserCard'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export type SubscribersModalProps = {
   id: string
@@ -35,12 +34,7 @@ export const SubscribersModal: React.FC<SubscribersModalProps> = ({
         content={
           subscribers &&
           subscribers.subscribers.map(user => (
-            <UserCard
-              key={user}
-              ownerId={user}
-              size={SMALL_USER_CARD}
-              showCardOnHover={true}
-            />
+            <UserBadge key={user} userId={user} showCardOnHover={true} />
           ))
         }
         onConfirm={() => handleModal(false)}

@@ -15,7 +15,6 @@ import { useGetAvailableFilesToDownloadInfinite } from '../../synapse-queries'
 import { useInView } from 'react-intersection-observer'
 import SynapseClient from '../../synapse-client'
 import dayjs from 'dayjs'
-import UserCard from '../UserCard/UserCard'
 import SortIcon from '../../assets/icons/Sort'
 import { useSynapseContext } from '../../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
@@ -29,6 +28,7 @@ import { Tooltip } from '@mui/material'
 import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 
@@ -308,10 +308,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                       <td>{item.projectName}</td>
                       <td>{addedOn}</td>
                       <td>
-                        <UserCard
-                          size={'SMALL USER CARD'}
-                          ownerId={item.createdBy}
-                        />
+                        <UserBadge userId={item.createdBy} />
                       </td>
                       <td>{createdOn}</td>
                       <td className="stickyColumn">

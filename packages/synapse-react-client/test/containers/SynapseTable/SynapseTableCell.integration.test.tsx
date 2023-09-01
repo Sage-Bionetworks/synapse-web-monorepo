@@ -40,7 +40,7 @@ import {
 } from '../../../src/mocks/user/mock_user_profile'
 import * as HasAccessModule from '../../../src/components/HasAccess/HasAccessV2'
 import * as EntityLinkModule from '../../../src/components/EntityLink'
-import * as UserCardModule from '../../../src/components/UserCard/UserCard'
+import * as UserBadgeModule from '../../../src/components/UserCard/UserBadge'
 import * as AddToDownloadListV2Module from '../../../src/components/AddToDownloadListV2'
 import { QueryWrapper } from '../../../src'
 import { getHandlersForTableQuery } from '../../../src/mocks/msw/handlers/tableQueryHandlers'
@@ -112,8 +112,8 @@ const mockEntityLink = jest
     return <span data-testid="EntityLink"></span>
   })
 
-jest.spyOn(UserCardModule, 'default').mockImplementation(() => {
-  return <div data-testid="UserCard"></div>
+jest.spyOn(UserBadgeModule, 'UserBadge').mockImplementation(() => {
+  return <div data-testid="UserBadge"></div>
 })
 
 jest.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
@@ -264,7 +264,7 @@ describe('SynapseTableCell tests', () => {
       columnValue: MOCK_USER_ID.toString(),
     })
 
-    await screen.findByTestId('UserCard')
+    await screen.findByTestId('UserBadge')
   })
 
   it('renders a markdown value', async () => {

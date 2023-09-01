@@ -210,9 +210,11 @@ function SynapseTableCell(props: SynapseTableCellProps) {
       return <UserOrTeamBadge principalId={columnValue} />
     case ColumnTypeEnum.LINK:
       return (
-        <Link target="_blank" rel="noopener noreferrer" href={columnValue}>
-          {columnValue}
-        </Link>
+        <p>
+          <Link target="_blank" rel="noopener noreferrer" href={columnValue}>
+            {columnValue}
+          </Link>
+        </p>
       )
     case ColumnTypeEnum.STRING:
     case ColumnTypeEnum.BOOLEAN:

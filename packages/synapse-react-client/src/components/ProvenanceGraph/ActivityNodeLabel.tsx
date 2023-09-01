@@ -1,14 +1,11 @@
 import dayjs from 'dayjs'
 import React, { useMemo } from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import { useGetUserProfile } from '../../synapse-queries'
 import { Activity } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
-import { Typography } from '@mui/material'
-import { UserCardSmall } from '../UserCard/UserCardSmall'
+import { Tooltip, Typography } from '@mui/material'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export const ActivityNodeLabel = (data: Activity) => {
-  const { data: userProfile } = useGetUserProfile(data.modifiedBy)
   const friendlyModifiedOn = formatDate(dayjs(data.modifiedOn))
   const { name, description } = data
   return useMemo(
@@ -32,10 +29,10 @@ export const ActivityNodeLabel = (data: Activity) => {
             </span>
           </Tooltip>
         )}
-        {userProfile && <UserCardSmall userProfile={userProfile} />}
+        <UserBadge userId={data.modifiedBy} />
         <div>{friendlyModifiedOn}</div>
       </>
     ),
-    [name, description, userProfile, friendlyModifiedOn],
+    [name, description, data.modifiedBy, friendlyModifiedOn],
   )
 }

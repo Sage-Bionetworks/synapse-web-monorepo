@@ -2,8 +2,8 @@ import React, { useRef } from 'react'
 import { getColor } from '../../utils/functions/getUserData'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 import UserCardMedium from './UserCardMedium'
-import { useOverlay } from '../../utils/hooks/useOverlay'
-import { Skeleton } from '@mui/material'
+import { useOverlay } from '../../utils/hooks'
+import { Avatar as MUIAvatar, Skeleton, SxProps } from '@mui/material'
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
@@ -16,6 +16,7 @@ export type AvatarProps = {
   imageURL?: string
   showCardOnHover?: boolean
   isLoadingAvatar?: boolean
+  className?: string
 }
 
 export const Avatar: React.FunctionComponent<AvatarProps> = ({
@@ -24,6 +25,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
   imageURL,
   showCardOnHover = false,
   isLoadingAvatar = false,
+  className,
 }) => {
   const target = useRef(null)
 
@@ -39,16 +41,28 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
     sx: { maxWidth: '425px' },
   })
 
-  let sizeClass
+  let sizeStyles: SxProps = {}
   switch (avatarSize) {
     case 'SMALL':
-      sizeClass = 'SRC-userImgSmall'
+      sizeStyles = {
+        fontSize: '12px',
+        width: '20px',
+        height: '20px',
+      }
       break
     case 'MEDIUM':
-      sizeClass = 'SRC-userImgMedium'
+      sizeStyles = {
+        fontSize: '18px',
+        width: '30px',
+        height: '30px',
+      }
       break
     case 'LARGE':
-      sizeClass = 'SRC-userImg'
+      sizeStyles = {
+        fontSize: '26px',
+        width: '80px',
+        height: '80px',
+      }
       break
     default:
       break
@@ -65,7 +79,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
     : { background: getColor(userProfile.userName) }
 
   if (isLoadingAvatar) {
-    return <Skeleton className={sizeClass} variant="circular" />
+    return <Skeleton sx={sizeStyles} variant="circular" />
   }
 
   let content: JSX.Element | string = <></>
@@ -79,7 +93,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
   return (
     <>
       {showCardOnHover && <OverlayComponent />}
-      <div
+      <MUIAvatar
         ref={target}
         role="img"
         onMouseEnter={() => toggleShow()}
@@ -90,14 +104,19 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
           }
           isShowingOverlay ? toggleHide(false) : toggleShow(false)
         }}
-        className={`${sizeClass} SRC-centerContentInline`}
-        style={{
+        className={`${className ?? ''}`}
+        sx={{
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
           cursor: cursorStyle,
+          textDecoration: 'none',
+          ...sizeStyles,
           ...conditionalStyles,
         }}
       >
         {content}
-      </div>
+      </MUIAvatar>
     </>
   )
 }

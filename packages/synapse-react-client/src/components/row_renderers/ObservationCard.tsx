@@ -1,10 +1,10 @@
 import React from 'react'
-import UserCard from '../UserCard/UserCard'
 import IconSvg from '../IconSvg/IconSvg'
 import { ShowMore } from './utils'
 import { UnitType } from 'dayjs'
 import { Skeleton } from '@mui/material'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
+import { UserBadge } from '../UserCard/UserBadge'
 
 type ObservationCardSchema = {
   submitterName: string
@@ -38,9 +38,7 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
     <div className="SRC-portalCard ObservationCard">
       <div className="ObservationCard__submitter">
         {!submitterUserId && <div>{submitterName}</div>}
-        {submitterUserId && (
-          <UserCard size={'SMALL USER CARD'} ownerId={submitterUserId} />
-        )}
+        {submitterUserId && <UserBadge userId={submitterUserId} />}
       </div>
       {time && (
         <div className="ObservationCard__time">
