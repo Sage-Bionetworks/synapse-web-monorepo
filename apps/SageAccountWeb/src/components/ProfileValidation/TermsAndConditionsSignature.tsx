@@ -1,6 +1,6 @@
 import { TextField, Typography } from '@mui/material'
-import { StyledFormControl } from '../StyledComponents'
 import React from 'react'
+import { StyledFormControl } from '../StyledComponents'
 
 export type TermsAndConditionsSignatureProps = {
   canSign: boolean

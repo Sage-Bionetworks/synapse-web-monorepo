@@ -1,7 +1,7 @@
 import React from 'react'
-import { Data } from './Resources'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import ExpandableContent from '../home_page/ExpandableContent'
+import { Data } from './Resources'
 
 export type ResourcesMobileProps = {
   data: Data

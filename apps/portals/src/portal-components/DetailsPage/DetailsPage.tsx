@@ -1,7 +1,6 @@
 import { cloneDeep, Dictionary } from 'lodash'
 import pluralize from 'pluralize'
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { BarLoader } from 'react-spinners'
 import {
   RegularExpressions,
@@ -10,7 +9,6 @@ import {
   IconSvg,
   SynapseUtilityFunctions,
 } from 'synapse-react-client'
-import type { LockedColumn } from 'synapse-react-client'
 import {
   ColumnType,
   ColumnTypeEnum,
@@ -30,6 +28,7 @@ import ToggleSynapseObjects from '../ToggleSynapseObjects'
 import DetailsPageTabs from './DetailsPageTabs'
 import { SideNavMenu } from './SideNavMenu'
 import { getComponentId, useScrollOnMount } from './utils'
+import type { LockedColumn } from 'synapse-react-client'
 
 const goToExplorePage = () => {
   /*

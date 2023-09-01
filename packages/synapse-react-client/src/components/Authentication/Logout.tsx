@@ -1,6 +1,6 @@
-import SynapseClient from '../../synapse-client'
 import React from 'react'
 import { Button } from '@mui/material'
+import SynapseClient from '../../synapse-client'
 
 export type LogoutProps = {
   callback: () => void

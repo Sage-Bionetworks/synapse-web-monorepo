@@ -1,4 +1,4 @@
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseConfig } from '../../../types/portal-config'
 import { dataSql } from '../resources'
 
 const rgbIndex = 1

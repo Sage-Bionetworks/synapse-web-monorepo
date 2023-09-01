@@ -1,7 +1,4 @@
 import { UseQueryOptions, useQuery, useQueryClient } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   BatchFileRequest,
   BatchFileResult,
@@ -9,6 +6,9 @@ import {
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useGetPresignedUrlContent(
   fileHandle: FileHandle,

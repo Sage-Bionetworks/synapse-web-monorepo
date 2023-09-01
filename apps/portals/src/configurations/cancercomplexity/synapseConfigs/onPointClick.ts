@@ -1,3 +1,4 @@
+import { Query } from '@sage-bionetworks/synapse-types'
 import {
   publicationSql,
   datasetsSql,
@@ -6,7 +7,6 @@ import {
   toolsSql,
   projectsSql,
 } from '../resources'
-import { Query } from '@sage-bionetworks/synapse-types'
 import type { ClickCallbackParams } from 'synapse-react-client'
 
 const sqlAndEntityMap: {

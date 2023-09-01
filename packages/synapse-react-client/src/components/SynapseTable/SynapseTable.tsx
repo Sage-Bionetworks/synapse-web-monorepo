@@ -1,22 +1,9 @@
 import React, { useMemo, useState } from 'react'
-import { useSynapseContext } from '../../utils'
 import {
   ColumnTypeEnum,
   QueryResultBundle,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { LabelLinkConfig } from '../CardContainerLogic'
-import loadingScreen from '../LoadingScreen/LoadingScreen'
-import ModalDownload from '../ModalDownload/ModalDownload'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
-import { useQueryContext } from '../QueryContext'
-import {
-  isEntityViewOrDataset,
-  isFileViewOrDataset,
-  isSortableColumn,
-} from './SynapseTableUtils'
-import { TablePagination } from './TablePagination'
-import ExpandableTableDataCell from './ExpandableTableDataCell'
 import { Box, Skeleton } from '@mui/material'
 import {
   ColumnDef,
@@ -26,6 +13,26 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table'
+import { useAtomValue } from 'jotai'
+import { useSynapseContext } from '../../utils'
+import { LabelLinkConfig } from '../CardContainerLogic'
+import loadingScreen from '../LoadingScreen/LoadingScreen'
+import ModalDownload from '../ModalDownload/ModalDownload'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { useQueryContext } from '../QueryContext'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+  tableQueryEntityAtom,
+} from '../QueryWrapper/QueryWrapper'
+import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
+import {
+  isEntityViewOrDataset,
+  isFileViewOrDataset,
+  isSortableColumn,
+} from './SynapseTableUtils'
+import { TablePagination } from './TablePagination'
+import ExpandableTableDataCell from './ExpandableTableDataCell'
 import { useTableSort } from './useTableSort'
 import {
   accessColumn,
@@ -37,13 +44,6 @@ import {
 } from './SynapseTableRenderers'
 import { SynapseTableContext } from './SynapseTableContext'
 import { usePrefetchTableData } from './usePrefetchTableData'
-import { useAtomValue } from 'jotai'
-import {
-  isLoadingNewBundleAtom,
-  tableQueryDataAtom,
-  tableQueryEntityAtom,
-} from '../QueryWrapper/QueryWrapper'
-import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
 
 export type SynapseTableProps = {
   /** If true and entity is a view or dataset, renders a column that represents if the caller has permission to download the entity represented by the row */

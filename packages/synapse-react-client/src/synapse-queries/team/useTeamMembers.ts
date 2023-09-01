@@ -5,14 +5,14 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from 'react-query'
-import SynapseClient, { deleteMemberFromTeam } from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   PaginatedResults,
   TeamMembershipStatus,
+  TeamMember,
 } from '@sage-bionetworks/synapse-types'
-import { TeamMember } from '@sage-bionetworks/synapse-types'
+import SynapseClient, { deleteMemberFromTeam } from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useGetTeamMembers(
   teamId: string | number,

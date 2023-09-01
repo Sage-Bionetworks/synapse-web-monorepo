@@ -1,17 +1,17 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import StandaloneLoginForm, {
-  StandaloneLoginFormProps,
-} from './StandaloneLoginForm'
-import SynapseClient from '../../synapse-client'
-import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import {
+  LoginResponse,
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../../utils/SynapseConstants'
+import StandaloneLoginForm, {
+  StandaloneLoginFormProps,
+} from './StandaloneLoginForm'
 
 const username = 'myUsername'
 const password = 'myPassword'

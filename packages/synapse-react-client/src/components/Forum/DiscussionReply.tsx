@@ -1,13 +1,14 @@
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
-import { formatDate } from '../../utils/functions/DateFormatter'
+import {
+  DiscussionReplyBundle,
+  ObjectType,
+} from '@sage-bionetworks/synapse-types'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { DiscussionReplyBundle } from '@sage-bionetworks/synapse-types'
+import { formatDate } from '../../utils/functions/DateFormatter'
 import UserCard from '../UserCard/UserCard'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import { ObjectType } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../IconSvg/IconSvg'
-import { ForumThreadEditor } from './ForumThreadEditor'
 import {
   useGetCurrentUserProfile,
   useGetEntityBundle,
@@ -19,6 +20,7 @@ import {
 import { displayToast } from '../ToastMessage/ToastMessage'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
+import { ForumThreadEditor } from './ForumThreadEditor'
 
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle

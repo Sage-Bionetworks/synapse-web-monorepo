@@ -1,6 +1,6 @@
 import { EvaluationRound } from '@sage-bionetworks/synapse-types'
-import { convertEvaluationRoundToInput, EvaluationRoundInput } from './models'
 import shortid from 'shortid'
+import { convertEvaluationRoundToInput, EvaluationRoundInput } from './models'
 
 describe('test conversion from EvaluaitonRound to EvaluationRoundInput', () => {
   let evaluationRound!: EvaluationRound

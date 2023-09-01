@@ -1,9 +1,9 @@
 import React from 'react'
+import { Tooltip } from '@mui/material'
+import pluralize from 'pluralize'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import IconSvg from '../IconSvg/IconSvg'
-import { Tooltip } from '@mui/material'
-import pluralize from 'pluralize'
 
 export type DownloadDetailsProps = {
   numFiles: number

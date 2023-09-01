@@ -1,11 +1,4 @@
 import {
-  getColumnIndicesWithType,
-  getDefaultPrimaryKey,
-  getFileColumnModelId,
-  getUniqueEntities,
-  isSortableColumn,
-} from './SynapseTableUtils'
-import {
   ColumnModel,
   ColumnTypeEnum,
   QueryResultBundle,
@@ -13,6 +6,13 @@ import {
 import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
 import mockDataset from '../../mocks/entity/mockDataset'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
+import {
+  getColumnIndicesWithType,
+  getDefaultPrimaryKey,
+  getFileColumnModelId,
+  getUniqueEntities,
+  isSortableColumn,
+} from './SynapseTableUtils'
 
 describe('Synapse Table Utilities tests', () => {
   describe('Table cell renderer utilities', () => {

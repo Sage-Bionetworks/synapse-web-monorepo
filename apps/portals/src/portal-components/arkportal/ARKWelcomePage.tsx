@@ -1,6 +1,6 @@
-import Layout from '../../portal-components/Layout'
 import React from 'react'
 import { Typography } from '@mui/material'
+import Layout from '../../portal-components/Layout'
 import logoPath from './assets/arklogomark.png'
 
 const ARKWelcomePage = () => {

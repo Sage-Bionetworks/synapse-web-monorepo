@@ -2,16 +2,17 @@ import React from 'react'
 import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor } from '@testing-library/react'
 import {
-  AccessRequestSubmissionTable,
-  AccessRequestSubmissionTableProps,
-} from './AccessRequestSubmissionTable'
-import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
-import {
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,
   SubmissionSearchResponse,
+  AccessType,
+  SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { AccessType, SubmissionState } from '@sage-bionetworks/synapse-types'
+import { upperFirst } from 'lodash-es'
+import dayjs from 'dayjs'
+import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history'
+import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
 import { rest, server } from '../../mocks/msw/server'
 import {
   BackendDestinationEnum,
@@ -23,11 +24,11 @@ import {
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
 } from '../../mocks/user/mock_user_profile'
-import { upperFirst } from 'lodash-es'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import dayjs from 'dayjs'
-import { Router } from 'react-router-dom'
-import { createMemoryHistory } from 'history'
+import {
+  AccessRequestSubmissionTable,
+  AccessRequestSubmissionTableProps,
+} from './AccessRequestSubmissionTable'
 
 function renderComponent(props: AccessRequestSubmissionTableProps) {
   const { wrapperFn } = createWrapperAndQueryClient()

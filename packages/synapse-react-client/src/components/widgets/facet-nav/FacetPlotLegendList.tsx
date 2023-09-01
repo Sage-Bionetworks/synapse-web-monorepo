@@ -1,7 +1,7 @@
 import React from 'react'
-import { FacetPlotLegendProps } from './FacetPlotLegendUtils'
-import { ElementWithTooltip } from '../ElementWithTooltip'
 import { Box, Typography } from '@mui/material'
+import { ElementWithTooltip } from '../ElementWithTooltip'
+import { FacetPlotLegendProps } from './FacetPlotLegendUtils'
 
 export function FacetPlotLegendList(props: FacetPlotLegendProps) {
   const { labels, colors = [], isExpanded } = props

@@ -1,14 +1,14 @@
 import { Alert, Button } from '@mui/material'
 import { Col, Dropdown, Form, Row } from 'react-bootstrap'
 import React, { useEffect, useState } from 'react'
+import { Evaluation } from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { ErrorBanner } from '../error/ErrorBanner'
-import { Evaluation } from '@sage-bionetworks/synapse-types'
-import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import IconSvg from '../IconSvg/IconSvg'
+import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 
 export type EvaluationEditorProps = {
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */

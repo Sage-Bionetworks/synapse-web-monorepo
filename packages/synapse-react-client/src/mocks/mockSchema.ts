@@ -5,7 +5,7 @@ import {
   ValidationResults,
 } from '@sage-bionetworks/synapse-types'
 import mockFileEntityData from './entity/mockFileEntity'
-import { JSONSchema7 } from 'json-schema'
+import type { JSONSchema7 } from 'json-schema'
 
 const mockFileEntity = mockFileEntityData.entity
 

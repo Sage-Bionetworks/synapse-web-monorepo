@@ -1,6 +1,9 @@
 import { render, screen, within } from '@testing-library/react'
 import React from 'react'
-import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
+import {
+  SubmissionState,
+  SubmissionSearchResult,
+} from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import {
@@ -9,10 +12,9 @@ import {
   mockUserBundle,
 } from '../../mocks/user/mock_user_profile'
 import { SynapseClient } from '../../index'
-import { SubmissionState } from '@sage-bionetworks/synapse-types'
-import { SubmissionSearchResult } from '@sage-bionetworks/synapse-types'
 import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
 import { mockSubmittedSubmission } from '../../mocks/dataaccess/MockSubmission'
+import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
 
 const defaultProps: SynapseNavDrawerProps = {
   initIsOpen: false,

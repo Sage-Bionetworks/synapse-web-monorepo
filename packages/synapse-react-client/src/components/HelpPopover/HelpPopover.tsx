@@ -1,7 +1,7 @@
 import React from 'react'
-import { MarkdownPopover } from '../Markdown/MarkdownPopover'
 import { ButtonProps, TooltipProps } from '@mui/material'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
+import { MarkdownPopover } from '../Markdown/MarkdownPopover'
 
 export type HelpPopoverProps = {
   markdownText: string

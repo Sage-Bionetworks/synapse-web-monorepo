@@ -1,9 +1,10 @@
 import React from 'react'
-import SendToCavaticaConfirmationDialog from './SendToCavaticaConfirmationDialog'
-import { QueryWrapper } from '../../index'
 import { act, render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { useSetAtom } from 'jotai'
+import { QueryWrapper } from '../../index'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   mockQueryBundleRequest,
   mockQueryResultBundle,
@@ -13,18 +14,17 @@ import {
   QueryVisualizationWrapper,
   useQueryVisualizationContext,
 } from '../QueryVisualizationWrapper'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { mockManagedACTAccessRequirement } from '../../mocks/mockAccessRequirements'
 import * as UseExportToCavaticaModule from '../../synapse-queries/entity/useExportToCavatica'
 import * as UseActionsRequiredForTableQueryModule from '../../synapse-queries/entity/useActionsRequiredForTableQuery'
 import { server } from '../../mocks/msw/server'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import { useSetAtom } from 'jotai'
 import { selectedRowsAtom } from '../QueryWrapper/TableRowSelectionState'
 import {
   getUseQueryLoadingMock,
   getUseQuerySuccessMock,
 } from '../../testutils/ReactQueryMockUtils'
+import SendToCavaticaConfirmationDialog from './SendToCavaticaConfirmationDialog'
 
 const onExportToCavatica = jest.fn()
 

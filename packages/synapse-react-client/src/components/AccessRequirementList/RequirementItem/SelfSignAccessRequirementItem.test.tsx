@@ -1,29 +1,29 @@
 import React from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { SynapseClient, SynapseContextType } from '../../../index'
 import {
   AccessApproval,
   AccessRequirementStatus,
   ApprovalState,
 } from '@sage-bionetworks/synapse-types'
+import userEvent from '@testing-library/user-event'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { SynapseClient, SynapseContextType } from '../../../index'
 import {
   mockAccessRequirementWikiPageKeys,
   mockSelfSignAccessRequirement,
   mockSelfSignAccessRequirementWikiPageKey,
   mockToUAccessRequirement,
 } from '../../../mocks/mockAccessRequirements'
-import userEvent from '@testing-library/user-event'
 import { MarkdownSynapseProps } from '../../Markdown'
-import SelfSignAccessRequirementItem, {
-  SelfSignAccessRequirementItemProps,
-} from './SelfSignAccessRequirementItem'
 import {
   MOCK_USER_ID,
   mockUserBundle,
   mockUserProfileData,
 } from '../../../mocks/user/mock_user_profile'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
+import SelfSignAccessRequirementItem, {
+  SelfSignAccessRequirementItemProps,
+} from './SelfSignAccessRequirementItem'
 
 jest.mock('../../Markdown/MarkdownSynapse', () => ({
   __esModule: true,

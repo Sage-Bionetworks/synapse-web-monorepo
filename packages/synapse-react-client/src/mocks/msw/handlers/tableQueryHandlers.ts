@@ -1,6 +1,12 @@
 import { cloneDeep, uniqueId } from 'lodash-es'
 import { rest } from 'msw'
 import {
+  AsynchronousJobStatus,
+  AsyncJobId,
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
+import {
   ASYNCHRONOUS_JOB_TOKEN,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
@@ -19,12 +25,6 @@ import {
   BUNDLE_MASK_QUERY_SELECT_COLUMNS,
   BUNDLE_MASK_SUM_FILES_SIZE_BYTES,
 } from '../../../utils/SynapseConstants'
-import {
-  AsynchronousJobStatus,
-  AsyncJobId,
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
 
 const BIT_TO_FIELD_MAP: Record<number, keyof QueryResultBundle> = {
   [BUNDLE_MASK_QUERY_RESULTS]: 'queryResult',

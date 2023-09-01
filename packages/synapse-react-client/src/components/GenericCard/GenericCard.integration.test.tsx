@@ -1,22 +1,15 @@
 import { render, screen, within } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { CardLink, TargetEnum } from '../CardContainerLogic'
-import GenericCard, {
-  CARD_SHORT_DESCRIPTION_CSS,
-  GenericCardSchema,
-  getLinkParams,
-  LongDescription,
-  ShortDescription,
-} from './index'
-import * as IconSvg from '../IconSvg/IconSvg'
-import * as FileHandleLinkModule from '../widgets/FileHandleLink'
-import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   ColumnTypeEnum,
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
+import { cloneDeep } from 'lodash-es'
+import * as IconSvg from '../IconSvg/IconSvg'
+import * as FileHandleLinkModule from '../widgets/FileHandleLink'
+import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { server } from '../../mocks/msw/server'
 import {
   MOCK_USER_ID,
@@ -25,7 +18,6 @@ import {
 import mockTableEntityData, {
   mockTableEntity,
 } from '../../mocks/entity/mockTableEntity'
-import { GenericCardProps } from './GenericCard'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import QueryWrapper from '../QueryWrapper'
 import {
@@ -33,8 +25,16 @@ import {
   mockQueryResultBundle,
 } from '../../mocks/mockFileViewQuery'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import { cloneDeep } from 'lodash-es'
+import { CardLink, TargetEnum } from '../CardContainerLogic'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
+import { GenericCardProps } from './GenericCard'
+import GenericCard, {
+  CARD_SHORT_DESCRIPTION_CSS,
+  GenericCardSchema,
+  getLinkParams,
+  LongDescription,
+  ShortDescription,
+} from './index'
 
 const renderComponent = (
   props: GenericCardProps,

@@ -1,4 +1,5 @@
 import React from 'react'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../utils'
 import {
   useAddQueryToDownloadList,
@@ -7,7 +8,6 @@ import {
 import { displayToast } from '../ToastMessage'
 import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
-import { EntityType } from '@sage-bionetworks/synapse-types'
 
 export type FolderDownloadConfirmationProps = {
   folderId: string

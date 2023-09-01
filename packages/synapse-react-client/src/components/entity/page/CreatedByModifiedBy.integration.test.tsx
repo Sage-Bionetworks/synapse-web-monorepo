@@ -1,11 +1,7 @@
 import React from 'react'
-import { formatDate } from '../../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { render, screen } from '@testing-library/react'
-import {
-  CreatedByModifiedBy,
-  CreatedByModifiedByProps,
-} from './CreatedByModifiedBy'
+import { formatDate } from '../../../utils/functions/DateFormatter'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { server } from '../../../mocks/msw/server'
 import mockFileEntity from '../../../mocks/entity/mockFileEntity'
@@ -16,6 +12,10 @@ import {
 import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { mockDatasetEntity } from '../../../mocks/entity/mockDataset'
+import {
+  CreatedByModifiedBy,
+  CreatedByModifiedByProps,
+} from './CreatedByModifiedBy'
 
 function renderComponent(props: CreatedByModifiedByProps) {
   return render(<CreatedByModifiedBy {...props} />, {

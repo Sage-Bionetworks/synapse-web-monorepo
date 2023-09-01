@@ -1,7 +1,7 @@
 import React from 'react'
 import { AddAlertTwoTone } from '@mui/icons-material'
 import { Link } from '@mui/material'
-import { HomePageHeaderConfig } from 'types/portal-config'
+import { HomePageHeaderConfig } from '../../types/portal-config'
 
 const homePageHeader: HomePageHeaderConfig = {
   summary: (

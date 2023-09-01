@@ -1,17 +1,17 @@
 import {
+  FileEntity,
+  Entity,
+  BatchFileResult,
+  FileHandle,
+  BatchFileRequest,
+  FileHandleAssociation,
+  FileHandleAssociateType,
+} from '@sage-bionetworks/synapse-types'
+import {
   getEntity,
   getFileHandleContent,
   getFiles,
 } from '../../synapse-client/SynapseClient'
-import { FileEntity } from '@sage-bionetworks/synapse-types'
-import { Entity } from '@sage-bionetworks/synapse-types'
-import { BatchFileResult } from '@sage-bionetworks/synapse-types'
-import { FileHandle } from '@sage-bionetworks/synapse-types'
-import { BatchFileRequest } from '@sage-bionetworks/synapse-types'
-import {
-  FileHandleAssociation,
-  FileHandleAssociateType,
-} from '@sage-bionetworks/synapse-types'
 
 const ESTIMATED_CORS_TIME_MS: number = 200
 const ESTIMATED_DOWNLOAD_SPEED_EXPIRE_TIME_KEY: string =

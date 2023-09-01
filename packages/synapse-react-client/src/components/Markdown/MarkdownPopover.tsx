@@ -5,10 +5,10 @@ import {
   TooltipProps,
   tooltipClasses,
   ButtonProps,
+  Typography,
 } from '@mui/material'
-import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
-import { Typography } from '@mui/material'
 import LightTooltip from '../styled/LightTooltip'
+import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 
 export type MarkdownPopoverProps = {
   children: JSX.Element

@@ -1,5 +1,12 @@
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
+import {
+  SubscriptionObjectType,
+  ALL_ENTITY_BUNDLE_FIELDS,
+  ObjectType,
+} from '@sage-bionetworks/synapse-types'
+import { FormControl } from 'react-bootstrap'
+import { Button, Typography } from '@mui/material'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetRepliesInfinite } from '../../synapse-queries/forum/useReply'
 import {
@@ -11,27 +18,20 @@ import {
   SMALL_USER_CARD,
   SRC_SIGN_IN_CLASS,
 } from '../../utils/SynapseConstants'
-import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 import UserCard from '../UserCard/UserCard'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import { DiscussionReply } from './DiscussionReply'
-import { FormControl } from 'react-bootstrap'
-import { Button, Typography } from '@mui/material'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import {
-  ALL_ENTITY_BUNDLE_FIELDS,
-  ObjectType,
-} from '@sage-bionetworks/synapse-types'
 import { useSubscription } from '../../synapse-queries/subscription/useSubscription'
 import {
   useGetCurrentUserProfile,
   useGetEntityBundle,
 } from '../../synapse-queries'
-import { ForumThreadEditor } from './ForumThreadEditor'
 import WarningDialog from '../SynapseForm/WarningDialog'
-import { SubscribersModal } from './SubscribersModal'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
+import { ForumThreadEditor } from './ForumThreadEditor'
+import { SubscribersModal } from './SubscribersModal'
+import { DiscussionReply } from './DiscussionReply'
 
 export type DiscussionThreadProps = {
   threadId: string

@@ -14,7 +14,7 @@ import { Button, Tooltip } from '@mui/material'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { displayToast } from '../../ToastMessage'
 import AddToList from '../../../assets/icons/AddToList'
-import { JSONSchema7Definition } from 'json-schema'
+import type { JSONSchema7Definition } from 'json-schema'
 
 /**
  * Derived from the base ObjectFieldTemplate with annotations-editor-specific changes

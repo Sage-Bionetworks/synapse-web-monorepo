@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 
-import { StepperDialog, StepperDialogProps } from './index'
 import Button from '@mui/material/Button'
 import { Step } from './StepperDialog'
+import { StepperDialog, StepperDialogProps } from './index'
 
 const steps: Record<string, Step & { content: React.ReactNode }> = {
   STEP_1: {

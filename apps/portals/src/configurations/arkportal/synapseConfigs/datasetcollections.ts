@@ -1,7 +1,7 @@
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseConfig } from '../../../types/portal-config'
 import { datasetCollectionsSql } from '../resources'
+import type { CardConfiguration } from 'synapse-react-client'
 
 const datasetCollectionsCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,

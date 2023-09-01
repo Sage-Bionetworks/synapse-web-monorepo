@@ -1,20 +1,20 @@
 import React from 'react'
-import { server } from '../../mocks/msw/server'
 import { render, screen } from '@testing-library/react'
 import { AccessApprovalSearchResult } from '@sage-bionetworks/synapse-types'
-import {
-  AccessApprovalsTable,
-  AccessApprovalsTableProps,
-} from './AccessApprovalsTable'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import {
   mockAccessApprovalSearchResult2,
   mockApprovalSearchResponse,
 } from '../../mocks/MockAccessApprovals'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import * as UseAccessApprovalsModule from '../../synapse-queries/dataaccess/useAccessApprovals'
-import userEvent from '@testing-library/user-event'
+import { server } from '../../mocks/msw/server'
+import {
+  AccessApprovalsTable,
+  AccessApprovalsTableProps,
+} from './AccessApprovalsTable'
 
 const mockSearchAccessApprovalsInfinite = jest.spyOn(
   UseAccessApprovalsModule,

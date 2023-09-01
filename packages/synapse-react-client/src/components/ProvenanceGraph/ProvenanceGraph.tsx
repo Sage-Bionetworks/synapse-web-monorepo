@@ -10,27 +10,28 @@ import ReactFlow, {
   useReactFlow,
 } from 'reactflow'
 import {
-  getLayoutedElements,
-  isArrayEqual,
-  NodeType,
-  ProvenanceNodeData,
-} from './ProvenanceUtils'
-import {
   Activity,
   Used,
   UsedEntity,
   UsedURL,
   USED_ENTITY_CONCRETE_TYPE_VALUE,
+  EntityHeader,
+  ReferenceList,
 } from '@sage-bionetworks/synapse-types'
-import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
+import { CircularProgress } from '@mui/material'
+import { useErrorHandler } from 'react-error-boundary'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import SynapseClient from '../../synapse-client'
-import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
 import { useGetEntityHeaders } from '../../synapse-queries'
-import { CircularProgress } from '@mui/material'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
-import { useErrorHandler } from 'react-error-boundary'
+import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
+import {
+  getLayoutedElements,
+  isArrayEqual,
+  NodeType,
+  ProvenanceNodeData,
+} from './ProvenanceUtils'
 import {
   addActivityNode,
   addEntityNode,

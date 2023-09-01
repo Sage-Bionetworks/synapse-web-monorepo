@@ -1,7 +1,7 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { DropdownMenu } from './DropdownMenu'
 import IconSvg from '../IconSvg/IconSvg'
+import { DropdownMenu } from './DropdownMenu'
 
 const meta = {
   title: 'UI/DropdownMenu',

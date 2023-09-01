@@ -1,7 +1,6 @@
 import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
 import { Table } from 'react-bootstrap'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchSort,
@@ -9,13 +8,14 @@ import {
   Direction,
 } from '@sage-bionetworks/synapse-types'
 import { Button, Typography } from '@mui/material'
+import { upperFirst } from 'lodash-es'
+import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import UserCard from '../UserCard/UserCard'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useSearchAccessApprovalsInfinite } from '../../synapse-queries/dataaccess/useAccessApprovals'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import SortIcon from '../../assets/icons/Sort'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import { upperFirst } from 'lodash-es'
 
 export type AccessApprovalsTableProps = {
   accessorId: string

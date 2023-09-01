@@ -10,10 +10,10 @@ import {
   ProjectHeader,
   RestrictionLevel,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID } from '../user/mock_user_profile'
-import { MockEntityData } from './MockEntityData'
-import { generateProject } from '../faker/generateFakeEntity'
 import { times } from 'lodash-es'
+import { MOCK_USER_ID } from '../user/mock_user_profile'
+import { generateProject } from '../faker/generateFakeEntity'
+import { MockEntityData } from './MockEntityData'
 
 export const mockProjectIds = times(20).map(i => i + 10000)
 

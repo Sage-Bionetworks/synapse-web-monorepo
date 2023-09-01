@@ -1,8 +1,8 @@
 import React from 'react'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
-import { useGetSubscribers } from '../../synapse-queries/subscription/useSubscription'
 import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 import { Link } from '@mui/material'
+import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
+import { useGetSubscribers } from '../../synapse-queries/subscription/useSubscription'
 import UserCard from '../UserCard/UserCard'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 

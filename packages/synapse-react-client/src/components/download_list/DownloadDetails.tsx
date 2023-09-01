@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import dayjs from 'dayjs'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { SkeletonInlineBlock } from '../Skeleton/SkeletonInlineBlock'
 import {
   InsertDriveFileTwoTone,
   LayersTwoTone,
@@ -13,6 +8,11 @@ import {
 import { Tooltip } from '@mui/material'
 import duration from 'dayjs/plugin/duration'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
+import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SkeletonInlineBlock } from '../Skeleton/SkeletonInlineBlock'
 
 dayjs.extend(duration)
 dayjs.extend(relativeTime)

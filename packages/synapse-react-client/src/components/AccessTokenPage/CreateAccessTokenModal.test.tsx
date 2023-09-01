@@ -1,16 +1,16 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import {
-  CreateAccessTokenModal,
-  CreateAccessTokenModalProps,
-} from './CreateAccessTokenModal'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import * as SynapseContext from '../../utils/context/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import { CLOSE_BUTTON_LABEL } from '../DialogBase'
 import { CANCEL_BUTTON_TEXT } from '../ConfirmationDialog/ConfirmationDialog'
 import SynapseClient from '../../synapse-client'
+import {
+  CreateAccessTokenModal,
+  CreateAccessTokenModalProps,
+} from './CreateAccessTokenModal'
 
 const EXAMPLE_PAT = 'abcdefghiklmnop'
 jest.mock('../../synapse-client', () => ({

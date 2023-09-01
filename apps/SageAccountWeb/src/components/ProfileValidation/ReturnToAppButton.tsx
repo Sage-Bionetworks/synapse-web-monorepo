@@ -11,9 +11,9 @@ import {
   useTheme,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { useAppContext } from '../../AppContext'
 import React from 'react'
 import { NavLink } from 'react-router-dom'
+import { useAppContext } from '../../AppContext'
 
 export const ReturnToAppButton: React.FC<{ children?: React.ReactNode }> = ({
   children,
@@ -52,9 +52,9 @@ export const ReturnToAppButton: React.FC<{ children?: React.ReactNode }> = ({
         </DialogTitle>
         <DialogContent dividers>
           <Typography variant="body1" paragraph>
-            If you cancel verification, you'll still be able to use portions of
-            the application which are available to registered users, but your
-            access will be restricted.
+            If you cancel verification, you&apos;ll still be able to use
+            portions of the application which are available to registered users,
+            but your access will be restricted.
           </Typography>
           <Typography variant="body1">
             To resume your verification in the future, access the{' '}

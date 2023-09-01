@@ -10,6 +10,12 @@ import {
 import { isEmpty } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
+import {
+  ALL_ENTITY_BUNDLE_FIELDS,
+  EntityBundle,
+  EntityType,
+} from '@sage-bionetworks/synapse-types'
+import { Tooltip } from '@mui/material'
 import { useDeleteEntity } from '../../synapse-queries/entity/useEntity'
 import {
   useGetSchemaBinding,
@@ -22,14 +28,8 @@ import {
   PUBLIC_PRINCIPAL_ID,
 } from '../../utils/SynapseConstants'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import {
-  ALL_ENTITY_BUNDLE_FIELDS,
-  EntityBundle,
-  EntityType,
-} from '@sage-bionetworks/synapse-types'
 import { EntityModal } from '../entity/metadata/EntityModal'
 import WarningDialog from '../SynapseForm/WarningDialog'
-import { Tooltip } from '@mui/material'
 
 function isPublic(bundle: EntityBundle): boolean {
   return bundle.benefactorAcl.resourceAccess.some(ra => {

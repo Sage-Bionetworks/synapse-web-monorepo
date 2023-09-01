@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import {
+  Evaluation,
+  UserEvaluationPermissions,
+} from '@sage-bionetworks/synapse-types'
+import { Button } from '@mui/material'
+import { Card, Col, Dropdown, Row } from 'react-bootstrap'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import {
   deleteEvaluation,
   getEvaluationPermissions,
 } from '../../synapse-client/SynapseClient'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { Evaluation } from '@sage-bionetworks/synapse-types'
-import { Button } from '@mui/material'
-import { Card, Col, Dropdown, Row } from 'react-bootstrap'
 import { ErrorBanner } from '../error/ErrorBanner'
-import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
-import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
 import { RequiredProperties } from '../../utils'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import IconSvg from '../IconSvg/IconSvg'
+import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 
 export type ExistingEvaluation = RequiredProperties<
   Evaluation,

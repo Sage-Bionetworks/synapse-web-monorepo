@@ -1,7 +1,7 @@
 import React from 'react'
-import { GoalsDataProps } from './Goals'
-import QueryCount from '../QueryCount/QueryCount'
 import { Button } from '@mui/material'
+import QueryCount from '../QueryCount/QueryCount'
+import { GoalsDataProps } from './Goals'
 
 export default function GoalsDesktop({
   asset,

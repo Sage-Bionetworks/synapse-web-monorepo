@@ -1,10 +1,10 @@
 import React from 'react'
 import { Skeleton } from '@mui/material'
 import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import UserCard from '../UserCard/UserCard'
 import { formatDate } from '../../utils/functions/DateFormatter'
-import dayjs from 'dayjs'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 

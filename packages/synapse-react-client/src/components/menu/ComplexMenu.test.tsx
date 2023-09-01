@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { ComplexMenu, ComplexMenuProps } from './ComplexMenu'
 
 const DROPDOWN_BUTTON_TEXT = 'Open Dropdown Menu'

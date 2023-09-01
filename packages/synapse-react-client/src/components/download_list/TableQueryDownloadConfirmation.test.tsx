@@ -1,7 +1,6 @@
 import React from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import * as ToastMessage from '../ToastMessage/ToastMessage'
 import {
   AddToDownloadListRequest,
   AddToDownloadListResponse,
@@ -9,8 +8,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
-import { TableQueryDownloadConfirmation } from './index'
+import * as ToastMessage from '../ToastMessage/ToastMessage'
 import { SynapseClientError } from '../../index'
 import {
   QueryVisualizationContextConsumer,
@@ -29,6 +27,8 @@ import {
 import QueryWrapper from '../QueryWrapper'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
+import { TableQueryDownloadConfirmation } from './index'
 
 jest.mock('../../../src/synapse-queries', () => {
   const actual = jest.requireActual('../../../src/synapse-queries')

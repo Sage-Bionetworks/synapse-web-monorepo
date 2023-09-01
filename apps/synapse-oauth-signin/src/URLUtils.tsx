@@ -1,5 +1,5 @@
-import { OAuthClientError } from 'OAuthClientError'
 import { SynapseClientError } from 'synapse-react-client'
+import { OAuthClientError } from 'OAuthClientError'
 
 export const handleErrorRedirect = (
   error: Error | OAuthClientError | SynapseClientError,

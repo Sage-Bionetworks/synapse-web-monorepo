@@ -1,21 +1,21 @@
 import React from 'react'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import RejectDataAccessRequestModal, {
-  RejectDataAccessRequestModalProps,
-} from './RejectDataAccessRequestModal'
+import userEvent from '@testing-library/user-event'
+import { SubmissionState } from '@sage-bionetworks/synapse-types'
+import failOnConsoleError from 'jest-fail-on-console'
 import { rest, server } from '../../mocks/msw/server'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '../../mocks/query/mockRejectionReasonsTableQueryResultBundle'
-import userEvent from '@testing-library/user-event'
 import { mockSubmittedSubmission } from '../../mocks/dataaccess/MockSubmission'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import { DATA_ACCESS_SUBMISSION_BY_ID } from '../../utils/APIConstants'
-import { SubmissionState } from '@sage-bionetworks/synapse-types'
-import failOnConsoleError from 'jest-fail-on-console'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import RejectDataAccessRequestModal, {
+  RejectDataAccessRequestModalProps,
+} from './RejectDataAccessRequestModal'
 
 const props: RejectDataAccessRequestModalProps = {
   submissionId: mockSubmittedSubmission.id,

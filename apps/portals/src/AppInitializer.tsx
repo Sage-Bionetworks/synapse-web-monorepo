@@ -1,6 +1,3 @@
-import RedirectDialog, {
-  redirectInstructionsMap,
-} from './portal-components/RedirectDialog'
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import {
@@ -8,6 +5,9 @@ import {
   SynapseClient,
   SynapseConstants,
 } from 'synapse-react-client'
+import RedirectDialog, {
+  redirectInstructionsMap,
+} from './portal-components/RedirectDialog'
 import useAnalytics from './useAnalytics'
 import { useLogInDialogContext } from './LogInDialogContext'
 

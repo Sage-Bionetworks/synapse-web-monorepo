@@ -1,8 +1,8 @@
 import React, { FunctionComponent /*, useState , useEffect */ } from 'react' // importing FunctionComponent
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
+import { cloneDeep, noop, uniq } from 'lodash-es'
 import { GraphItem, PlotStyle, Dictionary } from './types'
-import _ from 'lodash-es'
 const Plot = createPlotlyComponent(Plotly)
 
 export type DotPlotProps = {
@@ -31,7 +31,7 @@ function getLayout(
   dotPlotLayoutConfig: Partial<Plotly.Layout>,
   layoutOptions?: LayoutOptions,
 ): Partial<Plotly.Layout> {
-  const result = _.cloneDeep(dotPlotLayoutConfig)
+  const result = cloneDeep(dotPlotLayoutConfig)
   if (!layoutOptions) {
     return result
   }
@@ -99,7 +99,7 @@ function getPlotDataPoints(
   markerSymbols?: Dictionary,
 ): any[] {
   const isFakeData = ySorted === undefined
-  const groups = _.uniq(graphItems.map(item => item.group))
+  const groups = uniq(graphItems.map(item => item.group))
   const data: any = []
   const defaultSymbols = [
     'y-down',
@@ -173,7 +173,7 @@ const DotPlot: FunctionComponent<DotPlotProps> = ({
       style={style}
       data={getPlotDataPoints(plotData, plotStyle, pointsTypes, markerSymbols)}
       config={optionsConfig}
-      onClick={e => (onClick ? onClick(e) : _.noop)}
+      onClick={e => (onClick ? onClick(e) : noop)}
     />
   )
 }

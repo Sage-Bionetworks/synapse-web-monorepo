@@ -1,8 +1,8 @@
 import { UseQueryOptions, useQuery } from 'react-query'
+import { Forum } from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils'
-import { Forum } from '@sage-bionetworks/synapse-types'
 
 export function useGetEntityForum(
   entityId: string,

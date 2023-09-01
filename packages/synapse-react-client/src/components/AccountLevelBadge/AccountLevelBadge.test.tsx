@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
+import { UserBundle } from '@sage-bionetworks/synapse-types'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import SynapseClient from '../../synapse-client'
 import {
   AccountLevelBadge,
   accountLevelCertifiedLabel,
   accountLevelRegisteredLabel,
   accountLevelVerifiedLabel,
 } from './AccountLevelBadge'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { UserBundle } from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
 
 jest.mock('../../synapse-client', () => ({
   getUserBundle: jest.fn(),

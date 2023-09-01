@@ -1,12 +1,12 @@
 import React from 'react'
-import { DATASET } from '../../utils/SynapseConstants'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import * as Utils from './utils'
-import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
 import { SelectColumn, ColumnModel } from '@sage-bionetworks/synapse-types'
 import { Button } from '@mui/material'
+import { GenericCardSchema, getValueOrMultiValue } from '../GenericCard'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
+import { DATASET } from '../../utils/SynapseConstants'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
+import * as Utils from './utils'
 
 export type DatasetProps = {
   data?: any

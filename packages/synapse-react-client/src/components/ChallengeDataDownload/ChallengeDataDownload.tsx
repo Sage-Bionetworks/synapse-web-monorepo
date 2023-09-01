@@ -1,15 +1,15 @@
 import React, { useCallback } from 'react'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 import { EntityType } from '@sage-bionetworks/synapse-types'
+import { Box, Button } from '@mui/material'
 import { EntityDetailsListSharedProps } from '../EntityFinder/details/EntityDetailsList'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
 import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
 import { useEntitySelection } from '../EntityFinder/useEntitySelection'
-import { ChallengeEntityChildrenDetails } from './ChallengeEntityChildrenDetails'
-import { Box, Button } from '@mui/material'
 import { useAddFileBatchToDownloadList } from '../../synapse-queries'
 import { displayToast } from '../ToastMessage'
 import { useSynapseContext } from '../../utils'
+import { ChallengeEntityChildrenDetails } from './ChallengeEntityChildrenDetails'
 
 export type ChallengeDataDownloadProps = {
   parentContainerId: string

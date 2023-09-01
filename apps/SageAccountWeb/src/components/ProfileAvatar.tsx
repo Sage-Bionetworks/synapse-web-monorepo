@@ -9,13 +9,13 @@ import {
   useSynapseContext,
 } from 'synapse-react-client'
 import Cropper from 'react-easy-crop'
-import { Area } from 'react-easy-crop/types'
 import Person from '@mui/icons-material/Person'
 import {
   FileUploadComplete,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
 import { getCroppedImg } from './CropImage'
+import type { Area } from 'react-easy-crop/types'
 
 export type ProfileAvatarProps = {
   userProfile?: UserProfile
@@ -189,7 +189,13 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
             </Box>
           </>
         }
-        onConfirm={!imageLoading ? onCrop : () => ''}
+        onConfirm={
+          !imageLoading
+            ? () => {
+                onCrop()
+              }
+            : () => ''
+        }
         confirmButtonDisabled={imageLoading}
         confirmButtonText={imageLoading ? 'Loading...' : 'Save'}
       />

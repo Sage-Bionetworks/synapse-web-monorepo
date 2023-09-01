@@ -1,7 +1,8 @@
 import React from 'react'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { chunk } from 'lodash-es'
 import { SynapseConstants } from '../../utils'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import {
   QueryVisualizationContextType,
   QueryVisualizationWrapper,
@@ -9,7 +10,6 @@ import {
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
-import { chunk } from 'lodash-es'
 import { FacetPlotsCardGridContainer } from './FacetPlotsCardGrid'
 import { CARDS_PER_ROW } from './FeaturedDataTabsUtils'
 

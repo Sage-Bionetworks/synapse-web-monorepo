@@ -6,9 +6,10 @@ import {
   screen,
   within,
 } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseClient, SynapseContextType } from '../../index'
-import ChallengeTeamWizard from './index'
+import userEvent from '@testing-library/user-event'
+import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history'
+import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import {
   MOCK_CHALLENGE_PROJECT_ID,
   mockChallenge,
@@ -17,15 +18,14 @@ import {
   mockChallengeTeamResults,
   mockTeamList,
 } from '../../mocks/mockChallenge'
-import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
-import { ChallengeTeamWizardProps } from './ChallengeTeamWizard'
-import userEvent from '@testing-library/user-event'
-import { Router } from 'react-router-dom'
-import { createMemoryHistory } from 'history'
+import { SynapseClient, SynapseContextType } from '../../index'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
+import { ChallengeTeamWizardProps } from './ChallengeTeamWizard'
+import ChallengeTeamWizard from './index'
 
 const challengeTeamResults = mockChallengeTeamResults()
 const challengeTeams = mockTeamList(challengeTeamResults.results)

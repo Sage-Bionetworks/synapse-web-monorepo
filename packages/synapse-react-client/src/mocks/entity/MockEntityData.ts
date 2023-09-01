@@ -5,8 +5,8 @@ import {
   EntityHeader,
   ProjectHeader,
   EntityPath,
+  VersionInfo,
 } from '@sage-bionetworks/synapse-types'
-import { VersionInfo } from '@sage-bionetworks/synapse-types'
 
 /**
  * Defines the standard set of data that a mock entity should have.

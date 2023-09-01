@@ -3,7 +3,6 @@ import {
   ManagedACTAccessRequirement,
   ResearchProject,
 } from '@sage-bionetworks/synapse-types'
-import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import {
   Alert,
   Box,
@@ -15,6 +14,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
+import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import IconSvg from '../../../IconSvg/IconSvg'
 import {
   useGetResearchProject,

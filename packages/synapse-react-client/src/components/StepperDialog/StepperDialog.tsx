@@ -1,9 +1,8 @@
-import { Alert, Button, Box } from '@mui/material'
+import { Alert, Button, Box, DialogContentProps } from '@mui/material'
 import React from 'react'
 import { DialogBase } from '../DialogBase'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import SpinnerButton from '../SpinnerButton/SpinnerButton'
-import { DialogContentProps } from '@mui/material'
 
 export type Step = {
   id: string

@@ -1,4 +1,4 @@
-import { HomePageHeaderConfig } from 'types/portal-config'
+import { HomePageHeaderConfig } from '../../types/portal-config'
 
 const homePageHeader: HomePageHeaderConfig = {
   title: '',

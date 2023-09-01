@@ -1,14 +1,4 @@
 import { renderHook, waitFor } from '@testing-library/react'
-import SynapseClient from '../../synapse-client'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import useGetQueryResultBundle, {
-  useGetQueryResultBundleWithAsyncStatus,
-} from './useGetQueryResultBundle'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import {
-  BUNDLE_MASK_QUERY_COUNT,
-  BUNDLE_MASK_QUERY_RESULTS,
-} from '../../utils/SynapseConstants'
 import {
   AsynchJobState,
   AsynchronousJobStatus,
@@ -16,8 +6,18 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import {
+  BUNDLE_MASK_QUERY_COUNT,
+  BUNDLE_MASK_QUERY_RESULTS,
+} from '../../utils/SynapseConstants'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
+import useGetQueryResultBundle, {
+  useGetQueryResultBundleWithAsyncStatus,
+} from './useGetQueryResultBundle'
 
 let request: QueryBundleRequest
 

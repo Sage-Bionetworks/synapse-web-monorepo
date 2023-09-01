@@ -7,6 +7,12 @@ import BaseTable, {
 import { isEqual, upperFirst } from 'lodash-es'
 import pluralize from 'pluralize'
 import React, { useEffect, useMemo, useState } from 'react'
+import {
+  EntityRef,
+  EntityRefCollectionView,
+  EntityType,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
 import { SkeletonTable } from '../../Skeleton/SkeletonTable'
 import {
   convertToEntityType,
@@ -20,12 +26,6 @@ import {
   useUpdateEntity,
 } from '../../../synapse-queries/entity/useEntity'
 import { useSet } from '../../../utils/hooks/useSet'
-import {
-  EntityRef,
-  EntityRefCollectionView,
-  EntityType,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
 import { RequiredProperties } from '../../../utils/types/RequiredProperties'
 import {
   BadgeIconsRenderer,

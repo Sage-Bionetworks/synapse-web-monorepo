@@ -1,23 +1,23 @@
 import React, { useState } from 'react'
 import {
+  FacetColumnRequest,
+  QueryBundleRequest,
+  QueryResultBundle,
+  ColumnTypeEnum,
+} from '@sage-bionetworks/synapse-types'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
+import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/SqlFunctions'
 import { SynapseConstants } from '../../utils'
 import SynapseClient from '../../synapse-client'
-import {
-  FacetColumnRequest,
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
-import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import UserCardList from './UserCardList'
 import { LARGE_USER_CARD, UserCardSize } from '../../utils/SynapseConstants'
 import LargeButton from '../../components/styled/LargeButton'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { LoadingUserCardMedium } from '../UserCard/UserCardMedium'
-import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
+import UserCardList from './UserCardList'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 const DEFAULT_DISPLAY_COUNT = 3

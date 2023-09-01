@@ -1,10 +1,10 @@
 import React from 'react'
-import UserCard from '../UserCard/UserCard'
-import IconSvg from '../IconSvg/IconSvg'
-import { ShowMore } from './utils'
 import { UnitType } from 'dayjs'
 import { Skeleton } from '@mui/material'
+import UserCard from '../UserCard/UserCard'
+import IconSvg from '../IconSvg/IconSvg'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
+import { ShowMore } from './utils'
 
 type ObservationCardSchema = {
   submitterName: string

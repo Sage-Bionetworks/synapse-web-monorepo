@@ -1,6 +1,6 @@
 import React from 'react'
-import UserOrTeamBadge from '../../UserOrTeamBadge'
 import { Box } from '@mui/material'
+import UserOrTeamBadge from '../../UserOrTeamBadge'
 
 export type UserIdListProps = {
   userIds: string[]

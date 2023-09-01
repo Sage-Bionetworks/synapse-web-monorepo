@@ -1,8 +1,14 @@
 import Form from '@rjsf/mui'
-import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Alert, Box, Divider, Link, Typography } from '@mui/material'
+import {
+  ENTITY_CONCRETE_TYPE,
+  EntityJson,
+} from '@sage-bionetworks/synapse-types'
+import { RJSFValidationError } from '@rjsf/utils'
+import validator from '@rjsf/validator-ajv8'
+import RJSF from '@rjsf/core'
 import AddToList from '../../assets/icons/AddToList'
 import {
   BackendDestinationEnum,
@@ -15,11 +21,12 @@ import {
   useUpdateViaJson,
 } from '../../synapse-queries'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import {
-  ENTITY_CONCRETE_TYPE,
-  EntityJson,
-} from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
+import {
+  ConfirmationButtons,
+  ConfirmationDialog,
+} from '../ConfirmationDialog/ConfirmationDialog'
 import { AdditionalPropertiesSchemaField } from './field/AdditionalPropertiesSchemaField'
 import {
   dropNullishArrayValues,
@@ -31,13 +38,6 @@ import { DateTimeWidget } from './widget/DateTimeWidget'
 import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
 import { SelectWidget } from './widget/SelectWidget'
 import TextWidget from './widget/TextWidget'
-import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
-import {
-  ConfirmationButtons,
-  ConfirmationDialog,
-} from '../ConfirmationDialog/ConfirmationDialog'
-import { RJSFValidationError } from '@rjsf/utils'
-import validator from '@rjsf/validator-ajv8'
 import CustomObjectField from './field/CustomObjectField'
 import ArrayFieldItemTemplate from './template/ArrayFieldItemTemplate'
 import ArrayFieldTemplate from './template/ArrayFieldTemplate'
@@ -48,8 +48,8 @@ import ButtonTemplate from './template/ButtonTemplate'
 import DescriptionFieldTemplate from './template/DescriptionFieldTemplate'
 import ArrayFieldDescriptionTemplate from './template/ArrayFieldDescriptionTemplate'
 import BaseInputTemplate from './template/BaseInputTemplate'
-import RJSF from '@rjsf/core'
 import FieldErrorTemplate from './template/FieldErrorTemplate'
+import type { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */

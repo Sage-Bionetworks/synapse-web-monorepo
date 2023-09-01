@@ -7,9 +7,6 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   AccessApproval,
   AccessControlList,
@@ -22,12 +19,13 @@ import {
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   WikiPageKey,
-} from '@sage-bionetworks/synapse-types'
-import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
+  ResearchProject,
 } from '@sage-bionetworks/synapse-types'
-import { ResearchProject } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { sortAccessRequirementsByCompletion } from '../../components/AccessRequirementList/AccessRequirementListUtils'
 
 export function useGetAccessRequirements<T extends AccessRequirement>(

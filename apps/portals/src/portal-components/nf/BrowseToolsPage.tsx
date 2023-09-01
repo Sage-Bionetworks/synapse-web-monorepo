@@ -1,16 +1,16 @@
 import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
-import { popularSearchesSql, toolsSql } from '../../configurations/nf/resources'
-import Layout from '../Layout'
-import React from 'react'
+import React, { KeyboardEvent, useState } from 'react'
 import { Button, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
+import { Form } from 'react-bootstrap'
+import { popularSearchesSql, toolsSql } from '../../configurations/nf/resources'
+import Layout from '../Layout'
 import { ReactComponent as AnimalModels } from './assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from './assets/antibodies.svg'
 import { ReactComponent as Biobanks } from './assets/biobanks.svg'
 import { ReactComponent as CellLines } from './assets/cell-lines.svg'
 import { ReactComponent as PlasmidsReagents } from './assets/plasmids-reagents.svg'
 import PopularSearches from './PopularSearches'
-import { Form } from 'react-bootstrap'
 
 export const gotoExploreToolsWithFullTextSearch = (
   fullTextSearchString: string,
@@ -29,7 +29,7 @@ export const gotoExploreToolsWithFullTextSearch = (
 }
 
 const BrowseToolsPage = () => {
-  const [searchText, setSearchText] = React.useState<string>('')
+  const [searchText, setSearchText] = useState<string>('')
   const gotoExploreTools = () => {
     window.location.assign('/Explore/Tools')
   }
@@ -165,7 +165,7 @@ const BrowseToolsPage = () => {
                 onChange={(event) => {
                   setSearchText(event.target.value)
                 }}
-                onKeyPress={(evt) => {
+                onKeyPress={(evt: KeyboardEvent) => {
                   if (evt.key === 'Enter') {
                     gotoExploreToolsWithFullTextSearch(searchText)
                   }

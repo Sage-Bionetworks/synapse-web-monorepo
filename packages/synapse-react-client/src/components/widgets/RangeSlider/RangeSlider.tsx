@@ -1,6 +1,4 @@
-import React from 'react'
-import { RangeValues } from '../Range'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
   Box,
   Button,
@@ -9,6 +7,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import { RangeValues } from '../Range'
 
 export type RangeSliderProps = React.PropsWithChildren<{
   domain: string[]

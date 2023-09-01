@@ -1,13 +1,13 @@
 import React, { createContext, useContext } from 'react'
-import { SynapseClientError } from '../../utils/SynapseClientError'
 import {
   AsynchronousJobStatus,
   ColumnModel,
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { ReadonlyDeep } from 'type-fest'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 
 /*
   For details page: to lock a column (e.g. study, grant) so that the facet values and active filters

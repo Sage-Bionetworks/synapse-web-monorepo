@@ -1,6 +1,6 @@
 import React from 'react'
-import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import { EntityHeader, EntityType } from '@sage-bionetworks/synapse-types'
+import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import { EntityTypeIcon } from '../EntityIcon'
 import IconSvg from '../IconSvg/IconSvg'
 

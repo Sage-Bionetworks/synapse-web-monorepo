@@ -4,9 +4,10 @@ import dayjs from 'dayjs'
 import React from 'react'
 import { QueryClient } from 'react-query'
 import {
-  AccessRequirementTable,
-  AccessRequirementTableProps,
-} from './AccessRequirementTable'
+  ACCESS_TYPE,
+  AccessRequirementSearchRequest,
+  AccessRequirementSearchResponse,
+} from '@sage-bionetworks/synapse-types'
 import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_SEARCH } from '../../utils/APIConstants'
 import { formatDate } from '../../utils/functions/DateFormatter'
@@ -14,15 +15,14 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
-import {
-  AccessRequirementSearchRequest,
-  AccessRequirementSearchResponse,
-} from '@sage-bionetworks/synapse-types'
 import mockProjectData from '../../mocks/entity/mockProject'
 import { mockSearchResults } from '../../mocks/mockAccessRequirements'
 import { rest, server } from '../../mocks/msw/server'
 import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
+import {
+  AccessRequirementTable,
+  AccessRequirementTableProps,
+} from './AccessRequirementTable'
 
 const MOCK_PROJECT_ID = mockProjectData.id
 const MOCK_PROJECT_NAME = mockProjectData.name

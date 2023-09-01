@@ -1,6 +1,6 @@
 import React from 'react'
-import IconSvg from '../IconSvg/IconSvg'
 import { IconButton, Skeleton, Tooltip } from '@mui/material'
+import IconSvg from '../IconSvg/IconSvg'
 import {
   useAddFavorite,
   useIsFavorite,

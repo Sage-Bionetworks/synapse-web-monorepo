@@ -1,6 +1,6 @@
 import React from 'react'
-import headerConfig from '../config/headerConfig'
 import { Typography } from '@mui/material'
+import headerConfig from '../config/headerConfig'
 
 function Header() {
   const {

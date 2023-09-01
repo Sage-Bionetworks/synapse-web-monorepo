@@ -1,9 +1,11 @@
 import React from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
-import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { createMemoryHistory, MemoryHistory } from 'history'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { Router } from 'react-router-dom'
+import userEvent from '@testing-library/user-event'
+import selectEvent from 'react-select-event'
+import { UserBundle } from '@sage-bionetworks/synapse-types'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { rest, server } from '../../mocks/msw/server'
 import {
   BackendDestinationEnum,
@@ -18,16 +20,14 @@ import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
   mockSearchResults,
 } from '../../mocks/mockAccessRequirements'
-import userEvent from '@testing-library/user-event'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
 } from '../../mocks/user/mock_user_profile'
-import selectEvent from 'react-select-event'
 import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 import * as AccessApprovalsTableModule from './AccessApprovalsTable'
 import * as AccessRequestSubmissionTableModule from './AccessRequestSubmissionTable'
-import { UserBundle } from '@sage-bionetworks/synapse-types'
+import { UserHistoryDashboard } from './AccessHistoryDashboard'
 const APPROVAL_TABLE_TEST_ID = 'AccessApprovalTableTestId'
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'
 

@@ -9,6 +9,16 @@ import {
   FacetColumnResultValues,
 } from '@sage-bionetworks/synapse-types'
 import {
+  Box,
+  Button,
+  Divider,
+  Paper,
+  Skeleton,
+  Typography,
+} from '@mui/material'
+import { times } from 'lodash-es'
+import { useAtomValue } from 'jotai'
+import {
   extractPlotDataArray,
   getPlotStyle,
   GraphData,
@@ -17,15 +27,12 @@ import { getFacets } from '../widgets/facet-nav/FacetNav'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { ShowMore } from '../row_renderers/utils'
-import {
-  Box,
-  Button,
-  Divider,
-  Paper,
-  Skeleton,
-  Typography,
-} from '@mui/material'
 import { FacetPlotLegendTable } from '../widgets/facet-nav/FacetPlotLegendTable'
+import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+} from '../QueryWrapper/QueryWrapper'
 import {
   FACET_PLOTS_CARD_CLASSNAME,
   FACET_PLOTS_CARD_PLOT_CONTAINER_CLASSNAME,
@@ -33,13 +40,6 @@ import {
   FacetPlotsCardPlotContainer,
   FacetPlotsCardTitleContainer,
 } from './FacetPlotsCardGrid'
-import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
-import { times } from 'lodash-es'
-import { useAtomValue } from 'jotai'
-import {
-  isLoadingNewBundleAtom,
-  tableQueryDataAtom,
-} from '../QueryWrapper/QueryWrapper'
 
 const Plot = createPlotlyComponent(Plotly)
 

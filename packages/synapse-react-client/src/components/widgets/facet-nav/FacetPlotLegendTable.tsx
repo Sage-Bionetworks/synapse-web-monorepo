@@ -1,11 +1,11 @@
 import { Box, Link, Typography } from '@mui/material'
 import React from 'react'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   FacetPlotLegendProps,
   MAX_LEGEND_LENGTH,
   truncate,
 } from './FacetPlotLegendUtils'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
 type FacetPlotLegendTableProps = FacetPlotLegendProps & {
   facetName?: string

@@ -1,4 +1,14 @@
 import { StyledEngineProvider } from '@mui/material/styles'
+import React from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import {
+  ApplicationSessionManager,
+  SynapseClient,
+  SynapseToastContainer,
+  SynapseContextType,
+  SynapseContextConsumer,
+} from 'synapse-react-client'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { AppContextConsumer } from './AppContext'
 import { SageResourcesPage } from './components/SageResourcesPage'
 import { AccountCreatedPage } from './components/AccountCreatedPage'
@@ -12,20 +22,10 @@ import { RegisterAccount1 } from './components/RegisterAccount1'
 import { RegisterAccount2 } from './components/RegisterAccount2'
 import { ResetPassword } from './components/ResetPassword'
 import { TermsOfUsePage } from './components/TermsOfUsePage'
-import React from 'react'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import {
-  ApplicationSessionManager,
-  SynapseClient,
-  SynapseToastContainer,
-  SynapseContextType,
-  SynapseContextConsumer,
-} from 'synapse-react-client'
 import { getSearchParam } from './URLUtils'
 import './App.scss'
 import AppInitializer from './AppInitializer'
 import LoginPage from './LoginPage'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAuthEnrollmentPage'
 import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAuthBackupCodesPage'
 import { PersonalAccessTokensPage } from './components/PersonalAccessTokensPage'

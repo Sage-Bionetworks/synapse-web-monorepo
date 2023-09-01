@@ -1,15 +1,14 @@
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import EntityIdList, { EntityIdListProps } from './EntityIdList'
-import { act } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import {
   MOCK_CONTEXT_VALUE,
   SynapseTestContext,
 } from '../../../mocks/MockSynapseContext'
-import { render, screen, waitFor } from '@testing-library/react'
 import mockFileEntity from '../../../mocks/entity/mockFileEntity'
 import { getEntityHeaders } from '../../../synapse-client/SynapseClient'
 import SynapseClient from '../../../synapse-client'
+import EntityIdList, { EntityIdListProps } from './EntityIdList'
 
 jest
   .spyOn(SynapseClient, 'getEntityHeaders')

@@ -1,19 +1,19 @@
 import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
 import { Table } from 'react-bootstrap'
+import {
+  ACCESS_TYPE,
+  AccessRequirementSearchRequest,
+  AccessRequirementSearchSort,
+} from '@sage-bionetworks/synapse-types'
+import { Button, Typography } from '@mui/material'
+import { StarTwoTone } from '@mui/icons-material'
 import SortIcon from '../../assets/icons/Sort'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useSearchAccessRequirementsInfinite } from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
-import {
-  AccessRequirementSearchRequest,
-  AccessRequirementSearchSort,
-} from '@sage-bionetworks/synapse-types'
-import { Button, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
-import { StarTwoTone } from '@mui/icons-material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 

@@ -1,6 +1,6 @@
 import React from 'react'
-import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { Link, Typography } from '@mui/material'
+import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { SRC_SIGN_IN_CLASS } from '../../../utils/SynapseConstants'
 
 export type DownloadLoginModalProps = {

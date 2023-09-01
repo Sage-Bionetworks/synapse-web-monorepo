@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
-import ChallengeSubmission from './ChallengeSubmission'
 import { EntityType } from '@sage-bionetworks/synapse-types'
+import ChallengeSubmission from './ChallengeSubmission'
 
 const meta = {
   title: 'Synapse/Challenge/ChallengeSubmission',

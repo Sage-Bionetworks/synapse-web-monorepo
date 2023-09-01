@@ -1,8 +1,8 @@
-import { getFileEntityData } from './SynapseFormUtils'
 import SynapseClient from '../../synapse-client'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
 import { mockFormSchema } from '../../mocks/mock_drug_tool_data'
 import { mockFileHandle } from '../../mocks/mock_file_handle'
+import { getFileEntityData } from './SynapseFormUtils'
 const mockFileEntity = mockFileEntityData.entity
 
 const token: string = '123444'

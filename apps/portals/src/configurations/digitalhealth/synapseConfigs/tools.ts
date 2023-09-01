@@ -1,13 +1,13 @@
-import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
-import type { GenericCardSchema } from 'synapse-react-client'
 import {
+  SynapseConstants,
   CardConfiguration,
   CardContainerLogicProps,
 } from 'synapse-react-client'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
 import columnAliases from '../columnAliases'
 import { toolsSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import type { GenericCardSchema } from 'synapse-react-client'
 
 const rgbIndex = 3
 

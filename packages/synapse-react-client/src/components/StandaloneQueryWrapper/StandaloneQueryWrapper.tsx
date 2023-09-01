@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
 } from '../../utils/functions/SqlFunctions'
 import SynapseTable, { SynapseTableProps } from '../SynapseTable/SynapseTable'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
 import { QueryContextConsumer } from '../QueryContext/QueryContext'

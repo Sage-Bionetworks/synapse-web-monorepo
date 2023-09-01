@@ -1,7 +1,7 @@
 import React from 'react'
-import { ProgramsDataProps } from './Programs'
 import LargeButton from '../../components/styled/LargeButton'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
+import { ProgramsDataProps } from './Programs'
 
 export default function ProgramsDesktop({
   link,

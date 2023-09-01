@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
-import AccessRequirementSearchBox from './AccessRequirementSearchBox'
 import { displayToast } from '../../ToastMessage/ToastMessage'
+import AccessRequirementSearchBox from './AccessRequirementSearchBox'
 
 const meta = {
   title: 'Governance/AccessRequirementSearchBox',

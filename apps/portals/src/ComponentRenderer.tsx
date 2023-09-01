@@ -1,6 +1,6 @@
-import { SynapseConfig } from './types/portal-config'
 import { useLocation } from 'react-router-dom'
 import React from 'react'
+import { SynapseConfig } from './types/portal-config'
 import { scrollToWithOffset } from './utils'
 import { SynapseComponent } from './SynapseComponent'
 import Layout from './portal-components/Layout'

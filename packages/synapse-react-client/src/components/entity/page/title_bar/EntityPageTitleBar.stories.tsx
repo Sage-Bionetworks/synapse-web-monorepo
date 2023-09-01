@@ -1,9 +1,9 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
+import { EntityActionMenuProps } from '../action_menu/EntityActionMenu'
 import EntityPageTitleBar, {
   EntityPageTitleBarProps,
 } from './EntityPageTitleBar'
-import { EntityActionMenuProps } from '../action_menu/EntityActionMenu'
 
 const meta = {
   title: 'Synapse/EntityPage/TitleBar',

@@ -1,16 +1,15 @@
-import React from 'react'
-import {
-  useGetQueryResultBundleWithAsyncStatus,
-  useInfiniteQueryResultBundle,
-} from '../../synapse-queries'
+import React, { useMemo, useState } from 'react'
 import {
   AsynchronousJobStatus,
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { useMemo, useState } from 'react'
-import { SynapseClientError } from '../../utils/SynapseClientError'
 import { UseInfiniteQueryResult } from 'react-query'
+import {
+  useGetQueryResultBundleWithAsyncStatus,
+  useInfiniteQueryResultBundle,
+} from '../../synapse-queries'
+import { SynapseClientError } from '../../utils/SynapseClientError'
 
 type InfiniteDataPage = number | 'ALL'
 

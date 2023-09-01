@@ -1,13 +1,13 @@
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import React, { useEffect, useState } from 'react'
+import { Box } from '@mui/system'
 import SynapseClient from '../../synapse-client'
 import { SynapseConstants, useSynapseContext } from '../../utils'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import React, { useEffect, useState } from 'react'
 import Carousel from '../Carousel/Carousel'
-import { ProjectViewCard } from './ProjectViewCard'
 import { ErrorBanner } from '../error/ErrorBanner'
-import { Box } from '@mui/system'
+import { ProjectViewCard } from './ProjectViewCard'
 
 export type ProjectViewCarouselProps = {
   entityId: string

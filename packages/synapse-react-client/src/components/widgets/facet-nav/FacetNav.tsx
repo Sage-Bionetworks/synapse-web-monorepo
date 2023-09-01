@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import {
   FacetColumnRequest,
   FacetColumnResult,
@@ -7,17 +6,18 @@ import {
   FacetColumnResultValues,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
+import { Box, Button } from '@mui/material'
+import { useAtomValue } from 'jotai'
+import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext/QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
-import FacetNavPanel, { PlotType } from './FacetNavPanel'
 import TotalQueryResults from '../../TotalQueryResults'
-import { Box, Button } from '@mui/material'
-import { useAtomValue } from 'jotai'
 import {
   isLoadingNewBundleAtom,
   tableQueryDataAtom,
 } from '../../QueryWrapper/QueryWrapper'
+import FacetNavPanel, { PlotType } from './FacetNavPanel'
 
 /*
 TODO: This component has a few bugs when its props are updated with new data, this should be handled

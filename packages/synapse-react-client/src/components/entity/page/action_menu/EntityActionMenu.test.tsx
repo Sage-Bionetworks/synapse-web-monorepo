@@ -1,4 +1,7 @@
 import React from 'react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import EntityActionMenu, {
   ActionConfiguration,
   ActionConfigurationMap,
@@ -8,9 +11,6 @@ import EntityActionMenu, {
   EXPORTED_FOR_UNIT_TESTING,
   MenuConfigurationMap,
 } from './EntityActionMenu'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 
 function renderComponent(props: EntityActionMenuProps) {
   return render(<EntityActionMenu {...props} />, {

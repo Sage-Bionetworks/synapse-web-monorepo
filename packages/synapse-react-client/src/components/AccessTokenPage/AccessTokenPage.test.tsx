@@ -1,13 +1,13 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { AccessTokenCardProps } from './AccessTokenCard/AccessTokenCard'
-import { AccessTokenPage, AccessTokenPageProps } from './AccessTokenPage'
-import { CreateAccessTokenModalProps } from './CreateAccessTokenModal'
+import { AccessTokenRecordList } from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SynapseClient from '../../synapse-client'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
-import { AccessTokenRecordList } from '@sage-bionetworks/synapse-types'
+import { AccessTokenCardProps } from './AccessTokenCard/AccessTokenCard'
+import { AccessTokenPage, AccessTokenPageProps } from './AccessTokenPage'
+import { CreateAccessTokenModalProps } from './CreateAccessTokenModal'
 
 // Mock the CreateAccessTokenModal with a simple dialog with buttons to easily invoke passed props
 jest.mock(

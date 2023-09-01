@@ -1,14 +1,4 @@
 import React from 'react'
-import { SynapseConstants, SynapseContext } from '../../utils'
-import {
-  isDatasetCollection,
-  isTableEntity,
-} from '../../utils/functions/EntityTypeUtils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import {
-  DOI_REGEX,
-  SYNAPSE_ENTITY_ID_REGEX,
-} from '../../utils/functions/RegularExpressions'
 import {
   ColumnModel,
   ColumnType,
@@ -20,6 +10,17 @@ import {
   Table,
 } from '@sage-bionetworks/synapse-types'
 import { Box, Link } from '@mui/material'
+import { useAtomValue } from 'jotai'
+import { SynapseConstants, SynapseContext } from '../../utils'
+import {
+  isDatasetCollection,
+  isTableEntity,
+} from '../../utils/functions/EntityTypeUtils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import {
+  DOI_REGEX,
+  SYNAPSE_ENTITY_ID_REGEX,
+} from '../../utils/functions/RegularExpressions'
 import {
   CardLink,
   ColumnIconConfigs,
@@ -40,9 +41,8 @@ import {
 } from '../QueryVisualizationWrapper'
 import { IconOptions } from '../Icon'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { SynapseCardLabel } from './SynapseCardLabel'
-import { useAtomValue } from 'jotai'
 import { tableQueryEntityAtom } from '../QueryWrapper/QueryWrapper'
+import { SynapseCardLabel } from './SynapseCardLabel'
 
 export type KeyToAlias = {
   key: string

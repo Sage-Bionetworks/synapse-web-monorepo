@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { Box } from '@mui/material'
 import {
   LoginAwareButton,
   LoginAwareButtonProps,
 } from '../widgets/LoginAwareButton'
-import { Box } from '@mui/material'
 
 export type SpinnerButtonProps = LoginAwareButtonProps & {
   showSpinner?: boolean

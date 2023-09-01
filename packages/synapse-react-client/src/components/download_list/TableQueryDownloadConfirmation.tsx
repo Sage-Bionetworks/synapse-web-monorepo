@@ -1,23 +1,23 @@
 import React, { useMemo } from 'react'
+import { useAtomValue } from 'jotai'
 import { SynapseConstants, useSynapseContext } from '../../utils'
 import {
   useAddQueryToDownloadList,
   useGetQueryResultBundleWithAsyncStatus,
 } from '../../synapse-queries'
 import { displayToast } from '../ToastMessage'
-import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
 import { getPrimaryKeyINFilter } from '../../utils/functions/QueryFilterUtils'
 import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
-import { useAtomValue } from 'jotai'
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 import {
   hasSelectedRowsAtom,
   rowSelectionPrimaryKeyAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
+import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
+import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 
 export function TableQueryDownloadConfirmation() {
   const { getCurrentQueryRequest } = useQueryContext()

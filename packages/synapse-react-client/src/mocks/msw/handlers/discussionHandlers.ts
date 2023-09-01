@@ -1,6 +1,6 @@
 import { rest } from 'msw'
-import { FORUM, THREAD } from '../../../utils/APIConstants'
 import { Forum } from '@sage-bionetworks/synapse-types'
+import { FORUM, THREAD } from '../../../utils/APIConstants'
 import { SynapseApiResponse } from '../handlers'
 import {
   mockDiscussionThreadBundles,

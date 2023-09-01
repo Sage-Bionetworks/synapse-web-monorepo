@@ -1,6 +1,10 @@
-import { SynapseConfig } from 'types/portal-config'
-import { DetailsPageProps } from 'types/portal-util-types'
 import { SynapseConstants, CardConfiguration } from 'synapse-react-client'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
 import studyHeaderSvg from '../style/study-header.svg'
 import {
   studiesSql,
@@ -8,10 +12,6 @@ import {
   dataOnStudiesPageSql,
   defaultSearchConfiguration,
 } from '../resources'
-import {
-  ColumnMultiValueFunction,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 0
 export const studyCardConfiguration: CardConfiguration = {

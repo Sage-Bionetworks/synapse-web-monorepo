@@ -7,6 +7,11 @@ import BaseTable, {
 import dayjs from 'dayjs'
 import React, { SyntheticEvent, useEffect } from 'react'
 import { Form } from 'react-bootstrap'
+import {
+  EntityRef,
+  EntityType,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
 import SortIcon from '../../../../assets/icons/Sort'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
 import { isTableType } from '../../../../utils/functions/EntityTypeUtils'
@@ -16,11 +21,6 @@ import {
 } from '../../../../synapse-queries/entity/useEntity'
 import useGetEntityBundle from '../../../../synapse-queries/entity/useEntityBundle'
 import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
-import {
-  EntityRef,
-  EntityType,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
 import { EntityBadgeIcons } from '../../../EntityBadgeIcons/EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { EntityLink } from '../../../EntityLink'

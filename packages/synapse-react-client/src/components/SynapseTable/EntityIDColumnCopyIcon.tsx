@@ -1,4 +1,5 @@
 import React from 'react'
+import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
@@ -6,7 +7,6 @@ import {
   InteractiveCopyIdsIconProps,
 } from '../InteractiveCopyIdsIcon'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { SynapseConstants } from '../../utils'
 import { getFullQueryTableResults } from '../../synapse-client/SynapseClient'

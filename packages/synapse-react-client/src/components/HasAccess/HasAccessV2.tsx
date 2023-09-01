@@ -1,4 +1,11 @@
 import React, { useMemo } from 'react'
+import {
+  AccessRequirement,
+  RestrictableObjectType,
+  RestrictionInformationRequest,
+  RestrictionLevel,
+} from '@sage-bionetworks/synapse-types'
+import { Theme, useTheme } from '@mui/material'
 import SynapseClient from '../../synapse-client'
 import {
   BackendDestinationEnum,
@@ -8,17 +15,10 @@ import { useGetRestrictionInformation } from '../../synapse-queries/dataaccess/u
 import useGetEntityBundle from '../../synapse-queries/entity/useEntityBundle'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import {
-  AccessRequirement,
-  RestrictableObjectType,
-  RestrictionInformationRequest,
-  RestrictionLevel,
-} from '@sage-bionetworks/synapse-types'
 import AccessRequirementList, {
   checkHasUnsupportedRequirement,
 } from '../AccessRequirementList/AccessRequirementList'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
-import { Theme, useTheme } from '@mui/material'
 import { isFileEntity } from '../../utils/types/IsType'
 
 export type HasAccessProps = {

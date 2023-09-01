@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react'
 import React from 'react'
-import FeaturedDataTabs, { FeaturedDataTabsProps } from './FeaturedDataTabs'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import syn16787123Json from '../../mocks/query/syn16787123'
 import SynapseClient from '../../synapse-client'
+import FeaturedDataTabs, { FeaturedDataTabsProps } from './FeaturedDataTabs'
 
 const data = syn16787123Json
 

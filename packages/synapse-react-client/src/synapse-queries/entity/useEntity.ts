@@ -16,10 +16,6 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   AccessControlList,
   Entity,
@@ -33,6 +29,10 @@ import {
   UserEntityPermissions,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
 
 export function useGetEntity<T extends Entity>(

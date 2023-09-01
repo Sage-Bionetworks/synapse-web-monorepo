@@ -9,16 +9,16 @@ import {
   Switch,
   useParams,
 } from 'react-router-dom'
-import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { Typography } from '@mui/material'
+import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import OrientationBanner from '../OrientationBanner'
 import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
 import SubmissionPage from './SubmissionPage'
-import OrientationBanner from '../OrientationBanner'
 
 function LinkTab(props: {
   href: string

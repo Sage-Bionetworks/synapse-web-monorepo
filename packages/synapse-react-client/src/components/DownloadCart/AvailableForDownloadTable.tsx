@@ -1,9 +1,8 @@
 import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { DownloadListTableProps } from './DownloadListTable'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
-import DownloadListTable from './DownloadListTable'
+import DownloadListTable, { DownloadListTableProps } from './DownloadListTable'
 
 /**
  * Table of the files added to the Download Cart that are currently available for download.

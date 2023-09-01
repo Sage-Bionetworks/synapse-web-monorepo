@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
-import { UseDetectSSOCodeReturnType } from '../../hooks'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
+import { UseDetectSSOCodeReturnType } from '../../hooks'
 
 export type ApplicationSessionContextType = {
   /* The Synapse Authentication token. If undefined, the user is not signed in. */

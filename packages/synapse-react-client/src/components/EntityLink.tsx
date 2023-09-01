@@ -1,12 +1,12 @@
 import { Link, Skeleton } from '@mui/material'
 import React from 'react'
+import { Entity, EntityHeader } from '@sage-bionetworks/synapse-types'
 import {
   convertToEntityType,
   getEntityTypeFromHeader,
 } from '../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { useGetEntityHeader } from '../synapse-queries'
-import { Entity, EntityHeader } from '@sage-bionetworks/synapse-types'
 import { EntityTypeIcon } from './EntityIcon'
 import { ErrorBanner } from './error/ErrorBanner'
 import ErrorChip from './error/ErrorChip'

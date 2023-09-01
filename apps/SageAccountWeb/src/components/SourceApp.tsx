@@ -6,9 +6,9 @@ import {
   SynapseQueries,
 } from 'synapse-react-client'
 import { SkeletonTable } from 'synapse-react-client'
+import Skeleton from '@mui/material/Skeleton'
 import { SourceAppConfig } from './SourceAppConfigs'
 import SourceAppImage from './SourceAppImage'
-import Skeleton from '@mui/material/Skeleton'
 
 export type SourceAppProps = {
   isAccountCreationTextVisible?: boolean
@@ -21,14 +21,15 @@ export type SourceAppProps = {
  */
 export const SourceApp = (props: SourceAppProps) => {
   const { isAccountCreationTextVisible = false } = props
+  const sourceAppData = useSourceApp()
   return (
     <>
       <div className="SourceAppLogo">{useSourceApp()?.logo}</div>
       {isAccountCreationTextVisible && (
         <div>
           <p>
-            A Sage account is required to log into{' '}
-            {useSourceApp()?.friendlyName}.
+            A Sage account is required to log into {sourceAppData?.friendlyName}
+            .
           </p>
           <p>Create an account to get started.</p>
         </div>

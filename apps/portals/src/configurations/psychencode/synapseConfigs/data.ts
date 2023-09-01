@@ -1,4 +1,4 @@
-import { SynapseConfig } from 'types/portal-config'
+import { SynapseConfig } from '../../../types/portal-config'
 
 import { dataSql } from '../resources'
 
@@ -23,7 +23,7 @@ export const data: SynapseConfig = {
           baseURL: 'Explore/Studies/DetailsPage',
           isMarkdown: false,
         },
-      ],      
+      ],
     },
     searchConfiguration: {
       searchable: [
@@ -53,7 +53,7 @@ export const data: SynapseConfig = {
         'isStranded',
         'runType',
         'alignmentMethod',
-      ]
+      ],
     },
     visibleColumnCount: 10,
     shouldDeepLink: true,

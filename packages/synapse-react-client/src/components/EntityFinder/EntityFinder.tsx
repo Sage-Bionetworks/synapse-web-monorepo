@@ -14,6 +14,11 @@ import { useErrorHandler } from 'react-error-boundary'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
+import {
+  Reference,
+  EntityType,
+  KeyValue,
+} from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
 import {
   entityTypeToFriendlyName,
@@ -21,9 +26,6 @@ import {
 } from '../../utils/functions/EntityTypeUtils'
 import { parseSynId } from '../../utils/functions/RegularExpressions'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { Reference } from '@sage-bionetworks/synapse-types'
-import { EntityType } from '@sage-bionetworks/synapse-types'
-import { KeyValue } from '@sage-bionetworks/synapse-types'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {

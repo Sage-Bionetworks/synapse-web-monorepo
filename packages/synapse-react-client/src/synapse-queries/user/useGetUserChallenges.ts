@@ -4,14 +4,14 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   Challenge,
   ChallengeWithProjectHeaderPagedResults,
   PaginatedResults,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useGetUserChallenges(
   userId: string,

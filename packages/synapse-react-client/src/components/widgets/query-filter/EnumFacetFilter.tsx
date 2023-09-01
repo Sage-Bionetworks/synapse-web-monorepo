@@ -2,8 +2,6 @@ import { Collapse, Fade, IconButton, Menu, Tooltip } from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { SynapseConstants } from '../../../utils'
-import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
 import {
   ColumnTypeEnum,
   EntityHeader,
@@ -14,13 +12,15 @@ import {
   SelectColumn,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
+import { ReadonlyDeep } from 'type-fest'
+import { cloneDeep } from 'lodash-es'
+import { SynapseConstants } from '../../../utils'
+import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
 import IconSvg from '../../IconSvg/IconSvg'
 import { Checkbox } from '../Checkbox'
-import { FacetFilterHeader } from './FacetFilterHeader'
 import { useQueryContext } from '../../QueryContext'
-import { ReadonlyDeep } from 'type-fest'
 import { isFacetColumnValuesRequest } from '../../../utils/types/IsType'
-import { cloneDeep } from 'lodash-es'
+import { FacetFilterHeader } from './FacetFilterHeader'
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]

@@ -6,15 +6,13 @@ import {
   IconSvg,
   SynapseContextUtils,
 } from 'synapse-react-client'
-import { SourceAppLogo, useSourceApp } from './SourceApp'
 import { Box, Button, useTheme } from '@mui/material'
+import { SourceAppLogo, useSourceApp } from './SourceApp'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
 import { TermsAndConditionsLink } from './TermsAndConditionsLink'
 
-export type TermsOfUsePageProps = {}
-
-export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
+export const TermsOfUsePage = () => {
   const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [isFormComplete, setIsFormComplete] = useState(false)
@@ -22,7 +20,7 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
   const { accessToken } = SynapseContextUtils.useSynapseContext()
   const sourceApp = useSourceApp()
 
-  const onSignTermsOfUse = async (event: React.SyntheticEvent) => {
+  const onSignTermsOfUse = (event: React.SyntheticEvent) => {
     event.preventDefault()
     setIsLoading(true)
     try {

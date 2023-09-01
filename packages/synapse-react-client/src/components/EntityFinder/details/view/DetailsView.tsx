@@ -6,19 +6,19 @@ import BaseTable, {
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from 'react-query'
 import {
-  getEntityTypeFromHeader,
-  isContainerType,
-  isVersionableEntityType,
-} from '../../../../utils/functions/EntityTypeUtils'
-import { getEntityVersions } from '../../../../synapse-client/SynapseClient'
-import { useSynapseContext } from '../../../../utils/context/SynapseContext'
-import {
   Direction,
   EntityChildrenRequest,
   EntityHeader,
   EntityType,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
+import {
+  getEntityTypeFromHeader,
+  isContainerType,
+  isVersionableEntityType,
+} from '../../../../utils/functions/EntityTypeUtils'
+import { getEntityVersions } from '../../../../synapse-client/SynapseClient'
+import { useSynapseContext } from '../../../../utils/context/SynapseContext'
 import { BlockingLoader } from '../../../LoadingScreen/LoadingScreen'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'

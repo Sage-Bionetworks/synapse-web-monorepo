@@ -13,10 +13,6 @@ import {
   UserProfile,
   VerificationSubmission,
 } from '@sage-bionetworks/synapse-types'
-import { getSearchParam } from '../../URLUtils'
-import { ProfileFieldsEditor } from './ProfileFieldsEditor'
-import { VerifyIdentify } from './VerifyIdentify'
-import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
 import {
   Box,
   Button,
@@ -26,13 +22,17 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
+import { getSearchParam } from '../../URLUtils'
+import { StyledInnerContainer, StyledOuterContainer } from '../StyledComponents'
 import { SourceAppLogo, useSourceApp } from '../SourceApp'
+import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
+import { BackButton } from '../BackButton'
+import { ProfileFieldsEditor } from './ProfileFieldsEditor'
+import { VerifyIdentify } from './VerifyIdentify'
 import Attestation from './Attestation'
 import ThankYou from './ThankYou'
 import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
 import { ReturnToAppButton } from './ReturnToAppButton'
-import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
-import { BackButton } from '../BackButton'
 
 const STEP_CONTENT = [
   {
@@ -212,8 +212,7 @@ export enum ValidationWizardStep {
 
 function BodyControlFactory(args: {
   step: ValidationWizardStep
-
-  onNext: (vs: VerificationSubmission) => void
+  onNext: (vs: VerificationSubmission) => Promise<void>
   onReturnToSettings: () => void
   verificationSubmission?: VerificationSubmission
 }) {
@@ -223,7 +222,9 @@ function BodyControlFactory(args: {
         <>
           <ProfileFieldsEditor
             verificationSubmission={args.verificationSubmission!}
-            onNext={vs => args.onNext(vs)}
+            onNext={vs => {
+              args.onNext(vs)
+            }}
           />
         </>
       )
@@ -232,7 +233,9 @@ function BodyControlFactory(args: {
       return (
         <>
           <VerifyIdentify
-            onNext={vs => args.onNext(vs)}
+            onNext={vs => {
+              args.onNext(vs)
+            }}
             verificationSubmission={args.verificationSubmission!}
           />
         </>
@@ -242,7 +245,9 @@ function BodyControlFactory(args: {
       return (
         <TermsAndConditionsWrapped
           verificationSubmission={args.verificationSubmission!}
-          onNext={() => args.onNext(args.verificationSubmission!)}
+          onNext={() => {
+            args.onNext(args.verificationSubmission!)
+          }}
         />
       )
     }
@@ -251,7 +256,9 @@ function BodyControlFactory(args: {
         <>
           <Attestation
             verificationSubmission={args.verificationSubmission!}
-            onNext={() => args.onNext(args.verificationSubmission!)}
+            onNext={() => {
+              args.onNext(args.verificationSubmission!)
+            }}
           />
         </>
       )
@@ -273,10 +280,9 @@ function BodyControlFactory(args: {
   }
 }
 
-export type ProfileValidationProps = {}
-
-export const ProfileValidation = (props: ProfileValidationProps) => {
+export const ProfileValidation = () => {
   const { accessToken } = SynapseContextUtils.useSynapseContext()
+  const sourceAppData = useSourceApp()
   const [verificationSubmission, setVerificationSubmission] =
     useState<VerificationSubmission>()
   const [profile, setProfile] = useState<UserProfile>()
@@ -393,7 +399,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
     }
   }
 
-  const onPrevious = async (event: React.SyntheticEvent) => {
+  const onPrevious = (event: React.SyntheticEvent) => {
     event.preventDefault()
     switch (step) {
       case ValidationWizardStep.VERIFY_IDENTITY:
@@ -482,7 +488,7 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
             sx={theme => ({ marginTop: theme.spacing(5) })}
             endIcon={<ArrowRightAltIcon />}
           >
-            Return to {useSourceApp()?.friendlyName}
+            Return to {sourceAppData?.friendlyName}
           </Button>
         </ThankYou>
       )}

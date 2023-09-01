@@ -1,15 +1,15 @@
 import { renderHook, waitFor } from '@testing-library/react'
-import useDetectSSOCode from './useDetectSSOCode'
-import { SynapseClient } from '../../index'
-import { LoginResponse } from '@sage-bionetworks/synapse-types'
-import { BackendDestinationEnum } from '../functions/getEndpoint'
-import { SynapseClientError } from '../SynapseClientError'
 import {
+  LoginResponse,
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
+import { SynapseClient } from '../../index'
+import { BackendDestinationEnum } from '../functions/getEndpoint'
+import { SynapseClientError } from '../SynapseClientError'
 
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
+import useDetectSSOCode from './useDetectSSOCode'
 
 const authorizationCode = '12345'
 

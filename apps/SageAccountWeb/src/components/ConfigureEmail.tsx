@@ -5,7 +5,6 @@ import {
   SynapseQueries,
   useSynapseContext,
 } from 'synapse-react-client'
-import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import {
   Box,
   Button,
@@ -20,6 +19,7 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/DeleteTwoTone'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
+import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { StyledFormControl } from './StyledComponents'
 
 export type ConfigureEmailProps = {
@@ -158,13 +158,17 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
                 <Box sx={{ flexGrow: 1, marginRight: '10px' }}>{email}</Box>
                 <Button
                   variant="outlined"
-                  onClick={e => changePrimaryEmail(e, email)}
+                  onClick={e => {
+                    changePrimaryEmail(e, email)
+                  }}
                 >
                   Make Primary
                 </Button>
                 <IconButton
                   aria-label="close"
-                  onClick={e => deleteEmail(e, email)}
+                  onClick={e => {
+                    deleteEmail(e, email)
+                  }}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -202,7 +206,9 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
         control={
           <Checkbox
             checked={sendEmailNotifications}
-            onChange={e => updateEmailNotifications(!sendEmailNotifications)}
+            onChange={e => {
+              updateEmailNotifications(!sendEmailNotifications)
+            }}
           />
         }
         label={

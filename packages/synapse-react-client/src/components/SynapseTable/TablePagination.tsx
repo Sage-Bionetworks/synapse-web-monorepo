@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pagination, Typography } from '@mui/material'
-import { usePaginatedQueryContext } from '../QueryContext/QueryContext'
 import { useAtomValue } from 'jotai'
+import { usePaginatedQueryContext } from '../QueryContext/QueryContext'
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 export const TablePagination = () => {

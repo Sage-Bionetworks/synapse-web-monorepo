@@ -1,12 +1,12 @@
 import React from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import SynapseClient from '../synapse-client'
 import {
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
   FilesCountStatistics,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../synapse-client'
 import { SynapseContext } from '../utils/context/SynapseContext'
 const Plot = createPlotlyComponent(Plotly)
 

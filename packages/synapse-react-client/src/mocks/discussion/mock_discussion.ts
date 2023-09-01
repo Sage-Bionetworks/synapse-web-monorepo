@@ -2,11 +2,11 @@ import {
   DiscussionReplyBundle,
   DiscussionThreadBundle,
 } from '@sage-bionetworks/synapse-types'
+import { times } from 'lodash-es'
 import {
   mockUserProfileData,
   mockUserProfileData2,
 } from '../user/mock_user_profile'
-import { times } from 'lodash-es'
 import {
   generateDiscussionThreadBundle,
   generateForum,

@@ -1,5 +1,18 @@
 import { rest } from 'msw'
 import {
+  Entity,
+  EntityBundle,
+  EntityHeader,
+  EntityJson,
+  EntityPath,
+  PaginatedResults,
+  Reference,
+  VersionableEntity,
+  VersionInfo,
+  UploadDestination,
+  UploadType,
+} from '@sage-bionetworks/synapse-types'
+import {
   ENTITY,
   ENTITY_BUNDLE_V2,
   ENTITY_HEADERS,
@@ -13,22 +26,10 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import {
-  Entity,
-  EntityBundle,
-  EntityHeader,
-  EntityJson,
-  EntityPath,
-  PaginatedResults,
-  Reference,
-  VersionableEntity,
-} from '@sage-bionetworks/synapse-types'
-import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import mockEntities from '../../entity'
 import { MOCK_INVALID_PROJECT_NAME } from '../../entity/mockEntity'
 import { mockSchemaBinding } from '../../mockSchema'
 import { SynapseApiResponse } from '../handlers'
-import { UploadDestination, UploadType } from '@sage-bionetworks/synapse-types'
 
 export const getEntityHandlers = (backendOrigin: string) => [
   /**

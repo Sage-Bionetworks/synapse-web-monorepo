@@ -1,16 +1,13 @@
 import React from 'react'
-import EntityPageTitleBar, {
-  EntityPageTitleBarProps,
-} from './EntityPageTitleBar'
 import { render, screen } from '@testing-library/react'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
-import { EntityActionMenuProps } from '../action_menu/EntityActionMenu'
 import {
   DockerRepository,
   EntityBundle,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
+import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
+import { EntityActionMenuProps } from '../action_menu/EntityActionMenu'
 import { rest, server } from '../../../../mocks/msw/server'
 import {
   BackendDestinationEnum,
@@ -19,6 +16,9 @@ import {
 import { ENTITY_BUNDLE_V2 } from '../../../../utils/APIConstants'
 import * as FavoriteButtonModule from '../../../favorites/FavoriteButton'
 import * as EntityActionMenuModule from '../action_menu/EntityActionMenu'
+import EntityPageTitleBar, {
+  EntityPageTitleBarProps,
+} from './EntityPageTitleBar'
 import * as TitleBarPropertiesModule from './TitleBarProperties'
 import * as TitleBarVersionInfoModule from './EntityTitleBarVersionInfo'
 

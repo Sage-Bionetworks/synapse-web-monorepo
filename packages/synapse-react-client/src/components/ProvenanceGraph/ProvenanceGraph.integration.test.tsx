@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import ProvenanceGraph, { ProvenanceProps } from './ProvenanceGraph'
+import { Activity } from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { ACTIVITY_FOR_ENTITY } from '../../utils/APIConstants'
 import {
@@ -11,8 +11,8 @@ import { mockActivity } from '../../mocks/provenance/mockActivity'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../mocks/msw/server'
 import { SynapseApiResponse } from '../../mocks/msw/handlers'
-import { Activity } from '@sage-bionetworks/synapse-types'
 import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
+import ProvenanceGraph, { ProvenanceProps } from './ProvenanceGraph'
 
 function renderComponent(props: ProvenanceProps) {
   return render(<ProvenanceGraph {...props} />, { wrapper: createWrapper() })

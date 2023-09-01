@@ -1,12 +1,12 @@
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
-import { columnAliases } from './commonProps'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
 
+import { DetailsPageProps } from '../../../types/portal-util-types'
 import hackathonActiveSvg from '../style/hackathon-active.svg'
 import hackathonCompleteSvg from '../style/hackathon-complete.svg'
-import { DetailsPageProps } from 'types/portal-util-types'
 import { hackathonsSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { columnAliases } from './commonProps'
 import type { CardConfiguration } from 'synapse-react-client'
 
 const type = SynapseConstants.GENERIC_CARD

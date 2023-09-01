@@ -6,14 +6,14 @@ import {
   SynapseTheme,
 } from 'synapse-react-client'
 import './App.scss'
+import { createTheme, StyledEngineProvider } from '@mui/material/styles'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ThemeProvider } from '@mui/material'
 import AppInitializer from './AppInitializer'
 import { OAuth2Form } from './OAuth2Form'
 import { getURLParam } from './URLUtils'
 import Versions from './Versions'
 import generalTheme from './style/theme'
-import { createTheme, StyledEngineProvider } from '@mui/material/styles'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { ThemeProvider } from '@mui/material'
 
 const queryClient = new QueryClient(defaultQueryClientConfig)
 const theme = createTheme(SynapseTheme.mergeTheme(generalTheme))

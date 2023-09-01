@@ -5,12 +5,12 @@ import BaseTable, {
 } from '@sage-bionetworks/react-base-table'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from 'react-query'
-import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
 import {
   Direction,
   EntityHeader,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
+import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
 import { useSynapseContext } from '../../utils'
 import {
   getEntityTypeFromHeader,
@@ -32,11 +32,11 @@ import {
 } from '../EntityFinder/details/view/DetailsViewTableRenderers'
 import { BlockingLoader } from '../LoadingScreen/LoadingScreen'
 import { getEntityVersions } from '../../synapse-client'
-import { DownloadRenderer, SizeRenderer } from './Renderers'
 import {
   DetailsViewProps,
   EntityFinderTableViewRowData,
 } from '../EntityFinder/details/view/DetailsView'
+import { DownloadRenderer, SizeRenderer } from './Renderers'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46

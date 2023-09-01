@@ -4,8 +4,8 @@ import {
   QueryClientConfig,
   QueryClientProvider,
 } from 'react-query'
-import { ThemeProvider } from '../../theme/useTheme'
 import { ThemeOptions } from '@mui/material'
+import { ThemeProvider } from '../../theme/useTheme'
 import { SynapseContextProvider, SynapseContextType } from './SynapseContext'
 
 export const defaultQueryClientConfig: QueryClientConfig = {

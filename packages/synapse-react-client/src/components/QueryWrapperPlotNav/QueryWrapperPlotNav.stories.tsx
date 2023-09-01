@@ -1,23 +1,21 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import {
+  ColumnSingleValueQueryFilter,
+  Query,
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
+import {
   EXPERIMENTAL_TOOL,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
 } from '../../utils/SynapseConstants'
-import {
-  ColumnSingleValueQueryFilter,
-  Query,
-} from '@sage-bionetworks/synapse-types'
-import QueryWrapperPlotNav from './QueryWrapperPlotNav'
-import {
-  ColumnMultiValueFunction,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage'
 import { CustomControlCallbackData } from '../SynapseTable/TopLevelControls/TopLevelControls'
 import { QUERY_FILTERS_LOCAL_STORAGE_KEY } from '../../utils/functions/SqlFunctions'
 import { SynapseClient } from '../../index'
+import QueryWrapperPlotNav from './QueryWrapperPlotNav'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',

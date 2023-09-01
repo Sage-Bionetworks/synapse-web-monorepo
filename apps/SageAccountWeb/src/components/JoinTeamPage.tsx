@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Button, Typography, useTheme } from '@mui/material'
-import { useAppContext } from '../AppContext'
 import {
   displayToast,
   SynapseClient,
@@ -15,11 +14,10 @@ import {
   ResponseMessage,
 } from '@sage-bionetworks/synapse-types'
 import { CelebrationOutlined, Groups2Outlined } from '@mui/icons-material'
+import { useAppContext } from '../AppContext'
 import { StyledOuterContainer } from './StyledComponents'
 
-export type JoinTeamPageProps = {}
-
-export const JoinTeamPage = (props: JoinTeamPageProps) => {
+export const JoinTeamPage = () => {
   const context = useAppContext()
   const theme = useTheme()
   const [joinTeamToken, setJoinTeamToken] = useState<JoinTeamSignedToken>()

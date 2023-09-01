@@ -4,31 +4,31 @@ import React, { useCallback, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
-import { SkeletonInlineBlock } from '../../Skeleton/SkeletonInlineBlock'
-import getColorPalette from '../../ColorGradient/ColorGradient'
-import { SynapseConstants } from '../../../utils'
-import SynapseClient from '../../../synapse-client'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import {
   ColumnTypeEnum,
   FacetColumnRequest,
   FacetColumnResultValueCount,
   FacetColumnResultValues,
 } from '@sage-bionetworks/synapse-types'
+import { Box, IconButton, Tooltip } from '@mui/material'
+import { useQuery } from 'react-query'
+import { useAtomValue } from 'jotai'
+import { SkeletonInlineBlock } from '../../Skeleton/SkeletonInlineBlock'
+import getColorPalette from '../../ColorGradient/ColorGradient'
+import { SynapseConstants } from '../../../utils'
+import SynapseClient from '../../../synapse-client'
+import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import loadingScreen from '../../LoadingScreen/LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
-import { Box, IconButton, Tooltip } from '@mui/material'
-import { useQuery } from 'react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
-import { FacetPlotLegendList } from './FacetPlotLegendList'
-import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
 import IconSvg from '../../IconSvg'
-import { useAtomValue } from 'jotai'
 import {
   isLoadingNewBundleAtom,
   tableQueryDataAtom,
 } from '../../QueryWrapper/QueryWrapper'
+import { FacetPlotLegendList } from './FacetPlotLegendList'
+import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
 
 const Plot = createPlotlyComponent(Plotly)
 

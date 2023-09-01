@@ -5,13 +5,13 @@ import {
   UseMutationOptions,
   useQueryClient,
 } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   PaginatedResults,
   TrashedEntity,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useGetItemsInTrashCanInfinite(
   options?: UseInfiniteQueryOptions<

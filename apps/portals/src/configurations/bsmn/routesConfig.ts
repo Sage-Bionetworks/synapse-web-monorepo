@@ -1,4 +1,5 @@
-import { GenericRoute } from 'types/portal-config'
+import { SynapseConstants } from 'synapse-react-client'
+import { GenericRoute } from '../../types/portal-config'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import {
   projectCardConfiguration,
@@ -9,7 +10,6 @@ import {
   studyCardConfiguration,
 } from './synapseConfigs/studies'
 import { projectsSql, studiesSql } from './resources'
-import { SynapseConstants } from 'synapse-react-client'
 
 const routes: GenericRoute[] = [
   {

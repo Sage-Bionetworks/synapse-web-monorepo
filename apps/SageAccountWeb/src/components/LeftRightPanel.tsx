@@ -1,6 +1,6 @@
 import React from 'react'
-import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { Box, useTheme } from '@mui/material'
+import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 
 export const LeftRightPanel: React.FC<{
   leftContent: JSX.Element

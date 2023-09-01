@@ -1,21 +1,21 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
-import { RadioOption } from '../widgets/RadioGroup'
-import { ChallengeTeamSearch } from './ChallengeTeamSearch'
-import { SkeletonTable } from '../Skeleton'
 import { Team } from '@sage-bionetworks/synapse-types'
+import { Box } from '@mui/material'
+import { Link } from 'react-router-dom'
 import {
   useGetChallengeTeamList,
   useGetTeamList,
 } from '../../synapse-queries/team/useTeamList'
-import { Box } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { SkeletonTable } from '../Skeleton'
+import { RadioOption } from '../widgets/RadioGroup'
+import { formatDate } from '../../utils/functions/DateFormatter'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
+import { ChallengeTeamSearch } from './ChallengeTeamSearch'
 
 export type ChallengeTeamTableProps = {
   challengeId: string

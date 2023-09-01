@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
-import { useGetDownloadListActionsRequiredInfinite } from '../../synapse-queries/download/useDownloadList'
 import { useInView } from 'react-intersection-observer'
 import { ActionRequiredCount } from '@sage-bionetworks/synapse-types'
-import { LoadingActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import { Box } from '@mui/material'
+import { useGetDownloadListActionsRequiredInfinite } from '../../synapse-queries/download/useDownloadList'
+import { LoadingActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import { ActionRequiredListItem } from './ActionRequiredListItem'
 
 export type DownloadListActionsRequiredProps = {

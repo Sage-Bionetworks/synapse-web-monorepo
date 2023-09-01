@@ -1,7 +1,7 @@
 import { UseQueryOptions, useQuery } from 'react-query'
+import { UploadDestination } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { UploadDestination } from '@sage-bionetworks/synapse-types'
 import { getDefaultUploadDestination } from '../../synapse-client/SynapseClient'
 
 export function useGetDefaultUploadDestination(

@@ -1,4 +1,4 @@
-import { GenericRoute } from 'types/portal-config'
+import { GenericRoute } from '../../types/portal-config'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 
 const routes: GenericRoute[] = [

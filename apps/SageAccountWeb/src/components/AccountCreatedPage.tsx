@@ -1,14 +1,12 @@
 import React from 'react'
-import { SourceAppLogo, useSourceApp, useSourceAppConfigs } from './SourceApp'
 import { Button, Grid, Link, Typography } from '@mui/material'
-import { AppContextConsumer } from '../AppContext'
 import { Link as RouterLink } from 'react-router-dom'
-import { LeftRightPanel } from './LeftRightPanel'
+import { AppContextConsumer } from '../AppContext'
 import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
+import { LeftRightPanel } from './LeftRightPanel'
+import { SourceAppLogo, useSourceApp, useSourceAppConfigs } from './SourceApp'
 
-export type AccountCreatedPageProps = {}
-
-export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
+export const AccountCreatedPage = () => {
   const membershipInvitation = useMembershipInvitationTokenHandler()
   const sourceApp = useSourceApp()
   const sourceAppConfigs = useSourceAppConfigs()

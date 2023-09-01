@@ -1,11 +1,11 @@
 import React from 'react'
-import { useGetPresignedUrlContent } from '../../synapse-queries/file/useFiles'
-import { MB } from '../../utils/SynapseConstants'
 import {
   FileHandle,
   FileHandleAssociation,
   BatchFileRequest,
 } from '@sage-bionetworks/synapse-types'
+import { useGetPresignedUrlContent } from '../../synapse-queries/file/useFiles'
+import { MB } from '../../utils/SynapseConstants'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import HtmlPreview from './HtmlPreview/HtmlPreview'
 import { PreviewRendererType } from './PreviewRendererType'

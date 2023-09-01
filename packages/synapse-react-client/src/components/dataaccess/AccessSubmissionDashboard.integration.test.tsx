@@ -4,7 +4,6 @@ import { createMemoryHistory, MemoryHistory } from 'history'
 import React from 'react'
 import { Router } from 'react-router-dom'
 import selectEvent from 'react-select-event'
-import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { rest, server } from '../../mocks/msw/server'
 import {
@@ -15,7 +14,6 @@ import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
   mockSearchResults,
 } from '../../mocks/mockAccessRequirements'
-import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -24,6 +22,8 @@ import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_SEARCH,
 } from '../../utils/APIConstants'
+import { getOptionLabel } from './AccessRequirementSearchBox/AccessRequirementSearchBox'
+import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
 import * as AccessRequestSubmissionTableModule from './AccessRequestSubmissionTable'
 
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'

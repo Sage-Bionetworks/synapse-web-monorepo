@@ -9,6 +9,11 @@ import {
   UseQueryOptions,
   UseQueryResult,
 } from 'react-query'
+import {
+  AsynchronousJobStatus,
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import {
@@ -16,11 +21,6 @@ import {
   DEFAULT_PAGE_SIZE,
 } from '../../utils/SynapseConstants'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import {
-  AsynchronousJobStatus,
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
 
 const sharedQueryDefaults = {
   staleTime: 1000 * 60 * 30, // 30 minutes

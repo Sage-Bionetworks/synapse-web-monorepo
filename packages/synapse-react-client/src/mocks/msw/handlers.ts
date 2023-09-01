@@ -1,13 +1,14 @@
 import { rest } from 'msw'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
+import { SynapseError } from '../../utils/SynapseError'
 import { getEntityHandlers } from './handlers/entityHandlers'
 import {
   getCurrentUserCertifiedValidatedHandler,
   getUserProfileHandlers,
 } from './handlers/userProfileHandlers'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
 import {
   getAccessRequirementEntityBindingHandlers,
   getAccessRequirementHandlers,
@@ -17,7 +18,6 @@ import { getWikiHandlers } from './handlers/wikiHandlers'
 import { getDataAccessRequestHandlers } from './handlers/dataAccessRequestHandlers'
 import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
 import { getFileHandlers } from './handlers/fileHandlers'
-import { SynapseError } from '../../utils/SynapseError'
 import { getDiscussionHandlers } from './handlers/discussionHandlers'
 import { getSubscriptionHandlers } from './handlers/subscriptionHandlers'
 

@@ -1,5 +1,11 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
+import { rest } from 'msw'
+import {
+  AccessApproval,
+  AccessRequirementStatus,
+  ApprovalState,
+} from '@sage-bionetworks/synapse-types'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
@@ -11,16 +17,10 @@ import {
   mockToUAccessRequirementWithWiki,
 } from '../../../mocks/mockAccessRequirements'
 import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
-import { rest } from 'msw'
 import {
   ACCESS_APPROVAL,
   ACCESS_REQUIREMENT_STATUS,
 } from '../../../utils/APIConstants'
-import {
-  AccessApproval,
-  AccessRequirementStatus,
-  ApprovalState,
-} from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
 import { getAccessRequirementHandlers } from '../../../mocks/msw/handlers/accessRequirementHandlers'
 import { getWikiHandlers } from '../../../mocks/msw/handlers/wikiHandlers'

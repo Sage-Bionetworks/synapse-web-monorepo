@@ -1,6 +1,10 @@
 import { Edge, Node } from 'reactflow'
-import { EntityHeader, Reference } from '@sage-bionetworks/synapse-types'
-import { Activity, UsedURL } from '@sage-bionetworks/synapse-types'
+import {
+  EntityHeader,
+  Reference,
+  Activity,
+  UsedURL,
+} from '@sage-bionetworks/synapse-types'
 import {
   getNodeId,
   getProvenanceEdge,

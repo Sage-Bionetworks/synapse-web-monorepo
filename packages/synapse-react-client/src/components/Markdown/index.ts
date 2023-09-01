@@ -1,15 +1,15 @@
 export * from './widget'
-import type { MarkdownEditorProps } from './MarkdownEditor'
 import { MarkdownEditor } from './MarkdownEditor'
-import type { MarkdownSynapseProps } from './MarkdownSynapse'
 import Markdown from './MarkdownSynapse'
 import MarkdownSynapse from './MarkdownSynapse'
-import type { MarkdownWidgetProps } from './MarkdownWidget'
 import { default as MarkdownWidget } from './MarkdownWidget'
-import type { MarkdownCollapseProps } from './MarkdownCollapse'
 import { MarkdownCollapse } from './MarkdownCollapse'
-import type { MarkdownPopoverProps } from './MarkdownPopover'
 import { MarkdownPopover } from './MarkdownPopover'
+import type { MarkdownWidgetProps } from './MarkdownWidget'
+import type { MarkdownCollapseProps } from './MarkdownCollapse'
+import type { MarkdownPopoverProps } from './MarkdownPopover'
+import type { MarkdownSynapseProps } from './MarkdownSynapse'
+import type { MarkdownEditorProps } from './MarkdownEditor'
 
 export {
   MarkdownEditor,

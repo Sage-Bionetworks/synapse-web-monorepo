@@ -1,7 +1,7 @@
-import { useListState } from './useListState'
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useListState } from './useListState'
 
 type UserListStateWrapperProps = {
   initialValue: string[]

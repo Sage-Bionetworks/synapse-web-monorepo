@@ -7,14 +7,15 @@ import {
   useQueryClient,
   UseMutationOptions,
 } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import {
+  EntityHeader,
+  PaginatedResults,
   FavoriteSortBy,
   FavoriteSortDirection,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useIsFavorite(entityId: string) {
   // TODO: Handle pagination - the default limit is 200

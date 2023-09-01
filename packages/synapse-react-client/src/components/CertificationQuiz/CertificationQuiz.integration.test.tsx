@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import CertificationQuiz from './CertificationQuiz'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
@@ -10,6 +9,7 @@ import {
 } from '../../utils/functions/getEndpoint'
 import { rest, server } from '../../mocks/msw/server'
 import { mockQuiz, mockPassingRecord } from '../../mocks/mockCertificationQuiz'
+import CertificationQuiz from './CertificationQuiz'
 
 window.open = jest.fn()
 

@@ -1,12 +1,8 @@
 import React from 'react'
-import { useSourceApp } from './SourceApp'
 import { Link, Typography } from '@mui/material'
+import { useSourceApp } from './SourceApp'
 
-export type TermsOfUseRightPanelTextProps = {}
-
-export const TermsOfUseRightPanelText = (
-  props: TermsOfUseRightPanelTextProps,
-) => {
+export const TermsOfUseRightPanelText = () => {
   const sourceApp = useSourceApp()
   const sourceAppName = sourceApp?.friendlyName
 

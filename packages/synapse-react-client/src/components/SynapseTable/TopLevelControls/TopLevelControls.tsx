@@ -1,28 +1,24 @@
 import { cloneDeep, partition } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
-import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import {
   Query,
   QueryBundleRequest,
   QueryResultBundle,
   Row,
 } from '@sage-bionetworks/synapse-types'
+import { Button, Divider, Tooltip, Typography } from '@mui/material'
+import { useAtomValue } from 'jotai'
+import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { ColumnSelection, DownloadOptions } from '../table-top'
-import { Button, Divider, Tooltip, Typography } from '@mui/material'
 import QueryCount from '../../QueryCount/QueryCount'
 import MissingQueryResultsWarning from '../../MissingQueryResultsWarning/MissingQueryResultsWarning'
 import { Cavatica } from '../../../assets/icons/Cavatica'
 import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
 import SendToCavaticaConfirmationDialog from '../SendToCavaticaConfirmationDialog'
-import {
-  getNumberOfResultsToInvokeAction,
-  getNumberOfResultsToInvokeActionCopy,
-} from './TopLevelControlsUtils'
 import IconSvg from '../../IconSvg'
-import { useAtomValue } from 'jotai'
 import {
   lockedColumnAtom,
   tableQueryDataAtom,
@@ -33,6 +29,10 @@ import {
   isRowSelectionVisibleAtom,
   selectedRowsAtom,
 } from '../../QueryWrapper/TableRowSelectionState'
+import {
+  getNumberOfResultsToInvokeAction,
+  getNumberOfResultsToInvokeActionCopy,
+} from './TopLevelControlsUtils'
 
 export type TopLevelControlsProps = {
   name?: string

@@ -1,17 +1,32 @@
 import React from 'react'
-import _ from 'lodash-es'
 import { Engine, EngineResult } from 'json-rules-engine'
 import Form from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
-import { UiSchema, ErrorListProps, RJSFValidationError } from '@rjsf/utils'
+import { ErrorListProps, RJSFValidationError, UiSchema } from '@rjsf/utils'
+import Switch from 'react-switch'
+import { Prompt } from 'react-router-dom'
 import {
-  Step,
-  StepStateEnum,
+  cloneDeep,
+  find,
+  findIndex,
+  first,
+  get,
+  isEqual,
+  isUndefined,
+  keys,
+  pick,
+  remove,
+  set,
+  trimStart,
+} from 'lodash-es'
+import {
+  FormSchema,
+  IRulesNavigationEvent,
+  IRulesValidationEvent,
   NavActionEnum,
   StatusEnum,
-  FormSchema,
-  IRulesValidationEvent,
-  IRulesNavigationEvent,
+  Step,
+  StepStateEnum,
 } from './types'
 import Header from './Header'
 import StepsSideNav from './StepsSideNav'
@@ -19,8 +34,6 @@ import { NavButtons, NextStepLink } from './NavButtons'
 import DataDebug from './DataDebug'
 import SummaryTable from './SummaryTable'
 import WarningDialog from './WarningDialog'
-import Switch from 'react-switch'
-import { Prompt } from 'react-router-dom'
 
 export interface IFormData {
   [key: string]: {
@@ -109,10 +122,7 @@ export default class SynapseForm extends React.Component<
     super(props)
 
     //will modify the ui:help to render html vs text
-    this.uiSchema = stringToElementForProp(
-      _.cloneDeep(props.uiSchema),
-      'ui:help',
-    )
+    this.uiSchema = stringToElementForProp(cloneDeep(props.uiSchema), 'ui:help')
     //create steps array from the navSchema
     const steps = props.navSchema.steps
       .map((step, i) => {
@@ -180,8 +190,8 @@ export default class SynapseForm extends React.Component<
     const currentStateFormData = currentState.formData
     //if there is a top level 'included' property in schema - update the form.
     Object.keys(schemaScreens).forEach((key: string) => {
-      if (_.get(schemaScreens[key], `properties.included`)) {
-        _.set(result, `${key}.included`, true)
+      if (get(schemaScreens[key], `properties.included`)) {
+        set(result, `${key}.included`, true)
       }
     })
     return { ...currentStateFormData, ...result }
@@ -191,8 +201,8 @@ export default class SynapseForm extends React.Component<
     currentState: SynapseFormState,
   ): IFormData => {
     const firstStepId = currentState.currentStep.id
-    const newStateData = _.cloneDeep(currentState.formData)
-    _.set(newStateData, `${firstStepId}.included`, true)
+    const newStateData = cloneDeep(currentState.formData)
+    set(newStateData, `${firstStepId}.included`, true)
     return newStateData
   }
 
@@ -225,7 +235,7 @@ export default class SynapseForm extends React.Component<
     }
     //only get schema for current step. Only the portion of entire form is shown
 
-    const currentStepSlice = _.pick(this.props.schema, [
+    const currentStepSlice = pick(this.props.schema, [
       'title',
       'type',
       `properties.${id}`,
@@ -308,7 +318,7 @@ export default class SynapseForm extends React.Component<
     })
     //if we are in wizard mode we want to make sure that we include the step we are about to go to
     if (isMoveForwardInWizardMode) {
-      _.set(formData, `${nextStepId}.included`, true)
+      set(formData, `${nextStepId}.included`, true)
     }
 
     //at this point the form is valid and submitted and the data reflects the latest
@@ -353,17 +363,17 @@ export default class SynapseForm extends React.Component<
       if (!this.isSubmitScreen()) {
         //since we don't know if we'll get back to that step again - exclude it. We will include it again if we
         // get to it.
-        _.set(formData, `${this.state.currentStep.id}.included`, undefined)
+        set(formData, `${this.state.currentStep.id}.included`, undefined)
       }
     } else {
-      const currentIndex = _.findIndex(this.state.steps, {
+      const currentIndex = findIndex(this.state.steps, {
         id: this.state.currentStep.id,
       })
       if (currentIndex > 0) {
         previousStepId = this.state.steps[currentIndex - 1].id
       }
     }
-    if (!_.isUndefined(previousStepId)) {
+    if (!isUndefined(previousStepId)) {
       return this.moveStep(formData, previousStepId, isError, previousStack)
     }
   }
@@ -425,7 +435,7 @@ export default class SynapseForm extends React.Component<
     //error property is in the format: step.somevalue.etc  .welcome.submission_name example
     //find all the steps where there is an error
     const stepsWithError = errors.map(
-      error => _.trimStart(error.property, '.').split('.')[0],
+      error => trimStart(error.property, '.').split('.')[0],
     )
     //find all steps in current schema
     const stepsInCurrentSchema = Object.keys(currentSchemaProperties)
@@ -440,7 +450,7 @@ export default class SynapseForm extends React.Component<
       } else if (stepsInCurrentSchema.indexOf(step.id) > -1) {
         let state = StepStateEnum.COMPLETED
         //if we are in wizard and possibly have not visited this step
-        if (isWizard && !_.get(formData[step.id], 'included')) {
+        if (isWizard && !get(formData[step.id], 'included')) {
           state = step.state
         }
 
@@ -459,7 +469,7 @@ export default class SynapseForm extends React.Component<
   handleOnChange({ formData }: any) {
     //this is just for form updates. submit screen goes different route
     if (!this.isSubmitScreen() && !this.state.currentStep.excluded) {
-      const hasUnsavedChanges = !_.isEqual(this.state.formData, formData)
+      const hasUnsavedChanges = !isEqual(this.state.formData, formData)
       this.setState({ formData, hasUnsavedChanges })
     }
   }
@@ -548,8 +558,8 @@ export default class SynapseForm extends React.Component<
         return stp
       })
 
-      const formDataUpdated = _.cloneDeep(prevState.formData)
-      const currentStep = _.cloneDeep(prevState.currentStep)
+      const formDataUpdated = cloneDeep(prevState.formData)
+      const currentStep = cloneDeep(prevState.currentStep)
       //we need this because you can exclude on the ifnal screen so the currentStep.id
       //is not always the one we need to exclude
       if (currentStep.id === stepId) {
@@ -558,9 +568,9 @@ export default class SynapseForm extends React.Component<
       //if exluding - blow away the data for the step
       if (isExclude) {
         formDataUpdated[stepId] = {}
-        //_.set(formDataUpdated, `${stepId}.included`, false);
+        //set(formDataUpdated, `${stepId}.included`, false);
       } else {
-        _.set(formDataUpdated, `${stepId}.included`, true)
+        set(formDataUpdated, `${stepId}.included`, true)
       }
       return {
         steps,
@@ -684,7 +694,7 @@ export default class SynapseForm extends React.Component<
           ? acc.concat(value.validationRules)
           : acc
       }, [])
-      data = _.cloneDeep(formData)
+      data = cloneDeep(formData)
     }
 
     if (rules.length === 0) {
@@ -702,7 +712,7 @@ export default class SynapseForm extends React.Component<
         allRules.push(rule)
       } else {
         const path = paramProp.split('[*]')[0].substring(1)
-        const data = _.get(formData, path)
+        const data = get(formData, path)
         // generate a rule for each item in the data array by substituting [*] w/ appropriate index
         if (Array.isArray(data) && typeof data !== 'string') {
           for (let i = 0; i < data.length; i++) {
@@ -782,7 +792,7 @@ export default class SynapseForm extends React.Component<
           0,
           error.property.lastIndexOf('.'),
         )
-        _.remove(errors, (error: RJSFValidationError) => {
+        remove(errors, (error: RJSFValidationError) => {
           return (
             (error.property || '').indexOf(parentPath) > -1 &&
             (error.name === 'enum' || error.name === 'oneOf')
@@ -1005,7 +1015,7 @@ function renderTransformedErrorObject(
   i: number,
   schema: any,
 ): { order: number; element: JSX.Element } {
-  const propPath = _.trimStart(error.property, '.')
+  const propPath = trimStart(error.property, '.')
   const propArr = propPath.split('.')
 
   // some things require labels in schema (e.g. checkboxes) so this is preferred
@@ -1018,7 +1028,7 @@ function renderTransformedErrorObject(
   const arrayLabelFromUI = labelFromUi.replace(/\[.*?\]/, '.items')
   const indexMatch = labelFromSchema.match(/\[.*?\]/)
 
-  let index = _.first(indexMatch)
+  let index = first(indexMatch)
 
   if (index) {
     index = index.substring(1, index.length - 1)
@@ -1026,13 +1036,13 @@ function renderTransformedErrorObject(
   }
 
   const label =
-    _.get(uiSchema, labelFromUi) ||
-    _.get(schema.properties, labelFromSchema) ||
-    _.get(uiSchema, arrayLabelFromUI) ||
-    _.get(schema.properties, arrayLabelFromSchema) ||
+    get(uiSchema, labelFromUi) ||
+    get(schema.properties, labelFromSchema) ||
+    get(uiSchema, arrayLabelFromUI) ||
+    get(schema.properties, arrayLabelFromSchema) ||
     error.property
 
-  const screen = _.find(steps, { id: propArr[0] }) || {
+  const screen = find(steps, { id: propArr[0] }) || {
     title: propArr[0],
     order: 0,
   }
@@ -1052,7 +1062,7 @@ function renderTransformedErrorObject(
 
 //recursively sets property value to dangerouslySetInnerHTML of that value
 function stringToElementForProp(srcObject: any, key: string): object {
-  _.keys(srcObject).some(k => {
+  keys(srcObject).some(k => {
     if (k === key) {
       const value = srcObject[k]
       srcObject[k] = <span dangerouslySetInnerHTML={{ __html: value }}></span>

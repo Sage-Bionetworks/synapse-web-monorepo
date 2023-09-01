@@ -1,7 +1,7 @@
-import { getIsAllSelectedFromInfiniteList } from './useGetIsAllSelectedInfiniteList'
 import { Map } from 'immutable'
 import { EntityHeader, EntityType } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../functions/EntityTypeUtils'
+import { getIsAllSelectedFromInfiniteList } from './useGetIsAllSelectedInfiniteList'
 
 const ALL_TYPES = Object.values(EntityType)
 const mockFetchNextPage = jest.fn()

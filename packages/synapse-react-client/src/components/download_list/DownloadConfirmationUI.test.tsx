@@ -1,12 +1,12 @@
 import React from 'react'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../utils'
 import {
   DownloadConfirmationUI,
   DownloadConfirmationUIProps,
 } from './DownloadConfirmationUI'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseContextType } from '../../utils'
 import * as DownloadDetailsModule from './DownloadDetails'
 
 const DOWNLOAD_DETAILS_TEST_ID = 'DownloadDetails'

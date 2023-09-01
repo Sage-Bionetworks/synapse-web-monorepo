@@ -1,17 +1,17 @@
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { Table } from 'react-bootstrap'
-import SortIcon from '../../assets/icons/Sort'
-import { useGetForumInfinite } from '../../synapse-queries/forum/useForum'
-import { AVATAR, SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { Direction } from '@sage-bionetworks/synapse-types'
 import {
+  Direction,
   DiscussionFilter,
   DiscussionThreadOrder,
 } from '@sage-bionetworks/synapse-types'
+import { Button, Link } from '@mui/material'
+import SortIcon from '../../assets/icons/Sort'
+import { useGetForumInfinite } from '../../synapse-queries/forum/useForum'
+import { AVATAR, SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import IconSvg from '../IconSvg/IconSvg'
 import UserCard from '../UserCard/UserCard'
-import { Button, Link } from '@mui/material'
 
 export type ForumTableProps = {
   forumId: string

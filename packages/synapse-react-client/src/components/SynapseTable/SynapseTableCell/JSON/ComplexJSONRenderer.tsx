@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Box, Typography } from '@mui/material'
-import ExpandCollapseButton from '../../ExpandCollapseButton'
 import { chromeLight, Inspector } from 'react-inspector'
+import ExpandCollapseButton from '../../ExpandCollapseButton'
 
 type ComplexJSONRendererProps = {
   value: any

@@ -1,13 +1,13 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { UseQueryWrapperDataReturn } from './useQueryWrapperData'
 import {
   mockCompleteAsyncJob,
   mockQueryBundleRequest,
   mockQueryResultBundle,
 } from '../../mocks/mockFileViewQuery'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { useQueryWrapperPaginationControls } from './useQueryWrapperPaginationControls'
 import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
+import { useQueryWrapperPaginationControls } from './useQueryWrapperPaginationControls'
+import { UseQueryWrapperDataReturn } from './useQueryWrapperData'
 
 describe('useQueryWrapperPaginationControls tests', () => {
   const immutableTableQueryResult: ImmutableTableQueryResult = {

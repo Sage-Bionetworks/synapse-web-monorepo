@@ -1,14 +1,14 @@
 import React from 'react'
+import {
+  QueryBundleRequest,
+  SortDirection,
+} from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../utils'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/SqlFunctions'
-import {
-  QueryBundleRequest,
-  SortDirection,
-} from '@sage-bionetworks/synapse-types'
 import CardContainer from '../CardContainer/CardContainer'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { GenericCardSchema } from '../GenericCard'

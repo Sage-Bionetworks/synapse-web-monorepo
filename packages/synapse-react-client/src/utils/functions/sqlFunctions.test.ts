@@ -1,16 +1,16 @@
 import {
+  ColumnMultiValueFunction,
+  ColumnMultiValueFunctionQueryFilter,
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
+} from '@sage-bionetworks/synapse-types'
+import {
   getAdditionalFilters,
   parseEntityIdAndVersionFromSqlStatement,
   parseEntityIdFromSqlStatement,
   QUERY_FILTERS_LOCAL_STORAGE_KEY,
   SQLOperator,
 } from './SqlFunctions'
-import {
-  ColumnMultiValueFunction,
-  ColumnMultiValueFunctionQueryFilter,
-  ColumnSingleValueFilterOperator,
-  ColumnSingleValueQueryFilter,
-} from '@sage-bionetworks/synapse-types'
 
 describe('parseEntityIdFromSqlStatement', () => {
   it('should get entityId correctly', () => {

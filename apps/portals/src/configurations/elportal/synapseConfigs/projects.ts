@@ -1,5 +1,7 @@
-import { SynapseConfig } from 'types/portal-config'
 import { CardConfiguration, SynapseConstants } from 'synapse-react-client'
+import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
 import {
   computationalSql,
   defaultSearchConfiguration,
@@ -8,11 +10,9 @@ import {
   publicationsSql,
   studiesSql,
 } from '../resources'
-import { DetailsPageProps } from 'types/portal-util-types'
 import { studyCardConfiguration } from './studies'
 import { publicationCardProps } from './publications'
 import { computationalCardConfiguration } from './computational_tools'
-import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 4
 export const projectCardConfiguration: CardConfiguration = {

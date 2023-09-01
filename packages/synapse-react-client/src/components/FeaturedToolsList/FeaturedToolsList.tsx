@@ -1,11 +1,11 @@
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import React, { useState, useEffect } from 'react'
 import { SynapseConstants } from '../../utils'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryResultBundle'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import React, { useState, useEffect } from 'react'
-import { FeaturedToolCard } from './FeaturedToolCard'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { FeaturedToolCard } from './FeaturedToolCard'
 
 export type FeaturedToolsListProps = {
   entityId: string

@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import StepperDialog, { Step } from '../StepperDialog/StepperDialog'
-
 import {
   ErrorResponse,
   Team,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
-import { CreateChallengeTeam, CreateTeamRequest } from './CreateChallengeTeam'
-import { SelectChallengeTeam } from './SelectChallengeTeam'
-import { RegistrationSuccessful } from './RegistrationSuccessful'
-import { JoinRequestForm } from './JoinRequestForm'
+import { Typography } from '@mui/material'
+import { useQueryClient } from 'react-query'
+import StepperDialog, { Step } from '../StepperDialog/StepperDialog'
+
 import { useSynapseContext } from '../../utils'
 import {
   addTeamMemberAsAuthenticatedUserOrAdmin,
@@ -26,9 +24,10 @@ import {
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMembers'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-
-import { Typography } from '@mui/material'
-import { useQueryClient } from 'react-query'
+import { JoinRequestForm } from './JoinRequestForm'
+import { RegistrationSuccessful } from './RegistrationSuccessful'
+import { SelectChallengeTeam } from './SelectChallengeTeam'
+import { CreateChallengeTeam, CreateTeamRequest } from './CreateChallengeTeam'
 
 enum StepsEnum {
   SELECT_YOUR_CHALLENGE_TEAM = 'SELECT_YOUR_CHALLENGE_TEAM',

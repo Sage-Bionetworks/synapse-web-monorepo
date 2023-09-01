@@ -1,9 +1,9 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import ErrorChip, { ErrorChipProps } from './ErrorChip'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { SynapseContextConsumer } from '../../utils/context/SynapseContext'
 import FullContextProvider from '../../utils/context/FullContextProvider'
+import ErrorChip, { ErrorChipProps } from './ErrorChip'
 
 const meta = {
   title: 'Components/ErrorChip',

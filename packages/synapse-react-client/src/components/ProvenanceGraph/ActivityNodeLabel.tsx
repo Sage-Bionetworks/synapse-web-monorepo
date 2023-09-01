@@ -1,10 +1,9 @@
 import dayjs from 'dayjs'
 import React, { useMemo } from 'react'
+import { Activity } from '@sage-bionetworks/synapse-types'
+import { Tooltip, Typography } from '@mui/material'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetUserProfile } from '../../synapse-queries'
-import { Activity } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
-import { Typography } from '@mui/material'
 import { UserCardSmall } from '../UserCard/UserCardSmall'
 
 export const ActivityNodeLabel = (data: Activity) => {

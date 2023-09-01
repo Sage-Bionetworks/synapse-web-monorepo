@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
-import FeaturedDataTabs from './FeaturedDataTabs'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import {
   mockQueryPerCardResult,
   mockSingleQueryResult,
 } from '../../mocks/query/mockFeaturedDataTabsQueryData'
+import FeaturedDataTabs from './FeaturedDataTabs'
 
 const meta = {
   title: 'Home Page/FeaturedDataTabs',

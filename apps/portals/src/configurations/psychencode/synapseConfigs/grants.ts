@@ -5,13 +5,13 @@ import {
   ProjectIcon,
   SynapseConstants,
 } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
-import { DetailsPageProps } from 'types/portal-util-types'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
+import { grantSql } from '../resources'
 import { studyDetailPageProps } from './studies'
 import { publicationDetailPageProps } from './publications'
 import { peopleDetailPageProps } from './people'
-import { grantSql } from '../resources'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const rgbIndex = 2
 

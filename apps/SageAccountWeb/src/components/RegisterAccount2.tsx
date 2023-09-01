@@ -1,15 +1,13 @@
 import { Button, InputLabel, TextField, Typography } from '@mui/material'
-import { StyledFormControl } from './StyledComponents'
 import React, { useEffect, useState } from 'react'
 import { displayToast, SynapseClient } from 'synapse-react-client'
 import { AliasType } from '@sage-bionetworks/synapse-types'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
+import { StyledFormControl } from './StyledComponents'
 import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'
 
-export type RegisterAccount2Props = {}
-
-export const RegisterAccount2 = (props: RegisterAccount2Props) => {
+export const RegisterAccount2 = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -174,7 +172,9 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
               </StyledFormControl>
               <Button
                 variant="contained"
-                onClick={onCreateAccount}
+                onClick={e => {
+                  onCreateAccount(e)
+                }}
                 type="button"
                 disabled={isLoading}
               >

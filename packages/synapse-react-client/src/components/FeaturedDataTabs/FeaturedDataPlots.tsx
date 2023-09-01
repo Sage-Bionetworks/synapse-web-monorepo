@@ -1,11 +1,11 @@
 import React from 'react'
+import { chunk, times } from 'lodash-es'
 import QueryPerFacetPlotsCard, {
   QueryPerFacetPlotsCardProps,
 } from './QueryPerFacetPlotsCard'
 import SingleQueryFacetPlotsCards, {
   SingleQueryFacetPlotsCardsProps,
 } from './SingleQueryFacetPlotsCards'
-import { chunk, times } from 'lodash-es'
 import { FacetPlotsCardGridContainer } from './FacetPlotsCardGrid'
 import { CARDS_PER_ROW } from './FeaturedDataTabsUtils'
 

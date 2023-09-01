@@ -5,9 +5,9 @@ import {
   LockTwoTone,
 } from '@mui/icons-material'
 import Skeleton from '@mui/material/Skeleton'
-import ConditionalWrapper from '../utils/ConditionalWrapper'
 import { Avatar, AvatarProps, styled, SxProps, useTheme } from '@mui/material'
 import { StyledComponent } from '@emotion/styled/dist/emotion-styled.cjs'
+import ConditionalWrapper from '../utils/ConditionalWrapper'
 
 export enum RequirementItemStatus {
   COMPLETE = 'COMPLETE',

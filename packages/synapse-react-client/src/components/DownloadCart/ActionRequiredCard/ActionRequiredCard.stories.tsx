@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { ActionRequiredCard } from './ActionRequiredCard'
 import React from 'react'
+import { Button, Typography } from '@mui/material'
 import { WideButton } from '../../styled/WideButton'
 import { EASY_DIFFICULTY } from '../../../utils/SynapseConstants'
-import { Button, Typography } from '@mui/material'
+import { ActionRequiredCard } from './ActionRequiredCard'
 
 const meta = {
   title: 'Download/ActionRequiredCard',

@@ -1,9 +1,9 @@
 import React from 'react'
+import { Box, BoxProps, Button, ButtonProps, styled } from '@mui/material'
+import { StyledComponent } from '@emotion/styled'
 import AccessApprovalCheckMark, {
   RequirementItemStatus,
 } from '../AccessApprovalCheckMark'
-import { Box, BoxProps, Button, ButtonProps, styled } from '@mui/material'
-import { StyledComponent } from '@emotion/styled'
 
 export type RequirementItemProps = React.PropsWithChildren<{
   status: RequirementItemStatus

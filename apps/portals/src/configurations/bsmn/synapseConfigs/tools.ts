@@ -1,7 +1,7 @@
-import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
+import { SynapseConfig } from '../../../types/portal-config'
 import { toolsSql } from '../resources'
+import type { CardConfiguration } from 'synapse-react-client'
 
 const rgbIndex = 8
 

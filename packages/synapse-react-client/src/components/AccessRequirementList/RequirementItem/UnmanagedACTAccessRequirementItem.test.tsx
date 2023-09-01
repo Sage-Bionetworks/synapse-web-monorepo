@@ -1,17 +1,17 @@
 import React from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import UnmanagedACTAccessRequirementItem, {
-  UnmanagedACTAccessRequirementItemProps,
-} from './UnmanagedACTAccessRequirementItem'
-import { SynapseClient, SynapseContextType } from '../../../index'
 import { AccessRequirementStatus } from '@sage-bionetworks/synapse-types'
+import userEvent from '@testing-library/user-event'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { SynapseClient, SynapseContextType } from '../../../index'
 import {
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,
 } from '../../../mocks/mockAccessRequirements'
 import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockFileEntity'
-import userEvent from '@testing-library/user-event'
+import UnmanagedACTAccessRequirementItem, {
+  UnmanagedACTAccessRequirementItemProps,
+} from './UnmanagedACTAccessRequirementItem'
 
 function renderComponent(
   props: UnmanagedACTAccessRequirementItemProps,

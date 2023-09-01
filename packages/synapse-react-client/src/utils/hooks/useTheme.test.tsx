@@ -1,7 +1,7 @@
-import { mergeTheme } from '../../theme/useTheme'
 import { ThemeOptions } from '@mui/material'
-import defaultMuiThemeOptions from '../../theme/DefaultTheme'
 import { PartialDeep } from 'type-fest'
+import { mergeTheme } from '../../theme/useTheme'
+import defaultMuiThemeOptions from '../../theme/DefaultTheme'
 
 describe('Synapse Theme tests', () => {
   it('properly merges a custom theme with the default theme', () => {

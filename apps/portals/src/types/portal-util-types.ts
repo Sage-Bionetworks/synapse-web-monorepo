@@ -1,9 +1,9 @@
-import { SynapseConfig } from './portal-config'
 import { IconName } from 'synapse-react-client'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from './portal-config'
 
 /* 
   These are types that come up frequently between portals but are an

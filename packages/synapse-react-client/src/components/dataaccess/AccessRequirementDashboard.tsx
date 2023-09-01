@@ -3,17 +3,17 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Box, InputAdornment, TextField, Typography } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { EntityType } from '@sage-bionetworks/synapse-types'
+import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
+import { InputSizedButton } from '../styled/InputSizedButton'
 import {
   AccessRequirementTable,
   AccessRequirementTableProps,
 } from './AccessRequirementTable'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
-import { InputSizedButton } from '../styled/InputSizedButton'
 
 export type AccessRequirementDashboardProps = {
   onCreateNewAccessRequirementClicked?: () => void

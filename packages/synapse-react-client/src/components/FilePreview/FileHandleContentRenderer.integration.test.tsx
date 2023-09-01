@@ -1,25 +1,25 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import React from 'react'
-import FileHandleContentRenderer, {
-  FileHandleContentRendererProps,
-} from './FileHandleContentRenderer'
-import * as HtmlPreviewModule from './HtmlPreview/HtmlPreview'
-import { PreviewRendererType } from './PreviewRendererType'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { MB } from '../../utils/SynapseConstants'
 import {
   BatchFileResult,
   FileHandle,
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
+import { MB } from '../../utils/SynapseConstants'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
 import { MOCK_FILE_HANDLE_ID } from '../../mocks/mock_file_handle'
 import { rest, server } from '../../mocks/msw/server'
+import { PreviewRendererType } from './PreviewRendererType'
+import * as HtmlPreviewModule from './HtmlPreview/HtmlPreview'
+import FileHandleContentRenderer, {
+  FileHandleContentRendererProps,
+} from './FileHandleContentRenderer'
 
 jest.spyOn(HtmlPreviewModule, 'default').mockImplementation(() => {
   return <div data-testid="HtmlPreview"></div>

@@ -1,12 +1,12 @@
 import { useQuery, UseQueryOptions } from 'react-query'
-import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
 import {
   Direction,
   DockerCommit,
   PaginatedResults,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils'
 
 export function useGetDockerTags(

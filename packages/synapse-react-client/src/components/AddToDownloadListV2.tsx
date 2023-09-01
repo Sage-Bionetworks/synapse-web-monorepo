@@ -1,10 +1,10 @@
 import React from 'react'
-import IconSvg from './IconSvg/IconSvg'
-import { useSynapseContext } from '../utils/context/SynapseContext'
-import { displayToast } from './ToastMessage/ToastMessage'
 import { Link, Tooltip } from '@mui/material'
+import { useSynapseContext } from '../utils/context/SynapseContext'
 import { useAddFileToDownloadList } from '../synapse-queries/download/useDownloadList'
 import { useGetEntity } from '../synapse-queries'
+import { displayToast } from './ToastMessage/ToastMessage'
+import IconSvg from './IconSvg/IconSvg'
 
 export type AddToDownloadListV2Props = {
   entityId: string

@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, IconButton, Tooltip } from '@mui/material'
-import { useEffect, useState } from 'react'
 import UniversalCookies from 'universal-cookie'
+import { InfoOutlined } from '@mui/icons-material'
 import { isInSynapseExperimentalMode } from '../../synapse-client/SynapseClient'
 import { EXPERIMENTAL_MODE_COOKIE } from '../../utils/SynapseConstants'
-import { InfoOutlined } from '@mui/icons-material'
 
 const experimentalModeText =
   'This mode gives you early access to features that are still in development. Please note that we do not guarantee an absence of errors, and that the data created using these features may be lost during product upgrade.'

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
-import TwoFactorEnrollmentForm from './TwoFactorEnrollmentForm'
 import { displayToast } from '../ToastMessage/ToastMessage'
+import TwoFactorEnrollmentForm from './TwoFactorEnrollmentForm'
 
 const meta = {
   title: 'Authentication/TwoFactorEnrollment',

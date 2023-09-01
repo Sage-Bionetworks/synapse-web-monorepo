@@ -1,7 +1,12 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { rest } from 'msw'
-import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
+import {
+  AccessApproval,
+  ApprovalState,
+  SubmissionState,
+  TwoFactorAuthStatus,
+} from '@sage-bionetworks/synapse-types'
 import { ACCESS_APPROVAL } from '../../utils/APIConstants'
 import {
   mockACTAccessRequirement,
@@ -14,14 +19,8 @@ import {
   SynapseContextConsumer,
   SynapseContextProvider,
 } from '../../utils/context/SynapseContext'
-import {
-  AccessApproval,
-  ApprovalState,
-  SubmissionState,
-  TwoFactorAuthStatus,
-} from '@sage-bionetworks/synapse-types'
+import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
-import AccessRequirementList from './AccessRequirementList'
 import { getWikiHandlers } from '../../mocks/msw/handlers/wikiHandlers'
 import {
   getAccessRequirementEntityBindingHandlers,
@@ -32,6 +31,7 @@ import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
 import { mockApprovedSubmission } from '../../mocks/dataaccess/MockSubmission'
 import { getCurrentUserCertifiedValidatedHandler } from '../../mocks/msw/handlers/userProfileHandlers'
 import { getResearchProjectHandlers } from '../../mocks/msw/handlers/researchProjectHandlers'
+import AccessRequirementList from './AccessRequirementList'
 
 const meta: Meta = {
   title: 'Governance/Data Access Request Flow/AccessRequirementList',

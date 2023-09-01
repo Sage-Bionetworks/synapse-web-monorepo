@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
-import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { ACTAccessRequirement } from '@sage-bionetworks/synapse-types'
+import { Box, ButtonProps, Link, Typography } from '@mui/material'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
-import { Box, ButtonProps, Link, Typography } from '@mui/material'
 import {
   useGetAccessRequirementStatus,
   useGetAccessRequirementWikiPageKey,
 } from '../../../synapse-queries'
-import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import RequirementItem from './RequirementItem'
 
 export type UnmanagedACTAccessRequirementItemProps = {
   entityId: string

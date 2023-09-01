@@ -1,9 +1,9 @@
 import React from 'react'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
-import UserCardListGroupsMobile from './UserCardListGroups.Mobile'
-import UserCardListGroupsDesktop from './UserCardListGroups.Desktop'
 import LargeButton from '../../../components/styled/LargeButton'
 import { UserCardSize } from '../../../utils/SynapseConstants'
+import UserCardListGroupsMobile from './UserCardListGroups.Mobile'
+import UserCardListGroupsDesktop from './UserCardListGroups.Desktop'
 
 export type UserCardListGroupsProps = {
   sql: string

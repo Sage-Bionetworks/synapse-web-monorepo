@@ -1,7 +1,7 @@
 import React from 'react'
-import { Checkbox, CheckboxProps } from './Checkbox'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Checkbox, CheckboxProps } from './Checkbox'
 
 const mockCallback = jest.fn()
 

@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import {
+  ACCESS_TYPE,
+  Challenge,
+  Project,
+  ResourceAccess,
+  Team,
+  PROJECT_CONCRETE_TYPE_VALUE,
+  EntityType,
+  Entity,
+} from '@sage-bionetworks/synapse-types'
+import {
   useGetCurrentUserProfile,
   useGetEntityACL,
   useGetEntityAlias,
@@ -9,21 +19,11 @@ import {
   useUpdateEntityACL,
 } from '../../synapse-queries'
 import { useSynapseContext } from '../../utils'
-import {
-  ACCESS_TYPE,
-  Challenge,
-  Project,
-  ResourceAccess,
-  Team,
-} from '@sage-bionetworks/synapse-types'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { useGetTeam } from '../../synapse-queries/team/useTeam'
 import { createEntity } from '../../synapse-client'
-import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import SubmissionDirectoryList from './SubmissionDirectoryList'
 import ChallengeSubmissionStepper from './ChallengeSubmissionStepper'
-import { EntityType } from '@sage-bionetworks/synapse-types'
-import { Entity } from '@sage-bionetworks/synapse-types'
 
 export type EntityItem = Entity & {
   repositoryName?: string

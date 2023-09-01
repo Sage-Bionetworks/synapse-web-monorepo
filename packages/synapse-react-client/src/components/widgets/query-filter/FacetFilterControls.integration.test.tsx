@@ -1,16 +1,12 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import _ from 'lodash-es'
 import React from 'react'
-import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
-import FacetFilterControls, {
-  FacetFilterControlsProps,
-  getDefaultShownFacetFilters,
-} from './FacetFilterControls'
 import {
   FacetColumnRequest,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
+import { cloneDeep } from 'lodash-es'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import mockQueryResponseData from '../../../mocks/mockQueryResponseData'
 import { DEFAULT_PAGE_SIZE } from '../../../utils/SynapseConstants'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
@@ -19,6 +15,10 @@ import { server } from '../../../mocks/msw/server'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
 import { QueryContextConsumer, QueryContextType } from '../../QueryContext'
+import FacetFilterControls, {
+  FacetFilterControlsProps,
+  getDefaultShownFacetFilters,
+} from './FacetFilterControls'
 import { RangeFacetFilterProps } from './RangeFacetFilter'
 
 let capturedOnChange: RangeFacetFilterProps['onChange'] | undefined
@@ -171,7 +171,7 @@ describe('FacetFilterControls tests', () => {
       act(() => {
         capturedOnChange!(['1997', '1998'])
       })
-      const expected = _.cloneDeep(queryRequest)
+      const expected = cloneDeep(queryRequest)
       expected.query = { ...expected.query, selectedFacets: expectedResult }
       await waitFor(() => {
         expect(capturedQueryContext?.nextQueryRequest.query).toEqual(

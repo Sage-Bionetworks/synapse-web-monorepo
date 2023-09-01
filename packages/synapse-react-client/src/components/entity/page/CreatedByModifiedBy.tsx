@@ -7,6 +7,8 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import dayjs from 'dayjs'
+import { InfoTwoTone } from '@mui/icons-material'
 import {
   BUNDLE_MASK_LAST_UPDATED_ON,
   SMALL_USER_CARD,
@@ -24,8 +26,6 @@ import {
 import UserCard from '../../UserCard/UserCard'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import ConditionalWrapper from '../../utils/ConditionalWrapper'
-import dayjs from 'dayjs'
-import { InfoTwoTone } from '@mui/icons-material'
 
 export type CreatedByModifiedByProps = {
   entityId: string

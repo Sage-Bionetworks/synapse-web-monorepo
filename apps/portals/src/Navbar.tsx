@@ -1,7 +1,4 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
-import routesConfig from './config/routesConfig'
-import logoHeaderConfig from './config/logoHeaderConfig'
+import React, { useEffect, useState } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
 import {
   AppUtils,
@@ -12,12 +9,14 @@ import {
   SystemUseNotification,
   useSynapseContext,
 } from 'synapse-react-client'
+import { Box, Button, Dialog, DialogContent, IconButton } from '@mui/material'
+import { useHistory } from 'react-router-dom'
+import routesConfig from './config/routesConfig'
+import logoHeaderConfig from './config/logoHeaderConfig'
 import NavLink from './portal-components/NavLink'
 import NavUserLink from './portal-components/NavUserLink'
 import { ConfigRoute, GenericRoute } from './types/portal-config'
-import { Box, Button, Dialog, DialogContent, IconButton } from '@mui/material'
 import { useLogInDialogContext } from './LogInDialogContext'
-import { useHistory } from 'react-router-dom'
 import { RESPONSIVE_SIDE_PADDING } from './utils'
 
 type SynapseSettingLink = {

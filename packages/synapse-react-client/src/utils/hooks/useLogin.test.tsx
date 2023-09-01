@@ -1,14 +1,14 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
-import SynapseClient from '../../synapse-client'
-import { LoginResponse } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../SynapseClientError'
 import {
+  LoginResponse,
   ErrorResponseCode,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
-import useLogin from './useLogin'
+import SynapseClient from '../../synapse-client'
+import { SynapseClientError } from '../SynapseClientError'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import useLogin from './useLogin'
 
 const successfulLoginResponse: LoginResponse = {
   accessToken: 'abcd',

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
-import SortIcon from '../../assets/icons/Sort'
 import { Direction, EntityHeader } from '@sage-bionetworks/synapse-types'
+import { Form } from 'react-bootstrap'
+import { Tooltip } from '@mui/material'
+import SortIcon from '../../assets/icons/Sort'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
@@ -15,9 +17,7 @@ import {
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { EntityTypeIcon } from '../EntityIcon'
-import { Form } from 'react-bootstrap'
 import { ErrorBanner } from '../error/ErrorBanner'
-import { Tooltip } from '@mui/material'
 
 // Local types used for client-side sorting
 export type SortField = 'name' | 'type'

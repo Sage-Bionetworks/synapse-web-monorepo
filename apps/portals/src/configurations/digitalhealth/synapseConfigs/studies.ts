@@ -1,14 +1,13 @@
 import { SynapseConstants } from 'synapse-react-client'
-import { SynapseConfig } from 'types/portal-config'
-import type { GenericCardSchema } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
 import columnAliases from '../columnAliases'
-import { DetailsPageProps } from 'types/portal-util-types'
+import { studySql } from '../resources'
 import { dataDetailPageProps } from './data'
 import { toolsDetailPageProps } from './tools'
 import { publicationDetailPageProps } from './publications'
-import { studySql } from '../resources'
 import { iconOptions } from './iconOptions'
+import type { CardConfiguration, GenericCardSchema } from 'synapse-react-client'
 
 const rgbIndex = 9
 

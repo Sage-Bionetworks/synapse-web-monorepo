@@ -29,14 +29,14 @@ const ThankYou: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <CalendarMonthOutlinedIcon sx={{ color: '#fff', fontSize: '64px' }} />
       </Box>
       <Typography variant="headline2" paragraph>
-        We're verifying your account.
+        We&apos;re verifying your account.
       </Typography>
       <Typography
         variant="headline3"
         paragraph
         sx={{ marginBottom: theme.spacing(2) }}
       >
-        Here's what to expect next:
+        Here&apos;s what to expect next:
       </Typography>
       <Typography variant="body1" paragraph>
         Our Access and Compliance Team (ACT) will review your application. This

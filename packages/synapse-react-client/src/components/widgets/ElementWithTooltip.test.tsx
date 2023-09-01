@@ -1,7 +1,7 @@
 import { act, cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import _ from 'lodash-es'
 import React from 'react'
+import { noop } from 'lodash-es'
 import Columns from '../../assets/icons/columns'
 import { IconSvgProps } from '../IconSvg/IconSvg'
 import { ElementWithTooltip } from './ElementWithTooltip'
@@ -85,7 +85,7 @@ describe('ElementWithTooltip', () => {
     const child = <span className="my_class">hello world</span>
     init({
       ...props,
-      callbackFn: _.noop,
+      callbackFn: noop,
       children: child,
       image: undefined,
     })

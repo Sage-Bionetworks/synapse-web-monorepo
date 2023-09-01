@@ -2,8 +2,13 @@ import { initialize } from '@googlemaps/jest-mocks'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React, { MouseEventHandler } from 'react'
+import {
+  LoadScript,
+  GoogleMap as ReactGoogleMap,
+  Marker,
+  InfoWindow,
+} from '@react-google-maps/api'
 import { GeoData } from '../../synapse-client'
-import GoogleMap, { MapProps } from './GoogleMap'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { rest, server } from '../../mocks/msw/server'
 import {
@@ -13,12 +18,7 @@ import {
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
 } from '../../mocks/user/mock_user_profile'
-import {
-  LoadScript,
-  GoogleMap as ReactGoogleMap,
-  Marker,
-  InfoWindow,
-} from '@react-google-maps/api'
+import GoogleMap, { MapProps } from './GoogleMap'
 
 /** Mock the Google Maps library */
 jest.mock('@react-google-maps/api', () => ({

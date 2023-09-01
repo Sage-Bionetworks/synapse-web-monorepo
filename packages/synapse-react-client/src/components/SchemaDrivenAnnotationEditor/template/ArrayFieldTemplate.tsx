@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react'
 import { Box, Collapse, IconButton, Tooltip } from '@mui/material'
 import { HelpOutline } from '@mui/icons-material'
 import { useAdditionalPropertyContext } from './AdditionalPropertyContext'
-import { JSONSchema7 } from 'json-schema'
+import type { JSONSchema7 } from 'json-schema'
 
 /** The `ArrayFieldTemplate` component is the template used to render all items in an array.
  *

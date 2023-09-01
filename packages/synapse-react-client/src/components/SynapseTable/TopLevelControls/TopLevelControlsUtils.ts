@@ -1,8 +1,8 @@
-import { QueryContextType } from '../../QueryContext'
-import { QueryVisualizationContextType } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import pluralize from 'pluralize'
 import { upperFirst } from 'lodash-es'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
+import { QueryVisualizationContextType } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { QueryContextType } from '../../QueryContext'
 
 const TO_DOWNLOAD_CART = 'to Download Cart'
 

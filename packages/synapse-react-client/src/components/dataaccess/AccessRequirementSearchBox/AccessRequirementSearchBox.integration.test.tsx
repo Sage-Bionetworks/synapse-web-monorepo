@@ -2,9 +2,6 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import selectEvent from 'react-select-event'
-import AccessRequirementSearchBox, {
-  getOptionLabel,
-} from './AccessRequirementSearchBox'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_BY_ID,
@@ -19,6 +16,9 @@ import {
   mockSearchResults,
 } from '../../../mocks/mockAccessRequirements'
 import { rest, server } from '../../../mocks/msw/server'
+import AccessRequirementSearchBox, {
+  getOptionLabel,
+} from './AccessRequirementSearchBox'
 
 const mockOnChange = jest.fn()
 const onServiceRecievedRequest = jest.fn()

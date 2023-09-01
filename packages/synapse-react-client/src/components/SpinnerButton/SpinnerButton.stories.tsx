@@ -1,10 +1,10 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import SpinnerButton from './SpinnerButton'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
 } from '../../utils/context'
+import SpinnerButton from './SpinnerButton'
 
 const meta: Meta = {
   title: 'UI/SpinnerButton',

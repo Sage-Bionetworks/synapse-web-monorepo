@@ -1,9 +1,9 @@
 import React from 'react'
+import { SynapseConstants, ExperimentalMode } from 'synapse-react-client'
 import footerConfig from './config/footerConfig'
 import logoFooterConfig from './config/logoFooterConfig'
 import { ReactComponent as PoweredBySvg } from './portal-assets/poweredbysynapse.svg'
 import Versions from './portal-components/Versions'
-import { SynapseConstants, ExperimentalMode } from 'synapse-react-client'
 
 function Footer() {
   const goToTop = () => {

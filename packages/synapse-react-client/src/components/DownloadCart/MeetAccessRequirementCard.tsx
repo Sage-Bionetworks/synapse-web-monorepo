@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
-import { useGetAccessRequirements } from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { SelfSignAccessRequirement } from '@sage-bionetworks/synapse-types'
+import { useGetAccessRequirements } from '../../synapse-queries/dataaccess/useAccessRequirements'
 import {
   EASY_DIFFICULTY,
   MEDIUM_DIFFICULTY,
   VARIABLE_DIFFICULTY,
 } from '../../utils/SynapseConstants'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
-import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import WideButton from '../../components/styled/WideButton'
+import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number

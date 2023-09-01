@@ -1,11 +1,11 @@
 import React from 'react'
-import useGetInfoFromIds, { UseGetInfoFromIdsProps } from './useGetInfoFromIds'
 import { act } from 'react-dom/test-utils'
 import ReactDOM from 'react-dom'
 import { UserGroupHeader, UserProfile } from '@sage-bionetworks/synapse-types'
+import { waitFor } from '@testing-library/react'
 import { SynapseTestContext } from '../../mocks/MockSynapseContext'
 import SynapseClient from '../../synapse-client'
-import { waitFor } from '@testing-library/react'
+import useGetInfoFromIds, { UseGetInfoFromIdsProps } from './useGetInfoFromIds'
 
 jest.mock('../../synapse-client', () => ({
   getGroupHeadersBatch: jest.fn(),

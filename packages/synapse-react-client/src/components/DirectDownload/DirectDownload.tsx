@@ -5,12 +5,12 @@ import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
+import { UAParser } from 'ua-parser-js'
+import { Tooltip } from '@mui/material'
 import { getFiles } from '../../synapse-client/SynapseClient'
 import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
-import { UAParser } from 'ua-parser-js'
-import { Tooltip } from '@mui/material'
 import { implementsExternalFileHandleInterface } from '../../utils/types/IsType'
 import { useGetFileBatch } from '../../synapse-queries/file/useFiles'
 

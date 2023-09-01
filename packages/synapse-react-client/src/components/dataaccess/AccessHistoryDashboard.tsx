@@ -1,9 +1,13 @@
 import { omitBy } from 'lodash-es'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
+import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
+import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
+import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
+import { useGetCurrentUserBundle } from '../../synapse-queries'
+import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
@@ -12,10 +16,6 @@ import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,
 } from './AccessRequestSubmissionTable'
-import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
-import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
-import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
-import { useGetCurrentUserBundle } from '../../synapse-queries'
 
 export const UserHistoryDashboard = () => {
   const [accessRequirementId, setAccessRequirementId] = useState<

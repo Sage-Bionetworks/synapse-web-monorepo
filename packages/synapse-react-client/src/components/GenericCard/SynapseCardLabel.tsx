@@ -5,10 +5,11 @@ import {
   Row,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
+import { Link, Tooltip } from '@mui/material'
+import { isEmpty } from 'lodash-es'
 import UserCard from '../UserCard/UserCard'
 import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
-import { Link, Tooltip } from '@mui/material'
 import {
   CardLink,
   ColumnSpecifiedLink,
@@ -17,7 +18,6 @@ import {
 } from '../CardContainerLogic'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import { isEmpty } from 'lodash-es'
 import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
 
 type SynapseCardLabelProps = {

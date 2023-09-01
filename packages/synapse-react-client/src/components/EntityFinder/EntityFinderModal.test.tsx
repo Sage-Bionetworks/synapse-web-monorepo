@@ -8,6 +8,8 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import * as EntityFinderModule from './EntityFinder'
 import {
   EntityFinderModal,
@@ -15,8 +17,6 @@ import {
   UNSAVED_CHANGES,
 } from './EntityFinderModal'
 import { FinderScope } from './tree/EntityTree'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 
 let capturedOnSelectionChange: ((selected: Reference[]) => void) | undefined
 

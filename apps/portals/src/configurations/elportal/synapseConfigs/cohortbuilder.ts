@@ -1,14 +1,14 @@
-import { SynapseConfig } from 'types/portal-config'
-import {
-  cohortBuilderFilesSql,
-  cohortBuilderSql,
-  defaultSearchConfiguration,
-} from '../resources'
 import { SynapseUtilityFunctions } from 'synapse-react-client'
 import {
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
 } from '@sage-bionetworks/synapse-types'
+import { SynapseConfig } from '../../../types/portal-config'
+import {
+  cohortBuilderFilesSql,
+  cohortBuilderSql,
+  defaultSearchConfiguration,
+} from '../resources'
 
 const rgbIndex = 1
 

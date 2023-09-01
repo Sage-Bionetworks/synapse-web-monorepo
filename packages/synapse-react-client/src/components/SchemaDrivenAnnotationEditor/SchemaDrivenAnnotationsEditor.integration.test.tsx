@@ -10,10 +10,7 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import {
-  SchemaDrivenAnnotationEditor,
-  SchemaDrivenAnnotationEditorProps,
-} from './SchemaDrivenAnnotationEditor'
+import { cloneDeep } from 'lodash-es'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
@@ -31,7 +28,10 @@ import { SynapseContextType } from '../../utils/context/SynapseContext'
 import mockFileEntity from '../../mocks/entity/mockFileEntity'
 import { mockSchemaBinding, mockValidationSchema } from '../../mocks/mockSchema'
 import { rest, server } from '../../mocks/msw/server'
-import { cloneDeep } from 'lodash-es'
+import {
+  SchemaDrivenAnnotationEditor,
+  SchemaDrivenAnnotationEditorProps,
+} from './SchemaDrivenAnnotationEditor'
 
 async function chooseAutocompleteOption(el: HTMLElement, option: string) {
   await userEvent.clear(el)

@@ -1,13 +1,13 @@
 import React, { useMemo, useRef } from 'react'
+import { UserProfile } from '@sage-bionetworks/synapse-types'
+import { Box, Link } from '@mui/material'
 import { SynapseConstants } from '../../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserBundle } from '../../synapse-queries/user/useUserBundle'
 import { useOverlay } from '../../utils/hooks/useOverlay'
-import { UserProfile } from '@sage-bionetworks/synapse-types'
-import { Avatar, AvatarSize } from './Avatar'
 import IconSvg from '../IconSvg/IconSvg'
+import { Avatar, AvatarSize } from './Avatar'
 import UserCardMedium from './UserCardMedium'
-import { Box, Link } from '@mui/material'
 
 export type UserCardSmallProps = {
   userProfile: UserProfile

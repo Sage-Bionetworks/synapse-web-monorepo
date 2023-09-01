@@ -9,10 +9,10 @@ import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
-  DatasetItemsEditor,
-  DatasetItemsEditorProps,
-  getCopy,
-} from './DatasetItemsEditor'
+  EntityRef,
+  EntityType,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
 import * as ToastMessageModule from '../../ToastMessage/ToastMessage'
 import { displayToast } from '../../ToastMessage/ToastMessage'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
@@ -22,17 +22,17 @@ import {
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../utils/context/SynapseContext'
-import {
-  EntityRef,
-  EntityType,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
 import mockDatasetEntityData from '../../../mocks/entity/mockDataset'
 import mockDatasetCollectionData from '../../../mocks/entity/mockDatasetCollection'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../mocks/msw/server'
 import * as EntityFinderModal from '../../EntityFinder/EntityFinderModal'
 import * as EntityBadgeModule from '../../EntityBadgeIcons/EntityBadgeIcons'
+import {
+  DatasetItemsEditor,
+  DatasetItemsEditorProps,
+  getCopy,
+} from './DatasetItemsEditor'
 const mockDatasetEntity = mockDatasetEntityData.entity
 const mockDatasetCollectionEntity = mockDatasetCollectionData.entity
 const mockFileEntity = mockFileEntityData.entity

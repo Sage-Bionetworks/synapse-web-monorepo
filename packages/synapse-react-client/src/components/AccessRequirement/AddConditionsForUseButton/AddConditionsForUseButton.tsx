@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Button } from '@mui/material'
+import { RestrictionLevel } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg/IconSvg'
 import ImposeRestrictionDialog from '../ImposeRestrictionDialog/ImposeRestrictionDialog'
 import {
   useGetEntityBundle,
   useIsCurrentUserACTMember,
 } from '../../../synapse-queries'
-import { RestrictionLevel } from '@sage-bionetworks/synapse-types'
 import {
   isEntityRefCollectionView,
   isEntityView,

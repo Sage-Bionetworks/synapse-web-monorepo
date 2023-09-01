@@ -1,10 +1,6 @@
-import { SynapseConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import type { CardConfiguration } from 'synapse-react-client'
-import { DetailsPageProps } from 'types/portal-util-types'
-import { studyCardConfiguration } from './studies'
-import { toolCardConfiguration } from './tools'
-import { publicationsCardConfiguration } from './publications'
+import { SynapseConfig } from '../../../types/portal-config'
+import { DetailsPageProps } from '../../../types/portal-util-types'
 import {
   peopleSql,
   projectsSql,
@@ -12,6 +8,10 @@ import {
   toolsSql,
   publicationsSql,
 } from '../resources'
+import { toolCardConfiguration } from './tools'
+import { publicationsCardConfiguration } from './publications'
+import { studyCardConfiguration } from './studies'
+import type { CardConfiguration } from 'synapse-react-client'
 
 const rgbIndex = 7
 

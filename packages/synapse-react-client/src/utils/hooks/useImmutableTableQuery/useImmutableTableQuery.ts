@@ -6,10 +6,12 @@ import {
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { cloneDeep, isEqual } from 'lodash-es'
+import useDeepCompareEffect from 'use-deep-compare-effect'
+import { ReadonlyDeep } from 'type-fest'
+import { useDebouncedEffect } from '@react-hookz/web'
 import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
 import { DEFAULT_PAGE_SIZE } from '../../SynapseConstants'
 import { parseEntityIdAndVersionFromSqlStatement } from '../../functions/SqlFunctions'
-import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
@@ -19,9 +21,7 @@ import {
   queryRequestsHaveSameTotalResults,
   removeEmptyQueryParams,
 } from '../../functions/queryUtils'
-import { ReadonlyDeep } from 'type-fest'
 import useCommittedState from '../useCommittedState'
-import { useDebouncedEffect } from '@react-hookz/web'
 
 type QueryChangeCommitOptions =
   | {

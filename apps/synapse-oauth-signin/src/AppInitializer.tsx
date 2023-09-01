@@ -1,6 +1,6 @@
-import { OAuthClientError } from './OAuthClientError'
 import React, { useCallback, useEffect, useState } from 'react'
 import { ApplicationSessionManager, SynapseClient } from 'synapse-react-client'
+import { OAuthClientError } from './OAuthClientError'
 import { handleErrorRedirect } from './URLUtils'
 
 function AppInitializer(

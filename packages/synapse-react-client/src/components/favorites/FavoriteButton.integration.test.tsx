@@ -1,7 +1,8 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import FavoriteButton from './FavoriteButton'
+import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
+import userEvent from '@testing-library/user-event'
+import { DeferredPromise } from '@open-draft/deferred-promise'
 import { rest, server } from '../../mocks/msw/server'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
 import { FAVORITES } from '../../utils/APIConstants'
@@ -9,11 +10,10 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
-import userEvent from '@testing-library/user-event'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
-import { DeferredPromise } from '@open-draft/deferred-promise'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import FavoriteButton from './FavoriteButton'
 
 function renderComponent(wrapperProps?: SynapseContextType) {
   return render(<FavoriteButton entityId={mockFileEntityData.id} />, {

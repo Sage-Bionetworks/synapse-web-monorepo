@@ -1,9 +1,9 @@
-import { MOCK_USER_ID } from '../user/mock_user_profile'
 import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityHeader,
   EntityView,
 } from '@sage-bionetworks/synapse-types'
+import { MOCK_USER_ID } from '../user/mock_user_profile'
 import mockProject from './mockProject'
 import { MockEntityData } from './MockEntityData'
 import { MOCK_TABLE_ENTITY_ID } from './mockTableEntity'

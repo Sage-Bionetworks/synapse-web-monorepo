@@ -7,7 +7,9 @@ import {
   Grid,
   Link,
   Typography,
+  Box,
 } from '@mui/material'
+import { ExpandMoreTwoTone } from '@mui/icons-material'
 import RLogo from '../../assets/icons/RLogo'
 import Python from '../../assets/icons/Python'
 import Terminal from '../../assets/icons/Terminal'
@@ -17,20 +19,18 @@ import {
   getEndpoint,
   BackendDestinationEnum,
 } from '../../utils/functions/getEndpoint'
-import { SynapsePoweredPortal } from './SynapsePoweredPortal'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import SynapseFullLogo from '../../assets/icons/SynapseFullLogo'
 import IconSvg from '../IconSvg/IconSvg'
-import { SynapseFeatureItem } from './SynapseFeatureItem'
 import AccessDataAnywhere from '../../assets/icons/AccessDataAnywhere'
 import QueryStructuredData from '../../assets/icons/QueryStructuredData'
 import CommunicateFindings from '../../assets/icons/CommunicateFindings'
 import RecordProvenance from '../../assets/icons/RecordProvenance'
 import ShareYourResearch from '../../assets/icons/ShareYourResearch'
 import MintDoi from '../../assets/icons/MintDoi'
-import { Box } from '@mui/material'
+import { SynapseFeatureItem } from './SynapseFeatureItem'
+import { SynapsePoweredPortal } from './SynapsePoweredPortal'
 import { SynapsePriceTableCell } from './SynapsePriceTableCell'
-import { ExpandMoreTwoTone } from '@mui/icons-material'
 import { SynapsePriceFeatureRow } from './SynapsePriceFeatureRow'
 import PlatformOfferingsGrid from './PlatformOfferingsGrid'
 

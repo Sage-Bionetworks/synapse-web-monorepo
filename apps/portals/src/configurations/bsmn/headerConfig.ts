@@ -1,4 +1,4 @@
-import { HomePageHeaderConfig } from 'types/portal-config'
+import { HomePageHeaderConfig } from '../../types/portal-config'
 
 const homePageHeader: HomePageHeaderConfig = {
   summary: `Access data and tools from a multi-site effort funded by the National Institute of Mental Health to study the role of brain somatic mosaicism in neuropsychiatric disease.`,

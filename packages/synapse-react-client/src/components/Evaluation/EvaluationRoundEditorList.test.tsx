@@ -2,11 +2,11 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
 import React from 'react'
-import { EvaluationRoundEditorList } from './EvaluationRoundEditorList'
+import { EvaluationRound } from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SynapseClient from '../../synapse-client'
-import { EvaluationRound } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import { EvaluationRoundEditorList } from './EvaluationRoundEditorList'
 
 describe('test EvaluationRoundEditorList', () => {
   const evaluationId = '123123123'

@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { RadioOption } from '../widgets/RadioGroup'
 import {
   Direction,
   DockerCommit,
   SortBy,
 } from '@sage-bionetworks/synapse-types'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
+import { RadioOption } from '../widgets/RadioGroup'
+import { formatDate } from '../../utils/functions/DateFormatter'
 import { useGetDockerTags } from '../../synapse-queries/docker'
 import { EntityItem } from './ChallengeSubmission'
 

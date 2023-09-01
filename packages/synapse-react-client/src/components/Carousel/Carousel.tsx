@@ -2,9 +2,9 @@ import BrainhubCarousel, {
   CarouselProps as BrainhubCarouselProps,
 } from '@brainhubeu/react-carousel'
 import React, { useState } from 'react'
+import { SizeMe } from 'react-sizeme'
 import Arrow from '../../assets/icons/Arrow'
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
-import { SizeMe } from 'react-sizeme'
 import '@brainhubeu/react-carousel/lib/style.css'
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder

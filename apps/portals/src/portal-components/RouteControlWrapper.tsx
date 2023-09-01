@@ -1,14 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { RouteControl, RouteControlProps } from './RouteControl'
 import { Route, useHistory, useLocation } from 'react-router-dom'
-import { SynapseComponent } from '../SynapseComponent'
-import { ConfigRoute, NestedRoute } from '../types/portal-config'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { SynapseComponent } from '../SynapseComponent'
+import { ConfigRoute, NestedRoute } from '../types/portal-config'
 import {
   NEGATIVE_RESPONSIVE_SIDE_MARGIN,
   RESPONSIVE_SIDE_PADDING,
 } from '../utils'
+import { RouteControl, RouteControlProps } from './RouteControl'
 
 export type RouteControlWrapperProps = NestedRoute & {
   // we have to pass in all the custom routes because unlike the home page the explore buttons configs aren't held in state

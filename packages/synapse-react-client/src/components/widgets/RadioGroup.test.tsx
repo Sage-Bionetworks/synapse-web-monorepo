@@ -1,7 +1,7 @@
 import React from 'react'
-import { RadioGroup, RadioGroupProps } from './RadioGroup'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { RadioGroup, RadioGroupProps } from './RadioGroup'
 
 const mockCallback = jest.fn()
 

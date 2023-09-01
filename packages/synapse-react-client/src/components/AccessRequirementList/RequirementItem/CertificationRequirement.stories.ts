@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
-import CertificationRequirement from './CertificationRequirement'
 import { getCurrentUserCertifiedValidatedHandler } from '../../../mocks/msw/handlers/userProfileHandlers'
+import CertificationRequirement from './CertificationRequirement'
 
 const meta: Meta = {
   title:

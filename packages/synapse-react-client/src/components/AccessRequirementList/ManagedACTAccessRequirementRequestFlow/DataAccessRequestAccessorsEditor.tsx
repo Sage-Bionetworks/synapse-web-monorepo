@@ -1,13 +1,13 @@
 import React from 'react'
 import { Form } from 'react-bootstrap'
 import { Button, Stack, Typography } from '@mui/material'
-import UserCard from '../../UserCard/UserCard'
 import {
   AccessorChange,
   AccessType,
   TYPE_FILTER,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
+import UserCard from '../../UserCard/UserCard'
 import IconSvg from '../../IconSvg/IconSvg'
 import { RadioGroup } from '../../widgets/RadioGroup'
 import { useGetCurrentUserProfile } from '../../../synapse-queries'

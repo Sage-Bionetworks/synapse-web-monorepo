@@ -1,6 +1,6 @@
 import React from 'react'
-import JSONTableCellRenderer from './index'
 import { render } from '@testing-library/react'
+import JSONTableCellRenderer from './index'
 
 describe('JSONTableCellRenderer', () => {
   it.each<[string, any]>([

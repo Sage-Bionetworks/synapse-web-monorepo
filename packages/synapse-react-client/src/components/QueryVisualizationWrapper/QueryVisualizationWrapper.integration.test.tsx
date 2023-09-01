@@ -1,27 +1,27 @@
 import { act, render, waitFor } from '@testing-library/react'
 import React from 'react'
 import {
+  ColumnTypeEnum,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
+import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { SynapseConstants } from '../../utils'
+import {
   PaginatedQueryContextType,
   usePaginatedQueryContext,
 } from '../QueryContext/QueryContext'
+import queryResponse from '../../mocks/mockQueryResponseDataWithManyEnumFacets'
+import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
+import { server } from '../../mocks/msw/server'
+import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import {
   QueryVisualizationContextType,
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
   useQueryVisualizationContext,
 } from './QueryVisualizationWrapper'
-import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseConstants } from '../../utils'
-import {
-  ColumnTypeEnum,
-  QueryBundleRequest,
-} from '@sage-bionetworks/synapse-types'
-import queryResponse from '../../mocks/mockQueryResponseDataWithManyEnumFacets'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
-import { server } from '../../mocks/msw/server'
-import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 
 const onQueryContextReceived = jest.fn<void, [PaginatedQueryContextType]>()
 const onContextReceived = jest.fn<void, [QueryVisualizationContextType]>()

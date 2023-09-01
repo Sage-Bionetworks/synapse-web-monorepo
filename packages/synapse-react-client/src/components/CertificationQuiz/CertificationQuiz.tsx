@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import SynapseClient from '../../synapse-client'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   PassingRecord,
   QuizResponse,
   Quiz,
-} from '@sage-bionetworks/synapse-types'
-import {
   MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
   QuestionResponse,
 } from '@sage-bionetworks/synapse-types'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import { Button, Link } from '@mui/material'
-import { MarkdownPopover } from '../Markdown/MarkdownPopover'
+import { Button, Link, ButtonProps, Typography } from '@mui/material'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
-import { ButtonProps, Typography } from '@mui/material'
 import { useErrorHandler } from 'react-error-boundary'
+import SynapseClient from '../../synapse-client'
+import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { displayToast } from '../ToastMessage/ToastMessage'
+import { MarkdownPopover } from '../Markdown/MarkdownPopover'
 
 const CertificationQuiz: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()

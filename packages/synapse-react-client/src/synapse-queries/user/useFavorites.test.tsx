@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from '@testing-library/react'
-import { useGetFavorites } from './useFavorites'
 import { EntityHeader, PaginatedResults } from '@sage-bionetworks/synapse-types'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { useGetFavorites } from './useFavorites'
 
 const expected: PaginatedResults<EntityHeader> = {
   results: [

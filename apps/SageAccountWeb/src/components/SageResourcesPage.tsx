@@ -6,9 +6,7 @@ import { StyledOuterContainer } from './StyledComponents'
 import { useSourceApp, useSourceAppConfigs } from './SourceApp'
 import { BackButton } from './BackButton'
 
-export type SageResourcesPageProps = {}
-
-export const SageResourcesPage = (props: SageResourcesPageProps) => {
+export const SageResourcesPage = () => {
   const history = useHistory()
   const theme = useTheme()
   const sourceAppConfigs = useSourceAppConfigs()

@@ -9,8 +9,8 @@ import {
   SelfSignAccessRequirement,
   TermsOfUseAccessRequirement,
   WikiPageKey,
+  AccessRequirementSearchResponse,
 } from '@sage-bionetworks/synapse-types'
-import { AccessRequirementSearchResponse } from '@sage-bionetworks/synapse-types'
 import mockProjectData from './entity/mockProject'
 import { MOCK_USER_ID } from './user/mock_user_profile'
 import {

@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
+import { ChallengeWithProjectHeader } from '@sage-bionetworks/synapse-types'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserChallengesInfinite } from '../../synapse-queries/user/useGetUserChallenges'
-import { ChallengeWithProjectHeader } from '@sage-bionetworks/synapse-types'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 
 export type UserChallengesProps = {

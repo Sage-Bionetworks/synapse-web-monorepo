@@ -4,16 +4,16 @@ import { createMemoryHistory, MemoryHistory } from 'history'
 import React from 'react'
 import { Router } from 'react-router-dom'
 import selectEvent from 'react-select-event'
-import {
-  AccessRequirementDashboard,
-  AccessRequirementDashboardProps,
-} from './AccessRequirementDashboard'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { server } from '../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
 } from '../../mocks/user/mock_user_profile'
+import {
+  AccessRequirementDashboard,
+  AccessRequirementDashboardProps,
+} from './AccessRequirementDashboard'
 import { AccessRequirementTable } from './AccessRequirementTable'
 
 const AR_TABLE_TEST_ID = 'AccessRequirementTableTestId'

@@ -1,7 +1,8 @@
 import { act, renderHook } from '@testing-library/react'
-import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
 import { Row } from '@sage-bionetworks/synapse-types'
 import { cloneDeep } from 'lodash-es'
+import { Provider, useAtomValue, useSetAtom } from 'jotai'
+import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
 import {
   hasSelectedRowsAtom,
   isRowSelectedAtom,
@@ -9,7 +10,6 @@ import {
   rowSelectionPrimaryKeyAtom,
   selectedRowsAtom,
 } from './TableRowSelectionState'
-import { Provider, useAtomValue, useSetAtom } from 'jotai'
 import { tableQueryDataAtom } from './QueryWrapper'
 
 function useTableRowSelectionState() {

@@ -1,9 +1,7 @@
 import React from 'react'
 import { EntityBundle, UserBundle } from '@sage-bionetworks/synapse-types'
-import AddConditionsForUseButton, {
-  AddConditionsForUseButtonProps,
-} from './AddConditionsForUseButton'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { rest, server } from '../../../mocks/msw/server'
 import {
@@ -12,9 +10,11 @@ import {
 } from '../../../utils/functions/getEndpoint'
 import { ENTITY_BUNDLE_V2, USER_BUNDLE } from '../../../utils/APIConstants'
 import mockFileEntity from '../../../mocks/entity/mockFileEntity'
-import userEvent from '@testing-library/user-event'
 import { mockUnmetControlledDataRestrictionInformationACT } from '../../../mocks/mock_has_access_data'
 import { mockUserBundle } from '../../../mocks/user/mock_user_profile'
+import AddConditionsForUseButton, {
+  AddConditionsForUseButtonProps,
+} from './AddConditionsForUseButton'
 
 function renderComponent(props: AddConditionsForUseButtonProps) {
   return render(<AddConditionsForUseButton {...props} />, {
