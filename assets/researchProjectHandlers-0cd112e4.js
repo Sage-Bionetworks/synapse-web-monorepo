@@ -1,2 +1,0 @@
-import{l as a}from"./index-2724d18c.js";import{R as E,g as R}from"./SynapseClient-64d44981.js";import{M as n}from"./MockResearchProject-227e165b.js";function m(o){return[a.rest.post(`${o}${E}`,async(r,t,s)=>{const e=await r.json();return t(s.status(201),s.json(e))}),a.rest.get(`${o}${R(":id")}`,async(r,t,s)=>{const e={...n,accessRequirementId:r.params.id.toString()};return t(s.status(200),s.json(e))})]}export{m as g};
-//# sourceMappingURL=researchProjectHandlers-0cd112e4.js.map
