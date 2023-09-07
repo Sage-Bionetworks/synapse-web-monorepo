@@ -1,5 +1,5 @@
-import { Collapse } from '@mui/material'
-import React, { useEffect } from 'react'
+import { Collapse, Skeleton } from '@mui/material'
+import React, { useEffect, useMemo } from 'react'
 import { useState } from 'react'
 import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
@@ -9,6 +9,9 @@ import { FacetFilterHeader } from './FacetFilterHeader'
 import { RadioValuesEnum, getRadioValue, options } from './RangeFacetFilter'
 import dayjs from 'dayjs'
 import { RangeSlider } from '../RangeSlider/RangeSlider'
+import { useQueryContext } from '../../QueryContext'
+import { SynapseConstants } from '../../../utils'
+import { useGetQueryResultBundleWithAsyncStatus } from '../../../synapse-queries'
 
 export type CombinedRangeFacetFilterProps = {
   facetResults: FacetColumnResultRange[]
@@ -45,24 +48,50 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
   onChange,
   collapsed = false,
 }: CombinedRangeFacetFilterProps) => {
+  const { getCurrentQueryRequest } = useQueryContext()
+
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
   const {
-    columnMin: col1Min,
+    columnName: col1Name,
     // columnMax: col1Max  // not used
     selectedMin: col1SelectedMin,
     selectedMax: col1SelectedMax,
   } = facetResults[0]
   const {
+    columnName: col2Name,
     //columnMin: col2Min,  // not used
-    columnMax: col2Max,
     selectedMin: col2SelectedMin,
     selectedMax: col2SelectedMax,
   } = facetResults[1]
 
+  // Also query for the facet columns full range (without any selected facets), to set the range selector range
+  const queryBundleRequest = useMemo(() => {
+    const requestCopy = getCurrentQueryRequest()
+    requestCopy.partMask = SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+    const { selectedFacets } = requestCopy.query
+    requestCopy.query.selectedFacets = selectedFacets
+      ? selectedFacets.filter(
+          facetRequest =>
+            facetRequest.columnName !== col1Name &&
+            facetRequest.columnName !== col2Name,
+        )
+      : []
+    return requestCopy
+  }, [col1Name, col2Name, getCurrentQueryRequest])
+
+  const { data: queryResultFacetResponse, isLoading: isLoadingFacetStats } =
+    useGetQueryResultBundleWithAsyncStatus(queryBundleRequest)
+
+  const fullFacetStats = queryResultFacetResponse?.responseBody?.facets
+
+  const col1Facet = fullFacetStats?.find(facet => facet.columnName === col1Name)
+  const col2Facet = fullFacetStats?.find(facet => facet.columnName === col2Name)
+  const col1GlobalMin = (col1Facet as FacetColumnResultRange)?.columnMin
+  const col2GlobalMax = (col2Facet as FacetColumnResultRange)?.columnMax
   const isAnyValue =
     !col1SelectedMin && !col1SelectedMax && !col2SelectedMin && !col2SelectedMax
-  const selectedMin = col2SelectedMin || col1Min
-  const selectedMax = col1SelectedMax || col2Max
+  const selectedMin = col2SelectedMin || col1GlobalMin
+  const selectedMax = col1SelectedMax || col2GlobalMax
 
   const rangeType = columnType === 'DOUBLE' ? 'number' : 'date'
 
@@ -87,6 +116,9 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
     setRadioValue(getRadioValue(selectedMin, isAnyValue))
   }, [selectedMin, isAnyValue])
 
+  if (isLoadingFacetStats) {
+    return <Skeleton variant="rectangular" width="100" />
+  }
   return (
     <div>
       <FacetFilterHeader
@@ -104,19 +136,24 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
           }
         ></RadioGroup>
         {radioValue === RadioValuesEnum.RANGE &&
-          (col1Min === col2Max ? (
-            <label>{col2Max}</label>
+          (col1GlobalMin === col2GlobalMax ? (
+            <label>{col2GlobalMax}</label>
           ) : (
             <>
               {columnType === 'INTEGER' && (
                 <RangeSlider
-                  key="RangeSlider"
-                  domain={[col1Min, col2Max]}
+                  key={`RangeSlider-${selectedMin}-${selectedMax}`}
+                  domain={[col1GlobalMin, col2GlobalMax]}
                   initialValues={{ min: selectedMin, max: selectedMax }}
                   step={1}
                   doUpdateOnApply={true}
                   onChange={(values: RangeValues) =>
-                    onChange([col1Min, values.max, values.min, col2Max])
+                    onChange([
+                      col1GlobalMin,
+                      values.max,
+                      values.min,
+                      col2GlobalMax,
+                    ])
                   }
                 >
                   {'>'}
@@ -127,12 +164,21 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
                   key="Range"
                   initialValues={{
                     // From the backend, selectedMin is a formatted date (like "2021-06-15"), but columnMin is a unix timestamp in millis (like "1624651794856")
-                    min: col2SelectedMin ?? dayjs(parseInt(col1Min)).toString(),
-                    max: col1SelectedMax ?? dayjs(parseInt(col2Max)).toString(),
+                    min:
+                      col2SelectedMin ??
+                      dayjs(parseInt(col1GlobalMin)).toString(),
+                    max:
+                      col1SelectedMax ??
+                      dayjs(parseInt(col2GlobalMax)).toString(),
                   }}
                   type={rangeType}
                   onChange={(values: RangeValues) =>
-                    onChange([col1Min, values.max, values.min, col2Max])
+                    onChange([
+                      col1GlobalMin,
+                      values.max,
+                      values.min,
+                      col2GlobalMax,
+                    ])
                   }
                 ></Range>
               )}
@@ -145,7 +191,12 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
                   }}
                   type={rangeType}
                   onChange={(values: RangeValues) =>
-                    onChange([col1Min, values.max, values.min, col2Max])
+                    onChange([
+                      col1GlobalMin,
+                      values.max,
+                      values.min,
+                      col2GlobalMax,
+                    ])
                   }
                 ></Range>
               )}
