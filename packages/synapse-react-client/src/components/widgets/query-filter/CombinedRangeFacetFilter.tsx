@@ -86,12 +86,12 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
 
   const col1Facet = fullFacetStats?.find(facet => facet.columnName === col1Name)
   const col2Facet = fullFacetStats?.find(facet => facet.columnName === col2Name)
-  const col1MinMin = (col1Facet as FacetColumnResultRange)?.columnMin
-  const col2MaxMax = (col2Facet as FacetColumnResultRange)?.columnMax
+  const col1GlobalMin = (col1Facet as FacetColumnResultRange)?.columnMin
+  const col2GlobalMax = (col2Facet as FacetColumnResultRange)?.columnMax
   const isAnyValue =
     !col1SelectedMin && !col1SelectedMax && !col2SelectedMin && !col2SelectedMax
-  const selectedMin = col2SelectedMin || col1MinMin
-  const selectedMax = col1SelectedMax || col2MaxMax
+  const selectedMin = col2SelectedMin || col1GlobalMin
+  const selectedMax = col1SelectedMax || col2GlobalMax
 
   const rangeType = columnType === 'DOUBLE' ? 'number' : 'date'
 
@@ -136,19 +136,24 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
           }
         ></RadioGroup>
         {radioValue === RadioValuesEnum.RANGE &&
-          (col1MinMin === col2MaxMax ? (
-            <label>{col2MaxMax}</label>
+          (col1GlobalMin === col2GlobalMax ? (
+            <label>{col2GlobalMax}</label>
           ) : (
             <>
               {columnType === 'INTEGER' && (
                 <RangeSlider
                   key={`RangeSlider-${selectedMin}-${selectedMax}`}
-                  domain={[col1MinMin, col2MaxMax]}
+                  domain={[col1GlobalMin, col2GlobalMax]}
                   initialValues={{ min: selectedMin, max: selectedMax }}
                   step={1}
                   doUpdateOnApply={true}
                   onChange={(values: RangeValues) =>
-                    onChange([col1MinMin, values.max, values.min, col2MaxMax])
+                    onChange([
+                      col1GlobalMin,
+                      values.max,
+                      values.min,
+                      col2GlobalMax,
+                    ])
                   }
                 >
                   {'>'}
@@ -160,13 +165,20 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
                   initialValues={{
                     // From the backend, selectedMin is a formatted date (like "2021-06-15"), but columnMin is a unix timestamp in millis (like "1624651794856")
                     min:
-                      col2SelectedMin ?? dayjs(parseInt(col1MinMin)).toString(),
+                      col2SelectedMin ??
+                      dayjs(parseInt(col1GlobalMin)).toString(),
                     max:
-                      col1SelectedMax ?? dayjs(parseInt(col2MaxMax)).toString(),
+                      col1SelectedMax ??
+                      dayjs(parseInt(col2GlobalMax)).toString(),
                   }}
                   type={rangeType}
                   onChange={(values: RangeValues) =>
-                    onChange([col1MinMin, values.max, values.min, col2MaxMax])
+                    onChange([
+                      col1GlobalMin,
+                      values.max,
+                      values.min,
+                      col2GlobalMax,
+                    ])
                   }
                 ></Range>
               )}
@@ -179,7 +191,12 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
                   }}
                   type={rangeType}
                   onChange={(values: RangeValues) =>
-                    onChange([col1MinMin, values.max, values.min, col2MaxMax])
+                    onChange([
+                      col1GlobalMin,
+                      values.max,
+                      values.min,
+                      col2GlobalMax,
+                    ])
                   }
                 ></Range>
               )}
