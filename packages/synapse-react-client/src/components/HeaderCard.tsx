@@ -1,6 +1,5 @@
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
-import MarkdownSynapse from './Markdown/MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
 import { LongDescription, ShortDescription } from './GenericCard'
 
