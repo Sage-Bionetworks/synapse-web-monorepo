@@ -1228,8 +1228,8 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1
       core-js:
-        specifier: ^3.31.1
-        version: 3.31.1
+        specifier: ^3.32.2
+        version: 3.32.2
       esbuild:
         specifier: ^0.18.11
         version: 0.18.11
@@ -10240,8 +10240,8 @@ packages:
       browserslist: 4.21.9
     dev: true
 
-  /core-js@3.31.1:
-    resolution: {integrity: sha512-2sKLtfq1eFST7l7v62zaqXacPc7uG8ZAya8ogijLhTtaKNcpzpB4TMoTw2Si+8GYKRwFPMMtUT0263QFWFfqyQ==}
+  /core-js@3.32.2:
+    resolution: {integrity: sha512-pxXSw1mYZPDGvTQqEc5vgIb83jGQKFGYWY76z4a7weZXUolw3G+OvpZqSRcfYOoOVUQJYEPsWeQK8pKEnUtWxQ==}
     requiresBuild: true
 
   /core-util-is@1.0.3:
@@ -15987,6 +15987,7 @@ packages:
 
   /prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
+    requiresBuild: true
     optional: true
 
   /psl@1.9.0:
@@ -16134,7 +16135,7 @@ packages:
     resolution: {integrity: sha512-sZ41cxiU5llIB003yxxQBYrARBqe0repqPTTYBTmMqTz9szeBbE37BehCE891NZsmdZqqP+xWKdT3eo3vOzN8w==}
     engines: {node: '>=14'}
     dependencies:
-      core-js: 3.31.1
+      core-js: 3.32.2
       object-assign: 4.1.1
       promise: 8.3.0
       raf: 3.4.1
