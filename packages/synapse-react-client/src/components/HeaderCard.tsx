@@ -2,6 +2,7 @@ import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
 import MarkdownSynapse from './Markdown/MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
+import { LongDescription, ShortDescription } from './GenericCard'
 
 export type HeaderCardProps = {
   rgbIndex?: number
@@ -36,7 +37,13 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   const descriptionElement: Element | null = document.querySelector(
     'meta[name="description"]',
   )
+  const descriptionConfiguration: DescriptionConfig = {
+    ...descriptionConfig,
+    showFullDescriptionByDefault:
+      descriptionConfig?.showFullDescriptionByDefault ?? true,
+  }
   const [docTitle] = useState<string>(document.title)
+  const [hasClickedShowMore, setClickedShowMore] = useState<boolean>(false)
   const [docDescription] = useState<string>(
     descriptionElement ? descriptionElement.getAttribute('content')! : '',
   )
@@ -89,14 +96,27 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
                     </h3>
                   </div>
                   {subTitle && <div className="SRC-author"> {subTitle} </div>}
+                  {/* 
+                    Below is a hack that allows word highlighting to work, the Search component insert's
+                    html elements outside of the React DOM which if detected would break the app,
+                    but as written below this avoids that reconcilliation process.
+                  */}
                   {description && (
-                    <span className="SRC-font-size-base">
-                      {descriptionConfig?.isMarkdown ? (
-                        <MarkdownSynapse markdown={description} />
-                      ) : (
-                        description
-                      )}
-                    </span>
+                    <ShortDescription
+                      description={description}
+                      hasClickedShowMore={hasClickedShowMore}
+                      descriptionSubTitle=""
+                      descriptionConfig={descriptionConfiguration}
+                      toggleShowMore={() => setClickedShowMore(true)}
+                    />
+                  )}
+                  {description && (
+                    <LongDescription
+                      description={description}
+                      hasClickedShowMore={hasClickedShowMore}
+                      descriptionSubTitle=""
+                      descriptionConfig={descriptionConfiguration}
+                    />
                   )}
                 </div>
                 <div

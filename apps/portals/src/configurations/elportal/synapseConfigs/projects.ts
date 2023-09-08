@@ -17,6 +17,9 @@ import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
 const rgbIndex = 4
 export const projectCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
+  descriptionConfig: {
+    showFullDescriptionByDefault: false,
+  },
   genericCardSchema: {
     type: 'Project',
     title: 'name',
