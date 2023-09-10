@@ -1,7 +1,7 @@
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
-import MarkdownSynapse from './Markdown/MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
+import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
 
 export type HeaderCardProps = {
   rgbIndex?: number
@@ -36,6 +36,11 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   const descriptionElement: Element | null = document.querySelector(
     'meta[name="description"]',
   )
+  const descriptionConfiguration: DescriptionConfig = {
+    ...descriptionConfig,
+    showFullDescriptionByDefault:
+      descriptionConfig?.showFullDescriptionByDefault ?? true,
+  }
   const [docTitle] = useState<string>(document.title)
   const [docDescription] = useState<string>(
     descriptionElement ? descriptionElement.getAttribute('content')! : '',
@@ -89,15 +94,11 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
                     </h3>
                   </div>
                   {subTitle && <div className="SRC-author"> {subTitle} </div>}
-                  {description && (
-                    <span className="SRC-font-size-base">
-                      {descriptionConfig?.isMarkdown ? (
-                        <MarkdownSynapse markdown={description} />
-                      ) : (
-                        description
-                      )}
-                    </span>
-                  )}
+                  <CollapsibleDescription
+                    description={description}
+                    descriptionSubTitle=""
+                    descriptionConfig={descriptionConfiguration}
+                  />
                 </div>
                 <div
                   style={{

@@ -24,13 +24,11 @@ import {
   CardLink,
   ColumnIconConfigs,
   CommonCardProps,
-  DescriptionConfig,
   TargetEnum,
 } from '../CardContainerLogic'
 import HeaderCard from '../HeaderCard'
 import IconList from '../IconList'
 import IconSvg, { type2SvgIconName } from '../IconSvg/IconSvg'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { CardFooter, Icon } from '../row_renderers/utils'
 import { FileHandleLink } from '../widgets/FileHandleLink'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
@@ -43,6 +41,10 @@ import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriend
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { useAtomValue } from 'jotai'
 import { tableQueryEntityAtom } from '../QueryWrapper/QueryWrapper'
+import {
+  CHAR_COUNT_CUTOFF,
+  CollapsibleDescription,
+} from './CollapsibleDescription'
 
 export type KeyToAlias = {
   key: string
@@ -88,28 +90,6 @@ export type GenericCardProps = Omit<
   GenericCardPropsInternal,
   'table' | 'queryVisualizationContext'
 >
-
-export type GenericCardState = {
-  hasClickedShowMore: boolean
-}
-
-const CHAR_COUNT_CUTOFF = 400
-export const CARD_SHORT_DESCRIPTION_CSS = 'SRC-short-description'
-export const CARD_LONG_DESCRIPTION_CSS = 'SRC-long-description'
-
-// This function isn't in the class only for ease of testing with renderShortDescription
-export const getCutoff = (summary: string) => {
-  let previewText = ''
-  const summarySplit = summary.split(' ')
-  // find num words to join such that its >= char_count_cutoff
-  let i = 0
-  while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {
-    previewText += `${summarySplit[i]} `
-    i += 1
-  }
-  previewText = previewText.trim()
-  return { previewText }
-}
 
 export const getFileHandleAssociation = (
   table?: Entity,
@@ -293,84 +273,10 @@ export function getLinkParams(
   return { href, target }
 }
 
-export function LongDescription(props: {
-  description: string
-  hasClickedShowMore: boolean
-  descriptionSubTitle: string
-  descriptionConfig?: DescriptionConfig
-}) {
-  const {
-    description,
-    hasClickedShowMore,
-    descriptionSubTitle,
-    descriptionConfig,
-  } = props
-  let content: JSX.Element | string = description
-  if (descriptionConfig?.isMarkdown) {
-    content = <MarkdownSynapse markdown={content} />
-  }
-  const show =
-    hasClickedShowMore || descriptionConfig?.showFullDescriptionByDefault
-  return (
-    <div className={show ? '' : 'SRC-hidden'}>
-      <span
-        data-search-handle={descriptionSubTitle}
-        className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}
-      >
-        {content}
-      </span>
-    </div>
-  )
-}
-
-export function ShortDescription(props: {
-  description: string
-  hasClickedShowMore: boolean
-  descriptionSubTitle: string
-  descriptionConfig?: DescriptionConfig
-  toggleShowMore: () => void
-}) {
-  const {
-    description,
-    hasClickedShowMore,
-    descriptionSubTitle,
-    descriptionConfig,
-    toggleShowMore,
-  } = props
-  if (descriptionConfig?.showFullDescriptionByDefault) {
-    return <></>
-  }
-  return (
-    <div className={hasClickedShowMore ? 'SRC-hidden' : ''}>
-      <span
-        data-search-handle={descriptionSubTitle}
-        className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}
-      >
-        {getCutoff(description).previewText}
-      </span>
-      {description.length >= CHAR_COUNT_CUTOFF && (
-        <Link
-          style={{
-            fontSize: '16px',
-            cursor: 'pointer',
-            marginLeft: '5px',
-          }}
-          onClick={toggleShowMore}
-        >
-          ...Show More
-        </Link>
-      )}
-    </div>
-  )
-}
-
 /**
  * Renders a card from a table query
  */
-class _GenericCard extends React.Component<
-  GenericCardPropsInternal,
-  GenericCardState
-> {
+class _GenericCard extends React.Component<GenericCardPropsInternal> {
   static contextType = SynapseContext
 
   constructor(props: GenericCardPropsInternal) {
@@ -450,7 +356,6 @@ class _GenericCard extends React.Component<
     // and type, but theres one nuance which is that we can't override if one specific property will be
     // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
     const genericCardSchemaDefined = genericCardSchema!
-    const { hasClickedShowMore } = this.state
     const { link = '', type } = genericCardSchemaDefined
     const title = data[schema[genericCardSchemaDefined.title]]
     let subTitle =
@@ -676,28 +581,11 @@ class _GenericCard extends React.Component<
                 {subTitle}
               </div>
             )}
-            {/* 
-              Below is a hack that allows word highlighting to work, the Search component insert's
-              html elements outside of the React DOM which if detected would break the app,
-              but as written below this avoids that reconcilliation process.
-            */}
-            {description && (
-              <ShortDescription
-                description={description}
-                hasClickedShowMore={hasClickedShowMore}
-                descriptionSubTitle={descriptionSubTitle}
-                descriptionConfig={descriptionConfig}
-                toggleShowMore={this.toggleShowMore}
-              />
-            )}
-            {description && (
-              <LongDescription
-                description={description}
-                hasClickedShowMore={hasClickedShowMore}
-                descriptionSubTitle={descriptionSubTitle}
-                descriptionConfig={descriptionConfig}
-              />
-            )}
+            <CollapsibleDescription
+              description={description}
+              descriptionSubTitle={descriptionSubTitle}
+              descriptionConfig={descriptionConfig}
+            />
             {ctaLinkConfig && ctaHref && ctaTarget && (
               <Box sx={{ mt: '20px' }}>
                 <Link
