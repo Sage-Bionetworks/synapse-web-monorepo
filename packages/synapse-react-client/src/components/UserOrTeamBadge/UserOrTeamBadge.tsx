@@ -1,7 +1,6 @@
 import { Skeleton } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import { useGetUserGroupHeader } from '../../synapse-queries/user/useUserGroupHeader'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import React from 'react'
+import { useGetUserGroupHeader } from '../../synapse-queries'
 import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import TeamBadge from '../TeamBadge'
 import { UserBadge } from '../UserCard/UserBadge'
@@ -29,11 +28,6 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     principalId = providedUserGroupHeader?.ownerId
   }
 
-  const { accessToken } = useSynapseContext()
-  const [userGroupHeader, setUserGroupHeader] = useState<
-    UserGroupHeader | undefined
-  >(providedUserGroupHeader)
-
   const { data: fetchedUserGroupHeader } = useGetUserGroupHeader(
     (principalId ?? '').toString(),
     {
@@ -41,11 +35,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     },
   )
 
-  useEffect(() => {
-    if (principalId && userGroupHeader == undefined && fetchedUserGroupHeader) {
-      setUserGroupHeader(fetchedUserGroupHeader)
-    }
-  }, [accessToken, principalId, userGroupHeader, fetchedUserGroupHeader])
+  const userGroupHeader = providedUserGroupHeader ?? fetchedUserGroupHeader
 
   if (principalId == null && providedUserGroupHeader == null) {
     console.error(
