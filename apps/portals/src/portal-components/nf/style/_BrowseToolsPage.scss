@@ -44,9 +44,14 @@
   }
   .categories {
     display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
-    width: 1200px;
+    @media (min-width: 1350px) {
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    @media (max-width: 1349px) {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
     p {
       color: #fff !important;
       border-bottom: 1px transparent;
