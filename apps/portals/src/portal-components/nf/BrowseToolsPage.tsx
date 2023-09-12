@@ -2,7 +2,7 @@ import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
 import { popularSearchesSql, toolsSql } from '../../configurations/nf/resources'
 import Layout from '../Layout'
 import React from 'react'
-import { Button, Grid, Link, Typography } from '@mui/material'
+import { Button, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { ReactComponent as AnimalModels } from './assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from './assets/antibodies.svg'
@@ -74,7 +74,10 @@ const BrowseToolsPage = () => {
           <Typography variant="headline1" className="sectionTitle">
             NF Research Tools Central
           </Typography>
-          <div className="center-content">
+          <div
+            className="center-content"
+            style={{ marginLeft: '10px', marginRight: '10px' }}
+          >
             <div className="description">
               <Typography variant="body1">
                 NF Research Tools Central aims to support the development of a
