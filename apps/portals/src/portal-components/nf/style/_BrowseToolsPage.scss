@@ -25,7 +25,9 @@
     margin-top: 20px;
     display: grid;
     max-width: 750px;
-    grid-template-columns: 550px 100px 25px;
+    width: 100%;
+    grid-template-columns: auto 100px 25px;
+    margin-left: 10px;
     input {
       height: 41px;
     }
