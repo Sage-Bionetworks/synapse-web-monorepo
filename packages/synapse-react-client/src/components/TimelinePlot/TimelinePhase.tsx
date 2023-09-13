@@ -1,6 +1,7 @@
 import React from 'react'
 import Plotly, { Layout } from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
+import { ObservationEvent } from './TimelinePlot'
 const Plot = createPlotlyComponent(Plotly)
 
 const timelineData = [
@@ -40,7 +41,7 @@ const timelineData = [
   },
 ]
 
-const getLayout = (config: PhaseConfig): Partial<Layout> => {
+const getLayout = (color: string): Partial<Layout> => {
   return {
     hovermode: 'closest',
     showlegend: false,
@@ -75,7 +76,7 @@ const getLayout = (config: PhaseConfig): Partial<Layout> => {
         x1: 100,
         y0: 0.25,
         y1: 0.75,
-        fillcolor: config.color,
+        fillcolor: color,
         line: {
           width: 0,
         },
@@ -84,18 +85,23 @@ const getLayout = (config: PhaseConfig): Partial<Layout> => {
   }
 }
 
-type PhaseConfig = {
-  color: string
-  name: string
-}
 type TimelinePhaseProps = {
-  config: PhaseConfig
-  // events: PhaseEvent[]
+  name: string
+  color: string
+  timeMax: number // how long is this phase?
+  timeUnits: string // in what time units is the timeMax measured? (days? weeks?)
+  observationEvents?: ObservationEvent[]
 }
-const TimelinePhase = ({ config }: TimelinePhaseProps) => {
+const TimelinePhase = ({
+  name,
+  color,
+  timeMax,
+  timeUnits,
+  observationEvents,
+}: TimelinePhaseProps) => {
   return (
     <Plot
-      layout={getLayout(config)}
+      layout={getLayout(color)}
       data={timelineData}
       config={{ displayModeBar: false }}
       style={{ width: '100%', height: '300px' }}

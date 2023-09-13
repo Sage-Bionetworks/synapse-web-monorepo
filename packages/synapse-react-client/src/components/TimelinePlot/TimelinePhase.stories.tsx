@@ -13,6 +13,8 @@ export const Demo: Story = {
     config: {
       name: 'Phase1',
       color: 'rgba(50, 171, 96, 0.5)',
+      timeMax: 20,
+      timeUnits: 'days',
     },
   },
 }
