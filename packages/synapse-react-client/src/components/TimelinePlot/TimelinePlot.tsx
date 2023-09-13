@@ -81,8 +81,10 @@ const TimelinePlot = ({
         const { colorPalette } = getColorPalette(index, 1)
         const phaseEventRows =
           eventsData?.queryResult?.queryResults.rows.filter(row => {
-            row.values[observationPhaseIndex] ==
+            return (
+              row.values[observationPhaseIndex] ==
               phaseRow.values[phaseObservationIndex]
+            )
           })
         // transform into ObservationEvents and create a new TimelinePhase
         const observationEvents = phaseEventRows?.map(row => {
@@ -94,14 +96,16 @@ const TimelinePlot = ({
           return observationEvent
         })
         return (
-          <TimelinePhase
-            key={phaseRow.rowId}
-            name={phaseRow.values[phaseObservationIndex]!}
-            color={colorPalette[0]}
-            timeMax={parseInt(phaseRow.values[phaseObservationTimeMaxIndex]!)}
-            timeUnits={phaseRow.values[phaseObservationTimeMaxUnitsIndex]!}
-            observationEvents={observationEvents}
-          />
+          observationEvents && (
+            <TimelinePhase
+              key={phaseRow.rowId}
+              name={phaseRow.values[phaseObservationIndex]!}
+              color={colorPalette[0]}
+              timeMax={parseInt(phaseRow.values[phaseObservationTimeMaxIndex]!)}
+              timeUnits={phaseRow.values[phaseObservationTimeMaxUnitsIndex]!}
+              observationEvents={observationEvents}
+            />
+          )
         )
       })}
     </>

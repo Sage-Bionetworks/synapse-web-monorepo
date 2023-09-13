@@ -2,46 +2,38 @@ import React from 'react'
 import Plotly, { Layout } from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { ObservationEvent } from './TimelinePlot'
+import dayjs, { Dayjs, ManipulateType } from 'dayjs'
 const Plot = createPlotlyComponent(Plotly)
 
-const timelineData = [
-  {
-    x: [10, 10, 10],
-    y: [0, 0.5, 1],
-    mode: 'lines',
-    line: {
-      color: 'gray',
-      width: 2,
-    },
-    name: 'Event 1',
-    // Add event into in the customdata
-    customdata: [
-      'Custom Data for Event 1a',
-      'Custom Data for Event 1b',
-      'Custom Data for Event 1c',
-    ],
-    // but tell Plotly that we do not want it to show a hover tooltip (we're going to handle this)
-    hoverinfo: 'none',
-  },
-  {
-    x: [20, 20, 20],
-    y: [0, 0.5, 1],
-    mode: 'lines',
-    line: {
-      color: 'gray',
-      width: 2,
-    },
-    name: 'Event 2',
-    customdata: [
-      'Custom Data for Event 2a',
-      'Custom Data for Event 2b',
-      'Custom Data for Event 2c',
-    ],
-    hoverinfo: 'none',
-  },
-]
+const getTimelineData = (
+  start: dayjs.Dayjs,
+  observationEvents: ObservationEvent[],
+) => {
+  const data = observationEvents.map(event => {
+    const timepoint = start.add(event.time!, event.timeUnit as ManipulateType)
+    const utcFormattedTimepoint = timepoint.format()
+    return {
+      x: [utcFormattedTimepoint, utcFormattedTimepoint, utcFormattedTimepoint],
+      y: [0, 0.5, 1],
+      mode: 'lines',
+      line: {
+        color: 'gray',
+        width: 2,
+      },
+      // Add event into in the customdata
+      customdata: [event.id, event.id, event.id],
+      // but tell Plotly that we do not want it to show a hover tooltip (we're going to handle this)
+      hoverinfo: 'none',
+    }
+  })
+  return data
+}
 
-const getLayout = (color: string): Partial<Layout> => {
+const getLayout = (
+  start: dayjs.Dayjs,
+  end: dayjs.Dayjs,
+  color: string,
+): Partial<Layout> => {
   return {
     hovermode: 'closest',
     showlegend: false,
@@ -72,11 +64,12 @@ const getLayout = (color: string): Partial<Layout> => {
     shapes: [
       {
         type: 'rect',
-        x0: 0,
-        x1: 100,
+        x0: start.format(),
+        x1: end.format(),
         y0: 0.25,
         y1: 0.75,
         fillcolor: color,
+        opacity: 0.8,
         line: {
           width: 0,
         },
@@ -90,19 +83,21 @@ type TimelinePhaseProps = {
   color: string
   timeMax: number // how long is this phase?
   timeUnits: string // in what time units is the timeMax measured? (days? weeks?)
-  observationEvents?: ObservationEvent[]
+  observationEvents: ObservationEvent[]
 }
 const TimelinePhase = ({
-  name,
   color,
   timeMax,
   timeUnits,
   observationEvents,
 }: TimelinePhaseProps) => {
+  const start = dayjs()
+  const end = start.add(timeMax, timeUnits as ManipulateType)
+  debugger
   return (
     <Plot
-      layout={getLayout(color)}
-      data={timelineData}
+      data={getTimelineData(start, observationEvents)}
+      layout={getLayout(start, end, color)}
       config={{ displayModeBar: false }}
       style={{ width: '100%', height: '300px' }}
       useResizeHandler={true}
