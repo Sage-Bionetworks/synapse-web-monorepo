@@ -96,7 +96,8 @@ const TimelinePlot = ({
           return observationEvent
         })
         return (
-          observationEvents && (
+          observationEvents?.length &&
+          observationEvents?.length > 0 && (
             <TimelinePhase
               key={phaseRow.rowId}
               name={phaseRow.values[phaseObservationIndex]!}

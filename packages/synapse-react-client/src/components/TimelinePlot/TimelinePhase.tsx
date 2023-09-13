@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Plotly, { Layout } from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { ObservationEvent } from './TimelinePlot'
-import dayjs, { Dayjs, ManipulateType } from 'dayjs'
+import dayjs, { ManipulateType } from 'dayjs'
+import pluralize from 'pluralize'
+import { Paper, Typography } from '@mui/material'
 const Plot = createPlotlyComponent(Plotly)
 
 const getTimelineData = (
@@ -33,6 +35,7 @@ const getLayout = (
   start: dayjs.Dayjs,
   end: dayjs.Dayjs,
   color: string,
+  observationEvents: ObservationEvent[],
 ): Partial<Layout> => {
   return {
     hovermode: 'closest',
@@ -51,14 +54,17 @@ const getLayout = (
     },
 
     // event annotations
-    annotations: [
-      {
-        x: 10,
-        y: -0.2,
-        text: '10', // Text to display
+    annotations: observationEvents.map(event => {
+      const x = start.add(event.time!, event.timeUnit as ManipulateType)
+      const annotation: Partial<Plotly.Annotations> = {
+        x: x.format(),
+        y: -0.4,
+        text: `${event.time} ${pluralize(event.timeUnit!, event.time!)}`,
         showarrow: false,
-      },
-    ],
+        textangle: '270',
+      }
+      return annotation
+    }),
 
     // Each phase has a shape
     shapes: [
@@ -91,29 +97,66 @@ const TimelinePhase = ({
   timeUnits,
   observationEvents,
 }: TimelinePhaseProps) => {
+  const [hoverEvent, setHoverEvent] = useState<Plotly.PlotHoverEvent>()
   const start = dayjs()
   const end = start.add(timeMax, timeUnits as ManipulateType)
-  debugger
-  return (
-    <Plot
-      data={getTimelineData(start, observationEvents)}
-      layout={getLayout(start, end, color)}
-      config={{ displayModeBar: false }}
-      style={{ width: '100%', height: '300px' }}
-      useResizeHandler={true}
-      onHover={eventData => {
-        if (eventData.points[0]) {
-          //TODO: pop up UI at this position that has the event info, and a link!
-          const point = eventData.points[0]
-          console.log(`Pop up custom hover using the following info:`)
-          console.log(
-            `curveNumber:${point.curveNumber}, pointNumber: ${point.pointNumber}`,
-          )
-          console.log(`x:${point.x}, y: ${point.y}`)
-          console.log(`custom data:${point.customdata}`)
+
+  // hide the hover UI if we detect that the user moves the mouse outside of this component boundary
+  const componentRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (componentRef.current) {
+        const componentRect = componentRef.current.getBoundingClientRect()
+        const mouseX = e.clientX
+        const mouseY = e.clientY
+
+        // Check if the mouse is outside the component boundaries
+        if (
+          mouseX < componentRect.left ||
+          mouseX > componentRect.right ||
+          mouseY < componentRect.top ||
+          mouseY > componentRect.bottom
+        ) {
+          setHoverEvent(undefined)
         }
-      }}
-    />
+      }
+    }
+
+    // Add the event listener to the window
+    window.addEventListener('mousemove', handleMouseMove)
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
+  }, [])
+
+  const id = hoverEvent?.points[0].customdata as string
+  return (
+    <div ref={componentRef}>
+      <Plot
+        data={getTimelineData(start, observationEvents)}
+        layout={getLayout(start, end, color, observationEvents)}
+        config={{ displayModeBar: false }}
+        style={{ width: '100%', height: '300px' }}
+        useResizeHandler={true}
+        onHover={eventData => {
+          setHoverEvent(eventData)
+        }}
+      />
+      <Paper
+        sx={{
+          position: 'fixed',
+          top: `${hoverEvent?.event.y}px`,
+          left: `${hoverEvent?.event.x}px`,
+          display: hoverEvent ? 'block' : 'none',
+        }}
+      >
+        <Typography sx={{ p: 2 }} variant="body1">
+          {id}
+        </Typography>
+      </Paper>
+    </div>
   )
 }
 
