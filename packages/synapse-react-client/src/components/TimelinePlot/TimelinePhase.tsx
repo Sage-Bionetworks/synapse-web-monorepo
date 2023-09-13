@@ -33,10 +33,12 @@ const getTimelineData = (
 
 const getLayout = (
   start: dayjs.Dayjs,
-  end: dayjs.Dayjs,
+  timeMax: number,
+  timeUnits: string,
   color: string,
   observationEvents: ObservationEvent[],
 ): Partial<Layout> => {
+  const end = start.add(timeMax, timeUnits as ManipulateType)
   return {
     hovermode: 'closest',
     showlegend: false,
@@ -45,6 +47,7 @@ const getLayout = (
       showticklabels: false,
       showline: false,
       zeroline: false,
+      title: `${timeMax} ${timeUnits}`,
     },
     yaxis: {
       showgrid: false,
@@ -54,17 +57,17 @@ const getLayout = (
     },
 
     // event annotations
-    annotations: observationEvents.map(event => {
-      const x = start.add(event.time!, event.timeUnit as ManipulateType)
-      const annotation: Partial<Plotly.Annotations> = {
-        x: x.format(),
-        y: -0.4,
-        text: `${event.time} ${pluralize(event.timeUnit!, event.time!)}`,
-        showarrow: false,
-        textangle: '270',
-      }
-      return annotation
-    }),
+    // annotations: observationEvents.map(event => {
+    //   const x = start.add(event.time!, event.timeUnit as ManipulateType)
+    //   const annotation: Partial<Plotly.Annotations> = {
+    //     x: x.format(),
+    //     y: -0.4,
+    //     text: `${event.time} ${pluralize(event.timeUnit!, event.time!)}`,
+    //     showarrow: false,
+    //     textangle: '270',
+    //   }
+    //   return annotation
+    // }),
 
     // Each phase has a shape
     shapes: [
@@ -99,7 +102,6 @@ const TimelinePhase = ({
 }: TimelinePhaseProps) => {
   const [hoverEvent, setHoverEvent] = useState<Plotly.PlotHoverEvent>()
   const start = dayjs()
-  const end = start.add(timeMax, timeUnits as ManipulateType)
 
   // hide the hover UI if we detect that the user moves the mouse outside of this component boundary
   const componentRef = useRef<HTMLDivElement>(null)
@@ -136,7 +138,7 @@ const TimelinePhase = ({
     <div ref={componentRef}>
       <Plot
         data={getTimelineData(start, observationEvents)}
-        layout={getLayout(start, end, color, observationEvents)}
+        layout={getLayout(start, timeMax, timeUnits, color, observationEvents)}
         config={{ displayModeBar: false }}
         style={{ width: '100%', height: '300px' }}
         useResizeHandler={true}
