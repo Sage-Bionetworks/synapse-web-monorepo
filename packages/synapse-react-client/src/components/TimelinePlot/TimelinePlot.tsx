@@ -9,6 +9,7 @@ import hardcodedPhasesQueryResponseData, {
 } from './phasesQueryResponseData'
 import TimelinePhase from './TimelinePhase'
 import getColorPalette from '../ColorGradient/ColorGradient'
+import { Box } from '@mui/system'
 
 const OBSERVATION_PHASE_COLUMN_NAME = 'observationphase'
 const OBSERVATION_ID_COLUMN_NAME = 'observationid'
@@ -76,7 +77,7 @@ const TimelinePlot = ({
     return <></>
   }
   return (
-    <>
+    <Box sx={{ display: 'flex' }}>
       {phasesForTargetSpecies.map((phaseRow, index) => {
         const { colorPalette } = getColorPalette(index, 1)
         const phaseEventRows =
@@ -109,7 +110,7 @@ const TimelinePlot = ({
           )
         )
       })}
-    </>
+    </Box>
   )
 }
 

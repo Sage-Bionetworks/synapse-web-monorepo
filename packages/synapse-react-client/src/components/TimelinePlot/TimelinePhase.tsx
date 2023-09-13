@@ -3,7 +3,6 @@ import Plotly, { Layout } from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { ObservationEvent } from './TimelinePlot'
 import dayjs, { ManipulateType } from 'dayjs'
-import pluralize from 'pluralize'
 import { Paper, Typography } from '@mui/material'
 const Plot = createPlotlyComponent(Plotly)
 
@@ -140,7 +139,7 @@ const TimelinePhase = ({
         data={getTimelineData(start, observationEvents)}
         layout={getLayout(start, timeMax, timeUnits, color, observationEvents)}
         config={{ displayModeBar: false }}
-        style={{ width: '100%', height: '300px' }}
+        style={{ maxHeight: '300px' }}
         useResizeHandler={true}
         onHover={eventData => {
           setHoverEvent(eventData)
