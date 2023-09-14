@@ -6,18 +6,22 @@ import { Skeleton } from '@mui/material'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { UserBadge } from '../UserCard/UserBadge'
 
-type ObservationCardSchema = {
-  submitterName: string
-  submitterUserId: string
-  time: string
-  timeUnits: UnitType
-  text: string
-  tag: string
+/**
+ * Column index values into the row values given provided in "data"
+ */
+export type ObservationCardSchema = {
+  submitterName: number
+  submitterUserId: number
+  time: number
+  timeUnits: number
+  text: number
+  tag: number
 }
 
 export type ObservationCardProps = {
   schema: ObservationCardSchema
-  data: Record<ObservationCardSchema[keyof ObservationCardSchema], string>
+  data: (string | null)[]
+  includePortalCardClass?: boolean
 }
 
 /**
@@ -27,6 +31,7 @@ export type ObservationCardProps = {
 export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   data,
   schema,
+  includePortalCardClass = true,
 }: ObservationCardProps) => {
   const submitterName = data[schema.submitterName]
   const submitterUserId = data[schema.submitterUserId]
@@ -35,7 +40,11 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   const text = data[schema.text]
   const tag = data[schema.tag]
   return (
-    <div className="SRC-portalCard ObservationCard">
+    <div
+      className={`ObservationCard ${
+        includePortalCardClass ? 'SRC-portalCard' : ''
+      }`}
+    >
       <div className="ObservationCard__submitter">
         {!submitterUserId && <div>{submitterName}</div>}
         {submitterUserId && <UserBadge userId={submitterUserId} />}
@@ -43,15 +52,14 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
       {time && (
         <div className="ObservationCard__time">
           <IconSvg icon="time" />
-          <span>
-            {`${time} ${timeUnits}`}
-            {Number(time) > 1 ? 's' : ''}
-          </span>
+          <span>{`${time} ${timeUnits}`}</span>
         </div>
       )}
-      <div className="ObservationCard__text">
-        <ShowMore summary={text} />
-      </div>
+      {text && (
+        <div className="ObservationCard__text">
+          <ShowMore summary={text} />
+        </div>
+      )}
       <div className="ObservationCard__tags">
         {tag && <span className="SRC-tag">{tag}</span>}
       </div>
