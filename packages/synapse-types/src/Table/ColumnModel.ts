@@ -1,4 +1,6 @@
 import { ColumnType } from './ColumnType'
+import { JsonSubColumnModel } from './JsonSubColumnModel'
+import { FacetType } from './FacetType'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/ColumnModel.html
 export type ColumnModel = {
@@ -15,5 +17,8 @@ export type ColumnModel = {
   maximumListLength?: number
   /** Columns of type string can be constrained to an enumeration values set on this list. The maximum number of entries for an enum is 100 */
   enumValues?: string[]
-  facetType?: 'enumeration' | 'range'
+  /** Set to one of the enumerated values to indicate a column should be treated as a facet */
+  facetType?: FacetType
+  /** For column of type JSON that represents the combination of multiple sub-columns, this property is used to define each sub-column. */
+  jsonSubColumns?: JsonSubColumnModel[]
 }
