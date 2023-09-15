@@ -12,7 +12,9 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions'
 import { SizeMe } from 'react-sizeme'
-import { Typography } from '@mui/material'
+import TimelineLegendItem from './TimelineLegendItem'
+import { SkeletonTable } from '../Skeleton'
+import { Skeleton } from '@mui/material'
 
 const OBSERVATION_PHASE_COLUMN_NAME = 'phase'
 const OBSERVATION_TIME_COLUMN_NAME = 'time'
@@ -69,7 +71,7 @@ const TimelinePlot = ({
   const { data: eventsData, isLoading } = eventTableQuery
 
   if (isLoading) {
-    return <></>
+    return <LoadingTimelinePlot />
   }
   const observationPhaseIndex =
     eventsData?.queryResult?.queryResults.headers.findIndex(
@@ -103,6 +105,15 @@ const TimelinePlot = ({
         header.name.toLowerCase() === OBSERVATION_SUBMITTER_USER_ID_COLUMN_NAME,
     )!
 
+  const schema: ObservationCardSchema = {
+    submitterName: observationSubmitterNameIndex,
+    submitterUserId: submitterUserIdIndex,
+    tag: observationTypeIndex,
+    text: observationTextIndex,
+    time: observationTimeIndex,
+    timeUnits: observationTimeUnitIndex,
+  }
+
   // filter the phases query response data to the specific species
   const phasesForTargetSpecies =
     hardcodedPhasesQueryResponseData.queryResult?.queryResults.rows.filter(
@@ -134,21 +145,11 @@ const TimelinePlot = ({
         {phaseRowsWithData.map((phaseRow, index) => {
           const { colorPalette } = getColorPalette(index, 1)
           return (
-            <Box
+            <TimelineLegendItem
               key={phaseRow.rowId}
-              sx={{ display: 'flex', alignItems: 'center', gap: '7px' }}
-            >
-              <Box
-                sx={{
-                  backgroundColor: colorPalette[0],
-                  width: '20px',
-                  height: '20px',
-                }}
-              />
-              <Typography variant="body1">
-                {phaseRow.values[phaseObservationIndex]?.toUpperCase()}
-              </Typography>
-            </Box>
+              color={colorPalette[0]}
+              phaseName={phaseRow.values[phaseObservationIndex]}
+            />
           )
         })}
       </Box>
@@ -165,14 +166,6 @@ const TimelinePlot = ({
                     phaseRow.values[phaseObservationIndex]
                   )
                 })
-              const schema: ObservationCardSchema = {
-                submitterName: observationSubmitterNameIndex,
-                submitterUserId: submitterUserIdIndex,
-                tag: observationTypeIndex,
-                text: observationTextIndex,
-                time: observationTimeIndex,
-                timeUnits: observationTimeUnitIndex,
-              }
               return (
                 <TimelinePhase
                   key={phaseRow.rowId}
@@ -189,6 +182,20 @@ const TimelinePlot = ({
           </Box>
         )}
       </SizeMe>
+    </Box>
+  )
+}
+
+const LoadingTimelinePlot = () => {
+  return (
+    <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+        <Skeleton height="45px" width="80px" />
+        <Skeleton height="45px" width="80px" />
+      </Box>
+      <Box sx={{ display: 'flex' }}>
+        <Skeleton height="150px" width="100%" />
+      </Box>
     </Box>
   )
 }
