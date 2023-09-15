@@ -2,8 +2,6 @@ import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 
 const SPECIES_COLUMN_NAME = 'species'
 const OBSERVATION_PHASE_COLUMN_NAME = 'observationphase'
-const OBSERVATION_TIME_MAX_COLUMN_NAME = 'observationtimemax'
-const OBSERVATION_TIME_UNITS_COLUMN_NAME = 'observationtimeunits'
 
 const hardcodedPhasesQueryResponseData: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',

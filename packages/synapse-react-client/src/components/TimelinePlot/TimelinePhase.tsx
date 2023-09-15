@@ -195,6 +195,7 @@ const TimelinePhase = ({
         useResizeHandler={true}
         onClick={eventData => {
           setClickEvent(eventData)
+          setHoverEvent(undefined)
         }}
         onHover={eventData => {
           setHoverEvent(eventData)

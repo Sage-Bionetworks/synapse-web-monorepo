@@ -12,6 +12,7 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions'
 import { SizeMe } from 'react-sizeme'
+import { Typography } from '@mui/material'
 
 const OBSERVATION_PHASE_COLUMN_NAME = 'phase'
 const OBSERVATION_TIME_COLUMN_NAME = 'time'
@@ -115,7 +116,7 @@ const TimelinePlot = ({
     return <></>
   }
 
-  const numberOfPhasesToShow = phasesForTargetSpecies.filter(phaseRow => {
+  const phaseRowsWithData = phasesForTargetSpecies.filter(phaseRow => {
     const phaseEventRows = eventsData?.queryResult?.queryResults.rows.filter(
       row => {
         return (
@@ -125,14 +126,37 @@ const TimelinePlot = ({
       },
     )
     return phaseEventRows?.length && phaseEventRows?.length > 0
-  }).length
+  })
   return (
     <Box>
-      {/* TODO: Add legend */}
+      {/* Legend */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}>
+        {phaseRowsWithData.map((phaseRow, index) => {
+          const { colorPalette } = getColorPalette(index, 1)
+          return (
+            <Box
+              key={phaseRow.rowId}
+              sx={{ display: 'flex', alignItems: 'center', gap: '7px' }}
+            >
+              <Box
+                sx={{
+                  backgroundColor: colorPalette[0],
+                  width: '20px',
+                  height: '20px',
+                }}
+              />
+              <Typography variant="body1">
+                {phaseRow.values[phaseObservationIndex]?.toUpperCase()}
+              </Typography>
+            </Box>
+          )
+        })}
+      </Box>
+      {/* Phase plots */}
       <SizeMe refreshMode="debounce" noPlaceholder={true}>
         {({ size }) => (
           <Box sx={{ display: 'flex' }} className="forcePlotlyDefaultCursor">
-            {phasesForTargetSpecies.map((phaseRow, index) => {
+            {phaseRowsWithData.map((phaseRow, index) => {
               const { colorPalette } = getColorPalette(index, 1)
               const phaseEventRows =
                 eventsData?.queryResult?.queryResults.rows.filter(row => {
@@ -149,20 +173,18 @@ const TimelinePlot = ({
                 time: observationTimeIndex,
                 timeUnits: observationTimeUnitIndex,
               }
-              const isPhaseEvents =
-                phaseEventRows?.length && phaseEventRows?.length > 0
-              if (isPhaseEvents) {
-                return (
-                  <TimelinePhase
-                    key={phaseRow.rowId}
-                    name={phaseRow.values[phaseObservationIndex]!}
-                    color={colorPalette[0]}
-                    rowData={phaseEventRows}
-                    schema={schema}
-                    widthPx={size.width ? size.width / numberOfPhasesToShow : 0}
-                  />
-                )
-              } else return <></>
+              return (
+                <TimelinePhase
+                  key={phaseRow.rowId}
+                  name={phaseRow.values[phaseObservationIndex]!}
+                  color={colorPalette[0]}
+                  rowData={phaseEventRows!}
+                  schema={schema}
+                  widthPx={
+                    size.width ? size.width / phaseRowsWithData.length : 0
+                  }
+                />
+              )
             })}
           </Box>
         )}
