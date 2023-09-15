@@ -49,17 +49,19 @@ const getLayout = (
   annotateTimeUnits?: ManipulateType,
 ): Partial<Layout> => {
   const end = start.add(timeMax, timeUnits as ManipulateType)
+  const middleOfX = start.add(timeMax / 2, timeUnits as ManipulateType)
   const annotations: Partial<Plotly.Annotations>[] = [
     {
-      x: start.format(),
-      y: -0.1,
-      text: '          ',
+      x: middleOfX.format(),
+      y: -0.4,
+      text: '                  ', // hacky annotation in the middle of the plot so it does not shift when showing other annotations
       showarrow: false,
+      textangle: '270',
     },
     {
-      x: end.format(),
-      y: -0.1,
-      text: '          ',
+      x: middleOfX.format(),
+      y: 1,
+      text: `${timeMax} ${timeUnits}`,
       showarrow: false,
     },
   ]
@@ -67,9 +69,11 @@ const getLayout = (
     const x = start.add(annotateTime, annotateTimeUnits)
     annotations.push({
       x: x.format(),
-      y: -0.1,
+      y: -0.4,
       text: `${annotateTime} ${pluralize(annotateTimeUnits, annotateTime)}`,
       showarrow: false,
+      textangle: '270',
+      height: 12,
     })
   }
   return {
@@ -80,7 +84,6 @@ const getLayout = (
       showticklabels: false,
       showline: false,
       zeroline: false,
-      title: `${timeMax} ${timeUnits}`,
     },
     yaxis: {
       showgrid: false,
@@ -104,6 +107,13 @@ const getLayout = (
         },
       },
     ],
+    margin: {
+      l: 0,
+      r: 0,
+      t: 60,
+      b: 60,
+    },
+    // autosize: false,
   }
 }
 
@@ -147,6 +157,7 @@ const TimelinePhase = ({
   return (
     <div ref={componentRef}>
       <Plot
+        style={{ width: '100%', height: '300px' }}
         data={getTimelineData(start, rowData, schema, hoverEventRowId)}
         layout={getLayout(
           start,
@@ -157,7 +168,6 @@ const TimelinePhase = ({
           annotateTimeUnits,
         )}
         config={{ displayModeBar: false }}
-        style={{ maxHeight: '300px' }}
         useResizeHandler={true}
         onClick={eventData => {
           setClickEvent(eventData)

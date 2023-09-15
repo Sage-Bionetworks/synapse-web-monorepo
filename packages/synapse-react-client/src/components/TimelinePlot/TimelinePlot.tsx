@@ -111,6 +111,7 @@ const TimelinePlot = ({
   }
   return (
     <Box sx={{ display: 'flex' }}>
+      {/* TODO: Add legend */}
       {phasesForTargetSpecies.map((phaseRow, index) => {
         const { colorPalette } = getColorPalette(index, 1)
         const phaseEventRows =
