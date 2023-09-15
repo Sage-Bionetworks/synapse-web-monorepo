@@ -115,6 +115,7 @@ type TimelinePhaseProps = {
   rowData: Row[]
   schema: ObservationCardSchema
 }
+
 const TimelinePhase = ({
   color,
   timeMax,
