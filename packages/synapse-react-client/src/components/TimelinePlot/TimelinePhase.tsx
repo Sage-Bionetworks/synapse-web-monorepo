@@ -11,18 +11,48 @@ import { Row } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 const Plot = createPlotlyComponent(Plotly)
 
-const getTimelineData = (
+type TimepointData = {
+  timepoints: dayjs.Dayjs[]
+  hoverOverIndex: number
+}
+
+const getTimepointData = (
   start: dayjs.Dayjs,
   rowData: Row[],
   schema: ObservationCardSchema,
-  hoverEventRowId?: number, //if supplied, will highlight the hovered event
-) => {
-  const data = rowData.map(row => {
+  hoverEventRowId?: number, //if supplied, will return the index of this row
+): TimepointData => {
+  let hoverOverIndex = -1
+  const timepoints = rowData.map((row, index) => {
     const time = parseInt(row.values[schema.time]!)
     const timeUnit = row.values[schema.timeUnits]
-    const timepoint = start.add(time, timeUnit as ManipulateType)
+    if (row.rowId == hoverEventRowId) {
+      hoverOverIndex = index
+    }
+    return start.add(time, timeUnit as ManipulateType)
+  })
+  return {
+    timepoints,
+    hoverOverIndex,
+  }
+}
+
+export const getMaxDate = (timepoints: dayjs.Dayjs[]) => {
+  return timepoints.reduce(
+    (maxDateItem: dayjs.Dayjs, currentDateItem: dayjs.Dayjs) => {
+      if (!maxDateItem || currentDateItem.isAfter(maxDateItem)) {
+        return currentDateItem
+      }
+      return maxDateItem
+    },
+  )
+}
+
+const getTimelineData = (timepointData: TimepointData, rowData: Row[]) => {
+  const data = timepointData.timepoints.map((timepoint, index) => {
     const utcFormattedTimepoint = timepoint.format()
-    const isHoveredOver = row.rowId == hoverEventRowId
+    const isHoveredOver = index == timepointData.hoverOverIndex
+    const rowId = rowData[index].rowId
     return {
       x: [utcFormattedTimepoint, utcFormattedTimepoint, utcFormattedTimepoint],
       y: [0, 0.5, 1],
@@ -32,7 +62,7 @@ const getTimelineData = (
         width: 2,
       },
       // Add event into in the customdata
-      customdata: [row.rowId, row.rowId, row.rowId],
+      customdata: [rowId, rowId, rowId],
       // but tell Plotly that we do not want it to show a hover tooltip (we're going to handle this)
       hoverinfo: 'none',
     }
@@ -42,42 +72,36 @@ const getTimelineData = (
 
 const getLayout = (
   start: dayjs.Dayjs,
-  timeMax: number,
-  timeUnits: string,
+  end: dayjs.Dayjs,
   color: string,
   annotateTime?: number,
   annotateTimeUnits?: ManipulateType,
 ): Partial<Layout> => {
-  const end = start.add(timeMax, timeUnits as ManipulateType)
-  const middleOfX = start.add(timeMax / 2, timeUnits as ManipulateType)
+  const timelineBufferTime = end.diff(start) / 5 // add 20% to either side of the graph
   const annotations: Partial<Plotly.Annotations>[] = [
     {
-      x: middleOfX.format(),
-      y: -0.4,
-      text: '                  ', // hacky annotation in the middle of the plot so it does not shift when showing other annotations
+      x: start.add(1, 'day').format(),
+      y: -1,
+      text: '                             ', // hacky annotation in the middle of the plot so it does not shift when showing other annotations
       showarrow: false,
       textangle: '270',
-    },
-    {
-      x: middleOfX.format(),
-      y: 1,
-      text: `${timeMax} ${timeUnits}`,
-      showarrow: false,
+      height: 15,
     },
   ]
   if (annotateTime && annotateTimeUnits) {
     const x = start.add(annotateTime, annotateTimeUnits)
     annotations.push({
       x: x.format(),
-      y: -0.4,
+      y: -1,
       text: `${annotateTime} ${pluralize(annotateTimeUnits, annotateTime)}`,
       showarrow: false,
       textangle: '270',
-      height: 12,
+      height: 15,
     })
   }
   return {
     hovermode: 'closest',
+    dragmode: false, //disallow interaction
     showlegend: false,
     xaxis: {
       showgrid: false,
@@ -85,7 +109,9 @@ const getLayout = (
       showline: false,
       zeroline: false,
     },
+
     yaxis: {
+      range: [-1, 1],
       showgrid: false,
       zeroline: false,
       showline: false,
@@ -96,8 +122,8 @@ const getLayout = (
     shapes: [
       {
         type: 'rect',
-        x0: start.format(),
-        x1: end.format(),
+        x0: start.subtract(timelineBufferTime).format(),
+        x1: end.add(timelineBufferTime).format(),
         y0: 0.25,
         y1: 0.75,
         fillcolor: color,
@@ -120,18 +146,16 @@ const getLayout = (
 type TimelinePhaseProps = {
   name: string
   color: string
-  timeMax: number // how long is this phase?
-  timeUnits: string // in what time units is the timeMax measured? (days? weeks?)
   rowData: Row[]
   schema: ObservationCardSchema
+  widthPx: number
 }
 
 const TimelinePhase = ({
   color,
-  timeMax,
-  timeUnits,
   rowData,
   schema,
+  widthPx,
 }: TimelinePhaseProps) => {
   const [clickEvent, setClickEvent] = useState<Plotly.PlotMouseEvent>()
   const [hoverEvent, setHoverEvent] = useState<Plotly.PlotHoverEvent>()
@@ -153,20 +177,20 @@ const TimelinePhase = ({
   const annotateTimeUnits = hoverRow
     ? (hoverRow.values[schema.timeUnits] as ManipulateType)
     : undefined
+  const timepointData = getTimepointData(
+    start,
+    rowData,
+    schema,
+    hoverEventRowId,
+  )
 
+  const end = getMaxDate(timepointData.timepoints)
   return (
     <div ref={componentRef}>
       <Plot
-        style={{ width: '100%', height: '300px' }}
-        data={getTimelineData(start, rowData, schema, hoverEventRowId)}
-        layout={getLayout(
-          start,
-          timeMax,
-          timeUnits,
-          color,
-          annotateTime,
-          annotateTimeUnits,
-        )}
+        style={{ width: widthPx, height: '220px' }}
+        data={getTimelineData(timepointData, rowData)}
+        layout={getLayout(start, end, color, annotateTime, annotateTimeUnits)}
         config={{ displayModeBar: false }}
         useResizeHandler={true}
         onClick={eventData => {

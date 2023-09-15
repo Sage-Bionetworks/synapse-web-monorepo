@@ -179,13 +179,5 @@ export const phaseObservationIndex =
   hardcodedPhasesQueryResponseData.queryResult?.queryResults.headers.findIndex(
     header => header.name.toLowerCase() === OBSERVATION_PHASE_COLUMN_NAME,
   )!
-export const phaseObservationTimeMaxIndex =
-  hardcodedPhasesQueryResponseData.queryResult?.queryResults.headers.findIndex(
-    header => header.name.toLowerCase() === OBSERVATION_TIME_MAX_COLUMN_NAME,
-  )!
-export const phaseObservationTimeMaxUnitsIndex =
-  hardcodedPhasesQueryResponseData.queryResult?.queryResults.headers.findIndex(
-    header => header.name.toLowerCase() === OBSERVATION_TIME_UNITS_COLUMN_NAME,
-  )!
 
 export default hardcodedPhasesQueryResponseData

@@ -3,8 +3,6 @@ import { useGetFullTableQueryResults } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import hardcodedPhasesQueryResponseData, {
   phaseObservationIndex,
-  phaseObservationTimeMaxIndex,
-  phaseObservationTimeMaxUnitsIndex,
   phaseSpeciesIndex,
 } from './phasesQueryResponseData'
 import TimelinePhase from './TimelinePhase'
@@ -13,6 +11,7 @@ import { Box } from '@mui/system'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions'
+import { SizeMe } from 'react-sizeme'
 
 const OBSERVATION_PHASE_COLUMN_NAME = 'phase'
 const OBSERVATION_TIME_COLUMN_NAME = 'time'
@@ -38,6 +37,12 @@ const TimelinePlot = ({
     entityId: eventsTableId,
     query: {
       sql: `${observationsSql} WHERE observationTime IS NOT NULL`,
+      sort: [
+        {
+          column: 'observationTime',
+          direction: 'ASC',
+        },
+      ],
       additionalFilters: [
         {
           columnName: 'resourceId',
@@ -109,42 +114,59 @@ const TimelinePlot = ({
   if (!phasesForTargetSpecies || phasesForTargetSpecies.length == 0) {
     return <></>
   }
+
+  const numberOfPhasesToShow = phasesForTargetSpecies.filter(phaseRow => {
+    const phaseEventRows = eventsData?.queryResult?.queryResults.rows.filter(
+      row => {
+        return (
+          row.values[observationPhaseIndex] ==
+          phaseRow.values[phaseObservationIndex]
+        )
+      },
+    )
+    return phaseEventRows?.length && phaseEventRows?.length > 0
+  }).length
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box>
       {/* TODO: Add legend */}
-      {phasesForTargetSpecies.map((phaseRow, index) => {
-        const { colorPalette } = getColorPalette(index, 1)
-        const phaseEventRows =
-          eventsData?.queryResult?.queryResults.rows.filter(row => {
-            return (
-              row.values[observationPhaseIndex] ==
-              phaseRow.values[phaseObservationIndex]
-            )
-          })
-        const schema: ObservationCardSchema = {
-          submitterName: observationSubmitterNameIndex,
-          submitterUserId: submitterUserIdIndex,
-          tag: observationTypeIndex,
-          text: observationTextIndex,
-          time: observationTimeIndex,
-          timeUnits: observationTimeUnitIndex,
-        }
-        const isPhaseEvents =
-          phaseEventRows?.length && phaseEventRows?.length > 0
-        if (isPhaseEvents) {
-          return (
-            <TimelinePhase
-              key={phaseRow.rowId}
-              name={phaseRow.values[phaseObservationIndex]!}
-              color={colorPalette[0]}
-              timeMax={parseInt(phaseRow.values[phaseObservationTimeMaxIndex]!)}
-              timeUnits={phaseRow.values[phaseObservationTimeMaxUnitsIndex]!}
-              rowData={phaseEventRows}
-              schema={schema}
-            />
-          )
-        } else return <></>
-      })}
+      <SizeMe refreshMode="debounce" noPlaceholder={true}>
+        {({ size }) => (
+          <Box sx={{ display: 'flex' }} className="forcePlotlyDefaultCursor">
+            {phasesForTargetSpecies.map((phaseRow, index) => {
+              const { colorPalette } = getColorPalette(index, 1)
+              const phaseEventRows =
+                eventsData?.queryResult?.queryResults.rows.filter(row => {
+                  return (
+                    row.values[observationPhaseIndex] ==
+                    phaseRow.values[phaseObservationIndex]
+                  )
+                })
+              const schema: ObservationCardSchema = {
+                submitterName: observationSubmitterNameIndex,
+                submitterUserId: submitterUserIdIndex,
+                tag: observationTypeIndex,
+                text: observationTextIndex,
+                time: observationTimeIndex,
+                timeUnits: observationTimeUnitIndex,
+              }
+              const isPhaseEvents =
+                phaseEventRows?.length && phaseEventRows?.length > 0
+              if (isPhaseEvents) {
+                return (
+                  <TimelinePhase
+                    key={phaseRow.rowId}
+                    name={phaseRow.values[phaseObservationIndex]!}
+                    color={colorPalette[0]}
+                    rowData={phaseEventRows}
+                    schema={schema}
+                    widthPx={size.width ? size.width / numberOfPhasesToShow : 0}
+                  />
+                )
+              } else return <></>
+            })}
+          </Box>
+        )}
+      </SizeMe>
     </Box>
   )
 }
