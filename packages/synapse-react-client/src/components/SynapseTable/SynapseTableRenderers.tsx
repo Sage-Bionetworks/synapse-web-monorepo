@@ -172,7 +172,11 @@ export function TableDataColumnHeader(
   // we have to figure out if the current column is a facet selection
   const facetIndex: number = facets.findIndex(
     (facetColumnResult: FacetColumnResult) => {
-      return facetColumnResult.columnName === columnModel?.name
+      return (
+        facetColumnResult.columnName === columnModel?.name &&
+        // Exclude JSON subcolumn facets, since there may be more than one on a given column
+        facetColumnResult.jsonPath == undefined
+      )
     },
   )
   // the header must be included in the facets and it has to be enumerable for current rendering capabilities

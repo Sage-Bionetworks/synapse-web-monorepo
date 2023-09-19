@@ -1,10 +1,13 @@
-import { cloneDeep, isEqual, isEqualWith, isNil } from 'lodash-es'
+import { cloneDeep, isEqual, isEqualWith, isNil, pick } from 'lodash-es'
 import * as SynapseConstants from '../SynapseConstants'
 import SynapseClient from '../../synapse-client'
 import { LockedColumn } from '../../components/QueryContext/QueryContext'
 import {
+  ColumnModel,
   ColumnTypeEnum,
+  FacetColumnRequest,
   FacetColumnResult,
+  JsonSubColumnModel,
   Query,
   QueryBundleRequest,
   QueryResultBundle,
@@ -17,6 +20,7 @@ import {
   isColumnSingleValueQueryFilter,
 } from '../types/IsType'
 import { isDataset, isEntityView, isFileView } from './EntityTypeUtils'
+import { UniqueFacetIdentifier } from '../types/UniqueFacetIdentifier'
 
 type PartialStateObject = {
   hasMoreData: boolean
@@ -240,4 +244,41 @@ export function removeEmptyQueryParams(q: Query) {
   }
 
   return query
+}
+
+/**
+ * Given a FacetColumnResult and a set of ColumnModels, return the ColumnModel that
+ * matches the FacetColumnResult.
+ * @param facet
+ * @param columnModels
+ */
+export function getCorrespondingColumnForFacet(
+  facet: FacetColumnResult,
+  columnModels: ColumnModel[],
+): ColumnModel | JsonSubColumnModel | undefined {
+  let columnModel: ColumnModel | JsonSubColumnModel | undefined =
+    columnModels.find(model => model.name === facet.columnName)
+  if (facet.jsonPath && columnModel && columnModel.jsonSubColumns) {
+    columnModel = columnModel.jsonSubColumns.find(
+      cm => cm.jsonPath === facet.jsonPath,
+    )
+  }
+  return columnModel
+}
+
+/**
+ * Given a set of FacetColumnRequests, return the FacetColumnRequest that matches the given UniqueFacetIdentifier.
+ * @param facetDefinition
+ * @param selectedFacets
+ */
+export function getCorrespondingSelectedFacet(
+  facetDefinition: UniqueFacetIdentifier,
+  selectedFacets?: FacetColumnRequest[],
+): FacetColumnRequest | undefined {
+  return selectedFacets?.find(selectedFacet =>
+    isEqual(
+      pick(selectedFacet, ['columnName', 'jsonPath']),
+      pick(facetDefinition, ['columnName', 'jsonPath']),
+    ),
+  )
 }

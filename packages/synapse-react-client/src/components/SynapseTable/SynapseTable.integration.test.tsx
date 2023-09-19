@@ -494,4 +494,66 @@ describe('SynapseTable tests', () => {
     within(column).getByText('Number of Studies')
     screen.getByText('123')
   })
+
+  it('does not contain facet controls for JSON subcolumn facets', async () => {
+    const queryResultBundleWithFacetedJsonSubcolumn: QueryResultBundle = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+      queryCount: 1,
+      selectColumns: [{ name: 'study', columnType: 'JSON' }],
+      columnModels: [
+        {
+          id: '1',
+          name: 'study',
+          columnType: 'JSON',
+          jsonSubColumns: [
+            {
+              name: 'studyName',
+              jsonPath: '$.name',
+              columnType: 'STRING',
+              facetType: 'enumeration',
+            },
+          ],
+        },
+      ],
+      facets: [
+        {
+          columnName: 'study',
+          facetType: 'enumeration',
+          jsonPath: '$.name',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+          facetValues: [{ value: 'foo', count: 1, isSelected: false }],
+        },
+      ],
+      lastUpdatedOn: '2023-08-28T07:27:00.667Z',
+      queryResult: {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
+        queryResults: {
+          concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
+          tableId: MOCK_TABLE_ENTITY_ID,
+          etag: '53e1e27a-dbf3-4db3-acd1-dafca30b894c',
+          headers: [{ name: 'study', columnType: 'JSON' }],
+          rows: [{ values: ['{"name": "foo"}'] }],
+        },
+      },
+    }
+
+    server.use(
+      ...getHandlersForTableQuery(queryResultBundleWithFacetedJsonSubcolumn),
+    )
+
+    renderTable({ showDirectDownloadColumn: true })
+    mockAllIsIntersecting(true)
+
+    // The study column should be visible
+    const column = await screen.findByRole('columnheader')
+    within(column).getByText('Study')
+
+    // No facet filter controls should be visible, since the only facet on the study column is a JSON subcolumn facet
+    expect(
+      screen.queryByRole('button', {
+        name: 'Filter by specific facet',
+      }),
+    ).not.toBeInTheDocument()
+  })
 })
