@@ -217,7 +217,10 @@ export default function SendToCavaticaConfirmationDialog(
       confirmButtonText={confirmButtonText}
       confirmButtonDisabled={isLoading || (actions && actions.length > 0)}
       onConfirm={() => {
-        exportToCavatica()
+        exportToCavatica().then(
+          // on success, close the modal
+          () => setIsShowingExportToCavaticaModal(false),
+        )
       }}
       onCancel={() => setIsShowingExportToCavaticaModal(false)}
       maxWidth="md"
