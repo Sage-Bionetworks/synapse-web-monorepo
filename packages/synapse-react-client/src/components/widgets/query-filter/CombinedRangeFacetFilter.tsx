@@ -8,17 +8,17 @@ import { Range, RangeValues } from '../Range'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { RadioValuesEnum, getRadioValue, options } from './RangeFacetFilter'
 import dayjs from 'dayjs'
-import { RangeSlider } from '../RangeSlider/RangeSlider'
+import RangeSlider from '../RangeSlider/RangeSlider'
 import { useQueryContext } from '../../QueryContext'
 import { SynapseConstants } from '../../../utils'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../../synapse-queries'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
 export type CombinedRangeFacetFilterProps = {
   facetResults: FacetColumnResultRange[]
   label: string
   columnType: ColumnType
   onChange: (range: (RadioValuesEnum | number | string | undefined)[]) => void
-  collapsed?: boolean
 }
 
 /**
@@ -46,11 +46,11 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
   label,
   columnType,
   onChange,
-  collapsed = false,
 }: CombinedRangeFacetFilterProps) => {
   const { getCurrentQueryRequest } = useQueryContext()
+  const { getColumnDisplayName } = useQueryVisualizationContext()
 
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const {
     columnName: col1Name,
     // columnMax: col1Max  // not used
@@ -123,7 +123,7 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
     <div>
       <FacetFilterHeader
         isCollapsed={isCollapsed}
-        label={label}
+        label={getColumnDisplayName(label)}
         onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
       ></FacetFilterHeader>
       <Collapse in={!isCollapsed}>
@@ -146,8 +146,7 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
                   domain={[col1GlobalMin, col2GlobalMax]}
                   initialValues={{ min: selectedMin, max: selectedMax }}
                   step={1}
-                  doUpdateOnApply={true}
-                  onChange={(values: RangeValues) =>
+                  onApplyClicked={(values: RangeValues) =>
                     onChange([
                       col1GlobalMin,
                       values.max,
@@ -172,7 +171,7 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
                       dayjs(parseInt(col2GlobalMax)).toString(),
                   }}
                   type={rangeType}
-                  onChange={(values: RangeValues) =>
+                  onApplyClicked={(values: RangeValues) =>
                     onChange([
                       col1GlobalMin,
                       values.max,
@@ -190,7 +189,7 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
                     max: parseFloat(selectedMax),
                   }}
                   type={rangeType}
-                  onChange={(values: RangeValues) =>
+                  onApplyClicked={(values: RangeValues) =>
                     onChange([
                       col1GlobalMin,
                       values.max,

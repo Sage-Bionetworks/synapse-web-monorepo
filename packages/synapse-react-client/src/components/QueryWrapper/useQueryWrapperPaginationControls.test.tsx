@@ -25,6 +25,7 @@ describe('useQueryWrapperPaginationControls tests', () => {
     pageSize: 10,
     removeQueryFilter: jest.fn(),
     addValueToSelectedFacet: jest.fn(),
+    setRangeFacetValue: jest.fn(),
     removeSelectedFacet: jest.fn(),
     removeValueFromQueryFilter: jest.fn(),
     removeValueFromSelectedFacet: jest.fn(),

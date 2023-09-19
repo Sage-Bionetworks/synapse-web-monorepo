@@ -17,7 +17,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import loadingScreen from '../../LoadingScreen/LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
+import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
 import { Box, IconButton, Tooltip } from '@mui/material'
 import { useQuery } from 'react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
@@ -365,11 +365,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                 <span className="FacetNavPanel__title__name">{plotTitle}</span>
               )}
               <div className="FacetNavPanel__title__tools">
-                <EnumFacetFilter
-                  facetValues={facetToPlot.facetValues}
-                  columnModel={columnModel}
-                  containerAs="Dropdown"
-                />
+                <EnumFacetFilter facet={facetToPlot} containerAs="Dropdown" />
                 <Tooltip title={'Expand to large graph'}>
                   <IconButton onClick={() => setShowModal(true)} size={'small'}>
                     <IconSvg
@@ -394,12 +390,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   Filter All Data By
                 </span>
                 <EnumFacetFilter
-                  facetValues={facetToPlot.facetValues}
-                  columnModel={
-                    data?.columnModels!.find(
-                      el => el.name === facetToPlot.columnName,
-                    )!
-                  }
+                  facet={facetToPlot}
                   containerAs="Dropdown"
                   dropdownType="SelectBox"
                 />

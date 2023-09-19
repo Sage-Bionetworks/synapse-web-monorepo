@@ -18,27 +18,22 @@ import {
   VALUE_NOT_SET,
 } from '../../../utils/SynapseConstants'
 import { RangeSliderProps } from '../RangeSlider/RangeSlider'
-import { QueryVisualizationContextProvider } from '../../QueryVisualizationWrapper'
-import { Range, RangeProps } from '../Range'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import QueryWrapper from '../../QueryWrapper'
 import { MOCK_TABLE_ENTITY_ID } from '../../../mocks/entity/mockTableEntity'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { server } from '../../../mocks/msw/server'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
+import { cloneDeep } from 'lodash-es'
 
-let capturedOnChange:
+let capturedOnApplyClicked:
   | ((range: { min: string | number; max: string | number }) => void)
   | undefined
 
-jest.mock('../Range', () => ({
-  Range: jest.fn((props: RangeProps) => {
-    capturedOnChange = props.onChange
-    return <div data-testid="Range"></div>
-  }),
-}))
 jest.mock('../RangeSlider/RangeSlider', () => ({
-  RangeSlider: jest.fn((props: RangeSliderProps) => {
-    capturedOnChange = props.onChange
+  __esModule: true,
+  default: jest.fn((props: RangeSliderProps) => {
+    capturedOnApplyClicked = props.onApplyClicked
     return <div data-testid="RangeSlider"></div>
   }),
 }))
@@ -134,6 +129,16 @@ const columnModel: ColumnModel = {
   name: 'Year',
 }
 
+const dateColumnModel: ColumnModel = {
+  ...columnModel,
+  columnType: ColumnTypeEnum.DATE,
+}
+
+const doubleColumnModel: ColumnModel = {
+  ...columnModel,
+  columnType: ColumnTypeEnum.DOUBLE,
+}
+
 function createTestProps(
   overrides?: CombinedRangeFacetFilterProps,
 ): CombinedRangeFacetFilterProps {
@@ -149,6 +154,7 @@ function createTestProps(
 describe('CombinedRangeFacetFilter tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
+    capturedOnApplyClicked = undefined
     jest.clearAllMocks()
     server.use(...getHandlersForTableQuery(mockQueryResponseData))
   })
@@ -160,34 +166,9 @@ describe('CombinedRangeFacetFilter tests', () => {
     props = createTestProps(overrides)
     render(
       <QueryWrapper initQueryRequest={queryRequest}>
-        <QueryVisualizationContextProvider
-          queryVisualizationContext={{
-            getColumnDisplayName: jest.fn(col => col),
-            columnsToShowInTable: [],
-            setColumnsToShowInTable: jest.fn(() => null),
-            unitDescription: '',
-            getDisplayValue: jest.fn(() => ''),
-            NoContentPlaceholder: () => <></>,
-            isShowingExportToCavaticaModal: false,
-            setIsShowingExportToCavaticaModal: jest
-              .fn()
-              .mockImplementation(() => ''),
-            showFacetFilter: false,
-            setShowFacetFilter: jest.fn().mockImplementation(() => ''),
-            showSearchBar: false,
-            setShowSearchBar: jest.fn().mockImplementation(() => ''),
-            showDownloadConfirmation: false,
-            setShowDownloadConfirmation: jest.fn().mockImplementation(() => ''),
-            showSqlEditor: false,
-            setShowSqlEditor: jest.fn().mockImplementation(() => ''),
-            showCopyToClipboard: false,
-            setShowCopyToClipboard: jest.fn().mockImplementation(() => ''),
-            showFacetVisualization: false,
-            setShowFacetVisualization: jest.fn().mockImplementation(() => ''),
-          }}
-        >
+        <QueryVisualizationWrapper>
           <CombinedRangeFacetFilter {...props} />
-        </QueryVisualizationContextProvider>
+        </QueryVisualizationWrapper>
       </QueryWrapper>,
       {
         wrapper: createWrapper(),
@@ -224,60 +205,28 @@ describe('CombinedRangeFacetFilter tests', () => {
     })
   })
 
-  describe('collapsible', () => {
-    it('should hide content when toggled', async () => {
-      await init({ ...props, collapsed: false })
+  it('should collapse content when toggled', async () => {
+    await init({ ...props })
 
-      expect(MockCollapse).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          in: true,
-        }),
-        expect.anything(),
-      )
+    expect(MockCollapse).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        in: true,
+      }),
+      expect.anything(),
+    )
 
-      // toggle collapse via button
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Collapse Menu' }),
-      )
+    // toggle collapse via button
+    await userEvent.click(screen.getByRole('button', { name: 'Collapse Menu' }))
 
-      expect(MockCollapse).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          in: false,
-        }),
-        expect.anything(),
-      )
-    })
-
-    it('should start collapsed when specified via prop', async () => {
-      await init({ ...props, collapsed: true })
-      expect(MockCollapse).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          in: false,
-        }),
-        expect.anything(),
-      )
-
-      // toggle collapse via button
-      await userEvent.click(screen.getByRole('button', { name: 'Expand Menu' }))
-
-      expect(MockCollapse).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          in: true,
-        }),
-        expect.anything(),
-      )
-    })
+    expect(MockCollapse).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        in: false,
+      }),
+      expect.anything(),
+    )
   })
 
-  describe('displaying  correct range control', () => {
-    const dateColumnModel: ColumnModel = {
-      ...columnModel,
-      columnType: ColumnTypeEnum.DATE,
-    }
-    const doubleColumnModel: ColumnModel = {
-      ...columnModel,
-      columnType: ColumnTypeEnum.DOUBLE,
-    }
+  describe('displaying correct range control', () => {
     it('should set for integer', async () => {
       await init({
         ...props,
@@ -287,37 +236,52 @@ describe('CombinedRangeFacetFilter tests', () => {
     })
 
     it('should set for date', async () => {
+      const mockQueryResponseDataWithDateColumnModel = cloneDeep(
+        mockQueryResponseData,
+      )
+      mockQueryResponseDataWithDateColumnModel.columnModels = [dateColumnModel]
+      server.use(
+        ...getHandlersForTableQuery(mockQueryResponseDataWithDateColumnModel),
+      )
+
       await init({
         ...props,
         facetResults: [minRangeFacetResult, maxRangeFacetResult],
         columnType: dateColumnModel.columnType,
         label: dateColumnModel.name,
       })
-      screen.getByTestId('Range')
 
-      expect(Range).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          type: 'date',
-        }),
-        {},
-      )
+      const rangeOption = await screen.findByLabelText('Range')
+      await userEvent.click(rangeOption)
+      const minInput = await screen.findByLabelText<HTMLInputElement>('min')
+      const maxInput = await screen.findByLabelText<HTMLInputElement>('max')
+      expect(minInput.type).toBe('date')
+      expect(maxInput.type).toBe('date')
     })
 
     it('should set for double', async () => {
+      const mockQueryResponseDataWithDoubleColumnModel = cloneDeep(
+        mockQueryResponseData,
+      )
+      mockQueryResponseDataWithDoubleColumnModel.columnModels = [
+        doubleColumnModel,
+      ]
+      server.use(
+        ...getHandlersForTableQuery(mockQueryResponseDataWithDoubleColumnModel),
+      )
+
       await init({
         ...props,
         facetResults: [minRangeFacetResult, maxRangeFacetResult],
         columnType: doubleColumnModel.columnType,
         label: doubleColumnModel.name,
       })
-      screen.getByTestId('Range')
-
-      expect(Range).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          type: 'number',
-        }),
-        {},
-      )
+      const rangeOption = await screen.findByLabelText('Range')
+      await userEvent.click(rangeOption)
+      const minInput = await screen.findByLabelText<HTMLInputElement>('min')
+      const maxInput = await screen.findByLabelText<HTMLInputElement>('max')
+      expect(minInput.type).toBe('number')
+      expect(maxInput.type).toBe('number')
     })
   })
 
@@ -363,36 +327,46 @@ describe('CombinedRangeFacetFilter tests', () => {
     })
 
     it('should update from a range control', async () => {
-      capturedOnChange = undefined
-      const dateColumnModel: ColumnModel = {
-        ...columnModel,
-        columnType: ColumnTypeEnum.DATE,
-      }
+      const mockQueryResponseDataWithDoubleColumnModel = cloneDeep(
+        mockQueryResponseData,
+      )
+      mockQueryResponseDataWithDoubleColumnModel.columnModels = [
+        doubleColumnModel,
+      ]
+      server.use(
+        ...getHandlersForTableQuery(mockQueryResponseDataWithDoubleColumnModel),
+      )
 
       const updatedProps = {
         ...props,
         facetResults: [minRangeFacetResult, maxRangeFacetResult],
-        columnType: dateColumnModel.columnType,
-        label: dateColumnModel.name,
+        columnType: doubleColumnModel.columnType,
+        label: doubleColumnModel.name,
       }
       await init(updatedProps)
-      await waitFor(() => expect(Range).toHaveBeenCalled())
-      await waitFor(() => expect(capturedOnChange).toBeDefined())
-      capturedOnChange!({ min: '40', max: '50' })
+
+      // Type into the min/max text boxes
+      const minInput = await screen.findByLabelText('min')
+      const maxInput = await screen.findByLabelText('max')
+      await userEvent.clear(minInput)
+      await userEvent.type(minInput, '40')
+      await userEvent.clear(maxInput)
+      await userEvent.type(maxInput, '50')
+      await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+
       // Call back with column1 min to range selector max, and range selector min to column2 max.
       expect(mockCallback).toHaveBeenCalledWith(['1', '50', '40', '111'])
     })
 
     it('should update from a range slider control', async () => {
-      capturedOnChange = undefined
       await init({
         facetResults: [minRangeFacetResult, maxRangeFacetResult],
         columnType: ColumnTypeEnum.INTEGER,
         label: 'A',
         onChange: mockCallback,
       })
-      await waitFor(() => expect(capturedOnChange).toBeDefined())
-      capturedOnChange!({ min: '40', max: '50' })
+      await waitFor(() => expect(capturedOnApplyClicked).toBeDefined())
+      capturedOnApplyClicked!({ min: '40', max: '50' })
       // Call back with column1 min to range selector max, and range selector min to column2 max.
       expect(mockCallback).toHaveBeenCalledWith(['1', '50', '40', '111'])
     })

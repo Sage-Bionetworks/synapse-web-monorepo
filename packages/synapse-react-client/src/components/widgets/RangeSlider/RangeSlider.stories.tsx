@@ -1,6 +1,6 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { RangeSlider } from './RangeSlider'
+import RangeSlider from './RangeSlider'
 import { Paper } from '@mui/material'
 
 const meta = {
@@ -22,6 +22,5 @@ export const RangeSliderDemo: Story = {
     domain: ['-100', '100'],
     initialValues: { min: '20', max: '80' },
     step: 5,
-    doUpdateOnApply: false,
   },
 }

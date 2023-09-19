@@ -16,7 +16,7 @@ import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { useGetEntityHeader } from '../../synapse-queries'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'
-import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
+import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
 import { IconButton, Tooltip } from '@mui/material'
 import IconSvg from '../IconSvg'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
@@ -203,11 +203,7 @@ export function TableDataColumnHeader(
       <div className="SRC-centerContent" style={{ height: '22px' }}>
         {isFacetSelection && !isLockedColumn && columnModel && (
           <span>
-            <EnumFacetFilter
-              containerAs="Dropdown"
-              facetValues={facet.facetValues}
-              columnModel={columnModel}
-            />
+            <EnumFacetFilter containerAs="Dropdown" facet={facet} />
           </span>
         )}
         {column.getCanSort() && (

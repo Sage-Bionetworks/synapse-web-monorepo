@@ -1,13 +1,11 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import {
-  RangeSlider,
-  RangeSliderProps,
-} from '../../../src/components/widgets/RangeSlider/RangeSlider'
+import RangeSlider, { RangeSliderProps } from './RangeSlider'
 import { Slider } from '@mui/material'
 
-const mockCallback = jest.fn()
+const mockOnChange = jest.fn()
+const mockOnApplyClicked = jest.fn()
 const MUI_SLIDER_TEST_ID = 'Mock MUI Slider'
 jest.mock('@mui/material', () => {
   const muiActual = jest.requireActual('@mui/material')
@@ -25,9 +23,9 @@ function createTestProps(
   return {
     initialValues: { min: '1', max: '20' },
     domain: ['0', '35'],
-    onChange: mockCallback,
+    onChange: mockOnChange,
+    onApplyClicked: mockOnApplyClicked,
     step: 1,
-    doUpdateOnApply: true,
     ...overrides,
   }
 }
@@ -50,14 +48,15 @@ describe('RangeSlider', () => {
   })
 
   describe('callbacks', () => {
-    it('should not call the callbackFn on change when doUpdateOnApply is true', async () => {
-      init({ doUpdateOnApply: true })
+    it('should not call onApplyClicked on change', async () => {
+      init()
       screen.getByTestId(MUI_SLIDER_TEST_ID)
       await waitFor(() => expect(mockSlider).toHaveBeenCalled())
       act(() => {
-        mockSlider.mock.calls[0][0].onChange({}, [1, 20], 0)
+        mockSlider.mock.lastCall![0]!.onChange!(new Event('click'), [1, 20], 0)
       })
-      expect(mockCallback).not.toHaveBeenCalled()
+      expect(mockOnApplyClicked).not.toHaveBeenCalled()
+      expect(mockOnChange).toHaveBeenCalledWith({ min: 1, max: 20 })
     })
 
     /**
@@ -70,11 +69,11 @@ describe('RangeSlider', () => {
     )
 
     it('should always call callbackFn on Apply', async () => {
-      init({ doUpdateOnApply: true })
+      init()
       screen.getByTestId(MUI_SLIDER_TEST_ID)
       const button = screen.getByRole('button', { name: 'Apply' })
       await userEvent.click(button)
-      expect(mockCallback).toHaveBeenCalledWith({ min: 1, max: 20 })
+      expect(mockOnApplyClicked).toHaveBeenCalledWith({ min: 1, max: 20 })
     })
   })
 })

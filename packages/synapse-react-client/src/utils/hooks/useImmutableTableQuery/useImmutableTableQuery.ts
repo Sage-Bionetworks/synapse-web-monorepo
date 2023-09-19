@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  FacetColumnRequest,
+  FacetColumnRangeRequest,
   FacetColumnValuesRequest,
   QueryBundleRequest,
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import { cloneDeep, isEqual } from 'lodash-es'
+import { cloneDeep, isEqual, pick } from 'lodash-es'
 import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
 import { DEFAULT_PAGE_SIZE } from '../../SynapseConstants'
 import { parseEntityIdAndVersionFromSqlStatement } from '../../functions/SqlFunctions'
@@ -22,6 +22,7 @@ import {
 import { ReadonlyDeep } from 'type-fest'
 import useCommittedState from '../useCommittedState'
 import { useDebouncedEffect } from '@react-hookz/web'
+import { UniqueFacetIdentifier } from '../../types/UniqueFacetIdentifier'
 
 type QueryChangeCommitOptions =
   | {
@@ -59,18 +60,24 @@ export type ImmutableTableQueryResult = {
   /** Resets the query to the initial state, clearing all user-specified filters */
   resetQuery: () => void
   addValueToSelectedFacet: (
-    columnName: string,
+    facet: UniqueFacetIdentifier,
     value: string,
     commitOptions?: QueryChangeCommitOptions,
   ) => void
   /** Removes a particular selected facet from the query */
   removeSelectedFacet: (
-    facet: FacetColumnRequest | FacetColumnRequest[],
+    facet: UniqueFacetIdentifier | UniqueFacetIdentifier[],
   ) => void
   /** Removes a particular value from a selected facet. If the value is the last value in the FacetColumnRequest, the selected facet will be removed. */
   removeValueFromSelectedFacet: (
-    facet: FacetColumnRequest | string,
+    facet: UniqueFacetIdentifier,
     value: string,
+    commitOptions?: QueryChangeCommitOptions,
+  ) => void
+  setRangeFacetValue: (
+    facet: UniqueFacetIdentifier,
+    min?: string,
+    max?: string,
     commitOptions?: QueryChangeCommitOptions,
   ) => void
   /** Removes a particular QueryFilter from the query */
@@ -357,7 +364,7 @@ export default function useImmutableTableQuery(
 
   const addValueToSelectedFacet = useCallback(
     (
-      columnName: string,
+      facet: UniqueFacetIdentifier,
       value: string,
       commitOptions?: QueryChangeCommitOptions,
     ) => {
@@ -365,10 +372,16 @@ export default function useImmutableTableQuery(
         const newFacets = request.query.selectedFacets ?? []
 
         const existingFacetSelection = newFacets.find(
-          (facet): facet is FacetColumnValuesRequest =>
-            facet.concreteType ===
-              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' &&
-            facet.columnName === columnName,
+          (existingFacet): existingFacet is FacetColumnValuesRequest => {
+            return (
+              existingFacet.concreteType ===
+                'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' &&
+              isEqual(
+                pick(existingFacet, ['columnName', 'jsonPath']),
+                pick(facet, ['columnName', 'jsonPath']),
+              )
+            )
+          },
         )
 
         if (existingFacetSelection) {
@@ -379,7 +392,8 @@ export default function useImmutableTableQuery(
           newFacets.push({
             concreteType:
               'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-            columnName: columnName,
+            columnName: facet.columnName,
+            jsonPath: facet.jsonPath,
             facetValues: [value],
           })
         }
@@ -390,20 +404,68 @@ export default function useImmutableTableQuery(
     [setQueryOrPromptConfirmation],
   )
 
+  const setRangeFacetValue = useCallback(
+    (
+      facet: UniqueFacetIdentifier,
+      min?: string,
+      max?: string,
+      commitOptions?: QueryChangeCommitOptions,
+    ) => {
+      setQueryOrPromptConfirmation(request => {
+        const newFacets = request.query.selectedFacets ?? []
+
+        const existingFacetSelection = newFacets.find(
+          (existingFacet): existingFacet is FacetColumnRangeRequest =>
+            existingFacet.concreteType ===
+              'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest' &&
+            isEqual(
+              pick(existingFacet, ['columnName', 'jsonPath']),
+              pick(facet, ['columnName', 'jsonPath']),
+            ),
+        )
+        if (existingFacetSelection && min == null && max == null) {
+          // remove the facet
+          newFacets.splice(newFacets.indexOf(existingFacetSelection), 1)
+        } else if (existingFacetSelection) {
+          existingFacetSelection.min = min
+          existingFacetSelection.max = max
+        } else {
+          newFacets.push({
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+            columnName: facet.columnName,
+            jsonPath: facet.jsonPath,
+            min,
+            max,
+          })
+        }
+        request.query.selectedFacets = newFacets
+        return request
+      }, commitOptions)
+    },
+    [setQueryOrPromptConfirmation],
+  )
+
   const removeSelectedFacet = useCallback(
-    (facetColumnRequest: FacetColumnRequest | FacetColumnRequest[]) => {
-      const isArray = Array.isArray(facetColumnRequest)
+    (facetsToRemove: UniqueFacetIdentifier | UniqueFacetIdentifier[]) => {
+      const isArray = Array.isArray(facetsToRemove)
       setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.selectedFacets = (
           currentQuery.query.selectedFacets ?? []
         ).filter(facet => {
           // Use lodash for deep comparison
           if (isArray) {
-            return !facetColumnRequest.find(item => {
-              return isEqual(facet, item)
+            return !facetsToRemove.find(item => {
+              return isEqual(
+                pick(facet, ['columnName', 'jsonPath']),
+                pick(item, ['columnName', 'jsonPath']),
+              )
             })
           } else {
-            return !isEqual(facet, facetColumnRequest)
+            return !isEqual(
+              pick(facet, ['columnName', 'jsonPath']),
+              pick(facetsToRemove, ['columnName', 'jsonPath']),
+            )
           }
         })
         return currentQuery
@@ -414,12 +476,10 @@ export default function useImmutableTableQuery(
 
   const removeValueFromSelectedFacet = useCallback(
     (
-      facet: FacetColumnRequest | string,
+      facet: UniqueFacetIdentifier,
       value: string,
       commitOptions?: QueryChangeCommitOptions,
     ) => {
-      const facetColumnName =
-        typeof facet === 'object' ? facet.columnName : facet
       setQueryOrPromptConfirmation(currentQuery => {
         currentQuery.query.selectedFacets = (
           currentQuery.query.selectedFacets ?? []
@@ -428,7 +488,10 @@ export default function useImmutableTableQuery(
           .map(facetColumnRequest => {
             if (
               isFacetColumnValuesRequest(facetColumnRequest) &&
-              isEqual(facetColumnRequest.columnName, facetColumnName)
+              isEqual(
+                pick(facetColumnRequest, ['columnName', 'jsonPath']),
+                pick(facet, ['columnName', 'jsonPath']),
+              )
             ) {
               // Remove the value from the filter
               facetColumnRequest.facetValues =
@@ -525,5 +588,6 @@ export default function useImmutableTableQuery(
     onConfirmChange: onConfirmChangeQuery,
     onCancelChange: onCancelChangeQuery,
     addValueToSelectedFacet,
+    setRangeFacetValue,
   }
 }

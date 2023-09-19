@@ -56,34 +56,6 @@
     justify-content: space-between;
   }
 
-  &__search {
-    position: relative;
-    margin-top: 0;
-    height: 0;
-    overflow: hidden;
-    &.active {
-      margin-top: 6px;
-      height: auto;
-      overflow: visible;
-    }
-    input {
-      width: 100%;
-      border: 1px solid #dcdcdc;
-      padding: 6px 30px;
-      &::placeholder {
-        color: SRC.$gray-deemphasized;
-      }
-      &:focus {
-        outline-color: SRC.$primary-action-color;
-      }
-    }
-    button {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
-
   &__closeSearch {
     left: $input-icon-margin;
   }

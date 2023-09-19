@@ -7,7 +7,7 @@ import {
   ClickCallbackParams,
 } from '../../../src/components/Plot/types'
 import { Range, RangeValues } from '../../../src/components/widgets/Range'
-import { RangeSlider } from '../../../src/components/widgets/RangeSlider/RangeSlider'
+import RangeSlider from '../../../src/components/widgets/RangeSlider/RangeSlider'
 import { useState } from 'react'
 
 export const WidgetDemo: React.FunctionComponent = () => {
@@ -125,7 +125,7 @@ export const WidgetDemo: React.FunctionComponent = () => {
       <Range
         type="number"
         initialValues={{ min: rangeNumberValue.min, max: rangeNumberValue.max }}
-        onChange={(values: RangeValues) => setRangeNumberValue(values)}
+        onApplyClicked={(values: RangeValues) => setRangeNumberValue(values)}
       ></Range>
       <hr></hr>
       <h4>Date Range</h4>
@@ -134,7 +134,7 @@ export const WidgetDemo: React.FunctionComponent = () => {
       <Range
         type="date"
         initialValues={{ min: rangeDateValue.min, max: rangeDateValue.max }}
-        onChange={(values: RangeValues) => setRangeDateValue(values)}
+        onApplyClicked={(values: RangeValues) => setRangeDateValue(values)}
       ></Range>
       <hr></hr>
       <h4>Range Slider</h4>

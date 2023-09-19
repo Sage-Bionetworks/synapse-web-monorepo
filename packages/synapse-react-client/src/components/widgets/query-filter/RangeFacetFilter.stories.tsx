@@ -1,6 +1,5 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
 import { RangeFacetFilter } from './RangeFacetFilter'
@@ -41,9 +40,6 @@ export const NoneSelected: Story = {
       columnMin: '0',
       columnMax: '100',
     },
-    columnType: ColumnTypeEnum.INTEGER,
-    label: 'fooColumn',
-    collapsed: false,
   },
 }
 
@@ -59,8 +55,5 @@ export const Selected: Story = {
       selectedMin: '5',
       selectedMax: '95',
     },
-    columnType: ColumnTypeEnum.INTEGER,
-    label: 'fooColumn',
-    collapsed: false,
   },
 }

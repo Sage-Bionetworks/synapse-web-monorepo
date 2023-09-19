@@ -30,6 +30,10 @@ import pluralize from 'pluralize'
 import { ReadonlyDeep } from 'type-fest'
 import { useAtomValue } from 'jotai'
 import { lockedColumnAtom } from '../../QueryWrapper/QueryWrapper'
+import {
+  FRIENDLY_VALUE_NOT_SET,
+  VALUE_NOT_SET,
+} from '../../../utils/SynapseConstants'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
 
@@ -135,6 +139,20 @@ function getPillPropsFromQueryFilters(
   })
 }
 
+function getRangeFacetInnerText(min?: string, max?: string) {
+  if (min == undefined && max == undefined) {
+    return 'Any value'
+  } else if (min == undefined) {
+    return `Up to ${max}`
+  } else if (max == undefined) {
+    return `${min} or greater`
+  } else if (min === VALUE_NOT_SET && max === VALUE_NOT_SET) {
+    return FRIENDLY_VALUE_NOT_SET
+  } else {
+    return `${min} - ${max}`
+  }
+}
+
 function getPillPropsFromFacetFilters(
   selectedFacets: ReadonlyDeep<FacetColumnRequest[]>,
   queryContext: QueryContextType,
@@ -158,7 +176,10 @@ function getPillPropsFromFacetFilters(
         !columnModel
       ) {
         const text = `${pluralize(
-          getColumnDisplayName(selectedFacet.columnName),
+          getColumnDisplayName(
+            selectedFacet.columnName,
+            selectedFacet.jsonPath,
+          ),
         )} (${selectedFacet.facetValues.length.toLocaleString()})`
         return [
           {
@@ -181,6 +202,7 @@ function getPillPropsFromFacetFilters(
           innerText: innerText,
           tooltipText: `${getColumnDisplayName(
             selectedFacet.columnName,
+            selectedFacet.jsonPath,
           )}: ${innerText}`,
           onRemoveFilter: () => {
             queryContext.removeValueFromSelectedFacet(selectedFacet, facetValue)
@@ -205,7 +227,7 @@ function getPillPropsFromFacetFilters(
           const minFacet = selectedFacets.find(
             v => v.columnName == combineRangeFacetConfig.minFacetColumn,
           ) as FacetColumnRangeRequest
-          const innerText = `${maxFacet.min} - ${minFacet.max}`
+          const innerText = getRangeFacetInnerText(maxFacet.min, minFacet.max)
           return [
             {
               key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${innerText}`,
@@ -220,13 +242,18 @@ function getPillPropsFromFacetFilters(
         }
       }
 
-      const innerText = `${selectedFacet.min} - ${selectedFacet.max}`
+      const innerText = getRangeFacetInnerText(
+        selectedFacet.min,
+        selectedFacet.max,
+      )
+
       return [
         {
           key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${selectedFacet.min}-${selectedFacet.max}`,
           innerText: innerText,
           tooltipText: `${getColumnDisplayName(
             selectedFacet.columnName,
+            selectedFacet.jsonPath,
           )}: ${innerText}`,
           onRemoveFilter: () => {
             queryContext.removeSelectedFacet(selectedFacet)

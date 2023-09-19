@@ -21,7 +21,7 @@ const options: UseImmutableTableQueryOptions = {
   },
 }
 
-const initialQueryWithFacet: QueryBundleRequest = {
+const initialQueryWithEnumFacet: QueryBundleRequest = {
   ...options.initQueryRequest,
   query: {
     ...options.initQueryRequest.query,
@@ -31,6 +31,23 @@ const initialQueryWithFacet: QueryBundleRequest = {
         concreteType:
           'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
         facetValues: ['bar', 'baz'],
+      },
+    ],
+  },
+}
+
+const initialQueryWithRangeFacet: QueryBundleRequest = {
+  ...options.initQueryRequest,
+  query: {
+    ...options.initQueryRequest.query,
+    selectedFacets: [
+      {
+        columnName: 'bar',
+        jsonPath: '$.someJsonPath',
+        concreteType:
+          'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+        min: '0',
+        max: '500',
       },
     ],
   },
@@ -342,7 +359,7 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   test('addValueToSelectedFacet when facet does not exist', () => {
-    const initQueryRequest: QueryBundleRequest = initialQueryWithFacet
+    const initQueryRequest: QueryBundleRequest = initialQueryWithEnumFacet
 
     const { result } = renderHook(() =>
       useImmutableTableQuery({
@@ -353,7 +370,7 @@ describe('useImmutableTableQuery tests', () => {
 
     // Call under test - add value to new facet
     act(() => {
-      result.current.addValueToSelectedFacet('abc', 'def')
+      result.current.addValueToSelectedFacet({ columnName: 'abc' }, 'def')
     })
 
     expect(result.current.currentQueryRequest).toEqual({
@@ -373,7 +390,7 @@ describe('useImmutableTableQuery tests', () => {
     })
   })
   test('addValueToSelectedFacet when facet exists', () => {
-    const initQueryRequest: QueryBundleRequest = initialQueryWithFacet
+    const initQueryRequest: QueryBundleRequest = initialQueryWithEnumFacet
 
     const { result } = renderHook(() =>
       useImmutableTableQuery({
@@ -384,7 +401,7 @@ describe('useImmutableTableQuery tests', () => {
 
     // Call under test - add new value to existing facet
     act(() => {
-      result.current.addValueToSelectedFacet('foo', 'qux')
+      result.current.addValueToSelectedFacet({ columnName: 'foo' }, 'qux')
     })
 
     expect(result.current.currentQueryRequest).toEqual({
@@ -404,7 +421,7 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   test('addValueToSelectedFacet when facet value is already present', () => {
-    const initQueryRequest: QueryBundleRequest = initialQueryWithFacet
+    const initQueryRequest: QueryBundleRequest = initialQueryWithEnumFacet
 
     const { result } = renderHook(() =>
       useImmutableTableQuery({
@@ -415,7 +432,7 @@ describe('useImmutableTableQuery tests', () => {
 
     // Call under test
     act(() => {
-      result.current.addValueToSelectedFacet('foo', 'bar')
+      result.current.addValueToSelectedFacet({ columnName: 'foo' }, 'bar')
     })
 
     // Should not have changed
@@ -423,7 +440,7 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   test('removeSelectedFacet when facet exists', () => {
-    const initQueryRequest: QueryBundleRequest = initialQueryWithFacet
+    const initQueryRequest: QueryBundleRequest = initialQueryWithEnumFacet
 
     const { result } = renderHook(() =>
       useImmutableTableQuery({
@@ -448,7 +465,7 @@ describe('useImmutableTableQuery tests', () => {
     })
   })
   test('removeSelectedFacet when facet does not exist', () => {
-    const initQueryRequest: QueryBundleRequest = initialQueryWithFacet
+    const initQueryRequest: QueryBundleRequest = initialQueryWithEnumFacet
 
     const { result } = renderHook(() =>
       useImmutableTableQuery({
@@ -461,9 +478,6 @@ describe('useImmutableTableQuery tests', () => {
     act(() => {
       result.current.removeSelectedFacet({
         columnName: 'abc',
-        facetValues: ['def'],
-        concreteType:
-          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
       })
     })
 
@@ -471,7 +485,7 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   test('removeValueFromSelectedFacet when facet has multiple values', () => {
-    const initQueryRequest: QueryBundleRequest = initialQueryWithFacet
+    const initQueryRequest: QueryBundleRequest = initialQueryWithEnumFacet
 
     const { result } = renderHook(() =>
       useImmutableTableQuery({
@@ -482,7 +496,7 @@ describe('useImmutableTableQuery tests', () => {
 
     // Call under test - remove value
     act(() => {
-      result.current.removeValueFromSelectedFacet('foo', 'bar')
+      result.current.removeValueFromSelectedFacet({ columnName: 'foo' }, 'bar')
     })
 
     expect(result.current.currentQueryRequest).toEqual({
@@ -503,9 +517,9 @@ describe('useImmutableTableQuery tests', () => {
 
   test('removeValueFromSelectedFacet when removing last value in facet', () => {
     const initQueryRequest: QueryBundleRequest = {
-      ...initialQueryWithFacet,
+      ...initialQueryWithEnumFacet,
       query: {
-        ...initialQueryWithFacet.query,
+        ...initialQueryWithEnumFacet.query,
         selectedFacets: [
           {
             columnName: 'foo',
@@ -527,7 +541,7 @@ describe('useImmutableTableQuery tests', () => {
 
     // Call under test - remove all values
     act(() => {
-      result.current.removeValueFromSelectedFacet('foo', 'bar')
+      result.current.removeValueFromSelectedFacet({ columnName: 'foo' }, 'bar')
     })
 
     expect(result.current.currentQueryRequest).toEqual({
@@ -539,7 +553,7 @@ describe('useImmutableTableQuery tests', () => {
     })
   })
   test("removeValueFromSelectedFacet when facet doesn't exist", () => {
-    const initQueryRequest: QueryBundleRequest = initialQueryWithFacet
+    const initQueryRequest: QueryBundleRequest = initialQueryWithEnumFacet
 
     const { result } = renderHook(() =>
       useImmutableTableQuery({
@@ -549,10 +563,125 @@ describe('useImmutableTableQuery tests', () => {
     )
 
     act(() => {
-      result.current.removeValueFromSelectedFacet('abc', 'def')
+      result.current.removeValueFromSelectedFacet({ columnName: 'abc' }, 'def')
     })
 
     expect(result.current.currentQueryRequest).toEqual(initQueryRequest)
+  })
+
+  test('setRangeFacetValue for a new range facet', () => {
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+      }),
+    )
+
+    // Call under test
+    act(() => {
+      result.current.setRangeFacetValue(
+        {
+          columnName: 'bar',
+          jsonPath: '$.someJsonPath',
+        },
+        '10',
+        '20',
+      )
+    })
+
+    const expected: QueryBundleRequest = {
+      ...options.initQueryRequest,
+      query: {
+        ...options.initQueryRequest.query,
+        selectedFacets: [
+          {
+            columnName: 'bar',
+            jsonPath: '$.someJsonPath',
+            min: '10',
+            max: '20',
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          },
+        ],
+      },
+    }
+
+    expect(result.current.currentQueryRequest).toEqual(expected)
+  })
+
+  test('setRangeFacetValue for an existing range facet', () => {
+    const initQueryRequest: QueryBundleRequest = initialQueryWithRangeFacet
+
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    // Call under test
+    act(() => {
+      result.current.setRangeFacetValue(
+        {
+          columnName: 'bar',
+          jsonPath: '$.someJsonPath',
+        },
+        '10',
+        '20',
+      )
+    })
+
+    const expected: QueryBundleRequest = {
+      ...options.initQueryRequest,
+      query: {
+        ...options.initQueryRequest.query,
+        selectedFacets: [
+          {
+            columnName: 'bar',
+            jsonPath: '$.someJsonPath',
+            min: '10',
+            max: '20',
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          },
+        ],
+      },
+    }
+
+    expect(result.current.currentQueryRequest).toEqual(expected)
+  })
+
+  test('setRangeFacetValue with undefined min and max removes the existing facet', () => {
+    const initQueryRequest: QueryBundleRequest = initialQueryWithRangeFacet
+
+    const { result } = renderHook(() =>
+      useImmutableTableQuery({
+        ...options,
+        initQueryRequest: initQueryRequest,
+      }),
+    )
+
+    // Call under test
+    act(() => {
+      result.current.setRangeFacetValue(
+        {
+          columnName: 'bar',
+          jsonPath: '$.someJsonPath',
+        },
+        undefined,
+        undefined,
+      )
+    })
+
+    const expected: QueryBundleRequest = {
+      ...options.initQueryRequest,
+      query: {
+        ...options.initQueryRequest.query,
+      },
+    }
+    // No selected facets expected
+    delete expected.query.selectedFacets
+
+    expect(result.current.currentQueryRequest).toEqual(expected)
   })
 
   test('removeQueryFilter', () => {

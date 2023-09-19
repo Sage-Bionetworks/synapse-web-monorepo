@@ -1,17 +1,21 @@
 import { Collapse } from '@mui/material'
-import React, { useEffect } from 'react'
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,
 } from '../../../utils/SynapseConstants'
-import { ColumnType } from '@sage-bionetworks/synapse-types'
 import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
 import { RadioGroup } from '../RadioGroup'
 import { Range, RangeValues } from '../Range'
-import { RangeSlider } from '../RangeSlider/RangeSlider'
+import RangeSlider from '../RangeSlider/RangeSlider'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import dayjs from 'dayjs'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from '../../QueryWrapper/QueryWrapper'
+import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
+import { useQueryContext } from '../../QueryContext'
+import { isNumber } from 'lodash-es'
 
 export enum RadioValuesEnum {
   NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
@@ -25,10 +29,7 @@ export const options = [
 ]
 export type RangeFacetFilterProps = {
   facetResult: FacetColumnResultRange
-  label: string
-  columnType: ColumnType
-  onChange: (range: (RadioValuesEnum | number | string | undefined)[]) => void
-  collapsed?: boolean
+  hideCollapsible?: boolean
 }
 
 export const getRadioValue = (min: string, isAnyValue: boolean) => {
@@ -40,16 +41,18 @@ export const getRadioValue = (min: string, isAnyValue: boolean) => {
   return RadioValuesEnum.RANGE
 }
 
-export const RangeFacetFilter: React.FunctionComponent<
-  RangeFacetFilterProps
-> = ({
-  facetResult,
-  label,
-  columnType,
-  onChange,
-  collapsed = false,
-}: RangeFacetFilterProps) => {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
+export function RangeFacetFilter(props: RangeFacetFilterProps) {
+  const { facetResult, hideCollapsible = false } = props
+  const data = useAtomValue(tableQueryDataAtom)
+  const { setRangeFacetValue, removeSelectedFacet, getCurrentQueryRequest } =
+    useQueryContext()
+  const columnModel = data?.columnModels
+    ? getCorrespondingColumnForFacet(facetResult, data.columnModels)
+    : undefined
+
+  const columnType = columnModel?.columnType
+  const { getColumnDisplayName } = useQueryVisualizationContext()
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
 
   const { columnMin, columnMax, selectedMin, selectedMax } = facetResult // the upper bound of the selected range
 
@@ -60,16 +63,29 @@ export const RangeFacetFilter: React.FunctionComponent<
 
   const rangeType = columnType === 'DOUBLE' ? 'number' : 'date'
 
-  const handleRadioGroupChange = (
-    radioValue: RadioValuesEnum,
-    onChangeCallback: (
-      range: (RadioValuesEnum | number | string | undefined)[],
-    ) => void,
-  ) => {
+  const handleRadioGroupChange = (radioValue: RadioValuesEnum) => {
     setRadioValue(radioValue)
 
-    if (radioValue !== RadioValuesEnum.RANGE) {
-      onChangeCallback([radioValue, radioValue])
+    switch (radioValue) {
+      case RadioValuesEnum.RANGE:
+        // The range facet value will update when the user clicks the apply button
+        break
+      case RadioValuesEnum.NOT_SET:
+        setRangeFacetValue(facetResult, radioValue, radioValue)
+        break
+      case RadioValuesEnum.ANY: {
+        const selectedFacet =
+          getCurrentQueryRequest().query.selectedFacets?.find(
+            selectedFacet =>
+              selectedFacet.columnName === facetResult.columnName &&
+              selectedFacet.jsonPath === facetResult.jsonPath,
+          )
+        if (selectedFacet) {
+          removeSelectedFacet(selectedFacet)
+        }
+
+        break
+      }
     }
   }
 
@@ -84,16 +100,20 @@ export const RangeFacetFilter: React.FunctionComponent<
     <div>
       <FacetFilterHeader
         isCollapsed={isCollapsed}
-        label={label}
+        label={getColumnDisplayName(
+          facetResult.columnName,
+          facetResult.jsonPath,
+        )}
         onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
-      ></FacetFilterHeader>
+        hideCollapsible={hideCollapsible}
+      />
       <Collapse in={!isCollapsed}>
         <RadioGroup
           value={radioValue}
           id="rangeSelector"
           options={options}
           onChange={(radioValue: string) =>
-            handleRadioGroupChange(radioValue as RadioValuesEnum, onChange)
+            handleRadioGroupChange(radioValue as RadioValuesEnum)
           }
         ></RadioGroup>
         {radioValue === RadioValuesEnum.RANGE &&
@@ -110,10 +130,13 @@ export const RangeFacetFilter: React.FunctionComponent<
                     max: parseInt(currentMax),
                   }}
                   step={1}
-                  doUpdateOnApply={true}
-                  onChange={(values: RangeValues) =>
-                    onChange([values.min, values.max])
-                  }
+                  onApplyClicked={(values: RangeValues) => {
+                    setRangeFacetValue(
+                      facetResult,
+                      isNumber(values.min) ? String(values.min) : values.min,
+                      isNumber(values.max) ? String(values.max) : values.max,
+                    )
+                  }}
                 >
                   {'>'}
                 </RangeSlider>
@@ -128,9 +151,13 @@ export const RangeFacetFilter: React.FunctionComponent<
                     max: selectedMax ?? dayjs(parseInt(columnMax)).toString(),
                   }}
                   type={rangeType}
-                  onChange={(values: RangeValues) =>
-                    onChange([values.min, values.max])
-                  }
+                  onApplyClicked={(values: RangeValues) => {
+                    setRangeFacetValue(
+                      facetResult,
+                      isNumber(values.min) ? String(values.min) : values.min,
+                      isNumber(values.max) ? String(values.max) : values.max,
+                    )
+                  }}
                 ></Range>
               )}
               {columnType === 'DOUBLE' && (
@@ -141,8 +168,12 @@ export const RangeFacetFilter: React.FunctionComponent<
                     max: parseFloat(currentMax),
                   }}
                   type={rangeType}
-                  onChange={(values: RangeValues) =>
-                    onChange([values.min, values.max])
+                  onApplyClicked={(values: RangeValues) =>
+                    setRangeFacetValue(
+                      facetResult,
+                      isNumber(values.min) ? String(values.min) : values.min,
+                      isNumber(values.max) ? String(values.max) : values.max,
+                    )
                   }
                 ></Range>
               )}
