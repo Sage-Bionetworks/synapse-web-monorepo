@@ -23,12 +23,12 @@ const OBSERVATION_TEXT_COLUMN_NAME = 'text'
 const OBSERVATION_TYPE_COLUMN_NAME = 'tag'
 const OBSERVATION_SUBMITTER_USER_ID_COLUMN_NAME = 'submitteruserid'
 
-type TimelinePlotProps = {
+export type TimelinePlotProps = {
   species: string
   resourceId: string
   observationsSql: string
 }
-const TimelinePlot = ({
+export const TimelinePlot = ({
   observationsSql,
   species,
   resourceId,
