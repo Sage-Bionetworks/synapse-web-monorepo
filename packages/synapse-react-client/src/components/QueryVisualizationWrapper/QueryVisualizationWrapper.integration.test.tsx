@@ -22,6 +22,7 @@ import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHan
 import { server } from '../../mocks/msw/server'
 import { MOCK_TABLE_ENTITY_ID } from '../../mocks/entity/mockTableEntity'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import { cloneDeep } from 'lodash-es'
 
 const onQueryContextReceived = jest.fn<void, [PaginatedQueryContextType]>()
 const onContextReceived = jest.fn<void, [QueryVisualizationContextType]>()
@@ -247,6 +248,37 @@ describe('QueryVisualizationWrapper', () => {
           onContextReceived.mock.lastCall![0].getColumnDisplayName
         expect(getColumnDisplayName).toBeDefined()
         expect(getColumnDisplayName('testColumnName')).toBe('test column alias')
+      })
+    })
+
+    test('Returns the faceted jsonSubColumn name', async () => {
+      const queryResponseWithJsonSubColumn = cloneDeep(queryResponse)
+      queryResponseWithJsonSubColumn.columnModels = [
+        {
+          columnType: ColumnTypeEnum.JSON,
+          name: 'someJsonColumn',
+          id: '123',
+          jsonSubColumns: [
+            {
+              name: 'Sub column name',
+              columnType: ColumnTypeEnum.STRING,
+              facetType: 'enumeration',
+              jsonPath: '$.someJsonPath',
+            },
+          ],
+        },
+      ]
+      server.use(...getHandlersForTableQuery(queryResponseWithJsonSubColumn))
+
+      render(<TestComponent />, { wrapper: createWrapper() })
+
+      await waitFor(() => {
+        const getColumnDisplayName =
+          onContextReceived.mock.lastCall![0].getColumnDisplayName
+        expect(getColumnDisplayName).toBeDefined()
+        expect(getColumnDisplayName('someJsonColumn', '$.someJsonPath')).toBe(
+          'Sub column name',
+        )
       })
     })
   })

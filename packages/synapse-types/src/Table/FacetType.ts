@@ -1,4 +1,1 @@
-export type FacetType = {
-  enumeration?: string
-  range?: any
-}
+export type FacetType = 'enumeration' | 'range'

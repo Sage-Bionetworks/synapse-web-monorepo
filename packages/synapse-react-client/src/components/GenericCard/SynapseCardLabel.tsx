@@ -18,6 +18,8 @@ import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { isEmpty } from 'lodash-es'
 import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
 import { UserBadge } from '../UserCard/UserBadge'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import dayjs from 'dayjs'
 
 type SynapseCardLabelProps = {
   value: string
@@ -80,6 +82,11 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   }
   if (columnModelType === ColumnTypeEnum.USERID && str) {
     return <UserBadge userId={str} className={newClassName} />
+  }
+
+  // NFINT-906
+  if (columnModelType === ColumnTypeEnum.DATE && str) {
+    return <p>{formatDate(dayjs(Number(str)))}</p>
   }
 
   if (!labelLink) {
