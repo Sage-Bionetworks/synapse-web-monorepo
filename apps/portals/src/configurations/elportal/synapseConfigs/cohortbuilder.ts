@@ -82,7 +82,7 @@ export const filesView: SynapseConfig = {
     showExportToCavatica: true,
     fileIdColumnName: 'fileId',
     fileNameColumnName: 'fileId',
-    fileVersionColumnName: 'fileVersion',
+    fileVersionColumnName: 'currentVersion',
     cavaticaHelpURL: '/Limited%20Data%20Commons',
     visibleColumnCount: 10,
     isRowSelectionVisible: true,
