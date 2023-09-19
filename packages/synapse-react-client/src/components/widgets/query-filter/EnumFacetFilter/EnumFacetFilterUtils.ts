@@ -1,14 +1,15 @@
 import {
   EntityHeader,
   Evaluation,
+  FacetColumnRequest,
   FacetColumnResultValueCount,
   FacetColumnResultValues,
-  FacetColumnValuesRequest,
   QueryBundleRequest,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '../../../../utils'
 import { isFacetColumnValuesRequest } from '../../../../utils/types/IsType'
+import { getCorrespondingSelectedFacet } from '../../../../utils/functions/queryUtils'
 
 export function valueToLabel(
   facet: FacetColumnResultValueCount,
@@ -52,15 +53,19 @@ export function getAllIsSelected(
   nextQueryRequest: QueryBundleRequest,
   facet: FacetColumnResultValues,
 ) {
-  const matchingSelectedFacet: FacetColumnValuesRequest | undefined =
-    nextQueryRequest.query.selectedFacets?.find(
-      (facetRequest): facetRequest is FacetColumnValuesRequest =>
-        isFacetColumnValuesRequest(facetRequest) &&
-        facetRequest.columnName === facet.columnName,
-    )
-
+  const matchingSelectedFacet: FacetColumnRequest | undefined =
+    getCorrespondingSelectedFacet(facet, nextQueryRequest.query.selectedFacets)
   if (!matchingSelectedFacet) {
     return true
   }
+
+  if (!isFacetColumnValuesRequest(matchingSelectedFacet)) {
+    console.error(
+      'getAllIsSelected: matchingSelectedFacet is not a FacetColumnValuesRequest',
+      matchingSelectedFacet,
+    )
+    return true
+  }
+
   return matchingSelectedFacet.facetValues.length === 0
 }
