@@ -13,7 +13,6 @@ import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions'
 import { SizeMe } from 'react-sizeme'
 import TimelineLegendItem from './TimelineLegendItem'
-import { SkeletonTable } from '../Skeleton'
 import { Skeleton } from '@mui/material'
 
 const OBSERVATION_PHASE_COLUMN_NAME = 'phase'
