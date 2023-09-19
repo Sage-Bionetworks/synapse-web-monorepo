@@ -3,13 +3,16 @@ import { SynapseConstants } from '../../src/utils'
 import syn16787123Json from '../../src/mocks/query/syn16787123'
 import {
   COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+  ColumnModel,
   ColumnSingleValueFilterOperator,
   ColumnTypeEnum,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+  FacetColumnRequest,
   FacetColumnResult,
   FacetColumnResultValues,
+  JsonSubColumnModel,
   Query,
   QueryBundleRequest,
   QueryResultBundle,
@@ -18,6 +21,8 @@ import {
 import { cloneDeep } from 'lodash-es'
 import {
   canTableQueryBeAddedToDownloadList,
+  getCorrespondingColumnForFacet,
+  getCorrespondingSelectedFacet,
   hasResettableFilters,
   isFacetAvailable,
   isSingleNotSetValue,
@@ -29,6 +34,7 @@ import { mockTableEntity } from '../../src/mocks/entity/mockTableEntity'
 import mockDataset from '../../src/mocks/entity/mockDataset'
 import SynapseClient from '../../src/synapse-client'
 import { mockFileViewEntity } from '../../src/mocks/entity/mockFileView'
+import { UniqueFacetIdentifier } from '../../src/utils/types/UniqueFacetIdentifier'
 
 jest.mock('../../src/synapse-client/SynapseClient', () => ({
   getQueryTableResults: jest.fn(),
@@ -446,5 +452,129 @@ describe('removeEmptyQueryParams', () => {
 
     const actual = removeEmptyQueryParams(query)
     expect(actual).toEqual(expected)
+  })
+})
+
+describe('getCorrespondingColumnForFacet', () => {
+  it('gets a ColumnModel', () => {
+    const facet: FacetColumnResult = {
+      columnName: 'foo',
+      facetValues: [],
+      facetType: 'enumeration',
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+    }
+
+    const columnModels: ColumnModel[] = [
+      {
+        id: '1',
+        name: 'foo',
+        columnType: ColumnTypeEnum.STRING,
+      },
+    ]
+    const expected = columnModels[0]
+    const actual = getCorrespondingColumnForFacet(facet, columnModels)
+    expect(actual).toEqual(expected)
+  })
+
+  it('gets a JSON subcolumn', () => {
+    const facet: FacetColumnResult = {
+      columnName: 'foo',
+      jsonPath: '$.bar',
+      facetValues: [],
+      facetType: 'enumeration',
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+    }
+
+    const jsonSubColumn: JsonSubColumnModel = {
+      name: 'Bar',
+      jsonPath: '$.bar',
+      columnType: ColumnTypeEnum.STRING,
+      facetType: 'enumeration',
+    }
+
+    const columnModels: ColumnModel[] = [
+      {
+        id: '1',
+        name: 'foo',
+        jsonSubColumns: [jsonSubColumn],
+        facetType: 'enumeration',
+        columnType: ColumnTypeEnum.STRING,
+      },
+    ]
+    const actual = getCorrespondingColumnForFacet(facet, columnModels)
+    expect(actual).toEqual(jsonSubColumn)
+  })
+
+  it('returns undefined if the column model cannot be found', () => {
+    const facet: FacetColumnResult = {
+      columnName: 'foo',
+      facetValues: [],
+      facetType: 'enumeration',
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+    }
+
+    const columnModels: ColumnModel[] = []
+    const actual = getCorrespondingColumnForFacet(facet, columnModels)
+    expect(actual).toEqual(undefined)
+  })
+})
+
+describe('getCorrespondingSelectedFacet', () => {
+  it('gets a match on the column name', () => {
+    const facet: UniqueFacetIdentifier = {
+      columnName: 'foo',
+    }
+
+    const selectedFacets: FacetColumnRequest[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+        columnName: 'foo',
+        facetValues: ['bar'],
+      },
+    ]
+    const expected = selectedFacets[0]
+    const actual = getCorrespondingSelectedFacet(facet, selectedFacets)
+    expect(actual).toEqual(expected)
+  })
+
+  it('gets a match on JSON subcolumn', () => {
+    const facet: UniqueFacetIdentifier = {
+      columnName: 'foo',
+      jsonPath: "$.bar['baz']",
+    }
+
+    const selectedFacets: FacetColumnRequest[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+        columnName: 'foo',
+        jsonPath: "$.bar['baz']",
+        facetValues: ['bar'],
+      },
+    ]
+    const expected = selectedFacets[0]
+    const actual = getCorrespondingSelectedFacet(facet, selectedFacets)
+    expect(actual).toEqual(expected)
+  })
+
+  it('returns undefined if the facet cannot be found', () => {
+    const facet: UniqueFacetIdentifier = {
+      columnName: 'notFoo',
+    }
+
+    const selectedFacets: FacetColumnRequest[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+        columnName: 'foo',
+        facetValues: ['bar'],
+      },
+    ]
+    const actual = getCorrespondingSelectedFacet(facet, selectedFacets)
+    expect(actual).toBe(undefined)
   })
 })
