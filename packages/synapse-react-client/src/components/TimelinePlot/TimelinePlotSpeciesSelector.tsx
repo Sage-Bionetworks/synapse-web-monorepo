@@ -38,9 +38,10 @@ export const TimelinePlotSpeciesSelector = ({
     if (rows) {
       setSpecies(rows[0].values[0])
     }
-  }, [rows])
+  }, [rows, setSpecies])
 
-  if (isLoading || !rows || rows.length == 0) {
+  // Hide if loading, there are no rows, or there's only 1 species option
+  if (isLoading || !rows || rows.length < 2) {
     return <></>
   }
 
@@ -49,6 +50,7 @@ export const TimelinePlotSpeciesSelector = ({
       <StyledFormControl>
         <InputLabel>Species</InputLabel>
         <Select
+          sx={{ marginLeft: '2px', marginBottom: '2px' }}
           value={species}
           defaultValue={rows[0].values[0]}
           label="Species"

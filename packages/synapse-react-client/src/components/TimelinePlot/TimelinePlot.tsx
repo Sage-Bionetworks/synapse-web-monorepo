@@ -10,7 +10,8 @@ import getColorPalette from '../ColorGradient/ColorGradient'
 import { Box } from '@mui/system'
 import {
   ColumnSingleValueFilterOperator,
-  QueryFilter,
+  ColumnSingleValueQueryFilter,
+  Row,
 } from '@sage-bionetworks/synapse-types'
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import {
@@ -50,7 +51,7 @@ export const TimelinePlot = ({
   )
   const queryFilters =
     getAdditionalFilters(eventsTableId, searchParams, sqlOperator) ?? []
-  const speciesFilter: QueryFilter | undefined = species
+  const speciesFilter: ColumnSingleValueQueryFilter | undefined = species
     ? {
         columnName: 'species',
         concreteType:
@@ -63,22 +64,27 @@ export const TimelinePlot = ({
   if (speciesFilter) {
     additionalFilters.push(speciesFilter)
   }
-  const eventTableQuery = useGetFullTableQueryResults({
-    entityId: eventsTableId,
-    query: {
-      sql: `${sql} WHERE observationTime IS NOT NULL`,
-      sort: [
-        {
-          column: 'observationTime',
-          direction: 'ASC',
-        },
-      ],
-      additionalFilters: additionalFilters,
-    },
+  const eventTableQuery = useGetFullTableQueryResults(
+    {
+      entityId: eventsTableId,
+      query: {
+        sql: `${sql} WHERE observationTime IS NOT NULL`,
+        sort: [
+          {
+            column: 'observationTime',
+            direction: 'ASC',
+          },
+        ],
+        additionalFilters: additionalFilters,
+      },
 
-    partMask: BUNDLE_MASK_QUERY_RESULTS,
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-  })
+      partMask: BUNDLE_MASK_QUERY_RESULTS,
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    },
+    {
+      enabled: !!species,
+    },
+  )
 
   const { data: eventsData, isLoading } = eventTableQuery
 
@@ -127,83 +133,91 @@ export const TimelinePlot = ({
   }
 
   // filter the phases query response data to the specific species
-  const phasesForTargetSpecies =
-    hardcodedPhasesQueryResponseData.queryResult?.queryResults.rows.filter(
-      row => {
-        return row.values[phaseSpeciesIndex] == species
-      },
-    )
-  // then walk through the phases and create a plot for each (iff event data exists for that phase!)
+  let phaseRowsWithData: Row[] = []
+  if (species) {
+    const phasesForTargetSpecies =
+      hardcodedPhasesQueryResponseData.queryResult?.queryResults.rows.filter(
+        row => {
+          return row.values[phaseSpeciesIndex] == species
+        },
+      )
+    // then walk through the phases and create a plot for each (iff event data exists for that phase!)
 
-  if (!phasesForTargetSpecies || phasesForTargetSpecies.length == 0) {
-    return <></>
+    if (!phasesForTargetSpecies || phasesForTargetSpecies.length == 0) {
+      return <></>
+    }
+    phaseRowsWithData = phasesForTargetSpecies.filter(phaseRow => {
+      const phaseEventRows = eventsData?.queryResult?.queryResults.rows.filter(
+        row => {
+          return (
+            row.values[observationPhaseIndex] ==
+            phaseRow.values[phaseObservationIndex]
+          )
+        },
+      )
+      return phaseEventRows?.length && phaseEventRows?.length > 0
+    })
   }
 
-  const phaseRowsWithData = phasesForTargetSpecies.filter(phaseRow => {
-    const phaseEventRows = eventsData?.queryResult?.queryResults.rows.filter(
-      row => {
-        return (
-          row.values[observationPhaseIndex] ==
-          phaseRow.values[phaseObservationIndex]
-        )
-      },
-    )
-    return phaseEventRows?.length && phaseEventRows?.length > 0
-  })
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         {/* Species selector */}
-        {!defaultSpecies && (
-          <TimelinePlotSpeciesSelector
-            setSpecies={setSpecies}
-            species={species}
-            sql={sql}
-            additionalFilters={queryFilters}
-          />
-        )}
-        {/* Legend */}
-        {phaseRowsWithData.map((phaseRow, index) => {
-          const { colorPalette } = getColorPalette(index, 1)
-          return (
-            <TimelineLegendItem
-              key={phaseRow.rowId}
-              color={colorPalette[0]}
-              phaseName={phaseRow.values[phaseObservationIndex]}
+        <Box>
+          {!defaultSpecies && (
+            <TimelinePlotSpeciesSelector
+              setSpecies={setSpecies}
+              species={species}
+              sql={sql}
+              additionalFilters={queryFilters}
             />
-          )
-        })}
+          )}
+        </Box>
+        {/* Legend */}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}>
+          {phaseRowsWithData.map((phaseRow, index) => {
+            const { colorPalette } = getColorPalette(index, 1)
+            return (
+              <TimelineLegendItem
+                key={phaseRow.rowId}
+                color={colorPalette[0]}
+                phaseName={phaseRow.values[phaseObservationIndex]}
+              />
+            )
+          })}
+        </Box>
       </Box>
       {/* Phase plots */}
-      <SizeMe monitorWidth noPlaceholder={true}>
-        {({ size }) => (
-          <Box sx={{ display: 'flex' }} className="forcePlotlyDefaultCursor">
-            {phaseRowsWithData.map((phaseRow, index) => {
-              const { colorPalette } = getColorPalette(index, 1)
-              const phaseEventRows =
-                eventsData?.queryResult?.queryResults.rows.filter(row => {
-                  return (
-                    row.values[observationPhaseIndex] ==
-                    phaseRow.values[phaseObservationIndex]
-                  )
-                })
-              console.log(`height: ${size.height} width: ${size.width}`)
-              return (
-                <TimelinePhase
-                  key={phaseRow.rowId}
-                  name={phaseRow.values[phaseObservationIndex]!}
-                  color={colorPalette[0]}
-                  rowData={phaseEventRows!}
-                  schema={schema}
-                  widthPx={
-                    size.width ? size.width / phaseRowsWithData.length : 0
-                  }
-                />
-              )
-            })}
-          </Box>
-        )}
-      </SizeMe>
+      {species && (
+        <SizeMe monitorWidth noPlaceholder={true}>
+          {({ size }) => (
+            <Box sx={{ display: 'flex' }} className="forcePlotlyDefaultCursor">
+              {phaseRowsWithData.map((phaseRow, index) => {
+                const { colorPalette } = getColorPalette(index, 1)
+                const phaseEventRows =
+                  eventsData?.queryResult?.queryResults.rows.filter(row => {
+                    return (
+                      row.values[observationPhaseIndex] ==
+                      phaseRow.values[phaseObservationIndex]
+                    )
+                  })
+                return (
+                  <TimelinePhase
+                    key={phaseRow.rowId}
+                    name={phaseRow.values[phaseObservationIndex]!}
+                    color={colorPalette[0]}
+                    rowData={phaseEventRows!}
+                    schema={schema}
+                    widthPx={
+                      size.width ? size.width / phaseRowsWithData.length : 0
+                    }
+                  />
+                )
+              })}
+            </Box>
+          )}
+        </SizeMe>
+      )}
     </Box>
   )
 }

@@ -9,7 +9,7 @@ export const metadataFilesSql = `SELECT id, resourceType, dataType, assay, diagn
 export const fundersSql = 'SELECT * FROM syn16858699'
 export const hackathonsSql = 'SELECT * FROM syn25585549'
 export const observationsSql =
-  'SELECT observationSubmitterName as "submitterName", synapseId as "submitterUserId", observationTime as "time", observationTimeUnits as "timeUnits", observationText as "text", observationType as "tag", observationPhase as "phase" FROM syn51735464'
+  'SELECT observationSubmitterName as "submitterName", synapseId as "submitterUserId", observationTime as "time", observationTimeUnits as "timeUnits", observationText as "text", observationType as "tag", observationPhase as "phase", species FROM syn51735464'
 export const investigatorSql = `SELECT investigatorName as "firstName", ' ' as "lastName", institution, investigatorSynapseId as "USERID" FROM syn51734029 WHERE (investigatorName IS NOT NULL OR investigatorSynapseId IS NOT NULL)`
 export const developmentPublicationSql = `SELECT * FROM syn51735467`
 export const fundingAgencySql = `SELECT funderName as "Funding Agency" FROM syn51734076`
