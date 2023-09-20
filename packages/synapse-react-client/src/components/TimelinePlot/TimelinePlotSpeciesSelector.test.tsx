@@ -7,12 +7,29 @@ import TimelinePlotSpeciesSelector, {
   TimelinePlotSpeciesSelectorProps,
 } from './TimelinePlotSpeciesSelector'
 import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash-es'
 
 const setSpecies = jest.fn()
 
 const timelineSpeciesSelectorProps: TimelinePlotSpeciesSelectorProps = {
   sql: 'select * from syn123',
   setSpecies,
+}
+
+const singleRowQueryResultBundle = cloneDeep(queryResultBundleJson)
+singleRowQueryResultBundle.queryResult!.queryResults = {
+  ...singleRowQueryResultBundle.queryResult!.queryResults,
+  rows: [
+    {
+      values: ['Mus musculus'],
+    },
+  ],
+}
+
+const emptyQueryResultBundle = cloneDeep(queryResultBundleJson)
+emptyQueryResultBundle.queryResult!.queryResults = {
+  ...emptyQueryResultBundle.queryResult!.queryResults,
+  rows: [],
 }
 
 async function renderTimelineSelector(
@@ -31,7 +48,9 @@ async function renderTimelineSelector(
 describe('TimelinePlotSpeciesSelector tests', () => {
   jest
     .spyOn(SynapseClient, 'getFullQueryTableResults')
-    .mockResolvedValue(queryResultBundleJson)
+    .mockResolvedValueOnce(queryResultBundleJson)
+    .mockResolvedValueOnce(singleRowQueryResultBundle)
+    .mockResolvedValueOnce(emptyQueryResultBundle)
 
   it('renders timeline species selector', async () => {
     await renderTimelineSelector()
@@ -42,5 +61,27 @@ describe('TimelinePlotSpeciesSelector tests', () => {
     await userEvent.click(dropdown)
     await userEvent.click(await screen.findByText('Saccharomyces'))
     expect(setSpecies).toHaveBeenCalledWith('Saccharomyces')
+  })
+
+  it('timeline species selector is not shown when a single species is returned', async () => {
+    await renderTimelineSelector()
+    expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(2)
+    // verify the first row has been selected by default
+    expect(setSpecies).toHaveBeenCalledWith('Mus musculus')
+
+    let notExist = false
+    try {
+      await screen.findByRole('button')
+    } catch (error) {
+      notExist = true
+    }
+    expect(notExist).toEqual(true)
+  })
+
+  it('null is returned if no rows are returned', async () => {
+    await renderTimelineSelector()
+    expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(3)
+    // verify the first row has been selected by default
+    expect(setSpecies).toHaveBeenCalledWith(null)
   })
 })
