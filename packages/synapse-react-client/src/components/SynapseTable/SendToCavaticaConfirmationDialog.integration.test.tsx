@@ -25,8 +25,10 @@ import {
   getUseQueryLoadingMock,
   getUseQuerySuccessMock,
 } from '../../testutils/ReactQueryMockUtils'
+import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
+import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 
-const onExportToCavatica = jest.fn()
+const onExportToCavatica = jest.fn().mockImplementation(() => Promise.resolve())
 
 const mockUseExportToCavatica = jest
   .spyOn(UseExportToCavaticaModule, 'useExportToCavatica')
@@ -93,6 +95,7 @@ describe('Send to CAVATICA Confirmation Dialog', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     server.use(...getHandlersForTableQuery(mockQueryResultBundle))
+    server.use(...getEntityHandlers(MOCK_REPO_ORIGIN))
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

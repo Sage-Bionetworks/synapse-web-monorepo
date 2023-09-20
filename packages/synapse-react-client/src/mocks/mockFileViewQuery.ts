@@ -5,11 +5,11 @@ import {
 } from '@sage-bionetworks/synapse-types'
 
 export const mockQueryBundleRequest: QueryBundleRequest = {
-  entityId: 'syn11346063',
+  entityId: 'syn50000',
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
   partMask: 255,
   query: {
-    sql: 'SELECT * FROM syn11346063',
+    sql: 'SELECT * FROM syn50000',
     includeEntityEtag: true,
   },
 }
@@ -21,7 +21,7 @@ export const mockQueryResultBundle: QueryResultBundle = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
     queryResults: {
       concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
-      tableId: 'syn11346063',
+      tableId: 'syn50000',
       etag: 'DEFAULT',
       headers: [
         { name: 'id', columnType: 'ENTITYID', id: '81721' },

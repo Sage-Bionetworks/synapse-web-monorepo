@@ -16,7 +16,7 @@ const renderComponent = (props: FeaturedDataTabsProps) => {
 describe('FeaturedDataTabs tests', () => {
   const props: FeaturedDataTabsProps = {
     rgbIndex: 0,
-    sql: 'select * from syn11346063',
+    sql: 'select * from syn50000',
     configs: [
       {
         title: 'Human Studies',
