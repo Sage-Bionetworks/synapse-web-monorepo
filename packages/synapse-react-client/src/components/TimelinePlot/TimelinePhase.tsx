@@ -77,7 +77,7 @@ const getLayout = (
   annotateTime?: number,
   annotateTimeUnits?: ManipulateType,
 ): Partial<Layout> => {
-  const timelineBufferTime = end.diff(start) / 5 // add 20% to either side of the graph
+  const timelineBufferTime = end.diff(start) / 4 // add 25% to either side of the graph
   const annotations: Partial<Plotly.Annotations>[] = [
     {
       x: start.add(1, 'day').format(),
@@ -122,8 +122,8 @@ const getLayout = (
     shapes: [
       {
         type: 'rect',
-        x0: start.subtract(timelineBufferTime).format(),
-        x1: end.add(timelineBufferTime).format(),
+        x0: start.subtract(end.diff(start) / 10).format(), // add 10% to the left side of the graph
+        x1: end.add(end.diff(start) / 3).format(), // add 33% to right side of the graph
         y0: 0.25,
         y1: 0.75,
         fillcolor: color,
