@@ -244,6 +244,16 @@ export const toolDetailsPageConfig: DetailsPageProps = {
       uriValue: 'Observations',
       synapseConfigArray: [
         {
+          name: 'TimelinePlot',
+          outsideContainerClassName: 'home-spacer',
+          props: {
+            sql: observationsSql,
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+          },
+          tableSqlKeys: ['resourceId'],
+          columnName: 'resourceId',
+        },
+        {
           name: 'CardContainerLogic',
           props: {
             sql: `${observationsSql} WHERE observationTime IS NOT NULL ORDER BY observationTime DESC`,

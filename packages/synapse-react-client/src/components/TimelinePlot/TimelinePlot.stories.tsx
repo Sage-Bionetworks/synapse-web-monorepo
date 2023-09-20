@@ -1,15 +1,16 @@
 import { Meta, StoryObj } from '@storybook/react'
-import TimelinePlot from './TimelinePlot'
+import TimelinePlotWithSpecies from './TimelinePlotWithSpecies'
 import { rest } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { mockTableEntity } from '../../mocks/entity/mockTableEntity'
 import queryResultBundleJson from '../../mocks/query/syn51735464'
 import { getUserProfileHandlers } from '../../mocks/msw/handlers/userProfileHandlers'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
 const meta = {
   title: 'Components/TimelinePlot',
-  component: TimelinePlot,
+  component: TimelinePlotWithSpecies,
   parameters: { stack: 'mock' },
 } satisfies Meta
 export default meta
@@ -19,7 +20,15 @@ export const Demo: Story = {
   args: {
     observationsSql: `SELECT observationId as "id", observationPhase as "phase", observationSubmitterName as "submitterName", synapseId as "submitterUserId", observationTime as "time", observationTimeUnits as "timeUnits", observationText as "text", observationType as "tag" FROM syn51735464`,
     species: 'Rattus norvegicus',
-    resourceId: '9971e47e-976a-4631-8edd-5cae04304b01',
+    additionalFilters: [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        operator: ColumnSingleValueFilterOperator.EQUAL,
+        columnName: 'resourceId',
+        values: ['9971e47e-976a-4631-8edd-5cae04304b01'],
+      },
+    ],
   },
   parameters: {
     msw: {
