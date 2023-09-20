@@ -13,7 +13,7 @@ const timelineProps: TimelinePlotProps = {
     resourceId: '9971e47e-976a-4631-8edd-5cae04304b01',
   },
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-  // species: 'Rattus norvegicus',
+  defaultSpecies: 'Rattus norvegicus',
 }
 
 async function renderTimeline(props: TimelinePlotProps = timelineProps) {
