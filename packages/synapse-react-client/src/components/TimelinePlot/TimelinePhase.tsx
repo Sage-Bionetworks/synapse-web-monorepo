@@ -77,7 +77,6 @@ const getLayout = (
   annotateTime?: number,
   annotateTimeUnits?: ManipulateType,
 ): Partial<Layout> => {
-  const timelineBufferTime = end.diff(start) / 4 // add 25% to either side of the graph
   const annotations: Partial<Plotly.Annotations>[] = [
     {
       x: start.add(1, 'day').format(),
