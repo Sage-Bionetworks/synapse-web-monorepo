@@ -23,6 +23,7 @@ import { SizeMe } from 'react-sizeme'
 import TimelineLegendItem from './TimelineLegendItem'
 import { Skeleton } from '@mui/material'
 import TimelinePlotSpeciesSelector from './TimelinePlotSpeciesSelector'
+import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 
 const OBSERVATION_PHASE_COLUMN_NAME = 'phase'
 const OBSERVATION_TIME_COLUMN_NAME = 'time'
@@ -157,6 +158,9 @@ export const TimelinePlot = ({
       )
       return phaseEventRows?.length && phaseEventRows?.length > 0
     })
+  }
+  if (species === null) {
+    return <NoContentAvailable />
   }
 
   return (

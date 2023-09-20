@@ -36,7 +36,7 @@ export const TimelinePlotSpeciesSelector = ({
 
   useEffect(() => {
     if (rows) {
-      setSpecies(rows[0].values[0])
+      setSpecies(rows.length > 0 ? rows[0].values[0] : null)
     }
   }, [rows, setSpecies])
 
