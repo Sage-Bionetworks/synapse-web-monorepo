@@ -1,35 +1,26 @@
 import { act, render, screen } from '@testing-library/react'
 import React from 'react'
-import TimelinePlotWithSpecies, {
-  TimelinePlotWithSpeciesProps,
-} from './TimelinePlotWithSpecies'
+import TimelinePlot, { TimelinePlotProps } from './TimelinePlot'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 
 import { SynapseClient } from '../../index'
 import queryResultBundleJson from '../../mocks/query/syn51735464'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 
-const timelineProps: TimelinePlotWithSpeciesProps = {
-  observationsSql: 'select * from syn123',
-  species: 'Rattus norvegicus',
-  additionalFilters: [
-    {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-      operator: ColumnSingleValueFilterOperator.EQUAL,
-      columnName: 'resourceId',
-      values: ['9971e47e-976a-4631-8edd-5cae04304b01'],
-    },
-  ],
+const timelineProps: TimelinePlotProps = {
+  sql: 'select * from syn123',
+  searchParams: {
+    resourceId: '9971e47e-976a-4631-8edd-5cae04304b01',
+  },
+  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+  // species: 'Rattus norvegicus',
 }
 
-async function renderTimeline(
-  props: TimelinePlotWithSpeciesProps = timelineProps,
-) {
+async function renderTimeline(props: TimelinePlotProps = timelineProps) {
   let component
   // eslint-disable-next-line @typescript-eslint/require-await
   await act(async () => {
-    component = render(<TimelinePlotWithSpecies {...props} />, {
+    component = render(<TimelinePlot {...props} />, {
       wrapper: createWrapper(),
     })
   })

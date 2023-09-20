@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import TimelinePlotWithSpecies from './TimelinePlotWithSpecies'
+import TimelinePlot from './TimelinePlot'
 import { rest } from 'msw'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
 import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
@@ -10,7 +10,7 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 
 const meta = {
   title: 'Components/TimelinePlot',
-  component: TimelinePlotWithSpecies,
+  component: TimelinePlot,
   parameters: { stack: 'mock' },
 } satisfies Meta
 export default meta
@@ -18,17 +18,12 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   args: {
-    observationsSql: `SELECT observationId as "id", observationPhase as "phase", observationSubmitterName as "submitterName", synapseId as "submitterUserId", observationTime as "time", observationTimeUnits as "timeUnits", observationText as "text", observationType as "tag" FROM syn51735464`,
-    species: 'Rattus norvegicus',
-    additionalFilters: [
-      {
-        concreteType:
-          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-        operator: ColumnSingleValueFilterOperator.EQUAL,
-        columnName: 'resourceId',
-        values: ['9971e47e-976a-4631-8edd-5cae04304b01'],
-      },
-    ],
+    sql: `SELECT observationId as "id", observationPhase as "phase", observationSubmitterName as "submitterName", synapseId as "submitterUserId", observationTime as "time", observationTimeUnits as "timeUnits", observationText as "text", observationType as "tag" FROM syn51735464`,
+    searchParams: {
+      resourceId: '9971e47e-976a-4631-8edd-5cae04304b01',
+    },
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+    defaultSpecies: 'Rattus norvegicus',
   },
   parameters: {
     msw: {
