@@ -24,6 +24,7 @@ import {
   UserCardListRotateProps,
   UserCardProps,
   ChallengeDataDownloadProps,
+  TimelinePlotProps,
 } from 'synapse-react-client'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
@@ -281,6 +282,11 @@ type OrientationBanner = {
   props: OrientationBannerProps
 }
 
+type TimelinePlot = {
+  name: 'TimelinePlot'
+  props: TimelinePlotProps
+}
+
 type RedirectWithQuery = {
   name: 'RedirectWithQuery'
   props: RedirectProps
@@ -347,6 +353,7 @@ export type SynapseConfig = (
   | ChallengeDetailPageWrapper
   | ChallengeDataDownload
   | ChallengeSubmissionWrapper
+  | TimelinePlot
 ) &
   Metadata
 

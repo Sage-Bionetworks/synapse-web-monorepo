@@ -244,16 +244,27 @@ export const toolDetailsPageConfig: DetailsPageProps = {
       uriValue: 'Observations',
       synapseConfigArray: [
         {
-          name: 'CardContainerLogic',
-          props: {
-            sql: `${observationsSql} WHERE observationTime IS NOT NULL ORDER BY observationTime DESC`,
-            type: SynapseConstants.OBSERVATION_CARD,
-            limit: 3,
-          },
+          name: 'TimelinePlot',
           title: 'Natural History Observations',
+          outsideContainerClassName: 'home-spacer',
+          props: {
+            sql: observationsSql,
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+          },
           tableSqlKeys: ['resourceId'],
           columnName: 'resourceId',
         },
+        // {
+        //   name: 'CardContainerLogic',
+        //   props: {
+        //     sql: `${observationsSql} WHERE observationTime IS NOT NULL ORDER BY observationTime DESC`,
+        //     type: SynapseConstants.OBSERVATION_CARD,
+        //     limit: 3,
+        //   },
+        //   title: 'Natural History Observations',
+        //   tableSqlKeys: ['resourceId'],
+        //   columnName: 'resourceId',
+        // },
         {
           name: 'CardContainerLogic',
           props: {

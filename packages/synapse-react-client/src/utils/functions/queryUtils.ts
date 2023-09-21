@@ -45,6 +45,25 @@ export const getFieldIndex = (
 }
 
 /**
+ * Retrieve the index of a column using the header column name found inthe query results.
+ * Ignores case.
+ * @param name the column name
+ * @param result the QueryResultBundle containing the columns
+ * @returns The index of the column, or -1 if the column doesn't exist in the result
+ */
+export const getHeaderIndex = (
+  name: string,
+  result: QueryResultBundle | undefined,
+) => {
+  const nameLowercase = name.toLowerCase()
+  return (
+    result?.queryResult?.queryResults.headers.findIndex(el => {
+      return el.name.toLowerCase() === nameLowercase
+    }) ?? -1
+  )
+}
+
+/**
  * Returns the indices of the selectColumns with the specified type
  * @param columnType
  * @param data

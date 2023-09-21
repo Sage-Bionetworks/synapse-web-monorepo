@@ -21,6 +21,16 @@
 a:hover {
   cursor: pointer;
 }
+.forcePlotlyDefaultCursor {
+  .js-plotly-plot {
+    .plotly {
+      .drag {
+        cursor: default !important;
+      }
+    }
+  }
+}
+
 svg.SRC-hoverBox {
   &:hover {
     -webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
