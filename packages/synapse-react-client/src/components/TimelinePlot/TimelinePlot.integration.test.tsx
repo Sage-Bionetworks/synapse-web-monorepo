@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import TimelinePlot, { TimelinePlotProps } from './TimelinePlot'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -34,8 +34,10 @@ describe('TimelinePlot tests', () => {
 
   it('renders all phases of the timeline plot', async () => {
     await renderTimeline()
-    expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(1),
-      expect(await screen.findAllByText('PRENATAL')).toHaveLength(1)
+    await waitFor(() =>
+      expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(1),
+    )
+    expect(await screen.findAllByText('PRENATAL')).toHaveLength(1)
     expect(await screen.findAllByText('NEONATAL')).toHaveLength(1)
     expect(await screen.findAllByText('WEANLING')).toHaveLength(1)
     expect(await screen.findAllByText('JUVENILE')).toHaveLength(1)

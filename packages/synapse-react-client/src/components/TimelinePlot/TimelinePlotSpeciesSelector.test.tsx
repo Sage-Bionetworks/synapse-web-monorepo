@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../index'
@@ -54,7 +54,9 @@ describe('TimelinePlotSpeciesSelector tests', () => {
 
   it('renders timeline species selector', async () => {
     await renderTimelineSelector()
-    expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(1)
+    await waitFor(() =>
+      expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(1),
+    )
     // verify the first row has been selected by default
     expect(setSpecies).toHaveBeenCalledWith('Mus musculus')
     const dropdown = await screen.findByRole('button')
@@ -65,7 +67,10 @@ describe('TimelinePlotSpeciesSelector tests', () => {
 
   it('timeline species selector is not shown when a single species is returned', async () => {
     await renderTimelineSelector()
-    expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(2)
+
+    await waitFor(() =>
+      expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(2),
+    )
     // verify the first row has been selected by default
     expect(setSpecies).toHaveBeenCalledWith('Mus musculus')
 
@@ -74,7 +79,9 @@ describe('TimelinePlotSpeciesSelector tests', () => {
 
   it('null is returned if no rows are returned', async () => {
     await renderTimelineSelector()
-    expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(3)
+    await waitFor(() =>
+      expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(3),
+    )
     // verify the first row has been selected by default
     expect(setSpecies).toHaveBeenCalledWith(null)
   })
