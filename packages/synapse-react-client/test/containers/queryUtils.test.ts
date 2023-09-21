@@ -23,6 +23,7 @@ import {
   canTableQueryBeAddedToDownloadList,
   getCorrespondingColumnForFacet,
   getCorrespondingSelectedFacet,
+  getHeaderIndex,
   hasResettableFilters,
   isFacetAvailable,
   isSingleNotSetValue,
@@ -576,5 +577,26 @@ describe('getCorrespondingSelectedFacet', () => {
     ]
     const actual = getCorrespondingSelectedFacet(facet, selectedFacets)
     expect(actual).toBe(undefined)
+  })
+
+  describe('getHeaderIndex', () => {
+    it('gets a match on the column name', () => {
+      const actual = getHeaderIndex('id', syn16787123Json as QueryResultBundle)
+      expect(actual).toEqual(1)
+    })
+    it('verify case insensitive search', () => {
+      const actual = getHeaderIndex(
+        'PROJECTNAME',
+        syn16787123Json as QueryResultBundle,
+      )
+      expect(actual).toEqual(0)
+    })
+    it('verify not found', () => {
+      const actual = getHeaderIndex(
+        'foobarbaz',
+        syn16787123Json as QueryResultBundle,
+      )
+      expect(actual).toEqual(-1)
+    })
   })
 })

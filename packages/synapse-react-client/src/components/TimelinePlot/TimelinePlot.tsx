@@ -24,6 +24,7 @@ import TimelineLegendItem from './TimelineLegendItem'
 import { Skeleton } from '@mui/material'
 import TimelinePlotSpeciesSelector from './TimelinePlotSpeciesSelector'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
+import { getHeaderIndex } from '../../utils/functions/queryUtils'
 
 const OBSERVATION_PHASE_COLUMN_NAME = 'phase'
 const OBSERVATION_TIME_COLUMN_NAME = 'time'
@@ -92,38 +93,34 @@ export const TimelinePlot = ({
   if (isLoading) {
     return <LoadingTimelinePlot />
   }
-  const observationPhaseIndex =
-    eventsData?.queryResult?.queryResults.headers.findIndex(
-      header => header.name.toLowerCase() === OBSERVATION_PHASE_COLUMN_NAME,
-    )!
-  const observationTimeIndex =
-    eventsData?.queryResult?.queryResults.headers.findIndex(
-      header => header.name.toLowerCase() === OBSERVATION_TIME_COLUMN_NAME,
-    )!
-  const observationTimeUnitIndex =
-    eventsData?.queryResult?.queryResults.headers.findIndex(
-      header =>
-        header.name.toLowerCase() === OBSERVATION_TIME_UNITS_COLUMN_NAME,
-    )!
-  const observationSubmitterNameIndex =
-    eventsData?.queryResult?.queryResults.headers.findIndex(
-      header =>
-        header.name.toLowerCase() === OBSERVATION_SUBMITTER_NAME_COLUMN_NAME,
-    )!
-  const observationTextIndex =
-    eventsData?.queryResult?.queryResults.headers.findIndex(
-      header => header.name.toLowerCase() === OBSERVATION_TEXT_COLUMN_NAME,
-    )!
-  const observationTypeIndex =
-    eventsData?.queryResult?.queryResults.headers.findIndex(
-      header => header.name.toLowerCase() === OBSERVATION_TYPE_COLUMN_NAME,
-    )!
-  const submitterUserIdIndex =
-    eventsData?.queryResult?.queryResults.headers.findIndex(
-      header =>
-        header.name.toLowerCase() === OBSERVATION_SUBMITTER_USER_ID_COLUMN_NAME,
-    )!
-
+  const observationPhaseIndex = getHeaderIndex(
+    OBSERVATION_PHASE_COLUMN_NAME,
+    eventsData,
+  )
+  const observationTimeIndex = getHeaderIndex(
+    OBSERVATION_TIME_COLUMN_NAME,
+    eventsData,
+  )
+  const observationTimeUnitIndex = getHeaderIndex(
+    OBSERVATION_TIME_UNITS_COLUMN_NAME,
+    eventsData,
+  )
+  const observationSubmitterNameIndex = getHeaderIndex(
+    OBSERVATION_SUBMITTER_NAME_COLUMN_NAME,
+    eventsData,
+  )
+  const observationTextIndex = getHeaderIndex(
+    OBSERVATION_TEXT_COLUMN_NAME,
+    eventsData,
+  )
+  const observationTypeIndex = getHeaderIndex(
+    OBSERVATION_TYPE_COLUMN_NAME,
+    eventsData,
+  )
+  const submitterUserIdIndex = getHeaderIndex(
+    OBSERVATION_SUBMITTER_USER_ID_COLUMN_NAME,
+    eventsData,
+  )
   const schema: ObservationCardSchema = {
     submitterName: observationSubmitterNameIndex,
     submitterUserId: submitterUserIdIndex,

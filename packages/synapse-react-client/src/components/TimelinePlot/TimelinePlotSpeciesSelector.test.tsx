@@ -46,13 +46,11 @@ async function renderTimelineSelector(
 }
 
 describe('TimelinePlotSpeciesSelector tests', () => {
-  jest
-    .spyOn(SynapseClient, 'getFullQueryTableResults')
-    .mockResolvedValueOnce(queryResultBundleJson)
-    .mockResolvedValueOnce(singleRowQueryResultBundle)
-    .mockResolvedValueOnce(emptyQueryResultBundle)
-
   it('renders timeline species selector', async () => {
+    jest
+      .spyOn(SynapseClient, 'getFullQueryTableResults')
+      .mockResolvedValueOnce(queryResultBundleJson)
+
     await renderTimelineSelector()
     await waitFor(() =>
       expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(1),
@@ -66,6 +64,9 @@ describe('TimelinePlotSpeciesSelector tests', () => {
   })
 
   it('timeline species selector is not shown when a single species is returned', async () => {
+    jest
+      .spyOn(SynapseClient, 'getFullQueryTableResults')
+      .mockResolvedValueOnce(singleRowQueryResultBundle)
     await renderTimelineSelector()
 
     await waitFor(() =>
@@ -78,6 +79,10 @@ describe('TimelinePlotSpeciesSelector tests', () => {
   })
 
   it('null is returned if no rows are returned', async () => {
+    jest
+      .spyOn(SynapseClient, 'getFullQueryTableResults')
+      .mockResolvedValueOnce(emptyQueryResultBundle)
+
     await renderTimelineSelector()
     await waitFor(() =>
       expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(3),
