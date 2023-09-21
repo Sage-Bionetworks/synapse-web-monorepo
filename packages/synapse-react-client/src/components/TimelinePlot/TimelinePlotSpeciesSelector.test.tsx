@@ -69,13 +69,7 @@ describe('TimelinePlotSpeciesSelector tests', () => {
     // verify the first row has been selected by default
     expect(setSpecies).toHaveBeenCalledWith('Mus musculus')
 
-    let notExist = false
-    try {
-      await screen.findByRole('button')
-    } catch (error) {
-      notExist = true
-    }
-    expect(notExist).toEqual(true)
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
   it('null is returned if no rows are returned', async () => {

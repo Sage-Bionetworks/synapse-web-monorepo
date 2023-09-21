@@ -57,13 +57,6 @@ describe('TimelinePlot tests', () => {
     expect(await screen.findAllByText('ADOLESCENT')).toHaveLength(1)
     expect(await screen.findAllByText('ADULT')).toHaveLength(1)
 
-    // test
-    let notExist = false
-    try {
-      await screen.findAllByText('JUVENILE')
-    } catch (error) {
-      notExist = true
-    }
-    expect(notExist).toEqual(true)
+    expect(screen.queryByText('JUVENILE')).not.toBeInTheDocument()
   })
 })
