@@ -49,10 +49,26 @@ export const getMaxDate = (timepoints: dayjs.Dayjs[]) => {
 }
 
 const getTimelineData = (timepointData: TimepointData, rowData: Row[]) => {
+  // first combine all of the Rows that share the same timepoint
+  const combinedData: Record<string, Row[]> = timepointData.timepoints.reduce(
+    (result, currentTimepoint, index) => {
+      const resultRecord = result as Record<string, Row[]>
+      if (!resultRecord[currentTimepoint.format()]) {
+        resultRecord[currentTimepoint.format()] = []
+      }
+      resultRecord[currentTimepoint.format()].push(rowData[index])
+      return result
+    },
+    {},
+  )
+
   const data = timepointData.timepoints.map((timepoint, index) => {
     const utcFormattedTimepoint = timepoint.format()
     const isHoveredOver = index == timepointData.hoverOverIndex
-    const rowId = rowData[index].rowId
+    const rows = combinedData[utcFormattedTimepoint]
+    const rowIds = rows.map(row => {
+      return row.rowId
+    })
     return {
       x: [utcFormattedTimepoint, utcFormattedTimepoint, utcFormattedTimepoint],
       y: [0, 0.5, 1],
@@ -62,7 +78,7 @@ const getTimelineData = (timepointData: TimepointData, rowData: Row[]) => {
         width: 2,
       },
       // Add event into in the customdata
-      customdata: [rowId, rowId, rowId],
+      customdata: [rowIds, rowIds, rowIds],
       // but tell Plotly that we do not want it to show a hover tooltip (we're going to handle this)
       hoverinfo: 'none',
     }
@@ -76,6 +92,7 @@ const getLayout = (
   color: string,
   annotateTime?: number,
   annotateTimeUnits?: ManipulateType,
+  annotateEventCount?: number,
 ): Partial<Layout> => {
   const annotations: Partial<Plotly.Annotations>[] = [
     {
@@ -87,12 +104,17 @@ const getLayout = (
       height: 15,
     },
   ]
-  if (annotateTime && annotateTimeUnits) {
+  if (annotateTime && annotateTimeUnits && annotateEventCount) {
+    const eventCountText =
+      annotateEventCount > 1 ? `(${annotateEventCount})` : ''
     const x = start.add(annotateTime, annotateTimeUnits)
     annotations.push({
       x: x.format(),
       y: -1,
-      text: `${annotateTime} ${pluralize(annotateTimeUnits, annotateTime)}`,
+      text: `${annotateTime} ${pluralize(
+        annotateTimeUnits,
+        annotateTime,
+      )} ${eventCountText}`,
       showarrow: false,
       textangle: '270',
       height: 15,
@@ -162,25 +184,33 @@ const TimelinePhase = ({
 
   // hide the hover UI if we detect that the user moves the mouse outside of this component boundary
   const componentRef = useRef<HTMLDivElement>(null)
-  const rowId = clickEvent?.points[0].customdata as number
-  const selectedRow = rowData.filter(row => {
-    return row.rowId === rowId
-  })[0]
-  const hoverEventRowId = hoverEvent?.points[0].customdata as number
-  const hoverRow = rowData.filter(row => {
-    return row.rowId === hoverEventRowId
-  })[0]
-  const annotateTime = hoverRow
-    ? parseInt(hoverRow.values[schema.time]!)
-    : undefined
-  const annotateTimeUnits = hoverRow
-    ? (hoverRow.values[schema.timeUnits] as ManipulateType)
-    : undefined
+  const rowIds = clickEvent?.points[0].customdata as unknown as (
+    | number
+    | undefined
+  )[]
+  const selectedRows = rowData.filter(row => {
+    return rowIds?.includes(row.rowId)
+  })
+  const hoverEventRowIds = hoverEvent?.points[0].customdata as unknown as (
+    | number
+    | undefined
+  )[]
+  const hoverRows = rowData.filter(row => {
+    return hoverEventRowIds?.includes(row.rowId)
+  })
+  const annotateTime =
+    hoverRows && hoverRows.length > 0
+      ? parseInt(hoverRows[0].values[schema.time]!)
+      : undefined
+  const annotateTimeUnits =
+    hoverRows && hoverRows.length > 0
+      ? (hoverRows[0].values[schema.timeUnits] as ManipulateType)
+      : undefined
   const timepointData = getTimepointData(
     start,
     rowData,
     schema,
-    hoverEventRowId,
+    hoverEventRowIds?.length > 0 ? hoverEventRowIds[0] : undefined,
   )
 
   const end = getMaxDate(timepointData.timepoints)
@@ -189,7 +219,14 @@ const TimelinePhase = ({
       <Plot
         style={{ width: widthPx, height: '220px' }}
         data={getTimelineData(timepointData, rowData)}
-        layout={getLayout(start, end, color, annotateTime, annotateTimeUnits)}
+        layout={getLayout(
+          start,
+          end,
+          color,
+          annotateTime,
+          annotateTimeUnits,
+          hoverRows.length,
+        )}
         config={{ displayModeBar: false }}
         useResizeHandler={true}
         onClick={eventData => {
@@ -203,13 +240,21 @@ const TimelinePhase = ({
           setHoverEvent(undefined)
         }}
       />
-      {selectedRow && (
-        <Dialog onClose={() => setClickEvent(undefined)} open={!!selectedRow}>
-          <ObservationCard
-            data={selectedRow.values}
-            schema={schema}
-            includePortalCardClass={false}
-          />
+      {selectedRows && (
+        <Dialog
+          onClose={() => setClickEvent(undefined)}
+          open={!!selectedRows && selectedRows.length > 0}
+        >
+          {selectedRows.map(row => {
+            return (
+              <ObservationCard
+                key={row.rowId}
+                data={row.values}
+                schema={schema}
+                includePortalCardClass={false}
+              />
+            )
+          })}
         </Dialog>
       )}
     </div>
