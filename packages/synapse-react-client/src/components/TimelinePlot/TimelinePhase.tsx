@@ -38,6 +38,9 @@ const getTimepointData = (
 }
 
 export const getMaxDate = (timepoints: dayjs.Dayjs[]) => {
+  if (timepoints.length == 0) {
+    return dayjs().add(1, 'days')
+  }
   return timepoints.reduce(
     (maxDateItem: dayjs.Dayjs, currentDateItem: dayjs.Dayjs) => {
       if (!maxDateItem || currentDateItem.isAfter(maxDateItem)) {
@@ -49,6 +52,23 @@ export const getMaxDate = (timepoints: dayjs.Dayjs[]) => {
 }
 
 const getTimelineData = (timepointData: TimepointData, rowData: Row[]) => {
+  // If this phase has no data, return an empty data line
+  if (timepointData.timepoints.length == 0) {
+    return [
+      {
+        x: [dayjs().format()],
+        y: [0.5],
+        mode: 'lines',
+        line: {
+          color: 'blue',
+          width: 2,
+        },
+        customdata: [],
+        hoverinfo: 'none',
+      },
+    ]
+  }
+
   // first combine all of the Rows that share the same timepoint
   const combinedData: Record<string, Row[]> = timepointData.timepoints.reduce(
     (result, currentTimepoint, index) => {
@@ -188,14 +208,14 @@ const TimelinePhase = ({
     | number
     | undefined
   )[]
-  const selectedRows = rowData.filter(row => {
+  const selectedRows = rowData?.filter(row => {
     return rowIds?.includes(row.rowId)
   })
   const hoverEventRowIds = hoverEvent?.points[0].customdata as unknown as (
     | number
     | undefined
   )[]
-  const hoverRows = rowData.filter(row => {
+  const hoverRows = rowData?.filter(row => {
     return hoverEventRowIds?.includes(row.rowId)
   })
   const annotateTime =

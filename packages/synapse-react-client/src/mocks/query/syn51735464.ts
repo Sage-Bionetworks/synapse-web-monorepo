@@ -190,7 +190,7 @@ const syn51735464: QueryResultBundle = {
           versionNumber: 0,
           values: [
             '5db58943-4726-4bc7-9b8c-98d2f29328ed',
-            'adult',
+            'adolescent',
             'X',
             '999',
             '6',
@@ -204,7 +204,7 @@ const syn51735464: QueryResultBundle = {
           versionNumber: 0,
           values: [
             'e91e5d44-b9f6-48e8-b69f-a3937c422e95',
-            'adult',
+            'adolescent',
             'X',
             '999',
             '12',
@@ -213,6 +213,7 @@ const syn51735464: QueryResultBundle = {
             'pathologic',
           ],
         },
+        // note there is no data in the adult phase (but the phase should still be represented in the timeline)
       ],
     },
   },
