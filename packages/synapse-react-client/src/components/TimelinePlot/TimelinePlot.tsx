@@ -131,7 +131,7 @@ export const TimelinePlot = ({
   }
 
   // filter the phases query response data to the specific species
-  let phaseRowsWithData: Row[] = []
+  let phaseData: Row[] = []
   if (species) {
     const phasesForTargetSpecies =
       hardcodedPhasesQueryResponseData.queryResult?.queryResults.rows.filter(
@@ -144,17 +144,7 @@ export const TimelinePlot = ({
     if (!phasesForTargetSpecies || phasesForTargetSpecies.length == 0) {
       return <></>
     }
-    phaseRowsWithData = phasesForTargetSpecies.filter(phaseRow => {
-      const phaseEventRows = eventsData?.queryResult?.queryResults.rows.filter(
-        row => {
-          return (
-            row.values[observationPhaseIndex] ==
-            phaseRow.values[phaseObservationIndex]
-          )
-        },
-      )
-      return phaseEventRows?.length && phaseEventRows?.length > 0
-    })
+    phaseData = phasesForTargetSpecies
   }
   if (species === null) {
     return <NoContentAvailable />
@@ -176,7 +166,7 @@ export const TimelinePlot = ({
         </Box>
         {/* Legend */}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}>
-          {phaseRowsWithData.map((phaseRow, index) => {
+          {phaseData.map((phaseRow, index) => {
             const { colorPalette } = getColorPalette(index, 1)
             return (
               <TimelineLegendItem
@@ -193,7 +183,7 @@ export const TimelinePlot = ({
         <SizeMe monitorWidth noPlaceholder={true}>
           {({ size }) => (
             <Box sx={{ display: 'flex' }} className="forcePlotlyDefaultCursor">
-              {phaseRowsWithData.map((phaseRow, index) => {
+              {phaseData.map((phaseRow, index) => {
                 const { colorPalette } = getColorPalette(index, 1)
                 const phaseEventRows =
                   eventsData?.queryResult?.queryResults.rows.filter(row => {
@@ -209,9 +199,7 @@ export const TimelinePlot = ({
                     color={colorPalette[0]}
                     rowData={phaseEventRows!}
                     schema={schema}
-                    widthPx={
-                      size.width ? size.width / phaseRowsWithData.length : 0
-                    }
+                    widthPx={size.width ? size.width / phaseData.length : 0}
                   />
                 )
               })}
