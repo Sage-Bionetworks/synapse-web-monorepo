@@ -52,12 +52,13 @@ const syn51735464: QueryResultBundle = {
             'prenatal',
             'X',
             '999',
-            '83',
-            'days',
+            '3',
+            'weeks',
             'Gross optic nerve and chiasm enlargement',
             'pathologic',
           ],
         },
+        // rowId 4 is at the same timepoint as rowId 3
         {
           rowId: 4,
           versionNumber: 0,
