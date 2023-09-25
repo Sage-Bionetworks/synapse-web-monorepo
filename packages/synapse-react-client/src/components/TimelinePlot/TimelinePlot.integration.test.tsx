@@ -45,7 +45,7 @@ describe('TimelinePlot tests', () => {
     expect(await screen.findAllByText('ADULT')).toHaveLength(1)
   })
 
-  it('does not render a phase if it has no event data', async () => {
+  it('does render a phase even if it has no event data', async () => {
     const newRows = queryResultBundleJson.queryResult?.queryResults.rows.filter(
       row => {
         return row.values[1] != 'juvenile'
@@ -59,6 +59,6 @@ describe('TimelinePlot tests', () => {
     expect(await screen.findAllByText('ADOLESCENT')).toHaveLength(1)
     expect(await screen.findAllByText('ADULT')).toHaveLength(1)
 
-    expect(screen.queryByText('JUVENILE')).not.toBeInTheDocument()
+    expect(await screen.findAllByText('JUVENILE')).toHaveLength(1)
   })
 })
