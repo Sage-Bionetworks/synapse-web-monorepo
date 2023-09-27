@@ -1,4 +1,4 @@
-import { cloneDeep, isEqual, isEqualWith, isNil, pick } from 'lodash-es'
+import { cloneDeep, isEqual, isEqualWith, isMatch, isNil } from 'lodash-es'
 import * as SynapseConstants from '../SynapseConstants'
 import SynapseClient from '../../synapse-client'
 import { LockedColumn } from '../../components/QueryContext/QueryContext'
@@ -295,9 +295,22 @@ export function getCorrespondingSelectedFacet(
   selectedFacets?: FacetColumnRequest[],
 ): FacetColumnRequest | undefined {
   return selectedFacets?.find(selectedFacet =>
-    isEqual(
-      pick(selectedFacet, ['columnName', 'jsonPath']),
-      pick(facetDefinition, ['columnName', 'jsonPath']),
-    ),
+    facetObjectMatchesDefinition(facetDefinition, selectedFacet),
+  )
+}
+
+export function facetObjectMatchesDefinition(
+  facetDefinition:
+    | UniqueFacetIdentifier
+    | FacetColumnRequest
+    | FacetColumnResult,
+  facetObject: UniqueFacetIdentifier | FacetColumnRequest | FacetColumnResult,
+) {
+  return isMatch(
+    {
+      columnName: facetDefinition.columnName,
+      jsonPath: facetDefinition.jsonPath,
+    },
+    { columnName: facetObject.columnName, jsonPath: facetObject.jsonPath },
   )
 }

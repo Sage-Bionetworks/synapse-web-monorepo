@@ -147,24 +147,27 @@ describe('RangeFacetFilter tests', () => {
     )
   }
   describe('setting correct range value', () => {
-    it('should set for any', () => {
+    it('should set for any', async () => {
       init()
-      const radios = screen.getAllByRole('radio')
+      const radios = await screen.findAllByRole('radio')
       expect(radios).toHaveLength(3)
       const anyOption = screen.getByLabelText<HTMLInputElement>('Any')
       expect(anyOption.checked).toBe(true)
     })
 
-    it('should set for Unannotated', () => {
+    it('should set for Unannotated', async () => {
       init({ ...props, facetResult: notSetFacetResult })
-      const notAssignedOption =
-        screen.getByLabelText<HTMLInputElement>('Not Assigned')
+      const notAssignedOption = await screen.findByLabelText<HTMLInputElement>(
+        'Not Assigned',
+      )
       expect(notAssignedOption.checked).toBe(true)
     })
 
-    it('interval', () => {
+    it('interval', async () => {
       init({ ...props, facetResult: rangeFacetResult })
-      const rangeOption = screen.getByLabelText<HTMLInputElement>('Range')
+      const rangeOption = await screen.findByLabelText<HTMLInputElement>(
+        'Range',
+      )
       expect(rangeOption.checked).toBe(true)
     })
   })
@@ -172,15 +175,19 @@ describe('RangeFacetFilter tests', () => {
   it('should hide content when collapsible toggled', async () => {
     init({ ...props })
 
-    expect(MockCollapse).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        in: true,
-      }),
-      expect.anything(),
-    )
+    await waitFor(() => {
+      expect(MockCollapse).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          in: true,
+        }),
+        expect.anything(),
+      )
+    })
 
     // toggle collapse via button
-    await userEvent.click(screen.getByRole('button', { name: 'Collapse Menu' }))
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Collapse Menu' }),
+    )
 
     expect(MockCollapse).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -319,7 +326,9 @@ describe('RangeFacetFilter tests', () => {
       init()
 
       // Click "Range"
-      const rangeOption = screen.getByLabelText<HTMLInputElement>('Range')
+      const rangeOption = await screen.findByLabelText<HTMLInputElement>(
+        'Range',
+      )
       await userEvent.click(rangeOption)
 
       // Type into the min/max text boxes

@@ -5,14 +5,13 @@ import {
   isSingleNotSetValue,
 } from '../../../utils/functions/queryUtils'
 import {
-  FacetColumnRangeRequest,
   FacetColumnRequest,
   FacetColumnResultRange,
   FacetColumnResultValues,
   FacetColumnValuesRequest,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { useQueryContext } from '../../QueryContext/QueryContext'
+import { useQueryContext } from '../../QueryContext'
 import { EnumFacetFilter } from './EnumFacetFilter/EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
@@ -43,22 +42,6 @@ const convertFacetToFacetColumnValuesRequest = (
     .filter(facet => facet.isSelected)
     .map(facet => facet.value),
 })
-
-const convertFacetColumnRangeRequest = (
-  facet: FacetColumnResultRange,
-): FacetColumnRangeRequest => {
-  let result: FacetColumnRangeRequest = {
-    concreteType:
-      'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
-    columnName: facet.columnName, // The name of the faceted column
-    jsonPath: facet.jsonPath,
-  }
-
-  if (facet.columnMin) {
-    result = { ...result, min: facet.columnMin, max: facet.columnMax }
-  }
-  return result
-}
 
 const patchRequestFacets = (
   changedFacet: FacetColumnRequest,
@@ -119,26 +102,6 @@ export function applyChangesToValuesColumn(
   onChangeFn(result)
 }
 
-export const applyCombinedChangesToRangeColumn = (
-  lastRequest: QueryBundleRequest | undefined,
-  combinedRangeFacets: FacetColumnResultRange[],
-  onChangeFn: (result: FacetColumnRequest[]) => void,
-  values: string[],
-) => {
-  const minColumn = combinedRangeFacets[0]
-  const maxColumn = combinedRangeFacets[1]
-  minColumn.columnMin = values[0]
-  minColumn.columnMax = values[1]
-  maxColumn.columnMin = values[2]
-  maxColumn.columnMax = values[3]
-  const minColumnChangedFacet = convertFacetColumnRangeRequest(minColumn)
-  const maxColumnChangedFacet = convertFacetColumnRangeRequest(maxColumn)
-  let selections = lastRequest?.query?.selectedFacets ?? []
-  selections = patchRequestFacets(minColumnChangedFacet, selections)
-  selections = patchRequestFacets(maxColumnChangedFacet, selections)
-  onChangeFn(selections)
-}
-
 /**
  * Determines which facet filters should be shown after loading a new bundle. The shown facets will be the first
  * three available facets, plus any other facets that have a filter applied.
@@ -190,11 +153,7 @@ function FacetFilterControlsSkeleton() {
 
 function FacetFilterControls(props: FacetFilterControlsProps) {
   const { availableFacets } = props
-  const {
-    getCurrentQueryRequest,
-    executeQueryRequest,
-    combineRangeFacetConfig,
-  } = useQueryContext()
+  const { getCurrentQueryRequest, combineRangeFacetConfig } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const lastRequest = getCurrentQueryRequest()
   const data = useAtomValue(tableQueryDataAtom)
@@ -271,20 +230,6 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
 
   const columnModels = data!.columnModels
 
-  const applyChanges = useCallback(
-    (facets: FacetColumnRequest[]) => {
-      executeQueryRequest(
-        queryRequest => {
-          queryRequest.query.selectedFacets = facets
-          queryRequest.query.offset = 0
-          return queryRequest
-        },
-        { debounce: true },
-      )
-    },
-    [executeQueryRequest],
-  )
-
   const toggleShowFacetFilter = useCallback(
     (facetColumnName: string) => {
       const newFacetColumnsShown = new Set(facetColumnsShown)
@@ -324,15 +269,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
           facetResults={combinedRangeFacets as FacetColumnResultRange[]}
           label={combineRangeFacetConfig.label}
           columnType={combinedRangeFacetsColumnModelType!}
-          onChange={(values: (string | number | undefined)[]) =>
-            applyCombinedChangesToRangeColumn(
-              lastRequest,
-              combinedRangeFacets as FacetColumnResultRange[],
-              applyChanges,
-              values as string[],
-            )
-          }
-        ></CombinedRangeFacetFilter>
+        />
       )}
       {shownTopLevelFacets.map(facet => {
         const columnModel = getCorrespondingColumnForFacet(facet, columnModels!)

@@ -1,24 +1,22 @@
-import { Collapse, Skeleton } from '@mui/material'
-import React, { useEffect, useMemo } from 'react'
-import { useState } from 'react'
-import { ColumnType } from '@sage-bionetworks/synapse-types'
-import { FacetColumnResultRange } from '@sage-bionetworks/synapse-types'
-import { RadioGroup } from '../RadioGroup'
-import { Range, RangeValues } from '../Range'
-import { FacetFilterHeader } from './FacetFilterHeader'
-import { RadioValuesEnum, getRadioValue, options } from './RangeFacetFilter'
-import dayjs from 'dayjs'
-import RangeSlider from '../RangeSlider/RangeSlider'
+import { Skeleton } from '@mui/material'
+import React, { useMemo } from 'react'
+import {
+  ColumnType,
+  FacetColumnResultRange,
+} from '@sage-bionetworks/synapse-types'
+import { RangeValues } from '../Range'
 import { useQueryContext } from '../../QueryContext'
 import { SynapseConstants } from '../../../utils'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../../synapse-queries'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { RangeFacetFilterUI } from './RangeFacetFilterUI'
+import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
+import { isNumber } from 'lodash-es'
 
 export type CombinedRangeFacetFilterProps = {
   facetResults: FacetColumnResultRange[]
   label: string
   columnType: ColumnType
-  onChange: (range: (RadioValuesEnum | number | string | undefined)[]) => void
 }
 
 /**
@@ -41,27 +39,22 @@ export type CombinedRangeFacetFilterProps = {
 */
 export const CombinedRangeFacetFilter: React.FunctionComponent<
   CombinedRangeFacetFilterProps
-> = ({
-  facetResults,
-  label,
-  columnType,
-  onChange,
-}: CombinedRangeFacetFilterProps) => {
-  const { getCurrentQueryRequest } = useQueryContext()
+> = ({ facetResults, label, columnType }: CombinedRangeFacetFilterProps) => {
+  const { getCurrentQueryRequest, setRangeFacetValue, removeSelectedFacet } =
+    useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const {
     columnName: col1Name,
     // columnMax: col1Max  // not used
-    selectedMin: col1SelectedMin,
+    // selectedMin: col1SelectedMin // not used
     selectedMax: col1SelectedMax,
   } = facetResults[0]
   const {
     columnName: col2Name,
     //columnMin: col2Min,  // not used
     selectedMin: col2SelectedMin,
-    selectedMax: col2SelectedMax,
+    // selectedMax: col2SelectedMax, // not used
   } = facetResults[1]
 
   // Also query for the facet columns full range (without any selected facets), to set the range selector range
@@ -88,120 +81,44 @@ export const CombinedRangeFacetFilter: React.FunctionComponent<
   const col2Facet = fullFacetStats?.find(facet => facet.columnName === col2Name)
   const col1GlobalMin = (col1Facet as FacetColumnResultRange)?.columnMin
   const col2GlobalMax = (col2Facet as FacetColumnResultRange)?.columnMax
-  const isAnyValue =
-    !col1SelectedMin && !col1SelectedMax && !col2SelectedMin && !col2SelectedMax
-  const selectedMin = col2SelectedMin || col1GlobalMin
-  const selectedMax = col1SelectedMax || col2GlobalMax
+  const selectedMin = col2SelectedMin
+  const selectedMax = col1SelectedMax
 
-  const rangeType = columnType === 'DOUBLE' ? 'number' : 'date'
-
-  const handleRadioGroupChange = (
-    radioValue: RadioValuesEnum,
-    onChangeCallback: (
-      range: (RadioValuesEnum | number | string | undefined)[],
-    ) => void,
-  ) => {
-    setRadioValue(radioValue)
-
-    if (radioValue !== RadioValuesEnum.RANGE) {
-      onChangeCallback([radioValue, radioValue])
-    }
-  }
-
-  const [radioValue, setRadioValue] = useState(
-    getRadioValue(selectedMin, isAnyValue),
-  )
-
-  useEffect(() => {
-    setRadioValue(getRadioValue(selectedMin, isAnyValue))
-  }, [selectedMin, isAnyValue])
-
-  if (isLoadingFacetStats) {
+  if (isLoadingFacetStats || !col1Facet || !col2Facet) {
     return <Skeleton variant="rectangular" width="100" />
   }
   return (
-    <div>
-      <FacetFilterHeader
-        isCollapsed={isCollapsed}
-        label={getColumnDisplayName(label)}
-        onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
-      ></FacetFilterHeader>
-      <Collapse in={!isCollapsed}>
-        <RadioGroup
-          value={radioValue}
-          id="combinedRangeSelector"
-          options={options}
-          onChange={(radioValue: string) =>
-            handleRadioGroupChange(radioValue as RadioValuesEnum, onChange)
-          }
-        ></RadioGroup>
-        {radioValue === RadioValuesEnum.RANGE &&
-          (col1GlobalMin === col2GlobalMax ? (
-            <label>{col2GlobalMax}</label>
-          ) : (
-            <>
-              {columnType === 'INTEGER' && (
-                <RangeSlider
-                  key={`RangeSlider-${selectedMin}-${selectedMax}`}
-                  domain={[col1GlobalMin, col2GlobalMax]}
-                  initialValues={{ min: selectedMin, max: selectedMax }}
-                  step={1}
-                  onApplyClicked={(values: RangeValues) =>
-                    onChange([
-                      col1GlobalMin,
-                      values.max,
-                      values.min,
-                      col2GlobalMax,
-                    ])
-                  }
-                >
-                  {'>'}
-                </RangeSlider>
-              )}
-              {columnType === 'DATE' && (
-                <Range
-                  key="Range"
-                  initialValues={{
-                    // From the backend, selectedMin is a formatted date (like "2021-06-15"), but columnMin is a unix timestamp in millis (like "1624651794856")
-                    min:
-                      col2SelectedMin ??
-                      dayjs(parseInt(col1GlobalMin)).toString(),
-                    max:
-                      col1SelectedMax ??
-                      dayjs(parseInt(col2GlobalMax)).toString(),
-                  }}
-                  type={rangeType}
-                  onApplyClicked={(values: RangeValues) =>
-                    onChange([
-                      col1GlobalMin,
-                      values.max,
-                      values.min,
-                      col2GlobalMax,
-                    ])
-                  }
-                ></Range>
-              )}
-              {columnType === 'DOUBLE' && (
-                <Range
-                  key="Range"
-                  initialValues={{
-                    min: parseFloat(selectedMin),
-                    max: parseFloat(selectedMax),
-                  }}
-                  type={rangeType}
-                  onApplyClicked={(values: RangeValues) =>
-                    onChange([
-                      col1GlobalMin,
-                      values.max,
-                      values.min,
-                      col2GlobalMax,
-                    ])
-                  }
-                ></Range>
-              )}
-            </>
-          ))}
-      </Collapse>
-    </div>
+    <RangeFacetFilterUI
+      label={getColumnDisplayName(label)}
+      facetResult={{
+        columnMin: col1GlobalMin,
+        columnMax: col2GlobalMax,
+        selectedMin: selectedMin,
+        selectedMax: selectedMax,
+      }}
+      columnType={columnType}
+      onRangeValueSelected={(values: RangeValues) => {
+        setRangeFacetValue(
+          col1Facet,
+          col1GlobalMin,
+          isNumber(values.max) ? String(values.max) : values.max,
+          { noCommit: true },
+        )
+
+        setRangeFacetValue(
+          col2Facet,
+          isNumber(values.min) ? String(values.min) : values.min,
+          col2GlobalMax,
+        )
+      }}
+      onNotSetSelected={() => {
+        setRangeFacetValue(col1Facet, VALUE_NOT_SET, VALUE_NOT_SET)
+        setRangeFacetValue(col2Facet, VALUE_NOT_SET, VALUE_NOT_SET)
+      }}
+      onAnySelected={() => {
+        removeSelectedFacet(col1Facet)
+        removeSelectedFacet(col2Facet)
+      }}
+    />
   )
 }

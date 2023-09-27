@@ -1,6 +1,6 @@
 import { InfoOutlined } from '@mui/icons-material'
 import Plotly from 'plotly.js-basic-dist'
-import React, { useCallback, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
@@ -29,6 +29,7 @@ import {
   isLoadingNewBundleAtom,
   tableQueryDataAtom,
 } from '../../QueryWrapper/QueryWrapper'
+import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -274,21 +275,22 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
 
   const [showModal, setShowModal] = useState(false)
 
-  const plotTitle = getColumnDisplayName(facetToPlot.columnName)
-
-  const getColumnType = useCallback(
-    (): ColumnTypeEnum | undefined =>
-      data?.columnModels?.find(
-        columnModel => columnModel.name === facetToPlot.columnName,
-      )?.columnType as ColumnTypeEnum,
-    [data, facetToPlot.columnName],
+  const plotTitle = getColumnDisplayName(
+    facetToPlot.columnName,
+    facetToPlot.jsonPath,
   )
+
+  const columnModel = useMemo(
+    () => getCorrespondingColumnForFacet(facetToPlot, data?.columnModels ?? []),
+    [data?.columnModels, facetToPlot],
+  )
+  const columnType = columnModel?.columnType as ColumnTypeEnum
 
   const { data: plotData } = useQuery(
     [
       'extractPlotDataArray',
       facetToPlot,
-      getColumnType(),
+      columnType,
       index,
       plotType,
       accessToken,
@@ -296,7 +298,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     () =>
       extractPlotDataArray(
         facetToPlot,
-        getColumnType(),
+        columnType,
         index,
         plotType,
         accessToken,
@@ -329,10 +331,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
         </Dropdown.Menu>
       </Dropdown>
     </div>
-  )
-
-  const columnModel = data?.columnModels?.find(
-    columnModel => columnModel.name === facetToPlot.columnName,
   )
 
   if ((!data && isLoadingNewBundle) || !facetToPlot || !columnModel) {
@@ -413,7 +411,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               {({ size }) => (
                 <div>
                   <Plot
-                    key={`${facetToPlot.columnName}-${plotType}-${size.width}`}
+                    key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${size.width}`}
                     layout={layout}
                     data={plotData?.data ?? []}
                     style={getPlotStyle(

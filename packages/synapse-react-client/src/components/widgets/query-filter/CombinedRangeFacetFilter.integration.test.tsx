@@ -25,6 +25,7 @@ import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { server } from '../../../mocks/msw/server'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { cloneDeep } from 'lodash-es'
+import { QueryContextType, useQueryContext } from '../../QueryContext'
 
 let capturedOnApplyClicked:
   | ((range: { min: string | number; max: string | number }) => void)
@@ -44,7 +45,7 @@ const mockQueryResponseData: QueryResultBundle = {
     {
       concreteType:
         'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
-      columnName: 'Year',
+      columnName: 'minYear',
       facetType: 'range',
       columnMin: '1970',
       columnMax: '2000',
@@ -52,7 +53,23 @@ const mockQueryResponseData: QueryResultBundle = {
     {
       concreteType:
         'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
-      columnName: 'Value',
+      columnName: 'maxYear',
+      facetType: 'range',
+      columnMin: '1970',
+      columnMax: '2000',
+    },
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
+      columnName: 'minValue',
+      facetType: 'range',
+      columnMin: '1',
+      columnMax: '111',
+    },
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
+      columnName: 'maxValue',
       facetType: 'range',
       columnMin: '1',
       columnMax: '111',
@@ -81,11 +98,18 @@ const queryRequest: QueryBundleRequest = {
     offset: 0,
   },
 }
-const mockCallback = jest.fn(() => null)
-const intFacetResult: FacetColumnResultRange = {
+const minIntFacetResult: FacetColumnResultRange = {
   columnMax: '1999',
   columnMin: '1996',
-  columnName: 'Year',
+  columnName: 'minYear',
+  concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
+  facetType: 'range',
+}
+
+const maxIntFacetResult: FacetColumnResultRange = {
+  columnMax: '1999',
+  columnMin: '1996',
+  columnName: 'maxYear',
   concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
   facetType: 'range',
 }
@@ -93,7 +117,7 @@ const intFacetResult: FacetColumnResultRange = {
 const minColumnNotSetFacetResult: FacetColumnResultRange = {
   columnMax: '50',
   columnMin: '10',
-  columnName: 'Value',
+  columnName: 'minValue',
   selectedMax: VALUE_NOT_SET,
   selectedMin: VALUE_NOT_SET,
   concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
@@ -109,7 +133,7 @@ const minRangeFacetResult = {
 const maxColumnNotSetFacetResult: FacetColumnResultRange = {
   columnMax: '70',
   columnMin: '30',
-  columnName: 'Value',
+  columnName: 'maxValue',
   selectedMax: VALUE_NOT_SET,
   selectedMin: VALUE_NOT_SET,
   concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
@@ -143,17 +167,24 @@ function createTestProps(
   overrides?: CombinedRangeFacetFilterProps,
 ): CombinedRangeFacetFilterProps {
   return {
-    facetResults: [intFacetResult, intFacetResult],
+    facetResults: [minIntFacetResult, maxIntFacetResult],
     columnType: columnModel.columnType,
     label: columnModel.name,
-    onChange: mockCallback,
     ...overrides,
   }
+}
+
+let currentQueryContext: QueryContextType | undefined = undefined
+
+function ContextReceiver() {
+  currentQueryContext = useQueryContext()
+  return <></>
 }
 
 describe('CombinedRangeFacetFilter tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
+    currentQueryContext = undefined
     capturedOnApplyClicked = undefined
     jest.clearAllMocks()
     server.use(...getHandlersForTableQuery(mockQueryResponseData))
@@ -167,6 +198,7 @@ describe('CombinedRangeFacetFilter tests', () => {
     render(
       <QueryWrapper initQueryRequest={queryRequest}>
         <QueryVisualizationWrapper>
+          <ContextReceiver />
           <CombinedRangeFacetFilter {...props} />
         </QueryVisualizationWrapper>
       </QueryWrapper>,
@@ -179,7 +211,7 @@ describe('CombinedRangeFacetFilter tests', () => {
   describe('setting correct range value', () => {
     it('should set for any', async () => {
       await init()
-      const radios = screen.getAllByRole('radio')
+      const radios = await screen.findAllByRole('radio')
       expect(radios).toHaveLength(3)
       const anyOption = screen.getByLabelText<HTMLInputElement>('Any')
       expect(anyOption.checked).toBe(true)
@@ -190,8 +222,9 @@ describe('CombinedRangeFacetFilter tests', () => {
         ...props,
         facetResults: [minColumnNotSetFacetResult, maxColumnNotSetFacetResult],
       })
-      const notAssignedOption =
-        screen.getByLabelText<HTMLInputElement>('Not Assigned')
+      const notAssignedOption = await screen.findByLabelText<HTMLInputElement>(
+        'Not Assigned',
+      )
       expect(notAssignedOption.checked).toBe(true)
     })
 
@@ -200,7 +233,9 @@ describe('CombinedRangeFacetFilter tests', () => {
         ...props,
         facetResults: [minRangeFacetResult, maxRangeFacetResult],
       })
-      const rangeOption = screen.getByLabelText<HTMLInputElement>('Range')
+      const rangeOption = await screen.findByLabelText<HTMLInputElement>(
+        'Range',
+      )
       expect(rangeOption.checked).toBe(true)
     })
   })
@@ -291,35 +326,54 @@ describe('CombinedRangeFacetFilter tests', () => {
       // "Any" should be checked at the beginning
       const anyOption = await screen.findByLabelText<HTMLInputElement>('Any')
       expect(anyOption.checked).toBe(true)
-      mockCallback.mockClear()
 
       // Click "Not Assigned"
       const notAssignedOption =
         screen.getByLabelText<HTMLInputElement>('Not Assigned')
       await userEvent.click(notAssignedOption)
-      expect(mockCallback).toHaveBeenCalledWith([VALUE_NOT_SET, VALUE_NOT_SET])
-      expect(mockCallback).toHaveBeenCalledTimes(1)
+      await waitFor(() => {
+        expect(
+          currentQueryContext?.getCurrentQueryRequest().query.selectedFacets,
+        ).toContainEqual({
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          columnName: 'minYear',
+          min: VALUE_NOT_SET,
+          max: VALUE_NOT_SET,
+        })
+        expect(
+          currentQueryContext?.getCurrentQueryRequest().query.selectedFacets,
+        ).toContainEqual({
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          columnName: 'maxYear',
+          min: VALUE_NOT_SET,
+          max: VALUE_NOT_SET,
+        })
+      })
 
       //get updated wrapper and clear mocks
-      mockCallback.mockClear()
       expect(anyOption.checked).toBe(false)
       expect(notAssignedOption.checked).toBe(true)
 
       // Click "Range"
       const rangeOption = screen.getByLabelText<HTMLInputElement>('Range')
       await userEvent.click(rangeOption)
-      expect(mockCallback).not.toHaveBeenCalled()
       screen.getByTestId('RangeSlider')
 
       //get updated wrapper and clear mocks
-      mockCallback.mockClear()
       expect(anyOption.checked).toBe(false)
       expect(notAssignedOption.checked).toBe(false)
       expect(rangeOption.checked).toBe(true)
 
       // Click "Any"
       await userEvent.click(anyOption)
-      expect(mockCallback).toHaveBeenCalledWith(['', ''])
+      await waitFor(() => {
+        expect(
+          currentQueryContext?.getCurrentQueryRequest().query.selectedFacets,
+        ).toBeUndefined()
+      })
+
       expect(screen.queryByTestId('RangeSlider')).not.toBeInTheDocument()
       expect(anyOption.checked).toBe(true)
       expect(notAssignedOption.checked).toBe(false)
@@ -355,7 +409,26 @@ describe('CombinedRangeFacetFilter tests', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
 
       // Call back with column1 min to range selector max, and range selector min to column2 max.
-      expect(mockCallback).toHaveBeenCalledWith(['1', '50', '40', '111'])
+      await waitFor(() => {
+        expect(
+          currentQueryContext?.getCurrentQueryRequest().query.selectedFacets,
+        ).toContainEqual({
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          columnName: 'minValue',
+          min: '1',
+          max: '50',
+        })
+        expect(
+          currentQueryContext?.getCurrentQueryRequest().query.selectedFacets,
+        ).toContainEqual({
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          columnName: 'maxValue',
+          min: '40',
+          max: '111',
+        })
+      })
     })
 
     it('should update from a range slider control', async () => {
@@ -363,12 +436,30 @@ describe('CombinedRangeFacetFilter tests', () => {
         facetResults: [minRangeFacetResult, maxRangeFacetResult],
         columnType: ColumnTypeEnum.INTEGER,
         label: 'A',
-        onChange: mockCallback,
       })
       await waitFor(() => expect(capturedOnApplyClicked).toBeDefined())
       capturedOnApplyClicked!({ min: '40', max: '50' })
       // Call back with column1 min to range selector max, and range selector min to column2 max.
-      expect(mockCallback).toHaveBeenCalledWith(['1', '50', '40', '111'])
+      await waitFor(() => {
+        expect(
+          currentQueryContext?.getCurrentQueryRequest().query.selectedFacets,
+        ).toContainEqual({
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          columnName: 'minValue',
+          min: '1',
+          max: '50',
+        })
+        expect(
+          currentQueryContext?.getCurrentQueryRequest().query.selectedFacets,
+        ).toContainEqual({
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          columnName: 'maxValue',
+          min: '40',
+          max: '111',
+        })
+      })
     })
   })
 })

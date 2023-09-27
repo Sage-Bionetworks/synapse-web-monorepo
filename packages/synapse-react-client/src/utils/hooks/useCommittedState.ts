@@ -32,7 +32,9 @@ export default function useCommittedState<T>(
   // We must synchronize state on commit in a `useEffect` hook to ensure updates to `setUncommittedState` are completed
   // before we commit
   useEffect(() => {
+    console.log('uncommittedState updated', uncommittedState)
     if (shouldCommit) {
+      console.log('Committing state', uncommittedState)
       setCommittedState(uncommittedState)
       setShouldCommit(false)
       if (onCommit) {

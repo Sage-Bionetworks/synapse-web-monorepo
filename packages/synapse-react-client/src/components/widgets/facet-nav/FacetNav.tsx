@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
+import {
+  facetObjectMatchesDefinition,
+  isSingleNotSetValue,
+} from '../../../utils/functions/queryUtils'
 import {
   FacetColumnRequest,
   FacetColumnResult,
@@ -18,6 +21,7 @@ import {
   isLoadingNewBundleAtom,
   tableQueryDataAtom,
 } from '../../QueryWrapper/QueryWrapper'
+import { UniqueFacetIdentifier } from '../../../utils/types/UniqueFacetIdentifier'
 
 /*
 TODO: This component has a few bugs when its props are updated with new data, this should be handled
@@ -30,7 +34,7 @@ export type FacetNavProps = {
 }
 
 type UiFacetState = {
-  name: string
+  facet: UniqueFacetIdentifier
   isHidden: boolean
   plotType: PlotType
   index?: number
@@ -79,7 +83,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     if (facets.length > 0 && facetUiStateArray.length === 0) {
       setFacetUiStateArray(
         facets.map((item, index) => ({
-          name: item.columnName,
+          facet: { columnName: item.columnName, jsonPath: item.jsonPath },
           isHidden: index >= DEFAULT_VISIBLE_FACETS,
           plotType: 'PIE',
         })),
@@ -114,9 +118,11 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   }
 
   // don't show hidden facets
-  const isFacetHiddenInGrid = (columnName: string) => {
+  const isFacetHiddenInGrid = (facet: UniqueFacetIdentifier) => {
     const itemHidden = facetUiStateArray.find(
-      item => item.name === columnName && item.isHidden === true,
+      item =>
+        facetObjectMatchesDefinition(facet, item.facet) &&
+        item.isHidden === true,
     )
     const result = itemHidden !== undefined
     return result
@@ -136,39 +142,42 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   }, [facetUiStateArray])
 
   // hides facet graph
-  const hideFacetInGrid = (columnName: string) => {
-    setUiPropertyForFacet(columnName, 'isHidden', true)
+  const hideFacetInGrid = (facet: UniqueFacetIdentifier) => {
+    setUiPropertyForFacet(facet, 'isHidden', true)
   }
 
-  const setPlotType = (columnName: string, plotType: PlotType) => {
-    setUiPropertyForFacet(columnName, 'plotType', plotType)
+  const setPlotType = (facet: UniqueFacetIdentifier, plotType: PlotType) => {
+    setUiPropertyForFacet(facet, 'plotType', plotType)
   }
 
-  const getPlotType = (columnName: string): PlotType => {
-    const plotType = facetUiStateArray.find(
-      item => item.name === columnName,
+  const getPlotType = (facet: UniqueFacetIdentifier): PlotType => {
+    const plotType = facetUiStateArray.find(item =>
+      facetObjectMatchesDefinition(facet, item.facet),
     )?.plotType
     return plotType ?? 'PIE'
   }
 
   const setUiPropertyForFacet = (
-    columnName: string,
+    facet: UniqueFacetIdentifier,
     propName: keyof UiFacetState,
     value: boolean | PlotType, // 'the possible values of the above type' (currently can't be specified in TS using symbols)
   ) => {
     setFacetUiStateArray(facetUiStateArray =>
       facetUiStateArray.map(item =>
-        item.name === columnName ? { ...item, [propName]: value } : item,
+        facetObjectMatchesDefinition(facet, item.facet)
+          ? { ...item, [propName]: value }
+          : item,
       ),
     )
   }
 
-  const colorTracker = getFacets(data, facetsToPlot).map((el, index) => {
-    return {
-      columnName: el.columnName,
-      colorIndex: index,
-    }
-  })
+  const colorTracker: { facet: UniqueFacetIdentifier; colorIndex: number }[] =
+    getFacets(data, facetsToPlot).map((el, index) => {
+      return {
+        facet: { columnName: el.columnName, jsonPath: el.jsonPath },
+        colorIndex: index,
+      }
+    })
   const hasFacetsOrFilters =
     (lastQueryRequest?.query.selectedFacets !== undefined &&
       lastQueryRequest.query.selectedFacets.length > 0) ||
@@ -195,22 +204,20 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                 <div
                   style={{
                     minWidth: '435px',
-                    display: isFacetHiddenInGrid(facet.columnName)
-                      ? 'none'
-                      : 'block',
+                    display: isFacetHiddenInGrid(facet) ? 'none' : 'block',
                   }}
-                  key={facet.columnName}
+                  key={`${facet.columnName}-${facet.jsonPath}`}
                 >
                   <FacetNavPanel
                     index={
-                      colorTracker.find(
-                        el => el.columnName === facet.columnName,
+                      colorTracker.find(el =>
+                        facetObjectMatchesDefinition(el.facet, facet),
                       )?.colorIndex!
                     }
-                    onHide={() => hideFacetInGrid(facet.columnName)}
-                    plotType={getPlotType(facet.columnName)}
+                    onHide={() => hideFacetInGrid(facet)}
+                    plotType={getPlotType(facet)}
                     onSetPlotType={(plotType: PlotType) =>
-                      setPlotType(facet.columnName, plotType)
+                      setPlotType(facet, plotType)
                     }
                     facetToPlot={facet as FacetColumnResultValues}
                     /*

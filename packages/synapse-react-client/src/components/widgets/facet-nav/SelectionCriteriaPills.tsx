@@ -8,13 +8,13 @@ import {
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueQueryFilter,
   FacetColumnRangeRequest,
+  FacetColumnRequest,
   QueryFilter,
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import SelectionCriteriaPill, {
   SelectionCriteriaPillProps,
 } from './SelectionCriteriaPill'
-import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
 import {
   QueryVisualizationContextType,
   useQueryVisualizationContext,
@@ -22,8 +22,8 @@ import {
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
-  isFacetColumnValuesRequest,
   isFacetColumnRangeRequest,
+  isFacetColumnValuesRequest,
   isTextMatchesQueryFilter,
 } from '../../../utils/types/IsType'
 import pluralize from 'pluralize'

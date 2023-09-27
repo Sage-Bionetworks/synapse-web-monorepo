@@ -21,6 +21,7 @@ import {
 import { cloneDeep } from 'lodash-es'
 import {
   canTableQueryBeAddedToDownloadList,
+  facetObjectMatchesDefinition,
   getCorrespondingColumnForFacet,
   getCorrespondingSelectedFacet,
   getHeaderIndex,
@@ -598,5 +599,51 @@ describe('getCorrespondingSelectedFacet', () => {
       )
       expect(actual).toEqual(-1)
     })
+  })
+
+  test('facetObjectMatchesDefinition', () => {
+    expect(
+      facetObjectMatchesDefinition(
+        { columnName: 'foo' },
+        { columnName: 'foo' },
+      ),
+    ).toBe(true)
+    expect(
+      facetObjectMatchesDefinition(
+        { columnName: 'foo', jsonPath: undefined },
+        { columnName: 'foo' },
+      ),
+    ).toBe(true)
+    expect(
+      facetObjectMatchesDefinition(
+        { columnName: 'foo', jsonPath: '$.bar' },
+        { columnName: 'foo', jsonPath: '$.bar' },
+      ),
+    ).toBe(true)
+
+    expect(
+      facetObjectMatchesDefinition(
+        { columnName: 'foo' },
+        { columnName: 'baz' },
+      ),
+    ).toBe(false)
+    expect(
+      facetObjectMatchesDefinition(
+        { columnName: 'foo', jsonPath: '$.bar' },
+        { columnName: 'foo' },
+      ),
+    ).toBe(false)
+    expect(
+      facetObjectMatchesDefinition(
+        { columnName: 'foo', jsonPath: '$.bar' },
+        { columnName: 'baz', jsonPath: '$.bar' },
+      ),
+    ).toBe(false)
+    expect(
+      facetObjectMatchesDefinition(
+        { columnName: 'foo', jsonPath: '$.bar' },
+        { columnName: 'foo', jsonPath: '$.baz' },
+      ),
+    ).toBe(false)
   })
 })
