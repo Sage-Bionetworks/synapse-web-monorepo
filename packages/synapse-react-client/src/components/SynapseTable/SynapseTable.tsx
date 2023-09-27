@@ -8,7 +8,7 @@ import {
 import { LabelLinkConfig } from '../CardContainerLogic'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import ModalDownload from '../ModalDownload/ModalDownload'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useQueryContext } from '../QueryContext'
 import {
   isEntityViewOrDataset,

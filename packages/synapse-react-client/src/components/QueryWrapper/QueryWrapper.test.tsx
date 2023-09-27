@@ -194,7 +194,13 @@ describe('QueryWrapper', () => {
       await waitFor(() => expect(providedContext).toBeDefined())
 
       act(() => {
-        providedContext!.executeQueryRequest(initialQueryRequest)
+        providedContext!.executeQueryRequest({
+          ...initialQueryRequest,
+          query: {
+            ...initialQueryRequest.query,
+            offset: 10,
+          },
+        })
       })
 
       await waitFor(() => {
