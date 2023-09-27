@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import {
+  facetObjectMatchesDefinition,
   getCorrespondingColumnForFacet,
   isSingleNotSetValue,
 } from '../../../utils/functions/queryUtils'
@@ -16,7 +17,7 @@ import { EnumFacetFilter } from './EnumFacetFilter/EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
 import { Box, Skeleton, Stack } from '@mui/material'
-import { groupBy, isEqual, noop, pick, sortBy } from 'lodash-es'
+import { groupBy, noop, sortBy } from 'lodash-es'
 import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
 import { useAtomValue } from 'jotai'
 import {
@@ -48,10 +49,7 @@ const patchRequestFacets = (
   selections: FacetColumnRequest[] = [],
 ): FacetColumnRequest[] => {
   const changedFacetIndex = selections.findIndex(facet =>
-    isEqual(
-      pick(facet, ['columnName', 'jsonPath']),
-      pick(changedFacet, ['columnName', 'jsonPath']),
-    ),
+    facetObjectMatchesDefinition(facet, changedFacet),
   )
   const isEmptyValuesFacet =
     changedFacet.concreteType ===
