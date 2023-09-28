@@ -16,7 +16,7 @@ import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { useGetEntityHeader } from '../../synapse-queries'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'
-import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
+import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
 import { IconButton, Tooltip } from '@mui/material'
 import IconSvg from '../IconSvg'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
@@ -47,7 +47,8 @@ function RowSelectionCell(props: CellContext<Row, unknown>) {
   return (
     <div>
       <Checkbox
-        label=""
+        label={'Select row'}
+        hideLabel={true}
         checked={isRowSelected(row.original)}
         onChange={(checked: boolean) => {
           const cloneSelectedRows = [...selectedRows]
@@ -203,11 +204,7 @@ export function TableDataColumnHeader(
       <div className="SRC-centerContent" style={{ height: '22px' }}>
         {isFacetSelection && !isLockedColumn && columnModel && (
           <span>
-            <EnumFacetFilter
-              containerAs="Dropdown"
-              facetValues={facet.facetValues}
-              columnModel={columnModel}
-            />
+            <EnumFacetFilter containerAs="Dropdown" facet={facet} />
           </span>
         )}
         {column.getCanSort() && (

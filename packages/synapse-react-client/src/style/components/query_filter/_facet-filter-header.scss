@@ -6,6 +6,7 @@ $icon-size: 14px; // component-specific variable
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid $border-color-gray;
+  margin-bottom: 8px;
 
   &__label {
     font-weight: bold;

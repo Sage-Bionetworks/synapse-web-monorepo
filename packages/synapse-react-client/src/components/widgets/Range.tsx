@@ -13,13 +13,11 @@ export type RangeProps = {
   initialValues?: RangeValues
   className?: string
   errorText?: string
-  onChange: (newValues: RangeValues) => void
+  onApplyClicked: (newValues: RangeValues) => void
 }
 
-export const Range: React.FunctionComponent<RangeProps> = (
-  props: RangeProps,
-) => {
-  const errorText = 'Min value should be less then max value'
+export function Range(props: RangeProps) {
+  const errorText = 'Min value should be less than max value'
   const [error, setError] = useState(false)
   const [values, setValues] = useState(() =>
     props.type === 'number' && props.initialValues
@@ -98,7 +96,9 @@ export const Range: React.FunctionComponent<RangeProps> = (
       </div>
       <button
         className="btn btn-link SRC-noPadding"
-        onClick={() => handleAppyChanges(values, props.onChange, props.type)}
+        onClick={() =>
+          handleAppyChanges(values, props.onApplyClicked, props.type)
+        }
       >
         Apply
       </button>

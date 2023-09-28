@@ -1,23 +1,16 @@
 import React from 'react'
-import { FacetColumnResult } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../IconSvg/IconSvg'
-import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
-export type FacetChipProps = {
-  facet: FacetColumnResult
+export type FacetChipProps = React.PropsWithChildren<{
   isChecked: boolean
   onClick: () => void
-}
+}>
 
-export const FacetChip: React.FC<FacetChipProps> = ({
-  facet,
-  isChecked,
-  onClick,
-}) => {
-  const { getColumnDisplayName } = useQueryVisualizationContext()
+export function FacetChip(props: FacetChipProps) {
+  const { isChecked, onClick, children } = props
   return (
     <button className={`Chip ${isChecked ? 'Checked' : ''}`} onClick={onClick}>
-      {getColumnDisplayName(facet.columnName)}
+      {children}
       <IconSvg
         icon={isChecked ? 'check' : 'add'}
         sx={{

@@ -1,6 +1,6 @@
 import { InfoOutlined } from '@mui/icons-material'
 import Plotly from 'plotly.js-basic-dist'
-import React, { useCallback, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
@@ -17,7 +17,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import loadingScreen from '../../LoadingScreen/LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
+import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
 import { Box, IconButton, Tooltip } from '@mui/material'
 import { useQuery } from 'react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
@@ -29,6 +29,7 @@ import {
   isLoadingNewBundleAtom,
   tableQueryDataAtom,
 } from '../../QueryWrapper/QueryWrapper'
+import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -274,21 +275,22 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
 
   const [showModal, setShowModal] = useState(false)
 
-  const plotTitle = getColumnDisplayName(facetToPlot.columnName)
-
-  const getColumnType = useCallback(
-    (): ColumnTypeEnum | undefined =>
-      data?.columnModels?.find(
-        columnModel => columnModel.name === facetToPlot.columnName,
-      )?.columnType as ColumnTypeEnum,
-    [data, facetToPlot.columnName],
+  const plotTitle = getColumnDisplayName(
+    facetToPlot.columnName,
+    facetToPlot.jsonPath,
   )
+
+  const columnModel = useMemo(
+    () => getCorrespondingColumnForFacet(facetToPlot, data?.columnModels ?? []),
+    [data?.columnModels, facetToPlot],
+  )
+  const columnType = columnModel?.columnType as ColumnTypeEnum
 
   const { data: plotData } = useQuery(
     [
       'extractPlotDataArray',
       facetToPlot,
-      getColumnType(),
+      columnType,
       index,
       plotType,
       accessToken,
@@ -296,7 +298,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     () =>
       extractPlotDataArray(
         facetToPlot,
-        getColumnType(),
+        columnType,
         index,
         plotType,
         accessToken,
@@ -331,10 +333,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     </div>
   )
 
-  const columnModel = data?.columnModels?.find(
-    columnModel => columnModel.name === facetToPlot.columnName,
-  )
-
   if ((!data && isLoadingNewBundle) || !facetToPlot || !columnModel) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
@@ -365,11 +363,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                 <span className="FacetNavPanel__title__name">{plotTitle}</span>
               )}
               <div className="FacetNavPanel__title__tools">
-                <EnumFacetFilter
-                  facetValues={facetToPlot.facetValues}
-                  columnModel={columnModel}
-                  containerAs="Dropdown"
-                />
+                <EnumFacetFilter facet={facetToPlot} containerAs="Dropdown" />
                 <Tooltip title={'Expand to large graph'}>
                   <IconButton onClick={() => setShowModal(true)} size={'small'}>
                     <IconSvg
@@ -394,12 +388,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   Filter All Data By
                 </span>
                 <EnumFacetFilter
-                  facetValues={facetToPlot.facetValues}
-                  columnModel={
-                    data?.columnModels!.find(
-                      el => el.name === facetToPlot.columnName,
-                    )!
-                  }
+                  facet={facetToPlot}
                   containerAs="Dropdown"
                   dropdownType="SelectBox"
                 />
@@ -422,7 +411,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               {({ size }) => (
                 <div>
                   <Plot
-                    key={`${facetToPlot.columnName}-${plotType}-${size.width}`}
+                    key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${size.width}`}
                     layout={layout}
                     data={plotData?.data ?? []}
                     style={getPlotStyle(

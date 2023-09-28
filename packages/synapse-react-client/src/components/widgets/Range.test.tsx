@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import React from 'react'
-import { Range, RangeProps } from '../../../src/components/widgets/Range'
+import { Range, RangeProps } from './Range'
 
 const mockCallback = jest.fn()
 
@@ -10,7 +10,7 @@ const defaultProps: RangeProps = {
   type: 'number',
   initialValues: { min: '2.3', max: '5' },
   className: 'rangeClass',
-  onChange: mockCallback,
+  onApplyClicked: mockCallback,
 }
 
 function renderComponent(overrides?: Partial<RangeProps>) {
@@ -64,7 +64,7 @@ describe('Range input test', () => {
     await updateValue(4.9, 2)
     expect(mockCallback).not.toHaveBeenCalled()
     const errorMessage = screen.getByText(
-      'Min value should be less then max value',
+      'Min value should be less than max value',
     )
     expect(errorMessage.classList.contains('SRC-danger-color')).toBe(true)
   })
@@ -106,7 +106,7 @@ describe('Range input test', () => {
       await updateValue(updatedValues.max, updatedValues.min)
       expect(mockCallback).not.toHaveBeenCalled()
       const errorMessage = screen.getByText(
-        'Min value should be less then max value',
+        'Min value should be less than max value',
       )
       expect(errorMessage.classList.contains('SRC-danger-color')).toBe(true)
     })

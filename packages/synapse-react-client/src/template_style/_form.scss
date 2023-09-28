@@ -16,7 +16,7 @@
 
 .checkbox,
 .radio {
-  padding-left: 6px;
+  padding-left: 0px;
   min-width: 27px;
   margin-top: 0px;
   margin-bottom: 0px;
@@ -37,7 +37,7 @@
 
 @mixin customCheckbox($checkbox-top-offset: 0px) {
   $radio-before-top-offset: 1px;
-  $radio-before-left-offset: 4px;
+  $radio-before-left-offset: 0px;
 
   $radio-after-top-offset: $radio-before-top-offset + 3px;
   $radio-after-left-offset: $radio-before-left-offset + 3px;
@@ -64,9 +64,16 @@
   input[type='radio'] + label,
   input[type='radio'] + span {
     position: relative;
-    padding-left: 22px;
     margin-top: 5px;
     margin-bottom: 5px;
+    // This padding gives space between the label and the input
+    padding-left: 22px;
+  }
+
+  input[type='checkbox'] + label[aria-hidden='true'],
+  input[type='radio'] + label[aria-hidden='true'] {
+    // If the label is hidden, shrink the padding down to the size of the input
+    padding-left: 16px;
   }
 
   input[type='checkbox'] + label::before,

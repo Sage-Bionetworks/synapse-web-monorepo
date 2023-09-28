@@ -14,8 +14,8 @@ export type RangeSliderProps = React.PropsWithChildren<{
   domain: string[]
   initialValues: RangeValues
   step: number
-  doUpdateOnApply?: boolean
-  onChange: (values: RangeValues) => void
+  onChange?: (values: RangeValues) => void
+  onApplyClicked?: (values: RangeValues) => void
 }>
 
 function ValueLabelComponent(props: SliderValueLabelProps) {
@@ -36,8 +36,8 @@ function getInitialValues(initialValues: RangeValues, domain: string[]) {
   return result
 }
 
-export function RangeSlider(props: RangeSliderProps) {
-  const { doUpdateOnApply = true, onChange, step } = props
+function RangeSlider(props: RangeSliderProps) {
+  const { onApplyClicked, onChange, step } = props
   const stringArrToNumArr = (inputArr: string[]) =>
     inputArr.map(value => Number(value))
 
@@ -49,17 +49,17 @@ export function RangeSlider(props: RangeSliderProps) {
 
   const handleSliderChange = (values: readonly number[]) => {
     setValues([...values])
-    if (!doUpdateOnApply && onChange) {
+    if (onChange) {
       onChange({ min: values[0], max: values[1] })
     }
   }
 
   return (
-    <Box>
+    <Box sx={{ ml: 1 }}>
       <Typography variant="smallText1">
         {values[0]} - {values[1]}
       </Typography>
-      <Box display="flex" gap={3}>
+      <Box display="flex" gap={3} sx={{ ml: 1 }}>
         <Slider
           marks={[
             { value: numDomain[0], label: props.domain[0] },
@@ -75,12 +75,12 @@ export function RangeSlider(props: RangeSliderProps) {
             valueLabel: ValueLabelComponent,
           }}
         />
-        {doUpdateOnApply && (
+        {onApplyClicked && (
           <Box>
             <Button
               size="small"
               variant="contained"
-              onClick={() => props.onChange({ min: values[0], max: values[1] })}
+              onClick={() => onApplyClicked({ min: values[0], max: values[1] })}
             >
               Apply
             </Button>

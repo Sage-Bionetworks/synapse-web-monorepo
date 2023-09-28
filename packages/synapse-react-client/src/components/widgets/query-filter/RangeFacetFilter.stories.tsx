@@ -1,13 +1,13 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
-import { RangeFacetFilter } from './RangeFacetFilter'
+import { RangeFacetFilterUI } from './RangeFacetFilterUI'
+import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
 
 const meta = {
   title: 'Explore/Components/Facets/RangeFacetFilter',
-  component: RangeFacetFilter,
+  component: RangeFacetFilterUI,
   decorators: [
     Story => (
       <QueryWrapper
@@ -33,34 +33,63 @@ type Story = StoryObj<typeof meta>
 
 export const NoneSelected: Story = {
   args: {
+    label: 'foo',
+    columnType: 'INTEGER',
     facetResult: {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
-      facetType: 'range',
-      columnName: 'foo',
       columnMin: '0',
       columnMax: '100',
     },
-    columnType: ColumnTypeEnum.INTEGER,
-    label: 'fooColumn',
-    collapsed: false,
   },
 }
 
-export const Selected: Story = {
+export const NotAssignedSelected: Story = {
   args: {
+    label: 'foo',
+    columnType: 'INTEGER',
     facetResult: {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
-      facetType: 'range',
-      columnName: 'foo',
+      columnMin: '0',
+      columnMax: '100',
+      selectedMin: VALUE_NOT_SET,
+      selectedMax: VALUE_NOT_SET,
+    },
+  },
+}
+
+export const SelectedInteger: Story = {
+  args: {
+    label: 'foo',
+    columnType: 'INTEGER',
+    facetResult: {
       columnMin: '0',
       columnMax: '100',
       selectedMin: '5',
       selectedMax: '95',
     },
-    columnType: ColumnTypeEnum.INTEGER,
-    label: 'fooColumn',
-    collapsed: false,
+  },
+}
+
+export const SelectedDouble: Story = {
+  args: {
+    label: 'foo',
+    columnType: 'DOUBLE',
+    facetResult: {
+      columnMin: '0',
+      columnMax: '100',
+      selectedMin: '5',
+      selectedMax: '95',
+    },
+  },
+}
+
+export const SelectedDate: Story = {
+  args: {
+    label: 'foo',
+    columnType: 'DATE',
+    facetResult: {
+      columnMin: '0',
+      columnMax: '100',
+      selectedMin: '5',
+      selectedMax: '95',
+    },
   },
 }

@@ -46,6 +46,7 @@ export type QueryContextType<
   /** Resets the query to its initial state, clearing all filters added by the user */
   resetQuery: ImmutableTableQueryResult['resetQuery']
   addValueToSelectedFacet: ImmutableTableQueryResult['addValueToSelectedFacet']
+  setRangeFacetValue: ImmutableTableQueryResult['setRangeFacetValue']
   removeSelectedFacet: ImmutableTableQueryResult['removeSelectedFacet']
   removeValueFromSelectedFacet: ImmutableTableQueryResult['removeValueFromSelectedFacet']
   /** Removes a matching QueryFilter from the query */

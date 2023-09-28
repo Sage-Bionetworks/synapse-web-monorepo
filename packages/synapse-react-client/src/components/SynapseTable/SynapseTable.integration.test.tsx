@@ -22,6 +22,8 @@ import {
   QueryResultBundle,
   Reference,
   ReferenceList,
+  RestrictionInformationResponse,
+  RestrictionLevel,
   Table,
 } from '@sage-bionetworks/synapse-types'
 import { rest, server } from '../../mocks/msw/server'
@@ -46,6 +48,7 @@ import { mockFileHandle } from '../../mocks/mock_file_handle'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import { mockProjectViewEntity } from '../../mocks/entity/mockProjectView'
 import { mockDatasetEntity } from '../../mocks/entity/mockDataset'
+import { mockQueryResult } from '../../mocks/query/mockProjectViewQueryResults'
 
 const synapseTableEntityId = 'syn16787123'
 
@@ -140,6 +143,8 @@ jest.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
 describe('SynapseTable tests', () => {
   beforeAll(() => {
     server.listen()
+  })
+  beforeEach(() => {
     server.use(
       ...getHandlersForTableQuery(queryResultBundle),
 
@@ -186,6 +191,18 @@ describe('SynapseTable tests', () => {
           return res(ctx.status(200), ctx.json(responseBody))
         },
       ),
+      rest.post(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/restrictionInformation`,
+        async (req, res, ctx) => {
+          const responseBody: RestrictionInformationResponse = {
+            restrictionLevel: RestrictionLevel.OPEN,
+            hasUnmetAccessRequirement: false,
+          }
+          return res(ctx.status(200), ctx.json(responseBody))
+        },
+      ),
     )
   })
   afterEach(() => server.restoreHandlers())
@@ -194,6 +211,7 @@ describe('SynapseTable tests', () => {
   const entityTypeCases: [
     string,
     Table,
+    QueryResultBundle,
     {
       expectAccessToBeVisible: boolean
       expectAddToDownloadListToBeVisible: boolean
@@ -203,6 +221,7 @@ describe('SynapseTable tests', () => {
     [
       'EntityView (mixed types)',
       mixedEntityView,
+      mockQueryResult,
       {
         expectAccessToBeVisible: true,
         expectAddToDownloadListToBeVisible: true,
@@ -212,6 +231,7 @@ describe('SynapseTable tests', () => {
     [
       'File View',
       mockFileViewEntity,
+      mockQueryResult,
       {
         expectAccessToBeVisible: true,
         expectAddToDownloadListToBeVisible: true,
@@ -221,6 +241,7 @@ describe('SynapseTable tests', () => {
     [
       'Project View',
       mockProjectViewEntity,
+      mockQueryResult,
       {
         expectAccessToBeVisible: true,
         expectAddToDownloadListToBeVisible: false,
@@ -230,6 +251,7 @@ describe('SynapseTable tests', () => {
     [
       'TableEntity',
       mockTableEntity,
+      queryResultBundle,
       {
         expectAccessToBeVisible: false,
         expectAddToDownloadListToBeVisible: false,
@@ -239,6 +261,7 @@ describe('SynapseTable tests', () => {
     [
       'Dataset',
       mockDatasetEntity,
+      mockQueryResult,
       {
         expectAccessToBeVisible: true,
         expectAddToDownloadListToBeVisible: true,
@@ -253,7 +276,10 @@ describe('SynapseTable tests', () => {
   // - VirtualTable
   describe.each(entityTypeCases)(
     'Properly renders supplemental UI columns for %p',
-    (name, entity, expected) => {
+    (name, entity, queryResultBundle, expected) => {
+      beforeEach(() => {
+        server.use(...getHandlersForTableQuery(queryResultBundle))
+      })
       it(`Renders the supplemental columns correctly for ${name}`, async () => {
         renderTable(
           {
@@ -304,6 +330,7 @@ describe('SynapseTable tests', () => {
           {
             isRowSelectionVisible: true,
           },
+          entity,
         )
 
         await waitFor(() => {
@@ -325,6 +352,7 @@ describe('SynapseTable tests', () => {
           {
             isRowSelectionVisible: false,
           },
+          entity,
         )
 
         expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
