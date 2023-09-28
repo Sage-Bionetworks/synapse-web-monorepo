@@ -1,5 +1,5 @@
 export const computationalSql = 'Select * from syn20337467'
-export const dataSql = 'SELECT * FROM syn11346063.41'
+export const dataSql = 'SELECT * FROM syn11346063.42'
 export const dataOnStudiesPageSql =
   "SELECT id, name, metadataType, dataType, assay FROM syn11346063.40 WHERE `resourceType` = 'metadata'"
 export const peopleSql = 'SELECT * FROM syn13897207'
