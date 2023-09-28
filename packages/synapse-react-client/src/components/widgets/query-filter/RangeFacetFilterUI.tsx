@@ -1,5 +1,5 @@
 import { Collapse } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,
@@ -80,19 +80,15 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
         break
       case RadioValuesEnum.ANY: {
         onAnySelected()
-
         break
       }
     }
   }
 
-  useEffect(() => {
-    setRadioValue(getRadioValue(currentMin, hasAnyValue))
-  }, [currentMin, hasAnyValue])
-
   const [radioValue, setRadioValue] = useState(
     getRadioValue(currentMin, hasAnyValue),
   )
+
   return (
     <div>
       <FacetFilterHeader

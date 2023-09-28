@@ -84,6 +84,14 @@ export default function EnumFacetFilterUI(props: EnumFacetFilterUIProps) {
   const textInput: React.RefObject<HTMLInputElement> = React.createRef()
 
   const isDropdown = containerAs === 'Dropdown'
+  const showMoreButtonIsVisible =
+    !showAll && facetValues.length > MAX_ENUMERATION_VALUES_TO_SHOW
+  const showLessButtonIsVisible =
+    showAll &&
+    !searchTerm &&
+    !valueIndexedGreaterThanMaxToShowIsSelected &&
+    facetValues.length > MAX_ENUMERATION_VALUES_TO_SHOW
+
   const content = (
     <div className={isDropdown ? 'EnumFacetFilter__dropdown_menu' : ''}>
       <div className="EnumFacetFilter__checkboxContainer--forAll">
@@ -199,34 +207,30 @@ export default function EnumFacetFilterUI(props: EnumFacetFilterUIProps) {
         })}
         {!isDropdown && (
           <>
-            {!showAll &&
-              facetValues.length > MAX_ENUMERATION_VALUES_TO_SHOW && (
-                <button
-                  className="EnumFacetFilter__showMoreFacetsBtn"
-                  onClick={() => setToggleShowAll(true)}
-                >
-                  <div className="EnumFacetFilter__checkboxContainer">
-                    <div className="EnumFacetFilter__showMoreFacetsLabel">
-                      Show all ({facetValues.length})
-                    </div>
+            {showMoreButtonIsVisible && (
+              <button
+                className="EnumFacetFilter__showMoreFacetsBtn"
+                onClick={() => setToggleShowAll(true)}
+              >
+                <div className="EnumFacetFilter__checkboxContainer">
+                  <div className="EnumFacetFilter__showMoreFacetsLabel">
+                    Show all ({facetValues.length})
                   </div>
-                </button>
-              )}
-            {showAll &&
-              !searchTerm &&
-              !valueIndexedGreaterThanMaxToShowIsSelected &&
-              facetValues.length > MAX_ENUMERATION_VALUES_TO_SHOW && (
-                <button
-                  className="EnumFacetFilter__showMoreFacetsBtn"
-                  onClick={() => setToggleShowAll(false)}
-                >
-                  <div className="EnumFacetFilter__checkboxContainer">
-                    <div className="EnumFacetFilter__showMoreFacetsLabel">
-                      Show less
-                    </div>
+                </div>
+              </button>
+            )}
+            {showLessButtonIsVisible && (
+              <button
+                className="EnumFacetFilter__showMoreFacetsBtn"
+                onClick={() => setToggleShowAll(false)}
+              >
+                <div className="EnumFacetFilter__checkboxContainer">
+                  <div className="EnumFacetFilter__showMoreFacetsLabel">
+                    Show less
                   </div>
-                </button>
-              )}
+                </div>
+              </button>
+            )}
           </>
         )}
         {facetValuesToShow.length <= 0 && (
