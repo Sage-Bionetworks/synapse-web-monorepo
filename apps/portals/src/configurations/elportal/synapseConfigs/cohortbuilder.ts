@@ -4,11 +4,14 @@ import {
   cohortBuilderSql,
   defaultSearchConfiguration,
 } from '../resources'
-import { SynapseUtilityFunctions } from 'synapse-react-client'
 import {
-  ColumnSingleValueFilterOperator,
-  ColumnSingleValueQueryFilter,
-} from '@sage-bionetworks/synapse-types'
+  handleParticipantsToFiles,
+  handleSelectedParticipantsToFiles,
+} from './handleParticipantsToFiles'
+import {
+  handleFilesToParticipants,
+  handleSelectedFilesToParticipants,
+} from './handleFilesToParticipants'
 
 const rgbIndex = 1
 
@@ -18,7 +21,7 @@ export const individualsView: SynapseConfig = {
     rgbIndex,
     name: 'Participants',
     visibleColumnCount: 10,
-    facetsToPlot: ['Diagnosis'],
+    facetsToPlot: ['Sex', 'dataTypes', 'Assays', 'Diagnosis', 'fileFormat'],
     isRowSelectionVisible: true,
     rowSelectionPrimaryKey: ['individualID'],
     combineRangeFacetConfig: {
@@ -44,28 +47,16 @@ export const individualsView: SynapseConfig = {
       {
         buttonText: 'View files in selection',
         onClick: (event) => {
-          // add filter for files perspective, to show files associated to the selected participants only.
-          const idColIndex = event.data?.columnModels?.findIndex(
-            (cm) => cm.name === 'individualID',
-          )
-          const localStorageFilter: ColumnSingleValueQueryFilter = {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-            columnName: 'individualID',
-            operator: ColumnSingleValueFilterOperator.IN,
-            isDefiningCondition: true,
-            values: event.selectedRows!.map((row) => row.values[idColIndex!]!),
-          }
-          localStorage.setItem(
-            SynapseUtilityFunctions.QUERY_FILTERS_LOCAL_STORAGE_KEY(
-              'cohort-builder-files-perspective',
-            ),
-            // TODO: set additionalFiltersLocalStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
-            JSON.stringify([localStorageFilter]),
-          )
-          window.location.href = '/Explore/Data by Files v2'
+          handleSelectedParticipantsToFiles(event)
         },
         isRowSelectionSupported: true,
+      },
+      {
+        buttonText: 'View associated files',
+        onClick: (event) => {
+          handleParticipantsToFiles(event)
+        },
+        isRowSelectionSupported: false,
       },
     ],
     sql: cohortBuilderSql,
@@ -106,28 +97,16 @@ export const filesView: SynapseConfig = {
       {
         buttonText: 'View participants in selection',
         onClick: (event) => {
-          // add filter for files perspective, to show participants associated to the selected files only.
-          const idColIndex = event.data?.columnModels?.findIndex(
-            (cm) => cm.name === 'fileId',
-          )
-          const localStorageFilter: ColumnSingleValueQueryFilter = {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-            columnName: 'fileId',
-            operator: ColumnSingleValueFilterOperator.IN,
-            isDefiningCondition: true,
-            values: event.selectedRows!.map((row) => row.values[idColIndex!]!),
-          }
-          localStorage.setItem(
-            SynapseUtilityFunctions.QUERY_FILTERS_LOCAL_STORAGE_KEY(
-              'cohort-builder-individuals-perspective',
-            ),
-            // TODO: set additionalFiltersLocalStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
-            JSON.stringify([localStorageFilter]),
-          )
-          window.location.href = '/Explore/Data by Participants'
+          handleSelectedFilesToParticipants(event)
         },
         isRowSelectionSupported: true,
+      },
+      {
+        buttonText: 'View associated participants',
+        onClick: (event) => {
+          handleFilesToParticipants(event)
+        },
+        isRowSelectionSupported: false,
       },
     ],
     shouldDeepLink: true,
