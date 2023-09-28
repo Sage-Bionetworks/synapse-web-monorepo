@@ -53,7 +53,11 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
         disabled={disabled}
         data-testid={props['data-testid']}
       />
-      {<label htmlFor={uniqueId}>{hideLabel ? <></> : props.label}</label>}
+      {
+        <label htmlFor={uniqueId} aria-hidden={hideLabel}>
+          {hideLabel ? <></> : props.label}
+        </label>
+      }
       {props.children ?? <></>}
     </div>
   )

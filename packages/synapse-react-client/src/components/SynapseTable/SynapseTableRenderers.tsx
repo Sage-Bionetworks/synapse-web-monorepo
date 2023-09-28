@@ -47,7 +47,8 @@ function RowSelectionCell(props: CellContext<Row, unknown>) {
   return (
     <div>
       <Checkbox
-        label=""
+        label={'Select row'}
+        hideLabel={true}
         checked={isRowSelected(row.original)}
         onChange={(checked: boolean) => {
           const cloneSelectedRows = [...selectedRows]
