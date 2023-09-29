@@ -43,6 +43,7 @@ export const handleFilesToParticipants = async (
     // TODO: set additionalFiltersLocalStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
     JSON.stringify([localStorageFilter]),
   )
+  event.refresh()
   window.location.href = '/Explore/Data by Participants'
 }
 
@@ -68,5 +69,6 @@ export const handleSelectedFilesToParticipants = (
     // TODO: set additionalFiltersLocalStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
     JSON.stringify([localStorageFilter]),
   )
+  event.refresh()
   window.location.href = '/Explore/Data by Participants'
 }

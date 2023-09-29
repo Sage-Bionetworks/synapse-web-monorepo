@@ -569,7 +569,7 @@ export async function login(
   password: string,
   authenticationReceipt: string | null,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
-): Promise<LoginResponse | TwoFactorAuthErrorResponse> {
+): Promise<LoginResponse | TwoFactorAuthErrorResponse | null> {
   return returnIfTwoFactorAuthError(() =>
     doPost(
       '/auth/v1/login2',
@@ -626,7 +626,7 @@ export const oAuthSessionRequest = (
   authenticationCode: string | number,
   redirectUrl: string,
   endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
-): Promise<LoginResponse | TwoFactorAuthErrorResponse> => {
+): Promise<LoginResponse | TwoFactorAuthErrorResponse | null> => {
   return returnIfTwoFactorAuthError(() =>
     doPost(
       '/auth/v1/oauth2/session2',

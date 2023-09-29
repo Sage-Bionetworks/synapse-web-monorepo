@@ -79,6 +79,11 @@ export const filesView: SynapseConfig = {
     isRowSelectionVisible: true,
     rowSelectionPrimaryKey: ['fileId'],
     additionalFiltersLocalStorageKey: 'cohort-builder-files-perspective',
+    combineRangeFacetConfig: {
+      label: 'Age',
+      minFacetColumn: 'minAge',
+      maxFacetColumn: 'maxAge',
+    },
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,

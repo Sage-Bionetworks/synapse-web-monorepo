@@ -14,6 +14,7 @@ import {
 } from '../../QueryWrapper/QueryWrapper'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { getFileColumnModelId } from '../SynapseTableUtils'
+import CustomControlButton from '../TopLevelControls/CustomControlButton'
 
 export type RowSelectionControlsProps = {
   showExportToCavatica?: boolean
@@ -57,21 +58,18 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
         <>
           {customControls.map(customControl => {
             return (
-              <Button
+              <CustomControlButton
                 key={customControl.buttonText}
                 variant="contained"
-                onClick={() =>
-                  customControl.onClick({
-                    data,
-                    selectedRows,
-                    refresh,
-                    request: getCurrentQueryRequest(),
-                  })
-                }
+                callbackData={{
+                  data,
+                  selectedRows,
+                  refresh,
+                  request: getCurrentQueryRequest(),
+                }}
+                control={customControl}
                 startIcon={customControl.icon}
-              >
-                {customControl.buttonText}
-              </Button>
+              />
             )
           })}
           {showExportToCavatica && (
