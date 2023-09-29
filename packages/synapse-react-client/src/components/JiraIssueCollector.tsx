@@ -17,7 +17,7 @@ const ISSUE_COLLECTOR_URL_MAP: Record<IssueCollector, string> = {
 
 declare global {
   interface Window {
-    jQuery?: JQueryStatic
+    jQuery?: any
     ATL_JQ_PAGE_PROPS: any
   }
 }
@@ -59,6 +59,7 @@ export function showJiraIssueCollector(config: JiraIssueCollectorConfig): void {
       )
     }
     // Requires jQuery!
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     window.jQuery.ajax({
       url: ISSUE_COLLECTOR_URL_MAP[issueCollector],
       type: 'get',

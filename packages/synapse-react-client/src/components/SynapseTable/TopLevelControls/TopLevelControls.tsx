@@ -33,6 +33,7 @@ import {
   isRowSelectionVisibleAtom,
   selectedRowsAtom,
 } from '../../QueryWrapper/TableRowSelectionState'
+import { MutationFunction } from 'react-query'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -66,6 +67,7 @@ export type CustomControlCallbackData = {
 
 export type CustomControl = {
   buttonText: string
+  mutationFn?: MutationFunction
   onClick: (event: CustomControlCallbackData) => void
   isRowSelectionSupported: boolean
   classNames?: string

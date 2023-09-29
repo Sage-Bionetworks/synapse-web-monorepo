@@ -22,7 +22,7 @@ class Bookmarks extends React.Component<BookmarksProps, never> {
     // find all the links embedded in the markdown below
     const regex = /Synapse widget&gt;<\/span>(.*)</g
     let matchedGroup: RegExpExecArray | null
-    const output = []
+    const output: string[] = []
     // below we use regex.exec to find the find matched group containing the citation source
     while ((matchedGroup = regex.exec(copyFootnotes))) {
       output.push(matchedGroup[1])
