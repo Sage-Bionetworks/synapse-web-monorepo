@@ -2,7 +2,11 @@ import {
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClient, SynapseUtilityFunctions } from 'synapse-react-client'
+import {
+  SynapseClient,
+  SynapseConstants,
+  SynapseUtilityFunctions,
+} from 'synapse-react-client'
 import { CustomControlCallbackData } from 'synapse-react-client/src/components/SynapseTable/TopLevelControls/TopLevelControls'
 
 export const handleParticipantsToFiles = async (
@@ -14,7 +18,10 @@ export const handleParticipantsToFiles = async (
   )
   const token = await SynapseClient.getAccessTokenFromCookie()
   const queryResultBundle = await SynapseClient.getFullQueryTableResults(
-    event.request!,
+    {
+      ...event.request!,
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    },
     token,
   )
   const localStorageFilter: ColumnSingleValueQueryFilter = {
