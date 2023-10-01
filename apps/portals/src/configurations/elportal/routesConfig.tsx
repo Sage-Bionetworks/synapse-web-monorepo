@@ -200,9 +200,11 @@ const routes: GenericRoute[] = [
               text: (
                 <>
                   This page helps you find data related to anonymized
-                  Participants. Add filters to build a list of participants.
-                  Once you’ve built your cohort, you can download the related
-                  data files or <strong>Send to CAVATICA</strong> for analysis.
+                  Participants in the ELITE Portal. Add filters to build a list
+                  of participants, select the participants you are interested
+                  in, and view the files associated with your selected cohort.
+                  From there, you can download the related data files or{' '}
+                  <strong>Send to CAVATICA</strong> for analysis.
                 </>
               ),
               sx: { position: 'relative', zIndex: 1, marginBottom: '0px' },

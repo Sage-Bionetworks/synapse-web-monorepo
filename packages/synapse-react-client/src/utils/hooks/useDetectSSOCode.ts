@@ -62,14 +62,16 @@ export default function useDetectSSOCode(
 
       if (OAUTH2_PROVIDERS.GOOGLE == provider) {
         const onSuccess = (
-          response: LoginResponse | TwoFactorAuthErrorResponse,
+          response: LoginResponse | TwoFactorAuthErrorResponse | null,
         ) => {
-          if ('accessToken' in response) {
-            setAccessTokenCookie(response.accessToken).then(onSignInComplete)
-          } else {
-            // The app will redirect or open a modal to handle 2FA
-            if (onTwoFactorAuthRequired) {
-              onTwoFactorAuthRequired(response)
+          if (response) {
+            if ('accessToken' in response) {
+              setAccessTokenCookie(response.accessToken).then(onSignInComplete)
+            } else {
+              // The app will redirect or open a modal to handle 2FA
+              if (onTwoFactorAuthRequired) {
+                onTwoFactorAuthRequired(response)
+              }
             }
           }
         }

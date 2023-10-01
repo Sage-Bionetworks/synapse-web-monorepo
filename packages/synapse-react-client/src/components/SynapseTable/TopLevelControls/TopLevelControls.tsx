@@ -33,6 +33,7 @@ import {
   isRowSelectionVisibleAtom,
   selectedRowsAtom,
 } from '../../QueryWrapper/TableRowSelectionState'
+import CustomControlButton from './CustomControlButton'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -218,21 +219,18 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             topLevelCustomControls.map((customControl, index) => {
               return (
                 <React.Fragment key={index}>
-                  <Button
+                  <CustomControlButton
                     variant="text"
                     disabled={!numberOfResultsToInvokeAction}
-                    onClick={() =>
-                      customControl.onClick({
-                        data,
-                        selectedRows,
-                        refresh,
-                        request: getCurrentQueryRequest(),
-                      })
-                    }
+                    control={customControl}
+                    callbackData={{
+                      data,
+                      selectedRows,
+                      refresh,
+                      request: getCurrentQueryRequest(),
+                    }}
                     startIcon={customControl.icon}
-                  >
-                    {customControl.buttonText}
-                  </Button>
+                  />
                   <Divider orientation="vertical" variant="middle" flexItem />
                 </React.Fragment>
               )

@@ -45,7 +45,7 @@ export const FileHandleLink = (props: FileHandleLinkProps) => {
     }
   }, [accessToken, displayValue, fileHandleAssociation])
 
-  let fileName = undefined
+  let fileName: string | undefined = undefined
   if (batchFileResult) {
     fileName = batchFileResult.requestedFiles[0].fileHandle?.fileName
   }

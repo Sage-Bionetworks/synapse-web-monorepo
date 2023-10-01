@@ -107,7 +107,7 @@ export default function useLogin(
     mutate: mutateLoginWithUsernameAndPassword,
     isLoading: isLoadingLoginWithUsernameAndPassword,
   } = useMutation<
-    LoginResponse | TwoFactorAuthErrorResponse,
+    LoginResponse | TwoFactorAuthErrorResponse | null,
     SynapseClientError,
     { username: string; password: string; authenticationReceipt: string | null }
   >(
@@ -118,12 +118,14 @@ export default function useLogin(
         setErrorMessage(error.reason)
       },
       onSuccess: async loginResponse => {
-        if ('errorCode' in loginResponse) {
-          setStep('VERIFICATION_CODE')
-          setTwoFaToken(loginResponse.twoFaToken)
-          setUserId(loginResponse.userId)
-        } else {
-          await finishLogin(loginResponse)
+        if (loginResponse) {
+          if ('errorCode' in loginResponse) {
+            setStep('VERIFICATION_CODE')
+            setTwoFaToken(loginResponse.twoFaToken)
+            setUserId(loginResponse.userId)
+          } else {
+            await finishLogin(loginResponse)
+          }
         }
       },
     },

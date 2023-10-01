@@ -16,7 +16,7 @@ export function isOutsideSynapseOrg() {
 export async function allowNotFoundError<T>(
   fn: () => Promise<T>,
 ): Promise<T | null> {
-  let response = null
+  let response: Awaited<T> | null = null
   try {
     response = await fn()
   } catch (e) {
@@ -36,8 +36,8 @@ export async function allowNotFoundError<T>(
  */
 export async function returnIfTwoFactorAuthError<T>(
   fn: () => Promise<T>,
-): Promise<T | TwoFactorAuthErrorResponse> {
-  let response = null
+): Promise<T | TwoFactorAuthErrorResponse | null> {
+  let response: Awaited<T> | null = null
   try {
     response = await fn()
   } catch (e) {

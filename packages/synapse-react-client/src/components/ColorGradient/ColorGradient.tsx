@@ -16,8 +16,8 @@ export function getColorPalette(
   start: number,
   end: number,
 ): { colorPalette: string[]; textColors: string[] } {
-  let colorPaletteSelection = []
-  const textColors = []
+  let colorPaletteSelection: string[] = []
+  const textColors: string[] = []
   let offset = -1
 
   if (start % 2 === 0) {
