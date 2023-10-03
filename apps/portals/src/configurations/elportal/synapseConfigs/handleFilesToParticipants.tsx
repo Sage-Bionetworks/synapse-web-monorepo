@@ -13,14 +13,15 @@ export const handleFilesToParticipants = async (
   event: CustomControlCallbackData,
 ) => {
   // add filter for files perspective, to show participants associated to the selected files only.
-  const idColIndex = event.data?.columnModels?.findIndex(
-    (cm) => cm.name === 'fileId',
-  )
-
   const token = await SynapseClient.getAccessTokenFromCookie()
+
   const queryResultBundle = await SynapseClient.getFullQueryTableResults(
     {
       ...event.request!,
+      query: {
+        ...event.request?.query,
+        sql: `SELECT fileId FROM ${event.request?.entityId}`,
+      },
       partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     },
     token,
@@ -33,7 +34,7 @@ export const handleFilesToParticipants = async (
     operator: ColumnSingleValueFilterOperator.IN,
     isDefiningCondition: true,
     values: queryResultBundle.queryResult?.queryResults.rows.map(
-      (row) => row.values[idColIndex!]!,
+      (row) => row.values[0!]!,
     )!,
   }
   localStorage.setItem(
