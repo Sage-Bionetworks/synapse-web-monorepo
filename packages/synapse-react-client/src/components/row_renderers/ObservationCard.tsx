@@ -2,7 +2,7 @@ import React from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import { ShowMore } from './utils'
 import { UnitType } from 'dayjs'
-import { Skeleton } from '@mui/material'
+import { Link, Skeleton } from '@mui/material'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { UserBadge } from '../UserCard/UserBadge'
 
@@ -16,6 +16,7 @@ export type ObservationCardSchema = {
   timeUnits: number
   text: number
   tag: number
+  doi: number
 }
 
 export type ObservationCardProps = {
@@ -39,6 +40,7 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   const timeUnits = data[schema.timeUnits] as UnitType
   const text = data[schema.text]
   const tag = data[schema.tag]
+  const doi = data[schema.doi]
   return (
     <div
       className={`ObservationCard ${
@@ -58,6 +60,13 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
       {text && (
         <div className="ObservationCard__text">
           <ShowMore summary={text} />
+        </div>
+      )}
+      {doi && (
+        <div className="ObservationCard__doi">
+          <Link href={doi} target="_blank">
+            DOI
+          </Link>
         </div>
       )}
       <div className="ObservationCard__tags">

@@ -33,6 +33,7 @@ const OBSERVATION_SUBMITTER_NAME_COLUMN_NAME = 'submittername'
 const OBSERVATION_TEXT_COLUMN_NAME = 'text'
 const OBSERVATION_TYPE_COLUMN_NAME = 'tag'
 const OBSERVATION_SUBMITTER_USER_ID_COLUMN_NAME = 'submitteruserid'
+const OBSERVATION_DOI_COLUMN_NAME = 'doi'
 
 export type TimelinePlotProps = {
   sql: string
@@ -113,6 +114,11 @@ export const TimelinePlot = ({
     OBSERVATION_TEXT_COLUMN_NAME,
     eventsData,
   )
+  const observationDoiIndex = getHeaderIndex(
+    OBSERVATION_DOI_COLUMN_NAME,
+    eventsData,
+  )
+
   const observationTypeIndex = getHeaderIndex(
     OBSERVATION_TYPE_COLUMN_NAME,
     eventsData,
@@ -128,6 +134,7 @@ export const TimelinePlot = ({
     text: observationTextIndex,
     time: observationTimeIndex,
     timeUnits: observationTimeUnitIndex,
+    doi: observationDoiIndex,
   }
 
   // filter the phases query response data to the specific species
