@@ -572,6 +572,7 @@ button.SRC-roundBorder {
 .SRC-userCard {
   display: inline-flex;
   align-items: center;
+  min-width: 350px;
   .SRC-cardContent {
     width: 100%;
     overflow: hidden;
