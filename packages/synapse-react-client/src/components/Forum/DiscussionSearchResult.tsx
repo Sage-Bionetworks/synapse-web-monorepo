@@ -20,6 +20,7 @@ import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { UserBadge } from '../UserCard/UserBadge'
+import { useGetUserProfile } from '../../synapse-queries'
 
 export const getMessage = async (url: string): Promise<string> => {
   const response = await fetch(url, {
@@ -54,10 +55,10 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
     if (replyId) {
       const reply = await getReply(replyId, accessToken)
       newMessageUrl = await getReplyMessageUrl(reply.messageKey, accessToken)
-      setReplyAuthor(await getUserProfileById(accessToken, reply.createdBy))
+      setReplyAuthor(await getUserProfileById(reply.createdBy))
       setReplyBundle(reply)
     } else {
-      setReplyAuthor(await getUserProfileById(accessToken, thread.createdBy))
+      setReplyAuthor(await getUserProfileById(thread.createdBy))
       newMessageUrl = await getThreadMessageUrl(thread.messageKey, accessToken)
     }
     setMessageUrl(await getMessage(newMessageUrl.messageUrl))

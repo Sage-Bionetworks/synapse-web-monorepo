@@ -115,10 +115,7 @@ export async function extractPlotDataArray(
       columnType === ColumnTypeEnum.USERID ||
       columnType === ColumnTypeEnum.USERID_LIST
     ) {
-      const response = await SynapseClient.getGroupHeadersBatch(
-        filteredValues,
-        accessToken,
-      )
+      const response = await SynapseClient.getGroupHeadersBatch(filteredValues)
       for (const header of response.children) {
         map.set(header.ownerId, header.userName)
       }
