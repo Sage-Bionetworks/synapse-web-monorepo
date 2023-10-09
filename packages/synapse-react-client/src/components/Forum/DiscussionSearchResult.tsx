@@ -20,7 +20,6 @@ import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { UserBadge } from '../UserCard/UserBadge'
-import { useGetUserProfile } from '../../synapse-queries'
 
 export const getMessage = async (url: string): Promise<string> => {
   const response = await fetch(url, {
