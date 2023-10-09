@@ -756,8 +756,8 @@ export const getUserProfile = (accessToken: string | undefined) => {
  * https://rest-docs.synapse.org/rest/GET/userProfile.html
  */
 export const getUserProfileById = (
-  accessToken: string | undefined,
   ownerId: string,
+  accessToken?: string | undefined,
 ) => {
   return doGet<UserProfile>(
     USER_PROFILE_ID(ownerId),
@@ -853,11 +853,10 @@ export const postUserGroupHeadersWithAlias = (aliases: string[]) => {
  */
 export const getGroupHeadersBatch = (
   ids: string[],
-  accessToken?: string,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
     USER_GROUP_HEADERS_BATCH + `?ids=${ids.join(',')}`,
-    accessToken,
+    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }

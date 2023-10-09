@@ -58,6 +58,7 @@ export function UserBadge(props: UserBadgeProps) {
 
   const { data: userGroupHeader } = useGetUserGroupHeader(userId!, {
     enabled: Boolean(userId),
+    staleTime: 1000 * 60 * 15, // 15 min
   })
 
   // To show certification/validation status, we need the full bundle. Only fetch if these should be shown.

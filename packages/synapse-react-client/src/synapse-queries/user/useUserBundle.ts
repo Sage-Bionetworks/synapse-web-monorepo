@@ -96,7 +96,7 @@ export function useGetUserProfile(
 
   return useQuery<UserProfile, SynapseClientError>(
     queryKey,
-    () => SynapseClient.getUserProfileById(accessToken, principalId),
+    () => SynapseClient.getUserProfileById(principalId, accessToken),
     {
       ...options,
 
