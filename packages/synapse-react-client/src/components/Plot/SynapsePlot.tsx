@@ -119,7 +119,14 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
       yArray.push(rowValues[j])
     }
   }
-  return <Plot layout={layout} data={plotData} config={config} />
+  return (
+    <Plot
+      style={{ width: '100%', height: '450px' }}
+      layout={layout}
+      data={plotData}
+      config={config}
+    />
+  )
 }
 
 export default SynapsePlot
