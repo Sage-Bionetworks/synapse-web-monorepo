@@ -29,7 +29,7 @@ export const individualsView: SynapseConfig = {
       minFacetColumn: 'minAge',
       maxFacetColumn: 'maxAge',
     },
-    additionalPlots: [
+    synapsePlots: [
       {
         query: `SELECT cast((case when maxAge >= 0 and maxAge < 10  then ' 0 - 10 ' 
         when maxAge >= 10 and maxAge < 20  then ' 10 - 20 '

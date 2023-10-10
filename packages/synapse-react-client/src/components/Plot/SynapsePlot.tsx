@@ -3,8 +3,8 @@ import React from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SynapseConstants } from '../../utils'
 import {
+  FacetColumnRequest,
   QueryBundleRequest,
-  QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
@@ -12,15 +12,16 @@ const Plot = createPlotlyComponent(Plotly)
 
 export type SynapsePlotWidgetParams = {
   query: string //sql string
-  title: string //plot title
-  xtitle: string // x-axis title
-  ytitle: string // y-axis title
+  title?: string //plot title
+  xtitle?: string // x-axis title
+  ytitle?: string // y-axis title
   type: string // Plotly PlotType
-  xaxistype: string // Plotly AxisType
+  xaxistype?: string // Plotly AxisType
   showlegend?: string // sets the legend visibility ('true' | 'false')
   horizontal?: string // sets the if a bar chart should be horizontal or vertical ('true' | 'false')
   barmode?: string // Plotly barmode ('stack' | 'group' | 'overlay' | 'relative')
-  additionalFilters?: QueryFilter[] // Usually undefined, but is set in the context of a QueryWrapperPlotNav.additionalPlots
+  selectedFacets?: FacetColumnRequest[] // Usually undefined, but is set in the context of a QueryWrapperPlotNav synapsePlots
+  displayModebar?: string // sets the modebar visibility ('true' | 'false')
 }
 export type SynapsePlotProps = {
   widgetparamsMapped: SynapsePlotWidgetParams
@@ -30,14 +31,14 @@ const toBoolean = (v?: string) => {
   return v ? v.toLowerCase() == 'true' : false
 }
 export const SynapsePlot = (props: SynapsePlotProps) => {
-  const { query, additionalFilters } = props.widgetparamsMapped
+  const { query, selectedFacets } = props.widgetparamsMapped
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     entityId: parseEntityIdFromSqlStatement(query),
     query: {
       sql: query,
-      additionalFilters,
+      selectedFacets,
     },
   }
   const { data: queryData, isLoading } =
@@ -46,10 +47,23 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
     return <></>
   }
 
-  const { title, xtitle, ytitle, type, xaxistype, showlegend, barmode } =
-    props.widgetparamsMapped
+  const {
+    title,
+    xtitle,
+    ytitle,
+    type,
+    xaxistype,
+    showlegend,
+    barmode,
+    horizontal,
+    displayModebar,
+  } = props.widgetparamsMapped
   const isShowLegend = toBoolean(showlegend)
-  const isHorizontal = toBoolean(props.widgetparamsMapped.horizontal)
+  const isHorizontal = toBoolean(horizontal)
+  const isDisplayModebar = toBoolean(displayModebar)
+  const config: Partial<Plotly.Config> = {
+    displayModeBar: isDisplayModebar,
+  }
   const layout: Partial<Plotly.Layout> = {
     showlegend: isShowLegend,
     title,
@@ -98,7 +112,7 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
       yArray.push(rowValues[j])
     }
   }
-  return <Plot layout={layout} data={plotData} />
+  return <Plot layout={layout} data={plotData} config={config} />
 }
 
 export default SynapsePlot
