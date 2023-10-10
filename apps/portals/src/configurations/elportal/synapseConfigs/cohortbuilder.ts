@@ -29,6 +29,32 @@ export const individualsView: SynapseConfig = {
       minFacetColumn: 'minAge',
       maxFacetColumn: 'maxAge',
     },
+    additionalPlots: [
+      {
+        query: `SELECT cast((case when maxAge >= 0 and maxAge < 10  then ' 0 - 10 ' 
+        when maxAge >= 10 and maxAge < 20  then ' 10 - 20 '
+        when maxAge >= 20 and maxAge < 30  then ' 20 - 30 ' 
+        when maxAge >= 30 and maxAge < 40  then ' 30 - 40 ' 
+        when maxAge >= 40 and maxAge < 50  then ' 40 - 50 ' 
+        when maxAge >= 50 and maxAge < 60  then ' 50 - 60 '
+        when maxAge >= 60 and maxAge < 70  then ' 60 - 70 ' 
+        when maxAge >= 70 and maxAge < 80  then ' 70 - 80 '
+        when maxAge >= 80 and maxAge < 90  then ' 80 - 90 '
+        when maxAge >= 90 and maxAge < 100  then ' 90 - 100 '
+        else '100+' END) AS STRING) AS bucket,
+              count(*) AS totalWithinRange
+                FROM syn52234652
+                GROUP BY 1
+                ORDER BY bucket`,
+        // title: 'Individuals',
+        type: 'bar',
+        // xaxistype: ''
+        xtitle: 'Age',
+        ytitle: 'Participants',
+        // barmode: ''
+        showlegend: 'false',
+      },
+    ],
     tableConfiguration: {
       showAccessColumn: false,
       showDownloadColumn: false,

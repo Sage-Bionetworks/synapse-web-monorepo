@@ -2,37 +2,42 @@ import Plotly, { AxisType, PlotType } from 'plotly.js-basic-dist'
 import React from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SynapseConstants } from '../../utils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  QueryFilter,
+} from '@sage-bionetworks/synapse-types'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 const Plot = createPlotlyComponent(Plotly)
 
 export type SynapsePlotWidgetParams = {
-  query: string
-  title: string
-  xtitle: string
-  ytitle: string
-  type: string
-  xaxistype: string
-  showlegend: string
-  horizontal: string
-  barmode?: string
+  query: string //sql string
+  title: string //plot title
+  xtitle: string // x-axis title
+  ytitle: string // y-axis title
+  type: string // Plotly PlotType
+  xaxistype: string // Plotly AxisType
+  showlegend?: string // sets the legend visibility ('true' | 'false')
+  horizontal?: string // sets the if a bar chart should be horizontal or vertical ('true' | 'false')
+  barmode?: string // Plotly barmode ('stack' | 'group' | 'overlay' | 'relative')
+  additionalFilters?: QueryFilter[] // Usually undefined, but is set in the context of a QueryWrapperPlotNav.additionalPlots
 }
 export type SynapsePlotProps = {
   widgetparamsMapped: SynapsePlotWidgetParams
 }
 
-const toBoolean = (v: string) => {
+const toBoolean = (v?: string) => {
   return v ? v.toLowerCase() == 'true' : false
 }
 export const SynapsePlot = (props: SynapsePlotProps) => {
-  const { query } = props.widgetparamsMapped
+  const { query, additionalFilters } = props.widgetparamsMapped
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     entityId: parseEntityIdFromSqlStatement(query),
     query: {
       sql: query,
+      additionalFilters,
     },
   }
   const { data: queryData, isLoading } =

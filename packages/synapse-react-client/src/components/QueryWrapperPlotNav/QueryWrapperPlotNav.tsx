@@ -37,6 +37,9 @@ import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { TableQueryDownloadConfirmation } from '../download_list'
 import { useAtomValue } from 'jotai'
 import { isLoadingNewBundleAtom } from '../QueryWrapper/QueryWrapper'
+import QueryWrapperSynapsePlot, {
+  QueryWrapperSynapsePlotProps,
+} from './QueryWrapperSynapsePlot'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -59,6 +62,7 @@ type QueryWrapperPlotNavOwnProps = {
   >
   facetsToPlot?: string[]
   availableFacets?: FacetFilterControlsProps['availableFacets']
+  additionalPlots?: QueryWrapperSynapsePlotProps[]
   defaultColumn?: string
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
@@ -109,6 +113,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'fileIdColumnName'
   | 'fileNameColumnName'
   | 'fileVersionColumnName'
+  | 'additionalPlots'
 > & {
   isFullTextSearchEnabled: boolean
   remount: () => void
@@ -133,6 +138,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     customControls,
     remount,
     isFullTextSearchEnabled,
+    additionalPlots,
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
@@ -203,6 +209,10 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                 <FacetFilterControls availableFacets={availableFacets} />
               </>
             )}
+            {additionalPlots &&
+              additionalPlots.map((plotProps, index) => {
+                return <QueryWrapperSynapsePlot key={index} {...plotProps} />
+              })}
             <FacetNav facetsToPlot={facetsToPlot} />
             <FilterAndView
               tableConfiguration={tableConfiguration}
