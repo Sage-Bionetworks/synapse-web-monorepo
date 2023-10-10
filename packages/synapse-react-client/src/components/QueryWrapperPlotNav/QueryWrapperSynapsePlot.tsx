@@ -2,7 +2,10 @@ import React, { useMemo } from 'react'
 import { SynapsePlot } from '../Plot'
 import { useQueryContext } from '../QueryContext'
 import { SynapsePlotWidgetParams } from '../Plot/SynapsePlot'
-import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
+import {
+  FacetColumnRequest,
+  QueryFilter,
+} from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 
 export type QueryWrapperSynapsePlotProps = Omit<
@@ -16,11 +19,12 @@ export default function QueryWrapperSynapsePlot(
   const { currentQueryRequest } = useQueryContext()
   const { title } = props
   const widgetParamsMapped: SynapsePlotWidgetParams = useMemo(() => {
-    const { selectedFacets } = currentQueryRequest.query
+    const { selectedFacets, additionalFilters } = currentQueryRequest.query
     return {
       ...props,
       title: undefined, // we are handling the plot title here in this component
       selectedFacets: selectedFacets as FacetColumnRequest[],
+      additionalFilters: additionalFilters as QueryFilter[],
       displayModebar: 'false',
     }
   }, [currentQueryRequest, props])

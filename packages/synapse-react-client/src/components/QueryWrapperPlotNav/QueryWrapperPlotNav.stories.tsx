@@ -44,7 +44,7 @@ export const Cards: Story = {
     synapsePlots: [
       {
         query:
-          'SELECT resourceType, count(resourceType) FROM syn26438037 GROUP BY resourceType',
+          'SELECT resourceType, count(resourceType) FROM syn26438037 GROUP BY resourceType ',
         type: 'bar',
         title: 'Resource Type',
       },

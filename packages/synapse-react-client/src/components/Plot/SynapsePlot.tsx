@@ -5,9 +5,11 @@ import { SynapseConstants } from '../../utils'
 import {
   FacetColumnRequest,
   QueryBundleRequest,
+  QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
+import { Skeleton } from '@mui/material'
 const Plot = createPlotlyComponent(Plotly)
 
 export type SynapsePlotWidgetParams = {
@@ -21,6 +23,7 @@ export type SynapsePlotWidgetParams = {
   horizontal?: string // sets the if a bar chart should be horizontal or vertical ('true' | 'false')
   barmode?: string // Plotly barmode ('stack' | 'group' | 'overlay' | 'relative')
   selectedFacets?: FacetColumnRequest[] // Usually undefined, but is set in the context of a QueryWrapperPlotNav synapsePlots
+  additionalFilters?: QueryFilter[] // Usually undefined, but is set in the context of a QueryWrapperPlotNav synapsePlots
   displayModebar?: string // sets the modebar visibility ('true' | 'false')
 }
 export type SynapsePlotProps = {
@@ -31,7 +34,7 @@ const toBoolean = (v?: string) => {
   return v ? v.toLowerCase() == 'true' : false
 }
 export const SynapsePlot = (props: SynapsePlotProps) => {
-  const { query, selectedFacets } = props.widgetparamsMapped
+  const { query, selectedFacets, additionalFilters } = props.widgetparamsMapped
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
@@ -39,11 +42,15 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
     query: {
       sql: query,
       selectedFacets,
+      additionalFilters,
     },
   }
   const { data: queryData, isLoading } =
     useGetFullTableQueryResults(queryRequest)
-  if (isLoading || !queryData) {
+  if (isLoading) {
+    return <Skeleton width={'100%'} height={'200px'} />
+  }
+  if (!queryData) {
     return <></>
   }
 
