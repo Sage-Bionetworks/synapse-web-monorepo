@@ -16,9 +16,9 @@ import { QueryWrapperSynapsePlotProps } from 'synapse-react-client/src/component
 import { SynapseUtilityFunctions } from 'synapse-react-client'
 
 const rgbIndex = 1
-const getPlotConfig = (tableId: string, title: string) => {
+const getPlotConfig = (tableId: string) => {
   const plotConfig: QueryWrapperSynapsePlotProps = {
-    title: title,
+    title: 'Age Distribution',
     query: `SELECT cast((case when maxAge >= 0 and maxAge < 10  then ' 0 - 10 ' 
     when maxAge >= 10 and maxAge < 20  then ' 10 - 20 '
     when maxAge >= 20 and maxAge < 30  then ' 20 - 30 ' 
@@ -36,8 +36,8 @@ const getPlotConfig = (tableId: string, title: string) => {
             ORDER BY bucket`,
     type: 'bar',
     // xaxistype: ''
-    xtitle: 'Age',
-    ytitle: 'Count',
+    xtitle: 'Age (years)',
+    ytitle: '',
     // barmode: ''
     showlegend: 'false',
   }
@@ -59,7 +59,7 @@ export const individualsView: SynapseConfig = {
       minFacetColumn: 'minAge',
       maxFacetColumn: 'maxAge',
     },
-    synapsePlots: [getPlotConfig(participantsTableId, 'Participants')],
+    synapsePlots: [getPlotConfig(participantsTableId)],
     tableConfiguration: {
       showAccessColumn: false,
       showDownloadColumn: false,
@@ -118,7 +118,7 @@ export const filesView: SynapseConfig = {
       minFacetColumn: 'minAge',
       maxFacetColumn: 'maxAge',
     },
-    synapsePlots: [getPlotConfig(filesTableId, 'Files')],
+    synapsePlots: [getPlotConfig(filesTableId)],
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,
