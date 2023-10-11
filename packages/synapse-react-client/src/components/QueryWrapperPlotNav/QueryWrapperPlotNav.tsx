@@ -62,7 +62,7 @@ type QueryWrapperPlotNavOwnProps = {
   >
   facetsToPlot?: string[]
   availableFacets?: FacetFilterControlsProps['availableFacets']
-  synapsePlots?: QueryWrapperSynapsePlotProps[]
+  customPlots?: QueryWrapperSynapsePlotProps[]
   defaultColumn?: string
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
@@ -113,7 +113,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'fileIdColumnName'
   | 'fileNameColumnName'
   | 'fileVersionColumnName'
-  | 'synapsePlots'
+  | 'customPlots'
 > & {
   isFullTextSearchEnabled: boolean
   remount: () => void
@@ -138,7 +138,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     customControls,
     remount,
     isFullTextSearchEnabled,
-    synapsePlots,
+    customPlots,
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
@@ -209,9 +209,9 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                 <FacetFilterControls availableFacets={availableFacets} />
               </>
             )}
-            {synapsePlots && (
+            {customPlots && (
               <div className="SynapsePlots">
-                {synapsePlots.map((plotProps, index) => {
+                {customPlots.map((plotProps, index) => {
                   return <QueryWrapperSynapsePlot key={index} {...plotProps} />
                 })}
               </div>

@@ -59,7 +59,7 @@ export const individualsView: SynapseConfig = {
       minFacetColumn: 'minAge',
       maxFacetColumn: 'maxAge',
     },
-    synapsePlots: [getPlotConfig(participantsTableId)],
+    customPlots: [getPlotConfig(participantsTableId)],
     tableConfiguration: {
       showAccessColumn: false,
       showDownloadColumn: false,
@@ -118,7 +118,7 @@ export const filesView: SynapseConfig = {
       minFacetColumn: 'minAge',
       maxFacetColumn: 'maxAge',
     },
-    synapsePlots: [getPlotConfig(filesTableId)],
+    customPlots: [getPlotConfig(filesTableId)],
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,
