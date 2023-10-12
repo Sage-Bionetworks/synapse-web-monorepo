@@ -23,8 +23,8 @@ export type FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE =
 export type FacetColumnRangeRequest = {
   concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE
   columnName: string // The name of the faceted column
-  min?: string
-  max?: string
+  min?: number
+  max?: number
   /* To filter on a jsonSubColumn of a JSON column, provide the jsonPath of the sub-column */
   jsonPath?: string
 }

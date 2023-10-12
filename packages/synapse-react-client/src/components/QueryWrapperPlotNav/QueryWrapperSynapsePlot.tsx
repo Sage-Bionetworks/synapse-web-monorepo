@@ -20,13 +20,14 @@ export type QueryWrapperSynapsePlotProps = Pick<
 
 export type QueryWrapperSynapsePlotRowClickEvent = {
   row: Row
-} & Pick<QueryContextType, 'getCurrentQueryRequest' | 'executeQueryRequest'>
+  queryContext: QueryContextType
+}
 
 export default function QueryWrapperSynapsePlot(
   props: QueryWrapperSynapsePlotProps,
 ) {
-  const { currentQueryRequest, getCurrentQueryRequest, executeQueryRequest } =
-    useQueryContext()
+  const queryContext = useQueryContext()
+  const { currentQueryRequest } = queryContext
   const { title, onCustomPlotClick } = props
 
   const widgetParamsMapped: SynapsePlotWidgetParams = useMemo(() => {
@@ -42,16 +43,10 @@ export default function QueryWrapperSynapsePlot(
     return {
       selectedFacets: selectedFacets as FacetColumnRequest[],
       additionalFilters: additionalFilters as QueryFilter[],
-      executeQueryRequest,
-      getCurrentQueryRequest,
       onCustomPlotClick,
+      queryContext,
     }
-  }, [
-    currentQueryRequest.query,
-    executeQueryRequest,
-    getCurrentQueryRequest,
-    onCustomPlotClick,
-  ])
+  }, [currentQueryRequest.query, onCustomPlotClick, queryContext])
   return (
     <div className="SynapsePlot">
       {title && (

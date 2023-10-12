@@ -39,7 +39,8 @@ export default meta
 type Story = StoryObj<typeof meta>
 const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
   // window.alert(`Handling click on this row: ${JSON.stringify(event.row)}`)
-  const requestCopy = event.getCurrentQueryRequest()
+  const { getCurrentQueryRequest, executeQueryRequest } = event.queryContext
+  const requestCopy = getCurrentQueryRequest()
   requestCopy.query.additionalFilters = [
     ...(requestCopy.query.additionalFilters || []),
     {
@@ -50,7 +51,7 @@ const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
       values: [event.row.values[0] as string],
     },
   ]
-  event.executeQueryRequest(requestCopy)
+  executeQueryRequest(requestCopy)
 }
 export const Cards: Story = {
   args: {

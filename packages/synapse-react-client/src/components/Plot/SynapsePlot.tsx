@@ -12,7 +12,7 @@ import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunction
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 import { Skeleton } from '@mui/material'
 import { QueryWrapperSynapsePlotRowClickEvent } from '../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
-import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
+import { QueryContextType } from '../QueryContext'
 const Plot = createPlotlyComponent(Plotly)
 
 export type SynapsePlotWidgetParams = {
@@ -32,9 +32,8 @@ export type SynapsePlotWidgetParams = {
 export type QueryWrapperPlotNavCustomPlotParams = {
   selectedFacets: FacetColumnRequest[]
   additionalFilters: QueryFilter[]
-  onCustomPlotClick: (event: QueryWrapperSynapsePlotRowClickEvent) => void
-  getCurrentQueryRequest: () => QueryBundleRequest
-  executeQueryRequest: ImmutableTableQueryResult['setQuery']
+  onCustomPlotClick?: (event: QueryWrapperSynapsePlotRowClickEvent) => void
+  queryContext?: QueryContextType
 }
 export type SynapsePlotProps = {
   widgetparamsMapped: SynapsePlotWidgetParams
@@ -46,13 +45,8 @@ const toBoolean = (v?: string) => {
 }
 export const SynapsePlot = (props: SynapsePlotProps) => {
   const { query } = props.widgetparamsMapped
-  const {
-    selectedFacets,
-    additionalFilters,
-    onCustomPlotClick,
-    getCurrentQueryRequest,
-    executeQueryRequest,
-  } = props.customPlotParams ?? {}
+  const { selectedFacets, additionalFilters, onCustomPlotClick, queryContext } =
+    props.customPlotParams ?? {}
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
@@ -144,15 +138,14 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
   let onPlotClick:
     | ((event: Readonly<Plotly.PlotMouseEvent>) => void)
     | undefined
-  if (onCustomPlotClick && executeQueryRequest && getCurrentQueryRequest) {
+  if (onCustomPlotClick && queryContext) {
     onPlotClick = eventData => {
       const selectedRow = JSON.parse(
         eventData.points[0].customdata as string,
       ) as Row
       onCustomPlotClick({
         row: selectedRow,
-        executeQueryRequest,
-        getCurrentQueryRequest,
+        queryContext,
       })
     }
   }

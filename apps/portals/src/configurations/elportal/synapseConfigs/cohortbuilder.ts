@@ -12,10 +12,40 @@ import {
   handleFilesToParticipants,
   handleSelectedFilesToParticipants,
 } from './handleFilesToParticipants'
-import { QueryWrapperSynapsePlotProps } from 'synapse-react-client/src/components/QueryWrapperPlotNav/QueryWrapperSynapsePlot'
+import {
+  QueryWrapperSynapsePlotProps,
+  QueryWrapperSynapsePlotRowClickEvent,
+} from 'synapse-react-client/src/components/QueryWrapperPlotNav/QueryWrapperSynapsePlot'
 import { SynapseUtilityFunctions } from 'synapse-react-client'
 
 const rgbIndex = 1
+
+const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
+  window.alert(`Handling click on this row: ${JSON.stringify(event.row)}`)
+  const { getCurrentQueryRequest, executeQueryRequest } = event.queryContext
+  let newMin: number | undefined = undefined,
+    newMax: number | undefined = undefined
+  const value = event.row.values[0] as string
+  const values = value.match(/\d+/g)
+  if (values && values.length > 0) {
+    newMin = parseInt(values[0])
+    if (values.length > 1) {
+      newMax = parseInt(values[1])
+    }
+  }
+  const requestCopy = getCurrentQueryRequest()
+  requestCopy.query.selectedFacets = [
+    ...(requestCopy.query.selectedFacets || []),
+    {
+      columnName: 'maxAge',
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+      min: newMin,
+      max: newMax,
+    },
+  ]
+  executeQueryRequest(requestCopy)
+}
 const getPlotConfig = (tableId: string) => {
   const plotConfig: QueryWrapperSynapsePlotProps = {
     title: 'Age Distribution',
@@ -40,6 +70,7 @@ const getPlotConfig = (tableId: string) => {
     ytitle: '',
     // barmode: ''
     showlegend: 'false',
+    onCustomPlotClick: handlePlotClick,
   }
   return plotConfig
 }
