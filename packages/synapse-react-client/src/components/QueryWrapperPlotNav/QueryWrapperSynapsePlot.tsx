@@ -23,6 +23,12 @@ export type QueryWrapperSynapsePlotRowClickEvent = {
   queryContext: QueryContextType
 }
 
+/**
+ * This component wraps a SynapsePlot.  It passes in the current query context, and has a custom
+ * "title" style so that it looks like it belongs in the QueryWrapperPlotNav plots.
+ * @param props
+ * @returns
+ */
 export default function QueryWrapperSynapsePlot(
   props: QueryWrapperSynapsePlotProps,
 ) {
