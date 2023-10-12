@@ -21,7 +21,7 @@ import { SynapseUtilityFunctions } from 'synapse-react-client'
 const rgbIndex = 1
 
 const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
-  window.alert(`Handling click on this row: ${JSON.stringify(event.row)}`)
+  // window.alert(`Handling click on this row: ${JSON.stringify(event.row)}`)
   const { setRangeFacetValue } = event.queryContext
   let newMin: string | undefined = undefined,
     newMax: string | undefined = undefined
