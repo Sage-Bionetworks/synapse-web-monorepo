@@ -6,10 +6,13 @@ import {
   FacetColumnRequest,
   QueryBundleRequest,
   QueryFilter,
+  Row,
 } from '@sage-bionetworks/synapse-types'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 import { Skeleton } from '@mui/material'
+import { QueryWrapperSynapsePlotRowClickEvent } from '../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
+import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 const Plot = createPlotlyComponent(Plotly)
 
 export type SynapsePlotWidgetParams = {
@@ -22,19 +25,34 @@ export type SynapsePlotWidgetParams = {
   showlegend?: string // sets the legend visibility ('true' | 'false')
   horizontal?: string // sets the if a bar chart should be horizontal or vertical ('true' | 'false')
   barmode?: string // Plotly barmode ('stack' | 'group' | 'overlay' | 'relative')
-  selectedFacets?: FacetColumnRequest[] // Usually undefined, but is set in the context of a QueryWrapperPlotNav synapsePlots
-  additionalFilters?: QueryFilter[] // Usually undefined, but is set in the context of a QueryWrapperPlotNav synapsePlots
   displayModebar?: string // sets the modebar visibility ('true' | 'false')
+}
+
+// QueryWrapperPlotNav customPlot parameters, undefined otherwise
+export type QueryWrapperPlotNavCustomPlotParams = {
+  selectedFacets: FacetColumnRequest[]
+  additionalFilters: QueryFilter[]
+  onCustomPlotClick: (event: QueryWrapperSynapsePlotRowClickEvent) => void
+  getCurrentQueryRequest: () => QueryBundleRequest
+  executeQueryRequest: ImmutableTableQueryResult['setQuery']
 }
 export type SynapsePlotProps = {
   widgetparamsMapped: SynapsePlotWidgetParams
+  customPlotParams?: QueryWrapperPlotNavCustomPlotParams
 }
 
 const toBoolean = (v?: string) => {
   return v ? v.toLowerCase() == 'true' : false
 }
 export const SynapsePlot = (props: SynapsePlotProps) => {
-  const { query, selectedFacets, additionalFilters } = props.widgetparamsMapped
+  const { query } = props.widgetparamsMapped
+  const {
+    selectedFacets,
+    additionalFilters,
+    onCustomPlotClick,
+    getCurrentQueryRequest,
+    executeQueryRequest,
+  } = props.customPlotParams ?? {}
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
@@ -104,8 +122,9 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
       orientation,
       name: headers[i + 1].name,
       type: type.toLowerCase() as PlotType,
-      x: [] as Plotly.Datum[],
-      y: [] as Plotly.Datum[],
+      x: [],
+      y: [],
+      customdata: [],
     }
   }
   // grab all the data
@@ -115,16 +134,36 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
       const rowValues = row.values
       const xArray = plotData[j - 1]!.x as Plotly.Datum[]
       const yArray = plotData[j - 1]!.y as Plotly.Datum[]
+      const customdata = plotData[j - 1]!.customdata as Plotly.Datum[]
       xArray.push(rowValues[0])
       yArray.push(rowValues[j])
+      customdata.push(JSON.stringify(row))
     }
   }
+
+  let onPlotClick:
+    | ((event: Readonly<Plotly.PlotMouseEvent>) => void)
+    | undefined
+  if (onCustomPlotClick && executeQueryRequest && getCurrentQueryRequest) {
+    onPlotClick = eventData => {
+      const selectedRow = JSON.parse(
+        eventData.points[0].customdata as string,
+      ) as Row
+      onCustomPlotClick({
+        row: selectedRow,
+        executeQueryRequest,
+        getCurrentQueryRequest,
+      })
+    }
+  }
+
   return (
     <Plot
       style={{ width: '100%', height: '450px' }}
       layout={layout}
       data={plotData}
       config={config}
+      onClick={onPlotClick}
     />
   )
 }

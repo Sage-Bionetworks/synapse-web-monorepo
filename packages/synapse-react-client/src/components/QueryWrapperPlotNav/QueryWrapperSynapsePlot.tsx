@@ -1,34 +1,57 @@
 import React, { useMemo } from 'react'
 import { SynapsePlot } from '../Plot'
-import { useQueryContext } from '../QueryContext'
-import { SynapsePlotWidgetParams } from '../Plot/SynapsePlot'
+import { QueryContextType, useQueryContext } from '../QueryContext'
+import {
+  QueryWrapperPlotNavCustomPlotParams,
+  SynapsePlotWidgetParams,
+} from '../Plot/SynapsePlot'
 import {
   FacetColumnRequest,
   QueryFilter,
+  Row,
 } from '@sage-bionetworks/synapse-types'
 import { Typography } from '@mui/material'
 
-export type QueryWrapperSynapsePlotProps = Omit<
-  SynapsePlotWidgetParams,
-  'selectedFacets'
->
+export type QueryWrapperSynapsePlotProps = Pick<
+  QueryWrapperPlotNavCustomPlotParams,
+  'onCustomPlotClick'
+> &
+  Omit<SynapsePlotWidgetParams, 'selectedFacets' | 'additionalFilters'>
+
+export type QueryWrapperSynapsePlotRowClickEvent = {
+  row: Row
+} & Pick<QueryContextType, 'getCurrentQueryRequest' | 'executeQueryRequest'>
 
 export default function QueryWrapperSynapsePlot(
   props: QueryWrapperSynapsePlotProps,
 ) {
-  const { currentQueryRequest } = useQueryContext()
-  const { title } = props
+  const { currentQueryRequest, getCurrentQueryRequest, executeQueryRequest } =
+    useQueryContext()
+  const { title, onCustomPlotClick } = props
+
   const widgetParamsMapped: SynapsePlotWidgetParams = useMemo(() => {
-    const { selectedFacets, additionalFilters } = currentQueryRequest.query
     return {
       ...props,
       title: undefined, // we are handling the plot title here in this component
-      selectedFacets: selectedFacets as FacetColumnRequest[],
-      additionalFilters: additionalFilters as QueryFilter[],
       displayModebar: 'false',
     }
-  }, [currentQueryRequest, props])
+  }, [props])
 
+  const customPlotParams: QueryWrapperPlotNavCustomPlotParams = useMemo(() => {
+    const { selectedFacets, additionalFilters } = currentQueryRequest.query
+    return {
+      selectedFacets: selectedFacets as FacetColumnRequest[],
+      additionalFilters: additionalFilters as QueryFilter[],
+      executeQueryRequest,
+      getCurrentQueryRequest,
+      onCustomPlotClick,
+    }
+  }, [
+    currentQueryRequest.query,
+    executeQueryRequest,
+    getCurrentQueryRequest,
+    onCustomPlotClick,
+  ])
   return (
     <div className="SynapsePlot">
       {title && (
@@ -43,7 +66,10 @@ export default function QueryWrapperSynapsePlot(
           {title}
         </Typography>
       )}
-      <SynapsePlot widgetparamsMapped={widgetParamsMapped} />
+      <SynapsePlot
+        widgetparamsMapped={widgetParamsMapped}
+        customPlotParams={customPlotParams}
+      />
     </div>
   )
 }

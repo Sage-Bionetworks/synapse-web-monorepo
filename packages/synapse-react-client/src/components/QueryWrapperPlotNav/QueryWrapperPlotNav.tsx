@@ -40,6 +40,7 @@ import { isLoadingNewBundleAtom } from '../QueryWrapper/QueryWrapper'
 import QueryWrapperSynapsePlot, {
   QueryWrapperSynapsePlotProps,
 } from './QueryWrapperSynapsePlot'
+import { QueryWrapperPlotNavCustomPlotParams } from '../Plot/SynapsePlot'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -68,6 +69,7 @@ type QueryWrapperPlotNavOwnProps = {
   lockedColumn?: QueryWrapperProps['lockedColumn']
   onViewSharingSettingsClicked?: (benefactorId: string) => void
 } & Omit<TopLevelControlsProps, 'entityId'> &
+  Pick<QueryWrapperPlotNavCustomPlotParams, 'onCustomPlotClick'> &
   Pick<QueryWrapperProps, 'isRowSelectionVisible' | 'rowSelectionPrimaryKey'> &
   Pick<
     QueryVisualizationWrapperProps,
