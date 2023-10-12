@@ -40,8 +40,8 @@ export type SynapsePlotProps = {
   customPlotParams?: QueryWrapperPlotNavCustomPlotParams
 }
 
-const toBoolean = (v?: string) => {
-  return v ? v.toLowerCase() == 'true' : false
+const toBoolean = (v?: string, fallbackValue?: boolean) => {
+  return v ? v.toLowerCase() == 'true' : fallbackValue ?? false
 }
 export const SynapsePlot = (props: SynapsePlotProps) => {
   const { query } = props.widgetparamsMapped
@@ -77,9 +77,9 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
     horizontal,
     displayModebar,
   } = props.widgetparamsMapped
-  const isShowLegend = toBoolean(showlegend)
-  const isHorizontal = toBoolean(horizontal)
-  const isDisplayModebar = toBoolean(displayModebar)
+  const isShowLegend = toBoolean(showlegend, true)
+  const isHorizontal = toBoolean(horizontal, false)
+  const isDisplayModebar = toBoolean(displayModebar, false)
   const config: Partial<Plotly.Config> = {
     displayModeBar: isDisplayModebar,
   }
@@ -134,7 +134,6 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
       customdata.push(JSON.stringify(row))
     }
   }
-
   let onPlotClick:
     | ((event: Readonly<Plotly.PlotMouseEvent>) => void)
     | undefined
