@@ -22,29 +22,20 @@ const rgbIndex = 1
 
 const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
   window.alert(`Handling click on this row: ${JSON.stringify(event.row)}`)
-  const { getCurrentQueryRequest, executeQueryRequest } = event.queryContext
-  let newMin: number | undefined = undefined,
-    newMax: number | undefined = undefined
+  const { setRangeFacetValue } = event.queryContext
+  let newMin: string | undefined = undefined,
+    newMax: string | undefined = undefined
   const value = event.row.values[0] as string
   const values = value.match(/\d+/g)
   if (values && values.length > 0) {
-    newMin = parseInt(values[0])
+    newMin = values[0]
     if (values.length > 1) {
-      newMax = parseInt(values[1])
+      newMax = values[1]
     }
   }
-  const requestCopy = getCurrentQueryRequest()
-  requestCopy.query.selectedFacets = [
-    ...(requestCopy.query.selectedFacets || []),
-    {
-      columnName: 'maxAge',
-      concreteType:
-        'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
-      min: newMin,
-      max: newMax,
-    },
-  ]
-  executeQueryRequest(requestCopy)
+  // need to set both for the combined range filter
+  setRangeFacetValue({ columnName: 'minAge' }, newMin, newMax)
+  setRangeFacetValue({ columnName: 'maxAge' }, newMin, newMax)
 }
 const getPlotConfig = (tableId: string) => {
   const plotConfig: QueryWrapperSynapsePlotProps = {
@@ -62,6 +53,7 @@ const getPlotConfig = (tableId: string) => {
     else '100+' END) AS STRING) AS bucket,
           count(*) AS totalWithinRange
             FROM ${tableId}
+            WHERE maxAge IS NOT NULL
             GROUP BY 1
             ORDER BY bucket`,
     type: 'bar',
