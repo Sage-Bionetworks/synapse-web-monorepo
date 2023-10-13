@@ -18,14 +18,14 @@ const Plot = createPlotlyComponent(Plotly)
 export type SynapsePlotWidgetParams = {
   query: string //sql string
   title?: string //plot title
-  xtitle?: string // x-axis title
-  ytitle?: string // y-axis title
-  type: string // Plotly PlotType
-  xaxistype?: string // Plotly AxisType
-  showlegend?: string // sets the legend visibility ('true' | 'false')
-  horizontal?: string // sets the if a bar chart should be horizontal or vertical ('true' | 'false')
-  barmode?: string // Plotly barmode ('stack' | 'group' | 'overlay' | 'relative')
-  displayModebar?: string // sets the modebar visibility ('true' | 'false')
+  xtitle?: Plotly.LayoutAxis['title'] // x-axis title
+  ytitle?: Plotly.LayoutAxis['title'] // y-axis title
+  type: PlotType
+  xaxistype?: AxisType
+  showlegend?: Plotly.Layout['showlegend'] // sets the legend visibility
+  horizontal?: boolean // sets the if a bar chart should be horizontal or vertical
+  barmode?: Plotly.Layout['barmode'] // Plotly barmode
+  displayModeBar?: Plotly.Config['displayModeBar'] // sets the modebar visibility
 }
 
 // QueryWrapperPlotNav customPlot parameters, undefined otherwise
@@ -36,15 +36,12 @@ export type QueryWrapperPlotNavCustomPlotParams = {
   queryContext?: QueryContextType
 }
 export type SynapsePlotProps = {
-  widgetparamsMapped: SynapsePlotWidgetParams
+  synapsePlotWidgetParams: SynapsePlotWidgetParams
   customPlotParams?: QueryWrapperPlotNavCustomPlotParams
 }
 
-const toBoolean = (v?: string, fallbackValue?: boolean) => {
-  return v ? v.toLowerCase() == 'true' : fallbackValue ?? false
-}
 export const SynapsePlot = (props: SynapsePlotProps) => {
-  const { query } = props.widgetparamsMapped
+  const { query } = props.synapsePlotWidgetParams
   const { selectedFacets, additionalFilters, onCustomPlotClick, queryContext } =
     props.customPlotParams ?? {}
   const queryRequest: QueryBundleRequest = {
@@ -75,20 +72,16 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
     showlegend,
     barmode,
     horizontal,
-    displayModebar,
-  } = props.widgetparamsMapped
-  const isShowLegend = toBoolean(showlegend, true)
-  const isHorizontal = toBoolean(horizontal, false)
-  const isDisplayModebar = toBoolean(displayModebar, false)
+    displayModeBar,
+  } = props.synapsePlotWidgetParams
+
   const config: Partial<Plotly.Config> = {
-    displayModeBar: isDisplayModebar,
+    displayModeBar,
   }
   const layout: Partial<Plotly.Layout> = {
-    showlegend: isShowLegend,
+    showlegend: showlegend,
     title,
-    barmode: barmode
-      ? (barmode.toLowerCase() as 'stack' | 'group' | 'overlay' | 'relative')
-      : undefined,
+    barmode: barmode,
   }
   if (xtitle) {
     layout.xaxis = {
@@ -98,7 +91,7 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
   if (xaxistype) {
     layout.xaxis = {
       ...layout.xaxis,
-      type: xaxistype.toLowerCase() as AxisType,
+      type: xaxistype,
     }
   }
   if (ytitle) {
@@ -108,14 +101,14 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
   }
   // init plot_data
   const plotData: Partial<Plotly.PlotData>[] = []
-  const orientation = isHorizontal ? 'h' : 'v'
+  const orientation = horizontal ? 'h' : 'v'
   const headers = queryData.queryResult?.queryResults.headers ?? []
   for (let i = 0; i < headers.length - 1; i += 1) {
     // make an entry for each set of data points
     plotData[i] = {
       orientation,
       name: headers[i + 1].name,
-      type: type.toLowerCase() as PlotType,
+      type: type,
       x: [],
       y: [],
       customdata: [],

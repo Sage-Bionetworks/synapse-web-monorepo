@@ -10,7 +10,7 @@ import { act } from 'react-dom/test-utils'
 const customPlotClickCallback = jest.fn()
 
 const defaultProps: SynapsePlotProps = {
-  widgetparamsMapped: {
+  synapsePlotWidgetParams: {
     query:
       'SELECT resourceType, count(resourceType) FROM syn26438037 GROUP BY resourceType',
     type: 'bar',

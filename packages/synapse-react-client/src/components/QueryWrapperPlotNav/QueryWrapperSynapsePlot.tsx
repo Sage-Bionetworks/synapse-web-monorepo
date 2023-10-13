@@ -40,8 +40,8 @@ export default function QueryWrapperSynapsePlot(
     return {
       ...props,
       title: undefined, // we are handling the plot title here in this component
-      showlegend: 'false',
-      displayModebar: 'false',
+      showlegend: false,
+      displayModebar: false,
     }
   }, [props])
 
@@ -65,7 +65,7 @@ export default function QueryWrapperSynapsePlot(
         />
       )}
       <SynapsePlot
-        widgetparamsMapped={widgetParamsMapped}
+        synapsePlotWidgetParams={widgetParamsMapped}
         customPlotParams={customPlotParams}
       />
     </div>
