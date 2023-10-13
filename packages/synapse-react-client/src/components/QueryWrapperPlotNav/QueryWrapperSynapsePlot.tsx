@@ -40,6 +40,7 @@ export default function QueryWrapperSynapsePlot(
     return {
       ...props,
       title: undefined, // we are handling the plot title here in this component
+      showlegend: 'false',
       displayModebar: 'false',
     }
   }, [props])

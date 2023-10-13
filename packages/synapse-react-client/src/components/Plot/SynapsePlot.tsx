@@ -156,6 +156,8 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
       data={plotData}
       config={config}
       onClick={onPlotClick}
+      // TODO: if we want to change the cursor to pointer on hovering over a point,
+      // we could add a handler for onHover (if there's an onClick handler), and add/remove a class to the plot
     />
   )
 }
