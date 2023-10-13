@@ -122,8 +122,9 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
       const xArray = plotData[j - 1]!.x as Plotly.Datum[]
       const yArray = plotData[j - 1]!.y as Plotly.Datum[]
       const customdata = plotData[j - 1]!.customdata as Plotly.Datum[]
-      xArray.push(rowValues[0])
-      yArray.push(rowValues[j])
+
+      xArray.push(horizontal ? rowValues[j] : rowValues[0])
+      yArray.push(horizontal ? rowValues[0] : rowValues[j])
       customdata.push(JSON.stringify(row))
     }
   }
