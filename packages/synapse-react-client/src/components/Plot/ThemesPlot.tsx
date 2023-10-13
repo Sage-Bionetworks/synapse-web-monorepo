@@ -140,7 +140,7 @@ function getTotalsByProp<T>(
       (obj[prop] in res ? Number(res[obj[prop]]) : 0) + Number(obj.x)
     return res
   }, {})
-  const result = []
+  const result: T[] = []
   for (const property in resultObject) {
     result.push({
       [prop]: property,
