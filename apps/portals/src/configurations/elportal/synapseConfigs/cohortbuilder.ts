@@ -61,7 +61,7 @@ const getPlotConfig = (tableId: string) => {
     xtitle: 'Age (years)',
     ytitle: '',
     // barmode: ''
-    showlegend: 'false',
+    showlegend: false,
     onCustomPlotClick: handlePlotClick,
   }
   return plotConfig
@@ -119,9 +119,6 @@ export const individualsView: SynapseConfig = {
   },
 }
 
-const filesTableId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(
-  cohortBuilderFilesSql,
-)
 export const filesView: SynapseConfig = {
   name: 'QueryWrapperPlotNav',
   props: {
@@ -141,7 +138,6 @@ export const filesView: SynapseConfig = {
       minFacetColumn: 'minAge',
       maxFacetColumn: 'maxAge',
     },
-    customPlots: [getPlotConfig(filesTableId)],
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,
