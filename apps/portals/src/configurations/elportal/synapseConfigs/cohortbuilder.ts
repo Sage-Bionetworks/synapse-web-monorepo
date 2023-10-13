@@ -54,7 +54,7 @@ const getPlotConfig = (tableId: string) => {
           count(*) AS totalWithinRange
             FROM ${tableId}
             WHERE maxAge IS NOT NULL
-            GROUP BY 1
+            GROUP BY bucket
             ORDER BY bucket`,
     type: 'bar',
     // xaxistype: ''

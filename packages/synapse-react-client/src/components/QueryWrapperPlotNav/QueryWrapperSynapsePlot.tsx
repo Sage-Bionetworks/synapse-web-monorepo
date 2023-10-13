@@ -10,7 +10,7 @@ import {
   QueryFilter,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
+import { FacetFilterHeader } from '../widgets/query-filter/FacetFilterHeader'
 
 export type QueryWrapperSynapsePlotProps = Pick<
   QueryWrapperPlotNavCustomPlotParams,
@@ -57,16 +57,12 @@ export default function QueryWrapperSynapsePlot(
   return (
     <div className="SynapsePlot">
       {title && (
-        <Typography
-          variant="smallText1"
-          sx={{
-            fontWeight: 700,
-            borderBottom: '1px solid #dcdcdc',
-            paddingBottom: '8px',
-          }}
-        >
-          {title}
-        </Typography>
+        <FacetFilterHeader
+          hideCollapsible={true}
+          label={title}
+          isCollapsed={false}
+          onClick={() => {}}
+        />
       )}
       <SynapsePlot
         widgetparamsMapped={widgetParamsMapped}
