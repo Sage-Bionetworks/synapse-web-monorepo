@@ -14,7 +14,7 @@ import MarkdownSynapseImage, {
   ImageWidgetParams,
 } from './widget/MarkdownSynapseImage'
 import MarkdownSynapsePlot, {
-  PlotWidgetParams,
+  MarkdownSynapsePlotProps,
 } from './widget/MarkdownSynapsePlot'
 import MarkdownSynapseTable, {
   MarkdownSynapseTableProps,
@@ -37,7 +37,7 @@ type Image = {
 
 type Plot = {
   widgetType: 'plot'
-  widgetParamsMapped: PlotWidgetParams
+  widgetParamsMapped: MarkdownSynapsePlotProps
 }
 
 type TableOfContents = {

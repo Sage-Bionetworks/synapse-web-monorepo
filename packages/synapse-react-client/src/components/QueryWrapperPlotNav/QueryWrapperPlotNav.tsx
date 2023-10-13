@@ -37,6 +37,10 @@ import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { TableQueryDownloadConfirmation } from '../download_list'
 import { useAtomValue } from 'jotai'
 import { isLoadingNewBundleAtom } from '../QueryWrapper/QueryWrapper'
+import QueryWrapperSynapsePlot, {
+  QueryWrapperSynapsePlotProps,
+} from './QueryWrapperSynapsePlot'
+import { QueryWrapperPlotNavCustomPlotParams } from '../Plot/SynapsePlot'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -59,11 +63,13 @@ type QueryWrapperPlotNavOwnProps = {
   >
   facetsToPlot?: string[]
   availableFacets?: FacetFilterControlsProps['availableFacets']
+  customPlots?: QueryWrapperSynapsePlotProps[]
   defaultColumn?: string
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
   onViewSharingSettingsClicked?: (benefactorId: string) => void
 } & Omit<TopLevelControlsProps, 'entityId'> &
+  Pick<QueryWrapperPlotNavCustomPlotParams, 'onCustomPlotClick'> &
   Pick<QueryWrapperProps, 'isRowSelectionVisible' | 'rowSelectionPrimaryKey'> &
   Pick<
     QueryVisualizationWrapperProps,
@@ -109,6 +115,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'fileIdColumnName'
   | 'fileNameColumnName'
   | 'fileVersionColumnName'
+  | 'customPlots'
 > & {
   isFullTextSearchEnabled: boolean
   remount: () => void
@@ -133,6 +140,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     customControls,
     remount,
     isFullTextSearchEnabled,
+    customPlots,
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
@@ -203,6 +211,14 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                 <FacetFilterControls availableFacets={availableFacets} />
               </>
             )}
+            {customPlots && (
+              <div className="SynapsePlots">
+                {customPlots.map((plotProps, index) => {
+                  return <QueryWrapperSynapsePlot key={index} {...plotProps} />
+                })}
+              </div>
+            )}
+
             <FacetNav facetsToPlot={facetsToPlot} />
             <FilterAndView
               tableConfiguration={tableConfiguration}

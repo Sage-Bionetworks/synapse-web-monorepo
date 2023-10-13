@@ -18,6 +18,7 @@ import { displayToast } from '../ToastMessage'
 import { CustomControlCallbackData } from '../SynapseTable/TopLevelControls/TopLevelControls'
 import { QUERY_FILTERS_LOCAL_STORAGE_KEY } from '../../utils/functions/SqlFunctions'
 import { SynapseClient } from '../../index'
+import { QueryWrapperSynapsePlotRowClickEvent } from './QueryWrapperSynapsePlot'
 
 const meta = {
   title: 'Explore/QueryWrapperPlotNav',
@@ -36,11 +37,35 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
-
+const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
+  // window.alert(`Handling click on this row: ${JSON.stringify(event.row)}`)
+  const { getCurrentQueryRequest, executeQueryRequest } = event.queryContext
+  const requestCopy = getCurrentQueryRequest()
+  requestCopy.query.additionalFilters = [
+    ...(requestCopy.query.additionalFilters || []),
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'resourceType',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: [event.row.values[0] as string],
+    },
+  ]
+  executeQueryRequest(requestCopy)
+}
 export const Cards: Story = {
   args: {
     name: 'Tools',
     sql: 'SELECT * FROM syn26438037',
+    customPlots: [
+      {
+        query:
+          'SELECT resourceType, count(resourceType) FROM syn26438037 GROUP BY resourceType ',
+        type: 'bar',
+        title: 'Resource Type',
+        onCustomPlotClick: handlePlotClick,
+      },
+    ],
     limit: 5,
     defaultShowFacetVisualization: false,
     defaultShowSearchBox: true,
