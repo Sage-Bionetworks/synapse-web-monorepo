@@ -3,13 +3,16 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
+import { mockTableEntity } from './entity/mockTableEntity'
+
+const entityId = mockTableEntity.id
 
 export const mockQueryBundleRequest: QueryBundleRequest = {
-  entityId: 'syn50000',
+  entityId: entityId,
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
   partMask: 255,
   query: {
-    sql: 'SELECT * FROM syn50000',
+    sql: `SELECT * FROM ${entityId}`,
     includeEntityEtag: true,
   },
 }
@@ -21,10 +24,10 @@ export const mockQueryResultBundle: QueryResultBundle = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
     queryResults: {
       concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
-      tableId: 'syn50000',
+      tableId: entityId,
       etag: 'DEFAULT',
       headers: [
-        { name: 'id', columnType: 'ENTITYID', id: '81721' },
+        { name: 'id', columnType: 'JSON', id: '81721' },
         { name: 'name', columnType: 'STRING', id: '81722' },
         { name: 'study', columnType: 'STRING_LIST', id: '190401' },
         { name: 'dataType', columnType: 'STRING_LIST', id: '171338' },
@@ -1323,7 +1326,11 @@ export const mockQueryResultBundle: QueryResultBundle = {
     },
   },
   selectColumns: [
-    { name: 'id', columnType: 'ENTITYID', id: '81721' },
+    {
+      name: 'id',
+      columnType: 'ENTITYID',
+      id: '81721',
+    },
     { name: 'name', columnType: 'STRING', id: '81722' },
     { name: 'study', columnType: 'STRING_LIST', id: '190401' },
     { name: 'dataType', columnType: 'STRING_LIST', id: '171338' },
@@ -1369,7 +1376,25 @@ export const mockQueryResultBundle: QueryResultBundle = {
   ],
   maxRowsPerPage: 41,
   columnModels: [
-    { id: '81721', name: 'id', columnType: 'ENTITYID' },
+    {
+      id: '81721',
+      name: 'id',
+      columnType: 'JSON',
+      jsonSubColumns: [
+        {
+          name: 'Color',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+          jsonPath: '$.color',
+        },
+        {
+          name: 'Opacity',
+          columnType: 'INTEGER',
+          facetType: 'range',
+          jsonPath: '$.opacity',
+        },
+      ],
+    },
     { id: '81722', name: 'name', columnType: 'STRING', maximumSize: 256 },
     {
       id: '190401',

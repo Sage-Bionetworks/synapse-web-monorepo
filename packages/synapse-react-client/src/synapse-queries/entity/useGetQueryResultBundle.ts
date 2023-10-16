@@ -190,6 +190,7 @@ export function useGetQueryResultBundleWithAsyncStatus<
   )
 
   const mergedBundle = useMemo(() => {
+    console.log('mergedBundle')
     // If either query is in error, return the error
     if (rowResult.status === 'error') {
       return rowResult
