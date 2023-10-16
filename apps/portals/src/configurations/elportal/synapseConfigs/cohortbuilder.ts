@@ -88,11 +88,10 @@ export const individualsView: SynapseConfig = {
       showDownloadColumn: false,
       columnLinks: [
         {
-          matchColumnName: 'study',
+          matchColumnName: 'Study',
           isMarkdown: false,
           baseURL: 'Explore/Studies/DetailsPage',
           URLColumnName: 'studyKey',
-          wrapValueWithParens: false,
         },
       ],
     },
@@ -143,7 +142,7 @@ export const filesView: SynapseConfig = {
       showDownloadColumn: true,
       columnLinks: [
         {
-          matchColumnName: 'study',
+          matchColumnName: 'Study',
           isMarkdown: false,
           baseURL: 'Explore/Studies/DetailsPage',
           URLColumnName: 'studyKey',
