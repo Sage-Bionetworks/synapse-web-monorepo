@@ -14,7 +14,7 @@ import {
   useGetSchemaBinding,
   useUpdateViaJson,
 } from '../../synapse-queries'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError } from '../../utils'
 import {
   ENTITY_CONCRETE_TYPE,
   EntityJson,
@@ -23,6 +23,7 @@ import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './field/AdditionalPropertiesSchemaField'
 import {
   dropNullishArrayValues,
+  dropNullValues,
   getFriendlyPropertyName,
   getTransformErrors,
 } from './AnnotationEditorUtils'
@@ -67,7 +68,7 @@ export type SchemaDrivenAnnotationEditorProps = {
   /** If defined and formRef is not supplied, shows a 'Cancel' button and runs this effect on click */
   onCancel?: () => void
   /** Passes new form data upon each change to the form */
-  onChange?: (annotations: Record<string, any>) => void
+  onChange?: (annotations: Record<string, unknown>) => void
 }
 
 /**
@@ -89,6 +90,22 @@ function getPatternPropertiesBannedKeys(
     },
     {},
   )
+}
+
+/**
+ * Cleans the formData to remove values that are invalid for Synapse Annotations
+ * @param formData
+ * @param dropNullishValuesInArrays
+ */
+function cleanFormData(
+  formData: Record<string, unknown> | undefined,
+  dropNullishValuesInArrays: boolean,
+) {
+  let cleanedFormData = dropNullValues(formData)
+  if (dropNullishValuesInArrays) {
+    cleanedFormData = dropNullishArrayValues(cleanedFormData)
+  }
+  return cleanedFormData
 }
 
 /**
@@ -126,12 +143,17 @@ export function SchemaDrivenAnnotationEditor(
 
   const [showConfirmation, setShowConfirmation] = React.useState(false)
 
-  const { entityMetadata: entityJson, annotations } = useGetJson(entityId!, {
-    // Metadata is being edited, so don't refetch
-    staleTime: Infinity,
-    enabled: !!entityId,
-    useErrorBoundary: true,
-  })
+  const { entityMetadata: entityJson, annotations } = useGetJson(
+    entityId!,
+    // Derived annotations will be precomputed and displayed as placeholders in the form
+    false,
+    {
+      // Metadata is being edited, so don't refetch
+      staleTime: Infinity,
+      enabled: !!entityId,
+      useErrorBoundary: true,
+    },
+  )
 
   // Annotation fields fetched and modified via the form
   const [formData, setFormData] = React.useState<
@@ -190,7 +212,7 @@ export function SchemaDrivenAnnotationEditor(
 
   function submitChangedEntity() {
     mutation.mutate({
-      ...dropNullishArrayValues(formData ?? {}),
+      ...cleanFormData(formData, true),
       ...entityJson,
     } as EntityJson)
   }
@@ -294,8 +316,20 @@ export function SchemaDrivenAnnotationEditor(
                 setFormData(formData)
                 setValidationError(undefined)
               }}
+              onBlur={() => {
+                setFormData(
+                  // Clean the formData onBlur to remove null values that we will need to strip before submission
+                  // This will ensure that the user gets accurate validation information since the data will match what the backend will receive
+                  cleanFormData(
+                    formData,
+                    // Don't remove null values in arrays--the fields will disappear, which the user probably does not want
+                    false,
+                  ),
+                )
+              }}
               onSubmit={({ formData, errors }, event) => {
                 event.preventDefault()
+
                 if (errors && errors.length > 0) {
                   setValidationError(errors)
                 }

@@ -700,6 +700,33 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     )
   })
 
+  it('Does not submit null data for schema-defined properties', async () => {
+    server.use(
+      annotationsWithSchemaHandler,
+      ...schemaHandlers,
+      successfulUpdateHandler,
+    )
+    await renderComponent()
+    await screen.findByText('requires scientific annotations', { exact: false })
+
+    const countryField = await screen.findByLabelText('country*')
+
+    // Pick a value to ensure the property exists in the formData
+    await chooseAutocompleteOption(countryField, 'USA')
+
+    // Now clear the field
+    await userEvent.click(await screen.findByLabelText('Clear'))
+
+    // Save the form
+    await clickSaveAndConfirm()
+
+    await waitFor(() => expect(updatedJsonCaptor).toHaveBeenCalled())
+    // Because we cleared the field, country should not exist in the payload
+    expect(Object.hasOwn(updatedJsonCaptor.mock.calls[0][0], 'country')).toBe(
+      false,
+    )
+  })
+
   it('Initializes an empty array but does not submit null data', async () => {
     server.use(
       emptyArrayAnnotationsHandler, // showStringArray will be true but stringArray will have no data

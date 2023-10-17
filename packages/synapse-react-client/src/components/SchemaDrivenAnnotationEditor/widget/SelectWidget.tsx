@@ -69,7 +69,7 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
       disabled={disabled}
       multiple={multiple}
       disableClearable={!isClearable}
-      onChange={(event, newValue) => {
+      onChange={(event, newValue, reason) => {
         if (isObject(newValue) && 'inputValue' in newValue) {
           // Create a new value from the user input
           onChange(newValue.inputValue)

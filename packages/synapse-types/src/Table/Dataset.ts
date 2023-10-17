@@ -7,7 +7,7 @@ export interface EntityRef {
 }
 
 /**
- * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityRefCollectionView.html
+ * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityRefCollectionView.html
  */
 export interface EntityRefCollectionView extends View {
   items?: EntityRef[] // items is undefined on new collections

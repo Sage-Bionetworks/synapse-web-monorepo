@@ -27,6 +27,20 @@ export function dropNullishArrayValues(
   return newFormData
 }
 
+export function dropNullValues(
+  formData: Record<string, unknown> = {},
+): Record<string, unknown> {
+  return Object.keys(formData).reduce(
+    (acc: Record<string, unknown>, key: string) => {
+      if (formData[key] !== null) {
+        acc[key] = formData[key]
+      }
+      return acc
+    },
+    {},
+  )
+}
+
 /**
  * Inspects the property of the AjvError and modifies it to be comparable to simple key strings, like entity property keys.
  * @param error
