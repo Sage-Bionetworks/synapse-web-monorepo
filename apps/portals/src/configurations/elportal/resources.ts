@@ -8,8 +8,10 @@ export const studiesSql = 'SELECT * FROM syn51209885 ORDER BY isFeatured DESC'
 export const speciesSql = 'SELECT * FROM syn51449110 ORDER BY ItemOrder'
 export const computationalSql = 'SELECT * FROM syn51469335'
 export const upsetPlotSql = 'SELECT files, assay FROM syn51581771'
-export const cohortBuilderSql = 'SELECT * FROM syn52234652'
-export const cohortBuilderFilesSql = 'SELECT * FROM syn52234677'
+export const cohortBuilderSql =
+  'SELECT individualID, inFiles, minAge, maxAge, Sex, Study, fileFormat, dataTypes, dataSubtypes, Assays, fileIds, fileVersions FROM syn52234652'
+export const cohortBuilderFilesSql =
+  'SELECT id, individualCount,Study,dataTypes,Assays,Species,fileFormat,Type,minAge,maxAge,analysisType,Consortium,Grant,isModelSystem,isMultiSpecimen,metadataType,modelSystemType,Platform,Project,ResourceType,fileVersion FROM syn52234677'
 
 export const defaultSearchConfiguration = {
   fullTextSearchHelpURL: 'https://help.eliteportal.org/help/search-tips',
