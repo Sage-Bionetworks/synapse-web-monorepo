@@ -1,12 +1,28 @@
-import { AjvError } from '@rjsf/core'
+import { RJSFValidationError } from '@rjsf/utils'
 import {
   dropNullishArrayValues,
+  dropNullValues,
   getFriendlyPropertyName,
   getTransformErrors,
-} from '../../../../src/components/SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
+} from './AnnotationEditorUtils'
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 
 describe('AnnotationEditorUtils tests', () => {
+  describe('dropNullValues', () => {
+    it('removes null values only', () => {
+      const formData = {
+        a: 'foo',
+        b: {},
+        c: [],
+        d: '',
+        e: undefined,
+        f: null,
+      }
+      const expected = { a: 'foo', b: {}, c: [], d: '', e: undefined }
+      expect(dropNullValues(formData)).toEqual(expected)
+    })
+  })
+
   describe('dropNullishArrayValues', () => {
     it('will remove an empty array from the formData', () => {
       const formData = {
@@ -33,7 +49,8 @@ describe('AnnotationEditorUtils tests', () => {
 
   describe('getFriendlyPropertyName', () => {
     it('strips the leading period from a schema-defined property', () => {
-      const error = {
+      const error: RJSFValidationError = {
+        stack: '.study[0] is a requiredProperty',
         property: '.study[0]',
       }
 
@@ -42,7 +59,8 @@ describe('AnnotationEditorUtils tests', () => {
       expect(getFriendlyPropertyName(error)).toEqual(expected)
     })
     it('parses additionalProperties from an error', () => {
-      const error = {
+      const error: RJSFValidationError = {
+        stack: '.study[0] is a requiredProperty',
         property: "['myProperty']",
       }
 
@@ -55,7 +73,7 @@ describe('AnnotationEditorUtils tests', () => {
   describe('transformErrors', () => {
     it('combines errors caused by an enumeration defined using anyOf', () => {
       const transformErrors = getTransformErrors()
-      const errors: AjvError[] = [
+      const errors: RJSFValidationError[] = [
         {
           name: 'type',
           property: '.study[0]',
@@ -105,7 +123,7 @@ describe('AnnotationEditorUtils tests', () => {
       const transformErrors = getTransformErrors(
         FILE_ENTITY_CONCRETE_TYPE_VALUE,
       )
-      const errors: AjvError[] = [
+      const errors: RJSFValidationError[] = [
         {
           name: 'not',
           property: "['dataFileHandleId']",

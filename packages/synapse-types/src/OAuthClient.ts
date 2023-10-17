@@ -40,7 +40,7 @@ export interface OAuthClientVerificationPrecheckResult {
 
 /**
  OAuth 2.0 Client ID and secret, generated when a new client is created
-https://docs.synapse.org/rest/org/sagebionetworks/repo/model/oauth/OAuthClientIdAndSecret.html
+https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/oauth/OAuthClientIdAndSecret.html
 */
 export interface OAuthClientIdAndSecret {
   client_id: string

@@ -202,7 +202,7 @@ export function convertToConcreteEntityType(
 }
 
 /**
- * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionableEntity.html
+ * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionableEntity.html
  * @param type
  * @returns
  */

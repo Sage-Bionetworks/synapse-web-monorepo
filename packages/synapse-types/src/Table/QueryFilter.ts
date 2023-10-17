@@ -41,7 +41,7 @@ export interface ColumnMultiValueFunctionQueryFilter {
   values: string[] // Values to used with the filter.
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/TextMatchesQueryFilter.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/TextMatchesQueryFilter.html
 export const TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE =
   'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter'
 export type TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE =

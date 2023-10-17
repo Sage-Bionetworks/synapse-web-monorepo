@@ -8,7 +8,7 @@ export type SUBMISSION_VIEW_CONCRETE_TYPE =
 /**
  * A view of evaluation submissions whose scope is defined by the evaluation ids the submissions are part of. The user must have READ_PRIVATE_SUBMISSION access on each of the evaluations in the scope.
  *
- * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SubmissionView.html
+ * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SubmissionView.html
  */
 export interface SubmissionView extends View {
   concreteType: SUBMISSION_VIEW_CONCRETE_TYPE

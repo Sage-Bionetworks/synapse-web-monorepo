@@ -2534,7 +2534,7 @@ export const isOAuthClientReverificationRequired = (
 Get a secret credential to use when requesting an access token.
 Synapse supports 'client_secret_basic' and 'client_secret_post'.
 NOTE: This request will invalidate any previously issued secrets.
-https://docs.synapse.org/rest/POST/oauth2/client/secret/id.html
+https://rest-docs.synapse.org/rest/POST/oauth2/client/secret/id.html
 */
 export const createOAuthClientSecret = (
   accessToken: string,
@@ -3443,7 +3443,7 @@ export const getSubmissionById = (
  * Request to update a submission' state. Only ACT members and delegates with the REVIEW_SUBMISSION ACL
  * permission can perform this action.
  *
- * See https://docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId.html
+ * See https://rest-docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId.html
  * @param request
  * @param accessToken
  * @returns
@@ -3462,7 +3462,7 @@ export const updateSubmissionStatus = (
 
 /**
  * Get the schema bound to an entity.
- * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/schema/binding.html
  * @param entityId
  * @param accessToken
  * @returns
@@ -3480,7 +3480,7 @@ export const getSchemaBinding = (entityId: string, accessToken?: string) => {
 
 /**
  * Get the schema bound to an entity.
- * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/schema/binding.html
  * @param entityId
  * @param accessToken
  * @returns
@@ -3498,7 +3498,7 @@ export const getSchemaValidationResults = (
 
 /**
  * Get a schema by its $id.
- * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/schema/binding.html
  * @returns
  */
 export const getSchema = (schema$id: string) => {
@@ -3540,7 +3540,7 @@ export const getValidationSchema = async (
 
 /**
  * Determine if the caller has a particular access type on an entity
- * https://docs.synapse.org/rest/GET/entity/id/access.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/access.html
  * @param entityId
  * @param accessToken
  * @returns
@@ -3559,14 +3559,21 @@ export const hasAccessToEntity = (
 
 /**
  * Get the entity and its annotations as a JSON object
- * https://docs.synapse.org/rest/GET/entity/id/json.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/json.html
  * @param entityId
+ * @param includeDerivedAnnotations
  * @param accessToken
  * @returns
  */
-export const getEntityJson = (entityId: string, accessToken?: string) => {
+export const getEntityJson = (
+  entityId: string,
+  includeDerivedAnnotations: boolean,
+  accessToken?: string,
+) => {
+  const params = new URLSearchParams()
+  params.set('includeDerivedAnnotations', String(includeDerivedAnnotations))
   return doGet<EntityJson>(
-    ENTITY_JSON(entityId),
+    `${ENTITY_JSON(entityId)}?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3574,7 +3581,7 @@ export const getEntityJson = (entityId: string, accessToken?: string) => {
 
 /**
  * Update an entity and its annotations using a JSON object
- * https://docs.synapse.org/rest/PUT/entity/id/json.html
+ * https://rest-docs.synapse.org/rest/PUT/entity/id/json.html
  * @param entityId
  * @param accessToken
  * @returns
@@ -3596,7 +3603,7 @@ export const updateEntityJson = (
  * This service returns the email used for user notifications, i.e. when a Synapse message
  *  is sent and if the user has elected to receive messages by email, then this is the
  *  email address at which the user will receive the message.
- * https://docs.synapse.org/rest/GET/notificationEmail.html
+ * https://rest-docs.synapse.org/rest/GET/notificationEmail.html
  */
 export const getNotificationEmail = (accessToken?: string) => {
   return doGet<NotificationEmail>(

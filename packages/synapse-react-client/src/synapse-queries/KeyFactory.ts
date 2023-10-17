@@ -247,8 +247,10 @@ export class KeyFactory {
     return this.getKey(entityQueryKeyObjects.children(request, infinite))
   }
 
-  public getEntityJsonQueryKey(id: string) {
-    return this.getKey(entityQueryKeyObjects.json(id))
+  public getEntityJsonQueryKey(id: string, includeDerivedAnnotations: boolean) {
+    return this.getKey(entityQueryKeyObjects.json(id), {
+      includeDerivedAnnotations,
+    })
   }
 
   public getEntityBundleQueryKey(

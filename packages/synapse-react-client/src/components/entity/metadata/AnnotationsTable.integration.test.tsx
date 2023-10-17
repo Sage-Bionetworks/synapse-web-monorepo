@@ -75,4 +75,6 @@ describe('AnnotationsTable tests', () => {
     renderComponent()
     await screen.findByText('This Project has no annotations.')
   })
+
+  it.todo('Handles scenario where derived annotations are pending')
 })

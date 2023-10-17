@@ -71,7 +71,7 @@ export type EntityJsonValue =
   | boolean[]
   | undefined
 
-// Entity data returned as in https://docs.synapse.org/rest/GET/entity/id/json.html
+// Entity data returned as in https://rest-docs.synapse.org/rest/GET/entity/id/json.html
 // Not comprehensive, but we don't need it to be, since we currently only use JSON for annotations.
 export interface EntityJson extends Record<string, EntityJsonValue> {
   name: string
