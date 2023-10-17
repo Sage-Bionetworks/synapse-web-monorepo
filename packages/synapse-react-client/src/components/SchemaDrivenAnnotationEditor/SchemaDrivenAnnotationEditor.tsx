@@ -329,7 +329,6 @@ export function SchemaDrivenAnnotationEditor(
               }}
               onSubmit={({ formData, errors }, event) => {
                 event.preventDefault()
-
                 if (errors && errors.length > 0) {
                   setValidationError(errors)
                 }

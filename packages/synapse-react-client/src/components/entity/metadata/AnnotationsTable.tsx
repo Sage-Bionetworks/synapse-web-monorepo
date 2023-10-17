@@ -51,7 +51,7 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
   const showSchemaInformation = isInExperimentalMode && Boolean(boundSchema)
 
   // If the entity has not yet been validated since the last fetch, then derived annotations may not have been calculated.
-  const recentChangesHaveBeenValidated =
+  const recentChangesHaveNotBeenValidated =
     !!entityMetadata &&
     !!validationResults &&
     dayjs(entityMetadata.modifiedOn).diff(
@@ -124,7 +124,7 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
       </table>
       {entityMetadata &&
         showSchemaInformation &&
-        recentChangesHaveBeenValidated && (
+        recentChangesHaveNotBeenValidated && (
           <FullWidthAlert
             variant="warning"
             description={`This ${entityTypeToFriendlyName(
