@@ -8,7 +8,6 @@ import {
   SynapseClient,
   SynapseConstants,
 } from 'synapse-react-client'
-import useAnalytics from './useAnalytics'
 import { useLogInDialogContext } from './LogInDialogContext'
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
@@ -42,8 +41,6 @@ function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
   }, [])
 
   useSetDocumentMetadataFromConfig()
-
-  useAnalytics()
 
   useEffect(() => {
     /**
