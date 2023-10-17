@@ -10,7 +10,7 @@ export type FileEntityDirectDownloadProps = Omit<
   'associatedObjectId' | 'associatedObjectType' | 'fileHandleId'
 > & {
   entityId: string
-  entityVersionNumber?: number
+  entityVersionNumber?: string
 }
 
 export default function FileEntityDirectDownload(

@@ -58,6 +58,10 @@ export type SynapseTableProps = {
   hideAddToDownloadListColumn?: boolean
   /** Configuration to override cell renderers with e.g. a link to a portals detail page */
   columnLinks?: LabelLinkConfig
+  /** If provided, will use the value in this column instead of the rowID for the access column, download column, etc */
+  rowEntityIDColumnName?: string
+  /** If provided, will use the value in this column instead of the row version number for the access column, download column, etc */
+  rowEntityVersionColumnName?: string
 }
 
 const columnHelper = createColumnHelper<Row>()
@@ -69,6 +73,8 @@ export function SynapseTable(props: SynapseTableProps) {
     showDirectDownloadColumn = showDownloadColumn,
     hideAddToDownloadListColumn = hideDownload,
     columnLinks,
+    rowEntityIDColumnName,
+    rowEntityVersionColumnName,
   } = props
   const { getCurrentQueryRequest } = useQueryContext()
   const data = useAtomValue(tableQueryDataAtom)
@@ -91,12 +97,15 @@ export function SynapseTable(props: SynapseTableProps) {
   const isShowingAccessColumn: boolean = Boolean(
     showAccessColumn &&
       entity &&
-      isEntityViewOrDataset(entity) &&
-      allRowsHaveId(data),
+      ((isEntityViewOrDataset(entity) && allRowsHaveId(data)) ||
+        rowEntityIDColumnName),
   )
 
   const rowsAreDownloadable =
-    entity && isFileViewOrDataset(entity) && isLoggedIn && allRowsHaveId(data)
+    entity &&
+    isLoggedIn &&
+    ((isFileViewOrDataset(entity) && allRowsHaveId(data)) ||
+      rowEntityIDColumnName)
 
   const isShowingDirectDownloadColumn = Boolean(
     rowsAreDownloadable && showDirectDownloadColumn,
@@ -107,6 +116,16 @@ export function SynapseTable(props: SynapseTableProps) {
       !hideAddToDownloadListColumn &&
       !isRowSelectionVisible,
   )
+  const rowEntityIDColumnIndex = rowEntityIDColumnName
+    ? data?.queryResult?.queryResults.headers.findIndex(
+        col => col.name == rowEntityIDColumnName,
+      )
+    : undefined
+  const rowEntityVersionColumnIndex = rowEntityVersionColumnName
+    ? data?.queryResult?.queryResults.headers.findIndex(
+        col => col.name == rowEntityVersionColumnName,
+      )
+    : undefined
 
   const columns: ColumnDef<Row, string | null>[] = useMemo(
     () => [
@@ -167,6 +186,11 @@ export function SynapseTable(props: SynapseTableProps) {
     state: {
       sorting: sort,
       columnVisibility: columnVisibility,
+    },
+    meta: {
+      // make the rowEntityIDColumnIndex available to all cell renderers
+      rowEntityIDColumnIndex,
+      rowEntityVersionColumnIndex,
     },
   })
 
