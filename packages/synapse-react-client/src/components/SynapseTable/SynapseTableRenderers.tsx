@@ -2,6 +2,7 @@ import {
   CellContext,
   createColumnHelper,
   HeaderContext,
+  Table,
 } from '@tanstack/react-table'
 import {
   ColumnTypeEnum,
@@ -81,8 +82,8 @@ export const rowSelectionColumn = columnHelper.display({
 })
 
 function AddToDownloadListCell(props: CellContext<Row, unknown>) {
-  const entityId = getEntityOrRowId(props)
-  const versionNumberString = getEntityOrRowVersion(props)
+  const entityId = getEntityId(props)
+  const versionNumberString = getEntityVersion(props)
   const versionNumber = versionNumberString
     ? parseInt(versionNumberString)
     : undefined
@@ -110,8 +111,8 @@ export const addToDownloadListColumn = columnHelper.display({
 })
 
 function DirectDownloadCell(props: CellContext<Row, unknown>) {
-  const entityId = getEntityOrRowId(props)
-  const versionNumber = getEntityOrRowVersion(props)
+  const entityId = getEntityId(props)
+  const versionNumber = getEntityVersion(props)
 
   return (
     <div data-testid={'DirectDownloadCell'}>
@@ -134,33 +135,29 @@ export const directDownloadColumn = columnHelper.display({
   },
 })
 
-const getEntityOrRowId = (props: CellContext<Row, unknown>): string => {
+const getEntityId = (props: CellContext<Row, unknown>): string => {
   const { row, table } = props
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
   const rowEntityIDColumnIndex: number | undefined = (table.options.meta as any)
     .rowEntityIDColumnIndex
-  const entityId =
-    rowEntityIDColumnIndex !== undefined
-      ? row.original.values[rowEntityIDColumnIndex]!
-      : row.original.rowId!.toString()
+  const entityId = rowEntityIDColumnIndex
+    ? row.original.values[rowEntityIDColumnIndex]!
+    : row.original.rowId!.toString()
   return entityId
 }
-const getEntityOrRowVersion = (props: CellContext<Row, unknown>): string => {
+const getEntityVersion = (props: CellContext<Row, unknown>): string => {
   const { row, table } = props
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
   const rowEntityVersionColumnIndex: number | undefined = (
     table.options.meta as any
   ).rowEntityVersionColumnIndex
-  const versionNumber =
-    rowEntityVersionColumnIndex !== undefined
-      ? row.original.values[rowEntityVersionColumnIndex]!
-      : row.original.versionNumber!.toString()
+  const versionNumber = rowEntityVersionColumnIndex
+    ? row.original.values[rowEntityVersionColumnIndex]!
+    : row.original.versionNumber!.toString()
   return versionNumber
 }
 
 function AccessCell(props: CellContext<Row, unknown>) {
-  const entityId = getEntityOrRowId(props)
-  const versionNumber = getEntityOrRowVersion(props)
+  const entityId = getEntityId(props)
+  const versionNumber = getEntityVersion(props)
   return (
     <div data-testid={'AccessCell'}>
       <HasAccessV2
@@ -274,10 +271,6 @@ export function TableDataCell(props: CellContext<Row, string | null>) {
   const selectColumn = selectColumns.find(cm => cm.name === cell.column.id)
   const columnModels = data?.columnModels ?? []
   const { columnLinks } = useSynapseTableContext()
-  const entityOrRowId = getEntityOrRowId(props)
-  const entityOrRowVersion = getEntityOrRowVersion(props)
-  const versionNumber =
-    entityOrRowVersion !== undefined ? parseInt(entityOrRowVersion) : undefined
   if (selectColumn) {
     const columnLinkConfig = (columnLinks ?? []).find(el => {
       return el.matchColumnName === selectColumn.name
@@ -295,8 +288,8 @@ export function TableDataCell(props: CellContext<Row, string | null>) {
         rowData={cell.row.original.values}
         selectColumns={selectColumns}
         columnModels={columnModels}
-        entityOrRowId={entityOrRowId}
-        entityOrRowVersion={versionNumber}
+        rowId={cell.row.original.rowId}
+        rowVersionNumber={cell.row.original.versionNumber}
       />
     )
   } else return <td key={cell.id}></td>
