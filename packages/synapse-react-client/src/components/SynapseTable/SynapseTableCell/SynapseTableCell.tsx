@@ -42,7 +42,7 @@ export type SynapseTableCellProps = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
   rowData: Row['values']
-  rowId?: number
+  rowId?: number | string
   rowVersionNumber?: number
 }
 
@@ -60,7 +60,11 @@ function SynapseTableCell(props: SynapseTableCellProps) {
     rowVersionNumber,
   } = props
   const entity = useAtomValue(tableQueryEntityAtom)
-
+  const rowIdIsString = typeof rowId === 'string'
+  let rowSynId = undefined
+  if (rowId !== undefined) {
+    rowSynId = rowIdIsString ? rowId : `syn${rowId.toString()}`
+  }
   if (!columnValue) {
     return <p className="SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
   }
@@ -75,7 +79,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
         isHeader={false}
         labelLink={columnLinkConfig}
         rowData={rowData}
-        rowId={rowId}
+        rowId={rowSynId}
       />
     )
   }
@@ -83,20 +87,19 @@ function SynapseTableCell(props: SynapseTableCellProps) {
   // PORTALS-2095: Special case. If this is an EntityView, and we are rendering the 'id' or 'name' column,
   // and we have a rowId and rowVersionNumber (should always be the case), and our entityIdToHeader map
   // contains the row Synapse ID, then auto-link.
-  if (
+  const tableRowRepresentsFile =
     entity &&
-    (isEntityView(entity) ||
-      isDataset(entity) ||
-      isDatasetCollection(entity)) &&
+    (isEntityView(entity) || isDataset(entity) || isDatasetCollection(entity))
+  if (
+    (tableRowRepresentsFile || rowIdIsString) &&
     (columnName === 'id' || columnName === 'name') &&
-    rowId &&
+    rowSynId &&
     rowVersionNumber
   ) {
-    const synId = `syn${rowId.toString()}`
     return (
       <p>
         <EntityLink
-          entity={synId}
+          entity={rowSynId}
           versionNumber={rowVersionNumber}
           className={`${isBold}`}
           showIcon={false}
