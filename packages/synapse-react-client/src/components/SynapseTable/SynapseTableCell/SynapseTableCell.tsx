@@ -61,7 +61,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
   } = props
   const entity = useAtomValue(tableQueryEntityAtom)
   const rowIdIsString = typeof rowId === 'string'
-  let rowSynId = undefined
+  let rowSynId: string | undefined = undefined
   if (rowId !== undefined) {
     rowSynId = rowIdIsString ? rowId : `syn${rowId.toString()}`
   }
