@@ -81,7 +81,7 @@ export const rowSelectionColumn = columnHelper.display({
 })
 
 function AddToDownloadListCell(props: CellContext<Row, unknown>) {
-  const entityId = getEntityOrRowId(props)
+  const entityId = getEntityOrRowId(props)!
   const versionNumberString = getEntityOrRowVersion(props)
   const versionNumber = versionNumberString
     ? parseInt(versionNumberString)
@@ -110,7 +110,7 @@ export const addToDownloadListColumn = columnHelper.display({
 })
 
 function DirectDownloadCell(props: CellContext<Row, unknown>) {
-  const entityId = getEntityOrRowId(props)
+  const entityId = getEntityOrRowId(props)!
   const versionNumber = getEntityOrRowVersion(props)
 
   return (
@@ -134,17 +134,21 @@ export const directDownloadColumn = columnHelper.display({
   },
 })
 
-const getEntityOrRowId = (props: CellContext<Row, unknown>): string => {
+const getEntityOrRowId = (
+  props: CellContext<Row, unknown>,
+): string | undefined => {
   const { row, table } = props
   const rowEntityIDColumnIndex: number | undefined = (table.options.meta as any)
     .rowEntityIDColumnIndex
   const entityId =
     rowEntityIDColumnIndex !== undefined
       ? row.original.values[rowEntityIDColumnIndex]!
-      : row.original.rowId!.toString()
+      : row.original.rowId?.toString()
   return entityId
 }
-const getEntityOrRowVersion = (props: CellContext<Row, unknown>): string => {
+const getEntityOrRowVersion = (
+  props: CellContext<Row, unknown>,
+): string | undefined => {
   const { row, table } = props
   const rowEntityVersionColumnIndex: number | undefined = (
     table.options.meta as any
@@ -152,12 +156,12 @@ const getEntityOrRowVersion = (props: CellContext<Row, unknown>): string => {
   const versionNumber =
     rowEntityVersionColumnIndex !== undefined
       ? row.original.values[rowEntityVersionColumnIndex]!
-      : row.original.versionNumber!.toString()
+      : row.original.versionNumber?.toString()
   return versionNumber
 }
 
 function AccessCell(props: CellContext<Row, unknown>) {
-  const entityId = getEntityOrRowId(props)
+  const entityId = getEntityOrRowId(props)!
   const versionNumber = getEntityOrRowVersion(props)
   return (
     <div data-testid={'AccessCell'}>
