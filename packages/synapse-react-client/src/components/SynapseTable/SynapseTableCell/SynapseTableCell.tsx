@@ -32,6 +32,7 @@ import UserOrTeamBadge from '../../UserOrTeamBadge'
 import { isFileViewOrDataset } from '../SynapseTableUtils'
 import { useAtomValue } from 'jotai'
 import { tableQueryEntityAtom } from '../../QueryWrapper/QueryWrapper'
+import { RegularExpressions } from '../../..'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
@@ -42,8 +43,8 @@ export type SynapseTableCellProps = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
   rowData: Row['values']
-  rowId?: number
-  rowVersionNumber?: number
+  entityOrRowId?: string
+  entityOrRowVersion?: number
 }
 
 function SynapseTableCell(props: SynapseTableCellProps) {
@@ -56,8 +57,8 @@ function SynapseTableCell(props: SynapseTableCellProps) {
     selectColumns,
     columnModels,
     rowData,
-    rowId,
-    rowVersionNumber,
+    entityOrRowId,
+    entityOrRowVersion,
   } = props
   const entity = useAtomValue(tableQueryEntityAtom)
 
@@ -75,7 +76,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
         isHeader={false}
         labelLink={columnLinkConfig}
         rowData={rowData}
-        rowId={rowId}
+        rowId={entityOrRowVersion}
       />
     )
   }
@@ -83,21 +84,26 @@ function SynapseTableCell(props: SynapseTableCellProps) {
   // PORTALS-2095: Special case. If this is an EntityView, and we are rendering the 'id' or 'name' column,
   // and we have a rowId and rowVersionNumber (should always be the case), and our entityIdToHeader map
   // contains the row Synapse ID, then auto-link.
-  if (
+  const tableHasFiles =
     entity &&
-    (isEntityView(entity) ||
-      isDataset(entity) ||
-      isDatasetCollection(entity)) &&
+    (isEntityView(entity) || isDataset(entity) || isDatasetCollection(entity))
+  const isRowIdSynapseId =
+    entityOrRowId !== undefined &&
+    !!RegularExpressions.SYNAPSE_ENTITY_ID_REGEX.exec(entityOrRowId)
+  if (
+    (tableHasFiles || isRowIdSynapseId) &&
     (columnName === 'id' || columnName === 'name') &&
-    rowId &&
-    rowVersionNumber
+    entityOrRowId &&
+    entityOrRowVersion
   ) {
-    const synId = `syn${rowId.toString()}`
+    const synId = isRowIdSynapseId
+      ? entityOrRowId
+      : `syn${entityOrRowId.toString()}`
     return (
       <p>
         <EntityLink
           entity={synId}
-          versionNumber={rowVersionNumber}
+          versionNumber={entityOrRowVersion}
           className={`${isBold}`}
           showIcon={false}
           displayTextField={columnName}
@@ -151,7 +157,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
       let associatedObjectId = entity!.id!
       let associatedObjectType = FileHandleAssociateType.TableEntity
       if (isFileViewOrDataset(entity) && columnName === 'dataFileHandleId') {
-        associatedObjectId = String(rowId)
+        associatedObjectId = String(entityOrRowId)
         associatedObjectType = FileHandleAssociateType.FileEntity
       }
       return (

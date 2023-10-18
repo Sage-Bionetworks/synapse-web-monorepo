@@ -439,3 +439,20 @@ export const TableWithJSONColumns: Story = {
     shouldDeepLink: false,
   },
 }
+
+export const MaterializedViewOfFiles: Story = {
+  args: {
+    sql: 'SELECT * FROM syn52737576',
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true,
+      rowEntityIDColumnName: 'id',
+      rowEntityVersionColumnName: 'currentVersion',
+    },
+    name: 'MV with File Commands Demo',
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    showExportToCavatica: true,
+  },
+}
