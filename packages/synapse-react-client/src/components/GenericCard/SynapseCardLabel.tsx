@@ -30,7 +30,7 @@ type SynapseCardLabelProps = {
   isHeader: boolean
   className?: string
   rowData: Row['values']
-  rowId?: number
+  rowId?: string
 }
 export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   const {
@@ -181,9 +181,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         <p>
           {split.map((el, index) => {
             const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
-            const elOrRowId = labelLink.overrideValueWithRowID
-              ? `syn${rowId}`
-              : el
+            const elOrRowId = labelLink.overrideValueWithRowID ? rowId : el
             const value = wrapValueWithParens ? `(${elOrRowId})` : elOrRowId
             const href = `/${baseURL}?${URLColumnName}=${value}`
 

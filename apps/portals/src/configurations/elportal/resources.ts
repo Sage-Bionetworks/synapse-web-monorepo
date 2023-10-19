@@ -11,7 +11,7 @@ export const upsetPlotSql = 'SELECT files, assay FROM syn51581771'
 export const cohortBuilderSql =
   'SELECT individualID, inFiles, minAge, maxAge, Sex, Study, fileFormat, dataTypes, dataSubtypes, Assays, fileIds, fileVersions FROM syn52234652'
 export const cohortBuilderFilesSql =
-  'SELECT id, individualCount,Study,dataTypes,Assays,Species,fileFormat,minAge,maxAge,analysisType,Consortium,Grant,isModelSystem,isMultiSpecimen,metadataType,modelSystemType,Platform,Project,ResourceType,fileVersion FROM syn52234677'
+  'SELECT id, name, individualCount,Study,dataTypes,Assays,Species,fileFormat,minAge,maxAge,analysisType,Consortium,Grant,isModelSystem,isMultiSpecimen,metadataType,modelSystemType,Platform,Project,ResourceType,fileVersion FROM syn52234677'
 
 export const defaultSearchConfiguration = {
   fullTextSearchHelpURL: 'https://help.eliteportal.org/help/search-tips',

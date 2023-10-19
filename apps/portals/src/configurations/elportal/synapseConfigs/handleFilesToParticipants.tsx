@@ -20,7 +20,7 @@ export const handleFilesToParticipants = async (
       ...event.request!,
       query: {
         ...event.request?.query,
-        sql: `SELECT fileId FROM ${event.request?.entityId}`,
+        sql: `SELECT id FROM ${event.request?.entityId}`,
       },
       partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     },
@@ -53,7 +53,7 @@ export const handleSelectedFilesToParticipants = (
 ) => {
   // add filter for files perspective, to show participants associated to the selected files only.
   const idColIndex = event.data?.columnModels?.findIndex(
-    (cm) => cm.name === 'fileId',
+    (cm) => cm.name === 'id',
   )
   const localStorageFilter: ColumnSingleValueQueryFilter = {
     concreteType:

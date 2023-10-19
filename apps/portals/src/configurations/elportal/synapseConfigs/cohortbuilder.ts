@@ -124,13 +124,13 @@ export const filesView: SynapseConfig = {
     rgbIndex,
     name: 'Data',
     showExportToCavatica: true,
-    fileIdColumnName: 'fileId',
-    fileNameColumnName: 'fileId',
+    fileIdColumnName: 'id',
+    fileNameColumnName: 'name',
     fileVersionColumnName: 'currentVersion',
     cavaticaHelpURL: '/Limited%20Data%20Commons',
     visibleColumnCount: 10,
     isRowSelectionVisible: true,
-    rowSelectionPrimaryKey: ['fileId'],
+    rowSelectionPrimaryKey: ['id'],
     additionalFiltersLocalStorageKey: 'cohort-builder-files-perspective',
     combineRangeFacetConfig: {
       label: 'Age',
@@ -140,6 +140,8 @@ export const filesView: SynapseConfig = {
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,
+      rowEntityIDColumnName: 'id',
+      rowEntityVersionColumnName: 'fileVersion',
       columnLinks: [
         {
           matchColumnName: 'Study',

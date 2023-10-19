@@ -81,17 +81,19 @@ export const rowSelectionColumn = columnHelper.display({
 })
 
 function AddToDownloadListCell(props: CellContext<Row, unknown>) {
-  const { row } = props
-  const { data: entityHeader } = useGetEntityHeader(`syn${row.original.rowId!}`)
+  const entityId = getEntityOrRowId(props)!
+  const versionNumberString = getEntityOrRowVersion(props)
+  const versionNumber = versionNumberString
+    ? parseInt(versionNumberString)
+    : undefined
+  const { data: entityHeader } = useGetEntityHeader(entityId)
   return (
     <div data-testid={'AddToDownloadListCell'}>
       {entityHeader?.type === 'org.sagebionetworks.repo.model.FileEntity' && (
         <AddToDownloadListV2
-          entityId={row.original.rowId!.toString()}
-          entityVersionNumber={parseInt(
-            row.original.versionNumber!.toString()!,
-          )}
-        ></AddToDownloadListV2>
+          entityId={entityId}
+          entityVersionNumber={versionNumber}
+        />
       )}
     </div>
   )
@@ -108,12 +110,14 @@ export const addToDownloadListColumn = columnHelper.display({
 })
 
 function DirectDownloadCell(props: CellContext<Row, unknown>) {
-  const { row } = props
+  const entityId = getEntityOrRowId(props)!
+  const versionNumber = getEntityOrRowVersion(props)
+
   return (
     <div data-testid={'DirectDownloadCell'}>
       <FileEntityDirectDownload
-        entityId={row.original.rowId!.toString()}
-        entityVersionNumber={row.original.versionNumber}
+        entityId={entityId}
+        entityVersionNumber={versionNumber}
         iconSvgPropOverrides={{ sx: { color: 'primary.main' } }}
       />
     </div>
@@ -130,14 +134,63 @@ export const directDownloadColumn = columnHelper.display({
   },
 })
 
+/**
+ * Given the (tanstack react) Table CellContext, return the rowId of the current Synapse Table Row.
+ * If a rowEntityIDColumnName was provided in the table config, then instead return the entityID found in
+ * that cell of the current Row.
+ */
+const getEntityOrRowId = (
+  props: CellContext<Row, unknown>,
+): string | undefined => {
+  const { row, table } = props
+  const rowEntityIDColumnIndex: number | undefined = (table.options.meta as any)
+    .rowEntityIDColumnIndex
+  const entityId =
+    rowEntityIDColumnIndex !== undefined
+      ? row.original.values[rowEntityIDColumnIndex]!
+      : row.original.rowId?.toString()
+  return entityId
+}
+
+/**
+ * Given the (tanstack react) Table CellContext, return true if the table configuration defines a row entity version column name.
+ * This will be used as the entity that represents the current Row.
+ * @param props
+ * @returns
+ */
+const isRowEntityColumn = (props: CellContext<Row, unknown>): boolean => {
+  const { table } = props
+  return (table.options.meta as any).rowEntityVersionColumnIndex !== undefined
+}
+
+/**
+ * Given the (tanstack react) Table CellContext, return the version of the current Synapse Table Row.
+ * If a rowEntityVersionColumnName was provided in the table config, then instead return the version found in
+ * that cell of the current Row.
+ */
+const getEntityOrRowVersion = (
+  props: CellContext<Row, unknown>,
+): string | undefined => {
+  const { row, table } = props
+  const rowEntityVersionColumnIndex: number | undefined = (
+    table.options.meta as any
+  ).rowEntityVersionColumnIndex
+  const versionNumber =
+    rowEntityVersionColumnIndex !== undefined
+      ? row.original.values[rowEntityVersionColumnIndex]!
+      : row.original.versionNumber?.toString()
+  return versionNumber
+}
+
 function AccessCell(props: CellContext<Row, unknown>) {
-  const { row } = props
+  const entityId = getEntityOrRowId(props)!
+  const versionNumber = getEntityOrRowVersion(props)
   return (
     <div data-testid={'AccessCell'}>
       <HasAccessV2
-        key={row.original.rowId!.toString()}
-        entityId={row.original.rowId!.toString()}
-        entityVersionNumber={row.original.versionNumber!.toString()}
+        key={entityId}
+        entityId={entityId}
+        entityVersionNumber={versionNumber}
       />
     </div>
   )
@@ -240,7 +293,10 @@ export function TableDataColumnHeader(
 export function TableDataCell(props: CellContext<Row, string | null>) {
   const { cell } = props
   const data = useAtomValue(tableQueryDataAtom)
-
+  const entityOrRowId = getEntityOrRowId(props)
+  const entityOrRowVersion = getEntityOrRowVersion(props)
+  const versionNumber =
+    entityOrRowVersion !== undefined ? parseInt(entityOrRowVersion) : undefined
   const selectColumns = data?.selectColumns ?? []
   const selectColumn = selectColumns.find(cm => cm.name === cell.column.id)
   const columnModels = data?.columnModels ?? []
@@ -262,8 +318,9 @@ export function TableDataCell(props: CellContext<Row, string | null>) {
         rowData={cell.row.original.values}
         selectColumns={selectColumns}
         columnModels={columnModels}
-        rowId={cell.row.original.rowId}
-        rowVersionNumber={cell.row.original.versionNumber}
+        rowId={entityOrRowId}
+        rowVersionNumber={versionNumber}
+        isRowEntityColumn={isRowEntityColumn(props)}
       />
     )
   } else return <td key={cell.id}></td>
