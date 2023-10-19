@@ -67,7 +67,7 @@ const JSONArrayEditor = React.forwardRef(function JSONArrayEditor(
       className="JsonSchemaFormContainer"
       sx={{
         // Hide the label/button to show more info
-        '.LabelContainer': {
+        '.JsonSchemaForm .LabelContainer': {
           display: 'none',
           visibility: 'hidden',
         },
@@ -76,6 +76,7 @@ const JSONArrayEditor = React.forwardRef(function JSONArrayEditor(
       <Form
         ref={ref}
         schema={arraySchema}
+        className="JsonSchemaForm"
         uiSchema={{
           'ui:submitButtonOptions': {
             norender: true,
