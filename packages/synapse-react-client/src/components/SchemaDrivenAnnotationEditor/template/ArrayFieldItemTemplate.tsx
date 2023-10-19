@@ -92,7 +92,7 @@ export default function ArrayFieldItemTemplate<
             disabled={disabled || readonly}
             uiSchema={uiSchema}
             registry={registry}
-            aria-label={`Add New`}
+            aria-label={`Add Item`}
             onClick={onAddIndexClick(index + 1)}
           />
         </Grid>
