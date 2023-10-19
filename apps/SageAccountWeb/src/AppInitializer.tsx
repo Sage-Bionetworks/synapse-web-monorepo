@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import { getSearchParam } from './URLUtils'
-import useAnalytics from './useAnalytics'
 import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useSourceApp } from './components/SourceApp.js'
@@ -113,8 +112,6 @@ function AppInitializer(props: { children?: React.ReactNode }) {
       setRedirectURL('https://www.synapse.org/#!Profile:v/projects/all')
     }
   }, [appId])
-
-  useAnalytics()
 
   const { acceptsTermsOfUse } = useApplicationSessionContext()
 
