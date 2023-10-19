@@ -151,6 +151,18 @@ const getEntityOrRowId = (
       : row.original.rowId?.toString()
   return entityId
 }
+
+/**
+ * Given the (tanstack react) Table CellContext, return true if the table configuration defines a row entity version column name.
+ * This will be used as the entity that represents the current Row.
+ * @param props
+ * @returns
+ */
+const isRowEntityColumn = (props: CellContext<Row, unknown>): boolean => {
+  const { table } = props
+  return (table.options.meta as any).rowEntityVersionColumnIndex !== undefined
+}
+
 /**
  * Given the (tanstack react) Table CellContext, return the version of the current Synapse Table Row.
  * If a rowEntityVersionColumnName was provided in the table config, then instead return the version found in
@@ -308,6 +320,7 @@ export function TableDataCell(props: CellContext<Row, string | null>) {
         columnModels={columnModels}
         rowId={entityOrRowId}
         rowVersionNumber={versionNumber}
+        isRowEntityColumn={isRowEntityColumn(props)}
       />
     )
   } else return <td key={cell.id}></td>

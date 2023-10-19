@@ -42,8 +42,9 @@ export type SynapseTableCellProps = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
   rowData: Row['values']
-  rowId?: number | string
+  rowId?: string
   rowVersionNumber?: number
+  isRowEntityColumn?: boolean
 }
 
 function SynapseTableCell(props: SynapseTableCellProps) {
@@ -58,13 +59,9 @@ function SynapseTableCell(props: SynapseTableCellProps) {
     rowData,
     rowId,
     rowVersionNumber,
+    isRowEntityColumn,
   } = props
   const entity = useAtomValue(tableQueryEntityAtom)
-  const rowIdIsString = typeof rowId === 'string'
-  let rowSynId: string | undefined = undefined
-  if (rowId !== undefined) {
-    rowSynId = rowIdIsString ? rowId : `syn${rowId.toString()}`
-  }
   if (!columnValue) {
     return <p className="SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
   }
@@ -79,7 +76,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
         isHeader={false}
         labelLink={columnLinkConfig}
         rowData={rowData}
-        rowId={rowSynId}
+        rowId={rowId}
       />
     )
   }
@@ -91,15 +88,15 @@ function SynapseTableCell(props: SynapseTableCellProps) {
     entity &&
     (isEntityView(entity) || isDataset(entity) || isDatasetCollection(entity))
   if (
-    (tableRowRepresentsEntity || rowIdIsString) &&
+    (tableRowRepresentsEntity || isRowEntityColumn) &&
     (columnName === 'id' || columnName === 'name') &&
-    rowSynId &&
+    rowId &&
     rowVersionNumber
   ) {
     return (
       <p>
         <EntityLink
-          entity={rowSynId}
+          entity={rowId}
           versionNumber={rowVersionNumber}
           className={`${isBold}`}
           showIcon={false}
