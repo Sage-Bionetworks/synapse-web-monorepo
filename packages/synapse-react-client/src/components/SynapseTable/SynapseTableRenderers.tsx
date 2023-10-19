@@ -134,6 +134,11 @@ export const directDownloadColumn = columnHelper.display({
   },
 })
 
+/**
+ * Given the (tanstack react) Table CellContext, return the rowId of the current Synapse Table Row.
+ * If a rowEntityIDColumnName was provided in the table config, then instead return the entityID found in
+ * that cell of the current Row.
+ */
 const getEntityOrRowId = (
   props: CellContext<Row, unknown>,
 ): string | undefined => {
@@ -146,6 +151,11 @@ const getEntityOrRowId = (
       : row.original.rowId?.toString()
   return entityId
 }
+/**
+ * Given the (tanstack react) Table CellContext, return the version of the current Synapse Table Row.
+ * If a rowEntityVersionColumnName was provided in the table config, then instead return the version found in
+ * that cell of the current Row.
+ */
 const getEntityOrRowVersion = (
   props: CellContext<Row, unknown>,
 ): string | undefined => {

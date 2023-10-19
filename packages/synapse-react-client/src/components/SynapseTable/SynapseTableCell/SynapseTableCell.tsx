@@ -87,11 +87,11 @@ function SynapseTableCell(props: SynapseTableCellProps) {
   // PORTALS-2095: Special case. If this is an EntityView, and we are rendering the 'id' or 'name' column,
   // and we have a rowId and rowVersionNumber (should always be the case), and our entityIdToHeader map
   // contains the row Synapse ID, then auto-link.
-  const tableRowRepresentsFile =
+  const tableRowRepresentsEntity =
     entity &&
     (isEntityView(entity) || isDataset(entity) || isDatasetCollection(entity))
   if (
-    (tableRowRepresentsFile || rowIdIsString) &&
+    (tableRowRepresentsEntity || rowIdIsString) &&
     (columnName === 'id' || columnName === 'name') &&
     rowSynId &&
     rowVersionNumber
