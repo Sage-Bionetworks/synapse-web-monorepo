@@ -6,7 +6,6 @@ import {
 import { BUNDLE_MASK_QUERY_COLUMN_MODELS } from '../../utils/SynapseConstants'
 import {
   ColumnModel,
-  ColumnType,
   ColumnTypeEnum,
   EntityType,
   FacetType,
@@ -20,9 +19,9 @@ import {
   ButtonGroup,
   Checkbox as MUICheckbox,
   FormControl,
-  Grid,
   MenuItem,
   Select,
+  SxProps,
   TextField,
   Typography,
 } from '@mui/material'
@@ -38,7 +37,7 @@ import {
 } from './TableColumnSchemaFormReducer'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { selectAtom } from 'jotai/utils'
-import { isEqual, times } from 'lodash-es'
+import { isEmpty, isEqual, times } from 'lodash-es'
 import {
   convertToConcreteEntityType,
   convertToEntityType,
@@ -53,15 +52,15 @@ import {
   getColumnTypeFriendlyName,
   getFacetTypeFriendlyName,
   getMaxSizeForType,
-  unsupportedTypesForViews,
 } from './TableColumnSchemaEditorUtils'
 import { North, South } from '@mui/icons-material'
 import IconSvg from '../IconSvg'
+import TextFieldCommaSeparatedInput from './TextFieldCommaSeparatedInput'
 
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
   '18px 18px 2fr 2fr 0.75fr 1fr 1fr 1fr 1fr'
 
-const GRID_CONTAINER_Y_MARGIN_PX = 12
+const GRID_CONTAINER_Y_MARGIN_PX = 6
 
 const HIERARCHY_VERTICAL_LINE_COMPONENT = (
   <Box
@@ -222,61 +221,21 @@ function TableColumnSchemaForm(props: TableColumnSchemaFormProps) {
     if (initialData) {
       dispatch({
         type: 'setValue',
-        value: initialData,
+        value: initialData.map(
+          (cm: ColumnModel): ColumnModelFormData => ({
+            ...cm,
+            jsonSubColumns: cm.jsonSubColumns?.map(
+              (jsc: JsonSubColumnModel): JsonSubColumnModelFormData => ({
+                ...jsc,
+                isSelected: false,
+              }),
+            ),
+            isSelected: false,
+          }),
+        ),
       })
     }
   }, [])
-
-  // const methods = useForm<ColumnModelFormData>({
-  //   defaultValues: { columnModels: initialData },
-  // })
-  // const { control, handleSubmit, getValues, watch } = methods
-  // const { fields, append, prepend, remove, swap, move, insert, replace } =
-  //   useFieldArray({
-  //     control,
-  //     name: 'columnModels',
-  //   })
-
-  // const selectedColumnModels = watch().columnModels.filter(cm => cm.isSelected)
-  //
-  // const selectedColumnModelIndex = watch().columnModels.findIndex(
-  //   cm => cm.isSelected,
-  // )
-  // const selectedJsonSubColumns = watch().columnModels.flatMap(
-  //   cm => cm.jsonSubColumns?.filter(jsc => jsc.isSelected) ?? [],
-  // )
-  // const selectedJsonSubColumnIndex: number | undefined = watch()
-  //   .columnModels.flatMap(cm =>
-  //     cm.jsonSubColumns?.findIndex(jsc => jsc.isSelected),
-  //   )
-  //   .find(index => index !== -1)
-  //
-  // const handleMoveUp = useCallback(() => {
-  //   columnModels.forEach((cm, index) => {
-  //     if (
-  //       // Cannot move index 0 up
-  //       index > 0 &&
-  //       // Only move if it's selected
-  //       cm.isSelected &&
-  //       // If the previous item is also selected, don't swap
-  //       !columnModels[index - 1].isSelected
-  //     ) {
-  //       ;[columnModels[index - 1], columnModels[index]] = [
-  //         columnModels[index],
-  //         columnModels[index - 1],
-  //       ]
-  //     }
-  //   })
-  //   replace(columnModels)
-  // }, [columnModels, replace])
-  //
-  // const handleMoveDown = useCallback(() => {
-  //   // if (selectedJsonSubColumnIndex > 0) {
-  //   //   replace(`columnModels[${selectedColumnModelIndex}].jsonSubColumns`, [])
-  //   // } else {
-  //   swap(selectedColumnModelIndex, selectedColumnModelIndex + 1)
-  //   // }
-  // }, [selectedColumnModelIndex, swap])
 
   return (
     <>
@@ -290,7 +249,7 @@ function TableColumnSchemaForm(props: TableColumnSchemaFormProps) {
           borderBottom: '2px solid',
           borderColor: 'grey.300',
         }}
-        gap={1.25}
+        gap={'8px'}
       >
         <Box>{/* Checkbox */}</Box>
         <Box sx={{ gridColumn: '2 / span 2' }}>Column Name</Box>
@@ -337,6 +296,16 @@ type ColumnOrSubcolumnFormProps = {
   jsonSubColumnIndex?: number
 }
 
+const jsonSubColumnFieldSx: SxProps = {
+  height: '32px',
+  fontSize: '13px',
+}
+
+const topLevelColumnModelFieldSx: SxProps = {
+  height: '42px',
+  fontSize: '14px',
+}
+
 function ColumnOrSubcolumnForm(props: ColumnOrSubcolumnFormProps) {
   const { columnModelIndex, jsonSubColumnIndex, entityType } = props
   const isJsonSubColumn = jsonSubColumnIndex != undefined
@@ -369,6 +338,11 @@ function ColumnOrSubcolumnForm(props: ColumnOrSubcolumnFormProps) {
     () => configureFacetsForType(columnModel.columnType, isJsonSubColumn),
     [columnModel.columnType, isJsonSubColumn],
   )
+  const fieldSx: SxProps = useMemo(
+    () => (isJsonSubColumn ? jsonSubColumnFieldSx : topLevelColumnModelFieldSx),
+    [isJsonSubColumn],
+  )
+
   return (
     <>
       {isJsonSubColumn && (
@@ -416,6 +390,9 @@ function ColumnOrSubcolumnForm(props: ColumnOrSubcolumnFormProps) {
               },
             })
           }}
+          InputProps={{
+            sx: fieldSx,
+          }}
           fullWidth
         />
       </Box>
@@ -432,6 +409,7 @@ function ColumnOrSubcolumnForm(props: ColumnOrSubcolumnFormProps) {
                 newColumnType: e.target.value as ColumnTypeEnum,
               })
             }}
+            sx={fieldSx}
           >
             {allowedColumnTypes.map(value => {
               return (
@@ -455,6 +433,7 @@ function ColumnOrSubcolumnForm(props: ColumnOrSubcolumnFormProps) {
                 canHaveSize(columnModel.columnType) &&
                 getMaxSizeForType(columnModel.columnType),
             },
+            sx: fieldSx,
           }}
           onChange={e => {
             dispatch({
@@ -486,6 +465,9 @@ function ColumnOrSubcolumnForm(props: ColumnOrSubcolumnFormProps) {
               },
             })
           }}
+          InputProps={{
+            sx: fieldSx,
+          }}
           fullWidth
         />
       </Box>
@@ -507,43 +489,32 @@ function ColumnOrSubcolumnForm(props: ColumnOrSubcolumnFormProps) {
               },
             })
           }}
+          InputProps={{
+            sx: fieldSx,
+          }}
         />
       </Box>
       <Box>
-        <TextField
+        <TextFieldCommaSeparatedInput
           fullWidth
-          value={
-            (columnModel as ColumnModelFormData)?.enumValues?.join(', ') ?? ''
-          }
+          value={(columnModel as ColumnModelFormData)?.enumValues ?? []}
           disabled={canHaveRestrictedValues(
             columnModel.columnType,
             isJsonSubColumn,
           )}
-          onBlur={e => {
+          onBlur={newValue => {
             dispatch({
               type: 'setColumnModelValue',
               columnModelIndex,
               jsonSubColumnModelIndex: jsonSubColumnIndex,
               value: {
                 ...columnModel,
-                enumValues: e.target.value
-                  .split(',')
-                  .map(value => value.trim()),
+                enumValues: isEmpty(newValue) ? undefined : newValue,
               },
             })
           }}
-          onChange={e => {
-            dispatch({
-              type: 'setColumnModelValue',
-              columnModelIndex,
-              jsonSubColumnModelIndex: jsonSubColumnIndex,
-              value: {
-                ...columnModel,
-                enumValues: e.target.value
-                  .split(',')
-                  .map(value => value.trim()),
-              },
-            })
+          InputProps={{
+            sx: fieldSx,
           }}
         />
       </Box>
@@ -564,11 +535,12 @@ function ColumnOrSubcolumnForm(props: ColumnOrSubcolumnFormProps) {
                 },
               })
             }}
+            sx={fieldSx}
           >
             {(allowedFacetTypes ?? []).map((value, index) => {
               return (
                 <MenuItem value={value} key={index}>
-                  {getFacetTypeFriendlyName(value)}
+                  {value === undefined ? '' : getFacetTypeFriendlyName(value)}
                 </MenuItem>
               )
             })}
@@ -599,6 +571,9 @@ function ColumnOrSubcolumnForm(props: ColumnOrSubcolumnFormProps) {
                 })
               }}
               fullWidth
+              InputProps={{
+                sx: fieldSx,
+              }}
             />
             {/* TODO: Help */}
           </Box>
@@ -629,7 +604,6 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaEditorRowProps) {
   )
 
   if (!columnModel) {
-    console.log('props', props)
     return <></>
   }
 

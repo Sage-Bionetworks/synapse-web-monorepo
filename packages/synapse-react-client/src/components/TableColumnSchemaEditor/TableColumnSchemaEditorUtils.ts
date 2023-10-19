@@ -1,5 +1,4 @@
 import {
-  ColumnModel,
   ColumnType,
   ColumnTypeEnum,
   FacetType,
@@ -7,6 +6,7 @@ import {
 
 /**
  * These column types can only be used in Tables. They can not be used in views.
+ *  See SWC-6333 - for views, only allow column types that are mapped to annotation types.
  */
 const unsupportedTypesForViews = [
   ColumnTypeEnum.LARGETEXT,
@@ -179,7 +179,7 @@ export function canHaveDefault(
   isView: boolean,
   isJsonSubColumnFacet: boolean,
 ) {
-  // SWC-6333: if this column is in a view, only allow column types that are mapped to annotation types.
+  // SWC-6333: default types are not allowed in views
   if (!isView && !isJsonSubColumnFacet) {
     switch (type) {
       case ColumnTypeEnum.ENTITYID:

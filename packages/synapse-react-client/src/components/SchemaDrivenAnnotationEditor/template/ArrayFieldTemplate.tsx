@@ -23,7 +23,7 @@ function ArrayFieldTemplate<
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
 >(props: ArrayFieldTemplateProps<T, S, F>) {
-  const { idSchema, uiSchema, items, registry, schema } = props
+  const { idSchema, uiSchema, items, registry, schema, displayLabel } = props
   const uiOptions = getUiOptions<T, S, F>(uiSchema)
   const ArrayFieldTitleTemplate = getTemplate<
     'ArrayFieldTitleTemplate',
