@@ -1,6 +1,6 @@
 @use '../abstracts/variables' as SRC;
 
-.AnnotationEditor {
+.JsonSchemaFormContainer {
   .react-select-container > .form-control {
     height: 53.33px;
   }
@@ -26,7 +26,7 @@
     display: none !important;
   }
 
-  .AnnotationEditorForm {
+  .JsonSchemaForm {
     display: grid;
     // We can't rearrange the order of the HTML elements, so we use grid rows to reorder them.
     grid-template-rows: auto auto auto auto auto;

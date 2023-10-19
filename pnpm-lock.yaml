@@ -896,6 +896,9 @@ importers:
       mui-one-time-password-input:
         specifier: 1.1.0
         version: 1.1.0(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/material@5.13.7)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0)
+      papaparse:
+        specifier: ^5.4.1
+        version: 5.4.1
       plotly.js-basic-dist:
         specifier: ^2.24.3
         version: 2.24.3
@@ -1146,6 +1149,9 @@ importers:
       '@types/node':
         specifier: ^18.16.19
         version: 18.16.19
+      '@types/papaparse':
+        specifier: ^5.3.10
+        version: 5.3.10
       '@types/plotly.js':
         specifier: ^2.12.22
         version: 2.12.22
@@ -8183,6 +8189,12 @@ packages:
 
   /@types/npmlog@4.1.4:
     resolution: {integrity: sha512-WKG4gTr8przEZBiJ5r3s8ZIAoMXNbOgQ+j/d5O4X3x6kZJRLNvyUJuUK/KoG3+8BaOHPhp2m7WC6JKKeovDSzQ==}
+    dev: true
+
+  /@types/papaparse@5.3.10:
+    resolution: {integrity: sha512-mS1Fta/xJ9EDYmAvpeWzcV9Gr0cOl1ClpW7di9+wSUNDIDO55tBtyXg97O7K+Syrd9rDEmuejM2iqmJIJ1SO5g==}
+    dependencies:
+      '@types/node': 18.16.19
     dev: true
 
   /@types/parse-json@4.0.0:
@@ -15452,6 +15464,10 @@ packages:
   /pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
     dev: true
+
+  /papaparse@5.4.1:
+    resolution: {integrity: sha512-HipMsgJkZu8br23pW15uvo6sib6wne/4woLZPlFf3rpDyMe9ywEXUsuD7+6K9PRkJlVT51j/sCOYDKGGS3ZJrw==}
+    dev: false
 
   /parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}

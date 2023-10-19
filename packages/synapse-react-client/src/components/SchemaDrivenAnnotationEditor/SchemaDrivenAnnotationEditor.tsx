@@ -218,7 +218,7 @@ export function SchemaDrivenAnnotationEditor(
   }
 
   return (
-    <div className="AnnotationEditor">
+    <div className="JsonSchemaFormContainer">
       {isLoading ? (
         <div className="LoadingPlaceholder">
           <SynapseSpinner size={30} />
@@ -261,7 +261,7 @@ export function SchemaDrivenAnnotationEditor(
           {formData != undefined && (
             <Form
               validator={validator}
-              className="AnnotationEditorForm"
+              className="JsonSchemaForm"
               liveValidate={liveValidate}
               noHtml5Validate={true}
               experimental_defaultFormStateBehavior={{
