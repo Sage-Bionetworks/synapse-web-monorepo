@@ -8,8 +8,16 @@ import ArrayFieldItemTemplate from '../SchemaDrivenAnnotationEditor/template/Arr
 import ArrayFieldTemplate from '../SchemaDrivenAnnotationEditor/template/ArrayFieldTemplate'
 import ArrayFieldTitleTemplate from '../SchemaDrivenAnnotationEditor/template/ArrayFieldTitleTemplate'
 import ButtonTemplate from '../SchemaDrivenAnnotationEditor/template/ButtonTemplate'
-import { Box, Button, Collapse, TextField } from '@mui/material'
-import { parse } from 'papaparse'
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Button,
+  Collapse,
+  TextField,
+  Typography,
+} from '@mui/material'
+import { parse, ParseError } from 'papaparse'
 import { RJSFSchema } from '@rjsf/utils'
 type JSONArrayEditorProps = {
   value: string[]
@@ -32,21 +40,23 @@ const JSONArrayEditor = React.forwardRef(function JSONArrayEditor(
   const { value, onChange, onSubmit } = props
   const [showPasteNewValuesForm, setShowPasteNewValuesForm] = useState(false)
   const [pastedValues, setPastedValues] = useState('')
-
+  const [parseErrors, setParseErrors] = useState<ParseError[]>([])
   const addPastedValuesToArray = useCallback(() => {
     if (pastedValues) {
       parse<string[]>(pastedValues, {
         complete: result => {
-          console.log(result)
           if (result.errors.length > 0) {
-            console.error('Error parsing pasted values', result.errors)
+            setParseErrors(result.errors)
+          } else {
+            onChange([...value, ...result.data[0]])
+            setParseErrors([])
+            setPastedValues('')
+            setShowPasteNewValuesForm(false)
           }
-          onChange([...value, ...result.data[0]])
-          setPastedValues('')
-          setShowPasteNewValuesForm(false)
         },
       })
     } else {
+      setParseErrors([])
       setPastedValues('')
       setShowPasteNewValuesForm(false)
     }
@@ -54,7 +64,7 @@ const JSONArrayEditor = React.forwardRef(function JSONArrayEditor(
 
   return (
     <Box
-      className="AnnotationEditor"
+      className="JsonSchemaFormContainer"
       sx={{
         // Hide the label/button to show more info
         '.LabelContainer': {
@@ -88,8 +98,9 @@ const JSONArrayEditor = React.forwardRef(function JSONArrayEditor(
       </Button>
       <Collapse sx={{ mt: 2 }} in={showPasteNewValuesForm}>
         <TextField
+          multiline
           InputProps={{ inputProps: { 'aria-label': 'CSV or TSV to Append' } }}
-          rows={8}
+          rows={5}
           placeholder={'Place comma or tab delimited values here'}
           value={pastedValues}
           onChange={e => setPastedValues(e.target.value)}
@@ -100,6 +111,25 @@ const JSONArrayEditor = React.forwardRef(function JSONArrayEditor(
           </Button>
           <Button onClick={addPastedValuesToArray}>Add</Button>
         </Box>
+        {parseErrors && parseErrors.length > 0 && (
+          <Alert severity={'error'} sx={{ my: 2 }}>
+            <AlertTitle>Parsing errors encountered:</AlertTitle>
+            <ul>
+              {parseErrors.map((error, index) => {
+                return (
+                  <Typography
+                    component={'li'}
+                    lineHeight={1.5}
+                    key={index}
+                    variant={'smallText1'}
+                  >
+                    At {error.row}: {error.message}
+                  </Typography>
+                )
+              })}
+            </ul>
+          </Alert>
+        )}
       </Collapse>
     </Box>
   )
