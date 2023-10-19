@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react'
-import Form from '@rjsf/mui'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import JSONArrayEditor from './JSONArrayEditor'
+import type RJSFForm from '@rjsf/core'
+import { RJSFSchema } from '@rjsf/utils'
 
 export type JSONArrayEditorModalProps = {
   isShowingModal: boolean
@@ -11,7 +12,7 @@ export type JSONArrayEditorModalProps = {
 
 function JSONArrayEditorModal(props: JSONArrayEditorModalProps) {
   const { isShowingModal, onConfirm, onCancel } = props
-  const formRef = useRef<typeof Form>()
+  const formRef = useRef<RJSFForm<any, RJSFSchema, any>>(null)
   const [value, setValue] = useState<string[]>([])
   return (
     <ConfirmationDialog

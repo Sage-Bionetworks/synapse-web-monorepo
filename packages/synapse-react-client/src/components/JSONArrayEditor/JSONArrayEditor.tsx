@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react'
+import type RJSFForm from '@rjsf/core'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
 import { JSONSchema7 } from 'json-schema'
@@ -9,6 +10,7 @@ import ArrayFieldTitleTemplate from '../SchemaDrivenAnnotationEditor/template/Ar
 import ButtonTemplate from '../SchemaDrivenAnnotationEditor/template/ButtonTemplate'
 import { Box, Button, Collapse, TextField } from '@mui/material'
 import { parse } from 'papaparse'
+import { RJSFSchema } from '@rjsf/utils'
 type JSONArrayEditorProps = {
   value: string[]
   onChange: (newValue: string[]) => void
@@ -25,7 +27,7 @@ const arraySchema: JSONSchema7 = {
 
 const JSONArrayEditor = React.forwardRef(function JSONArrayEditor(
   props: JSONArrayEditorProps,
-  ref: React.Ref<Form>,
+  ref: React.Ref<RJSFForm<any, RJSFSchema, any>>,
 ) {
   const { value, onChange, onSubmit } = props
   const [showPasteNewValuesForm, setShowPasteNewValuesForm] = useState(false)
