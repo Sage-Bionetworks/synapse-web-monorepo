@@ -194,7 +194,7 @@
     "buffer": "^6.0.3",
     "chromatic": "^6.19.9",
     "copyfiles": "^2.4.1",
-    "core-js": "^3.31.1",
+    "core-js": "^3.33.1",
     "esbuild": "^0.18.11",
     "esbuild-plugin-globals": "^0.2.0",
     "esbuild-plugin-node-polyfills": "^1.0.2",
