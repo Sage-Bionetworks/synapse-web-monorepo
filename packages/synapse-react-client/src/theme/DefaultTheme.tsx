@@ -209,6 +209,9 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           outline: ownerState.error
             ? `1px solid ${theme.palette.error.main}`
             : 'none',
+          '&.Mui-disabled': {
+            backgroundColor: theme.palette.grey[100],
+          },
           '&.Mui-focused': {
             boxShadow: `${alpha(
               theme.palette.primary.main,
@@ -279,6 +282,9 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           fontSize: '14px',
           borderRadius: '2px',
           backgroundColor: theme.palette.common.black,
+          '& .MuiLink-root': {
+            color: '#fff',
+          },
         }),
       },
     },

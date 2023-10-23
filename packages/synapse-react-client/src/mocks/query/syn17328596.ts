@@ -1,5 +1,7 @@
 // result of querying table syn17328596
-export const syn17328596 = {
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+
+export const syn17328596: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',

@@ -11,6 +11,7 @@ export type SkeletonTableProps = {
   numCols?: number
   rowHeight?: string
   className?: string
+  fullWidthCells?: boolean
 }
 
 /**
@@ -23,6 +24,7 @@ export const SkeletonTable: React.FC<SkeletonTableProps> = ({
   numCols = 2,
   rowHeight,
   className,
+  fullWidthCells = false,
 }) => {
   const [skeletons, setSkeletons] = useState<JSX.Element[]>([])
 
@@ -33,18 +35,22 @@ export const SkeletonTable: React.FC<SkeletonTableProps> = ({
         <React.Fragment key={i}>
           <Skeleton
             height={rowHeight}
-            width={`${getRandomInt(35, 75)}%`}
+            width={fullWidthCells ? '100%' : `${getRandomInt(35, 75)}%`}
           ></Skeleton>
         </React.Fragment>,
       )
     })
     setSkeletons(elements)
-  }, [numRows, numCols, rowHeight])
+  }, [numRows, numCols, rowHeight, fullWidthCells])
 
   return (
     <div
       className={className}
-      style={{ display: 'grid', gridTemplateColumns: `auto `.repeat(numCols) }}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `auto `.repeat(numCols),
+        gap: '8px',
+      }}
     >
       {skeletons}
     </div>
