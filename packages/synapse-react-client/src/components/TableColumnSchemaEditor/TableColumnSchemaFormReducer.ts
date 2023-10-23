@@ -200,17 +200,21 @@ function changeColumnModelType(
   let newColumnModelValue: ColumnModelFormData | JsonSubColumnModelFormData
 
   // Create a copy of the selected column model
-  if (
-    prevState &&
-    prevState[columnModelIndex] &&
-    prevState[columnModelIndex].jsonSubColumns &&
-    jsonSubColumnModelIndex !== undefined
-  ) {
-    newColumnModelValue = cloneDeep(
-      prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex],
-    )
+  if (prevState && prevState[columnModelIndex]) {
+    if (
+      prevState[columnModelIndex].jsonSubColumns &&
+      jsonSubColumnModelIndex !== undefined
+    ) {
+      newColumnModelValue = cloneDeep(
+        prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex],
+      )
+    } else {
+      newColumnModelValue = cloneDeep(prevState[columnModelIndex])
+    }
   } else {
-    newColumnModelValue = cloneDeep(prevState[columnModelIndex])
+    throw new Error(
+      'Cannot change column model type for a column that does not exist',
+    )
   }
 
   // Update the column model. Remove fields that no longer make sense for the new column type
@@ -251,16 +255,16 @@ function changeColumnModelType(
   }
 
   // Replace the value
-  if (
-    prevState &&
-    prevState[columnModelIndex] &&
-    prevState[columnModelIndex].jsonSubColumns &&
-    jsonSubColumnModelIndex !== undefined
-  ) {
-    prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex] =
-      newColumnModelValue as JsonSubColumnModelFormData
-  } else {
-    prevState[columnModelIndex] = newColumnModelValue as ColumnModelFormData
+  if (prevState && prevState[columnModelIndex]) {
+    if (
+      prevState[columnModelIndex].jsonSubColumns &&
+      jsonSubColumnModelIndex !== undefined
+    ) {
+      prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex] =
+        newColumnModelValue as JsonSubColumnModelFormData
+    } else {
+      prevState[columnModelIndex] = newColumnModelValue as ColumnModelFormData
+    }
   }
 }
 
@@ -297,16 +301,16 @@ function setColumnModelValue(
   prevState: ColumnModelFormData[],
 ) {
   const { columnModelIndex, jsonSubColumnModelIndex, value } = action
-  if (
-    prevState &&
-    prevState[columnModelIndex] &&
-    prevState[columnModelIndex].jsonSubColumns &&
-    jsonSubColumnModelIndex !== undefined
-  ) {
-    prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex] =
-      value as JsonSubColumnModelFormData
-  } else {
-    prevState[columnModelIndex] = value as ColumnModelFormData
+  if (prevState && prevState[columnModelIndex]) {
+    if (
+      prevState[columnModelIndex].jsonSubColumns &&
+      jsonSubColumnModelIndex !== undefined
+    ) {
+      prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex] =
+        value as JsonSubColumnModelFormData
+    } else {
+      prevState[columnModelIndex] = value as ColumnModelFormData
+    }
   }
 }
 
@@ -319,21 +323,21 @@ function toggleSelect(
   prevState: ColumnModelFormData[],
 ) {
   const { columnModelIndex, jsonSubColumnModelIndex } = action
-  if (
-    prevState &&
-    prevState[columnModelIndex] &&
-    prevState[columnModelIndex].jsonSubColumns &&
-    jsonSubColumnModelIndex !== undefined
-  ) {
-    const cm =
-      prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex]
-    prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex] = {
-      ...cm,
-      isSelected: !cm.isSelected,
+  if (prevState && prevState[columnModelIndex]) {
+    if (
+      prevState[columnModelIndex].jsonSubColumns &&
+      jsonSubColumnModelIndex !== undefined
+    ) {
+      const cm =
+        prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex]
+      prevState[columnModelIndex].jsonSubColumns![jsonSubColumnModelIndex] = {
+        ...cm,
+        isSelected: !cm.isSelected,
+      }
+    } else {
+      const cm = prevState[columnModelIndex]
+      prevState[columnModelIndex] = { ...cm, isSelected: !cm.isSelected }
     }
-  } else {
-    const cm = prevState[columnModelIndex]
-    prevState[columnModelIndex] = { ...cm, isSelected: !cm.isSelected }
   }
 }
 
