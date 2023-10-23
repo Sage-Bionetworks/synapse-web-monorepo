@@ -21,7 +21,7 @@
     "react-easy-crop": "^4.7.5",
     "react-query": "3.39.3",
     "react-router-dom": "^5.3.4",
-    "sass": "^1.63.6",
+    "sass": "^1.69.4",
     "synapse-react-client": "workspace:*",
     "universal-cookie": "^4.0.4"
   },
