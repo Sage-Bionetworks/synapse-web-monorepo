@@ -44,7 +44,7 @@ export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
-          backgroundColor: 'grey.300',
+          backgroundColor: 'grey.200',
           padding: '15px',
         }}
       >
