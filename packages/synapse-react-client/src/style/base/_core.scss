@@ -572,7 +572,6 @@ button.SRC-roundBorder {
 .SRC-userCard {
   display: inline-flex;
   align-items: center;
-  min-width: 350px;
   .SRC-cardContent {
     width: 100%;
     overflow: hidden;
@@ -602,6 +601,7 @@ button.SRC-roundBorder {
   width: -webkit-fill-available; // for chrome
   width: -moz-available; // for firefox
   padding-left: 25px;
+  min-width: 350px;
 }
 
 .SRC-eqHeightRow {
