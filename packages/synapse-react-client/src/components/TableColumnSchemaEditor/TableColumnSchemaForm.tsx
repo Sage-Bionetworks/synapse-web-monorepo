@@ -175,6 +175,7 @@ function TableColumnSchemaFormActions() {
       </Button>
       <ButtonGroup>
         <Button
+          aria-label={'Move Down'}
           variant={'outlined'}
           color={'neutral'}
           onClick={() => {
@@ -185,6 +186,7 @@ function TableColumnSchemaFormActions() {
           <South fontSize={'small'} />
         </Button>
         <Button
+          aria-label={'Move Up'}
           variant={'outlined'}
           color={'neutral'}
           onClick={() => {
@@ -196,6 +198,7 @@ function TableColumnSchemaFormActions() {
         </Button>
       </ButtonGroup>
       <Button
+        aria-label={'Delete'}
         variant={'outlined'}
         color={'neutral'}
         onClick={() => {
@@ -241,7 +244,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
       />
       {columnModel.columnType === ColumnTypeEnum.JSON &&
         columnModel.jsonSubColumns &&
-        columnModel.jsonSubColumns.map((subcolumnFacet, index) => (
+        columnModel.jsonSubColumns.map((subColumnFacet, index) => (
           <ColumnModelForm
             key={index}
             entityType={entityType}
