@@ -18,7 +18,7 @@ export const Markdown: Story = {
 export const WikiPage: Story = {
   args: {
     ownerId: 'syn12666371',
-    wikiId: '602581',
+    wikiId: '608162',
     textDescription: 'full statement',
     showCopyPlainText: true,
   },

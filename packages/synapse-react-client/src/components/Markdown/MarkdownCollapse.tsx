@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { Collapse, SafeAnchor } from 'react-bootstrap'
-import IconMinus from '../../assets/icons/IconMinus'
-import IconPlus from '../../assets/icons/IconPlus'
-import IconCopy from '../../assets/icons/IconCopy'
 import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 import { displayToast } from '../ToastMessage/ToastMessage'
+import { Box, Collapse, SxProps, Typography } from '@mui/material'
+import {
+  ContentCopyTwoTone,
+  KeyboardArrowDownTwoTone,
+  KeyboardArrowUpTwoTone,
+} from '@mui/icons-material'
 
 export type MarkdownCollapseProps = {
   // The text that should be shown.  If not given, will default to "full text"
@@ -31,49 +33,78 @@ export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
   }
 
   const { textDescription = 'full text', showCopyPlainText } = props
+  const iconSx: SxProps = {
+    color: 'grey.700',
+    marginBottom: '-5px !important',
+    height: '18px',
+  }
   return (
-    <div className="MarkdownCollapse bootstrap-4-backport">
-      <p>
-        {show ? <IconMinus /> : <IconPlus />}
-        <SafeAnchor
-          className="highlight-link"
+    <div className="MarkdownCollapse">
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          backgroundColor: 'grey.300',
+          padding: '15px',
+        }}
+      >
+        <Typography
+          variant="smallLink"
           onClick={() => setShow(!show)}
           aria-controls="collapse-text"
           aria-expanded={show}
+          sx={{
+            '&:hover': {
+              cursor: 'pointer',
+            },
+          }}
         >
           {show ? 'Hide' : 'View'} {textDescription}{' '}
           {wordCount ? `(${wordCount} words)` : ''}
-        </SafeAnchor>
-      </p>
-      {showCopyPlainText && (
-        <p>
-          <IconCopy className="primary" />
-          <SafeAnchor
-            className="highlight-link"
-            onClick={() => {
-              if (plainText) {
-                navigator.clipboard
-                  .writeText(plainText)
-                  .then(() => {
-                    displayToast('Successfully copied to the clipboard')
-                  })
-                  .catch(err => {
-                    console.error(err)
-                  })
-              }
-            }}
-          >
-            Copy {textDescription} to clipboard
-          </SafeAnchor>
-        </p>
-      )}
+          {show ? (
+            <KeyboardArrowUpTwoTone sx={iconSx} />
+          ) : (
+            <KeyboardArrowDownTwoTone sx={iconSx} />
+          )}
+        </Typography>
+        {showCopyPlainText && (
+          <Box>
+            <Typography
+              variant="smallLink"
+              onClick={() => {
+                if (plainText) {
+                  navigator.clipboard
+                    .writeText(plainText)
+                    .then(() => {
+                      displayToast('Successfully copied to the clipboard')
+                    })
+                    .catch(err => {
+                      console.error(err)
+                    })
+                }
+              }}
+              sx={{
+                '&:hover': {
+                  cursor: 'pointer',
+                },
+              }}
+            >
+              <ContentCopyTwoTone sx={iconSx} />
+              Copy {textDescription} to clipboard
+            </Typography>
+          </Box>
+        )}
+      </Box>
+
       <Collapse in={show}>
-        <div id="collapse-text">
-          <MarkdownSynapse
-            {...props}
-            onMarkdownProcessingDone={onMarkdownProcessingDone}
-          />
-        </div>
+        <Box sx={{ backgroundColor: 'grey.100', padding: '25px' }}>
+          <div id="collapse-text">
+            <MarkdownSynapse
+              {...props}
+              onMarkdownProcessingDone={onMarkdownProcessingDone}
+            />
+          </div>
+        </Box>
       </Collapse>
     </div>
   )
