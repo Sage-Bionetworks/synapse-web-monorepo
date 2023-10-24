@@ -24,7 +24,7 @@ import { isEqual, times } from 'lodash-es'
 import { selectAtom } from 'jotai/utils'
 import ColumnModelForm from './ColumnModelForm'
 import AddToList from '../../assets/icons/AddToList'
-import { North, South } from '@mui/icons-material'
+import { AddCircleTwoTone, North, South } from '@mui/icons-material'
 import IconSvg from '../IconSvg'
 
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
@@ -89,19 +89,25 @@ export default function TableColumnSchemaForm(
         ),
       })
     }
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <>
+    <Box
+      sx={{
+        py: 2.5,
+        borderBottom: '2px solid',
+        borderColor: 'grey.300',
+      }}
+    >
       <TableColumnSchemaFormActions />
       <Box
         display={'grid'}
         sx={{
           gridTemplateColumns: COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS,
-          py: 1.25,
+          py: 2.5,
           fontWeight: 700,
-          borderBottom: '2px solid',
-          borderColor: 'grey.300',
         }}
         gap={'8px'}
       >
@@ -125,14 +131,16 @@ export default function TableColumnSchemaForm(
       </Box>
 
       <Button
+        variant={'outlined'}
         onClick={() => {
           dispatch({ type: 'appendColumn' })
         }}
+        startIcon={<AddCircleTwoTone />}
       >
         Add Column
       </Button>
       {/*  Add / import buttons here  */}
-    </>
+    </Box>
   )
 }
 
