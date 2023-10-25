@@ -59,7 +59,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
   )}#!Profile:v/projects`
 
   const contactUsHref =
-    'https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/16/create/85?summary=Synapse%20Hosting%20Plan%20Request&description=%3CPlease%20add%20a%20paragraph%20describing%20your%20project%20and%20your%20expected%20data%20storage%20need%20(e.g.%2C%20duration%20and%20expected%20volume)%3E'
+    'https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/26/create/162'
 
   return (
     <div className="SynapseHomepage">
