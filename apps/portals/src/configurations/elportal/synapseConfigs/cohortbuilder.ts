@@ -59,7 +59,7 @@ const getPlotConfig = (tableId: string) => {
     type: 'bar',
     // xaxistype: ''
     xtitle: 'Age (years)',
-    ytitle: '',
+    ytitle: 'Count',
     // barmode: ''
     showlegend: false,
     onCustomPlotClick: handlePlotClick,
