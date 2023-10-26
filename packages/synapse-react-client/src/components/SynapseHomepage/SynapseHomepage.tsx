@@ -752,8 +752,8 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               >
                 <img
                   alt="Alfred P. Sloan Foundation"
-                  src="https://s3.amazonaws.com/static.synapse.org/images/sloan.svg"
-                  width={'186px'}
+                  src="https://s3.amazonaws.com/static.synapse.org/images/sloan.png"
+                  width={'175px'}
                 />
               </a>
             </div>
