@@ -804,8 +804,21 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               >
                 <img
                   alt="Neurofibromatosis Therapeutic Acceleration Program"
-                  src="https://s3.amazonaws.com/static.synapse.org/images/ntap.png"
-                  width="113px"
+                  src="https://s3.amazonaws.com/static.synapse.org/images/ntap_secondary_logo_rgb.png"
+                  width="175px"
+                />
+              </a>
+            </div>
+            <div className="PartnerFlexItem">
+              <a
+                href="https://www.gilbertfamilyfoundation.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  alt="Gilbert Family Foundation"
+                  src="https://s3.amazonaws.com/static.synapse.org/images/gff_logo_stacked.png"
+                  width="77px"
                 />
               </a>
             </div>
