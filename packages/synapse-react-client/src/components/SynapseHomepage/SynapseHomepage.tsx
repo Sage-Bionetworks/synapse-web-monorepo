@@ -772,19 +772,6 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             </div>
             <div className="PartnerFlexItem">
               <a
-                href="http://www.lsdfa.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  alt="Life Sciences Discovery Fund"
-                  src="https://s3.amazonaws.com/static.synapse.org/images/life-sciences.svg"
-                  width={'186px'}
-                />
-              </a>
-            </div>
-            <div className="PartnerFlexItem">
-              <a
                 href="http://www.ctf.org/"
                 target="_blank"
                 rel="noopener noreferrer"
