@@ -752,8 +752,8 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               >
                 <img
                   alt="Alfred P. Sloan Foundation"
-                  src="https://s3.amazonaws.com/static.synapse.org/images/sloan.svg"
-                  width={'186px'}
+                  src="https://s3.amazonaws.com/static.synapse.org/images/sloan.png"
+                  width={'175px'}
                 />
               </a>
             </div>
@@ -766,19 +766,6 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 <img
                   alt="National Institute on Aging; NIH"
                   src="https://s3.amazonaws.com/static.synapse.org/images/nih-aging.svg"
-                  width={'186px'}
-                />
-              </a>
-            </div>
-            <div className="PartnerFlexItem">
-              <a
-                href="http://www.lsdfa.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  alt="Life Sciences Discovery Fund"
-                  src="https://s3.amazonaws.com/static.synapse.org/images/life-sciences.svg"
                   width={'186px'}
                 />
               </a>
@@ -804,8 +791,21 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               >
                 <img
                   alt="Neurofibromatosis Therapeutic Acceleration Program"
-                  src="https://s3.amazonaws.com/static.synapse.org/images/ntap.png"
-                  width="113px"
+                  src="https://s3.amazonaws.com/static.synapse.org/images/ntap_secondary_logo_rgb.png"
+                  width="175px"
+                />
+              </a>
+            </div>
+            <div className="PartnerFlexItem">
+              <a
+                href="https://www.gilbertfamilyfoundation.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  alt="Gilbert Family Foundation"
+                  src="https://s3.amazonaws.com/static.synapse.org/images/gff_logo_stacked.png"
+                  width="77px"
                 />
               </a>
             </div>
