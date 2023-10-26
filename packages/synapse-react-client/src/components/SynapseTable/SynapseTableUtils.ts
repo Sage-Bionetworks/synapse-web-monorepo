@@ -108,6 +108,7 @@ export function isSortableColumn(column: ColumnType) {
     case ColumnTypeEnum.USERID_LIST:
     case ColumnTypeEnum.ENTITYID_LIST:
     case ColumnTypeEnum.EVALUATIONID:
+    case ColumnTypeEnum.SUBMISSIONID:
     case ColumnTypeEnum.JSON:
       return false
     default:

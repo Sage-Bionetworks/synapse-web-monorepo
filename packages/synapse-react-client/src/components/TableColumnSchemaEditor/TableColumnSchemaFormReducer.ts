@@ -46,7 +46,6 @@ export function getNumberOfSelectedItems(formData: ColumnModelFormData[]) {
 
 export function getDefaultColumnModelFormData(): ColumnModelFormData {
   return {
-    id: '',
     name: '',
     columnType: ColumnTypeEnum.STRING,
     isSelected: false,

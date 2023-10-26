@@ -128,6 +128,7 @@ import {
   ChallengeTeamPagedResults,
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken,
+  ColumnModel,
   CreateDiscussionReply,
   CreateDiscussionThread,
   CreateSubmissionRequest,
@@ -288,6 +289,7 @@ import {
   returnIfTwoFactorAuthError,
 } from './SynapseClientUtils'
 import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
+import { SetOptional } from 'type-fest'
 
 const cookies = new UniversalCookies()
 
@@ -4676,6 +4678,44 @@ export function getSubjects(
     nextPageToken?: string
   }>(
     `/repo/v1/accessRequirement/${requirementId}/subjects?${params.toString()}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ *
+ *
+ * Create a batch of ColumnModel that can be used as columns of a Table.
+ * Unlike other objects in Synapse ColumnModels are immutable and reusable
+ * and do not have an "owner" or "creator".
+ *
+ * This method is idempotent, so if the same ColumnModel is passed multiple times,
+ * a new ColumnModel will not be created. Instead, the existing ColumnModel will be returned.
+ * This also means if two users create identical ColumnModels for their tables they will both
+ * receive the same ColumnModel. This call will either create all column models or create none.
+ *
+ * https://rest-docs.synapse.org/rest/POST/column/batch.html
+ * @param accessToken
+ * @param columnModels
+ */
+export function createColumnModels(
+  accessToken: string,
+  columnModels: SetOptional<ColumnModel, 'id'>[],
+): Promise<{
+  list: ColumnModel[]
+}> {
+  return doPost<{
+    list: ColumnModel[]
+  }>(
+    `/repo/v1/column/batch`,
+    {
+      list: columnModels.map(cm => ({
+        ...cm,
+        concreteType: 'org.sagebionetworks.repo.model.table.ColumnModel',
+      })),
+      concreteType: 'org.sagebionetworks.repo.model.ListWrapper',
+    },
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

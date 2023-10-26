@@ -132,7 +132,6 @@ describe('TableColumnSchemaFormReducer', () => {
       type: 'appendColumn',
     })
     expect(newState[newState.length - 1]).toEqual({
-      id: '',
       name: '',
       columnType: ColumnTypeEnum.STRING,
       isSelected: false,
