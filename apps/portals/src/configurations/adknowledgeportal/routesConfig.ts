@@ -236,6 +236,21 @@ const routes: GenericRoute[] = [
     ],
   },
   {
+    // PORTALS-2836: redirect /Explore/Programs/DetailsPage?Program=ELITE to the ELITE portal
+    exact: true,
+    path: 'Explore/Programs/DetailsPage',
+    hideRouteFromNavbar: true,
+    synapseConfigArray: [
+      {
+        name: 'RedirectToURL',
+        props: {
+          toURL: 'https://eliteportal.synapse.org/',
+          search: 'Program=ELITE',
+        },
+      },
+    ],
+  },
+  {
     path: 'Explore',
     routes: [
       {
