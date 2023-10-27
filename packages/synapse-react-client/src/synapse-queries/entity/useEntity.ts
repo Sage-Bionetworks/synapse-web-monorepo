@@ -30,6 +30,7 @@ import {
   Evaluation,
   GetEvaluationParameters,
   PaginatedResults,
+  TableUpdateTransactionRequest,
   UserEntityPermissions,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
@@ -363,6 +364,40 @@ export function useUpdateEntityACL(
 
         if (options?.onSuccess) {
           await options.onSuccess(updatedACL, variables, ctx)
+        }
+      },
+    },
+  )
+}
+
+export function useUpdateTable(
+  options?: UseMutationOptions<
+    unknown,
+    SynapseClientError,
+    TableUpdateTransactionRequest
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<
+    unknown,
+    SynapseClientError,
+    TableUpdateTransactionRequest
+  >(
+    (request: TableUpdateTransactionRequest) =>
+      SynapseClient.updateTable(request, accessToken),
+    {
+      ...options,
+      onSuccess: async (response, variables, ctx) => {
+        await invalidateAllQueriesForEntity(
+          queryClient,
+          keyFactory,
+          variables.entityId,
+        )
+
+        if (options?.onSuccess) {
+          await options.onSuccess(response, variables, ctx)
         }
       },
     },

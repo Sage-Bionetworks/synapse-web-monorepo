@@ -283,10 +283,9 @@ export default function ColumnModelForm(props: ColumnOrSubcolumnFormProps) {
           onClick={() => {
             setIsShowingRestrictedValuesModal(true)
           }}
-          disabled={canHaveRestrictedValues(
-            columnModel.columnType,
-            isJsonSubColumn,
-          )}
+          disabled={
+            !canHaveRestrictedValues(columnModel.columnType, isJsonSubColumn)
+          }
           InputProps={{
             // Is readOnly because edits are made with the JSONArrayEditorModal
             readOnly: true,

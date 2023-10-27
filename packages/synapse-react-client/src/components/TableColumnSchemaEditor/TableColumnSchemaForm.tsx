@@ -5,7 +5,12 @@ import {
   JsonSubColumnModel,
 } from '@sage-bionetworks/synapse-types'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
-import React, { useEffect, useMemo } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+} from 'react'
 import {
   ColumnModelFormData,
   getIsAllSelected,
@@ -21,7 +26,7 @@ import {
   Typography,
 } from '@mui/material'
 import { isEqual, times } from 'lodash-es'
-import { selectAtom } from 'jotai/utils'
+import { selectAtom, useAtomCallback } from 'jotai/utils'
 import ColumnModelForm from './ColumnModelForm'
 import AddToList from '../../assets/icons/AddToList'
 import { AddCircleTwoTone, North, South } from '@mui/icons-material'
@@ -54,16 +59,24 @@ export const HIERARCHY_END_COMPONENT = (
     })}
   />
 )
+
+export type SubmitHandle = {
+  // Allow the parent component to trigger a submit of the form, so this may be embedded in an arbitrary modal.
+  submit: () => void
+}
+
 type TableColumnSchemaFormProps = {
   /* The type of the Table, which determines various schema restrictions and form functionality */
   entityType: EntityType
   initialData?: ColumnModel[]
+  onSubmit: (formData: ColumnModelFormData[]) => void
 }
 
-export default function TableColumnSchemaForm(
-  props: TableColumnSchemaFormProps,
-) {
-  const { initialData, entityType } = props
+const TableColumnSchemaForm = React.forwardRef<
+  SubmitHandle,
+  TableColumnSchemaFormProps
+>(function TableColumnSchemaForm(props, ref) {
+  const { initialData, entityType, onSubmit } = props
 
   const numColumnModels = useAtomValue(
     useMemo(() => atom(get => get(tableColumnSchemaFormDataAtom).length), []),
@@ -71,6 +84,9 @@ export default function TableColumnSchemaForm(
 
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
 
+  /**
+   * Set the initialData in the form state atom on mount, if it exists.
+   */
   useEffect(() => {
     if (initialData) {
       dispatch({
@@ -93,8 +109,28 @@ export default function TableColumnSchemaForm(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // useAtomCallback will let us imperatively read the form data, instead of tracking it in state and triggering a full re-render of the form when any data changes
+  const readFormData = useAtomCallback(
+    useCallback(get => {
+      return get(tableColumnSchemaFormDataAtom)
+    }, []),
+  )
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        submit() {
+          onSubmit(readFormData())
+        },
+      }
+    },
+    [onSubmit, readFormData],
+  )
+
   return (
     <Box
+      component={'form'}
       sx={{
         py: 2.5,
         borderBottom: '2px solid',
@@ -142,7 +178,7 @@ export default function TableColumnSchemaForm(
       {/*  Add / import buttons here  */}
     </Box>
   )
-}
+})
 
 function TableColumnSchemaFormActions() {
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
@@ -277,3 +313,5 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
     </>
   )
 }
+
+export default TableColumnSchemaForm
