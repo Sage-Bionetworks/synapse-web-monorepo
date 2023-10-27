@@ -6,7 +6,8 @@ export type RedirectToURLProps = {
 }
 
 /**
- * Allows us to use react-router's Redirect as a portal component without losing the query params.
+ * Allows us to redirect to an arbitrary URL.  If search is provided, then it will only redirect if the
+ * search parameter matches this string.
  * @param props
  * @returns
  */
