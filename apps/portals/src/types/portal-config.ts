@@ -40,6 +40,7 @@ import { ToggleSynapseObjectsProps } from '../portal-components/ToggleSynapseObj
 import { CSSProperties } from 'react'
 import { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObjects'
 import { ChallengeSubmissionWrapperProps } from 'portal-components/challengeportal/ChallengeSubmissionWrapper'
+import { RedirectToURLProps } from 'portal-components/RedirectToURL'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -292,6 +293,11 @@ type RedirectWithQuery = {
   props: RedirectProps
 }
 
+type RedirectToURL = {
+  name: 'RedirectToURL'
+  props: RedirectToURLProps
+}
+
 type Redirect = {
   name: 'Redirect'
   props: RedirectProps
@@ -303,6 +309,7 @@ type Header = {
 }
 
 export type SynapseConfig = (
+  | RedirectToURL
   | RedirectWithQuery
   | Redirect
   | RouteControl

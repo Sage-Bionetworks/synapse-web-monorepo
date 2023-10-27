@@ -15,6 +15,7 @@ import StatusLineChart from './crc-researcher/StatusLineChart'
 import SurveysCompletedPlots from './crc-researcher/SurveysCompletedPlots'
 import Image from './Image'
 import RedirectWithQuery from './RedirectWithQuery'
+import RedirectToURL from './RedirectToURL'
 import { Redirect } from 'react-router-dom'
 import Header from './Header'
 import ChallengeParticipantGoogleMap from './challengeportal/ChallengeParticipantGoogleMap'
@@ -34,6 +35,7 @@ const PortalComponents = {
   StatusLineChart,
   SurveysCompletedPlots,
   Image,
+  RedirectToURL,
   RedirectWithQuery,
   Redirect,
   BrowseToolsPage,
