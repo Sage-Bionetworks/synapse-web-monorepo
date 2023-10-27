@@ -18,6 +18,7 @@ import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRe
 import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
 import {
   Box,
+  Button,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -41,6 +42,7 @@ import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnab
 import { AccessRequirementListItem } from './AccessRequirementListItem'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
+import { DialogActions } from '@mui/material'
 
 export type AccessRequirementListProps = {
   entityId: string // will show this entity info
@@ -369,10 +371,17 @@ export default function AccessRequirementList(
         renderContent = <RequestDataAccessSuccess onHide={onHide} />
         break
       case RequestDataStep.SHOW_ALL_ARS:
-        renderContent = content
-        break
       default:
-        renderContent = content
+        renderContent = (
+          <>
+            {content}
+            <DialogActions>
+              <Button variant="contained" onClick={onHide}>
+                Close
+              </Button>
+            </DialogActions>
+          </>
+        )
     }
     return (
       <Dialog maxWidth={dialogWidth} fullWidth open={true} onClose={onHide}>

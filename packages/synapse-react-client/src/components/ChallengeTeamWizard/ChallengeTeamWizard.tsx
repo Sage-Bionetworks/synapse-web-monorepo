@@ -466,9 +466,16 @@ const ChallengeTeamWizard: React.FunctionComponent<
     onClose()
   }
 
-  const onConfirmHandlerMap: Record<string, () => Promise<void>> | void = {
+  const onConfirmHandlerMap: Record<
+    string,
+    (() => Promise<void>) | (() => undefined)
+  > | void = {
     CREATE_NEW_TEAM: handleCreateTeam,
     JOIN_REQUEST_FORM: handleRequestMembership,
+    JOIN_REQUEST_SENT: () => {
+      hide()
+      return undefined
+    },
   }
 
   // Determine modal content based on step.id
