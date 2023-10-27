@@ -32,7 +32,7 @@ export const mockFileViewEntity = {
 const mockFileViewEntityHeader: EntityHeader = {
   name: mockFileViewEntity.name,
   id: MOCK_TABLE_ENTITY_ID,
-  type: 'org.sagebionetworks.repo.model.table.TableEntity',
+  type: 'org.sagebionetworks.repo.model.table.EntityView',
   versionNumber: mockFileViewEntity.versionNumber,
   versionLabel: mockFileViewEntity.versionLabel,
   benefactorId: parseInt(mockProject.id),
