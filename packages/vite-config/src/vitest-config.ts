@@ -11,7 +11,7 @@ export default mergeConfig(config, {
     reporters: ['default', 'html'],
     outputFile: { html: './coverage/report/index.html' },
     coverage: {
-      provider: 'c8',
+      provider: 'v8',
       reporter: ['text-summary', 'html-spa'],
       reportsDirectory: './coverage/cov',
     },
