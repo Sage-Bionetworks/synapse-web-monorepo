@@ -1,6 +1,6 @@
 import svgrPlugin from 'esbuild-plugin-svgr'
 import { sassPlugin } from 'esbuild-sass-plugin'
-import ESBuildNodePolyfillsPlugin from 'esbuild-plugin-node-polyfills'
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import esbuild from 'esbuild'
 import GlobalsPlugin from 'esbuild-plugin-globals'
 
@@ -50,7 +50,7 @@ const esBuildOptions = {
       namedExport: 'ReactComponent',
       exportType: 'named',
     }),
-    ESBuildNodePolyfillsPlugin,
+    NodeModulesPolyfillPlugin(),
     GlobalsPlugin(globals),
   ],
   external: [
