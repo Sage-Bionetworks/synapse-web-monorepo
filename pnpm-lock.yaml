@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 overrides:
   word-wrap: ^1.2.4
   semver: ^7.5.4
@@ -113,8 +117,8 @@ importers:
         specifier: ^5.3.4
         version: 5.3.4(react@18.2.0)
       sass:
-        specifier: ^1.63.6
-        version: 1.63.6
+        specifier: ^1.69.5
+        version: 1.69.5
       synapse-react-client:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
@@ -265,13 +269,13 @@ importers:
         version: 0.12.5
       vite:
         specifier: ^4.4.2
-        version: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+        version: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
       vite-config:
         specifier: workspace:*
         version: link:../../packages/vite-config
       vitest:
         specifier: ^0.34.6
-        version: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.63.6)
+        version: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.69.5)
       whatwg-fetch:
         specifier: ^3.6.2
         version: 3.6.2
@@ -339,8 +343,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0(react-dom@18.2.0)(react@18.2.0)
       sass:
-        specifier: ^1.63.6
-        version: 1.63.6
+        specifier: ^1.69.5
+        version: 1.69.5
       synapse-react-client:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
@@ -488,13 +492,13 @@ importers:
         version: 0.12.5
       vite:
         specifier: ^4.4.2
-        version: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+        version: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
       vite-config:
         specifier: workspace:*
         version: link:../../packages/vite-config
       vitest:
         specifier: ^0.34.6
-        version: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.63.6)
+        version: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.69.5)
       whatwg-fetch:
         specifier: ^3.6.2
         version: 3.6.2
@@ -550,8 +554,8 @@ importers:
         specifier: ^5.3.4
         version: 5.3.4(react@18.2.0)
       sass:
-        specifier: ^1.63.6
-        version: 1.63.6
+        specifier: ^1.69.5
+        version: 1.69.5
       synapse-react-client:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
@@ -717,13 +721,13 @@ importers:
         version: 0.12.5
       vite:
         specifier: ^4.4.2
-        version: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+        version: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
       vite-config:
         specifier: workspace:*
         version: link:../../packages/vite-config
       vitest:
         specifier: ^0.34.6
-        version: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.63.6)
+        version: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.69.5)
 
   packages/markdown-it-synapse:
     devDependencies:
@@ -980,8 +984,8 @@ importers:
         specifier: ^3.13.0
         version: 3.13.0
       sass:
-        specifier: ^1.63.6
-        version: 1.63.6
+        specifier: ^1.69.5
+        version: 1.69.5
       shortid:
         specifier: ^2.2.16
         version: 2.2.16
@@ -1081,7 +1085,7 @@ importers:
         version: 7.1.1(react-dom@18.2.0)(react@18.2.0)
       '@storybook/addon-styling':
         specifier: ^1.3.5
-        version: 1.3.5(less@4.1.3)(postcss@8.4.25)(react-dom@18.2.0)(react@18.2.0)(sass@1.63.6)(webpack@5.88.1)
+        version: 1.3.5(less@4.1.3)(postcss@8.4.25)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)(webpack@5.88.1)
       '@storybook/manager-api':
         specifier: ^7.1.1
         version: 7.1.1(react-dom@18.2.0)(react@18.2.0)
@@ -1345,7 +1349,7 @@ importers:
         version: 0.12.5
       vite:
         specifier: ^4.4.2
-        version: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+        version: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
       vite-plugin-svgr:
         specifier: ^3.2.0
         version: 3.2.0(rollup@2.79.1)(vite@4.4.2)
@@ -1406,13 +1410,13 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.2
-        version: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+        version: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
       vite-plugin-svgr:
         specifier: ^3.2.0
         version: 3.2.0(rollup@3.26.2)(vite@4.4.2)
       vitest:
         specifier: ^0.34.6
-        version: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.63.6)
+        version: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.69.5)
 
 packages:
 
@@ -4025,7 +4029,7 @@ packages:
       magic-string: 0.27.0
       react-docgen-typescript: 2.2.2(typescript@5.1.6)
       typescript: 5.1.6
-      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
     dev: true
 
   /@jridgewell/gen-mapping@0.3.3:
@@ -4238,7 +4242,7 @@ packages:
     resolution: {integrity: sha512-jcHy6HwOX7KzRhRtL8nvIvUlxvLx2Fl6NMRCyUSQSvMTyfou9kndekz0H4HJaXvG1Y4WEifk23RYedOlrD1kEQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
-      '@types/react': ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^17.0.0 || ^18.0.0
       react-dom: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
@@ -4267,7 +4271,7 @@ packages:
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@mui/material': ^5.0.0
-      '@types/react': ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
@@ -4285,7 +4289,7 @@ packages:
     peerDependencies:
       '@emotion/react': ^11.5.0
       '@emotion/styled': ^11.3.0
-      '@types/react': ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^17.0.0 || ^18.0.0
       react-dom: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
@@ -4319,7 +4323,7 @@ packages:
     resolution: {integrity: sha512-qbSr+udcij5F9dKhGX7fEdx2drXchq7htLNr2Qg2Ma+WJ6q0ERlEqGSBiPiVDJkptcjeVL4DGmcf1wl5+vD4EA==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
-      '@types/react': ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
@@ -4360,7 +4364,7 @@ packages:
     peerDependencies:
       '@emotion/react': ^11.5.0
       '@emotion/styled': ^11.3.0
-      '@types/react': ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@emotion/react':
@@ -4387,7 +4391,7 @@ packages:
   /@mui/types@7.2.4(@types/react@18.0.27):
     resolution: {integrity: sha512-LBcwa8rN84bKF+f5sDyku42w1NTxaPgPyYKODsh01U1fVstTClbUoSA96oyRBnSNyEiAVjKm6Gwx9vjR+xyqHA==}
     peerDependencies:
-      '@types/react': '*'
+      '@types/react': 18.0.27
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -5446,7 +5450,7 @@ packages:
       ts-dedent: 2.2.0
     dev: true
 
-  /@storybook/addon-styling@1.3.5(less@4.1.3)(postcss@8.4.25)(react-dom@18.2.0)(react@18.2.0)(sass@1.63.6)(webpack@5.88.1):
+  /@storybook/addon-styling@1.3.5(less@4.1.3)(postcss@8.4.25)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)(webpack@5.88.1):
     resolution: {integrity: sha512-W0oejixqUEd2yhy3ZAu9urKJZNCLrRFwpz7JD7OgN9HiUefLw3Rn2NHeP7v4Q1oznIxpYcsgYFzv10zX21Mq5w==}
     hasBin: true
     peerDependencies:
@@ -5487,7 +5491,7 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       resolve-url-loader: 5.0.0
-      sass-loader: 13.3.2(sass@1.63.6)(webpack@5.88.1)
+      sass-loader: 13.3.2(sass@1.69.5)(webpack@5.88.1)
       style-loader: 3.3.3(webpack@5.88.1)
       webpack: 5.88.1(esbuild@0.18.11)
     transitivePeerDependencies:
@@ -5668,7 +5672,7 @@ packages:
       remark-slug: 6.1.0
       rollup: 3.26.2
       typescript: 5.1.6
-      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -6169,7 +6173,7 @@ packages:
       react: 18.2.0
       react-docgen: 6.0.0-alpha.3
       react-dom: 18.2.0(react@18.2.0)
-      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
     transitivePeerDependencies:
       - '@preact/preset-vite'
       - encoding
@@ -7643,7 +7647,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.22.5(@babel/core@7.23.2)
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7658,7 +7662,7 @@ packages:
       '@babel/plugin-transform-react-jsx-self': 7.22.5(@babel/core@7.23.2)
       '@babel/plugin-transform-react-jsx-source': 7.22.5(@babel/core@7.23.2)
       react-refresh: 0.14.0
-      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7679,7 +7683,7 @@ packages:
       std-env: 3.3.3
       test-exclude: 6.0.0
       v8-to-istanbul: 9.1.0
-      vitest: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.63.6)
+      vitest: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.69.5)
     transitivePeerDependencies:
       - supports-color
 
@@ -7721,7 +7725,7 @@ packages:
       pathe: 1.1.1
       picocolors: 1.0.0
       sirv: 2.0.3
-      vitest: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.63.6)
+      vitest: 0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.69.5)
 
   /@vitest/utils@0.34.6:
     resolution: {integrity: sha512-IG5aDD8S6zlvloDsnzHw0Ut5xczlF+kv2BOTo+iXfPr54Yhi5qbVOgGB1hZaVq4iJ4C/MZ2J0y15IlsV/ZcI0A==}
@@ -10462,7 +10466,7 @@ packages:
     dependencies:
       esbuild: 0.18.11
       resolve: 1.22.2
-      sass: 1.63.6
+      sass: 1.69.5
     dev: true
 
   /esbuild@0.17.19:
@@ -11973,10 +11977,10 @@ packages:
 
   /immutable@4.1.0:
     resolution: {integrity: sha512-oNkuqVTA8jqG1Q6c+UglTOD1xhC1BtjKI7XkCXRkZHrN5m18/XsnUp8Q89GkQO/z+0WjonSvl0FLhDYftp46nQ==}
-    dev: false
 
   /immutable@4.3.0:
     resolution: {integrity: sha512-0AOCmOip+xgJwEVTQj1EfiDDOkPmuyllDuTuEX+DDXUgapLAsBIfkg3sxCYyCEA8mQqZrrxPUGjcOQ2JS3WLkg==}
+    dev: true
 
   /import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
@@ -13025,7 +13029,7 @@ packages:
     resolution: {integrity: sha512-90jXVOd9h6gi5JXk558M+wnJfaaVN2WegcNOCfiFbWboNaDl6DkRgiY/K1oeqTfYJmq8yM7XPsL99LAvcOPqhw==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
-      '@types/react': '>=17.0.0'
+      '@types/react': 18.0.27
       react: '>=17.0.0'
     peerDependenciesMeta:
       '@types/react':
@@ -14102,7 +14106,7 @@ packages:
       '@emotion/react': ^11.5.0
       '@emotion/styled': ^11.3.0
       '@mui/material': ^5.0.0
-      '@types/react': ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^17.0.0 || ^18.0.0
       react-dom: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
@@ -15187,6 +15191,7 @@ packages:
 
   /prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
+    requiresBuild: true
     optional: true
 
   /psl@1.9.0:
@@ -15541,7 +15546,7 @@ packages:
   /react-json-tree@0.18.0(@types/react@18.0.27)(react@18.2.0):
     resolution: {integrity: sha512-Qe6HKSXrr++n9Y31nkRJ3XvQMATISpqigH1vEKhLwB56+nk5thTP0ITThpjxY6ZG/ubpVq/aEHIcyLP/OPHxeA==}
     peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@babel/runtime': 7.23.2
@@ -15671,7 +15676,7 @@ packages:
     resolution: {integrity: sha512-63C4YQBUt0m6ALadE9XV56hV8BgJWDmmTPY758iIJjfQKt2nYwoUrPk0LXRXcB/yIj82T1/Ixfdpdk68LwIB0A==}
     engines: {node: '>=10'}
     peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
@@ -15687,7 +15692,7 @@ packages:
     resolution: {integrity: sha512-bO856ad1uDYLefgArk559IzUNeQ6SWH4QnrevIUjH+GczV56giDfl3h0Idptf2oIKxQmd1p9BN25jleKodTALg==}
     engines: {node: '>=10'}
     peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
@@ -15804,7 +15809,7 @@ packages:
     resolution: {integrity: sha512-ZWj0fHEMyWkHzKYUr2Bs/4zU6XLmq9HsgBURm7g5pAVfyn49DgUiNgY2d4lXRlYSiCif9YBGpQleewkcqddc7g==}
     engines: {node: '>=10'}
     peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
@@ -16435,7 +16440,7 @@ packages:
     resolution: {integrity: sha512-ZRwKbh/eQ6w9vmTjkuG0Ioi3HBwPFce0O+v//ve+aOq1oeCy7jMV2qzzAlpsNuqpqCBjjriM1lbtZbF/Q8jVyA==}
     dev: true
 
-  /sass-loader@13.3.2(sass@1.63.6)(webpack@5.88.1):
+  /sass-loader@13.3.2(sass@1.69.5)(webpack@5.88.1):
     resolution: {integrity: sha512-CQbKl57kdEv+KDLquhC+gE3pXt74LEAzm+tzywcA0/aHZuub8wTErbjAoNI57rPUWRYRNC5WUnNl8eGJNbDdwg==}
     engines: {node: '>= 14.15.0'}
     peerDependencies:
@@ -16455,17 +16460,17 @@ packages:
         optional: true
     dependencies:
       neo-async: 2.6.2
-      sass: 1.63.6
+      sass: 1.69.5
       webpack: 5.88.1(esbuild@0.18.11)
     dev: true
 
-  /sass@1.63.6:
-    resolution: {integrity: sha512-MJuxGMHzaOW7ipp+1KdELtqKbfAWbH7OLIdoSMnVe3EXPMTmxTmlaZDCTsgIpPCs3w99lLo9/zDKkOrJuT5byw==}
+  /sass@1.69.5:
+    resolution: {integrity: sha512-qg2+UCJibLr2LCVOt3OlPhr/dqVHWOa9XtZf2OjbLs/T4VPSJ00udtgJxH3neXZm+QqX8B+3cU7RaLqp1iVfcQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
       chokidar: 3.5.3
-      immutable: 4.3.0
+      immutable: 4.1.0
       source-map-js: 1.0.2
 
   /sax@1.2.4:
@@ -17849,7 +17854,7 @@ packages:
     resolution: {integrity: sha512-3FT9PRuRdbB9HfXhEq35u4oZkvpJ5kuYbpqhCfmiZyReuRgpnhDlbr2ZEnnuS0RrJAPn6l23xjFg9kpDM+Ms7w==}
     engines: {node: '>=10'}
     peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
@@ -17920,7 +17925,7 @@ packages:
     resolution: {integrity: sha512-epTbsLuzZ7lPClpz2TyryBfztm7m+28DlEv2ZCQ3MDr5ssiwyOwGH/e5F9CkfWjJ1t4clvI58yF822/GUkjjhw==}
     engines: {node: '>=10'}
     peerDependencies:
-      '@types/react': ^16.9.0 || ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
@@ -18016,7 +18021,7 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vite-node@0.34.6(@types/node@18.16.19)(sass@1.63.6):
+  /vite-node@0.34.6(@types/node@18.16.19)(sass@1.69.5):
     resolution: {integrity: sha512-nlBMJ9x6n7/Amaz6F3zJ97EBwR2FkzhBRxF5e+jE6LA3yi6Wtc2lyTij1OnDMIr34v5g/tVQtsVAzhT0jc5ygA==}
     engines: {node: '>=v14.18.0'}
     hasBin: true
@@ -18026,7 +18031,7 @@ packages:
       mlly: 1.4.0
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -18045,7 +18050,7 @@ packages:
       '@rollup/pluginutils': 5.0.2(rollup@2.79.1)
       '@svgr/core': 7.0.0
       '@svgr/plugin-jsx': 7.0.0
-      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -18059,7 +18064,7 @@ packages:
       '@rollup/pluginutils': 5.0.2(rollup@3.26.2)
       '@svgr/core': 7.0.0
       '@svgr/plugin-jsx': 7.0.0
-      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
+      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -18069,7 +18074,7 @@ packages:
     resolution: {integrity: sha512-irjKcKXRn7v5bPAg4mAbsS6DgibpP1VUFL9tlgxU6lloK6V9yw9qCZkS+s2PtbkZpWNzr3TN3zVJAc6J7gJZmA==}
     dev: true
 
-  /vite@4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6):
+  /vite@4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5):
     resolution: {integrity: sha512-zUcsJN+UvdSyHhYa277UHhiJ3iq4hUBwHavOpsNUGsTgjBeoBlK8eDt+iT09pBq0h9/knhG/SPrZiM7cGmg7NA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -18102,11 +18107,11 @@ packages:
       less: 4.1.3
       postcss: 8.4.25
       rollup: 3.26.2
-      sass: 1.63.6
+      sass: 1.69.5
     optionalDependencies:
       fsevents: 2.3.2
 
-  /vitest@0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.63.6):
+  /vitest@0.34.6(@vitest/ui@0.34.6)(jsdom@21.1.2)(sass@1.69.5):
     resolution: {integrity: sha512-+5CALsOvbNKnS+ZHMXtuUC7nL8/7F1F2DnHGjSsszX8zCjWSSviphCb/NuS9Nzf4Q03KyyDRBAXhF/8lffME4Q==}
     engines: {node: '>=v14.18.0'}
     hasBin: true
@@ -18160,8 +18165,8 @@ packages:
       strip-literal: 1.0.1
       tinybench: 2.5.0
       tinypool: 0.7.0
-      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.63.6)
-      vite-node: 0.34.6(@types/node@18.16.19)(sass@1.63.6)
+      vite: 4.4.2(@types/node@18.16.19)(less@4.1.3)(sass@1.69.5)
+      vite-node: 0.34.6(@types/node@18.16.19)(sass@1.69.5)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less
@@ -18635,7 +18640,7 @@ packages:
     resolution: {integrity: sha512-QCPfstAS4EBiTQzlaGP1gmorkh/UL1Leaj2tdj+zZCZ/9bm0WS7sI2wnfD5lpOszFqWJ1DcPnGoY8RDL61uokw==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
-      '@types/react': '>=16.8'
+      '@types/react': 18.0.27
       immer: '>=9.0'
       react: '>=16.8'
     peerDependenciesMeta:
@@ -18650,7 +18655,3 @@ packages:
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
