@@ -65,7 +65,7 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
       {doi && (
         <div className="ObservationCard__doi">
           <Link href={doi} target="_blank">
-            DOI
+            Reference
           </Link>
         </div>
       )}
