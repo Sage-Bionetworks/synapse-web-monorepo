@@ -23,6 +23,8 @@ import {
   SubscriptionObjectType,
   SubscriptionQuery,
   TYPE_FILTER,
+  ViewColumnModelRequest,
+  ViewEntityType,
 } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from 'react-query'
 import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
@@ -703,5 +705,18 @@ export class KeyFactory {
     sortDirection: string,
   ) {
     return this.getKey('dockerTag', id, offset, limit, sort, sortDirection)
+  }
+
+  public getDefaultColumnModelsQueryKey(
+    viewEntityType?: ViewEntityType,
+    viewTypeMask?: number,
+  ) {
+    return this.getKey('defaultColumnModels', viewEntityType, viewTypeMask)
+  }
+
+  public getAnnotationColumnModelsQueryKey(
+    request: Omit<ViewColumnModelRequest, 'nextPageToken'>,
+  ) {
+    return this.getKey('annotationColumnModels', request)
   }
 }

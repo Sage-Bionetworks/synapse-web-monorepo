@@ -1,7 +1,6 @@
-import { cloneDeep, uniqueId } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 import { rest } from 'msw'
 import {
-  ASYNCHRONOUS_JOB_TOKEN,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
 } from '../../../utils/APIConstants'
@@ -20,11 +19,13 @@ import {
   BUNDLE_MASK_SUM_FILES_SIZE_BYTES,
 } from '../../../utils/SynapseConstants'
 import {
-  AsynchronousJobStatus,
-  AsyncJobId,
   QueryBundleRequest,
   QueryResultBundle,
+  ViewColumnModelRequest,
+  ViewColumnModelResponse,
 } from '@sage-bionetworks/synapse-types'
+import { generateAsyncJobHandlers } from './asyncJobHandlers'
+import defaultFileViewColumnModels from '../../query/defaultFileViewColumnModels'
 
 const BIT_TO_FIELD_MAP: Record<number, keyof QueryResultBundle> = {
   [BUNDLE_MASK_QUERY_RESULTS]: 'queryResult',
@@ -54,84 +55,43 @@ export function getHandlersForTableQuery(
   response: QueryResultBundle,
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
 ) {
-  // We must map generated async job IDs to requests to disambiguate multiple calls to these endpoints
-  const mapOfRequests = new Map<string, QueryBundleRequest>()
+  return generateAsyncJobHandlers<QueryBundleRequest, QueryResultBundle>(
+    TABLE_QUERY_ASYNC_START(':id'),
+    tokenParam => TABLE_QUERY_ASYNC_GET(':entityId', tokenParam),
+    request => removeBundleFieldsUsingMask(response, request.partMask),
+    backendOrigin,
+  )
+}
 
+export function getAnnotationColumnHandlers(
+  response: ViewColumnModelResponse,
+  backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+) {
+  return generateAsyncJobHandlers<
+    ViewColumnModelRequest,
+    ViewColumnModelResponse
+  >(
+    '/repo/v1/column/view/scope/async/start',
+    tokenParam => `/repo/v1/column/view/scope/async/get/${tokenParam}`,
+    response,
+    backendOrigin,
+  )
+}
+
+export function getDefaultColumnHandlers(
+  backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+) {
   return [
-    rest.post(
-      `${backendOrigin}${TABLE_QUERY_ASYNC_START(':id')}`,
+    rest.get(
+      `${backendOrigin}/repo/v1/column/tableview/defaults`,
       async (req, res, ctx) => {
-        const asyncJobId = uniqueId()
-        mapOfRequests.set(asyncJobId, await req.json())
         return res(
-          ctx.status(201),
-          ctx.json<AsyncJobId>({
-            token: asyncJobId,
+          ctx.status(200),
+          ctx.json({
+            concreteType: 'org.sagebionetworks.repo.model.table.ColumnModel',
+            list: defaultFileViewColumnModels,
           }),
         )
-      },
-    ),
-
-    rest.get(
-      `${backendOrigin}${ASYNCHRONOUS_JOB_TOKEN(':id')}`,
-      async (req, res, ctx) => {
-        const id = req.params.id as string
-        const queryBundleRequest = mapOfRequests.get(id)
-        if (!id || !queryBundleRequest) {
-          return res(
-            ctx.status(404),
-            ctx.json({ message: 'The mocked asynchronous job was not found' }),
-          )
-        }
-
-        const resultBundle = removeBundleFieldsUsingMask(
-          response,
-          queryBundleRequest.partMask,
-        )
-
-        return res(
-          ctx.status(201),
-          ctx.json<
-            AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
-          >({
-            jobState: 'COMPLETE',
-            jobCanceling: false,
-            requestBody: queryBundleRequest,
-            etag: '00000000-0000-0000-0000-000000000000',
-            jobId: id,
-            responseBody: resultBundle,
-            startedByUserId: 0,
-            startedOn: '',
-            changedOn: '',
-            progressMessage: '',
-            progressCurrent: 100,
-            progressTotal: 100,
-            exception: '',
-            errorMessage: '',
-            errorDetails: '',
-            runtimeMS: 100,
-          }),
-        )
-      },
-    ),
-
-    rest.get(
-      `${backendOrigin}${TABLE_QUERY_ASYNC_GET(':entityId', ':asyncJobToken')}`,
-      async (req, res, ctx) => {
-        const asyncJobToken = req.params.asyncJobToken as string
-        const request = mapOfRequests.get(asyncJobToken)
-        if (!asyncJobToken || !request) {
-          return res(
-            ctx.status(404),
-            ctx.json({ message: 'The mocked asynchronous job was not found' }),
-          )
-        }
-        const resultBundle = removeBundleFieldsUsingMask(
-          response,
-          request.partMask,
-        )
-
-        return res(ctx.status(201), ctx.json<QueryResultBundle>(resultBundle))
       },
     ),
   ]

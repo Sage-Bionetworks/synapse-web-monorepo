@@ -1,6 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react'
 import TableColumnSchemaEditor from './TableColumnSchemaEditor'
-import { getHandlersForTableQuery } from '../../mocks/msw/handlers/tableQueryHandlers'
+import {
+  getDefaultColumnHandlers,
+  getHandlersForTableQuery,
+} from '../../mocks/msw/handlers/tableQueryHandlers'
 import {
   mockQueryBundleRequest,
   mockQueryResultBundle,
@@ -22,6 +25,7 @@ export const Demo: Story = {
       handlers: [
         ...getEntityHandlers(MOCK_REPO_ORIGIN),
         ...getHandlersForTableQuery(mockQueryResultBundle, MOCK_REPO_ORIGIN),
+        ...getDefaultColumnHandlers(MOCK_REPO_ORIGIN),
       ],
     },
   },

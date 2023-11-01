@@ -1,4 +1,5 @@
-import SynapseClient, { FunctionReturningPaginatedResults } from './index'
+import type { FunctionReturningPaginatedResults } from './SynapseClient'
+import * as SynapseClient from './SynapseClient'
 import { SynapseClientError } from '../utils/SynapseClientError'
 import {
   ACCESS_TOKEN_COOKIE_KEY,
@@ -128,6 +129,47 @@ describe('SynapseClient tests', () => {
       expect(mockFn).toHaveBeenCalledTimes(2)
       expect(mockFn).toHaveBeenNthCalledWith(1, 50, 0)
       expect(mockFn).toHaveBeenNthCalledWith(2, 50, 50)
+    })
+  })
+
+  describe('getAllOfNextPageTokenPaginatedService', () => {
+    it('works with one page', async () => {
+      const results = ['a']
+      const response = {
+        results: ['a'],
+      }
+
+      const mockFn = jest.fn().mockResolvedValueOnce(response)
+      const data = await SynapseClient.getAllOfNextPageTokenPaginatedService(
+        mockFn,
+      )
+      expect(data).toEqual(results)
+      expect(mockFn).toHaveBeenCalledTimes(1)
+      expect(mockFn).toHaveBeenNthCalledWith(1, undefined)
+    })
+
+    it('works with two pages', async () => {
+      const resultsPage1 = ['a', 'b']
+      const resultsPage2 = ['c']
+      const responsePage1 = {
+        results: resultsPage1,
+        nextPageToken: 'nextPageToken',
+      }
+      const responsePage2 = {
+        results: resultsPage2,
+      }
+
+      const mockFn = jest
+        .fn()
+        .mockResolvedValueOnce(responsePage1)
+        .mockResolvedValueOnce(responsePage2)
+      const data = await SynapseClient.getAllOfNextPageTokenPaginatedService(
+        mockFn,
+      )
+      expect(data).toEqual([...resultsPage1, ...resultsPage2]) // ['a', 'b', 'c']
+      expect(mockFn).toHaveBeenCalledTimes(2)
+      expect(mockFn).toHaveBeenNthCalledWith(1, undefined)
+      expect(mockFn).toHaveBeenNthCalledWith(2, 'nextPageToken')
     })
   })
 })

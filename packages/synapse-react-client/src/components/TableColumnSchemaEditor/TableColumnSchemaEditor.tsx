@@ -1,55 +1,34 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import {
   useGetEntity,
   useGetQueryResultBundleWithAsyncStatus,
-  useUpdateTable,
+  useUpdateTableColumns,
 } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_COLUMN_MODELS } from '../../utils/SynapseConstants'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { SkeletonTable } from '../Skeleton'
-import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
+import {
+  convertToEntityType,
+  isDataset,
+  isDatasetCollection,
+  isEntityView,
+  isSubmissionView,
+} from '../../utils/functions/EntityTypeUtils'
 import TableColumnSchemaForm, { SubmitHandle } from './TableColumnSchemaForm'
-import { Button } from '@mui/material'
-import {
-  ColumnModel,
-  JsonSubColumnModel,
-} from '@sage-bionetworks/synapse-types'
-import {
-  ColumnModelFormData,
-  JsonSubColumnModelFormData,
-} from './TableColumnSchemaFormReducer'
-import { SetOptional } from 'type-fest'
-import { createTableUpdateTransactionRequest } from './TableColumnSchemaEditorUtils'
+import { Alert, Button } from '@mui/material'
+import { ColumnModelFormData } from './TableColumnSchemaFormReducer'
+import { transformFormDataToColumnModels } from './TableColumnSchemaEditorUtils'
 import { useSynapseContext } from '../../utils'
+import {
+  ENTITY_VIEW_TYPE_MASK_DATASET,
+  ENTITY_VIEW_TYPE_MASK_FILE,
+  ViewEntityType,
+  ViewScope,
+} from '@sage-bionetworks/synapse-types'
+import { Provider } from 'jotai'
 
 export type TableColumnSchemaEditorProps = {
   entityId: string
-}
-
-function transformFormDataToColumnModels(formData: ColumnModelFormData[]) {
-  formData.map(
-    (formEntry: ColumnModelFormData): SetOptional<ColumnModel, 'id'> => {
-      // Remove the isSelected field because it was only used for the UI.
-      const { isSelected, ...rest } = formEntry
-      const columnModel = rest as SetOptional<ColumnModel, 'id'>
-      if (columnModel.jsonSubColumns) {
-        columnModel.jsonSubColumns = (
-          columnModel.jsonSubColumns as JsonSubColumnModelFormData[]
-        ).map(
-          (
-            jsonSubColumnFormData: JsonSubColumnModelFormData,
-          ): JsonSubColumnModel => {
-            // isSelected field from the subcolumn for the same reason
-            const { isSelected, ...rest } = jsonSubColumnFormData
-            return {
-              ...rest,
-            }
-          },
-        )
-      }
-      return columnModel
-    },
-  )
 }
 
 /**
@@ -57,9 +36,7 @@ function transformFormDataToColumnModels(formData: ColumnModelFormData[]) {
  * @param props
  * @constructor
  */
-export default function TableColumnSchemaEditor(
-  props: TableColumnSchemaEditorProps,
-) {
+function _TableColumnSchemaEditor(props: TableColumnSchemaEditorProps) {
   const { entityId } = props
 
   const formRef = useRef<SubmitHandle>(null)
@@ -81,31 +58,64 @@ export default function TableColumnSchemaEditor(
       },
     )
 
-  const { mutate, isLoading: isMutating } = useUpdateTable()
+  const { mutate, isLoading: isMutating, error } = useUpdateTableColumns()
 
-  const isLoading = isLoadingEntity || isLoadingColumnModels || isMutating
+  const isLoading = isLoadingEntity || isLoadingColumnModels
 
   // TODO: the hook above is not returning a stable reference. this is unexpected.
   const queryResultBundle = useDeepCompareMemoize(_queryResultBundle)
   const { accessToken } = useSynapseContext()
   const onSubmit = useCallback(
-    async (formData: ColumnModelFormData[]) => {
+    (formData: ColumnModelFormData[]) => {
       // Transform the form data into ColumnModels
-      transformFormDataToColumnModels(formData)
+      const columnModels = transformFormDataToColumnModels(formData)
 
-      // Create the request to update the table
-      // This call will create new column models as appropriate
-      const request = await createTableUpdateTransactionRequest(
-        accessToken!,
-        entityId,
-        queryResultBundle!.responseBody!.columnModels!,
-        formData,
-      )
       // Update the table schema with the new column models.
-      mutate(request)
+      mutate({
+        entityId,
+        originalColumnModels: queryResultBundle!.responseBody!.columnModels!,
+        newColumnModels: columnModels,
+      })
     },
     [accessToken, entityId, mutate, queryResultBundle],
   )
+
+  const viewScope: ViewScope | undefined = useMemo(() => {
+    if (!entity) {
+      return undefined
+    }
+    if (isEntityView(entity)) {
+      return {
+        scope: entity.scopeIds,
+        viewTypeMask: entity.viewTypeMask,
+        viewEntityType: convertToEntityType(
+          entity.concreteType,
+        ) as ViewEntityType,
+      }
+    } else if (isDataset(entity) || isDatasetCollection(entity)) {
+      const mask = isDataset(entity)
+        ? ENTITY_VIEW_TYPE_MASK_FILE
+        : ENTITY_VIEW_TYPE_MASK_DATASET
+      return {
+        scope: (entity.items ?? []).map(
+          item => `${item.entityId}.${item.versionNumber}`,
+        ),
+        viewTypeMask: mask,
+        viewEntityType: convertToEntityType(
+          entity.concreteType,
+        ) as ViewEntityType,
+      }
+    } else if (isSubmissionView(entity)) {
+      return {
+        scope: entity.scopeIds,
+        viewTypeMask: undefined,
+        viewEntityType: convertToEntityType(
+          entity.concreteType,
+        ) as ViewEntityType,
+      }
+    }
+    return undefined
+  }, [entity])
 
   if (isLoading || !entity) {
     return (
@@ -123,11 +133,19 @@ export default function TableColumnSchemaEditor(
       <TableColumnSchemaForm
         ref={formRef}
         entityType={convertToEntityType(entity.concreteType)}
+        viewScope={viewScope}
         initialData={queryResultBundle?.responseBody?.columnModels}
+        isSubmitting={isMutating}
         onSubmit={formData => {
           onSubmit(formData)
         }}
       />
+      {error && (
+        <Alert severity={'error'} sx={{ my: 2 }}>
+          {error?.message}
+        </Alert>
+      )}
+
       <Button
         variant="contained"
         color="primary"
@@ -136,10 +154,23 @@ export default function TableColumnSchemaEditor(
             formRef.current.submit()
           }
         }}
+        disabled={isMutating}
         sx={{ my: 2 }}
       >
-        Save
+        {isMutating ? 'Saving...' : 'Save'}
       </Button>
     </>
+  )
+}
+
+export default function TableColumnSchemaEditor(
+  props: TableColumnSchemaEditorProps,
+) {
+  // Wrap in a Jotai provider to ensure the Jotai atomic state is unique to this component tree
+  // i.e. other instances of TableColumnSchemaEditor will not share state with this instance
+  return (
+    <Provider>
+      <_TableColumnSchemaEditor {...props} />
+    </Provider>
   )
 }

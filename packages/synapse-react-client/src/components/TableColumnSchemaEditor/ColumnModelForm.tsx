@@ -40,10 +40,13 @@ import JSONArrayEditorModal from '../JSONArrayEditor/JSONArrayEditorModal'
 import { HIERARCHY_VERTICAL_LINE_COMPONENT } from './TableColumnSchemaForm'
 import { InfoTwoTone } from '@mui/icons-material'
 
-type ColumnOrSubcolumnFormProps = {
+type ColumnModelFormProps = {
   entityType: EntityType
   columnModelIndex: number
   jsonSubColumnIndex?: number
+  /* Default Columns are read-only, except for the facetType */
+  isDefaultColumn: boolean
+  disabled?: boolean
 }
 const jsonSubColumnFieldSx: SxProps = {
   height: '28px',
@@ -54,8 +57,20 @@ const topLevelColumnModelFieldSx: SxProps = {
   fontSize: '14px',
 }
 
-export default function ColumnModelForm(props: ColumnOrSubcolumnFormProps) {
-  const { columnModelIndex, jsonSubColumnIndex, entityType } = props
+/*
+ * Disable immediate MUI/Emotion style injection because it causes performance issues when adding many columns at once.
+ * This can be a common occurence when adding annotation columns
+ */
+const DISABLE_INJECTING_GLOBAL_STYLES_VALUE = true
+
+export default function ColumnModelForm(props: ColumnModelFormProps) {
+  const {
+    columnModelIndex,
+    jsonSubColumnIndex,
+    entityType,
+    isDefaultColumn,
+    disabled = false,
+  } = props
   const isJsonSubColumn = jsonSubColumnIndex != undefined
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
   const isView = (VIEW_CONCRETE_TYPE_VALUES as readonly string[]).includes(
@@ -102,16 +117,20 @@ export default function ColumnModelForm(props: ColumnOrSubcolumnFormProps) {
         </Box>
       )}
       <Box
+        data-testid={`ColumnModelForm`}
         display={'flex'}
         alignItems={'center'}
         sx={{
           gridColumn: isJsonSubColumn ? '2 / span 1' : ' 1 / span 1',
+          // Style hack to vertically center our custom checkbox component.
+          mb: '-5px',
         }}
       >
         <Checkbox
           label={'Select'}
           hideLabel
           checked={columnModel.isSelected}
+          disabled={disabled}
           onChange={() => {
             dispatch({
               type: 'toggleSelect',
@@ -123,6 +142,7 @@ export default function ColumnModelForm(props: ColumnOrSubcolumnFormProps) {
       </Box>
       <Box
         sx={{
+          my: 'auto',
           gridColumn: isJsonSubColumn
             ? /* If this is a JSON Subcolumn, we reduce the width of this grid column to create space to render the visual hierarchical line */
               '3 / span 1'
@@ -130,133 +150,168 @@ export default function ColumnModelForm(props: ColumnOrSubcolumnFormProps) {
               '2 / span 2',
         }}
       >
-        <TextField
-          value={columnModel.name}
-          placeholder={isJsonSubColumn ? 'Facet name' : 'Column name'}
-          onChange={e => {
-            dispatch({
-              type: 'setColumnModelValue',
-              columnModelIndex,
-              jsonSubColumnModelIndex: jsonSubColumnIndex,
-              value: {
-                ...columnModel,
-                name: e.target.value,
-              },
-            })
-          }}
-          InputProps={{
-            sx: fieldSx,
-            inputProps: {
-              'aria-label': 'Name',
-            },
-          }}
-          fullWidth
-        />
-      </Box>
-      <Box>
-        <FormControl fullWidth>
-          <Select
-            label="Column Type"
-            value={columnModel.columnType}
+        {isDefaultColumn ? (
+          columnModel.name
+        ) : (
+          <TextField
+            value={columnModel.name}
+            placeholder={isJsonSubColumn ? 'Facet name' : 'Column name'}
             onChange={e => {
               dispatch({
-                type: 'changeColumnModelType',
+                type: 'setColumnModelValue',
                 columnModelIndex,
                 jsonSubColumnModelIndex: jsonSubColumnIndex,
-                newColumnType: e.target.value as ColumnTypeEnum,
+                value: {
+                  ...columnModel,
+                  name: e.target.value,
+                },
               })
             }}
-            sx={fieldSx}
-          >
-            {allowedColumnTypes.map(value => {
-              return (
-                <MenuItem value={value} key={value}>
-                  {getColumnTypeFriendlyName(value)}
-                </MenuItem>
-              )
-            })}
-          </Select>
-        </FormControl>
+            InputProps={{
+              disableInjectingGlobalStyles:
+                DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+              sx: fieldSx,
+              inputProps: {
+                'aria-label': 'Name',
+              },
+            }}
+            disabled={disabled}
+            fullWidth
+          />
+        )}
+      </Box>
+      <Box my={'auto'}>
+        {isDefaultColumn ? (
+          getColumnTypeFriendlyName(columnModel.columnType)
+        ) : (
+          <FormControl fullWidth>
+            <Select
+              label="Column Type"
+              value={columnModel.columnType}
+              onChange={e => {
+                dispatch({
+                  type: 'changeColumnModelType',
+                  columnModelIndex,
+                  jsonSubColumnModelIndex: jsonSubColumnIndex,
+                  newColumnType: e.target.value as ColumnTypeEnum,
+                })
+              }}
+              inputProps={{
+                'aria-label': 'Column Type',
+              }}
+              sx={fieldSx}
+              disabled={disabled}
+            >
+              {allowedColumnTypes.map(value => {
+                return (
+                  <MenuItem value={value} key={value}>
+                    {getColumnTypeFriendlyName(value)}
+                  </MenuItem>
+                )
+              })}
+            </Select>
+          </FormControl>
+        )}
       </Box>
       <Box>
-        <TextField
-          type={'number'}
-          value={(columnModel as ColumnModelFormData).maximumSize ?? ''}
-          disabled={!canHaveSize(columnModel.columnType)}
-          InputProps={{
-            inputProps: {
-              'aria-label': 'Maximum Size',
-              min: 0,
-              max: canHaveSize(columnModel.columnType)
-                ? getMaxSizeForType(columnModel.columnType)
-                : undefined,
-            },
-            sx: fieldSx,
-          }}
-          onChange={e => {
-            dispatch({
-              type: 'setColumnModelValue',
-              columnModelIndex,
-              jsonSubColumnModelIndex: jsonSubColumnIndex,
-              value: {
-                ...columnModel,
-                maximumSize: parseInt(e.target.value),
+        {isDefaultColumn ? (
+          (columnModel as ColumnModelFormData).maximumSize ?? ''
+        ) : (
+          <TextField
+            type={'number'}
+            value={(columnModel as ColumnModelFormData).maximumSize ?? ''}
+            disabled={disabled || !canHaveSize(columnModel.columnType)}
+            InputProps={{
+              disableInjectingGlobalStyles:
+                DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+
+              inputProps: {
+                'aria-label': 'Maximum Size',
+                min: 0,
+                max: canHaveSize(columnModel.columnType)
+                  ? getMaxSizeForType(columnModel.columnType)
+                  : undefined,
               },
-            })
-          }}
-          fullWidth
-        />
+              sx: fieldSx,
+            }}
+            onChange={e => {
+              dispatch({
+                type: 'setColumnModelValue',
+                columnModelIndex,
+                jsonSubColumnModelIndex: jsonSubColumnIndex,
+                value: {
+                  ...columnModel,
+                  maximumSize: parseInt(e.target.value),
+                },
+              })
+            }}
+            fullWidth
+          />
+        )}
       </Box>
       <Box>
-        <TextField
-          type={'number'}
-          value={(columnModel as ColumnModelFormData).maximumListLength ?? ''}
-          disabled={!canHaveMaxListLength(columnModel.columnType)}
-          onChange={e => {
-            dispatch({
-              type: 'setColumnModelValue',
-              columnModelIndex,
-              jsonSubColumnModelIndex: jsonSubColumnIndex,
-              value: {
-                ...columnModel,
-                maximumListLength: parseInt(e.target.value),
+        {isDefaultColumn ? (
+          (columnModel as ColumnModelFormData).maximumListLength ?? ''
+        ) : (
+          <TextField
+            type={'number'}
+            value={(columnModel as ColumnModelFormData).maximumListLength ?? ''}
+            disabled={disabled || !canHaveMaxListLength(columnModel.columnType)}
+            onChange={e => {
+              dispatch({
+                type: 'setColumnModelValue',
+                columnModelIndex,
+                jsonSubColumnModelIndex: jsonSubColumnIndex,
+                value: {
+                  ...columnModel,
+                  maximumListLength: parseInt(e.target.value),
+                },
+              })
+            }}
+            InputProps={{
+              disableInjectingGlobalStyles:
+                DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+              inputProps: {
+                'aria-label': 'Maximum List Length',
               },
-            })
-          }}
-          InputProps={{
-            inputProps: {
-              'aria-label': 'Maximum List Length',
-            },
-            sx: fieldSx,
-          }}
-          fullWidth
-        />
+              sx: fieldSx,
+            }}
+            fullWidth
+          />
+        )}
       </Box>
       <Box>
-        <TextField
-          fullWidth
-          value={(columnModel as ColumnModelFormData)?.defaultValue ?? ''}
-          disabled={
-            !canHaveDefault(columnModel.columnType, isView, isJsonSubColumn)
-          }
-          onChange={e => {
-            dispatch({
-              type: 'setColumnModelValue',
-              columnModelIndex,
-              jsonSubColumnModelIndex: jsonSubColumnIndex,
-              value: {
-                ...columnModel,
-                defaultValue: e.target.value,
+        {isDefaultColumn ? (
+          (columnModel as ColumnModelFormData)?.defaultValue ?? ''
+        ) : (
+          <TextField
+            fullWidth
+            value={(columnModel as ColumnModelFormData)?.defaultValue ?? ''}
+            disabled={
+              disabled ||
+              !canHaveDefault(columnModel.columnType, isView, isJsonSubColumn)
+            }
+            onChange={e => {
+              dispatch({
+                type: 'setColumnModelValue',
+                columnModelIndex,
+                jsonSubColumnModelIndex: jsonSubColumnIndex,
+                value: {
+                  ...columnModel,
+                  defaultValue: e.target.value,
+                },
+              })
+            }}
+            InputProps={{
+              disableInjectingGlobalStyles:
+                DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+              inputProps: {
+                'aria-label': 'Default Value',
               },
-            })
-          }}
-          InputProps={{
-            inputProps: {
-              'aria-label': 'Default Value',
-            },
-            sx: fieldSx,
-          }}
-        />
+              sx: fieldSx,
+            }}
+          />
+        )}
       </Box>
       <Box>
         <JSONArrayEditorModal
@@ -284,9 +339,11 @@ export default function ColumnModelForm(props: ColumnOrSubcolumnFormProps) {
             setIsShowingRestrictedValuesModal(true)
           }}
           disabled={
+            disabled ||
             !canHaveRestrictedValues(columnModel.columnType, isJsonSubColumn)
           }
           InputProps={{
+            disableInjectingGlobalStyles: DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
             // Is readOnly because edits are made with the JSONArrayEditorModal
             readOnly: true,
             sx: fieldSx,
@@ -301,7 +358,7 @@ export default function ColumnModelForm(props: ColumnOrSubcolumnFormProps) {
           <Select
             label="Facet Type"
             value={columnModel.facetType}
-            disabled={allowedFacetTypes === null}
+            disabled={disabled || allowedFacetTypes === null}
             onChange={e => {
               dispatch({
                 type: 'setColumnModelValue',
@@ -314,6 +371,9 @@ export default function ColumnModelForm(props: ColumnOrSubcolumnFormProps) {
               })
             }}
             sx={fieldSx}
+            inputProps={{
+              'aria-label': 'Facet Type',
+            }}
           >
             {(allowedFacetTypes ?? []).map((value, index) => {
               return (
@@ -327,7 +387,13 @@ export default function ColumnModelForm(props: ColumnOrSubcolumnFormProps) {
       </Box>
       {isJsonSubColumn && (
         <>
-          <Box>{HIERARCHY_VERTICAL_LINE_COMPONENT}</Box>
+          <Box
+            sx={{
+              gridColumn: '1 / span 1',
+            }}
+          >
+            {HIERARCHY_VERTICAL_LINE_COMPONENT}
+          </Box>
           <Box></Box>
           <Box
             sx={{
@@ -348,8 +414,11 @@ export default function ColumnModelForm(props: ColumnOrSubcolumnFormProps) {
                   },
                 })
               }}
+              disabled={disabled}
               fullWidth
               InputProps={{
+                disableInjectingGlobalStyles:
+                  DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
                 sx: fieldSx,
                 endAdornment: (
                   <Tooltip

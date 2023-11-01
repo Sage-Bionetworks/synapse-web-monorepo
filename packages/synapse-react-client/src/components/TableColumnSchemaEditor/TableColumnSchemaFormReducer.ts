@@ -48,6 +48,7 @@ export function getDefaultColumnModelFormData(): ColumnModelFormData {
   return {
     name: '',
     columnType: ColumnTypeEnum.STRING,
+    isOriginallyDefaultColumn: false,
     isSelected: false,
   }
 }
@@ -134,6 +135,9 @@ export type ColumnModelFormData = Omit<
 > & {
   // add `isSelected` to the data object
   isSelected: boolean
+  // If the column originates as a default column based on column name, fields other than the facet type are readonly
+  // This field should not be automatically updated, because new columns with the same name should not immediately become readonly.
+  isOriginallyDefaultColumn: boolean
   // jsonSubColumns will also include formData (like isSelected)
   jsonSubColumns?: JsonSubColumnModelFormData[]
 }
@@ -392,7 +396,7 @@ function moveColumnModel(
     to: { columnModelIndex: number; jsonSubColumnModelIndex?: number }
   },
   prevState: ColumnModelFormData[],
-) {
+): ColumnModelFormData[] {
   const { from, to } = action
   const arrayToReorder =
     from.jsonSubColumnModelIndex !== undefined
@@ -410,7 +414,11 @@ function moveColumnModel(
       : to.columnModelIndex
 
   // Move the element
-  const newArray = moveElementInArray(arrayToReorder, fromIndex, toIndex)
+  const newArray = moveElementInArray<unknown>(
+    arrayToReorder,
+    fromIndex,
+    toIndex,
+  ) as ColumnModelFormData[] | JsonSubColumnModelFormData[]
 
   if (from.jsonSubColumnModelIndex !== undefined) {
     // If we moved a jsonSubColumn, update state to use the new, reordered array
@@ -419,7 +427,7 @@ function moveColumnModel(
     return prevState
   } else {
     // Otherwise, return the new, reordered array of column models
-    return newArray
+    return newArray as ColumnModelFormData[]
   }
 }
 

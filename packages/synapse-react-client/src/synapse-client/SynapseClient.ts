@@ -279,6 +279,9 @@ import {
   ValidationResults,
   VerificationSubmission,
   VersionInfo,
+  ViewColumnModelRequest,
+  ViewColumnModelResponse,
+  ViewEntityType,
   WikiPage,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
@@ -3056,6 +3059,34 @@ export const getAllOfPaginatedService = async <T>(
   return results
 }
 
+export type FunctionReturningNextPageToken<T> = (
+  nextPageToken?: string | null,
+) => Promise<{ results: T[]; nextPageToken?: string | null }>
+
+export async function getAllOfNextPageTokenPaginatedService<T>(
+  fn: FunctionReturningNextPageToken<T>,
+): Promise<T[]> {
+  let existsMoreData = true
+  let nextPageToken: string | null | undefined = undefined
+  const results: T[] = []
+
+  while (existsMoreData) {
+    try {
+      const data = await fn(nextPageToken)
+      results.push(...data.results)
+      nextPageToken = data.nextPageToken
+
+      if (!nextPageToken) {
+        existsMoreData = false
+      }
+    } catch (e) {
+      throw Error(`Error on getting paginated results ${e}`)
+    }
+  }
+
+  return results
+}
+
 // https://rest-docs.synapse.org/rest/POST/download/list/remove.html
 export const deleteDownloadListFiles = (
   list: FileHandleAssociation[],
@@ -4719,4 +4750,57 @@ export function createColumnModels(
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+/**
+ * Get the list of default ColumnModels for the given viewEntityType and viewTypeMask.
+ *
+ * https://rest-docs.synapse.org/rest/GET/column/tableview/defaults.html
+ *
+ * @param viewEntityType  The entity type of the view, if omitted use entityview
+ * @param viewTypeMask  Bit mask representing the types to include in the view. Not required for a submission view.
+ * For an entity view following are the possible types: (type=): File=0x01, Project=0x02, Table=0x04, Folder=0x08,
+ * View=0x10, Docker=0x20, SubmissionView=0x40, Dataset=0x80, DatasetCollection=0x100, MaterializedView=0x200).
+ */
+export function getDefaultColumnModels(
+  viewEntityType?: ViewEntityType,
+  viewTypeMask?: number,
+): Promise<{ list: ColumnModel[] }> {
+  const params = new URLSearchParams()
+  if (viewEntityType != null) {
+    params.set('viewEntityType', viewEntityType)
+  }
+  if (viewTypeMask != null) {
+    params.set('viewTypeMask', viewTypeMask.toString())
+  }
+  return doGet<{ list: ColumnModel[] }>(
+    `/repo/v1/column/tableview/defaults?${params.toString()}`,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export async function getAnnotationColumnModels(
+  request: ViewColumnModelRequest,
+  accessToken: string | undefined = undefined,
+): Promise<ColumnModel[]> {
+  // format function to be callable by getAllOfNextPageTokenPaginatedService
+  const fn: FunctionReturningNextPageToken<ColumnModel> = async (
+    nextPageToken?: string | null,
+  ): Promise<ViewColumnModelResponse> => {
+    request.nextPageToken = nextPageToken
+    const asyncJobId = await doPost<AsyncJobId>(
+      '/repo/v1/column/view/scope/async/start',
+      request,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+    return getAsyncResultBodyFromJobId(
+      asyncJobId.token,
+      `/repo/v1/column/view/scope/async/get/${asyncJobId.token}`,
+      accessToken,
+    )
+  }
+
+  return getAllOfNextPageTokenPaginatedService(fn)
 }
