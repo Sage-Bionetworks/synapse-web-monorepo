@@ -10,6 +10,7 @@ import { hex2ascii } from './StringUtils'
 import type { SQLOperator } from './SqlFunctions'
 import { BackendDestinationEnum } from './getEndpoint'
 
+export * from './TableColumnSchemaUtils'
 export {
   getNextPageOfData,
   getAdditionalFilters,

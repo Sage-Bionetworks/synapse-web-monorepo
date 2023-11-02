@@ -16,6 +16,7 @@ describe('TableColumnSchemaFormReducer', () => {
         name: 'col1',
         columnType: ColumnTypeEnum.STRING,
         isSelected: false,
+        isOriginallyDefaultColumn: false,
       },
       {
         id: '123',
@@ -38,6 +39,7 @@ describe('TableColumnSchemaFormReducer', () => {
           },
         ],
         isSelected: false,
+        isOriginallyDefaultColumn: false,
       },
     ]
   })
@@ -49,6 +51,7 @@ describe('TableColumnSchemaFormReducer', () => {
         name: 'col2',
         columnType: ColumnTypeEnum.INTEGER,
         isSelected: false,
+        isOriginallyDefaultColumn: false,
       },
     ]
     const newState = reducer(prevState, {
@@ -133,6 +136,7 @@ describe('TableColumnSchemaFormReducer', () => {
     })
     expect(newState[newState.length - 1]).toEqual({
       name: '',
+      isOriginallyDefaultColumn: false,
       columnType: ColumnTypeEnum.STRING,
       isSelected: false,
     })

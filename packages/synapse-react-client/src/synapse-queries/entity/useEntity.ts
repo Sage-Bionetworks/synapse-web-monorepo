@@ -22,6 +22,7 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   AccessControlList,
+  ColumnModel,
   Entity,
   EntityHeader,
   EntityId,
@@ -30,11 +31,12 @@ import {
   Evaluation,
   GetEvaluationParameters,
   PaginatedResults,
-  TableUpdateTransactionRequest,
   UserEntityPermissions,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
 import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
+import { createTableUpdateTransactionRequest } from '../../utils'
+import { SetOptional } from 'type-fest'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
@@ -370,23 +372,34 @@ export function useUpdateEntityACL(
   )
 }
 
-export function useUpdateTable(
+type UpdateTableMutationRequest = {
+  entityId: string
+  originalColumnModels: ColumnModel[]
+  newColumnModels: SetOptional<ColumnModel, 'id'>[]
+}
+
+export function useUpdateTableColumns(
   options?: UseMutationOptions<
     unknown,
     SynapseClientError,
-    TableUpdateTransactionRequest
+    UpdateTableMutationRequest
   >,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<
-    unknown,
-    SynapseClientError,
-    TableUpdateTransactionRequest
-  >(
-    (request: TableUpdateTransactionRequest) =>
-      SynapseClient.updateTable(request, accessToken),
+  return useMutation<unknown, SynapseClientError, UpdateTableMutationRequest>(
+    async (request: UpdateTableMutationRequest) => {
+      // This call will create new column models as appropriate
+      const transactionRequest = await createTableUpdateTransactionRequest(
+        accessToken!,
+        request.entityId,
+        request.originalColumnModels,
+        request.newColumnModels,
+      )
+
+      return SynapseClient.updateTable(transactionRequest, accessToken)
+    },
     {
       ...options,
       onSuccess: async (response, variables, ctx) => {

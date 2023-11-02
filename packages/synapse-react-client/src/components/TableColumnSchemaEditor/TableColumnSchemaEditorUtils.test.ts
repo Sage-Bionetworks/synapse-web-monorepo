@@ -1,8 +1,12 @@
 import {
-  ColumnModel,
   ColumnType,
   ColumnTypeEnum,
-  TableSchemaChangeRequest,
+  Dataset,
+  DatasetCollection,
+  ENTITY_VIEW_TYPE_MASK_DATASET,
+  ENTITY_VIEW_TYPE_MASK_FILE,
+  EntityView,
+  SubmissionView,
 } from '@sage-bionetworks/synapse-types'
 import {
   canHaveDefault,
@@ -10,13 +14,10 @@ import {
   canHaveRestrictedValues,
   canHaveSize,
   configureFacetsForType,
-  createTableUpdateTransactionRequest,
   getAllowedColumnTypes,
   getMaxSizeForType,
+  getViewScopeForEntity,
 } from './TableColumnSchemaEditorUtils'
-import * as SynapseClient from '../../synapse-client/SynapseClient'
-import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
-import { SetOptional } from 'type-fest'
 
 describe('TableColumnSchemaEditorUtils', () => {
   describe('getAllowedColumnTypes', () => {
@@ -288,173 +289,86 @@ describe('TableColumnSchemaEditorUtils', () => {
     })
   })
 
-  describe('getTableUpdateTransactionRequest tests', () => {
-    const OLD_COLUMN_MODEL_ID1 = '10001'
-    const OLD_COLUMN_MODEL_ID2 = '10002'
-    const NEW_COLUMN_MODEL_ID = '20001'
-    test('reorder with no change', async () => {
-      const tableId = 'syn93939'
-
-      const columnModel1: ColumnModel = {
-        id: OLD_COLUMN_MODEL_ID1,
-        name: 'col1',
-        columnType: ColumnTypeEnum.STRING,
+  describe('getViewScopeForEntity', () => {
+    test('EntityView', () => {
+      const entity: EntityView = {
+        columnIds: [],
+        isSearchEnabled: false,
+        id: 'syn1',
+        name: 'name',
+        etag: 'etag',
+        concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+        parentId: 'syn2',
+        scopeIds: ['syn789', 'syn482'],
+        viewTypeMask: 0x123,
       }
-      const columnModel2: ColumnModel = {
-        id: OLD_COLUMN_MODEL_ID2,
-        name: 'col2',
-        columnType: ColumnTypeEnum.STRING,
-      }
-
-      // test reordering, with no other changes
-      const oldColumnModels: ColumnModel[] = [columnModel1, columnModel2]
-
-      const newColumnModels: ColumnModel[] = [
-        { ...columnModel2 },
-        { ...columnModel1 },
-      ]
-
-      jest
-        .spyOn(SynapseClient, 'createColumnModels')
-        .mockResolvedValue({ list: newColumnModels })
-
-      // Call under test
-      const request = await createTableUpdateTransactionRequest(
-        MOCK_ACCESS_TOKEN,
-        tableId,
-        oldColumnModels,
-        newColumnModels,
-      )
-      expect(request.changes.length).toBe(1)
-      const tableUpdateRequest: TableSchemaChangeRequest = request
-        .changes[0] as TableSchemaChangeRequest
-      expect(tableUpdateRequest.orderedColumnIds).toHaveLength(2)
-      expect(tableUpdateRequest.orderedColumnIds[0]).toBe(OLD_COLUMN_MODEL_ID2)
-      expect(tableUpdateRequest.orderedColumnIds[1]).toBe(OLD_COLUMN_MODEL_ID1)
-      expect(tableUpdateRequest.changes).toHaveLength(0)
-    })
-    test('add new column', async () => {
-      const tableId = 'syn93939'
-      const oldColumnModels: ColumnModel[] = []
-      const proposedNewColumnModel: SetOptional<ColumnModel, 'id'> = {
-        name: 'newCol',
-        columnType: ColumnTypeEnum.STRING,
-      }
-      const changedColumnModels: SetOptional<ColumnModel, 'id'>[] = [
-        proposedNewColumnModel,
-      ]
-      const createdColumnModels: ColumnModel[] = [
-        {
-          ...proposedNewColumnModel,
-          id: NEW_COLUMN_MODEL_ID,
-        },
-      ]
-
-      jest
-        .spyOn(SynapseClient, 'createColumnModels')
-        .mockResolvedValue({ list: createdColumnModels })
-
-      const request = await createTableUpdateTransactionRequest(
-        MOCK_ACCESS_TOKEN,
-        tableId,
-        oldColumnModels,
-        changedColumnModels,
-      )
-
-      expect(request.changes.length).toBe(1)
-      const tableUpdateRequest: TableSchemaChangeRequest = request
-        .changes[0] as TableSchemaChangeRequest
-      expect(tableUpdateRequest.orderedColumnIds).toHaveLength(1)
-      expect(tableUpdateRequest.orderedColumnIds[0]).toBe(NEW_COLUMN_MODEL_ID)
-      expect(tableUpdateRequest.changes).toHaveLength(1)
-      expect(tableUpdateRequest.changes[0]).toMatchObject({
-        oldColumnId: null,
-        newColumnId: NEW_COLUMN_MODEL_ID,
+      const scope = getViewScopeForEntity(entity)
+      expect(scope).toEqual({
+        scope: ['syn789', 'syn482'],
+        viewTypeMask: 0x123,
+        viewEntityType: 'entityview',
       })
     })
-    test('full test', async () => {
-      // In this test, we will change a column, delete a column, and add a column (with appropriately
-      // mocked responses)
-      // Modify colA, delete colB, no change to colC, and add colD
-      const tableId = 'syn93939'
-      const colA: ColumnModel = {
-        id: '1',
-        name: 'colA',
-        columnType: ColumnTypeEnum.STRING,
+    test('Dataset', () => {
+      const entity: Dataset = {
+        columnIds: [],
+        isSearchEnabled: false,
+        id: 'syn1',
+        name: 'name',
+        etag: 'etag',
+        concreteType: 'org.sagebionetworks.repo.model.table.Dataset',
+        parentId: 'syn456',
+        items: [
+          { entityId: 'syn123', versionNumber: 1 },
+          { entityId: 'syn456', versionNumber: 7 },
+        ],
       }
-      const colB: ColumnModel = {
-        id: '2',
-        name: 'colB',
-        columnType: ColumnTypeEnum.STRING,
-      }
-      const colC: ColumnModel = {
-        id: '3',
-        name: 'colC',
-        columnType: ColumnTypeEnum.STRING,
-      }
-      const colD: SetOptional<ColumnModel, 'id'> = {
-        id: undefined,
-        name: 'colD',
-        columnType: ColumnTypeEnum.STRING,
-      }
-      const colAModified: ColumnModel = {
-        ...colA,
-        columnType: ColumnTypeEnum.INTEGER,
-      }
-      const colAAfterSave: ColumnModel = {
-        ...colAModified,
-        id: '4',
-      }
-      const colDAfterSave: ColumnModel = {
-        ...colD,
-        id: '5',
-      }
-
-      const oldSchema: ColumnModel[] = [colA, colB, colC]
-      const proposedNewSchema: SetOptional<ColumnModel, 'id'>[] = [
-        colAModified,
-        colC,
-        colD,
-      ]
-      const newSchemaAfterUpdate: ColumnModel[] = [
-        colAAfterSave,
-        colC,
-        colDAfterSave,
-      ]
-
-      jest
-        .spyOn(SynapseClient, 'createColumnModels')
-        .mockResolvedValue({ list: newSchemaAfterUpdate })
-
-      // Call under test
-      const request = await createTableUpdateTransactionRequest(
-        MOCK_ACCESS_TOKEN,
-        tableId,
-        oldSchema,
-        proposedNewSchema,
-      )
-
-      expect(request.entityId).toEqual(tableId)
-
-      expect(request.changes).toHaveLength(1)
-
-      // changes should consist of a create, an update, and a delete
-      const tableUpdates: TableSchemaChangeRequest = request
-        .changes[0] as TableSchemaChangeRequest
-      expect(tableUpdates.changes).toHaveLength(3)
-
-      // colB should be deleted
-      expect(tableUpdates.changes).toContainEqual({
-        oldColumnId: '2',
-        newColumnId: null,
+      const scope = getViewScopeForEntity(entity)
+      expect(scope).toEqual({
+        scope: ['syn123.1', 'syn456.7'],
+        viewTypeMask: ENTITY_VIEW_TYPE_MASK_FILE,
+        viewEntityType: 'dataset',
       })
-      expect(tableUpdates.changes).toContainEqual({
-        oldColumnId: '1',
-        newColumnId: '4',
+    })
+
+    test('Dataset Collection', () => {
+      const entity: DatasetCollection = {
+        columnIds: [],
+        isSearchEnabled: false,
+        id: 'syn1',
+        name: 'name',
+        etag: 'etag',
+        concreteType: 'org.sagebionetworks.repo.model.table.DatasetCollection',
+        parentId: 'syn2',
+        items: [
+          { entityId: 'syn123', versionNumber: 1 },
+          { entityId: 'syn456', versionNumber: 7 },
+        ],
+      }
+      const scope = getViewScopeForEntity(entity)
+      expect(scope).toEqual({
+        scope: ['syn123.1', 'syn456.7'],
+        viewTypeMask: ENTITY_VIEW_TYPE_MASK_DATASET,
+        viewEntityType: 'datasetcollection',
       })
-      expect(tableUpdates.changes).toContainEqual({
-        oldColumnId: null,
-        newColumnId: '5',
+    })
+
+    test('SubmissionView', () => {
+      const entity: SubmissionView = {
+        columnIds: [],
+        isSearchEnabled: false,
+        id: 'syn1',
+        name: 'name',
+        etag: 'etag',
+        concreteType: 'org.sagebionetworks.repo.model.table.SubmissionView',
+        parentId: 'syn2',
+        scopeIds: ['syn123', 'syn456'],
+      }
+      const scope = getViewScopeForEntity(entity)
+      expect(scope).toEqual({
+        scope: ['syn123', 'syn456'],
+        viewTypeMask: undefined,
+        viewEntityType: 'submissionview',
       })
     })
   })

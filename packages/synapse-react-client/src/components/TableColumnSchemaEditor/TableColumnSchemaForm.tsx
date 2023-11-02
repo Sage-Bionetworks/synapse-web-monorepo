@@ -2,7 +2,8 @@ import {
   ColumnModel,
   ColumnTypeEnum,
   EntityType,
-  JsonSubColumnModel,
+  VIEW_CONCRETE_TYPE_VALUES,
+  ViewScope,
 } from '@sage-bionetworks/synapse-types'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import React, {
@@ -15,14 +16,15 @@ import {
   ColumnModelFormData,
   getIsAllSelected,
   getNumberOfSelectedItems,
-  JsonSubColumnModelFormData,
   tableColumnSchemaFormDataAtom,
 } from './TableColumnSchemaFormReducer'
 import {
   Box,
+  BoxProps,
   Button,
   ButtonGroup,
   Checkbox as MUICheckbox,
+  styled,
   Typography,
 } from '@mui/material'
 import { isEqual, times } from 'lodash-es'
@@ -31,9 +33,21 @@ import ColumnModelForm from './ColumnModelForm'
 import AddToList from '../../assets/icons/AddToList'
 import { AddCircleTwoTone, North, South } from '@mui/icons-material'
 import IconSvg from '../IconSvg'
+import {
+  convertToConcreteEntityType,
+  entityTypeToFriendlyName,
+} from '../../utils/functions/EntityTypeUtils'
+import { transformColumnModelsToFormData } from './TableColumnSchemaEditorUtils'
+import {
+  useGetAnnotationColumnModels,
+  useGetDefaultColumnModels,
+} from '../../synapse-queries/table/useColumnModel'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { displayToast } from '../ToastMessage'
+import { StyledComponent } from '@emotion/styled/dist/emotion-styled.cjs'
 
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
-  '18px 18px 2fr 2fr 0.75fr 1fr 1fr 1fr 1fr'
+  '18px 18px 1.75fr 1.75fr 0.75fr 1fr 1.25fr 1.25fr 1fr'
 const GRID_CONTAINER_Y_MARGIN_PX = 6
 export const HIERARCHY_VERTICAL_LINE_COMPONENT = (
   <Box
@@ -68,15 +82,24 @@ export type SubmitHandle = {
 type TableColumnSchemaFormProps = {
   /* The type of the Table, which determines various schema restrictions and form functionality */
   entityType: EntityType
+  /* If this is an entity view, the ViewScope can be used to determine the default column models and fetch annotation column models */
+  viewScope?: ViewScope
   initialData?: ColumnModel[]
   onSubmit: (formData: ColumnModelFormData[]) => void
+  isSubmitting: boolean
 }
+
+const ColumnHeader: StyledComponent<BoxProps> = styled(Box, {
+  label: 'ColumnHeader',
+})({
+  fontWeight: 700,
+})
 
 const TableColumnSchemaForm = React.forwardRef<
   SubmitHandle,
   TableColumnSchemaFormProps
 >(function TableColumnSchemaForm(props, ref) {
-  const { initialData, entityType, onSubmit } = props
+  const { initialData, entityType, viewScope, onSubmit, isSubmitting } = props
 
   const numColumnModels = useAtomValue(
     useMemo(() => atom(get => get(tableColumnSchemaFormDataAtom).length), []),
@@ -84,37 +107,60 @@ const TableColumnSchemaForm = React.forwardRef<
 
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
 
-  /**
-   * Set the initialData in the form state atom on mount, if it exists.
-   */
-  useEffect(() => {
-    if (initialData) {
-      dispatch({
-        type: 'setValue',
-        value: initialData.map(
-          (cm: ColumnModel): ColumnModelFormData => ({
-            ...cm,
-            jsonSubColumns: cm.jsonSubColumns?.map(
-              (jsc: JsonSubColumnModel): JsonSubColumnModelFormData => ({
-                ...jsc,
-                isSelected: false,
-              }),
-            ),
-            isSelected: false,
-          }),
-        ),
-      })
-    }
-    // Only run on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   // useAtomCallback will let us imperatively read the form data, instead of tracking it in state and triggering a full re-render of the form when any data changes
   const readFormData = useAtomCallback(
     useCallback(get => {
       return get(tableColumnSchemaFormDataAtom)
     }, []),
   )
+  const concreteTableType = convertToConcreteEntityType(entityType)
+  const isView = VIEW_CONCRETE_TYPE_VALUES.includes(
+    concreteTableType as (typeof VIEW_CONCRETE_TYPE_VALUES)[number],
+  )
+  const hasAnnotationColumnModels = isView,
+    hasDefaultColumnModels = isView
+
+  const { data: defaultColumnModels, isLoading: isLoadingDefaultColumns } =
+    useGetDefaultColumnModels(
+      viewScope?.viewEntityType!,
+      viewScope?.viewTypeMask,
+      {
+        enabled: hasDefaultColumnModels,
+        staleTime: Infinity, // The default column models will never change
+      },
+    )
+
+  const {
+    data: annotationColumnModels,
+    isLoading: isLoadingAnnotationColumns,
+  } = useGetAnnotationColumnModels(
+    {
+      viewScope: viewScope!,
+      includeDerivedAnnotations: true,
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ViewColumnModelRequest',
+    },
+    {
+      enabled: hasAnnotationColumnModels,
+    },
+  )
+
+  /**
+   * Set the initialData in the form state atom on mount, if it exists and we have no data.
+   */
+  useEffect(() => {
+    if (initialData && !isLoadingDefaultColumns) {
+      dispatch({
+        type: 'setValue',
+        value: transformColumnModelsToFormData(
+          initialData,
+          defaultColumnModels ?? [],
+        ),
+      })
+    }
+    // Don't re-run if initial data changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoadingDefaultColumns])
 
   useImperativeHandle(
     ref,
@@ -128,6 +174,52 @@ const TableColumnSchemaForm = React.forwardRef<
     [onSubmit, readFormData],
   )
 
+  // Generic function to add a set of columns to the schema (e.g. default columns, annotation columns)
+  const addColumnSet = useCallback(
+    (newColumns: ColumnModel[]) => {
+      const currentFormData = readFormData()
+      const columnsToAdd = newColumns.filter(cm => {
+        // Only add columns that are not already present
+        // Use the name column to match because the ID may vary, e.g. if the facetType was changed
+        return !currentFormData.find(fd => fd.name === cm.name)
+      })
+      if (columnsToAdd.length > 0) {
+        dispatch({
+          type: 'setValue',
+          value: [
+            ...currentFormData,
+            ...transformColumnModelsToFormData(
+              columnsToAdd,
+              defaultColumnModels,
+            ),
+          ],
+        })
+        displayToast(
+          `${columnsToAdd.length} columns added to schema.`,
+          'success',
+        )
+      } else {
+        displayToast(
+          'No columns added. All columns to add are present in the column schema.',
+          'info',
+        )
+      }
+    },
+    [defaultColumnModels, dispatch, readFormData],
+  )
+
+  const addDefaultColumns = useCallback(() => {
+    if (defaultColumnModels) {
+      addColumnSet(defaultColumnModels)
+    }
+  }, [defaultColumnModels, addColumnSet])
+
+  const addAnnotationColumns = useCallback(() => {
+    if (annotationColumnModels) {
+      addColumnSet(annotationColumnModels)
+    }
+  }, [annotationColumnModels, addColumnSet])
+
   return (
     <Box
       component={'form'}
@@ -137,50 +229,106 @@ const TableColumnSchemaForm = React.forwardRef<
         borderColor: 'grey.300',
       }}
     >
-      <TableColumnSchemaFormActions />
+      <TableColumnSchemaFormActions disabled={isSubmitting} />
       <Box
         display={'grid'}
         sx={{
           gridTemplateColumns: COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS,
           py: 2.5,
-          fontWeight: 700,
         }}
         gap={'8px'}
       >
-        <Box>{/* Checkbox */}</Box>
-        <Box sx={{ gridColumn: '2 / span 2' }}>Column Name</Box>
-        <Box>Column Type</Box>
-        <Box>Size</Box>
-        <Box>Max List Length</Box>
-        <Box>Default Value</Box>
-        <Box>Restrict Values</Box>
-        <Box>Facet</Box>
+        <ColumnHeader>{/* Checkbox */}</ColumnHeader>
+        <ColumnHeader sx={{ gridColumn: '2 / span 2' }}>
+          Column Name
+        </ColumnHeader>
+        <ColumnHeader>Column Type</ColumnHeader>
+        <ColumnHeader>Size</ColumnHeader>
+        <ColumnHeader>Max List Length</ColumnHeader>
+        <ColumnHeader>Default Value</ColumnHeader>
+        <ColumnHeader>Restrict Values</ColumnHeader>
+        <ColumnHeader>Facet</ColumnHeader>
+        <Box
+          sx={{
+            gridColumn: '1 / span 10',
+            backgroundColor: 'grey.300',
+            height: '2px',
+          }}
+        />
         {times(numColumnModels, index => {
           return (
             <TableColumnSchemaFormRow
               entityType={entityType}
               columnModelIndex={index}
+              disabled={isSubmitting}
               key={index}
             />
           )
         })}
       </Box>
 
-      <Button
-        variant={'outlined'}
-        onClick={() => {
-          dispatch({ type: 'appendColumn' })
-        }}
-        startIcon={<AddCircleTwoTone />}
-      >
-        Add Column
-      </Button>
-      {/*  Add / import buttons here  */}
+      <Box display={'flex'} gap={1}>
+        <Button
+          variant={'outlined'}
+          onClick={() => {
+            dispatch({ type: 'appendColumn' })
+          }}
+          startIcon={<AddCircleTwoTone />}
+          disabled={isSubmitting}
+        >
+          Add Column
+        </Button>
+
+        {hasDefaultColumnModels && (
+          <Button
+            variant={'outlined'}
+            startIcon={
+              isLoadingDefaultColumns ? (
+                <SynapseSpinner />
+              ) : (
+                <AddCircleTwoTone />
+              )
+            }
+            onClick={() => {
+              addDefaultColumns()
+            }}
+            disabled={isLoadingDefaultColumns || isSubmitting}
+          >
+            Add Default {entityTypeToFriendlyName(entityType)} Columns
+          </Button>
+        )}
+
+        {hasAnnotationColumnModels && (
+          <Button
+            variant={'outlined'}
+            startIcon={
+              isLoadingAnnotationColumns ? (
+                <SynapseSpinner />
+              ) : (
+                <AddCircleTwoTone />
+              )
+            }
+            disabled={isLoadingAnnotationColumns || isSubmitting}
+            onClick={() => {
+              addAnnotationColumns()
+            }}
+          >
+            Add All Annotations
+          </Button>
+        )}
+      </Box>
     </Box>
   )
 })
 
-function TableColumnSchemaFormActions() {
+type TableColumnSchemaFormActionsProps = {
+  disabled?: boolean
+}
+
+function TableColumnSchemaFormActions(
+  props: TableColumnSchemaFormActionsProps,
+) {
+  const { disabled = false } = props
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
 
   const columnModels = useAtomValue(tableColumnSchemaFormDataAtom)
@@ -190,11 +338,13 @@ function TableColumnSchemaFormActions() {
   return (
     <Box display={'flex'} gap={1}>
       <Button
+        aria-label={'Select All'}
         variant={'outlined'}
         color={'neutral'}
         onClick={() => {
           dispatch({ type: 'toggleSelectAll' })
         }}
+        disabled={disabled || columnModels.length == 0}
       >
         {/*
            MUI Checkbox looks a little different from ours, but it has an indeterminate state
@@ -204,6 +354,7 @@ function TableColumnSchemaFormActions() {
           size={'small'}
           checked={allSelected}
           indeterminate={numSelected > 0 && !allSelected}
+          disabled={disabled || columnModels.length == 0}
         />
         <Typography variant="smallText1" color={'text.secondary'}>
           {numSelected} selected
@@ -217,7 +368,7 @@ function TableColumnSchemaFormActions() {
           onClick={() => {
             dispatch({ type: 'moveDown' })
           }}
-          disabled={numSelected == 0}
+          disabled={disabled || numSelected == 0}
         >
           <South fontSize={'small'} />
         </Button>
@@ -228,7 +379,7 @@ function TableColumnSchemaFormActions() {
           onClick={() => {
             dispatch({ type: 'moveUp' })
           }}
-          disabled={numSelected == 0}
+          disabled={disabled || numSelected == 0}
         >
           <North fontSize={'small'} />
         </Button>
@@ -240,7 +391,7 @@ function TableColumnSchemaFormActions() {
         onClick={() => {
           dispatch({ type: 'delete' })
         }}
-        disabled={numSelected == 0}
+        disabled={disabled || numSelected == 0}
       >
         <IconSvg fontSize={'small'} icon={'delete'} wrap={false} />
       </Button>
@@ -251,17 +402,18 @@ function TableColumnSchemaFormActions() {
 type TableColumnSchemaFormRowProps = {
   entityType: EntityType
   columnModelIndex: number
+  disabled: boolean
 }
 
 function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
-  const { columnModelIndex, entityType } = props
+  const { columnModelIndex, entityType, disabled } = props
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
   const columnModel = useAtomValue(
     useMemo(
       () =>
         selectAtom(
           tableColumnSchemaFormDataAtom,
-          v => v[columnModelIndex],
+          formData => formData[columnModelIndex],
           isEqual,
         ),
       [columnModelIndex],
@@ -271,12 +423,15 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
   if (!columnModel) {
     return <></>
   }
+  const isDefaultColumn = columnModel.isOriginallyDefaultColumn
 
   return (
     <>
       <ColumnModelForm
         entityType={entityType}
         columnModelIndex={columnModelIndex}
+        isDefaultColumn={isDefaultColumn}
+        disabled={disabled}
       />
       {columnModel.columnType === ColumnTypeEnum.JSON &&
         columnModel.jsonSubColumns &&
@@ -286,6 +441,8 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
             entityType={entityType}
             columnModelIndex={columnModelIndex}
             jsonSubColumnIndex={index}
+            isDefaultColumn={isDefaultColumn}
+            disabled={disabled}
           />
         ))}
       {columnModel.columnType === ColumnTypeEnum.JSON && (
@@ -301,6 +458,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
             <Button
               startIcon={<AddToList />}
               variant={'text'}
+              disabled={disabled}
               onClick={() =>
                 dispatch({ type: 'appendJsonSubColumn', columnModelIndex })
               }
