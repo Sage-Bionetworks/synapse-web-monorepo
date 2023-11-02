@@ -2,14 +2,26 @@ import {
   ColumnModel,
   ColumnType,
   ColumnTypeEnum,
+  Entity,
+  ENTITY_VIEW_TYPE_MASK_DATASET,
+  ENTITY_VIEW_TYPE_MASK_FILE,
   FacetType,
   JsonSubColumnModel,
+  ViewEntityType,
+  ViewScope,
 } from '@sage-bionetworks/synapse-types'
 import { SetOptional } from 'type-fest'
 import {
   ColumnModelFormData,
   JsonSubColumnModelFormData,
 } from './TableColumnSchemaFormReducer'
+import {
+  convertToEntityType,
+  isDataset,
+  isDatasetCollection,
+  isEntityView,
+  isSubmissionView,
+} from '../../utils/functions/EntityTypeUtils'
 
 /**
  * These column types can only be used in Tables. They can not be used in views.
@@ -303,4 +315,38 @@ export function transformColumnModelsToFormData(
         : undefined,
     }
   })
+}
+
+export function getViewScopeForEntity(entity: Entity): ViewScope | undefined {
+  if (isEntityView(entity)) {
+    return {
+      scope: entity.scopeIds,
+      viewTypeMask: entity.viewTypeMask,
+      viewEntityType: convertToEntityType(
+        entity.concreteType,
+      ) as ViewEntityType,
+    }
+  } else if (isDataset(entity) || isDatasetCollection(entity)) {
+    const mask = isDataset(entity)
+      ? ENTITY_VIEW_TYPE_MASK_FILE
+      : ENTITY_VIEW_TYPE_MASK_DATASET
+    return {
+      scope: (entity.items ?? []).map(
+        item => `${item.entityId}.${item.versionNumber}`,
+      ),
+      viewTypeMask: mask,
+      viewEntityType: convertToEntityType(
+        entity.concreteType,
+      ) as ViewEntityType,
+    }
+  } else if (isSubmissionView(entity)) {
+    return {
+      scope: entity.scopeIds,
+      viewTypeMask: undefined,
+      viewEntityType: convertToEntityType(
+        entity.concreteType,
+      ) as ViewEntityType,
+    }
+  }
+  return undefined
 }

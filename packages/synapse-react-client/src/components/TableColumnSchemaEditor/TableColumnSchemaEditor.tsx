@@ -7,24 +7,16 @@ import {
 import { BUNDLE_MASK_QUERY_COLUMN_MODELS } from '../../utils/SynapseConstants'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { SkeletonTable } from '../Skeleton'
-import {
-  convertToEntityType,
-  isDataset,
-  isDatasetCollection,
-  isEntityView,
-  isSubmissionView,
-} from '../../utils/functions/EntityTypeUtils'
+import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import TableColumnSchemaForm, { SubmitHandle } from './TableColumnSchemaForm'
 import { Alert, Button } from '@mui/material'
 import { ColumnModelFormData } from './TableColumnSchemaFormReducer'
-import { transformFormDataToColumnModels } from './TableColumnSchemaEditorUtils'
-import { useSynapseContext } from '../../utils'
 import {
-  ENTITY_VIEW_TYPE_MASK_DATASET,
-  ENTITY_VIEW_TYPE_MASK_FILE,
-  ViewEntityType,
-  ViewScope,
-} from '@sage-bionetworks/synapse-types'
+  getViewScopeForEntity,
+  transformFormDataToColumnModels,
+} from './TableColumnSchemaEditorUtils'
+import { useSynapseContext } from '../../utils'
+import { ViewScope } from '@sage-bionetworks/synapse-types'
 import { Provider } from 'jotai'
 
 export type TableColumnSchemaEditorProps = {
@@ -84,37 +76,7 @@ function _TableColumnSchemaEditor(props: TableColumnSchemaEditorProps) {
     if (!entity) {
       return undefined
     }
-    if (isEntityView(entity)) {
-      return {
-        scope: entity.scopeIds,
-        viewTypeMask: entity.viewTypeMask,
-        viewEntityType: convertToEntityType(
-          entity.concreteType,
-        ) as ViewEntityType,
-      }
-    } else if (isDataset(entity) || isDatasetCollection(entity)) {
-      const mask = isDataset(entity)
-        ? ENTITY_VIEW_TYPE_MASK_FILE
-        : ENTITY_VIEW_TYPE_MASK_DATASET
-      return {
-        scope: (entity.items ?? []).map(
-          item => `${item.entityId}.${item.versionNumber}`,
-        ),
-        viewTypeMask: mask,
-        viewEntityType: convertToEntityType(
-          entity.concreteType,
-        ) as ViewEntityType,
-      }
-    } else if (isSubmissionView(entity)) {
-      return {
-        scope: entity.scopeIds,
-        viewTypeMask: undefined,
-        viewEntityType: convertToEntityType(
-          entity.concreteType,
-        ) as ViewEntityType,
-      }
-    }
-    return undefined
+    return getViewScopeForEntity(entity)
   }, [entity])
 
   if (isLoading || !entity) {

@@ -2,7 +2,6 @@ import {
   ColumnModel,
   ColumnTypeEnum,
   EntityType,
-  SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
   VIEW_CONCRETE_TYPE_VALUES,
   ViewScope,
 } from '@sage-bionetworks/synapse-types'
@@ -118,9 +117,9 @@ const TableColumnSchemaForm = React.forwardRef<
   const isView = VIEW_CONCRETE_TYPE_VALUES.includes(
     concreteTableType as (typeof VIEW_CONCRETE_TYPE_VALUES)[number],
   )
-  const isSubmissionView =
-    SUBMISSION_VIEW_CONCRETE_TYPE_VALUE == concreteTableType
-  const hasDefaultColumnModels = isView
+  const hasAnnotationColumnModels = isView,
+    hasDefaultColumnModels = isView
+
   const { data: defaultColumnModels, isLoading: isLoadingDefaultColumns } =
     useGetDefaultColumnModels(
       viewScope?.viewEntityType!,
@@ -131,7 +130,6 @@ const TableColumnSchemaForm = React.forwardRef<
       },
     )
 
-  const hasAnnotationColumnModels = isView && !isSubmissionView
   const {
     data: annotationColumnModels,
     isLoading: isLoadingAnnotationColumns,
@@ -300,7 +298,7 @@ const TableColumnSchemaForm = React.forwardRef<
           </Button>
         )}
 
-        {isView && !isSubmissionView && (
+        {hasAnnotationColumnModels && (
           <Button
             variant={'outlined'}
             startIcon={

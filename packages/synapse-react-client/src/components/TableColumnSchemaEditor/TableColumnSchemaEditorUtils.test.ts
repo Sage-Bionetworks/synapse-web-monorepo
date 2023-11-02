@@ -1,4 +1,13 @@
-import { ColumnType, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnType,
+  ColumnTypeEnum,
+  Dataset,
+  DatasetCollection,
+  ENTITY_VIEW_TYPE_MASK_DATASET,
+  ENTITY_VIEW_TYPE_MASK_FILE,
+  EntityView,
+  SubmissionView,
+} from '@sage-bionetworks/synapse-types'
 import {
   canHaveDefault,
   canHaveMaxListLength,
@@ -7,6 +16,7 @@ import {
   configureFacetsForType,
   getAllowedColumnTypes,
   getMaxSizeForType,
+  getViewScopeForEntity,
 } from './TableColumnSchemaEditorUtils'
 
 describe('TableColumnSchemaEditorUtils', () => {
@@ -275,6 +285,90 @@ describe('TableColumnSchemaEditorUtils', () => {
       Object.values(ColumnTypeEnum).forEach((key: ColumnType) => {
         const actual = canHaveRestrictedValues(key, true)
         expect(actual).toBe(false)
+      })
+    })
+  })
+
+  describe('getViewScopeForEntity', () => {
+    test('EntityView', () => {
+      const entity: EntityView = {
+        columnIds: [],
+        isSearchEnabled: false,
+        id: 'syn1',
+        name: 'name',
+        etag: 'etag',
+        concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+        parentId: 'syn2',
+        scopeIds: ['syn789', 'syn482'],
+        viewTypeMask: 0x123,
+      }
+      const scope = getViewScopeForEntity(entity)
+      expect(scope).toEqual({
+        scope: ['syn789', 'syn482'],
+        viewTypeMask: 0x123,
+        viewEntityType: 'entityview',
+      })
+    })
+    test('Dataset', () => {
+      const entity: Dataset = {
+        columnIds: [],
+        isSearchEnabled: false,
+        id: 'syn1',
+        name: 'name',
+        etag: 'etag',
+        concreteType: 'org.sagebionetworks.repo.model.table.Dataset',
+        parentId: 'syn456',
+        items: [
+          { entityId: 'syn123', versionNumber: 1 },
+          { entityId: 'syn456', versionNumber: 7 },
+        ],
+      }
+      const scope = getViewScopeForEntity(entity)
+      expect(scope).toEqual({
+        scope: ['syn123.1', 'syn456.7'],
+        viewTypeMask: ENTITY_VIEW_TYPE_MASK_FILE,
+        viewEntityType: 'dataset',
+      })
+    })
+
+    test('Dataset Collection', () => {
+      const entity: DatasetCollection = {
+        columnIds: [],
+        isSearchEnabled: false,
+        id: 'syn1',
+        name: 'name',
+        etag: 'etag',
+        concreteType: 'org.sagebionetworks.repo.model.table.DatasetCollection',
+        parentId: 'syn2',
+        items: [
+          { entityId: 'syn123', versionNumber: 1 },
+          { entityId: 'syn456', versionNumber: 7 },
+        ],
+      }
+      const scope = getViewScopeForEntity(entity)
+      expect(scope).toEqual({
+        scope: ['syn123.1', 'syn456.7'],
+        viewTypeMask: ENTITY_VIEW_TYPE_MASK_DATASET,
+        viewEntityType: 'datasetcollection',
+      })
+    })
+
+    test('SubmissionView', () => {
+      const entity: SubmissionView = {
+        columnIds: [],
+        isSearchEnabled: false,
+        id: 'syn1',
+        name: 'name',
+        etag: 'etag',
+        concreteType: 'org.sagebionetworks.repo.model.table.SubmissionView',
+        parentId: 'syn2',
+        scopeIds: ['syn123', 'syn456'],
+      }
+      const scope = getViewScopeForEntity(entity)
+      expect(scope).toEqual({
+        scope: ['syn123', 'syn456'],
+        viewTypeMask: undefined,
+        viewEntityType: 'submissionview',
       })
     })
   })
