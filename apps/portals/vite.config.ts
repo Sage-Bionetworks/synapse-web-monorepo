@@ -6,5 +6,6 @@ export default mergeConfig(vitestConfig, {
   test: {
     include: ['src/tests/**/*.test.[jt]s?(x)'],
     setupFiles: ['src/tests/setupTests.ts'],
+    environment: 'jsdom', // introduced due to random "ReferenceError: window is not defined" during tests
   },
 })
