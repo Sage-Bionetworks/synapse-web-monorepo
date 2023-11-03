@@ -249,7 +249,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           standalone: true,
           props: {
             markdown:
-              'To view the observations, select the mark on the timeline of interest.',
+              'To view the observations, click on a mark on the timeline.',
           },
         },
         {
