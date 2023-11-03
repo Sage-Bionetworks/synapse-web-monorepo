@@ -244,8 +244,16 @@ export const toolDetailsPageConfig: DetailsPageProps = {
       uriValue: 'Observations',
       synapseConfigArray: [
         {
-          name: 'TimelinePlot',
           title: 'Natural History Observations',
+          name: 'Markdown',
+          standalone: true,
+          props: {
+            markdown:
+              'To view the observations, select the mark on the timeline of interest.',
+          },
+        },
+        {
+          name: 'TimelinePlot',
           outsideContainerClassName: 'home-spacer',
           props: {
             sql: observationsSql,
