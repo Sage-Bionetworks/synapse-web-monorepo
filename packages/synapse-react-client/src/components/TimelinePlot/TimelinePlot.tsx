@@ -160,7 +160,7 @@ export const TimelinePlot = ({
   }
 
   const widthPx = dimensions.width ? dimensions.width / phaseData.length : 0
-  const gridTemplateColumns = phaseData.map(() => `${widthPx}px`).join(' ')
+  const gridTemplateColumns = phaseData.map(() => 'auto').join(' ')
 
   return (
     <Box>
