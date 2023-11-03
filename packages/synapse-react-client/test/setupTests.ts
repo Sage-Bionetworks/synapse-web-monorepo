@@ -1,6 +1,6 @@
 import 'whatwg-fetch'
 import 'raf/polyfill' // polyfill for requestAnimationFrame
-import '@testing-library/jest-dom/extend-expect'
+import '@testing-library/jest-dom'
 import crypto from 'crypto'
 import { ResizeObserver } from '@juggle/resize-observer'
 import { setupIntersectionMocking } from 'react-intersection-observer/test-utils'
