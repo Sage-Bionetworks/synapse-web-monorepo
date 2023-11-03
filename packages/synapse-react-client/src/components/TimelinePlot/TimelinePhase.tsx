@@ -235,7 +235,7 @@ const TimelinePhase = ({
 
   const end = getMaxDate(timepointData.timepoints)
   return (
-    <div ref={componentRef}>
+    <div ref={componentRef} style={{ width: widthPx }}>
       <Plot
         style={{ width: widthPx, height: '220px' }}
         data={getTimelineData(timepointData, rowData)}

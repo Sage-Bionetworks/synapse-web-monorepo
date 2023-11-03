@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { createRef, useState } from 'react'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import hardcodedPhasesQueryResponseData, {
@@ -19,12 +19,12 @@ import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
 } from '../../utils/functions'
-import { SizeMe } from 'react-sizeme'
 import TimelineLegendItem from './TimelineLegendItem'
 import { Skeleton } from '@mui/material'
 import TimelinePlotSpeciesSelector from './TimelinePlotSpeciesSelector'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import { getHeaderIndex } from '../../utils/functions/queryUtils'
+import useRefDimensions from '../../utils/hooks/useRefDimensions'
 
 const OBSERVATION_PHASE_COLUMN_NAME = 'phase'
 const OBSERVATION_TIME_COLUMN_NAME = 'time'
@@ -52,6 +52,8 @@ export const TimelinePlot = ({
   const [species, setSpecies] = useState<string | undefined | null>(
     defaultSpecies,
   )
+  const plotContainerRef = createRef<HTMLDivElement>()
+  const dimensions = useRefDimensions(plotContainerRef)
   const queryFilters =
     getAdditionalFilters(eventsTableId, searchParams, sqlOperator) ?? []
   const speciesFilter: ColumnSingleValueQueryFilter | undefined = species
@@ -157,6 +159,9 @@ export const TimelinePlot = ({
     return <NoContentAvailable />
   }
 
+  const widthPx = dimensions.width ? dimensions.width / phaseData.length : 0
+  const gridTemplateColumns = phaseData.map(() => 'auto').join(' ')
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -187,32 +192,38 @@ export const TimelinePlot = ({
       </Box>
       {/* Phase plots */}
       {species && (
-        <SizeMe monitorWidth noPlaceholder={true}>
-          {({ size }) => (
-            <Box sx={{ display: 'flex' }} className="forcePlotlyDefaultCursor">
-              {phaseData.map((phaseRow, index) => {
-                const { colorPalette } = getColorPalette(index, 1)
-                const phaseEventRows =
-                  eventsData?.queryResult?.queryResults.rows.filter(row => {
-                    return (
-                      row.values[observationPhaseIndex] ==
-                      phaseRow.values[phaseObservationIndex]
-                    )
-                  })
-                return (
-                  <TimelinePhase
-                    key={phaseRow.rowId}
-                    name={phaseRow.values[phaseObservationIndex]!}
-                    color={colorPalette[0]}
-                    rowData={phaseEventRows!}
-                    schema={schema}
-                    widthPx={size.width ? size.width / phaseData.length : 0}
-                  />
-                )
-              })}
-            </Box>
-          )}
-        </SizeMe>
+        <div ref={plotContainerRef}>
+          <Box
+            sx={{
+              display: 'inline-grid',
+              gridTemplateColumns,
+              minWidth: dimensions.width,
+              maxWidth: dimensions.width,
+            }}
+            className="forcePlotlyDefaultCursor"
+          >
+            {phaseData.map((phaseRow, index) => {
+              const { colorPalette } = getColorPalette(index, 1)
+              const phaseEventRows =
+                eventsData?.queryResult?.queryResults.rows.filter(row => {
+                  return (
+                    row.values[observationPhaseIndex] ==
+                    phaseRow.values[phaseObservationIndex]
+                  )
+                })
+              return (
+                <TimelinePhase
+                  key={phaseRow.rowId}
+                  name={phaseRow.values[phaseObservationIndex]!}
+                  color={colorPalette[0]}
+                  rowData={phaseEventRows!}
+                  schema={schema}
+                  widthPx={widthPx}
+                />
+              )
+            })}
+          </Box>
+        </div>
       )}
     </Box>
   )
