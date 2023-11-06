@@ -1,6 +1,6 @@
 import React from 'react'
-import { useSourceApp } from './SourceApp'
 import { Link, Typography } from '@mui/material'
+import { useSourceApp } from './useSourceApp'
 
 export type TermsOfUseRightPanelTextProps = {}
 

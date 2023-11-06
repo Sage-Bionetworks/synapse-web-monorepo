@@ -3,8 +3,9 @@ import { Box, Grid, Paper, Typography, useTheme } from '@mui/material'
 import { ShowMore } from 'synapse-react-client'
 import { useHistory } from 'react-router-dom'
 import { StyledOuterContainer } from './StyledComponents'
-import { useSourceApp, useSourceAppConfigs } from './SourceApp'
 import { BackButton } from './BackButton'
+import { useSourceAppConfigs } from './useSourceAppConfigs'
+import { useSourceApp } from './useSourceApp'
 
 export type SageResourcesPageProps = {}
 
