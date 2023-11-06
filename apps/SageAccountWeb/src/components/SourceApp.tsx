@@ -4,12 +4,14 @@ import {
   Palettes,
   SynapseConstants,
   SynapseQueries,
+  SkeletonTable,
 } from 'synapse-react-client'
-import { SkeletonTable } from 'synapse-react-client'
 import { SourceAppConfig } from './SourceAppConfigs'
 import SourceAppImage from './SourceAppImage'
 import Skeleton from '@mui/material/Skeleton'
+import { useHistory, useLocation } from 'react-router-dom'
 
+const sourceAppConfigTableID = 'syn45291362'
 export type SourceAppProps = {
   isAccountCreationTextVisible?: boolean
 }
@@ -21,14 +23,14 @@ export type SourceAppProps = {
  */
 export const SourceApp = (props: SourceAppProps) => {
   const { isAccountCreationTextVisible = false } = props
+  const sourceApp = useSourceApp()
   return (
     <>
-      <div className="SourceAppLogo">{useSourceApp()?.logo}</div>
+      <div className="SourceAppLogo">{sourceApp?.logo}</div>
       {isAccountCreationTextVisible && (
         <div>
           <p>
-            A Sage account is required to log into{' '}
-            {useSourceApp()?.friendlyName}.
+            A Sage account is required to log into {sourceApp?.friendlyName}.
           </p>
           <p>Create an account to get started.</p>
         </div>
@@ -64,9 +66,9 @@ export const SourceAppDescription = () => {
 export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
   const { data: tableQueryResult } =
     SynapseQueries.useGetQueryResultBundleWithAsyncStatus({
-      entityId: 'syn45291362',
+      entityId: sourceAppConfigTableID,
       query: {
-        sql: `SELECT * FROM syn45291362`,
+        sql: `SELECT * FROM ${sourceAppConfigTableID}`,
         limit: 75,
       },
       partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
@@ -135,7 +137,21 @@ export const useSourceApp = (
 ): SourceAppConfig | undefined => {
   const sourceAppId = targetSourceAppId ?? localStorage.getItem('sourceAppId')
   const sourceAppConfigs = useSourceAppConfigs()
-  return sourceAppConfigs?.find(config => config.appId === sourceAppId)
+
+  // Find target source app.  Fallback to Sage Bionetworks source app if target not found.
+  const sourceApp = sourceAppConfigs?.find(
+    config => config.appId === sourceAppId,
+  )
+  const defaultSageSourceApp = sourceAppConfigs?.find(
+    config => config.appId === 'SAGE',
+  )
+  if (sourceAppConfigs !== undefined && sourceApp == undefined) {
+    console.error(
+      `Source appId '${sourceAppId}' not found in the Synapse configuration table (${sourceAppConfigTableID})!`,
+    )
+    localStorage.setItem('sourceAppId', 'SAGE')
+  }
+  return sourceApp ?? defaultSageSourceApp
 }
 
 export default SourceApp
