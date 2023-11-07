@@ -23,6 +23,33 @@ import {
 } from '../../utils/functions/getEndpoint'
 import { mockQueryResultBundle as mockFileViewQueryResultBundle } from '../../mocks/mockFileViewQuery'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
+import { ImportTableColumnsButtonProps } from './ImportTableColumnsButton'
+import { SetOptional } from 'type-fest'
+
+const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
+  {
+    name: 'foo',
+    columnType: 'STRING',
+  },
+  {
+    name: 'bar',
+    columnType: 'INTEGER',
+  },
+]
+
+function MockedImportTableColumnsButton(props: ImportTableColumnsButtonProps) {
+  return (
+    <button
+      data-testid={'ImportTableColumnsButton'}
+      onClick={() => props.onAddColumns(mockedImportedColumns)}
+    />
+  )
+}
+
+jest.mock('./ImportTableColumnsButton', () => ({
+  __esModule: true,
+  default: MockedImportTableColumnsButton,
+}))
 
 function renderComponent(props: TableColumnSchemaEditorProps) {
   return render(<TableColumnSchemaEditor {...props} />, {
@@ -240,5 +267,29 @@ describe('TableColumnSchemaEditor', () => {
     expect(screen.queryByLabelText('Column Type')).toBeInTheDocument()
     expect(screen.queryByLabelText('Maximum Size')).toBeInTheDocument()
     expect(screen.queryByLabelText('Restrict Values')).toBeInTheDocument()
+  })
+
+  it('User can import columns from another table', async () => {
+    // Start with no columns
+    server.use(
+      ...getHandlersForTableQuery({ ...mockTableQueryData, columnModels: [] }),
+    )
+    const { user } = await setUp({
+      entityId: mockTableEntityData.id,
+    })
+    // Verify the import button appears on screen (in this case, the component is mocked)
+    const importTableColumnsButton = await screen.findByTestId(
+      'ImportTableColumnsButton',
+    )
+
+    await user.click(importTableColumnsButton)
+
+    // New rows with each imported column should appear
+    await waitFor(async () => {
+      const nameFields = await screen.findAllByLabelText('Name')
+      expect(nameFields.length).toEqual(mockedImportedColumns.length)
+      expect(nameFields[0]).toHaveValue(mockedImportedColumns[0].name)
+      expect(nameFields[1]).toHaveValue(mockedImportedColumns[1].name)
+    })
   })
 })

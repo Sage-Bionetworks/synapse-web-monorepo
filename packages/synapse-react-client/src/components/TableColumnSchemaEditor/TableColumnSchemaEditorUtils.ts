@@ -35,7 +35,7 @@ const unsupportedTypesForViews = [
 export function getAllowedColumnTypes(
   isView: boolean,
   isJsonSubColumnFacet: boolean,
-) {
+): ColumnTypeEnum[] {
   return Object.values(ColumnTypeEnum)
     .filter(columnType =>
       isView ? !unsupportedTypesForViews.includes(columnType) : true,
@@ -296,7 +296,7 @@ export function transformFormDataToColumnModels(
  * @param defaultColumns
  */
 export function transformColumnModelsToFormData(
-  columnModels: ColumnModel[],
+  columnModels: SetOptional<ColumnModel, 'id'>[],
   defaultColumns: ColumnModel[] = [],
 ): ColumnModelFormData[] {
   return columnModels.map((cm): ColumnModelFormData => {

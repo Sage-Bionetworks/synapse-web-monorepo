@@ -37,7 +37,10 @@ import {
   convertToConcreteEntityType,
   entityTypeToFriendlyName,
 } from '../../utils/functions/EntityTypeUtils'
-import { transformColumnModelsToFormData } from './TableColumnSchemaEditorUtils'
+import {
+  getAllowedColumnTypes,
+  transformColumnModelsToFormData,
+} from './TableColumnSchemaEditorUtils'
 import {
   useGetAnnotationColumnModels,
   useGetDefaultColumnModels,
@@ -45,6 +48,8 @@ import {
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { displayToast } from '../ToastMessage'
 import { StyledComponent } from '@emotion/styled/dist/emotion-styled.cjs'
+import ImportTableColumnsButton from './ImportTableColumnsButton'
+import { SetOptional } from 'type-fest'
 
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
   '18px 18px 1.75fr 1.75fr 0.75fr 1fr 1.25fr 1.25fr 1fr'
@@ -176,13 +181,23 @@ const TableColumnSchemaForm = React.forwardRef<
 
   // Generic function to add a set of columns to the schema (e.g. default columns, annotation columns)
   const addColumnSet = useCallback(
-    (newColumns: ColumnModel[]) => {
+    (newColumns: SetOptional<ColumnModel, 'id'>[]) => {
       const currentFormData = readFormData()
-      const columnsToAdd = newColumns.filter(cm => {
-        // Only add columns that are not already present
-        // Use the name column to match because the ID may vary, e.g. if the facetType was changed
-        return !currentFormData.find(fd => fd.name === cm.name)
-      })
+      const columnsToAdd = newColumns.filter(
+        (cm: SetOptional<ColumnModel, 'id'>) => {
+          // Don't add columns that cannot be added (for example, Views cannot have JSON columns)
+          if (
+            !getAllowedColumnTypes(isView, false).includes(
+              cm.columnType as ColumnTypeEnum,
+            )
+          ) {
+            return false
+          }
+          // Only add columns that are not already present
+          // Use the name column to match because the ID may vary, e.g. if the facetType was changed
+          return !currentFormData.find(fd => fd.name === cm.name)
+        },
+      )
       if (columnsToAdd.length > 0) {
         dispatch({
           type: 'setValue',
@@ -205,7 +220,7 @@ const TableColumnSchemaForm = React.forwardRef<
         )
       }
     },
-    [defaultColumnModels, dispatch, readFormData],
+    [defaultColumnModels, dispatch, isView, readFormData],
   )
 
   const addDefaultColumns = useCallback(() => {
@@ -316,6 +331,11 @@ const TableColumnSchemaForm = React.forwardRef<
             Add All Annotations
           </Button>
         )}
+        <ImportTableColumnsButton
+          onAddColumns={cms => {
+            addColumnSet(cms)
+          }}
+        />
       </Box>
     </Box>
   )
