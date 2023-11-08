@@ -266,8 +266,8 @@ export function transformFormDataToColumnModels(
 ): SetOptional<ColumnModel, 'id'>[] {
   return formData.map(
     (formEntry: ColumnModelFormData): SetOptional<ColumnModel, 'id'> => {
-      // Remove the isSelected field because it was only used for the UI.
-      const { isSelected, ...rest } = formEntry
+      // Remove the isSelected and isOriginallyDefaultColumn fields because these were only used for the UI.
+      const { isSelected, isOriginallyDefaultColumn, ...rest } = formEntry
       const columnModel = rest as SetOptional<ColumnModel, 'id'>
       if (columnModel.jsonSubColumns) {
         columnModel.jsonSubColumns = (

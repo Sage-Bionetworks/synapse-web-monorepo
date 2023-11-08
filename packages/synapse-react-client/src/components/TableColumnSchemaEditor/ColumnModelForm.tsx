@@ -1,5 +1,6 @@
 import {
   Box,
+  Fade,
   FormControl,
   Link,
   MenuItem,
@@ -200,11 +201,20 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 'aria-label': 'Column Type',
               }}
               sx={fieldSx}
+              MenuProps={{
+                TransitionComponent: Fade,
+              }}
               disabled={disabled}
             >
               {allowedColumnTypes.map(value => {
                 return (
-                  <MenuItem value={value} key={value}>
+                  <MenuItem
+                    value={value}
+                    key={value}
+                    sx={{
+                      zIndex: 1500,
+                    }}
+                  >
                     {getColumnTypeFriendlyName(value)}
                   </MenuItem>
                 )
@@ -359,6 +369,9 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             label="Facet Type"
             value={columnModel.facetType}
             disabled={disabled || allowedFacetTypes === null}
+            MenuProps={{
+              TransitionComponent: Fade,
+            }}
             onChange={e => {
               dispatch({
                 type: 'setColumnModelValue',
@@ -377,7 +390,13 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           >
             {(allowedFacetTypes ?? []).map((value, index) => {
               return (
-                <MenuItem value={value} key={index}>
+                <MenuItem
+                  value={value}
+                  key={index}
+                  sx={{
+                    zIndex: 1500,
+                  }}
+                >
                   {value === undefined ? '' : getFacetTypeFriendlyName(value)}
                 </MenuItem>
               )

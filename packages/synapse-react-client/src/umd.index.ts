@@ -69,6 +69,7 @@ import SubscriptionPage from './components/SubscriptionPage'
 import OrientationBanner from './components/OrientationBanner/OrientationBanner'
 import AccessRequirementList from './components/AccessRequirementList/AccessRequirementList'
 import { BackendDestinationEnum } from './utils/functions'
+import TableColumnSchemaForm from './components/TableColumnSchemaEditor/TableColumnSchemaForm'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -143,6 +144,7 @@ const SynapseComponents = {
   SubscriptionPage,
   OrientationBanner,
   AccessRequirementList,
+  TableColumnSchemaForm,
 }
 
 // Include the version in the build

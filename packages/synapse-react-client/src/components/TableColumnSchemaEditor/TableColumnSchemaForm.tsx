@@ -40,6 +40,7 @@ import {
 import {
   getAllowedColumnTypes,
   transformColumnModelsToFormData,
+  transformFormDataToColumnModels,
 } from './TableColumnSchemaEditorUtils'
 import {
   useGetAnnotationColumnModels,
@@ -82,6 +83,8 @@ export const HIERARCHY_END_COMPONENT = (
 export type SubmitHandle = {
   // Allow the parent component to trigger a submit of the form, so this may be embedded in an arbitrary modal.
   submit: () => void
+  // Imperative handle to get the data out of the form for SWC compatibility
+  getEditedColumnModels: () => SetOptional<ColumnModel, 'id'>[]
 }
 
 type TableColumnSchemaFormProps = {
@@ -174,6 +177,9 @@ const TableColumnSchemaForm = React.forwardRef<
         submit() {
           onSubmit(readFormData())
         },
+        getEditedColumnModels() {
+          return transformFormDataToColumnModels(readFormData())
+        },
       }
     },
     [onSubmit, readFormData],
@@ -225,7 +231,12 @@ const TableColumnSchemaForm = React.forwardRef<
 
   const addDefaultColumns = useCallback(() => {
     if (defaultColumnModels) {
-      addColumnSet(defaultColumnModels)
+      addColumnSet(
+        defaultColumnModels.map(cm => ({
+          ...cm,
+          id: undefined,
+        })),
+      )
     }
   }, [defaultColumnModels, addColumnSet])
 
@@ -240,8 +251,6 @@ const TableColumnSchemaForm = React.forwardRef<
       component={'form'}
       sx={{
         py: 2.5,
-        borderBottom: '2px solid',
-        borderColor: 'grey.300',
       }}
     >
       <TableColumnSchemaFormActions disabled={isSubmitting} />

@@ -174,7 +174,7 @@ export function QueryVisualizationWrapper(
       const forceDisplayOriginalColumnName =
         localStorage.getItem('force-display-original-column-names') === 'true'
 
-      if (!columnName || forceDisplayOriginalColumnName) {
+      if (!columnName || (forceDisplayOriginalColumnName && !jsonPath)) {
         return columnName
       }
       if (columnAliases[columnName]) {
