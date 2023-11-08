@@ -6,6 +6,7 @@ overrides:
   '@types/react': 18.0.27
   goober: 2.1.9
   react-hot-toast: 2.2.0
+  postcss: ^8.4.31
 
 patchedDependencies:
   '@jsdevtools/ono@7.1.3':
@@ -458,7 +459,7 @@ importers:
         version: 8.0.0
       postcss-normalize:
         specifier: ^10.0.1
-        version: 10.0.1(browserslist@4.22.1)(postcss@8.4.25)
+        version: 10.0.1(browserslist@4.22.1)(postcss@8.4.31)
       process:
         specifier: ^0.11.10
         version: 0.11.10
@@ -684,7 +685,7 @@ importers:
         version: 8.0.0
       postcss-normalize:
         specifier: ^10.0.1
-        version: 10.0.1(browserslist@4.22.1)(postcss@8.4.25)
+        version: 10.0.1(browserslist@4.22.1)(postcss@8.4.31)
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -744,7 +745,7 @@ importers:
         version: 0.1.6
       tsup:
         specifier: ^6.7.0
-        version: 6.7.0(postcss@8.4.25)(typescript@5.1.6)
+        version: 6.7.0(postcss@8.4.31)(typescript@5.1.6)
       typescript:
         specifier: 5.1.6
         version: 5.1.6
@@ -1081,7 +1082,7 @@ importers:
         version: 7.1.1(react-dom@18.2.0)(react@18.2.0)
       '@storybook/addon-styling':
         specifier: ^1.3.5
-        version: 1.3.5(less@4.1.3)(postcss@8.4.25)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)(webpack@5.88.1)
+        version: 1.3.5(less@4.1.3)(postcss@8.4.31)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)(webpack@5.88.1)
       '@storybook/manager-api':
         specifier: ^7.1.1
         version: 7.1.1(react-dom@18.2.0)(react@18.2.0)
@@ -1291,7 +1292,7 @@ importers:
         version: 1.0.1
       postcss-normalize:
         specifier: ^10.0.1
-        version: 10.0.1(browserslist@4.22.1)(postcss@8.4.25)
+        version: 10.0.1(browserslist@4.22.1)(postcss@8.4.31)
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -1330,7 +1331,7 @@ importers:
         version: 2.0.12
       tsup:
         specifier: ^6.7.0
-        version: 6.7.0(postcss@8.4.25)(typescript@5.1.6)
+        version: 6.7.0(postcss@8.4.31)(typescript@5.1.6)
       type-fest:
         specifier: ^3.13.0
         version: 3.13.0
@@ -1363,7 +1364,7 @@ importers:
         version: 5.0.1
       tsup:
         specifier: ^6.7.0
-        version: 6.7.0(postcss@8.4.25)(typescript@5.1.6)
+        version: 6.7.0(postcss@8.4.31)(typescript@5.1.6)
       typescript:
         specifier: 5.1.6
         version: 5.1.6
@@ -5435,7 +5436,7 @@ packages:
       ts-dedent: 2.2.0
     dev: true
 
-  /@storybook/addon-styling@1.3.5(less@4.1.3)(postcss@8.4.25)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)(webpack@5.88.1):
+  /@storybook/addon-styling@1.3.5(less@4.1.3)(postcss@8.4.31)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)(webpack@5.88.1):
     resolution: {integrity: sha512-W0oejixqUEd2yhy3ZAu9urKJZNCLrRFwpz7JD7OgN9HiUefLw3Rn2NHeP7v4Q1oznIxpYcsgYFzv10zX21Mq5w==}
     hasBin: true
     peerDependencies:
@@ -5470,8 +5471,8 @@ packages:
       css-loader: 6.8.1(webpack@5.88.1)
       less: 4.1.3
       less-loader: 11.1.3(less@4.1.3)(webpack@5.88.1)
-      postcss: 8.4.25
-      postcss-loader: 7.3.3(postcss@8.4.25)(webpack@5.88.1)
+      postcss: 8.4.31
+      postcss-loader: 7.3.3(postcss@8.4.31)(webpack@5.88.1)
       prettier: 2.8.8
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -9499,12 +9500,12 @@ packages:
     peerDependencies:
       webpack: ^5.0.0
     dependencies:
-      icss-utils: 5.1.0(postcss@8.4.25)
-      postcss: 8.4.25
-      postcss-modules-extract-imports: 3.0.0(postcss@8.4.25)
-      postcss-modules-local-by-default: 4.0.3(postcss@8.4.25)
-      postcss-modules-scope: 3.0.0(postcss@8.4.25)
-      postcss-modules-values: 4.0.0(postcss@8.4.25)
+      icss-utils: 5.1.0(postcss@8.4.31)
+      postcss: 8.4.31
+      postcss-modules-extract-imports: 3.0.0(postcss@8.4.31)
+      postcss-modules-local-by-default: 4.0.3(postcss@8.4.31)
+      postcss-modules-scope: 3.0.0(postcss@8.4.31)
+      postcss-modules-values: 4.0.0(postcss@8.4.31)
       postcss-value-parser: 4.2.0
       semver: 7.5.4
       webpack: 5.88.1(esbuild@0.18.11)
@@ -11956,13 +11957,13 @@ packages:
     dependencies:
       safer-buffer: 2.1.2
 
-  /icss-utils@5.1.0(postcss@8.4.25):
+  /icss-utils@5.1.0(postcss@8.4.31):
     resolution: {integrity: sha512-soFhflCVWLfRNOPU3iv5Z9VUdT44xFRbzjLsEzSr5AQmgqPMTHdU3PMT1Cf1ssx8fLNJDA1juftYl+PUcv3MqA==}
     engines: {node: ^10 || ^12 || >= 14}
     peerDependencies:
       postcss: ^8.1.0
     dependencies:
-      postcss: 8.4.25
+      postcss: 8.4.31
     dev: true
 
   /identity-obj-proxy@3.0.0:
@@ -14969,7 +14970,7 @@ packages:
     deprecated: You can find the new Popper v2 at @popperjs/core, this package is dedicated to the legacy v1
     dev: false
 
-  /postcss-browser-comments@4.0.0(browserslist@4.22.1)(postcss@8.4.25):
+  /postcss-browser-comments@4.0.0(browserslist@4.22.1)(postcss@8.4.31):
     resolution: {integrity: sha512-X9X9/WN3KIvY9+hNERUqX9gncsgBA25XaeR+jshHz2j8+sYyHktHw1JdKuMjeLpGktXidqDhA7b/qm1mrBDmgg==}
     engines: {node: '>=8'}
     peerDependencies:
@@ -14977,10 +14978,10 @@ packages:
       postcss: '>=8'
     dependencies:
       browserslist: 4.22.1
-      postcss: 8.4.25
+      postcss: 8.4.31
     dev: true
 
-  /postcss-load-config@3.1.4(postcss@8.4.25):
+  /postcss-load-config@3.1.4(postcss@8.4.31):
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
     engines: {node: '>= 10'}
     peerDependencies:
@@ -14993,11 +14994,11 @@ packages:
         optional: true
     dependencies:
       lilconfig: 2.1.0
-      postcss: 8.4.25
+      postcss: 8.4.31
       yaml: 1.10.2
     dev: true
 
-  /postcss-loader@7.3.3(postcss@8.4.25)(webpack@5.88.1):
+  /postcss-loader@7.3.3(postcss@8.4.31)(webpack@5.88.1):
     resolution: {integrity: sha512-YgO/yhtevGO/vJePCQmTxiaEwER94LABZN0ZMT4A0vsak9TpO+RvKRs7EmJ8peIlB9xfXCsS7M8LjqncsUZ5HA==}
     engines: {node: '>= 14.15.0'}
     peerDependencies:
@@ -15006,53 +15007,53 @@ packages:
     dependencies:
       cosmiconfig: 8.2.0
       jiti: 1.19.1
-      postcss: 8.4.25
+      postcss: 8.4.31
       semver: 7.5.4
       webpack: 5.88.1(esbuild@0.18.11)
     dev: true
 
-  /postcss-modules-extract-imports@3.0.0(postcss@8.4.25):
+  /postcss-modules-extract-imports@3.0.0(postcss@8.4.31):
     resolution: {integrity: sha512-bdHleFnP3kZ4NYDhuGlVK+CMrQ/pqUm8bx/oGL93K6gVwiclvX5x0n76fYMKuIGKzlABOy13zsvqjb0f92TEXw==}
     engines: {node: ^10 || ^12 || >= 14}
     peerDependencies:
       postcss: ^8.1.0
     dependencies:
-      postcss: 8.4.25
+      postcss: 8.4.31
     dev: true
 
-  /postcss-modules-local-by-default@4.0.3(postcss@8.4.25):
+  /postcss-modules-local-by-default@4.0.3(postcss@8.4.31):
     resolution: {integrity: sha512-2/u2zraspoACtrbFRnTijMiQtb4GW4BvatjaG/bCjYQo8kLTdevCUlwuBHx2sCnSyrI3x3qj4ZK1j5LQBgzmwA==}
     engines: {node: ^10 || ^12 || >= 14}
     peerDependencies:
       postcss: ^8.1.0
     dependencies:
-      icss-utils: 5.1.0(postcss@8.4.25)
-      postcss: 8.4.25
+      icss-utils: 5.1.0(postcss@8.4.31)
+      postcss: 8.4.31
       postcss-selector-parser: 6.0.13
       postcss-value-parser: 4.2.0
     dev: true
 
-  /postcss-modules-scope@3.0.0(postcss@8.4.25):
+  /postcss-modules-scope@3.0.0(postcss@8.4.31):
     resolution: {integrity: sha512-hncihwFA2yPath8oZ15PZqvWGkWf+XUfQgUGamS4LqoP1anQLOsOJw0vr7J7IwLpoY9fatA2qiGUGmuZL0Iqlg==}
     engines: {node: ^10 || ^12 || >= 14}
     peerDependencies:
       postcss: ^8.1.0
     dependencies:
-      postcss: 8.4.25
+      postcss: 8.4.31
       postcss-selector-parser: 6.0.13
     dev: true
 
-  /postcss-modules-values@4.0.0(postcss@8.4.25):
+  /postcss-modules-values@4.0.0(postcss@8.4.31):
     resolution: {integrity: sha512-RDxHkAiEGI78gS2ofyvCsu7iycRv7oqw5xMWn9iMoR0N/7mf9D50ecQqUo5BZ9Zh2vH4bCUR/ktCqbB9m8vJjQ==}
     engines: {node: ^10 || ^12 || >= 14}
     peerDependencies:
       postcss: ^8.1.0
     dependencies:
-      icss-utils: 5.1.0(postcss@8.4.25)
-      postcss: 8.4.25
+      icss-utils: 5.1.0(postcss@8.4.31)
+      postcss: 8.4.31
     dev: true
 
-  /postcss-normalize@10.0.1(browserslist@4.22.1)(postcss@8.4.25):
+  /postcss-normalize@10.0.1(browserslist@4.22.1)(postcss@8.4.31):
     resolution: {integrity: sha512-+5w18/rDev5mqERcG3W5GZNMJa1eoYYNGo8gB7tEwaos0ajk3ZXAI4mHGcNT47NE+ZnZD1pEpUOFLvltIwmeJA==}
     engines: {node: '>= 12'}
     peerDependencies:
@@ -15061,8 +15062,8 @@ packages:
     dependencies:
       '@csstools/normalize.css': 12.0.0
       browserslist: 4.22.1
-      postcss: 8.4.25
-      postcss-browser-comments: 4.0.0(browserslist@4.22.1)(postcss@8.4.25)
+      postcss: 8.4.31
+      postcss-browser-comments: 4.0.0(browserslist@4.22.1)(postcss@8.4.31)
       sanitize.css: 13.0.0
     dev: true
 
@@ -15078,8 +15079,8 @@ packages:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
     dev: true
 
-  /postcss@8.4.25:
-    resolution: {integrity: sha512-7taJ/8t2av0Z+sQEvNzCkpDynl0tX3uJMCODi6nT3PfASC7dYCWV9aQ+uiCf+KBD4SEFcu+GvJdGdwzQ6OSjCw==}
+  /postcss@8.4.31:
+    resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       nanoid: 3.3.6
@@ -16255,7 +16256,7 @@ packages:
       adjust-sourcemap-loader: 4.0.0
       convert-source-map: 1.9.0
       loader-utils: 2.0.4
-      postcss: 8.4.25
+      postcss: 8.4.31
       source-map: 0.6.1
     dev: true
 
@@ -17545,7 +17546,7 @@ packages:
   /tslib@2.6.0:
     resolution: {integrity: sha512-7At1WUettjcSRHXCyYtTselblcHl9PJFFVKiCAy/bY97+BPZXSQ2wbq0P9s8tK2G7dFQfNnlJnPAiArVBVBsfA==}
 
-  /tsup@6.7.0(postcss@8.4.25)(typescript@5.1.6):
+  /tsup@6.7.0(postcss@8.4.31)(typescript@5.1.6):
     resolution: {integrity: sha512-L3o8hGkaHnu5TdJns+mCqFsDBo83bJ44rlK7e6VdanIvpea4ArPcU3swWGsLVbXak1PqQx/V+SSmFPujBK+zEQ==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -17569,8 +17570,8 @@ packages:
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
-      postcss: 8.4.25
-      postcss-load-config: 3.1.4(postcss@8.4.25)
+      postcss: 8.4.31
+      postcss-load-config: 3.1.4(postcss@8.4.31)
       resolve-from: 5.0.0
       rollup: 3.26.2
       source-map: 0.8.0-beta.0
@@ -18122,7 +18123,7 @@ packages:
       '@types/node': 18.16.19
       esbuild: 0.18.11
       less: 4.1.3
-      postcss: 8.4.25
+      postcss: 8.4.31
       rollup: 3.26.2
       sass: 1.69.5
     optionalDependencies:
