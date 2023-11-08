@@ -24,7 +24,7 @@ const getTimepointData = (
 ): TimepointData => {
   let hoverOverIndex = -1
   const timepoints = rowData.map((row, index) => {
-    const time = parseInt(row.values[schema.time]!)
+    const time = parseFloat(row.values[schema.time]!)
     const timeUnit = row.values[schema.timeUnits]
     if (row.rowId == hoverEventRowId) {
       hoverOverIndex = index
@@ -53,7 +53,10 @@ export const getMaxDate = (timepoints: dayjs.Dayjs[]) => {
 
 const getTimelineData = (timepointData: TimepointData, rowData: Row[]) => {
   // If this phase has no data, return an empty data line
-  if (timepointData.timepoints.length == 0) {
+  if (
+    timepointData.timepoints == undefined ||
+    timepointData.timepoints.length == 0
+  ) {
     return [
       {
         x: [dayjs().format()],
@@ -220,7 +223,7 @@ const TimelinePhase = ({
   })
   const annotateTime =
     hoverRows && hoverRows.length > 0
-      ? parseInt(hoverRows[0].values[schema.time]!)
+      ? parseFloat(hoverRows[0].values[schema.time]!)
       : undefined
   const annotateTimeUnits =
     hoverRows && hoverRows.length > 0

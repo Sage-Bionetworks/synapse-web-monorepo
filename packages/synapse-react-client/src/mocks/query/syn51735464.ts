@@ -81,7 +81,7 @@ const syn51735464: QueryResultBundle = {
             'neonatal',
             'X',
             '999',
-            '8',
+            '8.5',
             'days',
             'Optic glioma, focal expansion of prechiasmatic optic nerves and chiasm. Low proliferative indices. Lack of eosinophilic granular bodies, Rosenthal fibers or microcystic structures commonly seen in humans (therefore not juvenile pilocytic astrocytomas). Decrease in IPL-GCL and RNFL thickness by SD-OCT',
             'pathologic',
