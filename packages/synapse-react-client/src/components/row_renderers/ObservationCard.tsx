@@ -40,6 +40,7 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   const timeUnits = data[schema.timeUnits] as UnitType
   const text = data[schema.text]
   const tag = data[schema.tag]
+  const tags: string[] = JSON.parse(tag ?? '')
   const doi = data[schema.doi]
   return (
     <div
@@ -70,7 +71,14 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
         </div>
       )}
       <div className="ObservationCard__tags">
-        {tag && <span className="SRC-tag">{tag}</span>}
+        {tag &&
+          tags.map((tag, index) => {
+            return (
+              <span key={index} className="SRC-tag">
+                {tag}
+              </span>
+            )
+          })}
       </div>
     </div>
   )
