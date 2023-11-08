@@ -20,7 +20,7 @@ import {
   AliasType,
   isMembershipInvtnSignedToken,
 } from '@sage-bionetworks/synapse-types'
-import { SourceAppLogo, useSourceApp } from './SourceApp'
+import { SourceAppLogo } from './SourceApp'
 import { Link as RouterLink } from 'react-router-dom'
 import { EmailConfirmationPage } from './EmailConfirmationPage'
 import GoogleLogo from '../assets/g-logo.png'
@@ -31,6 +31,7 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from './StyledComponents'
+import { useSourceApp } from './useSourceApp'
 
 export enum Pages {
   CHOOSE_REGISTRATION,

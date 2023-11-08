@@ -12,15 +12,12 @@ import {
   useApplicationSessionContext,
 } from 'synapse-react-client'
 import { backButtonSx } from './components/BackButton.js'
-import {
-  SourceAppDescription,
-  SourceAppLogo,
-  useSourceApp,
-} from './components/SourceApp.js'
+import { SourceAppDescription, SourceAppLogo } from './components/SourceApp.js'
 import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from './components/StyledComponents.js'
+import { useSourceApp } from './components/useSourceApp'
 
 export type LoginPageProps = {
   returnToUrl?: string
