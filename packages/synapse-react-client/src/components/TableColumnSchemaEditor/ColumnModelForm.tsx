@@ -208,13 +208,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             >
               {allowedColumnTypes.map(value => {
                 return (
-                  <MenuItem
-                    value={value}
-                    key={value}
-                    sx={{
-                      zIndex: 1500,
-                    }}
-                  >
+                  <MenuItem value={value} key={value}>
                     {getColumnTypeFriendlyName(value)}
                   </MenuItem>
                 )
@@ -390,13 +384,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           >
             {(allowedFacetTypes ?? []).map((value, index) => {
               return (
-                <MenuItem
-                  value={value}
-                  key={index}
-                  sx={{
-                    zIndex: 1500,
-                  }}
-                >
+                <MenuItem value={value} key={index}>
                   {value === undefined ? '' : getFacetTypeFriendlyName(value)}
                 </MenuItem>
               )
