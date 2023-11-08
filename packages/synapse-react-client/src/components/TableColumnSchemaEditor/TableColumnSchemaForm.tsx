@@ -27,7 +27,7 @@ import {
   styled,
   Typography,
 } from '@mui/material'
-import { isEqual, times } from 'lodash-es'
+import { isEqual, noop, times } from 'lodash-es'
 import { selectAtom, useAtomCallback } from 'jotai/utils'
 import ColumnModelForm from './ColumnModelForm'
 import AddToList from '../../assets/icons/AddToList'
@@ -93,8 +93,8 @@ type TableColumnSchemaFormProps = {
   /* If this is an entity view, the ViewScope can be used to determine the default column models and fetch annotation column models */
   viewScope?: ViewScope
   initialData?: ColumnModel[]
-  onSubmit: (formData: ColumnModelFormData[]) => void
-  isSubmitting: boolean
+  onSubmit?: (formData: ColumnModelFormData[]) => void
+  isSubmitting?: boolean
 }
 
 const ColumnHeader: StyledComponent<BoxProps> = styled(Box, {
@@ -107,7 +107,13 @@ const TableColumnSchemaForm = React.forwardRef<
   SubmitHandle,
   TableColumnSchemaFormProps
 >(function TableColumnSchemaForm(props, ref) {
-  const { initialData, entityType, viewScope, onSubmit, isSubmitting } = props
+  const {
+    initialData,
+    entityType,
+    viewScope,
+    onSubmit = noop,
+    isSubmitting = false,
+  } = props
 
   const numColumnModels = useAtomValue(
     useMemo(() => atom(get => get(tableColumnSchemaFormDataAtom).length), []),
