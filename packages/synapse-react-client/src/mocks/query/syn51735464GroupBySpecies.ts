@@ -16,13 +16,13 @@ const syn51735464GroupBySpecies: QueryResultBundle = {
       ],
       rows: [
         {
-          values: ['Mus musculus'],
+          values: ['["Mus musculus"]'],
         },
         {
-          values: ['Rattus norvegicus'],
+          values: ['["Rattus norvegicus"]'],
         },
         {
-          values: ['Saccharomyces'],
+          values: ['["Saccharomyces"]'],
         },
       ],
     },

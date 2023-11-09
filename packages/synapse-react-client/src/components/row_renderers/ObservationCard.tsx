@@ -10,12 +10,12 @@ import { UserBadge } from '../UserCard/UserBadge'
  * Column index values into the row values given provided in "data"
  */
 export type ObservationCardSchema = {
-  submitterName: number
-  submitterUserId: number
-  time: number
-  timeUnits: number
-  text: number
-  tag: number
+  observationSubmitterName: number
+  synapseId: number
+  observationTime: number
+  observationTimeUnits: number
+  observationText: number
+  observationType: number
   doi: number
 }
 
@@ -34,12 +34,12 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   schema,
   includePortalCardClass = true,
 }: ObservationCardProps) => {
-  const submitterName = data[schema.submitterName]
-  const submitterUserId = data[schema.submitterUserId]
-  const time = data[schema.time]
-  const timeUnits = data[schema.timeUnits] as UnitType
-  const text = data[schema.text]
-  const tag = data[schema.tag]
+  const submitterName = data[schema.observationSubmitterName]
+  const submitterUserId = data[schema.synapseId]
+  const time = data[schema.observationTime]
+  const timeUnits = data[schema.observationTimeUnits] as UnitType
+  const text = data[schema.observationText]
+  const tag = data[schema.observationType]
   const tags: string[] = JSON.parse(tag ?? '')
   const doi = data[schema.doi]
   return (
@@ -74,7 +74,11 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
         {tag &&
           tags.map((tag, index) => {
             return (
-              <span key={index} className="SRC-tag">
+              <span
+                key={index}
+                className="SRC-tag"
+                style={{ marginRight: '5px' }}
+              >
                 {tag}
               </span>
             )

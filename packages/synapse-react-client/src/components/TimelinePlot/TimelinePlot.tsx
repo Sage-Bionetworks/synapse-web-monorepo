@@ -8,11 +8,7 @@ import hardcodedPhasesQueryResponseData, {
 import TimelinePhase from './TimelinePhase'
 import getColorPalette from '../ColorGradient/ColorGradient'
 import { Box } from '@mui/system'
-import {
-  ColumnSingleValueFilterOperator,
-  ColumnSingleValueQueryFilter,
-  Row,
-} from '@sage-bionetworks/synapse-types'
+import { Row } from '@sage-bionetworks/synapse-types'
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import {
   SQLOperator,
@@ -21,19 +17,21 @@ import {
 } from '../../utils/functions'
 import TimelineLegendItem from './TimelineLegendItem'
 import { Skeleton } from '@mui/material'
-import TimelinePlotSpeciesSelector from './TimelinePlotSpeciesSelector'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import { getHeaderIndex } from '../../utils/functions/queryUtils'
 import useRefDimensions from '../../utils/hooks/useRefDimensions'
+import { ColumnMultiValueFunctionQueryFilter } from '@sage-bionetworks/synapse-types'
+import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
 
-const OBSERVATION_PHASE_COLUMN_NAME = 'phase'
-const OBSERVATION_TIME_COLUMN_NAME = 'time'
-const OBSERVATION_TIME_UNITS_COLUMN_NAME = 'timeunits'
-const OBSERVATION_SUBMITTER_NAME_COLUMN_NAME = 'submittername'
-const OBSERVATION_TEXT_COLUMN_NAME = 'text'
-const OBSERVATION_TYPE_COLUMN_NAME = 'tag'
-const OBSERVATION_SUBMITTER_USER_ID_COLUMN_NAME = 'submitteruserid'
+const OBSERVATION_PHASE_COLUMN_NAME = 'observationphase'
+const OBSERVATION_TIME_COLUMN_NAME = 'observationtime'
+const OBSERVATION_TIME_UNITS_COLUMN_NAME = 'observationtimeunits'
+const OBSERVATION_SUBMITTER_NAME_COLUMN_NAME = 'observationsubmittername'
+const OBSERVATION_TEXT_COLUMN_NAME = 'observationtext'
+const OBSERVATION_TYPE_COLUMN_NAME = 'observationtype'
+const OBSERVATION_SUBMITTER_USER_ID_COLUMN_NAME = 'synapseid'
 const OBSERVATION_DOI_COLUMN_NAME = 'doi'
+const OBSERVATION_SPECIES_COLUMN_NAME = 'species'
 
 export type TimelinePlotProps = {
   sql: string
@@ -56,40 +54,35 @@ export const TimelinePlot = ({
   const dimensions = useRefDimensions(plotContainerRef)
   const queryFilters =
     getAdditionalFilters(eventsTableId, searchParams, sqlOperator) ?? []
-  const speciesFilter: ColumnSingleValueQueryFilter | undefined = species
+  const speciesFilter: ColumnMultiValueFunctionQueryFilter | undefined = species
     ? {
         columnName: 'species',
         concreteType:
-          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
         values: [species],
-        operator: ColumnSingleValueFilterOperator.EQUAL,
+        function: ColumnMultiValueFunction.HAS,
       }
     : undefined
   const additionalFilters = [...queryFilters]
   if (speciesFilter) {
     additionalFilters.push(speciesFilter)
   }
-  const eventTableQuery = useGetFullTableQueryResults(
-    {
-      entityId: eventsTableId,
-      query: {
-        sql: `${sql} WHERE observationTime IS NOT NULL`,
-        sort: [
-          {
-            column: 'observationTime',
-            direction: 'ASC',
-          },
-        ],
-        additionalFilters: additionalFilters,
-      },
+  const eventTableQuery = useGetFullTableQueryResults({
+    entityId: eventsTableId,
+    query: {
+      sql: `${sql} WHERE observationTime IS NOT NULL`,
+      sort: [
+        {
+          column: 'observationTime',
+          direction: 'ASC',
+        },
+      ],
+      additionalFilters: additionalFilters,
+    },
 
-      partMask: BUNDLE_MASK_QUERY_RESULTS,
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    },
-    {
-      enabled: !!species,
-    },
-  )
+    partMask: BUNDLE_MASK_QUERY_RESULTS,
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  })
 
   const { data: eventsData, isLoading } = eventTableQuery
 
@@ -129,14 +122,29 @@ export const TimelinePlot = ({
     OBSERVATION_SUBMITTER_USER_ID_COLUMN_NAME,
     eventsData,
   )
+  const speciesIndex = getHeaderIndex(
+    OBSERVATION_SPECIES_COLUMN_NAME,
+    eventsData,
+  )
   const schema: ObservationCardSchema = {
-    submitterName: observationSubmitterNameIndex,
-    submitterUserId: submitterUserIdIndex,
-    tag: observationTypeIndex,
-    text: observationTextIndex,
-    time: observationTimeIndex,
-    timeUnits: observationTimeUnitIndex,
+    observationSubmitterName: observationSubmitterNameIndex,
+    synapseId: submitterUserIdIndex,
+    observationType: observationTypeIndex,
+    observationText: observationTextIndex,
+    observationTime: observationTimeIndex,
+    observationTimeUnits: observationTimeUnitIndex,
     doi: observationDoiIndex,
+  }
+
+  if (eventsData && !species) {
+    // set species based on data
+    const firstRow = eventsData.queryResult?.queryResults.rows[0]
+    if (firstRow) {
+      const speciesValue = firstRow.values[speciesIndex]
+      if (speciesValue) {
+        setSpecies(JSON.parse(speciesValue)[0])
+      }
+    }
   }
 
   // filter the phases query response data to the specific species
@@ -165,17 +173,6 @@ export const TimelinePlot = ({
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        {/* Species selector */}
-        <Box>
-          {!defaultSpecies && (
-            <TimelinePlotSpeciesSelector
-              setSpecies={setSpecies}
-              species={species}
-              sql={sql}
-              additionalFilters={queryFilters}
-            />
-          )}
-        </Box>
         {/* Legend */}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}>
           {phaseData.map((phaseRow, index) => {

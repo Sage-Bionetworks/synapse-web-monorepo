@@ -24,8 +24,8 @@ const getTimepointData = (
 ): TimepointData => {
   let hoverOverIndex = -1
   const timepoints = rowData.map((row, index) => {
-    const time = parseFloat(row.values[schema.time]!)
-    const timeUnit = row.values[schema.timeUnits]
+    const time = parseFloat(row.values[schema.observationTime]!)
+    const timeUnit = row.values[schema.observationTimeUnits]
     if (row.rowId == hoverEventRowId) {
       hoverOverIndex = index
     }
@@ -223,11 +223,11 @@ const TimelinePhase = ({
   })
   const annotateTime =
     hoverRows && hoverRows.length > 0
-      ? parseFloat(hoverRows[0].values[schema.time]!)
+      ? parseFloat(hoverRows[0].values[schema.observationTime]!)
       : undefined
   const annotateTimeUnits =
     hoverRows && hoverRows.length > 0
-      ? (hoverRows[0].values[schema.timeUnits] as ManipulateType)
+      ? (hoverRows[0].values[schema.observationTimeUnits] as ManipulateType)
       : undefined
   const timepointData = getTimepointData(
     start,
