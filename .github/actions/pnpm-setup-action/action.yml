@@ -1,7 +1,7 @@
-name: "Set up pnpm and configure environment"
-description: "Installs Node, pnpm, fetches cache (if exists), and runs pnpm install"
+name: 'Set up pnpm and configure environment'
+description: 'Installs Node, pnpm, fetches cache (if exists), and runs pnpm install'
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Use Node.js ${{ matrix.node-version || 18 }}
       uses: actions/setup-node@v3
@@ -29,7 +29,7 @@ runs:
     - name: Set up Nx build cache
       uses: actions/cache@v3
       with:
-        path: node_modules/.cache/nx
+        path: .nx/cache
         key: ${{ runner.os }}-nx-cache
         restore-keys: |
           ${{ runner.os }}-nx-cache
