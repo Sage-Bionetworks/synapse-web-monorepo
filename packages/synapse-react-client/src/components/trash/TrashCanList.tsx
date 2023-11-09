@@ -38,6 +38,7 @@ function TrashCanListItem(props: TrashCanListItemProps) {
       </td>
       <td>{item.entityId}</td>
       <td>{item.entityName}</td>
+      <td>{item.entityType}</td>
       {/* <td>TypePlaceholder</td> */}
       <td>
         <>
@@ -173,6 +174,7 @@ export function TrashCanList() {
                 </th>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Entity Type</th>
                 {/* <th>TypePlaceholder</th> */}
                 <th>Location</th>
                 <th>Deleted On</th>
