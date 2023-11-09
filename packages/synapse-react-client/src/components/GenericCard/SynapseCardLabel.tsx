@@ -142,39 +142,21 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   ) {
     if (strList) {
       labelContent = (
-        <Box
-          sx={{
-            img: {
-              height: '100px',
-            },
-          }}
-        >
-          <p>
-            {strList.map((el, index) => {
-              return (
-                <React.Fragment key={el}>
-                  <EntityColumnImagePreview entityId={el} />
+        <p>
+          {strList.map((el, index) => {
+            return (
+              <React.Fragment key={el}>
+                <EntityColumnImagePreview entityId={el} />
 
-                  {/* \u00a0 is a nbsp; */}
-                  {index < strList.length - 1 && ',\u00a0\u00a0'}
-                </React.Fragment>
-              )
-            })}
-          </p>
-        </Box>
+                {/* \u00a0 is a nbsp; */}
+                {index < strList.length - 1 && ',\u00a0\u00a0'}
+              </React.Fragment>
+            )
+          })}
+        </p>
       )
     } else {
-      labelContent = (
-        <Box
-          sx={{
-            img: {
-              height: '100px',
-            },
-          }}
-        >
-          <EntityColumnImagePreview entityId={value} />
-        </Box>
-      )
+      labelContent = <EntityColumnImagePreview entityId={value} />
     }
   } else {
     const split = strList ? strList : str.split(',')
