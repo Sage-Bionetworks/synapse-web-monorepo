@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR label
-        if: ${{ github.event_name == 'pull_request' && github.event.label.name != 'chromatic' }}
+        if: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.label.name != 'chromatic' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # The following script will cancel the rest of the job
