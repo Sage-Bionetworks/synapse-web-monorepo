@@ -9,7 +9,7 @@ import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { SkeletonTable } from '../Skeleton'
 import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import TableColumnSchemaForm, { SubmitHandle } from './TableColumnSchemaForm'
-import { Alert, Button } from '@mui/material'
+import { Alert, Button, Divider } from '@mui/material'
 import { ColumnModelFormData } from './TableColumnSchemaFormReducer'
 import {
   getViewScopeForEntity,
@@ -102,12 +102,12 @@ function _TableColumnSchemaEditor(props: TableColumnSchemaEditorProps) {
           onSubmit(formData)
         }}
       />
+      <Divider />
       {error && (
         <Alert severity={'error'} sx={{ my: 2 }}>
           {error?.message}
         </Alert>
       )}
-
       <Button
         variant="contained"
         color="primary"

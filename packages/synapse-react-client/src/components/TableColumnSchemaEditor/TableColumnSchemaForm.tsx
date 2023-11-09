@@ -27,7 +27,7 @@ import {
   styled,
   Typography,
 } from '@mui/material'
-import { isEqual, times } from 'lodash-es'
+import { isEqual, noop, times } from 'lodash-es'
 import { selectAtom, useAtomCallback } from 'jotai/utils'
 import ColumnModelForm from './ColumnModelForm'
 import AddToList from '../../assets/icons/AddToList'
@@ -40,6 +40,7 @@ import {
 import {
   getAllowedColumnTypes,
   transformColumnModelsToFormData,
+  transformFormDataToColumnModels,
 } from './TableColumnSchemaEditorUtils'
 import {
   useGetAnnotationColumnModels,
@@ -82,6 +83,8 @@ export const HIERARCHY_END_COMPONENT = (
 export type SubmitHandle = {
   // Allow the parent component to trigger a submit of the form, so this may be embedded in an arbitrary modal.
   submit: () => void
+  // Imperative handle to get the data out of the form for SWC compatibility
+  getEditedColumnModels: () => SetOptional<ColumnModel, 'id'>[]
 }
 
 type TableColumnSchemaFormProps = {
@@ -90,8 +93,8 @@ type TableColumnSchemaFormProps = {
   /* If this is an entity view, the ViewScope can be used to determine the default column models and fetch annotation column models */
   viewScope?: ViewScope
   initialData?: ColumnModel[]
-  onSubmit: (formData: ColumnModelFormData[]) => void
-  isSubmitting: boolean
+  onSubmit?: (formData: ColumnModelFormData[]) => void
+  isSubmitting?: boolean
 }
 
 const ColumnHeader: StyledComponent<BoxProps> = styled(Box, {
@@ -104,7 +107,13 @@ const TableColumnSchemaForm = React.forwardRef<
   SubmitHandle,
   TableColumnSchemaFormProps
 >(function TableColumnSchemaForm(props, ref) {
-  const { initialData, entityType, viewScope, onSubmit, isSubmitting } = props
+  const {
+    initialData,
+    entityType,
+    viewScope,
+    onSubmit = noop,
+    isSubmitting = false,
+  } = props
 
   const numColumnModels = useAtomValue(
     useMemo(() => atom(get => get(tableColumnSchemaFormDataAtom).length), []),
@@ -174,6 +183,9 @@ const TableColumnSchemaForm = React.forwardRef<
         submit() {
           onSubmit(readFormData())
         },
+        getEditedColumnModels() {
+          return transformFormDataToColumnModels(readFormData())
+        },
       }
     },
     [onSubmit, readFormData],
@@ -225,7 +237,12 @@ const TableColumnSchemaForm = React.forwardRef<
 
   const addDefaultColumns = useCallback(() => {
     if (defaultColumnModels) {
-      addColumnSet(defaultColumnModels)
+      addColumnSet(
+        defaultColumnModels.map(cm => ({
+          ...cm,
+          id: undefined,
+        })),
+      )
     }
   }, [defaultColumnModels, addColumnSet])
 
@@ -240,8 +257,6 @@ const TableColumnSchemaForm = React.forwardRef<
       component={'form'}
       sx={{
         py: 2.5,
-        borderBottom: '2px solid',
-        borderColor: 'grey.300',
       }}
     >
       <TableColumnSchemaFormActions disabled={isSubmitting} />

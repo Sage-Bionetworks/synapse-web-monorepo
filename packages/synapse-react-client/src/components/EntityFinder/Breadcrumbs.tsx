@@ -29,7 +29,7 @@ export const Breadcrumbs: React.FunctionComponent<BreadcrumbsProps> = ({
         </>
       )}
       {items.map((item, index) => (
-        <>
+        <React.Fragment key={index}>
           <button
             className={`BreadcrumbItem ${item.isCurrent ? 'Current' : ''}`}
             key={index}
@@ -43,7 +43,7 @@ export const Breadcrumbs: React.FunctionComponent<BreadcrumbsProps> = ({
             {item.name}
           </button>
           {index !== items.length - 1 && <span>&gt;</span>}
-        </>
+        </React.Fragment>
       ))}
     </div>
   )
