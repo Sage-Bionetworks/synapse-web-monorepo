@@ -281,5 +281,37 @@ describe('QueryVisualizationWrapper', () => {
         )
       })
     })
+
+    test('Returns the faceted jsonSubColumn name if force-display-original-column-names is true', async () => {
+      localStorage.setItem('force-display-original-column-names', 'true')
+      const queryResponseWithJsonSubColumn = cloneDeep(queryResponse)
+      queryResponseWithJsonSubColumn.columnModels = [
+        {
+          columnType: ColumnTypeEnum.JSON,
+          name: 'someJsonColumn',
+          id: '123',
+          jsonSubColumns: [
+            {
+              name: 'Sub column name',
+              columnType: ColumnTypeEnum.STRING,
+              facetType: 'enumeration',
+              jsonPath: '$.someJsonPath',
+            },
+          ],
+        },
+      ]
+      server.use(...getHandlersForTableQuery(queryResponseWithJsonSubColumn))
+
+      render(<TestComponent />, { wrapper: createWrapper() })
+
+      await waitFor(() => {
+        const getColumnDisplayName =
+          onContextReceived.mock.lastCall![0].getColumnDisplayName
+        expect(getColumnDisplayName).toBeDefined()
+        expect(getColumnDisplayName('someJsonColumn', '$.someJsonPath')).toBe(
+          'Sub column name',
+        )
+      })
+    })
   })
 })

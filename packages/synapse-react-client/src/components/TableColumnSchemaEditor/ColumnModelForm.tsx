@@ -1,5 +1,6 @@
 import {
   Box,
+  Fade,
   FormControl,
   Link,
   MenuItem,
@@ -200,6 +201,9 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 'aria-label': 'Column Type',
               }}
               sx={fieldSx}
+              MenuProps={{
+                TransitionComponent: Fade,
+              }}
               disabled={disabled}
             >
               {allowedColumnTypes.map(value => {
@@ -359,6 +363,9 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             label="Facet Type"
             value={columnModel.facetType}
             disabled={disabled || allowedFacetTypes === null}
+            MenuProps={{
+              TransitionComponent: Fade,
+            }}
             onChange={e => {
               dispatch({
                 type: 'setColumnModelValue',

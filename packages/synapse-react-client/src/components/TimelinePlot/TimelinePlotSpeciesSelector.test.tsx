@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { SynapseClient } from '../../index'
+import SynapseClient from '../../synapse-client'
 import queryResultBundleJson from '../../mocks/query/syn51735464GroupBySpecies'
 import TimelinePlotSpeciesSelector, {
   TimelinePlotSpeciesSelectorProps,
@@ -57,7 +57,7 @@ describe('TimelinePlotSpeciesSelector tests', () => {
     )
     // verify the first row has been selected by default
     expect(setSpecies).toHaveBeenCalledWith('Mus musculus')
-    const dropdown = await screen.findByRole('button')
+    const dropdown = await screen.findByRole('combobox')
     await userEvent.click(dropdown)
     await userEvent.click(await screen.findByText('Saccharomyces'))
     expect(setSpecies).toHaveBeenCalledWith('Saccharomyces')
