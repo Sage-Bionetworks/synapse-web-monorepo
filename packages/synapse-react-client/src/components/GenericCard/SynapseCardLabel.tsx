@@ -20,11 +20,18 @@ import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
 import { UserBadge } from '../UserCard/UserBadge'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
+import { EntityColumnImage } from '../widgets/EntityColumnImage'
+import { EntityImage } from '../CardContainerLogic/CardContainerLogic'
 
 type SynapseCardLabelProps = {
   value: string
   columnName: string
-  labelLink: CardLink | MarkdownLink | ColumnSpecifiedLink | undefined
+  labelLink:
+    | CardLink
+    | MarkdownLink
+    | ColumnSpecifiedLink
+    | EntityImage
+    | undefined
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
   isHeader: boolean
@@ -110,7 +117,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   }
 
   let labelContent: JSX.Element
-  if (labelLink.isMarkdown) {
+  if ('isMarkdown' in labelLink && labelLink.isMarkdown) {
     if (strList) {
       labelContent = (
         <p>
@@ -127,6 +134,25 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
       )
     } else {
       labelContent = <MarkdownSynapse renderInline={true} markdown={value} />
+    }
+  } else if ('isEntityImage' in labelLink && labelLink.isEntityImage) {
+    if (strList) {
+      labelContent = (
+        <p>
+          {strList.map((el, index) => {
+            return (
+              <React.Fragment key={el}>
+                <EntityColumnImage entityId={el} />
+
+                {/* \u00a0 is a nbsp; */}
+                {index < strList.length - 1 && ',\u00a0\u00a0'}
+              </React.Fragment>
+            )
+          })}
+        </p>
+      )
+    } else {
+      labelContent = <EntityColumnImage entityId={value} />
     }
   } else {
     const split = strList ? strList : str.split(',')
@@ -180,8 +206,9 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
       labelContent = (
         <p>
           {split.map((el, index) => {
-            const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
-            const elOrRowId = labelLink.overrideValueWithRowID ? rowId : el
+            const cardLink = labelLink as CardLink
+            const { baseURL, URLColumnName, wrapValueWithParens } = cardLink
+            const elOrRowId = cardLink.overrideValueWithRowID ? rowId : el
             const value = wrapValueWithParens ? `(${elOrRowId})` : elOrRowId
             const href = `/${baseURL}?${URLColumnName}=${value}`
 
@@ -207,7 +234,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     }
   }
 
-  if (labelLink.tooltipText) {
+  if ('tooltipText' in labelLink && labelLink.tooltipText) {
     // wrap in a tooltip
     return (
       <Tooltip title={labelLink.tooltipText} enterNextDelay={300}>
