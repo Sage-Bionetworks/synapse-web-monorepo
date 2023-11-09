@@ -4,13 +4,11 @@ import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { ImageFileHandle } from './ImageFileHandle'
 import { Box } from '@mui/system'
 
-type EntityColumnImagePreviewProps = {
+type EntityColumnImageProps = {
   entityId: string
 }
 
-export const EntityColumnImagePreview = (
-  props: EntityColumnImagePreviewProps,
-) => {
+export const EntityColumnImage = (props: EntityColumnImageProps) => {
   const { entityId } = props
   const [isExpanded, setIsExpanded] = useState(false)
 

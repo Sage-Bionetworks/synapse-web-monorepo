@@ -20,7 +20,7 @@ import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
 import { UserBadge } from '../UserCard/UserBadge'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
-import { EntityColumnImagePreview } from '../widgets/EntityColumnImagePreview'
+import { EntityColumnImage } from '../widgets/EntityColumnImage'
 import { EntityPreviewImage } from '../CardContainerLogic/CardContainerLogic'
 
 type SynapseCardLabelProps = {
@@ -145,7 +145,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
           {strList.map((el, index) => {
             return (
               <React.Fragment key={el}>
-                <EntityColumnImagePreview entityId={el} />
+                <EntityColumnImage entityId={el} />
 
                 {/* \u00a0 is a nbsp; */}
                 {index < strList.length - 1 && ',\u00a0\u00a0'}
@@ -155,7 +155,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         </p>
       )
     } else {
-      labelContent = <EntityColumnImagePreview entityId={value} />
+      labelContent = <EntityColumnImage entityId={value} />
     }
   } else {
     const split = strList ? strList : str.split(',')

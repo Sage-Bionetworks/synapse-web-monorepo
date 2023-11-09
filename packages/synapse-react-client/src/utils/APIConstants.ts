@@ -18,10 +18,6 @@ const ASYNC_GET = '/async/get'
 export const ENTITY = `${REPO}/entity`
 export const ENTITY_ALIAS = (alias: string) => `${REPO}/entity/alias/${alias}`
 export const ENTITY_ID = (id: string | number) => `${REPO}/entity/${id}`
-export const ENTITY_PREVIEW = (
-  id: string | number,
-  version?: string | number,
-) => `${ENTITY_ID_VERSION(id, version)}/filepreview?redirect=false`
 /**
  * Some services allow (but do not require) you to specify the version in the path.
  */

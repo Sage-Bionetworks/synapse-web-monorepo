@@ -34,7 +34,6 @@ import {
   ENTITY_ID,
   ENTITY_JSON,
   ENTITY_PATH,
-  ENTITY_PREVIEW,
   ENTITY_PERMISSIONS,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
@@ -1113,22 +1112,6 @@ export const getEntityBundleV2 = <T extends EntityBundleRequest>(
   return doPost<EntityBundle<T>>(
     ENTITY_BUNDLE_V2(entityId, version),
     requestObject,
-    accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-}
-
-/**
- * Get the URL of the preview file associated with the current version of a FileEntity.
- * https://rest-docs.synapse.org/rest/GET/entity/id/filepreview.html
- */
-export const getEntityPreview = (
-  entityId: string | number,
-  version?: number,
-  accessToken?: string,
-) => {
-  return doGet<string>(
-    ENTITY_PREVIEW(entityId, version),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
