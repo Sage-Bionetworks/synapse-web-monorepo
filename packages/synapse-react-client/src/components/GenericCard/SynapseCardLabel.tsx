@@ -20,7 +20,6 @@ import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
 import { UserBadge } from '../UserCard/UserBadge'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
-import { Box } from '@mui/system'
 import { EntityColumnImagePreview } from '../widgets/EntityColumnImagePreview'
 import { EntityPreviewImage } from '../CardContainerLogic/CardContainerLogic'
 

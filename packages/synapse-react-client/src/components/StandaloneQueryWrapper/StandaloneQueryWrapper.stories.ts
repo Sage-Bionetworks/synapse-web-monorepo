@@ -43,10 +43,8 @@ export const ImagePreviewsDemo: Story = {
     showTopLevelControls: true,
     columnLinks: [
       {
-        isMarkdown: false,
         matchColumnName: 'fuse_mask',
         isEntityPreviewImage: true,
-        linkColumnName: '',
       },
     ],
   },

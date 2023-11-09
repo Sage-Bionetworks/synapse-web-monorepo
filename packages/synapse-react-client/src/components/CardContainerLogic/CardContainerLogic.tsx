@@ -106,7 +106,12 @@ export type DescriptionConfig = {
 }
 
 // Specify the indices in the values [] that should be rendered specially
-export type LabelLinkConfig = (MarkdownLink | CardLink | ColumnSpecifiedLink)[]
+export type LabelLinkConfig = (
+  | MarkdownLink
+  | CardLink
+  | ColumnSpecifiedLink
+  | EntityPreviewImage
+)[]
 
 export type ColumnIconConfigs = {
   columns: {
