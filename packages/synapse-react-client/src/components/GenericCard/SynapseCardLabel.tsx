@@ -21,7 +21,7 @@ import { UserBadge } from '../UserCard/UserBadge'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
-import { EntityPreviewImage } from '../CardContainerLogic/CardContainerLogic'
+import { EntityImage } from '../CardContainerLogic/CardContainerLogic'
 
 type SynapseCardLabelProps = {
   value: string
@@ -30,7 +30,7 @@ type SynapseCardLabelProps = {
     | CardLink
     | MarkdownLink
     | ColumnSpecifiedLink
-    | EntityPreviewImage
+    | EntityImage
     | undefined
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
@@ -135,10 +135,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     } else {
       labelContent = <MarkdownSynapse renderInline={true} markdown={value} />
     }
-  } else if (
-    'isEntityPreviewImage' in labelLink &&
-    labelLink.isEntityPreviewImage
-  ) {
+  } else if ('isEntityPreviewImage' in labelLink && labelLink.isEntityImage) {
     if (strList) {
       labelContent = (
         <p>

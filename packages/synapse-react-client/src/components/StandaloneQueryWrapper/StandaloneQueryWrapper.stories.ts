@@ -44,7 +44,7 @@ export const ImagePreviewsDemo: Story = {
     columnLinks: [
       {
         matchColumnName: 'fuse_mask',
-        isEntityPreviewImage: true,
+        isEntityImage: true,
       },
     ],
   },

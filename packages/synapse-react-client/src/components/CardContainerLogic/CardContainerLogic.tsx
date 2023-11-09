@@ -42,10 +42,10 @@ export interface ColumnSpecifiedLink {
  *  Used when a column value should be previewed
  *  Currently only works in SynapseTable (not cards!)
  */
-export interface EntityPreviewImage {
+export interface EntityImage {
   // the columns whos value will be used for the markdown
   matchColumnName: string
-  isEntityPreviewImage: boolean
+  isEntityImage: boolean
 }
 
 export enum TargetEnum {
@@ -110,7 +110,7 @@ export type LabelLinkConfig = (
   | MarkdownLink
   | CardLink
   | ColumnSpecifiedLink
-  | EntityPreviewImage
+  | EntityImage
 )[]
 
 export type ColumnIconConfigs = {
