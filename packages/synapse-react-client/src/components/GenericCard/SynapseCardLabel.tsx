@@ -135,7 +135,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     } else {
       labelContent = <MarkdownSynapse renderInline={true} markdown={value} />
     }
-  } else if ('isEntityPreviewImage' in labelLink && labelLink.isEntityImage) {
+  } else if ('isEntityImage' in labelLink && labelLink.isEntityImage) {
     if (strList) {
       labelContent = (
         <p>
