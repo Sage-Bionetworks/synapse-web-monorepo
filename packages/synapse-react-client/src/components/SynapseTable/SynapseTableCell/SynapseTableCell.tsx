@@ -32,12 +32,17 @@ import UserOrTeamBadge from '../../UserOrTeamBadge'
 import { isFileViewOrDataset } from '../SynapseTableUtils'
 import { useAtomValue } from 'jotai'
 import { tableQueryEntityAtom } from '../../QueryWrapper/QueryWrapper'
+import { EntityPreviewImage } from '../../CardContainerLogic/CardContainerLogic'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
   columnValue: string | null
   isBold: string
-  columnLinkConfig?: CardLink | MarkdownLink | ColumnSpecifiedLink
+  columnLinkConfig?:
+    | CardLink
+    | MarkdownLink
+    | ColumnSpecifiedLink
+    | EntityPreviewImage
   columnName: string
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]

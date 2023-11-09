@@ -34,3 +34,20 @@ export const TopLevelControls: Story = {
     showTopLevelControls: true,
   },
 }
+
+export const ImagePreviewsDemo: Story = {
+  args: {
+    name: 'Entity column image preview demo',
+    hideDownload: false,
+    sql: 'SELECT * FROM syn52743383',
+    showTopLevelControls: true,
+    columnLinks: [
+      {
+        isMarkdown: false,
+        matchColumnName: 'fuse_mask',
+        isEntityPreviewImage: true,
+        linkColumnName: '',
+      },
+    ],
+  },
+}

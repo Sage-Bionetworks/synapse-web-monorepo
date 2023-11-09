@@ -38,6 +38,16 @@ export interface ColumnSpecifiedLink {
   tooltipText?: string
 }
 
+/**
+ *  Used when a column value should be previewed
+ *  Currently only works in SynapseTable (not cards!)
+ */
+export interface EntityPreviewImage {
+  // the columns whos value will be used for the markdown
+  matchColumnName: string
+  isEntityPreviewImage: boolean
+}
+
 export enum TargetEnum {
   CURRENT_WINDOW = '_self',
   NEW_WINDOW = '_blank',

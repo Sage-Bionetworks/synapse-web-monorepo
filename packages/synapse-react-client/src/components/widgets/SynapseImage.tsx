@@ -16,12 +16,12 @@ export type SynapseImageProps = {
   fileName?: string
   fileResults?: FileHandle[]
   params: {
-    align: string
-    scale: string
+    align?: string
+    scale?: string
     // this should be treated as a boolean, but the actual type that will come through
     // is a string which I don't want to mis-represent
-    responsive: string
-    altText: string
+    responsive?: string
+    altText?: string
   }
 }
 
