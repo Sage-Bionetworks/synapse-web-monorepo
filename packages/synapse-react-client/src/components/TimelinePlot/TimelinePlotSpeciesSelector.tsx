@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import { Box } from '@mui/system'
@@ -24,7 +24,7 @@ export const TimelinePlotSpeciesSelector = ({
   const eventTableQuery = useGetFullTableQueryResults({
     entityId: eventsTableId,
     query: {
-      sql: `SELECT species FROM ${eventsTableId} WHERE species IS NOT null GROUP BY species`,
+      sql: `SELECT distinct unnest(species) FROM ${eventsTableId} WHERE species is not null GROUP BY species`,
       additionalFilters: additionalFilters,
     },
     partMask: BUNDLE_MASK_QUERY_RESULTS,
@@ -33,12 +33,10 @@ export const TimelinePlotSpeciesSelector = ({
 
   const { data: speciesData, isLoading } = eventTableQuery
   const rows = speciesData?.queryResult?.queryResults?.rows
-
-  useEffect(() => {
-    if (rows) {
-      setSpecies(rows.length > 0 ? rows[0].values[0] : null)
-    }
-  }, [rows, setSpecies])
+  const defaultSpecies = rows && rows.length > 0 ? rows[0].values[0] : undefined
+  if (species == undefined && defaultSpecies != undefined) {
+    setSpecies(defaultSpecies)
+  }
 
   // Hide if loading, there are no rows, or there's only 1 species option
   if (isLoading || !rows || rows.length < 2) {
@@ -52,9 +50,11 @@ export const TimelinePlotSpeciesSelector = ({
         <Select
           sx={{ marginLeft: '2px', marginBottom: '2px' }}
           value={species}
-          defaultValue={rows[0].values[0]}
+          defaultValue={defaultSpecies}
           label="Species"
-          onChange={event => setSpecies(event.target.value)}
+          onChange={event => {
+            setSpecies(event.target.value)
+          }}
         >
           {rows?.map(row => {
             const species = row.values[0]!
