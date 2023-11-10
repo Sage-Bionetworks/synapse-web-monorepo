@@ -1,9 +1,9 @@
+import { EntityType } from './EntityType'
 /**
  * JSON schema for the TrashEntity POJO. A trashed entity is an entity in the trash can.
  *
  * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/TrashedEntity.html
  */
-import { EntityType } from './EntityType'
 
 export type TrashedEntity = {
   /** The id of the entity. */
