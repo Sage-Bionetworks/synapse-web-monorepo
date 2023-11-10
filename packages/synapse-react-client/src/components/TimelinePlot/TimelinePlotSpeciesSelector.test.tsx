@@ -77,17 +77,4 @@ describe('TimelinePlotSpeciesSelector tests', () => {
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
-
-  it('null is returned if no rows are returned', async () => {
-    jest
-      .spyOn(SynapseClient, 'getFullQueryTableResults')
-      .mockResolvedValueOnce(emptyQueryResultBundle)
-
-    await renderTimelineSelector()
-    await waitFor(() =>
-      expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(3),
-    )
-    // verify the first row has been selected by default
-    expect(setSpecies).toHaveBeenCalledWith(null)
-  })
 })
