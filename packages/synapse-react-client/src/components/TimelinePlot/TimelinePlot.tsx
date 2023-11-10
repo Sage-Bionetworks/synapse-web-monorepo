@@ -1,4 +1,4 @@
-import React, { createRef, useState } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import hardcodedPhasesQueryResponseData, {
@@ -17,6 +17,7 @@ import {
 } from '../../utils/functions'
 import TimelineLegendItem from './TimelineLegendItem'
 import { Skeleton } from '@mui/material'
+import TimelinePlotSpeciesSelector from './TimelinePlotSpeciesSelector'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import { getHeaderIndex } from '../../utils/functions/queryUtils'
 import useRefDimensions from '../../utils/hooks/useRefDimensions'
@@ -31,7 +32,6 @@ const OBSERVATION_TEXT_COLUMN_NAME = 'observationtext'
 const OBSERVATION_TYPE_COLUMN_NAME = 'observationtype'
 const OBSERVATION_SUBMITTER_USER_ID_COLUMN_NAME = 'synapseid'
 const OBSERVATION_DOI_COLUMN_NAME = 'doi'
-const OBSERVATION_SPECIES_COLUMN_NAME = 'species'
 
 export type TimelinePlotProps = {
   sql: string
@@ -50,6 +50,7 @@ export const TimelinePlot = ({
   const [species, setSpecies] = useState<string | undefined | null>(
     defaultSpecies,
   )
+  const [phaseData, setPhaseData] = useState<Row[] | undefined>([])
   const plotContainerRef = createRef<HTMLDivElement>()
   const dimensions = useRefDimensions(plotContainerRef)
   const queryFilters =
@@ -67,24 +68,42 @@ export const TimelinePlot = ({
   if (speciesFilter) {
     additionalFilters.push(speciesFilter)
   }
-  const eventTableQuery = useGetFullTableQueryResults({
-    entityId: eventsTableId,
-    query: {
-      sql: `${sql} WHERE observationTime IS NOT NULL`,
-      sort: [
-        {
-          column: 'observationTime',
-          direction: 'ASC',
-        },
-      ],
-      additionalFilters: additionalFilters,
-    },
+  const eventTableQuery = useGetFullTableQueryResults(
+    {
+      entityId: eventsTableId,
+      query: {
+        sql: `${sql} WHERE observationTime IS NOT NULL`,
+        sort: [
+          {
+            column: 'observationTime',
+            direction: 'ASC',
+          },
+        ],
+        additionalFilters: additionalFilters,
+      },
 
-    partMask: BUNDLE_MASK_QUERY_RESULTS,
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-  })
+      partMask: BUNDLE_MASK_QUERY_RESULTS,
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    },
+    {
+      enabled: !!species,
+    },
+  )
 
   const { data: eventsData, isLoading } = eventTableQuery
+
+  // filter the phases query response data to the specific species
+  useEffect(() => {
+    if (species) {
+      const phasesForTargetSpecies =
+        hardcodedPhasesQueryResponseData.queryResult?.queryResults.rows.filter(
+          row => {
+            return row.values[phaseSpeciesIndex] == species
+          },
+        )
+      setPhaseData(phasesForTargetSpecies)
+    }
+  }, [species])
 
   if (isLoading) {
     return <LoadingTimelinePlot />
@@ -122,10 +141,7 @@ export const TimelinePlot = ({
     OBSERVATION_SUBMITTER_USER_ID_COLUMN_NAME,
     eventsData,
   )
-  const speciesIndex = getHeaderIndex(
-    OBSERVATION_SPECIES_COLUMN_NAME,
-    eventsData,
-  )
+
   const schema: ObservationCardSchema = {
     observationSubmitterName: observationSubmitterNameIndex,
     synapseId: submitterUserIdIndex,
@@ -136,35 +152,11 @@ export const TimelinePlot = ({
     doi: observationDoiIndex,
   }
 
-  if (eventsData && !species) {
-    // set species based on data
-    const firstRow = eventsData.queryResult?.queryResults.rows[0]
-    if (firstRow) {
-      const speciesValue = firstRow.values[speciesIndex]
-      if (speciesValue) {
-        setSpecies(JSON.parse(speciesValue)[0])
-      }
-    }
-  }
-
-  // filter the phases query response data to the specific species
-  let phaseData: Row[] = []
-  if (species) {
-    const phasesForTargetSpecies =
-      hardcodedPhasesQueryResponseData.queryResult?.queryResults.rows.filter(
-        row => {
-          return row.values[phaseSpeciesIndex] == species
-        },
-      )
-    // then walk through the phases and create a plot for each (iff event data exists for that phase!)
-
-    if (!phasesForTargetSpecies || phasesForTargetSpecies.length == 0) {
-      return <></>
-    }
-    phaseData = phasesForTargetSpecies
-  }
   if (species === null) {
     return <NoContentAvailable />
+  }
+  if (!phaseData) {
+    return <></>
   }
 
   const widthPx = dimensions.width ? dimensions.width / phaseData.length : 0
@@ -173,6 +165,17 @@ export const TimelinePlot = ({
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        {/* Species selector */}
+        <Box>
+          {!defaultSpecies && (
+            <TimelinePlotSpeciesSelector
+              setSpecies={setSpecies}
+              species={species}
+              sql={sql}
+              additionalFilters={queryFilters}
+            />
+          )}
+        </Box>
         {/* Legend */}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}>
           {phaseData.map((phaseRow, index) => {
@@ -208,15 +211,18 @@ export const TimelinePlot = ({
                     phaseRow.values[phaseObservationIndex]
                   )
                 })
-              return (
+
+              return phaseEventRows ? (
                 <TimelinePhase
                   key={phaseRow.rowId}
                   name={phaseRow.values[phaseObservationIndex]!}
                   color={colorPalette[0]}
-                  rowData={phaseEventRows!}
+                  rowData={phaseEventRows}
                   schema={schema}
                   widthPx={widthPx}
                 />
+              ) : (
+                <></>
               )
             })}
           </Box>
