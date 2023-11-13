@@ -244,18 +244,12 @@ export const toolDetailsPageConfig: DetailsPageProps = {
       uriValue: 'Observations',
       synapseConfigArray: [
         {
-          title: 'Natural History Observations',
-          name: 'Markdown',
-          standalone: true,
-          props: {
-            markdown:
-              'To view the observations, click on a mark on the timeline.',
-          },
-        },
-        {
           name: 'TimelinePlot',
           outsideContainerClassName: 'home-spacer',
           props: {
+            title: 'Natural History Observations',
+            subTitle:
+              'To view the observations, click on a mark on the timeline.',
             sql: observationsSql,
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
           },
