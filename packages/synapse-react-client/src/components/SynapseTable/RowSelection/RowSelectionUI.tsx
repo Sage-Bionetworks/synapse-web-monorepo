@@ -2,6 +2,8 @@ import React from 'react'
 import { Box, Button, Paper, Typography } from '@mui/material'
 import InlineBadge from '../../styled/InlineBadge'
 import pluralize from 'pluralize'
+import { useAtomValue } from 'jotai'
+import { isRowSelectionUIFloatingAtom } from '../../QueryWrapper/TableRowSelectionState'
 
 export type RowSelectionUIProps = {
   show?: boolean
@@ -20,6 +22,7 @@ export function RowSelectionUI(props: RowSelectionUIProps) {
     onClearSelection,
     customControls = <></>,
   } = props
+  const isRowSelectionUIFloating = useAtomValue(isRowSelectionUIFloatingAtom)
   if (!show) {
     return <></>
   }
@@ -30,8 +33,8 @@ export function RowSelectionUI(props: RowSelectionUIProps) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        position: 'fixed',
-        bottom: 0,
+        position: isRowSelectionUIFloating ? 'fixed' : 'absolute',
+        bottom: isRowSelectionUIFloating ? 0 : -70,
         left: 0,
         width: '100%',
         height: '70px',

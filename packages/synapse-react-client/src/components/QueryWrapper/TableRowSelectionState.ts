@@ -42,6 +42,11 @@ export function getRowSelectionEqualityComparator(
 export const isRowSelectionVisibleAtom = atom<boolean>(false)
 
 /**
+ * Whether row selection UI should float or be shown inline
+ */
+export const isRowSelectionUIFloatingAtom = atom<boolean>(true)
+
+/**
  * A unique key that identifies a row. If two selected rows have the same key values, then they are considered equal and would both be selected/deselected together.
  */
 export const rowSelectionPrimaryKeyAtom = atom<string[] | undefined>(undefined)

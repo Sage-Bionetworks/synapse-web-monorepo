@@ -150,6 +150,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             showExportToCavatica: true,
             cavaticaHelpURL: '/Limited%20Data%20Commons',
             isRowSelectionVisible: true,
+            isRowSelectionUIFloating: false,
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,
@@ -172,6 +173,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             showExportToCavatica: true,
             cavaticaHelpURL: '/Limited%20Data%20Commons',
             isRowSelectionVisible: true,
+            isRowSelectionUIFloating: false,
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,

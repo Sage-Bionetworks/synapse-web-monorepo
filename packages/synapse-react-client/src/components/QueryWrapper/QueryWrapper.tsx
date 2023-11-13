@@ -25,6 +25,7 @@ import useImmutableTableQuery from '../../utils/hooks/useImmutableTableQuery/use
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import {
   hasSelectedRowsAtom,
+  isRowSelectionUIFloatingAtom,
   isRowSelectionVisibleAtom,
   rowSelectionPrimaryKeyAtom,
   selectedRowsAtom,
@@ -47,6 +48,8 @@ export type QueryWrapperProps = React.PropsWithChildren<{
    * Note that Synapse tables have no internal concept of a primary key.
    */
   rowSelectionPrimaryKey?: string[]
+  /** By default, the row selection UI will float at the bottom of the viewport.  Set to false to make it inline */
+  isRowSelectionUIFloating?: boolean
   isInfinite?: boolean
   combineRangeFacetConfig?: CombineRangeFacetConfig
 }>
@@ -80,6 +83,7 @@ function _QueryWrapper(props: QueryWrapperProps) {
     shouldDeepLink,
     onViewSharingSettingsClicked,
     isRowSelectionVisible: isRowSelectionVisibleFromProps = false,
+    isRowSelectionUIFloating: isRowSelectionUIFloatingFromProps = true,
     rowSelectionPrimaryKey: rowSelectionPrimaryKeyFromProps,
     isInfinite = false,
     combineRangeFacetConfig,
@@ -187,6 +191,11 @@ function _QueryWrapper(props: QueryWrapperProps) {
   useEffect(() => {
     setIsRowSelectionVisible(isRowSelectionVisibleFromProps)
   }, [isRowSelectionVisibleFromProps, setIsRowSelectionVisible])
+
+  const setIsRowSelectionUIFloating = useSetAtom(isRowSelectionUIFloatingAtom)
+  useEffect(() => {
+    setIsRowSelectionUIFloating(isRowSelectionUIFloatingFromProps)
+  }, [isRowSelectionUIFloatingFromProps, setIsRowSelectionUIFloating])
 
   const rowSelectionPrimaryKey = useMemo(() => {
     if (rowSelectionPrimaryKeyFromProps) {

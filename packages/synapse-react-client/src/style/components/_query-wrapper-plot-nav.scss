@@ -3,6 +3,7 @@
 
 .QueryWrapperPlotNav {
   display: grid;
+  position: relative;
 
   @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
     grid-template-columns: 23% 75%;
@@ -42,6 +43,10 @@
         margin-left: 0;
       }
     }
+  }
+
+  &.hasSelectedRows {
+    margin-bottom: 100px;
   }
 
   // row
