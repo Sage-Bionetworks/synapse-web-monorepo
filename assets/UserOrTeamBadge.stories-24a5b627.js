@@ -1,0 +1,18 @@
+import{P,a as A}from"./SynapseConstants-0daa3b0b.js";import{U as T}from"./UserOrTeamBadge-7667d76f.js";import"./OrientationBanner-6f1c542d.js";import"./jsx-runtime-095bf462.js";import"./index-8db94870.js";import"./_commonjsHelpers-042e6b4d.js";import"./FullWidthAlert-e628333c.js";import"./AlertTitle-aed9db43.js";import"./styled-17e9e47b.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-4abd396b.js";import"./createSvgIcon-c69fbb93.js";import"./Paper-2a5a67d3.js";import"./IconButton-5cd80e83.js";import"./ButtonBase-4975ddb0.js";import"./emotion-react.browser.esm-39b3de80.js";import"./assertThisInitialized-081f9914.js";import"./inheritsLoose-c82a83d4.js";import"./TransitionGroupContext-aa95d3cf.js";import"./useForkRef-f2aa3d66.js";import"./useIsFocusVisible-bbf13f29.js";import"./Typography-d5f8f357.js";import"./extendSxProp-1c03cb1b.js";import"./Stack-685b29ad.js";import"./Box-fd1c0045.js";import"./useTheme-e16afdbe.js";import"./Grow-0db08d4d.js";import"./isHostComponent-fa76b8d9.js";import"./index-8ce4a492.js";import"./utils-02ec0d60.js";import"./ClickAwayListener-e5c35437.js";import"./Tooltip-9098414d.js";import"./Button-24da439b.js";import"./SynapseClient-263d1708.js";import"./getEndpoint-ac94413e.js";import"./Link-a60839ec.js";import"./_getTag-40b07ccb.js";import"./isArray-5e3f9107.js";import"./StringUtils-2ea3ab4d.js";import"./dayjs.min-59ef0ea6.js";import"./index-58d3fd43.js";import"./tiny-invariant-dd7d57d2.js";import"./CheckCircleTwoTone-8c636771.js";import"./inputBaseClasses-42f125b6.js";import"./Fade-4732825d.js";import"./UserBadge-51d9b755.js";import"./Popover-8b41c65d.js";import"./Modal-f893880b.js";import"./Backdrop-e2cb474f.js";import"./getScrollbarSize-ac846fe6.js";import"./ownerWindow-2c76219e.js";import"./createChainedFunction-0bab83cf.js";import"./IconSvg-8e470b55.js";import"./ErrorOutlined-3dd860d7.js";import"./GetAppTwoTone-355d174d.js";import"./InfoOutlined-61b6cf08.js";import"./cloneDeep-8d88a06c.js";import"./_baseClone-1ac4a65f.js";import"./_Uint8Array-b1e297cd.js";import"./_baseTimes-8715be3e.js";import"./SkeletonTable-1687e537.js";import"./times-f4c88e12.js";import"./identity-46f208ab.js";import"./isSymbol-7c514724.js";import"./Skeleton-5d185628.js";import"./ToastMessage-75cae4d1.js";import"./hasClass-ec9efd32.js";import"./uniqueId-4d05949d.js";import"./toString-cc90cb98.js";import"./Avatar-eb0038c1.js";const xr={title:"UI/UserOrTeamBadge",component:T},r={args:{principalId:"273984"}},o={args:{principalId:"273957"}},p={args:{principalId:P}},t={args:{principalId:A}};var i,m,a;r.parameters={...r.parameters,docs:{...(i=r.parameters)==null?void 0:i.docs,source:{originalSource:`{
+  args: {
+    principalId: '273984'
+  }
+}`,...(a=(m=r.parameters)==null?void 0:m.docs)==null?void 0:a.source}}};var e,s,c;o.parameters={...o.parameters,docs:{...(e=o.parameters)==null?void 0:e.docs,source:{originalSource:`{
+  args: {
+    principalId: '273957'
+  }
+}`,...(c=(s=o.parameters)==null?void 0:s.docs)==null?void 0:c.source}}};var n,d,I;p.parameters={...p.parameters,docs:{...(n=p.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    principalId: PUBLIC_PRINCIPAL_ID
+  }
+}`,...(I=(d=p.parameters)==null?void 0:d.docs)==null?void 0:I.source}}};var u,l,g;t.parameters={...t.parameters,docs:{...(u=t.parameters)==null?void 0:u.docs,source:{originalSource:`{
+  args: {
+    principalId: AUTHENTICATED_PRINCIPAL_ID
+  }
+}`,...(g=(l=t.parameters)==null?void 0:l.docs)==null?void 0:g.source}}};const Hr=["User","Team","PublicGroup","AuthenticatedGroup"];export{t as AuthenticatedGroup,p as PublicGroup,o as Team,r as User,Hr as __namedExportsOrder,xr as default};
+//# sourceMappingURL=UserOrTeamBadge.stories-24a5b627.js.map
