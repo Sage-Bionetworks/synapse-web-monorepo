@@ -37,7 +37,6 @@ export const TimelinePlotSpeciesSelector = ({
   if (species == undefined && defaultSpecies != undefined) {
     setSpecies(defaultSpecies)
   }
-
   // Hide if loading, there are no rows, or there's only 1 species option
   if (isLoading || !rows || rows.length < 2) {
     return <></>
@@ -50,7 +49,6 @@ export const TimelinePlotSpeciesSelector = ({
         <Select
           sx={{ marginLeft: '2px', marginBottom: '2px' }}
           value={species}
-          defaultValue={defaultSpecies}
           label="Species"
           onChange={event => {
             setSpecies(event.target.value)
