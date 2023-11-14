@@ -85,6 +85,8 @@ export type SubmitHandle = {
   submit: () => void
   // Imperative handle to get the data out of the form for SWC compatibility
   getEditedColumnModels: () => SetOptional<ColumnModel, 'id'>[]
+  // Used to check if all form data is valid. Returns the current validity state
+  validate: () => boolean
 }
 
 type TableColumnSchemaFormProps = {
@@ -185,6 +187,10 @@ const TableColumnSchemaForm = React.forwardRef<
         },
         getEditedColumnModels() {
           return transformFormDataToColumnModels(readFormData())
+        },
+        validate() {
+          // TODO: SWC-6612
+          return true
         },
       }
     },

@@ -142,8 +142,8 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
         />
       </Box>
       <Box
+        my={isDefaultColumn ? 'auto' : undefined}
         sx={{
-          my: 'auto',
           gridColumn: isJsonSubColumn
             ? /* If this is a JSON Subcolumn, we reduce the width of this grid column to create space to render the visual hierarchical line */
               '3 / span 1'
@@ -181,7 +181,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           />
         )}
       </Box>
-      <Box my={'auto'}>
+      <Box my={isDefaultColumn ? 'auto' : undefined}>
         {isDefaultColumn ? (
           getColumnTypeFriendlyName(columnModel.columnType)
         ) : (
@@ -217,7 +217,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           </FormControl>
         )}
       </Box>
-      <Box>
+      <Box my={isDefaultColumn ? 'auto' : undefined}>
         {isDefaultColumn ? (
           (columnModel as ColumnModelFormData).maximumSize ?? ''
         ) : (
@@ -231,7 +231,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
 
               inputProps: {
                 'aria-label': 'Maximum Size',
-                min: 0,
+                min: 1,
                 max: canHaveSize(columnModel.columnType)
                   ? getMaxSizeForType(columnModel.columnType)
                   : undefined,
@@ -253,7 +253,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           />
         )}
       </Box>
-      <Box>
+      <Box my={isDefaultColumn ? 'auto' : undefined}>
         {isDefaultColumn ? (
           (columnModel as ColumnModelFormData).maximumListLength ?? ''
         ) : (
@@ -284,7 +284,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           />
         )}
       </Box>
-      <Box>
+      <Box my={isDefaultColumn ? 'auto' : undefined}>
         {isDefaultColumn ? (
           (columnModel as ColumnModelFormData)?.defaultValue ?? ''
         ) : (
