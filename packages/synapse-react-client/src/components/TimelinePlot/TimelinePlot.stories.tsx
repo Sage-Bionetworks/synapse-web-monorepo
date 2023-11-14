@@ -18,12 +18,12 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   args: {
-    sql: `SELECT * FROM syn52928979`,
+    sql: `SELECT * FROM syn51735464`,
     searchParams: {
-      resourceId: '033b7173-4c58-410e-b441-579ba05c388a',
+      resourceId: '9971e47e-976a-4631-8edd-5cae04304b01',
     },
     sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-    // defaultSpecies: 'Mus musculus',
+    defaultSpecies: 'Mus musculus',
   },
   parameters: {
     msw: {
