@@ -11,6 +11,7 @@ import {
   canHaveRestrictedValues,
   canHaveSize,
   configureFacetsForType,
+  DEFAULT_STRING_SIZE,
 } from './TableColumnSchemaEditorUtils'
 
 export function getIsAllSelected(formData: ColumnModelFormData[]) {
@@ -48,6 +49,7 @@ export function getDefaultColumnModelFormData(): ColumnModelFormData {
   return {
     name: '',
     columnType: ColumnTypeEnum.STRING,
+    maximumSize: DEFAULT_STRING_SIZE,
     isOriginallyDefaultColumn: false,
     isSelected: false,
   }

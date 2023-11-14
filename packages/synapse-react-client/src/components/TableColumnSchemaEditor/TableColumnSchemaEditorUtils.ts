@@ -201,7 +201,11 @@ export function canHaveDefault(
   isJsonSubColumnFacet: boolean,
 ) {
   // SWC-6333: default types are not allowed in views
-  if (!isView && !isJsonSubColumnFacet) {
+  if (isView) {
+    return false
+  } else if (isJsonSubColumnFacet) {
+    return false
+  } else {
     switch (type) {
       case ColumnTypeEnum.ENTITYID:
       case ColumnTypeEnum.FILEHANDLEID:
@@ -213,12 +217,10 @@ export function canHaveDefault(
       default:
         return true
     }
-  } else {
-    return false
   }
 }
 
-const DEFAULT_STRING_SIZE = 50
+export const DEFAULT_STRING_SIZE = 50
 const MAX_STRING_SIZE = 1000
 
 /**
@@ -231,7 +233,6 @@ export function getMaxSizeForType(type: ColumnType | ColumnTypeEnum): number {
   switch (type) {
     case ColumnTypeEnum.STRING:
     case ColumnTypeEnum.STRING_LIST:
-      return DEFAULT_STRING_SIZE
     case ColumnTypeEnum.LINK:
       return MAX_STRING_SIZE
     default:

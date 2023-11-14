@@ -138,6 +138,7 @@ describe('TableColumnSchemaFormReducer', () => {
       name: '',
       isOriginallyDefaultColumn: false,
       columnType: ColumnTypeEnum.STRING,
+      maximumSize: 50,
       isSelected: false,
     })
 
