@@ -41,9 +41,12 @@ import QueryWrapperSynapsePlot, {
   QueryWrapperSynapsePlotProps,
 } from './QueryWrapperSynapsePlot'
 import { QueryWrapperPlotNavCustomPlotParams } from '../Plot/SynapsePlot'
+import { hasSelectedRowsAtom } from '../QueryWrapper/TableRowSelectionState'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
+
+export const HAS_SELECTED_ROWS_CSS: string = 'hasSelectedRows'
 
 type QueryWrapperPlotNavOwnProps = {
   sql: string
@@ -70,7 +73,12 @@ type QueryWrapperPlotNavOwnProps = {
   onViewSharingSettingsClicked?: (benefactorId: string) => void
 } & Omit<TopLevelControlsProps, 'entityId'> &
   Pick<QueryWrapperPlotNavCustomPlotParams, 'onCustomPlotClick'> &
-  Pick<QueryWrapperProps, 'isRowSelectionVisible' | 'rowSelectionPrimaryKey'> &
+  Pick<
+    QueryWrapperProps,
+    | 'isRowSelectionVisible'
+    | 'rowSelectionPrimaryKey'
+    | 'isRowSelectionUIFloating'
+  > &
   Pick<
     QueryVisualizationWrapperProps,
     | 'defaultShowFacetVisualization'
@@ -148,6 +156,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
   const { isFacetsAvailable: isFaceted } = queryContext
   const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
 
+  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
   return (
     <QueryVisualizationContextConsumer>
       {queryVisualizationContext => {
@@ -163,7 +172,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
               queryVisualizationContext.showFacetFilter
                 ? QUERY_FILTERS_EXPANDED_CSS
                 : QUERY_FILTERS_COLLAPSED_CSS
-            }`}
+            } ${hasSelectedRows ? HAS_SELECTED_ROWS_CSS : ''}`}
             sx={{
               '*': {
                 cursor: isLoadingNewBundle ? 'wait' : undefined,
