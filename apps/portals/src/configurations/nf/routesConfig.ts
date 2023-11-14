@@ -21,7 +21,7 @@ import {
   organizationCardSchema,
   organizationDetailsPage,
   organizationDetailsPageLinkConfig,
-} from './organizations'
+} from './synapseConfigs/organizations'
 import {
   fundersSql,
   hackathonsSql,
