@@ -1,19 +1,16 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { SynapseConfig } from 'types/portal-config'
-import {
-  columnAliases,
-  searchConfiguration,
-} from './synapseConfigs/commonProps'
-import { publicationsCardConfiguration } from './synapseConfigs/publications'
-import { studyCardConfiguration } from './synapseConfigs/studies'
+import { columnAliases, searchConfiguration } from './commonProps'
+import { publicationsCardConfiguration } from './publications'
+import { studyCardConfiguration } from './studies'
 import {
   filesSql,
   fundersSql,
   studiesSql,
   datasetsSql,
   publicationsSql,
-} from './resources'
+} from '../resources'
 import type { CardLink } from 'synapse-react-client'
 import type { GenericCardSchema } from 'synapse-react-client'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
@@ -27,15 +24,22 @@ export const organizationDetailsPageConfig: DetailsPageProps = {
       iconName: 'study',
       synapseConfigArray: [
         {
-          name: 'CardContainerLogic',
+          name: 'QueryWrapperPlotNav',
           props: {
+            rgbIndex: 8,
+            shouldDeepLink: false,
+            defaultShowFacetVisualization: false,
             sql: studiesSql,
-            limit: 3,
-            ...studyCardConfiguration,
+            visibleColumnCount: 7,
+            sqlOperator: ColumnSingleValueFilterOperator.LIKE,
+            cardConfiguration: studyCardConfiguration,
+            name: 'Funded Studies',
+            columnAliases,
+            searchConfiguration,
+            limit: 2,
           },
-          title: 'Funded Studies',
-          columnName: 'fundingAgency',
           tableSqlKeys: ['fundingAgency'],
+          columnName: 'fundingAgency',
         },
         {
           name: 'CardContainerLogic',
