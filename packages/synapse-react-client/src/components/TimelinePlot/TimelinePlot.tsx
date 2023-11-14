@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from 'react'
+import React, { createRef, useMemo, useState } from 'react'
 import { useGetFullTableQueryResults } from '../../synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../../utils/SynapseConstants'
 import hardcodedPhasesQueryResponseData, {
@@ -8,7 +8,6 @@ import hardcodedPhasesQueryResponseData, {
 import TimelinePhase from './TimelinePhase'
 import getColorPalette from '../ColorGradient/ColorGradient'
 import { Box } from '@mui/system'
-import { Row } from '@sage-bionetworks/synapse-types'
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import {
   SQLOperator,
@@ -53,7 +52,6 @@ export const TimelinePlot = ({
   const [species, setSpecies] = useState<string | undefined | null>(
     defaultSpecies,
   )
-  const [phaseData, setPhaseData] = useState<Row[] | undefined>([])
   const plotContainerRef = createRef<HTMLDivElement>()
   const dimensions = useRefDimensions(plotContainerRef)
   const queryFilters =
@@ -96,7 +94,7 @@ export const TimelinePlot = ({
   const { data: eventsData, isLoading } = eventTableQuery
 
   // filter the phases query response data to the specific species
-  useEffect(() => {
+  const phaseData = useMemo(() => {
     if (species) {
       const phasesForTargetSpecies =
         hardcodedPhasesQueryResponseData.queryResult?.queryResults.rows.filter(
@@ -104,8 +102,8 @@ export const TimelinePlot = ({
             return row.values[phaseSpeciesIndex] == species
           },
         )
-      setPhaseData(phasesForTargetSpecies)
-    }
+      return phasesForTargetSpecies
+    } else return undefined
   }, [species])
 
   if (isLoading) {
@@ -155,12 +153,9 @@ export const TimelinePlot = ({
     doi: observationDoiIndex,
   }
 
-  if (!phaseData) {
-    return <></>
-  }
-
-  const widthPx = dimensions.width ? dimensions.width / phaseData.length : 0
-  const gridTemplateColumns = phaseData.map(() => 'auto').join(' ')
+  const widthPx =
+    dimensions.width && phaseData ? dimensions.width / phaseData.length : 0
+  const gridTemplateColumns = phaseData?.map(() => 'auto').join(' ')
 
   return (
     <>
@@ -188,23 +183,25 @@ export const TimelinePlot = ({
             )}
           </Box>
           {/* Legend */}
-          <Box
-            sx={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}
-          >
-            {phaseData.map((phaseRow, index) => {
-              const { colorPalette } = getColorPalette(index, 1)
-              return (
-                <TimelineLegendItem
-                  key={phaseRow.rowId}
-                  color={colorPalette[0]}
-                  phaseName={phaseRow.values[phaseObservationIndex]}
-                />
-              )
-            })}
-          </Box>
+          {phaseData && (
+            <Box
+              sx={{ display: 'flex', justifyContent: 'flex-end', gap: '25px' }}
+            >
+              {phaseData.map((phaseRow, index) => {
+                const { colorPalette } = getColorPalette(index, 1)
+                return (
+                  <TimelineLegendItem
+                    key={phaseRow.rowId}
+                    color={colorPalette[0]}
+                    phaseName={phaseRow.values[phaseObservationIndex]}
+                  />
+                )
+              })}
+            </Box>
+          )}
         </Box>
         {/* Phase plots */}
-        {species && (
+        {species && phaseData && (
           <div ref={plotContainerRef}>
             <Box
               sx={{
