@@ -250,8 +250,8 @@ describe('TableColumnSchemaEditorUtils', () => {
   })
   test('getMaxSizeForType', () => {
     const expected: Partial<Record<ColumnTypeEnum, number>> = {
-      [ColumnTypeEnum.STRING]: 50,
-      [ColumnTypeEnum.STRING_LIST]: 50,
+      [ColumnTypeEnum.STRING]: 1000,
+      [ColumnTypeEnum.STRING_LIST]: 1000,
       [ColumnTypeEnum.LINK]: 1000,
     }
     const shouldError = Object.values(ColumnTypeEnum).filter(
