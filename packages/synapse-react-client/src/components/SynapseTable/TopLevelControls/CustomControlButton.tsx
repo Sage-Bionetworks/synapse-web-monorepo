@@ -10,7 +10,7 @@ export interface CustomControlButtonProps extends ButtonProps {
 
 function CustomControlButton(props: CustomControlButtonProps) {
   const { control, callbackData, disabled } = props
-  const { onClick, buttonText } = control
+  const { onClick, buttonText, buttonID } = control
   const [isLoading, setIsLoading] = useState(false)
   const isDisabled = disabled || isLoading
   return (
@@ -27,6 +27,7 @@ function CustomControlButton(props: CustomControlButtonProps) {
           },
         })
       }}
+      id={buttonID}
     >
       {isLoading && <SynapseSpinner size={30} />}
       {buttonText}

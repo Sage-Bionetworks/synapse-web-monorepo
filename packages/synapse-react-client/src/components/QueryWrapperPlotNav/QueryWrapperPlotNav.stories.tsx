@@ -338,6 +338,7 @@ export const TableRowSelectionWithCustomCommand: Story = {
           handleRowSelectionCustomCommandClick(event)
         },
         isRowSelectionSupported: true,
+        buttonID: 'RowSelectionCustomCommandButtonID',
       },
       {
         buttonText: 'All Results Custom Command',
@@ -345,6 +346,7 @@ export const TableRowSelectionWithCustomCommand: Story = {
           handleAllDataCustomCommandClick(event)
         },
         isRowSelectionSupported: false,
+        buttonID: 'AllResultsCustomCommandButtonID',
       },
     ],
   },

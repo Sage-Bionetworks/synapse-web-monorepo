@@ -35,6 +35,8 @@ import {
 } from '../../QueryWrapper/TableRowSelectionState'
 import CustomControlButton from './CustomControlButton'
 
+const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaTopLevelControlButton'
+
 export type TopLevelControlsProps = {
   name?: string
   hideDownload?: boolean
@@ -71,6 +73,7 @@ export type CustomControl = {
   isRowSelectionSupported: boolean
   classNames?: string
   icon?: React.ReactNode
+  buttonID?: string // optionally set the ID property of the element
 }
 
 const TopLevelControls = (props: TopLevelControlsProps) => {
@@ -267,6 +270,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     setIsShowingExportToCavaticaModal(true)
                   }}
                   startIcon={<Cavatica />}
+                  id={SEND_TO_CAVATICA_BUTTON_ID}
                 >
                   Send {numberOfResultsToInvokeActionAsText} to CAVATICA
                 </Button>

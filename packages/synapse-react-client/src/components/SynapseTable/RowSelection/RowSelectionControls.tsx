@@ -16,6 +16,8 @@ import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { getFileColumnModelId } from '../SynapseTableUtils'
 import CustomControlButton from '../TopLevelControls/CustomControlButton'
 
+const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaRowSelectionControlButton'
+
 export type RowSelectionControlsProps = {
   showExportToCavatica?: boolean
   customControls?: CustomControl[]
@@ -79,6 +81,7 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
                 setIsShowingExportToCavaticaModal(true)
               }}
               startIcon={<Cavatica />}
+              id={SEND_TO_CAVATICA_BUTTON_ID}
             >
               Send to CAVATICA
             </Button>
