@@ -495,7 +495,11 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
           >
             {HIERARCHY_END_COMPONENT}
           </Box>
-          <Box>
+          <Box
+            sx={{
+              gridColumn: '3 / span 5',
+            }}
+          >
             <Button
               startIcon={<AddToList />}
               variant={'text'}
