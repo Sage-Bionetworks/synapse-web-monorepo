@@ -1,0 +1,92 @@
+import{c as K}from"./SynapseTableCell-0a555e86.js";import"./jsx-runtime-095bf462.js";import"./index-8db94870.js";import"./_commonjsHelpers-042e6b4d.js";import"./dayjs.min-59ef0ea6.js";import"./DateFormatter-0c654b0c.js";import"./SynapseClient-263d1708.js";import"./SynapseConstants-0daa3b0b.js";import"./OrientationBanner-6f1c542d.js";import"./FullWidthAlert-e628333c.js";import"./AlertTitle-aed9db43.js";import"./styled-17e9e47b.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-4abd396b.js";import"./createSvgIcon-c69fbb93.js";import"./Paper-2a5a67d3.js";import"./IconButton-5cd80e83.js";import"./ButtonBase-4975ddb0.js";import"./emotion-react.browser.esm-39b3de80.js";import"./assertThisInitialized-081f9914.js";import"./inheritsLoose-c82a83d4.js";import"./TransitionGroupContext-aa95d3cf.js";import"./useForkRef-f2aa3d66.js";import"./useIsFocusVisible-bbf13f29.js";import"./Typography-d5f8f357.js";import"./extendSxProp-1c03cb1b.js";import"./Stack-685b29ad.js";import"./Box-fd1c0045.js";import"./useTheme-e16afdbe.js";import"./Grow-0db08d4d.js";import"./isHostComponent-fa76b8d9.js";import"./index-8ce4a492.js";import"./utils-02ec0d60.js";import"./ClickAwayListener-e5c35437.js";import"./Tooltip-9098414d.js";import"./Button-24da439b.js";import"./getEndpoint-ac94413e.js";import"./Link-a60839ec.js";import"./_getTag-40b07ccb.js";import"./isArray-5e3f9107.js";import"./StringUtils-2ea3ab4d.js";import"./index-58d3fd43.js";import"./tiny-invariant-dd7d57d2.js";import"./CheckCircleTwoTone-8c636771.js";import"./inputBaseClasses-42f125b6.js";import"./Fade-4732825d.js";import"./IconSvg-8e470b55.js";import"./ErrorOutlined-3dd860d7.js";import"./GetAppTwoTone-355d174d.js";import"./InfoOutlined-61b6cf08.js";import"./SynapseTableConstants-5f56c39f.js";import"./UserBadge-51d9b755.js";import"./Popover-8b41c65d.js";import"./Modal-f893880b.js";import"./Backdrop-e2cb474f.js";import"./getScrollbarSize-ac846fe6.js";import"./ownerWindow-2c76219e.js";import"./createChainedFunction-0bab83cf.js";import"./cloneDeep-8d88a06c.js";import"./_baseClone-1ac4a65f.js";import"./_Uint8Array-b1e297cd.js";import"./_baseTimes-8715be3e.js";import"./SkeletonTable-1687e537.js";import"./times-f4c88e12.js";import"./identity-46f208ab.js";import"./isSymbol-7c514724.js";import"./Skeleton-5d185628.js";import"./ToastMessage-75cae4d1.js";import"./hasClass-ec9efd32.js";import"./uniqueId-4d05949d.js";import"./toString-cc90cb98.js";import"./Avatar-eb0038c1.js";import"./EntityLink-621b9601.js";import"./useEntity-cce959a4.js";import"./useMutation-2fd2f657.js";import"./useInfiniteQuery-13409d0d.js";import"./isEqual-ac67b0a5.js";import"./_baseIsEqual-87eb2da3.js";import"./_cacheHas-55e2e70f.js";import"./_setToArray-3d6ec6fd.js";import"./pick-534cade1.js";import"./hasIn-0d386c99.js";import"./_baseSlice-cf92e063.js";import"./isPlainObject-e879285f.js";import"./_overRest-3519ba7c.js";import"./useGetEntityHeaders-60c8da3e.js";import"./EntityIcon-a8d2b943.js";import"./ErrorChip-72877f40.js";import"./index-95cfb7c2.js";import"./RegularExpressions-bc0adf55.js";import"./SqlFunctions-755b39fb.js";import"./UserSearchBoxV2-2d554872.js";import"./Select-ce3716e1.esm-a615e1cd.js";import"./isNativeReflectConstruct-e378569d.js";import"./use-deep-compare-effect.esm-7a830988.js";import"./uniq-24dfdf35.js";import"./_isIterateeCall-fa5ca898.js";import"./without-a38b5c08.js";import"./_baseRest-03545ee2.js";import"./isArrayLikeObject-b0c1df5c.js";import"./UserOrTeamBadge-7667d76f.js";import"./index-e2c57e20.js";import"./Icon-2eb6cc74.js";import"./ShowMore-7427d245.js";import"./WideButton-519d13bd.js";import"./LoadingScreen-a6a4aa4a.js";import"./LinearProgress-4645bffd.js";import"./useTeamMembers-f492156d.js";import"./ObservationCard-595cb69f.js";import"./_commonjs-dynamic-modules-302442b1.js";import"./uniq-fe955338.js";import"./mapValues-dee13770.js";import"./isPlainObject-1dec192d.js";import"./now-beb31482.js";import"./ThemesPlot-90262737.js";import"./ElementWithTooltip-28b41fdc.js";import"./Dropdown-e31bc54f.js";import"./objectWithoutPropertiesLoose-4f48578a.js";import"./ThemeProvider-c7f6a893.js";import"./createWithBsPrefix-3f26db1d.js";import"./factory-275e83af.js";import"./sortBy-30e2e31f.js";import"./_getMatchData-d83467b7.js";import"./_baseFor-d254fa1e.js";import"./merge-d5e6ea23.js";import"./isNil-4daaf6fd.js";import"./useGetQueryResultBundle-07a0d750.js";import"./NoSearchResults-460db635.js";import"./NoData-59ea70fa.js";import"./queryUtils-db6de4ec.js";import"./LastLoginInfo-7f21f65e.js";import"./jsx-runtime_commonjs-proxy-19ec7b09.js";import"./isMuiElement-3ce2dffc.js";import"./Dialog-2a91462e.js";import"./DialogTitle-e0efc5fc.js";import"./TextField-8144cd52.js";import"./InputLabel-f385112e.js";import"./Select-8309ba81.js";import"./index-953d39fd.js";import"./MenuList-b8c6d487.js";import"./tslib.es6-9c2726d7.js";import"./lodash-e374147d.js";import"./useAccessRequirements-85ade8d2.js";import"./StandaloneLoginForm-a45e7d3e.js";import"./LoginFlowBackButton-bbdf7c7c.js";import"./TextField-0e186e33.js";import"./StyledFormControl-3020fa6d.js";import"./LoginMethodButton-010931a0.js";import"./Grid-e97e58b0.js";import"./useDataAccessSubmission-016dbac2.js";import"./RadioGroup-b7f85712.js";import"./Form-2a68b4a5.js";import"./Col-94fe5593.js";import"./FileUpload-52906ec6.js";import"./Divider-e92f465f.js";import"./dividerClasses-ee1d42f7.js";import"./AuthenticatedRequirement-5240ad99.js";import"./RequirementItem-8100c56e.js";import"./ConditionalWrapper-51b8d1ed.js";import"./CheckTwoTone-6fb1c6d1.js";import"./CertificationRequirement-01fabe68.js";import"./ValidationRequirement-f4dbb900.js";import"./TwoFactorAuthEnabledRequirement-0f024332.js";import"./TwoFactorEnrollmentForm-aa026adc.js";import"./LeftRightPanel-5869c0a1.js";import"./ActionRequiredCard-b972c2bb.js";import"./RequestDownloadCard-8be656b4.js";import"./Tabs-a6db7a32.js";import"./QueryCount-df29486d.js";import"./SkeletonButton-894c06ed.js";import"./EnumFacetFilterUI-6162eddb.js";import"./RangeSlider-045328e3.js";import"./react-sizeme-5bfc490a.js";import"./ColorGradient-3d3e1969.js";import"./colorPalette-c43701fe.js";import"./SelectionCriteriaPill-0158ba9c.js";import"./useDownloadList-9ce880ff.js";import"./UpsetPlot-59d2dbd2.js";import"./LargeButton-8b441bb2.js";import"./SynapseVideo-285b0065.js";import"./IconList-a3e85960.js";import"./UserCardList-1254ad1e.js";import"./Box-94283325.js";const ke={title:"Markdown/MarkdownSynapse",component:K},r={args:{markdown:"*markdown* given to the **component**"}},t={args:{ownerId:"syn12666371",wikiId:"585317",loadingSkeletonRowCount:20}},o={args:{ownerId:"syn18142975"}},e={args:{markdown:`Button link demo 
+
+
+\${buttonlink?text=Align%20Left&align=left} 
+
+
+\${buttonlink?text=Align%20Right&align=right} 
+
+
+\${buttonlink?text=Align%20Center&align=center} 
+
+
+\${buttonlink?text=Highlight&highlight=true} 
+
+
+Links to synapse: 
+
+\${buttonlink?text=This%20Button%20Links%20to%20Synapse&url=https://synapse.org/}
+  `}},i={args:{markdown:"Note: you must be signed in to see this image\n${image?synapseId=syn36695878}"}},n={args:{markdown:'${plot?query=select "id"%2C "createdOn" from syn23567477&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}'}},p={args:{markdown:`# Synapse Table
+
+Modify the markdown control to change the parameters
+
+\${synapsetable?query=SELECT %2A FROM syn26302617&showquery=false&tableonly=false}`}},m={args:{markdown:`# Provenance Graphs
+Multiple start nodes
+\${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}
+Specify the entity version
+\${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}`}},s={args:{ownerId:"syn5585645",wikiId:"493662"}},a={args:{ownerId:"syn38870076"}},d={args:{markdown:"${iduReport?accessRestrictionId=9605700}"}},c={args:{ownerId:"syn23567475",wikiId:"621868"}};var l,g,u;r.parameters={...r.parameters,docs:{...(l=r.parameters)==null?void 0:l.docs,source:{originalSource:`{
+  args: {
+    markdown: '*markdown* given to the **component**'
+  }
+}`,...(u=(g=r.parameters)==null?void 0:g.docs)==null?void 0:u.source}}};var y,k,w;t.parameters={...t.parameters,docs:{...(y=t.parameters)==null?void 0:y.docs,source:{originalSource:`{
+  args: {
+    ownerId: 'syn12666371',
+    wikiId: '585317',
+    loadingSkeletonRowCount: 20
+  }
+}`,...(w=(k=t.parameters)==null?void 0:k.docs)==null?void 0:w.source}}};var h,I,S;o.parameters={...o.parameters,docs:{...(h=o.parameters)==null?void 0:h.docs,source:{originalSource:`{
+  args: {
+    ownerId: 'syn18142975'
+  }
+}`,...(S=(I=o.parameters)==null?void 0:I.docs)==null?void 0:S.source}}};var b,$,f;e.parameters={...e.parameters,docs:{...(b=e.parameters)==null?void 0:b.docs,source:{originalSource:`{
+  args: {
+    markdown: \`Button link demo \\n
+
+\\\${buttonlink?text=Align%20Left&align=left} \\n
+
+\\\${buttonlink?text=Align%20Right&align=right} \\n
+
+\\\${buttonlink?text=Align%20Center&align=center} \\n
+
+\\\${buttonlink?text=Highlight&highlight=true} \\n
+
+Links to synapse: \\n
+\\\${buttonlink?text=This%20Button%20Links%20to%20Synapse&url=https://synapse.org/}
+  \`
+  }
+}`,...(f=($=e.parameters)==null?void 0:$.docs)==null?void 0:f.source}}};var x,R,M;i.parameters={...i.parameters,docs:{...(x=i.parameters)==null?void 0:x.docs,source:{originalSource:`{
+  args: {
+    markdown: 'Note: you must be signed in to see this image\\n\${image?synapseId=syn36695878}'
+  }
+}`,...(M=(R=i.parameters)==null?void 0:R.docs)==null?void 0:M.source}}};var v,L,P;n.parameters={...n.parameters,docs:{...(v=n.parameters)==null?void 0:v.docs,source:{originalSource:`{
+  args: {
+    markdown: '\${plot?query=select "id"%2C "createdOn" from syn23567477&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}'
+  }
+}`,...(P=(L=n.parameters)==null?void 0:L.docs)==null?void 0:P.source}}};var C,H,T;p.parameters={...p.parameters,docs:{...(C=p.parameters)==null?void 0:C.docs,source:{originalSource:`{
+  args: {
+    markdown: '# Synapse Table\\n\\nModify the markdown control to change the parameters\\n\\n\${synapsetable?query=SELECT %2A FROM syn26302617&showquery=false&tableonly=false}'
+  }
+}`,...(T=(H=p.parameters)==null?void 0:H.docs)==null?void 0:T.source}}};var A,B,E;m.parameters={...m.parameters,docs:{...(A=m.parameters)==null?void 0:A.docs,source:{originalSource:`{
+  args: {
+    markdown: '# Provenance Graphs\\nMultiple start nodes\\n\${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}\\nSpecify the entity version\\n\${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}'
+  }
+}`,...(E=(B=m.parameters)==null?void 0:B.docs)==null?void 0:E.source}}};var F,O,q;s.parameters={...s.parameters,docs:{...(F=s.parameters)==null?void 0:F.docs,source:{originalSource:`{
+  args: {
+    ownerId: 'syn5585645',
+    wikiId: '493662'
+  }
+}`,...(q=(O=s.parameters)==null?void 0:O.docs)==null?void 0:q.source}}};var D,G,U;a.parameters={...a.parameters,docs:{...(D=a.parameters)==null?void 0:D.docs,source:{originalSource:`{
+  args: {
+    ownerId: 'syn38870076'
+  }
+}`,...(U=(G=a.parameters)==null?void 0:G.docs)==null?void 0:U.source}}};var W,z,N;d.parameters={...d.parameters,docs:{...(W=d.parameters)==null?void 0:W.docs,source:{originalSource:`{
+  args: {
+    markdown: '\${iduReport?accessRestrictionId=9605700}'
+  }
+}`,...(N=(z=d.parameters)==null?void 0:z.docs)==null?void 0:N.source}}};var _,j,J;c.parameters={...c.parameters,docs:{...(_=c.parameters)==null?void 0:_.docs,source:{originalSource:`{
+  args: {
+    ownerId: 'syn23567475',
+    wikiId: '621868'
+  }
+}`,...(J=(j=c.parameters)==null?void 0:j.docs)==null?void 0:J.source}}};const we=["HardCodedMarkdown","WikiPage","ImageDemo","ButtonLink","ImageBySynID","Plot","SynapseTable","MarkdownProvenanceGraph","HtmlRenderingTest","LargeHtmlFileRenderingTest","MarkdownIDUReport","ComprehensivePlainMarkdownWiki"];export{e as ButtonLink,c as ComprehensivePlainMarkdownWiki,r as HardCodedMarkdown,s as HtmlRenderingTest,i as ImageBySynID,o as ImageDemo,a as LargeHtmlFileRenderingTest,d as MarkdownIDUReport,m as MarkdownProvenanceGraph,n as Plot,p as SynapseTable,t as WikiPage,we as __namedExportsOrder,ke as default};
+//# sourceMappingURL=MarkdownSynapse.stories-24bf64eb.js.map
