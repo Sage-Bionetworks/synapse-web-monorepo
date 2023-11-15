@@ -21,6 +21,9 @@ import {
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
 
+const SEND_TO_CAVATICA_CONFIRM_BUTTON_ID =
+  'SendToCavaticaButtonFromConfirmationDialog'
+
 export type SendToCavaticaConfirmationDialogProps = {
   fileIdColumnName?: string
   fileNameColumnName?: string
@@ -216,6 +219,7 @@ export default function SendToCavaticaConfirmationDialog(
       }
       confirmButtonText={confirmButtonText}
       confirmButtonDisabled={isLoading || (actions && actions.length > 0)}
+      confirmButtonID={SEND_TO_CAVATICA_CONFIRM_BUTTON_ID}
       onConfirm={() => {
         exportToCavatica().then(
           // on success, close the modal

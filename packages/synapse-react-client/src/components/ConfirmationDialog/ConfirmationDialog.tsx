@@ -11,6 +11,7 @@ export type ConfirmationButtonsProps = {
   confirmButtonVariant?: ButtonProps['variant']
   confirmButtonDisabled?: boolean
   hasCancelButton?: boolean
+  confirmButtonID?: string // optionally set the ID property of the confirmation button element
 }
 
 export const CANCEL_BUTTON_TEXT = 'Cancel'
@@ -33,6 +34,7 @@ export const ConfirmationButtons = (props: ConfirmationButtonsProps) => {
     onConfirm,
     onCancel,
     hasCancelButton = true,
+    confirmButtonID,
   } = props
   return (
     <>
@@ -43,6 +45,7 @@ export const ConfirmationButtons = (props: ConfirmationButtonsProps) => {
         color={confirmButtonColor}
         onClick={onConfirm}
         disabled={confirmButtonDisabled}
+        id={confirmButtonID}
       >
         {confirmButtonText}
       </Button>
@@ -65,6 +68,7 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
     onConfirm,
     onCancel,
     hasCancelButton,
+    confirmButtonID,
     ...rest
   } = props
   return (
@@ -80,6 +84,7 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
           onConfirm={onConfirm}
           onCancel={onCancel}
           hasCancelButton={hasCancelButton}
+          confirmButtonID={confirmButtonID}
         />
       }
       {...rest}

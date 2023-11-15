@@ -103,6 +103,7 @@ export const individualsView: SynapseConfig = {
           handleSelectedParticipantsToFiles(event)
         },
         isRowSelectionSupported: true,
+        buttonID: 'ViewFilesInSelectionButton',
       },
       {
         buttonText: 'View associated files',
@@ -110,6 +111,7 @@ export const individualsView: SynapseConfig = {
           handleParticipantsToFiles(event)
         },
         isRowSelectionSupported: false,
+        buttonID: 'ViewAllFilesButton',
       },
     ],
     sql: cohortBuilderSql,
