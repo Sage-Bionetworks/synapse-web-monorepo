@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import React from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import ShowMore from '../ShowMore'
 
 export type FeaturedToolCardProps = {
   id: string
@@ -17,9 +18,7 @@ export const FeaturedToolCard: React.FunctionComponent<
   return (
     <div
       {...domProps}
-      className={`cardContainer FeaturedToolCard bootstrap-4-backport ${
-        domProps.className ?? ''
-      }`}
+      className={`cardContainer FeaturedToolCard ${domProps.className ?? ''}`}
     >
       <div className="FeaturedToolCard__Type">
         <span className="SRC-tag">{type}</span>
@@ -28,15 +27,12 @@ export const FeaturedToolCard: React.FunctionComponent<
         {formatDate(dayjs(parseInt(date)), 'MMMM YYYY')}
       </div>
       <div className="FeaturedToolCard__Name">{name}</div>
-      <div className="FeaturedToolCard__Description">{description}</div>
-      <div>
-        <a
-          className="FeaturedToolCard__Link"
-          href={`${toolDetailPageURL}${id}`}
-        >
-          View Tool
-        </a>
+      <div className="FeaturedToolCard__Description">
+        <ShowMore summary={description} />
       </div>
+      <a className="FeaturedToolCard__Link" href={`${toolDetailPageURL}${id}`}>
+        View Tool
+      </a>
     </div>
   )
 }
