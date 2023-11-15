@@ -24,7 +24,7 @@ export const TimelinePlotSpeciesSelector = ({
   const eventTableQuery = useGetFullTableQueryResults({
     entityId: eventsTableId,
     query: {
-      sql: `SELECT distinct unnest(species) FROM ${eventsTableId} WHERE species is not null GROUP BY species`,
+      sql: `SELECT distinct unnest(species) FROM ${eventsTableId} WHERE species IS NOT NULL AND observationTime IS NOT NULL GROUP BY species`,
       additionalFilters: additionalFilters,
     },
     partMask: BUNDLE_MASK_QUERY_RESULTS,
