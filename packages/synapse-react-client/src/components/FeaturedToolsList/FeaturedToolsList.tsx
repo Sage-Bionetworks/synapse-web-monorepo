@@ -38,9 +38,9 @@ export const FeaturedToolsList: React.FunctionComponent<
   nameColumnName = 'name',
   descriptionColumnName = 'description',
   typeColumnName = 'type',
-  dateColumnName = 'date',
+  dateColumnName = 'dateAdded',
 }) => {
-  const sql = `SELECT "${idColumnName}", "${nameColumnName}", "${descriptionColumnName}", "${typeColumnName}", "${dateColumnName}" FROM ${entityId} ORDER BY ROW_ID DESC LIMIT 3`
+  const sql = `SELECT "${idColumnName}", "${nameColumnName}", "${descriptionColumnName}", "${typeColumnName}", "${dateColumnName}" FROM ${entityId} ORDER BY ${dateColumnName} DESC LIMIT 3`
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
