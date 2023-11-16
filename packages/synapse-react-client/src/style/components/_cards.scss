@@ -67,12 +67,9 @@ $text-color-lighter: #898989;
       }
     }
     a,
-    .SRC-userCard {
+    .MuiLink-root {
       color: white !important;
-      border-bottom: 1px solid white !important;
-      &:hover {
-        border-bottom: 1px solid white !important;
-      }
+      text-decoration-color: white !important;
     }
     .SRC-cardMetadata .SRC-row-label {
       text-transform: uppercase;
@@ -105,9 +102,6 @@ $text-color-lighter: #898989;
     display: flex;
     margin-left: 15px;
   }
-  .SRC-portalCardCTALink {
-    margin-top: 20px;
-  }
 
   .SRC-downloadData {
     border-radius: 20px;
@@ -127,7 +121,7 @@ $text-color-lighter: #898989;
     margin: $baseline-grid, 0, $baseline-grid * 0.5, 0 !important;
     padding: 0;
     font-size: $text-size-title !important;
-    line-height: 125%;
+    line-height: 150%;
     a {
       margin: 0;
       font-weight: 700;

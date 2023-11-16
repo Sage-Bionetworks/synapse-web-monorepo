@@ -5,7 +5,7 @@ import { EntityIdAndVersionNumber } from '../EntityFinder/details/view/DetailsVi
 import { Skeleton } from '@mui/material'
 import { useGetEntityBundle } from '../../synapse-queries'
 import { FileHandle } from '@sage-bionetworks/synapse-types'
-import DirectDownload from '../DirectDownload'
+import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 
 type FileHandleWithPreview = FileHandle & {
   isPreview?: boolean
@@ -35,9 +35,10 @@ export function DownloadRenderer<T extends EntityIdAndVersionNumber>(
   props: CellRendererProps<T>,
 ) {
   return (
-    <DirectDownload
-      associatedObjectId={props.rowData.entityId}
+    <FileEntityDirectDownload
+      entityId={props.rowData.entityId}
+      entityVersionNumber={props.rowData.versionNumber}
       stopPropagation={true}
-    ></DirectDownload>
+    />
   )
 }

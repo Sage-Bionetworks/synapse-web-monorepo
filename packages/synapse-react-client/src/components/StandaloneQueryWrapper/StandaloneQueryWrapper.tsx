@@ -12,11 +12,10 @@ import TopLevelControls, {
   TopLevelControlsProps,
 } from '../SynapseTable/TopLevelControls/TopLevelControls'
 import FullTextSearch from '../FullTextSearch'
-import SearchV2, { SearchV2Props } from '../SearchV2'
+import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import { useGetEntity } from '../../synapse-queries/entity/useEntity'
 import TotalQueryResults from '../TotalQueryResults'
-import SqlEditor from '../SqlEditor'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import SqlEditor from '../SynapseTable/SqlEditor'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
@@ -30,6 +29,7 @@ import {
   Operator,
   SearchParams,
 } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
+import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
 
 type StandaloneQueryWrapperOwnProps = {
   sql: string
@@ -38,7 +38,7 @@ type StandaloneQueryWrapperOwnProps = {
     SearchV2Props,
     'queryContext' | 'queryVisualizationContext'
   >
-} & Omit<TopLevelControlsProps, 'entityId'> &
+} & TopLevelControlsProps &
   Pick<
     QueryVisualizationWrapperProps,
     | 'rgbIndex'
@@ -50,12 +50,7 @@ type StandaloneQueryWrapperOwnProps = {
     | 'additionalFiltersLocalStorageKey'
   >
 
-export type StandaloneQueryWrapperProps = Partial<
-  Omit<
-    SynapseTableProps,
-    'synapseContext' | 'queryContext' | 'queryVisualizationContext'
-  >
-> &
+export type StandaloneQueryWrapperProps = SynapseTableProps &
   SearchParams &
   Operator &
   StandaloneQueryWrapperOwnProps
@@ -85,13 +80,14 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
 const StandaloneQueryWrapper: React.FunctionComponent<
   StandaloneQueryWrapperProps
 > = (props: StandaloneQueryWrapperProps) => {
+  /** @deprecated property inherited from SynapseTableProps */
+  const { hideDownload } = props
   const {
-    title,
     searchParams,
     sqlOperator,
     showAccessColumn,
     sql,
-    hideDownload,
+    hideAddToDownloadListColumn = hideDownload,
     hideQueryCount,
     name,
     showTopLevelControls = false,
@@ -118,8 +114,6 @@ const StandaloneQueryWrapper: React.FunctionComponent<
       searchParams,
       sqlOperator,
     )
-
-  const synapseContext = useSynapseContext()
 
   const { data: entity } = useGetEntity(entityId)
   return (
@@ -157,7 +151,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                         <TopLevelControls
                           showColumnSelection={true}
                           name={name}
-                          hideDownload={hideDownload}
+                          hideDownload={hideAddToDownloadListColumn}
                           hideQueryCount={hideQueryCount}
                           hideFacetFilterControl={true}
                           hideVisualizationsControl={true}
@@ -179,13 +173,13 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                       {showTopLevelControls && (
                         <TotalQueryResults frontText={''} />
                       )}
+                      <QueryWrapperLoadingScreen />
                       <SynapseTable
-                        synapseContext={synapseContext}
-                        queryContext={queryContext}
-                        queryVisualizationContext={queryVisualizationContext}
                         showAccessColumn={showAccessColumn}
-                        title={title}
                         data-testid="SynapseTable"
+                        hideAddToDownloadListColumn={
+                          hideAddToDownloadListColumn
+                        }
                         {...rest}
                       />
                       <LastUpdatedOn />

@@ -1,9 +1,13 @@
-import { cloneDeep, isEqual, isEqualWith, isNil } from 'lodash-es'
+import { cloneDeep, isEqual, isEqualWith, isMatch, isNil } from 'lodash-es'
 import * as SynapseConstants from '../SynapseConstants'
 import SynapseClient from '../../synapse-client'
 import { LockedColumn } from '../../components/QueryContext/QueryContext'
 import {
+  ColumnModel,
+  ColumnTypeEnum,
+  FacetColumnRequest,
   FacetColumnResult,
+  JsonSubColumnModel,
   Query,
   QueryBundleRequest,
   QueryResultBundle,
@@ -16,6 +20,7 @@ import {
   isColumnSingleValueQueryFilter,
 } from '../types/IsType'
 import { isDataset, isEntityView, isFileView } from './EntityTypeUtils'
+import { UniqueFacetIdentifier } from '../types/UniqueFacetIdentifier'
 
 type PartialStateObject = {
   hasMoreData: boolean
@@ -37,6 +42,42 @@ export const getFieldIndex = (
       return el.name === name
     }) ?? -1
   )
+}
+
+/**
+ * Retrieve the index of a column using the header column name found inthe query results.
+ * Ignores case.
+ * @param name the column name
+ * @param result the QueryResultBundle containing the columns
+ * @returns The index of the column, or -1 if the column doesn't exist in the result
+ */
+export const getHeaderIndex = (
+  name: string,
+  result: QueryResultBundle | undefined,
+) => {
+  const nameLowercase = name.toLowerCase()
+  return (
+    result?.queryResult?.queryResults.headers.findIndex(el => {
+      return el.name.toLowerCase() === nameLowercase
+    }) ?? -1
+  )
+}
+
+/**
+ * Returns the indices of the selectColumns with the specified type
+ * @param columnType
+ * @param data
+ */
+export function getTypeIndices(
+  columnType: ColumnTypeEnum,
+  data?: QueryResultBundle,
+): number[] {
+  return (data?.selectColumns ?? []).reduce((prev: number[], curr, index) => {
+    if (curr.columnType === columnType) {
+      return [...prev, index]
+    }
+    return prev
+  }, [])
 }
 
 /**
@@ -139,14 +180,17 @@ export function hasResettableFilters(
   const hasFacetFilters =
     Array.isArray(query.selectedFacets) &&
     query.selectedFacets.filter(
-      facet => facet.columnName !== lockedColumn?.columnName,
+      facet =>
+        facet.columnName.toLowerCase() !==
+        lockedColumn?.columnName?.toLowerCase(),
     ).length > 0
   const hasAdditionalFilters =
     Array.isArray(query.additionalFilters) &&
     query.additionalFilters.filter(queryFilter =>
       isColumnSingleValueQueryFilter(queryFilter) ||
       isColumnMultiValueFunctionQueryFilter(queryFilter)
-        ? queryFilter.columnName !== lockedColumn?.columnName
+        ? queryFilter.columnName.toLowerCase() !==
+          lockedColumn?.columnName?.toLowerCase()
         : true,
     ).length > 0
 
@@ -187,4 +231,86 @@ export function queryRequestsHaveSameTotalResults(
     }
     return isEqual(value1, value2)
   })
+}
+
+/**
+ * Remove null/empty values from the query parameters where an undefined value is equivalent.
+ *
+ * This will ensure a query object is as simple as possible for URL search parameters and also increases the
+ * likelihood of a cache hit.
+ * @param q
+ */
+export function removeEmptyQueryParams(q: Query) {
+  const query = cloneDeep(q)
+
+  if (query.limit == null) {
+    delete query.limit
+  }
+  if (query.offset == null) {
+    delete query.offset
+  }
+
+  if (query.sort == null || query.sort.length == 0) {
+    delete query.sort
+  }
+
+  if (query.selectedFacets == null || query.selectedFacets.length == 0) {
+    delete query.selectedFacets
+  }
+
+  if (query.additionalFilters == null || query.additionalFilters.length == 0) {
+    delete query.additionalFilters
+  }
+
+  return query
+}
+
+/**
+ * Given a FacetColumnResult and a set of ColumnModels, return the ColumnModel that
+ * matches the FacetColumnResult.
+ * @param facet
+ * @param columnModels
+ */
+export function getCorrespondingColumnForFacet(
+  facet: FacetColumnResult,
+  columnModels: ColumnModel[],
+): ColumnModel | JsonSubColumnModel | undefined {
+  let columnModel: ColumnModel | JsonSubColumnModel | undefined =
+    columnModels.find(model => model.name === facet.columnName)
+  if (facet.jsonPath && columnModel && columnModel.jsonSubColumns) {
+    columnModel = columnModel.jsonSubColumns.find(
+      cm => cm.jsonPath === facet.jsonPath,
+    )
+  }
+  return columnModel
+}
+
+/**
+ * Given a set of FacetColumnRequests, return the FacetColumnRequest that matches the given UniqueFacetIdentifier.
+ * @param facetDefinition
+ * @param selectedFacets
+ */
+export function getCorrespondingSelectedFacet(
+  facetDefinition: UniqueFacetIdentifier,
+  selectedFacets?: FacetColumnRequest[],
+): FacetColumnRequest | undefined {
+  return selectedFacets?.find(selectedFacet =>
+    facetObjectMatchesDefinition(facetDefinition, selectedFacet),
+  )
+}
+
+export function facetObjectMatchesDefinition(
+  facetDefinition:
+    | UniqueFacetIdentifier
+    | FacetColumnRequest
+    | FacetColumnResult,
+  facetObject: UniqueFacetIdentifier | FacetColumnRequest | FacetColumnResult,
+) {
+  return isMatch(
+    {
+      columnName: facetDefinition.columnName,
+      jsonPath: facetDefinition.jsonPath,
+    },
+    { columnName: facetObject.columnName, jsonPath: facetObject.jsonPath },
+  )
 }

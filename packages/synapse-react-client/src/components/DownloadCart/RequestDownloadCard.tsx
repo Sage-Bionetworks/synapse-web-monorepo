@@ -1,9 +1,8 @@
 import React from 'react'
-import { useGetEntityHeaders } from '../../synapse-queries/entity/useGetEntityHeaders'
-import { EntityHeader } from '@sage-bionetworks/synapse-types'
+import { useGetEntityHeader } from '../../synapse-queries/entity/useGetEntityHeaders'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
 import { Button, Typography } from '@mui/material'
-import { ActionRequiredCard } from './ActionRequiredCard'
+import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 
 export type RequestDownloadCardProps = {
   entityId: string
@@ -24,10 +23,13 @@ export const RequestDownloadCard: React.FunctionComponent<
       '_blank',
     ),
 }: RequestDownloadCardProps) => {
-  const { data, isLoading } = useGetEntityHeaders([{ targetId: entityId }], {
-    useErrorBoundary: true,
-  })
-  const entityHeader: EntityHeader | undefined = data?.results[0]
+  const { data: entityHeader, isLoading } = useGetEntityHeader(
+    entityId,
+    undefined,
+    {
+      useErrorBoundary: true,
+    },
+  )
 
   return (
     <ActionRequiredCard

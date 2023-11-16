@@ -24,8 +24,8 @@ import {
   UserCardListRotateProps,
   UserCardProps,
   ChallengeDataDownloadProps,
+  TimelinePlotProps,
 } from 'synapse-react-client'
-import { StatefulButtonControlWrapperProps } from '../portal-components/StatefulButtonControlWrapper'
 import { RouteControlWrapperProps } from '../portal-components/RouteControlWrapper'
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
 import { AboutPortalProps } from '../portal-components/csbc-home-page/AboutPortal'
@@ -40,6 +40,7 @@ import { ToggleSynapseObjectsProps } from '../portal-components/ToggleSynapseObj
 import { CSSProperties } from 'react'
 import { TabbedSynapseObjectsProps } from 'portal-components/TabbedSynapseObjects'
 import { ChallengeSubmissionWrapperProps } from 'portal-components/challengeportal/ChallengeSubmissionWrapper'
+import { RedirectToURLProps } from 'portal-components/RedirectToURL'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -99,11 +100,6 @@ type Programs = {
 type Resources = {
   name: 'Resources'
   props: ResourcesProps
-}
-
-type StatefulButtonControl = {
-  name: 'StatefulButtonControlWrapper'
-  props: StatefulButtonControlWrapperProps
 }
 
 type RouteControl = {
@@ -287,9 +283,19 @@ type OrientationBanner = {
   props: OrientationBannerProps
 }
 
+type TimelinePlot = {
+  name: 'TimelinePlot'
+  props: TimelinePlotProps
+}
+
 type RedirectWithQuery = {
   name: 'RedirectWithQuery'
   props: RedirectProps
+}
+
+type RedirectToURL = {
+  name: 'RedirectToURL'
+  props: RedirectToURLProps
 }
 
 type Redirect = {
@@ -303,9 +309,9 @@ type Header = {
 }
 
 export type SynapseConfig = (
+  | RedirectToURL
   | RedirectWithQuery
   | Redirect
-  | StatefulButtonControl
   | RouteControl
   | CardContainerLogic
   | QueryWrapper
@@ -354,6 +360,7 @@ export type SynapseConfig = (
   | ChallengeDetailPageWrapper
   | ChallengeDataDownload
   | ChallengeSubmissionWrapper
+  | TimelinePlot
 ) &
   Metadata
 

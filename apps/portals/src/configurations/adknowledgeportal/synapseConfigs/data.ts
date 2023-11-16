@@ -9,6 +9,7 @@ const data: SynapseConfig = {
     rgbIndex,
     name: 'Data',
     visibleColumnCount: 10,
+    showExportToCavatica: true,
     isRowSelectionVisible: true,
     tableConfiguration: {
       showAccessColumn: true,

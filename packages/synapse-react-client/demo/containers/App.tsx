@@ -12,7 +12,7 @@ import {
   mockFormSchema as formSchema,
   mockNavSchema as formNavSchema,
   mockUiSchema as formUiSchema,
-} from '../../mocks/mock_drug_tool_data'
+} from '../../src/mocks/mock_drug_tool_data'
 import '../style/App.scss'
 import '../style/DemoStyle.scss'
 import Demo from './Demo'

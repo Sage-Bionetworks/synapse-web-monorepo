@@ -4,13 +4,13 @@ import { render, screen } from '@testing-library/react'
 import TitleBarProperties, {
   TitleBarPropertiesProps,
 } from '../../../../../src/components/entity/page/title_bar/TitleBarProperties'
-import mockFileEntity from '../../../../../mocks/entity/mockFileEntity'
-import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
+import mockFileEntity from '../../../../../src/mocks/entity/mockFileEntity'
+import { createWrapper } from '../../../../../src/testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
 import * as HasAccessModule from '../../../../../src/components/HasAccess/HasAccessV2'
-import { mockFileHandle } from '../../../../../mocks/mock_file_handle'
+import { mockFileHandle } from '../../../../../src/mocks/mock_file_handle'
 import { calculateFriendlyFileSize } from '../../../../../src/utils/functions/calculateFriendlyFileSize'
-import { rest, server } from '../../../../../mocks/msw/server'
+import { rest, server } from '../../../../../src/mocks/msw/server'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -26,8 +26,8 @@ import {
   EntityType,
   ExternalFileHandle,
 } from '@sage-bionetworks/synapse-types'
-import mockDataset from '../../../../../mocks/entity/mockDataset'
-import { mockFolderEntity } from '../../../../../mocks/entity/mockEntity'
+import mockDataset from '../../../../../src/mocks/entity/mockDataset'
+import { mockFolderEntity } from '../../../../../src/mocks/entity/mockEntity'
 import failOnConsoleError from 'jest-fail-on-console'
 
 const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'

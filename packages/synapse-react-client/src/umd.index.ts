@@ -19,7 +19,7 @@ import FavoritesPage from './components/favorites/FavoritesPage'
 import ForumSearch from './components/ForumSearch/ForumSearch'
 import FullWidthAlert from './components/FullWidthAlert/FullWidthAlert'
 import { HasAccessV2 as HasAccess } from './components/HasAccess/HasAccessV2'
-import { HelpPopover } from './components/HelpPopover'
+import { HelpPopover } from './components/HelpPopover/HelpPopover'
 import ProjectViewCarousel from './components/ProjectViewCarousel/ProjectViewCarousel'
 import IconSvg from './components/IconSvg/IconSvg'
 import StandaloneLoginForm from './components/Authentication/StandaloneLoginForm'
@@ -27,11 +27,11 @@ import LoginPage from './components/Authentication/LoginPage'
 import PageProgress from './components/PageProgress/PageProgress'
 import { AccessTokenPage } from './components/AccessTokenPage/AccessTokenPage'
 import PlotlyWrapper from './components/PlotlyWrapper'
-import { ProgrammaticInstructionsModal } from './components/ProgrammaticInstructionsModal'
+import { ProgrammaticInstructionsModal } from './components/ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import QueryWrapperPlotNav from './components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import StatisticsPlot from './components/StatisticsPlot'
 import { SynapseHomepage } from './components/SynapseHomepage'
-import { SynapseNavDrawer } from './components/SynapseNavDrawer'
+import { SynapseNavDrawer } from './components/SynapseNavDrawer/SynapseNavDrawer'
 import { DatasetItemsEditor } from './components/SynapseTable/datasets/DatasetItemsEditor'
 import StandaloneQueryWrapper from './components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 import ProgrammaticTableDownload from './components/ProgrammaticTableDownload/ProgrammaticTableDownload'
@@ -46,13 +46,13 @@ import UserCard from './components/UserCard/UserCard'
 import UserProfileLinks from './components/UserProfileLinks/UserProfileLinks'
 import CertificationQuiz from './components/CertificationQuiz/CertificationQuiz'
 import ProvenanceGraph from './components/ProvenanceGraph/ProvenanceGraph'
-import IDUReport from './components/IDUReport'
+import IDUReport from './components/IDUReport/IDUReport'
 import HtmlPreview from './components/FilePreview/HtmlPreview/HtmlPreview'
 import EntityPageBreadcrumbs from './components/entity/page/breadcrumbs/EntityPageBreadcrumbs'
 import EntityActionMenu from './components/entity/page/action_menu/EntityActionMenu'
 import EntityPageTitleBar from './components/entity/page/title_bar/EntityPageTitleBar'
 import { CreatedByModifiedBy } from './components/entity/page/CreatedByModifiedBy'
-import SynapseClient from './synapse-client'
+import SynapseClient, { HttpClient } from './synapse-client'
 import * as SynapseQueries from './synapse-queries'
 import { SynapseConstants } from './utils'
 import Palettes from './theme/palette/Palettes'
@@ -68,9 +68,15 @@ import { FullContextProvider } from './utils/context/FullContextProvider'
 import SubscriptionPage from './components/SubscriptionPage'
 import OrientationBanner from './components/OrientationBanner/OrientationBanner'
 import AccessRequirementList from './components/AccessRequirementList/AccessRequirementList'
+import { BackendDestinationEnum } from './utils/functions'
+import TableColumnSchemaForm from './components/TableColumnSchemaEditor/TableColumnSchemaForm'
 
 // Also include scss in the bundle
 import './style/main.scss'
+
+const SynapseEnums = {
+  BackendDestinationEnum,
+}
 
 const SynapseContext = {
   FullContextProvider,
@@ -138,6 +144,7 @@ const SynapseComponents = {
   SubscriptionPage,
   OrientationBanner,
   AccessRequirementList,
+  TableColumnSchemaForm,
 }
 
 // Include the version in the build
@@ -145,11 +152,13 @@ const SynapseComponents = {
 const SynapseReactClientVersion = require('../package.json').version
 
 export {
+  HttpClient,
   SynapseReactClientVersion,
   SynapseComponents,
   SynapseConstants,
   SynapseClient,
   SynapseContext,
+  SynapseEnums,
   SynapseQueries,
   Palettes,
 }

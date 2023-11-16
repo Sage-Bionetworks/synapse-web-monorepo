@@ -2,6 +2,7 @@ import {
   ColumnModel,
   ColumnType,
   ColumnTypeEnum,
+  Entity,
   EntityHeader,
   QueryResultBundle,
   Table,
@@ -107,10 +108,30 @@ export function isSortableColumn(column: ColumnType) {
     case ColumnTypeEnum.USERID_LIST:
     case ColumnTypeEnum.ENTITYID_LIST:
     case ColumnTypeEnum.EVALUATIONID:
+    case ColumnTypeEnum.SUBMISSIONID:
     case ColumnTypeEnum.JSON:
       return false
     default:
       console.warn(`Unhandled column type: ${column}`)
       return false
   }
+}
+
+export function getDefaultPrimaryKey(
+  entity?: Table,
+  columnModels?: ColumnModel[],
+): string[] | undefined {
+  if (
+    isFileViewOrDataset(entity) &&
+    columnModels?.find(cm => cm.name === 'id')
+  ) {
+    // If the primary key isn't specified via props, and this is a file view/dataset, we can safely use the 'id' column as primary key, if it is present
+    // Note: Synapse tables don't have an internal concept of a primary key
+    return ['id']
+  }
+  return undefined
+}
+
+export function isEntityViewOrDataset(entity: Entity): boolean {
+  return Boolean(entity && (isEntityView(entity) || isDataset(entity)))
 }

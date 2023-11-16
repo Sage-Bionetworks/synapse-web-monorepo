@@ -8,7 +8,7 @@ export const publicationCardProps = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     type: SynapseConstants.PUBLICATION,
-    title: 'Title',
+    title: 'Name',
     subTitle: 'Authors',
     link: 'DOI',
     secondaryLabels: ['Year', 'Journal', 'Program', 'Grant', 'DOI', 'PubmedId'],

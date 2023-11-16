@@ -9,13 +9,9 @@ import {
   EntityType,
 } from '@sage-bionetworks/synapse-types'
 import * as DownloadConfirmationUIModule from '../../../src/components/download_list/DownloadConfirmationUI'
-import {
-  DownloadConfirmationUI,
-  DownloadConfirmationUIProps,
-} from '../../../src/components/download_list/DownloadConfirmationUI'
+import { DownloadConfirmationUIProps } from '../../../src/components/download_list/DownloadConfirmationUI'
 import { FolderDownloadConfirmation } from '../../../src/components/download_list'
 import { SynapseClientError } from '../../../src'
-import { mockQueryBundleRequest } from '../../../mocks/mockFileViewQuery'
 import {
   useAddQueryToDownloadList,
   useGetEntityChildren,
@@ -23,7 +19,7 @@ import {
 import {
   getUseMutationMock,
   getUseQuerySuccessMock,
-} from '../../testutils/ReactQueryMockUtils'
+} from '../../../src/testutils/ReactQueryMockUtils'
 
 jest.mock('../../../src/synapse-queries', () => ({
   useGetEntityChildren: jest.fn(),
@@ -56,7 +52,7 @@ const mockOnClose = jest.fn()
 async function setUp() {
   const user = userEvent.setup()
   let component
-  await act(() => {
+  await act(async () => {
     component = render(
       <FolderDownloadConfirmation folderId={FOLDER_ID} fnClose={mockOnClose} />,
     )
@@ -179,7 +175,7 @@ describe('FolderDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall[0].onError({
+      mockUseAddQueryToDownloadList.mock.lastCall![0].onError({
         reason: 'some error message',
       })
     })

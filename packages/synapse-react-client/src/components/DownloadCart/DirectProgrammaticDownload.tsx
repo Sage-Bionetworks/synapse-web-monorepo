@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Tooltip } from '@mui/material'
 import IconSvg from '../IconSvg/IconSvg'
-import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 
 type DirectProgrammaticDownloadProps = {

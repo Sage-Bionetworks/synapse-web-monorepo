@@ -6,18 +6,19 @@ import { Link } from 'react-router-dom'
 import SortIcon from '../../assets/icons/Sort'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { useSearchAccessSubmissionsInfinite } from '../../synapse-queries/dataaccess/useDataAccessSubmission'
-import { ACT_TEAM_ID, SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { Direction, SubmissionState } from '@sage-bionetworks/synapse-types'
+import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import {
+  Direction,
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,
   SubmissionSearchSort,
   SubmissionSortField,
+  SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../LoadingScreen'
-import UserCard from '../UserCard/UserCard'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { Button, Typography } from '@mui/material'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export type AccessRequestSubmissionTableProps = {
   showSubmitter?: boolean
@@ -131,9 +132,8 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
                       .filter(user => item.submitterId !== user.userId)
                       .map(requester => (
                         <li key={requester.userId}>
-                          <UserCard
-                            size={SMALL_USER_CARD}
-                            ownerId={requester.userId}
+                          <UserBadge
+                            userId={requester.userId}
                             className="requester"
                           />
                         </li>

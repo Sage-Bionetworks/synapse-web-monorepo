@@ -15,7 +15,6 @@ import {
   useGetVersionsInfinite,
 } from '../../../../synapse-queries/entity/useEntity'
 import useGetEntityBundle from '../../../../synapse-queries/entity/useEntityBundle'
-import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
 import {
   EntityRef,
   EntityType,
@@ -25,13 +24,13 @@ import { EntityBadgeIcons } from '../../../EntityBadgeIcons/EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { EntityLink } from '../../../EntityLink'
 import IconSvg from '../../../IconSvg/IconSvg'
-import { SynapseSpinner } from '../../../LoadingScreen'
+import { SynapseSpinner } from '../../../LoadingScreen/LoadingScreen'
 import { DatasetItemsEditorTableData } from '../../../SynapseTable/datasets/DatasetItemsEditor'
-import UserCard from '../../../UserCard/UserCard'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityFinderTableViewRowData } from './DetailsView'
+import { UserBadge } from '../../../UserCard/UserBadge'
 
 // TODO: Consider sharing logic with SynapseTableCell.tsx
 
@@ -186,13 +185,11 @@ export function ProjectRenderer<T extends EntityIdAndVersionNumber>(
   return project ? <EntityLink entity={project} /> : <></>
 }
 
-export function UserCardRenderer({ cellData }: { cellData?: string }) {
-  return (
-    <UserCard
-      ownerId={cellData}
-      size={SMALL_USER_CARD}
-      openLinkInNewTab={true}
-    />
+export function UserBadgeRenderer({ cellData }: { cellData?: string }) {
+  return cellData ? (
+    <UserBadge userId={cellData} openLinkInNewTab={true} />
+  ) : (
+    <></>
   )
 }
 
@@ -213,7 +210,7 @@ export function ModifiedByRenderer<T extends EntityIdAndVersionNumber>(
     return <Skeleton width={200} />
   }
 
-  return <UserCardRenderer {...props} cellData={bundle?.entity.modifiedBy} />
+  return <UserBadgeRenderer {...props} cellData={bundle?.entity.modifiedBy} />
 }
 
 export function LoadingRenderer() {

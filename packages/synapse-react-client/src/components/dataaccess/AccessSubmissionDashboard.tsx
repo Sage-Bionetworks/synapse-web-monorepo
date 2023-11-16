@@ -9,8 +9,8 @@ import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,
 } from './AccessRequestSubmissionTable'
-import UserSearchBoxV2 from '../UserSearchBoxV2'
-import AccessRequirementSearchBox from './AccessRequirementSearchBox'
+import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
+import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 
 export const DataAccessSubmissionDashboard = () => {
   const [accessRequirementId, setAccessRequirementId] = useState<

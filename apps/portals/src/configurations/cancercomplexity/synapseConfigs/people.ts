@@ -1,12 +1,11 @@
 import {
   CardConfiguration,
   GenericCardSchema,
-  IconOptions,
-  SynapseComponents,
   SynapseConstants,
 } from 'synapse-react-client'
 import { peopleSql } from '../resources'
 import { SynapseConfig } from 'types/portal-config'
+import personSvg from '../style/Person.svg'
 
 const rgbIndex = 3
 
@@ -24,15 +23,12 @@ export const peopleSchema: GenericCardSchema = {
   ],
 }
 
-// TODO: Change iconOptions type to map () => string | JSX.Element and remove cast
-const iconOptions: IconOptions = {
-  Grant: SynapseComponents.ProjectIcon as unknown as string,
-}
-
 export const peopleCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 3,
-  iconOptions,
+  iconOptions: {
+    Person: personSvg,
+  },
   genericCardSchema: peopleSchema,
   titleLinkConfig: {
     isMarkdown: false,

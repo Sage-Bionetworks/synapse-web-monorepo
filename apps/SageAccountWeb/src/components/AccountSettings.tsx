@@ -31,7 +31,7 @@ import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
 import UniversalCookies from 'universal-cookie'
 import { StyledFormControl } from './StyledComponents'
 import { ProfileAvatar } from './ProfileAvatar'
-import { useSourceAppConfigs } from './SourceApp'
+import { useSourceAppConfigs } from './useSourceAppConfigs'
 
 const CompletionStatus: React.FC<{ isComplete: boolean | undefined }> = ({
   isComplete,

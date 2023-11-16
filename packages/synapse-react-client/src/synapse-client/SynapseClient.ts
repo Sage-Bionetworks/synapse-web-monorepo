@@ -30,7 +30,6 @@ import {
   ENTITY_ALIAS,
   ENTITY_BUNDLE_V2,
   ENTITY_EVALUATION,
-  ENTITY_HEADER_BY_ID,
   ENTITY_HEADERS,
   ENTITY_ID,
   ENTITY_JSON,
@@ -84,10 +83,7 @@ import {
   getEndpoint,
 } from '../utils/functions/getEndpoint'
 import { removeUndefined } from '../utils/functions/ObjectUtils'
-import {
-  DATETIME_UTC_COOKIE_KEY,
-  NETWORK_UNAVAILABLE_MESSAGE,
-} from '../utils/SynapseConstants'
+import { DATETIME_UTC_COOKIE_KEY } from '../utils/SynapseConstants'
 import {
   ACCESS_TYPE,
   AccessApproval,
@@ -128,11 +124,15 @@ import {
   BulkFileDownloadResponse,
   Challenge,
   ChallengePagedResults,
+  ChallengeTeam,
+  ChallengeTeamPagedResults,
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken,
+  ColumnModel,
   CreateDiscussionReply,
   CreateDiscussionThread,
   CreateSubmissionRequest,
+  Direction,
   DiscussionFilter,
   DiscussionReplyBundle,
   DiscussionReplyOrder,
@@ -140,6 +140,7 @@ import {
   DiscussionSearchResponse,
   DiscussionThreadBundle,
   DiscussionThreadOrder,
+  DockerCommit,
   DoiAssociation,
   DownloadFromTableRequest,
   DownloadFromTableResult,
@@ -162,7 +163,6 @@ import {
   EntityJson,
   EntityLookupRequest,
   EntityPath,
-  ErrorResponseCode,
   Evaluation,
   EvaluationRound,
   EvaluationRoundListRequest,
@@ -184,6 +184,7 @@ import {
   FormGroup,
   FormRejection,
   Forum,
+  GetEvaluationParameters,
   GetProjectsParameters,
   HasAccessResponse,
   InviteeVerificationSignedToken,
@@ -196,6 +197,7 @@ import {
   ManagedACTAccessRequirementStatus,
   MembershipInvitation,
   MembershipInvtnSignedToken,
+  MembershipRequest,
   MessageURL,
   MultipartUploadRequest,
   MultipartUploadStatus,
@@ -232,11 +234,12 @@ import {
   Request,
   ResearchProject,
   ResponseMessage,
+  RestrictableObjectDescriptor,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   SearchQuery,
   SearchResults,
-  SqlTransformResponse,
+  SortBy,
   Submission as DataAccessSubmission,
   SubmissionInfoPage,
   SubmissionInfoPageRequest,
@@ -252,10 +255,11 @@ import {
   TableUpdateTransactionRequest,
   Team,
   TeamMember,
+  TeamMembershipStatus,
+  TeamSubmissionEligibility,
   Topic,
   TotpSecret,
   TotpSecretActivationRequest,
-  TransformSqlWithFacetsRequest,
   TrashedEntity,
   TwoFactorAuthErrorResponse,
   TwoFactorAuthLoginRequest,
@@ -267,6 +271,7 @@ import {
   UpdateThreadTitleRequest,
   UploadDestination,
   UserBundle,
+  UserEntityPermissions,
   UserEvaluationPermissions,
   UserGroupHeaderResponse,
   UserGroupHeaderResponsePage,
@@ -274,30 +279,22 @@ import {
   ValidationResults,
   VerificationSubmission,
   VersionInfo,
+  ViewColumnModelRequest,
+  ViewColumnModelResponse,
+  ViewEntityType,
   WikiPage,
   WikiPageKey,
-  MembershipRequest,
-  ChallengeTeamPagedResults,
-  ChallengeTeam,
-  TeamMembershipStatus,
-  UserEntityPermissions,
-  GetEvaluationParameters,
-  DockerCommit,
-  SortBy,
-  Direction,
-  TeamSubmissionEligibility,
-  RestrictableObjectDescriptor,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '../utils/SynapseClientError'
 import { calculateFriendlyFileSize } from '../utils/functions/calculateFriendlyFileSize'
-import { SynapseError } from '../utils/SynapseError'
+import {
+  allowNotFoundError,
+  isOutsideSynapseOrg,
+  returnIfTwoFactorAuthError,
+} from './SynapseClientUtils'
+import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
+import { SetOptional } from 'type-fest'
 
 const cookies = new UniversalCookies()
-
-// TODO: Create JSON response types for all return types
-export const IS_OUTSIDE_SYNAPSE_ORG = !window.location.hostname
-  .toLowerCase()
-  .includes('.synapse.org')
 
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
@@ -306,230 +303,6 @@ export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export function getRootURL(): string {
   const portString = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
-}
-
-/**
- * Waits t number of milliseconds
- *
- * @export
- * @param {number} t milliseconds
- * @returns after t milliseconds
- */
-export function delay(t: number) {
-  return new Promise(resolve => {
-    setTimeout(resolve.bind(null, {}), t)
-  })
-}
-
-/**
- * Invokes a function that makes a request to Synapse and returns null if the server responds with a 404.
- * @param fn a function that may throw a SynapseClientError when encountering an HTTP Error Code
- * @returns The result of the function call, or null if the result is a 404 "Not Found" error.
- */
-export async function allowNotFoundError<T>(
-  fn: () => Promise<T>,
-): Promise<T | null> {
-  let response = null
-  try {
-    response = await fn()
-  } catch (e) {
-    if (e instanceof SynapseClientError && e.status === 404) {
-      // Permitted
-    } else {
-      throw e
-    }
-  }
-  return response
-}
-
-/**
- * If the asynchronous request returns a TwoFactorAuthErrorResponse, return that error instead of throwing it. Other
- * types of errors will still be thrown.
- * @param fn
- */
-export async function returnIfTwoFactorAuthError<T>(
-  fn: () => Promise<T>,
-): Promise<T | TwoFactorAuthErrorResponse> {
-  let response = null
-  try {
-    response = await fn()
-  } catch (e) {
-    if (
-      e instanceof SynapseClientError &&
-      e.status === 401 &&
-      e.errorResponse &&
-      'errorCode' in e.errorResponse &&
-      e.errorResponse.errorCode === ErrorResponseCode.TWO_FA_REQUIRED &&
-      e.errorResponse.concreteType ===
-        'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse'
-    ) {
-      return e.errorResponse
-    } else {
-      throw e
-    }
-  }
-  return response
-}
-
-/*
-  0 - no internet connection
-  429 - Too Many Requests
-  502 - Bad Gateway
-  503 - Service Unavailable
-  504 - Gateway Timeout
-*/
-const RETRY_STATUS_CODES = [0, 429, 502, 503, 504]
-const MAX_RETRY_STATUS_CODES = [502, 503]
-const MAX_RETRY = 3
-/**
- * Fetches data, retrying if the HTTP status code indicates that it could be retried. Contains custom logic for
- * handling errors returned by the Synapse backend.
- * @throws SynapseClientError
- */
-const fetchWithExponentialTimeout = async <TResponse>(
-  url: RequestInfo,
-  options: RequestInit,
-  delayMs = 1000,
-): Promise<TResponse> => {
-  let response
-  try {
-    response = await fetch(url, options)
-  } catch (err) {
-    console.error(err)
-    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url.toString())
-  }
-
-  let numOfTry = 1
-  while (response.status && RETRY_STATUS_CODES.includes(response.status)) {
-    await delay(delayMs)
-    // Exponential backoff if we re-fetch
-    delayMs = delayMs * 2
-    response = await fetch(url, options)
-    if (MAX_RETRY_STATUS_CODES.includes(response.status)) {
-      numOfTry++
-      if (numOfTry == MAX_RETRY) {
-        break
-      }
-    }
-  }
-
-  const contentType = response.headers.get('Content-Type')
-  const responseBody = await response.text()
-  let responseObject: TResponse | SynapseError | string = responseBody
-  try {
-    // try to parse it as json
-    if (contentType && contentType.includes('application/json')) {
-      responseObject = JSON.parse(responseBody) as TResponse | SynapseError
-    }
-  } catch (error) {
-    console.warn('Failed to parse response as JSON', responseBody)
-  }
-
-  if (response.ok) {
-    return responseObject as TResponse
-  } else if (
-    responseObject !== null &&
-    typeof responseObject === 'object' &&
-    'reason' in responseObject
-  ) {
-    throw new SynapseClientError(
-      response.status,
-      responseObject.reason,
-      url.toString(),
-      responseObject,
-    )
-  } else {
-    throw new SynapseClientError(
-      response.status,
-      JSON.stringify(responseObject),
-      url.toString(),
-    )
-  }
-}
-
-export const doPost = <T>(
-  url: string,
-  requestJsonObject: unknown,
-  accessToken: string | undefined,
-  endpoint: BackendDestinationEnum,
-  additionalOptions: RequestInit = {},
-): Promise<T> => {
-  const options: RequestInit = {
-    body: JSON.stringify(requestJsonObject),
-    headers: {
-      Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
-      'Content-Type': 'application/json',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
-    method: 'POST',
-    mode: 'cors',
-    ...additionalOptions,
-  }
-  const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
-}
-export const doGet = <T>(
-  url: string,
-  accessToken: string | undefined,
-  endpoint: BackendDestinationEnum,
-  additionalOptions: RequestInit = {},
-) => {
-  const options: RequestInit = {
-    headers: {
-      Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
-    method: 'GET',
-    mode: 'cors',
-    ...additionalOptions,
-  }
-  const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
-}
-
-export const doDelete = (
-  url: string,
-  accessToken: string | undefined,
-  endpoint: BackendDestinationEnum,
-  additionalOptions: RequestInit = {},
-) => {
-  const options: RequestInit = {
-    headers: {
-      Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
-    method: 'DELETE',
-    mode: 'cors',
-    ...additionalOptions,
-  }
-  const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<void>(usedEndpoint + url, options)
-}
-
-export const doPut = <T>(
-  url: string,
-  requestJsonObject: unknown,
-  accessToken: string | undefined,
-  endpoint: BackendDestinationEnum,
-  additionalOptions: RequestInit = {},
-): Promise<T> => {
-  const options: RequestInit = {
-    body: JSON.stringify(requestJsonObject),
-    headers: {
-      Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
-      'Content-Type': 'application/json',
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
-    method: 'PUT',
-    mode: 'cors',
-    ...additionalOptions,
-  }
-  const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 
 export const getVersion = (): Promise<SynapseVersion> => {
@@ -761,7 +534,7 @@ export const getFullQueryTableResults = async (
   const { query, ...rest } = queryBundleRequest
   const queryRequest: QueryBundleRequest = {
     ...rest,
-    query: { ...query, offset: offset },
+    query: { ...query, offset: offset, limit: undefined },
     partMask:
       queryBundleRequest.partMask |
       SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE,
@@ -801,7 +574,7 @@ export async function login(
   password: string,
   authenticationReceipt: string | null,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
-): Promise<LoginResponse | TwoFactorAuthErrorResponse> {
+): Promise<LoginResponse | TwoFactorAuthErrorResponse | null> {
   return returnIfTwoFactorAuthError(() =>
     doPost(
       '/auth/v1/login2',
@@ -858,7 +631,7 @@ export const oAuthSessionRequest = (
   authenticationCode: string | number,
   redirectUrl: string,
   endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
-): Promise<LoginResponse | TwoFactorAuthErrorResponse> => {
+): Promise<LoginResponse | TwoFactorAuthErrorResponse | null> => {
   return returnIfTwoFactorAuthError(() =>
     doPost(
       '/auth/v1/oauth2/session2',
@@ -988,8 +761,8 @@ export const getUserProfile = (accessToken: string | undefined) => {
  * https://rest-docs.synapse.org/rest/GET/userProfile.html
  */
 export const getUserProfileById = (
-  accessToken: string | undefined,
   ownerId: string,
+  accessToken?: string | undefined,
 ) => {
   return doGet<UserProfile>(
     USER_PROFILE_ID(ownerId),
@@ -1085,11 +858,10 @@ export const postUserGroupHeadersWithAlias = (aliases: string[]) => {
  */
 export const getGroupHeadersBatch = (
   ids: string[],
-  accessToken?: string,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
     USER_GROUP_HEADERS_BATCH + `?ids=${ids.join(',')}`,
-    accessToken,
+    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1271,15 +1043,21 @@ export const getEntityAlias = (alias: string, accessToken?: string) => {
 }
 
 /**
- * Get the EntityHeader for a single entity
- * https://rest-docs.synapse.org/rest/GET/entity/id/type.html
+ * Get the EntityHeader for a single entity.
+ *
+ * Note that this will not throw an error if not found or unauthorized.
+ * See https://sagebionetworks.jira.com/browse/PLFM-7989
  */
-export const getEntityHeader = (entityId: string, accessToken?: string) => {
-  return doGet<EntityHeader>(
-    ENTITY_HEADER_BY_ID(entityId),
+export const getEntityHeader = async (
+  entityId: string,
+  versionNumber?: number,
+  accessToken?: string,
+): Promise<EntityHeader | undefined> => {
+  const batchResult = await getEntityHeaders(
+    [{ targetId: entityId, targetVersionNumber: versionNumber }],
     accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
   )
+  return batchResult.results[0]
 }
 
 /**
@@ -1878,7 +1656,7 @@ export const isInSynapseExperimentalMode = (): boolean => {
 export const setAccessTokenCookie = async (
   token: string | undefined,
 ): Promise<void> => {
-  if (IS_OUTSIDE_SYNAPSE_ORG) {
+  if (isOutsideSynapseOrg()) {
     if (!token) {
       cookies.remove(ACCESS_TOKEN_COOKIE_KEY, { path: '/' })
       // See - https://github.com/reactivestack/cookies/issues/189
@@ -1905,9 +1683,13 @@ export const setAccessTokenCookie = async (
 /**
  * Get the current access token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
+ *
+ * @throws SynapseClientError if the token is expired or not found by the servlet
  */
-export const getAccessTokenFromCookie = async (): Promise<string> => {
-  if (IS_OUTSIDE_SYNAPSE_ORG) {
+export const getAccessTokenFromCookie = async (): Promise<
+  string | undefined
+> => {
+  if (isOutsideSynapseOrg()) {
     return Promise.resolve(cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
   }
   return doGet<string>(
@@ -2757,7 +2539,7 @@ export const isOAuthClientReverificationRequired = (
 Get a secret credential to use when requesting an access token.
 Synapse supports 'client_secret_basic' and 'client_secret_post'.
 NOTE: This request will invalidate any previously issued secrets.
-https://docs.synapse.org/rest/POST/oauth2/client/secret/id.html
+https://rest-docs.synapse.org/rest/POST/oauth2/client/secret/id.html
 */
 export const createOAuthClientSecret = (
   accessToken: string,
@@ -3277,6 +3059,34 @@ export const getAllOfPaginatedService = async <T>(
   return results
 }
 
+export type FunctionReturningNextPageToken<T> = (
+  nextPageToken?: string | null,
+) => Promise<{ results: T[]; nextPageToken?: string | null }>
+
+export async function getAllOfNextPageTokenPaginatedService<T>(
+  fn: FunctionReturningNextPageToken<T>,
+): Promise<T[]> {
+  let existsMoreData = true
+  let nextPageToken: string | null | undefined = undefined
+  const results: T[] = []
+
+  while (existsMoreData) {
+    try {
+      const data = await fn(nextPageToken)
+      results.push(...data.results)
+      nextPageToken = data.nextPageToken
+
+      if (!nextPageToken) {
+        existsMoreData = false
+      }
+    } catch (e) {
+      throw Error(`Error on getting paginated results ${e}`)
+    }
+  }
+
+  return results
+}
+
 // https://rest-docs.synapse.org/rest/POST/download/list/remove.html
 export const deleteDownloadListFiles = (
   list: FileHandleAssociation[],
@@ -3325,17 +3135,6 @@ export const updateTable = async (
     asyncJobId.token,
     `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/get/${asyncJobId.token}`,
     accessToken,
-  )
-}
-
-export const getTransformSqlWithFacetsRequest = (
-  transformSqlWithFacetsRequest: TransformSqlWithFacetsRequest,
-) => {
-  return doPost<SqlTransformResponse>(
-    '/repo/v1/table/sql/transform',
-    transformSqlWithFacetsRequest,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
@@ -3677,7 +3476,7 @@ export const getSubmissionById = (
  * Request to update a submission' state. Only ACT members and delegates with the REVIEW_SUBMISSION ACL
  * permission can perform this action.
  *
- * See https://docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId.html
+ * See https://rest-docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId.html
  * @param request
  * @param accessToken
  * @returns
@@ -3696,7 +3495,7 @@ export const updateSubmissionStatus = (
 
 /**
  * Get the schema bound to an entity.
- * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/schema/binding.html
  * @param entityId
  * @param accessToken
  * @returns
@@ -3714,7 +3513,7 @@ export const getSchemaBinding = (entityId: string, accessToken?: string) => {
 
 /**
  * Get the schema bound to an entity.
- * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/schema/binding.html
  * @param entityId
  * @param accessToken
  * @returns
@@ -3732,7 +3531,7 @@ export const getSchemaValidationResults = (
 
 /**
  * Get a schema by its $id.
- * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/schema/binding.html
  * @returns
  */
 export const getSchema = (schema$id: string) => {
@@ -3774,7 +3573,7 @@ export const getValidationSchema = async (
 
 /**
  * Determine if the caller has a particular access type on an entity
- * https://docs.synapse.org/rest/GET/entity/id/access.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/access.html
  * @param entityId
  * @param accessToken
  * @returns
@@ -3793,14 +3592,21 @@ export const hasAccessToEntity = (
 
 /**
  * Get the entity and its annotations as a JSON object
- * https://docs.synapse.org/rest/GET/entity/id/json.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/json.html
  * @param entityId
+ * @param includeDerivedAnnotations
  * @param accessToken
  * @returns
  */
-export const getEntityJson = (entityId: string, accessToken?: string) => {
+export const getEntityJson = (
+  entityId: string,
+  includeDerivedAnnotations: boolean,
+  accessToken?: string,
+) => {
+  const params = new URLSearchParams()
+  params.set('includeDerivedAnnotations', String(includeDerivedAnnotations))
   return doGet<EntityJson>(
-    ENTITY_JSON(entityId),
+    `${ENTITY_JSON(entityId)}?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3808,7 +3614,7 @@ export const getEntityJson = (entityId: string, accessToken?: string) => {
 
 /**
  * Update an entity and its annotations using a JSON object
- * https://docs.synapse.org/rest/PUT/entity/id/json.html
+ * https://rest-docs.synapse.org/rest/PUT/entity/id/json.html
  * @param entityId
  * @param accessToken
  * @returns
@@ -3830,7 +3636,7 @@ export const updateEntityJson = (
  * This service returns the email used for user notifications, i.e. when a Synapse message
  *  is sent and if the user has elected to receive messages by email, then this is the
  *  email address at which the user will receive the message.
- * https://docs.synapse.org/rest/GET/notificationEmail.html
+ * https://rest-docs.synapse.org/rest/GET/notificationEmail.html
  */
 export const getNotificationEmail = (accessToken?: string) => {
   return doGet<NotificationEmail>(
@@ -4906,4 +4712,95 @@ export function getSubjects(
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+/**
+ *
+ *
+ * Create a batch of ColumnModel that can be used as columns of a Table.
+ * Unlike other objects in Synapse ColumnModels are immutable and reusable
+ * and do not have an "owner" or "creator".
+ *
+ * This method is idempotent, so if the same ColumnModel is passed multiple times,
+ * a new ColumnModel will not be created. Instead, the existing ColumnModel will be returned.
+ * This also means if two users create identical ColumnModels for their tables they will both
+ * receive the same ColumnModel. This call will either create all column models or create none.
+ *
+ * https://rest-docs.synapse.org/rest/POST/column/batch.html
+ * @param accessToken
+ * @param columnModels
+ */
+export function createColumnModels(
+  accessToken: string,
+  columnModels: SetOptional<ColumnModel, 'id'>[],
+): Promise<{
+  list: ColumnModel[]
+}> {
+  return doPost<{
+    list: ColumnModel[]
+  }>(
+    `/repo/v1/column/batch`,
+    {
+      list: columnModels.map(cm => ({
+        ...cm,
+        concreteType: 'org.sagebionetworks.repo.model.table.ColumnModel',
+      })),
+      concreteType: 'org.sagebionetworks.repo.model.ListWrapper',
+    },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the list of default ColumnModels for the given viewEntityType and viewTypeMask.
+ *
+ * https://rest-docs.synapse.org/rest/GET/column/tableview/defaults.html
+ *
+ * @param viewEntityType  The entity type of the view, if omitted use entityview
+ * @param viewTypeMask  Bit mask representing the types to include in the view. Not required for a submission view.
+ * For an entity view following are the possible types: (type=): File=0x01, Project=0x02, Table=0x04, Folder=0x08,
+ * View=0x10, Docker=0x20, SubmissionView=0x40, Dataset=0x80, DatasetCollection=0x100, MaterializedView=0x200).
+ */
+export function getDefaultColumnModels(
+  viewEntityType?: ViewEntityType,
+  viewTypeMask?: number,
+): Promise<{ list: ColumnModel[] }> {
+  const params = new URLSearchParams()
+  if (viewEntityType != null) {
+    params.set('viewEntityType', viewEntityType)
+  }
+  if (viewTypeMask != null) {
+    params.set('viewTypeMask', viewTypeMask.toString())
+  }
+  return doGet<{ list: ColumnModel[] }>(
+    `/repo/v1/column/tableview/defaults?${params.toString()}`,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export async function getAnnotationColumnModels(
+  request: ViewColumnModelRequest,
+  accessToken: string | undefined = undefined,
+): Promise<ColumnModel[]> {
+  // format function to be callable by getAllOfNextPageTokenPaginatedService
+  const fn: FunctionReturningNextPageToken<ColumnModel> = async (
+    nextPageToken?: string | null,
+  ): Promise<ViewColumnModelResponse> => {
+    request.nextPageToken = nextPageToken
+    const asyncJobId = await doPost<AsyncJobId>(
+      '/repo/v1/column/view/scope/async/start',
+      request,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+    return getAsyncResultBodyFromJobId(
+      asyncJobId.token,
+      `/repo/v1/column/view/scope/async/get/${asyncJobId.token}`,
+      accessToken,
+    )
+  }
+
+  return getAllOfNextPageTokenPaginatedService(fn)
 }

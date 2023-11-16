@@ -3,12 +3,18 @@
 
 .QueryWrapperPlotNav {
   display: grid;
+  position: relative;
 
   @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
-    grid-template-columns: 25% 75%;
+    grid-template-columns: 23% 75%;
+    grid-column-gap: 2%;
 
     // by default, children take up the full row
     > * {
+      grid-column: 1 / span 2;
+    }
+
+    .ErrorBannerWrapper {
       grid-column: 1 / span 2;
     }
 
@@ -20,10 +26,11 @@
       }
       .download-confirmation,
       .FacetNav,
+      .QueryWrapperFullTextSearchInput,
       .QueryWrapperSearchInput,
       .QueryWrapperSqlEditorInput,
-      .ErrorBannerWrapper,
-      .FilterAndView {
+      .FilterAndView,
+      .SynapsePlots {
         grid-column: 2 / span 1;
       }
 
@@ -38,6 +45,10 @@
     }
   }
 
+  &.hasSelectedRows {
+    margin-bottom: 100px;
+  }
+
   // row
   .TopLevelControls {
     grid-row: 1 / span 1;
@@ -48,6 +59,7 @@
   .download-confirmation {
     grid-row: 3 / span 1;
   }
+  .QueryWrapperFullTextSearchInput,
   .QueryWrapperSearchInput {
     grid-row: 4 / span 1;
     .MuiCollapse-entered {
@@ -68,11 +80,14 @@
   .FacetFilterControls {
     grid-row: 7 / span 1;
   }
-  .FacetNav {
+  .SynapsePlots {
     grid-row: 8 / span 1;
   }
-  .FilterAndView {
+  .FacetNav {
     grid-row: 9 / span 1;
+  }
+  .FilterAndView {
+    grid-row: 10 / span 1;
   }
 
   &.isHidingFacetFilters {
@@ -87,16 +102,6 @@
     }
   }
 
-  > .FacetFilterControls,
-  > .download-confirmation,
-  > .FacetNav,
-  > .QueryWrapperSearchInput,
-  > .QueryWrapperSqlEditorInput,
-  > .ErrorBannerWrapper,
-  > .FilterAndView {
-    margin-left: 15px;
-  }
-
   .QueryWrapperTextInput {
     // PORTALS-1856: z-index greater than the Show All Graphs button (500)
     z-index: 600;
@@ -108,7 +113,8 @@
     padding-left: 15px;
     padding-bottom: 13px;
   }
-  .FacetNav {
+  .FacetNav,
+  .SynapsePlots {
     margin-top: 5px;
     margin-bottom: 10px;
   }
@@ -125,6 +131,11 @@
       text-align: center;
     }
   }
+
+  .ErrorBannerWrapper,
+  .download-confirmation {
+    margin-top: 8px;
+  }
 }
 
 .TopLevelControls {
@@ -137,30 +148,13 @@
       margin-top: 0px;
     }
   }
-  background-color: map.get(SRC.$colors, 'gray-300');
+  background-color: map.get(SRC.$colors, 'gray-200');
   &__showhidefacetfilters {
     display: none;
   }
   &__querycount {
     display: inline-flex;
     align-items: center;
-    &__facetFilterLink {
-      height: 100%;
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: flex-start;
-      align-items: center;
-      margin-left: 15px;
-      font-weight: 400 !important;
-      &__text {
-        font-size: 14px;
-        margin-top: 4px;
-      }
-      svg {
-        margin-right: 7px;
-        margin-top: 8px;
-      }
-    }
   }
   &__actions {
     display: inline-flex;

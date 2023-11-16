@@ -1,15 +1,29 @@
 import React from 'react'
 import { Dropdown } from 'react-bootstrap'
 import ModalDownload from '../../ModalDownload/ModalDownload'
-import { isDataset } from '../../../utils/functions/EntityTypeUtils'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
+import {
+  hasFilesInView,
+  isDataset,
+  isEntityView,
+} from '../../../utils/functions/EntityTypeUtils'
+import { useSynapseContext } from '../../../utils'
 import { Tooltip } from '@mui/material'
-import { useQueryContext } from '../../QueryContext/QueryContext'
+import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
 import { getNumberOfResultsToAddToDownloadListCopy } from '../TopLevelControls/TopLevelControlsUtils'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
+import { getFileColumnModelId } from '../SynapseTableUtils'
+import { useAtomValue } from 'jotai'
+import {
+  tableQueryDataAtom,
+  tableQueryEntityAtom,
+} from '../../QueryWrapper/QueryWrapper'
+import {
+  hasSelectedRowsAtom,
+  selectedRowsAtom,
+} from '../../QueryWrapper/TableRowSelectionState'
 
 export type DownloadOptionsProps = {
   onDownloadFiles: () => void
@@ -20,23 +34,28 @@ export const DownloadOptions: React.FunctionComponent<
   DownloadOptionsProps
 > = props => {
   const { accessToken } = useSynapseContext()
-  const {
-    entity,
-    data: queryResultBundle,
-    getLastQueryRequest,
-    hasResettableFilters,
-    hasSelectedRows,
-    selectedRows,
-  } = useQueryContext()
-  const queryBundleRequest = getLastQueryRequest()
+  const { getCurrentQueryRequest, hasResettableFilters } = useQueryContext()
+  const queryResultBundle = useAtomValue(tableQueryDataAtom)
+  const entity = useAtomValue(tableQueryEntityAtom)
+
+  const selectedRows = useAtomValue(selectedRowsAtom)
+  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
+
+  const queryBundleRequest = getCurrentQueryRequest()
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] =
     React.useState(false)
   const { onDownloadFiles, darkTheme = true } = props
 
-  const showAddQueryToDownloadList = canTableQueryBeAddedToDownloadList(entity)
+  const fileColumnId = getFileColumnModelId(queryResultBundle?.columnModels)
 
+  const isEntityViewWithoutFiles =
+    entity && isEntityView(entity) && !hasFilesInView(entity)
+
+  const showAddQueryToDownloadList =
+    !isEntityViewWithoutFiles &&
+    (fileColumnId || canTableQueryBeAddedToDownloadList(entity))
   // SWC-5878 - Disable downloading a "Draft" dataset
   const disableDownload = entity && isDataset(entity) && entity.isLatestVersion
 

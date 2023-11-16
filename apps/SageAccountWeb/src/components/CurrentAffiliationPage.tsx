@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SourceAppLogo, useSourceApp } from './SourceApp'
+import { SourceAppLogo } from './SourceApp'
 import { InputLabel, TextField, Typography } from '@mui/material'
 import { LeftRightPanel } from './LeftRightPanel'
 import { StyledFormControl } from './StyledComponents'
@@ -11,6 +11,7 @@ import {
 } from 'synapse-react-client'
 import { Redirect } from 'react-router-dom'
 import { ContinueButton } from './ProfileValidation/ContinueButton'
+import { useSourceApp } from './useSourceApp'
 
 export const CurrentAffiliationPage = () => {
   const sourceApp = useSourceApp()

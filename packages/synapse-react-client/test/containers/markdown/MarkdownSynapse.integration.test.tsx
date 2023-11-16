@@ -5,7 +5,7 @@ import * as MarkdownPlotModule from '../../../src/components/Markdown/widget/Mar
 import MarkdownSynapse, {
   MarkdownSynapseProps,
 } from '../../../src/components/Markdown/MarkdownSynapse'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../../src/synapse-client'
 import {
   BackendDestinationEnum,
@@ -13,7 +13,7 @@ import {
 } from '../../../src/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../src/utils/context/SynapseContext'
 import { WikiPage } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../../mocks/msw/server'
+import { rest, server } from '../../../src/mocks/msw/server'
 import * as MarkdownProvenanceModule from '../../../src/components/Markdown/widget/MarkdownProvenanceGraph'
 
 jest.mock('../../../src/components/Plot/SynapsePlot', () => {

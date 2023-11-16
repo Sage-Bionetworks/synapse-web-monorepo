@@ -31,21 +31,9 @@ describe('SynapseComponent tests', () => {
 
   it('renders portal specific components correctly', () => {
     const synapseConfig: SynapseConfig = {
-      name: 'StatefulButtonControlWrapper',
+      name: 'RouteControlWrapper',
       props: {
-        configs: [
-          {
-            name: 'mock2',
-            synapseConfigArray: [
-              {
-                name: 'Markdown',
-                props: {
-                  markdown: '## This is a markdown component',
-                },
-              },
-            ],
-          },
-        ],
+        customRoutes: [],
       },
     }
     render(
@@ -62,6 +50,6 @@ describe('SynapseComponent tests', () => {
         </MemoryRouter>
       </FullContextProvider>,
     )
-    screen.getByText('This is a markdown component')
+    screen.getByText('Explore')
   })
 })

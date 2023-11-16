@@ -1,24 +1,36 @@
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
-import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import {
-  FacetColumnRangeRequest,
+  facetObjectMatchesDefinition,
+  getCorrespondingColumnForFacet,
+  isSingleNotSetValue,
+} from '../../../utils/functions/queryUtils'
+import {
   FacetColumnRequest,
-  FacetColumnResult,
   FacetColumnResultRange,
   FacetColumnResultValues,
   FacetColumnValuesRequest,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { useQueryContext } from '../../QueryContext/QueryContext'
-import { EnumFacetFilter } from './EnumFacetFilter'
+import { useQueryContext } from '../../QueryContext'
+import { EnumFacetFilter } from './EnumFacetFilter/EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { RangeFacetFilter } from './RangeFacetFilter'
 import { Box, Skeleton, Stack } from '@mui/material'
-import { sortBy } from 'lodash-es'
+import { groupBy, noop, sortBy } from 'lodash-es'
+import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
+import { useAtomValue } from 'jotai'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+} from '../../QueryWrapper/QueryWrapper'
+import { FacetFilterHeader } from './FacetFilterHeader'
+import JsonColumnFacetFilters from './JsonColumnFacetFilters'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
 export type FacetFilterControlsProps = {
-  /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with at least one non-null value will be shown. */
+  /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with
+    at least one non-null value will be shown. */
   availableFacets?: string[]
 }
 
@@ -32,36 +44,24 @@ const convertFacetToFacetColumnValuesRequest = (
     .map(facet => facet.value),
 })
 
-const convertFacetColumnRangeRequest = (
-  facet: FacetColumnResultRange,
-): FacetColumnRangeRequest => {
-  let result: FacetColumnRangeRequest = {
-    concreteType:
-      'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
-    columnName: facet.columnName, // The name of the faceted column
-  }
-
-  if (facet.columnMin) {
-    result = { ...result, min: facet.columnMin, max: facet.columnMax }
-  }
-  return result
-}
-
 const patchRequestFacets = (
   changedFacet: FacetColumnRequest,
-  lastRequest?: QueryBundleRequest,
+  selections: FacetColumnRequest[] = [],
 ): FacetColumnRequest[] => {
-  const selections = lastRequest?.query?.selectedFacets ?? []
-  const changedFacetIndex = selections.findIndex(
-    facet => facet.columnName === changedFacet.columnName,
+  const changedFacetIndex = selections.findIndex(facet =>
+    facetObjectMatchesDefinition(facet, changedFacet),
   )
-
   const isEmptyValuesFacet =
     changedFacet.concreteType ===
       'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' &&
     (!changedFacet.facetValues || !changedFacet.facetValues.length)
+  const isEmptyRangesFacet =
+    changedFacet.concreteType ===
+      'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest' &&
+    (!changedFacet.min || !changedFacet.max)
+
   if (changedFacetIndex > -1) {
-    if (isEmptyValuesFacet) {
+    if (isEmptyValuesFacet || isEmptyRangesFacet) {
       selections.splice(changedFacetIndex, 1)
     } else {
       selections[changedFacetIndex] = changedFacet
@@ -93,64 +93,28 @@ export function applyChangesToValuesColumn(
   }
 
   const changedFacet = convertFacetToFacetColumnValuesRequest(facet)
-  const result = patchRequestFacets(changedFacet, lastRequest)
-  onChangeFn(result)
-}
-
-// This handles multiple checkbox selection with delay refresh
-export const applyMultipleChangesToValuesColumn = (
-  lastRequest: QueryBundleRequest | undefined,
-  facet: FacetColumnResultValues,
-  onChangeFn: (result: FacetColumnRequest[]) => void,
-  facetNameMap?: Record<string, string | boolean>,
-) => {
-  const facetNames = (facetNameMap && Object.keys(facetNameMap)) || []
-  if (facetNames.length) {
-    facet.facetValues.forEach(facetValue => {
-      if (facetNames.includes(facetValue.value)) {
-        facetValue.isSelected = facetNameMap
-          ? !!facetNameMap[facetValue.value]
-          : false
-      }
-    })
-  }
-  const changedFacet = convertFacetToFacetColumnValuesRequest(facet)
-  const result = patchRequestFacets(changedFacet, lastRequest)
-  onChangeFn(result)
-}
-
-//rangeChanges
-export const applyChangesToRangeColumn = (
-  lastRequest: QueryBundleRequest | undefined,
-  facet: FacetColumnResultRange,
-  onChangeFn: (result: FacetColumnRequest[]) => void,
-  values: string[],
-) => {
-  facet.columnMin = values[0]
-  facet.columnMax = values[1]
-  const changedFacet = convertFacetColumnRangeRequest(facet)
-  const result = patchRequestFacets(changedFacet, lastRequest)
+  const result = patchRequestFacets(
+    changedFacet,
+    lastRequest?.query?.selectedFacets,
+  )
   onChangeFn(result)
 }
 
 /**
  * Determines which facet filters should be shown after loading a new bundle. The shown facets will be the first
  * three available facets, plus any other facets that have a filter applied.
- * @param facets
+ * @param facetColumns
  * @param selectedFacets
  * @returns the columnNames of the facets that should be shown.
  */
 export function getDefaultShownFacetFilters(
-  facets: FacetColumnResult[],
+  facetColumns: string[],
   selectedFacets?: FacetColumnRequest[],
 ): Set<string> {
   const columnsWithExistingFilters = (selectedFacets ?? []).map(
     fcr => fcr.columnName,
   )
-  return new Set([
-    ...facets.slice(0, 3).map(f => f.columnName),
-    ...columnsWithExistingFilters,
-  ])
+  return new Set([...facetColumns.slice(0, 3), ...columnsWithExistingFilters])
 }
 
 function FacetFilterSkeleton() {
@@ -187,12 +151,10 @@ function FacetFilterControlsSkeleton() {
 
 function FacetFilterControls(props: FacetFilterControlsProps) {
   const { availableFacets } = props
-  const {
-    data: data,
-    getLastQueryRequest,
-    executeQueryRequest,
-  } = useQueryContext()
-  const lastRequest = getLastQueryRequest()
+  const { getCurrentQueryRequest, combineRangeFacetConfig } = useQueryContext()
+  const { getColumnDisplayName } = useQueryVisualizationContext()
+  const lastRequest = getCurrentQueryRequest()
+  const data = useAtomValue(tableQueryDataAtom)
 
   const facets = data!
     .facets!.filter(
@@ -200,15 +162,55 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
         // If availableFacets is configured, remove those that don't match.
         availableFacets == null || availableFacets.includes(facet.columnName),
     )
+    // Don't include json subcolumn facets, those will be handled separately
+    .filter(facet => facet.jsonPath == null)
+    .filter(
+      facet =>
+        // Don't show facets if included in the combine range facet config, handled separately
+        combineRangeFacetConfig == null ||
+        (combineRangeFacetConfig.maxFacetColumn !== facet.columnName &&
+          combineRangeFacetConfig.minFacetColumn !== facet.columnName),
+    )
     .filter(
       facet =>
         // Don't show facets where there are no values
         !isSingleNotSetValue(facet),
     )
 
-  // Controls which facet filter sections are shown/hidden by clicking on chips
-  const [facetFiltersShown, setFacetFiltersShown] = React.useState<Set<string>>(
-    getDefaultShownFacetFilters(facets, lastRequest.query.selectedFacets),
+  const combinedRangeFacets = combineRangeFacetConfig
+    ? data!.facets!.filter(
+        facet =>
+          combineRangeFacetConfig.maxFacetColumn === facet.columnName ||
+          combineRangeFacetConfig.minFacetColumn === facet.columnName,
+      )
+    : []
+
+  // Group JSON facets by column name, so they can be grouped in the UI under their parent column name
+  const jsonFacetsGroupedByColumn = groupBy(
+    data!.facets!.filter(f => !!f.jsonPath),
+    'columnName',
+  )
+
+  const allFacetColumns: string[] = useMemo(() => {
+    const allFacetColumns: string[] = []
+    facets.forEach(facet => allFacetColumns.push(facet.columnName))
+    if (combineRangeFacetConfig) {
+      allFacetColumns.push(combineRangeFacetConfig.label)
+    }
+    if (jsonFacetsGroupedByColumn) {
+      Object.keys(jsonFacetsGroupedByColumn).forEach(jsonColumn =>
+        allFacetColumns.push(jsonColumn),
+      )
+    }
+    return allFacetColumns
+  }, [combineRangeFacetConfig, facets, jsonFacetsGroupedByColumn])
+
+  // Controls which facet columns are shown/hidden by clicking on chips. NOTE: One column may have multiple facets (e.g. JSON subcolumn facets)
+  const [facetColumnsShown, setFacetColumnsShown] = React.useState<Set<string>>(
+    getDefaultShownFacetFilters(
+      allFacetColumns,
+      lastRequest.query.selectedFacets,
+    ),
   )
 
   /**
@@ -216,89 +218,100 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
    */
   useDeepCompareEffectNoCheck(() => {
     // Select the first three facet columns, plus any columns where a facet is already filtered
-    setFacetFiltersShown(
-      getDefaultShownFacetFilters(facets, lastRequest.query.selectedFacets),
+    setFacetColumnsShown(
+      getDefaultShownFacetFilters(
+        allFacetColumns,
+        lastRequest.query.selectedFacets,
+      ),
     )
   }, [facets])
 
-  const columnModels = data!.selectColumns
+  const columnModels = data!.columnModels
 
-  const applyChanges = (facets: FacetColumnRequest[]) => {
-    const queryRequest: QueryBundleRequest = getLastQueryRequest()
-    queryRequest.query.selectedFacets = facets
-    queryRequest.query.offset = 0
-    executeQueryRequest(queryRequest)
-  }
+  const toggleShowFacetFilter = useCallback(
+    (facetColumnName: string) => {
+      const newFacetColumnsShown = new Set(facetColumnsShown)
+      if (newFacetColumnsShown.has(facetColumnName)) {
+        newFacetColumnsShown.delete(facetColumnName)
+      } else {
+        newFacetColumnsShown.add(facetColumnName)
+      }
+      setFacetColumnsShown(newFacetColumnsShown)
+    },
+    [facetColumnsShown],
+  )
+  const combinedRangeFacetsColumnModelType = combineRangeFacetConfig
+    ? columnModels!.find(
+        model => model.name === combineRangeFacetConfig.minFacetColumn,
+      )?.columnType
+    : undefined
 
-  const toggleShowFacetFilter = (facet: FacetColumnResult) => {
-    const newFacetFilterShown = new Set(facetFiltersShown)
-    if (newFacetFilterShown.has(facet.columnName)) {
-      newFacetFilterShown.delete(facet.columnName)
-    } else {
-      newFacetFilterShown.add(facet.columnName)
-    }
-    setFacetFiltersShown(newFacetFilterShown)
-  }
+  const shownTopLevelFacets = useMemo(
+    () =>
+      (facets ?? []).filter(facet => facetColumnsShown.has(facet.columnName)),
+    [facetColumnsShown, facets],
+  )
+
+  const shownJsonFacetGroups = useMemo(
+    () =>
+      Object.entries(jsonFacetsGroupedByColumn).filter(([columnName]) =>
+        facetColumnsShown.has(columnName),
+      ),
+    [facetColumnsShown, jsonFacetsGroupedByColumn],
+  )
 
   return (
     <div className={`FacetFilterControls`}>
-      {(facets ?? [])
-        .filter(facet => facetFiltersShown.has(facet.columnName))
-        .map(facet => {
-          const columnModel = columnModels!.find(
-            model => model.name === facet.columnName,
+      {combineRangeFacetConfig && (
+        <CombinedRangeFacetFilter
+          facetResults={combinedRangeFacets as FacetColumnResultRange[]}
+          label={combineRangeFacetConfig.label}
+          columnType={combinedRangeFacetsColumnModelType!}
+        />
+      )}
+      {shownTopLevelFacets.map(facet => {
+        const columnModel = getCorrespondingColumnForFacet(facet, columnModels!)
+        return (
+          <div className="FacetFilterControls__facet" key={facet.columnName}>
+            {facet.facetType === 'enumeration' && columnModel && (
+              <EnumFacetFilter containerAs="Collapsible" facet={facet} />
+            )}
+            {facet.facetType === 'range' && columnModel && (
+              <RangeFacetFilter facetResult={facet} />
+            )}
+          </div>
+        )
+      })}
+      {shownJsonFacetGroups.map(([columnName, facets]) => {
+        const columnModel = data?.columnModels?.find(
+          cm => cm.name === columnName,
+        )
+        return (
+          columnModel && (
+            <JsonColumnFacetFilters
+              key={columnName}
+              columnModel={columnModel}
+              facets={facets}
+            />
           )
-          return (
-            <div className="FacetFilterControls__facet" key={facet.columnName}>
-              {facet.facetType === 'enumeration' && columnModel && (
-                <EnumFacetFilter
-                  containerAs="Collapsible"
-                  collapsed={false}
-                  facetValues={facet.facetValues}
-                  columnModel={columnModel}
-                  onChange={(facetNamesMap: Record<string, boolean>) =>
-                    applyMultipleChangesToValuesColumn(
-                      lastRequest,
-                      facet,
-                      applyChanges,
-                      facetNamesMap,
-                    )
-                  }
-                  onClear={() =>
-                    applyChangesToValuesColumn(lastRequest, facet, applyChanges)
-                  }
-                ></EnumFacetFilter>
-              )}
-              {facet.facetType === 'range' && columnModel && (
-                <RangeFacetFilter
-                  facetResult={facet}
-                  columnModel={columnModel}
-                  collapsed={false}
-                  onChange={(values: (string | number | undefined)[]) =>
-                    applyChangesToRangeColumn(
-                      lastRequest,
-                      facet,
-                      applyChanges,
-                      values as string[],
-                    )
-                  }
-                ></RangeFacetFilter>
-              )}
-            </div>
-          )
-        })}
+        )
+      })}
       <div>
-        <div className="AvailableFacet">
-          <label className="AvailableFacet__label">Available Facets</label>
-        </div>
-        {sortBy(facets, ['columnName']).map(facet => {
+        <FacetFilterHeader
+          label={'Available Facets'}
+          hideCollapsible
+          isCollapsed={false}
+          onClick={noop}
+        />
+        {sortBy(allFacetColumns).map(columnName => {
           return (
             <FacetChip
-              key={facet.columnName}
-              facet={facet}
-              onClick={() => toggleShowFacetFilter(facet)}
-              isChecked={facetFiltersShown.has(facet.columnName)}
-            />
+              key={columnName}
+              onClick={() => toggleShowFacetFilter(columnName)}
+              isChecked={facetColumnsShown.has(columnName)}
+            >
+              {getColumnDisplayName(columnName)}
+            </FacetChip>
           )
         })}
       </div>
@@ -309,7 +322,9 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
 export default function FacetFilterControlsOrLoader(
   props: FacetFilterControlsProps,
 ) {
-  const { data, isLoadingNewBundle } = useQueryContext()
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
+  const data = useAtomValue(tableQueryDataAtom)
+
   if (isLoadingNewBundle) {
     return <FacetFilterControlsSkeleton />
   } else if (data == null || data.facets == null) {

@@ -1,7 +1,6 @@
 @use '../abstracts/variables' as SRC;
 
-.QueryWrapperSearchInput,
-.QueryWrapperSqlEditorInput {
+.QueryWrapperSearchInput {
   &__helppopoverwrapper {
     display: grid;
     grid-template-columns: auto 25px;

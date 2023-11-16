@@ -1,0 +1,39 @@
+{
+  "concreteType": "org.sagebionetworks.repo.model.table.QueryResultBundle",
+  "queryResult": {
+    "concreteType": "org.sagebionetworks.repo.model.table.QueryResult",
+    "queryResults": {
+      "concreteType": "org.sagebionetworks.repo.model.table.RowSet",
+      "tableId": "syn26438037",
+      "etag": "9bc71aba-5c89-48cb-80f1-735caa30609f",
+      "headers": [
+        {
+          "name": "resourceType",
+          "columnType": "STRING"
+        },
+        {
+          "name": "COUNT(resourceType)",
+          "columnType": "INTEGER"
+        }
+      ],
+      "rows": [
+        {
+          "values": ["Animal Model", "120"]
+        },
+        {
+          "values": ["Antibody", "261"]
+        },
+        {
+          "values": ["Biobank", "3"]
+        },
+        {
+          "values": ["Cell Line", "630"]
+        },
+        {
+          "values": ["Genetic Reagent", "122"]
+        }
+      ]
+    }
+  },
+  "maxRowsPerPage": 26214
+}

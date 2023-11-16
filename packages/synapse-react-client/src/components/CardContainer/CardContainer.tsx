@@ -14,7 +14,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from '../CardContainerLogic'
 import GenericCard from '../GenericCard'
-import loadingScreen from '../LoadingScreen'
+import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { useInfiniteQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { Dataset, Funder } from '../row_renderers'
@@ -26,6 +26,8 @@ import TotalQueryResults from '../TotalQueryResults'
 import UserCardList from '../UserCardList/UserCardList'
 import WideButton from '../styled/WideButton'
 import { Box } from '@mui/material'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 export type CardContainerProps = {
   isHeader?: boolean
@@ -63,8 +65,8 @@ export function CardContainer(props: CardContainerProps) {
   } = props
   const infiniteQueryContext = useInfiniteQueryContext()
   const { NoContentPlaceholder } = useQueryVisualizationContext()
-  const { data, appendNextPageToResults, hasNextPage } = infiniteQueryContext
-
+  const { appendNextPageToResults, hasNextPage } = infiniteQueryContext
+  const data = useAtomValue(tableQueryDataAtom)
   const queryVisualizationContext = useQueryVisualizationContext()
 
   const ids = data?.queryResult!.queryResults.tableId

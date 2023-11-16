@@ -1,15 +1,20 @@
 import React from 'react'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'
+import {
+  InteractiveCopyIdsIcon,
+  InteractiveCopyIdsIconProps,
+} from '../InteractiveCopyIdsIcon'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { SynapseConstants } from '../../utils'
 import { getFullQueryTableResults } from '../../synapse-client/SynapseClient'
 import { parseEntityIdAndVersionFromSqlStatement } from '../../utils/functions/SqlFunctions'
 
-const EntityIDColumnCopyIcon = () => {
+type EntityIDColumnCopyIconProps = Omit<InteractiveCopyIdsIconProps, 'onCopy'>
+
+const EntityIDColumnCopyIcon = (props: EntityIDColumnCopyIconProps) => {
   const synapseContext = useSynapseContext()
   const queryContext = useQueryContext()
   const [isLoading, setIsLoading] = React.useState(false)
@@ -35,8 +40,8 @@ const EntityIDColumnCopyIcon = () => {
     setIsLoading(true)
 
     // ask for all pages of data
-    const { getLastQueryRequest } = queryContext
-    const queryRequestClone = getLastQueryRequest()
+    const { getCurrentQueryRequest } = queryContext
+    const queryRequestClone = getCurrentQueryRequest()
     const { sql: oldSql } = queryRequestClone.query
     const { entityId, versionNumber } =
       parseEntityIdAndVersionFromSqlStatement(oldSql)!
@@ -84,6 +89,7 @@ const EntityIDColumnCopyIcon = () => {
     <SynapseSpinner size={25} />
   ) : (
     <InteractiveCopyIdsIcon
+      {...props}
       onCopy={() => {
         handleCopyIdsToClipboard()
       }}

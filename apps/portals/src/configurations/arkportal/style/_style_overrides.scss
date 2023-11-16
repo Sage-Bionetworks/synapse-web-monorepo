@@ -17,16 +17,10 @@
   background: #3c3c42;
 }
 
-.SRC-chart-link {
-  a {
-    background: Portal.$primary-action-color !important;
-  }
-}
-
 // targets all columns that are 4 from the beginning
 // https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-child
 // relying on having specified the order in the studies sql
-td.SRC_noBorderTop:nth-child(n + 4) {
+.SynapseTable td:nth-child(n + 4) {
   .markdown.markdown-inline {
     a {
       font-size: 0px;
@@ -64,18 +58,19 @@ $ARK-gray-900: #1d1d22 !default;
 
 .Goals {
   &__Desktop {
-    gap: 30px;  
+    gap: 30px;
   }
   &__Card {
     position: relative;
     background: #fff;
     border: 1px solid $ARK-gray-200;
-    box-shadow: 0px 4px 4px rgba(0,0,0,0.05), 0px 1px 1px rgba(208,212,217,0.05);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05),
+      0px 1px 1px rgba(208, 212, 217, 0.05);
     border-radius: 10px;
     margin: 0;
     padding: 40px;
     display: flex;
-    align-items: flex-start;  
+    align-items: flex-start;
     &:hover {
       transition: all 0.24s ease-in-out;
       border: 1px solid #f2caba;
@@ -121,7 +116,8 @@ $ARK-gray-900: #1d1d22 !default;
         background-color: transparent;
         text-decoration: none;
         align-self: flex-end;
-        &:hover, &:active {
+        &:hover,
+        &:active {
           background-color: unset !important;
         }
         &:after {
@@ -130,17 +126,19 @@ $ARK-gray-900: #1d1d22 !default;
           height: 100%;
           width: 100%;
           display: block;
-          background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDciIGhlaWdodD0iNDUiIHZpZXdCb3g9IjAgMCA0NyA0NSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEwLjg1NzkgMjIuNjU1M0gzNi4zMTM4IiBzdHJva2U9IiNFNzk3NzYiIHN0cm9rZS13aWR0aD0iNCIvPgo8cGF0aCBkPSJNMjQuNDM0MyAxMC43MTU4TDM2LjQzNDMgMjIuNzE1OEwyNC40MzQzIDM0LjcxNTgiIHN0cm9rZT0iI0U3OTc3NiIgc3Ryb2tlLXdpZHRoPSI0Ii8+Cjwvc3ZnPgo=") no-repeat bottom right;
+          background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDciIGhlaWdodD0iNDUiIHZpZXdCb3g9IjAgMCA0NyA0NSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEwLjg1NzkgMjIuNjU1M0gzNi4zMTM4IiBzdHJva2U9IiNFNzk3NzYiIHN0cm9rZS13aWR0aD0iNCIvPgo8cGF0aCBkPSJNMjQuNDM0MyAxMC43MTU4TDM2LjQzNDMgMjIuNzE1OEwyNC40MzQzIDM0LjcxNTgiIHN0cm9rZT0iI0U3OTc3NiIgc3Ryb2tlLXdpZHRoPSI0Ii8+Cjwvc3ZnPgo=')
+            no-repeat bottom right;
         }
       }
     }
-    &__header, &__summary {
+    &__header,
+    &__summary {
       padding: 0;
     }
   }
 }
 
-.CollectionList .SRC-imageThumbnail img{
+.CollectionList .SRC-imageThumbnail img {
   float: right;
   max-width: 110px;
   padding-right: 30px;

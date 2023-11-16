@@ -57,16 +57,8 @@ function IconButtonTemplate<
 >(props: IconButtonProps<T, S, F> & IconButtonTemplateProps) {
   const { iconType, buttonType, ...otherProps } = props
 
-  const {
-    registry: { translateString },
-  } = otherProps
   return (
-    <IconButton
-      title={translateString(TranslatableString.RemoveButton)}
-      {...otherProps}
-      color={'default'}
-      sx={buttonSx}
-    >
+    <IconButton {...otherProps} color={'default'} sx={buttonSx}>
       {getIcon(buttonType)}
     </IconButton>
   )
@@ -77,7 +69,16 @@ export function RemoveButton<
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
 >(props: IconButtonProps<T, S, F>) {
-  return <IconButtonTemplate<T, S, F> {...props} buttonType={'remove'} />
+  const {
+    registry: { translateString },
+  } = props
+  return (
+    <IconButtonTemplate<T, S, F>
+      title={translateString(TranslatableString.RemoveButton)}
+      {...props}
+      buttonType={'remove'}
+    />
+  )
 }
 
 export function CopyButton<
@@ -85,7 +86,16 @@ export function CopyButton<
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
 >(props: IconButtonProps<T, S, F>) {
-  return <IconButtonTemplate<T, S, F> {...props} buttonType={'copy'} />
+  const {
+    registry: { translateString },
+  } = props
+  return (
+    <IconButtonTemplate<T, S, F>
+      title={translateString(TranslatableString.CopyButton)}
+      {...props}
+      buttonType={'copy'}
+    />
+  )
 }
 
 export function MoveUpButton<
@@ -93,7 +103,16 @@ export function MoveUpButton<
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
 >(props: IconButtonProps<T, S, F>) {
-  return <IconButtonTemplate<T, S, F> {...props} buttonType={'moveUp'} />
+  const {
+    registry: { translateString },
+  } = props
+  return (
+    <IconButtonTemplate<T, S, F>
+      title={translateString(TranslatableString.MoveUpButton)}
+      {...props}
+      buttonType={'moveUp'}
+    />
+  )
 }
 
 export function MoveDownButton<
@@ -101,7 +120,16 @@ export function MoveDownButton<
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
 >(props: IconButtonProps<T, S, F>) {
-  return <IconButtonTemplate<T, S, F> {...props} buttonType={'moveDown'} />
+  const {
+    registry: { translateString },
+  } = props
+  return (
+    <IconButtonTemplate<T, S, F>
+      title={translateString(TranslatableString.MoveDownButton)}
+      {...props}
+      buttonType={'moveDown'}
+    />
+  )
 }
 
 export default {

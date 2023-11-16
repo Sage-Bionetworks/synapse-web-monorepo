@@ -1,7 +1,6 @@
 import dayjs from 'dayjs'
 import React, { useMemo, useState } from 'react'
 import { Table } from 'react-bootstrap'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchSort,
@@ -9,13 +8,13 @@ import {
   Direction,
 } from '@sage-bionetworks/synapse-types'
 import { Button, Typography } from '@mui/material'
-import UserCard from '../UserCard/UserCard'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useSearchAccessApprovalsInfinite } from '../../synapse-queries/dataaccess/useAccessApprovals'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import SortIcon from '../../assets/icons/Sort'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { upperFirst } from 'lodash-es'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export type AccessApprovalsTableProps = {
   accessorId: string
@@ -111,7 +110,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
                 </td>
                 <td>{item.accessRequirementName}</td>
                 <td>
-                  <UserCard size={SMALL_USER_CARD} ownerId={item.submitterId} />
+                  <UserBadge userId={item.submitterId} />
                 </td>
                 <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
                 <td>{formatDate(dayjs(item.modifiedOn))}</td>

@@ -13,7 +13,7 @@ import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundl
 import { Typography } from '@mui/material'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'

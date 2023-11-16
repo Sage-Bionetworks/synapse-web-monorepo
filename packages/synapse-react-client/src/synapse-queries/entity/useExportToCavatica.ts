@@ -11,6 +11,9 @@ import {
 export function useExportToCavatica(
   queryBundleRequest: QueryBundleRequest,
   selectColumns?: SelectColumn[],
+  fileIdColumnName: string = 'id',
+  fileNameColumnName: string = 'name',
+  fileVersionColumnName: string = 'currentVersion',
 ) {
   const { accessToken } = useSynapseContext()
   const separator = ','
@@ -21,7 +24,7 @@ export function useExportToCavatica(
     try {
       // add drs_uri to select
       const selectColumnsList = selectColumns?.map(col => col.name).join(',')
-      const sql = `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', id, '.', currentVersion) AS drs_uri, name as file_name, ${selectColumnsList} FROM ${originalSql.slice(
+      const sql = `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', ${fileIdColumnName}, '.', ${fileVersionColumnName}) AS drs_uri, ${fileNameColumnName} as file_name, ${selectColumnsList} FROM ${originalSql.slice(
         originalSql.toLowerCase().indexOf('from') + 'from'.length + 1,
       )}`
       const downloadFromTableRequest: DownloadFromTableRequest = {
@@ -39,19 +42,9 @@ export function useExportToCavatica(
         downloadFromTableRequest,
         accessToken,
       )
-      const presignedURL = await SynapseClient.getFileHandleByIdURL(
-        result.resultsFileHandleId,
-        accessToken,
-      )
-      // Send this presigned URL to the CAVATICA landing page where it can be processed
-      // NOTE: This dev environment redirect link only works if you are in the Seven Bridges VPN, so this cannot be tested by Sage
-      // const cavaticaURL = `https://synapse-vayu.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
-      //   presignedURL,
-      // )}`
-      // This is the production redirect link.
-      // TODO: Pass DRS url to manifest file rather than presigned URL
-      const cavaticaURL = `https://cavatica.sbgenomics.com/import-redirect/drs/csv/?URL=${encodeURIComponent(
-        presignedURL,
+      // Send this DRS URI to the CAVATICA landing page where it can be processed
+      const cavaticaURL = `https://cavatica.sbgenomics.com/import-redirect/drs/csv?DRS_URI=${encodeURIComponent(
+        `drs://repo-prod.prod.sagebase.org/fh${result.resultsFileHandleId}`,
       )}`
       window.open(cavaticaURL, '_blank')
     } catch (_err) {

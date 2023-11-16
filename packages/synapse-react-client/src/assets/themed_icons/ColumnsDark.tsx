@@ -21,8 +21,8 @@ export const ColumnsDark = () => (
       y="0.5"
       width="4.66667"
       height="16"
-      stroke="#ffffff"
-      fill="#ffffff"
+      stroke="none"
+      fill="none"
     />
   </svg>
 )

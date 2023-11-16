@@ -1,12 +1,11 @@
 import { InfoOutlined } from '@mui/icons-material'
 import Plotly from 'plotly.js-basic-dist'
-import React, { useCallback, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import { SkeletonInlineBlock } from '../../Skeleton/SkeletonInlineBlock'
-import getColorPalette from '../../ColorGradient'
-import { ElementWithTooltip } from '../ElementWithTooltip'
+import getColorPalette from '../../ColorGradient/ColorGradient'
 import { SynapseConstants } from '../../../utils'
 import SynapseClient from '../../../synapse-client'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
@@ -16,19 +15,21 @@ import {
   FacetColumnResultValueCount,
   FacetColumnResultValues,
 } from '@sage-bionetworks/synapse-types'
-import loadingScreen from '../../LoadingScreen'
+import loadingScreen from '../../LoadingScreen/LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { useQueryContext } from '../../QueryContext/QueryContext'
-import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
-import {
-  applyChangesToValuesColumn,
-  applyMultipleChangesToValuesColumn,
-} from '../query-filter/FacetFilterControls'
-import { Tooltip } from '@mui/material'
+import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
+import { Box, IconButton, Tooltip } from '@mui/material'
 import { useQuery } from 'react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
+import IconSvg from '../../IconSvg'
+import { useAtomValue } from 'jotai'
+import {
+  isLoadingNewBundleAtom,
+  tableQueryDataAtom,
+} from '../../QueryWrapper/QueryWrapper'
+import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -114,10 +115,7 @@ export async function extractPlotDataArray(
       columnType === ColumnTypeEnum.USERID ||
       columnType === ColumnTypeEnum.USERID_LIST
     ) {
-      const response = await SynapseClient.getGroupHeadersBatch(
-        filteredValues,
-        accessToken,
-      )
+      const response = await SynapseClient.getGroupHeadersBatch(filteredValues)
       for (const header of response.children) {
         map.set(header.ownerId, header.userName)
       }
@@ -254,22 +252,12 @@ export function getPlotStyle(
   }
 }
 
-const getClassNameForPlotDiv = (isExpanded: boolean, plotType: PlotType) => {
-  if (!isExpanded) {
-    return 'FacetNavPanel__body__plot'
-  }
-  return `FacetNavPanel__body__plot--expanded${
-    plotType === 'BAR' ? 'Bar' : 'Pie'
-  }`
-}
-
 const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   props: FacetNavPanelProps,
 ): JSX.Element => {
   const {
     onHide,
     isModalView,
-    applyChangesToFacetFilter,
     applyChangesToGraphSlice,
     index,
     facetToPlot,
@@ -277,27 +265,29 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     onSetPlotType,
   } = props
   const { accessToken } = useSynapseContext()
-  const { data, isLoadingNewBundle, getLastQueryRequest } = useQueryContext()
+  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
+  const data = useAtomValue(tableQueryDataAtom)
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
   const [showModal, setShowModal] = useState(false)
 
-  const plotTitle = getColumnDisplayName(facetToPlot.columnName)
-
-  const getColumnType = useCallback(
-    (): ColumnTypeEnum | undefined =>
-      data?.columnModels?.find(
-        columnModel => columnModel.name === facetToPlot.columnName,
-      )?.columnType as ColumnTypeEnum,
-    [data, facetToPlot.columnName],
+  const plotTitle = getColumnDisplayName(
+    facetToPlot.columnName,
+    facetToPlot.jsonPath,
   )
+
+  const columnModel = useMemo(
+    () => getCorrespondingColumnForFacet(facetToPlot, data?.columnModels ?? []),
+    [data?.columnModels, facetToPlot],
+  )
+  const columnType = columnModel?.columnType as ColumnTypeEnum
 
   const { data: plotData } = useQuery(
     [
       'extractPlotDataArray',
       facetToPlot,
-      getColumnType(),
+      columnType,
       index,
       plotType,
       accessToken,
@@ -305,7 +295,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     () =>
       extractPlotDataArray(
         facetToPlot,
-        getColumnType(),
+        columnType,
         index,
         plotType,
         accessToken,
@@ -340,7 +330,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     </div>
   )
 
-  if ((!data && isLoadingNewBundle) || !facetToPlot) {
+  if ((!data && isLoadingNewBundle) || !facetToPlot || !columnModel) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}
@@ -370,46 +360,21 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                 <span className="FacetNavPanel__title__name">{plotTitle}</span>
               )}
               <div className="FacetNavPanel__title__tools">
-                <EnumFacetFilter
-                  facetValues={facetToPlot.facetValues}
-                  columnModel={
-                    data?.columnModels!.find(
-                      el => el.name === facetToPlot.columnName,
-                    )!
-                  }
-                  onChange={facetNamesMap => {
-                    applyMultipleChangesToValuesColumn(
-                      getLastQueryRequest(),
-                      facetToPlot,
-                      applyChangesToFacetFilter,
-                      facetNamesMap,
-                    )
-                  }}
-                  onClear={() => {
-                    applyChangesToValuesColumn(
-                      getLastQueryRequest(),
-                      facetToPlot,
-                      applyChangesToFacetFilter,
-                    )
-                  }}
-                  containerAs="Dropdown"
-                />
-                <ElementWithTooltip
-                  tooltipText="Expand to large graph"
-                  key="expandGraph"
-                  callbackFn={() => setShowModal(true)}
-                  className="SRC-primary-color"
-                  darkTheme={false}
-                  icon={'expand'}
-                />
-                <ElementWithTooltip
-                  tooltipText="Hide graph under Show More"
-                  key="hideGraph"
-                  callbackFn={() => onHide()}
-                  className="SRC-primary-color"
-                  darkTheme={false}
-                  icon={'close'}
-                />
+                <EnumFacetFilter facet={facetToPlot} containerAs="Dropdown" />
+                <Tooltip title={'Expand to large graph'}>
+                  <IconButton onClick={() => setShowModal(true)} size={'small'}>
+                    <IconSvg
+                      icon={'openInFull'}
+                      wrap={false}
+                      fontSize={'inherit'}
+                    />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={'Hide graph under Show More'}>
+                  <IconButton onClick={() => onHide()} size={'small'}>
+                    <IconSvg icon={'close'} wrap={false} fontSize={'inherit'} />
+                  </IconButton>
+                </Tooltip>
               </div>
             </div>
           )}
@@ -420,27 +385,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   Filter All Data By
                 </span>
                 <EnumFacetFilter
-                  facetValues={facetToPlot.facetValues}
-                  columnModel={
-                    data?.columnModels!.find(
-                      el => el.name === facetToPlot.columnName,
-                    )!
-                  }
-                  onChange={facetNamesMap => {
-                    applyMultipleChangesToValuesColumn(
-                      getLastQueryRequest(),
-                      facetToPlot,
-                      applyChangesToFacetFilter,
-                      facetNamesMap,
-                    )
-                  }}
-                  onClear={() => {
-                    applyChangesToValuesColumn(
-                      getLastQueryRequest(),
-                      facetToPlot,
-                      applyChangesToFacetFilter,
-                    )
-                  }}
+                  facet={facetToPlot}
                   containerAs="Dropdown"
                   dropdownType="SelectBox"
                 />
@@ -451,15 +396,19 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               <ChartSelectionToggle />
             </>
           )}
-          <div
-            className={`FacetNavPanel__body${isModalView ? '--expanded' : ''}`}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '50% 50%',
+            }}
             role="graphics-object"
+            className="FacetNavPanel__body"
           >
             <SizeMe monitorHeight noPlaceholder>
               {({ size }) => (
-                <div className={getClassNameForPlotDiv(isModalView, plotType)}>
+                <div>
                   <Plot
-                    key={`${facetToPlot.columnName}-${plotType}-${size.width}`}
+                    key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${size.width}`}
                     layout={layout}
                     data={plotData?.data ?? []}
                     style={getPlotStyle(
@@ -484,7 +433,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               colors={plotData?.colors}
               isExpanded={isModalView}
             />
-          </div>
+          </Box>
         </div>
       </>
     )

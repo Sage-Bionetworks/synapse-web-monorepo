@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { isEmpty } from 'lodash-es'
 import {
   convertToEntityType,
@@ -8,32 +8,69 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import { useGetSchemaBinding } from '../../../synapse-queries/entity/useEntityBoundSchema'
-import { useSynapseContext } from '../../../utils/context/SynapseContext'
-import { useGetJson } from '../../../synapse-queries/entity/useEntity'
-import { SkeletonTable } from '../../Skeleton/SkeletonTable'
+import {
+  useGetJson,
+  useGetSchemaBinding,
+  useGetValidationResults,
+} from '../../../synapse-queries'
+import { useSynapseContext } from '../../../utils'
+import { SkeletonTable } from '../../Skeleton'
+import dayjs from 'dayjs'
+import FullWidthAlert from '../../FullWidthAlert'
 
 export type AnnotationsTableProps = {
   readonly entityId: string
   readonly versionNumber?: number
 }
 
-export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
-  entityId,
-}) => {
+export function AnnotationsTable(props: AnnotationsTableProps) {
+  const { entityId } = props
+  const [isManuallyRefetching, setIsManuallyRefetching] = useState(false)
   /**
    * Currently, schema/validation features are only shown in experimental mode.
    */
   const { isInExperimentalMode } = useSynapseContext()
 
   // TODO: Support versioned annotations, see PLFM-7290
-  const { entityMetadata, annotations, isLoading } = useGetJson(entityId)
+  const {
+    entityMetadata,
+    annotations,
+    isLoading,
+    refetch: refetchEntityData,
+  } = useGetJson(entityId, true)
 
   const { data: boundSchema } = useGetSchemaBinding(entityId, {
     enabled: isInExperimentalMode,
   })
 
-  return isLoading ? (
+  const { data: validationResults, refetch: refetchValidationInformation } =
+    useGetValidationResults(entityId, {
+      enabled: isInExperimentalMode && Boolean(boundSchema),
+    })
+
+  const showSchemaInformation = isInExperimentalMode && Boolean(boundSchema)
+
+  // If the entity has not yet been validated since the last fetch, then derived annotations may not have been calculated.
+  const recentChangesHaveNotBeenValidated =
+    !!entityMetadata &&
+    !!validationResults &&
+    dayjs(entityMetadata.modifiedOn).diff(
+      dayjs(validationResults.validatedOn),
+    ) > 0
+
+  const onRefetch = useCallback(async () => {
+    setIsManuallyRefetching(true)
+    const promises = [
+      // Refetch the annotations, which may have changed if new derived annotations have been calculated
+      refetchEntityData(),
+      // Refetch the validation information, which we use to determine if derived annotations may still be pending
+      refetchValidationInformation(),
+    ]
+    await Promise.allSettled(promises)
+    setIsManuallyRefetching(false)
+  }, [refetchEntityData, refetchValidationInformation])
+
+  return isLoading || isManuallyRefetching ? (
     <SkeletonTable numRows={3} numCols={2} />
   ) : (
     <>
@@ -63,7 +100,7 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
                 </tr>
               )
             })}
-          {boundSchema && isInExperimentalMode ? (
+          {showSchemaInformation ? (
             <tr className="AnnotationsTable__Row">
               <td className="AnnotationsTable__Row__Key Schema">
                 Validation Schema
@@ -72,19 +109,38 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
                 <a
                   href={`${getEndpoint(
                     BackendDestinationEnum.REPO_ENDPOINT,
-                  )}repo/v1/schema/type/registered/${
-                    boundSchema.jsonSchemaVersionInfo.$id
+                  )}/repo/v1/schema/type/registered/${
+                    boundSchema!.jsonSchemaVersionInfo.$id
                   }`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {boundSchema.jsonSchemaVersionInfo.schemaName}
+                  {boundSchema!.jsonSchemaVersionInfo.schemaName}
                 </a>
               </td>
             </tr>
           ) : null}
         </tbody>
       </table>
+      {entityMetadata &&
+        showSchemaInformation &&
+        recentChangesHaveNotBeenValidated && (
+          <FullWidthAlert
+            variant="warning"
+            description={`This ${entityTypeToFriendlyName(
+              convertToEntityType(entityMetadata.concreteType),
+            )} has changed since it has been last validated. If this ${entityTypeToFriendlyName(
+              convertToEntityType(entityMetadata.concreteType),
+            )} is expected to have annotations derived from the Validation Schema, they may not yet be visible.`}
+            primaryButtonConfig={{
+              text: 'Reload Annotations',
+              onClick: () => {
+                onRefetch()
+              },
+            }}
+            isGlobal={false}
+          />
+        )}
     </>
   )
 }

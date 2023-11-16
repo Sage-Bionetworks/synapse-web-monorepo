@@ -143,9 +143,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     return (
       <div
         data-testid="CardFooter"
-        className={`SRC-cardMetadata ${
-          this.props.isHeader ? 'SRC-card-footer-header' : ''
-        } ${this.props.className ?? ''}`}
+        className={`SRC-cardMetadata ${this.props.className ?? ''}`}
       >
         <table>
           <tbody>

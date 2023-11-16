@@ -23,7 +23,7 @@ import {
   EntityType,
   Reference,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../../LoadingScreen'
+import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import { BreadcrumbItem } from '../Breadcrumbs'
 import { toEntityHeader } from '../details/configurations/ProjectListDetails'
 import {
@@ -206,22 +206,20 @@ export function EntityTree(props: EntityTreeProps) {
     useErrorBoundary: true,
   })
 
-  const {
-    data: projectHeader,
-    isLoading: isLoadingProjectHeader,
-    error: fetchProjectError,
-  } = useGetEntityHeader(projectId!, {
-    enabled: !!(projectId ?? initialContainerPath?.path[1]?.id),
-    refetchInterval: Infinity,
-  })
+  const { data: projectHeader, isLoading: isLoadingProjectHeader } =
+    useGetEntityHeader(projectId!, undefined, {
+      enabled: !!(projectId ?? initialContainerPath?.path[1]?.id),
+      refetchInterval: Infinity,
+    })
 
   if (
     FinderScope.CURRENT_PROJECT === scope &&
     projectId &&
-    fetchProjectError &&
-    fetchProjectError.status === 403
+    !isLoadingProjectHeader &&
+    !projectHeader
   ) {
-    // The user doesn't have access to the project, so let's change the scope to something else
+    // The header wasn't returned, so the user doesn't have access to the current project
+    // Let's change the scope to something else
     displayToast(
       `You don't have access to the current project (${projectId}).`,
       'warning',

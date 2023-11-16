@@ -1,23 +1,29 @@
-import { useQuery, UseQueryOptions } from 'react-query'
+import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 
+/**
+ * Get a single UserGroupHeader, utilizing a react-query cache.  This is always an unauthenticated call
+ * (the user's current email address will never be returned in the result).
+ * @param principalId
+ * @param options
+ * @returns
+ */
 export function useGetUserGroupHeader(
   principalId: string,
   options?: UseQueryOptions<UserGroupHeader, SynapseClientError>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { keyFactory } = useSynapseContext()
   const queryKey = keyFactory.getUserGroupHeaderQueryKey(principalId)
 
   return useQuery<UserGroupHeader, SynapseClientError>(
     queryKey,
     async () => {
-      const responsePage = await SynapseClient.getGroupHeadersBatch(
-        [principalId],
-        accessToken,
-      )
+      const responsePage = await SynapseClient.getGroupHeadersBatch([
+        principalId,
+      ])
       if (responsePage.children.length !== 1) {
         throw new Error(
           `Expected one response in useGetUserGroupHeader for id: ${principalId}, got ${responsePage.children.length}`,
@@ -25,6 +31,41 @@ export function useGetUserGroupHeader(
       }
       return responsePage.children[0]
     },
+    options,
+  )
+}
+
+/**
+ * Get an array of UserGroupHeaders, utilizing a react-query cache.  This is always an unauthenticated call
+ * (the users current email addresses will never be returned in the result).
+ * @param principalId
+ * @param options
+ * @returns
+ */
+export function useGetUserGroupHeaders(
+  principalIds: string[],
+  options?: UseQueryOptions<UserGroupHeader[], SynapseClientError>,
+) {
+  const { keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  const queryKey = keyFactory.getUserGroupHeaderBatchQueryKey(principalIds)
+  const queryFn = async () => {
+    const response = await SynapseClient.getGroupHeadersBatch(principalIds)
+
+    // Update the cache with each individual header
+    response.children.forEach(userGroupHeader => {
+      queryClient.setQueryData(
+        keyFactory.getUserGroupHeaderQueryKey(userGroupHeader.ownerId),
+        userGroupHeader,
+      )
+    })
+
+    return response.children
+  }
+
+  return useQuery<UserGroupHeader[], SynapseClientError>(
+    queryKey,
+    queryFn,
     options,
   )
 }

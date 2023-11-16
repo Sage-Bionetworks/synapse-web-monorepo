@@ -1,0 +1,14 @@
+.SynapsePlots {
+  padding-top: 5px;
+  > .SynapsePlot {
+    // Hack around Plotly.  If modebar is hidden, it still takes up space for some reason.
+    // Move plot up (closer to title), and make sure the title is on top.
+    .plot-container {
+      margin-top: -5px;
+    }
+    p {
+      position: relative;
+      z-index: 100;
+    }
+  }
+}

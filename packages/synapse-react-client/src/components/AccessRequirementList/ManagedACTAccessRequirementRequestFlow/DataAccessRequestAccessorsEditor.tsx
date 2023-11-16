@@ -1,7 +1,6 @@
 import React from 'react'
 import { Form } from 'react-bootstrap'
 import { Button, Stack, Typography } from '@mui/material'
-import UserCard from '../../UserCard/UserCard'
 import {
   AccessorChange,
   AccessType,
@@ -11,7 +10,8 @@ import {
 import IconSvg from '../../IconSvg/IconSvg'
 import { RadioGroup } from '../../widgets/RadioGroup'
 import { useGetCurrentUserProfile } from '../../../synapse-queries'
-import UserSearchBoxV2 from '../../UserSearchBoxV2'
+import UserSearchBoxV2 from '../../UserSearchBox/UserSearchBoxV2'
+import { UserBadge } from '../../UserCard/UserBadge'
 
 export type DataAccessRequestAccessorsEditorProps = {
   /* The current set of accessor changes for a data access request */
@@ -103,9 +103,8 @@ export default function DataAccessRequestAccessorsEditor(
           {accessorChanges.map((ac, i) => {
             return (
               <div className={'list-items'} key={`accessor-${i}`}>
-                <UserCard
-                  size={'SMALL USER CARD'}
-                  ownerId={ac.userId}
+                <UserBadge
+                  userId={ac.userId}
                   showAccountLevelIcon={true}
                   disableLink={true}
                   showFullName={true}

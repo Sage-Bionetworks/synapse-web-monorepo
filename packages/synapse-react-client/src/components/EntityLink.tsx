@@ -5,7 +5,7 @@ import {
   getEntityTypeFromHeader,
 } from '../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import { useGetEntity } from '../synapse-queries'
+import { useGetEntity, useGetEntityHeader } from '../synapse-queries'
 import { Entity, EntityHeader } from '@sage-bionetworks/synapse-types'
 import { EntityTypeIcon } from './EntityIcon'
 import { ErrorBanner } from './error/ErrorBanner'
@@ -38,8 +38,22 @@ export const EntityLink = (props: EntityLinkProps) => {
     entityId = entityOrId
   }
 
-  const { data: fetchedEntity, error } = useGetEntity(entityId, versionNumber, {
-    enabled: !!entityId && typeof entityOrId === 'string',
+  const fetchHeader = !!entityId && typeof entityOrId === 'string'
+
+  const { data: fetchedEntity, isLoading } = useGetEntityHeader(
+    entityId,
+    versionNumber,
+    {
+      enabled: fetchHeader,
+    },
+  )
+
+  // We don't get 4XX errors from useGetEntityHeader, so fetch the entity object to get an error response
+  // See PLFM-7989
+  const fetchFullEntity =
+    fetchHeader && fetchedEntity == undefined && !isLoading
+  const { error } = useGetEntity(entityId, versionNumber, {
+    enabled: fetchFullEntity,
   })
 
   if (fetchedEntity || typeof entityOrId !== 'string') {

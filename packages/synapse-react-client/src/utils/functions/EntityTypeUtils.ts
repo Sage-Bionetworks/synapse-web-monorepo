@@ -202,7 +202,7 @@ export function convertToConcreteEntityType(
 }
 
 /**
- * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionableEntity.html
+ * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionableEntity.html
  * @param type
  * @returns
  */
@@ -372,4 +372,18 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
   [VIRTUAL_TABLE_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
   [FOLDER_CONCRETE_TYPE_VALUE]: allEntityKeys,
   [PROJECT_CONCRETE_TYPE_VALUE]: [...allEntityKeys, 'alias'],
+}
+
+type EntityTypeGroupKey = 'ALL_TABLES'
+
+export const EntityTypeGroup: Record<EntityTypeGroupKey, EntityType[]> = {
+  ['ALL_TABLES']: [
+    EntityType.TABLE,
+    EntityType.ENTITY_VIEW,
+    EntityType.SUBMISSION_VIEW,
+    EntityType.DATASET,
+    EntityType.DATASET_COLLECTION,
+    EntityType.MATERIALIZED_VIEW,
+    EntityType.VIRTUAL_TABLE,
+  ],
 }

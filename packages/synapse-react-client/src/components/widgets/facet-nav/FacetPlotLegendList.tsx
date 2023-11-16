@@ -1,9 +1,5 @@
 import React from 'react'
-import {
-  FacetPlotLegendProps,
-  MAX_LEGEND_LENGTH,
-  truncate,
-} from './FacetPlotLegendUtils'
+import { FacetPlotLegendProps } from './FacetPlotLegendUtils'
 import { ElementWithTooltip } from '../ElementWithTooltip'
 import { Box, Typography } from '@mui/material'
 
@@ -23,13 +19,19 @@ export function FacetPlotLegendList(props: FacetPlotLegendProps) {
       className={`FacetNavPanel__body__legend${isExpanded ? '--expanded' : ''}`}
     >
       {labels.slice(0, numLegendItems).map((facetValue, index) => {
-        const labelDisplay = truncate(facetValue.label, MAX_LEGEND_LENGTH)
         return (
           <ElementWithTooltip
             tooltipText={facetValue.label}
             key={facetValue.label}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: '20px auto 30px',
+                alignItems: 'center',
+                gap: '10px',
+              }}
+            >
               <Box
                 sx={{
                   width: '14px',
@@ -40,7 +42,18 @@ export function FacetPlotLegendList(props: FacetPlotLegendProps) {
                 key={`legendLabel_${index}`}
                 style={{ cursor: 'default' }}
               />
-              <Typography variant="body2">{labelDisplay}</Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  display: 'block',
+                  width: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {facetValue.label}
+              </Typography>
               <Typography variant="body2" sx={{ color: 'grey.600' }}>
                 {facetValue.count}
               </Typography>

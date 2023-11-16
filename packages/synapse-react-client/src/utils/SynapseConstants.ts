@@ -79,6 +79,8 @@ export const DOWNLOAD_PERMISSION_REQUIRED: string =
 export const DEFAULT_PAGE_SIZE: number = 25
 // For User Profile Cards
 export const AVATAR = 'AVATAR'
+
+/** @deprecated use the UserBadge component */
 export const SMALL_USER_CARD = 'SMALL USER CARD'
 export const MEDIUM_USER_CARD = 'MEDIUM USER CARD'
 export const LARGE_USER_CARD = 'LARGE USER CARD'
@@ -90,7 +92,6 @@ export type UserCardSize =
   | typeof LARGE_USER_CARD
 
 export const SEPERATOR = 'SEPERATOR'
-export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS'
 
 // For internal testing only
 export const _TIME_DELAY = 75

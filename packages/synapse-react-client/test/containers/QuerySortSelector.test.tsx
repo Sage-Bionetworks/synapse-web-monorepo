@@ -13,13 +13,13 @@ import {
   QueryContextProvider,
   QueryContextType,
 } from '../../src/components/QueryContext/QueryContext'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
   SortItem,
 } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../mocks/query/syn16787123.json'
+import syn16787123Json from '../../src/mocks/query/syn16787123'
 import selectEvent from 'react-select-event'
 import { DEFAULT_PAGE_SIZE } from '../../src/utils/SynapseConstants'
 
@@ -74,7 +74,7 @@ describe('QuerySortSelector tests', () => {
   const queryContext: Partial<QueryContextType> = {
     data,
     hasNextPage: false,
-    getLastQueryRequest: getLastQueryRequest,
+    getCurrentQueryRequest: getLastQueryRequest,
     executeQueryRequest: executeQueryRequest,
   }
 
@@ -93,14 +93,18 @@ describe('QuerySortSelector tests', () => {
 
   const verifyExpectedSortItem = async (expectedSortItem: SortItem) => {
     await waitFor(
-      () =>
-        expect(executeQueryRequest).toHaveBeenCalledWith(
+      () => {
+        expect(executeQueryRequest).toHaveBeenCalled()
+        const queryTransformFn = executeQueryRequest.mock.lastCall![0]
+        expect(typeof queryTransformFn).toBe('function')
+        expect(queryTransformFn(lastQueryRequest)).toEqual(
           expect.objectContaining({
             query: expect.objectContaining({
               sort: expect.arrayContaining([expectedSortItem]),
             }),
           }),
-        ),
+        )
+      },
       {
         timeout: 15000,
       },

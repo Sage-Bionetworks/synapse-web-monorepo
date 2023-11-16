@@ -6,11 +6,12 @@ import {
   IconSvg,
   SynapseContextUtils,
 } from 'synapse-react-client'
-import { SourceAppLogo, useSourceApp } from './SourceApp'
+import { SourceAppLogo } from './SourceApp'
 import { Box, Button, useTheme } from '@mui/material'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
 import { TermsAndConditionsLink } from './TermsAndConditionsLink'
+import { useSourceApp } from './useSourceApp'
 
 export type TermsOfUsePageProps = {}
 

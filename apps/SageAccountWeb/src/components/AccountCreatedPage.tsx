@@ -1,10 +1,12 @@
 import React from 'react'
-import { SourceAppLogo, useSourceApp, useSourceAppConfigs } from './SourceApp'
+import { SourceAppLogo } from './SourceApp'
 import { Button, Grid, Link, Typography } from '@mui/material'
 import { AppContextConsumer } from '../AppContext'
 import { Link as RouterLink } from 'react-router-dom'
 import { LeftRightPanel } from './LeftRightPanel'
 import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
+import { useSourceApp } from './useSourceApp'
+import { useSourceAppConfigs } from './useSourceAppConfigs'
 
 export type AccountCreatedPageProps = {}
 

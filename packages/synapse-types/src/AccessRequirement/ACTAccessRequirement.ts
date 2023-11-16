@@ -29,8 +29,8 @@ export interface ACTAccessRequirement {
   accessType: ACCESS_TYPE
   /* Indicates which type of AccessRequirement this object represents. Provided by the system, the user may not set this field. */
   concreteType: 'org.sagebionetworks.repo.model.ACTAccessRequirement'
-  /* Information on how to contact the Synapse ACT for access approval (external to Synapse). Required when creating or updating. */
-  actContactInfo: string
+  /* Information on how to contact the Synapse ACT for access approval (external to Synapse). */
+  actContactInfo?: string
   /* If true, then in addition to following directions in the 'actContactInfo' the client should open a JIRA issue to notify the ACT. If omitted, default is 'true'. */
   openJiraIssue: boolean
 }

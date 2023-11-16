@@ -21,7 +21,7 @@ import {
 import { calculateFriendlyFileSize } from '../../../../utils/functions/calculateFriendlyFileSize'
 import { Box, Link } from '@mui/material'
 import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
-import CopyToClipboardString from '../../../CopyToClipboardString'
+import CopyToClipboardString from '../../../CopyToClipboardString/CopyToClipboardString'
 import { useGetDOIAssociation } from '../../../../synapse-queries/doi/useDOI'
 
 export type EntityProperty = {

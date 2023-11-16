@@ -9,3 +9,5 @@ export type { RequiredProperties }
 export * from './context'
 export { ACCESS_TOKEN_COOKIE_KEY } from './SynapseConstants'
 export { POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY } from './SynapseConstants'
+export * from './SynapseClientError'
+export { createTableUpdateTransactionRequest } from './functions'

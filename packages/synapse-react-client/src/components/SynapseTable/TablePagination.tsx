@@ -1,11 +1,14 @@
 import React from 'react'
-import { Pagination } from '@mui/material'
+import { Pagination, Typography } from '@mui/material'
 import { usePaginatedQueryContext } from '../QueryContext/QueryContext'
-import { Typography } from '@mui/material'
+import { useAtomValue } from 'jotai'
+import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
 export const TablePagination = () => {
-  const { data, goToPage, pageSize, setPageSize, currentPage } =
+  const { goToPage, pageSize, setPageSize, currentPage } =
     usePaginatedQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+
   const queryCount = data?.queryCount
 
   const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -30,7 +33,12 @@ export const TablePagination = () => {
         count={Math.ceil(queryCount! / pageSize)}
         color="secondary"
         onChange={handlePage}
-        style={{ display: 'inline-block', float: 'left' }}
+        shape={'rounded'}
+        sx={{
+          display: 'inline-block',
+          float: 'left',
+          '.MuiPaginationItem-root': { fontSize: '14px' },
+        }}
       />
       <Typography variant="body1" style={{ display: 'inline-block' }}>
         {`${queryCount?.toLocaleString()} total rows /`}

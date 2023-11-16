@@ -11,6 +11,7 @@ import { ReactComponent as CellLines } from './assets/cell-lines.svg'
 import { ReactComponent as PlasmidsReagents } from './assets/plasmids-reagents.svg'
 import PopularSearches from './PopularSearches'
 import { Form } from 'react-bootstrap'
+import pluralize from 'pluralize'
 
 export const gotoExploreToolsWithFullTextSearch = (
   fullTextSearchString: string,
@@ -27,6 +28,19 @@ export const gotoExploreToolsWithFullTextSearch = (
     `/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`,
   )
 }
+
+type Category = {
+  resourceName: string
+  image: React.ReactElement
+}
+
+const categories: Category[] = [
+  { resourceName: 'Animal Model', image: <AnimalModels /> },
+  { resourceName: 'Antibody', image: <Antibodies /> },
+  { resourceName: 'Genetic Reagent', image: <PlasmidsReagents /> },
+  { resourceName: 'Cell Line', image: <CellLines /> },
+  { resourceName: 'Biobank', image: <Biobanks /> },
+]
 
 const BrowseToolsPage = () => {
   const [searchText, setSearchText] = React.useState<string>('')
@@ -60,7 +74,10 @@ const BrowseToolsPage = () => {
           <Typography variant="headline1" className="sectionTitle">
             NF Research Tools Central
           </Typography>
-          <div className="center-content">
+          <div
+            className="center-content"
+            style={{ marginLeft: '10px', marginRight: '10px' }}
+          >
             <div className="description">
               <Typography variant="body1">
                 NF Research Tools Central aims to support the development of a
@@ -82,38 +99,21 @@ const BrowseToolsPage = () => {
           Drill-down to explore specific types of NF research tools.
         </Typography>
         <div className="categories">
-          <button
-            onClick={() => gotoExploreToolsWithSelectedResource('Animal Model')}
-          >
-            <AnimalModels />
-            <Typography variant="headline3">Animal Models</Typography>
-          </button>
-          <button
-            onClick={() => gotoExploreToolsWithSelectedResource('Antibody')}
-          >
-            <Antibodies />
-            <Typography variant="headline3">Antibodies</Typography>
-          </button>
-          <button
-            onClick={() =>
-              gotoExploreToolsWithSelectedResource('Genetic Reagent')
-            }
-          >
-            <PlasmidsReagents />
-            <Typography variant="headline3">Genetic Reagents</Typography>
-          </button>
-          <button
-            onClick={() => gotoExploreToolsWithSelectedResource('Cell Line')}
-          >
-            <CellLines />
-            <Typography variant="headline3">Cell Lines</Typography>
-          </button>
-          <button
-            onClick={() => gotoExploreToolsWithSelectedResource('Biobank')}
-          >
-            <Biobanks />
-            <Typography variant="headline3">Biobanks</Typography>
-          </button>
+          {categories.map((category) => {
+            return (
+              <button
+                key={category.resourceName}
+                onClick={() =>
+                  gotoExploreToolsWithSelectedResource(category.resourceName)
+                }
+              >
+                {category.image}
+                <Typography variant="headline3">
+                  {pluralize(category.resourceName)}
+                </Typography>
+              </button>
+            )
+          })}
         </div>
         <div className="center-content">
           <SynapseComponents.WideButton

@@ -1,11 +1,9 @@
 import { Skeleton } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import { useGetUserGroupHeader } from '../../synapse-queries/user/useUserGroupHeader'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import React from 'react'
+import { useGetUserGroupHeader } from '../../synapse-queries'
 import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import TeamBadge from '../TeamBadge'
-import UserCard from '../UserCard/UserCard'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export type UserOrTeamBadgeProps = {
   /* The principal ID of the user or team. Required if userGroupHeader is undefined. */
@@ -30,11 +28,6 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     principalId = providedUserGroupHeader?.ownerId
   }
 
-  const { accessToken } = useSynapseContext()
-  const [userGroupHeader, setUserGroupHeader] = useState<
-    UserGroupHeader | undefined
-  >(providedUserGroupHeader)
-
   const { data: fetchedUserGroupHeader } = useGetUserGroupHeader(
     (principalId ?? '').toString(),
     {
@@ -42,11 +35,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     },
   )
 
-  useEffect(() => {
-    if (principalId && userGroupHeader == undefined && fetchedUserGroupHeader) {
-      setUserGroupHeader(fetchedUserGroupHeader)
-    }
-  }, [accessToken, principalId, userGroupHeader, fetchedUserGroupHeader])
+  const userGroupHeader = providedUserGroupHeader ?? fetchedUserGroupHeader
 
   if (principalId == null && providedUserGroupHeader == null) {
     console.error(
@@ -57,9 +46,8 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     return <Skeleton width={125} height={30} />
   } else if (userGroupHeader.isIndividual) {
     return (
-      <UserCard
-        ownerId={principalId!.toString()}
-        size={SMALL_USER_CARD}
+      <UserBadge
+        userId={principalId!.toString()}
         disableLink={disableHref}
         showFullName={showFullName}
         showCardOnHover={showCardOnHover}

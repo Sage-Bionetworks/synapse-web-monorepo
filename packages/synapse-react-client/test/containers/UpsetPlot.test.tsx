@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import UpsetPlot, { UpsetPlotProps } from '../../src/components/Plot/UpsetPlot'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import SynapseClient from '../../src/synapse-client'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import syn16787123Json from '../../mocks/query/syn16787123.json'
+import syn16787123Json from '../../src/mocks/query/syn16787123'
 import * as UpSetJsModule from '@upsetjs/react'
 
 const data = syn16787123Json as QueryResultBundle

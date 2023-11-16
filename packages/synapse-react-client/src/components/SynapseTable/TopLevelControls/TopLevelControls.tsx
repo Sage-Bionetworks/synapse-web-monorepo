@@ -13,8 +13,7 @@ import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { ColumnSelection, DownloadOptions } from '../table-top'
 import { Button, Divider, Tooltip, Typography } from '@mui/material'
 import QueryCount from '../../QueryCount/QueryCount'
-import { Icon } from '../../row_renderers/utils'
-import MissingQueryResultsWarning from '../../MissingQueryResultsWarning'
+import MissingQueryResultsWarning from '../../MissingQueryResultsWarning/MissingQueryResultsWarning'
 import { Cavatica } from '../../../assets/icons/Cavatica'
 import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
 import SendToCavaticaConfirmationDialog from '../SendToCavaticaConfirmationDialog'
@@ -22,6 +21,21 @@ import {
   getNumberOfResultsToInvokeAction,
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
+import IconSvg from '../../IconSvg'
+import { useAtomValue } from 'jotai'
+import {
+  lockedColumnAtom,
+  tableQueryDataAtom,
+  tableQueryEntityAtom,
+} from '../../QueryWrapper/QueryWrapper'
+import {
+  hasSelectedRowsAtom,
+  isRowSelectionVisibleAtom,
+  selectedRowsAtom,
+} from '../../QueryWrapper/TableRowSelectionState'
+import CustomControlButton from './CustomControlButton'
+
+const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaTopLevelControlButton'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -33,6 +47,9 @@ export type TopLevelControlsProps = {
   showColumnSelection?: boolean
   customControls?: CustomControl[]
   showExportToCavatica?: boolean
+  fileIdColumnName?: string
+  fileNameColumnName?: string
+  fileVersionColumnName?: string
   cavaticaHelpURL?: string
   remount?: () => void
 }
@@ -56,6 +73,7 @@ export type CustomControl = {
   isRowSelectionSupported: boolean
   classNames?: string
   icon?: React.ReactNode
+  buttonID?: string // optionally set the ID property of the element
 }
 
 const TopLevelControls = (props: TopLevelControlsProps) => {
@@ -70,6 +88,9 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     customControls,
     showExportToCavatica = false,
     cavaticaHelpURL,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
     remount,
   } = props
 
@@ -77,18 +98,14 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     customControls,
     { isRowSelectionSupported: true },
   )
-  const {
-    data,
-    entity,
-    getInitQueryRequest,
-    lockedColumn,
-    hasResettableFilters,
-    getLastQueryRequest,
-    isRowSelectionVisible,
-    selectedRows,
-    hasSelectedRows,
-  } = useQueryContext()
-  useQueryContext()
+  const { getInitQueryRequest, hasResettableFilters, getCurrentQueryRequest } =
+    useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const entity = useAtomValue(tableQueryEntityAtom)
+  const lockedColumn = useAtomValue(lockedColumnAtom)
+  const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
+  const selectedRows = useAtomValue(selectedRowsAtom)
+  const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
 
   const {
     setShowSearchBar,
@@ -131,8 +148,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   /**
    * Handles the toggle of a column select, this will cause the table to
    * either show the column or hide depending on the prior state of the column
-   *
-   * @memberof SynapseTable
    */
   const toggleColumnSelection = (columnName: string) => {
     let columnsToShowInTableCopy = cloneDeep(columnsToShowInTable)
@@ -182,15 +197,24 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             </>
           )}
           {!hideFacetFilterControl && (
-            <a
+            <Button
+              variant={'text'}
               onClick={() => setShowFacetFilter(value => !value)}
-              className="TopLevelControls__querycount__facetFilterLink SRC-no-underline-on-hover"
+              startIcon={
+                <IconSvg
+                  icon={showFacetFilter ? 'close' : 'filter'}
+                  wrap={false}
+                />
+              }
+              sx={{
+                ml: 2,
+                fontWeight: 400,
+                fontSize: '14px',
+                textDecoration: 'none !important',
+              }}
             >
-              <Icon type={showFacetFilter ? 'close' : 'filter'}></Icon>
-              <span className="TopLevelControls__querycount__facetFilterLink__text">
-                {showFacetFilter ? 'Hide' : 'Show'} filters
-              </span>
-            </a>
+              {showFacetFilter ? 'Hide' : 'Show'} filters
+            </Button>
           )}
         </div>
         <div className="TopLevelControls__actions">
@@ -198,21 +222,18 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             topLevelCustomControls.map((customControl, index) => {
               return (
                 <React.Fragment key={index}>
-                  <Button
+                  <CustomControlButton
                     variant="text"
                     disabled={!numberOfResultsToInvokeAction}
-                    onClick={() =>
-                      customControl.onClick({
-                        data,
-                        selectedRows,
-                        refresh,
-                        request: getLastQueryRequest(),
-                      })
-                    }
+                    control={customControl}
+                    callbackData={{
+                      data,
+                      selectedRows,
+                      refresh,
+                      request: getCurrentQueryRequest(),
+                    }}
                     startIcon={customControl.icon}
-                  >
-                    {customControl.buttonText}
-                  </Button>
+                  />
                   <Divider orientation="vertical" variant="middle" flexItem />
                 </React.Fragment>
               )
@@ -249,6 +270,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     setIsShowingExportToCavaticaModal(true)
                   }}
                   startIcon={<Cavatica />}
+                  id={SEND_TO_CAVATICA_BUTTON_ID}
                 >
                   Send {numberOfResultsToInvokeActionAsText} to CAVATICA
                 </Button>
@@ -319,7 +341,12 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               darkTheme={true}
             />
           )}
-          <SendToCavaticaConfirmationDialog cavaticaHelpURL={cavaticaHelpURL} />
+          <SendToCavaticaConfirmationDialog
+            cavaticaHelpURL={cavaticaHelpURL}
+            fileIdColumnName={fileIdColumnName}
+            fileNameColumnName={fileNameColumnName}
+            fileVersionColumnName={fileVersionColumnName}
+          />
         </div>
       </div>
     </div>

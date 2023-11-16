@@ -1,7 +1,8 @@
 import { QueryContextType } from '../../QueryContext'
-import { QueryVisualizationContextType } from '../../QueryVisualizationWrapper'
+import { QueryVisualizationContextType } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import pluralize from 'pluralize'
 import { upperFirst } from 'lodash-es'
+import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 
 const TO_DOWNLOAD_CART = 'to Download Cart'
 
@@ -17,9 +18,9 @@ const TO_DOWNLOAD_CART = 'to Download Cart'
  * @param data
  */
 export function getNumberOfResultsToInvokeAction(
-  hasSelectedRows: QueryContextType['hasSelectedRows'],
-  selectedRows: QueryContextType['selectedRows'],
-  data: QueryContextType['data'],
+  hasSelectedRows: boolean,
+  selectedRows: Row[],
+  data: QueryResultBundle | undefined,
 ) {
   return hasSelectedRows ? selectedRows.length : data?.queryCount
 }
@@ -40,9 +41,9 @@ export function getNumberOfResultsToInvokeAction(
  */
 export function getNumberOfResultsToInvokeActionCopy(
   hasResettableFilters: QueryContextType['hasResettableFilters'],
-  hasSelectedRows: QueryContextType['hasSelectedRows'],
-  selectedRows: QueryContextType['selectedRows'],
-  data: QueryContextType['data'],
+  hasSelectedRows: boolean,
+  selectedRows: Row[],
+  data: QueryResultBundle | undefined,
   unitDescription: QueryVisualizationContextType['unitDescription'],
 ) {
   if (!hasResettableFilters && !hasSelectedRows) {
@@ -75,9 +76,9 @@ export function getNumberOfResultsToInvokeActionCopy(
  */
 export function getNumberOfResultsToAddToDownloadListCopy(
   hasResettableFilters: QueryContextType['hasResettableFilters'],
-  hasSelectedRows: QueryContextType['hasSelectedRows'],
-  selectedRows: QueryContextType['selectedRows'],
-  data: QueryContextType['data'],
+  hasSelectedRows: boolean,
+  selectedRows: Row[],
+  data: QueryResultBundle | undefined,
   unitDescription: QueryVisualizationContextType['unitDescription'],
 ) {
   if (!hasResettableFilters && !hasSelectedRows) {

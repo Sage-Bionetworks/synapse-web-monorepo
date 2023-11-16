@@ -22,7 +22,7 @@ import {
 import _ from 'lodash-es'
 import DotPlot from './DotPlot'
 import BarPlot from './BarPlot'
-import loadingScreen from '../LoadingScreen'
+import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { RequiredKeysOf } from 'type-fest'
 
 export type ThemesPlotProps = {
@@ -140,11 +140,11 @@ function getTotalsByProp<T>(
       (obj[prop] in res ? Number(res[obj[prop]]) : 0) + Number(obj.x)
     return res
   }, {})
-  const result = []
+  const result: T[] = []
   for (const property in resultObject) {
     result.push({
       [prop]: property,
-      count: resultObject[property] as number,
+      count: resultObject[property],
     } as unknown as T)
   }
   return result

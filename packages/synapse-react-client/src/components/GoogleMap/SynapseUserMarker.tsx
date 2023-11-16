@@ -1,10 +1,8 @@
-import { Divider } from '@mui/material'
+import { Divider, Typography } from '@mui/material'
 import { InfoWindow, Marker } from '@react-google-maps/api'
 import React, { useMemo } from 'react'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { Typography } from '@mui/material'
-import UserCard from '../UserCard/UserCard'
 import { GeoData } from '../../synapse-client'
+import { UserBadge } from '../UserCard/UserBadge'
 
 const MAP_MARKER_IMAGE_URL =
   'https://s3.amazonaws.com/static.synapse.org/images/synapse-map-marker.png'
@@ -58,11 +56,7 @@ export function SynapseUserMarker(props: SynapseUserMarkerProps) {
             {geoData.userIds.map(id => (
               <React.Fragment key={id}>
                 <br />
-                <UserCard
-                  size={SMALL_USER_CARD}
-                  ownerId={id}
-                  openLinkInNewTab={true}
-                />
+                <UserBadge userId={id} openLinkInNewTab={true} />
               </React.Fragment>
             ))}
           </React.Fragment>

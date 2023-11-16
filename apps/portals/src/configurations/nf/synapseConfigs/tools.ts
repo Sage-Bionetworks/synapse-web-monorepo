@@ -55,6 +55,7 @@ export const toolsSchema: GenericCardSchema = {
     'tumorType',
     'specimenFormat',
     'specimenType',
+    'dateModified',
   ],
 }
 
@@ -205,7 +206,6 @@ export const toolDetailsPageConfig: DetailsPageProps = {
         {
           name: 'StandaloneQueryWrapper',
           props: {
-            title: 'Mutations',
             name: 'Mutations',
             unitDescription: 'Mutations',
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
@@ -244,16 +244,29 @@ export const toolDetailsPageConfig: DetailsPageProps = {
       uriValue: 'Observations',
       synapseConfigArray: [
         {
-          name: 'CardContainerLogic',
+          name: 'TimelinePlot',
+          outsideContainerClassName: 'home-spacer',
           props: {
-            sql: `${observationsSql} WHERE observationTime IS NOT NULL ORDER BY observationTime DESC`,
-            type: SynapseConstants.OBSERVATION_CARD,
-            limit: 3,
+            title: 'Natural History Observations',
+            subTitle:
+              'To view the observations, click on a mark on the timeline.',
+            sql: observationsSql,
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
           },
-          title: 'Natural History Observations',
           tableSqlKeys: ['resourceId'],
           columnName: 'resourceId',
         },
+        // {
+        //   name: 'CardContainerLogic',
+        //   props: {
+        //     sql: `${observationsSql} WHERE observationTime IS NOT NULL ORDER BY observationTime DESC`,
+        //     type: SynapseConstants.OBSERVATION_CARD,
+        //     limit: 3,
+        //   },
+        //   title: 'Natural History Observations',
+        //   tableSqlKeys: ['resourceId'],
+        //   columnName: 'resourceId',
+        // },
         {
           name: 'CardContainerLogic',
           props: {

@@ -46,7 +46,7 @@ export function RadioOption<T extends string | boolean | number = string>(
 ) {
   const [uniqueId] = useState(_uniqueId('src-radio-'))
   return (
-    <div onClick={() => props.onChange(props.value)}>
+    <div className={'radio'} onClick={() => props.onChange(props.value)}>
       <input
         id={uniqueId}
         type="radio"

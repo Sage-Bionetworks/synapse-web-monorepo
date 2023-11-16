@@ -11,7 +11,7 @@ const shared = {
   moduleNameMapper: {
     '\\.(css|less|scss)$': 'identity-obj-proxy',
     // Mock SVGs, loaded by SVGR https://react-svgr.com/docs/jest/
-    '\\.svg$': '<rootDir>/mocks/svg.js',
+    '\\.svg$': '<rootDir>/test/testutils/svg.js',
   },
   transformIgnorePatterns: [
     `node_modules/(?!(?:.pnpm/)?(${esModules.join('|')}))`,
@@ -25,13 +25,13 @@ module.exports = {
   projects: [
     {
       displayName: 'synapse-react-client unit tests',
-      testMatch: ['<rootDir>/test/**/*.test.[jt]s?(x)'],
+      testMatch: ['<rootDir>/**/*.test.[jt]s?(x)'],
       testPathIgnorePatterns: ['/node_modules/', 'integration.test\\.'],
       ...shared,
     },
     {
       displayName: 'synapse-react-client integration tests',
-      testMatch: ['<rootDir>/test/**/*.integration.test.[jt]s?(x)'],
+      testMatch: ['<rootDir>/**/*.integration.test.[jt]s?(x)'],
       // Use jest-serial-runner since these integration tests use a shared mock server
       runner: 'jest-serial-runner',
       ...shared,

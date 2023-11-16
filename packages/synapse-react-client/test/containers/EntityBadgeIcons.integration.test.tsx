@@ -4,10 +4,10 @@ import {
   EntityBadgeIcons,
   EntityBadgeIconsProps,
 } from '../../src/components/EntityBadgeIcons/EntityBadgeIcons'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../src/utils/context/SynapseContext'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../mocks/msw/server'
+import mockFileEntityData from '../../src/mocks/entity/mockFileEntity'
+import { rest, server } from '../../src/mocks/msw/server'
 import userEvent from '@testing-library/user-event'
 import {
   BackendDestinationEnum,
@@ -27,7 +27,7 @@ import { EntityType } from '@sage-bionetworks/synapse-types'
 import {
   mockSchemaBinding,
   mockSchemaValidationResults,
-} from '../../mocks/mockSchema'
+} from '../../src/mocks/mockSchema'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id

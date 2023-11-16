@@ -3,7 +3,7 @@
  */
 
 import { omit, pick } from 'lodash-es'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import {
   QueryFunctionContext,
   QueryKey,
@@ -21,20 +21,22 @@ import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
+  AccessControlList,
+  ColumnModel,
   Entity,
   EntityHeader,
+  EntityId,
   EntityJson,
-  EntityJsonValue,
   EntityPath,
   Evaluation,
   GetEvaluationParameters,
   PaginatedResults,
+  UserEntityPermissions,
+  VersionInfo,
 } from '@sage-bionetworks/synapse-types'
-import { VersionInfo } from '@sage-bionetworks/synapse-types'
 import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
-import { EntityId } from '@sage-bionetworks/synapse-types'
-import { AccessControlList } from '@sage-bionetworks/synapse-types'
-import { UserEntityPermissions } from '@sage-bionetworks/synapse-types'
+import { createTableUpdateTransactionRequest } from '../../utils'
+import { SetOptional } from 'type-fest'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
@@ -207,26 +209,37 @@ export function removeStandardEntityFields(
  */
 export function useGetJson(
   entityId: string,
+  includeDerivedAnnotations: boolean,
   options?: UseQueryOptions<EntityJson, SynapseClientError>,
 ) {
-  const [entityMetadata, setEntityMetadata] = useState<EntityJson | undefined>()
-  const [annotations, setAnnotations] = useState<
-    Record<string, EntityJsonValue> | undefined
-  >()
   const { accessToken, keyFactory } = useSynapseContext()
   const query = useQuery<EntityJson, SynapseClientError>(
-    keyFactory.getEntityJsonQueryKey(entityId),
-    () => SynapseClient.getEntityJson(entityId, accessToken),
+    keyFactory.getEntityJsonQueryKey(entityId, includeDerivedAnnotations),
+    () =>
+      SynapseClient.getEntityJson(
+        entityId,
+        includeDerivedAnnotations,
+        accessToken,
+      ),
     options,
   )
 
   // Separate the standard fields and annotations.
-  useEffect(() => {
-    if (query.data) {
-      setEntityMetadata(getStandardEntityFields(query.data))
-      setAnnotations(removeStandardEntityFields(query.data))
-    }
-  }, [query.data])
+  const entityMetadata = useMemo(
+    () =>
+      query?.data == undefined
+        ? undefined
+        : getStandardEntityFields(query.data),
+    [query.data],
+  )
+
+  const annotations = useMemo(
+    () =>
+      query?.data == undefined
+        ? undefined
+        : removeStandardEntityFields(query.data),
+    [query.data],
+  )
 
   return {
     ...query,
@@ -252,7 +265,8 @@ export function useUpdateViaJson(
 
         await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
         queryClient.setQueryData(
-          keyFactory.getEntityJsonQueryKey(entityId),
+          // This annotation data will never include derived annotations, which are calculated by the backend asynchronously
+          keyFactory.getEntityJsonQueryKey(entityId, false),
           data,
         )
 
@@ -352,6 +366,51 @@ export function useUpdateEntityACL(
 
         if (options?.onSuccess) {
           await options.onSuccess(updatedACL, variables, ctx)
+        }
+      },
+    },
+  )
+}
+
+type UpdateTableMutationRequest = {
+  entityId: string
+  originalColumnModels: ColumnModel[]
+  newColumnModels: SetOptional<ColumnModel, 'id'>[]
+}
+
+export function useUpdateTableColumns(
+  options?: UseMutationOptions<
+    unknown,
+    SynapseClientError,
+    UpdateTableMutationRequest
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<unknown, SynapseClientError, UpdateTableMutationRequest>(
+    async (request: UpdateTableMutationRequest) => {
+      // This call will create new column models as appropriate
+      const transactionRequest = await createTableUpdateTransactionRequest(
+        accessToken!,
+        request.entityId,
+        request.originalColumnModels,
+        request.newColumnModels,
+      )
+
+      return SynapseClient.updateTable(transactionRequest, accessToken)
+    },
+    {
+      ...options,
+      onSuccess: async (response, variables, ctx) => {
+        await invalidateAllQueriesForEntity(
+          queryClient,
+          keyFactory,
+          variables.entityId,
+        )
+
+        if (options?.onSuccess) {
+          await options.onSuccess(response, variables, ctx)
         }
       },
     },

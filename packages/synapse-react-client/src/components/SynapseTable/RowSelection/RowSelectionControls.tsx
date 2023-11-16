@@ -7,6 +7,16 @@ import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { Cavatica } from '../../../assets/icons/Cavatica'
 import { GetAppTwoTone } from '@mui/icons-material'
 import { canTableQueryBeAddedToDownloadList } from '../../../utils/functions/queryUtils'
+import { useAtom, useAtomValue } from 'jotai'
+import {
+  tableQueryDataAtom,
+  tableQueryEntityAtom,
+} from '../../QueryWrapper/QueryWrapper'
+import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
+import { getFileColumnModelId } from '../SynapseTableUtils'
+import CustomControlButton from '../TopLevelControls/CustomControlButton'
+
+const SEND_TO_CAVATICA_BUTTON_ID = 'SendToCavaticaRowSelectionControlButton'
 
 export type RowSelectionControlsProps = {
   showExportToCavatica?: boolean
@@ -22,8 +32,11 @@ export type RowSelectionControlsProps = {
  */
 export function RowSelectionControls(props: RowSelectionControlsProps) {
   const { customControls = [], showExportToCavatica = false, remount } = props
-  const { data, entity, getLastQueryRequest, selectedRows, setSelectedRows } =
-    useQueryContext()
+  const { getCurrentQueryRequest } = useQueryContext()
+  const data = useAtomValue(tableQueryDataAtom)
+  const entity = useAtomValue(tableQueryEntityAtom)
+  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
+
   const { setIsShowingExportToCavaticaModal, setShowDownloadConfirmation } =
     useQueryVisualizationContext()
 
@@ -34,8 +47,9 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
       remount()
     }
   }
-
-  const showAddToDownloadCart = canTableQueryBeAddedToDownloadList(entity)
+  const fileColumnId = getFileColumnModelId(data?.columnModels)
+  const showAddToDownloadCart =
+    fileColumnId ?? canTableQueryBeAddedToDownloadList(entity)
 
   return (
     <RowSelectionUI
@@ -46,21 +60,18 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
         <>
           {customControls.map(customControl => {
             return (
-              <Button
+              <CustomControlButton
                 key={customControl.buttonText}
                 variant="contained"
-                onClick={() =>
-                  customControl.onClick({
-                    data,
-                    selectedRows,
-                    refresh,
-                    request: getLastQueryRequest(),
-                  })
-                }
+                callbackData={{
+                  data,
+                  selectedRows,
+                  refresh,
+                  request: getCurrentQueryRequest(),
+                }}
+                control={customControl}
                 startIcon={customControl.icon}
-              >
-                {customControl.buttonText}
-              </Button>
+              />
             )
           })}
           {showExportToCavatica && (
@@ -70,6 +81,7 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
                 setIsShowingExportToCavaticaModal(true)
               }}
               startIcon={<Cavatica />}
+              id={SEND_TO_CAVATICA_BUTTON_ID}
             >
               Send to CAVATICA
             </Button>

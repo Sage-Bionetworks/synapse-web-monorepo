@@ -1,39 +1,36 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { DownloadListItemResult } from '@sage-bionetworks/synapse-types'
-import { Dropdown, Table } from 'react-bootstrap'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { useGetAvailableFilesToDownloadInfinite } from '../../synapse-queries/download/useDownloadList'
-import { useInView } from 'react-intersection-observer'
 import {
   AvailableFilter,
+  Direction,
+  DownloadListItem,
+  DownloadListItemResult,
+  FilesStatisticsResponse,
   Sort,
   SortField,
 } from '@sage-bionetworks/synapse-types'
-import { DownloadListItem } from '@sage-bionetworks/synapse-types'
+import { Dropdown, Table } from 'react-bootstrap'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
+import { useGetAvailableFilesToDownloadInfinite } from '../../synapse-queries'
+import { useInView } from 'react-intersection-observer'
 import SynapseClient from '../../synapse-client'
 import dayjs from 'dayjs'
-import UserCard from '../UserCard/UserCard'
 import SortIcon from '../../assets/icons/Sort'
-import {
-  Direction,
-  FileHandleAssociateType,
-} from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useSynapseContext } from '../../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg/IconSvg'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
-import { SkeletonTable } from '../Skeleton/SkeletonTable'
-import DirectDownload from '../DirectDownload'
-import { displayToast } from '../ToastMessage/ToastMessage'
-import { FilesStatisticsResponse } from '@sage-bionetworks/synapse-types'
+import { SkeletonTable } from '../Skeleton'
+import { displayToast } from '../ToastMessage'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
-import { BlockingLoader } from '../LoadingScreen'
+import { BlockingLoader } from '../LoadingScreen/LoadingScreen'
 import { Tooltip } from '@mui/material'
 import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
+import { UserBadge } from '../UserCard/UserBadge'
+
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
-export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
 dayjs.extend(localizedFormat)
 
@@ -228,6 +225,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 <th>
                   SynID
                   <InteractiveCopyIdsIcon
+                    size={'small'}
                     onCopy={() => {
                       // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
                       setCopyingAllSynapseIDs(true)
@@ -275,7 +273,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                             placement="right"
                           >
                             <span className="eligibileIcon">
-                              <IconSvg icon="packagableFile" />
+                              <IconSvg wrap={false} icon="packagableFile" />
                             </span>
                           </Tooltip>
                         )}
@@ -286,7 +284,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                             placement="right"
                           >
                             <span className="ineligibileIcon">
-                              <IconSvg icon="warningOutlined" />
+                              <IconSvg wrap={false} icon="warningOutlined" />
                             </span>
                           </Tooltip>
                         )}
@@ -310,21 +308,15 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                       <td>{item.projectName}</td>
                       <td>{addedOn}</td>
                       <td>
-                        <UserCard
-                          size={'SMALL USER CARD'}
-                          ownerId={item.createdBy}
-                        />
+                        <UserBadge userId={item.createdBy} />
                       </td>
                       <td>{createdOn}</td>
                       <td className="stickyColumn">
                         <div className="actionsContainer">
                           <span className="downloadItem">
-                            <DirectDownload
-                              associatedObjectId={item.fileEntityId}
-                              associatedObjectType={
-                                FileHandleAssociateType.FileEntity
-                              }
-                              entityVersionNumber={item.versionNumber?.toString()}
+                            <FileEntityDirectDownload
+                              entityId={item.fileEntityId}
+                              entityVersionNumber={item.versionNumber}
                               displayFileName={false}
                               onClickCallback={(isExternalLink: boolean) => {
                                 // SWC-5944: remove the item from the download list, unless it's an external link.

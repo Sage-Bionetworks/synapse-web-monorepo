@@ -1,4 +1,4 @@
-import { UseQueryOptions, useQuery } from 'react-query'
+import { UseQueryOptions, useQuery, useQueryClient } from 'react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -8,6 +8,7 @@ import {
   FileHandle,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
+import { cloneDeep } from 'lodash-es'
 
 export function useGetPresignedUrlContent(
   fileHandle: FileHandle,
@@ -125,7 +126,29 @@ export function useGetFileBatch(
   options?: UseQueryOptions<BatchFileResult, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  const queryFn = async () => SynapseClient.getFiles(request, accessToken)
+  const queryClient = useQueryClient()
+  const queryFn = async () => {
+    const response = await SynapseClient.getFiles(request, accessToken)
+
+    // Update the cache with the individual file handle results, in case this was a batch
+    response.requestedFiles.forEach(fileResult => {
+      const requestedItem = request.requestedFiles.find(
+        fha => fha.fileHandleId === fileResult.fileHandleId,
+      )!
+      const atomicRequest: BatchFileRequest = {
+        ...cloneDeep(request),
+        requestedFiles: [requestedItem],
+      }
+      const atomicResult: BatchFileResult = {
+        requestedFiles: [fileResult],
+      }
+      queryClient.setQueryData(
+        keyFactory.getBatchOfFiles(atomicRequest),
+        atomicResult,
+      )
+    })
+    return response
+  }
 
   if (request.includePreSignedURLs || request.includePreviewPreSignedURLs) {
     // Don't use this hook if you need pre-signed URLs. They expire every 30 seconds, so you will either end up giving the

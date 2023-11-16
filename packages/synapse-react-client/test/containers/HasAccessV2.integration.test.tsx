@@ -4,7 +4,7 @@ import {
   HasAccessV2,
   HasAccessProps,
 } from '../../src/components/HasAccess/HasAccessV2'
-import { createWrapper } from '../testutils/TestingLibraryUtils'
+import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
 import { ENTITY_BUNDLE_V2 } from '../../src/utils/APIConstants'
 import {
   BackendDestinationEnum,
@@ -18,14 +18,14 @@ import {
   RestrictionInformationRequest,
   RestrictionInformationResponse,
 } from '@sage-bionetworks/synapse-types'
-import { mockFolderEntity } from '../../mocks/entity/mockEntity'
-import mockFileEntityData from '../../mocks/entity/mockFileEntity'
-import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
+import { mockFolderEntity } from '../../src/mocks/entity/mockEntity'
+import mockFileEntityData from '../../src/mocks/entity/mockFileEntity'
+import { MOCK_CONTEXT_VALUE } from '../../src/mocks/MockSynapseContext'
 import {
   mockOpenRestrictionInformation,
   mockUnmetControlledDataRestrictionInformationACT,
-} from '../../mocks/mock_has_access_data'
-import { rest, server } from '../../mocks/msw/server'
+} from '../../src/mocks/mock_has_access_data'
+import { rest, server } from '../../src/mocks/msw/server'
 
 const entityId = mockFileEntityData.id
 const mockFileEntityBundle = mockFileEntityData.bundle

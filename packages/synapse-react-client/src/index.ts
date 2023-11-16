@@ -13,7 +13,7 @@ import * as AppUtils from './utils/AppUtils'
 import * as RegularExpressions from './utils/functions/RegularExpressions'
 import { SynapseClientError } from './utils/SynapseClientError'
 import * as SynapseComponents from './components'
-import SynapseClient from './synapse-client'
+import SynapseClient, { HttpClient } from './synapse-client'
 import * as SynapseQueries from './synapse-queries'
 import { SynapseConstants, SynapseUtilityFunctions } from './utils'
 
@@ -29,6 +29,7 @@ const SynapseContextUtils = {
 }
 
 export {
+  HttpClient,
   SynapseClient,
   SynapseClientError,
   SynapseConstants,

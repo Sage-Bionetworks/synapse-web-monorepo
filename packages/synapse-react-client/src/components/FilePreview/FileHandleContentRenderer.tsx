@@ -6,7 +6,7 @@ import {
   FileHandleAssociation,
   BatchFileRequest,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import HtmlPreview from './HtmlPreview/HtmlPreview'
 import { PreviewRendererType } from './PreviewRendererType'
 

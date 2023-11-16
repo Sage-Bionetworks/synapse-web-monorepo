@@ -6,59 +6,53 @@ import {
   isDatasetCollection,
   isEntityView,
 } from '../../../utils/functions/EntityTypeUtils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
-import { AUTHENTICATED_USERS } from '../../../utils/SynapseConstants'
 import {
   ColumnModel,
   ColumnType,
   ColumnTypeEnum,
-  EntityHeader,
   FileHandleAssociateType,
   Row,
   SelectColumn,
-  UserGroupHeader,
-  UserProfile,
 } from '@sage-bionetworks/synapse-types'
 import {
   CardLink,
   ColumnSpecifiedLink,
   MarkdownLink,
 } from '../../CardContainerLogic'
-import DirectDownload from '../../DirectDownload'
+import DirectDownload from '../../DirectDownload/DirectDownload'
 import EntityIdList from './EntityIdList'
 import { EntityLink } from '../../EntityLink'
 import EvaluationIdRenderer from './EvaluationIdRenderer'
 import { SynapseCardLabel } from '../../GenericCard'
-import IconSvg, { IconName } from '../../IconSvg/IconSvg'
-import { useQueryContext } from '../../QueryContext/QueryContext'
 import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
-import UserCard from '../../UserCard/UserCard'
 import UserIdList from './UserIdList'
 import JSONTableCellRenderer from './JSON/JSONTableCellRenderer'
-import { Typography } from '@mui/material'
+import { Link, Typography } from '@mui/material'
+import UserOrTeamBadge from '../../UserOrTeamBadge'
+import { isFileViewOrDataset } from '../SynapseTableUtils'
+import { useAtomValue } from 'jotai'
+import { tableQueryEntityAtom } from '../../QueryWrapper/QueryWrapper'
+import { EntityImage } from '../../CardContainerLogic/CardContainerLogic'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
   columnValue: string | null
   isBold: string
-  columnLinkConfig?: CardLink | MarkdownLink | ColumnSpecifiedLink
-  mapEntityIdToHeader: Record<string, EntityHeader>
-  mapUserIdToHeader: Record<string, UserGroupHeader | UserProfile>
+  columnLinkConfig?: CardLink | MarkdownLink | ColumnSpecifiedLink | EntityImage
   columnName: string
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
   rowData: Row['values']
-  rowId?: number
+  rowId?: string
   rowVersionNumber?: number
+  isRowEntityColumn?: boolean
 }
 
-export function SynapseTableCell(props: SynapseTableCellProps) {
+function SynapseTableCell(props: SynapseTableCellProps) {
   const {
     columnType,
     columnValue,
     isBold,
-    mapEntityIdToHeader,
-    mapUserIdToHeader,
     columnLinkConfig,
     columnName,
     selectColumns,
@@ -66,9 +60,9 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
     rowData,
     rowId,
     rowVersionNumber,
+    isRowEntityColumn,
   } = props
-  const { entity } = useQueryContext()
-
+  const entity = useAtomValue(tableQueryEntityAtom)
   if (!columnValue) {
     return <p className="SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
   }
@@ -91,21 +85,19 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
   // PORTALS-2095: Special case. If this is an EntityView, and we are rendering the 'id' or 'name' column,
   // and we have a rowId and rowVersionNumber (should always be the case), and our entityIdToHeader map
   // contains the row Synapse ID, then auto-link.
-  if (
+  const tableRowRepresentsEntity =
     entity &&
-    (isEntityView(entity) ||
-      isDataset(entity) ||
-      isDatasetCollection(entity)) &&
+    (isEntityView(entity) || isDataset(entity) || isDatasetCollection(entity))
+  if (
+    (tableRowRepresentsEntity || isRowEntityColumn) &&
     (columnName === 'id' || columnName === 'name') &&
     rowId &&
     rowVersionNumber
   ) {
-    const synId = `syn${rowId.toString()}`
-    const entity = mapEntityIdToHeader[synId] ?? synId
     return (
       <p>
         <EntityLink
-          entity={entity}
+          entity={rowId}
           versionNumber={rowVersionNumber}
           className={`${isBold}`}
           showIcon={false}
@@ -120,13 +112,12 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
       return (
         <p>
           <EntityLink
-            entity={mapEntityIdToHeader[columnValue] ?? columnValue}
+            entity={columnValue}
             className={`${isBold}`}
             displayTextField={'name'}
           />
         </p>
       )
-      break
     case ColumnTypeEnum.DATE_LIST: {
       const jsonData: number[] = JSON.parse(columnValue)
       return (
@@ -157,19 +148,29 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
         </p>
       )
     }
-    case ColumnTypeEnum.FILEHANDLEID:
+    case ColumnTypeEnum.FILEHANDLEID: {
+      let associatedObjectId = entity!.id!
+      let associatedObjectType = FileHandleAssociateType.TableEntity
+      if (isFileViewOrDataset(entity) && columnName === 'dataFileHandleId') {
+        associatedObjectId = String(rowId)
+        associatedObjectType = FileHandleAssociateType.FileEntity
+      }
       return (
         <>
           {entity && (
-            <DirectDownload
-              associatedObjectId={entity.id!}
-              associatedObjectType={FileHandleAssociateType.TableEntity}
-              fileHandleId={columnValue}
-              displayFileName={true}
-            />
+            <p>
+              <DirectDownload
+                iconSvgPropOverrides={{ sx: { color: 'primary.main' } }}
+                associatedObjectId={associatedObjectId}
+                associatedObjectType={associatedObjectType}
+                fileHandleId={columnValue}
+                displayFileName={true}
+              />
+            </p>
           )}
         </>
       )
+    }
     case ColumnTypeEnum.ENTITYID_LIST: {
       const jsonData: string[] = JSON.parse(columnValue)
       return (
@@ -207,52 +208,16 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
       return <p className={isBold}>{formatDate(dayjs(Number(columnValue)))}</p>
 
     case ColumnTypeEnum.USERID:
-      if (
-        Object.prototype.hasOwnProperty.call(mapUserIdToHeader, columnValue)
-      ) {
-        const cachedData = mapUserIdToHeader[columnValue]
-        const { ownerId, userName } = cachedData
-        if ('isIndividual' in cachedData) {
-          // is UserGroupHeader
-          const icon: IconName =
-            userName === AUTHENTICATED_USERS ? 'public' : 'people'
-          if (userName === AUTHENTICATED_USERS) {
-            return (
-              <span>
-                <IconSvg icon={icon} /> All registered Synapse users
-              </span>
-            )
-          }
-          return (
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${ownerId}`}
-            >
-              <IconSvg icon={icon} /> {userName}
-            </a>
-          )
-        } else {
-          // isUserCard
-          return (
-            <UserCard
-              userProfile={cachedData}
-              preSignedURL={cachedData.clientPreSignedURL}
-              size={'SMALL USER CARD'}
-            />
-          )
-        }
-      }
-      break
+      return <UserOrTeamBadge principalId={columnValue} />
     case ColumnTypeEnum.LINK:
       return (
-        <a target="_blank" rel="noopener noreferrer" href={columnValue}>
-          {columnValue}
-        </a>
+        <p>
+          <Link target="_blank" rel="noopener noreferrer" href={columnValue}>
+            {columnValue}
+          </Link>
+        </p>
       )
     case ColumnTypeEnum.STRING:
-    case ColumnTypeEnum.DOUBLE:
-    case ColumnTypeEnum.INTEGER:
     case ColumnTypeEnum.BOOLEAN:
     case ColumnTypeEnum.MEDIUMTEXT:
     case ColumnTypeEnum.LARGETEXT: {
@@ -262,6 +227,26 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
         </Typography>
       )
     }
+    case ColumnTypeEnum.INTEGER:
+      return (
+        <Typography
+          variant={'smallText1'}
+          sx={{ textAlign: 'right' }}
+          className={isBold}
+        >
+          {parseInt(columnValue).toLocaleString()}
+        </Typography>
+      )
+    case ColumnTypeEnum.DOUBLE:
+      return (
+        <Typography
+          variant={'smallText1'}
+          sx={{ textAlign: 'right' }}
+          className={isBold}
+        >
+          {parseFloat(columnValue).toLocaleString()}
+        </Typography>
+      )
     case ColumnTypeEnum.JSON:
       return <JSONTableCellRenderer value={columnValue} />
     default:
@@ -278,3 +263,5 @@ export function SynapseTableCell(props: SynapseTableCellProps) {
   // TODO: If we don't have a id:data mapping, we should render a component that can fetch the required data, rather than breaking from the case.
   return <p className={isBold}>{columnValue}</p>
 }
+
+export default React.memo(SynapseTableCell)

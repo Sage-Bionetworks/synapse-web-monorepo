@@ -23,9 +23,12 @@ import {
   SubscriptionObjectType,
   SubscriptionQuery,
   TYPE_FILTER,
+  ViewColumnModelRequest,
+  ViewEntityType,
 } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from 'react-query'
 import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
+import { hashCode } from '../utils/functions/StringUtils'
 
 const entityQueryKeyObjects = {
   /* Query key for all entities */
@@ -133,8 +136,8 @@ const entityQueryKeyObjects = {
     ...entityQueryKeyObjects.entity(id),
     scope: 'schemaValidationResults',
   }),
-  header: (id: string) => ({
-    ...entityQueryKeyObjects.entity(id),
+  header: (id: string, versionNumber?: number) => ({
+    ...entityQueryKeyObjects.version(id, versionNumber),
     scope: 'entityHeaders',
   }),
   headers: (references: ReferenceList) => ({
@@ -192,7 +195,12 @@ export class KeyFactory {
    * @private
    */
   private getKey(...args: any[]): QueryKey {
-    return [this.accessToken, ...removeTrailingUndefinedElements(args)]
+    return [
+      this.accessToken == null
+        ? this.accessToken
+        : btoa(String(hashCode(this.accessToken))),
+      ...removeTrailingUndefinedElements(args),
+    ]
   }
 
   public getAllEntityDataQueryKey() {
@@ -241,8 +249,10 @@ export class KeyFactory {
     return this.getKey(entityQueryKeyObjects.children(request, infinite))
   }
 
-  public getEntityJsonQueryKey(id: string) {
-    return this.getKey(entityQueryKeyObjects.json(id))
+  public getEntityJsonQueryKey(id: string, includeDerivedAnnotations: boolean) {
+    return this.getKey(entityQueryKeyObjects.json(id), {
+      includeDerivedAnnotations,
+    })
   }
 
   public getEntityBundleQueryKey(
@@ -281,8 +291,8 @@ export class KeyFactory {
     return this.getKey(entityQueryKeyObjects.schemaValidationResults(id))
   }
 
-  public getEntityHeaderQueryKey(id: string) {
-    return this.getKey(entityQueryKeyObjects.header(id))
+  public getEntityHeaderQueryKey(id: string, versionNumber?: number) {
+    return this.getKey(entityQueryKeyObjects.header(id, versionNumber))
   }
 
   public getEntityAccessRequirementsQueryKey(id: string) {
@@ -664,6 +674,10 @@ export class KeyFactory {
   public getUserGroupHeaderQueryKey(id: string) {
     return this.getKey('userGroupHeader', id)
   }
+
+  public getUserGroupHeaderBatchQueryKey(id: string[]) {
+    return this.getKey('userGroupHeaderBatch', id)
+  }
   public getUserGroupHeaderWithAliasQueryKey(aliases: string[]) {
     return this.getKey('userGroupHeader', aliases)
   }
@@ -691,5 +705,18 @@ export class KeyFactory {
     sortDirection: string,
   ) {
     return this.getKey('dockerTag', id, offset, limit, sort, sortDirection)
+  }
+
+  public getDefaultColumnModelsQueryKey(
+    viewEntityType?: ViewEntityType,
+    viewTypeMask?: number,
+  ) {
+    return this.getKey('defaultColumnModels', viewEntityType, viewTypeMask)
+  }
+
+  public getAnnotationColumnModelsQueryKey(
+    request: Omit<ViewColumnModelRequest, 'nextPageToken'>,
+  ) {
+    return this.getKey('annotationColumnModels', request)
   }
 }

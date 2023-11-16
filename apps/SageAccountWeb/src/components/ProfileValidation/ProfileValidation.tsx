@@ -26,13 +26,14 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import { SourceAppLogo, useSourceApp } from '../SourceApp'
+import { SourceAppLogo } from '../SourceApp'
 import Attestation from './Attestation'
 import ThankYou from './ThankYou'
 import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
 import { ReturnToAppButton } from './ReturnToAppButton'
 import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
 import { BackButton } from '../BackButton'
+import { useSourceApp } from '../useSourceApp'
 
 const STEP_CONTENT = [
   {

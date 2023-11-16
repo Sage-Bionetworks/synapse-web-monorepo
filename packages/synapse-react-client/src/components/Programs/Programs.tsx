@@ -9,7 +9,7 @@ import useGetQueryResultBundle from '../../synapse-queries/entity/useGetQueryRes
 import useShowDesktop from '../../utils/hooks/useShowDesktop'
 import ProgramsMobile from './Programs.Mobile'
 import ProgramsDesktop from './Programs.Desktop'
-import { getColorPalette } from '../ColorGradient'
+import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { CardLink } from '../CardContainerLogic'
 import { getFieldIndex } from '../../utils/functions/queryUtils'
 import { useGetEntity } from '../../synapse-queries/entity/useEntity'

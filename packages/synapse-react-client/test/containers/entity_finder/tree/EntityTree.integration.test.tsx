@@ -13,6 +13,7 @@ import {
   EntityPath,
   EntityType,
   PaginatedResults,
+  Project,
   ProjectHeader,
   ProjectHeaderList,
 } from '@sage-bionetworks/synapse-types'
@@ -22,24 +23,29 @@ import {
   EntityTreeNodeType,
   VirtualizedTreeProps,
 } from '../../../../src/components/EntityFinder/tree/VirtualizedTree'
-import { rest, server } from '../../../../mocks/msw/server'
+import { rest, server } from '../../../../src/mocks/msw/server'
 import failOnConsole from 'jest-fail-on-console'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../src/utils/functions/getEndpoint'
 import {
+  ENTITY,
   ENTITY_HEADER_BY_ID,
+  ENTITY_HEADERS,
+  ENTITY_ID,
   ENTITY_PATH,
   FAVORITES,
   PROJECTS,
 } from '../../../../src/utils/APIConstants'
-import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
-import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
+import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
+import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
+import mockFileEntity from '../../../../src/mocks/entity/mockFileEntity'
 import * as ToastMessageModule from '../../../../src/components/ToastMessage/ToastMessage'
-import mockProject, { mockProjects } from '../../../../mocks/entity/mockProject'
-import { mockFolderEntity } from '../../../../mocks/entity/mockEntity'
+import mockProject, {
+  mockProjects,
+} from '../../../../src/mocks/entity/mockProject'
+import { mockFolderEntity } from '../../../../src/mocks/entity/mockEntity'
 
 const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'
 
@@ -209,20 +215,27 @@ describe('EntityTree tests', () => {
           return res(ctx.status(200), ctx.json(entityPath))
         },
       ),
-      rest.get(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}${ENTITY_HEADER_BY_ID(':id')}`,
+
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
         async (req, res, ctx) => {
-          if (req.params.id === projectIdWithNoReadAccess) {
+          const { references } = await req.json()
+          if (references[0].targetId === projectIdWithNoReadAccess) {
             return res(
-              ctx.status(403),
+              ctx.status(200),
               ctx.json({
-                reason: 'You do not have READ access on this entity.',
+                results: [],
+                totalNumberOfResults: 0,
               }),
             )
           }
-          return res(ctx.status(200), ctx.json(entityPath.path[1]))
+          return res(
+            ctx.status(200),
+            ctx.json({
+              results: [entityPath.path[1]],
+              totalNumberOfResults: 1,
+            }),
+          )
         },
       ),
       rest.get(

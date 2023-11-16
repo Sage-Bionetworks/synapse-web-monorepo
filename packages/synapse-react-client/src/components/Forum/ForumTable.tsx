@@ -3,15 +3,16 @@ import React, { useState } from 'react'
 import { Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
 import { useGetForumInfinite } from '../../synapse-queries/forum/useForum'
-import { AVATAR, SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { Direction } from '@sage-bionetworks/synapse-types'
+import { AVATAR } from '../../utils/SynapseConstants'
 import {
+  Direction,
   DiscussionFilter,
   DiscussionThreadOrder,
 } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../IconSvg/IconSvg'
 import UserCard from '../UserCard/UserCard'
 import { Button, Link } from '@mui/material'
+import { UserBadge } from '../UserCard/UserBadge'
 
 export type ForumTableProps = {
   forumId: string
@@ -149,7 +150,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
                   </Link>
                 </td>
                 <td>
-                  <UserCard size={SMALL_USER_CARD} ownerId={item.createdBy} />
+                  <UserBadge userId={item.createdBy} />
                 </td>
                 <td>
                   {item.activeAuthors.map(user => (

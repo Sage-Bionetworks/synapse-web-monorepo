@@ -29,7 +29,11 @@
     .SubmissionSummaryGrid {
       display: grid;
       column-gap: 10px;
-      grid-template-columns: auto auto;
+      // Grid column maximum is 50% minus 5px to account for the column gap
+      grid-template-columns: minmax(auto, calc(50% - 5px)) minmax(
+          auto,
+          calc(50% - 5px)
+        );
 
       .Key {
         grid-column: 1;

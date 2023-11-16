@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { SynapseConstants } from '../../utils'
 

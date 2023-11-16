@@ -1,23 +1,13 @@
 import React from 'react'
 import { GenericRoute } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import {
-  projects,
-  studies,
-  data,
-  people,
-  publications,
-  cohortbuilder,
-  species,
-} from './synapseConfigs'
 import RouteControlWrapperProps from './routeControlWrapperProps'
 import { studiesProgrammaticRouteConfig } from './synapseConfigs/studies'
 import {
   projectCardConfiguration,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
-import { dataSql, projectsSql, peopleSql, upsetPlotSql } from './resources'
-import computationalTools from './synapseConfigs/computational_tools'
+import { peopleSql, projectsSql } from './resources'
 
 const routes: GenericRoute[] = [
   {
@@ -52,86 +42,88 @@ const routes: GenericRoute[] = [
           entityId: 'syn51449135',
         },
       },
-      {
-        name: 'UpsetPlot',
-        title: 'Exploring the Data',
-        outsideContainerClassName: 'home-spacer home-bg-dark',
-        centerTitle: true,
-        props: {
-          sql: upsetPlotSql,
-          rgbIndex: 0,
-          maxBarCount: 20,
-          setName: '# Files per data type',
-          combinationName: '# Files',
-          // summaryLinkText: 'Explore All Data',
-          // summaryLink: '/Explore/Data',
-        },
-      },
-      {
-        name: 'FeaturedDataTabs',
-        centerTitle: true,
-        outsideContainerClassName: 'home-spacer home-bg-dark',
-        props: {
-          sql: dataSql,
-          rgbIndex: 3,
-          configs: [
-            {
-              title: 'Human Studies',
-              icon: 'PERSON',
-              explorePagePath: '/Explore/Studies',
-              exploreObjectType: 'Studies',
-              plotsConfig: {
-                configs: [
-                  {
-                    title: 'The Long Life Family Study',
-                    description:
-                      'This study is an international collaborative study of the genetics and familial components of exceptional survival, longevity, and healthy aging.',
-                    facetsToPlot: ['dataType'],
-                    selectFacetColumnName: 'study',
-                    selectFacetColumnValue: 'LLFS',
-                    detailsPagePath:
-                      '/Explore/Studies/DetailsPage?studyKey=LLFS',
-                    unitDescription: 'Files',
-                  },
-                  {
-                    title:
-                      'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study',
-                    description:
-                      'This study provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
-                    facetsToPlot: ['dataType'],
-                    selectFacetColumnName: 'study',
-                    selectFacetColumnValue: 'ADAMTS7',
-                    detailsPagePath:
-                      '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
-                    unitDescription: 'Files',
-                  },
-                  {
-                    title:
-                      'The Single cell transcriptomic analysis of PBMCs in Extreme Longevity',
-                    description:
-                      'This study provides data from 7 centenarian samples (> 100 years) and 2 younger control samples (20-59 years) from New England Centenarian Study (NECS) at Boston University and the Integrative Longevity Omics (ILO). Peripheral Blood Mononuclear Cells (PBMCs) transcriptional and protein expression were profiled at a single cell resolution. Pluripotent stem cells were also generated. Droplet-based single cell CITE-seq data (16,082 cells).',
-                    facetsToPlot: ['dataType'],
-                    selectFacetColumnName: 'study',
-                    selectFacetColumnValue: 'ELPSCRNA',
-                    detailsPagePath:
-                      '/Explore/Studies/DetailsPage?studyKey=ELPSCRNA',
-                    unitDescription: 'Files',
-                  },
-                ],
-              },
-            },
-            {
-              title: 'Animal Model Studies',
-              icon: 'MOUSE',
-              explorePagePath: '/Explore/Studies',
-              exploreObjectType: 'Studies',
-              plotsConfig: {
-                configs: [],
-              },
-            },
-          ],
-        },
-      },
+      // Commented out for v1
+      // {
+      //   name: 'UpsetPlot',
+      //   title: 'Exploring the Data',
+      //   outsideContainerClassName: 'home-spacer home-bg-dark',
+      //   centerTitle: true,
+      //   props: {
+      //     sql: upsetPlotSql,
+      //     rgbIndex: 0,
+      //     maxBarCount: 20,
+      //     setName: '# Files per data type',
+      //     combinationName: '# Files',
+      //     // summaryLinkText: 'Explore All Data',
+      //     // summaryLink: '/Explore/Data',
+      //   },
+      // },
+      // {
+      //   name: 'FeaturedDataTabs',
+      //   centerTitle: true,
+      //   outsideContainerClassName: 'home-spacer home-bg-dark',
+      //   props: {
+      //     sql: dataSql,
+      //     rgbIndex: 3,
+      //     configs: [
+      //       {
+      //         title: 'Human Studies',
+      //         icon: 'PERSON',
+      //         explorePagePath: '/Explore/Studies',
+      //         exploreObjectType: 'Studies',
+      //         plotsConfig: {
+      //           configs: [
+      //             {
+      //               title:
+      //                 'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog study',
+      //               description:
+      //                 'This study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS traits and five distinct definitions of longevity.',
+      //               facetsToPlot: ['dataType'],
+      //               selectFacetColumnName: 'study',
+      //               selectFacetColumnValue: 'MRGWAS',
+      //               detailsPagePath:
+      //                 '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
+      //               unitDescription: 'Files',
+      //             },
+      //             {
+      //               title:
+      //                 'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study',
+      //               description:
+      //                 'This study provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
+      //               facetsToPlot: ['dataType'],
+      //               selectFacetColumnName: 'study',
+      //               selectFacetColumnValue: 'ADAMTS7',
+      //               detailsPagePath:
+      //                 '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
+      //               unitDescription: 'Files',
+      //             },
+      //             {
+      //               title:
+      //                 'The Phenome-wide association study of aging: data files and a web resource',
+      //               description:
+      //                 'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
+      //               facetsToPlot: ['dataType'],
+      //               selectFacetColumnName: 'study',
+      //               selectFacetColumnValue: 'Aging-PheWAS',
+      //               detailsPagePath:
+      //                 '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
+      //               unitDescription: 'Files',
+      //             },
+      //           ],
+      //         },
+      //       },
+      //       {
+      //         title: 'Animal Model Studies',
+      //         icon: 'MOUSE',
+      //         explorePagePath: '/Explore/Studies',
+      //         exploreObjectType: 'Studies',
+      //         plotsConfig: {
+      //           configs: [],
+      //         },
+      //       },
+      //     ],
+      //   },
+      // },
       {
         name: 'Ecosystem',
         title: 'Related Resources',
@@ -196,21 +188,8 @@ const routes: GenericRoute[] = [
     routes: [
       {
         exact: true,
-        path: 'Data by Files',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: data,
-            },
-          },
-        ],
-      },
-      {
-        exact: true,
         path: 'Data by Participants',
+        hideRouteFromNavbar: true, // remove on release of the cohort builder
         synapseConfigArray: [
           {
             name: 'OrientationBanner',
@@ -221,12 +200,11 @@ const routes: GenericRoute[] = [
               text: (
                 <>
                   This page helps you find data related to anonymized
-                  Participants. Add filters to build a list of participants. If
-                  you have a list of participant IDs, click{' '}
-                  <strong>Filter by Participant</strong> to add them. Once
-                  you’ve built your cohort, you can download the related data
-                  files, <strong>Send to CAVATICA</strong> for analysis, or just{' '}
-                  <strong>Save your Query</strong> and come back to it later.
+                  Participants in the ELITE Portal. Add filters to build a list
+                  of participants, select the participants you are interested
+                  in, and view the files associated with your selected cohort.
+                  From there, you can download the related data files or{' '}
+                  <strong>Send to CAVATICA</strong> for analysis.
                 </>
               ),
               sx: { position: 'relative', zIndex: 1, marginBottom: '0px' },
@@ -237,33 +215,34 @@ const routes: GenericRoute[] = [
               // },
             },
           },
+        ],
+      },
+      {
+        path: ':slug/',
+        hideRouteFromNavbar: true,
+        exact: true,
+        synapseConfigArray: [
           {
             name: 'RouteControlWrapper',
             isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: cohortbuilder,
-            },
+            props: RouteControlWrapperProps,
           },
         ],
       },
       {
+        exact: true,
+        path: 'Data by Files',
+        hideRouteFromNavbar: false,
+      },
+      {
+        exact: true,
+        path: 'Data by Files v2',
+        hideRouteFromNavbar: true, // this replaces Data by Files on release of the cohort builder
+      },
+
+      {
         path: 'Projects',
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: projects,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             exact: true,
@@ -287,35 +266,11 @@ const routes: GenericRoute[] = [
       },
       {
         path: 'Species',
-        exact: true,
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: species,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
         path: 'Studies',
         routes: [
-          {
-            path: '',
-            exact: true,
-            synapseConfigArray: [
-              {
-                name: 'RouteControlWrapper',
-                isOutsideContainer: true,
-                props: {
-                  ...RouteControlWrapperProps,
-                  synapseConfig: studies,
-                },
-              },
-            ],
-          },
           {
             path: 'DetailsPage',
             routes: [
@@ -325,46 +280,16 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        exact: true,
         path: 'Publications',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: publications,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
-        exact: true,
         path: 'Computational Tools',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: computationalTools,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
       {
-        exact: true,
         path: 'People',
-        synapseConfigArray: [
-          {
-            name: 'RouteControlWrapper',
-            isOutsideContainer: true,
-            props: {
-              ...RouteControlWrapperProps,
-              synapseConfig: people,
-            },
-          },
-        ],
+        hideRouteFromNavbar: false,
       },
     ],
   },

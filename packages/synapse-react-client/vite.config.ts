@@ -3,11 +3,13 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
+import jotaiDebugLabel from 'jotai/babel/plugin-debug-label'
+import jotaiReactRefresh from 'jotai/babel/plugin-react-refresh'
 
 export default defineConfig({
   root: './src',
   plugins: [
-    react(),
+    react({ babel: { plugins: [jotaiDebugLabel, jotaiReactRefresh] } }),
     svgr({
       svgrOptions: {
         plugins: ['@svgr/plugin-jsx'],

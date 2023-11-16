@@ -16,3 +16,22 @@ export function hex2ascii(inputString: string): string {
   }
   return str
 }
+
+/**
+ * Returns a hash code from a string. Uses Java's String.hashCode() algorithm: https://devdocs.io/openjdk~8/java/lang/string#hashCode--
+ * @param  {String} str The string to hash.
+ * @return {Number}    A 32bit integer
+ * @see https://stackoverflow.com/a/8831937
+ */
+export function hashCode(str?: string | null) {
+  if (str == null) {
+    str = ''
+  }
+  let hash = 0
+  for (let i = 0, len = str.length; i < len; i++) {
+    const chr = str.charCodeAt(i)
+    hash = (hash << 5) - hash + chr
+    hash |= 0 // Convert to 32bit integer
+  }
+  return hash
+}

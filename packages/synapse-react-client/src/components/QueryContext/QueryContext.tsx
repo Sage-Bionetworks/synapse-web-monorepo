@@ -1,16 +1,13 @@
-import React from 'react'
-import { createContext, useContext } from 'react'
+import React, { createContext, useContext } from 'react'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import {
   AsynchronousJobStatus,
   ColumnModel,
   QueryBundleRequest,
   QueryResultBundle,
-  Row,
-  Table,
 } from '@sage-bionetworks/synapse-types'
-import { ImmutableTableQueryResult } from '../useImmutableTableQuery'
-import { SetRequired } from 'type-fest'
+import { ImmutableTableQueryResult } from '../../utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
+import { ReadonlyDeep } from 'type-fest'
 
 /*
   For details page: to lock a column (e.g. study, grant) so that the facet values and active filters
@@ -38,62 +35,37 @@ export type QueryContextType<
   TIncludedFields extends OptionalQueryBundleRequestFields = never,
   ExcludeOtherFields extends true | false = false,
 > = {
-  /** The entity being queried. Will be undefined while initially fetching */
-  entity: Table | undefined
-  /** The query results, which will be undefined while initially fetching a new bundle, but will not be unloaded when fetching new pages */
-  data:
-    | Omit<
-        SetRequired<QueryResultBundle, TIncludedFields>,
-        ExcludeOtherFields extends true
-          ? Exclude<OptionalQueryBundleRequestFields, TIncludedFields>
-          : never
-      >
-    | undefined
+  currentQueryRequest: ReadonlyDeep<QueryBundleRequest>
+  nextQueryRequest: ReadonlyDeep<QueryBundleRequest>
   /** Returns a deep clone of the current query bundle request */
-  getLastQueryRequest: () => QueryBundleRequest
+  getCurrentQueryRequest: () => QueryBundleRequest
   /** Returns a deep clone of the initial query bundle request */
   getInitQueryRequest: () => QueryBundleRequest
   /** Updates the current query with the passed request */
-  executeQueryRequest: React.Dispatch<React.SetStateAction<QueryBundleRequest>>
+  executeQueryRequest: ImmutableTableQueryResult['setQuery']
   /** Resets the query to its initial state, clearing all filters added by the user */
   resetQuery: ImmutableTableQueryResult['resetQuery']
+  addValueToSelectedFacet: ImmutableTableQueryResult['addValueToSelectedFacet']
+  setRangeFacetValue: ImmutableTableQueryResult['setRangeFacetValue']
   removeSelectedFacet: ImmutableTableQueryResult['removeSelectedFacet']
   removeValueFromSelectedFacet: ImmutableTableQueryResult['removeValueFromSelectedFacet']
   /** Removes a matching QueryFilter from the query */
   removeQueryFilter: ImmutableTableQueryResult['removeQueryFilter']
   /** Removes a value from a QueryFilter. If no more values remain in the filter, the filter is also removed */
   removeValueFromQueryFilter: ImmutableTableQueryResult['removeValueFromQueryFilter']
-  /** Returns true when loading a brand-new query result bundle. Will not be true when just loading the next page of query results. */
-  isLoadingNewBundle: boolean
   /** The error returned by the query request, if one is encountered */
   error: SynapseClientError | null
   /** The status of the asynchronous job. */
   asyncJobStatus?: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
   /** Whether facets are available to be filtered upon based on the current data */
   isFacetsAvailable: boolean
-  /**
-   * A column name may be "locked" so that it is both (1) not shown to the user that the filter is active, and (2) not modifiable by the user.
-   * For example, we may show only the data matching a particular facet value on a Details Page without implying that the shown data is part of a larger table.
-   * The presence of a locked filter will result in a client-side modification of the active query and result bundle data.
-   */
-  lockedColumn?: LockedColumn
   /** Returns true iff the current request has resettable filters applied via facet filters or additionalFilters. Excludes filters applied to a locked column */
   hasResettableFilters: boolean
   getColumnModel: (columnName: string) => ColumnModel | null
   // Either open benefactor entity page in a new window or open the sharing settings dialog (in Synapse.org)
   onViewSharingSettingsClicked?: (benefactorId: string) => void
-  /** Whether the user can select individual rows on which to perform an action */
-  isRowSelectionVisible: boolean
-  /** The collection of selected rows */
-  selectedRows: Row[]
-  /** State updater for `selectedRows`  */
-  setSelectedRows: React.Dispatch<React.SetStateAction<Row[]>>
-  /** The set of columns that defines a uniqueness constraint on the table for the purposes of filtering based on row selection.
-   * Note that Synapse tables have no internal concept of a primary key.
-   */
-  rowSelectionPrimaryKey?: string[]
-  /** Whether the user has selected any rows */
-  hasSelectedRows: boolean
+  /** Combines two faceted columns into a single inclusive range selector */
+  combineRangeFacetConfig?: ReadonlyDeep<CombineRangeFacetConfig>
 }
 
 export type PaginatedQueryContextType<
@@ -194,6 +166,12 @@ export function useInfiniteQueryContext(): InfiniteQueryContextType {
   }
   // TODO: Identify more type-safe alternative to casting
   return context as InfiniteQueryContextType
+}
+
+export type CombineRangeFacetConfig = {
+  minFacetColumn: string
+  maxFacetColumn: string
+  label: string
 }
 
 export const QueryContextConsumer = QueryContext.Consumer

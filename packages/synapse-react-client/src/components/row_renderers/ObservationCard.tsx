@@ -1,23 +1,28 @@
 import React from 'react'
-import UserCard from '../UserCard/UserCard'
 import IconSvg from '../IconSvg/IconSvg'
 import { ShowMore } from './utils'
 import { UnitType } from 'dayjs'
-import { Skeleton } from '@mui/material'
+import { Link, Skeleton } from '@mui/material'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
+import { UserBadge } from '../UserCard/UserBadge'
 
-type ObservationCardSchema = {
-  submitterName: string
-  submitterUserId: string
-  time: string
-  timeUnits: UnitType
-  text: string
-  tag: string
+/**
+ * Column index values into the row values given provided in "data"
+ */
+export type ObservationCardSchema = {
+  observationSubmitterName: number
+  synapseId: number
+  observationTime: number
+  observationTimeUnits: number
+  observationText: number
+  observationType: number
+  doi: number
 }
 
 export type ObservationCardProps = {
   schema: ObservationCardSchema
-  data: Record<ObservationCardSchema[keyof ObservationCardSchema], string>
+  data: (string | null)[]
+  includePortalCardClass?: boolean
 }
 
 /**
@@ -27,35 +32,57 @@ export type ObservationCardProps = {
 export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   data,
   schema,
+  includePortalCardClass = true,
 }: ObservationCardProps) => {
-  const submitterName = data[schema.submitterName]
-  const submitterUserId = data[schema.submitterUserId]
-  const time = data[schema.time]
-  const timeUnits = data[schema.timeUnits] as UnitType
-  const text = data[schema.text]
-  const tag = data[schema.tag]
+  const submitterName = data[schema.observationSubmitterName]
+  const submitterUserId = data[schema.synapseId]
+  const time = data[schema.observationTime]
+  const timeUnits = data[schema.observationTimeUnits] as UnitType
+  const text = data[schema.observationText]
+  const tag = data[schema.observationType]
+  const tags: string[] = JSON.parse(tag ?? '')
+  const doi = data[schema.doi]
   return (
-    <div className="SRC-portalCard ObservationCard">
+    <div
+      className={`ObservationCard ${
+        includePortalCardClass ? 'SRC-portalCard' : ''
+      }`}
+    >
       <div className="ObservationCard__submitter">
         {!submitterUserId && <div>{submitterName}</div>}
-        {submitterUserId && (
-          <UserCard size={'SMALL USER CARD'} ownerId={submitterUserId} />
-        )}
+        {submitterUserId && <UserBadge userId={submitterUserId} />}
       </div>
       {time && (
         <div className="ObservationCard__time">
           <IconSvg icon="time" />
-          <span>
-            {`${time} ${timeUnits}`}
-            {Number(time) > 1 ? 's' : ''}
-          </span>
+          <span>{`${time} ${timeUnits}`}</span>
         </div>
       )}
-      <div className="ObservationCard__text">
-        <ShowMore summary={text} />
-      </div>
+      {text && (
+        <div className="ObservationCard__text">
+          <ShowMore summary={text} />
+        </div>
+      )}
+      {doi && (
+        <div className="ObservationCard__doi">
+          <Link href={doi} target="_blank">
+            Reference
+          </Link>
+        </div>
+      )}
       <div className="ObservationCard__tags">
-        {tag && <span className="SRC-tag">{tag}</span>}
+        {tag &&
+          tags.map((tag, index) => {
+            return (
+              <span
+                key={index}
+                className="SRC-tag"
+                style={{ marginRight: '5px' }}
+              >
+                {tag}
+              </span>
+            )
+          })}
       </div>
     </div>
   )

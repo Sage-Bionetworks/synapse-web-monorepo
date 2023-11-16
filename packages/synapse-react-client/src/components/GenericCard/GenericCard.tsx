@@ -1,14 +1,14 @@
-import { isEmpty } from 'lodash-es'
 import React from 'react'
-import { SynapseConstants } from '../../utils'
-import { isTableEntity } from '../../utils/functions/EntityTypeUtils'
+import { SynapseConstants, SynapseContext } from '../../utils'
+import {
+  isDatasetCollection,
+  isTableEntity,
+} from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import {
   DOI_REGEX,
   SYNAPSE_ENTITY_ID_REGEX,
 } from '../../utils/functions/RegularExpressions'
-import { SMALL_USER_CARD } from '../../utils/SynapseConstants'
-import { SynapseContext } from '../../utils/context/SynapseContext'
 import {
   ColumnModel,
   ColumnType,
@@ -16,30 +16,35 @@ import {
   Entity,
   FileHandleAssociateType,
   FileHandleAssociation,
-  Row,
   SelectColumn,
+  Table,
 } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
+import { Box, Link } from '@mui/material'
 import {
   CardLink,
   ColumnIconConfigs,
-  ColumnSpecifiedLink,
   CommonCardProps,
-  DescriptionConfig,
-  MarkdownLink,
   TargetEnum,
 } from '../CardContainerLogic'
 import HeaderCard from '../HeaderCard'
 import IconList from '../IconList'
 import IconSvg, { type2SvgIconName } from '../IconSvg/IconSvg'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import { QueryContextType } from '../QueryContext'
 import { CardFooter, Icon } from '../row_renderers/utils'
-import UserCard from '../UserCard/UserCard'
 import { FileHandleLink } from '../widgets/FileHandleLink'
 import { ImageFileHandle } from '../widgets/ImageFileHandle'
-import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
-import { IconOptions } from '../Icon/Icon'
+import {
+  QueryVisualizationContextType,
+  useQueryVisualizationContext,
+} from '../QueryVisualizationWrapper'
+import { IconOptions } from '../Icon'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
+import { SynapseCardLabel } from './SynapseCardLabel'
+import { useAtomValue } from 'jotai'
+import { tableQueryEntityAtom } from '../QueryWrapper/QueryWrapper'
+import {
+  CHAR_COUNT_CUTOFF,
+  CollapsibleDescription,
+} from './CollapsibleDescription'
 
 export type KeyToAlias = {
   key: string
@@ -64,7 +69,7 @@ export type GenericCardSchema = {
   dataTypeIconNames?: string
 }
 
-export type GenericCardProps = {
+export type GenericCardPropsInternal = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
   iconOptions?: IconOptions
@@ -76,33 +81,15 @@ export type GenericCardProps = {
   // Row values
   data: string[]
   rowId?: number
-  tableId: string | undefined
   columnIconOptions?: ColumnIconConfigs
-  queryContext: QueryContextType
+  table: Table | undefined
   queryVisualizationContext: QueryVisualizationContextType
 } & CommonCardProps
 
-export type GenericCardState = {
-  hasClickedShowMore: boolean
-}
-
-const CHAR_COUNT_CUTOFF = 400
-export const CARD_SHORT_DESCRIPTION_CSS = 'SRC-short-description'
-export const CARD_LONG_DESCRIPTION_CSS = 'SRC-long-description'
-
-// This function isn't in the class only for ease of testing with renderShortDescription
-export const getCutoff = (summary: string) => {
-  let previewText = ''
-  const summarySplit = summary.split(' ')
-  // find num words to join such that its >= char_count_cutoff
-  let i = 0
-  while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {
-    previewText += `${summarySplit[i]} `
-    i += 1
-  }
-  previewText = previewText.trim()
-  return { previewText }
-}
+export type GenericCardProps = Omit<
+  GenericCardPropsInternal,
+  'table' | 'queryVisualizationContext'
+>
 
 export const getFileHandleAssociation = (
   table?: Entity,
@@ -207,208 +194,6 @@ export const VersionLabel: React.FC<{
   )
 }
 
-type SynapseCardLabelProps = {
-  value: string
-  columnName: string
-  labelLink: CardLink | MarkdownLink | ColumnSpecifiedLink | undefined
-  selectColumns: SelectColumn[] | undefined
-  columnModels: ColumnModel[] | undefined
-  isHeader: boolean
-  className?: string
-  rowData: Row['values']
-  rowId?: number
-}
-
-export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
-  const {
-    value,
-    columnName,
-    labelLink,
-    selectColumns,
-    columnModels,
-    isHeader,
-    className,
-    rowData,
-    rowId,
-  } = props
-  if (!value) {
-    return <p>{value}</p>
-  }
-  const { strList, str, columnModelType } = getValueOrMultiValue({
-    columnName,
-    value,
-    selectColumns,
-    columnModels,
-  })
-
-  if (!str) {
-    // the array came back empty
-    return <p>{str}</p>
-  }
-
-  let newClassName = className
-  const style: React.CSSProperties = {}
-  if (isHeader) {
-    newClassName = className?.concat(' ', 'SRC-lightLink')
-  }
-  // PORTALS-1913: special rendering for user ID lists
-  if (columnModelType === ColumnTypeEnum.USERID_LIST && strList) {
-    return (
-      <p>
-        {strList.map((val: string, index: number) => {
-          return (
-            <React.Fragment key={val}>
-              <UserCard
-                ownerId={val}
-                size={SMALL_USER_CARD}
-                className={newClassName}
-              />
-              {/* \u00a0 is a nbsp; */}
-              {index < strList.length - 1 && ',\u00a0\u00a0'}
-            </React.Fragment>
-          )
-        })}
-      </p>
-    )
-  }
-  if (columnModelType === ColumnTypeEnum.USERID && str) {
-    return (
-      <UserCard ownerId={str} size={SMALL_USER_CARD} className={newClassName} />
-    )
-  }
-
-  if (!labelLink) {
-    // if this looks like a Synapse ID, then autolink.
-    if (str.match(SYNAPSE_ENTITY_ID_REGEX)) {
-      // its a synId
-      return (
-        <a
-          target={TargetEnum.NEW_WINDOW}
-          rel="noopener noreferrer"
-          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${str}`}
-          className={newClassName}
-        >
-          {str}
-        </a>
-      )
-    } else {
-      // they don't need a link
-      return <p>{str}</p>
-    }
-  }
-
-  let labelContent: JSX.Element
-  if (labelLink.isMarkdown) {
-    if (strList) {
-      labelContent = (
-        <p>
-          {strList.map((el, index) => {
-            return (
-              <React.Fragment key={el}>
-                <MarkdownSynapse key={el} renderInline={true} markdown={el} />
-                {/* \u00a0 is a nbsp; */}
-                {index < strList.length - 1 && ',\u00a0\u00a0'}
-              </React.Fragment>
-            )
-          })}
-        </p>
-      )
-    } else {
-      labelContent = <MarkdownSynapse renderInline={true} markdown={value} />
-    }
-  } else {
-    const split = strList ? strList : str.split(',')
-    let linkTarget: TargetEnum | undefined = undefined
-    if ('target' in labelLink) {
-      linkTarget = labelLink.target!
-    }
-    if ('linkColumnName' in labelLink) {
-      const linkIndex = getColumnIndex(
-        labelLink.linkColumnName,
-        selectColumns,
-        columnModels,
-      )
-      if (linkIndex == null) {
-        console.warn(
-          `Could not determine column index of ${labelLink.linkColumnName}`,
-        )
-        labelContent = <>{value}</>
-      } else {
-        const href = rowData[linkIndex]
-
-        if (isEmpty(href)) {
-          labelContent = <>{value}</>
-        } else {
-          labelContent = (
-            <p>
-              {split.map((el, index) => {
-                return (
-                  <React.Fragment key={el}>
-                    <a
-                      href={href ?? undefined}
-                      target={linkTarget ?? TargetEnum.NEW_WINDOW}
-                      rel="noopener noreferrer"
-                      key={el}
-                      className={newClassName}
-                      style={style}
-                    >
-                      {el}
-                    </a>
-                    {index < split.length - 1 && (
-                      <span style={{ marginRight: 4 }}>, </span>
-                    )}
-                  </React.Fragment>
-                )
-              })}
-            </p>
-          )
-        }
-      }
-    } else {
-      labelContent = (
-        <p>
-          {split.map((el, index) => {
-            const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
-            const elOrRowId = labelLink.overrideValueWithRowID
-              ? `syn${rowId}`
-              : el
-            const value = wrapValueWithParens ? `(${elOrRowId})` : elOrRowId
-            const href = `/${baseURL}?${URLColumnName}=${value}`
-
-            return (
-              <React.Fragment key={el}>
-                <a
-                  href={href}
-                  key={el}
-                  className={newClassName}
-                  style={style}
-                  target={linkTarget ?? TargetEnum.CURRENT_WINDOW}
-                >
-                  {el}
-                </a>
-                {index < split.length - 1 && (
-                  <span style={{ marginRight: 4 }}>, </span>
-                )}
-              </React.Fragment>
-            )
-          })}
-        </p>
-      )
-    }
-  }
-
-  if (labelLink.tooltipText) {
-    // wrap in a tooltip
-    return (
-      <Tooltip title={labelLink.tooltipText} enterNextDelay={300}>
-        <span>{labelContent}</span>
-      </Tooltip>
-    )
-  } else {
-    return labelContent
-  }
-}
-
 type ValueOrMultiValue = {
   str: string
   strList?: string[]
@@ -488,88 +273,13 @@ export function getLinkParams(
   return { href, target }
 }
 
-export function LongDescription(props: {
-  description: string
-  hasClickedShowMore: boolean
-  descriptionSubTitle: string
-  descriptionConfig?: DescriptionConfig
-}) {
-  const {
-    description,
-    hasClickedShowMore,
-    descriptionSubTitle,
-    descriptionConfig,
-  } = props
-  let content: JSX.Element | string = description
-  if (descriptionConfig?.isMarkdown) {
-    content = <MarkdownSynapse markdown={content} />
-  }
-  const show =
-    hasClickedShowMore || descriptionConfig?.showFullDescriptionByDefault
-  return (
-    <div className={show ? '' : 'SRC-hidden'}>
-      <span
-        data-search-handle={descriptionSubTitle}
-        className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}
-      >
-        {content}
-      </span>
-    </div>
-  )
-}
-
-export function ShortDescription(props: {
-  description: string
-  hasClickedShowMore: boolean
-  descriptionSubTitle: string
-  descriptionConfig?: DescriptionConfig
-  toggleShowMore: () => void
-}) {
-  const {
-    description,
-    hasClickedShowMore,
-    descriptionSubTitle,
-    descriptionConfig,
-    toggleShowMore,
-  } = props
-  if (descriptionConfig?.showFullDescriptionByDefault) {
-    return <></>
-  }
-  return (
-    <div className={hasClickedShowMore ? 'SRC-hidden' : ''}>
-      <span
-        data-search-handle={descriptionSubTitle}
-        className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}
-      >
-        {getCutoff(description).previewText}
-      </span>
-      {description.length >= CHAR_COUNT_CUTOFF && (
-        <a
-          style={{
-            fontSize: '16px',
-            cursor: 'pointer',
-            marginLeft: '5px',
-          }}
-          className="highlight-link"
-          onClick={toggleShowMore}
-        >
-          ...Show More
-        </a>
-      )}
-    </div>
-  )
-}
-
 /**
  * Renders a card from a table query
  */
-export default class GenericCard extends React.Component<
-  GenericCardProps,
-  GenericCardState
-> {
+class _GenericCard extends React.Component<GenericCardPropsInternal> {
   static contextType = SynapseContext
 
-  constructor(props: GenericCardProps) {
+  constructor(props: GenericCardPropsInternal) {
     super(props)
     this.state = {
       hasClickedShowMore: false,
@@ -608,14 +318,13 @@ export default class GenericCard extends React.Component<
   }) => {
     if (href) {
       return (
-        <a
+        <Link
           data-search-handle={titleSearchHandle}
           target={target}
           href={href}
-          className="highlight-link"
         >
           {title}
-        </a>
+        </Link>
       )
     } else {
       return <span data-search-handle={titleSearchHandle}> {title} </span>
@@ -640,14 +349,13 @@ export default class GenericCard extends React.Component<
       descriptionConfig,
       rgbIndex,
       columnIconOptions,
-      queryContext: { entity: table },
+      table,
       queryVisualizationContext: { getColumnDisplayName },
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
     // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
     const genericCardSchemaDefined = genericCardSchema!
-    const { hasClickedShowMore } = this.state
     const { link = '', type } = genericCardSchemaDefined
     const title = data[schema[genericCardSchemaDefined.title]]
     let subTitle =
@@ -688,8 +396,15 @@ export default class GenericCard extends React.Component<
       let value: any = data[schema[columnName]]
       let columnDisplayName
       if (value) {
-        // SWC-6115: special rendering of the version column (for Views)
-        if (isView && columnName === 'currentVersion') {
+        // PORTALS-2750: special rendering of the datasetSizeInBytes (for Dataset Collections)
+        if (
+          isDatasetCollection(table as Entity) &&
+          columnName === 'datasetSizeInBytes'
+        ) {
+          columnDisplayName = 'Size'
+          value = calculateFriendlyFileSize(parseInt(value))
+        } // SWC-6115: special rendering of the version column (for Views)
+        else if (isView && columnName === 'currentVersion') {
           const synapseId = data[schema.id]
           const version = value
           value = VersionLabel({ synapseId, version })
@@ -866,34 +581,21 @@ export default class GenericCard extends React.Component<
                 {subTitle}
               </div>
             )}
-            {/* 
-              Below is a hack that allows word highlighting to work, the Search component insert's
-              html elements outside of the React DOM which if detected would break the app,
-              but as written below this avoids that reconcilliation process.
-            */}
-            {description && (
-              <ShortDescription
-                description={description}
-                hasClickedShowMore={hasClickedShowMore}
-                descriptionSubTitle={descriptionSubTitle}
-                descriptionConfig={descriptionConfig}
-                toggleShowMore={this.toggleShowMore}
-              />
-            )}
-            {description && (
-              <LongDescription
-                description={description}
-                hasClickedShowMore={hasClickedShowMore}
-                descriptionSubTitle={descriptionSubTitle}
-                descriptionConfig={descriptionConfig}
-              />
-            )}
+            <CollapsibleDescription
+              description={description}
+              descriptionSubTitle={descriptionSubTitle}
+              descriptionConfig={descriptionConfig}
+            />
             {ctaLinkConfig && ctaHref && ctaTarget && (
-              <div className="SRC-portalCardCTALink bootstrap-4-backport">
-                <a target={ctaTarget} rel="noopener noreferrer" href={ctaHref}>
+              <Box sx={{ mt: '20px' }}>
+                <Link
+                  target={ctaTarget}
+                  rel="noopener noreferrer"
+                  href={ctaHref}
+                >
                   {ctaLinkConfig.text}
-                </a>
-              </div>
+                </Link>
+              </Box>
             )}
           </div>
         </div>
@@ -909,4 +611,16 @@ export default class GenericCard extends React.Component<
       </div>
     )
   }
+}
+
+export default function GenericCard(props: GenericCardProps) {
+  const table = useAtomValue(tableQueryEntityAtom)
+  const queryVisualizationContext = useQueryVisualizationContext()
+  return (
+    <_GenericCard
+      {...props}
+      table={table}
+      queryVisualizationContext={queryVisualizationContext}
+    />
+  )
 }
