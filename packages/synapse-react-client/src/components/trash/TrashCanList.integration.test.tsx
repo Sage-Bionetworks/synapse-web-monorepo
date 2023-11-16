@@ -15,6 +15,7 @@ import {
 import {
   PaginatedResults,
   TrashedEntity,
+  EntityType,
 } from '@sage-bionetworks/synapse-types'
 import mockDatasetData from '../../mocks/entity/mockDataset'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
@@ -32,6 +33,7 @@ const trashCanPages: PaginatedResults<TrashedEntity>[] = [
       {
         entityId: mockFileEntityData.id,
         entityName: mockFileEntityData.name,
+        entityType: EntityType.FILE,
         deletedByPrincipalId: MOCK_USER_ID.toString(),
         deletedOn: '2020-01-01T00:00:00.000Z',
         originalParentId: mockFileEntityData.entity.parentId!,
@@ -44,6 +46,7 @@ const trashCanPages: PaginatedResults<TrashedEntity>[] = [
       {
         entityId: mockDatasetData.id,
         entityName: mockDatasetData.name,
+        entityType: EntityType.FILE,
         deletedByPrincipalId: MOCK_USER_ID.toString(),
         deletedOn: '2020-01-01T00:00:00.000Z',
         originalParentId: mockDatasetData.entity.parentId!,

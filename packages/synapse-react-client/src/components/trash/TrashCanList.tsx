@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import React, { useEffect, useRef, useState } from 'react'
 import { Table } from 'react-bootstrap'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 import { useGetEntity } from '../../synapse-queries'
 import {
   useGetItemsInTrashCanInfinite,
@@ -38,6 +39,7 @@ function TrashCanListItem(props: TrashCanListItemProps) {
       </td>
       <td>{item.entityId}</td>
       <td>{item.entityName}</td>
+      <td>{entityTypeToFriendlyName(item.entityType)}</td>
       {/* <td>TypePlaceholder</td> */}
       <td>
         <>
@@ -173,6 +175,7 @@ export function TrashCanList() {
                 </th>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Entity Type</th>
                 {/* <th>TypePlaceholder</th> */}
                 <th>Location</th>
                 <th>Deleted On</th>
