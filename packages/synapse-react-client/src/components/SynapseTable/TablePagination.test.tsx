@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, fireEvent, act } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { TablePagination } from './TablePagination'
 import {
   PaginatedQueryContextType,
@@ -9,6 +9,7 @@ import {
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 import { Provider, SetStateAction, useSetAtom } from 'jotai'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import userEvent from '@testing-library/user-event'
 
 const renderedTextConfirmation = 'TablePagination rendered!'
 
@@ -24,7 +25,7 @@ const Receiver = () => {
   return <>{renderedTextConfirmation}</>
 }
 
-function Wrapper(queryContext: Partial<PaginatedQueryContextType>) {
+const Wrapper: React.FC<Partial<PaginatedQueryContextType>> = queryContext => {
   return (
     <Provider>
       <QueryContextProvider queryContext={queryContext as QueryContextType}>
@@ -42,18 +43,16 @@ describe('TablePagination component', () => {
     mockGoToPage = jest.fn()
   })
 
-  it('renders pagination and page size elements', () => {
+  it('renders pagination and page size elements', async () => {
     render(
-      Wrapper({
-        goToPage: mockGoToPage,
-        setPageSize: mockSetPageSize,
-        pageSize: 10,
-        currentPage: 1,
-      }),
+      <Wrapper
+        goToPage={mockGoToPage}
+        setPageSize={mockSetPageSize}
+        pageSize={10}
+        currentPage={1}
+      />,
     )
-    act(() => {
-      screen.findByText(renderedTextConfirmation)
-    })
+    await screen.findByText(renderedTextConfirmation)
     act(() => {
       setTableData({
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -67,18 +66,18 @@ describe('TablePagination component', () => {
     expect(screen.getByRole('combobox')).toBeInTheDocument() // Select for page size
   })
 
-  it('triggers page change correctly', () => {
+  it('triggers page change correctly', async () => {
     render(
-      Wrapper({
-        goToPage: mockGoToPage,
-        setPageSize: mockSetPageSize,
-        pageSize: 10,
-        currentPage: 1,
-      }),
+      <Wrapper
+        goToPage={mockGoToPage}
+        setPageSize={mockSetPageSize}
+        pageSize={10}
+        currentPage={1}
+      />,
     )
-    act(() => {
-      screen.findByText(renderedTextConfirmation)
-    })
+
+    await screen.findByText(renderedTextConfirmation)
+
     act(() => {
       setTableData({
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -88,26 +87,22 @@ describe('TablePagination component', () => {
     })
 
     // Simulate changing the page
-    act(() => {
-      fireEvent.click(screen.getByText('2')) // Click on page 2
-    })
+    await userEvent.click(screen.getByText('2')) // Click on page 2
 
     expect(mockGoToPage).toHaveBeenCalledTimes(1)
     expect(mockGoToPage).toHaveBeenCalledWith(2)
   })
 
-  it('triggers page size change correctly', () => {
+  it('triggers page size change correctly', async () => {
     render(
-      Wrapper({
-        goToPage: mockGoToPage,
-        setPageSize: mockSetPageSize,
-        pageSize: 100,
-        currentPage: 1,
-      }),
+      <Wrapper
+        goToPage={mockGoToPage}
+        setPageSize={mockSetPageSize}
+        pageSize={100}
+        currentPage={1}
+      />,
     )
-    act(() => {
-      screen.findByText(renderedTextConfirmation)
-    })
+    await screen.findByText(renderedTextConfirmation)
     act(() => {
       setTableData({
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -116,29 +111,23 @@ describe('TablePagination component', () => {
       })
     })
 
-    // Simulate changing the page size
-    act(() => {
-      fireEvent.change(screen.getByRole('combobox'), {
-        target: { value: '25' },
-      }) // Change page size to 25
-    })
+    // Simulate changing the page size to 25
+    await userEvent.selectOptions(screen.getByRole('combobox'), '25')
 
     expect(mockSetPageSize).toHaveBeenCalledTimes(1)
     expect(mockSetPageSize).toHaveBeenCalledWith('25')
   })
 
-  it('hides pagination when on the first page and query count is less than 10', () => {
+  it('hides pagination when on the first page and query count is less than 10', async () => {
     render(
-      Wrapper({
-        goToPage: mockGoToPage,
-        setPageSize: mockSetPageSize,
-        pageSize: 100,
-        currentPage: 1,
-      }),
+      <Wrapper
+        goToPage={mockGoToPage}
+        setPageSize={mockSetPageSize}
+        pageSize={100}
+        currentPage={1}
+      />,
     )
-    act(() => {
-      screen.findByText(renderedTextConfirmation)
-    })
+    await screen.findByText(renderedTextConfirmation)
     act(() => {
       setTableData({
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -149,5 +138,27 @@ describe('TablePagination component', () => {
 
     // Check if pagination is not rendered when conditions are met
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
+  })
+
+  it('small max rows per page with more than one page of results', async () => {
+    render(
+      <Wrapper
+        goToPage={mockGoToPage}
+        setPageSize={mockSetPageSize}
+        pageSize={5}
+        currentPage={1}
+      />,
+    )
+    await screen.findByText(renderedTextConfirmation)
+    act(() => {
+      setTableData({
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+        queryCount: 20,
+        maxRowsPerPage: 5,
+      })
+    })
+    const comboBox = screen.getByRole('combobox')
+    expect(comboBox.childElementCount).toEqual(1)
+    expect(comboBox.children.item(0)?.textContent).toEqual('5 per page')
   })
 })
