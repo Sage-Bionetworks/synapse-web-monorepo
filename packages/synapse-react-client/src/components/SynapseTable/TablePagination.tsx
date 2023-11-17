@@ -11,6 +11,17 @@ export const TablePagination = () => {
 
   const queryCount = data?.queryCount
 
+  const maxPageSize = data?.maxRowsPerPage ?? pageSize
+  const pageSizeOptions = [10, 25, 100, 500]
+  const pageSizeOptionsBasedOnData = pageSizeOptions.filter(
+    value => value < maxPageSize,
+  )
+  if (pageSizeOptionsBasedOnData.length == 0) {
+    pageSizeOptionsBasedOnData.push(maxPageSize)
+    if (data?.maxRowsPerPage && pageSize > data.maxRowsPerPage) {
+      setPageSize(data.maxRowsPerPage)
+    }
+  }
   const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
     goToPage(value)
   }
@@ -49,10 +60,13 @@ export const TablePagination = () => {
         style={{ padding: '4px', marginLeft: '4px' }}
         value={pageSize}
       >
-        <option value={10}>10 per page</option>
-        <option value={25}>25 per page</option>
-        <option value={100}>100 per page</option>
-        <option value={500}>500 per page</option>
+        {pageSizeOptionsBasedOnData.map(pageSize => {
+          return (
+            <option key={pageSize} value={pageSize}>
+              {pageSize} per page
+            </option>
+          )
+        })}
       </select>
       {
         //TODO: PORTALS-2546: convert to MUI?
