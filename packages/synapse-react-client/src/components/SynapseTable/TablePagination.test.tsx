@@ -4,6 +4,7 @@ import { TablePagination } from './TablePagination'
 import {
   PaginatedQueryContextType,
   QueryContextProvider,
+  QueryContextType,
 } from '../QueryContext/QueryContext'
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 import { Provider, SetStateAction, useSetAtom } from 'jotai'
@@ -26,7 +27,7 @@ const Receiver = () => {
 function Wrapper(queryContext: Partial<PaginatedQueryContextType>) {
   return (
     <Provider>
-      <QueryContextProvider queryContext={queryContext}>
+      <QueryContextProvider queryContext={queryContext as QueryContextType}>
         <Receiver />
         <TablePagination />
       </QueryContextProvider>
