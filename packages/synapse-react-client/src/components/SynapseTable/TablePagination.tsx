@@ -12,6 +12,7 @@ export const TablePagination = () => {
   const queryCount = data?.queryCount
 
   const maxPageSize = data?.maxRowsPerPage ?? pageSize
+
   const pageSizeOptions = [10, 25, 100, 500]
   const pageSizeOptionsBasedOnData = pageSizeOptions.filter(
     value => value < maxPageSize,
@@ -33,7 +34,8 @@ export const TablePagination = () => {
 
   // PORTALS-2259: Special case.  If we're on the first page,
   // and the total query count is less than the min page size, then do not show pagination UI.
-  if (currentPage == 1 && queryCount && queryCount < 10) {
+  // Also hide pagination if the query count is unavailable.
+  if ((currentPage == 1 && queryCount && queryCount < 10) || !queryCount) {
     return <></>
   }
 
@@ -41,7 +43,7 @@ export const TablePagination = () => {
     <div>
       <Pagination
         page={currentPage}
-        count={Math.ceil(queryCount! / pageSize)}
+        count={Math.ceil(queryCount / pageSize)}
         color="secondary"
         onChange={handlePage}
         shape={'rounded'}
@@ -67,10 +69,9 @@ export const TablePagination = () => {
             </option>
           )
         })}
-      </select>
-      {
-        //TODO: PORTALS-2546: convert to MUI?
-        /* <FormControl>
+        {
+          //TODO: PORTALS-2546: convert to MUI?
+          /* <FormControl>
         <Select
           value={pageSize}
           size="small"
@@ -82,8 +83,9 @@ export const TablePagination = () => {
           <MenuItem value={100}>100 per page</MenuItem>
           <MenuItem value={500}>500 per page</MenuItem>
         </Select>
-      </FormControl> */
-      }
+        </FormControl> */
+        }
+      </select>
     </div>
   )
 }
