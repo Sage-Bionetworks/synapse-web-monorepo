@@ -33,7 +33,7 @@ export const TablePagination = () => {
   }
 
   // PORTALS-2259: Special case.  If we're on the first page,
-  // and the total query count is less than the min page size, then do not show pagination UI.
+  // and the total query count is less than the page size, then do not show pagination UI.
   // Also hide pagination if the query count is unavailable.
   if (
     (currentPage == 1 && queryCount && queryCount < pageSize) ||
