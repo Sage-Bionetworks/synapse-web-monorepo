@@ -15,6 +15,7 @@ function renderComponent(props: JSONArrayEditorModalProps) {
 async function setUp(props: JSONArrayEditorModalProps) {
   const user = userEvent.setup()
   const component = renderComponent(props)
+
   const showPasteValuesButton = await screen.findByRole<HTMLButtonElement>(
     'button',
     {
@@ -36,12 +37,16 @@ async function setUp(props: JSONArrayEditorModalProps) {
     },
   )
 
+  // This button only appears if there are no items in the array
+  const addFirstItemButton = screen.queryByRole('button', { name: 'Add item' })
+
   return {
     component,
     user,
     showPasteValuesButton,
     confirmModalButton,
     cancelModalButton,
+    addFirstItemButton,
   }
 }
 
@@ -52,11 +57,14 @@ describe('JSONArrayEditorModal', () => {
     jest.clearAllMocks()
   })
   it('Can enter values', async () => {
-    const { user, confirmModalButton } = await setUp({
+    const { user, addFirstItemButton, confirmModalButton } = await setUp({
       isShowingModal: true,
       onConfirm,
       onCancel,
     })
+
+    expect(addFirstItemButton).toBeInTheDocument()
+    await user.click(addFirstItemButton!)
 
     const firstInput = await screen.findByRole('textbox')
     await user.type(firstInput, 'first value')
@@ -74,11 +82,19 @@ describe('JSONArrayEditorModal', () => {
   })
   it('Can append by entering CSV', async () => {
     const textToPaste = 'second value,third value,fourth value'
-    const { user, showPasteValuesButton, confirmModalButton } = await setUp({
+    const {
+      user,
+      addFirstItemButton,
+      showPasteValuesButton,
+      confirmModalButton,
+    } = await setUp({
       isShowingModal: true,
       onConfirm,
       onCancel,
     })
+
+    expect(addFirstItemButton).toBeInTheDocument()
+    await user.click(addFirstItemButton!)
 
     const firstInput = await screen.findByRole('textbox')
     await user.type(firstInput, 'first value')
@@ -112,11 +128,19 @@ describe('JSONArrayEditorModal', () => {
   })
   it('Can append by entering TSV', async () => {
     const textToPaste = 'second value\tthird value\tfourth value'
-    const { user, showPasteValuesButton, confirmModalButton } = await setUp({
+    const {
+      user,
+      addFirstItemButton,
+      showPasteValuesButton,
+      confirmModalButton,
+    } = await setUp({
       isShowingModal: true,
       onConfirm,
       onCancel,
     })
+
+    expect(addFirstItemButton).toBeInTheDocument()
+    await user.click(addFirstItemButton!)
 
     const firstInput = await screen.findByRole('textbox')
     await user.type(firstInput, 'first value')
@@ -150,11 +174,19 @@ describe('JSONArrayEditorModal', () => {
   })
   it('Does not append pasted values when paste is cancelled', async () => {
     const textToPaste = 'second value,third value,fourth value'
-    const { user, showPasteValuesButton, confirmModalButton } = await setUp({
+    const {
+      user,
+      addFirstItemButton,
+      showPasteValuesButton,
+      confirmModalButton,
+    } = await setUp({
       isShowingModal: true,
       onConfirm,
       onCancel,
     })
+
+    expect(addFirstItemButton).toBeInTheDocument()
+    await user.click(addFirstItemButton!)
 
     const firstInput = await screen.findByRole('textbox')
     await user.type(firstInput, 'first value')
@@ -186,11 +218,14 @@ describe('JSONArrayEditorModal', () => {
     expect(onConfirm).toHaveBeenCalledWith(['first value'])
   })
   it('Handles cancelling the modal', async () => {
-    const { user, cancelModalButton } = await setUp({
+    const { user, addFirstItemButton, cancelModalButton } = await setUp({
       isShowingModal: true,
       onConfirm,
       onCancel,
     })
+
+    expect(addFirstItemButton).toBeInTheDocument()
+    await user.click(addFirstItemButton!)
 
     const firstInput = await screen.findByRole('textbox')
     await user.type(firstInput, 'first value')
@@ -206,5 +241,27 @@ describe('JSONArrayEditorModal', () => {
 
     expect(onCancel).toHaveBeenCalled()
     expect(onConfirm).not.toHaveBeenCalled()
+  })
+  it('Shows initial values', async () => {
+    const initialValues = ['foo', 'bar']
+    const { user, addFirstItemButton, confirmModalButton } = await setUp({
+      isShowingModal: true,
+      onConfirm,
+      onCancel,
+      value: initialValues,
+    })
+
+    expect(addFirstItemButton).not.toBeInTheDocument()
+
+    const inputs = await screen.findAllByRole('textbox')
+
+    const firstInput = inputs[0]
+    expect(firstInput).toHaveValue('foo')
+
+    const secondInput = inputs[1]
+    expect(secondInput).toHaveValue('bar')
+
+    await user.click(confirmModalButton)
+    expect(onConfirm).toHaveBeenCalledWith(['foo', 'bar'])
   })
 })

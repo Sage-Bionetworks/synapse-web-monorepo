@@ -92,9 +92,7 @@ export function EntityModal(props: EntityModalProps) {
       variant={'contained'}
       onClick={() => {
         // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/3121
-        ;(
-          annotationEditorFormRef.current as any
-        ).formElement.current.requestSubmit()
+        annotationEditorFormRef.current!.formElement.current.requestSubmit()
       }}
     >
       Save Annotations

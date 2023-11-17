@@ -51,6 +51,7 @@ import ArrayFieldDescriptionTemplate from './template/ArrayFieldDescriptionTempl
 import BaseInputTemplate from './template/BaseInputTemplate'
 import RJSF from '@rjsf/core'
 import FieldErrorTemplate from './template/FieldErrorTemplate'
+import ErrorListTemplate from './template/ErrorListTemplate'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -282,8 +283,7 @@ export function SchemaDrivenAnnotationEditor(
                 WrapIfAdditionalTemplate: WrapIfAdditionalTemplate,
                 ButtonTemplates: ButtonTemplate,
                 DescriptionFieldTemplate: DescriptionFieldTemplate,
-                /* Errors are displayed by an Alert component below, so we don't show the builtin ErrorList */
-                ErrorListTemplate: () => null,
+                ErrorListTemplate: ErrorListTemplate,
               }}
               ref={ref}
               disabled={mutation.isLoading}
@@ -350,24 +350,6 @@ export function SchemaDrivenAnnotationEditor(
                 CheckboxWidget: BooleanWidget,
               }}
             >
-              {validationError && (
-                <Alert severity="error" sx={{ my: 2 }}>
-                  <b>Validation errors found:</b>
-                  <ul>
-                    {validationError.map(
-                      (e: RJSFValidationError, index: number) => {
-                        return (
-                          <li key={index}>
-                            <b>{`${getFriendlyPropertyName(e)}: `}</b>{' '}
-                            {`${e.message}`}
-                          </li>
-                        )
-                      },
-                    )}
-                  </ul>
-                </Alert>
-              )}
-
               {submissionError && showSubmissionError && (
                 <Alert severity="error" sx={{ my: 2 }}>
                   Annotations could not be updated: {submissionError.reason}
