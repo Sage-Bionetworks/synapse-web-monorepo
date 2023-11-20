@@ -397,7 +397,7 @@ export function getTextFieldType(columnType: ColumnTypeEnum) {
     case ColumnTypeEnum.INTEGER:
       return 'number'
     case ColumnTypeEnum.DATE:
-      return 'datetime'
+      return 'date'
     default:
       return 'text'
   }

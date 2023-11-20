@@ -25,6 +25,7 @@ const mockTableBundle: TableBundle = {
 }
 
 export const Demo: Story = {
+  name: 'Table Column Schema Editor',
   parameters: {
     msw: {
       handlers: [
@@ -50,7 +51,7 @@ export const Demo: Story = {
             return res(
               ctx.status(200),
               ctx.json({
-                ...mockTableEntityData.bundle,
+                entity: mockTableEntityData.entity,
                 tableBundle: mockTableBundle,
               }),
             )
