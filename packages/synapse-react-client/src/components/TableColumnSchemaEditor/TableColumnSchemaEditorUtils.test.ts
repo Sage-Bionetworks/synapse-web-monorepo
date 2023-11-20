@@ -243,6 +243,14 @@ describe('TableColumnSchemaEditorUtils', () => {
         ColumnTypeEnum.MEDIUMTEXT,
         ColumnTypeEnum.LARGETEXT,
         ColumnTypeEnum.JSON,
+        ColumnTypeEnum.SUBMISSIONID,
+        ColumnTypeEnum.EVALUATIONID,
+        ColumnTypeEnum.STRING_LIST,
+        ColumnTypeEnum.INTEGER_LIST,
+        ColumnTypeEnum.BOOLEAN_LIST,
+        ColumnTypeEnum.DATE_LIST,
+        ColumnTypeEnum.USERID_LIST,
+        ColumnTypeEnum.ENTITYID_LIST,
       ]
       Object.values(ColumnTypeEnum).forEach((type: ColumnType) => {
         const actual = canHaveDefault(type, false, false)
