@@ -238,18 +238,6 @@ export const SendToCavatica: Story = {
   },
 }
 
-export const CombinedRangeFacetsDemo: Story = {
-  args: {
-    sql: 'SELECT * FROM syn52211295',
-    combineRangeFacetConfig: {
-      label: 'Age',
-      minFacetColumn: 'minAge',
-      maxFacetColumn: 'maxAge',
-    },
-    tableConfiguration: {},
-  },
-}
-
 const handleRowSelectionCustomCommandClick = (
   event: CustomControlCallbackData,
 ) => {
