@@ -118,7 +118,7 @@ describe('TablePagination component', () => {
     expect(mockSetPageSize).toHaveBeenCalledWith('25')
   })
 
-  it('hides pagination when on the first page and query count is less than 10', async () => {
+  it('hides pagination when on the first page and query count is 1', async () => {
     render(
       <Wrapper
         goToPage={mockGoToPage}
@@ -131,7 +131,7 @@ describe('TablePagination component', () => {
     act(() => {
       setTableData({
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
-        queryCount: 5,
+        queryCount: 1,
         maxRowsPerPage: 1000,
       })
     })

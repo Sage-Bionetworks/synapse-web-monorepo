@@ -32,12 +32,12 @@ export const TablePagination = () => {
     setPageSize(value)
   }
 
-  // PORTALS-2259: Special case.  If we're on the first page,
-  // and the total query count is less than the page size, then do not show pagination UI.
+  // PORTALS-2259: Special presentation case.  If we're on the first page,
+  // and the total query count is equal to 1 (and is the page size is not 1), then hide the pagination UI.
   // Also hide pagination if the query count is unavailable.
   if (
-    (currentPage == 1 && queryCount && queryCount < pageSize) ||
-    !queryCount
+    (currentPage == 1 && queryCount == 1 && pageSize != 1) ||
+    queryCount == undefined
   ) {
     return <></>
   }
