@@ -284,13 +284,6 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
         ) : (
           <DefaultValueField
             TextFieldProps={{
-              disabled:
-                disabled ||
-                !canHaveDefault(
-                  columnModel.columnType,
-                  isView,
-                  isJsonSubColumn,
-                ),
               InputProps: {
                 disableInjectingGlobalStyles:
                   DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
@@ -303,14 +296,6 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             }}
             SelectProps={{
               label: 'Default Value',
-              disabled:
-                disabled ||
-                !canHaveDefault(
-                  columnModel.columnType,
-                  isView,
-                  isJsonSubColumn,
-                ),
-
               sx: fieldSx,
               inputProps: {
                 'aria-label': 'Default Value',
@@ -329,6 +314,10 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 },
               })
             }}
+            disabled={
+              disabled ||
+              !canHaveDefault(columnModel.columnType, isView, isJsonSubColumn)
+            }
           />
         )}
       </Box>

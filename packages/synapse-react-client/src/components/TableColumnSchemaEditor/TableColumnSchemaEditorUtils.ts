@@ -227,7 +227,6 @@ export function canHaveDefault(
 
 export const DEFAULT_STRING_SIZE = 50
 const MAX_STRING_SIZE = 1000
-// const MAX_LIST_LENGTH = 100
 
 /**
  * Get the default max size for a given type.
@@ -357,50 +356,6 @@ export function getViewScopeForEntity(entity: Entity): ViewScope | undefined {
   }
   return undefined
 }
-//
-// function validateName(name: string) {
-//   return !(name == null || name == '')
-// }
-//
-// function validateSize(maximumSize: number) {
-//   return maximumSize > 0 && maximumSize <= MAX_STRING_SIZE
-// }
-//
-// function validateMaxListLength(maxListLength: number) {
-//   return maxListLength > 0 && maxListLength <= MAX_LIST_LENGTH
-// }
-//
-// function validateDefault() {}
-//
-// function validateColumnModel(cm: ColumnModelFormData) {
-//   if (!validateName()) {
-//     isValid = false
-//   }
-//   if (!validateSize()) {
-//     isValid = false
-//   }
-//   if (!validateMaxListLength()) {
-//     isValid = false
-//   }
-//   if (!view.validateDefault()) {
-//     isValid = false
-//   }
-// }
-//
-// export function validate(formData: ColumnModelFormData[]): boolean {
-//   if (!validateName()) {
-//     isValid = false
-//   }
-//   if (!validateSize()) {
-//     isValid = false
-//   }
-//   if (!validateMaxListLength()) {
-//     isValid = false
-//   }
-//   if (!view.validateDefault()) {
-//     isValid = false
-//   }
-// }
 
 export function getJsonSchemaItemDefinitionForColumnType(
   columnType: ColumnTypeEnum,

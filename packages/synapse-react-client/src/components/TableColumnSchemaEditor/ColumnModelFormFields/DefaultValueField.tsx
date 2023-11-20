@@ -14,12 +14,14 @@ export type DefaultValueFieldProps<T> = {
   columnType: ColumnTypeEnum
   value: T
   onChange: (newValue: T) => void
-  TextFieldProps?: Omit<TextFieldProps, 'value' | 'onChange'>
-  SelectProps?: Omit<SelectProps, 'value' | 'onChange'>
+  disabled?: boolean
+  TextFieldProps?: Omit<TextFieldProps, 'value' | 'onChange' | 'disabled'>
+  SelectProps?: Omit<SelectProps, 'value' | 'onChange' | 'disabled'>
 }
 
 export default function DefaultValueField<T>(props: DefaultValueFieldProps<T>) {
-  const { columnType, onChange, value, TextFieldProps, SelectProps } = props
+  const { columnType, onChange, value, disabled, TextFieldProps, SelectProps } =
+    props
 
   const textFieldType: TextFieldProps['type'] = useMemo(
     () => getTextFieldType(columnType),
@@ -31,6 +33,7 @@ export default function DefaultValueField<T>(props: DefaultValueFieldProps<T>) {
       <FormControl fullWidth>
         <Select
           {...SelectProps}
+          disabled={disabled}
           value={value}
           onChange={e => {
             if (e.target.value == undefined) {
@@ -54,6 +57,7 @@ export default function DefaultValueField<T>(props: DefaultValueFieldProps<T>) {
       type={textFieldType}
       value={value}
       onChange={event => onChange(event.target.value as T)}
+      disabled={disabled}
     />
   )
 }
