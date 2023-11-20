@@ -1,11 +1,8 @@
 import React, { useCallback, useMemo, useRef } from 'react'
 import {
-  useGetEntity,
-  useGetQueryResultBundleWithAsyncStatus,
+  useGetEntityBundle,
   useUpdateTableColumns,
 } from '../../synapse-queries'
-import { BUNDLE_MASK_QUERY_COLUMN_MODELS } from '../../utils/SynapseConstants'
-import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { SkeletonTable } from '../Skeleton'
 import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import TableColumnSchemaForm, { SubmitHandle } from './TableColumnSchemaForm'
@@ -15,7 +12,6 @@ import {
   getViewScopeForEntity,
   transformFormDataToColumnModels,
 } from './TableColumnSchemaEditorUtils'
-import { useSynapseContext } from '../../utils'
 import { ViewScope } from '@sage-bionetworks/synapse-types'
 import { Provider } from 'jotai'
 
@@ -32,54 +28,48 @@ function _TableColumnSchemaEditor(props: TableColumnSchemaEditorProps) {
   const { entityId } = props
 
   const formRef = useRef<SubmitHandle>(null)
-  const { data: entity, isLoading: isLoadingEntity } = useGetEntity(entityId)
-  const { data: _queryResultBundle, isLoading: isLoadingColumnModels } =
-    useGetQueryResultBundleWithAsyncStatus(
-      {
-        entityId,
-        query: {
-          sql: `SELECT * FROM ${entityId}`,
-        },
-        partMask: BUNDLE_MASK_QUERY_COLUMN_MODELS,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      },
-      {
-        // This data is inserted into a form, so don't refetch it.
-        staleTime: Infinity,
-        useErrorBoundary: true,
-      },
-    )
+  const { data: bundle, isLoading } = useGetEntityBundle(
+    entityId,
+    undefined,
+    {
+      includeEntity: true,
+      includeTableBundle: true,
+    },
+    {
+      // This data is inserted into a form, so don't refetch it.
+      staleTime: Infinity,
+      useErrorBoundary: true,
+    },
+  )
+
+  const entity = bundle?.entity
+  const originalColumnModels = bundle?.tableBundle?.columnModels
 
   const { mutate, isLoading: isMutating, error } = useUpdateTableColumns()
 
-  const isLoading = isLoadingEntity || isLoadingColumnModels
-
-  // TODO: the hook above is not returning a stable reference. this is unexpected.
-  const queryResultBundle = useDeepCompareMemoize(_queryResultBundle)
-  const { accessToken } = useSynapseContext()
   const onSubmit = useCallback(
     (formData: ColumnModelFormData[]) => {
       // Transform the form data into ColumnModels
-      const columnModels = transformFormDataToColumnModels(formData)
+      const newColumnModels = transformFormDataToColumnModels(formData)
 
       // Update the table schema with the new column models.
       mutate({
         entityId,
-        originalColumnModels: queryResultBundle!.responseBody!.columnModels!,
-        newColumnModels: columnModels,
+        originalColumnModels: originalColumnModels!,
+        newColumnModels: newColumnModels,
       })
     },
-    [accessToken, entityId, mutate, queryResultBundle],
+    [entityId, mutate, originalColumnModels],
   )
 
   const viewScope: ViewScope | undefined = useMemo(() => {
     if (!entity) {
       return undefined
     }
-    return getViewScopeForEntity(entity)
+    return getViewScopeForEntity(entity!)
   }, [entity])
 
-  if (isLoading || !entity) {
+  if (isLoading || !bundle || !entity) {
     return (
       <SkeletonTable
         numRows={8}
@@ -96,7 +86,7 @@ function _TableColumnSchemaEditor(props: TableColumnSchemaEditorProps) {
         ref={formRef}
         entityType={convertToEntityType(entity.concreteType)}
         viewScope={viewScope}
-        initialData={queryResultBundle?.responseBody?.columnModels}
+        initialData={bundle?.tableBundle?.columnModels}
         isSubmitting={isMutating}
         onSubmit={formData => {
           onSubmit(formData)

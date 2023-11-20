@@ -22,6 +22,7 @@ import {
   isEntityView,
   isSubmissionView,
 } from '../../utils/functions/EntityTypeUtils'
+import { JSONSchema7Definition } from 'json-schema'
 
 /**
  * These column types can only be used in Tables. They can not be used in views.
@@ -205,6 +206,8 @@ export function canHaveDefault(
     return false
   } else if (isJsonSubColumnFacet) {
     return false
+  } else if (type.endsWith('_LIST')) {
+    return false
   } else {
     switch (type) {
       case ColumnTypeEnum.ENTITYID:
@@ -213,6 +216,8 @@ export function canHaveDefault(
       case ColumnTypeEnum.MEDIUMTEXT:
       case ColumnTypeEnum.LARGETEXT:
       case ColumnTypeEnum.JSON:
+      case ColumnTypeEnum.SUBMISSIONID:
+      case ColumnTypeEnum.EVALUATIONID:
         return false
       default:
         return true
@@ -222,6 +227,7 @@ export function canHaveDefault(
 
 export const DEFAULT_STRING_SIZE = 50
 const MAX_STRING_SIZE = 1000
+// const MAX_LIST_LENGTH = 100
 
 /**
  * Get the default max size for a given type.
@@ -350,4 +356,94 @@ export function getViewScopeForEntity(entity: Entity): ViewScope | undefined {
     }
   }
   return undefined
+}
+//
+// function validateName(name: string) {
+//   return !(name == null || name == '')
+// }
+//
+// function validateSize(maximumSize: number) {
+//   return maximumSize > 0 && maximumSize <= MAX_STRING_SIZE
+// }
+//
+// function validateMaxListLength(maxListLength: number) {
+//   return maxListLength > 0 && maxListLength <= MAX_LIST_LENGTH
+// }
+//
+// function validateDefault() {}
+//
+// function validateColumnModel(cm: ColumnModelFormData) {
+//   if (!validateName()) {
+//     isValid = false
+//   }
+//   if (!validateSize()) {
+//     isValid = false
+//   }
+//   if (!validateMaxListLength()) {
+//     isValid = false
+//   }
+//   if (!view.validateDefault()) {
+//     isValid = false
+//   }
+// }
+//
+// export function validate(formData: ColumnModelFormData[]): boolean {
+//   if (!validateName()) {
+//     isValid = false
+//   }
+//   if (!validateSize()) {
+//     isValid = false
+//   }
+//   if (!validateMaxListLength()) {
+//     isValid = false
+//   }
+//   if (!view.validateDefault()) {
+//     isValid = false
+//   }
+// }
+
+export function getJsonSchemaItemDefinitionForColumnType(
+  columnType: ColumnTypeEnum,
+): JSONSchema7Definition {
+  switch (columnType) {
+    case ColumnTypeEnum.STRING:
+    case ColumnTypeEnum.STRING_LIST:
+      return { type: 'string', minLength: 1 }
+    case ColumnTypeEnum.DOUBLE:
+      return { type: 'number' }
+    case ColumnTypeEnum.BOOLEAN:
+    case ColumnTypeEnum.BOOLEAN_LIST:
+      return { type: 'boolean' }
+    case ColumnTypeEnum.INTEGER:
+    case ColumnTypeEnum.INTEGER_LIST:
+      return { type: 'integer' }
+    case ColumnTypeEnum.DATE:
+    case ColumnTypeEnum.DATE_LIST:
+      return { type: 'string', format: 'datetime' }
+    case ColumnTypeEnum.FILEHANDLEID:
+    case ColumnTypeEnum.ENTITYID:
+    case ColumnTypeEnum.ENTITYID_LIST:
+    case ColumnTypeEnum.LINK:
+    case ColumnTypeEnum.MEDIUMTEXT:
+    case ColumnTypeEnum.LARGETEXT:
+    case ColumnTypeEnum.USERID:
+    case ColumnTypeEnum.USERID_LIST:
+    case ColumnTypeEnum.SUBMISSIONID:
+    case ColumnTypeEnum.JSON:
+    case ColumnTypeEnum.EVALUATIONID:
+    default:
+      return { type: 'string', minLength: 1 }
+  }
+}
+
+export function getTextFieldType(columnType: ColumnTypeEnum) {
+  switch (columnType) {
+    case ColumnTypeEnum.DOUBLE:
+    case ColumnTypeEnum.INTEGER:
+      return 'number'
+    case ColumnTypeEnum.DATE:
+      return 'datetime'
+    default:
+      return 'text'
+  }
 }

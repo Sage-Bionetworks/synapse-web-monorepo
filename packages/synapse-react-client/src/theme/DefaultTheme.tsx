@@ -18,6 +18,9 @@ import {
 
 const DIALOG_INNER_PADDING = '2px'
 
+// The default TransitionComponent, Grow, causes click event interception issues, especially in SWC's gwtbootstrap modals.
+const TRANSITION_COMPONENT_OVERRIDE = Fade
+
 export const defaultMuiThemeOptions: ThemeOptions = {
   typography: typographyOptions,
   palette: palette,
@@ -252,6 +255,11 @@ export const defaultMuiThemeOptions: ThemeOptions = {
         }),
       },
     },
+    MuiMenu: {
+      defaultProps: {
+        TransitionComponent: TRANSITION_COMPONENT_OVERRIDE,
+      },
+    },
     MuiMenuItem: {
       styleOverrides: {
         root: {
@@ -272,7 +280,7 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     MuiTooltip: {
       defaultProps: {
         arrow: true,
-        TransitionComponent: Fade,
+        TransitionComponent: TRANSITION_COMPONENT_OVERRIDE,
       },
       styleOverrides: {
         arrow: ({ theme }) => ({
