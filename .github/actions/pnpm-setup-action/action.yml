@@ -26,13 +26,15 @@ runs:
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
-    - name: Set up Nx build cache
-      uses: actions/cache@v3
-      with:
-        path: .nx/cache
-        key: ${{ runner.os }}-nx-cache
-        restore-keys: |
-          ${{ runner.os }}-nx-cache
+    #    TODO: Storing the Nx cache is failing builds because the cache is not meant to be shared between machines.
+    #    This check can be disabled, but may present security risks. See: https://nx.dev/recipes/troubleshooting/unknown-local-cache#you-share-cache-with-another-machine-using-a-network-drive
+    #    - name: Set up Nx build cache
+    #      uses: actions/cache@v3
+    #      with:
+    #        path: .nx/cache
+    #        key: ${{ runner.os }}-nx-cache
+    #        restore-keys: |
+    #          ${{ runner.os }}-nx-cache
     - name: Install dependencies (use frozen lockfile)
       run: pnpm install --frozen-lockfile
       shell: bash
