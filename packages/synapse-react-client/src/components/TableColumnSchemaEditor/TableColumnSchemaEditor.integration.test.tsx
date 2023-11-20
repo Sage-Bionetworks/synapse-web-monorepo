@@ -9,22 +9,25 @@ import mockTableEntityData from '../../mocks/entity/mockTableEntity'
 import {
   getAnnotationColumnHandlers,
   getDefaultColumnHandlers,
-  getHandlersForTableQuery,
 } from '../../mocks/msw/handlers/tableQueryHandlers'
 import { syn17328596 as mockTableQueryData } from '../../mocks/query/syn17328596'
 import userEvent from '@testing-library/user-event'
 import { SynapseClient } from '../../index'
 import { rest } from 'msw'
 import { uniqueId } from 'lodash-es'
-import { ColumnModel, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnModel,
+  ColumnTypeEnum,
+  EntityBundle,
+} from '@sage-bionetworks/synapse-types'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { mockQueryResultBundle as mockFileViewQueryResultBundle } from '../../mocks/mockFileViewQuery'
 import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import { ImportTableColumnsButtonProps } from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
+import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
 
 const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
   {
@@ -50,6 +53,17 @@ jest.mock('./ImportTableColumnsButton', () => ({
   __esModule: true,
   default: MockedImportTableColumnsButton,
 }))
+
+function getEntityBundleHandler(bundle: Partial<EntityBundle>) {
+  return rest.post(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+      ':entityId',
+    )}`,
+    async (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(bundle))
+    },
+  )
+}
 
 function renderComponent(props: TableColumnSchemaEditorProps) {
   return render(<TableColumnSchemaEditor {...props} />, {
@@ -107,7 +121,15 @@ describe('TableColumnSchemaEditor', () => {
   afterAll(() => server.close())
 
   it('Renders a form and preloads data', async () => {
-    server.use(...getHandlersForTableQuery(mockTableQueryData))
+    server.use(
+      getEntityBundleHandler({
+        entity: mockTableEntityData.entity,
+        tableBundle: {
+          columnModels: mockTableQueryData.columnModels!,
+          maxRowsPerPage: 25,
+        },
+      }),
+    )
     await setUp({
       entityId: mockTableEntityData.id,
     })
@@ -123,7 +145,16 @@ describe('TableColumnSchemaEditor', () => {
   })
   it('User can update the form and submit the new data', async () => {
     const updateTableSpy = jest.spyOn(SynapseClient, 'updateTable')
-    server.use(...getHandlersForTableQuery(mockTableQueryData))
+    server.use(
+      getEntityBundleHandler({
+        entity: mockTableEntityData.entity,
+        tableBundle: {
+          columnModels: mockTableQueryData.columnModels!,
+          maxRowsPerPage: 25,
+        },
+      }),
+    )
+
     const { user, saveButton } = await setUp({
       entityId: mockTableEntityData.id,
     })
@@ -147,10 +178,13 @@ describe('TableColumnSchemaEditor', () => {
   it('User can add default columns', async () => {
     // Must use a file view -- tables don't have default columns
     server.use(
-      ...getHandlersForTableQuery({
-        ...mockFileViewQueryResultBundle,
-        // The view initially has no columns.
-        columnModels: [],
+      getEntityBundleHandler({
+        entity: mockFileViewEntity,
+        tableBundle: {
+          // The view initially has no columns.
+          columnModels: [],
+          maxRowsPerPage: 25,
+        },
       }),
     )
     await setUp({
@@ -179,10 +213,13 @@ describe('TableColumnSchemaEditor', () => {
   it('User can add annotations columns to a view', async () => {
     // Must use a file view to get annotations
     server.use(
-      ...getHandlersForTableQuery({
-        ...mockFileViewQueryResultBundle,
-        // The view initially has no columns.
-        columnModels: [],
+      getEntityBundleHandler({
+        entity: mockFileViewEntity,
+        tableBundle: {
+          // The view initially has no columns.
+          columnModels: [],
+          maxRowsPerPage: 25,
+        },
       }),
     )
     await setUp({
@@ -212,16 +249,19 @@ describe('TableColumnSchemaEditor', () => {
   it('Existing default columns are not editable, except facetType', async () => {
     // Must use a file view to have default columns
     server.use(
-      ...getHandlersForTableQuery({
-        ...mockFileViewQueryResultBundle,
-        // The view initially has the ID column, which is a default column.
-        columnModels: [
-          {
-            id: '1234',
-            name: 'id',
-            columnType: ColumnTypeEnum.STRING,
-          },
-        ],
+      getEntityBundleHandler({
+        entity: mockFileViewEntity,
+        tableBundle: {
+          // The view initially has the ID column, which is a default column.
+          columnModels: [
+            {
+              id: '1234',
+              name: 'id',
+              columnType: ColumnTypeEnum.STRING,
+            },
+          ],
+          maxRowsPerPage: 25,
+        },
       }),
     )
     const { user } = await setUp({
@@ -272,7 +312,14 @@ describe('TableColumnSchemaEditor', () => {
   it('User can import columns from another table', async () => {
     // Start with no columns
     server.use(
-      ...getHandlersForTableQuery({ ...mockTableQueryData, columnModels: [] }),
+      getEntityBundleHandler({
+        entity: mockTableEntityData.entity,
+        tableBundle: {
+          // Start with no columns
+          columnModels: [],
+          maxRowsPerPage: 25,
+        },
+      }),
     )
     const { user } = await setUp({
       entityId: mockTableEntityData.id,

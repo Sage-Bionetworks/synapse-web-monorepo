@@ -1,6 +1,5 @@
 import {
   Box,
-  Fade,
   FormControl,
   Link,
   MenuItem,
@@ -23,7 +22,7 @@ import {
   VIEW_CONCRETE_TYPE_VALUES,
 } from '@sage-bionetworks/synapse-types'
 import { convertToConcreteEntityType } from '../../utils/functions/EntityTypeUtils'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { isEmpty, isEqual } from 'lodash-es'
 import {
   canHaveDefault,
@@ -37,9 +36,10 @@ import {
   getMaxSizeForType,
 } from './TableColumnSchemaEditorUtils'
 import { Checkbox } from '../widgets/Checkbox'
-import JSONArrayEditorModal from '../JSONArrayEditor/JSONArrayEditorModal'
 import { HIERARCHY_VERTICAL_LINE_COMPONENT } from './TableColumnSchemaForm'
 import { InfoTwoTone } from '@mui/icons-material'
+import DefaultValueField from './ColumnModelFormFields/DefaultValueField'
+import RestrictedValuesField from './ColumnModelFormFields/RestrictedValuesField'
 
 type ColumnModelFormProps = {
   entityType: EntityType
@@ -77,9 +77,6 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
   const isView = (VIEW_CONCRETE_TYPE_VALUES as readonly string[]).includes(
     convertToConcreteEntityType(entityType),
   )
-
-  const [isShowingRestrictedValuesModal, setIsShowingRestrictedValuesModal] =
-    useState(false)
 
   const columnModelAtom = useMemo(
     () =>
@@ -201,9 +198,6 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 'aria-label': 'Column Type',
               }}
               sx={fieldSx}
-              MenuProps={{
-                TransitionComponent: Fade,
-              }}
               disabled={disabled}
             >
               {allowedColumnTypes.map(value => {
@@ -288,39 +282,49 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
         {isDefaultColumn ? (
           (columnModel as ColumnModelFormData)?.defaultValue ?? ''
         ) : (
-          <TextField
-            fullWidth
+          <DefaultValueField
+            TextFieldProps={{
+              InputProps: {
+                disableInjectingGlobalStyles:
+                  DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+                inputProps: {
+                  'aria-label': 'Default Value',
+                },
+                sx: fieldSx,
+              },
+              fullWidth: true,
+            }}
+            SelectProps={{
+              label: 'Default Value',
+              sx: fieldSx,
+              inputProps: {
+                'aria-label': 'Default Value',
+              },
+            }}
+            columnType={columnModel.columnType as ColumnTypeEnum}
             value={(columnModel as ColumnModelFormData)?.defaultValue ?? ''}
-            disabled={
-              disabled ||
-              !canHaveDefault(columnModel.columnType, isView, isJsonSubColumn)
-            }
-            onChange={e => {
+            onChange={value => {
               dispatch({
                 type: 'setColumnModelValue',
                 columnModelIndex,
                 jsonSubColumnModelIndex: jsonSubColumnIndex,
                 value: {
                   ...columnModel,
-                  defaultValue: e.target.value,
+                  defaultValue: value,
                 },
               })
             }}
-            InputProps={{
-              disableInjectingGlobalStyles:
-                DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
-              inputProps: {
-                'aria-label': 'Default Value',
-              },
-              sx: fieldSx,
-            }}
+            disabled={
+              disabled ||
+              !canHaveDefault(columnModel.columnType, isView, isJsonSubColumn)
+            }
           />
         )}
       </Box>
       <Box>
-        <JSONArrayEditorModal
-          isShowingModal={isShowingRestrictedValuesModal}
-          onConfirm={newValue => {
+        <RestrictedValuesField
+          value={(columnModel as ColumnModelFormData)?.enumValues}
+          onChange={newValue => {
             dispatch({
               type: 'setColumnModelValue',
               columnModelIndex,
@@ -330,29 +334,22 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 enumValues: isEmpty(newValue) ? undefined : newValue,
               },
             })
-            setIsShowingRestrictedValuesModal(false)
           }}
-          onCancel={() => setIsShowingRestrictedValuesModal(false)}
-        />
-        <TextField
-          fullWidth
-          value={((columnModel as ColumnModelFormData)?.enumValues ?? []).join(
-            ', ',
-          )}
-          onClick={() => {
-            setIsShowingRestrictedValuesModal(true)
-          }}
-          disabled={
-            disabled ||
-            !canHaveRestrictedValues(columnModel.columnType, isJsonSubColumn)
-          }
-          InputProps={{
-            disableInjectingGlobalStyles: DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
-            // Is readOnly because edits are made with the JSONArrayEditorModal
-            readOnly: true,
-            sx: fieldSx,
-            inputProps: {
-              'aria-label': 'Restrict Values',
+          columnType={columnModel.columnType as ColumnTypeEnum}
+          TextFieldProps={{
+            fullWidth: true,
+            disabled:
+              disabled ||
+              !canHaveRestrictedValues(columnModel.columnType, isJsonSubColumn),
+            InputProps: {
+              disableInjectingGlobalStyles:
+                DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+              // Is readOnly because edits are made with the JSONArrayEditorModal
+              readOnly: true,
+              sx: fieldSx,
+              inputProps: {
+                'aria-label': 'Restrict Values',
+              },
             },
           }}
         />
@@ -363,9 +360,6 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             label="Facet Type"
             value={columnModel.facetType}
             disabled={disabled || allowedFacetTypes === null}
-            MenuProps={{
-              TransitionComponent: Fade,
-            }}
             onChange={e => {
               dispatch({
                 type: 'setColumnModelValue',

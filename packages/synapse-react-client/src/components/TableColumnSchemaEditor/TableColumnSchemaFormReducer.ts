@@ -8,7 +8,6 @@ import { SetOptional } from 'type-fest'
 import { cloneDeep } from 'lodash-es'
 import {
   canHaveMaxListLength,
-  canHaveRestrictedValues,
   canHaveSize,
   configureFacetsForType,
   DEFAULT_STRING_SIZE,
@@ -233,11 +232,13 @@ function changeColumnModelType(
   ) {
     delete newColumnModelValue.maximumListLength
   }
-  if (
-    !canHaveRestrictedValues(newColumnType, !!jsonSubColumnModelIndex) &&
-    'enumValues' in newColumnModelValue
-  ) {
+
+  // Remove default and restricted values unconditionally since they may not adhere to the new column type
+  if ('enumValues' in newColumnModelValue) {
     delete newColumnModelValue.enumValues
+  }
+  if ('defaultValue' in newColumnModelValue) {
+    delete newColumnModelValue.defaultValue
   }
 
   const allowedFacetTypes = configureFacetsForType(

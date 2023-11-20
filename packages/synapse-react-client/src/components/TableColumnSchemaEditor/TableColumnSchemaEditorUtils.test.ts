@@ -15,9 +15,11 @@ import {
   canHaveSize,
   configureFacetsForType,
   getAllowedColumnTypes,
+  getJsonSchemaItemDefinitionForColumnType,
   getMaxSizeForType,
   getViewScopeForEntity,
 } from './TableColumnSchemaEditorUtils'
+import { JSONSchema7Definition } from 'json-schema'
 
 describe('TableColumnSchemaEditorUtils', () => {
   describe('getAllowedColumnTypes', () => {
@@ -241,6 +243,14 @@ describe('TableColumnSchemaEditorUtils', () => {
         ColumnTypeEnum.MEDIUMTEXT,
         ColumnTypeEnum.LARGETEXT,
         ColumnTypeEnum.JSON,
+        ColumnTypeEnum.SUBMISSIONID,
+        ColumnTypeEnum.EVALUATIONID,
+        ColumnTypeEnum.STRING_LIST,
+        ColumnTypeEnum.INTEGER_LIST,
+        ColumnTypeEnum.BOOLEAN_LIST,
+        ColumnTypeEnum.DATE_LIST,
+        ColumnTypeEnum.USERID_LIST,
+        ColumnTypeEnum.ENTITYID_LIST,
       ]
       Object.values(ColumnTypeEnum).forEach((type: ColumnType) => {
         const actual = canHaveDefault(type, false, false)
@@ -370,6 +380,24 @@ describe('TableColumnSchemaEditorUtils', () => {
         viewTypeMask: undefined,
         viewEntityType: 'submissionview',
       })
+    })
+  })
+  describe('getJsonSchemaItemDefinitionForColumnType', () => {
+    test.each<[ColumnTypeEnum, JSONSchema7Definition]>([
+      [ColumnTypeEnum.STRING, { type: 'string', minLength: 1 }],
+      [ColumnTypeEnum.STRING_LIST, { type: 'string', minLength: 1 }],
+      [ColumnTypeEnum.INTEGER, { type: 'integer' }],
+      [ColumnTypeEnum.INTEGER_LIST, { type: 'integer' }],
+      [ColumnTypeEnum.DOUBLE, { type: 'number' }],
+      [ColumnTypeEnum.BOOLEAN, { type: 'boolean' }],
+      [ColumnTypeEnum.BOOLEAN_LIST, { type: 'boolean' }],
+      [ColumnTypeEnum.DATE, { type: 'string', format: 'datetime' }],
+      [ColumnTypeEnum.DATE_LIST, { type: 'string', format: 'datetime' }],
+      [ColumnTypeEnum.USERID, { type: 'string', minLength: 1 }],
+      [ColumnTypeEnum.ENTITYID, { type: 'string', minLength: 1 }],
+    ])(`%s`, (columnType, expected) => {
+      const actual = getJsonSchemaItemDefinitionForColumnType(columnType)
+      expect(actual).toEqual(expected)
     })
   })
 })

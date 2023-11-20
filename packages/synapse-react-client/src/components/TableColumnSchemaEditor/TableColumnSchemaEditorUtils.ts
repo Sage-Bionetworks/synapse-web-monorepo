@@ -22,6 +22,7 @@ import {
   isEntityView,
   isSubmissionView,
 } from '../../utils/functions/EntityTypeUtils'
+import { JSONSchema7Definition } from 'json-schema'
 
 /**
  * These column types can only be used in Tables. They can not be used in views.
@@ -205,6 +206,8 @@ export function canHaveDefault(
     return false
   } else if (isJsonSubColumnFacet) {
     return false
+  } else if (type.endsWith('_LIST')) {
+    return false
   } else {
     switch (type) {
       case ColumnTypeEnum.ENTITYID:
@@ -213,6 +216,8 @@ export function canHaveDefault(
       case ColumnTypeEnum.MEDIUMTEXT:
       case ColumnTypeEnum.LARGETEXT:
       case ColumnTypeEnum.JSON:
+      case ColumnTypeEnum.SUBMISSIONID:
+      case ColumnTypeEnum.EVALUATIONID:
         return false
       default:
         return true
@@ -350,4 +355,50 @@ export function getViewScopeForEntity(entity: Entity): ViewScope | undefined {
     }
   }
   return undefined
+}
+
+export function getJsonSchemaItemDefinitionForColumnType(
+  columnType: ColumnTypeEnum,
+): JSONSchema7Definition {
+  switch (columnType) {
+    case ColumnTypeEnum.STRING:
+    case ColumnTypeEnum.STRING_LIST:
+      return { type: 'string', minLength: 1 }
+    case ColumnTypeEnum.DOUBLE:
+      return { type: 'number' }
+    case ColumnTypeEnum.BOOLEAN:
+    case ColumnTypeEnum.BOOLEAN_LIST:
+      return { type: 'boolean' }
+    case ColumnTypeEnum.INTEGER:
+    case ColumnTypeEnum.INTEGER_LIST:
+      return { type: 'integer' }
+    case ColumnTypeEnum.DATE:
+    case ColumnTypeEnum.DATE_LIST:
+      return { type: 'string', format: 'datetime' }
+    case ColumnTypeEnum.FILEHANDLEID:
+    case ColumnTypeEnum.ENTITYID:
+    case ColumnTypeEnum.ENTITYID_LIST:
+    case ColumnTypeEnum.LINK:
+    case ColumnTypeEnum.MEDIUMTEXT:
+    case ColumnTypeEnum.LARGETEXT:
+    case ColumnTypeEnum.USERID:
+    case ColumnTypeEnum.USERID_LIST:
+    case ColumnTypeEnum.SUBMISSIONID:
+    case ColumnTypeEnum.JSON:
+    case ColumnTypeEnum.EVALUATIONID:
+    default:
+      return { type: 'string', minLength: 1 }
+  }
+}
+
+export function getTextFieldType(columnType: ColumnTypeEnum) {
+  switch (columnType) {
+    case ColumnTypeEnum.DOUBLE:
+    case ColumnTypeEnum.INTEGER:
+      return 'number'
+    case ColumnTypeEnum.DATE:
+      return 'date'
+    default:
+      return 'text'
+  }
 }

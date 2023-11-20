@@ -1,37 +1,60 @@
-import React, { useRef, useState } from 'react'
-import { ConfirmationDialog } from '../ConfirmationDialog'
-import JSONArrayEditor from './JSONArrayEditor'
+import React, { useEffect, useRef, useState } from 'react'
+import {
+  ConfirmationDialog,
+  ConfirmationDialogProps,
+} from '../ConfirmationDialog'
+import JSONArrayEditor, { JSONArrayEditorProps } from './JSONArrayEditor'
 import type RJSFForm from '@rjsf/core'
 import { RJSFSchema } from '@rjsf/utils'
 
-export type JSONArrayEditorModalProps = {
+export type JSONArrayEditorModalProps = Pick<
+  JSONArrayEditorProps,
+  'arrayItemDefinition' | 'value'
+> & {
+  dialogTitle?: ConfirmationDialogProps['title']
   isShowingModal: boolean
   onConfirm: (value: string[]) => void
   onCancel: () => void
 }
 
 function JSONArrayEditorModal(props: JSONArrayEditorModalProps) {
-  const { isShowingModal, onConfirm, onCancel } = props
+  const {
+    isShowingModal,
+    onConfirm,
+    onCancel,
+    dialogTitle = 'Edit Values',
+    value,
+    ...editorProps
+  } = props
   const formRef = useRef<RJSFForm<any, RJSFSchema, any>>(null)
-  const [value, setValue] = useState<string[]>([])
+  const [tempValue, setTempValue] = useState<string[]>(value ?? [])
+
+  useEffect(() => {
+    /* If the passed prop changes, reset local component state */
+    if (value) {
+      setTempValue(value)
+    }
+  }, [value])
+
   return (
     <ConfirmationDialog
       open={isShowingModal}
-      title="Edit Values"
+      title={dialogTitle}
       confirmButtonText="OK"
       onCancel={onCancel}
       maxWidth="md"
       content={
         <JSONArrayEditor
           ref={formRef}
-          value={value}
-          onChange={newValue => setValue(newValue)}
+          value={tempValue}
+          onChange={newValue => setTempValue(newValue)}
           onSubmit={onConfirm}
+          {...editorProps}
         />
       }
       onConfirm={() => {
         // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/3121
-        ;(formRef.current as any).formElement.current.requestSubmit()
+        formRef.current!.formElement.current.requestSubmit()
       }}
     ></ConfirmationDialog>
   )

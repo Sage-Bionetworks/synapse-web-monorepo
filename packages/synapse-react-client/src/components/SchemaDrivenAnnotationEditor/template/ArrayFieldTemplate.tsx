@@ -2,17 +2,18 @@ import {
   ADDITIONAL_PROPERTY_FLAG,
   ArrayFieldTemplateItemType,
   ArrayFieldTemplateProps,
-  FormContextType,
   getTemplate,
   getUiOptions,
   RJSFSchema,
   StrictRJSFSchema,
 } from '@rjsf/utils'
 import React, { useEffect, useState } from 'react'
-import { Box, Collapse, IconButton, Tooltip } from '@mui/material'
+import { Box, Button, Collapse, IconButton, Tooltip } from '@mui/material'
 import { HelpOutline } from '@mui/icons-material'
 import { useAdditionalPropertyContext } from './AdditionalPropertyContext'
 import { JSONSchema7 } from 'json-schema'
+import { CustomFormContext } from '../CustomFormContext'
+import { isEmpty } from 'lodash-es'
 
 /** The `ArrayFieldTemplate` component is the template used to render all items in an array.
  *
@@ -21,9 +22,9 @@ import { JSONSchema7 } from 'json-schema'
 function ArrayFieldTemplate<
   T = any,
   S extends StrictRJSFSchema = RJSFSchema,
-  F extends FormContextType = any,
+  F extends CustomFormContext = any,
 >(props: ArrayFieldTemplateProps<T, S, F>) {
-  const { idSchema, uiSchema, items, registry, schema } = props
+  const { idSchema, uiSchema, items, registry, schema, formContext } = props
   const uiOptions = getUiOptions<T, S, F>(uiSchema)
   const ArrayFieldTitleTemplate = getTemplate<
     'ArrayFieldTitleTemplate',
@@ -54,7 +55,10 @@ function ArrayFieldTemplate<
    * If we have an array of 0 items, go ahead and add one.
    */
   useEffect(() => {
-    if (props.items.length === 0) {
+    if (
+      props.items.length === 0 &&
+      !formContext?.allowRemovingLastItemInArray
+    ) {
       props.onAddClick()
     }
   }, [props])
@@ -81,6 +85,11 @@ function ArrayFieldTemplate<
           </Tooltip>
         )}
       </div>
+      {(!items || isEmpty(items)) && (
+        <Button variant={'outlined'} onClick={props.onAddClick}>
+          Add item
+        </Button>
+      )}
       {items && (
         <>
           {items.map(
@@ -96,7 +105,11 @@ function ArrayFieldTemplate<
                 hasCopy={true}
                 hasMoveUp={items.length > 1 && index != 0}
                 hasMoveDown={items.length > 1 && index != items.length - 1}
-                hasRemove={isAdditionalProperty || items.length > 1}
+                hasRemove={
+                  isAdditionalProperty ||
+                  items.length > 1 ||
+                  Boolean(formContext?.allowRemovingLastItemInArray)
+                }
                 onDropIndexClick={
                   isAdditionalProperty &&
                   items.length == 1 &&

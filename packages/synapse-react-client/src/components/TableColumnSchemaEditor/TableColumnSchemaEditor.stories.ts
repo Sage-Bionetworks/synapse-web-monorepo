@@ -3,15 +3,13 @@ import TableColumnSchemaEditor from './TableColumnSchemaEditor'
 import {
   getAnnotationColumnHandlers,
   getDefaultColumnHandlers,
-  getHandlersForTableQuery,
 } from '../../mocks/msw/handlers/tableQueryHandlers'
-import {
-  mockQueryBundleRequest,
-  mockQueryResultBundle,
-} from '../../mocks/mockFileViewQuery'
+import { mockQueryResultBundle } from '../../mocks/mockFileViewQuery'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
-import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
-import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import { ColumnTypeEnum, TableBundle } from '@sage-bionetworks/synapse-types'
+import { rest } from 'msw'
+import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
+import mockTableEntityData from '../../mocks/entity/mockTableEntity'
 
 const meta = {
   title: 'Synapse/Table Column Schema Editor',
@@ -21,12 +19,16 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+const mockTableBundle: TableBundle = {
+  columnModels: mockQueryResultBundle.columnModels!,
+  maxRowsPerPage: 25,
+}
+
 export const Demo: Story = {
+  name: 'Table Column Schema Editor',
   parameters: {
     msw: {
       handlers: [
-        ...getEntityHandlers(MOCK_REPO_ORIGIN),
-        ...getHandlersForTableQuery(mockQueryResultBundle, MOCK_REPO_ORIGIN),
         ...getDefaultColumnHandlers(MOCK_REPO_ORIGIN),
         ...getAnnotationColumnHandlers(
           {
@@ -43,10 +45,22 @@ export const Demo: Story = {
           },
           MOCK_REPO_ORIGIN,
         ),
+        rest.post(
+          `${MOCK_REPO_ORIGIN}${ENTITY_BUNDLE_V2(':entityId')}`,
+          async (req, res, ctx) => {
+            return res(
+              ctx.status(200),
+              ctx.json({
+                entity: mockTableEntityData.entity,
+                tableBundle: mockTableBundle,
+              }),
+            )
+          },
+        ),
       ],
     },
   },
   args: {
-    entityId: mockQueryBundleRequest.entityId,
+    entityId: mockTableEntityData.id,
   },
 }

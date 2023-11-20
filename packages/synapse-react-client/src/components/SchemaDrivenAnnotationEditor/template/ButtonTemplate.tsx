@@ -55,7 +55,7 @@ function IconButtonTemplate<
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
 >(props: IconButtonProps<T, S, F> & IconButtonTemplateProps) {
-  const { iconType, buttonType, ...otherProps } = props
+  const { iconType, buttonType, uiSchema, ...otherProps } = props
 
   return (
     <IconButton {...otherProps} color={'default'} sx={buttonSx}>
