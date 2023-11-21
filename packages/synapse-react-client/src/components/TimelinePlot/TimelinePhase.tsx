@@ -249,7 +249,7 @@ const TimelinePhase = ({
           setHoverEvent(undefined)
         }}
         // PORTALS-2861: To avoid the plot handling the double-click, change the key so the Plotly graph (gd) associated
-        // to the click event is invalid.  Tried many other approaches before arriving at this hack.
+        // to the click event is invalid.
         onDoubleClick={() => {
           setPlotKey(plotKey + 1)
         }}
