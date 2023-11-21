@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react'
-import Plotly, { Layout } from 'plotly.js-basic-dist'
+import React, { useMemo, useRef, useState } from 'react'
+import Plotly, { Layout, PlotData } from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import dayjs, { ManipulateType } from 'dayjs'
 import { Dialog } from '@mui/material'
@@ -8,7 +8,7 @@ import {
   ObservationCardSchema,
 } from '../row_renderers/ObservationCard'
 import { Row } from '@sage-bionetworks/synapse-types'
-import pluralize from 'pluralize'
+
 const Plot = createPlotlyComponent(Plotly)
 
 type TimepointData = {
@@ -98,7 +98,7 @@ const getTimelineData = (timepointData: TimepointData, rowData: Row[]) => {
       mode: 'lines',
       line: {
         color: isHoveredOver ? 'black' : 'gray',
-        width: 2,
+        width: isHoveredOver ? 2 : 1,
       },
       // Add event into in the customdata
       customdata: [rowIds, rowIds, rowIds],
@@ -113,55 +113,55 @@ const getLayout = (
   start: dayjs.Dayjs,
   end: dayjs.Dayjs,
   color: string,
-  annotateTime?: number,
-  annotateTimeUnits?: ManipulateType,
-  annotateEventCount?: number,
+  timelineData: Plotly.Data[],
+  rowData: Row[],
+  schema: ObservationCardSchema,
 ): Partial<Layout> => {
-  const annotations: Partial<Plotly.Annotations>[] = [
-    {
-      x: start.add(1, 'day').format(),
-      y: -1,
-      text: '                             ', // hacky annotation in the middle of the plot so it does not shift when showing other annotations
-      showarrow: false,
-      textangle: '270',
-      height: 15,
-    },
-  ]
-  if (annotateTime && annotateTimeUnits && annotateEventCount) {
-    const eventCountText =
-      annotateEventCount > 1 ? `(${annotateEventCount})` : ''
-    const x = start.add(annotateTime, annotateTimeUnits)
-    annotations.push({
-      x: x.format(),
-      y: -1,
-      text: `${annotateTime} ${pluralize(
-        annotateTimeUnits,
-        annotateTime,
-      )} ${eventCountText}`,
-      showarrow: false,
-      textangle: '270',
-      height: 15,
-    })
-  }
+  const xTickVals = timelineData.map(value => {
+    // return the utcFormattedTimepoint
+    return (value as PlotData).x[0]
+  })
+  const xTickText = timelineData.map(value => {
+    const rowIds = (value as PlotData).customdata[0] as number[] | undefined
+    if (rowIds && rowIds.length > 0) {
+      const count = rowIds.length
+      const rows = rowData?.filter(row => {
+        return rowIds[0] == row.rowId
+      })
+      if (rows && rows.length > 0) {
+        const row = rows[0]
+        const time = parseFloat(row.values[schema.observationTime]!)
+        const timeUnits = row.values[
+          schema.observationTimeUnits
+        ] as ManipulateType
+        const countString = count > 1 ? `(${count})` : ''
+        return `${time} ${timeUnits} ${countString}`
+      }
+    }
+    return ''
+  })
+
   return {
     hovermode: 'closest',
     dragmode: false, //disallow interaction
     showlegend: false,
     xaxis: {
       showgrid: false,
-      showticklabels: false,
+      showticklabels: true,
       showline: false,
       zeroline: false,
+      tickvals: xTickVals,
+      ticktext: xTickText,
+      tickangle: -45,
     },
 
     yaxis: {
-      range: [-1, 1],
+      range: [0, 1.25],
       showgrid: false,
       zeroline: false,
       showline: false,
       showticklabels: false,
     },
-    annotations: annotations,
     // Each phase has a shape
     shapes: [
       {
@@ -203,6 +203,7 @@ const TimelinePhase = ({
 }: TimelinePhaseProps) => {
   const [clickEvent, setClickEvent] = useState<Plotly.PlotMouseEvent>()
   const [hoverEvent, setHoverEvent] = useState<Plotly.PlotHoverEvent>()
+  const [plotKey, setPlotKey] = useState(1)
   const start = dayjs()
 
   // hide the hover UI if we detect that the user moves the mouse outside of this component boundary
@@ -218,43 +219,39 @@ const TimelinePhase = ({
     | number
     | undefined
   )[]
-  const hoverRows = rowData?.filter(row => {
-    return hoverEventRowIds?.includes(row.rowId)
-  })
-  const annotateTime =
-    hoverRows && hoverRows.length > 0
-      ? parseFloat(hoverRows[0].values[schema.observationTime]!)
-      : undefined
-  const annotateTimeUnits =
-    hoverRows && hoverRows.length > 0
-      ? (hoverRows[0].values[schema.observationTimeUnits] as ManipulateType)
-      : undefined
-  const timepointData = getTimepointData(
-    start,
-    rowData,
-    schema,
-    hoverEventRowIds?.length > 0 ? hoverEventRowIds[0] : undefined,
-  )
+
+  const timepointData = useMemo(() => {
+    return getTimepointData(
+      start,
+      rowData,
+      schema,
+      hoverEventRowIds?.length > 0 ? hoverEventRowIds[0] : undefined,
+    )
+  }, [hoverEventRowIds, rowData, schema, start])
 
   const end = getMaxDate(timepointData.timepoints)
+
+  const timelineData = useMemo(() => {
+    return getTimelineData(timepointData, rowData)
+  }, [timepointData, rowData])
+
   return (
     <div ref={componentRef} style={{ width: widthPx }}>
       <Plot
+        key={`Plot-${color}-${plotKey}`}
         style={{ width: widthPx, height: '220px' }}
-        data={getTimelineData(timepointData, rowData)}
-        layout={getLayout(
-          start,
-          end,
-          color,
-          annotateTime,
-          annotateTimeUnits,
-          hoverRows.length,
-        )}
+        data={timelineData}
+        layout={getLayout(start, end, color, timelineData, rowData, schema)}
         config={{ displayModeBar: false }}
         useResizeHandler={true}
         onClick={eventData => {
           setClickEvent(eventData)
           setHoverEvent(undefined)
+        }}
+        // PORTALS-2861: To avoid the plot handling the double-click, change the key so the Plotly graph (gd) associated
+        // to the click event is invalid.
+        onDoubleClick={() => {
+          setPlotKey(plotKey + 1)
         }}
         onHover={eventData => {
           setHoverEvent(eventData)
