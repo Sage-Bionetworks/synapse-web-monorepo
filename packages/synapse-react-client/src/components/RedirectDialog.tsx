@@ -21,7 +21,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
   const [isCancelled, setIsCancelled] = React.useState<boolean>(false)
 
   useEffect(() => {
-    if (countdownSeconds) {
+    if (countdownSeconds && !isCancelled) {
       // You would expect that we should redirect when countdownSeconds reaches 0,
       // but it actually takes about a second to perform the redirect.
       // So let's start the process when we get to 1.
@@ -34,7 +34,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
         }
       }, 1000)
     }
-  }, [redirectUrl, countdownSeconds])
+  }, [redirectUrl, countdownSeconds, isCancelled])
 
   useEffect(() => {
     if (countdownSeconds == undefined) {
@@ -43,18 +43,11 @@ const RedirectDialog = (props: RedirectDialogProps) => {
   }, [countdownSeconds])
 
   const onClose = () => {
-    // reset countdown seconds
-    setCountdownSeconds(undefined)
     setIsCancelled(true)
   }
 
   return (
-    <Dialog
-      open={!isCancelled}
-      onClose={onClose}
-      className="RedirectDialog"
-      // PaperProps={{ sx: { padding: 0 } }}
-    >
+    <Dialog open={!isCancelled} onClose={onClose} className="RedirectDialog">
       <DialogTitle>Redirecting</DialogTitle>
       <DialogContent>
         <Typography variant="body1" sx={{ paddingBottom: '20px' }}>
