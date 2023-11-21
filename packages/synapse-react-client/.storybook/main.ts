@@ -4,6 +4,7 @@ import turbosnap from 'vite-plugin-turbosnap'
 
 const config: StorybookConfig = {
   stories: ['../**/*.stories.mdx', '../**/*.stories.@(js|jsx|ts|tsx)'],
+
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
@@ -14,6 +15,7 @@ const config: StorybookConfig = {
     },
     'storybook-addon-designs',
   ],
+
   framework: {
     name: '@storybook/react-vite',
     options: {
@@ -22,6 +24,7 @@ const config: StorybookConfig = {
       },
     },
   },
+
   typescript: {
     // These options are from https://storybook.js.org/blog/material-ui-in-storybook/
     check: false,
@@ -43,10 +46,13 @@ const config: StorybookConfig = {
           : true,
     },
   },
+
   features: {
     storyStoreV7: true,
   },
+
   staticDirs: ['../public'],
+
   async viteFinal(config, { configType }) {
     let base,
       plugins = undefined
@@ -63,6 +69,10 @@ const config: StorybookConfig = {
     // return the customized config
 
     return mergeConfig(config, customStorybookConfig)
+  },
+
+  docs: {
+    autodocs: false,
   },
 }
 module.exports = config
