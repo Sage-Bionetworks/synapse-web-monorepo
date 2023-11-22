@@ -27,16 +27,23 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<
   CalendarWithIconFormGroupProps
 > = ({ value, setterCallback, label, disabled = false }) => {
   const [id] = useState(uniqueId('calendar-with-icon-form-group-'))
+
+  // SWC-6613: Force re-render when DateTimePicker dialog is closed to re-initialize (clean up MUI dialog)
+  const [dateTimePickerKey, setDateTimePickerKey] = useState(1)
   return (
     <Form.Group className="calendar-with-icon-form-group">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         {label && <label htmlFor={id}>{label}</label>}
         <InputGroup>
           <DateTimePicker
+            key={dateTimePickerKey}
             className="datetime-picker"
             value={value}
             disabled={disabled}
             onChange={setterCallback}
+            onClose={() => {
+              setDateTimePickerKey(dateTimePickerKey + 1)
+            }}
             renderInput={params => (
               <TextField
                 disabled={disabled}
