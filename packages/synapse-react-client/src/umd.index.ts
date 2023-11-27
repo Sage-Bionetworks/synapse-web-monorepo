@@ -1,5 +1,6 @@
 import { SkeletonButton } from './components/Skeleton/SkeletonButton'
 import { AccountLevelBadge } from './components/AccountLevelBadge/AccountLevelBadge'
+import RedirectDialog from './components/RedirectDialog'
 import ChangePassword from './components/ChangePassword/ChangePassword'
 import { ReviewerDashboard } from './components/dataaccess/ReviewerDashboard'
 import { FolderDownloadConfirmation } from './components/download_list/FolderDownloadConfirmation'
@@ -145,6 +146,7 @@ const SynapseComponents = {
   OrientationBanner,
   AccessRequirementList,
   TableColumnSchemaForm,
+  RedirectDialog,
 }
 
 // Include the version in the build
