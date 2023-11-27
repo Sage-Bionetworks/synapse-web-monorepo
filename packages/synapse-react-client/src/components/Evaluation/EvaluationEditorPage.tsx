@@ -35,7 +35,7 @@ export const EvaluationEditorPage: React.FunctionComponent<
         onSaveSuccess={setSavedEvaluationId}
       />
 
-      <div className="mt-4">
+      <div className="my-4">
         {savedEvaluationId ? (
           <EvaluationRoundEditorList evaluationId={savedEvaluationId} />
         ) : (

@@ -27,9 +27,10 @@ function TextFieldWithTzShown(props: TextFieldProps) {
     <TextField
       {...props}
       InputProps={{
+        ...props.InputProps,
         endAdornment: (
           <>
-            {tzDisplay}
+            <span>{tzDisplay}</span>
             {props.InputProps?.endAdornment}
           </>
         ),
@@ -46,6 +47,7 @@ function DateTimeFieldWithTzShown(props: DateTimeFieldProps<string | Dayjs>) {
       id={id}
       {...props}
       slots={{
+        ...props.slots,
         textField: TextFieldWithTzShown,
       }}
     />
