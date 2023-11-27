@@ -9,7 +9,6 @@ const globals = {
   'react-dom': 'ReactDOM',
   'react-router': 'ReactRouter',
   'react-router-dom': 'ReactRouterDOM',
-  'react-transition-group': 'ReactTransitionGroup',
   'react-bootstrap': 'ReactBootstrap',
   'react-plotly.js/factory': 'createPlotlyComponent',
   'rss-parser': 'Parser',
@@ -78,7 +77,6 @@ const esBuildOptions = {
     'markdownitInlineComments',
     'markdownitBr',
     'markdownitMath',
-    'react-transition-group',
     'universal-cookie',
   ],
 }

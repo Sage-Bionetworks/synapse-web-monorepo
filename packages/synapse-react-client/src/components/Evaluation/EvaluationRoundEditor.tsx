@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react'
 import { Alert, Button } from '@mui/material'
 import { Card, Col, Form, FormControl, FormGroup, Row } from 'react-bootstrap'
 import dayjs, { Dayjs } from 'dayjs'
-import { CalendarWithIconFormGroup } from './CalendarWithIconFormGroup'
 import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitOptionsList'
 import { useListState } from '../../utils/hooks/useListState'
 import {
@@ -15,9 +14,9 @@ import {
   EvaluationRoundLimitInput,
 } from './input_models/models'
 import {
-  updateEvaluationRound,
   createEvaluationRound,
   deleteEvaluationRound,
+  updateEvaluationRound,
 } from '../../synapse-client/SynapseClient'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
@@ -26,6 +25,10 @@ import { useSynapseContext } from '../../utils/context/SynapseContext'
 import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
 import utc from 'dayjs/plugin/utc'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
+import DateTimePicker from '../DateTimePicker/DateTimePicker'
+import { DateTimeValidationError } from '@mui/x-date-pickers'
+import { upperFirst } from 'lodash-es'
+
 dayjs.extend(utc)
 dayjs.extend(isSameOrAfter)
 
@@ -117,6 +120,20 @@ const convertInputsToEvaluationRound = (
   }
 }
 
+function getDateErrorMessage(
+  dateField: 'start' | 'end',
+  error: DateTimeValidationError | null,
+): string | null {
+  if (error == null) return null
+  switch (error) {
+    case 'disablePast':
+      return `${upperFirst(dateField)} date cannot be in the past`
+    case 'invalidDate':
+    default:
+      return 'Invalid date'
+  }
+}
+
 export const EvaluationRoundEditor: React.FunctionComponent<
   EvaluationRoundEditorProps
 > = ({ evaluationRoundInput, onSave, onDelete }) => {
@@ -131,10 +148,12 @@ export const EvaluationRoundEditor: React.FunctionComponent<
   }, [error])
 
   const [startDate, setStartDate] = useState<string | Dayjs | null>(
-    dayjs(evaluationRoundInput.roundStart),
+    evaluationRoundInput.roundStart
+      ? dayjs(evaluationRoundInput.roundStart)
+      : null,
   )
   const [endDate, setEndDate] = useState<string | Dayjs | null>(
-    dayjs(evaluationRoundInput.roundEnd),
+    evaluationRoundInput.roundEnd ? dayjs(evaluationRoundInput.roundEnd) : null,
   )
 
   const [totalSubmissionLimit, setTotalSubmissionLimit] = useState<string>(
@@ -142,6 +161,11 @@ export const EvaluationRoundEditor: React.FunctionComponent<
   )
 
   const [advancedMode, setAdvancedMode] = useState<boolean>(false)
+
+  const [startDateError, setStartDateError] =
+    useState<DateTimeValidationError | null>(null)
+  const [endDateError, setEndDateError] =
+    useState<DateTimeValidationError | null>(null)
 
   const {
     list: advancedLimits,
@@ -215,7 +239,9 @@ export const EvaluationRoundEditor: React.FunctionComponent<
     }
   }
 
-  const disallowDatesBeforeNow = disallowCalendarDateBefore(dayjs())
+  const disableStartInput = dayjs().isSameOrAfter(
+    evaluationRoundInput.roundStart,
+  )
 
   // https://react-bootstrap.github.io/components/forms/#forms-validation-native
   return (
@@ -257,28 +283,42 @@ export const EvaluationRoundEditor: React.FunctionComponent<
 
             <Row>
               <Col>
-                <CalendarWithIconFormGroup
-                  value={startDate}
-                  setterCallback={setStartDate}
+                <DateTimePicker
                   label="Round Start"
-                  isValidDate={disallowDatesBeforeNow}
-                  disabled={dayjs().isSameOrAfter(
-                    evaluationRoundInput.roundStart,
-                  )}
+                  value={startDate}
+                  onChange={setStartDate}
+                  onError={error => setStartDateError(error)}
+                  disabled={disableStartInput}
+                  // Don't allow the value to be a past date only if the input is not disabled.
+                  // i.e. allow a past date if the round has already started
+                  disablePast={!disableStartInput}
+                  slotProps={{
+                    textField: {
+                      helperText: getDateErrorMessage('start', startDateError),
+                    },
+                  }}
                 />
               </Col>
               <Col>
-                <CalendarWithIconFormGroup
-                  value={endDate}
+                <DateTimePicker
                   label="Round End"
-                  setterCallback={setEndDate}
-                  isValidDate={disallowDatesBeforeNow}
+                  value={endDate}
+                  onChange={setEndDate}
+                  onError={error => setEndDateError(error)}
+                  disablePast={
+                    !dayjs(endDate).isSame(evaluationRoundInput.roundEnd)
+                  }
+                  slotProps={{
+                    textField: {
+                      helperText: getDateErrorMessage('end', endDateError),
+                    },
+                  }}
                 />
               </Col>
             </Row>
             <Row>
               <Col>
-                <h5>SUBMISSION LIMITS</h5>
+                <h5 style={{ marginTop: '20px' }}>SUBMISSION LIMITS</h5>
               </Col>
             </Row>
 
