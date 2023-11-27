@@ -36,9 +36,6 @@ describe('DateFormatter', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
-  afterAll(() => {
-    jest.restoreAllMocks()
-  })
   it('Shows local time', () => {
     mockGetUseUtcTimeFromCookie.mockReturnValue(false)
     const formattedDate = formatDate(mockDate)
