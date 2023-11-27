@@ -1,9 +1,0 @@
-import{j as p}from"./jsx-runtime-095bf462.js";import{T as a}from"./TextField-8144cd52.js";import"./index-8db94870.js";import"./_commonjsHelpers-042e6b4d.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-4abd396b.js";import"./styled-17e9e47b.js";import"./InputLabel-f385112e.js";import"./inputBaseClasses-42f125b6.js";import"./useForkRef-f2aa3d66.js";import"./index-8ce4a492.js";import"./ownerWindow-2c76219e.js";import"./isHostComponent-fa76b8d9.js";import"./emotion-react.browser.esm-39b3de80.js";import"./isMuiElement-3ce2dffc.js";import"./Grow-0db08d4d.js";import"./useTheme-e16afdbe.js";import"./utils-02ec0d60.js";import"./inheritsLoose-c82a83d4.js";import"./TransitionGroupContext-aa95d3cf.js";import"./Select-8309ba81.js";import"./index-953d39fd.js";import"./Popover-8b41c65d.js";import"./Modal-f893880b.js";import"./Backdrop-e2cb474f.js";import"./Fade-4732825d.js";import"./getScrollbarSize-ac846fe6.js";import"./createChainedFunction-0bab83cf.js";import"./Paper-2a5a67d3.js";import"./MenuList-b8c6d487.js";import"./createSvgIcon-c69fbb93.js";const r=t=>p(a,{...t});try{r.displayName="TextField",r.__docgenInfo={description:"",displayName:"TextField",props:{}}}catch{}const E={title:"UI/MUI/TextField",component:r,parameters:{design:{type:"figma",url:"https://www.figma.com/file/0oPm5lLSUva8kyfVNMS6FA/Sage-Style-%26-Component-Library?type=design&node-id=540-19147"}}},e={name:"Text Field",args:{label:"My Label Text Here",placeholder:"Placeholder text",error:!0}};var o,i,m;e.parameters={...e.parameters,docs:{...(o=e.parameters)==null?void 0:o.docs,source:{originalSource:`{
-  name: 'Text Field',
-  args: {
-    label: 'My Label Text Here',
-    placeholder: 'Placeholder text',
-    error: true
-  }
-}`,...(m=(i=e.parameters)==null?void 0:i.docs)==null?void 0:m.source}}};const O=["Demo"];export{e as Demo,O as __namedExportsOrder,E as default};
-//# sourceMappingURL=MuiTextField.stories-2b647d86.js.map
