@@ -27,6 +27,7 @@ import utc from 'dayjs/plugin/utc'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 import DateTimePicker from '../DateTimePicker/DateTimePicker'
 import { DateTimeValidationError } from '@mui/x-date-pickers'
+import { upperFirst } from 'lodash-es'
 
 dayjs.extend(utc)
 dayjs.extend(isSameOrAfter)
@@ -116,6 +117,20 @@ const convertInputsToEvaluationRound = (
     roundStart: dayjs.utc(startDate).toJSON(),
     roundEnd: dayjs.utc(endDate).toJSON(),
     limits: limits,
+  }
+}
+
+function getDateErrorMessage(
+  dateField: 'start' | 'end',
+  error: DateTimeValidationError | null,
+): string | null {
+  if (error == null) return null
+  switch (error) {
+    case 'disablePast':
+      return `${upperFirst(dateField)} date cannot be in the past`
+    case 'invalidDate':
+    default:
+      return 'Invalid date'
   }
 }
 
@@ -279,9 +294,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<
                   disablePast={!disableStartInput}
                   slotProps={{
                     textField: {
-                      helperText: startDateError
-                        ? 'Start date cannot be in the past'
-                        : undefined,
+                      helperText: getDateErrorMessage('start', startDateError),
                     },
                   }}
                 />
@@ -297,9 +310,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<
                   }
                   slotProps={{
                     textField: {
-                      helperText: endDateError
-                        ? 'End date cannot be in the past'
-                        : undefined,
+                      helperText: getDateErrorMessage('end', endDateError),
                     },
                   }}
                 />
