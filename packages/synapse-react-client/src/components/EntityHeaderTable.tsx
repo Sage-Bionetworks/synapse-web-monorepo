@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-
+import React, { useEffect, useState } from 'react'
+import { Link } from '@mui/material'
 import {
   Column,
   Table,
@@ -17,8 +17,8 @@ import {
   SortingFn,
   ColumnDef,
   flexRender,
-  FilterFns,
   FilterMeta,
+  CellContext,
 } from '@tanstack/react-table'
 
 import {
@@ -29,10 +29,9 @@ import {
 import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../utils/functions/EntityTypeUtils'
 import { useGetEntityHeaders } from '../synapse-queries'
+import IconSvg from './IconSvg'
+import { EntityLink } from './EntityLink'
 
-interface FilterFnsExtended extends FilterFns {
-  fuzzy: FilterFn<unknown>
-}
 interface FilterMetaExtended extends FilterMeta {
   itemRank: RankingInfo
 }
@@ -55,8 +54,8 @@ const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
   // Only sort by rank if the column has ranking information
   if (rowA.columnFiltersMeta[columnId]) {
     dir = compareItems(
-      (rowA.columnFiltersMeta[columnId] as FilterMetaExtended)?.itemRank!,
-      (rowB.columnFiltersMeta[columnId] as FilterMetaExtended)?.itemRank!,
+      (rowA.columnFiltersMeta[columnId] as FilterMetaExtended)?.itemRank,
+      (rowB.columnFiltersMeta[columnId] as FilterMetaExtended)?.itemRank,
     )
   }
 
@@ -77,17 +76,15 @@ export type EntityHeaderTableProps = {
  */
 export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   const { references } = props
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  )
-  const [globalFilter, setGlobalFilter] = React.useState('')
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [globalFilter, setGlobalFilter] = useState('')
 
   const columns = React.useMemo<ColumnDef<EntityHeader, any>[]>(
     () => [
       {
         accessorFn: row => row.name,
         id: 'name',
-        cell: info => info.getValue(),
+        cell: EntityHeaderNameCell,
         header: 'Name',
       },
       {
@@ -97,7 +94,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         header: 'SynID',
       },
       {
-        accessorFn: row => getEntityTypeFromHeader(row),
+        accessorFn: row => getEntityTypeFromHeader(row).toUpperCase(),
         id: 'type',
         header: 'Type',
         cell: info => info.getValue(),
@@ -178,8 +175,30 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
                             header.getContext(),
                           )}
                           {{
-                            asc: ' 🔼',
-                            desc: ' 🔽',
+                            asc: (
+                              <IconSvg
+                                icon={'sortUp'}
+                                wrap={false}
+                                sx={{
+                                  color: 'primary.main',
+                                  backgroundColor: 'none',
+                                  float: 'right',
+                                  marginRight: '5px',
+                                }}
+                              />
+                            ),
+                            desc: (
+                              <IconSvg
+                                icon={'sortDown'}
+                                wrap={false}
+                                sx={{
+                                  color: 'primary.main',
+                                  backgroundColor: 'none',
+                                  float: 'right',
+                                  marginRight: '5px',
+                                }}
+                              />
+                            ),
                           }[header.column.getIsSorted() as string] ?? null}
                         </div>
                         {header.column.getCanFilter() ? (
@@ -214,70 +233,70 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           })}
         </tbody>
       </table>
-      <div className="h-2" />
-      <div className="flex items-center gap-2">
-        <button
-          className="border rounded p-1"
-          onClick={() => table.setPageIndex(0)}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'<<'}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'<'}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {'>'}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          disabled={!table.getCanNextPage()}
-        >
-          {'>>'}
-        </button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{' '}
-            {table.getPageCount()}
-          </strong>
-        </span>
-        <span className="flex items-center gap-1">
-          | Go to page:
-          <input
-            type="number"
-            defaultValue={table.getState().pagination.pageIndex + 1}
+      {table.getPageCount() > 1 && (
+        <div className="flex items-center gap-2">
+          <button
+            className="border rounded p-1"
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {'<<'}
+          </button>
+          <button
+            className="border rounded p-1"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {'<'}
+          </button>
+          <button
+            className="border rounded p-1"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {'>'}
+          </button>
+          <button
+            className="border rounded p-1"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            {'>>'}
+          </button>
+          <span className="flex items-center gap-1">
+            <div>Page</div>
+            <strong>
+              {table.getState().pagination.pageIndex + 1} of{' '}
+              {table.getPageCount()}
+            </strong>
+          </span>
+          <span className="flex items-center gap-1">
+            | Go to page:
+            <input
+              type="number"
+              defaultValue={table.getState().pagination.pageIndex + 1}
+              onChange={e => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0
+                table.setPageIndex(page)
+              }}
+              className="border p-1 rounded w-16"
+            />
+          </span>
+          <select
+            value={table.getState().pagination.pageSize}
             onChange={e => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0
-              table.setPageIndex(page)
+              table.setPageSize(Number(e.target.value))
             }}
-            className="border p-1 rounded w-16"
-          />
-        </span>
-        <select
-          value={table.getState().pagination.pageSize}
-          onChange={e => {
-            table.setPageSize(Number(e.target.value))
-          }}
-        >
-          {[10, 20, 30, 40, 50].map(pageSize => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
-      </div>
+          >
+            {[10, 20, 30, 40, 50].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <div>{table.getPrePaginationRowModel().rows.length} Rows</div>
-      <pre>{JSON.stringify(table.getState(), null, 2)}</pre>
     </div>
   )
 }
@@ -372,11 +391,11 @@ function DebouncedInput({
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>) {
   const [value, setValue] = React.useState(initialValue)
 
-  React.useEffect(() => {
+  useEffect(() => {
     setValue(initialValue)
   }, [initialValue])
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timeout = setTimeout(() => {
       onChange(value)
     }, debounce)
@@ -386,5 +405,16 @@ function DebouncedInput({
 
   return (
     <input {...props} value={value} onChange={e => setValue(e.target.value)} />
+  )
+}
+
+function EntityHeaderNameCell(props: CellContext<EntityHeader, string | null>) {
+  const { cell } = props
+
+  const { row } = cell
+  return (
+    <td key={cell.id}>
+      <EntityLink entity={row.original} />
+    </td>
   )
 }
