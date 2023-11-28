@@ -253,6 +253,7 @@
     "build:esbuild": "node esbuild.config.mjs",
     "build:docs": "pnpm storybook build",
     "build:gh-pages": "pnpm storybook build && touch storybook-static/.nojekyll",
+    "build-storybook": "pnpm storybook build",
     "type-check": "tsc --noEmit",
     "link-src": "pnpm link && cd ./node_modules/react && pnpm link && cd ../react-router && pnpm link && cd ../react-router-dom && pnpm link && cd ../../",
     "unlink-src": "pnpm unlink && cd ./node_modules/react && pnpm unlink && cd ../react-router && pnpm unlink && cd ../react-router-dom && pnpm unlink && cd ../../",
