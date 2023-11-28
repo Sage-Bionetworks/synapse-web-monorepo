@@ -2,7 +2,7 @@ import React, { useId, useMemo } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { TextField, TextFieldProps } from '@mui/material'
+import { Box, TextField, TextFieldProps } from '@mui/material'
 import {
   DateTimePicker as MuiDateTimePicker,
   DateTimePickerProps as MuiDateTimePickerProps,
@@ -30,7 +30,7 @@ function TextFieldWithTzShown(props: TextFieldProps) {
         ...props.InputProps,
         endAdornment: (
           <>
-            <span>{tzDisplay}</span>
+            <Box ml={0.5}>{tzDisplay}</Box>
             {props.InputProps?.endAdornment}
           </>
         ),
@@ -74,6 +74,7 @@ export default function DateTimePicker(props: DateTimePickerProps) {
       <MuiDateTimePicker<string | Dayjs>
         value={valueAsDayjs}
         slots={{
+          ...props.slots,
           field: DateTimeFieldWithTzShown,
         }}
         {...rest}
