@@ -13,6 +13,8 @@ import {
   ColumnDef,
   flexRender,
   CellContext,
+  HeaderContext,
+  RowSelectionState,
 } from '@tanstack/react-table'
 import {
   TextField,
@@ -20,6 +22,7 @@ import {
   Autocomplete,
   Typography,
   Box,
+  Checkbox,
 } from '@mui/material'
 import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../utils/functions/EntityTypeUtils'
@@ -31,6 +34,7 @@ import { useDebouncedEffect } from '../utils/hooks'
 
 export type EntityHeaderTableProps = {
   references: ReferenceList
+  isEditable: boolean
 }
 
 /**
@@ -41,25 +45,37 @@ export type EntityHeaderTableProps = {
  * ReactFlow component.
  */
 export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
-  const { references } = props
+  const { references, isEditable } = props
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
-  const columns = useMemo<ColumnDef<EntityHeader, any>[]>(
+  const selectColumns: ColumnDef<EntityHeader, any>[] = useMemo(
     () => [
       {
-        accessorFn: row => row.name,
+        id: 'select',
+        header: CheckBoxHeader,
+        cell: CheckBoxCell,
+      },
+    ],
+    [],
+  )
+
+  const entityHeaderColumns: ColumnDef<EntityHeader, any>[] = useMemo(
+    () => [
+      {
+        accessorFn: (row: EntityHeader) => row.name,
         id: 'name',
         cell: EntityHeaderNameCell,
         header: 'Name',
       },
       {
-        accessorFn: row => row.id,
+        accessorFn: (row: EntityHeader) => row.id,
         id: 'id',
         cell: EntityHeaderIDCell,
         header: 'SynID',
       },
       {
-        accessorFn: row => getEntityTypeFromHeader(row),
+        accessorFn: (row: EntityHeader) => getEntityTypeFromHeader(row),
         id: 'type',
         header: 'Type',
         cell: EntityHeaderTypeCell,
@@ -69,6 +85,14 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     [],
   )
 
+  const columns = useMemo<ColumnDef<EntityHeader, any>[]>(
+    () =>
+      isEditable
+        ? selectColumns.concat(entityHeaderColumns)
+        : entityHeaderColumns,
+    [entityHeaderColumns, isEditable, selectColumns],
+  )
+  const selectionCount = Object.keys(rowSelection).length
   const {
     data: results,
     isSuccess,
@@ -83,13 +107,15 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     data,
     columns,
     state: {
+      rowSelection,
       columnFilters,
     },
+    enableRowSelection: isEditable,
+    onRowSelectionChange: setRowSelection,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
@@ -112,25 +138,37 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   }
   return (
     <div>
-      <div style={{ marginBottom: '10px' }}>
+      <Typography variant="body1" sx={{ marginBottom: '10px' }}>
         {table.getPrePaginationRowModel().rows.length} Entities
-      </div>
-      <Box sx={{ overflow: 'auto', height: '400px', paddingLeft: '2px' }}>
+        {selectionCount > 0 && <span>{` (${selectionCount} selected)`}</span>}
+      </Typography>
+
+      <Box
+        sx={{
+          overflow: 'auto',
+          height: '400px',
+          paddingLeft: '2px',
+          th: {
+            backgroundColor: '#eee',
+            zIndex: 100,
+          },
+        }}
+      >
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
           <thead>
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => {
-                  let columnSize: string = ''
+                  let columnSize: string = '5%'
                   switch (header.id) {
                     case 'name':
                       columnSize = '50%'
                       break
                     case 'id':
-                      columnSize = '25%'
+                      columnSize = '22%'
                       break
                     case 'type':
-                      columnSize = '25%'
+                      columnSize = '22%'
                       break
                     default:
                       break
@@ -337,5 +375,28 @@ function EntityHeaderTypeCell(props: CellContext<EntityHeader, string | null>) {
     <Typography variant="body1" sx={{ textTransform: 'capitalize' }}>
       {cell.getContext().getValue()}
     </Typography>
+  )
+}
+
+function CheckBoxHeader(props: HeaderContext<EntityHeader, string | null>) {
+  const { table } = props
+  return (
+    <Checkbox
+      checked={table.getIsAllRowsSelected()}
+      indeterminate={table.getIsSomeRowsSelected()}
+      onClick={table.getToggleAllRowsSelectedHandler()}
+    />
+  )
+}
+
+function CheckBoxCell(props: CellContext<EntityHeader, string | null>) {
+  const { row } = props
+  return (
+    <Checkbox
+      checked={row.getIsSelected()}
+      disabled={!row.getCanSelect()}
+      indeterminate={row.getIsSomeSelected()}
+      onClick={row.getToggleSelectedHandler()}
+    />
   )
 }

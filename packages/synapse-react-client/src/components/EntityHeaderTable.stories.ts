@@ -15,6 +15,7 @@ type Story = StoryObj<typeof meta>
 
 export const Mock: Story = {
   args: {
+    isEditable: false,
     references: [
       {
         targetId: MOCK_FILE_ENTITY_ID,
@@ -34,6 +35,7 @@ export const Mock: Story = {
 
 export const RealWorldADKP: Story = {
   args: {
+    isEditable: true,
     references: [
       {
         targetId: 'syn5550376',
