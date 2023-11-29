@@ -8,9 +8,6 @@ import { MOCK_TABLE_ENTITY_ID } from '../mocks/entity/mockTableEntity'
 const meta = {
   title: 'Governance/EntityHeaderTable',
   component: EntityHeaderTable,
-  parameters: {
-    stack: 'mock',
-  },
 } satisfies Meta
 export default meta
 
@@ -28,6 +25,7 @@ export const Mock: Story = {
     ],
   },
   parameters: {
+    stack: 'mock',
     msw: {
       handlers: { ...getHandlers(MOCK_REPO_ORIGIN) },
     },
@@ -815,5 +813,8 @@ export const RealWorldADKP: Story = {
         targetId: 'syn52383690',
       },
     ],
+  },
+  parameters: {
+    stack: 'production',
   },
 }
