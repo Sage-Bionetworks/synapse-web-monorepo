@@ -9,13 +9,18 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFacetedMinMaxValues,
-  getPaginationRowModel,
   getSortedRowModel,
   ColumnDef,
   flexRender,
   CellContext,
 } from '@tanstack/react-table'
-import { TextField, TextFieldProps, Autocomplete } from '@mui/material'
+import {
+  TextField,
+  TextFieldProps,
+  Autocomplete,
+  Typography,
+  Box,
+} from '@mui/material'
 import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../utils/functions/EntityTypeUtils'
 import { useGetEntityHeaders } from '../synapse-queries'
@@ -50,14 +55,14 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
       {
         accessorFn: row => row.id,
         id: 'id',
-        cell: info => info.getValue(),
+        cell: EntityHeaderIDCell,
         header: 'SynID',
       },
       {
-        accessorFn: row => getEntityTypeFromHeader(row).toUpperCase(),
+        accessorFn: row => getEntityTypeFromHeader(row),
         id: 'type',
         header: 'Type',
-        cell: info => info.getValue(),
+        cell: EntityHeaderTypeCell,
         filterFn: 'includesString',
       },
     ],
@@ -84,7 +89,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
@@ -107,168 +112,128 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   }
   return (
     <div>
-      <table width={'100%'}>
-        <thead>
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => {
-                let columnSize: string = ''
-                switch (header.id) {
-                  case 'name':
-                    columnSize = '50%'
-                    break
-                  case 'id':
-                    columnSize = '25%'
-                    break
-                  case 'type':
-                    columnSize = '25%'
-                    break
-                  default:
-                    break
-                }
-                return (
-                  <th
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    style={{ width: columnSize }}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <>
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? 'SRC-hand-cursor'
-                              : '',
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                          {{
-                            asc: (
-                              <IconSvg
-                                icon={'sortUp'}
-                                wrap={false}
-                                sx={{
-                                  color: 'primary.main',
-                                  backgroundColor: 'none',
-                                  float: 'right',
-                                  marginRight: '5px',
-                                }}
-                              />
-                            ),
-                            desc: (
-                              <IconSvg
-                                icon={'sortDown'}
-                                wrap={false}
-                                sx={{
-                                  color: 'primary.main',
-                                  backgroundColor: 'none',
-                                  float: 'right',
-                                  marginRight: '5px',
-                                }}
-                              />
-                            ),
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                        {header.column.getCanFilter() ? (
-                          <div>
-                            <Filter column={header.column} table={table} />
-                          </div>
-                        ) : null}
-                      </>
-                    )}
-                    {header.column.getCanResize() && (
-                      <div
-                        className={`resizer ${
-                          header.column.getIsResizing() ? 'isResizing' : ''
-                        }`}
-                        onMouseDown={header.getResizeHandler()}
-                        onTouchStart={header.getResizeHandler()}
-                      />
-                    )}
-                  </th>
-                )
-              })}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map(row => {
-            return (
-              <tr key={row.id} style={{ height: '30px' }}>
-                {row.getVisibleCells().map(cell => {
+      <div style={{ marginBottom: '10px' }}>
+        {table.getPrePaginationRowModel().rows.length} Entities
+      </div>
+      <Box sx={{ overflow: 'auto', height: '400px', paddingLeft: '2px' }}>
+        <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+          <thead>
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => {
+                  let columnSize: string = ''
+                  switch (header.id) {
+                    case 'name':
+                      columnSize = '50%'
+                      break
+                    case 'id':
+                      columnSize = '25%'
+                      break
+                    case 'type':
+                      columnSize = '25%'
+                      break
+                    default:
+                      break
+                  }
                   return (
-                    <td
-                      key={cell.id}
+                    <th
+                      key={header.id}
+                      colSpan={header.colSpan}
                       style={{
-                        width: cell.column.getSize(),
+                        width: columnSize,
+                        position: 'sticky',
+                        top: '0px',
+                        background: '#fff',
                       }}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
+                      {header.isPlaceholder ? null : (
+                        <>
+                          <div
+                            {...{
+                              className: header.column.getCanSort()
+                                ? 'SRC-hand-cursor'
+                                : '',
+                              onClick: header.column.getToggleSortingHandler(),
+                            }}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                            {{
+                              asc: (
+                                <IconSvg
+                                  icon={'sortUp'}
+                                  wrap={false}
+                                  sx={{
+                                    color: 'primary.main',
+                                    backgroundColor: 'none',
+                                    float: 'right',
+                                    marginRight: '5px',
+                                  }}
+                                />
+                              ),
+                              desc: (
+                                <IconSvg
+                                  icon={'sortDown'}
+                                  wrap={false}
+                                  sx={{
+                                    color: 'primary.main',
+                                    backgroundColor: 'none',
+                                    float: 'right',
+                                    marginRight: '5px',
+                                  }}
+                                />
+                              ),
+                            }[header.column.getIsSorted() as string] ?? null}
+                          </div>
+                          {header.column.getCanFilter() ? (
+                            <div>
+                              <Filter column={header.column} table={table} />
+                            </div>
+                          ) : null}
+                        </>
                       )}
-                    </td>
+                      {header.column.getCanResize() && (
+                        <div
+                          className={`resizer ${
+                            header.column.getIsResizing() ? 'isResizing' : ''
+                          }`}
+                          onMouseDown={header.getResizeHandler()}
+                          onTouchStart={header.getResizeHandler()}
+                        />
+                      )}
+                    </th>
                   )
                 })}
               </tr>
-            )
-          })}
-        </tbody>
-      </table>
-      {table.getPageCount() > 1 && (
-        <div style={{ marginTop: '10px' }}>
-          <button
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {'<<'}
-          </button>
-          <button
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {'<'}
-          </button>
-          <button
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            {'>'}
-          </button>
-          <button
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            {'>>'}
-          </button>
-          <span style={{ marginRight: '20px' }}>
-            <div>Page</div>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of{' '}
-              {table.getPageCount()}
-            </strong>
-          </span>
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={e => {
-              table.setPageSize(Number(e.target.value))
-            }}
-          >
-            {[10, 20, 30, 40, 50].map(pageSize => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
             ))}
-          </select>
-        </div>
-      )}
-      <div style={{ marginTop: '10px' }}>
-        {table.getPrePaginationRowModel().rows.length} Rows
-      </div>
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map(row => {
+              return (
+                <tr key={row.id} style={{ height: '30px' }}>
+                  {row.getVisibleCells().map(cell => {
+                    return (
+                      <td
+                        key={cell.id}
+                        style={{
+                          width: cell.column.getSize(),
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </Box>
     </div>
   )
 }
@@ -359,4 +324,18 @@ function EntityHeaderNameCell(props: CellContext<EntityHeader, string | null>) {
   const { row } = cell
   const { original } = row
   return <EntityLink entity={original} />
+}
+
+function EntityHeaderIDCell(props: CellContext<EntityHeader, string | null>) {
+  const { cell } = props
+  return <Typography variant="body1">{cell.getContext().getValue()}</Typography>
+}
+
+function EntityHeaderTypeCell(props: CellContext<EntityHeader, string | null>) {
+  const { cell } = props
+  return (
+    <Typography variant="body1" sx={{ textTransform: 'capitalize' }}>
+      {cell.getContext().getValue()}
+    </Typography>
+  )
 }
