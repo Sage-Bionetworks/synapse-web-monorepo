@@ -106,17 +106,31 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     return <SkeletonTable numCols={3} numRows={5} />
   }
   return (
-    <div className="p-2">
+    <div>
       <table width={'100%'}>
         <thead>
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => {
+                let columnSize: string = ''
+                switch (header.id) {
+                  case 'name':
+                    columnSize = '50%'
+                    break
+                  case 'id':
+                    columnSize = '25%'
+                    break
+                  case 'type':
+                    columnSize = '25%'
+                    break
+                  default:
+                    break
+                }
                 return (
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    style={{ width: header.getSize() }}
+                    style={{ width: columnSize }}
                   >
                     {header.isPlaceholder ? null : (
                       <>
@@ -231,23 +245,12 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           >
             {'>>'}
           </button>
-          <span>
+          <span style={{ marginRight: '20px' }}>
             <div>Page</div>
             <strong>
               {table.getState().pagination.pageIndex + 1} of{' '}
               {table.getPageCount()}
             </strong>
-          </span>
-          <span>
-            | Go to page:
-            <input
-              type="number"
-              defaultValue={table.getState().pagination.pageIndex + 1}
-              onChange={e => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0
-                table.setPageIndex(page)
-              }}
-            />
           </span>
           <select
             value={table.getState().pagination.pageSize}
@@ -281,7 +284,7 @@ function Filter({
     .getPreFilteredRowModel()
     .flatRows[0]?.getValue(column.id)
 
-  const columnFilterValue = column.getFilterValue()
+  const columnFilterValue = (column.getFilterValue() as string) ?? ''
 
   const sortedUniqueValues: string[] = React.useMemo(
     () =>
@@ -294,12 +297,11 @@ function Filter({
     <DebouncedInput
       type="text"
       options={sortedUniqueValues}
-      value={(columnFilterValue ?? '') as string}
+      value={columnFilterValue}
       onChange={value => column.setFilterValue(value)}
       placeholder={`Filter by ${column.id}... (${
         column.getFacetedUniqueValues().size
       })`}
-      className="w-36 border shadow rounded"
       list={column.id + 'list'}
     />
   )
@@ -324,7 +326,7 @@ function DebouncedInput({
     () => {
       onChange(value)
     },
-    [onChange, value],
+    [value],
     300,
   )
 
@@ -356,5 +358,5 @@ function EntityHeaderNameCell(props: CellContext<EntityHeader, string | null>) {
   const { cell } = props
   const { row } = cell
   const { original } = row
-  return <EntityLink key={original.id} entity={original} />
+  return <EntityLink entity={original} />
 }
