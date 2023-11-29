@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from '@mui/material'
+import React, { useEffect, useState, useMemo } from 'react'
 import {
   Column,
   Table,
@@ -11,57 +10,19 @@ import {
   getFacetedUniqueValues,
   getFacetedMinMaxValues,
   getPaginationRowModel,
-  sortingFns,
   getSortedRowModel,
-  FilterFn,
-  SortingFn,
   ColumnDef,
   flexRender,
-  FilterMeta,
   CellContext,
 } from '@tanstack/react-table'
-
-import {
-  RankingInfo,
-  rankItem,
-  compareItems,
-} from '@tanstack/match-sorter-utils'
+import { TextField, TextFieldProps, Autocomplete } from '@mui/material'
 import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../utils/functions/EntityTypeUtils'
 import { useGetEntityHeaders } from '../synapse-queries'
 import IconSvg from './IconSvg'
 import { EntityLink } from './EntityLink'
-
-interface FilterMetaExtended extends FilterMeta {
-  itemRank: RankingInfo
-}
-
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value)
-
-  // Store the itemRank info
-  addMeta({
-    itemRank,
-  })
-
-  // Return if the item should be filtered in/out
-  return itemRank.passed
-}
-
-const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
-  let dir = 0
-  // Only sort by rank if the column has ranking information
-  if (rowA.columnFiltersMeta[columnId]) {
-    dir = compareItems(
-      (rowA.columnFiltersMeta[columnId] as FilterMetaExtended)?.itemRank,
-      (rowB.columnFiltersMeta[columnId] as FilterMetaExtended)?.itemRank,
-    )
-  }
-
-  // Provide an alphanumeric fallback for when the item ranks are equal
-  return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir
-}
+import { SkeletonTable } from './Skeleton'
+import { useDebouncedEffect } from '../utils/hooks'
 
 export type EntityHeaderTableProps = {
   references: ReferenceList
@@ -77,9 +38,8 @@ export type EntityHeaderTableProps = {
 export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   const { references } = props
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [globalFilter, setGlobalFilter] = useState('')
 
-  const columns = React.useMemo<ColumnDef<EntityHeader, any>[]>(
+  const columns = useMemo<ColumnDef<EntityHeader, any>[]>(
     () => [
       {
         accessorFn: row => row.name,
@@ -99,29 +59,28 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         header: 'Type',
         cell: info => info.getValue(),
         filterFn: 'includesString',
-        sortingFn: fuzzySort,
       },
     ],
     [],
   )
 
-  const { data: results, isSuccess } = useGetEntityHeaders(references, {
+  const {
+    data: results,
+    isSuccess,
+    isLoading,
+  } = useGetEntityHeaders(references, {
     useErrorBoundary: true,
   })
-  const data = results ? results?.results : []
+  const data = useMemo(() => {
+    return results ? results?.results : []
+  }, [results])
   const table = useReactTable({
     data,
     columns,
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
     state: {
       columnFilters,
-      globalFilter,
     },
     onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: fuzzyFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -129,9 +88,10 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    debugTable: true,
-    debugHeaders: true,
-    debugColumns: false,
+    // debugTable: true,
+    // debugHeaders: true,
+    // debugColumns: false,
+    columnResizeMode: 'onChange',
   })
 
   useEffect(() => {
@@ -142,30 +102,28 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     }
   }, [table.getState().columnFilters[0]?.id])
 
+  if (isLoading) {
+    return <SkeletonTable numCols={3} numRows={5} />
+  }
   return (
     <div className="p-2">
-      <div>
-        <DebouncedInput
-          value={globalFilter ?? ''}
-          onChange={value => setGlobalFilter(String(value))}
-          className="p-2 font-lg shadow border border-block"
-          placeholder="Search all columns..."
-        />
-      </div>
-      <div className="h-2" />
-      <table>
+      <table width={'100%'}>
         <thead>
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => {
                 return (
-                  <th key={header.id} colSpan={header.colSpan}>
+                  <th
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    style={{ width: header.getSize() }}
+                  >
                     {header.isPlaceholder ? null : (
                       <>
                         <div
                           {...{
                             className: header.column.getCanSort()
-                              ? 'cursor-pointer select-none'
+                              ? 'SRC-hand-cursor'
                               : '',
                             onClick: header.column.getToggleSortingHandler(),
                           }}
@@ -208,6 +166,15 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
                         ) : null}
                       </>
                     )}
+                    {header.column.getCanResize() && (
+                      <div
+                        className={`resizer ${
+                          header.column.getIsResizing() ? 'isResizing' : ''
+                        }`}
+                        onMouseDown={header.getResizeHandler()}
+                        onTouchStart={header.getResizeHandler()}
+                      />
+                    )}
                   </th>
                 )
               })}
@@ -217,10 +184,15 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         <tbody>
           {table.getRowModel().rows.map(row => {
             return (
-              <tr key={row.id}>
+              <tr key={row.id} style={{ height: '30px' }}>
                 {row.getVisibleCells().map(cell => {
                   return (
-                    <td key={cell.id}>
+                    <td
+                      key={cell.id}
+                      style={{
+                        width: cell.column.getSize(),
+                      }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -234,43 +206,39 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         </tbody>
       </table>
       {table.getPageCount() > 1 && (
-        <div className="flex items-center gap-2">
+        <div style={{ marginTop: '10px' }}>
           <button
-            className="border rounded p-1"
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
             {'<<'}
           </button>
           <button
-            className="border rounded p-1"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             {'<'}
           </button>
           <button
-            className="border rounded p-1"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
             {'>'}
           </button>
           <button
-            className="border rounded p-1"
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
             {'>>'}
           </button>
-          <span className="flex items-center gap-1">
+          <span>
             <div>Page</div>
             <strong>
               {table.getState().pagination.pageIndex + 1} of{' '}
               {table.getPageCount()}
             </strong>
           </span>
-          <span className="flex items-center gap-1">
+          <span>
             | Go to page:
             <input
               type="number"
@@ -279,7 +247,6 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
                 const page = e.target.value ? Number(e.target.value) - 1 : 0
                 table.setPageIndex(page)
               }}
-              className="border p-1 rounded w-16"
             />
           </span>
           <select
@@ -296,7 +263,9 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           </select>
         </div>
       )}
-      <div>{table.getPrePaginationRowModel().rows.length} Rows</div>
+      <div style={{ marginTop: '10px' }}>
+        {table.getPrePaginationRowModel().rows.length} Rows
+      </div>
     </div>
   )
 }
@@ -314,67 +283,25 @@ function Filter({
 
   const columnFilterValue = column.getFilterValue()
 
-  const sortedUniqueValues = React.useMemo(
+  const sortedUniqueValues: string[] = React.useMemo(
     () =>
       typeof firstValue === 'number'
         ? []
         : Array.from(column.getFacetedUniqueValues().keys()).sort(),
     [column.getFacetedUniqueValues()],
   )
-
-  return typeof firstValue === 'number' ? (
-    <div>
-      <div className="flex space-x-2">
-        <DebouncedInput
-          type="number"
-          min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
-          max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
-          value={(columnFilterValue as [number, number])?.[0] ?? ''}
-          onChange={value =>
-            column.setFilterValue((old: [number, number]) => [value, old?.[1]])
-          }
-          placeholder={`Min ${
-            column.getFacetedMinMaxValues()?.[0]
-              ? `(${column.getFacetedMinMaxValues()?.[0]})`
-              : ''
-          }`}
-          className="w-24 border shadow rounded"
-        />
-        <DebouncedInput
-          type="number"
-          min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
-          max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
-          value={(columnFilterValue as [number, number])?.[1] ?? ''}
-          onChange={value =>
-            column.setFilterValue((old: [number, number]) => [old?.[0], value])
-          }
-          placeholder={`Max ${
-            column.getFacetedMinMaxValues()?.[1]
-              ? `(${column.getFacetedMinMaxValues()?.[1]})`
-              : ''
-          }`}
-          className="w-24 border shadow rounded"
-        />
-      </div>
-      <div className="h-1" />
-    </div>
-  ) : (
-    <>
-      <datalist id={column.id + 'list'}>
-        {sortedUniqueValues.slice(0, 5000).map((value: any) => (
-          <option value={value} key={value} />
-        ))}
-      </datalist>
-      <DebouncedInput
-        type="text"
-        value={(columnFilterValue ?? '') as string}
-        onChange={value => column.setFilterValue(value)}
-        placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
-        className="w-36 border shadow rounded"
-        list={column.id + 'list'}
-      />
-      <div className="h-1" />
-    </>
+  return (
+    <DebouncedInput
+      type="text"
+      options={sortedUniqueValues}
+      value={(columnFilterValue ?? '') as string}
+      onChange={value => column.setFilterValue(value)}
+      placeholder={`Filter by ${column.id}... (${
+        column.getFacetedUniqueValues().size
+      })`}
+      className="w-36 border shadow rounded"
+      list={column.id + 'list'}
+    />
   )
 }
 
@@ -382,39 +309,52 @@ function Filter({
 function DebouncedInput({
   value: initialValue,
   onChange,
-  debounce = 500,
+  options,
   ...props
 }: {
-  value: string | number
-  onChange: (value: string | number) => void
-  debounce?: number
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>) {
-  const [value, setValue] = React.useState(initialValue)
-
-  useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
+  value: string
+  onChange: (value: string) => void
+  options: string[]
+} & Pick<
+  React.InputHTMLAttributes<TextFieldProps>,
+  'type' | 'min' | 'max' | 'value' | 'placeholder' | 'className' | 'list'
+>) {
+  const [value, setValue] = useState(initialValue)
+  useDebouncedEffect(
+    () => {
       onChange(value)
-    }, debounce)
-
-    return () => clearTimeout(timeout)
-  }, [value])
+    },
+    [onChange, value],
+    300,
+  )
 
   return (
-    <input {...props} value={value} onChange={e => setValue(e.target.value)} />
+    <Autocomplete
+      disablePortal
+      isOptionEqualToValue={(option, value) =>
+        value.length == 0 || option === value
+      }
+      options={options}
+      value={value}
+      onChange={(event, newValue) => {
+        setValue(newValue ?? '')
+      }}
+      sx={{ marginRight: '10px' }}
+      renderInput={params => (
+        <TextField
+          {...params}
+          {...props}
+          value={value}
+          onChange={e => setValue(e.target.value)}
+        />
+      )}
+    />
   )
 }
 
 function EntityHeaderNameCell(props: CellContext<EntityHeader, string | null>) {
   const { cell } = props
-
   const { row } = cell
-  return (
-    <td key={cell.id}>
-      <EntityLink entity={row.original} />
-    </td>
-  )
+  const { original } = row
+  return <EntityLink key={original.id} entity={original} />
 }
