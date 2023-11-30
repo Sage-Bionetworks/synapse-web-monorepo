@@ -53,6 +53,7 @@ declare module '@mui/material/styles' {
        This is necessary because the builtin grey cannot be overridden for this purpose. */
     neutral: Palette['primary']
     darkPrimary: Palette['primary']
+    lightPrimary: Palette['primary']
     light: Palette['primary']
   }
 
@@ -62,6 +63,7 @@ declare module '@mui/material/styles' {
        This is necessary because the builtin grey cannot be overridden for this purpose. */
     neutral: PaletteOptions['primary']
     darkPrimary: PaletteOptions['primary']
+    lightPrimary: PaletteOptions['primary']
     light: PaletteOptions['primary']
   }
 }
@@ -75,6 +77,7 @@ declare module '@mui/material' {
   interface ButtonPropsColorOverrides {
     neutral: true
     darkPrimary: true
+    lightPrimary: true
     light: true
   }
 }

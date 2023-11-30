@@ -99,7 +99,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 <Button
                   href={DASHBOARD_LINK}
                   variant="contained"
-                  color="light"
+                  color="lightPrimary"
                   sx={buttonSx}
                 >
                   View Your Dashboard
@@ -124,7 +124,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 <Button
                   href={LOGIN_LINK}
                   variant="contained"
-                  color="light"
+                  color="lightPrimary"
                   sx={buttonSx}
                 >
                   Log in to Synapse
@@ -821,7 +821,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 <Button
                   href={DASHBOARD_LINK}
                   variant="contained"
-                  color="light"
+                  color="lightPrimary"
                   sx={buttonSx}
                 >
                   View Your Dashboard
@@ -846,7 +846,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 <Button
                   href={LOGIN_LINK}
                   variant="contained"
-                  color="light"
+                  color="lightPrimary"
                   sx={buttonSx}
                 >
                   Log in to Synapse
