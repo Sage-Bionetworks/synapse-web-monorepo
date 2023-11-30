@@ -31,6 +31,7 @@ import IconSvg from './IconSvg'
 import { EntityLink } from './EntityLink'
 import { SkeletonTable } from './Skeleton'
 import { useDebouncedEffect } from '../utils/hooks'
+import { cloneDeep } from 'lodash-es'
 
 export type EntityHeaderTableProps = {
   references: ReferenceList
@@ -47,7 +48,17 @@ export type EntityHeaderTableProps = {
 export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   const { references, isEditable } = props
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [refsInState, setRefsInState] = useState<ReferenceList>(
+    cloneDeep(references),
+  )
+
+  // TODO: Add "Mark for removal from AR" button in grid (to the right of the row/selection count)
+  //  Click handler would go through rowSelection keys, somehow translate to entity headers, and
+  //  update the refsInState (which would update the data and refresh the table).  Is there a tanstack example of responding to selection.
+  // TODO: Add ability to Add synapse IDs (comma separated list) in a text field.
+  //  Add entity finder, that would add a new entry to this list.
+  //  Add button that would take the synapse IDs from the text box, and add them to the refsInState
 
   const selectColumns: ColumnDef<EntityHeader, any>[] = useMemo(
     () => [
@@ -97,7 +108,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     data: results,
     isSuccess,
     isLoading,
-  } = useGetEntityHeaders(references, {
+  } = useGetEntityHeaders(refsInState, {
     useErrorBoundary: true,
   })
   const data = useMemo(() => {
