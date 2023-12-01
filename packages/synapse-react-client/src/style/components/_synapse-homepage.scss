@@ -185,7 +185,8 @@
     .HeroContainer {
       display: grid;
       grid-template-columns: auto auto;
-      grid-template-rows: auto auto;
+      grid-template-rows: 1fr;
+      align-items: center;
 
       .HeroImage {
         width: 700px;
@@ -207,7 +208,7 @@
         margin-bottom: 30px;
       }
 
-      .ButtonContainer {
+      .SignUpButtonContainer {
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 2;
