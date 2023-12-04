@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, MouseEventHandler } from 'react'
 import {
   Column,
   Table,
@@ -48,20 +48,17 @@ export type EntityHeaderTableProps = {
  * ReactFlow component.
  */
 export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
-  const { references, isEditable } = props
+  const { references, isEditable, onUpdate } = props
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [refsInState, setRefsInState] = useState<ReferenceList>(
     cloneDeep(references),
   )
 
-  // TODO: Add "Mark for removal from AR" button in grid (to the right of the row/selection count)
-  //  Click handler would go through rowSelection keys, somehow translate to entity headers, and
-  //  update the refsInState (which would update the data and refresh the table).  Is there a tanstack example of responding to selection.
   // TODO: Add ability to Add synapse IDs (comma separated list) in a text field.
   //  Add entity finder, that would add a new entry to this list.
   //  Add button that would take the synapse IDs from the text box, and add them to the refsInState
-  // TODO: On any update to refsInState, call onUpdate()
+  // TODO: On any update to refsInState, call onUpdate(). On remove is DONE, need to call rows added.
 
   const selectColumns: ColumnDef<EntityHeader, any>[] = useMemo(
     () => [
@@ -114,8 +111,29 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   } = useGetEntityHeaders(refsInState, {
     useErrorBoundary: true,
   })
+
   const data = useMemo(() => {
-    return results ? results?.results : []
+    //create dummy entries for values that were not returned by the getEntityHeaders call!
+    const newData = results ? results?.results : []
+    const newDataEntityIds = new Set()
+    newData.map(entityHeader => newDataEntityIds.add(entityHeader.id))
+    const missingRefs = refsInState.filter(
+      ref => !newDataEntityIds.has(ref.targetId),
+    )
+    const dummyEntityHeaders: EntityHeader[] = missingRefs.map(ref => {
+      return {
+        id: ref.targetId,
+        name: ref.targetId,
+        benefactorId: -1,
+        type: 'org.sagebionetworks.repo.model.FileEntity',
+        createdOn: '',
+        modifiedOn: '',
+        createdBy: '',
+        modifiedBy: '',
+        isLatestVersion: true,
+      }
+    })
+    return newData.concat(dummyEntityHeaders)
   }, [results])
   const table = useReactTable({
     data,
@@ -152,6 +170,24 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   } else if (!isSuccess) {
     return <></>
   }
+  const onRemoveFromAR: MouseEventHandler<HTMLButtonElement> = e => {
+    // rowSelection looks like {3: true. 5: true} where the key is the row index.
+    // Create a new ReferenceList based on the entityHeaders in the current table.
+    const updatedData = data.filter(
+      (_value, index) => !(rowSelection[index] === true),
+    )
+    const newRowRefs: ReferenceList = updatedData.map(entityHeader => {
+      return {
+        targetId: entityHeader.id,
+      }
+    })
+    setRowSelection({})
+    setRefsInState(newRowRefs)
+    if (onUpdate) {
+      onUpdate(newRowRefs)
+    }
+  }
+
   const isSelection = selectionCount > 0
   return (
     <div>
@@ -167,7 +203,11 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           {isSelection && <span>{` (${selectionCount} selected)`}</span>}
         </Typography>
         {isEditable && (
-          <Button variant="contained" disabled={!isSelection}>
+          <Button
+            variant="contained"
+            disabled={!isSelection}
+            onClick={onRemoveFromAR}
+          >
             Mark for Removal from AR
           </Button>
         )}

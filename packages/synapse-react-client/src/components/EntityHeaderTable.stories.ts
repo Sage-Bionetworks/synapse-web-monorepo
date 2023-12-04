@@ -4,6 +4,7 @@ import { getHandlers } from '../mocks/msw/handlers'
 import { EntityHeaderTable } from './EntityHeaderTable'
 import { MOCK_FILE_ENTITY_ID } from '../mocks/entity/mockFileEntity'
 import { MOCK_TABLE_ENTITY_ID } from '../mocks/entity/mockTableEntity'
+import { ReferenceList } from '@sage-bionetworks/synapse-types'
 
 const meta = {
   title: 'Governance/EntityHeaderTable',
@@ -36,6 +37,13 @@ export const Mock: Story = {
 export const RealWorldADKP: Story = {
   args: {
     isEditable: true,
+    onUpdate: (newReferenceList: ReferenceList) => {
+      alert(
+        `onUpdate(): New reference list after rows removed: ${JSON.stringify(
+          newReferenceList,
+        )}`,
+      )
+    },
     references: [
       {
         targetId: 'syn5550376',
