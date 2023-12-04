@@ -1,4 +1,4 @@
-import React, { useId, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -11,7 +11,6 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import { useSynapseContext } from '../../utils'
-import { DateTimeField, DateTimeFieldProps } from '@mui/x-date-pickers'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -39,23 +38,8 @@ function TextFieldWithTzShown(props: TextFieldProps) {
   )
 }
 
-function DateTimeFieldWithTzShown(props: DateTimeFieldProps<string | Dayjs>) {
-  const id = useId()
-
-  return (
-    <DateTimeField<string | Dayjs>
-      id={id}
-      {...props}
-      slots={{
-        ...props.slots,
-        textField: TextFieldWithTzShown,
-      }}
-    />
-  )
-}
-
 export default function DateTimePicker(props: DateTimePickerProps) {
-  const { value, ...rest } = props
+  const { value, slots, ...rest } = props
   const { utcTime } = useSynapseContext()
 
   const valueAsDayjs = useMemo(() => {
@@ -74,8 +58,8 @@ export default function DateTimePicker(props: DateTimePickerProps) {
       <MuiDateTimePicker<string | Dayjs>
         value={valueAsDayjs}
         slots={{
-          ...props.slots,
-          field: DateTimeFieldWithTzShown,
+          ...slots,
+          textField: TextFieldWithTzShown,
         }}
         {...rest}
       />
