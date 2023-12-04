@@ -23,6 +23,7 @@ import {
   Typography,
   Box,
   Checkbox,
+  Button,
 } from '@mui/material'
 import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../utils/functions/EntityTypeUtils'
@@ -36,6 +37,7 @@ import { cloneDeep } from 'lodash-es'
 export type EntityHeaderTableProps = {
   references: ReferenceList
   isEditable: boolean
+  onUpdate: (updatedRefs: ReferenceList) => void // when the references are updated, EntityHeaderTable will call this function with the updated list
 }
 
 /**
@@ -59,6 +61,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   // TODO: Add ability to Add synapse IDs (comma separated list) in a text field.
   //  Add entity finder, that would add a new entry to this list.
   //  Add button that would take the synapse IDs from the text box, and add them to the refsInState
+  // TODO: On any update to refsInState, call onUpdate()
 
   const selectColumns: ColumnDef<EntityHeader, any>[] = useMemo(
     () => [
@@ -146,14 +149,29 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
 
   if (isLoading) {
     return <SkeletonTable numCols={3} numRows={5} />
+  } else if (!isSuccess) {
+    return <></>
   }
+  const isSelection = selectionCount > 0
   return (
     <div>
-      <Typography variant="body1" sx={{ marginBottom: '10px' }}>
-        {table.getPrePaginationRowModel().rows.length} Entities
-        {selectionCount > 0 && <span>{` (${selectionCount} selected)`}</span>}
-      </Typography>
-
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          padding: '0px 10px 10px 5px',
+        }}
+      >
+        <Typography variant="body1" sx={{ marginBottom: '10px' }}>
+          {table.getPrePaginationRowModel().rows.length} Entities
+          {isSelection && <span>{` (${selectionCount} selected)`}</span>}
+        </Typography>
+        {isEditable && (
+          <Button variant="contained" disabled={!isSelection}>
+            Mark for Removal from AR
+          </Button>
+        )}
+      </Box>
       <Box
         sx={{
           overflow: 'auto',
