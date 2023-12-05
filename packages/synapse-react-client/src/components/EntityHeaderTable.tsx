@@ -37,7 +37,8 @@ import { cloneDeep } from 'lodash-es'
 export type EntityHeaderTableProps = {
   references: ReferenceList
   isEditable: boolean
-  onUpdate: (updatedRefs: ReferenceList) => void // when the references are updated, EntityHeaderTable will call this function with the updated list
+  onUpdate?: (updatedRefs: ReferenceList) => void // when the references are updated, EntityHeaderTable will call this function with the updated list
+  removeSelectedRowsButtonText?: string
 }
 
 /**
@@ -48,7 +49,12 @@ export type EntityHeaderTableProps = {
  * ReactFlow component.
  */
 export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
-  const { references, isEditable, onUpdate } = props
+  const {
+    references,
+    isEditable,
+    onUpdate,
+    removeSelectedRowsButtonText = 'Remove Selected Rows',
+  } = props
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [refsInState, setRefsInState] = useState<ReferenceList>(
@@ -208,7 +214,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
             disabled={!isSelection}
             onClick={onRemoveFromAR}
           >
-            Mark for Removal from AR
+            {removeSelectedRowsButtonText}
           </Button>
         )}
       </Box>

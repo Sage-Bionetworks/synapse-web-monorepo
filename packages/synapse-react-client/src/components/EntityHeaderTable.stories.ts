@@ -37,6 +37,7 @@ export const Mock: Story = {
 export const RealWorldADKP: Story = {
   args: {
     isEditable: true,
+    removeSelectedRowsButtonText: 'Mark for Removal from AR',
     onUpdate: (newReferenceList: ReferenceList) => {
       alert(
         `onUpdate(): New reference list after rows removed: ${JSON.stringify(
