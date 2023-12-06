@@ -40,7 +40,7 @@ export const RealWorldADKP: Story = {
     removeSelectedRowsButtonText: 'Mark for Removal from AR',
     onUpdate: (newReferenceList: ReferenceList) => {
       alert(
-        `onUpdate(): New reference list after rows removed: ${JSON.stringify(
+        `onUpdate(): New reference list after rows updated: ${JSON.stringify(
           newReferenceList,
         )}`,
       )
