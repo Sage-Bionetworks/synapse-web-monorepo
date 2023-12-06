@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-  MouseEventHandler,
-  useCallback,
-} from 'react'
+import React, { useState, useMemo, MouseEventHandler, useCallback } from 'react'
 import {
   useReactTable,
   ColumnFiltersState,
@@ -34,7 +28,7 @@ import IconSvg from '../IconSvg'
 import { SkeletonTable } from '../Skeleton'
 import { cloneDeep } from 'lodash-es'
 import { AddCircleTwoTone } from '@mui/icons-material'
-import { ParseError, parse } from 'papaparse'
+import { parse } from 'papaparse'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { Filter } from './Filter'
 import { EntityHeaderNameCell } from './EntityHeaderTableCellRenderers'
@@ -71,7 +65,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     cloneDeep(references),
   )
   const [newEntityIDs, setNewEntityIDs] = useState<string>('')
-  const [parseErrors, setParseErrors] = useState<ParseError[]>([])
+  const [parseErrors, setParseErrors] = useState<string[]>([])
 
   const updateRefsInState = useCallback((refs: ReferenceList) => {
     setRowSelection({})
@@ -84,14 +78,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   }, [])
 
   const setInvalidEntityIDError = useCallback((invalidEntityIDs: string[]) => {
-    setParseErrors([
-      {
-        type: 'FieldMismatch',
-        code: 'TooFewFields',
-        message: `Unrecognized entity IDs: ${JSON.stringify(invalidEntityIDs)}`,
-        row: 1,
-      },
-    ])
+    setParseErrors([`Invalid Synapse ID(s): ${invalidEntityIDs.join(',')}`])
   }, [])
 
   const addRefsFromEntityIDs = useCallback(
@@ -112,7 +99,10 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         parse<string[]>(newEntityIDs, {
           complete: result => {
             if (result.errors.length > 0) {
-              setParseErrors(result.errors)
+              const newParseErrors = result.errors.map(
+                parseError => parseError.message,
+              )
+              setParseErrors(newParseErrors)
             } else {
               const newParsedEntityIDs = result.data[0]
               const invalidEntityIDs = newParsedEntityIDs.filter(
@@ -238,14 +228,6 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     // debugColumns: false,
     columnResizeMode: 'onChange',
   })
-
-  useEffect(() => {
-    if (table.getState().columnFilters[0]?.id === 'name') {
-      if (table.getState().sorting[0]?.id !== 'name') {
-        table.setSorting([{ id: 'name', desc: false }])
-      }
-    }
-  }, [table.getState().columnFilters[0]?.id])
 
   if (isLoading) {
     return <SkeletonTable numCols={3} numRows={5} />
@@ -451,13 +433,12 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
                 {parseErrors.map((error, index) => {
                   return (
                     <Typography
-                      component={'li'}
+                      component={parseErrors.length > 1 ? 'li' : 'span'}
                       lineHeight={1.5}
                       key={index}
                       variant={'smallText1'}
                     >
-                      {/* {error.row ? `At ${error.row}: ` : ''} */}
-                      {error.message}
+                      {error}
                     </Typography>
                   )
                 })}
