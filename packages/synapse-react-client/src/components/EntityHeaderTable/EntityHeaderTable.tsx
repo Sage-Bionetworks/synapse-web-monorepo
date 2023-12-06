@@ -241,7 +241,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   })
 
   if (isLoading) {
-    return <SkeletonTable numCols={3} numRows={5} />
+    return <SkeletonTable numCols={3} numRows={10} />
   } else if (!isSuccess) {
     return <></>
   }
