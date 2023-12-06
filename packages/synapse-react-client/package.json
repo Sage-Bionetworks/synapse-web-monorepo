@@ -231,7 +231,7 @@
     "type-fest": "^3.13.0",
     "typescript": "5.1.6",
     "util": "^0.12.5",
-    "vite": "^4.4.2",
+    "vite": "^5.0.6",
     "vite-plugin-svgr": "^3.2.0",
     "vite-plugin-turbosnap": "^1.0.2",
     "weak-napi": "^2.0.2",
