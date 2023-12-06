@@ -6,8 +6,6 @@ import React, {
   useCallback,
 } from 'react'
 import {
-  Column,
-  Table,
   useReactTable,
   ColumnFiltersState,
   getCoreRowModel,
@@ -18,35 +16,32 @@ import {
   getSortedRowModel,
   ColumnDef,
   flexRender,
-  CellContext,
-  HeaderContext,
   RowSelectionState,
 } from '@tanstack/react-table'
 import {
   TextField,
-  TextFieldProps,
-  Autocomplete,
   Typography,
   Box,
-  Checkbox,
   Button,
-  Link,
   InputLabel,
   Alert,
   AlertTitle,
 } from '@mui/material'
 import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
-import { getEntityTypeFromHeader } from '../utils/functions/EntityTypeUtils'
-import { useGetEntityHeaders } from '../synapse-queries'
-import IconSvg from './IconSvg'
-import { EntityLink } from './EntityLink'
-import { SkeletonTable } from './Skeleton'
-import { useDebouncedEffect } from '../utils/hooks'
+import { getEntityTypeFromHeader } from '../../utils/functions/EntityTypeUtils'
+import { useGetEntityHeaders } from '../../synapse-queries'
+import IconSvg from '../IconSvg'
+import { SkeletonTable } from '../Skeleton'
 import { cloneDeep } from 'lodash-es'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { AddCircleTwoTone } from '@mui/icons-material'
 import { ParseError, parse } from 'papaparse'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../utils/functions/RegularExpressions'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
+import { Filter } from './Filter'
+import { EntityHeaderNameCell } from './EntityHeaderTableCellRenderers'
+import { EntityHeaderIDCell } from './EntityHeaderTableCellRenderers'
+import { EntityHeaderTypeCell } from './EntityHeaderTableCellRenderers'
+import { CheckBoxHeader } from './EntityHeaderTableCellRenderers'
+import { CheckBoxCell } from './EntityHeaderTableCellRenderers'
 
 export type EntityHeaderTableProps = {
   references: ReferenceList
@@ -56,7 +51,7 @@ export type EntityHeaderTableProps = {
 }
 
 // extend EntityHeader to create dummy EntityHeader rows for those that the current user cannot view
-type EntityHeaderOrDummy = EntityHeader & { isDummy?: boolean }
+export type EntityHeaderOrDummy = EntityHeader & { isDummy?: boolean }
 
 /**
  * Renders a sortable/filterable table for a set of entity references.  If editable, onUpdate will be called back
@@ -472,145 +467,5 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         </Box>
       )}
     </div>
-  )
-}
-
-function Filter({
-  column,
-  table,
-}: {
-  column: Column<any, unknown>
-  table: Table<any>
-}) {
-  const firstValue = table
-    .getPreFilteredRowModel()
-    .flatRows[0]?.getValue(column.id)
-
-  const columnFilterValue = (column.getFilterValue() as string) ?? ''
-
-  const sortedUniqueValues: string[] = React.useMemo(
-    () =>
-      typeof firstValue === 'number'
-        ? []
-        : Array.from(column.getFacetedUniqueValues().keys()).sort(),
-    [column.getFacetedUniqueValues()],
-  )
-  return (
-    <DebouncedInput
-      type="text"
-      options={sortedUniqueValues}
-      value={columnFilterValue}
-      onChange={value => column.setFilterValue(value)}
-      placeholder={`Filter by ${column.id}... (${
-        column.getFacetedUniqueValues().size
-      })`}
-      list={column.id + 'list'}
-    />
-  )
-}
-
-// A debounced input react component
-function DebouncedInput({
-  value: initialValue,
-  onChange,
-  options,
-  ...props
-}: {
-  value: string
-  onChange: (value: string) => void
-  options: string[]
-} & Pick<
-  React.InputHTMLAttributes<TextFieldProps>,
-  'type' | 'min' | 'max' | 'value' | 'placeholder' | 'className' | 'list'
->) {
-  const [value, setValue] = useState(initialValue)
-  useDebouncedEffect(
-    () => {
-      onChange(value)
-    },
-    [value],
-    300,
-  )
-
-  return (
-    <Autocomplete
-      disablePortal
-      isOptionEqualToValue={(option, value) =>
-        value.length == 0 || option === value
-      }
-      options={options}
-      value={value}
-      onChange={(event, newValue) => {
-        setValue(newValue ?? '')
-      }}
-      sx={{ marginRight: '10px' }}
-      renderInput={params => (
-        <TextField
-          {...params}
-          {...props}
-          value={value}
-          onChange={e => setValue(e.target.value)}
-        />
-      )}
-    />
-  )
-}
-
-function EntityHeaderNameCell(
-  props: CellContext<EntityHeaderOrDummy, string | null>,
-) {
-  const { cell } = props
-  const { row } = cell
-  const { original } = row
-  const { id, isDummy } = original
-  return isDummy ? (
-    <Link href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${id}`}>
-      {id}
-    </Link>
-  ) : (
-    <EntityLink entity={original} />
-  )
-}
-
-function EntityHeaderIDCell(
-  props: CellContext<EntityHeaderOrDummy, string | null>,
-) {
-  const { cell } = props
-  return <Typography variant="body1">{cell.getContext().getValue()}</Typography>
-}
-
-function EntityHeaderTypeCell(
-  props: CellContext<EntityHeaderOrDummy, string | null>,
-) {
-  const { cell } = props
-  return (
-    <Typography variant="body1" sx={{ textTransform: 'capitalize' }}>
-      {cell.getContext().getValue()}
-    </Typography>
-  )
-}
-
-function CheckBoxHeader(
-  props: HeaderContext<EntityHeaderOrDummy, string | null>,
-) {
-  const { table } = props
-  return (
-    <Checkbox
-      checked={table.getIsAllRowsSelected()}
-      indeterminate={table.getIsSomeRowsSelected()}
-      onClick={table.getToggleAllRowsSelectedHandler()}
-    />
-  )
-}
-
-function CheckBoxCell(props: CellContext<EntityHeaderOrDummy, string | null>) {
-  const { row } = props
-  return (
-    <Checkbox
-      checked={row.getIsSelected()}
-      disabled={!row.getCanSelect()}
-      indeterminate={row.getIsSomeSelected()}
-      onClick={row.getToggleSelectedHandler()}
-    />
   )
 }
