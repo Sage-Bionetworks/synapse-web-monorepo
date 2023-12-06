@@ -20,8 +20,14 @@ import {
   InputLabel,
   Alert,
   AlertTitle,
+  IconButton,
+  Tooltip,
 } from '@mui/material'
-import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
+import {
+  EntityHeader,
+  EntityType,
+  ReferenceList,
+} from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../../utils/functions/EntityTypeUtils'
 import { useGetEntityHeaders } from '../../synapse-queries'
 import IconSvg from '../IconSvg'
@@ -36,6 +42,10 @@ import { EntityHeaderIDCell } from './EntityHeaderTableCellRenderers'
 import { EntityHeaderTypeCell } from './EntityHeaderTableCellRenderers'
 import { CheckBoxHeader } from './EntityHeaderTableCellRenderers'
 import { CheckBoxCell } from './EntityHeaderTableCellRenderers'
+import AddAd from '../../assets/icons/AddAd'
+import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
+import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
+import { FinderScope } from '../EntityFinder/tree/EntityTree'
 
 export type EntityHeaderTableProps = {
   references: ReferenceList
@@ -66,6 +76,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   )
   const [newEntityIDs, setNewEntityIDs] = useState<string>('')
   const [parseErrors, setParseErrors] = useState<string[]>([])
+  const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
 
   const updateRefsInState = useCallback((refs: ReferenceList) => {
     setRowSelection({})
@@ -247,6 +258,20 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     })
     updateRefsInState(newRowRefs)
   }
+  const selectableTypes = [
+    EntityType.PROJECT,
+    EntityType.FOLDER,
+    EntityType.FILE,
+    EntityType.TABLE,
+    EntityType.LINK,
+    EntityType.ENTITY_VIEW,
+    EntityType.DOCKER_REPO,
+    EntityType.SUBMISSION_VIEW,
+    EntityType.DATASET,
+    EntityType.DATASET_COLLECTION,
+    EntityType.MATERIALIZED_VIEW,
+    EntityType.VIRTUAL_TABLE,
+  ]
 
   const isSelection = selectionCount > 0
   return (
@@ -401,6 +426,31 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           </tbody>
         </table>
       </Box>
+      <EntityFinderModal
+        configuration={{
+          selectMultiple: true,
+          selectableTypes: selectableTypes,
+          versionSelection: VersionSelectionType.DISALLOWED,
+          initialScope: FinderScope.ALL_PROJECTS,
+          initialContainer: 'root',
+        }}
+        promptCopy={'Select Entities to add to the Synapse ID list'}
+        show={showEntityFinder}
+        title={'Select Entities'}
+        confirmButtonCopy={'Add Entities'}
+        onConfirm={items => {
+          const newEntityIDsArray = items.map(ref => ref.targetId)
+          const newEntityIDsString =
+            newEntityIDs.trim().length > 0
+              ? newEntityIDs.concat(',')
+              : newEntityIDs
+          setNewEntityIDs(
+            newEntityIDsString.concat(newEntityIDsArray.join(',')),
+          )
+          setShowEntityFinder(false)
+        }}
+        onCancel={() => setShowEntityFinder(false)}
+      />
       {isEditable && (
         <Box sx={{ marginTop: '10px' }}>
           <InputLabel htmlFor="synIDs">Add Synapse IDs</InputLabel>
@@ -414,8 +464,17 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
               value={newEntityIDs}
               placeholder="Enter a list of Synapse IDs (i.e. 'syn123, syn456')"
             />
-            <Box>
+            <Box sx={{ padding: '5px 0px 0px 5px' }}>
               {/* Entity finder button.  On select, append the selected entity ID to the newSynIDs list */}
+              <Tooltip title="Add a Synapse ID to the list via the Entity Finder">
+                <IconButton
+                  onClick={() => {
+                    setShowEntityFinder(true)
+                  }}
+                >
+                  <AddAd />
+                </IconButton>
+              </Tooltip>
             </Box>
             <Button
               variant="outlined"
