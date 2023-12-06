@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useMemo, MouseEventHandler } from 'react'
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  MouseEventHandler,
+  useCallback,
+} from 'react'
 import {
   Column,
   Table,
@@ -24,6 +30,10 @@ import {
   Box,
   Checkbox,
   Button,
+  Link,
+  InputLabel,
+  Alert,
+  AlertTitle,
 } from '@mui/material'
 import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../utils/functions/EntityTypeUtils'
@@ -33,6 +43,10 @@ import { EntityLink } from './EntityLink'
 import { SkeletonTable } from './Skeleton'
 import { useDebouncedEffect } from '../utils/hooks'
 import { cloneDeep } from 'lodash-es'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import { AddCircleTwoTone } from '@mui/icons-material'
+import { ParseError, parse } from 'papaparse'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../utils/functions/RegularExpressions'
 
 export type EntityHeaderTableProps = {
   references: ReferenceList
@@ -41,12 +55,12 @@ export type EntityHeaderTableProps = {
   removeSelectedRowsButtonText?: string
 }
 
+// extend EntityHeader to create dummy EntityHeader rows for those that the current user cannot view
+type EntityHeaderOrDummy = EntityHeader & { isDummy?: boolean }
+
 /**
- * Renders a Provenance Graph for a set of entities.
- * New Nodes are added to tempNodes, and new Edges are added to tempEdges.
- * On change, these are fed into the dagre js graph library to figure out the node positions,
- * and the output stored in 'nodes' and 'edges'. The 'nodes' and 'edges' arrays are used by the
- * ReactFlow component.
+ * Renders a sortable/filterable table for a set of entity references.  If editable, onUpdate will be called back
+ * on any entity added/removed.
  */
 export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   const {
@@ -57,16 +71,81 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   } = props
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  //ReferenceList of EntityHeaders shown in the table.  setRefsInState() should not be called, use updateRefsInState() instead.
   const [refsInState, setRefsInState] = useState<ReferenceList>(
     cloneDeep(references),
   )
+  const [newEntityIDs, setNewEntityIDs] = useState<string>('')
+  const [parseErrors, setParseErrors] = useState<ParseError[]>([])
 
-  // TODO: Add ability to Add synapse IDs (comma separated list) in a text field.
-  //  Add entity finder, that would add a new entry to this list.
-  //  Add button that would take the synapse IDs from the text box, and add them to the refsInState
-  // TODO: On any update to refsInState, call onUpdate(). On remove is DONE, need to call rows added.
+  const updateRefsInState = useCallback((refs: ReferenceList) => {
+    setRowSelection({})
+    setRefsInState(refs)
+    if (onUpdate) {
+      onUpdate(refs)
+    }
+    setParseErrors([])
+    setNewEntityIDs('')
+  }, [])
 
-  const selectColumns: ColumnDef<EntityHeader, any>[] = useMemo(
+  const setInvalidEntityIDError = useCallback((invalidEntityIDs: string[]) => {
+    setParseErrors([
+      {
+        type: 'FieldMismatch',
+        code: 'TooFewFields',
+        message: `Unrecognized entity IDs: ${JSON.stringify(invalidEntityIDs)}`,
+        row: 1,
+      },
+    ])
+  }, [])
+
+  const addRefsFromEntityIDs = useCallback(
+    (entityIDs: string[]) => {
+      const newReferences: ReferenceList = entityIDs.map(id => {
+        return {
+          targetId: id.trim(),
+        }
+      })
+      updateRefsInState([...refsInState, ...newReferences])
+    },
+    [refsInState],
+  )
+
+  const addPastedValuesToArray = useCallback(() => {
+    if (newEntityIDs) {
+      if (newEntityIDs.includes(',')) {
+        parse<string[]>(newEntityIDs, {
+          complete: result => {
+            if (result.errors.length > 0) {
+              setParseErrors(result.errors)
+            } else {
+              const newParsedEntityIDs = result.data[0]
+              const invalidEntityIDs = newParsedEntityIDs.filter(
+                id => !id.trim().match(SYNAPSE_ENTITY_ID_REGEX),
+              )
+              if (invalidEntityIDs.length > 0) {
+                setInvalidEntityIDError(invalidEntityIDs)
+              } else {
+                addRefsFromEntityIDs(newParsedEntityIDs)
+              }
+            }
+          },
+        })
+      } else {
+        // single item
+        if (!newEntityIDs.trim().match(SYNAPSE_ENTITY_ID_REGEX)) {
+          setInvalidEntityIDError([newEntityIDs])
+        } else {
+          addRefsFromEntityIDs([newEntityIDs])
+        }
+      }
+    } else {
+      setParseErrors([])
+      setNewEntityIDs('')
+    }
+  }, [newEntityIDs])
+
+  const selectColumns: ColumnDef<EntityHeaderOrDummy, any>[] = useMemo(
     () => [
       {
         id: 'select',
@@ -77,22 +156,23 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     [],
   )
 
-  const entityHeaderColumns: ColumnDef<EntityHeader, any>[] = useMemo(
+  const entityHeaderColumns: ColumnDef<EntityHeaderOrDummy, any>[] = useMemo(
     () => [
       {
-        accessorFn: (row: EntityHeader) => row.name,
+        accessorFn: (row: EntityHeaderOrDummy) => row.name,
         id: 'name',
         cell: EntityHeaderNameCell,
         header: 'Name',
       },
       {
-        accessorFn: (row: EntityHeader) => row.id,
+        accessorFn: (row: EntityHeaderOrDummy) => row.id,
         id: 'id',
         cell: EntityHeaderIDCell,
         header: 'SynID',
       },
       {
-        accessorFn: (row: EntityHeader) => getEntityTypeFromHeader(row),
+        accessorFn: (row: EntityHeaderOrDummy) =>
+          row.isDummy ? '-' : getEntityTypeFromHeader(row),
         id: 'type',
         header: 'Type',
         cell: EntityHeaderTypeCell,
@@ -102,7 +182,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     [],
   )
 
-  const columns = useMemo<ColumnDef<EntityHeader, any>[]>(
+  const columns = useMemo<ColumnDef<EntityHeaderOrDummy, any>[]>(
     () =>
       isEditable
         ? selectColumns.concat(entityHeaderColumns)
@@ -126,17 +206,18 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     const missingRefs = refsInState.filter(
       ref => !newDataEntityIds.has(ref.targetId),
     )
-    const dummyEntityHeaders: EntityHeader[] = missingRefs.map(ref => {
+    const dummyEntityHeaders: EntityHeaderOrDummy[] = missingRefs.map(ref => {
       return {
         id: ref.targetId,
         name: ref.targetId,
         benefactorId: -1,
-        type: 'org.sagebionetworks.repo.model.FileEntity',
+        type: 'org.sagebionetworks.repo.model.Project',
         createdOn: '',
         modifiedOn: '',
         createdBy: '',
         modifiedBy: '',
         isLatestVersion: true,
+        isDummy: true,
       }
     })
     return newData.concat(dummyEntityHeaders)
@@ -187,11 +268,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         targetId: entityHeader.id,
       }
     })
-    setRowSelection({})
-    setRefsInState(newRowRefs)
-    if (onUpdate) {
-      onUpdate(newRowRefs)
-    }
+    updateRefsInState(newRowRefs)
   }
 
   const isSelection = selectionCount > 0
@@ -347,6 +424,53 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           </tbody>
         </table>
       </Box>
+      {isEditable && (
+        <Box sx={{ marginTop: '10px' }}>
+          <InputLabel htmlFor="synIDs">Add Synapse IDs</InputLabel>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 50px 150px' }}>
+            <TextField
+              id="synIDs"
+              name="synIDs"
+              fullWidth
+              onChange={e => setNewEntityIDs(e.target.value)}
+              value={newEntityIDs}
+              placeholder="Enter a list of Synapse IDs (i.e. 'syn123, syn456')"
+            />
+            <Box>
+              {/* Entity finder button.  On select, append the selected entity ID to the newSynIDs list */}
+            </Box>
+            <Button
+              variant="outlined"
+              onClick={addPastedValuesToArray}
+              disabled={isLoading || newEntityIDs.trim().length == 0}
+            >
+              <AddCircleTwoTone />
+              &nbsp;Add Entities
+            </Button>
+          </Box>
+          {parseErrors && parseErrors.length > 0 && (
+            <Alert severity={'error'} sx={{ my: 2 }}>
+              <AlertTitle>Parsing errors encountered:</AlertTitle>
+              <ul>
+                {parseErrors.map((error, index) => {
+                  return (
+                    <Typography
+                      component={'li'}
+                      lineHeight={1.5}
+                      key={index}
+                      variant={'smallText1'}
+                    >
+                      {/* {error.row ? `At ${error.row}: ` : ''} */}
+                      {error.message}
+                    </Typography>
+                  )
+                })}
+              </ul>
+            </Alert>
+          )}
+        </Box>
+      )}
     </div>
   )
 }
@@ -432,19 +556,32 @@ function DebouncedInput({
   )
 }
 
-function EntityHeaderNameCell(props: CellContext<EntityHeader, string | null>) {
+function EntityHeaderNameCell(
+  props: CellContext<EntityHeaderOrDummy, string | null>,
+) {
   const { cell } = props
   const { row } = cell
   const { original } = row
-  return <EntityLink entity={original} />
+  const { id, isDummy } = original
+  return isDummy ? (
+    <Link href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${id}`}>
+      {id}
+    </Link>
+  ) : (
+    <EntityLink entity={original} />
+  )
 }
 
-function EntityHeaderIDCell(props: CellContext<EntityHeader, string | null>) {
+function EntityHeaderIDCell(
+  props: CellContext<EntityHeaderOrDummy, string | null>,
+) {
   const { cell } = props
   return <Typography variant="body1">{cell.getContext().getValue()}</Typography>
 }
 
-function EntityHeaderTypeCell(props: CellContext<EntityHeader, string | null>) {
+function EntityHeaderTypeCell(
+  props: CellContext<EntityHeaderOrDummy, string | null>,
+) {
   const { cell } = props
   return (
     <Typography variant="body1" sx={{ textTransform: 'capitalize' }}>
@@ -453,7 +590,9 @@ function EntityHeaderTypeCell(props: CellContext<EntityHeader, string | null>) {
   )
 }
 
-function CheckBoxHeader(props: HeaderContext<EntityHeader, string | null>) {
+function CheckBoxHeader(
+  props: HeaderContext<EntityHeaderOrDummy, string | null>,
+) {
   const { table } = props
   return (
     <Checkbox
@@ -464,7 +603,7 @@ function CheckBoxHeader(props: HeaderContext<EntityHeader, string | null>) {
   )
 }
 
-function CheckBoxCell(props: CellContext<EntityHeader, string | null>) {
+function CheckBoxCell(props: CellContext<EntityHeaderOrDummy, string | null>) {
   const { row } = props
   return (
     <Checkbox
