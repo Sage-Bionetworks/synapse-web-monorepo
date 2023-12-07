@@ -52,7 +52,10 @@ export type EntityHeaderTableProps = {
   isEditable: boolean
   onUpdate?: (updatedRefs: ReferenceList) => void // when the references are updated, EntityHeaderTable will call this function with the updated list
   removeSelectedRowsButtonText?: string
+  onUpdateEntityIDsTextbox?: (value: string) => void // when the entity IDs text box is updated, this is called
 }
+
+const UNMANAGEABLE_SUBJECT_COUNT = 10
 
 // extend EntityHeader to create dummy EntityHeader rows for those that the current user cannot view
 export type EntityHeaderOrDummy = EntityHeader & { isDummy?: boolean }
@@ -67,6 +70,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     isEditable,
     onUpdate,
     removeSelectedRowsButtonText = 'Remove Selected Rows',
+    onUpdateEntityIDsTextbox,
   } = props
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -74,9 +78,18 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   const [refsInState, setRefsInState] = useState<ReferenceList>(
     cloneDeep(references),
   )
+  // update the textbox new entity IDs list.  setNewEntityIDs should not be called, use updateNewEntityIDs
   const [newEntityIDs, setNewEntityIDs] = useState<string>('')
   const [parseErrors, setParseErrors] = useState<string[]>([])
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
+
+  const updateNewEntityIDs = useCallback(
+    (newValue: string) => {
+      setNewEntityIDs(newValue)
+      onUpdateEntityIDsTextbox && onUpdateEntityIDsTextbox(newValue)
+    },
+    [onUpdateEntityIDsTextbox],
+  )
 
   const updateRefsInState = useCallback((refs: ReferenceList) => {
     setRowSelection({})
@@ -85,7 +98,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
       onUpdate(refs)
     }
     setParseErrors([])
-    setNewEntityIDs('')
+    updateNewEntityIDs('')
   }, [])
 
   const setInvalidEntityIDError = useCallback((invalidEntityIDs: string[]) => {
@@ -137,7 +150,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
       }
     } else {
       setParseErrors([])
-      setNewEntityIDs('')
+      updateNewEntityIDs('')
     }
   }, [newEntityIDs])
 
@@ -274,6 +287,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   ]
 
   const isSelection = selectionCount > 0
+  const rowCount = table.getPrePaginationRowModel().rows.length
   return (
     <div>
       <Box
@@ -283,149 +297,159 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           padding: '12px 10px 10px 5px',
         }}
       >
-        <Typography variant="body1" sx={{ marginBottom: '10px' }}>
-          {table.getPrePaginationRowModel().rows.length} Entities
-          {isSelection && <span>{` (${selectionCount} selected)`}</span>}
-        </Typography>
-        {isEditable && (
-          <Button
-            variant="contained"
-            disabled={!isSelection}
-            onClick={onRemoveFromAR}
-          >
-            {removeSelectedRowsButtonText}
-          </Button>
-        )}
+        <div>
+          {rowCount > UNMANAGEABLE_SUBJECT_COUNT && (
+            <Typography variant="body1" sx={{ marginBottom: '10px' }}>
+              {rowCount} Entities
+              {isSelection && <span>{` (${selectionCount} selected)`}</span>}
+            </Typography>
+          )}
+        </div>
+        <div>
+          {isEditable && (
+            <Button
+              variant="contained"
+              disabled={!isSelection}
+              onClick={onRemoveFromAR}
+            >
+              {removeSelectedRowsButtonText}
+            </Button>
+          )}
+        </div>
       </Box>
-      <Box
-        sx={{
-          overflow: 'auto',
-          height: '230px',
-          paddingLeft: '2px',
-          th: {
-            backgroundColor: '#eee',
-            zIndex: 100,
-          },
-        }}
-      >
-        <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-          <thead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                  let columnSize: string = '5%'
-                  switch (header.id) {
-                    case 'name':
-                      columnSize = '50%'
-                      break
-                    case 'id':
-                      columnSize = '22%'
-                      break
-                    case 'type':
-                      columnSize = '22%'
-                      break
-                    default:
-                      break
-                  }
-                  return (
-                    <th
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      style={{
-                        width: columnSize,
-                        position: 'sticky',
-                        top: '0px',
-                        background: '#fff',
-                      }}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <>
-                          <div
-                            {...{
-                              className: header.column.getCanSort()
-                                ? 'SRC-hand-cursor'
-                                : '',
-                              onClick: header.column.getToggleSortingHandler(),
-                            }}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                            {{
-                              asc: (
-                                <IconSvg
-                                  icon={'sortUp'}
-                                  wrap={false}
-                                  sx={{
-                                    color: 'primary.main',
-                                    backgroundColor: 'none',
-                                    float: 'right',
-                                    marginRight: '5px',
-                                  }}
-                                />
-                              ),
-                              desc: (
-                                <IconSvg
-                                  icon={'sortDown'}
-                                  wrap={false}
-                                  sx={{
-                                    color: 'primary.main',
-                                    backgroundColor: 'none',
-                                    float: 'right',
-                                    marginRight: '5px',
-                                  }}
-                                />
-                              ),
-                            }[header.column.getIsSorted() as string] ?? null}
-                          </div>
-                          {header.column.getCanFilter() ? (
-                            <div>
-                              <Filter column={header.column} table={table} />
-                            </div>
-                          ) : null}
-                        </>
-                      )}
-                      {header.column.getCanResize() && (
-                        <div
-                          className={`resizer ${
-                            header.column.getIsResizing() ? 'isResizing' : ''
-                          }`}
-                          onMouseDown={header.getResizeHandler()}
-                          onTouchStart={header.getResizeHandler()}
-                        />
-                      )}
-                    </th>
-                  )
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map(row => {
-              return (
-                <tr key={row.id} style={{ height: '30px' }}>
-                  {row.getVisibleCells().map(cell => {
+      {rowCount > 0 && (
+        <Box
+          sx={{
+            overflow: 'auto',
+            maxHeight: '250px',
+            paddingLeft: '2px',
+            th: {
+              backgroundColor: '#eee',
+              zIndex: 100,
+            },
+          }}
+        >
+          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <thead>
+              {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => {
+                    let columnSize: string = '5%'
+                    switch (header.id) {
+                      case 'name':
+                        columnSize = '50%'
+                        break
+                      case 'id':
+                        columnSize = '22%'
+                        break
+                      case 'type':
+                        columnSize = '22%'
+                        break
+                      default:
+                        break
+                    }
                     return (
-                      <td
-                        key={cell.id}
+                      <th
+                        key={header.id}
+                        colSpan={header.colSpan}
                         style={{
-                          width: cell.column.getSize(),
+                          width: columnSize,
+                          position: 'sticky',
+                          top: '0px',
+                          background: '#fff',
                         }}
                       >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
+                        {header.isPlaceholder ? null : (
+                          <>
+                            <div
+                              {...{
+                                className: header.column.getCanSort()
+                                  ? 'SRC-hand-cursor'
+                                  : '',
+                                onClick:
+                                  header.column.getToggleSortingHandler(),
+                              }}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                              {{
+                                asc: (
+                                  <IconSvg
+                                    icon={'sortUp'}
+                                    wrap={false}
+                                    sx={{
+                                      color: 'primary.main',
+                                      backgroundColor: 'none',
+                                      float: 'right',
+                                      marginRight: '5px',
+                                    }}
+                                  />
+                                ),
+                                desc: (
+                                  <IconSvg
+                                    icon={'sortDown'}
+                                    wrap={false}
+                                    sx={{
+                                      color: 'primary.main',
+                                      backgroundColor: 'none',
+                                      float: 'right',
+                                      marginRight: '5px',
+                                    }}
+                                  />
+                                ),
+                              }[header.column.getIsSorted() as string] ?? null}
+                            </div>
+                            {header.column.getCanFilter() &&
+                            rowCount > UNMANAGEABLE_SUBJECT_COUNT ? (
+                              <div>
+                                <Filter column={header.column} table={table} />
+                              </div>
+                            ) : null}
+                          </>
                         )}
-                      </td>
+                        {header.column.getCanResize() && (
+                          <div
+                            className={`resizer ${
+                              header.column.getIsResizing() ? 'isResizing' : ''
+                            }`}
+                            onMouseDown={header.getResizeHandler()}
+                            onTouchStart={header.getResizeHandler()}
+                          />
+                        )}
+                      </th>
                     )
                   })}
                 </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </Box>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map(row => {
+                return (
+                  <tr key={row.id} style={{ height: '30px' }}>
+                    {row.getVisibleCells().map(cell => {
+                      return (
+                        <td
+                          key={cell.id}
+                          style={{
+                            width: cell.column.getSize(),
+                          }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </Box>
+      )}
       <EntityFinderModal
         configuration={{
           selectMultiple: true,
@@ -444,9 +468,10 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
             newEntityIDs.trim().length > 0
               ? newEntityIDs.concat(',')
               : newEntityIDs
-          setNewEntityIDs(
-            newEntityIDsString.concat(newEntityIDsArray.join(',')),
+          const newValue = newEntityIDsString.concat(
+            newEntityIDsArray.join(','),
           )
+          updateNewEntityIDs(newValue)
           setShowEntityFinder(false)
         }}
         onCancel={() => setShowEntityFinder(false)}
@@ -460,7 +485,9 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
               id="synIDs"
               name="synIDs"
               fullWidth
-              onChange={e => setNewEntityIDs(e.target.value)}
+              onChange={e => {
+                updateNewEntityIDs(e.target.value)
+              }}
               value={newEntityIDs}
               placeholder="Enter a list of Synapse IDs (i.e. 'syn123, syn456')"
             />
