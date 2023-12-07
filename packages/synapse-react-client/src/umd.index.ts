@@ -70,6 +70,7 @@ import OrientationBanner from './components/OrientationBanner/OrientationBanner'
 import AccessRequirementList from './components/AccessRequirementList/AccessRequirementList'
 import { BackendDestinationEnum } from './utils/functions'
 import TableColumnSchemaForm from './components/TableColumnSchemaEditor/TableColumnSchemaForm'
+import EntityHeaderTable from './components/EntityHeaderTable'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -145,6 +146,7 @@ const SynapseComponents = {
   OrientationBanner,
   AccessRequirementList,
   TableColumnSchemaForm,
+  EntityHeaderTable,
 }
 
 // Include the version in the build
