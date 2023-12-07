@@ -1,9 +1,16 @@
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import { z } from 'zod'
+import { z, ZodType } from 'zod'
 import { isArray, isEmpty } from 'lodash-es'
 import getZodSchemaForColumnType from './getZodSchemaForColumnType'
 
-export function getDefaultValueValidator(columnType: ColumnTypeEnum) {
+/**
+ * Returns a validator for a ColumnModel's `defaultValue` field.
+ * This validator will transform the field to match the correct type of defaultValue, which is an optional string.
+ * @param columnType the columnType of the ColumnModel
+ */
+export function getDefaultValueValidator(
+  columnType: ColumnTypeEnum,
+): ZodType<string | undefined> {
   const schema = getZodSchemaForColumnType(columnType)
   return z
     .union([
