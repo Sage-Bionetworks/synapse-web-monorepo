@@ -287,7 +287,8 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   ]
 
   const isSelection = selectionCount > 0
-  const rowCount = table.getPrePaginationRowModel().rows.length
+  const totalRowCount = data.length
+  const filteredRowCount = table.getPrePaginationRowModel().rows.length
   return (
     <div>
       <Box
@@ -298,9 +299,12 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         }}
       >
         <div>
-          {rowCount > UNMANAGEABLE_SUBJECT_COUNT && (
+          {totalRowCount > UNMANAGEABLE_SUBJECT_COUNT && (
             <Typography variant="body1" sx={{ marginBottom: '10px' }}>
-              {rowCount} Entities
+              {totalRowCount} Entities{' '}
+              {filteredRowCount < totalRowCount
+                ? `(${filteredRowCount} visible)`
+                : ''}
               {isSelection && <span>{` (${selectionCount} selected)`}</span>}
             </Typography>
           )}
@@ -317,7 +321,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           )}
         </div>
       </Box>
-      {rowCount > 0 && (
+      {totalRowCount > 0 && (
         <Box
           sx={{
             overflow: 'auto',
@@ -402,7 +406,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
                               }[header.column.getIsSorted() as string] ?? null}
                             </div>
                             {header.column.getCanFilter() &&
-                            rowCount > UNMANAGEABLE_SUBJECT_COUNT ? (
+                            totalRowCount > UNMANAGEABLE_SUBJECT_COUNT ? (
                               <div>
                                 <Filter column={header.column} table={table} />
                               </div>
