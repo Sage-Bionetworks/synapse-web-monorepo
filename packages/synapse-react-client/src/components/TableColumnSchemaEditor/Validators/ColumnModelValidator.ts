@@ -14,17 +14,17 @@ import getEnumValuesValidator from './EnumValuesValidator'
 import { optionalStringSchema } from './OptionalStringSchema'
 import { omit } from 'lodash-es'
 
-const FacetTypeSchema = z.union([z.literal('enumeration'), z.literal('range')])
+const facetTypeSchema = z.union([z.literal('enumeration'), z.literal('range')])
 
-const ColumnModelBaseZodSchema = z.object({
+const columnModelBaseZodSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
   columnType: z.nativeEnum(ColumnTypeEnum),
 })
 
-export const JsonSubColumnModelZodSchema = ColumnModelBaseZodSchema.merge(
+export const jsonSubColumnModelZodSchema = columnModelBaseZodSchema.merge(
   z.object({
     jsonPath: z.string().startsWith('$'),
-    facetType: FacetTypeSchema,
+    facetType: facetTypeSchema,
   }),
 )
 
@@ -34,25 +34,38 @@ export const JsonSubColumnModelZodSchema = ColumnModelBaseZodSchema.merge(
  *
  * The parse method will return a ColumnModel where all data is properly formed.
  */
-export const ColumnModelZodSchema = ColumnModelBaseZodSchema.merge(
-  z.object({
-    id: z.string().optional(),
-    defaultValue: z.union([z.string(), z.array(z.any())]).optional(),
-    maximumSize: z
-      .union([optionalStringSchema, z.number()])
-      .pipe(
-        z.coerce.number().finite().int().min(1).max(MAX_STRING_SIZE).optional(),
-      ),
-    maximumListLength: z
-      .union([optionalStringSchema, z.number()])
-      .pipe(
-        z.coerce.number().finite().int().min(1).max(MAX_LIST_LENGTH).optional(),
-      ),
-    enumValues: z.array(z.coerce.string()).optional(),
-    jsonSubColumns: z.array(JsonSubColumnModelZodSchema).optional(),
-    facetType: FacetTypeSchema.optional(),
-  }),
-)
+export const columnModelZodSchema = columnModelBaseZodSchema
+  .merge(
+    z.object({
+      id: z.string().optional(),
+      defaultValue: z.union([z.string(), z.array(z.any())]).optional(),
+      maximumSize: z
+        .union([optionalStringSchema, z.number()])
+        .pipe(
+          z.coerce
+            .number()
+            .finite()
+            .int()
+            .min(1)
+            .max(MAX_STRING_SIZE)
+            .optional(),
+        ),
+      maximumListLength: z
+        .union([optionalStringSchema, z.number()])
+        .pipe(
+          z.coerce
+            .number()
+            .finite()
+            .int()
+            .min(1)
+            .max(MAX_LIST_LENGTH)
+            .optional(),
+        ),
+      enumValues: z.array(z.coerce.string()).optional(),
+      jsonSubColumns: z.array(jsonSubColumnModelZodSchema).optional(),
+      facetType: facetTypeSchema.optional(),
+    }),
+  )
   .refine(data => data.maximumSize == null || canHaveSize(data.columnType), {
     message: 'Size is not allowed for this column type',
     path: ['maximumSize'],
@@ -114,7 +127,7 @@ export const ColumnModelZodSchema = ColumnModelBaseZodSchema.merge(
     return omit(data, 'enumValues')
   })
 
-export const ColumnModelFormDataZodSchema = z.array(ColumnModelZodSchema)
+export const columnModelFormDataZodSchema = z.array(columnModelZodSchema)
 
 export function validateColumnModelFormData(
   formData: SetOptional<
@@ -128,5 +141,5 @@ export function validateColumnModelFormData(
   >[],
   SetOptional<ColumnModel, 'id'>[]
 > {
-  return ColumnModelFormDataZodSchema.safeParse(formData)
+  return columnModelFormDataZodSchema.safeParse(formData)
 }

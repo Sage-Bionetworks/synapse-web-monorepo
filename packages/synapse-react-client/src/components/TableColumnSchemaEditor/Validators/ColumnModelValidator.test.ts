@@ -1,9 +1,9 @@
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import { ColumnModelFormDataZodSchema } from './ColumnModelValidator'
+import { columnModelFormDataZodSchema } from './ColumnModelValidator'
 
 describe('ColumnModel validation', () => {
   it('Does not require optional fields', () => {
-    const columnModels = ColumnModelFormDataZodSchema.parse([
+    const columnModels = columnModelFormDataZodSchema.parse([
       {
         name: 'foo',
         columnType: ColumnTypeEnum.STRING,
@@ -19,7 +19,7 @@ describe('ColumnModel validation', () => {
   })
   describe('maximumSize', () => {
     it('handles no size', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'no size',
           columnType: ColumnTypeEnum.STRING,
@@ -33,7 +33,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('handles empty string', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'empty string',
           columnType: ColumnTypeEnum.STRING,
@@ -49,7 +49,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('handles exactly the minimum value', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'min',
           columnType: ColumnTypeEnum.STRING,
@@ -66,7 +66,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('handles exactly the maximum value', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'max',
           columnType: ColumnTypeEnum.STRING,
@@ -83,7 +83,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('handles a value with number type', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'as number',
           columnType: ColumnTypeEnum.STRING,
@@ -102,7 +102,7 @@ describe('ColumnModel validation', () => {
     it('rejects a value of zero', () => {
       expect(() =>
         console.log(
-          ColumnModelFormDataZodSchema.parse([
+          columnModelFormDataZodSchema.parse([
             {
               name: 'zero',
               columnType: ColumnTypeEnum.STRING,
@@ -114,7 +114,7 @@ describe('ColumnModel validation', () => {
     })
     it('rejects a value over the maximum', () => {
       expect(() =>
-        ColumnModelFormDataZodSchema.parse([
+        columnModelFormDataZodSchema.parse([
           {
             name: 'overMax',
             columnType: ColumnTypeEnum.STRING,
@@ -125,7 +125,7 @@ describe('ColumnModel validation', () => {
     })
     it('rejects a non-number value', () => {
       expect(() =>
-        ColumnModelFormDataZodSchema.parse([
+        columnModelFormDataZodSchema.parse([
           {
             name: 'nonNumber',
             columnType: ColumnTypeEnum.STRING,
@@ -136,7 +136,7 @@ describe('ColumnModel validation', () => {
     })
     it('does not allow maximumSize for disallowed columns', () => {
       expect(() =>
-        ColumnModelFormDataZodSchema.parse([
+        columnModelFormDataZodSchema.parse([
           {
             name: 'boolean',
             columnType: ColumnTypeEnum.BOOLEAN,
@@ -148,7 +148,7 @@ describe('ColumnModel validation', () => {
   })
   describe('maximumListLength', () => {
     it('handles no maximumListLength', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'no max list length',
           columnType: ColumnTypeEnum.STRING_LIST,
@@ -163,7 +163,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('handles empty string', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'empty string',
           columnType: ColumnTypeEnum.STRING_LIST,
@@ -179,7 +179,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('handles exactly the minimum value', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'min',
           columnType: ColumnTypeEnum.STRING_LIST,
@@ -196,7 +196,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('handles exactly the maximum value', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'max',
           columnType: ColumnTypeEnum.STRING_LIST,
@@ -213,7 +213,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('handles a value of number type', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'as number',
           columnType: ColumnTypeEnum.STRING_LIST,
@@ -232,7 +232,7 @@ describe('ColumnModel validation', () => {
     it('rejects a value of 0', () => {
       expect(() =>
         console.log(
-          ColumnModelFormDataZodSchema.parse([
+          columnModelFormDataZodSchema.parse([
             {
               name: 'zero',
               columnType: ColumnTypeEnum.STRING_LIST,
@@ -244,7 +244,7 @@ describe('ColumnModel validation', () => {
     })
     it('rejects a value over the maximum', () => {
       expect(() =>
-        ColumnModelFormDataZodSchema.parse([
+        columnModelFormDataZodSchema.parse([
           {
             name: 'overMax',
             columnType: ColumnTypeEnum.STRING_LIST,
@@ -255,7 +255,7 @@ describe('ColumnModel validation', () => {
     })
     it('rejects a non-number value', () => {
       expect(() =>
-        ColumnModelFormDataZodSchema.parse([
+        columnModelFormDataZodSchema.parse([
           {
             name: 'nonNumber',
             columnType: ColumnTypeEnum.STRING_LIST,
@@ -266,7 +266,7 @@ describe('ColumnModel validation', () => {
     })
     it('does not allow maximumListLength for disallowed columns', () => {
       expect(() =>
-        ColumnModelFormDataZodSchema.parse([
+        columnModelFormDataZodSchema.parse([
           {
             name: 'boolean',
             columnType: ColumnTypeEnum.BOOLEAN,
@@ -278,7 +278,7 @@ describe('ColumnModel validation', () => {
   })
   describe('defaultValue', () => {
     it('defaultValue is a string', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'string',
           columnType: ColumnTypeEnum.STRING,
@@ -295,7 +295,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('defaultValue is a string array', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'stringList serialized',
           columnType: ColumnTypeEnum.STRING_LIST,
@@ -332,7 +332,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('defaultValue is boolean', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'boolean',
           columnType: ColumnTypeEnum.BOOLEAN,
@@ -369,7 +369,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('defaultValue is an integer', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'int',
           columnType: ColumnTypeEnum.INTEGER,
@@ -387,7 +387,7 @@ describe('ColumnModel validation', () => {
     })
 
     it('defaultValue is an integer list', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'serialized integer list',
           columnType: ColumnTypeEnum.INTEGER_LIST,
@@ -414,7 +414,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('defaultValue is a double', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'double',
           columnType: ColumnTypeEnum.DOUBLE,
@@ -461,7 +461,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('defaultValue is datetime', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'iso timestamp',
           columnType: ColumnTypeEnum.DATE,
@@ -488,7 +488,7 @@ describe('ColumnModel validation', () => {
       ])
     })
     it('defaultValue is an array of datetime', () => {
-      const columnModels = ColumnModelFormDataZodSchema.parse([
+      const columnModels = columnModelFormDataZodSchema.parse([
         {
           name: 'iso timestamp serialized',
           columnType: ColumnTypeEnum.DATE_LIST,
@@ -542,7 +542,7 @@ describe('ColumnModel validation', () => {
     })
     it('rejects defaultValues of incorrect type', () => {
       expect(() =>
-        ColumnModelFormDataZodSchema.parse([
+        columnModelFormDataZodSchema.parse([
           {
             name: 'integer with string default',
             columnType: ColumnTypeEnum.INTEGER,
@@ -555,7 +555,7 @@ describe('ColumnModel validation', () => {
   describe('enumValues', () => {
     describe('STRING', () => {
       it('Handles an array of string enum values', () => {
-        const columnModels = ColumnModelFormDataZodSchema.parse([
+        const columnModels = columnModelFormDataZodSchema.parse([
           {
             name: 'foo',
             columnType: ColumnTypeEnum.STRING,
@@ -571,7 +571,7 @@ describe('ColumnModel validation', () => {
         ])
       })
       it('Handles and removes an empty array', () => {
-        const columnModels = ColumnModelFormDataZodSchema.parse([
+        const columnModels = columnModelFormDataZodSchema.parse([
           {
             name: 'foo',
             columnType: ColumnTypeEnum.STRING,
@@ -588,7 +588,7 @@ describe('ColumnModel validation', () => {
     })
     describe('INTEGER', () => {
       it('Handles an array of integers', () => {
-        const columnModels = ColumnModelFormDataZodSchema.parse([
+        const columnModels = columnModelFormDataZodSchema.parse([
           {
             name: 'foo',
             columnType: ColumnTypeEnum.INTEGER,
@@ -604,7 +604,7 @@ describe('ColumnModel validation', () => {
         ])
       })
       it('Handles an array of integers formatted as strings', () => {
-        const columnModels = ColumnModelFormDataZodSchema.parse([
+        const columnModels = columnModelFormDataZodSchema.parse([
           {
             name: 'foo',
             columnType: ColumnTypeEnum.INTEGER,
@@ -621,7 +621,7 @@ describe('ColumnModel validation', () => {
       })
       it('Rejects non-integer values', () => {
         expect(() =>
-          ColumnModelFormDataZodSchema.parse([
+          columnModelFormDataZodSchema.parse([
             {
               name: 'foo',
               columnType: ColumnTypeEnum.INTEGER,
@@ -633,7 +633,7 @@ describe('ColumnModel validation', () => {
     })
     describe('ENTITYID', () => {
       it('Handles an array of entityIds', () => {
-        const columnModels = ColumnModelFormDataZodSchema.parse([
+        const columnModels = columnModelFormDataZodSchema.parse([
           {
             name: 'foo',
             columnType: ColumnTypeEnum.ENTITYID,
@@ -650,7 +650,7 @@ describe('ColumnModel validation', () => {
       })
       it('Rejects an improperly formatted synId', () => {
         expect(() =>
-          ColumnModelFormDataZodSchema.parse([
+          columnModelFormDataZodSchema.parse([
             {
               name: 'foo',
               columnType: ColumnTypeEnum.ENTITYID,
