@@ -280,7 +280,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
-          padding: '0px 10px 10px 5px',
+          padding: '12px 10px 10px 5px',
         }}
       >
         <Typography variant="body1" sx={{ marginBottom: '10px' }}>
@@ -300,7 +300,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
       <Box
         sx={{
           overflow: 'auto',
-          height: '400px',
+          height: '230px',
           paddingLeft: '2px',
           th: {
             backgroundColor: '#eee',
