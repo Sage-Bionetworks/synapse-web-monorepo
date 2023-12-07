@@ -23,7 +23,7 @@ const parentId = mockProject.id
 const projectName = mockProject.name
 
 export const MOCK_FILE_ENTITY_ID = `syn30000`
-const MOCK_FILE_NAME = 'My mock file entity'
+export const MOCK_FILE_NAME = 'My mock file entity'
 
 // TODO: Create a mock wiki
 const MOCK_WIKI_ID = '45745485'

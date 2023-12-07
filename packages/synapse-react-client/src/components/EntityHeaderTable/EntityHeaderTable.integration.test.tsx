@@ -6,9 +6,17 @@ import { ReferenceList } from '@sage-bionetworks/synapse-types'
 import { server } from '../../mocks/msw/server'
 import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
 import { EntityHeaderTable, EntityHeaderTableProps } from './EntityHeaderTable'
-import mockEntities from '../../mocks/entity'
 
 import * as EntityFinderModule from '../EntityFinder/EntityFinderModal'
+import mockFileEntityData, {
+  MOCK_FILE_ENTITY_ID,
+  MOCK_FILE_NAME,
+} from '../../mocks/entity/mockFileEntity'
+import mockDatasetData, {
+  MOCK_DATASET_ENTITY_ID,
+  MOCK_DATASET_NAME,
+} from '../../mocks/entity/mockDataset'
+import userEvent from '@testing-library/user-event'
 
 function renderTable(props: EntityHeaderTableProps) {
   return render(<EntityHeaderTable {...props} />, {
@@ -30,211 +38,68 @@ describe('EntityHeaderTable tests', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  it('renders table', async () => {
-    const refs: ReferenceList = [{ targetId: mockEntities[0].id }]
+  it('renders table (not editable)', async () => {
+    const refs: ReferenceList = [
+      { targetId: mockFileEntityData.id },
+      { targetId: mockDatasetData.id },
+    ]
     renderTable({ references: refs, isEditable: false })
     expect(await screen.findAllByRole('columnheader')).toHaveLength(3)
+    expect(await screen.findAllByRole('row')).toHaveLength(3) // 1 header row and 2 data rows
+    expect(await screen.findByText(MOCK_FILE_NAME)).toBeInTheDocument()
+    expect(await screen.findByText(MOCK_FILE_ENTITY_ID)).toBeInTheDocument()
+    expect(await screen.findByText(MOCK_DATASET_NAME)).toBeInTheDocument()
+    expect(await screen.findByText(MOCK_DATASET_ENTITY_ID)).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
   })
 
-  // it('handle column sort press works', async () => {
-  //   /*
-  //             Overview:
-  //               Go through clicking a column's sort button, there are
-  //               three states that cycle:
-  //                 - off
-  //                 - descending
-  //                 - ascending
-  //           */
-  //   renderTable()
-  //   await waitFor(() => {
-  //     expect(queryContext).toBeDefined()
-  //   })
+  it('renders editable table, with ability to add items', async () => {
+    const mockOnUpdate = jest.fn()
+    const refs: ReferenceList = [
+      { targetId: mockFileEntityData.id },
+      { targetId: mockDatasetData.id },
+    ]
+    renderTable({ references: refs, isEditable: true, onUpdate: mockOnUpdate })
 
-  //   // simulate having clicked the sort button on the first column, projectName
-  //   const sortedColumn = 'projectName'
+    const textField = await screen.findByRole('textbox')
+    expect(textField.getAttribute('type')).toBe('text')
+    await userEvent.click(textField)
+    await userEvent.paste('syn123, syn456')
+    const button = await screen.findByRole('button', {
+      name: 'Add Entities',
+    })
+    await userEvent.click(button)
 
-  //   const sortButton = (
-  //     await screen.findAllByRole('button', { name: 'sort' })
-  //   )[0]
-  //   await userEvent.click(sortButton)
+    expect(mockOnUpdate).toHaveBeenCalledWith([
+      { targetId: MOCK_FILE_ENTITY_ID },
+      { targetId: MOCK_DATASET_ENTITY_ID },
+      { targetId: 'syn123' },
+      { targetId: 'syn456' },
+    ])
+  })
 
-  //   // below we match only the part of the object that we expect to have changed
-  //   await waitFor(() => {
-  //     expect(queryContext!.currentQueryRequest).toEqual(
-  //       expect.objectContaining({
-  //         query: expect.objectContaining({
-  //           sort: [
-  //             {
-  //               column: sortedColumn,
-  //               direction: 'ASC',
-  //             },
-  //           ],
-  //         }),
-  //       }),
-  //     )
-  //   })
+  it('renders editable table, with ability to remove items', async () => {
+    const mockOnUpdate = jest.fn()
+    const refs: ReferenceList = [
+      { targetId: mockFileEntityData.id },
+      { targetId: mockDatasetData.id },
+    ]
+    const removeEntitiesButtonText = 'Remove Test Entities'
+    renderTable({
+      references: refs,
+      isEditable: true,
+      onUpdate: mockOnUpdate,
+      removeSelectedRowsButtonText: removeEntitiesButtonText,
+    })
 
-  //   // simulate second sort click
-  //   await userEvent.click(sortButton)
-  //   // below we match only the part of the object that we expect to have changed
-  //   await waitFor(() => {
-  //     expect(queryContext!.currentQueryRequest).toEqual(
-  //       expect.objectContaining({
-  //         query: expect.objectContaining({
-  //           sort: [
-  //             {
-  //               column: sortedColumn,
-  //               direction: 'DESC',
-  //             },
-  //           ],
-  //         }),
-  //       }),
-  //     )
-  //   })
+    const checkBoxes = await screen.findAllByRole('checkbox')
+    await userEvent.click(checkBoxes[0])
+    const button = await screen.findByRole('button', {
+      name: removeEntitiesButtonText,
+    })
+    await userEvent.click(button)
 
-  //   // simulate third sort click -- the sort will be removed
-  //   await userEvent.click(sortButton)
-  //   // below we match only the part of the object that we expect to have changed
-  //   await waitFor(() => {
-  //     expect(queryContext!.currentQueryRequest.query.sort).not.toBeDefined()
-  //   })
-  // })
-
-  // it('Hides download columns when rows of an entity-containing view have no IDs', () => {
-  //   // e.g. when the view has a GROUP BY or DISTINCT clause, the rows no longer represent individual entities, so they can't be downloaded
-  //   // this is indicated by the rows of the result query not having rowIds, rather than the rowId matching the synID of the corresponding entity
-  //   const queryResultBundleWithoutRowIds = cloneDeep(queryResultBundle)
-  //   queryResultBundleWithoutRowIds.queryResult!.queryResults.rows =
-  //     queryResultBundleWithoutRowIds.queryResult!.queryResults.rows.map(
-  //       row => ({
-  //         ...row,
-  //         rowId: undefined,
-  //       }),
-  //     )
-
-  //   // Return a file view entity, so the download column would be shown if not for the missing row IDs
-  //   server.use(
-  //     rest.get(
-  //       `${getEndpoint(
-  //         BackendDestinationEnum.REPO_ENDPOINT,
-  //       )}/repo/v1/entity/${synapseTableEntityId}`,
-  //       (req, res, ctx) => {
-  //         return res(ctx.status(200), ctx.json(mockFileViewEntity))
-  //       },
-  //     ),
-  //     ...getHandlersForTableQuery(queryResultBundleWithoutRowIds),
-  //   )
-
-  //   renderTable({ showDirectDownloadColumn: true })
-  //   mockAllIsIntersecting(true)
-
-  //   expect(
-  //     screen.queryByTestId('AddToDownloadListCell'),
-  //   ).not.toBeInTheDocument()
-  // })
-
-  // it('handles case where selectColumns do not match column models (SWC-6540)', async () => {
-  //   const queryResultBundleWithRenamedColumn: QueryResultBundle = {
-  //     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
-  //     queryCount: 1,
-  //     selectColumns: [{ name: 'Number of Studies', columnType: 'INTEGER' }],
-  //     columnModels: [
-  //       { name: 'studyName', columnType: 'LARGETEXT', id: '82659' },
-  //       { name: 'studyId', columnType: 'ENTITYID', id: '82658' },
-  //     ],
-  //     facets: [],
-  //     lastUpdatedOn: '2023-08-28T07:27:00.667Z',
-  //     queryResult: {
-  //       concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
-  //       queryResults: {
-  //         concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
-  //         tableId: MOCK_TABLE_ENTITY_ID,
-  //         etag: '53e1e27a-dbf3-4db3-acd1-dafca30b894c',
-  //         headers: [{ name: 'Number of Studies', columnType: 'INTEGER' }],
-  //         rows: [{ values: ['123'] }],
-  //       },
-  //     },
-  //   }
-
-  //   server.use(
-  //     rest.get(
-  //       `${getEndpoint(
-  //         BackendDestinationEnum.REPO_ENDPOINT,
-  //       )}/repo/v1/entity/${synapseTableEntityId}`,
-  //       (req, res, ctx) => {
-  //         return res(ctx.status(200), ctx.json(mockFileViewEntity))
-  //       },
-  //     ),
-  //     ...getHandlersForTableQuery(queryResultBundleWithRenamedColumn),
-  //   )
-
-  //   renderTable({ showDirectDownloadColumn: true })
-  //   mockAllIsIntersecting(true)
-
-  //   const column = await screen.findByRole('columnheader')
-  //   within(column).getByText('Number of Studies')
-  //   screen.getByText('123')
-  // })
-
-  // it('does not contain facet controls for JSON subcolumn facets', async () => {
-  //   const queryResultBundleWithFacetedJsonSubcolumn: QueryResultBundle = {
-  //     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
-  //     queryCount: 1,
-  //     selectColumns: [{ name: 'study', columnType: 'JSON' }],
-  //     columnModels: [
-  //       {
-  //         id: '1',
-  //         name: 'study',
-  //         columnType: 'JSON',
-  //         jsonSubColumns: [
-  //           {
-  //             name: 'studyName',
-  //             jsonPath: '$.name',
-  //             columnType: 'STRING',
-  //             facetType: 'enumeration',
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //     facets: [
-  //       {
-  //         columnName: 'study',
-  //         facetType: 'enumeration',
-  //         jsonPath: '$.name',
-  //         concreteType:
-  //           'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
-  //         facetValues: [{ value: 'foo', count: 1, isSelected: false }],
-  //       },
-  //     ],
-  //     lastUpdatedOn: '2023-08-28T07:27:00.667Z',
-  //     queryResult: {
-  //       concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
-  //       queryResults: {
-  //         concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
-  //         tableId: MOCK_TABLE_ENTITY_ID,
-  //         etag: '53e1e27a-dbf3-4db3-acd1-dafca30b894c',
-  //         headers: [{ name: 'study', columnType: 'JSON' }],
-  //         rows: [{ values: ['{"name": "foo"}'] }],
-  //       },
-  //     },
-  //   }
-
-  //   server.use(
-  //     ...getHandlersForTableQuery(queryResultBundleWithFacetedJsonSubcolumn),
-  //   )
-
-  //   renderTable({ showDirectDownloadColumn: true })
-  //   mockAllIsIntersecting(true)
-
-  //   // The study column should be visible
-  //   const column = await screen.findByRole('columnheader')
-  //   within(column).getByText('Study')
-
-  //   // No facet filter controls should be visible, since the only facet on the study column is a JSON subcolumn facet
-  //   expect(
-  //     screen.queryByRole('button', {
-  //       name: 'Filter by specific facet',
-  //     }),
-  //   ).not.toBeInTheDocument()
-  // })
+    expect(mockOnUpdate).toHaveBeenCalledWith([])
+  })
 })
