@@ -1,7 +1,33 @@
-import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import { ColumnModel, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import { columnModelFormDataZodSchema } from './ColumnModelValidator'
+import { SetOptional } from 'type-fest'
 
 describe('ColumnModel validation', () => {
+  it('Validator returns an object of the correct type', () => {
+    // Specifically testing that the return type is an array of ColumnModels
+    // If the schema + transforms returns a type that doesn't match, we will get a compile-time type error
+    const columnModels: SetOptional<ColumnModel, 'id'>[] =
+      columnModelFormDataZodSchema.parse([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+        },
+      ])
+
+    // This assignment verifies that the inferred type is strong, i.e. is not `any`.
+    // If the inferred type was weakened to be `any`, we would get a compile-time error here.
+    // @ts-expect-error - the inferred type should conflict with the variable type here
+    const invalidAssignment: Array<{ differentObjectType: string }> =
+      columnModelFormDataZodSchema.parse([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+        },
+      ])
+    // Result is not important for this test
+    expect(columnModels).toBeDefined()
+    expect(invalidAssignment).toBeDefined()
+  })
   it('Does not require optional fields', () => {
     const columnModels = columnModelFormDataZodSchema.parse([
       {
