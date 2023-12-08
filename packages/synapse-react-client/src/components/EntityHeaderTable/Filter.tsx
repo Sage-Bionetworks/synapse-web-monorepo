@@ -26,7 +26,7 @@ export function Filter({
     <DebouncedInput
       type="text"
       options={sortedUniqueValues}
-      value={columnFilterValue}
+      initialValue={columnFilterValue}
       onChange={value => column.setFilterValue(value)}
       placeholder={`Filter by ${column.id}... (${
         column.getFacetedUniqueValues().size
