@@ -61,9 +61,16 @@ export default function SendToCavaticaConfirmationDialog(
     setIsShowingExportToCavaticaModal,
     unitDescription,
   } = useQueryVisualizationContext()
-  const [isShowingExportPage, setIsShowingExportPage] = useState(false)
+  const [isShowingDisclaimerPage, setIsShowingDisclaimerPage] = useState(true)
+
+  // disclaimerAcknowledged is tracking the checkbox state
   const { value: disclaimerAcknowledged, set: setDisclaimerAcknowledged } =
     useLocalStorageValue<boolean>(EXTERNAL_COMPUTE_ENV_DISCLAIMER)
+
+  const showDisclaimer =
+    isShowingExportToCavaticaModal && isShowingDisclaimerPage
+  const showExport = isShowingExportToCavaticaModal && !isShowingDisclaimerPage
+
   const cavaticaQueryRequest = useMemo(() => {
     const request = getCurrentQueryRequest()
     if (hasSelectedRows && rowSelectionPrimaryKey && data?.columnModels) {
@@ -98,7 +105,7 @@ export default function SendToCavaticaConfirmationDialog(
     data?.columnModels as ColumnModel[],
     {
       useErrorBoundary: true,
-      enabled: !!data?.columnModels && isShowingExportPage,
+      enabled: !!data?.columnModels && isShowingExportToCavaticaModal,
     },
   )
 
@@ -113,7 +120,7 @@ export default function SendToCavaticaConfirmationDialog(
   return (
     <div>
       <ConfirmationDialog
-        open={isShowingExportToCavaticaModal}
+        open={showDisclaimer}
         title="Disclaimer"
         content={
           <>
@@ -161,8 +168,7 @@ export default function SendToCavaticaConfirmationDialog(
         confirmButtonDisabled={!disclaimerAcknowledged}
         confirmButtonID={SEND_TO_CAVATICA_CONFIRM_BUTTON_ID}
         onConfirm={() => {
-          setIsShowingExportToCavaticaModal(false)
-          setIsShowingExportPage(true)
+          setIsShowingDisclaimerPage(false)
         }}
         onCancel={() => {
           setIsShowingExportToCavaticaModal(false)
@@ -170,7 +176,7 @@ export default function SendToCavaticaConfirmationDialog(
         maxWidth="md"
       />
       <ConfirmationDialog
-        open={isShowingExportPage}
+        open={showExport}
         title="Send to CAVATICA"
         content={
           <>
@@ -286,14 +292,16 @@ export default function SendToCavaticaConfirmationDialog(
         confirmButtonID={SEND_TO_CAVATICA_CONFIRM_BUTTON_ID}
         onConfirm={() => {
           exportToCavatica().then(
-            // on success, close the modal
+            // on success, reset to the disclaimer page and close the modal
             () => {
-              setIsShowingExportPage(false)
+              setIsShowingDisclaimerPage(true)
+              setIsShowingExportToCavaticaModal(false)
             },
           )
         }}
         onCancel={() => {
-          setIsShowingExportPage(false)
+          setIsShowingDisclaimerPage(true)
+          setIsShowingExportToCavaticaModal(false)
         }}
         maxWidth="md"
       />
