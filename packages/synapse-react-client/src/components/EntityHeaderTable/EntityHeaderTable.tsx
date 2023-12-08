@@ -10,7 +10,6 @@ import {
   getSortedRowModel,
   ColumnDef,
   flexRender,
-  RowSelectionState,
 } from '@tanstack/react-table'
 import {
   TextField,
@@ -32,7 +31,6 @@ import { getEntityTypeFromHeader } from '../../utils/functions/EntityTypeUtils'
 import { useGetEntityHeaders } from '../../synapse-queries'
 import IconSvg from '../IconSvg'
 import { SkeletonTable } from '../Skeleton'
-import { cloneDeep } from 'lodash-es'
 import { AddCircleTwoTone } from '@mui/icons-material'
 import { parse } from 'papaparse'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
@@ -46,6 +44,7 @@ import AddAd from '../../assets/icons/AddAd'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'
+import { useEntityHeaderTableState } from './useEntityHeaderTableState'
 
 export type EntityHeaderTableProps = {
   references: ReferenceList
@@ -73,33 +72,18 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     onUpdateEntityIDsTextbox,
   } = props
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  //ReferenceList of EntityHeaders shown in the table.  setRefsInState() should not be called, use updateRefsInState() instead.
-  const [refsInState, setRefsInState] = useState<ReferenceList>(
-    cloneDeep(references),
-  )
-  // update the textbox new entity IDs list.  setNewEntityIDs should not be called, use updateNewEntityIDs
-  const [newEntityIDs, setNewEntityIDs] = useState<string>('')
-  const [parseErrors, setParseErrors] = useState<string[]>([])
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
 
-  const updateNewEntityIDs = useCallback(
-    (newValue: string) => {
-      setNewEntityIDs(newValue)
-      onUpdateEntityIDsTextbox && onUpdateEntityIDsTextbox(newValue)
-    },
-    [onUpdateEntityIDsTextbox],
-  )
-
-  const updateRefsInState = useCallback((refs: ReferenceList) => {
-    setRowSelection({})
-    setRefsInState(refs)
-    if (onUpdate) {
-      onUpdate(refs)
-    }
-    setParseErrors([])
-    updateNewEntityIDs('')
-  }, [])
+  const {
+    rowSelection,
+    setRowSelection,
+    refsInState,
+    setRefsInState,
+    newEntityIDs,
+    setNewEntityIDs,
+    parseErrors,
+    setParseErrors,
+  } = useEntityHeaderTableState(references, onUpdateEntityIDsTextbox, onUpdate)
 
   const setInvalidEntityIDError = useCallback((invalidEntityIDs: string[]) => {
     setParseErrors([`Invalid Synapse ID(s): ${invalidEntityIDs.join(',')}`])
@@ -112,7 +96,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           targetId: id.trim(),
         }
       })
-      updateRefsInState([...refsInState, ...newReferences])
+      setRefsInState([...refsInState, ...newReferences])
     },
     [refsInState],
   )
@@ -150,7 +134,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
       }
     } else {
       setParseErrors([])
-      updateNewEntityIDs('')
+      setNewEntityIDs('')
     }
   }, [newEntityIDs])
 
@@ -269,7 +253,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         targetId: entityHeader.id,
       }
     })
-    updateRefsInState(newRowRefs)
+    setRefsInState(newRowRefs)
   }
   const selectableTypes = [
     EntityType.PROJECT,
@@ -475,7 +459,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           const newValue = newEntityIDsString.concat(
             newEntityIDsArray.join(','),
           )
-          updateNewEntityIDs(newValue)
+          setNewEntityIDs(newValue)
           setShowEntityFinder(false)
         }}
         onCancel={() => setShowEntityFinder(false)}
@@ -490,7 +474,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
               name="synIDs"
               fullWidth
               onChange={e => {
-                updateNewEntityIDs(e.target.value)
+                setNewEntityIDs(e.target.value)
               }}
               value={newEntityIDs}
               placeholder="Enter a list of Synapse IDs (i.e. 'syn123, syn456')"

@@ -5,14 +5,16 @@ import { useDebouncedEffect } from '../../utils/hooks'
 // A debounced input react component
 
 export function DebouncedInput({
-  value: initialValue,
+  initialValue,
   onChange,
   options,
-  ...props
+  delay = 250,
+  ...textFieldProps
 }: {
-  value: string
+  initialValue: string
   onChange: (value: string) => void
   options: string[]
+  delay?: number
 } & Pick<
   React.InputHTMLAttributes<TextFieldProps>,
   'type' | 'min' | 'max' | 'value' | 'placeholder' | 'className' | 'list'
@@ -23,7 +25,7 @@ export function DebouncedInput({
       onChange(value)
     },
     [value],
-    300,
+    delay,
   )
 
   return (
@@ -41,7 +43,7 @@ export function DebouncedInput({
       renderInput={params => (
         <TextField
           {...params}
-          {...props}
+          {...textFieldProps}
           value={value}
           onChange={e => setValue(e.target.value)}
         />
