@@ -76,17 +76,27 @@ function renderComponent() {
 
 async function setUp() {
   const user = userEvent.setup()
+  localStorage.clear()
   const component = renderComponent()
-
   await waitFor(() => {
     expect(showSendToCavaticaModal).toBeDefined()
   })
-
   act(() => {
     showSendToCavaticaModal!(true)
   })
 
-  const sendToCavatica = screen.getByRole('button', { name: /CAVATICA/i })
+  const acknowledgeCheckbox = await screen.findByRole('checkbox', {
+    name: /I acknowledge and accept these terms/i,
+  })
+  await userEvent.click(acknowledgeCheckbox)
+  const disclaimerContinueButton = await screen.findByRole('button', {
+    name: /Continue/i,
+  })
+  await userEvent.click(disclaimerContinueButton)
+  const sendToCavatica = await screen.findByRole('button', {
+    name: /CAVATICA/i,
+  })
+
   return { component, user, sendToCavatica }
 }
 
