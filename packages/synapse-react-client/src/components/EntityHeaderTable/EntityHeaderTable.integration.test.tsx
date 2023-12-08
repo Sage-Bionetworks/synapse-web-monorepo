@@ -94,6 +94,7 @@ describe('EntityHeaderTable tests', () => {
     })
 
     const checkBoxes = await screen.findAllByRole('checkbox')
+    // Click the 'Select All' checkbox
     await userEvent.click(checkBoxes[0])
     const button = await screen.findByRole('button', {
       name: removeEntitiesButtonText,
