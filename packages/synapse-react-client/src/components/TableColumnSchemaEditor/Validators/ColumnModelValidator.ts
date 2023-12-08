@@ -109,6 +109,8 @@ export const columnModelZodSchema = columnModelBaseZodSchema
     return omit(data, 'defaultValue')
   })
   .transform((data, ctx) => {
+    // NOTE: This is the same set of steps as the `defaultValue` transform
+    // We may be able to refactor this, but it is challenging to do so without breaking the schema's inferred type
     if (data.enumValues != null) {
       // Validate and transform the defaultValue based on the columnType
       const enumValuesSchema = getEnumValuesValidator(data.columnType)
