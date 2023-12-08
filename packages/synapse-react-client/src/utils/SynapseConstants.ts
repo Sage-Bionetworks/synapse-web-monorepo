@@ -145,6 +145,9 @@ export const OAUTH2_PROVIDERS = {
   [LOGIN_METHOD_OAUTH2_ORCID]: 'ORCID',
 }
 
+export const EXTERNAL_COMPUTE_ENV_DISCLAIMER =
+  'external_compute_env_disclaimer_acknowledged'
+
 /* Last login information */
 export const CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY =
   'current_sourceapp_friendly_name'
@@ -161,4 +164,6 @@ export const ACCESS_TOKEN_COOKIE_KEY =
 export const POST_SSO_REDIRECT_URL_LOCALSTORAGE_KEY = 'after-sso-login-url'
 
 /* Persistent localStorage keys on SWC logout */
-export const PERSISTENT_LOCAL_STORAGE_KEYS = ORIENTATION_BANNER_KEYS
+export const PERSISTENT_LOCAL_STORAGE_KEYS = ORIENTATION_BANNER_KEYS.push(
+  EXTERNAL_COMPUTE_ENV_DISCLAIMER,
+)
