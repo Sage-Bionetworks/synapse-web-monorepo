@@ -159,7 +159,6 @@ export default function SendToCavaticaConfirmationDialog(
         }
         confirmButtonText="Continue"
         confirmButtonDisabled={!disclaimerAcknowledged}
-        confirmButtonID={SEND_TO_CAVATICA_CONFIRM_BUTTON_ID}
         onConfirm={() => {
           setIsShowingExportToCavaticaModal(false)
           setIsShowingExportPage(true)
