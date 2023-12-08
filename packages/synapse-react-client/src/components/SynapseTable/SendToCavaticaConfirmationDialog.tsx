@@ -61,6 +61,7 @@ export default function SendToCavaticaConfirmationDialog(
     setIsShowingExportToCavaticaModal,
     unitDescription,
   } = useQueryVisualizationContext()
+  // The disclaimer should be shown every time. The checkbox state will be pre-filled based on localStorage.
   const [isShowingDisclaimerPage, setIsShowingDisclaimerPage] = useState(true)
 
   // disclaimerAcknowledged is tracking the checkbox state
