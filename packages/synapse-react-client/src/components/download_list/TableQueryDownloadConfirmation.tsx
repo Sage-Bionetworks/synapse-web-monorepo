@@ -31,19 +31,19 @@ export function TableQueryDownloadConfirmation() {
     requestCopy.partMask =
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
-
     const fileColumnId = getFileColumnModelId(data?.columnModels)
     if (fileColumnId) {
       requestCopy.query.selectFileColumn = Number(fileColumnId)
     }
-    if (hasSelectedRows && rowSelectionPrimaryKey && data?.columnModels) {
+    if (hasSelectedRows && rowSelectionPrimaryKey && data?.selectColumns) {
+      const primaryKeyINFilter = getPrimaryKeyINFilter(
+        rowSelectionPrimaryKey,
+        selectedRows,
+        data.selectColumns,
+      )
       requestCopy.query.additionalFilters = [
         ...(requestCopy.query.additionalFilters || []),
-        getPrimaryKeyINFilter(
-          rowSelectionPrimaryKey,
-          selectedRows,
-          data.columnModels,
-        ),
+        primaryKeyINFilter,
       ]
     }
     return requestCopy

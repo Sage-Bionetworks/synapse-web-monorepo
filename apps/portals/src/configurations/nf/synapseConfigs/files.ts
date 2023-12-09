@@ -12,6 +12,9 @@ const files: SynapseConfig = {
     name: 'Files',
     sql: filesSql,
     visibleColumnCount,
+    showExportToCavatica: false,
+    isRowSelectionVisible: true,
+    rowSelectionPrimaryKey: ['id'],
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,

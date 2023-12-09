@@ -1,15 +1,15 @@
 import {
-  ColumnModel,
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
   QueryFilter,
   Row,
+  SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 
 export function getPrimaryKeyINFilter(
   primaryKeyColumnNames: string[],
   selectedRows: Row[],
-  columnModels: ColumnModel[],
+  selectColumns: SelectColumn[],
 ): QueryFilter {
   if (!primaryKeyColumnNames || primaryKeyColumnNames.length !== 1) {
     // If the key is undefined, then the user should have never been able to apply a filter
@@ -17,8 +17,8 @@ export function getPrimaryKeyINFilter(
     throw new Error('rowSelectionPrimaryKey must be defined and have length 1')
   }
   // Apply a filter that should only return the selected rows
-  const primaryKeyColumnIndex = columnModels.findIndex(
-    cm => cm.name === primaryKeyColumnNames[0],
+  const primaryKeyColumnIndex = selectColumns.findIndex(
+    sc => sc.name === primaryKeyColumnNames[0],
   )
   const filter: ColumnSingleValueQueryFilter = {
     concreteType:
