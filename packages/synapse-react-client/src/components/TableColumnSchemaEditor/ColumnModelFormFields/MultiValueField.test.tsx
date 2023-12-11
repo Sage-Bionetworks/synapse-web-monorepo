@@ -1,23 +1,19 @@
 import React from 'react'
 import { getJsonSchemaItemDefinitionForColumnType } from '../TableColumnSchemaEditorUtils'
 import { JSONSchema7Definition } from 'json-schema'
-import RestrictedValuesField, {
-  RestrictedValuesFieldProps,
-} from './RestrictedValuesField'
+import MultiValueField, { MultiValueFieldProps } from './MultiValueField'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import JSONArrayEditorModal from '../../JSONArrayEditor/JSONArrayEditorModal'
 import userEvent from '@testing-library/user-event'
 
-const jsonSchemaItemDefinition: JSONSchema7Definition = {
+const stringDefinition: JSONSchema7Definition = {
   type: 'string',
 }
 jest.mock('../TableColumnSchemaEditorUtils', () => {
   return {
-    getJsonSchemaItemDefinitionForColumnType: jest
-      .fn()
-      .mockReturnValue(jsonSchemaItemDefinition),
+    getJsonSchemaItemDefinitionForColumnType: jest.fn(),
   }
 })
 
@@ -35,14 +31,18 @@ const mockGetJsonSchemaDefinition = jest.mocked(
 )
 const mockJsonArrayEditorModal = jest.mocked(JSONArrayEditorModal)
 
-function renderComponent(props: RestrictedValuesFieldProps) {
-  return render(<RestrictedValuesField {...props} />, {
+function renderComponent(props: MultiValueFieldProps) {
+  return render(<MultiValueField {...props} />, {
     wrapper: createWrapper(),
   })
 }
 
 describe('RestrictedValuesField', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
   test('interactions and calls to dependencies', async () => {
+    mockGetJsonSchemaDefinition.mockReturnValue(stringDefinition)
     const onChange = jest.fn()
     renderComponent({
       columnType: ColumnTypeEnum.STRING,
@@ -57,13 +57,15 @@ describe('RestrictedValuesField', () => {
     expect(mockGetJsonSchemaDefinition).toHaveBeenCalledWith(
       ColumnTypeEnum.STRING,
     )
-    expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
-      expect.objectContaining({
-        arrayItemDefinition: jsonSchemaItemDefinition,
-        value: ['foo', 'bar'],
-        isShowingModal: false,
-      }),
-      expect.anything(),
+    await waitFor(() =>
+      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+        expect.objectContaining({
+          arrayItemDefinition: stringDefinition,
+          value: ['foo', 'bar'],
+          isShowingModal: false,
+        }),
+        expect.anything(),
+      ),
     )
 
     // Click the text field and the modal will be shown

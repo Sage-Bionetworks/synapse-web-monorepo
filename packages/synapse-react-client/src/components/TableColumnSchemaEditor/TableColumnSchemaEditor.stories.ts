@@ -10,6 +10,7 @@ import { ColumnTypeEnum, TableBundle } from '@sage-bionetworks/synapse-types'
 import { rest } from 'msw'
 import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
 import mockTableEntityData from '../../mocks/entity/mockTableEntity'
+import mockEntities from '../../mocks/entity'
 
 const meta = {
   title: 'Synapse/Table Column Schema Editor',
@@ -48,10 +49,13 @@ export const Demo: Story = {
         rest.post(
           `${MOCK_REPO_ORIGIN}${ENTITY_BUNDLE_V2(':entityId')}`,
           async (req, res, ctx) => {
+            const entity =
+              mockEntities.find(entity => entity.id === req.params.entityId) ||
+              mockTableEntityData
             return res(
               ctx.status(200),
               ctx.json({
-                entity: mockTableEntityData.entity,
+                entity: entity.entity,
                 tableBundle: mockTableBundle,
               }),
             )

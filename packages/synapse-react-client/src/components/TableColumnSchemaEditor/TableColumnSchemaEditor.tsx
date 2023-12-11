@@ -7,13 +7,10 @@ import { SkeletonTable } from '../Skeleton'
 import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import TableColumnSchemaForm, { SubmitHandle } from './TableColumnSchemaForm'
 import { Alert, Button, Divider } from '@mui/material'
-import { ColumnModelFormData } from './TableColumnSchemaFormReducer'
-import {
-  getViewScopeForEntity,
-  transformFormDataToColumnModels,
-} from './TableColumnSchemaEditorUtils'
-import { ViewScope } from '@sage-bionetworks/synapse-types'
+import { getViewScopeForEntity } from './TableColumnSchemaEditorUtils'
+import { ColumnModel, ViewScope } from '@sage-bionetworks/synapse-types'
 import { Provider } from 'jotai'
+import { SetOptional } from 'type-fest'
 
 export type TableColumnSchemaEditorProps = {
   entityId: string
@@ -48,10 +45,7 @@ function _TableColumnSchemaEditor(props: TableColumnSchemaEditorProps) {
   const { mutate, isLoading: isMutating, error } = useUpdateTableColumns()
 
   const onSubmit = useCallback(
-    (formData: ColumnModelFormData[]) => {
-      // Transform the form data into ColumnModels
-      const newColumnModels = transformFormDataToColumnModels(formData)
-
+    (newColumnModels: SetOptional<ColumnModel, 'id'>[]) => {
       // Update the table schema with the new column models.
       mutate({
         entityId,

@@ -1,5 +1,4 @@
 import { ColumnModel, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import { ColumnModelFormData } from '../TableColumnSchemaFormReducer'
 import {
   canHaveMaxListLength,
   canHaveSize,
@@ -29,43 +28,36 @@ export const jsonSubColumnModelZodSchema = columnModelBaseZodSchema.merge(
 )
 
 /**
+ * Zod schema whose shape represents a ColumnModel. This unrefined schema is saved in this "intermediate" state so
+ * that it can be extended with `.merge` to create an inferred type that can applied to form data.
+ */
+const unrefinedColumnModelSchema = columnModelBaseZodSchema.merge(
+  z.object({
+    id: z.string().optional(),
+    defaultValue: z.union([z.string(), z.array(z.any())]).optional(),
+    maximumSize: z
+      .union([optionalStringSchema, z.number()])
+      .pipe(
+        z.coerce.number().finite().int().min(1).max(MAX_STRING_SIZE).optional(),
+      ),
+    maximumListLength: z
+      .union([optionalStringSchema, z.number()])
+      .pipe(
+        z.coerce.number().finite().int().min(1).max(MAX_LIST_LENGTH).optional(),
+      ),
+    enumValues: z.array(z.coerce.string()).optional(),
+    jsonSubColumns: z.array(jsonSubColumnModelZodSchema).optional(),
+    facetType: facetTypeSchema.optional(),
+  }),
+)
+
+/**
  * Zod schema to validate a column model. The provided data is coerced and transformed to match the ColumnModel type.
  * For this reason, form data may be directly passed into this schema parser.
  *
  * The parse method will return a ColumnModel where all data is properly formed.
  */
-export const columnModelZodSchema = columnModelBaseZodSchema
-  .merge(
-    z.object({
-      id: z.string().optional(),
-      defaultValue: z.union([z.string(), z.array(z.any())]).optional(),
-      maximumSize: z
-        .union([optionalStringSchema, z.number()])
-        .pipe(
-          z.coerce
-            .number()
-            .finite()
-            .int()
-            .min(1)
-            .max(MAX_STRING_SIZE)
-            .optional(),
-        ),
-      maximumListLength: z
-        .union([optionalStringSchema, z.number()])
-        .pipe(
-          z.coerce
-            .number()
-            .finite()
-            .int()
-            .min(1)
-            .max(MAX_LIST_LENGTH)
-            .optional(),
-        ),
-      enumValues: z.array(z.coerce.string()).optional(),
-      jsonSubColumns: z.array(jsonSubColumnModelZodSchema).optional(),
-      facetType: facetTypeSchema.optional(),
-    }),
-  )
+export const columnModelZodSchema = unrefinedColumnModelSchema
   .refine(data => data.maximumSize == null || canHaveSize(data.columnType), {
     message: 'Size is not allowed for this column type',
     path: ['maximumSize'],
@@ -130,6 +122,31 @@ export const columnModelZodSchema = columnModelBaseZodSchema
   })
 
 export const columnModelFormDataZodSchema = z.array(columnModelZodSchema)
+
+const jsonSubColumnModelFormDataSchema = jsonSubColumnModelZodSchema.merge(
+  z.object({
+    isSelected: z.boolean(),
+  }),
+)
+
+export type JsonSubColumnModelFormData = z.input<
+  typeof jsonSubColumnModelFormDataSchema
+>
+
+// Use the "unrefined" schema since we can extend it with form-only fields
+const columnModelFormDataSchema = unrefinedColumnModelSchema.merge(
+  z.object({
+    isSelected: z.boolean(),
+    isOriginallyDefaultColumn: z.boolean(),
+    jsonSubColumns: z.array(jsonSubColumnModelFormDataSchema).optional(),
+  }),
+)
+
+/**
+ * Type that represents possible form input data for a ColumnModel.
+ * a
+ */
+export type ColumnModelFormData = z.input<typeof columnModelFormDataSchema>
 
 export function validateColumnModelFormData(
   formData: SetOptional<

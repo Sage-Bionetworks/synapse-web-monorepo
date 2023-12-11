@@ -7,17 +7,19 @@ import JSONArrayEditor, { JSONArrayEditorProps } from './JSONArrayEditor'
 import type RJSFForm from '@rjsf/core'
 import { RJSFSchema } from '@rjsf/utils'
 
-export type JSONArrayEditorModalProps = Pick<
-  JSONArrayEditorProps,
+export type JSONArrayEditorModalProps<T = unknown> = Pick<
+  JSONArrayEditorProps<T>,
   'arrayItemDefinition' | 'value'
 > & {
   dialogTitle?: ConfirmationDialogProps['title']
   isShowingModal: boolean
-  onConfirm: (value: string[]) => void
+  onConfirm: (value: T[]) => void
   onCancel: () => void
 }
 
-function JSONArrayEditorModal(props: JSONArrayEditorModalProps) {
+function JSONArrayEditorModal<T = unknown>(
+  props: JSONArrayEditorModalProps<T>,
+) {
   const {
     isShowingModal,
     onConfirm,
@@ -27,7 +29,7 @@ function JSONArrayEditorModal(props: JSONArrayEditorModalProps) {
     ...editorProps
   } = props
   const formRef = useRef<RJSFForm<any, RJSFSchema, any>>(null)
-  const [tempValue, setTempValue] = useState<string[]>(value ?? [])
+  const [tempValue, setTempValue] = useState<T[]>(value ?? [])
 
   useEffect(() => {
     /* If the passed prop changes, reset local component state */
@@ -44,8 +46,8 @@ function JSONArrayEditorModal(props: JSONArrayEditorModalProps) {
       onCancel={onCancel}
       maxWidth="md"
       content={
-        <JSONArrayEditor
-          ref={formRef}
+        <JSONArrayEditor<T>
+          formRef={formRef}
           value={tempValue}
           onChange={newValue => setTempValue(newValue)}
           onSubmit={onConfirm}

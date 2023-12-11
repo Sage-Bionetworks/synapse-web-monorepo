@@ -11,9 +11,9 @@ import React, {
   useEffect,
   useImperativeHandle,
   useMemo,
+  useState,
 } from 'react'
 import {
-  ColumnModelFormData,
   getIsAllSelected,
   getNumberOfSelectedItems,
   tableColumnSchemaFormDataAtom,
@@ -27,7 +27,7 @@ import {
   styled,
   Typography,
 } from '@mui/material'
-import { isEqual, noop, times } from 'lodash-es'
+import { groupBy, isEqual, noop, times } from 'lodash-es'
 import { selectAtom, useAtomCallback } from 'jotai/utils'
 import ColumnModelForm from './ColumnModelForm'
 import AddToList from '../../assets/icons/AddToList'
@@ -40,7 +40,6 @@ import {
 import {
   getAllowedColumnTypes,
   transformColumnModelsToFormData,
-  transformFormDataToColumnModels,
 } from './TableColumnSchemaEditorUtils'
 import {
   useGetAnnotationColumnModels,
@@ -51,6 +50,8 @@ import { displayToast } from '../ToastMessage'
 import { StyledComponent } from '@emotion/styled/dist/emotion-styled.cjs'
 import ImportTableColumnsButton from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
+import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
+import { ZodError, ZodIssue } from 'zod'
 
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
   '18px 18px 1.75fr 1.75fr 0.75fr 1fr 1.25fr 1.25fr 1fr'
@@ -95,7 +96,7 @@ type TableColumnSchemaFormProps = {
   /* If this is an entity view, the ViewScope can be used to determine the default column models and fetch annotation column models */
   viewScope?: ViewScope
   initialData?: ColumnModel[]
-  onSubmit?: (formData: ColumnModelFormData[]) => void
+  onSubmit?: (newColumnModels: SetOptional<ColumnModel, 'id'>[]) => void
   isSubmitting?: boolean
 }
 
@@ -122,6 +123,9 @@ const TableColumnSchemaForm = React.forwardRef<
   )
 
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
+  const [validationErrors, setValidationErrors] = useState<ZodError | null>(
+    null,
+  )
 
   // useAtomCallback will let us imperatively read the form data, instead of tracking it in state and triggering a full re-render of the form when any data changes
   const readFormData = useAtomCallback(
@@ -178,19 +182,36 @@ const TableColumnSchemaForm = React.forwardRef<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingDefaultColumns])
 
+  const validateInternal = useCallback(() => {
+    const result = validateColumnModelFormData(readFormData())
+    if (result.success) {
+      setValidationErrors(null)
+    } else {
+      setValidationErrors(result.error)
+    }
+    return result
+  }, [readFormData])
+
   useImperativeHandle(
     ref,
     () => {
       return {
         submit() {
-          onSubmit(readFormData())
+          const result = validateInternal()
+          if (result.success) {
+            onSubmit(result.data)
+          }
         },
         getEditedColumnModels() {
-          return transformFormDataToColumnModels(readFormData())
+          const result = validateInternal()
+          if (!result.success) {
+            throw new Error('Column models were not valid')
+          }
+          return result.data
         },
         validate() {
-          // TODO: SWC-6612
-          return true
+          const result = validateInternal()
+          return result.success
         },
       }
     },
@@ -258,6 +279,14 @@ const TableColumnSchemaForm = React.forwardRef<
     }
   }, [annotationColumnModels, addColumnSet])
 
+  // Put the errors into a map of columnModelIndex -> errors
+  const errorsByColumnModel = useMemo(() => {
+    if (validationErrors) {
+      return groupBy(validationErrors.errors, e => e.path[0])
+    }
+    return {}
+  }, [validationErrors])
+
   return (
     <Box
       component={'form'}
@@ -298,6 +327,7 @@ const TableColumnSchemaForm = React.forwardRef<
               columnModelIndex={index}
               disabled={isSubmitting}
               key={index}
+              columnModelValidationErrors={errorsByColumnModel[index]}
             />
           )
         })}
@@ -356,6 +386,7 @@ const TableColumnSchemaForm = React.forwardRef<
           onAddColumns={cms => {
             addColumnSet(cms)
           }}
+          disabled={isSubmitting}
         />
       </Box>
     </Box>
@@ -444,10 +475,16 @@ type TableColumnSchemaFormRowProps = {
   entityType: EntityType
   columnModelIndex: number
   disabled: boolean
+  columnModelValidationErrors: ZodIssue[] | null
 }
 
 function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
-  const { columnModelIndex, entityType, disabled } = props
+  const {
+    columnModelIndex,
+    entityType,
+    disabled,
+    columnModelValidationErrors = null,
+  } = props
   const dispatch = useSetAtom(tableColumnSchemaFormDataAtom)
   const columnModel = useAtomValue(
     useMemo(
@@ -461,6 +498,17 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
     ),
   )
 
+  // Organize the JSON Subcolumn errors into a map of subcolumn index to errors
+  const errorsForSubcolumns = useMemo(() => {
+    if (columnModelValidationErrors) {
+      const errorsForAllSubcolumns = columnModelValidationErrors.filter(e => {
+        return e.path[0] === columnModelIndex && e.path[1] == 'jsonSubColumns'
+      })
+      return groupBy(errorsForAllSubcolumns, e => e.path[2])
+    }
+    return {}
+  }, [columnModelIndex, columnModelValidationErrors])
+
   if (!columnModel) {
     return <></>
   }
@@ -473,6 +521,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
         columnModelIndex={columnModelIndex}
         isDefaultColumn={isDefaultColumn}
         disabled={disabled}
+        validationErrors={columnModelValidationErrors}
       />
       {columnModel.columnType === ColumnTypeEnum.JSON &&
         columnModel.jsonSubColumns &&
@@ -484,6 +533,7 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
             jsonSubColumnIndex={index}
             isDefaultColumn={isDefaultColumn}
             disabled={disabled}
+            validationErrors={errorsForSubcolumns[index]}
           />
         ))}
       {columnModel.columnType === ColumnTypeEnum.JSON && (
