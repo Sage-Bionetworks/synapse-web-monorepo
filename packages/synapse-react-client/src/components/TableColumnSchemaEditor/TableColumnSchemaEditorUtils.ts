@@ -226,7 +226,8 @@ export function canHaveDefault(
 }
 
 export const DEFAULT_STRING_SIZE = 50
-const MAX_STRING_SIZE = 1000
+export const MAX_STRING_SIZE = 1000
+export const MAX_LIST_LENGTH = 100
 
 /**
  * Get the default max size for a given type.
