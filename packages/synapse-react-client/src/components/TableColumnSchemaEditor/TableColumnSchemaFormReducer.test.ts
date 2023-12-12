@@ -1,6 +1,6 @@
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
+import { ColumnModelFormData } from './Validators/ColumnModelValidator'
 import {
-  ColumnModelFormData,
   getDefaultColumnModelFormData,
   getDefaultJsonSubColumnFormData,
   getNumberOfSelectedItems,

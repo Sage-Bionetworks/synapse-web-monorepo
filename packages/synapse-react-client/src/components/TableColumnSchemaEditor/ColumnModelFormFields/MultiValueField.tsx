@@ -3,16 +3,18 @@ import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import JSONArrayEditorModal from '../../JSONArrayEditor/JSONArrayEditorModal'
 import { getJsonSchemaItemDefinitionForColumnType } from '../TableColumnSchemaEditorUtils'
 import { TextField, TextFieldProps } from '@mui/material'
+import { formatDate } from '../../../utils/functions/DateFormatter'
+import dayjs from 'dayjs'
 
-export type RestrictedValuesFieldProps = {
-  value?: string[]
-  onChange: (newValue: string[]) => void
+export type MultiValueFieldProps<T = unknown> = {
+  value?: T[] | null
+  onChange: (newValue: T[] | null) => void
   columnType: ColumnTypeEnum
   TextFieldProps?: Omit<TextFieldProps, 'value' | 'onChange'>
 }
 
-export default function RestrictedValuesField(
-  props: RestrictedValuesFieldProps,
+export default function MultiValueField<T = unknown>(
+  props: MultiValueFieldProps<T>,
 ) {
   const { columnType, onChange, value = [], TextFieldProps } = props
   const [isShowingModal, setIsShowingModal] = useState(false)
@@ -22,11 +24,21 @@ export default function RestrictedValuesField(
     [columnType],
   )
 
+  const textFieldDisplayedValue = useMemo(() => {
+    if (value == null) {
+      return ''
+    }
+    if (columnType === ColumnTypeEnum.DATE_LIST) {
+      return value.map(v => formatDate(dayjs(v as string))).join(', ')
+    }
+    return value.join(', ')
+  }, [value, columnType])
+
   return (
     <>
       <JSONArrayEditorModal
         arrayItemDefinition={arrayItemDefinition}
-        value={value}
+        value={value ?? undefined}
         isShowingModal={isShowingModal}
         onConfirm={values => {
           onChange(values)
@@ -36,7 +48,7 @@ export default function RestrictedValuesField(
       />
       <TextField
         {...TextFieldProps}
-        value={value.join(', ')}
+        value={textFieldDisplayedValue}
         onClick={() => {
           setIsShowingModal(true)
         }}

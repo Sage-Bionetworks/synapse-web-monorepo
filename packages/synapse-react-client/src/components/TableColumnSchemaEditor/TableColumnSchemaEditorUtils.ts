@@ -6,7 +6,6 @@ import {
   ENTITY_VIEW_TYPE_MASK_DATASET,
   ENTITY_VIEW_TYPE_MASK_FILE,
   FacetType,
-  JsonSubColumnModel,
   ViewEntityType,
   ViewScope,
 } from '@sage-bionetworks/synapse-types'
@@ -14,7 +13,7 @@ import { SetOptional } from 'type-fest'
 import {
   ColumnModelFormData,
   JsonSubColumnModelFormData,
-} from './TableColumnSchemaFormReducer'
+} from './Validators/ColumnModelValidator'
 import {
   convertToEntityType,
   isDataset,
@@ -206,13 +205,13 @@ export function canHaveDefault(
     return false
   } else if (isJsonSubColumnFacet) {
     return false
-  } else if (type.endsWith('_LIST')) {
-    return false
   } else {
     switch (type) {
       case ColumnTypeEnum.ENTITYID:
+      case ColumnTypeEnum.ENTITYID_LIST:
       case ColumnTypeEnum.FILEHANDLEID:
       case ColumnTypeEnum.USERID:
+      case ColumnTypeEnum.USERID_LIST:
       case ColumnTypeEnum.MEDIUMTEXT:
       case ColumnTypeEnum.LARGETEXT:
       case ColumnTypeEnum.JSON:
@@ -265,38 +264,6 @@ export function canHaveRestrictedValues(
 }
 
 /**
- * Transform the form data for the TableColumnSchemaForm to ColumnModels to be sent to Synapse
- * @param formData the form data to transform
- */
-export function transformFormDataToColumnModels(
-  formData: ColumnModelFormData[],
-): SetOptional<ColumnModel, 'id'>[] {
-  return formData.map(
-    (formEntry: ColumnModelFormData): SetOptional<ColumnModel, 'id'> => {
-      // Remove the isSelected and isOriginallyDefaultColumn fields because these were only used for the UI.
-      const { isSelected, isOriginallyDefaultColumn, ...rest } = formEntry
-      const columnModel = rest as SetOptional<ColumnModel, 'id'>
-      if (columnModel.jsonSubColumns) {
-        columnModel.jsonSubColumns = (
-          columnModel.jsonSubColumns as JsonSubColumnModelFormData[]
-        ).map(
-          (
-            jsonSubColumnFormData: JsonSubColumnModelFormData,
-          ): JsonSubColumnModel => {
-            // isSelected field from the subcolumn for the same reason
-            const { isSelected, ...rest } = jsonSubColumnFormData
-            return {
-              ...rest,
-            }
-          },
-        )
-      }
-      return columnModel
-    },
-  )
-}
-
-/**
  * Transform ColumnModels returned by Synapse into the form data for the TableColumnSchemaForm.
  * Default column models, if available, are used to determine which columns should not be editable in the form.
  * @param columnModels
@@ -309,17 +276,32 @@ export function transformColumnModelsToFormData(
   return columnModels.map((cm): ColumnModelFormData => {
     return {
       ...cm,
+      columnType: cm.columnType as ColumnTypeEnum,
+      maximumSize:
+        cm.maximumSize == null ? undefined : cm.maximumSize.toString(),
+      maximumListLength:
+        cm.maximumListLength == null
+          ? undefined
+          : cm.maximumListLength.toString(),
       isSelected: false,
       // If the name matches a known default column model, then we consider it to be a default column model itself
       isOriginallyDefaultColumn: defaultColumns.some(
         dcm => dcm.name === cm.name,
       ),
       jsonSubColumns: cm.jsonSubColumns
-        ? cm.jsonSubColumns.map(jsc => ({
-            ...jsc,
-            isSelected: false,
-          }))
+        ? cm.jsonSubColumns.map(
+            (jsc): JsonSubColumnModelFormData => ({
+              ...jsc,
+              columnType: jsc.columnType as ColumnTypeEnum,
+              isSelected: false,
+            }),
+          )
         : undefined,
+      // If this is defaultValue for a LIST column, the value is a serialized string
+      defaultValue:
+        cm.defaultValue && cm.columnType.endsWith('_LIST')
+          ? JSON.parse(cm.defaultValue)
+          : cm.defaultValue,
     }
   })
 }
@@ -389,17 +371,5 @@ export function getJsonSchemaItemDefinitionForColumnType(
     case ColumnTypeEnum.EVALUATIONID:
     default:
       return { type: 'string', minLength: 1 }
-  }
-}
-
-export function getTextFieldType(columnType: ColumnTypeEnum) {
-  switch (columnType) {
-    case ColumnTypeEnum.DOUBLE:
-    case ColumnTypeEnum.INTEGER:
-      return 'number'
-    case ColumnTypeEnum.DATE:
-      return 'date'
-    default:
-      return 'text'
   }
 }

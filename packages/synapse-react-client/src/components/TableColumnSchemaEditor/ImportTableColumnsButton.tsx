@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { Button } from '@mui/material'
+import { Button, ButtonProps } from '@mui/material'
 import { DownloadTwoTone } from '@mui/icons-material'
 import { SetOptional } from 'type-fest'
 import {
@@ -15,7 +15,7 @@ import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils'
 import { displayToast } from '../ToastMessage'
 
-export type ImportTableColumnsButtonProps = {
+export type ImportTableColumnsButtonProps = Omit<ButtonProps, 'onClick'> & {
   initialFinderProjectId?: string
   onAddColumns: (columnModels: SetOptional<ColumnModel, 'id'>[]) => void
 }
@@ -23,7 +23,7 @@ export type ImportTableColumnsButtonProps = {
 export default function ImportTableColumnsButton(
   props: ImportTableColumnsButtonProps,
 ) {
-  const { initialFinderProjectId, onAddColumns } = props
+  const { initialFinderProjectId, onAddColumns, ...buttonProps } = props
   const [showFinder, setShowFinder] = useState(false)
   const { accessToken } = useSynapseContext()
 
@@ -97,6 +97,7 @@ export default function ImportTableColumnsButton(
           setShowFinder(true)
         }}
         startIcon={<DownloadTwoTone />}
+        {...buttonProps}
       >
         Import Columns
       </Button>

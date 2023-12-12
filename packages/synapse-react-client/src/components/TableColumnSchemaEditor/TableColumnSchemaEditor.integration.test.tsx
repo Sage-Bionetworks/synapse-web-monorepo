@@ -83,6 +83,7 @@ describe('TableColumnSchemaEditor', () => {
     server.listen()
   })
   beforeEach(() => {
+    jest.clearAllMocks()
     server.resetHandlers()
     server.use(
       /* Each test in this suite should register its own table query handler */
@@ -337,6 +338,47 @@ describe('TableColumnSchemaEditor', () => {
       expect(nameFields.length).toEqual(mockedImportedColumns.length)
       expect(nameFields[0]).toHaveValue(mockedImportedColumns[0].name)
       expect(nameFields[1]).toHaveValue(mockedImportedColumns[1].name)
+    })
+  })
+  it('Shows error messages if validation fails', async () => {
+    const updateTableSpy = jest.spyOn(SynapseClient, 'updateTable')
+    server.use(
+      getEntityBundleHandler({
+        entity: mockTableEntityData.entity,
+        tableBundle: {
+          columnModels: mockTableQueryData.columnModels!,
+          maxRowsPerPage: 25,
+        },
+      }),
+    )
+
+    const { user, saveButton } = await setUp({
+      entityId: mockTableEntityData.id,
+    })
+
+    // Add a column
+    const addColumnButton = await screen.findByRole('button', {
+      name: 'Add Column',
+    })
+
+    await user.click(addColumnButton)
+    // Intentionally do not add a name
+
+    await user.click(saveButton)
+
+    await screen.findByText('Name is required')
+
+    await waitFor(() => {
+      expect(updateTableSpy).not.toHaveBeenCalled()
+    })
+
+    // Now add the name and ensure we can successfully submit
+    const nameFields = await screen.findAllByLabelText('Name')
+    await user.type(nameFields[nameFields.length - 1], 'newColumnName')
+
+    await user.click(saveButton)
+    await waitFor(() => {
+      expect(updateTableSpy).toHaveBeenCalled()
     })
   })
 })

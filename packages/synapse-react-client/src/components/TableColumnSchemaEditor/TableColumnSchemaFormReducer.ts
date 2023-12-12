@@ -1,10 +1,5 @@
-import {
-  ColumnModel,
-  ColumnTypeEnum,
-  JsonSubColumnModel,
-} from '@sage-bionetworks/synapse-types'
+import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import { atomWithReducer } from 'jotai/utils'
-import { SetOptional } from 'type-fest'
 import { cloneDeep } from 'lodash-es'
 import {
   canHaveMaxListLength,
@@ -12,6 +7,10 @@ import {
   configureFacetsForType,
   DEFAULT_STRING_SIZE,
 } from './TableColumnSchemaEditorUtils'
+import {
+  ColumnModelFormData,
+  JsonSubColumnModelFormData,
+} from './Validators/ColumnModelValidator'
 
 export function getIsAllSelected(formData: ColumnModelFormData[]) {
   return (
@@ -123,24 +122,6 @@ function moveSelectedItemsDown<T = unknown>(
     }
   }
   return newArr
-}
-
-export type JsonSubColumnModelFormData = JsonSubColumnModel & {
-  // add `isSelected` to the data object
-  isSelected: boolean
-}
-
-export type ColumnModelFormData = Omit<
-  SetOptional<ColumnModel, 'id'>,
-  'jsonSubColumns'
-> & {
-  // add `isSelected` to the data object
-  isSelected: boolean
-  // If the column originates as a default column based on column name, fields other than the facet type are readonly
-  // This field should not be automatically updated, because new columns with the same name should not immediately become readonly.
-  isOriginallyDefaultColumn: boolean
-  // jsonSubColumns will also include formData (like isSelected)
-  jsonSubColumns?: JsonSubColumnModelFormData[]
 }
 
 type TableColumnSchemaFormReducerAction =
