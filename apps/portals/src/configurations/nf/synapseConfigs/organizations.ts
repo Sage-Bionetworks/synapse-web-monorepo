@@ -4,6 +4,7 @@ import { SynapseConfig } from 'types/portal-config'
 import { columnAliases, searchConfiguration } from './commonProps'
 import { publicationsCardConfiguration } from './publications'
 import { studyCardConfiguration } from './studies'
+import { datasetCardConfiguration } from './datasets'
 import {
   filesSql,
   fundersSql,
@@ -93,9 +94,9 @@ export const organizationDetailsPageConfig: DetailsPageProps = {
         {
           name: 'CardContainerLogic',
           props: {
+            ...datasetCardConfiguration,
             sql: datasetsSql,
             limit: 3,
-            type: SynapseConstants.DATASET,
           },
           columnName: 'fundingAgency',
           title: 'Datasets',
