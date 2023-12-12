@@ -10,6 +10,7 @@ import type { CardConfiguration } from 'synapse-react-client'
 import { DetailsPageProps } from 'types/portal-util-types'
 import { toolsCardConfiguration } from './tools'
 import { publicationsCardConfiguration } from './publications'
+import { datasetCardConfiguration } from './datasets'
 import {
   studiesSql,
   datasetsSql,
@@ -227,9 +228,9 @@ export const studiesDetailPage: DetailsPageProps = {
           title: 'Datasets',
           tableSqlKeys: ['studyId'],
           props: {
+            ...datasetCardConfiguration,
             sql: datasetsSql,
             sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-            type: 'dataset',
           },
         },
 
