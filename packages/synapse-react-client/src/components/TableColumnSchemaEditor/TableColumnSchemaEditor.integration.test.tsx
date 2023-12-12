@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import TableColumnSchemaEditor, {
   TableColumnSchemaEditorProps,
 } from './TableColumnSchemaEditor'
@@ -375,6 +375,137 @@ describe('TableColumnSchemaEditor', () => {
     // Now add the name and ensure we can successfully submit
     const nameFields = await screen.findAllByLabelText('Name')
     await user.type(nameFields[nameFields.length - 1], 'newColumnName')
+
+    await user.click(saveButton)
+    await waitFor(() => {
+      expect(updateTableSpy).toHaveBeenCalled()
+    })
+  })
+
+  it('Can update restricted values for STRING type', async () => {
+    const updateTableSpy = jest.spyOn(SynapseClient, 'updateTable')
+    const stringColumnWithRestrictedVals: ColumnModel = {
+      id: '1234',
+      name: 'stringWithRestrictedVals',
+      columnType: ColumnTypeEnum.STRING,
+      // `enumValues` is an array of strings, even for INTEGER columns
+      enumValues: ['foo', 'true', '3', 'null'],
+    }
+    server.use(
+      getEntityBundleHandler({
+        entity: mockTableEntityData.entity,
+        tableBundle: {
+          columnModels: [stringColumnWithRestrictedVals],
+          maxRowsPerPage: 25,
+        },
+      }),
+    )
+
+    const { user, saveButton } = await setUp({
+      entityId: mockTableEntityData.id,
+    })
+
+    // Add a column
+    let restrictedValuesInput = await screen.findByRole('textbox', {
+      name: 'Restrict Values',
+    })
+
+    // The rendered value should be comma-separated
+    expect(restrictedValuesInput).toHaveValue('foo, true, 3, null')
+
+    await user.click(restrictedValuesInput)
+    const valueEditorModal = await screen.findByRole('dialog')
+
+    let inputs = await within(valueEditorModal).findAllByRole('textbox')
+    expect(inputs).toHaveLength(4)
+    expect(inputs[0]).toHaveValue('foo')
+    expect(inputs[1]).toHaveValue('true')
+    expect(inputs[2]).toHaveValue('3')
+    expect(inputs[3]).toHaveValue('null')
+
+    await user.clear(inputs[0])
+    await user.type(inputs[0], 'bar')
+
+    // SWC-6622: No validation error should be thrown when we save these integers,
+    // even though they were converted to strings by the backend
+    const confirmChangeButton = within(valueEditorModal).getByRole('button', {
+      name: 'OK',
+    })
+    await user.click(confirmChangeButton)
+
+    restrictedValuesInput = await screen.findByRole('textbox', {
+      name: 'Restrict Values',
+    })
+    expect(restrictedValuesInput).toHaveValue('bar, true, 3, null')
+
+    await user.click(saveButton)
+    await waitFor(() => {
+      expect(updateTableSpy).toHaveBeenCalled()
+    })
+  })
+
+  it('Can update restricted values for INTEGER type', async () => {
+    const updateTableSpy = jest.spyOn(SynapseClient, 'updateTable')
+    const integerColumnWithRestrictedVals: ColumnModel = {
+      id: '1234',
+      name: 'integerWithRestrictedVals',
+      columnType: ColumnTypeEnum.INTEGER,
+      // `enumValues` is an array of strings, even for INTEGER columns
+      enumValues: ['1', '2', '3'],
+    }
+    server.use(
+      getEntityBundleHandler({
+        entity: mockTableEntityData.entity,
+        tableBundle: {
+          columnModels: [integerColumnWithRestrictedVals],
+          maxRowsPerPage: 25,
+        },
+      }),
+    )
+
+    const { user, saveButton } = await setUp({
+      entityId: mockTableEntityData.id,
+    })
+
+    // Add a column
+    let restrictedValuesInput = await screen.findByRole('textbox', {
+      name: 'Restrict Values',
+    })
+
+    // The rendered value should be comma-separated
+    expect(restrictedValuesInput).toHaveValue('1, 2, 3')
+
+    await user.click(restrictedValuesInput)
+    const valueEditorModal = await screen.findByRole('dialog')
+
+    let inputs = await within(valueEditorModal).findAllByRole('textbox')
+    expect(inputs).toHaveLength(3)
+    expect(inputs[0]).toHaveValue('1')
+    expect(inputs[1]).toHaveValue('2')
+    expect(inputs[2]).toHaveValue('3')
+
+    const addItemButtons = await within(valueEditorModal).findAllByRole(
+      'button',
+      { name: 'Add Item' },
+    )
+    // Click the last one
+    await user.click(addItemButtons[addItemButtons.length - 1])
+
+    inputs = await within(valueEditorModal).findAllByRole('textbox')
+    expect(inputs).toHaveLength(4)
+    await user.type(inputs[3], '4')
+
+    // SWC-6622: No validation error should be thrown when we save these integers,
+    // even though they were converted to strings by the backend
+    const confirmChangeButton = within(valueEditorModal).getByRole('button', {
+      name: 'OK',
+    })
+    await user.click(confirmChangeButton)
+
+    restrictedValuesInput = await screen.findByRole('textbox', {
+      name: 'Restrict Values',
+    })
+    expect(restrictedValuesInput).toHaveValue('1, 2, 3, 4')
 
     await user.click(saveButton)
     await waitFor(() => {

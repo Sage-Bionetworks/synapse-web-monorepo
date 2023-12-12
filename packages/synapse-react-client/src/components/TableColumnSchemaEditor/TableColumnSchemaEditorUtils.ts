@@ -263,6 +263,19 @@ export function canHaveRestrictedValues(
   }
 }
 
+function transformEnumValues(
+  enumValues: string[],
+  columnType: ColumnType | ColumnTypeEnum,
+): (string | number)[] {
+  // SWC-6622 - Special case: if these are INTEGER, convert to numbers before inserting data into form components
+  // The editor validates that these are integers, so inserting the strings returned by the API causes an
+  // unexpected validation error
+  if (columnType === ColumnTypeEnum.INTEGER) {
+    return enumValues.map(value => parseInt(value))
+  }
+  return enumValues
+}
+
 /**
  * Transform ColumnModels returned by Synapse into the form data for the TableColumnSchemaForm.
  * Default column models, if available, are used to determine which columns should not be editable in the form.
@@ -302,6 +315,10 @@ export function transformColumnModelsToFormData(
         cm.defaultValue && cm.columnType.endsWith('_LIST')
           ? JSON.parse(cm.defaultValue)
           : cm.defaultValue,
+      enumValues:
+        cm.enumValues != null
+          ? transformEnumValues(cm.enumValues, cm.columnType)
+          : undefined,
     }
   })
 }
