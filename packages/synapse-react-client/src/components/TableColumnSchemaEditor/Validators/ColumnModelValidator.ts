@@ -45,7 +45,17 @@ const unrefinedColumnModelSchema = columnModelBaseZodSchema.merge(
       .pipe(
         z.coerce.number().finite().int().min(1).max(MAX_LIST_LENGTH).optional(),
       ),
-    enumValues: z.array(z.coerce.string()).optional(),
+    enumValues: z
+      .array(
+        z
+          .union([
+            z.string(),
+            // enumValues is allowed on INTEGER type, but the backend stores them as strings, so allow passing integers
+            z.number().int(),
+          ])
+          .pipe(z.coerce.string()),
+      )
+      .optional(),
     jsonSubColumns: z.array(jsonSubColumnModelZodSchema).optional(),
     facetType: facetTypeSchema.optional(),
   }),
