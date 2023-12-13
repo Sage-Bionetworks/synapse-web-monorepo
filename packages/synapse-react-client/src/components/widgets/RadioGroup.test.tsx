@@ -35,7 +35,7 @@ describe('basic function', () => {
     const radioOptions = screen.getAllByRole<HTMLInputElement>('radio')
     expect(radioOptions).toHaveLength(props.options.length)
     expect(radioGroup.className.includes('radioGroupClass')).toBe(true)
-    screen.getByLabelText(props.options[0].label)
+    screen.getByLabelText(props.options[0].label as string)
 
     expect(radioOptions[0]).not.toBeChecked()
     expect(radioOptions[1]).toBeChecked()
@@ -62,5 +62,16 @@ describe('basic function', () => {
     expect(radioOptions[0]).not.toBeChecked()
     expect(radioOptions[1]).not.toBeChecked()
     expect(radioOptions[2]).not.toBeChecked()
+  })
+
+  it('should disable the input values when disabled is true', () => {
+    init({ ...props, disabled: true })
+    screen.getByRole<HTMLDivElement>('radiogroup')
+    const radioOptions = screen.getAllByRole<HTMLInputElement>('radio')
+    expect(radioOptions).toHaveLength(props.options.length)
+
+    expect(radioOptions[0]).toBeDisabled()
+    expect(radioOptions[1]).toBeDisabled()
+    expect(radioOptions[2]).toBeDisabled()
   })
 })
