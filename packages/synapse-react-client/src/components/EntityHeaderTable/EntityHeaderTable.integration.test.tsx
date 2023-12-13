@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { MOCK_REPO_ORIGIN } from '../../utils/functions/getEndpoint'
@@ -6,8 +6,8 @@ import { ReferenceList } from '@sage-bionetworks/synapse-types'
 import { server } from '../../mocks/msw/server'
 import { getEntityHandlers } from '../../mocks/msw/handlers/entityHandlers'
 import { EntityHeaderTable, EntityHeaderTableProps } from './EntityHeaderTable'
-
 import * as EntityFinderModule from '../EntityFinder/EntityFinderModal'
+import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import mockFileEntityData, {
   MOCK_FILE_ENTITY_ID,
   MOCK_FILE_NAME,
@@ -27,6 +27,8 @@ function renderTable(props: EntityHeaderTableProps) {
 jest.spyOn(EntityFinderModule, 'EntityFinderModal').mockImplementation(() => {
   return <div data-testid="EntityFinderModal"></div>
 })
+
+const mockEntityFinderModal = jest.mocked(EntityFinderModal)
 
 describe('EntityHeaderTable tests', () => {
   beforeAll(() => {
@@ -77,6 +79,58 @@ describe('EntityHeaderTable tests', () => {
       { targetId: 'syn123' },
       { targetId: 'syn456' },
     ])
+  })
+
+  it('handles adding items without CSV input', async () => {
+    const mockOnUpdate = jest.fn()
+    const refs: ReferenceList = [
+      { targetId: mockFileEntityData.id },
+      { targetId: mockDatasetData.id },
+    ]
+    renderTable({
+      references: refs,
+      isEditable: true,
+      onUpdate: mockOnUpdate,
+      hideTextFieldToPasteValue: true, // !
+    })
+
+    const openEntityFinderButton = await screen.findByRole('button', {
+      name: 'Add Entities',
+    })
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+
+    await userEvent.click(openEntityFinderButton)
+
+    await waitFor(() =>
+      expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+        expect.objectContaining({ show: true }),
+        expect.anything(),
+      ),
+    )
+
+    // Simulate making a selection with the Entity Finder modal
+    const entityFinderModalPassedProps = mockEntityFinderModal.mock.lastCall![0]
+    act(() => {
+      entityFinderModalPassedProps.onConfirm([
+        { targetId: 'syn123' },
+        { targetId: 'syn456' },
+      ])
+    })
+
+    await waitFor(() => {
+      // The entity finder should have been hidden
+      expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+        expect.objectContaining({ show: false }),
+        expect.anything(),
+      )
+      // And the items should have been added automatically
+      expect(mockOnUpdate).toHaveBeenCalledWith([
+        { targetId: MOCK_FILE_ENTITY_ID },
+        { targetId: MOCK_DATASET_ENTITY_ID },
+        { targetId: 'syn123' },
+        { targetId: 'syn456' },
+      ])
+    })
   })
 
   it('renders editable table, with ability to remove items', async () => {

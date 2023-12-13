@@ -23,15 +23,18 @@ export function useEntityHeaderTableState(
     [onUpdateEntityIDsTextbox],
   )
 
-  const setRefsInState = useCallback((refs: ReferenceList) => {
-    setRowSelection({})
-    _setRefsInState(refs)
-    if (onUpdate) {
-      onUpdate(refs)
-    }
-    setParseErrors([])
-    setNewEntityIDs('')
-  }, [])
+  const setRefsInState = useCallback(
+    (refs: ReferenceList) => {
+      setRowSelection({})
+      _setRefsInState(refs)
+      if (onUpdate) {
+        onUpdate(refs)
+      }
+      setParseErrors([])
+      setNewEntityIDs('')
+    },
+    [onUpdate, setNewEntityIDs],
+  )
 
   return {
     rowSelection,
