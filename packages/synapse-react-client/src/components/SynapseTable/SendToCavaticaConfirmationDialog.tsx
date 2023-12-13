@@ -74,13 +74,13 @@ export default function SendToCavaticaConfirmationDialog(
 
   const cavaticaQueryRequest = useMemo(() => {
     const request = getCurrentQueryRequest()
-    if (hasSelectedRows && rowSelectionPrimaryKey && data?.columnModels) {
+    if (hasSelectedRows && rowSelectionPrimaryKey && data?.selectColumns) {
       request.query.additionalFilters = [
         ...(request.query.additionalFilters || []),
         getPrimaryKeyINFilter(
           rowSelectionPrimaryKey,
           selectedRows,
-          data.columnModels,
+          data.selectColumns,
         ),
       ]
     }
