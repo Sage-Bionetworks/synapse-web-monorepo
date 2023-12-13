@@ -111,7 +111,6 @@ export default function ChallengeTeamTable({
             currentValue={selectedTeam}
             onChange={teamChangeHandler}
             label=""
-            groupId="radiogroup"
             style={{ marginBottom: '16px' }}
           />
         )

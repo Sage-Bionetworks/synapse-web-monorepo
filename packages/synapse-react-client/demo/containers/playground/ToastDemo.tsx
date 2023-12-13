@@ -50,7 +50,6 @@ export const ToastDemo = () => {
         Alert Variant
       </Typography>
       <RadioGroup
-        id="toast-demo-variant"
         options={[
           { label: 'Info', value: 'info' },
           { label: 'Success', value: 'success' },

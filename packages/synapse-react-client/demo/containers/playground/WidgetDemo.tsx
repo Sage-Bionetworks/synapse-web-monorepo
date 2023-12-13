@@ -112,7 +112,6 @@ export const WidgetDemo: React.FunctionComponent = () => {
       Option Value is: {optionValue}
       <br />
       <RadioGroup
-        id="radioGroup1"
         options={options}
         value={optionValue}
         onChange={(value: string) => setOptionValue(value)}

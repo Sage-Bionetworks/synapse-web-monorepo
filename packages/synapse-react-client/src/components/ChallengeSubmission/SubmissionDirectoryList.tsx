@@ -173,7 +173,6 @@ function SubmissionDirectoryList({
               entityChangeHandler(selectedItemId as string)
             }}
             label=""
-            groupId="radiogroup"
             style={{ marginBottom: '16px' }}
           />
         )
