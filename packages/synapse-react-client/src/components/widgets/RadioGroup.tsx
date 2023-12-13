@@ -2,7 +2,6 @@ import React, { useId } from 'react'
 
 export type RadioGroupProps<T extends string | boolean | number = string> = {
   options: { label: React.ReactNode; value: T }[]
-  id?: string
   className?: string
   value?: T
   onChange: (value: T) => void
