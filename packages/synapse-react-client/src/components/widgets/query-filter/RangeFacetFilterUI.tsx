@@ -100,12 +100,11 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
       <Collapse in={!isCollapsed}>
         <RadioGroup
           value={radioValue}
-          id="rangeSelector"
           options={options}
           onChange={(radioValue: string) =>
             handleRadioGroupChange(radioValue as RadioValuesEnum)
           }
-        ></RadioGroup>
+        />
         {radioValue === RadioValuesEnum.RANGE &&
           (columnMin === columnMax ? (
             <label>{columnMax}</label>

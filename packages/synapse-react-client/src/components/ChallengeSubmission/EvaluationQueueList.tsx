@@ -42,7 +42,6 @@ function EvaluationQueueList({
             currentValue={selectedEvaluation}
             onChange={onEvaluationChange}
             label=""
-            groupId="radiogroup"
             style={{ marginBottom: '16px' }}
           />
         )

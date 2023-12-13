@@ -63,7 +63,6 @@ function SubmissionCommitList({
             currentValue={selectedCommit?.digest}
             onChange={commitChangeHandler}
             label=""
-            groupId="radiogroup"
             style={{ marginBottom: '16px' }}
           />
         )

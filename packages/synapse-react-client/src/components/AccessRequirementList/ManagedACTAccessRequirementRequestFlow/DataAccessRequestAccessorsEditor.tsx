@@ -134,7 +134,6 @@ export default function DataAccessRequestAccessorsEditor(
                     ac.type !== AccessType.GAIN_ACCESS && (
                       <>
                         <RadioGroup
-                          id={`accessor-renewal-${ac.userId}`}
                           value={ac.type}
                           options={[
                             {

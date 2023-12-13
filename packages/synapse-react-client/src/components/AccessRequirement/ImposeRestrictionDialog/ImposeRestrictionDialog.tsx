@@ -100,7 +100,6 @@ export default function ImposeRestrictionDialog(
             Is this sensitive human data that must be protected?
           </FormLabel>
           <RadioGroup<boolean>
-            id={`impose-restriction-${entityId}`}
             value={isSensitiveHumanData}
             options={[
               {
