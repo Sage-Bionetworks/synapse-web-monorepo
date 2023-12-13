@@ -12,7 +12,6 @@ function createTestProps(overrides?: RadioGroupProps): RadioGroupProps {
       { label: 'Label1', value: 'value1' },
       { label: 'Label2', value: 'value2' },
     ],
-    id: 'radioGroup1',
     className: 'radioGroupClass',
     value: 'value1',
     onChange: mockCallback,
