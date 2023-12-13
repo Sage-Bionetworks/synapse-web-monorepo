@@ -17,7 +17,7 @@ export function RadioGroup<T extends string | boolean | number = string>(
     : `radiogroup`
 
   return (
-    <div id={props.id} className={className} role="radiogroup">
+    <div className={className} role="radiogroup">
       {props.options.map((option, index) => (
         <RadioOption<T>
           key={index.toString()}
