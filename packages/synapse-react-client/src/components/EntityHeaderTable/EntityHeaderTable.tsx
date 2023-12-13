@@ -22,11 +22,7 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material'
-import {
-  EntityHeader,
-  EntityType,
-  ReferenceList,
-} from '@sage-bionetworks/synapse-types'
+import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../../utils/functions/EntityTypeUtils'
 import { useGetEntityHeaders } from '../../synapse-queries'
 import IconSvg from '../IconSvg'
@@ -41,10 +37,22 @@ import { EntityHeaderTypeCell } from './EntityHeaderTableCellRenderers'
 import { CheckBoxHeader } from './EntityHeaderTableCellRenderers'
 import { CheckBoxCell } from './EntityHeaderTableCellRenderers'
 import AddAd from '../../assets/icons/AddAd'
-import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
+import {
+  EntityFinderModal,
+  EntityFinderModalProps,
+} from '../EntityFinder/EntityFinderModal'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'
 import { useEntityHeaderTableState } from './useEntityHeaderTableState'
+import { noop, upperFirst } from 'lodash-es'
+import pluralize from 'pluralize'
+
+const DEFAULT_FINDER_CONFIG: EntityFinderModalProps['configuration'] = {
+  selectMultiple: true,
+  versionSelection: VersionSelectionType.DISALLOWED,
+  initialScope: FinderScope.ALL_PROJECTS,
+  initialContainer: 'root',
+}
 
 export type EntityHeaderTableProps = {
   references: ReferenceList
@@ -52,6 +60,11 @@ export type EntityHeaderTableProps = {
   onUpdate?: (updatedRefs: ReferenceList) => void // when the references are updated, EntityHeaderTable will call this function with the updated list
   removeSelectedRowsButtonText?: string
   onUpdateEntityIDsTextbox?: (value: string) => void // when the entity IDs text box is updated, this is called
+  /* The word used to describe the items in the table. Default 'entity' */
+  objectNameCopy?: string
+  // If true, the text field where IDs are pasted is hidden, and confirming the entity finder will immediately call `onUpdate`
+  hideTextFieldToPasteValue?: boolean
+  entityFinderConfiguration?: EntityFinderModalProps['configuration']
 }
 
 const UNMANAGEABLE_SUBJECT_COUNT = 10
@@ -67,9 +80,12 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   const {
     references,
     isEditable,
-    onUpdate,
+    onUpdate = noop,
     removeSelectedRowsButtonText = 'Remove Selected Rows',
     onUpdateEntityIDsTextbox,
+    objectNameCopy = 'entity',
+    hideTextFieldToPasteValue = false,
+    entityFinderConfiguration = DEFAULT_FINDER_CONFIG,
   } = props
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
@@ -85,9 +101,12 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     setParseErrors,
   } = useEntityHeaderTableState(references, onUpdateEntityIDsTextbox, onUpdate)
 
-  const setInvalidEntityIDError = useCallback((invalidEntityIDs: string[]) => {
-    setParseErrors([`Invalid Synapse ID(s): ${invalidEntityIDs.join(',')}`])
-  }, [])
+  const setInvalidEntityIDError = useCallback(
+    (invalidEntityIDs: string[]) => {
+      setParseErrors([`Invalid Synapse ID(s): ${invalidEntityIDs.join(',')}`])
+    },
+    [setParseErrors],
+  )
 
   const addRefsFromEntityIDs = useCallback(
     (entityIDs: string[]) => {
@@ -98,7 +117,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
       })
       setRefsInState([...refsInState, ...newReferences])
     },
-    [refsInState],
+    [refsInState, setRefsInState],
   )
 
   const addPastedValuesToArray = useCallback(() => {
@@ -136,7 +155,15 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
       setParseErrors([])
       setNewEntityIDs('')
     }
-  }, [newEntityIDs])
+  }, [
+    addRefsFromEntityIDs,
+    newEntityIDs,
+    setInvalidEntityIDError,
+    setNewEntityIDs,
+    setParseErrors,
+  ])
+
+  const pluralObjectName = upperFirst(pluralize(objectNameCopy))
 
   const selectColumns: ColumnDef<EntityHeaderOrDummy, any>[] = useMemo(
     () => [
@@ -255,21 +282,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     })
     setRefsInState(newRowRefs)
   }
-  const selectableTypes = [
-    EntityType.PROJECT,
-    EntityType.FOLDER,
-    EntityType.FILE,
-    EntityType.TABLE,
-    EntityType.LINK,
-    EntityType.ENTITY_VIEW,
-    EntityType.DOCKER_REPO,
-    EntityType.SUBMISSION_VIEW,
-    EntityType.DATASET,
-    EntityType.DATASET_COLLECTION,
-    EntityType.MATERIALIZED_VIEW,
-    EntityType.VIRTUAL_TABLE,
-  ]
-
+  ;``
   const isSelection = selectionCount > 0
   const totalRowCount = data.length
   const filteredRowCount = table.getPrePaginationRowModel().rows.length
@@ -285,7 +298,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         <div>
           {totalRowCount > UNMANAGEABLE_SUBJECT_COUNT && (
             <Typography variant="body1" sx={{ marginBottom: '10px' }}>
-              {totalRowCount} Entities{' '}
+              {totalRowCount} {pluralObjectName}{' '}
               {filteredRowCount < totalRowCount
                 ? `(${filteredRowCount} visible)`
                 : ''}
@@ -294,7 +307,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           )}
         </div>
         <div>
-          {isEditable && (
+          {isEditable && refsInState.length > 0 && (
             <Button
               variant="contained"
               disabled={!isSelection}
@@ -439,67 +452,81 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         </Box>
       )}
       <EntityFinderModal
-        configuration={{
-          selectMultiple: true,
-          selectableTypes: selectableTypes,
-          versionSelection: VersionSelectionType.DISALLOWED,
-          initialScope: FinderScope.ALL_PROJECTS,
-          initialContainer: 'root',
-        }}
-        promptCopy={'Select Entities to add to the Synapse ID list'}
+        configuration={entityFinderConfiguration}
+        promptCopy={`Select ${pluralObjectName} to add to the Synapse ID list`}
         show={showEntityFinder}
-        title={'Select Entities'}
-        confirmButtonCopy={'Add Entities'}
+        title={`Select ${pluralObjectName}`}
+        confirmButtonCopy={`Add ${pluralObjectName}`}
         onConfirm={items => {
-          const newEntityIDsArray = items.map(ref => ref.targetId)
-          const newEntityIDsString =
-            newEntityIDs.trim().length > 0
-              ? newEntityIDs.concat(',')
-              : newEntityIDs
-          const newValue = newEntityIDsString.concat(
-            newEntityIDsArray.join(','),
-          )
-          setNewEntityIDs(newValue)
+          if (hideTextFieldToPasteValue) {
+            onUpdate([...refsInState, ...items])
+          } else {
+            const newEntityIDsArray = items.map(ref => ref.targetId)
+            const newEntityIDsString =
+              newEntityIDs.trim().length > 0
+                ? newEntityIDs.concat(',')
+                : newEntityIDs
+            const newValue = newEntityIDsString.concat(
+              newEntityIDsArray.join(','),
+            )
+            setNewEntityIDs(newValue)
+          }
           setShowEntityFinder(false)
         }}
         onCancel={() => setShowEntityFinder(false)}
       />
       {isEditable && (
         <Box sx={{ marginTop: '10px' }}>
-          <InputLabel htmlFor="synIDs">Add Synapse IDs</InputLabel>
-
-          <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 50px 150px' }}>
-            <TextField
-              id="synIDs"
-              name="synIDs"
-              fullWidth
-              onChange={e => {
-                setNewEntityIDs(e.target.value)
-              }}
-              value={newEntityIDs}
-              placeholder="Enter a list of Synapse IDs (i.e. 'syn123, syn456')"
-            />
-            <Box sx={{ padding: '5px 0px 0px 5px' }}>
-              {/* Entity finder button.  On select, append the selected entity ID to the newSynIDs list */}
-              <Tooltip title="Add a Synapse ID to the list via the Entity Finder">
-                <IconButton
-                  onClick={() => {
-                    setShowEntityFinder(true)
-                  }}
-                >
-                  <AddAd />
-                </IconButton>
-              </Tooltip>
-            </Box>
+          {hideTextFieldToPasteValue && (
             <Button
               variant="outlined"
-              onClick={addPastedValuesToArray}
-              disabled={isLoading || newEntityIDs.trim().length == 0}
+              onClick={() => {
+                setShowEntityFinder(true)
+              }}
+              startIcon={<AddAd />}
             >
-              <AddCircleTwoTone />
-              &nbsp;Add Entities
+              Add {pluralObjectName}
             </Button>
-          </Box>
+          )}
+          {!hideTextFieldToPasteValue && (
+            <>
+              <InputLabel htmlFor="synIDs">Add Synapse IDs</InputLabel>
+              <Box
+                sx={{ display: 'grid', gridTemplateColumns: 'auto 50px 150px' }}
+              >
+                <TextField
+                  id="synIDs"
+                  name="synIDs"
+                  fullWidth
+                  onChange={e => {
+                    setNewEntityIDs(e.target.value)
+                  }}
+                  value={newEntityIDs}
+                  placeholder="Enter a list of Synapse IDs (i.e. 'syn123, syn456')"
+                />
+                <Box sx={{ padding: '5px 0px 0px 5px' }}>
+                  {/* Entity finder button.  On select, append the selected entity ID to the newSynIDs list */}
+                  <Tooltip title="Add a Synapse ID to the list via the Entity Finder">
+                    <IconButton
+                      onClick={() => {
+                        setShowEntityFinder(true)
+                      }}
+                    >
+                      <AddAd />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+                <Button
+                  variant="outlined"
+                  onClick={addPastedValuesToArray}
+                  disabled={isLoading || newEntityIDs.trim().length == 0}
+                  startIcon={<AddCircleTwoTone />}
+                >
+                  Add {pluralObjectName}
+                </Button>
+              </Box>
+            </>
+          )}
           {parseErrors && parseErrors.length > 0 && (
             <Alert severity={'error'} sx={{ my: 2 }}>
               <AlertTitle>Parsing errors encountered:</AlertTitle>
