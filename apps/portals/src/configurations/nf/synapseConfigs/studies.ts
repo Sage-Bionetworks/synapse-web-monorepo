@@ -196,14 +196,35 @@ export const studiesDetailPage: DetailsPageProps = {
       ],
     },
     {
-      title: 'Study Data',
-      uriValue: 'Data',
+      title: 'Study Datasets',
+      uriValue: 'Datasets',
+      iconName: 'dataset',
+      toolTip: 'All of the Datasets generated within this study',
+      cssClass: 'tab-dataset',
+      synapseConfigArray: [
+        {
+          name: 'CardContainerLogic',
+          columnName: 'studyId',
+          title: 'Study Datasets',
+          tableSqlKeys: ['studyId'],
+          props: {
+            ...datasetCardConfiguration,
+            sql: datasetsSql,
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+          },
+        },
+      ],
+    },
+    {
+      title: 'Study Files',
+      uriValue: 'Files',
       iconName: 'database',
-      toolTip: 'All of the Data generated within this study',
+      toolTip: 'All of the file data generated within this study',
       cssClass: 'tab-database',
       synapseConfigArray: [
         {
           name: 'QueryWrapperPlotNav',
+          title: 'Study Files',
           props: {
             rgbIndex: 8,
             shouldDeepLink: false,
@@ -214,26 +235,13 @@ export const studiesDetailPage: DetailsPageProps = {
               showAccessColumn: true,
               showDownloadColumn: true,
             },
-            name: 'Data Files',
+            // name: 'Study Files',
             columnAliases,
             searchConfiguration,
           },
           tableSqlKeys: ['studyId'],
           columnName: 'studyId',
         },
-
-        {
-          name: 'CardContainerLogic',
-          columnName: 'studyId',
-          title: 'Datasets',
-          tableSqlKeys: ['studyId'],
-          props: {
-            ...datasetCardConfiguration,
-            sql: datasetsSql,
-            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-          },
-        },
-
         {
           name: 'StandaloneQueryWrapper',
           title: 'Metadata Files',

@@ -470,7 +470,7 @@ export const DetailsPageSynapseConfigArray: React.FC<{
       })}
     </>
   )
-  if (showMenu) {
+  if (showMenu && synapseConfigArray.length > 1) {
     return (
       <div className="DetailsPage">
         <div className="button-container">
