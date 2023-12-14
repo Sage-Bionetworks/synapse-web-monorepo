@@ -1,0 +1,13 @@
+import{j as t}from"./jsx-runtime-095bf462.js";import{S as e}from"./SpinnerButton-2f55eb5f.js";import{S as s,a as c}from"./SynapseClient-ce5780df.js";import"./index-8db94870.js";import"./_commonjsHelpers-042e6b4d.js";import"./LoginAwareButton-d7bbc24a.js";import"./react-router-dom-743701a2.js";import"./inheritsLoose-c82a83d4.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-4abd396b.js";import"./styled-81e3612a.js";import"./tiny-invariant-dd7d57d2.js";import"./SynapseConstants-163777d5.js";import"./OrientationBanner-caa14b37.js";import"./FullWidthAlert-f28d1efb.js";import"./AlertTitle-ce329963.js";import"./createSvgIcon-efa5fd2e.js";import"./Paper-057dfac2.js";import"./IconButton-2a435ef1.js";import"./ButtonBase-84be17da.js";import"./emotion-react.browser.esm-f993d2c2.js";import"./assertThisInitialized-081f9914.js";import"./TransitionGroupContext-aa95d3cf.js";import"./useForkRef-f2aa3d66.js";import"./useIsFocusVisible-bbf13f29.js";import"./Typography-214fd772.js";import"./extendSxProp-3a6755c2.js";import"./Stack-db426a61.js";import"./Box-f664662a.js";import"./useTheme-533dafd0.js";import"./Grow-080f23da.js";import"./isHostComponent-fa76b8d9.js";import"./index-8ce4a492.js";import"./utils-b7dab64f.js";import"./ClickAwayListener-e5c35437.js";import"./Tooltip-f72372f7.js";import"./Button-f56bbd3a.js";import"./getEndpoint-ac94413e.js";import"./Link-342b97d1.js";import"./_getTag-ed9314eb.js";import"./isArray-5e3f9107.js";import"./StringUtils-2ea3ab4d.js";import"./dayjs.min-47c8dffe.js";import"./index-58d3fd43.js";import"./InfoTwoTone-444cba43.js";import"./CheckCircleTwoTone-b7fa358f.js";import"./inputBaseClasses-a1108cc7.js";import"./Fade-275e12f9.js";const et={title:"UI/SpinnerButton",component:e,argTypes:{isAuthenticated:{control:{type:"boolean"},defaultValue:!0},showSpinner:{control:{type:"boolean"},defaultValue:!1}},render:o=>{const a=o.isAuthenticated;return delete o.isAuthenticated,t(s,{children:i=>t(c,{synapseContext:{...i,accessToken:a?i.accessToken??"fake token":void 0},children:t("div",{children:t(e,{...o})})})})}},r={args:{isAuthenticated:!0,children:"Make Async call",showSpinner:!1,variant:"contained",color:"primary",onClick:()=>{alert("clicked")}}};var n,p,m;r.parameters={...r.parameters,docs:{...(n=r.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    isAuthenticated: true,
+    children: 'Make Async call',
+    showSpinner: false,
+    variant: 'contained',
+    color: 'primary',
+    onClick: () => {
+      alert('clicked');
+    }
+  }
+}`,...(m=(p=r.parameters)==null?void 0:p.docs)==null?void 0:m.source}}};const nt=["Demo"];export{r as Demo,nt as __namedExportsOrder,et as default};
+//# sourceMappingURL=SpinnerButton.stories-84cbb592.js.map
