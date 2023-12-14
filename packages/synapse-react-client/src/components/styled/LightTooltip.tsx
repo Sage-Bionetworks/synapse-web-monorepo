@@ -1,5 +1,11 @@
 import React from 'react'
-import { Tooltip, TooltipProps, tooltipClasses, styled } from '@mui/material'
+import {
+  Tooltip,
+  TooltipProps,
+  tooltipClasses,
+  styled,
+  linkClasses,
+} from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
 
 export const LightTooltip: StyledComponent<TooltipProps> = styled(
@@ -8,7 +14,7 @@ export const LightTooltip: StyledComponent<TooltipProps> = styled(
   ),
 )(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     color: theme.palette.grey[1000],
     boxShadow: theme.shadows[1],
     border: `1px solid ${theme.palette.grey[500]}`,
@@ -18,7 +24,10 @@ export const LightTooltip: StyledComponent<TooltipProps> = styled(
       boxShadow: theme.shadows[1],
       border: `1px solid ${theme.palette.grey[500]}`,
     },
-    color: theme.palette.common.white,
+    color: theme.palette.background.paper,
+  },
+  [`& .${linkClasses.root}`]: {
+    color: theme.palette.primary.main,
   },
 }))
 

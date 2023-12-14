@@ -1,17 +1,17 @@
-import React, { useState } from 'react'
+import React, { useId } from 'react'
 import {
-  Button,
   Box,
-  TooltipProps,
-  tooltipClasses,
+  Button,
   ButtonProps,
+  tooltipClasses,
+  TooltipProps,
+  Typography,
 } from '@mui/material'
 import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
-import { Typography } from '@mui/material'
 import LightTooltip from '../styled/LightTooltip'
+import { atom, useAtom } from 'jotai'
 
-export type MarkdownPopoverProps = {
-  children: JSX.Element
+export type MarkdownPopoverProps = React.PropsWithChildren<{
   contentProps: MarkdownSynapseProps
   sx?: TooltipProps['sx']
   placement?: TooltipProps['placement']
@@ -25,7 +25,7 @@ export type MarkdownPopoverProps = {
   }
   maxWidth?: string
   minWidth?: string
-}
+}>
 
 const buttonBoxSx = {
   display: 'flex',
@@ -37,6 +37,9 @@ const buttonBoxSx = {
   },
 }
 
+// Register a global atom to track which popover is open, to ensure only one is shown at any given time
+const openMarkdownPopoverAtom = atom<string | null>(null)
+
 export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
   children,
   contentProps,
@@ -47,7 +50,12 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
   maxWidth = '500px',
   minWidth = '300px',
 }: MarkdownPopoverProps) => {
-  const [show, setShow] = useState(false)
+  const id = useId()
+  const [openMarkdownPopoverId, setOpenMarkdownPopoverId] = useAtom(
+    openMarkdownPopoverAtom,
+  )
+
+  const show = openMarkdownPopoverId === id
 
   const content = (
     <Box sx={{ padding: '20px' }}>
@@ -62,7 +70,7 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
             onClick={() => {
               actionButton.onClick()
               if (actionButton.closePopoverOnClick) {
-                setShow(false)
+                setOpenMarkdownPopoverId(null)
               }
             }}
           >
@@ -70,7 +78,10 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
           </Button>
         )}
         {showCloseButton && (
-          <Button variant="outlined" onClick={() => setShow(false)}>
+          <Button
+            variant="outlined"
+            onClick={() => setOpenMarkdownPopoverId(null)}
+          >
             Close
           </Button>
         )}
@@ -82,7 +93,9 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
     <LightTooltip
       title={content}
       placement={placement}
-      onClick={() => setShow(!show)}
+      onClick={() =>
+        setOpenMarkdownPopoverId(currentId => (currentId == id ? null : id))
+      }
       open={show}
       sx={{
         ...sx,
