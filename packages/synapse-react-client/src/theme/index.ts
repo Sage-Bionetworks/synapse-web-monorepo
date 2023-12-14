@@ -1,2 +1,3 @@
 export { defaultMuiThemeOptions } from './DefaultTheme'
-export * from './useTheme'
+export * from './ThemeProvider'
+export { mergeTheme } from './mergeTheme'

@@ -282,7 +282,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     })
     setRefsInState(newRowRefs)
   }
-  ;``
+
   const isSelection = selectionCount > 0
   const totalRowCount = data.length
   const filteredRowCount = table.getPrePaginationRowModel().rows.length
