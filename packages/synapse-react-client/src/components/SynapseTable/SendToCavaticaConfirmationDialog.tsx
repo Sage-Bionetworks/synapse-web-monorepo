@@ -144,18 +144,15 @@ export default function SendToCavaticaConfirmationDialog(
                 These integrations or provisions do not signify an endorsement
                 of that particular environment by Sage Bionetworks or funders,
                 nor does it alter the relationship between Sage Bionetworks,
-                existing data contributors, funders or computational providers.
+                existing data contributors, project sponsors or funders, or
+                computational providers.
               </Typography>
               <Typography variant="body1" sx={{ marginBottom: '20px' }}>
                 Furthermore, it is the responsibility of individual users to
                 review the terms of data use for each compute environment, as
                 well as for the portal or repository from which the data is
                 sourced. Users must personally ensure that all data access terms
-                and conditions are met. This includes the maintenance of
-                confidentiality with controlled-access datasets and the
-                agreement to not distribute data and its derivatives to any
-                entity or individual other than collaborators who have signed a
-                Data Use Certificate.
+                and conditions are met.
               </Typography>
               <Checkbox
                 label="I acknowledge and accept these terms"
