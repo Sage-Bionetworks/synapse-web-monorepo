@@ -10,6 +10,12 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false
   },
-  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "include": [
+    "src/**/*.tsx",
+    "src/**/*.ts",
+    "e2e/**.ts",
+    "e2e/**/**.ts",
+    "playwright.config.ts"
+  ],
   "files": ["src/types.d.ts"]
 }

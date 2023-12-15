@@ -38,9 +38,18 @@
     "test": "pnpm run copy-test-configuration && vitest",
     "test:ci": "pnpm run copy-test-configuration && vitest run --coverage",
     "generate-sitemap": "node sitemap/generate-sitemap.cjs",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "portal:build": "export $(grep -v '^#' .env | xargs); chmod +x ./build.sh; ./build.sh ${PORTAL}",
+    "portal:start": "pnpm run start >/dev/null 2>&1 &",
+    "portal:stop": "pid=$(lsof -i :3000 -t) && kill ${pid}",
+    "e2e": "playwright test",
+    "e2e:chromium": "playwright test --project=chromium",
+    "e2e:report": "pnpm exec playwright show-report",
+    "e2e:report:blob": "pnpm exec playwright merge-reports --reporter html ./blob-report && pnpm e2e:report",
+    "playwright:update": "pnpm add -D @playwright/test@latest; pnpm playwright install"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.1",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^13.4.0",
@@ -58,6 +67,7 @@
     "@vitest/utils": "^0.34.6",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
+    "dotenv": "^16.3.1",
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^21.1.2",
