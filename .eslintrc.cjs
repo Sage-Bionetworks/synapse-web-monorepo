@@ -60,6 +60,14 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-extra-semi": "warn",
   },
+  overrides: [
+    {
+      files: ["apps/portals/e2e/*.ts"],
+      rules: {
+        "@typescript-eslint/no-floating-promises": "error",
+      },
+    },
+  ],
   settings: {
     react: {
       version: "detect",

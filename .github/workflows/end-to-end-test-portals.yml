@@ -1,0 +1,90 @@
+name: End to end testing for Portals
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+env:
+  PW_ALL_BLOBS_DIR: all-blob-reports
+  PORTALS_SUBDIR: apps/portals
+concurrency:
+  group: '${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  e2e-tests:
+    if: ${{ (github.event_name == 'push' && (github.ref_name == 'main' || github.actor == github.repository_owner)) || github.event_name == 'pull_request' }}
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ github.repository_owner == 'Sage-Bionetworks' && 5 || 10 }}
+      matrix:
+        PORTAL:
+          [
+            adknowledgeportal,
+            arkportal,
+            bsmn,
+            cancercomplexity,
+            challengeportal,
+            digitalhealth,
+            elportal,
+            nf,
+            psychencode,
+            stopadportal,
+          ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/pnpm-setup-action
+      - name: Build portal
+        run: |
+          cd "${{ env.PORTALS_SUBDIR }}"
+          chmod +x ./build.sh
+          ./build.sh "${{ matrix.PORTAL }}"
+      - name: Start portal
+        run: pnpm nx run portals:portal:start
+      - name: Install Playwright Browsers
+        run: |
+          cd "${{ env.PORTALS_SUBDIR }}"
+          pnpm playwright install --with-deps
+      # Name report in playwright.config once feature is released:
+      # https://github.com/microsoft/playwright/issues/27284
+      - name: Run e2e tests
+        run: PWTEST_BLOB_REPORT_NAME="${{ matrix.PORTAL }}" pnpm nx run portals:e2e
+        env:
+          PORTAL: ${{ matrix.PORTAL }}
+      - name: Stop portal
+        run: pnpm nx run portals:portal:stop
+      - name: Upload blob report to GitHub Actions Artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: ${{ env.PW_ALL_BLOBS_DIR }}
+          path: '${{ env.PORTALS_SUBDIR }}/blob-report'
+          retention-days: 1
+  merge-e2e-reports:
+    # Merge reports after e2e-tests, even if some shards have failed
+    # But skip this job if the previous job was cancelled or skipped
+    if: ${{ !cancelled() && needs.e2e-tests.result != 'skipped' }}
+    needs: [e2e-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/pnpm-setup-action
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.PW_ALL_BLOBS_DIR }}
+          path: ${{ env.PORTALS_SUBDIR }}/${{ env.PW_ALL_BLOBS_DIR }}
+      - name: Merge into HTML Report
+        run: cd ${{ env.PORTALS_SUBDIR }}; pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v3
+        with:
+          name: html-report--attempt-${{ github.run_attempt }}
+          path: '${{ env.PORTALS_SUBDIR }}/playwright-report'
+          retention-days: 14

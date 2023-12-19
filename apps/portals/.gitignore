@@ -11,3 +11,10 @@ public/deploy_date.txt
 public/favicon.svg
 public/logo.svg
 public/socialmedia.png
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+.env
