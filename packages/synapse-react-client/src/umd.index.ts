@@ -71,6 +71,7 @@ import AccessRequirementList from './components/AccessRequirementList/AccessRequ
 import { BackendDestinationEnum } from './utils/functions'
 import TableColumnSchemaForm from './components/TableColumnSchemaEditor/TableColumnSchemaForm'
 import EntityHeaderTable from './components/EntityHeaderTable'
+import AccessRequirementRelatedProjectsList from './components/AccessRequirementRelatedProjectsList'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -147,6 +148,7 @@ const SynapseComponents = {
   AccessRequirementList,
   TableColumnSchemaForm,
   EntityHeaderTable,
+  AccessRequirementRelatedProjectsList,
 }
 
 // Include the version in the build

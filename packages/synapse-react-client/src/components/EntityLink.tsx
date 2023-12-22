@@ -84,7 +84,9 @@ export const EntityLink = (props: EntityLinkProps) => {
     } else {
       return (
         <p className={className}>
-          <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
+          {showIcon && (
+            <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
+          )}
           {entity[displayTextField as keyof typeof entity]}
         </p>
       )
