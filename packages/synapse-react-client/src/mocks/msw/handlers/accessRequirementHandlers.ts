@@ -9,6 +9,7 @@ import { MOCK_REPO_ORIGIN } from '../../../utils/functions/getEndpoint'
 import {
   AccessRequirement,
   AccessRequirementStatus,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   ObjectType,
   PaginatedResults,
   SubmissionState,
@@ -101,7 +102,7 @@ export const getAccessRequirementStatusHandlers = (
       if (!response && accessRequirement) {
         const isManagedACTAR =
           accessRequirement.concreteType ===
-          'org.sagebionetworks.repo.model.ManagedACTAccessRequirement'
+          MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
         response = {
           accessRequirementId: req.params.id as string,
           concreteType: isManagedACTAR

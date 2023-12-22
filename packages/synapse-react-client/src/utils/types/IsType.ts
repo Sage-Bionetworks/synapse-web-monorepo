@@ -28,6 +28,7 @@ import {
   PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   S3FileHandle,
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   TermsOfUseAccessRequirement,
   TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
   TextMatchesQueryFilter,
@@ -106,7 +107,7 @@ export const isFileEntity = isTypeViaConcreteTypeFactory<FileEntity>(
 )
 export const isTermsOfUseAccessRequirement =
   isTypeViaConcreteTypeFactory<TermsOfUseAccessRequirement>(
-    'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
+    TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   )
 export const isInviteeVerificationSignedToken =
   isTypeViaConcreteTypeFactory<InviteeVerificationSignedToken>(

@@ -1,6 +1,13 @@
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
 import ACCESS_TYPE from '../ACCESS_TYPE'
 
+export const TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE =
+  'Terms of Use'
+export const TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE =
+  'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement'
+export type TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE =
+  typeof TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+
 export interface TermsOfUseAccessRequirement {
   /* The version number issued to this version on the object. */
   versionNumber: number
@@ -27,7 +34,7 @@ export interface TermsOfUseAccessRequirement {
   /* The enumeration of possible permission. */
   accessType: ACCESS_TYPE
   /* Indicates which type of AccessRequirement this object represents. Provided by the system, the user may not set this field. */
-  concreteType: 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement'
+  concreteType: TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE
   /* Terms Of Use for Access, stored directly in the document (versus in a referenced Location)*/
   termsOfUse?: string
 }

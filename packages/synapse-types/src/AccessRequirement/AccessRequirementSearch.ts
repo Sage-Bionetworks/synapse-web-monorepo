@@ -1,4 +1,5 @@
 import ACCESS_TYPE from '../ACCESS_TYPE'
+import { ACCESS_REQUIREMENT_CONCRETE_TYPE } from './AccessRequirement'
 
 export type AccessRequirementSearchSort = {
   field: 'CREATED_ON' | 'NAME'
@@ -22,6 +23,8 @@ export interface AccessRequirementSearchRequest {
 export type AccessRequirementSearchResult = {
   /** The id of the AR */
   id: string
+  /** The concrete type of the AR */
+  type: ACCESS_REQUIREMENT_CONCRETE_TYPE
   /** The creation date of the AR */
   createdOn: string
   /** The last modification date of the AR */

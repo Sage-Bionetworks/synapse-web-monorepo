@@ -4,11 +4,15 @@ import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
 } from '../../utils/hooks/useGetInfoFromIds'
 import {
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   AccessRequirement,
   EntityHeader,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   ManagedACTAccessRequirement,
   Renewal,
   Request,
+  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../IconSvg/IconSvg'
 import StandaloneLoginForm from '../Authentication/StandaloneLoginForm'
@@ -58,10 +62,10 @@ export type AccessRequirementListProps = {
 const SUPPORTED_ACCESS_REQUIREMENTS = new Set<
   AccessRequirement['concreteType']
 >([
-  'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
-  'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
-  'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
-  'org.sagebionetworks.repo.model.ACTAccessRequirement',
+  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 ])
 
 const DialogSubsectionHeader: StyledComponent<TypographyProps> = styled(
@@ -207,25 +211,25 @@ export default function AccessRequirementList(
   const anyARsRequireTwoFactorAuth = accessRequirements?.some(
     accessRequirement =>
       accessRequirement.concreteType ===
-        'org.sagebionetworks.repo.model.ManagedACTAccessRequirement' &&
+        MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE &&
       accessRequirement.isTwoFaRequired,
   )
 
   const anyARsRequireCertification = accessRequirements?.some(
     accessRequirement =>
       (accessRequirement.concreteType ===
-        'org.sagebionetworks.repo.model.ManagedACTAccessRequirement' ||
+        MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
         accessRequirement.concreteType ===
-          'org.sagebionetworks.repo.model.SelfSignAccessRequirement') &&
+          SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE) &&
       accessRequirement.isCertifiedUserRequired,
   )
 
   const anyARsRequireProfileValidation = accessRequirements?.some(
     accessRequirement =>
       (accessRequirement.concreteType ===
-        'org.sagebionetworks.repo.model.ManagedACTAccessRequirement' ||
+        MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
         accessRequirement.concreteType ===
-          'org.sagebionetworks.repo.model.SelfSignAccessRequirement') &&
+          SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE) &&
       accessRequirement.isValidatedProfileRequired,
   )
 

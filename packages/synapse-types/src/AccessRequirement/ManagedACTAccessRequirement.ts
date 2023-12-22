@@ -1,6 +1,13 @@
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
 import ACCESS_TYPE from '../ACCESS_TYPE'
 
+export const MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE =
+  'Managed'
+export const MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE =
+  'org.sagebionetworks.repo.model.ManagedACTAccessRequirement'
+export type MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE =
+  typeof MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+
 export type ManagedACTAccessRequirement = {
   /* The version number issued to this version on the object. */
   versionNumber: number
@@ -26,7 +33,7 @@ export type ManagedACTAccessRequirement = {
   subjectIds: Array<RestrictableObjectDescriptor>
   /* The enumeration of possible permission. */
   accessType: ACCESS_TYPE /* Indicates which type of AccessRequirement this object represents. Provided by the system, the user may not set this field. */
-  concreteType: 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement'
+  concreteType: MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE
   /* If true, then accessor needs to be a Synapse Certified User to gain access. */
   isCertifiedUserRequired: boolean
   /* If true, then accessor needs to have their Synapse Profile validated to gain access. */

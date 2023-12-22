@@ -22,6 +22,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
+import { AccessRequirement } from '@sage-bionetworks/synapse-types'
 
 const ACCESS_REQUIREMENT_ID = 1111
 const defaultProps: MeetAccessRequirementCardProps = {
@@ -29,7 +30,9 @@ const defaultProps: MeetAccessRequirementCardProps = {
   count: 10,
 }
 
-const setupAccessRequirementResponse = (accessRequirement: any) => {
+const setupAccessRequirementResponse = (
+  accessRequirement: AccessRequirement,
+) => {
   server.use(
     rest.get(
       `${getEndpoint(

@@ -1,6 +1,12 @@
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
 import ACCESS_TYPE from '../ACCESS_TYPE'
 
+export const LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE = 'Lock'
+export const LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE =
+  'org.sagebionetworks.repo.model.LockAccessRequirement'
+export type LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE =
+  typeof LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+
 /**
  * JSON schema for Lock Access Requirement, used to lock down the entity while waiting for ACT to review.
  * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/LockAccessRequirement.html
@@ -31,7 +37,7 @@ export type LockAccessRequirement = {
   /* 	The enumeration of possible permission. */
   accessType: ACCESS_TYPE
   /* 	Indicates which type of AccessRequirement this object represents. Provided by the system, the user may not set this field. */
-  concreteType: 'org.sagebionetworks.repo.model.LockAccessRequirement'
+  concreteType: LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE
   /* 	The key of the jira issue created for this Access Requirement. */
   jiraKey: string
 }

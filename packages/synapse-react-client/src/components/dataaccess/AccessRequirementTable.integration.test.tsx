@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -6,6 +6,7 @@ import { QueryClient } from 'react-query'
 import {
   AccessRequirementTable,
   AccessRequirementTableProps,
+  accessRequirementConcreteTypeValueToDisplayValue,
 } from './AccessRequirementTable'
 import { createWrapperAndQueryClient } from '../../testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_SEARCH } from '../../utils/APIConstants'
@@ -14,13 +15,28 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
+import {
+  ACCESS_TYPE,
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+} from '@sage-bionetworks/synapse-types'
 import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
 } from '@sage-bionetworks/synapse-types'
 import mockProjectData from '../../mocks/entity/mockProject'
-import { mockSearchResults } from '../../mocks/mockAccessRequirements'
+import {
+  mockACTAccessRequirement,
+  mockLockAccessRequirement,
+  mockManagedACTAccessRequirement,
+  mockSearchResults,
+  mockSelfSignAccessRequirement,
+  mockToUAccessRequirement,
+} from '../../mocks/mockAccessRequirements'
 import { rest, server } from '../../mocks/msw/server'
 import { MOCK_USER_NAME } from '../../mocks/user/mock_user_profile'
 
@@ -55,6 +71,7 @@ const mockSearchResultsPage2: AccessRequirementSearchResponse = {
     {
       id: '9608424',
       createdOn: '2017-08-23T18:48:20.892Z',
+      type: ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
       modifiedOn: '2022-05-20T22:26:44.406Z',
       name: 'Access Requirement on Page 2',
       version: '269',
@@ -145,21 +162,28 @@ describe('Access Requirement Table tests', () => {
     screen.getByRole('columnheader', {
       name: /^Access Requirement Name/,
     })
+    screen.getByRole('columnheader', { name: 'Type' })
     screen.getByRole('columnheader', { name: 'Related to Projects' })
     screen.getByRole('columnheader', { name: 'Reviewer' })
     screen.getByRole('columnheader', { name: 'Last Modified' })
     screen.getByRole('columnheader', { name: /^Created On/ })
 
     // check the first row of data
-    screen.getByRole('cell', { name: mockSearchResults.results[0].id })
-    screen.getByRole('cell', { name: mockSearchResults.results[0].name })
+    const row = screen.getAllByRole('row')[1]
+    within(row).getByRole('cell', { name: mockSearchResults.results[0].id })
+    within(row).getByRole('cell', { name: mockSearchResults.results[0].name })
+    within(row).getByRole('cell', {
+      name: accessRequirementConcreteTypeValueToDisplayValue(
+        mockSearchResults.results[0].type,
+      ),
+    })
     // The related project and reviewer ID both get rendered
-    await screen.findAllByText(MOCK_PROJECT_NAME)
-    await screen.findAllByText('@' + MOCK_USER_NAME)
-    screen.getByRole('cell', {
+    await within(row).findByText(MOCK_PROJECT_NAME)
+    await within(row).findByText('@' + MOCK_USER_NAME)
+    within(row).getByRole('cell', {
       name: formatDate(dayjs(mockSearchResults.results[0].modifiedOn)),
     })
-    screen.getByRole('cell', {
+    within(row).getByRole('cell', {
       name: formatDate(dayjs(mockSearchResults.results[0].createdOn)),
     })
   })
@@ -265,5 +289,33 @@ describe('Access Requirement Table tests', () => {
         }),
       ),
     )
+  })
+
+  it('correctly maps AR concrete type to display type', () => {
+    expect(
+      accessRequirementConcreteTypeValueToDisplayValue(
+        mockManagedACTAccessRequirement.concreteType,
+      ),
+    ).toEqual(MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE)
+    expect(
+      accessRequirementConcreteTypeValueToDisplayValue(
+        mockACTAccessRequirement.concreteType,
+      ),
+    ).toEqual(ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE)
+    expect(
+      accessRequirementConcreteTypeValueToDisplayValue(
+        mockLockAccessRequirement.concreteType,
+      ),
+    ).toEqual(LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE)
+    expect(
+      accessRequirementConcreteTypeValueToDisplayValue(
+        mockToUAccessRequirement.concreteType,
+      ),
+    ).toEqual(TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE)
+    expect(
+      accessRequirementConcreteTypeValueToDisplayValue(
+        mockSelfSignAccessRequirement.concreteType,
+      ),
+    ).toEqual(SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE)
   })
 })

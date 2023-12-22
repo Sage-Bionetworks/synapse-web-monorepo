@@ -1,6 +1,10 @@
 import {
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   AccessRequirement,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   ManagedACTAccessRequirement,
+  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import UnmanagedACTAccessRequirementItem from './RequirementItem/UnmanagedACTAccessRequirementItem'
 import ManagedACTAccessRequirementItem from './ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem'
@@ -22,15 +26,15 @@ export function AccessRequirementListItem(
 ) {
   const { accessRequirement, entityId, onHide, onRequestAccess } = props
   switch (accessRequirement.concreteType) {
-    case 'org.sagebionetworks.repo.model.SelfSignAccessRequirement':
-    case 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement':
+    case SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
+    case TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
       return (
         <SelfSignAccessRequirementItem
           accessRequirement={accessRequirement}
           onHide={onHide}
         />
       )
-    case 'org.sagebionetworks.repo.model.ACTAccessRequirement':
+    case ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
       return (
         <UnmanagedACTAccessRequirementItem
           accessRequirement={accessRequirement}
@@ -38,7 +42,7 @@ export function AccessRequirementListItem(
           entityId={entityId}
         />
       )
-    case 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement':
+    case MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
       return (
         <ManagedACTAccessRequirementItem
           accessRequirement={accessRequirement}
