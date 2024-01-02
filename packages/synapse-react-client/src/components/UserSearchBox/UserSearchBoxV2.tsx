@@ -139,12 +139,8 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
       header: item,
     }))
 
-  if (defaultValue && defaultUserGroupHeader == null) {
-    return <Skeleton width="100%" />
-  }
-
   const placeholderText = useMemo(() => {
-    if (!!placeholder) {
+    if (placeholder !== undefined) {
       return placeholder
     } else if (typeFilter == TYPE_FILTER.USERS_ONLY) {
       return 'Username or name (first and last)'
@@ -154,6 +150,11 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
       return 'Username, name (first and last), or team name'
     }
   }, [placeholder, typeFilter])
+
+  if (defaultValue && defaultUserGroupHeader == null) {
+    return <Skeleton width="100%" />
+  }
+
   return (
     <Select
       className="bootstrap-4-backport UserSearchBoxV2"
