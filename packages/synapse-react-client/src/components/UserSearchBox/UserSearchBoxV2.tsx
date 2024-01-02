@@ -143,11 +143,11 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     if (placeholder !== undefined) {
       return placeholder
     } else if (typeFilter == TYPE_FILTER.USERS_ONLY) {
-      return 'Username or name (first and last)'
+      return 'Name (first and last)'
     } else if (typeFilter == TYPE_FILTER.TEAMS_ONLY) {
       return 'Team name'
     } else {
-      return 'Username, name (first and last), or team name'
+      return 'Name (first and last) or team name'
     }
   }, [placeholder, typeFilter])
 
