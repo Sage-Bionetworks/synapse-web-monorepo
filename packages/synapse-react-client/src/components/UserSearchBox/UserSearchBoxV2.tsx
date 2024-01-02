@@ -33,7 +33,7 @@ export type UserSearchBoxProps = {
   filterPredicate?: (item: UserGroupHeader) => boolean
   placeholder?: string
   focusOnSelect?: boolean
-  /* The principal ID of the current `select`ed user or team. If null, no selection is made. If undefined, state will be handled internally */
+  /* The principal ID of the current selected user or team. If null, no selection is made. If undefined, state will be handled internally */
   value?: PropsValue<UserSearchBoxValueType> | undefined
 }
 
