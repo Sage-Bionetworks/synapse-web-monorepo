@@ -8,6 +8,8 @@ export type AccessRequirementSearchSort = {
 export interface AccessRequirementSearchRequest {
   /** Optional substring used to filter Access Requirements by name */
   nameContains?: string
+  /** Optional list of ids used to filter access requirements with specific ids. */
+  ids?: number[]
   /** Optional id used to filter Access Requirements to retrieve only those that have been applied within a particular project. */
   relatedProjectId?: string
   /** Optional principal ID used to filter Access Requirements to retrieve only those that can be reviewed by the specific reviewer. */
