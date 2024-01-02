@@ -1,6 +1,13 @@
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
 import ACCESS_TYPE from '../ACCESS_TYPE'
 
+export const SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE =
+  'Click-Wrap'
+export const SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE =
+  'org.sagebionetworks.repo.model.SelfSignAccessRequirement'
+export type SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE =
+  typeof SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+
 export interface SelfSignAccessRequirement {
   /* The version number issued to this version on the object. */
   versionNumber: number
@@ -27,7 +34,7 @@ export interface SelfSignAccessRequirement {
   /* The enumeration of possible permission. */
   accessType: ACCESS_TYPE
   /* Indicates which type of AccessRequirement this object represents. Provided by the system, the user may not set this field. */
-  concreteType: 'org.sagebionetworks.repo.model.SelfSignAccessRequirement'
+  concreteType: SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE
   /* If true, then accessor needs to be a Synapse Certified User to gain access. */
   isCertifiedUserRequired: boolean
   /* If true, then accessor needs to have their Synapse Profile validated to gain access. */

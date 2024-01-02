@@ -6,7 +6,20 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useSearchAccessRequirementsInfinite } from '../../synapse-queries/dataaccess/useAccessRequirements'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
+import {
+  ACCESS_REQUIREMENT_CONCRETE_TYPE,
+  ACCESS_TYPE,
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+} from '@sage-bionetworks/synapse-types'
 import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchSort,
@@ -23,6 +36,26 @@ export type AccessRequirementTableProps = {
   reviewerId?: string
   accessType?: ACCESS_TYPE
   onCreateNewAccessRequirementClicked?: () => void
+}
+
+export function accessRequirementConcreteTypeValueToDisplayValue(
+  accessRequirementConcreteTypeValue: ACCESS_REQUIREMENT_CONCRETE_TYPE,
+) {
+  switch (accessRequirementConcreteTypeValue) {
+    case TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
+      return TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE
+    case SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE: {
+      return SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE
+    }
+    case MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
+      return MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE
+    case ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
+      return ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE
+    case LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
+      return LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE
+    default:
+      return 'Unknown'
+  }
 }
 
 export function AccessRequirementTable(props: AccessRequirementTableProps) {
@@ -98,6 +131,7 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
                   />
                 </span>
               </th>
+              <th>Type</th>
               <th>Related to Projects</th>
               <th>Reviewer</th>
               <th>Last Modified</th>
@@ -129,6 +163,9 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
                     </a>
                   </td>
                   <td>{ar.name}</td>
+                  <td>
+                    {accessRequirementConcreteTypeValueToDisplayValue(ar.type)}
+                  </td>
                   <td>
                     {ar.relatedProjectIds.map(projectId => (
                       <React.Fragment key={projectId}>

@@ -1,6 +1,12 @@
 import ACCESS_TYPE from '../ACCESS_TYPE'
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
 
+export const ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE = 'Basic'
+export const ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE =
+  'org.sagebionetworks.repo.model.ACTAccessRequirement'
+export type ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE =
+  typeof ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+
 //https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/ACTAccessRequirement.html
 export interface ACTAccessRequirement {
   /* The version number issued to this version on the object. */
@@ -28,7 +34,7 @@ export interface ACTAccessRequirement {
   /* The enumeration of possible permission. */
   accessType: ACCESS_TYPE
   /* Indicates which type of AccessRequirement this object represents. Provided by the system, the user may not set this field. */
-  concreteType: 'org.sagebionetworks.repo.model.ACTAccessRequirement'
+  concreteType: ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE
   /* Information on how to contact the Synapse ACT for access approval (external to Synapse). */
   actContactInfo?: string
   /* If true, then in addition to following directions in the 'actContactInfo' the client should open a JIRA issue to notify the ACT. If omitted, default is 'true'. */
