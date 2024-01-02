@@ -3,6 +3,7 @@ import { AccessRequirementSearchRequest } from '@sage-bionetworks/synapse-types'
 import { useSearchAccessRequirementsInfinite } from '../../synapse-queries'
 import { EntityLink } from '../EntityLink'
 import { Alert, List, ListItem, Typography } from '@mui/material'
+import pluralize from 'pluralize'
 
 export type AccessRequirementRelatedProjectsListProps = {
   accessRequirementId: number
@@ -20,9 +21,11 @@ export const AccessRequirementRelatedProjectsList = (
   const ar = data?.pages.flatMap(page => page.results)[0] ?? undefined
 
   const nRelatedProjects = ar?.relatedProjectIds.length || 0
-  const relatedProjectsTitle = `${nRelatedProjects} project${
-    nRelatedProjects === 1 ? '' : 's'
-  }${nRelatedProjects > 0 ? ':' : ''}`
+  const relatedProjectsTitle = `${pluralize(
+    'project',
+    nRelatedProjects,
+    true,
+  )}${nRelatedProjects > 0 ? ':' : ''}`
 
   return (
     <>
