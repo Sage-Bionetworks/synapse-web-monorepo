@@ -33,7 +33,7 @@ export type UserSearchBoxProps = {
   filterPredicate?: (item: UserGroupHeader) => boolean
   placeholder?: string
   focusOnSelect?: boolean
-  /* The principal ID of the current selected user or team. If null, no selection is made. If undefined, state will be handled internally */
+  /* The principal ID of the current `select`ed user or team. If null, no selection is made. If undefined, state will be handled internally */
   value?: PropsValue<UserSearchBoxValueType> | undefined
 }
 
@@ -107,9 +107,13 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
       type: 'USER_PROFILE',
     })
 
+  const isSearchEnabled = !!debouncedInput
   const { data, isLoading } = useSearchUserGroupHeaders(
     debouncedInput,
     typeFilter,
+    {
+      enabled: isSearchEnabled,
+    },
   )
 
   const selectRef = React.useRef<any>(null)
@@ -139,6 +143,17 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     return <Skeleton width="100%" />
   }
 
+  const placeholderText = useMemo(() => {
+    if (!!placeholder) {
+      return placeholder
+    } else if (typeFilter == TYPE_FILTER.USERS_ONLY) {
+      return 'Username or name (first and last)'
+    } else if (typeFilter == TYPE_FILTER.TEAMS_ONLY) {
+      return 'Team name'
+    } else {
+      return 'Username, name (first and last), or team name'
+    }
+  }, [placeholder, typeFilter])
   return (
     <Select
       className="bootstrap-4-backport UserSearchBoxV2"
@@ -149,6 +164,8 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
       isLoading={isLoading}
       options={(!isLoading && options) || []}
       noOptionsMessage={noOptionsMessage}
+      openMenuOnClick={false}
+      placeholder={placeholderText}
       defaultValue={
         defaultValue
           ? {
@@ -180,7 +197,6 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
           onChange(option?.id ?? null, option?.header ?? null)
         }
       }}
-      placeholder={placeholder}
     />
   )
 }
