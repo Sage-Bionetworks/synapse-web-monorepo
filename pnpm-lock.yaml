@@ -330,7 +330,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       react-plotly.js:
         specifier: ^2.6.0
-        version: 2.6.0(plotly.js@2.24.3)(react@18.2.0)
+        version: 2.6.0(plotly.js@2.27.1)(react@18.2.0)
       react-query:
         specifier: 3.39.3
         version: 3.39.3(react-dom@18.2.0)(react@18.2.0)
@@ -950,7 +950,7 @@ importers:
         version: 2.5.2(react-dom@18.2.0)(react@18.2.0)
       react-plotly.js:
         specifier: ^2.6.0
-        version: 2.6.0(plotly.js@2.24.3)(react@18.2.0)
+        version: 2.6.0(plotly.js@2.27.1)(react@18.2.0)
       react-popper:
         specifier: ^2.3.0
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.2.0)(react@18.2.0)
@@ -4083,7 +4083,7 @@ packages:
     resolution: {integrity: sha512-Iiv+IcappRRv6IBlknIVmLkXxfp51NEX1+l9f+dIbBuPU4PaRULegr1lCeHKsC45KU5ruxM5xMg4R/de03aJQg==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
-      '@types/react': ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^17.0.0 || ^18.0.0
       react-dom: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
@@ -4231,7 +4231,7 @@ packages:
   /@mui/types@7.2.10(@types/react@18.0.27):
     resolution: {integrity: sha512-wX1vbDC+lzF7FlhT6A3ffRZgEoKWPF8VqRoTu4lZwouFX2t90KyCMsgepMw5DxLak1BSp/KP86CmtZttikb/gQ==}
     peerDependencies:
-      '@types/react': ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -4272,7 +4272,7 @@ packages:
     resolution: {integrity: sha512-qAHvTXzk7basbyqPvhgWqN6JbmI2wLB/mf97GkSlz5c76MiKYV6Ffjvw9BjKZQ1YRb8rDX9kgdjRezOcoB91oQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
-      '@types/react': ^17.0.0 || ^18.0.0
+      '@types/react': 18.0.27
       react: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
@@ -15105,8 +15105,8 @@ packages:
     resolution: {integrity: sha512-fiVn3XTl7acMUp/Th9QDflmaK/EtId28U8SF1kmPgpwQaiTvP7M5u1XLeXIsEsSbDOmtWfr5hEpKYwcc2TcjEA==}
     dev: false
 
-  /plotly.js@2.24.3:
-    resolution: {integrity: sha512-XPlBqWXx+BHU49gQ0tVIAhTqzP7cmnOfYTXIMxju8wTJElKEaiF9qqPG88WDiIAToup2n40zhXjsyJe/JaRu2g==}
+  /plotly.js@2.27.1:
+    resolution: {integrity: sha512-XeE0zTJWTxURYrUJqzf73l8lTb+HnyRvvhHkoSIEvWf58ins4saopo9l25kCm+xHAGz8E/2EOncE4DyXsJ34kA==}
     dependencies:
       '@plotly/d3': 3.8.1
       '@plotly/d3-sankey': 0.7.2
@@ -15846,13 +15846,13 @@ packages:
       warning: 4.0.3
     dev: false
 
-  /react-plotly.js@2.6.0(plotly.js@2.24.3)(react@18.2.0):
+  /react-plotly.js@2.6.0(plotly.js@2.27.1)(react@18.2.0):
     resolution: {integrity: sha512-g93xcyhAVCSt9kV1svqG1clAEdL6k3U+jjuSzfTV7owaSU9Go6Ph8bl25J+jKfKvIGAEYpe4qj++WHJuc9IaeA==}
     peerDependencies:
       plotly.js: '>1.34.0'
       react: '>0.13.0'
     dependencies:
-      plotly.js: 2.24.3
+      plotly.js: 2.27.1
       prop-types: 15.8.1
       react: 18.2.0
     dev: false
