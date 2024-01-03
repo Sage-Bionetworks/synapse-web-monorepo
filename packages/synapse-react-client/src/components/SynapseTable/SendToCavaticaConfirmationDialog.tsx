@@ -214,11 +214,13 @@ export default function SendToCavaticaConfirmationDialog(
               <br />
               2. You must connect your CAVATICA account to Synapse.
             </Typography>
-            <Typography variant="body1">
-              <Link href={cavaticaConnectAccountURL} target="_blank">
-                Click here for instructions
-              </Link>
-            </Typography>
+            {cavaticaConnectAccountURL && (
+              <Typography variant="body1">
+                <Link href={cavaticaConnectAccountURL} target="_blank">
+                  Click here for instructions
+                </Link>
+              </Typography>
+            )}
             <Box
               sx={{
                 backgroundColor: 'grey.100',
