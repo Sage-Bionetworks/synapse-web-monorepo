@@ -1,5 +1,10 @@
 import { SynapseConfig } from 'types/portal-config'
-import { dataSql, defaultSearchConfiguration } from '../resources'
+import {
+  cavaticaConnectAccountURL,
+  cavaticaHelpURL,
+  dataSql,
+  defaultSearchConfiguration,
+} from '../resources'
 
 const rgbIndex = 1
 
@@ -9,7 +14,8 @@ const data: SynapseConfig = {
     rgbIndex,
     name: 'Data',
     showExportToCavatica: true,
-    cavaticaHelpURL: '/Limited%20Data%20Commons',
+    cavaticaHelpURL: cavaticaHelpURL,
+    cavaticaConnectAccountURL: cavaticaConnectAccountURL,
     visibleColumnCount: 10,
     isRowSelectionVisible: true,
     additionalFiltersLocalStorageKey: 'cohort-builder-files-perspective',

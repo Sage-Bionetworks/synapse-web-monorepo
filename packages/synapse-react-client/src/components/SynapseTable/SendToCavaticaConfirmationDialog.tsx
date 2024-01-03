@@ -44,7 +44,7 @@ export default function SendToCavaticaConfirmationDialog(
     fileNameColumnName,
     fileVersionColumnName,
     cavaticaHelpURL,
-    cavaticaConnectAccountURL = 'https://help.eliteportal.org/help/limited-data-commons#LimitedDataCommons-GainingAccess',
+    cavaticaConnectAccountURL,
   } = props
   const {
     getCurrentQueryRequest,
@@ -214,11 +214,13 @@ export default function SendToCavaticaConfirmationDialog(
               <br />
               2. You must connect your CAVATICA account to Synapse.
             </Typography>
-            <Typography variant="body1">
-              <Link href={cavaticaConnectAccountURL} target="_blank">
-                Click here for instructions
-              </Link>
-            </Typography>
+            {cavaticaConnectAccountURL && (
+              <Typography variant="body1">
+                <Link href={cavaticaConnectAccountURL} target="_blank">
+                  Click here for instructions
+                </Link>
+              </Typography>
+            )}
             <Box
               sx={{
                 backgroundColor: 'grey.100',
@@ -229,8 +231,8 @@ export default function SendToCavaticaConfirmationDialog(
               <Typography variant="body1">
                 Note that we cannot provide support for CAVATICA. Please contact
                 CAVATICA’s{' '}
-                <Link href="mailto:support@sevenbridges.com "> support</Link>{' '}
-                for issues related to the above.
+                <Link href="mailto:support@velsera.com"> support</Link> for
+                issues related to the above.
               </Typography>
             </Box>
             {isLoading ? (
