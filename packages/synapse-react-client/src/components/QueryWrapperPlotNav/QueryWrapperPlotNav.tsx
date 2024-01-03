@@ -267,7 +267,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
 
   const entityId = parseEntityIdFromSqlStatement(sql)
   const additionalFilters = getAdditionalFilters(
-    additionalFiltersSessionStorageKey ?? entityId,
+    additionalFiltersSessionStorageKey,
     searchParams,
     sqlOperator,
   )

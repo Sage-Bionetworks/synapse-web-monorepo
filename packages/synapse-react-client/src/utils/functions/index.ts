@@ -20,5 +20,5 @@ export {
   hex2ascii,
   BackendDestinationEnum,
   SQLOperator,
-  QUERY_FILTERS_SESSION_STORAGE_KEY as QUERY_FILTERS_LOCAL_STORAGE_KEY,
+  QUERY_FILTERS_SESSION_STORAGE_KEY,
 }

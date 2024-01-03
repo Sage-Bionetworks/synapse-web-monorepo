@@ -110,7 +110,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
   const entityId = parseEntityIdFromSqlStatement(sql)
   derivedQueryRequestFromSearchParams.query.additionalFilters =
     getAdditionalFilters(
-      additionalFiltersSessionStorageKey ?? entityId,
+      additionalFiltersSessionStorageKey,
       searchParams,
       sqlOperator,
     )

@@ -38,13 +38,15 @@ export const getIgnoredQueryFilterSearchParamKey = (
  * @returns
  */
 export const getAdditionalFilters = (
-  sessionStorageKey: string,
+  sessionStorageKey?: string,
   searchParams?: Record<string, string>,
   operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE,
 ): QueryFilter[] | undefined => {
-  const sessionStorageQueryFiltersString = sessionStorage.getItem(
-    QUERY_FILTERS_SESSION_STORAGE_KEY(sessionStorageKey),
-  )
+  const sessionStorageQueryFiltersString = sessionStorageKey
+    ? sessionStorage.getItem(
+        QUERY_FILTERS_SESSION_STORAGE_KEY(sessionStorageKey),
+      )
+    : undefined
   let additionalFilters: QueryFilter[] = []
   if (sessionStorageQueryFiltersString) {
     additionalFilters = JSON.parse(

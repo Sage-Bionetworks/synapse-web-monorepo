@@ -122,7 +122,7 @@ export default function DetailsPage(props: DetailsPageProps) {
   const queryBundleRequest = React.useMemo(() => {
     const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
     const additionalFilters = SynapseUtilityFunctions.getAdditionalFilters(
-      additionalFiltersSessionStorageKey ?? entityId,
+      additionalFiltersSessionStorageKey,
       searchParams,
       sqlOperator,
     )

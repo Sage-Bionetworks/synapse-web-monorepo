@@ -36,7 +36,7 @@ export const handleParticipantsToFiles = async (
     )!,
   }
   sessionStorage.setItem(
-    SynapseUtilityFunctions.QUERY_FILTERS_LOCAL_STORAGE_KEY(
+    SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(
       'cohort-builder-files-perspective',
     ),
     // TODO: set additionalFiltersSessionStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
@@ -61,7 +61,7 @@ export const handleSelectedParticipantsToFiles = (
     values: event.selectedRows!.map((row) => row.values[idColIndex!]!),
   }
   sessionStorage.setItem(
-    SynapseUtilityFunctions.QUERY_FILTERS_LOCAL_STORAGE_KEY(
+    SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(
       'cohort-builder-files-perspective',
     ),
     // TODO: set additionalFiltersSessionStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table

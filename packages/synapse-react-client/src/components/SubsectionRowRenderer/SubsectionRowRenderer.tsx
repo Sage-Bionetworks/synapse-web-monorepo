@@ -65,7 +65,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
       setIsLoading(true)
       const entityId = parseEntityIdFromSqlStatement(sql)
       const additionalFilters = getAdditionalFilters(
-        additionalFiltersSessionStorageKey ?? entityId,
+        additionalFiltersSessionStorageKey,
         searchParams,
         sqlOperator,
       )
