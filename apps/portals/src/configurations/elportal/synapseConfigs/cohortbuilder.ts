@@ -1,5 +1,7 @@
 import { SynapseConfig } from 'types/portal-config'
 import {
+  cavaticaConnectAccountURL,
+  cavaticaHelpURL,
   cohortBuilderFilesSql,
   cohortBuilderSql,
   defaultSearchConfiguration,
@@ -129,7 +131,8 @@ export const filesView: SynapseConfig = {
     fileIdColumnName: 'id',
     fileNameColumnName: 'name',
     fileVersionColumnName: 'fileVersion',
-    cavaticaHelpURL: '/Limited%20Data%20Commons',
+    cavaticaHelpURL: cavaticaHelpURL,
+    cavaticaConnectAccountURL: cavaticaConnectAccountURL,
     visibleColumnCount: 10,
     isRowSelectionVisible: true,
     rowSelectionPrimaryKey: ['id'],

@@ -44,7 +44,7 @@ export default function SendToCavaticaConfirmationDialog(
     fileNameColumnName,
     fileVersionColumnName,
     cavaticaHelpURL,
-    cavaticaConnectAccountURL = 'https://help.eliteportal.org/help/limited-data-commons#LimitedDataCommons-GainingAccess',
+    cavaticaConnectAccountURL,
   } = props
   const {
     getCurrentQueryRequest,
@@ -228,9 +228,8 @@ export default function SendToCavaticaConfirmationDialog(
             >
               <Typography variant="body1">
                 Note that we cannot provide support for CAVATICA. Please contact
-                CAVATICA’s{' '}
-                <Link href="mailto:support@sevenbridges.com "> support</Link>{' '}
-                for issues related to the above.
+                CAVATICA’s <Link href="support@velsera.com"> support</Link> for
+                issues related to the above.
               </Typography>
             </Box>
             {isLoading ? (

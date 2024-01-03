@@ -14,3 +14,6 @@ export const cohortBuilderFilesSql = 'SELECT * FROM syn52234677'
 export const defaultSearchConfiguration = {
   fullTextSearchHelpURL: 'https://help.eliteportal.org/help/search-tips',
 }
+export const cavaticaConnectAccountURL =
+  'https://help.eliteportal.org/help/analysis-environments#IntegrationwithAnalysis&ComputeEnvironments-GainingAccess'
+export const cavaticaHelpURL = '/Limited%20Data%20Commons'

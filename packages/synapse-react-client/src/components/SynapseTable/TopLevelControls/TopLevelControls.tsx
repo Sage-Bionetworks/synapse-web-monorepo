@@ -51,6 +51,7 @@ export type TopLevelControlsProps = {
   fileNameColumnName?: string
   fileVersionColumnName?: string
   cavaticaHelpURL?: string
+  cavaticaConnectAccountURL?: string
   remount?: () => void
 }
 
@@ -88,6 +89,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     customControls,
     showExportToCavatica = false,
     cavaticaHelpURL,
+    cavaticaConnectAccountURL,
     fileIdColumnName,
     fileNameColumnName,
     fileVersionColumnName,
@@ -343,6 +345,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           )}
           <SendToCavaticaConfirmationDialog
             cavaticaHelpURL={cavaticaHelpURL}
+            cavaticaConnectAccountURL={cavaticaConnectAccountURL}
             fileIdColumnName={fileIdColumnName}
             fileNameColumnName={fileNameColumnName}
             fileVersionColumnName={fileVersionColumnName}
