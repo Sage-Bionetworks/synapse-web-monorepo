@@ -414,20 +414,22 @@ const routes: GenericRoute[] = [
       },
     ],
   },
-  {
-    exact: true,
-    path: 'Analytical Workspace',
-    synapseConfigArray: [
-      {
-        name: 'Markdown',
-        props: {
-          ownerId: 'syn22300949',
-          wikiId: '604940',
-          loadingSkeletonRowCount: 10,
-        },
-      },
-    ],
-  },
+  // TODO: link to new page that will feature info about the connection to CAVATICA and other Analytical/Compute Environments...
+  // {
+  //   exact: true,
+  //   path: 'Analysis Platforms',
+  //   synapseConfigArray: [
+  //     {
+  //       name: 'Markdown',
+  //       title: 'Analysis Platforms',
+  //       props: {
+  //         ownerId: 'syn????',
+  //         wikiId: '????',
+  //         loadingSkeletonRowCount: 10,
+  //       },
+  //     },
+  //   ],
+  // },
   {
     path: 'Data Access',
     exact: true,
