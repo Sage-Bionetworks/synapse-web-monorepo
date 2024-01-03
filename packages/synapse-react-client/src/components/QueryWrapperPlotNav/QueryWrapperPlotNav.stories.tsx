@@ -16,7 +16,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage'
 import { CustomControlCallbackData } from '../SynapseTable/TopLevelControls/TopLevelControls'
-import { QUERY_FILTERS_LOCAL_STORAGE_KEY } from '../../utils/functions/SqlFunctions'
+import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '../../utils/functions/SqlFunctions'
 import { SynapseClient } from '../../index'
 import { QueryWrapperSynapsePlotRowClickEvent } from './QueryWrapperSynapsePlot'
 
@@ -257,7 +257,7 @@ const handleRowSelectionCustomCommandClick = (
     values: event.selectedRows!.map(row => row.values[idColIndex!]!),
   }
   localStorage.setItem(
-    QUERY_FILTERS_LOCAL_STORAGE_KEY('syn51186974-selectedfiles'),
+    QUERY_FILTERS_SESSION_STORAGE_KEY('syn51186974-selectedfiles'),
     JSON.stringify([localStorageFilter]),
   )
   console.log(
@@ -294,7 +294,7 @@ const handleAllDataCustomCommandClick = async (
     values: ids,
   }
   localStorage.setItem(
-    QUERY_FILTERS_LOCAL_STORAGE_KEY('syn51186974-selectedfiles'),
+    QUERY_FILTERS_SESSION_STORAGE_KEY('syn51186974-selectedfiles'),
     JSON.stringify([localStorageFilter]),
   )
   console.log(
@@ -318,7 +318,7 @@ export const TableRowSelectionWithCustomCommand: Story = {
     // while the participant view of the same Virtual Table should have another.
     // The custom commands should add filters that target the other perspective
     // (file command adds filter for participant perspective, participant command adds filter for the file perspective)
-    additionalFiltersLocalStorageKey: 'syn51186974-selectedfiles',
+    additionalFiltersSessionStorageKey: 'syn51186974-selectedfiles',
     customControls: [
       {
         buttonText: 'Row Selection Custom Command',

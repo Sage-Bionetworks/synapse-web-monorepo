@@ -25,7 +25,7 @@ export const handleParticipantsToFiles = async (
     },
     token,
   )
-  const localStorageFilter: ColumnSingleValueQueryFilter = {
+  const sessionStorageFilter: ColumnSingleValueQueryFilter = {
     concreteType:
       'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
     columnName: 'individualID',
@@ -35,12 +35,12 @@ export const handleParticipantsToFiles = async (
       (row) => row.values[0!]!,
     )!,
   }
-  localStorage.setItem(
+  sessionStorage.setItem(
     SynapseUtilityFunctions.QUERY_FILTERS_LOCAL_STORAGE_KEY(
       'cohort-builder-files-perspective',
     ),
-    // TODO: set additionalFiltersLocalStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
-    JSON.stringify([localStorageFilter]),
+    // TODO: set additionalFiltersSessionStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
+    JSON.stringify([sessionStorageFilter]),
   )
   window.location.href = '/Explore/Data by Files v2'
 }
@@ -52,7 +52,7 @@ export const handleSelectedParticipantsToFiles = (
   const idColIndex = event.data?.columnModels?.findIndex(
     (cm) => cm.name === 'individualID',
   )
-  const localStorageFilter: ColumnSingleValueQueryFilter = {
+  const sessionStorageFilter: ColumnSingleValueQueryFilter = {
     concreteType:
       'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
     columnName: 'individualID',
@@ -60,12 +60,12 @@ export const handleSelectedParticipantsToFiles = (
     isDefiningCondition: true,
     values: event.selectedRows!.map((row) => row.values[idColIndex!]!),
   }
-  localStorage.setItem(
+  sessionStorage.setItem(
     SynapseUtilityFunctions.QUERY_FILTERS_LOCAL_STORAGE_KEY(
       'cohort-builder-files-perspective',
     ),
-    // TODO: set additionalFiltersLocalStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
-    JSON.stringify([localStorageFilter]),
+    // TODO: set additionalFiltersSessionStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
+    JSON.stringify([sessionStorageFilter]),
   )
   window.location.href = '/Explore/Data by Files v2'
 }

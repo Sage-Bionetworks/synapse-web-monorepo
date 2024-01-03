@@ -2,7 +2,7 @@ import {
   getAdditionalFilters,
   parseEntityIdAndVersionFromSqlStatement,
   parseEntityIdFromSqlStatement,
-  QUERY_FILTERS_LOCAL_STORAGE_KEY,
+  QUERY_FILTERS_SESSION_STORAGE_KEY,
   SQLOperator,
 } from './SqlFunctions'
 import {
@@ -285,7 +285,7 @@ describe('Local Storage QueryFilter[] tests', () => {
       values: ['b'],
     }
     localStorage.setItem(
-      QUERY_FILTERS_LOCAL_STORAGE_KEY('syn123'),
+      QUERY_FILTERS_SESSION_STORAGE_KEY('syn123'),
       JSON.stringify([filter]),
     )
 
@@ -307,7 +307,7 @@ describe('Local Storage QueryFilter[] tests', () => {
       values: ['syn21754060'],
     }
     localStorage.setItem(
-      QUERY_FILTERS_LOCAL_STORAGE_KEY('syn123'),
+      QUERY_FILTERS_SESSION_STORAGE_KEY('syn123'),
       JSON.stringify([localStorageFilter]),
     )
     const searchParams = {

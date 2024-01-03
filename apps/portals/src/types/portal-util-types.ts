@@ -52,7 +52,7 @@ export type DetailsPageProps = DetailsPageContent & {
   }
   sql: string
   sqlOperator?: ColumnSingleValueFilterOperator | ColumnMultiValueFunction
-  additionalFiltersLocalStorageKey?: string
+  additionalFiltersSessionStorageKey?: string
 }
 
 export type DetailsPageTabProps = DetailsPageContent & {

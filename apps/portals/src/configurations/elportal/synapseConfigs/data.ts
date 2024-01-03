@@ -18,7 +18,7 @@ const data: SynapseConfig = {
     cavaticaConnectAccountURL: cavaticaConnectAccountURL,
     visibleColumnCount: 10,
     isRowSelectionVisible: true,
-    additionalFiltersLocalStorageKey: 'cohort-builder-files-perspective',
+    additionalFiltersSessionStorageKey: 'cohort-builder-files-perspective',
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,

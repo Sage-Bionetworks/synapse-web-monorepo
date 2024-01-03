@@ -97,7 +97,8 @@ export const individualsView: SynapseConfig = {
         },
       ],
     },
-    additionalFiltersLocalStorageKey: 'cohort-builder-individuals-perspective',
+    additionalFiltersSessionStorageKey:
+      'cohort-builder-individuals-perspective',
     customControls: [
       {
         buttonText: 'View files in selection',
@@ -136,7 +137,7 @@ export const filesView: SynapseConfig = {
     visibleColumnCount: 10,
     isRowSelectionVisible: true,
     rowSelectionPrimaryKey: ['id'],
-    additionalFiltersLocalStorageKey: 'cohort-builder-files-perspective',
+    additionalFiltersSessionStorageKey: 'cohort-builder-files-perspective',
     combineRangeFacetConfig: {
       label: 'Age',
       minFacetColumn: 'minAge',
