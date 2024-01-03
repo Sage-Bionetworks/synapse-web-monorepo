@@ -228,7 +228,8 @@ export default function SendToCavaticaConfirmationDialog(
             >
               <Typography variant="body1">
                 Note that we cannot provide support for CAVATICA. Please contact
-                CAVATICA’s <Link href="support@velsera.com"> support</Link> for
+                CAVATICA’s{' '}
+                <Link href="mailto:support@velsera.com"> support</Link> for
                 issues related to the above.
               </Typography>
             </Box>
