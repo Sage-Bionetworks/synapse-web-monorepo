@@ -88,7 +88,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'showLastUpdatedOn'
     | 'noContentPlaceholderType'
     | 'unitDescription'
-    | 'additionalFiltersLocalStorageKey'
+    | 'additionalFiltersSessionStorageKey'
   > &
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
@@ -262,12 +262,12 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     initQueryJson,
     showLastUpdatedOn,
     unitDescription,
-    additionalFiltersLocalStorageKey,
+    additionalFiltersSessionStorageKey,
   } = props
 
   const entityId = parseEntityIdFromSqlStatement(sql)
   const additionalFilters = getAdditionalFilters(
-    additionalFiltersLocalStorageKey ?? entityId,
+    additionalFiltersSessionStorageKey,
     searchParams,
     sqlOperator,
   )

@@ -13,7 +13,7 @@ export type SQLOperator =
   | ColumnMultiValueFunction
 
 const WITHOUT_SYN_PREFIX = 3
-export const QUERY_FILTERS_LOCAL_STORAGE_KEY = (key: string) =>
+export const QUERY_FILTERS_SESSION_STORAGE_KEY = (key: string) =>
   `${key}-temp-QueryFilter-array`
 
 export function removePrefixIfSynId(value: string) {
@@ -38,26 +38,20 @@ export const getIgnoredQueryFilterSearchParamKey = (
  * @returns
  */
 export const getAdditionalFilters = (
-  localStorageKey: string,
+  sessionStorageKey?: string,
   searchParams?: Record<string, string>,
   operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE,
 ): QueryFilter[] | undefined => {
-  const localStorageQueryFiltersString = localStorage.getItem(
-    QUERY_FILTERS_LOCAL_STORAGE_KEY(localStorageKey),
-  )
+  const sessionStorageQueryFiltersString = sessionStorageKey
+    ? sessionStorage.getItem(
+        QUERY_FILTERS_SESSION_STORAGE_KEY(sessionStorageKey),
+      )
+    : undefined
   let additionalFilters: QueryFilter[] = []
-  if (localStorageQueryFiltersString) {
+  if (sessionStorageQueryFiltersString) {
     additionalFilters = JSON.parse(
-      localStorageQueryFiltersString,
+      sessionStorageQueryFiltersString,
     ) as QueryFilter[]
-    // delay clearing out the value so re-rendering during React Strict mode does not destroy the filter
-    setTimeout(
-      () =>
-        localStorage.removeItem(
-          QUERY_FILTERS_LOCAL_STORAGE_KEY(localStorageKey),
-        ),
-      1000,
-    )
   }
   if (searchParams) {
     const isQueryWrapperKey = (key: string) =>

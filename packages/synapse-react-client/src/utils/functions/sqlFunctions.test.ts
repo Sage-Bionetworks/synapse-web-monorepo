@@ -2,7 +2,7 @@ import {
   getAdditionalFilters,
   parseEntityIdAndVersionFromSqlStatement,
   parseEntityIdFromSqlStatement,
-  QUERY_FILTERS_LOCAL_STORAGE_KEY,
+  QUERY_FILTERS_SESSION_STORAGE_KEY,
   SQLOperator,
 } from './SqlFunctions'
 import {
@@ -284,8 +284,8 @@ describe('Local Storage QueryFilter[] tests', () => {
       operator: ColumnSingleValueFilterOperator.EQUAL,
       values: ['b'],
     }
-    localStorage.setItem(
-      QUERY_FILTERS_LOCAL_STORAGE_KEY('syn123'),
+    sessionStorage.setItem(
+      QUERY_FILTERS_SESSION_STORAGE_KEY('syn123'),
       JSON.stringify([filter]),
     )
 
@@ -299,16 +299,16 @@ describe('Local Storage QueryFilter[] tests', () => {
   })
 
   it('Load QueryFilter from both search param and local storage', () => {
-    const localStorageFilter: ColumnSingleValueQueryFilter = {
+    const sessionStorageFilter: ColumnSingleValueQueryFilter = {
       concreteType:
         'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
       columnName: 'study',
       operator: ColumnSingleValueFilterOperator.EQUAL,
       values: ['syn21754060'],
     }
-    localStorage.setItem(
-      QUERY_FILTERS_LOCAL_STORAGE_KEY('syn123'),
-      JSON.stringify([localStorageFilter]),
+    sessionStorage.setItem(
+      QUERY_FILTERS_SESSION_STORAGE_KEY('syn123'),
+      JSON.stringify([sessionStorageFilter]),
     )
     const searchParams = {
       study: 'syn21754060',
@@ -324,7 +324,7 @@ describe('Local Storage QueryFilter[] tests', () => {
       values: ['syn21754060'],
     }
     const expectedResult: ColumnSingleValueQueryFilter[] = [
-      localStorageFilter,
+      sessionStorageFilter,
       searchParamFilter,
     ]
     expect(result).toEqual(expectedResult)

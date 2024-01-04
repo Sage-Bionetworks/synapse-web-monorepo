@@ -1,5 +1,5 @@
 import { SynapseConfig } from 'types/portal-config'
-import { dataSql } from '../resources'
+import { cavaticaConnectAccountURL, dataSql } from '../resources'
 
 const rgbIndex = 1
 
@@ -10,6 +10,8 @@ const data: SynapseConfig = {
     name: 'Data',
     visibleColumnCount: 10,
     showExportToCavatica: true,
+    // cavaticaHelpURL: cavaticaHelpURL,
+    cavaticaConnectAccountURL: cavaticaConnectAccountURL,
     isRowSelectionVisible: true,
     tableConfiguration: {
       showAccessColumn: true,

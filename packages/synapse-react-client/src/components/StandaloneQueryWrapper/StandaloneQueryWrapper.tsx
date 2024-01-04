@@ -47,7 +47,7 @@ type StandaloneQueryWrapperOwnProps = {
     | 'noContentPlaceholderType'
     | 'showLastUpdatedOn'
     | 'visibleColumnCount'
-    | 'additionalFiltersLocalStorageKey'
+    | 'additionalFiltersSessionStorageKey'
   >
 
 export type StandaloneQueryWrapperProps = SynapseTableProps &
@@ -95,7 +95,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
     unitDescription = 'Results',
     rgbIndex,
     showLastUpdatedOn,
-    additionalFiltersLocalStorageKey,
+    additionalFiltersSessionStorageKey,
     noContentPlaceholderType = showTopLevelControls
       ? NoContentPlaceholderType.INTERACTIVE
       : NoContentPlaceholderType.STATIC,
@@ -110,7 +110,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
   const entityId = parseEntityIdFromSqlStatement(sql)
   derivedQueryRequestFromSearchParams.query.additionalFilters =
     getAdditionalFilters(
-      additionalFiltersLocalStorageKey ?? entityId,
+      additionalFiltersSessionStorageKey,
       searchParams,
       sqlOperator,
     )

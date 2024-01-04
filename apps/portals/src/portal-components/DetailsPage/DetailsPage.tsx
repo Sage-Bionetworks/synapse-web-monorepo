@@ -114,7 +114,7 @@ export default function DetailsPage(props: DetailsPageProps) {
     searchParams = {},
     sqlOperator,
     showMenu = true,
-    additionalFiltersLocalStorageKey,
+    additionalFiltersSessionStorageKey,
   } = props
 
   useScrollOnMount()
@@ -122,7 +122,7 @@ export default function DetailsPage(props: DetailsPageProps) {
   const queryBundleRequest = React.useMemo(() => {
     const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
     const additionalFilters = SynapseUtilityFunctions.getAdditionalFilters(
-      additionalFiltersLocalStorageKey ?? entityId,
+      additionalFiltersSessionStorageKey,
       searchParams,
       sqlOperator,
     )

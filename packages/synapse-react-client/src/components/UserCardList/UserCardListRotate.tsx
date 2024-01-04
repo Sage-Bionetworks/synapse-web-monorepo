@@ -32,7 +32,7 @@ export type UserCardListRotateProps = {
   selectedFacets?: FacetColumnRequest[]
   sqlOperator?: SQLOperator
   searchParams?: Record<string, string>
-  additionalFiltersLocalStorageKey?: string
+  additionalFiltersSessionStorageKey?: string
 }
 
 export const getDisplayIds = (
@@ -82,7 +82,7 @@ export const UserCardListRotate: React.FunctionComponent<
   selectedFacets,
   searchParams,
   sqlOperator,
-  additionalFiltersLocalStorageKey,
+  additionalFiltersSessionStorageKey,
 }) => {
   const { accessToken } = useSynapseContext()
   const [userIds, setUserIds] = useState<string[]>([])
@@ -97,7 +97,7 @@ export const UserCardListRotate: React.FunctionComponent<
       setIsLoading(true)
       const entityId = parseEntityIdFromSqlStatement(sql)
       const additionalFilters = getAdditionalFilters(
-        additionalFiltersLocalStorageKey ?? entityId,
+        additionalFiltersSessionStorageKey,
         searchParams,
         sqlOperator,
       )
