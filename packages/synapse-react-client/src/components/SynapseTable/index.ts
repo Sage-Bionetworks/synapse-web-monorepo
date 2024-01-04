@@ -1,4 +1,5 @@
 import { SynapseTable } from './SynapseTable'
 import type { SynapseTableProps } from './SynapseTable'
-export { SynapseTable, SynapseTableProps }
+import { NoContentPlaceholderType } from './NoContentPlaceholderType'
+export { SynapseTable, SynapseTableProps, NoContentPlaceholderType }
 export default SynapseTable

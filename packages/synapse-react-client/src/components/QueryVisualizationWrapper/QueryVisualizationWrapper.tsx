@@ -206,6 +206,8 @@ export function QueryVisualizationWrapper(
         } else {
           return <ThisTableIsEmpty />
         }
+      case NoContentPlaceholderType.HIDDEN:
+        return <></>
       case NoContentPlaceholderType.STATIC:
       default:
         return <NoContentAvailable />
