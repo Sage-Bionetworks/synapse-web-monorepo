@@ -11,6 +11,7 @@ import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import mockFileEntityData, {
   MOCK_FILE_ENTITY_ID,
   MOCK_FILE_NAME,
+  mockFileEntities,
 } from '../../mocks/entity/mockFileEntity'
 import mockDatasetData, {
   MOCK_DATASET_ENTITY_ID,
@@ -156,5 +157,52 @@ describe('EntityHeaderTable tests', () => {
     await userEvent.click(button)
 
     expect(mockOnUpdate).toHaveBeenCalledWith([])
+  })
+
+  it('removes filters when filters are hidden', async () => {
+    const mockOnUpdate = jest.fn()
+    // 10 FileEntities, and 1 Dataset
+    const refs: ReferenceList = [
+      ...mockFileEntities.slice(0, 10).map(entity => ({ targetId: entity.id })),
+      { targetId: mockDatasetData.id },
+    ]
+    const removeEntitiesButtonText = 'Remove Test Entities'
+    renderTable({
+      references: refs,
+      isEditable: true,
+      onUpdate: mockOnUpdate,
+      removeSelectedRowsButtonText: removeEntitiesButtonText,
+    })
+
+    // Should have 12 rows: 11 items + table header
+    await waitFor(() => expect(screen.getAllByRole('row')).toHaveLength(12))
+
+    // Filter to just show the file data
+    const typeFilterInput = await screen.findByLabelText('Filter by Type', {
+      exact: false,
+    })
+    await userEvent.type(typeFilterInput, 'File')
+
+    // One row should be hidden, 10 shown (+ table header)
+    await waitFor(() => expect(screen.getAllByRole('row')).toHaveLength(11))
+
+    const checkBoxes = await screen.findAllByRole('checkbox')
+    // Click the 'Select All' checkbox
+    await userEvent.click(checkBoxes[0])
+    const button = await screen.findByRole('button', {
+      name: removeEntitiesButtonText,
+    })
+    await userEvent.click(button)
+
+    expect(mockOnUpdate).toHaveBeenCalledWith([
+      { targetId: mockDatasetData.id },
+    ])
+
+    await waitFor(() => {
+      // The filter field was removed
+      expect(typeFilterInput).not.toBeInTheDocument()
+      // The filter should have been cleared, and the remaining row (+ header) should be shown
+      expect(screen.getAllByRole('row')).toHaveLength(2)
+    })
   })
 })
