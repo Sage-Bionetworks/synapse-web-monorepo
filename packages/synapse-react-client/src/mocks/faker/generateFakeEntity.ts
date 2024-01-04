@@ -44,11 +44,15 @@ export function generateBaseEntity(
 }
 
 export function generateProject(
-  overrides?: Partial<Project>,
+  entityDataOverrides?: Partial<Project>,
+  idOverride?: number,
 ): MockEntityData<Project> {
-  return generateBaseEntity({
-    name: faker.lorem.words({ min: 1, max: 4 }),
-    concreteType: 'org.sagebionetworks.repo.model.Project',
-    ...overrides,
-  }) as MockEntityData<Project>
+  return generateBaseEntity(
+    {
+      name: faker.lorem.words({ min: 1, max: 4 }),
+      concreteType: 'org.sagebionetworks.repo.model.Project',
+      ...entityDataOverrides,
+    },
+    idOverride,
+  ) as MockEntityData<Project>
 }
