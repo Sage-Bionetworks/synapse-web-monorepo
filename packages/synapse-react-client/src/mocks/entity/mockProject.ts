@@ -209,23 +209,20 @@ const mockProjectEntityData = {
   json: mockProjectJson,
 } satisfies MockEntityData<Project>
 
-export const mockProjects: Project[] = mockProjectIds.map(id => {
+const generatedProjectsEntityData = mockProjectIds.map(id => {
   if (`syn${id}` === MOCK_PROJECT_ID) {
-    return mockProjectEntity
+    return mockProjectEntityData
   }
-  return generateProject({ id: `syn${id}` })
+  return generateProject(undefined, id)
 })
 
-export const mockProjectsEntityData: MockEntityData<Project>[] =
-  mockProjects.map((p: Project): MockEntityData<Project> => {
-    if (p.id === MOCK_PROJECT_ID) {
-      return mockProjectEntityData
-    }
-    return {
-      id: p.id!,
-      name: p.name,
-      entity: p,
-    }
-  })
+export const mockProjects: Project[] = generatedProjectsEntityData.map(
+  projectData => projectData.entity,
+)
+
+export const mockProjectsEntityData: MockEntityData<Project>[] = [
+  mockProjectEntityData,
+  ...generatedProjectsEntityData,
+]
 
 export default mockProjectEntityData

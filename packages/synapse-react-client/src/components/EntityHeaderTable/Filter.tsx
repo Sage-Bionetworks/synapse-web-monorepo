@@ -28,10 +28,9 @@ export function Filter({
       options={sortedUniqueValues}
       initialValue={columnFilterValue}
       onChange={value => column.setFilterValue(value)}
-      placeholder={`Filter by ${column.id}... (${
+      label={`Filter by ${column.columnDef.header} (${
         column.getFacetedUniqueValues().size
       })`}
-      list={column.id + 'list'}
     />
   )
 }

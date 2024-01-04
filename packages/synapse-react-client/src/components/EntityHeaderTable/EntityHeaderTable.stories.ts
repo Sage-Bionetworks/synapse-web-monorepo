@@ -9,6 +9,12 @@ import { ReferenceList } from '@sage-bionetworks/synapse-types'
 const meta = {
   title: 'Governance/EntityHeaderTable',
   component: EntityHeaderTable,
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/vLusb6uSfhx45OyFx5IHwy/(XDM)-Extensible-Data-Management-Comps?type=design&node-id=6546-11978',
+    },
+  },
 } satisfies Meta
 export default meta
 

@@ -18,6 +18,8 @@ import {
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
 import mockProject from './mockProject'
+import { times } from 'lodash-es'
+import { generateBaseEntity } from '../faker/generateFakeEntity'
 
 const parentId = mockProject.id
 const projectName = mockProject.name
@@ -234,6 +236,17 @@ const mockFileEntityHeader: EntityHeader = {
   isLatestVersion: true,
 }
 
+const generatedFileEntityData: MockEntityData<FileEntity>[] = times(50).map(
+  i =>
+    generateBaseEntity(
+      {
+        concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+        parentId: mockProject.id,
+      },
+      30000 + i + 1,
+    ) as MockEntityData<FileEntity>,
+)
+
 const mockFileEntityData = {
   id: MOCK_FILE_ENTITY_ID,
   name: MOCK_FILE_NAME,
@@ -245,5 +258,10 @@ const mockFileEntityData = {
   entityHeader: mockFileEntityHeader,
   path: filePath,
 } satisfies MockEntityData<FileEntity>
+
+export const mockFileEntities = [
+  mockFileEntityData,
+  ...generatedFileEntityData,
+] satisfies MockEntityData<FileEntity>[]
 
 export default mockFileEntityData
