@@ -27,7 +27,7 @@ export const handleFilesToParticipants = async (
     token,
   )
 
-  const localStorageFilter: ColumnSingleValueQueryFilter = {
+  const sessionStorageFilter: ColumnSingleValueQueryFilter = {
     concreteType:
       'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
     columnName: 'fileId',
@@ -37,12 +37,12 @@ export const handleFilesToParticipants = async (
       (row) => row.values[0!]!,
     )!,
   }
-  localStorage.setItem(
-    SynapseUtilityFunctions.QUERY_FILTERS_LOCAL_STORAGE_KEY(
+  sessionStorage.setItem(
+    SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(
       'cohort-builder-individuals-perspective',
     ),
-    // TODO: set additionalFiltersLocalStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
-    JSON.stringify([localStorageFilter]),
+    // TODO: set additionalFiltersSessionStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
+    JSON.stringify([sessionStorageFilter]),
   )
   event.refresh()
   window.location.href = '/Explore/Data by Participants'
@@ -55,7 +55,7 @@ export const handleSelectedFilesToParticipants = (
   const idColIndex = event.data?.columnModels?.findIndex(
     (cm) => cm.name === 'id',
   )
-  const localStorageFilter: ColumnSingleValueQueryFilter = {
+  const sessionStorageFilter: ColumnSingleValueQueryFilter = {
     concreteType:
       'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
     columnName: 'fileId',
@@ -63,12 +63,12 @@ export const handleSelectedFilesToParticipants = (
     isDefiningCondition: true,
     values: event.selectedRows!.map((row) => row.values[idColIndex!]!),
   }
-  localStorage.setItem(
-    SynapseUtilityFunctions.QUERY_FILTERS_LOCAL_STORAGE_KEY(
+  sessionStorage.setItem(
+    SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(
       'cohort-builder-individuals-perspective',
     ),
-    // TODO: set additionalFiltersLocalStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
-    JSON.stringify([localStorageFilter]),
+    // TODO: set additionalFiltersSessionStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
+    JSON.stringify([sessionStorageFilter]),
   )
   event.refresh()
   window.location.href = '/Explore/Data by Participants'

@@ -108,7 +108,7 @@ export type QueryVisualizationWrapperProps = {
    */
   rowSelectionPrimaryKey?: string[]
   /* Look for additional filters using the given key.  If not provided, the entity ID will be used. */
-  additionalFiltersLocalStorageKey?: string
+  additionalFiltersSessionStorageKey?: string
 }
 
 /**

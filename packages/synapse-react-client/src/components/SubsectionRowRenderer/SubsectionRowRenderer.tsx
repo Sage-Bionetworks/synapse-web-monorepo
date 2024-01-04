@@ -32,7 +32,7 @@ export type SubsectionRowRendererProps = {
   friendlyValuesMap?: FriendlyValuesMap
   columnNameIsSectionTitle?: boolean
   limit?: number
-  additionalFiltersLocalStorageKey?: string
+  additionalFiltersSessionStorageKey?: string
 }
 
 const LIST_COLUMN_TYPES: ColumnType[] = [
@@ -54,7 +54,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
   friendlyValuesMap,
   columnNameIsSectionTitle = false,
   limit,
-  additionalFiltersLocalStorageKey,
+  additionalFiltersSessionStorageKey,
 }) => {
   const { accessToken } = useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
@@ -65,7 +65,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
       setIsLoading(true)
       const entityId = parseEntityIdFromSqlStatement(sql)
       const additionalFilters = getAdditionalFilters(
-        additionalFiltersLocalStorageKey ?? entityId,
+        additionalFiltersSessionStorageKey,
         searchParams,
         sqlOperator,
       )
