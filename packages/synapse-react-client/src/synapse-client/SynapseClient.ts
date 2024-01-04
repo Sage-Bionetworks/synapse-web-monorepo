@@ -39,7 +39,6 @@ import {
   ENTITY_SCHEMA_VALIDATION,
   EVALUATION,
   EVALUATION_BY_ID,
-  EVALUATIONS_BY_ID,
   FAVORITES,
   FILE_HANDLE_BATCH,
   FORUM,
@@ -870,15 +869,40 @@ export const getGroupHeadersBatch = (
  * Return a batch of Evaluation queues
  * https://rest-docs.synapse.org/rest/GET/evaluation.html
  */
-export const getEvaluations = (
-  evalIds: string[],
-  accessToken: string | undefined,
+export const getEvaluations = async (
+  params: GetEvaluationParameters = {},
+  accessToken?: string,
 ): Promise<PaginatedResults<Evaluation>> => {
-  return doGet<PaginatedResults<Evaluation>>(
-    EVALUATIONS_BY_ID(evalIds),
-    accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  const urlParams = new URLSearchParams()
+  if (params.accessType != null) urlParams.set('accessType', params.accessType)
+  if (params.activeOnly != null)
+    urlParams.set('activeOnly', params.activeOnly.toString())
+  if (params.evaluationIds != null)
+    urlParams.set('evaluationIds', params.evaluationIds.join(','))
+
+  const fn = (limit: number, offset: number) => {
+    urlParams.set('limit', limit.toString())
+    urlParams.set('offset', offset.toString())
+
+    const url = `${EVALUATION}?${urlParams.toString()}`
+    return doGet<PaginatedResults<Evaluation>>(
+      url,
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+
+  // If evaluation IDs were explicitly specified, fetch all pages
+  if (params.evaluationIds) {
+    const results = await getAllOfPaginatedService(fn)
+    return {
+      totalNumberOfResults: results.length,
+      results,
+    }
+  }
+
+  // Otherwise, return the requested page of data
+  return fn(params.limit ?? 20, params.offset ?? 0)
 }
 
 export type UserProfileList = { list: UserProfile[] }

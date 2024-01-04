@@ -93,9 +93,6 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
     <LightTooltip
       title={content}
       placement={placement}
-      onClick={() =>
-        setOpenMarkdownPopoverId(currentId => (currentId == id ? null : id))
-      }
       open={show}
       sx={{
         ...sx,
@@ -108,6 +105,14 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
       <Box
         role="button"
         className={'PopoverContainer'}
+        onClick={e => {
+          // Prevent the default action of the click event -- for example, if this is in a `label` tag for a checkbox,
+          // prevent the click from toggling the checkbox value
+          e.preventDefault()
+          // Prevent the click from propagating to the parent container
+          e.stopPropagation()
+          setOpenMarkdownPopoverId(currentId => (currentId == id ? null : id))
+        }}
         sx={{ display: 'inline-block', cursor: 'pointer' }}
       >
         {children}

@@ -12,6 +12,7 @@ import {
   PaginatedResults,
   TrashedEntity,
 } from '@sage-bionetworks/synapse-types'
+import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetItemsInTrashCanInfinite(
   options?: UseInfiniteQueryOptions<
@@ -28,16 +29,7 @@ export function useGetItemsInTrashCanInfinite(
     },
     {
       ...options,
-      getNextPageParam: (page, pages) => {
-        const numberOfFetchedResults = pages.flatMap(
-          page => page.results,
-        ).length
-        if (page.totalNumberOfResults! > numberOfFetchedResults) {
-          return numberOfFetchedResults
-        } else {
-          return undefined
-        }
-      },
+      getNextPageParam: getNextPageParamForPaginatedResults,
     },
   )
 }

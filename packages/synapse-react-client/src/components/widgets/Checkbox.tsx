@@ -1,8 +1,9 @@
+import Typography from '@mui/material/Typography'
 import { uniqueId as _uniqueId } from 'lodash-es'
 import React, { useState } from 'react'
 
 export type CheckboxProps = React.PropsWithChildren<{
-  label: string
+  label: React.ReactNode
   hideLabel?: boolean
   checked?: boolean
   className?: string
@@ -45,7 +46,6 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   return (
     <div className={className} onClick={props.onClick}>
       <input
-        aria-label={props.label}
         type="checkbox"
         checked={checked}
         id={uniqueId}
@@ -53,11 +53,14 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
         disabled={disabled}
         data-testid={props['data-testid']}
       />
-      {
-        <label htmlFor={uniqueId} aria-hidden={hideLabel}>
-          {hideLabel ? <></> : props.label}
-        </label>
-      }
+      <Typography
+        component={'label'}
+        variant={'smallText1'}
+        htmlFor={uniqueId}
+        aria-hidden={hideLabel}
+      >
+        {hideLabel ? <></> : props.label}
+      </Typography>
       {props.children ?? <></>}
     </div>
   )

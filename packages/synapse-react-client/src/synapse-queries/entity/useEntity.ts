@@ -37,6 +37,7 @@ import {
 import { invalidateAllQueriesForEntity } from '../QueryClientUtils'
 import { createTableUpdateTransactionRequest } from '../../utils'
 import { SetOptional } from 'type-fest'
+import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
@@ -178,11 +179,7 @@ export function useGetVersionsInfinite(
     },
     {
       ...options,
-      getNextPageParam: (lastPage, pages) => {
-        if (lastPage.results.length > 0) return pages.length * LIMIT
-        //set the new offset to (page * limit)
-        else return undefined
-      },
+      getNextPageParam: getNextPageParamForPaginatedResults,
     },
   )
 }
