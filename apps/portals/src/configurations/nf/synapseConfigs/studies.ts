@@ -20,6 +20,7 @@ import {
   toolStudySql,
 } from '../resources'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { NoContentPlaceholderType } from 'synapse-react-client'
 
 export const newStudiesSql = `${studiesSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
@@ -187,9 +188,10 @@ export const studiesDetailPage: DetailsPageProps = {
           columnName: 'relatedStudies',
           tableSqlKeys: ['studyId'],
           props: {
-            sqlOperator: ColumnSingleValueFilterOperator.LIKE,
+            sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
             sql: studiesSql,
             columnAliases,
+            noContentPlaceholderType: NoContentPlaceholderType.HIDDEN,
             ...studyCardConfiguration,
           },
         },

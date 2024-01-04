@@ -229,7 +229,8 @@ const SynapseObject: React.FC<{
     return <></>
   } else if (
     columnType === ColumnTypeEnum.STRING_LIST ||
-    columnType === ColumnTypeEnum.INTEGER_LIST
+    columnType === ColumnTypeEnum.INTEGER_LIST ||
+    columnType === ColumnTypeEnum.ENTITYID_LIST
   ) {
     try {
       rawValue = JSON.parse(rawValue)
