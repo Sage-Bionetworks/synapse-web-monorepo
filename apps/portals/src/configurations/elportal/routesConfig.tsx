@@ -295,11 +295,11 @@ const routes: GenericRoute[] = [
   },
   {
     exact: true,
-    path: 'Limited Data Commons',
+    path: 'Analysis Platforms',
     synapseConfigArray: [
       {
         name: 'Markdown',
-        title: 'Limited Data Commons',
+        title: 'Analysis Platforms',
         props: {
           ownerId: 'syn27229419',
           wikiId: '621275',

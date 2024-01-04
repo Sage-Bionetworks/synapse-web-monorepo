@@ -416,13 +416,14 @@ const routes: GenericRoute[] = [
   },
   {
     exact: true,
-    path: 'Analytical Workspace',
+    path: 'Analysis Platforms',
     synapseConfigArray: [
       {
         name: 'Markdown',
+        title: 'Analysis Platforms',
         props: {
-          ownerId: 'syn22300949',
-          wikiId: '604940',
+          ownerId: 'syn12666371',
+          wikiId: '625598',
           loadingSkeletonRowCount: 10,
         },
       },
