@@ -26,8 +26,8 @@ export const LightTooltip: StyledComponent<TooltipProps> = styled(
     },
     color: theme.palette.background.paper,
   },
-  [`& .${linkClasses.root}`]: {
-    color: theme.palette.primary.main,
+  [`& .${tooltipClasses.tooltip} .${linkClasses.root}`]: {
+    color: `${theme.palette.primary.main}`,
   },
 }))
 
