@@ -56,11 +56,11 @@ const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
 export const Cards: Story = {
   args: {
     name: 'Tools',
-    sql: 'SELECT * FROM syn26438037',
+    sql: 'SELECT * FROM syn51730943',
     customPlots: [
       {
         query:
-          'SELECT resourceType, count(resourceType) FROM syn26438037 GROUP BY resourceType ',
+          'SELECT resourceType, count(resourceType) FROM syn51730943 GROUP BY resourceType ',
         type: 'bar',
         title: 'Resource Type',
         onCustomPlotClick: handlePlotClick,
@@ -70,10 +70,6 @@ export const Cards: Story = {
     defaultShowFacetVisualization: false,
     defaultShowSearchBox: true,
     shouldDeepLink: true,
-    searchConfiguration: {
-      fullTextSearchHelpURL:
-        'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html',
-    },
     cardConfiguration: {
       type: GENERIC_CARD,
       titleLinkConfig: {
@@ -82,15 +78,23 @@ export const Cards: Story = {
         URLColumnName: 'resourceId',
         matchColumnName: 'resourceId',
         overrideLinkURLColumnName: 'biobankURL',
-        // target: TargetEnum.NEW_WINDOW
       },
       secondaryLabelLimit: 4,
+      labelLinkConfig: [
+        {
+          isMarkdown: true,
+          matchColumnName: 'investigatorWebsite',
+        },
+      ],
       genericCardSchema: {
         type: EXPERIMENTAL_TOOL,
         title: 'resourceName',
         subTitle: 'resourceType',
         description: 'description',
         secondaryLabels: [
+          'investigatorName',
+          'institution',
+          'investigatorWebsite',
           'rrid',
           'synonyms',
           'cellLineCategory',
@@ -109,16 +113,9 @@ export const Cards: Story = {
           'tumorType',
           'specimenFormat',
           'specimenType',
+          'dateModified',
         ],
       },
-      labelLinkConfig: [
-        {
-          isMarkdown: true,
-          matchColumnName: 'rrid',
-          tooltipText:
-            'This is to demo a custom tooltip that describes column data',
-        },
-      ],
     },
   },
 }

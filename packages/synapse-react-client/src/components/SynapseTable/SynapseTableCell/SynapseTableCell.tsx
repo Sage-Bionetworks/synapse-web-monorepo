@@ -33,6 +33,7 @@ import { isFileViewOrDataset } from '../SynapseTableUtils'
 import { useAtomValue } from 'jotai'
 import { tableQueryEntityAtom } from '../../QueryWrapper/QueryWrapper'
 import { EntityImage } from '../../CardContainerLogic/CardContainerLogic'
+import Linkify from '../../GenericCard/Linkify'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
@@ -192,7 +193,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
           {jsonData.map((val: string, index: number) => {
             return (
               <React.Fragment key={val}>
-                {val}
+                <Linkify text={val} />
                 {index !== jsonData.length - 1 ? ', ' : ''}
               </React.Fragment>
             )
@@ -223,7 +224,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
     case ColumnTypeEnum.LARGETEXT: {
       return (
         <Typography variant={'smallText1'} className={isBold}>
-          {columnValue}
+          <Linkify text={columnValue} />
         </Typography>
       )
     }
