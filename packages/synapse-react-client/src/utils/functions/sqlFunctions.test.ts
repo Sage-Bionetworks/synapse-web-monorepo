@@ -284,7 +284,7 @@ describe('Local Storage QueryFilter[] tests', () => {
       operator: ColumnSingleValueFilterOperator.EQUAL,
       values: ['b'],
     }
-    localStorage.setItem(
+    sessionStorage.setItem(
       QUERY_FILTERS_SESSION_STORAGE_KEY('syn123'),
       JSON.stringify([filter]),
     )
