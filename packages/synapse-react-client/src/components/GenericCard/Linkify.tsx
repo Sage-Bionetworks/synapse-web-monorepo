@@ -66,15 +66,13 @@ const rules: LinkifyRule[] = [
 const splitter = new RegExp(rules.map(r => r.regex.source).join('|'), 'g')
 
 const Linkify: React.FC<LinkifyProps> = ({ text, className }) => {
-  if (text === undefined) {
+  if (text == null) {
     return <></>
-  } else if (!text.split) {
-    return <p>{text}</p>
   }
-
+  // Split the string using the joined regular expressions so we can add links to identifiers within free text
   const parts = text.split(splitter)
   return (
-    <p>
+    <>
       {parts.map((part, index) => {
         const match = rules.find(r => r.regex.test(part))
         if (match) {
@@ -93,7 +91,7 @@ const Linkify: React.FC<LinkifyProps> = ({ text, className }) => {
         // else
         return part
       })}
-    </p>
+    </>
   )
 }
 

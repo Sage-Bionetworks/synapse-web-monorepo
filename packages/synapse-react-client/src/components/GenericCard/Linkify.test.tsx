@@ -107,7 +107,6 @@ describe('Linkify tests', () => {
       `https://www.synapse.org/#!Synapse:syn1234567`,
     )
     expect(link.textContent).toEqual('syn1234567')
-    const p = container.querySelector('p')
-    expect(p).toHaveTextContent(value)
+    expect(container).toHaveTextContent(value)
   })
 })

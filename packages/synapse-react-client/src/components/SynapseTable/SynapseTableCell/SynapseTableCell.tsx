@@ -191,9 +191,15 @@ function SynapseTableCell(props: SynapseTableCellProps) {
       return (
         <p className={isBold}>
           {jsonData.map((val: string, index: number) => {
+            const textRenderer =
+              columnType == ColumnTypeEnum.STRING_LIST ? (
+                <Linkify text={val} />
+              ) : (
+                <>{val}</>
+              )
             return (
               <React.Fragment key={val}>
-                <Linkify text={val} />
+                {textRenderer}
                 {index !== jsonData.length - 1 ? ', ' : ''}
               </React.Fragment>
             )
