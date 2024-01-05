@@ -5,7 +5,6 @@ import {
   Row,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { Link, Tooltip } from '@mui/material'
 import {
   CardLink,
@@ -13,7 +12,6 @@ import {
   MarkdownLink,
   TargetEnum,
 } from '../CardContainerLogic'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { isEmpty } from 'lodash-es'
 import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
