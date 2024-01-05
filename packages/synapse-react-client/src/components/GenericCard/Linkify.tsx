@@ -23,6 +23,14 @@ const httpRule: LinkifyRule = {
   onMatch: value => value,
 }
 
+const doiRule: LinkifyRule = {
+  regex: /(doi:10.\d{4,9}\/[-._;()/:A-Z0-9]+)/,
+  onMatch: value => {
+    const id = value.slice('doi:'.length)
+    return `https://doi.org/${id}`
+  },
+}
+
 const pubMedRule: LinkifyRule = {
   regex: /(PMID:\d+)/,
   onMatch: value => {
@@ -54,6 +62,14 @@ const clinVarRCVRule: LinkifyRule = {
   },
 }
 
+const arXivRule: LinkifyRule = {
+  regex: /(arXiv:[a-zA-Z0-9.]+)/,
+  onMatch: value => {
+    const id = value.slice('arXiv:'.length)
+    return `https://arxiv.org/abs/${id}`
+  },
+}
+
 const rules: LinkifyRule[] = [
   httpRule,
   synapseIdRule,
@@ -62,6 +78,8 @@ const rules: LinkifyRule[] = [
   mutationIdRule,
   clinVarVCVRule,
   clinVarRCVRule,
+  doiRule,
+  arXivRule,
 ]
 const splitter = new RegExp(rules.map(r => r.regex.source).join('|'), 'g')
 
