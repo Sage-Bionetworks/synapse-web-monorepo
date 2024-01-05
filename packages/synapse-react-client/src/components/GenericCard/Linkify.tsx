@@ -1,7 +1,6 @@
 import React from 'react'
 import { TargetEnum } from '../CardContainerLogic'
 import { Link } from '@mui/material'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 export type LinkifyProps = {
@@ -15,7 +14,7 @@ export type LinkifyRule = {
 }
 
 const synapseIdRule: LinkifyRule = {
-  regex: SYNAPSE_ENTITY_ID_REGEX,
+  regex: /(syn\d+(?:\.\d+)?)/,
   onMatch: value => `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${value}`,
 }
 

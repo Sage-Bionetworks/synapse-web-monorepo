@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { prettyDOM, render } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import React from 'react'
 import Linkify from './Linkify'
@@ -95,5 +95,19 @@ describe('Linkify tests', () => {
     expect(link.getAttribute('href')).toEqual(
       `https://www.ncbi.nlm.nih.gov/clinvar/RCV123456`,
     )
+  })
+
+  test('auto-link only the Synapse ID', () => {
+    const value = 'a Synapse ID syn1234567 within other text'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://www.synapse.org/#!Synapse:syn1234567`,
+    )
+    expect(link.textContent).toEqual('syn1234567')
+    const p = container.querySelector('p')
+    expect(p).toHaveTextContent(value)
   })
 })
