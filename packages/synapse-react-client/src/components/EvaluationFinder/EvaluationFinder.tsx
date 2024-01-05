@@ -61,6 +61,7 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
                     )}
                 </Typography>
               }
+              aria-label={evaluation.name!}
               checked={selectedIds.includes(evaluation.id!)}
               onChange={() => {
                 if (selectedIds.includes(evaluation.id!)) {

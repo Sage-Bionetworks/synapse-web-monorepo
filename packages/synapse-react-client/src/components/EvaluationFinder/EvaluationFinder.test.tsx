@@ -38,7 +38,7 @@ describe('EvaluationFinder', () => {
     renderComponent({ onChange, selectedIds })
 
     // The first page is visible
-    const evaluationsToSelect = await screen.findAllByRole('checkbox')
+    let evaluationsToSelect = await screen.findAllByRole('checkbox')
     expect(evaluationsToSelect).toHaveLength(2)
 
     // Verify that the selection is correct
@@ -53,7 +53,8 @@ describe('EvaluationFinder', () => {
     await userEvent.click(nextPageButton)
 
     // Page 2 will be shown
-    await waitFor(() => expect(screen.getAllByRole('checkbox')).toHaveLength(1))
+    evaluationsToSelect = await screen.findAllByRole('checkbox')
+    expect(evaluationsToSelect).toHaveLength(1)
     expect(nextPageButton).toBeDisabled()
 
     // Go back to page 1
@@ -62,6 +63,12 @@ describe('EvaluationFinder', () => {
     })
     await userEvent.click(previousPageButton)
     await waitFor(() => expect(screen.getAllByRole('checkbox')).toHaveLength(2))
+
+    evaluationsToSelect = await screen.findAllByRole('checkbox')
+    expect(evaluationsToSelect).toHaveLength(2)
+
+    // Click the first evaluation and verify that the onChange callback is called
+    await userEvent.click(evaluationsToSelect[0])
+    expect(onChange).toHaveBeenCalledWith(expect.arrayContaining(['1', '2']))
   })
-  it('shows selection and calls onChange', () => {})
 })
