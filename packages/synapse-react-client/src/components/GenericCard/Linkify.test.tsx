@@ -27,4 +27,63 @@ describe('Linkify tests', () => {
       `https://pubmed.ncbi.nlm.nih.gov/123456`,
     )
   })
+
+  test('auto-links Mutation ID', () => {
+    const value = 'MGI:123456'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://www.informatics.jax.org/allele/${value}`,
+    )
+  })
+
+  test('auto-links antibody RRID via ScienceCrunch', () => {
+    const value = 'AB_123456'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://scicrunch.org/resolver/${value}`,
+    )
+  })
+  test('auto-links cell line RRID via ScienceCrunch', () => {
+    const value = 'CVCL_AB12'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://scicrunch.org/resolver/${value}`,
+    )
+  })
+
+  test('auto-links ClinVar VCV', () => {
+    const value = 'ClinVar:VCV123456'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://www.ncbi.nlm.nih.gov/clinvar/variation/VCV123456`,
+    )
+  })
+
+  test('auto-links ClinVar RCV', () => {
+    const value = 'ClinVar:RCV123456'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://www.ncbi.nlm.nih.gov/clinvar/RCV123456`,
+    )
+  })
 })
