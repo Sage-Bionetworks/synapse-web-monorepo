@@ -5,7 +5,6 @@ import {
   Row,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { Link, Tooltip } from '@mui/material'
 import {
   CardLink,
@@ -13,7 +12,6 @@ import {
   MarkdownLink,
   TargetEnum,
 } from '../CardContainerLogic'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { isEmpty } from 'lodash-es'
 import { getColumnIndex, getValueOrMultiValue } from './GenericCard'
@@ -22,6 +20,7 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
 import { EntityImage } from '../CardContainerLogic/CardContainerLogic'
+import Linkify from './Linkify'
 
 type SynapseCardLabelProps = {
   value: string
@@ -97,23 +96,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   }
 
   if (!labelLink) {
-    // if this looks like a Synapse ID, then autolink.
-    if (str.match(SYNAPSE_ENTITY_ID_REGEX)) {
-      // its a synId
-      return (
-        <Link
-          target={TargetEnum.NEW_WINDOW}
-          rel="noopener noreferrer"
-          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${str}`}
-          className={newClassName}
-        >
-          {str}
-        </Link>
-      )
-    } else {
-      // they don't need a link
-      return <p>{str}</p>
-    }
+    return <Linkify text={str} className={newClassName} />
   }
 
   let labelContent: JSX.Element
