@@ -1,13 +1,29 @@
 {
   "name": "@sage-bionetworks/synapse-types",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
+  "private": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "author": "Sage Bionetworks",
+  "homepage": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/tree/main/packages/synapse-types",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Sage-Bionetworks/synapse-web-monorepo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/issues"
+  },
+  "license": "Apache-2.0",
   "scripts": {
     "build": "rimraf ./dist && tsup ./src/index.ts --format esm,cjs --dts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "pnpm install && pnpm nx run @sage-bionetworks/synapse-types:build"
   },
   "devDependencies": {
     "rimraf": "^5.0.1",
