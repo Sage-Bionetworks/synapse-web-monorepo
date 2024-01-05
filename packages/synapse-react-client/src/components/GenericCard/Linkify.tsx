@@ -24,7 +24,7 @@ const httpRule: LinkifyRule = {
 }
 
 const doiRule: LinkifyRule = {
-  regex: /(doi:10.\d{4,9}\/[-._;()/:A-Z0-9]+)/,
+  regex: /(doi:10.\d+\/[-._;()/:a-zA-Z0-9]+)/,
   onMatch: value => {
     const id = value.slice('doi:'.length)
     return `https://doi.org/${id}`

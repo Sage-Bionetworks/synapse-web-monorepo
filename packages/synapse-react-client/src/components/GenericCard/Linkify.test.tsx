@@ -118,7 +118,7 @@ describe('Linkify tests', () => {
 
     const link = container.querySelector('a')!
     expect(link.getAttribute('href')).toEqual(
-      `https://www.doi.org/10.1093/neuonc/noy046`,
+      `https://doi.org/10.1093/neuonc/noy046`,
     )
   })
 
