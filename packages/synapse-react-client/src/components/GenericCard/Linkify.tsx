@@ -4,7 +4,7 @@ import { Link } from '@mui/material'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 export type LinkifyProps = {
-  text: string
+  text?: string
   className?: string
 }
 
@@ -63,12 +63,16 @@ const rules: LinkifyRule[] = [
   clinVarVCVRule,
   clinVarRCVRule,
 ]
+const splitter = new RegExp(rules.map(r => r.regex.source).join('|'), 'g')
 
 const Linkify: React.FC<LinkifyProps> = ({ text, className }) => {
-  const parts = text.split(
-    new RegExp(rules.map(r => r.regex.source).join('|'), 'g'),
-  )
+  if (text === undefined) {
+    return <></>
+  } else if (!text.split) {
+    return <p>{text}</p>
+  }
 
+  const parts = text.split(splitter)
   return (
     <p>
       {parts.map((part, index) => {
