@@ -109,4 +109,28 @@ describe('Linkify tests', () => {
     expect(link.textContent).toEqual('syn1234567')
     expect(container).toHaveTextContent(value)
   })
+
+  test('auto-links doi in APA modern alphanumeric string format', () => {
+    const value = 'doi:10.1093/neuonc/noy046'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://doi.org/10.1093/neuonc/noy046`,
+    )
+  })
+
+  test('auto-links arXiv', () => {
+    const value = 'arXiv:2303.07469 '
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://arxiv.org/abs/2303.07469`,
+    )
+  })
 })
