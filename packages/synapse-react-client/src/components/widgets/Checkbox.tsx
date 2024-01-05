@@ -55,7 +55,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   return (
     <div className={className} onClick={props.onClick}>
       <input
-        aria-label={props['aria-label']}
+        aria-label={'aria-label' in props ? props['aria-label'] : props.label}
         type="checkbox"
         checked={checked}
         id={uniqueId}
