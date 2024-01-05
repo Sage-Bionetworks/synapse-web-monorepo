@@ -18,6 +18,12 @@ const synapseIdRule: LinkifyRule = {
   regex: SYNAPSE_ENTITY_ID_REGEX,
   onMatch: value => `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${value}`,
 }
+
+const httpRule: LinkifyRule = {
+  regex: /((ftp|http|https):\/\/[^ ",]+)/,
+  onMatch: value => value,
+}
+
 const pubMedRule: LinkifyRule = {
   regex: /(PMID:\d+)/,
   onMatch: value => {
@@ -50,6 +56,7 @@ const clinVarRCVRule: LinkifyRule = {
 }
 
 const rules: LinkifyRule[] = [
+  httpRule,
   synapseIdRule,
   pubMedRule,
   sciCrunchResolverRule,
@@ -68,7 +75,6 @@ const Linkify: React.FC<LinkifyProps> = ({ text, className }) => {
       {parts.map((part, index) => {
         const match = rules.find(r => r.regex.test(part))
         if (match) {
-          debugger
           return (
             <Link
               href={match.onMatch(part)}

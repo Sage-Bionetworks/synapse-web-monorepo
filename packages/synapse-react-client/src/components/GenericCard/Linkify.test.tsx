@@ -4,6 +4,16 @@ import React from 'react'
 import Linkify from './Linkify'
 
 describe('Linkify tests', () => {
+  test('auto-links a https URL', () => {
+    const value = 'https://sagebionetworks.org/who-we-are/'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(value)
+  })
+
   test('auto-links a Synapse ID', () => {
     const value = 'syn1234567'
     const { container } = render(<Linkify text={value} />, {
