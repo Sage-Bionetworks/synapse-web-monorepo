@@ -10,16 +10,26 @@ jobs:
   tag-and-publish:
     strategy:
       matrix:
-        publishablePackage: [synapse-react-client, markdown-it-synapse]
+        publishablePackage:
+          [
+            synapse-react-client,
+            markdown-it-synapse,
+            '@sage-bionetworks/synapse-types',
+          ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/pnpm-setup-action
+      - name: Get package path
+        id: package-path
+        run: |
+          packagePath=$(pnpm nx show project ${{ matrix.publishablePackage }} --json | jq -r '.sourceRoot')
+          echo "packagePath=${packagePath}" >> "$GITHUB_OUTPUT"
       # Check if the package version changed
       - id: package-version-check
         uses: EndBug/version-check@v2
         with:
-          file-name: './packages/${{ matrix.publishablePackage }}/package.json'
+          file-name: './${{ steps.package-path.outputs.packagePath }}/package.json'
       # Build the package to publish
       - name: Build package
         run: pnpm nx run ${{ matrix.publishablePackage }}:build
@@ -38,6 +48,6 @@ jobs:
             })
       - name: Publish to NPM # or simulate the publish for PRs
         run: pnpm publish --access public ${{ ((github.event_name == 'pull_request' || steps.package-version-check.outputs.changed == 'false') && '--dry-run --no-git-checks') || '' }}
-        working-directory: ./packages/${{ matrix.publishablePackage }}
+        working-directory: './${{ steps.package-path.outputs.packagePath }}'
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
