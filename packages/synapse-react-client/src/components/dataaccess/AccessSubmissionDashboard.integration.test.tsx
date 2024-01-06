@@ -43,7 +43,6 @@ function renderComponent(modifyHistory?: (history: MemoryHistory) => void) {
     modifyHistory(history)
   }
   const renderResult = render(
-    // @ts-expect-error - seems to be an obscure type mismatch
     <Router history={history}>
       <DataAccessSubmissionDashboard />
     </Router>,
@@ -103,7 +102,7 @@ describe('AccessSubmissionDashboard tests', () => {
     )
   })
 
-  it.skip('Updates the passed props and URLSearchParams when updating arName', async () => {
+  it('Updates the passed props and URLSearchParams when updating arName', async () => {
     const { history } = renderComponent()
     const arNameInput = await screen.findByLabelText(
       'Filter by Access Requirement Name',
@@ -137,7 +136,7 @@ describe('AccessSubmissionDashboard tests', () => {
     )
   })
 
-  it.skip('Updates the passed props and URLSearchParams when updating requesterId', async () => {
+  it('Updates the passed props and URLSearchParams when updating requesterId', async () => {
     const { history } = renderComponent()
     const requesterInput = await screen.findByLabelText('Filter by Requester')
     await userEvent.type(requesterInput, MOCK_USER_NAME.substring(0, 1))
@@ -161,10 +160,6 @@ describe('AccessSubmissionDashboard tests', () => {
     )
   })
 
-  //  TODO:  Error in Travis build.  Commenting out to release SRC.
-  //  Example: https://app.travis-ci.com/github/Sage-Bionetworks/Synapse-React-Client/builds/258312595
-  //  Expected: "999" (MOCK_USER_ID)
-  //  Received: null
   it('Updates the passed props and URLSearchParams when updating reviewerId', async () => {
     const { history } = renderComponent()
     const reviewerInput = await screen.findByLabelText('Filter by Reviewer')
