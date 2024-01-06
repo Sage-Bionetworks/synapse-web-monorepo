@@ -65,7 +65,6 @@ function renderComponent(modifyHistory?: (history: MemoryHistory) => void) {
     modifyHistory(history)
   }
   const renderResult = render(
-    // @ts-expect-error - seems to be an obscure type mismatch
     <Router history={history}>
       <UserHistoryDashboard />
     </Router>,

@@ -301,6 +301,9 @@ importers:
       '@sage-bionetworks/react-base-table':
         specifier: ^1.13.4
         version: 1.13.4(react-dom@18.2.0)(react@18.2.0)
+      '@sage-bionetworks/synapse-types':
+        specifier: workspace:*
+        version: link:../../packages/synapse-types
       clone-deep:
         specifier: ^4.0.1
         version: 4.0.1
@@ -353,9 +356,6 @@ importers:
       '@playwright/test':
         specifier: ^1.40.1
         version: 1.40.1
-      '@sage-bionetworks/synapse-types':
-        specifier: workspace:*
-        version: link:../../packages/synapse-types
       '@testing-library/jest-dom':
         specifier: ^6.1.4
         version: 6.1.4(vitest@0.34.6)
@@ -819,6 +819,9 @@ importers:
       '@sage-bionetworks/react-base-table':
         specifier: ^1.13.4
         version: 1.13.4(react-dom@18.2.0)(react@18.2.0)
+      '@sage-bionetworks/synapse-types':
+        specifier: workspace:*
+        version: link:../synapse-types
       '@tanstack/react-table':
         specifier: ^8.9.3
         version: 8.9.3(react-dom@18.2.0)(react@18.2.0)
@@ -1078,9 +1081,6 @@ importers:
       '@rollup/plugin-inject':
         specifier: ^4.0.4
         version: 4.0.4(rollup@2.79.1)
-      '@sage-bionetworks/synapse-types':
-        specifier: workspace:*
-        version: link:../synapse-types
       '@storybook/addon-actions':
         specifier: ^7.5.3
         version: 7.5.3(@types/react-dom@18.2.6)(@types/react@18.0.27)(react-dom@18.2.0)(react@18.2.0)

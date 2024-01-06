@@ -37,7 +37,6 @@ function renderComponent(
     modifyHistory(history)
   }
   const renderResult = render(
-    // @ts-expect-error - seems to be an obscure type mismatch
     <Router history={history}>
       <AccessRequirementDashboard {...props} />
     </Router>,
@@ -71,7 +70,7 @@ describe('AccessRequirementDashboard tests', () => {
     )
   })
 
-  it.skip('Updates the passed props and URLSearchParams when updating nameContains', async () => {
+  it('Updates the passed props and URLSearchParams when updating nameContains', async () => {
     const { history } = renderComponent()
     const nameContainsInput = await screen.findByLabelText(
       'Filter by Access Requirement Name',

@@ -6,14 +6,14 @@ import {
   SynapseClient,
   SynapseConstants,
   SynapseUtilityFunctions,
+  CustomControlCallbackData,
 } from 'synapse-react-client'
-import { CustomControlCallbackData } from 'synapse-react-client/src/components/SynapseTable/TopLevelControls/TopLevelControls'
 
 export const handleFilesToParticipants = async (
   event: CustomControlCallbackData,
 ) => {
   // add filter for files perspective, to show participants associated to the selected files only.
-  let token = undefined
+  let token: string | undefined = undefined
   try {
     token = await SynapseClient.getAccessTokenFromCookie()
   } catch (err) {

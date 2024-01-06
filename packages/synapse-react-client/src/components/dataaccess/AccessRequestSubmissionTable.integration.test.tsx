@@ -32,7 +32,6 @@ import { createMemoryHistory } from 'history'
 function renderComponent(props: AccessRequestSubmissionTableProps) {
   const { wrapperFn } = createWrapperAndQueryClient()
   render(
-    // @ts-expect-error - seems to be an obscure type mismatch
     <Router history={createMemoryHistory()}>
       <AccessRequestSubmissionTable {...props} />
     </Router>,

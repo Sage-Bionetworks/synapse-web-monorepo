@@ -72,7 +72,6 @@ async function renderComponent(
   // eslint-disable-next-line @typescript-eslint/require-await
   await act(async () => {
     renderReturn = render(
-      // @ts-expect-error - seems to be an obscure type mismatch
       <Router history={createMemoryHistory()}>
         <ChallengeTeamWizard {...props} />
       </Router>,
