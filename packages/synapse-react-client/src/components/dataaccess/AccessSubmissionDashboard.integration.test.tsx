@@ -118,13 +118,11 @@ describe('AccessSubmissionDashboard tests', () => {
       )
     })
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         new URLSearchParams(history.location.search).get('accessRequirementId'),
-      ).toEqual(mockAccessRequirement.id.toString()),
-    )
+      ).toEqual(mockAccessRequirement.id.toString())
 
-    await waitFor(() =>
       expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
         expect.objectContaining({
           accessRequirementId: mockAccessRequirement.id.toString(),
@@ -132,8 +130,8 @@ describe('AccessSubmissionDashboard tests', () => {
           reviewerId: undefined,
         }),
         expect.anything(),
-      ),
-    )
+      )
+    })
   })
 
   it('Updates the passed props and URLSearchParams when updating requesterId', async () => {
@@ -145,19 +143,20 @@ describe('AccessSubmissionDashboard tests', () => {
       await selectEvent.select(requesterInput, new RegExp('@' + MOCK_USER_NAME))
     })
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         new URLSearchParams(history.location.search).get('accessorId'),
-      ).toEqual(MOCK_USER_ID.toString()),
-    )
-    expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        accessRequirementId: undefined,
-        accessorId: MOCK_USER_ID.toString(),
-        reviewerId: undefined,
-      }),
-      expect.anything(),
-    )
+      ).toEqual(MOCK_USER_ID.toString())
+
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          accessRequirementId: undefined,
+          accessorId: MOCK_USER_ID.toString(),
+          reviewerId: undefined,
+        }),
+        expect.anything(),
+      )
+    })
   })
 
   it('Updates the passed props and URLSearchParams when updating reviewerId', async () => {
@@ -169,19 +168,20 @@ describe('AccessSubmissionDashboard tests', () => {
       await selectEvent.select(reviewerInput, new RegExp('@' + MOCK_USER_NAME))
     })
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         new URLSearchParams(history.location.search).get('reviewerId'),
-      ).toEqual(MOCK_USER_ID.toString()),
-    )
-    expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        accessRequirementId: undefined,
-        accessorId: undefined,
-        reviewerId: MOCK_USER_ID.toString(),
-      }),
-      expect.anything(),
-    )
+      ).toEqual(MOCK_USER_ID.toString())
+
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          accessRequirementId: undefined,
+          accessorId: undefined,
+          reviewerId: MOCK_USER_ID.toString(),
+        }),
+        expect.anything(),
+      )
+    })
   })
 
   it('Auto-fills the inputs with search parameter values', async () => {

@@ -59,14 +59,16 @@ describe('AccessRequirementDashboard tests', () => {
     expect(await screen.findAllByRole('combobox')).toHaveLength(1)
     expect(await screen.findAllByRole('textbox')).toHaveLength(2)
     await screen.findByTestId(AR_TABLE_TEST_ID)
-    expect(mockAccessRequirementTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        nameContains: '',
-        relatedProjectId: undefined,
-        reviewerId: undefined,
-        onCreateNewAccessRequirementClicked: mockOnCreateNewAR,
-      }),
-      expect.anything(),
+    await waitFor(() =>
+      expect(mockAccessRequirementTable).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          nameContains: '',
+          relatedProjectId: undefined,
+          reviewerId: undefined,
+          onCreateNewAccessRequirementClicked: mockOnCreateNewAR,
+        }),
+        expect.anything(),
+      ),
     )
   })
 
