@@ -79,19 +79,20 @@ describe('AccessRequirementDashboard tests', () => {
     )
     await userEvent.type(nameContainsInput, NAME_CONTAINS_PREFIX)
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         new URLSearchParams(history.location.search).get('nameContains'),
-      ).toEqual(NAME_CONTAINS_PREFIX),
-    )
-    expect(mockAccessRequirementTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        nameContains: NAME_CONTAINS_PREFIX,
-        relatedProjectId: undefined,
-        reviewerId: undefined,
-      }),
-      expect.anything(),
-    )
+      ).toEqual(NAME_CONTAINS_PREFIX)
+
+      expect(mockAccessRequirementTable).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          nameContains: NAME_CONTAINS_PREFIX,
+          relatedProjectId: undefined,
+          reviewerId: undefined,
+        }),
+        expect.anything(),
+      )
+    })
   })
 
   it('Updates the URL search parameters when updating relatedProjectId', async () => {
