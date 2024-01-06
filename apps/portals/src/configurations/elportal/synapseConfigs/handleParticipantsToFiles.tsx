@@ -13,7 +13,12 @@ export const handleParticipantsToFiles = async (
   event: CustomControlCallbackData,
 ) => {
   // add filter for files perspective, to show files associated to all participant rows.
-  const token = await SynapseClient.getAccessTokenFromCookie()
+  let token = undefined
+  try {
+    token = await SynapseClient.getAccessTokenFromCookie()
+  } catch (err) {
+    console.log(err)
+  }
   const queryResultBundle = await SynapseClient.getFullQueryTableResults(
     {
       ...event.request!,
