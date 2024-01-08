@@ -63,13 +63,8 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
         disabled={disabled}
         data-testid={props['data-testid']}
       />
-      <Typography
-        component={'label'}
-        variant={'smallText1'}
-        htmlFor={uniqueId}
-        sx={hideLabel ? { display: 'none' } : {}}
-      >
-        {props.label}
+      <Typography component={'label'} variant={'smallText1'} htmlFor={uniqueId}>
+        {hideLabel ? <></> : props.label}
       </Typography>
       {props.children ?? <></>}
     </div>
