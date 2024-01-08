@@ -132,8 +132,6 @@ export const APPROVED_SUBMISSION_INFO = (
 
 export const EVALUATION = `${REPO}/evaluation`
 export const EVALUATION_BY_ID = (id: string | number) => EVALUATION + `/${id}`
-export const EVALUATIONS_BY_ID = (ids: string[] | number[]) =>
-  EVALUATION + `/?evaluationIds=${ids.join(',')}&limit=${ids.length}`
 
 export const ACTIVITY_FOR_ENTITY = (entityId: string, versionNumber?: string) =>
   versionNumber

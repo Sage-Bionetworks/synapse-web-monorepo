@@ -15,6 +15,7 @@ import {
   FavoriteSortBy,
   FavoriteSortDirection,
 } from '@sage-bionetworks/synapse-types'
+import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useIsFavorite(entityId: string) {
   // TODO: Handle pagination - the default limit is 200
@@ -119,11 +120,7 @@ export function useGetFavoritesInfinite(
     },
     {
       ...options,
-      getNextPageParam: (lastPage, pages) => {
-        if (lastPage.results.length > 0) return pages.length * LIMIT
-        //set the new offset to (page * limit)
-        else return undefined
-      },
+      getNextPageParam: getNextPageParamForPaginatedResults,
     },
   )
 }

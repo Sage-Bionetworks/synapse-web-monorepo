@@ -12,6 +12,7 @@ import {
   FavoriteSortDirection,
   FileHandle,
   FileHandleAssociation,
+  GetEvaluationParameters,
   GetProjectsParameters,
   PrincipalAliasRequest,
   QueryBundleRequest,
@@ -718,5 +719,9 @@ export class KeyFactory {
     request: Omit<ViewColumnModelRequest, 'nextPageToken'>,
   ) {
     return this.getKey('annotationColumnModels', request)
+  }
+
+  public getEvaluationsQueryKey(request: GetEvaluationParameters) {
+    return this.getKey('evaluation', request)
   }
 }

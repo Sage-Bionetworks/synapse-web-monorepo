@@ -1,17 +1,27 @@
+import Typography from '@mui/material/Typography'
 import { uniqueId as _uniqueId } from 'lodash-es'
 import React, { useState } from 'react'
 
-export type CheckboxProps = React.PropsWithChildren<{
-  label: string
-  hideLabel?: boolean
-  checked?: boolean
-  className?: string
-  onChange: (newValue: boolean) => void
-  isSelectAll?: boolean
-  onClick?: (event: React.SyntheticEvent<HTMLDivElement>) => void
-  disabled?: boolean
-  'data-testid'?: string
-}>
+export type CheckboxProps = React.PropsWithChildren<
+  {
+    hideLabel?: boolean
+    checked?: boolean
+    className?: string
+    onChange: (newValue: boolean) => void
+    isSelectAll?: boolean
+    onClick?: (event: React.SyntheticEvent<HTMLDivElement>) => void
+    disabled?: boolean
+    'data-testid'?: string
+    'aria-label'?: string
+  } & (
+    | {
+        label?: React.ReactNode
+        /* If the label is not a string, then we require an aria-label */
+        'aria-label': string
+      }
+    | { label: string }
+  )
+>
 
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   props: CheckboxProps,
@@ -45,7 +55,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   return (
     <div className={className} onClick={props.onClick}>
       <input
-        aria-label={props.label}
+        aria-label={'aria-label' in props ? props['aria-label'] : props.label}
         type="checkbox"
         checked={checked}
         id={uniqueId}
@@ -53,11 +63,14 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
         disabled={disabled}
         data-testid={props['data-testid']}
       />
-      {
-        <label htmlFor={uniqueId} aria-hidden={hideLabel}>
-          {hideLabel ? <></> : props.label}
-        </label>
-      }
+      <Typography
+        component={'label'}
+        variant={'smallText1'}
+        htmlFor={uniqueId}
+        sx={hideLabel ? { display: 'none' } : {}}
+      >
+        {props.label}
+      </Typography>
       {props.children ?? <></>}
     </div>
   )

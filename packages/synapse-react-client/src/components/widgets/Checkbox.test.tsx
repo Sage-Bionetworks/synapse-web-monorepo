@@ -5,12 +5,12 @@ import userEvent from '@testing-library/user-event'
 
 const mockCallback = jest.fn()
 
-const props: CheckboxProps = {
+const props = {
   label: 'checkboxLabel',
   checked: true,
   className: 'checkboxClass',
   onChange: mockCallback,
-}
+} satisfies CheckboxProps
 
 describe('basic function', () => {
   beforeEach(() => {

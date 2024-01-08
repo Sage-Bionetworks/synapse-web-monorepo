@@ -103,7 +103,7 @@ const getEvaluationItems = async (
   lookupList: string[],
   token: string | undefined,
 ): Promise<Evaluation[]> => {
-  const newData = await getEvaluations(lookupList, token)
+  const newData = await getEvaluations({ evaluationIds: lookupList }, token)
   const notFound = lookupList.filter(
     item => newData.results.map(item => item.id).indexOf(item) === -1,
   )
