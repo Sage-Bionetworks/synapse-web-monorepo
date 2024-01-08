@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useGetEvaluationsInfinite } from '../../synapse-queries/evaluation/useEvaluation'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 import {
+  Alert,
   Box,
   Button,
   FormControl,
@@ -23,24 +24,35 @@ export type EvaluationFinderProps = Pick<
 export default function EvaluationFinder(props: EvaluationFinderProps) {
   const { accessType, activeOnly, selectedIds = [], onChange } = props
   const [currentPage, setCurrentPage] = useState(0)
-  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useGetEvaluationsInfinite(
-      {
-        accessType,
-        activeOnly,
-      },
-      { keepPreviousData: true },
-    )
+  const {
+    data,
+    isLoading,
+    hasNextPage: hasNextPageOnServer,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useGetEvaluationsInfinite(
+    {
+      accessType,
+      activeOnly,
+    },
+    { keepPreviousData: true, useErrorBoundary: true },
+  )
 
   if (isLoading) {
     return <LinearProgress />
   }
   if (!data?.pages) {
-    return <></>
+    // This should never happen since errors are propagated to the error boundary
+    return (
+      <Alert severity="error">
+        An unexpected error occurred and evaluations could not be loaded
+      </Alert>
+    )
   }
 
+  const hasNextPageInState = data.pages.length - 1 > currentPage
   const canGoToNextPage =
-    (data.pages.length - 1 > currentPage || hasNextPage) && !isFetchingNextPage
+    hasNextPageInState || (hasNextPageOnServer && !isFetchingNextPage)
 
   return (
     <>
@@ -90,7 +102,12 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
             if (data.pages[currentPage + 1]) {
               setCurrentPage(page => page + 1)
             } else {
-              fetchNextPage().then(() => setCurrentPage(page => page + 1))
+              fetchNextPage()
+                .then(() => setCurrentPage(page => page + 1))
+                .catch(() => {
+                  // The error will be thrown by the useGetEvaluationsInfinite hook handled by the error boundary
+                  console.error('Error fetching next page of evaluations')
+                })
             }
           }}
         >
