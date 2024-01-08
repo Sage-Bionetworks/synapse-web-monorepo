@@ -37,7 +37,6 @@ function renderComponent(
     modifyHistory(history)
   }
   const renderResult = render(
-    // @ts-expect-error - seems to be an obscure type mismatch
     <Router history={history}>
       <AccessRequirementDashboard {...props} />
     </Router>,
@@ -60,37 +59,40 @@ describe('AccessRequirementDashboard tests', () => {
     expect(await screen.findAllByRole('combobox')).toHaveLength(1)
     expect(await screen.findAllByRole('textbox')).toHaveLength(2)
     await screen.findByTestId(AR_TABLE_TEST_ID)
-    expect(mockAccessRequirementTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        nameContains: '',
-        relatedProjectId: undefined,
-        reviewerId: undefined,
-        onCreateNewAccessRequirementClicked: mockOnCreateNewAR,
-      }),
-      expect.anything(),
+    await waitFor(() =>
+      expect(mockAccessRequirementTable).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          nameContains: '',
+          relatedProjectId: undefined,
+          reviewerId: undefined,
+          onCreateNewAccessRequirementClicked: mockOnCreateNewAR,
+        }),
+        expect.anything(),
+      ),
     )
   })
 
-  it.skip('Updates the passed props and URLSearchParams when updating nameContains', async () => {
+  it('Updates the passed props and URLSearchParams when updating nameContains', async () => {
     const { history } = renderComponent()
     const nameContainsInput = await screen.findByLabelText(
       'Filter by Access Requirement Name',
     )
     await userEvent.type(nameContainsInput, NAME_CONTAINS_PREFIX)
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         new URLSearchParams(history.location.search).get('nameContains'),
-      ).toEqual(NAME_CONTAINS_PREFIX),
-    )
-    expect(mockAccessRequirementTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        nameContains: NAME_CONTAINS_PREFIX,
-        relatedProjectId: undefined,
-        reviewerId: undefined,
-      }),
-      expect.anything(),
-    )
+      ).toEqual(NAME_CONTAINS_PREFIX)
+
+      expect(mockAccessRequirementTable).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          nameContains: NAME_CONTAINS_PREFIX,
+          relatedProjectId: undefined,
+          reviewerId: undefined,
+        }),
+        expect.anything(),
+      )
+    })
   })
 
   it('Updates the URL search parameters when updating relatedProjectId', async () => {

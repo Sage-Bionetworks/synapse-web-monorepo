@@ -43,7 +43,6 @@ function renderComponent(modifyHistory?: (history: MemoryHistory) => void) {
     modifyHistory(history)
   }
   const renderResult = render(
-    // @ts-expect-error - seems to be an obscure type mismatch
     <Router history={history}>
       <DataAccessSubmissionDashboard />
     </Router>,
@@ -103,7 +102,7 @@ describe('AccessSubmissionDashboard tests', () => {
     )
   })
 
-  it.skip('Updates the passed props and URLSearchParams when updating arName', async () => {
+  it('Updates the passed props and URLSearchParams when updating arName', async () => {
     const { history } = renderComponent()
     const arNameInput = await screen.findByLabelText(
       'Filter by Access Requirement Name',
@@ -119,13 +118,11 @@ describe('AccessSubmissionDashboard tests', () => {
       )
     })
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         new URLSearchParams(history.location.search).get('accessRequirementId'),
-      ).toEqual(mockAccessRequirement.id.toString()),
-    )
+      ).toEqual(mockAccessRequirement.id.toString())
 
-    await waitFor(() =>
       expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
         expect.objectContaining({
           accessRequirementId: mockAccessRequirement.id.toString(),
@@ -133,11 +130,11 @@ describe('AccessSubmissionDashboard tests', () => {
           reviewerId: undefined,
         }),
         expect.anything(),
-      ),
-    )
+      )
+    })
   })
 
-  it.skip('Updates the passed props and URLSearchParams when updating requesterId', async () => {
+  it('Updates the passed props and URLSearchParams when updating requesterId', async () => {
     const { history } = renderComponent()
     const requesterInput = await screen.findByLabelText('Filter by Requester')
     await userEvent.type(requesterInput, MOCK_USER_NAME.substring(0, 1))
@@ -146,25 +143,22 @@ describe('AccessSubmissionDashboard tests', () => {
       await selectEvent.select(requesterInput, new RegExp('@' + MOCK_USER_NAME))
     })
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         new URLSearchParams(history.location.search).get('accessorId'),
-      ).toEqual(MOCK_USER_ID.toString()),
-    )
-    expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        accessRequirementId: undefined,
-        accessorId: MOCK_USER_ID.toString(),
-        reviewerId: undefined,
-      }),
-      expect.anything(),
-    )
+      ).toEqual(MOCK_USER_ID.toString())
+
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          accessRequirementId: undefined,
+          accessorId: MOCK_USER_ID.toString(),
+          reviewerId: undefined,
+        }),
+        expect.anything(),
+      )
+    })
   })
 
-  //  TODO:  Error in Travis build.  Commenting out to release SRC.
-  //  Example: https://app.travis-ci.com/github/Sage-Bionetworks/Synapse-React-Client/builds/258312595
-  //  Expected: "999" (MOCK_USER_ID)
-  //  Received: null
   it('Updates the passed props and URLSearchParams when updating reviewerId', async () => {
     const { history } = renderComponent()
     const reviewerInput = await screen.findByLabelText('Filter by Reviewer')
@@ -174,19 +168,20 @@ describe('AccessSubmissionDashboard tests', () => {
       await selectEvent.select(reviewerInput, new RegExp('@' + MOCK_USER_NAME))
     })
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         new URLSearchParams(history.location.search).get('reviewerId'),
-      ).toEqual(MOCK_USER_ID.toString()),
-    )
-    expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        accessRequirementId: undefined,
-        accessorId: undefined,
-        reviewerId: MOCK_USER_ID.toString(),
-      }),
-      expect.anything(),
-    )
+      ).toEqual(MOCK_USER_ID.toString())
+
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          accessRequirementId: undefined,
+          accessorId: undefined,
+          reviewerId: MOCK_USER_ID.toString(),
+        }),
+        expect.anything(),
+      )
+    })
   })
 
   it('Auto-fills the inputs with search parameter values', async () => {
