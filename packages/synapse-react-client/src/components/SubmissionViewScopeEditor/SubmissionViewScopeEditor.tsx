@@ -2,7 +2,7 @@ import React from 'react'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import EvaluationFinder from '../EvaluationFinder/EvaluationFinder'
 import { useGetEvaluation } from '../../synapse-queries/evaluation/useEvaluation'
-import { Box, IconButton, Typography } from '@mui/material'
+import { Box, IconButton, Skeleton, Typography } from '@mui/material'
 import IconSvg from '../IconSvg'
 
 type SubmissionViewScopeItemProps = {
@@ -14,10 +14,16 @@ function SubmissionViewScopeItem(props: SubmissionViewScopeItemProps) {
   const { evaluationId, onRemove } = props
   const { data: evaluation, isLoading } = useGetEvaluation(evaluationId)
   if (isLoading) {
-    return <></>
+    return <Skeleton width={'100%'} />
   }
   return (
-    <Box display={'flex'} flexDirection={'row'} gap={1} alignItems={'center'}>
+    <Box
+      display={'flex'}
+      flexDirection={'row'}
+      gap={1}
+      alignItems={'center'}
+      justifyContent={'space-between'}
+    >
       <Typography key={evaluation!.id} variant={'smallText1'}>
         {evaluation!.name}
       </Typography>
@@ -56,6 +62,9 @@ export default function SubmissionViewScopeEditor(
 
   return (
     <>
+      <Typography variant={'smallText1'} sx={{ fontWeight: 700 }} mb={1}>
+        Evaluations
+      </Typography>
       <EvaluationFinder
         activeOnly={false}
         accessType={ACCESS_TYPE.READ_PRIVATE_SUBMISSION}
