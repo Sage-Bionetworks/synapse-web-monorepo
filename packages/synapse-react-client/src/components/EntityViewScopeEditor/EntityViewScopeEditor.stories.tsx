@@ -15,6 +15,10 @@ const meta: Meta = {
       </Paper>
     ),
   ],
+  render: function Render(args) {
+    const [ids, setIds] = React.useState<string[]>([])
+    return <EntityViewScopeEditor {...args} scopeIds={ids} onChange={setIds} />
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
