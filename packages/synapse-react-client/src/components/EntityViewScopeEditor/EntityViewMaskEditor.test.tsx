@@ -52,7 +52,7 @@ describe('EntityViewMaskEditor tests', () => {
     )
   })
 
-  it('Disables input if an unsupported mask value is passed', async () => {
+  it('Disables input if an unsupported mask value is passed', () => {
     const value = ENTITY_VIEW_TYPE_MASK_DOCKER
     const onChange = jest.fn()
     renderComponent({ value, onChange })
