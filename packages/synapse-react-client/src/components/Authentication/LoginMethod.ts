@@ -16,7 +16,7 @@ export function getLoginMethodFriendlyName(loginMethod: LoginMethod) {
     case LOGIN_METHOD_OAUTH2_GOOGLE:
       return 'Google'
     case LOGIN_METHOD_OAUTH2_ORCID:
-      return 'ORCID'
+      return 'ORCiD'
     case LOGIN_METHOD_EMAIL:
       return 'your email'
     default:
