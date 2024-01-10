@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react'
+import * as SynapseContext from '../../utils/context/SynapseContext'
 import useDetectSSOCode from './useDetectSSOCode'
 import { SynapseClient } from '../../index'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
@@ -10,6 +11,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
+import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 
 const authorizationCode = '12345'
 
@@ -234,6 +236,10 @@ describe('useDetectSSOCode tests', () => {
     })
   })
   it('Handles ORCID binding', async () => {
+    // set up access token, to indicate that user is logged in
+    const synapseContextSpy = jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
     history.replaceState(
       {},
       '',
@@ -256,8 +262,14 @@ describe('useDetectSSOCode tests', () => {
       expect(onSignInComplete).toHaveBeenCalled()
       expect(hookReturn.result.current.isLoading).toBe(false)
     })
+    synapseContextSpy.mockReset()
   })
   it('Handles ORCID binding failure', async () => {
+    // set up access token, to indicate that user is logged in
+    const synapseContextSpy = jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     history.replaceState(
       {},
@@ -290,6 +302,117 @@ describe('useDetectSSOCode tests', () => {
 
       expect(onSignInComplete).not.toHaveBeenCalled()
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
+    })
+    consoleSpy.mockReset()
+    synapseContextSpy.mockReset()
+  })
+
+  it('Handles 2fa scenario on login with ORCiD', async () => {
+    // by default, user is not logged in (access token in context is not set)
+    history.replaceState(
+      {},
+      '',
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.ORCID}`,
+    )
+    const mockOn2fa = jest.fn()
+    mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
+
+    const hookReturn = renderHook(() =>
+      useDetectSSOCode({
+        onSignInComplete,
+        onTwoFactorAuthRequired: mockOn2fa,
+      }),
+    )
+
+    expect(hookReturn.result.current.isLoading).toBe(true)
+
+    await waitFor(() => {
+      expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
+        OAUTH2_PROVIDERS.ORCID,
+        authorizationCode,
+        `http://localhost/?provider=${OAUTH2_PROVIDERS.ORCID}`,
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )
+      expect(mockOn2fa).toHaveBeenCalledWith(twoFactorAuthErrorResponse)
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(onSignInComplete).not.toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
+    })
+  })
+
+  it('Redirects to account registration on failed login with ORCID where the status is 404', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    history.replaceState(
+      {},
+      '',
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.ORCID}`,
+    )
+    const notFoundError = new SynapseClientError(
+      404,
+      'not found',
+      expect.getState().currentTestName!,
+    )
+
+    mockOAuthSessionRequest.mockRejectedValue(notFoundError)
+
+    const hookReturn = renderHook(() => useDetectSSOCode({ onSignInComplete }))
+
+    expect(hookReturn.result.current.isLoading).toBe(true)
+
+    await waitFor(() => {
+      expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
+        OAUTH2_PROVIDERS.ORCID,
+        authorizationCode,
+        `http://localhost/?provider=${OAUTH2_PROVIDERS.ORCID}`,
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(onSignInComplete).not.toHaveBeenCalled()
+      expect(window.location.replace).toHaveBeenCalledWith(
+        'https://www.synapse.org/#!RegisterAccount:0',
+      )
+      expect(hookReturn.result.current.isLoading).toBe(false)
+    })
+    consoleSpy.mockReset()
+  })
+
+  it('Handles other error on login with ORCID', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    history.replaceState(
+      {},
+      '',
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.ORCID}`,
+    )
+    const unhandledError = new SynapseClientError(
+      500,
+      'other error',
+      expect.getState().currentTestName!,
+    )
+
+    mockOAuthSessionRequest.mockRejectedValue(unhandledError)
+    const mockOnError = jest.fn()
+
+    const hookReturn = renderHook(() =>
+      useDetectSSOCode({ onSignInComplete, onError: mockOnError }),
+    )
+    expect(hookReturn.result.current.isLoading).toBe(true)
+
+    await waitFor(() => {
+      expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
+        OAUTH2_PROVIDERS.ORCID,
+        authorizationCode,
+        `http://localhost/?provider=${OAUTH2_PROVIDERS.ORCID}`,
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(onSignInComplete).not.toHaveBeenCalled()
+
+      expect(mockOnError).toHaveBeenCalledWith(unhandledError.reason)
+      // Should not redirect to account creation
+      expect(window.location.href).not.toEqual(
+        'https://www.synapse.org/#!RegisterAccount:0',
+      )
       expect(hookReturn.result.current.isLoading).toBe(false)
     })
     consoleSpy.mockReset()
