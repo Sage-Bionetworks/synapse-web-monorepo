@@ -1,15 +1,12 @@
 import React from 'react'
-import { Box } from '@mui/material'
+import { Box, BoxProps } from '@mui/material'
 
-export type WizardChoiceButtonGroupProps = React.PropsWithChildren<{}>
-
-export default function WizardChoiceButtonGroup(
-  props: WizardChoiceButtonGroupProps,
-) {
-  const { children } = props
+export default function WizardChoiceButtonGroup(props: BoxProps) {
+  const { sx } = props
   return (
     <Box
       role={'menu'}
+      {...props}
       sx={{
         '& > button': {
           '&:first-of-type': {
@@ -26,9 +23,8 @@ export default function WizardChoiceButtonGroup(
             borderTop: 'none',
           },
         },
+        ...(Array.isArray(sx) ? sx : [sx]),
       }}
-    >
-      {children}
-    </Box>
+    />
   )
 }
