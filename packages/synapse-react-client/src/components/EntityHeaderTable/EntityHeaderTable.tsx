@@ -305,11 +305,13 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
         table.setColumnFilters([])
       }
     },
-    [showFilterControls],
+    [table, showFilterControls],
   )
 
   if (isLoading) {
-    return <SkeletonTable numCols={3} numRows={10} />
+    return (
+      <SkeletonTable numCols={3} numRows={Math.min(10, refsInState.length)} />
+    )
   } else if (!isSuccess) {
     return <></>
   }
