@@ -163,7 +163,7 @@ export default function DefaultValueField<T>(props: DefaultValueFieldProps<T>) {
     <TextField
       {...TextFieldProps}
       type={'text'}
-      value={value}
+      value={value || undefined}
       onChange={event => {
         if (event.target.value == '') {
           onChange(undefined as T)
