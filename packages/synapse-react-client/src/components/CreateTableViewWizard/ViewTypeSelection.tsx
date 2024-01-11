@@ -11,7 +11,7 @@ import { useSynapseContext } from '../../utils'
 
 const FILE_VIEW_DESCRIPTION = (
   <>
-    <WizardChoiceButtonDescription my={1.25}>
+    <WizardChoiceButtonDescription>
       This view lists all files, folders, and/or tables in the selected folders
       or projects.
     </WizardChoiceButtonDescription>
@@ -31,7 +31,7 @@ const FILE_VIEW_DESCRIPTION = (
 
 const PROJECT_VIEW_DESCRIPTION = (
   <>
-    <WizardChoiceButtonDescription my={1.25}>
+    <WizardChoiceButtonDescription>
       This view lists all (and only) your selected projects.
     </WizardChoiceButtonDescription>
     <Link
@@ -50,7 +50,7 @@ const PROJECT_VIEW_DESCRIPTION = (
 
 const SUBMISSION_VIEW_DESCRIPTION = (
   <>
-    <WizardChoiceButtonDescription my={1.25}>
+    <WizardChoiceButtonDescription>
       This view lists all submissions within one or more evaluation queues.
     </WizardChoiceButtonDescription>
     <Link
@@ -69,7 +69,7 @@ const SUBMISSION_VIEW_DESCRIPTION = (
 
 const MATERIALIZED_VIEW_DESCRIPTION = (
   <>
-    <WizardChoiceButtonDescription my={1.25}>
+    <WizardChoiceButtonDescription>
       The results of a query across multiple sources, defined by a SQL
       statement.
     </WizardChoiceButtonDescription>
@@ -88,7 +88,7 @@ const MATERIALIZED_VIEW_DESCRIPTION = (
 )
 
 const VIRTUAL_TABLE_DESCRIPTION = (
-  <WizardChoiceButtonDescription my={1.25}>
+  <WizardChoiceButtonDescription>
     A saved query on another table or view where complex filters can be applied
     to aggregated results.
   </WizardChoiceButtonDescription>

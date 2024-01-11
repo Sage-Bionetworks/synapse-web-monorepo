@@ -6,7 +6,7 @@ import { Link } from '@mui/material'
 
 const TABLE_DESCRIPTION = (
   <>
-    <WizardChoiceButtonDescription my={1.25}>
+    <WizardChoiceButtonDescription>
       Synapse tables are used to organize web-accessible, sharable, and
       queryable data. Tables may be queried and edited with the Synapse UI, as
       well as with the Synapse programmatic clients.
@@ -27,7 +27,7 @@ const TABLE_DESCRIPTION = (
 
 const VIEW_DESCRIPTION = (
   <>
-    <WizardChoiceButtonDescription my={1.25}>
+    <WizardChoiceButtonDescription>
       Views allow you to see and query groups of other objects in Synapse, such
       as files, tables, projects, or submissions and any associated annotations
       about those items.
@@ -45,7 +45,7 @@ const VIEW_DESCRIPTION = (
 )
 
 export type TableTypeSelectionProps = {
-  /* Callback including the chosen type, and optional viewTypeMask if included in the choice (e.g. Project Views) */
+  /* Callback invoked if the user selects "Table" */
   onTableSelected: () => void
   /* Callback invoked if the user selects the "View" group, which will show more options */
   onViewSelected: () => void
