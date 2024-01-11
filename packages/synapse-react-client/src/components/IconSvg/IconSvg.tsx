@@ -121,6 +121,7 @@ import { Tooltip } from '@mui/material'
 import CreateVersion from '../../assets/icons/CreateVersion'
 import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
 import { GoogleIcon24 } from '../../assets/GoogleIcon24'
+import { ORCIDIcon } from '../../assets/icons/ORCIDIcon'
 
 export const IconStrings = [
   'accessOpen',
@@ -243,6 +244,7 @@ export const IconStrings = [
   'addConditions',
   'sortUp',
   'sortDown',
+  'orcid',
   'google24',
   'openInFull',
 ] as const
@@ -513,6 +515,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Sort {...otherProps} />
     case 'google24':
       return <GoogleIcon24 {...otherProps} />
+    case 'orcid':
+      return <ORCIDIcon {...otherProps} />
     case 'filter':
       return <FilterAltTwoTone {...otherProps} />
     case 'openInFull':

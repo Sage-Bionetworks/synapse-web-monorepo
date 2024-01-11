@@ -5,6 +5,7 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_GOOGLE,
+  LOGIN_METHOD_OAUTH2_ORCID,
   OAUTH2_PROVIDERS,
 } from '../../utils/SynapseConstants'
 import LoginMethodButton from './LoginMethodButton'
@@ -26,16 +27,20 @@ export default function AuthenticationMethodSelection(
 ) {
   const { onBeginOAuthSignIn, ssoRedirectUrl, onSelectUsernameAndPassword } =
     props
-  function onGoogleSignIn(event: React.MouseEvent<HTMLButtonElement>) {
+
+  function onSSOSignIn(
+    event: React.MouseEvent<HTMLButtonElement>,
+    provider: string,
+  ) {
     if (onBeginOAuthSignIn) {
       onBeginOAuthSignIn()
     }
 
     event.preventDefault()
     const redirectUrl = ssoRedirectUrl
-      ? `${ssoRedirectUrl}${OAUTH2_PROVIDERS.GOOGLE}`
-      : `${SynapseClient.getRootURL()}?provider=${OAUTH2_PROVIDERS.GOOGLE}`
-    SynapseClient.oAuthUrlRequest(OAUTH2_PROVIDERS.GOOGLE, redirectUrl)
+      ? `${ssoRedirectUrl}${provider}`
+      : `${SynapseClient.getRootURL()}?provider=${provider}`
+    SynapseClient.oAuthUrlRequest(provider, redirectUrl)
       .then(data => {
         // Send the user to the authorization URL
         window.location = data.authorizationUrl as unknown as Location
@@ -50,7 +55,16 @@ export default function AuthenticationMethodSelection(
       <LoginMethodButton
         loginMethod={LOGIN_METHOD_OAUTH2_GOOGLE}
         iconName="google24"
-        onClick={onGoogleSignIn}
+        onClick={event => {
+          onSSOSignIn(event, OAUTH2_PROVIDERS.GOOGLE)
+        }}
+      />
+      <LoginMethodButton
+        loginMethod={LOGIN_METHOD_OAUTH2_ORCID}
+        iconName="orcid"
+        onClick={event => {
+          onSSOSignIn(event, OAUTH2_PROVIDERS.ORCID)
+        }}
       />
       <LoginMethodButton
         loginMethod={LOGIN_METHOD_EMAIL}

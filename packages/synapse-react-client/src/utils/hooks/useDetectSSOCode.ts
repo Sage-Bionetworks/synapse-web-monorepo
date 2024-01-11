@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
+import { useSynapseContext } from '../context'
 
 export type UseDetectSSOCodeReturnType = {
   /* true iff SSO login has occurred and the completion of the OAuth flow in Synapse is pending */
@@ -54,13 +55,35 @@ export default function useDetectSSOCode(
   // state is used during OAuth based Synapse account creation (it's the username)
   const state = searchParams?.get('state')
 
+  const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(!!(code && provider))
 
   useEffect(() => {
     if (code && provider) {
       const redirectUrl = `${redirectURL}?provider=${provider}`
 
-      if (OAUTH2_PROVIDERS.GOOGLE == provider) {
+      //If user is already logged in, and the provider is ORCID, then try to bind this OAuth provider to the account.
+      if (OAUTH2_PROVIDERS.ORCID == provider && accessToken !== undefined) {
+        // now bind this to the user account
+        const onFailure = (err: SynapseClientError) => {
+          console.error('Error binding ORCiD to account: ', err)
+          if (onError) {
+            onError(err.reason)
+          }
+        }
+        bindOAuthProviderToAccount(
+          provider,
+          code,
+          redirectUrl,
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )
+          .then(onSignInComplete)
+          .catch(onFailure)
+          .finally(() => setIsLoading(false))
+      } else if (
+        OAUTH2_PROVIDERS.GOOGLE == provider ||
+        OAUTH2_PROVIDERS.ORCID == provider
+      ) {
         const onSuccess = (
           response: LoginResponse | TwoFactorAuthErrorResponse | null,
         ) => {
@@ -80,13 +103,13 @@ export default function useDetectSSOCode(
             // Synapse account not found, send to registration page
             window.location.replace(registerAccountUrl)
           }
-          console.error('Error with Google account association: ', err)
+          console.error('Error with account login: ', err)
           if (onError) {
             onError(err.reason)
           }
         }
 
-        if (state) {
+        if (OAUTH2_PROVIDERS.GOOGLE == provider && state) {
           oAuthRegisterAccountStep2(
             state,
             provider,
@@ -108,23 +131,6 @@ export default function useDetectSSOCode(
             .catch(onFailure)
             .finally(() => setIsLoading(false))
         }
-      } else if (OAUTH2_PROVIDERS.ORCID == provider) {
-        // now bind this to the user account
-        const onFailure = (err: SynapseClientError) => {
-          console.error('Error binding ORCiD to account: ', err)
-          if (onError) {
-            onError(err.reason)
-          }
-        }
-        bindOAuthProviderToAccount(
-          provider,
-          code,
-          redirectUrl,
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )
-          .then(onSignInComplete)
-          .catch(onFailure)
-          .finally(() => setIsLoading(false))
       } else {
         console.warn('Unknown SSO Provider: ', provider)
         setIsLoading(false)
