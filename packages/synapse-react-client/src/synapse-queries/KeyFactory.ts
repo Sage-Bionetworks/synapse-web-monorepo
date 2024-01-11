@@ -721,7 +721,10 @@ export class KeyFactory {
     return this.getKey('annotationColumnModels', request)
   }
 
+  public getEvaluationByIdQueryKey(evalId: string) {
+    return this.getKey('evaluation', evalId)
+  }
   public getEvaluationsQueryKey(request: GetEvaluationParameters) {
-    return this.getKey('evaluation', request)
+    return this.getKey('evaluation', 'paginated', request)
   }
 }
