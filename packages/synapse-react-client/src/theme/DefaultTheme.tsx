@@ -131,6 +131,18 @@ export const defaultMuiThemeOptions: ThemeOptions = {
         }),
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          boxShadow:
+            '0px 16px 16px rgba(0, 0, 0, 0.05), 0px 4px 4px rgba(0, 0, 0, 0.05), 0px 1px 1px rgba(0, 0, 0, 0.05)',
+        },
+      },
+      defaultProps: {
+        square: true,
+      },
+    },
     MuiCheckbox: {
       defaultProps: {
         color: 'secondary',

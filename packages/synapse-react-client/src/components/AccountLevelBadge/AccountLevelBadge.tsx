@@ -1,4 +1,4 @@
-import { Link, Tooltip, Typography } from '@mui/material'
+import { Box, Card, Link, Tooltip, Typography } from '@mui/material'
 import React from 'react'
 import { ReactComponent as Certified } from '../../assets/icons/account-certified.svg'
 import { ReactComponent as Validated } from '../../assets/icons/account-validated.svg'
@@ -40,28 +40,35 @@ export const AccountLevelBadge: React.FunctionComponent<
 > = ({ badgeType }: AccountLevelBadgeProps) => {
   const badgeConfig = accountLevelBadgeConfig[badgeType]
   return (
-    <div className={'AccountLevelBadge cardContainer'}>
+    <Card
+      sx={{
+        maxWidth: 450,
+        padding: '30px 20px',
+        margin: '5px',
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
       <Tooltip title={badgeConfig.tooltipText}>
-        <div className="AccountLevelBadge__iconContainer">
+        <Box alignSelf="start" mr="10px">
           {badgeConfig.icon}
-        </div>
+        </Box>
       </Tooltip>
-      <div className="AccountLevelBadge__body">
-        <Typography variant="headline3" sx={{ mb: '5px' }}>
+      <Box>
+        <Typography variant="headline3" gutterBottom component="div">
           {badgeConfig.label}
         </Typography>
-        <Typography variant="body1" sx={{ color: 'grey.700', mb: 1 }}>
+        <Typography variant="body1" sx={{ color: 'grey.700', mb: '10px' }}>
           {badgeConfig.description}
         </Typography>
         <Link
-          className="AccountLevelBadge__body__moreInfoLink"
           target="_blank"
           rel="noopener noreferrer"
           href="https://help.synapse.org/docs/User-Types.2007072795.html"
         >
-          Learn more
+          <Typography variant="buttonLink">Learn more</Typography>
         </Link>
-      </div>
-    </div>
+      </Box>
+    </Card>
   )
 }
