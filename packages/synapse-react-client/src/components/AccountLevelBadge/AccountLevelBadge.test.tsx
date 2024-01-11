@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 import React from 'react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
@@ -18,33 +17,20 @@ describe('AccountLevelBadge', () => {
     return { component, user }
   }
 
-  async function confirmTooltipText(
-    user: UserEvent,
-    badgeType: AccountLevelBadgeType,
-  ) {
-    const iconDiv = document.querySelector('.AccountLevelBadge__iconContainer')
-    expect(iconDiv).not.toBeNull()
-    await user.hover(iconDiv!)
+  for (const badgeType in accountLevelBadgeConfig) {
+    it(`${badgeType} badge`, async () => {
+      const { user } = setUp(badgeType as AccountLevelBadgeType)
 
-    const tooltip = await screen.findByRole('tooltip')
-    expect(tooltip).toHaveTextContent(
-      accountLevelBadgeConfig[badgeType].tooltipText,
-    )
+      const config = accountLevelBadgeConfig[badgeType as AccountLevelBadgeType]
+
+      await screen.findByText(config.label)
+      await screen.findByText(config.description)
+
+      const icon = screen.getByLabelText(config.tooltipText)
+      await user.hover(icon)
+
+      const tooltip = await screen.findByRole('tooltip')
+      expect(tooltip).toHaveTextContent(config.tooltipText)
+    })
   }
-
-  it('certified user', async () => {
-    const { user } = setUp('certified')
-
-    await screen.findByText(accountLevelBadgeConfig.certified.label)
-    await screen.findByText(accountLevelBadgeConfig.certified.description)
-    await confirmTooltipText(user, 'certified')
-  })
-
-  it('validated user', async () => {
-    const { user } = setUp('validated')
-
-    await screen.findByText(accountLevelBadgeConfig.validated.label)
-    await screen.findByText(accountLevelBadgeConfig.validated.description)
-    await confirmTooltipText(user, 'validated')
-  })
 })
