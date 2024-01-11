@@ -53,13 +53,18 @@ describe('EntityViewMaskEditor tests', () => {
   })
 
   it('Disables input if an unsupported mask value is passed', () => {
-    const value = ENTITY_VIEW_TYPE_MASK_DOCKER
+    const value = ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_DOCKER
     const onChange = jest.fn()
     renderComponent({ value, onChange })
 
     screen
       .getAllByRole('checkbox')
       .forEach(checkbox => expect(checkbox).toBeDisabled())
+
+    expect(screen.getByLabelText('Files')).toBeChecked()
+    expect(screen.getByLabelText('Folders')).not.toBeChecked()
+    expect(screen.getByLabelText('Tables')).not.toBeChecked()
+    expect(screen.getByLabelText('Datasets')).not.toBeChecked()
 
     const alert = screen.getByRole('alert')
     within(alert).getByText(

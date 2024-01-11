@@ -108,7 +108,7 @@ describe('EntityViewScopeEditor tests', () => {
   it('Restricts the selectable types based on isProjectView', async () => {
     const scopeIds = ['syn123']
     const onChange = jest.fn()
-    const isProjectView = true // !
+    const isProjectView = true // Test different UI for project views
     renderComponent({
       scopeIds,
       onChange,
@@ -125,7 +125,7 @@ describe('EntityViewScopeEditor tests', () => {
           isEditable: true,
           onUpdate: expect.anything(),
           removeSelectedRowsButtonText: 'Remove Selected Items from View Scope',
-          objectNameCopy: 'container',
+          objectNameCopy: 'project',
           hideTextFieldToPasteValue: true,
           entityFinderConfiguration: {
             selectMultiple: true,

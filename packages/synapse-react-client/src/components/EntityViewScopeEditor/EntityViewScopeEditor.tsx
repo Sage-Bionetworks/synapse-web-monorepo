@@ -18,7 +18,7 @@ export type EntityViewScopeEditorProps = {
 export default function EntityViewScopeEditor(
   props: EntityViewScopeEditorProps,
 ) {
-  const { scopeIds, isProjectView = false } = props
+  const { scopeIds, isProjectView = false, onChange } = props
   const references: ReferenceList = useMemo(
     () => scopeIds.map(scope => ({ targetId: scope })),
     [scopeIds],
@@ -38,10 +38,10 @@ export default function EntityViewScopeEditor(
         references={references}
         isEditable={true}
         onUpdate={newReferences => {
-          props.onChange(newReferences.map(ref => ref.targetId))
+          onChange(newReferences.map(ref => ref.targetId))
         }}
         removeSelectedRowsButtonText={'Remove Selected Items from View Scope'}
-        objectNameCopy={'container'}
+        objectNameCopy={isProjectView ? 'project' : 'container'}
         hideTextFieldToPasteValue={true}
         entityFinderConfiguration={{
           selectMultiple: true,

@@ -21,13 +21,14 @@ const maskLabelPairs: [string, number][] = [
 ]
 
 export function isMaskSupportedInUI(value: number) {
-  // Union of all the supported UI mask values
-  const allMasksSupportedInEditor = maskLabelPairs.reduce(
-    (acc, [, mask]) => acc | mask,
-    0,
-  )
-  // Flip the bits and & with the value -- if any bits remain, then an unsupported mask is in use
-  return (~allMasksSupportedInEditor & value) === 0
+  maskLabelPairs.forEach(([, mask]) => {
+    // Remove each supported bit
+    if ((value & mask) !== 0) {
+      value = value - mask
+    }
+  })
+  // If value is not zero, then some unsupported bit remains
+  return value === 0
 }
 
 export default function EntityViewMaskEditor(props: EntityViewMaskEditorProps) {
@@ -45,7 +46,10 @@ export default function EntityViewMaskEditor(props: EntityViewMaskEditorProps) {
           <Checkbox
             key={label}
             label={label}
-            checked={(value & mask) > 0}
+            checked={
+              // Checked if the mask bit is set
+              (value & mask) > 0
+            }
             disabled={customMaskInUse}
             onChange={() => {
               // Toggle the clicked mask value with XOR
