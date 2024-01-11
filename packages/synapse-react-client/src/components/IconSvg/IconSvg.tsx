@@ -121,7 +121,7 @@ import { Tooltip } from '@mui/material'
 import CreateVersion from '../../assets/icons/CreateVersion'
 import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
 import { GoogleIcon24 } from '../../assets/GoogleIcon24'
-import { ORCIDIcon } from '../../assets/icons/ORCiDIcon'
+import { ORCIDIcon } from '../../assets/icons/ORCIDIcon'
 
 export const IconStrings = [
   'accessOpen',
