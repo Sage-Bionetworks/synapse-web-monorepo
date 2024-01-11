@@ -1,67 +1,66 @@
+import { Link, Tooltip, Typography } from '@mui/material'
 import React from 'react'
 import { ReactComponent as Certified } from '../../assets/icons/account-certified.svg'
-import { ReactComponent as Registered } from '../../assets/icons/account-registered.svg'
 import { ReactComponent as Validated } from '../../assets/icons/account-validated.svg'
-import { SynapseConstants } from '../../utils'
-import { useGetUserBundle } from '../../synapse-queries/user/useUserBundle'
-import { ErrorBanner } from '../error/ErrorBanner'
 
-export type AccountLevelBadgeProps = {
-  userId: string
+export type AccountLevelBadgeType = 'certified' | 'validated'
+type AccountLevelBadgeConfig = {
+  label: string
+  description: string
+  tooltipText: string
+  icon: React.ReactElement
 }
 
-export const accountLevelRegisteredLabel: string = 'Registered'
-export const accountLevelCertifiedLabel: string = 'Certified'
-export const accountLevelVerifiedLabel: string = 'Validated'
+export const accountLevelBadgeConfig: Record<
+  AccountLevelBadgeType,
+  AccountLevelBadgeConfig
+> = {
+  certified: {
+    label: 'Certified',
+    description: 'Has access to normal functionality.',
+    tooltipText:
+      'This user has passed Sage Certification, which means they can upload data and create new projects and tables.',
+    icon: <Certified />,
+  },
+  validated: {
+    label: 'Validated',
+    description: 'Identity has been manually verified.',
+    tooltipText:
+      'This user is Validated. Their identity and credentials have been manually verified by Sage Bionetworks.',
+    icon: <Validated />,
+  },
+}
 
-const CERTIFICATION_AND_VERIFICATION_BUNDLE_MASK =
-  SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
-  SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
+export type AccountLevelBadgeProps = {
+  badgeType: AccountLevelBadgeType
+}
 
 export const AccountLevelBadge: React.FunctionComponent<
   AccountLevelBadgeProps
-> = ({ userId }: AccountLevelBadgeProps) => {
-  const {
-    data: userBundle,
-    isLoading,
-    error,
-  } = useGetUserBundle(userId, CERTIFICATION_AND_VERIFICATION_BUNDLE_MASK)
-
-  if (isLoading) {
-    return <></>
-  }
-  if (error) {
-    return <ErrorBanner error={error} />
-  }
-
-  let accountLevelString: string = accountLevelRegisteredLabel
-  let icon = <Registered />
-  if (userBundle?.isCertified) {
-    accountLevelString = accountLevelCertifiedLabel
-    icon = <Certified />
-  }
-  if (userBundle?.isVerified) {
-    accountLevelString = accountLevelVerifiedLabel
-    icon = <Validated />
-  }
+> = ({ badgeType }: AccountLevelBadgeProps) => {
+  const badgeConfig = accountLevelBadgeConfig[badgeType]
   return (
     <div className={'AccountLevelBadge cardContainer'}>
-      <div className="AccountLevelBadge__iconContainer">{icon}</div>
+      <Tooltip title={badgeConfig.tooltipText}>
+        <div className="AccountLevelBadge__iconContainer">
+          {badgeConfig.icon}
+        </div>
+      </Tooltip>
       <div className="AccountLevelBadge__body">
-        <p className="AccountLevelBadge__body__userAccountLevel">
-          {accountLevelString}
-        </p>
-        <p className="AccountLevelBadge__body__accountLevelLabel">
-          Synapse Account Level
-        </p>
-        <a
+        <Typography variant="headline3" sx={{ mb: '5px' }}>
+          {badgeConfig.label}
+        </Typography>
+        <Typography variant="body1" sx={{ color: 'grey.700', mb: 1 }}>
+          {badgeConfig.description}
+        </Typography>
+        <Link
           className="AccountLevelBadge__body__moreInfoLink"
           target="_blank"
           rel="noopener noreferrer"
           href="https://help.synapse.org/docs/User-Types.2007072795.html"
         >
           Learn more
-        </a>
+        </Link>
       </div>
     </div>
   )

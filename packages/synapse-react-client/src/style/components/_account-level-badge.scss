@@ -1,11 +1,11 @@
 .AccountLevelBadge {
   display: flex;
   align-items: center;
-  padding: 23px 20px;
-  width: 280px;
+  padding: 30px 20px;
+  max-width: 450px;
   &__iconContainer {
-    margin-top: 8px;
-    margin-right: 11px;
+    align-self: start;
+    margin-right: 10px;
   }
   &__body {
     &__userAccountLevel {
