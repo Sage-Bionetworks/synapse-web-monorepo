@@ -1,0 +1,2 @@
+import{r,i as a,a as t}from"./jsx-runtime_commonjs-proxy-d6eb4d39.js";var e={},u=a;Object.defineProperty(e,"__esModule",{value:!0});var v=e.default=void 0,i=u(r()),o=t,l=(0,i.default)((0,o.jsx)("path",{d:"M10.09 15.59 11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"}),"ExitToApp");v=e.default=l;export{v as d};
+//# sourceMappingURL=ExitToApp-296407ba.js.map
