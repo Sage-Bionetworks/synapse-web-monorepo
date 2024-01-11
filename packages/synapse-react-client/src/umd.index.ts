@@ -1,5 +1,5 @@
 import { SkeletonButton } from './components/Skeleton/SkeletonButton'
-import { AccountLevelBadge } from './components/AccountLevelBadge/AccountLevelBadge'
+import { AccountLevelBadges } from './components/AccountLevelBadges/AccountLevelBadges'
 import ChangePassword from './components/ChangePassword/ChangePassword'
 import { ReviewerDashboard } from './components/dataaccess/ReviewerDashboard'
 import { FolderDownloadConfirmation } from './components/download_list/FolderDownloadConfirmation'
@@ -97,7 +97,7 @@ const SynapseComponents = {
   EvaluationCard,
   EvaluationEditorPage,
   AccessTokenPage,
-  AccountLevelBadge,
+  AccountLevelBadges,
   TermsAndConditions,
   PageProgress,
   ProjectViewCarousel,

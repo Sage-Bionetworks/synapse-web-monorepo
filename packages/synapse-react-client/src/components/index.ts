@@ -1,5 +1,5 @@
 export * from './AccessTokenPage'
-export * from './AccountLevelBadge'
+export * from './AccountLevelBadges'
 export * from './Authentication'
 export * from './CardContainer'
 export * from './CardContainerLogic'

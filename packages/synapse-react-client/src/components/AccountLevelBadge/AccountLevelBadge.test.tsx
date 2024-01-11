@@ -1,79 +1,36 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
   AccountLevelBadge,
-  accountLevelCertifiedLabel,
-  accountLevelRegisteredLabel,
-  accountLevelVerifiedLabel,
+  AccountLevelBadgeType,
+  accountLevelBadgeConfig,
 } from './AccountLevelBadge'
-import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { UserBundle } from '@sage-bionetworks/synapse-types'
-import SynapseClient from '../../synapse-client'
 
-jest.mock('../../synapse-client', () => ({
-  getUserBundle: jest.fn(),
-}))
-
-const mockGetUserBundle = jest.mocked(SynapseClient.getUserBundle)
-
-const mockRegistered: UserBundle = {
-  userId: '345424',
-  isCertified: false,
-  isVerified: false,
-}
-const mockCertified: UserBundle = {
-  userId: '345424',
-  isCertified: true,
-  isVerified: false,
-}
-const mockVerified: UserBundle = {
-  userId: '345424',
-  isCertified: true,
-  isVerified: true,
-}
-
-describe('basic functionality', () => {
-  const props = {
-    userId: '1234',
-  }
-
-  function renderComponent() {
-    return render(<AccountLevelBadge {...props} />, {
+describe('AccountLevelBadge', () => {
+  function setUp(badgeType: AccountLevelBadgeType) {
+    const component = render(<AccountLevelBadge badgeType={badgeType} />, {
       wrapper: createWrapper(),
     })
+    const user = userEvent.setup()
+    return { component, user }
   }
 
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
+  for (const badgeType in accountLevelBadgeConfig) {
+    it(`${badgeType} badge`, async () => {
+      const { user } = setUp(badgeType as AccountLevelBadgeType)
 
-  it('registered user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(mockRegistered)
+      const config = accountLevelBadgeConfig[badgeType as AccountLevelBadgeType]
 
-    renderComponent()
+      await screen.findByText(config.label)
+      await screen.findByText(config.description)
 
-    // find account level label
-    await screen.findByText(accountLevelRegisteredLabel)
-    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
-  })
+      const icon = screen.getByLabelText(config.tooltipText)
+      await user.hover(icon)
 
-  it('certified user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(mockCertified)
-
-    renderComponent()
-
-    // find account level label
-    await screen.findByText(accountLevelCertifiedLabel)
-    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
-  })
-
-  it('verified user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(mockVerified)
-
-    renderComponent()
-
-    // find account level label
-    await screen.findByText(accountLevelVerifiedLabel)
-    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
-  })
+      const tooltip = await screen.findByRole('tooltip')
+      expect(tooltip).toHaveTextContent(config.tooltipText)
+    })
+  }
 })
