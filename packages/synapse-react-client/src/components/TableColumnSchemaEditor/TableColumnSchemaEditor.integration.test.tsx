@@ -29,6 +29,7 @@ import { ImportTableColumnsButtonProps } from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
 import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
 import { addColumnModelToForm } from './TableColumnSchemaEditorTestUtils'
+import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
 
 const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
   {
@@ -89,18 +90,7 @@ describe('TableColumnSchemaEditor', () => {
     server.use(
       /* Each test in this suite should register its own table query handler */
       ...getDefaultColumnHandlers(),
-      ...getAnnotationColumnHandlers({
-        concreteType:
-          'org.sagebionetworks.repo.model.table.ViewColumnModelResponse',
-        results: [
-          {
-            id: '1235325',
-            columnType: ColumnTypeEnum.STRING,
-            name: 'columnFromAnnotations',
-            maximumSize: 10,
-          },
-        ],
-      }),
+      ...getAnnotationColumnHandlers(MOCK_ANNOTATION_COLUMNS),
       rest.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,

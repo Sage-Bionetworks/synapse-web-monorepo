@@ -8,23 +8,33 @@ import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import mockProjectEntityData from '../../mocks/entity/mockProject'
 import userEvent from '@testing-library/user-event'
 import {
+  ColumnModel,
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
   ENTITY_VIEW_TYPE_MASK_PROJECT,
+  EntityType,
   MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
   SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
   TABLE_ENTITY_CONCRETE_TYPE_VALUE,
+  ViewScope,
   VIRTUAL_TABLE_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import { addColumnModelToForm } from '../TableColumnSchemaEditor/TableColumnSchemaEditorTestUtils'
-import SynapseClient from '../../synapse-client'
+import SynapseClient, { getAnnotationColumnModels } from '../../synapse-client'
 import {
   MOCK_ACCESS_TOKEN,
   MOCK_CONTEXT_VALUE,
 } from '../../mocks/MockSynapseContext'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumnModels'
+import { rest } from 'msw'
+import { uniqueId } from 'lodash-es'
+import { BACKEND_ENDPOINT } from '../../utils/APIConstants'
+import { BackendDestinationEnum } from '../../utils/functions'
+import { getEndpoint } from '../../utils/functions/getEndpoint'
+import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
+import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
 
 jest.mock('../EntityFinder/EntityFinderModal', () => ({
   EntityFinderModal: jest.fn(() => (
@@ -36,9 +46,13 @@ const mockEntityFinderModal = jest.mocked(EntityFinderModal)
 
 jest.spyOn(SynapseClient, 'createEntity')
 jest.spyOn(SynapseClient, 'createColumnModels')
+jest.spyOn(SynapseClient, 'getAnnotationColumnModels')
 
 const createColumnModelsSpy = jest.mocked(SynapseClient.createColumnModels)
 const createEntitySpy = jest.mocked(SynapseClient.createEntity)
+const getAnnotationColumnsSpy = jest.mocked(
+  SynapseClient.getAnnotationColumnModels,
+)
 describe('CreateTableWizard integration tests', () => {
   function renderComponent(props: CreateTableViewWizardProps) {
     return render(<CreateTableViewWizard {...props} />, {
@@ -53,7 +67,7 @@ describe('CreateTableWizard integration tests', () => {
     server.listen()
   })
   afterEach(() => {
-    server.restoreHandlers()
+    server.resetHandlers()
     jest.clearAllMocks()
   })
   afterAll(() => server.close())
@@ -175,6 +189,30 @@ describe('CreateTableWizard integration tests', () => {
     await waitFor(() => expect(addDefaultViewColumnsButton).toBeEnabled())
     await userEvent.click(addDefaultViewColumnsButton)
 
+    // Add annotation columns
+    const addAnnotationColumnsButton = await screen.findByRole('button', {
+      name: 'Add All Annotations',
+    })
+    await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
+    await userEvent.click(addAnnotationColumnsButton)
+    // Verify we called the API with the correct scope and view type mask
+    await waitFor(() =>
+      expect(getAnnotationColumnsSpy).toHaveBeenLastCalledWith(
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ViewColumnModelRequest',
+          viewScope: {
+            viewTypeMask:
+              ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER,
+            scope: ['syn123', 'syn456'],
+            viewEntityType: EntityType.ENTITY_VIEW,
+          },
+          includeDerivedAnnotations: true,
+        },
+        MOCK_ACCESS_TOKEN,
+      ),
+    )
+
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     // Give the view a name
@@ -193,9 +231,12 @@ describe('CreateTableWizard integration tests', () => {
           name: 'tableName',
           concreteType: ENTITY_VIEW_CONCRETE_TYPE_VALUE,
           parentId: mockProjectEntityData.id,
-          columnIds: defaultFileViewColumnModels.map(
-            columnModel => columnModel.id,
-          ),
+          columnIds: [
+            ...defaultFileViewColumnModels.map(columnModel => columnModel.id),
+            ...MOCK_ANNOTATION_COLUMNS.results.map(
+              columnModel => columnModel.id,
+            ),
+          ],
           scopeIds: expect.any(Array),
           viewTypeMask:
             ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER,
@@ -266,6 +307,29 @@ describe('CreateTableWizard integration tests', () => {
     await waitFor(() => expect(addDefaultViewColumnsButton).toBeEnabled())
     await userEvent.click(addDefaultViewColumnsButton)
 
+    // Add annotation columns
+    const addAnnotationColumnsButton = await screen.findByRole('button', {
+      name: 'Add All Annotations',
+    })
+    await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
+    await userEvent.click(addAnnotationColumnsButton)
+    // Verify we called the API with the correct scope and view type mask
+    await waitFor(() =>
+      expect(getAnnotationColumnsSpy).toHaveBeenLastCalledWith(
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ViewColumnModelRequest',
+          viewScope: {
+            viewTypeMask: ENTITY_VIEW_TYPE_MASK_PROJECT,
+            scope: ['syn123', 'syn456'],
+            viewEntityType: EntityType.ENTITY_VIEW,
+          },
+          includeDerivedAnnotations: true,
+        },
+        MOCK_ACCESS_TOKEN,
+      ),
+    )
+
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     // Give the view a name
@@ -284,9 +348,12 @@ describe('CreateTableWizard integration tests', () => {
           name: 'tableName',
           concreteType: ENTITY_VIEW_CONCRETE_TYPE_VALUE,
           parentId: mockProjectEntityData.id,
-          columnIds: defaultFileViewColumnModels.map(
-            columnModel => columnModel.id,
-          ),
+          columnIds: [
+            ...defaultFileViewColumnModels.map(columnModel => columnModel.id),
+            ...MOCK_ANNOTATION_COLUMNS.results.map(
+              columnModel => columnModel.id,
+            ),
+          ],
           scopeIds: expect.any(Array),
           viewTypeMask: ENTITY_VIEW_TYPE_MASK_PROJECT,
         },
@@ -344,6 +411,28 @@ describe('CreateTableWizard integration tests', () => {
     await waitFor(() => expect(addDefaultViewColumnsButton).toBeEnabled())
     await userEvent.click(addDefaultViewColumnsButton)
 
+    // Add annotation columns
+    const addAnnotationColumnsButton = await screen.findByRole('button', {
+      name: 'Add All Annotations',
+    })
+    await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
+    await userEvent.click(addAnnotationColumnsButton)
+    // Verify we called the API with the correct scope and view type mask
+    await waitFor(() =>
+      expect(getAnnotationColumnsSpy).toHaveBeenLastCalledWith(
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ViewColumnModelRequest',
+          viewScope: {
+            viewTypeMask: undefined,
+            scope: [mockEvaluationQueue.id!],
+            viewEntityType: EntityType.SUBMISSION_VIEW,
+          },
+          includeDerivedAnnotations: true,
+        },
+        MOCK_ACCESS_TOKEN,
+      ),
+    )
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     // Give the view a name
@@ -362,9 +451,12 @@ describe('CreateTableWizard integration tests', () => {
           name: 'tableName',
           concreteType: SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
           parentId: mockProjectEntityData.id,
-          columnIds: defaultFileViewColumnModels.map(
-            columnModel => columnModel.id,
-          ),
+          columnIds: [
+            ...defaultFileViewColumnModels.map(columnModel => columnModel.id),
+            ...MOCK_ANNOTATION_COLUMNS.results.map(
+              columnModel => columnModel.id,
+            ),
+          ],
           scopeIds: expect.any(Array),
         },
         MOCK_ACCESS_TOKEN,
@@ -550,5 +642,156 @@ describe('CreateTableWizard integration tests', () => {
 
     // Verify that we cannot advance
     await waitFor(() => expect(nextButton).toBeDisabled())
+  })
+
+  it('Shows an error when column model creation fails', async () => {
+    const errorMessage = 'Mocked error in POST /column/batch'
+    server.use(
+      rest.post(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/column/batch`,
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(400),
+            ctx.json({
+              reason: errorMessage,
+            }),
+          )
+        },
+      ),
+    )
+
+    const onComplete = jest.fn()
+    const onCancel = jest.fn()
+    renderComponent({
+      open: true,
+      parentId: mockProjectEntityData.id,
+      onComplete,
+      onCancel,
+    })
+
+    // Select "Table"
+    const tableButton = await screen.findByRole('menuitem', {
+      name: 'Table',
+    })
+    await userEvent.click(tableButton)
+
+    // Add a few columns
+    await addColumnModelToForm('foo')
+    await addColumnModelToForm('bar')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+
+    // Give the table a name
+    const nameField = await screen.findByRole('textbox', { name: 'Name' })
+    await userEvent.type(nameField, 'tableName')
+    await userEvent.click(screen.getByRole('button', { name: 'Finish' }))
+
+    // Verify that the error is shown and the callback was not invoked
+    await waitFor(() => {
+      expect(createColumnModelsSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        expect.arrayContaining([
+          {
+            name: 'foo',
+            columnType: 'STRING',
+            maximumSize: 50,
+          },
+          {
+            name: 'bar',
+            columnType: 'STRING',
+            maximumSize: 50,
+          },
+        ]),
+      )
+
+      // The error should be shown
+      const alert = screen.getByRole('alert')
+      within(alert).getByText(errorMessage)
+
+      // The call to create the entity and the onComplete callback should not have been called
+      expect(createEntitySpy).not.toHaveBeenCalled()
+      expect(onComplete).not.toHaveBeenCalled()
+    })
+  })
+
+  it('Shows an error when entity creation fails', async () => {
+    const errorMessage = 'Mocked error in POST /entity'
+    server.use(
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/entity`,
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(400),
+            ctx.json({
+              reason: errorMessage,
+            }),
+          )
+        },
+      ),
+    )
+
+    const onComplete = jest.fn()
+    const onCancel = jest.fn()
+    renderComponent({
+      open: true,
+      parentId: mockProjectEntityData.id,
+      onComplete,
+      onCancel,
+    })
+
+    // Select "Table"
+    const tableButton = await screen.findByRole('menuitem', {
+      name: 'Table',
+    })
+    await userEvent.click(tableButton)
+
+    // Add a few columns
+    await addColumnModelToForm('foo')
+    await addColumnModelToForm('bar')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+
+    // Give the table a name
+    const nameField = await screen.findByRole('textbox', { name: 'Name' })
+    await userEvent.type(nameField, 'tableName')
+    await userEvent.click(screen.getByRole('button', { name: 'Finish' }))
+
+    // Verify that the error is shown and the callback was not invoked
+    await waitFor(() => {
+      expect(createColumnModelsSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        expect.arrayContaining([
+          {
+            name: 'foo',
+            columnType: 'STRING',
+            maximumSize: 50,
+          },
+          {
+            name: 'bar',
+            columnType: 'STRING',
+            maximumSize: 50,
+          },
+        ]),
+      )
+
+      expect(createEntitySpy).toHaveBeenCalledWith(
+        {
+          name: 'tableName',
+          concreteType: TABLE_ENTITY_CONCRETE_TYPE_VALUE,
+          parentId: mockProjectEntityData.id,
+          columnIds: expect.any(Array),
+        },
+        MOCK_ACCESS_TOKEN,
+      )
+
+      // The error should be shown
+      const alert = screen.getByRole('alert')
+      within(alert).getByText(errorMessage)
+
+      // The call to create the entity and the onComplete callback should not have been called
+      expect(onComplete).not.toHaveBeenCalled()
+    })
   })
 })

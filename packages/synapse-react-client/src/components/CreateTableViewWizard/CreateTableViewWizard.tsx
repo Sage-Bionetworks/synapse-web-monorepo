@@ -7,6 +7,7 @@ import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityType,
   ViewEntityType,
+  ViewScope,
 } from '@sage-bionetworks/synapse-types'
 import TableTypeSelection from './TableTypeSelection'
 import { Alert, Box, Button } from '@mui/material'
@@ -80,11 +81,28 @@ export default function CreateTableViewWizard(
 
   const [sql, setSql] = useState('')
 
-  const { mutate: createEntity, error: createEntityError } = useCreateEntity({
-    onSuccess: entity => {
-      onComplete(entity.id!)
-    },
-  })
+  const viewScope: ViewScope | undefined = useMemo(() => {
+    if (entityType === EntityType.ENTITY_VIEW) {
+      return {
+        scope: entityViewScopeIds,
+        viewTypeMask,
+        viewEntityType: entityType as ViewEntityType,
+      }
+    } else if (entityType === EntityType.SUBMISSION_VIEW) {
+      return {
+        scope: submissionViewScopeIds,
+        viewEntityType: entityType as ViewEntityType,
+      }
+    }
+    return undefined
+  }, [entityType, entityViewScopeIds, submissionViewScopeIds, viewTypeMask])
+
+  const { mutateAsync: createEntity, error: createEntityError } =
+    useCreateEntity({
+      onSuccess: entity => {
+        onComplete(entity.id!)
+      },
+    })
 
   const { mutateAsync: createColumnModels, error: createColumnModelsError } =
     useCreateColumnModels()
@@ -121,8 +139,7 @@ export default function CreateTableViewWizard(
       try {
         createdColumnModels = await createColumnModels(columnModels)
       } catch (e) {
-        console.error('Error creating column models', e)
-        // The hook will manage the error, so just exit early if we encountered one
+        // Error will be handled by the hook, exit early if we encountered one
         return
       }
     }
@@ -145,7 +162,12 @@ export default function CreateTableViewWizard(
     maybeSetViewTypeMask(entityToCreate, entityType, viewTypeMask)
     maybeSetDefiningSQL(entityToCreate, entityType, sql)
 
-    createEntity(entityToCreate)
+    try {
+      await createEntity(entityToCreate)
+    } catch (e) {
+      // Error will be handled by the hook
+      return
+    }
   }, [
     columnModels,
     createColumnModels,
@@ -273,16 +295,7 @@ export default function CreateTableViewWizard(
             entityType={entityType!}
             ref={columnSchemaFormRef}
             onSubmit={onColumnSchemaSubmit}
-            viewScope={
-              entityType === EntityType.ENTITY_VIEW ||
-              entityType === EntityType.SUBMISSION_VIEW
-                ? {
-                    scope: entityViewScopeIds,
-                    viewTypeMask,
-                    viewEntityType: entityType as ViewEntityType,
-                  }
-                : undefined
-            }
+            viewScope={viewScope}
           />
         )
       case 'TABLE_NAME':

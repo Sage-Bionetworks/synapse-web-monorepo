@@ -34,10 +34,10 @@ export function useGetAnnotationColumnModels(
   request: Omit<ViewColumnModelRequest, 'nextPageToken'>,
   options?: UseQueryOptions<ColumnModel[], SynapseClientError>,
 ) {
-  const { keyFactory } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<ColumnModel[], SynapseClientError>(
     keyFactory.getAnnotationColumnModelsQueryKey(request),
-    () => SynapseClient.getAnnotationColumnModels(request),
+    () => SynapseClient.getAnnotationColumnModels(request, accessToken),
     options,
   )
 }

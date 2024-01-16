@@ -52,6 +52,7 @@ import ImportTableColumnsButton from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
 import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
 import { ZodError, ZodIssue } from 'zod'
+import pluralize from 'pluralize'
 
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
   '18px 18px 1.75fr 1.75fr 0.75fr 1fr 1.25fr 1.25fr 1fr'
@@ -249,7 +250,10 @@ function TableColumnSchemaFormInternal(
           ],
         })
         displayToast(
-          `${columnsToAdd.length} columns added to schema.`,
+          `${columnsToAdd.length} ${pluralize(
+            'column',
+            columnsToAdd.length,
+          )} added to schema.`,
           'success',
         )
       } else {
