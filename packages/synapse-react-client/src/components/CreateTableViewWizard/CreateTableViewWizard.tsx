@@ -43,7 +43,7 @@ export type CreateTableViewWizardProps = {
 }
 
 /**
- * Wizard to create a Synapse table, view, dataset, or other table type.
+ * Wizard to create a Synapse table, view, or other table type.
  *
  * See the README.md in this folder for a visualization of the flowchart
  *
@@ -102,7 +102,6 @@ export default function CreateTableViewWizard(
 
   const onViewSelected = useCallback(() => {
     setStep('CHOOSE_VIEW_TYPE')
-    // Reset the scope IDs in case we switched from an EntityView to a SubmissionView
   }, [])
 
   const onFinish = useCallback(async () => {
@@ -123,6 +122,7 @@ export default function CreateTableViewWizard(
         createdColumnModels = await createColumnModels(columnModels)
       } catch (e) {
         console.error('Error creating column models', e)
+        // The hook will manage the error, so just exit early if we encountered one
         return
       }
     }

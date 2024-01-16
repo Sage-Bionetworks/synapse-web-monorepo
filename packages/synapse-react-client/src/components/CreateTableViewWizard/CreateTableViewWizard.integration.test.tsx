@@ -7,7 +7,6 @@ import CreateTableViewWizard, {
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import mockProjectEntityData from '../../mocks/entity/mockProject'
 import userEvent from '@testing-library/user-event'
-import { getCreateColumnModelBatchHandler } from '../../mocks/msw/handlers/tableQueryHandlers'
 import {
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_TYPE_MASK_FILE,
@@ -52,10 +51,6 @@ describe('CreateTableWizard integration tests', () => {
 
   beforeAll(() => {
     server.listen()
-    server.use(
-      // Set up handlers for creating column models
-      getCreateColumnModelBatchHandler(),
-    )
   })
   afterEach(() => {
     server.restoreHandlers()
