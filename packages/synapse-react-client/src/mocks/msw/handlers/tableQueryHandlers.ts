@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, uniqueId } from 'lodash-es'
 import { rest } from 'msw'
 import {
   TABLE_QUERY_ASYNC_GET,
@@ -19,6 +19,7 @@ import {
   BUNDLE_MASK_SUM_FILES_SIZE_BYTES,
 } from '../../../utils/SynapseConstants'
 import {
+  ColumnModel,
   QueryBundleRequest,
   QueryResultBundle,
   ViewColumnModelRequest,
@@ -95,4 +96,27 @@ export function getDefaultColumnHandlers(
       },
     ),
   ]
+}
+
+export function getCreateColumnModelBatchHandler(
+  backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+) {
+  return rest.post(
+    `${backendOrigin}/repo/v1/column/batch`,
+    async (req, res, ctx) => {
+      const { list: columnModels } = await req.json<{ list: ColumnModel[] }>()
+      columnModels.forEach(cm => {
+        if (!cm.id) {
+          cm.id = uniqueId()
+        }
+      })
+      return res(
+        ctx.status(201),
+        ctx.json({
+          concreteType: 'org.sagebionetworks.repo.model.table.ColumnModel',
+          list: columnModels,
+        }),
+      )
+    },
+  )
 }

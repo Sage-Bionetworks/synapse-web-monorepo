@@ -28,6 +28,7 @@ import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import { ImportTableColumnsButtonProps } from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
 import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
+import { addColumnModelToForm } from './TableColumnSchemaEditorTestUtils'
 
 const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
   {
@@ -161,14 +162,7 @@ describe('TableColumnSchemaEditor', () => {
     })
 
     // Add a column
-    const addColumnButton = await screen.findByRole('button', {
-      name: 'Add Column',
-    })
-
-    await user.click(addColumnButton)
-    const nameFields = await screen.findAllByLabelText('Name')
-    await user.type(nameFields[nameFields.length - 1], 'newColumnName')
-
+    await addColumnModelToForm('newColumnName', user)
     await user.click(saveButton)
 
     await waitFor(() => {
@@ -293,15 +287,8 @@ describe('TableColumnSchemaEditor', () => {
       expect(screen.getAllByRole('checkbox')).toHaveLength(1)
     })
 
-    // Add a column
-    const addColumnButton = await screen.findByRole('button', {
-      name: 'Add Column',
-    })
-
-    await user.click(addColumnButton)
-    const nameFields = await screen.findAllByLabelText('Name')
-    // Change the name to 'id'. This column should still be editable, even though it matches a default column.
-    await user.type(nameFields[nameFields.length - 1], 'id')
+    // Add a column - set the name to 'id'. This column should still be editable, even though it matches a default column.
+    await addColumnModelToForm('id', user)
 
     // Verify the column is editable by checking that a few of the inputs are still in the document
     expect(screen.queryByLabelText('Name')).toBeInTheDocument()
@@ -356,13 +343,8 @@ describe('TableColumnSchemaEditor', () => {
       entityId: mockTableEntityData.id,
     })
 
-    // Add a column
-    const addColumnButton = await screen.findByRole('button', {
-      name: 'Add Column',
-    })
-
-    await user.click(addColumnButton)
-    // Intentionally do not add a name
+    // Add a column -- intentionally do not add a name
+    await addColumnModelToForm(undefined, user)
 
     await user.click(saveButton)
 

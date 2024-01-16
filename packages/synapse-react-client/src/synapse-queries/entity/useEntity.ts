@@ -95,6 +95,39 @@ export function useGetEntities(
   }, [isLoading, headerIds])
 }
 
+export function useCreateEntity(
+  options?: UseMutationOptions<
+    Entity,
+    SynapseClientError,
+    Pick<Entity, 'name' | 'description' | 'parentId' | 'concreteType'>
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<
+    Entity,
+    SynapseClientError,
+    Pick<Entity, 'name' | 'description' | 'parentId' | 'concreteType'>
+  >((entity: Entity) => SynapseClient.createEntity(entity, accessToken), {
+    onSuccess: async (newEntity, variables, ctx) => {
+      await invalidateAllQueriesForEntity(
+        queryClient,
+        keyFactory,
+        newEntity.id!,
+      )
+      queryClient.setQueryData(
+        keyFactory.getEntityQueryKey(newEntity.id!),
+        newEntity,
+      )
+
+      if (options?.onSuccess) {
+        await options.onSuccess(newEntity, variables, ctx)
+      }
+    },
+  })
+}
+
 export function useUpdateEntity<T extends Entity>(
   options?: UseMutationOptions<T, SynapseClientError, T>,
 ) {

@@ -5,7 +5,7 @@ import {
   VIEW_CONCRETE_TYPE_VALUES,
   ViewScope,
 } from '@sage-bionetworks/synapse-types'
-import { atom, useAtomValue, useSetAtom } from 'jotai'
+import { atom, Provider, useAtomValue, useSetAtom } from 'jotai'
 import React, {
   useCallback,
   useEffect,
@@ -95,7 +95,7 @@ type TableColumnSchemaFormProps = {
   entityType: EntityType
   /* If this is an entity view, the ViewScope can be used to determine the default column models and fetch annotation column models */
   viewScope?: ViewScope
-  initialData?: ColumnModel[]
+  initialData?: SetOptional<ColumnModel, 'id'>[]
   onSubmit?: (newColumnModels: SetOptional<ColumnModel, 'id'>[]) => void
   isSubmitting?: boolean
 }
@@ -106,10 +106,10 @@ const ColumnHeader: StyledComponent<BoxProps> = styled(Box, {
   fontWeight: 700,
 })
 
-const TableColumnSchemaForm = React.forwardRef<
-  SubmitHandle,
-  TableColumnSchemaFormProps
->(function TableColumnSchemaForm(props, ref) {
+function TableColumnSchemaFormInternal(
+  props: TableColumnSchemaFormProps,
+  ref: React.ForwardedRef<SubmitHandle>,
+) {
   const {
     initialData,
     entityType,
@@ -215,7 +215,7 @@ const TableColumnSchemaForm = React.forwardRef<
         },
       }
     },
-    [onSubmit, readFormData],
+    [onSubmit, validateInternal],
   )
 
   // Generic function to add a set of columns to the schema (e.g. default columns, annotation columns)
@@ -264,12 +264,7 @@ const TableColumnSchemaForm = React.forwardRef<
 
   const addDefaultColumns = useCallback(() => {
     if (defaultColumnModels) {
-      addColumnSet(
-        defaultColumnModels.map(cm => ({
-          ...cm,
-          id: undefined,
-        })),
-      )
+      addColumnSet(defaultColumnModels)
     }
   }, [defaultColumnModels, addColumnSet])
 
@@ -391,7 +386,7 @@ const TableColumnSchemaForm = React.forwardRef<
       </Box>
     </Box>
   )
-})
+}
 
 type TableColumnSchemaFormActionsProps = {
   disabled?: boolean
@@ -567,4 +562,22 @@ function TableColumnSchemaFormRow(props: TableColumnSchemaFormRowProps) {
   )
 }
 
-export default TableColumnSchemaForm
+const TableColumnSchemaFormInternalWithForwardRef = React.forwardRef<
+  SubmitHandle,
+  TableColumnSchemaFormProps
+>(TableColumnSchemaFormInternal)
+
+const TableColumnSchemaFormWrapped = React.forwardRef<
+  SubmitHandle,
+  TableColumnSchemaFormProps
+>(function TableColumnSchemaForm(props: TableColumnSchemaFormProps, ref) {
+  // Wrap the form in a Jotai provider so that the internal atoms are scoped to just this component instance
+  // Use forwardRef to ensure that the ref can be passed along
+  return (
+    <Provider>
+      <TableColumnSchemaFormInternalWithForwardRef {...props} ref={ref} />
+    </Provider>
+  )
+})
+
+export default TableColumnSchemaFormWrapped

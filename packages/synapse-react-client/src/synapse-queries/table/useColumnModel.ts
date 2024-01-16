@@ -3,9 +3,15 @@ import {
   ViewColumnModelRequest,
   ViewEntityType,
 } from '@sage-bionetworks/synapse-types'
-import { useQuery, UseQueryOptions } from 'react-query'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  UseQueryOptions,
+} from 'react-query'
 import { SynapseClientError, useSynapseContext } from '../../utils'
 import SynapseClient from '../../synapse-client'
+import { SetOptional } from 'type-fest'
 
 export function useGetDefaultColumnModels(
   viewEntityType: ViewEntityType,
@@ -34,4 +40,22 @@ export function useGetAnnotationColumnModels(
     () => SynapseClient.getAnnotationColumnModels(request),
     options,
   )
+}
+
+export function useCreateColumnModels(
+  options?: UseMutationOptions<
+    ColumnModel[],
+    SynapseClientError,
+    SetOptional<ColumnModel, 'id'>[]
+  >,
+) {
+  const { accessToken } = useSynapseContext()
+  return useMutation({
+    ...options,
+    mutationFn: async columnModels => {
+      return (
+        await SynapseClient.createColumnModels(accessToken!, columnModels)
+      ).list
+    },
+  })
 }

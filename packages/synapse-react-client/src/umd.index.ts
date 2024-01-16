@@ -72,6 +72,7 @@ import { BackendDestinationEnum } from './utils/functions'
 import TableColumnSchemaForm from './components/TableColumnSchemaEditor/TableColumnSchemaForm'
 import EntityHeaderTable from './components/EntityHeaderTable'
 import AccessRequirementRelatedProjectsList from './components/AccessRequirementRelatedProjectsList'
+import CreateTableViewWizard from './components/CreateTableViewWizard/CreateTableViewWizard'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -149,6 +150,7 @@ const SynapseComponents = {
   TableColumnSchemaForm,
   EntityHeaderTable,
   AccessRequirementRelatedProjectsList,
+  CreateTableWizard: CreateTableViewWizard,
 }
 
 // Include the version in the build

@@ -20,6 +20,11 @@ import { getFileHandlers } from './handlers/fileHandlers'
 import { SynapseError } from '../../utils/SynapseError'
 import { getDiscussionHandlers } from './handlers/discussionHandlers'
 import { getSubscriptionHandlers } from './handlers/subscriptionHandlers'
+import {
+  getCreateColumnModelBatchHandler,
+  getDefaultColumnHandlers,
+} from './handlers/tableQueryHandlers'
+import { getEvaluationHandlers } from './handlers/evaluationHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
@@ -49,6 +54,9 @@ const getHandlers = (backendOrigin: string) => [
   ...getFileHandlers(backendOrigin),
   ...getDiscussionHandlers(backendOrigin),
   ...getSubscriptionHandlers(backendOrigin),
+  ...getEvaluationHandlers(backendOrigin),
+  getCreateColumnModelBatchHandler(backendOrigin),
+  ...getDefaultColumnHandlers(backendOrigin),
 ]
 
 const handlers = getHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT))
