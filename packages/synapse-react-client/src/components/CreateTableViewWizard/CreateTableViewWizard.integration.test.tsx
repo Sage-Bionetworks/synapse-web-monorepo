@@ -8,7 +8,6 @@ import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import mockProjectEntityData from '../../mocks/entity/mockProject'
 import userEvent from '@testing-library/user-event'
 import {
-  ColumnModel,
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
@@ -17,11 +16,10 @@ import {
   MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
   SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
   TABLE_ENTITY_CONCRETE_TYPE_VALUE,
-  ViewScope,
   VIRTUAL_TABLE_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import { addColumnModelToForm } from '../TableColumnSchemaEditor/TableColumnSchemaEditorTestUtils'
-import SynapseClient, { getAnnotationColumnModels } from '../../synapse-client'
+import SynapseClient from '../../synapse-client'
 import {
   MOCK_ACCESS_TOKEN,
   MOCK_CONTEXT_VALUE,
@@ -29,8 +27,6 @@ import {
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumnModels'
 import { rest } from 'msw'
-import { uniqueId } from 'lodash-es'
-import { BACKEND_ENDPOINT } from '../../utils/APIConstants'
 import { BackendDestinationEnum } from '../../utils/functions'
 import { getEndpoint } from '../../utils/functions/getEndpoint'
 import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
