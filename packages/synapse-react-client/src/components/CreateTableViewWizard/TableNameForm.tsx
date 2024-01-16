@@ -12,8 +12,6 @@ type TableNameFormProps = {
 /**
  * React component for the naming a new table or view.
  * Renders UI to provide the name and description of a table or view.
- *
- * If this is a view, the user can also select the scope of the view.
  */
 export default function TableNameForm(props: TableNameFormProps) {
   const { name, setName, description, setDescription } = props

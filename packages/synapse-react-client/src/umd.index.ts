@@ -150,7 +150,7 @@ const SynapseComponents = {
   TableColumnSchemaForm,
   EntityHeaderTable,
   AccessRequirementRelatedProjectsList,
-  CreateTableWizard: CreateTableViewWizard,
+  CreateTableViewWizard,
 }
 
 // Include the version in the build

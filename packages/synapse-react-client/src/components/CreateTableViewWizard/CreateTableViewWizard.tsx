@@ -235,6 +235,23 @@ export default function CreateTableViewWizard(
     viewTypeMask,
   ])
 
+  const errorContent = useMemo(() => {
+    return (
+      <>
+        {createEntityError && (
+          <Alert sx={{ my: 2 }} severity="error">
+            {createEntityError.message}
+          </Alert>
+        )}
+        {createColumnModelsError && (
+          <Alert sx={{ my: 2 }} severity="error">
+            {createColumnModelsError.message}
+          </Alert>
+        )}
+      </>
+    )
+  }, [createColumnModelsError, createEntityError])
+
   const stepContent = useMemo(() => {
     switch (step) {
       case 'CHOOSE_TABLE_TYPE':
@@ -281,11 +298,14 @@ export default function CreateTableViewWizard(
               setDescription={setDescription}
             />
             {/* TODO: Move SqlDefinedTableEditor to its own step, see https://sagebionetworks.jira.com/browse/PLFM-8209 */}
-            <SqlDefinedTableEditor
-              value={sql}
-              onChange={e => setSql(e.target.value)}
-              entityType={entityType}
-            />
+            <Box mt={1.25}>
+              <SqlDefinedTableEditor
+                value={sql}
+                onChange={e => setSql(e.target.value)}
+                entityType={entityType}
+              />
+            </Box>
+            {errorContent}
           </>
         )
       case 'TABLE_COLUMNS':
@@ -300,12 +320,15 @@ export default function CreateTableViewWizard(
         )
       case 'TABLE_NAME':
         return (
-          <TableNameForm
-            name={name}
-            setName={setName}
-            description={description}
-            setDescription={setDescription}
-          />
+          <>
+            <TableNameForm
+              name={name}
+              setName={setName}
+              description={description}
+              setDescription={setDescription}
+            />
+            {errorContent}
+          </>
         )
     }
   }, [
@@ -322,6 +345,7 @@ export default function CreateTableViewWizard(
     step,
     submissionViewScopeIds,
     viewTypeMask,
+    viewScope,
   ])
 
   return (
@@ -330,21 +354,7 @@ export default function CreateTableViewWizard(
       onCancel={onCancel}
       maxWidth={'md'}
       title={getModalTitle(step, entityType)}
-      content={
-        <div>
-          {stepContent}
-          {createEntityError && (
-            <Alert sx={{ my: 2 }} severity="error">
-              {createEntityError.message}
-            </Alert>
-          )}
-          {createColumnModelsError && (
-            <Alert sx={{ my: 2 }} severity="error">
-              {createColumnModelsError.message}
-            </Alert>
-          )}
-        </div>
-      }
+      content={stepContent}
       actions={
         <Box display={'flex'} width={'100%'} gap={2.25} mt={2}>
           {showBackButton && (
