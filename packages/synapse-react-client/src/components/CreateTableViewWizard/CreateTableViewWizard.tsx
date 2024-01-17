@@ -204,11 +204,7 @@ export default function CreateTableViewWizard(
   }, [step, entityType])
 
   const onNextButtonClicked = useCallback(() => {
-    if (
-      step === 'TABLE_NAME' ||
-      // TODO: After PLFM-8209 is complete, TABLE_SQL can come before TABLE_NAME
-      step === 'TABLE_SQL'
-    ) {
+    if (isLastStep(step)) {
       void onFinish()
     } else if (step === 'TABLE_COLUMNS') {
       onColumnSchemaNextClicked()
@@ -332,19 +328,20 @@ export default function CreateTableViewWizard(
         )
     }
   }, [
-    columnModels,
-    description,
-    entityType,
+    step,
+    onViewSelected,
+    onTableTypeSelected,
     entityViewScopeIds,
     isProjectView,
-    name,
-    onColumnSchemaSubmit,
-    onTableTypeSelected,
-    onViewSelected,
-    sql,
-    step,
-    submissionViewScopeIds,
     viewTypeMask,
+    submissionViewScopeIds,
+    name,
+    description,
+    sql,
+    entityType,
+    errorContent,
+    columnModels,
+    onColumnSchemaSubmit,
     viewScope,
   ])
 

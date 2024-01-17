@@ -51,12 +51,15 @@ const getAnnotationColumnsSpy = jest.mocked(
 )
 describe('CreateTableWizard integration tests', () => {
   function renderComponent(props: CreateTableViewWizardProps) {
-    return render(<CreateTableViewWizard {...props} />, {
-      wrapper: createWrapper({
-        ...MOCK_CONTEXT_VALUE,
-        isInExperimentalMode: true,
+    return {
+      user: userEvent.setup(),
+      ...render(<CreateTableViewWizard {...props} />, {
+        wrapper: createWrapper({
+          ...MOCK_CONTEXT_VALUE,
+          isInExperimentalMode: true,
+        }),
       }),
-    })
+    }
   }
 
   beforeAll(() => {
@@ -71,7 +74,7 @@ describe('CreateTableWizard integration tests', () => {
   test('Create a table', async () => {
     const onComplete = jest.fn()
     const onCancel = jest.fn()
-    renderComponent({
+    const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
       onComplete,
@@ -82,18 +85,18 @@ describe('CreateTableWizard integration tests', () => {
     const tableButton = await screen.findByRole('menuitem', {
       name: 'Table',
     })
-    await userEvent.click(tableButton)
+    await user.click(tableButton)
 
     // Add a few columns
     await addColumnModelToForm('foo')
     await addColumnModelToForm('bar')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
 
     // Give the table a name
     const nameField = await screen.findByRole('textbox', { name: 'Name' })
-    await userEvent.type(nameField, 'tableName')
-    await userEvent.click(screen.getByRole('button', { name: 'Finish' }))
+    await user.type(nameField, 'tableName')
+    await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the table was created and the callback was invoked
     await waitFor(() => {
@@ -127,7 +130,7 @@ describe('CreateTableWizard integration tests', () => {
   test('Create an entity view and change the mask', async () => {
     const onComplete = jest.fn()
     const onCancel = jest.fn()
-    renderComponent({
+    const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
       onComplete,
@@ -135,14 +138,14 @@ describe('CreateTableWizard integration tests', () => {
     })
 
     // Select "View"
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'View',
       }),
     )
 
     // Select the file view option
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'Files, Folders, and Other Objects',
       }),
@@ -155,7 +158,7 @@ describe('CreateTableWizard integration tests', () => {
     const addContainersToScopeButton = await screen.findByRole('button', {
       name: 'Add Containers',
     })
-    await userEvent.click(addContainersToScopeButton)
+    await user.click(addContainersToScopeButton)
 
     // Entity finder is mocked since it's challenging to interact with programmatically
     await screen.findByTestId('EntityFinderModalMocked')
@@ -174,23 +177,23 @@ describe('CreateTableWizard integration tests', () => {
     // Tweak the mask
     expect(screen.getByLabelText('Files')).toBeChecked()
     expect(screen.getByLabelText('Folders')).not.toBeChecked()
-    await userEvent.click(screen.getByLabelText('Folders'))
+    await user.click(screen.getByLabelText('Folders'))
     expect(screen.getByLabelText('Folders')).toBeChecked()
-    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
 
     // Add default columns
     const addDefaultViewColumnsButton = await screen.findByRole('button', {
       name: 'Add Default View Columns',
     })
     await waitFor(() => expect(addDefaultViewColumnsButton).toBeEnabled())
-    await userEvent.click(addDefaultViewColumnsButton)
+    await user.click(addDefaultViewColumnsButton)
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
       name: 'Add All Annotations',
     })
     await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
-    await userEvent.click(addAnnotationColumnsButton)
+    await user.click(addAnnotationColumnsButton)
     // Verify we called the API with the correct scope and view type mask
     await waitFor(() =>
       expect(getAnnotationColumnsSpy).toHaveBeenLastCalledWith(
@@ -209,12 +212,12 @@ describe('CreateTableWizard integration tests', () => {
       ),
     )
 
-    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
 
     // Give the view a name
     const nameField = await screen.findByRole('textbox', { name: 'Name' })
-    await userEvent.type(nameField, 'tableName')
-    await userEvent.click(screen.getByRole('button', { name: 'Finish' }))
+    await user.type(nameField, 'tableName')
+    await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the view was created and the callback was invoked
     await waitFor(() => {
@@ -245,7 +248,7 @@ describe('CreateTableWizard integration tests', () => {
   test('Create a project view', async () => {
     const onComplete = jest.fn()
     const onCancel = jest.fn()
-    renderComponent({
+    const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
       onComplete,
@@ -253,14 +256,14 @@ describe('CreateTableWizard integration tests', () => {
     })
 
     // Select "View"
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'View',
       }),
     )
 
     // Select the project view option
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'Projects',
       }),
@@ -273,7 +276,7 @@ describe('CreateTableWizard integration tests', () => {
     const addContainersToScopeButton = await screen.findByRole('button', {
       name: 'Add Projects',
     })
-    await userEvent.click(addContainersToScopeButton)
+    await user.click(addContainersToScopeButton)
 
     // Entity finder is mocked since it's challenging to interact with programmatically
     await screen.findByTestId('EntityFinderModalMocked')
@@ -294,21 +297,21 @@ describe('CreateTableWizard integration tests', () => {
       screen.queryByText('Include in View', { exact: false }),
     ).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Files')).not.toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
 
     // Add default columns
     const addDefaultViewColumnsButton = await screen.findByRole('button', {
       name: 'Add Default View Columns',
     })
     await waitFor(() => expect(addDefaultViewColumnsButton).toBeEnabled())
-    await userEvent.click(addDefaultViewColumnsButton)
+    await user.click(addDefaultViewColumnsButton)
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
       name: 'Add All Annotations',
     })
     await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
-    await userEvent.click(addAnnotationColumnsButton)
+    await user.click(addAnnotationColumnsButton)
     // Verify we called the API with the correct scope and view type mask
     await waitFor(() =>
       expect(getAnnotationColumnsSpy).toHaveBeenLastCalledWith(
@@ -326,12 +329,12 @@ describe('CreateTableWizard integration tests', () => {
       ),
     )
 
-    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
 
     // Give the view a name
     const nameField = await screen.findByRole('textbox', { name: 'Name' })
-    await userEvent.type(nameField, 'tableName')
-    await userEvent.click(screen.getByRole('button', { name: 'Finish' }))
+    await user.type(nameField, 'tableName')
+    await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the view was created and the callback was invoked
     await waitFor(() => {
@@ -361,7 +364,7 @@ describe('CreateTableWizard integration tests', () => {
   test('Create a submission view', async () => {
     const onComplete = jest.fn()
     const onCancel = jest.fn()
-    renderComponent({
+    const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
       onComplete,
@@ -369,14 +372,14 @@ describe('CreateTableWizard integration tests', () => {
     })
 
     // Select "View"
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'View',
       }),
     )
 
     // Select the submission view option
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'Challenge Submissions',
       }),
@@ -388,7 +391,7 @@ describe('CreateTableWizard integration tests', () => {
 
     // Add a few IDs to the scope
     const evaluationOptions = await screen.findAllByRole('checkbox')
-    await userEvent.click(evaluationOptions[0])
+    await user.click(evaluationOptions[0])
 
     // Verify that the selections were added by querying for the "Remove" buttons
     const removeButtons = await screen.findAllByRole('button', {
@@ -398,21 +401,21 @@ describe('CreateTableWizard integration tests', () => {
     expect(removeButtons).toHaveLength(1)
 
     expect(nextStepButton).not.toBeDisabled()
-    await userEvent.click(nextStepButton)
+    await user.click(nextStepButton)
 
     // Add default columns
     const addDefaultViewColumnsButton = await screen.findByRole('button', {
       name: 'Add Default Submission View Columns',
     })
     await waitFor(() => expect(addDefaultViewColumnsButton).toBeEnabled())
-    await userEvent.click(addDefaultViewColumnsButton)
+    await user.click(addDefaultViewColumnsButton)
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
       name: 'Add All Annotations',
     })
     await waitFor(() => expect(addAnnotationColumnsButton).toBeEnabled())
-    await userEvent.click(addAnnotationColumnsButton)
+    await user.click(addAnnotationColumnsButton)
     // Verify we called the API with the correct scope and view type mask
     await waitFor(() =>
       expect(getAnnotationColumnsSpy).toHaveBeenLastCalledWith(
@@ -429,12 +432,12 @@ describe('CreateTableWizard integration tests', () => {
         MOCK_ACCESS_TOKEN,
       ),
     )
-    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
 
     // Give the view a name
     const nameField = await screen.findByRole('textbox', { name: 'Name' })
-    await userEvent.type(nameField, 'tableName')
-    await userEvent.click(screen.getByRole('button', { name: 'Finish' }))
+    await user.type(nameField, 'tableName')
+    await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the view was created and the callback was invoked
     await waitFor(() => {
@@ -463,7 +466,7 @@ describe('CreateTableWizard integration tests', () => {
   test('Create a materialized view', async () => {
     const onComplete = jest.fn()
     const onCancel = jest.fn()
-    renderComponent({
+    const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
       onComplete,
@@ -471,14 +474,14 @@ describe('CreateTableWizard integration tests', () => {
     })
 
     // Select "View"
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'View',
       }),
     )
 
     // Select the materialized view option
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'Materialized View',
       }),
@@ -486,15 +489,15 @@ describe('CreateTableWizard integration tests', () => {
 
     // Give the view a name
     const nameField = await screen.findByRole('textbox', { name: 'Name' })
-    await userEvent.type(nameField, 'tableName')
+    await user.type(nameField, 'tableName')
 
     // Add defining SQL
     const definingSqlField = await screen.findByRole('textbox', {
       name: 'Defining SQL',
     })
-    await userEvent.type(definingSqlField, 'SELECT * FROM syn123')
+    await user.type(definingSqlField, 'SELECT * FROM syn123')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Finish' }))
+    await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the view was created and the callback was invoked
     await waitFor(() => {
@@ -515,7 +518,7 @@ describe('CreateTableWizard integration tests', () => {
   test('Create a virtual table', async () => {
     const onComplete = jest.fn()
     const onCancel = jest.fn()
-    renderComponent({
+    const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
       onComplete,
@@ -523,14 +526,14 @@ describe('CreateTableWizard integration tests', () => {
     })
 
     // Select "View"
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'View',
       }),
     )
 
     // Select the virtual table option
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'Virtual Table',
       }),
@@ -538,15 +541,15 @@ describe('CreateTableWizard integration tests', () => {
 
     // Give the view a name
     const nameField = await screen.findByRole('textbox', { name: 'Name' })
-    await userEvent.type(nameField, 'tableName')
+    await user.type(nameField, 'tableName')
 
     // Add defining SQL
     const definingSqlField = await screen.findByRole('textbox', {
       name: 'Defining SQL',
     })
-    await userEvent.type(definingSqlField, 'SELECT * FROM syn123')
+    await user.type(definingSqlField, 'SELECT * FROM syn123')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Finish' }))
+    await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the view was created and the callback was invoked
     await waitFor(() => {
@@ -567,7 +570,7 @@ describe('CreateTableWizard integration tests', () => {
   test('Column models must be valid before advancing', async () => {
     const onComplete = jest.fn()
     const onCancel = jest.fn()
-    renderComponent({
+    const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
       onComplete,
@@ -578,19 +581,19 @@ describe('CreateTableWizard integration tests', () => {
     const tableButton = await screen.findByRole('menuitem', {
       name: 'Table',
     })
-    await userEvent.click(tableButton)
+    await user.click(tableButton)
 
     // Add a column without a name
     await addColumnModelToForm(undefined)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
     // Check that the error message appears instead of advancing
     await screen.findByText('Name is required')
   })
   test('EntityView scope and mask must be valid before advancing', async () => {
     const onComplete = jest.fn()
     const onCancel = jest.fn()
-    renderComponent({
+    const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
       onComplete,
@@ -598,14 +601,14 @@ describe('CreateTableWizard integration tests', () => {
     })
 
     // Select "View"
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'View',
       }),
     )
 
     // Select the file view option
-    await userEvent.click(
+    await user.click(
       await screen.findByRole('menuitem', {
         name: 'Files, Folders, and Other Objects',
       }),
@@ -624,7 +627,7 @@ describe('CreateTableWizard integration tests', () => {
     const addContainersToScopeButton = await screen.findByRole('button', {
       name: 'Add Containers',
     })
-    await userEvent.click(addContainersToScopeButton)
+    await user.click(addContainersToScopeButton)
     await screen.findByTestId('EntityFinderModalMocked')
     const entityFinderModalPassedProps = mockEntityFinderModal.mock.lastCall![0]
     act(() => {
@@ -634,7 +637,7 @@ describe('CreateTableWizard integration tests', () => {
     await waitFor(() => expect(nextButton).not.toBeDisabled())
 
     // Uncheck all mask boxes to make the mask invalid
-    await userEvent.click(screen.getByLabelText('Files'))
+    await user.click(screen.getByLabelText('Files'))
 
     // Verify that we cannot advance
     await waitFor(() => expect(nextButton).toBeDisabled())
@@ -660,7 +663,7 @@ describe('CreateTableWizard integration tests', () => {
 
     const onComplete = jest.fn()
     const onCancel = jest.fn()
-    renderComponent({
+    const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
       onComplete,
@@ -671,18 +674,18 @@ describe('CreateTableWizard integration tests', () => {
     const tableButton = await screen.findByRole('menuitem', {
       name: 'Table',
     })
-    await userEvent.click(tableButton)
+    await user.click(tableButton)
 
     // Add a few columns
     await addColumnModelToForm('foo')
     await addColumnModelToForm('bar')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
 
     // Give the table a name
     const nameField = await screen.findByRole('textbox', { name: 'Name' })
-    await userEvent.type(nameField, 'tableName')
-    await userEvent.click(screen.getByRole('button', { name: 'Finish' }))
+    await user.type(nameField, 'tableName')
+    await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the error is shown and the callback was not invoked
     await waitFor(() => {
@@ -730,7 +733,7 @@ describe('CreateTableWizard integration tests', () => {
 
     const onComplete = jest.fn()
     const onCancel = jest.fn()
-    renderComponent({
+    const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
       onComplete,
@@ -741,18 +744,18 @@ describe('CreateTableWizard integration tests', () => {
     const tableButton = await screen.findByRole('menuitem', {
       name: 'Table',
     })
-    await userEvent.click(tableButton)
+    await user.click(tableButton)
 
     // Add a few columns
     await addColumnModelToForm('foo')
     await addColumnModelToForm('bar')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
 
     // Give the table a name
     const nameField = await screen.findByRole('textbox', { name: 'Name' })
-    await userEvent.type(nameField, 'tableName')
-    await userEvent.click(screen.getByRole('button', { name: 'Finish' }))
+    await user.type(nameField, 'tableName')
+    await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the error is shown and the callback was not invoked
     await waitFor(() => {
@@ -789,5 +792,10 @@ describe('CreateTableWizard integration tests', () => {
       // The call to create the entity and the onComplete callback should not have been called
       expect(onComplete).not.toHaveBeenCalled()
     })
+    // Go back to the previous step and check that the error is no longer shown
+    await user.click(screen.getByRole('button', { name: 'Back' }))
+    await waitFor(() =>
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument(),
+    )
   })
 })

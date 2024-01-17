@@ -154,6 +154,7 @@ describe('CreateTableWizardUtils tests', () => {
     expect(isLastStep('ENTITY_VIEW_SCOPE')).toBe(false)
     expect(isLastStep('SUBMISSION_VIEW_SCOPE')).toBe(false)
     expect(isLastStep('TABLE_COLUMNS')).toBe(false)
+    // TABLE_SQL can be moved to a separate step after PLFM-8209 is done
     expect(isLastStep('TABLE_SQL')).toBe(true)
     expect(isLastStep('TABLE_NAME')).toBe(true)
   })
@@ -188,6 +189,22 @@ describe('CreateTableWizardUtils tests', () => {
       maybeSetColumnIds(entityToModify, entityType, createdColumnModels)
       expect(entityToModify.columnIds).toEqual(['123'])
     })
+
+    test.each<EntityType>([
+      EntityType.TABLE,
+      EntityType.ENTITY_VIEW,
+      EntityType.SUBMISSION_VIEW,
+      EntityType.DATASET,
+      EntityType.DATASET_COLLECTION,
+    ])(
+      'does not add columnIds if there are no createdColumnModels - %s',
+      entityType => {
+        const entityToModify = getTableStub(entityType)
+        const createdColumnModels: ColumnModel[] = []
+        maybeSetColumnIds(entityToModify, entityType, createdColumnModels)
+        expect(entityToModify.columnIds).toEqual([])
+      },
+    )
 
     test.each<EntityType>([
       EntityType.MATERIALIZED_VIEW,
