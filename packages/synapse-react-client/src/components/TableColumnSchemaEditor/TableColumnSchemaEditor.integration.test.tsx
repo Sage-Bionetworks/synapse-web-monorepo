@@ -28,6 +28,8 @@ import { mockFileViewEntity } from '../../mocks/entity/mockFileView'
 import { ImportTableColumnsButtonProps } from './ImportTableColumnsButton'
 import { SetOptional } from 'type-fest'
 import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
+import { addColumnModelToForm } from './TableColumnSchemaEditorTestUtils'
+import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
 
 const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
   {
@@ -88,18 +90,7 @@ describe('TableColumnSchemaEditor', () => {
     server.use(
       /* Each test in this suite should register its own table query handler */
       ...getDefaultColumnHandlers(),
-      ...getAnnotationColumnHandlers({
-        concreteType:
-          'org.sagebionetworks.repo.model.table.ViewColumnModelResponse',
-        results: [
-          {
-            id: '1235325',
-            columnType: ColumnTypeEnum.STRING,
-            name: 'columnFromAnnotations',
-            maximumSize: 10,
-          },
-        ],
-      }),
+      ...getAnnotationColumnHandlers(MOCK_ANNOTATION_COLUMNS),
       rest.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
@@ -161,14 +152,7 @@ describe('TableColumnSchemaEditor', () => {
     })
 
     // Add a column
-    const addColumnButton = await screen.findByRole('button', {
-      name: 'Add Column',
-    })
-
-    await user.click(addColumnButton)
-    const nameFields = await screen.findAllByLabelText('Name')
-    await user.type(nameFields[nameFields.length - 1], 'newColumnName')
-
+    await addColumnModelToForm('newColumnName', user)
     await user.click(saveButton)
 
     await waitFor(() => {
@@ -293,15 +277,8 @@ describe('TableColumnSchemaEditor', () => {
       expect(screen.getAllByRole('checkbox')).toHaveLength(1)
     })
 
-    // Add a column
-    const addColumnButton = await screen.findByRole('button', {
-      name: 'Add Column',
-    })
-
-    await user.click(addColumnButton)
-    const nameFields = await screen.findAllByLabelText('Name')
-    // Change the name to 'id'. This column should still be editable, even though it matches a default column.
-    await user.type(nameFields[nameFields.length - 1], 'id')
+    // Add a column - set the name to 'id'. This column should still be editable, even though it matches a default column.
+    await addColumnModelToForm('id', user)
 
     // Verify the column is editable by checking that a few of the inputs are still in the document
     expect(screen.queryByLabelText('Name')).toBeInTheDocument()
@@ -356,13 +333,8 @@ describe('TableColumnSchemaEditor', () => {
       entityId: mockTableEntityData.id,
     })
 
-    // Add a column
-    const addColumnButton = await screen.findByRole('button', {
-      name: 'Add Column',
-    })
-
-    await user.click(addColumnButton)
-    // Intentionally do not add a name
+    // Add a column -- intentionally do not add a name
+    await addColumnModelToForm(undefined, user)
 
     await user.click(saveButton)
 

@@ -10,16 +10,13 @@ import {
   ENTITY_SCHEMA_BINDING,
 } from '../../../utils/APIConstants'
 import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../utils/functions/getEndpoint'
-import {
   Entity,
   EntityBundle,
   EntityHeader,
   EntityJson,
   EntityPath,
   PaginatedResults,
+  ProjectHeaderList,
   Reference,
   VersionableEntity,
 } from '@sage-bionetworks/synapse-types'
@@ -29,31 +26,30 @@ import { MOCK_INVALID_PROJECT_NAME } from '../../entity/mockEntity'
 import { mockSchemaBinding } from '../../mockSchema'
 import { SynapseApiResponse } from '../handlers'
 import { UploadDestination, UploadType } from '@sage-bionetworks/synapse-types'
+import { uniqueId } from 'lodash-es'
+import { mockProjectsEntityData } from '../../entity/mockProject'
 
 export const getEntityHandlers = (backendOrigin: string) => [
   /**
    * Create a new entity
    */
   rest.post(`${backendOrigin}${ENTITY}`, async (req, res, ctx) => {
-    let status = 404
-    let response: SynapseApiResponse<Entity> = {
-      reason: `Mock Service worker could not find a matching mock entity for this request : ${JSON.stringify(
-        req.body,
-      )}`,
-    }
-    if (req.body) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const requestBody = req.body as Entity
-
-      const entityData = mockEntities.find(
-        entity => entity.name === requestBody.name,
-      )
-      if (entityData) {
-        response = entityData.entity
-        status = 200
-      } else if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
+    let status = 200
+    const requestBody = await req.json<Entity>()
+    let response: SynapseApiResponse<Entity> = { reason: '...' }
+    if (!requestBody) {
+      status = 400
+      response = {
+        reason: `Mock service worker received the following malformed body for PUT ${ENTITY} : ${JSON.stringify(
+          requestBody,
+        )}`,
+      }
+    } else {
+      if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
         response.reason = 'Invalid project name'
         status = 403
+      } else {
+        response = { id: uniqueId('syn'), ...requestBody }
       }
     }
 
@@ -246,9 +242,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
   ),
 
   rest.get(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}/file/v1/entity/:id/uploadDestination`,
+    `${backendOrigin}/file/v1/entity/:id/uploadDestination`,
     async (req, res, ctx) => {
       const response: UploadDestination = {
         banner: '',
@@ -259,4 +253,17 @@ export const getEntityHandlers = (backendOrigin: string) => [
       return res(ctx.status(200), ctx.json(response))
     },
   ),
+
+  rest.get(`${backendOrigin}/repo/v1/projects`, async (req, res, ctx) => {
+    const response: ProjectHeaderList = {
+      results: mockProjectsEntityData.map(p => ({
+        name: p.name,
+        id: p.id,
+        lastActivity: '2024-01-04T21:11:59.000Z',
+        modifiedBy: parseInt(p.entity.modifiedBy!),
+        modifiedOn: p.entity.modifiedOn!,
+      })),
+    }
+    return res(ctx.status(200), ctx.json(response))
+  }),
 ]

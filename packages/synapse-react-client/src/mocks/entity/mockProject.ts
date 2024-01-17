@@ -15,9 +15,9 @@ import { MockEntityData } from './MockEntityData'
 import { generateProject } from '../faker/generateFakeEntity'
 import { times } from 'lodash-es'
 
-export const mockProjectIds = times(20).map(i => i + 10000)
+export const mockProjectIds = times(20).map(i => i + 10001)
 
-const MOCK_PROJECT_ID = `syn${mockProjectIds[0]}`
+const MOCK_PROJECT_ID = `syn10000`
 const MOCK_PROJECT_NAME = 'A Mock Project'
 
 const mockProjectEntity = {

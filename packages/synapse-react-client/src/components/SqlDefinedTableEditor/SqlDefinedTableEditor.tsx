@@ -26,6 +26,17 @@ const MATERIALIZED_VIEW_HELP = (
   </Box>
 )
 
+const VIRTUAL_TABLE_HELP = (
+  <Box mb={2.5}>
+    <Typography variant={'body1'} color={'grey.700'} mb={1.25}>
+      A Synapse Virtual Table is a type of table that is defined by a Synapse
+      SQL query. Any query on a Virtual Table will execute the defining SQL
+      statement on the referenced table. The defining SQL of a Virtual Table
+      cannot include JOIN clauses on multiple tables.
+    </Typography>
+  </Box>
+)
+
 export type SqlDefinedTableEditorProps = TextFieldProps & {
   /* Optional entity type for showing help documentation */
   entityType?: EntityType
@@ -43,6 +54,7 @@ export default function SqlDefinedTableEditor(
   return (
     <>
       {entityType === EntityType.MATERIALIZED_VIEW && MATERIALIZED_VIEW_HELP}
+      {entityType === EntityType.VIRTUAL_TABLE && VIRTUAL_TABLE_HELP}
       <TextField
         label={'Defining SQL'}
         placeholder={'SELECT * FROM syn123'}

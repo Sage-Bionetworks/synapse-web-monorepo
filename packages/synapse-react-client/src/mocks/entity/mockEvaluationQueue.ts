@@ -22,3 +22,5 @@ export const mockEvaluationQueue: Evaluation = {
   submissionInstructionsMessage: MOCK_EVALUATION_SUBMISSION_INSTRUCTIONS,
   submissionReceiptMessage: MOCK_EVALUATION_RECEIPT_MESSAGE,
 }
+
+export const mockEvaluations: Evaluation[] = [mockEvaluationQueue]
