@@ -4,7 +4,8 @@ import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useErrorHandler } from 'react-error-boundary'
 import { useGetDownloadListStatistics } from '../../synapse-queries/download/useDownloadList'
 import IconSvg from '../IconSvg/IconSvg'
-import { Tooltip } from '@mui/material'
+import { Tooltip, Link as MuiLink } from '@mui/material'
+import { Link } from 'react-router-dom'
 
 export type ShowDownloadV2Props = {
   to: string
@@ -56,13 +57,12 @@ export function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
     </Tooltip>
   )
   return (
-    <a
+    <MuiLink
       className={`Download-Link v2 ${className}`}
-      href={to}
       rel="noopener noreferrer"
     >
-      {content}
-    </a>
+      <Link to={to}>{content}</Link>
+    </MuiLink>
   )
 }
 
