@@ -11,6 +11,7 @@ import {
 } from './AccessRequestSubmissionTable'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
+import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 
 export const DataAccessSubmissionDashboard = () => {
   const [accessRequirementId, setAccessRequirementId] = useState<
@@ -52,7 +53,8 @@ export const DataAccessSubmissionDashboard = () => {
   }, [])
 
   const onReviewerChange = useCallback((selected: string | null) => {
-    if (selected) {
+    if (selected && selected !== ACT_TEAM_ID.toString()) {
+      console.log('selected', selected)
       setReviewerId(selected)
     } else {
       setReviewerId(undefined)
