@@ -4,7 +4,10 @@ import { createMemoryHistory, MemoryHistory } from 'history'
 import React from 'react'
 import { Router } from 'react-router-dom'
 import selectEvent from 'react-select-event'
-import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
+import {
+  DataAccessSubmissionDashboard,
+  getReviewerFilterID,
+} from './AccessSubmissionDashboard'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { rest, server } from '../../mocks/msw/server'
 import {
@@ -25,6 +28,7 @@ import {
   ACCESS_REQUIREMENT_SEARCH,
 } from '../../utils/APIConstants'
 import * as AccessRequestSubmissionTableModule from './AccessRequestSubmissionTable'
+import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'
 const MOCK_AR_ID = '12321'
@@ -203,5 +207,24 @@ describe('AccessSubmissionDashboard tests', () => {
         expect.anything(),
       ),
     )
+  })
+  describe('getReviewerFilterID', () => {
+    it('handle non-act reviewer', () => {
+      const nonActReviewerID = MOCK_USER_ID.toString()
+      const result = getReviewerFilterID(nonActReviewerID)
+      expect(result).toBeDefined()
+      if (result !== undefined) {
+        expect(result).toBe(MOCK_USER_ID.toString())
+      }
+    })
+    it('handle act reviewer', () => {
+      const actReviewerID = ACT_TEAM_ID.toString()
+      const result = getReviewerFilterID(actReviewerID)
+      expect(result).toBeUndefined
+    })
+    it('handle passing undefined', () => {
+      const result = getReviewerFilterID(null)
+      expect(result).toBeUndefined
+    })
   })
 })
