@@ -213,18 +213,16 @@ describe('AccessSubmissionDashboard tests', () => {
       const nonActReviewerID = MOCK_USER_ID.toString()
       const result = getReviewerFilterID(nonActReviewerID)
       expect(result).toBeDefined()
-      if (result !== undefined) {
-        expect(result).toBe(MOCK_USER_ID.toString())
-      }
+      expect(result).toBe(MOCK_USER_ID.toString())
     })
     it('handle act reviewer', () => {
       const actReviewerID = ACT_TEAM_ID.toString()
       const result = getReviewerFilterID(actReviewerID)
-      expect(result).toBeUndefined
+      expect(result).toBeUndefined()
     })
     it('handle passing undefined', () => {
       const result = getReviewerFilterID(null)
-      expect(result).toBeUndefined
+      expect(result).toBeUndefined()
     })
   })
 })
