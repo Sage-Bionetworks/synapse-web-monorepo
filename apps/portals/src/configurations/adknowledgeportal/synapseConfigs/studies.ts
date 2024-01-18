@@ -174,6 +174,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             rgbIndex,
             name: 'Metadata Files',
             visibleColumnCount: 10,
+            showExportToCavatica: true,
             isRowSelectionVisible: true,
             tableConfiguration: {
               showAccessColumn: true,
@@ -198,6 +199,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             rgbIndex,
             visibleColumnCount: 10,
             isRowSelectionVisible: true,
+            showExportToCavatica: true,
             tableConfiguration: {
               showAccessColumn: true,
               showDownloadColumn: true,
