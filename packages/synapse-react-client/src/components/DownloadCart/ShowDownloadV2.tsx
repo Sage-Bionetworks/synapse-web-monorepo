@@ -58,10 +58,11 @@ export function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
   )
   return (
     <MuiLink
+      to={to}
+      component={Link}
       className={`Download-Link v2 ${className}`}
-      rel="noopener noreferrer"
     >
-      <Link to={to}>{content}</Link>
+      {content}
     </MuiLink>
   )
 }
