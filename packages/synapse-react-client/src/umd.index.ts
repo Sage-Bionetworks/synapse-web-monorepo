@@ -73,6 +73,7 @@ import TableColumnSchemaForm from './components/TableColumnSchemaEditor/TableCol
 import EntityHeaderTable from './components/EntityHeaderTable'
 import AccessRequirementRelatedProjectsList from './components/AccessRequirementRelatedProjectsList'
 import CreateTableViewWizard from './components/CreateTableViewWizard/CreateTableViewWizard'
+import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableColumnSchemaEditor'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -151,6 +152,7 @@ const SynapseComponents = {
   EntityHeaderTable,
   AccessRequirementRelatedProjectsList,
   CreateTableViewWizard,
+  TableColumnSchemaEditor,
 }
 
 // Include the version in the build

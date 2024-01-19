@@ -22,11 +22,14 @@ import {
   ColumnModel,
   QueryBundleRequest,
   QueryResultBundle,
+  TableUpdateTransactionRequest,
+  TableUpdateTransactionResponse,
   ViewColumnModelRequest,
   ViewColumnModelResponse,
 } from '@sage-bionetworks/synapse-types'
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
 import defaultFileViewColumnModels from '../../query/defaultFileViewColumnModels'
+import { SynapseError } from '../../../utils/SynapseError'
 
 const BIT_TO_FIELD_MAP: Record<number, keyof QueryResultBundle> = {
   [BUNDLE_MASK_QUERY_RESULTS]: 'queryResult',
@@ -118,5 +121,23 @@ export function getCreateColumnModelBatchHandler(
         }),
       )
     },
+  )
+}
+
+export function getTableTransactionHandlers(
+  response: TableUpdateTransactionResponse | SynapseError,
+  backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+  statusCode?: number,
+) {
+  return generateAsyncJobHandlers<
+    TableUpdateTransactionRequest,
+    TableUpdateTransactionResponse | SynapseError
+  >(
+    `/repo/v1/entity/:entityId/table/transaction/async/start`,
+    tokenParam =>
+      `/repo/v1/entity/:entityId/table/transaction/async/get/${tokenParam}`,
+    response,
+    backendOrigin,
+    statusCode,
   )
 }

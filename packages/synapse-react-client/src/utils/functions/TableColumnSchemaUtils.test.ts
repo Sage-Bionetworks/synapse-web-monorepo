@@ -93,6 +93,42 @@ describe('TableColumnSchemaUtils', () => {
         newColumnId: NEW_COLUMN_MODEL_ID,
       })
     })
+    test('add new column that has an existing ID', async () => {
+      const tableId = 'syn93939'
+      const oldSchema: ColumnModel[] = []
+      const columnModelWithId: ColumnModel = {
+        id: NEW_COLUMN_MODEL_ID,
+        name: 'newCol',
+        columnType: ColumnTypeEnum.STRING,
+      }
+      const proposedSchema: SetOptional<ColumnModel, 'id'>[] = [
+        columnModelWithId,
+      ]
+      // Note that the ID doesn't change in the created column model
+      const createdColumnModels: ColumnModel[] = [columnModelWithId]
+
+      jest
+        .spyOn(SynapseClient, 'createColumnModels')
+        .mockResolvedValue({ list: createdColumnModels })
+
+      const request = await createTableUpdateTransactionRequest(
+        MOCK_ACCESS_TOKEN,
+        tableId,
+        oldSchema,
+        proposedSchema,
+      )
+
+      expect(request.changes.length).toBe(1)
+      const tableUpdateRequest: TableSchemaChangeRequest = request
+        .changes[0] as TableSchemaChangeRequest
+      expect(tableUpdateRequest.orderedColumnIds).toHaveLength(1)
+      expect(tableUpdateRequest.orderedColumnIds[0]).toBe(NEW_COLUMN_MODEL_ID)
+      expect(tableUpdateRequest.changes).toHaveLength(1)
+      expect(tableUpdateRequest.changes[0]).toMatchObject({
+        oldColumnId: null,
+        newColumnId: NEW_COLUMN_MODEL_ID,
+      })
+    })
     test('full test', async () => {
       // In this test, we will change a column, delete a column, and add a column (with appropriately
       // mocked responses)
@@ -177,6 +213,40 @@ describe('TableColumnSchemaUtils', () => {
         oldColumnId: null,
         newColumnId: '5',
       })
+    })
+    test('treats undefined/missing fields as equivalent', async () => {
+      const tableId = 'syn93939'
+
+      const columnModel1: ColumnModel = {
+        id: OLD_COLUMN_MODEL_ID1,
+        name: 'col1',
+        columnType: ColumnTypeEnum.STRING,
+      }
+
+      const oldColumnModels: ColumnModel[] = [columnModel1]
+
+      const newColumnModels: ColumnModel[] = [
+        // Add `maximumSize` field, but set it to undefined
+        { ...columnModel1, maximumSize: undefined },
+      ]
+
+      jest
+        .spyOn(SynapseClient, 'createColumnModels')
+        .mockResolvedValue({ list: newColumnModels })
+
+      // Call under test
+      const request = await createTableUpdateTransactionRequest(
+        MOCK_ACCESS_TOKEN,
+        tableId,
+        oldColumnModels,
+        newColumnModels,
+      )
+      expect(request.changes.length).toBe(1)
+      const tableUpdateRequest: TableSchemaChangeRequest = request
+        .changes[0] as TableSchemaChangeRequest
+      expect(tableUpdateRequest.orderedColumnIds).toHaveLength(1)
+      expect(tableUpdateRequest.orderedColumnIds[0]).toBe(OLD_COLUMN_MODEL_ID1)
+      expect(tableUpdateRequest.changes).toHaveLength(0)
     })
   })
 })

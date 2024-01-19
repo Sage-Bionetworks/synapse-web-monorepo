@@ -6,14 +6,19 @@ import {
 import { SkeletonTable } from '../Skeleton'
 import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import TableColumnSchemaForm, { SubmitHandle } from './TableColumnSchemaForm'
-import { Alert, Button, Divider } from '@mui/material'
+import { Alert, Box, Button } from '@mui/material'
 import { getViewScopeForEntity } from './TableColumnSchemaEditorUtils'
 import { ColumnModel, ViewScope } from '@sage-bionetworks/synapse-types'
-import { Provider } from 'jotai'
 import { SetOptional } from 'type-fest'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { DialogBase } from '../DialogBase'
+import { noop } from 'lodash-es'
 
 export type TableColumnSchemaEditorProps = {
   entityId: string
+  open: boolean
+  onColumnsUpdated?: () => void
+  onCancel?: () => void
 }
 
 /**
@@ -21,8 +26,10 @@ export type TableColumnSchemaEditorProps = {
  * @param props
  * @constructor
  */
-function _TableColumnSchemaEditor(props: TableColumnSchemaEditorProps) {
-  const { entityId } = props
+export default function TableColumnSchemaEditor(
+  props: TableColumnSchemaEditorProps,
+) {
+  const { entityId, open, onColumnsUpdated = noop, onCancel = noop } = props
 
   const formRef = useRef<SubmitHandle>(null)
   const { data: bundle, isLoading } = useGetEntityBundle(
@@ -42,7 +49,15 @@ function _TableColumnSchemaEditor(props: TableColumnSchemaEditorProps) {
   const entity = bundle?.entity
   const originalColumnModels = bundle?.tableBundle?.columnModels
 
-  const { mutate, isLoading: isMutating, error } = useUpdateTableColumns()
+  const {
+    mutate,
+    isLoading: isMutating,
+    error,
+  } = useUpdateTableColumns({
+    onSuccess: () => {
+      onColumnsUpdated()
+    },
+  })
 
   const onSubmit = useCallback(
     (newColumnModels: SetOptional<ColumnModel, 'id'>[]) => {
@@ -60,7 +75,7 @@ function _TableColumnSchemaEditor(props: TableColumnSchemaEditorProps) {
     if (!entity) {
       return undefined
     }
-    return getViewScopeForEntity(entity!)
+    return getViewScopeForEntity(entity)
   }, [entity])
 
   if (isLoading || !bundle || !entity) {
@@ -75,48 +90,57 @@ function _TableColumnSchemaEditor(props: TableColumnSchemaEditorProps) {
   }
 
   return (
-    <>
-      <TableColumnSchemaForm
-        ref={formRef}
-        entityType={convertToEntityType(entity.concreteType)}
-        viewScope={viewScope}
-        initialData={bundle?.tableBundle?.columnModels}
-        isSubmitting={isMutating}
-        onSubmit={formData => {
-          onSubmit(formData)
-        }}
-      />
-      <Divider />
-      {error && (
-        <Alert severity={'error'} sx={{ my: 2 }}>
-          {error?.message}
-        </Alert>
-      )}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => {
-          if (formRef.current) {
-            formRef.current.submit()
-          }
-        }}
-        disabled={isMutating}
-        sx={{ my: 2 }}
-      >
-        {isMutating ? 'Saving...' : 'Save'}
-      </Button>
-    </>
-  )
-}
-
-export default function TableColumnSchemaEditor(
-  props: TableColumnSchemaEditorProps,
-) {
-  // Wrap in a Jotai provider to ensure the Jotai atomic state is unique to this component tree
-  // i.e. other instances of TableColumnSchemaEditor will not share state with this instance
-  return (
-    <Provider>
-      <_TableColumnSchemaEditor {...props} />
-    </Provider>
+    <DialogBase
+      open={open}
+      onCancel={onCancel}
+      maxWidth={'xl'}
+      title={'Edit Columns'}
+      content={
+        <>
+          <TableColumnSchemaForm
+            ref={formRef}
+            entityType={convertToEntityType(entity.concreteType)}
+            viewScope={viewScope}
+            initialData={bundle?.tableBundle?.columnModels}
+            isSubmitting={isMutating}
+            onSubmit={formData => {
+              onSubmit(formData)
+            }}
+          />
+          {error && (
+            <Alert severity={'error'} sx={{ my: 2 }}>
+              {error?.message}
+            </Alert>
+          )}
+        </>
+      }
+      actions={
+        <Box
+          display={'flex'}
+          justifyContent={'flex-end'}
+          alignItems={'center'}
+          width={'100%'}
+          gap={2.25}
+        >
+          <Button variant={'outlined'} onClick={onCancel} disabled={isMutating}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              if (formRef.current) {
+                formRef.current.submit()
+              }
+            }}
+            disabled={isMutating}
+            sx={{ my: 2 }}
+            startIcon={isMutating ? <SynapseSpinner /> : undefined}
+          >
+            {isMutating ? 'Saving...' : 'Save'}
+          </Button>
+        </Box>
+      }
+    />
   )
 }
