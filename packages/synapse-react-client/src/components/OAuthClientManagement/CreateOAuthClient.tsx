@@ -8,10 +8,14 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  MenuItem,
   TextField,
   Typography,
 } from '@mui/material'
-import { OAuthClient } from '@sage-bionetworks/synapse-types'
+import {
+  OAuthClient,
+  OIDCSigningAlgorithm,
+} from '@sage-bionetworks/synapse-types'
 import {
   useCreateOAuthClient,
   useDeleteOAuthClient,
@@ -25,6 +29,10 @@ import SynapseClient from '../../synapse-client'
 import { useDebouncedEffect } from '../../utils/hooks'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 
+export const defaultUserInfoSignedResponseAlgorithm = 'JSON'
+export const warningHeader = 'Are you absolutely sure?'
+export const warningBody =
+  'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.'
 const INPUT_CHANGE_DEBOUNCE_DELAY_MS = 500
 const GRID_NARROW = 12
 const GRID_WIDE = 6
@@ -55,18 +63,17 @@ export const CreateOAuthModal: React.FunctionComponent<
   const { accessToken } = useSynapseContext()
   const [clientName, setClientName] = useState('')
   const [redirectUris, setRedirectUris] = useState([{ uri: '' }])
-  const [policyUri, setPolicyUri] = useState<string>()
-  const [clientUri, setClientUri] = useState<string>()
-  const [sectorUri, setSectorUri] = useState<string | undefined>()
-  const [tosUri, setTosUri] = useState<string>()
+  const [policyUri, setPolicyUri] = useState<string>('')
+  const [clientUri, setClientUri] = useState<string>('')
+  const [sectorUri, setSectorUri] = useState<string>('')
+  const [tosUri, setTosUri] = useState<string>('')
+  const [userinfoSignedResponseAlg, setUserinfoSignedResponseAlg] = useState<
+    'JSON' | OIDCSigningAlgorithm
+  >(defaultUserInfoSignedResponseAlgorithm)
   const [warnTrigger, setWarnTrigger] = useState(false)
   const [isDelete, setIsDelete] = useState<boolean>(false)
   const [updatedClient, setUpdatedClient] = useState<OAuthClient>()
   const [error, setError] = useState<SynapseClientError>()
-
-  const warningHeader = 'Are you absolutely sure?'
-  const warningBody =
-    'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.'
 
   // Return the OAuth Client definition based on the current client-side UI state
   const oAuthClient: OAuthClient = useMemo(() => {
@@ -76,7 +83,11 @@ export const CreateOAuthModal: React.FunctionComponent<
       redirect_uris: redirectUris?.map(str => str.uri) ?? [''],
       policy_uri: policyUri,
       client_uri: clientUri,
-      sector_identifier_uri: sectorUri ?? '',
+      sector_identifier_uri: sectorUri,
+      userinfo_signed_response_alg:
+        userinfoSignedResponseAlg === defaultUserInfoSignedResponseAlgorithm
+          ? undefined
+          : userinfoSignedResponseAlg,
       tos_uri: tosUri,
       etag: client?.etag,
     }
@@ -88,6 +99,7 @@ export const CreateOAuthModal: React.FunctionComponent<
     policyUri,
     redirectUris,
     sectorUri,
+    userinfoSignedResponseAlg,
     tosUri,
   ])
 
@@ -98,13 +110,17 @@ export const CreateOAuthModal: React.FunctionComponent<
     )
     setPolicyUri(client?.policy_uri ?? '')
     setClientUri(client?.client_uri ?? '')
-    setSectorUri(client?.sector_identifier_uri ?? undefined)
+    setSectorUri(client?.sector_identifier_uri ?? '')
+    setUserinfoSignedResponseAlg(
+      client?.userinfo_signed_response_alg ??
+        defaultUserInfoSignedResponseAlgorithm,
+    )
     setTosUri(client?.tos_uri ?? '')
   }, [isShowingModal, client])
 
   useDebouncedEffect(
     () => {
-      if (accessToken) {
+      if (accessToken && oAuthClient.client_id) {
         // SWC-6365: use the pre-check service to determine if we need to show a warning on edit
         SynapseClient.isOAuthClientReverificationRequired(
           oAuthClient,
@@ -124,6 +140,7 @@ export const CreateOAuthModal: React.FunctionComponent<
     setPolicyUri('')
     setClientUri('')
     setSectorUri('')
+    setUserinfoSignedResponseAlg(defaultUserInfoSignedResponseAlgorithm)
     setTosUri('')
     onClose()
   }
@@ -357,6 +374,25 @@ export const CreateOAuthModal: React.FunctionComponent<
                 fullWidth
                 margin="normal"
               />
+            </Grid>
+            <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+              <TextField
+                label="User Info Signed Response Algorithm"
+                value={userinfoSignedResponseAlg}
+                onChange={e =>
+                  setUserinfoSignedResponseAlg(
+                    e.target.value as OIDCSigningAlgorithm,
+                  )
+                }
+                select
+                fullWidth
+                margin="normal"
+              >
+                <MenuItem value={defaultUserInfoSignedResponseAlgorithm}>
+                  JSON
+                </MenuItem>
+                <MenuItem value={OIDCSigningAlgorithm.RS256}>JWT</MenuItem>
+              </TextField>
             </Grid>
           </Grid>
           {isEdit && (
