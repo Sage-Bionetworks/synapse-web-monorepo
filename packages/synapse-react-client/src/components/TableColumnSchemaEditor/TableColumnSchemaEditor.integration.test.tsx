@@ -736,10 +736,7 @@ describe('TableColumnSchemaEditor', () => {
     })
     await user.click(saveButton)
 
-    await waitFor(() => {
-      const existingColumnIds = mockTableQueryData.columnModels!.map(
-        cm => cm.id,
-      )
+    await waitFor(async () => {
       expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
         MOCK_ACCESS_TOKEN,
         mockTableEntityData.id,
@@ -751,26 +748,7 @@ describe('TableColumnSchemaEditor', () => {
         ],
       )
       expect(updateTableSpy).toHaveBeenCalledWith(
-        {
-          changes: [
-            {
-              // No columns were added or removed
-              changes: [],
-              concreteType:
-                'org.sagebionetworks.repo.model.table.TableSchemaChangeRequest',
-              entityId: mockTableEntityData.id,
-              // The first column was moved down one spot
-              orderedColumnIds: [
-                existingColumnIds[1],
-                existingColumnIds[0],
-                ...existingColumnIds.slice(2),
-              ],
-            },
-          ],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: mockTableEntityData.id,
-        },
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
         MOCK_ACCESS_TOKEN,
       )
       expect(mockOnColumnsUpdated).toHaveBeenCalled()
