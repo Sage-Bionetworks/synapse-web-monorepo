@@ -4,9 +4,9 @@ import './App.scss'
 import Footer from './Footer'
 import AppInitializer from './AppInitializer'
 import Navbar from './Navbar'
-import CookiesNotification from './CookiesNotification'
 import { CookiesProvider } from 'react-cookie'
 import {
+  CookiesNotification,
   SynapseTheme,
   SynapseToastContainer,
   defaultQueryClientConfig,
