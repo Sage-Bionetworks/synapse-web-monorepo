@@ -4,7 +4,6 @@ import { SageResourcesPage } from './components/SageResourcesPage'
 import { AccountCreatedPage } from './components/AccountCreatedPage'
 import { AccountSettings } from './components/AccountSettings'
 import { CertificationQuiz } from './components/CertificationQuiz'
-import CookiesNotification from './components/CookiesNotification'
 import { CurrentAffiliationPage } from './components/CurrentAffiliationPage'
 import { JoinTeamPage } from './components/JoinTeamPage'
 import { ProfileValidation } from './components/ProfileValidation/ProfileValidation'
@@ -16,6 +15,7 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import {
   ApplicationSessionManager,
+  CookiesNotification,
   SynapseClient,
   SynapseToastContainer,
   SynapseContextType,

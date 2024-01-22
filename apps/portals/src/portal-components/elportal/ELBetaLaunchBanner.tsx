@@ -1,18 +1,20 @@
 import { Link } from '@mui/material'
 import React from 'react'
-import { useCookies } from 'react-cookie'
 import { SynapseComponents } from 'synapse-react-client'
-const EL_BETA_LAUNCH_COOKIE_KEY =
+const EL_BETA_LAUNCH_LOCALSTORAGE_KEY =
   'org.sagebionetworks.security.cookies.portal.elbetalaunch.dismissed'
 const ELBetaLaunchBanner = () => {
-  const [cookies, setCookie] = useCookies([EL_BETA_LAUNCH_COOKIE_KEY])
-  return cookies[EL_BETA_LAUNCH_COOKIE_KEY] ? (
+  const [showBanner, setShowBanner] = React.useState(
+    localStorage.getItem(EL_BETA_LAUNCH_LOCALSTORAGE_KEY) === null,
+  )
+  return !showBanner ? (
     <></>
   ) : (
     <SynapseComponents.FullWidthAlert
       isGlobal={true}
       onClose={() => {
-        setCookie(EL_BETA_LAUNCH_COOKIE_KEY, 'true')
+        localStorage.setItem(EL_BETA_LAUNCH_LOCALSTORAGE_KEY, 'true')
+        setShowBanner(false)
       }}
       variant={'info'}
       show={true}
