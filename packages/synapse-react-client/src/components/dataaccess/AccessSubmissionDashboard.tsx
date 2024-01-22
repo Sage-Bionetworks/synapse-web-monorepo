@@ -11,6 +11,15 @@ import {
 } from './AccessRequestSubmissionTable'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
+import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
+
+export const getReviewerFilterID = (selected: string | null) => {
+  if (selected && selected !== ACT_TEAM_ID.toString()) {
+    return selected
+  } else {
+    return undefined
+  }
+}
 
 export const DataAccessSubmissionDashboard = () => {
   const [accessRequirementId, setAccessRequirementId] = useState<
@@ -52,11 +61,7 @@ export const DataAccessSubmissionDashboard = () => {
   }, [])
 
   const onReviewerChange = useCallback((selected: string | null) => {
-    if (selected) {
-      setReviewerId(selected)
-    } else {
-      setReviewerId(undefined)
-    }
+    setReviewerId(getReviewerFilterID(selected))
   }, [])
 
   useDebouncedEffect(
