@@ -12,7 +12,7 @@ import { ColumnModel, ViewScope } from '@sage-bionetworks/synapse-types'
 import { SetOptional } from 'type-fest'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { DialogBase } from '../DialogBase'
-import { noop } from 'lodash-es'
+import { isUndefined, noop, omitBy } from 'lodash-es'
 
 export type TableColumnSchemaEditorProps = {
   entityId: string
@@ -65,7 +65,10 @@ export default function TableColumnSchemaEditor(
       mutate({
         entityId,
         originalColumnModels: originalColumnModels!,
-        newColumnModels: newColumnModels,
+        newColumnModels: newColumnModels.map(cm =>
+          // Remove undefined properties from the new column models
+          omitBy(cm, isUndefined),
+        ) as SetOptional<ColumnModel, 'id'>[],
       })
     },
     [entityId, mutate, originalColumnModels],

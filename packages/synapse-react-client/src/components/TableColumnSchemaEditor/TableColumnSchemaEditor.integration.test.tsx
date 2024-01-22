@@ -36,6 +36,7 @@ import {
 import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
 import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumnModels'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
+import * as TableColumnSchemaUtils from '../../utils/functions/TableColumnSchemaUtils'
 
 const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
   {
@@ -93,13 +94,16 @@ async function setUp(props: TableColumnSchemaEditorProps) {
 describe('TableColumnSchemaEditor', () => {
   const mockOnColumnsUpdated = jest.fn()
   const mockOnCancel = jest.fn()
+  const createTableUpdateTransactionRequestSpy = jest.spyOn(
+    TableColumnSchemaUtils,
+    'createTableUpdateTransactionRequest',
+  )
   const updateTableSpy = jest.spyOn(SynapseClient, 'updateTable')
 
   beforeAll(() => {
     server.listen()
   })
   beforeEach(() => {
-    jest.clearAllMocks()
     server.resetHandlers()
     server.use(
       /* Each test in this suite should register its own table query handler */
@@ -121,6 +125,7 @@ describe('TableColumnSchemaEditor', () => {
       }),
     )
   })
+  afterEach(() => jest.clearAllMocks())
   afterAll(() => server.close())
 
   it('Renders a form and preloads data', async () => {
@@ -172,30 +177,23 @@ describe('TableColumnSchemaEditor', () => {
     await addColumnModelToForm('newColumnName', user)
     await user.click(saveButton)
 
-    await waitFor(() => {
-      const expectedExistingColumnIds = mockTableQueryData.columnModels!.map(
-        cm => cm.id,
+    await waitFor(async () => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        mockTableQueryData.columnModels,
+        [
+          ...mockTableQueryData.columnModels!,
+          {
+            name: 'newColumnName',
+            columnType: 'STRING',
+            maximumSize: 50,
+          },
+        ],
       )
+
       expect(updateTableSpy).toHaveBeenCalledWith(
-        {
-          changes: [
-            {
-              // The new column was added, no columns were changed, moved, or removed
-              changes: [{ newColumnId: expect.any(String), oldColumnId: null }],
-              concreteType:
-                'org.sagebionetworks.repo.model.table.TableSchemaChangeRequest',
-              entityId: mockTableEntityData.id,
-              // The new column is at the end
-              orderedColumnIds: [
-                ...expectedExistingColumnIds,
-                expect.any(String),
-              ],
-            },
-          ],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: mockTableEntityData.id,
-        },
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
         MOCK_ACCESS_TOKEN,
       )
       expect(mockOnColumnsUpdated).toHaveBeenCalled()
@@ -242,28 +240,19 @@ describe('TableColumnSchemaEditor', () => {
 
     await user.click(saveButton)
 
-    await waitFor(() => {
+    await waitFor(async () => {
+      const expectedProposedSchema = defaultFileViewColumnModels.map(cm => ({
+        ...cm,
+        id: undefined,
+      }))
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockFileViewEntity.id,
+        [],
+        expectedProposedSchema,
+      )
       expect(updateTableSpy).toHaveBeenCalledWith(
-        {
-          changes: [
-            {
-              // The default columns were added; they are all new
-              changes: expect.arrayContaining(
-                defaultFileViewColumnModels.map(cm => ({
-                  newColumnId: cm.id,
-                  oldColumnId: null,
-                })),
-              ),
-              concreteType:
-                'org.sagebionetworks.repo.model.table.TableSchemaChangeRequest',
-              entityId: mockFileViewEntity.id,
-              orderedColumnIds: defaultFileViewColumnModels.map(cm => cm.id),
-            },
-          ],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: mockFileViewEntity.id,
-        },
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
         MOCK_ACCESS_TOKEN,
       )
       expect(mockOnColumnsUpdated).toHaveBeenCalled()
@@ -309,30 +298,20 @@ describe('TableColumnSchemaEditor', () => {
 
     await user.click(saveButton)
 
-    await waitFor(() => {
+    await waitFor(async () => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockFileViewEntity.id,
+        [],
+        // IDs are stripped from imported columns, in case they are changed
+        MOCK_ANNOTATION_COLUMNS.results.map(cm => {
+          const newObj: SetOptional<ColumnModel, 'id'> = { ...cm }
+          delete newObj.id
+          return newObj
+        }),
+      )
       expect(updateTableSpy).toHaveBeenCalledWith(
-        {
-          changes: [
-            {
-              // The annotation columns were added; they are all new
-              changes: expect.arrayContaining(
-                MOCK_ANNOTATION_COLUMNS.results.map(cm => ({
-                  newColumnId: cm.id,
-                  oldColumnId: null,
-                })),
-              ),
-              concreteType:
-                'org.sagebionetworks.repo.model.table.TableSchemaChangeRequest',
-              entityId: mockFileViewEntity.id,
-              orderedColumnIds: MOCK_ANNOTATION_COLUMNS.results.map(
-                cm => cm.id,
-              ),
-            },
-          ],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: mockFileViewEntity.id,
-        },
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
         MOCK_ACCESS_TOKEN,
       )
       expect(mockOnColumnsUpdated).toHaveBeenCalled()
@@ -410,7 +389,7 @@ describe('TableColumnSchemaEditor', () => {
         },
       }),
     )
-    const { user } = await setUp({
+    const { user, saveButton } = await setUp({
       entityId: mockTableEntityData.id,
       open: true,
       onColumnsUpdated: mockOnColumnsUpdated,
@@ -429,6 +408,27 @@ describe('TableColumnSchemaEditor', () => {
       expect(nameFields.length).toEqual(mockedImportedColumns.length)
       expect(nameFields[0]).toHaveValue(mockedImportedColumns[0].name)
       expect(nameFields[1]).toHaveValue(mockedImportedColumns[1].name)
+    })
+
+    await user.click(saveButton)
+
+    await waitFor(async () => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        [],
+        // IDs are stripped from imported columns, in case they are changed
+        mockedImportedColumns.map(cm => {
+          const newObj: SetOptional<ColumnModel, 'id'> = { ...cm }
+          delete newObj.id
+          return newObj
+        }),
+      )
+      expect(updateTableSpy).toHaveBeenCalledWith(
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
+        MOCK_ACCESS_TOKEN,
+      )
+      expect(mockOnColumnsUpdated).toHaveBeenCalled()
     })
   })
   it('Shows error messages if validation fails', async () => {
@@ -457,6 +457,7 @@ describe('TableColumnSchemaEditor', () => {
     await screen.findByText('Name is required')
 
     await waitFor(() => {
+      expect(createTableUpdateTransactionRequestSpy).not.toHaveBeenCalled()
       expect(updateTableSpy).not.toHaveBeenCalled()
       expect(mockOnColumnsUpdated).not.toHaveBeenCalled()
     })
@@ -466,25 +467,22 @@ describe('TableColumnSchemaEditor', () => {
     await user.type(nameFields[nameFields.length - 1], 'newColumnName')
 
     await user.click(saveButton)
-    await waitFor(() => {
+    await waitFor(async () => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        mockTableQueryData.columnModels!,
+        [
+          ...mockTableQueryData.columnModels!,
+          {
+            name: 'newColumnName',
+            columnType: 'STRING',
+            maximumSize: 50,
+          },
+        ],
+      )
       expect(updateTableSpy).toHaveBeenCalledWith(
-        {
-          changes: [
-            {
-              changes: [{ newColumnId: expect.any(String), oldColumnId: null }],
-              concreteType:
-                'org.sagebionetworks.repo.model.table.TableSchemaChangeRequest',
-              entityId: mockTableEntityData.id,
-              orderedColumnIds: [
-                ...mockTableQueryData.columnModels!.map(cm => cm.id),
-                expect.any(String),
-              ],
-            },
-          ],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: mockTableEntityData.id,
-        },
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
         MOCK_ACCESS_TOKEN,
       )
       expect(mockOnColumnsUpdated).toHaveBeenCalled()
@@ -550,27 +548,20 @@ describe('TableColumnSchemaEditor', () => {
     expect(restrictedValuesInput).toHaveValue('bar, true, 3, null')
 
     await user.click(saveButton)
-    await waitFor(() => {
+    await waitFor(async () => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        [stringColumnWithRestrictedVals],
+        [
+          {
+            ...stringColumnWithRestrictedVals,
+            enumValues: ['bar', 'true', '3', 'null'],
+          },
+        ],
+      )
       expect(updateTableSpy).toHaveBeenCalledWith(
-        {
-          changes: [
-            {
-              changes: [
-                {
-                  newColumnId: expect.any(String),
-                  oldColumnId: stringColumnWithRestrictedVals.id,
-                },
-              ],
-              concreteType:
-                'org.sagebionetworks.repo.model.table.TableSchemaChangeRequest',
-              entityId: mockTableEntityData.id,
-              orderedColumnIds: [expect.any(String)],
-            },
-          ],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: mockTableEntityData.id,
-        },
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
         MOCK_ACCESS_TOKEN,
       )
       expect(mockOnColumnsUpdated).toHaveBeenCalled()
@@ -643,27 +634,20 @@ describe('TableColumnSchemaEditor', () => {
     expect(restrictedValuesInput).toHaveValue('1, 2, 3, 4')
 
     await user.click(saveButton)
-    await waitFor(() => {
+    await waitFor(async () => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        [integerColumnWithRestrictedVals],
+        [
+          {
+            ...integerColumnWithRestrictedVals,
+            enumValues: ['1', '2', '3', '4'],
+          },
+        ],
+      )
       expect(updateTableSpy).toHaveBeenCalledWith(
-        {
-          changes: [
-            {
-              changes: [
-                {
-                  newColumnId: expect.any(String),
-                  oldColumnId: integerColumnWithRestrictedVals.id,
-                },
-              ],
-              concreteType:
-                'org.sagebionetworks.repo.model.table.TableSchemaChangeRequest',
-              entityId: mockTableEntityData.id,
-              orderedColumnIds: [expect.any(String)],
-            },
-          ],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: mockTableEntityData.id,
-        },
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
         MOCK_ACCESS_TOKEN,
       )
       expect(mockOnColumnsUpdated).toHaveBeenCalled()
@@ -687,41 +671,24 @@ describe('TableColumnSchemaEditor', () => {
       onCancel: mockOnCancel,
     })
 
-    // Add a column
+    // Change the first column
     await modifyColumnModelInForm(0, {
       columnName: 'changedColumnName',
     })
     await user.click(saveButton)
 
-    await waitFor(() => {
-      const existingColumnIds = mockTableQueryData.columnModels!.map(
-        cm => cm.id,
+    await waitFor(async () => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        mockTableQueryData.columnModels,
+        [
+          { ...mockTableQueryData.columnModels![0], name: 'changedColumnName' },
+          ...mockTableQueryData.columnModels!.slice(1),
+        ],
       )
       expect(updateTableSpy).toHaveBeenCalledWith(
-        {
-          changes: [
-            {
-              changes: [
-                {
-                  // The first column was changed!
-                  oldColumnId: existingColumnIds[0],
-                  newColumnId: expect.any(String),
-                },
-              ],
-              concreteType:
-                'org.sagebionetworks.repo.model.table.TableSchemaChangeRequest',
-              entityId: mockTableEntityData.id,
-              // The new/changed column is at the beginning. The 2nd and 3rd columns will match the original columns
-              orderedColumnIds: [
-                expect.any(String),
-                ...existingColumnIds.slice(1),
-              ],
-            },
-          ],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: mockTableEntityData.id,
-        },
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
         MOCK_ACCESS_TOKEN,
       )
       expect(mockOnColumnsUpdated).toHaveBeenCalled()
@@ -773,6 +740,16 @@ describe('TableColumnSchemaEditor', () => {
       const existingColumnIds = mockTableQueryData.columnModels!.map(
         cm => cm.id,
       )
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        mockTableQueryData.columnModels,
+        [
+          mockTableQueryData.columnModels![1],
+          mockTableQueryData.columnModels![0],
+          ...mockTableQueryData.columnModels!.slice(2),
+        ],
+      )
       expect(updateTableSpy).toHaveBeenCalledWith(
         {
           changes: [
@@ -799,6 +776,72 @@ describe('TableColumnSchemaEditor', () => {
       expect(mockOnColumnsUpdated).toHaveBeenCalled()
     })
   })
+
+  it('Can reorder and edit the same column', async () => {
+    server.use(
+      getEntityBundleHandler({
+        entity: mockTableEntityData.entity,
+        tableBundle: {
+          columnModels: mockTableQueryData.columnModels!,
+          maxRowsPerPage: 25,
+        },
+      }),
+    )
+
+    const { user, saveButton, moveDownButton } = await setUp({
+      entityId: mockTableEntityData.id,
+      open: true,
+      onColumnsUpdated: mockOnColumnsUpdated,
+      onCancel: mockOnCancel,
+    })
+
+    let checkboxes: HTMLInputElement[] = []
+    await waitFor(() => {
+      checkboxes = screen.getAllByRole('checkbox')
+      expect(checkboxes).toHaveLength(
+        mockTableQueryData.columnModels!.length + 1,
+      )
+    })
+
+    // Change the name of the first column
+    await modifyColumnModelInForm(0, {
+      columnName: 'changedColumnName',
+    })
+
+    // Move the first column down one spot
+    // Note that the first checkbox is "Select All"
+    const firstColumnCheckbox = checkboxes[1]
+    expect(firstColumnCheckbox).not.toBeChecked()
+    await user.click(firstColumnCheckbox)
+    expect(firstColumnCheckbox).toBeChecked()
+
+    await user.click(moveDownButton)
+    await waitFor(() => {
+      // Verify the columns have been reordered by inspecting the checkboxes
+      expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked()
+      expect(screen.getAllByRole('checkbox')[2]).toBeChecked()
+    })
+    await user.click(saveButton)
+
+    await waitFor(async () => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        mockTableQueryData.columnModels!,
+        [
+          mockTableQueryData.columnModels![1],
+          { ...mockTableQueryData.columnModels![0], name: 'changedColumnName' },
+          ...mockTableQueryData.columnModels!.slice(2),
+        ],
+      )
+      expect(updateTableSpy).toHaveBeenCalledWith(
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
+        MOCK_ACCESS_TOKEN,
+      )
+      expect(mockOnColumnsUpdated).toHaveBeenCalled()
+    })
+  })
+
   it('Handles failure on the update call', async () => {
     const errorMessage = 'Uh oh, something went wrong!!!'
     server.use(
@@ -827,30 +870,26 @@ describe('TableColumnSchemaEditor', () => {
 
     await user.click(saveButton)
 
-    await waitFor(() => {
+    await waitFor(async () => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        mockTableQueryData.columnModels,
+        mockTableQueryData.columnModels,
+      )
       expect(updateTableSpy).toHaveBeenCalledWith(
-        {
-          changes: [
-            {
-              changes: [],
-              concreteType:
-                'org.sagebionetworks.repo.model.table.TableSchemaChangeRequest',
-              entityId: mockTableEntityData.id,
-              orderedColumnIds: mockTableQueryData.columnModels!.map(
-                cm => cm.id,
-              ),
-            },
-          ],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: mockTableEntityData.id,
-        },
+        await createTableUpdateTransactionRequestSpy.mock.results[0].value,
         MOCK_ACCESS_TOKEN,
       )
     })
-    // `onColumnsUpdated` should NOT be called because the update failed
+
+    const errorAlert = await screen.findByRole('alert')
+    within(errorAlert).getByText(errorMessage)
+
+    // `onColumnsUpdated` should NOT have been called because the update failed
     expect(mockOnColumnsUpdated).not.toHaveBeenCalled()
   })
+
   it('Clicking cancel calls onCancel', async () => {
     server.use(
       getEntityBundleHandler({

@@ -56,21 +56,22 @@ export async function createTableUpdateTransactionRequest(
   const changes: ColumnChange[] = []
   const columnIdsThatWereChangedOrAdded: Set<string> = new Set()
   for (let i = 0; i < proposedSchema.length; i++) {
-    const oldColumnId: string | null = proposedSchema[i].id ?? null
+    const columnIdInProposedSchema: string | null = proposedSchema[i].id ?? null
     const newColumnId: string | null = createdColumnModels[i].id ?? null
-    if (oldColumnId) columnIdsThatWereChangedOrAdded.add(oldColumnId)
+    if (columnIdInProposedSchema)
+      columnIdsThatWereChangedOrAdded.add(columnIdInProposedSchema)
     columnIdsThatWereChangedOrAdded.add(newColumnId)
     if (
       // The column has changed
-      oldColumnId != null &&
-      oldColumnId !== newColumnId
+      columnIdInProposedSchema != null &&
+      columnIdInProposedSchema !== newColumnId
     ) {
-      changes.push({ oldColumnId, newColumnId })
+      changes.push({ oldColumnId: columnIdInProposedSchema, newColumnId })
     } else if (
       // the column is new and is defined by the user
-      oldColumnId == null ||
+      columnIdInProposedSchema == null ||
       // the column is new but already has an ID (e.g. we are adding a default column to a view)
-      !oldColumnModelId2Model.has(oldColumnId)
+      !oldColumnModelId2Model.has(columnIdInProposedSchema)
     ) {
       changes.push({ oldColumnId: null, newColumnId })
     }
