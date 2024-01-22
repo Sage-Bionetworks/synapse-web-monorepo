@@ -7,6 +7,25 @@ import { SetOptional } from 'type-fest'
 import { createColumnModels } from '../../synapse-client'
 import { isEqualTreatUndefinedAsMissing } from './IsEqualTreatUndefinedAsMissing'
 
+function validateProposedSchema(
+  oldSchema: ColumnModel[],
+  proposedSchema: SetOptional<ColumnModel, 'id'>[],
+): void {
+  // If the proposed schema contains any IDs that are not in the old schema, throw an error
+  // We do this so we can accurately updates to existing columns by using the ID that is already present
+  const oldColumnModelIds: Set<string> = new Set()
+  for (const columnModel of oldSchema) {
+    oldColumnModelIds.add(columnModel.id)
+  }
+  for (const columnModel of proposedSchema) {
+    if (columnModel.id != null && !oldColumnModelIds.has(columnModel.id)) {
+      throw new Error(
+        `Proposed schema contains a new column model with ID ${columnModel.id} that is not in the old schema.`,
+      )
+    }
+  }
+}
+
 /**
  * Creates the column models for a change request and returns the change request to be passed to the Synapse backend.
  *
@@ -23,6 +42,8 @@ export async function createTableUpdateTransactionRequest(
   oldSchema: ColumnModel[],
   proposedSchema: SetOptional<ColumnModel, 'id'>[],
 ): Promise<TableUpdateTransactionRequest> {
+  validateProposedSchema(oldSchema, proposedSchema)
+
   // Keep track of the old column models by ID
   const oldColumnModelId2Model: Map<string, ColumnModel> = new Map()
   for (const columnModel of oldSchema) {
@@ -57,7 +78,7 @@ export async function createTableUpdateTransactionRequest(
   const columnIdsThatWereChangedOrAdded: Set<string> = new Set()
   for (let i = 0; i < proposedSchema.length; i++) {
     const columnIdInProposedSchema: string | null = proposedSchema[i].id ?? null
-    const newColumnId: string | null = createdColumnModels[i].id ?? null
+    const newColumnId: string = createdColumnModels[i].id
     if (columnIdInProposedSchema)
       columnIdsThatWereChangedOrAdded.add(columnIdInProposedSchema)
     columnIdsThatWereChangedOrAdded.add(newColumnId)

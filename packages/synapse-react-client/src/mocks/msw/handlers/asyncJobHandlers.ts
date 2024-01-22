@@ -85,6 +85,7 @@ export function generateAsyncJobHandlers<
           serviceSpecificEndpointResponseStatus < 400 ? 'COMPLETE' : 'FAILED'
 
         return res(
+          // This endpoint returns a successful status code regardless of the job status
           ctx.status(200),
           ctx.json<AsynchronousJobStatus<TRequestBody, TResponseBody>>({
             jobState,

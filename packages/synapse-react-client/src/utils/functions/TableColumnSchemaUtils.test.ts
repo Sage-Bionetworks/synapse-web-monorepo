@@ -9,6 +9,7 @@ import { createTableUpdateTransactionRequest } from './TableColumnSchemaUtils'
 import SynapseClient from '../../synapse-client'
 
 describe('TableColumnSchemaUtils', () => {
+  beforeEach(() => jest.clearAllMocks())
   describe('getTableUpdateTransactionRequest tests', () => {
     const OLD_COLUMN_MODEL_ID1 = '10001'
     const OLD_COLUMN_MODEL_ID2 = '10002'
@@ -143,42 +144,38 @@ describe('TableColumnSchemaUtils', () => {
         newColumnId: NEW_COLUMN_MODEL_ID,
       })
     })
-    test('add new column that has an existing ID', async () => {
+
+    test('adding a new column that has an existing ID causes a thrown error', async () => {
       const tableId = 'syn93939'
       const oldSchema: ColumnModel[] = []
-      const columnModelWithId: ColumnModel = {
+      const newColumnModelWithId: ColumnModel = {
         id: NEW_COLUMN_MODEL_ID,
         name: 'newCol',
         columnType: ColumnTypeEnum.STRING,
       }
       const proposedSchema: SetOptional<ColumnModel, 'id'>[] = [
-        columnModelWithId,
+        newColumnModelWithId,
       ]
-      // Note that the ID doesn't change in the created column model
-      const createdColumnModels: ColumnModel[] = [columnModelWithId]
 
-      jest
-        .spyOn(SynapseClient, 'createColumnModels')
-        .mockResolvedValue({ list: createdColumnModels })
-
-      const request = await createTableUpdateTransactionRequest(
-        MOCK_ACCESS_TOKEN,
-        tableId,
-        oldSchema,
-        proposedSchema,
+      const createColumnModelsSpy = jest.spyOn(
+        SynapseClient,
+        'createColumnModels',
       )
 
-      expect(request.changes.length).toBe(1)
-      const tableUpdateRequest: TableSchemaChangeRequest = request
-        .changes[0] as TableSchemaChangeRequest
-      expect(tableUpdateRequest.orderedColumnIds).toHaveLength(1)
-      expect(tableUpdateRequest.orderedColumnIds[0]).toBe(NEW_COLUMN_MODEL_ID)
-      expect(tableUpdateRequest.changes).toHaveLength(1)
-      expect(tableUpdateRequest.changes[0]).toMatchObject({
-        oldColumnId: null,
-        newColumnId: NEW_COLUMN_MODEL_ID,
-      })
+      await expect(() =>
+        createTableUpdateTransactionRequest(
+          MOCK_ACCESS_TOKEN,
+          tableId,
+          oldSchema,
+          proposedSchema,
+        ),
+      ).rejects.toThrow(
+        `Proposed schema contains a new column model with ID ${NEW_COLUMN_MODEL_ID} that is not in the old schema.`,
+      )
+
+      expect(createColumnModelsSpy).not.toHaveBeenCalled()
     })
+
     test('full test', async () => {
       // In this test, we will change a column, delete a column, and add a column (with appropriately
       // mocked responses)
