@@ -48,10 +48,8 @@ jobs:
         run: |
           cd "${{ env.PORTALS_SUBDIR }}"
           pnpm playwright install --with-deps
-      # Name report in playwright.config once feature is released:
-      # https://github.com/microsoft/playwright/issues/27284
       - name: Run e2e tests
-        run: PWTEST_BLOB_REPORT_NAME="${{ matrix.PORTAL }}" pnpm nx run portals:e2e
+        run: pnpm nx run portals:e2e
         env:
           PORTAL: ${{ matrix.PORTAL }}
       - name: Stop portal

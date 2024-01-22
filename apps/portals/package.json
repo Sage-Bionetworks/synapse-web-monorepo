@@ -50,7 +50,7 @@
     "playwright:update": "pnpm add -D @playwright/test@latest; pnpm playwright install"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.1",
+    "@playwright/test": "^1.41.1",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
