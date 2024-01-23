@@ -11,6 +11,7 @@ import {
   Row,
 } from '@sage-bionetworks/synapse-types'
 import { FacetFilterHeader } from '../widgets/query-filter/FacetFilterHeader'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 
 export type QueryWrapperSynapsePlotProps = Pick<
   QueryWrapperPlotNavCustomPlotParams,
@@ -35,6 +36,7 @@ export default function QueryWrapperSynapsePlot(
   const queryContext = useQueryContext()
   const { currentQueryRequest } = queryContext
   const { title, onCustomPlotClick } = props
+  const { showFacetVisualization } = useQueryVisualizationContext()
 
   const widgetParamsMapped: SynapsePlotWidgetParams = useMemo(() => {
     return {
@@ -56,18 +58,22 @@ export default function QueryWrapperSynapsePlot(
   }, [currentQueryRequest.query, onCustomPlotClick, queryContext])
   return (
     <div className="SynapsePlot">
-      {title && (
-        <FacetFilterHeader
-          hideCollapsible={true}
-          label={title}
-          isCollapsed={false}
-          onClick={() => {}}
-        />
+      {showFacetVisualization && (
+        <>
+          {title && (
+            <FacetFilterHeader
+              hideCollapsible={true}
+              label={title}
+              isCollapsed={false}
+              onClick={() => {}}
+            />
+          )}
+          <SynapsePlot
+            synapsePlotWidgetParams={widgetParamsMapped}
+            customPlotParams={customPlotParams}
+          />
+        </>
       )}
-      <SynapsePlot
-        synapsePlotWidgetParams={widgetParamsMapped}
-        customPlotParams={customPlotParams}
-      />
     </div>
   )
 }
