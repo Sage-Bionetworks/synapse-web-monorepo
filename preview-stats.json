@@ -1505,13 +1505,13 @@
           "moduleName": "./src/components/SynapseTable/SynapseTable.tsx"
         },
         {
+          "moduleName": "./src/mocks/mockSchema.ts"
+        },
+        {
           "moduleName": "./src/mocks/mock_drug_tool_data.ts"
         },
         {
           "moduleName": "./src/components/SubmissionViewScopeEditor/SubmissionViewScopeEditor.tsx"
-        },
-        {
-          "moduleName": "./src/mocks/mockSchema.ts"
         },
         {
           "moduleName": "./src/utils/functions/SqlFunctions.ts"
@@ -1586,13 +1586,13 @@
           "moduleName": "./src/components/EntityFinder/tree/EntityTree.tsx"
         },
         {
-          "moduleName": "./src/components/CertificationQuiz/CertificationQuiz.tsx"
-        },
-        {
           "moduleName": "./src/assets/icons/Sort.tsx"
         },
         {
           "moduleName": "./src/components/EntityIcon.tsx"
+        },
+        {
+          "moduleName": "./src/components/CertificationQuiz/CertificationQuiz.tsx"
         },
         {
           "moduleName": "./src/components/UserCardList/UserCardListRotate.tsx"
@@ -1613,13 +1613,16 @@
           "moduleName": "./src/components/dataaccess/SubmissionPage.tsx"
         },
         {
-          "moduleName": "./src/components/dataaccess/AccessRequirementDashboard.tsx"
-        },
-        {
           "moduleName": "./src/components/dataaccess/AccessHistoryDashboard.tsx"
         },
         {
+          "moduleName": "./src/components/dataaccess/AccessRequirementDashboard.tsx"
+        },
+        {
           "moduleName": "./src/components/dataaccess/AccessSubmissionDashboard.tsx"
+        },
+        {
+          "moduleName": "./src/components/TermsAndConditions/TermsAndConditionsItem.tsx"
         },
         {
           "moduleName": "./src/mocks/entity/mockDataset.ts"
@@ -1637,9 +1640,6 @@
           "moduleName": "./src/utils/functions/getDataFromFromStorage.ts"
         },
         {
-          "moduleName": "./src/components/TermsAndConditions/TermsAndConditionsItem.tsx"
-        },
-        {
           "moduleName": "./src/components/SynapseTable/SynapseTableRenderers.tsx"
         },
         {
@@ -1649,13 +1649,13 @@
           "moduleName": "./src/components/SynapseForm/SynapseFormSubmissionsGrid.tsx"
         },
         {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
-        },
-        {
           "moduleName": "./src/components/SubscriptionPage/SubscriptionPage.tsx"
         },
         {
           "moduleName": "./src/components/SynapseTable/SearchV2.tsx"
+        },
+        {
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
         },
         {
           "moduleName": "./src/components/OAuthClientManagement/CreateOAuthClient.tsx"
@@ -1733,10 +1733,10 @@
           "moduleName": "./src/synapse-client/SynapseClient.ts"
         },
         {
-          "moduleName": "./src/components/AccessTokenPage/AccessTokenCard/AccessTokenCard.tsx"
+          "moduleName": "./src/mocks/mockSubscription.ts"
         },
         {
-          "moduleName": "./src/mocks/mockSubscription.ts"
+          "moduleName": "./src/components/AccessTokenPage/AccessTokenCard/AccessTokenCard.tsx"
         },
         {
           "moduleName": "./src/utils/functions/testDownloadSpeed.ts"
@@ -1754,6 +1754,12 @@
           "moduleName": "./src/components/TableColumnSchemaEditor/TableColumnSchemaFormReducer.ts"
         },
         {
+          "moduleName": "./src/components/DirectDownload/FileEntityDirectDownload.tsx"
+        },
+        {
+          "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilter.tsx"
+        },
+        {
           "moduleName": "./src/components/TableColumnSchemaEditor/ImportTableColumnsButton.tsx"
         },
         {
@@ -1761,12 +1767,6 @@
         },
         {
           "moduleName": "./src/components/TableColumnSchemaEditor/Validators/ColumnModelValidator.ts"
-        },
-        {
-          "moduleName": "./src/components/DirectDownload/FileEntityDirectDownload.tsx"
-        },
-        {
-          "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilter.tsx"
         },
         {
           "moduleName": "./src/components/SubscriptionPage/SubscriptionItem.tsx"
@@ -1793,16 +1793,16 @@
           "moduleName": "./src/components/ChallengeSubmission/SubmissionDirectoryList.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeSubmission/EvaluationQueueList.tsx"
+          "moduleName": "./src/components/ChallengeDataDownload/ChallengeEntityChildrenDetails.tsx"
         },
         {
           "moduleName": "./src/components/ChallengeSubmission/SubmissionCommitList.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeDataDownload/ChallengeEntityChildrenDetails.tsx"
+          "moduleName": "./src/components/CardContainer/CardContainer.tsx"
         },
         {
-          "moduleName": "./src/components/CardContainer/CardContainer.tsx"
+          "moduleName": "./src/components/ChallengeSubmission/EvaluationQueueList.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem.tsx"
@@ -1826,13 +1826,13 @@
           "moduleName": "./src/components/TableColumnSchemaEditor/ColumnModelFormFields/MultiValueField.tsx"
         },
         {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceEntityIcon.tsx"
+          "moduleName": "./src/components/SubscriptionPage/ForumTopic.tsx"
         },
         {
           "moduleName": "./src/components/SubscriptionPage/ThreadTopic.tsx"
         },
         {
-          "moduleName": "./src/components/SubscriptionPage/ForumTopic.tsx"
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceEntityIcon.tsx"
         },
         {
           "moduleName": "./src/components/FilePreview/EntityPreview.tsx"
@@ -1874,10 +1874,10 @@
           "moduleName": "./src/mocks/msw/handlers/userProfileHandlers.ts"
         },
         {
-          "moduleName": "./src/mocks/msw/handlers/entityHandlers.ts"
+          "moduleName": "./src/mocks/msw/handlers/accessRequirementHandlers.ts"
         },
         {
-          "moduleName": "./src/mocks/msw/handlers/accessRequirementHandlers.ts"
+          "moduleName": "./src/mocks/msw/handlers/entityHandlers.ts"
         },
         {
           "moduleName": "./src/mocks/msw/handlers/subscriptionHandlers.ts"
@@ -2045,10 +2045,10 @@
           "moduleName": "./src/components/DownloadCart/DownloadCartPage.tsx"
         },
         {
-          "moduleName": "./src/components/Authentication/TwoFactorAuthSettingsPanel.tsx"
+          "moduleName": "./src/components/AccessRequirementList/AccessRequirementList.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/AccessRequirementList.tsx"
+          "moduleName": "./src/components/Authentication/TwoFactorAuthSettingsPanel.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirement/ImposeRestrictionDialog/ImposeRestrictionDialog.tsx"
@@ -2060,10 +2060,10 @@
           "moduleName": "./src/components/AccessRequirement/AddConditionsForUseButton/AddConditionsForUseButton.tsx"
         },
         {
-          "moduleName": "./src/components/entity/page/title_bar/EntityPageTitleBar.tsx"
+          "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterUI.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterUI.tsx"
+          "moduleName": "./src/components/entity/page/title_bar/EntityPageTitleBar.tsx"
         },
         {
           "moduleName": "./src/components/entity/page/action_menu/EntityActionMenu.tsx"
@@ -2078,6 +2078,9 @@
           "moduleName": "./src/components/dataaccess/ReviewerDashboard.tsx"
         },
         {
+          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
+        },
+        {
           "moduleName": "./src/components/favorites/FavoritesPage.tsx"
         },
         {
@@ -2090,13 +2093,10 @@
           "moduleName": "./src/components/Evaluation/EvaluationCard.tsx"
         },
         {
-          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
+          "moduleName": "./src/components/EntityIcon.tsx"
         },
         {
           "moduleName": "./src/components/DownloadCart/ShowDownloadV2.tsx"
-        },
-        {
-          "moduleName": "./src/components/EntityIcon.tsx"
         },
         {
           "moduleName": "./src/components/dataaccess/RejectDataAccessRequestModal.tsx"
@@ -2132,16 +2132,13 @@
           "moduleName": "./src/components/Forum/DiscussionReply.tsx"
         },
         {
-          "moduleName": "./src/components/TotalQueryResults.tsx"
-        },
-        {
           "moduleName": "./src/components/Evaluation/EvaluationEditor.tsx"
         },
         {
-          "moduleName": "./src/components/Authentication/LoginFlowBackButton.tsx"
+          "moduleName": "./src/components/TotalQueryResults.tsx"
         },
         {
-          "moduleName": "./src/components/Authentication/TwoFactorSecretDialog.tsx"
+          "moduleName": "./src/components/Authentication/LoginFlowBackButton.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/CancelRequestDataAccess.tsx"
@@ -2150,19 +2147,22 @@
           "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess.tsx"
         },
         {
+          "moduleName": "./src/components/Authentication/TwoFactorSecretDialog.tsx"
+        },
+        {
           "moduleName": "./src/components/EntityFinder/details/view/DetailsViewTableRenderers.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DocumentTemplate.tsx"
-        },
-        {
           "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsEditor.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField.tsx"
+        },
+        {
+          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DocumentTemplate.tsx"
         },
         {
           "moduleName": "./src/components/DirectDownload/DirectDownload.tsx"
@@ -2183,19 +2183,19 @@
           "moduleName": "./src/components/AddToDownloadListV2.tsx"
         },
         {
-          "moduleName": "./src/components/SynapseForm/NavButtons.tsx"
-        },
-        {
           "moduleName": "./src/components/SynapseForm/StepsSideNav.tsx"
         },
         {
-          "moduleName": "./src/components/ProvenanceGraph/EntityPlaceholderNodeLabel.tsx"
+          "moduleName": "./src/components/SynapseForm/NavButtons.tsx"
         },
         {
           "moduleName": "./src/components/home_page/ExpandableContent.tsx"
         },
         {
           "moduleName": "./src/components/widgets/query-filter/FacetChip.tsx"
+        },
+        {
+          "moduleName": "./src/components/ProvenanceGraph/EntityPlaceholderNodeLabel.tsx"
         },
         {
           "moduleName": "./src/components/Icon/Icon.tsx"
@@ -2213,13 +2213,13 @@
           "moduleName": "./src/components/InteractiveCopyIdsIcon.tsx"
         },
         {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceEntityIcon.tsx"
+          "moduleName": "./src/components/SynapseTable/table-top/ColumnSelection.tsx"
         },
         {
           "moduleName": "./src/components/ProvenanceGraph/ProvenanceExternalIcon.tsx"
         },
         {
-          "moduleName": "./src/components/SynapseTable/table-top/ColumnSelection.tsx"
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceEntityIcon.tsx"
         },
         {
           "moduleName": "./src/components/Evaluation/EvaluationRoundEditor.tsx"
@@ -2366,19 +2366,19 @@
           "moduleName": "./src/components/ForumSearch/ForumSearch.tsx"
         },
         {
-          "moduleName": "./src/components/FileUpload/FileUpload.tsx"
+          "moduleName": "./src/components/Goals/Goals.tsx"
         },
         {
-          "moduleName": "./src/components/Goals/Goals.tsx"
+          "moduleName": "./src/components/FileUpload/FileUpload.tsx"
         },
         {
           "moduleName": "./src/components/FeaturedToolsList/FeaturedToolsList.tsx"
         },
         {
-          "moduleName": "./src/components/CreateProjectModal/CreateProjectModal.tsx"
+          "moduleName": "./src/components/DownloadCart/DownloadCartPage.tsx"
         },
         {
-          "moduleName": "./src/components/DownloadCart/DownloadCartPage.tsx"
+          "moduleName": "./src/components/CreateProjectModal/CreateProjectModal.tsx"
         },
         {
           "moduleName": "./src/components/ChangePassword/ChangePassword.tsx"
@@ -2387,10 +2387,10 @@
           "moduleName": "./src/components/AccessRequirementList/AccessRequirementList.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.tsx"
@@ -2400,6 +2400,18 @@
         },
         {
           "moduleName": "./src/components/SynapseTable/SynapseTableCell/EvaluationIdRenderer.tsx"
+        },
+        {
+          "moduleName": "./src/utils/context/FullContextProvider.tsx"
+        },
+        {
+          "moduleName": "./src/synapse-queries/user/useUserBundle.ts"
+        },
+        {
+          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
+        },
+        {
+          "moduleName": "./src/components/StorybookComponentWrapper.tsx"
         },
         {
           "moduleName": "./src/synapse-queries/entity/useExportToCavatica.ts"
@@ -2417,19 +2429,10 @@
           "moduleName": "./src/components/Evaluation/EvaluationCard.tsx"
         },
         {
-          "moduleName": "./src/utils/context/FullContextProvider.tsx"
-        },
-        {
-          "moduleName": "./src/synapse-queries/user/useUserBundle.ts"
-        },
-        {
-          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
+          "moduleName": "./src/synapse-queries/user/useFavorites.ts"
         },
         {
           "moduleName": "./src/synapse-queries/trash/useTrashCan.ts"
-        },
-        {
-          "moduleName": "./src/components/StorybookComponentWrapper.tsx"
         },
         {
           "moduleName": "./src/components/error/ErrorBanner.tsx"
@@ -2441,16 +2444,13 @@
           "moduleName": "./src/components/CertificationQuiz/CertificationQuiz.tsx"
         },
         {
-          "moduleName": "./src/synapse-queries/user/useFavorites.ts"
-        },
-        {
-          "moduleName": "./src/components/JiraIssueCollector.tsx"
-        },
-        {
           "moduleName": "./src/components/UserCardList/UserCardListRotate.tsx"
         },
         {
           "moduleName": "./src/components/SubsectionRowRenderer/SubsectionRowRenderer.tsx"
+        },
+        {
+          "moduleName": "./src/components/JiraIssueCollector.tsx"
         },
         {
           "moduleName": "./src/utils/hooks/useGetInfoFromIds.ts"
@@ -2459,22 +2459,22 @@
           "moduleName": "./src/synapse-queries/dataaccess/useDataAccessSubmission.ts"
         },
         {
+          "moduleName": "./src/synapse-queries/file/useFiles.ts"
+        },
+        {
           "moduleName": "./src/components/widgets/FileHandleLink.tsx"
         },
         {
           "moduleName": "./src/synapse-queries/dataaccess/useAccessRequirements.ts"
         },
         {
-          "moduleName": "./src/synapse-queries/file/useFiles.ts"
-        },
-        {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
+          "moduleName": "./src/synapse-queries/entity/useEntity.ts"
         },
         {
           "moduleName": "./src/synapse-queries/entity/useGetQueryResultBundle.ts"
         },
         {
-          "moduleName": "./src/synapse-queries/entity/useEntity.ts"
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
         },
         {
           "moduleName": "./src/components/OAuthClientManagement/CreateOAuthClient.tsx"
@@ -2483,22 +2483,22 @@
           "moduleName": "./src/synapse-queries/entity/useEntityBundle.ts"
         },
         {
+          "moduleName": "./src/components/Forum/DiscussionSearchResult.tsx"
+        },
+        {
           "moduleName": "./src/synapse-queries/forum/useReply.ts"
         },
         {
           "moduleName": "./src/synapse-queries/forum/useThread.ts"
         },
         {
-          "moduleName": "./src/components/Forum/DiscussionSearchResult.tsx"
-        },
-        {
           "moduleName": "./src/components/Evaluation/EvaluationEditor.tsx"
         },
         {
-          "moduleName": "./src/synapse-queries/entity/useGetEntityHeaders.ts"
+          "moduleName": "./src/synapse-queries/download/useDownloadList.ts"
         },
         {
-          "moduleName": "./src/synapse-queries/download/useDownloadList.ts"
+          "moduleName": "./src/synapse-queries/entity/useGetEntityHeaders.ts"
         },
         {
           "moduleName": "./src/components/DownloadCart/AvailableForDownloadTable.tsx"
@@ -2540,16 +2540,13 @@
           "moduleName": "./src/components/AccessTokenPage/AccessTokenCard/AccessTokenCard.tsx"
         },
         {
-          "moduleName": "./src/synapse-queries/user/useGetUserChallenges.ts"
-        },
-        {
-          "moduleName": "./src/synapse-queries/user/useGetUserProjects.ts"
-        },
-        {
           "moduleName": "./src/synapse-queries/user/useGetUserTeams.ts"
         },
         {
           "moduleName": "./src/synapse-queries/dataaccess/useAccessApprovals.ts"
+        },
+        {
+          "moduleName": "./src/synapse-queries/user/useGetUserProjects.ts"
         },
         {
           "moduleName": "./src/synapse-queries/dataaccess/useGetApprovedSubmissionInfo.ts"
@@ -2558,7 +2555,16 @@
           "moduleName": "./src/synapse-queries/entity/useEntityBoundSchema.ts"
         },
         {
+          "moduleName": "./src/synapse-queries/user/useGetUserChallenges.ts"
+        },
+        {
           "moduleName": "./src/synapse-queries/entity/useGetEntityChildren.ts"
+        },
+        {
+          "moduleName": "./src/synapse-queries/entity/useSchema.ts"
+        },
+        {
+          "moduleName": "./src/synapse-queries/search/useSearch.ts"
         },
         {
           "moduleName": "./src/synapse-queries/user/useProjects.ts"
@@ -2567,13 +2573,7 @@
           "moduleName": "./src/synapse-queries/user/useUserGroupHeader.ts"
         },
         {
-          "moduleName": "./src/synapse-queries/entity/useSchema.ts"
-        },
-        {
           "moduleName": "./src/synapse-queries/oauth/useOAuthClient.ts"
-        },
-        {
-          "moduleName": "./src/synapse-queries/search/useSearch.ts"
         },
         {
           "moduleName": "./src/components/ModalDownload/ModalDownload.tsx"
@@ -2651,10 +2651,10 @@
           "moduleName": "./src/components/AccessRequirementList/AccessRequirementList.stories.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.stories.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.stories.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.stories.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.stories.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.stories.tsx"
@@ -2699,10 +2699,10 @@
           "moduleName": "./src/components/error/ErrorBanner.stories.tsx"
         },
         {
-          "moduleName": "./src/utils/context/SynapseContext.tsx"
+          "moduleName": "./src/components/error/ErrorChip.tsx"
         },
         {
-          "moduleName": "./src/components/error/ErrorChip.tsx"
+          "moduleName": "./src/utils/context/SynapseContext.tsx"
         },
         {
           "moduleName": "./src/components/Resources/Resources.tsx"
@@ -2756,10 +2756,10 @@
           "moduleName": "./src/components/dataaccess/SubmissionPage.tsx"
         },
         {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
+          "moduleName": "./src/components/QueryWrapperErrorBanner.tsx"
         },
         {
-          "moduleName": "./src/components/QueryWrapperErrorBanner.tsx"
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
         },
         {
           "moduleName": "./src/components/Markdown/MarkdownWidget.tsx"
@@ -2921,10 +2921,10 @@
           "moduleName": "./src/components/AccessRequirementList/RequirementItem/ValidationRequirement.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/RequirementItem/CertificationRequirement.tsx"
@@ -2939,25 +2939,25 @@
           "moduleName": "./src/components/GenericCard/Linkify.tsx"
         },
         {
-          "moduleName": "./src/components/favorites/FavoritesPage.tsx"
-        },
-        {
           "moduleName": "./src/components/StorybookComponentWrapper.tsx"
         },
         {
           "moduleName": "./src/utils/hooks/useDetectSSOCode.ts"
         },
         {
+          "moduleName": "./src/components/favorites/FavoritesPage.tsx"
+        },
+        {
           "moduleName": "./src/components/UserCard/UserCardMedium.tsx"
         },
         {
-          "moduleName": "./src/components/UserProfileLinks/UserChallenges.tsx"
+          "moduleName": "./src/components/UserProfileLinks/UserTeams.tsx"
         },
         {
           "moduleName": "./src/components/UserProfileLinks/UserProjects.tsx"
         },
         {
-          "moduleName": "./src/components/UserProfileLinks/UserTeams.tsx"
+          "moduleName": "./src/components/UserProfileLinks/UserChallenges.tsx"
         },
         {
           "moduleName": "./src/utils/functions/index.ts"
@@ -3011,16 +3011,16 @@
           "moduleName": "./src/components/ChallengeSubmission/SubmissionDirectoryList.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamTable.tsx"
-        },
-        {
           "moduleName": "./src/components/Authentication/UsernamePasswordForm.tsx"
         },
         {
-          "moduleName": "./src/components/SubscriptionPage/ThreadTopic.tsx"
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamTable.tsx"
         },
         {
           "moduleName": "./src/components/SubscriptionPage/ForumTopic.tsx"
+        },
+        {
+          "moduleName": "./src/components/SubscriptionPage/ThreadTopic.tsx"
         },
         {
           "moduleName": "./src/components/row_renderers/Dataset.tsx"
@@ -3050,10 +3050,10 @@
           "moduleName": "./src/components/AccessRequirementList/AccessRequirementList.stories.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.stories.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.stories.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.stories.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.stories.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.stories.tsx"
@@ -3128,10 +3128,10 @@
           "moduleName": "./src/components/UserSearchBox/UserSearchBoxV2.stories.ts"
         },
         {
-          "moduleName": "./src/components/dataaccess/AccessRequirementDashboard.tsx"
+          "moduleName": "./src/components/dataaccess/AccessHistoryDashboard.tsx"
         },
         {
-          "moduleName": "./src/components/dataaccess/AccessHistoryDashboard.tsx"
+          "moduleName": "./src/components/dataaccess/AccessRequirementDashboard.tsx"
         },
         {
           "moduleName": "./src/components/dataaccess/AccessSubmissionDashboard.tsx"
@@ -3200,10 +3200,10 @@
           "moduleName": "./src/components/DownloadCart/ActionRequiredCard/ActionRequiredCard.stories.tsx"
         },
         {
-          "moduleName": "./src/utils/index.ts"
+          "moduleName": "./src/components/TermsAndConditions/TermsAndConditions.tsx"
         },
         {
-          "moduleName": "./src/components/TermsAndConditions/TermsAndConditions.tsx"
+          "moduleName": "./src/utils/index.ts"
         },
         {
           "moduleName": "./src/components/StandaloneQueryWrapper/StandaloneQueryWrapper.tsx"
@@ -3221,13 +3221,13 @@
           "moduleName": "./src/mocks/user/mock_user_profile.ts"
         },
         {
-          "moduleName": "./src/components/DownloadCart/MeetAccessRequirementCard.tsx"
+          "moduleName": "./src/components/DownloadCart/RequestDownloadCard.tsx"
         },
         {
           "moduleName": "./src/components/DownloadCart/EnableTwoFaRequirementCard.tsx"
         },
         {
-          "moduleName": "./src/components/DownloadCart/RequestDownloadCard.tsx"
+          "moduleName": "./src/components/DownloadCart/MeetAccessRequirementCard.tsx"
         },
         {
           "moduleName": "./src/components/Authentication/LoginMethod.ts"
@@ -3257,9 +3257,6 @@
           "moduleName": "./src/components/widgets/LoginAwareButton.tsx"
         },
         {
-          "moduleName": "./src/components/Forum/DiscussionThread.tsx"
-        },
-        {
           "moduleName": "./src/synapse-queries/user/useUserBundle.ts"
         },
         {
@@ -3269,13 +3266,16 @@
           "moduleName": "./src/utils/hooks/useDetectSSOCode.ts"
         },
         {
-          "moduleName": "./src/components/SignInButton.tsx"
+          "moduleName": "./src/components/Forum/DiscussionThread.tsx"
         },
         {
           "moduleName": "./src/components/UserCardList/UserCardListRotate.tsx"
         },
         {
           "moduleName": "./src/components/dataaccess/RejectDataAccessRequestModal.tsx"
+        },
+        {
+          "moduleName": "./src/components/SignInButton.tsx"
         },
         {
           "moduleName": "./src/components/UserCardList/UserCardList.tsx"
@@ -3296,10 +3296,10 @@
           "moduleName": "./src/components/SynapseForm/SynapseFormSubmissionsGrid.tsx"
         },
         {
-          "moduleName": "./src/synapse-queries/entity/useGetQueryResultBundle.ts"
+          "moduleName": "./src/components/SynapseTable/TopLevelControls/TopLevelControls.tsx"
         },
         {
-          "moduleName": "./src/components/SynapseTable/TopLevelControls/TopLevelControls.tsx"
+          "moduleName": "./src/synapse-queries/entity/useGetQueryResultBundle.ts"
         },
         {
           "moduleName": "./src/components/ExperimentalMode/ExperimentalMode.tsx"
@@ -3308,13 +3308,13 @@
           "moduleName": "./src/components/Forum/ForumTable.tsx"
         },
         {
+          "moduleName": "./src/components/CardContainerLogic/CardContainerLogic.tsx"
+        },
+        {
           "moduleName": "./src/components/Authentication/LoginFlowBackButton.tsx"
         },
         {
           "moduleName": "./src/utils/hooks/useLogin.ts"
-        },
-        {
-          "moduleName": "./src/components/CardContainerLogic/CardContainerLogic.tsx"
         },
         {
           "moduleName": "./src/utils/AppUtils/AppUtils.ts"
@@ -3344,25 +3344,25 @@
           "moduleName": "./src/components/widgets/facet-nav/SelectionCriteriaPills.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
-        },
-        {
           "moduleName": "./src/components/widgets/query-filter/RangeFacetFilter.tsx"
         },
         {
-          "moduleName": "./src/components/FeaturedDataTabs/QueryPerFacetPlotsCard.tsx"
+          "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
         },
         {
           "moduleName": "./src/components/Icon/Icon.tsx"
         },
         {
+          "moduleName": "./src/components/FeaturedDataTabs/QueryPerFacetPlotsCard.tsx"
+        },
+        {
           "moduleName": "./src/components/EntityBadgeIcons/EntityBadgeIcons.tsx"
         },
         {
-          "moduleName": "./src/components/Authentication/AuthenticationMethodSelection.tsx"
+          "moduleName": "./src/components/CardContainer/CardContainer.tsx"
         },
         {
-          "moduleName": "./src/components/CardContainer/CardContainer.tsx"
+          "moduleName": "./src/components/Authentication/AuthenticationMethodSelection.tsx"
         },
         {
           "moduleName": "./src/utils/hooks/useImmutableTableQuery/TableQueryReducerActions.ts"
@@ -3398,10 +3398,10 @@
           "moduleName": "./src/components/SynapseTable/SynapseTableCell/SynapseTableCell.tsx"
         },
         {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/UserIdList.tsx"
+          "moduleName": "./src/components/index.ts"
         },
         {
-          "moduleName": "./src/components/index.ts"
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/UserIdList.tsx"
         }
       ]
     },
@@ -3497,10 +3497,10 @@
           "moduleName": "./src/components/UserCard/UserBadge.tsx"
         },
         {
-          "moduleName": "./src/components/TableColumnSchemaEditor/TableColumnSchemaEditor.tsx"
+          "moduleName": "./src/components/TermsAndConditions/TermsAndConditions.tsx"
         },
         {
-          "moduleName": "./src/components/TermsAndConditions/TermsAndConditions.tsx"
+          "moduleName": "./src/components/TableColumnSchemaEditor/TableColumnSchemaEditor.tsx"
         },
         {
           "moduleName": "./src/components/QueryWrapperPlotNav/QueryWrapperPlotNav.tsx"
@@ -3566,6 +3566,9 @@
           "moduleName": "./src/components/TimelinePlot/TimelinePlot.tsx"
         },
         {
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
+        },
+        {
           "moduleName": "./src/components/trash/TrashCanList.tsx"
         },
         {
@@ -3581,9 +3584,6 @@
           "moduleName": "./src/components/EntityFinder/tree/EntityTree.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
-        },
-        {
           "moduleName": "./src/components/QueryWrapper/QueryWrapper.tsx"
         },
         {
@@ -3593,10 +3593,10 @@
           "moduleName": "./src/components/dataaccess/RejectDataAccessRequestModal.tsx"
         },
         {
-          "moduleName": "./src/components/dataaccess/AccessHistoryDashboard.tsx"
+          "moduleName": "./src/components/UserOrTeamBadge/UserOrTeamBadge.tsx"
         },
         {
-          "moduleName": "./src/components/UserOrTeamBadge/UserOrTeamBadge.tsx"
+          "moduleName": "./src/components/dataaccess/AccessHistoryDashboard.tsx"
         },
         {
           "moduleName": "./src/components/TimelinePlot/TimelinePlotSpeciesSelector.tsx"
@@ -3608,10 +3608,10 @@
           "moduleName": "./src/components/SynapseTable/usePrefetchTableData.ts"
         },
         {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
+          "moduleName": "./src/components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor.tsx"
         },
         {
-          "moduleName": "./src/components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor.tsx"
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
         },
         {
           "moduleName": "./src/components/OAuthClientManagement/CreateOAuthClient.tsx"
@@ -3620,10 +3620,10 @@
           "moduleName": "./src/components/Forum/DiscussionReply.tsx"
         },
         {
-          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
+          "moduleName": "./src/components/AccessRequirementRelatedProjectsList/AccessRequirementRelatedProjectsList.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementRelatedProjectsList/AccessRequirementRelatedProjectsList.tsx"
+          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
         },
         {
           "moduleName": "./src/components/ChallengeRegisterButton/ChallengeRegisterButton.tsx"
@@ -3638,10 +3638,10 @@
           "moduleName": "./src/components/entity/metadata/AnnotationsTable.tsx"
         },
         {
-          "moduleName": "./src/components/entity/page/title_bar/EntityTitleBarVersionInfo.tsx"
+          "moduleName": "./src/components/entity/page/title_bar/TitleBarProperties.tsx"
         },
         {
-          "moduleName": "./src/components/entity/page/title_bar/TitleBarProperties.tsx"
+          "moduleName": "./src/components/entity/page/title_bar/EntityTitleBarVersionInfo.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm.tsx"
@@ -3656,19 +3656,19 @@
           "moduleName": "./src/components/QueryWrapper/useQueryWrapperData.ts"
         },
         {
+          "moduleName": "./src/components/DirectDownload/FileEntityDirectDownload.tsx"
+        },
+        {
           "moduleName": "./src/components/AddToDownloadListV2.tsx"
         },
         {
-          "moduleName": "./src/components/DirectDownload/FileEntityDirectDownload.tsx"
+          "moduleName": "./src/components/download_list/FolderDownloadConfirmation.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirement/EntityActionsRequired.tsx"
         },
         {
           "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
-        },
-        {
-          "moduleName": "./src/components/download_list/FolderDownloadConfirmation.tsx"
         },
         {
           "moduleName": "./src/components/download_list/TableQueryDownloadConfirmation.tsx"
@@ -3683,13 +3683,13 @@
           "moduleName": "./src/components/ChallengeSubmission/SubmissionDirectoryList.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeSubmission/EvaluationQueueList.tsx"
+          "moduleName": "./src/components/ChallengeDataDownload/Renderers.tsx"
         },
         {
           "moduleName": "./src/components/ChallengeDataDownload/ChallengeEntityChildrenDetails.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeDataDownload/Renderers.tsx"
+          "moduleName": "./src/components/ChallengeSubmission/EvaluationQueueList.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem.tsx"
@@ -3701,10 +3701,10 @@
           "moduleName": "./src/components/widgets/EntityColumnImage.tsx"
         },
         {
-          "moduleName": "./src/components/ProgrammaticTableDownload/ProgrammaticTableDownload.tsx"
+          "moduleName": "./src/components/Plot/SynapsePlot.tsx"
         },
         {
-          "moduleName": "./src/components/Plot/SynapsePlot.tsx"
+          "moduleName": "./src/components/ProgrammaticTableDownload/ProgrammaticTableDownload.tsx"
         },
         {
           "moduleName": "./src/components/SubscriptionPage/ForumTopic.tsx"
@@ -3731,10 +3731,10 @@
           "moduleName": "./src/components/Forum/DiscussionThread.tsx"
         },
         {
-          "moduleName": "./src/components/dataaccess/SubmissionPage.tsx"
+          "moduleName": "./src/components/UserOrTeamBadge/UserOrTeamBadge.tsx"
         },
         {
-          "moduleName": "./src/components/UserOrTeamBadge/UserOrTeamBadge.tsx"
+          "moduleName": "./src/components/dataaccess/SubmissionPage.tsx"
         },
         {
           "moduleName": "./src/components/GoogleMap/SynapseUserMarker.tsx"
@@ -3743,13 +3743,13 @@
           "moduleName": "./src/components/Forum/DiscussionSearchResult.tsx"
         },
         {
-          "moduleName": "./src/components/Forum/SubscribersModal.tsx"
-        },
-        {
           "moduleName": "./src/components/Forum/ForumTable.tsx"
         },
         {
           "moduleName": "./src/components/Forum/DiscussionReply.tsx"
+        },
+        {
+          "moduleName": "./src/components/Forum/SubscribersModal.tsx"
         },
         {
           "moduleName": "./src/components/Evaluation/CreatedOnByUserDiv.tsx"
@@ -3875,16 +3875,22 @@
           "moduleName": "./src/components/ChangePassword/ChangePassword.tsx"
         },
         {
-          "moduleName": "./src/components/Authentication/TwoFactorAuthSettingsPanel.tsx"
+          "moduleName": "./demo/containers/playground/ToastDemo.tsx"
         },
         {
-          "moduleName": "./demo/containers/playground/ToastDemo.tsx"
+          "moduleName": "./src/components/Authentication/TwoFactorAuthSettingsPanel.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirement/ImposeRestrictionDialog/ImposeRestrictionDialog.tsx"
         },
         {
           "moduleName": "./src/components/entity/metadata/EntityModal.tsx"
+        },
+        {
+          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
+        },
+        {
+          "moduleName": "./src/components/StorybookComponentWrapper.tsx"
         },
         {
           "moduleName": "./src/synapse-queries/entity/useExportToCavatica.ts"
@@ -3897,12 +3903,6 @@
         },
         {
           "moduleName": "./src/components/EntityFinder/tree/EntityTree.tsx"
-        },
-        {
-          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
-        },
-        {
-          "moduleName": "./src/components/StorybookComponentWrapper.tsx"
         },
         {
           "moduleName": "./src/components/CertificationQuiz/CertificationQuiz.tsx"
@@ -4058,10 +4058,10 @@
           "moduleName": "./src/components/SubscriptionPage/Topic.stories.ts"
         },
         {
-          "moduleName": "./src/components/SubscriptionPage/ThreadTopic.tsx"
+          "moduleName": "./src/components/SubscriptionPage/ForumTopic.tsx"
         },
         {
-          "moduleName": "./src/components/SubscriptionPage/ForumTopic.tsx"
+          "moduleName": "./src/components/SubscriptionPage/ThreadTopic.tsx"
         }
       ]
     },
@@ -4162,6 +4162,18 @@
       ]
     },
     {
+      "id": "./src/components/RssFeedCards/RssFeedCards.tsx",
+      "name": "./src/components/RssFeedCards/RssFeedCards.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/RssFeedCards/RssFeedCards.stories.ts"
+        },
+        {
+          "moduleName": "./src/components/RssFeedCards/index.ts"
+        }
+      ]
+    },
+    {
       "id": "./src/components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor.tsx",
       "name": "./src/components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor.tsx",
       "reasons": [
@@ -4182,18 +4194,6 @@
         },
         {
           "moduleName": "./src/mocks/msw/handlers/entityHandlers.ts"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/RssFeedCards/RssFeedCards.tsx",
-      "name": "./src/components/RssFeedCards/RssFeedCards.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/RssFeedCards/RssFeedCards.stories.ts"
-        },
-        {
-          "moduleName": "./src/components/RssFeedCards/index.ts"
         }
       ]
     },
@@ -4319,10 +4319,10 @@
           "moduleName": "./src/components/QueryCount/QueryCount.tsx"
         },
         {
-          "moduleName": "./src/utils/functions/deepLinkingUtils.ts"
+          "moduleName": "./src/components/Plot/SynapsePlot.tsx"
         },
         {
-          "moduleName": "./src/components/Plot/SynapsePlot.tsx"
+          "moduleName": "./src/utils/functions/deepLinkingUtils.ts"
         },
         {
           "moduleName": "./src/components/Plot/UpsetPlot.tsx"
@@ -4432,18 +4432,6 @@
       ]
     },
     {
-      "id": "./src/components/OAuthClientManagement/OAuthManagement.tsx",
-      "name": "./src/components/OAuthClientManagement/OAuthManagement.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/OAuthClientManagement/OAuthManagement.stories.ts"
-        },
-        {
-          "moduleName": "./src/components/OAuthClientManagement/index.ts"
-        }
-      ]
-    },
-    {
       "id": "./src/components/OrientationBanner/OrientationBanner.tsx",
       "name": "./src/components/OrientationBanner/OrientationBanner.tsx",
       "reasons": [
@@ -4452,6 +4440,18 @@
         },
         {
           "moduleName": "./src/components/OrientationBanner/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/OAuthClientManagement/OAuthManagement.tsx",
+      "name": "./src/components/OAuthClientManagement/OAuthManagement.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/OAuthClientManagement/OAuthManagement.stories.ts"
+        },
+        {
+          "moduleName": "./src/components/OAuthClientManagement/index.ts"
         }
       ]
     },
@@ -4478,10 +4478,10 @@
           "moduleName": "./src/components/AccessRequirementList/RequirementItem/RequirementItem.stories.tsx"
         },
         {
-          "moduleName": "./src/components/Markdown/MarkdownCollapse.tsx"
+          "moduleName": "./src/components/Markdown/MarkdownPopover.tsx"
         },
         {
-          "moduleName": "./src/components/Markdown/MarkdownPopover.tsx"
+          "moduleName": "./src/components/Markdown/MarkdownCollapse.tsx"
         },
         {
           "moduleName": "./src/components/TableFeedCards/TableFeedCards.tsx"
@@ -4694,16 +4694,16 @@
           "moduleName": "./src/components/AccessRequirement/ImposeRestrictionDialog/ImposeRestrictionDialog.tsx"
         },
         {
-          "moduleName": "./src/components/FullTextSearch.tsx"
-        },
-        {
           "moduleName": "./src/components/SynapseTable/SqlEditor.tsx"
         },
         {
-          "moduleName": "./src/components/ProvenanceGraph/UndefinedNodeLabel.tsx"
+          "moduleName": "./src/components/FullTextSearch.tsx"
         },
         {
           "moduleName": "./src/components/MissingQueryResultsWarning/MissingQueryResultsWarning.tsx"
+        },
+        {
+          "moduleName": "./src/components/ProvenanceGraph/UndefinedNodeLabel.tsx"
         },
         {
           "moduleName": "./src/components/DialogBase.tsx"
@@ -4945,30 +4945,6 @@
       ]
     },
     {
-      "id": "./src/components/DropdownSelect/index.ts",
-      "name": "./src/components/DropdownSelect/index.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/DropdownSelect/DropdownSelect.stories.ts"
-        },
-        {
-          "moduleName": "./src/components/SubscriptionPage/SubscriptionPage.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/DownloadCart/ShowDownloadV2.tsx",
-      "name": "./src/components/DownloadCart/ShowDownloadV2.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/DownloadCart/ShowDownloadV2.stories.ts"
-        },
-        {
-          "moduleName": "./src/components/DownloadCart/index.ts"
-        }
-      ]
-    },
-    {
       "id": "./src/components/EntityFinder/EntityFinder.tsx",
       "name": "./src/components/EntityFinder/EntityFinder.tsx",
       "reasons": [
@@ -5061,6 +5037,30 @@
         },
         {
           "moduleName": "./src/components/EntityFinder/EntityFinder.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/DropdownSelect/index.ts",
+      "name": "./src/components/DropdownSelect/index.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/DropdownSelect/DropdownSelect.stories.ts"
+        },
+        {
+          "moduleName": "./src/components/SubscriptionPage/SubscriptionPage.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/DownloadCart/ShowDownloadV2.tsx",
+      "name": "./src/components/DownloadCart/ShowDownloadV2.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/DownloadCart/ShowDownloadV2.stories.ts"
+        },
+        {
+          "moduleName": "./src/components/DownloadCart/index.ts"
         }
       ]
     },
@@ -5242,24 +5242,6 @@
       ]
     },
     {
-      "id": "./src/components/Authentication/TwoFactorEnrollmentForm.tsx",
-      "name": "./src/components/Authentication/TwoFactorEnrollmentForm.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Authentication/TwoFactorEnrollmentForm.stories.ts"
-        },
-        {
-          "moduleName": "./src/components/Authentication/TwoFactorAuthSettingsPanel.tsx"
-        },
-        {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
-        },
-        {
-          "moduleName": "./src/components/Authentication/index.ts"
-        }
-      ]
-    },
-    {
       "id": "./src/components/CardContainerLogic/index.ts",
       "name": "./src/components/CardContainerLogic/index.ts",
       "reasons": [
@@ -5281,6 +5263,24 @@
       ]
     },
     {
+      "id": "./src/components/Authentication/TwoFactorEnrollmentForm.tsx",
+      "name": "./src/components/Authentication/TwoFactorEnrollmentForm.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Authentication/TwoFactorEnrollmentForm.stories.ts"
+        },
+        {
+          "moduleName": "./src/components/Authentication/TwoFactorAuthSettingsPanel.tsx"
+        },
+        {
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
+        },
+        {
+          "moduleName": "./src/components/Authentication/index.ts"
+        }
+      ]
+    },
+    {
       "id": "./src/components/Authentication/TwoFactorBackupCodes.tsx",
       "name": "./src/components/Authentication/TwoFactorBackupCodes.tsx",
       "reasons": [
@@ -5289,15 +5289,6 @@
         },
         {
           "moduleName": "./src/components/Authentication/index.ts"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/Authentication/Logout.tsx",
-      "name": "./src/components/Authentication/Logout.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Authentication/Logout.stories.ts"
         }
       ]
     },
@@ -5352,6 +5343,15 @@
         },
         {
           "moduleName": "./src/components/Authentication/AuthenticationMethodSelection.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/Authentication/Logout.tsx",
+      "name": "./src/components/Authentication/Logout.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Authentication/Logout.stories.ts"
         }
       ]
     },
@@ -5411,9 +5411,6 @@
           "moduleName": "./src/components/SynapseTable/SendToCavaticaConfirmationDialog.tsx"
         },
         {
-          "moduleName": "./src/components/FullTextSearch.tsx"
-        },
-        {
           "moduleName": "./src/components/SynapseTable/TopLevelControls/TopLevelControls.tsx"
         },
         {
@@ -5423,10 +5420,16 @@
           "moduleName": "./src/components/QueryWrapperPlotNav/LastUpdatedOn.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/FacetFilterControls.tsx"
+          "moduleName": "./src/components/FullTextSearch.tsx"
         },
         {
           "moduleName": "./src/components/widgets/facet-nav/FacetNav.tsx"
+        },
+        {
+          "moduleName": "./src/components/widgets/query-filter/FacetFilterControls.tsx"
+        },
+        {
+          "moduleName": "./src/components/QueryWrapperPlotNav/QueryWrapperSynapsePlot.tsx"
         },
         {
           "moduleName": "./src/components/TotalQueryResults.tsx"
@@ -5447,16 +5450,16 @@
           "moduleName": "./src/components/widgets/facet-nav/SelectionCriteriaPills.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
-        },
-        {
-          "moduleName": "./src/components/widgets/query-filter/JsonColumnFacetFilters.tsx"
-        },
-        {
           "moduleName": "./src/components/widgets/query-filter/RangeFacetFilter.tsx"
         },
         {
+          "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
+        },
+        {
           "moduleName": "./src/components/download_list/TableQueryDownloadConfirmation.tsx"
+        },
+        {
+          "moduleName": "./src/components/widgets/query-filter/JsonColumnFacetFilters.tsx"
         },
         {
           "moduleName": "./src/components/FeaturedDataTabs/QueryPerFacetPlotsCard.tsx"
@@ -5465,10 +5468,10 @@
           "moduleName": "./src/components/FeaturedDataTabs/SingleQueryFacetPlotsCards.tsx"
         },
         {
-          "moduleName": "./src/components/CardContainer/CardContainer.tsx"
+          "moduleName": "./src/components/QuerySortSelector.tsx"
         },
         {
-          "moduleName": "./src/components/QuerySortSelector.tsx"
+          "moduleName": "./src/components/CardContainer/CardContainer.tsx"
         },
         {
           "moduleName": "./src/components/SynapseTable/table-top/ColumnSelection.tsx"
@@ -5519,10 +5522,10 @@
           "moduleName": "./src/components/widgets/query-filter/RangeFacetFilter.stories.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
+          "moduleName": "./src/components/widgets/query-filter/RangeFacetFilter.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/RangeFacetFilter.tsx"
+          "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
         }
       ]
     },
@@ -5539,6 +5542,15 @@
       ]
     },
     {
+      "id": "./src/components/entity/page/CreatedByModifiedBy.tsx",
+      "name": "./src/components/entity/page/CreatedByModifiedBy.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/entity/page/CreatedByModifiedBy.stories.ts"
+        }
+      ]
+    },
+    {
       "id": "./src/components/entity/metadata/EntityModal.tsx",
       "name": "./src/components/entity/metadata/EntityModal.tsx",
       "reasons": [
@@ -5551,11 +5563,14 @@
       ]
     },
     {
-      "id": "./src/components/entity/page/CreatedByModifiedBy.tsx",
-      "name": "./src/components/entity/page/CreatedByModifiedBy.tsx",
+      "id": "./src/components/UserCardList/UserCardListGroups/UserCardListGroups.tsx",
+      "name": "./src/components/UserCardList/UserCardListGroups/UserCardListGroups.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/entity/page/CreatedByModifiedBy.stories.ts"
+          "moduleName": "./src/components/UserCardList/UserCardListGroups/UserCardListGroups.stories.ts"
+        },
+        {
+          "moduleName": "./src/components/UserCardList/UserCardListGroups/index.ts"
         }
       ]
     },
@@ -5571,18 +5586,6 @@
         },
         {
           "moduleName": "./src/components/dataaccess/AccessSubmissionDashboard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/UserCardList/UserCardListGroups/UserCardListGroups.tsx",
-      "name": "./src/components/UserCardList/UserCardListGroups/UserCardListGroups.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/UserCardList/UserCardListGroups/UserCardListGroups.stories.ts"
-        },
-        {
-          "moduleName": "./src/components/UserCardList/UserCardListGroups/index.ts"
         }
       ]
     },
@@ -5792,19 +5795,19 @@
           "moduleName": "./src/components/OrientationBanner/OrientationBanner.tsx"
         },
         {
-          "moduleName": "./src/components/CreateProjectModal/CreateProjectModal.tsx"
+          "moduleName": "./src/components/DownloadCart/DownloadCartPage.tsx"
         },
         {
-          "moduleName": "./src/components/DownloadCart/DownloadCartPage.tsx"
+          "moduleName": "./src/components/CreateProjectModal/CreateProjectModal.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirement/ImposeRestrictionDialog/ImposeRestrictionDialog.tsx"
         },
         {
-          "moduleName": "./src/components/FullWidthAlert/index.ts"
+          "moduleName": "./src/components/dataaccess/RejectDataAccessRequestModal.tsx"
         },
         {
-          "moduleName": "./src/components/dataaccess/RejectDataAccessRequestModal.tsx"
+          "moduleName": "./src/components/FullWidthAlert/index.ts"
         },
         {
           "moduleName": "./src/components/ToastMessage/ToastMessage.tsx"
@@ -6050,9 +6053,6 @@
           "moduleName": "./src/components/SynapseTable/useTableSort.tsx"
         },
         {
-          "moduleName": "./src/components/FullTextSearch.tsx"
-        },
-        {
           "moduleName": "./src/components/SynapseTable/TopLevelControls/TopLevelControls.tsx"
         },
         {
@@ -6060,6 +6060,9 @@
         },
         {
           "moduleName": "./src/components/QueryWrapper/QueryWrapperLoadingScreen.tsx"
+        },
+        {
+          "moduleName": "./src/components/FullTextSearch.tsx"
         },
         {
           "moduleName": "./src/components/widgets/query-filter/FacetFilterControls.tsx"
@@ -6080,10 +6083,10 @@
           "moduleName": "./src/components/widgets/facet-nav/SelectionCriteriaPills.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
+          "moduleName": "./src/components/widgets/query-filter/RangeFacetFilter.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/RangeFacetFilter.tsx"
+          "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
         },
         {
           "moduleName": "./src/components/download_list/TableQueryDownloadConfirmation.tsx"
@@ -6179,10 +6182,10 @@
           "moduleName": "./src/mocks/entity/mockFileEntity.ts"
         },
         {
-          "moduleName": "./src/mocks/entity/mockDataset.ts"
+          "moduleName": "./src/mocks/entity/mockDatasetCollection.ts"
         },
         {
-          "moduleName": "./src/mocks/entity/mockDatasetCollection.ts"
+          "moduleName": "./src/mocks/entity/mockDataset.ts"
         },
         {
           "moduleName": "./src/mocks/entity/mockFileView.ts"
@@ -6293,13 +6296,13 @@
           "moduleName": "./src/components/DownloadCart/ActionRequiredCard/ActionRequiredCard.stories.tsx"
         },
         {
-          "moduleName": "./src/components/DownloadCart/MeetAccessRequirementCard.tsx"
+          "moduleName": "./src/components/DownloadCart/RequestDownloadCard.tsx"
         },
         {
           "moduleName": "./src/components/DownloadCart/EnableTwoFaRequirementCard.tsx"
         },
         {
-          "moduleName": "./src/components/DownloadCart/RequestDownloadCard.tsx"
+          "moduleName": "./src/components/DownloadCart/MeetAccessRequirementCard.tsx"
         },
         {
           "moduleName": "./src/components/DownloadCart/DownloadListActionsRequired.tsx"
@@ -6314,10 +6317,10 @@
           "moduleName": "./src/components/DownloadCart/ActionRequiredCard/ActionRequiredCard.stories.tsx"
         },
         {
-          "moduleName": "./src/components/DownloadCart/MeetAccessRequirementCard.tsx"
+          "moduleName": "./src/components/DownloadCart/EnableTwoFaRequirementCard.tsx"
         },
         {
-          "moduleName": "./src/components/DownloadCart/EnableTwoFaRequirementCard.tsx"
+          "moduleName": "./src/components/DownloadCart/MeetAccessRequirementCard.tsx"
         },
         {
           "moduleName": "./src/components/SynapseForm/SynapseFormSubmissionsGrid.tsx"
@@ -6350,10 +6353,10 @@
           "moduleName": "./src/components/AccessRequirementList/RequirementItem/ValidationRequirement.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.tsx"
@@ -6395,10 +6398,10 @@
           "moduleName": "./src/components/AccessRequirementList/RequirementItem/ValidationRequirement.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx"
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
         },
         {
           "moduleName": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.tsx"
@@ -6414,42 +6417,6 @@
         },
         {
           "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./stories/stubs/Tooltip/MuiTooltip.tsx",
-      "name": "./stories/stubs/Tooltip/MuiTooltip.tsx",
-      "reasons": [
-        {
-          "moduleName": "./stories/stubs/Tooltip/MuiTooltip.stories.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./stories/stubs/Button/MuiButton.tsx",
-      "name": "./stories/stubs/Button/MuiButton.tsx",
-      "reasons": [
-        {
-          "moduleName": "./stories/stubs/Button/MuiButton.stories.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/Markdown/MarkdownPopover.tsx",
-      "name": "./src/components/Markdown/MarkdownPopover.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Markdown/MarkdownPopover.stories.tsx"
-        },
-        {
-          "moduleName": "./src/components/HelpPopover/HelpPopover.tsx"
-        },
-        {
-          "moduleName": "./src/components/CertificationQuiz/CertificationQuiz.tsx"
-        },
-        {
-          "moduleName": "./src/components/Markdown/index.ts"
         }
       ]
     },
@@ -6548,10 +6515,10 @@
           "moduleName": "./src/components/Goals/Goals.tsx"
         },
         {
-          "moduleName": "./src/components/CreateProjectModal/CreateProjectModal.tsx"
+          "moduleName": "./src/components/DownloadCart/DownloadCartPage.tsx"
         },
         {
-          "moduleName": "./src/components/DownloadCart/DownloadCartPage.tsx"
+          "moduleName": "./src/components/CreateProjectModal/CreateProjectModal.tsx"
         },
         {
           "moduleName": "./src/components/ChangePassword/ChangePassword.tsx"
@@ -6569,6 +6536,15 @@
           "moduleName": "./src/components/ProjectViewCarousel/ProjectViewCarousel.tsx"
         },
         {
+          "moduleName": "./src/synapse-queries/user/useUserBundle.ts"
+        },
+        {
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
+        },
+        {
+          "moduleName": "./src/components/StorybookComponentWrapper.tsx"
+        },
+        {
           "moduleName": "./src/synapse-queries/entity/useExportToCavatica.ts"
         },
         {
@@ -6578,22 +6554,13 @@
           "moduleName": "./src/components/OAuthClientManagement/OAuthManagement.tsx"
         },
         {
-          "moduleName": "./src/synapse-queries/user/useUserBundle.ts"
-        },
-        {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
+          "moduleName": "./src/synapse-queries/user/useFavorites.ts"
         },
         {
           "moduleName": "./src/synapse-queries/trash/useTrashCan.ts"
         },
         {
-          "moduleName": "./src/components/StorybookComponentWrapper.tsx"
-        },
-        {
           "moduleName": "./src/components/CertificationQuiz/CertificationQuiz.tsx"
-        },
-        {
-          "moduleName": "./src/synapse-queries/user/useFavorites.ts"
         },
         {
           "moduleName": "./src/components/UserCardList/UserCardListRotate.tsx"
@@ -6608,13 +6575,13 @@
           "moduleName": "./src/synapse-queries/dataaccess/useDataAccessSubmission.ts"
         },
         {
+          "moduleName": "./src/synapse-queries/file/useFiles.ts"
+        },
+        {
           "moduleName": "./src/components/widgets/FileHandleLink.tsx"
         },
         {
           "moduleName": "./src/synapse-queries/dataaccess/useAccessRequirements.ts"
-        },
-        {
-          "moduleName": "./src/synapse-queries/file/useFiles.ts"
         },
         {
           "moduleName": "./src/utils/functions/queryUtils.ts"
@@ -6623,28 +6590,28 @@
           "moduleName": "./src/components/SynapseForm/SynapseFormSubmissionsGrid.tsx"
         },
         {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
-        },
-        {
-          "moduleName": "./src/synapse-queries/entity/useGetQueryResultBundle.ts"
-        },
-        {
           "moduleName": "./src/components/SynapseForm/SynapseFormUtils.ts"
-        },
-        {
-          "moduleName": "./src/synapse-queries/entity/useEntity.ts"
         },
         {
           "moduleName": "./src/synapse-queries/evaluation/useEvaluation.ts"
         },
         {
+          "moduleName": "./src/synapse-queries/entity/useEntity.ts"
+        },
+        {
+          "moduleName": "./src/synapse-queries/entity/useGetQueryResultBundle.ts"
+        },
+        {
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
+        },
+        {
           "moduleName": "./src/components/OAuthClientManagement/CreateOAuthClient.tsx"
         },
         {
-          "moduleName": "./src/synapse-queries/entity/useEntityBundle.ts"
+          "moduleName": "./src/components/GoogleMap/GoogleMap.tsx"
         },
         {
-          "moduleName": "./src/components/GoogleMap/GoogleMap.tsx"
+          "moduleName": "./src/synapse-queries/entity/useEntityBundle.ts"
         },
         {
           "moduleName": "./src/synapse-queries/forum/useReply.ts"
@@ -6662,10 +6629,10 @@
           "moduleName": "./src/components/Evaluation/EvaluationEditor.tsx"
         },
         {
-          "moduleName": "./src/synapse-queries/entity/useGetEntityHeaders.ts"
+          "moduleName": "./src/synapse-queries/download/useDownloadList.ts"
         },
         {
-          "moduleName": "./src/synapse-queries/download/useDownloadList.ts"
+          "moduleName": "./src/synapse-queries/entity/useGetEntityHeaders.ts"
         },
         {
           "moduleName": "./src/synapse-queries/table/useColumnModel.ts"
@@ -6710,22 +6677,22 @@
           "moduleName": "./src/utils/functions/getUserData.ts"
         },
         {
-          "moduleName": "./src/synapse-queries/user/useGetUserChallenges.ts"
-        },
-        {
-          "moduleName": "./src/synapse-queries/user/useGetUserProjects.ts"
-        },
-        {
           "moduleName": "./src/synapse-queries/user/useGetUserTeams.ts"
         },
         {
           "moduleName": "./src/synapse-queries/dataaccess/useAccessApprovals.ts"
         },
         {
+          "moduleName": "./src/synapse-queries/user/useGetUserProjects.ts"
+        },
+        {
           "moduleName": "./src/synapse-queries/dataaccess/useGetApprovedSubmissionInfo.ts"
         },
         {
           "moduleName": "./src/synapse-queries/entity/useEntityBoundSchema.ts"
+        },
+        {
+          "moduleName": "./src/synapse-queries/user/useGetUserChallenges.ts"
         },
         {
           "moduleName": "./src/synapse-queries/entity/useGetEntityActionsRequired.ts"
@@ -6737,25 +6704,25 @@
           "moduleName": "./src/synapse-queries/entity/useGetEntityChildren.ts"
         },
         {
-          "moduleName": "./src/synapse-queries/user/useProjects.ts"
-        },
-        {
-          "moduleName": "./src/synapse-queries/user/useUserGroupHeader.ts"
-        },
-        {
           "moduleName": "./src/synapse-queries/entity/useGetEntityForum.ts"
         },
         {
           "moduleName": "./src/synapse-queries/entity/useSchema.ts"
         },
         {
+          "moduleName": "./src/synapse-queries/search/useSearch.ts"
+        },
+        {
+          "moduleName": "./src/synapse-queries/user/useProjects.ts"
+        },
+        {
+          "moduleName": "./src/synapse-queries/user/useUserGroupHeader.ts"
+        },
+        {
           "moduleName": "./src/synapse-queries/oauth/useOAuthClient.ts"
         },
         {
           "moduleName": "./src/utils/functions/TableColumnSchemaUtils.ts"
-        },
-        {
-          "moduleName": "./src/synapse-queries/search/useSearch.ts"
         },
         {
           "moduleName": "./src/components/ModalDownload/ModalDownload.tsx"
@@ -6872,10 +6839,10 @@
           "moduleName": "./src/components/ProjectViewCarousel/ProjectViewCarousel.tsx"
         },
         {
-          "moduleName": "./src/synapse-queries/entity/useActionsRequiredForTableQuery.ts"
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
+          "moduleName": "./src/synapse-queries/entity/useActionsRequiredForTableQuery.ts"
         },
         {
           "moduleName": "./src/components/UserCardList/UserCardListRotate.tsx"
@@ -6896,13 +6863,13 @@
           "moduleName": "./src/utils/functions/getDataFromFromStorage.ts"
         },
         {
+          "moduleName": "./src/synapse-queries/evaluation/useEvaluation.ts"
+        },
+        {
           "moduleName": "./src/synapse-queries/entity/useEntity.ts"
         },
         {
           "moduleName": "./src/components/QueryWrapperErrorBanner.tsx"
-        },
-        {
-          "moduleName": "./src/synapse-queries/evaluation/useEvaluation.ts"
         },
         {
           "moduleName": "./src/synapse-queries/forum/useForum.ts"
@@ -6968,10 +6935,10 @@
           "moduleName": "./src/components/MissingQueryResultsWarning/MissingQueryResultsWarning.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
+          "moduleName": "./src/components/download_list/FolderDownloadConfirmation.tsx"
         },
         {
-          "moduleName": "./src/components/download_list/FolderDownloadConfirmation.tsx"
+          "moduleName": "./src/components/widgets/query-filter/CombinedRangeFacetFilter.tsx"
         },
         {
           "moduleName": "./src/components/download_list/TableQueryDownloadConfirmation.tsx"
@@ -6989,10 +6956,10 @@
           "moduleName": "./src/components/ChallengeSubmission/SubmissionDirectoryList.tsx"
         },
         {
-          "moduleName": "./src/components/ProgrammaticTableDownload/ProgrammaticTableDownload.tsx"
+          "moduleName": "./src/components/Plot/SynapsePlot.tsx"
         },
         {
-          "moduleName": "./src/components/Plot/SynapsePlot.tsx"
+          "moduleName": "./src/components/ProgrammaticTableDownload/ProgrammaticTableDownload.tsx"
         },
         {
           "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterUtils.ts"
@@ -7046,10 +7013,10 @@
           "moduleName": "./src/mocks/mock_file_handle.ts"
         },
         {
-          "moduleName": "./src/mocks/entity/mockDataset.ts"
+          "moduleName": "./src/mocks/entity/mockDatasetCollection.ts"
         },
         {
-          "moduleName": "./src/mocks/entity/mockDatasetCollection.ts"
+          "moduleName": "./src/mocks/entity/mockDataset.ts"
         },
         {
           "moduleName": "./src/mocks/entity/mockFileView.ts"
@@ -7064,10 +7031,10 @@
           "moduleName": "./src/mocks/faker/fakerUtils.ts"
         },
         {
-          "moduleName": "./src/mocks/faker/generateSubscription.ts"
+          "moduleName": "./src/mocks/faker/generateDiscussion.ts"
         },
         {
-          "moduleName": "./src/mocks/faker/generateDiscussion.ts"
+          "moduleName": "./src/mocks/faker/generateSubscription.ts"
         },
         {
           "moduleName": "./src/components/Evaluation/EvaluationEditorPage.stories.ts"
@@ -7083,6 +7050,42 @@
         },
         {
           "moduleName": "./src/mocks/msw/handlers/userProfileHandlers.ts"
+        }
+      ]
+    },
+    {
+      "id": "./stories/stubs/Tooltip/MuiTooltip.tsx",
+      "name": "./stories/stubs/Tooltip/MuiTooltip.tsx",
+      "reasons": [
+        {
+          "moduleName": "./stories/stubs/Tooltip/MuiTooltip.stories.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./stories/stubs/Button/MuiButton.tsx",
+      "name": "./stories/stubs/Button/MuiButton.tsx",
+      "reasons": [
+        {
+          "moduleName": "./stories/stubs/Button/MuiButton.stories.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/Markdown/MarkdownPopover.tsx",
+      "name": "./src/components/Markdown/MarkdownPopover.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Markdown/MarkdownPopover.stories.tsx"
+        },
+        {
+          "moduleName": "./src/components/HelpPopover/HelpPopover.tsx"
+        },
+        {
+          "moduleName": "./src/components/CertificationQuiz/CertificationQuiz.tsx"
+        },
+        {
+          "moduleName": "./src/components/Markdown/index.ts"
         }
       ]
     },
@@ -7157,9 +7160,6 @@
           "moduleName": "./src/synapse-client/index.ts"
         },
         {
-          "moduleName": "./src/components/Evaluation/EvaluationCard.tsx"
-        },
-        {
           "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
         },
         {
@@ -7167,6 +7167,9 @@
         },
         {
           "moduleName": "./src/utils/hooks/useDetectSSOCode.ts"
+        },
+        {
+          "moduleName": "./src/components/Evaluation/EvaluationCard.tsx"
         },
         {
           "moduleName": "./src/components/UserSearchBox/UserSearchBox.tsx"
@@ -7501,18 +7504,6 @@
       ]
     },
     {
-      "id": "./src/synapse-queries/KeyFactory.ts",
-      "name": "./src/synapse-queries/KeyFactory.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/utils/context/SynapseContext.tsx"
-        },
-        {
-          "moduleName": "./src/synapse-queries/index.ts"
-        }
-      ]
-    },
-    {
       "id": "./src/components/JiraIssueCollector.tsx",
       "name": "./src/components/JiraIssueCollector.tsx",
       "reasons": [
@@ -7525,20 +7516,14 @@
       ]
     },
     {
-      "id": "./src/mocks/mock_file_handle.ts",
-      "name": "./src/mocks/mock_file_handle.ts",
+      "id": "./src/synapse-queries/KeyFactory.ts",
+      "name": "./src/synapse-queries/KeyFactory.ts",
       "reasons": [
         {
-          "moduleName": "./src/mocks/mockAccessRequirements.ts"
+          "moduleName": "./src/utils/context/SynapseContext.tsx"
         },
         {
-          "moduleName": "./src/mocks/entity/mockFileEntity.ts"
-        },
-        {
-          "moduleName": "./src/mocks/dataaccess/MockDataAccessRequest.ts"
-        },
-        {
-          "moduleName": "./src/mocks/msw/handlers/fileHandlers.ts"
+          "moduleName": "./src/synapse-queries/index.ts"
         }
       ]
     },
@@ -7567,17 +7552,50 @@
       ]
     },
     {
-      "id": "./src/components/OrientationBanner/index.ts",
-      "name": "./src/components/OrientationBanner/index.ts",
+      "id": "./src/mocks/mock_file_handle.ts",
+      "name": "./src/mocks/mock_file_handle.ts",
       "reasons": [
         {
-          "moduleName": "./src/utils/SynapseConstants.ts"
+          "moduleName": "./src/mocks/mockAccessRequirements.ts"
         },
         {
-          "moduleName": "./src/components/index.ts"
+          "moduleName": "./src/mocks/entity/mockFileEntity.ts"
         },
         {
-          "moduleName": "./src/components/dataaccess/ReviewerDashboard.tsx"
+          "moduleName": "./src/mocks/dataaccess/MockDataAccessRequest.ts"
+        },
+        {
+          "moduleName": "./src/mocks/msw/handlers/fileHandlers.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/UserOrTeamBadge/UserOrTeamBadge.tsx",
+      "name": "./src/components/UserOrTeamBadge/UserOrTeamBadge.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/UserOrTeamBadge/index.ts"
+        },
+        {
+          "moduleName": "./src/components/UserSearchBox/UserSearchBox.tsx"
+        },
+        {
+          "moduleName": "./src/components/UserSearchBox/UserSearchBoxV2.tsx"
+        },
+        {
+          "moduleName": "./src/components/dataaccess/SubmissionPage.tsx"
+        },
+        {
+          "moduleName": "./src/components/dataaccess/AccessHistoryDashboard.tsx"
+        },
+        {
+          "moduleName": "./src/components/dataaccess/AccessRequirementTable.tsx"
+        },
+        {
+          "moduleName": "./src/components/dataaccess/AccessRequestSubmissionTable.tsx"
+        },
+        {
+          "moduleName": "./src/components/Markdown/widget/MarkdownUserOrTeamBadge.tsx"
         }
       ]
     },
@@ -7610,13 +7628,13 @@
           "moduleName": "./src/components/SynapseTable/SqlEditor.tsx"
         },
         {
-          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
-        },
-        {
           "moduleName": "./src/components/TableColumnSchemaEditor/TableColumnSchemaForm.tsx"
         },
         {
           "moduleName": "./src/components/DropdownSelect/DropdownSelect.tsx"
+        },
+        {
+          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
         },
         {
           "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterDropdown.tsx"
@@ -7651,44 +7669,83 @@
       ]
     },
     {
-      "id": "./src/components/UserOrTeamBadge/UserOrTeamBadge.tsx",
-      "name": "./src/components/UserOrTeamBadge/UserOrTeamBadge.tsx",
+      "id": "./src/components/OrientationBanner/index.ts",
+      "name": "./src/components/OrientationBanner/index.ts",
       "reasons": [
         {
-          "moduleName": "./src/components/UserOrTeamBadge/index.ts"
+          "moduleName": "./src/utils/SynapseConstants.ts"
         },
         {
-          "moduleName": "./src/components/UserSearchBox/UserSearchBoxV2.tsx"
+          "moduleName": "./src/components/index.ts"
         },
         {
-          "moduleName": "./src/components/UserSearchBox/UserSearchBox.tsx"
-        },
-        {
-          "moduleName": "./src/components/dataaccess/SubmissionPage.tsx"
-        },
-        {
-          "moduleName": "./src/components/dataaccess/AccessHistoryDashboard.tsx"
-        },
-        {
-          "moduleName": "./src/components/dataaccess/AccessRequirementTable.tsx"
-        },
-        {
-          "moduleName": "./src/components/dataaccess/AccessRequestSubmissionTable.tsx"
-        },
-        {
-          "moduleName": "./src/components/Markdown/widget/MarkdownUserOrTeamBadge.tsx"
+          "moduleName": "./src/components/dataaccess/ReviewerDashboard.tsx"
         }
       ]
     },
     {
-      "id": "./src/components/StepperDialog/index.ts",
-      "name": "./src/components/StepperDialog/index.ts",
+      "id": "./src/synapse-queries/file/useFiles.ts",
+      "name": "./src/synapse-queries/file/useFiles.ts",
       "reasons": [
         {
-          "moduleName": "./src/components/StepperDialog/StepperDialog.stories.tsx"
+          "moduleName": "./src/components/UserCard/UserCard.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeSubmission/ChallengeSubmissionStepper.tsx"
+          "moduleName": "./src/components/TermsAndConditions/TermsAndConditionsItem.tsx"
+        },
+        {
+          "moduleName": "./src/components/SynapseTable/usePrefetchTableData.ts"
+        },
+        {
+          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField.tsx"
+        },
+        {
+          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DocumentTemplate.tsx"
+        },
+        {
+          "moduleName": "./src/components/DirectDownload/DirectDownload.tsx"
+        },
+        {
+          "moduleName": "./src/components/FilePreview/FileHandleContentRenderer.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/utils/hooks/usePreFetchResource.ts",
+      "name": "./src/utils/hooks/usePreFetchResource.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/UserCard/UserCard.tsx"
+        },
+        {
+          "moduleName": "./src/utils/hooks/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/UserCard/Avatar.tsx",
+      "name": "./src/components/UserCard/Avatar.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/UserCard/UserCard.tsx"
+        },
+        {
+          "moduleName": "./src/components/UserCard/UserCardMedium.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/UserCard/UserCardMedium.tsx",
+      "name": "./src/components/UserCard/UserCardMedium.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/UserCard/UserCard.tsx"
+        },
+        {
+          "moduleName": "./src/components/UserCardList/UserCardListRotate.tsx"
+        },
+        {
+          "moduleName": "./src/components/UserCard/Avatar.tsx"
         }
       ]
     },
@@ -7759,72 +7816,6 @@
       ]
     },
     {
-      "id": "./src/synapse-queries/file/useFiles.ts",
-      "name": "./src/synapse-queries/file/useFiles.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/UserCard/UserCard.tsx"
-        },
-        {
-          "moduleName": "./src/components/TermsAndConditions/TermsAndConditionsItem.tsx"
-        },
-        {
-          "moduleName": "./src/components/SynapseTable/usePrefetchTableData.ts"
-        },
-        {
-          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DocumentTemplate.tsx"
-        },
-        {
-          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField.tsx"
-        },
-        {
-          "moduleName": "./src/components/DirectDownload/DirectDownload.tsx"
-        },
-        {
-          "moduleName": "./src/components/FilePreview/FileHandleContentRenderer.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/utils/hooks/usePreFetchResource.ts",
-      "name": "./src/utils/hooks/usePreFetchResource.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/UserCard/UserCard.tsx"
-        },
-        {
-          "moduleName": "./src/utils/hooks/index.ts"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/UserCard/Avatar.tsx",
-      "name": "./src/components/UserCard/Avatar.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/UserCard/UserCard.tsx"
-        },
-        {
-          "moduleName": "./src/components/UserCard/UserCardMedium.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/UserCard/UserCardMedium.tsx",
-      "name": "./src/components/UserCard/UserCardMedium.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/UserCard/UserCard.tsx"
-        },
-        {
-          "moduleName": "./src/components/UserCardList/UserCardListRotate.tsx"
-        },
-        {
-          "moduleName": "./src/components/UserCard/Avatar.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/utils/hooks/useOverlay.tsx",
       "name": "./src/utils/hooks/useOverlay.tsx",
       "reasons": [
@@ -7833,6 +7824,15 @@
         },
         {
           "moduleName": "./src/utils/hooks/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/TermsAndConditions/TermsAndConditionsItem.tsx",
+      "name": "./src/components/TermsAndConditions/TermsAndConditionsItem.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/TermsAndConditions/TermsAndConditions.tsx"
         }
       ]
     },
@@ -7928,19 +7928,19 @@
           "moduleName": "./src/components/SynapseTable/TopLevelControls/TopLevelControls.tsx"
         },
         {
-          "moduleName": "./src/components/SynapseTable/SearchV2.tsx"
-        },
-        {
           "moduleName": "./src/components/QueryWrapperPlotNav/LastUpdatedOn.tsx"
         },
         {
           "moduleName": "./src/components/QueryWrapper/QueryWrapperLoadingScreen.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/FacetFilterControls.tsx"
+          "moduleName": "./src/components/SynapseTable/SearchV2.tsx"
         },
         {
           "moduleName": "./src/components/widgets/facet-nav/FacetNav.tsx"
+        },
+        {
+          "moduleName": "./src/components/widgets/query-filter/FacetFilterControls.tsx"
         },
         {
           "moduleName": "./src/components/TotalQueryResults.tsx"
@@ -7958,13 +7958,13 @@
           "moduleName": "./src/components/widgets/facet-nav/SelectionCriteriaPills.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/JsonColumnFacetFilters.tsx"
-        },
-        {
           "moduleName": "./src/components/widgets/query-filter/RangeFacetFilter.tsx"
         },
         {
           "moduleName": "./src/components/download_list/TableQueryDownloadConfirmation.tsx"
+        },
+        {
+          "moduleName": "./src/components/widgets/query-filter/JsonColumnFacetFilters.tsx"
         },
         {
           "moduleName": "./src/components/CardContainer/CardContainer.tsx"
@@ -8123,10 +8123,10 @@
           "moduleName": "./src/components/SchemaDrivenAnnotationEditor/AnnotationEditorUtils.ts"
         },
         {
-          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
+          "moduleName": "./src/components/TableColumnSchemaEditor/TableColumnSchemaForm.tsx"
         },
         {
-          "moduleName": "./src/components/TableColumnSchemaEditor/TableColumnSchemaForm.tsx"
+          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
         },
         {
           "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizardUtils.ts"
@@ -8138,10 +8138,10 @@
           "moduleName": "./src/components/ChallengeDataDownload/ChallengeDataTable.tsx"
         },
         {
-          "moduleName": "./src/components/entity/metadata/MetadataTable.tsx"
+          "moduleName": "./src/components/entity/metadata/AnnotationsTable.tsx"
         },
         {
-          "moduleName": "./src/components/entity/metadata/AnnotationsTable.tsx"
+          "moduleName": "./src/components/entity/metadata/MetadataTable.tsx"
         },
         {
           "moduleName": "./src/components/EntityFinder/details/view/DetailsViewTableRenderers.tsx"
@@ -8159,10 +8159,10 @@
           "moduleName": "./src/components/TableColumnSchemaEditor/ColumnModelForm.tsx"
         },
         {
-          "moduleName": "./src/components/ProvenanceGraph/EntityNodeLabel.tsx"
+          "moduleName": "./src/components/MissingQueryResultsWarning/MissingQueryResultsWarning.tsx"
         },
         {
-          "moduleName": "./src/components/MissingQueryResultsWarning/MissingQueryResultsWarning.tsx"
+          "moduleName": "./src/components/ProvenanceGraph/EntityNodeLabel.tsx"
         },
         {
           "moduleName": "./src/components/EntityFinder/tree/VirtualizedTree.tsx"
@@ -8177,10 +8177,10 @@
           "moduleName": "./src/components/entity/page/title_bar/useGetEntityTitleBarProperties.tsx"
         },
         {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceEntityIcon.tsx"
+          "moduleName": "./src/components/SynapseTable/table-top/DownloadOptions.tsx"
         },
         {
-          "moduleName": "./src/components/SynapseTable/table-top/DownloadOptions.tsx"
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceEntityIcon.tsx"
         },
         {
           "moduleName": "./src/components/EntityFinder/EntityFinder.tsx"
@@ -8223,15 +8223,6 @@
         },
         {
           "moduleName": "./src/components/TableColumnSchemaEditor/ColumnModelFormFields/MultiValueField.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/TermsAndConditions/TermsAndConditionsItem.tsx",
-      "name": "./src/components/TermsAndConditions/TermsAndConditionsItem.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/TermsAndConditions/TermsAndConditions.tsx"
         }
       ]
     },
@@ -8527,6 +8518,18 @@
       ]
     },
     {
+      "id": "./src/components/StepperDialog/index.ts",
+      "name": "./src/components/StepperDialog/index.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/StepperDialog/StepperDialog.stories.tsx"
+        },
+        {
+          "moduleName": "./src/components/ChallengeSubmission/ChallengeSubmissionStepper.tsx"
+        }
+      ]
+    },
+    {
       "id": "./src/components/SubscriptionPage/SubscriptionPage.tsx",
       "name": "./src/components/SubscriptionPage/SubscriptionPage.tsx",
       "reasons": [
@@ -8543,16 +8546,16 @@
           "moduleName": "./src/mocks/mock_drug_tool_data.ts"
         },
         {
-          "moduleName": "./src/components/SynapseForm/NavButtons.tsx"
-        },
-        {
           "moduleName": "./src/components/SynapseForm/StepsSideNav.tsx"
         },
         {
-          "moduleName": "./src/components/SynapseForm/SynapseFormWrapper.tsx"
+          "moduleName": "./src/components/SynapseForm/NavButtons.tsx"
         },
         {
           "moduleName": "./src/components/SynapseForm/SynapseForm.tsx"
+        },
+        {
+          "moduleName": "./src/components/SynapseForm/SynapseFormWrapper.tsx"
         }
       ]
     },
@@ -8711,10 +8714,10 @@
           "moduleName": "./src/components/SynapseTable/usePrefetchTableData.ts"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/FacetFilterControls.tsx"
+          "moduleName": "./src/components/widgets/facet-nav/FacetNav.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/facet-nav/FacetNav.tsx"
+          "moduleName": "./src/components/widgets/query-filter/FacetFilterControls.tsx"
         },
         {
           "moduleName": "./src/utils/hooks/useImmutableTableQuery/useImmutableTableQuery.ts"
@@ -8726,10 +8729,10 @@
           "moduleName": "./src/components/SynapseTable/RowSelection/RowSelectionControls.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/JsonColumnFacetFilters.tsx"
+          "moduleName": "./src/components/widgets/query-filter/RangeFacetFilter.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/RangeFacetFilter.tsx"
+          "moduleName": "./src/components/widgets/query-filter/JsonColumnFacetFilters.tsx"
         },
         {
           "moduleName": "./src/utils/hooks/useImmutableTableQuery/useTableQueryReducer.ts"
@@ -8749,14 +8752,14 @@
       ]
     },
     {
-      "id": "./src/components/StepperDialog/StepperDialog.tsx",
-      "name": "./src/components/StepperDialog/StepperDialog.tsx",
+      "id": "./src/synapse-queries/evaluation/useEvaluation.ts",
+      "name": "./src/synapse-queries/evaluation/useEvaluation.ts",
       "reasons": [
         {
-          "moduleName": "./src/components/StepperDialog/index.ts"
+          "moduleName": "./src/components/SubmissionViewScopeEditor/SubmissionViewScopeEditor.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
+          "moduleName": "./src/components/EvaluationFinder/EvaluationFinder.tsx"
         }
       ]
     },
@@ -8908,14 +8911,23 @@
       ]
     },
     {
-      "id": "./src/synapse-queries/evaluation/useEvaluation.ts",
-      "name": "./src/synapse-queries/evaluation/useEvaluation.ts",
+      "id": "./src/components/StepperDialog/StepperDialog.tsx",
+      "name": "./src/components/StepperDialog/StepperDialog.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/SubmissionViewScopeEditor/SubmissionViewScopeEditor.tsx"
+          "moduleName": "./src/components/StepperDialog/index.ts"
         },
         {
-          "moduleName": "./src/components/EvaluationFinder/EvaluationFinder.tsx"
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/utils/VisibilityObserver.tsx",
+      "name": "./src/components/utils/VisibilityObserver.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/RenderIfInView/RenderIfInView.tsx"
         }
       ]
     },
@@ -8982,15 +8994,6 @@
       "reasons": [
         {
           "moduleName": "./src/components/QueryWrapperPlotNav/QueryWrapperPlotNav.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/utils/VisibilityObserver.tsx",
-      "name": "./src/components/utils/VisibilityObserver.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/RenderIfInView/RenderIfInView.tsx"
         }
       ]
     },
@@ -9073,6 +9076,18 @@
       ]
     },
     {
+      "id": "./src/components/styled/LightTooltip.tsx",
+      "name": "./src/components/styled/LightTooltip.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Markdown/MarkdownPopover.tsx"
+        },
+        {
+          "moduleName": "./src/components/styled/index.ts"
+        }
+      ]
+    },
+    {
       "id": "./src/style/components/_spinner.scss",
       "name": "./src/style/components/_spinner.scss",
       "reasons": [
@@ -9114,18 +9129,6 @@
       "reasons": [
         {
           "moduleName": "./src/components/JSONArrayEditor/JSONArrayEditorModal.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/styled/LightTooltip.tsx",
-      "name": "./src/components/styled/LightTooltip.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Markdown/MarkdownPopover.tsx"
-        },
-        {
-          "moduleName": "./src/components/styled/index.ts"
         }
       ]
     },
@@ -9194,10 +9197,10 @@
           "moduleName": "./src/components/HasAccess/HasAccessV2.tsx"
         },
         {
-          "moduleName": "./src/components/DownloadCart/MeetAccessRequirementCard.tsx"
+          "moduleName": "./src/components/DownloadCart/EnableTwoFaRequirementCard.tsx"
         },
         {
-          "moduleName": "./src/components/DownloadCart/EnableTwoFaRequirementCard.tsx"
+          "moduleName": "./src/components/DownloadCart/MeetAccessRequirementCard.tsx"
         },
         {
           "moduleName": "./src/components/ChallengeDetailPage/ChallengeDetailPage.tsx"
@@ -9317,16 +9320,16 @@
           "moduleName": "./src/components/Forum/DiscussionReply.tsx"
         },
         {
-          "moduleName": "./src/components/FeaturedToolsList/FeaturedToolCard.tsx"
-        },
-        {
           "moduleName": "./src/components/Evaluation/CreatedOnByUserDiv.tsx"
         },
         {
-          "moduleName": "./src/components/entity/metadata/MetadataTable.tsx"
+          "moduleName": "./src/components/FeaturedToolsList/FeaturedToolCard.tsx"
         },
         {
           "moduleName": "./src/components/entity/metadata/AnnotationsTable.tsx"
+        },
+        {
+          "moduleName": "./src/components/entity/metadata/MetadataTable.tsx"
         },
         {
           "moduleName": "./src/components/EntityFinder/details/view/DetailsViewTableRenderers.tsx"
@@ -9353,10 +9356,10 @@
           "moduleName": "./src/components/ChallengeSubmission/SubmissionDirectoryList.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamTable.tsx"
+          "moduleName": "./src/components/ChallengeSubmission/SubmissionCommitList.tsx"
         },
         {
-          "moduleName": "./src/components/ChallengeSubmission/SubmissionCommitList.tsx"
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamTable.tsx"
         },
         {
           "moduleName": "./src/components/TableColumnSchemaEditor/ColumnModelFormFields/MultiValueField.tsx"
@@ -9529,120 +9532,6 @@
       ]
     },
     {
-      "id": "./src/components/widgets/Checkbox.tsx",
-      "name": "./src/components/widgets/Checkbox.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/EvaluationFinder/EvaluationFinder.tsx"
-        },
-        {
-          "moduleName": "./src/components/EntityViewScopeEditor/EntityViewMaskEditor.tsx"
-        },
-        {
-          "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterUI.tsx"
-        },
-        {
-          "moduleName": "./src/components/SynapseTable/SendToCavaticaConfirmationDialog.tsx"
-        },
-        {
-          "moduleName": "./src/components/trash/TrashCanList.tsx"
-        },
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableRenderers.tsx"
-        },
-        {
-          "moduleName": "./src/components/SynapseTable/datasets/DatasetItemsEditor.tsx"
-        },
-        {
-          "moduleName": "./src/components/ChallengeDataDownload/ChallengeDataTable.tsx"
-        },
-        {
-          "moduleName": "./src/components/EntityFinder/details/view/DetailsViewTableRenderers.tsx"
-        },
-        {
-          "moduleName": "./src/components/AccessTokenPage/CreateAccessTokenModal.tsx"
-        },
-        {
-          "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterOption.tsx"
-        },
-        {
-          "moduleName": "./src/components/TableColumnSchemaEditor/ColumnModelForm.tsx"
-        },
-        {
-          "moduleName": "./src/components/EntityFinder/details/view/DetailsView.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/synapse-queries/forum/useForum.ts",
-      "name": "./src/synapse-queries/forum/useForum.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Forum/ForumPage.tsx"
-        },
-        {
-          "moduleName": "./src/components/Forum/ForumTable.tsx"
-        },
-        {
-          "moduleName": "./src/components/SubscriptionPage/ForumTopic.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/synapse-queries/subscription/useSubscription.ts",
-      "name": "./src/synapse-queries/subscription/useSubscription.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Forum/ForumPage.tsx"
-        },
-        {
-          "moduleName": "./src/components/Forum/DiscussionThread.tsx"
-        },
-        {
-          "moduleName": "./src/components/SubscriptionPage/SubscriptionPage.tsx"
-        },
-        {
-          "moduleName": "./src/components/Forum/SubscribersModal.tsx"
-        },
-        {
-          "moduleName": "./src/components/SubscriptionPage/ThreadTopic.tsx"
-        },
-        {
-          "moduleName": "./src/components/SubscriptionPage/ForumTopic.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/Forum/ForumTable.tsx",
-      "name": "./src/components/Forum/ForumTable.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Forum/ForumPage.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/Forum/SubscribersModal.tsx",
-      "name": "./src/components/Forum/SubscribersModal.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Forum/ForumPage.tsx"
-        },
-        {
-          "moduleName": "./src/components/Forum/DiscussionThread.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/FeaturedToolsList/FeaturedToolCard.tsx",
-      "name": "./src/components/FeaturedToolsList/FeaturedToolCard.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/FeaturedToolsList/FeaturedToolsList.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/components/FeaturedDataTabs/FeaturedDataPlots.tsx",
       "name": "./src/components/FeaturedDataTabs/FeaturedDataPlots.tsx",
       "reasons": [
@@ -9687,6 +9576,120 @@
         },
         {
           "moduleName": "./src/components/QueryVisualizationWrapper/QueryVisualizationWrapper.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/synapse-queries/forum/useForum.ts",
+      "name": "./src/synapse-queries/forum/useForum.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Forum/ForumPage.tsx"
+        },
+        {
+          "moduleName": "./src/components/Forum/ForumTable.tsx"
+        },
+        {
+          "moduleName": "./src/components/SubscriptionPage/ForumTopic.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/synapse-queries/subscription/useSubscription.ts",
+      "name": "./src/synapse-queries/subscription/useSubscription.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Forum/ForumPage.tsx"
+        },
+        {
+          "moduleName": "./src/components/Forum/DiscussionThread.tsx"
+        },
+        {
+          "moduleName": "./src/components/SubscriptionPage/SubscriptionPage.tsx"
+        },
+        {
+          "moduleName": "./src/components/Forum/SubscribersModal.tsx"
+        },
+        {
+          "moduleName": "./src/components/SubscriptionPage/ForumTopic.tsx"
+        },
+        {
+          "moduleName": "./src/components/SubscriptionPage/ThreadTopic.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/Forum/ForumTable.tsx",
+      "name": "./src/components/Forum/ForumTable.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Forum/ForumPage.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/Forum/SubscribersModal.tsx",
+      "name": "./src/components/Forum/SubscribersModal.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Forum/ForumPage.tsx"
+        },
+        {
+          "moduleName": "./src/components/Forum/DiscussionThread.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/widgets/Checkbox.tsx",
+      "name": "./src/components/widgets/Checkbox.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/EvaluationFinder/EvaluationFinder.tsx"
+        },
+        {
+          "moduleName": "./src/components/EntityViewScopeEditor/EntityViewMaskEditor.tsx"
+        },
+        {
+          "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterUI.tsx"
+        },
+        {
+          "moduleName": "./src/components/SynapseTable/SendToCavaticaConfirmationDialog.tsx"
+        },
+        {
+          "moduleName": "./src/components/trash/TrashCanList.tsx"
+        },
+        {
+          "moduleName": "./src/components/SynapseTable/SynapseTableRenderers.tsx"
+        },
+        {
+          "moduleName": "./src/components/SynapseTable/datasets/DatasetItemsEditor.tsx"
+        },
+        {
+          "moduleName": "./src/components/ChallengeDataDownload/ChallengeDataTable.tsx"
+        },
+        {
+          "moduleName": "./src/components/EntityFinder/details/view/DetailsViewTableRenderers.tsx"
+        },
+        {
+          "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterOption.tsx"
+        },
+        {
+          "moduleName": "./src/components/AccessTokenPage/CreateAccessTokenModal.tsx"
+        },
+        {
+          "moduleName": "./src/components/TableColumnSchemaEditor/ColumnModelForm.tsx"
+        },
+        {
+          "moduleName": "./src/components/EntityFinder/details/view/DetailsView.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/FeaturedToolsList/FeaturedToolCard.tsx",
+      "name": "./src/components/FeaturedToolsList/FeaturedToolCard.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/FeaturedToolsList/FeaturedToolsList.tsx"
         }
       ]
     },
@@ -9766,90 +9769,6 @@
       ]
     },
     {
-      "id": "./src/components/CreateTableViewWizard/TableNameForm.tsx",
-      "name": "./src/components/CreateTableViewWizard/TableNameForm.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/CreateTableViewWizard/TableTypeSelection.tsx",
-      "name": "./src/components/CreateTableViewWizard/TableTypeSelection.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/CreateTableViewWizard/ViewTypeSelection.tsx",
-      "name": "./src/components/CreateTableViewWizard/ViewTypeSelection.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/SqlDefinedTableEditor/SqlDefinedTableEditor.tsx",
-      "name": "./src/components/SqlDefinedTableEditor/SqlDefinedTableEditor.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/synapse-queries/table/useColumnModel.ts",
-      "name": "./src/synapse-queries/table/useColumnModel.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
-        },
-        {
-          "moduleName": "./src/components/TableColumnSchemaEditor/TableColumnSchemaForm.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/DialogBase.tsx",
-      "name": "./src/components/DialogBase.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
-        },
-        {
-          "moduleName": "./src/components/ConfirmationDialog/ConfirmationDialog.tsx"
-        },
-        {
-          "moduleName": "./src/components/entity/metadata/EntityModal.tsx"
-        },
-        {
-          "moduleName": "./src/components/OAuthClientManagement/OAuthManagement.tsx"
-        },
-        {
-          "moduleName": "./src/components/StepperDialog/StepperDialog.tsx"
-        },
-        {
-          "moduleName": "./src/components/ModalDownload/ModalDownload.tsx"
-        },
-        {
-          "moduleName": "./src/components/Markdown/UserMentionModal.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/CreateTableViewWizard/CreateTableViewWizardUtils.ts",
-      "name": "./src/components/CreateTableViewWizard/CreateTableViewWizardUtils.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/components/FullWidthAlert/index.ts",
       "name": "./src/components/FullWidthAlert/index.ts",
       "reasons": [
@@ -9867,6 +9786,33 @@
         },
         {
           "moduleName": "./src/components/SynapseForm/SynapseFormWrapper.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/DialogBase.tsx",
+      "name": "./src/components/DialogBase.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/ConfirmationDialog/ConfirmationDialog.tsx"
+        },
+        {
+          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
+        },
+        {
+          "moduleName": "./src/components/entity/metadata/EntityModal.tsx"
+        },
+        {
+          "moduleName": "./src/components/OAuthClientManagement/OAuthManagement.tsx"
+        },
+        {
+          "moduleName": "./src/components/StepperDialog/StepperDialog.tsx"
+        },
+        {
+          "moduleName": "./src/components/ModalDownload/ModalDownload.tsx"
+        },
+        {
+          "moduleName": "./src/components/Markdown/UserMentionModal.tsx"
         }
       ]
     },
@@ -9928,11 +9874,98 @@
       ]
     },
     {
+      "id": "./src/components/CreateTableViewWizard/TableNameForm.tsx",
+      "name": "./src/components/CreateTableViewWizard/TableNameForm.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/CreateTableViewWizard/TableTypeSelection.tsx",
+      "name": "./src/components/CreateTableViewWizard/TableTypeSelection.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/CreateTableViewWizard/ViewTypeSelection.tsx",
+      "name": "./src/components/CreateTableViewWizard/ViewTypeSelection.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/SqlDefinedTableEditor/SqlDefinedTableEditor.tsx",
+      "name": "./src/components/SqlDefinedTableEditor/SqlDefinedTableEditor.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/synapse-queries/table/useColumnModel.ts",
+      "name": "./src/synapse-queries/table/useColumnModel.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
+        },
+        {
+          "moduleName": "./src/components/TableColumnSchemaEditor/TableColumnSchemaForm.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/CreateTableViewWizard/CreateTableViewWizardUtils.ts",
+      "name": "./src/components/CreateTableViewWizard/CreateTableViewWizardUtils.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/CreateTableViewWizard/CreateTableViewWizard.tsx"
+        }
+      ]
+    },
+    {
       "id": "./src/components/ChallengeRegisterButton/ChallengeRegisterButton.tsx",
       "name": "./src/components/ChallengeRegisterButton/ChallengeRegisterButton.tsx",
       "reasons": [
         {
           "moduleName": "./src/components/ChallengeRegisterButton/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/ChallengeDataDownload/ChallengeDataDownload.tsx",
+      "name": "./src/components/ChallengeDataDownload/ChallengeDataDownload.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/ChallengeDataDownload/index.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/ChallengeDataDownload/ChallengeDataTable.tsx",
+      "name": "./src/components/ChallengeDataDownload/ChallengeDataTable.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/ChallengeDataDownload/index.tsx"
+        },
+        {
+          "moduleName": "./src/components/ChallengeDataDownload/ChallengeEntityChildrenDetails.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/CardContainerLogic/CardContainerLogic.tsx",
+      "name": "./src/components/CardContainerLogic/CardContainerLogic.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/CardContainerLogic/index.ts"
         }
       ]
     },
@@ -9964,42 +9997,6 @@
       ]
     },
     {
-      "id": "./src/components/ChallengeDataDownload/ChallengeDataDownload.tsx",
-      "name": "./src/components/ChallengeDataDownload/ChallengeDataDownload.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ChallengeDataDownload/index.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/ChallengeDataDownload/ChallengeDataTable.tsx",
-      "name": "./src/components/ChallengeDataDownload/ChallengeDataTable.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ChallengeDataDownload/index.tsx"
-        },
-        {
-          "moduleName": "./src/components/ChallengeDataDownload/ChallengeEntityChildrenDetails.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/synapse-queries/auth/useTwoFactorEnrollment.ts",
-      "name": "./src/synapse-queries/auth/useTwoFactorEnrollment.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Authentication/TwoFactorAuthSettingsPanel.tsx"
-        },
-        {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
-        },
-        {
-          "moduleName": "./src/components/Authentication/TwoFactorEnrollmentForm.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/components/ChallengeTeamWizard/index.ts",
       "name": "./src/components/ChallengeTeamWizard/index.ts",
       "reasons": [
@@ -10023,6 +10020,36 @@
         },
         {
           "moduleName": "./src/components/FilePreview/HtmlPreview/HtmlPreview.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/widgets/RadioGroup.tsx",
+      "name": "./src/components/widgets/RadioGroup.tsx",
+      "reasons": [
+        {
+          "moduleName": "./demo/containers/playground/ToastDemo.tsx"
+        },
+        {
+          "moduleName": "./src/components/widgets/query-filter/RangeFacetFilterUI.tsx"
+        },
+        {
+          "moduleName": "./src/components/AccessRequirement/ImposeRestrictionDialog/ImposeRestrictionDialog.tsx"
+        },
+        {
+          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsEditor.tsx"
+        },
+        {
+          "moduleName": "./src/components/ChallengeSubmission/SubmissionDirectoryList.tsx"
+        },
+        {
+          "moduleName": "./src/components/ChallengeSubmission/SubmissionCommitList.tsx"
+        },
+        {
+          "moduleName": "./src/components/ChallengeSubmission/EvaluationQueueList.tsx"
+        },
+        {
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamTable.tsx"
         }
       ]
     },
@@ -10092,15 +10119,6 @@
         },
         {
           "moduleName": "./src/components/SystemUseNotification/index.ts"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/CardContainerLogic/CardContainerLogic.tsx",
-      "name": "./src/components/CardContainerLogic/CardContainerLogic.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/CardContainerLogic/index.ts"
         }
       ]
     },
@@ -10180,6 +10198,21 @@
       ]
     },
     {
+      "id": "./src/synapse-queries/auth/useTwoFactorEnrollment.ts",
+      "name": "./src/synapse-queries/auth/useTwoFactorEnrollment.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Authentication/TwoFactorAuthSettingsPanel.tsx"
+        },
+        {
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/TwoFactorAuthEnabledRequirement.tsx"
+        },
+        {
+          "moduleName": "./src/components/Authentication/TwoFactorEnrollmentForm.tsx"
+        }
+      ]
+    },
+    {
       "id": "./src/components/SynapseTable/RowSelection/RowSelectionUI.tsx",
       "name": "./src/components/SynapseTable/RowSelection/RowSelectionUI.tsx",
       "reasons": [
@@ -10217,10 +10250,10 @@
           "moduleName": "./src/components/SynapseTable/TopLevelControls/TopLevelControls.tsx"
         },
         {
-          "moduleName": "./src/components/SynapseTable/table-top/ColumnSelection.tsx"
+          "moduleName": "./src/components/SynapseTable/table-top/DownloadOptions.tsx"
         },
         {
-          "moduleName": "./src/components/SynapseTable/table-top/DownloadOptions.tsx"
+          "moduleName": "./src/components/SynapseTable/table-top/ColumnSelection.tsx"
         },
         {
           "moduleName": "./src/components/widgets/facet-nav/FacetPlotLegendList.tsx"
@@ -10288,32 +10321,14 @@
       ]
     },
     {
-      "id": "./src/components/widgets/RadioGroup.tsx",
-      "name": "./src/components/widgets/RadioGroup.tsx",
+      "id": "./src/utils/functions/colorPalette.ts",
+      "name": "./src/utils/functions/colorPalette.ts",
       "reasons": [
         {
-          "moduleName": "./demo/containers/playground/ToastDemo.tsx"
+          "moduleName": "./demo/containers/playground/ColorPaletteInspector.tsx"
         },
         {
-          "moduleName": "./src/components/widgets/query-filter/RangeFacetFilterUI.tsx"
-        },
-        {
-          "moduleName": "./src/components/AccessRequirement/ImposeRestrictionDialog/ImposeRestrictionDialog.tsx"
-        },
-        {
-          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsEditor.tsx"
-        },
-        {
-          "moduleName": "./src/components/ChallengeSubmission/SubmissionDirectoryList.tsx"
-        },
-        {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamTable.tsx"
-        },
-        {
-          "moduleName": "./src/components/ChallengeSubmission/EvaluationQueueList.tsx"
-        },
-        {
-          "moduleName": "./src/components/ChallengeSubmission/SubmissionCommitList.tsx"
+          "moduleName": "./src/components/ColorGradient/ColorGradient.tsx"
         }
       ]
     },
@@ -10344,18 +10359,6 @@
         },
         {
           "moduleName": "./src/components/widgets/query-filter/JsonColumnFacetFilters.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/utils/functions/colorPalette.ts",
-      "name": "./src/utils/functions/colorPalette.ts",
-      "reasons": [
-        {
-          "moduleName": "./demo/containers/playground/ColorPaletteInspector.tsx"
-        },
-        {
-          "moduleName": "./src/components/ColorGradient/ColorGradient.tsx"
         }
       ]
     },
@@ -10435,24 +10438,6 @@
       ]
     },
     {
-      "id": "./src/components/entity/page/title_bar/TitleBarProperties.tsx",
-      "name": "./src/components/entity/page/title_bar/TitleBarProperties.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/entity/page/title_bar/EntityPageTitleBar.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/entity/page/title_bar/EntityTitleBarVersionInfo.tsx",
-      "name": "./src/components/entity/page/title_bar/EntityTitleBarVersionInfo.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/entity/page/title_bar/EntityPageTitleBar.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterOption.tsx",
       "name": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterOption.tsx",
       "reasons": [
@@ -10467,6 +10452,24 @@
       "reasons": [
         {
           "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterUI.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/entity/page/title_bar/TitleBarProperties.tsx",
+      "name": "./src/components/entity/page/title_bar/TitleBarProperties.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/entity/page/title_bar/EntityPageTitleBar.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/entity/page/title_bar/EntityTitleBarVersionInfo.tsx",
+      "name": "./src/components/entity/page/title_bar/EntityTitleBarVersionInfo.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/entity/page/title_bar/EntityPageTitleBar.tsx"
         }
       ]
     },
@@ -10578,141 +10581,6 @@
         },
         {
           "moduleName": "./src/components/HeaderCard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONRendererUtils.ts",
-      "name": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONRendererUtils.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONTableCellRenderer.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONPrimitiveRenderer.tsx",
-      "name": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONPrimitiveRenderer.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONTableCellRenderer.tsx"
-        },
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONArrayRenderer.tsx"
-        },
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONObjectRenderer.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONArrayRenderer.tsx",
-      "name": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONArrayRenderer.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONTableCellRenderer.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONObjectRenderer.tsx",
-      "name": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONObjectRenderer.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONTableCellRenderer.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer.tsx",
-      "name": "./src/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONTableCellRenderer.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/theme/DefaultTheme.tsx",
-      "name": "./src/theme/DefaultTheme.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/theme/index.ts"
-        },
-        {
-          "moduleName": "./src/theme/ThemeProvider.tsx"
-        },
-        {
-          "moduleName": "./src/theme/mergeTheme.ts"
-        },
-        {
-          "moduleName": "./.storybook/preview.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/theme/ThemeProvider.tsx",
-      "name": "./src/theme/ThemeProvider.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/theme/index.ts"
-        },
-        {
-          "moduleName": "./src/utils/context/FullContextProvider.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/theme/mergeTheme.ts",
-      "name": "./src/theme/mergeTheme.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/theme/index.ts"
-        },
-        {
-          "moduleName": "./src/theme/ThemeProvider.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/utils/AppUtils/AppUtils.ts",
-      "name": "./src/utils/AppUtils/AppUtils.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/utils/AppUtils/index.ts"
-        },
-        {
-          "moduleName": "./src/utils/AppUtils/session/ApplicationSessionManager.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/utils/AppUtils/session/ApplicationSessionContext.tsx",
-      "name": "./src/utils/AppUtils/session/ApplicationSessionContext.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/utils/AppUtils/index.ts"
-        },
-        {
-          "moduleName": "./src/utils/AppUtils/session/ApplicationSessionManager.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/utils/AppUtils/session/ApplicationSessionManager.tsx",
-      "name": "./src/utils/AppUtils/session/ApplicationSessionManager.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/utils/AppUtils/index.ts"
-        }
-      ]
-    },
-    {
-      "id": "./src/utils/hooks/useQuerySearchParam.ts",
-      "name": "./src/utils/hooks/useQuerySearchParam.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/utils/AppUtils/index.ts"
         }
       ]
     },
@@ -11200,6 +11068,141 @@
       ]
     },
     {
+      "id": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONRendererUtils.ts",
+      "name": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONRendererUtils.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONTableCellRenderer.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONPrimitiveRenderer.tsx",
+      "name": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONPrimitiveRenderer.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONTableCellRenderer.tsx"
+        },
+        {
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONArrayRenderer.tsx"
+        },
+        {
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONObjectRenderer.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONArrayRenderer.tsx",
+      "name": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONArrayRenderer.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONTableCellRenderer.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONObjectRenderer.tsx",
+      "name": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONObjectRenderer.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONTableCellRenderer.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer.tsx",
+      "name": "./src/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONTableCellRenderer.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/utils/AppUtils/AppUtils.ts",
+      "name": "./src/utils/AppUtils/AppUtils.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/utils/AppUtils/index.ts"
+        },
+        {
+          "moduleName": "./src/utils/AppUtils/session/ApplicationSessionManager.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/utils/AppUtils/session/ApplicationSessionContext.tsx",
+      "name": "./src/utils/AppUtils/session/ApplicationSessionContext.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/utils/AppUtils/index.ts"
+        },
+        {
+          "moduleName": "./src/utils/AppUtils/session/ApplicationSessionManager.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/utils/AppUtils/session/ApplicationSessionManager.tsx",
+      "name": "./src/utils/AppUtils/session/ApplicationSessionManager.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/utils/AppUtils/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/utils/hooks/useQuerySearchParam.ts",
+      "name": "./src/utils/hooks/useQuerySearchParam.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/utils/AppUtils/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/theme/DefaultTheme.tsx",
+      "name": "./src/theme/DefaultTheme.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/theme/index.ts"
+        },
+        {
+          "moduleName": "./src/theme/ThemeProvider.tsx"
+        },
+        {
+          "moduleName": "./src/theme/mergeTheme.ts"
+        },
+        {
+          "moduleName": "./.storybook/preview.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/theme/ThemeProvider.tsx",
+      "name": "./src/theme/ThemeProvider.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/theme/index.ts"
+        },
+        {
+          "moduleName": "./src/utils/context/FullContextProvider.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/theme/mergeTheme.ts",
+      "name": "./src/theme/mergeTheme.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/theme/index.ts"
+        },
+        {
+          "moduleName": "./src/theme/ThemeProvider.tsx"
+        }
+      ]
+    },
+    {
       "id": "./src/synapse-client/SynapseClientUtils.ts",
       "name": "./src/synapse-client/SynapseClientUtils.ts",
       "reasons": [
@@ -11386,6 +11389,84 @@
       ]
     },
     {
+      "id": "./src/components/Authentication/RegenerateBackupCodesWarning.tsx",
+      "name": "./src/components/Authentication/RegenerateBackupCodesWarning.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/Authentication/RecoveryCodeGrid.tsx",
+      "name": "./src/components/Authentication/RecoveryCodeGrid.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/utils/hooks/useMediaPrintOnly.ts",
+      "name": "./src/utils/hooks/useMediaPrintOnly.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/ChallengeTeamWizard/CreateChallengeTeam.tsx",
+      "name": "./src/components/ChallengeTeamWizard/CreateChallengeTeam.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/ChallengeTeamWizard/SelectChallengeTeam.tsx",
+      "name": "./src/components/ChallengeTeamWizard/SelectChallengeTeam.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/ChallengeTeamWizard/RegistrationSuccessful.tsx",
+      "name": "./src/components/ChallengeTeamWizard/RegistrationSuccessful.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/ChallengeTeamWizard/JoinRequestForm.tsx",
+      "name": "./src/components/ChallengeTeamWizard/JoinRequestForm.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/utils/hooks/useDetectSSOCode.ts",
+      "name": "./src/utils/hooks/useDetectSSOCode.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/StorybookComponentWrapper.tsx"
+        },
+        {
+          "moduleName": "./src/utils/hooks/index.ts"
+        },
+        {
+          "moduleName": "./src/utils/AppUtils/session/ApplicationSessionManager.tsx"
+        }
+      ]
+    },
+    {
       "id": "./src/components/Skeleton/SkeletonInlineBlock.tsx",
       "name": "./src/components/Skeleton/SkeletonInlineBlock.tsx",
       "reasons": [
@@ -11417,13 +11498,13 @@
           "moduleName": "./src/components/UserCard/UserCardMedium.tsx"
         },
         {
-          "moduleName": "./src/components/UserProfileLinks/UserChallenges.tsx"
+          "moduleName": "./src/components/UserProfileLinks/UserTeams.tsx"
         },
         {
           "moduleName": "./src/components/UserProfileLinks/UserProjects.tsx"
         },
         {
-          "moduleName": "./src/components/UserProfileLinks/UserTeams.tsx"
+          "moduleName": "./src/components/UserProfileLinks/UserChallenges.tsx"
         },
         {
           "moduleName": "./src/components/Forum/DiscussionSearchResult.tsx"
@@ -11632,110 +11713,23 @@
       ]
     },
     {
-      "id": "./src/components/ChallengeTeamWizard/CreateChallengeTeam.tsx",
-      "name": "./src/components/ChallengeTeamWizard/CreateChallengeTeam.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/ChallengeTeamWizard/SelectChallengeTeam.tsx",
-      "name": "./src/components/ChallengeTeamWizard/SelectChallengeTeam.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/ChallengeTeamWizard/RegistrationSuccessful.tsx",
-      "name": "./src/components/ChallengeTeamWizard/RegistrationSuccessful.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/ChallengeTeamWizard/JoinRequestForm.tsx",
-      "name": "./src/components/ChallengeTeamWizard/JoinRequestForm.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamWizard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/Authentication/RegenerateBackupCodesWarning.tsx",
-      "name": "./src/components/Authentication/RegenerateBackupCodesWarning.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/Authentication/RecoveryCodeGrid.tsx",
-      "name": "./src/components/Authentication/RecoveryCodeGrid.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/utils/hooks/useMediaPrintOnly.ts",
-      "name": "./src/utils/hooks/useMediaPrintOnly.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Authentication/TwoFactorBackupCodes.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/synapse-queries/InfiniteQueryUtils.ts",
       "name": "./src/synapse-queries/InfiniteQueryUtils.ts",
       "reasons": [
         {
-          "moduleName": "./src/synapse-queries/trash/useTrashCan.ts"
-        },
-        {
           "moduleName": "./src/synapse-queries/user/useFavorites.ts"
         },
         {
-          "moduleName": "./src/synapse-queries/entity/useEntity.ts"
+          "moduleName": "./src/synapse-queries/trash/useTrashCan.ts"
         },
         {
           "moduleName": "./src/synapse-queries/evaluation/useEvaluation.ts"
         },
         {
+          "moduleName": "./src/synapse-queries/entity/useEntity.ts"
+        },
+        {
           "moduleName": "./src/synapse-queries/user/useGetUserTeams.ts"
-        }
-      ]
-    },
-    {
-      "id": "./src/utils/hooks/useDetectSSOCode.ts",
-      "name": "./src/utils/hooks/useDetectSSOCode.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/StorybookComponentWrapper.tsx"
-        },
-        {
-          "moduleName": "./src/utils/hooks/index.ts"
-        },
-        {
-          "moduleName": "./src/utils/AppUtils/session/ApplicationSessionManager.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/utils/functions/ArrayUtils.ts",
-      "name": "./src/utils/functions/ArrayUtils.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/synapse-queries/KeyFactory.ts"
         }
       ]
     },
@@ -11831,16 +11825,25 @@
           "moduleName": "./src/components/UserSearchBox/UserSearchBoxV2.tsx"
         },
         {
-          "moduleName": "./src/components/dataaccess/AccessRequirementDashboard.tsx"
+          "moduleName": "./src/components/dataaccess/AccessHistoryDashboard.tsx"
         },
         {
-          "moduleName": "./src/components/dataaccess/AccessHistoryDashboard.tsx"
+          "moduleName": "./src/components/dataaccess/AccessRequirementDashboard.tsx"
         },
         {
           "moduleName": "./src/components/dataaccess/AccessSubmissionDashboard.tsx"
         },
         {
           "moduleName": "./src/utils/hooks/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/utils/functions/ArrayUtils.ts",
+      "name": "./src/utils/functions/ArrayUtils.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/synapse-queries/KeyFactory.ts"
         }
       ]
     },
@@ -11893,6 +11896,15 @@
       ]
     },
     {
+      "id": "./src/components/TeamBadge.tsx",
+      "name": "./src/components/TeamBadge.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/UserOrTeamBadge/UserOrTeamBadge.tsx"
+        }
+      ]
+    },
+    {
       "id": "./src/synapse-queries/dataaccess/useDataAccessSubmission.ts",
       "name": "./src/synapse-queries/dataaccess/useDataAccessSubmission.ts",
       "reasons": [
@@ -11920,27 +11932,6 @@
       ]
     },
     {
-      "id": "./src/components/dataaccess/AccessRequirementTable.tsx",
-      "name": "./src/components/dataaccess/AccessRequirementTable.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/dataaccess/AccessRequirementDashboard.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/styled/InputSizedButton.tsx",
-      "name": "./src/components/styled/InputSizedButton.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/dataaccess/AccessRequirementDashboard.tsx"
-        },
-        {
-          "moduleName": "./src/components/styled/index.ts"
-        }
-      ]
-    },
-    {
       "id": "./src/components/dataaccess/AccessApprovalsTable.tsx",
       "name": "./src/components/dataaccess/AccessApprovalsTable.tsx",
       "reasons": [
@@ -11962,20 +11953,32 @@
       ]
     },
     {
-      "id": "./src/components/TeamBadge.tsx",
-      "name": "./src/components/TeamBadge.tsx",
+      "id": "./src/components/dataaccess/AccessRequirementTable.tsx",
+      "name": "./src/components/dataaccess/AccessRequirementTable.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/UserOrTeamBadge/UserOrTeamBadge.tsx"
+          "moduleName": "./src/components/dataaccess/AccessRequirementDashboard.tsx"
         }
       ]
     },
     {
-      "id": "./src/synapse-queries/user/useGetUserChallenges.ts",
-      "name": "./src/synapse-queries/user/useGetUserChallenges.ts",
+      "id": "./src/components/styled/InputSizedButton.tsx",
+      "name": "./src/components/styled/InputSizedButton.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/UserProfileLinks/UserChallenges.tsx"
+          "moduleName": "./src/components/dataaccess/AccessRequirementDashboard.tsx"
+        },
+        {
+          "moduleName": "./src/components/styled/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/synapse-queries/user/useGetUserTeams.ts",
+      "name": "./src/synapse-queries/user/useGetUserTeams.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/UserProfileLinks/UserTeams.tsx"
         },
         {
           "moduleName": "./src/synapse-queries/user/index.ts"
@@ -11995,11 +11998,11 @@
       ]
     },
     {
-      "id": "./src/synapse-queries/user/useGetUserTeams.ts",
-      "name": "./src/synapse-queries/user/useGetUserTeams.ts",
+      "id": "./src/synapse-queries/user/useGetUserChallenges.ts",
+      "name": "./src/synapse-queries/user/useGetUserChallenges.ts",
       "reasons": [
         {
-          "moduleName": "./src/components/UserProfileLinks/UserTeams.tsx"
+          "moduleName": "./src/components/UserProfileLinks/UserChallenges.tsx"
         },
         {
           "moduleName": "./src/synapse-queries/user/index.ts"
@@ -12103,15 +12106,6 @@
       ]
     },
     {
-      "id": "./src/synapse-queries/oauth/useOAuthClient.ts",
-      "name": "./src/synapse-queries/oauth/useOAuthClient.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/synapse-queries/oauth/index.ts"
-        }
-      ]
-    },
-    {
       "id": "./src/synapse-queries/user/useProjects.ts",
       "name": "./src/synapse-queries/user/useProjects.ts",
       "reasons": [
@@ -12133,6 +12127,15 @@
       ]
     },
     {
+      "id": "./src/synapse-queries/oauth/useOAuthClient.ts",
+      "name": "./src/synapse-queries/oauth/useOAuthClient.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/synapse-queries/oauth/index.ts"
+        }
+      ]
+    },
+    {
       "id": "./src/utils/functions/TableColumnSchemaUtils.ts",
       "name": "./src/utils/functions/TableColumnSchemaUtils.ts",
       "reasons": [
@@ -12142,14 +12145,11 @@
       ]
     },
     {
-      "id": "./src/assets/icons/NoData.tsx",
-      "name": "./src/assets/icons/NoData.tsx",
+      "id": "./src/assets/icons/terms/CheckIcon.tsx",
+      "name": "./src/assets/icons/terms/CheckIcon.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/SynapseTable/TableIsEmpty.tsx"
-        },
-        {
-          "moduleName": "./src/components/RssFeedCards/RssFeedCards.tsx"
+          "moduleName": "./src/components/TermsAndConditions/TermsAndConditionsItem.tsx"
         }
       ]
     },
@@ -12244,11 +12244,14 @@
       ]
     },
     {
-      "id": "./src/assets/icons/terms/CheckIcon.tsx",
-      "name": "./src/assets/icons/terms/CheckIcon.tsx",
+      "id": "./src/assets/icons/NoData.tsx",
+      "name": "./src/assets/icons/NoData.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/TermsAndConditions/TermsAndConditionsItem.tsx"
+          "moduleName": "./src/components/SynapseTable/TableIsEmpty.tsx"
+        },
+        {
+          "moduleName": "./src/components/RssFeedCards/RssFeedCards.tsx"
         }
       ]
     },
@@ -12322,50 +12325,11 @@
       ]
     },
     {
-      "id": "./src/components/ProvenanceGraph/ProvenanceUtils.tsx",
-      "name": "./src/components/ProvenanceGraph/ProvenanceUtils.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
-        },
-        {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraphUtils.ts"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/ProvenanceGraph/ProvenanceGraphUtils.ts",
-      "name": "./src/components/ProvenanceGraph/ProvenanceGraphUtils.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/components/SubscriptionPage/SubscriptionItem.tsx",
       "name": "./src/components/SubscriptionPage/SubscriptionItem.tsx",
       "reasons": [
         {
           "moduleName": "./src/components/SubscriptionPage/SubscriptionPage.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/home_page/ExpandableContent.tsx",
-      "name": "./src/components/home_page/ExpandableContent.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Resources/Resources.Mobile.tsx"
-        },
-        {
-          "moduleName": "./src/components/Programs/Programs.Mobile.tsx"
-        },
-        {
-          "moduleName": "./src/components/Goals/Goals.Mobile.tsx"
-        },
-        {
-          "moduleName": "./src/components/UserCardList/UserCardListGroups/UserCardListGroups.Mobile.tsx"
         }
       ]
     },
@@ -12439,11 +12403,59 @@
       ]
     },
     {
+      "id": "./src/components/home_page/ExpandableContent.tsx",
+      "name": "./src/components/home_page/ExpandableContent.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Resources/Resources.Mobile.tsx"
+        },
+        {
+          "moduleName": "./src/components/Programs/Programs.Mobile.tsx"
+        },
+        {
+          "moduleName": "./src/components/Goals/Goals.Mobile.tsx"
+        },
+        {
+          "moduleName": "./src/components/UserCardList/UserCardListGroups/UserCardListGroups.Mobile.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/download_list/FolderDownloadConfirmation.tsx",
+      "name": "./src/components/download_list/FolderDownloadConfirmation.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/download_list/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/download_list/TableQueryDownloadConfirmation.tsx",
+      "name": "./src/components/download_list/TableQueryDownloadConfirmation.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/download_list/index.ts"
+        }
+      ]
+    },
+    {
       "id": "./src/components/AccessRequirement/EntityActionsRequired.tsx",
       "name": "./src/components/AccessRequirement/EntityActionsRequired.tsx",
       "reasons": [
         {
           "moduleName": "./src/components/QueryWrapperErrorBanner.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/widgets/facet-nav/FacetNavPanel.tsx",
+      "name": "./src/components/widgets/facet-nav/FacetNavPanel.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/widgets/facet-nav/FacetNav.tsx"
+        },
+        {
+          "moduleName": "./src/components/FeaturedDataTabs/FacetPlotsCard.tsx"
         }
       ]
     },
@@ -12483,18 +12495,6 @@
       "reasons": [
         {
           "moduleName": "./src/components/widgets/query-filter/FacetFilterControls.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/widgets/facet-nav/FacetNavPanel.tsx",
-      "name": "./src/components/widgets/facet-nav/FacetNavPanel.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/widgets/facet-nav/FacetNav.tsx"
-        },
-        {
-          "moduleName": "./src/components/FeaturedDataTabs/FacetPlotsCard.tsx"
         }
       ]
     },
@@ -12730,20 +12730,23 @@
       ]
     },
     {
-      "id": "./src/components/download_list/FolderDownloadConfirmation.tsx",
-      "name": "./src/components/download_list/FolderDownloadConfirmation.tsx",
+      "id": "./src/components/ProvenanceGraph/ProvenanceUtils.tsx",
+      "name": "./src/components/ProvenanceGraph/ProvenanceUtils.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/download_list/index.ts"
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
+        },
+        {
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraphUtils.ts"
         }
       ]
     },
     {
-      "id": "./src/components/download_list/TableQueryDownloadConfirmation.tsx",
-      "name": "./src/components/download_list/TableQueryDownloadConfirmation.tsx",
+      "id": "./src/components/ProvenanceGraph/ProvenanceGraphUtils.ts",
+      "name": "./src/components/ProvenanceGraph/ProvenanceGraphUtils.ts",
       "reasons": [
         {
-          "moduleName": "./src/components/download_list/index.ts"
+          "moduleName": "./src/components/ProvenanceGraph/ProvenanceGraph.tsx"
         }
       ]
     },
@@ -12756,6 +12759,15 @@
         },
         {
           "moduleName": "./src/components/SchemaDrivenAnnotationEditor/template/ArrayFieldTemplate.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/SchemaDrivenAnnotationEditor/template/FieldDescriptionTable.tsx",
+      "name": "./src/components/SchemaDrivenAnnotationEditor/template/FieldDescriptionTable.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/SchemaDrivenAnnotationEditor/template/DescriptionFieldTemplate.tsx"
         }
       ]
     },
@@ -12774,15 +12786,6 @@
         },
         {
           "moduleName": "./src/components/widgets/EntityColumnImage.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/SchemaDrivenAnnotationEditor/template/FieldDescriptionTable.tsx",
-      "name": "./src/components/SchemaDrivenAnnotationEditor/template/FieldDescriptionTable.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/SchemaDrivenAnnotationEditor/template/DescriptionFieldTemplate.tsx"
         }
       ]
     },
@@ -12913,6 +12916,15 @@
       ]
     },
     {
+      "id": "./src/components/GoogleMap/SynapseUserMarker.tsx",
+      "name": "./src/components/GoogleMap/SynapseUserMarker.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/GoogleMap/GoogleMap.tsx"
+        }
+      ]
+    },
+    {
       "id": "./src/components/Markdown/widget/MarkdownButton.tsx",
       "name": "./src/components/Markdown/widget/MarkdownButton.tsx",
       "reasons": [
@@ -13012,15 +13024,6 @@
       ]
     },
     {
-      "id": "./src/components/GoogleMap/SynapseUserMarker.tsx",
-      "name": "./src/components/GoogleMap/SynapseUserMarker.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/GoogleMap/GoogleMap.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/components/row_renderers/ObservationCard.tsx",
       "name": "./src/components/row_renderers/ObservationCard.tsx",
       "reasons": [
@@ -13029,15 +13032,6 @@
         },
         {
           "moduleName": "./src/components/CardContainer/CardContainer.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/Markdown/UserMentionModal.tsx",
-      "name": "./src/components/Markdown/UserMentionModal.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/Markdown/MarkdownEditor.tsx"
         }
       ]
     },
@@ -13080,6 +13074,15 @@
         },
         {
           "moduleName": "./src/components/ShowMore/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/Markdown/UserMentionModal.tsx",
+      "name": "./src/components/Markdown/UserMentionModal.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Markdown/MarkdownEditor.tsx"
         }
       ]
     },
@@ -13129,38 +13132,14 @@
       ]
     },
     {
-      "id": "./src/components/EntityHeaderTable/Filter.tsx",
-      "name": "./src/components/EntityHeaderTable/Filter.tsx",
+      "id": "./src/mocks/faker/fakerUtils.ts",
+      "name": "./src/mocks/faker/fakerUtils.ts",
       "reasons": [
         {
-          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/EntityHeaderTable/EntityHeaderTableCellRenderers.tsx",
-      "name": "./src/components/EntityHeaderTable/EntityHeaderTableCellRenderers.tsx",
-      "reasons": [
+          "moduleName": "./src/mocks/faker/generateFakeEntity.ts"
+        },
         {
-          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/assets/icons/AddAd.tsx",
-      "name": "./src/assets/icons/AddAd.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/EntityHeaderTable/useEntityHeaderTableState.ts",
-      "name": "./src/components/EntityHeaderTable/useEntityHeaderTableState.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
+          "moduleName": "./src/mocks/faker/generateDiscussion.ts"
         }
       ]
     },
@@ -13222,23 +13201,38 @@
       ]
     },
     {
-      "id": "./src/mocks/faker/fakerUtils.ts",
-      "name": "./src/mocks/faker/fakerUtils.ts",
+      "id": "./src/components/EntityHeaderTable/Filter.tsx",
+      "name": "./src/components/EntityHeaderTable/Filter.tsx",
       "reasons": [
         {
-          "moduleName": "./src/mocks/faker/generateFakeEntity.ts"
-        },
-        {
-          "moduleName": "./src/mocks/faker/generateDiscussion.ts"
+          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
         }
       ]
     },
     {
-      "id": "./src/components/EntityHeaderTable/DebouncedInput.tsx",
-      "name": "./src/components/EntityHeaderTable/DebouncedInput.tsx",
+      "id": "./src/components/EntityHeaderTable/EntityHeaderTableCellRenderers.tsx",
+      "name": "./src/components/EntityHeaderTable/EntityHeaderTableCellRenderers.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/EntityHeaderTable/Filter.tsx"
+          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/assets/icons/AddAd.tsx",
+      "name": "./src/assets/icons/AddAd.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/EntityHeaderTable/useEntityHeaderTableState.ts",
+      "name": "./src/components/EntityHeaderTable/useEntityHeaderTableState.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/EntityHeaderTable/EntityHeaderTable.tsx"
         }
       ]
     },
@@ -13291,6 +13285,15 @@
       ]
     },
     {
+      "id": "./src/components/EntityHeaderTable/DebouncedInput.tsx",
+      "name": "./src/components/EntityHeaderTable/DebouncedInput.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/EntityHeaderTable/Filter.tsx"
+        }
+      ]
+    },
+    {
       "id": "./src/components/DownloadCart/DownloadDetails.tsx",
       "name": "./src/components/DownloadCart/DownloadDetails.tsx",
       "reasons": [
@@ -13323,6 +13326,60 @@
       "reasons": [
         {
           "moduleName": "./src/components/ChallengeSubmission/ChallengeSubmissionStepper.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/CardContainer/CardContainer.tsx",
+      "name": "./src/components/CardContainer/CardContainer.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/CardContainerLogic/CardContainerLogic.tsx"
+        },
+        {
+          "moduleName": "./src/components/CardContainer/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/QuerySortSelector.tsx",
+      "name": "./src/components/QuerySortSelector.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/CardContainerLogic/CardContainerLogic.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx",
+      "name": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/AccessRequirementList/AccessRequirementListItem.tsx"
+        },
+        {
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.stories.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem.tsx",
+      "name": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/AccessRequirementList/AccessRequirementListItem.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.tsx",
+      "name": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/AccessRequirementList/AccessRequirementListItem.tsx"
+        },
+        {
+          "moduleName": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.stories.tsx"
         }
       ]
     },
@@ -13363,83 +13420,11 @@
       ]
     },
     {
-      "id": "./src/components/CardContainer/CardContainer.tsx",
-      "name": "./src/components/CardContainer/CardContainer.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/CardContainerLogic/CardContainerLogic.tsx"
-        },
-        {
-          "moduleName": "./src/components/CardContainer/index.ts"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/QuerySortSelector.tsx",
-      "name": "./src/components/QuerySortSelector.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/CardContainerLogic/CardContainerLogic.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/assets/icons/FrontHand.tsx",
       "name": "./src/assets/icons/FrontHand.tsx",
       "reasons": [
         {
           "moduleName": "./src/components/Authentication/RegenerateBackupCodesWarning.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx",
-      "name": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/AccessRequirementList/AccessRequirementListItem.tsx"
-        },
-        {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/UnmanagedACTAccessRequirementItem.stories.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem.tsx",
-      "name": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/AccessRequirementList/AccessRequirementListItem.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.tsx",
-      "name": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/AccessRequirementList/AccessRequirementListItem.tsx"
-        },
-        {
-          "moduleName": "./src/components/AccessRequirementList/RequirementItem/SelfSignAccessRequirementItem.stories.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/assets/icons/IconPlus.tsx",
-      "name": "./src/assets/icons/IconPlus.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/widgets/query-filter/FacetFilterHeader.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/assets/icons/IconMinus.tsx",
-      "name": "./src/assets/icons/IconMinus.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/widgets/query-filter/FacetFilterHeader.tsx"
         }
       ]
     },
@@ -13489,14 +13474,20 @@
       ]
     },
     {
-      "id": "./src/utils/functions/FileHandleUtils.ts",
-      "name": "./src/utils/functions/FileHandleUtils.ts",
+      "id": "./src/assets/icons/IconPlus.tsx",
+      "name": "./src/assets/icons/IconPlus.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/entity/metadata/MetadataTable.tsx"
-        },
+          "moduleName": "./src/components/widgets/query-filter/FacetFilterHeader.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/assets/icons/IconMinus.tsx",
+      "name": "./src/assets/icons/IconMinus.tsx",
+      "reasons": [
         {
-          "moduleName": "./src/components/entity/page/title_bar/useGetEntityTitleBarProperties.tsx"
+          "moduleName": "./src/components/widgets/query-filter/FacetFilterHeader.tsx"
         }
       ]
     },
@@ -13506,6 +13497,18 @@
       "reasons": [
         {
           "moduleName": "./src/components/entity/metadata/AnnotationsTable.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/utils/functions/FileHandleUtils.ts",
+      "name": "./src/utils/functions/FileHandleUtils.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/entity/metadata/MetadataTable.tsx"
+        },
+        {
+          "moduleName": "./src/components/entity/page/title_bar/useGetEntityTitleBarProperties.tsx"
         }
       ]
     },
@@ -13565,10 +13568,10 @@
       "name": "./src/components/DirectDownloadButton.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DocumentTemplate.tsx"
+          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField.tsx"
         },
         {
-          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField.tsx"
+          "moduleName": "./src/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DocumentTemplate.tsx"
         }
       ]
     },
@@ -13578,24 +13581,6 @@
       "reasons": [
         {
           "moduleName": "./src/components/GenericCard/SynapseCardLabel.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/SynapseTable/ExpandCollapseButton.tsx",
-      "name": "./src/components/SynapseTable/ExpandCollapseButton.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONArrayRenderer.tsx"
-        },
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONObjectRenderer.tsx"
-        },
-        {
-          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer.tsx"
-        },
-        {
-          "moduleName": "./src/components/SynapseTable/ExpandableTableDataCell.tsx"
         }
       ]
     },
@@ -13639,20 +13624,20 @@
       ]
     },
     {
-      "id": "./src/utils/functions/deepLinkingUtils.ts",
-      "name": "./src/utils/functions/deepLinkingUtils.ts",
+      "id": "./src/components/SynapseTable/ExpandCollapseButton.tsx",
+      "name": "./src/components/SynapseTable/ExpandCollapseButton.tsx",
       "reasons": [
         {
-          "moduleName": "./src/utils/hooks/useImmutableTableQuery/useImmutableTableQuery.ts"
-        }
-      ]
-    },
-    {
-      "id": "./src/utils/hooks/useImmutableTableQuery/useTableQueryReducer.ts",
-      "name": "./src/utils/hooks/useImmutableTableQuery/useTableQueryReducer.ts",
-      "reasons": [
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONArrayRenderer.tsx"
+        },
         {
-          "moduleName": "./src/utils/hooks/useImmutableTableQuery/useImmutableTableQuery.ts"
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer.tsx"
+        },
+        {
+          "moduleName": "./src/components/SynapseTable/SynapseTableCell/JSON/JSONObjectRenderer.tsx"
+        },
+        {
+          "moduleName": "./src/components/SynapseTable/ExpandableTableDataCell.tsx"
         }
       ]
     },
@@ -13777,6 +13762,24 @@
       ]
     },
     {
+      "id": "./src/utils/functions/deepLinkingUtils.ts",
+      "name": "./src/utils/functions/deepLinkingUtils.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/utils/hooks/useImmutableTableQuery/useImmutableTableQuery.ts"
+        }
+      ]
+    },
+    {
+      "id": "./src/utils/hooks/useImmutableTableQuery/useTableQueryReducer.ts",
+      "name": "./src/utils/hooks/useImmutableTableQuery/useTableQueryReducer.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/utils/hooks/useImmutableTableQuery/useImmutableTableQuery.ts"
+        }
+      ]
+    },
+    {
       "id": "./src/utils/APIConstants.ts",
       "name": "./src/utils/APIConstants.ts",
       "reasons": [
@@ -13811,10 +13814,10 @@
           "moduleName": "./src/mocks/msw/handlers/wikiHandlers.ts"
         },
         {
-          "moduleName": "./src/mocks/msw/handlers/entityHandlers.ts"
+          "moduleName": "./src/mocks/msw/handlers/accessRequirementHandlers.ts"
         },
         {
-          "moduleName": "./src/mocks/msw/handlers/accessRequirementHandlers.ts"
+          "moduleName": "./src/mocks/msw/handlers/entityHandlers.ts"
         },
         {
           "moduleName": "./src/mocks/msw/handlers/researchProjectHandlers.ts"
@@ -13858,15 +13861,6 @@
       ]
     },
     {
-      "id": "./src/utils/functions/testDownloadSpeed.ts",
-      "name": "./src/utils/functions/testDownloadSpeed.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/download_list/DownloadDetails.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/mocks/discussion/mock_discussion.ts",
       "name": "./src/mocks/discussion/mock_discussion.ts",
       "reasons": [
@@ -13897,6 +13891,15 @@
       ]
     },
     {
+      "id": "./src/utils/functions/testDownloadSpeed.ts",
+      "name": "./src/utils/functions/testDownloadSpeed.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/download_list/DownloadDetails.tsx"
+        }
+      ]
+    },
+    {
       "id": "./src/assets/icons/CertifiedUser.tsx",
       "name": "./src/assets/icons/CertifiedUser.tsx",
       "reasons": [
@@ -13911,6 +13914,15 @@
       "reasons": [
         {
           "moduleName": "./src/components/ModalDownload/ModalDownload.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterUtils.ts",
+      "name": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterUtils.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilter.tsx"
         }
       ]
     },
@@ -13932,6 +13944,18 @@
         },
         {
           "moduleName": "./src/components/TableColumnSchemaEditor/ColumnModelFormFields/DefaultValueField.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/InteractiveCopyIdsIcon.tsx",
+      "name": "./src/components/InteractiveCopyIdsIcon.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/SynapseTable/EntityIDColumnCopyIcon.tsx"
+        },
+        {
+          "moduleName": "./src/components/DownloadCart/DownloadListTable.tsx"
         }
       ]
     },
@@ -13963,27 +13987,6 @@
       ]
     },
     {
-      "id": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterUtils.ts",
-      "name": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterUtils.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilter.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/InteractiveCopyIdsIcon.tsx",
-      "name": "./src/components/InteractiveCopyIdsIcon.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/SynapseTable/EntityIDColumnCopyIcon.tsx"
-        },
-        {
-          "moduleName": "./src/components/DownloadCart/DownloadListTable.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/components/SubscriptionPage/ForumTopic.tsx",
       "name": "./src/components/SubscriptionPage/ForumTopic.tsx",
       "reasons": [
@@ -13998,15 +14001,6 @@
       "reasons": [
         {
           "moduleName": "./src/components/SubscriptionPage/SubscriptionItem.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/ProvenanceGraph/ProvenanceEntityIcon.tsx",
-      "name": "./src/components/ProvenanceGraph/ProvenanceEntityIcon.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ProvenanceGraph/EntityNodeLabel.tsx"
         }
       ]
     },
@@ -14029,15 +14023,6 @@
       ]
     },
     {
-      "id": "./src/components/ProvenanceGraph/ProvenanceExternalIcon.tsx",
-      "name": "./src/components/ProvenanceGraph/ProvenanceExternalIcon.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ProvenanceGraph/ExternalGraphNodeLabel.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/components/download_list/DownloadConfirmationUtils.ts",
       "name": "./src/components/download_list/DownloadConfirmationUtils.ts",
       "reasons": [
@@ -14050,11 +14035,20 @@
       ]
     },
     {
-      "id": "./src/components/IDUReport/IDUReport.tsx",
-      "name": "./src/components/IDUReport/IDUReport.tsx",
+      "id": "./src/components/ProvenanceGraph/ProvenanceEntityIcon.tsx",
+      "name": "./src/components/ProvenanceGraph/ProvenanceEntityIcon.tsx",
       "reasons": [
         {
-          "moduleName": "./src/components/Markdown/widget/MarkdownIDUReport.tsx"
+          "moduleName": "./src/components/ProvenanceGraph/EntityNodeLabel.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/ProvenanceGraph/ProvenanceExternalIcon.tsx",
+      "name": "./src/components/ProvenanceGraph/ProvenanceExternalIcon.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/ProvenanceGraph/ExternalGraphNodeLabel.tsx"
         }
       ]
     },
@@ -14064,6 +14058,15 @@
       "reasons": [
         {
           "moduleName": "./src/components/Markdown/widget/MarkdownEntityPreview.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/IDUReport/IDUReport.tsx",
+      "name": "./src/components/IDUReport/IDUReport.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/Markdown/widget/MarkdownIDUReport.tsx"
         }
       ]
     },
@@ -14085,18 +14088,6 @@
         },
         {
           "moduleName": "./src/components/Markdown/MarkdownSynapse.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/FeaturedDataTabs/FacetPlotsCard.tsx",
-      "name": "./src/components/FeaturedDataTabs/FacetPlotsCard.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/FeaturedDataTabs/QueryPerFacetPlotsCard.tsx"
-        },
-        {
-          "moduleName": "./src/components/FeaturedDataTabs/SingleQueryFacetPlotsCards.tsx"
         }
       ]
     },
@@ -14191,6 +14182,18 @@
       ]
     },
     {
+      "id": "./src/components/FeaturedDataTabs/FacetPlotsCard.tsx",
+      "name": "./src/components/FeaturedDataTabs/FacetPlotsCard.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/FeaturedDataTabs/QueryPerFacetPlotsCard.tsx"
+        },
+        {
+          "moduleName": "./src/components/FeaturedDataTabs/SingleQueryFacetPlotsCards.tsx"
+        }
+      ]
+    },
+    {
       "id": "./src/components/EntityFinder/details/view/VersionColumnHeader.tsx",
       "name": "./src/components/EntityFinder/details/view/VersionColumnHeader.tsx",
       "reasons": [
@@ -14227,24 +14230,6 @@
       ]
     },
     {
-      "id": "./src/components/ChallengeTeamWizard/ChallengeTeamSearch.tsx",
-      "name": "./src/components/ChallengeTeamWizard/ChallengeTeamSearch.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamTable.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/synapse-queries/team/useTeamList.ts",
-      "name": "./src/synapse-queries/team/useTeamList.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamTable.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/synapse-queries/docker/index.ts",
       "name": "./src/synapse-queries/docker/index.ts",
       "reasons": [
@@ -14259,6 +14244,24 @@
       "reasons": [
         {
           "moduleName": "./src/components/CardContainer/CardContainer.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/ChallengeTeamWizard/ChallengeTeamSearch.tsx",
+      "name": "./src/components/ChallengeTeamWizard/ChallengeTeamSearch.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamTable.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/synapse-queries/team/useTeamList.ts",
+      "name": "./src/synapse-queries/team/useTeamList.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/ChallengeTeamWizard/ChallengeTeamTable.tsx"
         }
       ]
     },
@@ -14605,15 +14608,6 @@
       ]
     },
     {
-      "id": "./src/synapse-queries/docker/useGetDockerTag.ts",
-      "name": "./src/synapse-queries/docker/useGetDockerTag.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/synapse-queries/docker/index.ts"
-        }
-      ]
-    },
-    {
       "id": "./src/components/row_renderers/Dataset.tsx",
       "name": "./src/components/row_renderers/Dataset.tsx",
       "reasons": [
@@ -14628,6 +14622,15 @@
       "reasons": [
         {
           "moduleName": "./src/components/row_renderers/index.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/synapse-queries/docker/useGetDockerTag.ts",
+      "name": "./src/synapse-queries/docker/useGetDockerTag.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/synapse-queries/docker/index.ts"
         }
       ]
     },
@@ -14965,33 +14968,6 @@
       ]
     },
     {
-      "id": "./src/assets/icons/subscribe_plus.svg",
-      "name": "./src/assets/icons/subscribe_plus.svg",
-      "reasons": [
-        {
-          "moduleName": "./src/components/RssFeedCards/RssFeedCards.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/SynapseForm/SynapseForm.tsx",
-      "name": "./src/components/SynapseForm/SynapseForm.tsx",
-      "reasons": [
-        {
-          "moduleName": "./src/components/SynapseForm/SynapseFormWrapper.tsx"
-        }
-      ]
-    },
-    {
-      "id": "./src/components/SynapseForm/SynapseFormUtils.ts",
-      "name": "./src/components/SynapseForm/SynapseFormUtils.ts",
-      "reasons": [
-        {
-          "moduleName": "./src/components/SynapseForm/SynapseFormWrapper.tsx"
-        }
-      ]
-    },
-    {
       "id": "./src/components/SynapseForm/Header.tsx",
       "name": "./src/components/SynapseForm/Header.tsx",
       "reasons": [
@@ -15033,6 +15009,33 @@
       "reasons": [
         {
           "moduleName": "./src/components/SynapseForm/SynapseForm.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/assets/icons/subscribe_plus.svg",
+      "name": "./src/assets/icons/subscribe_plus.svg",
+      "reasons": [
+        {
+          "moduleName": "./src/components/RssFeedCards/RssFeedCards.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/SynapseForm/SynapseForm.tsx",
+      "name": "./src/components/SynapseForm/SynapseForm.tsx",
+      "reasons": [
+        {
+          "moduleName": "./src/components/SynapseForm/SynapseFormWrapper.tsx"
+        }
+      ]
+    },
+    {
+      "id": "./src/components/SynapseForm/SynapseFormUtils.ts",
+      "name": "./src/components/SynapseForm/SynapseFormUtils.ts",
+      "reasons": [
+        {
+          "moduleName": "./src/components/SynapseForm/SynapseFormWrapper.tsx"
         }
       ]
     },
