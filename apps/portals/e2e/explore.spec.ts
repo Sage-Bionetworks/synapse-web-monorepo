@@ -3,6 +3,7 @@ import { defaultExpectTimeout } from '../playwright.config'
 import exploreConfig from './configs/exploreConfig'
 import { dismissBanners } from './helpers/banners'
 import { getPortal } from './helpers/portalInfo'
+import { tagTestTitle } from './helpers/setup'
 
 const portalExploreConfig = exploreConfig[getPortal()]
 
@@ -341,7 +342,7 @@ test.describe('Explore', () => {
     const exploreTabTypes = exploreTabType.split('_')
 
     for (const exploreTab of exploreTabs) {
-      test(exploreTab, async ({ page }) => {
+      test(tagTestTitle(exploreTab), async ({ page }) => {
         await goToExploreTab(page, exploreTab)
 
         if (exploreTabTypes.includes('cards')) await expectCards(page)
