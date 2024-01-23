@@ -1,34 +1,37 @@
-import React from 'react'
-import * as UseGetEntityPropertiesModule from '../../../../../src/components/entity/page/title_bar/useGetEntityTitleBarProperties'
-import { render, screen } from '@testing-library/react'
-import TitleBarProperties, {
-  TitleBarPropertiesProps,
-} from '../../../../../src/components/entity/page/title_bar/TitleBarProperties'
-import mockFileEntity from '../../../../../src/mocks/entity/mockFileEntity'
-import { createWrapper } from '../../../../../src/testutils/TestingLibraryUtils'
-import userEvent from '@testing-library/user-event'
-import * as HasAccessModule from '../../../../../src/components/HasAccess/HasAccessV2'
-import { mockFileHandle } from '../../../../../src/mocks/mock_file_handle'
-import { calculateFriendlyFileSize } from '../../../../../src/utils/functions/calculateFriendlyFileSize'
-import { rest, server } from '../../../../../src/mocks/msw/server'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../../../src/utils/functions/getEndpoint'
-import {
-  DOI_ASSOCIATION,
-  ENTITY_BUNDLE_V2,
-} from '../../../../../src/utils/APIConstants'
 import {
   DoiAssociation,
   EntityBundle,
   EntityChildrenResponse,
   EntityType,
   ExternalFileHandle,
+  ExternalObjectStoreFileHandle,
+  VersionableEntity,
 } from '@sage-bionetworks/synapse-types'
-import mockDataset from '../../../../../src/mocks/entity/mockDataset'
-import { mockFolderEntity } from '../../../../../src/mocks/entity/mockEntity'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import failOnConsoleError from 'jest-fail-on-console'
+import React from 'react'
+import mockDataset from '../../../../mocks/entity/mockDataset'
+import { mockFolderEntity } from '../../../../mocks/entity/mockEntity'
+import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
+import { mockDoiAssociation } from '../../../../mocks/entity/mockProject'
+import { mockFileHandle } from '../../../../mocks/mock_file_handle'
+import { rest, server } from '../../../../mocks/msw/server'
+import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
+import {
+  DOI_ASSOCIATION,
+  ENTITY_BUNDLE_V2,
+} from '../../../../utils/APIConstants'
+import { calculateFriendlyFileSize } from '../../../../utils/functions/calculateFriendlyFileSize'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../../utils/functions/getEndpoint'
+import * as HasAccessModule from '../../../HasAccess/HasAccessV2'
+import TitleBarProperties, {
+  TitleBarPropertiesProps,
+} from './TitleBarProperties'
+import * as UseGetEntityPropertiesModule from './useGetEntityTitleBarProperties'
 
 const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'
 
@@ -83,7 +86,9 @@ function renderComponent(propOverrides?: Partial<TitleBarPropertiesProps>) {
 async function expandPropertiesIfPossible() {
   try {
     await userEvent.click(await screen.findByText(/\d+ more properties/))
-  } catch (e) {}
+  } catch (e) {
+    // add a comment to ignore empty block error
+  }
 }
 
 describe('TitleBarProperties', () => {
@@ -226,7 +231,7 @@ describe('TitleBarProperties', () => {
             endpointUrl,
             bucket,
             fileKey,
-          },
+          } as ExternalObjectStoreFileHandle,
         ],
       })
       renderComponent()
@@ -293,62 +298,53 @@ describe('TitleBarProperties', () => {
       expect(screen.queryByText(`Alias`)).not.toBeInTheDocument()
     })
     it('DOI', async () => {
-      const doiUri = '10.7303/syn12345678.3'
       useEntityBundleOverride({
         ...mockFileEntity.bundle,
-        doiAssociation: {
-          doiUri,
-        },
+        doiAssociation: mockDoiAssociation,
       })
       renderComponent()
       await expandPropertiesIfPossible()
 
       await screen.findByText(`DOI`)
-      await screen.findByText('https://doi.org/10.7303/syn12345678.3')
+      await screen.findByText(`https://doi.org/${mockDoiAssociation.doiUri}`)
     })
     it('Unversioned DOI fallback for latest version of versionable entity', async () => {
-      const doiUri = '10.7303/syn12345678'
       // The bundle does not provide a version-specific DOI, and the entity is the latest version
       useEntityBundleOverride({
         ...mockFileEntity.bundle,
         entity: {
           ...mockFileEntity.entity,
           isLatestVersion: true,
-        },
+        } as VersionableEntity,
         doiAssociation: undefined,
       })
       // A non-version-specific DOI exists
-      useDoiAssociationOverride({
-        doiUri,
-      })
+      useDoiAssociationOverride(mockDoiAssociation)
       renderComponent()
       await expandPropertiesIfPossible()
 
       await screen.findByText(`DOI`)
-      await screen.findByText('https://doi.org/10.7303/syn12345678')
+      await screen.findByText(`https://doi.org/${mockDoiAssociation.doiUri}`)
     })
 
     it('Unversioned DOI fallback is not shown if not latest version', async () => {
-      const doiUri = '10.7303/syn12345678'
       // The bundle does not provide a version-specific DOI, but this is not the latest version
       useEntityBundleOverride({
         ...mockFileEntity.bundle,
         entity: {
           ...mockFileEntity.entity,
           isLatestVersion: false,
-        },
+        } as VersionableEntity,
         doiAssociation: undefined,
       })
       // A non-version-specific DOI exists
-      useDoiAssociationOverride({
-        doiUri,
-      })
+      useDoiAssociationOverride(mockDoiAssociation)
       renderComponent()
       await expandPropertiesIfPossible()
 
       expect(screen.queryByText(`DOI`)).not.toBeInTheDocument()
       expect(
-        screen.queryByText(`https://doi.org/10.7303/syn12345678`),
+        screen.queryByText(`https://doi.org/${mockDoiAssociation.doiUri}`),
       ).not.toBeInTheDocument()
     })
     it('Container fields (Child count, upload destination)', async () => {
@@ -367,6 +363,7 @@ describe('TitleBarProperties', () => {
             const response: EntityChildrenResponse = {
               page: [],
               totalChildCount: 55,
+              nextPageToken: 'npt',
             }
             return res(ctx.status(200), ctx.json(response))
           },
