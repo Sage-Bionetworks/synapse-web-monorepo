@@ -37,6 +37,7 @@ import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
 import defaultFileViewColumnModels from '../../mocks/query/defaultFileViewColumnModels'
 import { MOCK_ACCESS_TOKEN } from '../../mocks/MockSynapseContext'
 import * as TableColumnSchemaUtils from '../../utils/functions/TableColumnSchemaUtils'
+import { omit } from 'lodash-es'
 
 const mockedImportedColumns: SetOptional<ColumnModel, 'id'>[] = [
   {
@@ -241,10 +242,9 @@ describe('TableColumnSchemaEditor', () => {
     await user.click(saveButton)
 
     await waitFor(async () => {
-      const expectedProposedSchema = defaultFileViewColumnModels.map(cm => ({
-        ...cm,
-        id: undefined,
-      }))
+      const expectedProposedSchema = defaultFileViewColumnModels.map(cm =>
+        omit(cm, ['id']),
+      )
       expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
         MOCK_ACCESS_TOKEN,
         mockFileViewEntity.id,
@@ -299,16 +299,16 @@ describe('TableColumnSchemaEditor', () => {
     await user.click(saveButton)
 
     await waitFor(async () => {
+      // IDs are stripped from imported columns, in case column properties are changed
+      const expectedProposedSchema = MOCK_ANNOTATION_COLUMNS.results.map(cm =>
+        omit(cm, 'id'),
+      )
+
       expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
         MOCK_ACCESS_TOKEN,
         mockFileViewEntity.id,
         [],
-        // IDs are stripped from imported columns, in case they are changed
-        MOCK_ANNOTATION_COLUMNS.results.map(cm => {
-          const newObj: SetOptional<ColumnModel, 'id'> = { ...cm }
-          delete newObj.id
-          return newObj
-        }),
+        expectedProposedSchema,
       )
       expect(updateTableSpy).toHaveBeenCalledWith(
         await createTableUpdateTransactionRequestSpy.mock.results[0].value,
@@ -418,11 +418,7 @@ describe('TableColumnSchemaEditor', () => {
         mockTableEntityData.id,
         [],
         // IDs are stripped from imported columns, in case they are changed
-        mockedImportedColumns.map(cm => {
-          const newObj: SetOptional<ColumnModel, 'id'> = { ...cm }
-          delete newObj.id
-          return newObj
-        }),
+        mockedImportedColumns.map(cm => omit(cm, 'id')),
       )
       expect(updateTableSpy).toHaveBeenCalledWith(
         await createTableUpdateTransactionRequestSpy.mock.results[0].value,

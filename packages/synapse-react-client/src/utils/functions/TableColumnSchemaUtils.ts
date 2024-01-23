@@ -12,7 +12,7 @@ function validateProposedSchema(
   proposedSchema: SetOptional<ColumnModel, 'id'>[],
 ): void {
   // If the proposed schema contains any IDs that are not in the old schema, throw an error
-  // We do this so we can accurately updates to existing columns by using the ID that is already present
+  // We do this so we can accurately track updates to existing columns by using the ID that is already present
   const oldColumnModelIds: Set<string> = new Set()
   for (const columnModel of oldSchema) {
     oldColumnModelIds.add(columnModel.id)

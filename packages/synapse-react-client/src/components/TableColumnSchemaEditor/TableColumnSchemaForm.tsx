@@ -223,7 +223,7 @@ function TableColumnSchemaFormInternal(
   const addColumnSet = useCallback(
     (newColumns: SetOptional<ColumnModel, 'id'>[]) => {
       const currentFormData = readFormData()
-      const columnsToAdd = newColumns.filter(
+      let columnsToAdd = newColumns.filter(
         (cm: SetOptional<ColumnModel, 'id'>) => {
           // Don't add columns that cannot be added (for example, Views cannot have JSON columns)
           if (
@@ -241,7 +241,7 @@ function TableColumnSchemaFormInternal(
       // Remove the ID column so TableColumnSchemaUtils.createTableUpdateTransactionRequest recognizes these as new columns
       // createTableUpdateTransactionRequest uses the existing column ID to track column updates in the table, so any new columns should have no ID
       // The user can also modify these columns before submitting them, so the ID may not be accurate when we end up submitting them
-      columnsToAdd.forEach(cm => omit(cm, 'id'))
+      columnsToAdd = columnsToAdd.map(cm => omit(cm, ['id']))
       if (columnsToAdd.length > 0) {
         dispatch({
           type: 'setValue',

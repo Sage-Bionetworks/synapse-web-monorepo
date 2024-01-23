@@ -8,7 +8,6 @@ import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import mockProjectEntityData from '../../mocks/entity/mockProject'
 import userEvent from '@testing-library/user-event'
 import {
-  ColumnModel,
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
@@ -32,7 +31,6 @@ import { BackendDestinationEnum } from '../../utils/functions'
 import { getEndpoint } from '../../utils/functions/getEndpoint'
 import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
 import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
-import { SetOptional } from 'type-fest'
 import { omit } from 'lodash-es'
 
 jest.mock('../EntityFinder/EntityFinderModal', () => ({
