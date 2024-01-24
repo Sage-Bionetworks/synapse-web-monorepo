@@ -47,7 +47,7 @@ export const handleParticipantsToFiles = async (
     // TODO: set additionalFiltersSessionStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
     JSON.stringify([sessionStorageFilter]),
   )
-  window.location.href = '/Explore/Data by Files v2'
+  window.location.href = '/Explore/Data by Files'
 }
 
 export const handleSelectedParticipantsToFiles = (
@@ -72,5 +72,5 @@ export const handleSelectedParticipantsToFiles = (
     // TODO: set additionalFiltersSessionStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
     JSON.stringify([sessionStorageFilter]),
   )
-  window.location.href = '/Explore/Data by Files v2'
+  window.location.href = '/Explore/Data by Files'
 }

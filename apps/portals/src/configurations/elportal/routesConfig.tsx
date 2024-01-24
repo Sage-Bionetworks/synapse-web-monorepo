@@ -188,8 +188,12 @@ const routes: GenericRoute[] = [
     routes: [
       {
         exact: true,
+        path: 'Data by Files',
+        hideRouteFromNavbar: false,
+      },
+      {
+        exact: true,
         path: 'Data by Participants',
-        hideRouteFromNavbar: true, // remove on release of the cohort builder
         synapseConfigArray: [
           {
             name: 'OrientationBanner',
@@ -229,17 +233,6 @@ const routes: GenericRoute[] = [
           },
         ],
       },
-      {
-        exact: true,
-        path: 'Data by Files',
-        hideRouteFromNavbar: false,
-      },
-      {
-        exact: true,
-        path: 'Data by Files v2',
-        hideRouteFromNavbar: true, // this replaces Data by Files on release of the cohort builder
-      },
-
       {
         path: 'Projects',
         routes: [
