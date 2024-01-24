@@ -6,12 +6,19 @@ export type IconListProps = {
     [index: string]: IconSvgProps // if the icon option has the "label" set, it will show tooltip in IconSvg
   }
   iconNames: string[]
+  iconFontSize?: string
   useTheme?: boolean
   useBackground?: boolean
 }
 
 const IconList: React.FunctionComponent<IconListProps> = props => {
-  const { iconConfigs, iconNames, useTheme, useBackground } = props
+  const {
+    iconConfigs,
+    iconNames,
+    iconFontSize = '24px',
+    useTheme,
+    useBackground,
+  } = props
   let noMatch: boolean = false
   const css = useTheme ? 'icon-list themed' : 'icon-list'
   const componentCss = useBackground ? `${css} bg-circle` : css
@@ -25,7 +32,13 @@ const IconList: React.FunctionComponent<IconListProps> = props => {
         noMatch = true
         return
       } else {
-        return <IconSvg key={el} {...iconConfig} />
+        return (
+          <IconSvg
+            style={{ fontSize: iconFontSize }}
+            key={el}
+            {...iconConfig}
+          />
+        )
       }
     })
   }
@@ -34,7 +47,7 @@ const IconList: React.FunctionComponent<IconListProps> = props => {
     <span className={componentCss}>
       {buildIconList()}
       {noMatch && iconConfigs['other'] ? (
-        <IconSvg {...iconConfigs['other']} />
+        <IconSvg style={{ fontSize: iconFontSize }} {...iconConfigs['other']} />
       ) : (
         <></>
       )}
