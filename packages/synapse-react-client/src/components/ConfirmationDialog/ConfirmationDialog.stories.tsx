@@ -17,8 +17,7 @@ export const Demo: Story = {
   args: {
     open: true,
     title: 'My Dialog Title',
-    confirmButtonText: 'Confirm',
-    confirmButtonColor: 'error',
+    confirmButtonProps: { children: 'Confirm', color: 'error' },
     maxWidth: 'lg',
     content: (
       <>

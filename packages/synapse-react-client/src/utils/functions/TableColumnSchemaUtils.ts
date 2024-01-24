@@ -29,7 +29,7 @@ function validateProposedSchema(
 /**
  * Creates the column models for a change request and returns the change request to be passed to the Synapse backend.
  *
- * Note that to update a column model and preserve table data, the ID of the
+ * Note that to update a column model and preserve table data, the ID of the column in the oldSchema should be the same as the column ID in the proposedSchema.
  * @param accessToken the Synapse access token
  * @param tableId the ID of the table to change
  * @param oldSchema the current schema of the table
@@ -75,33 +75,34 @@ export async function createTableUpdateTransactionRequest(
 
   // now that all columns have been created, figure out the column changes (create, update, and no-op)
   const changes: ColumnChange[] = []
-  const columnIdsThatWereChangedOrAdded: Set<string> = new Set()
+  // We have to provide the backend with the set of columns to remove from the table schema.
+  // Keep track of the column IDs that were modified or added to make it easier to determine this set.
+  const columnIdsThatShouldNotBeRemovedFromSchema: Set<string> = new Set()
   for (let i = 0; i < proposedSchema.length; i++) {
     const columnIdInProposedSchema: string | null = proposedSchema[i].id ?? null
     const newColumnId: string = createdColumnModels[i].id
-    if (columnIdInProposedSchema)
-      columnIdsThatWereChangedOrAdded.add(columnIdInProposedSchema)
-    columnIdsThatWereChangedOrAdded.add(newColumnId)
+    if (columnIdInProposedSchema != null) {
+      // This column was modified, so it should not be removed from the schema
+      columnIdsThatShouldNotBeRemovedFromSchema.add(columnIdInProposedSchema)
+    }
+    columnIdsThatShouldNotBeRemovedFromSchema.add(newColumnId)
     if (
-      // The column has changed
       columnIdInProposedSchema != null &&
       columnIdInProposedSchema !== newColumnId
     ) {
+      // The column has changed
       changes.push({ oldColumnId: columnIdInProposedSchema, newColumnId })
-    } else if (
-      // the column is new and is defined by the user
-      columnIdInProposedSchema == null ||
-      // the column is new but already has an ID (e.g. we are adding a default column to a view)
-      !oldColumnModelId2Model.has(columnIdInProposedSchema)
-    ) {
+    } else if (columnIdInProposedSchema == null) {
+      // the column is new to the table
       changes.push({ oldColumnId: null, newColumnId })
     }
+    // Otherwise, the column was in the old schema and was not modified. No change is needed.
   }
 
-  // delete columns that are not represented in the changes already (create or update)
+  // delete columns that were not updated, added, or unchanged in the table schema
   for (const oldColumnModel of oldSchema) {
     const oldColumnId: string | null = oldColumnModel.id
-    if (!columnIdsThatWereChangedOrAdded.has(oldColumnId)) {
+    if (!columnIdsThatShouldNotBeRemovedFromSchema.has(oldColumnId)) {
       changes.push({ oldColumnId, newColumnId: null })
     }
   }

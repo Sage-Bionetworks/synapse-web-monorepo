@@ -38,7 +38,6 @@ export const SubscribersModal: React.FC<SubscribersModalProps> = ({
           ))
         }
         onConfirm={() => handleModal(false)}
-        confirmButtonText="Ok"
         hasCancelButton={false}
       />
     </div>

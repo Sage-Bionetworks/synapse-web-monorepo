@@ -6,13 +6,13 @@ import {
 import { SkeletonTable } from '../Skeleton'
 import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import TableColumnSchemaForm, { SubmitHandle } from './TableColumnSchemaForm'
-import { Alert, Box, Button } from '@mui/material'
+import { Alert } from '@mui/material'
 import { getViewScopeForEntity } from './TableColumnSchemaEditorUtils'
 import { ColumnModel, ViewScope } from '@sage-bionetworks/synapse-types'
 import { SetOptional } from 'type-fest'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { DialogBase } from '../DialogBase'
 import { isUndefined, noop, omitBy } from 'lodash-es'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 
 export type TableColumnSchemaEditorProps = {
   entityId: string
@@ -93,9 +93,8 @@ export default function TableColumnSchemaEditor(
   }
 
   return (
-    <DialogBase
+    <ConfirmationDialog
       open={open}
-      onCancel={onCancel}
       maxWidth={'xl'}
       title={'Edit Columns'}
       content={
@@ -117,33 +116,20 @@ export default function TableColumnSchemaEditor(
           )}
         </>
       }
-      actions={
-        <Box
-          display={'flex'}
-          justifyContent={'flex-end'}
-          alignItems={'center'}
-          width={'100%'}
-          gap={2.25}
-        >
-          <Button variant={'outlined'} onClick={onCancel} disabled={isMutating}>
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              if (formRef.current) {
-                formRef.current.submit()
-              }
-            }}
-            disabled={isMutating}
-            sx={{ my: 2 }}
-            startIcon={isMutating ? <SynapseSpinner /> : undefined}
-          >
-            {isMutating ? 'Saving...' : 'Save'}
-          </Button>
-        </Box>
-      }
+      confirmButtonProps={{
+        children: isMutating ? 'Saving...' : 'Save',
+        disabled: isMutating,
+        startIcon: isMutating ? <SynapseSpinner /> : undefined,
+      }}
+      onConfirm={() => {
+        if (formRef.current) {
+          formRef.current.submit()
+        }
+      }}
+      cancelButtonProps={{
+        disabled: isMutating,
+      }}
+      onCancel={onCancel}
     />
   )
 }

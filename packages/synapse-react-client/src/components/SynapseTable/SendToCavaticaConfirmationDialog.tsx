@@ -162,8 +162,10 @@ export default function SendToCavaticaConfirmationDialog(
             </Box>
           </>
         }
-        confirmButtonText="Continue"
-        confirmButtonDisabled={!disclaimerAcknowledged}
+        confirmButtonProps={{
+          children: 'Continue',
+          disabled: !disclaimerAcknowledged,
+        }}
         onConfirm={() => {
           setIsShowingDisclaimerPage(false)
         }}
@@ -286,9 +288,11 @@ export default function SendToCavaticaConfirmationDialog(
             </Typography>
           </>
         }
-        confirmButtonText={confirmButtonText}
-        confirmButtonDisabled={isLoading || (actions && actions.length > 0)}
-        confirmButtonID={SEND_TO_CAVATICA_CONFIRM_BUTTON_ID}
+        confirmButtonProps={{
+          id: SEND_TO_CAVATICA_CONFIRM_BUTTON_ID,
+          children: confirmButtonText,
+          disabled: isLoading || (actions && actions.length > 0),
+        }}
         onConfirm={() => {
           exportToCavatica().then(
             // on success, reset to the disclaimer page and close the modal

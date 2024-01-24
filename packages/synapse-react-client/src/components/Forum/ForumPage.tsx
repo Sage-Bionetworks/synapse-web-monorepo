@@ -123,8 +123,10 @@ export const ForumPage: React.FC<ForumPageProps> = ({
         onCancel={() => setShowSignInModal(false)}
         hasCancelButton={false}
         onConfirm={() => setShowSignInModal(false)}
-        confirmButtonText="Sign In"
-        confirmButtonClassName={SRC_SIGN_IN_CLASS}
+        confirmButtonProps={{
+          children: 'Sign In',
+          className: SRC_SIGN_IN_CLASS,
+        }}
       />
     </div>
   )

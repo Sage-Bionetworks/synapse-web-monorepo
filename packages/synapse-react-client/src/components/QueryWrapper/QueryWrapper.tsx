@@ -249,7 +249,9 @@ function _QueryWrapper(props: QueryWrapperProps) {
         content={
           'Changing the current query will cause your current selection to be lost. Are you sure you want to proceed?'
         }
-        confirmButtonText={'Clear Selection and Update Query'}
+        confirmButtonProps={{
+          children: 'Clear Selection and Update Query',
+        }}
         onConfirm={() => {
           setSelectedRows([])
           onConfirmChange()

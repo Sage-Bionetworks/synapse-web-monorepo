@@ -506,7 +506,9 @@ export class SynapseFormSubmissionGrid extends React.Component<
             className={`theme-${this.props.formClass}`}
             hasCloseButton={false}
             hasCancelButton={false}
-            confirmButtonColor="success"
+            confirmButtonProps={{
+              color: 'success',
+            }}
             onCancel={() => this.setState({ isShowInfoModal: false })}
             onConfirm={() => this.setState({ isShowInfoModal: false })}
           />
