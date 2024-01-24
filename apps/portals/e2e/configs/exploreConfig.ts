@@ -47,7 +47,7 @@ const exploreConfig: ExploreConfig = {
     table_charts: ['Data'],
   },
   elportal: {
-    table_charts: ['Data By Files'],
+    table_charts: ['Data By Files', 'Data by Participants'],
     cards: ['Species'],
     cards_charts: [
       'Projects',
