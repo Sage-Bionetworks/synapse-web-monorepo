@@ -1,0 +1,20 @@
+{
+  "name": "synapse-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/generated/index.js",
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.9.0",
+    "lodash": "^4.17.21",
+    "rimraf": "^5.0.1"
+  },
+  "scripts": {
+    "get-spec": "curl -fsSL https://rest-docs.synapse.org/rest/openapi/openapispecification.json > openapispecification.json",
+    "configure": "openapi-generator-cli version-manager set 7.2.0",
+    "build": "pnpm configure && rimraf src/generated && openapi-generator-cli generate -i transformedSpec.json -c config.json -o src/generated",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0"
+}
