@@ -29,7 +29,7 @@ The GitHub UI or CLI can be used to view the reports:
 - GitHub UI
   - Navigate to the Action run summary page.
   - Download the report named "html-report--attempt-{number}". _Note:_ only the report from the latest attempt will be available.
-  - Unzip and move the files into the `playwright-report` directory in SWC.
+  - Unzip and move the files into the `playwright-report` directory in the `apps/portals` subdirectory of synapse-web-monorepo.
   - Run `yarn e2e:report` to view the HTML report in the browser.
 - GitHub CLI
   - Install [GitHub CLI](https://cli.github.com/), if necessary.
