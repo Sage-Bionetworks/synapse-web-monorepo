@@ -1,2 +1,0 @@
-import{x as m}from"./SynapseClient-ceb0e6d4.js";import"./getEndpoint-ac94413e.js";import"./OrientationBanner-1c6f5b11.js";import{d as e}from"./dayjs.min-f79c4412.js";import{u as r,t as a,a as i,l as s}from"./timezone-f53425a4.js";e.extend(r);e.extend(a);e.extend(i);e.extend(s);function x(t,o){return o||(o="M/D/YYYY h:mm A",m.getUseUtcTimeFromCookie()&&(o+=" z")),m.getUseUtcTimeFromCookie()?e(t).tz("utc").format(o):e(t).tz(e.tz.guess()).format(o)}export{x as f};
-//# sourceMappingURL=DateFormatter-de1e645f.js.map
