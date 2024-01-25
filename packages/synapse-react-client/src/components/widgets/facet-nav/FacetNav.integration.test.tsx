@@ -74,7 +74,7 @@ describe('facets display hide/show', () => {
   it("should display 2 facets with 'show more' button", async () => {
     init()
     await waitFor(() => {
-      expect(screen.getAllByRole('graphics-document')).toHaveLength(2)
+      expect(screen.getAllByRole('figure')).toHaveLength(2)
     })
     await screen.findByRole('button', { name: 'View All Charts' })
   })
@@ -82,7 +82,7 @@ describe('facets display hide/show', () => {
   it('shows all facet plots when show more is clicked', async () => {
     init()
     await waitFor(() => {
-      expect(screen.getAllByRole('graphics-document')).toHaveLength(2)
+      expect(screen.getAllByRole('figure')).toHaveLength(2)
     })
 
     const showMoreButton = await screen.findByRole('button', {
@@ -95,9 +95,7 @@ describe('facets display hide/show', () => {
       facet => facet.facetType === 'enumeration',
     ).length
 
-    expect(await screen.findAllByRole('graphics-document')).toHaveLength(
-      expectedLength,
-    )
+    expect(await screen.findAllByRole('figure')).toHaveLength(expectedLength)
 
     expect(screen.queryByText('View All Charts')).not.toBeInTheDocument()
   })
@@ -107,7 +105,7 @@ describe('facets display hide/show', () => {
     data.facets = [data.facets![0], data.facets![2]]
     server.use(...getHandlersForTableQuery(data))
     init()
-    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
+    expect(await screen.findAllByRole('figure')).toHaveLength(2)
 
     await waitFor(() =>
       expect(screen.queryByText('View All Charts')).not.toBeInTheDocument(),
@@ -120,7 +118,7 @@ describe('facets display hide/show', () => {
     })
 
     // Only two plots are shown and the button is hidden
-    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
+    expect(await screen.findAllByRole('figure')).toHaveLength(2)
     await waitFor(() =>
       expect(screen.queryByText('View All Charts')).not.toBeInTheDocument(),
     )
@@ -129,31 +127,29 @@ describe('facets display hide/show', () => {
   it('hiding facet should hide it from facet grid', async () => {
     init()
     await waitFor(() => {
-      expect(screen.getAllByRole('graphics-document')).toHaveLength(2)
+      expect(screen.getAllByRole('figure')).toHaveLength(2)
     })
     const closeFacetPlotButton = getButtonOnFacet('Hide graph', 0)!
     await userEvent.click(closeFacetPlotButton)
-    expect(await screen.findAllByRole('graphics-document')).toHaveLength(1)
+    expect(await screen.findAllByRole('figure')).toHaveLength(1)
   })
 
   it('expanding facet should additionally show the facet in a modal', async () => {
     init()
     await waitFor(() => {
-      expect(screen.getAllByRole('graphics-document')).toHaveLength(2)
+      expect(screen.getAllByRole('figure')).toHaveLength(2)
     })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     const expandButton = getButtonOnFacet('expand', 1)!
     await userEvent.click(expandButton)
     const dialog = await screen.findByRole('dialog')
-    await within(dialog).findByRole('graphics-document')
+    await within(dialog).findByRole('figure')
 
     // Close the modal
     await userEvent.click(
       screen.getByRole('button', { name: CLOSE_BUTTON_LABEL }),
     )
-    await waitFor(() =>
-      expect(screen.getAllByRole('graphics-document')).toHaveLength(2),
-    )
+    await waitFor(() => expect(screen.getAllByRole('figure')).toHaveLength(2))
   })
 })

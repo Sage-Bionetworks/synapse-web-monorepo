@@ -84,7 +84,7 @@ describe('FacetNavPanel tests', () => {
 
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
     renderComponent()
-    const panel = await screen.findByRole('graphics-document')
+    const panel = await screen.findByRole('figure')
     expect(panel).toHaveClass('FacetNavPanel')
 
     const buttons = await screen.findAllByRole<HTMLButtonElement>('button')
@@ -105,7 +105,7 @@ describe('FacetNavPanel tests', () => {
       onSetPlotType: mockSetPlotTypeCallback,
       isModalView: true,
     })
-    const panel = await screen.findByRole('graphics-document')
+    const panel = await screen.findByRole('figure')
     expect(panel).toHaveClass('FacetNavPanel--expanded')
 
     await within(panel).findByText('Chart Type')

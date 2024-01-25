@@ -75,6 +75,11 @@ const expectTopLevelControls = async (
         (getPortal() === 'elportal' && exploreTab === 'Data By Files')
       ) {
         exploreTabHeading = 'Data'
+      } else if (
+        getPortal() === 'elportal' &&
+        exploreTab === 'Data by Participants'
+      ) {
+        exploreTabHeading = 'Participants'
       }
       await expect(header.getByRole('heading')).toContainText(exploreTabHeading)
     })
@@ -107,6 +112,108 @@ const getAvailableFacetsDiv = (page: Page) => {
   return getFacetFilterControlsPanel(page)
     .locator('> div')
     .filter({ hasText: 'Available Facets' })
+}
+
+const countVisibleElements = async (allCells: Locator) => {
+  const count = await allCells.count()
+  let visibleCount = 0
+  for (let i = 0; i < count; i++) {
+    const cell = allCells.nth(i)
+    if (await cell.isVisible()) {
+      visibleCount++
+    }
+  }
+  return visibleCount
+}
+
+const toggleChartVisibilityAndVerifyCount = async (page: Page) => {
+  const chartsPanel = page.locator('.FacetNav')
+
+  const allChartCells = chartsPanel.getByRole('figure')
+  const allChartsCount = await allChartCells.count()
+
+  const visibleChartCount = await countVisibleElements(allChartCells)
+  let firstVisibleindex = -1
+  for (let i = 0; i < allChartsCount; i++) {
+    const chart = allChartCells.nth(i)
+    if (await chart.isVisible()) {
+      firstVisibleindex = i
+      break
+    }
+  }
+  const chartToTestIndex = firstVisibleindex
+  const initialCount = visibleChartCount
+
+  await test.step('confirm chart visibility and count', async () => {
+    const chartCell = allChartCells.nth(chartToTestIndex)
+    const chartToolbar = await chartCell.getByRole('toolbar')
+    await chartToolbar
+      .getByRole('button', { name: 'Hide graph under Show More' })
+      .click()
+
+    const newCount = await countVisibleElements(allChartCells)
+    expect(newCount).toBe(initialCount - 1)
+  })
+}
+
+const toggleAndVerifyVisibility = async (
+  page: Page,
+  showHideButton: Locator,
+  chartsPanel: Locator,
+  ageDistChart: Locator,
+  isAgeDistributionChartPresent: boolean,
+  shouldBeVisible: boolean,
+) => {
+  await showHideButton.click()
+  if (shouldBeVisible) {
+    await expect(chartsPanel).toBeVisible()
+    if (isAgeDistributionChartPresent) {
+      await expect(ageDistChart).toBeVisible()
+    }
+  } else {
+    await expect(chartsPanel).toBeHidden()
+    if (isAgeDistributionChartPresent) {
+      await expect(ageDistChart).toBeHidden()
+    }
+  }
+}
+
+const toggleShowHideVisualizationsAndVerify = async (
+  page: Page,
+  shouldBeVisible: boolean,
+) => {
+  const showHideButton = page.getByRole('button', {
+    name: 'Show / Hide Visualizations',
+  })
+  const ageDistChart = page.getByText('Age Distribution')
+  const isAgeDistributionChartPresent = (await ageDistChart.count()) > 0
+
+  const chartsPanel = page.locator('.FacetNav')
+
+  const chartCells = chartsPanel.locator('.FacetNavPanel:visible')
+  const initialCount = await chartCells.count()
+
+  await test.step('toggle visualization and count', async () => {
+    await toggleAndVerifyVisibility(
+      page,
+      showHideButton,
+      chartsPanel,
+      ageDistChart,
+      isAgeDistributionChartPresent,
+      shouldBeVisible,
+    )
+    shouldBeVisible = !shouldBeVisible
+    await toggleAndVerifyVisibility(
+      page,
+      showHideButton,
+      chartsPanel,
+      ageDistChart,
+      isAgeDistributionChartPresent,
+      shouldBeVisible,
+    )
+    const newCount = await page.locator('.FacetNavPanel:visible').count()
+    expect(newCount).toBe(initialCount)
+  })
 }
 
 const expectFacetControls = async (page: Page) => {
@@ -177,7 +284,6 @@ const expectFacetCharts = async (page: Page) => {
       await test.step(`confirm chart ${i}`, async () => {
         const chartCell = chartCells.nth(i)
         await expect(chartCell).toBeVisible()
-
         await test.step('confirm chart title', async () => {
           const chartTitle = chartCell.locator('.FacetNavPanel__title')
           const chartTitleText = await chartTitle.textContent()
@@ -352,6 +458,10 @@ test.describe('Explore', () => {
             exploreTab,
             exploreTabTypes.includes('table'),
           )
+          // Toggle visibility of a specific chart and verify count
+          await toggleChartVisibilityAndVerifyCount(page)
+          // Toggle Show/Hide Visualizations and verify all charts are hidden/visible
+          await toggleShowHideVisualizationsAndVerify(page, false)
         }
         if (exploreTabTypes.includes('people')) await expectPeopleCards(page)
         if (exploreTabTypes.includes('table'))
