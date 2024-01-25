@@ -114,7 +114,8 @@ const getAvailableFacetsDiv = (page: Page) => {
     .filter({ hasText: 'Available Facets' })
 }
 
-const countVisibleElements = async (allCells: Locator, count: number) => {
+const countVisibleElements = async (allCells: Locator) => {
+  const count = await allCells.count()
   let visibleCount = 0
   for (let i = 0; i < count; i++) {
     const cell = allCells.nth(i)
@@ -131,15 +132,13 @@ const toggleChartVisibilityAndVerifyCount = async (page: Page) => {
   const allChartCells = chartsPanel.getByRole('figure')
   const allChartsCount = await allChartCells.count()
 
-  let visibleChartCount = 0
+  const visibleChartCount = await countVisibleElements(allChartCells)
   let firstVisibleindex = -1
   for (let i = 0; i < allChartsCount; i++) {
     const chart = allChartCells.nth(i)
     if (await chart.isVisible()) {
-      visibleChartCount++
-    }
-    if ((await chart.isVisible()) && firstVisibleindex == -1) {
       firstVisibleindex = i
+      break
     }
   }
   const chartToTestIndex = firstVisibleindex
@@ -152,12 +151,12 @@ const toggleChartVisibilityAndVerifyCount = async (page: Page) => {
       .getByRole('button', { name: 'Hide graph under Show More' })
       .click()
 
-    const newCount = await countVisibleElements(allChartCells, allChartsCount)
+    const newCount = await countVisibleElements(allChartCells)
     expect(newCount).toBe(initialCount - 1)
   })
 }
 
-const toggleAndVerifyVisbility = async (
+const toggleAndVerifyVisibility = async (
   page: Page,
   showHideButton: Locator,
   chartsPanel: Locator,
@@ -195,7 +194,7 @@ const toggleShowHideVisualizationsAndVerify = async (
   const initialCount = await chartCells.count()
 
   await test.step('toggle visualization and count', async () => {
-    await toggleAndVerifyVisbility(
+    await toggleAndVerifyVisibility(
       page,
       showHideButton,
       chartsPanel,
@@ -204,7 +203,7 @@ const toggleShowHideVisualizationsAndVerify = async (
       shouldBeVisible,
     )
     shouldBeVisible = !shouldBeVisible
-    await toggleAndVerifyVisbility(
+    await toggleAndVerifyVisibility(
       page,
       showHideButton,
       chartsPanel,
