@@ -9,10 +9,7 @@ import {
   CustomControlCallbackData,
 } from 'synapse-react-client'
 
-export const handleParticipantsToFiles = async (
-  event: CustomControlCallbackData,
-) => {
-  // add filter for files perspective, to show files associated to all participant rows.
+const getAllIndividualIDs = async (event: CustomControlCallbackData) => {
   let token: string | undefined = undefined
   try {
     token = await SynapseClient.getAccessTokenFromCookie()
@@ -30,40 +27,30 @@ export const handleParticipantsToFiles = async (
     },
     token,
   )
-  const sessionStorageFilter: ColumnSingleValueQueryFilter = {
-    concreteType:
-      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-    columnName: 'individualID',
-    operator: ColumnSingleValueFilterOperator.IN,
-    isDefiningCondition: true,
-    values: queryResultBundle.queryResult?.queryResults.rows.map(
-      (row) => row.values[0!]!,
-    )!,
-  }
-  sessionStorage.setItem(
-    SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(
-      'cohort-builder-files-perspective',
-    ),
-    // TODO: set additionalFiltersSessionStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
-    JSON.stringify([sessionStorageFilter]),
-  )
-  window.location.href = '/Explore/Data by Files'
+  return queryResultBundle.queryResult?.queryResults.rows.map(
+    (row) => row.values[0!]!,
+  )!
 }
 
-export const handleSelectedParticipantsToFiles = (
+export const handleSelectedParticipantsToFiles = async (
   event: CustomControlCallbackData,
 ) => {
   // add filter for files perspective, to show files associated to the selected participants only.
   const idColIndex = event.data?.columnModels?.findIndex(
     (cm) => cm.name === 'individualID',
   )
+  // if selected rows were defined, then get the ids from the event selected rows.  Otherwise, get ALL ids (across all pages)
+  const ids =
+    event.selectedRows && event.selectedRows.length > 0
+      ? event.selectedRows.map((row) => row.values[idColIndex!]!)
+      : await getAllIndividualIDs(event)
   const sessionStorageFilter: ColumnSingleValueQueryFilter = {
     concreteType:
       'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
     columnName: 'individualID',
     operator: ColumnSingleValueFilterOperator.IN,
     isDefiningCondition: true,
-    values: event.selectedRows!.map((row) => row.values[idColIndex!]!),
+    values: ids,
   }
   sessionStorage.setItem(
     SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(

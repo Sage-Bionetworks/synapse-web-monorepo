@@ -1,4 +1,4 @@
-import { cloneDeep, partition } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 import React, { useMemo, useState } from 'react'
 import { SQL_EDITOR } from '../../../utils/SynapseConstants'
 import {
@@ -68,10 +68,10 @@ export type CustomControlCallbackData = {
   request?: QueryBundleRequest
 }
 
+// note, all custom controls should check for selected rows in the event (to support row selection)
 export type CustomControl = {
   buttonText: string
   onClick: (event: CustomControlCallbackData) => void
-  isRowSelectionSupported: boolean
   classNames?: string
   icon?: React.ReactNode
   buttonID?: string // optionally set the ID property of the element
@@ -96,10 +96,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     remount,
   } = props
 
-  const [rowSelectionCustomControls, topLevelCustomControls] = partition(
-    customControls,
-    { isRowSelectionSupported: true },
-  )
   const { getInitQueryRequest, hasResettableFilters, getCurrentQueryRequest } =
     useQueryContext()
   const data = useAtomValue(tableQueryDataAtom)
@@ -220,8 +216,8 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           )}
         </div>
         <div className="TopLevelControls__actions">
-          {topLevelCustomControls &&
-            topLevelCustomControls.map((customControl, index) => {
+          {customControls &&
+            customControls.map((customControl, index) => {
               return (
                 <React.Fragment key={index}>
                   <CustomControlButton
@@ -330,7 +326,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
 
           {isRowSelectionVisible && (
             <RowSelectionControls
-              customControls={rowSelectionCustomControls}
+              customControls={customControls}
               showExportToCavatica={showExportToCavatica}
               remount={remount}
             />
