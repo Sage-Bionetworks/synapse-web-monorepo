@@ -4,41 +4,47 @@ import {
   EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   ExternalFileHandle,
+  ExternalGoogleCloudUploadDestination,
   ExternalObjectStoreFileHandle,
+  ExternalObjectStoreUploadDestination,
+  ExternalS3UploadDestination,
+  ExternalUploadDestination,
+  FileEntity,
   GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   GoogleCloudFileHandle,
   PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   ProxyFileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   S3FileHandle,
-} from '@sage-bionetworks/synapse-types'
-import {
-  ExternalGoogleCloudUploadDestination,
-  ExternalObjectStoreUploadDestination,
-  ExternalS3UploadDestination,
-  ExternalUploadDestination,
   S3UploadDestination,
   UploadType,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID } from '../../../src/mocks/user/mock_user_profile'
+import mockFileEntityData from '../../mocks/entity/mockFileEntity'
+import {
+  mockExternalObjectStoreFileHandle,
+  mockFileHandle,
+} from '../../mocks/mock_file_handle'
+import { MOCK_USER_ID } from '../../mocks/user/mock_user_profile'
 import {
   getDataFileHandle,
   getFileHandleStorageInfo,
   getStorageLocationName,
   getUploadDestinationString,
-} from '../../../src/utils/functions/FileHandleUtils'
+} from './FileHandleUtils'
 
 describe('File Handle Utils', () => {
   describe('getDataFileHandle', () => {
     it('Returns the data file handle ID if it exists', () => {
       const dataFileHandleId = '123'
       const fileHandle = {
+        ...mockFileHandle,
         id: dataFileHandleId,
       }
       const entityBundle: EntityBundle = {
+        ...mockFileEntityData.bundle,
         entity: {
           dataFileHandleId: dataFileHandleId,
-        },
+        } as FileEntity,
         fileHandles: [fileHandle],
         entityType: EntityType.FILE,
       }
@@ -49,9 +55,10 @@ describe('File Handle Utils', () => {
     it('Returns undefined if the bundle does not contain a data file handle', () => {
       const dataFileHandleId = '123'
       const entityBundle: EntityBundle = {
+        ...mockFileEntityData.bundle,
         entity: {
           dataFileHandleId: dataFileHandleId,
-        },
+        } as FileEntity,
         fileHandles: [],
         entityType: EntityType.FILE,
       }
@@ -73,6 +80,9 @@ describe('File Handle Utils', () => {
         contentType: 'text/plain',
         contentSize: 123,
         createdBy: MOCK_USER_ID.toString(),
+        modifiedOn: '',
+        storageLocationId: 1234,
+        status: 'AVAILABLE',
       }
       const result = getFileHandleStorageInfo(fileHandle)
       expect(result).toEqual({ url: url })
@@ -93,6 +103,9 @@ describe('File Handle Utils', () => {
         contentType: 'text/plain',
         contentSize: 123,
         createdBy: MOCK_USER_ID.toString(),
+        modifiedOn: '',
+        storageLocationId: 1234,
+        status: 'AVAILABLE',
       }
       const result = getFileHandleStorageInfo(fileHandle)
       expect(result).toEqual({ endpoint, bucket, fileKey })
@@ -110,6 +123,9 @@ describe('File Handle Utils', () => {
         contentType: 'text/plain',
         contentSize: 123,
         createdBy: MOCK_USER_ID.toString(),
+        modifiedOn: '',
+        storageLocationId: 1234,
+        status: 'AVAILABLE',
       }
       const result = getFileHandleStorageInfo(fileHandle)
       expect(result).toEqual({ url: url })
@@ -130,6 +146,9 @@ describe('File Handle Utils', () => {
         contentType: 'text/plain',
         contentSize: 123,
         createdBy: MOCK_USER_ID.toString(),
+        isPreview: false,
+        modifiedOn: '',
+        status: 'AVAILABLE',
       }
       const result = getFileHandleStorageInfo(fileHandle)
       expect(result).toEqual({
@@ -151,6 +170,9 @@ describe('File Handle Utils', () => {
         contentType: 'text/plain',
         contentSize: 123,
         createdBy: MOCK_USER_ID.toString(),
+        isPreview: false,
+        modifiedOn: '',
+        status: 'AVAILABLE',
       }
       const result = getFileHandleStorageInfo(fileHandle)
       expect(result).toEqual({
@@ -173,6 +195,9 @@ describe('File Handle Utils', () => {
         contentType: 'text/plain',
         contentSize: 123,
         createdBy: MOCK_USER_ID.toString(),
+        isPreview: false,
+        modifiedOn: '',
+        status: 'AVAILABLE',
       }
       const result = getFileHandleStorageInfo(fileHandle)
       expect(result).toEqual({
@@ -184,6 +209,7 @@ describe('File Handle Utils', () => {
     it("Returns 'Synapse Storage' for a file in  Synapse Storage", () => {
       const storageLocationId = 1
       const fileHandle: S3FileHandle = {
+        ...mockFileHandle,
         storageLocationId: storageLocationId,
         concreteType: S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
       }
@@ -194,6 +220,7 @@ describe('File Handle Utils', () => {
     it('Returns an s3 path for an S3 file handle in a custom storage location', () => {
       const storageLocationId = 1243466
       const fileHandle: S3FileHandle = {
+        ...mockFileHandle,
         storageLocationId: storageLocationId,
         bucketName: 'myBucket',
         concreteType: S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
@@ -204,6 +231,7 @@ describe('File Handle Utils', () => {
     it('Returns a gs path for an Google Cloud file handle in a custom storage location', () => {
       const storageLocationId = 1243466
       const fileHandle: GoogleCloudFileHandle = {
+        ...mockFileHandle,
         storageLocationId: storageLocationId,
         bucketName: 'myBucket',
         concreteType: GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE,
@@ -214,6 +242,7 @@ describe('File Handle Utils', () => {
     it('Returns the file path for a ProxyFileHandle', () => {
       const path = 'https://example.com'
       const fileHandle: ProxyFileHandle = {
+        ...mockFileHandle,
         filePath: path,
         concreteType: PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE,
       }
@@ -224,6 +253,7 @@ describe('File Handle Utils', () => {
     it('Returns the external url for an External File Handle', () => {
       const url = 'https://example.com'
       const fileHandle: ExternalFileHandle = {
+        ...mockFileHandle,
         externalURL: url,
         concreteType: EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE,
       }
@@ -232,24 +262,33 @@ describe('File Handle Utils', () => {
     })
     it('Returns the bucket for an external object store file handle', () => {
       const bucket = 'myExternalBucket'
-      const fileHandle: ExternalObjectStoreFileHandle = {
+      const fileHandle = {
+        ...mockExternalObjectStoreFileHandle,
         bucket: bucket,
         concreteType: EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE,
-      }
+      } as ExternalObjectStoreFileHandle
       const result = getStorageLocationName(fileHandle)
       expect(result).toEqual(bucket)
     })
   })
   describe('getUploadDestinationString', () => {
+    const mockS3UploadDestination: S3UploadDestination = {
+      banner: '',
+      storageLocationId: 1,
+      uploadType: UploadType.S3,
+      concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
+      stsEnabled: true,
+      baseKey: 'myKey',
+    }
+
     it("Returns 'Synapse Storage' the Synapse Storage upload destination", () => {
-      const uploadDestination: S3UploadDestination = {
-        concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
-      }
+      const uploadDestination: S3UploadDestination = mockS3UploadDestination
       const result = getUploadDestinationString(uploadDestination)
       expect(result).toEqual('Synapse Storage')
     })
     it('Returns the URL for an ExternalUploadDestination', () => {
       const uploadDestination: ExternalUploadDestination = {
+        ...mockS3UploadDestination,
         concreteType:
           'org.sagebionetworks.repo.model.file.ExternalUploadDestination',
         uploadType: UploadType.HTTPS,
@@ -260,6 +299,7 @@ describe('File Handle Utils', () => {
     })
     it('Strips everything after the trailing slash for an ExternalUploadDestination with SFTP', () => {
       const uploadDestination: ExternalUploadDestination = {
+        ...mockS3UploadDestination,
         concreteType:
           'org.sagebionetworks.repo.model.file.ExternalUploadDestination',
         uploadType: UploadType.SFTP,
@@ -270,10 +310,12 @@ describe('File Handle Utils', () => {
     })
     it('Returns an s3 path for an ExternalS3UploadDestination', () => {
       const uploadDestination: ExternalS3UploadDestination = {
+        ...mockS3UploadDestination,
         concreteType:
           'org.sagebionetworks.repo.model.file.ExternalS3UploadDestination',
         bucket: 'myBucket',
         baseKey: 'myKey',
+        endpointUrl: 'https://example.com',
       }
       const result = getUploadDestinationString(uploadDestination)
       expect(result).toEqual('s3://myBucket/myKey')
@@ -281,6 +323,7 @@ describe('File Handle Utils', () => {
 
     it('Returns a gs path for an ExternalGoogleCloudUploadDestination', () => {
       const uploadDestination: ExternalGoogleCloudUploadDestination = {
+        ...mockS3UploadDestination,
         concreteType:
           'org.sagebionetworks.repo.model.file.ExternalGoogleCloudUploadDestination',
         bucket: 'myBucket',
@@ -292,10 +335,12 @@ describe('File Handle Utils', () => {
 
     it('Returns a path for an ExternalObjectStoreUploadDestination', () => {
       const uploadDestination: ExternalObjectStoreUploadDestination = {
+        ...mockS3UploadDestination,
         concreteType:
           'org.sagebionetworks.repo.model.file.ExternalObjectStoreUploadDestination',
         endpointUrl: 'https://example.com',
         bucket: 'myBucket',
+        keyPrefixUUID: 'uuid123',
       }
       const result = getUploadDestinationString(uploadDestination)
       expect(result).toEqual('https://example.com/myBucket')
