@@ -137,7 +137,7 @@ export const ForumThreadEditor: React.FunctionComponent<
           }
           content={editorContent}
           onConfirm={() => onSave(text, title)}
-          confirmButtonText={confirmButtonText}
+          confirmButtonProps={{ children: confirmButtonText }}
         />
       ) : (
         <>
@@ -146,7 +146,7 @@ export const ForumThreadEditor: React.FunctionComponent<
             <ConfirmationButtons
               onCancel={onClose}
               onConfirm={() => onSave(text, title)}
-              confirmButtonText={confirmButtonText}
+              confirmButtonProps={{ children: confirmButtonText }}
             />
           </Box>
         </>

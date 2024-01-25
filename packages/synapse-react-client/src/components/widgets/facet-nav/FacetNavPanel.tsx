@@ -345,7 +345,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
           title={plotTitle ?? ''}
           content={<FacetNavPanel {...props} isModalView={true} />}
           hasCancelButton={false}
-          confirmButtonText="Apply Filters"
+          confirmButtonProps={{ children: 'Apply Filters' }}
           onConfirm={() => setShowModal(false)}
         />
         <div

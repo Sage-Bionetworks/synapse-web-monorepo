@@ -49,8 +49,10 @@ export const DownloadLoginModal: React.FunctionComponent<
       content={content}
       onCancel={() => props.onHide()}
       onConfirm={() => props.onHide()}
-      confirmButtonText={CONFIRM_BUTTON_TEXT}
-      confirmButtonClassName={SRC_SIGN_IN_CLASS}
+      confirmButtonProps={{
+        children: CONFIRM_BUTTON_TEXT,
+        className: SRC_SIGN_IN_CLASS,
+      }}
     />
   )
 }

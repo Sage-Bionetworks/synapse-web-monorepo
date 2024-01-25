@@ -35,6 +35,7 @@ import {
   maybeSetViewTypeMask,
 } from './CreateTableViewWizardUtils'
 import SubmissionViewScopeEditor from '../SubmissionViewScopeEditor/SubmissionViewScopeEditor'
+import { isUndefined, omitBy } from 'lodash-es'
 
 export type CreateTableViewWizardProps = {
   open: boolean
@@ -137,7 +138,12 @@ export default function CreateTableViewWizard(
       entityType !== EntityType.VIRTUAL_TABLE
     ) {
       try {
-        createdColumnModels = await createColumnModels(columnModels)
+        createdColumnModels = await createColumnModels(
+          columnModels.map(cm => omitBy(cm, isUndefined)) as SetOptional<
+            ColumnModel,
+            'id'
+          >[],
+        )
       } catch (e) {
         // Error will be handled by the hook, exit early if we encountered one
         return

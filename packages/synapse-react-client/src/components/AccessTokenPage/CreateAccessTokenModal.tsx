@@ -142,8 +142,10 @@ export const CreateAccessTokenModal: React.FunctionComponent<
       open={true}
       title="Create New Personal Access Token"
       content={isLoading ? loadingScreen : dialogContent}
-      confirmButtonText={showCreatedToken ? 'Close' : 'Create Token'}
-      confirmButtonVariant={showCreatedToken ? 'outlined' : 'contained'}
+      confirmButtonProps={{
+        children: showCreatedToken ? 'Close' : 'Create Token',
+        variant: showCreatedToken ? 'outlined' : 'contained',
+      }}
       hasCancelButton={!showCreatedToken}
       onCancel={onClose}
       onConfirm={

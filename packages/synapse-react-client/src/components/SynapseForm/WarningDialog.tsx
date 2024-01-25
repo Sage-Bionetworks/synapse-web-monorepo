@@ -32,8 +32,10 @@ export function WarningDialog(props: WarningDialogProps) {
       title={title}
       content={content}
       className={className}
-      confirmButtonText={confirmButtonText}
-      confirmButtonColor={confirmButtonColor}
+      confirmButtonProps={{
+        children: confirmButtonText,
+        color: confirmButtonColor,
+      }}
       onCancel={onCancel}
       onConfirm={() => onConfirm(...(onConfirmCallbackArgs ?? []))}
     />

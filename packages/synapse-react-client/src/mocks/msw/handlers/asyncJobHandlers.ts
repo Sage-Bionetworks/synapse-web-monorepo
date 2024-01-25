@@ -5,10 +5,12 @@ import {
 } from '../../../utils/functions/getEndpoint'
 import { uniqueId } from 'lodash-es'
 import {
+  AsynchJobState,
   AsynchronousJobStatus,
   AsyncJobId,
 } from '@sage-bionetworks/synapse-types'
 import { ASYNCHRONOUS_JOB_TOKEN } from '../../../utils/APIConstants'
+import { SynapseError } from '../../../utils/SynapseError'
 
 /**
  * Global mapping between async job token and request/response. This sort of acts as an in-memory database for asynchronous jobs.
@@ -30,15 +32,19 @@ const mapOfAsyncJobs = new Map<
  *   The generic asynchronous job retrieval handler will be generated automatically.
  * @param responseBody the response body, or a function that takes the request body and returns the response body
  * @param backendOrigin the backend origin to use for the handlers.
+ * @param serviceSpecificEndpointResponseStatus the status code to use for the service-specific endpoint. The asynchronous job endpoint will always return 200.
  */
 export function generateAsyncJobHandlers<
   TRequestBody = unknown,
-  TResponseBody extends DefaultBodyType = DefaultBodyType,
+  TResponseBody extends DefaultBodyType | SynapseError =
+    | DefaultBodyType
+    | SynapseError,
 >(
   requestPath: string,
   responsePath: (tokenParam: string) => string,
   responseBody: TResponseBody | ((requestBody: TRequestBody) => TResponseBody),
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+  serviceSpecificEndpointResponseStatus = 201,
 ) {
   return [
     // Handler for the asynchronous job request endpoint.
@@ -75,10 +81,14 @@ export function generateAsyncJobHandlers<
         const responseObject: TResponseBody =
           typeof response === 'function' ? response(request) : response
 
+        const jobState: AsynchJobState =
+          serviceSpecificEndpointResponseStatus < 400 ? 'COMPLETE' : 'FAILED'
+
         return res(
-          ctx.status(201),
+          // This endpoint returns a successful status code regardless of the job status
+          ctx.status(200),
           ctx.json<AsynchronousJobStatus<TRequestBody, TResponseBody>>({
-            jobState: 'COMPLETE',
+            jobState,
             jobCanceling: false,
             requestBody: request,
             etag: '00000000-0000-0000-0000-000000000000',
@@ -119,7 +129,10 @@ export function generateAsyncJobHandlers<
         const responseObject: TResponseBody =
           typeof response === 'function' ? response(request) : response
 
-        return res(ctx.status(201), ctx.json(responseObject))
+        return res(
+          ctx.status(serviceSpecificEndpointResponseStatus),
+          ctx.json(responseObject),
+        )
       },
     ),
   ]

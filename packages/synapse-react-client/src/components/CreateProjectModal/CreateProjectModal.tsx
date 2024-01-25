@@ -72,7 +72,7 @@ export const CreateProjectModal: React.FunctionComponent<
         open={isShowingModal}
         title="Create a new Project"
         content={dialogContent}
-        confirmButtonText="Save"
+        confirmButtonProps={{ children: 'Save' }}
         onConfirm={() => {
           void onCreateProject()
         }}

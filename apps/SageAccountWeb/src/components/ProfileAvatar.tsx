@@ -190,8 +190,10 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
           </>
         }
         onConfirm={!imageLoading ? onCrop : () => ''}
-        confirmButtonDisabled={imageLoading}
-        confirmButtonText={imageLoading ? 'Loading...' : 'Save'}
+        confirmButtonProps={{
+          children: imageLoading ? 'Loading...' : 'Save',
+          disabled: imageLoading,
+        }}
       />
     </div>
   )

@@ -56,5 +56,6 @@ export const Demo: Story = {
   },
   args: {
     entityId: mockTableEntityData.id,
+    open: true,
   },
 }

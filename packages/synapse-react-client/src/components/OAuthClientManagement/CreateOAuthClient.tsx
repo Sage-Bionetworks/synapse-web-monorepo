@@ -454,7 +454,7 @@ export const CreateOAuthModal: React.FunctionComponent<
         title={isEdit ? 'Client Details' : 'Create New OAuth Client'}
         content={content}
         onConfirm={onCreateClient}
-        confirmButtonText="Save"
+        confirmButtonProps={{ children: 'Save' }}
       />
       <WarningDialog
         open={isShowingConfirmModal}

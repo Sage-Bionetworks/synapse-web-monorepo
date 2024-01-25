@@ -42,7 +42,6 @@ function JSONArrayEditorModal<T = unknown>(
     <ConfirmationDialog
       open={isShowingModal}
       title={dialogTitle}
-      confirmButtonText="OK"
       onCancel={onCancel}
       maxWidth="md"
       content={

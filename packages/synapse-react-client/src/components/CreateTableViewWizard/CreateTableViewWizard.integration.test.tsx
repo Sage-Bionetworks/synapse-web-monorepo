@@ -31,6 +31,7 @@ import { BackendDestinationEnum } from '../../utils/functions'
 import { getEndpoint } from '../../utils/functions/getEndpoint'
 import { MOCK_ANNOTATION_COLUMNS } from '../../mocks/mockAnnotationColumns'
 import { mockEvaluationQueue } from '../../mocks/entity/mockEvaluationQueue'
+import { omit } from 'lodash-es'
 
 jest.mock('../EntityFinder/EntityFinderModal', () => ({
   EntityFinderModal: jest.fn(() => (
@@ -49,6 +50,24 @@ const createEntitySpy = jest.mocked(SynapseClient.createEntity)
 const getAnnotationColumnsSpy = jest.mocked(
   SynapseClient.getAnnotationColumnModels,
 )
+
+const defaultColumnModelsWithoutId = defaultFileViewColumnModels.map(cm =>
+  omit(cm, ['id']),
+)
+const annotationColumnModelsWithoutId = MOCK_ANNOTATION_COLUMNS.results.map(
+  cm => omit(cm, ['id']),
+)
+
+async function getLatestCreatedColumnModelIdsFromSpy(
+  spy: typeof createColumnModelsSpy,
+) {
+  return (
+    await (spy.mock.results[0].value as ReturnType<
+      typeof SynapseClient.createColumnModels
+    >)
+  ).list.map(cm => cm.id)
+}
+
 describe('CreateTableWizard integration tests', () => {
   function renderComponent(props: CreateTableViewWizardProps) {
     return {
@@ -220,22 +239,22 @@ describe('CreateTableWizard integration tests', () => {
     await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the view was created and the callback was invoked
-    await waitFor(() => {
-      expect(createColumnModelsSpy).toHaveBeenCalledWith(
-        MOCK_ACCESS_TOKEN,
-        expect.arrayContaining(defaultFileViewColumnModels),
+    await waitFor(async () => {
+      expect(createColumnModelsSpy).toHaveBeenCalledWith(MOCK_ACCESS_TOKEN, [
+        // The new column models would have had IDs stripped in the column form
+        ...defaultColumnModelsWithoutId,
+        ...annotationColumnModelsWithoutId,
+      ])
+      const createdColumnModelIds = await getLatestCreatedColumnModelIdsFromSpy(
+        createColumnModelsSpy,
       )
       expect(createEntitySpy).toHaveBeenCalledWith(
         {
           name: 'tableName',
+          description: undefined,
           concreteType: ENTITY_VIEW_CONCRETE_TYPE_VALUE,
           parentId: mockProjectEntityData.id,
-          columnIds: [
-            ...defaultFileViewColumnModels.map(columnModel => columnModel.id),
-            ...MOCK_ANNOTATION_COLUMNS.results.map(
-              columnModel => columnModel.id,
-            ),
-          ],
+          columnIds: createdColumnModelIds,
           scopeIds: expect.any(Array),
           viewTypeMask:
             ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER,
@@ -337,22 +356,21 @@ describe('CreateTableWizard integration tests', () => {
     await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the view was created and the callback was invoked
-    await waitFor(() => {
-      expect(createColumnModelsSpy).toHaveBeenCalledWith(
-        MOCK_ACCESS_TOKEN,
-        expect.arrayContaining(defaultFileViewColumnModels),
+    await waitFor(async () => {
+      expect(createColumnModelsSpy).toHaveBeenCalledWith(MOCK_ACCESS_TOKEN, [
+        // The new column models would have had IDs stripped in the column form
+        ...defaultColumnModelsWithoutId,
+        ...annotationColumnModelsWithoutId,
+      ])
+      const createdColumnModelIds = await getLatestCreatedColumnModelIdsFromSpy(
+        createColumnModelsSpy,
       )
       expect(createEntitySpy).toHaveBeenCalledWith(
         {
           name: 'tableName',
           concreteType: ENTITY_VIEW_CONCRETE_TYPE_VALUE,
           parentId: mockProjectEntityData.id,
-          columnIds: [
-            ...defaultFileViewColumnModels.map(columnModel => columnModel.id),
-            ...MOCK_ANNOTATION_COLUMNS.results.map(
-              columnModel => columnModel.id,
-            ),
-          ],
+          columnIds: createdColumnModelIds,
           scopeIds: expect.any(Array),
           viewTypeMask: ENTITY_VIEW_TYPE_MASK_PROJECT,
         },
@@ -440,22 +458,21 @@ describe('CreateTableWizard integration tests', () => {
     await user.click(screen.getByRole('button', { name: 'Finish' }))
 
     // Verify that the view was created and the callback was invoked
-    await waitFor(() => {
-      expect(createColumnModelsSpy).toHaveBeenCalledWith(
-        MOCK_ACCESS_TOKEN,
-        expect.arrayContaining(defaultFileViewColumnModels),
+    await waitFor(async () => {
+      expect(createColumnModelsSpy).toHaveBeenCalledWith(MOCK_ACCESS_TOKEN, [
+        // The new column models would have had IDs stripped in the column form
+        ...defaultColumnModelsWithoutId,
+        ...annotationColumnModelsWithoutId,
+      ])
+      const createdColumnModelIds = await getLatestCreatedColumnModelIdsFromSpy(
+        createColumnModelsSpy,
       )
       expect(createEntitySpy).toHaveBeenCalledWith(
         {
           name: 'tableName',
           concreteType: SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
           parentId: mockProjectEntityData.id,
-          columnIds: [
-            ...defaultFileViewColumnModels.map(columnModel => columnModel.id),
-            ...MOCK_ANNOTATION_COLUMNS.results.map(
-              columnModel => columnModel.id,
-            ),
-          ],
+          columnIds: createdColumnModelIds,
           scopeIds: expect.any(Array),
         },
         MOCK_ACCESS_TOKEN,

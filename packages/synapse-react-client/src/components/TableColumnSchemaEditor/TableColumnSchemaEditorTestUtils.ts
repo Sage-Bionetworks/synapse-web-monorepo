@@ -15,3 +15,15 @@ export async function addColumnModelToForm(
     await user.type(nameFields[nameFields.length - 1], columnName)
   }
 }
+
+export async function modifyColumnModelInForm(
+  index: number,
+  data: { columnName: string },
+  user: UserEvent | typeof userEvent = userEvent,
+) {
+  if (data.columnName) {
+    const nameField = (await screen.findAllByLabelText('Name'))[index]
+    await user.clear(nameField)
+    await user.type(nameField, data.columnName)
+  }
+}

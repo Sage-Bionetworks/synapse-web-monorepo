@@ -371,7 +371,9 @@ export function SchemaDrivenAnnotationEditor(
                       onConfirm={() => {
                         ref.current!.formElement.current.requestSubmit()
                       }}
-                      confirmButtonText={entityId ? 'Save' : 'Validate'}
+                      confirmButtonProps={{
+                        children: entityId ? 'Save' : 'Validate',
+                      }}
                     />
                   </Box>
                 </>
@@ -411,7 +413,9 @@ export function SchemaDrivenAnnotationEditor(
                   </div>
                 </>
               }
-              confirmButtonText="Save"
+              confirmButtonProps={{
+                children: 'Save',
+              }}
             />
           )}
         </>
