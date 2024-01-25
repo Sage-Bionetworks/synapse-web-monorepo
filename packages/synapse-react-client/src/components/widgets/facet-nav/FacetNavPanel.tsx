@@ -349,7 +349,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
           onConfirm={() => setShowModal(false)}
         />
         <div
-          role="graphics-document"
+          role="figure"
           className={`FacetNavPanel${isModalView ? '--expanded' : ''}`}
         >
           {!isModalView && (
@@ -359,7 +359,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               ) : (
                 <span className="FacetNavPanel__title__name">{plotTitle}</span>
               )}
-              <div className="FacetNavPanel__title__tools">
+              <div role="toolbar" className="FacetNavPanel__title__tools">
                 <EnumFacetFilter facet={facetToPlot} containerAs="Dropdown" />
                 <Tooltip title={'Expand to large graph'}>
                   <IconButton onClick={() => setShowModal(true)} size={'small'}>
