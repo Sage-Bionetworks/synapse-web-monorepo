@@ -71,10 +71,12 @@ export const ThemeColorWithCircleBackground: Story = {
     iconConfigs: {
       drugCombinationScreen: { icon: 'rat' },
       geneVariants: { icon: 'geneVariants' },
+      other: { icon: 'other' },
     },
+    iconFontSize: '40px',
     useTheme: true,
     useBackground: true,
-    iconNames: ['drugCombinationScreen', 'geneVariants'],
+    iconNames: ['drugCombinationScreen', 'geneVariants', 'other'],
   },
 }
 export const Tooltip: Story = {

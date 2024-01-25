@@ -1,14 +1,28 @@
 import React from 'react'
 import IconSvg, { IconSvgProps } from './IconSvg/IconSvg'
 
+type IconConfigs = {
+  [index: string]: IconSvgProps // if the icon option has the "label" set, it will show tooltip in IconSvg
+}
+
 export type IconListProps = {
-  iconConfigs: {
-    [index: string]: IconSvgProps // if the icon option has the "label" set, it will show tooltip in IconSvg
-  }
+  iconConfigs: IconConfigs
   iconNames: string[]
   iconFontSize?: string
   useTheme?: boolean
   useBackground?: boolean
+}
+
+const mergeIconFontSizeIntoIconConfigs = (
+  iconConfigs: IconConfigs,
+  iconFontSize: string,
+) => {
+  for (const key in iconConfigs) {
+    const existingSx = iconConfigs[key].sx
+    iconConfigs[key].sx = existingSx
+      ? { ...existingSx, fontSize: iconFontSize }
+      : { fontSize: iconFontSize }
+  }
 }
 
 const IconList: React.FunctionComponent<IconListProps> = props => {
@@ -22,6 +36,7 @@ const IconList: React.FunctionComponent<IconListProps> = props => {
   let noMatch: boolean = false
   const css = useTheme ? 'icon-list themed' : 'icon-list'
   const componentCss = useBackground ? `${css} bg-circle` : css
+  mergeIconFontSizeIntoIconConfigs(iconConfigs, iconFontSize)
 
   const buildIconList = () => {
     const unique = Array.from(new Set(iconNames))
@@ -32,13 +47,7 @@ const IconList: React.FunctionComponent<IconListProps> = props => {
         noMatch = true
         return
       } else {
-        return (
-          <IconSvg
-            style={{ fontSize: iconFontSize }}
-            key={el}
-            {...iconConfig}
-          />
-        )
+        return <IconSvg key={el} {...iconConfig} />
       }
     })
   }
@@ -47,7 +56,7 @@ const IconList: React.FunctionComponent<IconListProps> = props => {
     <span className={componentCss}>
       {buildIconList()}
       {noMatch && iconConfigs['other'] ? (
-        <IconSvg style={{ fontSize: iconFontSize }} {...iconConfigs['other']} />
+        <IconSvg {...iconConfigs['other']} />
       ) : (
         <></>
       )}
