@@ -6,14 +6,8 @@ import {
   cohortBuilderSql,
   defaultSearchConfiguration,
 } from '../resources'
-import {
-  handleParticipantsToFiles,
-  handleSelectedParticipantsToFiles,
-} from './handleParticipantsToFiles'
-import {
-  handleFilesToParticipants,
-  handleSelectedFilesToParticipants,
-} from './handleFilesToParticipants'
+import { handleSelectedParticipantsToFiles } from './handleParticipantsToFiles'
+import { handleSelectedFilesToParticipants } from './handleFilesToParticipants'
 import {
   QueryWrapperSynapsePlotProps,
   QueryWrapperSynapsePlotRowClickEvent,
@@ -101,19 +95,10 @@ export const individualsView: SynapseConfig = {
       'cohort-builder-individuals-perspective',
     customControls: [
       {
-        buttonText: 'View files in selection',
+        buttonText: 'View associated files',
         onClick: (event) => {
           handleSelectedParticipantsToFiles(event)
         },
-        isRowSelectionSupported: true,
-        buttonID: 'ViewFilesInSelectionButton',
-      },
-      {
-        buttonText: 'View associated files',
-        onClick: (event) => {
-          handleParticipantsToFiles(event)
-        },
-        isRowSelectionSupported: false,
         buttonID: 'ViewAllFilesButton',
       },
     ],
@@ -161,18 +146,10 @@ export const filesView: SynapseConfig = {
 
     customControls: [
       {
-        buttonText: 'View participants in selection',
+        buttonText: 'View associated participants',
         onClick: (event) => {
           handleSelectedFilesToParticipants(event)
         },
-        isRowSelectionSupported: true,
-      },
-      {
-        buttonText: 'View associated participants',
-        onClick: (event) => {
-          handleFilesToParticipants(event)
-        },
-        isRowSelectionSupported: false,
       },
     ],
     shouldDeepLink: true,

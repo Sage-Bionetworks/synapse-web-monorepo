@@ -235,54 +235,33 @@ export const SendToCavatica: Story = {
   },
 }
 
-const handleRowSelectionCustomCommandClick = (
+const getAllIDs = async (event: CustomControlCallbackData) => {
+  // get all ids
+  const ids: string[] = []
+  event.request!.query.sql = 'select id from syn51186974'
+  const results = await SynapseClient.getFullQueryTableResults(event.request!)
+  results.queryResult?.queryResults.rows.map(row => {
+    if (row.values && row.values[0]) ids.push(row.values[0])
+  })
+  return ids
+}
+
+const handleRowSelectionCustomCommandClick = async (
   event: CustomControlCallbackData,
 ) => {
+  const isSelection = event.selectedRows && event.selectedRows.length > 0
   displayToast(
     `Custom action applied to ${
-      event.selectedRows!.length
+      isSelection ? event.selectedRows!.length : 'all'
     } rows (see js console for more information)`,
   )
   console.log('Rows selected:')
   console.log(event.selectedRows)
   const idColIndex = event.data?.columnModels?.findIndex(cm => cm.name === 'id')
-  const localStorageFilter: ColumnSingleValueQueryFilter = {
-    concreteType:
-      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-    columnName: 'id',
-    operator: ColumnSingleValueFilterOperator.IN,
-    values: event.selectedRows!.map(row => row.values[idColIndex!]!),
-  }
-  localStorage.setItem(
-    QUERY_FILTERS_SESSION_STORAGE_KEY('syn51186974-selectedfiles'),
-    JSON.stringify([localStorageFilter]),
-  )
-  console.log(
-    'Local Storage value set, refresh table to see additionalFilter QueryFilter being utilized',
-  )
-  // TODO: PORTALS-2682: event.refresh() should refresh the data but it currently doesn't
-  event.refresh()
-}
 
-const handleAllDataCustomCommandClick = async (
-  event: CustomControlCallbackData,
-) => {
-  displayToast(
-    `Custom action applied to all results (see js console for more information)`,
-  )
-
-  const ids: string[] = []
-  if (event.request) {
-    console.log('Query request is available')
-    console.log(event.request)
-    // get all ids
-    event.request.query.sql = 'select id from syn51186974'
-    const results = await SynapseClient.getFullQueryTableResults(event.request)
-    results.queryResult?.queryResults.rows.map(row => {
-      if (row.values && row.values[0]) ids.push(row.values[0])
-    })
-  }
-
+  const ids = isSelection
+    ? event.selectedRows!.map(row => row.values[idColIndex!]!)
+    : await getAllIDs(event)
   const localStorageFilter: ColumnSingleValueQueryFilter = {
     concreteType:
       'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
@@ -297,7 +276,7 @@ const handleAllDataCustomCommandClick = async (
   console.log(
     'Local Storage value set, refresh table to see additionalFilter QueryFilter being utilized',
   )
-  // refresh causes the component to remount, which picks up the new filter from localstorage
+  // TODO: PORTALS-2682: event.refresh() should refresh the data but it currently doesn't
   event.refresh()
 }
 
@@ -318,20 +297,11 @@ export const TableRowSelectionWithCustomCommand: Story = {
     additionalFiltersSessionStorageKey: 'syn51186974-selectedfiles',
     customControls: [
       {
-        buttonText: 'Row Selection Custom Command',
+        buttonText: 'Row Custom Command',
         onClick: event => {
           handleRowSelectionCustomCommandClick(event)
         },
-        isRowSelectionSupported: true,
         buttonID: 'RowSelectionCustomCommandButtonID',
-      },
-      {
-        buttonText: 'All Results Custom Command',
-        onClick: event => {
-          handleAllDataCustomCommandClick(event)
-        },
-        isRowSelectionSupported: false,
-        buttonID: 'AllResultsCustomCommandButtonID',
       },
     ],
   },

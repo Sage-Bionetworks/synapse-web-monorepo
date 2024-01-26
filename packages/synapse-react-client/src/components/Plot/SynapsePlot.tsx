@@ -103,6 +103,10 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
   const plotData: Partial<Plotly.PlotData>[] = []
   const orientation = horizontal ? 'h' : 'v'
   const headers = queryData.queryResult?.queryResults.headers ?? []
+  const rows = queryData.queryResult?.queryResults.rows ?? []
+  if (headers.length == 0 || rows.length == 0) {
+    return <></>
+  }
   for (let i = 0; i < headers.length - 1; i += 1) {
     // make an entry for each set of data points
     plotData[i] = {
@@ -115,7 +119,7 @@ export const SynapsePlot = (props: SynapsePlotProps) => {
     }
   }
   // grab all the data
-  for (const row of queryData.queryResult?.queryResults.rows ?? []) {
+  for (const row of rows) {
     for (let j = 1; j < row.values.length; j += 1) {
       // create pairs of data
       const rowValues = row.values

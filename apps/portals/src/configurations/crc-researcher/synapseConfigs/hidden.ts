@@ -26,7 +26,6 @@ export const hidden: SynapseConfig = {
         onClick: (event) => {
           handleParticipantWorkflowChange(event, 'Uncategorized')
         },
-        isRowSelectionSupported: true,
       },
     ],
   },
