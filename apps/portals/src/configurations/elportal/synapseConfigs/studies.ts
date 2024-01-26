@@ -8,7 +8,6 @@ import {
   dataOnStudiesPageSql,
   defaultSearchConfiguration,
   cavaticaConnectAccountURL,
-  cavaticaHelpURL,
 } from '../resources'
 import {
   ColumnMultiValueFunction,
@@ -150,7 +149,6 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             visibleColumnCount: 10,
             name: 'Metadata Files',
             showExportToCavatica: true,
-            cavaticaHelpURL: cavaticaHelpURL,
             cavaticaConnectAccountURL: cavaticaConnectAccountURL,
             isRowSelectionVisible: true,
             isRowSelectionUIFloating: false,
@@ -174,7 +172,6 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             rgbIndex,
             visibleColumnCount: 10,
             showExportToCavatica: true,
-            cavaticaHelpURL: cavaticaHelpURL,
             cavaticaConnectAccountURL: cavaticaConnectAccountURL,
             isRowSelectionVisible: true,
             isRowSelectionUIFloating: false,
