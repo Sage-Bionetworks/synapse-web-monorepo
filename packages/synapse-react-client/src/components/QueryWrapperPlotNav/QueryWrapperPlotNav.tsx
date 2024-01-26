@@ -118,7 +118,6 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'hideSqlEditorControl'
   | 'searchConfiguration'
   | 'showExportToCavatica'
-  | 'cavaticaHelpURL'
   | 'cavaticaConnectAccountURL'
   | 'customControls'
   | 'fileIdColumnName'
@@ -142,7 +141,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     hideSqlEditorControl,
     searchConfiguration,
     showExportToCavatica = false,
-    cavaticaHelpURL,
     cavaticaConnectAccountURL,
     fileIdColumnName,
     fileNameColumnName,
@@ -209,7 +207,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                 hideVisualizationsControl={!isFaceted}
                 hideSqlEditorControl={hideSqlEditorControl}
                 showExportToCavatica={showExportToCavatica}
-                cavaticaHelpURL={cavaticaHelpURL}
                 cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                 customControls={customControls}
                 remount={remount}

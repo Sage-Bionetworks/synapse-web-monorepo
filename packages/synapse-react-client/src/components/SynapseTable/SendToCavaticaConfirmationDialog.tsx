@@ -32,7 +32,6 @@ export type SendToCavaticaConfirmationDialogProps = {
   fileIdColumnName?: string
   fileNameColumnName?: string
   fileVersionColumnName?: string
-  cavaticaHelpURL?: string
   cavaticaConnectAccountURL?: string
 }
 
@@ -43,7 +42,6 @@ export default function SendToCavaticaConfirmationDialog(
     fileIdColumnName,
     fileNameColumnName,
     fileVersionColumnName,
-    cavaticaHelpURL,
     cavaticaConnectAccountURL,
   } = props
   const {
@@ -190,16 +188,6 @@ export default function SendToCavaticaConfirmationDialog(
             >
               <Typography variant="body1" sx={{ textAlign: 'center' }}>
                 CAVATICA is a data analysis and sharing platform.
-                {cavaticaHelpURL && (
-                  <>
-                    {' '}
-                    Read more about CAVATICA{' '}
-                    <Link href={cavaticaHelpURL} target="_blank">
-                      here
-                    </Link>
-                    .
-                  </>
-                )}
               </Typography>
             </Box>
             <Typography

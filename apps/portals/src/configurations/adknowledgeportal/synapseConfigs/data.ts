@@ -10,7 +10,6 @@ const data: SynapseConfig = {
     name: 'Data',
     visibleColumnCount: 10,
     showExportToCavatica: true,
-    // cavaticaHelpURL: cavaticaHelpURL,
     cavaticaConnectAccountURL: cavaticaConnectAccountURL,
     isRowSelectionVisible: true,
     tableConfiguration: {

@@ -1,7 +1,6 @@
 import { SynapseConfig } from 'types/portal-config'
 import {
   cavaticaConnectAccountURL,
-  cavaticaHelpURL,
   cohortBuilderFilesSql,
   cohortBuilderSql,
   defaultSearchConfiguration,
@@ -103,7 +102,7 @@ export const individualsView: SynapseConfig = {
       },
     ],
     sql: cohortBuilderSql,
-    shouldDeepLink: true,
+    shouldDeepLink: false,
     searchConfiguration: defaultSearchConfiguration,
   },
 }
@@ -117,7 +116,6 @@ export const filesView: SynapseConfig = {
     fileIdColumnName: 'id',
     fileNameColumnName: 'name',
     fileVersionColumnName: 'fileVersion',
-    cavaticaHelpURL: cavaticaHelpURL,
     cavaticaConnectAccountURL: cavaticaConnectAccountURL,
     visibleColumnCount: 10,
     isRowSelectionVisible: true,
@@ -152,7 +150,7 @@ export const filesView: SynapseConfig = {
         },
       },
     ],
-    shouldDeepLink: true,
+    shouldDeepLink: false,
     searchConfiguration: defaultSearchConfiguration,
   },
 }

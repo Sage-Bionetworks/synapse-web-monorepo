@@ -16,4 +16,3 @@ export const defaultSearchConfiguration = {
 }
 export const cavaticaConnectAccountURL =
   'https://help.eliteportal.org/help/analysis-environments#IntegrationwithAnalysis&ComputeEnvironments-GainingAccess'
-export const cavaticaHelpURL = '/Limited%20Data%20Commons'
