@@ -27,7 +27,7 @@ import {
   TargetEnum,
 } from '../CardContainerLogic'
 import HeaderCard from '../HeaderCard'
-import IconList from '../IconList'
+import IconList, { IconListProps } from '../IconList'
 import IconSvg, { type2SvgIconName } from '../IconSvg/IconSvg'
 import { CardFooter, Icon } from '../row_renderers/utils'
 import { FileHandleLink } from '../widgets/FileHandleLink'
@@ -544,7 +544,11 @@ class _GenericCard extends React.Component<GenericCardPropsInternal> {
                     <IconList
                       iconConfigs={columnIconOptions.columns.dataType}
                       iconNames={JSON.parse(dataTypeIconNames)}
-                      iconFontSize="40px"
+                      commonIconProps={
+                        {
+                          sx: { fontSize: '40px' },
+                        } as IconListProps['commonIconProps']
+                      }
                       useBackground={true}
                       useTheme={true}
                     />
