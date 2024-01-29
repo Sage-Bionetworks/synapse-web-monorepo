@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import SynapseClient from '../../synapse-client'
 import {
   BackendDestinationEnum,
@@ -197,7 +197,7 @@ export function HasAccessV2(props: HasAccessProps) {
     restrictionInformationRequest,
   )
 
-  const handleGetAccess = () => {
+  const handleGetAccess = useCallback(() => {
     // TODO: The fetch should really happen in the AR List component.
     // If we need to open the AR page in synapse, the logic should be in the modal and it should just close itself right away
     SynapseClient.getAllAccessRequirements(accessToken, entityId).then(
@@ -215,7 +215,7 @@ export function HasAccessV2(props: HasAccessProps) {
         }
       },
     )
-  }
+  }, [accessToken, entityId])
 
   // Show Access Requirements
   const accessRequirementsJsx = useMemo(() => {
@@ -267,6 +267,8 @@ export function HasAccessV2(props: HasAccessProps) {
     restrictionInformation,
     accessRequirements,
     displayAccessRequirement,
+    handleGetAccess,
+    props.className,
   ])
 
   if (fileHandleDownloadType === undefined) {

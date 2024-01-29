@@ -1,35 +1,31 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import {
-  HasAccessV2,
-  HasAccessProps,
-} from '../../src/components/HasAccess/HasAccessV2'
-import { createWrapper } from '../../src/testutils/TestingLibraryUtils'
-import { ENTITY_BUNDLE_V2 } from '../../src/utils/APIConstants'
+import { HasAccessV2, HasAccessProps } from './HasAccessV2'
+import { createWrapper } from '../../testutils/TestingLibraryUtils'
+import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../src/utils/functions/getEndpoint'
-import { SRC_SIGN_IN_CLASS } from '../../src/utils/SynapseConstants'
-import { SynapseContextType } from '../../src/utils/context/SynapseContext'
+} from '../../utils/functions/getEndpoint'
+import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
+import { SynapseContextType } from '../../utils/context/SynapseContext'
 import {
   EntityBundle,
   RestrictableObjectType,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
 } from '@sage-bionetworks/synapse-types'
-import { mockFolderEntity } from '../../src/mocks/entity/mockEntity'
-import mockFileEntityData from '../../src/mocks/entity/mockFileEntity'
-import { MOCK_CONTEXT_VALUE } from '../../src/mocks/MockSynapseContext'
+import { mockFolderEntity } from '../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../mocks/entity/mockFileEntity'
+import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import {
   mockOpenRestrictionInformation,
   mockUnmetControlledDataRestrictionInformationACT,
-} from '../../src/mocks/mock_has_access_data'
-import { rest, server } from '../../src/mocks/msw/server'
+} from '../../mocks/mock_has_access_data'
+import { rest, server } from '../../mocks/msw/server'
 
 const entityId = mockFileEntityData.id
 const mockFileEntityBundle = mockFileEntityData.bundle
-const isInDownloadList: boolean = true
 
 const renderComponent = (
   props: HasAccessProps,
@@ -41,7 +37,6 @@ const renderComponent = (
 }
 const props: HasAccessProps = {
   entityId,
-  isInDownloadList,
 }
 
 const onGetRestrictionInformation = jest.fn()
@@ -86,7 +81,7 @@ describe('HasAccess tests', () => {
 
   it('User has all permissions on a standard FileEntity and any Access Requirements have been met', async () => {
     const entityBundle: EntityBundle = {
-      entity: mockFileEntityBundle.entity,
+      ...mockFileEntityBundle,
       permissions: {
         ...mockFileEntityBundle.permissions,
         canDownload: true,
@@ -115,8 +110,10 @@ describe('HasAccess tests', () => {
 
   it('The entity is a Folder entity', async () => {
     const entityBundle: EntityBundle = {
+      ...mockFileEntityBundle,
       entity: mockFolderEntity,
       permissions: {
+        ...mockFileEntityBundle.permissions,
         canDownload: true,
       },
     }
@@ -144,6 +141,7 @@ describe('HasAccess tests', () => {
   describe('Authorization blocked by ACL', () => {
     it('Handles a file entity where download access is blocked because of missing DOWNLOAD permission, and the user is signed in', async () => {
       const entityBundle: EntityBundle = {
+        ...mockFileEntityBundle,
         entity: mockFileEntityBundle.entity,
         permissions: {
           ...mockFileEntityBundle.permissions,
@@ -177,6 +175,7 @@ describe('HasAccess tests', () => {
         accessToken: undefined,
       }
       const entityBundle: EntityBundle = {
+        ...mockFileEntityBundle,
         entity: mockFileEntityBundle.entity,
         permissions: {
           ...mockFileEntityBundle.permissions,
@@ -211,6 +210,7 @@ describe('HasAccess tests', () => {
   describe('File is controlled by Access Requirements', () => {
     it('User has ACL permissions but not AR permissions', async () => {
       const entityBundle: EntityBundle = {
+        ...mockFileEntityBundle,
         entity: mockFileEntityBundle.entity,
         permissions: {
           ...mockFileEntityBundle.permissions,
@@ -247,6 +247,7 @@ describe('HasAccess tests', () => {
         accessToken: undefined,
       }
       const entityBundle: EntityBundle = {
+        ...mockFileEntityBundle,
         entity: mockFileEntityBundle.entity,
         permissions: {
           ...mockFileEntityBundle.permissions,
@@ -280,6 +281,7 @@ describe('HasAccess tests', () => {
 
     it('User does not have ACL permissions and does not have AR permissions', async () => {
       const entityBundle: EntityBundle = {
+        ...mockFileEntityBundle,
         entity: mockFileEntityBundle.entity,
         permissions: {
           ...mockFileEntityBundle.permissions,
