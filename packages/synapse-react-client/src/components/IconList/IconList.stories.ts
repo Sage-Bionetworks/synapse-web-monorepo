@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import IconList from '../IconList'
+import IconList, { IconListProps } from '../IconList'
 
 const meta = {
   title: 'UI/IconList',
@@ -71,10 +71,14 @@ export const ThemeColorWithCircleBackground: Story = {
     iconConfigs: {
       drugCombinationScreen: { icon: 'rat' },
       geneVariants: { icon: 'geneVariants' },
+      other: { icon: 'other' },
     },
+    commonIconProps: {
+      sx: { fontSize: '40px' },
+    } as IconListProps['commonIconProps'],
     useTheme: true,
     useBackground: true,
-    iconNames: ['drugCombinationScreen', 'geneVariants'],
+    iconNames: ['drugCombinationScreen', 'geneVariants', 'other'],
   },
 }
 export const Tooltip: Story = {

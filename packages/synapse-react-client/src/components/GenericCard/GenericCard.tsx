@@ -544,6 +544,9 @@ class _GenericCard extends React.Component<GenericCardPropsInternal> {
                     <IconList
                       iconConfigs={columnIconOptions.columns.dataType}
                       iconNames={JSON.parse(dataTypeIconNames)}
+                      commonIconProps={{
+                        sx: { fontSize: '40px' },
+                      }}
                       useBackground={true}
                       useTheme={true}
                     />
