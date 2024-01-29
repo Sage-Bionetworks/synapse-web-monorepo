@@ -28,6 +28,7 @@ import { SynapseApiResponse } from '../handlers'
 import { UploadDestination, UploadType } from '@sage-bionetworks/synapse-types'
 import { uniqueId } from 'lodash-es'
 import { mockProjectsEntityData } from '../../entity/mockProject'
+import { mockUploadDestinations } from '../../mock_upload_destination'
 
 export const getEntityHandlers = (backendOrigin: string) => [
   /**
@@ -251,6 +252,26 @@ export const getEntityHandlers = (backendOrigin: string) => [
         concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
       }
       return res(ctx.status(200), ctx.json(response))
+    },
+  ),
+
+  rest.get(
+    `${backendOrigin}/file/v1/entity/:id/uploadDestination/:storageLocationId`,
+    async (req, res, ctx) => {
+      let status = 404
+      let response: SynapseApiResponse<UploadDestination> = {
+        reason: `Mock Service worker could not find an uploadDestination using storageLocationId ${req.params.storageLocationId}`,
+      }
+      const uploadDestination = mockUploadDestinations.find(
+        e => Number(req.params.storageLocationId) === e.storageLocationId,
+      )
+
+      if (uploadDestination) {
+        response = uploadDestination
+        status = 200
+      }
+
+      return res(ctx.status(status), ctx.json(response))
     },
   ),
 

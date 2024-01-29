@@ -1,10 +1,15 @@
 import {
+  BaseKeyUploadDestination,
   EntityBundle,
   EntityType,
   EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   ExternalFileHandle,
+  ExternalGoogleCloudUploadDestination,
   ExternalObjectStoreFileHandle,
+  ExternalObjectStoreUploadDestination,
+  ExternalS3UploadDestination,
+  ExternalUploadDestination,
   FileEntity,
   FileHandle,
   GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE,
@@ -13,18 +18,12 @@ import {
   ProxyFileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   S3FileHandle,
-} from '@sage-bionetworks/synapse-types'
-import {
-  ExternalGoogleCloudUploadDestination,
-  ExternalObjectStoreUploadDestination,
-  ExternalS3UploadDestination,
-  ExternalUploadDestination,
   UploadDestination,
   UploadType,
 } from '@sage-bionetworks/synapse-types'
+import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client/SynapseClient'
 
 const SYNAPSE_STORAGE = 'Synapse Storage'
-const SYNAPSE_STORAGE_LOCATION_ID = 1
 
 type FileHandleStorageInfo =
   | {
@@ -41,6 +40,7 @@ type FileHandleStorageInfo =
  */
 export function getFileHandleStorageInfo(
   fileHandle: FileHandle,
+  storageLocationUploadDestination?: UploadDestination,
 ): FileHandleStorageInfo {
   switch (fileHandle.concreteType) {
     case EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE:
@@ -51,11 +51,19 @@ export function getFileHandleStorageInfo(
       }
     case PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE:
     case EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE:
-      return { url: getStorageLocationName(fileHandle) }
+      return {
+        url: getStorageLocationName(
+          fileHandle,
+          storageLocationUploadDestination,
+        ),
+      }
     case S3_FILE_HANDLE_CONCRETE_TYPE_VALUE:
     case GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       return {
-        location: getStorageLocationName(fileHandle),
+        location: getStorageLocationName(
+          fileHandle,
+          storageLocationUploadDestination,
+        ),
       }
     default:
       throw new Error(
@@ -72,12 +80,22 @@ export function getFileHandleStorageInfo(
  * @param fileHandle
  * @returns
  */
-export function getStorageLocationName(fileHandle: FileHandle) {
+export function getStorageLocationName(
+  fileHandle: FileHandle,
+  storageLocationUploadDestination?: UploadDestination,
+) {
+  const baseKey =
+    storageLocationUploadDestination &&
+    (storageLocationUploadDestination as BaseKeyUploadDestination).baseKey
+  const baseKeyText = baseKey ? `/${baseKey}` : ''
+
   switch (fileHandle.concreteType) {
     case PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       return (fileHandle as ProxyFileHandle).filePath
     case EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE:
-      return (fileHandle as ExternalObjectStoreFileHandle).bucket
+      return `${
+        (fileHandle as ExternalObjectStoreFileHandle).bucket
+      }${baseKeyText}`
     case EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       return (fileHandle as ExternalFileHandle).externalURL
     case S3_FILE_HANDLE_CONCRETE_TYPE_VALUE:
@@ -90,10 +108,12 @@ export function getStorageLocationName(fileHandle: FileHandle) {
       ) {
         return SYNAPSE_STORAGE
       } else {
-        return `s3://${(fileHandle as S3FileHandle).bucketName}`
+        return `s3://${(fileHandle as S3FileHandle).bucketName}${baseKeyText}`
       }
     case GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE:
-      return `gs://${(fileHandle as GoogleCloudFileHandle).bucketName}`
+      return `gs://${
+        (fileHandle as GoogleCloudFileHandle).bucketName
+      }${baseKeyText}`
     default:
       throw new Error(
         `Couldn't determine location name for file handle: ${JSON.stringify(

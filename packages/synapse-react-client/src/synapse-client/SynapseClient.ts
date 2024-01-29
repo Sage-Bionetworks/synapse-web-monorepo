@@ -4630,6 +4630,24 @@ export function getDefaultUploadDestination(
 }
 
 /**
+ * Get the upload destination associated with the given storage location id.
+ * This will always return an upload destination
+ *
+ * https://rest-docs.synapse.org/rest/GET/entity/id/uploadDestination/storageLocationId.html
+ */
+export function getUploadDestinationForStorageLocation(
+  parentId: string,
+  storageLocationId: number,
+  accessToken?: string,
+): Promise<UploadDestination> {
+  return doGet<UploadDestination>(
+    `/file/v1/entity/${parentId}/uploadDestination/${storageLocationId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Retrieves the DOI for the object. Note: this call only retrieves the DOI association, if it exists.
  * To retrieve the metadata for the object, see GET /doi
  *

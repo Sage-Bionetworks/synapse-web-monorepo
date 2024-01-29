@@ -5,6 +5,8 @@ import {
   EntityType,
   ExternalFileHandle,
   ExternalObjectStoreFileHandle,
+  S3FileHandle,
+  S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   VersionableEntity,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
@@ -32,6 +34,10 @@ import TitleBarProperties, {
   TitleBarPropertiesProps,
 } from './TitleBarProperties'
 import * as UseGetEntityPropertiesModule from './useGetEntityTitleBarProperties'
+import {
+  MOCK_EXTERNAL_S3_STORAGE_LOCATION_ID,
+  mockExternalS3UploadDestination,
+} from '../../../../mocks/mock_upload_destination'
 
 const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'
 
@@ -216,6 +222,27 @@ describe('TitleBarProperties', () => {
 
       await screen.findByText(`Storage Location`)
       await screen.findByText('Synapse Storage')
+    })
+    it('File handle storage location bucket and baseKey', async () => {
+      const bucketName = mockExternalS3UploadDestination.bucket
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        fileHandles: [
+          {
+            ...mockFileHandle,
+            concreteType: S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+            bucketName: bucketName,
+            storageLocationId: MOCK_EXTERNAL_S3_STORAGE_LOCATION_ID,
+          } as S3FileHandle,
+        ],
+      })
+      renderComponent()
+      await expandPropertiesIfPossible()
+
+      await screen.findByText(`Storage Location`)
+      await screen.findByText(
+        `s3://${bucketName}/${mockExternalS3UploadDestination.baseKey}`,
+      )
     })
     it('File handle endpoint, bucket, key', async () => {
       const endpointUrl = 'https://my-endpoint.fake'

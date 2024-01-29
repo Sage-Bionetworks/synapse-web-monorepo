@@ -12,7 +12,10 @@ import {
   isEntityRefCollectionView,
   isVersionableEntity,
 } from '../../../../utils/functions/EntityTypeUtils'
-import { useGetDefaultUploadDestination } from '../../../../synapse-queries/file/useUploadDestination'
+import {
+  useGetDefaultUploadDestination,
+  useGetUploadDestinationForStorageLocation,
+} from '../../../../synapse-queries/file/useUploadDestination'
 import {
   getDataFileHandle,
   getFileHandleStorageInfo,
@@ -42,18 +45,42 @@ export function useGetEntityTitleBarProperties(
 ): EntityProperty[] {
   const { data: bundle } = useGetEntityBundle(entityId, versionNumber)
 
+  const isContainer = !!(
+    bundle?.entityType && isContainerType(bundle.entityType)
+  )
+  const dataFileHandle = bundle && getDataFileHandle(bundle)
+  const parentId = bundle?.entity?.parentId
+  const storageLocationId = dataFileHandle?.storageLocationId
+
   const { data: entityChildrenResponse } = useGetEntityChildren(
     {
       parentId: entityId,
       includeTypes: Object.values(EntityType),
       includeTotalChildCount: true,
     },
-    { enabled: !!(bundle?.entityType && isContainerType(bundle.entityType)) },
+    { enabled: isContainer },
   )
 
-  const { data: uploadDestination } = useGetDefaultUploadDestination(entityId, {
-    enabled: !!(bundle?.entityType && isContainerType(bundle.entityType)),
-  })
+  const { data: defaultUploadDestination } = useGetDefaultUploadDestination(
+    entityId,
+    { enabled: isContainer },
+  )
+
+  // Note: defaultUploadDestination can't be used for non-container entities
+  // since the service checks that any entity in the path to the root has some
+  // project setting with a storage location, but does not look at the file entity's
+  // storage location id. Since a user can upload a file in any storage location
+  // and put it anywhere in the hierarchy, the file entity storage location id
+  // is where the file handle was actually uploaded. We must use a service that
+  // takes the storage location id in the input to get the storage location for a
+  // file entity.
+  const { data: storageLocationUploadDestination } =
+    useGetUploadDestinationForStorageLocation(parentId!, storageLocationId!, {
+      enabled:
+        !isContainer &&
+        parentId !== undefined &&
+        storageLocationId !== undefined,
+    })
 
   // If this is the latest entity version, show the "versionless" DOI if it exists.
   const useFallbackVersionlessDOI =
@@ -70,13 +97,12 @@ export function useGetEntityTitleBarProperties(
     },
   )
 
-  const dataFileHandle = bundle && getDataFileHandle(bundle)
-
   const size =
     dataFileHandle?.contentSize &&
     calculateFriendlyFileSize(dataFileHandle.contentSize)
   const fileHandleStorageInfo =
-    dataFileHandle && getFileHandleStorageInfo(dataFileHandle)
+    dataFileHandle &&
+    getFileHandleStorageInfo(dataFileHandle, storageLocationUploadDestination)
   const storageLocation =
     fileHandleStorageInfo &&
     'location' in fileHandleStorageInfo &&
@@ -103,7 +129,8 @@ export function useGetEntityTitleBarProperties(
     bundle?.entity.name != bundle?.fileName && bundle?.fileName
 
   const uploadDestinationString =
-    uploadDestination && getUploadDestinationString(uploadDestination)
+    defaultUploadDestination &&
+    getUploadDestinationString(defaultUploadDestination)
 
   // If there is no version-specific DOI, fall back to the versionless DOI
   const doiAssociation = useFallbackVersionlessDOI
