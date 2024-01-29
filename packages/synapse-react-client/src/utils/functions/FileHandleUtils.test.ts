@@ -16,7 +16,6 @@ import {
   ProxyFileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   S3FileHandle,
-  S3UploadDestination,
   UploadType,
 } from '@sage-bionetworks/synapse-types'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
@@ -312,25 +311,13 @@ describe('File Handle Utils', () => {
     })
   })
   describe('getUploadDestinationString', () => {
-    const mockS3UploadDestination: S3UploadDestination = {
-      banner: '',
-      storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
-      uploadType: UploadType.S3,
-      concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
-      stsEnabled: true,
-      baseKey: 'myKey',
-    }
-
     it("Returns 'Synapse Storage' the Synapse Storage upload destination", () => {
-      const uploadDestination: S3UploadDestination = mockS3UploadDestination
-      const result = getUploadDestinationString(uploadDestination)
+      const result = getUploadDestinationString(mockS3UploadDestination)
       expect(result).toEqual('Synapse Storage')
     })
     it('Returns the URL for an ExternalUploadDestination', () => {
       const uploadDestination: ExternalUploadDestination = {
-        ...mockS3UploadDestination,
-        concreteType:
-          'org.sagebionetworks.repo.model.file.ExternalUploadDestination',
+        ...mockExternalUploadDestination,
         uploadType: UploadType.HTTPS,
         url: 'https://testUrl.com/abcdef',
       }
@@ -339,9 +326,7 @@ describe('File Handle Utils', () => {
     })
     it('Strips everything after the trailing slash for an ExternalUploadDestination with SFTP', () => {
       const uploadDestination: ExternalUploadDestination = {
-        ...mockS3UploadDestination,
-        concreteType:
-          'org.sagebionetworks.repo.model.file.ExternalUploadDestination',
+        ...mockExternalUploadDestination,
         uploadType: UploadType.SFTP,
         url: 'sftp://testUrl.com/abcdef',
       }
@@ -350,9 +335,7 @@ describe('File Handle Utils', () => {
     })
     it('Returns an s3 path for an ExternalS3UploadDestination', () => {
       const uploadDestination: ExternalS3UploadDestination = {
-        ...mockS3UploadDestination,
-        concreteType:
-          'org.sagebionetworks.repo.model.file.ExternalS3UploadDestination',
+        ...mockExternalS3UploadDestination,
         bucket: 'myBucket',
         baseKey: 'myKey',
         endpointUrl: 'https://example.com',
@@ -363,9 +346,7 @@ describe('File Handle Utils', () => {
 
     it('Returns a gs path for an ExternalGoogleCloudUploadDestination', () => {
       const uploadDestination: ExternalGoogleCloudUploadDestination = {
-        ...mockS3UploadDestination,
-        concreteType:
-          'org.sagebionetworks.repo.model.file.ExternalGoogleCloudUploadDestination',
+        ...mockExternalGoogleCloudUploadDestination,
         bucket: 'myBucket',
         baseKey: 'myKey',
       }
@@ -375,9 +356,7 @@ describe('File Handle Utils', () => {
 
     it('Returns a path for an ExternalObjectStoreUploadDestination', () => {
       const uploadDestination: ExternalObjectStoreUploadDestination = {
-        ...mockS3UploadDestination,
-        concreteType:
-          'org.sagebionetworks.repo.model.file.ExternalObjectStoreUploadDestination',
+        ...mockExternalObjectStoreUploadDestination,
         endpointUrl: 'https://example.com',
         bucket: 'myBucket',
         keyPrefixUUID: 'uuid123',
