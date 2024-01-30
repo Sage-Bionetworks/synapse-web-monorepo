@@ -12,7 +12,7 @@ import { displayToast } from '../ToastMessage/ToastMessage'
 export type TwoFactorAuthSettingsPanelProps = {
   onRegenerateBackupCodes: () => void
   onBeginTwoFactorEnrollment: () => void
-  showTitle?: boolean
+  hideTitle?: boolean
 }
 
 export default function TwoFactorAuthSettingsPanel(
@@ -21,7 +21,7 @@ export default function TwoFactorAuthSettingsPanel(
   const {
     onRegenerateBackupCodes,
     onBeginTwoFactorEnrollment,
-    showTitle = true,
+    hideTitle = false,
   } = props
   const { data: status, isLoading: isLoadingStatus } =
     useGetTwoFactorEnrollmentStatus()
@@ -38,8 +38,8 @@ export default function TwoFactorAuthSettingsPanel(
 
   return (
     <Box>
-      {showTitle && (
-        <Typography variant={'headline2'}>
+      {!hideTitle && (
+        <Typography variant={'headline2'} role={'heading'}>
           Two-factor Authentication (2FA)
         </Typography>
       )}
