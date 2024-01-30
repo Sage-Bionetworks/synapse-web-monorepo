@@ -1235,6 +1235,18 @@ export const getUserChallenges = (
 }
 
 /**
+ * Get a user's certification quiz passing record
+ * see https://rest-docs.synapse.org/rest/GET/user/id/certifiedUserPassingRecord.html
+ */
+export const getPassingRecord = (
+  userId: string | number,
+  accessToken: string | undefined,
+): Promise<PassingRecord> => {
+  const url = `/repo/v1//user/${userId}/certifiedUserPassingRecord`
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
  * Get a list of teams registered to the given challenge.
  * see http://rest-docs.synapse.org/rest/GET/challenge.html
  */

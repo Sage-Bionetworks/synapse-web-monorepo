@@ -16,7 +16,9 @@ import { MarkdownPopover } from '../Markdown/MarkdownPopover'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import { ButtonProps, Typography } from '@mui/material'
 import { useErrorHandler } from 'react-error-boundary'
-
+import { useGetCurrentUserBundle } from '../../synapse-queries'
+import { USER_BUNDLE_MASK_IS_VERIFIED } from '../../utils/SynapseConstants'
+import { useGetPassingRecord } from '../../synapse-queries/user/useGetPassingRecord'
 const CertificationQuiz: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
@@ -24,9 +26,13 @@ const CertificationQuiz: React.FunctionComponent = () => {
   const [questionResponse, setQuestionResponse] = useState<QuestionResponse[]>(
     [],
   )
-  const [passingRecord, setPassingRecord] = useState<PassingRecord>()
+  const { data: currentUserBundle } = useGetCurrentUserBundle(
+    USER_BUNDLE_MASK_IS_VERIFIED,
+  )
+  const isCertified = currentUserBundle?.isCertified
+  const userId = currentUserBundle?.userId
+  const { data: passingRecord } = useGetPassingRecord(userId)
   const formRef = React.useRef<HTMLFormElement>(null)
-
   const GETTING_STARTED_URL =
     'https://help.synapse.org/docs/Getting-Started.2055471150.html'
 
@@ -57,7 +63,6 @@ const CertificationQuiz: React.FunctionComponent = () => {
   const handleRetakeQuiz = () => {
     formRef.current?.reset()
     setQuestionResponse([])
-    setPassingRecord(undefined)
     getQuiz()
   }
 
@@ -68,11 +73,11 @@ const CertificationQuiz: React.FunctionComponent = () => {
           quizId: quiz.id,
           questionResponses: questionResponse,
         }
-        const passRec = await SynapseClient.postCertifiedUserTestResponse(
+        await SynapseClient.postCertifiedUserTestResponse(
           accessToken,
           quizResponse,
         )
-        setPassingRecord(passRec)
+        fds
         window.scrollTo(0, 0)
       } else {
         displayToast(

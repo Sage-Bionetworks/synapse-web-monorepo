@@ -46,7 +46,6 @@ export function useGetEntityHeaders(
           ),
           header,
         )
-
         // If the request item had a version and was the latest version, we can also hydrate the cache
         // for the 'unversioned' request
         if (requestedItem.targetVersionNumber && header.isLatestVersion) {

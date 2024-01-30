@@ -628,6 +628,9 @@ export class KeyFactory {
   public getUserChallengesQueryKey(userId: string) {
     return this.getKey('userChallenges', userId)
   }
+  public getPassingRecordQueryKey(userId: string) {
+    return this.getKey('passingRecord', userId)
+  }
 
   public getSubmissionTeamsQueryKey(challengeId: string) {
     return this.getKey('submissionTeams', challengeId)
