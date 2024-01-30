@@ -37,6 +37,37 @@ function renderComponent(props: TwoFactorAuthSettingsPanelProps) {
 describe('TwoFactorAuthSettingsPanel', () => {
   beforeEach(() => jest.clearAllMocks())
 
+  it('Shows a title if hideTitle is not provided', async () => {
+    mockGetCurrentEnrollmentStatus.mockResolvedValue(disabledStatus)
+
+    renderComponent({
+      onRegenerateBackupCodes: mockOnRegenerateBackupCodes,
+      onBeginTwoFactorEnrollment: mockOnBeginTwoFactorEnrollment,
+    })
+
+    await screen.findByRole('heading', {
+      name: 'Two-factor Authentication (2FA)',
+    })
+  })
+
+  it('Does not show a title if hideTitle is true', async () => {
+    mockGetCurrentEnrollmentStatus.mockResolvedValue(disabledStatus)
+
+    renderComponent({
+      onRegenerateBackupCodes: mockOnRegenerateBackupCodes,
+      onBeginTwoFactorEnrollment: mockOnBeginTwoFactorEnrollment,
+      hideTitle: true,
+    })
+    // Ensure something in the component is rendered before we query for the title
+    await screen.findByText('Inactive')
+
+    expect(
+      screen.queryByRole('heading', {
+        name: 'Two-factor Authentication (2FA)',
+      }),
+    ).not.toBeInTheDocument()
+  })
+
   it('Shows 2FA is inactive and provides an option to enroll', async () => {
     mockGetCurrentEnrollmentStatus.mockResolvedValue(disabledStatus)
 
