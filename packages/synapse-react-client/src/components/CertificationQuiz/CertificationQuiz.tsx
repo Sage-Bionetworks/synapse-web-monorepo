@@ -25,6 +25,7 @@ import {
 } from '../../synapse-queries/user/useCertificationQuiz'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
+import CertificationAnswer from './CertificationAnswer'
 const CertificationQuiz: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
@@ -53,7 +54,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
     }
   }
 
-  const { mutate: postCertifiedUserTestResponse } =
+  const { mutate: postCertifiedUserTestResponse, isLoading: isSubmitting } =
     usePostCertifiedUserTestResponse({
       onSuccess: () => {
         window.scrollTo(0, 0)
@@ -188,28 +189,17 @@ const CertificationQuiz: React.FunctionComponent = () => {
                       ></div>
                     </Typography>
                     {question.answers.map(choice => (
-                      <div
+                      <CertificationAnswer
                         key={`${question.questionIndex}-${choice.answerIndex}`}
-                      >
-                        <input
-                          id={`${question.questionIndex}-${choice.answerIndex}`}
-                          name={`${question.questionIndex}`}
-                          type={question.exclusive ? 'radio' : 'checkbox'}
-                          value={choice.answerIndex}
-                          onClick={e =>
-                            onUpdateAnswer(
-                              question.questionIndex,
-                              Number(e.currentTarget.value),
-                            )
-                          }
-                        />
-                        <label
-                          style={{ fontWeight: 400 }}
-                          htmlFor={`${question.questionIndex}-${choice.answerIndex}`}
-                        >
-                          {choice.prompt}
-                        </label>
-                      </div>
+                        question={question}
+                        answer={choice}
+                        onClick={e =>
+                          onUpdateAnswer(
+                            question.questionIndex,
+                            Number(e.currentTarget.value),
+                          )
+                        }
+                      />
                     ))}
                     <MarkdownPopover
                       contentProps={{ markdown: question.helpText }}
@@ -234,6 +224,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
               color="primary"
               variant="contained"
               size="large"
+              disabled={isSubmitting}
               onClick={() => {
                 handleSubmit()
               }}
@@ -261,26 +252,15 @@ const CertificationQuiz: React.FunctionComponent = () => {
                     ></div>
                   </Typography>
                   {question.answers.map(choice => (
-                    <div
+                    <CertificationAnswer
                       key={`${question.questionIndex}-${choice.answerIndex}`}
-                    >
-                      <input
-                        id={`${question.questionIndex}-${choice.answerIndex}`}
-                        name={`${question.questionIndex}`}
-                        type={question.exclusive ? 'radio' : 'checkbox'}
-                        value={choice.answerIndex}
-                        checked={response.answerIndex.includes(
-                          choice.answerIndex,
-                        )}
-                        disabled={true}
-                      />
-                      <label
-                        style={{ fontWeight: 400 }}
-                        htmlFor={`${question.questionIndex}-${choice.answerIndex}`}
-                      >
-                        {choice.prompt}
-                      </label>
-                    </div>
+                      question={question}
+                      answer={choice}
+                      disabled={true}
+                      checked={response.answerIndex.includes(
+                        choice.answerIndex,
+                      )}
+                    />
                   ))}
                 </li>
               )

@@ -4,46 +4,31 @@ import React from 'react'
 import CertificationQuiz from './CertificationQuiz'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
-import { rest, server } from '../../mocks/msw/server'
 import { mockQuiz, mockPassingRecord } from '../../mocks/mockCertificationQuiz'
+import {
+  useGetPassingRecord,
+  usePostCertifiedUserTestResponse,
+} from '../../synapse-queries/user/useCertificationQuiz'
+import { getUseMutationMock } from '../../testutils/ReactQueryMockUtils'
+import { PassingRecord, QuizResponse } from '@sage-bionetworks/synapse-types'
+import { SynapseClientError } from '../../utils'
 
 window.open = jest.fn()
+jest.mock('../../synapse-queries/user/useCertificationQuiz', () => {
+  return {
+    usePostCertifiedUserTestResponse: jest.fn(),
+    useGetPassingRecord: jest.fn(),
+  }
+})
+const mockUsePostCertifiedUserTestResponse =
+  usePostCertifiedUserTestResponse as jest.Mock
+const mockUseGetPassingRecord = useGetPassingRecord as jest.Mock
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => {})
 const gettingStartedUrl =
   'https://help.synapse.org/docs/Getting-Started.2055471150.html'
-
-const getQuizHandler = rest.get(
-  `${getEndpoint(
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )}/repo/v1/certifiedUserTest`,
-  async (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockQuiz))
-  },
-)
-
-const failedQuizHandler = rest.post(
-  'https://repo-prod.prod.sagebase.org/repo/v1/certifiedUserTestResponse',
-  async (req, res, ctx) => {
-    return res(ctx.status(201), ctx.json({ mockPassingRecord }))
-  },
-)
-
-const passedQuizHandler = rest.post(
-  'https://repo-prod.prod.sagebase.org/repo/v1/certifiedUserTestResponse',
-  async (req, res, ctx) => {
-    return res(
-      ctx.status(201),
-      ctx.json({ ...mockPassingRecord, passed: true }),
-    )
-  },
-)
 
 function renderComponent() {
   render(<CertificationQuiz />, {
@@ -52,13 +37,21 @@ function renderComponent() {
 }
 
 describe('CertificationQuiz tests', () => {
-  beforeAll(() => server.listen())
-  beforeEach(() => server.use(getQuizHandler))
+  beforeEach(() => {
+    const mutationMockReturnValue = getUseMutationMock<
+      PassingRecord,
+      SynapseClientError,
+      QuizResponse
+    >(mockPassingRecord)
+    mockUsePostCertifiedUserTestResponse.mockReturnValue({
+      mutate: mutationMockReturnValue,
+      isLoading: false,
+    })
+    mockUseGetPassingRecord.mockReturnValue({ data: mockPassingRecord })
+  })
   afterEach(() => {
-    server.resetHandlers()
     jest.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('Shows loads the certification quiz', async () => {
     renderComponent()
@@ -87,7 +80,7 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Submit quiz that did not pass', async () => {
-    server.use(failedQuizHandler)
+    // TODO: mock respond with a failed passing record
     renderComponent()
     const radio1 = await screen.findByLabelText(
       mockQuiz.questions[0].answers[0].prompt,
@@ -128,7 +121,7 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Submit quiz that did pass', async () => {
-    server.use(passedQuizHandler)
+    // TODO: mock respond with passing record of a passed quiz
     renderComponent()
 
     const radio1 = await screen.findByLabelText(
@@ -148,6 +141,7 @@ describe('CertificationQuiz tests', () => {
 
     await userEvent.click(submitButton)
 
+    //TODO: look for Alert, rather than a toast message
     await waitFor(() =>
       expect(mockToastFn).toHaveBeenCalledWith(
         `You passed the Synapse Certification Quiz on ${mockPassingRecord.passedOn}`,
