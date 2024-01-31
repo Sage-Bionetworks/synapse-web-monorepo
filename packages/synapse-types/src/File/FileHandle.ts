@@ -27,7 +27,7 @@ export interface FileHandle {
   /** The short, user visible name for this file. */
   fileName: string
   /** The optional storage location descriptor */
-  storageLocationId: number
+  storageLocationId: number | null
   /** The size of the file in bytes. */
   contentSize: number
   /** The status of the file handle as computed by the backend. This value cannot be changed, any file handle that is not AVAILABLE should not be used. */

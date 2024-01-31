@@ -238,6 +238,15 @@ describe('File Handle Utils', () => {
       expect(result).toEqual('Synapse Storage')
     })
 
+    it("Returns 'Synapse Storage' for a file with a null storage location id", () => {
+      const fileHandle: S3FileHandle = {
+        ...mockFileHandle,
+        storageLocationId: null,
+        concreteType: S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+      }
+      const result = getStorageLocationName(fileHandle, undefined)
+      expect(result).toEqual('Synapse Storage')
+    })
     it('Returns an s3 path for an S3 file handle in a custom storage location', () => {
       const fileHandle: S3FileHandle = {
         ...mockFileHandle,
@@ -297,7 +306,7 @@ describe('File Handle Utils', () => {
       expect(result).toEqual(url)
     })
     it('Returns the bucket for an external object store file handle', () => {
-      const bucket = mockExternalObjectStoreUploadDestination.bucket
+      const { bucket, endpointUrl } = mockExternalObjectStoreUploadDestination
       const fileHandle: ExternalObjectStoreFileHandle = {
         ...mockExternalObjectStoreFileHandle,
         bucket: bucket,
@@ -307,7 +316,7 @@ describe('File Handle Utils', () => {
         fileHandle,
         mockExternalObjectStoreUploadDestination,
       )
-      expect(result).toEqual(bucket)
+      expect(result).toEqual(`${endpointUrl}/${bucket}`)
     })
   })
   describe('getUploadDestinationString', () => {

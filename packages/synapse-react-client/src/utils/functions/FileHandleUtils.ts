@@ -1,5 +1,5 @@
 import {
-  BaseKeyUploadDestination,
+  CloudProviderFileHandleInterface,
   EntityBundle,
   EntityType,
   EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE,
@@ -13,15 +13,12 @@ import {
   FileEntity,
   FileHandle,
   GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE,
-  GoogleCloudFileHandle,
   PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   ProxyFileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
-  S3FileHandle,
   UploadDestination,
   UploadType,
 } from '@sage-bionetworks/synapse-types'
-import { SYNAPSE_STORAGE_LOCATION_ID } from '../../synapse-client/SynapseClient'
 
 const SYNAPSE_STORAGE = 'Synapse Storage'
 
@@ -40,7 +37,7 @@ type FileHandleStorageInfo =
  */
 export function getFileHandleStorageInfo(
   fileHandle: FileHandle,
-  storageLocationUploadDestination?: UploadDestination,
+  storageLocationUploadDestination: UploadDestination | undefined,
 ): FileHandleStorageInfo {
   switch (fileHandle.concreteType) {
     case EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE:
@@ -82,38 +79,32 @@ export function getFileHandleStorageInfo(
  */
 export function getStorageLocationName(
   fileHandle: FileHandle,
-  storageLocationUploadDestination?: UploadDestination,
+  storageLocationUploadDestination: UploadDestination | undefined,
 ) {
-  const baseKey =
-    storageLocationUploadDestination &&
-    (storageLocationUploadDestination as BaseKeyUploadDestination).baseKey
-  const baseKeyText = baseKey ? `/${baseKey}` : ''
+  // Uploads to Synapse Storage often do not get their storage location field back-filled,
+  // so null also indicates a Synapse-Stored file
+  if (
+    fileHandle.concreteType === S3_FILE_HANDLE_CONCRETE_TYPE_VALUE &&
+    fileHandle.storageLocationId === null
+  ) {
+    return SYNAPSE_STORAGE
+  }
 
   switch (fileHandle.concreteType) {
     case PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       return (fileHandle as ProxyFileHandle).filePath
     case EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE:
-      return `${
-        (fileHandle as ExternalObjectStoreFileHandle).bucket
-      }${baseKeyText}`
+    case S3_FILE_HANDLE_CONCRETE_TYPE_VALUE:
+    case GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE:
+      if (storageLocationUploadDestination) {
+        return getUploadDestinationString(storageLocationUploadDestination)
+      }
+      return fileHandle.concreteType ===
+        EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE
+        ? (fileHandle as ExternalObjectStoreFileHandle).bucket
+        : (fileHandle as CloudProviderFileHandleInterface).bucketName
     case EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       return (fileHandle as ExternalFileHandle).externalURL
-    case S3_FILE_HANDLE_CONCRETE_TYPE_VALUE:
-      // Uploads to Synapse Storage often do not get their storage location field back-filled,
-      // so null also indicates a Synapse-Stored file
-      if (
-        [null, SYNAPSE_STORAGE_LOCATION_ID].includes(
-          (fileHandle as S3FileHandle).storageLocationId,
-        )
-      ) {
-        return SYNAPSE_STORAGE
-      } else {
-        return `s3://${(fileHandle as S3FileHandle).bucketName}${baseKeyText}`
-      }
-    case GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE:
-      return `gs://${
-        (fileHandle as GoogleCloudFileHandle).bucketName
-      }${baseKeyText}`
     default:
       throw new Error(
         `Couldn't determine location name for file handle: ${JSON.stringify(
@@ -143,7 +134,7 @@ export function getDataFileHandle(
 export function getUploadDestinationString(
   uploadDestination: UploadDestination,
 ) {
-  let uploadDestinationString = null
+  let uploadDestinationString = ''
   if (uploadDestination) {
     switch (uploadDestination.concreteType) {
       case 'org.sagebionetworks.repo.model.file.S3UploadDestination':
