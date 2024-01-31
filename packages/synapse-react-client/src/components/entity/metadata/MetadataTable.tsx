@@ -36,7 +36,7 @@ export const MetadataTable = ({
     useGetUploadDestinationForStorageLocation(parentId!, storageLocationId!, {
       enabled:
         parentId !== undefined &&
-        !(storageLocationId === undefined || storageLocationId === null),
+        storageLocationId != null,
     })
 
   let fileLocationName = undefined

@@ -79,7 +79,7 @@ export function useGetEntityTitleBarProperties(
       enabled:
         !isContainer &&
         parentId !== undefined &&
-        !(storageLocationId === undefined || storageLocationId === null),
+        storageLocationId != null,
     })
 
   // If this is the latest entity version, show the "versionless" DOI if it exists.
