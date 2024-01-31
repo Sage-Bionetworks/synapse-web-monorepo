@@ -1,4 +1,8 @@
-import { S3FileHandle } from '@sage-bionetworks/synapse-types'
+import {
+  EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+  ExternalObjectStoreFileHandle,
+  S3FileHandle,
+} from '@sage-bionetworks/synapse-types'
 import { MOCK_USER_ID } from './user/mock_user_profile'
 
 export const MOCK_FILE_HANDLE_ID = '987654321'
@@ -30,6 +34,15 @@ export const mockFileHandle: S3FileHandle = {
   previewId: `${MOCK_PREVIEW_FILE_HANDLE_ID}`,
   isPreview: false,
 }
+
+export const mockExternalObjectStoreFileHandle: ExternalObjectStoreFileHandle =
+  {
+    ...mockFileHandle,
+    concreteType: EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+    endpointUrl: 'https://my-endpoint.fake',
+    bucket: 'my-bucket',
+    fileKey: 'my-key',
+  }
 
 export const mockIrbApprovalFileHandle: S3FileHandle = {
   id: `${MOCK_DATA_ACCESS_SUBMISSION_IRB_APPROVAL_FILE_HANDLE_ID}`,

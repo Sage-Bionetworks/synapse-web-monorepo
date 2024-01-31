@@ -471,6 +471,13 @@ export class KeyFactory {
     return this.getKey('uploadDestination', 'default', containerEntityId)
   }
 
+  public getUploadDestinationForStorageLocationQueryKey(
+    parentId: string,
+    storageLocationId: number,
+  ) {
+    return this.getKey('uploadDestination', parentId, storageLocationId)
+  }
+
   public getForumModeratorsQueryKey(forumId: string) {
     return this.getKey('moderators', forumId)
   }

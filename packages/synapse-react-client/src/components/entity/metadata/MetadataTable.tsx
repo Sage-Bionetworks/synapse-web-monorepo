@@ -12,6 +12,7 @@ import {
 } from '../../../utils/functions/FileHandleUtils'
 import useGetEntityBundle from '../../../synapse-queries/entity/useEntityBundle'
 import { UserBadge } from '../../UserCard/UserBadge'
+import { useGetUploadDestinationForStorageLocation } from '../../../synapse-queries/file/useUploadDestination'
 
 export type MetadataTableProps = {
   readonly entityId: string
@@ -29,10 +30,21 @@ export const MetadataTable = ({
   const dataFileHandle = entityBundle
     ? getDataFileHandle(entityBundle)
     : undefined
+  const parentId = entityBundle?.entity?.parentId
+  const storageLocationId = dataFileHandle?.storageLocationId
+  const { data: storageLocationUploadDestination } =
+    useGetUploadDestinationForStorageLocation(parentId!, storageLocationId!, {
+      enabled:
+        parentId !== undefined &&
+        storageLocationId != null,
+    })
 
   let fileLocationName = undefined
   if (dataFileHandle) {
-    fileLocationName = getStorageLocationName(dataFileHandle)
+    fileLocationName = getStorageLocationName(
+      dataFileHandle,
+      storageLocationUploadDestination,
+    )
   }
 
   return entityBundle ? (
