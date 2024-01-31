@@ -18,12 +18,15 @@ import { HelpOutlineTwoTone } from '@mui/icons-material'
 import { ButtonProps, Typography } from '@mui/material'
 import { useErrorHandler } from 'react-error-boundary'
 import { useGetCurrentUserBundle } from '../../synapse-queries'
-import { USER_BUNDLE_MASK_IS_VERIFIED } from '../../utils/SynapseConstants'
-import { useGetPassingRecord } from '../../synapse-queries/user/useGetPassingRecord'
-import { useQueryClient } from 'react-query'
+import { USER_BUNDLE_MASK_IS_CERTIFIED } from '../../utils/SynapseConstants'
+import {
+  useGetPassingRecord,
+  usePostCertifiedUserTestResponse,
+} from '../../synapse-queries/user/useCertificationQuiz'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import dayjs from 'dayjs'
 const CertificationQuiz: React.FunctionComponent = () => {
-  const { accessToken, keyFactory } = useSynapseContext()
-  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   const [quiz, setQuiz] = useState<Quiz | undefined>()
   const [isRetakingQuiz, setIsRetakingQuiz] = useState(false)
@@ -31,7 +34,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
     [],
   )
   const { data: currentUserBundle } = useGetCurrentUserBundle(
-    USER_BUNDLE_MASK_IS_VERIFIED,
+    USER_BUNDLE_MASK_IS_CERTIFIED,
   )
   const isCertified = currentUserBundle?.isCertified
   const userId = currentUserBundle?.userId
@@ -49,6 +52,16 @@ const CertificationQuiz: React.FunctionComponent = () => {
       handleError(err)
     }
   }
+
+  const { mutate: postCertifiedUserTestResponse } =
+    usePostCertifiedUserTestResponse({
+      onSuccess: () => {
+        window.scrollTo(0, 0)
+      },
+      onError: e => {
+        handleError(e)
+      },
+    })
 
   // user is taking the quiz if user is not certified, and either there is no passing record or if the user clicked to retake the quiz
   const isTakingQuiz =
@@ -78,27 +91,14 @@ const CertificationQuiz: React.FunctionComponent = () => {
     getQuiz()
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     try {
       if (quiz && quiz.questions.length === questionResponse.length) {
         const quizResponse: QuizResponse = {
           quizId: quiz.id,
           questionResponses: questionResponse,
         }
-        await SynapseClient.postCertifiedUserTestResponse(
-          accessToken,
-          quizResponse,
-        )
-        queryClient.invalidateQueries(
-          keyFactory.getPassingRecordQueryKey(userId!),
-        )
-        queryClient.invalidateQueries(
-          keyFactory.getUserBundleQueryKey(
-            'current',
-            USER_BUNDLE_MASK_IS_VERIFIED,
-          ),
-        )
-        window.scrollTo(0, 0)
+        postCertifiedUserTestResponse(quizResponse)
       } else {
         displayToast(
           'Please answer all of the questions and try again.',
@@ -119,7 +119,6 @@ const CertificationQuiz: React.FunctionComponent = () => {
           color: 'primary' as ButtonProps['color'],
         }
       : undefined
-
   return (
     <div>
       {passingRecord && !isTakingQuiz && (
@@ -142,18 +141,22 @@ const CertificationQuiz: React.FunctionComponent = () => {
               </Typography>
             </Alert>
           )}
+          {passingRecord.passed && isCertified && (
+            <Alert severity="success">
+              <AlertTitle>Quiz Passed</AlertTitle>
+              <Typography variant="body1" sx={{ marginTop: '5px' }}>
+                {`You passed the Synapse Certification Quiz on ${formatDate(
+                  dayjs(passingRecord.passedOn),
+                )}`}
+              </Typography>
+            </Alert>
+          )}
           <Typography
             variant="sectionTitle"
             sx={{ marginTop: '20px', marginBottom: '20px' }}
           >
             Score: {passingRecord.score} / {quiz?.questions.length}
           </Typography>
-          {passingRecord.passed &&
-            isCertified &&
-            displayToast(
-              `You passed the Synapse Certification Quiz on ${passingRecord.passedOn}`,
-              'success',
-            )}
         </>
       )}
       <div className="CertificationQuiz__container">
