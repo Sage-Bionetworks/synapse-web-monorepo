@@ -12,7 +12,7 @@ import {
   QuestionResponse,
 } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import { Alert, AlertTitle, Button, Link } from '@mui/material'
+import { Alert, AlertTitle, Button, Link, Skeleton } from '@mui/material'
 import { MarkdownPopover } from '../Markdown/MarkdownPopover'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import { ButtonProps, Typography } from '@mui/material'
@@ -26,6 +26,8 @@ import {
 import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import CertificationAnswer from './CertificationAnswer'
+import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
+
 const CertificationQuiz: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
@@ -39,9 +41,10 @@ const CertificationQuiz: React.FunctionComponent = () => {
   )
   const isCertified = currentUserBundle?.isCertified
   const userId = currentUserBundle?.userId
-  const { data: passingRecord } = useGetPassingRecord(userId, {
-    enabled: userId !== undefined,
-  })
+  const { data: passingRecord, isLoading: isLoadingPassingRecord } =
+    useGetPassingRecord(userId, {
+      enabled: userId !== undefined,
+    })
   const formRef = React.useRef<HTMLFormElement>(null)
   const GETTING_STARTED_URL =
     'https://help.synapse.org/docs/Getting-Started.2055471150.html'
@@ -63,7 +66,6 @@ const CertificationQuiz: React.FunctionComponent = () => {
         handleError(e)
       },
     })
-
   // user is taking the quiz if user is not certified, and either there is no passing record or if the user clicked to retake the quiz
   const isTakingQuiz =
     !isCertified && (passingRecord == undefined || isRetakingQuiz)
@@ -72,6 +74,10 @@ const CertificationQuiz: React.FunctionComponent = () => {
       getQuiz()
     }
   }, [accessToken])
+
+  if (isLoadingPassingRecord || quiz == undefined) {
+    return <CertificationQuizSkeleton />
+  }
 
   const onUpdateAnswer = (questionIndex: number, answer: number) => {
     const newState = [
@@ -269,6 +275,28 @@ const CertificationQuiz: React.FunctionComponent = () => {
         )}
       </div>
     </div>
+  )
+}
+
+const CertificationQuizSkeleton: React.FunctionComponent = () => {
+  const questions = []
+  for (let i = 0; i < 20; i++) {
+    questions.push(
+      <li key={i}>
+        <SkeletonTable numCols={1} numRows={5} />
+      </li>,
+    )
+  }
+  return (
+    <>
+      <div>
+        <Skeleton height="80px" width="460px" />
+      </div>
+      <SkeletonParagraph numRows={5} />
+      <div className="CertificationQuiz__container">
+        <ol style={{ marginTop: '20px' }}>{questions}</ol>
+      </div>
+    </>
   )
 }
 
