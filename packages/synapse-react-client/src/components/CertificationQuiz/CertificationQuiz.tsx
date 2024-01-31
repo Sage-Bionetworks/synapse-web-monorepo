@@ -184,45 +184,58 @@ const CertificationQuiz: React.FunctionComponent = () => {
             <div dangerouslySetInnerHTML={{ __html: quiz.header }}></div>
             <form ref={formRef} onSubmit={e => e.preventDefault()}>
               <ol>
-                {quiz?.questions.map(question => (
-                  <li
-                    key={question.questionIndex}
-                    role={question.exclusive ? 'radiogroup' : undefined}
-                  >
-                    <Typography variant="body1" sx={{ marginTop: '20px' }}>
-                      <div
-                        dangerouslySetInnerHTML={{ __html: question.prompt }}
-                      ></div>
-                    </Typography>
-                    {question.answers.map(choice => (
-                      <CertificationAnswer
-                        key={`${question.questionIndex}-${choice.answerIndex}`}
-                        question={question}
-                        answer={choice}
-                        onClick={e =>
-                          onUpdateAnswer(
-                            question.questionIndex,
-                            Number(e.currentTarget.value),
-                          )
-                        }
-                      />
-                    ))}
-                    <MarkdownPopover
-                      contentProps={{ markdown: question.helpText }}
-                      placement="right"
-                      actionButton={actionButtonConfig(question.docLink)}
-                      showCloseButton={true}
+                {quiz?.questions.map(question => {
+                  const isHelp = question.helpText || question.docLink
+                  return (
+                    <li
+                      key={question.questionIndex}
+                      role={question.exclusive ? 'radiogroup' : undefined}
                     >
-                      <Typography variant="hintText" color="primary">
-                        <HelpOutlineTwoTone
-                          className="HelpButton"
-                          style={{ marginRight: '4px' }}
-                        />
-                        Need help answering this question?
+                      <Typography variant="body1" sx={{ marginTop: '20px' }}>
+                        <div
+                          dangerouslySetInnerHTML={{ __html: question.prompt }}
+                        ></div>
                       </Typography>
-                    </MarkdownPopover>
-                  </li>
-                ))}
+                      {question.answers.map(choice => (
+                        <CertificationAnswer
+                          key={`${question.questionIndex}-${choice.answerIndex}`}
+                          question={question}
+                          answer={choice}
+                          onClick={e =>
+                            onUpdateAnswer(
+                              question.questionIndex,
+                              Number(e.currentTarget.value),
+                            )
+                          }
+                        />
+                      ))}
+                      {isHelp && (
+                        <MarkdownPopover
+                          contentProps={{ markdown: question.helpText }}
+                          placement="right"
+                          sx={{
+                            table: {
+                              textAlign: 'center',
+                              th: {
+                                padding: '5px',
+                              },
+                            },
+                          }}
+                          actionButton={actionButtonConfig(question.docLink)}
+                          showCloseButton={true}
+                        >
+                          <Typography variant="hintText" color="primary">
+                            <HelpOutlineTwoTone
+                              className="HelpButton"
+                              style={{ marginRight: '4px' }}
+                            />
+                            Need help answering this question?
+                          </Typography>
+                        </MarkdownPopover>
+                      )}
+                    </li>
+                  )
+                })}
               </ol>
             </form>
             <Button
