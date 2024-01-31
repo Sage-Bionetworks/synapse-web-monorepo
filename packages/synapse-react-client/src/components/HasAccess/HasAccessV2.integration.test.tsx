@@ -21,6 +21,7 @@ import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import {
   mockOpenRestrictionInformation,
   mockUnmetControlledDataRestrictionInformationACT,
+  mockUnmetControlledDataRestrictionInformationRestricted,
 } from '../../mocks/mock_has_access_data'
 import { rest, server } from '../../mocks/msw/server'
 
@@ -37,6 +38,22 @@ const renderComponent = (
 }
 const props: HasAccessProps = {
   entityId,
+}
+
+const expectIcon = async (iconName: string, tooltipText: string) => {
+  const icon = await screen.findByRole('img')
+  expect(icon).toHaveAccessibleName(tooltipText)
+  expect(icon.getAttribute('data-svg')).toEqual(iconName)
+}
+const expectSignInButton = async () => {
+  const button = await screen.findByRole('button')
+  expect(button).toHaveTextContent('')
+  expect(button).toHaveClass(SRC_SIGN_IN_CLASS)
+}
+const expectArButton = async (linkText: string) => {
+  const button = await screen.findByRole('button')
+  expect(button).toHaveTextContent(linkText)
+  expect(button).not.toHaveClass(SRC_SIGN_IN_CLASS)
 }
 
 const onGetRestrictionInformation = jest.fn()
@@ -92,9 +109,7 @@ describe('HasAccess tests', () => {
 
     renderComponent(props)
 
-    expect((await screen.findByRole('img')).getAttribute('data-svg')).toEqual(
-      'accessOpen',
-    )
+    await expectIcon('accessOpen', '')
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
 
     const expectedRestrictionInformationRequest: RestrictionInformationRequest =
@@ -122,9 +137,7 @@ describe('HasAccess tests', () => {
 
     renderComponent(props)
 
-    expect((await screen.findByRole('img')).getAttribute('data-svg')).toEqual(
-      'accessOpen',
-    )
+    await expectIcon('accessOpen', '')
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
 
     const expectedRestrictionInformationRequest: RestrictionInformationRequest =
@@ -153,10 +166,10 @@ describe('HasAccess tests', () => {
 
       renderComponent(props)
 
-      const icon = await screen.findByRole('img', {
-        name: 'You do not have download access for this item.',
-      })
-      expect(icon.getAttribute('data-svg')).toEqual('accessClosed')
+      await expectIcon(
+        'accessClosed',
+        'You do not have download access for this item.',
+      )
       expect(screen.queryByRole('button')).not.toBeInTheDocument()
 
       const expectedRestrictionInformationRequest: RestrictionInformationRequest =
@@ -187,13 +200,8 @@ describe('HasAccess tests', () => {
 
       renderComponent(props, wrapperProps)
 
-      const icon = await screen.findByRole('img', {
-        name: 'You must sign in to access this file.',
-      })
-      expect(icon.getAttribute('data-svg')).toEqual('accessClosed')
-      // Sign in button is present
-      const signInButton = screen.getByRole('button')
-      expect(signInButton.classList.contains(SRC_SIGN_IN_CLASS)).toBe(true)
+      await expectIcon('accessClosed', 'You must sign in to access this file.')
+      await expectSignInButton()
 
       const expectedRestrictionInformationRequest: RestrictionInformationRequest =
         {
@@ -208,6 +216,35 @@ describe('HasAccess tests', () => {
   })
 
   describe('File is controlled by Access Requirements', () => {
+    it('User has ACL permissions, has restriction by terms of use, but does not have unmet ARs', async () => {
+      const entityBundle: EntityBundle = {
+        ...mockFileEntityBundle,
+        permissions: {
+          ...mockFileEntityBundle.permissions,
+          canDownload: true,
+        },
+      }
+      useMswEntityBundle(entityBundle)
+      useMswRestrictionInformation({
+        ...mockUnmetControlledDataRestrictionInformationRestricted,
+        hasUnmetAccessRequirement: false,
+      })
+
+      renderComponent(props)
+
+      await expectIcon('accessOpen', 'View Terms')
+      await expectArButton('View Terms')
+
+      const expectedRestrictionInformationRequest: RestrictionInformationRequest =
+        {
+          restrictableObjectType: RestrictableObjectType.ENTITY,
+          objectId: entityId,
+        }
+
+      expect(onGetRestrictionInformation).toHaveBeenLastCalledWith(
+        expectedRestrictionInformationRequest,
+      )
+    })
     it('User has ACL permissions but not AR permissions', async () => {
       const entityBundle: EntityBundle = {
         ...mockFileEntityBundle,
@@ -224,11 +261,11 @@ describe('HasAccess tests', () => {
 
       renderComponent(props)
 
-      const icon = await screen.findByRole('img', {
-        name: 'You must request access to this restricted file.',
-      })
-      expect(icon.getAttribute('data-svg')).toEqual('accessClosed')
-      expect(screen.queryByRole('button')).not.toBeInTheDocument()
+      await expectIcon(
+        'accessClosed',
+        'You must request access to this restricted file.',
+      )
+      await expectArButton('Request Access')
 
       const expectedRestrictionInformationRequest: RestrictionInformationRequest =
         {
@@ -261,12 +298,12 @@ describe('HasAccess tests', () => {
 
       renderComponent(props, wrapperProps)
 
-      const icon = await screen.findByRole('img', {
-        name: 'You must request access to this restricted file.',
-      })
-      expect(icon.getAttribute('data-svg')).toEqual('accessClosed')
+      await expectIcon(
+        'accessClosed',
+        'You must request access to this restricted file.',
+      )
       // User will be prompted to sign in in the AR modal
-      expect(screen.queryByRole('button')).not.toBeInTheDocument()
+      await expectArButton('Request Access')
 
       const expectedRestrictionInformationRequest: RestrictionInformationRequest =
         {
@@ -295,11 +332,11 @@ describe('HasAccess tests', () => {
 
       renderComponent(props)
 
-      const icon = await screen.findByRole('img', {
-        name: 'You must request access to this restricted file.',
-      })
-      expect(icon.getAttribute('data-svg')).toEqual('accessClosed')
-      expect(screen.queryByRole('button')).not.toBeInTheDocument()
+      await expectIcon(
+        'accessClosed',
+        'You must request access to this restricted file.',
+      )
+      await expectArButton('Request Access')
 
       const expectedRestrictionInformationRequest: RestrictionInformationRequest =
         {
@@ -310,6 +347,28 @@ describe('HasAccess tests', () => {
       expect(onGetRestrictionInformation).toHaveBeenLastCalledWith(
         expectedRestrictionInformationRequest,
       )
+    })
+    it('Can hide button text', async () => {
+      const entityBundle: EntityBundle = {
+        ...mockFileEntityBundle,
+        entity: mockFileEntityBundle.entity,
+        permissions: {
+          ...mockFileEntityBundle.permissions,
+          canDownload: false,
+        },
+      }
+      useMswEntityBundle(entityBundle)
+      useMswRestrictionInformation(
+        mockUnmetControlledDataRestrictionInformationACT,
+      )
+
+      renderComponent({ ...props, showButtonText: false })
+
+      await expectIcon(
+        'accessClosed',
+        'You must request access to this restricted file.',
+      )
+      await expectArButton('')
     })
   })
 

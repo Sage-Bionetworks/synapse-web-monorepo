@@ -18,7 +18,7 @@ import AccessRequirementList, {
   checkHasUnsupportedRequirement,
 } from '../AccessRequirementList/AccessRequirementList'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
-import { Theme, useTheme } from '@mui/material'
+import { Box, Button, Theme, useTheme } from '@mui/material'
 import { isFileEntity } from '../../utils/types/IsType'
 
 export type HasAccessProps = {
@@ -26,10 +26,14 @@ export type HasAccessProps = {
   entityId: string
   entityVersionNumber?: string
   className?: string
+  showButtonText?: boolean
 }
+
+const buttonSx = { p: '0px', minWidth: 'unset' }
 
 export enum FileHandleDownloadTypeEnum {
   Accessible = 'Accessible',
+  AccessibleWithTerms = 'AccessibleWithTerms',
   AccessBlockedByRestriction = 'AccessBlockedByRestriction',
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
@@ -54,6 +58,12 @@ const iconConfiguration: Record<
     icon: 'accessClosed',
     color: theme => theme.palette.warning.main,
     tooltipText: 'You do not have download access for this item.',
+  },
+
+  [FileHandleDownloadTypeEnum.AccessibleWithTerms]: {
+    icon: 'accessOpen',
+    color: theme => theme.palette.success.main,
+    tooltipText: 'View Terms',
   },
 
   [FileHandleDownloadTypeEnum.Accessible]: {
@@ -88,6 +98,13 @@ function AccessIcon(props: { downloadType: FileHandleDownloadTypeEnum }) {
   }
   // nothing is rendered until downloadType is determined
   return <></>
+}
+
+function isFileHandleDownloadTypeUndefined(
+  fileHandleDownloadType: FileHandleDownloadTypeEnum | undefined,
+) {
+  // note, this can't be "if (!downloadType)" since DownloadTypeEnum has a 0 value (which is falsy)
+  return fileHandleDownloadType === undefined
 }
 
 /**
@@ -142,7 +159,15 @@ export function useGetFileHandleDownloadType(
       )
     } else if (entity && permissions?.canDownload) {
       if (isFileEntity(entity) && entity.dataFileHandleId) {
-        setFileHandleDownloadType(FileHandleDownloadTypeEnum.Accessible)
+        if (
+          restrictionInformation?.restrictionLevel !== RestrictionLevel.OPEN
+        ) {
+          setFileHandleDownloadType(
+            FileHandleDownloadTypeEnum.AccessibleWithTerms,
+          )
+        } else {
+          setFileHandleDownloadType(FileHandleDownloadTypeEnum.Accessible)
+        }
       } else {
         setFileHandleDownloadType(FileHandleDownloadTypeEnum.NoFileHandle)
       }
@@ -175,7 +200,7 @@ export function HasAccessV2(props: HasAccessProps) {
     AccessRequirement[]
   >([])
 
-  const { entityId, entityVersionNumber } = props
+  const { entityId, entityVersionNumber, showButtonText = true } = props
 
   const fileHandleDownloadType = useGetFileHandleDownloadType(
     entityId,
@@ -219,9 +244,12 @@ export function HasAccessV2(props: HasAccessProps) {
 
   // Show Access Requirements
   const accessRequirementsJsx = useMemo(() => {
-    if (!restrictionInformation) {
+    if (
+      !restrictionInformation ||
+      isFileHandleDownloadTypeUndefined(fileHandleDownloadType)
+    ) {
       // loading
-      return <></>
+      return null
     }
     const hasUnmetAccessRequirement =
       restrictionInformation?.hasUnmetAccessRequirement
@@ -232,24 +260,20 @@ export function HasAccessV2(props: HasAccessProps) {
       linkText = 'Request Access'
     } else if (RestrictionLevel.OPEN === restrictionLevel) {
       // they need to sign in
-      return <></>
+      return null
     } else {
       linkText = 'View Terms'
     }
     return (
       <>
-        <a
-          style={{
-            fontSize: '14px',
-            cursor: 'pointer',
-            marginLeft: '5px',
-            verticalAlign: 'top',
-          }}
+        <Button
+          sx={buttonSx}
           className={props.className}
           onClick={handleGetAccess}
         >
-          {linkText}
-        </a>
+          <AccessIcon downloadType={fileHandleDownloadType!} />
+          {showButtonText && <Box ml="5px">{linkText}</Box>}
+        </Button>
         {displayAccessRequirement && (
           <AccessRequirementList
             entityId={entityId}
@@ -269,18 +293,19 @@ export function HasAccessV2(props: HasAccessProps) {
     displayAccessRequirement,
     handleGetAccess,
     props.className,
+    fileHandleDownloadType,
+    showButtonText,
   ])
 
-  if (fileHandleDownloadType === undefined) {
-    // note, this can't be "if (!downloadType)" since DownloadTypeEnum has a 0 value (which is falsy)
+  if (isFileHandleDownloadTypeUndefined(fileHandleDownloadType)) {
     // loading
     return <></>
   }
   const iconContainer =
     fileHandleDownloadType ===
     FileHandleDownloadTypeEnum.AccessBlockedToAnonymous ? (
-      <button
-        type="button"
+      <Button
+        sx={buttonSx}
         className={SRC_SIGN_IN_CLASS}
         onClick={ev => {
           if (ev.isTrusted) {
@@ -304,15 +329,14 @@ export function HasAccessV2(props: HasAccessProps) {
         }}
       >
         <AccessIcon downloadType={fileHandleDownloadType} />
-      </button>
+      </Button>
     ) : (
-      <AccessIcon downloadType={fileHandleDownloadType} />
+      <AccessIcon downloadType={fileHandleDownloadType!} />
     )
 
   return (
     <span style={{ whiteSpace: 'nowrap' }}>
-      {iconContainer}
-      {accessRequirementsJsx}
+      {accessRequirementsJsx ? accessRequirementsJsx : iconContainer}
     </span>
   )
 }
