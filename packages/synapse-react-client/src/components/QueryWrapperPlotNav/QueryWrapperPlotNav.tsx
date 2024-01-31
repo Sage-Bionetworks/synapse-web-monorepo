@@ -32,7 +32,7 @@ import FacetFilterControls, {
 } from '../widgets/query-filter/FacetFilterControls'
 import FilterAndView from './FilterAndView'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
-import { Box } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { TableQueryDownloadConfirmation } from '../download_list'
 import { useAtomValue } from 'jotai'
@@ -42,6 +42,7 @@ import QueryWrapperSynapsePlot, {
 } from './QueryWrapperSynapsePlot'
 import { QueryWrapperPlotNavCustomPlotParams } from '../Plot/SynapsePlot'
 import { hasSelectedRowsAtom } from '../QueryWrapper/TableRowSelectionState'
+import PlotsContainer from '../Plot/PlotsContainer'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -153,11 +154,16 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
+  const [areComponentsCollapsed, setAreComponentsCollapsed] = useState(false)
 
   const { isFacetsAvailable: isFaceted } = queryContext
   const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
 
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
+
+  const toggleComponentsCollapse = () => {
+    setAreComponentsCollapsed(prevState => !prevState)
+  }
   return (
     <QueryVisualizationContextConsumer>
       {queryVisualizationContext => {
@@ -221,15 +227,23 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                 <FacetFilterControls availableFacets={availableFacets} />
               </>
             )}
-            {customPlots && (
+
+            <PlotsContainer
+              facetsToPlot={facetsToPlot}
+              customPlots={customPlots}
+            />
+
+            {/* {customPlots && (
               <div className="SynapsePlots">
                 {customPlots.map((plotProps, index) => {
-                  return <QueryWrapperSynapsePlot key={index} {...plotProps} />
+                  return <QueryWrapperSynapsePlot 
+                  key={index} {...plotProps} />
                 })}
               </div>
             )}
 
-            <FacetNav facetsToPlot={facetsToPlot} />
+            <FacetNav facetsToPlot={facetsToPlot} /> */}
+
             <FilterAndView
               tableConfiguration={tableConfiguration}
               hideDownload={hideDownload}

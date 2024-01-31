@@ -57,8 +57,8 @@ export type QueryVisualizationContextType = {
   setShowSqlEditor: React.Dispatch<React.SetStateAction<boolean>>
   showCopyToClipboard: boolean
   setShowCopyToClipboard: React.Dispatch<React.SetStateAction<boolean>>
-  showFacetVisualization: boolean
-  setShowFacetVisualization: React.Dispatch<React.SetStateAction<boolean>>
+  showPlotVisualization: boolean
+  setShowPlotVisualization: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 /**
@@ -149,7 +149,7 @@ export function QueryVisualizationWrapper(
   const data = useAtomValue(tableQueryDataAtom)
 
   const [showSqlEditor, setShowSqlEditor] = useState(false)
-  const [showFacetVisualization, setShowFacetVisualization] = useState(
+  const [showPlotVisualization, setShowPlotVisualization] = useState(
     defaultShowFacetVisualization,
   )
   const [showCopyToClipboard, setShowCopyToClipboard] = useState(true)
@@ -263,10 +263,8 @@ export function QueryVisualizationWrapper(
       setShowDownloadConfirmation,
       showSqlEditor,
       setShowSqlEditor,
-      showFacetVisualization: isFacetsAvailable
-        ? showFacetVisualization
-        : false,
-      setShowFacetVisualization,
+      showPlotVisualization: isFacetsAvailable ? showPlotVisualization : false,
+      setShowPlotVisualization,
       showCopyToClipboard,
       setShowCopyToClipboard,
     }),
@@ -283,7 +281,7 @@ export function QueryVisualizationWrapper(
       showCopyToClipboard,
       showDownloadConfirmation,
       showFacetFilter,
-      showFacetVisualization,
+      showPlotVisualization,
       showSearchBar,
       showSqlEditor,
       unitDescription,

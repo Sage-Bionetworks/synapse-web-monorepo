@@ -111,7 +111,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     unitDescription,
     setShowDownloadConfirmation,
     showCopyToClipboard,
-    setShowFacetVisualization,
+    setShowPlotVisualization: setShowFacetVisualization,
     setShowSqlEditor,
     showFacetFilter,
     setShowFacetFilter,

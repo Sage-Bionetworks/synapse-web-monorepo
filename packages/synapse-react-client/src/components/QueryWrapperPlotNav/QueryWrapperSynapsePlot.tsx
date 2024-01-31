@@ -10,14 +10,19 @@ import {
   QueryFilter,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { FacetFilterHeader } from '../widgets/query-filter/FacetFilterHeader'
+import { IconButton, Tooltip } from '@mui/material'
+import IconSvg from '../IconSvg'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 
 export type QueryWrapperSynapsePlotProps = Pick<
   QueryWrapperPlotNavCustomPlotParams,
   'onCustomPlotClick'
 > &
-  Omit<SynapsePlotWidgetParams, 'selectedFacets' | 'additionalFilters'>
+  Omit<SynapsePlotWidgetParams, 'selectedFacets' | 'additionalFilters'> & {
+    // TODO: Split interfaces into external props and internal props,
+    // onHide should not be externalized
+    onHide?: () => void
+  }
 
 export type QueryWrapperSynapsePlotRowClickEvent = {
   row: Row
@@ -35,8 +40,9 @@ export default function QueryWrapperSynapsePlot(
 ) {
   const queryContext = useQueryContext()
   const { currentQueryRequest } = queryContext
-  const { title, onCustomPlotClick } = props
-  const { showFacetVisualization } = useQueryVisualizationContext()
+  const { title, onCustomPlotClick, onHide } = props // onhide() callback
+  const { showPlotVisualization: showFacetVisualization } =
+    useQueryVisualizationContext()
 
   const widgetParamsMapped: SynapsePlotWidgetParams = useMemo(() => {
     return {
@@ -61,12 +67,23 @@ export default function QueryWrapperSynapsePlot(
       {showFacetVisualization && (
         <>
           {title && (
-            <FacetFilterHeader
-              hideCollapsible={true}
-              label={title}
-              isCollapsed={false}
-              onClick={() => {}}
-            />
+            <div className="FacetNavPanel__title">
+              <span className="FacetNavPanel__title__name">{title}</span>
+              <div role="toolbar" className="FacetNavPanel__title__tools">
+                <Tooltip title={'Hide graph under Show More'}>
+                  <IconButton
+                    onClick={() => {
+                      if (onHide) {
+                        onHide()
+                      }
+                    }}
+                    size={'small'}
+                  >
+                    <IconSvg icon={'close'} wrap={false} fontSize={'inherit'} />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </div>
           )}
           <SynapsePlot
             synapsePlotWidgetParams={widgetParamsMapped}

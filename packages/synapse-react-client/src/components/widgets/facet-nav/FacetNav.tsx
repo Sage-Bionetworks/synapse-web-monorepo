@@ -22,7 +22,7 @@ import {
   tableQueryDataAtom,
 } from '../../QueryWrapper/QueryWrapper'
 import { UniqueFacetIdentifier } from '../../../utils/types/UniqueFacetIdentifier'
-
+import { UiPlotState, PlotIdentifier } from '../../Plot/PlotsContainer'
 /*
 TODO: This component has a few bugs when its props are updated with new data, this should be handled
 at some point. As of the moment the portal doesn't have a case when the props will update,
@@ -30,19 +30,25 @@ it will always mount this component.
 */
 
 export type FacetNavProps = {
-  facetsToPlot?: string[]
-}
-
-type UiFacetState = {
   facet: UniqueFacetIdentifier
-  isHidden: boolean
-  plotType: PlotType
-  index?: number
+  facetsToPlot?: string[]
+  facetUiStateArray: UiPlotState[]
+  setFacetUiStateArray: React.Dispatch<React.SetStateAction<UiPlotState[]>>
+  hidePlotInGrid: (plotId: PlotIdentifier) => void
+  setPlotType: (plotId: PlotIdentifier, plotType: PlotType) => void
+  getPlotType: (plotId: PlotIdentifier) => PlotType
+  plotMatchesDefinition: (
+    definition: PlotIdentifier,
+    plotId: PlotIdentifier,
+  ) => boolean
 }
 
-const DEFAULT_VISIBLE_FACETS = 2
-
-type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
+// type UiPlotState = {
+//   plotId: UniqueFacetIdentifier
+//   isHidden: boolean
+//   plotType: PlotType
+//   index?: number
+// }
 
 export function getFacets(
   data: QueryResultBundle | undefined,
@@ -63,47 +69,29 @@ export function getFacets(
   return result
 }
 
-const FacetNav: React.FunctionComponent<FacetNavProps> = ({
-  facetsToPlot,
-}: FacetNavProps): JSX.Element => {
+const FacetNav: React.FunctionComponent<FacetNavProps> = (
+  props: FacetNavProps,
+): JSX.Element => {
+  const {
+    facet,
+    facetUiStateArray,
+    setFacetUiStateArray,
+    facetsToPlot,
+    hidePlotInGrid,
+    setPlotType,
+    getPlotType,
+    plotMatchesDefinition,
+  } = props
   const { getCurrentQueryRequest, executeQueryRequest, error } =
     useQueryContext()
   const data = useAtomValue(tableQueryDataAtom)
-  const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
-  const { showFacetVisualization } = useQueryVisualizationContext()
-  const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
 
   const lastQueryRequest = getCurrentQueryRequest()
+
   const facets = useMemo(
     () => getFacets(data, facetsToPlot),
     [data, facetsToPlot],
   )
-
-  useEffect(() => {
-    if (facets.length > 0 && facetUiStateArray.length === 0) {
-      setFacetUiStateArray(
-        facets.map((item, index) => ({
-          facet: { columnName: item.columnName, jsonPath: item.jsonPath },
-          isHidden: index >= DEFAULT_VISIBLE_FACETS,
-          plotType: 'PIE',
-        })),
-      )
-    }
-  }, [facetUiStateArray.length, facets])
-
-  // when 'show more/less' is clicked
-  const onShowMoreClick = (shouldShowMore: boolean) => {
-    setFacetUiStateArray(facetUiStateArray => {
-      return facetUiStateArray.map((item, index) => {
-        if (shouldShowMore) {
-          // show everything
-          return { ...item, isHidden: false }
-        }
-        // otherwise hide everything except the first three items
-        return { ...item, isHidden: index >= DEFAULT_VISIBLE_FACETS }
-      })
-    })
-  }
 
   // what needs to happen after the filters are adjusted from the plot
   const applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
@@ -117,59 +105,35 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     )
   }
 
-  // don't show hidden facets
-  const isFacetHiddenInGrid = (facet: UniqueFacetIdentifier) => {
-    const itemHidden = facetUiStateArray.find(
-      item =>
-        facetObjectMatchesDefinition(facet, item.facet) &&
-        item.isHidden === true,
-    )
-    const result = itemHidden !== undefined
-    return result
-  }
-
-  const showMoreButtonState = useMemo<ShowMoreState>(() => {
-    if (
-      // if at least one item is hidden
-      facetUiStateArray.find(item => item.isHidden === true)
-    ) {
-      return 'MORE'
-    } else if (facetUiStateArray.length <= DEFAULT_VISIBLE_FACETS) {
-      return 'NONE'
-    } else {
-      return 'LESS'
-    }
-  }, [facetUiStateArray])
-
   // hides facet graph
-  const hideFacetInGrid = (facet: UniqueFacetIdentifier) => {
-    setUiPropertyForFacet(facet, 'isHidden', true)
-  }
+  // const hideFacetInGrid = (facet: UniqueFacetIdentifier) => {
+  //   setUiPropertyForFacet(facet, 'isHidden', true)
+  // }
 
-  const setPlotType = (facet: UniqueFacetIdentifier, plotType: PlotType) => {
-    setUiPropertyForFacet(facet, 'plotType', plotType)
-  }
+  // const setPlotType = (facet: UniqueFacetIdentifier, plotType: PlotType) => {
+  //   setUiPropertyForFacet(facet, 'plotType', plotType)
+  // }
 
-  const getPlotType = (facet: UniqueFacetIdentifier): PlotType => {
-    const plotType = facetUiStateArray.find(item =>
-      facetObjectMatchesDefinition(facet, item.facet),
-    )?.plotType
-    return plotType ?? 'PIE'
-  }
+  // const getPlotType = (facet: UniqueFacetIdentifier): PlotType => {
+  //   const plotType = facetUiStateArray.find(item =>
+  //     facetObjectMatchesDefinition(facet, item.plotId),
+  //   )?.plotType
+  //   return plotType ?? 'PIE'
+  // }
 
-  const setUiPropertyForFacet = (
-    facet: UniqueFacetIdentifier,
-    propName: keyof UiFacetState,
-    value: boolean | PlotType, // 'the possible values of the above type' (currently can't be specified in TS using symbols)
-  ) => {
-    setFacetUiStateArray(facetUiStateArray =>
-      facetUiStateArray.map(item =>
-        facetObjectMatchesDefinition(facet, item.facet)
-          ? { ...item, [propName]: value }
-          : item,
-      ),
-    )
-  }
+  // const setUiPropertyForFacet = (
+  //   facet: UniqueFacetIdentifier,
+  //   propName: keyof UiPlotState,
+  //   value: boolean | PlotType, // 'the possible values of the above type' (currently can't be specified in TS using symbols)
+  // ) => {
+  //   setFacetUiStateArray(facetUiStateArray =>
+  //     facetUiStateArray.map(item =>
+  //       facetObjectMatchesDefinition(facet, item.plot)
+  //         ? { ...item, [propName]: value }
+  //         : item,
+  //     ),
+  //   )
+  // }
 
   const colorTracker: { facet: UniqueFacetIdentifier; colorIndex: number }[] =
     getFacets(data, facetsToPlot).map((el, index) => {
@@ -178,100 +142,44 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
         colorIndex: index,
       }
     })
-  const hasFacetsOrFilters =
-    (lastQueryRequest?.query.selectedFacets !== undefined &&
-      lastQueryRequest.query.selectedFacets.length > 0) ||
-    (lastQueryRequest?.query.additionalFilters !== undefined &&
-      lastQueryRequest?.query.additionalFilters.length > 0)
-  if (error || (!data && isLoadingNewBundle)) {
-    return <></>
-  } else {
-    return (
-      <>
-        <TotalQueryResults
-          frontText={''}
-          endText={hasFacetsOrFilters ? 'filtered by' : ''}
-          hideIfUnfiltered={true}
-        />
-        {facets.length > 0 && (
-          <div
-            className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${
-              showMoreButtonState === 'LESS' ? 'less' : ''
-            }`}
-          >
-            <div className="FacetNav__row" role="list">
-              {facets.map(facet => (
-                <div
-                  style={{
-                    minWidth: '435px',
-                    display: isFacetHiddenInGrid(facet) ? 'none' : 'block',
-                  }}
-                  key={`${facet.columnName}-${facet.jsonPath}`}
-                >
-                  <FacetNavPanel
-                    index={
-                      colorTracker.find(el =>
-                        facetObjectMatchesDefinition(el.facet, facet),
-                      )?.colorIndex!
-                    }
-                    onHide={() => hideFacetInGrid(facet)}
-                    plotType={getPlotType(facet)}
-                    onSetPlotType={(plotType: PlotType) =>
-                      setPlotType(facet, plotType)
-                    }
-                    facetToPlot={facet as FacetColumnResultValues}
-                    /*
-                      TODO: Simplify the nested functions below, all the logic should be contained
-                      in the EnumFacetFilter component.
-                    */
-                    applyChangesToFacetFilter={applyChangesFromQueryFilter}
-                    applyChangesToGraphSlice={(
-                      facet: FacetColumnResultValues,
-                      value: FacetColumnResultValueCount | undefined,
-                      isSelected: boolean,
-                    ) =>
-                      applyChangesToValuesColumn(
-                        lastQueryRequest,
-                        facet,
-                        applyChangesFromQueryFilter,
-                        value?.value,
-                        isSelected,
-                      )
-                    }
-                    isModalView={false}
-                  />
-                </div>
-              ))}
-            </div>
-            {showMoreButtonState !== 'NONE' && (
-              <Box
-                display="flex"
-                justifyContent="center"
-                sx={{
-                  backgroundColor: 'grey.100',
-                  p: 2,
-                  mt: 2,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() =>
-                    onShowMoreClick(showMoreButtonState === 'MORE')
-                  }
-                  sx={{ width: '150px' }}
-                >
-                  {showMoreButtonState === 'LESS'
-                    ? 'Hide Charts'
-                    : 'View All Charts'}
-                </Button>
-              </Box>
-            )}
-          </div>
-        )}
-      </>
-    )
-  }
+
+  return (
+    <FacetNavPanel
+      // plot related
+      index={
+        colorTracker.find(el => plotMatchesDefinition(el.facet, facet))
+          ?.colorIndex!
+      }
+      onHide={() => hidePlotInGrid(facet)}
+      // plot related
+      plotType={getPlotType(facet)}
+      // plot related
+      onSetPlotType={(plotType: PlotType) => setPlotType(facet, plotType)}
+      // facet related
+      facetToPlot={facet as FacetColumnResultValues}
+      /*
+        TODO: Simplify the nested functions below, all the logic should be contained
+        in the EnumFacetFilter component.
+      */
+      // facet related
+      applyChangesToFacetFilter={applyChangesFromQueryFilter}
+      applyChangesToGraphSlice={(
+        facet: FacetColumnResultValues,
+        value: FacetColumnResultValueCount | undefined,
+        isSelected: boolean,
+      ) =>
+        applyChangesToValuesColumn(
+          lastQueryRequest,
+          facet,
+          applyChangesFromQueryFilter,
+          value?.value,
+          isSelected,
+        )
+      }
+      // plot related
+      isModalView={false}
+    />
+  )
 }
 
 export default FacetNav
