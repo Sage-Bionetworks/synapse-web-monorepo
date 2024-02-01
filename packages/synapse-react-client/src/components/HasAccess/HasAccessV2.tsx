@@ -100,13 +100,6 @@ function AccessIcon(props: { downloadType: FileHandleDownloadTypeEnum }) {
   return <></>
 }
 
-function isFileHandleDownloadTypeUndefined(
-  fileHandleDownloadType: FileHandleDownloadTypeEnum | undefined,
-) {
-  // note, this can't be "if (!downloadType)" since DownloadTypeEnum has a 0 value (which is falsy)
-  return fileHandleDownloadType === undefined
-}
-
 /**
  * Determines whether an Entity is accessible for download, or if it is blocked by the ACL or unmet Access Requirements.
  *
@@ -242,68 +235,10 @@ export function HasAccessV2(props: HasAccessProps) {
     )
   }, [accessToken, entityId])
 
-  // Show Access Requirements
-  const accessRequirementsJsx = useMemo(() => {
-    if (
-      !restrictionInformation ||
-      isFileHandleDownloadTypeUndefined(fileHandleDownloadType)
-    ) {
-      // loading
-      return null
-    }
-    const hasUnmetAccessRequirement =
-      restrictionInformation?.hasUnmetAccessRequirement
-    const restrictionLevel = restrictionInformation?.restrictionLevel
-    let linkText = ''
-
-    if (hasUnmetAccessRequirement) {
-      linkText = 'Request Access'
-    } else if (RestrictionLevel.OPEN === restrictionLevel) {
-      // they need to sign in
-      return null
-    } else {
-      linkText = 'View Terms'
-    }
-    return (
-      <>
-        <Button
-          sx={buttonSx}
-          className={props.className}
-          onClick={handleGetAccess}
-        >
-          <AccessIcon downloadType={fileHandleDownloadType!} />
-          {showButtonText && <Box ml="5px">{linkText}</Box>}
-        </Button>
-        {displayAccessRequirement && (
-          <AccessRequirementList
-            entityId={entityId}
-            accessRequirementFromProps={accessRequirements}
-            renderAsModal={true}
-            onHide={() => {
-              setDisplayAccessRequirement(false)
-            }}
-          />
-        )}
-      </>
-    )
-  }, [
-    entityId,
-    restrictionInformation,
-    accessRequirements,
-    displayAccessRequirement,
-    handleGetAccess,
-    props.className,
-    fileHandleDownloadType,
-    showButtonText,
-  ])
-
-  if (isFileHandleDownloadTypeUndefined(fileHandleDownloadType)) {
-    // loading
-    return <></>
-  }
-  const iconContainer =
-    fileHandleDownloadType ===
-    FileHandleDownloadTypeEnum.AccessBlockedToAnonymous ? (
+  // Sign-in wrapped icon or icon alone
+  const iconContainer = useMemo(() => {
+    return fileHandleDownloadType ===
+      FileHandleDownloadTypeEnum.AccessBlockedToAnonymous ? (
       <Button
         sx={buttonSx}
         className={SRC_SIGN_IN_CLASS}
@@ -333,10 +268,69 @@ export function HasAccessV2(props: HasAccessProps) {
     ) : (
       <AccessIcon downloadType={fileHandleDownloadType!} />
     )
+  }, [fileHandleDownloadType])
+
+  // Access Requirements icon or Icon Container
+  const accessRequirementsJsxOrIconContainer = useMemo(() => {
+    if (!restrictionInformation || !fileHandleDownloadType) {
+      // loading
+      return <></>
+    }
+    const hasUnmetAccessRequirement =
+      restrictionInformation?.hasUnmetAccessRequirement
+    const restrictionLevel = restrictionInformation?.restrictionLevel
+    let linkText = ''
+
+    if (hasUnmetAccessRequirement) {
+      linkText = 'Request Access'
+    } else if (RestrictionLevel.OPEN === restrictionLevel) {
+      // they need to sign in
+      return iconContainer
+    } else {
+      linkText = 'View Terms'
+    }
+    return (
+      <>
+        <Button
+          sx={buttonSx}
+          className={props.className}
+          onClick={handleGetAccess}
+        >
+          <AccessIcon downloadType={fileHandleDownloadType} />
+          {showButtonText && <Box ml="5px">{linkText}</Box>}
+        </Button>
+        {displayAccessRequirement && (
+          <AccessRequirementList
+            entityId={entityId}
+            accessRequirementFromProps={accessRequirements}
+            renderAsModal={true}
+            onHide={() => {
+              setDisplayAccessRequirement(false)
+            }}
+          />
+        )}
+      </>
+    )
+  }, [
+    entityId,
+    restrictionInformation,
+    accessRequirements,
+    displayAccessRequirement,
+    handleGetAccess,
+    props.className,
+    fileHandleDownloadType,
+    showButtonText,
+    iconContainer,
+  ])
+
+  if (!fileHandleDownloadType) {
+    // loading
+    return <></>
+  }
 
   return (
     <span style={{ whiteSpace: 'nowrap' }}>
-      {accessRequirementsJsx ? accessRequirementsJsx : iconContainer}
+      {accessRequirementsJsxOrIconContainer}
     </span>
   )
 }
