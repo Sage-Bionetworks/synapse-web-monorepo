@@ -33,6 +33,7 @@ jest.mock('../../synapse-queries/user/useCertificationQuiz', () => {
     useGetPassingRecord: jest.fn(),
   }
 })
+
 const mockUsePostCertifiedUserTestResponse =
   usePostCertifiedUserTestResponse as jest.Mock
 const mockUseGetPassingRecord = useGetPassingRecord as jest.Mock

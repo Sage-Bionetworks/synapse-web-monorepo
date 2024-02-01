@@ -60,11 +60,10 @@ const CertificationQuiz: React.FunctionComponent = () => {
   const { mutate: postCertifiedUserTestResponse, isLoading: isSubmitting } =
     usePostCertifiedUserTestResponse({
       onSuccess: () => {
+        setIsRetakingQuiz(false)
         window.scrollTo(0, 0)
       },
-      onError: e => {
-        handleError(e)
-      },
+      useErrorBoundary: true,
     })
   // user is taking the quiz if user is not certified, and either there is no passing record or if the user clicked to retake the quiz
   const isTakingQuiz =
@@ -191,10 +190,12 @@ const CertificationQuiz: React.FunctionComponent = () => {
                       key={question.questionIndex}
                       role={question.exclusive ? 'radiogroup' : undefined}
                     >
-                      <div
+                      <Typography
+                        component={'div'}
+                        variant={'body1'}
                         dangerouslySetInnerHTML={{ __html: question.prompt }}
-                        style={{ marginTop: '20px' }}
-                      ></div>
+                        sx={{ marginTop: '20px' }}
+                      />
                       {question.answers.map(choice => (
                         <CertificationAnswer
                           key={`${question.questionIndex}-${choice.answerIndex}`}
@@ -261,13 +262,15 @@ const CertificationQuiz: React.FunctionComponent = () => {
                 responseCorrectness.response as MultichoiceResponse
               return (
                 <li key={question.questionIndex}>
-                  <div
+                  <Typography
+                    component={'div'}
+                    variant={'body1'}
                     dangerouslySetInnerHTML={{ __html: question.prompt }}
-                    style={{ marginTop: '20px' }}
                     className={
                       responseCorrectness.isCorrect ? '' : 'incorrectQuestion'
                     }
-                  ></div>
+                    sx={{ marginTop: '20px' }}
+                  />
                   {question.answers.map(choice => (
                     <CertificationAnswer
                       key={`${question.questionIndex}-${choice.answerIndex}`}

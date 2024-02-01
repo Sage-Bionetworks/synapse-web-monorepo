@@ -3,6 +3,7 @@ import {
   MultichoiceAnswer,
   MultichoiceQuestion,
 } from '@sage-bionetworks/synapse-types'
+import { Typography } from '@mui/material'
 
 export type CertificationAnswerProps = {
   question: MultichoiceQuestion
@@ -25,12 +26,14 @@ export default function CertificationAnswer(props: CertificationAnswerProps) {
         checked={checked}
         disabled={disabled}
       />
-      <label
-        style={{ fontWeight: 400 }}
+      <Typography
+        variant={'label'}
+        component={'label'}
+        sx={{ fontWeight: 400 }}
         htmlFor={`${question.questionIndex}-${answer.answerIndex}`}
       >
         {answer.prompt}
-      </label>
+      </Typography>
     </div>
   )
 }
