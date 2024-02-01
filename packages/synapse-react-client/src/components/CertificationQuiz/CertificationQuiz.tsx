@@ -2,31 +2,50 @@ import React, { useEffect, useState } from 'react'
 import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
-  PassingRecord,
   QuizResponse,
   Quiz,
+  MultichoiceQuestion,
+  MultichoiceResponse,
 } from '@sage-bionetworks/synapse-types'
 import {
   MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
   QuestionResponse,
 } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import { Button, Link } from '@mui/material'
+import { Alert, AlertTitle, Button, Link, Skeleton } from '@mui/material'
 import { MarkdownPopover } from '../Markdown/MarkdownPopover'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import { ButtonProps, Typography } from '@mui/material'
 import { useErrorHandler } from 'react-error-boundary'
+import { useGetCurrentUserBundle } from '../../synapse-queries'
+import { USER_BUNDLE_MASK_IS_CERTIFIED } from '../../utils/SynapseConstants'
+import {
+  useGetPassingRecord,
+  usePostCertifiedUserTestResponse,
+} from '../../synapse-queries/user/useCertificationQuiz'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import dayjs from 'dayjs'
+import CertificationAnswer from './CertificationAnswer'
+import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
 
 const CertificationQuiz: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   const [quiz, setQuiz] = useState<Quiz | undefined>()
+  const [isRetakingQuiz, setIsRetakingQuiz] = useState(false)
   const [questionResponse, setQuestionResponse] = useState<QuestionResponse[]>(
     [],
   )
-  const [passingRecord, setPassingRecord] = useState<PassingRecord>()
+  const { data: currentUserBundle } = useGetCurrentUserBundle(
+    USER_BUNDLE_MASK_IS_CERTIFIED,
+  )
+  const isCertified = currentUserBundle?.isCertified
+  const userId = currentUserBundle?.userId
+  const { data: passingRecord, isLoading: isLoadingPassingRecord } =
+    useGetPassingRecord(userId, {
+      enabled: userId !== undefined,
+    })
   const formRef = React.useRef<HTMLFormElement>(null)
-
   const GETTING_STARTED_URL =
     'https://help.synapse.org/docs/Getting-Started.2055471150.html'
 
@@ -38,9 +57,26 @@ const CertificationQuiz: React.FunctionComponent = () => {
     }
   }
 
+  const { mutate: postCertifiedUserTestResponse, isLoading: isSubmitting } =
+    usePostCertifiedUserTestResponse({
+      onSuccess: () => {
+        setIsRetakingQuiz(false)
+        window.scrollTo(0, 0)
+      },
+      useErrorBoundary: true,
+    })
+  // user is taking the quiz if user is not certified, and either there is no passing record or if the user clicked to retake the quiz
+  const isTakingQuiz =
+    !isCertified && (passingRecord == undefined || isRetakingQuiz)
   useEffect(() => {
-    getQuiz()
+    if (accessToken) {
+      getQuiz()
+    }
   }, [accessToken])
+
+  if (isLoadingPassingRecord || quiz == undefined) {
+    return <CertificationQuizSkeleton />
+  }
 
   const onUpdateAnswer = (questionIndex: number, answer: number) => {
     const newState = [
@@ -56,24 +92,19 @@ const CertificationQuiz: React.FunctionComponent = () => {
 
   const handleRetakeQuiz = () => {
     formRef.current?.reset()
+    setIsRetakingQuiz(true)
     setQuestionResponse([])
-    setPassingRecord(undefined)
     getQuiz()
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     try {
       if (quiz && quiz.questions.length === questionResponse.length) {
         const quizResponse: QuizResponse = {
           quizId: quiz.id,
           questionResponses: questionResponse,
         }
-        const passRec = await SynapseClient.postCertifiedUserTestResponse(
-          accessToken,
-          quizResponse,
-        )
-        setPassingRecord(passRec)
-        window.scrollTo(0, 0)
+        postCertifiedUserTestResponse(quizResponse)
       } else {
         displayToast(
           'Please answer all of the questions and try again.',
@@ -94,26 +125,15 @@ const CertificationQuiz: React.FunctionComponent = () => {
           color: 'primary' as ButtonProps['color'],
         }
       : undefined
-
   return (
-    <div className="bootstrap-4-backport CertificationQuiz">
-      {passingRecord && (
-        <div>
-          <>
-            {!passingRecord.passed && (
-              <div className="failBanner">Quiz Failed</div>
-            )}
-            <Typography variant="hintText">
-              Score: {passingRecord.score} / {quiz?.questions.length}
-            </Typography>
-            {passingRecord.passed ? (
-              displayToast(
-                `You passed the Synapse Certification Quiz on ${passingRecord.passedOn}`,
-                'success',
-              )
-            ) : (
-              <Typography variant="body1">
-                Please review the items shown in red below, and{' '}
+    <div>
+      {passingRecord && !isTakingQuiz && (
+        <>
+          {(!passingRecord.passed || !isCertified) && (
+            <Alert severity="error">
+              {!passingRecord.passed && <AlertTitle>Quiz Failed</AlertTitle>}
+              <Typography variant="body1" sx={{ marginTop: '5px' }}>
+                Please review the results from the previous attempt, and{' '}
                 <Link
                   href="#"
                   onClick={e => {
@@ -121,107 +141,176 @@ const CertificationQuiz: React.FunctionComponent = () => {
                     handleRetakeQuiz()
                   }}
                 >
-                  try again
+                  retake the quiz
                 </Link>
                 .
               </Typography>
-            )}
-          </>
-        </div>
+            </Alert>
+          )}
+          {passingRecord.passed && isCertified && (
+            <Alert severity="success">
+              <AlertTitle>Quiz Passed</AlertTitle>
+              <Typography variant="body1" sx={{ marginTop: '5px' }}>
+                {`You passed the Synapse Certification Quiz on ${formatDate(
+                  dayjs(passingRecord.passedOn),
+                )}`}
+              </Typography>
+            </Alert>
+          )}
+          <Typography
+            variant="sectionTitle"
+            sx={{ marginTop: '20px', marginBottom: '20px' }}
+          >
+            Score: {passingRecord.score} / {quiz?.questions.length}
+          </Typography>
+        </>
       )}
       <div className="CertificationQuiz__container">
-        <Button
-          onClick={() => window.open(GETTING_STARTED_URL, '_blank')}
-          className="help-button"
-          color="secondary"
-          variant="contained"
-        >
-          <HelpOutlineTwoTone
-            className="HelpButton"
-            style={{ marginRight: '4px' }}
-          />
-          Help
-        </Button>
-        {quiz ? (
-          <div dangerouslySetInnerHTML={{ __html: quiz.header }}></div>
-        ) : (
-          ''
-        )}
-        <form ref={formRef} onSubmit={e => e.preventDefault()}>
-          <ol>
-            {quiz?.questions.map(question => (
-              <li
-                key={question.questionIndex}
-                role={question.exclusive ? 'radiogroup' : undefined}
-              >
-                <div
-                  dangerouslySetInnerHTML={{ __html: question.prompt }}
-                  className={
-                    passingRecord &&
-                    (passingRecord.corrections?.find(
-                      quest =>
-                        quest.question.questionIndex === question.questionIndex,
-                    )?.isCorrect
-                      ? ''
-                      : 'incorrectQuestion')
-                  }
-                ></div>
-                {question.answers.map(choice => (
-                  <div key={`${question.questionIndex}-${choice.answerIndex}`}>
-                    <input
-                      id={`${question.questionIndex}-${choice.answerIndex}`}
-                      name={`${question.questionIndex}`}
-                      type={question.exclusive ? 'radio' : 'checkbox'}
-                      value={choice.answerIndex}
-                      onClick={e =>
-                        onUpdateAnswer(
-                          question.questionIndex,
-                          Number(e.currentTarget.value),
-                        )
-                      }
-                      disabled={!!passingRecord}
-                    />
-                    <label
-                      style={{ fontWeight: 400 }}
-                      htmlFor={`${question.questionIndex}-${choice.answerIndex}`}
+        {quiz && isTakingQuiz && (
+          <>
+            <Button
+              onClick={() => window.open(GETTING_STARTED_URL, '_blank')}
+              className="help-button"
+              color="secondary"
+              variant="contained"
+            >
+              <HelpOutlineTwoTone
+                className="HelpButton"
+                style={{ marginRight: '4px' }}
+              />
+              Help
+            </Button>
+            <div dangerouslySetInnerHTML={{ __html: quiz.header }}></div>
+            <form ref={formRef} onSubmit={e => e.preventDefault()}>
+              <ol>
+                {quiz?.questions.map(question => {
+                  const isHelp = question.helpText || question.docLink
+                  return (
+                    <li
+                      key={question.questionIndex}
+                      role={question.exclusive ? 'radiogroup' : undefined}
                     >
-                      {choice.prompt}
-                    </label>
-                  </div>
-                ))}
-                <MarkdownPopover
-                  contentProps={{ markdown: question.helpText }}
-                  placement="right"
-                  actionButton={actionButtonConfig(question.docLink)}
-                  showCloseButton={true}
-                >
-                  <Typography variant="hintText" color="primary">
-                    <HelpOutlineTwoTone
-                      className="HelpButton"
-                      style={{ marginRight: '4px' }}
+                      <Typography
+                        component={'div'}
+                        variant={'body1'}
+                        dangerouslySetInnerHTML={{ __html: question.prompt }}
+                        sx={{ marginTop: '20px' }}
+                      />
+                      {question.answers.map(choice => (
+                        <CertificationAnswer
+                          key={`${question.questionIndex}-${choice.answerIndex}`}
+                          question={question}
+                          answer={choice}
+                          onClick={e =>
+                            onUpdateAnswer(
+                              question.questionIndex,
+                              Number(e.currentTarget.value),
+                            )
+                          }
+                        />
+                      ))}
+                      {isHelp && (
+                        <MarkdownPopover
+                          contentProps={{ markdown: question.helpText }}
+                          placement="right"
+                          sx={{
+                            table: {
+                              textAlign: 'center',
+                              th: {
+                                padding: '5px',
+                              },
+                            },
+                          }}
+                          actionButton={actionButtonConfig(question.docLink)}
+                          showCloseButton={true}
+                        >
+                          <Typography variant="hintText" color="primary">
+                            <HelpOutlineTwoTone
+                              className="HelpButton"
+                              style={{ marginRight: '4px' }}
+                            />
+                            Need help answering this question?
+                          </Typography>
+                        </MarkdownPopover>
+                      )}
+                    </li>
+                  )
+                })}
+              </ol>
+            </form>
+            <Button
+              className="help-button"
+              color="primary"
+              variant="contained"
+              size="large"
+              disabled={isSubmitting}
+              onClick={() => {
+                handleSubmit()
+              }}
+            >
+              Submit
+            </Button>
+          </>
+        )}
+
+        {!isTakingQuiz && passingRecord?.corrections && (
+          <ol>
+            {passingRecord.corrections.map(responseCorrectness => {
+              const question =
+                responseCorrectness.question as MultichoiceQuestion
+              const response =
+                responseCorrectness.response as MultichoiceResponse
+              return (
+                <li key={question.questionIndex}>
+                  <Typography
+                    component={'div'}
+                    variant={'body1'}
+                    dangerouslySetInnerHTML={{ __html: question.prompt }}
+                    className={
+                      responseCorrectness.isCorrect ? '' : 'incorrectQuestion'
+                    }
+                    sx={{ marginTop: '20px' }}
+                  />
+                  {question.answers.map(choice => (
+                    <CertificationAnswer
+                      key={`${question.questionIndex}-${choice.answerIndex}`}
+                      question={question}
+                      answer={choice}
+                      disabled={true}
+                      checked={response.answerIndex.includes(
+                        choice.answerIndex,
+                      )}
                     />
-                    Need help answering this question?
-                  </Typography>
-                </MarkdownPopover>
-              </li>
-            ))}
+                  ))}
+                </li>
+              )
+            })}
           </ol>
-        </form>
-        {!passingRecord && (
-          <Button
-            className="help-button"
-            color="primary"
-            variant="contained"
-            size="large"
-            onClick={() => {
-              handleSubmit()
-            }}
-          >
-            Submit
-          </Button>
         )}
       </div>
     </div>
+  )
+}
+
+const CertificationQuizSkeleton: React.FunctionComponent = () => {
+  const questions = []
+  for (let i = 0; i < 20; i++) {
+    questions.push(
+      <li key={i}>
+        <SkeletonTable numCols={1} numRows={5} />
+      </li>,
+    )
+  }
+  return (
+    <>
+      <div>
+        <Skeleton height="80px" width="460px" />
+      </div>
+      <SkeletonParagraph numRows={5} />
+      <div className="CertificationQuiz__container">
+        <ol style={{ marginTop: '20px' }}>{questions}</ol>
+      </div>
+    </>
   )
 }
 

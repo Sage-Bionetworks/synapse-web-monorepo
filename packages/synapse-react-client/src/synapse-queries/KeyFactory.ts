@@ -30,6 +30,15 @@ import {
 import { QueryKey } from 'react-query'
 import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
 import { hashCode } from '../utils/functions/StringUtils'
+import {
+  USER_BUNDLE_MASK_IS_ACT_MEMBER,
+  USER_BUNDLE_MASK_IS_AR_REVIEWER,
+  USER_BUNDLE_MASK_IS_CERTIFIED,
+  USER_BUNDLE_MASK_IS_VERIFIED,
+  USER_BUNDLE_MASK_ORCID,
+  USER_BUNDLE_MASK_USER_PROFILE,
+  USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
+} from '../utils/SynapseConstants'
 
 const entityQueryKeyObjects = {
   /* Query key for all entities */
@@ -635,6 +644,9 @@ export class KeyFactory {
   public getUserChallengesQueryKey(userId: string) {
     return this.getKey('userChallenges', userId)
   }
+  public getPassingRecordQueryKey(userId: string) {
+    return this.getKey('passingRecord', userId)
+  }
 
   public getSubmissionTeamsQueryKey(challengeId: string) {
     return this.getKey('submissionTeams', challengeId)
@@ -667,8 +679,32 @@ export class KeyFactory {
     return this.getKey('user', 'current', 'profile')
   }
 
-  public getUserBundleQueryKey(userId: string, mask?: number) {
-    return this.getKey('user', userId, 'bundle', mask)
+  public getUserBundleQueryKey(userId: string, mask: number) {
+    // Convert the mask into an object, where the field is only included (with value true) iff the bit in the mask is set
+    const maskObject = {
+      ...((mask & USER_BUNDLE_MASK_USER_PROFILE) !== 0
+        ? { isUserProfile: true }
+        : undefined),
+      ...((mask & USER_BUNDLE_MASK_ORCID) !== 0
+        ? { isOrcId: true }
+        : undefined),
+      ...((mask & USER_BUNDLE_MASK_VERIFICATION_SUBMISSION) !== 0
+        ? { isVerificationSubmission: true }
+        : undefined),
+      ...((mask & USER_BUNDLE_MASK_IS_CERTIFIED) !== 0
+        ? { isCertified: true }
+        : undefined),
+      ...((mask & USER_BUNDLE_MASK_IS_VERIFIED) !== 0
+        ? { isVerified: true }
+        : undefined),
+      ...((mask & USER_BUNDLE_MASK_IS_ACT_MEMBER) !== 0
+        ? { isACT: true }
+        : undefined),
+      ...((mask & USER_BUNDLE_MASK_IS_AR_REVIEWER) !== 0
+        ? { isARReviewer: true }
+        : undefined),
+    }
+    return this.getKey('user', userId, 'bundle', maskObject)
   }
 
   public getUserProfileQueryKey(userId: string) {

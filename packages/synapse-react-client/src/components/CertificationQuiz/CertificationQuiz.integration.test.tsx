@@ -5,13 +5,45 @@ import CertificationQuiz from './CertificationQuiz'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import {
+  mockQuiz,
+  mockPassingRecordPassed,
+  mockPassingRecordFailed,
+} from '../../mocks/mockCertificationQuiz'
+import {
+  useGetPassingRecord,
+  usePostCertifiedUserTestResponse,
+} from '../../synapse-queries/user/useCertificationQuiz'
+import { getUseMutationMock } from '../../testutils/ReactQueryMockUtils'
+import { PassingRecord, QuizResponse } from '@sage-bionetworks/synapse-types'
+import { SynapseClientError } from '../../utils'
+import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 import { rest, server } from '../../mocks/msw/server'
-import { mockQuiz, mockPassingRecord } from '../../mocks/mockCertificationQuiz'
+import { useGetCurrentUserBundle } from '../../synapse-queries/user/useUserBundle'
+import { mockUserBundle } from '../../mocks/user/mock_user_profile'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import dayjs from 'dayjs'
 
 window.open = jest.fn()
+jest.mock('../../synapse-queries/user/useCertificationQuiz', () => {
+  return {
+    usePostCertifiedUserTestResponse: jest.fn(),
+    useGetPassingRecord: jest.fn(),
+  }
+})
+
+const mockUsePostCertifiedUserTestResponse =
+  usePostCertifiedUserTestResponse as jest.Mock
+const mockUseGetPassingRecord = useGetPassingRecord as jest.Mock
+
+jest.mock('../../synapse-queries/user/useUserBundle', () => {
+  return {
+    useGetCurrentUserBundle: jest.fn(),
+  }
+})
+const mockUseGetCurrentUserBundle = useGetCurrentUserBundle as jest.Mock
 
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
@@ -28,32 +60,30 @@ const getQuizHandler = rest.get(
   },
 )
 
-const failedQuizHandler = rest.post(
-  'https://repo-prod.prod.sagebase.org/repo/v1/certifiedUserTestResponse',
-  async (req, res, ctx) => {
-    return res(ctx.status(201), ctx.json({ mockPassingRecord }))
-  },
-)
-
-const passedQuizHandler = rest.post(
-  'https://repo-prod.prod.sagebase.org/repo/v1/certifiedUserTestResponse',
-  async (req, res, ctx) => {
-    return res(
-      ctx.status(201),
-      ctx.json({ ...mockPassingRecord, passed: true }),
-    )
-  },
-)
-
 function renderComponent() {
   render(<CertificationQuiz />, {
     wrapper: createWrapper(),
   })
 }
+const mutationMockReturnValue = getUseMutationMock<
+  PassingRecord,
+  SynapseClientError,
+  QuizResponse
+>(mockPassingRecordPassed)
 
 describe('CertificationQuiz tests', () => {
   beforeAll(() => server.listen())
-  beforeEach(() => server.use(getQuizHandler))
+  beforeEach(() => {
+    server.use(getQuizHandler)
+    mockUsePostCertifiedUserTestResponse.mockReturnValue(
+      mutationMockReturnValue,
+    )
+    mockUseGetPassingRecord.mockReturnValue({ data: undefined })
+    mockUseGetCurrentUserBundle.mockReturnValue({
+      data: { ...mockUserBundle, isCertified: false },
+    })
+  })
+
   afterEach(() => {
     server.resetHandlers()
     jest.clearAllMocks()
@@ -87,48 +117,36 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Submit quiz that did not pass', async () => {
-    server.use(failedQuizHandler)
+    // set up and verify quiz failed UI. click retry
+    mockUseGetPassingRecord.mockReturnValue({ data: mockPassingRecordFailed })
+
     renderComponent()
-    const radio1 = await screen.findByLabelText(
-      mockQuiz.questions[0].answers[0].prompt,
-    )
-    const radio2 = await screen.findByLabelText(
-      mockQuiz.questions[1].answers[0].prompt,
-    )
-    const submitButton = await screen.findByRole('button', { name: 'Submit' })
-
-    expect(radio1).toBeInTheDocument()
-    expect(radio2).toBeInTheDocument()
-
-    expect(radio1).not.toBeChecked()
-    expect(radio2).not.toBeChecked()
-
-    await userEvent.click(radio1)
-    await userEvent.click(radio2)
-
-    expect(radio1).toBeChecked()
-    expect(radio2).toBeChecked()
-
-    await userEvent.click(submitButton)
 
     await screen.findByText('Quiz Failed')
 
     expect(mockToastFn).not.toHaveBeenCalled()
 
     // Test retaking test
-    const retakeLink = await screen.findByRole('link', { name: 'try again' })
+    const retakeLink = await screen.findByRole('link', {
+      name: 'retake the quiz',
+    })
     await userEvent.click(retakeLink)
 
+    const radio1 = await screen.findByLabelText(
+      mockQuiz.questions[0].answers[0].prompt,
+    )
+    const radio2 = await screen.findByLabelText(
+      mockQuiz.questions[1].answers[0].prompt,
+    )
     expect(radio1).not.toBeChecked()
     expect(radio2).not.toBeChecked()
     expect(screen.queryByText('Quiz Failed')).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('link', { name: 'try again' }),
+      screen.queryByRole('link', { name: 'retake the quiz' }),
     ).not.toBeInTheDocument()
   })
 
   it('Submit quiz that did pass', async () => {
-    server.use(passedQuizHandler)
     renderComponent()
 
     const radio1 = await screen.findByLabelText(
@@ -147,12 +165,33 @@ describe('CertificationQuiz tests', () => {
     expect(radio2).toBeChecked()
 
     await userEvent.click(submitButton)
+    expect(mutationMockReturnValue.mutate).toHaveBeenCalledTimes(1)
+  })
 
-    await waitFor(() =>
-      expect(mockToastFn).toHaveBeenCalledWith(
-        `You passed the Synapse Certification Quiz on ${mockPassingRecord.passedOn}`,
-        'success',
-      ),
+  it('Verify passing UI', async () => {
+    mockUseGetCurrentUserBundle.mockReturnValue({
+      data: { ...mockUserBundle, isCertified: true },
+    })
+    mockUseGetPassingRecord.mockReturnValue({ data: mockPassingRecordPassed })
+
+    renderComponent()
+
+    const passedOnFormatted = formatDate(
+      dayjs(mockPassingRecordPassed.passedOn),
     )
+    await screen.findByText(
+      `You passed the Synapse Certification Quiz on ${passedOnFormatted}`,
+    )
+  })
+
+  it('Test ACT revoked case - Passed quiz but not certified', async () => {
+    mockUseGetCurrentUserBundle.mockReturnValue({
+      data: { ...mockUserBundle, isCertified: false },
+    })
+    mockUseGetPassingRecord.mockReturnValue({ data: mockPassingRecordPassed })
+
+    renderComponent()
+
+    await screen.findByText('retake the quiz')
   })
 })
