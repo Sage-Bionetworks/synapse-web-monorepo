@@ -191,6 +191,7 @@ function AccessCell(props: CellContext<Row, unknown>) {
         key={entityId}
         entityId={entityId}
         entityVersionNumber={versionNumber}
+        showButtonText={false}
       />
     </div>
   )
@@ -200,6 +201,7 @@ export const accessColumn = columnHelper.display({
   id: `${columnIdPrefix}.Access`,
   enableResizing: false,
   cell: AccessCell,
+  maxSize: 50,
   meta: {
     align: 'center',
   },

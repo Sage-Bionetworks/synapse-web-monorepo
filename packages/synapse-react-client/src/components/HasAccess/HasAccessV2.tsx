@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import SynapseClient from '../../synapse-client'
 import {
   BackendDestinationEnum,
@@ -18,7 +18,7 @@ import AccessRequirementList, {
   checkHasUnsupportedRequirement,
 } from '../AccessRequirementList/AccessRequirementList'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
-import { Theme, useTheme } from '@mui/material'
+import { Box, Button, Theme, useTheme } from '@mui/material'
 import { isFileEntity } from '../../utils/types/IsType'
 
 export type HasAccessProps = {
@@ -26,10 +26,14 @@ export type HasAccessProps = {
   entityId: string
   entityVersionNumber?: string
   className?: string
+  showButtonText?: boolean
 }
+
+const buttonSx = { p: '0px', minWidth: 'unset' }
 
 export enum FileHandleDownloadTypeEnum {
   Accessible = 'Accessible',
+  AccessibleWithTerms = 'AccessibleWithTerms',
   AccessBlockedByRestriction = 'AccessBlockedByRestriction',
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
@@ -54,6 +58,12 @@ const iconConfiguration: Record<
     icon: 'accessClosed',
     color: theme => theme.palette.warning.main,
     tooltipText: 'You do not have download access for this item.',
+  },
+
+  [FileHandleDownloadTypeEnum.AccessibleWithTerms]: {
+    icon: 'accessOpen',
+    color: theme => theme.palette.success.main,
+    tooltipText: 'View Terms',
   },
 
   [FileHandleDownloadTypeEnum.Accessible]: {
@@ -142,7 +152,15 @@ export function useGetFileHandleDownloadType(
       )
     } else if (entity && permissions?.canDownload) {
       if (isFileEntity(entity) && entity.dataFileHandleId) {
-        setFileHandleDownloadType(FileHandleDownloadTypeEnum.Accessible)
+        if (
+          restrictionInformation?.restrictionLevel !== RestrictionLevel.OPEN
+        ) {
+          setFileHandleDownloadType(
+            FileHandleDownloadTypeEnum.AccessibleWithTerms,
+          )
+        } else {
+          setFileHandleDownloadType(FileHandleDownloadTypeEnum.Accessible)
+        }
       } else {
         setFileHandleDownloadType(FileHandleDownloadTypeEnum.NoFileHandle)
       }
@@ -175,7 +193,7 @@ export function HasAccessV2(props: HasAccessProps) {
     AccessRequirement[]
   >([])
 
-  const { entityId, entityVersionNumber } = props
+  const { entityId, entityVersionNumber, showButtonText = true } = props
 
   const fileHandleDownloadType = useGetFileHandleDownloadType(
     entityId,
@@ -197,7 +215,7 @@ export function HasAccessV2(props: HasAccessProps) {
     restrictionInformationRequest,
   )
 
-  const handleGetAccess = () => {
+  const handleGetAccess = useCallback(() => {
     // TODO: The fetch should really happen in the AR List component.
     // If we need to open the AR page in synapse, the logic should be in the modal and it should just close itself right away
     SynapseClient.getAllAccessRequirements(accessToken, entityId).then(
@@ -215,70 +233,14 @@ export function HasAccessV2(props: HasAccessProps) {
         }
       },
     )
-  }
+  }, [accessToken, entityId])
 
-  // Show Access Requirements
-  const accessRequirementsJsx = useMemo(() => {
-    if (!restrictionInformation) {
-      // loading
-      return <></>
-    }
-    const hasUnmetAccessRequirement =
-      restrictionInformation?.hasUnmetAccessRequirement
-    const restrictionLevel = restrictionInformation?.restrictionLevel
-    let linkText = ''
-
-    if (hasUnmetAccessRequirement) {
-      linkText = 'Request Access'
-    } else if (RestrictionLevel.OPEN === restrictionLevel) {
-      // they need to sign in
-      return <></>
-    } else {
-      linkText = 'View Terms'
-    }
-    return (
-      <>
-        <a
-          style={{
-            fontSize: '14px',
-            cursor: 'pointer',
-            marginLeft: '5px',
-            verticalAlign: 'top',
-          }}
-          className={props.className}
-          onClick={handleGetAccess}
-        >
-          {linkText}
-        </a>
-        {displayAccessRequirement && (
-          <AccessRequirementList
-            entityId={entityId}
-            accessRequirementFromProps={accessRequirements}
-            renderAsModal={true}
-            onHide={() => {
-              setDisplayAccessRequirement(false)
-            }}
-          />
-        )}
-      </>
-    )
-  }, [
-    entityId,
-    restrictionInformation,
-    accessRequirements,
-    displayAccessRequirement,
-  ])
-
-  if (fileHandleDownloadType === undefined) {
-    // note, this can't be "if (!downloadType)" since DownloadTypeEnum has a 0 value (which is falsy)
-    // loading
-    return <></>
-  }
-  const iconContainer =
-    fileHandleDownloadType ===
-    FileHandleDownloadTypeEnum.AccessBlockedToAnonymous ? (
-      <button
-        type="button"
+  // Sign-in wrapped icon or icon alone
+  const iconContainer = useMemo(() => {
+    return fileHandleDownloadType ===
+      FileHandleDownloadTypeEnum.AccessBlockedToAnonymous ? (
+      <Button
+        sx={buttonSx}
         className={SRC_SIGN_IN_CLASS}
         onClick={ev => {
           if (ev.isTrusted) {
@@ -302,15 +264,73 @@ export function HasAccessV2(props: HasAccessProps) {
         }}
       >
         <AccessIcon downloadType={fileHandleDownloadType} />
-      </button>
+      </Button>
     ) : (
-      <AccessIcon downloadType={fileHandleDownloadType} />
+      <AccessIcon downloadType={fileHandleDownloadType!} />
     )
+  }, [fileHandleDownloadType])
+
+  // Access Requirements icon or Icon Container
+  const accessRequirementsJsxOrIconContainer = useMemo(() => {
+    if (!restrictionInformation || !fileHandleDownloadType) {
+      // loading
+      return <></>
+    }
+    const hasUnmetAccessRequirement =
+      restrictionInformation?.hasUnmetAccessRequirement
+    const restrictionLevel = restrictionInformation?.restrictionLevel
+    let linkText = ''
+
+    if (hasUnmetAccessRequirement) {
+      linkText = 'Request Access'
+    } else if (RestrictionLevel.OPEN === restrictionLevel) {
+      // they need to sign in
+      return iconContainer
+    } else {
+      linkText = 'View Terms'
+    }
+    return (
+      <>
+        <Button
+          sx={buttonSx}
+          className={props.className}
+          onClick={handleGetAccess}
+        >
+          <AccessIcon downloadType={fileHandleDownloadType} />
+          {showButtonText && <Box ml="5px">{linkText}</Box>}
+        </Button>
+        {displayAccessRequirement && (
+          <AccessRequirementList
+            entityId={entityId}
+            accessRequirementFromProps={accessRequirements}
+            renderAsModal={true}
+            onHide={() => {
+              setDisplayAccessRequirement(false)
+            }}
+          />
+        )}
+      </>
+    )
+  }, [
+    entityId,
+    restrictionInformation,
+    accessRequirements,
+    displayAccessRequirement,
+    handleGetAccess,
+    props.className,
+    fileHandleDownloadType,
+    showButtonText,
+    iconContainer,
+  ])
+
+  if (!fileHandleDownloadType) {
+    // loading
+    return <></>
+  }
 
   return (
     <span style={{ whiteSpace: 'nowrap' }}>
-      {iconContainer}
-      {accessRequirementsJsx}
+      {accessRequirementsJsxOrIconContainer}
     </span>
   )
 }
