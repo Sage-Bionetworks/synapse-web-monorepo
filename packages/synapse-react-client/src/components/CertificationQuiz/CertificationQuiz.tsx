@@ -191,11 +191,10 @@ const CertificationQuiz: React.FunctionComponent = () => {
                       key={question.questionIndex}
                       role={question.exclusive ? 'radiogroup' : undefined}
                     >
-                      <Typography variant="body1" sx={{ marginTop: '20px' }}>
-                        <div
-                          dangerouslySetInnerHTML={{ __html: question.prompt }}
-                        ></div>
-                      </Typography>
+                      <div
+                        dangerouslySetInnerHTML={{ __html: question.prompt }}
+                        style={{ marginTop: '20px' }}
+                      ></div>
                       {question.answers.map(choice => (
                         <CertificationAnswer
                           key={`${question.questionIndex}-${choice.answerIndex}`}
@@ -262,14 +261,13 @@ const CertificationQuiz: React.FunctionComponent = () => {
                 responseCorrectness.response as MultichoiceResponse
               return (
                 <li key={question.questionIndex}>
-                  <Typography variant="body1" sx={{ marginTop: '20px' }}>
-                    <div
-                      dangerouslySetInnerHTML={{ __html: question.prompt }}
-                      className={
-                        responseCorrectness.isCorrect ? '' : 'incorrectQuestion'
-                      }
-                    ></div>
-                  </Typography>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: question.prompt }}
+                    style={{ marginTop: '20px' }}
+                    className={
+                      responseCorrectness.isCorrect ? '' : 'incorrectQuestion'
+                    }
+                  ></div>
                   {question.answers.map(choice => (
                     <CertificationAnswer
                       key={`${question.questionIndex}-${choice.answerIndex}`}
