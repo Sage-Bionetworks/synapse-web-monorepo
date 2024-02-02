@@ -12,6 +12,7 @@ import { ReactComponent as PlasmidsReagents } from './assets/plasmids-reagents.s
 import PopularSearches from './PopularSearches'
 import { Form } from 'react-bootstrap'
 import pluralize from 'pluralize'
+import PortalComponents from '../../portal-components'
 
 export const gotoExploreToolsWithFullTextSearch = (
   fullTextSearchString: string,
@@ -218,6 +219,25 @@ const BrowseToolsPage = () => {
           </SynapseComponents.WideButton>
         </div>
       </Layout>
+      <Layout outsideContainerClassName="home-container-description  home-bg-dark home-spacer">
+        <Typography variant="sectionTitle" className="sectionTitle">
+          Announcements
+        </Typography>
+        <PortalComponents.Ecosystem
+          config={[
+            {
+              title: 'Free Cell Lines',
+              ownerId: 'syn26451327',
+              wikiId: '614272',
+            },
+            {
+              title: 'Acquire Tissue',
+              ownerId: 'syn26451327',
+              wikiId: '625915',
+            },
+          ]}
+        />
+      </Layout>
       <Layout outsideContainerClassName="home-spacer highlightSubmitToolContainer">
         <Typography variant="sectionTitle" className="sectionTitle">
           Submit a Tool to NF Research Tools Central
@@ -249,5 +269,4 @@ const BrowseToolsPage = () => {
     </div>
   )
 }
-
 export default BrowseToolsPage

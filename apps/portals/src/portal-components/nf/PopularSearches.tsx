@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import {
-  SynapseClient,
-  SynapseConstants,
-  SynapseContextUtils,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
-import { QueryBundleRequest, RowSet } from '@sage-bionetworks/synapse-types'
+import React from 'react'
+import { SynapseConstants, SynapseUtilityFunctions } from 'synapse-react-client'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { gotoExploreToolsWithFullTextSearch } from './BrowseToolsPage'
 import { Link } from '@mui/material'
+import { SynapseQueries } from 'synapse-react-client'
 
 export type PopularSearchesProps = {
   sql: string
@@ -19,47 +15,21 @@ export type PopularSearchesProps = {
 const PopularSearches: React.FunctionComponent<PopularSearchesProps> = ({
   sql,
 }) => {
-  const { accessToken } = SynapseContextUtils.useSynapseContext()
-  const [rowSet, setRowSet] = useState<RowSet>()
-  const [isLoading, setIsLoading] = useState<boolean>()
-  let mounted = true
-  useEffect(() => {
-    const fetchData = async function () {
-      setIsLoading(true)
-      const entityId =
-        SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
-      const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-      const request: QueryBundleRequest = {
-        partMask,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        entityId,
-        query: {
-          sql,
-          limit: 4,
-        },
-      }
+  const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+  const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
+  const request: QueryBundleRequest = {
+    partMask,
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId,
+    query: {
+      sql,
+      limit: 4,
+    },
+  }
+  const { data: queryResultResponse, isLoading } =
+    SynapseQueries.useGetQueryResultBundleWithAsyncStatus(request)
 
-      const queryResultBundle = await SynapseClient.getQueryTableResults(
-        request,
-        accessToken,
-      )
-      setIsLoading(false)
-      const { queryResult } = queryResultBundle
-      const queryResults = queryResult?.queryResults
-      if (queryResults) {
-        if (mounted) {
-          setRowSet(queryResults)
-        }
-      } else {
-        console.log('PopularSearches: Error getting data')
-      }
-    }
-    fetchData()
-
-    return () => {
-      mounted = false
-    }
-  }, [sql, accessToken])
+  const rowSet = queryResultResponse?.responseBody?.queryResult?.queryResults
 
   return (
     <div className="PopularSearches">
