@@ -225,7 +225,13 @@ export default function CreateTableViewWizard(
     step !== 'CHOOSE_TABLE_TYPE' && step !== 'CHOOSE_VIEW_TYPE'
 
   const onBackButtonClicked = useCallback(() => {
-    setStep(getPreviousStep(step, entityType))
+    const previousStep = getPreviousStep(step, entityType)
+    // Clear the columns if the user changed their mind on the type of table they want to create
+    // e.g. if you pick file view, add columns, go back, switch to a submission view, the columns should reset.
+    if (['CHOOSE_TABLE_TYPE', 'CHOOSE_VIEW_TYPE'].includes(previousStep)) {
+      setColumnModels([])
+    }
+    setStep(previousStep)
   }, [step, entityType])
 
   const onNextButtonClicked = useCallback(() => {
