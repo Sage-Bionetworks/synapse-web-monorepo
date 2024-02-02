@@ -92,7 +92,7 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
             variant={'outlined'}
             onClick={() => setCurrentPage(page => page - 1)}
           >
-            Previous
+            Previous Page
           </Button>
         )}
         <Button
@@ -111,7 +111,7 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
             }
           }}
         >
-          Next
+          Next Page
         </Button>
       </Box>
     </>

@@ -46,7 +46,7 @@ describe('EvaluationFinder', () => {
     expect(evaluationsToSelect[1]).toBeChecked()
 
     const nextPageButton = await screen.findByRole('button', {
-      name: 'Next',
+      name: 'Next Page',
     })
 
     await waitFor(() => expect(nextPageButton).not.toBeDisabled())
@@ -59,7 +59,7 @@ describe('EvaluationFinder', () => {
 
     // Go back to page 1
     const previousPageButton = await screen.findByRole('button', {
-      name: 'Previous',
+      name: 'Previous Page',
     })
     await userEvent.click(previousPageButton)
     await waitFor(() => expect(screen.getAllByRole('checkbox')).toHaveLength(2))
