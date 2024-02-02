@@ -20,7 +20,10 @@ import TableColumnSchemaForm, {
 import EntityViewScopeEditor from '../EntityViewScopeEditor/EntityViewScopeEditor'
 import { SetOptional } from 'type-fest'
 import SqlDefinedTableEditor from '../SqlDefinedTableEditor/SqlDefinedTableEditor'
-import { useCreateColumnModels } from '../../synapse-queries/table/useColumnModel'
+import {
+  useCreateColumnModels,
+  useGetDefaultColumnModels,
+} from '../../synapse-queries/table/useColumnModel'
 import EntityViewMaskEditor from '../EntityViewScopeEditor/EntityViewMaskEditor'
 import { DialogBase } from '../DialogBase'
 import {
@@ -97,6 +100,22 @@ export default function CreateTableViewWizard(
     }
     return undefined
   }, [entityType, entityViewScopeIds, submissionViewScopeIds, viewTypeMask])
+
+  const {
+    data: defaultColumnModels,
+    isLoading: isLoadingDefaultColumns,
+    isError: errorFetchingDefaultColumns,
+  } = useGetDefaultColumnModels(
+    viewScope?.viewEntityType!,
+    viewScope?.viewTypeMask,
+    {
+      // Fetch the default columns when the user is determining scope
+      // This way we can pre-fill the columns right before they go to the columns step
+      // We will prevent clicking "Next" before this is loaded
+      enabled: step === 'ENTITY_VIEW_SCOPE' || step === 'SUBMISSION_VIEW_SCOPE',
+      staleTime: Infinity, // The default column models will never change
+    },
+  )
 
   const { mutateAsync: createEntity, error: createEntityError } =
     useCreateEntity({
@@ -218,16 +237,37 @@ export default function CreateTableViewWizard(
       step === 'ENTITY_VIEW_SCOPE' ||
       step === 'SUBMISSION_VIEW_SCOPE'
     ) {
+      // We make sure that the default column models are loaded before the user gets to this step by disabling the "Next" button while we are fetching them (unless there's an error)
+      // So we can assume that defaultColumnModels is safely loaded. If not, user will just start with 0 columns, which is acceptable.
+      if (columnModels.length == 0 && defaultColumnModels) {
+        setColumnModels(
+          defaultColumnModels.map(cm => ({ ...cm, id: undefined })),
+        )
+      }
       setStep('TABLE_COLUMNS')
     }
-  }, [onColumnSchemaNextClicked, onFinish, step])
+  }, [
+    step,
+    onFinish,
+    onColumnSchemaNextClicked,
+    columnModels.length,
+    defaultColumnModels,
+  ])
 
   const isNextButtonDisabled = useMemo(() => {
     if (step === 'ENTITY_VIEW_SCOPE') {
-      return entityViewScopeIds.length === 0 || viewTypeMask === 0
+      return (
+        entityViewScopeIds.length === 0 ||
+        viewTypeMask === 0 ||
+        (isLoadingDefaultColumns && !errorFetchingDefaultColumns)
+      )
     }
     if (step === 'SUBMISSION_VIEW_SCOPE') {
-      return submissionViewScopeIds.length === 0 || viewTypeMask === 0
+      return (
+        submissionViewScopeIds.length === 0 ||
+        viewTypeMask === 0 ||
+        (isLoadingDefaultColumns && !errorFetchingDefaultColumns)
+      )
     }
     return false
   }, [
@@ -235,6 +275,8 @@ export default function CreateTableViewWizard(
     submissionViewScopeIds.length,
     step,
     viewTypeMask,
+    isLoadingDefaultColumns,
+    errorFetchingDefaultColumns,
   ])
 
   const errorContent = useMemo(() => {

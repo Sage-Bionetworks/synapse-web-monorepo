@@ -200,12 +200,14 @@ describe('CreateTableWizard integration tests', () => {
     expect(screen.getByLabelText('Folders')).toBeChecked()
     await user.click(screen.getByRole('button', { name: 'Next' }))
 
-    // Add default columns
-    const addDefaultViewColumnsButton = await screen.findByRole('button', {
+    // Default columns should be added immediately
+    defaultFileViewColumnModels.forEach(cm => {
+      expect(screen.getByText(cm.name)).toBeInTheDocument()
+    })
+    // There should also be an add default view columns button
+    await screen.findByRole('button', {
       name: 'Add Default View Columns',
     })
-    await waitFor(() => expect(addDefaultViewColumnsButton).toBeEnabled())
-    await user.click(addDefaultViewColumnsButton)
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
@@ -318,12 +320,15 @@ describe('CreateTableWizard integration tests', () => {
     expect(screen.queryByLabelText('Files')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Next' }))
 
-    // Add default columns
-    const addDefaultViewColumnsButton = await screen.findByRole('button', {
+    // Default columns should be added immediately
+    defaultFileViewColumnModels.forEach(cm => {
+      expect(screen.getByText(cm.name)).toBeInTheDocument()
+    })
+
+    // There should also be an add default view columns button
+    await screen.findByRole('button', {
       name: 'Add Default View Columns',
     })
-    await waitFor(() => expect(addDefaultViewColumnsButton).toBeEnabled())
-    await user.click(addDefaultViewColumnsButton)
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
@@ -404,7 +409,7 @@ describe('CreateTableWizard integration tests', () => {
     )
 
     // Before adding evaluations to the scope, verify we cannot advance without making a selection
-    const nextStepButton = screen.getByRole('button', { name: 'Next' })
+    const nextStepButton = await screen.findByRole('button', { name: 'Next' })
     expect(nextStepButton).toBeDisabled()
 
     // Add a few IDs to the scope
@@ -421,12 +426,15 @@ describe('CreateTableWizard integration tests', () => {
     expect(nextStepButton).not.toBeDisabled()
     await user.click(nextStepButton)
 
-    // Add default columns
-    const addDefaultViewColumnsButton = await screen.findByRole('button', {
+    // Default columns should be added immediately
+    defaultFileViewColumnModels.forEach(cm => {
+      expect(screen.getByText(cm.name)).toBeInTheDocument()
+    })
+
+    // There should also be an add default view columns button
+    await screen.findByRole('button', {
       name: 'Add Default Submission View Columns',
     })
-    await waitFor(() => expect(addDefaultViewColumnsButton).toBeEnabled())
-    await user.click(addDefaultViewColumnsButton)
 
     // Add annotation columns
     const addAnnotationColumnsButton = await screen.findByRole('button', {
