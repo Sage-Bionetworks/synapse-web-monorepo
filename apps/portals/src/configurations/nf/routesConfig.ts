@@ -67,7 +67,7 @@ const routes: GenericRoute[] = [
         outsideContainerClassName: 'home-spacer home-bg-dark',
         link: '/Explore/Studies',
         props: {
-          limit,
+          initialLimit: limit,
           columnAliases,
           sql: newStudiesSql,
           ...studyCardConfiguration,

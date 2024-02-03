@@ -168,7 +168,7 @@ export const studiesDetailPage: DetailsPageProps = {
           tableSqlKeys: ['studyId'],
           props: {
             sql: toolStudySql,
-            limit: 3,
+            initialLimit: 3,
             ...toolsCardConfiguration,
           },
         },

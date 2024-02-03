@@ -21,7 +21,8 @@ type Story = StoryObj<typeof meta>
 export const GenericCard: Story = {
   args: {
     sql: 'SELECT * FROM syn22095937.4 order by authors asc',
-    limit: 2,
+    initialLimit: 2,
+    limit: 5,
     type: GENERIC_CARD,
     genericCardSchema: {
       type: PUBLICATION,
