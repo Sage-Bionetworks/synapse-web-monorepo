@@ -5,7 +5,7 @@ import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import { SkeletonInlineBlock } from '../../Skeleton/SkeletonInlineBlock'
-import getColorPalette from '../../ColorGradient/ColorGradient'
+import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'
 import { SynapseConstants } from '../../../utils'
 import SynapseClient from '../../../synapse-client'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
@@ -80,8 +80,9 @@ export async function extractPlotDataArray(
   plotType: PlotType,
   accessToken?: string,
 ) {
-  const { colorPalette } = getColorPalette(
-    index,
+  const colorPalette = getContrastColorPalette(
+    index % 2 === 0 ? 'even' : 'odd',
+    Math.floor(index / 2),
     facetToPlot.facetValues.length,
   )
 
