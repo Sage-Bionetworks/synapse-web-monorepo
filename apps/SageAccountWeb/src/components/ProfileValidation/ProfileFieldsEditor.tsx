@@ -1,4 +1,4 @@
-import { Box, InputLabel, TextField, useTheme } from '@mui/material'
+import { Box, TextField, useTheme } from '@mui/material'
 import { StyledFormControl } from '../StyledComponents'
 import React, { useState } from 'react'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
@@ -54,11 +54,10 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
           margin="normal"
           sx={{ marginTop: '0px' }}
         >
-          <InputLabel shrink htmlFor="firstName" required>
-            First Name
-          </InputLabel>
           <TextField
             fullWidth
+            required
+            label={'First Name'}
             id="firstName"
             name="firstName"
             onChange={handleChange}
@@ -67,11 +66,10 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
           />
         </StyledFormControl>
         <StyledFormControl fullWidth variant="standard" margin="normal">
-          <InputLabel shrink htmlFor="lasttName" required>
-            Last Name
-          </InputLabel>
           <TextField
             fullWidth
+            required
+            label={'Last Name'}
             id="lastName"
             name="lastName"
             onChange={handleChange}
@@ -85,11 +83,9 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
           margin="normal"
           required
         >
-          <InputLabel shrink htmlFor="company">
-            Current Affiliation
-          </InputLabel>
           <TextField
             fullWidth
+            label={'Current Affiliation'}
             id="company"
             name="company"
             onChange={handleChange}
@@ -103,10 +99,8 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
           margin="normal"
           required
         >
-          <InputLabel shrink htmlFor="location">
-            Location
-          </InputLabel>
           <TextField
+            label={'Location'}
             id="location"
             name="location"
             fullWidth

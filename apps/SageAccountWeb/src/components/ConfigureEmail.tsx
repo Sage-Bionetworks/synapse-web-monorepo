@@ -14,7 +14,6 @@ import {
   Divider,
   FormControlLabel,
   IconButton,
-  InputLabel,
   TextField,
   Typography,
 } from '@mui/material'
@@ -175,11 +174,9 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
         }
       })}
       <StyledFormControl variant="standard" margin="normal" fullWidth>
-        <InputLabel shrink htmlFor="additionalEmail">
-          Add an email address
-        </InputLabel>
         <Box sx={{ display: 'flex' }}>
           <TextField
+            label={'Add an email address'}
             id="additionalEmail"
             sx={{ flexGrow: 1, marginRight: '10px' }}
             value={newEmail}

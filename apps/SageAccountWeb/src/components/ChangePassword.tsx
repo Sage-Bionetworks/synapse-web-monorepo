@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, InputLabel, Link, TextField } from '@mui/material'
+import { Button, Link, TextField } from '@mui/material'
 import {
   ChangePasswordWithCurrentPassword,
   UserProfile,
@@ -78,14 +78,13 @@ export const ChangePassword = (props: ChangePasswordProps) => {
           variant="standard"
           margin="normal"
         >
-          <InputLabel shrink htmlFor="currentPassword" required>
-            Current password
-          </InputLabel>
           <TextField
             fullWidth
+            required
             type="password"
             id="currentPassword"
             name="currentPassword"
+            label={'Current password'}
             onChange={e => setOldPassword(e.target.value)}
             value={oldPassword || ''}
           />
@@ -96,14 +95,13 @@ export const ChangePassword = (props: ChangePasswordProps) => {
           variant="standard"
           margin="normal"
         >
-          <InputLabel shrink htmlFor="newPassword" required>
-            New password
-          </InputLabel>
           <TextField
             fullWidth
+            required
             type="password"
             id="newPassword"
             name="newPassword"
+            label={'New password'}
             onChange={e => setNewPassword(e.target.value)}
             value={newPassword || ''}
           />
@@ -115,14 +113,13 @@ export const ChangePassword = (props: ChangePasswordProps) => {
           margin="normal"
           sx={{ marginBottom: '10px' }}
         >
-          <InputLabel shrink htmlFor="confirmPassword" required>
-            Confirm password
-          </InputLabel>
           <TextField
             fullWidth
+            required
             type="password"
             id="confirmPassword"
             name="confirmPassword"
+            label={'Confirm password'}
             onChange={e => setConfirmPassword(e.target.value)}
             value={confirmPassword || ''}
           />
