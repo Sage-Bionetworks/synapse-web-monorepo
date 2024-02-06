@@ -160,9 +160,11 @@ export function fetchData(
   )
 }
 
+const DEFAULT_STATUSLINECHART_STYLE: React.CSSProperties = { width: '100%' }
+
 const StatusLineChart: FunctionComponent<StatusLineChartProps> = ({
   token,
-  style = { width: '100%' },
+  style = DEFAULT_STATUSLINECHART_STYLE,
 }: StatusLineChartProps) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [plotData, setPlotData] = useState<PlotData | null>(null)

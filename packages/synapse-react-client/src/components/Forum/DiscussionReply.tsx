@@ -26,9 +26,12 @@ export type DiscussionReplyProps = {
   onClickLink?: () => void
 }
 
+const DEFAULT_ON_CLICK_LINK: DiscussionReplyProps['onClickLink'] = () =>
+  alert('This functionality has not been implemented yet')
+
 export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
   reply,
-  onClickLink = () => alert('This functionality has not been implemented yet'),
+  onClickLink = DEFAULT_ON_CLICK_LINK,
 }) => {
   const [showReplyModal, setShowReplyModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)

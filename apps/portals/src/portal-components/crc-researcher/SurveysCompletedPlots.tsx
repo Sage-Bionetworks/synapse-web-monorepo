@@ -101,9 +101,15 @@ export function fetchData(
   )
 }
 
+const DEFAULT_SURVEYS_COMPLETED_PLOTS_STYLE: React.CSSProperties = {
+  width: '100%',
+  height: '400px',
+  padding: '100px 50px',
+}
+
 const SurveysCompletedPlots: FunctionComponent<SurveysCompletedPlotsProps> = ({
   token,
-  style = { width: '100%', height: '400px', padding: '100px 50px' },
+  style = DEFAULT_SURVEYS_COMPLETED_PLOTS_STYLE,
 }: SurveysCompletedPlotsProps) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [plotData, setPlotData] = useState<PlotData | null>(null)

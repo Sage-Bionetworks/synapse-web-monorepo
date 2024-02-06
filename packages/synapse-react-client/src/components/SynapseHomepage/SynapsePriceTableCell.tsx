@@ -8,7 +8,7 @@ export type SynapsePriceTableCellProps = {
 
 export const SynapsePriceTableCell: React.FunctionComponent<
   React.PropsWithChildren<SynapsePriceTableCellProps>
-> = ({ children, sx = {}, role = 'cell' }) => {
+> = ({ children, sx, role = 'cell' }) => {
   return (
     <Box
       sx={{

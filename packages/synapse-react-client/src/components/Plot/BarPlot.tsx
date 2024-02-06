@@ -84,6 +84,12 @@ function getLayout(
   return layout
 }
 
+const DEFAULT_BARPLOT_PLOTSTYLE: PlotStyle = { backgroundColor: 'transparent' }
+const DEFAULT_BARPLOT_STYLE: React.CSSProperties = {
+  width: '100%',
+  height: '100%',
+}
+
 const BarPlot: FunctionComponent<BarPlotProps> = ({
   plotData,
   optionsConfig,
@@ -92,8 +98,8 @@ const BarPlot: FunctionComponent<BarPlotProps> = ({
   label,
   xMax,
   colors,
-  plotStyle = { backgroundColor: 'transparent' },
-  style = { width: '100%', height: '100%' },
+  plotStyle = DEFAULT_BARPLOT_PLOTSTYLE,
+  style = DEFAULT_BARPLOT_STYLE,
   onClick,
 }: BarPlotProps) => {
   return (
