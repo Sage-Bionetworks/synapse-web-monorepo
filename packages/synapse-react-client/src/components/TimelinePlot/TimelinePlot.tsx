@@ -6,7 +6,7 @@ import hardcodedPhasesQueryResponseData, {
   phaseSpeciesIndex,
 } from './phasesQueryResponseData'
 import TimelinePhase from './TimelinePhase'
-import getColorPalette from '../ColorGradient/ColorGradient'
+import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { Box } from '@mui/system'
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import {
