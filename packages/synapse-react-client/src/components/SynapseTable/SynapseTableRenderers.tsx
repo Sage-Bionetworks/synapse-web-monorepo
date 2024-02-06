@@ -17,7 +17,7 @@ import { useGetEntityHeader } from '../../synapse-queries'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
 import HasAccessV2 from '../HasAccess'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
-import { IconButton, Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip } from '@mui/material'
 import IconSvg from '../IconSvg'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
@@ -32,6 +32,7 @@ import {
   isRowSelectedAtom,
   selectedRowsAtom,
 } from '../QueryWrapper/TableRowSelectionState'
+import { HelpTwoTone } from '@mui/icons-material'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -218,13 +219,14 @@ export function TableDataColumnHeader(
   const selectColumn = selectColumns.find(sc => sc.name === column.id)
   const columnModel = columnModels.find(cm => cm.name === column.id)
   const facets = data?.facets ?? []
-  const { getColumnDisplayName } = useQueryVisualizationContext()
+  const { getColumnDisplayName, getHelpText } = useQueryVisualizationContext()
 
   if (!selectColumn) {
     return <>{column.id}</>
   }
 
-  const displayColumnName = getColumnDisplayName(selectColumn!.name)
+  const displayColumnName = getColumnDisplayName(selectColumn.name)
+  const columnHelpText = getHelpText(selectColumn.name)
   // we have to figure out if the current column is a facet selection
   const facetIndex: number = facets.findIndex(
     (facetColumnResult: FacetColumnResult) => {
@@ -245,6 +247,7 @@ export function TableDataColumnHeader(
     selectColumn &&
     selectColumn.name == 'id' &&
     selectColumn.columnType == ColumnTypeEnum.ENTITYID
+
   return (
     <div className="SRC-split">
       <div className="SRC-centerContent">
@@ -256,7 +259,19 @@ export function TableDataColumnHeader(
           {displayColumnName}
         </span>
       </div>
-      <div className="SRC-centerContent" style={{ height: '22px' }}>
+      <Box
+        role={'menubar'}
+        display={'flex'}
+        alignItems="center"
+        sx={{ height: '22px', ml: 2, gap: 0.25 }}
+      >
+        {columnHelpText && (
+          <Tooltip title={columnHelpText} placement={'top'}>
+            <IconButton size={'small'}>
+              <HelpTwoTone fontSize={'inherit'} />
+            </IconButton>
+          </Tooltip>
+        )}
         {isFacetSelection && !isLockedColumn && columnModel && (
           <span>
             <EnumFacetFilter containerAs="Dropdown" facet={facet} />
@@ -287,7 +302,7 @@ export function TableDataColumnHeader(
           </Tooltip>
         )}
         {isEntityIDColumn && <EntityIDColumnCopyIcon size={'small'} />}
-      </div>
+      </Box>
     </div>
   )
 }

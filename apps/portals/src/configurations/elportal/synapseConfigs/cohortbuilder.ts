@@ -72,6 +72,13 @@ export const individualsView: SynapseConfig = {
     facetsToPlot: ['Sex', 'dataTypes', 'Assays', 'Diagnosis', 'fileFormat'],
     isRowSelectionVisible: true,
     rowSelectionPrimaryKey: ['individualID'],
+    helpConfiguration: [
+      {
+        columnName: 'individualID',
+        helpText:
+          'A unique identifier that represents a study participant in this system. Individual IDs in our system do not match study-specific participant IDs.',
+      },
+    ],
     combineRangeFacetConfig: {
       label: 'Age',
       minFacetColumn: 'minAge',

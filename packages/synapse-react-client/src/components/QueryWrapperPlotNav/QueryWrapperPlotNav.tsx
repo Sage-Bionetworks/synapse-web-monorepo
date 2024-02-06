@@ -89,6 +89,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'noContentPlaceholderType'
     | 'unitDescription'
     | 'additionalFiltersSessionStorageKey'
+    | 'helpConfiguration'
   > &
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
@@ -260,6 +261,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     showLastUpdatedOn,
     unitDescription,
     additionalFiltersSessionStorageKey,
+    helpConfiguration,
   } = props
 
   const entityId = parseEntityIdFromSqlStatement(sql)
@@ -311,6 +313,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
         unitDescription={unitDescription}
         rgbIndex={props.rgbIndex}
         columnAliases={props.columnAliases}
+        helpConfiguration={helpConfiguration}
         visibleColumnCount={props.visibleColumnCount}
         defaultShowFacetVisualization={props.defaultShowFacetVisualization}
         defaultShowSearchBar={

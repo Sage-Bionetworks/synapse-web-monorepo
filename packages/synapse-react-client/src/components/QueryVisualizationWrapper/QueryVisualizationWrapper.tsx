@@ -19,6 +19,15 @@ import useMutuallyExclusiveState from '../../utils/hooks/useMutuallyExclusiveSta
 import { useAtomValue } from 'jotai'
 import { tableQueryDataAtom } from '../QueryWrapper/QueryWrapper'
 
+type ColumnOrFacetHelpConfig = {
+  /** Text that describes the column or facet */
+  helpText: string
+  /** The name of the column for which the markdown applies */
+  columnName: string
+  /** The JSON path matching a described JSON Column facet */
+  jsonPath?: string
+}
+
 export type QueryVisualizationContextType = {
   columnsToShowInTable: string[]
   setColumnsToShowInTable: (newState: string[]) => void
@@ -28,6 +37,8 @@ export type QueryVisualizationContextType = {
   showLastUpdatedOn?: boolean
   /** Given a column name, return the display name for the column */
   getColumnDisplayName: (columnName: string, jsonPath?: string) => string
+  /** Given a column name or JSON facet, return the configured help text */
+  getHelpText: (columnName: string, jsonPath?: string) => string | undefined
   /** Given a cell value and a column type, returns the displayed value for the data */
   getDisplayValue: (value: string, columnType: ColumnType) => string
   /** React node to display in place of cards/table when there are no results. */
@@ -109,6 +120,8 @@ export type QueryVisualizationWrapperProps = {
   rowSelectionPrimaryKey?: string[]
   /* Look for additional filters using the given key.  If not provided, the entity ID will be used. */
   additionalFiltersSessionStorageKey?: string
+  /** Configuration to add a help popover to each corresponding column header */
+  helpConfiguration?: ColumnOrFacetHelpConfig[]
 }
 
 /**
@@ -123,6 +136,7 @@ export function QueryVisualizationWrapper(
     defaultShowSearchBar = false,
     defaultShowFacetVisualization = true,
     unitDescription = 'result',
+    helpConfiguration,
   } = props
 
   const columnAliases = useMemo(
@@ -198,6 +212,20 @@ export function QueryVisualizationWrapper(
     [columnAliases, data?.columnModels],
   )
 
+  const getHelpText = useCallback(
+    (columnName: string, jsonPath?: string): string | undefined => {
+      if (Array.isArray(helpConfiguration)) {
+        const helpConfig = helpConfiguration.find(
+          config =>
+            config.columnName === columnName && config.jsonPath === jsonPath,
+        )
+        return helpConfig?.helpText
+      }
+      return undefined
+    },
+    [helpConfiguration],
+  )
+
   const NoContentPlaceholder = useCallback(() => {
     switch (noContentPlaceholderType) {
       case NoContentPlaceholderType.INTERACTIVE:
@@ -223,6 +251,7 @@ export function QueryVisualizationWrapper(
       showLastUpdatedOn: props.showLastUpdatedOn,
       getColumnDisplayName,
       getDisplayValue,
+      getHelpText,
       NoContentPlaceholder,
       isShowingExportToCavaticaModal,
       setIsShowingExportToCavaticaModal,
@@ -244,6 +273,7 @@ export function QueryVisualizationWrapper(
     [
       NoContentPlaceholder,
       getColumnDisplayName,
+      getHelpText,
       isFacetsAvailable,
       isShowingExportToCavaticaModal,
       props.rgbIndex,
