@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import {
   Box,
   Button,
-  InputLabel,
   Link,
   TextField,
   Typography,
@@ -222,10 +221,8 @@ export const RegisterAccount1 = () => {
                         margin="normal"
                         sx={formControlSx}
                       >
-                        <InputLabel shrink htmlFor="emailAddress" required>
-                          Email address
-                        </InputLabel>
                         <TextField
+                          label={'Email address'}
                           fullWidth
                           id="emailAddress"
                           name="emailAddress"
@@ -273,11 +270,9 @@ export const RegisterAccount1 = () => {
                         margin="normal"
                         sx={formControlSx}
                       >
-                        <InputLabel shrink htmlFor="username" required>
-                          Username
-                        </InputLabel>
                         <TextField
                           fullWidth
+                          label={'Username'}
                           id="username"
                           name="username"
                           required

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { SourceAppLogo } from './SourceApp'
-import { InputLabel, TextField, Typography } from '@mui/material'
+import { TextField, Typography } from '@mui/material'
 import { LeftRightPanel } from './LeftRightPanel'
 import { StyledFormControl } from './StyledComponents'
 import {
@@ -42,11 +42,9 @@ export const CurrentAffiliationPage = () => {
               margin="normal"
               required
             >
-              <InputLabel shrink htmlFor="company">
-                Current Affiliation
-              </InputLabel>
               <TextField
                 fullWidth
+                label={'Current Affiliation'}
                 id="company"
                 name="company"
                 onChange={event => setNewAffiliation(event.target.value)}

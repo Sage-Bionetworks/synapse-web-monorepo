@@ -1,4 +1,4 @@
-import { Button, InputLabel, TextField, Typography } from '@mui/material'
+import { Button, TextField, Typography } from '@mui/material'
 import { StyledFormControl } from './StyledComponents'
 import React, { useEffect, useState } from 'react'
 import { displayToast, SynapseClient } from 'synapse-react-client'
@@ -101,11 +101,10 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
                 variant="standard"
                 margin="normal"
               >
-                <InputLabel shrink htmlFor="username" required>
-                  Choose a username
-                </InputLabel>
                 <TextField
                   fullWidth
+                  required
+                  label={'Choose a username'}
                   id="username"
                   name="username"
                   onChange={e => setUsername(e.target.value)}
@@ -113,11 +112,9 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
                 />
               </StyledFormControl>
               <StyledFormControl fullWidth variant="standard" margin="normal">
-                <InputLabel shrink htmlFor="firstName">
-                  First name
-                </InputLabel>
                 <TextField
                   fullWidth
+                  label={'First name'}
                   id="firstName"
                   name="firstName"
                   onChange={e => setFirstName(e.target.value)}
@@ -125,11 +122,9 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
                 />
               </StyledFormControl>
               <StyledFormControl fullWidth variant="standard" margin="normal">
-                <InputLabel shrink htmlFor="lastName">
-                  Last name
-                </InputLabel>
                 <TextField
                   fullWidth
+                  label={'Last name'}
                   id="lastName"
                   name="lastName"
                   onChange={e => setLastName(e.target.value)}
@@ -142,12 +137,11 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
                 variant="standard"
                 margin="normal"
               >
-                <InputLabel shrink htmlFor="password1" required>
-                  Password
-                </InputLabel>
                 <TextField
                   type="password"
                   fullWidth
+                  required
+                  label={'Password'}
                   id="password1"
                   name="password1"
                   onChange={e => setPassword1(e.target.value)}
@@ -160,12 +154,11 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
                 variant="standard"
                 margin="normal"
               >
-                <InputLabel shrink htmlFor="password2" required>
-                  Confirm password
-                </InputLabel>
                 <TextField
                   type="password"
                   fullWidth
+                  required
+                  label={'Confirm password'}
                   id="password2"
                   name="password2"
                   onChange={e => setPassword2(e.target.value)}

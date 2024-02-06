@@ -4,7 +4,6 @@ import {
   Button,
   Container,
   Grid,
-  InputLabel,
   Link,
   ListItemButton,
   MenuItem,
@@ -239,10 +238,8 @@ export const AccountSettings = () => {
                     margin="normal"
                     required
                   >
-                    <InputLabel shrink htmlFor="username">
-                      Username
-                    </InputLabel>
                     <TextField
+                      label={'Username'}
                       id="username"
                       name="username"
                       fullWidth
@@ -255,10 +252,8 @@ export const AccountSettings = () => {
                     variant="standard"
                     margin="normal"
                   >
-                    <InputLabel shrink htmlFor="firstName">
-                      First name
-                    </InputLabel>
                     <TextField
+                      label={'First name'}
                       id="firstName"
                       name="firstName"
                       fullWidth
@@ -271,10 +266,8 @@ export const AccountSettings = () => {
                     variant="standard"
                     margin="normal"
                   >
-                    <InputLabel shrink htmlFor="lastName">
-                      Last name
-                    </InputLabel>
                     <TextField
+                      label={'Last name'}
                       id="lastName"
                       name="lastName"
                       fullWidth
@@ -287,10 +280,8 @@ export const AccountSettings = () => {
                     variant="standard"
                     margin="normal"
                   >
-                    <InputLabel shrink htmlFor="position">
-                      Current position
-                    </InputLabel>
                     <TextField
+                      label={'Current position'}
                       id="position"
                       name="position"
                       fullWidth
@@ -303,10 +294,8 @@ export const AccountSettings = () => {
                     variant="standard"
                     margin="normal"
                   >
-                    <InputLabel shrink htmlFor="industry">
-                      Industry
-                    </InputLabel>
                     <TextField
+                      label={'Industry'}
                       id="industry"
                       name="industry"
                       fullWidth
@@ -319,10 +308,8 @@ export const AccountSettings = () => {
                     variant="standard"
                     margin="normal"
                   >
-                    <InputLabel shrink htmlFor="website">
-                      Website
-                    </InputLabel>
                     <TextField
+                      label={'Website'}
                       id="website"
                       name="website"
                       fullWidth
@@ -335,10 +322,8 @@ export const AccountSettings = () => {
                     variant="standard"
                     margin="normal"
                   >
-                    <InputLabel shrink htmlFor="location">
-                      City, Country
-                    </InputLabel>
                     <TextField
+                      label={'City, Country'}
                       id="location"
                       name="location"
                       fullWidth
@@ -351,10 +336,8 @@ export const AccountSettings = () => {
                     variant="standard"
                     margin="normal"
                   >
-                    <InputLabel shrink htmlFor="company">
-                      Institutional affiliation
-                    </InputLabel>
                     <TextField
+                      label={'Institutional affiliation'}
                       id="company"
                       name="company"
                       fullWidth
@@ -444,10 +427,8 @@ export const AccountSettings = () => {
                   margin="normal"
                   sx={{ marginBottom: '10px' }}
                 >
-                  <InputLabel shrink htmlFor="timezone-select">
-                    Choose a format
-                  </InputLabel>
                   <TextField
+                    label={'Choose a format'}
                     id="timezone-select"
                     value={isUTCTimeStaged}
                     fullWidth

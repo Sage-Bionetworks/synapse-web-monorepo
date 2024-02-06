@@ -1,9 +1,8 @@
-import { Box, Button, InputLabel, TextField, Typography } from '@mui/material'
+import { Box, Button, TextField, Typography } from '@mui/material'
 import { StyledFormControl } from '../components/StyledComponents'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { SynapseClient } from 'synapse-react-client'
-import { displayToast } from 'synapse-react-client'
+import { displayToast, SynapseClient } from 'synapse-react-client'
 import {
   ChangePasswordWithToken,
   PasswordResetSignedToken,
@@ -105,14 +104,13 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                   margin="normal"
                   sx={formControlSx}
                 >
-                  <InputLabel shrink htmlFor="newPassword" required>
-                    New password
-                  </InputLabel>
                   <TextField
                     fullWidth
+                    required
                     type="password"
                     id="newPassword"
                     name="newPassword"
+                    label={'New password'}
                     onChange={e => setNewPassword(e.target.value)}
                     value={newPassword || ''}
                   />
@@ -124,14 +122,13 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                   margin="normal"
                   sx={formControlSx}
                 >
-                  <InputLabel shrink htmlFor="confirmPassword" required>
-                    Confirm password
-                  </InputLabel>
                   <TextField
                     fullWidth
+                    required
                     type="password"
                     id="confirmPassword"
                     name="confirmPassword"
+                    label={'Confirm password'}
                     onChange={e => setConfirmPassword(e.target.value)}
                     value={confirmPassword || ''}
                   />
@@ -164,11 +161,10 @@ export const ResetPassword = (props: ResetPasswordProps) => {
                 margin="normal"
                 sx={formControlSx}
               >
-                <InputLabel shrink htmlFor="username" required>
-                  Email address or username
-                </InputLabel>
                 <TextField
                   fullWidth
+                  required
+                  label={'Email address or username'}
                   id="username"
                   name="username"
                   onChange={e => setUserName(e.target.value)}
