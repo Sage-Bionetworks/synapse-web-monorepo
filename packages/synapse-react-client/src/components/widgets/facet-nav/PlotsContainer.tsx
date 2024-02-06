@@ -1,34 +1,40 @@
-import {
-  FacetColumnRequest,
-  FacetColumnResultValues,
-  FacetColumnResultValueCount,
-} from '@sage-bionetworks/synapse-types'
-import { facetObjectMatchesDefinition } from '../../utils/functions/queryUtils'
-import { UniqueFacetIdentifier } from '../../utils/types/UniqueFacetIdentifier'
-import { useQueryContext } from '../QueryContext'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
+import { facetObjectMatchesDefinition } from '../../../utils/functions/queryUtils'
+import { UniqueFacetIdentifier } from '../../../utils/types/UniqueFacetIdentifier'
+import { useQueryContext } from '../../QueryContext'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   tableQueryDataAtom,
   isLoadingNewBundleAtom,
-} from '../QueryWrapper/QueryWrapper'
-import { QueryWrapperSynapsePlotProps } from '../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
+} from '../../QueryWrapper/QueryWrapper'
+import { QueryWrapperSynapsePlotProps } from '../../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
 import React from 'react'
-import { useState, useMemo, useEffect } from 'react'
-import TotalQueryResults from '../TotalQueryResults'
-import { getFacets } from '../widgets/facet-nav/FacetNav'
-import FacetNavPanel, { PlotType } from '../widgets/facet-nav/FacetNavPanel'
-import { applyChangesToValuesColumn } from '../widgets/query-filter/FacetFilterControls'
+import { useState, useMemo, useEffect, useCallback } from 'react'
+import { getFacets } from './useFacetPlots'
+import FacetNavPanel, {
+  FacetNavPanelProps,
+  PlotType,
+} from '../facet-nav/FacetNavPanel'
 import { useAtomValue } from 'jotai'
 import { Button, Box } from '@mui/material'
-import FacetNav from '../widgets/facet-nav/FacetNav'
-import QueryWrapperSynapsePlot from '../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
-import useFacetPlots from '../widgets/facet-nav/useFacetPlots'
-import useDeepCompareEffect from 'use-deep-compare-effect'
+import QueryWrapperSynapsePlot from '../../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
+import useFacetPlots from './useFacetPlots'
 import { PlotType as PlotlyPlotType } from 'plotly.js-basic-dist'
 
 const DEFAULT_VISIBLE_PLOTS = 2
 type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
-
+export type FacetNavProps = {
+  facet: UniqueFacetIdentifier
+  facetsToPlot?: string[]
+  facetUiStateArray: UiPlotState[]
+  setFacetUiStateArray: React.Dispatch<React.SetStateAction<UiPlotState[]>>
+  hidePlotInGrid: (plotId: PlotIdentifier) => void
+  setPlotType: (plotId: PlotIdentifier, plotType: PlotType) => void
+  getPlotType: (plotId: PlotIdentifier) => PlotType
+  plotMatchesDefinition: (
+    definition: PlotIdentifier,
+    plotId: PlotIdentifier,
+  ) => boolean
+}
 export type PlotsContainerProps = {
   facetsToPlot?: string[]
   customPlots?: QueryWrapperSynapsePlotProps[]
@@ -58,17 +64,6 @@ const plotMatchesDefinition = (
   }
 }
 
-function convertFacetNavPlotTypeToPlotlyPlotType(
-  facetNavPlotType: PlotType,
-): PlotlyPlotType {
-  if (facetNavPlotType === 'BAR') {
-    return 'bar'
-  } else if (facetNavPlotType === 'PIE') {
-    return 'pie'
-  }
-  return 'pie'
-}
-
 function convertPlotlyPlotTypeToFacetNavPlotType(
   plotlyPlotType: PlotlyPlotType,
 ): PlotType {
@@ -78,6 +73,16 @@ function convertPlotlyPlotTypeToFacetNavPlotType(
     return 'PIE'
   }
   return 'PIE'
+}
+
+const generatePlotKey = (plotUiState: UiPlotState) => {
+  if ('__custom' in plotUiState.plotId) {
+    // For custom plots
+    return `custom-${plotUiState.plotId.title}`
+  } else {
+    // For facet plots
+    return `facet-${plotUiState.plotId.columnName}-${plotUiState.plotId.jsonPath}`
+  }
 }
 
 const DEFAULT_PLOT_TYPE: PlotType = 'PIE'
@@ -90,11 +95,10 @@ export default function PlotsContainer(props: PlotsContainerProps) {
     facetsToPlot = DEFAULT_FACETS_TO_PLOT,
     customPlots = DEFAULT_CUSTOM_PLOTS,
   } = props
-  const { getCurrentQueryRequest, executeQueryRequest, error } =
-    useQueryContext()
+  const { error } = useQueryContext()
   const data = useAtomValue(tableQueryDataAtom)
   const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
-  const { showPlotVisualization } = useQueryVisualizationContext()
+  const { showPlots: showPlotVisualization } = useQueryVisualizationContext()
   const [plotUiStateArray, setPlotUiStateArray] = useState<UiPlotState[]>([])
   const facetNavPanelPropsArray = useFacetPlots(facetsToPlot)
 
@@ -105,37 +109,110 @@ export default function PlotsContainer(props: PlotsContainerProps) {
     return plotType ?? 'PIE'
   }
 
+  // Wrap in useCallback
+  // switch to
+  const isPlotInState = useCallback(
+    (plotId: PlotIdentifier): boolean => {
+      // plotUiStateArray.find...
+      //return plotUiStateArray && plotUiStateArray.find(plotId)
+      return !!plotUiStateArray.find(plot => {
+        if ('__custom' in plot.plotId && '__custom' in plotId) {
+          return plot.plotId.title === plotId.title
+        } else if (!('__custom' in plotId) && !('__custom' in plot.plotId)) {
+          return facetObjectMatchesDefinition(plot.plotId, plotId)
+        } else {
+          return false
+        }
+      })
+    },
+    [plotUiStateArray],
+  )
+
+  // Wrap in useCallback
+  const getCombinedNewPlots = useCallback(
+    (
+      customPlots: QueryWrapperSynapsePlotProps[],
+      facetNavPanelPropsArray: Pick<
+        FacetNavPanelProps,
+        'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
+      >[],
+    ): UiPlotState[] => [
+      ...(customPlots ?? []).map((plotProps, index) => ({
+        plotId: {
+          __custom: true,
+          title: plotProps.title ?? '',
+        } satisfies CustomPlotIdentifier,
+        isHidden: index >= DEFAULT_VISIBLE_PLOTS,
+        plotType: convertPlotlyPlotTypeToFacetNavPlotType(plotProps.type),
+      })),
+      ...(facetNavPanelPropsArray ?? []).map((facetPlotProps, index) => ({
+        plotId: facetPlotProps.facetToPlot,
+        isHidden: index >= DEFAULT_VISIBLE_PLOTS,
+        plotType: DEFAULT_PLOT_TYPE,
+      })),
+    ],
+    [],
+  )
+
   useEffect(() => {
-    console.log('effect reinitializePlotUiStateArray ran')
-    const newPlotUiStateArray: UiPlotState[] = []
-    if (customPlots && customPlots.length > 0) {
-      newPlotUiStateArray.push(
-        ...customPlots.map(
-          (plotProps): UiPlotState => ({
-            plotId: {
-              __custom: true,
-              title: plotProps.title ?? '',
-            },
-            isHidden: false,
-            plotType: convertPlotlyPlotTypeToFacetNavPlotType(plotProps.type),
+    // const currentPlotIds = getCurrentPlotIds()
+    const combinedNewPlots = getCombinedNewPlots(
+      customPlots,
+      facetNavPanelPropsArray,
+    )
+
+    // Filter to only include new plots
+    const newPlots = combinedNewPlots.filter(plot => {
+      return !isPlotInState(plot.plotId)
+    })
+
+    // Update the state with new plots
+    setPlotUiStateArray(prevPlots => {
+      // Remove plots that are no longer in props from prevPlots
+      const isPlotStillPresent = (prevPlot: UiPlotState): boolean => {
+        if ('__custom' in prevPlot.plotId && prevPlot.plotId.__custom) {
+          const uniqueCustomPlot = prevPlot.plotId
+          return customPlots.some(
+            customPlot => customPlot.title === uniqueCustomPlot.title,
+          )
+        } else {
+          return facetNavPanelPropsArray.some(facetPlot =>
+            facetObjectMatchesDefinition(
+              facetPlot.facetToPlot,
+              prevPlot.plotId as UniqueFacetIdentifier,
+            ),
+          )
+        }
+      } // fn returns true iff the plot id is in customPlots or facetNavPanelPropsArray
+
+      const updatedProps = prevPlots.filter(isPlotStillPresent)
+
+      // Append new plots
+      const combinedPlots = [...updatedProps, ...newPlots]
+
+      // Remove duplicates
+      const uniquePlots = combinedPlots.filter(
+        (plot, index, self) =>
+          index ===
+          self.findIndex(p => {
+            if ('__custom' in plot.plotId && '__custom' in p.plotId) {
+              return plot.plotId.title === p.plotId.title
+            } else if (
+              !('__custom' in plot.plotId) &&
+              !('__custom' in plot.plotId)
+            ) {
+              return facetObjectMatchesDefinition(
+                plot.plotId,
+                p.plotId as UniqueFacetIdentifier,
+              )
+            } else {
+              return false
+            }
           }),
-        ),
       )
-    }
-
-    if (facetNavPanelPropsArray && facetNavPanelPropsArray.length > 0) {
-      newPlotUiStateArray.push(
-        ...facetNavPanelPropsArray.map(facetPlotProps => ({
-          plotId: facetPlotProps.facetToPlot,
-          isHidden: false,
-          plotType: DEFAULT_PLOT_TYPE,
-        })),
-      )
-    }
-    setPlotUiStateArray(newPlotUiStateArray)
+      return uniquePlots
+    })
   }, [customPlots, facetNavPanelPropsArray])
-
-  const lastQueryRequest = getCurrentQueryRequest()
 
   // when 'show more/less' is clicked
   const onShowMoreClick = (shouldShowMore: boolean) => {
@@ -174,7 +251,7 @@ export default function PlotsContainer(props: PlotsContainerProps) {
     }
   }, [plotUiStateArray])
 
-  // hides facet graph
+  // hides plot graph
   const hidePlotInGrid = (plotId: PlotIdentifier) => {
     setUiPropertyForPlot(plotId, 'isHidden', true)
   }
@@ -197,8 +274,10 @@ export default function PlotsContainer(props: PlotsContainerProps) {
     )
   }
 
-  const colorTracker: { facet: UniqueFacetIdentifier; colorIndex: number }[] =
-    // Todo: fix to work with customPlots
+  const colorTracker: { facet: PlotIdentifier; colorIndex: number }[] =
+    // TODO: customPlots should use the color index
+    // additionally, it is unclear why this object is created
+    // We can probably just pass the index from `plotUiStateArray.map)
     getFacets(data, facetsToPlot).map((el, index) => {
       return {
         facet: { columnName: el.columnName, jsonPath: el.jsonPath },
@@ -206,39 +285,18 @@ export default function PlotsContainer(props: PlotsContainerProps) {
       }
     })
 
-  const generatePlotKey = (plotUiState: UiPlotState) => {
-    if ('__custom' in plotUiState.plotId) {
-      // For custom plots
-      return `custom-${plotUiState.plotId.title}`
-    } else {
-      // For facet plots
-      return `facet-${plotUiState.plotId.columnName}-${plotUiState.plotId.jsonPath}`
-    }
-  }
-
-  const hasFacetsOrFilters =
-    (lastQueryRequest?.query.selectedFacets !== undefined &&
-      lastQueryRequest.query.selectedFacets.length > 0) ||
-    (lastQueryRequest?.query.additionalFilters !== undefined &&
-      lastQueryRequest?.query.additionalFilters.length > 0)
   if (error || (!data && isLoadingNewBundle)) {
     return <></>
   } else {
     return (
       <>
-        <TotalQueryResults
-          frontText={''}
-          endText={hasFacetsOrFilters ? 'filtered by' : ''}
-          hideIfUnfiltered={true}
-        />
         {plotUiStateArray.length > 0 && (
           <div
-            className={`FacetNav ${showPlotVisualization ? '' : 'hidden'} ${
-              showMoreButtonState === 'LESS' ? 'less' : ''
-            }`}
+            className={`PlotsContainer ${
+              showPlotVisualization ? '' : 'hidden'
+            } ${showMoreButtonState === 'LESS' ? 'less' : ''}`}
           >
-            <div className="FacetNav__row" role="list">
-              {/* // split into customplots array and array of facet plots and render seperately */}
+            <div className="PlotNav__row" role="list">
               {plotUiStateArray.map(plotUiState => {
                 const isCustomPlot = '__custom' in plotUiState.plotId
                 const customPlotProps = isCustomPlot
@@ -319,5 +377,3 @@ export default function PlotsContainer(props: PlotsContainerProps) {
     )
   }
 }
-
-// PlotsContainer.whyDidYouRender = true

@@ -53,7 +53,7 @@ export const programs: SynapseConfig = {
     name: 'Programs',
     columnAliases,
     facetsToPlot: [],
-    defaultShowFacetVisualization: false,
+    defaultShowPlots: false,
   },
 }
 

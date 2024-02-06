@@ -57,8 +57,8 @@ export type QueryVisualizationContextType = {
   setShowSqlEditor: React.Dispatch<React.SetStateAction<boolean>>
   showCopyToClipboard: boolean
   setShowCopyToClipboard: React.Dispatch<React.SetStateAction<boolean>>
-  showPlotVisualization: boolean
-  setShowPlotVisualization: React.Dispatch<React.SetStateAction<boolean>>
+  showPlots: boolean
+  setShowPlots: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 /**
@@ -108,7 +108,7 @@ export type QueryVisualizationWrapperProps = {
   columnAliases?: Record<string, string>
   visibleColumnCount?: number
   hiddenColumns?: string[]
-  defaultShowFacetVisualization?: boolean
+  defaultShowPlots?: boolean
   defaultShowSearchBar?: boolean
   showLastUpdatedOn?: boolean
   /** Default is INTERACTIVE */
@@ -122,6 +122,7 @@ export type QueryVisualizationWrapperProps = {
   additionalFiltersSessionStorageKey?: string
   /** Configuration to add a help popover to each corresponding column header */
   helpConfiguration?: ColumnOrFacetHelpConfig[]
+  hasCustomPlots?: boolean
 }
 
 /**
@@ -134,9 +135,10 @@ export function QueryVisualizationWrapper(
   const {
     noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE,
     defaultShowSearchBar = false,
-    defaultShowFacetVisualization = true,
+    defaultShowPlots = true,
     unitDescription = 'result',
     helpConfiguration,
+    hasCustomPlots = false,
   } = props
 
   const columnAliases = useMemo(
@@ -149,9 +151,7 @@ export function QueryVisualizationWrapper(
   const data = useAtomValue(tableQueryDataAtom)
 
   const [showSqlEditor, setShowSqlEditor] = useState(false)
-  const [showPlotVisualization, setShowPlotVisualization] = useState(
-    defaultShowFacetVisualization,
-  )
+  const [showPlots, setShowPlots] = useState(defaultShowPlots)
   const [showCopyToClipboard, setShowCopyToClipboard] = useState(true)
   const [showFacetFilter, setShowFacetFilter] = useState(true)
 
@@ -263,8 +263,8 @@ export function QueryVisualizationWrapper(
       setShowDownloadConfirmation,
       showSqlEditor,
       setShowSqlEditor,
-      showPlotVisualization: isFacetsAvailable ? showPlotVisualization : false,
-      setShowPlotVisualization,
+      showPlots: hasCustomPlots || isFacetsAvailable ? showPlots : false,
+      setShowPlots,
       showCopyToClipboard,
       setShowCopyToClipboard,
     }),
@@ -281,11 +281,12 @@ export function QueryVisualizationWrapper(
       showCopyToClipboard,
       showDownloadConfirmation,
       showFacetFilter,
-      showPlotVisualization,
+      showPlots,
       showSearchBar,
       showSqlEditor,
       unitDescription,
       visibleColumns,
+      hasCustomPlots,
     ],
   )
   /**

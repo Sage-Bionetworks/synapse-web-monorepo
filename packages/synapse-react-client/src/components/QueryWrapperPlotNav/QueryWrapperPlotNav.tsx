@@ -1,48 +1,48 @@
+import { Box } from '@mui/material'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { useAtomValue } from 'jotai'
 import React, { useState } from 'react'
+import { useGetEntity } from '../../synapse-queries'
 import { SynapseConstants } from '../../utils'
-import { isTable } from '../../utils/functions/EntityTypeUtils'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions'
-import { useGetEntity } from '../../synapse-queries'
+import { isTable } from '../../utils/functions/EntityTypeUtils'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardConfiguration } from '../CardContainerLogic'
+import { TableQueryDownloadConfirmation } from '../download_list'
+import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import FullTextSearch from '../FullTextSearch'
 import ModalDownload from '../ModalDownload/ModalDownload'
+import { QueryWrapperPlotNavCustomPlotParams } from '../Plot/SynapsePlot'
+import { QueryContextType, useQueryContext } from '../QueryContext'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
-import { QueryContextType, useQueryContext } from '../QueryContext'
+import { isLoadingNewBundleAtom } from '../QueryWrapper/QueryWrapper'
+import { hasSelectedRowsAtom } from '../QueryWrapper/TableRowSelectionState'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
+import { SynapseTableProps } from '../SynapseTable'
+import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import SqlEditor from '../SynapseTable/SqlEditor'
-import { SynapseTableProps } from '../SynapseTable'
 import TopLevelControls, {
   TopLevelControlsProps,
 } from '../SynapseTable/TopLevelControls/TopLevelControls'
-import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
+import TotalQueryResults from '../TotalQueryResults'
+import PlotsContainer, {
+  PlotsContainerProps,
+} from '../widgets/facet-nav/PlotsContainer'
 import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
 import FilterAndView from './FilterAndView'
-import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
-import { Box, Button } from '@mui/material'
-import { SynapseErrorBoundary } from '../error/ErrorBanner'
-import { TableQueryDownloadConfirmation } from '../download_list'
-import { useAtomValue } from 'jotai'
-import { isLoadingNewBundleAtom } from '../QueryWrapper/QueryWrapper'
-import QueryWrapperSynapsePlot, {
-  QueryWrapperSynapsePlotProps,
-} from './QueryWrapperSynapsePlot'
-import { QueryWrapperPlotNavCustomPlotParams } from '../Plot/SynapsePlot'
-import { hasSelectedRowsAtom } from '../QueryWrapper/TableRowSelectionState'
-import PlotsContainer from '../Plot/PlotsContainer'
+import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -82,7 +82,7 @@ type QueryWrapperPlotNavOwnProps = {
   > &
   Pick<
     QueryVisualizationWrapperProps,
-    | 'defaultShowFacetVisualization'
+    | 'defaultShowPlots'
     | 'visibleColumnCount'
     | 'columnAliases'
     | 'rgbIndex'
@@ -104,7 +104,7 @@ export type Operator = {
 }
 
 export type QueryWrapperPlotNavProps = SearchParams &
-  FacetNavProps &
+  PlotsContainerProps &
   Operator &
   QueryWrapperPlotNavOwnProps
 
@@ -154,16 +154,20 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
-  const [areComponentsCollapsed, setAreComponentsCollapsed] = useState(false)
 
   const { isFacetsAvailable: isFaceted } = queryContext
   const isLoadingNewBundle = useAtomValue(isLoadingNewBundleAtom)
 
   const hasSelectedRows = useAtomValue(hasSelectedRowsAtom)
 
-  const toggleComponentsCollapse = () => {
-    setAreComponentsCollapsed(prevState => !prevState)
-  }
+  const currentQueryRequest = queryContext.currentQueryRequest
+
+  const hasFacetsOrFilters =
+    (currentQueryRequest?.query.selectedFacets !== undefined &&
+      currentQueryRequest.query.selectedFacets.length > 0) ||
+    (currentQueryRequest?.query.additionalFilters !== undefined &&
+      currentQueryRequest?.query.additionalFilters.length > 0)
+
   return (
     <QueryVisualizationContextConsumer>
       {queryVisualizationContext => {
@@ -227,23 +231,15 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                 <FacetFilterControls availableFacets={availableFacets} />
               </>
             )}
-
+            <TotalQueryResults
+              frontText={''}
+              endText={hasFacetsOrFilters ? 'filtered by' : ''}
+              hideIfUnfiltered={true}
+            />
             <PlotsContainer
               facetsToPlot={facetsToPlot}
               customPlots={customPlots}
             />
-
-            {/* {customPlots && (
-              <div className="SynapsePlots">
-                {customPlots.map((plotProps, index) => {
-                  return <QueryWrapperSynapsePlot 
-                  key={index} {...plotProps} />
-                })}
-              </div>
-            )}
-
-            <FacetNav facetsToPlot={facetsToPlot} /> */}
-
             <FilterAndView
               tableConfiguration={tableConfiguration}
               hideDownload={hideDownload}
@@ -276,6 +272,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     unitDescription,
     additionalFiltersSessionStorageKey,
     helpConfiguration,
+    customPlots,
   } = props
 
   const entityId = parseEntityIdFromSqlStatement(sql)
@@ -329,12 +326,13 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
         columnAliases={props.columnAliases}
         helpConfiguration={helpConfiguration}
         visibleColumnCount={props.visibleColumnCount}
-        defaultShowFacetVisualization={props.defaultShowFacetVisualization}
+        defaultShowPlots={props.defaultShowPlots}
         defaultShowSearchBar={
           props.defaultShowSearchBox || isFullTextSearchEnabled
         }
         showLastUpdatedOn={showLastUpdatedOn}
         noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
+        hasCustomPlots={Array.isArray(customPlots) && customPlots.length > 0}
       >
         <QueryWrapperPlotNavContents
           {...props}

@@ -67,7 +67,7 @@ export const Cards: Story = {
       },
     ],
     limit: 5,
-    defaultShowFacetVisualization: false,
+    defaultShowPlots: false,
     defaultShowSearchBox: true,
     shouldDeepLink: true,
     cardConfiguration: {

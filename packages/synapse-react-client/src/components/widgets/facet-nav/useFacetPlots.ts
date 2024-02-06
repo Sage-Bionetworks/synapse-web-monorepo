@@ -8,13 +8,12 @@ import {
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import { tableQueryDataAtom } from '../../QueryWrapper/QueryWrapper'
 import { useAtomValue } from 'jotai'
-import { useMemo, useEffect, useCallback } from 'react'
-import { UniqueFacetIdentifier } from '../../../utils/types/UniqueFacetIdentifier'
+import { useMemo, useCallback } from 'react'
 import { FacetNavPanelProps } from './FacetNavPanel'
-import FacetPlotsCard from '../../FeaturedDataTabs/FacetPlotsCard'
 import { useQueryContext } from '../../QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/FacetFilterControls'
 
+// Custom hook for generating properties for FacetNavPanel components with filter controls based on the given facets
 export default function useFacetPlots(
   facetsToPlot: string[],
 ): Pick<
@@ -22,8 +21,7 @@ export default function useFacetPlots(
   'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
 >[] {
   const data = useAtomValue(tableQueryDataAtom)
-  const { getCurrentQueryRequest, executeQueryRequest, error } =
-    useQueryContext()
+  const { getCurrentQueryRequest, executeQueryRequest } = useQueryContext()
 
   const lastQueryRequest = useMemo(
     () => getCurrentQueryRequest(),
@@ -70,7 +68,6 @@ export default function useFacetPlots(
             ),
         }
       }),
-    // FIXME: For some reason, lastQueryRequest causes this to constantly re-run
     [facets, applyChangesFromQueryFilter, lastQueryRequest],
   )
   return facetNavPanelProps

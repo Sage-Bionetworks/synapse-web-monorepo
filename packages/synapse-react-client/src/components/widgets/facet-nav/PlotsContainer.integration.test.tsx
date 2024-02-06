@@ -3,7 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
-import FacetNav, { FacetNavProps } from './FacetNav'
+import PlotsContainer, {
+  PlotsContainerProps,
+} from '../../widgets/facet-nav/PlotsContainer'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../../utils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -49,11 +51,12 @@ function getButtonOnFacet(
   }
 }
 
-function init(props?: FacetNavProps) {
+function init(props?: PlotsContainerProps) {
+  // Todo: need to migrate this test to use PlotsContainer
   render(
     <QueryWrapper initQueryRequest={lastQueryRequest}>
       <QueryVisualizationWrapper>
-        <FacetNav {...props} />
+        <PlotsContainer {...props} />
       </QueryVisualizationWrapper>
     </QueryWrapper>,
     {

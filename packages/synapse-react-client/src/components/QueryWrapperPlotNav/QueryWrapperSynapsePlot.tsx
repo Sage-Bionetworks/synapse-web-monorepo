@@ -10,20 +10,16 @@ import {
   QueryFilter,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { IconButton, Tooltip } from '@mui/material'
-import IconSvg from '../IconSvg'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-
+import PlotPanelHeader from '../Plot/PlotPanelHeader'
 export type QueryWrapperSynapsePlotProps = Pick<
   QueryWrapperPlotNavCustomPlotParams,
   'onCustomPlotClick'
 > &
-  Omit<SynapsePlotWidgetParams, 'selectedFacets' | 'additionalFilters'> & {
-    // TODO: Split interfaces into external props and internal props,
-    // onHide should not be externalized
-    onHide?: () => void
-  }
-
+  Omit<SynapsePlotWidgetParams, 'selectedFacets' | 'additionalFilters'>
+type QueryWrapperSynapsePlotInternalProps = {
+  onHide: () => void
+}
 export type QueryWrapperSynapsePlotRowClickEvent = {
   row: Row
   queryContext: QueryContextType
@@ -36,13 +32,12 @@ export type QueryWrapperSynapsePlotRowClickEvent = {
  * @returns
  */
 export default function QueryWrapperSynapsePlot(
-  props: QueryWrapperSynapsePlotProps,
+  props: QueryWrapperSynapsePlotProps & QueryWrapperSynapsePlotInternalProps,
 ) {
   const queryContext = useQueryContext()
   const { currentQueryRequest } = queryContext
   const { title, onCustomPlotClick, onHide } = props // onhide() callback
-  const { showPlotVisualization: showFacetVisualization } =
-    useQueryVisualizationContext()
+  const { showPlots } = useQueryVisualizationContext()
 
   const widgetParamsMapped: SynapsePlotWidgetParams = useMemo(() => {
     return {
@@ -63,28 +58,10 @@ export default function QueryWrapperSynapsePlot(
     }
   }, [currentQueryRequest.query, onCustomPlotClick, queryContext])
   return (
-    <div className="SynapsePlot">
-      {showFacetVisualization && (
+    <div role="figure" className="SynapsePlot">
+      {showPlots && (
         <>
-          {title && (
-            <div className="FacetNavPanel__title">
-              <span className="FacetNavPanel__title__name">{title}</span>
-              <div role="toolbar" className="FacetNavPanel__title__tools">
-                <Tooltip title={'Hide graph under Show More'}>
-                  <IconButton
-                    onClick={() => {
-                      if (onHide) {
-                        onHide()
-                      }
-                    }}
-                    size={'small'}
-                  >
-                    <IconSvg icon={'close'} wrap={false} fontSize={'inherit'} />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            </div>
-          )}
+          {title && <PlotPanelHeader title={title} onHide={onHide} />}
           <SynapsePlot
             synapsePlotWidgetParams={widgetParamsMapped}
             customPlotParams={customPlotParams}
