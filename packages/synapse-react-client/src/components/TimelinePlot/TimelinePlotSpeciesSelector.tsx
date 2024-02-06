@@ -15,7 +15,7 @@ export type TimelinePlotSpeciesSelectorProps = {
 }
 export const TimelinePlotSpeciesSelector = ({
   sql,
-  additionalFilters = [],
+  additionalFilters,
   species,
   setSpecies,
 }: TimelinePlotSpeciesSelectorProps) => {

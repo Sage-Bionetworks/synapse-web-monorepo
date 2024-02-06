@@ -140,6 +140,17 @@ function getPlotDataPoints(
   return data
 }
 
+const DEFAULT_DOTPLOT_PLOTSTYLE: PlotStyle = {
+  markerFill: '#515359',
+  markerLine: '#515359',
+  markerSize: 9,
+  backgroundColor: 'transparent',
+}
+const DEFAULT_DOTPLOT_STYLE: React.CSSProperties = {
+  width: '100%',
+  height: '100%',
+}
+
 const DotPlot: FunctionComponent<DotPlotProps> = ({
   plotData,
   optionsConfig,
@@ -147,14 +158,9 @@ const DotPlot: FunctionComponent<DotPlotProps> = ({
   label,
   id,
   xMax,
-  style = { width: '100%', height: '100%' },
+  style = DEFAULT_DOTPLOT_STYLE,
   markerSymbols,
-  plotStyle = {
-    markerFill: '#515359',
-    markerLine: '#515359',
-    markerSize: 9,
-    backgroundColor: 'transparent',
-  },
+  plotStyle = DEFAULT_DOTPLOT_PLOTSTYLE,
   onClick,
   isLegend = false,
   isXAxis = false,

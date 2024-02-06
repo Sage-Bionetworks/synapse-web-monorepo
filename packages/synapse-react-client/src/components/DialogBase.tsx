@@ -14,15 +14,18 @@ import {
 import React from 'react'
 import { HelpPopover, HelpPopoverProps } from './HelpPopover/HelpPopover'
 
+const EMPTY_OBJECT = {}
+
 export type CloseButtonProps = {
   sx?: SxProps
   onClick?: () => void
 }
 
 export const CLOSE_BUTTON_LABEL = 'close'
+const DEFAULT_CLOSEBUTTON_SX: SxProps = { color: 'grey.700' }
 
 export const CloseButton: React.FC<CloseButtonProps> = ({
-  sx = { color: 'grey.700' },
+  sx = DEFAULT_CLOSEBUTTON_SX,
   onClick,
 }) => {
   return (
@@ -62,7 +65,7 @@ export const DialogBase = ({
   maxWidth = 'sm',
   fullWidth = true,
   sx,
-  contentProps = {},
+  contentProps = EMPTY_OBJECT,
 }: DialogBaseProps) => {
   return (
     <Dialog

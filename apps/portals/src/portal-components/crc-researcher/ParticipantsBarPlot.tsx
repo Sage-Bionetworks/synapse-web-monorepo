@@ -158,9 +158,15 @@ export function fetchData(token: string): Promise<RowSet> {
   )
 }
 
+const DEFAULT_PARTICIPANTS_BAR_PLOT_STYLE: React.CSSProperties = {
+  width: '100%',
+  height: '100%',
+  margin: '30px 10px',
+}
+
 const ParticipantsBarPlot: FunctionComponent<ParticipantsBarPlotProps> = ({
   token,
-  style = { width: '100%', height: '100%', margin: '30px 10px' },
+  style = DEFAULT_PARTICIPANTS_BAR_PLOT_STYLE,
 }: ParticipantsBarPlotProps) => {
   // get plot data!
   const [isLoaded, setIsLoaded] = useState(false)

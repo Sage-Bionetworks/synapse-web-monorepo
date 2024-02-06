@@ -18,6 +18,10 @@ export type TooltipVisualProps = {
   border?: boolean
 }
 
+const DEFAULT_TOOLTIP_VISUAL_PROPS: Partial<TooltipVisualProps> = {
+  place: 'top',
+}
+
 /*****************************************
  *  The control needs to either have a child element or needs to have an image supplied
  *  If the child element is supplied the control renders the child applying additional properties
@@ -55,7 +59,7 @@ export const ElementWithTooltip = ({
   tooltipText,
   className = '',
   imageColor,
-  tooltipVisualProps = { place: 'top' },
+  tooltipVisualProps = DEFAULT_TOOLTIP_VISUAL_PROPS,
   children,
   darkTheme,
   size,
