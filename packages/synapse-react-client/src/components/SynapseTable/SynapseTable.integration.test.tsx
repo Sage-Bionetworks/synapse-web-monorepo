@@ -5,7 +5,10 @@ import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { SynapseConstants } from '../../utils'
-import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
+import {
+  QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
+} from '../QueryVisualizationWrapper'
 import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '../../utils/APIConstants'
@@ -63,6 +66,7 @@ function renderTable(
   props?: SynapseTableProps,
   queryWrapperPropOverrides?: Partial<QueryWrapperProps>,
   mockEntity: Table = mockTableEntity,
+  queryVisualizationWrapperProps?: Partial<QueryVisualizationWrapperProps>,
 ) {
   const initQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -111,7 +115,7 @@ function renderTable(
       initQueryRequest={initQueryRequest}
       {...queryWrapperPropOverrides}
     >
-      <QueryVisualizationWrapper>
+      <QueryVisualizationWrapper {...queryVisualizationWrapperProps}>
         <QueryContextConsumer>
           {context => {
             // Capture the query context so we can use it in our tests
@@ -583,5 +587,21 @@ describe('SynapseTable tests', () => {
         name: 'Filter by specific facet',
       }),
     ).not.toBeInTheDocument()
+  })
+
+  it('shows help text when provided by QueryVisualizationWrapper', async () => {
+    const helpText = 'Some description for the column'
+    renderTable(undefined, undefined, undefined, {
+      helpConfiguration: [
+        {
+          columnName: 'id',
+          helpText: helpText,
+        },
+      ],
+    })
+
+    // Verify that the ID column contains the icon button with the help text
+    const columnHeader = await screen.findByRole('columnheader', { name: 'Id' })
+    within(columnHeader).getByRole('button', { name: helpText })
   })
 })

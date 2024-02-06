@@ -354,6 +354,12 @@ export const Dataset: Story = {
     hideSqlEditorControl: false,
     shouldDeepLink: false,
     showExportToCavatica: true,
+    helpConfiguration: [
+      {
+        columnName: 'id',
+        helpText: 'This represents the unique ID in Synapse',
+      },
+    ],
   },
 }
 
