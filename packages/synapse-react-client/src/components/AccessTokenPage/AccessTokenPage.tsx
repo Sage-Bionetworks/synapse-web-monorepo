@@ -5,6 +5,7 @@ import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard/AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
+import { AddCircleTwoTone, AddTwoTone } from '@mui/icons-material'
 
 export type AccessTokenPageProps = {
   title: string
@@ -39,6 +40,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
             variant="contained"
             color="primary"
             onClick={() => setShowCreateTokenModal(true)}
+            startIcon={<AddCircleTwoTone />}
           >
             Create New Token
           </Button>
