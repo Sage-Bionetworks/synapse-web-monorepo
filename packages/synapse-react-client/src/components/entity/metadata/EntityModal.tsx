@@ -59,6 +59,9 @@ export function EntityModal(props: EntityModalProps) {
   const [showEditCancellationWarning, setShowEditCancellationWarning] =
     useState(false)
   const [isInEditMode, setIsInEditMode] = useState(false)
+
+  // Need to store variable behavior for when the user confirms they want to cancel editing
+  // We may return to the readonly view, or we might close the entire modal, depending on what they clicked.
   const [onCancelEdit, setOnCancelEdit] = useState<() => void>(() =>
     setIsInEditMode(false),
   )
