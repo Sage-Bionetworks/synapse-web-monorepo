@@ -61,6 +61,7 @@ export function CardContainer(props: CardContainerProps) {
     isLoading,
     secondaryLabelLimit = 3,
     title,
+    initialLimit,
     ...rest
   } = props
   const infiniteQueryContext = useInfiniteQueryContext()
@@ -68,6 +69,20 @@ export function CardContainer(props: CardContainerProps) {
   const { appendNextPageToResults, hasNextPage } = infiniteQueryContext
   const data = useAtomValue(tableQueryDataAtom)
   const queryVisualizationContext = useQueryVisualizationContext()
+  const [hasAppliedInitialLimit, setHasAppliedInitialLimit] =
+    React.useState<boolean>(false)
+
+  const queryCount = data?.queryCount
+  const applyInitialLimit =
+    initialLimit !== undefined &&
+    queryCount !== undefined &&
+    initialLimit < queryCount &&
+    !hasAppliedInitialLimit
+
+  let dataRows: Row[] = (data && data.queryResult?.queryResults.rows) || []
+  if (applyInitialLimit) {
+    dataRows = dataRows.slice(0, initialLimit)
+  }
 
   const ids = data?.queryResult!.queryResults.tableId
     ? [data?.queryResult.queryResults.tableId]
@@ -84,7 +99,7 @@ export function CardContainer(props: CardContainerProps) {
         {isLoading && type !== OBSERVATION_CARD && loadingScreen}
       </div>
     )
-  } else if (data && data.queryResult!.queryResults.rows.length === 0) {
+  } else if (dataRows.length === 0) {
     // Show "no results" UI (see PORTALS-1497)
     return <NoContentPlaceholder />
   }
@@ -92,14 +107,18 @@ export function CardContainer(props: CardContainerProps) {
   data.queryResult!.queryResults.headers.forEach((element, index) => {
     schema[element.name] = index
   })
-  const showViewMoreButton = hasNextPage && (
+  const showViewMoreButton = (applyInitialLimit || hasNextPage) && (
     <Box display="flex" justifyContent="flex-end">
       <WideButton
         variant="contained"
         color="secondary"
         size="large"
         onClick={() => {
-          appendNextPageToResults()
+          if (applyInitialLimit && !hasAppliedInitialLimit) {
+            setHasAppliedInitialLimit(true)
+          } else {
+            appendNextPageToResults()
+          }
         }}
       >
         View More
@@ -118,15 +137,12 @@ export function CardContainer(props: CardContainerProps) {
         'Type MEDIUM_USER_CARD specified but no columnType USERID found',
       )
     }
-    const listIds = data.queryResult!.queryResults.rows.map(
-      el => el.values[userIdColumnIndex],
-    )
+    const listIds = dataRows.map(el => el.values[userIdColumnIndex])
     cards = <UserCardList data={data} list={listIds} size={MEDIUM_USER_CARD} />
   } else {
     // render the cards
-    const cardsData = data.queryResult!.queryResults.rows
-    cards = cardsData.length ? (
-      cardsData.map((rowData: Row, index) => {
+    cards = dataRows.length ? (
+      dataRows.map((rowData: Row, index) => {
         const key = JSON.stringify(rowData.values)
         const propsForCard = {
           key,
