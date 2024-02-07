@@ -1,13 +1,16 @@
 import { OAuthClientError } from './OAuthClientError'
 import React, { useCallback, useEffect, useState } from 'react'
-import { ApplicationSessionManager, SynapseClient } from 'synapse-react-client'
+import {
+  ApplicationSessionManager,
+  SynapseClient,
+  useFramebuster,
+} from 'synapse-react-client'
 import { handleErrorRedirect } from './URLUtils'
 
 function AppInitializer(
   props: React.PropsWithChildren<Record<string, unknown>>,
 ) {
   const [maxAge, setMaxAge] = useState<number | undefined>(undefined)
-  const [isFramed, setIsFramed] = useState(false)
 
   const urlSearchParams = new URLSearchParams(window.location.search)
   const prompt = urlSearchParams.get('prompt')
@@ -83,16 +86,7 @@ function AppInitializer(
     }
   }, [prompt])
 
-  // TODO: move this effect (and the corresponding useState hook) into one custom hook in a separate file
-  useEffect(() => {
-    // SWC-6294: on mount, detect and attempt a client-side framebuster (mitigation only, easily bypassed by attacker)
-    if (window.top && window.top !== window) {
-      // If not sandboxed, make sure not to show any portal content (in case they block window unload via onbeforeunload)
-      setIsFramed(true)
-      // If sandboxed, this call will cause an uncaught js exception and portal will not load.
-      window.top.location = window.location
-    }
-  }, [])
+  const isFramed = useFramebuster()
 
   return (
     <ApplicationSessionManager maxAge={maxAge} onError={onSignInError}>
