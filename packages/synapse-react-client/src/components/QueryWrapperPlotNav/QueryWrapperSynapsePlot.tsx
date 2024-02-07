@@ -36,7 +36,7 @@ export default function QueryWrapperSynapsePlot(
 ) {
   const queryContext = useQueryContext()
   const { currentQueryRequest } = queryContext
-  const { title, onCustomPlotClick, onHide } = props // onhide() callback
+  const { title, onCustomPlotClick, onHide } = props
   const { showPlots } = useQueryVisualizationContext()
 
   const widgetParamsMapped: SynapsePlotWidgetParams = useMemo(() => {

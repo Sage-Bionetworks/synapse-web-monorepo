@@ -52,7 +52,6 @@ function getButtonOnFacet(
 }
 
 function init(props?: PlotsContainerProps) {
-  // Todo: need to migrate this test to use PlotsContainer
   render(
     <QueryWrapper initQueryRequest={lastQueryRequest}>
       <QueryVisualizationWrapper>

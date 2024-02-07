@@ -160,21 +160,13 @@ const toggleAndVerifyVisibility = async (
   page: Page,
   showHideButton: Locator,
   chartsPanel: Locator,
-  ageDistChart: Locator,
-  isAgeDistributionChartPresent: boolean,
   shouldBeVisible: boolean,
 ) => {
   await showHideButton.click()
   if (shouldBeVisible) {
     await expect(chartsPanel).toBeVisible()
-    if (isAgeDistributionChartPresent) {
-      await expect(ageDistChart).toBeVisible()
-    }
   } else {
     await expect(chartsPanel).toBeHidden()
-    if (isAgeDistributionChartPresent) {
-      await expect(ageDistChart).toBeHidden()
-    }
   }
 }
 
@@ -182,26 +174,30 @@ const toggleShowHideVisualizationsAndVerify = async (
   page: Page,
   shouldBeVisible: boolean,
 ) => {
+  const viewAllChartsButton = page.getByRole('button', {
+    name: 'View All Charts',
+  })
+  expect(viewAllChartsButton).not.toBeNull()
+
+  await test.step('show all charts', async () => {
+    await viewAllChartsButton.click()
+  })
+
   const showHideButton = page.getByRole('button', {
     name: 'Show / Hide Visualizations',
   })
+  expect(showHideButton).not.toBeNull()
+
   const chartsPanel = page.locator('.PlotsContainer')
 
-  //const ageDistChart = page.getByText('Age Distribution')
-  const ageDistChart = chartsPanel.locator('.SynapsePlots:visible')
-  const isAgeDistributionChartPresent = (await ageDistChart.count()) > 0
-
-  const chartCells = chartsPanel.locator('.FacetNavPanel:visible')
+  const chartCells = chartsPanel.getByRole('figure')
   const initialCount = await chartCells.count()
 
   await test.step('toggle visualization and count', async () => {
-    expect(showHideButton).not.toBeNull()
     await toggleAndVerifyVisibility(
       page,
       showHideButton,
       chartsPanel,
-      ageDistChart,
-      isAgeDistributionChartPresent,
       shouldBeVisible,
     )
     shouldBeVisible = !shouldBeVisible
@@ -209,11 +205,9 @@ const toggleShowHideVisualizationsAndVerify = async (
       page,
       showHideButton,
       chartsPanel,
-      ageDistChart,
-      isAgeDistributionChartPresent,
       shouldBeVisible,
     )
-    const newCount = await page.locator('.FacetNavPanel:visible').count()
+    const newCount = await page.getByRole('figure').count()
     expect(newCount).toBe(initialCount)
   })
 }

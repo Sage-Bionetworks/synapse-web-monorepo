@@ -25,7 +25,7 @@ export default function PlotPanelHeader(props: PlotPanelHeaderProps) {
       {!data && isLoadingNewBundle ? (
         <SkeletonInlineBlock width={100} />
       ) : (
-        <span className="FacetNavPanel__title__name">{title}</span> // title was plotTitle in FacetNavPanel
+        <span className="FacetNavPanel__title__name">{title}</span>
       )}
       <div role="toolbar" className="FacetNavPanel__title__tools">
         {facetToPlot && (
