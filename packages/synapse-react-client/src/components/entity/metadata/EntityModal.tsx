@@ -184,6 +184,7 @@ export function EntityModal(props: EntityModalProps) {
             <SchemaDrivenAnnotationEditor
               entityId={entityId}
               formRef={annotationEditorFormRef}
+              hideActions
               onSuccess={() => {
                 displayToast('Annotations successfully updated.', 'success')
                 setIsInEditMode(false)

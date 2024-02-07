@@ -47,7 +47,7 @@ export default function WrapIfAdditionalTemplate<
 
   return (
     <div className={classNames}>
-      <Grid container sx={{ my: 2 }} columnSpacing={2} rowSpacing={0}>
+      <Grid container my={1} columnSpacing={2} rowSpacing={0}>
         <Grid item xs={3}>
           <TextField
             fullWidth={true}

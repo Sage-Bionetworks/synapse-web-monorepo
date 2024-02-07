@@ -9,15 +9,15 @@ const filter = createFilterOptions<EnumOptionsType>()
 /**
  * This function finds the enum option that has the corresponding value and returns it.
  *
- * If value is nullish, this fn returns undefined. If there is no corresponding option, then a new object is returned
+ * If value is nullish, this fn returns null. If there is no corresponding option, then a new object is returned
  * where the label and value are set to the provided value.
  */
 export function findValueOption(
   value: string | null | undefined,
   options: EnumOptionsType[],
-): EnumOptionsType | undefined {
+): EnumOptionsType | string | null {
   if (value == null) {
-    return undefined
+    return null
   }
 
   const correspondingOption = options.filter(option => option.value === value)
