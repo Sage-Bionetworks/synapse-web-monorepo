@@ -1,6 +1,6 @@
 import Skeleton from '@mui/material/Skeleton'
 import Form from '@rjsf/core'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
   entityTypeToFriendlyName,
   isVersionableEntityType,
@@ -18,6 +18,8 @@ import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
 import { Button, Tooltip } from '@mui/material'
 import { DialogBase } from '../../DialogBase'
+import { ConfirmationDialog } from '../../ConfirmationDialog'
+import { noop } from 'lodash-es'
 
 export const EntityModalTabs = [
   // non-annotation metadata about the entity
@@ -38,6 +40,7 @@ export type EntityModalProps = {
   readonly onClose: () => void
   readonly initialTab?: EntityModalTab
   readonly showTabs?: boolean
+  readonly onEditModeChanged?: (isInEditMode: boolean) => void
 }
 
 export function EntityModal(props: EntityModalProps) {
@@ -48,12 +51,27 @@ export function EntityModal(props: EntityModalProps) {
     onClose,
     initialTab = 'METADATA',
     showTabs = true,
+    onEditModeChanged = noop,
   } = props
   const annotationEditorFormRef = useRef<Form>(null)
 
   const [currentTab, setCurrentTab] = useState<EntityModalTab>(initialTab)
+  const [showEditCancellationWarning, setShowEditCancellationWarning] =
+    useState(false)
   const [isInEditMode, setIsInEditMode] = useState(false)
-  const [hasClickedCancel, setHasClickedCancel] = useState(false)
+  const [onCancelEdit, setOnCancelEdit] = useState<() => void>(() =>
+    setIsInEditMode(false),
+  )
+
+  // Call the callback if `isInEditMode` changes
+  // e.g. to set the global isInEditMode tracker in SWC
+  useEffect(() => {
+    onEditModeChanged(isInEditMode)
+    return () => {
+      // Ensure we disable edit mode when the component unmounts
+      onEditModeChanged(false)
+    }
+  }, [isInEditMode, onEditModeChanged])
 
   const { data: entityBundle } = useGetEntityBundle(entityId, versionNumber)
   const canEdit = entityBundle && entityBundle.permissions.canEdit
@@ -105,15 +123,11 @@ export function EntityModal(props: EntityModalProps) {
     <Button
       variant={'outlined'}
       onClick={() => {
-        if (hasClickedCancel) {
-          setIsInEditMode(false)
-        }
-        setHasClickedCancel(!hasClickedCancel)
+        setOnCancelEdit(() => () => setIsInEditMode(false))
+        setShowEditCancellationWarning(true)
       }}
     >
-      {hasClickedCancel
-        ? 'Are you sure? Unsaved changes will be lost'
-        : 'Cancel'}
+      Cancel
     </Button>
   )
 
@@ -184,18 +198,56 @@ export function EntityModal(props: EntityModalProps) {
     </>
   )
 
+  const cancelEditingConfirmationModal = (
+    <ConfirmationDialog
+      open={showEditCancellationWarning}
+      title="Unsaved Changes"
+      content="Any unsaved changes will be lost. Are you sure you want to close the editor?"
+      onCancel={() => {
+        setShowEditCancellationWarning(false)
+      }}
+      onConfirm={() => {
+        setShowEditCancellationWarning(false)
+        onCancelEdit()
+      }}
+    />
+  )
+
+  const modalTitle = useMemo(() => {
+    if (!entityBundle?.entity.name) {
+      return <Skeleton width={'40%'} />
+    } else if (currentTab === 'ANNOTATIONS') {
+      return `${isInEditMode ? 'Edit ' : ''}Annotations for ${
+        entityBundle.entity.name
+      }`
+    }
+    return entityBundle.entity.name
+  }, [currentTab, entityBundle?.entity.name, isInEditMode])
+
   return (
     <DialogBase
       className={`EntityMetadata`}
       open={show}
-      onCancel={onClose}
+      onCancel={() => {
+        if (isInEditMode) {
+          setShowEditCancellationWarning(true)
+          setOnCancelEdit(() => {
+            // Need to return a function in a function because passing a function to setState has a different meaning
+            return () => {
+              setIsInEditMode(false)
+              onClose()
+            }
+          })
+        } else {
+          onClose()
+        }
+      }}
       maxWidth={isInEditMode ? 'md' : 'sm'}
-      title={
-        entityBundle ? entityBundle.entity.name : <Skeleton width={'40%'} />
-      }
+      title={modalTitle}
       content={dialogContent}
       actions={
         <>
+          {cancelEditingConfirmationModal}
           {showCancelAnnotationEditsButton && cancelAnnotationEditsButton}
           {showSaveAnnotationsButton && saveAnnotationsButton}
           {showEditAnnotationsButton && editAnnotationsButton}
