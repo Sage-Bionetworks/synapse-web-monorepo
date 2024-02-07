@@ -1,43 +1,13 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { AccessTokenCardProps } from './AccessTokenCard/AccessTokenCard'
 import { AccessTokenPage, AccessTokenPageProps } from './AccessTokenPage'
-import { CreateAccessTokenModalProps } from './CreateAccessTokenModal'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import SynapseClient from '../../synapse-client'
 import { SynapseContextType } from '../../utils/context/SynapseContext'
 import { AccessTokenRecordList } from '@sage-bionetworks/synapse-types'
 
-// Mock the CreateAccessTokenModal with a simple dialog with buttons to easily invoke passed props
-jest.mock(
-  '../../../src/components/AccessTokenPage/CreateAccessTokenModal',
-  () => {
-    return {
-      CreateAccessTokenModal: (props: CreateAccessTokenModalProps) => {
-        return (
-          <div role="dialog">
-            <button onClick={props.onClose}>Invoke onClose</button>
-            <button onClick={props.onCreate}>Invoke onCreate</button>
-          </div>
-        )
-      },
-    }
-  },
-)
-
-jest.mock('./AccessTokenCard/AccessTokenCard', () => {
-  return {
-    AccessTokenCard: (props: AccessTokenCardProps) => {
-      return (
-        <div>
-          <p>{props.accessToken.name}</p>
-          <button onClick={props.onDelete}>Invoke onDelete</button>
-        </div>
-      )
-    },
-  }
-})
+const PERSONAL_ACCESS_TOKEN = 'qwertyuiop'
 
 const mockResultsFirstPage: AccessTokenRecordList = {
   results: [
@@ -89,12 +59,26 @@ function renderComponent(
   props: AccessTokenPageProps,
   wrapperProps?: SynapseContextType,
 ) {
-  return render(<AccessTokenPage {...props} />, {
+  const user = userEvent.setup()
+  const component = render(<AccessTokenPage {...props} />, {
     wrapper: createWrapper(wrapperProps),
   })
+  const openCreateTokenModalButton = screen.getByRole('button', {
+    name: 'Create New Token',
+  })
+
+  return { user, component, openCreateTokenModalButton }
 }
 
 describe('basic functionality', () => {
+  jest.spyOn(SynapseClient, 'createPersonalAccessToken').mockResolvedValue({
+    token: PERSONAL_ACCESS_TOKEN,
+  })
+
+  jest
+    .spyOn(SynapseClient, 'deletePersonalAccessToken')
+    .mockImplementation(() => Promise.resolve())
+
   const props: AccessTokenPageProps = {
     title: 'A title',
     body: 'A body',
@@ -104,22 +88,18 @@ describe('basic functionality', () => {
     jest.clearAllMocks()
   })
 
-  it('shows the create token modal when the button is clicked and hides when onClose is called', async () => {
-    renderComponent(props)
+  it('shows the create token modal when the button is clicked and hides when cancelled', async () => {
+    const { user, openCreateTokenModalButton } = renderComponent(props)
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     // Click 'Create new token' button
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Create New Token' }),
-    )
+    await user.click(openCreateTokenModalButton)
 
     await screen.findByRole('dialog')
 
     // close the modal
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Invoke onClose' }),
-    )
+    await user.click(await screen.findByRole('button', { name: 'Cancel' }))
 
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -137,26 +117,27 @@ describe('basic functionality', () => {
     expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(1)
   })
 
-  it('rerenders the list when onCreate is called', async () => {
+  it('re-fetches the list when a token is created', async () => {
     // We can verify the rerender by checking if the API is called twice
     jest
       .spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    renderComponent(props)
+    const { user, openCreateTokenModalButton } = renderComponent(props)
 
     // Click the button to render the modal
-    const openModalButton = await screen.findByRole('button', {
-      name: 'Create New Token',
-    })
-    await userEvent.click(openModalButton)
+    await user.click(openCreateTokenModalButton)
 
-    // Simulate creation
-    const createTokenButton = await screen.findByRole('button', {
-      name: 'Invoke onCreate',
-    })
-    await userEvent.click(createTokenButton)
+    // Create a token
+    const dialog = screen.getByRole('dialog')
+    await user.type(
+      within(dialog).getByRole('textbox', { name: 'Token Name' }),
+      'New token name',
+    )
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Create Token' }),
+    )
 
     await waitFor(() =>
       expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(
@@ -165,19 +146,26 @@ describe('basic functionality', () => {
     )
   })
 
-  it('rerenders the list when onDelete is called', async () => {
+  it('rerenders the list when a token is deleted', async () => {
     // We can verify the rerender by checking if the API is called twice
     jest
       .spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    renderComponent(props)
+    const { user } = renderComponent(props)
 
     // Trigger onDelete on a card.
-    const deleteButton = await screen.findByText('Invoke onDelete')
-    await userEvent.click(deleteButton)
+    const deleteButton = await screen.findByRole('button', {
+      name: 'Delete Token',
+    })
+    await user.click(deleteButton)
 
+    const dialog = screen.getByRole('dialog')
+    const deleteConfirmButton = within(dialog).getByRole('button', {
+      name: 'Delete Token',
+    })
+    await user.click(deleteConfirmButton)
     await waitFor(() =>
       expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(
         2,
@@ -191,7 +179,7 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    renderComponent(props)
+    const { user } = renderComponent(props)
 
     // Only card one is visible initially
     await screen.findByText(mockResultsFirstPage.results[0].name)
@@ -205,7 +193,7 @@ describe('basic functionality', () => {
     })
 
     // Click the button
-    await userEvent.click(loadMoreButton)
+    await user.click(loadMoreButton)
 
     // Both cards are visible
     await screen.findByText(mockResultsFirstPage.results[0].name)
