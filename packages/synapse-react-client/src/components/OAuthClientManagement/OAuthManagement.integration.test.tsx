@@ -94,8 +94,8 @@ describe('oAuthManagement tests', () => {
     screen.findByText(mockClientList1.results[0].client_name)
 
     await screen.findByText('Yes')
-    await screen.findAllByRole('button', { name: 'EDIT' })
-    await screen.findAllByRole('button', { name: 'GENERATE SECRET' })
+    await screen.findAllByRole('button', { name: 'Edit' })
+    await screen.findAllByRole('button', { name: 'Generate Secret' })
   })
 
   it('Handles pagination', async () => {
