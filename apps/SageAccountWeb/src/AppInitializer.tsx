@@ -10,12 +10,12 @@ import {
   SynapseTheme,
   SynapseUtilityFunctions,
   useApplicationSessionContext,
+  useFramebuster,
 } from 'synapse-react-client'
 import { AppContextProvider } from './AppContext'
 import { useSourceApp } from './components/useSourceApp'
 
 function AppInitializer(props: { children?: React.ReactNode }) {
-  const [isFramed, setIsFramed] = useState(false)
   const [appId, setAppId] = useState<string>()
   const [redirectURL, setRedirectURL] = useState<string>()
   const [theme, setTheme] = useState<Theme>(
@@ -28,15 +28,7 @@ function AppInitializer(props: { children?: React.ReactNode }) {
     SignedTokenInterface | undefined
   >()
   const { currentSourceAppNameState } = useLastLoginInfoState()
-  useEffect(() => {
-    // SWC-6294: on mount, detect and attempt a client-side framebuster (mitigation only, easily bypassed by attacker)
-    if (window.top && window.top !== window) {
-      // If not sandboxed, make sure not to show any portal content (in case they block window unload via onbeforeunload)
-      setIsFramed(true)
-      // If sandboxed, this call will cause an uncaught js exception and portal will not load.
-      window.top.location = window.location
-    }
-  }, [])
+  const isFramed = useFramebuster()
 
   useEffect(() => {
     const searchParamAppId = getSearchParam('appId')

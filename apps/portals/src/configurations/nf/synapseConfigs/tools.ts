@@ -172,7 +172,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           title: 'Development Publication',
           props: {
             ...publicationsV2CardConfiguration,
-            limit: 3,
+            initialLimit: 3,
             columnAliases,
             sql: developmentPublicationSql,
             secondaryLabelLimit: 4,
@@ -221,7 +221,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           title: 'Publications',
           props: {
             ...publicationsV2CardConfiguration,
-            limit: 3,
+            initialLimit: 3,
             columnAliases,
             sql: publicationsV2Sql,
           },
@@ -272,7 +272,7 @@ export const toolDetailsPageConfig: DetailsPageProps = {
           props: {
             sql: `${observationsSql} WHERE observationTime IS NULL`,
             type: SynapseConstants.OBSERVATION_CARD,
-            limit: 3,
+            initialLimit: 3,
           },
           title: 'Community Observations',
           tableSqlKeys: ['resourceId'],

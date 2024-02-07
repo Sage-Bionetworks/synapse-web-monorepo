@@ -7,6 +7,7 @@ import {
   ApplicationSessionManager,
   SynapseClient,
   SynapseConstants,
+  useFramebuster,
 } from 'synapse-react-client'
 import { useLogInDialogContext } from './LogInDialogContext'
 
@@ -27,18 +28,9 @@ function useSetDocumentMetadataFromConfig() {
 function AppInitializer(props: React.PropsWithChildren<Record<never, never>>) {
   const [cookies, setCookie] = useCookies([COOKIE_CONFIG_KEY])
   const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)
-  const [isFramed, setIsFramed] = useState(false)
   const { showLoginDialog, setShowLoginDialog } = useLogInDialogContext()
 
-  useEffect(() => {
-    // SWC-6294: on mount, detect and attempt a client-side framebuster (mitigation only, easily bypassed by attacker)
-    if (window.top && window.top !== window) {
-      // If not sandboxed, make sure not to show any portal content (in case they block window unload via onbeforeunload)
-      setIsFramed(true)
-      // If sandboxed, this call will cause an uncaught js exception and portal will not load.
-      window.top.location = window.location
-    }
-  }, [])
+  const isFramed = useFramebuster()
 
   useSetDocumentMetadataFromConfig()
 

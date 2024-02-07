@@ -27,6 +27,7 @@ import {
 } from './handlers/tableQueryHandlers'
 import { getEvaluationHandlers } from './handlers/evaluationHandlers'
 import { MOCK_ANNOTATION_COLUMNS } from '../mockAnnotationColumns'
+import { getPersonalAccessTokenHandlers } from './handlers/personalAccessTokenHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
@@ -60,6 +61,7 @@ const getHandlers = (backendOrigin: string) => [
   getCreateColumnModelBatchHandler(backendOrigin),
   ...getAnnotationColumnHandlers(MOCK_ANNOTATION_COLUMNS, backendOrigin),
   ...getDefaultColumnHandlers(backendOrigin),
+  ...getPersonalAccessTokenHandlers(backendOrigin),
 ]
 
 const handlers = getHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT))

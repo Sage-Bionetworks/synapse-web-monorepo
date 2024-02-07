@@ -135,6 +135,7 @@ export type CardConfiguration = {
   type: string
   hasInternalLink?: boolean
   iconOptions?: IconOptions
+  initialLimit?: number
 } & CommonCardProps
 
 export type CardContainerLogicProps = {
