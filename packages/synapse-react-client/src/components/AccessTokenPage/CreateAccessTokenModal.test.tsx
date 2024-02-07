@@ -128,7 +128,7 @@ describe('CreateAccessTokenModal tests', () => {
     const { user, tokenInput, checkboxes, initialButtons } = setUp(props)
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 
-    // Try to create with permisions, but no name
+    // Try to create with permissions, but no name
     expect(tokenInput).toHaveTextContent('')
     expect(checkboxes.view.checked).toBe(true)
 
