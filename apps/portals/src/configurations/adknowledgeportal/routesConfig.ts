@@ -208,7 +208,7 @@ const routes: GenericRoute[] = [
           exact: false,
           strict: false,
           from: 'ExperimentalModels',
-          to: 'Explore/Experimental Models',
+          to: '/Explore/Experimental Models',
         },
       },
     ],
@@ -247,6 +247,26 @@ const routes: GenericRoute[] = [
           toURL: 'https://eliteportal.synapse.org/',
           search: 'Program=ELITE',
         },
+      },
+    ],
+  },
+  // PORTALS-2919: Redirect DataAccess/Instructions to /Data Access
+  {
+    path: 'DataAccess',
+    hideRouteFromNavbar: true,
+    routes: [
+      {
+        path: 'Instructions',
+        synapseConfigArray: [
+          {
+            name: 'Redirect',
+            props: {
+              to: {
+                pathname: '/Data Access',
+              },
+            },
+          },
+        ],
       },
     ],
   },
