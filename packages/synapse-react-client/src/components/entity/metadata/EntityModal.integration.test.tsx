@@ -223,7 +223,7 @@ describe('EntityModal tests', () => {
     })
 
     const editButton = await screen.findByRole('button', { name: 'Edit' })
-    await userEvent.click(editButton)
+    await user.click(editButton)
 
     expect(onEditModeChanged).toHaveBeenLastCalledWith(true)
 
@@ -270,7 +270,7 @@ describe('EntityModal tests', () => {
     })
 
     const editButton = await screen.findByRole('button', { name: 'Edit' })
-    await userEvent.click(editButton)
+    await user.click(editButton)
 
     expect(onEditModeChanged).toHaveBeenLastCalledWith(true)
 
