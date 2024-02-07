@@ -12,6 +12,7 @@ import CopyToClipboardInput from '../CopyToClipboardInput/CopyToClipboardInput'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { DialogBase } from '../DialogBase'
 import { Button, Link } from '@mui/material'
+import { AddCircleTwoTone } from '@mui/icons-material'
 
 export const OAuthManagement: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
@@ -57,6 +58,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
           setIsEdit(false)
         }}
         sx={{ float: 'right' }}
+        startIcon={<AddCircleTwoTone />}
       >
         Create New Client
       </Button>
@@ -89,7 +91,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
                       size="small"
                       onClick={() => setIsShowingVerification(true)}
                     >
-                      SUBMIT VERIFICATION
+                      Submit Verification
                     </Button>
                   )}
                 </td>
@@ -102,7 +104,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
                     }}
                     size="small"
                   >
-                    GENERATE SECRET
+                    Generate Secret
                   </Button>
                 </td>
                 <td>
@@ -115,7 +117,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
                     }}
                     size="small"
                   >
-                    EDIT
+                    Edit
                   </Button>
                 </td>
               </tr>

@@ -2,12 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import { getSearchParam } from './URLUtils'
 import { SignedTokenInterface } from '@sage-bionetworks/synapse-types'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { sageAccountWebThemeOverrides } from './style/theme'
-import { Theme } from '@mui/material'
 import {
-  useLastLoginInfoState,
-  SynapseTheme,
   SynapseUtilityFunctions,
   useApplicationSessionContext,
   useFramebuster,
@@ -16,56 +11,13 @@ import { AppContextProvider } from './AppContext'
 import { useSourceApp } from './components/useSourceApp'
 
 function AppInitializer(props: { children?: React.ReactNode }) {
-  const [appId, setAppId] = useState<string>()
   const [redirectURL, setRedirectURL] = useState<string>()
-  const [theme, setTheme] = useState<Theme>(
-    createTheme(
-      SynapseTheme.defaultMuiThemeOptions,
-      sageAccountWebThemeOverrides,
-    ),
-  )
+
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
   >()
-  const { currentSourceAppNameState } = useLastLoginInfoState()
   const isFramed = useFramebuster()
-
-  useEffect(() => {
-    const searchParamAppId = getSearchParam('appId')
-    const localStorageAppId = localStorage.getItem('sourceAppId')
-    if (searchParamAppId) {
-      localStorage.setItem('sourceAppId', searchParamAppId)
-      setAppId(searchParamAppId)
-    } else if (localStorageAppId) {
-      setAppId(localStorageAppId)
-    } else {
-      // fallback to Sage Bionetworks
-      localStorage.setItem('sourceAppId', 'SAGE')
-      setAppId('SAGE')
-    }
-  }, [])
-
-  const sourceApp = useSourceApp(appId)
-
-  useEffect(() => {
-    if (sourceApp?.friendlyName) {
-      currentSourceAppNameState.set(sourceApp.friendlyName)
-    }
-  }, [currentSourceAppNameState, sourceApp?.friendlyName])
-
-  useEffect(() => {
-    if (sourceApp?.palette) {
-      setTheme(
-        createTheme(
-          SynapseTheme.defaultMuiThemeOptions,
-          sageAccountWebThemeOverrides,
-          {
-            palette: sourceApp.palette,
-          },
-        ),
-      )
-    }
-  }, [sourceApp?.appId])
+  const { appId } = useSourceApp()
 
   useEffect(() => {
     const searchParamSignedToken = getSearchParam('signedToken')
@@ -115,13 +67,11 @@ function AppInitializer(props: { children?: React.ReactNode }) {
         signedToken,
       }}
     >
-      <ThemeProvider theme={theme}>
-        {acceptsTermsOfUse === false &&
-          location.pathname != '/authenticated/signTermsOfUse' && (
-            <Redirect to="/authenticated/signTermsOfUse" />
-          )}
-        {!isFramed && props.children}
-      </ThemeProvider>
+      {acceptsTermsOfUse === false &&
+        location.pathname != '/authenticated/signTermsOfUse' && (
+          <Redirect to="/authenticated/signTermsOfUse" />
+        )}
+      {!isFramed && props.children}
     </AppContextProvider>
   )
 }
