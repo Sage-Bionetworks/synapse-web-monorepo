@@ -80,14 +80,11 @@
   .FacetFilterControls {
     grid-row: 7 / span 1;
   }
-  .SynapsePlots {
+  .PlotsContainer {
     grid-row: 8 / span 1;
   }
-  .PlotsContainer {
-    grid-row: 9 / span 1;
-  }
   .FilterAndView {
-    grid-row: 10 / span 1;
+    grid-row: 9 / span 1;
   }
 
   &.isHidingFacetFilters {

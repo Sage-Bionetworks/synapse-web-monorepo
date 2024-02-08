@@ -88,20 +88,20 @@ const getCustomPlotIdentifier = (
 }
 
 const getCombinedNewPlots = (
-  customPlots: QueryWrapperSynapsePlotProps[],
+  customPlots: QueryWrapperSynapsePlotProps[] = [],
   facetNavPanelPropsArray: Pick<
     FacetNavPanelProps,
     'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
-  >[],
+  >[] = [],
 ): UiPlotState[] => [
-  ...(customPlots ?? []).map((plotProps, index) => ({
+  ...customPlots.map((plotProps, index) => ({
     plotId: getCustomPlotIdentifier(plotProps),
     isHidden: index >= DEFAULT_VISIBLE_PLOTS,
     plotType: convertPlotlyPlotTypeToFacetNavPlotType(plotProps.type),
   })),
-  ...(facetNavPanelPropsArray ?? []).map((facetPlotProps, index) => ({
+  ...facetNavPanelPropsArray.map((facetPlotProps, index) => ({
     plotId: facetPlotProps.facetToPlot,
-    isHidden: index + (customPlots ?? []).length >= DEFAULT_VISIBLE_PLOTS,
+    isHidden: index + customPlots.length >= DEFAULT_VISIBLE_PLOTS,
     plotType: DEFAULT_PLOT_TYPE,
   })),
 ]
