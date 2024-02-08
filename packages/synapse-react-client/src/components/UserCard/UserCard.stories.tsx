@@ -1,15 +1,16 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-
 import {
   ANONYMOUS_PRINCIPAL_ID,
   AVATAR,
   LARGE_USER_CARD,
   MEDIUM_USER_CARD,
+  SEPERATOR,
   SMALL_USER_CARD,
 } from '../../utils/SynapseConstants'
-import { useGetCurrentUserProfile } from '../../synapse-queries/user/useUserBundle'
-import UserCard from './UserCard'
+import { useGetCurrentUserProfile } from '../../synapse-queries'
+import UserCard, { UserCardProps } from './UserCard'
+import { Box } from '@mui/material'
 
 const meta = {
   title: 'UI/UserCard',
@@ -27,15 +28,11 @@ const meta = {
           logged in, enter an ownerId (e.g. 273960) or alias (e.g. brucehoff)
           below.
         </p>
-        <UserCard
-          ownerId={args.ownerId ?? currentUserId}
-          size={args.size ?? SMALL_USER_CARD}
-          {...args}
-        />
+        <UserCard ownerId={args.ownerId ?? currentUserId} {...args} />
       </>
     )
   },
-} satisfies Meta
+} satisfies Meta<UserCardProps>
 export default meta
 type Story = StoryObj<typeof meta>
 
@@ -55,6 +52,44 @@ export const SmallUserCard: Story = {
 export const MediumUserCard: Story = {
   args: {
     size: MEDIUM_USER_CARD,
+  },
+}
+
+export const MediumUserCardWithActions: Story = {
+  decorators: [
+    Story => {
+      return (
+        <Box maxWidth={'450px'}>
+          <Story />
+        </Box>
+      )
+    },
+  ],
+  args: {
+    size: MEDIUM_USER_CARD,
+    menuActions: [
+      {
+        field: 'Action 1',
+        callback: () => {
+          console.log('Action 1 clicked')
+        },
+      },
+      {
+        field: SEPERATOR,
+      },
+      {
+        field: 'Action 2',
+        callback: () => {
+          console.log('Action 2 clicked')
+        },
+      },
+      {
+        field: 'Action 3',
+        callback: () => {
+          console.log('Action 3 clicked')
+        },
+      },
+    ],
   },
 }
 
