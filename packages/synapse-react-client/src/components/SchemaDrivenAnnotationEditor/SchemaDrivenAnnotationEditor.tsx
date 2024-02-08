@@ -26,6 +26,7 @@ import {
   dropNullValues,
   getFriendlyPropertyName,
   getTransformErrors,
+  shouldLiveValidate,
 } from './AnnotationEditorUtils'
 import { BooleanWidget } from './widget/BooleanWidget'
 import { DateTimeWidget } from './widget/DateTimeWidget'
@@ -164,9 +165,6 @@ export function SchemaDrivenAnnotationEditor(
     Record<string, unknown> | undefined
   >(undefined)
 
-  const hasInitialAnnotations =
-    annotations && Object.keys(annotations).length > 0
-
   /**
    * patternProperties lets us define how to treat additionalProperties in a JSON schema by property name.
    * In all cases, let's ban properties that collide with entity properties by making their schema "not: {}"
@@ -225,7 +223,7 @@ export function SchemaDrivenAnnotationEditor(
   }
 
   const liveValidate =
-    liveValidateFromProps ?? Boolean(hasInitialAnnotations && validationSchema)
+    liveValidateFromProps ?? shouldLiveValidate(annotations, validationSchema)
 
   return (
     <div className="JsonSchemaFormContainer">
