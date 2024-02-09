@@ -25,7 +25,7 @@
         grid-row: 3 / span 100;
       }
       .download-confirmation,
-      .FacetNav,
+      .PlotsContainer,
       .QueryWrapperFullTextSearchInput,
       .QueryWrapperSearchInput,
       .QueryWrapperSqlEditorInput,
@@ -80,14 +80,11 @@
   .FacetFilterControls {
     grid-row: 7 / span 1;
   }
-  .SynapsePlots {
+  .PlotsContainer {
     grid-row: 8 / span 1;
   }
-  .FacetNav {
-    grid-row: 9 / span 1;
-  }
   .FilterAndView {
-    grid-row: 10 / span 1;
+    grid-row: 9 / span 1;
   }
 
   &.isHidingFacetFilters {
@@ -113,7 +110,7 @@
     padding-left: 15px;
     padding-bottom: 13px;
   }
-  .FacetNav,
+  .PlotsContainer,
   .SynapsePlots {
     margin-top: 5px;
     margin-bottom: 10px;

@@ -2,10 +2,18 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { SynapseClient } from '../../../index'
-import { AccessTokenCard, AccessTokenCardProps } from './AccessTokenCard'
+import {
+  AccessTokenCard,
+  AccessTokenCardProps,
+  EXPIRED_PAT_WARNING,
+} from './AccessTokenCard'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
 import * as SynapseContext from '../../../utils/context/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import {
+  MOCK_ACCESS_TOKEN,
+  MOCK_CONTEXT_VALUE,
+} from '../../../mocks/MockSynapseContext'
+import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
 
 const mockOnDelete = jest.fn(() => null)
 
@@ -16,9 +24,9 @@ jest
 const activeTokenProps: AccessTokenCardProps = {
   accessToken: {
     id: '45',
-    userId: '3350396',
+    userId: String(MOCK_USER_ID),
     scopes: ['view', 'download'],
-    name: 'My access token',
+    name: 'My active access token',
     createdOn: '2020-08-23T14:59:19.073Z',
     lastUsed: '2020-10-25T14:59:19.073Z',
     state: 'ACTIVE',
@@ -28,10 +36,10 @@ const activeTokenProps: AccessTokenCardProps = {
 
 const expiredTokenProps: AccessTokenCardProps = {
   accessToken: {
-    id: '45',
-    userId: '3350396',
+    id: '46',
+    userId: String(MOCK_USER_ID),
     scopes: ['view', 'download'],
-    name: 'My access token',
+    name: 'My expired access token',
     createdOn: '2020-08-23T14:59:19.073Z',
     lastUsed: '2020-10-25T14:59:19.073Z',
     state: 'EXPIRED',
@@ -40,7 +48,11 @@ const expiredTokenProps: AccessTokenCardProps = {
 }
 
 function renderComponent(props: AccessTokenCardProps) {
-  return render(<AccessTokenCard {...props} />, { wrapper: createWrapper() })
+  const user = userEvent.setup()
+  const component = render(<AccessTokenCard {...props} />, {
+    wrapper: createWrapper(),
+  })
+  return { user, component }
 }
 
 describe('AccessTokenCard', () => {
@@ -51,24 +63,25 @@ describe('AccessTokenCard', () => {
       .mockImplementation(() => MOCK_CONTEXT_VALUE)
   })
 
-  test('has the correct style when active', () => {
-    const { container } = renderComponent(activeTokenProps)
-    const card = container.querySelector('div.PersonalAccessTokenCard')!
-    expect(card.classList.contains('bg-warning')).toBe(false)
+  test('does not show a warning when active', () => {
+    renderComponent(activeTokenProps)
+
+    expect(
+      screen.queryByRole('button', { name: EXPIRED_PAT_WARNING }),
+    ).not.toBeInTheDocument()
   })
-  test('has the correct style when expired', () => {
-    const { container } = renderComponent(expiredTokenProps)
-    const card = container.querySelector('div.PersonalAccessTokenCard')!
-    expect(card.classList.contains('bg-warning')).toBe(true)
+  test('shows a warning when expired', () => {
+    renderComponent(expiredTokenProps)
+    screen.getByRole('button', { name: EXPIRED_PAT_WARNING })
   })
 
   test('modal pops up and sends request on delete', async () => {
-    renderComponent(activeTokenProps)
+    const { user } = renderComponent(activeTokenProps)
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     // Click delete button to open modal
-    await userEvent.click(screen.getByRole('button'))
+    await user.click(screen.getByRole('button', { name: 'Delete Token' }))
 
     const dialog = screen.getByRole('dialog')
 
@@ -76,19 +89,22 @@ describe('AccessTokenCard', () => {
     const deleteConfirmButton = within(dialog).getByRole('button', {
       name: 'Delete Token',
     })
-    await userEvent.click(deleteConfirmButton)
+    await user.click(deleteConfirmButton)
 
-    expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalled()
+    expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalledWith(
+      activeTokenProps.accessToken.id,
+      MOCK_ACCESS_TOKEN,
+    )
     await waitFor(() => {
       expect(mockOnDelete).toHaveBeenCalled()
     })
   })
 
   it('does not delete when modal is canceled', async () => {
-    renderComponent(activeTokenProps)
+    const { user } = renderComponent(activeTokenProps)
 
     // Click delete button to open modal
-    await userEvent.click(screen.getByRole('button'))
+    await user.click(screen.getByRole('button', { name: 'Delete Token' }))
 
     const dialog = screen.getByRole('dialog')
 
@@ -96,20 +112,23 @@ describe('AccessTokenCard', () => {
     const cancelButton = within(dialog).getByRole('button', {
       name: 'Cancel',
     })
-    await userEvent.click(cancelButton)
+    await user.click(cancelButton)
 
     expect(SynapseClient.deletePersonalAccessToken).not.toHaveBeenCalled()
     expect(mockOnDelete).not.toHaveBeenCalled()
   })
 
   it('sends request on delete with no modal when expired', async () => {
-    renderComponent(expiredTokenProps)
+    const { user } = renderComponent(expiredTokenProps)
 
     // Click delete button -- no modal should open, because the token has expired.
-    await userEvent.click(screen.getByRole('button'))
+    await user.click(screen.getByRole('button', { name: 'Delete Token' }))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalled()
+    expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalledWith(
+      expiredTokenProps.accessToken.id,
+      MOCK_ACCESS_TOKEN,
+    )
     await waitFor(() => {
       expect(mockOnDelete).toHaveBeenCalled()
     })

@@ -111,7 +111,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     unitDescription,
     setShowDownloadConfirmation,
     showCopyToClipboard,
-    setShowFacetVisualization,
+    setShowPlots,
     setShowSqlEditor,
     showFacetFilter,
     setShowFacetFilter,
@@ -301,7 +301,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           {!hideVisualizationsControl && (
             <ElementWithTooltip
               tooltipText={'Show / Hide Visualizations'}
-              callbackFn={() => setShowFacetVisualization(value => !value)}
+              callbackFn={() => setShowPlots(value => !value)}
               darkTheme={true}
               icon={'chart'}
             />

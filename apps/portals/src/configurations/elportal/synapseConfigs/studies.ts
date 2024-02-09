@@ -159,7 +159,7 @@ export const studiesDetailsPageProps: DetailsPageProps = {
             availableFacets: ['metadataType', 'dataType', 'assay'],
             sql: dataOnStudiesPageSql,
             shouldDeepLink: false,
-            defaultShowFacetVisualization: false,
+            defaultShowPlots: false,
           },
           tableSqlKeys: ['study'],
           columnName: 'studyKey',

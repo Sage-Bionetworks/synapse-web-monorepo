@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
-import { Button } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import { useGetPersonalAccessTokensInfinite } from '../../synapse-queries/user/usePersonalAccessToken'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard/AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
+import { AddCircleTwoTone } from '@mui/icons-material'
 
 export type AccessTokenPageProps = {
   title: string
-  body: string | JSX.Element
+  body: React.ReactNode
 }
 
 export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
@@ -21,64 +22,56 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
     data: infiniteData,
     isLoading,
     error,
-    refetch,
     fetchNextPage,
     hasNextPage,
   } = useGetPersonalAccessTokensInfinite()
 
-  // We rerender the list whenever a token is created or deleted to ensure we are up-to-date
-  const rerenderList = () => {
-    refetch()
-  }
-
   const tokenRecords = infiniteData?.pages.flatMap(page => page.results) ?? []
 
   return (
-    <div className="PersonalAccessTokenPage">
-      <div className="PersonalAccessTokenPage__Header">
-        <div className="PersonalAccessTokenPage__Header__CopyText">
+    <div>
+      <Box display={'flex'} gap={2} justifyContent={'space-between'}>
+        <Box flexGrow={1}>
           <h1>{title}</h1>
           {body}
-        </div>
-        <div className="PersonalAccessTokenPage__Header__CreateButton">
+        </Box>
+        <Box flexShrink={0} alignSelf={'end'}>
           <Button
             variant="contained"
             color="primary"
             onClick={() => setShowCreateTokenModal(true)}
+            startIcon={<AddCircleTwoTone />}
           >
             Create New Token
           </Button>
-        </div>
-      </div>
+        </Box>
+      </Box>
       <SynapseErrorBoundary>
         {showCreateTokenModal && (
           <CreateAccessTokenModal
             onClose={() => setShowCreateTokenModal(false)}
-            onCreate={rerenderList}
-          ></CreateAccessTokenModal>
+          />
         )}
 
         <div>
-          {!isLoading && tokenRecords.length === 0 && (
-            <div className="PersonalAccessTokenPage__NoTokensMessage SRC-text-title">
+          {!isLoading && !error && tokenRecords.length === 0 && (
+            <Typography variant={'headline2'} m={5} textAlign={'center'}>
               You currently have no personal access tokens.
-            </div>
+            </Typography>
           )}
-          <div className="PersonalAccessTokenPage__CardList">
+          <Box maxWidth={'800px'} mx={'auto'} my={2.5}>
             {tokenRecords.map(accessToken => {
               return (
                 <AccessTokenCard
                   key={accessToken.id}
                   accessToken={accessToken}
-                  onDelete={rerenderList}
                 />
               )
             })}
             {isLoading && loadingScreen}
             {!isLoading && hasNextPage && !error && (
-              <div className="PersonalAccessTokenPage__CardList__LoadMore">
+              <Box display={'flex'} justifyContent={'flex-end'}>
                 <Button
-                  className="PersonalAccessTokenPage__CardList__LoadMore__Button"
                   variant="contained"
                   color="primary"
                   onClick={() => {
@@ -87,9 +80,9 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
                 >
                   Load More
                 </Button>
-              </div>
+              </Box>
             )}
-          </div>
+          </Box>
           {error && <ErrorBanner error={error}></ErrorBanner>}
         </div>
       </SynapseErrorBoundary>

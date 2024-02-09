@@ -4,18 +4,21 @@ import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { EntityModal, EntityModalProps } from './EntityModal'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { ENTITY_BUNDLE_V2 } from '../../../utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../utils'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
-import { rest, server } from '../../../mocks/msw/server'
+import { server } from '../../../mocks/msw/server'
 import {
   FileEntity,
   UserEntityPermissions,
 } from '@sage-bionetworks/synapse-types'
+import {
+  getEntityBundleHandler,
+  getVersionedEntityBundleHandler,
+} from '../../../mocks/msw/handlers/entityHandlers'
 
 const {
   id: MOCK_FILE_ENTITY_ID,
@@ -110,16 +113,12 @@ describe('EntityModal tests', () => {
   })
 
   it('Shows the edit button when the user has edit permissions', async () => {
+    const bundle = cloneDeep(mockFileEntityBundle)
+    bundle.permissions = PERMISSIONS_CAN_EDIT
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
-        async (req, res, ctx) => {
-          const response = cloneDeep(mockFileEntityBundle)
-          response.permissions = PERMISSIONS_CAN_EDIT
-          return res(ctx.status(200), ctx.json(response))
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
@@ -128,16 +127,13 @@ describe('EntityModal tests', () => {
   })
 
   it('Does not show the edit button when the user does not have edit permissions', () => {
+    const bundle = cloneDeep(mockFileEntityBundle)
+    bundle.permissions = PERMISSIONS_CANNOT_EDIT
+
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
-        async (req, res, ctx) => {
-          const response = cloneDeep(mockFileEntityBundle)
-          response.permissions = PERMISSIONS_CANNOT_EDIT
-          return res(ctx.status(200), ctx.json(response))
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
@@ -148,18 +144,14 @@ describe('EntityModal tests', () => {
   })
 
   it('Does not show the edit button for annotations when looking at an older version', () => {
+    const bundle = cloneDeep(mockFileEntityBundle)
+    ;(bundle.entity as FileEntity).isLatestVersion = false
+    bundle.permissions = PERMISSIONS_CAN_EDIT
+
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-          ':versionNumber',
-        )}`,
-        async (req, res, ctx) => {
-          const response = cloneDeep(mockFileEntityBundle)
-          ;(response.entity as FileEntity).isLatestVersion = false
-          response.permissions = PERMISSIONS_CAN_EDIT
-          return res(ctx.status(200), ctx.json(response))
-        },
+      getVersionedEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
@@ -171,17 +163,14 @@ describe('EntityModal tests', () => {
 
   it('Opens the annotation editor when edit is clicked', async () => {
     const onEditModeChanged = jest.fn()
+    const bundle = cloneDeep(mockFileEntityBundle)
+    ;(bundle.entity as FileEntity).isLatestVersion = true
+    bundle.permissions = PERMISSIONS_CAN_EDIT
+
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
-        async (req, res, ctx) => {
-          const response = cloneDeep(mockFileEntityBundle)
-          ;(response.entity as FileEntity).isLatestVersion = true
-          response.permissions = PERMISSIONS_CAN_EDIT
-          return res(ctx.status(200), ctx.json(response))
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
@@ -202,17 +191,15 @@ describe('EntityModal tests', () => {
   it('Cancelling out of edit mode using the cancel button triggers a warning before disabling edit mode', async () => {
     const onEditModeChanged = jest.fn()
     const onClose = jest.fn()
+
+    const bundle = cloneDeep(mockFileEntityBundle)
+    ;(bundle.entity as FileEntity).isLatestVersion = true
+    bundle.permissions = PERMISSIONS_CAN_EDIT
+
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
-        async (req, res, ctx) => {
-          const response = cloneDeep(mockFileEntityBundle)
-          ;(response.entity as FileEntity).isLatestVersion = true
-          response.permissions = PERMISSIONS_CAN_EDIT
-          return res(ctx.status(200), ctx.json(response))
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
@@ -249,17 +236,15 @@ describe('EntityModal tests', () => {
   it('Cancelling out of edit mode using the modal "x" triggers a warning before calling onClose', async () => {
     const onEditModeChanged = jest.fn()
     const onClose = jest.fn()
+
+    const bundle = cloneDeep(mockFileEntityBundle)
+    ;(bundle.entity as FileEntity).isLatestVersion = true
+    bundle.permissions = PERMISSIONS_CAN_EDIT
+
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
-        async (req, res, ctx) => {
-          const response = cloneDeep(mockFileEntityBundle)
-          ;(response.entity as FileEntity).isLatestVersion = true
-          response.permissions = PERMISSIONS_CAN_EDIT
-          return res(ctx.status(200), ctx.json(response))
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 

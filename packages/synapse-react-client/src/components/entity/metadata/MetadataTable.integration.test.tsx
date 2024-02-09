@@ -9,16 +9,16 @@ import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import mockProjectEntityData from '../../../mocks/entity/mockProject'
 import { mockFileHandle } from '../../../mocks/mock_file_handle'
 import { mockExternalS3UploadDestination } from '../../../mocks/mock_upload_destination'
-import { rest, server } from '../../../mocks/msw/server'
+import { server } from '../../../mocks/msw/server'
 import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
 import { createWrapper } from '../../../testutils/TestingLibraryUtils'
-import { ENTITY_BUNDLE_V2 } from '../../../utils/APIConstants'
 import { SynapseContextType } from '../../../utils/context/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import { MetadataTable, MetadataTableProps } from './MetadataTable'
+import { getEntityBundleHandler } from '../../../mocks/msw/handlers/entityHandlers'
 
 const { id: MOCK_FILE_ENTITY_ID } = mockFileEntityData
 const { id: MOCK_PROJECT_ID, bundle: mockProjectEntityBundle } =
@@ -67,29 +67,24 @@ describe('MetadataTable tests', () => {
   it('Renders storage location bucket and baseKey for an external file', async () => {
     const bucket = mockExternalS3UploadDestination.bucket
     const baseKey = mockExternalS3UploadDestination.baseKey
+    const bundle: EntityBundle = {
+      ...mockFileEntityData.bundle,
+      entity: {
+        ...mockFileEntityData.entity,
+        dataFileHandleId: mockFileHandle.id,
+      } as FileEntity,
+      fileHandles: [
+        {
+          ...mockFileHandle,
+          bucketName: bucket,
+          storageLocationId: mockExternalS3UploadDestination.storageLocationId,
+        } as S3FileHandle,
+      ],
+    }
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
-        async (req, res, ctx) => {
-          const response: EntityBundle = {
-            ...mockFileEntityData.bundle,
-            entity: {
-              ...mockFileEntityData.entity,
-              dataFileHandleId: mockFileHandle.id,
-            } as FileEntity,
-            fileHandles: [
-              {
-                ...mockFileHandle,
-                bucketName: bucket,
-                storageLocationId:
-                  mockExternalS3UploadDestination.storageLocationId,
-              } as S3FileHandle,
-            ],
-          }
-          return res(ctx.status(200), ctx.json(response))
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
