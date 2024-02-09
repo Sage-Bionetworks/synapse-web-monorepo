@@ -82,7 +82,9 @@ export function useGetEntities(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [headerIds],
   )
-  const results = useQueries(queries)
+  const results = useQueries({
+    queries: queries,
+  })
   const isLoading = results.some(result => result.isLoading)
   const entities: Entity[] = results
     .filter(query => query.data !== undefined)

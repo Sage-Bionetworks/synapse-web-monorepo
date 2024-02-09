@@ -29,7 +29,7 @@ export type MapProps = {
 function Map(props: MapProps) {
   const { teamId, apiKeyOverride } = props
 
-  const { data: apiKey } = useQuery('googleMapsApiKey', getGoogleMapsApiKey, {
+  const { data: apiKey } = useQuery(['googleMapsApiKey'], getGoogleMapsApiKey, {
     useErrorBoundary: true,
   })
 
