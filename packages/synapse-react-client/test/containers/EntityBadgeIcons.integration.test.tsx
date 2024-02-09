@@ -14,7 +14,6 @@ import {
   getEndpoint,
 } from '../../src/utils/functions/getEndpoint'
 import {
-  ENTITY_BUNDLE_V2,
   ENTITY_ID,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
@@ -23,12 +22,17 @@ import {
   ANONYMOUS_PRINCIPAL_ID,
   AUTHENTICATED_PRINCIPAL_ID,
 } from '../../src/utils/SynapseConstants'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import {
+  ACCESS_TYPE,
+  EntityBundle,
+  EntityType,
+} from '@sage-bionetworks/synapse-types'
 import {
   mockSchemaBinding,
   mockSchemaValidationResults,
 } from '../../src/mocks/mockSchema'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import { getEntityBundleHandler } from '../../src/mocks/msw/handlers/entityHandlers'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
 const mockFileEntityBundle = mockFileEntityData.bundle
@@ -67,33 +71,26 @@ describe('EntityBadgeIcons tests', () => {
     }
   })
   it('Shows the public icon when anonymous is in the ACL', async () => {
+    const bundle: EntityBundle = {
+      ...mockFileEntityBundle,
+      benefactorAcl: {
+        ...mockFileEntityBundle.benefactorAcl,
+        resourceAccess: [
+          {
+            principalId: AUTHENTICATED_PRINCIPAL_ID, // !
+            accessType: [ACCESS_TYPE.READ],
+          },
+          {
+            principalId: ANONYMOUS_PRINCIPAL_ID, // !
+            accessType: [ACCESS_TYPE.READ],
+          },
+        ],
+      },
+    }
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
-
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              ...mockFileEntityBundle,
-              benefactorAcl: {
-                ...mockFileEntityBundle.benefactorAcl,
-                resourceAccess: [
-                  {
-                    principalId: AUTHENTICATED_PRINCIPAL_ID, // !
-                    accessType: ['READ'],
-                  },
-                  {
-                    principalId: ANONYMOUS_PRINCIPAL_ID, // !
-                    accessType: ['READ'],
-                  },
-                ],
-              },
-            }),
-          )
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
@@ -101,24 +98,17 @@ describe('EntityBadgeIcons tests', () => {
     await screen.findByTestId('is-public-icon')
   })
   it('Shows the private icon when anonymous is not in the ACL', async () => {
+    const bundle: EntityBundle = {
+      ...mockFileEntityBundle,
+      benefactorAcl: {
+        ...mockFileEntityBundle.benefactorAcl,
+        resourceAccess: [],
+      },
+    }
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
-
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              ...mockFileEntityBundle,
-              benefactorAcl: {
-                ...mockFileEntityBundle.benefactorAcl,
-                resourceAccess: [],
-              },
-            }),
-          )
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
@@ -127,24 +117,17 @@ describe('EntityBadgeIcons tests', () => {
   })
 
   it('Shows the local sharing settings icon when the ACL is attached to itself', async () => {
+    const bundle: EntityBundle = {
+      ...mockFileEntityBundle,
+      benefactorAcl: {
+        ...mockFileEntityBundle.benefactorAcl,
+        id: MOCK_FILE_ENTITY_ID, // !
+      },
+    }
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
-
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              ...mockFileEntityBundle,
-              benefactorAcl: {
-                ...mockFileEntityBundle.benefactorAcl,
-                id: MOCK_FILE_ENTITY_ID, // !
-              },
-            }),
-          )
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
@@ -164,24 +147,18 @@ describe('EntityBadgeIcons tests', () => {
 
   describe('Unlink', () => {
     it('Does not show the icon on non-links', async () => {
-      server.use(
-        rest.post(
-          `${getEndpoint(
-            BackendDestinationEnum.REPO_ENDPOINT,
-          )}${ENTITY_BUNDLE_V2(':entityId')}`,
+      const bundle: EntityBundle = {
+        ...mockFileEntityBundle,
+        entityType: EntityType.FILE,
+        permissions: {
+          canDelete: true,
+        },
+      }
 
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                ...mockFileEntityBundle,
-                entityType: EntityType.FILE,
-                permissions: {
-                  canDelete: true,
-                },
-              }),
-            )
-          },
+      server.use(
+        getEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          bundle,
         ),
       )
       await renderComponent()
@@ -189,24 +166,17 @@ describe('EntityBadgeIcons tests', () => {
     })
 
     it('Does not show the icon if no permission to delete', async () => {
+      const bundle: EntityBundle = {
+        ...mockFileEntityBundle,
+        entityType: EntityType.LINK,
+        permissions: {
+          canDelete: false,
+        },
+      }
       server.use(
-        rest.post(
-          `${getEndpoint(
-            BackendDestinationEnum.REPO_ENDPOINT,
-          )}${ENTITY_BUNDLE_V2(':entityId')}`,
-
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                ...mockFileEntityBundle,
-                entityType: EntityType.LINK,
-                permissions: {
-                  canDelete: false,
-                },
-              }),
-            )
-          },
+        getEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          bundle,
         ),
       )
       await renderComponent()
@@ -214,52 +184,35 @@ describe('EntityBadgeIcons tests', () => {
     })
 
     it('Shows the unlink icon', async () => {
+      const bundle: EntityBundle = {
+        ...mockFileEntityBundle,
+        entityType: EntityType.LINK,
+        permissions: {
+          canDelete: true,
+        },
+      }
       server.use(
-        rest.post(
-          `${getEndpoint(
-            BackendDestinationEnum.REPO_ENDPOINT,
-          )}${ENTITY_BUNDLE_V2(':entityId')}`,
-
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                ...mockFileEntityBundle,
-                entityType: EntityType.LINK,
-                permissions: {
-                  canDelete: true,
-                },
-              }),
-            )
-          },
+        getEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          bundle,
         ),
       )
       await renderComponent()
       await screen.findByTestId('unlink-icon')
     })
     it('Calls the success callback on success', async () => {
+      const bundle: EntityBundle = {
+        ...mockFileEntityBundle,
+        entityType: EntityType.LINK,
+        permissions: {
+          canDelete: true,
+        },
+      }
       server.use(
-        rest.post(
-          `${getEndpoint(
-            BackendDestinationEnum.REPO_ENDPOINT,
-          )}${ENTITY_BUNDLE_V2(':entityId')}`,
-
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                ...mockFileEntityBundle,
-                entityType: EntityType.LINK,
-                permissions: {
-                  canDelete: true,
-                },
-              }),
-            )
-          },
+        getEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          bundle,
         ),
-      )
-
-      server.use(
         rest.delete(
           `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
             ':entityId',
@@ -286,28 +239,18 @@ describe('EntityBadgeIcons tests', () => {
       )
     })
     it('Calls the error callback on fail', async () => {
+      const bundle: EntityBundle = {
+        ...mockFileEntityBundle,
+        entityType: EntityType.LINK,
+        permissions: {
+          canDelete: true,
+        },
+      }
       server.use(
-        rest.post(
-          `${getEndpoint(
-            BackendDestinationEnum.REPO_ENDPOINT,
-          )}${ENTITY_BUNDLE_V2(':entityId')}`,
-
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                ...mockFileEntityBundle,
-                entityType: EntityType.LINK,
-                permissions: {
-                  canDelete: true,
-                },
-              }),
-            )
-          },
+        getEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          bundle,
         ),
-      )
-
-      server.use(
         rest.delete(
           `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
             ':entityId',
@@ -409,6 +352,13 @@ describe('EntityBadgeIcons tests', () => {
     })
 
     it('Missing annotations with schema', async () => {
+      // The entity must have no annotations
+      const bundle: EntityBundle = {
+        ...mockFileEntityBundle,
+        annotations: {
+          annotations: {}, // !
+        },
+      }
       server.use(
         rest.get(
           `${getEndpoint(
@@ -420,23 +370,9 @@ describe('EntityBadgeIcons tests', () => {
           },
         ),
 
-        // The entity must have no annotations
-        rest.post(
-          `${getEndpoint(
-            BackendDestinationEnum.REPO_ENDPOINT,
-          )}${ENTITY_BUNDLE_V2(':entityId')}`,
-
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                ...mockFileEntityBundle,
-                annotations: {
-                  annotations: {}, // !
-                },
-              }),
-            )
-          },
+        getEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          bundle,
         ),
         // The entity's annotations are invalid
         rest.get(

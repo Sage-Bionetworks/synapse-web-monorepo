@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { HasAccessV2, HasAccessProps } from './HasAccessV2'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { ENTITY_BUNDLE_V2 } from '../../utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -24,6 +23,7 @@ import {
   mockUnmetControlledDataRestrictionInformationRestricted,
 } from '../../mocks/mock_has_access_data'
 import { rest, server } from '../../mocks/msw/server'
+import { getEntityBundleHandler } from '../../mocks/msw/handlers/entityHandlers'
 
 const entityId = mockFileEntityData.id
 const mockFileEntityBundle = mockFileEntityData.bundle
@@ -60,13 +60,9 @@ const onGetRestrictionInformation = jest.fn()
 
 function useMswEntityBundle(entityBundle: EntityBundle) {
   server.use(
-    rest.post(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-        ':entityId',
-      )}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(entityBundle))
-      },
+    getEntityBundleHandler(
+      getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+      entityBundle,
     ),
   )
 }
