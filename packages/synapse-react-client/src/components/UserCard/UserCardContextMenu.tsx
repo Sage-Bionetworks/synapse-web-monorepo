@@ -1,6 +1,7 @@
 import React from 'react'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 import { SEPERATOR } from '../../utils/SynapseConstants'
+import { Divider, Menu, MenuItem } from '@mui/material'
 
 export type MenuAction = {
   field: string
@@ -10,40 +11,35 @@ export type MenuAction = {
 export type UserCardContextMenuProps = {
   userProfile: UserProfile
   menuActions: MenuAction[]
+  open: boolean
+  anchorEl?: HTMLElement | null
+  onClose?: () => void
 }
 
 const UserCardContextMenu: React.FC<UserCardContextMenuProps> = (
   props: UserCardContextMenuProps,
 ) => {
-  const { menuActions = [], userProfile } = props
+  const {
+    menuActions = [],
+    userProfile,
+    open,
+    anchorEl = null,
+    onClose,
+  } = props
   return (
-    <div className="dropdown open">
-      <ul
-        className="dropdown-menu dropdown-menu-right"
-        aria-labelledby="dropdownMenu1"
-      >
-        {menuActions.map((menuAction, index) => {
-          const callback = () => menuAction.callback!(userProfile)
-          if (menuAction.field === SEPERATOR) {
-            return (
-              <hr className="SRC-break" key={`${menuAction.field}_${index}`} />
-            )
-          }
-          return (
-            <li
-              role="menuitem"
-              key={menuAction.field}
-              style={{ listStyle: 'none' }}
-              className="SRC-menu-item SRC-table-dropdown-list SRC-primary-background-color-hover"
-              onClick={callback}
-              onKeyPress={callback}
-            >
-              <button className="SRC-menuAction">{menuAction.field}</button>
-            </li>
-          )
-        })}
-      </ul>
-    </div>
+    <Menu open={open} anchorEl={anchorEl} onClose={onClose}>
+      {menuActions.map((menuAction, index) => {
+        const callback = () => menuAction.callback!(userProfile)
+        if (menuAction.field === SEPERATOR) {
+          return <Divider key={`${menuAction.field}_${index}`} />
+        }
+        return (
+          <MenuItem role="menuitem" key={menuAction.field} onClick={callback}>
+            {menuAction.field}
+          </MenuItem>
+        )
+      })}
+    </Menu>
   )
 }
 

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
@@ -32,13 +32,17 @@ const renderUserCard = (props: UserCardProps) => {
 }
 
 const renderUserCardContextMenu = (props: UserCardContextMenuProps) => {
-  return render(<UserCardContextMenu {...props} />, {
+  const user = userEvent.setup()
+  const component = render(<UserCardContextMenu {...props} />, {
     wrapper: createWrapper(),
   })
+  return { user, component }
 }
 
 const renderMediumUserCard = (props: Omit<UserCardProps, 'size'>) => {
-  return renderUserCard({ ...props, size: MEDIUM_USER_CARD })
+  const user = userEvent.setup()
+  const component = renderUserCard({ ...props, size: MEDIUM_USER_CARD })
+  return { user, component }
 }
 
 const renderLargeUserCard = (props: Omit<UserCardProps, 'size'>) => {
@@ -207,10 +211,10 @@ describe('UserCard tests', () => {
           callback: () => {},
         },
       ] as MenuAction[]
-      renderMediumUserCard({ ...props, menuActions })
+      const { user } = renderMediumUserCard({ ...props, menuActions })
       await screen.findByText('ORCID', { exact: false })
       const menuButton = await screen.findByRole('menu')
-      await userEvent.click(menuButton)
+      await user.click(menuButton)
       await screen.findByRole('menuitem')
     })
   })
@@ -220,17 +224,25 @@ describe('UserCard tests', () => {
       userProfile: mockUserProfileData,
     }
 
-    it('renders without crashing', () => {
+    it('renders without crashing', async () => {
+      const menuActionCallback = jest.fn()
       const menuActions = [
         {
           field: 'text',
-          callback: () => {},
+          callback: menuActionCallback,
         },
       ] as MenuAction[]
-      const { container } = renderUserCardContextMenu({ ...props, menuActions })
-      // one svg is for the clipboard icon, one for the ellipsis,
-      // and one is for the user svg
-      expect(container).toBeDefined()
+      const { user } = renderUserCardContextMenu({
+        ...props,
+        menuActions,
+        open: true,
+      })
+      const menu = screen.getByRole('menu')
+      const menuItem = within(menu).getByRole('menuitem')
+
+      await user.click(menuItem)
+
+      expect(menuActionCallback).toHaveBeenCalled()
     })
 
     it('renders a break with SEPERATOR in menuActions', () => {
@@ -248,8 +260,16 @@ describe('UserCard tests', () => {
           callback: () => {},
         },
       ] as MenuAction[]
-      const { container } = renderUserCardContextMenu({ ...props, menuActions })
-      expect(container.querySelector('hr.SRC-break')).not.toBeNull()
+      renderUserCardContextMenu({
+        ...props,
+        menuActions,
+        open: true,
+      })
+      const menu = screen.getByRole('menu')
+      const menuItems = within(menu).getAllByRole('menuitem')
+      expect(menuItems).toHaveLength(2)
+      const separators = within(menu).getAllByRole('separator')
+      expect(separators).toHaveLength(1)
     })
   })
 

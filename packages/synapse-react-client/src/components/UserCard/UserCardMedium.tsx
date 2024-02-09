@@ -1,5 +1,5 @@
-import { Skeleton, Tooltip } from '@mui/material'
-import React, { useEffect, useRef, useState } from 'react'
+import { Card, IconButton, Skeleton, Tooltip } from '@mui/material'
+import React, { useRef, useState } from 'react'
 import IconCopy from '../../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../../assets/icons/ValidatedProfile'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
@@ -62,8 +62,17 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   isCertified,
   isLoadingAvatar,
 }) => {
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(
+    null,
+  )
+  const isContextMenuOpen = Boolean(menuAnchorEl)
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMenuAnchorEl(event.currentTarget)
+  }
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null)
+  }
   const [showModal, setShowModal] = useState(false)
-  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false)
 
   const copyToClipboardRef = useRef<HTMLParagraphElement>(null)
 
@@ -79,35 +88,12 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   const { displayName, userName, firstName, lastName, position, company } =
     userProfile
 
-  useEffect(() => {
-    const pageClick = (_event: any) => {
-      if (!isContextMenuOpen) {
-        return
-      }
-      // hide content menu (deferred, to allow menu action to process)
-      setTimeout(() => {
-        if (isContextMenuOpen) {
-          toggleContextMenu(_event)
-        }
-      }, 10)
-    }
-    // SWC-4778: https://stackoverflow.com/questions/23821768/how-to-listen-for-click-events-that-are-outside-of-a-component
-    window.addEventListener('mouseup', pageClick, false)
-    return () => {
-      window.removeEventListener('mouseup', pageClick, false)
-    }
-  }, [])
-
   const { data: userBundle } = useGetUserBundle(
     userProfile.ownerId,
     SynapseConstants.USER_BUNDLE_MASK_ORCID,
   )
 
   const ORCID = userBundle?.ORCID
-
-  const toggleContextMenu = (_event: any) => {
-    setIsContextMenuOpen(isOpen => !isOpen)
-  }
 
   let name = ''
   const linkLocation = link
@@ -233,88 +219,58 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
       {/* conditionally render menu actions, if there are no actions then we don't show the button */}
       {menuActions && menuActions.length > 0 && (
         <React.Fragment>
-          <span
+          <IconButton
             role="menu"
-            className={`SRC-extraPadding SRC-hand-cursor SRC-primary-background-color-hover SRC-inlineBlock
-              SRC-cardMenuButton ${
-                isContextMenuOpen ? 'SRC-primary-background-color' : ''
-              }`}
-            style={{ outline: 'none' }}
             tabIndex={0}
-            onClick={toggleContextMenu}
-            onKeyPress={toggleContextMenu}
+            onClick={handleMenuClick}
+            sx={{ mx: 1 }}
           >
-            <span
-              className={
-                isContextMenuOpen || isLarge
-                  ? 'SRC-whiteText'
-                  : 'SRC-primary-text-color'
-              }
-            >
-              <IconSvg icon="verticalEllipsis" />
-            </span>
-          </span>
-          {isContextMenuOpen && (
-            <UserCardContextMenu
-              menuActions={menuActions}
-              userProfile={userProfile}
-            />
-          )}
+            <IconSvg icon="verticalEllipsis" wrap={false} />
+          </IconButton>
+          <UserCardContextMenu
+            menuActions={menuActions}
+            userProfile={userProfile}
+            anchorEl={menuAnchorEl}
+            onClose={handleMenuClose}
+            open={isContextMenuOpen}
+          />
         </React.Fragment>
       )}
-      {!menuActions && <span style={{ padding: '0px 0px 0px 35px' }} />}
     </React.Fragment>
   )
 
   if (!isLarge) {
     return (
-      <div
-        style={{ border: '1px solid #DDDDDF', backgroundColor: 'white' }}
-        className={`cardContainer SRC-userCard SRC-userCardMediumUp ${
-          isContextMenuOpen ? 'SRC-hand-cursor' : ''
-        }`}
-        onClick={isContextMenuOpen ? toggleContextMenu : undefined}
-      >
-        {mediumCard}
-      </div>
+      <Card className={`SRC-userCard SRC-userCardMediumUp`}>{mediumCard}</Card>
     )
   }
   // else return medium card inside large component
   // when the component is large we have to set the click handler to wrap both the top and bottom portion
   return (
-    <div
-      className={
-        isContextMenuOpen ? 'SRC-hand-cursor cardContainer' : 'cardContainer'
-      }
-      onClick={isContextMenuOpen ? toggleContextMenu : undefined}
-    >
+    <Card>
       <div
-        className={`SRC-primary-background-color SRC-userCard SRC-userCardMediumUp ${
-          isContextMenuOpen ? 'SRC-hand-cursor' : ''
-        }`}
+        className={`SRC-primary-background-color SRC-userCard SRC-userCardMediumUp`}
       >
         {mediumCard}
       </div>
-      {isLarge ? (
+      {isLarge && (
         <UserCardLarge userProfile={userProfile} isCertified={isCertified} />
-      ) : (
-        false
       )}
-    </div>
+    </Card>
   )
 }
 
 export const LoadingUserCardMedium: React.FunctionComponent = () => {
   return (
-    <div
-      className="cardContainer SRC-userCard SRC-userCardMediumUp"
+    <Card
+      className="SRC-userCard SRC-userCardMediumUp"
       style={{ width: '380px' }}
     >
       <Skeleton variant="circular" width="80px" height="80px" />
       <div style={{ width: '250px' }}>
         <SkeletonTable numCols={1} numRows={2} />
       </div>
-    </div>
+    </Card>
   )
 }
 

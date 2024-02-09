@@ -403,12 +403,6 @@ button.dropdown-toggle.nav-button:hover {
 }
 // end header
 
-#explore-portal {
-  font-size: 21px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
 // title
 .title {
   text-transform: uppercase;
@@ -427,17 +421,6 @@ button.dropdown-toggle.nav-button:hover {
 }
 
 // end home page utils
-
-// override synapse table label, TODO: add specific class that can get targeted instead
-div.SRC-marginBottomTen {
-  p {
-    margin-top: 15px;
-  }
-}
-
-#exploreCount {
-  padding-top: 20px;
-}
 
 #user-menu-button {
   height: 72px;

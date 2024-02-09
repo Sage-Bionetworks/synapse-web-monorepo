@@ -31,20 +31,6 @@ a:hover {
   }
 }
 
-svg.SRC-hoverBox {
-  &:hover {
-    -webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
-    filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
-    cursor: pointer;
-  }
-  &::after {
-    transition: all 400ms;
-  }
-  &:hover:after {
-    transition: all 400ms;
-  }
-}
-
 .SRCBorderedPanel {
   background: SRC.$gray-light;
   border: 1px solid SRC.$border-color-gray;
@@ -55,23 +41,6 @@ svg.SRC-hoverBox {
   }
 }
 
-.SRC-syn-border {
-  border-color: lightgray;
-  border-style: solid;
-  border-width: 1px;
-}
-.SRC-syn-border-spacing {
-  padding: 10px 0px;
-  margin-bottom: 10px;
-}
-.SRC-syn-lightbackground {
-  background: #f9f9f9;
-}
-
-.SRC-noMargin {
-  margin: 0px;
-}
-
 .SRC-noPadding {
   padding: 0px;
 }
@@ -79,10 +48,6 @@ svg.SRC-hoverBox {
 .SRC-floatLeft,
 .wp-block-image .alignleft {
   float: left;
-}
-
-.SRC-floatRight {
-  float: right;
 }
 
 .SRC-overflowAuto {
@@ -141,54 +106,12 @@ svg.SRC-hoverBox {
   }
 }
 
-.SRC-facets {
-  padding: 4px 12px;
-  border-radius: 20px;
-  margin-right: 6px;
-  margin-bottom: 5px;
-  margin-top: 5px;
-  display: inline-block;
-  cursor: pointer;
-}
-
-span.SRC-facets svg.SRC-facets-icon {
-  vertical-align: -0.175em;
-  width: 0.5em;
-  opacity: 0.5;
-}
-
 .SRC-inlineBlock {
   display: inline-block;
 }
 
-.SRC-facets-text {
-  font-weight: 400;
-  font-size: 13px;
-}
-
 .SRC-hand-cursor {
   cursor: pointer;
-}
-
-.SRC-deemphasized-text {
-  color: #b7b7b7;
-}
-
-.SRC-margin-bottom-50px {
-  margin-bottom: 50px;
-}
-
-.SRC-table-button {
-  border-radius: 8px;
-  color: #1e7098;
-  background: white;
-}
-
-.SRC-chart-rect-style {
-  margin: 0px;
-  stroke-width: 1px;
-  stroke: rgba(0, 0, 0, 0.1);
-  box-shadow: 20px 20px;
 }
 
 .SRC-marginBottomTop {
@@ -196,21 +119,8 @@ span.SRC-facets svg.SRC-facets-icon {
   margin-bottom: 15px;
 }
 
-.SRC-salmon-background {
-  background: #f27277;
-}
-
 .SRC-boldText {
   font-weight: bold;
-}
-
-.SRC-marginRightFivePx .SRC-paddingSevenPx {
-  margin-right: 5px;
-  padding: 7px;
-}
-
-.SRC-roundBorder {
-  border-radius: 15px;
 }
 
 .SRC-whiteText,
@@ -226,26 +136,6 @@ a.SRC-whiteText {
   width: max-content;
 }
 
-.SRC-marginFive {
-  margin: 5px;
-}
-
-.SRC-grayBackground {
-  background: #f9f9f9;
-}
-
-.SRC-no-text-decor {
-  text-decoration: none;
-}
-
-.SRC-no-underline-on-hover:hover {
-  text-decoration: none !important;
-}
-
-.SRC-underline-on-hover:hover {
-  text-decoration: underline;
-}
-
 .SRC-validatedProfileIcon {
   margin-left: 10px;
   svg {
@@ -258,137 +148,17 @@ a.SRC-whiteText {
     vertical-align: bottom;
   }
 }
-.SRC-marginFifteen {
-  margin-left: 15px;
-  margin-right: 15px;
-}
-
-button.SRC-roundBorder {
-  border-radius: 15px;
-}
-
-.SRC-marginBottomTen {
-  margin-bottom: 10px;
-}
-
-.SRC-marginTopMinusTen {
-  margin-top: -10px;
-}
 
 .SRC-flex {
   display: flex;
-}
-
-.SRC-pointed-triangle-right {
-  position: relative;
-}
-
-.SRC-pointed-triangle-right:after,
-.SRC-pointed-triangle-right::after {
-  position: absolute;
-  right: -10px;
-  top: 15px;
-  content: '';
-  width: 0;
-  height: 0;
-  border-left: solid 10px;
-  border-left-color: inherit;
-  border-bottom: solid 10px transparent;
-  border-top: solid 10px transparent;
-}
-
-.SRC-pointed-triangle-down {
-  position: relative;
-}
-
-.SRC-pointed-triangle-down:after,
-.SRC-pointed-triangle-down::after {
-  position: absolute;
-  left: 10px;
-  bottom: -10px;
-  content: '';
-  z-index: 10;
-  width: 0;
-  height: 0;
-  border-top: solid 10px;
-  border-top-color: inherit;
-  border-left: solid 10px transparent;
-  border-right: solid 10px transparent;
-}
-
-.SRC-menu-button-base {
-  min-height: 51px;
-  height: 51px;
-  line-height: 51px;
-  text-align: left;
-  font-size: 16px;
-}
-.SRC-background-unset {
-  background: unset;
-}
-
-.SRC-text-shadow {
-  text-shadow: #505050 2px 2px 4px;
-}
-
-.SRC-text-large {
-  font-size: 25px;
 }
 
 .SRC-center-text {
   text-align: center;
 }
 
-#root {
-  .SRC-text-title {
-    font-size: 18px;
-  }
-  .SRC-text-chart {
-    font-size: 16px;
-  }
-}
-
-.SRC-text-chart {
-  font-size: 16px;
-}
-
-.SRC-bar-border {
-  background: #f9f9f9;
-}
-
-.SRC-border-bottom-only {
-  border-bottom: 1px solid SRC.$border-color-gray;
-}
-
-.SRC-border-top-only {
-  border-top: 1px solid SRC.$border-color-gray;
-}
-
 .SRC-no-border-bottom-imp {
   border-bottom: none !important;
-}
-
-.SRC-bar-border-bottom {
-  padding: 7px; /*create more room around texts */
-  border-bottom: 1px solid SRC.$border-color-gray;
-  border-left: 1px solid SRC.$border-color-gray;
-  border-right: 1px solid SRC.$border-color-gray;
-}
-
-.SRC-bar-border-top {
-  border-top: 1px solid SRC.$border-color-gray;
-  border-left: 1px solid SRC.$border-color-gray;
-  border-right: 1px solid SRC.$border-color-gray;
-}
-
-#root {
-  .SRC-bar-border-top.SRC-bar-border.SRC-bar-marginTop {
-    margin-top: 10px;
-  }
-}
-
-.SRC-padding-chart {
-  padding-left: 10px;
 }
 
 .SRC-marginAuto {
@@ -397,29 +167,12 @@ button.SRC-roundBorder {
   margin-bottom: 10px;
 }
 
-.SRC-padding {
-  padding: 3px;
-}
-
 .SRC-blackText {
   color: #1a1c29;
 }
 
 .SRC-light-background {
   background: #f5f5f5;
-}
-
-.dropdownList {
-  font-weight: 100;
-  padding-left: 7px;
-}
-
-.SRC-extraPadding {
-  padding: 5px;
-}
-
-.SRC-base-font {
-  font-size: 16px;
 }
 
 .SRC-verticalAlignTop {
@@ -487,12 +240,6 @@ button.SRC-roundBorder {
   justify-content: center;
 }
 
-.SRC-centerContentInline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .SRC-hidden {
   visibility: hidden;
   display: none;
@@ -547,7 +294,6 @@ button.SRC-roundBorder {
 .UserBadge {
   height: fit-content;
   width: fit-content;
-  cursor: pointer;
 }
 
 .SRC-inline-avatar {
@@ -618,30 +364,9 @@ button.SRC-roundBorder {
   }
 }
 
-.SRC-textareaCopy {
-  border: none;
-  background-color: transparent;
-  resize: none;
-  outline: none;
-  color: #337ab7;
-  cursor: pointer;
-}
-
-.SRC-cardMenuButton {
-  margin-left: auto;
-  margin-right: 16px;
-  padding-left: 5px;
-}
-
 .SRC-inlineFlex {
   display: inline-flex;
   align-items: center;
-}
-
-.SRC-copyContainer {
-  color: #337ab7;
-  cursor: pointer;
-  z-index: 2;
 }
 
 .SRC-cardContainer {
@@ -740,21 +465,6 @@ button.SRC-roundBorder {
   border-radius: 4px;
 }
 
-.SRC-break {
-  margin: 0px;
-  border: 1px solid #dcdcdc;
-}
-
-.SRC-menu-item {
-  padding: 10px 10px 5px 10px;
-  color: #515359;
-}
-
-.SRC-contextMenuDropdown {
-  border: 1px solid #dcdcdc;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
 .SRC-card-metadata-title {
   color: #ababac;
   margin-top: 16px;
@@ -768,67 +478,14 @@ button.SRC-roundBorder {
   background-color: #fff;
 }
 
-.SRC-cardSvg.SRC-whiteText > svg {
-  opacity: 0.5;
-}
-
-.SRC-cardSvg:hover > svg {
-  opacity: 1;
-}
-
-.SRC-facet-select-all {
-  padding: 4px 12px;
-}
-
 .SRC-menuLayout {
   padding-right: 40px;
-}
-
-.SRC-chart-btn {
-  border: none;
-  height: 30px;
-  width: 30px;
-  border-radius: 4px;
-  &:hover {
-    background-color: #e6e6e6;
-  }
-  &:active:focus {
-    outline: none;
-  }
-  &:focus {
-    outline: none;
-  }
-}
-
-.SRC-chart-nav {
-  height: 30px;
-  position: absolute;
-  right: 15px;
-  z-index: 99;
 }
 
 .SRC-loadingContainer {
   min-height: 100px;
 }
 
-// sample style for rss (news) feed
-.srcRssFeed {
-  list-style: none;
-  padding-left: 0px;
-  padding-right: 15px;
-}
-.srcRssFeedItem {
-  border: 1px solid SRC.$border-color-gray;
-  margin-bottom: 30px;
-}
-.srcRssFeedItemTitle {
-  padding-bottom: 5px;
-  font-weight: bold;
-  font-size: 20px;
-}
-.srcRssFeedItemContent {
-  padding-top: 10px;
-}
 .wp-block-media-text.is-vertically-aligned-top {
   align-items: start;
 }
@@ -845,41 +502,7 @@ button.SRC-roundBorder {
   width: 100%;
   vertical-align: middle;
 }
-.SRC-gap {
-  display: flex;
-  justify-content: space-between;
-  padding-left: 10px;
-  span {
-    padding-right: 20px;
-  }
-}
 
-.SRC-accordion-menu {
-  overflow: hidden;
-}
-
-.SRC-accordion-menu-enter-done {
-  overflow: visible;
-}
-
-// this implements the fade in for cards
-.SRC-accordion-menu-enter {
-  max-height: 0px;
-}
-
-.SRC-accordion-menu-enter.SRC-accordion-menu-enter-active {
-  max-height: 1000px;
-  transition: max-height 1000ms ease-in-out;
-}
-
-.SRC-accordion-menu-exit {
-  max-height: 1000px;
-}
-
-.SRC-accordion-menu-exit.SRC-accordion-menu-exit-active {
-  max-height: 0px;
-  transition: max-height 500ms ease-out;
-}
 .SRC-card-overview-title {
   text-transform: uppercase;
   font-weight: bold;
@@ -903,17 +526,8 @@ button {
   }
 }
 
-.highlight {
-  font-weight: bold;
-  padding: 2px;
-}
-
 .SRC-fullWidth {
   width: 100%;
-}
-
-.SRC-inherit-height {
-  height: inherit;
 }
 
 .SRC-standard-button-shape {
@@ -976,23 +590,11 @@ a.dropdown-item {
     color: rgba(0, 0, 0, 0.25) !important;
   }
 }
-.SRC-success-color {
-  color: map.get(SRC.$colors, 'success');
-}
-.SRC-success-color-bg {
-  background-color: map.get(SRC.$colors, 'success');
-}
 .SRC-warning-color {
   color: map.get(SRC.$colors, 'warning');
 }
-.SRC-warning-color-bg {
-  background-color: map.get(SRC.$colors, 'warning');
-}
 .SRC-danger-color {
   color: map.get(SRC.$colors, 'error');
-}
-.SRC-danger-color-bg {
-  background-color: map.get(SRC.$colors, 'error');
 }
 
 // PORTALS-965: add a max-width to the bootstrap container-fluid class
@@ -1016,9 +618,6 @@ a.dropdown-item {
 
 hr ~ .QueryWrapperPlotNav {
   margin-top: 11px;
-  .SRC-marginTopMinusTen {
-    margin-top: 0;
-  }
 }
 
 // from SWC.scss
@@ -1029,59 +628,6 @@ hr ~ .QueryWrapperPlotNav {
 
 .link {
   color: #2b688f;
-}
-
-.align-center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.floatleft {
-  float: left;
-}
-
-.floatright {
-  float: right;
-}
-
-.userProfileImage {
-  border-radius: 50%;
-  height: 23px;
-  width: 23px;
-  min-width: 23px;
-}
-
-.SRC-table-top {
-  .SRC-table-tools {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    .ElementWithTooltip {
-      flex: 1;
-      flex-grow: 1;
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      margin: 0;
-      border-radius: 0;
-      &.icon-vertical-dots {
-        width: 24px;
-      }
-
-      svg {
-        color: #fff;
-      }
-      svg,
-      path {
-        fill: #fff;
-      }
-    }
-  }
-}
-.SRC-rangeGrip {
-  width: 3px;
 }
 
 .SynapseTable {
@@ -1141,11 +687,6 @@ hr ~ .QueryWrapperPlotNav {
 
 .SignInButton {
   padding: 0px;
-}
-
-#addAndRemoveColumns-dropdown.dropdown-menu {
-  max-height: 300px;
-  overflow: auto;
 }
 
 .SRC-pointer-events-none {
@@ -1265,10 +806,6 @@ main,
 
 .SRC-margin-left-5 {
   margin-left: 5px;
-}
-
-.SRC-tooltip {
-  z-index: 2600 !important;
 }
 
 // TODO - remove after react-select is updated to use MUI theme, see PORTALS-2651
