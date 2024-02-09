@@ -257,7 +257,7 @@ export default function PlotsContainer(props: PlotsContainerProps) {
               showPlotVisualization ? '' : 'hidden'
             } ${showMoreButtonState === 'LESS' ? 'less' : ''}`}
           >
-            <div className="PlotNav__row" role="list">
+            <div className="PlotsContainer__row" role="list">
               {plotUiStateArray.map(plotUiState => {
                 const isCustomPlot = '__custom' in plotUiState.plotId
                 const customPlotProps = customPlots.find(customPlot =>
