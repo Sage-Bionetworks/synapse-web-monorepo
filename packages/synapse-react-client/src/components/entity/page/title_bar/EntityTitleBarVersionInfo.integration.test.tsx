@@ -10,13 +10,17 @@ import { mockDatasetEntity } from '../../../../mocks/entity/mockDataset'
 import { render, screen } from '@testing-library/react'
 import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import userEvent from '@testing-library/user-event'
-import { rest, server } from '../../../../mocks/msw/server'
+import { server } from '../../../../mocks/msw/server'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../utils/functions/getEndpoint'
-import { ENTITY_BUNDLE_V2 } from '../../../../utils/APIConstants'
 import { mockTableEntity } from '../../../../mocks/entity/mockTableEntity'
+import { getVersionedEntityBundleHandler } from '../../../../mocks/msw/handlers/entityHandlers'
+import {
+  EntityBundle,
+  VersionableEntity,
+} from '@sage-bionetworks/synapse-types'
 
 function renderComponent(props: EntityTitleBarVersionInfoProps) {
   return render(<EntityTitleBarVersionInfo {...props} />, {
@@ -54,24 +58,17 @@ describe('EntityTitleBarVersionInfo', () => {
     it('Truncates a long version label', async () => {
       const longLabel =
         'This is an extra long version label that should be truncated to a reasonable length that we can show in the UI'
+      const bundle: EntityBundle = {
+        ...mockFileEntity.bundle,
+        entity: {
+          ...mockFileEntity.bundle.entity,
+          versionLabel: longLabel,
+        } as VersionableEntity,
+      }
       server.use(
-        rest.post(
-          `${getEndpoint(
-            BackendDestinationEnum.REPO_ENDPOINT,
-          )}${ENTITY_BUNDLE_V2(':entityId', ':versionNumber')}`,
-
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                ...mockFileEntity.bundle,
-                entity: {
-                  ...mockFileEntity.bundle.entity,
-                  versionLabel: longLabel,
-                },
-              }),
-            )
-          },
+        getVersionedEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          bundle,
         ),
       )
       const mockCallback = jest.fn()

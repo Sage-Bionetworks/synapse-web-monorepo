@@ -5,22 +5,22 @@ import EntityPageTitleBar, {
 import { render, screen } from '@testing-library/react'
 import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
 import mockFileEntity from '../../../../mocks/entity/mockFileEntity'
+import * as EntityActionMenuModule from '../action_menu/EntityActionMenu'
 import { EntityActionMenuProps } from '../action_menu/EntityActionMenu'
 import {
   DockerRepository,
   EntityBundle,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../../../mocks/msw/server'
+import { server } from '../../../../mocks/msw/server'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../utils/functions/getEndpoint'
-import { ENTITY_BUNDLE_V2 } from '../../../../utils/APIConstants'
 import * as FavoriteButtonModule from '../../../favorites/FavoriteButton'
-import * as EntityActionMenuModule from '../action_menu/EntityActionMenu'
 import * as TitleBarPropertiesModule from './TitleBarProperties'
 import * as TitleBarVersionInfoModule from './EntityTitleBarVersionInfo'
+import { getVersionedEntityBundleHandler } from '../../../../mocks/msw/handlers/entityHandlers'
 
 const TITLE_BAR_PROPERTIES_TEST_ID = 'title-bar-properties'
 const TITLE_BAR_VERSION_INFO_TEST_ID = 'title-bar-version-info'
@@ -57,15 +57,9 @@ function renderComponent(props: EntityPageTitleBarProps) {
 
 function useEntityBundleOverride(bundle: EntityBundle) {
   server.use(
-    rest.post(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-        ':entityId',
-        ':versionNumber',
-      )}`,
-
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(bundle))
-      },
+    getVersionedEntityBundleHandler(
+      getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+      bundle,
     ),
   )
 }

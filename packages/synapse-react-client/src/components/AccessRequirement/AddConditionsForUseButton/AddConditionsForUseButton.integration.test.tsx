@@ -10,11 +10,12 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import { ENTITY_BUNDLE_V2, USER_BUNDLE } from '../../../utils/APIConstants'
+import { USER_BUNDLE } from '../../../utils/APIConstants'
 import mockFileEntity from '../../../mocks/entity/mockFileEntity'
 import userEvent from '@testing-library/user-event'
 import { mockUnmetControlledDataRestrictionInformationACT } from '../../../mocks/mock_has_access_data'
 import { mockUserBundle } from '../../../mocks/user/mock_user_profile'
+import { getEntityBundleHandler } from '../../../mocks/msw/handlers/entityHandlers'
 
 function renderComponent(props: AddConditionsForUseButtonProps) {
   return render(<AddConditionsForUseButton {...props} />, {
@@ -86,19 +87,14 @@ describe('AddConditionsForUseButton', () => {
   })
 
   it('Button is not shown if there are restrictions', () => {
+    const bundle: EntityBundle = {
+      ...mockFileEntity.bundle,
+      restrictionInformation: mockUnmetControlledDataRestrictionInformationACT,
+    }
     server.use(
-      rest.get(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entity',
-        )}`,
-        async (req, res, ctx) => {
-          const result: EntityBundle = {
-            ...mockFileEntity.bundle,
-            restrictionInformation:
-              mockUnmetControlledDataRestrictionInformationACT,
-          }
-          return res(ctx.status(200), ctx.json(result))
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
@@ -111,21 +107,17 @@ describe('AddConditionsForUseButton', () => {
   })
 
   it("Button is not shown if the user doesn't have permission to impose restrictions", () => {
+    const bundle: EntityBundle = {
+      ...mockFileEntity.bundle,
+      permissions: {
+        ...mockFileEntity.bundle.permissions,
+        canChangePermissions: false,
+      },
+    }
     server.use(
-      rest.get(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entity',
-        )}`,
-        async (req, res, ctx) => {
-          const result: EntityBundle = {
-            ...mockFileEntity.bundle,
-            permissions: {
-              ...mockFileEntity.bundle.permissions,
-              canChangePermissions: false,
-            },
-          }
-          return res(ctx.status(200), ctx.json(result))
-        },
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        bundle,
       ),
     )
 
