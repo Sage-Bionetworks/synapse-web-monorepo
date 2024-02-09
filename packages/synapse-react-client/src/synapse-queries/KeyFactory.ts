@@ -27,7 +27,7 @@ import {
   ViewColumnModelRequest,
   ViewEntityType,
 } from '@sage-bionetworks/synapse-types'
-import { QueryKey } from 'react-query'
+import { QueryKey } from '@tanstack/react-query'
 import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
 import { hashCode } from '../utils/functions/StringUtils'
 import {

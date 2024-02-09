@@ -9,7 +9,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import { SynapseClientError, useSynapseContext } from '../../utils'
 import SynapseClient from '../../synapse-client'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'

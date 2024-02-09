@@ -10,7 +10,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useMemo, useState } from 'react'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { UseInfiniteQueryResult } from 'react-query'
+import { UseInfiniteQueryResult } from '@tanstack/react-query'
 
 type InfiniteDataPage = number | 'ALL'
 

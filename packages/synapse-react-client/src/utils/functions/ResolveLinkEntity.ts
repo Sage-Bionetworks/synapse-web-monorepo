@@ -1,4 +1,4 @@
-import { QueryOptions, useQuery } from 'react-query'
+import { QueryOptions, useQuery } from '@tanstack/react-query'
 import { getEntity } from '../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../context/SynapseContext'
 import { Entity } from '@sage-bionetworks/synapse-types'

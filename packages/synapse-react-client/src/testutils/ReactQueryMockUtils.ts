@@ -3,7 +3,7 @@ import {
   QueryObserverSuccessResult,
   UseMutationResult,
   UseQueryResult,
-} from 'react-query'
+} from '@tanstack/react-query'
 
 export function getUseQuerySuccessMock<TData>(
   data: TData,

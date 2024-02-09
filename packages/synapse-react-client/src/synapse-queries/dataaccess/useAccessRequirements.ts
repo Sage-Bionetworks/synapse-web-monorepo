@@ -9,7 +9,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'

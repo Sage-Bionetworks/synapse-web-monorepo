@@ -28,7 +28,7 @@ import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMember
 import { SynapseClientError } from '../../utils/SynapseClientError'
 
 import { Typography } from '@mui/material'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 
 enum StepsEnum {
   SELECT_YOUR_CHALLENGE_TEAM = 'SELECT_YOUR_CHALLENGE_TEAM',

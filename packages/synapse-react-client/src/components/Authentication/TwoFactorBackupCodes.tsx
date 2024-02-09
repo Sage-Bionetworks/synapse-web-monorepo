@@ -9,7 +9,7 @@ import {
 } from '@mui/material'
 import { LeftRightPanel, StyledOuterContainer } from '../styled/LeftRightPanel'
 import IconSvg from '../IconSvg/IconSvg'
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { createRecoveryCodes } from '../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { displayToast } from '../ToastMessage/ToastMessage'

@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { QueryClient } from 'react-query'
+import { QueryClient } from '@tanstack/react-query'
 import { MOCK_CONTEXT_VALUE } from '../mocks/MockSynapseContext'
 import { SynapseContextType } from '../utils/context/SynapseContext'
 import FullContextProvider, {

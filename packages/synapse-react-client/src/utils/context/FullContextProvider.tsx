@@ -3,7 +3,7 @@ import {
   QueryClient,
   QueryClientConfig,
   QueryClientProvider,
-} from 'react-query'
+} from '@tanstack/react-query'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeOptions } from '@mui/material'
 import { SynapseContextProvider, SynapseContextType } from './SynapseContext'

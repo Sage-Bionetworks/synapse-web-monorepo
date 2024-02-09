@@ -33,7 +33,7 @@ import {
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { UseQueryResult } from 'react-query'
+import { UseQueryResult } from '@tanstack/react-query'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { displayToast } from '../ToastMessage/ToastMessage'
 

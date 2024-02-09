@@ -8,7 +8,7 @@ import {
   UseMutationOptions,
   useQuery,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import { SynapseClientError, useSynapseContext } from '../../utils'
 import SynapseClient from '../../synapse-client'
 import { SetOptional } from 'type-fest'

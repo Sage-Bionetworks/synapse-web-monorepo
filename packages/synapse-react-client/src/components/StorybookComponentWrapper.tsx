@@ -4,10 +4,10 @@ import {
   SynapseContextProvider,
   SynapseContextType,
 } from '../utils/context/SynapseContext'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import SynapseClient from '../synapse-client'
 import { SynapseToastContainer } from './ToastMessage/ToastMessage'
-import { ReactQueryDevtools } from 'react-query/devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import dayjs from 'dayjs'
 import {
   getAccessTokenFromCookie,

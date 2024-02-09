@@ -6,7 +6,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { SynapseClientError } from '../SynapseClientError'
 import SynapseClient from '../../synapse-client'
 

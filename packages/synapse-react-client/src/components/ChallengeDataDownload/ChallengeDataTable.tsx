@@ -4,7 +4,7 @@ import BaseTable, {
   SortOrder,
 } from '@sage-bionetworks/react-base-table'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
 import {
   Direction,

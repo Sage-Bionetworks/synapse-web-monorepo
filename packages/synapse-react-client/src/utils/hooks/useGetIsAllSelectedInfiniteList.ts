@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
-import { FetchNextPageOptions, InfiniteQueryObserverResult } from 'react-query'
+import {
+  FetchNextPageOptions,
+  InfiniteQueryObserverResult,
+} from '@tanstack/react-query'
 import { SynapseClientError } from '../SynapseClientError'
 
 /**

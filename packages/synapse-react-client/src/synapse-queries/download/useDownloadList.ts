@@ -14,7 +14,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import {
   ActionRequiredResponse,
   AvailableFilesResponse,

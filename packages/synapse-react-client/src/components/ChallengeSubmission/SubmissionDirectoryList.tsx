@@ -37,7 +37,7 @@ import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { EntityItem } from './ChallengeSubmission'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 
 type SubmissionDirectoryRow = {
   id: string

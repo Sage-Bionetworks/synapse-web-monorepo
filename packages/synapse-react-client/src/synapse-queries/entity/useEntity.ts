@@ -15,7 +15,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
 import { SynapseClientError } from '../../utils/SynapseClientError'

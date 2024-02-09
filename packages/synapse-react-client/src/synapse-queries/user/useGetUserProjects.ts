@@ -1,4 +1,7 @@
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
