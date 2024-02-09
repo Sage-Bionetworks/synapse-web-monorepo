@@ -80,8 +80,10 @@ export async function extractPlotDataArray(
   accessToken?: string,
 ) {
   const colorPalette = getContrastColorPalette(
-    index % 2 === 0 ? 'even' : 'odd',
-    Math.floor(index / 2),
+    // Use only the odd palette, using the same offset for all plots until palettes are improved.
+    // See PORTALS-2916
+    'odd', // index % 2 === 0 ? 'even' : 'odd',
+    0, // Math.floor(index / 2),
     facetToPlot.facetValues.length,
   )
 
