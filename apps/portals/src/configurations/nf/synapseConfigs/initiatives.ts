@@ -26,7 +26,7 @@ const initiatives: SynapseConfig = {
   className: 'InitiativeCardList',
   props: {
     rgbIndex,
-    defaultShowFacetVisualization: false,
+    defaultShowPlots: false,
     shouldDeepLink: true,
     sql: initiativesSql,
     cardConfiguration: {
