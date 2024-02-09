@@ -4,8 +4,10 @@ import {
   dropNullValues,
   getFriendlyPropertyName,
   getTransformErrors,
+  shouldLiveValidate,
 } from './AnnotationEditorUtils'
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
+import { JSONSchema7 } from 'json-schema'
 
 describe('AnnotationEditorUtils tests', () => {
   describe('dropNullValues', () => {
@@ -141,6 +143,38 @@ describe('AnnotationEditorUtils tests', () => {
       ])
 
       expect(transformErrors(errors)).toEqual(expected)
+    })
+  })
+
+  describe('shouldLiveValidate', () => {
+    const schema: JSONSchema7 | undefined = {
+      properties: {
+        foo: {
+          type: 'string',
+        },
+      },
+    }
+    it('should be true if there are annotations and a schema', () => {
+      const annotations: Record<string, unknown> | undefined = {
+        foo: 'bar',
+      }
+      expect(shouldLiveValidate(annotations, schema)).toBe(true)
+    })
+    it('should be false if annotations is empty', () => {
+      const annotations: Record<string, unknown> | undefined = {
+        // empty object
+      }
+      expect(shouldLiveValidate(annotations, schema)).toBe(false)
+    })
+    it('should be false if annotations is undefined', () => {
+      const annotations: Record<string, unknown> | undefined = undefined
+      expect(shouldLiveValidate(annotations, schema)).toBe(false)
+    })
+    it('should be true if there is no schema', () => {
+      const annotations: Record<string, unknown> | undefined = {
+        foo: 'bar',
+      }
+      expect(shouldLiveValidate(annotations, undefined)).toBe(false)
     })
   })
 })

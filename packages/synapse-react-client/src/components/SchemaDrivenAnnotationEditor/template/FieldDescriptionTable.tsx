@@ -1,4 +1,4 @@
-import { Collapse } from '@mui/material'
+import { Box, Collapse } from '@mui/material'
 import React from 'react'
 import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 
@@ -41,7 +41,7 @@ export default function FieldDescriptionTable(
 
   return (
     <Collapse className="field-description" in={true}>
-      <table className="FieldDescriptionTable">
+      <Box component="table" className="FieldDescriptionTable" mb={1}>
         <tbody>
           {description && (
             <tr>
@@ -54,7 +54,7 @@ export default function FieldDescriptionTable(
             <td>{typeString}</td>
           </tr>
         </tbody>
-      </table>
+      </Box>
     </Collapse>
   )
 }
