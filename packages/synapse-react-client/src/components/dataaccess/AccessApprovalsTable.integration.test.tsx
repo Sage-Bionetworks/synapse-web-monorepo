@@ -1,7 +1,11 @@
 import React from 'react'
-import { server } from '../../mocks/msw/server'
+import { rest, server } from '../../mocks/msw/server'
 import { render, screen } from '@testing-library/react'
-import { AccessApprovalSearchResult } from '@sage-bionetworks/synapse-types'
+import {
+  AccessApprovalSearchRequest,
+  AccessApprovalSearchResponse,
+  AccessApprovalSearchResult,
+} from '@sage-bionetworks/synapse-types'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
@@ -12,16 +16,11 @@ import {
   mockAccessApprovalSearchResult2,
   mockApprovalSearchResponse,
 } from '../../mocks/MockAccessApprovals'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import * as UseAccessApprovalsModule from '../../synapse-queries/dataaccess/useAccessApprovals'
 import userEvent from '@testing-library/user-event'
-
-const mockSearchAccessApprovalsInfinite = jest.spyOn(
-  UseAccessApprovalsModule,
-  'useSearchAccessApprovalsInfinite',
-)
-
-const mockFetchNextPage = jest.fn()
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 
 const page2: AccessApprovalSearchResult[] = [mockAccessApprovalSearchResult2]
 
@@ -34,47 +33,28 @@ function renderComponent(props: AccessApprovalsTableProps) {
 describe('AccessApprovalsTable tests', () => {
   beforeAll(() => {
     server.listen()
-    mockSearchAccessApprovalsInfinite.mockReturnValue({
-      data: {
-        pages: [
-          {
+    server.use(
+      rest.post(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/accessApproval/search`,
+        async (req, res, ctx) => {
+          const requestBody: AccessApprovalSearchRequest = await req.json()
+          let responseBody: AccessApprovalSearchResponse = {
             results: mockApprovalSearchResponse.results,
             nextPageToken: mockApprovalSearchResponse.nextPageToken,
-          },
-          {
-            results: page2,
-            nextPageToken: undefined,
-          },
-        ],
-        pageParams: [],
-      },
-      fetchNextPage: mockFetchNextPage,
-      hasNextPage: true,
-      isLoading: false,
-      isSuccess: true,
-      isError: false,
-      isLoadingError: false,
-      error: null,
-      isIdle: false,
-      isRefetchError: false,
-      status: 'success',
-      fetchPreviousPage: jest.fn(),
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      dataUpdatedAt: 0,
-      errorUpdatedAt: 0,
-      failureCount: 0,
-      errorUpdateCount: 0,
-      isFetched: false,
-      isFetchedAfterMount: false,
-      isFetching: false,
-      isPlaceholderData: false,
-      isPreviousData: false,
-      isRefetching: false,
-      isStale: false,
-      refetch: jest.fn(),
-      remove: jest.fn(),
-    })
+          }
+
+          if (requestBody.nextPageToken) {
+            responseBody = {
+              results: page2,
+              nextPageToken: undefined,
+            }
+          }
+          return res(ctx.status(200), ctx.json(responseBody))
+        },
+      ),
+    )
   })
   afterEach(() => {
     server.restoreHandlers()
@@ -95,29 +75,24 @@ describe('AccessApprovalsTable tests', () => {
     await screen.findByText('Expires')
   })
 
-  it('Renders all of the data', async () => {
+  it('Renders first page of data', async () => {
     renderComponent({
       accessorId: MOCK_USER_ID.toString(),
     })
-    mockAllIsIntersecting(true)
-    expect(
-      await screen.findAllByText(
-        mockAccessApprovalSearchResult2.accessRequirementId,
-      ),
-    ).toHaveLength(51)
+
+    await screen.findByText(
+      mockApprovalSearchResponse.results[0].accessRequirementId,
+    )
   })
 
-  it('Renders show more button when it has a next page', async () => {
-    mockAllIsIntersecting(true)
+  it('pagination works', async () => {
     renderComponent({
       accessorId: MOCK_USER_ID.toString(),
     })
-    const moreButton = screen.queryByRole('button', { name: 'Show More' })
-    expect(
-      screen.queryByRole('button', { name: 'Show More' }),
-    ).toBeInTheDocument()
-    await userEvent.click(moreButton!)
-    const item2 = await screen.findAllByText('Access Requirement2')
-    expect(item2).toHaveLength(1)
+    const showMoreButton = await screen.findByRole('button', {
+      name: 'Show More',
+    })
+    await userEvent.click(showMoreButton)
+    await screen.findByText(page2[0].accessRequirementId)
   })
 })

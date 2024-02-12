@@ -140,13 +140,13 @@ export const AccessApprovalsTable: React.FunctionComponent<
           No Results
         </Typography>
       )}
-      {!hasNextPage ? (
-        ''
-      ) : (
+      {hasNextPage && (
         <Button
           variant="outlined"
           color="primary"
-          onClick={() => fetchNextPage}
+          onClick={() => {
+            fetchNextPage()
+          }}
         >
           Show More
         </Button>
