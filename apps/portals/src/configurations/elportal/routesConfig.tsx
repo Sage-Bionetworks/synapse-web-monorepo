@@ -259,6 +259,9 @@ const routes: GenericRoute[] = [
                   titleLinkConfig: {
                     isMarkdown: false,
                     overrideLinkURLColumnName: 'externalWebsite',
+                    baseURL: 'Explore/Projects',
+                    URLColumnName: '',
+                    matchColumnName: '',
                   },
                 },
               },
