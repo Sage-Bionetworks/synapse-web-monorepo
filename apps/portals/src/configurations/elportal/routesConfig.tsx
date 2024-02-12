@@ -256,6 +256,10 @@ const routes: GenericRoute[] = [
                   sql: projectsSql,
                   isHeader: true,
                   ...projectCardConfiguration,
+                  titleLinkConfig: {
+                    isMarkdown: false,
+                    overrideLinkURLColumnName: 'externalWebsite',
+                  },
                 },
               },
               {
