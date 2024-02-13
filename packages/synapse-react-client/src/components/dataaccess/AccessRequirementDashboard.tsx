@@ -112,7 +112,7 @@ export function AccessRequirementDashboard(
   )
 
   const onReviewerChange = useCallback((selected: string | null) => {
-    if (selected && selected !== SPECIAL_ACT_TEAM_ID) {
+    if (selected) {
       setReviewerId(selected)
     } else {
       setReviewerId(undefined)

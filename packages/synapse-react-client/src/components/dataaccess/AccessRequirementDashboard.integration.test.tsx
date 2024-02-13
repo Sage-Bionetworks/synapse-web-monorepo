@@ -75,7 +75,7 @@ describe('AccessRequirementDashboard tests', () => {
   it('Updates the passed props and URLSearchParams when updating nameOrID', async () => {
     const { history } = renderComponent()
     const nameOrIDInput = await screen.findByLabelText(
-      'Filter by Access Requirement Name',
+      'Filter by Access Requirement Name or ID',
     )
     await userEvent.type(nameOrIDInput, NAME_CONTAINS_PREFIX)
 

@@ -142,7 +142,10 @@ describe('Access Requirement Table tests', () => {
 
     expect(onServiceRecievedRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        ...props,
+        nameContains: nameOrID,
+        relatedProjectId: relatedProject,
+        reviewerId,
+        accessType,
         sort: defaultSort,
       }),
     )
