@@ -122,13 +122,13 @@ describe('Access Requirement Table tests', () => {
   afterAll(() => server.close())
 
   it('Passes along props to the search request', async () => {
-    const nameContains = 'abc'
+    const nameOrID = 'abc'
     const relatedProject = 'syn123'
     const reviewerId = '123'
     const accessType = ACCESS_TYPE.REVIEW_SUBMISSIONS
 
     const props = {
-      nameContains: nameContains,
+      nameOrID: nameOrID,
       relatedProjectId: relatedProject,
       reviewerId: reviewerId,
       accessType: accessType,

@@ -31,7 +31,7 @@ import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 export type AccessRequirementTableProps = {
-  nameContains?: string
+  nameOrID?: string
   relatedProjectId?: string
   reviewerId?: string
   accessType?: ACCESS_TYPE
@@ -57,10 +57,13 @@ export function accessRequirementConcreteTypeValueToDisplayValue(
       return 'Unknown'
   }
 }
+const isIntegerInput = (v: string): boolean => {
+  return /^\d+$/.test(v)
+}
 
 export function AccessRequirementTable(props: AccessRequirementTableProps) {
   const {
-    nameContains,
+    nameOrID,
     relatedProjectId,
     reviewerId,
     accessType,
@@ -73,16 +76,27 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
   })
 
   const searchRequest: Omit<AccessRequirementSearchRequest, 'nextPageToken'> =
-    useMemo(
-      () => ({
+    useMemo(() => {
+      // SWC-6615: If the input string is a single integer, assume it's the AR ID.  Otherwise use as the nameContains field.
+      let nameContains: string | undefined = undefined
+      let ids: number[] | undefined = undefined
+      if (nameOrID !== undefined) {
+        const nameOrIDTrimmed = nameOrID.trim()
+        if (isIntegerInput(nameOrIDTrimmed)) {
+          ids = [Number.parseInt(nameOrIDTrimmed)]
+        } else {
+          nameContains = nameOrIDTrimmed
+        }
+      }
+      return {
+        ids,
         nameContains,
         relatedProjectId,
         reviewerId,
         accessType,
         sort: [sort],
-      }),
-      [nameContains, relatedProjectId, reviewerId, accessType, sort],
-    )
+      }
+    }, [nameOrID, relatedProjectId, reviewerId, accessType, sort])
 
   const { data, hasNextPage, fetchNextPage, isLoading } =
     useSearchAccessRequirementsInfinite(searchRequest)
