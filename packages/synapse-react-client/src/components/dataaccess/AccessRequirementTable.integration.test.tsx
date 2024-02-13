@@ -122,7 +122,7 @@ describe('Access Requirement Table tests', () => {
   afterAll(() => server.close())
 
   it('Passes along props to the search request', async () => {
-    const nameOrID = 'abc'
+    const nameOrID = 'a 1234567'
     const relatedProject = 'syn123'
     const reviewerId = '123'
     const accessType = ACCESS_TYPE.REVIEW_SUBMISSIONS
@@ -143,6 +143,37 @@ describe('Access Requirement Table tests', () => {
     expect(onServiceRecievedRequest).toHaveBeenCalledWith(
       expect.objectContaining({
         nameContains: nameOrID,
+        relatedProjectId: relatedProject,
+        reviewerId,
+        accessType,
+        sort: defaultSort,
+      }),
+    )
+  })
+
+  it('Test recognition of an AR ID', async () => {
+    const accessRequirementID = 1234567
+    const nameOrID = ` ${accessRequirementID}`
+    const relatedProject = 'syn123'
+    const reviewerId = '123'
+    const accessType = ACCESS_TYPE.REVIEW_SUBMISSIONS
+
+    const props = {
+      nameOrID: nameOrID,
+      relatedProjectId: relatedProject,
+      reviewerId: reviewerId,
+      accessType: accessType,
+    }
+
+    const defaultSort = [{ field: 'CREATED_ON', direction: 'DESC' }]
+
+    renderComponent(props)
+
+    await waitFor(() => expect(onServiceRecievedRequest).toHaveBeenCalled())
+
+    expect(onServiceRecievedRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ids: [accessRequirementID],
         relatedProjectId: relatedProject,
         reviewerId,
         accessType,
