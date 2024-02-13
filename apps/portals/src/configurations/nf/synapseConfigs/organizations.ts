@@ -29,7 +29,7 @@ export const organizationDetailsPageConfig: DetailsPageProps = {
           props: {
             rgbIndex: 8,
             shouldDeepLink: false,
-            defaultShowFacetVisualization: false,
+            defaultShowPlots: false,
             sql: studiesSql,
             visibleColumnCount: 7,
             sqlOperator: ColumnSingleValueFilterOperator.LIKE,

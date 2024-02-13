@@ -22,7 +22,7 @@ export default function MarkdownSynapseTable(props: MarkdownSynapseTableProps) {
       sql={query}
       hideSqlEditorControl={!showQuery}
       name={name}
-      defaultShowFacetVisualization={false}
+      defaultShowPlots={false}
       tableConfiguration={{}}
     />
   )

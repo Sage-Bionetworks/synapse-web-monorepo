@@ -127,7 +127,7 @@ const countVisibleElements = async (allCells: Locator) => {
 }
 
 const toggleChartVisibilityAndVerifyCount = async (page: Page) => {
-  const chartsPanel = page.locator('.FacetNav')
+  const chartsPanel = page.locator('.PlotsContainer')
 
   const allChartCells = chartsPanel.getByRole('figure')
   const allChartsCount = await allChartCells.count()
@@ -146,7 +146,7 @@ const toggleChartVisibilityAndVerifyCount = async (page: Page) => {
 
   await test.step('confirm chart visibility and count', async () => {
     const chartCell = allChartCells.nth(chartToTestIndex)
-    const chartToolbar = await chartCell.getByRole('toolbar')
+    const chartToolbar = chartCell.getByRole('toolbar')
     await chartToolbar
       .getByRole('button', { name: 'Hide graph under Show More' })
       .click()
@@ -160,21 +160,13 @@ const toggleAndVerifyVisibility = async (
   page: Page,
   showHideButton: Locator,
   chartsPanel: Locator,
-  ageDistChart: Locator,
-  isAgeDistributionChartPresent: boolean,
   shouldBeVisible: boolean,
 ) => {
   await showHideButton.click()
   if (shouldBeVisible) {
     await expect(chartsPanel).toBeVisible()
-    if (isAgeDistributionChartPresent) {
-      await expect(ageDistChart).toBeVisible()
-    }
   } else {
     await expect(chartsPanel).toBeHidden()
-    if (isAgeDistributionChartPresent) {
-      await expect(ageDistChart).toBeHidden()
-    }
   }
 }
 
@@ -182,15 +174,23 @@ const toggleShowHideVisualizationsAndVerify = async (
   page: Page,
   shouldBeVisible: boolean,
 ) => {
+  const viewAllChartsButton = page.getByRole('button', {
+    name: 'View All Charts',
+  })
+  expect(viewAllChartsButton).not.toBeNull()
+
+  await test.step('show all charts', async () => {
+    await viewAllChartsButton.click()
+  })
+
   const showHideButton = page.getByRole('button', {
     name: 'Show / Hide Visualizations',
   })
-  const ageDistChart = page.getByText('Age Distribution')
-  const isAgeDistributionChartPresent = (await ageDistChart.count()) > 0
+  expect(showHideButton).not.toBeNull()
 
-  const chartsPanel = page.locator('.FacetNav')
+  const chartsPanel = page.locator('.PlotsContainer')
 
-  const chartCells = chartsPanel.locator('.FacetNavPanel:visible')
+  const chartCells = chartsPanel.getByRole('figure')
   const initialCount = await chartCells.count()
 
   await test.step('toggle visualization and count', async () => {
@@ -198,8 +198,6 @@ const toggleShowHideVisualizationsAndVerify = async (
       page,
       showHideButton,
       chartsPanel,
-      ageDistChart,
-      isAgeDistributionChartPresent,
       shouldBeVisible,
     )
     shouldBeVisible = !shouldBeVisible
@@ -207,11 +205,9 @@ const toggleShowHideVisualizationsAndVerify = async (
       page,
       showHideButton,
       chartsPanel,
-      ageDistChart,
-      isAgeDistributionChartPresent,
       shouldBeVisible,
     )
-    const newCount = await page.locator('.FacetNavPanel:visible').count()
+    const newCount = await page.getByRole('figure').count()
     expect(newCount).toBe(initialCount)
   })
 }
@@ -260,12 +256,11 @@ const expectFacetControls = async (page: Page) => {
 
 const expectFacetCharts = async (page: Page) => {
   await test.step('confirm facet charts', async () => {
-    const chartsPanel = page.locator('.FacetNav')
-    const chartCells = chartsPanel.locator('.FacetNavPanel:visible')
-
-    const nChartCells = await chartCells.count()
-    expect(nChartCells).toBeGreaterThanOrEqual(1)
-    expect(nChartCells).toBeLessThanOrEqual(2)
+    const chartsPanel = page.locator('.PlotsContainer')
+    const facetPlotCells = chartsPanel.locator('.FacetNavPanel:visible')
+    const facetChartCells = await facetPlotCells.count()
+    expect(facetChartCells).toBeGreaterThanOrEqual(1)
+    expect(facetChartCells).toBeLessThanOrEqual(2)
 
     const availableFacetNames =
       await test.step('get available facets', async () => {
@@ -280,9 +275,9 @@ const expectFacetCharts = async (page: Page) => {
         return availableFacetNames
       })
 
-    for (let i = 0; i < nChartCells; i++) {
+    for (let i = 0; i < facetChartCells; i++) {
       await test.step(`confirm chart ${i}`, async () => {
-        const chartCell = chartCells.nth(i)
+        const chartCell = facetPlotCells.nth(i)
         await expect(chartCell).toBeVisible()
         await test.step('confirm chart title', async () => {
           const chartTitle = chartCell.locator('.FacetNavPanel__title')

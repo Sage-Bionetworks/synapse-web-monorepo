@@ -13,7 +13,7 @@ import {
   getPlotStyle,
   GraphData,
 } from '../widgets/facet-nav/FacetNavPanel'
-import { getFacets } from '../widgets/facet-nav/FacetNav'
+import { getFacets } from '../widgets/facet-nav/useFacetPlots'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { ShowMore } from '../row_renderers/utils'

@@ -5,8 +5,8 @@ import {
   EntityType,
   ExternalFileHandle,
   ExternalObjectStoreFileHandle,
-  S3FileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+  S3FileHandle,
   VersionableEntity,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
@@ -20,10 +20,7 @@ import { mockDoiAssociation } from '../../../../mocks/entity/mockProject'
 import { mockFileHandle } from '../../../../mocks/mock_file_handle'
 import { rest, server } from '../../../../mocks/msw/server'
 import { createWrapper } from '../../../../testutils/TestingLibraryUtils'
-import {
-  DOI_ASSOCIATION,
-  ENTITY_BUNDLE_V2,
-} from '../../../../utils/APIConstants'
+import { DOI_ASSOCIATION } from '../../../../utils/APIConstants'
 import { calculateFriendlyFileSize } from '../../../../utils/functions/calculateFriendlyFileSize'
 import {
   BackendDestinationEnum,
@@ -38,6 +35,7 @@ import {
   MOCK_EXTERNAL_S3_STORAGE_LOCATION_ID,
   mockExternalS3UploadDestination,
 } from '../../../../mocks/mock_upload_destination'
+import { getEntityBundleHandler } from '../../../../mocks/msw/handlers/entityHandlers'
 
 const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'
 
@@ -51,14 +49,9 @@ const mockOnActClick = jest.fn()
 
 function useEntityBundleOverride(bundle: EntityBundle) {
   server.use(
-    rest.post(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-        ':entityId',
-      )}`,
-
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(bundle))
-      },
+    getEntityBundleHandler(
+      getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+      bundle,
     ),
   )
 }

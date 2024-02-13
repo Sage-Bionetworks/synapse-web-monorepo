@@ -2,6 +2,7 @@ import { RJSFValidationError } from '@rjsf/utils'
 import { flatMap, groupBy, isEmpty } from 'lodash-es'
 import { ENTITY_CONCRETE_TYPE } from '@sage-bionetworks/synapse-types'
 import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
+import { JSONSchema7 } from 'json-schema'
 
 /**
  * Strips null values from arrays in the provided form data. If the array is empty after
@@ -132,4 +133,18 @@ export function convertToArray<T>(value: T): Array<unknown> {
   } else {
     return [value]
   }
+}
+
+/**
+ * Returns true if the default behavior of the form should be to live validate
+ * @param existingAnnotations
+ * @param validationSchema
+ */
+export function shouldLiveValidate(
+  existingAnnotations: Record<string, unknown> | undefined,
+  validationSchema: JSONSchema7 | undefined,
+): boolean {
+  const hasExistingAnnotations =
+    existingAnnotations && Object.keys(existingAnnotations).length > 0
+  return Boolean(hasExistingAnnotations && validationSchema)
 }

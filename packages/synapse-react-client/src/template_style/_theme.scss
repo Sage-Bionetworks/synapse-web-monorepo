@@ -43,40 +43,6 @@
   }
 }
 
-.SRC-secondary-background-color-hover {
-  &:hover,
-  &[aria-expanded='true'] {
-    background-color: SRC.$secondary-action-color !important;
-    color: white !important;
-    fill: white !important;
-    * {
-      background-color: SRC.$secondary-action-color !important;
-      color: white !important;
-    }
-  }
-}
-
-.grip-handle:hover {
-  background-color: SRC.$primary-action-color !important;
-  width: 3px;
-}
-
-// TODO: Need design for focus states
-.SRC-menu-button-base:focus {
-  outline: none;
-}
-
-.tableDropdownSelector {
-  color: #4e5491;
-  font-size: 13px;
-  font-weight: 600;
-  border: none;
-  background: white;
-  &:focus {
-    outline: SRC.$primary-action-color;
-  }
-}
-
 .SRC-button-focus-primary-color {
   &:focus {
     outline-color: SRC.$primary-action-color;

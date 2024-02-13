@@ -4,7 +4,6 @@ import React, { useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
-import { SkeletonInlineBlock } from '../../Skeleton/SkeletonInlineBlock'
 import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'
 import { SynapseConstants } from '../../../utils'
 import SynapseClient from '../../../synapse-client'
@@ -18,18 +17,18 @@ import {
 import loadingScreen from '../../LoadingScreen/LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
-import { Box, IconButton, Tooltip } from '@mui/material'
+import { Box, Tooltip } from '@mui/material'
 import { useQuery } from 'react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
-import IconSvg from '../../IconSvg'
 import { useAtomValue } from 'jotai'
 import {
   isLoadingNewBundleAtom,
   tableQueryDataAtom,
 } from '../../QueryWrapper/QueryWrapper'
 import { getCorrespondingColumnForFacet } from '../../../utils/functions/queryUtils'
+import PlotPanelHeader from '../../Plot/PlotPanelHeader'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -81,8 +80,10 @@ export async function extractPlotDataArray(
   accessToken?: string,
 ) {
   const colorPalette = getContrastColorPalette(
-    index % 2 === 0 ? 'even' : 'odd',
-    Math.floor(index / 2),
+    // Use only the odd palette, using the same offset for all plots until palettes are improved.
+    // See PORTALS-2916
+    'odd', // index % 2 === 0 ? 'even' : 'odd',
+    0, // Math.floor(index / 2),
     facetToPlot.facetValues.length,
   )
 
@@ -242,7 +243,7 @@ export function getPlotStyle(
   const quotient = plotType === 'BAR' ? 0.8 : 0.6
   const width = parentWidth ? parentWidth * quotient : 200
   let height = plotType === 'PIE' ? width : width / 3
-  // max height of .FacetNav row col* is 200px, so the effective plot height max is around 150 unless it's expanded
+  // max height of .PlotsContainer row col* is 200px, so the effective plot height max is around 150 unless it's expanded
   if (height > maxHeight) {
     height = maxHeight
   }
@@ -354,30 +355,14 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
           className={`FacetNavPanel${isModalView ? '--expanded' : ''}`}
         >
           {!isModalView && (
-            <div className="FacetNavPanel__title">
-              {!data && isLoadingNewBundle ? (
-                <SkeletonInlineBlock width={100} />
-              ) : (
-                <span className="FacetNavPanel__title__name">{plotTitle}</span>
-              )}
-              <div role="toolbar" className="FacetNavPanel__title__tools">
-                <EnumFacetFilter facet={facetToPlot} containerAs="Dropdown" />
-                <Tooltip title={'Expand to large graph'}>
-                  <IconButton onClick={() => setShowModal(true)} size={'small'}>
-                    <IconSvg
-                      icon={'openInFull'}
-                      wrap={false}
-                      fontSize={'inherit'}
-                    />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={'Hide graph under Show More'}>
-                  <IconButton onClick={() => onHide()} size={'small'}>
-                    <IconSvg icon={'close'} wrap={false} fontSize={'inherit'} />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            </div>
+            <PlotPanelHeader
+              data={data}
+              isLoadingNewBundle={isLoadingNewBundle}
+              title={plotTitle}
+              facetToPlot={facetToPlot}
+              onHide={onHide}
+              setShowModal={setShowModal}
+            />
           )}
           {isModalView && (
             <>
