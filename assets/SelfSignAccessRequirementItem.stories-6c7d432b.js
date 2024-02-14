@@ -1,0 +1,84 @@
+import{j as c}from"./jsx-runtime-9dc53467.js";import{q as k}from"./SynapseTableCell-72e9ab34.js";import{S as y,a as K,k as d,a2 as u}from"./SynapseClient-0bc28181.js";import{e as S,g as R,f as A,j as g}from"./wikiHandlers-19a052c3.js";import{M as e}from"./getEndpoint-ac94413e.js";import{l as i}from"./index-fc05e55e.js";import{l}from"./index-bd88158d.js";import{M as m}from"./mock_user_profile-24c5a2e2.js";import{g as O}from"./accessRequirementHandlers-c37a3108.js";import{a as I}from"./userProfileHandlers-bd651f15.js";import"./index-76fb7be0.js";import"./_commonjsHelpers-de833af9.js";import"./dayjs.min-f79c4412.js";import"./DateFormatter-0ac5436d.js";import"./OrientationBanner-6563f144.js";import"./FullWidthAlert-56b416c7.js";import"./Alert-a2690b50.js";import"./styled-2fcfc37a.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-55b21f7f.js";import"./createSvgIcon-8a3e2935.js";import"./Paper-699baef2.js";import"./IconButton-64077c25.js";import"./ButtonBase-f4a900e8.js";import"./emotion-react.browser.esm-b6cea713.js";import"./assertThisInitialized-081f9914.js";import"./inheritsLoose-c82a83d4.js";import"./TransitionGroupContext-1474f578.js";import"./useForkRef-8feb2ebf.js";import"./useIsFocusVisible-e5f6c995.js";import"./Stack-69986211.js";import"./extendSxProp-c283072b.js";import"./Box-2044d34a.js";import"./AlertTitle-a34c5fe9.js";import"./Typography-b1f79b20.js";import"./useTheme-76051239.js";import"./Grow-cbd0a034.js";import"./isHostComponent-fa76b8d9.js";import"./index-d3ea75b5.js";import"./utils-bed83364.js";import"./ClickAwayListener-3907f9d7.js";import"./Tooltip-b4e2f4d6.js";import"./Button-8ea9f590.js";import"./timezone-f53425a4.js";import"./IconSvg-5d9a5c7d.js";import"./ErrorOutlined-c656d1cd.js";import"./GetAppTwoTone-89480507.js";import"./InfoOutlined-64e960b4.js";import"./CheckCircleTwoTone-b021ad72.js";import"./SynapseTableConstants-5f56c39f.js";import"./UserBadge-17286047.js";import"./SynapseConstants-dc6cdfaa.js";import"./Menu-282b7c89.js";import"./index-c71daf5e.js";import"./Modal-f2a92dc6.js";import"./Backdrop-a166067b.js";import"./Fade-1b8e1369.js";import"./getScrollbarSize-ac846fe6.js";import"./ownerWindow-2c76219e.js";import"./createChainedFunction-0bab83cf.js";import"./MenuList-209db6ea.js";import"./List-7dea6900.js";import"./cloneDeep-cb98969d.js";import"./_baseClone-c3e37260.js";import"./_Uint8Array-595ed3dd.js";import"./_Map-02912bad.js";import"./isArray-5e3f9107.js";import"./_baseTimes-8715be3e.js";import"./_initCloneObject-b3d76b79.js";import"./_getAllKeys-a7c6e1ea.js";import"./_getTag-6966e563.js";import"./SkeletonTable-aa2cf667.js";import"./times-c23b3cf2.js";import"./identity-46f208ab.js";import"./toInteger-8c467ff1.js";import"./isSymbol-7c514724.js";import"./Skeleton-5f112c28.js";import"./ToastMessage-b1133164.js";import"./CSSTransition-46e04253.js";import"./hasClass-ec9efd32.js";import"./uniqueId-4d05949d.js";import"./toString-cc90cb98.js";import"./Divider-1bbf49d6.js";import"./dividerClasses-0324015e.js";import"./MenuItem-7900b244.js";import"./Card-c5e40899.js";import"./Avatar-cb65f89e.js";import"./Link-66bc2a10.js";import"./EntityLink-6710e0f2.js";import"./useEntity-b751c65d.js";import"./useMutation-5bc70c23.js";import"./useInfiniteQuery-3542bf6e.js";import"./isEqualWith-2aee5e03.js";import"./_getMatchData-23cf8316.js";import"./_cacheHas-cc8fa475.js";import"./_setToArray-3d6ec6fd.js";import"./pick-f7c80597.js";import"./_baseIndexOf-c808ca38.js";import"./_baseIteratee-f4897559.js";import"./_baseSlice-cf92e063.js";import"./isPlainObject-9a905694.js";import"./_overRest-54674ae8.js";import"./InfiniteQueryUtils-54ae7e6b.js";import"./useGetEntityHeaders-e687dda9.js";import"./EntityIcon-ff917a1f.js";import"./ErrorChip-c1be995c.js";import"./Chip-74479db8.js";import"./index-e4fc7078.js";import"./SqlFunctions-6179e7b0.js";import"./RegularExpressions-bc0adf55.js";import"./UserSearchBoxV2-c504781a.js";import"./Select-ce3716e1.esm-7febccc9.js";import"./use-deep-compare-effect.esm-3f8944c0.js";import"./uniq-91fc4097.js";import"./_isIterateeCall-984cc862.js";import"./without-9cea2dc4.js";import"./_baseRest-a17404df.js";import"./isArrayLikeObject-333fcb04.js";import"./UserOrTeamBadge-e7c08923.js";import"./index-339041a1.js";import"./Icon-72ddf768.js";import"./ShowMore-0d3229ca.js";import"./WideButton-2acc1d75.js";import"./LoadingScreen-6da72a1d.js";import"./LinearProgress-ed3be834.js";import"./useTeamMembers-0cebd49a.js";import"./pluralize-9f2b9a2f.js";import"./_commonjs-dynamic-modules-302442b1.js";import"./index.modern-42b48b42.js";import"./mapValues-c1561695.js";import"./isPlainObject-ad60ab85.js";import"./now-104568b6.js";import"./ObservationCard-b911f366.js";import"./ThemesPlot-91f880fd.js";import"./ElementWithTooltip-aeeb963a.js";import"./Dropdown-20841b4f.js";import"./ThemeProvider-ab8de9d2.js";import"./index-9d475cdf.js";import"./createWithBsPrefix-73743689.js";import"./factory-33ef2009.js";import"./sortBy-9432484f.js";import"./_baseFor-d254fa1e.js";import"./merge-6d426093.js";import"./isNil-be4011bf.js";import"./useGetQueryResultBundle-120ffa12.js";import"./useDownloadList-2ebe145f.js";import"./NoSearchResults-37a4f967.js";import"./NoData-300108e2.js";import"./queryUtils-c124c6e2.js";import"./LastLoginInfo-24a79b2f.js";import"./InfoTwoTone-c9bbd609.js";import"./jsx-runtime_commonjs-proxy-390881ee.js";import"./isMuiElement-bce4c331.js";import"./Dialog-009e8af0.js";import"./DialogTitle-a5a79c6c.js";import"./DialogContent-d709b0e2.js";import"./TextField-5c5c5817.js";import"./InputLabel-0bf96f6e.js";import"./useFormControl-41ba3265.js";import"./inputBaseClasses-7a80a621.js";import"./Select-97e02160.js";import"./tslib.es6-9c2726d7.js";import"./lodash-bd8c10bc.js";import"./useAccessRequirements-374dd23f.js";import"./useMediaQuery-bbc50899.js";import"./StandaloneLoginForm-9d1e57d1.js";import"./LoginFlowBackButton-4d024557.js";import"./TextField-38c47b70.js";import"./StyledFormControl-b96b937e.js";import"./LoginMethodButton-d447636b.js";import"./Grid-fef54d6c.js";import"./useDataAccessSubmission-eb6a58aa.js";import"./RadioGroup-13ffdadd.js";import"./Form-4048f6ae.js";import"./Col-79fd1bc4.js";import"./FileUpload-649e79d7.js";import"./AuthenticatedRequirement-46dc09bd.js";import"./RequirementItem-5be7f774.js";import"./ConditionalWrapper-28a47e51.js";import"./CheckTwoTone-e5bce218.js";import"./CertificationRequirement-12a2f50e.js";import"./ValidationRequirement-d07b8dd4.js";import"./TwoFactorAuthEnabledRequirement-30df487f.js";import"./TwoFactorEnrollmentForm-23334507.js";import"./LeftRightPanel-eddfdfe7.js";import"./ActionRequiredCard-c203d939.js";import"./RequestDownloadCard-14509de4.js";import"./Tabs-72ca661f.js";import"./QueryCount-23f90038.js";import"./SkeletonButton-9ffd30ff.js";import"./Checkbox-0e4b5ffa.js";import"./SelectionCriteriaPill-bad47101.js";import"./EnumFacetFilterUI-654e4183.js";import"./RangeSlider-3ea549da.js";import"./react-sizeme-a86e205b.js";import"./ColorGradient-982494fb.js";import"./colorPalette-c43701fe.js";import"./UpsetPlot-1bd3d788.js";import"./lz-string-8d18d2e5.js";import"./LargeButton-be50079f.js";import"./SynapseVideo-8819e89f.js";import"./IconList-1fd4a045.js";import"./UserCardList-a3f1528b.js";import"./Box-56def3ff.js";import"./StringUtils-2ea3ab4d.js";import"./tiny-invariant-dd7d57d2.js";import"./mockProject-73721772.js";import"./mockWiki-cafc8881.js";import"./mock_file_handle-f7c8fcb8.js";import"./util-c0197ce2.js";import"./index-4166e284.js";import"./mockEntity-68f98de5.js";import"./mockFileEntity-ae1f7452.js";const Ts={title:"Governance/Data Access Request Flow/Requirements/SelfSignAccessRequirementItem",component:k,argTypes:{isAuthenticated:{control:{type:"boolean"},defaultValue:!0}},decorators:[(o,t)=>c(y,{children:r=>c(K,{synapseContext:{...r,accessToken:t.isAuthenticated?r.accessToken??"fake token":void 0},children:c(o,{})})})]},p={args:{accessRequirement:{...S,isCertifiedUserRequired:!0,isValidatedProfileRequired:!0}},parameters:{msw:{handlers:[...O(e),...R(e),I(e,!1,!1),i.rest.get(`${e}${d(":id")}`,async(o,t,r)=>{const s={accessRequirementId:o.params.id,concreteType:"org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus",isApproved:!1};return t(r.status(200),r.json(s))}),i.rest.post(`${e}${u}`,async(o,t,r)=>{const s={requirementId:S.id,submitterId:m.toString(),accessorId:m.toString(),state:l.APPROVED};return t(r.status(201),r.json(s))})]}}},n={args:{accessRequirement:A},parameters:{msw:{handlers:[...O(e),...R(e),I(e,!1,!1),i.rest.get(`${e}${d(":id")}`,async(o,t,r)=>{const s={accessRequirementId:o.params.id,concreteType:"org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus",isApproved:!1};return t(r.status(200),r.json(s))}),i.rest.post(`${e}${u}`,async(o,t,r)=>{const s={requirementId:A.id,submitterId:m.toString(),accessorId:m.toString(),state:l.APPROVED};return t(r.status(201),r.json(s))})]}}},a={args:{accessRequirement:g},parameters:{msw:{handlers:[...O(e),...R(e),I(e,!1,!1),i.rest.get(`${e}${d(":id")}`,async(o,t,r)=>{const s={accessRequirementId:o.params.id,concreteType:"org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus",isApproved:!1};return t(r.status(200),r.json(s))}),i.rest.post(`${e}${u}`,async(o,t,r)=>{const s={requirementId:g.id,submitterId:m.toString(),accessorId:m.toString(),state:l.APPROVED};return t(r.status(201),r.json(s))})]}}};var _,q,C;p.parameters={...p.parameters,docs:{...(_=p.parameters)==null?void 0:_.docs,source:{originalSource:`{
+  args: {
+    accessRequirement: {
+      ...mockSelfSignAccessRequirement,
+      isCertifiedUserRequired: true,
+      isValidatedProfileRequired: true
+    }
+  },
+  parameters: {
+    msw: {
+      handlers: [
+      // ...getHandlers(MOCK_REPO_ORIGIN),
+      ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN), ...getWikiHandlers(MOCK_REPO_ORIGIN), getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, false, false), rest.get(\`\${MOCK_REPO_ORIGIN}\${ACCESS_REQUIREMENT_STATUS(':id')}\`, async (req, res, ctx) => {
+        const response: AccessRequirementStatus = {
+          accessRequirementId: (req.params.id as string),
+          concreteType: 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+          isApproved: false
+        };
+        return res(ctx.status(200), ctx.json(response));
+      }), rest.post(\`\${MOCK_REPO_ORIGIN}\${ACCESS_APPROVAL}\`, async (req, res, ctx) => {
+        const response: AccessApproval = {
+          requirementId: mockSelfSignAccessRequirement.id,
+          submitterId: MOCK_USER_ID.toString(),
+          accessorId: MOCK_USER_ID.toString(),
+          state: ApprovalState.APPROVED
+        };
+        return res(ctx.status(201), ctx.json(response));
+      })]
+    }
+  }
+}`,...(C=(q=p.parameters)==null?void 0:q.docs)==null?void 0:C.source}}};var E,f,P;n.parameters={...n.parameters,docs:{...(E=n.parameters)==null?void 0:E.docs,source:{originalSource:`{
+  args: {
+    accessRequirement: mockToUAccessRequirement
+  },
+  parameters: {
+    msw: {
+      handlers: [
+      // ...getHandlers(MOCK_REPO_ORIGIN),
+      ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN), ...getWikiHandlers(MOCK_REPO_ORIGIN), getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, false, false), rest.get(\`\${MOCK_REPO_ORIGIN}\${ACCESS_REQUIREMENT_STATUS(':id')}\`, async (req, res, ctx) => {
+        const response: AccessRequirementStatus = {
+          accessRequirementId: (req.params.id as string),
+          concreteType: 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+          isApproved: false
+        };
+        return res(ctx.status(200), ctx.json(response));
+      }), rest.post(\`\${MOCK_REPO_ORIGIN}\${ACCESS_APPROVAL}\`, async (req, res, ctx) => {
+        const response: AccessApproval = {
+          requirementId: mockToUAccessRequirement.id,
+          submitterId: MOCK_USER_ID.toString(),
+          accessorId: MOCK_USER_ID.toString(),
+          state: ApprovalState.APPROVED
+        };
+        return res(ctx.status(201), ctx.json(response));
+      })]
+    }
+  }
+}`,...(P=(f=n.parameters)==null?void 0:f.docs)==null?void 0:P.source}}};var U,M,T;a.parameters={...a.parameters,docs:{...(U=a.parameters)==null?void 0:U.docs,source:{originalSource:`{
+  args: {
+    accessRequirement: mockToUAccessRequirementWithWiki
+  },
+  parameters: {
+    msw: {
+      handlers: [
+      // ...getHandlers(MOCK_REPO_ORIGIN),
+      ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN), ...getWikiHandlers(MOCK_REPO_ORIGIN), getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, false, false), rest.get(\`\${MOCK_REPO_ORIGIN}\${ACCESS_REQUIREMENT_STATUS(':id')}\`, async (req, res, ctx) => {
+        const response: AccessRequirementStatus = {
+          accessRequirementId: (req.params.id as string),
+          concreteType: 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+          isApproved: false
+        };
+        return res(ctx.status(200), ctx.json(response));
+      }), rest.post(\`\${MOCK_REPO_ORIGIN}\${ACCESS_APPROVAL}\`, async (req, res, ctx) => {
+        const response: AccessApproval = {
+          requirementId: mockToUAccessRequirementWithWiki.id,
+          submitterId: MOCK_USER_ID.toString(),
+          accessorId: MOCK_USER_ID.toString(),
+          state: ApprovalState.APPROVED
+        };
+        return res(ctx.status(201), ctx.json(response));
+      })]
+    }
+  }
+}`,...(T=(M=a.parameters)==null?void 0:M.docs)==null?void 0:T.source}}};const ks=["RequiresUnmetCertificationAndValidation","LegacyTermsOfUse","LegacyTermsOfUseWithWiki"];export{n as LegacyTermsOfUse,a as LegacyTermsOfUseWithWiki,p as RequiresUnmetCertificationAndValidation,ks as __namedExportsOrder,Ts as default};
+//# sourceMappingURL=SelfSignAccessRequirementItem.stories-6c7d432b.js.map
