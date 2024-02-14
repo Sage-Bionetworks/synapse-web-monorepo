@@ -34,9 +34,9 @@ function useConfigureSourceAppFromQueryParams() {
     useLocalStorageValue(SOURCE_APP_ID_LOCALSTORAGE_KEY)
 
   useEffect(() => {
-    const searchParamAppId = getSearchParam(SOURCE_APP_ID_QUERY_PARAM_KEY)
-    if (searchParamAppId) {
-      setLocalStorageAppId(searchParamAppId)
+    const appIdFromSearchParam = getSearchParam(SOURCE_APP_ID_QUERY_PARAM_KEY)
+    if (appIdFromSearchParam) {
+      setLocalStorageAppId(appIdFromSearchParam)
     } else if (!localStorageAppId) {
       // fallback to Sage Bionetworks
       setLocalStorageAppId(DEFAULT_SOURCE_APP_ID)
@@ -65,9 +65,8 @@ export function useSynchronizeCurrentSourceAppNameForLogin(
 }
 
 /**
- * Provides context necessary for most components in SRC.
+ * Provides context for the 'source app', which will be used for theming and branding so this app feels connected to the application the user is coming from.
  *
- * The SynapseContextProvider must be wrapped in a react-query QueryClientProvider.
  * @param props sourceAppId: An optional source app ID to use. If not provided, the source app ID will be read from localStorage, or default to 'SAGE'.
  */
 export function SourceAppProvider(props: SourceAppContextProviderProps) {
@@ -128,7 +127,7 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
 export function useSourceApp(): SourceAppContextType {
   const context = useContext(SourceAppContext)
   if (context === undefined) {
-    console.error('useSourceApp must be used within a SourceAppContextProvider')
+    console.error('useSourceApp must be used within a SourceAppProvider')
     return STATIC_SOURCE_APP_CONFIG
   }
   return context
