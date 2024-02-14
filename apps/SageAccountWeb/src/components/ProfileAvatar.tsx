@@ -36,18 +36,18 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
   useEffect(() => {
     if (userProfile?.profilePicureFileHandleId) {
       SynapseClient.getFileHandleByIdURL(
-        userProfile?.profilePicureFileHandleId as string,
+        userProfile.profilePicureFileHandleId,
         accessToken,
       ).then(picUrl => {
         setProfilePicUrl(picUrl)
       })
     }
-  }, [userProfile])
+  }, [accessToken, userProfile])
 
   const updateUserProfile = async (newFileHandleId: string) => {
     try {
       if (userProfile) {
-        userProfile.profilePicureFileHandleId = newFileHandleId as string
+        userProfile.profilePicureFileHandleId = newFileHandleId
         await SynapseClient.updateMyUserProfile(userProfile, accessToken)
         displayToast('Profile picture has been successfully updated', 'success')
         onProfileUpdated()

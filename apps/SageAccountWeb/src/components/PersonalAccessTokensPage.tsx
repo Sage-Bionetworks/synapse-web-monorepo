@@ -4,8 +4,9 @@ import { StyledOuterContainer } from './StyledComponents'
 import { Box, Paper, Typography } from '@mui/material'
 import { BackButton } from './BackButton'
 import { AccessTokenPage } from 'synapse-react-client'
+import { SourceAppProvider, SYNAPSE_SOURCE_APP_ID } from './useSourceApp'
 
-export const PersonalAccessTokensPage = () => {
+export function PersonalAccessTokensPageInternal() {
   return (
     <StyledOuterContainer className="PersonalAccessTokenPage">
       <Paper
@@ -32,5 +33,14 @@ export const PersonalAccessTokensPage = () => {
         </Box>
       </Paper>
     </StyledOuterContainer>
+  )
+}
+
+export function PersonalAccessTokensPage() {
+  // PersonalAccessTokens are exclusively for Synapse, so use the Synapse theme
+  return (
+    <SourceAppProvider sourceAppId={SYNAPSE_SOURCE_APP_ID}>
+      <PersonalAccessTokensPageInternal />
+    </SourceAppProvider>
   )
 }

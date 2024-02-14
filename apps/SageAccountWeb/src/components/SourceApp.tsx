@@ -1,4 +1,4 @@
-import { Box, SxProps, Typography } from '@mui/material'
+import { Box, BoxProps, Typography } from '@mui/material'
 import React from 'react'
 import { SkeletonTable } from 'synapse-react-client'
 import Skeleton from '@mui/material/Skeleton'
@@ -31,10 +31,10 @@ export const SourceApp = (props: SourceAppProps) => {
   )
 }
 
-export const SourceAppLogo: React.FC<{ sx?: SxProps }> = ({ sx }) => {
+export function SourceAppLogo(props: Omit<BoxProps, 'children' | 'className'>) {
   const sourceAppConfig = useSourceApp()
   return (
-    <Box className="SourceAppLogo" sx={sx}>
+    <Box className="SourceAppLogo" {...props}>
       {sourceAppConfig ? (
         sourceAppConfig.logo
       ) : (

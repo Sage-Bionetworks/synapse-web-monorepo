@@ -9,6 +9,18 @@ import {
 import SourceAppImage from './SourceAppImage'
 import { sourceAppConfigTableID } from '../resources'
 
+// A static SourceAppConfig to use as a fallback in case the request to get source app configs fails
+export const STATIC_SOURCE_APP_CONFIG: SourceAppConfig = {
+  appId: '',
+  appURL: '',
+  description: '',
+  friendlyName: 'Sage Bionetworks',
+  requestAffiliation: false,
+  logo: <></>,
+  isPublicized: true,
+  palette: { ...Palettes.palette },
+}
+
 export const useSourceAppConfigs = (): SourceAppConfig[] | undefined => {
   const { data: tableQueryResult } =
     SynapseQueries.useGetQueryResultBundleWithAsyncStatus({

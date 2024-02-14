@@ -17,9 +17,9 @@ import {
   ApplicationSessionManager,
   CookiesNotification,
   SynapseClient,
-  SynapseToastContainer,
-  SynapseContextType,
   SynapseContextConsumer,
+  SynapseContextType,
+  SynapseToastContainer,
 } from 'synapse-react-client'
 import { getSearchParam } from './URLUtils'
 import './App.scss'
@@ -30,6 +30,7 @@ import TwoFactorAuthEnrollmentPage from './components/TwoFactorAuth/TwoFactorAut
 import TwoFactorAuthBackupCodesPage from './components/TwoFactorAuth/TwoFactorAuthBackupCodesPage'
 import { PersonalAccessTokensPage } from './components/PersonalAccessTokensPage'
 import { OAuthClientManagementPage } from './components/OAuthClientManagementPage'
+import { SourceAppProvider } from './components/useSourceApp'
 
 const isCodeSearchParam = getSearchParam('code') !== undefined
 const isProviderSearchParam = getSearchParam('provider') !== undefined
@@ -51,131 +52,143 @@ function App() {
         <StyledEngineProvider injectFirst>
           <QueryClientProvider client={queryClient}>
             <ApplicationSessionManager>
-              <AppInitializer>
-                <CookiesNotification />
-                <Switch>
-                  <Route exact path="/">
+              <SourceAppProvider>
+                <AppInitializer>
+                  <CookiesNotification />
+                  <Switch>
+                    <Route exact path="/">
+                      <SynapseContextConsumer>
+                        {(ctx?: SynapseContextType) => {
+                          if (!ctx?.accessToken) {
+                            return <LoginPage returnToUrl={'/'} />
+                          } else {
+                            return (
+                              <AppContextConsumer>
+                                {appContext => (
+                                  <>
+                                    {appContext?.redirectURL &&
+                                      !isInSSOFlow &&
+                                      window.location.replace(
+                                        appContext?.redirectURL,
+                                      )}
+                                  </>
+                                )}
+                              </AppContextConsumer>
+                            )
+                          }
+                        }}
+                      </SynapseContextConsumer>
+                    </Route>
+                    <Route
+                      exact
+                      path="/logout"
+                      render={props => {
+                        SynapseClient.signOut().then(() => {
+                          window.history.replaceState(
+                            null,
+                            '',
+                            '/authenticated/myaccount',
+                          )
+                        })
+                        return <></>
+                      }}
+                    />
+                    <Route
+                      exact
+                      path="/register1"
+                      component={RegisterAccount1}
+                    />
+                    <Route
+                      exact
+                      path="/register2"
+                      component={RegisterAccount2}
+                    />
+                    <Route exact path="/jointeam" component={JoinTeamPage} />
+                    <Route
+                      exact
+                      path="/sageresources"
+                      component={SageResourcesPage}
+                    />
+                    <Route exact path="/resetPassword">
+                      <ResetPassword returnToUrl="/authenticated/myaccount" />
+                    </Route>
                     <SynapseContextConsumer>
                       {(ctx?: SynapseContextType) => {
-                        if (!ctx?.accessToken) {
-                          return <LoginPage returnToUrl={'/'} />
-                        } else {
-                          return (
-                            <AppContextConsumer>
-                              {appContext => (
-                                <>
-                                  {appContext?.redirectURL &&
-                                    !isInSSOFlow &&
-                                    window.location.replace(
-                                      appContext?.redirectURL,
-                                    )}
-                                </>
-                              )}
-                            </AppContextConsumer>
-                          )
-                        }
+                        const isAuthenticated = !!ctx?.accessToken
+                        return (
+                          <>
+                            {/* If not signed in and in the "/authenticated" path, show the login page */}
+                            {!isAuthenticated && (
+                              <Route path="/authenticated" exact={false}>
+                                <LoginPage />
+                              </Route>
+                            )}
+                            {isAuthenticated && (
+                              <>
+                                <Route path={'/authenticated/validate'} exact>
+                                  <ProfileValidation />
+                                </Route>
+                                <Route
+                                  path={'/authenticated/signTermsOfUse'}
+                                  exact
+                                >
+                                  <TermsOfUsePage />
+                                </Route>
+                                <Route path={'/authenticated/myaccount'} exact>
+                                  <AccountSettings />
+                                </Route>
+                                <Route
+                                  path={'/authenticated/currentaffiliation'}
+                                  exact
+                                >
+                                  <CurrentAffiliationPage />
+                                </Route>
+                                <Route
+                                  path={'/authenticated/accountcreated'}
+                                  exact
+                                >
+                                  <AccountCreatedPage />
+                                </Route>
+                                <Route
+                                  path={'/authenticated/certificationquiz'}
+                                  exact
+                                >
+                                  <CertificationQuiz />
+                                </Route>
+                                <Route
+                                  path={'/authenticated/2fa/enroll'}
+                                  exact
+                                  render={() => <TwoFactorAuthEnrollmentPage />}
+                                />
+                                <Route
+                                  path={'/authenticated/2fa/generatecodes'}
+                                  exact
+                                  render={() => (
+                                    <TwoFactorAuthBackupCodesPage />
+                                  )}
+                                />
+                                <Route
+                                  path={'/authenticated/personalaccesstokens'}
+                                  exact
+                                  render={() => <PersonalAccessTokensPage />}
+                                />
+                                <Route
+                                  path={'/authenticated/oauthclientmanagement'}
+                                  exact
+                                  render={() => <OAuthClientManagementPage />}
+                                />
+                              </>
+                            )}
+                          </>
+                        )
                       }}
                     </SynapseContextConsumer>
-                  </Route>
-                  <Route
-                    exact
-                    path="/logout"
-                    render={props => {
-                      SynapseClient.signOut().then(() => {
-                        window.history.replaceState(
-                          null,
-                          '',
-                          '/authenticated/myaccount',
-                        )
-                      })
-                      return <></>
-                    }}
-                  />
-                  <Route exact path="/register1" component={RegisterAccount1} />
-                  <Route exact path="/register2" component={RegisterAccount2} />
-                  <Route exact path="/jointeam" component={JoinTeamPage} />
-                  <Route
-                    exact
-                    path="/sageresources"
-                    component={SageResourcesPage}
-                  />
-                  <Route exact path="/resetPassword">
-                    <ResetPassword returnToUrl="/authenticated/myaccount" />
-                  </Route>
-                  <SynapseContextConsumer>
-                    {(ctx?: SynapseContextType) => {
-                      const isAuthenticated = !!ctx?.accessToken
-                      return (
-                        <>
-                          {/* If not signed in and in the "/authenticated" path, show the login page */}
-                          {!isAuthenticated && (
-                            <Route path="/authenticated" exact={false}>
-                              <LoginPage />
-                            </Route>
-                          )}
-                          {isAuthenticated && (
-                            <>
-                              <Route path={'/authenticated/validate'} exact>
-                                <ProfileValidation />
-                              </Route>
-                              <Route
-                                path={'/authenticated/signTermsOfUse'}
-                                exact
-                              >
-                                <TermsOfUsePage />
-                              </Route>
-                              <Route path={'/authenticated/myaccount'} exact>
-                                <AccountSettings />
-                              </Route>
-                              <Route
-                                path={'/authenticated/currentaffiliation'}
-                                exact
-                              >
-                                <CurrentAffiliationPage />
-                              </Route>
-                              <Route
-                                path={'/authenticated/accountcreated'}
-                                exact
-                              >
-                                <AccountCreatedPage />
-                              </Route>
-                              <Route
-                                path={'/authenticated/certificationquiz'}
-                                exact
-                              >
-                                <CertificationQuiz />
-                              </Route>
-                              <Route
-                                path={'/authenticated/2fa/enroll'}
-                                exact
-                                render={() => <TwoFactorAuthEnrollmentPage />}
-                              />
-                              <Route
-                                path={'/authenticated/2fa/generatecodes'}
-                                exact
-                                render={() => <TwoFactorAuthBackupCodesPage />}
-                              />
-                              <Route
-                                path={'/authenticated/personalaccesstokens'}
-                                exact
-                                render={() => <PersonalAccessTokensPage />}
-                              />
-                              <Route
-                                path={'/authenticated/oauthclientmanagement'}
-                                exact
-                                render={() => <OAuthClientManagementPage />}
-                              />
-                            </>
-                          )}
-                        </>
-                      )
-                    }}
-                  </SynapseContextConsumer>
-                  <Route exact={true} path="/login">
-                    <LoginPage returnToUrl={'/'} />
-                  </Route>
-                </Switch>
-              </AppInitializer>
+                    <Route exact={true} path="/login">
+                      <LoginPage returnToUrl={'/'} />
+                    </Route>
+                  </Switch>
+                </AppInitializer>
+              </SourceAppProvider>
             </ApplicationSessionManager>
             <SynapseToastContainer />
           </QueryClientProvider>

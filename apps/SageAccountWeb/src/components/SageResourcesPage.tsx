@@ -5,15 +5,17 @@ import { useHistory } from 'react-router-dom'
 import { StyledOuterContainer } from './StyledComponents'
 import { BackButton } from './BackButton'
 import { useSourceAppConfigs } from './useSourceAppConfigs'
-import { useSourceApp } from './useSourceApp'
+import {
+  DEFAULT_SOURCE_APP_ID,
+  SourceAppProvider,
+  useSourceApp,
+} from './useSourceApp'
 
-export type SageResourcesPageProps = {}
-
-export const SageResourcesPage = (props: SageResourcesPageProps) => {
+export function SageResourcesPageInternal() {
   const history = useHistory()
   const theme = useTheme()
   const sourceAppConfigs = useSourceAppConfigs()
-  const sageSourceAppConfig = useSourceApp('SAGE')
+  const sageSourceAppConfig = useSourceApp()
   return (
     <StyledOuterContainer>
       <Paper
@@ -100,5 +102,14 @@ export const SageResourcesPage = (props: SageResourcesPageProps) => {
         </Box>
       </Paper>
     </StyledOuterContainer>
+  )
+}
+
+export function SageResourcesPage() {
+  return (
+    // This page should always use the Sage Bionetworks resources and theme
+    <SourceAppProvider sourceAppId={DEFAULT_SOURCE_APP_ID}>
+      <SageResourcesPageInternal />
+    </SourceAppProvider>
   )
 }
