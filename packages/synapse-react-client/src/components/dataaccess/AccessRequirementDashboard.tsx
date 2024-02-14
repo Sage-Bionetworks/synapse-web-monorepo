@@ -30,7 +30,7 @@ export function AccessRequirementDashboard(
   const location = useLocation()
   const history = useHistory()
 
-  const [nameContains, setNameContains] = useState<string>('')
+  const [nameOrID, setNameOrID] = useState<string>('')
   const [relatedProjectId, setRelatedProjectId] = useState<string | undefined>(
     undefined,
   )
@@ -45,7 +45,7 @@ export function AccessRequirementDashboard(
   useEffect(() => {
     function initializeFromSearchParams() {
       const initialParams = new URLSearchParams(location.search)
-      setNameContains(initialParams.get('nameContains') ?? '')
+      setNameOrID(initialParams.get('nameOrID') ?? '')
       setRelatedProjectId(initialParams.get('relatedProjectId') ?? undefined)
       setReviewerId(initialParams.get('reviewerId') ?? undefined)
     }
@@ -55,7 +55,7 @@ export function AccessRequirementDashboard(
   const [showEntityFinder, setShowEntityFinder] = useState(false)
 
   const [tableProps, setTableProps] = useState<AccessRequirementTableProps>({
-    nameContains,
+    nameOrID,
     relatedProjectId,
     reviewerId,
     onCreateNewAccessRequirementClicked,
@@ -69,14 +69,14 @@ export function AccessRequirementDashboard(
   useDebouncedEffect(
     () => {
       function updateQueryParams(
-        nameContains: string | undefined,
+        nameOrID: string | undefined,
         relatedProjectId: string | undefined,
         reviewerId: string | undefined,
       ) {
         // Don't include undefined/empty parameters
         const params = omitBy(
           {
-            nameContains,
+            nameOrID,
             relatedProjectId,
             reviewerId,
           },
@@ -93,15 +93,15 @@ export function AccessRequirementDashboard(
       }
 
       setTableProps({
-        nameContains,
+        nameOrID,
         relatedProjectId,
         reviewerId,
         onCreateNewAccessRequirementClicked,
       })
-      updateQueryParams(nameContains, relatedProjectId, reviewerId)
+      updateQueryParams(nameOrID, relatedProjectId, reviewerId)
     },
     [
-      nameContains,
+      nameOrID,
       relatedProjectId,
       reviewerId,
       onCreateNewAccessRequirementClicked,
@@ -146,14 +146,14 @@ export function AccessRequirementDashboard(
       <form className="InputPanel">
         <div>
           <TextField
-            label="Filter by Access Requirement Name"
+            label="Filter by Access Requirement Name or ID"
             id="ar-name-filter"
             type="text"
             fullWidth
-            placeholder="Search for an Access Requirement Name"
-            value={nameContains}
+            placeholder="Search for an Access Requirement Name or ID"
+            value={nameOrID}
             onChange={e => {
-              setNameContains(e.target.value)
+              setNameOrID(e.target.value)
             }}
             InputProps={{
               endAdornment: (

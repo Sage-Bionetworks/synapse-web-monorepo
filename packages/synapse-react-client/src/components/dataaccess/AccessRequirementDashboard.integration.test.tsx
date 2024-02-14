@@ -62,7 +62,7 @@ describe('AccessRequirementDashboard tests', () => {
     await waitFor(() =>
       expect(mockAccessRequirementTable).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          nameContains: '',
+          nameOrID: '',
           relatedProjectId: undefined,
           reviewerId: undefined,
           onCreateNewAccessRequirementClicked: mockOnCreateNewAR,
@@ -72,21 +72,21 @@ describe('AccessRequirementDashboard tests', () => {
     )
   })
 
-  it('Updates the passed props and URLSearchParams when updating nameContains', async () => {
+  it('Updates the passed props and URLSearchParams when updating nameOrID', async () => {
     const { history } = renderComponent()
-    const nameContainsInput = await screen.findByLabelText(
-      'Filter by Access Requirement Name',
+    const nameOrIDInput = await screen.findByLabelText(
+      'Filter by Access Requirement Name or ID',
     )
-    await userEvent.type(nameContainsInput, NAME_CONTAINS_PREFIX)
+    await userEvent.type(nameOrIDInput, NAME_CONTAINS_PREFIX)
 
     await waitFor(() => {
       expect(
-        new URLSearchParams(history.location.search).get('nameContains'),
+        new URLSearchParams(history.location.search).get('nameOrID'),
       ).toEqual(NAME_CONTAINS_PREFIX)
 
       expect(mockAccessRequirementTable).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          nameContains: NAME_CONTAINS_PREFIX,
+          nameOrID: NAME_CONTAINS_PREFIX,
           relatedProjectId: undefined,
           reviewerId: undefined,
         }),
@@ -109,7 +109,7 @@ describe('AccessRequirementDashboard tests', () => {
     )
     expect(mockAccessRequirementTable).toHaveBeenCalledWith(
       expect.objectContaining({
-        nameContains: '',
+        nameOrID: '',
         relatedProjectId: RELATED_PROJECT_ID,
         reviewerId: undefined,
       }),
@@ -133,7 +133,7 @@ describe('AccessRequirementDashboard tests', () => {
     await waitFor(() =>
       expect(mockAccessRequirementTable).toHaveBeenCalledWith(
         expect.objectContaining({
-          nameContains: '',
+          nameOrID: '',
           relatedProjectId: undefined,
           reviewerId: MOCK_USER_ID.toString(),
         }),
@@ -146,7 +146,7 @@ describe('AccessRequirementDashboard tests', () => {
     renderComponent(undefined, history => {
       // Modify the search parameters before rendering
       const searchParams = new URLSearchParams('')
-      searchParams.set('nameContains', NAME_CONTAINS_PREFIX)
+      searchParams.set('nameOrID', NAME_CONTAINS_PREFIX)
       searchParams.set('relatedProjectId', RELATED_PROJECT_ID)
       searchParams.set('reviewerId', MOCK_USER_ID.toString())
       history.push('?' + searchParams.toString())
@@ -155,7 +155,7 @@ describe('AccessRequirementDashboard tests', () => {
     await waitFor(() =>
       expect(mockAccessRequirementTable).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          nameContains: NAME_CONTAINS_PREFIX,
+          nameOrID: NAME_CONTAINS_PREFIX,
           relatedProjectId: RELATED_PROJECT_ID,
           reviewerId: MOCK_USER_ID.toString(),
         }),
