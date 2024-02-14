@@ -13,7 +13,7 @@ const config: StorybookConfig = {
       name: '@storybook/addon-themes',
       options: {},
     },
-    'storybook-addon-designs',
+    '@storybook/addon-designs',
   ],
 
   framework: {
