@@ -1,6 +1,8 @@
 import { ThemeOptions } from '@mui/material'
 import { PartialDeep } from 'type-fest'
-export const latoFont = ['Lato', 'Roboto', 'Helvetica', 'Arial'].join(',')
+export const fontDefinition = ['DM Sans', 'Roboto', 'Helvetica', 'Arial'].join(
+  ',',
+)
 
 // Merge the default theme (defined in synapse-react-client) with the SageAccountWeb overrides defined here.
 export const sageAccountWebThemeOverrides: PartialDeep<ThemeOptions> = {
@@ -52,7 +54,7 @@ export const sageAccountWebThemeOverrides: PartialDeep<ThemeOptions> = {
         root: {
           width: '100%',
           '&.MuiInputLabel-root': {
-            fontFamily: latoFont,
+            fontFamily: fontDefinition,
             fontWeight: 700,
           },
         },
@@ -69,7 +71,7 @@ export const sageAccountWebThemeOverrides: PartialDeep<ThemeOptions> = {
   },
   typography: {
     allVariants: {
-      fontFamily: latoFont,
+      fontFamily: fontDefinition,
       fontSize: '14px',
     },
     button: {

@@ -33,7 +33,7 @@ const Tagline: StyledComponent<TypographyProps> = styled(Typography, {
   label: 'Tagline',
 })(({ theme }) => ({
   marginBottom: theme.spacing(2),
-  font: '300 24px/34px Lato, sans-serif',
+  font: '300 24px/34px DM Sans, sans-serif',
 }))
 
 function BackupCodeInstructions(props: TypographyProps) {
