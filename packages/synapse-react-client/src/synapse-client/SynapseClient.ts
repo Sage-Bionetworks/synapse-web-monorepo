@@ -128,9 +128,13 @@ import {
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken,
   ColumnModel,
+  CreateChallengeTeamRequest,
   CreateDiscussionReply,
   CreateDiscussionThread,
+  CreateMembershipInvitationRequest,
+  CreateMembershipRequestRequest,
   CreateSubmissionRequest,
+  CreateTeamRequest,
   Direction,
   DiscussionFilter,
   DiscussionReplyBundle,
@@ -1313,19 +1317,15 @@ export const getSubmissionEligibility = (
  * see https://rest-docs.synapse.org/rest/POST/challenge/challengeId/challengeTeam.html
  */
 export const registerChallengeTeam = (
+  challengeTeam: CreateChallengeTeamRequest,
   accessToken: string | undefined,
-  challengeId: string | number,
-  teamId: string | number,
-  message?: string,
 ): Promise<ChallengeTeam> => {
-  const url = `/repo/v1/challenge/${challengeId}/challengeTeam`
+  const url = `/repo/v1/challenge/${String(
+    challengeTeam.challengeId,
+  )}/challengeTeam`
   return doPost(
     url,
-    {
-      challengeId,
-      teamId,
-      message,
-    },
+    challengeTeam,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1348,14 +1348,12 @@ export const getEntityChallenge = (
  * https://rest-docs.synapse.org/rest/POST/team.html
  */
 export function createTeam(
+  team: CreateTeamRequest,
   accessToken: string | undefined,
-  name: string,
-  description?: string,
-  icon?: string,
 ): Promise<Team> {
   return doPost(
     `/repo/v1/team`,
-    { name, description, icon },
+    team,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1459,16 +1457,12 @@ export const addTeamMemberAsAuthenticatedUserOrAdmin = (
  * https://rest-docs.synapse.org/rest/POST/membershipInvitation.html
  */
 export function createMembershipInvitation(
+  membershipInvitation: CreateMembershipInvitationRequest,
   accessToken: string | undefined,
-  teamId: string | number,
-  inviteeEmail: string,
-  inviteeId?: string | number,
-  message?: string,
-  expiresOn?: string,
 ): Promise<EntityHeader> {
   return doPost(
     `${REPO}/membershipInvitation`,
-    { teamId, inviteeEmail, inviteeId, message, expiresOn },
+    membershipInvitation,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1549,16 +1543,13 @@ export const getMembershipStatus = (
  * @returns a TeamMember if the user is a member of the team, or null if the user is not.
  */
 export const createMembershipRequest = (
-  teamId: string,
-  userId: string,
-  message?: string,
-  expiresOn?: string,
+  membershipRequest: CreateMembershipRequestRequest,
   accessToken?: string,
 ): Promise<MembershipRequest | null> => {
   const url = `/repo/v1/membershipRequest`
   return doPost<MembershipRequest>(
     url,
-    { teamId, userId, message, expiresOn },
+    membershipRequest,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

@@ -356,10 +356,11 @@ const ChallengeTeamWizard: React.FunctionComponent<
       setStep({ ...step, nextEnabled: false })
       setErrorMessage(undefined)
       await createMembershipRequest(
-        selectedTeam.id,
-        userProfile.ownerId,
-        joinMessage,
-        undefined,
+        {
+          teamId: selectedTeam.id,
+          userId: userProfile.ownerId,
+          message: joinMessage,
+        },
         accessToken,
       )
         .then(() => {
@@ -384,7 +385,13 @@ const ChallengeTeamWizard: React.FunctionComponent<
     if (teamId && challenge) {
       setErrorMessage(undefined)
       setRegisterChallengeSuccess(false)
-      await registerChallengeTeam(accessToken, challenge.id, teamId)
+      await registerChallengeTeam(
+        {
+          challengeId: challenge.id,
+          teamId: String(teamId),
+        },
+        accessToken,
+      )
         .then(() => {
           setRegisterChallengeSuccess(true)
         })
@@ -415,9 +422,8 @@ const ChallengeTeamWizard: React.FunctionComponent<
       const errors: string[] = []
       for (const inviteeEmail of emails) {
         await createMembershipInvitation(
+          { teamId: String(teamId), inviteeEmail: inviteeEmail.trim() },
           accessToken,
-          teamId,
-          inviteeEmail.trim(),
         ).catch(() => {
           errors.push(inviteeEmail.trim())
         })
@@ -441,7 +447,10 @@ const ChallengeTeamWizard: React.FunctionComponent<
       setStep({ ...step, confirmEnabled: false })
       setConfirming(true)
       setErrorMessage(undefined)
-      await createTeam(accessToken, newTeam.name, newTeam.description)
+      await createTeam(
+        { name: newTeam.name, description: newTeam.description },
+        accessToken,
+      )
         .then(response => {
           setCreatedNewTeam(true)
           setSelectedTeam(response)

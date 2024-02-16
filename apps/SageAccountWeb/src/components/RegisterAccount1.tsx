@@ -58,7 +58,7 @@ export const RegisterAccount1 = () => {
     ) {
       SynapseClient.getMembershipInvitation(appContext.signedToken).then(
         membershipInvitation => {
-          setEmail(membershipInvitation.inviteeEmail)
+          setEmail(membershipInvitation.inviteeEmail!)
           setMembershipInvitationEmail(membershipInvitation.inviteeEmail)
         },
       )
