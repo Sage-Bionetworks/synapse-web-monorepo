@@ -33,10 +33,10 @@ export default function SqlDefinedTableEditorModal(
   const type = entity ? convertToEntityType(entity.concreteType) : undefined
   const {
     mutate,
-    isLoading: isUpdateLoading,
+    isPending: isUpdatePending,
     error: updateError,
   } = useUpdateEntity<MaterializedView | VirtualTable>({ onSuccess: onUpdate })
-  const isLoading = isEntityLoading || isUpdateLoading
+  const isLoading = isEntityLoading || isUpdatePending
   const error = entityError || updateError
   return (
     <ConfirmationDialog
@@ -63,9 +63,9 @@ export default function SqlDefinedTableEditorModal(
         </>
       }
       confirmButtonProps={{
-        children: isUpdateLoading ? 'Saving...' : 'Save',
+        children: isUpdatePending ? 'Saving...' : 'Save',
         disabled: isLoading,
-        startIcon: isUpdateLoading ? <SynapseSpinner /> : undefined,
+        startIcon: isUpdatePending ? <SynapseSpinner /> : undefined,
       }}
       onConfirm={() => {
         if (entity) {

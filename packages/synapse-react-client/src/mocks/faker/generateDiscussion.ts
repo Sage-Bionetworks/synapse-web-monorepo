@@ -1,8 +1,8 @@
 import { DiscussionThreadBundle, Forum } from '@sage-bionetworks/synapse-types'
 import { faker } from '@faker-js/faker'
-import { mockUserData } from '../user/mock_user_profile'
 import { pickRandomMockUser } from './fakerUtils'
 import { SetRequired } from 'type-fest'
+import { mockUserGroupData } from '../usergroup/mockUserGroup'
 
 export function generateForum(
   overrides: SetRequired<Partial<Forum>, 'projectId'>,
@@ -22,7 +22,7 @@ export function generateDiscussionThreadBundle(
 ): DiscussionThreadBundle {
   return {
     id: String(faker.number.int()),
-    activeAuthors: mockUserData.map(u => String(u.id)),
+    activeAuthors: mockUserGroupData.map(u => String(u.id)),
     createdBy: String(pickRandomMockUser().id),
     createdOn: faker.date.anytime().toISOString(),
     etag: faker.string.uuid(),

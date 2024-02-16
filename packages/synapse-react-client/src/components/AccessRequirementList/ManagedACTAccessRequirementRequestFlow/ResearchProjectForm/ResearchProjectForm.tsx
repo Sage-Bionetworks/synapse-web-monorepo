@@ -3,7 +3,6 @@ import {
   ManagedACTAccessRequirement,
   ResearchProject,
 } from '@sage-bionetworks/synapse-types'
-import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import {
   Alert,
   Box,
@@ -35,79 +34,50 @@ export type ResearchProjectFormProps = {
  */
 export default function ResearchProjectForm(props: ResearchProjectFormProps) {
   const { onSave, managedACTAccessRequirement, onHide } = props
-  const [projectLead, setProjectLead] = useState<string | undefined>(undefined)
-  const [institution, setInstitution] = useState<string | undefined>(undefined)
-  const [intendedDataUseStatement, setIntendedDataUseStatement] = useState<
-    string | undefined
-  >(undefined)
-  const [alert, setAlert] = useState<AlertProps | undefined>()
+  const [projectLead, setProjectLead] = useState<string>('')
+  const [institution, setInstitution] = useState<string>('')
+  const [intendedDataUseStatement, setIntendedDataUseStatement] =
+    useState<string>('')
 
-  const { data: existingResearchProject, isLoading: isLoadingInitialData } =
-    useGetResearchProject(String(managedACTAccessRequirement.id), {
-      // Infinite staleTime ensures this won't be refetched unless explicitly invalidated by the mutation
-      staleTime: Infinity,
-      onError: e => {
-        console.log(
-          'RequestDataAccessStep1: Error getting research project data: ',
-          e,
-        )
-      },
-    })
+  const {
+    data: existingResearchProject,
+    isLoading: isLoadingInitialData,
+    error: getResearchProjectError,
+  } = useGetResearchProject(String(managedACTAccessRequirement.id), {
+    // Infinite staleTime ensures this won't be refetched unless explicitly invalidated by the mutation
+    staleTime: Infinity,
+  })
 
   // Populate the form with existing data if it exists
   useEffect(() => {
-    if (projectLead == undefined && existingResearchProject?.projectLead) {
+    if (existingResearchProject?.projectLead) {
       setProjectLead(existingResearchProject?.projectLead)
     }
-    if (institution == undefined && existingResearchProject?.institution) {
+    if (existingResearchProject?.institution) {
       setInstitution(existingResearchProject?.institution)
     }
-    if (
-      intendedDataUseStatement == undefined &&
-      existingResearchProject?.intendedDataUseStatement
-    ) {
+    if (existingResearchProject?.intendedDataUseStatement) {
       setIntendedDataUseStatement(
         existingResearchProject?.intendedDataUseStatement,
       )
     }
-  }, [
-    existingResearchProject?.institution,
-    existingResearchProject?.intendedDataUseStatement,
-    existingResearchProject?.projectLead,
-    institution,
-    intendedDataUseStatement,
-    projectLead,
-  ])
+  }, [existingResearchProject])
 
-  const { mutate, isLoading: isLoadingUpdate } = useUpdateResearchProject({
+  const {
+    mutate,
+    isPending: updateIsPending,
+    error: updateResearchProjectError,
+  } = useUpdateResearchProject({
     onSuccess: data => {
       if (onSave) {
         onSave(data)
       }
     },
-    onError: e => {
-      console.log(
-        'RequestDataAccessStep1: Error updating research project data: ',
-        e,
-      )
-      setAlert({
-        key: 'error',
-        message: getErrorMessage(e.reason),
-      })
-    },
   })
 
-  const isLoading = isLoadingInitialData || isLoadingUpdate
+  const isLoading = isLoadingInitialData || updateIsPending
 
-  const getErrorMessage = (reason: string = '') => {
-    return (
-      <>
-        <strong>Unable to update research project data.</strong>
-        <br />
-        {reason}
-      </>
-    )
-  }
+  const error = getResearchProjectError || updateResearchProjectError
 
   const handleSubmit = (e: React.FormEvent<HTMLElement>) => {
     e.preventDefault()
@@ -181,7 +151,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
             )}
           </form>
         </ManagedACTAccessRequirementFormWikiWrapper>
-        {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
+        {error && <Alert severity={'error'}>{error.reason}</Alert>}
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" disabled={isLoading} onClick={onHide}>
@@ -193,7 +163,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
           disabled={isLoading}
           onClick={handleSubmit}
         >
-          {isLoadingUpdate ? 'Saving...' : 'Save changes'}
+          {updateIsPending ? 'Saving...' : 'Save changes'}
         </Button>
       </DialogActions>
     </>

@@ -4,7 +4,7 @@ import { Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useSearchAccessRequirementsInfinite } from '../../synapse-queries/dataaccess/useAccessRequirements'
+import { useSearchAccessRequirementsInfinite } from '../../synapse-queries'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
 import {
   ACCESS_REQUIREMENT_CONCRETE_TYPE,

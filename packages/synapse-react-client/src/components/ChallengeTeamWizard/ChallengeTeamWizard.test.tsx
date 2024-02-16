@@ -31,8 +31,6 @@ const challengeTeamResults = mockChallengeTeamResults()
 const challengeTeams = mockTeamList(challengeTeamResults.results)
 const team1 = challengeTeams.list[0]
 
-// console.log(challengeTeams)
-
 jest
   .spyOn(SynapseClient, 'getUserProfile')
   .mockResolvedValue(mockUserProfileData)
@@ -117,20 +115,16 @@ describe('ChallengeTeamWizard tests', () => {
   })
 
   it('Selects the Team', async () => {
-    const { container } = await renderComponent(defaultProps)
-    console.log({ container })
+    await renderComponent(defaultProps)
     const btn = await screen.findByRole('button', { name: 'Next' })
     expect(btn).toHaveAttribute('disabled')
     const rows = await screen.findAllByRole('row')
     const row = rows[1]
     expect(row).toHaveAttribute('aria-selected', 'false')
-    // const radio = container.querySelector('#src-radio-1')
     const radio = within(row).getByRole('radio')
     expect(radio).toHaveAttribute('value', team1.id)
     const ele = radio.parentElement!
-    console.log({ ele })
     await userEvent.click(ele)
-    console.log({ radio })
     expect(row).toHaveAttribute('aria-selected', 'true')
   })
 

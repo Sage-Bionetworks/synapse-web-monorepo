@@ -207,7 +207,7 @@ export class KeyFactory {
   private getKey(...args: any[]): QueryKey {
     return [
       this.accessToken == null
-        ? this.accessToken
+        ? 'anonymous'
         : btoa(String(hashCode(this.accessToken))),
       ...removeTrailingUndefinedElements(args),
     ]
@@ -612,8 +612,12 @@ export class KeyFactory {
     return this.getKey('team', teamId, 'member', userId)
   }
 
-  public getMembershipStatusQueryKey(teamId: string, userId: string) {
+  public getMembershipStatusQueryKey(teamId: string, userId?: string) {
     return this.getKey('team', teamId, 'membershipStatus', userId)
+  }
+
+  public getAllOpenMembershipInvitationsForUserQueryKey(userId: string) {
+    return this.getKey('openMembershipInvitations', userId)
   }
 
   public getTeamAccessRequirementsQueryKey(teamId: string) {
@@ -646,6 +650,10 @@ export class KeyFactory {
   }
   public getPassingRecordQueryKey(userId: string) {
     return this.getKey('passingRecord', userId)
+  }
+
+  public getAllSubmissionTeamsQueryKeys() {
+    return this.getKey('submissionTeams')
   }
 
   public getSubmissionTeamsQueryKey(

@@ -77,12 +77,12 @@ export function StorybookComponentWrapper(props: {
 }) {
   const { storybookContext } = props
 
+  const currentStack: SynapseStack = (storybookContext.globals.stack ||
+    storybookContext.parameters.stack) as SynapseStack
+
   useEffect(() => {
-    overrideEndpoint(
-      (storybookContext.globals.stack as SynapseStack) ||
-        (storybookContext.parameters.stack as SynapseStack),
-    )
-  }, [storybookContext.globals.stack])
+    overrideEndpoint(currentStack)
+  }, [currentStack])
 
   const [accessToken, setAccessToken] = React.useState<string | undefined>(
     undefined,

@@ -42,7 +42,7 @@ export default function TableColumnSchemaEditor(
     {
       // This data is inserted into a form, so don't refetch it.
       staleTime: Infinity,
-      useErrorBoundary: true,
+      throwOnError: true,
     },
   )
 
@@ -51,7 +51,7 @@ export default function TableColumnSchemaEditor(
 
   const {
     mutate,
-    isLoading: isMutating,
+    isPending: updateIsPending,
     error,
   } = useUpdateTableColumns({
     onSuccess: () => {
@@ -104,7 +104,7 @@ export default function TableColumnSchemaEditor(
             entityType={convertToEntityType(entity.concreteType)}
             viewScope={viewScope}
             initialData={bundle?.tableBundle?.columnModels}
-            isSubmitting={isMutating}
+            isSubmitting={updateIsPending}
             onSubmit={formData => {
               onSubmit(formData)
             }}
@@ -117,9 +117,9 @@ export default function TableColumnSchemaEditor(
         </>
       }
       confirmButtonProps={{
-        children: isMutating ? 'Saving...' : 'Save',
-        disabled: isMutating,
-        startIcon: isMutating ? <SynapseSpinner /> : undefined,
+        children: updateIsPending ? 'Saving...' : 'Save',
+        disabled: updateIsPending,
+        startIcon: updateIsPending ? <SynapseSpinner /> : undefined,
       }}
       onConfirm={() => {
         if (formRef.current) {
@@ -127,7 +127,7 @@ export default function TableColumnSchemaEditor(
         }
       }}
       cancelButtonProps={{
-        disabled: isMutating,
+        disabled: updateIsPending,
       }}
       onCancel={onCancel}
     />

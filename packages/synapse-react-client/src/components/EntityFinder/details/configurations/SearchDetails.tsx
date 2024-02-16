@@ -29,7 +29,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
   const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useSearchInfinite(searchQuery, {
       enabled: !!searchQuery.queryTerm,
-      useErrorBoundary: true,
+      throwOnError: true,
     })
 
   if (searchQuery.queryTerm) {

@@ -1,4 +1,6 @@
 import {
+  InfiniteData,
+  QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useMutation,
@@ -14,31 +16,46 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
-export function useGetItemsInTrashCanInfinite(
-  options?: UseInfiniteQueryOptions<
-    PaginatedResults<TrashedEntity>,
-    SynapseClientError
+export function useGetItemsInTrashCanInfinite<
+  TData = InfiniteData<PaginatedResults<TrashedEntity>>,
+>(
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      PaginatedResults<TrashedEntity>,
+      SynapseClientError,
+      TData,
+      PaginatedResults<TrashedEntity>,
+      QueryKey,
+      number | undefined
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useInfiniteQuery<PaginatedResults<TrashedEntity>, SynapseClientError>(
-    keyFactory.getTrashCanItemsQueryKey(),
-    context => {
+  return useInfiniteQuery<
+    PaginatedResults<TrashedEntity>,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    number | undefined
+  >({
+    ...options,
+    queryKey: keyFactory.getTrashCanItemsQueryKey(),
+    queryFn: context => {
       return SynapseClient.getItemsInTrashCan(accessToken, context.pageParam)
     },
-    {
-      ...options,
-      getNextPageParam: getNextPageParamForPaginatedResults,
-    },
-  )
+    initialPageParam: undefined,
+    getNextPageParam: getNextPageParamForPaginatedResults,
+  })
 }
 
 export function useRestoreEntities(
-  options?: UseMutationOptions<
-    PromiseSettledResult<void>[],
-    SynapseClientError,
-    string | Set<string>
+  options?: Partial<
+    UseMutationOptions<
+      PromiseSettledResult<void>[],
+      SynapseClientError,
+      string | Set<string>
+    >
   >,
 ) {
   const queryClient = useQueryClient()
@@ -48,8 +65,9 @@ export function useRestoreEntities(
     PromiseSettledResult<void>[],
     SynapseClientError,
     string | Set<string>
-  >(
-    (ids: string | Set<string>) => {
+  >({
+    ...options,
+    mutationFn: (ids: string | Set<string>) => {
       if (typeof ids === 'string') {
         ids = new Set([ids])
       }
@@ -58,25 +76,24 @@ export function useRestoreEntities(
       })
       return Promise.allSettled(promises)
     },
-    {
-      ...options,
-      onSuccess: async (_, ids, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getTrashCanItemsQueryKey(),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(_, ids, ctx)
-        }
-      },
+    onSuccess: async (_, ids, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getTrashCanItemsQueryKey(),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(_, ids, ctx)
+      }
     },
-  )
+  })
 }
 
 export function usePurgeEntities(
-  options?: UseMutationOptions<
-    PromiseSettledResult<void>[],
-    SynapseClientError,
-    string | Set<string>
+  options?: Partial<
+    UseMutationOptions<
+      PromiseSettledResult<void>[],
+      SynapseClientError,
+      string | Set<string>
+    >
   >,
 ) {
   const queryClient = useQueryClient()
@@ -86,8 +103,9 @@ export function usePurgeEntities(
     PromiseSettledResult<void>[],
     SynapseClientError,
     string | Set<string>
-  >(
-    (ids: string | Set<string>) => {
+  >({
+    ...options,
+    mutationFn: (ids: string | Set<string>) => {
       if (typeof ids === 'string') {
         ids = new Set([ids])
       }
@@ -96,16 +114,13 @@ export function usePurgeEntities(
       })
       return Promise.allSettled(promises)
     },
-    {
-      ...options,
-      onSuccess: async (_, ids, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getTrashCanItemsQueryKey(),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(_, ids, ctx)
-        }
-      },
+    onSuccess: async (_, ids, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getTrashCanItemsQueryKey(),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(_, ids, ctx)
+      }
     },
-  )
+  })
 }

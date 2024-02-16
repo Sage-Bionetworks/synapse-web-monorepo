@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, Collapse, Stack } from '@mui/material'
+import { Box, Button, Collapse, Stack, Typography } from '@mui/material'
 import {
   ErrorBoundary,
   ErrorBoundaryPropsWithComponent,
@@ -22,9 +22,9 @@ export const YOU_ARE_NOT_AUTHORIZED_MESSAGE =
 
 export const SignInPrompt = () => {
   return (
-    <>
+    <Typography variant={'body1'}>
       Please <SignInButton /> to view this resource.
-    </>
+    </Typography>
   )
 }
 

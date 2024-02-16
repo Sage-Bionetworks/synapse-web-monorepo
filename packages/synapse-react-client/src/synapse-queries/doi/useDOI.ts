@@ -8,18 +8,23 @@ export function useGetDOIAssociation(
   objectId: string,
   versionNumber?: number,
   objectType = 'ENTITY',
-  options?: UseQueryOptions<DoiAssociation | null, SynapseClientError>,
+  options?: Partial<UseQueryOptions<DoiAssociation | null, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<DoiAssociation | null, SynapseClientError>(
-    keyFactory.getDOIAssociationQueryKey(objectType, objectId, versionNumber),
-    () =>
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getDOIAssociationQueryKey(
+      objectType,
+      objectId,
+      versionNumber,
+    ),
+
+    queryFn: () =>
       SynapseClient.getDOIAssociation(
         accessToken,
         objectId,
         versionNumber,
         objectType,
       ),
-    options,
-  )
+  })
 }

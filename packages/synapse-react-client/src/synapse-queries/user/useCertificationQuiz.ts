@@ -15,45 +15,45 @@ import { USER_BUNDLE_MASK_IS_CERTIFIED } from '../../utils/SynapseConstants'
 
 export function useGetPassingRecord(
   userId: string = '',
-  options?: UseQueryOptions<PassingRecord, SynapseClientError>,
+  options?: Partial<UseQueryOptions<PassingRecord, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<PassingRecord, SynapseClientError>(
-    keyFactory.getPassingRecordQueryKey(userId),
-    () => SynapseClient.getPassingRecord(userId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getPassingRecordQueryKey(userId),
+    queryFn: () => SynapseClient.getPassingRecord(userId, accessToken),
+  })
 }
 
 export function usePostCertifiedUserTestResponse(
-  options?: UseMutationOptions<PassingRecord, SynapseClientError, QuizResponse>,
+  options?: Partial<
+    UseMutationOptions<PassingRecord, SynapseClientError, QuizResponse>
+  >,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
   const { data: userProfile } = useGetCurrentUserProfile()
 
-  return useMutation<PassingRecord, SynapseClientError, QuizResponse>(
-    (quizResponse: QuizResponse) =>
+  return useMutation<PassingRecord, SynapseClientError, QuizResponse>({
+    ...options,
+    mutationFn: (quizResponse: QuizResponse) =>
       SynapseClient.postCertifiedUserTestResponse(accessToken, quizResponse),
-    {
-      ...options,
-      onSuccess: async (updatedPassingRecord, variables, ctx) => {
-        await Promise.all([
-          queryClient.invalidateQueries(
-            keyFactory.getPassingRecordQueryKey(userProfile?.ownerId!),
+    onSuccess: async (updatedPassingRecord, variables, ctx) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getPassingRecordQueryKey(userProfile?.ownerId!),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getUserBundleQueryKey(
+            'current',
+            USER_BUNDLE_MASK_IS_CERTIFIED,
           ),
-          queryClient.invalidateQueries(
-            keyFactory.getUserBundleQueryKey(
-              'current',
-              USER_BUNDLE_MASK_IS_CERTIFIED,
-            ),
-          ),
-        ])
+        }),
+      ])
 
-        if (options?.onSuccess) {
-          await options.onSuccess(updatedPassingRecord, variables, ctx)
-        }
-      },
+      if (options?.onSuccess) {
+        await options.onSuccess(updatedPassingRecord, variables, ctx)
+      }
     },
-  )
+  })
 }

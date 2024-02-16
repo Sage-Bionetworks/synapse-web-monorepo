@@ -14,19 +14,19 @@ import {
 import { LogInDialogContextProvider } from './LogInDialogContext'
 import { createTheme, ThemeProvider } from '@mui/material'
 import palette from './config/paletteConfig'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const RouteResolver = React.lazy(() => import('./RouteResolver'))
-const theme = createTheme(SynapseTheme.mergeTheme({ palette }))
+const theme = createTheme(SynapseTheme.defaultMuiThemeOptions, { palette })
 const queryClient = new QueryClient(defaultQueryClientConfig)
 
 function App() {
   return (
     <>
-      <CookiesProvider>
-        <BrowserRouter>
-          <LogInDialogContextProvider>
-            <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
+        <CookiesProvider>
+          <BrowserRouter>
+            <LogInDialogContextProvider>
               <QueryClientProvider client={queryClient}>
                 <AppInitializer>
                   <SynapseToastContainer />
@@ -43,10 +43,10 @@ function App() {
                   <Footer />
                 </AppInitializer>
               </QueryClientProvider>
-            </ThemeProvider>
-          </LogInDialogContextProvider>
-        </BrowserRouter>
-      </CookiesProvider>
+            </LogInDialogContextProvider>
+          </BrowserRouter>
+        </CookiesProvider>
+      </ThemeProvider>
     </>
   )
 }

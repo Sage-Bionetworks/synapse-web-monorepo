@@ -73,7 +73,7 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
 }) => {
   const queryClient = useQueryClient()
 
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
 
   const showSelectColumn = selectColumnType !== 'none'
 
@@ -83,10 +83,14 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
   const cancelQuery = () => {
     // It's likely that the user will be throttled by the Synapse backend and may be waiting a
     // noticeable amount of time for the current request, so cancel it (in addition to cancelling future requests)
-    queryClient.cancelQueries([
-      'entitychildren',
-      getChildrenInfiniteRequestObject,
-    ])
+    if (getChildrenInfiniteRequestObject) {
+      queryClient.cancelQueries({
+        queryKey: keyFactory.getEntityChildrenQueryKey(
+          getChildrenInfiniteRequestObject,
+          true,
+        ),
+      })
+    }
     setShowLoadingScreen(false)
     setShouldSelectAll(false)
   }
@@ -173,10 +177,18 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
                         // Show the loading screen since we must fetch data (potentially a lot) to finish the task
                         setShowLoadingScreen(true)
 
-                        const versions = await queryClient.fetchQuery(
-                          ['entity', e.id, 'versions', { offset: 0, limit: 1 }],
-                          () => getEntityVersions(e.id, accessToken, 0, 1),
-                        )
+                        const limit = 1
+                        const offset = 0
+                        const versions = await queryClient.fetchQuery({
+                          queryKey:
+                            keyFactory.getPaginatedEntityVersionsQueryKey(
+                              e.id,
+                              limit,
+                              offset,
+                            ),
+                          queryFn: () =>
+                            getEntityVersions(e.id, accessToken, offset, limit),
+                        })
                         // we pick the first version in the list because it is the most recent
                         latestVersion = versions.results[0]?.versionNumber
                       }
@@ -209,6 +221,7 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
     shouldSelectAll,
     toggleSelection,
     visibleTypes,
+    keyFactory,
   ])
 
   const tableData = entities.reduce(

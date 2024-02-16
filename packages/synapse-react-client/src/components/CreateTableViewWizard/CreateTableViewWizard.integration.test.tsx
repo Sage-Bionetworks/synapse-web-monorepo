@@ -198,7 +198,10 @@ describe('CreateTableWizard integration tests', () => {
     expect(screen.getByLabelText('Folders')).not.toBeChecked()
     await user.click(screen.getByLabelText('Folders'))
     expect(screen.getByLabelText('Folders')).toBeChecked()
-    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    const nextButton = screen.getByRole('button', { name: 'Next' })
+    await waitFor(() => expect(nextButton).not.toBeDisabled())
+    await user.click(nextButton)
 
     // Default columns should be added immediately
     defaultFileViewColumnModels.forEach(cm => {

@@ -103,7 +103,7 @@ export default function SendToCavaticaConfirmationDialog(
     cavaticaQueryRequest,
     data?.columnModels as ColumnModel[],
     {
-      useErrorBoundary: true,
+      throwOnError: true,
       enabled: !!data?.columnModels && isShowingExportToCavaticaModal,
     },
   )

@@ -93,8 +93,8 @@ function isLeafNode(node: TreeNode) {
   } else {
     return (
       // Entity is not a container
-      !isContainerType(getEntityTypeFromHeader(node)) ||
       // OR Children have been fetched (nonnull) and there are 0 children
+      !isContainerType(getEntityTypeFromHeader(node)) ||
       (node.children != null && node.children.length === 0)
     )
   }
@@ -346,13 +346,11 @@ export function Node(
           )}
         </div>
       )}
-
       <div className="EntityName" ref={ref}>
         <Tooltip title={tooltipContent} placement="right">
           {nodeText}
         </Tooltip>
       </div>
-
       {treeNodeType === EntityTreeNodeType.SINGLE_PANE && (
         <EntityBadgeIcons
           entityId={id}

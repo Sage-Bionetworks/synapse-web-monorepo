@@ -1454,13 +1454,40 @@ export const addTeamMemberAsAuthenticatedUserOrAdmin = (
 }
 
 /**
+ * Retrieve the open membership invitations for a user
+ * https://rest-docs.synapse.org/rest/GET/user/id/openInvitation.html
+ */
+export function getOpenMembershipInvitationsForUser(
+  userId: string,
+  accessToken: string,
+): Promise<PaginatedResults<MembershipInvitation>> {
+  return doGet(
+    `${REPO}/user/${userId}/openInvitation`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Retrieve all open membership invitations for a user.
+ */
+export function getAllOpenMembershipInvitationsForUser(
+  userId: string,
+  accessToken: string,
+) {
+  return getAllOfPaginatedService(() =>
+    getOpenMembershipInvitationsForUser(userId, accessToken),
+  )
+}
+
+/**
  * Create a membership invitation and send an email notification to the invitee.
  * https://rest-docs.synapse.org/rest/POST/membershipInvitation.html
  */
 export function createMembershipInvitation(
   membershipInvitation: CreateMembershipInvitationRequest,
   accessToken: string | undefined,
-): Promise<EntityHeader> {
+): Promise<MembershipInvitation> {
   return doPost(
     `${REPO}/membershipInvitation`,
     membershipInvitation,
@@ -1539,14 +1566,14 @@ export const getMembershipStatus = (
 }
 
 /**
- * Create a membership request and send an email notification to the administrators of the team.
+ * Create a membership request and send an email notification to the administrators of the team. The Team must be specified. Optionally, the creator may include a message and/or expiration date for the request. If no expiration date is specified then the request never expires.
  *
- * @returns a TeamMember if the user is a member of the team, or null if the user is not.
+ * https://rest-docs.synapse.org/rest/POST/membershipRequest.html
  */
 export const createMembershipRequest = (
   membershipRequest: CreateMembershipRequestRequest,
   accessToken?: string,
-): Promise<MembershipRequest | null> => {
+): Promise<MembershipRequest> => {
   const url = `/repo/v1/membershipRequest`
   return doPost<MembershipRequest>(
     url,

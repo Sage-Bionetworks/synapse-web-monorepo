@@ -24,7 +24,6 @@ import {
 import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
 import {
   mockUserBundle,
-  mockUserData,
   mockUserProfileData,
 } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
@@ -42,7 +41,7 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
       let response: SynapseApiResponse<UserProfile> = {
         reason: `Mock Service worker could not find a user profile with ID ${req.params.id}`,
       }
-      const match = mockUserData.find(
+      const match = mockUserGroupData.find(
         userData => userData.id.toString() === req.params.id,
       )
       if (match && match.userProfile) {
@@ -84,7 +83,7 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
       let response: SynapseApiResponse<UserBundle> = {
         reason: `Mock Service worker could not find a user bundle with ID ${req.params.id}`,
       }
-      const match = mockUserData.find(
+      const match = mockUserGroupData.find(
         userData => userData.id.toString() === req.params.id,
       )
       if (match && match.userBundle) {
@@ -124,7 +123,7 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
   rest.post(`${backendOrigin}${USER_PROFILE}`, async (req, res, ctx) => {
     const requestedList = (await req.json()).list as string[]
     const responsePage: UserProfileList = {
-      list: mockUserData
+      list: mockUserGroupData
         .filter(userData => requestedList.includes(userData.id.toString()))
         .map(userData => userData.userProfile)
         .filter(

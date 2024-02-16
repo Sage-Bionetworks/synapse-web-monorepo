@@ -1,4 +1,5 @@
 import {
+  InfiniteData,
   QueryFunctionContext,
   QueryKey,
   useInfiniteQuery,
@@ -16,30 +17,50 @@ import {
   AccessTokenRecordList,
 } from '@sage-bionetworks/synapse-types'
 
-export function useGetPersonalAccessTokensInfinite(
-  options?: UseInfiniteQueryOptions<AccessTokenRecordList, SynapseClientError>,
+export function useGetPersonalAccessTokensInfinite<
+  TData = InfiniteData<AccessTokenRecordList>,
+>(
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      AccessTokenRecordList,
+      SynapseClientError,
+      TData,
+      AccessTokenRecordList,
+      QueryKey,
+      AccessTokenRecordList['nextPageToken']
+    >
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useInfiniteQuery<AccessTokenRecordList, SynapseClientError>(
-    keyFactory.getPersonalAccessTokensQueryKey(),
-    async (context: QueryFunctionContext<QueryKey, string | undefined>) => {
+  return useInfiniteQuery<
+    AccessTokenRecordList,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    AccessTokenRecordList['nextPageToken']
+  >({
+    ...options,
+    initialPageParam: undefined,
+    queryKey: keyFactory.getPersonalAccessTokensQueryKey(),
+    queryFn: async (
+      context: QueryFunctionContext<QueryKey, string | undefined>,
+    ) => {
       return await SynapseClient.getPersonalAccessTokenRecords(
         accessToken,
         context.pageParam,
       )
     },
-    {
-      ...options,
-      getNextPageParam: page => page.nextPageToken,
-    },
-  )
+    getNextPageParam: page => page.nextPageToken,
+  })
 }
 
 export function useCreatePersonalAccessToken(
-  options?: UseMutationOptions<
-    AccessTokenGenerationResponse,
-    SynapseClientError,
-    AccessTokenGenerationRequest
+  options?: Partial<
+    UseMutationOptions<
+      AccessTokenGenerationResponse,
+      SynapseClientError,
+      AccessTokenGenerationRequest
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
@@ -54,9 +75,9 @@ export function useCreatePersonalAccessToken(
       if (options?.onSuccess) {
         options.onSuccess(...args)
       }
-      await queryClient.invalidateQueries(
-        keyFactory.getPersonalAccessTokensQueryKey(),
-      )
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getPersonalAccessTokensQueryKey(),
+      })
     },
     mutationFn: request =>
       SynapseClient.createPersonalAccessToken(request, accessToken),
@@ -64,7 +85,7 @@ export function useCreatePersonalAccessToken(
 }
 
 export function useDeletePersonalAccessToken(
-  options?: UseMutationOptions<void, SynapseClientError, string>,
+  options?: Partial<UseMutationOptions<void, SynapseClientError, string>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
@@ -74,9 +95,9 @@ export function useDeletePersonalAccessToken(
       if (options?.onSuccess) {
         options.onSuccess(...args)
       }
-      await queryClient.invalidateQueries(
-        keyFactory.getPersonalAccessTokensQueryKey(),
-      )
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getPersonalAccessTokensQueryKey(),
+      })
     },
     mutationFn: tokenId =>
       SynapseClient.deletePersonalAccessToken(tokenId, accessToken),

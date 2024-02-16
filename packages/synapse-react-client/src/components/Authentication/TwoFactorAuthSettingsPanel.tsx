@@ -27,14 +27,14 @@ export default function TwoFactorAuthSettingsPanel(
     useGetTwoFactorEnrollmentStatus()
   const isActivated = status?.status === 'ENABLED'
 
-  const { mutate: disable2FA, isLoading: isLoadingMutation } =
+  const { mutate: disable2FA, isPending: disable2FAIsPending } =
     useDisableTwoFactorAuth({
       onSuccess: () => {
         displayToast('2FA removed from this account', 'info')
       },
     })
 
-  const isLoading = isLoadingStatus || isLoadingMutation
+  const isLoading = isLoadingStatus || disable2FAIsPending
 
   return (
     <Box>

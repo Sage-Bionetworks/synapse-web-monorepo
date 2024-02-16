@@ -194,7 +194,7 @@ describe('useQueryWrapperData tests', () => {
         expect(result.current.error).toBe(error)
         expect(result.current.isLoadingNewBundle).toBe(false)
 
-        expect(result.current.hasNextPage).toBeUndefined()
+        expect(result.current.hasNextPage).toBe(false)
         expect(result.current.currentPage).toBe(0)
         expect(result.current.setCurrentPage).toBeDefined()
         expect(result.current.isFetchingNextPage).toBe(false)

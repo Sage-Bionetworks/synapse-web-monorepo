@@ -64,14 +64,14 @@ export default function useQueryWrapperData<T extends boolean = boolean>(
   const {
     data: paginatedData,
     isLoading: paginatedQueryIsLoading,
-    isPreviousData: newPaginatedQueryIsFetching,
+    isPlaceholderData: newPaginatedQueryIsFetching,
     error: paginatedQueryError,
   } = useGetQueryResultBundleWithAsyncStatus(
     query,
     {
       enabled: !isInfinite,
-      // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
-      keepPreviousData: true,
+      // We set `placeholderData` to be `previousData` because we don't want to clear out the current data when the query is modified via the UI
+      placeholderData: previousData => previousData,
     },
     setCurrentAsyncStatus,
   )
@@ -84,13 +84,13 @@ export default function useQueryWrapperData<T extends boolean = boolean>(
     isFetchingNextPage: infiniteDataIsFetchingNextPage,
     isLoading: infiniteDataQueryIsLoading,
     error: infiniteDataError,
-    isPreviousData: newInfiniteDataQueryIsFetching,
+    isPlaceholderData: newInfiniteDataQueryIsFetching,
   } = useInfiniteQueryResultBundle(
     query,
     {
       enabled: isInfinite,
-      // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
-      keepPreviousData: true,
+      // We set `placeholderData` to be `previousData` because we don't want to clear out the current data when the query is modified via the UI
+      placeholderData: previousData => previousData,
     },
     setCurrentAsyncStatus,
   )

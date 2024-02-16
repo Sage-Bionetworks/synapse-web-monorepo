@@ -25,7 +25,7 @@ import {
   SynapseQueries,
 } from 'synapse-react-client'
 import { describe, expect, it, vi } from 'vitest'
-import { UseQueryResult } from 'react-query'
+import { UseQueryResult } from '@tanstack/react-query'
 
 vi.mock('synapse-react-client', async (importActual) => {
   const actual = await importActual<typeof import('synapse-react-client')>()

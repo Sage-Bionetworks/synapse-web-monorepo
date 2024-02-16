@@ -220,7 +220,7 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
     isSuccess,
     isLoading,
   } = useGetEntityHeaders(refsInState, {
-    useErrorBoundary: true,
+    throwOnError: true,
   })
 
   const data = useMemo(() => {

@@ -40,30 +40,33 @@ export const ForumThreadEditor: React.FunctionComponent<
 
   const [title, setTitle] = useState<string>(initialTitle ?? '')
   const [text, setText] = useState<string>(initialText ?? '')
-  const { mutate: updateTitle, isLoading: isLoadingTitle } =
+  const { mutate: updateTitle, isPending: titleUpdateIsPending } =
     useUpdateThreadTitle({
       onSuccess: () => onClose(),
     })
-  const { mutate: updateMessage, isLoading: isLoadingMessage } =
+  const { mutate: updateMessage, isPending: messageUpdateIsPending } =
     useUpdateThreadMessage({
       onSuccess: () => onClose(),
     })
-  const { mutate: createThread, isLoading: isLoadingThread } = useCreateThread({
-    onSuccess: () => onClose(),
-  })
-  const { mutate: createReply, isLoading: isLoadingReply } = usePostReply({
-    onSuccess: () => onClose(),
-  })
-  const { mutate: updateReply, isLoading: isLoadingReplyUpdate } = usePutReply({
+  const { mutate: createThread, isPending: createThreadIsPending } =
+    useCreateThread({
+      onSuccess: () => onClose(),
+    })
+  const { mutate: createReply, isPending: createReplyIsPending } = usePostReply(
+    {
+      onSuccess: () => onClose(),
+    },
+  )
+  const { mutate: updateReply, isPending: updateReplyIsPending } = usePutReply({
     onSuccess: () => onClose(),
   })
 
-  const isLoading =
-    isLoadingMessage ||
-    isLoadingReply ||
-    isLoadingThread ||
-    isLoadingTitle ||
-    isLoadingReplyUpdate
+  const updateIsPending =
+    messageUpdateIsPending ||
+    createReplyIsPending ||
+    createThreadIsPending ||
+    titleUpdateIsPending ||
+    updateReplyIsPending
 
   const isExistingThread = !isReply && initialTitle
 
@@ -119,7 +122,7 @@ export const ForumThreadEditor: React.FunctionComponent<
     </div>
   )
 
-  const confirmButtonText = isLoading ? 'Saving' : 'Save'
+  const confirmButtonText = updateIsPending ? 'Saving' : 'Save'
 
   return (
     <>

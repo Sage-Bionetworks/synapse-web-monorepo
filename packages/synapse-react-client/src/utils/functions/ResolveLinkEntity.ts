@@ -42,9 +42,9 @@ export function useResolveLinkEntity(
   options?: QueryOptions<Entity>,
 ) {
   const { accessToken } = useSynapseContext()
-  return useQuery(
-    ['resolveLinkEntity', synId, versionNumber],
-    () => resolveLinkEntity(synId, versionNumber, accessToken),
-    options,
-  )
+  return useQuery({
+    queryKey: ['resolveLinkEntity', synId, versionNumber],
+    queryFn: () => resolveLinkEntity(synId, versionNumber, accessToken),
+    ...options,
+  })
 }

@@ -24,7 +24,7 @@ export const DownloadListActionsRequired: React.FunctionComponent<
     isFetchingNextPage,
     fetchNextPage,
   } = useGetDownloadListActionsRequiredInfinite({
-    useErrorBoundary: true,
+    throwOnError: true,
   })
 
   useEffect(() => {

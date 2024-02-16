@@ -1,45 +1,41 @@
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 import { UploadDestination } from '@sage-bionetworks/synapse-types'
 import {
   getDefaultUploadDestination,
   getUploadDestinationForStorageLocation,
-} from '../../synapse-client/SynapseClient'
+} from '../../synapse-client'
 
 export function useGetDefaultUploadDestination(
   containerEntityId: string,
-  options?: UseQueryOptions<UploadDestination, SynapseClientError>,
+  options?: Partial<UseQueryOptions<UploadDestination, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<UploadDestination, SynapseClientError>(
-    keyFactory.getDefaultUploadDestinationQueryKey(containerEntityId),
-    () => getDefaultUploadDestination(containerEntityId, accessToken),
-    {
-      ...options,
-    },
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getDefaultUploadDestinationQueryKey(containerEntityId),
+    queryFn: () => getDefaultUploadDestination(containerEntityId, accessToken),
+  })
 }
 
 export function useGetUploadDestinationForStorageLocation(
   parentId: string,
   storageLocationId: number,
-  options?: UseQueryOptions<UploadDestination, SynapseClientError>,
+  options?: Partial<UseQueryOptions<UploadDestination, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<UploadDestination, SynapseClientError>(
-    keyFactory.getUploadDestinationForStorageLocationQueryKey(
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getUploadDestinationForStorageLocationQueryKey(
       parentId,
       storageLocationId,
     ),
-    () =>
+
+    queryFn: () =>
       getUploadDestinationForStorageLocation(
         parentId,
         storageLocationId,
         accessToken,
       ),
-    {
-      ...options,
-    },
-  )
+  })
 }

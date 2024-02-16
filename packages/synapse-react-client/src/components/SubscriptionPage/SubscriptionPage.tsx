@@ -3,11 +3,13 @@ import { useGetAllSubscriptions } from '../../synapse-queries/subscription/useSu
 import {
   SortByType as SubscriptionSortField,
   SortDirection,
+  Subscription,
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
 import SubscriptionItem from './SubscriptionItem'
 import { Box, Button, Stack, Tab, Tabs } from '@mui/material'
 import DropdownSelect from '../DropdownSelect'
+import { InfiniteData } from '@tanstack/react-query'
 
 type SortOption = { value: SortDirection; label: string }
 
@@ -31,10 +33,16 @@ export default function SubscriptionPage() {
   }
 
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    useGetAllSubscriptions(
+    useGetAllSubscriptions<InfiniteData<Subscription>>(
       currentFilter,
       // Since the user may edit their subscriptions on this page, set staleTime to infinity to prevent re-fetching while editing
-      { staleTime: Infinity },
+      {
+        staleTime: Infinity,
+        select: data => ({
+          pages: data.pages.flatMap(page => page.results),
+          pageParams: data.pageParams,
+        }),
+      },
       // Override the query key with a unique ID, because we don't want changes to invalidate this list while it's being used
       [`subscriptionPageFetch_${instanceSpecificQueryKey}`, currentFilter],
     )

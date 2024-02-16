@@ -1,19 +1,21 @@
 import React, { ChangeEvent, useState } from 'react'
 import { Box, TextField, Typography } from '@mui/material'
-import { Team } from '@sage-bionetworks/synapse-types'
+import { useGetTeam } from '../../synapse-queries/team/useTeam'
 
 type JoinRequestFormProps = {
-  team: Team | undefined
+  teamId?: string
   joinMessageChange: (msg: string) => void
 }
 
 export const JoinRequestForm = ({
-  team,
+  teamId,
   joinMessageChange,
 }: JoinRequestFormProps) => {
   const [message, setMessage] = useState<string>('')
-  if (!team) return null
 
+  const { data: team } = useGetTeam(teamId!, { enabled: Boolean(teamId) })
+  if (!teamId) return null
+  if (!team) return null
   const handleMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const value = event.target.value
     setMessage(value)

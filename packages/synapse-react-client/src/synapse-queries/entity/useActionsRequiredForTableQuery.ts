@@ -16,10 +16,12 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 export function useGetActionsRequiredForTableQuery(
   queryBundleRequest: QueryBundleRequest,
   columnModels: ColumnModel[],
-  options?: UseQueryOptions<
-    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-    SynapseClientError,
-    ActionRequiredCount[]
+  options?: Partial<
+    UseQueryOptions<
+      AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+      SynapseClientError,
+      ActionRequiredCount[]
+    >
   >,
 ) {
   const queryRequestCopy = useMemo(() => {

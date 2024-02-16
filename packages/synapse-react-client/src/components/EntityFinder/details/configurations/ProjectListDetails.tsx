@@ -24,7 +24,7 @@ export const ProjectListDetails: React.FunctionComponent<
   ProjectListDetailsProps
 > = ({ projectsParams, ...sharedProps }) => {
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useGetProjectsInfinite(projectsParams, { useErrorBoundary: true })
+    useGetProjectsInfinite(projectsParams, { throwOnError: true })
 
   const projects =
     data?.pages.flatMap(page => page.results).map(toEntityHeader) ?? []

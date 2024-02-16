@@ -23,15 +23,15 @@ export function ProgrammaticTableDownload({
   const {
     data: asyncJobStatus,
     isLoading: queryIsLoading,
-    isPreviousData: newQueryIsFetching,
+    isPlaceholderData: newQueryIsFetching,
   } = useGetQueryResultBundleWithAsyncStatus(
     {
       ...queryBundleRequest,
       partMask: SynapseConstants.BUNDLE_MASK_COMBINED_SQL,
     },
     {
-      keepPreviousData: true,
-      useErrorBoundary: true,
+      placeholderData: previousData => previousData,
+      throwOnError: true,
     },
   )
 

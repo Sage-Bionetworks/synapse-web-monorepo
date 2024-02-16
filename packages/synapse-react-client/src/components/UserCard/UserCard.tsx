@@ -4,7 +4,7 @@ import { useGetProfileImage } from '../../synapse-queries/file/useFiles'
 import {
   useGetPrincipalIdForAlias,
   useGetUserProfile,
-} from '../../synapse-queries/user/useUserBundle'
+} from '../../synapse-queries'
 import usePreFetchResource, {
   useCreateUrlForData,
 } from '../../utils/hooks/usePreFetchResource'

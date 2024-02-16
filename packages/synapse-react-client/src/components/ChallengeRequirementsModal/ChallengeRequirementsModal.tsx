@@ -57,7 +57,7 @@ export default function ChallengeRequirementsModal(
 
   const {
     mutateAsync: addTeamMember,
-    isLoading: registrationIsPending,
+    isPending: registrationIsPending,
     error: registrationError,
   } = useAddMemberToTeam()
 

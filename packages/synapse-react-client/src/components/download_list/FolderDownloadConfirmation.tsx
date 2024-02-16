@@ -31,7 +31,7 @@ export function FolderDownloadConfirmation(
   const fileCount = entityChildrenData?.totalChildCount ?? 0
   const fileSizeTotal = entityChildrenData?.sumFileSizesBytes
 
-  const { mutate: addToDownloadList, isLoading: isAddingToDownloadCart } =
+  const { mutate: addToDownloadList, isPending: isAddingToDownloadCart } =
     useAddQueryToDownloadList({
       onSuccess: () => {
         displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)

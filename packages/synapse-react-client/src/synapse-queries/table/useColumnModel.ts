@@ -16,30 +16,34 @@ import { SetOptional } from 'type-fest'
 export function useGetDefaultColumnModels(
   viewEntityType: ViewEntityType,
   viewTypeMask?: number,
-  options?: UseQueryOptions<ColumnModel[], SynapseClientError>,
+  options?: Partial<UseQueryOptions<ColumnModel[], SynapseClientError>>,
 ) {
   const { keyFactory } = useSynapseContext()
-  return useQuery<ColumnModel[], SynapseClientError>(
-    keyFactory.getDefaultColumnModelsQueryKey(viewEntityType, viewTypeMask),
-    async () => {
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getDefaultColumnModelsQueryKey(
+      viewEntityType,
+      viewTypeMask,
+    ),
+    queryFn: async () => {
       return (
         await SynapseClient.getDefaultColumnModels(viewEntityType, viewTypeMask)
       ).list
     },
-    options,
-  )
+  })
 }
 
 export function useGetAnnotationColumnModels(
   request: Omit<ViewColumnModelRequest, 'nextPageToken'>,
-  options?: UseQueryOptions<ColumnModel[], SynapseClientError>,
+  options?: Partial<UseQueryOptions<ColumnModel[], SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<ColumnModel[], SynapseClientError>(
-    keyFactory.getAnnotationColumnModelsQueryKey(request),
-    () => SynapseClient.getAnnotationColumnModels(request, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getAnnotationColumnModelsQueryKey(request),
+    queryFn: () =>
+      SynapseClient.getAnnotationColumnModels(request, accessToken),
+  })
 }
 
 export function useCreateColumnModels(

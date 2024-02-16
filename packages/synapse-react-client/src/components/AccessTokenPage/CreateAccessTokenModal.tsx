@@ -34,7 +34,7 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
 
   const {
     mutate,
-    isLoading,
+    isPending: createIsPending,
     error: mutationError,
     data: createdTokenResponse,
   } = useCreatePersonalAccessToken()
@@ -136,7 +136,7 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
     <ConfirmationDialog
       open={true}
       title="Create New Personal Access Token"
-      content={isLoading ? loadingScreen : dialogContent}
+      content={createIsPending ? loadingScreen : dialogContent}
       confirmButtonProps={{
         children: createdTokenResponse ? 'Close' : 'Create Token',
         variant: createdTokenResponse ? 'outlined' : 'contained',

@@ -11,13 +11,13 @@ export type TeamMember = {
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/MembershipRequest.html
 export type MembershipRequest = {
-  id: string
+  id?: string
   teamId: string
   userId: string
   message?: string //The request message (optional).
   expiresOn?: string //The date this request expires (optional).
-  createdOn: string
-  createdBy: string
+  createdOn?: string
+  createdBy?: string
 }
 
 // The fields that should be included in the request to create a MembershipRequest

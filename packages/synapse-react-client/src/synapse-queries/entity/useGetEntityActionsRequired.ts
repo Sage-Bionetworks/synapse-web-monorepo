@@ -6,12 +6,13 @@ import { ActionRequiredList } from '@sage-bionetworks/synapse-types'
 
 export function useGetEntityActionsRequired(
   entityId: string,
-  options?: UseQueryOptions<ActionRequiredList, SynapseClientError>,
+  options?: Partial<UseQueryOptions<ActionRequiredList, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<ActionRequiredList, SynapseClientError>(
-    keyFactory.getEntityActionsRequiredQueryKey(entityId),
-    () => SynapseClient.getEntityDownloadActionsRequired(entityId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityActionsRequiredQueryKey(entityId),
+    queryFn: () =>
+      SynapseClient.getEntityDownloadActionsRequired(entityId, accessToken),
+  })
 }

@@ -285,8 +285,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   )
   const columnType = columnModel?.columnType as ColumnTypeEnum
 
-  const { data: plotData } = useQuery(
-    [
+  const { data: plotData } = useQuery({
+    queryKey: [
       'extractPlotDataArray',
       facetToPlot,
       columnType,
@@ -294,7 +294,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
       plotType,
       accessToken,
     ],
-    () =>
+
+    queryFn: () =>
       extractPlotDataArray(
         facetToPlot,
         columnType,
@@ -302,10 +303,9 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
         plotType,
         accessToken,
       ),
-    {
-      enabled: !!facetToPlot,
-    },
-  )
+
+    enabled: !!facetToPlot,
+  })
 
   /* rendering functions */
   const ChartSelectionToggle = (): JSX.Element => (

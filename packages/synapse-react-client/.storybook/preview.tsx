@@ -26,6 +26,7 @@ import {
 } from '../src/theme/palette/Palettes'
 import { createTheme } from '@mui/material/styles'
 import defaultMuiThemeOptions from '../src/theme/DefaultTheme'
+import { getUserProfileHandlers } from '../src/mocks/msw/handlers/userProfileHandlers'
 
 faker.seed(12345)
 

@@ -11,7 +11,6 @@ import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
   MOCK_USER_ID_3,
-  mockUserData,
   mockUserGroupHeader,
   mockUserGroupHeader2,
   mockUserGroupHeader3,
@@ -42,6 +41,7 @@ import * as UserSearchBoxV2Module from '../../../UserSearchBox/UserSearchBoxV2'
 import { SynapseClientError } from '../../../../utils/SynapseClientError'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
+import { mockUserGroupData } from '../../../../mocks/usergroup/mockUserGroup'
 
 const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
 jest.mock('../../../Markdown/MarkdownSynapse', () => ({
@@ -79,13 +79,14 @@ jest.spyOn(SynapseClient, 'getGroupHeadersBatch').mockImplementation(ids => {
 
 jest.spyOn(SynapseClient, 'getUserProfileById').mockImplementation((_, id) => {
   return Promise.resolve(
-    mockUserData.find(user => String(user.id) === String(id))!.userProfile!,
+    mockUserGroupData.find(user => String(user.id) === String(id))!
+      .userProfile!,
   )
 })
 
 jest.spyOn(SynapseClient, 'getUserBundle').mockImplementation(id => {
   return Promise.resolve(
-    mockUserData.find(user => String(user.id) === String(id))!.userBundle!,
+    mockUserGroupData.find(user => String(user.id) === String(id))!.userBundle!,
   )
 })
 
@@ -149,7 +150,7 @@ async function renderComponent(
   // eslint-disable-next-line @typescript-eslint/require-await
   await act(async () => {
     renderResult = render(<DataAccessRequestAccessorsFilesForm {...props} />, {
-      wrapper: createWrapper(),
+      wrapper: createWrapper({ withErrorBoundary: true }),
     })
   })
   return renderResult
@@ -347,7 +348,10 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       ),
     )
 
-    await expect(renderComponent(defaultProps)).rejects.toThrow(errorMessage)
+    await renderComponent(defaultProps)
+
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(errorMessage)
 
     consoleErrorSpy.mockRestore()
   })

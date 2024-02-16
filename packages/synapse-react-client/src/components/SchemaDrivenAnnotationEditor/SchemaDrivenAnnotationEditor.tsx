@@ -148,7 +148,7 @@ export function SchemaDrivenAnnotationEditor(
 
   const [showConfirmation, setShowConfirmation] = React.useState(false)
 
-  const { entityMetadata: entityJson, annotations } = useGetJson(
+  const { data } = useGetJson(
     entityId!,
     // Derived annotations will be precomputed and displayed as placeholders in the form
     false,
@@ -156,9 +156,12 @@ export function SchemaDrivenAnnotationEditor(
       // Metadata is being edited, so don't refetch
       staleTime: Infinity,
       enabled: !!entityId,
-      useErrorBoundary: true,
+      throwOnError: true,
     },
   )
+
+  const entityJson = data?.entityMetadata
+  const annotations = data?.annotations
 
   // Annotation fields fetched and modified via the form
   const [formData, setFormData] = React.useState<
@@ -191,21 +194,21 @@ export function SchemaDrivenAnnotationEditor(
     {
       enabled: !!entityId,
       refetchOnWindowFocus: false,
-      useErrorBoundary: true,
+      throwOnError: true,
     },
   )
 
   const { data: fetchedValidationSchema, isLoading: isLoadingSchema } =
     useGetSchema(schemaId ?? schema?.jsonSchemaVersionInfo.$id ?? '', {
       enabled: !!schemaId || !!schema,
-      useErrorBoundary: true,
+      throwOnError: true,
     })
 
   const validationSchema = validationSchemaFromProps || fetchedValidationSchema
 
   const isLoading = isLoadingBinding || isLoadingSchema
 
-  const mutation = useUpdateViaJson({
+  const { mutate, isPending: updateIsPending } = useUpdateViaJson({
     onSuccess: () => {
       onSuccess()
     },
@@ -216,7 +219,7 @@ export function SchemaDrivenAnnotationEditor(
   })
 
   function submitChangedEntity() {
-    mutation.mutate({
+    mutate({
       ...cleanFormData(formData, true),
       ...entityJson,
     } as EntityJson)
@@ -292,7 +295,7 @@ export function SchemaDrivenAnnotationEditor(
               ErrorListTemplate: ErrorListTemplate,
             }}
             ref={ref}
-            disabled={mutation.isLoading}
+            disabled={updateIsPending}
             schema={
               {
                 ...(validationSchema ?? {}),

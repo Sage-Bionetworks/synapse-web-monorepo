@@ -1,5 +1,5 @@
 import {
-  QueryFunction,
+  InfiniteData,
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
@@ -35,112 +35,136 @@ import { KeyFactory } from '../KeyFactory'
 
 export function useGetAccessRequirements<T extends AccessRequirement>(
   accessRequirementId: string | number,
-  options?: UseQueryOptions<T, SynapseClientError>,
+  options?: Partial<UseQueryOptions<T, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<T, SynapseClientError>(
-    keyFactory.getAccessRequirementQueryKey(String(accessRequirementId)),
-    () =>
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getAccessRequirementQueryKey(
+      String(accessRequirementId),
+    ),
+    queryFn: () =>
       SynapseClient.getAccessRequirementById<T>(
         accessToken,
         accessRequirementId,
       ),
-    options,
-  )
+  })
 }
 
 export function useGetAccessRequirementsForEntity(
   entityId: string,
-  options?: UseQueryOptions<AccessRequirement[], SynapseClientError>,
+  options?: Partial<UseQueryOptions<AccessRequirement[], SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<AccessRequirement[], SynapseClientError>(
-    keyFactory.getEntityAccessRequirementsQueryKey(entityId),
-    () => SynapseClient.getAllAccessRequirements(accessToken, entityId),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityAccessRequirementsQueryKey(entityId),
+    queryFn: () =>
+      SynapseClient.getAllAccessRequirements(accessToken, entityId),
+  })
 }
 
 export function useGetAccessRequirementsForTeam(
   teamId: string,
-  options?: UseQueryOptions<AccessRequirement[], SynapseClientError>,
+  options?: Partial<UseQueryOptions<AccessRequirement[], SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<AccessRequirement[], SynapseClientError>(
-    keyFactory.getTeamAccessRequirementsQueryKey(teamId),
-    () => SynapseClient.getTeamAccessRequirements(accessToken, teamId),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getTeamAccessRequirementsQueryKey(teamId),
+    queryFn: () => SynapseClient.getTeamAccessRequirements(accessToken, teamId),
+  })
 }
 
 export function useGetAccessRequirementWikiPageKey(
   accessRequirementId: string,
-  options?: UseQueryOptions<WikiPageKey, SynapseClientError>,
+  options?: Partial<UseQueryOptions<WikiPageKey, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<WikiPageKey, SynapseClientError>(
-    keyFactory.getAccessRequirementWikiPageKey(accessRequirementId),
-    () =>
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getAccessRequirementWikiPageKey(accessRequirementId),
+
+    queryFn: () =>
       SynapseClient.getWikiPageKeyForAccessRequirement(
         accessToken,
         accessRequirementId,
       ),
-    options,
-  )
+  })
 }
 
 export function useGetAccessRequirementACL(
   accessRequirementId: string,
-  options?: UseQueryOptions<AccessControlList | null, SynapseClientError>,
-) {
-  const { accessToken, keyFactory } = useSynapseContext()
-
-  return useQuery<AccessControlList | null, SynapseClientError>(
-    keyFactory.getAccessRequirementAclQueryKey(accessRequirementId),
-    () =>
-      SynapseClient.getAccessRequirementAcl(accessToken, accessRequirementId),
-    options,
-  )
-}
-
-export function useSearchAccessRequirementsInfinite(
-  params: Omit<AccessRequirementSearchRequest, 'nextPageToken'>,
-  options?: UseInfiniteQueryOptions<
-    AccessRequirementSearchResponse,
-    SynapseClientError
+  options?: Partial<
+    UseQueryOptions<AccessControlList | null, SynapseClientError>
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useInfiniteQuery<AccessRequirementSearchResponse, SynapseClientError>(
-    keyFactory.searchAccessRequirementsQueryKey(params),
-    async context => {
+
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getAccessRequirementAclQueryKey(accessRequirementId),
+
+    queryFn: () =>
+      SynapseClient.getAccessRequirementAcl(accessToken, accessRequirementId),
+  })
+}
+
+export function useSearchAccessRequirementsInfinite<
+  TData = InfiniteData<AccessRequirementSearchResponse>,
+>(
+  params: Omit<AccessRequirementSearchRequest, 'nextPageToken'>,
+  options?: UseInfiniteQueryOptions<
+    AccessRequirementSearchResponse,
+    SynapseClientError,
+    TData,
+    AccessRequirementSearchResponse,
+    QueryKey,
+    AccessRequirementSearchResponse['nextPageToken']
+  >,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useInfiniteQuery<
+    AccessRequirementSearchResponse,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    AccessRequirementSearchResponse['nextPageToken']
+  >({
+    ...options,
+    queryKey: keyFactory.searchAccessRequirementsQueryKey(params),
+    queryFn: async context => {
       return await SynapseClient.searchAccessRequirements(accessToken, {
         ...params,
         nextPageToken: context.pageParam,
       })
     },
-    {
-      ...options,
-      getNextPageParam: page => page.nextPageToken,
-    },
-  )
+    initialPageParam: undefined,
+    getNextPageParam: page => page.nextPageToken,
+  })
 }
 
 export function useGetRestrictionInformation(
   request: RestrictionInformationRequest,
-  options?: UseQueryOptions<RestrictionInformationResponse, SynapseClientError>,
+  options?: Partial<
+    UseQueryOptions<RestrictionInformationResponse, SynapseClientError>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<RestrictionInformationResponse, SynapseClientError>(
-    keyFactory.getAccessRequirementRestrictionInformationQueryKey(request),
-    () => SynapseClient.getRestrictionInformation(request, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey:
+      keyFactory.getAccessRequirementRestrictionInformationQueryKey(request),
+    queryFn: () =>
+      SynapseClient.getRestrictionInformation(request, accessToken),
+  })
 }
 
 export function useCreateLockAccessRequirement(
-  options?: UseMutationOptions<AccessRequirement, SynapseClientError, string>,
+  options?: Partial<
+    UseMutationOptions<AccessRequirement, SynapseClientError, string>
+  >,
 ) {
   const { accessToken } = useSynapseContext()
   const queryClient = useQueryClient()
@@ -153,11 +177,13 @@ export function useCreateLockAccessRequirement(
     mutationKey: ['createLockAccessRequirement'],
     onSuccess: async (data, variables, ctx) => {
       // Invalidate all access requirement queries
-      await queryClient.invalidateQueries(
-        keyFactory.getAccessRequirementQueryKey(),
-      )
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAccessRequirementQueryKey(),
+      })
       // Invalidate all entity queries (not just the current entity because the new AR may apply to this entity's children)
-      await queryClient.invalidateQueries(keyFactory.getAllEntityDataQueryKey())
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllEntityDataQueryKey(),
+      })
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
@@ -174,8 +200,7 @@ function getAccessRequirementStatusQueryOptions<
   keyFactory: KeyFactory,
   accessToken: string,
   accessRequirementId: string,
-): //UseQueryOptions<T, SynapseClientError> // for @tanstack/react-query v5
-{ queryKey: QueryKey; queryFn: QueryFunction<T> } {
+): UseQueryOptions<T, SynapseClientError> {
   return {
     queryKey:
       keyFactory.getAccessRequirementStatusQueryKey(accessRequirementId),
@@ -197,112 +222,110 @@ export function useGetAccessRequirementStatus<
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  const queryOptions = getAccessRequirementStatusQueryOptions<T>(
-    keyFactory,
-    accessToken!,
-    accessRequirementId,
-  )
-
-  return useQuery(queryOptions.queryKey, queryOptions.queryFn, options)
+  return useQuery({
+    ...options,
+    ...getAccessRequirementStatusQueryOptions<T>(
+      keyFactory,
+      accessToken!,
+      accessRequirementId,
+    ),
+  })
 }
 
 export function useGetAccessRequirementStatuses<
   T extends
     | AccessRequirementStatus
     | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
->(
-  accessRequirementIds: string[],
-  options?: UseQueryOptions<T, SynapseClientError>,
-) {
+>(accessRequirementIds: string[]) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQueries(
-    accessRequirementIds.map(id => ({
-      ...options,
-      ...getAccessRequirementStatusQueryOptions<T>(
-        keyFactory,
-        accessToken!,
-        id,
-      ),
-    })),
-  )
+  return useQueries({
+    queries: accessRequirementIds.map(id =>
+      getAccessRequirementStatusQueryOptions<T>(keyFactory, accessToken!, id),
+    ),
+  })
 }
 
 export function useSortAccessRequirementIdsByCompletion(
   accessRequirementIds: string[],
-  options?: UseQueryOptions<string[], SynapseClientError>,
+  options?: Partial<UseQueryOptions<string[], SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<string[], SynapseClientError>(
-    keyFactory.getSortedAccessRequirementsAndStatusQueryKey(
-      accessRequirementIds,
-    ),
-    () => sortAccessRequirementsByCompletion(accessToken, accessRequirementIds),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey:
+      keyFactory.getSortedAccessRequirementsAndStatusQueryKey(
+        accessRequirementIds,
+      ),
+
+    queryFn: () =>
+      sortAccessRequirementsByCompletion(accessToken, accessRequirementIds),
+  })
 }
 
 export function useGetResearchProject(
   accessRequirementId: string,
-  options?: UseQueryOptions<ResearchProject, SynapseClientError>,
+  options?: Partial<UseQueryOptions<ResearchProject, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<ResearchProject, SynapseClientError>(
-    keyFactory.getAccessRequirementResearchProjectQueryKey(accessRequirementId),
-    () => SynapseClient.getResearchProject(accessRequirementId, accessToken!),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey:
+      keyFactory.getAccessRequirementResearchProjectQueryKey(
+        accessRequirementId,
+      ),
+    queryFn: () =>
+      SynapseClient.getResearchProject(accessRequirementId, accessToken!),
+  })
 }
 
 export function useUpdateResearchProject(
-  options?: UseMutationOptions<
-    ResearchProject,
-    SynapseClientError,
-    ResearchProject
+  options?: Partial<
+    UseMutationOptions<ResearchProject, SynapseClientError, ResearchProject>
   >,
 ) {
   const { accessToken } = useSynapseContext()
   const queryClient = useQueryClient()
   const { keyFactory } = useSynapseContext()
 
-  return useMutation<ResearchProject, SynapseClientError, ResearchProject>(
-    (researchProject: ResearchProject) =>
+  return useMutation<ResearchProject, SynapseClientError, ResearchProject>({
+    ...options,
+    mutationFn: (researchProject: ResearchProject) =>
       SynapseClient.updateResearchProject(researchProject, accessToken!),
-    {
-      ...options,
-      onSuccess: async (data, variables, ctx) => {
-        // Invalidate the research project query
-        await queryClient.invalidateQueries(
-          keyFactory.getAccessRequirementResearchProjectQueryKey(
-            data.accessRequirementId,
-          ),
-        )
-        if (options?.onSuccess) {
-          return options.onSuccess(data, variables, ctx)
-        }
-        return
-      },
+    onSuccess: async (data, variables, ctx) => {
+      // Invalidate the research project query
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAccessRequirementResearchProjectQueryKey(
+          data.accessRequirementId,
+        ),
+      })
+      if (options?.onSuccess) {
+        return options.onSuccess(data, variables, ctx)
+      }
+      return
     },
-  )
+  })
 }
 
 export function useGetDataAccessRequestForUpdate(
   accessRequirementId: string,
-  options?: UseQueryOptions<Request | Renewal, SynapseClientError>,
+  options?: Partial<UseQueryOptions<Request | Renewal, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<Request | Renewal, SynapseClientError>(
-    keyFactory.getDataAccessRequestForUpdateQueryKey(accessRequirementId),
-    () =>
+  return useQuery({
+    ...options,
+    queryKey:
+      keyFactory.getDataAccessRequestForUpdateQueryKey(accessRequirementId),
+
+    queryFn: () =>
       SynapseClient.getDataAccessRequestForUpdate(
         accessRequirementId,
         accessToken!,
       ),
-    options,
-  )
+  })
 }
 
 export function useUpdateDataAccessRequest(
@@ -316,25 +339,23 @@ export function useUpdateDataAccessRequest(
   const queryClient = useQueryClient()
   const { keyFactory } = useSynapseContext()
 
-  return useMutation<Request | Renewal, SynapseClientError, Request | Renewal>(
-    (requestInterface: Request | Renewal) =>
+  return useMutation<Request | Renewal, SynapseClientError, Request | Renewal>({
+    ...options,
+    mutationFn: (requestInterface: Request | Renewal) =>
       SynapseClient.updateDataAccessRequest(requestInterface, accessToken!),
-    {
-      ...options,
-      onSuccess: async (data, variables, ctx) => {
-        // Invalidate the data access request query
-        await queryClient.invalidateQueries(
-          keyFactory.getDataAccessRequestForUpdateQueryKey(
-            data.accessRequirementId,
-          ),
-        )
-        if (options?.onSuccess) {
-          return options.onSuccess(data, variables, ctx)
-        }
-        return
-      },
+    onSuccess: async (data, variables, ctx) => {
+      // Invalidate the data access request query
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getDataAccessRequestForUpdateQueryKey(
+          data.accessRequirementId,
+        ),
+      })
+      if (options?.onSuccess) {
+        return options.onSuccess(data, variables, ctx)
+      }
+      return
     },
-  )
+  })
 }
 
 export function useCreateAccessApproval(
@@ -352,15 +373,17 @@ export function useCreateAccessApproval(
     AccessApproval,
     SynapseClientError,
     CreateAccessApprovalRequest
-  >(request => SynapseClient.createAccessApproval(accessToken, request), {
+  >({
     ...options,
+    mutationFn: request =>
+      SynapseClient.createAccessApproval(accessToken, request),
     onSuccess: async (data, variables, ctx) => {
       // Invalidate query for AR status
-      await queryClient.invalidateQueries(
-        keyFactory.getAccessRequirementStatusQueryKey(
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAccessRequirementStatusQueryKey(
           String(variables.requirementId),
         ),
-      )
+      })
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
@@ -384,23 +407,21 @@ export function useCancelDataAccessRequest(
     ACTSubmissionStatus,
     SynapseClientError,
     { submissionId: string; accessRequirementId: string }
-  >(
-    request =>
+  >({
+    ...options,
+    mutationFn: request =>
       SynapseClient.cancelDataAccessRequest(request.submissionId, accessToken!),
-    {
-      ...options,
-      onSuccess: async (data, variables, ctx) => {
-        // Invalidate query for AR status
-        await queryClient.invalidateQueries(
-          keyFactory.getAccessRequirementStatusQueryKey(
-            String(variables.accessRequirementId),
-          ),
-        )
-        if (options?.onSuccess) {
-          return options.onSuccess(data, variables, ctx)
-        }
-        return
-      },
+    onSuccess: async (data, variables, ctx) => {
+      // Invalidate query for AR status
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAccessRequirementStatusQueryKey(
+          String(variables.accessRequirementId),
+        ),
+      })
+      if (options?.onSuccess) {
+        return options.onSuccess(data, variables, ctx)
+      }
+      return
     },
-  )
+  })
 }

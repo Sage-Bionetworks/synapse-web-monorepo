@@ -30,7 +30,7 @@ export const RequestDownloadCard: React.FunctionComponent<
     entityId,
     undefined,
     {
-      useErrorBoundary: true,
+      throwOnError: true,
     },
   )
 

@@ -6,13 +6,13 @@ import { Forum } from '@sage-bionetworks/synapse-types'
 
 export function useGetEntityForum(
   entityId: string,
-  options?: UseQueryOptions<Forum, SynapseClientError>,
+  options?: Partial<UseQueryOptions<Forum, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<Forum, SynapseClientError>(
-    keyFactory.getForumQueryKey(entityId),
-    () => SynapseClient.getForum(entityId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getForumQueryKey(entityId),
+    queryFn: () => SynapseClient.getForum(entityId, accessToken),
+  })
 }
