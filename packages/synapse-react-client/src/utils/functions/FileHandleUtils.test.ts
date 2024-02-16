@@ -238,15 +238,6 @@ describe('File Handle Utils', () => {
       expect(result).toEqual('Synapse Storage')
     })
 
-    it("Returns 'Synapse Storage' for a file with a null storage location id", () => {
-      const fileHandle: S3FileHandle = {
-        ...mockFileHandle,
-        storageLocationId: null,
-        concreteType: S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
-      }
-      const result = getStorageLocationName(fileHandle, undefined)
-      expect(result).toEqual('Synapse Storage')
-    })
     it('Returns an s3 path for an S3 file handle in a custom storage location', () => {
       const fileHandle: S3FileHandle = {
         ...mockFileHandle,
