@@ -17,7 +17,7 @@ const homePageHeader: HomePageHeaderConfig = {
           gap: '30px',
         }}
       >
-        <DreamLogo /> <SageLogo />
+        <DreamLogo /> <SageLogo sx={{ width: '200px' }} />
       </Box>
     </>
   ),
