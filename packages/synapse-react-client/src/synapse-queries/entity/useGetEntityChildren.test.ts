@@ -54,7 +54,7 @@ const page2: EntityChildrenResponse = {
       isLatestVersion: true,
     },
   ],
-  nextPageToken: null,
+  nextPageToken: undefined,
 }
 
 const mockGetEntityChildren = jest.spyOn(SynapseClient, 'getEntityChildren')

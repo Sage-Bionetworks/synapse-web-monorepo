@@ -20,6 +20,12 @@ export type MembershipRequest = {
   createdBy: string
 }
 
+// The fields that should be included in the request to create a MembershipRequest
+export type CreateMembershipRequestRequest = Pick<
+  MembershipRequest,
+  'teamId' | 'userId' | 'message' | 'expiresOn'
+>
+
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/TeamMembershipStatus.html
 export type TeamMembershipStatus = {
   teamId: string

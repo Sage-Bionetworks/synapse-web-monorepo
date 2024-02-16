@@ -69,7 +69,7 @@ function SubmissionDirectoryList({
   const [errorMessage, setErrorMessage] = useState<string>()
   const [canSubmit, setCanSubmit] = useState<boolean>()
   const [fetchedHeaders, setFetchedHeaders] = useState<EntityHeader[]>([])
-  const [nextPageToken, setNextPageToken] = useState<string | null>(null)
+  const [nextPageToken, setNextPageToken] = useState<string | undefined>()
   const [fetchNextPage, setFetchNextPage] = useState<boolean>(false)
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false)
   const [uploadAttempt, setUploadAttempt] = useState<FileUploadAttempt>()
@@ -113,7 +113,7 @@ function SubmissionDirectoryList({
     setErrorMessage(undefined)
     setCanSubmit(undefined)
     setFetchedHeaders([])
-    setNextPageToken(null)
+    setNextPageToken(undefined)
     setFetchNextPage(false)
     refetch()
   }

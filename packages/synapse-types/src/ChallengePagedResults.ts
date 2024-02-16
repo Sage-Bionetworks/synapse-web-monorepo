@@ -30,8 +30,14 @@ export type ChallengeTeam = {
   etag: string
   challengeId: string
   teamId: string
-  message: string
+  message?: string
 }
+
+// The fields that are required in the request to create a challenge team
+export type CreateChallengeTeamRequest = Pick<
+  ChallengeTeam,
+  'teamId' | 'challengeId' | 'message'
+>
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/ChallengeTeamPagedResults.html
 export type ChallengeTeamPagedResults = {

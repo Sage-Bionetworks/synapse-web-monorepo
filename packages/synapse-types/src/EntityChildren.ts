@@ -28,7 +28,7 @@ export type EntityChildrenRequest = {
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityChildrenResponse.html
 export type EntityChildrenResponse = {
   page: EntityHeader[]
-  nextPageToken: string | null
+  nextPageToken: string | undefined
   totalChildCount?: number
   sumFileSizesBytes?: number
 }

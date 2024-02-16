@@ -26,7 +26,7 @@ type ChallengeTeamRow = {
   id: string
   name: string
   created: string
-  description: string
+  description?: string
 }
 
 export default function ChallengeTeamTable({
