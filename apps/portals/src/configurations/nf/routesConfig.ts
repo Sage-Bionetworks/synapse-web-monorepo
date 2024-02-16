@@ -88,46 +88,6 @@ const routes: GenericRoute[] = [
         },
       },
       {
-        name: 'Ecosystem',
-        title: 'NF Grant Opportunities',
-        centerTitle: true,
-        outsideContainerClassName: 'home-spacer home-bg-dark',
-        props: {
-          config: [
-            {
-              title: "Children's Tumor Foundation",
-              ownerId: 'syn26451327',
-              wikiId: '614272',
-            },
-            {
-              title: 'Neurofibromatosis Therapeutic Acceleration Program',
-              ownerId: 'syn26451327',
-              wikiId: '614277',
-            },
-            {
-              title: 'Gilbert Family Foundation',
-              ownerId: 'syn26451327',
-              wikiId: '614275',
-            },
-            {
-              title: 'DoD CDMRP Neurofibromatosis Research Program',
-              ownerId: 'syn26451327',
-              wikiId: '614274',
-            },
-            {
-              title: 'DHART SPORE',
-              ownerId: 'syn26451327',
-              wikiId: '614273',
-            },
-            {
-              title: 'Neurofibromatosis Research Initiative',
-              ownerId: 'syn26451327',
-              wikiId: '614276',
-            },
-          ],
-        },
-      },
-      {
         name: 'CardContainerLogic',
         title: 'Our Partners',
         outsideContainerClassName: 'home-spacer',
