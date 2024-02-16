@@ -5,4 +5,3 @@ still offscreen, for example you could set thresholdOffset="200px" you want an i
 it scrolls into view. A negative value will move the boundary into the viewport, triggering "in view" after
 it's already becoming visible.
 "200px", "200px 0 50px 0", "-50px" are all valid values.`,name:"rootMargin",required:!1,type:{name:"string"}},className:{defaultValue:null,description:'One or more class names to be added to the root element of this component, i.e.\n`"class-one class-two"`.',name:"className",required:!1,type:{name:"string"}}}}}catch{}class l extends d.Component{constructor(){super(...arguments);t(this,"getChildren",()=>s(h,{children:this.props.children}))}render(){return s(o,{renderInView:this.getChildren})}}try{l.displayName="RenderIfInView",l.__docgenInfo={description:"",displayName:"RenderIfInView",props:{}}}catch{}export{l as R};
-//# sourceMappingURL=RenderIfInView-df26c1ce.js.map

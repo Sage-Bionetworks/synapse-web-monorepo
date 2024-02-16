@@ -16,11 +16,13 @@
   <script>
     window.CONFIG_TYPE = 'PRODUCTION';
     window.LOGLEVEL = 'info';
-    window.FRAMEWORK_OPTIONS = {"builder":{"viteConfigPath":"./.storybook/storybook-vite.config.ts"}};
+    window.FRAMEWORK_OPTIONS = {"strictMode":false,"builder":{"viteConfigPath":"./.storybook/storybook-vite.config.ts"}};
     window.CHANNEL_OPTIONS = {};
-    window.FEATURES = {"warnOnLegacyHierarchySeparator":true,"buildStoriesJson":false,"storyStoreV7":true,"argTypeTargetsV7":true,"legacyDecoratorFileOrder":false};
+    window.FEATURES = {"warnOnLegacyHierarchySeparator":true,"buildStoriesJson":false,"storyStoreV7":true,"argTypeTargetsV7":true,"legacyDecoratorFileOrder":false,"disallowImplicitActionsInRenderV8":false};
     window.STORIES = [{"titlePrefix":"","directory":".","files":"**/*.stories.mdx","importPathMatcher":"^\\.(?:(?:^|\\/|(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)(?!\\.)(?=.)[^/]*?\\.stories\\.mdx)$"},{"titlePrefix":"","directory":".","files":"**/*.stories.@(js|jsx|ts|tsx)","importPathMatcher":"^\\.(?:(?:^|\\/|(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)(?!\\.)(?=.)[^/]*?\\.stories\\.(js|jsx|ts|tsx))$"}];
     window.DOCS_OPTIONS = {"defaultName":"Docs","autodocs":false};
+
+    
 
     // We do this so that "module && module.hot" etc. in Storybook source code
     // doesn't fail (it will simply be disabled)
@@ -409,7 +411,7 @@
 <!-- end synapse markdown imports -->
 <script crossorigin src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-  <script type="module" crossorigin src="./assets/iframe-5b5778a9.js"></script>
+  <script type="module" crossorigin src="./assets/iframe-d41fabf5.js"></script>
 </head>
 
 <body>
