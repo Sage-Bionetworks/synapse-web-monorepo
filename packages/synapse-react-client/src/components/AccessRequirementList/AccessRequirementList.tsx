@@ -4,8 +4,8 @@ import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
 } from '../../utils/hooks/useGetInfoFromIds'
 import {
-  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   AccessRequirement,
+  ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   EntityHeader,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   ManagedACTAccessRequirement,
@@ -23,12 +23,7 @@ import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/R
 import {
   Box,
   Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
   Link,
-  Stack,
   styled,
   Typography,
   TypographyProps,
@@ -46,17 +41,21 @@ import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnab
 import { AccessRequirementListItem } from './AccessRequirementListItem'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
-import { DialogActions } from '@mui/material'
+import { noop } from 'lodash-es'
+import { DialogBase } from '../DialogBase'
 
 export type AccessRequirementListProps = {
   entityId: string // will show this entity info
   teamId?: string // will show this team info
   accessRequirementFromProps?: Array<AccessRequirement>
-  onHide: () => void
-  renderAsModal?: boolean
   numberOfFilesAffected?: number // if provided, will show this instead of the entity information
   requestObjectName?: string // if provided, will show this instead of the entity information or numberOfFilesAffected
+  /* If true, this component will render in its own modal */
+  renderAsModal?: boolean
+  /* Overrides the default dialog title. This only applies if renderAsModal is true */
   dialogTitle?: string // if provided, will show this instead of Data Access Request
+  /* Called when the modal is hidden. This only applies if renderAsModal is true */
+  onHide?: () => void
 }
 
 const SUPPORTED_ACCESS_REQUIREMENTS = new Set<
@@ -129,13 +128,13 @@ export default function AccessRequirementList(
   const {
     entityId,
     teamId,
-    onHide,
+    onHide = noop,
     accessRequirementFromProps,
-    renderAsModal,
+    renderAsModal = false,
     numberOfFilesAffected,
     requestObjectName,
-    dialogTitle = 'Data Access Request',
   } = props
+  let { dialogTitle = 'Data Access Request' } = props
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
   const [requestDataStep, setRequestDataStep] = useState<RequestDataStep>(
@@ -257,50 +256,38 @@ export default function AccessRequirementList(
 
   const content = (
     <>
-      <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
-          {dialogTitle}
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
-
-      <DialogContent>
-        <DialogSubsectionHeader sx={{ mt: 0 }}>
-          What is this request for?
-        </DialogSubsectionHeader>
-        <Typography variant={'body1'} component={'span'}>
-          {requestDetails}
-        </Typography>
-        <DialogSubsectionHeader>What do I need to do?</DialogSubsectionHeader>
-        <AuthenticatedRequirement />
-        {anyARsRequireCertification && <CertificationRequirement />}
-        {anyARsRequireProfileValidation && <ValidationRequirement />}
-        {anyARsRequireTwoFactorAuth && <TwoFactorAuthEnabledRequirement />}
-        {sortedAccessRequirementIds
-          ?.map(id => accessRequirements!.find(ar => id === String(ar.id))!)
-          ?.map(accessRequirement => {
-            return (
-              <AccessRequirementListItem
-                key={accessRequirement.id}
-                accessRequirement={accessRequirement}
-                entityId={entityId}
-                onHide={onHide}
-                onRequestAccess={accessRequirement => {
-                  const nextStep = isSignedIn
-                    ? RequestDataStep.UPDATE_RESEARCH_PROJECT
-                    : RequestDataStep.PROMPT_LOGIN
-                  requestDataStepCallback({
-                    managedACTAccessRequirement: accessRequirement,
-                    step: nextStep,
-                  })
-                }}
-              />
-            )
-          })}
-      </DialogContent>
+      <DialogSubsectionHeader sx={{ mt: 0 }}>
+        What is this request for?
+      </DialogSubsectionHeader>
+      <Typography variant={'body1'} component={'span'}>
+        {requestDetails}
+      </Typography>
+      <DialogSubsectionHeader>What do I need to do?</DialogSubsectionHeader>
+      <AuthenticatedRequirement />
+      {anyARsRequireCertification && <CertificationRequirement />}
+      {anyARsRequireProfileValidation && <ValidationRequirement />}
+      {anyARsRequireTwoFactorAuth && <TwoFactorAuthEnabledRequirement />}
+      {sortedAccessRequirementIds
+        ?.map(id => accessRequirements!.find(ar => id === String(ar.id))!)
+        ?.map(accessRequirement => {
+          return (
+            <AccessRequirementListItem
+              key={accessRequirement.id}
+              accessRequirement={accessRequirement}
+              entityId={entityId}
+              onHide={onHide}
+              onRequestAccess={accessRequirement => {
+                const nextStep = isSignedIn
+                  ? RequestDataStep.UPDATE_RESEARCH_PROJECT
+                  : RequestDataStep.PROMPT_LOGIN
+                requestDataStepCallback({
+                  managedACTAccessRequirement: accessRequirement,
+                  step: nextStep,
+                })
+              }}
+            />
+          )
+        })}
     </>
   )
 
@@ -313,6 +300,7 @@ export default function AccessRequirementList(
       : 'md'
 
   let renderContent = content
+  let dialogActions = <></>
   if (renderAsModal) {
     switch (requestDataStep) {
       case RequestDataStep.UPDATE_RESEARCH_PROJECT:
@@ -358,17 +346,15 @@ export default function AccessRequirementList(
         )
         break
       case RequestDataStep.PROMPT_LOGIN:
+        dialogTitle = 'Please Log In'
         renderContent = (
-          <>
-            <DialogTitle>Please Log In</DialogTitle>
-            <DialogContent className={'AccessRequirementList login-modal '}>
-              <StandaloneLoginForm
-                sessionCallback={() => {
-                  window.location.reload()
-                }}
-              />
-            </DialogContent>
-          </>
+          <Box className={'AccessRequirementList login-modal '}>
+            <StandaloneLoginForm
+              sessionCallback={() => {
+                window.location.reload()
+              }}
+            />
+          </Box>
         )
         break
       case RequestDataStep.COMPLETE:
@@ -376,21 +362,23 @@ export default function AccessRequirementList(
         break
       case RequestDataStep.SHOW_ALL_ARS:
       default:
-        renderContent = (
-          <>
-            {content}
-            <DialogActions>
-              <Button variant="contained" onClick={onHide}>
-                Close
-              </Button>
-            </DialogActions>
-          </>
+        renderContent = content
+        dialogActions = (
+          <Button variant="contained" onClick={onHide}>
+            Close
+          </Button>
         )
     }
     return (
-      <Dialog maxWidth={dialogWidth} fullWidth open={true} onClose={onHide}>
-        {renderContent}
-      </Dialog>
+      <DialogBase
+        title={dialogTitle}
+        maxWidth={dialogWidth}
+        fullWidth
+        open={true}
+        onCancel={onHide}
+        content={renderContent}
+        actions={dialogActions}
+      />
     )
   }
   return <Box>{renderContent}</Box>
