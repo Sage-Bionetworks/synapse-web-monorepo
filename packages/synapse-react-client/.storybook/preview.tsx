@@ -9,7 +9,7 @@ import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
 import isChromatic from 'chromatic/isChromatic'
 import { faker } from '@faker-js/faker'
 import { ThemeProvider } from '@mui/material'
-import { withThemeFromJSXProvider } from '@storybook/addon-styling'
+import { withThemeFromJSXProvider } from '@storybook/addon-themes'
 import {
   adKnowledgePortalPalette,
   arkPortalPalette,
