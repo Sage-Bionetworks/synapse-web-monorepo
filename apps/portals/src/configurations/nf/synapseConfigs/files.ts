@@ -12,15 +12,15 @@ const files: SynapseConfig = {
     name: 'Files',
     sql: filesSql,
     visibleColumnCount,
-    showExportToCavatica: false,
+    showExportToCavatica: true,
     isRowSelectionVisible: true,
     rowSelectionPrimaryKey: ['id'],
     tableConfiguration: {
       showAccessColumn: true,
       showDownloadColumn: true,
-      // TODO: When changing from a File View to a Materialized View, set the entity ID column and version column to use (instead of the Row ID and Version)
-      // rowEntityIDColumnName: 'id',
-      // rowEntityVersionColumnName: 'fileVersion',
+      // set the entity ID column and version column to use (instead of the Row ID and Version)
+      rowEntityIDColumnName: 'id',
+      rowEntityVersionColumnName: 'currentVersion',
     },
     shouldDeepLink: true,
     columnAliases,

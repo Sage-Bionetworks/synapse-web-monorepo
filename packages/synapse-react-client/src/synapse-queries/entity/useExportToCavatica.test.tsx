@@ -73,7 +73,7 @@ describe('useExportToCavatica', () => {
 
   it('Successfully send to CAVATICA', async () => {
     const expectedSql =
-      "SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', id, '.', currentVersion) AS drs_uri, name as file_name, id,annotation FROM syn42"
+      'SELECT CONCAT(\'drs://repo-prod.prod.sagebase.org/syn\', id, \'.\', currentVersion) AS drs_uri, name as file_name, "id","annotation" FROM syn42'
     mockGetDownloadFromTableRequest.mockResolvedValue(downloadFromTableResult)
     const {
       result: { current: exportFunction },
@@ -98,7 +98,7 @@ describe('useExportToCavatica', () => {
       fileNameColumnName = 'fileName',
       fileVersionColumnName = 'fileVersion'
     const expectedSql =
-      "SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', fileId, '.', fileVersion) AS drs_uri, fileName as file_name, id,annotation FROM syn42"
+      'SELECT CONCAT(\'drs://repo-prod.prod.sagebase.org/syn\', fileId, \'.\', fileVersion) AS drs_uri, fileName as file_name, "id","annotation" FROM syn42'
     mockGetDownloadFromTableRequest.mockResolvedValue(downloadFromTableResult)
     const {
       result: { current: exportFunction },

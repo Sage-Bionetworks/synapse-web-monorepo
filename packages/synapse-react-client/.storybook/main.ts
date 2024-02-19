@@ -10,15 +10,16 @@ const config: StorybookConfig = {
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
     {
-      name: '@storybook/addon-styling',
+      name: '@storybook/addon-themes',
       options: {},
     },
-    'storybook-addon-designs',
+    '@storybook/addon-designs',
   ],
 
   framework: {
     name: '@storybook/react-vite',
     options: {
+      strictMode: false,
       builder: {
         viteConfigPath: './.storybook/storybook-vite.config.ts',
       },

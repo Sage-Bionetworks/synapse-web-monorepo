@@ -81,15 +81,6 @@ export function getStorageLocationName(
   fileHandle: FileHandle,
   storageLocationUploadDestination: UploadDestination | undefined,
 ) {
-  // Uploads to Synapse Storage often do not get their storage location field back-filled,
-  // so null also indicates a Synapse-Stored file
-  if (
-    fileHandle.concreteType === S3_FILE_HANDLE_CONCRETE_TYPE_VALUE &&
-    fileHandle.storageLocationId === null
-  ) {
-    return SYNAPSE_STORAGE
-  }
-
   switch (fileHandle.concreteType) {
     case PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       return (fileHandle as ProxyFileHandle).filePath
