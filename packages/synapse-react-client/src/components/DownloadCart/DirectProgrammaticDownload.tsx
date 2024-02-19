@@ -16,7 +16,7 @@ function DirectProgrammaticDownload({
   const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
 
   const rCode = `library(synapser)
-synLogin('username','password')
+synLogin(authToken="")
 
 # Obtain a pointer and download the data
 ${entityId} <- synGet(entity='${entityId}'${
@@ -26,7 +26,7 @@ ${entityId} <- synGet(entity='${entityId}'${
   const pythonCode = `import synapseclient
 
 syn = synapseclient.Synapse()
-syn.login('synapse_username','password')
+syn.login(authToken="")
 
 # Obtain a pointer and download the data
 ${entityId} = syn.get(entity='${entityId}'${

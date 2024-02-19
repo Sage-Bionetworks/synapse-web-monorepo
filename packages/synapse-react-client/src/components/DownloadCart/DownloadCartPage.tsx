@@ -19,7 +19,8 @@ import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/
 import { DeleteTwoTone } from '@mui/icons-material'
 
 const pythonDownloadCode = `import synapseclient
-syn = synapseclient.login()
+syn = synapseclient.Synapse()
+syn.login(authToken="")
 dl_list_file_entities = syn.get_download_list()`
 
 const cliDownloadCode = `synapse get-download-list`
