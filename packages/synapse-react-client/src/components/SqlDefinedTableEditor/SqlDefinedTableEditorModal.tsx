@@ -36,7 +36,8 @@ export default function SqlDefinedTableEditorModal(
     isLoading: isUpdateLoading,
     error: updateError,
   } = useUpdateEntity<MaterializedView | VirtualTable>({ onSuccess: onUpdate })
-
+  const isLoading = isEntityLoading || isUpdateLoading
+  const error = entityError || updateError
   return (
     <ConfirmationDialog
       open={open}
@@ -47,18 +48,23 @@ export default function SqlDefinedTableEditorModal(
             value={sql}
             entityType={type}
             onChange={e => setSql(e.target.value)}
-            disabled={isEntityLoading || isUpdateLoading}
+            disabled={isLoading}
           ></SqlDefinedTableEditor>
-          {(entityError || updateError) && (
-            <Alert severity="error">
-              {entityError?.reason || updateError?.reason}
+          {error && (
+            <Alert
+              sx={{
+                my: 1,
+              }}
+              severity="error"
+            >
+              {error.reason}
             </Alert>
           )}
         </>
       }
       confirmButtonProps={{
         children: isUpdateLoading ? 'Saving...' : 'Save',
-        disabled: isUpdateLoading,
+        disabled: isLoading,
         startIcon: isUpdateLoading ? <SynapseSpinner /> : undefined,
       }}
       onConfirm={() => {

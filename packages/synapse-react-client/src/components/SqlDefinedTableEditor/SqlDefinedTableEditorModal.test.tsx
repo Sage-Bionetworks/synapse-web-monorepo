@@ -24,9 +24,11 @@ function renderComponent(props: SqlDefinedTableEditorModalProps) {
   })
 }
 
+const originalSql = 'SELECT * FROM syn123'
+
 jest.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
   ...mockTableEntity,
-  definingSQL: 'SELECT * FROM syn123',
+  definingSQL: originalSql,
   concreteType: MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
 } as Entity)
 
@@ -54,15 +56,16 @@ describe('SqlDefinedTableEditorModal tests', () => {
     expect(within(dialog).getByRole('button', { name: 'Save' })).toBeVisible()
   })
 
-  it('loads and displays SQL from the given entityId', () => {
+  it('loads and displays SQL from the given entityId', async () => {
     const textarea = screen.getByRole('textbox', { name: 'Defining SQL' })
+    await waitFor(() => expect(textarea).toHaveValue(originalSql))
     expect(textarea).toBeInTheDocument()
   })
 
-  it('expect textarea to be disabled after pressing save', () => {
+  it('expect textarea to be disabled after pressing save', async () => {
     const dialog = screen.getByRole('dialog')
     const saveButton = within(dialog).getByRole('button', { name: 'Save' })
-    userEvent.click(saveButton)
+    await userEvent.click(saveButton)
 
     const textarea = screen.getByRole('textbox', { name: 'Defining SQL' })
     expect(textarea).toBeDisabled()
@@ -92,7 +95,7 @@ describe('SqlDefinedTableEditorModal tests', () => {
     expect(mockOnUpdate).not.toHaveBeenCalled()
   })
 
-  it('handle success case', async () => {
+  it('successfully submit new definingSql and call the onUpdate callback', async () => {
     const newSql = 'SELECT * FROM syn123 LIMIT 0'
     const mockMaterializedView = {
       ...mockTableEntityInstance,

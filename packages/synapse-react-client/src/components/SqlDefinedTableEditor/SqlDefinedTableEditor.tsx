@@ -50,7 +50,7 @@ export type SqlDefinedTableEditorProps = TextFieldProps & {
 export default function SqlDefinedTableEditor(
   props: SqlDefinedTableEditorProps,
 ) {
-  const { entityType, disabled, ...textFieldProps } = props
+  const { entityType, ...textFieldProps } = props
   return (
     <>
       {entityType === EntityType.MATERIALIZED_VIEW && MATERIALIZED_VIEW_HELP}
@@ -61,7 +61,6 @@ export default function SqlDefinedTableEditor(
         fullWidth
         multiline
         required
-        disabled={disabled}
         minRows={6}
         {...textFieldProps}
       />
