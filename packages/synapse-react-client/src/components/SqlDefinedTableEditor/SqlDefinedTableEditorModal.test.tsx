@@ -59,7 +59,6 @@ describe('SqlDefinedTableEditorModal tests', () => {
   it('loads and displays SQL from the given entityId', async () => {
     const textarea = screen.getByRole('textbox', { name: 'Defining SQL' })
     await waitFor(() => expect(textarea).toHaveValue(originalSql))
-    expect(textarea).toBeInTheDocument()
   })
 
   it('expect textarea to be disabled after pressing save', async () => {
