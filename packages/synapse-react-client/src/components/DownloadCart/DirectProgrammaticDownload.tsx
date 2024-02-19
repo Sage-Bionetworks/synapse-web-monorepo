@@ -8,6 +8,14 @@ type DirectProgrammaticDownloadProps = {
   entityId: string
   version?: number
 }
+export const PYTHON_CLIENT_IMPORT_AND_LOGIN = `import synapseclient
+syn = synapseclient.Synapse()
+syn.login(authToken="")
+`
+
+export const R_CLIENT_IMPORT_AND_LOGIN = `library(synapser)
+synLogin(authToken="")
+`
 
 function DirectProgrammaticDownload({
   entityId,
@@ -15,19 +23,13 @@ function DirectProgrammaticDownload({
 }: DirectProgrammaticDownloadProps) {
   const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
 
-  const rCode = `library(synapser)
-synLogin('username','password')
-
+  const rCode = `${R_CLIENT_IMPORT_AND_LOGIN}
 # Obtain a pointer and download the data
 ${entityId} <- synGet(entity='${entityId}'${
     version ? `, version=${version}` : ''
   } ) `
 
-  const pythonCode = `import synapseclient
-
-syn = synapseclient.Synapse()
-syn.login('synapse_username','password')
-
+  const pythonCode = `${PYTHON_CLIENT_IMPORT_AND_LOGIN}
 # Obtain a pointer and download the data
 ${entityId} = syn.get(entity='${entityId}'${
     version ? `, version=${version}` : ''

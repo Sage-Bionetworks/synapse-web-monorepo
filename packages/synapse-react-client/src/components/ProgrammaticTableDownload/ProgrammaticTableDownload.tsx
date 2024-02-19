@@ -4,6 +4,10 @@ import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../synapse-queries'
 import { SynapseConstants } from '../../utils'
+import {
+  PYTHON_CLIENT_IMPORT_AND_LOGIN,
+  R_CLIENT_IMPORT_AND_LOGIN,
+} from '../DownloadCart/DirectProgrammaticDownload'
 
 export type ProgrammaticTableDownloadProps = {
   queryBundleRequest: QueryBundleRequest
@@ -83,7 +87,8 @@ export function ProgrammaticTableDownload({
           download files.
         </>
       }
-      rCode={`query ${'<-'} synTableQuery("${clientSql}")${'\n'}read.table(query$filepath, sep = ",")`}
+      rCode={`${R_CLIENT_IMPORT_AND_LOGIN}
+query ${'<-'} synTableQuery("${clientSql}")${'\n'}read.table(query$filepath, sep = ",")`}
       pythonNotes={
         <>
           This Python code will download file annotations only. Use{' '}
@@ -98,7 +103,8 @@ export function ProgrammaticTableDownload({
           download files.
         </>
       }
-      pythonCode={`query = syn.tableQuery("${clientSql}")${'\n'}query.asDataFrame()`}
+      pythonCode={`${PYTHON_CLIENT_IMPORT_AND_LOGIN}
+query = syn.tableQuery("${clientSql}")${'\n'}query.asDataFrame()`}
     />
   )
 }

@@ -17,9 +17,9 @@ import { Button, Tooltip, Typography } from '@mui/material'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { DeleteTwoTone } from '@mui/icons-material'
+import { PYTHON_CLIENT_IMPORT_AND_LOGIN } from './DirectProgrammaticDownload'
 
-const pythonDownloadCode = `import synapseclient
-syn = synapseclient.login()
+const pythonDownloadCode = `${PYTHON_CLIENT_IMPORT_AND_LOGIN}
 dl_list_file_entities = syn.get_download_list()`
 
 const cliDownloadCode = `synapse get-download-list`
