@@ -1,11 +1,10 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import {
   ManagedACTAccessRequirement,
+  ManagedACTAccessRequirementStatus,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { ManagedACTAccessRequirementStatus } from '@sage-bionetworks/synapse-types'
 import { AlertProps } from './DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
 import RequirementItem from '../RequirementItem/RequirementItem'
@@ -17,7 +16,6 @@ import {
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 
 export type ManagedACTAccessRequirementItemProps = {
-  entityId: string
   accessRequirement: ManagedACTAccessRequirement
   onHide: () => void
   onRequestAccess: () => void

@@ -5,6 +5,7 @@ import {
   ManagedACTAccessRequirement,
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import UnmanagedACTAccessRequirementItem from './RequirementItem/UnmanagedACTAccessRequirementItem'
 import ManagedACTAccessRequirementItem from './ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem'
@@ -13,9 +14,10 @@ import SelfSignAccessRequirementItem from './RequirementItem/SelfSignAccessRequi
 
 export type AccessRequirementListItemProps = {
   accessRequirement: AccessRequirement
-  entityId: string
   onHide: () => void
   onRequestAccess: (accessRequirement: ManagedACTAccessRequirement) => void
+  subjectId: string
+  subjectType: RestrictableObjectType
 }
 
 /**
@@ -24,7 +26,8 @@ export type AccessRequirementListItemProps = {
 export function AccessRequirementListItem(
   props: AccessRequirementListItemProps,
 ) {
-  const { accessRequirement, entityId, onHide, onRequestAccess } = props
+  const { accessRequirement, subjectId, subjectType, onHide, onRequestAccess } =
+    props
   switch (accessRequirement.concreteType) {
     case SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
     case TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
@@ -39,7 +42,8 @@ export function AccessRequirementListItem(
         <UnmanagedACTAccessRequirementItem
           accessRequirement={accessRequirement}
           onHide={onHide}
-          entityId={entityId}
+          subjectId={subjectId}
+          subjectType={subjectType}
         />
       )
     case MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
@@ -47,7 +51,6 @@ export function AccessRequirementListItem(
         <ManagedACTAccessRequirementItem
           accessRequirement={accessRequirement}
           onHide={onHide}
-          entityId={entityId}
           onRequestAccess={() => {
             onRequestAccess(accessRequirement)
           }}

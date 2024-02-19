@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
-import { ACTAccessRequirement } from '@sage-bionetworks/synapse-types'
+import {
+  ACTAccessRequirement,
+  RestrictableObjectType,
+} from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '../../../utils/context/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
 import { Box, ButtonProps, Link, Typography } from '@mui/material'
@@ -12,7 +15,8 @@ import RequirementItem from './RequirementItem'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 
 export type UnmanagedACTAccessRequirementItemProps = {
-  entityId: string
+  subjectId: string
+  subjectType: RestrictableObjectType
   accessRequirement: ACTAccessRequirement
   onHide: () => void
 }
@@ -27,7 +31,7 @@ export type UnmanagedACTAccessRequirementItemProps = {
 export default function UnmanagedACTAccessRequirementItem(
   props: UnmanagedACTAccessRequirementItemProps,
 ) {
-  const { accessRequirement, entityId, onHide } = props
+  const { accessRequirement, subjectId, subjectType, onHide } = props
   const { accessToken } = useSynapseContext()
 
   const { data: accessRequirementStatus, isLoading: isLoadingStatus } =
@@ -55,7 +59,7 @@ export default function UnmanagedACTAccessRequirementItem(
 
   const gotoSynapseAccessRequirementPage = () => {
     window.open(
-      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${accessRequirement.id}&TYPE=ENTITY&ID=${entityId}`,
+      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${accessRequirement.id}&TYPE=${subjectType}&ID=${subjectId}`,
     )
   }
   const onAcceptClicked = () => {

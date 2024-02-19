@@ -8,7 +8,6 @@ import {
   AccessRequirementStatus,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockFileEntity'
 import {
   mockManagedACTAccessRequirement,
   mockManagedACTAccessRequirementWikiPageKey,
@@ -75,7 +74,6 @@ const mockOnHide = jest.fn()
 const rejectedReason = 'You incorrectly filled out your IDU Statement.'
 
 const defaultProps: ManagedACTAccessRequirementItemProps = {
-  entityId: MOCK_FILE_ENTITY_ID,
   accessRequirement: mockManagedACTAccessRequirement,
   onRequestAccess: mockOnRequestAccess,
   onHide: mockOnHide,

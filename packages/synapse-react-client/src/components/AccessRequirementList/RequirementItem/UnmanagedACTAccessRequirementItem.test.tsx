@@ -5,7 +5,10 @@ import UnmanagedACTAccessRequirementItem, {
   UnmanagedACTAccessRequirementItemProps,
 } from './UnmanagedACTAccessRequirementItem'
 import { SynapseClient, SynapseContextType } from '../../../index'
-import { AccessRequirementStatus } from '@sage-bionetworks/synapse-types'
+import {
+  AccessRequirementStatus,
+  RestrictableObjectType,
+} from '@sage-bionetworks/synapse-types'
 import {
   mockACTAccessRequirement,
   mockManagedACTAccessRequirement,
@@ -30,7 +33,8 @@ const mockOnHide = jest.fn()
 
 const defaultProps: UnmanagedACTAccessRequirementItemProps = {
   accessRequirement: mockACTAccessRequirement,
-  entityId: MOCK_FILE_ENTITY_ID,
+  subjectId: MOCK_FILE_ENTITY_ID,
+  subjectType: RestrictableObjectType.ENTITY,
   onHide: mockOnHide,
 }
 
@@ -102,7 +106,7 @@ describe('UnmanagedACTAccessRequirement tests', () => {
 
     expect(window.open).toHaveBeenLastCalledWith(
       expect.stringContaining(
-        `#!AccessRequirement:AR_ID=${mockACTAccessRequirement.id}&TYPE=ENTITY&ID=${MOCK_FILE_ENTITY_ID}`,
+        `#!AccessRequirement:AR_ID=${mockACTAccessRequirement.id}&TYPE=${RestrictableObjectType.ENTITY}&ID=${MOCK_FILE_ENTITY_ID}`,
       ),
     )
 
