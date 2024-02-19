@@ -17,8 +17,11 @@ import {
   SynapseContextConsumer,
   SynapseContextProvider,
 } from '../../../../index'
+import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 
-const meta = {
+const meta: Meta<
+  DataAccessRequestAccessorsFilesFormProps & { isAuthenticated: boolean }
+> = {
   title:
     'Governance/Data Access Request Flow/Managed Access Requirement/Step 2 - Accessors and Documentation',
   component: DataAccessRequestAccessorsFilesForm,
@@ -62,9 +65,7 @@ const meta = {
       </SynapseContextConsumer>
     ),
   ],
-} satisfies Meta<
-  DataAccessRequestAccessorsFilesFormProps & { isAuthenticated: boolean }
->
+}
 
 export default meta
 
@@ -73,7 +74,8 @@ type Story = StoryObj<typeof meta>
 export const Request: Story = {
   args: {
     isAuthenticated: true,
-    entityId: MOCK_FOLDER_ID,
+    subjectId: MOCK_FOLDER_ID,
+    subjectType: RestrictableObjectType.ENTITY,
     managedACTAccessRequirement: mockManagedACTAccessRequirement,
     researchProjectId: MOCK_RESEARCH_PROJECT_ID,
   },
@@ -81,7 +83,8 @@ export const Request: Story = {
 export const Renewal: Story = {
   args: {
     isAuthenticated: true,
-    entityId: MOCK_FOLDER_ID,
+    subjectId: MOCK_FOLDER_ID,
+    subjectType: RestrictableObjectType.ENTITY,
     managedACTAccessRequirement: mockManagedACTAccessRequirement,
     researchProjectId: MOCK_RESEARCH_PROJECT_ID,
   },

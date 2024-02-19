@@ -301,7 +301,8 @@ export function HasAccessV2(props: HasAccessProps) {
         </Button>
         {displayAccessRequirement && (
           <AccessRequirementList
-            entityId={entityId}
+            subjectId={entityId}
+            subjectType={RestrictableObjectType.ENTITY}
             accessRequirementFromProps={accessRequirements}
             renderAsModal={true}
             onHide={() => {

@@ -134,7 +134,8 @@ const mockOnSubmissionCreated = jest.fn()
 const defaultProps: DataAccessRequestAccessorsFilesFormProps = {
   researchProjectId: MOCK_RESEARCH_PROJECT_ID,
   managedACTAccessRequirement: mockManagedACTAccessRequirement,
-  entityId: MOCK_FILE_ENTITY_ID,
+  subjectId: MOCK_FILE_ENTITY_ID,
+  subjectType: RestrictableObjectType.ENTITY,
   onHide: mockOnHide,
   onCancel: mockOnCancel,
   onSubmissionCreated: mockOnSubmissionCreated,

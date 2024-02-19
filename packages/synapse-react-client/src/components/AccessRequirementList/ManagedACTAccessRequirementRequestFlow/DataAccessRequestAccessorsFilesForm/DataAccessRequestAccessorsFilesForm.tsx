@@ -89,9 +89,11 @@ function AccessorRequirementHelpText(props: {
 
 export type DataAccessRequestAccessorsFilesFormProps = {
   /**
-   * The ID of the entity of interest. This corresponds to the subjectId of the {@link CreateSubmissionRequest}
+   * The ID of the object of interest. This corresponds to the subjectId of the {@link CreateSubmissionRequest}
    */
-  entityId: string
+  subjectId: string
+  /* The type of the subject */
+  subjectType: RestrictableObjectType
   /* The access requirement to which the user is requesting access */
   managedACTAccessRequirement: ManagedACTAccessRequirement
   onSubmissionCreated: () => void
@@ -122,7 +124,8 @@ export default function DataAccessRequestAccessorsFilesForm(
   const {
     onSubmissionCreated,
     managedACTAccessRequirement,
-    entityId,
+    subjectId,
+    subjectType,
     researchProjectId,
     onCancel,
   } = props
@@ -284,8 +287,8 @@ export default function DataAccessRequestAccessorsFilesForm(
         request: {
           requestId: requestObject.id,
           requestEtag: requestObject.etag,
-          subjectId: entityId,
-          subjectType: RestrictableObjectType.ENTITY,
+          subjectId: subjectId,
+          subjectType: subjectType,
         },
         accessRequirementId: String(managedACTAccessRequirement.id),
       })

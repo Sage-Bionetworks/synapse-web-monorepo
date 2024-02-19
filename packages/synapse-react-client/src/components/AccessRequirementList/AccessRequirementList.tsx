@@ -1,16 +1,12 @@
 import React, { useMemo, useState } from 'react'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import useGetInfoFromIds, {
-  UseGetInfoFromIdsProps,
-} from '../../utils/hooks/useGetInfoFromIds'
 import {
   AccessRequirement,
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  EntityHeader,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   ManagedACTAccessRequirement,
   Renewal,
   Request,
+  RestrictableObjectType,
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
@@ -20,14 +16,7 @@ import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/Ca
 import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
 import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
-import {
-  Box,
-  Button,
-  Link,
-  styled,
-  Typography,
-  TypographyProps,
-} from '@mui/material'
+import { Box, Button, styled, Typography, TypographyProps } from '@mui/material'
 import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement'
 import CertificationRequirement from './RequirementItem/CertificationRequirement'
 import ValidationRequirement from './RequirementItem/ValidationRequirement'
@@ -39,24 +28,48 @@ import {
 } from '../../synapse-queries'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
 import { AccessRequirementListItem } from './AccessRequirementListItem'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useSynapseContext } from '../../utils'
 import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
 import { noop } from 'lodash-es'
 import { DialogBase } from '../DialogBase'
+import UserOrTeamBadge from '../UserOrTeamBadge'
+import { EntityLink } from '../EntityLink'
 
 export type AccessRequirementListProps = {
-  entityId: string // will show this entity info
-  teamId?: string // will show this team info
-  accessRequirementFromProps?: Array<AccessRequirement>
-  numberOfFilesAffected?: number // if provided, will show this instead of the entity information
-  requestObjectName?: string // if provided, will show this instead of the entity information or numberOfFilesAffected
+  /* if provided, will show this instead of the entity information */
+  numberOfFilesAffected?: number
+  /* if provided, will show this instead of the entity information or numberOfFilesAffected */
+  requestObjectName?: string
   /* If true, this component will render in its own modal */
   renderAsModal?: boolean
   /* Overrides the default dialog title. This only applies if renderAsModal is true */
-  dialogTitle?: string // if provided, will show this instead of Data Access Request
+  dialogTitle?: string
   /* Called when the modal is hidden. This only applies if renderAsModal is true */
   onHide?: () => void
-}
+  /* Displays the provided list of access requirements, instead of the ones fetched using the subject ID */
+  accessRequirementFromProps?: Array<AccessRequirement>
+} & (
+  | {
+      /**
+       * Fetches the access requirements associated with an entity
+       * @deprecated Please use `subjectId` and `subjectType`
+       */
+      entityId: string
+    }
+  | {
+      /**
+       * Fetches the access requirements associated with a team
+       * @deprecated Please use `subjectId` and `subjectType`
+       */
+      teamId: string
+    }
+  | {
+      /* The ID of the object for which access is being requested */
+      subjectId: string
+      /* The type of the object for which access is being requested */
+      subjectType: RestrictableObjectType
+    }
+)
 
 const SUPPORTED_ACCESS_REQUIREMENTS = new Set<
   AccessRequirement['concreteType']
@@ -126,14 +139,29 @@ export default function AccessRequirementList(
   props: AccessRequirementListProps,
 ) {
   const {
-    entityId,
-    teamId,
     onHide = noop,
-    accessRequirementFromProps,
     renderAsModal = false,
     numberOfFilesAffected,
     requestObjectName,
   } = props
+
+  const isShowingRequirementsForEntity = 'entityId' in props
+  const isShowingRequirementsFromProps = 'accessRequirementFromProps' in props
+
+  const subjectId =
+    'subjectId' in props
+      ? props.subjectId
+      : isShowingRequirementsForEntity
+      ? props.entityId
+      : props.teamId
+
+  const subjectType =
+    'subjectType' in props
+      ? props.subjectType
+      : isShowingRequirementsForEntity
+      ? RestrictableObjectType.ENTITY
+      : RestrictableObjectType.TEAM
+
   let { dialogTitle = 'Data Access Request' } = props
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
@@ -147,30 +175,27 @@ export default function AccessRequirementList(
     Request | Renewal | undefined
   >()
 
-  const entityHeaderProps: UseGetInfoFromIdsProps<EntityHeader> = {
-    ids: [entityId],
-    type: 'ENTITY_HEADER',
-  }
   const canShowManagedACTWikiInWizard = useCanShowManagedACTWikiInWizard()
 
-  const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
-
   const { data: fetchedRequirementsForTeam } = useGetAccessRequirementsForTeam(
-    teamId!,
+    subjectId,
     {
-      enabled: Boolean(!accessRequirementFromProps && teamId),
+      enabled: subjectType === RestrictableObjectType.TEAM,
     },
   )
   const { data: fetchedRequirementsForEntity } =
-    useGetAccessRequirementsForEntity(entityId, {
-      enabled: Boolean(!accessRequirementFromProps && entityId && !teamId),
+    useGetAccessRequirementsForEntity(subjectId, {
+      enabled: subjectType === RestrictableObjectType.ENTITY,
     })
 
-  const fetchedRequirements = teamId
-    ? fetchedRequirementsForTeam
-    : fetchedRequirementsForEntity
+  const requirementsFromProps = isShowingRequirementsFromProps
+    ? props.accessRequirementFromProps
+    : undefined
 
-  const accessRequirements = accessRequirementFromProps ?? fetchedRequirements
+  const accessRequirements =
+    requirementsFromProps ??
+    fetchedRequirementsForEntity ??
+    fetchedRequirementsForTeam
 
   /**
    * Set the initial ordering of the Access Requirements to show complete ARs first. The individual AR Item components
@@ -233,7 +258,7 @@ export default function AccessRequirementList(
   )
 
   const requestDetails = useMemo(() => {
-    // Prioritize requestObjectName, then the number of files affected, then the entity name
+    // Prioritize requestObjectName, then the number of files affected, then the entity/team name
     if (requestObjectName) return requestObjectName
     if (numberOfFilesAffected)
       return (
@@ -242,17 +267,17 @@ export default function AccessRequirementList(
           File(s)
         </>
       )
-    return (
-      <>
-        <IconSvg icon="file" sx={{ width: '30px' }} />{' '}
-        <Link
-          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityId}`}
-        >
-          {entityInformation[0]?.name}
-        </Link>
-      </>
-    )
-  }, [entityId, entityInformation, numberOfFilesAffected, requestObjectName])
+    if (subjectType === RestrictableObjectType.ENTITY) {
+      return <EntityLink entity={subjectId} />
+    } else if (subjectType === RestrictableObjectType.TEAM) {
+      return <UserOrTeamBadge principalId={subjectId} />
+    } else {
+      console.warn(
+        `Unhandled case for AccessRequirementList requestDetails: ${subjectType}: ${subjectId}`,
+      )
+      return <></>
+    }
+  }, [numberOfFilesAffected, requestObjectName, subjectId, subjectType])
 
   const content = (
     <>
@@ -274,7 +299,8 @@ export default function AccessRequirementList(
             <AccessRequirementListItem
               key={accessRequirement.id}
               accessRequirement={accessRequirement}
-              entityId={entityId}
+              subjectId={subjectId}
+              subjectType={subjectType}
               onHide={onHide}
               onRequestAccess={accessRequirement => {
                 const nextStep = isSignedIn
@@ -323,7 +349,8 @@ export default function AccessRequirementList(
           <DataAccessRequestAccessorsFilesForm
             researchProjectId={researchProjectId}
             managedACTAccessRequirement={managedACTAccessRequirement!}
-            entityId={entityId} // for form submission after save
+            subjectId={subjectId ?? ''}
+            subjectType={subjectType ?? RestrictableObjectType.ENTITY}
             onHide={onHide}
             onCancel={dataAccessRequestInProgress => {
               requestDataStepCallback({

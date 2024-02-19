@@ -44,7 +44,8 @@ export function EnableTwoFaRequirementCard(
       />
       {isShowingAccessRequirement && ar && (
         <AccessRequirementList
-          entityId={ar.subjectIds[0].id}
+          subjectId={ar.subjectIds[0].id}
+          subjectType={ar.subjectIds[0].type}
           accessRequirementFromProps={[ar]}
           renderAsModal={true}
           numberOfFilesAffected={count}
