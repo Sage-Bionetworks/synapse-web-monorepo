@@ -10,6 +10,11 @@ import {
 } from 'synapse-react-client'
 
 const getAllIndividualIDs = async (event: CustomControlCallbackData) => {
+  const selectedFacets = event.request?.query.selectedFacets
+  const additionalFilters = event.request?.query.additionalFilters
+  if (selectedFacets == undefined && additionalFilters == undefined) {
+    return undefined
+  }
   let token: string | undefined = undefined
   try {
     token = await SynapseClient.getAccessTokenFromCookie()
@@ -44,20 +49,22 @@ export const handleSelectedParticipantsToFiles = async (
     event.selectedRows && event.selectedRows.length > 0
       ? event.selectedRows.map((row) => row.values[idColIndex!]!)
       : await getAllIndividualIDs(event)
-  const sessionStorageFilter: ColumnSingleValueQueryFilter = {
-    concreteType:
-      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-    columnName: 'individualID',
-    operator: ColumnSingleValueFilterOperator.IN,
-    isDefiningCondition: true,
-    values: ids,
+
+  if (ids !== undefined) {
+    const sessionStorageFilter: ColumnSingleValueQueryFilter = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'individualID',
+      operator: ColumnSingleValueFilterOperator.IN,
+      isDefiningCondition: true,
+      values: ids,
+    }
+    sessionStorage.setItem(
+      SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(
+        'cohort-builder-files-perspective',
+      ),
+      JSON.stringify([sessionStorageFilter]),
+    )
   }
-  sessionStorage.setItem(
-    SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(
-      'cohort-builder-files-perspective',
-    ),
-    // TODO: set additionalFiltersSessionStorageKey to 'cohort-builder-files-perspective' in files perspective of Virtual Table
-    JSON.stringify([sessionStorageFilter]),
-  )
   window.location.href = '/Explore/Data by Files'
 }
