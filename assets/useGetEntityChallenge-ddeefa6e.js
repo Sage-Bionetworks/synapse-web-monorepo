@@ -1,0 +1,1 @@
+import{o as s,s as r,t as a}from"./SynapseClient-7700f4cc.js";import"./getEndpoint-ac94413e.js";import"./OrientationBanner-c0eacdfc.js";import"./index-76fb7be0.js";import"./jsx-runtime-9dc53467.js";function m(e,t){const{accessToken:n,keyFactory:o}=s();return r(o.getEntityChallengeQueryKey(e),()=>a.getEntityChallenge(e,n),t)}export{m as u};
