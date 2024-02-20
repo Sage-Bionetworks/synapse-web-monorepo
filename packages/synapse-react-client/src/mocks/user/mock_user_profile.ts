@@ -114,7 +114,7 @@ export const mockUserGroupHeader3: UserGroupHeader = {
   isIndividual: true,
 }
 
-type MockUserOrTeamData = {
+export type MockUserOrTeamData = {
   id: number
   userProfile: UserProfile | null
   userBundle: UserBundle | null
