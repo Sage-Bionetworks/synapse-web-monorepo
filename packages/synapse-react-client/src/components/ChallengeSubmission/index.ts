@@ -1,4 +1,9 @@
+import AvailableEvaluationQueueList from './AvailableEvaluationQueueList'
 import { ChallengeSubmission } from './ChallengeSubmission'
 import type { ChallengeSubmissionProps } from './ChallengeSubmission'
 
-export { ChallengeSubmission, ChallengeSubmissionProps }
+export {
+  AvailableEvaluationQueueList,
+  ChallengeSubmission,
+  ChallengeSubmissionProps,
+}

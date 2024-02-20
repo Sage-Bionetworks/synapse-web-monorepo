@@ -1,4 +1,6 @@
 import { Evaluation } from '@sage-bionetworks/synapse-types'
+import { times } from 'lodash-es'
+import { generateEvaluation } from '../faker/generateEvaluation'
 
 export const MOCK_EVALUATION_ID = '9614712'
 export const MOCK_EVALUATION_ETAG = 'a2b871cb-faa4-471a-8c23-b917c77fecb2'
@@ -24,3 +26,7 @@ export const mockEvaluationQueue: Evaluation = {
 }
 
 export const mockEvaluations: Evaluation[] = [mockEvaluationQueue]
+
+export const generatedEvaulations: Evaluation[] = times(10, () =>
+  generateEvaluation(),
+)
