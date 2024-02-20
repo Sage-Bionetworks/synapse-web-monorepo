@@ -29,6 +29,7 @@ import {
 } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
 import { UserProfileList } from '../../../synapse-client/SynapseClient'
+import { mockUserGroupData } from '../../usergroup/mockUserGroup'
 
 export const getUserProfileHandlers = (backendOrigin: string) => [
   /**
@@ -109,7 +110,7 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
     async (req, res, ctx) => {
       const ids = req.url.searchParams.get('ids')!.split(',')
       const responsePage: UserGroupHeaderResponsePage = {
-        children: mockUserData
+        children: mockUserGroupData
           .filter(userData => ids.includes(userData.id.toString()))
           .map(userData => userData.userGroupHeader),
       }
@@ -140,7 +141,7 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
     const prefix = (req.url.searchParams.get('prefix') ?? '').toLowerCase()
     const typeFilter = req.url.searchParams.get('typeFilter') as TYPE_FILTER
     const responsePage: UserGroupHeaderResponsePage = {
-      children: mockUserData
+      children: mockUserGroupData
         .filter(userData => {
           if (!typeFilter || typeFilter === TYPE_FILTER.ALL) {
             return true

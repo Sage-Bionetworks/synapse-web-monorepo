@@ -96,6 +96,12 @@ export const RequiresUnmetCertificationAndValidation: Story = {
               submitterId: MOCK_USER_ID.toString(),
               accessorId: MOCK_USER_ID.toString(),
               state: ApprovalState.APPROVED,
+              id: 123,
+              etag: 'etag',
+              createdOn: new Date().toISOString(),
+              modifiedOn: new Date().toISOString(),
+              createdBy: String(MOCK_USER_ID),
+              modifiedBy: String(MOCK_USER_ID),
             }
             return res(ctx.status(201), ctx.json(response))
           },
@@ -137,6 +143,12 @@ export const LegacyTermsOfUse: Story = {
               submitterId: MOCK_USER_ID.toString(),
               accessorId: MOCK_USER_ID.toString(),
               state: ApprovalState.APPROVED,
+              id: 123,
+              etag: 'etag',
+              createdOn: new Date().toISOString(),
+              modifiedOn: new Date().toISOString(),
+              createdBy: String(MOCK_USER_ID),
+              modifiedBy: String(MOCK_USER_ID),
             }
             return res(ctx.status(201), ctx.json(response))
           },
@@ -178,6 +190,12 @@ export const LegacyTermsOfUseWithWiki: Story = {
               submitterId: MOCK_USER_ID.toString(),
               accessorId: MOCK_USER_ID.toString(),
               state: ApprovalState.APPROVED,
+              id: 123,
+              etag: 'etag',
+              createdOn: new Date().toISOString(),
+              modifiedOn: new Date().toISOString(),
+              createdBy: String(MOCK_USER_ID),
+              modifiedBy: String(MOCK_USER_ID),
             }
             return res(ctx.status(201), ctx.json(response))
           },

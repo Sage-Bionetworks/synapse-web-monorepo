@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import {
-  AccessApproval,
   ApprovalState,
+  CreateAccessApprovalRequest,
   SelfSignAccessRequirement,
   TermsOfUseAccessRequirement,
 } from '@sage-bionetworks/synapse-types'
@@ -77,7 +77,7 @@ export default function SelfSignAccessRequirementItem(
   })
 
   const onAcceptClicked = () => {
-    const accessApprovalRequest: AccessApproval = {
+    const accessApprovalRequest: CreateAccessApprovalRequest = {
       requirementId: accessRequirement?.id,
       submitterId: user?.ownerId!,
       accessorId: user?.ownerId!,

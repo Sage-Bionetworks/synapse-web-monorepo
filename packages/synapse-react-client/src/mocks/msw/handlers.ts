@@ -8,11 +8,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
-import {
-  getAccessRequirementEntityBindingHandlers,
-  getAccessRequirementHandlers,
-  getAccessRequirementStatusHandlers,
-} from './handlers/accessRequirementHandlers'
+import { getAllAccessRequirementHandlers } from './handlers/accessRequirementHandlers'
 import { getWikiHandlers } from './handlers/wikiHandlers'
 import { getDataAccessRequestHandlers } from './handlers/dataAccessRequestHandlers'
 import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
@@ -28,6 +24,8 @@ import {
 import { getEvaluationHandlers } from './handlers/evaluationHandlers'
 import { MOCK_ANNOTATION_COLUMNS } from '../mockAnnotationColumns'
 import { getPersonalAccessTokenHandlers } from './handlers/personalAccessTokenHandlers'
+import getAllChallengeHandlers from './handlers/challengeHandlers'
+import getAllTeamHandlers from './handlers/teamHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<T> = T | SynapseError
@@ -49,9 +47,7 @@ const getHandlers = (backendOrigin: string) => [
   ...getUserProfileHandlers(backendOrigin),
   getCurrentUserCertifiedValidatedHandler(backendOrigin, true, true),
   ...getWikiHandlers(backendOrigin),
-  ...getAccessRequirementHandlers(backendOrigin),
-  ...getAccessRequirementEntityBindingHandlers(backendOrigin),
-  ...getAccessRequirementStatusHandlers(backendOrigin),
+  ...getAllAccessRequirementHandlers(backendOrigin),
   ...getDataAccessRequestHandlers(backendOrigin),
   ...getResearchProjectHandlers(backendOrigin),
   ...getFileHandlers(backendOrigin),
@@ -62,6 +58,8 @@ const getHandlers = (backendOrigin: string) => [
   ...getAnnotationColumnHandlers(MOCK_ANNOTATION_COLUMNS, backendOrigin),
   ...getDefaultColumnHandlers(backendOrigin),
   ...getPersonalAccessTokenHandlers(backendOrigin),
+  ...getAllTeamHandlers(backendOrigin),
+  ...getAllChallengeHandlers(backendOrigin),
 ]
 
 const handlers = getHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT))

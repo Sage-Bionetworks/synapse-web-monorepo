@@ -1,52 +1,43 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import { SynapseConstants } from '../../../src/utils'
-import SynapseTableCell, {
-  SynapseTableCellProps,
-} from '../../../src/components/SynapseTable/SynapseTableCell/SynapseTableCell'
-import { NOT_SET_DISPLAY_VALUE } from '../../../src/components/SynapseTable/SynapseTableConstants'
-import { createWrapper } from '../../../src/testutils/TestingLibraryUtils'
-import {
-  ENTITY_HEADERS,
-  ENTITY_ID_VERSION,
-} from '../../../src/utils/APIConstants'
+import { SynapseConstants } from '../../../utils'
+import SynapseTableCell, { SynapseTableCellProps } from './SynapseTableCell'
+import { NOT_SET_DISPLAY_VALUE } from '../SynapseTableConstants'
+import { createWrapper } from '../../../testutils/TestingLibraryUtils'
+import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '../../../utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../src/utils/functions/getEndpoint'
+} from '../../../utils/functions/getEndpoint'
 import {
   AUTHENTICATED_PRINCIPAL_ID,
   DEFAULT_PAGE_SIZE,
-} from '../../../src/utils/SynapseConstants'
+} from '../../../utils/SynapseConstants'
 import {
   ColumnTypeEnum,
-  Entity,
   EntityHeader,
   PaginatedResults,
   QueryBundleRequest,
   QueryResultBundle,
   Reference,
   ReferenceList,
+  VersionableEntity,
 } from '@sage-bionetworks/synapse-types'
-import { rest, server } from '../../../src/mocks/msw/server'
-import queryResultBundleJson from '../../../src/mocks/query/syn16787123'
+import { rest, server } from '../../../mocks/msw/server'
+import queryResultBundleJson from '../../../mocks/query/syn16787123'
 import dayjs from 'dayjs'
-import { formatDate } from '../../../src/utils/functions/DateFormatter'
-import {
-  MOCK_TEAM_ID,
-  MOCK_USER_ID,
-  MOCK_USER_ID_2,
-  mockTeamData,
-} from '../../../src/mocks/user/mock_user_profile'
-import * as HasAccessModule from '../../../src/components/HasAccess/HasAccessV2'
-import * as EntityLinkModule from '../../../src/components/EntityLink'
-import * as UserBadgeModule from '../../../src/components/UserCard/UserBadge'
-import * as AddToDownloadListV2Module from '../../../src/components/AddToDownloadListV2'
-import { QueryWrapper } from '../../../src'
-import { getHandlersForTableQuery } from '../../../src/mocks/msw/handlers/tableQueryHandlers'
-import { mockTableEntity } from '../../../src/mocks/entity/mockTableEntity'
-
-import { mockFileViewEntity } from '../../../src/mocks/entity/mockFileView'
+import { formatDate } from '../../../utils/functions/DateFormatter'
+import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+import * as HasAccessModule from '../../HasAccess/HasAccessV2'
+import * as EntityLinkModule from '../../EntityLink'
+import * as UserBadgeModule from '../../UserCard/UserBadge'
+import * as AddToDownloadListV2Module from '../../AddToDownloadListV2'
+import { QueryWrapper } from '../../../index'
+import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
+import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
+import { mockFileViewEntity } from '../../../mocks/entity/mockFileView'
+import { MOCK_TEAM_ID, mockTeamUserGroup } from '../../../mocks/team/mockTeam'
+import { uniqueId } from 'lodash-es'
 
 const queryResultBundle: QueryResultBundle =
   queryResultBundleJson as QueryResultBundle
@@ -143,8 +134,14 @@ describe('SynapseTableCell tests', () => {
             results: requestBody.map((reference: Reference) => {
               return {
                 id: reference.targetId,
-                name: 3,
+                name: uniqueId('entity-name-'),
                 type: 'org.sagebionetworks.repo.model.FileEntity',
+                benefactorId: 123,
+                createdOn: new Date().toISOString(),
+                modifiedOn: new Date().toISOString(),
+                createdBy: String(MOCK_USER_ID),
+                modifiedBy: String(MOCK_USER_ID),
+                isLatestVersion: true,
               }
             }),
           }
@@ -156,15 +153,14 @@ describe('SynapseTableCell tests', () => {
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ENTITY_ID_VERSION(':id', ':version')}`,
         async (req, res, ctx) => {
-          const responseBody: Entity = {
-            id: req.params.id!,
+          const responseBody: VersionableEntity = {
+            id: req.params.id as string,
             name: `Mock Entity with Id ${req.params.id}`,
-            versionNumber: req.params.version,
+            versionNumber: parseInt(req.params.version as string),
             versionLabel: `v${req.params.version}`,
             versionComment: 'test',
             modifiedOn: '2021-03-31T18:30:00.000Z',
             modifiedBy: MOCK_USER_ID.toString(),
-            modifiedByPrincipalId: MOCK_USER_ID_2.toString(),
             etag: 'etag',
             concreteType: 'org.sagebionetworks.repo.model.FileEntity',
           }
@@ -187,19 +183,20 @@ describe('SynapseTableCell tests', () => {
   const mockRowId = 122
   const mockRowVersion = 2
 
-  const tableCellProps: SynapseTableCellProps = {
+  const tableCellProps = {
     isBold: '',
     columnLinkConfig: undefined,
     columnName: '',
     selectColumns: undefined,
     columnModels: undefined,
-    rowId: mockRowId,
+    rowId: String(mockRowId),
     rowVersionNumber: mockRowVersion,
-  }
+  } satisfies Partial<SynapseTableCellProps>
 
   it('renders an entity link with an ID', async () => {
     renderTableCell({
       ...tableCellProps,
+      rowData: [mockEntityLinkValue],
       columnType: ColumnTypeEnum.ENTITYID,
       columnValue: mockEntityLinkValue,
     })
@@ -227,6 +224,7 @@ describe('SynapseTableCell tests', () => {
     )
     renderTableCell({
       ...tableCellProps,
+      rowData: ['My amazing project folder'],
       columnName: 'name',
       columnType: ColumnTypeEnum.STRING,
       columnValue: 'My amazing project folder',
@@ -238,6 +236,7 @@ describe('SynapseTableCell tests', () => {
   it('renders a link for all authenticated users', async () => {
     renderTableCell({
       ...tableCellProps,
+      rowData: [AUTHENTICATED_PRINCIPAL_ID.toString()],
       columnType: ColumnTypeEnum.USERID,
       columnValue: AUTHENTICATED_PRINCIPAL_ID.toString(),
     })
@@ -250,9 +249,10 @@ describe('SynapseTableCell tests', () => {
       ...tableCellProps,
       columnType: ColumnTypeEnum.USERID,
       columnValue: MOCK_TEAM_ID.toString(),
+      rowData: [MOCK_TEAM_ID.toString()],
     })
 
-    await screen.findByText(mockTeamData.userGroupHeader.userName, {
+    await screen.findByText(mockTeamUserGroup.userGroupHeader.userName, {
       exact: false,
     })
   })
@@ -262,6 +262,7 @@ describe('SynapseTableCell tests', () => {
       ...tableCellProps,
       columnType: ColumnTypeEnum.USERID,
       columnValue: MOCK_USER_ID.toString(),
+      rowData: [MOCK_USER_ID.toString()],
     })
 
     await screen.findByTestId('UserBadge')
@@ -274,6 +275,7 @@ describe('SynapseTableCell tests', () => {
       ...tableCellProps,
       columnType: ColumnTypeEnum.USERID,
       columnValue: mockMarkdownColumnValue,
+      rowData: [mockMarkdownColumnValue],
       columnLinkConfig: {
         isMarkdown: true,
         matchColumnName: 'a',
@@ -290,6 +292,7 @@ describe('SynapseTableCell tests', () => {
       ...tableCellProps,
       columnType: ColumnTypeEnum.STRING,
       columnValue: mockColumnValue,
+      rowData: [mockColumnValue],
     })
 
     await screen.findByText(mockColumnValue)
@@ -300,6 +303,7 @@ describe('SynapseTableCell tests', () => {
       ...tableCellProps,
       columnType: ColumnTypeEnum.DATE,
       columnValue: mockDateValue,
+      rowData: [mockDateValue],
     })
 
     await screen.findByText(formatDate(dayjs(Number(mockDateValue))))
@@ -310,6 +314,7 @@ describe('SynapseTableCell tests', () => {
       ...tableCellProps,
       columnType: ColumnTypeEnum.DATE_LIST,
       columnValue: MOCKED_DATE_LIST,
+      rowData: [MOCKED_DATE_LIST],
     })
 
     await screen.findByText(formatDate(dayjs(Number(MOCK_DATE_VALUE))))
@@ -320,6 +325,7 @@ describe('SynapseTableCell tests', () => {
       ...tableCellProps,
       columnType: ColumnTypeEnum.INTEGER_LIST,
       columnValue: MOCKED_INTEGER_LIST,
+      rowData: [MOCKED_INTEGER_LIST],
     })
 
     await screen.findByText('10,', { exact: false })
@@ -331,6 +337,7 @@ describe('SynapseTableCell tests', () => {
       ...tableCellProps,
       columnType: ColumnTypeEnum.BOOLEAN_LIST,
       columnValue: MOCKED_BOOLEAN_LIST,
+      rowData: [MOCKED_BOOLEAN_LIST],
     })
 
     await screen.findByText('true,')
@@ -341,6 +348,8 @@ describe('SynapseTableCell tests', () => {
     renderTableCell({
       ...tableCellProps,
       columnType: ColumnTypeEnum.DATE,
+      columnValue: null,
+      rowData: [null],
     })
 
     await screen.findByText(NOT_SET_DISPLAY_VALUE)

@@ -648,8 +648,12 @@ export class KeyFactory {
     return this.getKey('passingRecord', userId)
   }
 
-  public getSubmissionTeamsQueryKey(challengeId: string) {
-    return this.getKey('submissionTeams', challengeId)
+  public getSubmissionTeamsQueryKey(
+    challengeId: string,
+    limit?: number,
+    offset?: number,
+  ) {
+    return this.getKey('submissionTeams', challengeId, { limit, offset })
   }
 
   public getUserProjectsQueryKey(

@@ -1,9 +1,4 @@
 import {
-  ACT_TEAM_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '../../utils/SynapseConstants'
-import {
   UserBundle,
   UserGroupHeader,
   UserProfile,
@@ -119,86 +114,36 @@ export const mockUserGroupHeader3: UserGroupHeader = {
   isIndividual: true,
 }
 
-type MockUserOrTeamData = {
+export type MockUserOrTeamData = {
   id: number
   userProfile: UserProfile | null
   userBundle: UserBundle | null
   userGroupHeader: UserGroupHeader
 }
 
-const mockUserData1: MockUserOrTeamData = {
+export const mockUserData1: MockUserOrTeamData = {
   id: MOCK_USER_ID,
   userProfile: mockUserProfileData,
   userBundle: mockUserBundle,
   userGroupHeader: mockUserGroupHeader,
 }
 
-const mockUserData2: MockUserOrTeamData = {
+export const mockUserData2: MockUserOrTeamData = {
   id: MOCK_USER_ID_2,
   userProfile: mockUserProfileData2,
   userBundle: mockUserBundle2,
   userGroupHeader: mockUserGroupHeader2,
 }
 
-const mockUserData3: MockUserOrTeamData = {
+export const mockUserData3: MockUserOrTeamData = {
   id: MOCK_USER_ID_3,
   userProfile: mockUserProfileData3,
   userBundle: mockUserBundle3,
   userGroupHeader: mockUserGroupHeader3,
 }
 
-export const MOCK_TEAM_ID = 987654
-
-export const mockTeamData: MockUserOrTeamData = {
-  id: MOCK_TEAM_ID,
-  userProfile: null,
-  userBundle: null,
-  userGroupHeader: {
-    ownerId: MOCK_TEAM_ID.toString(),
-    userName: 'Mock Team',
-    isIndividual: false,
-  },
-}
-
-const mockActData: MockUserOrTeamData = {
-  id: ACT_TEAM_ID,
-  userProfile: null,
-  userBundle: null,
-  userGroupHeader: {
-    ownerId: ACT_TEAM_ID.toString(),
-    userName: 'Synapse Access and Compliance Team',
-    isIndividual: false,
-  },
-}
-
-const mockPublicGroupData: MockUserOrTeamData = {
-  id: PUBLIC_PRINCIPAL_ID,
-  userProfile: null,
-  userBundle: null,
-  userGroupHeader: {
-    ownerId: PUBLIC_PRINCIPAL_ID.toString(),
-    userName: 'PUBLIC',
-    isIndividual: false,
-  },
-}
-
-const mockAuthenticatedGroupData: MockUserOrTeamData = {
-  id: AUTHENTICATED_PRINCIPAL_ID,
-  userProfile: null,
-  userBundle: null,
-  userGroupHeader: {
-    ownerId: AUTHENTICATED_PRINCIPAL_ID.toString(),
-    userName: 'AUTHENTICATED_USERS',
-    isIndividual: false,
-  },
-}
-
 export const mockUserData: MockUserOrTeamData[] = [
   mockUserData1,
   mockUserData2,
   mockUserData3,
-  mockTeamData,
-  mockActData,
-  mockAuthenticatedGroupData,
-  mockPublicGroupData,
 ]

@@ -1,8 +1,11 @@
 import {
+  QueryFunction,
+  QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
+  useQueries,
   useQuery,
   useQueryClient,
   UseQueryOptions,
@@ -14,21 +17,21 @@ import {
   AccessApproval,
   AccessControlList,
   AccessRequirement,
+  AccessRequirementSearchRequest,
+  AccessRequirementSearchResponse,
   AccessRequirementStatus,
   ACTSubmissionStatus,
+  CreateAccessApprovalRequest,
   ManagedACTAccessRequirementStatus,
   Renewal,
   Request,
+  ResearchProject,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
-import {
-  AccessRequirementSearchRequest,
-  AccessRequirementSearchResponse,
-} from '@sage-bionetworks/synapse-types'
-import { ResearchProject } from '@sage-bionetworks/synapse-types'
 import { sortAccessRequirementsByCompletion } from '../../components/AccessRequirementList/AccessRequirementListUtils'
+import { KeyFactory } from '../KeyFactory'
 
 export function useGetAccessRequirements<T extends AccessRequirement>(
   accessRequirementId: string | number,
@@ -163,24 +166,65 @@ export function useCreateLockAccessRequirement(
   })
 }
 
+function getAccessRequirementStatusQueryOptions<
+  T extends
+    | AccessRequirementStatus
+    | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
+>(
+  keyFactory: KeyFactory,
+  accessToken: string,
+  accessRequirementId: string,
+): //UseQueryOptions<T, SynapseClientError> // for @tanstack/react-query v5
+{ queryKey: QueryKey; queryFn: QueryFunction<T> } {
+  return {
+    queryKey:
+      keyFactory.getAccessRequirementStatusQueryKey(accessRequirementId),
+    queryFn: () =>
+      SynapseClient.getAccessRequirementStatus<T>(
+        accessToken,
+        accessRequirementId,
+      ),
+  }
+}
+
 export function useGetAccessRequirementStatus<
   T extends
     | AccessRequirementStatus
     | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
 >(
   accessRequirementId: string,
+  options?: Partial<UseQueryOptions<T, SynapseClientError>>,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  const queryOptions = getAccessRequirementStatusQueryOptions<T>(
+    keyFactory,
+    accessToken!,
+    accessRequirementId,
+  )
+
+  return useQuery(queryOptions.queryKey, queryOptions.queryFn, options)
+}
+
+export function useGetAccessRequirementStatuses<
+  T extends
+    | AccessRequirementStatus
+    | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
+>(
+  accessRequirementIds: string[],
   options?: UseQueryOptions<T, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<T, SynapseClientError>(
-    keyFactory.getAccessRequirementStatusQueryKey(accessRequirementId),
-    () =>
-      SynapseClient.getAccessRequirementStatus<T>(
-        accessToken,
-        accessRequirementId,
+  return useQueries(
+    accessRequirementIds.map(id => ({
+      ...options,
+      ...getAccessRequirementStatusQueryOptions<T>(
+        keyFactory,
+        accessToken!,
+        id,
       ),
-    options,
+    })),
   )
 }
 
@@ -297,31 +341,32 @@ export function useCreateAccessApproval(
   options?: UseMutationOptions<
     AccessApproval,
     SynapseClientError,
-    AccessApproval
+    CreateAccessApprovalRequest
   >,
 ) {
   const { accessToken } = useSynapseContext()
   const queryClient = useQueryClient()
   const { keyFactory } = useSynapseContext()
 
-  return useMutation<AccessApproval, SynapseClientError, AccessApproval>(
-    request => SynapseClient.createAccessApproval(accessToken, request),
-    {
-      ...options,
-      onSuccess: async (data, variables, ctx) => {
-        // Invalidate query for AR status
-        await queryClient.invalidateQueries(
-          keyFactory.getAccessRequirementStatusQueryKey(
-            String(variables.requirementId),
-          ),
-        )
-        if (options?.onSuccess) {
-          return options.onSuccess(data, variables, ctx)
-        }
-        return
-      },
+  return useMutation<
+    AccessApproval,
+    SynapseClientError,
+    CreateAccessApprovalRequest
+  >(request => SynapseClient.createAccessApproval(accessToken, request), {
+    ...options,
+    onSuccess: async (data, variables, ctx) => {
+      // Invalidate query for AR status
+      await queryClient.invalidateQueries(
+        keyFactory.getAccessRequirementStatusQueryKey(
+          String(variables.requirementId),
+        ),
+      )
+      if (options?.onSuccess) {
+        return options.onSuccess(data, variables, ctx)
+      }
+      return
     },
-  )
+  })
 }
 
 export function useCancelDataAccessRequest(
