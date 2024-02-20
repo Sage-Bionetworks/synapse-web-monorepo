@@ -63,14 +63,17 @@ const addFilesToDownloadListResponse: AddToDownloadListResponse = {
 
 let receivedQueryVisualizationContext: QueryVisualizationContextType | undefined
 
-async function setUp() {
+async function setUp(rowSelectionPrimaryKeyColumn?: string) {
   const user = userEvent.setup()
   let component
+  const rowSelectionPrimaryKey = rowSelectionPrimaryKeyColumn
+    ? [rowSelectionPrimaryKeyColumn]
+    : undefined
   act(() => {
     component = render(
       <QueryWrapper
         initQueryRequest={mockQueryBundleRequest}
-        rowSelectionPrimaryKey={['id']}
+        rowSelectionPrimaryKey={rowSelectionPrimaryKey}
       >
         <QueryVisualizationWrapper>
           <QueryVisualizationContextConsumer>
@@ -176,6 +179,7 @@ describe('TableQueryDownloadConfirmation', () => {
       query: mockQueryBundleRequest.query,
       concreteType:
         'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+      useVersionNumber: true,
     })
 
     act(() => {
@@ -237,6 +241,7 @@ describe('TableQueryDownloadConfirmation', () => {
       query: mockQueryBundleRequest.query,
       concreteType:
         'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+      useVersionNumber: true,
     })
 
     act(() => {
@@ -258,5 +263,24 @@ describe('TableQueryDownloadConfirmation', () => {
     expect(receivedQueryVisualizationContext?.showDownloadConfirmation).toBe(
       false,
     )
+  })
+
+  it('setting the row primary key indicates that the row version should not be used', async () => {
+    await setUp('fileSynapseID')
+    expect(mockDownloadConfirmationUi).toHaveBeenCalled()
+    const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
+
+    // Call under test
+    act(() => {
+      passedProps.onAddToDownloadCart()
+    })
+
+    expect(mutationMockReturnValue.mutate).toHaveBeenCalledTimes(1)
+    expect(mutationMockReturnValue.mutate).toHaveBeenCalledWith({
+      query: mockQueryBundleRequest.query,
+      concreteType:
+        'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+      useVersionNumber: false,
+    })
   })
 })
