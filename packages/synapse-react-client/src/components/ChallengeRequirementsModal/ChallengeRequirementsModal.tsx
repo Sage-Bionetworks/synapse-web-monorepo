@@ -104,6 +104,8 @@ export default function ChallengeRequirementsModal(
     registrationError,
   ].filter((e): e is SynapseClientError => Boolean(e))
 
+   // It's possible that the user joined the team, but requirements on the team changed since they became a member
+   // They do not need to re-join the team, but they should still be prompted to accept the requirements
   let registerButtonText = teamMembershipStatus?.isMember
     ? 'Continue'
     : 'Register'
@@ -146,8 +148,6 @@ export default function ChallengeRequirementsModal(
       }}
       confirmButtonProps={{
         children: registerButtonText,
-        // It's possible that the user joined the team, but requirements on the team changed since they became a member
-        // They do not need to re-join the team, but they should still be prompted to accept the requirements
         startIcon: registrationIsPending ? <SynapseSpinner /> : undefined,
         disabled: !meetsAllRequirements || registrationIsPending,
       }}
