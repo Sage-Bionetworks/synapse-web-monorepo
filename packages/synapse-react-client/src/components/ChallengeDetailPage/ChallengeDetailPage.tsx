@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 import ChallengeRegisterButton from '../ChallengeRegisterButton'
 import ChallengeTeamWizard from '../ChallengeTeamWizard'
-import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
-import { useGetEntity, useGetEntityChallenge } from '../../synapse-queries'
+import {
+  useGetEntityChallenge,
+  useGetUserSubmissionTeams,
+} from '../../synapse-queries'
 import ConfirmationDialog from '../ConfirmationDialog'
-import { SynapseQueries, displayToast, useSynapseContext } from '../..'
+import { displayToast, SynapseQueries, useSynapseContext } from '../..'
 import { useDeleteTeamMembership } from '../../synapse-queries/team/useTeamMembers'
+import ChallengeRequirementsModal from '../ChallengeRequirementsModal/ChallengeRequirementsModal'
 
 export type ChallengeDetailPageProps = {
   projectId: string
@@ -13,21 +16,38 @@ export type ChallengeDetailPageProps = {
 
 export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
   const { accessToken } = useSynapseContext()
-  const [showWizard, setShowWizard] = useState<boolean>(false)
-  const [showRequirements, setShowRequirements] = useState<boolean>(false)
+  const isLoggedIn = !!accessToken
+  const [showSubmissionTeamWizard, setShowSubmissionTeamWizard] =
+    useState<boolean>(false)
+  const [showRegistrationModal, setShowRegistrationModal] =
+    useState<boolean>(false)
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<boolean>(false)
   const { data: userProfile } = SynapseQueries.useGetCurrentUserProfile()
-  const { data: project } = useGetEntity(projectId)
 
   const toggleShowWizard = (b: boolean) => {
-    setShowWizard(b)
+    setShowSubmissionTeamWizard(b)
   }
   const onJoinClick = () => {
-    setShowRequirements(true)
+    setShowRegistrationModal(true)
   }
   const onLeaveClick = () => {
     setShowLeaveConfirm(true)
   }
+
+  const { data: challenge } = useGetEntityChallenge(projectId)
+
+  // Determine whether the given user belongs to any submission teams
+  // If so, we should not show them the ChallengeTeamWizard once they have registered.
+  const { data: userSubmissionTeams } = useGetUserSubmissionTeams(
+    challenge?.id!,
+    1,
+    0,
+    {
+      enabled: Boolean(isLoggedIn && challenge),
+    },
+  )
+  const isMemberOfSubmissionTeam =
+    userSubmissionTeams && userSubmissionTeams.results.length > 0
 
   const { mutate: leaveChallenge } = useDeleteTeamMembership({
     onSuccess: () => {
@@ -39,15 +59,15 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
   })
 
   const doLeaveChallenge = () => {
-    if (accessToken && challenge && userProfile) {
+    if (isLoggedIn && challenge && userProfile) {
       /**
        * What does it mean to leave a challenge?
        * Simply leaving the participant team may not be enough...
-       * the user may also belong to one or more challenge team(s).
+       * the user may also belong to one or more challenge submission team(s).
        * Should they be removed from those?
        * What if the team belongs to more than one challenge?
        * Should the team be removed from the challenge instead?
-       * Only a team admin can request this however.
+       * Only a team admin can request this, however.
        */
 
       leaveChallenge({
@@ -58,13 +78,13 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
   }
 
   const handleRequirementsHide = () => {
-    setShowRequirements(false)
-    if (accessToken) {
-      setShowWizard(true)
-    }
+    setShowRegistrationModal(false)
   }
-
-  const { data: challenge } = useGetEntityChallenge(projectId)
+  const handleRegistrationComplete = () => {
+    setShowRegistrationModal(false)
+    // Only guide the user to join/create a submission team if they are not already part of one.
+    setShowSubmissionTeamWizard(!isMemberOfSubmissionTeam)
+  }
 
   return (
     <>
@@ -73,37 +93,29 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
         onJoinClick={onJoinClick}
         onLeaveClick={onLeaveClick}
       />
-      {showRequirements && (
-        <AccessRequirementList
-          entityId={projectId}
-          teamId={challenge?.participantTeamId}
-          onHide={handleRequirementsHide}
-          renderAsModal={true}
-          requestObjectName={project?.name}
-          dialogTitle="Challenge Terms and Conditions"
-        />
-      )}
-      {showWizard && (
-        <ChallengeTeamWizard
-          projectId={projectId}
-          onClose={() => {
-            toggleShowWizard(false)
-          }}
-          isShowingModal={true}
-        />
-      )}
-      {showLeaveConfirm && (
-        <ConfirmationDialog
-          open={showLeaveConfirm}
-          title={'Leave this Challenge?'}
-          content={'Are you sure you want to leave this Challenge?'}
-          onCancel={() => setShowLeaveConfirm(false)}
-          onConfirm={() => {
-            doLeaveChallenge()
-            setShowLeaveConfirm(false)
-          }}
-        />
-      )}
+      <ChallengeRequirementsModal
+        open={showRegistrationModal}
+        projectId={projectId}
+        onRegisterComplete={handleRegistrationComplete}
+        onCancel={handleRequirementsHide}
+      />
+      <ChallengeTeamWizard
+        projectId={projectId}
+        onClose={() => {
+          toggleShowWizard(false)
+        }}
+        isShowingModal={showSubmissionTeamWizard}
+      />
+      <ConfirmationDialog
+        open={showLeaveConfirm}
+        title={'Leave this Challenge?'}
+        content={'Are you sure you want to leave this Challenge?'}
+        onCancel={() => setShowLeaveConfirm(false)}
+        onConfirm={() => {
+          doLeaveChallenge()
+          setShowLeaveConfirm(false)
+        }}
+      />
     </>
   )
 }
