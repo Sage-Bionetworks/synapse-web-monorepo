@@ -21,7 +21,7 @@ import {
 import {
   useGetCurrentUserProfile,
   useGetEntityChallenge,
-  useGetUserSubmissionTeamsInfinite,
+  useGetUserSubmissionTeams,
 } from '../../synapse-queries'
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMembers'
@@ -165,7 +165,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
 
   // Determine whether or not the given user belongs to any submission teams
   const { data: userSubmissionTeams, error: userSubmissionTeamError } =
-    useGetUserSubmissionTeamsInfinite(challenge?.id ?? EMPTY_ID, 1)
+    useGetUserSubmissionTeams(challenge?.id ?? EMPTY_ID, 1)
   useEffect(() => {
     if (userSubmissionTeams) {
       const isReg = userSubmissionTeams.results.length > 0

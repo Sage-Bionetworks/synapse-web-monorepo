@@ -5,25 +5,25 @@ import {
   useGetEntityAlias,
   useGetEntityChallenge,
   useGetEntityPermissions,
-  useGetUserSubmissionTeamsInfinite,
+  useGetUserSubmissionTeams,
   useUpdateEntityACL,
 } from '../../synapse-queries'
 import { useSynapseContext } from '../../utils'
 import {
   ACCESS_TYPE,
   Challenge,
+  Entity,
+  EntityType,
   Project,
+  PROJECT_CONCRETE_TYPE_VALUE,
   ResourceAccess,
   Team,
 } from '@sage-bionetworks/synapse-types'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { useGetTeam } from '../../synapse-queries/team/useTeam'
 import { createEntity } from '../../synapse-client'
-import { PROJECT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import SubmissionDirectoryList from './SubmissionDirectoryList'
 import ChallengeSubmissionStepper from './ChallengeSubmissionStepper'
-import { EntityType } from '@sage-bionetworks/synapse-types'
-import { Entity } from '@sage-bionetworks/synapse-types'
 
 export type EntityItem = Entity & {
   repositoryName?: string
@@ -87,7 +87,7 @@ export function ChallengeSubmission({
   })
 
   // Determine whether or not the given user belongs to any submission teams
-  const { data: userSubmissionTeams } = useGetUserSubmissionTeamsInfinite(
+  const { data: userSubmissionTeams } = useGetUserSubmissionTeams(
     challenge?.id ?? EMPTY_ID,
     2,
   )

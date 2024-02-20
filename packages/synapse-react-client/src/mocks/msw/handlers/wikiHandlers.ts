@@ -1,6 +1,6 @@
 import { rest } from 'msw'
 import { ACCESS_REQUIREMENT_WIKI_PAGE } from '../../../utils/APIConstants'
-import { WikiPage } from '@sage-bionetworks/synapse-types'
+import { FileHandleResults, WikiPage } from '@sage-bionetworks/synapse-types'
 import { SynapseApiResponse } from '../handlers'
 import { mockWikiPages } from '../../mockWiki'
 
@@ -17,6 +17,16 @@ export const getWikiHandlers = (backendOrigin: string) => [
       if (wikiPage) {
         response = wikiPage
         status = 200
+      }
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+  rest.get(
+    `${backendOrigin}/repo/v1/:objectType/:objectId/wiki2/:wikiId/attachmenthandles`,
+    async (req, res, ctx) => {
+      let status = 200
+      let response: SynapseApiResponse<FileHandleResults> = {
+        list: [],
       }
       return res(ctx.status(status), ctx.json(response))
     },

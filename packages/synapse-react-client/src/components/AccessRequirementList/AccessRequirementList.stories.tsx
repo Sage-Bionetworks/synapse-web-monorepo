@@ -114,8 +114,8 @@ export const HasMetRequirements: Story = {
         ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
         ...getAccessRequirementEntityBindingHandlers(MOCK_REPO_ORIGIN),
 
-        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, {
-          [mockManagedACTAccessRequirement.id.toString()]: {
+        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
+          {
             accessRequirementId: mockManagedACTAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
@@ -128,27 +128,26 @@ export const HasMetRequirements: Story = {
               state: SubmissionState.APPROVED,
             },
           },
-          [mockSelfSignAccessRequirement.id.toString()]: {
+          {
             accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
             isApproved: true,
           },
 
-          [mockToUAccessRequirement.id.toString()]: {
+          {
             accessRequirementId: mockToUAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
             isApproved: true,
           },
-
-          [mockACTAccessRequirement.id.toString()]: {
+          {
             accessRequirementId: mockACTAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
             isApproved: true,
           },
-        }),
+        ]),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
       ],
     },
@@ -169,34 +168,32 @@ export const HasUnmetRequirements: Story = {
         ...getTwoFactorAuthStatusHandler(false),
         ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
         ...getAccessRequirementEntityBindingHandlers(MOCK_REPO_ORIGIN),
-        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, {
-          [mockManagedACTAccessRequirement.id.toString()]: {
+        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
+          {
             accessRequirementId: mockManagedACTAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
             isApproved: false,
           },
-          [mockSelfSignAccessRequirement.id.toString()]: {
+          {
             accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
             isApproved: false,
           },
-
-          [mockToUAccessRequirement.id.toString()]: {
+          {
             accessRequirementId: mockToUAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
             isApproved: false,
           },
-
-          [mockACTAccessRequirement.id.toString()]: {
+          {
             accessRequirementId: mockACTAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
             isApproved: false,
           },
-        }),
+        ]),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         ...getResearchProjectHandlers(MOCK_REPO_ORIGIN),
         rest.post(
@@ -207,6 +204,12 @@ export const HasUnmetRequirements: Story = {
               submitterId: MOCK_USER_ID.toString(),
               accessorId: MOCK_USER_ID.toString(),
               state: ApprovalState.APPROVED,
+              id: 123,
+              etag: 'etag',
+              createdOn: new Date().toISOString(),
+              modifiedOn: new Date().toISOString(),
+              createdBy: String(MOCK_USER_ID),
+              modifiedBy: String(MOCK_USER_ID),
             }
             return res(ctx.status(201), ctx.json(response))
           },
@@ -230,14 +233,14 @@ export const NotValidated: Story = {
         ...getTwoFactorAuthStatusHandler(true),
         ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
         ...getAccessRequirementEntityBindingHandlers(MOCK_REPO_ORIGIN),
-        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, {
-          [mockSelfSignAccessRequirement.id.toString()]: {
+        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
+          {
             accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
             isApproved: false,
           },
-        }),
+        ]),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         rest.post(
           `${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`,
@@ -247,6 +250,12 @@ export const NotValidated: Story = {
               submitterId: MOCK_USER_ID.toString(),
               accessorId: MOCK_USER_ID.toString(),
               state: ApprovalState.APPROVED,
+              id: 123,
+              etag: 'etag',
+              createdOn: new Date().toISOString(),
+              modifiedOn: new Date().toISOString(),
+              createdBy: String(MOCK_USER_ID),
+              modifiedBy: String(MOCK_USER_ID),
             }
             return res(ctx.status(201), ctx.json(response))
           },
@@ -270,14 +279,14 @@ export const NotCertified: Story = {
         ...getTwoFactorAuthStatusHandler(true),
         ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
         ...getAccessRequirementEntityBindingHandlers(MOCK_REPO_ORIGIN),
-        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, {
-          [mockSelfSignAccessRequirement.id.toString()]: {
+        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
+          {
             accessRequirementId: mockSelfSignAccessRequirement.id.toString(),
             concreteType:
               'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
             isApproved: false,
           },
-        }),
+        ]),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         rest.post(
           `${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`,
@@ -287,6 +296,12 @@ export const NotCertified: Story = {
               submitterId: MOCK_USER_ID.toString(),
               accessorId: MOCK_USER_ID.toString(),
               state: ApprovalState.APPROVED,
+              id: 123,
+              etag: 'etag',
+              createdOn: new Date().toISOString(),
+              modifiedOn: new Date().toISOString(),
+              createdBy: String(MOCK_USER_ID),
+              modifiedBy: String(MOCK_USER_ID),
             }
             return res(ctx.status(201), ctx.json(response))
           },

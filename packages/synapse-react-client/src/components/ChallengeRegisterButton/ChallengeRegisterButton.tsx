@@ -6,7 +6,7 @@ import { useSynapseContext } from '../../utils'
 import {
   useGetCurrentUserProfile,
   useGetEntityChallenge,
-  useGetUserSubmissionTeamsInfinite,
+  useGetUserSubmissionTeams,
 } from '../../synapse-queries'
 import { Challenge, PaginatedIds } from '@sage-bionetworks/synapse-types'
 import { useGetIsUserMemberOfTeam } from '../../synapse-queries/team/useTeamMembers'
@@ -77,7 +77,7 @@ const ChallengeRegisterButton = ({
     },
   )
 
-  useGetUserSubmissionTeamsInfinite(challenge?.id ?? '0', 20, {
+  useGetUserSubmissionTeams(challenge?.id ?? '0', 20, 0, {
     enabled: !!challenge && !!accessToken,
     onSettled: (data: PaginatedIds | undefined, error) => {
       if (data) {

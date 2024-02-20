@@ -7,24 +7,28 @@ import {
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { PaginatedIds, PaginatedResults } from '@sage-bionetworks/synapse-types'
-import { Team } from '@sage-bionetworks/synapse-types'
+import {
+  PaginatedIds,
+  PaginatedResults,
+  Team,
+} from '@sage-bionetworks/synapse-types'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
-export function useGetUserSubmissionTeamsInfinite(
+export function useGetUserSubmissionTeams(
   challengeId: string,
   limit?: number,
+  offset: number = 10,
   options?: UseQueryOptions<PaginatedIds, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
   return useQuery<PaginatedIds, SynapseClientError>(
-    keyFactory.getSubmissionTeamsQueryKey(challengeId),
-    async context => {
+    keyFactory.getSubmissionTeamsQueryKey(challengeId, limit, offset),
+    async () => {
       return SynapseClient.getSubmissionTeams(
         accessToken,
         challengeId,
-        context.pageParam, // pass the context.pageParam for the new offset,
+        offset,
         limit ?? 10,
       )
     },

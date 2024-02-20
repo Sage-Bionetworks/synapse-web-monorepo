@@ -128,6 +128,7 @@ import {
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken,
   ColumnModel,
+  CreateAccessApprovalRequest,
   CreateChallengeTeamRequest,
   CreateDiscussionReply,
   CreateDiscussionThread,
@@ -1444,7 +1445,7 @@ export const addTeamMemberAsAuthenticatedUserOrAdmin = (
   memberId: string,
   accessToken: string,
 ) => {
-  return doPut(
+  return doPut<void>(
     TEAM_ID_MEMBER_ID_WITH_NOTIFICATION(teamId, memberId),
     undefined,
     accessToken,
@@ -3018,7 +3019,7 @@ export const getAccessApproval = async (
  */
 export const createAccessApproval = async (
   accessToken: string | undefined,
-  accessApproval: AccessApproval,
+  accessApproval: CreateAccessApprovalRequest,
 ): Promise<AccessApproval> => {
   return doPost<AccessApproval>(
     ACCESS_APPROVAL,

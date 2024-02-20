@@ -1,17 +1,17 @@
 import {
   Challenge,
   ChallengeTeam,
+  ChallengeTeamPagedResults,
   ListWrapper,
-  PaginatedResults,
   Team,
   TeamMember,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
-import { MOCK_USER_ID, mockUserGroupHeader } from './user/mock_user_profile'
+import { MOCK_USER_ID, mockUserGroupHeader } from '../user/mock_user_profile'
+import { MOCK_CHALLENGE_PARTICIPANT_TEAM_ID } from '../team/mockTeam'
 
 export const MOCK_CHALLENGE_ID = '1234'
 export const MOCK_CHALLENGE_PROJECT_ID = 'syn12345678'
-export const MOCK_PARTICIPANT_TEAM_ID = '123456'
 const etag = 'f1b29c62-e987-4e69-9cec-198bf017a586'
 
 const getRandomId = (len: number) => {
@@ -23,11 +23,11 @@ export const mockChallenge: Challenge = {
   id: MOCK_CHALLENGE_ID,
   etag,
   projectId: MOCK_CHALLENGE_PROJECT_ID,
-  participantTeamId: MOCK_PARTICIPANT_TEAM_ID,
+  participantTeamId: String(MOCK_CHALLENGE_PARTICIPANT_TEAM_ID),
 }
 
 export const mockChallengeTeamMember: TeamMember = {
-  teamId: MOCK_PARTICIPANT_TEAM_ID,
+  teamId: String(MOCK_CHALLENGE_PARTICIPANT_TEAM_ID),
   member: mockUserGroupHeader,
   isAdmin: false,
 }
@@ -37,7 +37,7 @@ export const mockChallengeTeamMembershipStatus = (
   canJoin: boolean = true,
 ): TeamMembershipStatus => {
   return {
-    teamId: MOCK_PARTICIPANT_TEAM_ID,
+    teamId: String(MOCK_CHALLENGE_PARTICIPANT_TEAM_ID),
     userId: MOCK_USER_ID.toString(),
     isMember,
     hasOpenInvitation: false,
@@ -49,7 +49,9 @@ export const mockChallengeTeamMembershipStatus = (
   }
 }
 
-export const mockChallengeTeam = (): ChallengeTeam => {
+export const mockChallengeTeam = (
+  override?: Partial<ChallengeTeam>,
+): ChallengeTeam => {
   const id: string = getRandomId(6).toString()
   const teamId: string = getRandomId(6).toString()
   return {
@@ -58,10 +60,11 @@ export const mockChallengeTeam = (): ChallengeTeam => {
     challengeId: MOCK_CHALLENGE_ID,
     teamId,
     message: `Message for team ${teamId}`,
+    ...override,
   }
 }
 
-export const mockChallengeTeamResults = (): PaginatedResults<ChallengeTeam> => {
+export const mockChallengeTeamResults = (): ChallengeTeamPagedResults => {
   const results: ChallengeTeam[] = []
   do {
     results.push(mockChallengeTeam())

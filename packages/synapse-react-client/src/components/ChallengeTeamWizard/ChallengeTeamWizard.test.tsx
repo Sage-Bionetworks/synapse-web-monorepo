@@ -16,7 +16,7 @@ import {
   mockChallengeTeamMembershipStatus,
   mockChallengeTeamResults,
   mockTeamList,
-} from '../../mocks/mockChallenge'
+} from '../../mocks/challenge/mockChallenge'
 import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import { ChallengeTeamWizardProps } from './ChallengeTeamWizard'
 import userEvent from '@testing-library/user-event'

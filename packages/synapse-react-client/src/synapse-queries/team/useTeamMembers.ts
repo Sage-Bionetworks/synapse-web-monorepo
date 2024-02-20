@@ -10,16 +10,16 @@ import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
   PaginatedResults,
+  TeamMember,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
-import { TeamMember } from '@sage-bionetworks/synapse-types'
 
 export function useGetTeamMembers(
   teamId: string | number,
   options?: UseQueryOptions<PaginatedResults<TeamMember>, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<PaginatedResults<TeamMember>, SynapseClientError>(
+  return useQuery(
     keyFactory.getTeamMembersQueryKey(String(teamId)),
     () => SynapseClient.getTeamMembers(accessToken, teamId, '', 50, 0),
     options,
@@ -33,7 +33,7 @@ export function useGetIsUserMemberOfTeam(
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<TeamMember | null, SynapseClientError>(
+  return useQuery(
     keyFactory.getIsUserMemberOfTeamQueryKey(teamId, userId),
     () => SynapseClient.getIsUserMemberOfTeam(teamId, userId, accessToken),
     options,
@@ -41,19 +41,55 @@ export function useGetIsUserMemberOfTeam(
 }
 
 export function useGetMembershipStatus(
-  teamId: string | number,
-  userId: string | number,
+  teamId: string,
+  userId: string,
   options?: UseQueryOptions<TeamMembershipStatus, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<TeamMembershipStatus, SynapseClientError>(
-    keyFactory.getMembershipStatusQueryKey(
-      teamId.toString(),
-      userId.toString(),
-    ),
+  return useQuery(
+    keyFactory.getMembershipStatusQueryKey(teamId, userId),
     () => SynapseClient.getMembershipStatus(teamId, userId, accessToken),
     options,
+  )
+}
+
+export function useAddMemberToTeam() {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<
+    void,
+    SynapseClientError,
+    { teamId: string; userId: string }
+  >(
+    ({ teamId, userId }) =>
+      SynapseClient.addTeamMemberAsAuthenticatedUserOrAdmin(
+        teamId,
+        userId,
+        accessToken!,
+      ),
+    {
+      onSuccess: async (data, variables, ctx) => {
+        await Promise.all([
+          queryClient.invalidateQueries(
+            keyFactory.getMembershipStatusQueryKey(
+              variables.teamId,
+              variables.userId,
+            ),
+          ),
+          queryClient.invalidateQueries(
+            keyFactory.getIsUserMemberOfTeamQueryKey(
+              variables.teamId,
+              variables.userId,
+            ),
+          ),
+          queryClient.invalidateQueries(
+            keyFactory.getTeamMembersQueryKey(variables.teamId),
+          ),
+        ])
+      },
+    },
   )
 }
 
@@ -68,22 +104,28 @@ export function useDeleteTeamMembership(
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, TeamMembershipParam>(
-    variables =>
+  return useMutation<void, SynapseClientError, TeamMembershipParam>({
+    ...options,
+    mutationFn: variables =>
       deleteMemberFromTeam(variables.teamId, variables.userId, accessToken),
-    {
-      ...options,
-      onSuccess: async (data, variables, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getIsUserMemberOfTeamQueryKey(
+    onSuccess: async (data, variables, ctx) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getIsUserMemberOfTeamQueryKey(
             variables.teamId,
             variables.userId,
           ),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(data, variables, ctx)
-        }
-      },
+        }),
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getMembershipStatusQueryKey(
+            variables.teamId,
+            variables.userId,
+          ),
+        }),
+      ])
+      if (options?.onSuccess) {
+        await options.onSuccess(data, variables, ctx)
+      }
     },
-  )
+  })
 }
