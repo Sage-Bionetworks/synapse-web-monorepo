@@ -81,6 +81,9 @@ export function TableQueryDownloadConfirmation() {
     ? undefined
     : queryResultResponse?.responseBody?.sumFileSizes?.sumFileSizesBytes
 
+  // PORTALS-2954: We can only rely on the row version number if the rowID is meaningful.
+  // If rowSelectionPrimaryKey is undefined, then try to use the row version number
+  const useVersionNumber = rowSelectionPrimaryKey == undefined
   return (
     <DownloadConfirmationUI
       onAddToDownloadCart={() =>
@@ -88,6 +91,7 @@ export function TableQueryDownloadConfirmation() {
           query: queryBundleRequest?.query,
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+          useVersionNumber: useVersionNumber,
         })
       }
       fileCount={fileCount}
