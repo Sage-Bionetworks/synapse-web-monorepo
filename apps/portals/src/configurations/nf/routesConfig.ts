@@ -342,16 +342,29 @@ const routes: GenericRoute[] = [
 
   {
     path: 'About',
-    exact: true,
-    synapseConfigArray: [
+    routes: [
       {
-        name: 'Markdown',
-        title: 'About',
-        props: {
-          ownerId: 'syn26451327',
-          wikiId: '614265',
-          loadingSkeletonRowCount: 20,
-        },
+        path: 'NF-OSI',
+        hideRouteFromNavbar: false,
+        synapseConfigArray: [
+          {
+            name: 'Markdown',
+            title: 'About',
+            props: {
+              ownerId: 'syn26451327',
+              wikiId: '614265',
+              loadingSkeletonRowCount: 20,
+            },
+          },
+        ],
+      },
+      {
+        displayName: 'Data Standards',
+        hideRouteFromNavbar: false,
+        path: undefined,
+        target: '_blank',
+        link: 'https://nf-osi.github.io/nf-metadata-dictionary/',
+        synapseConfigArray: [],
       },
     ],
   },
