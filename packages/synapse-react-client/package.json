@@ -135,7 +135,7 @@
     "@babel/runtime": "^7.23.2",
     "@babel/types": "^7.23.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
-    "@faker-js/faker": "^8.0.2",
+    "@faker-js/faker": "^8.4.1",
     "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
     "@googlemaps/jest-mocks": "^2.19.2",
     "@jest/reporters": "^29.6.1",
