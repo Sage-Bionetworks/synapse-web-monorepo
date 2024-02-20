@@ -39,7 +39,7 @@ function EvaluationQueueList({
         return (
           <RadioOption
             value={params.id as string}
-            currentValue={selectedEvaluation}
+            checked={params.id === selectedEvaluation}
             onChange={onEvaluationChange}
             label=""
             style={{ marginBottom: '16px' }}
@@ -84,9 +84,8 @@ function EvaluationQueueList({
         density="compact"
         autoHeight
         loading={isLoading}
-        components={{
-          Header: () => null,
-          Toolbar: () => null,
+        slots={{
+          toolbar: () => null,
         }}
         sx={{
           fontSize: '14px',

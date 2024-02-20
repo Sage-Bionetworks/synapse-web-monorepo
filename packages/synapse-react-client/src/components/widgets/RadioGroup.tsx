@@ -22,7 +22,7 @@ export function RadioGroup<T extends string | boolean | number = string>(
           key={index.toString()}
           label={option.label}
           value={option.value}
-          currentValue={props.value}
+          checked={option.value === props.value}
           onChange={props.onChange}
           disabled={props.disabled}
         />
@@ -34,10 +34,10 @@ export function RadioGroup<T extends string | boolean | number = string>(
 export type RadioOptionProps<T extends string | boolean | number = string> = {
   label: React.ReactNode
   value: T
-  currentValue?: T
   style?: React.CSSProperties
   onChange: (value: T) => void
   disabled?: boolean
+  checked: boolean
 }
 
 export function RadioOption<T extends string | boolean | number = string>(
@@ -52,7 +52,7 @@ export function RadioOption<T extends string | boolean | number = string>(
         onChange={() => {
           // no-op -- change is handled by the div
         }}
-        checked={props.currentValue === props.value}
+        checked={props.checked}
         value={props.value.toString()}
         disabled={props.disabled}
       />

@@ -168,7 +168,7 @@ function SubmissionDirectoryList({
         return (
           <RadioOption
             value={params.id}
-            currentValue={selectedItem?.id}
+            checked={params.id === selectedItem?.id}
             onChange={selectedItemId => {
               entityChangeHandler(selectedItemId as string)
             }}
@@ -374,19 +374,19 @@ function SubmissionDirectoryList({
       </Box>
       <Box>
         <DataGrid
-          initialState={{ pagination: { page: page } }}
           loading={areEntitiesLoading}
           columns={columns}
           rows={getRows(entities)}
-          pageSize={PER_PAGE}
           rowCount={headerResults?.totalChildCount ?? 0}
-          page={page}
           pagination
           paginationMode="server"
-          onPageChange={n => handlePageChange(n)}
+          paginationModel={{ page, pageSize: PER_PAGE }}
+          pageSizeOptions={[PER_PAGE]}
+          onPaginationModelChange={({ page }) => {
+            handlePageChange(page)
+          }}
           density="compact"
           autoHeight
-          rowsPerPageOptions={[PER_PAGE]}
           sx={{
             fontSize: '14px',
             border: 'none',
