@@ -121,47 +121,6 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const { data: userProfile } = useGetCurrentUserProfile()
   // Retrieve the challenge associated with the projectId passed through props
   const { data: challenge } = useGetEntityChallenge(projectId)
-  const participantTeamId: string = challenge
-    ? challenge.participantTeamId
-    : EMPTY_ID
-  const userId = userProfile ? userProfile.ownerId : EMPTY_ID
-
-  // Verify that user is a member of the participant team
-  const { data: challengeTeamMembershipStatus } = useGetMembershipStatus(
-    participantTeamId,
-    userId,
-  )
-  useEffect(() => {
-    if (
-      challengeTeamMembershipStatus &&
-      !challengeTeamMembershipStatus?.isMember &&
-      accessToken
-    ) {
-      addTeamMemberAsAuthenticatedUserOrAdmin(
-        participantTeamId,
-        userId,
-        accessToken,
-      )
-        .then(() => {
-          queryClient.invalidateQueries(
-            keyFactory.getMembershipStatusQueryKey(participantTeamId, userId),
-          )
-          queryClient.invalidateQueries(
-            keyFactory.getIsUserMemberOfTeamQueryKey(participantTeamId, userId),
-          )
-        })
-        .catch(error => {
-          setErrorMessage(error.reason)
-        })
-    }
-  }, [
-    accessToken,
-    participantTeamId,
-    userId,
-    challengeTeamMembershipStatus,
-    queryClient,
-    keyFactory,
-  ])
 
   // Determine whether or not the given user belongs to any submission teams
   const { data: userSubmissionTeams, error: userSubmissionTeamError } =

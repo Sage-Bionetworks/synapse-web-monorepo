@@ -44,8 +44,8 @@ export type AccessRequirementListProps = {
   renderAsModal?: boolean
   /* Overrides the default dialog title. This only applies if renderAsModal is true */
   dialogTitle?: string
-  /* Called when the modal is hidden. This only applies if renderAsModal is true */
-  onHide?: () => void
+  /* Called when the user rejects the terms of a listed AccessRequirement. If renderAsModal is true, this is also called when the user closes the modal. */
+  onHide: () => void
   /* Displays the provided list of access requirements, instead of the ones fetched using the subject ID */
   accessRequirementFromProps?: Array<AccessRequirement>
 } & (
