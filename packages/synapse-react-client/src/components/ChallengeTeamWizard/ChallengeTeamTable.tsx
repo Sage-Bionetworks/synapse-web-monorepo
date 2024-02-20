@@ -108,7 +108,7 @@ export default function ChallengeTeamTable({
         return (
           <RadioOption
             value={params.id}
-            currentValue={selectedTeam}
+            checked={params.id === selectedTeam}
             onChange={teamChangeHandler}
             label=""
             style={{ marginBottom: '16px' }}

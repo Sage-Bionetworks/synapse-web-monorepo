@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@emotion/react": "^11.11.1",
+    "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.16",
-    "@mui/material": "^5.14.17",
+    "@mui/icons-material": "^5.15.10",
+    "@mui/material": "^5.15.10",
     "@react-hookz/web": "^23.1.0",
     "@sage-bionetworks/react-base-table": "^1.13.4",
     "@sage-bionetworks/synapse-types": "workspace:*",
