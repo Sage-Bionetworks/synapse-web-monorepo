@@ -16,8 +16,8 @@ import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetUserSubmissionTeams(
   challengeId: string,
-  limit?: number,
-  offset: number = 10,
+  limit: number = 10,
+  offset?: number,
   options?: UseQueryOptions<PaginatedIds, SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
@@ -29,13 +29,13 @@ export function useGetUserSubmissionTeams(
         accessToken,
         challengeId,
         offset,
-        limit ?? 10,
+        limit,
       )
     },
     {
       ...options,
       getNextPageParam: (lastPage, pages) => {
-        if (lastPage.results.length > 0) return pages.length * (limit ?? 10)
+        if (lastPage.results.length > 0) return pages.length * limit
         //set the new offset to (page * limit)
         else return undefined
       },
