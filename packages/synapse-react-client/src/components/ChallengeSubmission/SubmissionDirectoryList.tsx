@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { RadioOption } from '../widgets/RadioGroup'
@@ -130,9 +130,13 @@ function SubmissionDirectoryList({
   }, [entityType, pageSize])
 
   const queries = useGetEntities(getPageHeaders())
-  const entities = queries
-    .filter(q => q.status === 'success')
-    .map(q => q.data) as EntityItem[]
+  const entities = useMemo(
+    () =>
+      queries
+        .filter(q => q.status === 'success')
+        .map(q => q.data) as EntityItem[],
+    [queries],
+  )
   const areEntitiesLoading = queries.some(q => q.isLoading)
 
   const entityChangeHandler = async (value: string) => {
