@@ -1,7 +1,6 @@
 import { useQuery, UseQueryOptions } from 'react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 import { ActionRequiredList } from '@sage-bionetworks/synapse-types'
 
 export function useGetEntityActionsRequired(

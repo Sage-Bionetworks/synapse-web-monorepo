@@ -6,10 +6,8 @@ import {
   UseQueryOptions,
 } from 'react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context'
-import { PassingRecord } from '@sage-bionetworks/synapse-types'
-import { QuizResponse } from '@sage-bionetworks/synapse-types'
+import { SynapseClientError, useSynapseContext } from '../../utils'
+import { PassingRecord, QuizResponse } from '@sage-bionetworks/synapse-types'
 import { useGetCurrentUserProfile } from './useUserBundle'
 import { USER_BUNDLE_MASK_IS_CERTIFIED } from '../../utils/SynapseConstants'
 
