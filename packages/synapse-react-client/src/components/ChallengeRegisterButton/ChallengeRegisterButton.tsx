@@ -1,102 +1,87 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
-import { Box } from '@mui/system'
+import { Box } from '@mui/material'
 import SpinnerButton from '../SpinnerButton/SpinnerButton'
-import { useSynapseContext } from '../../utils'
 import {
   useGetCurrentUserProfile,
   useGetEntityChallenge,
+  useGetIsUserMemberOfTeam,
   useGetUserSubmissionTeams,
 } from '../../synapse-queries'
-import { Challenge, PaginatedIds } from '@sage-bionetworks/synapse-types'
-import { useGetIsUserMemberOfTeam } from '../../synapse-queries/team/useTeamMembers'
-import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 
 export interface ChallengeRegisterButtonProps {
   projectId: string
-  onChallengeError?: (error: SynapseClientError) => void
+  onError?: (error: SynapseClientError) => void
   onJoinClick?: () => void
   onLeaveClick?: () => void
 }
 
-const EMPTY_ID = ''
-
 const ChallengeRegisterButton = ({
   projectId,
-  onChallengeError,
+  onError,
   onJoinClick,
   onLeaveClick,
 }: ChallengeRegisterButtonProps) => {
   const { accessToken } = useSynapseContext()
-  const [challenge, setChallenge] = useState<Challenge>()
-  const { data: userProfile } = useGetCurrentUserProfile()
-  const [isRegistered, setIsRegistered] = useState<boolean>(false)
-  const [hasSubmissionTeam, setHasSubmissionTeam] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [requestError, setRequestError] = useState<SynapseClientError>()
+  const isLoggedIn = !!accessToken
+  const { data: userProfile } = useGetCurrentUserProfile({
+    enabled: isLoggedIn,
+  })
 
-  useEffect(() => {
-    if (requestError && onChallengeError) onChallengeError(requestError)
-  }, [requestError, onChallengeError])
-
-  useGetEntityChallenge(projectId, {
-    enabled: !!accessToken && !challenge,
-    onSettled: (data, error) => {
-      if (data) {
-        setChallenge(data)
-      }
-      if (error) {
-        setLoading(false)
-        setRequestError(error)
-      }
-    },
+  const {
+    data: challenge,
+    isLoading: isLoadingChallenge,
+    error: getChallengeError,
+  } = useGetEntityChallenge(projectId, {
+    enabled: isLoggedIn,
   })
 
   // Verify that user is a member of the participant team
-  useGetIsUserMemberOfTeam(
-    challenge?.participantTeamId ?? EMPTY_ID,
-    userProfile?.ownerId ?? EMPTY_ID,
+  const {
+    data: teamMembership,
+    isLoading: isLoadingTeamMembership,
+    error: getTeamMembershipError,
+  } = useGetIsUserMemberOfTeam(
+    challenge?.participantTeamId!,
+    userProfile?.ownerId!,
     {
       enabled: !!challenge && !!userProfile,
-      onSettled: (data, error) => {
-        if (data === null) {
-          // User is not a member of the participant team
-          setIsRegistered(false)
-          setLoading(false)
-        }
-        if (data !== null) {
-          // User is a member of the participant team, continue
-          setIsRegistered(true)
-        }
-        if (error) {
-          // Could not determine if user is a member of the participant team
-          setLoading(false)
-          setRequestError(error)
-        }
-      },
     },
   )
 
-  useGetUserSubmissionTeams(challenge?.id ?? '0', 20, 0, {
-    enabled: !!challenge && !!accessToken,
-    onSettled: (data: PaginatedIds | undefined, error) => {
-      if (data) {
-        setHasSubmissionTeam(data.results.length > 0)
-      }
-      if (error) {
-        setRequestError(error)
-      }
-      setLoading(false)
-    },
+  const isRegistered = Boolean(teamMembership)
+
+  const {
+    data: userSubmissionTeams,
+    error: getSubmissionTeamsError,
+    isLoading: isLoadingSubmissionTeams,
+  } = useGetUserSubmissionTeams(challenge?.id!, 20, 0, {
+    enabled: !!challenge && isLoggedIn,
   })
 
-  if (loading) {
+  const hasSubmissionTeam =
+    userSubmissionTeams && userSubmissionTeams.results.length > 0
+  const isMemberOfBothParticipantAndSubmissionTeams =
+    isRegistered && hasSubmissionTeam
+
+  const error =
+    getChallengeError || getTeamMembershipError || getSubmissionTeamsError
+
+  useEffect(() => {
+    if (error && onError) onError(error)
+  }, [error, onError])
+
+  const isLoading =
+    isLoadingChallenge || isLoadingTeamMembership || isLoadingSubmissionTeams
+
+  if (isLoading) {
     return <SpinnerButton showSpinner>Loading...</SpinnerButton>
   }
 
   return (
     <Box>
-      {(!isRegistered || !hasSubmissionTeam) && (
+      {!isMemberOfBothParticipantAndSubmissionTeams && (
         <SpinnerButton
           disableElevation={true}
           variant="contained"
@@ -118,7 +103,7 @@ const ChallengeRegisterButton = ({
           Register for this Challenge
         </SpinnerButton>
       )}
-      {isRegistered && hasSubmissionTeam && (
+      {isMemberOfBothParticipantAndSubmissionTeams && (
         <SpinnerButton
           disableElevation={true}
           variant="outlined"
