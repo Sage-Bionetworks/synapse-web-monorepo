@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react'
-import { ConfirmationDialog } from '../ConfirmationDialog'
 import {
   useGetAccessRequirementsForTeam,
   useGetAccessRequirementStatuses,
@@ -15,7 +14,7 @@ import { SynapseClientError, useSynapseContext } from '../../utils'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
 import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { Alert, Typography } from '@mui/material'
+import { Alert, Button, Typography } from '@mui/material'
 import { isEmpty } from 'lodash-es'
 
 export type ChallengeRequirementsModalProps = {
@@ -104,8 +103,8 @@ export default function ChallengeRequirementsModal(
     registrationError,
   ].filter((e): e is SynapseClientError => Boolean(e))
 
-   // It's possible that the user joined the team, but requirements on the team changed since they became a member
-   // They do not need to re-join the team, but they should still be prompted to accept the requirements
+  // It's possible that the user joined the team, but requirements on the team changed since they became a member
+  // They do not need to re-join the team, but they should still be prompted to accept the requirements
   let registerButtonText = teamMembershipStatus?.isMember
     ? 'Continue'
     : 'Register'
@@ -113,44 +112,50 @@ export default function ChallengeRequirementsModal(
     registerButtonText = 'Registering...'
   }
 
+  if (!isEmpty(errors)) {
+    return (
+      <Alert severity="error">
+        {errors.map((e, index) => (
+          <Typography variant={'body1'} key={index}>
+            {e.reason}
+          </Typography>
+        ))}
+      </Alert>
+    )
+  }
+
+  if (!participantTeamId || !open) {
+    return <></>
+  }
+
   return (
-    <ConfirmationDialog
-      open={open}
-      title={`Challenge Terms and Conditions`}
-      content={
+    <AccessRequirementList
+      dialogTitle={`Challenge Terms and Conditions`}
+      subjectId={participantTeamId}
+      subjectType={RestrictableObjectType.TEAM}
+      teamId={challenge?.participantTeamId}
+      renderAsModal={true}
+      requestObjectName={project?.name}
+      onHide={() => {
+        onCancel()
+      }}
+      customDialogActions={
         <>
-          {participantTeamId && (
-            <AccessRequirementList
-              subjectId={participantTeamId}
-              subjectType={RestrictableObjectType.TEAM}
-              teamId={challenge?.participantTeamId}
-              renderAsModal={false}
-              requestObjectName={project?.name}
-              onHide={() => {
-                onCancel()
-              }}
-            />
-          )}
-          {!isEmpty(errors) && (
-            <Alert severity="error">
-              {errors.map((e, index) => (
-                <Typography variant={'body1'} key={index}>
-                  {e.reason}
-                </Typography>
-              ))}
-            </Alert>
-          )}
+          <Button variant={'outlined'} onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button
+            variant={'contained'}
+            onClick={() => {
+              registerForChallenge()
+            }}
+            startIcon={registrationIsPending ? <SynapseSpinner /> : undefined}
+            disabled={!meetsAllRequirements || registrationIsPending}
+          >
+            {registerButtonText}
+          </Button>
         </>
       }
-      onCancel={onCancel}
-      onConfirm={() => {
-        registerForChallenge()
-      }}
-      confirmButtonProps={{
-        children: registerButtonText,
-        startIcon: registrationIsPending ? <SynapseSpinner /> : undefined,
-        disabled: !meetsAllRequirements || registrationIsPending,
-      }}
     />
   )
 }

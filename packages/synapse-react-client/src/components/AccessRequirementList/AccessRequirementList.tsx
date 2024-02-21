@@ -16,7 +16,16 @@ import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/Ca
 import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
 import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
-import { Box, Button, styled, Typography, TypographyProps } from '@mui/material'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  styled,
+  Typography,
+  TypographyProps,
+} from '@mui/material'
 import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement'
 import CertificationRequirement from './RequirementItem/CertificationRequirement'
 import ValidationRequirement from './RequirementItem/ValidationRequirement'
@@ -31,7 +40,7 @@ import { AccessRequirementListItem } from './AccessRequirementListItem'
 import { useSynapseContext } from '../../utils'
 import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
 import { noop } from 'lodash-es'
-import { DialogBase } from '../DialogBase'
+import { DialogBaseTitle } from '../DialogBase'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { EntityLink } from '../EntityLink'
 
@@ -48,6 +57,8 @@ export type AccessRequirementListProps = {
   onHide: () => void
   /* Displays the provided list of access requirements, instead of the ones fetched using the subject ID */
   accessRequirementFromProps?: Array<AccessRequirement>
+  /* If provided, displays these actions on when viewing all ARs */
+  customDialogActions?: React.ReactNode
 } & (
   | {
       /**
@@ -143,6 +154,7 @@ export default function AccessRequirementList(
     renderAsModal = false,
     numberOfFilesAffected,
     requestObjectName,
+    customDialogActions,
   } = props
 
   const isShowingRequirementsForEntity = 'entityId' in props
@@ -279,44 +291,6 @@ export default function AccessRequirementList(
     }
   }, [numberOfFilesAffected, requestObjectName, subjectId, subjectType])
 
-  const content = (
-    <>
-      <DialogSubsectionHeader sx={{ mt: 0 }}>
-        What is this request for?
-      </DialogSubsectionHeader>
-      <Typography variant={'body1'} component={'span'}>
-        {requestDetails}
-      </Typography>
-      <DialogSubsectionHeader>What do I need to do?</DialogSubsectionHeader>
-      <AuthenticatedRequirement />
-      {anyARsRequireCertification && <CertificationRequirement />}
-      {anyARsRequireProfileValidation && <ValidationRequirement />}
-      {anyARsRequireTwoFactorAuth && <TwoFactorAuthEnabledRequirement />}
-      {sortedAccessRequirementIds
-        ?.map(id => accessRequirements!.find(ar => id === String(ar.id))!)
-        ?.map(accessRequirement => {
-          return (
-            <AccessRequirementListItem
-              key={accessRequirement.id}
-              accessRequirement={accessRequirement}
-              subjectId={subjectId}
-              subjectType={subjectType}
-              onHide={onHide}
-              onRequestAccess={accessRequirement => {
-                const nextStep = isSignedIn
-                  ? RequestDataStep.UPDATE_RESEARCH_PROJECT
-                  : RequestDataStep.PROMPT_LOGIN
-                requestDataStepCallback({
-                  managedACTAccessRequirement: accessRequirement,
-                  step: nextStep,
-                })
-              }}
-            />
-          )
-        })}
-    </>
-  )
-
   const dialogWidth =
     [
       RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
@@ -325,88 +299,131 @@ export default function AccessRequirementList(
       ? 'xl'
       : 'md'
 
-  let renderContent = content
-  let dialogActions = <></>
-  if (renderAsModal) {
-    switch (requestDataStep) {
-      case RequestDataStep.UPDATE_RESEARCH_PROJECT:
-        renderContent = (
-          <ResearchProjectForm
-            managedACTAccessRequirement={managedACTAccessRequirement!}
-            onSave={researchProject => {
-              requestDataStepCallback({
-                managedACTAccessRequirement,
-                step: RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
-                researchProjectId: researchProject.id,
-              })
-            }}
-            onHide={onHide}
-          />
-        )
-        break
-      case RequestDataStep.UPDATE_ACCESSORS_AND_FILES:
-        renderContent = (
-          <DataAccessRequestAccessorsFilesForm
-            researchProjectId={researchProjectId}
-            managedACTAccessRequirement={managedACTAccessRequirement!}
-            subjectId={subjectId ?? ''}
-            subjectType={subjectType ?? RestrictableObjectType.ENTITY}
-            onHide={onHide}
-            onCancel={dataAccessRequestInProgress => {
-              requestDataStepCallback({
-                step: RequestDataStep.PROMPT_CANCEL,
-                dataAccessRequest: dataAccessRequestInProgress,
-              })
-            }}
-            onSubmissionCreated={() => {
-              requestDataStepCallback({ step: RequestDataStep.COMPLETE })
-            }}
-          />
-        )
-        break
-      case RequestDataStep.PROMPT_CANCEL:
-        renderContent = (
-          <CancelRequestDataAccess
-            modifiedDataAccessRequest={dataAccessRequest}
-            onHide={onHide} // for closing dialogs
-          />
-        )
-        break
-      case RequestDataStep.PROMPT_LOGIN:
-        dialogTitle = 'Please Log In'
-        renderContent = (
-          <Box className={'AccessRequirementList login-modal '}>
+  let renderContent = <></>
+  switch (requestDataStep) {
+    case RequestDataStep.UPDATE_RESEARCH_PROJECT:
+      renderContent = (
+        <ResearchProjectForm
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          onSave={researchProject => {
+            requestDataStepCallback({
+              managedACTAccessRequirement,
+              step: RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
+              researchProjectId: researchProject.id,
+            })
+          }}
+          onHide={onHide}
+        />
+      )
+      break
+    case RequestDataStep.UPDATE_ACCESSORS_AND_FILES:
+      renderContent = (
+        <DataAccessRequestAccessorsFilesForm
+          researchProjectId={researchProjectId}
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          subjectId={subjectId ?? ''}
+          subjectType={subjectType ?? RestrictableObjectType.ENTITY}
+          onHide={onHide}
+          onCancel={dataAccessRequestInProgress => {
+            requestDataStepCallback({
+              step: RequestDataStep.PROMPT_CANCEL,
+              dataAccessRequest: dataAccessRequestInProgress,
+            })
+          }}
+          onSubmissionCreated={() => {
+            requestDataStepCallback({ step: RequestDataStep.COMPLETE })
+          }}
+        />
+      )
+      break
+    case RequestDataStep.PROMPT_CANCEL:
+      renderContent = (
+        <CancelRequestDataAccess
+          modifiedDataAccessRequest={dataAccessRequest}
+          onHide={onHide} // for closing dialogs
+        />
+      )
+      break
+    case RequestDataStep.PROMPT_LOGIN:
+      dialogTitle = 'Please Log In'
+      renderContent = (
+        <>
+          <DialogBaseTitle title={dialogTitle} onCancel={onHide} />
+          <DialogContent className={'AccessRequirementList login-modal '}>
             <StandaloneLoginForm
               sessionCallback={() => {
                 window.location.reload()
               }}
             />
-          </Box>
-        )
-        break
-      case RequestDataStep.COMPLETE:
-        renderContent = <RequestDataAccessSuccess onHide={onHide} />
-        break
-      case RequestDataStep.SHOW_ALL_ARS:
-      default:
-        renderContent = content
-        dialogActions = (
-          <Button variant="contained" onClick={onHide}>
-            Close
-          </Button>
-        )
-    }
+          </DialogContent>
+        </>
+      )
+      break
+    case RequestDataStep.COMPLETE:
+      renderContent = <RequestDataAccessSuccess onHide={onHide} />
+      break
+    case RequestDataStep.SHOW_ALL_ARS:
+    default:
+      renderContent = (
+        <>
+          <DialogBaseTitle title={dialogTitle} onCancel={onHide} />
+          <DialogContent>
+            <DialogSubsectionHeader sx={{ mt: 0 }}>
+              What is this request for?
+            </DialogSubsectionHeader>
+            <Typography variant={'body1'} component={'span'}>
+              {requestDetails}
+            </Typography>
+            <DialogSubsectionHeader>
+              What do I need to do?
+            </DialogSubsectionHeader>
+            <AuthenticatedRequirement />
+            {anyARsRequireCertification && <CertificationRequirement />}
+            {anyARsRequireProfileValidation && <ValidationRequirement />}
+            {anyARsRequireTwoFactorAuth && <TwoFactorAuthEnabledRequirement />}
+            {sortedAccessRequirementIds
+              ?.map(id => accessRequirements!.find(ar => id === String(ar.id))!)
+              ?.map(accessRequirement => {
+                return (
+                  <AccessRequirementListItem
+                    key={accessRequirement.id}
+                    accessRequirement={accessRequirement}
+                    subjectId={subjectId}
+                    subjectType={subjectType}
+                    onHide={onHide}
+                    onRequestAccess={accessRequirement => {
+                      const nextStep = isSignedIn
+                        ? RequestDataStep.UPDATE_RESEARCH_PROJECT
+                        : RequestDataStep.PROMPT_LOGIN
+                      requestDataStepCallback({
+                        managedACTAccessRequirement: accessRequirement,
+                        step: nextStep,
+                      })
+                    }}
+                  />
+                )
+              })}
+          </DialogContent>
+          <DialogActions>
+            {customDialogActions ? (
+              customDialogActions
+            ) : (
+              <Button variant="contained" onClick={onHide}>
+                Close
+              </Button>
+            )}
+          </DialogActions>
+        </>
+      )
+  }
+
+  if (renderAsModal) {
     return (
-      <DialogBase
-        title={dialogTitle}
-        maxWidth={dialogWidth}
-        fullWidth
-        open={true}
-        onCancel={onHide}
-        content={renderContent}
-        actions={dialogActions}
-      />
+      <Dialog maxWidth={dialogWidth} fullWidth open={true} onClose={onHide}>
+        {renderContent}
+      </Dialog>
     )
   }
+
   return <Box>{renderContent}</Box>
 }
