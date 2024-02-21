@@ -1064,10 +1064,12 @@ export const getEntityHeaders = (
  * https://rest-docs.synapse.org/rest/GET/entity/alias/alias.html
  */
 export const getEntityAlias = (alias: string, accessToken?: string) => {
-  return doGet<EntityId>(
-    ENTITY_ALIAS(alias),
-    accessToken,
-    BackendDestinationEnum.REPO_ENDPOINT,
+  return allowNotFoundError(() =>
+    doGet<EntityId>(
+      ENTITY_ALIAS(alias),
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }
 

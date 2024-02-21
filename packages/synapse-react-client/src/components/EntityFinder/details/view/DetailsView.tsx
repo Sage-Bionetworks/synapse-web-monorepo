@@ -108,7 +108,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 }) => {
   const queryClient = useQueryClient()
 
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory: queryClientKeyFactory } = useSynapseContext()
 
   const showSelectColumn = selectColumnType !== 'none'
 
@@ -118,10 +118,12 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   const cancelQuery = () => {
     // It's likely that the user will be throttled by the Synapse backend and may be waiting a
     // noticeable amount of time for the current request, so cancel it (in addition to cancelling future requests)
-    queryClient.cancelQueries([
-      'entitychildren',
-      getChildrenInfiniteRequestObject,
-    ])
+    queryClient.cancelQueries(
+      queryClientKeyFactory.getEntityChildrenQueryKey(
+        getChildrenInfiniteRequestObject!,
+        true,
+      ),
+    )
     setShowLoadingScreen(false)
     setShouldSelectAll(false)
   }
@@ -208,9 +210,21 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                         // Show the loading screen since we must fetch data (potentially a lot) to finish the task
                         setShowLoadingScreen(true)
 
+                        const versionsQueryOffset = 0
+                        const versionsQueryLimit = 1
                         const versions = await queryClient.fetchQuery(
-                          ['entity', e.id, 'versions', { offset: 0, limit: 1 }],
-                          () => getEntityVersions(e.id, accessToken, 0, 1),
+                          queryClientKeyFactory.getPaginatedEntityVersionsQueryKey(
+                            e.id,
+                            versionsQueryLimit,
+                            versionsQueryOffset,
+                          ),
+                          () =>
+                            getEntityVersions(
+                              e.id,
+                              accessToken,
+                              versionsQueryOffset,
+                              versionsQueryLimit,
+                            ),
                         )
                         // we pick the first version in the list because it is the most recent
                         latestVersion = versions.results[0]?.versionNumber

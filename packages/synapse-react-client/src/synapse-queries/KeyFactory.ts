@@ -207,7 +207,7 @@ export class KeyFactory {
   private getKey(...args: any[]): QueryKey {
     return [
       this.accessToken == null
-        ? this.accessToken
+        ? 'anonymous'
         : btoa(String(hashCode(this.accessToken))),
       ...removeTrailingUndefinedElements(args),
     ]

@@ -46,12 +46,6 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     useGetResearchProject(String(managedACTAccessRequirement.id), {
       // Infinite staleTime ensures this won't be refetched unless explicitly invalidated by the mutation
       staleTime: Infinity,
-      onError: e => {
-        console.log(
-          'RequestDataAccessStep1: Error getting research project data: ',
-          e,
-        )
-      },
     })
 
   // Populate the form with existing data if it exists

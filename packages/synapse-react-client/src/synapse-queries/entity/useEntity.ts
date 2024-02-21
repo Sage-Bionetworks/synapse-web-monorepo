@@ -62,7 +62,6 @@ export function useGetEntities(
   options?: UseQueryOptions<Entity[], SynapseClientError>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  const headerIds = entityHeaders.map(header => header.id).join()
   const queries = useMemo(
     () =>
       entityHeaders.map(header => {
@@ -77,22 +76,12 @@ export function useGetEntities(
               header.id,
               header.versionNumber,
             ),
+          options,
         }
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [headerIds],
+    [accessToken, entityHeaders, keyFactory, options],
   )
-  const results = useQueries(queries)
-  const isLoading = results.some(result => result.isLoading)
-  const entities: Entity[] = results
-    .filter(query => query.data !== undefined)
-    .map(query => query.data!)
-  return useMemo(() => {
-    // @ts-ignore
-    if (!isLoading && options?.onSuccess) options.onSuccess(entities)
-    return { isLoading, data: entities }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, headerIds])
+  return useQueries(queries)
 }
 
 export function useCreateEntity(
@@ -363,7 +352,7 @@ export function useGetEntityPermissions(
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   return useQuery<UserEntityPermissions | null, SynapseClientError>(
-    keyFactory.getEntityAliasQueryKey(entityId),
+    keyFactory.getEntityPermissionsQueryKey(entityId),
     () => SynapseClient.getEntityPermissions(entityId, accessToken),
     options,
   )

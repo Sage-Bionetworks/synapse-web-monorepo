@@ -92,16 +92,22 @@ function SubmissionDirectoryList({
   const { data: headerResults, refetch } = useGetEntityChildren(request, {
     enabled: !!challengeProjectId,
     useErrorBoundary: true,
-    onSuccess: data => {
+  })
+
+  useEffect(() => {
+    if (headerResults) {
       const newHeaders = [...fetchedHeaders]
       const headerPage = Math.floor(((page + 1) * PER_PAGE) / HEADERS_PER_PAGE)
       const start = headerPage * HEADERS_PER_PAGE
-      newHeaders.splice(start, start + HEADERS_PER_PAGE, ...data.page)
+      newHeaders.splice(start, start + HEADERS_PER_PAGE, ...headerResults.page)
       setFetchedHeaders(newHeaders)
       setFetchNextPage(false)
-      setNextPageToken(data.nextPageToken)
-    },
-  })
+      setNextPageToken(headerResults.nextPageToken)
+    }
+    // TODO: Temporary useEffect hook to remove onSuccess QueryOption for @tanstack/react-query v5
+    // Refactor this component to remove this effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [headerResults])
 
   function getPageHeaders() {
     const pageStart = page * PER_PAGE
@@ -123,9 +129,11 @@ function SubmissionDirectoryList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entityType, pageSize])
 
-  const { isLoading: areEntitiesLoading, data: entities } = useGetEntities(
-    getPageHeaders(),
-  )
+  const queries = useGetEntities(getPageHeaders())
+  const entities = queries
+    .filter(q => q.status === 'success')
+    .map(q => q.data) as EntityItem[]
+  const areEntitiesLoading = queries.some(q => q.isLoading)
 
   const entityChangeHandler = async (value: string) => {
     setCanSubmit(false)

@@ -73,10 +73,7 @@ export function ChallengeSubmission({
   const { data: userProfile, isLoading: isProfileLoading } =
     useGetCurrentUserProfile({
       enabled: isLoggedIn,
-      onError: () => {
-        setLoading(false)
-        setErrorMessage(`Error: Could not retrieve user profile`)
-      },
+      useErrorBoundary: true,
     })
 
   // Retrieve the challenge associated with the projectId passed through props
@@ -121,17 +118,15 @@ export function ChallengeSubmission({
     newProject?.alias ?? EMPTY_ID,
     {
       enabled: newProject !== undefined && !!challenge && !!submissionTeam,
-      onError: error => {
-        setLoading(false)
-        setProjectAliasFound(false)
-        setErrorMessage(error.reason)
-      },
+      useErrorBoundary: true,
     },
   )
   useEffect(() => {
     if (entityAlias) {
       setProjectAliasFound(true)
       setChallengeProjectId(entityAlias.id)
+    } else {
+      setProjectAliasFound(false)
     }
   }, [entityAlias])
 
@@ -142,10 +137,7 @@ export function ChallengeSubmission({
   const { data: entityACL } = useGetEntityACL(challengeProjectId ?? EMPTY_ID, {
     enabled: !!challengeProjectId && isProjectNewlyCreated === true,
     refetchInterval: Infinity,
-    onError: error => {
-      setLoading(false)
-      setErrorMessage(error.reason)
-    },
+    useErrorBoundary: true,
   })
 
   useEffect(() => {
@@ -177,10 +169,7 @@ export function ChallengeSubmission({
     {
       enabled: !!challengeProjectId,
       refetchInterval: Infinity,
-      onError: error => {
-        setLoading(false)
-        setErrorMessage(error.reason)
-      },
+      useErrorBoundary: true,
     },
   )
 
