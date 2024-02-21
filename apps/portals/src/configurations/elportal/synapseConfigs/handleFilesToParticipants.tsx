@@ -66,6 +66,12 @@ export const handleSelectedFilesToParticipants = async (
       ),
       JSON.stringify([sessionStorageFilter]),
     )
+  } else {
+    sessionStorage.removeItem(
+      SynapseUtilityFunctions.QUERY_FILTERS_SESSION_STORAGE_KEY(
+        'cohort-builder-individuals-perspective',
+      ),
+    )
   }
   window.location.href = '/Explore/Data by Participants'
 }
