@@ -1,6 +1,6 @@
 import React from 'react'
 import userEvent from '@testing-library/user-event'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import ChallengeRegisterButton, {
   ChallengeRegisterButtonProps,
 } from './ChallengeRegisterButton'
@@ -13,6 +13,7 @@ import {
   mockChallengeTeamMember,
 } from '../../mocks/challenge/mockChallenge'
 import { MOCK_TEAM_ID } from '../../mocks/team/mockTeam'
+import { SynapseClientError } from '../../utils'
 
 const mockOnError = jest.fn()
 const mockOnJoinClick = jest.fn()
@@ -123,5 +124,22 @@ describe('ChallengeRegisterButton', () => {
     expect(mockOnJoinClick).not.toHaveBeenCalled()
   })
 
-  it('Invokes the callback on error', () => {})
+  it('Invokes the callback on error', async () => {
+    const error = new SynapseClientError(
+      500,
+      'Simulated error in test',
+      expect.getState().currentTestName!,
+    )
+    mockGetIsUserMemberOfTeam.mockRejectedValue(error)
+    mockGetSubmissionTeams.mockResolvedValue({
+      results: [String(MOCK_TEAM_ID)],
+      totalNumberOfResults: 1,
+    })
+
+    renderComponent()
+
+    await waitFor(() => {
+      expect(mockOnError).toHaveBeenCalledWith(error)
+    })
+  })
 })
