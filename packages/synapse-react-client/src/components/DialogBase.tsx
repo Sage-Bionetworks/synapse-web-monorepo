@@ -35,15 +35,38 @@ export const CloseButton: React.FC<CloseButtonProps> = ({
   )
 }
 
-export type DialogBaseProps = {
-  open: boolean
+export type DialogBaseTitleProps = {
   title: React.ReactNode
+  titleHelpPopoverProps?: HelpPopoverProps
+  hasCloseButton?: boolean
+  onCancel: () => void
+}
+
+export function DialogBaseTitle(props: DialogBaseTitleProps) {
+  const {
+    title,
+    titleHelpPopoverProps,
+    hasCloseButton = true,
+    onCancel,
+  } = props
+  return (
+    <DialogTitle>
+      <Stack direction="row" alignItems={'center'} gap={'5px'}>
+        {title}
+        {titleHelpPopoverProps && <HelpPopover {...titleHelpPopoverProps} />}
+        <Box sx={{ flexGrow: 1 }} />
+        {hasCloseButton && <CloseButton onClick={() => onCancel()} />}
+      </Stack>
+    </DialogTitle>
+  )
+}
+
+export type DialogBaseProps = DialogBaseTitleProps & {
+  open: boolean
   content: React.ReactNode
   actions?: React.ReactNode
   className?: string
   onCancel: () => void
-  hasCloseButton?: boolean
-  titleHelpPopoverProps?: HelpPopoverProps
   maxWidth?: DialogProps['maxWidth']
   fullWidth?: boolean
   sx?: DialogProps['sx']
@@ -60,7 +83,7 @@ export const DialogBase = ({
   actions,
   className,
   onCancel,
-  hasCloseButton = true,
+  hasCloseButton,
   titleHelpPopoverProps,
   maxWidth = 'sm',
   fullWidth = true,
@@ -76,14 +99,12 @@ export const DialogBase = ({
       onClose={() => onCancel()}
       sx={sx}
     >
-      <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
-          {title}
-          {titleHelpPopoverProps && <HelpPopover {...titleHelpPopoverProps} />}
-          <Box sx={{ flexGrow: 1 }} />
-          {hasCloseButton && <CloseButton onClick={() => onCancel()} />}
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle
+        title={title}
+        titleHelpPopoverProps={titleHelpPopoverProps}
+        hasCloseButton={hasCloseButton}
+        onCancel={onCancel}
+      />
       <DialogContent {...contentProps}>{content}</DialogContent>
       {actions && <DialogActions>{actions}</DialogActions>}
     </Dialog>
