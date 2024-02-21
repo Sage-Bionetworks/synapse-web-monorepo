@@ -437,10 +437,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
     onClose()
   }
 
-  const onConfirmHandlerMap: Record<
-    string,
-    (() => Promise<void>) | (() => undefined)
-  > | void = {
+  const onConfirmHandlerMap: Record<string, () => Promise<void> | void> = {
     CREATE_NEW_TEAM: handleCreateTeam,
     JOIN_REQUEST_FORM: handleRequestMembership,
     JOIN_REQUEST_SENT: () => {
@@ -531,7 +528,9 @@ const ChallengeTeamWizard: React.FunctionComponent<
       onCancel={hide}
       onStepChange={handleStepChange as (arg: string) => void}
       open={isShowingModal}
-      onConfirm={onConfirmHandler}
+      onConfirm={() => {
+        onConfirmHandler()
+      }}
       confirming={confirming}
       step={step}
       content={createContent()}

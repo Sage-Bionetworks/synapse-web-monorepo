@@ -96,8 +96,9 @@ export const Demo: Story = {
   args: {
     errorMessage: '',
     onCancel: () => alert('Here we would close the stepper'),
-    onConfirm: () =>
-      Promise.resolve(alert('Here we would confirm some important action')),
+    onConfirm: () => {
+      alert('Here we would confirm some important action')
+    },
     confirming: false,
     onStepChange: () => undefined,
     open: true,
