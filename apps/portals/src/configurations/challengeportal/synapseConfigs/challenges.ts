@@ -161,8 +161,14 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
           },
         },
         {
-          name: 'CardContainerLogic',
+          name: 'Markdown',
+          columnName: 'ContributorsDescription',
+          injectMarkdown: true,
           title: 'Contributors',
+          props: {},
+        },
+        {
+          name: 'CardContainerLogic',
           columnName: 'Contributors',
           overrideSqlSourceTable: true,
           props: {

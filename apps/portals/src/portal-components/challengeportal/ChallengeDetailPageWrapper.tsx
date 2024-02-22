@@ -16,7 +16,7 @@ import {
 const ChallengeDetailPageWrapper = () => {
   const projectId = AppUtils.useQuerySearchParam('id')
   const { data, isLoading } = SynapseQueries.useGetEntityBundle(
-    projectId,
+    projectId ?? '', //fallback for type safety, but should only be enabled when projectId is set
     undefined,
     {
       includeAnnotations: true,
@@ -30,7 +30,7 @@ const ChallengeDetailPageWrapper = () => {
   }
   if (
     !!projectId &&
-    data?.annotations.annotations['Status'].value[0] == 'Active'
+    data?.annotations.annotations['Status']?.value[0] == 'Active'
   ) {
     return (
       <div className="container-fluid">
