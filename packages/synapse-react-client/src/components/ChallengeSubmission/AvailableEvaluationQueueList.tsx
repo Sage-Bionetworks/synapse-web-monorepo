@@ -2,29 +2,39 @@ import { HelpOutlineTwoTone } from '@mui/icons-material'
 import {
   Autocomplete,
   Box,
+  Button,
+  Collapse,
   List,
   ListItem,
   MenuItem,
   TextField,
-  Tooltip,
   Typography,
 } from '@mui/material'
 import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { MarkdownSynapse } from '../Markdown'
+import LightTooltip from '../styled/LightTooltip'
 
 type TextWithHelpIconProps = {
   text: string
-  tooltipTitle?: string
+  tooltipMarkdownText?: string
 }
 
 function TextWithHelpIcon(props: TextWithHelpIconProps) {
-  const { text, tooltipTitle } = props
+  const { text, tooltipMarkdownText } = props
+
   return (
     <>
       {text}
-      {tooltipTitle && (
-        <Tooltip title={tooltipTitle}>
+      {tooltipMarkdownText && (
+        <LightTooltip
+          title={
+            <Typography variant="body1" mb={0}>
+              <MarkdownSynapse markdown={tooltipMarkdownText} />
+            </Typography>
+          }
+        >
           <HelpOutlineTwoTone
             sx={{
               ml: 1,
@@ -32,7 +42,7 @@ function TextWithHelpIcon(props: TextWithHelpIconProps) {
               fontSize: '16px',
             }}
           />
-        </Tooltip>
+        </LightTooltip>
       )}
     </>
   )
@@ -47,22 +57,32 @@ function AvailableEvaluationQueueStaticList(
   props: AvailableEvaluationQueueStaticListProps,
 ) {
   const { evaluations } = props
+  const [showList, setShowList] = useState<boolean>(false)
 
   return (
     <Box mt={2}>
-      <Typography variant="body1">Available Evaluation Queues:</Typography>
-      <List dense={true}>
-        {evaluations.map(evaluation => {
-          return (
-            <ListItem key={evaluation.id}>
-              <TextWithHelpIcon
-                text={evaluation.name!}
-                tooltipTitle={evaluation.submissionInstructionsMessage}
-              />
-            </ListItem>
-          )
-        })}
-      </List>
+      <Button
+        variant="contained"
+        sx={{ mb: 1 }}
+        onClick={() => setShowList(!showList)}
+      >
+        {`${showList ? 'Hide' : 'Show'} All Available Evaluation Queues`}
+      </Button>
+      <Collapse in={showList}>
+        <Typography variant="body1">Available Evaluation Queues:</Typography>
+        <List dense={true}>
+          {evaluations.map(evaluation => {
+            return (
+              <ListItem key={evaluation.id}>
+                <TextWithHelpIcon
+                  text={evaluation.name!}
+                  tooltipMarkdownText={evaluation.submissionInstructionsMessage}
+                />
+              </ListItem>
+            )
+          })}
+        </List>
+      </Collapse>
     </Box>
   )
 }
@@ -95,7 +115,7 @@ function AvailableEvaluationQueueAutocompleteList(
           <MenuItem {...props}>
             <TextWithHelpIcon
               text={ownerState.getOptionLabel(option)}
-              tooltipTitle={option.submissionInstructionsMessage}
+              tooltipMarkdownText={option.submissionInstructionsMessage}
             />
           </MenuItem>
         )
@@ -119,21 +139,28 @@ export type AvailableEvaluationQueueListProps = {
 function AvailableEvaluationQueueList(
   props: AvailableEvaluationQueueListProps,
 ) {
-  const { isSelectable = true, onChangeSelectedEvaluation, evaluations } = props
+  const {
+    isSelectable = true,
+    onChangeSelectedEvaluation = noop,
+    evaluations,
+  } = props
   const nEvaluations = evaluations.length
+
+  useEffect(() => {
+    if (nEvaluations === 1 && isSelectable)
+      onChangeSelectedEvaluation(evaluations[0])
+  }, [evaluations, isSelectable, nEvaluations, onChangeSelectedEvaluation])
 
   if (nEvaluations === 0)
     return <Typography variant="body1">No evaluations found</Typography>
 
   if (nEvaluations === 1) {
     const evaluation = evaluations[0]
-    if (isSelectable && onChangeSelectedEvaluation)
-      onChangeSelectedEvaluation(evaluation)
     return (
       <Box display="flex" alignItems="center">
         <TextWithHelpIcon
           text={evaluation.name!}
-          tooltipTitle={evaluation.submissionInstructionsMessage}
+          tooltipMarkdownText={evaluation.submissionInstructionsMessage}
         />
       </Box>
     )

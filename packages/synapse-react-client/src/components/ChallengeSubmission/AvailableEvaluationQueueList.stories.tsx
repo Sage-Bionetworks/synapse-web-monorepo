@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
 import {
@@ -8,41 +7,37 @@ import {
 } from '../../mocks/entity/mockEvaluationQueue'
 import AvailableEvaluationQueueList from './AvailableEvaluationQueueList'
 
-const meta = {
+const meta: Meta = {
   title: 'Synapse/Challenge/AvailableEvaluationQueueList',
   component: AvailableEvaluationQueueList,
-  render: args => (
-    <Box maxWidth="600px">
-      <AvailableEvaluationQueueList {...args} />
-    </Box>
-  ),
+  decorators: [
+    Story => (
+      <Box maxWidth="600px">
+        <Story />
+      </Box>
+    ),
+  ],
 } satisfies Meta<typeof AvailableEvaluationQueueList>
 export default meta
 type Story = StoryObj<typeof meta>
 
-const onChangeSelectedEvaluation = (evaluation: Evaluation | null) => {
-  return console.log(
-    evaluation ? `Selected ${evaluation.name!}` : 'No evaluation selected',
-  )
-}
-
 export const NoneAvailable: Story = {
   args: {
     evaluations: [],
-    onChangeSelectedEvaluation,
   },
 }
 
+const markdownText = '*markdown* given to the **component**'
 export const OneAvailable: Story = {
   args: {
-    evaluations: [mockEvaluationQueue],
-    onChangeSelectedEvaluation,
+    evaluations: [
+      { ...mockEvaluationQueue, submissionInstructionsMessage: markdownText },
+    ],
   },
 }
 
 export const ManyAvailable: Story = {
   args: {
     evaluations: generatedEvaulations,
-    onChangeSelectedEvaluation,
   },
 }
