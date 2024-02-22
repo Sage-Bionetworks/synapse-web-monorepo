@@ -30,7 +30,7 @@ const mockFileEntityBundle = mockFileEntityData.bundle
 
 const renderComponent = (
   props: HasAccessProps,
-  wrapperProps?: SynapseContextType,
+  wrapperProps?: Partial<SynapseContextType>,
 ) => {
   return render(<HasAccessV2 {...props} />, {
     wrapper: createWrapper(wrapperProps),
@@ -179,8 +179,7 @@ describe('HasAccess tests', () => {
       )
     })
     it('Handles a file entity where download access is blocked because of missing DOWNLOAD permission, and the user is not signed in', async () => {
-      const wrapperProps: SynapseContextType = {
-        ...MOCK_CONTEXT_VALUE,
+      const wrapperProps: Partial<SynapseContextType> = {
         accessToken: undefined,
       }
       const entityBundle: EntityBundle = {

@@ -57,7 +57,7 @@ export function useGetForumInfinite(
   >(
     keyFactory.getForumThreadsQueryKey(forumId, limit, sort, ascending, filter),
     async context => {
-      return SynapseClient.getForumThread(
+      return SynapseClient.getForumThreads(
         accessToken,
         forumId,
         context.pageParam,

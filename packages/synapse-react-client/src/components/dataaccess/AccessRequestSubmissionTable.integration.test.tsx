@@ -164,8 +164,10 @@ describe('Access Request Submission Table tests', () => {
       ),
     })
     await screen.findAllByText('@' + MOCK_USER_NAME_2)
-    screen.getByRole('cell', { name: 'Synapse Access and Compliance Team' })
-    screen.getByRole('cell', {
+    await screen.findByRole('cell', {
+      name: 'Synapse Access and Compliance Team',
+    })
+    await screen.findByRole('cell', {
       name: formatDate(
         dayjs(mockSubmissionSearchResponse.results[0].createdOn),
       ),

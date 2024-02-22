@@ -373,18 +373,22 @@ describe('SynapseTable tests', () => {
 
   it('renders facet controls in the column headers', async () => {
     renderTable()
+
     // there are a total of 13 columns in view, so we expect
     // 13 headers
-    expect(await screen.findAllByRole('columnheader')).toHaveLength(
-      totalColumns,
-    )
+    await waitFor(() => {
+      expect(screen.getAllByRole('columnheader')).toHaveLength(totalColumns)
+    })
+
     // there are five facets for the dataset so there should be 5
     // faceted columns
-    expect(
-      await screen.findAllByRole('button', {
-        name: 'Filter by specific facet',
-      }),
-    ).toHaveLength(5)
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole('button', {
+          name: 'Filter by specific facet',
+        }),
+      ).toHaveLength(5)
+    })
   })
 
   it('handle column sort press works', async () => {

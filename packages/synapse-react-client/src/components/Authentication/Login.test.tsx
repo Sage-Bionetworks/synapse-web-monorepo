@@ -111,8 +111,12 @@ describe('StandaloneLoginForm', () => {
     )
     expect(callback).not.toHaveBeenCalled()
 
-    const otpInputs = await screen.findAllByRole('textbox')
-    expect(otpInputs).toHaveLength(6)
+    let otpInputs: HTMLElement[] = []
+
+    await waitFor(() => {
+      otpInputs = screen.getAllByRole('textbox')
+      expect(otpInputs).toHaveLength(6)
+    })
     for (let i = 0; i < otpInputs.length; i++) {
       await userEvent.type(otpInputs[i], String(i + 1))
     }
@@ -164,7 +168,7 @@ describe('StandaloneLoginForm', () => {
     )
     expect(callback).not.toHaveBeenCalled()
 
-    await userEvent.click(screen.getByText('Use a backup code instead'))
+    await userEvent.click(await screen.findByText('Use a backup code instead'))
 
     const recoveryCode = 'abcd-1234-zxcv-5678'
     const recoveryCodeInput = await screen.findByRole('textbox')

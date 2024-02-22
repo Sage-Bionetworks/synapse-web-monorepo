@@ -1462,7 +1462,7 @@ export const addTeamMemberAsAuthenticatedUserOrAdmin = (
 export function createMembershipInvitation(
   membershipInvitation: CreateMembershipInvitationRequest,
   accessToken: string | undefined,
-): Promise<EntityHeader> {
+): Promise<MembershipInvitation> {
   return doPost(
     `${REPO}/membershipInvitation`,
     membershipInvitation,
@@ -1541,14 +1541,14 @@ export const getMembershipStatus = (
 }
 
 /**
- * Create a membership request and send an email notification to the administrators of the team.
+ * Create a membership request and send an email notification to the administrators of the team. The Team must be specified. Optionally, the creator may include a message and/or expiration date for the request. If no expiration date is specified then the request never expires.
  *
- * @returns a TeamMember if the user is a member of the team, or null if the user is not.
+ * https://rest-docs.synapse.org/rest/POST/membershipRequest.html
  */
 export const createMembershipRequest = (
   membershipRequest: CreateMembershipRequestRequest,
   accessToken?: string,
-): Promise<MembershipRequest | null> => {
+): Promise<MembershipRequest> => {
   const url = `/repo/v1/membershipRequest`
   return doPost<MembershipRequest>(
     url,
@@ -4290,7 +4290,7 @@ export const forumSearch = (
  * https://rest-docs.synapse.org/rest/GET/forum/forumId/threads.html
  */
 
-export const getForumThread = (
+export const getForumThreads = (
   accessToken: string | undefined,
   forumId: string,
   offset: number = 0,
@@ -4301,7 +4301,7 @@ export const getForumThread = (
 ) => {
   const params = new URLSearchParams()
   params.set('offset', offset.toString())
-  params.set('limit', limit?.toString())
+  params.set('limit', limit.toString())
   params.set('sort', sort)
   params.set('ascending', ascending.toString())
   params.set('filter', filter)

@@ -90,7 +90,6 @@ async function setUp(props: ResearchProjectFormProps) {
     name: 'Save changes',
   })
   const cancelButton = await screen.findByRole('button', { name: 'Cancel' })
-  const wiki = screen.queryByTestId(MARKDOWN_SYNAPSE_TEST_ID)
   return {
     component,
     user,
@@ -99,7 +98,6 @@ async function setUp(props: ResearchProjectFormProps) {
     iduInput,
     saveChangesButton,
     cancelButton,
-    wiki,
   }
 }
 
@@ -125,6 +123,12 @@ describe('ResearchProjectForm', () => {
     expect(projectLeadInput).toBeInTheDocument()
     expect(institutionInput).toBeInTheDocument()
     expect(iduInput).not.toBeInTheDocument()
+
+    // Ensure the server data has finished loading by checking that the inputs are not disabled
+    await waitFor(() => {
+      expect(projectLeadInput).not.toBeDisabled()
+      expect(institutionInput).not.toBeDisabled()
+    })
 
     const projectLead = 'My name'
     const institution = 'My institution'
@@ -168,6 +172,13 @@ describe('ResearchProjectForm', () => {
     expect(projectLeadInput).toBeInTheDocument()
     expect(institutionInput).toBeInTheDocument()
     expect(iduInput).toBeInTheDocument()
+
+    // Ensure the server data has finished loading by checking that the inputs are not disabled
+    await waitFor(() => {
+      expect(projectLeadInput).not.toBeDisabled()
+      expect(institutionInput).not.toBeDisabled()
+      expect(iduInput).not.toBeDisabled()
+    })
 
     const projectLead = 'My name'
     const institution = 'My institution'
@@ -292,11 +303,12 @@ describe('ResearchProjectForm', () => {
   })
 
   it('Shows the AR wiki', async () => {
-    const { wiki } = await setUp({
+    await setUp({
       ...defaultProps,
     })
 
-    expect(wiki).toBeInTheDocument()
+    await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
+
     expect(mockMarkdownSynapse).toHaveBeenCalledWith(
       expect.objectContaining({
         wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
