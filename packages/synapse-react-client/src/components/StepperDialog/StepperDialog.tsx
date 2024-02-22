@@ -9,7 +9,7 @@ export type Step = {
   id: string
   title: string
   cancelButtonText?: string
-  onConfirm?: (() => Promise<void>) | (() => undefined)
+  onConfirm?: () => void
   confirmStep?: string
   confirmEnabled?: boolean
   confirmButtonText?: string
@@ -24,7 +24,7 @@ export type Steps = Step[]
 export type StepperDialogProps = {
   errorMessage: string | undefined
   onCancel: () => void
-  onConfirm: (() => Promise<void>) | (() => undefined)
+  onConfirm: () => void
   confirming?: boolean
   onStepChange: (arg: string) => void
   open: boolean

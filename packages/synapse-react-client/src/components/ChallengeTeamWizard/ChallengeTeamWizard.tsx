@@ -25,7 +25,6 @@ import {
 } from '../../synapse-queries'
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMembers'
-import { SynapseClientError } from '../../utils/SynapseClientError'
 
 import { Typography } from '@mui/material'
 import { useQueryClient } from 'react-query'
@@ -144,25 +143,29 @@ const ChallengeTeamWizard: React.FunctionComponent<
     }
   }, [userSubmissionTeams, userSubmissionTeamError])
 
-  useGetMembershipStatus(
-    selectedTeam?.id ?? EMPTY_ID,
-    userProfile?.ownerId ?? EMPTY_ID,
-    {
-      enabled: !!selectedTeam && !!userProfile,
-      onSettled: (
-        data: TeamMembershipStatus | undefined,
-        error: SynapseClientError | null,
-      ) => {
-        // console.log('useGetMembershipStatus', data, error)
-        if (data) {
-          setMembershipStatus({ ...membershipStatus, [data.teamId]: data })
-        }
-        if (error) {
-          setErrorMessage(error.reason)
-        }
+  const { data: teamMembershipStatus, error: teamMembershipError } =
+    useGetMembershipStatus(
+      selectedTeam?.id ?? EMPTY_ID,
+      userProfile?.ownerId ?? EMPTY_ID,
+      {
+        enabled: !!selectedTeam && !!userProfile,
       },
-    },
-  )
+    )
+
+  useEffect(() => {
+    if (teamMembershipStatus) {
+      setMembershipStatus(prev => ({
+        ...prev,
+        [teamMembershipStatus.teamId]: teamMembershipStatus,
+      }))
+    }
+  }, [teamMembershipStatus])
+
+  useEffect(() => {
+    if (teamMembershipError) {
+      setErrorMessage(teamMembershipError.reason)
+    }
+  }, [teamMembershipError])
 
   /*************************
    * React to state changes
@@ -434,10 +437,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
     onClose()
   }
 
-  const onConfirmHandlerMap: Record<
-    string,
-    (() => Promise<void>) | (() => undefined)
-  > | void = {
+  const onConfirmHandlerMap: Record<string, () => Promise<void> | void> = {
     CREATE_NEW_TEAM: handleCreateTeam,
     JOIN_REQUEST_FORM: handleRequestMembership,
     JOIN_REQUEST_SENT: () => {
@@ -528,7 +528,9 @@ const ChallengeTeamWizard: React.FunctionComponent<
       onCancel={hide}
       onStepChange={handleStepChange as (arg: string) => void}
       open={isShowingModal}
-      onConfirm={onConfirmHandler}
+      onConfirm={() => {
+        onConfirmHandler()
+      }}
       confirming={confirming}
       step={step}
       content={createContent()}

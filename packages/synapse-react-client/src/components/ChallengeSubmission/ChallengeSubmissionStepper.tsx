@@ -231,7 +231,9 @@ function ChallengeSubmissionStepper({
       onCancel={hide}
       onStepChange={handleStepChange as (arg: string) => void}
       open={isShowingModal}
-      onConfirm={onConfirmHandler}
+      onConfirm={() => {
+        onConfirmHandler()
+      }}
       confirming={confirming}
       step={step}
       content={stepperContent()}

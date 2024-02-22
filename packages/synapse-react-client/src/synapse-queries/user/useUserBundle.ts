@@ -96,19 +96,23 @@ export function useGetUserProfile(
 
   return useQuery<UserProfile, SynapseClientError>(
     queryKey,
-    () => SynapseClient.getUserProfileById(principalId, accessToken),
+    async () => {
+      const profile = await SynapseClient.getUserProfileById(
+        principalId,
+        accessToken,
+      )
+
+      // If the profile is re-fetched, save it to sessionStorage
+      sessionStorage.setItem(sessionStorageCacheKey, JSON.stringify(profile))
+
+      return profile
+    },
     {
       ...options,
-
       // Use the sessionStorage cache to pre-populate profile data.
       initialData: cachedValue
         ? (JSON.parse(cachedValue) as UserProfile)
         : undefined,
-
-      // If the profile is re-fetched, save it to sessionStorage
-      onSuccess: profile => {
-        sessionStorage.setItem(sessionStorageCacheKey, JSON.stringify(profile))
-      },
     },
   )
 }

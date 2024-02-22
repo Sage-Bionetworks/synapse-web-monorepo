@@ -83,32 +83,25 @@ export function useGetAllSubscriptions(
     queryKeyOverride ?? keyFactory.getAllSubscriptionsQueryKey(query),
     async context => {
       const offset = context.pageParam as number | undefined
-      return await SynapseClient.getAllSubscriptions(
+      const subscriptions = await SynapseClient.getAllSubscriptions(
         accessToken,
         10,
         offset,
         query,
       )
+      subscriptions.results.forEach(subscription => {
+        queryClient.setQueryData(
+          keyFactory.getSubscriptionQueryKey(
+            subscription.objectId,
+            subscription.objectType,
+          ),
+          subscription,
+        )
+      })
+      return subscriptions
     },
     {
       ...options,
-      onSuccess: data => {
-        // Set the query data for each individual subscription that was retrieved
-        data.pages.forEach(subscription => {
-          queryClient.setQueryData(
-            keyFactory.getSubscriptionQueryKey(
-              subscription.objectId,
-              subscription.objectType,
-            ),
-            subscription,
-          )
-        })
-
-        if (options?.onSuccess) {
-          options.onSuccess(data)
-        }
-      },
-
       select: data =>
         ({
           pages: data.pages.flatMap(page => page.results),
