@@ -1,9 +1,10 @@
-import { Box } from '@mui/material'
-import * as React from 'react'
+import React from 'react'
+import { Link, Box, Skeleton } from '@mui/material'
 import {
   AppUtils,
   ChallengeDetailPage,
   SynapseQueries,
+  SynapseUtilityFunctions,
 } from 'synapse-react-client'
 
 /**
@@ -15,23 +16,35 @@ import {
  */
 const ChallengeDetailPageWrapper = () => {
   const projectId = AppUtils.useQuerySearchParam('id')
-  const { data, isLoading } = SynapseQueries.useGetEntityBundle(
-    projectId ?? '', //fallback for type safety, but should only be enabled when projectId is set
-    undefined,
-    {
-      includeAnnotations: true,
-    },
-    {
-      enabled: !!projectId,
-    },
-  )
-  if (isLoading) {
-    return <></>
+  const { data: entityBundle, isLoading: isEntityBundleLoading } =
+    SynapseQueries.useGetEntityBundle(
+      projectId ?? '', //fallback for type safety, but should only be enabled when projectId is set
+      undefined,
+      {
+        includeAnnotations: true,
+      },
+      {
+        enabled: !!projectId,
+      },
+    )
+  const { data: challenge, isLoading: isChallengeLoading } =
+    SynapseQueries.useGetEntityChallenge(
+      projectId ?? '', //fallback for type safety, but should only be enabled when projectId is set
+      {
+        enabled: !!projectId,
+      },
+    )
+  const { data: teamMembers, isLoading: isTeamMembersLoading } =
+    SynapseQueries.useGetTeamMembers(challenge?.participantTeamId ?? '', {
+      enabled: !!challenge,
+    })
+  if (isEntityBundleLoading || isChallengeLoading || isTeamMembersLoading) {
+    return <Skeleton height="60px" width="400px" />
   }
-  if (
-    !!projectId &&
-    data?.annotations.annotations['Status']?.value[0] == 'Active'
-  ) {
+  const isChallengeActive =
+    entityBundle?.annotations.annotations['Status']?.value[0] == 'Active'
+  const memberCount = teamMembers?.totalNumberOfResults
+  if (projectId !== undefined) {
     return (
       <div className="container-fluid">
         <div className="row">
@@ -39,7 +52,33 @@ const ChallengeDetailPageWrapper = () => {
             <Box
               sx={{ position: 'absolute', marginTop: '-150px', zIndex: 100 }}
             >
-              <ChallengeDetailPage projectId={projectId} />
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  columnGap: '10px',
+                }}
+              >
+                {isChallengeActive && (
+                  <ChallengeDetailPage projectId={projectId} />
+                )}
+                <Link
+                  target="_blank"
+                  rel="noreferrer"
+                  href={`${SynapseUtilityFunctions.getEndpoint(
+                    SynapseUtilityFunctions.BackendDestinationEnum
+                      .PORTAL_ENDPOINT,
+                  )}#!Team:${challenge?.participantTeamId}`}
+                  sx={{
+                    color: 'white',
+                    '&:hover': { color: 'white', textDecorationColor: 'white' },
+                    '&:focus': { color: 'white' },
+                    textDecorationColor: 'white',
+                  }}
+                >
+                  {memberCount} Registered Participants
+                </Link>
+              </Box>
             </Box>
           </div>
         </div>
