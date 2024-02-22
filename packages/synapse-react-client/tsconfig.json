@@ -1,7 +1,7 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist/types",
     "module": "esnext",
     "target": "esnext",
@@ -11,5 +11,5 @@
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", ".storybook/**/*"]
 }
