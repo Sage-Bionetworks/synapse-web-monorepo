@@ -21,7 +21,10 @@ export default function SqlDefinedTableEditorModal(
     data: entity,
     isLoading: isEntityLoading,
     error: entityError,
-  } = useGetEntity<MaterializedView | VirtualTable>(entityId)
+  } = useGetEntity<MaterializedView | VirtualTable>(entityId, undefined, {
+    // Set the stale time to infinity because we don't want to refetch this in the middle of an edit
+    staleTime: Infinity,
+  })
   const [sql, setSql] = useState('')
 
   useEffect(() => {
