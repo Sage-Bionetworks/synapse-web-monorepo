@@ -1,1 +1,0 @@
-import{b as s}from"./_baseTimes-8715be3e.js";import{i as m}from"./identity-46f208ab.js";import{t as f}from"./toInteger-8c467ff1.js";function u(t){return typeof t=="function"?t:m}var c=9007199254740991,i=4294967295,e=Math.min;function E(t,r){if(t=f(t),t<1||t>c)return[];var o=i,n=e(t,i);r=u(r),t-=i;for(var a=s(n,r);++o<t;)r(o);return a}export{u as c,E as t};
