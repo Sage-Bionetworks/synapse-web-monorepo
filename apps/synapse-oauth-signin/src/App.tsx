@@ -12,7 +12,7 @@ import { getURLParam } from './URLUtils'
 import Versions from './Versions'
 import generalTheme from './style/theme'
 import { createTheme, StyledEngineProvider } from '@mui/material/styles'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from '@mui/material'
 
 const queryClient = new QueryClient(defaultQueryClientConfig)
