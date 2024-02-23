@@ -273,6 +273,12 @@ describe('ResearchProjectForm', () => {
       },
     })
 
+    await waitFor(() => {
+      expect(projectLeadInput).not.toBeDisabled()
+      expect(institutionInput).not.toBeDisabled()
+      expect(iduInput).not.toBeDisabled()
+    })
+
     const projectLead = 'My name'
     const institution = 'My institution'
     const idu = "what I'm going to do with the data"
