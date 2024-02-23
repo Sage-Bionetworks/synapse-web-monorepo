@@ -75,6 +75,8 @@ import AccessRequirementRelatedProjectsList from './components/AccessRequirement
 import CreateTableViewWizard from './components/CreateTableViewWizard/CreateTableViewWizard'
 import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableColumnSchemaEditor'
 import SqlDefinedTableEditorModal from './components/SqlDefinedTableEditor/SqlDefinedTableEditorModal'
+import AvailableEvaluationQueueList from './components/ChallengeSubmission/AvailableEvaluationQueueList'
+
 // Also include scss in the bundle
 import './style/main.scss'
 
@@ -147,6 +149,7 @@ const SynapseComponents = {
   TwoFactorEnrollmentForm,
   SubscriptionPage,
   OrientationBanner,
+  AvailableEvaluationQueueList,
   AccessRequirementList,
   TableColumnSchemaForm,
   EntityHeaderTable,
