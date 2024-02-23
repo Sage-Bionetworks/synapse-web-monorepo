@@ -28,7 +28,7 @@
     "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/isomorphic-fetch": "^0.0.36",
-    "@types/jest": "^27.5.2",
+    "@types/jest": "^29.5.12",
     "@types/katex": "^0.5.0",
     "@types/node": "^18.16.19",
     "@types/plotly.js": "^2.12.22",
