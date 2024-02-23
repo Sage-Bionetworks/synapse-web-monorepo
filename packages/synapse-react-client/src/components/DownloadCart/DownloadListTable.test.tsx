@@ -1,14 +1,16 @@
 import '@testing-library/jest-dom'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import { mockFileStatistics } from '../../mocks/mock_file_statistics'
 import userEvent from '@testing-library/user-event'
 import DownloadListTableV2 from './DownloadListTable'
-import { DownloadListItemResult } from '@sage-bionetworks/synapse-types'
+import {
+  AvailableFilesResponse,
+  DownloadListItemResult,
+} from '@sage-bionetworks/synapse-types'
 import { SynapseTestContext } from '../../mocks/MockSynapseContext'
-import * as useDownloadList from '../../synapse-queries/download/useDownloadList'
 import SynapseClient from '../../synapse-client'
 
 jest.spyOn(SynapseClient, 'removeItemFromDownloadListV2').mockResolvedValue({
@@ -22,12 +24,6 @@ jest
   .spyOn(SynapseClient, 'getProfilePicPreviewPresignedUrl')
   .mockResolvedValue(null)
 
-const mockUseGetAvailableFilesToDownloadInfinite = jest.spyOn(
-  useDownloadList,
-  'useGetAvailableFilesToDownloadInfinite',
-)
-
-const mockFetchNextPage = jest.fn()
 const mockRefetchStatistics = jest.fn()
 
 const page1: DownloadListItemResult[] = [
@@ -59,6 +55,25 @@ const page2: DownloadListItemResult[] = [
     isEligibleForPackaging: true,
   },
 ]
+jest
+  .spyOn(SynapseClient, 'getAvailableFilesToDownload')
+  .mockImplementation(request => {
+    let response: AvailableFilesResponse = {
+      page: page1,
+      nextPageToken: '50a0',
+      concreteType:
+        'org.sagebionetworks.repo.model.download.AvailableFilesResponse',
+    }
+    if (request.nextPageToken) {
+      response = {
+        page: page2,
+        nextPageToken: undefined,
+        concreteType:
+          'org.sagebionetworks.repo.model.download.AvailableFilesResponse',
+      }
+    }
+    return Promise.resolve(response)
+  })
 
 function renderComponent() {
   return render(
@@ -74,59 +89,18 @@ function renderComponent() {
 describe('DownloadListTable tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseGetAvailableFilesToDownloadInfinite.mockReturnValue({
-      data: {
-        pages: [
-          {
-            page: page1,
-            nextPageToken: '50a0',
-            concreteType:
-              'org.sagebionetworks.repo.model.download.AvailableFilesResponse',
-          },
-          {
-            page: page2,
-            nextPageToken: undefined,
-            concreteType:
-              'org.sagebionetworks.repo.model.download.AvailableFilesResponse',
-          },
-        ],
-        pageParams: [],
-      },
-      fetchNextPage: mockFetchNextPage,
-      hasNextPage: false,
-      isLoading: false,
-      isSuccess: true,
-      error: null,
-      isError: false,
-      isIdle: false,
-      isLoadingError: false,
-      isRefetchError: false,
-      status: 'success',
-      fetchPreviousPage: jest.fn(),
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      dataUpdatedAt: 0,
-      errorUpdatedAt: 0,
-      failureCount: 0,
-      errorUpdateCount: 0,
-      isFetched: false,
-      isFetchedAfterMount: false,
-      isFetching: false,
-      isPlaceholderData: false,
-      isPreviousData: false,
-      isRefetching: false,
-      isStale: false,
-      refetch: jest.fn(),
-      remove: jest.fn(),
-    })
   })
   it('loads more available download files when inView', async () => {
-    mockAllIsIntersecting(true)
-
     renderComponent()
 
     const fileEntity1 = await screen.findAllByText('file1.txt')
     expect(fileEntity1).toHaveLength(1)
+
+    // trigger fetching page 2
+    act(() => {
+      mockAllIsIntersecting(true)
+    })
+
     const fileEntity2 = await screen.findAllByText('file2.txt')
     expect(fileEntity2).toHaveLength(1)
   })

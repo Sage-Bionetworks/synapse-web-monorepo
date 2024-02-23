@@ -52,11 +52,11 @@ describe('TimelinePlotSpeciesSelector tests', () => {
       .mockResolvedValueOnce(queryResultBundleJson)
 
     await renderTimelineSelector()
-    await waitFor(() =>
-      expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(1),
-    )
+    await waitFor(() => {
+      expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalledTimes(1)
+      expect(setSpecies).toHaveBeenCalledWith('Mus musculus')
+    })
     // verify the first row has been selected by default
-    expect(setSpecies).toHaveBeenCalledWith('Mus musculus')
     const dropdown = await screen.findByRole('combobox')
     await userEvent.click(dropdown)
     await userEvent.click(await screen.findByText('Saccharomyces'))

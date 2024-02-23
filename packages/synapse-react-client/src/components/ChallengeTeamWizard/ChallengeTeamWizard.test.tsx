@@ -4,6 +4,7 @@ import {
   render,
   RenderResult,
   screen,
+  waitFor,
   within,
 } from '@testing-library/react'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -117,20 +118,21 @@ describe('ChallengeTeamWizard tests', () => {
   })
 
   it('Selects the Team', async () => {
-    const { container } = await renderComponent(defaultProps)
-    console.log({ container })
+    await renderComponent(defaultProps)
     const btn = await screen.findByRole('button', { name: 'Next' })
     expect(btn).toHaveAttribute('disabled')
-    const rows = await screen.findAllByRole('row')
+    let rows: HTMLElement[] = []
+    await waitFor(() => {
+      rows = screen.getAllByRole('row')
+      expect(rows.length).toBeGreaterThan(1)
+    })
     const row = rows[1]
     expect(row).toHaveAttribute('aria-selected', 'false')
-    // const radio = container.querySelector('#src-radio-1')
-    const radio = within(row).getByRole('radio')
+
+    const radio = await within(row).findByRole('radio')
     expect(radio).toHaveAttribute('value', team1.id)
     const ele = radio.parentElement!
-    console.log({ ele })
     await userEvent.click(ele)
-    console.log({ radio })
     expect(row).toHaveAttribute('aria-selected', 'true')
   })
 

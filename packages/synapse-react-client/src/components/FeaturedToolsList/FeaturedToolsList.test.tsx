@@ -2,7 +2,7 @@ import React from 'react'
 import FeaturedToolsList from './FeaturedToolsList'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import syn26344826Json from '../../mocks/query/syn26344826.json'
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
@@ -40,7 +40,9 @@ describe('basic tests', () => {
     // We must await asynchronous events for our assertions to pass
     // eslint-disable-next-line @typescript-eslint/require-await
     const { container } = await act(async () => init())
-    expect(container.querySelector('.FeaturedToolCard')).toBeDefined()
-    expect(container.querySelectorAll('.FeaturedToolCard')).toHaveLength(3)
+    await waitFor(() => {
+      expect(container.querySelector('.FeaturedToolCard')).toBeDefined()
+      expect(container.querySelectorAll('.FeaturedToolCard')).toHaveLength(3)
+    })
   })
 })

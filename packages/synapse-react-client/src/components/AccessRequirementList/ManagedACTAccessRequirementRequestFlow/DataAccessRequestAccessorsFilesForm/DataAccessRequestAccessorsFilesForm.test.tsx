@@ -39,7 +39,7 @@ import {
 import userEvent from '@testing-library/user-event'
 import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 import * as UserSearchBoxV2Module from '../../../UserSearchBox/UserSearchBoxV2'
-import { SynapseClientError } from '../../../../utils/SynapseClientError'
+import { SynapseClientError } from '../../../../utils'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 
@@ -141,18 +141,13 @@ const defaultProps: DataAccessRequestAccessorsFilesFormProps = {
   onSubmissionCreated: mockOnSubmissionCreated,
 }
 
-async function renderComponent(
-  props: DataAccessRequestAccessorsFilesFormProps,
-) {
-  let renderResult
-  // We must await asynchronous events for our assertions to pass
-  // eslint-disable-next-line @typescript-eslint/require-await
-  await act(async () => {
-    renderResult = render(<DataAccessRequestAccessorsFilesForm {...props} />, {
-      wrapper: createWrapper(),
-    })
+function renderComponent(props: DataAccessRequestAccessorsFilesFormProps) {
+  const user = userEvent.setup()
+  const component = render(<DataAccessRequestAccessorsFilesForm {...props} />, {
+    wrapper: createWrapper({ withErrorBoundary: true }),
   })
-  return renderResult
+
+  return { user, component }
 }
 
 const DOWNLOAD_DUC_TEMPLATE_TEXT = 'Download DUC Template'
@@ -173,7 +168,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
         { userId: String(MOCK_USER_ID), type: AccessType.GAIN_ACCESS },
       ],
     })
-    await renderComponent(defaultProps)
+    const { user } = renderComponent(defaultProps)
 
     // Verify that only the current user appears
     await screen.findByText(
@@ -214,7 +209,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
     // One remove button should be present for user 2
     const removeAccessorButton = await screen.findByLabelText('Remove user')
 
-    await userEvent.click(removeAccessorButton)
+    await user.click(removeAccessorButton)
 
     // Once again, verify that only the current user appears and no remove buttons appear
     await screen.findByText(
@@ -246,7 +241,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       ],
     })
 
-    await renderComponent(defaultProps)
+    const { user } = renderComponent(defaultProps)
 
     // Verify that both users appear
     await screen.findByText(
@@ -265,7 +260,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       name: 'Revoke',
     })
     // Let's revoke user 2's access
-    await userEvent.click(revokeOption)
+    await user.click(revokeOption)
 
     // No remove buttons should be present, because current users cannot be removed as an accessor
     expect(screen.queryByLabelText('Remove user')).not.toBeInTheDocument()
@@ -302,7 +297,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
 
     // Submit the request so we can inspect the request object
     const submitButton = await screen.findByRole('button', { name: 'Submit' })
-    await userEvent.click(submitButton)
+    await user.click(submitButton)
 
     await waitFor(() => {
       expect(mockUpdateDataAccessRequest).toHaveBeenCalled()
@@ -347,14 +342,17 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       ),
     )
 
-    await expect(renderComponent(defaultProps)).rejects.toThrow(errorMessage)
+    renderComponent(defaultProps)
+
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(errorMessage)
 
     consoleErrorSpy.mockRestore()
   })
 
   it('should show DUC template and field if required', async () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
-    await renderComponent({
+    renderComponent({
       ...defaultProps,
       managedACTAccessRequirement: {
         ...mockManagedACTAccessRequirement,
@@ -366,9 +364,9 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
     await screen.findByRole('button', { name: UPLOAD_DUC_BUTTON_TEXT })
   })
 
-  it('should not show DUC template and field if not required', async () => {
+  it('should not show DUC template and field if not required', () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
-    await renderComponent({
+    renderComponent({
       ...defaultProps,
       managedACTAccessRequirement: {
         ...mockManagedACTAccessRequirement,
@@ -386,7 +384,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
 
   it('should show IRB field if required', async () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
-    await renderComponent({
+    renderComponent({
       ...defaultProps,
       managedACTAccessRequirement: {
         ...mockManagedACTAccessRequirement,
@@ -397,9 +395,9 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
     await screen.findByRole('button', { name: UPLOAD_IRB_LETTER_BUTTON_TEXT })
   })
 
-  it('should not show IRB field if not required', async () => {
+  it('should not show IRB field if not required', () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
-    await renderComponent({
+    renderComponent({
       ...defaultProps,
       managedACTAccessRequirement: {
         ...mockManagedACTAccessRequirement,
@@ -414,7 +412,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
 
   it('should show attachments if required', async () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
-    await renderComponent({
+    renderComponent({
       ...defaultProps,
       managedACTAccessRequirement: {
         ...mockManagedACTAccessRequirement,
@@ -425,9 +423,9 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
     await screen.findByRole('button', { name: UPLOAD_ATTACHMENT_BUTTON_TEXT })
   })
 
-  it('should not show attachments if not required', async () => {
+  it('should not show attachments if not required', () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
-    await renderComponent({
+    renderComponent({
       ...defaultProps,
       managedACTAccessRequirement: {
         ...mockManagedACTAccessRequirement,
@@ -442,13 +440,13 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
 
   it('should show publications and summary of use for a renewal', async () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_RENEWAL)
-    await renderComponent(defaultProps)
+    renderComponent(defaultProps)
     await screen.findByLabelText(PUBLICATIONS_FIELD_LABEL_TEXT)
     await screen.findByLabelText(SUMMARY_OF_USE_FIELD_LABEL_TEXT)
   })
-  it('should not show publications and summary of use for a request', async () => {
+  it('should not show publications and summary of use for a request', () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
-    await renderComponent(defaultProps)
+    renderComponent(defaultProps)
 
     expect(
       screen.queryByLabelText(PUBLICATIONS_FIELD_LABEL_TEXT),
@@ -464,7 +462,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       ...MOCK_DATA_ACCESS_REQUEST,
       accessorChanges: emptyAccessorChanges,
     })
-    await renderComponent(defaultProps)
+    const { user } = renderComponent(defaultProps)
 
     // Verify that the current user appears
     await screen.findByText(
@@ -474,7 +472,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
 
     // Submit the request so we can inspect the request object
     const submitButton = await screen.findByRole('button', { name: 'Submit' })
-    await userEvent.click(submitButton)
+    await user.click(submitButton)
 
     await waitFor(() => {
       expect(mockUpdateDataAccessRequest).toHaveBeenCalled()
@@ -508,7 +506,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       ...MOCK_DATA_ACCESS_REQUEST,
       accessorChanges: accessorChangesWithDuplicate,
     })
-    await renderComponent(defaultProps)
+    const { user } = renderComponent(defaultProps)
 
     // Verify that each accessor only appears once
     await screen.findByText(
@@ -522,7 +520,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
 
     // Submit the request so we can inspect the request object
     const submitButton = await screen.findByRole('button', { name: 'Submit' })
-    await userEvent.click(submitButton)
+    await user.click(submitButton)
 
     await waitFor(() => {
       expect(mockUpdateDataAccessRequest).toHaveBeenCalled()
@@ -551,7 +549,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
 
   it('Shows the AR wiki', async () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
-    await renderComponent(defaultProps)
+    renderComponent(defaultProps)
     await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
     expect(mockMarkdownSynapse).toHaveBeenCalledWith(
       expect.objectContaining({

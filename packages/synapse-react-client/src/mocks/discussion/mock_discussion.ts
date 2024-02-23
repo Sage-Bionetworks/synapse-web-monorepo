@@ -11,7 +11,7 @@ import {
   generateDiscussionThreadBundle,
   generateForum,
 } from '../faker/generateDiscussion'
-import { mockProjects } from '../entity/mockProject'
+import mockProject, { mockProjects } from '../entity/mockProject'
 
 export const MOCK_FORUM_ID = '984321189'
 
@@ -29,12 +29,10 @@ const generatedDiscussionThreadBundles = mockForums.flatMap(forum => {
   )
 })
 
-export const MOCK_SUBSCRIPTION_ID = '123'
-
 export const mockDiscussionThreadBundle: DiscussionThreadBundle = {
   id: '999',
   forumId: MOCK_FORUM_ID,
-  projectId: '123',
+  projectId: mockProject.id,
   title: 'mockTitle1',
   createdOn: '2022-09-28',
   createdBy: mockUserProfileData.ownerId,
@@ -53,7 +51,7 @@ export const mockDiscussionThreadBundle: DiscussionThreadBundle = {
 export const mockDiscussionThreadBundle2: DiscussionThreadBundle = {
   ...mockDiscussionThreadBundle,
   id: '888',
-  projectId: '12',
+  projectId: mockProject.id,
   title: 'mockTitle2',
   createdBy: mockUserProfileData2.ownerId,
   numberOfViews: 14,
@@ -67,7 +65,7 @@ export const mockDiscussionReplyBundle: DiscussionReplyBundle = {
   threadId: mockDiscussionThreadBundle.id,
 }
 
-export const mockDiscussionThreadBundles = [
+export const mockDiscussionThreadBundles: DiscussionThreadBundle[] = [
   ...generatedDiscussionThreadBundles,
   mockDiscussionThreadBundle,
   mockDiscussionThreadBundle2,
