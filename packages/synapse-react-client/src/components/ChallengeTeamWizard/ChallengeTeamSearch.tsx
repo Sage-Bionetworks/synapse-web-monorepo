@@ -15,7 +15,6 @@ export const ChallengeTeamSearch = ({
   const width = rowCount > 5 ? 'calc(100% - 8px)' : '100%'
   return (
     <Box
-      component="form"
       sx={{
         p: '4px 4px',
         display: 'flex',
