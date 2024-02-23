@@ -73,14 +73,14 @@ export function ChallengeSubmission({
   const { data: userProfile, isLoading: isProfileLoading } =
     useGetCurrentUserProfile({
       enabled: isLoggedIn,
-      useErrorBoundary: true,
+      throwOnError: true,
     })
 
   // Retrieve the challenge associated with the projectId passed through props
   const { data: challenge } = useGetEntityChallenge(projectId, {
     enabled: isLoggedIn && !!projectId,
     refetchInterval: Infinity,
-    useErrorBoundary: true,
+    throwOnError: true,
   })
 
   // Determine whether or not the given user belongs to any submission teams
@@ -111,14 +111,14 @@ export function ChallengeSubmission({
   const { data: submissionTeam } = useGetTeam(submissionTeamId!, {
     enabled: !!submissionTeamId,
     refetchInterval: Infinity,
-    useErrorBoundary: true,
+    throwOnError: true,
   })
 
   const { data: entityAlias } = useGetEntityAlias(
     newProject?.alias ?? EMPTY_ID,
     {
       enabled: newProject !== undefined && !!challenge && !!submissionTeam,
-      useErrorBoundary: true,
+      throwOnError: true,
     },
   )
   useEffect(() => {
@@ -137,7 +137,7 @@ export function ChallengeSubmission({
   const { data: entityACL } = useGetEntityACL(challengeProjectId ?? EMPTY_ID, {
     enabled: !!challengeProjectId && isProjectNewlyCreated === true,
     refetchInterval: Infinity,
-    useErrorBoundary: true,
+    throwOnError: true,
   })
 
   useEffect(() => {
@@ -169,7 +169,7 @@ export function ChallengeSubmission({
     {
       enabled: !!challengeProjectId,
       refetchInterval: Infinity,
-      useErrorBoundary: true,
+      throwOnError: true,
     },
   )
 

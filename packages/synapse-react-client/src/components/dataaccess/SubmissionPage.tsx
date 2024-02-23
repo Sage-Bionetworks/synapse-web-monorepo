@@ -91,7 +91,7 @@ function AccessRequirementWiki(props: AccessRequirementWikiType) {
   const { data: wikiPageKey } = useGetAccessRequirementWikiPageKey(
     props.accessRequirementId,
     {
-      useErrorBoundary: true,
+      throwOnError: true,
     },
   )
 
@@ -122,7 +122,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   const handleError = useErrorHandler()
   const { data: submission, refetch } = useGetDataAccessSubmission(
     submissionId,
-    { useErrorBoundary: true },
+    { throwOnError: true },
   )
 
   const { mutateAsync } = useUpdateDataAccessSubmissionState()
@@ -135,7 +135,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
 
   const { data: acl } = useGetAccessRequirementACL(
     submission?.accessRequirementId!,
-    { enabled: !!submission, useErrorBoundary: true },
+    { enabled: !!submission, throwOnError: true },
   )
 
   const [showApprovalConfirmation, setShowApprovalConfirmation] =

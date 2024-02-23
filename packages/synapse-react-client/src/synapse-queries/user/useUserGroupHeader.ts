@@ -1,7 +1,10 @@
-import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 
 /**
@@ -13,14 +16,15 @@ import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
  */
 export function useGetUserGroupHeader(
   principalId: string,
-  options?: UseQueryOptions<UserGroupHeader, SynapseClientError>,
+  options?: Partial<UseQueryOptions<UserGroupHeader, SynapseClientError>>,
 ) {
   const { keyFactory } = useSynapseContext()
   const queryKey = keyFactory.getUserGroupHeaderQueryKey(principalId)
 
-  return useQuery<UserGroupHeader, SynapseClientError>(
-    queryKey,
-    async () => {
+  return useQuery({
+    ...options,
+    queryKey: queryKey,
+    queryFn: async () => {
       const responsePage = await SynapseClient.getGroupHeadersBatch([
         principalId,
       ])
@@ -31,8 +35,7 @@ export function useGetUserGroupHeader(
       }
       return responsePage.children[0]
     },
-    options,
-  )
+  })
 }
 
 /**
@@ -44,7 +47,7 @@ export function useGetUserGroupHeader(
  */
 export function useGetUserGroupHeaders(
   principalIds: string[],
-  options?: UseQueryOptions<UserGroupHeader[], SynapseClientError>,
+  options?: Partial<UseQueryOptions<UserGroupHeader[], SynapseClientError>>,
 ) {
   const { keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
@@ -63,50 +66,50 @@ export function useGetUserGroupHeaders(
     return response.children
   }
 
-  return useQuery<UserGroupHeader[], SynapseClientError>(
+  return useQuery<UserGroupHeader[], SynapseClientError>({
+    ...options,
     queryKey,
     queryFn,
-    options,
-  )
+  })
 }
 
 export function useSearchUserGroupHeaders(
   prefix: string,
   filter?: TYPE_FILTER,
-  options?: UseQueryOptions<UserGroupHeader[], SynapseClientError>,
+  options?: Partial<UseQueryOptions<UserGroupHeader[], SynapseClientError>>,
 ) {
   const { keyFactory } = useSynapseContext()
   const queryKey = keyFactory.getUserGroupHeaderSearchQueryKey(prefix, filter)
 
-  return useQuery<UserGroupHeader[], SynapseClientError>(
-    queryKey,
-    async () => {
+  return useQuery({
+    ...options,
+    queryKey: queryKey,
+    queryFn: async () => {
       const responsePage = await SynapseClient.getUserGroupHeaders(
         prefix,
         filter,
       )
       return responsePage.children
     },
-    options,
-  )
+  })
 }
 
 export function useGetUserGroupHeaderWithAlias(
   aliases: string[],
-  options?: UseQueryOptions<UserGroupHeader[], SynapseClientError>,
+  options?: Partial<UseQueryOptions<UserGroupHeader[], SynapseClientError>>,
 ) {
   const { keyFactory } = useSynapseContext()
 
   const queryKey = keyFactory.getUserGroupHeaderWithAliasQueryKey(aliases)
 
-  return useQuery<UserGroupHeader[], SynapseClientError>(
-    queryKey,
-    async () => {
+  return useQuery({
+    ...options,
+    queryKey: queryKey,
+    queryFn: async () => {
       const response = await SynapseClient.postUserGroupHeadersWithAlias(
         aliases,
       )
       return response.list
     },
-    options,
-  )
+  })
 }

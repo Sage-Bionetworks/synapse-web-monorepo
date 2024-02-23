@@ -4,7 +4,7 @@ import BaseTable, {
   SortOrder,
 } from '@sage-bionetworks/react-base-table'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { EntityFinderHeader } from '../EntityFinder/EntityFinderHeader'
 import {
   Direction,
@@ -84,12 +84,12 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
     // It's likely that the user will be throttled by the Synapse backend and may be waiting a
     // noticeable amount of time for the current request, so cancel it (in addition to cancelling future requests)
     if (getChildrenInfiniteRequestObject) {
-      queryClient.cancelQueries(
-        keyFactory.getEntityChildrenQueryKey(
+      queryClient.cancelQueries({
+        queryKey: keyFactory.getEntityChildrenQueryKey(
           getChildrenInfiniteRequestObject,
           true,
         ),
-      )
+      })
     }
     setShowLoadingScreen(false)
     setShouldSelectAll(false)
@@ -179,15 +179,16 @@ export const ChallengeDataTable: React.FunctionComponent<DetailsViewProps> = ({
 
                         const limit = 1
                         const offset = 0
-                        const versions = await queryClient.fetchQuery(
-                          keyFactory.getPaginatedEntityVersionsQueryKey(
-                            e.id,
-                            limit,
-                            offset,
-                          ),
-                          () =>
+                        const versions = await queryClient.fetchQuery({
+                          queryKey:
+                            keyFactory.getPaginatedEntityVersionsQueryKey(
+                              e.id,
+                              limit,
+                              offset,
+                            ),
+                          queryFn: () =>
                             getEntityVersions(e.id, accessToken, offset, limit),
-                        )
+                        })
                         // we pick the first version in the list because it is the most recent
                         latestVersion = versions.results[0]?.versionNumber
                       }

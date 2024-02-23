@@ -82,7 +82,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
 
   const { data: rootEntityHeadersPage, isSuccess } = useGetEntityHeaders(
     rootEntityRefs,
-    { useErrorBoundary: true },
+    { throwOnError: true },
   )
   if (
     isSuccess &&

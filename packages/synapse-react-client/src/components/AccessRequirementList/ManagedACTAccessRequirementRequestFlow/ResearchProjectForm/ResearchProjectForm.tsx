@@ -73,7 +73,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     projectLead,
   ])
 
-  const { mutate, isLoading: isLoadingUpdate } = useUpdateResearchProject({
+  const { mutate, isPending: updateIsPending } = useUpdateResearchProject({
     onSuccess: data => {
       if (onSave) {
         onSave(data)
@@ -91,7 +91,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     },
   })
 
-  const isLoading = isLoadingInitialData || isLoadingUpdate
+  const isLoading = isLoadingInitialData || updateIsPending
 
   const getErrorMessage = (reason: string = '') => {
     return (
@@ -187,7 +187,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
           disabled={isLoading}
           onClick={handleSubmit}
         >
-          {isLoadingUpdate ? 'Saving...' : 'Save changes'}
+          {updateIsPending ? 'Saving...' : 'Save changes'}
         </Button>
       </DialogActions>
     </>

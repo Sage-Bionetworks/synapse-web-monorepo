@@ -27,7 +27,7 @@ import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
 import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMembers'
 
 import { Typography } from '@mui/material'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 
 enum StepsEnum {
   SELECT_YOUR_CHALLENGE_TEAM = 'SELECT_YOUR_CHALLENGE_TEAM',
@@ -297,9 +297,9 @@ const ChallengeTeamWizard: React.FunctionComponent<
       .then(() => {
         // invalidate submissions team membership status to update the ChallengeRegisterButton
         if (challenge) {
-          queryClient.invalidateQueries(
-            keyFactory.getSubmissionTeamsQueryKey(challenge?.id),
-          )
+          queryClient.invalidateQueries({
+            queryKey: keyFactory.getSubmissionTeamsQueryKey(challenge?.id),
+          })
         }
         handleStepChange(StepsEnum.REGISTRATION_SUCCESSFUL)
       })

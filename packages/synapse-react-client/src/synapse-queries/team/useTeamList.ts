@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -10,25 +10,26 @@ import {
 
 export function useGetTeamList(
   teamIds: string[] | number[],
-  options?: UseQueryOptions<ListWrapper<Team>, SynapseClientError>,
+  options?: Partial<UseQueryOptions<ListWrapper<Team>, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<ListWrapper<Team>, SynapseClientError>(
-    keyFactory.getTeamListQueryKey(teamIds.sort().join()),
-    () => SynapseClient.getTeamList(teamIds, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getTeamListQueryKey(teamIds.sort().join()),
+    queryFn: () => SynapseClient.getTeamList(teamIds, accessToken),
+  })
 }
 
 export function useGetChallengeTeamList(
   challengeId: string,
-  options?: UseQueryOptions<ChallengeTeam[], SynapseClientError>,
+  options?: Partial<UseQueryOptions<ChallengeTeam[], SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<ChallengeTeam[], SynapseClientError>(
-    keyFactory.getChallengeTeamListQueryKey(challengeId),
-    () => SynapseClient.getAllChallengeTeams(accessToken, challengeId),
-    options,
-  )
+  return useQuery({
+    ...options,
+
+    queryKey: keyFactory.getChallengeTeamListQueryKey(challengeId),
+    queryFn: () => SynapseClient.getAllChallengeTeams(accessToken, challengeId),
+  })
 }

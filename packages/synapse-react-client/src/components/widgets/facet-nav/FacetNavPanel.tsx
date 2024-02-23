@@ -18,7 +18,7 @@ import loadingScreen from '../../LoadingScreen/LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
 import { Box, Tooltip } from '@mui/material'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
@@ -285,8 +285,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   )
   const columnType = columnModel?.columnType as ColumnTypeEnum
 
-  const { data: plotData } = useQuery(
-    [
+  const { data: plotData } = useQuery({
+    queryKey: [
       'extractPlotDataArray',
       facetToPlot,
       columnType,
@@ -294,7 +294,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
       plotType,
       accessToken,
     ],
-    () =>
+
+    queryFn: () =>
       extractPlotDataArray(
         facetToPlot,
         columnType,
@@ -302,10 +303,9 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
         plotType,
         accessToken,
       ),
-    {
-      enabled: !!facetToPlot,
-    },
-  )
+
+    enabled: !!facetToPlot,
+  })
 
   /* rendering functions */
   const ChartSelectionToggle = (): JSX.Element => (

@@ -1,4 +1,6 @@
 import {
+  InfiniteData,
+  QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useMutation,
@@ -6,46 +8,61 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { Submission } from '@sage-bionetworks/synapse-types'
-import { SubmissionStateChangeRequest } from '@sage-bionetworks/synapse-types'
-import {
-  SubmissionSearchRequest,
-  SubmissionSearchResponse,
-} from '@sage-bionetworks/synapse-types'
 import {
   ACTSubmissionStatus,
   CreateSubmissionRequest,
+  Submission,
+  SubmissionSearchRequest,
+  SubmissionSearchResponse,
+  SubmissionStateChangeRequest,
 } from '@sage-bionetworks/synapse-types'
 
 export default function useGetDataAccessSubmission(
   submissionId: string | number,
-  options?: UseQueryOptions<Submission, SynapseClientError>,
+  options?: Partial<UseQueryOptions<Submission, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<Submission, SynapseClientError>(
-    keyFactory.getDataAccessSubmissionQueryKey(String(submissionId.toString())),
-    () => SynapseClient.getSubmissionById(submissionId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getDataAccessSubmissionQueryKey(
+      String(submissionId.toString()),
+    ),
+    queryFn: () => SynapseClient.getSubmissionById(submissionId, accessToken),
+  })
 }
 
-export function useSearchAccessSubmissionsInfinite(
+export function useSearchAccessSubmissionsInfinite<
+  TData = InfiniteData<SubmissionSearchResponse>,
+>(
   params: SubmissionSearchRequest,
-  options?: UseInfiniteQueryOptions<
-    SubmissionSearchResponse,
-    SynapseClientError
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      SubmissionSearchResponse,
+      SynapseClientError,
+      TData,
+      SubmissionSearchResponse,
+      QueryKey,
+      SubmissionSearchResponse['nextPageToken']
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useInfiniteQuery<SubmissionSearchResponse, SynapseClientError>(
-    keyFactory.searchDataAccessSubmissionQueryKey(params),
-    async context => {
+  return useInfiniteQuery<
+    SubmissionSearchResponse,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    SubmissionSearchResponse['nextPageToken']
+  >({
+    ...options,
+    queryKey: keyFactory.searchDataAccessSubmissionQueryKey(params),
+    queryFn: async context => {
       return await SynapseClient.searchAccessSubmission(
         {
           ...params,
@@ -54,11 +71,9 @@ export function useSearchAccessSubmissionsInfinite(
         accessToken,
       )
     },
-    {
-      ...options,
-      getNextPageParam: page => page.nextPageToken,
-    },
-  )
+    initialPageParam: undefined,
+    getNextPageParam: page => page.nextPageToken,
+  })
 }
 
 export function useUpdateDataAccessSubmissionState(
@@ -75,35 +90,35 @@ export function useUpdateDataAccessSubmissionState(
     Submission,
     SynapseClientError,
     SubmissionStateChangeRequest
-  >(
-    (request: SubmissionStateChangeRequest): Promise<Submission> =>
+  >({
+    ...options,
+    mutationFn: (request: SubmissionStateChangeRequest): Promise<Submission> =>
       SynapseClient.updateSubmissionStatus(request, accessToken),
-    {
-      ...options,
-      onSuccess: async (updatedSubmission, variables, ctx) => {
-        // Invalidate all searches, since updating the status will affect filtered search results
-        await queryClient.invalidateQueries(
-          keyFactory.searchDataAccessSubmissionQueryKey(),
-        )
-        // Update the query data for the updated submission
-        queryClient.setQueryData(
-          keyFactory.getDataAccessSubmissionQueryKey(variables.submissionId),
-          updatedSubmission,
-        )
+    onSuccess: async (updatedSubmission, variables, ctx) => {
+      // Invalidate all searches, since updating the status will affect filtered search results
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.searchDataAccessSubmissionQueryKey(),
+      })
+      // Update the query data for the updated submission
+      queryClient.setQueryData(
+        keyFactory.getDataAccessSubmissionQueryKey(variables.submissionId),
+        updatedSubmission,
+      )
 
-        if (options?.onSuccess) {
-          await options.onSuccess(updatedSubmission, variables, ctx)
-        }
-      },
+      if (options?.onSuccess) {
+        await options.onSuccess(updatedSubmission, variables, ctx)
+      }
     },
-  )
+  })
 }
 
 export function useSubmitDataAccessRequest(
-  options?: UseMutationOptions<
-    ACTSubmissionStatus,
-    SynapseClientError,
-    { request: CreateSubmissionRequest; accessRequirementId: string }
+  options?: Partial<
+    UseMutationOptions<
+      ACTSubmissionStatus,
+      SynapseClientError,
+      { request: CreateSubmissionRequest; accessRequirementId: string }
+    >
   >,
 ) {
   const queryClient = useQueryClient()
@@ -113,8 +128,12 @@ export function useSubmitDataAccessRequest(
     ACTSubmissionStatus,
     SynapseClientError,
     { request: CreateSubmissionRequest; accessRequirementId: string }
-  >(
-    async ({ request, accessRequirementId }): Promise<ACTSubmissionStatus> => {
+  >({
+    ...options,
+    mutationFn: async ({
+      request,
+      accessRequirementId,
+    }): Promise<ACTSubmissionStatus> => {
       // The subjectId or subjectType may not be known, so pick an arbitrary one off of the AR (SWC-6490)
       if (request.subjectId == null || request.subjectType == null) {
         const { subjects } = await SynapseClient.getSubjects(
@@ -126,23 +145,20 @@ export function useSubmitDataAccessRequest(
       }
       return SynapseClient.submitDataAccessRequest(request, accessToken!)
     },
-    {
-      ...options,
-      onSuccess: async (data, variables, ctx) => {
-        // Invalidate the status of the relevant AR
-        await queryClient.invalidateQueries(
-          keyFactory.getAccessRequirementStatusQueryKey(
-            variables.accessRequirementId,
-          ),
-        )
-        // Invalidate all searches, in case it was an AR reviewer who created this submission
-        await queryClient.invalidateQueries(
-          keyFactory.searchDataAccessSubmissionQueryKey(),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(data, variables, ctx)
-        }
-      },
+    onSuccess: async (data, variables, ctx) => {
+      // Invalidate the status of the relevant AR
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAccessRequirementStatusQueryKey(
+          variables.accessRequirementId,
+        ),
+      })
+      // Invalidate all searches, in case it was an AR reviewer who created this submission
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.searchDataAccessSubmissionQueryKey(),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(data, variables, ctx)
+      }
     },
-  )
+  })
 }

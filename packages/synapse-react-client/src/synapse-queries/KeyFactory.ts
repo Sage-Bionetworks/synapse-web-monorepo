@@ -27,7 +27,7 @@ import {
   ViewColumnModelRequest,
   ViewEntityType,
 } from '@sage-bionetworks/synapse-types'
-import { QueryKey } from 'react-query'
+import { QueryKey } from '@tanstack/react-query'
 import { removeTrailingUndefinedElements } from '../utils/functions/ArrayUtils'
 import { hashCode } from '../utils/functions/StringUtils'
 import {
@@ -612,7 +612,7 @@ export class KeyFactory {
     return this.getKey('team', teamId, 'member', userId)
   }
 
-  public getMembershipStatusQueryKey(teamId: string, userId: string) {
+  public getMembershipStatusQueryKey(teamId: string, userId?: string) {
     return this.getKey('team', teamId, 'membershipStatus', userId)
   }
 

@@ -176,7 +176,7 @@ export function EntityTree(props: EntityTreeProps) {
   const { data: currentContainerBundle, isSuccess: isSuccessBundle } =
     useGetEntityBundle(currentContainer!, undefined, ALL_ENTITY_BUNDLE_FIELDS, {
       enabled: !!currentContainer && currentContainer !== 'root',
-      useErrorBoundary: true,
+      throwOnError: true,
     })
 
   const { data: favorites, isLoading: isLoadingFavorites } = useGetFavorites(
@@ -192,7 +192,7 @@ export function EntityTree(props: EntityTreeProps) {
       }),
       // Don't refetch the projects. Updating the entity headers will drop all the children that VirtualizedTree has fetched
       refetchInterval: Infinity,
-      useErrorBoundary: true,
+      throwOnError: true,
     },
   )
 
@@ -203,7 +203,7 @@ export function EntityTree(props: EntityTreeProps) {
       initialContainer.match(SYNAPSE_ENTITY_ID_REGEX)
     ),
     refetchInterval: Infinity,
-    useErrorBoundary: true,
+    throwOnError: true,
   })
 
   const { data: projectHeader, isLoading: isLoadingProjectHeader } =

@@ -6,7 +6,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { SynapseClientError } from '../SynapseClientError'
 import SynapseClient from '../../synapse-client'
 
@@ -36,7 +36,7 @@ export default function useLogin(
   twoFaErrorResponse?: TwoFactorAuthErrorResponse,
 ): UseLoginReturn {
   const [step, setStep] = useState<UseLoginReturn['step']>('CHOOSE_AUTH_METHOD')
-  const [errorMessage, setErrorMessage] = useState<string>()
+  const [errorMessage, setErrorMessage] = useState<string | undefined>()
   const [userId, setUserId] = useState<number>()
   const [twoFaToken, setTwoFaToken] = useState<string>()
 
@@ -105,38 +105,36 @@ export default function useLogin(
 
   const {
     mutate: mutateLoginWithUsernameAndPassword,
-    isLoading: isLoadingLoginWithUsernameAndPassword,
+    isPending: isLoadingLoginWithUsernameAndPassword,
   } = useMutation<
     LoginResponse | TwoFactorAuthErrorResponse | null,
     SynapseClientError,
     { username: string; password: string; authenticationReceipt: string | null }
-  >(
-    ({ username, password, authenticationReceipt }) =>
+  >({
+    mutationFn: ({ username, password, authenticationReceipt }) =>
       SynapseClient.login(username, password, authenticationReceipt),
-    {
-      onError: error => {
-        setErrorMessage(error.reason)
-      },
-      onSuccess: async loginResponse => {
-        if (loginResponse) {
-          if ('errorCode' in loginResponse) {
-            setStep('VERIFICATION_CODE')
-            setTwoFaToken(loginResponse.twoFaToken)
-            setUserId(loginResponse.userId)
-          } else {
-            await finishLogin(loginResponse)
-          }
-        }
-      },
+    onError: error => {
+      setErrorMessage(error.reason)
     },
-  )
+    onSuccess: async loginResponse => {
+      if (loginResponse) {
+        if ('errorCode' in loginResponse) {
+          setStep('VERIFICATION_CODE')
+          setTwoFaToken(loginResponse.twoFaToken)
+          setUserId(loginResponse.userId)
+        } else {
+          await finishLogin(loginResponse)
+        }
+      }
+    },
+  })
 
   const {
     mutate: mutateLoginWith2FACode,
-    isLoading: isLoadingLoginWith2FACode,
+    isPending: isLoadingLoginWith2FACode,
   } = useMutation<LoginResponse, SynapseClientError, TwoFactorAuthLoginRequest>(
-    SynapseClient.loginWith2fa,
     {
+      mutationFn: SynapseClient.loginWith2fa,
       onError: e => {
         setErrorMessage(e.reason)
         if (

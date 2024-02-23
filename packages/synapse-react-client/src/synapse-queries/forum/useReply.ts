@@ -1,43 +1,63 @@
 import {
-  UseInfiniteQueryOptions,
+  InfiniteData,
+  QueryKey,
   useInfiniteQuery,
-  UseMutationOptions,
-  useQueryClient,
+  UseInfiniteQueryOptions,
   useMutation,
-  UseQueryOptions,
+  UseMutationOptions,
   useQuery,
-} from 'react-query'
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 import {
   CreateDiscussionReply,
   DiscussionFilter,
   DiscussionReplyBundle,
   DiscussionReplyOrder,
+  Match,
+  PaginatedResults,
   UpdateDiscussionReply,
 } from '@sage-bionetworks/synapse-types'
-import { PaginatedResults } from '@sage-bionetworks/synapse-types'
-import { Match } from '@sage-bionetworks/synapse-types'
+import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
-export function useGetRepliesInfinite(
+export function useGetRepliesInfinite<
+  TData = InfiniteData<PaginatedResults<DiscussionReplyBundle>>,
+>(
   threadId: string,
   ascending: boolean,
   limit: number,
   sort?: DiscussionReplyOrder,
   filter?: DiscussionFilter,
-  options?: UseInfiniteQueryOptions<
-    PaginatedResults<DiscussionReplyBundle>,
-    SynapseClientError
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      PaginatedResults<DiscussionReplyBundle>,
+      SynapseClientError,
+      TData,
+      PaginatedResults<DiscussionReplyBundle>,
+      QueryKey,
+      number | undefined
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<
     PaginatedResults<DiscussionReplyBundle>,
-    SynapseClientError
-  >(
-    keyFactory.getRepliesQueryKey(threadId, ascending, limit, sort, filter),
-    async context => {
+    SynapseClientError,
+    TData,
+    QueryKey,
+    number | undefined
+  >({
+    ...options,
+    queryKey: keyFactory.getRepliesQueryKey(
+      threadId,
+      ascending,
+      limit,
+      sort,
+      filter,
+    ),
+    queryFn: async context => {
       return SynapseClient.getReplies(
         accessToken,
         threadId,
@@ -48,25 +68,14 @@ export function useGetRepliesInfinite(
         filter,
       )
     },
-    {
-      ...options,
-      getNextPageParam: (lastPage, pages) => {
-        const numberOfFetchedResults = pages.flatMap(
-          page => page.results,
-        ).length
-        if (lastPage.totalNumberOfResults! > numberOfFetchedResults) {
-          return numberOfFetchedResults
-        } else {
-          return undefined
-        }
-      },
-    },
-  )
+    initialPageParam: undefined,
+    getNextPageParam: getNextPageParamForPaginatedResults,
+  })
 }
 
 export function useGetReply(
   reply: DiscussionReplyBundle,
-  options?: UseQueryOptions<string, SynapseClientError>,
+  options?: Partial<UseQueryOptions<string, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryFn = async () => {
@@ -84,11 +93,15 @@ export function useGetReply(
     })
     return data.text()
   }
-  return useQuery<string, SynapseClientError>(
-    keyFactory.getReplyQueryKey(reply.threadId, reply.id, reply.messageKey),
+  return useQuery<string, SynapseClientError>({
+    ...options,
+    queryKey: keyFactory.getReplyQueryKey(
+      reply.threadId,
+      reply.id,
+      reply.messageKey,
+    ),
     queryFn,
-    options,
-  )
+  })
 }
 
 export function usePostReply(
@@ -104,21 +117,19 @@ export function usePostReply(
     DiscussionReplyBundle,
     SynapseClientError,
     CreateDiscussionReply
-  >(
-    (request: CreateDiscussionReply) =>
+  >({
+    ...options,
+    mutationFn: (request: CreateDiscussionReply) =>
       SynapseClient.postReply(request, accessToken),
-    {
-      ...options,
-      onSuccess: async (newReply, variables, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getAllRepliesQueryKey(newReply.threadId),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(newReply, variables, ctx)
-        }
-      },
+    onSuccess: async (newReply, variables, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllRepliesQueryKey(newReply.threadId),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(newReply, variables, ctx)
+      }
     },
-  )
+  })
 }
 
 export function usePutReply(
@@ -135,43 +146,40 @@ export function usePutReply(
     DiscussionReplyBundle,
     SynapseClientError,
     UpdateDiscussionReply
-  >(
-    (request: UpdateDiscussionReply) =>
+  >({
+    ...options,
+    mutationFn: (request: UpdateDiscussionReply) =>
       SynapseClient.putReply(request, accessToken),
-    {
-      ...options,
-      onSuccess: async (newReply, variables, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getAllRepliesQueryKey(newReply.threadId),
-        )
+    onSuccess: async (newReply, variables, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllRepliesQueryKey(newReply.threadId),
+      })
 
-        if (options?.onSuccess) {
-          await options.onSuccess(newReply, variables, ctx)
-        }
-      },
+      if (options?.onSuccess) {
+        await options.onSuccess(newReply, variables, ctx)
+      }
     },
-  )
+  })
 }
 
 export function useDeleteReply(
-  options?: UseMutationOptions<void, SynapseClientError, Match>,
+  options?: Partial<UseMutationOptions<void, SynapseClientError, Match>>,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, Match>(
-    (match: Match) => SynapseClient.deleteReply(accessToken, match.replyId),
-    {
-      ...options,
-      onSuccess: async (updatedReply, variables, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getAllRepliesQueryKey(variables.threadId),
-        )
+  return useMutation<void, SynapseClientError, Match>({
+    ...options,
+    mutationFn: (match: Match) =>
+      SynapseClient.deleteReply(accessToken, match.replyId),
+    onSuccess: async (updatedReply, variables, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllRepliesQueryKey(variables.threadId),
+      })
 
-        if (options?.onSuccess) {
-          await options.onSuccess(updatedReply, variables, ctx)
-        }
-      },
+      if (options?.onSuccess) {
+        await options.onSuccess(updatedReply, variables, ctx)
+      }
     },
-  )
+  })
 }

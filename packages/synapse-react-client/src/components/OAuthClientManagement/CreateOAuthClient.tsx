@@ -161,7 +161,7 @@ export const CreateOAuthModal: React.FunctionComponent<
     },
   })
 
-  const { mutate: updateClient, isLoading: isLoadingUpdate } =
+  const { mutate: updateClient, isPending: updateIsPending } =
     useUpdateOAuthClient({
       onSuccess: () => {
         displayToast('Successfully saved', 'success')
@@ -294,12 +294,12 @@ export const CreateOAuthModal: React.FunctionComponent<
 
   const content = (
     <>
-      {isLoadingUpdate && (
+      {updateIsPending && (
         <div className={'SRC-center-text'}>
           <SynapseSpinner size={40} />
         </div>
       )}
-      {!isLoadingUpdate && (
+      {!updateIsPending && (
         <>
           <Typography variant="body1" mb={'10px'}>
             To protect you and your users, your consent screen and application

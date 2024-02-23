@@ -1,5 +1,5 @@
 import React from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import { DownloadListTableProps } from './DownloadListTable'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'

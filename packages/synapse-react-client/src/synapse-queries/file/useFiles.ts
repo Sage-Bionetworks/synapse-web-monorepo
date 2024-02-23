@@ -1,4 +1,8 @@
-import { UseQueryOptions, useQuery, useQueryClient } from 'react-query'
+import {
+  UseQueryOptions,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -14,7 +18,9 @@ export function useGetPresignedUrlContent(
   fileHandle: FileHandle,
   request: BatchFileRequest,
   maxFileSizeBytes?: number,
-  options?: Omit<UseQueryOptions<string, SynapseClientError>, 'staleTime'>,
+  options?: Partial<
+    Omit<UseQueryOptions<string, SynapseClientError>, 'staleTime'>
+  >,
 ) {
   if (request.requestedFiles.length !== 1) {
     console.warn('useGetPresignedUrlContent only supports one file at a time')
@@ -29,25 +35,24 @@ export function useGetPresignedUrlContent(
     )
     return data
   }
-  return useQuery<string, SynapseClientError>(
-    keyFactory.getPresignedUrlContentQueryKey(
+  return useQuery<string, SynapseClientError>({
+    ...options,
+    queryKey: keyFactory.getPresignedUrlContentQueryKey(
       fileHandle,
       request,
       maxFileSizeBytes,
     ),
-
     queryFn,
-    {
-      staleTime: Infinity,
-      ...options,
-    },
-  )
+    staleTime: Infinity,
+  })
 }
 
 export function useGetPresignedUrlContentFromFHA(
   fileHandleAssociation: FileHandleAssociation,
   forceAnonymous: boolean = false,
-  options?: Omit<UseQueryOptions<string, SynapseClientError>, 'staleTime'>,
+  options?: Partial<
+    Omit<UseQueryOptions<string, SynapseClientError>, 'staleTime'>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryFn = async () => {
@@ -66,18 +71,15 @@ export function useGetPresignedUrlContentFromFHA(
     )
     return data
   }
-  return useQuery<string, SynapseClientError>(
-    keyFactory.getPresignedUrlFromFHAContentQueryKey(
+  return useQuery<string, SynapseClientError>({
+    ...options,
+    queryKey: keyFactory.getPresignedUrlFromFHAContentQueryKey(
       fileHandleAssociation,
       forceAnonymous,
     ),
-
     queryFn,
-    {
-      staleTime: Infinity,
-      ...options,
-    },
-  )
+    staleTime: Infinity,
+  })
 }
 
 /**
@@ -85,7 +87,9 @@ export function useGetPresignedUrlContentFromFHA(
  */
 export function useGetProfileImage(
   userId: string,
-  options?: Omit<UseQueryOptions<Blob | null, SynapseClientError>, 'staleTime'>,
+  options?: Partial<
+    Omit<UseQueryOptions<Blob | null, SynapseClientError>, 'staleTime'>
+  >,
 ) {
   const { keyFactory } = useSynapseContext()
   const queryFn = async () => {
@@ -103,14 +107,12 @@ export function useGetProfileImage(
     }
     return null
   }
-  return useQuery<Blob | null, SynapseClientError>(
-    keyFactory.getProfileImageQueryKey(userId),
+  return useQuery<Blob | null, SynapseClientError>({
+    ...options,
+    queryKey: keyFactory.getProfileImageQueryKey(userId),
     queryFn,
-    {
-      staleTime: Infinity,
-      ...options,
-    },
-  )
+    staleTime: Infinity,
+  })
 }
 
 /**
@@ -123,7 +125,7 @@ export function useGetProfileImage(
  */
 export function useGetFileBatch(
   request: BatchFileRequest,
-  options?: UseQueryOptions<BatchFileResult, SynapseClientError>,
+  options?: Partial<UseQueryOptions<BatchFileResult, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
@@ -156,11 +158,9 @@ export function useGetFileBatch(
     throw new Error('useGetFileBatch does not support pre-signed URLs.')
   }
 
-  return useQuery<BatchFileResult, SynapseClientError>(
-    keyFactory.getBatchOfFiles(request),
+  return useQuery<BatchFileResult, SynapseClientError>({
+    ...options,
+    queryKey: keyFactory.getBatchOfFiles(request),
     queryFn,
-    {
-      ...options,
-    },
-  )
+  })
 }

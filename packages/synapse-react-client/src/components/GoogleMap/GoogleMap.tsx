@@ -1,6 +1,6 @@
 import { GoogleMap, LoadScript } from '@react-google-maps/api'
 import React, { useCallback, useMemo, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
   GeoData,
   getAllSynapseUserGeoData,
@@ -29,8 +29,10 @@ export type MapProps = {
 function Map(props: MapProps) {
   const { teamId, apiKeyOverride } = props
 
-  const { data: apiKey } = useQuery('googleMapsApiKey', getGoogleMapsApiKey, {
-    useErrorBoundary: true,
+  const { data: apiKey } = useQuery({
+    queryKey: ['googleMapsApiKey'],
+    queryFn: getGoogleMapsApiKey,
+    throwOnError: true,
   })
 
   /** Tracks the currently selected marker on click */
@@ -38,17 +40,19 @@ function Map(props: MapProps) {
     null,
   )
 
-  const { data: geoData, isLoading: isLoadingGeoData } = useQuery(
-    ['synapseGeoData', teamId],
-    () => {
+  const { data: geoData, isLoading: isLoadingGeoData } = useQuery({
+    queryKey: ['synapseGeoData', teamId],
+
+    queryFn: () => {
       if (teamId) {
         return getSynapseTeamGeoData(teamId)
       } else {
         return getAllSynapseUserGeoData()
       }
     },
-    { useErrorBoundary: true },
-  )
+
+    throwOnError: true,
+  })
 
   const onLoad = useCallback(
     function callback(map: google.maps.Map) {

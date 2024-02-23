@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
-import { useGetForumInfinite } from '../../synapse-queries/forum/useForum'
+import { useGetForumThreadsInfinite } from '../../synapse-queries/forum/useForum'
 import { AVATAR } from '../../utils/SynapseConstants'
 import {
   Direction,
@@ -32,7 +32,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
   )
   const [isAscending, setIsAscending] = useState(false)
 
-  const { data, hasNextPage, fetchNextPage } = useGetForumInfinite(
+  const { data, hasNextPage, fetchNextPage } = useGetForumThreadsInfinite(
     forumId,
     limit,
     sort,

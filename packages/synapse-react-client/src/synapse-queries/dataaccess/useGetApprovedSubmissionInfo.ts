@@ -1,4 +1,9 @@
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
+import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -7,29 +12,41 @@ import {
   SubmissionInfoPageRequest,
 } from '@sage-bionetworks/synapse-types'
 
-export function useGetApprovedSubmissionInfoInfinite(
+export function useGetApprovedSubmissionInfoInfinite<
+  TData = InfiniteData<SubmissionInfoPage>,
+>(
   accessRequirementId: string,
-  options?: UseInfiniteQueryOptions<
-    SubmissionInfoPage,
-    SynapseClientError,
-    SubmissionInfoPage
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      SubmissionInfoPage,
+      SynapseClientError,
+      TData,
+      SubmissionInfoPage,
+      QueryKey,
+      SubmissionInfoPage['nextPageToken']
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const request: SubmissionInfoPageRequest = {
     accessRequirementId,
   }
-  return useInfiniteQuery<SubmissionInfoPage, SynapseClientError>(
-    keyFactory.getApprovedSubmissionInfoQueryKey(request),
-    async context => {
+  return useInfiniteQuery<
+    SubmissionInfoPage,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    SubmissionInfoPage['nextPageToken']
+  >({
+    ...options,
+    queryKey: keyFactory.getApprovedSubmissionInfoQueryKey(request),
+    queryFn: async context => {
       return await SynapseClient.getApprovedSubmissionInfo(
         { ...request, nextPageToken: context.pageParam },
         accessToken,
       )
     },
-    {
-      ...options,
-      getNextPageParam: page => page.nextPageToken,
-    },
-  )
+    initialPageParam: undefined,
+    getNextPageParam: page => page.nextPageToken,
+  })
 }

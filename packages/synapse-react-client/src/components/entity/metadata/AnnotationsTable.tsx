@@ -44,11 +44,12 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
 
   // TODO: Support versioned annotations, see PLFM-7290
   const {
-    entityMetadata,
-    annotations,
+    data: entityData,
     isLoading,
     refetch: refetchEntityData,
   } = useGetJson(entityId, true)
+  const entityMetadata = entityData?.entityMetadata
+  const annotations = entityData?.annotations
 
   const { data: boundSchema } = useGetSchemaBinding(entityId, {
     enabled: isInExperimentalMode,

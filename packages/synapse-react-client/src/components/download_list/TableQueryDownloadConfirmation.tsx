@@ -60,7 +60,7 @@ export function TableQueryDownloadConfirmation() {
     setShowDownloadConfirmation(false)
   }
 
-  const { mutate: addToDownloadList, isLoading: isAddingToDownloadCart } =
+  const { mutate: addToDownloadList, isPending: isAddingToDownloadCart } =
     useAddQueryToDownloadList({
       onSuccess: () => {
         displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)

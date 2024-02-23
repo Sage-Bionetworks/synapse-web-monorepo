@@ -57,13 +57,13 @@ const CertificationQuiz: React.FunctionComponent = () => {
     }
   }
 
-  const { mutate: postCertifiedUserTestResponse, isLoading: isSubmitting } =
+  const { mutate: postCertifiedUserTestResponse, isPending: isSubmitting } =
     usePostCertifiedUserTestResponse({
       onSuccess: () => {
         setIsRetakingQuiz(false)
         window.scrollTo(0, 0)
       },
-      useErrorBoundary: true,
+      throwOnError: true,
     })
   // user is taking the quiz if user is not certified, and either there is no passing record or if the user clicked to retake the quiz
   const isTakingQuiz =

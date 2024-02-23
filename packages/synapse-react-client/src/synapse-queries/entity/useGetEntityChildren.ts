@@ -1,11 +1,11 @@
 import {
-  QueryFunctionContext,
+  InfiniteData,
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -16,32 +16,48 @@ import {
 
 export function useGetEntityChildren(
   request: EntityChildrenRequest,
-  options?: UseQueryOptions<
-    EntityChildrenResponse,
-    SynapseClientError,
-    EntityChildrenResponse
+  options?: Partial<
+    UseQueryOptions<
+      EntityChildrenResponse,
+      SynapseClientError,
+      EntityChildrenResponse
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<EntityChildrenResponse, SynapseClientError>(
-    keyFactory.getEntityChildrenQueryKey(request, false),
-    () => SynapseClient.getEntityChildren(request, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityChildrenQueryKey(request, false),
+    queryFn: () => SynapseClient.getEntityChildren(request, accessToken),
+  })
 }
 
-export function useGetEntityChildrenInfinite(
+export function useGetEntityChildrenInfinite<
+  TData = InfiniteData<EntityChildrenResponse>,
+>(
   request: EntityChildrenRequest,
-  options?: UseInfiniteQueryOptions<
-    EntityChildrenResponse,
-    SynapseClientError,
-    EntityChildrenResponse
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      EntityChildrenResponse,
+      SynapseClientError,
+      TData,
+      EntityChildrenResponse,
+      QueryKey,
+      EntityChildrenResponse['nextPageToken']
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useInfiniteQuery<EntityChildrenResponse, SynapseClientError>(
-    keyFactory.getEntityChildrenQueryKey(request, true),
-    async (context: QueryFunctionContext<QueryKey, string>) => {
+  return useInfiniteQuery<
+    EntityChildrenResponse,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    EntityChildrenResponse['nextPageToken']
+  >({
+    ...options,
+    queryKey: keyFactory.getEntityChildrenQueryKey(request, true),
+    queryFn: async context => {
       return await SynapseClient.getEntityChildren(
         {
           ...request,
@@ -54,9 +70,7 @@ export function useGetEntityChildrenInfinite(
         context.signal,
       )
     },
-    {
-      ...options,
-      getNextPageParam: page => page.nextPageToken,
-    },
-  )
+    initialPageParam: undefined,
+    getNextPageParam: page => page.nextPageToken,
+  })
 }

@@ -210,7 +210,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         title: toastMessageTitle,
         primaryButtonConfig: {
           text: SAVE_CHANGES,
-          onClick: () => mutation.mutate(datasetToUpdate),
+          onClick: () => mutate(datasetToUpdate),
         },
       })
     }
@@ -221,36 +221,37 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { data: path } = useGetEntityPath(entityId)
   const projectId = path?.path[1]?.id
 
-  const mutation = useUpdateEntity<EntityRefCollectionView>({
-    onSuccess: () => {
-      setHasChangedSinceLastSave(false)
-      if (onSave) {
-        onSave()
-      } else {
-        // If onSave isn't specified, push a generic toast message.
-        displayToast(CREATE_VERSION_TO_FREEZE, 'success', {
-          title: ENTITY_SAVED,
-        })
-      }
-    },
-    onError: error => {
-      if (error.status === 412) {
-        displayToast(PRECONDITION_FAILED_MESSAGE, 'warning', {
-          title: PRECONDITION_FAILED_TITLE,
-          primaryButtonConfig: {
-            text: PRECONDITION_FAILED_ACTION,
-            onClick: () => {
-              refetch()
+  const { mutate, isPending: updateIsPending } =
+    useUpdateEntity<EntityRefCollectionView>({
+      onSuccess: () => {
+        setHasChangedSinceLastSave(false)
+        if (onSave) {
+          onSave()
+        } else {
+          // If onSave isn't specified, push a generic toast message.
+          displayToast(CREATE_VERSION_TO_FREEZE, 'success', {
+            title: ENTITY_SAVED,
+          })
+        }
+      },
+      onError: error => {
+        if (error.status === 412) {
+          displayToast(PRECONDITION_FAILED_MESSAGE, 'warning', {
+            title: PRECONDITION_FAILED_TITLE,
+            primaryButtonConfig: {
+              text: PRECONDITION_FAILED_ACTION,
+              onClick: () => {
+                refetch()
+              },
             },
-          },
-        })
-      } else {
-        displayToast(error.reason, 'danger', {
-          title: 'An Error Occurred',
-        })
-      }
-    },
-  })
+          })
+        } else {
+          displayToast(error.reason, 'danger', {
+            title: 'An Error Occurred',
+          })
+        }
+      },
+    })
 
   const tableData = datasetToUpdate?.items.map((item: EntityRef) => {
     return {
@@ -588,7 +589,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       />
 
       <div className="DatasetEditorTopBottomPanel">
-        <BlockingLoader show={mutation.isLoading} />
+        <BlockingLoader show={updateIsPending} />
         <div className="ItemCount">
           {datasetToUpdate ? (
             <Typography variant="headline3">
@@ -679,7 +680,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           disabled={!datasetToUpdate}
           variant="contained"
           color="primary"
-          onClick={() => mutation.mutate(datasetToUpdate!)}
+          onClick={() => mutate(datasetToUpdate!)}
         >
           Save
         </Button>

@@ -1,4 +1,8 @@
-import { useQuery, useQueryClient, UseQueryOptions } from 'react-query'
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -11,7 +15,9 @@ import {
 
 export function useGetEntityHeaders(
   references: ReferenceList,
-  options?: UseQueryOptions<PaginatedResults<EntityHeader>, SynapseClientError>,
+  options?: Partial<
+    UseQueryOptions<PaginatedResults<EntityHeader>, SynapseClientError>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
@@ -66,23 +72,26 @@ export function useGetEntityHeaders(
     return response
   }
 
-  return useQuery<PaginatedResults<EntityHeader>, SynapseClientError>(
-    keyFactory.getEntityHeadersQueryKey(references),
+  return useQuery<PaginatedResults<EntityHeader>, SynapseClientError>({
+    ...options,
+    queryKey: keyFactory.getEntityHeadersQueryKey(references),
     queryFn,
-    options,
-  )
+  })
 }
 
 export function useGetEntityHeader(
   entityId: string,
   versionNumber?: number,
-  options?: UseQueryOptions<EntityHeader | undefined, SynapseClientError>,
+  options?: Partial<
+    UseQueryOptions<EntityHeader | undefined, SynapseClientError>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<EntityHeader | undefined, SynapseClientError>(
-    keyFactory.getEntityHeaderQueryKey(entityId, versionNumber),
-    () => SynapseClient.getEntityHeader(entityId, versionNumber, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityHeaderQueryKey(entityId, versionNumber),
+    queryFn: () =>
+      SynapseClient.getEntityHeader(entityId, versionNumber, accessToken),
+  })
 }

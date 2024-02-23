@@ -35,7 +35,7 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
       accessType,
       activeOnly,
     },
-    { keepPreviousData: true, useErrorBoundary: true },
+    { placeholderData: previousData => previousData, throwOnError: true },
   )
 
   if (isLoading) {

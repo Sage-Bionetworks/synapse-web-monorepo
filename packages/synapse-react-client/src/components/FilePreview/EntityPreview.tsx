@@ -33,7 +33,7 @@ export default function EntityPreview(props: EntityPreviewProps) {
     ALL_ENTITY_BUNDLE_FIELDS,
     {
       enabled: !!isResolvedLinkFileEntity,
-      useErrorBoundary: true,
+      throwOnError: true,
     },
   )
 

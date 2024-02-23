@@ -23,9 +23,9 @@ export default function FavoriteButton(props: FavoriteButtonProps) {
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
   const { isFavorite, isLoading } = useIsFavorite(entityId)
-  const { mutate: onAddFavorite, isLoading: isAddingFavorite } =
+  const { mutate: onAddFavorite, isPending: isAddingFavorite } =
     useAddFavorite()
-  const { mutate: onRemoveFavorite, isLoading: isRemovingFavorite } =
+  const { mutate: onRemoveFavorite, isPending: isRemovingFavorite } =
     useRemoveFavorite()
 
   const disableButton =
