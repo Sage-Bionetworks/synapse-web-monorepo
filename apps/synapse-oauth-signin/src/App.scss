@@ -1,13 +1,13 @@
-@use "./style/variables" as Portal;
+@use './style/variables' as Portal;
 
-@use "synapse-react-client/dist/style/main.scss" with (
+@use 'synapse-react-client/dist/style/main.scss' with (
   $primary-action-color: Portal.$primary-action-color,
   $secondary-action-color: Portal.$secondary-action-color,
   $primary-bgcolor-rgba: unset
 );
 
 .App {
-  font-family: "Lato", sans-serif;
+  font-family: 'DM Sans', sans-serif;
   overflow: hidden;
 }
 
@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: center;
   background: transparent
-    url("https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg")
+    url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg')
     no-repeat;
   background-size: cover;
   margin: 0;

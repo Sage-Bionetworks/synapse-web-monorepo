@@ -83,7 +83,7 @@
 }
 
 body {
-  font-family: 'Lato', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   button:focus {
     // bootstrap override
     outline: Portal.$primary-action-color;
@@ -584,7 +584,7 @@ button.dropdown-toggle.nav-button:hover {
     margin-bottom: 0px;
   }
   #sage-logo {
-    margin-top: 10px;
+    width: 250px;
   }
   .logos {
     margin-top: 15px;

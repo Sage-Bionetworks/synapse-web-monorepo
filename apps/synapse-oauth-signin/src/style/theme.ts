@@ -2,7 +2,9 @@ import 'synapse-react-client'
 import { ThemeOptions } from '@mui/material'
 import { Palettes } from 'synapse-react-client'
 
-export const latoFont = ['Lato', 'Roboto', 'Helvetica', 'Arial'].join(',')
+export const fontDefinition = ['DM Sans', 'Roboto', 'Helvetica', 'Arial'].join(
+  ',',
+)
 
 const themeOptions: ThemeOptions = {
   palette: Palettes.palette,
@@ -53,7 +55,7 @@ const themeOptions: ThemeOptions = {
         root: {
           width: '100%',
           '&.MuiInputLabel-root': {
-            fontFamily: latoFont,
+            fontFamily: fontDefinition,
             fontWeight: 700,
           },
         },
@@ -104,7 +106,7 @@ const themeOptions: ThemeOptions = {
   },
   typography: {
     allVariants: {
-      fontFamily: latoFont,
+      fontFamily: fontDefinition,
       fontSize: '14px',
     },
     headline1: {},

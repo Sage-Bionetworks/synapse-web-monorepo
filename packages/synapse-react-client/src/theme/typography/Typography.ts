@@ -1,7 +1,7 @@
 import { TypographyOptions } from '@mui/material/styles/createTypography'
 import { Palette } from '@mui/material/styles/createPalette'
 
-export const defaultFontFamily = ['Lato', 'sans-serif'].join(',')
+export const defaultFontFamily = ['DM Sans', 'sans-serif'].join(',')
 export const monospaceFontFamily = [
   'Menlo',
   'Courier New',

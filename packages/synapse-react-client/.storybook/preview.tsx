@@ -109,7 +109,7 @@ initialize({
 })
 
 const fontLoader = async () => ({
-  fonts: await Promise.all([document.fonts.load('700 1em Lato')]),
+  fonts: await Promise.all([document.fonts.load('700 1em "DM Sans"')]),
 })
 
 export const loaders = [mswLoader]
