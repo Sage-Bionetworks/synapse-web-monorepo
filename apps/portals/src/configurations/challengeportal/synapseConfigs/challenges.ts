@@ -61,7 +61,7 @@ const taskTabConfigs = (taskID: string) => {
       props: {},
     },
     {
-      name: 'ChallengeDataDownload',
+      name: 'ChallengeDataDownloadWrapper',
       columnName: `${taskID}.DataFolder`,
       title: 'Data Files',
       props: {

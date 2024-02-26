@@ -209,8 +209,8 @@ type ChallengeDetailPageWrapper = {
   name: 'ChallengeDetailPageWrapper'
   props: undefined
 }
-type ChallengeDataDownload = {
-  name: 'ChallengeDataDownload'
+type ChallengeDataDownloadWrapper = {
+  name: 'ChallengeDataDownloadWrapper'
   props: ChallengeDataDownloadProps
 }
 type ChallengeSubmissionWrapper = {
@@ -358,7 +358,7 @@ export type SynapseConfig = (
   | OrientationBanner
   | Header
   | ChallengeDetailPageWrapper
-  | ChallengeDataDownload
+  | ChallengeDataDownloadWrapper
   | ChallengeSubmissionWrapper
   | TimelinePlot
 ) &
