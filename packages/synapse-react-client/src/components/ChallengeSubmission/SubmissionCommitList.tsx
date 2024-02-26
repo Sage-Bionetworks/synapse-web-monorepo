@@ -63,7 +63,6 @@ function SubmissionCommitList({
             checked={params.id === selectedCommit?.digest}
             onChange={commitChangeHandler}
             label=""
-            style={{ marginBottom: '16px' }}
           />
         )
       },
@@ -157,6 +156,11 @@ function SubmissionCommitList({
             },
             '.MuiDataGrid-columnHeaderTitleContainer': {
               justifyContent: 'space-between',
+            },
+            '.radio': {
+              display: 'flex',
+              alignItems: 'center',
+              height: '100%',
             },
           }}
           getRowClassName={params =>

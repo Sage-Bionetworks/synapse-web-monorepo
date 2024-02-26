@@ -185,7 +185,6 @@ function SubmissionDirectoryList({
               entityChangeHandler(selectedItemId as string)
             }}
             label=""
-            style={{ marginBottom: '16px' }}
           />
         )
       },
@@ -411,6 +410,11 @@ function SubmissionDirectoryList({
             },
             '.MuiDataGrid-columnHeaderTitleContainer': {
               justifyContent: 'space-between',
+            },
+            '.radio': {
+              display: 'flex',
+              alignItems: 'center',
+              height: '100%',
             },
           }}
           getRowClassName={params =>
