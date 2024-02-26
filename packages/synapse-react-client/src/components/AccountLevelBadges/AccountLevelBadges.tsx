@@ -34,7 +34,7 @@ export const AccountLevelBadges: React.FunctionComponent<
   return (
     <>
       {hasBadges && (
-        <Box display="flex">
+        <Box display="flex" gap="10px">
           {userBundle?.isCertified && (
             <AccountLevelBadge badgeType="certified" />
           )}

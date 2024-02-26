@@ -44,7 +44,6 @@ export const AccountLevelBadge: React.FunctionComponent<
       sx={{
         maxWidth: 450,
         padding: '30px 20px',
-        margin: '5px',
         display: 'flex',
         alignItems: 'center',
       }}
