@@ -144,13 +144,7 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
           props: {},
         },
         {
-          name: 'Markdown',
-          columnName: 'OrganizersDescription',
-          injectMarkdown: true,
           title: 'Organizers',
-          props: {},
-        },
-        {
           name: 'CardContainerLogic',
           columnName: 'Organizers',
           overrideSqlSourceTable: true, // Instead, modify the sql (SELECT * FROM <column value>)
@@ -162,12 +156,12 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
         },
         {
           name: 'Markdown',
-          columnName: 'ContributorsDescription',
+          columnName: 'OrganizersDescription',
           injectMarkdown: true,
-          title: 'Contributors',
           props: {},
         },
         {
+          title: 'Contributors',
           name: 'CardContainerLogic',
           columnName: 'Contributors',
           overrideSqlSourceTable: true,
@@ -176,6 +170,12 @@ export const challengeDetailsPageConfig: DetailsPageProps = {
             limit: 6,
             type: SynapseConstants.MEDIUM_USER_CARD,
           },
+        },
+        {
+          name: 'Markdown',
+          columnName: 'ContributorsDescription',
+          injectMarkdown: true,
+          props: {},
         },
         {
           name: 'CardContainerLogic',
