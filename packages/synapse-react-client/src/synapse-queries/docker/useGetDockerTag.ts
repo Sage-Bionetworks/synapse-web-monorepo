@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import {
@@ -15,18 +15,22 @@ export function useGetDockerTags(
   limit: string | number = 20,
   sort: SortBy = SortBy.CREATED_ON,
   sortDirection: Direction = Direction.DESC,
-  options?: UseQueryOptions<PaginatedResults<DockerCommit>, SynapseClientError>,
+  options?: Partial<
+    UseQueryOptions<PaginatedResults<DockerCommit>, SynapseClientError>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<PaginatedResults<DockerCommit>, SynapseClientError>(
-    keyFactory.getPaginatedDockerTagQueryKey(
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getPaginatedDockerTagQueryKey(
       entityId,
       offset.toString(),
       limit.toString(),
       sort,
       sortDirection,
     ),
-    () =>
+
+    queryFn: () =>
       SynapseClient.getDockerTag(
         entityId,
         accessToken,
@@ -35,6 +39,5 @@ export function useGetDockerTags(
         sort,
         sortDirection,
       ),
-    options,
-  )
+  })
 }

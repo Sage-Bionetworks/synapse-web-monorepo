@@ -1,9 +1,11 @@
 import {
+  InfiniteData,
+  QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -18,13 +20,14 @@ export function useGetUserSubmissionTeams(
   challengeId: string,
   limit: number = 10,
   offset?: number,
-  options?: UseQueryOptions<PaginatedIds, SynapseClientError>,
+  options?: Partial<UseQueryOptions<PaginatedIds, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<PaginatedIds, SynapseClientError>(
-    keyFactory.getSubmissionTeamsQueryKey(challengeId, limit, offset),
-    async () => {
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getSubmissionTeamsQueryKey(challengeId),
+    queryFn: () => {
       return SynapseClient.getSubmissionTeams(
         accessToken,
         challengeId,
@@ -32,30 +35,36 @@ export function useGetUserSubmissionTeams(
         limit,
       )
     },
-    {
-      ...options,
-      getNextPageParam: (lastPage, pages) => {
-        if (lastPage.results.length > 0) return pages.length * limit
-        //set the new offset to (page * limit)
-        else return undefined
-      },
-    },
-  )
+  })
 }
 
-export function useGetUserTeamsInfinite(
+export function useGetUserTeamsInfinite<
+  TData = InfiniteData<PaginatedResults<Team>>,
+>(
   userId: string,
-  options?: UseInfiniteQueryOptions<
-    PaginatedResults<Team>,
-    SynapseClientError,
-    PaginatedResults<Team>
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      PaginatedResults<Team>,
+      SynapseClientError,
+      TData,
+      PaginatedResults<Team>,
+      QueryKey,
+      number | undefined
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const LIMIT = 10
-  return useInfiniteQuery<PaginatedResults<Team>, SynapseClientError>(
-    keyFactory.getUserTeamsQueryKey(userId),
-    async context => {
+  return useInfiniteQuery<
+    PaginatedResults<Team>,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    number | undefined
+  >({
+    ...options,
+    queryKey: keyFactory.getUserTeamsQueryKey(userId),
+    queryFn: async context => {
       return SynapseClient.getUserTeamList(
         accessToken,
         userId,
@@ -63,9 +72,7 @@ export function useGetUserTeamsInfinite(
         LIMIT, // limit
       )
     },
-    {
-      ...options,
-      getNextPageParam: getNextPageParamForPaginatedResults,
-    },
-  )
+    initialPageParam: undefined,
+    getNextPageParam: getNextPageParamForPaginatedResults,
+  })
 }

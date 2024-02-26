@@ -10,16 +10,18 @@ import { cloneDeep } from 'lodash-es'
 import { getFileColumnModelId } from '../../components/SynapseTable/SynapseTableUtils'
 import { SynapseConstants } from '../../utils'
 import { useGetQueryResultBundleWithAsyncStatus } from './useGetQueryResultBundle'
-import { UseQueryOptions } from 'react-query'
+import { UseQueryOptions } from '@tanstack/react-query'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 
 export function useGetActionsRequiredForTableQuery(
   queryBundleRequest: QueryBundleRequest,
   columnModels: ColumnModel[],
-  options?: UseQueryOptions<
-    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-    SynapseClientError,
-    ActionRequiredCount[]
+  options?: Partial<
+    UseQueryOptions<
+      AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+      SynapseClientError,
+      ActionRequiredCount[]
+    >
   >,
 ) {
   const queryRequestCopy = useMemo(() => {

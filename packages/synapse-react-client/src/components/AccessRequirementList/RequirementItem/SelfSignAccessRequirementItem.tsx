@@ -68,7 +68,7 @@ export default function SelfSignAccessRequirementItem(
 
   const {
     mutate: createAccessApproval,
-    isLoading,
+    isPending: createAccessApprovalIsPending,
     error,
   } = useCreateAccessApproval({
     onError: err => {
@@ -122,7 +122,7 @@ export default function SelfSignAccessRequirementItem(
         variant: 'outlined',
         onClick: onAcceptClicked,
         children: acceptButtonText,
-        disabled: isLoading || acceptButtonDisabled,
+        disabled: createAccessApprovalIsPending || acceptButtonDisabled,
       },
       {
         variant: 'text',

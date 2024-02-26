@@ -24,7 +24,7 @@ export const EntityChildrenDetails: React.FunctionComponent<
   }
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetEntityChildrenInfinite(getChildrenInfiniteRequestObject, {
-      useErrorBoundary: true,
+      throwOnError: true,
     })
   const entities = data?.pages.flatMap(page => page.page) ?? []
   const totalEntities = data?.pages[0].totalChildCount

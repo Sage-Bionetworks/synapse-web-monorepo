@@ -4,10 +4,10 @@ import {
   SynapseContextProvider,
   SynapseContextType,
 } from '../utils/context/SynapseContext'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import SynapseClient from '../synapse-client'
 import { SynapseToastContainer } from './ToastMessage/ToastMessage'
-import { ReactQueryDevtools } from 'react-query/devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import dayjs from 'dayjs'
 import {
   getAccessTokenFromCookie,
@@ -77,12 +77,12 @@ export function StorybookComponentWrapper(props: {
 }) {
   const { storybookContext } = props
 
+  const currentStack: SynapseStack = (storybookContext.globals.stack ||
+    storybookContext.parameters.stack) as SynapseStack
+
   useEffect(() => {
-    overrideEndpoint(
-      (storybookContext.globals.stack as SynapseStack) ||
-        (storybookContext.parameters.stack as SynapseStack),
-    )
-  }, [storybookContext.globals.stack])
+    overrideEndpoint(currentStack)
+  }, [currentStack])
 
   const [accessToken, setAccessToken] = React.useState<string | undefined>(
     undefined,

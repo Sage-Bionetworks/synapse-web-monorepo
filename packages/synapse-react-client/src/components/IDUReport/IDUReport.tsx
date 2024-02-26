@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { useGetApprovedSubmissionInfoInfinite } from '../../synapse-queries/dataaccess/useGetApprovedSubmissionInfo'
+import { useGetApprovedSubmissionInfoInfinite } from '../../synapse-queries'
 import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
 import {
   LoadingSubmissionInfoCard,
@@ -26,7 +26,7 @@ export const IDUReport: React.FunctionComponent<IDUReportProps> = (
     isFetchingNextPage,
     fetchNextPage,
   } = useGetApprovedSubmissionInfoInfinite(accessRequirementId, {
-    useErrorBoundary: true,
+    throwOnError: true,
   })
   useEffect(() => {
     if (

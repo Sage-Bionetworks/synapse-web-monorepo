@@ -42,7 +42,7 @@ export default function FileHandleContentRenderer(
     fileHandle,
     batchFileRequest,
     MAX_FILE_SIZE,
-    { useErrorBoundary: true },
+    { throwOnError: true },
   )
 
   if (isLoading) {

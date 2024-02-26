@@ -1,52 +1,63 @@
 import {
+  InfiniteData,
+  QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
-import { ProjectHeaderList } from '@sage-bionetworks/synapse-types'
-import { GetProjectsParameters } from '@sage-bionetworks/synapse-types'
+import { SynapseClientError, useSynapseContext } from '../../utils'
+import {
+  GetProjectsParameters,
+  ProjectHeaderList,
+} from '@sage-bionetworks/synapse-types'
 
 export function useGetProjects(
   params?: GetProjectsParameters,
-  options?: UseQueryOptions<
-    ProjectHeaderList,
-    SynapseClientError,
-    ProjectHeaderList
+  options?: Partial<
+    UseQueryOptions<ProjectHeaderList, SynapseClientError, ProjectHeaderList>
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<ProjectHeaderList, SynapseClientError>(
-    keyFactory.getMyProjectsQueryKey(params),
-    () => SynapseClient.getMyProjects(accessToken!, params),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getMyProjectsQueryKey(params),
+    queryFn: () => SynapseClient.getMyProjects(accessToken!, params),
+  })
 }
 
-export function useGetProjectsInfinite(
+export function useGetProjectsInfinite<TData = InfiniteData<ProjectHeaderList>>(
   params: GetProjectsParameters,
-  options?: UseInfiniteQueryOptions<
-    ProjectHeaderList,
-    SynapseClientError,
-    ProjectHeaderList
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      ProjectHeaderList,
+      SynapseClientError,
+      TData,
+      ProjectHeaderList,
+      QueryKey,
+      ProjectHeaderList['nextPageToken']
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useInfiniteQuery<ProjectHeaderList, SynapseClientError>(
-    keyFactory.getMyProjectsQueryKey(params),
-    async context => {
+  return useInfiniteQuery<
+    ProjectHeaderList,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    ProjectHeaderList['nextPageToken']
+  >({
+    ...options,
+    initialPageParam: undefined,
+    queryKey: keyFactory.getMyProjectsQueryKey(params),
+    queryFn: async context => {
       return await SynapseClient.getMyProjects(accessToken!, {
         ...params,
         nextPageToken: context.pageParam,
       })
     },
-    {
-      ...options,
-      getNextPageParam: page => page.nextPageToken,
-    },
-  )
+    getNextPageParam: page => page.nextPageToken,
+  })
 }

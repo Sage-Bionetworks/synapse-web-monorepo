@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -22,27 +22,27 @@ import {
 } from '@sage-bionetworks/synapse-types'
 
 export function useGetNotificationEmail(
-  options?: UseQueryOptions<NotificationEmail, SynapseClientError>,
+  options?: Partial<UseQueryOptions<NotificationEmail, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<NotificationEmail, SynapseClientError>(
-    keyFactory.getNotificationEmailQueryKey(),
-    () => SynapseClient.getNotificationEmail(accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getNotificationEmailQueryKey(),
+    queryFn: () => SynapseClient.getNotificationEmail(accessToken),
+  })
 }
 
 export function useGetCurrentUserProfile(
-  options?: UseQueryOptions<UserProfile, SynapseClientError>,
+  options?: Partial<UseQueryOptions<UserProfile, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryKey = keyFactory.getCurrentUserProfileQueryKey()
 
-  return useQuery<UserProfile, SynapseClientError>(
-    queryKey,
-    () => SynapseClient.getUserProfile(accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: queryKey,
+    queryFn: () => SynapseClient.getUserProfile(accessToken),
+  })
 }
 
 const ALL_USER_BUNDLE_FIELDS =
@@ -57,36 +57,36 @@ const ALL_USER_BUNDLE_FIELDS =
 export function useGetUserBundle(
   userId: string,
   mask: number = ALL_USER_BUNDLE_FIELDS,
-  options?: UseQueryOptions<UserBundle, SynapseClientError>,
+  options?: Partial<UseQueryOptions<UserBundle, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryKey = keyFactory.getUserBundleQueryKey(userId, mask)
 
-  return useQuery<UserBundle, SynapseClientError>(
-    queryKey,
-    () => SynapseClient.getUserBundle(userId, mask, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: queryKey,
+    queryFn: () => SynapseClient.getUserBundle(userId, mask, accessToken),
+  })
 }
 
 export function useGetCurrentUserBundle<TData = UserBundle>(
   mask: number = ALL_USER_BUNDLE_FIELDS,
-  options?: UseQueryOptions<UserBundle, SynapseClientError, TData>,
+  options?: Partial<UseQueryOptions<UserBundle, SynapseClientError, TData>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
   const queryKey = keyFactory.getUserBundleQueryKey('current', mask)
 
-  return useQuery<UserBundle, SynapseClientError, TData>(
-    queryKey,
-    () => SynapseClient.getMyUserBundle(mask, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: queryKey,
+    queryFn: () => SynapseClient.getMyUserBundle(mask, accessToken),
+  })
 }
 
 export function useGetUserProfile(
   principalId: string,
-  options?: UseQueryOptions<UserProfile, SynapseClientError>,
+  options?: Partial<UseQueryOptions<UserProfile, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryKey = keyFactory.getUserProfileQueryKey(principalId)
@@ -94,49 +94,47 @@ export function useGetUserProfile(
   const sessionStorageCacheKey = `${principalId}_USER_PROFILE`
   const cachedValue = sessionStorage.getItem(sessionStorageCacheKey)
 
-  return useQuery<UserProfile, SynapseClientError>(
-    queryKey,
-    async () => {
-      const profile = await SynapseClient.getUserProfileById(
+  return useQuery({
+    ...options,
+    queryKey: queryKey,
+    queryFn: async () => {
+      const userProfile = await SynapseClient.getUserProfileById(
         principalId,
         accessToken,
       )
-
       // If the profile is re-fetched, save it to sessionStorage
-      sessionStorage.setItem(sessionStorageCacheKey, JSON.stringify(profile))
-
-      return profile
+      sessionStorage.setItem(
+        sessionStorageCacheKey,
+        JSON.stringify(userProfile),
+      )
+      return userProfile
     },
-    {
-      ...options,
-      // Use the sessionStorage cache to pre-populate profile data.
-      initialData: cachedValue
-        ? (JSON.parse(cachedValue) as UserProfile)
-        : undefined,
-    },
-  )
+    // Use the sessionStorage cache to pre-populate profile data.
+    placeholderData: cachedValue
+      ? (JSON.parse(cachedValue) as UserProfile)
+      : options?.placeholderData,
+  })
 }
 
 export function useGetPrincipalIdForAlias(
   request: PrincipalAliasRequest,
-  options?: UseQueryOptions<
-    PrincipalAliasResponse['principalId'],
-    SynapseClientError
+  options?: Partial<
+    UseQueryOptions<PrincipalAliasResponse['principalId'], SynapseClientError>
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
   const queryKey = keyFactory.getPrincipalAliasQueryKey(request)
 
-  return useQuery<PrincipalAliasResponse['principalId'], SynapseClientError>(
-    queryKey,
-    async () => {
+  return useQuery({
+    ...options,
+    queryKey: queryKey,
+    queryFn: async () => {
       return (
         await SynapseClient.getPrincipalAliasRequest(accessToken, request)
       ).principalId
     },
-    options,
-  )
+  })
 }
 
 export function useIsCurrentUserACTMember() {

@@ -4,7 +4,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import SynapseClient, { deleteMemberFromTeam } from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -16,42 +16,46 @@ import {
 
 export function useGetTeamMembers(
   teamId: string | number,
-  options?: UseQueryOptions<PaginatedResults<TeamMember>, SynapseClientError>,
+  options?: Partial<
+    UseQueryOptions<PaginatedResults<TeamMember>, SynapseClientError>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery(
-    keyFactory.getTeamMembersQueryKey(String(teamId)),
-    () => SynapseClient.getTeamMembers(accessToken, teamId, '', 50, 0),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getTeamMembersQueryKey(String(teamId)),
+    queryFn: () => SynapseClient.getTeamMembers(accessToken, teamId, '', 50, 0),
+  })
 }
 
 export function useGetIsUserMemberOfTeam(
   teamId: string,
   userId: string,
-  options?: UseQueryOptions<TeamMember | null, SynapseClientError>,
+  options?: Partial<UseQueryOptions<TeamMember | null, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery(
-    keyFactory.getIsUserMemberOfTeamQueryKey(teamId, userId),
-    () => SynapseClient.getIsUserMemberOfTeam(teamId, userId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getIsUserMemberOfTeamQueryKey(teamId, userId),
+    queryFn: () =>
+      SynapseClient.getIsUserMemberOfTeam(teamId, userId, accessToken),
+  })
 }
 
 export function useGetMembershipStatus(
   teamId: string,
   userId: string,
-  options?: UseQueryOptions<TeamMembershipStatus, SynapseClientError>,
+  options?: Partial<UseQueryOptions<TeamMembershipStatus, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery(
-    keyFactory.getMembershipStatusQueryKey(teamId, userId),
-    () => SynapseClient.getMembershipStatus(teamId, userId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getMembershipStatusQueryKey(teamId, userId),
+    queryFn: () =>
+      SynapseClient.getMembershipStatus(teamId, userId, accessToken),
+  })
 }
 
 export function useAddMemberToTeam() {
@@ -62,35 +66,33 @@ export function useAddMemberToTeam() {
     void,
     SynapseClientError,
     { teamId: string; userId: string }
-  >(
-    ({ teamId, userId }) =>
+  >({
+    mutationFn: ({ teamId, userId }) =>
       SynapseClient.addTeamMemberAsAuthenticatedUserOrAdmin(
         teamId,
         userId,
         accessToken!,
       ),
-    {
-      onSuccess: async (data, variables, ctx) => {
-        await Promise.all([
-          queryClient.invalidateQueries(
-            keyFactory.getMembershipStatusQueryKey(
-              variables.teamId,
-              variables.userId,
-            ),
+    onSuccess: async (data, variables, ctx) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getMembershipStatusQueryKey(
+            variables.teamId,
+            variables.userId,
           ),
-          queryClient.invalidateQueries(
-            keyFactory.getIsUserMemberOfTeamQueryKey(
-              variables.teamId,
-              variables.userId,
-            ),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getIsUserMemberOfTeamQueryKey(
+            variables.teamId,
+            variables.userId,
           ),
-          queryClient.invalidateQueries(
-            keyFactory.getTeamMembersQueryKey(variables.teamId),
-          ),
-        ])
-      },
+        }),
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getTeamMembersQueryKey(variables.teamId),
+        }),
+      ])
     },
-  )
+  })
 }
 
 export type TeamMembershipParam = {
@@ -99,7 +101,9 @@ export type TeamMembershipParam = {
 }
 
 export function useDeleteTeamMembership(
-  options?: UseMutationOptions<void, SynapseClientError, TeamMembershipParam>,
+  options?: Partial<
+    UseMutationOptions<void, SynapseClientError, TeamMembershipParam>
+  >,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()

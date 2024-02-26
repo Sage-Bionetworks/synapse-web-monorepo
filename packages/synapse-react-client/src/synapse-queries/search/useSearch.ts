@@ -1,10 +1,11 @@
 import {
-  QueryFunctionContext,
+  InfiniteData,
+  QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -12,43 +13,55 @@ import { SearchQuery, SearchResults } from '@sage-bionetworks/synapse-types'
 
 export function useSearch(
   query: SearchQuery,
-  options?: UseQueryOptions<SearchResults, SynapseClientError, SearchResults>,
+  options?: Partial<
+    UseQueryOptions<SearchResults, SynapseClientError, SearchResults>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<SearchResults, SynapseClientError>(
-    keyFactory.getSearchEntitiesQueryKey(query),
-    () => SynapseClient.searchEntities(query, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getSearchEntitiesQueryKey(query),
+    queryFn: () => SynapseClient.searchEntities(query, accessToken),
+  })
 }
 
-export function useSearchInfinite(
+export function useSearchInfinite<TData = InfiniteData<SearchResults>>(
   query: Omit<SearchQuery, 'start'>,
-  options?: UseInfiniteQueryOptions<
-    SearchResults,
-    SynapseClientError,
-    SearchResults
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      SearchResults,
+      SynapseClientError,
+      TData,
+      SearchResults,
+      QueryKey,
+      number | undefined
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useInfiniteQuery<SearchResults, SynapseClientError>(
-    keyFactory.getSearchEntitiesQueryKey(query),
-    async (context: QueryFunctionContext) => {
+  return useInfiniteQuery<
+    SearchResults,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    number | undefined
+  >({
+    ...options,
+    queryKey: keyFactory.getSearchEntitiesQueryKey(query),
+    queryFn: async context => {
       return SynapseClient.searchEntities(
         { ...query, start: context.pageParam },
         accessToken,
       )
     },
-    {
-      ...options,
-      getNextPageParam: prevPage => {
-        if (prevPage.start + prevPage.hits.length === prevPage.found) {
-          return null
-        } else {
-          return prevPage.start + prevPage.hits.length
-        }
-      },
+    initialPageParam: undefined,
+    getNextPageParam: prevPage => {
+      if (prevPage.start + prevPage.hits.length === prevPage.found) {
+        return null
+      } else {
+        return prevPage.start + prevPage.hits.length
+      }
     },
-  )
+  })
 }

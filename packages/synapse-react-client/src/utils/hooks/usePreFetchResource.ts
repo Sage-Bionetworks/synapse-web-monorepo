@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export async function fetchBlob(url: string): Promise<Blob> {
   const response = await fetch(url)
@@ -19,15 +19,13 @@ export function releaseResourceUrl(resourceUrl: string) {
 export default function usePreFetchResource(
   preSignedURL?: string,
 ): string | undefined {
-  const { data: blob, error } = useQuery(
-    ['usePreFetchResource', preSignedURL],
-    () => fetchBlob(preSignedURL!),
-    {
-      enabled: !!preSignedURL,
-      // The URL may expire, so the fetched item should never be marked as 'stale'; a refetch may not work.
-      staleTime: Infinity,
-    },
-  )
+  const { data: blob, error } = useQuery({
+    queryKey: ['usePreFetchResource', preSignedURL],
+    queryFn: () => fetchBlob(preSignedURL!),
+    enabled: !!preSignedURL,
+    // The URL may expire, so the fetched item should never be marked as 'stale'; a refetch may not work.
+    staleTime: Infinity,
+  })
 
   useEffect(() => {
     if (error) {

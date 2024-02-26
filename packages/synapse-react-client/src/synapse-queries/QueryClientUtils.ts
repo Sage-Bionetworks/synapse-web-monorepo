@@ -1,4 +1,4 @@
-import { QueryClient } from 'react-query'
+import { QueryClient } from '@tanstack/react-query'
 import { KeyFactory } from './KeyFactory'
 
 /**
@@ -16,5 +16,7 @@ export function invalidateAllQueriesForEntity(
   // Some examples:
   //  - deleting an entity should invalidate the parent's children
   //  - moving an entity should invalidate the old and new parent's children
-  return queryClient.invalidateQueries(keyFactory.getEntityQueryKey(id))
+  return queryClient.invalidateQueries({
+    queryKey: keyFactory.getEntityQueryKey(id),
+  })
 }

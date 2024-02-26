@@ -100,18 +100,18 @@ export function TrashCanList() {
     }
   }
 
-  const { mutate: restore, isLoading: isLoadingRestore } = useRestoreEntities({
+  const { mutate: restore, isPending: isPendingRestore } = useRestoreEntities({
     onSettled: onMutateSettled,
   })
-  const { mutate: purge, isLoading: isLoadingPurge } = usePurgeEntities({
+  const { mutate: purge, isPending: isPendingPurge } = usePurgeEntities({
     onSettled: onMutateSettled,
   })
 
-  const isMutating = isLoadingRestore || isLoadingPurge
+  const isMutating = isPendingRestore || isPendingPurge
 
   const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useGetItemsInTrashCanInfinite({
-      useErrorBoundary: true,
+      throwOnError: true,
     })
 
   const items = data?.pages.flatMap(page => page.results) ?? []
@@ -130,7 +130,7 @@ export function TrashCanList() {
     <div className="bootstrap-4-backport">
       <BlockingLoader
         show={isMutating}
-        headlineText={isLoadingPurge ? 'Deleting...' : 'Restoring...'}
+        headlineText={isPendingPurge ? 'Deleting...' : 'Restoring...'}
       />
       <Typography variant="body1">
         The trash can contains items that were recently deleted. You can recover

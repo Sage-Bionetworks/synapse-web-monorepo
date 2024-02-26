@@ -5,7 +5,7 @@
 import { omit, pick } from 'lodash-es'
 import { useMemo } from 'react'
 import {
-  QueryFunctionContext,
+  InfiniteData,
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
@@ -15,7 +15,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { entityJsonKeys } from '../../utils/functions/EntityTypeUtils'
 import { SynapseClientError } from '../../utils/SynapseClientError'
@@ -42,29 +42,29 @@ import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 export function useGetEntity<T extends Entity>(
   entityId: string,
   versionNumber?: string | number,
-  options?: UseQueryOptions<T, SynapseClientError>,
+  options?: Partial<UseQueryOptions<T, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<T, SynapseClientError>(
-    keyFactory.getEntityVersionQueryKey(entityId, versionNumber),
-    () =>
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityVersionQueryKey(entityId, versionNumber),
+    queryFn: () =>
       SynapseClient.getEntity<T>(
         accessToken,
         entityId,
         versionNumber?.toString(),
       ),
-    options,
-  )
+  })
 }
 
 export function useGetEntities(
   entityHeaders: Pick<EntityHeader, 'id' | 'versionNumber'>[],
-  options?: UseQueryOptions<Entity[], SynapseClientError>,
+  options?: Partial<UseQueryOptions<Entity[], SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queries = useMemo(
-    () =>
-      entityHeaders.map(header => {
+    () => ({
+      queries: entityHeaders.map(header => {
         return {
           queryKey: keyFactory.getEntityVersionQueryKey(
             header.id,
@@ -79,6 +79,7 @@ export function useGetEntities(
           options,
         }
       }),
+    }),
     [accessToken, entityHeaders, keyFactory, options],
   )
   return useQueries(queries)
@@ -98,7 +99,9 @@ export function useCreateEntity(
     Entity,
     SynapseClientError,
     Pick<Entity, 'name' | 'description' | 'parentId' | 'concreteType'>
-  >((entity: Entity) => SynapseClient.createEntity(entity, accessToken), {
+  >({
+    mutationFn: (entity: Entity) =>
+      SynapseClient.createEntity(entity, accessToken),
     onSuccess: async (newEntity, variables, ctx) => {
       await invalidateAllQueriesForEntity(
         queryClient,
@@ -118,80 +121,100 @@ export function useCreateEntity(
 }
 
 export function useUpdateEntity<T extends Entity>(
-  options?: UseMutationOptions<T, SynapseClientError, T>,
+  options?: Partial<UseMutationOptions<T, SynapseClientError, T>>,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<T, SynapseClientError, T>(
-    (entity: T) => SynapseClient.updateEntity<T>(entity, accessToken),
-    {
-      ...options,
-      onSuccess: async (updatedEntity, variables, ctx) => {
-        await invalidateAllQueriesForEntity(
-          queryClient,
-          keyFactory,
-          updatedEntity.id!,
-        )
-        queryClient.setQueryData(
-          keyFactory.getEntityQueryKey(updatedEntity.id!),
-          updatedEntity,
-        )
+  return useMutation<T, SynapseClientError, T>({
+    ...options,
+    mutationFn: (entity: T) =>
+      SynapseClient.updateEntity<T>(entity, accessToken),
+    onSuccess: async (updatedEntity, variables, ctx) => {
+      await invalidateAllQueriesForEntity(
+        queryClient,
+        keyFactory,
+        updatedEntity.id!,
+      )
+      queryClient.setQueryData(
+        keyFactory.getEntityQueryKey(updatedEntity.id!),
+        updatedEntity,
+      )
 
-        if (options?.onSuccess) {
-          await options.onSuccess(updatedEntity, variables, ctx)
-        }
-      },
+      if (options?.onSuccess) {
+        await options.onSuccess(updatedEntity, variables, ctx)
+      }
     },
-  )
+  })
 }
 
 export function useDeleteEntity(
-  options?: UseMutationOptions<void, SynapseClientError, string>,
+  options?: Partial<UseMutationOptions<void, SynapseClientError, string>>,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, string>(
-    (entityId: string) => SynapseClient.deleteEntity(accessToken, entityId),
-    {
-      ...options,
-      onSuccess: async (voidReturn, entityId, ctx) => {
-        await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
-        if (options?.onSuccess) {
-          await options.onSuccess(voidReturn, entityId, ctx)
-        }
-      },
+  return useMutation<void, SynapseClientError, string>({
+    ...options,
+    mutationFn: (entityId: string) =>
+      SynapseClient.deleteEntity(accessToken, entityId),
+    onSuccess: async (voidReturn, entityId, ctx) => {
+      await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
+      if (options?.onSuccess) {
+        await options.onSuccess(voidReturn, entityId, ctx)
+      }
     },
-  )
+  })
 }
 
 export function useGetVersions(
   entityId: string,
   offset: number = 0,
   limit: number = 200,
-  options?: UseQueryOptions<PaginatedResults<VersionInfo>, SynapseClientError>,
+  options?: Partial<
+    UseQueryOptions<PaginatedResults<VersionInfo>, SynapseClientError>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
-    keyFactory.getPaginatedEntityVersionsQueryKey(entityId, limit, offset),
-    () => SynapseClient.getEntityVersions(entityId, accessToken, offset, limit),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getPaginatedEntityVersionsQueryKey(
+      entityId,
+      limit,
+      offset,
+    ),
+    queryFn: () =>
+      SynapseClient.getEntityVersions(entityId, accessToken, offset, limit),
+  })
 }
 
-export function useGetVersionsInfinite(
+export function useGetVersionsInfinite<
+  TData = InfiniteData<PaginatedResults<VersionInfo>>,
+>(
   entityId: string,
-  options: UseInfiniteQueryOptions<
-    PaginatedResults<VersionInfo>,
-    SynapseClientError
+  options: Partial<
+    UseInfiniteQueryOptions<
+      PaginatedResults<VersionInfo>,
+      SynapseClientError,
+      TData,
+      PaginatedResults<VersionInfo>,
+      QueryKey,
+      number | undefined
+    >
   >,
 ) {
   const LIMIT = 200
   const { accessToken, keyFactory } = useSynapseContext()
-  return useInfiniteQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
-    keyFactory.getEntityVersionsQueryKey(entityId),
-    async (context: QueryFunctionContext<QueryKey, number>) => {
+  return useInfiniteQuery<
+    PaginatedResults<VersionInfo>,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    number | undefined
+  >({
+    ...options,
+    queryKey: keyFactory.getEntityVersionsQueryKey(entityId),
+    queryFn: async context => {
       return await SynapseClient.getEntityVersions(
         entityId,
         accessToken,
@@ -199,11 +222,9 @@ export function useGetVersionsInfinite(
         LIMIT,
       )
     },
-    {
-      ...options,
-      getNextPageParam: getNextPageParamForPaginatedResults,
-    },
-  )
+    initialPageParam: undefined,
+    getNextPageParam: getNextPageParamForPaginatedResults,
+  })
 }
 
 export function getStandardEntityFields(json: EntityJson): EntityJson {
@@ -220,7 +241,8 @@ export function removeStandardEntityFields(
 }
 
 /**
- * In addition to the standard objects returned by {@link useQuery}, this hook also returns the following objects:
+ * This hook automatically transforms the data to include these objects:
+ * - `entity`: the unmodified Entity data object
  * - `entityMetadata`: the standard entity fields contained in the JSON response
  * - `annotations`: the annotations contained in the JSON response
  *
@@ -229,166 +251,159 @@ export function removeStandardEntityFields(
 export function useGetJson(
   entityId: string,
   includeDerivedAnnotations: boolean,
-  options?: UseQueryOptions<EntityJson, SynapseClientError>,
+  options?: Partial<UseQueryOptions<EntityJson, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  const query = useQuery<EntityJson, SynapseClientError>(
-    keyFactory.getEntityJsonQueryKey(entityId, includeDerivedAnnotations),
-    () =>
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityJsonQueryKey(
+      entityId,
+      includeDerivedAnnotations,
+    ),
+    queryFn: () =>
       SynapseClient.getEntityJson(
         entityId,
         includeDerivedAnnotations,
         accessToken,
       ),
-    options,
-  )
 
-  // Separate the standard fields and annotations.
-  const entityMetadata = useMemo(
-    () =>
-      query?.data == undefined
-        ? undefined
-        : getStandardEntityFields(query.data),
-    [query.data],
-  )
+    select: data => {
+      // Separate the standard fields and annotations.
+      const entityMetadata = getStandardEntityFields(data)
 
-  const annotations = useMemo(
-    () =>
-      query?.data == undefined
-        ? undefined
-        : removeStandardEntityFields(query.data),
-    [query.data],
-  )
+      const annotations = removeStandardEntityFields(data)
 
-  return {
-    ...query,
-    entityMetadata,
-    annotations,
-  }
+      return {
+        entity: data,
+        entityMetadata,
+        annotations,
+      }
+    },
+  })
 }
 
 export function useUpdateViaJson(
-  options?: UseMutationOptions<EntityJson, SynapseClientError, EntityJson>,
+  options?: Partial<
+    UseMutationOptions<EntityJson, SynapseClientError, EntityJson>
+  >,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
-  return useMutation<EntityJson, SynapseClientError, EntityJson>(
-    (json: EntityJson) => {
+  return useMutation<EntityJson, SynapseClientError, EntityJson>({
+    ...options,
+    mutationFn: (json: EntityJson) => {
       const entityId = json.id
       return SynapseClient.updateEntityJson(entityId, json, accessToken)
     },
-    {
-      ...options,
-      onSuccess: async (data, variables, ctx) => {
-        const entityId = data.id
+    onSuccess: async (data, variables, ctx) => {
+      const entityId = data.id
 
-        await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
-        queryClient.setQueryData(
-          // This annotation data will never include derived annotations, which are calculated by the backend asynchronously
-          keyFactory.getEntityJsonQueryKey(entityId, false),
-          data,
-        )
+      await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
+      queryClient.setQueryData(
+        // This annotation data will never include derived annotations, which are calculated by the backend asynchronously
+        keyFactory.getEntityJsonQueryKey(entityId, false),
+        data,
+      )
 
-        if (options?.onSuccess) {
-          await options.onSuccess(data, variables, ctx)
-        }
-      },
+      if (options?.onSuccess) {
+        await options.onSuccess(data, variables, ctx)
+      }
     },
-  )
+  })
 }
 
 export function useGetEntityPath(
   entityId: string,
-  options?: UseQueryOptions<EntityPath, SynapseClientError>,
+  options?: Partial<UseQueryOptions<EntityPath, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<EntityPath, SynapseClientError>(
-    keyFactory.getEntityPathQueryKey(entityId),
-    () => SynapseClient.getEntityPath(entityId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityPathQueryKey(entityId),
+    queryFn: () => SynapseClient.getEntityPath(entityId, accessToken),
+  })
 }
 
 export function useGetEntityACL(
   entityId: string,
-  options?: UseQueryOptions<AccessControlList, SynapseClientError>,
+  options?: Partial<UseQueryOptions<AccessControlList, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<AccessControlList, SynapseClientError>(
-    keyFactory.getEntityPathQueryKey(entityId),
-    () => SynapseClient.getEntityACL(entityId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityPathQueryKey(entityId),
+    queryFn: () => SynapseClient.getEntityACL(entityId, accessToken),
+  })
 }
 
 export function useGetEntityAlias(
   alias: string,
-  options?: UseQueryOptions<EntityId | null, SynapseClientError>,
+  options?: Partial<UseQueryOptions<EntityId | null, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<EntityId | null, SynapseClientError>(
-    keyFactory.getEntityAliasQueryKey(alias),
-    () => SynapseClient.getEntityAlias(alias, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityAliasQueryKey(alias),
+    queryFn: () => SynapseClient.getEntityAlias(alias, accessToken),
+  })
 }
 
 export function useGetEntityEvaluations(
   entityId: string,
   params?: GetEvaluationParameters,
-  options?: UseQueryOptions<Evaluation[] | null, SynapseClientError>,
+  options?: Partial<UseQueryOptions<Evaluation[] | null, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<Evaluation[] | null, SynapseClientError>(
-    keyFactory.getEntityEvaluationsQueryKey(entityId),
-    () => SynapseClient.getAllEntityEvaluations(entityId, params, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityEvaluationsQueryKey(entityId),
+    queryFn: () =>
+      SynapseClient.getAllEntityEvaluations(entityId, params, accessToken),
+  })
 }
 
 export function useGetEntityPermissions(
   entityId: string,
-  options?: UseQueryOptions<UserEntityPermissions | null, SynapseClientError>,
+  options?: Partial<
+    UseQueryOptions<UserEntityPermissions | null, SynapseClientError>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<UserEntityPermissions | null, SynapseClientError>(
-    keyFactory.getEntityPermissionsQueryKey(entityId),
-    () => SynapseClient.getEntityPermissions(entityId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityPermissionsQueryKey(entityId),
+    queryFn: () => SynapseClient.getEntityPermissions(entityId, accessToken),
+  })
 }
 
 export function useUpdateEntityACL(
-  options?: UseMutationOptions<
-    AccessControlList,
-    SynapseClientError,
-    AccessControlList
+  options?: Partial<
+    UseMutationOptions<AccessControlList, SynapseClientError, AccessControlList>
   >,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<AccessControlList, SynapseClientError, AccessControlList>(
-    (acl: AccessControlList) => SynapseClient.updateEntityACL(acl, accessToken),
-    {
-      ...options,
-      onSuccess: async (updatedACL: AccessControlList, variables, ctx) => {
-        await invalidateAllQueriesForEntity(
-          queryClient,
-          keyFactory,
-          updatedACL.id,
-        )
-        queryClient.setQueryData(
-          keyFactory.getEntityACLQueryKey(updatedACL.id),
-          updatedACL,
-        )
+  return useMutation<AccessControlList, SynapseClientError, AccessControlList>({
+    ...options,
+    mutationFn: (acl: AccessControlList) =>
+      SynapseClient.updateEntityACL(acl, accessToken),
+    onSuccess: async (updatedACL: AccessControlList, variables, ctx) => {
+      await invalidateAllQueriesForEntity(
+        queryClient,
+        keyFactory,
+        updatedACL.id,
+      )
+      queryClient.setQueryData(
+        keyFactory.getEntityACLQueryKey(updatedACL.id),
+        updatedACL,
+      )
 
-        if (options?.onSuccess) {
-          await options.onSuccess(updatedACL, variables, ctx)
-        }
-      },
+      if (options?.onSuccess) {
+        await options.onSuccess(updatedACL, variables, ctx)
+      }
     },
-  )
+  })
 }
 
 type UpdateTableMutationRequest = {
@@ -398,17 +413,16 @@ type UpdateTableMutationRequest = {
 }
 
 export function useUpdateTableColumns(
-  options?: UseMutationOptions<
-    unknown,
-    SynapseClientError,
-    UpdateTableMutationRequest
+  options?: Partial<
+    UseMutationOptions<unknown, SynapseClientError, UpdateTableMutationRequest>
   >,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<unknown, SynapseClientError, UpdateTableMutationRequest>(
-    async (request: UpdateTableMutationRequest) => {
+  return useMutation<unknown, SynapseClientError, UpdateTableMutationRequest>({
+    ...options,
+    mutationFn: async (request: UpdateTableMutationRequest) => {
       // This call will create new column models as appropriate
       const transactionRequest = await createTableUpdateTransactionRequest(
         accessToken!,
@@ -419,19 +433,16 @@ export function useUpdateTableColumns(
 
       return SynapseClient.updateTable(transactionRequest, accessToken)
     },
-    {
-      ...options,
-      onSuccess: async (response, variables, ctx) => {
-        await invalidateAllQueriesForEntity(
-          queryClient,
-          keyFactory,
-          variables.entityId,
-        )
+    onSuccess: async (response, variables, ctx) => {
+      await invalidateAllQueriesForEntity(
+        queryClient,
+        keyFactory,
+        variables.entityId,
+      )
 
-        if (options?.onSuccess) {
-          await options.onSuccess(response, variables, ctx)
-        }
-      },
+      if (options?.onSuccess) {
+        await options.onSuccess(response, variables, ctx)
+      }
     },
-  )
+  })
 }

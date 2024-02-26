@@ -77,9 +77,7 @@ export function useGetEntityTitleBarProperties(
   const { data: storageLocationUploadDestination } =
     useGetUploadDestinationForStorageLocation(parentId!, storageLocationId!, {
       enabled:
-        !isContainer &&
-        parentId !== undefined &&
-        storageLocationId != null,
+        !isContainer && parentId !== undefined && storageLocationId != null,
     })
 
   // If this is the latest entity version, show the "versionless" DOI if it exists.

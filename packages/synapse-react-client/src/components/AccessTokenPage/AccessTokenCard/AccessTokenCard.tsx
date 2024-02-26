@@ -36,12 +36,13 @@ export function AccessTokenCard(props: AccessTokenCardProps) {
 
   const isExpired = accessToken.state === 'EXPIRED'
 
-  const { mutate: deleteToken, isLoading } = useDeletePersonalAccessToken({
-    onSuccess: () => {
-      onDelete()
-    },
-    useErrorBoundary: true,
-  })
+  const { mutate: deleteToken, isPending: deleteIsPending } =
+    useDeletePersonalAccessToken({
+      onSuccess: () => {
+        onDelete()
+      },
+      throwOnError: true,
+    })
 
   const onClickDeleteButton = useCallback(() => {
     if (isExpired) {
@@ -159,7 +160,7 @@ export function AccessTokenCard(props: AccessTokenCardProps) {
           )}
           <Tooltip title={'Delete Token'} placement={'top'}>
             <IconButton
-              disabled={isLoading}
+              disabled={deleteIsPending}
               color="error"
               onClick={onClickDeleteButton}
             >

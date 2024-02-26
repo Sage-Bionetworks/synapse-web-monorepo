@@ -18,7 +18,7 @@ export function EnableTwoFaRequirementCard(
   const { data: ar, isLoading } = useGetAccessRequirements(
     accessRequirementId,
     {
-      useErrorBoundary: true,
+      throwOnError: true,
     },
   )
 

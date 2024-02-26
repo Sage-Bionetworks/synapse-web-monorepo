@@ -1,4 +1,4 @@
-import { QueryOptions, useQuery } from 'react-query'
+import { QueryOptions, useQuery } from '@tanstack/react-query'
 import { getEntity } from '../../synapse-client/SynapseClient'
 import { useSynapseContext } from '../context/SynapseContext'
 import { Entity } from '@sage-bionetworks/synapse-types'
@@ -42,9 +42,9 @@ export function useResolveLinkEntity(
   options?: QueryOptions<Entity>,
 ) {
   const { accessToken } = useSynapseContext()
-  return useQuery(
-    ['resolveLinkEntity', synId, versionNumber],
-    () => resolveLinkEntity(synId, versionNumber, accessToken),
-    options,
-  )
+  return useQuery({
+    queryKey: ['resolveLinkEntity', synId, versionNumber],
+    queryFn: () => resolveLinkEntity(synId, versionNumber, accessToken),
+    ...options,
+  })
 }

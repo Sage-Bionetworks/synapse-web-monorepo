@@ -10,7 +10,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useMemo, useState } from 'react'
 import { SynapseClientError } from '../../utils/SynapseClientError'
-import { UseInfiniteQueryResult } from 'react-query'
+import { UseInfiniteQueryResult } from '@tanstack/react-query'
 
 type InfiniteDataPage = number | 'ALL'
 
@@ -64,14 +64,14 @@ export default function useQueryWrapperData<T extends boolean = boolean>(
   const {
     data: paginatedData,
     isLoading: paginatedQueryIsLoading,
-    isPreviousData: newPaginatedQueryIsFetching,
+    isPlaceholderData: newPaginatedQueryIsFetching,
     error: paginatedQueryError,
   } = useGetQueryResultBundleWithAsyncStatus(
     query,
     {
       enabled: !isInfinite,
-      // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
-      keepPreviousData: true,
+      // We set `placeholderData` to be `previousData` because we don't want to clear out the current data when the query is modified via the UI
+      placeholderData: previousData => previousData,
     },
     setCurrentAsyncStatus,
   )
@@ -84,13 +84,13 @@ export default function useQueryWrapperData<T extends boolean = boolean>(
     isFetchingNextPage: infiniteDataIsFetchingNextPage,
     isLoading: infiniteDataQueryIsLoading,
     error: infiniteDataError,
-    isPreviousData: newInfiniteDataQueryIsFetching,
+    isPlaceholderData: newInfiniteDataQueryIsFetching,
   } = useInfiniteQueryResultBundle(
     query,
     {
       enabled: isInfinite,
-      // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
-      keepPreviousData: true,
+      // We set `placeholderData` to be `previousData` because we don't want to clear out the current data when the query is modified via the UI
+      placeholderData: previousData => previousData,
     },
     setCurrentAsyncStatus,
   )

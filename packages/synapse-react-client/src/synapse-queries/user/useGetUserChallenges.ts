@@ -1,9 +1,11 @@
 import {
+  InfiniteData,
+  QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -16,32 +18,47 @@ import {
 export function useGetUserChallenges(
   userId: string,
   limit?: number,
-  options?: UseQueryOptions<PaginatedResults<Challenge>, SynapseClientError>,
+  options?: Partial<
+    UseQueryOptions<PaginatedResults<Challenge>, SynapseClientError>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<PaginatedResults<Challenge>, SynapseClientError>(
-    keyFactory.getUserChallengesQueryKey(userId),
-    () => SynapseClient.getUserChallenges(accessToken, userId, 0, limit ?? 10),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getUserChallengesQueryKey(userId),
+    queryFn: () =>
+      SynapseClient.getUserChallenges(accessToken, userId, 0, limit ?? 10),
+  })
 }
 
-export function useGetUserChallengesInfinite(
+export function useGetUserChallengesInfinite<
+  TData = InfiniteData<ChallengeWithProjectHeaderPagedResults>,
+>(
   userId: string,
-  options?: UseInfiniteQueryOptions<
-    ChallengeWithProjectHeaderPagedResults,
-    SynapseClientError,
-    ChallengeWithProjectHeaderPagedResults
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      ChallengeWithProjectHeaderPagedResults,
+      SynapseClientError,
+      TData,
+      ChallengeWithProjectHeaderPagedResults,
+      QueryKey,
+      number | undefined
+    >
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   return useInfiniteQuery<
     ChallengeWithProjectHeaderPagedResults,
-    SynapseClientError
-  >(
-    keyFactory.getUserChallengesQueryKey(userId),
-    async context => {
+    SynapseClientError,
+    TData,
+    QueryKey,
+    number | undefined
+  >({
+    ...options,
+    initialPageParam: undefined,
+    queryKey: keyFactory.getUserChallengesQueryKey(userId),
+    queryFn: async context => {
       const challenges = await SynapseClient.getUserChallenges(
         accessToken,
         userId,
@@ -74,13 +91,10 @@ export function useGetUserChallengesInfinite(
         totalNumberOfResults: challenges.totalNumberOfResults,
       }
     },
-    {
-      ...options,
-      getNextPageParam: (lastPage, pages) => {
-        if (lastPage.results.length > 0)
-          return pages.length * 10 //set the new offset to (page * limit)
-        else return undefined
-      },
+    getNextPageParam: (lastPage, pages) => {
+      if (lastPage.results.length > 0)
+        return pages.length * 10 //set the new offset to (page * limit)
+      else return undefined
     },
-  )
+  })
 }

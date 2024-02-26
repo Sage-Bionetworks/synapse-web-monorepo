@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
 import {
-  UseQueryOptions,
-  useQuery,
-  UseMutationOptions,
-  useQueryClient,
   useMutation,
-} from 'react-query'
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import {
   CreateDiscussionThread,
   DiscussionThreadBundle,
@@ -13,8 +13,7 @@ import {
   UpdateThreadTitleRequest,
 } from '@sage-bionetworks/synapse-types'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 
 export function useGetThread(threadId: string) {
   const { data: threadData, isLoading: isLoadingBundle } =
@@ -42,20 +41,22 @@ export function useGetThread(threadId: string) {
 
 export function useGetThreadBundle(
   threadId: string,
-  options?: UseQueryOptions<DiscussionThreadBundle, SynapseClientError>,
+  options?: Partial<
+    UseQueryOptions<DiscussionThreadBundle, SynapseClientError>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<DiscussionThreadBundle, SynapseClientError>(
-    keyFactory.getThreadQueryKey(threadId),
-    () => SynapseClient.getThread(threadId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getThreadQueryKey(threadId),
+    queryFn: () => SynapseClient.getThread(threadId, accessToken),
+  })
 }
 
 export function useGetThreadBody(
   threadData?: DiscussionThreadBundle,
-  options?: UseQueryOptions<string, SynapseClientError>,
+  options?: Partial<UseQueryOptions<string, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
@@ -74,11 +75,14 @@ export function useGetThreadBody(
     })
     return data.text()
   }
-  return useQuery<string, SynapseClientError>(
-    keyFactory.getThreadBodyQueryKey(threadData?.id!, threadData?.messageKey!),
+  return useQuery<string, SynapseClientError>({
+    ...options,
+    queryKey: keyFactory.getThreadBodyQueryKey(
+      threadData?.id!,
+      threadData?.messageKey!,
+    ),
     queryFn,
-    options,
-  )
+  })
 }
 
 export function useUpdateThreadTitle(
@@ -94,24 +98,22 @@ export function useUpdateThreadTitle(
     DiscussionThreadBundle,
     SynapseClientError,
     UpdateThreadTitleRequest
-  >(
-    (request: UpdateThreadTitleRequest) =>
+  >({
+    ...options,
+    mutationFn: (request: UpdateThreadTitleRequest) =>
       SynapseClient.putThreadTitle(accessToken, request),
-    {
-      ...options,
-      onSuccess: async (newThread, variables, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getAllForumThreadsQueryKey(newThread.forumId),
-        )
-        await queryClient.invalidateQueries(
-          keyFactory.getThreadQueryKey(variables.threadId),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(newThread, variables, ctx)
-        }
-      },
+    onSuccess: async (newThread, variables, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllForumThreadsQueryKey(newThread.forumId),
+      })
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getThreadQueryKey(variables.threadId),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(newThread, variables, ctx)
+      }
     },
-  )
+  })
 }
 
 export function useUpdateThreadMessage(
@@ -128,21 +130,19 @@ export function useUpdateThreadMessage(
     DiscussionThreadBundle,
     SynapseClientError,
     UpdateThreadMessageRequest
-  >(
-    (request: UpdateThreadMessageRequest) =>
+  >({
+    ...options,
+    mutationFn: (request: UpdateThreadMessageRequest) =>
       SynapseClient.putThreadMessage(accessToken, request),
-    {
-      ...options,
-      onSuccess: async (newThread, variables, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getThreadQueryKey(variables.threadId),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(newThread, variables, ctx)
-        }
-      },
+    onSuccess: async (newThread, variables, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getThreadQueryKey(variables.threadId),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(newThread, variables, ctx)
+      }
     },
-  )
+  })
 }
 
 export function useCreateThread(
@@ -159,21 +159,19 @@ export function useCreateThread(
     DiscussionThreadBundle,
     SynapseClientError,
     CreateDiscussionThread
-  >(
-    (newThread: CreateDiscussionThread) =>
+  >({
+    ...options,
+    mutationFn: (newThread: CreateDiscussionThread) =>
       SynapseClient.postThread(accessToken, newThread),
-    {
-      ...options,
-      onSuccess: async (threadBundle, newThreadRequest, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(threadBundle, newThreadRequest, ctx)
-        }
-      },
+    onSuccess: async (threadBundle, newThreadRequest, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(threadBundle, newThreadRequest, ctx)
+      }
     },
-  )
+  })
 }
 
 export function useDeleteThread(
@@ -186,24 +184,22 @@ export function useDeleteThread(
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
-    (threadBundle: DiscussionThreadBundle) =>
+  return useMutation<void, SynapseClientError, DiscussionThreadBundle>({
+    ...options,
+    mutationFn: (threadBundle: DiscussionThreadBundle) =>
       SynapseClient.deleteThread(accessToken, threadBundle.id),
-    {
-      ...options,
-      onSuccess: async (updatedThread, threadBundle, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
-        )
-        await queryClient.invalidateQueries(
-          keyFactory.getThreadQueryKey(threadBundle.id),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(updatedThread, threadBundle, ctx)
-        }
-      },
+    onSuccess: async (updatedThread, threadBundle, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
+      })
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getThreadQueryKey(threadBundle.id),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(updatedThread, threadBundle, ctx)
+      }
     },
-  )
+  })
 }
 
 export function useRestoreThread(
@@ -216,24 +212,22 @@ export function useRestoreThread(
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
-    (threadBundle: DiscussionThreadBundle) =>
+  return useMutation<void, SynapseClientError, DiscussionThreadBundle>({
+    ...options,
+    mutationFn: (threadBundle: DiscussionThreadBundle) =>
       SynapseClient.restoreThread(accessToken, threadBundle.id),
-    {
-      ...options,
-      onSuccess: async (updatedThread, threadBundle, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
-        )
-        await queryClient.invalidateQueries(
-          keyFactory.getThreadQueryKey(threadBundle.id),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(updatedThread, threadBundle, ctx)
-        }
-      },
+    onSuccess: async (updatedThread, threadBundle, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
+      })
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getThreadQueryKey(threadBundle.id),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(updatedThread, threadBundle, ctx)
+      }
     },
-  )
+  })
 }
 
 export function usePinThread(
@@ -246,24 +240,22 @@ export function usePinThread(
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
-    (threadBundle: DiscussionThreadBundle) =>
+  return useMutation<void, SynapseClientError, DiscussionThreadBundle>({
+    ...options,
+    mutationFn: (threadBundle: DiscussionThreadBundle) =>
       SynapseClient.pinThread(accessToken, threadBundle.id),
-    {
-      ...options,
-      onSuccess: async (updatedThread, threadBundle, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
-        )
-        await queryClient.invalidateQueries(
-          keyFactory.getThreadQueryKey(threadBundle.id),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(updatedThread, threadBundle, ctx)
-        }
-      },
+    onSuccess: async (updatedThread, threadBundle, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
+      })
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getThreadQueryKey(threadBundle.id),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(updatedThread, threadBundle, ctx)
+      }
     },
-  )
+  })
 }
 
 export function useUnPinThread(
@@ -276,22 +268,20 @@ export function useUnPinThread(
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, DiscussionThreadBundle>(
-    (threadBundle: DiscussionThreadBundle) =>
+  return useMutation<void, SynapseClientError, DiscussionThreadBundle>({
+    ...options,
+    mutationFn: (threadBundle: DiscussionThreadBundle) =>
       SynapseClient.unPinThread(accessToken, threadBundle.id),
-    {
-      ...options,
-      onSuccess: async (updatedThread, threadBundle, ctx) => {
-        await queryClient.invalidateQueries(
-          keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
-        )
-        await queryClient.invalidateQueries(
-          keyFactory.getThreadQueryKey(threadBundle.id),
-        )
-        if (options?.onSuccess) {
-          await options.onSuccess(updatedThread, threadBundle, ctx)
-        }
-      },
+    onSuccess: async (updatedThread, threadBundle, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
+      })
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getThreadQueryKey(threadBundle.id),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(updatedThread, threadBundle, ctx)
+      }
     },
-  )
+  })
 }

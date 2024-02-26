@@ -1,7 +1,6 @@
-import { useQuery, UseQueryOptions } from 'react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   EntityBundle,
@@ -14,20 +13,25 @@ export function useGetEntityBundle<
   entityId: string,
   version?: number,
   bundleRequest: T = ALL_ENTITY_BUNDLE_FIELDS as T,
-  options?: UseQueryOptions<EntityBundle<T>, SynapseClientError>,
+  options?: Partial<UseQueryOptions<EntityBundle<T>, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<EntityBundle<T>, SynapseClientError>(
-    keyFactory.getEntityBundleQueryKey(entityId, version, bundleRequest),
-    () =>
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityBundleQueryKey(
+      entityId,
+      version,
+      bundleRequest,
+    ),
+
+    queryFn: () =>
       SynapseClient.getEntityBundleV2<T>(
         entityId,
         bundleRequest,
         version,
         accessToken,
       ),
-    options,
-  )
+  })
 }
 
 export default useGetEntityBundle

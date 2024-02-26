@@ -3,7 +3,7 @@ import {
   QueryObserverSuccessResult,
   UseMutationResult,
   UseQueryResult,
-} from 'react-query'
+} from '@tanstack/react-query'
 
 export function getUseQuerySuccessMock<TData>(
   data: TData,
@@ -19,18 +19,20 @@ export function getUseQuerySuccessMock<TData>(
     isFetched: true,
     isFetchedAfterMount: true,
     isFetching: false,
-    isIdle: false,
     isLoading: false,
     isLoadingError: false,
     isPlaceholderData: false,
-    isPreviousData: false,
     isRefetchError: false,
     isRefetching: false,
     isStale: false,
     isSuccess: true,
     refetch: jest.fn(),
-    remove: jest.fn(),
     status: 'success',
+    failureReason: null,
+    fetchStatus: 'idle',
+    isInitialLoading: false,
+    isPaused: false,
+    isPending: false,
   }
 }
 
@@ -48,19 +50,21 @@ export function getUseQueryLoadingMock<TData>(): QueryObserverLoadingResult<
     isError: false,
     isFetched: true,
     isFetchedAfterMount: true,
-    isFetching: false,
-    isIdle: false,
+    isFetching: true,
     isLoading: true,
     isLoadingError: false,
     isPlaceholderData: false,
-    isPreviousData: false,
     isRefetchError: false,
     isRefetching: false,
     isStale: false,
     isSuccess: false,
     refetch: jest.fn(),
-    remove: jest.fn(),
-    status: 'loading',
+    status: 'pending',
+    failureReason: null,
+    fetchStatus: 'fetching',
+    isPending: true,
+    isInitialLoading: true,
+    isPaused: false,
   }
 }
 
@@ -78,18 +82,20 @@ export function getUseQueryErrorMock<TError>(
     isFetched: false,
     isFetchedAfterMount: true,
     isFetching: false,
-    isIdle: false,
-    isLoading: false,
     isLoadingError: true,
     isPlaceholderData: false,
-    isPreviousData: false,
     isRefetchError: false,
     isRefetching: false,
     isStale: false,
     isSuccess: false,
     refetch: jest.fn(),
-    remove: jest.fn(),
     status: 'error',
+    failureReason: null,
+    fetchStatus: 'idle',
+    isInitialLoading: false,
+    isPaused: false,
+    isLoading: false,
+    isPending: false,
   }
 }
 
@@ -103,7 +109,6 @@ export function getUseMutationMock<TData, TError, TVariables>(
     failureCount: 0,
     isError: false,
     isIdle: true,
-    isLoading: false,
     isPaused: false,
     isSuccess: false,
     mutate: jest.fn(),
@@ -111,5 +116,8 @@ export function getUseMutationMock<TData, TError, TVariables>(
     reset: jest.fn(),
     status: 'idle',
     variables: undefined,
+    failureReason: null,
+    isPending: false,
+    submittedAt: 0,
   }
 }

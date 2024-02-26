@@ -34,7 +34,7 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
 > = ({ accessRequirementId, count }: MeetAccessRequirementCardProps) => {
   const { data: ar, isLoading } = useGetAccessRequirements(
     accessRequirementId,
-    { useErrorBoundary: true },
+    { throwOnError: true },
   )
   const [isShowingAccessRequirement, setIsShowingAccessRequirement] =
     useState<boolean>(false)

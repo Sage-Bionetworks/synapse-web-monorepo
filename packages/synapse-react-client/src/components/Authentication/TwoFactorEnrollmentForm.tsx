@@ -86,7 +86,7 @@ export default function TwoFactorEnrollmentForm(
 
   const {
     mutate: finishEnrollment,
-    isLoading: isFinishingEnrollment,
+    isPending: isFinishingEnrollment,
     error,
   } = useFinishTwoFactorEnrollment({
     onSuccess: onTwoFactorEnrollmentSuccess,

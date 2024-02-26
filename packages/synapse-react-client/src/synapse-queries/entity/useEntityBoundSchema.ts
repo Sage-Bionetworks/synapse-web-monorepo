@@ -1,4 +1,4 @@
-import { UseQueryOptions, useQuery } from 'react-query'
+import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
@@ -7,25 +7,28 @@ import { ValidationResults } from '@sage-bionetworks/synapse-types'
 
 export function useGetSchemaBinding(
   entityId: string,
-  options?: UseQueryOptions<JsonSchemaObjectBinding | null, SynapseClientError>,
+  options?: Partial<
+    UseQueryOptions<JsonSchemaObjectBinding | null, SynapseClientError>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery<JsonSchemaObjectBinding | null, SynapseClientError>(
-    keyFactory.getEntityBoundJsonSchemaQueryKey(entityId),
-    () => SynapseClient.getSchemaBinding(entityId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntityBoundJsonSchemaQueryKey(entityId),
+    queryFn: () => SynapseClient.getSchemaBinding(entityId, accessToken),
+  })
 }
 
 export function useGetValidationResults(
   entityId: string,
-  options?: UseQueryOptions<ValidationResults, SynapseClientError>,
+  options?: Partial<UseQueryOptions<ValidationResults, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useQuery<ValidationResults, SynapseClientError>(
-    keyFactory.getEntitySchemaValidationResultsQueryKey(entityId),
-    () => SynapseClient.getSchemaValidationResults(entityId, accessToken),
-    options,
-  )
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getEntitySchemaValidationResultsQueryKey(entityId),
+    queryFn: () =>
+      SynapseClient.getSchemaValidationResults(entityId, accessToken),
+  })
 }

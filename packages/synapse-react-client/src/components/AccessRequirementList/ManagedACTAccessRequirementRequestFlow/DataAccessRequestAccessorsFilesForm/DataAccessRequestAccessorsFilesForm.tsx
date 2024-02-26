@@ -145,7 +145,7 @@ export default function DataAccessRequestAccessorsFilesForm(
       // Infinite staleTime ensures this won't get re-fetched unless explicitly invalidated by the mutation
       staleTime: Infinity,
       // This call should never fail, so if we run into an error, throwing to an error boundary is acceptable
-      useErrorBoundary: true,
+      throwOnError: true,
     })
 
   const isRenewal =
@@ -160,7 +160,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     })
   }
 
-  const { mutate: submit, isLoading: isLoadingSubmitDataAccessRequest } =
+  const { mutate: submit, isPending: submitDataAccessRequestIsPending } =
     useSubmitDataAccessRequest({
       onSuccess: () => {
         onSubmissionCreated()
@@ -170,15 +170,15 @@ export default function DataAccessRequestAccessorsFilesForm(
 
   const {
     mutateAsync: updateRequestAsync,
-    isLoading: isLoadingUpdateDataAccessRequest,
+    isPending: updateDataAccessRequestIsPending,
   } = useUpdateDataAccessRequest({
     onError: onError,
   })
 
   const isLoading =
     isLoadingGetDataAccessRequest ||
-    isLoadingUpdateDataAccessRequest ||
-    isLoadingSubmitDataAccessRequest
+    updateDataAccessRequestIsPending ||
+    submitDataAccessRequestIsPending
 
   /**
    * This effect comprises a collection of updates we should immediately apply to a data access request.
@@ -264,6 +264,8 @@ export default function DataAccessRequestAccessorsFilesForm(
         setSummaryOfUse(dataAccessRequest.summaryOfUse)
       }
     }
+    // Intentionally only re-synchronize state when server state changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataAccessRequest])
 
   function getDataAccessRequestWithLocalState(): Request | Renewal {
@@ -548,7 +550,7 @@ export default function DataAccessRequestAccessorsFilesForm(
                   <TextField
                     id={'publications'}
                     label={'Publication(s)'}
-                    disabled={isLoadingSubmitDataAccessRequest}
+                    disabled={submitDataAccessRequestIsPending}
                     multiline
                     rows={3}
                     value={publication}
@@ -560,7 +562,7 @@ export default function DataAccessRequestAccessorsFilesForm(
                     id={'summaryOfUse'}
                     label={'Summary of use'}
                     value={summaryOfUse}
-                    disabled={isLoadingSubmitDataAccessRequest}
+                    disabled={submitDataAccessRequestIsPending}
                     multiline
                     rows={3}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -579,7 +581,7 @@ export default function DataAccessRequestAccessorsFilesForm(
           <>
             <Button
               variant="outlined"
-              disabled={isLoadingSubmitDataAccessRequest}
+              disabled={submitDataAccessRequestIsPending}
               onClick={() => {
                 if (dataAccessRequest) {
                   // include the local state in the onCancel callback so the user may save their changes
@@ -591,7 +593,7 @@ export default function DataAccessRequestAccessorsFilesForm(
             </Button>
             <Button
               variant="contained"
-              disabled={isLoadingSubmitDataAccessRequest}
+              disabled={submitDataAccessRequestIsPending}
               onClick={() => {
                 handleSubmit()
               }}

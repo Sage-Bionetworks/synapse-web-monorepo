@@ -4,7 +4,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import {
   TotpSecret,
   TotpSecretActivationRequest,
@@ -15,7 +15,7 @@ import SynapseClient from '../../synapse-client'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 
 export function useStartTwoFactorEnrollment(
-  options?: UseMutationOptions<TotpSecret, SynapseClientError>,
+  options?: Partial<UseMutationOptions<TotpSecret, SynapseClientError>>,
 ) {
   const { accessToken } = useSynapseContext()
   return useMutation({
@@ -43,9 +43,9 @@ export function useFinishTwoFactorEnrollment(
       if (options?.onSuccess) {
         options.onSuccess(...args)
       }
-      await queryClient.invalidateQueries(
-        keyFactory.getTwoFactorAuthStatusQueryKey(),
-      )
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getTwoFactorAuthStatusQueryKey(),
+      })
     },
     mutationFn: request =>
       SynapseClient.complete2FAEnrollment(request, accessToken),
@@ -53,7 +53,7 @@ export function useFinishTwoFactorEnrollment(
 }
 
 export function useDisableTwoFactorAuth(
-  options?: UseMutationOptions<void, SynapseClientError, void>,
+  options?: Partial<UseMutationOptions<void, SynapseClientError, void>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
@@ -63,9 +63,9 @@ export function useDisableTwoFactorAuth(
       if (options?.onSuccess) {
         options.onSuccess(...args)
       }
-      await queryClient.invalidateQueries(
-        keyFactory.getTwoFactorAuthStatusQueryKey(),
-      )
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getTwoFactorAuthStatusQueryKey(),
+      })
     },
     mutationFn: () =>
       SynapseClient.disableTwoFactorAuthForCurrentUser(accessToken),
@@ -73,14 +73,13 @@ export function useDisableTwoFactorAuth(
 }
 
 export function useGetTwoFactorEnrollmentStatus(
-  options?: UseQueryOptions<TwoFactorAuthStatus, SynapseClientError>,
+  options?: Partial<UseQueryOptions<TwoFactorAuthStatus, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery(
-    keyFactory.getTwoFactorAuthStatusQueryKey(),
-    () => SynapseClient.getCurrentUserTwoFactorEnrollmentStatus(accessToken),
-    {
-      ...options,
-    },
-  )
+  return useQuery({
+    queryKey: keyFactory.getTwoFactorAuthStatusQueryKey(),
+    queryFn: () =>
+      SynapseClient.getCurrentUserTwoFactorEnrollmentStatus(accessToken),
+    ...options,
+  })
 }
