@@ -35,7 +35,7 @@ export default function useCreateAndRegisterChallengeTeam() {
     error: challengeRegistrationError,
   } = useRegisterTeamForChallenge()
 
-  // Invite the comma-delimited list of emails to join the team
+  // Invite the list of emails to join the team
   const handleInviteTeamMembers = useCallback(
     async (
       teamId: string,

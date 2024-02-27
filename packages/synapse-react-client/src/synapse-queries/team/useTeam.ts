@@ -2,6 +2,7 @@ import {
   useMutation,
   UseMutationOptions,
   useQuery,
+  useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client'
@@ -26,9 +27,18 @@ export function useCreateTeam(
     UseMutationOptions<Team, SynapseClientError, CreateTeamRequest>
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
   return useMutation<Team, SynapseClientError, CreateTeamRequest>({
     ...options,
     mutationFn: team => SynapseClient.createTeam(team, accessToken),
+    onSuccess: async (data, variables, context) => {
+      if (options?.onSuccess) {
+        options.onSuccess(data, variables, context)
+      }
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllUserTeamsQueryKey(),
+      })
+    },
   })
 }
