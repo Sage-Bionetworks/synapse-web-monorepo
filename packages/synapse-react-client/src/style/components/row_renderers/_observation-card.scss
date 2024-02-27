@@ -1,6 +1,8 @@
 @use '../../abstracts/variables' as SRC;
 
 .ObservationCard {
+  max-width: 850px;
+
   &__submitter {
     background-color: SRC.$gray-light;
     padding: 10px 25px;
