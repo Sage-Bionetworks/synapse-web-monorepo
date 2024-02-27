@@ -21,6 +21,7 @@ import Header from './Header'
 import ChallengeParticipantGoogleMap from './challengeportal/ChallengeParticipantGoogleMap'
 import ChallengeDetailPageWrapper from './challengeportal/ChallengeDetailPageWrapper'
 import ChallengeSubmissionWrapper from './challengeportal/ChallengeSubmissionWrapper'
+import ChallengeDataDownloadWrapper from './challengeportal/ChallengeDataDownloadWrapper'
 import ProjectDiscussionForum from './ProjectDiscussionForum'
 
 const PortalComponents = {
@@ -48,6 +49,7 @@ const PortalComponents = {
   ChallengeDetailPageWrapper,
   ProjectDiscussionForum,
   ChallengeSubmissionWrapper,
+  ChallengeDataDownloadWrapper,
 }
 
 export default PortalComponents
