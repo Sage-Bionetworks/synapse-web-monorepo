@@ -1,31 +1,28 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import StepperDialog, { Step } from '../StepperDialog/StepperDialog'
-
 import {
   ErrorResponse,
-  Team,
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
-import { CreateChallengeTeam, CreateTeamRequest } from './CreateChallengeTeam'
+import {
+  CreateChallengeTeam,
+  CreateChallengeTeamHandle,
+} from './CreateChallengeTeam'
 import { SelectChallengeTeam } from './SelectChallengeTeam'
 import { RegistrationSuccessful } from './RegistrationSuccessful'
 import { JoinRequestForm } from './JoinRequestForm'
 import { useSynapseContext } from '../../utils'
 import {
   addTeamMemberAsAuthenticatedUserOrAdmin,
-  createMembershipInvitation,
   createMembershipRequest,
-  createTeam,
-  registerChallengeTeam,
 } from '../../synapse-client'
 import {
   useGetCurrentUserProfile,
   useGetEntityChallenge,
+  useGetMembershipStatus,
   useGetUserSubmissionTeams,
 } from '../../synapse-queries'
 import { ANONYMOUS_PRINCIPAL_ID } from '../../utils/SynapseConstants'
-import { useGetMembershipStatus } from '../../synapse-queries/team/useTeamMembers'
-
 import { Typography } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -91,7 +88,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const [loading, setLoading] = useState<boolean>(true)
   const [step, setStep] = useState<Step>(steps.SELECT_YOUR_CHALLENGE_TEAM)
   const [errorMessage, setErrorMessage] = useState<string>()
-  const [selectedTeam, setSelectedTeam] = useState<Team | undefined>()
+  const [selectedTeamId, setSelectedTeamId] = useState<string | undefined>()
   const [createdNewTeam, setCreatedNewTeam] = useState<boolean>(false)
   const [confirming, setConfirming] = useState<boolean>(false)
   const [hasSubmissionTeam, setHasSubmissionTeam] = useState<boolean>(false)
@@ -100,17 +97,9 @@ const ChallengeTeamWizard: React.FunctionComponent<
   const [membershipStatus, setMembershipStatus] = useState<
     Record<string, TeamMembershipStatus>
   >({})
-  const [inviteMembersSuccess, setInviteMembersSuccess] =
-    useState<boolean>(false)
-  const [registerChallengeSuccess, setRegisterChallengeSuccess] =
-    useState<boolean>(false)
-  const [newTeam, setNewTeam] = useState<CreateTeamRequest>({
-    name: '',
-    description: '',
-    message: '',
-    invitees: '',
-  })
   const [joinMessage, setJoinMessage] = useState<string>('')
+
+  const createChallengeTeamRef = useRef<CreateChallengeTeamHandle>(null)
 
   /************************
    * Data population hooks
@@ -145,10 +134,10 @@ const ChallengeTeamWizard: React.FunctionComponent<
 
   const { data: teamMembershipStatus, error: teamMembershipError } =
     useGetMembershipStatus(
-      selectedTeam?.id ?? EMPTY_ID,
+      selectedTeamId ?? EMPTY_ID,
       userProfile?.ownerId ?? EMPTY_ID,
       {
-        enabled: !!selectedTeam && !!userProfile,
+        enabled: !!selectedTeamId && !!userProfile,
       },
     )
 
@@ -172,14 +161,14 @@ const ChallengeTeamWizard: React.FunctionComponent<
    ************************/
 
   const canUserJoinTeam = () => {
-    if (selectedTeam && selectedTeam.id in membershipStatus) {
+    if (selectedTeamId && selectedTeamId in membershipStatus) {
       const {
         canJoin,
         membershipApprovalRequired,
         isMember,
         hasOpenInvitation,
         hasOpenRequest,
-      } = membershipStatus[selectedTeam.id]
+      } = membershipStatus[selectedTeamId]
 
       if (isMember) {
         // User cannot join this team, disable Next button
@@ -230,23 +219,11 @@ const ChallengeTeamWizard: React.FunctionComponent<
     }
   }, [accessToken, userProfile, projectId, challenge])
 
-  /**
-   * When creating a new team, wait for the team to be registered to the challenge
-   * and for invited members to be invited before proceeding to confirmation view.
-   */
-  useEffect(() => {
-    if (inviteMembersSuccess && registerChallengeSuccess) {
-      setConfirming(false)
-      handleStepChange(step.confirmStep as StepsEnum)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [registerChallengeSuccess, inviteMembersSuccess, step])
-
   // Determine the user's eligibility to join the selected team
   useEffect(() => {
     if (
-      selectedTeam &&
-      selectedTeam.id in membershipStatus &&
+      selectedTeamId &&
+      selectedTeamId in membershipStatus &&
       step.id === StepsEnum.SELECT_YOUR_CHALLENGE_TEAM
     ) {
       const { canJoin, errorMessage } = canUserJoinTeam()
@@ -258,26 +235,17 @@ const ChallengeTeamWizard: React.FunctionComponent<
       if (errorMessage) setErrorMessage(errorMessage)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [membershipStatus, selectedTeam, step])
+  }, [membershipStatus, selectedTeamId, step])
 
   /************************
    * Form update handlers
    * *********************/
 
   // SELECT_YOUR_CHALLENGE_TEAM: user has selected an existing challenge team from the table
-  const handleSelectTeam = (team: Team) => {
-    if (team) {
-      // Setting selectedTeam will trigger the useMembershipStatus hook
-      setErrorMessage(undefined)
-      setSelectedTeam(team)
-    }
-  }
-
-  // CREATE_NEW_TEAM: form change handler
-  const handleChangeTeamInfo = (updatedTeam: CreateTeamRequest) => {
-    setNewTeam(updatedTeam)
-    const confirmEnabled = updatedTeam.name.length > 1
-    setStep({ ...step, confirmEnabled })
+  const handleSelectTeam = (teamId: string) => {
+    // Setting selectedTeam will trigger the useMembershipStatus hook
+    setErrorMessage(undefined)
+    setSelectedTeamId(teamId)
   }
 
   /************************
@@ -285,7 +253,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
    * *********************/
 
   // JOIN_REQUEST_FORM: Add user to an existing public team or a team the user has an open invitation to
-  const addUserToTeam = (teamId = selectedTeam?.id) => {
+  const addUserToTeam = (teamId = selectedTeamId) => {
     if (!teamId || !userProfile || !accessToken) return
     setConfirming(true)
     setErrorMessage(undefined)
@@ -313,13 +281,13 @@ const ChallengeTeamWizard: React.FunctionComponent<
 
   // JOIN_REQUEST_FORM: User is requesting to join an existing non-public challenge team
   const handleRequestMembership = async () => {
-    if (userProfile && selectedTeam) {
+    if (userProfile && selectedTeamId) {
       setConfirming(true)
       setStep({ ...step, nextEnabled: false })
       setErrorMessage(undefined)
       await createMembershipRequest(
         {
-          teamId: selectedTeam.id,
+          teamId: selectedTeamId,
           userId: userProfile.ownerId,
           message: joinMessage,
         },
@@ -340,111 +308,38 @@ const ChallengeTeamWizard: React.FunctionComponent<
     }
   }
 
-  // CREATE_NEW_TEAM: Add newly created team to the challenge
-  const handleRegisterChallengeTeam = async (teamId: string | number) => {
-    const msg = 'Error registering challenge team'
-    // console.log({ teamId, challenge })
-    if (teamId && challenge) {
-      setErrorMessage(undefined)
-      setRegisterChallengeSuccess(false)
-      await registerChallengeTeam(
-        {
-          challengeId: challenge.id,
-          teamId: String(teamId),
-        },
-        accessToken,
-      )
-        .then(() => {
-          setRegisterChallengeSuccess(true)
-        })
-        .catch((err: ErrorResponse) => {
-          setErrorMessage(`${msg}: ${err.reason}`)
-          setConfirming(false)
-        })
-    } else {
-      setErrorMessage(`${msg}: Invalid team.`)
-      setConfirming(false)
-    }
-  }
-
-  // CREATE_NEW_TEAM: Invite a comma-delimited list of emails to join the team
-  const handleInviteTeamMembers = async (
-    teamId: string | number,
-    invitees: string,
-  ) => {
-    if (!invitees.length) {
-      setInviteMembersSuccess(true)
-      return
-    }
-    const msg = 'Error inviting members'
-    if (teamId) {
-      setErrorMessage(undefined)
-      setInviteMembersSuccess(false)
-      const emails = invitees.split(',')
-      const errors: string[] = []
-      for (const inviteeEmail of emails) {
-        await createMembershipInvitation(
-          { teamId: String(teamId), inviteeEmail: inviteeEmail.trim() },
-          accessToken,
-        ).catch(() => {
-          errors.push(inviteeEmail.trim())
-        })
-      }
-
-      if (errors.length) {
-        setErrorMessage(`${msg}: ${errors.join(', ')}`)
-        setConfirming(false)
-      } else {
-        setInviteMembersSuccess(true)
-      }
-    } else {
-      setErrorMessage(`${msg}: Invalid team.`)
-      setConfirming(false)
-    }
-  }
-
-  // CREATE_NEW_TEAM: Create a new team to join the challenge
-  const handleCreateTeam = async () => {
-    if (newTeam && newTeam.name && newTeam.name.length > 1) {
-      setStep({ ...step, confirmEnabled: false })
-      setConfirming(true)
-      setErrorMessage(undefined)
-      await createTeam(
-        { name: newTeam.name, description: newTeam.description },
-        accessToken,
-      )
-        .then(response => {
-          setCreatedNewTeam(true)
-          setSelectedTeam(response)
-          // Add newly created team to challenge
-          handleRegisterChallengeTeam(response.id)
-          // Invite emails to new team
-          handleInviteTeamMembers(response.id, newTeam.invitees)
-        })
-        .catch((err: ErrorResponse) => {
-          setConfirming(false)
-          setErrorMessage(`Error creating team: ${err.reason}`)
-          setStep({ ...step, confirmEnabled: true })
-        })
-    }
-  }
-
   const hide = () => {
     setErrorMessage(undefined)
     setCreatedNewTeam(false)
-    setSelectedTeam(undefined)
+    setSelectedTeamId(undefined)
     setStep({ ...step, nextEnabled: false })
     onClose()
   }
 
   const onConfirmHandlerMap: Record<string, () => Promise<void> | void> = {
-    CREATE_NEW_TEAM: handleCreateTeam,
+    CREATE_NEW_TEAM: () => {
+      if (createChallengeTeamRef.current) {
+        createChallengeTeamRef.current.submit()
+      }
+    },
     JOIN_REQUEST_FORM: handleRequestMembership,
     JOIN_REQUEST_SENT: () => {
       hide()
       return undefined
     },
   }
+
+  const updateConfirmEnabledForCreateTeam = useCallback(
+    (canCreateTeam: boolean) => {
+      {
+        setStep(step => ({
+          ...step,
+          confirmEnabled: canCreateTeam,
+        }))
+      }
+    },
+    [],
+  )
 
   // Determine modal content based on step.id
   const createContent = () => {
@@ -454,7 +349,9 @@ const ChallengeTeamWizard: React.FunctionComponent<
           <SelectChallengeTeam
             challengeId={challenge.id}
             onCreateTeam={() => handleStepChange(StepsEnum.CREATE_NEW_TEAM)}
-            onSelectTeam={handleSelectTeam}
+            onSelectTeam={team => {
+              handleSelectTeam(team.id)
+            }}
           />
         ) : (
           <></>
@@ -462,7 +359,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
       case StepsEnum.JOIN_REQUEST_FORM:
         return (
           <JoinRequestForm
-            team={selectedTeam}
+            teamId={selectedTeamId}
             joinMessageChange={setJoinMessage}
           />
         )
@@ -478,14 +375,20 @@ const ChallengeTeamWizard: React.FunctionComponent<
         return (
           <RegistrationSuccessful
             createdNewTeam={createdNewTeam}
-            teamName={selectedTeam?.name}
+            teamId={selectedTeamId}
           />
         )
       case StepsEnum.CREATE_NEW_TEAM:
         return (
           <CreateChallengeTeam
-            onChangeTeamInfo={handleChangeTeamInfo}
-            onError={setErrorMessage}
+            ref={createChallengeTeamRef}
+            challengeId={challenge!.id}
+            onCanSubmitChange={updateConfirmEnabledForCreateTeam}
+            onFinished={newTeamId => {
+              setCreatedNewTeam(true)
+              setSelectedTeamId(newTeamId)
+              setStep(steps[StepsEnum.REGISTRATION_SUCCESSFUL])
+            }}
           />
         )
       default:

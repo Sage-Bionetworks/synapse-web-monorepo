@@ -1,3 +1,4 @@
+export * from './challenge'
 export * from './dataaccess'
 export * from './download'
 export * from './entity'

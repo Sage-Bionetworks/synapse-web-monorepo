@@ -1,23 +1,41 @@
 import React, { ChangeEvent, useState } from 'react'
-import { Box, TextField, Typography } from '@mui/material'
-import { Team } from '@sage-bionetworks/synapse-types'
+import { Alert, Box, TextField, Typography } from '@mui/material'
+import { useGetTeam } from '../../synapse-queries'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 type JoinRequestFormProps = {
-  team: Team | undefined
+  teamId: string | undefined
   joinMessageChange: (msg: string) => void
 }
 
 export const JoinRequestForm = ({
-  team,
+  teamId,
   joinMessageChange,
 }: JoinRequestFormProps) => {
   const [message, setMessage] = useState<string>('')
-  if (!team) return null
+  const {
+    data: team,
+    status,
+    error,
+  } = useGetTeam(teamId!, { enabled: !!teamId })
+  if (!teamId) return null
 
   const handleMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const value = event.target.value
     setMessage(value)
     joinMessageChange(value)
+  }
+
+  if (status === 'pending') {
+    return (
+      <Box display="flex" flexDirection="column" gap={1}>
+        <SynapseSpinner />
+      </Box>
+    )
+  }
+
+  if (status === 'error') {
+    return <Alert severity={'error'}>{error.message}</Alert>
   }
 
   return (

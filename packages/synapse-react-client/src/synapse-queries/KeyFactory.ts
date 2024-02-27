@@ -663,6 +663,10 @@ export class KeyFactory {
     return this.getKey('userProjects', userId, projectParams)
   }
 
+  public getAllUserTeamsQueryKey() {
+    return this.getKey('userTeams')
+  }
+
   public getUserTeamsQueryKey(userId: string) {
     return this.getKey('userTeams', userId)
   }

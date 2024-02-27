@@ -9,6 +9,8 @@ import SynapseClient, { deleteMemberFromTeam } from '../../synapse-client'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { useSynapseContext } from '../../utils/context/SynapseContext'
 import {
+  CreateMembershipInvitationRequest,
+  MembershipInvitation,
   PaginatedResults,
   TeamMember,
   TeamMembershipStatus,
@@ -55,6 +57,28 @@ export function useGetMembershipStatus(
     queryKey: keyFactory.getMembershipStatusQueryKey(teamId, userId),
     queryFn: () =>
       SynapseClient.getMembershipStatus(teamId, userId, accessToken),
+  })
+}
+
+export function useInviteUserToTeam(
+  options?: Partial<
+    UseMutationOptions<
+      MembershipInvitation,
+      SynapseClientError,
+      CreateMembershipInvitationRequest
+    >
+  >,
+) {
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<
+    MembershipInvitation,
+    SynapseClientError,
+    CreateMembershipInvitationRequest
+  >({
+    ...options,
+    mutationFn: invitation =>
+      SynapseClient.createMembershipInvitation(invitation, accessToken!),
   })
 }
 
