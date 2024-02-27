@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import StepperDialog, { Step } from '../StepperDialog/StepperDialog'
 import {
   ErrorResponse,
@@ -329,6 +329,18 @@ const ChallengeTeamWizard: React.FunctionComponent<
     },
   }
 
+  const updateConfirmEnabledForCreateTeam = useCallback(
+    (canCreateTeam: boolean) => {
+      {
+        setStep(step => ({
+          ...step,
+          confirmEnabled: canCreateTeam,
+        }))
+      }
+    },
+    [],
+  )
+
   // Determine modal content based on step.id
   const createContent = () => {
     switch (step.id) {
@@ -371,12 +383,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
           <CreateChallengeTeam
             ref={createChallengeTeamRef}
             challengeId={challenge!.id}
-            onCanSubmitChange={canCreateTeam => {
-              setStep(step => ({
-                ...step,
-                confirmEnabled: canCreateTeam,
-              }))
-            }}
+            onCanSubmitChange={updateConfirmEnabledForCreateTeam}
             onFinished={newTeamId => {
               setCreatedNewTeam(true)
               setSelectedTeamId(newTeamId)
