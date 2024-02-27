@@ -146,7 +146,6 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
         loading={isLoading}
         rows={allRows}
         columns={columns}
-        rowSelectionModel={selectedTeamId ? [selectedTeamId] : []}
         rowCount={5}
         hideFooter
         density="compact"
