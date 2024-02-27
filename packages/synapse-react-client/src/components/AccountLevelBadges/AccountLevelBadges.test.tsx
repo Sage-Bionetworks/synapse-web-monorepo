@@ -1,9 +1,13 @@
 import { UserBundle } from '@sage-bionetworks/synapse-types'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
+import { mockUserProfileData } from '../../mocks/user/mock_user_profile'
 import SynapseClient from '../../synapse-client'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
-import { accountLevelBadgeConfig } from '../AccountLevelBadge/AccountLevelBadge'
+import {
+  AccountLevelBadgeType,
+  accountLevelBadgeConfig,
+} from '../AccountLevelBadge/AccountLevelBadge'
 import { AccountLevelBadges } from './AccountLevelBadges'
 
 jest.mock('../../synapse-client', () => ({
@@ -12,25 +16,28 @@ jest.mock('../../synapse-client', () => ({
 
 const mockGetUserBundle = jest.mocked(SynapseClient.getUserBundle)
 
-const mockRegistered: UserBundle = {
-  userId: '345424',
-  isCertified: false,
-  isVerified: false,
+const getMockUserBundle = (
+  isCertified: boolean,
+  isVerified: boolean,
+  twoFactorAuthEnabled?: boolean,
+) => {
+  const bundle: UserBundle = {
+    userId: '345424',
+    isCertified: isCertified,
+    isVerified: isVerified,
+  }
+  bundle.userProfile =
+    twoFactorAuthEnabled === undefined
+      ? undefined
+      : {
+          ...mockUserProfileData,
+          twoFactorAuthEnabled: twoFactorAuthEnabled,
+        }
+  return bundle
 }
-const mockCertified: UserBundle = {
-  userId: '345424',
-  isCertified: true,
-  isVerified: false,
-}
-const mockVerified: UserBundle = {
-  userId: '345424',
-  isCertified: false,
-  isVerified: true,
-}
-const mockCertifiedAndVerified: UserBundle = {
-  userId: '345424',
-  isCertified: true,
-  isVerified: true,
+
+const queryForBadgeLabel = (badgeType: AccountLevelBadgeType) => {
+  return screen.queryByText(accountLevelBadgeConfig[badgeType].label)
 }
 
 describe('AccountLevelBadges', () => {
@@ -49,44 +56,88 @@ describe('AccountLevelBadges', () => {
   })
 
   it('registered user', () => {
-    mockGetUserBundle.mockResolvedValueOnce(mockRegistered)
+    mockGetUserBundle.mockResolvedValueOnce(getMockUserBundle(false, false))
 
     renderComponent()
 
-    expect(
-      screen.queryByText(accountLevelBadgeConfig.certified.label),
-    ).toBeNull()
-    expect(
-      screen.queryByText(accountLevelBadgeConfig.validated.label),
-    ).toBeNull()
+    expect(queryForBadgeLabel('certified')).toBeNull()
+    expect(queryForBadgeLabel('validated')).toBeNull()
+    expect(queryForBadgeLabel('enabledMFA')).toBeNull()
+
     expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
   })
 
   it('certified user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(mockCertified)
+    mockGetUserBundle.mockResolvedValueOnce(getMockUserBundle(true, false))
 
     renderComponent()
 
-    await screen.findByText(accountLevelBadgeConfig.certified.label)
+    await waitFor(() => {
+      expect(queryForBadgeLabel('certified')).not.toBeNull()
+    })
+    expect(queryForBadgeLabel('validated')).toBeNull()
+    expect(queryForBadgeLabel('enabledMFA')).toBeNull()
+
     expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
   })
 
   it('verified user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(mockVerified)
+    mockGetUserBundle.mockResolvedValueOnce(getMockUserBundle(false, true))
 
     renderComponent()
 
-    await screen.findByText(accountLevelBadgeConfig.validated.label)
+    await waitFor(() => {
+      expect(queryForBadgeLabel('validated')).not.toBeNull()
+    })
+    expect(queryForBadgeLabel('certified')).toBeNull()
+    expect(queryForBadgeLabel('enabledMFA')).toBeNull()
+
+    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
+  })
+
+  it('enabled mfa user', async () => {
+    mockGetUserBundle.mockResolvedValueOnce(
+      getMockUserBundle(false, false, true),
+    )
+
+    renderComponent()
+
+    await waitFor(() => {
+      expect(queryForBadgeLabel('enabledMFA')).not.toBeNull()
+    })
+    expect(queryForBadgeLabel('certified')).toBeNull()
+    expect(queryForBadgeLabel('validated')).toBeNull()
+
     expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
   })
 
   it('certified and verified user', async () => {
-    mockGetUserBundle.mockResolvedValueOnce(mockCertifiedAndVerified)
+    mockGetUserBundle.mockResolvedValueOnce(
+      getMockUserBundle(true, true, false),
+    )
 
     renderComponent()
 
-    await screen.findByText(accountLevelBadgeConfig.certified.label)
-    await screen.findByText(accountLevelBadgeConfig.validated.label)
+    await waitFor(() => {
+      expect(queryForBadgeLabel('certified')).not.toBeNull()
+      expect(queryForBadgeLabel('validated')).not.toBeNull()
+    })
+    expect(queryForBadgeLabel('enabledMFA')).toBeNull()
+
+    expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
+  })
+
+  it('certified, verified, and enabled mfa user', async () => {
+    mockGetUserBundle.mockResolvedValueOnce(getMockUserBundle(true, true, true))
+
+    renderComponent()
+
+    await waitFor(() => {
+      expect(queryForBadgeLabel('certified')).not.toBeNull()
+      expect(queryForBadgeLabel('validated')).not.toBeNull()
+      expect(queryForBadgeLabel('enabledMFA')).not.toBeNull()
+    })
+
     expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
   })
 })

@@ -2,13 +2,15 @@ import { Box, Card, Link, Tooltip, Typography } from '@mui/material'
 import React from 'react'
 import { ReactComponent as Certified } from '../../assets/icons/account-certified.svg'
 import { ReactComponent as Validated } from '../../assets/icons/account-validated.svg'
+import { ReactComponent as EnabledMFA } from '../../assets/icons/account-enabled-mfa.svg'
 
-export type AccountLevelBadgeType = 'certified' | 'validated'
+export type AccountLevelBadgeType = 'certified' | 'validated' | 'enabledMFA'
 type AccountLevelBadgeConfig = {
   label: string
   description: string
   tooltipText: string
   icon: React.ReactElement
+  linkHref: string
 }
 
 export const accountLevelBadgeConfig: Record<
@@ -21,6 +23,7 @@ export const accountLevelBadgeConfig: Record<
     tooltipText:
       'This user has passed Sage Certification, which means they can upload data and create new projects and tables.',
     icon: <Certified />,
+    linkHref: 'https://help.synapse.org/docs/User-Types.2007072795.html',
   },
   validated: {
     label: 'Validated',
@@ -28,6 +31,16 @@ export const accountLevelBadgeConfig: Record<
     tooltipText:
       'This user is Validated. Their identity and credentials have been manually verified by Sage Bionetworks.',
     icon: <Validated />,
+    linkHref: 'https://help.synapse.org/docs/User-Types.2007072795.html',
+  },
+  enabledMFA: {
+    label: 'Multi-factor Authentication',
+    description: 'User has activated MFA',
+    tooltipText:
+      'This user currently has multi-factor authentication (MFA) activated.',
+    icon: <EnabledMFA />,
+    linkHref:
+      'https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#ManagingYourAccount-AddingTwo-FactorAuthentication(2FA)toyouraccount',
   },
 }
 
@@ -42,9 +55,11 @@ export const AccountLevelBadge: React.FunctionComponent<
   return (
     <Card
       sx={{
-        maxWidth: 450,
+        maxWidth: 325,
+        minWidth: 250,
         padding: '30px 20px',
         display: 'flex',
+        width: '100%',
         alignItems: 'center',
       }}
     >
@@ -63,7 +78,7 @@ export const AccountLevelBadge: React.FunctionComponent<
         <Link
           target="_blank"
           rel="noopener noreferrer"
-          href="https://help.synapse.org/docs/User-Types.2007072795.html"
+          href={badgeConfig.linkHref}
         >
           <Typography variant="buttonLink">Learn more</Typography>
         </Link>

@@ -31,6 +31,9 @@ describe('AccountLevelBadge', () => {
 
       const tooltip = await screen.findByRole('tooltip')
       expect(tooltip).toHaveTextContent(config.tooltipText)
+
+      const link = await screen.findByRole('link')
+      expect(link).toHaveAttribute('href', config.linkHref)
     })
   }
 })
