@@ -242,7 +242,7 @@ const ChallengeTeamWizard: React.FunctionComponent<
    * *********************/
 
   // SELECT_YOUR_CHALLENGE_TEAM: user has selected an existing challenge team from the table
-  const handleSelectTeam = (teamId: string) => {
+  const handleSelectTeam = (teamId?: string) => {
     // Setting selectedTeam will trigger the useMembershipStatus hook
     setErrorMessage(undefined)
     setSelectedTeamId(teamId)
@@ -337,8 +337,9 @@ const ChallengeTeamWizard: React.FunctionComponent<
           <SelectChallengeTeam
             challengeId={challenge.id}
             onCreateTeam={() => handleStepChange(StepsEnum.CREATE_NEW_TEAM)}
-            onSelectTeam={team => {
-              handleSelectTeam(team.id)
+            selectedTeamId={selectedTeamId}
+            onSelectTeam={teamId => {
+              handleSelectTeam(teamId)
             }}
           />
         ) : (
