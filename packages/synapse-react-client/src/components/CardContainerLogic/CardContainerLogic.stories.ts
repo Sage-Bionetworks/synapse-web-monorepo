@@ -55,7 +55,7 @@ export const EmptyResults: Story = {
 
 export const ObservationCard: Story = {
   args: {
-    sql: `SELECT "Observation Submitter Name" as "submitterName", Synapse_id as "submitterUserId", "Observation Time" as "time", "Observation Time Units" as "timeUnits", "Observation Text" as "text", "Observation Type" as "tag" FROM syn26344832 WHERE "Observation Time" IS NOT NULL`,
+    sql: `SELECT * FROM syn51735464`,
     type: OBSERVATION_CARD,
     limit: 3,
   },

@@ -108,7 +108,7 @@ export function CardContainer(props: CardContainerProps) {
     schema[element.name] = index
   })
   const showViewMoreButton = (applyInitialLimit || hasNextPage) && (
-    <Box display="flex" justifyContent="flex-end">
+    <Box display="flex" justifyContent="flex-start">
       <WideButton
         variant="contained"
         color="secondary"
