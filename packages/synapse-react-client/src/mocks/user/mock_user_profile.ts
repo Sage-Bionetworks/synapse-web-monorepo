@@ -20,6 +20,7 @@ export const mockUserProfileData = {
   createdOn: '2018-06-18T21:42:48.000Z',
   url: 'https://sagebase.org',
   email: 'mockemail@fakeemailprovider.xyz',
+  twoFactorAuthEnabled: false,
 } satisfies UserProfile
 
 export const mockUserBundle: UserBundle = {
@@ -56,6 +57,7 @@ export const mockUserProfileData2: UserProfile = {
   userName: MOCK_USER_NAME_2,
   createdOn: '2018-06-18T21:42:48.000Z',
   url: 'https://sagebase.org',
+  twoFactorAuthEnabled: false,
 }
 
 export const mockUserBundle2: UserBundle = {
@@ -93,6 +95,7 @@ export const mockUserProfileData3: UserProfile = {
   userName: MOCK_USER_NAME_3,
   createdOn: '2008-01-20T18:12:39.000Z',
   url: 'https://sagebase.org',
+  twoFactorAuthEnabled: true,
 }
 
 export const mockUserBundle3: UserBundle = {

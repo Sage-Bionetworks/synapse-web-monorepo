@@ -38,5 +38,6 @@ export type UserProfile = {
   notificationSettings?: Settings // Settings Contains a user's notification settings
   preferences?: UserPreference[]
   createdOn?: string // The date this profile was created
+  twoFactorAuthEnabled?: boolean // Flag that indicates if the user has two factor authentication enabled.
   clientPreSignedURL?: string // NOTE - this is an added property, it does not come from the backend for free
 }

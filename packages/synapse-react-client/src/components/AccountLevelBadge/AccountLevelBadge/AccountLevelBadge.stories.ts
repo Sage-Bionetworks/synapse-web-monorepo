@@ -10,14 +10,8 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-export const Certified: Story = {
+export const Demo: Story = {
   args: {
     badgeType: 'certified',
-  },
-}
-
-export const Validated: Story = {
-  args: {
-    badgeType: 'validated',
   },
 }
