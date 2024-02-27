@@ -93,9 +93,7 @@ export class UserCardList extends React.Component<
     const nullOwnerIdsRows = data.queryResult!.queryResults.rows.filter(
       el => !el.values[ownerId],
     )
-    return nullOwnerIdsRows.map<
-      Omit<UserProfile, 'ownerId' | 'twoFactorAuthEnabled'>
-    >(el => {
+    return nullOwnerIdsRows.map<Omit<UserProfile, 'ownerId'>>(el => {
       const values = el.values
       return {
         firstName: values[firstNameIndex] ?? '',
