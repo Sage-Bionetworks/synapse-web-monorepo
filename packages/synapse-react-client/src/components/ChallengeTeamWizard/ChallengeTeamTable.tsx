@@ -111,7 +111,6 @@ export default function ChallengeTeamTable({
             checked={params.id === selectedTeam}
             onChange={teamChangeHandler}
             label=""
-            style={{ marginBottom: '16px' }}
           />
         )
       },
@@ -178,6 +177,11 @@ export default function ChallengeTeamTable({
               },
               '.MuiDataGrid-columnHeaderTitleContainer': {
                 justifyContent: 'space-between',
+              },
+              '.radio': {
+                display: 'flex',
+                alignItems: 'center',
+                height: '100%',
               },
             }}
             getRowClassName={params =>

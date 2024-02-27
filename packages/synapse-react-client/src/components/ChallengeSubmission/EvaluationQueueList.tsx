@@ -42,7 +42,6 @@ function EvaluationQueueList({
             checked={params.id === selectedEvaluation}
             onChange={onEvaluationChange}
             label=""
-            style={{ marginBottom: '16px' }}
           />
         )
       },
@@ -102,6 +101,11 @@ function EvaluationQueueList({
           },
           '.MuiDataGrid-columnHeaderTitleContainer': {
             justifyContent: 'space-between',
+          },
+          '.radio': {
+            display: 'flex',
+            alignItems: 'center',
+            height: '100%',
           },
         }}
         getRowClassName={params =>
