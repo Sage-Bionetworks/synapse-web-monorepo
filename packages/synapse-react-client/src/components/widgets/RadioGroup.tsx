@@ -36,28 +36,29 @@ export type RadioOptionProps<T extends string | boolean | number = string> = {
   value: T
   style?: React.CSSProperties
   onChange: (value: T) => void
-  disabled?: boolean
-  checked: boolean
-}
+} & Omit<
+  React.HTMLProps<HTMLInputElement>,
+  'label' | 'value' | 'style' | 'onChange'
+>
 
 export function RadioOption<T extends string | boolean | number = string>(
   props: RadioOptionProps<T>,
 ) {
+  const { value, label, onChange, style, ...inputProps } = props
   const uniqueId = useId()
   return (
-    <div className={'radio'} onClick={() => props.onChange(props.value)}>
+    <div className={'radio'} onClick={() => onChange(value)}>
       <input
         id={uniqueId}
         type="radio"
         onChange={() => {
           // no-op -- change is handled by the div
         }}
-        checked={props.checked}
-        value={props.value.toString()}
-        disabled={props.disabled}
+        value={String(value)}
+        {...inputProps}
       />
-      <label htmlFor={uniqueId} style={props.style}>
-        {props.label}
+      <label htmlFor={uniqueId} style={style}>
+        {label}
       </label>
     </div>
   )
