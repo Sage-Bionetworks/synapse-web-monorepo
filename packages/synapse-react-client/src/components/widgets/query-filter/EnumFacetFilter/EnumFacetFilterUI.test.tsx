@@ -34,6 +34,7 @@ function generateManyFacetValues(): RenderedFacetValue[] {
 const mockOnAddValueToSelection = jest.fn()
 const mockOnRemoveAllFacetSelections = jest.fn()
 const mockOnRemoveValueFromSelection = jest.fn()
+const mockOnHoverOverValue = jest.fn()
 
 const defaultProps = {
   onAddValueToSelection: mockOnAddValueToSelection,
@@ -45,6 +46,7 @@ const defaultProps = {
   hideCollapsible: false,
   onRemoveAllFacetSelections: mockOnRemoveAllFacetSelections,
   onRemoveValueFromSelection: mockOnRemoveValueFromSelection,
+  onHoverOverValue: mockOnHoverOverValue,
 } satisfies EnumFacetFilterUIProps
 
 function renderComponent(overrides?: Partial<EnumFacetFilterUIProps>) {
@@ -181,6 +183,10 @@ describe('EnumFacetFilterUI (unit tests)', () => {
       expect(individualFacetCheckboxes[0]).not.toBeChecked()
       expect(individualFacetCheckboxes[1]).toBeChecked()
 
+      await userEvent.hover(individualFacetCheckboxes[0])
+      await waitFor(() => {
+        expect(mockOnHoverOverValue).toHaveBeenCalledTimes(1)
+      })
       await userEvent.click(individualFacetCheckboxes[0])
       await userEvent.click(individualFacetCheckboxes[1])
       await waitFor(() => {
