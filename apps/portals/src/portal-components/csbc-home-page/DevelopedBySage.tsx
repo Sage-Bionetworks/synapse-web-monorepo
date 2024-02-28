@@ -20,7 +20,7 @@ const DevelopedBySage = () => {
         and is part of the
         <a
           className="SRC-primary-text-color SRC-boldText"
-          href="https://sagebionetworks.org/tools_resources/synapse-platform/"
+          href="https://sagebionetworks.org/platform/synapse"
           target="_blank"
           rel="noreferrer"
         >
@@ -48,7 +48,7 @@ const DevelopedBySage = () => {
           <NIH id="nih-logo" />
         </a>
         <a
-          href="https://sagebionetworks.org/tools_resources/synapse-platform/"
+          href="https://sagebionetworks.org/platform/synapse"
           target="_blank"
           rel="noreferrer"
         >

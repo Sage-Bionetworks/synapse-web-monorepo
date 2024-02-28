@@ -5,7 +5,7 @@ import Linkify from './Linkify'
 
 describe('Linkify tests', () => {
   test('auto-links a https URL', () => {
-    const value = 'https://sagebionetworks.org/who-we-are/'
+    const value = 'https://sagebionetworks.org/people'
     const { container } = render(<Linkify text={value} />, {
       wrapper: createWrapper(),
     })
