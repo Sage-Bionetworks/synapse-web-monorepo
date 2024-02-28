@@ -4,7 +4,7 @@ import {
   mockUserData3,
   MockUserOrTeamData,
 } from '../user/mock_user_profile'
-import { mockActData, mockTeamUserGroup } from '../team/mockTeam'
+import { mockTeamUserGroups } from '../team/mockTeam'
 import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
@@ -34,8 +34,7 @@ export const mockUserGroupData: MockUserOrTeamData[] = [
   mockUserData1,
   mockUserData2,
   mockUserData3,
-  mockTeamUserGroup,
-  mockActData,
+  ...mockTeamUserGroups,
   mockAuthenticatedGroupData,
   mockPublicGroupData,
 ]

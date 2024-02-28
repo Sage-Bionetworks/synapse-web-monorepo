@@ -28,6 +28,7 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import dayjs from 'dayjs'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
+import { mockActTeam } from '../../mocks/team/mockTeam'
 
 function renderComponent(props: AccessRequestSubmissionTableProps) {
   const { wrapperFn } = createWrapperAndQueryClient()
@@ -165,7 +166,7 @@ describe('Access Request Submission Table tests', () => {
     })
     await screen.findAllByText('@' + MOCK_USER_NAME_2)
     await screen.findByRole('cell', {
-      name: 'Synapse Access and Compliance Team',
+      name: mockActTeam.name,
     })
     await screen.findByRole('cell', {
       name: formatDate(

@@ -16,6 +16,7 @@ import {
   MOCK_TEAM_ID_2,
   MOCK_TEAM_ID_3,
   MOCK_TEAM_ID_4,
+  MOCK_TEAM_ID_5,
 } from '../../team/mockTeam'
 import { uniqueId } from 'lodash-es'
 
@@ -30,6 +31,10 @@ const registeredChallengeTeams = [
   }),
   mockChallengeTeam({
     teamId: String(MOCK_TEAM_ID_4),
+    challengeId: MOCK_CHALLENGE_ID,
+  }),
+  mockChallengeTeam({
+    teamId: String(MOCK_TEAM_ID_5),
     challengeId: MOCK_CHALLENGE_ID,
   }),
 ]
