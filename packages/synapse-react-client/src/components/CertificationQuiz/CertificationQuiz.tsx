@@ -161,7 +161,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
             variant="sectionTitle"
             sx={{ marginTop: '20px', marginBottom: '20px' }}
           >
-            Score: {passingRecord.score} / {quiz?.questions.length}
+            Score: {passingRecord.score} / {passingRecord.corrections?.length}
           </Typography>
         </>
       )}
