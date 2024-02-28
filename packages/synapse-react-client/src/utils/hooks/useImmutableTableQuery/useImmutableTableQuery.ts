@@ -97,7 +97,7 @@ export type UseImmutableTableQueryOptions = {
 }
 
 // When changing the query with the debounce option, the amount of time to wait for additional debounced changes before updating the query
-export const DEBOUNCE_DELAY_MS = 1500
+export const DEBOUNCE_DELAY_MS = 750
 
 /**
  * Custom hook that maintains and manages the state of a Synapse Table query.
