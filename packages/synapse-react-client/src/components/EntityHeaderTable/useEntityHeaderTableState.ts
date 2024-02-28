@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { RowSelectionState } from '@tanstack/react-table'
 import { cloneDeep } from 'lodash-es'
 import { ReferenceList } from '@sage-bionetworks/synapse-types'
@@ -15,6 +15,10 @@ export function useEntityHeaderTableState(
   const [newEntityIDs, _setNewEntityIDs] = useState<string>('')
   const [parseErrors, setParseErrors] = useState<string[]>([])
 
+  useEffect(() => {
+    _setRefsInState(cloneDeep(references))
+  }, [references])
+
   const setNewEntityIDs = useCallback(
     (newValue: string) => {
       _setNewEntityIDs(newValue)
@@ -25,6 +29,7 @@ export function useEntityHeaderTableState(
 
   const setRefsInState = useCallback(
     (refs: ReferenceList) => {
+      console.log('setRefsInState called')
       setRowSelection({})
       _setRefsInState(refs)
       if (onUpdate) {
