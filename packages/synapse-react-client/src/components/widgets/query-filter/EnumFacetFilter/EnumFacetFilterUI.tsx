@@ -33,6 +33,8 @@ export type EnumFacetFilterUIProps = {
   onRemoveValueFromSelection: (value: string) => void
   /* Called when all values should be unselected (e.g. 'All' is clicked) */
   onRemoveAllFacetSelections: () => void
+  /* Called when an value is hovered over */
+  onHoverOverValue: (value: string) => void
 }
 
 function removeWhitespace(value: string): string {
@@ -50,6 +52,7 @@ export default function EnumFacetFilterUI(props: EnumFacetFilterUIProps) {
     onRemoveValueFromSelection,
     facetTitle,
     onRemoveAllFacetSelections,
+    onHoverOverValue,
   } = props
   const [toggleShowAll, setToggleShowAll] = useState<boolean>(false)
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
@@ -195,6 +198,9 @@ export default function EnumFacetFilterUI(props: EnumFacetFilterUIProps) {
               count={count}
               isDropdown={isDropdown}
               checked={isSelected}
+              onHover={() => {
+                onHoverOverValue(value)
+              }}
               onChange={(newIsSelected: boolean) => {
                 if (newIsSelected) {
                   onAddValueToSelection(value)

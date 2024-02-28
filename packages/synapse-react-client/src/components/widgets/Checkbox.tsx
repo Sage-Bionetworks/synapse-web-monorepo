@@ -63,7 +63,12 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
         disabled={disabled}
         data-testid={props['data-testid']}
       />
-      <Typography component={'label'} variant={'smallText1'} htmlFor={uniqueId}>
+      <Typography
+        sx={{ lineHeight: '20px' }}
+        component={'label'}
+        variant={'smallText1'}
+        htmlFor={uniqueId}
+      >
         {/* Note: the `label` element MUST be rendered for our checkbox CSS to work! */}
         {hideLabel ? <></> : props.label}
       </Typography>

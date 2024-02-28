@@ -8,10 +8,11 @@ type EnumFacetFilterOptionProps = {
   readonly isDropdown: boolean
   readonly checked: boolean
   readonly onChange: (selected: boolean) => void
+  readonly onHover: () => void
 }
 
 export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
-  const { id, label, count, isDropdown, checked, onChange } = props
+  const { id, label, count, isDropdown, checked, onChange, onHover } = props
   return (
     <div
       className="EnumFacetFilter__checkboxContainer"
@@ -21,6 +22,7 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
           onChange(!checked)
         }
       }}
+      onMouseEnter={onHover}
     >
       <Checkbox
         className="EnumFacetFilter__checkbox"
