@@ -39,7 +39,7 @@ export default function EntityViewScopeEditorModal(
     }
   }, [entity])
 
-  const { mutate, isLoading: isUpdateLoading } = useUpdateEntity<EntityView>({
+  const { mutate, isPending: isUpdateLoading } = useUpdateEntity<EntityView>({
     onSuccess: onUpdate,
   })
 

@@ -11,8 +11,6 @@ import mockTableEntityData, {
   mockTableEntity,
 } from '../../mocks/entity/mockTableEntity'
 import {
-  EntityView,
-  ENTITY_VIEW_TYPE_MASK_DATASET,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
   ENTITY_VIEW_TYPE_MASK_PROJECT,
@@ -52,7 +50,7 @@ describe('EntityViewScopeEditorModal tests', () => {
     } as Entity)
   })
 
-  it('displays the correct scope editor and mask editor after initial render', () => {
+  it('displays the correct scope editor and mask editor after initial render', async () => {
     jest.clearAllMocks()
     renderComponent({
       entityId: mockTableEntity.id,
@@ -87,10 +85,12 @@ describe('EntityViewScopeEditorModal tests', () => {
     expect(tablesButton).toBeVisible()
     expect(datasetsButton).toBeVisible()
 
-    expect(filesButton).not.toBeChecked()
-    expect(foldersButton).not.toBeChecked()
-    expect(tablesButton).not.toBeChecked()
-    expect(datasetsButton).not.toBeChecked()
+    await waitFor(() => {
+      expect(filesButton).toBeChecked()
+      expect(foldersButton).toBeChecked()
+      expect(tablesButton).not.toBeChecked()
+      expect(datasetsButton).not.toBeChecked()
+    })
   })
 
   it('display error for invalid entity', async () => {
@@ -112,6 +112,11 @@ describe('EntityViewScopeEditorModal tests', () => {
     )
 
     const saveButton = within(dialog).getByRole('button', { name: 'Save' })
+    await waitFor(() => {
+      expect(
+        within(dialog).getByRole('button', { name: 'Save' }),
+      ).not.toBeDisabled()
+    })
     await userEvent.click(saveButton)
     expect(mockOnUpdate).not.toHaveBeenCalled()
   })
@@ -198,7 +203,7 @@ describe('EntityViewScopeEditorModal tests', () => {
       expect(mockEntityViewScopeEditor).toHaveBeenLastCalledWith(
         {
           scopeIds: ['syn123'],
-          disabled: false,
+          disabled: undefined,
           isProjectView: false,
           onChange: expect.any(Function),
         },
