@@ -77,7 +77,7 @@ export default function LoginPage(props: LoginPageProps) {
   const loginForm = (
     <Stack
       alignItems={'stretch'}
-      sx={{ height: '100%', width: '325px', mx: 'auto' }}
+      sx={{ height: '100%', width: '330px', mx: 'auto' }}
     >
       {!showDesktop && (
         <Stack flexDirection={'row'}>
