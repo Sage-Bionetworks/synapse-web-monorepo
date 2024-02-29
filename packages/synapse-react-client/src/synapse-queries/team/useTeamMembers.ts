@@ -6,11 +6,12 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import SynapseClient, { deleteMemberFromTeam } from '../../synapse-client'
-import { SynapseClientError } from '../../utils/SynapseClientError'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { SynapseClientError, useSynapseContext } from '../../utils'
 import {
   CreateMembershipInvitationRequest,
+  CreateMembershipRequestRequest,
   MembershipInvitation,
+  MembershipRequest,
   PaginatedResults,
   TeamMember,
   TeamMembershipStatus,
@@ -60,6 +61,24 @@ export function useGetMembershipStatus(
   })
 }
 
+export function useGetAllOpenMembershipInvitations(
+  userId: string,
+  options?: Partial<
+    UseQueryOptions<MembershipInvitation[], SynapseClientError>
+  >,
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getAllOpenMembershipInvitationsForUserQueryKey(userId),
+    queryFn: () =>
+      SynapseClient.getAllOpenMembershipInvitationsForUser(
+        userId,
+        accessToken!,
+      ),
+  })
+}
+
 export function useInviteUserToTeam(
   options?: Partial<
     UseMutationOptions<
@@ -82,7 +101,15 @@ export function useInviteUserToTeam(
   })
 }
 
-export function useAddMemberToTeam() {
+export function useAddMemberToTeam(
+  options?: Partial<
+    UseMutationOptions<
+      void,
+      SynapseClientError,
+      { teamId: string; userId: string }
+    >
+  >,
+) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
@@ -91,6 +118,7 @@ export function useAddMemberToTeam() {
     SynapseClientError,
     { teamId: string; userId: string }
   >({
+    ...options,
     mutationFn: ({ teamId, userId }) =>
       SynapseClient.addTeamMemberAsAuthenticatedUserOrAdmin(
         teamId,
@@ -98,6 +126,9 @@ export function useAddMemberToTeam() {
         accessToken!,
       ),
     onSuccess: async (data, variables, ctx) => {
+      if (options?.onSuccess) {
+        options.onSuccess(data, variables, ctx)
+      }
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getMembershipStatusQueryKey(
@@ -114,7 +145,45 @@ export function useAddMemberToTeam() {
         queryClient.invalidateQueries({
           queryKey: keyFactory.getTeamMembersQueryKey(variables.teamId),
         }),
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getAllSubmissionTeamsQueryKeys(),
+        }),
       ])
+    },
+  })
+}
+
+export function useRequestToJoinTeam(
+  options: Partial<
+    UseMutationOptions<
+      MembershipRequest,
+      SynapseClientError,
+      CreateMembershipRequestRequest
+    >
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useMutation<
+    MembershipRequest,
+    SynapseClientError,
+    CreateMembershipRequestRequest
+  >({
+    ...options,
+    mutationFn: request =>
+      SynapseClient.createMembershipRequest(request, accessToken!),
+    onSuccess: async (data, variables, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getMembershipStatusQueryKey(
+          variables.teamId,
+          variables.userId,
+        ),
+      })
+      if (options.onSuccess) {
+        return options.onSuccess(data, variables, ctx)
+      }
+      return
     },
   })
 }

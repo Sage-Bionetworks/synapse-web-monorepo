@@ -1456,6 +1456,33 @@ export const addTeamMemberAsAuthenticatedUserOrAdmin = (
 }
 
 /**
+ * Retrieve the open membership invitations for a user
+ * https://rest-docs.synapse.org/rest/GET/user/id/openInvitation.html
+ */
+export function getOpenMembershipInvitationsForUser(
+  userId: string,
+  accessToken: string,
+): Promise<PaginatedResults<MembershipInvitation>> {
+  return doGet(
+    `${REPO}/user/${userId}/openInvitation`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Retrieve all open membership invitations for a user.
+ */
+export function getAllOpenMembershipInvitationsForUser(
+  userId: string,
+  accessToken: string,
+) {
+  return getAllOfPaginatedService(() =>
+    getOpenMembershipInvitationsForUser(userId, accessToken),
+  )
+}
+
+/**
  * Create a membership invitation and send an email notification to the invitee.
  * https://rest-docs.synapse.org/rest/POST/membershipInvitation.html
  */

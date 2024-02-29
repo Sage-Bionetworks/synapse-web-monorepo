@@ -36,7 +36,7 @@ import { QueryWrapper } from '../../../index'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { mockTableEntity } from '../../../mocks/entity/mockTableEntity'
 import { mockFileViewEntity } from '../../../mocks/entity/mockFileView'
-import { MOCK_TEAM_ID, mockTeamUserGroup } from '../../../mocks/team/mockTeam'
+import { MOCK_TEAM_ID, mockTeamData } from '../../../mocks/team/mockTeam'
 import { uniqueId } from 'lodash-es'
 
 const queryResultBundle: QueryResultBundle =
@@ -252,7 +252,7 @@ describe('SynapseTableCell tests', () => {
       rowData: [MOCK_TEAM_ID.toString()],
     })
 
-    await screen.findByText(mockTeamUserGroup.userGroupHeader.userName, {
+    await screen.findByText(mockTeamData.name, {
       exact: false,
     })
   })

@@ -40,6 +40,7 @@ import {
 } from '../../mocks/user/mock_user_profile'
 import * as RejectDataAccessRequestModalModule from './RejectDataAccessRequestModal'
 import failOnConsoleError from 'jest-fail-on-console'
+import { mockActTeam } from '../../mocks/team/mockTeam'
 
 function renderComponent(props: SubmissionPageProps) {
   render(<SubmissionPage {...props} />, {
@@ -164,7 +165,7 @@ describe('Submission Page tests', () => {
     await screen.findByRole('button', { name: 'Reject' })
 
     await screen.findByText('Assigned Reviewer')
-    await screen.findByText('Synapse Access and Compliance Team')
+    await screen.findByText(mockActTeam.name)
 
     await screen.findByText('Conditions')
     await screen.findByText('Expiration period: 1 day(s)')
@@ -325,9 +326,7 @@ describe('Submission Page tests', () => {
     })
 
     // When an ACL exists, don't show the ACT as the reviewer
-    expect(
-      screen.queryByText('Synapse Access and Compliance Team'),
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText(mockActTeam.name)).not.toBeInTheDocument()
 
     // User 1 now appears as the submitter, modifier, an accessor, and the Reviewer
     await waitFor(() =>

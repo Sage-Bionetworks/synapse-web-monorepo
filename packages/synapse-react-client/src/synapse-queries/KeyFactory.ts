@@ -616,6 +616,10 @@ export class KeyFactory {
     return this.getKey('team', teamId, 'membershipStatus', userId)
   }
 
+  public getAllOpenMembershipInvitationsForUserQueryKey(userId: string) {
+    return this.getKey('openMembershipInvitations', userId)
+  }
+
   public getTeamAccessRequirementsQueryKey(teamId: string) {
     return this.getKey('team', teamId, 'accessRequirements')
   }
@@ -646,6 +650,10 @@ export class KeyFactory {
   }
   public getPassingRecordQueryKey(userId: string) {
     return this.getKey('passingRecord', userId)
+  }
+
+  public getAllSubmissionTeamsQueryKeys() {
+    return this.getKey('submissionTeams')
   }
 
   public getSubmissionTeamsQueryKey(
